@@ -107,6 +107,10 @@ main (int argc, char *argv[])
         THROW_IF_FAIL (loop) ;
 
         DynamicModuleManager module_manager ;
+
+        UString p = DBG_PERSPECTIVE_PLUGIN_PATH ;
+        module_manager.module_loader ()->config_search_paths ().push_back (p) ;
+
         IDebuggerSafePtr debugger =
                     module_manager.load<IDebugger> ("gdbengine") ;
 
@@ -144,8 +148,6 @@ main (int argc, char *argv[])
         cout << "nb of breakpoints: "
              << debugger->get_cached_breakpoints ().size ()
              << "\n" ;
-        debugger->do_continue () ;
-        sleep (1) ;
         debugger->do_continue () ;
         sleep (1) ;
         debugger->run_loop_iterations (-1) ;

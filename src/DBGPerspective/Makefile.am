@@ -1,4 +1,4 @@
-SUBDIRS=glade menus icons
+SUBDIRS=glade menus icons dbgengine
 
 plugin_config_files= \
 plugin-descriptor.xml \

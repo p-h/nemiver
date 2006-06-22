@@ -4,7 +4,7 @@
         <libraryname>gdbmod</libraryname>
     </module>
     <customsearchpaths>
-        <path>@prefix@/lib/nemiver/modules</path>
+        <path>@prefix@/lib/nemiver/plugins/DBGPerspective</path>
     </customsearchpaths>
 </moduleconfig>
 

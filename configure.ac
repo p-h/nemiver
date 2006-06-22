@@ -179,13 +179,13 @@ AC_PROG_MAKE_SET
 AC_OUTPUT([Makefile
 src/Makefile
   src/common/Makefile
-  src/dbgengine/Makefile
-  src/dbgengine/gdbengine.conf
   src/uicommon/Makefile
   src/workbench/Makefile
   src/workbench/workbench.conf
   src/DBGPerspective/Makefile
   src/DBGPerspective/DBGPerspective.conf
+    src/DBGPerspective/dbgengine/Makefile
+    src/DBGPerspective/dbgengine/gdbengine.conf
     src/DBGPerspective/glade/Makefile
     src/DBGPerspective/menus/Makefile
     src/DBGPerspective/icons/Makefile

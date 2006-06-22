@@ -211,10 +211,10 @@ struct GDBEngine::Priv {
             output.raw_value (output_value) ;
             IDebugger::CommandAndOutput command_and_output ;
             if (output.has_result_record ()) {
-                command_and_output.command (command_queue.back ()) ;
                 if (!command_queue.empty ()) {
                     list<Command>::iterator back_iter = command_queue.end ();
                     back_iter -- ;
+                    command_and_output.command (*back_iter) ;
                     command_queue.erase (back_iter) ;
                 }
             }

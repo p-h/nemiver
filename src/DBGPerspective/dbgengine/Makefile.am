@@ -1,5 +1,7 @@
+PLUGIN_NAME=DBGPerspective
+
 gdbmod_LTLIBRARIES=libgdbmod.la
-gdbmoddir=@NEMIVER_MODULES_DIR@
+gdbmoddir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 
 headers= \
 nmv-i-debugger.h
@@ -8,13 +10,10 @@ libgdbmod_la_SOURCES= \
 $(headers) \
 nmv-gdb-engine.cc
 
-publicheaders_DATA=$(headers)
-publicheadersdir=$(prefix)/include/dbgengine
-
 libgdbmod_la_LDFLAGS=@NEMIVER_LIBS@
 
 config_DATA=gdbengine.conf
-configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
+configdir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 
 INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/common

@@ -1,3 +1,15 @@
+vendredi 23 juin 2006, 00:38:59 (UTC+0200) Dodji Seketeli
+
+	* */Makefile.in: remove these files from svn.
+	* configure: removed this file from svn:
+	* src/dbgengine: moved this in src/DBGPerspective . The dbgengine
+	  is now part of the DBGPerspective plugin.
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:
+	  (GDBEngine::Priv::on_gdb_stdout_signal): fixed a crash due to
+	  a bad usage of iterators.
+	* tests/test-breakpoint.cc: updated this to reflect the move
+	  of the dbgenginein the DBGPerspective.
+
 samedi 17 juin 2006, 17:10:32 (UTC+0200) Dodji Seketeli
 	* Initial code. Make sure the plugin system in place.
 
