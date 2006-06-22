@@ -1,0 +1,12 @@
+<plugindescriptor autoactivate="yes" candeactivate="no">
+    <name>DBGPerspective</name>
+    <version>0.0.1</version>
+    <entrypoint>DBGPerspective</entrypoint>
+    <dependencies>
+        <plugin>
+            <name>DBGPerspective</name>
+            <version>0.0.1</version>
+        </plugin>
+    </dependencies>
+</plugindescriptor>
+

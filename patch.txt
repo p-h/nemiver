@@ -1,0 +1,164 @@
+Seulement dans gdpp-0.0.1/: config.h
+Seulement dans gdpp-0.0.1/: config.log
+Seulement dans gdpp-0.0.1/: config.status
+Seulement dans gdpp-0.0.1/glade: Makefile
+diff -ur gdpp-orig/gdpp-0.0.1/glade/workbench.glade gdpp-0.0.1/glade/workbench.glade
+--- gdpp-orig/gdpp-0.0.1/glade/workbench.glade	2006-06-08 21:42:15.000000000 +0200
++++ gdpp-0.0.1/glade/workbench.glade	2006-06-09 12:20:21.000000000 +0200
+@@ -39,19 +39,58 @@
+ 	</widget>
+ 	<packing>
+ 	  <property name="padding">0</property>
+-	  <property name="expand">True</property>
+-	  <property name="fill">True</property>
++	  <property name="expand">False</property>
++	  <property name="fill">False</property>
+ 	</packing>
+       </child>
+ 
+       <child>
+-	<widget class="GtkVBox" id="toolbarcontainer">
++	<widget class="GtkVBox" id="toolbarvbox">
+ 	  <property name="visible">True</property>
+ 	  <property name="homogeneous">False</property>
+ 	  <property name="spacing">0</property>
+ 
+ 	  <child>
+-	    <placeholder/>
++	    <widget class="GtkNotebook" id="toolbarcontainer">
++	      <property name="visible">True</property>
++	      <property name="show_tabs">False</property>
++	      <property name="show_border">True</property>
++	      <property name="tab_pos">GTK_POS_TOP</property>
++	      <property name="scrollable">False</property>
++	      <property name="enable_popup">False</property>
++
++	      <child>
++		<placeholder/>
++	      </child>
++
++	      <child>
++		<widget class="GtkLabel" id="label1">
++		  <property name="visible">True</property>
++		  <property name="label" translatable="yes">label1</property>
++		  <property name="use_underline">False</property>
++		  <property name="use_markup">False</property>
++		  <property name="justify">GTK_JUSTIFY_LEFT</property>
++		  <property name="wrap">False</property>
++		  <property name="selectable">False</property>
++		  <property name="xalign">0.5</property>
++		  <property name="yalign">0.5</property>
++		  <property name="xpad">0</property>
++		  <property name="ypad">0</property>
++		  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
++		  <property name="width_chars">-1</property>
++		  <property name="single_line_mode">False</property>
++		  <property name="angle">0</property>
++		</widget>
++		<packing>
++		  <property name="type">tab</property>
++		</packing>
++	      </child>
++	    </widget>
++	    <packing>
++	      <property name="padding">0</property>
++	      <property name="expand">True</property>
++	      <property name="fill">True</property>
++	    </packing>
+ 	  </child>
+ 	</widget>
+ 	<packing>
+Seulement dans gdpp-0.0.1/glade: workbench.glade.bak
+Seulement dans gdpp-0.0.1/glade: workbench.gladep
+Seulement dans gdpp-0.0.1/glade: workbench.gladep.bak
+Seulement dans gdpp-0.0.1/: libtool
+Seulement dans gdpp-0.0.1/: Makefile
+Seulement dans gdpp-0.0.1/menus: Makefile
+Seulement dans gdpp-0.0.1/src/common: .deps
+Seulement dans gdpp-0.0.1/src/common: gdp-date-utils.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-date-utils.o
+Seulement dans gdpp-0.0.1/src/common: gdp-dynamic-module.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-dynamic-module.o
+Seulement dans gdpp-0.0.1/src/common: gdp-env.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-env.o
+Seulement dans gdpp-0.0.1/src/common: gdp-exception.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-exception.o
+Seulement dans gdpp-0.0.1/src/common: gdp-initializer.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-initializer.o
+Seulement dans gdpp-0.0.1/src/common: gdp-libxml-utils.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-libxml-utils.o
+Seulement dans gdpp-0.0.1/src/common: gdp-log-stream.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-log-stream.o
+Seulement dans gdpp-0.0.1/src/common: gdp-object.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-object.o
+Seulement dans gdpp-0.0.1/src/common: gdp-plugin.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-plugin.o
+Seulement dans gdpp-0.0.1/src/common: gdp-scope-logger.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-scope-logger.o
+Seulement dans gdpp-0.0.1/src/common: gdp-sequence.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-sequence.o
+Seulement dans gdpp-0.0.1/src/common: gdp-ustring.lo
+Seulement dans gdpp-0.0.1/src/common: gdp-ustring.o
+Seulement dans gdpp-0.0.1/src/common: libgdpcommon.la
+Seulement dans gdpp-0.0.1/src/common: .libs
+Seulement dans gdpp-0.0.1/src/common: Makefile
+Seulement dans gdpp-0.0.1/src/dbgengine: .deps
+Seulement dans gdpp-0.0.1/src/dbgengine: gdbengine.conf
+Seulement dans gdpp-0.0.1/src/dbgengine: gdp-gdb-engine.lo
+Seulement dans gdpp-0.0.1/src/dbgengine: gdp-gdb-engine.o
+Seulement dans gdpp-0.0.1/src/dbgengine: libgdbmod.la
+Seulement dans gdpp-0.0.1/src/dbgengine: .libs
+Seulement dans gdpp-0.0.1/src/dbgengine: Makefile
+Seulement dans gdpp-0.0.1/src/DBGPerspective: .deps
+diff -ur gdpp-orig/gdpp-0.0.1/src/DBGPerspective/gdp-dbg-perspective.cc gdpp-0.0.1/src/DBGPerspective/gdp-dbg-perspective.cc
+--- gdpp-orig/gdpp-0.0.1/src/DBGPerspective/gdp-dbg-perspective.cc	2006-06-05 19:03:58.000000000 +0200
++++ gdpp-0.0.1/src/DBGPerspective/gdp-dbg-perspective.cc	2006-06-09 12:25:03.000000000 +0200
+@@ -23,3 +23,13 @@
+  */
+ #include "gdp-i-perspective.h"
+ 
++//the dynmod initial factory.
++extern "C" {
++bool
++GDP_API gdp_common_create_dynamic_module_instance (void **a_new_instance)
++{
++    //*a_new_instance = new gdp::DBGPerspective () ;
++    return (*a_new_instance != 0) ;
++}
++
++}//end extern C
+Seulement dans gdpp-0.0.1/src/DBGPerspective: .gdp-dbg-perspective.cc.swp
+Seulement dans gdpp-0.0.1/src/DBGPerspective: gdp-dbg-perspective.lo
+Seulement dans gdpp-0.0.1/src/DBGPerspective: gdp-dbg-perspective.o
+Seulement dans gdpp-0.0.1/src/DBGPerspective/glade: Makefile
+Seulement dans gdpp-0.0.1/src/DBGPerspective: libdbgperspectiveplugin.la
+Seulement dans gdpp-0.0.1/src/DBGPerspective: .libs
+Seulement dans gdpp-0.0.1/src/DBGPerspective: Makefile
+Seulement dans gdpp-0.0.1/src/DBGPerspective/menus: Makefile
+Seulement dans gdpp-0.0.1/src: .deps
+Seulement dans gdpp-0.0.1/src: gdpp
+Seulement dans gdpp-0.0.1/src: .libs
+Seulement dans gdpp-0.0.1/src: main.o
+Seulement dans gdpp-0.0.1/src: Makefile
+Seulement dans gdpp-0.0.1/src/uicommon: .deps
+Seulement dans gdpp-0.0.1/src/uicommon: gdp-ui-utils.lo
+Seulement dans gdpp-0.0.1/src/uicommon: gdp-ui-utils.o
+Seulement dans gdpp-0.0.1/src/uicommon: libgdpuicommon.la
+Seulement dans gdpp-0.0.1/src/uicommon: .libs
+Seulement dans gdpp-0.0.1/src/uicommon: Makefile
+Seulement dans gdpp-0.0.1/src/workbench: .deps
+Seulement dans gdpp-0.0.1/src/workbench: .gdp-workbench.cc.swp
+Seulement dans gdpp-0.0.1/src/workbench: gdp-workbench.lo
+Seulement dans gdpp-0.0.1/src/workbench: gdp-workbench.o
+Seulement dans gdpp-0.0.1/src/workbench: .libs
+Seulement dans gdpp-0.0.1/src/workbench: libworkbenchmod.la
+Seulement dans gdpp-0.0.1/src/workbench: Makefile
+Seulement dans gdpp-0.0.1/src/workbench: workbench.conf
+Seulement dans gdpp-0.0.1/: stamp-h1
+Seulement dans gdpp-0.0.1/tests: .deps
+Seulement dans gdpp-0.0.1/tests: fooprog
+Seulement dans gdpp-0.0.1/tests: fooprog.o
+Seulement dans gdpp-0.0.1/tests: .libs
+Seulement dans gdpp-0.0.1/tests: Makefile
+Seulement dans gdpp-0.0.1/tests: runtestbreakpoint
+Seulement dans gdpp-0.0.1/tests: test-breakpoint.o

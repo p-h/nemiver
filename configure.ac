@@ -1,0 +1,221 @@
+dnl **************************************************************
+dnl Process this file with autoconf to produce a configure script.
+dnl **************************************************************
+AC_INIT(nemiver, 0.0.1)
+AC_PREREQ(2.59)
+AC_CONFIG_SRCDIR(README)
+AC_CANONICAL_TARGET
+AM_MAINTAINER_MODE
+AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+AM_CONFIG_HEADER(config.h)
+
+MAJOR_VERSION=0
+MINOR_VERSION=0
+MICRO_VERSION=1
+
+NEMIVER_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION"
+AC_SUBST(NEMIVER_VERSION)
+
+dnl ************************************************************
+dnl First, Here goes the list of the version of the librairies
+dnl we depend on.
+dnl ************************************************************
+LIBGMODULE_VERSION=2.8.5
+LIBGTHREAD_VERSION=2.8.5
+LIBGLIBMM_VERSION=2.8.2
+LIBGNOMEVFSMM_VERSION=2.10
+LIBXML2_VERSION=2.6.22
+LIBGTKMM_VERSION=2.6.0
+LIBGLADEMM_VERSION=2.6.0
+LIBGTKSOURCEVIEWMM_VERSION=1.0.0
+
+dnl *********************
+dnl Checks for programs.
+dnl *********************
+AC_PROG_CXX
+AC_GNU_SOURCE
+#AC_HEADER_STDC
+
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+
+AC_LANG_CPLUSPLUS
+AC_LANG_COMPILER_REQUIRE
+
+AC_PATH_PROG(GDB_PROG,gdb)
+
+if test x$GDB_PROG = x ; then
+    AC_MSG_ERROR([didn't find the gdb debugger. please, install it.])
+fi
+AC_SUBST(GDB_PROG)
+
+ENABLE_IDEBUGGER_ONLY=no
+ENABLE_DBGENGINE=yes
+ENABLE_WORKBENCH=yes
+
+dnl ***************************
+dnl a list of enablexxx options
+dnl ***************************
+
+AC_ARG_ENABLE(idebuggeronly,
+              AC_HELP_STRING([--enable-idebugger-only=yes|no],
+                            [compile the idebuger iface only (default is no)]),
+              ENABLE_IDEBUGGER_ONLY=$enableval,
+              ENABLE_IDEBUGGER_ONLY=no)
+if test x$ENABLE_IDEBUGGER_ONLY = xyes ; then
+    ENABLE_DBGENGINE=yes
+    ENABLE_WORKBENCH=no
+fi
+
+AC_ARG_ENABLE(workbench,
+              AC_HELP_STRING([--enable-workbench=yes|no],
+                            [enable the graphical gd++ workbench (default is yes)]),
+              ENABLE_WORKBENCH=$enableval,
+              ENABLE_WORKBENCH=yes)
+if test x$ENABLE_WORKBENCH = xyes ; then
+    AC_DEFINE([WITH_WORKBENCH], 1, [compile the workbench])
+else
+    ENABLE_WORKBENCH=no
+fi
+
+
+ENABLE_DEBUG=yes
+AC_ARG_ENABLE(debug,
+              AC_HELP_STRING([--enable-debug=yes|no],
+                             [enable a lot of debug message dumps(default is yes)]),
+              ENABLE_DEBUG=$enableval,
+              ENABLE_DEBUG=yes)
+if test x$ENABLE_DEBUG = xyes ; then
+        AC_DEFINE([NEMIVER_DEBUG], 1,
+        [enable a lot of messages dumps in the terminal])
+else
+        ENABLE_DEBUG=no
+fi
+
+
+ENABLE_GCC_SYMBOLS_VISIBILITY=yes
+AC_ARG_ENABLE(symbolsvisibilitycontrol,
+              AC_HELP_STRING([--enable-symbolsvisibilitycontrol=yes|no],
+                             [use the gcc symbols visibility feature. >=n gcc4. default is yes)]),
+              ENABLE_GCC_SYMBOLS_VISIBILITY=$enableval,
+              ENABLE_GCC_SYMBOLS_VISIBILITY=yes)
+if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes ; then
+    AC_DEFINE(HAS_GCC_VISIBILITY_SUPPORT,1,[gcc visibility support])
+fi
+
+dnl *******************************
+dnl checking for libraries we use
+dnl *******************************
+PKG_CHECK_MODULES(LIBGMODULE, [gmodule-2.0 >= $LIBGMODULE_VERSION])
+PKG_CHECK_MODULES(LIBGTHREAD, [gthread-2.0 >= $LIBGTHREAD_VERSION])
+PKG_CHECK_MODULES(LIBXML2, [libxml-2.0 >= $LIBXML2_VERSION])
+PKG_CHECK_MODULES(LIBGLIBMM, [glibmm-2.4 >= $LIBGLIBMM_VERSION])
+PKG_CHECK_MODULES(LIBGNOMEVFSMM, [gnome-vfsmm-2.6 >= $LIBGNOMEVFSMM_VERSION])
+if test x$ENABLE_WORKBENCH = xyes ; then
+    PKG_CHECK_MODULES(LIBGTKMM, [gtkmm-2.4 >= $LIBGTKMM_VERSION])
+    PKG_CHECK_MODULES(LIBGLADEMM, [libglademm-2.4 >= $LIBGLADEMM_VERSION])
+    PKG_CHECK_MODULES(LIBGTKSOURCEVIEWMM, [gtksourceviewmm-1.0 >= $LIBGTKSOURCEVIEWMM_VERSION])
+fi
+
+#NEMIVER_LIBS="$LIBGTHREAD_LIBS $LIBGLIBMM_LIBS $LIBXML2_LIBS"
+#NEMIVER_LIBS="$NEMIVER_LIBS $LIBGMODULE_LIBS $LIBGNOMEVFSMM_LIBS"
+#NEMIVER_LIBS="$NEMIVER_LIBS $LIBGTKSOURCEVIEWMM_LIBS $LIBGLADEMM_LIBS"
+
+NEMIVER_LIBS="$LIBGTKSOURCEVIEWMM_LIBS $LIBGTHREAD_LIBS $LIBXML2_LIBS"
+NEMIVER_LIBS="$NEMIVER_LIBS $LIBGMODULE_LIBS $LIBGNOMEVFSMM_LIBS"
+NEMIVER_LIBS="$NEMIVER_LIBS $LIBGLADEMM_LIBS"
+
+NEMIVER_CFLAGS="$LIBGTHREAD_CFLAGS $LIBGLIBMM_CFLAGS $LIBXML2_CFLAGS"
+NEMIVER_CFLAGS="$NEMIVER_CFLAGS $LIBGMODULE_CFLAGS"
+NEMIVER_CFLAGS="$NEMIVER_CFLAGS $LIBGNOMEVFSMM_CFLAGS $LIBGTKSOURCEVIEWMM_CFLAGS"
+NEMIVER_CFLAGS="$NEMIVER_CFLAGS $LIBGLADEMM_CFLAGS"
+
+AC_SUBST(NEMIVER_LIBS)
+AC_SUBST(NEMIVER_CFLAGS)
+
+dnl ***************************
+dnl Set Dodjicommon devel environment.
+dnl ***************************
+
+DEVEL_FLAGS="-g -Wall -Wundef -Wpointer-arith -Wcast-align \
+-Wwrite-strings   -Wsign-compare \
+-Waggregate-return -Wmissing-prototypes  -Wmissing-declarations \
+-Wmissing-format-attribute  -Wredundant-decls -Wnested-externs \
+-Werror"
+
+if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes ; then
+    REQUIRED_FLAGS="-fvisibility=hidden -fvisibility-inlines-hidden"
+else
+    REQUIRED_FLAGS=""
+fi
+
+if test  "x$NEMIVER_DEVEL" = "xon" ; then
+    CFLAGS=$DODJI_FLAGS
+    CXXFLAGS="-Wall -g -Werror -fuse-cxa-atexit $REQUIRED_FLAGS"
+    ENABLE_DEBUG=yes
+else
+    CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit $REQUIRED_FLAGS"
+fi
+
+if test x$ENABLE_DEBUG != x ; then
+    AC_DEFINE([NEMIVER_DEBUG],1,[enable debug messages])
+fi
+
+NEMIVER_INSTALL_PREFIX=$prefix
+NEMIVER_SYSTEM_CONFIG_DIR=$libdir/nemiver/config
+NEMIVER_MODULES_DIR=$libdir/nemiver/modules
+NEMIVER_PLUGINS_DIR=$libdir/nemiver/plugins
+NEMIVER_TEST_MODULES_DIR=$NEMIVER_MODULES_DIR/test-modules
+
+
+AC_SUBST(NEMIVER_INSTALL_PREFIX)
+AC_SUBST(NEMIVER_SYSTEM_CONFIG_DIR)
+AC_SUBST(NEMIVER_MODULES_DIR)
+AC_SUBST(NEMIVER_PLUGINS_DIR)
+AC_SUBST(NEMIVER_TEST_MODULES_DIR)
+
+AC_PROG_MAKE_SET
+
+AC_OUTPUT([Makefile
+src/Makefile
+  src/common/Makefile
+  src/dbgengine/Makefile
+  src/dbgengine/gdbengine.conf
+  src/uicommon/Makefile
+  src/workbench/Makefile
+  src/workbench/workbench.conf
+  src/DBGPerspective/Makefile
+  src/DBGPerspective/DBGPerspective.conf
+    src/DBGPerspective/glade/Makefile
+    src/DBGPerspective/menus/Makefile
+    src/DBGPerspective/icons/Makefile
+glade/Makefile
+menus/Makefile
+tests/Makefile])
+
+cat <<EOT
+
+=================================================================
+         Nemiver: $MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
+=================================================================
+        Here is the configuration of the package:
+
+    Prefix                          : ${prefix}
+    Source code location            : ${srcdir}
+    C Compiler                      : ${CC}
+    C++ Compiler                    : ${CXX}
+    NEMIVER_DEVEL env var              : ${NEMIVER_DEVEL}
+    Enable verbose debug messages   : ${ENABLE_DEBUG}
+    Enable workbench                : ${ENABLE_WORKBENCH}
+    Maintainer mode                 : ${USER_MAINTAINER_MODE}
+    CFLAGS                          : ${CFLAGS}
+    CXXFLAGS                        : ${CXXFLAGS}
+    NEMIVER_LIBS                       : ${NEMIVER_LIBS}
+    NEMIVER_CFLAGS                     : ${NEMIVER_CFLAGS}
+
+Now, Type 'make' to compile Nemiver
+I hope you will enjoy it.
+
+--Dodji
+EOT
+

@@ -1,0 +1,12 @@
+<plugindescriptor autoactivate="yes" candeactivate="no">
+    <name>Workbench</name>
+    <version>0.0.1</version>
+    <entrypoint>Workbench</entrypoint>
+    <dependencies>
+        <plugin>
+            <name>Workbench</name>
+            <version>0.0.1</version>
+        </plugin>
+    </dependencies>
+</plugindescriptor>
+

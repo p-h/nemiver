@@ -1,0 +1,1537 @@
+/*
+ *This file is part of the Nemiver project
+ *
+ *Nemiver is free software; you can redistribute
+ *it and/or modify it under the terms of
+ *the GNU General Public License as published by the
+ *Free Software Foundation; either version 2,
+ *or (at your option) any later version.
+ *
+ *Nemiver is distributed in the hope that it will
+ *be useful, but WITHOUT ANY WARRANTY;
+ *without even the implied warranty of
+ *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *See the GNU General Public License for more details.
+ *
+ *You should have received a copy of the
+ *GNU General Public License along with Goupil;
+ *see the file COPYING.
+ *If not, write to the Free Software Foundation,
+ *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ *See COPYRIGHT file copyright information.
+ */
+#include <ctype.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <pty.h>
+#include <termios.h>
+#include <algorithm>
+#include <memory>
+#include <fstream>
+#include "nmv-i-debugger.h"
+#include "nmv-env.h"
+#include "nmv-exception.h"
+#include "nmv-sequence.h"
+
+using namespace std ;
+using namespace nemiver::common ;
+
+namespace nemiver {
+
+class GDBEngine : public IDebugger {
+
+    GDBEngine (const GDBEngine &) ;
+    GDBEngine& operator= (const GDBEngine &) ;
+
+    struct Priv ;
+    SafePtr<Priv> m_priv ;
+    friend struct Priv ;
+
+public:
+
+    GDBEngine () ;
+    virtual ~GDBEngine () ;
+    void get_info (Info &a_info) const ;
+    void do_init () ;
+
+    sigc::signal<void, Output&>& pty_signal () const ;
+    sigc::signal<void, CommandAndOutput&>& stdout_signal () const ;
+    sigc::signal<void, Output&>& stderr_signal () const ;
+    sigc::signal<void>& engine_died_signal () const ;
+
+    void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
+    void run_loop_iterations (int a_nb_iters) ;
+    void execute_command (Command &a_command) ;
+    bool busy () const ;
+    void load_program (const vector<UString> &a_argv,
+                       const vector<UString> &a_source_search_dirs) ;
+    void do_continue () ;
+    void run ()  ;
+    void step_in () ;
+    void step_over () ;
+    void continue_to_position (const UString &a_path, gint a_line_num)  ;
+    void set_breakpoint (const UString &a_path, gint a_line_num)  ;
+    void list_breakpoints () ;
+    const map<int, BreakPoint>& get_cached_breakpoints () ;
+    void set_breakpoint (const UString &a_func_name)  ;
+    void enable_breakpoint (const UString &a_path, gint a_line_num) ;
+    void disable_breakpoint (const UString &a_path, gint a_line_num) ;
+    void delete_breakpoint (const UString &a_path, gint a_line_num) ;
+};//end class GDBEngine
+
+
+//*************************
+//<GDBEngine::Priv struct>
+//*************************
+
+struct GDBEngine::Priv {
+    //***********************
+    //<GDBEngine attributes>
+    //************************
+    UString cwd ;
+    vector<UString> argv ;
+    vector<UString> source_search_dirs ;
+    Glib::Pid gdb_pid ;
+    int gdb_stdout_fd ;
+    int gdb_stderr_fd ;
+    int gdb_master_pty_fd ;
+    Glib::RefPtr<Glib::IOChannel> gdb_stdout_channel;
+    Glib::RefPtr<Glib::IOChannel> gdb_stderr_channel ;
+    Glib::RefPtr<Glib::IOChannel> gdb_master_pty_channel;
+    UString gdb_stdout_buffer ;
+    UString gdb_master_pty_buffer ;
+    UString gdb_stderr_buffer;
+    list<IDebugger::Command> command_queue ;
+    map<int, IDebugger::BreakPoint> cached_breakpoints;
+    Sequence command_sequence ;
+    enum InBufferStatus {
+        FILLING,
+        FILLED
+    };
+    InBufferStatus gdb_master_pty_buffer_status ;
+    InBufferStatus gdb_stdout_buffer_status ;
+    InBufferStatus error_buffer_status ;
+    Glib::RefPtr<Glib::MainContext> loop_context ;
+
+    sigc::signal<void> gdb_died_signal;
+    sigc::signal<void, const UString& > gdb_master_pty_signal;
+    sigc::signal<void, const UString& > gdb_stdout_signal;
+    sigc::signal<void, const UString& > gdb_stderr_signal;
+
+    mutable sigc::signal<void, Output&> pty_signal  ;
+    mutable sigc::signal<void, CommandAndOutput&> stdout_signal  ;
+    mutable sigc::signal<void, Output&> stderr_signal  ;
+
+    //***********************
+    //</GDBEngine attributes>
+    //************************
+
+    void attach_channel_to_loop_context_as_source
+                (Glib::IOCondition a_cond,
+                 const sigc::slot<bool, Glib::IOCondition> &a_slot,
+                 const Glib::RefPtr<Glib::IOChannel> &a_chan,
+                 const Glib::RefPtr<Glib::MainContext>&a_ctxt)
+    {
+        THROW_IF_FAIL (a_chan) ;
+        THROW_IF_FAIL (a_ctxt) ;
+
+        Glib::RefPtr<Glib::IOSource> io_source =
+            Glib::IOSource::create (a_chan, a_cond) ;
+        io_source->connect (a_slot) ;
+        io_source->attach (a_ctxt) ;
+    }
+
+    void set_event_loop_context
+                        (const Glib::RefPtr<Glib::MainContext> &a_ctxt)
+    {
+        loop_context = a_ctxt ;
+    }
+
+    void run_loop_iterations (int a_nb_iters)
+    {
+        if (!a_nb_iters) return ;
+
+        if (a_nb_iters < 0) {
+            while (get_event_loop_context ()->pending ()) {
+                get_event_loop_context ()->iteration (false) ;
+            }
+        } else {
+            while (a_nb_iters--) {
+                get_event_loop_context ()->iteration (false) ;
+            }
+        }
+    }
+
+    Glib::RefPtr<Glib::MainContext>& get_event_loop_context ()
+    {
+        if (!loop_context) {
+            loop_context = Glib::MainContext::get_default ();
+        }
+        THROW_IF_FAIL (loop_context) ;
+        return loop_context ;
+    }
+
+    void on_gdb_pty_signal (const UString &a_buf)
+    {
+        Output result (a_buf) ;
+        pty_signal.emit (result) ;
+    }
+
+    void on_gdb_stderr_signal (const UString &a_buf)
+    {
+        Output result (a_buf) ;
+        stderr_signal.emit (result) ;
+    }
+
+    void on_gdb_stdout_signal (const UString &a_buf)
+    {
+        Output output (a_buf);
+
+        UString::size_type from (0), to (0), end (a_buf.size ()) ;
+        for (; from < end ;) {
+            if (!parse_output_record (a_buf, from, to, output)) {
+                LOG_ERROR ("output record parsing failed: "
+                           << a_buf.substr (from, end - from)
+                           << "\npart of buf: " << a_buf
+                           << "\nfrom: " << (int) from
+                           << "\nto: " << (int) to << "\n") ;
+                break ;
+            }
+
+            //parsing GDB/MI output succeeded.
+            //Check if the output contains the result to a command issued by
+            //the user. If yes, build the CommandAndResult, update the
+            //command queue and notify the user that the command it issued
+            //has a result.
+            output.parsing_succeeded (true) ;
+            UString output_value ;
+            output_value.assign (a_buf, from, to - from +1) ;
+            output.raw_value (output_value) ;
+            IDebugger::CommandAndOutput command_and_output ;
+            if (output.has_result_record ()) {
+                command_and_output.command (command_queue.back ()) ;
+                if (!command_queue.empty ()) {
+                    list<Command>::iterator back_iter = command_queue.end ();
+                    back_iter -- ;
+                    command_queue.erase (back_iter) ;
+                }
+            }
+            command_and_output.output (output) ;
+            stdout_signal.emit (command_and_output) ;
+            from = to ;
+            while (to < end && isspace (a_buf[from])) {++from;}
+        }
+    }
+
+    Priv () :
+        cwd ("."), gdb_pid (0), gdb_stdout_fd (0),
+        gdb_stderr_fd (0), gdb_master_pty_fd (0),
+        gdb_master_pty_buffer_status (FILLED),
+        error_buffer_status (FILLED)
+    {
+        gdb_stdout_signal.connect (sigc::mem_fun
+                (*this, &Priv::on_gdb_stdout_signal)) ;
+        gdb_master_pty_signal.connect (sigc::mem_fun
+                (*this, &Priv::on_gdb_pty_signal)) ;
+        gdb_stderr_signal.connect (sigc::mem_fun
+                (*this, &Priv::on_gdb_stderr_signal)) ;
+        stdout_signal.connect (sigc::mem_fun
+                (*this, &Priv::on_stdout_signal_default)) ;
+    }
+
+    void free_resources ()
+    {
+        if (gdb_pid) {
+            g_spawn_close_pid (gdb_pid) ;
+            gdb_pid = 0 ;
+        }
+        if (gdb_stdout_channel) {
+            gdb_stdout_channel->close () ;
+            gdb_stdout_channel.clear () ;
+        }
+        if (gdb_master_pty_channel) {
+            gdb_master_pty_channel->close () ;
+            gdb_master_pty_channel.clear () ;
+        }
+        if (gdb_stderr_channel) {
+            gdb_stderr_channel->close () ;
+            gdb_stderr_channel.clear () ;
+        }
+    }
+
+    void on_child_died_signal (Glib::Pid a_pid,
+                               int a_priority)
+    {
+        gdb_died_signal.emit () ;
+        free_resources () ;
+    }
+
+    bool is_gdb_running ()
+    {
+        if (gdb_pid) {return true ;}
+        return false ;
+    }
+
+    void kill_gdb ()
+    {
+        if (is_gdb_running ()) {
+            kill (gdb_pid, SIGKILL) ;
+        }
+        free_resources() ;
+    }
+
+    bool launch_program (const vector<UString> &a_args,
+                         int &a_pid,
+                         int &a_master_pty_fd,
+                         int &a_stdout_fd,
+                         int &a_stderr_fd)
+    {
+        RETURN_VAL_IF_FAIL (!a_args.empty (), false) ;
+
+        enum ReadWritePipe {
+            READ_PIPE=0,
+            WRITE_PIPE=1
+        };
+
+        int stdout_pipes[2] = {0};
+        int stderr_pipes[2]= {0} ;
+        //int stdin_pipes[2]= {0} ;
+        int master_pty_fd (0) ;
+
+        RETURN_VAL_IF_FAIL (pipe (stdout_pipes) == 0, false) ;
+        //TODO: this line leaks the preceding pipes if it fails
+        RETURN_VAL_IF_FAIL (pipe (stderr_pipes) == 0, false) ;
+        //RETURN_VAL_IF_FAIL (pipe (stdin_pipes) == 0, false) ;
+
+        int pid  = forkpty (&master_pty_fd, NULL, NULL, NULL);
+        //int pid  = fork () ;
+        if (pid == 0) {
+            //in the child process
+            //*******************************************
+            //wire stderr to stderr_pipes[WRITER] pipe
+            //******************************************
+            close (2) ;
+            dup (stderr_pipes[WRITE_PIPE]) ;
+
+            //*******************************************
+            //wire stdout to stdout_pipes[WRITER] pipe
+            //******************************************
+            close (1) ;
+            dup (stdout_pipes[WRITE_PIPE]) ;
+
+            //close (0) ;
+            //log << "at 5" << endl;
+            //dup (stdin_pipes[READ_PIPE]) ;
+            //log << "at 6" << endl;
+
+            //*****************************
+            //close the unnecessary pipes
+            //****************************
+            close (stderr_pipes[READ_PIPE]) ;
+            close (stdout_pipes[READ_PIPE]) ;
+            //close (stdin_pipes[WRITE_PIPE]) ;
+
+            //**********************************************
+            //configure the pipes to be to have no buffering
+            //*********************************************
+            int state_flag (0) ;
+            if ((state_flag = fcntl (stdout_pipes[WRITE_PIPE],
+                                     F_GETFL)) != -1) {
+                fcntl (stdout_pipes[WRITE_PIPE],
+                       F_SETFL,
+                       O_SYNC | state_flag) ;
+            }
+            if ((state_flag = fcntl (stderr_pipes[WRITE_PIPE],
+                                     F_GETFL)) != -1) {
+                fcntl (stderr_pipes[WRITE_PIPE],
+                        F_SETFL,
+                        O_SYNC | state_flag) ;
+            }
+
+            auto_ptr<char *> args;
+            args.reset (new char* [a_args.size () + 1]) ;
+            memset (args.get (), 0,
+                    sizeof (char*) * (a_args.size () + 1)) ;
+            if (!args.get ()) {
+                exit (-1) ;
+            }
+            vector<UString>::const_iterator iter ;
+            unsigned int i (0) ;
+            for (i=0 ;
+                 i < a_args.size () ;
+                 ++i) {
+                args.get ()[i] =
+                            const_cast<char*> (a_args[i].c_str ());
+            }
+            execvp (args.get ()[0], args.get ()) ;
+            exit (-1) ;
+        } else if (pid > 0) {
+            //in the parent process
+
+            //**************************
+            //close the useless pipes
+            //*************************
+            close (stderr_pipes[WRITE_PIPE]) ;
+            close (stdout_pipes[WRITE_PIPE]) ;
+            //close (stdin_pipes[READ_PIPE]) ;
+
+            //****************************************
+            //configure the pipes to be non blocking
+            //****************************************
+            int state_flag (0) ;
+            if ((state_flag = fcntl (stdout_pipes[READ_PIPE],
+                            F_GETFL)) != -1) {
+                fcntl (stdout_pipes[READ_PIPE],
+                        F_SETFL,
+                        O_NONBLOCK|state_flag);
+            }
+            if ((state_flag = fcntl (stderr_pipes[READ_PIPE],
+                            F_GETFL)) != -1) {
+                fcntl (stdout_pipes[READ_PIPE],
+                        F_SETFL,
+                        O_NONBLOCK|state_flag);
+            }
+
+            if ((state_flag = fcntl (master_pty_fd,
+                            F_GETFL)) != -1) {
+                fcntl (master_pty_fd,
+                        F_SETFL,
+                        O_NONBLOCK|state_flag);
+            }
+            struct termios termios_flags;
+            tcgetattr (master_pty_fd, &termios_flags);
+            termios_flags.c_iflag &= ~(IGNPAR | INPCK
+                    |INLCR | IGNCR
+                    | ICRNL | IXON
+                    |IXOFF | ISTRIP);
+            termios_flags.c_iflag |= IGNBRK | BRKINT
+            | IMAXBEL | IXANY;
+            termios_flags.c_oflag &= ~OPOST;
+            termios_flags.c_cflag &= ~(CSTOPB | CREAD
+                    | PARENB | HUPCL);
+            termios_flags.c_cflag |= CS8 | CLOCAL;
+            termios_flags.c_cc[VMIN] = 0;
+            //echo off
+            termios_flags.c_lflag &= ~(ECHOKE | ECHOE
+                    |ECHO| ECHONL | ECHOPRT
+                    |ECHOCTL | ISIG | ICANON
+                    |IEXTEN | NOFLSH | TOSTOP);
+            cfsetospeed(&termios_flags, __MAX_BAUD);
+            tcsetattr(master_pty_fd, TCSANOW, &termios_flags);
+            a_pid = pid ;
+            a_master_pty_fd = master_pty_fd ;
+            //a_master_pty_fd = stdin_pipes[WRITE_PIPE];
+            a_stdout_fd = stdout_pipes[READ_PIPE] ;
+            a_stderr_fd = stderr_pipes[READ_PIPE] ;
+            gdb_pid = pid ;
+        } else {
+            //the fork failed.
+            close (stderr_pipes[READ_PIPE]) ;
+            close (stdout_pipes[READ_PIPE]) ;
+            LOG_ERROR ("fork() failed\n") ;
+            return false ;
+        }
+        return true ;
+    }
+
+    void set_communication_charset (const string &a_charset)
+    {
+        gdb_stdout_channel->set_encoding (a_charset) ;
+        gdb_stderr_channel->set_encoding (a_charset) ;
+        gdb_master_pty_channel->set_encoding (a_charset) ;
+    }
+
+    bool launch_gdb (const vector<UString> &a_prog_args,
+                     const vector<UString> &a_source_search_dirs)
+    {
+        if (is_gdb_running ()) {
+            kill_gdb () ;
+        }
+        argv.clear () ;
+        argv.push_back (env::get_gdb_program ()) ;
+        argv.push_back ("--interpreter=mi2") ;
+        argv.insert (argv.end (),
+                     a_prog_args.begin (),
+                     a_prog_args.end ()) ;
+        source_search_dirs = a_source_search_dirs;
+        RETURN_VAL_IF_FAIL (launch_program (argv,
+                                            gdb_pid,
+                                            gdb_master_pty_fd,
+                                            gdb_stdout_fd,
+                                            gdb_stderr_fd),
+                            false) ;
+        if (!gdb_pid) {return false;}
+
+        gdb_stdout_channel =
+            Glib::IOChannel::create_from_fd (gdb_stdout_fd) ;
+        gdb_stderr_channel =
+            Glib::IOChannel::create_from_fd (gdb_stderr_fd) ;
+        gdb_master_pty_channel =
+            Glib::IOChannel::create_from_fd (gdb_master_pty_fd) ;
+
+        string charset ;
+        Glib::get_charset (charset) ;
+        set_communication_charset (charset) ;
+
+        attach_channel_to_loop_context_as_source
+            (Glib::IO_IN | Glib::IO_PRI
+             | Glib::IO_HUP | Glib::IO_ERR,
+             sigc::mem_fun
+                        (this,
+                        &Priv::on_gdb_master_pty_has_data_signal),
+             gdb_master_pty_channel,
+             get_event_loop_context ()) ;
+
+        attach_channel_to_loop_context_as_source
+            (Glib::IO_IN | Glib::IO_PRI
+             | Glib::IO_HUP | Glib::IO_ERR,
+             sigc::mem_fun
+                        (this,
+                        &Priv::on_gdb_stderr_has_data_signal),
+             gdb_stderr_channel,
+             get_event_loop_context ()) ;
+
+        attach_channel_to_loop_context_as_source
+            (Glib::IO_IN | Glib::IO_PRI
+             | Glib::IO_HUP | Glib::IO_ERR,
+             sigc::mem_fun
+                        (this,
+                        &Priv::on_gdb_stdout_has_data_signal),
+             gdb_stdout_channel,
+             get_event_loop_context ()) ;
+        return true ;
+    }
+
+    bool issue_command (const Command &a_command)
+    {
+        if (gdb_master_pty_channel) {
+            if (gdb_master_pty_channel->write
+                        (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
+                a_command.id (command_sequence.create_next_integer ()) ;
+                command_queue.push_front (a_command) ;
+                gdb_master_pty_channel->flush () ;
+                run_loop_iterations (-1) ;
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    bool on_gdb_master_pty_has_data_signal (Glib::IOCondition a_cond)
+    {
+        THROW_IF_FAIL (gdb_master_pty_channel) ;
+        if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
+            char buf[513] = {0} ;
+            gsize nb_read (0), CHUNK_SIZE(512) ;
+            Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
+            bool got_data (false) ;
+            while (true) {
+                status = gdb_master_pty_channel->read (buf,
+                                                       CHUNK_SIZE,
+                                                       nb_read) ;
+                if (status == Glib::IO_STATUS_NORMAL
+                        && nb_read && (nb_read <= CHUNK_SIZE)) {
+                    if (gdb_master_pty_buffer_status == FILLED) {
+                        gdb_master_pty_buffer.clear () ;
+                        gdb_master_pty_buffer_status = FILLING ;
+                    }
+                    Glib::ustring::size_type i = gdb_master_pty_buffer.size () ;
+                    gdb_master_pty_buffer.insert (i, buf, nb_read) ;
+                    got_data = true ;
+                } else {
+                    break ;
+                }
+                nb_read = 0 ;
+            }
+            if (got_data) {
+                gdb_master_pty_buffer_status = FILLED ;
+                gdb_master_pty_signal.emit (gdb_master_pty_buffer) ;
+                gdb_master_pty_buffer.clear () ;
+            }
+        }
+        if (a_cond & Glib::IO_HUP) {
+            LOG_ERROR ("Connection lost") ;
+            kill_gdb () ;
+            gdb_died_signal.emit () ;
+        }
+        if (a_cond & Glib::IO_ERR) {
+            LOG_ERROR ("Error over the wire") ;
+        }
+        return true ;
+    }
+
+    bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
+    {
+        try {
+            if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
+                char buf[513] = {0} ;
+                gsize nb_read (0), CHUNK_SIZE(512) ;
+                Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
+                bool got_data (false) ;
+                while (true) {
+                    status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read) ;
+                    if (status == Glib::IO_STATUS_NORMAL
+                        && nb_read && (nb_read <= CHUNK_SIZE)) {
+                        if (gdb_stdout_buffer_status == FILLED) {
+                            gdb_stdout_buffer.clear () ;
+                            gdb_stdout_buffer_status = FILLING ;
+                        }
+                        Glib::ustring::size_type i = gdb_stdout_buffer.size () ;
+                        gdb_stdout_buffer.insert (i, buf, nb_read) ;
+                        got_data = true ;
+                    } else {
+                        break ;
+                    }
+                    nb_read = 0 ;
+                }
+                if (got_data) {
+                    gdb_stdout_buffer_status = FILLED ;
+                    //TODO: parse the output
+                    //(that can contains several output records),
+                    //and signal each record.
+                    gdb_stdout_signal.emit (gdb_stdout_buffer) ;
+                    gdb_stdout_buffer.clear () ;
+                }
+            }
+            if (a_cond & Glib::IO_HUP) {
+                LOG_ERROR ("Connection lost") ;
+                kill_gdb () ;
+                gdb_died_signal.emit () ;
+            }
+            if (a_cond & Glib::IO_ERR) {
+                LOG_ERROR ("Error over the wire") ;
+            }
+        } catch (Glib::Error &e) {
+            TRACE_EXCEPTION (e) ;
+            return false ;
+        } catch (exception &e) {
+            TRACE_EXCEPTION (e) ;
+            return false ;
+        } catch (...) {
+            LOG_ERROR ("got an unknown exception") ;
+            return false ;
+        }
+        return true ;
+    }
+
+    bool on_gdb_stderr_has_data_signal (Glib::IOCondition a_cond)
+    {
+
+        if (a_cond & Glib::IO_IN || a_cond & Glib::IO_PRI) {
+            char buf[513] = {0} ;
+            gsize nb_read (0), CHUNK_SIZE(512) ;
+            Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
+            bool got_data (false) ;
+            while (true) {
+                status = gdb_stderr_channel->read (buf,
+                                                   CHUNK_SIZE,
+                                                   nb_read) ;
+                if (status == Glib::IO_STATUS_NORMAL
+                        && nb_read && (nb_read <= CHUNK_SIZE)) {
+                    if (error_buffer_status == FILLED) {
+                        gdb_stderr_buffer.clear () ;
+                        error_buffer_status = FILLING ;
+                    }
+                    Glib::ustring::size_type i = gdb_stderr_buffer.size () ;
+                    gdb_stderr_buffer.insert (i, buf, nb_read) ;
+                    got_data = true ;
+
+                } else {
+                    break ;
+                }
+                nb_read = 0 ;
+            }
+            if (got_data) {
+                error_buffer_status = FILLED ;
+                gdb_stderr_signal.emit (gdb_stderr_buffer) ;
+                gdb_stderr_buffer.clear () ;
+            }
+        } else if (a_cond & Glib::IO_HUP) {
+            kill_gdb () ;
+            gdb_died_signal.emit () ;
+        }
+        return true ;
+    }
+
+    bool breakpoint_has_failed (const CommandAndOutput &a_in)
+    {
+        if (a_in.has_command ()
+            && a_in.command ().value ().compare (0, 5, "break")) {
+            return false ;
+        }
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().breakpoints ().empty ()) {
+            return true ;
+        }
+        return false ;
+    }
+
+    void on_stdout_signal_default (const CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && !a_in.output ().result_record ().breakpoints ().empty ()) {
+            cached_breakpoints= a_in.output ().result_record ().breakpoints ();
+        }
+    }
+
+    bool parse_attribute (const UString &a_input,
+                          UString::size_type a_from,
+                          UString::size_type &a_to,
+                          UString &a_name,
+                          UString &a_value)
+    {
+        UString::size_type cur = a_from,
+                           end = a_input.size (),
+                           name_start = cur ;
+        if (cur >= end) {return false;}
+
+        UString name, value ;
+        UString::value_type sep (0);
+        //goto first '='
+        for (;
+             cur<end
+             && !isspace (a_input[cur])
+             && a_input[cur] != '=';
+             ++cur) {
+        }
+
+        if (a_input[cur] != '='
+            || ++cur >= end ) {
+            return false ;
+        }
+
+        sep = a_input[cur] ;
+        if (sep != '"' && sep != '{' && sep != '[') {return false;}
+        if (sep == '{') {sep = '}';}
+        if (sep == '[') {sep = ']';}
+
+        if (++cur >= end) {
+            return false;
+        }
+        UString::size_type name_end = cur-3, value_start = cur ;
+
+        //goto $sep
+        for (;
+             cur<end
+             && a_input[cur] != sep;
+             ++cur) {
+        }
+        if (a_input[cur] != sep) {return false;}
+        UString::size_type value_end = cur-1 ;
+
+        name.assign (a_input, name_start, name_end - name_start + 1);
+        value.assign (a_input, value_start, value_end-value_start + 1);
+
+        a_to = ++cur ;
+        a_name = name ;
+        a_value = value ;
+        return true ;
+    }
+
+    /// \brief parses an attribute list
+    ///
+    /// An attribute list has the form:
+    /// attr0="val0",attr1="bal1",attr2="val2"
+    bool parse_attributes (const UString &a_input,
+                           UString::size_type a_from,
+                           UString::size_type &a_to,
+                           map<UString, UString> &a_attrs)
+    {
+        UString::size_type cur = a_from, end = a_input.size () ;
+
+        if (cur == end) {return false;}
+        UString name, value ;
+        map<UString, UString> attrs ;
+
+        while (true) {
+            if (!parse_attribute (a_input, cur, cur, name, value)) {break ;}
+            if (!name.empty () && !value.empty ()) {
+                attrs[name] = value ;
+                name.clear (); value.clear () ;
+            }
+
+            while (isspace (a_input[cur])) {++cur ;}
+            if (cur >= end || a_input[cur] != ',') {break;}
+            if (++cur >= end) {break;}
+        }
+        a_attrs = attrs ;
+        a_to = cur ;
+        return true ;
+    }
+
+    /// \brief parses a breakpoint definition as returned by gdb.
+    ///
+    ///breakpoint definition string looks like this:
+    ///bkpt={number="3",type="breakpoint",disp="keep",enabled="y",
+    ///addr="0x0804860e",func="func2()",file="fooprog.cc",line="13",times="0"}
+    ///
+    ///\param a_input the input string to parse.
+    ///\param a_from where to start the parsing from
+    ///\param a_to out parameter. A past the end iterator that
+    /// point the the end of the parsed text. This is set if and only
+    /// if the function completes successfuly
+    /// \param a_output the output datatructure filled upon parsing.
+    /// \return true in case of successful parsing, false otherwise.
+    bool parse_breakpoint (const UString &a_input,
+                           Glib::ustring::size_type a_from,
+                           Glib::ustring::size_type &a_to,
+                           IDebugger::BreakPoint &a_bkpt)
+    {
+        Glib::ustring::size_type cur = a_from, end = a_input.size () ;
+
+        if (a_input.compare (cur, 6, "bkpt={")) {return false;}
+
+        cur += 6 ;
+        if (cur >= end) {return false;}
+
+        map<UString, UString> attrs ;
+        bool is_ok = parse_attributes (a_input, cur, cur, attrs) ;
+        if (!is_ok) {return false;}
+
+        if (a_input[cur++] != '}') {return false;}
+
+        map<UString, UString>::iterator iter, null_iter = attrs.end () ;
+        if (   (iter = attrs.find ("number"))  == null_iter
+            || (iter = attrs.find ("type"))    == null_iter
+            || (iter = attrs.find ("disp"))    == null_iter
+            || (iter = attrs.find ("enabled")) == null_iter
+            || (iter = attrs.find ("addr"))    == null_iter
+            || (iter = attrs.find ("func"))    == null_iter
+            || (iter = attrs.find ("file"))    == null_iter
+            || (iter = attrs.find ("line"))    == null_iter
+            || (iter = attrs.find ("times"))   == null_iter
+            ) {
+            return false ;
+        }
+
+        a_bkpt.number (atoi (attrs["number"].c_str ())) ;
+        if (attrs["enabled"] == "y") {
+            a_bkpt.enabled (true) ;
+        } else {
+            a_bkpt.enabled (false) ;
+        }
+        a_bkpt.address (attrs["addr"]) ;
+        a_bkpt.function (attrs["func"]) ;
+        a_bkpt.file (attrs["file"]) ;
+        a_to = cur ;
+        return true;
+    }
+
+    bool parse_breakpoint_table (const UString &a_input,
+                                 UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 map<int, BreakPoint> &a_breakpoints)
+    {
+        UString::size_type cur=a_from, end=a_input.size () ;
+
+        if (a_input.compare (cur, 17, "BreakpointTable={")) {return false;}
+        cur += 17 ;
+        if (cur >= end) {return false;}
+
+        //skip table headers and got to table body.
+        cur = a_input.find ("body=[", 0)  ;
+        if (!cur) {return false;}
+        cur += 6 ;
+        if (cur >= end) {return false;}
+
+        map<int, IDebugger::BreakPoint> breakpoint_table ;
+        if (a_input[cur] == ']') {
+            //there are zero breakpoints ...
+        } else if (!a_input.compare (cur, 6, "bkpt={")){
+            //there are some breakpoints
+            IDebugger::BreakPoint breakpoint ;
+            while (true) {
+                if (!parse_breakpoint (a_input, cur, cur, breakpoint)) {
+                    break;
+                }
+                breakpoint_table[breakpoint.number ()] = breakpoint ;
+                if (a_input[cur] == ',') {
+                    ++cur ;
+                    if (cur >= end) {return false;}
+                }
+                breakpoint.clear () ;
+            }
+            if (breakpoint_table.empty ()) {return false;}
+        } else {
+            //weird things are happening, get out.
+            return false ;
+        }
+
+        if (a_input[cur] != ']') {return false;}
+        ++cur ;
+        if (cur >= end) {return false;}
+        if (a_input[cur] != '}') {return false;}
+        ++cur ;
+
+        a_to = cur ;
+        a_breakpoints = breakpoint_table ;
+        return true;
+    }
+
+    /// \brief parse function arguments list
+    ///
+    /// function args list have the form:
+    /// args=[{name="name0",value="0"},{name="name1",value="1"}]
+    ///
+    /// This function parses only started from (including) the first '{'
+    /// \param a_input the input string to parse
+    /// \param a_from where to parse from.
+    /// \param out parameter. End of the parsed string. This is a past the end
+    ///  offset.
+    /// \param a_args the map of the parsed attributes. This is set if and
+    /// only if the function returned true.
+    /// \return true upon successful parsing, false otherwise.
+    bool parse_function_args (const UString &a_input,
+                              const UString::size_type a_from,
+                              UString::size_type &a_to,
+                              map<UString, UString> a_args)
+    {
+        UString::size_type cur = a_from, end = a_input.size () ;
+
+        if (a_input.compare (cur, 1, "{")) {return false;}
+        cur ++  ; if (cur >= end) {return false;}
+
+        UString::size_type name_start (0),
+                           name_end (0),
+                           value_start (0),
+                           value_end (0);
+
+        Glib::ustring name, value ;
+        map<UString, UString> args ;
+
+        while (true) {
+            if (a_input.compare (cur, 6, "name=\"")) {break;}
+            cur += 6 ; if (cur >= end) {return false;}
+            name_start = cur;
+            for (; cur < end && a_input[cur] != '"'; ++cur) {}
+            if (a_input[cur] != '"') {return false;}
+            name_end = cur - 1 ;
+            if (++cur >= end) {return false;}
+            if (a_input.compare (cur, 8, ",value=\"")) {return false;}
+            cur += 8 ; if (cur >= end) {return false;}
+            value_start = cur ;
+            for (; cur < end && a_input[cur] != '"'; ++cur) {}
+            if (a_input[cur] != '"') {return false;}
+            value_end = cur - 1 ;
+            name.clear (), value.clear () ;
+            name.assign (a_input, name_start, name_end - name_start + 1) ;
+            value.assign (a_input, value_start, value_end - value_start + 1) ;
+            args[name] = value ;
+            if (++cur >= end) {return false;}
+            if (a_input[cur] != '}') {return false;}
+            if (++cur >= end) {break;}
+
+            if (!a_input.compare(cur, 2,",{") ){
+                cur += 2 ;
+                continue ;
+            } else {
+                break ;
+            }
+        }
+
+        a_args = args ;
+        a_to = cur ;
+        return true;
+    }
+
+    /// \brief parses a function frame
+    ///
+    /// function frames have the form:
+    /// frame={addr="0x080485fa",func="func1",args=[{name="foo", value="bar"}],
+    /// file="fooprog.cc",fullname="/foo/fooprog.cc",line="6"}
+    ///
+    /// \param a_input the input string to parse
+    /// \param a_from where to parse from.
+    /// \param a_to out parameter. Where the parser went after the parsing.
+    /// \param a_frame the parsed frame. It is set if and only if the function
+    ///  returns true.
+    /// \return true upon successful parsing, false otherwise.
+    bool parse_frame (const UString &a_input,
+                      UString::size_type a_from,
+                      UString::size_type &a_to,
+                      IDebugger::Frame &a_frame)
+    {
+        UString::size_type cur = a_from, end = a_input.size () ;
+        if (a_input.compare (a_from, 7, "frame={")) {
+            return false ;
+        }
+        cur += 7 ;
+        if (cur >= end) {return false;}
+
+        map<UString, UString> attrs ;
+        if (!parse_attributes (a_input, cur, cur, attrs)) {return false;}
+        if (a_input[cur] != '}') {return false;}
+        ++cur ;
+
+        map<UString, UString>::const_iterator iter, null_iter = attrs.end () ;
+        if (   (iter = attrs.find ("addr")) == null_iter
+            || (iter = attrs.find ("func")) == null_iter
+            || (iter = attrs.find ("file")) == null_iter
+            || (iter = attrs.find ("fullname")) == null_iter) {
+            return false ;
+        }
+
+        a_frame.address (attrs["addr"]) ;
+        a_frame.function (attrs["func"]) ;
+        UString args_str = attrs["args"] ;
+        if (args_str != "") {
+            map<UString, UString> args ;
+            UString::size_type from(0), to(0) ;
+            if (!parse_function_args (args_str, from, to, args)) {return false;}
+            a_frame.args () = args ;
+        }
+        a_frame.file_name (attrs["file"]) ;
+        a_frame.file_full_name (attrs["fullname"]) ;
+        a_frame.line (atoi (attrs["line"].c_str())) ;
+        a_to = cur ;
+        return true;
+    }
+
+    bool parse_c_string (const UString &a_input,
+                         UString::size_type a_from,
+                         UString::size_type &a_to,
+                         UString &a_c_string)
+    {
+        UString::size_type cur=a_from, end = a_input.size () ;
+
+        if (cur >= end) {return false;}
+        if (a_input[cur] != '"') {return false;}
+
+        ++cur ; if (cur >= end) {return false;}
+        UString::size_type str_start = cur, str_end (0) ;
+
+        while (true) {
+            ++cur ;
+            if (cur >= end) {return false;}
+            if (a_input[cur] == '"' && a_input[cur - 1] != '\\') {break ;}
+        }
+        if (a_input[cur] != '"') {return false;}
+        str_end = cur - 1 ;
+        ++cur ;
+        Glib::ustring str (a_input, str_start, str_end - str_start + 1) ;
+        a_c_string = str ;
+        a_to = cur ;
+        return true ;
+    }
+
+    bool parse_stream_record (const UString &a_input,
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              IDebugger::Output::StreamRecord &a_record)
+    {
+        UString::size_type cur=a_from, end = a_input.size () ;
+
+        if (cur >= end) {return false;}
+
+        UString console, target, log ;
+
+        if (a_input[cur] == '~') {
+            //console stream output
+            ++cur ; if (cur >= end) {return false ;}
+            if (!parse_c_string (a_input, cur, cur, console)) {return false;}
+        } else if (a_input[cur] == '@') {
+            //target stream output
+            ++cur ; if (cur >= end) {return false ;}
+            if (!parse_c_string (a_input, cur, cur, target)) {return false;}
+        } else if (a_input[cur] == '&') {
+            //log stream output
+            ++cur ; if (cur >= end) {return false ;}
+            if (!parse_c_string (a_input, cur, cur, log)) {return false;}
+        } else {
+            return false ;
+        }
+
+        for (; cur < end && isspace (a_input[cur]) ; ++cur) {}
+        bool found (false) ;
+        if (!console.empty ()) {
+            found = true ;
+            a_record.debugger_console (console) ;
+        }
+        if (!target.empty ()) {
+            found = true ;
+            a_record.target_output (target) ;
+        }
+        if (!log.empty ()) {
+            found = true ;
+            a_record.debugger_log (log) ;
+        }
+
+        if (!found) {return false;}
+        a_to = cur ;
+        return true;
+    }
+
+    bool parse_stopped_async_output (const UString &a_input,
+                                     UString::size_type a_from,
+                                     UString::size_type &a_to,
+                                     bool &a_got_frame,
+                                     IDebugger::Frame &a_frame,
+                                     map<UString, UString> &a_attrs)
+    {
+        UString::size_type cur=a_from, end=a_input.size () ;
+
+        if (cur >= end) {return false;}
+
+        if (a_input.compare (cur, 9,"*stopped,")) {return false;}
+        cur += 9 ; if (cur >= end) {return false;}
+
+        map<UString, UString> attrs ;
+        UString name, value;
+        bool got_frame (false) ;
+        IDebugger::Frame frame ;
+        while (true) {
+            if (!a_input.compare (cur, 7, "frame={")) {
+                if (!parse_frame (a_input, cur, cur, frame)) {return false;}
+                got_frame = true ;
+            } else {
+                if (!parse_attribute (a_input, cur, cur, name, value)) {break;}
+                attrs[name] = value ;
+                name.clear () ; value.clear () ;
+            }
+
+            if (cur >= end) {break ;}
+            if (a_input[cur] == ',') {++cur;}
+            if (cur >= end) {break ;}
+        }
+
+        for (; cur < end && a_input[cur] != '\n' ; ++cur) {}
+
+        if (a_input[cur] != '\n') {return false;}
+        ++cur ;
+
+        a_got_frame = got_frame ;
+        if (a_got_frame) {
+            a_frame = frame ;
+        }
+        a_to = cur ;
+        a_attrs = attrs ;
+        return true ;
+    }
+
+    IDebugger::Output::OutOfBandRecord::StopReason str_to_stopped_reason
+                                                        (const UString &a_str)
+    {
+        if (a_str == "breakpoint-hit") {
+            return IDebugger::Output::OutOfBandRecord::BREAKPOINT_HIT ;
+        } else if (a_str == "watchpoint-trigger") {
+            return IDebugger::Output::OutOfBandRecord::WATCHPOINT_TRIGGER ;
+        } else if (a_str == "read-watchpoint-trigger") {
+            return IDebugger::Output::OutOfBandRecord::READ_WATCHPOINT_TRIGGER ;
+        } else if (a_str == "function-finished") {
+            return IDebugger::Output::OutOfBandRecord::FUNCTION_FINISHED;
+        } else if (a_str == "location-reached") {
+            return IDebugger::Output::OutOfBandRecord::LOCATION_REACHED;
+        } else if (a_str == "watchpoint-scope") {
+            return IDebugger::Output::OutOfBandRecord::WATCHPOINT_SCOPE;
+        } else if (a_str == "end-stepping-range") {
+            return IDebugger::Output::OutOfBandRecord::END_STEPPING_RANGE;
+        } else if (a_str == "exited-signalled") {
+            return IDebugger::Output::OutOfBandRecord::EXITED_SIGNALLED;
+        } else if (a_str == "exited") {
+            return IDebugger::Output::OutOfBandRecord::EXITED;
+        } else if (a_str == "exited-normally") {
+            return IDebugger::Output::OutOfBandRecord::EXITED_NORMALLY;
+        } else if (a_str == "signal-received") {
+            return IDebugger::Output::OutOfBandRecord::SIGNAL_RECEIVED;
+        } else {
+            return IDebugger::Output::OutOfBandRecord::UNDEFINED ;
+        }
+    }
+
+    bool parse_out_of_band_record (const UString &a_input,
+                                   UString::size_type a_from,
+                                   UString::size_type &a_to,
+                                   IDebugger::Output::OutOfBandRecord &a_record)
+    {
+        UString::size_type cur=a_from, end = a_input.size () ;
+        if (cur >= end) {return false;}
+
+        IDebugger::Output::OutOfBandRecord record ;
+        if (   a_input[cur] == '~'
+            || a_input[cur] == '@'
+            || a_input[cur] == '&') {
+            IDebugger::Output::StreamRecord stream_record ;
+            if (!parse_stream_record (a_input, cur, cur,
+                                      stream_record)) {return false;}
+            record.has_stream_record (true) ;
+            record.stream_record (stream_record) ;
+
+            while (cur < end && isspace (a_input[cur])) {++cur;}
+        }
+
+        if (!a_input.compare (cur, 9,"*stopped,")) {
+            map<UString, UString> attrs ;
+            bool got_frame (false) ;
+            IDebugger::Frame frame ;
+            if (!parse_stopped_async_output (a_input, cur, cur,
+                                             got_frame, frame, attrs)) {
+                return false ;
+            }
+            record.is_stopped (true) ;
+            record.stop_reason (str_to_stopped_reason (attrs["reason"])) ;
+            if (got_frame) {
+                record.frame (frame) ;
+                record.has_frame (true);
+            }
+
+            if (attrs.find ("bkptno") != attrs.end ()) {
+                record.breakpoint_number (atoi (attrs["bkptno"].c_str ())) ;
+            }
+            record.thread_id (atoi (attrs["thread-id"].c_str ())) ;
+        }
+
+        while (cur < end && isspace (a_input[cur])) {++cur;}
+        a_to = cur ;
+        a_record = record ;
+        return true ;
+    }
+
+    bool parse_result_record (const UString &a_input,
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              IDebugger::Output::ResultRecord &a_record)
+    {
+        UString::size_type cur=a_from, end=a_input.size () ;
+        if (cur == end) {return false;}
+
+        UString name, value ;
+        IDebugger::Output::ResultRecord result_record ;
+        if (!a_input.compare (cur, 5, "^done")) {
+            cur += 5 ;
+            result_record.kind (IDebugger::Output::ResultRecord::DONE) ;
+            if (cur < end && a_input[cur] == ',') {
+                cur++;
+                if (cur >= end) {return false;}
+
+                if (!a_input.compare (cur, 6, "bkpt={")) {
+                    IDebugger::BreakPoint breakpoint ;
+                    if (parse_breakpoint (a_input, cur, cur, breakpoint)) {
+                        result_record.breakpoints ()[breakpoint.number ()] =
+                                                                     breakpoint ;
+                    }
+                } else if (!a_input.compare (cur, 17, "BreakpointTable={")) {
+                    map<int, BreakPoint> breaks ;
+                    parse_breakpoint_table (a_input, cur, cur, breaks) ;
+                    result_record.breakpoints () = breaks ;
+                }
+
+                for (;cur < end && a_input[cur] != '\n';++cur) {}
+            }
+        } else if (!a_input.compare (cur, 8, "^running")) {
+            result_record.kind (IDebugger::Output::ResultRecord::RUNNING) ;
+            cur += 8 ;
+            for (;cur < end && a_input[cur] != '\n';++cur) {}
+        } else if (!a_input.compare (cur, 5, "^exit")) {
+            result_record.kind (IDebugger::Output::ResultRecord::EXIT) ;
+            cur += 5 ;
+            for (;cur < end && a_input[cur] != '\n';++cur) {}
+        } else if (!a_input.compare (cur, 10, "^connected")) {
+            result_record.kind (IDebugger::Output::ResultRecord::CONNECTED) ;
+            cur += 10 ;
+            for (;cur < end && a_input[cur] != '\n';++cur) {}
+        } else if (!a_input.compare (cur, 6, "^error")) {
+            result_record.kind (IDebugger::Output::ResultRecord::ERROR) ;
+            cur += 6 ; if (cur >= end)
+            if (cur < end && a_input[cur] == ',') {++cur ;}
+            if (cur >= end) {return false;}
+            if (!parse_attribute (a_input, cur, cur, name, value)) {return false;}
+            if (name != "") {
+                result_record.attrs ()[name] = value ;
+            }
+            for (;cur < end && a_input[cur] != '\n';++cur) {}
+        } else {
+            return false ;
+        }
+
+        if (a_input[cur] != '\n') {return false;}
+
+        a_record = result_record ;
+        a_to = cur ;
+        return true;
+    }
+
+    bool parse_output_record (const UString &a_input,
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              IDebugger::Output &a_output)
+    {
+        UString::size_type cur=a_from, end=a_input.size () ;
+
+        if (cur >= end) {return false;}
+
+        IDebugger::Output output ;
+
+fetch_out_of_band_record:
+        if (   a_input[cur] == '*'
+            || a_input[cur] == '~'
+            || a_input[cur] == '@'
+            || a_input[cur] == '&'
+            || a_input[cur] == '+'
+            || a_input[cur] == '=') {
+            IDebugger::Output::OutOfBandRecord oo_record ;
+            if (!parse_out_of_band_record (a_input, cur, cur, oo_record)) {
+                return false;
+            }
+            output.has_out_of_band_record (true) ;
+            output.out_of_band_records ().push_back (oo_record) ;
+            goto fetch_out_of_band_record ;
+        }
+
+        if (cur >= end) {return false;}
+
+        if (a_input[cur] == '^') {
+            IDebugger::Output::ResultRecord result_record ;
+            if (parse_result_record (a_input, cur, cur, result_record)) {
+                output.has_result_record (true) ;
+                output.result_record (result_record) ;
+            }
+            if (cur >= end) {return false;}
+        }
+
+        while (cur < end && isspace (a_input[cur])) {++cur;}
+
+        if (!a_input.compare (cur, 5, "(gdb)")) {
+            cur += 5 ;
+        }
+
+        if (cur == a_from) {
+            //we didn't parse anything
+            return false ;
+        }
+
+        while (cur < end && isspace (a_input[cur])) {++cur;}
+
+        a_output = output ;
+        a_to = cur ;
+        return true;
+    }
+
+    ~Priv ()
+    {
+        kill_gdb () ;
+    }
+};//end GDBEngine::Priv
+
+//*************************
+//</GDBEngine::Priv struct>
+//*************************
+
+//****************************
+//<GDBEngine methods>
+//****************************
+GDBEngine::GDBEngine ()
+{
+    m_priv = new Priv ;
+}
+
+GDBEngine::~GDBEngine ()
+{
+    m_priv = 0;
+}
+
+void
+GDBEngine::load_program (const vector<UString> &a_argv,
+                         const vector<UString> &a_source_search_dirs)
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (!a_argv.empty ()) ;
+
+    if (!m_priv->is_gdb_running ()) {
+        THROW_IF_FAIL (m_priv->launch_gdb (a_argv, a_source_search_dirs)) ;
+        run_loop_iterations (-1) ;
+
+        IDebugger::Command command ;
+
+        command.value ("set breakpoint pending auto") ;
+        THROW_IF_FAIL (m_priv->issue_command (command)) ;
+    }
+
+    UString args ;
+    UString::size_type len (a_argv.size ()) ;
+    for (UString::size_type i = 1 ; i < len; ++i) {
+        args += " " + a_argv[i] ;
+    }
+
+    Command command (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
+    THROW_IF_FAIL (m_priv->issue_command (command)) ;
+
+
+    return ;
+}
+
+void
+GDBEngine::get_info (Info &a_info) const
+{
+    const static Info s_info ("debuggerengine",
+                              "The GDB debugger engine backend. "
+                               "Implements the IDebugger interface",
+                              "1.0") ;
+    a_info = s_info ;
+}
+
+void
+GDBEngine::do_init ()
+{
+}
+
+sigc::signal<void, GDBEngine::Output&>&
+GDBEngine::pty_signal () const
+{
+    return m_priv->pty_signal ;
+}
+
+sigc::signal<void, GDBEngine::Output&>&
+GDBEngine::stderr_signal () const
+{
+    return m_priv->stderr_signal ;
+}
+
+sigc::signal<void, GDBEngine::CommandAndOutput&>&
+GDBEngine::stdout_signal () const
+{
+    return m_priv->stdout_signal ;
+}
+
+sigc::signal<void>&
+GDBEngine::engine_died_signal () const
+{
+    return m_priv->gdb_died_signal ;
+}
+
+void
+GDBEngine::set_event_loop_context
+                        (const Glib::RefPtr<Glib::MainContext> &a_ctxt)
+{
+    m_priv->set_event_loop_context (a_ctxt) ;
+}
+
+void
+GDBEngine::run_loop_iterations (int a_nb_iters)
+{
+    THROW_IF_FAIL (m_priv) ;
+    m_priv->run_loop_iterations (a_nb_iters) ;
+}
+
+void
+GDBEngine::execute_command (Command &a_command)
+{
+    THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
+    THROW_IF_FAIL (m_priv->issue_command (a_command)) ;
+}
+
+bool
+GDBEngine::busy () const
+{
+    return false ;
+}
+
+
+void
+GDBEngine::do_continue ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-continue"))) ;
+}
+
+void
+GDBEngine::run ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-run"))) ;
+}
+
+void
+GDBEngine::step_in ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-step"))) ;
+}
+
+void
+GDBEngine::step_over ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-next"))) ;
+}
+
+void
+GDBEngine::continue_to_position (const UString &a_path, gint a_line_num)
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-until "
+                                          + a_path
+                                          + ":"
+                                          + UString::from_int (a_line_num)))) ;
+}
+
+void
+GDBEngine::set_breakpoint (const UString &a_path, gint a_line_num)
+{
+    THROW_IF_FAIL (m_priv) ;
+    //here, don't use the gdb/mi format, because only the cmd line
+    //format supports the 'set breakpoint pending' option that lets
+    //gdb set pending breakpoint when a breakpoint location doesn't exist.
+    //read http://sourceware.org/gdb/current/onlinedocs/gdb_6.html#SEC33
+    //Also, we don't neet to explicitely 'set breakpoint pending' to have it
+    //work. Even worse, setting it doesn't work.
+    THROW_IF_FAIL (m_priv->issue_command (Command ("break "
+                                          + a_path
+                                          + ":"
+                                          + UString::from_int (a_line_num)))) ;
+}
+
+void
+GDBEngine::list_breakpoints ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-break-list"))) ;
+}
+
+const map<int, IDebugger::BreakPoint>&
+GDBEngine::get_cached_breakpoints ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    return m_priv->cached_breakpoints ;
+}
+
+void
+GDBEngine::set_breakpoint (const UString &a_func_name)
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-break-insert "
+                                                   + a_func_name))) ;
+}
+
+void
+GDBEngine::enable_breakpoint (const UString &a_path, gint a_line_num)
+{
+}
+
+void
+GDBEngine::disable_breakpoint (const UString &a_path, gint a_line_num)
+{
+}
+
+void
+GDBEngine::delete_breakpoint (const UString &a_path, gint a_line_num)
+{
+}
+
+//****************************
+//</GDBEngine methods>
+//****************************
+}//end namespace nemiver
+
+//the dynmod initial factory.
+extern "C" {
+bool
+NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
+{
+    *a_new_instance = new nemiver::GDBEngine () ;
+    return (*a_new_instance != 0) ;
+}
+
+}//end extern C
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+ <ui>
+  <toolbar name="ToolBar">
+    <toolitem action="RunMenuItemAction" name="RunToolItem"/>
+    <toolitem action="NextMenuItemAction" name="NextToolItem"/>
+    <toolitem action="StepMenuItemAction" name="StepToolItem"/>
+    <toolitem action="ContinueMenuItemAction" name="ContinueToolItem"/>
+    <toolitem action="BreakMenuItemAction" name="BreakToolItem"/>
+  </toolbar>
+ </ui>
+
