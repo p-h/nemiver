@@ -1,3 +1,16 @@
+samedi 1 juillet 2006, 14:28:58 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: made various fixes
+	  to make this work with the main loop. Do not necessarily run the
+	  main loop each time a command is issued.
+	* src/DBGPerspective/dbgengine/nmv-i-debugger.h: make it optional
+	  to run the event loop after issuing a command
+	* src/DBGPerspective/nmv-dbg-perspective.cc: started to wire the
+	  'execute program' action.
+	* src/DBGPerspective/nmv-run-program-dialog.cc,h: started to code
+	  the run program dialog.
+	* src/common/nmv-ustring.cc,h: added the UString::split() method.
+
 vendredi 23 juin 2006, 00:38:59 (UTC+0200) Dodji Seketeli
 
 	* */Makefile.in: remove these files from svn.

@@ -29,6 +29,8 @@
  */
 #include <sstream>
 #include "nmv-ustring.h"
+#include "nmv-safe-ptr-utils.h"
+
 using namespace std ;
 namespace nemiver {
 namespace common {
@@ -77,6 +79,11 @@ UString::UString (UString const &an_other_string): Glib::ustring (an_other_strin
 UString::UString (const Glib::ustring &an_other_string) :
         Glib::ustring (an_other_string)
 {}
+
+UString::UString (const string &an_other_string) :
+    Glib::ustring (Glib::locale_to_utf8 (an_other_string.c_str ()))
+{
+}
 
 UString::~UString ()
 {}
@@ -161,6 +168,30 @@ UString::operator! () const
         return true ;
     }
     return false ;
+}
+
+vector<UString>
+UString::split (const UString &a_delim) const
+{
+    vector<UString> result ;
+    if (size () == Glib::ustring::size_type (0)) {return result;}
+
+    gint len = size () + 1 ;
+    SafePtr<gchar> buf (new gchar[size () + 1]) ;
+    memset (buf.get (), 0, len) ;
+    memcpy (buf.get (), c_str (), size ()) ;
+
+    gchar **splited = g_strsplit (buf.get (), a_delim.c_str (), -1) ;
+    try {
+        for (gchar **cur = splited ; cur && *cur; ++cur) {
+            result.push_back (UString (*cur)) ;
+        }
+    } catch (...) {}
+
+    if (splited) {
+        g_strfreev (splited) ;
+    }
+    return result ;
 }
 
 }//end namespace common

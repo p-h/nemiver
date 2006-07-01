@@ -505,32 +505,39 @@ public:
 
     virtual void load_program
                 (const vector<UString> &a_argv,
-                 const vector<UString> &a_source_search_dirs) = 0;
+                 const vector<UString> &a_source_search_dirs,
+                 bool a_run_event_loops=false) = 0;
 
-    virtual void do_continue () = 0;
+    virtual void do_continue (bool a_run_event_loops=false) = 0;
 
-    virtual void run () = 0 ;
+    virtual void run (bool a_run_event_loops=false) = 0 ;
 
-    virtual void step_in () = 0;
+    virtual void step_in (bool a_run_event_loops=false) = 0;
 
-    virtual void step_over () = 0;
+    virtual void step_over (bool a_run_event_loops=false) = 0;
 
     virtual void continue_to_position (const UString &a_path,
-                                       gint a_line_num) = 0 ;
+                                       gint a_line_num,
+                                       bool a_run_event_loops=false ) = 0 ;
     virtual void set_breakpoint (const UString &a_path,
-                                 gint a_line_num) = 0 ;
-    virtual void set_breakpoint (const UString &a_func_name) = 0 ;
+                                 gint a_line_num,
+                                 bool a_run_event_loops=false) = 0 ;
+    virtual void set_breakpoint (const UString &a_func_name,
+                                 bool a_run_event_loops=false) = 0 ;
 
-    virtual void list_breakpoints () = 0 ;
+    virtual void list_breakpoints (bool a_run_event_loops=false) = 0 ;
 
     virtual const map<int, BreakPoint>& get_cached_breakpoints () = 0 ;
 
     virtual void enable_breakpoint (const UString &a_path,
-                                    gint a_line_num) = 0;
+                                    gint a_line_num,
+                                    bool a_run_event_loops=false) = 0;
     virtual void disable_breakpoint (const UString &a_path,
-                                     gint a_line_num) = 0;
+                                     gint a_line_num,
+                                     bool a_run_event_loops=false) = 0;
     virtual void delete_breakpoint (const UString &a_path,
-                                    gint a_line_num) = 0;
+                                    gint a_line_num,
+                                    bool a_run_event_loops=false) = 0;
 };//end IDebugger
 
 }//end namespace nemiver

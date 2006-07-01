@@ -66,19 +66,31 @@ public:
     void execute_command (Command &a_command) ;
     bool busy () const ;
     void load_program (const vector<UString> &a_argv,
-                       const vector<UString> &a_source_search_dirs) ;
-    void do_continue () ;
-    void run ()  ;
-    void step_in () ;
-    void step_over () ;
-    void continue_to_position (const UString &a_path, gint a_line_num)  ;
-    void set_breakpoint (const UString &a_path, gint a_line_num)  ;
-    void list_breakpoints () ;
+                       const vector<UString> &a_source_search_dirs,
+                       bool a_run_event_loops) ;
+    void do_continue (bool a_run_event_loops) ;
+    void run (bool a_run_event_loops)  ;
+    void step_in (bool a_run_event_loops) ;
+    void step_over (bool a_run_event_loops) ;
+    void continue_to_position (const UString &a_path,
+                               gint a_line_num,
+                               bool a_run_event_loops)  ;
+    void set_breakpoint (const UString &a_path,
+                         gint a_line_num,
+                         bool a_run_event_loops)  ;
+    void list_breakpoints (bool a_run_event_loops) ;
     const map<int, BreakPoint>& get_cached_breakpoints () ;
-    void set_breakpoint (const UString &a_func_name)  ;
-    void enable_breakpoint (const UString &a_path, gint a_line_num) ;
-    void disable_breakpoint (const UString &a_path, gint a_line_num) ;
-    void delete_breakpoint (const UString &a_path, gint a_line_num) ;
+    void set_breakpoint (const UString &a_func_name,
+                         bool a_run_event_loops)  ;
+    void enable_breakpoint (const UString &a_path,
+                            gint a_line_num,
+                            bool a_run_event_loops) ;
+    void disable_breakpoint (const UString &a_path,
+                             gint a_line_num,
+                             bool a_run_event_loops) ;
+    void delete_breakpoint (const UString &a_path,
+                            gint a_line_num,
+                            bool a_run_event_loops) ;
 };//end class GDBEngine
 
 
@@ -196,7 +208,8 @@ struct GDBEngine::Priv {
                            << a_buf.substr (from, end - from)
                            << "\npart of buf: " << a_buf
                            << "\nfrom: " << (int) from
-                           << "\nto: " << (int) to << "\n") ;
+                           << "\nto: " << (int) to << "\n"
+                           << "\nstrlen: " << (int) a_buf.size ());
                 break ;
             }
 
@@ -382,47 +395,36 @@ struct GDBEngine::Priv {
             //****************************************
             int state_flag (0) ;
             if ((state_flag = fcntl (stdout_pipes[READ_PIPE],
-                            F_GETFL)) != -1) {
-                fcntl (stdout_pipes[READ_PIPE],
-                        F_SETFL,
-                        O_NONBLOCK|state_flag);
+                                     F_GETFL)) != -1) {
+                fcntl (stdout_pipes[READ_PIPE], F_SETFL, O_NONBLOCK|state_flag);
             }
             if ((state_flag = fcntl (stderr_pipes[READ_PIPE],
-                            F_GETFL)) != -1) {
-                fcntl (stdout_pipes[READ_PIPE],
-                        F_SETFL,
-                        O_NONBLOCK|state_flag);
+                                     F_GETFL)) != -1) {
+                fcntl (stderr_pipes[READ_PIPE], F_SETFL, O_NONBLOCK|state_flag);
             }
 
-            if ((state_flag = fcntl (master_pty_fd,
-                            F_GETFL)) != -1) {
-                fcntl (master_pty_fd,
-                        F_SETFL,
-                        O_NONBLOCK|state_flag);
+            if ((state_flag = fcntl (master_pty_fd, F_GETFL)) != -1) {
+                fcntl (master_pty_fd, F_SETFL, O_NONBLOCK|state_flag);
             }
             struct termios termios_flags;
             tcgetattr (master_pty_fd, &termios_flags);
             termios_flags.c_iflag &= ~(IGNPAR | INPCK
-                    |INLCR | IGNCR
-                    | ICRNL | IXON
-                    |IXOFF | ISTRIP);
-            termios_flags.c_iflag |= IGNBRK | BRKINT
-            | IMAXBEL | IXANY;
+                                       |INLCR | IGNCR
+                                       | ICRNL | IXON
+                                       |IXOFF | ISTRIP);
+            termios_flags.c_iflag |= IGNBRK | BRKINT | IMAXBEL | IXANY;
             termios_flags.c_oflag &= ~OPOST;
-            termios_flags.c_cflag &= ~(CSTOPB | CREAD
-                    | PARENB | HUPCL);
+            termios_flags.c_cflag &= ~(CSTOPB | CREAD | PARENB | HUPCL);
             termios_flags.c_cflag |= CS8 | CLOCAL;
             termios_flags.c_cc[VMIN] = 0;
             //echo off
-            termios_flags.c_lflag &= ~(ECHOKE | ECHOE
-                    |ECHO| ECHONL | ECHOPRT
-                    |ECHOCTL | ISIG | ICANON
-                    |IEXTEN | NOFLSH | TOSTOP);
+            termios_flags.c_lflag &= ~(ECHOKE | ECHOE |ECHO| ECHONL | ECHOPRT
+                                    |ECHOCTL | ISIG | ICANON
+                                    |IEXTEN | NOFLSH | TOSTOP);
             cfsetospeed(&termios_flags, __MAX_BAUD);
             tcsetattr(master_pty_fd, TCSANOW, &termios_flags);
             a_pid = pid ;
             a_master_pty_fd = master_pty_fd ;
-            //a_master_pty_fd = stdin_pipes[WRITE_PIPE];
             a_stdout_fd = stdout_pipes[READ_PIPE] ;
             a_stderr_fd = stderr_pipes[READ_PIPE] ;
             gdb_pid = pid ;
@@ -504,7 +506,8 @@ struct GDBEngine::Priv {
         return true ;
     }
 
-    bool issue_command (const Command &a_command)
+    bool issue_command (const Command &a_command,
+                        bool a_run_event_loops=false)
     {
         if (gdb_master_pty_channel) {
             if (gdb_master_pty_channel->write
@@ -512,7 +515,9 @@ struct GDBEngine::Priv {
                 a_command.id (command_sequence.create_next_integer ()) ;
                 command_queue.push_front (a_command) ;
                 gdb_master_pty_channel->flush () ;
-                run_loop_iterations (-1) ;
+                if (a_run_event_loops) {
+                    run_loop_iterations (-1) ;
+                }
                 return true ;
             }
         }
@@ -537,8 +542,9 @@ struct GDBEngine::Priv {
                         gdb_master_pty_buffer.clear () ;
                         gdb_master_pty_buffer_status = FILLING ;
                     }
-                    Glib::ustring::size_type i = gdb_master_pty_buffer.size () ;
-                    gdb_master_pty_buffer.insert (i, buf, nb_read) ;
+                    std::string raw_str(buf, nb_read) ;
+                    UString tmp = Glib::locale_to_utf8 (raw_str) ;
+                    gdb_stdout_buffer.append (tmp) ;
                     got_data = true ;
                 } else {
                     break ;
@@ -566,11 +572,12 @@ struct GDBEngine::Priv {
     {
         try {
             if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
-                char buf[513] = {0} ;
                 gsize nb_read (0), CHUNK_SIZE(512) ;
+                char buf[CHUNK_SIZE+1] ;
                 Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
                 bool got_data (false) ;
                 while (true) {
+                    memset (buf, 0, CHUNK_SIZE + 1) ;
                     status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read) ;
                     if (status == Glib::IO_STATUS_NORMAL
                         && nb_read && (nb_read <= CHUNK_SIZE)) {
@@ -578,8 +585,9 @@ struct GDBEngine::Priv {
                             gdb_stdout_buffer.clear () ;
                             gdb_stdout_buffer_status = FILLING ;
                         }
-                        Glib::ustring::size_type i = gdb_stdout_buffer.size () ;
-                        gdb_stdout_buffer.insert (i, buf, nb_read) ;
+                        std::string raw_str(buf, nb_read) ;
+                        UString tmp = Glib::locale_to_utf8 (raw_str) ;
+                        gdb_stdout_buffer.append (tmp) ;
                         got_data = true ;
                     } else {
                         break ;
@@ -634,8 +642,9 @@ struct GDBEngine::Priv {
                         gdb_stderr_buffer.clear () ;
                         error_buffer_status = FILLING ;
                     }
-                    Glib::ustring::size_type i = gdb_stderr_buffer.size () ;
-                    gdb_stderr_buffer.insert (i, buf, nb_read) ;
+                    std::string raw_str(buf, nb_read) ;
+                    UString tmp = Glib::locale_to_utf8 (raw_str) ;
+                    gdb_stdout_buffer.append (tmp) ;
                     got_data = true ;
 
                 } else {
@@ -999,13 +1008,14 @@ struct GDBEngine::Priv {
         if (cur >= end) {return false;}
         if (a_input[cur] != '"') {return false;}
 
-        ++cur ; if (cur >= end) {return false;}
+        ++cur ;
+        if (cur >= end) {return false;}
         UString::size_type str_start = cur, str_end (0) ;
 
         while (true) {
-            ++cur ;
             if (cur >= end) {return false;}
             if (a_input[cur] == '"' && a_input[cur - 1] != '\\') {break ;}
+            ++cur ;
         }
         if (a_input[cur] != '"') {return false;}
         str_end = cur - 1 ;
@@ -1333,14 +1343,20 @@ GDBEngine::~GDBEngine ()
 
 void
 GDBEngine::load_program (const vector<UString> &a_argv,
-                         const vector<UString> &a_source_search_dirs)
+                         const vector<UString> &a_source_search_dirs,
+                         bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (!a_argv.empty ()) ;
 
+    vector<UString>::const_iterator iter ;
+    LOG ("lauching prog with argv: ") ;
+    for (iter = a_argv.begin () ; iter != a_argv.end () ; ++iter) {
+        LOG (*iter) ;
+    }
+
     if (!m_priv->is_gdb_running ()) {
         THROW_IF_FAIL (m_priv->launch_gdb (a_argv, a_source_search_dirs)) ;
-        run_loop_iterations (-1) ;
 
         IDebugger::Command command ;
 
@@ -1357,6 +1373,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
     Command command (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
     THROW_IF_FAIL (m_priv->issue_command (command)) ;
 
+    LOG ("done") ;
 
     return ;
 }
@@ -1429,35 +1446,37 @@ GDBEngine::busy () const
 
 
 void
-GDBEngine::do_continue ()
+GDBEngine::do_continue (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-continue"))) ;
 }
 
 void
-GDBEngine::run ()
+GDBEngine::run (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-run"))) ;
 }
 
 void
-GDBEngine::step_in ()
+GDBEngine::step_in (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-step"))) ;
 }
 
 void
-GDBEngine::step_over ()
+GDBEngine::step_over (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-next"))) ;
 }
 
 void
-GDBEngine::continue_to_position (const UString &a_path, gint a_line_num)
+GDBEngine::continue_to_position (const UString &a_path,
+                                 gint a_line_num,
+                                 bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-until "
@@ -1467,7 +1486,9 @@ GDBEngine::continue_to_position (const UString &a_path, gint a_line_num)
 }
 
 void
-GDBEngine::set_breakpoint (const UString &a_path, gint a_line_num)
+GDBEngine::set_breakpoint (const UString &a_path,
+                           gint a_line_num,
+                           bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     //here, don't use the gdb/mi format, because only the cmd line
@@ -1483,7 +1504,7 @@ GDBEngine::set_breakpoint (const UString &a_path, gint a_line_num)
 }
 
 void
-GDBEngine::list_breakpoints ()
+GDBEngine::list_breakpoints (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-break-list"))) ;
@@ -1497,7 +1518,8 @@ GDBEngine::get_cached_breakpoints ()
 }
 
 void
-GDBEngine::set_breakpoint (const UString &a_func_name)
+GDBEngine::set_breakpoint (const UString &a_func_name,
+                           bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-break-insert "
@@ -1505,17 +1527,23 @@ GDBEngine::set_breakpoint (const UString &a_func_name)
 }
 
 void
-GDBEngine::enable_breakpoint (const UString &a_path, gint a_line_num)
+GDBEngine::enable_breakpoint (const UString &a_path,
+                              gint a_line_num,
+                              bool a_run_event_loops)
 {
 }
 
 void
-GDBEngine::disable_breakpoint (const UString &a_path, gint a_line_num)
+GDBEngine::disable_breakpoint (const UString &a_path,
+                               gint a_line_num,
+                               bool a_run_event_loops)
 {
 }
 
 void
-GDBEngine::delete_breakpoint (const UString &a_path, gint a_line_num)
+GDBEngine::delete_breakpoint (const UString &a_path,
+                              gint a_line_num,
+                              bool a_run_event_loops)
 {
 }
 

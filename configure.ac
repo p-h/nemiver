@@ -210,8 +210,8 @@ cat <<EOT
     Maintainer mode                 : ${USER_MAINTAINER_MODE}
     CFLAGS                          : ${CFLAGS}
     CXXFLAGS                        : ${CXXFLAGS}
-    NEMIVER_LIBS                       : ${NEMIVER_LIBS}
-    NEMIVER_CFLAGS                     : ${NEMIVER_CFLAGS}
+    NEMIVER_LIBS                    : ${NEMIVER_LIBS}
+    NEMIVER_CFLAGS                  : ${NEMIVER_CFLAGS}
 
 Now, Type 'make' to compile Nemiver
 I hope you will enjoy it.

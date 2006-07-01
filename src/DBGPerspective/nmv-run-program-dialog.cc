@@ -54,6 +54,7 @@ struct RunProgramDialog::Priv {
         file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
         file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
         file_chooser.set_select_multiple (false) ;
+        file_chooser.set_show_hidden (true) ;
 
         int result = file_chooser.run () ;
 
@@ -72,6 +73,7 @@ struct RunProgramDialog::Priv {
         file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
         file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
         file_chooser.set_select_multiple (false) ;
+        file_chooser.set_show_hidden (true) ;
 
         int result = file_chooser.run () ;
 
@@ -131,6 +133,7 @@ RunProgramDialog::RunProgramDialog (const UString &a_root_path)
     m_priv = new RunProgramDialog::Priv ();
     m_priv->root_path = a_root_path ;
     m_priv->load_glade_file () ;
+    working_directory (Glib::get_current_dir ()) ;
 }
 
 RunProgramDialog::~RunProgramDialog ()

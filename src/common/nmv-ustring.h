@@ -30,9 +30,13 @@
 #ifndef __NEMIVER_USTRING_H__
 #define __NEMIVER_USTRING_H__
 
+#include <vector>
+#include <string>
 #include "config.h"
 #include <glibmm.h>
 #include "nmv-api-macros.h"
+
+using namespace std ;
 
 namespace nemiver {
 namespace common {
@@ -44,6 +48,7 @@ public:
     UString (const char *a_cstr, long a_len=-1) ;
     UString (const unsigned char *a_cstr, long a_len=-1) ;
     UString (const Glib::ustring &an_other_string) ;
+    UString (const string &an_other_string) ;
     UString (UString const &an_other_string) ;
     virtual ~UString () ;
     UString& set (const gchar* a_buf, gulong a_len) ;
@@ -55,6 +60,7 @@ public:
     UString& operator= (const unsigned char *a_cstr) ;
     UString& operator= (UString const &a_cstr) ;
     bool operator! () const ;
+    vector<UString> split (const UString &a_delim) const ;
 };//end class UString
 
 }//end namespace common

@@ -32,6 +32,7 @@
 #include "nmv-i-perspective.h"
 #include "nmv-source-editor.h"
 #include "nmv-run-program-dialog.h"
+#include "nmv-i-debugger.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -139,6 +140,10 @@ public:
     void close_current_file () ;
     void close_file (const UString &a_uri) ;
     void execute_program () ;
+    void execute_program (const UString &a_prog,
+                          const UString &a_args,
+                          const UString &a_cwd) ;
+    IDebuggerSafePtr& debugger () ;
     sigc::signal<void, bool>& activated_signal () ;
 };//end class DBGPerspective
 
@@ -196,6 +201,7 @@ struct DBGPerspective::Priv {
     map<int, UString> pagenum_2_uri_map ;
     Gtk::Notebook *statuses_notebook ;
     int current_page_num ;
+    IDebuggerSafePtr debugger ;
 
     Priv () :
         initialized (false),
@@ -811,7 +817,59 @@ DBGPerspective::execute_program ()
 {
     RunProgramDialog dialog (plugin_path ()) ;
 
-    dialog.run () ;
+    int result = dialog.run () ;
+    if (result != Gtk::RESPONSE_OK) {
+        LOG ("user asked to cancel") ;
+        return;
+    }
+
+    UString prog, args, cwd ;
+    prog = dialog.program_name () ;
+    THROW_IF_FAIL (prog != "") ;
+    args = dialog.arguments () ;
+    cwd = dialog.working_directory () ;
+    THROW_IF_FAIL (cwd != "") ;
+
+    execute_program (prog, args, cwd) ;
+
+}
+
+void
+DBGPerspective::execute_program (const UString &a_prog,
+                                 const UString &a_args,
+                                 const UString &a_cwd)
+{
+    NEMIVER_TRY
+
+    IDebuggerSafePtr dbg_engine = debugger () ;
+    THROW_IF_FAIL (dbg_engine) ;
+    vector<UString> args = a_args.split (" ") ;
+    args.insert (args.begin (), a_prog) ;
+    vector<UString> source_search_dirs = a_cwd.split (" ") ;
+
+    dbg_engine->load_program (args, source_search_dirs) ;
+
+    NEMIVER_CATCH
+}
+
+IDebuggerSafePtr&
+DBGPerspective::debugger ()
+{
+    if (!m_priv->debugger) {
+        DynamicModule::Loader *loader = plugin_entry_point_loader () ;
+        THROW_IF_FAIL (loader) ;
+        DynamicModuleManager *module_manager =
+                            loader->get_dynamic_module_manager () ;
+        THROW_IF_FAIL (module_manager) ;
+
+        m_priv->debugger =
+            module_manager->load<IDebugger> ("gdbengine",
+                                             *plugin_entry_point_loader ()) ;
+        m_priv->debugger->set_event_loop_context
+                                    (Glib::MainContext::get_default ()) ;
+    }
+    THROW_IF_FAIL (m_priv->debugger) ;
+    return m_priv->debugger ;
 }
 
 sigc::signal<void, bool>&
