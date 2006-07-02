@@ -210,7 +210,7 @@ public:
         ///
         ///either the output stream of the
         ///debugger console (to be displayed by the CLI),
-        ///of the output stream of the target or the debugger log stream.
+        ///or the target output stream or the debugger log stream.
         class StreamRecord {
             UString m_debugger_console ;
             UString m_target_output ;

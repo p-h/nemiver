@@ -106,6 +106,7 @@ private:
     //************
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
+    void on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao) ;
 
 
     string build_resource_path (const UString &a_dir, const UString &a_name) ;
@@ -119,6 +120,7 @@ private:
     void init_toolbar () ;
     void init_body () ;
     void init_signals () ;
+    void init_debugger_output_handlers () ;
     void append_source_editor (SourceEditor &a_sv,
                                const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
     SourceEditor* get_current_source_editor () ;
@@ -179,6 +181,75 @@ struct UnrefGObjectNative {
     }
 };
 
+/// A container of handlers
+/// to handle output coming from
+/// the debugger engine
+struct OutputHandler : Object {
+
+    //a method supposed to return
+    //true if the current handler knows
+    //how to handle a given debugger output
+    virtual bool can_handle (IDebugger::CommandAndOutput &){return false;}
+
+    //a method supposed to return
+    //true if the current handler knows
+    //how to handle a given debugger output
+    virtual void do_handle (IDebugger::CommandAndOutput &) {}
+};//end struct OutputHandler
+typedef SafePtr<OutputHandler, ObjectRef, ObjectUnref> OutputHandlerSafePtr ;
+
+struct OnStreamRecordHandler: OutputHandler{
+    Gtk::TextView *command_view ;
+    Gtk::TextView *prog_output_view ;
+    Gtk::TextView *debug_view ;
+
+    OnStreamRecordHandler (Gtk::TextView *a_command_view=NULL,
+                          Gtk::TextView *a_prog_output_view=NULL,
+                          Gtk::TextView *a_debug_view=NULL) :
+        command_view (a_command_view),
+        prog_output_view (a_prog_output_view),
+        debug_view (a_debug_view)
+    {}
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (!a_in.output ().has_out_of_band_record ()) {
+            return false;
+        }
+        return true ;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        list<IDebugger::Output::OutOfBandRecord>::const_iterator iter ;
+        for (iter = a_in.output ().out_of_band_records ().begin ();
+             iter != a_in.output ().out_of_band_records ().end ();
+             ++iter) {
+            if (iter->has_stream_record ()) {
+                if (command_view
+                    && iter->stream_record ().debugger_console () != ""){
+                    command_view->get_buffer ()->insert
+                        (command_view->get_buffer ()->end (),
+                         iter->stream_record ().debugger_console () + "\n") ;
+                }
+                if (prog_output_view
+                    && iter->stream_record ().target_output () != ""){
+                    prog_output_view->get_buffer ()->insert
+                        (prog_output_view->get_buffer ()->end (),
+                         iter->stream_record ().target_output () + "\n") ;
+                }
+                if (debug_view
+                    && iter->stream_record ().debugger_log () != ""){
+                    debug_view->get_buffer ()->insert
+                        (debug_view->get_buffer ()->end (),
+                         iter->stream_record ().debugger_log () + "\n") ;
+                }
+            }
+        }
+
+    }
+};//end struct OnStreamRecordHandler
+
 struct DBGPerspective::Priv {
     bool initialized ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group ;
@@ -200,8 +271,12 @@ struct DBGPerspective::Priv {
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_uri_map ;
     Gtk::Notebook *statuses_notebook ;
+    Gtk::TextView *command_view ;
+    Gtk::TextView *program_output_view;
+    Gtk::TextView *error_view ;
     int current_page_num ;
     IDebuggerSafePtr debugger ;
+    list<OutputHandlerSafePtr> output_handlers ;
 
     Priv () :
         initialized (false),
@@ -255,6 +330,20 @@ void
 DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num)
 {
     m_priv->current_page_num = a_page_num;
+}
+
+void
+DBGPerspective::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
+{
+    list<OutputHandlerSafePtr>::iterator iter ;
+    for (iter = m_priv->output_handlers.begin () ;
+         iter != m_priv->output_handlers.end ();
+         ++iter)
+    {
+        if ((*iter)->can_handle (a_cao)) {
+            (*iter)->do_handle (a_cao) ;
+        }
+    }
 }
 
 
@@ -556,6 +645,15 @@ DBGPerspective::init_body ()
     m_priv->statuses_notebook =
         env::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                    "statusesnotebook") ;
+    m_priv->command_view =
+        env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
+                                                   "commandview") ;
+    m_priv->program_output_view =
+        env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
+                                                   "programoutputview") ;
+    m_priv->error_view =
+        env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
+                                                   "errorview") ;
 
     m_priv->body_main_paned->unparent () ;
     m_priv->body_main_paned->show_all () ;
@@ -567,6 +665,16 @@ DBGPerspective::init_signals ()
 {
     m_priv->sourceviews_notebook->signal_switch_page ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_switch_page_signal)) ;
+}
+
+void
+DBGPerspective::init_debugger_output_handlers ()
+{
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnStreamRecordHandler
+                                   (m_priv->command_view,
+                                    m_priv->program_output_view,
+                                    m_priv->error_view))) ;
 }
 
 void
@@ -679,6 +787,7 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     init_toolbar () ;
     init_body () ;
     init_signals () ;
+    init_debugger_output_handlers () ;
     m_priv->initialized = true ;
 }
 
@@ -867,6 +976,8 @@ DBGPerspective::debugger ()
                                              *plugin_entry_point_loader ()) ;
         m_priv->debugger->set_event_loop_context
                                     (Glib::MainContext::get_default ()) ;
+        m_priv->debugger->stdout_signal ().connect (sigc::mem_fun
+                (*this, &DBGPerspective::on_debugger_stdout_signal)) ;
     }
     THROW_IF_FAIL (m_priv->debugger) ;
     return m_priv->debugger ;

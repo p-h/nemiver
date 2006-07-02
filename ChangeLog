@@ -1,3 +1,12 @@
+dimanche 2 juillet 2006, 19:29:19 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-i-debugger.h: fixed some doc
+	* src/DBGPerspective/nmv-dbg-perspective.cc: start throwing the
+	  the debugger stream record at the different text views of the status
+	  window
+	* src/DBGPerspective/glade/bodycontainer.glade: update the status
+	  window
+
 samedi 1 juillet 2006, 14:28:58 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: made various fixes
