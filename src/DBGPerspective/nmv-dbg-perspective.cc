@@ -101,12 +101,13 @@ private:
     void on_open_action () ;
     void on_close_action () ;
     void on_execute_program_action () ;
-    //************
-    //</action slots>
-    //************
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
     void on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao) ;
+    void on_debugger_ready_signal (bool a_is_ready) ;
+    //************
+    //</action slots>
+    //************
 
 
     string build_resource_path (const UString &a_dir, const UString &a_name) ;
@@ -147,6 +148,7 @@ public:
                           const UString &a_cwd) ;
     IDebuggerSafePtr& debugger () ;
     sigc::signal<void, bool>& activated_signal () ;
+    sigc::signal<void, bool>& debugger_ready_signal () ;
 };//end class DBGPerspective
 
 struct RefGObject {
@@ -263,6 +265,7 @@ struct DBGPerspective::Priv {
     IWorkbench *workbench ;
     Gtk::Toolbar *toolbar ;
     sigc::signal<void, bool> activated_signal;
+    sigc::signal<void, bool> debugger_ready_signal;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
@@ -346,6 +349,15 @@ DBGPerspective::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
     }
 }
 
+void
+DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
+{
+    if (a_is_ready) {
+        m_priv->debugger_ready_action_group->set_sensitive (true) ;
+    } else {
+        m_priv->debugger_ready_action_group->set_sensitive (false) ;
+    }
+}
 
 //****************************
 //</slots>
@@ -665,6 +677,8 @@ DBGPerspective::init_signals ()
 {
     m_priv->sourceviews_notebook->signal_switch_page ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_switch_page_signal)) ;
+    debugger_ready_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_ready_signal)) ;
 }
 
 void
@@ -957,6 +971,7 @@ DBGPerspective::execute_program (const UString &a_prog,
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
 
     dbg_engine->load_program (args, source_search_dirs) ;
+    debugger_ready_signal ().emit (true) ;
 
     NEMIVER_CATCH
 }
@@ -988,6 +1003,12 @@ DBGPerspective::activated_signal ()
 {
     CHECK_P_INIT ;
     return m_priv->activated_signal ;
+}
+
+sigc::signal<void, bool>&
+DBGPerspective::debugger_ready_signal ()
+{
+    return m_priv->debugger_ready_signal ;
 }
 
 }//end namespace nemiver

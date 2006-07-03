@@ -35,6 +35,14 @@
 #include "nmv-exception.h"
 #include "nmv-sequence.h"
 
+#define LOG_PARSING_ERROR(a_buf, a_from) \
+{ \
+Glib::ustring str_01 (a_buf, a_from, a_buf.size () - a_from) ;\
+LOG_ERROR ("parsing failed for buf: " \
+           << a_buf \
+           << " cur index was: " << (int)a_from) ;\
+}
+
 using namespace std ;
 using namespace nemiver::common ;
 
@@ -454,9 +462,9 @@ struct GDBEngine::Priv {
         argv.clear () ;
         argv.push_back (env::get_gdb_program ()) ;
         argv.push_back ("--interpreter=mi2") ;
-        argv.insert (argv.end (),
-                     a_prog_args.begin (),
-                     a_prog_args.end ()) ;
+        argv.push_back (a_prog_args[0]) ;
+
+
         source_search_dirs = a_source_search_dirs;
         RETURN_VAL_IF_FAIL (launch_program (argv,
                                             gdb_pid,
@@ -503,6 +511,15 @@ struct GDBEngine::Priv {
                         &Priv::on_gdb_stdout_has_data_signal),
              gdb_stdout_channel,
              get_event_loop_context ()) ;
+
+        UString args ;
+        for (vector<UString>::size_type i=1; i < a_prog_args.size () ; ++i) {
+            args += a_prog_args[i] + " " ;
+        }
+
+        if (args != "") {
+            return issue_command (Command ("set args " + args)) ;
+        }
         return true ;
     }
 
@@ -545,7 +562,10 @@ struct GDBEngine::Priv {
                     std::string raw_str(buf, nb_read) ;
                     UString tmp = Glib::locale_to_utf8 (raw_str) ;
                     gdb_stdout_buffer.append (tmp) ;
-                    got_data = true ;
+                    if (gdb_stdout_buffer.find ("(gdb)")
+                        != Glib::ustring::npos) {
+                        got_data = true ;
+                    }
                 } else {
                     break ;
                 }
@@ -588,7 +608,10 @@ struct GDBEngine::Priv {
                         std::string raw_str(buf, nb_read) ;
                         UString tmp = Glib::locale_to_utf8 (raw_str) ;
                         gdb_stdout_buffer.append (tmp) ;
-                        got_data = true ;
+                        if (gdb_stdout_buffer.find ("(gdb)")
+                            != Glib::ustring::npos) {
+                            got_data = true ;
+                        }
                     } else {
                         break ;
                     }
@@ -596,9 +619,6 @@ struct GDBEngine::Priv {
                 }
                 if (got_data) {
                     gdb_stdout_buffer_status = FILLED ;
-                    //TODO: parse the output
-                    //(that can contains several output records),
-                    //and signal each record.
                     gdb_stdout_signal.emit (gdb_stdout_buffer) ;
                     gdb_stdout_buffer.clear () ;
                 }
@@ -998,6 +1018,8 @@ struct GDBEngine::Priv {
         return true;
     }
 
+    /// parses a string that has the form:
+    /// \"blah\"
     bool parse_c_string (const UString &a_input,
                          UString::size_type a_from,
                          UString::size_type &a_to,
@@ -1005,19 +1027,31 @@ struct GDBEngine::Priv {
     {
         UString::size_type cur=a_from, end = a_input.size () ;
 
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         if (a_input[cur] != '"') {return false;}
-
         ++cur ;
-        if (cur >= end) {return false;}
+
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         UString::size_type str_start = cur, str_end (0) ;
 
         while (true) {
-            if (cur >= end) {return false;}
+            if (cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             if (a_input[cur] == '"' && a_input[cur - 1] != '\\') {break ;}
             ++cur ;
         }
-        if (a_input[cur] != '"') {return false;}
+        if (a_input[cur] != '"') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         str_end = cur - 1 ;
         ++cur ;
         Glib::ustring str (a_input, str_start, str_end - str_start + 1) ;
@@ -1033,23 +1067,48 @@ struct GDBEngine::Priv {
     {
         UString::size_type cur=a_from, end = a_input.size () ;
 
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         UString console, target, log ;
 
         if (a_input[cur] == '~') {
             //console stream output
-            ++cur ; if (cur >= end) {return false ;}
-            if (!parse_c_string (a_input, cur, cur, console)) {return false;}
+            ++cur ;
+            if (cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            if (!parse_c_string (a_input, cur, cur, console)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
         } else if (a_input[cur] == '@') {
             //target stream output
-            ++cur ; if (cur >= end) {return false ;}
-            if (!parse_c_string (a_input, cur, cur, target)) {return false;}
+            ++cur ;
+            if (cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            if (!parse_c_string (a_input, cur, cur, target)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
         } else if (a_input[cur] == '&') {
             //log stream output
-            ++cur ; if (cur >= end) {return false ;}
-            if (!parse_c_string (a_input, cur, cur, log)) {return false;}
+            ++cur ;
+            if (cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            if (!parse_c_string (a_input, cur, cur, log)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
         } else {
+            LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
@@ -1068,7 +1127,10 @@ struct GDBEngine::Priv {
             a_record.debugger_log (log) ;
         }
 
-        if (!found) {return false;}
+        if (!found) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         a_to = cur ;
         return true;
     }
@@ -1156,7 +1218,10 @@ struct GDBEngine::Priv {
                                    IDebugger::Output::OutOfBandRecord &a_record)
     {
         UString::size_type cur=a_from, end = a_input.size () ;
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         IDebugger::Output::OutOfBandRecord record ;
         if (   a_input[cur] == '~'
@@ -1164,7 +1229,10 @@ struct GDBEngine::Priv {
             || a_input[cur] == '&') {
             IDebugger::Output::StreamRecord stream_record ;
             if (!parse_stream_record (a_input, cur, cur,
-                                      stream_record)) {return false;}
+                                      stream_record)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             record.has_stream_record (true) ;
             record.stream_record (stream_record) ;
 
@@ -1204,7 +1272,10 @@ struct GDBEngine::Priv {
                               IDebugger::Output::ResultRecord &a_record)
     {
         UString::size_type cur=a_from, end=a_input.size () ;
-        if (cur == end) {return false;}
+        if (cur == end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         UString name, value ;
         IDebugger::Output::ResultRecord result_record ;
@@ -1213,7 +1284,10 @@ struct GDBEngine::Priv {
             result_record.kind (IDebugger::Output::ResultRecord::DONE) ;
             if (cur < end && a_input[cur] == ',') {
                 cur++;
-                if (cur >= end) {return false;}
+                if (cur >= end) {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                    return false;
+                }
 
                 if (!a_input.compare (cur, 6, "bkpt={")) {
                     IDebugger::BreakPoint breakpoint ;
@@ -1269,7 +1343,10 @@ struct GDBEngine::Priv {
     {
         UString::size_type cur=a_from, end=a_input.size () ;
 
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         IDebugger::Output output ;
 
@@ -1282,6 +1359,7 @@ fetch_out_of_band_record:
             || a_input[cur] == '=') {
             IDebugger::Output::OutOfBandRecord oo_record ;
             if (!parse_out_of_band_record (a_input, cur, cur, oo_record)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
                 return false;
             }
             output.has_out_of_band_record (true) ;
@@ -1289,7 +1367,10 @@ fetch_out_of_band_record:
             goto fetch_out_of_band_record ;
         }
 
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         if (a_input[cur] == '^') {
             IDebugger::Output::ResultRecord result_record ;
@@ -1297,7 +1378,10 @@ fetch_out_of_band_record:
                 output.has_result_record (true) ;
                 output.result_record (result_record) ;
             }
-            if (cur >= end) {return false;}
+            if (cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
         }
 
         while (cur < end && isspace (a_input[cur])) {++cur;}
@@ -1308,6 +1392,7 @@ fetch_out_of_band_record:
 
         if (cur == a_from) {
             //we didn't parse anything
+            LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
@@ -1349,12 +1434,6 @@ GDBEngine::load_program (const vector<UString> &a_argv,
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (!a_argv.empty ()) ;
 
-    vector<UString>::const_iterator iter ;
-    LOG ("lauching prog with argv: ") ;
-    for (iter = a_argv.begin () ; iter != a_argv.end () ; ++iter) {
-        LOG (*iter) ;
-    }
-
     if (!m_priv->is_gdb_running ()) {
         THROW_IF_FAIL (m_priv->launch_gdb (a_argv, a_source_search_dirs)) ;
 
@@ -1372,8 +1451,6 @@ GDBEngine::load_program (const vector<UString> &a_argv,
 
     Command command (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
     THROW_IF_FAIL (m_priv->issue_command (command)) ;
-
-    LOG ("done") ;
 
     return ;
 }

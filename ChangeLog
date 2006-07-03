@@ -1,3 +1,18 @@
+lundi 3 juillet 2006, 22:55:07 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: 
+	 (GDBEngine::Priv::launch_gdb): the target arguments have to be
+	 set using the "set args" command.
+	 (GDBEngine::Priv::on_gdb_master_pty_has_data_signal),
+	 (GDBEngine::Priv::on_gdb_stdout_has_data_signal): advertise a
+	 a gdb output record only if the "(gdb)" string is found in the
+	 buffer we get from gdb. Otherwise, wait for the next string chunk
+
+	 Also, add debugging to lot of the parsing routines.
+	* src/DBGPerspective/nmv-dbg-perspective.cc:
+	add a "debugger_ready_signal() and use it to set the debugger
+	ready dependant actions (un)sensitive.
+
 dimanche 2 juillet 2006, 19:29:19 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-i-debugger.h: fixed some doc
