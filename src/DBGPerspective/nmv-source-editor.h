@@ -27,11 +27,13 @@
 #include <gtkmm/box.h>
 #include <gtksourceviewmm/sourceview.h>
 #include "nmv-safe-ptr-utils.h"
+#include "nmv-ustring.h"
 
 using gtksourceview::SourceView ;
 using gtksourceview::SourceBuffer ;
 using Gtk::VBox ;
 using nemiver::common::SafePtr ;
+using nemiver::common::UString ;
 
 namespace nemiver {
 
@@ -43,11 +45,12 @@ class SourceEditor : public  VBox {
     SafePtr<Priv> m_priv ;
 
     void init () ;
+    SourceEditor () ;
 
 public:
 
-    SourceEditor () ;
-    SourceEditor (Glib::RefPtr<SourceBuffer> &a_buf) ;
+    SourceEditor (const UString &a_root_dir,
+                  Glib::RefPtr<SourceBuffer> &a_buf) ;
     virtual ~SourceEditor () ;
     SourceView& source_view () ;
     gint current_line () ;

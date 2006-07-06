@@ -1,6 +1,7 @@
 PLUGIN_NAME=DBGPerspective
 iconsfiles = \
 set-breakpoint.xpm \
+breakpoint-marker.png \
 continue.xpm \
 stop-debugger.xpm \
 run-debugger.xpm \

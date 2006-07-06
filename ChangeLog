@@ -1,3 +1,14 @@
+jeudi 6 juillet 2006, 08:37:33 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::load_program): fixed loading a program after
+	gdb has been launched
+	* src/DBGPerspective/nmv-source-editor.cc: get the path to
+	 the resources at instanciation time so that we can load things
+	 like breakpoint marker pixbufs and the like.
+	* src/DBGPerspective/icons/breakpoint-marker.png: added this to
+	 repository
+
 lundi 3 juillet 2006, 22:55:07 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: 

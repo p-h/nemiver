@@ -535,6 +535,7 @@ struct GDBEngine::Priv {
                 if (a_run_event_loops) {
                     run_loop_iterations (-1) ;
                 }
+                LOG ("issued command: " << a_command.value ()) ;
                 return true ;
             }
         }
@@ -1441,16 +1442,19 @@ GDBEngine::load_program (const vector<UString> &a_argv,
 
         command.value ("set breakpoint pending auto") ;
         THROW_IF_FAIL (m_priv->issue_command (command)) ;
-    }
+    } else {
+        UString args ;
+        UString::size_type len (a_argv.size ()) ;
+        for (UString::size_type i = 1 ; i < len; ++i) {
+            args += " " + a_argv[i] ;
+        }
 
-    UString args ;
-    UString::size_type len (a_argv.size ()) ;
-    for (UString::size_type i = 1 ; i < len; ++i) {
-        args += " " + a_argv[i] ;
-    }
+        Command command (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
+        THROW_IF_FAIL (m_priv->issue_command (command)) ;
 
-    Command command (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
-    THROW_IF_FAIL (m_priv->issue_command (command)) ;
+        command.value ("set args " + args) ;
+        THROW_IF_FAIL (m_priv->issue_command (command)) ;
+    }
 
     return ;
 }

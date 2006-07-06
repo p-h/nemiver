@@ -900,7 +900,8 @@ DBGPerspective::open_file (const UString &a_uri)
     handle.close () ;
 
     source_buffer->set_highlight () ;
-    SourceEditor *source_editor (Gtk::manage (new SourceEditor (source_buffer)));
+    SourceEditor *source_editor (Gtk::manage (new SourceEditor (plugin_path (),
+                                                                source_buffer)));
     source_editor->show_all () ;
     append_source_editor (*source_editor, uri) ;
 

@@ -34,6 +34,7 @@ using namespace nemiver::common ;
 namespace nemiver {
 
 struct SourceEditor::Priv {
+    UString root_dir ;
     gint current_column ;
     gint current_line ;
     SourceView *source_view ;
@@ -104,6 +105,22 @@ struct SourceEditor::Priv {
         return 0 ;
     }
 
+    bool get_absolute_resource_path (const UString &a_relative_path,
+                                     string &a_absolute_path)
+    {
+        bool result (false) ;
+        string absolute_path =
+            Glib::build_filename (Glib::locale_from_utf8 (root_dir),
+                                  a_relative_path) ;
+        if (Glib::file_test (absolute_path,
+                             Glib::FILE_TEST_IS_REGULAR
+                             | Glib::FILE_TEST_EXISTS)) {
+            result = false ;
+            a_absolute_path = absolute_path ;
+        }
+        return result ;
+    }
+
     Priv () :
         current_column (1),
         current_line (1),
@@ -117,7 +134,9 @@ struct SourceEditor::Priv {
         init_signals () ;
     }
 
-    Priv (Glib::RefPtr<SourceBuffer> &a_buf) :
+    Priv (const UString &a_root_dir,
+          Glib::RefPtr<SourceBuffer> &a_buf) :
+        root_dir (a_root_dir),
         current_column (1),
         current_line (1),
         source_view (Gtk::manage (new SourceView (a_buf))),
@@ -139,6 +158,8 @@ SourceEditor::init ()
     scrolled->show_all () ;
     pack_start (*scrolled) ;
     pack_end (*m_priv->status_box, Gtk::PACK_SHRINK) ;
+    source_view ().set_show_line_markers (true) ;
+    source_view ().set_show_line_numbers (true);
 }
 
 SourceEditor::SourceEditor ()
@@ -147,9 +168,10 @@ SourceEditor::SourceEditor ()
     init () ;
 }
 
-SourceEditor::SourceEditor (Glib::RefPtr<SourceBuffer> &a_buf)
+SourceEditor::SourceEditor (const UString &a_root_dir,
+                            Glib::RefPtr<SourceBuffer> &a_buf)
 {
-    m_priv = new Priv (a_buf) ;
+    m_priv = new Priv (a_root_dir, a_buf) ;
     init () ;
 }
 
