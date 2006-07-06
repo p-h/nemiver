@@ -1,3 +1,9 @@
+jeudi 6 juillet 2006, 09:15:47 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-source-editor.cc:
+	(SourceEditor::Priv::get_absolute_resource_path): fix this
+	(SourceEditor::init): load the breakpoint marker pixbuf
+
 jeudi 6 juillet 2006, 08:37:33 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:

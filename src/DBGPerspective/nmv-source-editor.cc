@@ -115,8 +115,10 @@ struct SourceEditor::Priv {
         if (Glib::file_test (absolute_path,
                              Glib::FILE_TEST_IS_REGULAR
                              | Glib::FILE_TEST_EXISTS)) {
-            result = false ;
+            result = true;
             a_absolute_path = absolute_path ;
+        } else {
+            LOG ("could not find file: " << a_absolute_path) ;
         }
         return result ;
     }
@@ -158,6 +160,16 @@ SourceEditor::init ()
     scrolled->show_all () ;
     pack_start (*scrolled) ;
     pack_end (*m_priv->status_box, Gtk::PACK_SHRINK) ;
+
+    string path ;
+    if (!m_priv->get_absolute_resource_path ("icons/breakpoint-marker.png",
+                                             path)) {
+        THROW ("could not get path to breakpoint-marker.png") ;
+    }
+
+    Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf = Gdk::Pixbuf::create_from_file (path) ;
+    source_view ().set_marker_pixbuf ("breakpoint-marker", bm_pixbuf) ;
+
     source_view ().set_show_line_markers (true) ;
     source_view ().set_show_line_numbers (true);
 }
