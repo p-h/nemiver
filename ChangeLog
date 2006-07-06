@@ -1,3 +1,14 @@
+jeudi 6 juillet 2006, 13:39:42 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::Priv::on_gdb_stdout_has_data_signal): fix the condition to
+	 detect that a gdb output chunk is complete. This should be more robust
+	 now.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: 
+	 (DBGPerspective::on_insert_in_command_view_signal): added this method
+		to detect that a user typed a gdb command in the command view and send
+		the command to gdb.
+
 jeudi 6 juillet 2006, 09:15:47 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-source-editor.cc:

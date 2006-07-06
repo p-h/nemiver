@@ -105,10 +105,13 @@ private:
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
     void on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao) ;
     void on_debugger_ready_signal (bool a_is_ready) ;
+
+    void on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_iter,
+                                           const Glib::ustring &a_text,
+                                           int a_dont_know) ;
     //************
     //</action slots>
     //************
-
 
     string build_resource_path (const UString &a_dir, const UString &a_name) ;
     void add_stock_icon (const UString &a_stock_id,
@@ -232,7 +235,7 @@ struct OnStreamRecordHandler: OutputHandler{
                     && iter->stream_record ().debugger_console () != ""){
                     command_view->get_buffer ()->insert
                         (command_view->get_buffer ()->end (),
-                         iter->stream_record ().debugger_console () + "\n") ;
+                         iter->stream_record ().debugger_console () + "\n(gdb) ") ;
                 }
                 if (prog_output_view
                     && iter->stream_record ().target_output () != ""){
@@ -332,12 +335,15 @@ DBGPerspective::on_execute_program_action ()
 void
 DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num)
 {
+    NEMIVER_TRY
     m_priv->current_page_num = a_page_num;
+    NEMIVER_CATCH
 }
 
 void
 DBGPerspective::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
 {
+    NEMIVER_TRY
     list<OutputHandlerSafePtr>::iterator iter ;
     for (iter = m_priv->output_handlers.begin () ;
          iter != m_priv->output_handlers.end ();
@@ -347,16 +353,56 @@ DBGPerspective::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
             (*iter)->do_handle (a_cao) ;
         }
     }
+    NEMIVER_CATCH
 }
 
 void
 DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 {
+    NEMIVER_TRY
+
     if (a_is_ready) {
         m_priv->debugger_ready_action_group->set_sensitive (true) ;
     } else {
         m_priv->debugger_ready_action_group->set_sensitive (false) ;
     }
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_it,
+                                                  const Glib::ustring &a_text,
+                                                  int a_dont_know)
+{
+    NEMIVER_TRY
+    if (a_text == "") {return;}
+
+    if (a_text == "\n") {
+        //get the command that is on the current line
+        UString line ;
+        Gtk::TextBuffer::iterator iter = a_it, tmp_iter, eol_iter = a_it ;
+        for (;;) {
+            --iter ;
+            if (iter.is_start ()) {break;}
+            tmp_iter = iter ;
+            if (tmp_iter.get_char () == ')'
+                && (--tmp_iter).get_char () == 'b'
+                && (--tmp_iter).get_char () == 'd'
+                && (--tmp_iter).get_char () == 'g'
+                && (--tmp_iter).get_char () == '(') {
+                ++ iter ;
+                line = iter.get_visible_text (eol_iter) ;
+                break ;
+            }
+        }
+        if (!line.empty ()) {
+            IDebuggerSafePtr dbg = debugger () ;
+            THROW_IF_FAIL (dbg) ;
+            dbg->execute_command (IDebugger::Command (line)) ;
+        }
+    }
+    NEMIVER_CATCH
 }
 
 //****************************
@@ -660,12 +706,19 @@ DBGPerspective::init_body ()
     m_priv->command_view =
         env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
                                                    "commandview") ;
+    m_priv->command_view->set_editable (true) ;
+    m_priv->command_view->get_buffer ()->signal_insert ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_insert_in_command_view_signal)) ;
+
     m_priv->program_output_view =
         env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
                                                    "programoutputview") ;
+    m_priv->program_output_view->set_editable (false) ;
+
     m_priv->error_view =
         env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
                                                    "errorview") ;
+    m_priv->error_view->set_editable (false) ;
 
     m_priv->body_main_paned->unparent () ;
     m_priv->body_main_paned->show_all () ;

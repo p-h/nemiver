@@ -71,7 +71,7 @@ public:
 
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
-    void execute_command (Command &a_command) ;
+    void execute_command (const Command &a_command) ;
     bool busy () const ;
     void load_program (const vector<UString> &a_argv,
                        const vector<UString> &a_source_search_dirs,
@@ -563,8 +563,13 @@ struct GDBEngine::Priv {
                     std::string raw_str(buf, nb_read) ;
                     UString tmp = Glib::locale_to_utf8 (raw_str) ;
                     gdb_stdout_buffer.append (tmp) ;
-                    if (gdb_stdout_buffer.find ("(gdb)")
-                        != Glib::ustring::npos) {
+                    if (gdb_stdout_buffer[len - 1] == '\n'
+                        && gdb_stdout_buffer[len - 2] == ' '
+                        && gdb_stdout_buffer[len - 3] == ')'
+                        && gdb_stdout_buffer[len - 4] == 'b'
+                        && gdb_stdout_buffer[len - 5] == 'd'
+                        && gdb_stdout_buffer[len - 6] == 'g'
+                        && gdb_stdout_buffer[len - 7] == '(') {
                         got_data = true ;
                     }
                 } else {
@@ -609,8 +614,15 @@ struct GDBEngine::Priv {
                         std::string raw_str(buf, nb_read) ;
                         UString tmp = Glib::locale_to_utf8 (raw_str) ;
                         gdb_stdout_buffer.append (tmp) ;
-                        if (gdb_stdout_buffer.find ("(gdb)")
-                            != Glib::ustring::npos) {
+                        UString::size_type len = gdb_stdout_buffer.size () ;
+
+                        if (gdb_stdout_buffer[len - 1] == '\n'
+                            && gdb_stdout_buffer[len - 2] == ' '
+                            && gdb_stdout_buffer[len - 3] == ')'
+                            && gdb_stdout_buffer[len - 4] == 'b'
+                            && gdb_stdout_buffer[len - 5] == 'd'
+                            && gdb_stdout_buffer[len - 6] == 'g'
+                            && gdb_stdout_buffer[len - 7] == '(') {
                             got_data = true ;
                         }
                     } else {
@@ -1513,7 +1525,7 @@ GDBEngine::run_loop_iterations (int a_nb_iters)
 }
 
 void
-GDBEngine::execute_command (Command &a_command)
+GDBEngine::execute_command (const Command &a_command)
 {
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
     THROW_IF_FAIL (m_priv->issue_command (a_command)) ;

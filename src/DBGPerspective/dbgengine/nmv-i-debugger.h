@@ -499,7 +499,7 @@ public:
 
     virtual void run_loop_iterations (int a_nb_iters) = 0;
 
-    virtual void execute_command (Command &a_command) = 0;
+    virtual void execute_command (const Command &a_command) = 0;
 
     virtual bool busy () const = 0;
 
