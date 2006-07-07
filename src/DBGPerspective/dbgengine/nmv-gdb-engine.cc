@@ -211,6 +211,7 @@ struct GDBEngine::Priv {
 
         UString::size_type from (0), to (0), end (a_buf.size ()) ;
         for (; from < end ;) {
+            LOG ("buf: " << a_buf) ;
             if (!parse_output_record (a_buf, from, to, output)) {
                 LOG_ERROR ("output record parsing failed: "
                            << a_buf.substr (from, end - from)
@@ -562,14 +563,15 @@ struct GDBEngine::Priv {
                     }
                     std::string raw_str(buf, nb_read) ;
                     UString tmp = Glib::locale_to_utf8 (raw_str) ;
-                    gdb_stdout_buffer.append (tmp) ;
+                    gdb_master_pty_buffer.append (tmp) ;
+                    UString::size_type len = gdb_master_pty_buffer.size () ;
                     if (gdb_stdout_buffer[len - 1] == '\n'
-                        && gdb_stdout_buffer[len - 2] == ' '
-                        && gdb_stdout_buffer[len - 3] == ')'
-                        && gdb_stdout_buffer[len - 4] == 'b'
-                        && gdb_stdout_buffer[len - 5] == 'd'
-                        && gdb_stdout_buffer[len - 6] == 'g'
-                        && gdb_stdout_buffer[len - 7] == '(') {
+                        && gdb_master_pty_buffer[len - 2] == ' '
+                        && gdb_master_pty_buffer[len - 3] == ')'
+                        && gdb_master_pty_buffer[len - 4] == 'b'
+                        && gdb_master_pty_buffer[len - 5] == 'd'
+                        && gdb_master_pty_buffer[len - 6] == 'g'
+                        && gdb_master_pty_buffer[len - 7] == '(') {
                         got_data = true ;
                     }
                 } else {
@@ -614,16 +616,23 @@ struct GDBEngine::Priv {
                         std::string raw_str(buf, nb_read) ;
                         UString tmp = Glib::locale_to_utf8 (raw_str) ;
                         gdb_stdout_buffer.append (tmp) ;
-                        UString::size_type len = gdb_stdout_buffer.size () ;
+                        UString::size_type len = gdb_stdout_buffer.size (), i=0 ;
 
-                        if (gdb_stdout_buffer[len - 1] == '\n'
-                            && gdb_stdout_buffer[len - 2] == ' '
-                            && gdb_stdout_buffer[len - 3] == ')'
-                            && gdb_stdout_buffer[len - 4] == 'b'
-                            && gdb_stdout_buffer[len - 5] == 'd'
-                            && gdb_stdout_buffer[len - 6] == 'g'
-                            && gdb_stdout_buffer[len - 7] == '(') {
+                        while (isspace (gdb_stdout_buffer[len-i-1])) {++i;}
+
+                        LOG ("'" << (char) gdb_stdout_buffer[len-i-1] << "'") ;
+                        LOG ("'" << (char) gdb_stdout_buffer[len-i-2] << "'") ;
+                        LOG ("'" << (char) gdb_stdout_buffer[len-i-3] << "'") ;
+                        LOG ("'" << (char) gdb_stdout_buffer[len-i-4] << "'") ;
+                        LOG ("'" << (char) gdb_stdout_buffer[len-i-5] << "'") ;
+
+                        if (gdb_stdout_buffer[len-i-1] == ')'
+                            && gdb_stdout_buffer[len-i-2] == 'b'
+                            && gdb_stdout_buffer[len-i-3] == 'd'
+                            && gdb_stdout_buffer[len-i-4] == 'g'
+                            && gdb_stdout_buffer[len-i-5] == '(') {
                             got_data = true ;
+                            LOG ("got data") ;
                         }
                     } else {
                         break ;
@@ -632,6 +641,7 @@ struct GDBEngine::Priv {
                 }
                 if (got_data) {
                     gdb_stdout_buffer_status = FILLED ;
+                    LOG ("emited") ;
                     gdb_stdout_signal.emit (gdb_stdout_buffer) ;
                     gdb_stdout_buffer.clear () ;
                 }

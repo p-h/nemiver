@@ -1,3 +1,8 @@
+vendredi 7 juillet 2006, 18:10:31 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: better handling of the
+	  debugger answer.
+
 jeudi 6 juillet 2006, 13:39:42 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:

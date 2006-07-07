@@ -226,6 +226,8 @@ struct OnStreamRecordHandler: OutputHandler{
 
     void do_handle (IDebugger::CommandAndOutput &a_in)
     {
+        THROW_IF_FAIL (command_view && prog_output_view && debug_view) ;
+
         list<IDebugger::Output::OutOfBandRecord>::const_iterator iter ;
         for (iter = a_in.output ().out_of_band_records ().begin ();
              iter != a_in.output ().out_of_band_records ().end ();
@@ -235,7 +237,7 @@ struct OnStreamRecordHandler: OutputHandler{
                     && iter->stream_record ().debugger_console () != ""){
                     command_view->get_buffer ()->insert
                         (command_view->get_buffer ()->end (),
-                         iter->stream_record ().debugger_console () + "\n(gdb) ") ;
+                         iter->stream_record ().debugger_console () + "\n") ;
                 }
                 if (prog_output_view
                     && iter->stream_record ().target_output () != ""){
@@ -254,6 +256,27 @@ struct OnStreamRecordHandler: OutputHandler{
 
     }
 };//end struct OnStreamRecordHandler
+
+struct OnResultRecordHandler: OutputHandler {
+    Gtk::TextView *command_view ;
+
+    OnResultRecordHandler (Gtk::TextView *a_command_view=NULL) :
+        command_view (a_command_view)
+    {}
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (!a_in.output ().has_result_record ()) {
+            return false;
+        }
+        return true ;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (command_view) ;
+    }
+};//end struct OnResultRecordHandler
 
 struct DBGPerspective::Priv {
     bool initialized ;
@@ -353,6 +376,9 @@ DBGPerspective::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
             (*iter)->do_handle (a_cao) ;
         }
     }
+    m_priv->command_view->get_buffer ()->insert
+        (m_priv->command_view->get_buffer ()->end (),
+         "\n(gdb) ") ;
     NEMIVER_CATCH
 }
 
@@ -742,6 +768,9 @@ DBGPerspective::init_debugger_output_handlers ()
                                    (m_priv->command_view,
                                     m_priv->program_output_view,
                                     m_priv->error_view))) ;
+
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnResultRecordHandler (m_priv->command_view))) ;
 }
 
 void
