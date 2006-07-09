@@ -81,7 +81,9 @@ public:
 
     /// \brief open a source file from a url
     /// \param a_uri the uri of the file to open
-    virtual void open_file (const UString &a_uri) = 0;
+    /// \param a_cur_line the line to flag as being the current exceution line
+    /// if set to -1, this parameter is ignored.
+    virtual bool open_file (const UString &a_uri, int a_cur_line=-1) = 0;
 
     /// \brief open a source file
     ///

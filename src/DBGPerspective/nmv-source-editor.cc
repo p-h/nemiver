@@ -25,11 +25,13 @@
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
+#include <gtksourceviewmm/sourcemarker.h>
 #include "nmv-exception.h"
 #include "nmv-source-editor.h"
 #include "nmv-ustring.h"
 
 using namespace nemiver::common ;
+using gtksourceview::SourceMarker ;
 
 namespace nemiver {
 
@@ -161,6 +163,9 @@ SourceEditor::init ()
     pack_start (*scrolled) ;
     pack_end (*m_priv->status_box, Gtk::PACK_SHRINK) ;
 
+    //****************************
+    //set breakpoint marker pixbuf
+    //****************************
     string path ;
     if (!m_priv->get_absolute_resource_path ("icons/breakpoint-marker.png",
                                              path)) {
@@ -169,6 +174,16 @@ SourceEditor::init ()
 
     Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf = Gdk::Pixbuf::create_from_file (path) ;
     source_view ().set_marker_pixbuf ("breakpoint-marker", bm_pixbuf) ;
+
+    //****************************
+    //set line pointer pixbuf
+    //****************************
+    path = "" ;
+    if (!m_priv->get_absolute_resource_path ("icons/line-pointer.xpm", path)) {
+        THROW ("could not get path to line-pointer.xpm") ;
+    }
+    Glib::RefPtr<Gdk::Pixbuf> lp_pixbuf = Gdk::Pixbuf::create_from_file (path) ;
+    source_view ().set_marker_pixbuf ("line-pointer-marker", lp_pixbuf) ;
 
     source_view ().set_show_line_markers (true) ;
     source_view ().set_show_line_numbers (true);
@@ -195,6 +210,7 @@ SourceEditor::~SourceEditor ()
 SourceView&
 SourceEditor::source_view ()
 {
+    THROW_IF_FAIL (m_priv && m_priv->source_view) ;
     return *m_priv->source_view ;
 }
 
@@ -220,6 +236,46 @@ void
 SourceEditor::current_column (gint &a_col)
 {
     m_priv->current_column = a_col ;
+}
+
+void
+SourceEditor::move_where_marker_to_line (int a_line)
+{
+    THROW_IF_FAIL (a_line >= 0) ;
+
+    Gtk::TextIter line_iter =
+            source_view ().get_source_buffer ()->get_iter_at_line (a_line - 1) ;
+    THROW_IF_FAIL (line_iter) ;
+
+    Glib::RefPtr<SourceMarker> where_marker =
+        source_view ().get_source_buffer ()->get_marker ("where-marker") ;
+    if (!where_marker) {
+        Glib::RefPtr<SourceMarker> where_marker =
+            source_view ().get_source_buffer ()->create_marker
+                                                        ("where-marker",
+                                                         "line-pointer-marker",
+                                                         line_iter) ;
+        THROW_IF_FAIL (where_marker) ;
+    } else {
+        source_view ().get_source_buffer ()->move_marker (where_marker,
+                                                          line_iter) ;
+    }
+    source_view ().scroll_to (line_iter) ;
+}
+
+void
+SourceEditor::set_visual_breakpoint_at_line (int a_line)
+{
+    Gtk::TextIter iter =
+        source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
+    THROW_IF_FAIL (iter) ;
+    source_view ().get_source_buffer ()->create_marker
+        (UString::from_int (a_line), "breakpoint-marker", iter) ;
+}
+
+void
+SourceEditor::remove_visual_breakpoint_from_line (int a_line)
+{
 }
 
 }//end namespace nemiver

@@ -46,6 +46,20 @@
 }
 #endif
 
+#ifndef NEMIVER_CATCH_AND_RETURN
+#define NEMIVER_CATCH_AND_RETURN(a_value) \
+} catch (Glib::Exception &e) { \
+    nemiver::ui_utils::display_error (e.what ()) ; \
+    return a_value ; \
+} catch (std::exception &e) { \
+    nemiver::ui_utils::display_error (e.what ()) ; \
+    return a_value ; \
+} catch (...) { \
+    nemiver::ui_utils::display_error ("An unknown error occured") ; \
+    return a_value ; \
+}
+#endif
+
 namespace nemiver {
 namespace ui_utils {
 

@@ -157,9 +157,12 @@ public:
         UString m_address ;
         UString m_function ;
         map<UString, UString> m_args ;
+        //present if the target has debugging info
         UString m_file_name ;
         UString m_file_full_name ;
         int m_line ;
+        //present if the target doesn't have debugging info
+        UString m_library ;
 
     public:
 
@@ -185,6 +188,10 @@ public:
 
         int line () const {return m_line;}
         void line (int a_in) {m_line = a_in;}
+
+        const UString& library () const {return m_library;}
+        void library (const UString &a_library) {m_library = a_library;}
+
         /// @}
 
         /// \brief clears the current instance

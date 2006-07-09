@@ -942,8 +942,16 @@ struct GDBEngine::Priv {
     {
         UString::size_type cur = a_from, end = a_input.size () ;
 
-        if (a_input.compare (cur, 1, "{")) {return false;}
-        cur ++  ; if (cur >= end) {return false;}
+        if (a_input.compare (cur, 1, "{")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
+
+        cur ++  ;
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         UString::size_type name_start (0),
                            name_end (0),
@@ -955,24 +963,49 @@ struct GDBEngine::Priv {
 
         while (true) {
             if (a_input.compare (cur, 6, "name=\"")) {break;}
-            cur += 6 ; if (cur >= end) {return false;}
+            cur += 6 ;
+            if (cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             name_start = cur;
             for (; cur < end && a_input[cur] != '"'; ++cur) {}
-            if (a_input[cur] != '"') {return false;}
+            if (a_input[cur] != '"') {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             name_end = cur - 1 ;
-            if (++cur >= end) {return false;}
-            if (a_input.compare (cur, 8, ",value=\"")) {return false;}
-            cur += 8 ; if (cur >= end) {return false;}
+            if (++cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
+            if (a_input.compare (cur, 8, ",value=\"")) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
+            cur += 8 ; if (cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             value_start = cur ;
             for (; cur < end && a_input[cur] != '"'; ++cur) {}
-            if (a_input[cur] != '"') {return false;}
+            if (a_input[cur] != '"') {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             value_end = cur - 1 ;
             name.clear (), value.clear () ;
             name.assign (a_input, name_start, name_end - name_start + 1) ;
             value.assign (a_input, value_start, value_end - value_start + 1) ;
             args[name] = value ;
-            if (++cur >= end) {return false;}
-            if (a_input[cur] != '}') {return false;}
+            if (++cur >= end) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
+            if (a_input[cur] != '}') {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             if (++cur >= end) {break;}
 
             if (!a_input.compare(cur, 2,",{") ){
@@ -1010,18 +1043,22 @@ struct GDBEngine::Priv {
             return false ;
         }
         cur += 7 ;
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         map<UString, UString> attrs ;
         if (!parse_attributes (a_input, cur, cur, attrs)) {return false;}
-        if (a_input[cur] != '}') {return false;}
+        if (a_input[cur] != '}') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         ++cur ;
 
         map<UString, UString>::const_iterator iter, null_iter = attrs.end () ;
-        if (   (iter = attrs.find ("addr")) == null_iter
-            || (iter = attrs.find ("func")) == null_iter
-            || (iter = attrs.find ("file")) == null_iter
-            || (iter = attrs.find ("fullname")) == null_iter) {
+        if (   (iter = attrs.find ("addr")) == null_iter) {
+            LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
@@ -1031,12 +1068,16 @@ struct GDBEngine::Priv {
         if (args_str != "") {
             map<UString, UString> args ;
             UString::size_type from(0), to(0) ;
-            if (!parse_function_args (args_str, from, to, args)) {return false;}
+            if (!parse_function_args (args_str, from, to, args)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
             a_frame.args () = args ;
         }
         a_frame.file_name (attrs["file"]) ;
         a_frame.file_full_name (attrs["fullname"]) ;
         a_frame.line (atoi (attrs["line"].c_str())) ;
+        a_frame.library (attrs["from"].c_str()) ;
         a_to = cur ;
         return true;
     }
@@ -1169,7 +1210,10 @@ struct GDBEngine::Priv {
 
         if (cur >= end) {return false;}
 
-        if (a_input.compare (cur, 9,"*stopped,")) {return false;}
+        if (a_input.compare (cur, 9,"*stopped,")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         cur += 9 ; if (cur >= end) {return false;}
 
         map<UString, UString> attrs ;
@@ -1178,7 +1222,10 @@ struct GDBEngine::Priv {
         IDebugger::Frame frame ;
         while (true) {
             if (!a_input.compare (cur, 7, "frame={")) {
-                if (!parse_frame (a_input, cur, cur, frame)) {return false;}
+                if (!parse_frame (a_input, cur, cur, frame)) {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                    return false;
+                }
                 got_frame = true ;
             } else {
                 if (!parse_attribute (a_input, cur, cur, name, value)) {break;}
@@ -1193,7 +1240,10 @@ struct GDBEngine::Priv {
 
         for (; cur < end && a_input[cur] != '\n' ; ++cur) {}
 
-        if (a_input[cur] != '\n') {return false;}
+        if (a_input[cur] != '\n') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         ++cur ;
 
         a_got_frame = got_frame ;

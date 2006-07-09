@@ -24,6 +24,7 @@
 #ifndef __NEMIVER_SOURCE_EDITOR_H__
 #define __NEMIVER_SOURCE_EDITOR_H__
 
+#include <list>
 #include <gtkmm/box.h>
 #include <gtksourceviewmm/sourceview.h>
 #include "nmv-safe-ptr-utils.h"
@@ -34,6 +35,7 @@ using gtksourceview::SourceBuffer ;
 using Gtk::VBox ;
 using nemiver::common::SafePtr ;
 using nemiver::common::UString ;
+using std::list ;
 
 namespace nemiver {
 
@@ -57,6 +59,9 @@ public:
     void current_line (gint &a_line) ;
     gint current_column () ;
     void current_column (gint &a_col) ;
+    void move_where_marker_to_line (int a_line) ;
+    void set_visual_breakpoint_at_line (int a_line) ;
+    void remove_visual_breakpoint_from_line (int a_line) ;
 };//end class SourceEditor
 
 }//end namespace nemiver

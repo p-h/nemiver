@@ -33,9 +33,11 @@
 #include "nmv-source-editor.h"
 #include "nmv-run-program-dialog.h"
 #include "nmv-i-debugger.h"
+#include "nmv-ui-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
+using namespace nemiver::ui_utils;
 using namespace gtksourceview ;
 
 namespace nemiver {
@@ -128,6 +130,8 @@ private:
     void append_source_editor (SourceEditor &a_sv,
                                const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
     SourceEditor* get_current_source_editor () ;
+    SourceEditor* get_source_editor_from_uri (const UString &a_uri) ;
+    void bring_source_as_current (const UString &a_uri) ;
     int get_n_pages () ;
 
 public:
@@ -141,8 +145,9 @@ public:
     void get_toolbars (list<Gtk::Toolbar*> &a_tbs)  ;
     Gtk::Widget* get_body ()  ;
     void edit_workbench_menu () ;
-    void open_file (const UString &a_uri) ;
     void open_file () ;
+    bool open_file (const UString &a_uri,
+                    int current_line=-1) ;
     void close_current_file () ;
     void close_file (const UString &a_uri) ;
     void execute_program () ;
@@ -150,6 +155,10 @@ public:
                           const UString &a_args,
                           const UString &a_cwd) ;
     IDebuggerSafePtr& debugger () ;
+    Gtk::TextView* get_command_view () ;
+    Gtk::TextView* get_program_output_view () ;
+    Gtk::TextView* get_error_view () ;
+    void set_where (const UString &a_uri, int line) ;
     sigc::signal<void, bool>& activated_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
 };//end class DBGPerspective
@@ -204,16 +213,10 @@ struct OutputHandler : Object {
 typedef SafePtr<OutputHandler, ObjectRef, ObjectUnref> OutputHandlerSafePtr ;
 
 struct OnStreamRecordHandler: OutputHandler{
-    Gtk::TextView *command_view ;
-    Gtk::TextView *prog_output_view ;
-    Gtk::TextView *debug_view ;
+    DBGPerspective *m_persp ;
 
-    OnStreamRecordHandler (Gtk::TextView *a_command_view=NULL,
-                          Gtk::TextView *a_prog_output_view=NULL,
-                          Gtk::TextView *a_debug_view=NULL) :
-        command_view (a_command_view),
-        prog_output_view (a_prog_output_view),
-        debug_view (a_debug_view)
+    OnStreamRecordHandler (DBGPerspective *a_persp) :
+        m_persp (a_persp)
     {}
 
     bool can_handle (IDebugger::CommandAndOutput &a_in)
@@ -226,29 +229,32 @@ struct OnStreamRecordHandler: OutputHandler{
 
     void do_handle (IDebugger::CommandAndOutput &a_in)
     {
-        THROW_IF_FAIL (command_view && prog_output_view && debug_view) ;
+        THROW_IF_FAIL (m_persp
+                       && m_persp->get_command_view ()
+                       && m_persp->get_program_output_view ()
+                       && m_persp->get_error_view ()) ;
 
         list<IDebugger::Output::OutOfBandRecord>::const_iterator iter ;
         for (iter = a_in.output ().out_of_band_records ().begin ();
              iter != a_in.output ().out_of_band_records ().end ();
              ++iter) {
             if (iter->has_stream_record ()) {
-                if (command_view
+                if (m_persp->get_command_view ()
                     && iter->stream_record ().debugger_console () != ""){
-                    command_view->get_buffer ()->insert
-                        (command_view->get_buffer ()->end (),
+                    m_persp->get_command_view ()->get_buffer ()->insert
+                        (m_persp->get_command_view ()->get_buffer ()->end (),
                          iter->stream_record ().debugger_console () + "\n") ;
                 }
-                if (prog_output_view
+                if (m_persp->get_program_output_view ()
                     && iter->stream_record ().target_output () != ""){
-                    prog_output_view->get_buffer ()->insert
-                        (prog_output_view->get_buffer ()->end (),
+                    m_persp->get_program_output_view ()->get_buffer ()->insert
+                        (m_persp->get_program_output_view ()->get_buffer ()->end (),
                          iter->stream_record ().target_output () + "\n") ;
                 }
-                if (debug_view
+                if (m_persp->get_error_view ()
                     && iter->stream_record ().debugger_log () != ""){
-                    debug_view->get_buffer ()->insert
-                        (debug_view->get_buffer ()->end (),
+                    m_persp->get_error_view ()->get_buffer ()->insert
+                        (m_persp->get_error_view ()->get_buffer ()->end (),
                          iter->stream_record ().debugger_log () + "\n") ;
                 }
             }
@@ -275,6 +281,57 @@ struct OnResultRecordHandler: OutputHandler {
     void do_handle (IDebugger::CommandAndOutput &a_in)
     {
         THROW_IF_FAIL (command_view) ;
+    }
+};//end struct OnResultRecordHandler
+
+struct OnStoppedHandler: OutputHandler {
+    DBGPerspective* m_dbg_perspective ;
+    IDebugger::Output::OutOfBandRecord m_out_of_band_record ;
+    bool m_is_stopped ;
+
+    OnStoppedHandler (DBGPerspective *a_persp) :
+        m_dbg_perspective (a_persp),
+        m_is_stopped (false)
+    {}
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (!a_in.output ().has_out_of_band_record ()) {
+            return false;
+        }
+        m_is_stopped = true ;
+        list<IDebugger::Output::OutOfBandRecord>::iterator iter ;
+
+        for (iter = a_in.output ().out_of_band_records ().begin () ;
+             iter != a_in.output ().out_of_band_records ().end () ;
+             ++iter) {
+            if (iter->is_stopped () && iter->has_frame ()) {
+                m_out_of_band_record = *iter ;
+                return true ;
+            }
+        }
+        return false;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_dbg_perspective->get_command_view ()
+                       && m_is_stopped
+                       && m_dbg_perspective) ;
+        if (m_out_of_band_record.frame ().function () != ""
+            && m_out_of_band_record.frame ().line () == 0) {
+            display_warning (UString ("No line info available for symbol '")
+                             + m_out_of_band_record.frame ().function ()
+                             + "' of library "
+                             + m_out_of_band_record.frame ().library ()) ;
+        } else if (m_out_of_band_record.frame ().line () > 0
+                   && m_out_of_band_record.frame ().file_full_name () != "") {
+            m_dbg_perspective->set_where
+                ("file://" + m_out_of_band_record.frame ().file_full_name (),
+                 m_out_of_band_record.frame ().line ()) ;
+        } else {
+            display_error ("Symbol not available") ;
+        }
     }
 };//end struct OnResultRecordHandler
 
@@ -764,13 +821,10 @@ void
 DBGPerspective::init_debugger_output_handlers ()
 {
     m_priv->output_handlers.push_back
-        (OutputHandlerSafePtr (new OnStreamRecordHandler
-                                   (m_priv->command_view,
-                                    m_priv->program_output_view,
-                                    m_priv->error_view))) ;
+        (OutputHandlerSafePtr (new OnStreamRecordHandler (this))) ;
 
     m_priv->output_handlers.push_back
-        (OutputHandlerSafePtr (new OnResultRecordHandler (m_priv->command_view))) ;
+        (OutputHandlerSafePtr (new OnStoppedHandler (this))) ;
 }
 
 void
@@ -840,6 +894,45 @@ DBGPerspective::get_current_source_editor ()
     if (iter == nil) {return NULL ;}
 
     return iter->second ;
+}
+
+SourceEditor*
+DBGPerspective::get_source_editor_from_uri (const UString &a_uri)
+{
+    map<UString, int>::iterator iter =
+        m_priv->uri_2_pagenum_map.find (a_uri) ;
+    if (iter == m_priv->uri_2_pagenum_map.end ()) {
+        return NULL ;
+    }
+    return m_priv->pagenum_2_source_editor_map[iter->second] ;
+}
+
+void
+DBGPerspective::bring_source_as_current (const UString &a_uri)
+{
+    SourceEditor *source_editor = get_source_editor_from_uri (a_uri) ;
+    if (!source_editor) {
+        open_file (a_uri) ;
+    }
+    source_editor = get_source_editor_from_uri (a_uri) ;
+    THROW_IF_FAIL (source_editor) ;
+    map<UString, int>::iterator iter =
+        m_priv->uri_2_pagenum_map.find (a_uri) ;
+    THROW_IF_FAIL (iter != m_priv->uri_2_pagenum_map.end ()) ;
+    m_priv->sourceviews_notebook->set_current_page (iter->second) ;
+}
+
+void
+DBGPerspective::set_where (const UString &a_uri,
+                           int a_line)
+{
+    LOG_FUNCTION_SCOPE_NORMAL ;
+    LOG ("a_uri: " << a_uri << ", a_line: " << a_line) ;
+
+    bring_source_as_current (a_uri) ;
+    SourceEditor *source_editor = get_source_editor_from_uri (a_uri) ;
+    THROW_IF_FAIL (source_editor) ;
+    source_editor->move_where_marker_to_line (a_line) ;
 }
 
 int
@@ -943,10 +1036,12 @@ DBGPerspective::open_file ()
     }
 }
 
-void
-DBGPerspective::open_file (const UString &a_uri)
+
+bool
+DBGPerspective::open_file (const UString &a_uri,
+                           int a_current_line)
 {
-    if (!a_uri) {return ;}
+    if (!a_uri) {return false;}
 
     Glib::RefPtr<Gnome::Vfs::Uri> uri = Gnome::Vfs::Uri::create (a_uri) ;
     Gnome::Vfs::Handle handle ;
@@ -984,12 +1079,24 @@ DBGPerspective::open_file (const UString &a_uri)
     source_buffer->set_highlight () ;
     SourceEditor *source_editor (Gtk::manage (new SourceEditor (plugin_path (),
                                                                 source_buffer)));
+    if (a_current_line > 0) {
+        Gtk::TextIter cur_line_iter =
+                source_buffer->get_iter_at_line (a_current_line) ;
+        if (cur_line_iter) {
+            Glib::RefPtr<SourceMarker> where_marker =
+                source_buffer->create_marker ("where-marker",
+                                              "line-pointer-marker",
+                                              cur_line_iter) ;
+            THROW_IF_FAIL (where_marker) ;
+        }
+    }
     source_editor->show_all () ;
     append_source_editor (*source_editor, uri) ;
 
     m_priv->opened_file_action_group->set_sensitive (true) ;
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH_AND_RETURN (false);
+    return true ;
 }
 
 void
@@ -1079,6 +1186,24 @@ DBGPerspective::debugger ()
     }
     THROW_IF_FAIL (m_priv->debugger) ;
     return m_priv->debugger ;
+}
+
+Gtk::TextView*
+DBGPerspective::get_command_view ()
+{
+    return m_priv->command_view ;
+}
+
+Gtk::TextView*
+DBGPerspective::get_program_output_view ()
+{
+    return m_priv->program_output_view ;
+}
+
+Gtk::TextView*
+DBGPerspective::get_error_view ()
+{
+    return m_priv->error_view ;
 }
 
 sigc::signal<void, bool>&

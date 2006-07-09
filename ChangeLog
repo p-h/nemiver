@@ -1,3 +1,16 @@
+lundi 10 juillet 2006, 01:01:11 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: add more parsing
+	 function error logs.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: first version to
+	move the "where" marker when the debugger sends 'stopped' out of band
+	record. This works somehow, but I think the Gtk::TextView::scroll_to()
+	should be called in a g_idle_add(). This only works when typing
+	gdb/mi commands by hands in the command view.
+	* src/DBGPerspective/nmv-source-editor.cc: first version of the
+	infrastructure to show the "where" marker in the source.
+
+
 vendredi 7 juillet 2006, 18:10:31 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: better handling of the
