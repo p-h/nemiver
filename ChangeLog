@@ -1,3 +1,16 @@
+lundi 10 juillet 2006, 02:42:49 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:
+	add IDebugger::queue_command( . It basically queues a command
+	that will be executed only after the previous command has been
+	executed.
+	To execute a command directly (without waiting for any other command),
+	use IDebugger::execute_command().
+	* src/DBGPerspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::execute_program): by default, break in main and
+	run the program. In a near future, one should be able to deactivate
+	this by a checkbox in the "execute program" dialog.
+
 lundi 10 juillet 2006, 01:01:11 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: add more parsing

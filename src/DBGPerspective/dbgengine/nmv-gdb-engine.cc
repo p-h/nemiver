@@ -72,6 +72,7 @@ public:
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
     void execute_command (const Command &a_command) ;
+    void queue_command (const Command &a_command) ;
     bool busy () const ;
     void load_program (const vector<UString> &a_argv,
                        const vector<UString> &a_source_search_dirs,
@@ -124,6 +125,7 @@ struct GDBEngine::Priv {
     UString gdb_master_pty_buffer ;
     UString gdb_stderr_buffer;
     list<IDebugger::Command> command_queue ;
+    list<IDebugger::Command> queued_commands ;
     map<int, IDebugger::BreakPoint> cached_breakpoints;
     Sequence command_sequence ;
     enum InBufferStatus {
@@ -244,6 +246,11 @@ struct GDBEngine::Priv {
             stdout_signal.emit (command_and_output) ;
             from = to ;
             while (to < end && isspace (a_buf[from])) {++from;}
+
+            if (!queued_commands.empty ()) {
+                issue_command (*queued_commands.begin ()) ;
+                queued_commands.erase (queued_commands.begin ()) ;
+            }
         }
     }
 
@@ -1589,6 +1596,13 @@ GDBEngine::execute_command (const Command &a_command)
 {
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
     THROW_IF_FAIL (m_priv->issue_command (a_command)) ;
+}
+
+void
+GDBEngine::queue_command (const Command &a_command)
+{
+    THROW_IF_FAIL (m_priv) ;
+    m_priv->queued_commands.push_back (a_command) ;
 }
 
 bool

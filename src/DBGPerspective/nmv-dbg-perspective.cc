@@ -1161,6 +1161,11 @@ DBGPerspective::execute_program (const UString &a_prog,
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
 
     dbg_engine->load_program (args, source_search_dirs) ;
+
+    dbg_engine->queue_command (IDebugger::Command ("-break-insert main")) ;
+
+    dbg_engine->queue_command (IDebugger::Command ("-exec-run")) ;
+
     debugger_ready_signal ().emit (true) ;
 
     NEMIVER_CATCH

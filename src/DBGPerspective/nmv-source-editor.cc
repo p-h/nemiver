@@ -260,7 +260,7 @@ SourceEditor::move_where_marker_to_line (int a_line)
         source_view ().get_source_buffer ()->move_marker (where_marker,
                                                           line_iter) ;
     }
-    source_view ().scroll_to (line_iter) ;
+    scroll_to_line (a_line) ;
 }
 
 void
@@ -276,6 +276,43 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line)
 void
 SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 {
+}
+
+struct ScrollToLine {
+    int m_line ;
+    SourceView *m_source_view ;
+
+    ScrollToLine () :
+        m_line (0),
+        m_source_view (NULL)
+    {}
+
+    ScrollToLine (SourceView *a_source_view,
+                  int a_line) :
+        m_line (a_line),
+        m_source_view (a_source_view)
+    {
+    }
+
+    bool do_scroll ()
+    {
+        if (!m_source_view) {return false;}
+        Gtk::TextIter iter =
+            m_source_view->get_buffer ()->get_iter_at_line (m_line) ;
+        if (!iter) {return false;}
+        m_source_view->scroll_to (iter) ;
+        return false ;
+    }
+};
+
+void
+SourceEditor::scroll_to_line (int a_line)
+{
+    static ScrollToLine s_scroll_functor ;
+    s_scroll_functor.m_line = a_line ;
+    s_scroll_functor.m_source_view = m_priv->source_view ;
+    Glib::signal_idle ().connect (sigc::mem_fun (s_scroll_functor,
+                                                 &ScrollToLine::do_scroll)) ;
 }
 
 }//end namespace nemiver

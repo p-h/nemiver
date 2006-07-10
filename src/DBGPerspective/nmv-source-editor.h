@@ -62,6 +62,7 @@ public:
     void move_where_marker_to_line (int a_line) ;
     void set_visual_breakpoint_at_line (int a_line) ;
     void remove_visual_breakpoint_from_line (int a_line) ;
+    void scroll_to_line (int a_line) ;
 };//end class SourceEditor
 
 }//end namespace nemiver
