@@ -1,3 +1,9 @@
+mardi 11 juillet 2006, 16:27:55 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: wire the menu actions
+	 with what they have to do, make sure the command, prog outpout and
+	 error view scroll to end properly.
+
 lundi 10 juillet 2006, 02:42:49 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:

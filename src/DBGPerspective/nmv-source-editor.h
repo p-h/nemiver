@@ -63,6 +63,8 @@ public:
     void set_visual_breakpoint_at_line (int a_line) ;
     void remove_visual_breakpoint_from_line (int a_line) ;
     void scroll_to_line (int a_line) ;
+    void set_path (const UString &a_path) ;
+    UString get_path () const ;
 };//end class SourceEditor
 
 }//end namespace nemiver

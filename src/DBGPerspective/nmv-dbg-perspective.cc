@@ -50,7 +50,7 @@ const char *LINE_POINTER      = "nmv-line-pointer" ;
 const char *RUN_TO_CURSOR     = "nmv-run-to-cursor" ;
 const char *STEP_INTO         = "nmv-step-into" ;
 const char *STEP_OVER         = "nmv-step-over" ;
-const char *STEP_OUT          = "nmv-step-over" ;
+const char *STEP_OUT          = "nmv-step-out" ;
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
@@ -103,6 +103,11 @@ private:
     void on_open_action () ;
     void on_close_action () ;
     void on_execute_program_action () ;
+    void on_run_action () ;
+    void on_next_action () ;
+    void on_step_into_action () ;
+    void on_continue_action () ;
+    void on_set_breakpoint_action () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
     void on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao) ;
@@ -130,6 +135,7 @@ private:
     void append_source_editor (SourceEditor &a_sv,
                                const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
     SourceEditor* get_current_source_editor () ;
+    UString get_current_file_path () ;
     SourceEditor* get_source_editor_from_uri (const UString &a_uri) ;
     void bring_source_as_current (const UString &a_uri) ;
     int get_n_pages () ;
@@ -154,10 +160,21 @@ public:
     void execute_program (const UString &a_prog,
                           const UString &a_args,
                           const UString &a_cwd) ;
+    void run () ;
+    void step_over () ;
+    void step_into () ;
+    void do_continue () ;
+    void set_breakpoint () ;
+    void set_breakpoint (const UString &a_file,
+                         int a_line) ;
+
     IDebuggerSafePtr& debugger () ;
     Gtk::TextView* get_command_view () ;
     Gtk::TextView* get_program_output_view () ;
     Gtk::TextView* get_error_view () ;
+    void add_text_to_command_view (const UString &a_text) ;
+    void add_text_to_program_output_view (const UString &a_text) ;
+    void add_text_to_error_view (const UString &a_text) ;
     void set_where (const UString &a_uri, int line) ;
     sigc::signal<void, bool>& activated_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
@@ -241,21 +258,18 @@ struct OnStreamRecordHandler: OutputHandler{
             if (iter->has_stream_record ()) {
                 if (m_persp->get_command_view ()
                     && iter->stream_record ().debugger_console () != ""){
-                    m_persp->get_command_view ()->get_buffer ()->insert
-                        (m_persp->get_command_view ()->get_buffer ()->end (),
-                         iter->stream_record ().debugger_console () + "\n") ;
+                    m_persp->add_text_to_command_view
+                        (iter->stream_record ().debugger_console () + "\n") ;
                 }
                 if (m_persp->get_program_output_view ()
                     && iter->stream_record ().target_output () != ""){
-                    m_persp->get_program_output_view ()->get_buffer ()->insert
-                        (m_persp->get_program_output_view ()->get_buffer ()->end (),
-                         iter->stream_record ().target_output () + "\n") ;
+                    m_persp->add_text_to_program_output_view
+                        (iter->stream_record ().target_output () + "\n") ;
                 }
                 if (m_persp->get_error_view ()
                     && iter->stream_record ().debugger_log () != ""){
-                    m_persp->get_error_view ()->get_buffer ()->insert
-                        (m_persp->get_error_view ()->get_buffer ()->end (),
-                         iter->stream_record ().debugger_log () + "\n") ;
+                    m_persp->add_text_to_error_view
+                        (iter->stream_record ().debugger_log () + "\n") ;
                 }
             }
         }
@@ -327,7 +341,7 @@ struct OnStoppedHandler: OutputHandler {
         } else if (m_out_of_band_record.frame ().line () > 0
                    && m_out_of_band_record.frame ().file_full_name () != "") {
             m_dbg_perspective->set_where
-                ("file://" + m_out_of_band_record.frame ().file_full_name (),
+                (m_out_of_band_record.frame ().file_full_name (),
                  m_out_of_band_record.frame ().line ()) ;
         } else {
             display_error ("Symbol not available") ;
@@ -413,6 +427,52 @@ DBGPerspective::on_execute_program_action ()
 }
 
 void
+DBGPerspective::on_run_action ()
+{
+    NEMIVER_TRY
+
+    run () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_next_action ()
+{
+    NEMIVER_TRY
+
+    step_over () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_step_into_action ()
+{
+    NEMIVER_TRY
+
+    step_into () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_continue_action ()
+{
+    NEMIVER_TRY
+    do_continue () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_set_breakpoint_action ()
+{
+    NEMIVER_TRY
+    set_breakpoint () ;
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num)
 {
     NEMIVER_TRY
@@ -433,9 +493,7 @@ DBGPerspective::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
             (*iter)->do_handle (a_cao) ;
         }
     }
-    m_priv->command_view->get_buffer ()->insert
-        (m_priv->command_view->get_buffer ()->end (),
-         "\n(gdb) ") ;
+    add_text_to_command_view ("\n(gdb) ") ;
     NEMIVER_CATCH
 }
 
@@ -590,7 +648,7 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_RUN_DEBUGGER,
             "_Run",
             "Run the debugger starting from program's begining",
-            nil_slot
+            sigc::mem_fun (*this, &DBGPerspective::on_run_action)
         }
         ,
         {
@@ -598,7 +656,7 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_STEP_OVER,
             "_Next",
             "Execute next instruction steping over the next function, if any",
-            nil_slot
+            sigc::mem_fun (*this, &DBGPerspective::on_next_action)
         }
         ,
         {
@@ -606,7 +664,7 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_STEP_INTO,
             "_Step",
             "Execute next instruction, steping into the next function, if any",
-            nil_slot
+            sigc::mem_fun (*this, &DBGPerspective::on_step_into_action)
         }
         ,
         {
@@ -614,7 +672,7 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_CONTINUE,
             "_Continue",
             "Continue program execution until the next breakpoint",
-            nil_slot
+            sigc::mem_fun (*this, &DBGPerspective::on_continue_action)
         }
         ,
         {
@@ -622,7 +680,7 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_SET_BREAKPOINT,
             "_Break",
             "Set a breakpoint the current cursor location",
-            nil_slot
+            sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action)
         }
     };
 
@@ -865,9 +923,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
                                                               *table,
                                                               -1);
-    m_priv->uri_2_pagenum_map[a_uri->to_string ()] = page_num ;
+    m_priv->uri_2_pagenum_map[a_uri->get_path ()] = page_num ;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
-    m_priv->pagenum_2_uri_map[page_num] = a_uri->to_string ();
+    m_priv->pagenum_2_uri_map[page_num] = a_uri->get_path ();
 
     table.release () ;
     close_button.release () ;
@@ -894,6 +952,14 @@ DBGPerspective::get_current_source_editor ()
     if (iter == nil) {return NULL ;}
 
     return iter->second ;
+}
+
+UString
+DBGPerspective::get_current_file_path ()
+{
+    SourceEditor *source_editor = get_current_source_editor () ;
+    if (!source_editor) {return "";}
+    return source_editor->get_path () ;
 }
 
 SourceEditor*
@@ -942,6 +1008,7 @@ DBGPerspective::get_n_pages ()
 
     return m_priv->sourceviews_notebook->get_n_pages () ;
 }
+
 
 //*******************
 //</private methods>
@@ -1079,6 +1146,8 @@ DBGPerspective::open_file (const UString &a_uri,
     source_buffer->set_highlight () ;
     SourceEditor *source_editor (Gtk::manage (new SourceEditor (plugin_path (),
                                                                 source_buffer)));
+    source_editor->set_path (uri->get_path ()) ;
+
     if (a_current_line > 0) {
         Gtk::TextIter cur_line_iter =
                 source_buffer->get_iter_at_line (a_current_line) ;
@@ -1171,6 +1240,49 @@ DBGPerspective::execute_program (const UString &a_prog,
     NEMIVER_CATCH
 }
 
+void
+DBGPerspective::run ()
+{
+    debugger ()->run () ;
+}
+void
+DBGPerspective::step_over ()
+{
+    debugger ()->step_over () ;
+}
+
+void
+DBGPerspective::step_into ()
+{
+    debugger ()->step_in () ;
+}
+
+void
+DBGPerspective::do_continue ()
+{
+    debugger ()->do_continue () ;
+}
+
+void
+DBGPerspective::set_breakpoint ()
+{
+    SourceEditor *source_editor = get_current_source_editor () ;
+    THROW_IF_FAIL (source_editor) ;
+    THROW_IF_FAIL (source_editor->get_path () != "") ;
+
+    gint current_line =
+        source_editor->source_view ().get_source_buffer ()->get_insert
+            ()->get_iter ().get_line () + 1;
+    set_breakpoint (source_editor->get_path (), current_line) ;
+}
+
+void
+DBGPerspective::set_breakpoint (const UString &a_file_path,
+                                int a_line)
+{
+    debugger ()->set_breakpoint (a_file_path, a_line) ;
+}
+
 IDebuggerSafePtr&
 DBGPerspective::debugger ()
 {
@@ -1209,6 +1321,63 @@ Gtk::TextView*
 DBGPerspective::get_error_view ()
 {
     return m_priv->error_view ;
+}
+
+struct ScrollTextViewToEndClosure {
+    Gtk::TextView *text_view ;
+
+    ScrollTextViewToEndClosure (Gtk::TextView *a_view=NULL) :
+        text_view (a_view)
+    {
+    }
+
+    bool do_exec ()
+    {
+        if (!text_view) {return false;}
+        if (!text_view->get_buffer ()) {return false;}
+
+        Gtk::TextIter end_iter = text_view->get_buffer ()->end () ;
+        text_view->scroll_to (end_iter) ;
+        return false ;
+    }
+};//end struct ScrollTextViewToEndClosure
+
+void
+DBGPerspective::add_text_to_command_view (const UString &a_text)
+{
+    THROW_IF_FAIL (m_priv && m_priv->command_view) ;
+    m_priv->command_view->get_buffer ()->insert
+        (m_priv->command_view->get_buffer ()->end (),
+         a_text) ;
+    static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
+    s_scroll_to_end_closure.text_view = m_priv->command_view ;
+    Glib::signal_idle ().connect (sigc::mem_fun
+            (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
+}
+
+void
+DBGPerspective::add_text_to_program_output_view (const UString &a_text)
+{
+    THROW_IF_FAIL (m_priv && m_priv->program_output_view) ;
+    m_priv->program_output_view->get_buffer ()->insert
+        (m_priv->program_output_view->get_buffer ()->end (),
+         a_text) ;
+    static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
+    s_scroll_to_end_closure.text_view = m_priv->program_output_view ;
+    Glib::signal_idle ().connect (sigc::mem_fun
+            (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
+}
+
+void
+DBGPerspective::add_text_to_error_view (const UString &a_text)
+{
+    THROW_IF_FAIL (m_priv && m_priv->error_view) ;
+    m_priv->error_view->get_buffer ()->insert
+        (m_priv->error_view->get_buffer ()->end (), a_text) ;
+    static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
+    s_scroll_to_end_closure.text_view = m_priv->error_view ;
+    Glib::signal_idle ().connect (sigc::mem_fun
+            (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
 }
 
 sigc::signal<void, bool>&

@@ -44,6 +44,7 @@ struct SourceEditor::Priv {
     Gtk::Label *line_col_label ;
     Gtk::Label *line_count;
     sigc::signal<void, gint, gint> signal_insertion_moved ;
+    UString path ;
 
     //**************
     //<signal slots>
@@ -313,6 +314,18 @@ SourceEditor::scroll_to_line (int a_line)
     s_scroll_functor.m_source_view = m_priv->source_view ;
     Glib::signal_idle ().connect (sigc::mem_fun (s_scroll_functor,
                                                  &ScrollToLine::do_scroll)) ;
+}
+
+void
+SourceEditor::set_path (const UString &a_path)
+{
+    m_priv->path = a_path ;
+}
+
+UString
+SourceEditor::get_path () const
+{
+    return m_priv->path ;
 }
 
 }//end namespace nemiver
