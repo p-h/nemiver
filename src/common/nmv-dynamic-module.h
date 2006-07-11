@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode:nil; c-basic-offset:4;-*- */
 
-/*Copyright (c) 2005-2006 Nemiver Seketeli
+/*Copyright (c) 2005-2006 Dodji Seketeli
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"),
@@ -51,7 +51,7 @@ extern "C" {
 /// This function must then instanciate a DynamicModule,
 /// set \em a_new_inst to that new DynamicModule, and return true in case
 /// of success. Otherwise, it must return false.
-bool gpil_common_create_dynamic_module_instance (void **a_new_instance) ;
+bool nemiver_common_create_dynamic_module_instance (void **a_new_instance) ;
 
 }
 

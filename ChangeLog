@@ -1,3 +1,11 @@
+mardi 11 juillet 2006, 17:51:08 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: added the step out
+	 action.
+	* src/DBGPerspective/dbgengine/nmv-i-debugger.h: added the step out
+	 method.
+	* src/common/*.(cc|h): seded some copyright information
+
 mardi 11 juillet 2006, 16:27:55 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: wire the menu actions

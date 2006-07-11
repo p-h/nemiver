@@ -525,6 +525,8 @@ public:
 
     virtual void step_over (bool a_run_event_loops=false) = 0;
 
+    virtual void step_out (bool a_run_event_loops=false) = 0;
+
     virtual void continue_to_position (const UString &a_path,
                                        gint a_line_num,
                                        bool a_run_event_loops=false ) = 0 ;

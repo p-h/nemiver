@@ -80,6 +80,7 @@ public:
     void do_continue (bool a_run_event_loops) ;
     void run (bool a_run_event_loops)  ;
     void step_in (bool a_run_event_loops) ;
+    void step_out (bool a_run_event_loops) ;
     void step_over (bool a_run_event_loops) ;
     void continue_to_position (const UString &a_path,
                                gint a_line_num,
@@ -1631,6 +1632,13 @@ GDBEngine::step_in (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-step"))) ;
+}
+
+void
+GDBEngine::step_out (bool a_run_event_loops)
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-finish"))) ;
 }
 
 void

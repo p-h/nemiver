@@ -106,6 +106,7 @@ private:
     void on_run_action () ;
     void on_next_action () ;
     void on_step_into_action () ;
+    void on_step_out_action () ;
     void on_continue_action () ;
     void on_set_breakpoint_action () ;
 
@@ -163,6 +164,7 @@ public:
     void run () ;
     void step_over () ;
     void step_into () ;
+    void step_out () ;
     void do_continue () ;
     void set_breakpoint () ;
     void set_breakpoint (const UString &a_file,
@@ -457,6 +459,16 @@ DBGPerspective::on_step_into_action ()
 }
 
 void
+DBGPerspective::on_step_out_action ()
+{
+    NEMIVER_TRY
+
+    step_out () ;
+
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_continue_action ()
 {
     NEMIVER_TRY
@@ -665,6 +677,14 @@ DBGPerspective::init_actions ()
             "_Step",
             "Execute next instruction, steping into the next function, if any",
             sigc::mem_fun (*this, &DBGPerspective::on_step_into_action)
+        }
+        ,
+        {
+            "StepOutMenuItemAction",
+            nemiver::STOCK_STEP_OUT,
+            "Step _out",
+            "Finish the execution of the current function",
+            sigc::mem_fun (*this, &DBGPerspective::on_step_out_action)
         }
         ,
         {
@@ -1255,6 +1275,12 @@ void
 DBGPerspective::step_into ()
 {
     debugger ()->step_in () ;
+}
+
+void
+DBGPerspective::step_out ()
+{
+    debugger ()->step_out () ;
 }
 
 void
