@@ -867,6 +867,7 @@ struct GDBEngine::Priv {
             || (iter = attrs.find ("addr"))    == null_iter
             || (iter = attrs.find ("func"))    == null_iter
             || (iter = attrs.find ("file"))    == null_iter
+            || (iter = attrs.find ("fullname"))== null_iter
             || (iter = attrs.find ("line"))    == null_iter
             || (iter = attrs.find ("times"))   == null_iter
             ) {
@@ -881,7 +882,9 @@ struct GDBEngine::Priv {
         }
         a_bkpt.address (attrs["addr"]) ;
         a_bkpt.function (attrs["func"]) ;
-        a_bkpt.file (attrs["file"]) ;
+        a_bkpt.file_name (attrs["file"]) ;
+        a_bkpt.full_file_name (attrs["fullname"]) ;
+        a_bkpt.line (atoi (attrs["line"].c_str ())) ;
         a_to = cur ;
         return true;
     }

@@ -15,7 +15,7 @@
  *See the GNU General Public License for more details.
  *
  *You should have received a copy of the
- *GNU General Public License along with Goupil;
+ *GNU General Public License along with Nemiver;
  *see the file COPYING.
  *If not, write to the Free Software Foundation,
  *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -176,6 +176,9 @@ public:
     bool delete_breakpoint (int a_breakpoint_num) ;
     bool delete_breakpoint (const UString &a_file_uri,
                             int a_linenum) ;
+    void append_visual_breakpoint (const UString &a_file_name,
+                                   int a_linenum) ;
+    void delete_visual_breakpoint (const UString &a_file_name, int a_linenum) ;
 
     IDebuggerSafePtr& debugger () ;
     Gtk::TextView* get_command_view () ;
@@ -1064,9 +1067,6 @@ void
 DBGPerspective::set_where (const UString &a_uri,
                            int a_line)
 {
-    LOG_FUNCTION_SCOPE_NORMAL ;
-    LOG ("a_uri: " << a_uri << ", a_line: " << a_line) ;
-
     bring_source_as_current (a_uri) ;
     SourceEditor *source_editor = get_source_editor_from_uri (a_uri) ;
     THROW_IF_FAIL (source_editor) ;
@@ -1367,6 +1367,8 @@ DBGPerspective::append_breakpoints (map<int, IDebugger::BreakPoint> &a_breaks)
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
     for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
         m_priv->breakpoints[iter->first] = iter->second ;
+        append_visual_breakpoint (iter->second.full_file_name (),
+                                  iter->second.line ()-1) ;
     }
 }
 
@@ -1379,7 +1381,7 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
     for (iter = m_priv->breakpoints.begin () ;
          iter != m_priv->breakpoints.end () ;
          ++iter) {
-        if (   (iter->second.file () == a_file_name)
+        if (   (iter->second.full_file_name () == a_file_name)
             && (iter->second.line () == a_line_num)) {
             a_break_num= iter->second.number () ;
             return true ;
@@ -1396,8 +1398,34 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
     if (iter == m_priv->breakpoints.end ()) {
         return false ;
     }
+    delete_visual_breakpoint (iter->second.full_file_name (),
+                              iter->second.line ()) ;
     m_priv->breakpoints.erase (iter);
     return true ;
+}
+
+void
+DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
+                                          int a_linenum)
+{
+    LOG ("file_name: " << a_file_name << "\nlinenum: " << (int)a_linenum) ;
+    if (a_linenum < 0) {a_linenum = 0;}
+
+    SourceEditor *source_editor = get_source_editor_from_uri (a_file_name) ;
+    if (!source_editor) {
+        open_file (a_file_name) ;
+        source_editor = get_source_editor_from_uri (a_file_name) ;
+    }
+    THROW_IF_FAIL (source_editor) ;
+    source_editor->set_visual_breakpoint_at_line (a_linenum) ;
+}
+
+void
+DBGPerspective::delete_visual_breakpoint (const UString &a_file_name, int a_linenum)
+{
+    SourceEditor *source_editor = get_source_editor_from_uri (a_file_name) ;
+    THROW_IF_FAIL (source_editor) ;
+    source_editor->remove_visual_breakpoint_from_line (a_linenum) ;
 }
 
 bool
