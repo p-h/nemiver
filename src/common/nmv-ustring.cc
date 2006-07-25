@@ -30,6 +30,7 @@
 #include <sstream>
 #include "nmv-ustring.h"
 #include "nmv-safe-ptr-utils.h"
+#include "nmv-log-stream-utils.h"
 
 using namespace std ;
 namespace nemiver {
@@ -192,6 +193,47 @@ UString::split (const UString &a_delim) const
         g_strfreev (splited) ;
     }
     return result ;
+}
+
+void
+UString::chomp ()
+{
+    Glib::ustring::size_type i = 0, ws_start =0, ws_end = 0;
+
+    //remove the ws from the beginning of the string.
+    while (i < size () && isspace (at (i))) {
+        LOG ("boucle 1, i: " << (int)i) ;
+        ++ws_end;
+        ++ i ;
+    }
+    Glib::ustring::size_type n = ws_end - ws_start ;
+    if (n < 0) {n = 0;}
+    /*
+    LOG ("ws_end: " << (int)ws_end
+         << ", ws_start: " << (int) ws_start
+         << ", n: " << (int)n) ;
+    */
+    erase (ws_start, n) ;
+    //LOG ("after first erase: '" << *this << "'") ;
+
+    //remove the ws from the end of the string.
+    i = size ()  - 1;
+    ws_end = i ;
+    ws_start = i ;
+    while (i >= 0 && isspace (at (i))) {
+        LOG ("boucle 2, i: " << (int)i) ;
+        --ws_start ;
+        --i ;
+    }
+    if (ws_start != ws_end) {++ws_start;}
+    n = ws_end - ws_start + 1;
+    /*
+    LOG ("ws_end: " << (int)ws_end
+         << ", ws_start: " << (int) ws_start
+         << ", n: " << (int)n) ;
+    */
+    erase (ws_start, n) ;
+    //LOG ("after second erase: '" << *this << "'") ;
 }
 
 }//end namespace common

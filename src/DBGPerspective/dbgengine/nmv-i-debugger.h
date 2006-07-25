@@ -1,3 +1,4 @@
+//Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -508,7 +509,7 @@ public:
 
     virtual void execute_command (const Command &a_command) = 0;
 
-    virtual void queue_command (const Command &a_command) = 0;
+    virtual bool queue_command (const Command &a_command) = 0;
 
     virtual bool busy () const = 0;
 

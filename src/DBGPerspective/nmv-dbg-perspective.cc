@@ -169,6 +169,13 @@ public:
     void set_breakpoint () ;
     void set_breakpoint (const UString &a_file,
                          int a_line) ;
+    void append_breakpoints (map<int, IDebugger::BreakPoint> &a_breaks) ;
+    bool get_breakpoint_number (const UString &a_file_name,
+                                int a_linenum,
+                                int &a_break_num) ;
+    bool delete_breakpoint (int a_breakpoint_num) ;
+    bool delete_breakpoint (const UString &a_file_uri,
+                            int a_linenum) ;
 
     IDebuggerSafePtr& debugger () ;
     Gtk::TextView* get_command_view () ;
@@ -279,12 +286,27 @@ struct OnStreamRecordHandler: OutputHandler{
     }
 };//end struct OnStreamRecordHandler
 
-struct OnResultRecordHandler: OutputHandler {
-    Gtk::TextView *command_view ;
+struct OnBreakPointHandler: OutputHandler {
+    DBGPerspective* m_dbg_perspective ;
 
-    OnResultRecordHandler (Gtk::TextView *a_command_view=NULL) :
-        command_view (a_command_view)
+    OnBreakPointHandler (DBGPerspective *a_persp=NULL) :
+        m_dbg_perspective (a_persp)
     {}
+
+    bool has_breakpoints_set (IDebugger::CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().breakpoints ().size ()) {
+            return true ;
+        }
+        return false ;
+    }
+
+    void append_breakpoints_to_list (map<int, IDebugger::BreakPoint> &a_breaks)
+    {
+        THROW_IF_FAIL (m_dbg_perspective) ;
+        m_dbg_perspective->append_breakpoints (a_breaks) ;
+    }
 
     bool can_handle (IDebugger::CommandAndOutput &a_in)
     {
@@ -296,9 +318,35 @@ struct OnResultRecordHandler: OutputHandler {
 
     void do_handle (IDebugger::CommandAndOutput &a_in)
     {
-        THROW_IF_FAIL (command_view) ;
+        THROW_IF_FAIL (m_dbg_perspective) ;
+
+        //if breakpoint where set, put them in cache !
+        if (has_breakpoints_set (a_in)) {
+            LOG ("breakpoint set detected") ;
+            append_breakpoints_to_list
+                (a_in.output ().result_record ().breakpoints ()) ;
+        }
+
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().kind ()
+               == IDebugger::Output::ResultRecord::DONE
+            && a_in.command ().value ().find ("-break-delete")
+                != Glib::ustring::npos) {
+            LOG ("-break-delete command issued detected") ;
+            UString tmp = a_in.command ().value () ;
+            tmp = tmp.erase (1, 13) ;
+            if (tmp.size () == 0) {return ;}
+            tmp.chomp () ;
+            LOG ("bkpoint number as str: '" << tmp << "'") ;
+            int bkpt_number = atoi (tmp.c_str ()) ;
+            LOG ("bkpoint number as int: " << bkpt_number) ;
+            if (bkpt_number) {
+                m_dbg_perspective->delete_breakpoint (bkpt_number) ;
+                LOG ("breakpoint deleted: " << (int)bkpt_number) ;
+            }
+        }
     }
-};//end struct OnResultRecordHandler
+};//end struct OnBreakPointHandler
 
 struct OnStoppedHandler: OutputHandler {
     DBGPerspective* m_dbg_perspective ;
@@ -349,7 +397,7 @@ struct OnStoppedHandler: OutputHandler {
             display_error ("Symbol not available") ;
         }
     }
-};//end struct OnResultRecordHandler
+};//end struct OnStoppedHandler
 
 struct DBGPerspective::Priv {
     bool initialized ;
@@ -379,6 +427,7 @@ struct DBGPerspective::Priv {
     int current_page_num ;
     IDebuggerSafePtr debugger ;
     list<OutputHandlerSafePtr> output_handlers ;
+    map<int, IDebugger::BreakPoint> breakpoints ;
 
     Priv () :
         initialized (false),
@@ -903,6 +952,9 @@ DBGPerspective::init_debugger_output_handlers ()
 
     m_priv->output_handlers.push_back
         (OutputHandlerSafePtr (new OnStoppedHandler (this))) ;
+
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnBreakPointHandler (this))) ;
 }
 
 void
@@ -1307,6 +1359,60 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
                                 int a_line)
 {
     debugger ()->set_breakpoint (a_file_path, a_line) ;
+}
+
+void
+DBGPerspective::append_breakpoints (map<int, IDebugger::BreakPoint> &a_breaks)
+{
+    map<int, IDebugger::BreakPoint>::const_iterator iter ;
+    for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
+        m_priv->breakpoints[iter->first] = iter->second ;
+    }
+}
+
+bool
+DBGPerspective::get_breakpoint_number (const UString &a_file_name,
+                                       int a_line_num,
+                                       int &a_break_num)
+{
+    map<int, IDebugger::BreakPoint>::const_iterator iter ;
+    for (iter = m_priv->breakpoints.begin () ;
+         iter != m_priv->breakpoints.end () ;
+         ++iter) {
+        if (   (iter->second.file () == a_file_name)
+            && (iter->second.line () == a_line_num)) {
+            a_break_num= iter->second.number () ;
+            return true ;
+        }
+    }
+    return false ;
+}
+
+bool
+DBGPerspective::delete_breakpoint (int a_breakpoint_num)
+{
+    map<int, IDebugger::BreakPoint>::iterator iter =
+        m_priv->breakpoints.find (a_breakpoint_num) ;
+    if (iter == m_priv->breakpoints.end ()) {
+        return false ;
+    }
+    m_priv->breakpoints.erase (iter);
+    return true ;
+}
+
+bool
+DBGPerspective::delete_breakpoint (const UString &a_file_name,
+                                   int a_line_num)
+{
+    int breakpoint_number=0 ;
+    if (!get_breakpoint_number (a_file_name,
+                                a_line_num,
+                                breakpoint_number)) {
+        return false ;
+    }
+    if (breakpoint_number < 1) {return false;}
+
+    return delete_breakpoint (breakpoint_number) ;
 }
 
 IDebuggerSafePtr&

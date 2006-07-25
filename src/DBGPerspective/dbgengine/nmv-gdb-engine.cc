@@ -72,7 +72,7 @@ public:
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
     void execute_command (const Command &a_command) ;
-    void queue_command (const Command &a_command) ;
+    bool queue_command (const Command &a_command) ;
     bool busy () const ;
     void load_program (const vector<UString> &a_argv,
                        const vector<UString> &a_source_search_dirs,
@@ -127,6 +127,7 @@ struct GDBEngine::Priv {
     UString gdb_stderr_buffer;
     list<IDebugger::Command> command_queue ;
     list<IDebugger::Command> queued_commands ;
+    list<IDebugger::Command> started_commands ;
     map<int, IDebugger::BreakPoint> cached_breakpoints;
     Sequence command_sequence ;
     enum InBufferStatus {
@@ -230,27 +231,31 @@ struct GDBEngine::Priv {
             //the user. If yes, build the CommandAndResult, update the
             //command queue and notify the user that the command it issued
             //has a result.
+            //
+
             output.parsing_succeeded (true) ;
             UString output_value ;
             output_value.assign (a_buf, from, to - from +1) ;
             output.raw_value (output_value) ;
             IDebugger::CommandAndOutput command_and_output ;
             if (output.has_result_record ()) {
-                if (!command_queue.empty ()) {
-                    list<Command>::iterator back_iter = command_queue.end ();
-                    back_iter -- ;
-                    command_and_output.command (*back_iter) ;
-                    command_queue.erase (back_iter) ;
+                if (!started_commands.empty ()) {
+                    command_and_output.command (*started_commands.begin ()) ;
                 }
             }
             command_and_output.output (output) ;
             stdout_signal.emit (command_and_output) ;
             from = to ;
             while (to < end && isspace (a_buf[from])) {++from;}
-
-            if (!queued_commands.empty ()) {
-                issue_command (*queued_commands.begin ()) ;
-                queued_commands.erase (queued_commands.begin ()) ;
+            if (output.has_result_record ()) {
+                if (!started_commands.empty ()) {
+                    started_commands.erase (started_commands.begin ()) ;
+                }
+                if (started_commands.empty ()
+                    && !queued_commands.empty ()) {
+                    issue_command (*queued_commands.begin ()) ;
+                    queued_commands.erase (queued_commands.begin ()) ;
+                }
             }
         }
     }
@@ -535,18 +540,20 @@ struct GDBEngine::Priv {
     bool issue_command (const Command &a_command,
                         bool a_run_event_loops=false)
     {
-        if (gdb_master_pty_channel) {
-            if (gdb_master_pty_channel->write
-                        (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
-                a_command.id (command_sequence.create_next_integer ()) ;
-                command_queue.push_front (a_command) ;
-                gdb_master_pty_channel->flush () ;
-                if (a_run_event_loops) {
-                    run_loop_iterations (-1) ;
-                }
-                LOG ("issued command: " << a_command.value ()) ;
-                return true ;
+        if (!gdb_master_pty_channel) {
+            return false ;
+        }
+        if (gdb_master_pty_channel->write
+                (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
+            gdb_master_pty_channel->flush () ;
+            if (a_run_event_loops) {
+                run_loop_iterations (-1) ;
             }
+            THROW_IF_FAIL (started_commands.size () <= 1) ;
+
+            started_commands.push_back (a_command) ;
+            LOG ("issued command: " << a_command.value ()) ;
+            return true ;
         }
         return false ;
     }
@@ -1521,7 +1528,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         IDebugger::Command command ;
 
         command.value ("set breakpoint pending auto") ;
-        THROW_IF_FAIL (m_priv->issue_command (command)) ;
+        THROW_IF_FAIL (queue_command (command)) ;
     } else {
         UString args ;
         UString::size_type len (a_argv.size ()) ;
@@ -1530,10 +1537,10 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         }
 
         Command command (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
-        THROW_IF_FAIL (m_priv->issue_command (command)) ;
+        THROW_IF_FAIL (queue_command (command)) ;
 
         command.value ("set args " + args) ;
-        THROW_IF_FAIL (m_priv->issue_command (command)) ;
+        THROW_IF_FAIL (queue_command (command)) ;
     }
 
     return ;
@@ -1596,14 +1603,20 @@ void
 GDBEngine::execute_command (const Command &a_command)
 {
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
-    THROW_IF_FAIL (m_priv->issue_command (a_command)) ;
+    THROW_IF_FAIL (queue_command (a_command)) ;
 }
 
-void
+bool
 GDBEngine::queue_command (const Command &a_command)
 {
-    THROW_IF_FAIL (m_priv) ;
+    bool result (false) ;
+    THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
     m_priv->queued_commands.push_back (a_command) ;
+    if (m_priv->started_commands.empty ()) {
+        result = m_priv->issue_command (*m_priv->queued_commands.begin ()) ;
+        m_priv->queued_commands.erase (m_priv->queued_commands.begin ()) ;
+    }
+    return result ;
 }
 
 bool
@@ -1617,35 +1630,35 @@ void
 GDBEngine::do_continue (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-continue"))) ;
+    queue_command (Command ("-exec-continue")) ;
 }
 
 void
 GDBEngine::run (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-run"))) ;
+    queue_command (Command ("-exec-run")) ;
 }
 
 void
 GDBEngine::step_in (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-step"))) ;
+    queue_command (Command ("-exec-step")) ;
 }
 
 void
 GDBEngine::step_out (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-finish"))) ;
+    queue_command (Command ("-exec-finish")) ;
 }
 
 void
 GDBEngine::step_over (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-next"))) ;
+    queue_command (Command ("-exec-next")) ;
 }
 
 void
@@ -1654,10 +1667,10 @@ GDBEngine::continue_to_position (const UString &a_path,
                                  bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-exec-until "
-                                          + a_path
-                                          + ":"
-                                          + UString::from_int (a_line_num)))) ;
+    queue_command (Command ("-exec-until "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num))) ;
 }
 
 void
@@ -1672,17 +1685,18 @@ GDBEngine::set_breakpoint (const UString &a_path,
     //read http://sourceware.org/gdb/current/onlinedocs/gdb_6.html#SEC33
     //Also, we don't neet to explicitely 'set breakpoint pending' to have it
     //work. Even worse, setting it doesn't work.
-    THROW_IF_FAIL (m_priv->issue_command (Command ("break "
-                                          + a_path
-                                          + ":"
-                                          + UString::from_int (a_line_num)))) ;
+    queue_command (Command ("break "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num))) ;
+    queue_command (Command ("-break-list ")) ;
 }
 
 void
 GDBEngine::list_breakpoints (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-break-list"))) ;
+    queue_command (Command ("-break-list")) ;
 }
 
 const map<int, IDebugger::BreakPoint>&
@@ -1697,8 +1711,7 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
                            bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->issue_command (Command ("-break-insert "
-                                                   + a_func_name))) ;
+    queue_command (Command ("-break-insert " + a_func_name)) ;
 }
 
 void
