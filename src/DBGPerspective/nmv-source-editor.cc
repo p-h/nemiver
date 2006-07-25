@@ -34,12 +34,32 @@ using namespace nemiver::common ;
 using gtksourceview::SourceMarker ;
 
 namespace nemiver {
+class SourceView : public gtksourceview::SourceView {
+
+public:
+    SourceView (Glib::RefPtr<SourceBuffer> &a_buf) :
+        gtksourceview::SourceView (a_buf)
+    {}
+
+    SourceView () :
+        gtksourceview::SourceView ()
+    {}
+
+    bool on_button_press_event (GdkEventButton *a_event)
+    {
+        if (a_event->type == GDK_BUTTON_PRESS && a_event->button == 3) {
+            return false ;
+        } else {
+            return Gtk::Widget::on_button_press_event (a_event) ;
+        }
+    }
+};//end class Sourceview
 
 struct SourceEditor::Priv {
     UString root_dir ;
     gint current_column ;
     gint current_line ;
-    SourceView *source_view ;
+    nemiver::SourceView *source_view ;
     Gtk::HBox *status_box ;
     Gtk::Label *line_col_label ;
     Gtk::Label *line_count;
@@ -208,7 +228,7 @@ SourceEditor::~SourceEditor ()
     LOG ("deleted") ;
 }
 
-SourceView&
+gtksourceview::SourceView&
 SourceEditor::source_view ()
 {
     THROW_IF_FAIL (m_priv && m_priv->source_view) ;

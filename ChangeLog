@@ -1,3 +1,12 @@
+mardi 25 juillet 2006, 23:42:41 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc:
+	 Build contextual menu when right clicking in a sourceview.
+	 I still have to code the unset break point action handler.
+	* src/DBGPerspective/nmv-source-editor.cc:  override the
+	on_button_press_event() virtual method so that we can work around
+	the hard coded contextual menu of gtksourceview.
+
 mardi 25 juillet 2006, 18:54:36 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: 

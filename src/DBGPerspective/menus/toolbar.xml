@@ -6,7 +6,6 @@
     <toolitem action="StepMenuItemAction" name="StepToolItem"/>
     <toolitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
     <toolitem action="ContinueMenuItemAction" name="ContinueToolItem"/>
-    <toolitem action="BreakMenuItemAction" name="BreakToolItem"/>
   </toolbar>
  </ui>
 

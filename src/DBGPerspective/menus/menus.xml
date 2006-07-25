@@ -15,8 +15,12 @@
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
-            <menuitem action="ContinueMenuItemAction" name="ContinueMenuItem"/>
-            <menuitem action="BreakMenuItemAction" name="BreakMenuItem"/>
+            <menuitem action="ContinueMenuItemAction"
+                      name="ContinueMenuItem"/>
+            <menuitem action="SetBreakPointMenuItemAction"
+                      name="SetBreakMenuItem"/>
+            <menuitem action="UnSetBreakPointMenuItemAction"
+                      name="UnSetBreakPointMenuItem"/>
         </menu>
     </placeholder>
   </menubar>

@@ -98,7 +98,7 @@ private:
     };
 
     //************
-    //<action slots>
+    //<signal slots>
     //************
     void on_open_action () ;
     void on_close_action () ;
@@ -109,6 +109,7 @@ private:
     void on_step_out_action () ;
     void on_continue_action () ;
     void on_set_breakpoint_action () ;
+    void on_unset_breakpoint_action () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
     void on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao) ;
@@ -117,8 +118,9 @@ private:
     void on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_iter,
                                            const Glib::ustring &a_text,
                                            int a_dont_know) ;
+    bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
     //************
-    //</action slots>
+    //</signal slots>
     //************
 
     string build_resource_path (const UString &a_dir, const UString &a_name) ;
@@ -188,6 +190,7 @@ public:
     void add_text_to_program_output_view (const UString &a_text) ;
     void add_text_to_error_view (const UString &a_text) ;
     void set_where (const UString &a_uri, int line) ;
+    Gtk::Widget* get_contextual_menu () ;
     sigc::signal<void, bool>& activated_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
 };//end class DBGPerspective
@@ -412,6 +415,8 @@ struct DBGPerspective::Priv {
     Glib::RefPtr<Gtk::IconFactory> icon_factory ;
     Gtk::UIManager::ui_merge_id menubar_merge_id ;
     Gtk::UIManager::ui_merge_id toolbar_merge_id ;
+    Gtk::UIManager::ui_merge_id contextual_menu_merge_id;
+    Gtk::Widget *contextual_menu ;
     IWorkbench *workbench ;
     Gtk::Toolbar *toolbar ;
     sigc::signal<void, bool> activated_signal;
@@ -436,6 +441,7 @@ struct DBGPerspective::Priv {
         initialized (false),
         menubar_merge_id (0),
         toolbar_merge_id (0),
+        contextual_menu_merge_id(0),
         workbench (NULL),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
@@ -537,6 +543,13 @@ DBGPerspective::on_set_breakpoint_action ()
 }
 
 void
+DBGPerspective::on_unset_breakpoint_action ()
+{
+    NEMIVER_TRY
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num)
 {
     NEMIVER_TRY
@@ -610,6 +623,26 @@ DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterato
     NEMIVER_CATCH
 }
 
+bool
+DBGPerspective::on_button_pressed_in_source_view_signal (GdkEventButton *a_event)
+{
+    NEMIVER_TRY
+
+    if (a_event->type != GDK_BUTTON_PRESS) {
+        return false ;
+    }
+
+    if (a_event->button != 3) {
+        return false ;
+    }
+    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
+    THROW_IF_FAIL (menu) ;
+    menu->popup (a_event->button, a_event->time) ;
+
+    NEMIVER_CATCH
+    return true ;
+}
+
 //****************************
 //</slots>
 //***************************
@@ -660,6 +693,14 @@ DBGPerspective::add_perspective_menu_entries ()
                                            absolute_path)) ;
 
     m_priv->menubar_merge_id =
+        m_priv->workbench->get_ui_manager ()->add_ui_from_file
+                                        (Glib::locale_to_utf8 (absolute_path)) ;
+
+    relative_path = Glib::build_filename ("menus", "contextualmenu.xml") ;
+    THROW_IF_FAIL (build_absolute_resource_path
+                    (Glib::locale_to_utf8 (relative_path),
+                                           absolute_path)) ;
+    m_priv->contextual_menu_merge_id =
         m_priv->workbench->get_ui_manager ()->add_ui_from_file
                                         (Glib::locale_to_utf8 (absolute_path)) ;
 }
@@ -748,11 +789,18 @@ DBGPerspective::init_actions ()
         }
         ,
         {
-            "BreakMenuItemAction",
+            "SetBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
             "_Break",
             "Set a breakpoint the current cursor location",
             sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action)
+        },
+        {
+            "UnSetBreakPointMenuItemAction",
+            nil_stock_id,
+            "_Unset breakpoint",
+            "Unset the breakpoint the current cursor location",
+            sigc::mem_fun (*this, &DBGPerspective::on_unset_breakpoint_action)
         }
     };
 
@@ -1073,6 +1121,33 @@ DBGPerspective::set_where (const UString &a_uri,
     source_editor->move_where_marker_to_line (a_line) ;
 }
 
+Gtk::Widget*
+DBGPerspective::get_contextual_menu ()
+{
+    THROW_IF_FAIL (m_priv->contextual_menu_merge_id) ;
+
+    if (!m_priv->contextual_menu) {
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "SetBreakPointMenuItem",
+             "SetBreakPointMenuItemAction") ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "UnSetBreakPointMenuItem",
+             "UnSetBreakPointMenuItemAction") ;
+
+        m_priv->workbench->get_ui_manager ()->ensure_update () ;
+        m_priv->contextual_menu =
+            m_priv->workbench->get_ui_manager ()->get_widget
+            ("/ContextualMenu") ;
+        THROW_IF_FAIL (m_priv->contextual_menu) ;
+    }
+    return m_priv->contextual_menu ;
+}
+
 int
 DBGPerspective::get_n_pages ()
 {
@@ -1216,8 +1291,9 @@ DBGPerspective::open_file (const UString &a_uri,
     handle.close () ;
 
     source_buffer->set_highlight () ;
-    SourceEditor *source_editor (Gtk::manage (new SourceEditor (plugin_path (),
-                                                                source_buffer)));
+    SourceEditor *source_editor (Gtk::manage
+                                (new SourceEditor (plugin_path (),
+                                 source_buffer)));
     source_editor->set_path (uri->get_path ()) ;
 
     if (a_current_line > 0) {
@@ -1233,6 +1309,14 @@ DBGPerspective::open_file (const UString &a_uri,
     }
     source_editor->show_all () ;
     append_source_editor (*source_editor, uri) ;
+
+    if (!source_editor->source_view ().has_no_window ()) {
+        source_editor->source_view ().add_events (Gdk::BUTTON3_MOTION_MASK) ;
+        source_editor->source_view ().signal_button_press_event ().connect
+            (sigc::mem_fun
+             (*this,
+              &DBGPerspective::on_button_pressed_in_source_view_signal)) ;
+    }
 
     m_priv->opened_file_action_group->set_sensitive (true) ;
 
