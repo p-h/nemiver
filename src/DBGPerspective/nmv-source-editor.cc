@@ -21,7 +21,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include <map>
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
@@ -30,10 +30,12 @@
 #include "nmv-source-editor.h"
 #include "nmv-ustring.h"
 
+using namespace std ;
 using namespace nemiver::common ;
 using gtksourceview::SourceMarker ;
 
 namespace nemiver {
+
 class SourceView : public gtksourceview::SourceView {
 
 public:
@@ -56,6 +58,7 @@ public:
 };//end class Sourceview
 
 struct SourceEditor::Priv {
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> > markers ;
     UString root_dir ;
     gint current_column ;
     gint current_line ;
@@ -290,13 +293,21 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line)
     Gtk::TextIter iter =
         source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
     THROW_IF_FAIL (iter) ;
-    source_view ().get_source_buffer ()->create_marker
+    m_priv->markers[a_line] = source_view ().get_source_buffer ()->create_marker
         (UString::from_int (a_line), "breakpoint-marker", iter) ;
 }
 
 void
 SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 {
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
+    iter = m_priv->markers.find (a_line) ;
+    if (iter == m_priv->markers.end ()) {
+        LOG ("no bkpoint marker found at line: " << (int) a_line) ;
+        return ;
+    }
+    source_view ().get_source_buffer ()->delete_marker (iter->second) ;
+    m_priv->markers.erase (iter) ;
 }
 
 struct ScrollToLine {

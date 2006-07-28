@@ -555,6 +555,8 @@ public:
     virtual void delete_breakpoint (const UString &a_path,
                                     gint a_line_num,
                                     bool a_run_event_loops=false) = 0;
+    virtual void delete_breakpoint (gint a_break_num,
+                                    bool a_run_event_loops=false) = 0;
 };//end IDebugger
 
 }//end namespace nemiver

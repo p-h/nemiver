@@ -142,6 +142,7 @@ private:
     SourceEditor* get_source_editor_from_uri (const UString &a_uri) ;
     void bring_source_as_current (const UString &a_uri) ;
     int get_n_pages () ;
+    void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
 
 public:
 
@@ -175,12 +176,14 @@ public:
     bool get_breakpoint_number (const UString &a_file_name,
                                 int a_linenum,
                                 int &a_break_num) ;
+    bool delete_breakpoint () ;
     bool delete_breakpoint (int a_breakpoint_num) ;
     bool delete_breakpoint (const UString &a_file_uri,
                             int a_linenum) ;
     void append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum) ;
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum) ;
+    void delete_visual_breakpoint (int a_breaknum) ;
 
     IDebuggerSafePtr& debugger () ;
     Gtk::TextView* get_command_view () ;
@@ -347,8 +350,8 @@ struct OnBreakPointHandler: OutputHandler {
             int bkpt_number = atoi (tmp.c_str ()) ;
             LOG ("bkpoint number as int: " << bkpt_number) ;
             if (bkpt_number) {
-                m_dbg_perspective->delete_breakpoint (bkpt_number) ;
-                LOG ("breakpoint deleted: " << (int)bkpt_number) ;
+                m_dbg_perspective->delete_visual_breakpoint (bkpt_number) ;
+                LOG ("visual breakpoint deleted: " << (int)bkpt_number) ;
             }
         }
     }
@@ -546,6 +549,7 @@ void
 DBGPerspective::on_unset_breakpoint_action ()
 {
     NEMIVER_TRY
+    delete_breakpoint () ;
     NEMIVER_CATCH
 }
 
@@ -635,10 +639,7 @@ DBGPerspective::on_button_pressed_in_source_view_signal (GdkEventButton *a_event
     if (a_event->button != 3) {
         return false ;
     }
-    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
-    THROW_IF_FAIL (menu) ;
-    menu->popup (a_event->button, a_event->time) ;
-
+    popup_source_view_contextual_menu (a_event) ;
     NEMIVER_CATCH
     return true ;
 }
@@ -1127,17 +1128,18 @@ DBGPerspective::get_contextual_menu ()
     THROW_IF_FAIL (m_priv->contextual_menu_merge_id) ;
 
     if (!m_priv->contextual_menu) {
-        m_priv->workbench->get_ui_manager ()->add_ui
-            (m_priv->contextual_menu_merge_id,
-             "/ContextualMenu",
-             "SetBreakPointMenuItem",
-             "SetBreakPointMenuItemAction") ;
 
         m_priv->workbench->get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "UnSetBreakPointMenuItem",
              "UnSetBreakPointMenuItemAction") ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "SetBreakPointMenuItem",
+             "SetBreakPointMenuItemAction") ;
 
         m_priv->workbench->get_ui_manager ()->ensure_update () ;
         m_priv->contextual_menu =
@@ -1154,6 +1156,51 @@ DBGPerspective::get_n_pages ()
     THROW_IF_FAIL (m_priv && m_priv->sourceviews_notebook) ;
 
     return m_priv->sourceviews_notebook->get_n_pages () ;
+}
+
+void
+DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
+{
+    SourceEditor *editor = get_current_source_editor () ;
+    THROW_IF_FAIL (editor) ;
+    int buffer_x=0, buffer_y=0, line_top=0;
+    Gtk::TextBuffer::iterator cur_iter ;
+    UString file_name ;
+    int break_num=0 ;
+
+    editor->source_view ().window_to_buffer_coords (Gtk::TEXT_WINDOW_TEXT,
+                                                    (int)a_event->x,
+                                                    (int)a_event->y,
+                                                    buffer_x, buffer_y) ;
+    editor->source_view ().get_line_at_y (cur_iter, buffer_y, line_top) ;
+
+    file_name = editor->get_path () ;
+    bool breakpoint_found=false ;
+    if (get_breakpoint_number (file_name,
+                                cur_iter.get_line () + 1,
+                                break_num)) {
+        breakpoint_found = true ;
+    }
+    Glib::RefPtr<Gtk::Action> break_action =
+        m_priv->debugger_ready_action_group->get_action
+                                            ("SetBreakPointMenuItemAction") ;
+    THROW_IF_FAIL (break_action) ;
+    Glib::RefPtr<Gtk::Action> unbreak_action =
+        m_priv->debugger_ready_action_group->get_action
+                                            ("UnSetBreakPointMenuItemAction") ;
+    THROW_IF_FAIL (unbreak_action) ;
+    if (breakpoint_found) {
+        break_action->set_sensitive (false) ;
+        unbreak_action->set_sensitive (true) ;
+    } else {
+        break_action->set_sensitive (true) ;
+        unbreak_action->set_sensitive (false) ;
+    }
+
+    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
+    THROW_IF_FAIL (menu) ;
+    editor->source_view ().get_buffer ()->place_cursor (cur_iter) ;
+    menu->popup (a_event->button, a_event->time) ;
 }
 
 
@@ -1475,15 +1522,35 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
 }
 
 bool
+DBGPerspective::delete_breakpoint ()
+{
+    SourceEditor *source_editor = get_current_source_editor () ;
+    THROW_IF_FAIL (source_editor) ;
+    THROW_IF_FAIL (source_editor->get_path () != "") ;
+
+    gint current_line =
+        source_editor->source_view ().get_source_buffer ()->get_insert
+            ()->get_iter ().get_line () + 1;
+    int break_num=0 ;
+    if (!get_breakpoint_number (source_editor->get_path (),
+                                current_line,
+                                break_num)) {
+        return false ;
+    }
+    THROW_IF_FAIL (break_num) ;
+    return delete_breakpoint (break_num) ;
+}
+
+bool
 DBGPerspective::delete_breakpoint (int a_breakpoint_num)
 {
     map<int, IDebugger::BreakPoint>::iterator iter =
         m_priv->breakpoints.find (a_breakpoint_num) ;
     if (iter == m_priv->breakpoints.end ()) {
+        LOG ("breakpoint " << (int) a_breakpoint_num << " not found") ;
         return false ;
     }
-    delete_visual_breakpoint (iter->second.full_file_name (),
-                              iter->second.line ()) ;
+    debugger ()->delete_breakpoint (a_breakpoint_num) ;
     m_priv->breakpoints.erase (iter);
     return true ;
 }
@@ -1507,9 +1574,28 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
 void
 DBGPerspective::delete_visual_breakpoint (const UString &a_file_name, int a_linenum)
 {
+    LOG ("filename: " << a_file_name << "\nlinenum: " << (int)a_linenum) ;
+
     SourceEditor *source_editor = get_source_editor_from_uri (a_file_name) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (a_linenum) ;
+}
+
+void
+DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
+{
+    map<int, IDebugger::BreakPoint>::iterator iter =
+        m_priv->breakpoints.find (a_breakpoint_num) ;
+    if (iter == m_priv->breakpoints.end ()) {
+        LOG ("breakpoint " << (int) a_breakpoint_num << " not found") ;
+        return ;
+    }
+
+    SourceEditor *source_editor =
+        get_source_editor_from_uri (iter->second.full_file_name ()) ;
+    THROW_IF_FAIL (source_editor) ;
+    LOG ("removing visual bkpt marker from line: " << (int) iter->second.line ()) ;
+    source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
 }
 
 bool

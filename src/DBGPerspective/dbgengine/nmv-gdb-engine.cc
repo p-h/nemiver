@@ -101,6 +101,8 @@ public:
     void delete_breakpoint (const UString &a_path,
                             gint a_line_num,
                             bool a_run_event_loops) ;
+    void delete_breakpoint (gint a_break_num,
+                            bool a_run_event_loops) ;
 };//end class GDBEngine
 
 
@@ -1614,10 +1616,15 @@ GDBEngine::queue_command (const Command &a_command)
 {
     bool result (false) ;
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
+    LOG ("command queue size before push: " << (int) m_priv->queued_commands.size ()) ;
     m_priv->queued_commands.push_back (a_command) ;
+    LOG ("command queue size after push: " << (int) m_priv->queued_commands.size ()) ;
     if (m_priv->started_commands.empty ()) {
+        LOG ("command issued: " << m_priv->queued_commands.begin ()->value ()) ;
         result = m_priv->issue_command (*m_priv->queued_commands.begin ()) ;
+        LOG ("command erased: " << m_priv->queued_commands.begin ()->value ()) ;
         m_priv->queued_commands.erase (m_priv->queued_commands.begin ()) ;
+    LOG ("command queue size after erase: " << (int) m_priv->queued_commands.size ()) ;
     }
     return result ;
 }
@@ -1736,6 +1743,20 @@ GDBEngine::delete_breakpoint (const UString &a_path,
                               gint a_line_num,
                               bool a_run_event_loops)
 {
+    THROW_IF_FAIL (m_priv) ;
+    queue_command (Command ("-break-delete "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num))) ;
+}
+
+void
+GDBEngine::delete_breakpoint (gint a_break_num,
+                              bool a_run_event_loops)
+{
+    THROW_IF_FAIL (m_priv) ;
+    queue_command (Command ("-break-delete "
+                            + UString::from_int (a_break_num))) ;
 }
 
 //****************************

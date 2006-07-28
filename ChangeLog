@@ -1,3 +1,10 @@
+vendredi 28 juillet 2006, 18:10:42 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: added
+	 GDBEngine::delete_breakpoint() to delete breakpoints by bkpoint number.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: started to work on breakpoint
+		deletion capabilities, via the contextual menu.
+
 mardi 25 juillet 2006, 23:42:41 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc:
