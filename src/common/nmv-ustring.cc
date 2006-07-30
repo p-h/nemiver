@@ -208,13 +208,11 @@ UString::chomp ()
     }
     Glib::ustring::size_type n = ws_end - ws_start ;
     if (n < 0) {n = 0;}
-    /*
     LOG ("ws_end: " << (int)ws_end
          << ", ws_start: " << (int) ws_start
          << ", n: " << (int)n) ;
-    */
     erase (ws_start, n) ;
-    //LOG ("after first erase: '" << *this << "'") ;
+    LOG ("after first erase: '" << *this << "'") ;
 
     //remove the ws from the end of the string.
     i = size ()  - 1;
@@ -226,14 +224,12 @@ UString::chomp ()
         --i ;
     }
     if (ws_start != ws_end) {++ws_start;}
-    n = ws_end - ws_start + 1;
-    /*
+    n = ws_end - ws_start ;
     LOG ("ws_end: " << (int)ws_end
          << ", ws_start: " << (int) ws_start
          << ", n: " << (int)n) ;
-    */
     erase (ws_start, n) ;
-    //LOG ("after second erase: '" << *this << "'") ;
+    LOG ("after second erase: '" << *this << "'") ;
 }
 
 }//end namespace common

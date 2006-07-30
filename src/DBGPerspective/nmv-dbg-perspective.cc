@@ -342,8 +342,9 @@ struct OnBreakPointHandler: OutputHandler {
             && a_in.command ().value ().find ("-break-delete")
                 != Glib::ustring::npos) {
             LOG ("-break-delete command issued detected") ;
+            LOG ("command was: " << a_in.command ().value ()) ;
             UString tmp = a_in.command ().value () ;
-            tmp = tmp.erase (1, 13) ;
+            tmp = tmp.erase (0, 13) ;
             if (tmp.size () == 0) {return ;}
             tmp.chomp () ;
             LOG ("bkpoint number as str: '" << tmp << "'") ;
@@ -1551,7 +1552,6 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
         return false ;
     }
     debugger ()->delete_breakpoint (a_breakpoint_num) ;
-    m_priv->breakpoints.erase (iter);
     return true ;
 }
 
@@ -1596,6 +1596,7 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
     THROW_IF_FAIL (source_editor) ;
     LOG ("removing visual bkpt marker from line: " << (int) iter->second.line ()) ;
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
+    m_priv->breakpoints.erase (iter);
 }
 
 bool

@@ -29,6 +29,7 @@
 #include "nmv-exception.h"
 #include "nmv-source-editor.h"
 #include "nmv-ustring.h"
+#include "nmv-sequence.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -58,6 +59,7 @@ public:
 };//end class Sourceview
 
 struct SourceEditor::Priv {
+    Sequence sequence ;
     std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> > markers ;
     UString root_dir ;
     gint current_column ;
@@ -149,6 +151,19 @@ struct SourceEditor::Priv {
         return result ;
     }
 
+    void register_breakpoint_marker_name (const UString &a_name)
+    {
+        string path ;
+        if (!get_absolute_resource_path ("icons/breakpoint-marker.png",
+                                                 path)) {
+            THROW ("could not get path to breakpoint-marker.png") ;
+        }
+
+        Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf =
+                                Gdk::Pixbuf::create_from_file (path) ;
+        source_view->set_marker_pixbuf (a_name, bm_pixbuf) ;
+    }
+
     Priv () :
         current_column (1),
         current_line (1),
@@ -188,21 +203,9 @@ SourceEditor::init ()
     pack_end (*m_priv->status_box, Gtk::PACK_SHRINK) ;
 
     //****************************
-    //set breakpoint marker pixbuf
-    //****************************
-    string path ;
-    if (!m_priv->get_absolute_resource_path ("icons/breakpoint-marker.png",
-                                             path)) {
-        THROW ("could not get path to breakpoint-marker.png") ;
-    }
-
-    Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf = Gdk::Pixbuf::create_from_file (path) ;
-    source_view ().set_marker_pixbuf ("breakpoint-marker", bm_pixbuf) ;
-
-    //****************************
     //set line pointer pixbuf
     //****************************
-    path = "" ;
+    string path = "" ;
     if (!m_priv->get_absolute_resource_path ("icons/line-pointer.xpm", path)) {
         THROW ("could not get path to line-pointer.xpm") ;
     }
@@ -290,11 +293,20 @@ SourceEditor::move_where_marker_to_line (int a_line)
 void
 SourceEditor::set_visual_breakpoint_at_line (int a_line)
 {
+    if (m_priv->markers.find (a_line) !=  m_priv->markers.end ()) {
+        return ;
+    }
+
     Gtk::TextIter iter =
         source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
     THROW_IF_FAIL (iter) ;
-    m_priv->markers[a_line] = source_view ().get_source_buffer ()->create_marker
-        (UString::from_int (a_line), "breakpoint-marker", iter) ;
+    UString marker_name = UString::from_int (a_line);
+    m_priv->register_breakpoint_marker_name (marker_name) ;
+
+    Glib::RefPtr<gtksourceview::SourceMarker> marker =
+        source_view ().get_source_buffer ()->create_marker
+            (marker_name, marker_name, iter) ;
+    m_priv->markers[a_line] = marker ;
 }
 
 void
@@ -306,6 +318,7 @@ SourceEditor::remove_visual_breakpoint_from_line (int a_line)
         LOG ("no bkpoint marker found at line: " << (int) a_line) ;
         return ;
     }
+    LOG ("gonna delete marker: " << iter->second->get_name ()) ;
     source_view ().get_source_buffer ()->delete_marker (iter->second) ;
     m_priv->markers.erase (iter) ;
 }

@@ -1,3 +1,11 @@
+dimanche 30 juillet 2006, 18:18:57 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: fix handling of
+	  breakpoint listing.
+	* src/DBGPerspective/nmv-source-editor.cc: don't set breakpoint
+	  markers more than once per line.
+	* src/common/nmv-ustring.cc: fix the UString::chomp() function.
+
 vendredi 28 juillet 2006, 18:10:42 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: added
