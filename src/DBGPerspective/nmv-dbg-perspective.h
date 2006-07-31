@@ -129,6 +129,8 @@ public:
     void close_current_file () ;
     void close_file (const UString &a_uri) ;
     void execute_program () ;
+    void execute_program (const UString &a_prog_and_args,
+                          const UString &a_cwd)
     void execute_program (const UString &a_prog,
                           const UString &a_args,
                           const UString &a_cwd) ;

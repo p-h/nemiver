@@ -44,7 +44,7 @@ append_options_to_group (OptionDesc *a_descs,
                          int a_number_of_options,
                          Glib::OptionGroup &a_group)
 {
-    Glib::OptoinEntry entry ;
+    Glib::OptionEntry entry ;
 
     for (int i = 0 ; i < a_number_of_options ; ++i) {
         option_desc_to_option (a_descs[i], entry) ;

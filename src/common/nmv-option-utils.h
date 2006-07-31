@@ -34,19 +34,19 @@ namespace options_utils {
 
 class OptionDesc {
     UString m_long_name ;
-    UString m_short_name ;
-    UString m_short_name ;
+    gchar m_short_name ;
     UString m_description ;
     UString m_arg_description ;
     enum Glib::OptionEntry::Flags m_flags ;
 
 public:
     OptionDesc () :
-        m_flags (0)
+        m_short_name (0),
+        m_flags ((Glib::OptionEntry::Flags)0)
     {}
 
     OptionDesc (const UString &a_long_name,
-                const UString &a_short_name,
+                const gchar a_short_name,
                 const UString &a_description,
                 const UString &a_arg_description,
                 const Glib::OptionEntry::Flags a_flags) :
@@ -60,8 +60,8 @@ public:
     const UString& long_name () {return m_long_name;}
     void long_name (const UString &a_in) {m_long_name = a_in;}
 
-    const UString& short_name () {return m_short_name;}
-    void short_name (const UString &a_in) {m_short_name = a_in;}
+    gchar short_name () {return m_short_name;}
+    void short_name (gchar a_in) {m_short_name = a_in;}
 
     const UString& description () {return m_description;}
     void description (const UString &a_in) {m_description = a_in;}
@@ -70,11 +70,11 @@ public:
     void arg_description (const UString &a_in) {m_arg_description = a_in;}
 
     Glib::OptionEntry::Flags flags () {return m_flags;}
-    void flags (Glib::Options::Flags a_in) {m_flags = a_in;}
+    void flags (Glib::OptionEntry::Flags a_in) {m_flags = a_in;}
 }; //end class OptionDesc
 
 void option_desc_to_option (OptionDesc &a_desc,
-                            Glib::Option &a_option) ;
+                            Glib::OptionEntry &a_option) ;
 
 void append_options_to_group (OptionDesc *a_descs,
                               int a_number_of_options,

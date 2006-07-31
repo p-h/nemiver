@@ -1284,6 +1284,14 @@ DBGPerspective::execute_program ()
 }
 
 void
+DBGPerspective::execute_program (const UString &a_prog_and_args,
+                                 const UString &a_cwd)
+{
+    vector<UString> argv = a_prog_and_args.split (" ") ;
+    execute_program
+}
+
+void
 DBGPerspective::execute_program (const UString &a_prog,
                                  const UString &a_args,
                                  const UString &a_cwd)

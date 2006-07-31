@@ -195,6 +195,12 @@ UString::split (const UString &a_delim) const
     return result ;
 }
 
+UString
+UString::join (vector<UString> &a_elements, const UString &a_delim)
+{
+    vector<>
+}
+
 void
 UString::chomp ()
 {
