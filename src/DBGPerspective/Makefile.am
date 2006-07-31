@@ -15,6 +15,7 @@ plugin_LTLIBRARIES=libdbgperspectiveplugin.la
 plugindir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 sources= \
 nmv-dbg-perspective.cc \
+nmv-dbg-perspective.h \
 nmv-source-editor.cc \
 nmv-source-editor.h \
 nmv-run-program-dialog.cc \

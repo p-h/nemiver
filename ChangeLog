@@ -1,3 +1,8 @@
+lundi 31 juillet 2006, 08:47:18 (UTC+0200) Dodji Seketeli
+
+	* src/main.cc: started to work on command line options to launch the
+	 debugger
+
 dimanche 30 juillet 2006, 18:18:57 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: fix handling of

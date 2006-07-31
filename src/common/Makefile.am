@@ -17,7 +17,8 @@ nmv-date-utils.h \
 nmv-i-input-stream.h \
 nmv-env.h \
 nmv-plugin.h \
-nmv-sequence.h
+nmv-sequence.h \
+nmv-option-utils.h
 
 libnemivercommon_la_SOURCES= $(headers) \
 nmv-ustring.cc \
@@ -31,7 +32,8 @@ nmv-dynamic-module.cc \
 nmv-date-utils.cc \
 nmv-env.cc \
 nmv-plugin.cc \
-nmv-sequence.cc
+nmv-sequence.cc \
+nmv-option-utils.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(prefix)/include/libnemivercommon

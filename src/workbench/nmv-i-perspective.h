@@ -41,6 +41,7 @@ using nemiver::common::SafePtr;
 using nemiver::IWorkbenchSafePtr ;
 
 class IPerspective ;
+
 typedef SafePtr<IPerspective, ObjectRef, ObjectUnref> IPerspectiveSafePtr ;
 
 class NEMIVER_API IPerspective : public Plugin::EntryPoint {

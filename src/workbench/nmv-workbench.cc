@@ -77,6 +77,7 @@ public:
     Gtk::Notebook& get_toolbar_container ();
     Gtk::Window& get_root_window () ;
     Glib::RefPtr<Gtk::UIManager>& get_ui_manager ()  ;
+    IPerspective* get_perspective (const UString &a_name) ;
 };//end class Workbench
 
 struct Workbench::Priv {
@@ -237,6 +238,20 @@ Workbench::get_ui_manager ()
     CHECK_WB_INIT ;
     THROW_IF_FAIL (m_priv && m_priv->ui_manager) ;
     return m_priv->ui_manager ;
+}
+
+IPerspective*
+Workbench::get_perspective (const UString &a_name)
+{
+    list<IPerspectiveSafePtr>::const_iterator iter ;
+    for (iter = m_priv->perspectives.begin ();
+         iter != m_priv->perspectives.end ();
+         ++iter) {
+        if ((*iter)->descriptor ()->name () == a_name) {
+            return iter->get () ;
+        }
+    }
+    return NULL;
 }
 
 void

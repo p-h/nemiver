@@ -27,13 +27,16 @@
 #include <gtkmm.h>
 #include "nmv-api-macros.h"
 #include "nmv-dynamic-module.h"
+#include "nmv-ustring.h"
 
 namespace nemiver {
 
+class IPerspective ;
 using nemiver::common::SafePtr ;
 using nemiver::common::DynamicModule;
 using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
+using nemiver::common::UString ;
 
 class IWorkbench ;
 typedef SafePtr<IWorkbench, ObjectRef, ObjectUnref> IWorkbenchSafePtr ;
@@ -94,6 +97,8 @@ public:
 
     /// \return the Gtk::UIManager of the workbench
     virtual Glib::RefPtr<Gtk::UIManager>& get_ui_manager () = 0 ;
+
+    virtual IPerspective* get_perspective (const UString &a_name) = 0;
 
     ///@}
 };//end class IWorkbench

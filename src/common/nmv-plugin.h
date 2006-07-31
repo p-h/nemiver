@@ -158,7 +158,6 @@ public:
 
         bool build_absolute_resource_path (const UString &a_relative_path,
                                            std::string &a_absolute_path);
-        DescriptorSafePtr descriptor () ;
 
         void descriptor (DescriptorSafePtr &a_desc) ;
 
@@ -176,6 +175,7 @@ public:
         };//end Loader
 
         virtual ~EntryPoint () ;
+        DescriptorSafePtr descriptor () ;
     };//end class EntryPoint
 
     virtual ~Plugin () ;

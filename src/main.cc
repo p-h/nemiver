@@ -34,11 +34,22 @@ using nemiver::IWorkbench ;
 using nemiver::IWorkbenchSafePtr ;
 using nemiver::common::UString ;
 
+bool gv_help=false ;
+gchar *gv_prog_arg=NULL ;
+
+static GOptionEntry entries[] =
+{
+    { "help", 'h', 0, G_OPTION_ARG_NONE, &gv_help, "display help", NULL },
+    { "debug", 'd', 0, G_OPTION_ARG_STRING, &gv_prog_arg, "debug a prog", NULL },
+    {NULL}
+};
+
 int
 main (int a_argc, char *a_argv[])
 {
     Initializer::do_init () ;
     Gtk::Main main_loop (a_argc, a_argv);
+    GOptionContext *context=NULL ;
 
     NEMIVER_TRY
 
@@ -47,9 +58,21 @@ main (int a_argc, char *a_argv[])
     IWorkbenchSafePtr workbench = module_manager.load<IWorkbench> ("workbench");
     workbench->do_init (main_loop) ;
 
+    //***************************
+    //parse command line options
+    //***************************
+    GOptionContext *context = g_option_context_new ("- debug a program") ;
+    g_option_context_add_main_entries (context, entries, "") ;
+    g_option_context_add_group (context, gtk_get_option_group (TRUE)) ;
+    g_option_context_parse (context, &a_argc, &a_argv, NULL) ;
+
     main_loop.run (workbench->get_root_window ()) ;
 
     NEMIVER_CATCH
+
+    if (context) {g_object_unref (G_OBJECT (context)) ;}
+    if (gv_prog_arg) {g_free (gv_prog_arg);}
+
     return 0 ;
 }
 
