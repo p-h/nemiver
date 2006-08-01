@@ -460,6 +460,7 @@ struct DBGPerspective::Priv {
         menubar_merge_id (0),
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
+        contextual_menu (NULL),
         workbench (NULL),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
@@ -1140,7 +1141,7 @@ DBGPerspective::set_where (const UString &a_uri,
 Gtk::Widget*
 DBGPerspective::get_contextual_menu ()
 {
-    THROW_IF_FAIL (m_priv->contextual_menu_merge_id) ;
+    THROW_IF_FAIL (m_priv && m_priv->contextual_menu_merge_id) ;
 
     if (!m_priv->contextual_menu) {
 
@@ -1212,7 +1213,7 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
         unbreak_action->set_sensitive (false) ;
     }
 
-    Gtk::Menu *menu = static_cast<Gtk::Menu*> (get_contextual_menu ()) ;
+    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
     THROW_IF_FAIL (menu) ;
     editor->source_view ().get_buffer ()->place_cursor (cur_iter) ;
     menu->popup (a_event->button, a_event->time) ;
