@@ -21,6 +21,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <iostream>
 #include <gtkmm.h>
 #include <libglademm.h>
 #include "nmv-exception.h"
@@ -30,10 +31,12 @@
 #include "nmv-env.h"
 #include "nmv-dbg-perspective.h"
 
+using namespace std ;
 using nemiver::common::DynamicModuleManager ;
 using nemiver::common::Initializer ;
 using nemiver::IWorkbench ;
 using nemiver::IWorkbenchSafePtr ;
+using nemiver::IDBGPerspective ;
 using nemiver::common::UString ;
 
 bool gv_help=false ;
@@ -41,8 +44,13 @@ gchar *gv_prog_arg=NULL ;
 
 static GOptionEntry entries[] =
 {
-    { "debug", 'd', 0, G_OPTION_ARG_STRING, &gv_prog_arg, "debug a prog", NULL },
-    {NULL}
+    { "debug",
+      'd',
+      0,
+      G_OPTION_ARG_STRING,
+      &gv_prog_arg,
+      "debug a prog",
+      "<prog-name>"}
 };
 
 int
@@ -68,9 +76,15 @@ main (int a_argc, char *a_argv[])
     workbench->do_init (main_loop) ;
 
     if (gv_prog_arg) {
-        DBGPerspective *debug_persp =
-            dynamic_cast<DBGPerspective*> (workbench->get_perspective
-                                                                ("DBGPerspective")) ;
+        IDBGPerspective *debug_persp =
+            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+                                                            ("DBGPerspective")) ;
+        if (debug_persp) {
+            debug_persp->execute_program (UString (gv_prog_arg)) ;
+        } else {
+            cerr << "Could not find the DBGPerspective\n" ;
+            return -1 ;
+        }
 
     }
 

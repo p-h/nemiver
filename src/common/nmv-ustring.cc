@@ -196,9 +196,25 @@ UString::split (const UString &a_delim) const
 }
 
 UString
-UString::join (vector<UString> &a_elements, const UString &a_delim)
+UString::join (const vector<UString> &a_elements,
+               const UString &a_delim)
 {
-    vector<>
+    vector<UString>::const_iterator from = a_elements.begin () ;
+    vector<UString>::const_iterator to = a_elements.end () ;
+    return join (from, to, a_delim) ;
+}
+
+UString
+UString::join (vector<UString>::const_iterator &a_from,
+               vector<UString>::const_iterator &a_to,
+               const UString &a_delim)
+{
+    vector<UString>::const_iterator iter = a_from ;
+    UString result = *iter ;
+    for (; iter != a_to ; ++iter) {
+        result += a_delim + *iter ;
+    }
+    return result ;
 }
 
 void
