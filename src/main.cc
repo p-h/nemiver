@@ -39,8 +39,7 @@ using nemiver::IWorkbenchSafePtr ;
 using nemiver::IDBGPerspective ;
 using nemiver::common::UString ;
 
-bool gv_help=false ;
-gchar *gv_prog_arg=NULL ;
+static gchar *gv_prog_arg=NULL ;
 
 static GOptionEntry entries[] =
 {
@@ -50,7 +49,9 @@ static GOptionEntry entries[] =
       G_OPTION_ARG_STRING,
       &gv_prog_arg,
       "debug a prog",
-      "<prog-name>"}
+      "<prog-name-and-args>"
+    },
+    {NULL}
 };
 
 int
@@ -65,9 +66,6 @@ main (int a_argc, char *a_argv[])
     g_option_context_add_group (context, gtk_get_option_group (TRUE)) ;
     g_option_context_parse (context, &a_argc, &a_argv, NULL) ;
 
-    //if (context) {g_object_unref (G_OBJECT (context)) ; context=NULL;}
-    if (gv_prog_arg) {g_free (gv_prog_arg);}
-
     NEMIVER_TRY
 
     DynamicModuleManager module_manager ;
@@ -80,11 +78,14 @@ main (int a_argc, char *a_argv[])
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
                                                             ("DBGPerspective")) ;
         if (debug_persp) {
+            LOG ("going to debug program: '" << UString (gv_prog_arg) << "'\n") ;
             debug_persp->execute_program (UString (gv_prog_arg)) ;
         } else {
             cerr << "Could not find the DBGPerspective\n" ;
             return -1 ;
         }
+        g_free (gv_prog_arg);
+        gv_prog_arg = NULL;
 
     }
 

@@ -251,6 +251,7 @@ Workbench::get_perspective (const UString &a_name)
             return iter->get () ;
         }
     }
+    LOG_ERROR ("could not find perspective: '" << a_name << "'") ;
     return NULL;
 }
 

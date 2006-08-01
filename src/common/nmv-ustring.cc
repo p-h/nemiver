@@ -199,6 +199,9 @@ UString
 UString::join (const vector<UString> &a_elements,
                const UString &a_delim)
 {
+    if (!a_elements.size ()) {
+        return UString ("") ;
+    }
     vector<UString>::const_iterator from = a_elements.begin () ;
     vector<UString>::const_iterator to = a_elements.end () ;
     return join (from, to, a_delim) ;
@@ -209,6 +212,8 @@ UString::join (vector<UString>::const_iterator &a_from,
                vector<UString>::const_iterator &a_to,
                const UString &a_delim)
 {
+    if (a_from == a_to) {return UString ("");}
+
     vector<UString>::const_iterator iter = a_from ;
     UString result = *iter ;
     for (; iter != a_to ; ++iter) {

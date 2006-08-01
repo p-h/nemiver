@@ -32,7 +32,7 @@
 #include "nmv-i-debugger.h"
 namespace nemiver {
 
-class IDBGPerspective : public IPerspective {
+class NEMIVER_API IDBGPerspective : public IPerspective {
     //non copyable
     IDBGPerspective (const IPerspective&) ;
     IDBGPerspective& operator= (const IPerspective&) ;

@@ -1451,6 +1451,10 @@ DBGPerspective::execute_program (const UString &a_prog,
 {
     NEMIVER_TRY
 
+    LOG ("a_prog: " << a_prog
+         << " a_args: " << a_args
+         << " a_cwd: " << a_cwd) ;
+
     IDebuggerSafePtr dbg_engine = debugger () ;
     THROW_IF_FAIL (dbg_engine) ;
     vector<UString> args = a_args.split (" ") ;
