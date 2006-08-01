@@ -405,6 +405,7 @@ struct OnStoppedHandler: OutputHandler {
         THROW_IF_FAIL (m_dbg_perspective->get_command_view ()
                        && m_is_stopped
                        && m_dbg_perspective) ;
+        m_dbg_perspective->debugger_ready_signal ().emit (true) ;
         if (m_out_of_band_record.frame ().function () != ""
             && m_out_of_band_record.frame ().line () == 0) {
             display_warning (UString ("No line info available for symbol '")
@@ -756,14 +757,6 @@ DBGPerspective::init_actions ()
     sigc::slot<void> nil_slot ;
     static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
         {
-            "DebugMenuAction",
-            nil_stock_id,
-            "_Debug",
-            "",
-            nil_slot
-        }
-        ,
-        {
             "RunMenuItemAction",
             nemiver::STOCK_RUN_DEBUGGER,
             "_Run",
@@ -848,6 +841,14 @@ DBGPerspective::init_actions ()
     };
 
     static ui_utils::ActionEntry s_file_opened_action_entries [] = {
+        {
+            "DebugMenuAction",
+            nil_stock_id,
+            "_Debug",
+            "",
+            nil_slot
+        }
+        ,
         {
             "CloseMenuItemAction",
             Gtk::Stock::CLOSE,
@@ -1211,7 +1212,7 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
         unbreak_action->set_sensitive (false) ;
     }
 
-    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
+    Gtk::Menu *menu = static_cast<Gtk::Menu*> (get_contextual_menu ()) ;
     THROW_IF_FAIL (menu) ;
     editor->source_view ().get_buffer ()->place_cursor (cur_iter) ;
     menu->popup (a_event->button, a_event->time) ;
@@ -1476,29 +1477,34 @@ void
 DBGPerspective::run ()
 {
     debugger ()->run () ;
+    debugger_ready_signal ().emit (false) ;
 }
 void
 DBGPerspective::step_over ()
 {
     debugger ()->step_over () ;
+    debugger_ready_signal ().emit (false) ;
 }
 
 void
 DBGPerspective::step_into ()
 {
     debugger ()->step_in () ;
+    debugger_ready_signal ().emit (false) ;
 }
 
 void
 DBGPerspective::step_out ()
 {
     debugger ()->step_out () ;
+    debugger_ready_signal ().emit (false) ;
 }
 
 void
 DBGPerspective::do_continue ()
 {
     debugger ()->do_continue () ;
+    debugger_ready_signal ().emit (false) ;
 }
 
 void
@@ -1519,6 +1525,7 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
                                 int a_line)
 {
     debugger ()->set_breakpoint (a_file_path, a_line) ;
+    debugger_ready_signal ().emit (false) ;
 }
 
 void
@@ -1580,6 +1587,7 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
         return false ;
     }
     debugger ()->delete_breakpoint (a_breakpoint_num) ;
+    debugger_ready_signal ().emit (false) ;
     return true ;
 }
 

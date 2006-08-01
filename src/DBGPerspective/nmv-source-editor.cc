@@ -164,6 +164,14 @@ struct SourceEditor::Priv {
         source_view->set_marker_pixbuf (a_name, bm_pixbuf) ;
     }
 
+    void init ()
+    {
+        update_line_col_label () ;
+        status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
+        init_signals () ;
+        source_view->set_editable (false) ;
+    }
+
     Priv () :
         current_column (1),
         current_line (1),
@@ -172,9 +180,7 @@ struct SourceEditor::Priv {
         line_col_label (Gtk::manage (new Gtk::Label ()))
 
     {
-        update_line_col_label () ;
-        status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
-        init_signals () ;
+        init () ;
     }
 
     Priv (const UString &a_root_dir,
@@ -186,9 +192,7 @@ struct SourceEditor::Priv {
         status_box (Gtk::manage (new Gtk::HBox)),
         line_col_label (Gtk::manage (new Gtk::Label ()))
     {
-        update_line_col_label () ;
-        status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
-        init_signals () ;
+        init () ;
     }
 };//end class SourceEditor
 
