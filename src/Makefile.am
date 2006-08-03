@@ -1,4 +1,4 @@
-SUBDIRS=common uicommon workbench DBGPerspective
+SUBDIRS=common dbdimpl uicommon workbench DBGPerspective
 
 bin_PROGRAMS=nemiver
 nemiver_SOURCES=main.cc

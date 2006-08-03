@@ -1,3 +1,4 @@
+// Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -68,8 +69,8 @@ class NEMIVER_API IWorkbench : public DynamicModule {
     IWorkbench& operator= (const IWorkbench&) ;
 
 protected:
-    // must created by the dynamic modules facotory
-    IWorkbench () {};
+    // must created by the dynamic modules factory
+    IWorkbench () {}
 
 public:
 

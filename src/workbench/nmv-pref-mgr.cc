@@ -1,3 +1,4 @@
+// Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -21,35 +22,5 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#include <locale.h>
-#include <glibmm.h>
-#include <libxml/parser.h>
-#include <libgnomevfsmm/init.h>
-#include "nmv-initializer.h"
-#include "nmv-conf-manager.h"
-
-namespace nemiver {
-namespace common {
-
-Initializer::Initializer ()
-{
-    setlocale (LC_ALL, "") ;
-    Glib::thread_init () ;
-    Gnome::Vfs::init () ;
-    ConfManager::init () ;
-}
-
-Initializer::~Initializer ()
-{
-    xmlCleanupParser () ;
-}
-
-void
-Initializer::do_init ()
-{
-    static Initializer s_init ;
-}
-
-}//end namespace common
-}//end namespace nemiver
-
+#include "nmv-i-pref-mgr.h"
+//TODO: finish this !

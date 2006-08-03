@@ -3,11 +3,13 @@ workbenchmoddir=@NEMIVER_MODULES_DIR@
 
 headers= \
 nmv-i-workbench.h \
-nmv-i-perspective.h
+nmv-i-perspective.h \
+nmv-i-pref-mgr.h
 
 libworkbenchmod_la_SOURCES= \
 $(headers) \
-nmv-workbench.cc
+nmv-workbench.cc \
+nmv-pref-mgr.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(prefix)/include/dbgengine

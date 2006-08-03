@@ -28,6 +28,7 @@ LIBXML2_VERSION=2.6.22
 LIBGTKMM_VERSION=2.6.0
 LIBGLADEMM_VERSION=2.6.0
 LIBGTKSOURCEVIEWMM_VERSION=1.0.0
+SQLITE3_VERSION=3.0
 
 dnl *********************
 dnl Checks for programs.
@@ -106,11 +107,19 @@ fi
 dnl *******************************
 dnl checking for libraries we use
 dnl *******************************
+
+#try to detect boost-dev include-only libs
+AC_CHECK_HEADERS([boost/variant.hpp],
+                 [],
+                 [AC_MSG_ERROR([Please, install libboost development headers])])
+
 PKG_CHECK_MODULES(LIBGMODULE, [gmodule-2.0 >= $LIBGMODULE_VERSION])
 PKG_CHECK_MODULES(LIBGTHREAD, [gthread-2.0 >= $LIBGTHREAD_VERSION])
 PKG_CHECK_MODULES(LIBXML2, [libxml-2.0 >= $LIBXML2_VERSION])
 PKG_CHECK_MODULES(LIBGLIBMM, [glibmm-2.4 >= $LIBGLIBMM_VERSION])
 PKG_CHECK_MODULES(LIBGNOMEVFSMM, [gnome-vfsmm-2.6 >= $LIBGNOMEVFSMM_VERSION])
+PKG_CHECK_MODULES(SQLITE3, [sqlite3 >= $SQLITE3_VERSION])
+
 if test x$ENABLE_WORKBENCH = xyes ; then
     PKG_CHECK_MODULES(LIBGTKMM, [gtkmm-2.4 >= $LIBGTKMM_VERSION])
     PKG_CHECK_MODULES(LIBGLADEMM, [libglademm-2.4 >= $LIBGLADEMM_VERSION])
@@ -179,6 +188,9 @@ AC_PROG_MAKE_SET
 AC_OUTPUT([Makefile
 src/Makefile
   src/common/Makefile
+  src/dbdimpl/Makefile
+  src/dbdimpl/sqlite/Makefile
+  src/dbdimpl/sqlite/nemiver.sqlitedriver.conf
   src/uicommon/Makefile
   src/workbench/Makefile
   src/workbench/workbench.conf
@@ -189,6 +201,8 @@ src/Makefile
     src/DBGPerspective/glade/Makefile
     src/DBGPerspective/menus/Makefile
     src/DBGPerspective/icons/Makefile
+    src/DBGPerspective/sqlscripts/Makefile
+    src/DBGPerspective/sqlscripts/sqlite/Makefile
 glade/Makefile
 menus/Makefile
 tests/Makefile])

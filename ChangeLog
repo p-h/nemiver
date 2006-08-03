@@ -1,3 +1,10 @@
+jeudi 3 août 2006, 23:21:04 (UTC+0200) Dodji Seketeli
+
+	* src/*lot-of-files*: started to work on a session manager.
+	  also, tried to make the nmv-dbg-perspective.cc code more robust.
+	  Don't emit the "debugger-not-ready' signal after we send the
+	  "break" command to gdb.
+
 mardi 1 août 2006, 19:12:56 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: okay, I think I understood

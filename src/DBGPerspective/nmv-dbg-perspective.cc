@@ -1319,6 +1319,7 @@ DBGPerspective::open_file (const UString &a_uri,
                            int a_current_line)
 {
     if (!a_uri) {return false;}
+    if (get_source_editor_from_uri (a_uri)) {return true ;}
 
     Glib::RefPtr<Gnome::Vfs::Uri> uri = Gnome::Vfs::Uri::create (a_uri) ;
     Gnome::Vfs::Handle handle ;
@@ -1588,7 +1589,6 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
         return false ;
     }
     debugger ()->delete_breakpoint (a_breakpoint_num) ;
-    debugger_ready_signal ().emit (false) ;
     return true ;
 }
 

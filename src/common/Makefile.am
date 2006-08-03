@@ -18,7 +18,17 @@ nmv-i-input-stream.h \
 nmv-env.h \
 nmv-plugin.h \
 nmv-sequence.h \
-nmv-option-utils.h
+nmv-option-utils.h \
+nmv-i-connection-driver.h \
+nmv-i-connection-manager-driver.h \
+nmv-parsing-utils.h  \
+nmv-conf-manager.h \
+nmv-buffer.h \
+nmv-tools.h \
+nmv-transaction.h \
+nmv-sql-statement.h \
+nmv-insert-statement.h \
+nmv-delete-statement.h
 
 libnemivercommon_la_SOURCES= $(headers) \
 nmv-ustring.cc \
@@ -33,7 +43,16 @@ nmv-date-utils.cc \
 nmv-env.cc \
 nmv-plugin.cc \
 nmv-sequence.cc \
-nmv-option-utils.cc
+nmv-option-utils.cc \
+nmv-connection-manager.cc \
+nmv-connection.cc \
+nmv-parsing-utils.cc \
+nmv-conf-manager.cc \
+nmv-tools.cc \
+nmv-transaction.cc \
+nmv-sql-statement.cc \
+nmv-insert-statement.cc \
+nmv-delete-statement.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(prefix)/include/libnemivercommon

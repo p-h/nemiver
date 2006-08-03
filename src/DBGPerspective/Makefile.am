@@ -1,4 +1,4 @@
-SUBDIRS=glade menus icons dbgengine
+SUBDIRS=glade menus icons dbgengine sqlscripts
 
 plugin_config_files= \
 plugin-descriptor.xml \
@@ -19,7 +19,9 @@ nmv-dbg-perspective.h \
 nmv-source-editor.cc \
 nmv-source-editor.h \
 nmv-run-program-dialog.cc \
-nmv-run-program-dialog.h
+nmv-run-program-dialog.h \
+nmv-sess-mgr.cc \
+nmv-sess-mgr.h
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LIBADD= \
