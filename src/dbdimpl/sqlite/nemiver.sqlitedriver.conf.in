@@ -1,0 +1,9 @@
+<moduleconfig>
+    <module>
+        <name>org.goupil.db.sqlitedriver</name>
+        <libraryname>goupildbdsqlite</libraryname>
+    </module>
+    <customsearchpaths>
+        <path>@prefix@/lib/goupil/modules</path>
+    </customsearchpaths>
+</moduleconfig>
