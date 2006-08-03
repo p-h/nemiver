@@ -1029,6 +1029,8 @@ void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                       const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri)
 {
+    LOG ("a_uri: '"  << a_uri->get_path () << "'") ;
+
     if (!a_uri) {return;}
 
     if (m_priv->uri_2_pagenum_map.find (a_uri->to_string ())
@@ -1051,7 +1053,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->set_size_request (w+4, h+4) ;
     close_button->set_relief (Gtk::RELIEF_NONE) ;
     close_button->add (*cicon) ;
-    close_button->uri = a_uri->to_string () ;
+    close_button->uri = a_uri->get_path () ;
     close_button->signal_clicked ().connect
             (sigc::mem_fun (*close_button, &SlotedButton::on_clicked)) ;
 
@@ -1399,7 +1401,10 @@ DBGPerspective::close_current_file ()
 void
 DBGPerspective::close_file (const UString &a_uri)
 {
+    LOG (a_uri) ;
+
     map<UString, int>::const_iterator nil, iter ;
+    nil = m_priv->uri_2_pagenum_map.end () ;
     iter = m_priv->uri_2_pagenum_map.find (a_uri) ;
     if (iter == nil) {return;}
 
