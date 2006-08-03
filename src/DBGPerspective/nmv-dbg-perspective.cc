@@ -1033,10 +1033,10 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
 
     if (!a_uri) {return;}
 
-    if (m_priv->uri_2_pagenum_map.find (a_uri->to_string ())
+    if (m_priv->uri_2_pagenum_map.find (a_uri->get_path ())
         != m_priv->uri_2_pagenum_map.end ()) {
         THROW (UString ("File of '")
-               + a_uri->to_string ()
+               + a_uri->get_path ()
                + "' is already loaded") ;
     }
 
