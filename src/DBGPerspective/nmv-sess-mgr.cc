@@ -38,6 +38,8 @@ using nemiver::common::ConnectionManager ;
 using nemiver::common::Transaction ;
 using nemiver::common::SQLStatement ;
 
+static const char *REQUIRED_DB_SCHEMA_VERSION = "1.0" ;
+
 namespace nemiver {
 
 struct SessMgr::Priv {
@@ -52,6 +54,9 @@ struct SessMgr::Priv {
 
     ConnectionSafePtr connection ()
     {
+        if (!conn) {
+            conn= ConnectionManager::create_db_connection () ;
+        }
         THROW_IF_FAIL (conn) ;
         return conn;
     }
@@ -66,10 +71,6 @@ struct SessMgr::Priv {
 
     bool create_db ()
     {
-        if (!conn) {
-            conn= ConnectionManager::create_db_connection () ;
-            THROW_IF_FAIL (conn) ;
-        }
 
         UString path_to_script = path_to_create_table_script () ;
         Transaction transaction (*conn) ;
@@ -85,29 +86,100 @@ struct SessMgr::Priv {
 
         THROW_IF_FAIL (connection ()->execute_statement (insert_statement)) ;
         THROW_IF_FAIL (connection ()->read_next_row ()) ;
-
-        return false ;
+        UString version ;
+        THROW_IF_FAIL (connection ()->get_column_content (0, version)) ;
+        LOG ("version: " << version) ;
+        if (version != REQUIRED_DB_SCHEMA_VERSION) {
+            return false ;
+        }
+        return true ;
     }
 
     void init_db ()
     {
+        //if the db version is not what we expect, create
+        //a new db with the schema we expect.
+        if (!check_db_version ()) {
+            THROW_IF_FAIL (create_db ()) ;
+        }
+    }
+
+    void init ()
+    {
+        init_db () ;
     }
 };//end struct SessMgr::Priv
 
 SessMgr::SessMgr ()
 {
     m_priv = new SessMgr::Priv ;
+    m_priv->init () ;
 }
 
 SessMgr::SessMgr (const UString &a_root_dir)
 {
     m_priv = new SessMgr::Priv (a_root_dir) ;
+    m_priv->init () ;
 }
 
 list<SessMgr::Session>&
 SessMgr::sessions ()
 {
     return m_priv->sessions ;
+}
+
+static const char * SESSION_NAME = "sessionname" ;
+
+void
+SessMgr::store_session (const Session &a_session)
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    Transaction transaction (*m_priv->connection ());
+
+    //The next line starts a transaction.
+    //If we get off from this function without reaching
+    //the trans.end() call, every db request we made gets rolled back.
+    TransactionAutoHelper trans (transaction) ;
+
+    //insert the session id in the sessions table, and get the session id
+    //we just inerted
+    UString query ("insert into sessions values(NULL)");
+    THROW_IF_FAIL2 (trans.get ().get_connection ().execute_statement (query),
+                    "failed to execute query: '" + query + "'") ;
+    query = "select max(id) from sessions" ;
+    THROW_IF_FAIL2 (trans.get ().get_connection ().execute_statement (query),
+                    "failed to execute query: '" + query + "'") ;
+    THROW_IF_FAIL (trans.get ().get_connection ().read_next_row ()) ;
+    gint64 session_id=0 ;
+    THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, session_id)) ;
+    THROW_IF_FAIL (session_id) ;
+
+    //store the session name
+    query = "insert into attributes values(NULL, "
+            + UString::from_int (session_id) + ", "
+            + SESSION_NAME + ", "
+            + a_session.name()
+            + ")"
+            ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+
+    //store the breakpoints
+    list<IDebugger::BreakPoint>::const_iterator iter ;
+    for (iter = a_session.breakpoints ().begin ();
+         iter != a_session.breakpoints ().end ();
+         ++iter) {
+        query = "insert into breakpoints values(NULL, "
+                + UString::from_int (session_id) + ", "
+                + iter->full_file_name () + ", "
+                + UString::from_int (iter->line ())
+                + ")"
+                ;
+        THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    }
+
+    //TODO: finish this ! (store the opened files)
+    trans.end () ;
 }
 
 void

@@ -2,8 +2,7 @@ create table schemainfo (version text not null) ;
 
 insert into schemainfo (version) values ('1.0') ;
 
-create table sessions (id integer primary key,
-                       name text) ;
+create table sessions (id integer primary key) ;
 
 create table attributes (id integer primary key,
                          sessionid integer,

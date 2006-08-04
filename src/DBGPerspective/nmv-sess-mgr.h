@@ -58,17 +58,22 @@ public:
     class Session {
         UString m_name ;
         list<IDebugger::BreakPoint> m_breakpoints ;
+        list<UString> m_opened_files ;
 
     public:
-        const UString& name ()  ;
-        void name (const UString &) ;
-        list<IDebugger::BreakPoint>& breakpoints () ;
-        const list<IDebugger::BreakPoint>& breakpoints () const ;
+        const UString& name ()  const {return m_name;}
+        void name (const UString &a_in) {m_name = a_in;}
+        list<IDebugger::BreakPoint>& breakpoints () {return m_breakpoints;}
+        const list<IDebugger::BreakPoint>& breakpoints () const {return m_breakpoints;}
+        list<UString>& opened_files () {return m_opened_files;}
+        const list<UString>& opened_files () const {return m_opened_files;}
     };//end class Session
 
     SessMgr (const UString &root_dir) ;
     virtual ~SessMgr () {}
     list<Session>& sessions () ;
+    const list<Session>& sessions () const ;
+    void store_session (const Session &a_session) ;
     void store_sessions () ;
     void load_sessions ();
 };//end class SessMgr
