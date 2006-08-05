@@ -65,7 +65,7 @@ struct SessMgr::Priv {
     {
         string path = Glib::build_filename
                                     (Glib::locale_from_utf8 (root_dir),
-                                     "sqlscripts/sqlite/create-tables.sql") ;
+                                     "sqlscripts/create-tables.sql") ;
         return Glib::locale_to_utf8 (path) ;
     }
 
@@ -82,12 +82,13 @@ struct SessMgr::Priv {
 
     bool check_db_version ()
     {
-        SQLStatement insert_statement ("select version from schemainfo") ;
+        SQLStatement query ("select version from schemainfo") ;
 
-        THROW_IF_FAIL (connection ()->execute_statement (insert_statement)) ;
-        THROW_IF_FAIL (connection ()->read_next_row ()) ;
+        RETURN_VAL_IF_FAIL (connection ()->execute_statement (query), false) ;
+        RETURN_VAL_IF_FAIL (connection ()->read_next_row (), false) ;
         UString version ;
-        THROW_IF_FAIL (connection ()->get_column_content (0, version)) ;
+        RETURN_VAL_IF_FAIL (connection ()->get_column_content (0, version),
+                            false) ;
         LOG ("version: " << version) ;
         if (version != REQUIRED_DB_SCHEMA_VERSION) {
             return false ;
@@ -122,16 +123,18 @@ SessMgr::SessMgr (const UString &a_root_dir)
     m_priv->init () ;
 }
 
+SessMgr::~SessMgr ()
+{
+}
+
 list<SessMgr::Session>&
 SessMgr::sessions ()
 {
     return m_priv->sessions ;
 }
 
-static const char * SESSION_NAME = "sessionname" ;
-
 void
-SessMgr::store_session (const Session &a_session)
+SessMgr::store_session (Session &a_session)
 {
     THROW_IF_FAIL (m_priv) ;
 
@@ -142,54 +145,213 @@ SessMgr::store_session (const Session &a_session)
     //the trans.end() call, every db request we made gets rolled back.
     TransactionAutoHelper trans (transaction) ;
 
-    //insert the session id in the sessions table, and get the session id
-    //we just inerted
-    UString query ("insert into sessions values(NULL)");
-    THROW_IF_FAIL2 (trans.get ().get_connection ().execute_statement (query),
-                    "failed to execute query: '" + query + "'") ;
-    query = "select max(id) from sessions" ;
-    THROW_IF_FAIL2 (trans.get ().get_connection ().execute_statement (query),
-                    "failed to execute query: '" + query + "'") ;
-    THROW_IF_FAIL (trans.get ().get_connection ().read_next_row ()) ;
-    gint64 session_id=0 ;
-    THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, session_id)) ;
-    THROW_IF_FAIL (session_id) ;
+    UString query ;
+    if (!a_session.session_id ()) {
+        //insert the session id in the sessions table, and get the session id
+        //we just inerted
+        query = "insert into sessions values(NULL)";
+        THROW_IF_FAIL2 (trans.get ().get_connection ().execute_statement (query),
+                        "failed to execute query: '" + query + "'") ;
+        query = "select max(id) from sessions" ;
+        THROW_IF_FAIL2 (trans.get ().get_connection ().execute_statement (query),
+                        "failed to execute query: '" + query + "'") ;
+        THROW_IF_FAIL (trans.get ().get_connection ().read_next_row ()) ;
+        gint64 session_id=0 ;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, session_id)) ;
+        THROW_IF_FAIL (session_id) ;
+        a_session.session_id (session_id) ;
+    }
 
-    //store the session name
-    query = "insert into attributes values(NULL, "
-            + UString::from_int (session_id) + ", "
-            + SESSION_NAME + ", "
-            + a_session.name()
-            + ")"
-            ;
-    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    //store the properties
+    query = "delete from attributes where sessionid = "
+            + UString::from_int (a_session.session_id ()) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+
+    map<UString, UString>::const_iterator prop_iter ;
+    for (prop_iter = a_session.properties ().begin ();
+         prop_iter != a_session.properties ().end ();
+         ++prop_iter) {
+        query = "insert into attributes values(NULL, "
+                + UString::from_int (a_session.session_id ()) + ", '"
+                + prop_iter->first + "', '"
+                + prop_iter->second
+                + "')"
+                ;
+        THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+    }
 
     //store the breakpoints
-    list<IDebugger::BreakPoint>::const_iterator iter ;
-    for (iter = a_session.breakpoints ().begin ();
-         iter != a_session.breakpoints ().end ();
-         ++iter) {
+    query = "delete from breakpoints where sessionid = "
+            + UString::from_int (a_session.session_id ()) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+
+    list<SessMgr::BreakPoint>::const_iterator break_iter ;
+    for (break_iter = a_session.breakpoints ().begin ();
+         break_iter != a_session.breakpoints ().end ();
+         ++break_iter) {
         query = "insert into breakpoints values(NULL, "
-                + UString::from_int (session_id) + ", "
-                + iter->full_file_name () + ", "
-                + UString::from_int (iter->line ())
+                + UString::from_int (a_session.session_id ()) + ", '"
+                + break_iter->filename () + "', "
+                + UString::from_int (break_iter->line_number ())
                 + ")"
                 ;
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     }
 
-    //TODO: finish this ! (store the opened files)
+    //store the opened files
+    query = "delete from openedfiles where sessionid = "
+            + UString::from_int (a_session.session_id ()) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+
+    list<UString>::const_iterator ofile_iter ;
+    for (ofile_iter = a_session.opened_files ().begin ();
+         ofile_iter != a_session.opened_files ().end ();
+         ++ofile_iter) {
+        query = "insert into openedfiles values(NULL, "
+                + UString::from_int (a_session.session_id ()) + ", '"
+                + *ofile_iter
+                + "')" ;
+        THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    }
     trans.end () ;
 }
 
 void
 SessMgr::store_sessions ()
 {
+    list<Session>::iterator session_iter ;
+    for (session_iter = sessions ().begin ();
+         session_iter != sessions ().end ();
+         ++session_iter) {
+        store_session (*session_iter) ;
+    }
+}
+
+void
+SessMgr::load_session (Session &a_session)
+{
+    if (!a_session.session_id ()) {
+        THROW ("Session has null ID. Can't load if from database") ;
+    }
+
+    THROW_IF_FAIL (m_priv) ;
+
+    Transaction transaction (*m_priv->connection ());
+    Session session ;
+    session.session_id (a_session.session_id ()) ;
+
+    //The next line starts a transaction.
+    //If we get off from this function without reaching
+    //the trans.end() call, every db request we made gets rolled back.
+    TransactionAutoHelper trans (transaction) ;
+
+    //load the attributes
+    UString query="select attributes.name, attributes.value "
+                  "from attributes where attributes.sessionid = "
+                  + UString::from_int (a_session.session_id ());
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    while (trans.get ().get_connection ().read_next_row ()) {
+        UString name, value ;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, name)) ;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (1, value)) ;
+        session.properties ()[name] = value ;
+    }
+
+    //load the breakpoints
+    query = "select breakpoints.filename, breakpoints.linenumber from "
+            "breakpoints where breakpoints.sessionid = "
+            + UString::from_int (session.session_id ())
+            ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    while (trans.get ().get_connection ().read_next_row ()) {
+        UString filename, linenumber;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                                (0, filename));
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                                (1, linenumber));
+        session.breakpoints ().push_back (SessMgr::BreakPoint (filename,
+                                                               linenumber)) ;
+    }
+
+    //load the opened files
+    query = "select openedfiles.filename from openedfiles where "
+            "openedfile.sessionid = "
+            + UString::from_int (session.session_id ()) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+
+    while (trans.get ().get_connection ().read_next_row ()) {
+        UString filename ;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                                (0, filename));
+        session.opened_files ().push_back (filename) ;
+    }
+
+    trans.end () ;
+    a_session = session ;
 }
 
 void
 SessMgr::load_sessions ()
 {
+    THROW_IF_FAIL (m_priv) ;
+    UString query = "select session.id from sessions" ;
+
+    Transaction transaction (*m_priv->connection ()) ;
+    TransactionAutoHelper trans (transaction) ;
+
+    list<Session> sessions ;
+    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+    while (trans.get ().get_connection ().read_next_row ()) {
+        gint64 session_id=0 ;
+        transaction.get_connection ().get_column_content (0, session_id) ;
+        THROW_IF_FAIL (session_id) ;
+        sessions.push_back (Session (session_id)) ;
+    }
+    list<Session>::iterator session_iter ;
+    for (session_iter = sessions.begin ();
+         session_iter != sessions.end ();
+         ++session_iter) {
+        load_session (*session_iter) ;
+    }
+    m_priv->sessions = sessions ;
+    trans.end () ;
+}
+
+void
+SessMgr::delete_session (gint64 a_id)
+{
+    THROW_IF_FAIL (m_priv) ;
+    Transaction transaction (*m_priv->connection ()) ;
+    TransactionAutoHelper trans (transaction) ;
+
+    UString query = "delete from attributes where "
+                    "sessionid = " + UString::from_int (a_id);
+    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+
+    query = "delete from breakpoints where "
+            "sessionid = " + UString::from_int (a_id) ;
+    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+
+    query = "delete from openedfiles where "
+            "sessionid = " + UString::from_int (a_id) ;
+    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+
+    query = "delete from sessions where "
+            "id = " + UString::from_int (a_id) ;
+    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+
+    trans.end () ;
+}
+
+void
+SessMgr::delete_sessions ()
+{
+    list<Session>::const_iterator iter ;
+    for (iter = sessions ().begin ();
+         iter != sessions ().end ();
+         ++iter) {
+        delete_session (iter->session_id ()) ;
+    }
 }
 
 }//end namespace nemiver

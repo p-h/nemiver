@@ -24,11 +24,6 @@
  *See COPYRIGHT file copyright information.
  */
 #include "config.h"
-#ifdef NEMIVER_WITH_SQLITE3
-
-#pragma GCC visibility push(default)
-#include <cstring>
-#pragma GCC visibility pop
 
 #include <sqlite3.h>
 #include "nmv-log-stream-utils.h"
@@ -431,6 +426,4 @@ SqliteCnxDrv::close ()
 }//end namespace sqlite
 }//end namespace dbd
 }//end namespace nemiver
-
-#endif //NEMIVER_WITH_SQLITE3
 

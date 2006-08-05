@@ -30,6 +30,8 @@
 #include "nmv-env.h"
 #include "nmv-run-program-dialog.h"
 #include "nmv-ui-utils.h"
+#include "nmv-sess-mgr.h"
+#include "nmv-date-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -115,6 +117,7 @@ private:
                                            const Glib::ustring &a_text,
                                            int a_dont_know) ;
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
+    void on_shutdown_signal () ;
     //************
     //</signal slots>
     //************
@@ -134,11 +137,13 @@ private:
     void append_source_editor (SourceEditor &a_sv,
                                const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
     SourceEditor* get_current_source_editor () ;
+    SessMgr* get_session_manager () ;
     UString get_current_file_path () ;
     SourceEditor* get_source_editor_from_uri (const UString &a_uri) ;
     void bring_source_as_current (const UString &a_uri) ;
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
+    void save_session () ;
 
 public:
 
@@ -425,6 +430,7 @@ struct OnStoppedHandler: OutputHandler {
 
 struct DBGPerspective::Priv {
     bool initialized ;
+    UString prog_name_or_pid ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
@@ -454,6 +460,7 @@ struct DBGPerspective::Priv {
     IDebuggerSafePtr debugger ;
     list<OutputHandlerSafePtr> output_handlers ;
     map<int, IDebugger::BreakPoint> breakpoints ;
+    SessMgrSafePtr session_manager ;
 
     Priv () :
         initialized (false),
@@ -656,9 +663,21 @@ DBGPerspective::on_button_pressed_in_source_view_signal (GdkEventButton *a_event
         return false ;
     }
     popup_source_view_contextual_menu (a_event) ;
+
     NEMIVER_CATCH
     return true ;
 }
+
+void
+DBGPerspective::on_shutdown_signal ()
+{
+    NEMIVER_TRY
+
+    save_session () ;
+
+    NEMIVER_CATCH
+}
+
 
 //****************************
 //</slots>
@@ -1096,6 +1115,18 @@ DBGPerspective::get_current_source_editor ()
     return iter->second ;
 }
 
+SessMgr*
+DBGPerspective::get_session_manager ()
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    if (!m_priv->session_manager) {
+        m_priv->session_manager = new SessMgr (plugin_path ()) ;
+        THROW_IF_FAIL (m_priv->session_manager) ;
+    }
+    return m_priv->session_manager.get () ;
+}
+
 UString
 DBGPerspective::get_current_file_path ()
 {
@@ -1221,6 +1252,40 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
     menu->popup (a_event->button, a_event->time) ;
 }
 
+void
+DBGPerspective::save_session ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    SessMgr::Session session ;
+    UString session_name = m_priv->prog_name_or_pid ;
+    if (session_name == "") {return;}
+
+    UString today ;
+    dateutils::get_current_datetime (today) ;
+    session_name += "-" + today ;
+
+    session.properties ()["sessionname"] = session_name;
+
+    map<UString, int>::const_iterator uri_iter =
+        m_priv->uri_2_pagenum_map.begin () ;
+    for (;
+         uri_iter != m_priv->uri_2_pagenum_map.end ();
+         ++uri_iter) {
+        session.opened_files ().push_back (uri_iter->first) ;
+    }
+
+    map<int, IDebugger::BreakPoint>::const_iterator break_iter ;
+    for (break_iter = m_priv->breakpoints.begin ();
+         break_iter != m_priv->breakpoints.end ();
+         ++break_iter) {
+        session.breakpoints ().push_back
+            (SessMgr::BreakPoint (break_iter->second.full_file_name (),
+                                  break_iter->second.line ())) ;
+    }
+    THROW_IF_FAIL (get_session_manager ()) ;
+    get_session_manager ()->store_session (session) ;
+}
+
 
 //*******************
 //</private methods>
@@ -1257,6 +1322,8 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     init_signals () ;
     init_debugger_output_handlers () ;
     m_priv->initialized = true ;
+    m_priv->workbench->shutting_down_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_shutdown_signal)) ;
 }
 
 DBGPerspective::~DBGPerspective ()
@@ -1476,6 +1543,8 @@ DBGPerspective::execute_program (const UString &a_prog,
     dbg_engine->queue_command (IDebugger::Command ("-exec-run")) ;
 
     debugger_ready_signal ().emit (true) ;
+
+    m_priv->prog_name_or_pid = a_prog ;
 
     NEMIVER_CATCH
 }

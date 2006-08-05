@@ -44,6 +44,12 @@ class IPerspective ;
 
 typedef SafePtr<IPerspective, ObjectRef, ObjectUnref> IPerspectiveSafePtr ;
 
+/// an abstraction of a consistent user interface dedicated
+/// at doing a certain task. Nemiver is a collection of perspectives
+/// even though only on perspective is coded at the moment:
+/// 'the debugger  perspective'
+/// Perspective are also plugins. It is the dutty of the Workbench to load
+/// all the perspective it finds, at launch time.
 class NEMIVER_API IPerspective : public Plugin::EntryPoint {
     //non copyable
     IPerspective (const IPerspective&) ;

@@ -1,3 +1,19 @@
+samedi 5 août 2006, 18:34:12 (UTC+0200) Dodji Seketeli
+
+	* src/workbench/nmv-i-perspective.h: added some comments.
+	* src/workbench/nmv-workbench.cc: emit the
+	IWorkbench::shutting_down_signal() signal at app shutdown.
+	* src/DBGPerspective/nmv-sess-mgr.cc,h: went forward in
+	  saving/loading/deleting sessions. It seems the saving part works
+	  somehow. I haven't really tested it though.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: save the session
+	  at workshop shutdown time. I haven't coded anything to reload
+	  the sessions yet.
+	* src/common/nmv-tools.cc:
+	  (execute_sql_command_file): check the presence of the sql script
+	  file before opening it.
+	* src/common/nmv-date-utils.h: properly export the functions here.
+
 vendredi 4 août 2006, 18:39:23 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-sess-mgr.cc,h,

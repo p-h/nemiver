@@ -29,7 +29,9 @@
  */
 #ifndef __NEMIVER_DATE_UTILS_H__
 #define __NEMIVER_DATE_UTILS_H__
+
 #include <sys/time.h>
+#include "nmv-api-macros.h"
 
 namespace nemiver {
 namespace common {
@@ -39,9 +41,9 @@ class UString ;
 namespace dateutils
 {
 
-time_t get_current_datetime () ;
-void get_current_datetime (struct tm &a_tm) ;
-void get_current_datetime (UString &a_datetime) ;
+time_t NEMIVER_API get_current_datetime () ;
+void NEMIVER_API get_current_datetime (struct tm &a_tm) ;
+void NEMIVER_API get_current_datetime (UString &a_datetime) ;
 
 }//end namespace dateutils
 }//end namespace common

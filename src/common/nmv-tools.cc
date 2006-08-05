@@ -24,6 +24,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include <fstream>
+#include <glibmm.h>
 #include "nmv-tools.h"
 #include "nmv-parsing-utils.h"
 #include "nmv-sql-statement.h"
@@ -38,6 +39,12 @@ execute_sql_command_file (const UString &a_sql_command_file,
                           Transaction &a_trans,
                           ostream &a_ostream)
 {
+    if (!Glib::file_test (Glib::locale_from_utf8 (a_sql_command_file),
+                          Glib::FILE_TEST_IS_REGULAR)) {
+        LOG_ERROR ("could not find file " + a_sql_command_file) ;
+        return false ;
+    }
+
     ifstream inputfile ;
     try {
         inputfile.open (a_sql_command_file.c_str ()) ;

@@ -1,0 +1,9 @@
+<moduleconfig>
+    <module>
+        <name>org.nemiver.db.sqlitedriver</name>
+        <libraryname>nemiverdbdsqlite</libraryname>
+    </module>
+    <customsearchpaths>
+        <path>@prefix@/lib/nemiver/modules</path>
+    </customsearchpaths>
+</moduleconfig>

@@ -80,6 +80,8 @@ public:
     /// \param a_main the main loop created by the application.
     virtual void do_init (Gtk::Main &a_main) = 0;
 
+    /// \brief signal
+
 
     /// \name various getters
 
@@ -102,6 +104,15 @@ public:
     virtual IPerspective* get_perspective (const UString &a_name) = 0;
 
     ///@}
+
+    /// \name signals
+
+    /// @{
+
+    /// \brief emitted just before the workbench shuts down
+    virtual sigc::signal<void>& shutting_down_signal () = 0 ;
+
+    /// @}
 };//end class IWorkbench
 
 }//end namespace nemiver

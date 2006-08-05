@@ -24,7 +24,6 @@
  *See COPYRIGHT file copyright information.
  */
 #include "config.h"
-#ifdef NEMIVER_WITH_SQLITE3
 #include <sqlite3.h>
 #include "nmv-ustring.h"
 #include "nmv-exception.h"
@@ -35,8 +34,11 @@
 
 using namespace nemiver::common ;
 
-NEMIVER_API bool
-nmv_common_create_dynamic_module_instance (void **a_new_instance)
+extern "C" {
+
+bool
+NEMIVER_API
+nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
     RETURN_VAL_IF_FAIL (a_new_instance, false) ;
 
@@ -57,6 +59,7 @@ nmv_common_create_dynamic_module_instance (void **a_new_instance)
     }
     return true ;
 }
+}//end extern C
 
 namespace nemiver {
 namespace common {
@@ -100,11 +103,11 @@ SqliteCnxMgrDrv::connect_to_db (const DBDesc &a_db_desc,
     //that is in $HOME/.nemiver/db/sqlite
     UString db_name (a_db_desc.name ()) ;
     if (!Glib::path_is_absolute (db_name)) {
-        if (!Glib::file_test (env::get_user_nemiver_db_dir (),
+        if (!Glib::file_test (env::get_user_db_dir (),
                               Glib::FILE_TEST_IS_DIR)) {
-            env::create_user_nemiver_db_dir () ;
+            env::create_user_db_dir () ;
         }
-        db_name = Glib::build_filename (env::get_user_nemiver_db_dir (),
+        db_name = Glib::build_filename (env::get_user_db_dir (),
                                         db_name).c_str () ;
     }
 
@@ -138,6 +141,4 @@ SqliteCnxMgrDrv::do_init ()
 }//end sqlite
 }//end namespace common
 }//end namespace  nemiver
-
-#endif //NEMIVER_WITH_SQLITE3
 

@@ -190,7 +190,7 @@ src/Makefile
   src/common/Makefile
   src/dbdimpl/Makefile
   src/dbdimpl/sqlite/Makefile
-  src/dbdimpl/sqlite/nemiver.sqlitedriver.conf
+  src/dbdimpl/sqlite/org.nemiver.db.sqlitedriver.conf
   src/uicommon/Makefile
   src/workbench/Makefile
   src/workbench/workbench.conf

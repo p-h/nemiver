@@ -65,6 +65,7 @@ private:
     void select_perspective (IPerspective *a_perspective) ;
 
     void do_init () {}
+    void shut_down () ;
 
 public:
     Workbench () ;
@@ -78,6 +79,7 @@ public:
     Gtk::Window& get_root_window () ;
     Glib::RefPtr<Gtk::UIManager>& get_ui_manager ()  ;
     IPerspective* get_perspective (const UString &a_name) ;
+    sigc::signal<void>& shutting_down_signal () ;
 };//end class Workbench
 
 struct Workbench::Priv {
@@ -94,6 +96,7 @@ struct Workbench::Priv {
     list<IPerspectiveSafePtr> perspectives ;
     map<IPerspective*, int> toolbars_index_map ;
     map<IPerspective*, int> bodies_index_map ;
+    sigc::signal<void> shutting_down_signal ;
 
     Priv () :
         initialized (false),
@@ -118,7 +121,7 @@ struct Workbench::Priv {
 void
 Workbench::on_quit_menu_item_action ()
 {
-    m_priv->main->quit () ;
+    shut_down () ;
 }
 
 Workbench::Workbench ()
@@ -199,6 +202,13 @@ Workbench::do_init (Gtk::Main &a_main)
     NEMIVER_CATCH
 }
 
+void
+Workbench::shut_down ()
+{
+    shutting_down_signal ().emit () ;
+    m_priv->main->quit () ;
+}
+
 Glib::RefPtr<Gtk::ActionGroup>
 Workbench::get_default_action_group ()
 {
@@ -253,6 +263,14 @@ Workbench::get_perspective (const UString &a_name)
     }
     LOG_ERROR ("could not find perspective: '" << a_name << "'") ;
     return NULL;
+}
+
+sigc::signal<void>&
+Workbench::shutting_down_signal ()
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    return m_priv->shutting_down_signal ;
 }
 
 void

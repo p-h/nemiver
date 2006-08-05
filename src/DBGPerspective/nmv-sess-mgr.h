@@ -26,6 +26,7 @@
 #define __NMV_SESS_MGR_H__
 
 #include <list>
+#include <map>
 #include "nmv-object.h"
 #include "nmv-ustring.h"
 #include "nmv-safe-ptr-utils.h"
@@ -54,28 +55,74 @@ protected:
     SessMgr () ;
 
 public:
+    class BreakPoint {
+        UString m_filename ;
+        int m_line_number ;
+
+    public:
+        BreakPoint (const UString &a_filename,
+                    const UString &a_line_number) :
+            m_filename (a_filename),
+            m_line_number (atoi (a_line_number.c_str ()))
+        {}
+
+        BreakPoint (const UString &a_filename,
+                    int a_line_number) :
+            m_filename (a_filename),
+            m_line_number (a_line_number)
+        {}
+
+        BreakPoint () :
+            m_line_number (0)
+        {}
+
+        const UString& filename () const {return m_filename;}
+        void filename (const UString &a_in) {m_filename = a_in;}
+
+        int line_number () const {return m_line_number;}
+        void line_number (int a_in) {m_line_number = a_in;}
+    };
 
     class Session {
-        UString m_name ;
-        list<IDebugger::BreakPoint> m_breakpoints ;
+        gint64 m_session_id ;
+        map<UString, UString> m_properties ;
+        list<BreakPoint> m_breakpoints ;
         list<UString> m_opened_files ;
 
     public:
-        const UString& name ()  const {return m_name;}
-        void name (const UString &a_in) {m_name = a_in;}
-        list<IDebugger::BreakPoint>& breakpoints () {return m_breakpoints;}
-        const list<IDebugger::BreakPoint>& breakpoints () const {return m_breakpoints;}
+        Session () :
+            m_session_id (0)
+        {}
+
+        Session (gint64 a_session_id) :
+            m_session_id (a_session_id)
+        {}
+
+        gint64 session_id () const {return m_session_id;}
+        void session_id (gint64 a_in) {m_session_id = a_in;}
+
+        const map<UString, UString>& properties ()  const {return m_properties;}
+        map<UString, UString>& properties () {return m_properties;}
+
+        list<BreakPoint>& breakpoints () {return m_breakpoints;}
+        const list<BreakPoint>& breakpoints () const
+        {
+            return m_breakpoints;
+        }
         list<UString>& opened_files () {return m_opened_files;}
         const list<UString>& opened_files () const {return m_opened_files;}
     };//end class Session
 
     SessMgr (const UString &root_dir) ;
-    virtual ~SessMgr () {}
+    virtual ~SessMgr () ;
     list<Session>& sessions () ;
     const list<Session>& sessions () const ;
-    void store_session (const Session &a_session) ;
+    void store_session (Session &a_session) ;
     void store_sessions () ;
+    void load_session (Session &a_session) ;
     void load_sessions ();
+    void delete_session (gint64 a_id) ;
+    void delete_sessions () ;
 };//end class SessMgr
 
 }//end namespace nemiver

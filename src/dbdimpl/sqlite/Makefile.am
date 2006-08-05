@@ -15,6 +15,6 @@ $(top_builddir)/src/common/libnemivercommon.la
 INCLUDES=@NEMIVER_CFLAGS@ -I$(top_srcdir)/src/common \
 -DIN_LIBSQLITE_DSO
 
-config_DATA=nemiver.sqlitedriver.conf
+config_DATA=org.nemiver.db.sqlitedriver.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
