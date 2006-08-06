@@ -1533,7 +1533,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         IDebugger::Command command ;
 
         command.value ("set breakpoint pending auto") ;
-        THROW_IF_FAIL (queue_command (command)) ;
+        queue_command (command) ;
     } else {
         UString args ;
         UString::size_type len (a_argv.size ()) ;
@@ -1542,10 +1542,10 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         }
 
         Command command (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
-        THROW_IF_FAIL (queue_command (command)) ;
+        queue_command (command) ;
 
         command.value ("set args " + args) ;
-        THROW_IF_FAIL (queue_command (command)) ;
+        queue_command (command) ;
     }
 
     return ;
@@ -1608,7 +1608,7 @@ void
 GDBEngine::execute_command (const Command &a_command)
 {
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
-    THROW_IF_FAIL (queue_command (a_command)) ;
+    queue_command (a_command) ;
 }
 
 bool

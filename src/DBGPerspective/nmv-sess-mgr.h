@@ -31,6 +31,7 @@
 #include "nmv-ustring.h"
 #include "nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
+#include "nmv-transaction.h"
 
 using namespace std ;
 using nemiver::common::Object ;
@@ -38,21 +39,20 @@ using nemiver::common::UString ;
 using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
 using nemiver::common::SafePtr ;
+using nemiver::common::Transaction ;
 
 namespace nemiver {
 
-class SessMgr ;
-typedef SafePtr<SessMgr, ObjectRef, ObjectUnref> SessMgrSafePtr  ;
+class ISessMgr ;
+typedef SafePtr<ISessMgr, ObjectRef, ObjectUnref> ISessMgrSafePtr  ;
 
-class SessMgr : public Object {
+class NEMIVER_API ISessMgr : public Object {
     //non copyable
-    SessMgr (const SessMgr&) ;
-    SessMgr& operator= (const SessMgr&) ;
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    ISessMgr (const ISessMgr&) ;
+    ISessMgr& operator= (const ISessMgr&) ;
 
 protected:
-    SessMgr () ;
+    ISessMgr () {};
 
 public:
     class BreakPoint {
@@ -113,17 +113,23 @@ public:
         const list<UString>& opened_files () const {return m_opened_files;}
     };//end class Session
 
-    SessMgr (const UString &root_dir) ;
-    virtual ~SessMgr () ;
-    list<Session>& sessions () ;
-    const list<Session>& sessions () const ;
-    void store_session (Session &a_session) ;
-    void store_sessions () ;
-    void load_session (Session &a_session) ;
-    void load_sessions ();
-    void delete_session (gint64 a_id) ;
-    void delete_sessions () ;
+    virtual ~ISessMgr () {}
+    virtual Transaction& default_transaction () = 0;
+    virtual list<Session>& sessions () = 0;
+    virtual const list<Session>& sessions () const = 0;
+    virtual void store_session (Session &a_session,
+                                Transaction &a_trans) = 0;
+    virtual void store_sessions (Transaction &a_trans) = 0;
+    virtual void load_session (Session &a_session,
+                               Transaction &a_trans) = 0;
+    virtual void load_sessions (Transaction &a_trans) = 0;
+    virtual void load_sessions () = 0;
+    virtual void delete_session (gint64 a_id,
+                                 Transaction &a_trans) = 0;
+    virtual void delete_sessions (Transaction &a_trans)  = 0;
+    static ISessMgrSafePtr create (const UString &a_root_dir) ;
 };//end class SessMgr
+
 
 }//end namespace nemiver
 

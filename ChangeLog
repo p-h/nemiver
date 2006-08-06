@@ -1,3 +1,15 @@
+dimanche 6 août 2006, 20:35:48 (UTC+0200) Dodji Seketeli
+
+	* src/workbench/nmv-workbench.cc: hide the main window by default.
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: fix a long standing
+	  annoying assert.
+	* src/DBGPerspective/nmv-sess-mgr.cc,h: make ISessMgr be a pure
+	  interface.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: started to support
+	  the launching of a recorded session. Nothing works yet.
+	* src/main.cc: support the --listsessions option. Next stop is to
+	  add a --debugsession <sessionnum> option.
+
 samedi 5 août 2006, 18:34:12 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-i-perspective.h: added some comments.

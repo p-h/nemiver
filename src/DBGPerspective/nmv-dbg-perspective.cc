@@ -50,6 +50,11 @@ const char *STEP_INTO         = "nmv-step-into" ;
 const char *STEP_OVER         = "nmv-step-over" ;
 const char *STEP_OUT          = "nmv-step-out" ;
 
+const char *SESSION_NAME = "sessionname" ;
+const char *PROGRAM_NAME= "programname" ;
+const char *PROGRAM_ARGS= "programarguments" ;
+const char *PROGRAM_CWD= "programcwd" ;
+
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
 const Gtk::StockID STOCK_STOP_DEBUGGER (STOP_DEBUGGER) ;
@@ -137,13 +142,14 @@ private:
     void append_source_editor (SourceEditor &a_sv,
                                const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
     SourceEditor* get_current_source_editor () ;
-    SessMgr* get_session_manager () ;
+    ISessMgr* get_session_manager () ;
     UString get_current_file_path () ;
     SourceEditor* get_source_editor_from_uri (const UString &a_uri) ;
     void bring_source_as_current (const UString &a_uri) ;
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
     void save_session () ;
+    void save_session (ISessMgr::Session &a_session) ;
 
 public:
 
@@ -173,6 +179,10 @@ public:
     void close_current_file () ;
 
     void close_file (const UString &a_uri) ;
+
+    ISessMgr& session_manager () ;
+
+    void execute_session (ISessMgr::Session &a_session) ;
 
     void execute_program () ;
 
@@ -430,7 +440,10 @@ struct OnStoppedHandler: OutputHandler {
 
 struct DBGPerspective::Priv {
     bool initialized ;
-    UString prog_name_or_pid ;
+    bool reused_session ;
+    UString prog_name ;
+    UString prog_args ;
+    UString prog_cwd ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
@@ -460,10 +473,12 @@ struct DBGPerspective::Priv {
     IDebuggerSafePtr debugger ;
     list<OutputHandlerSafePtr> output_handlers ;
     map<int, IDebugger::BreakPoint> breakpoints ;
-    SessMgrSafePtr session_manager ;
+    ISessMgrSafePtr session_manager ;
+    ISessMgr::Session session ;
 
     Priv () :
         initialized (false),
+        reused_session (false),
         menubar_merge_id (0),
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
@@ -673,7 +688,15 @@ DBGPerspective::on_shutdown_signal ()
 {
     NEMIVER_TRY
 
-    save_session () ;
+    if (m_priv->prog_name == "") {
+        return ;
+    }
+
+    if (m_priv->reused_session) {
+        save_session (m_priv->session) ;
+    } else {
+        save_session () ;
+    }
 
     NEMIVER_CATCH
 }
@@ -1115,13 +1138,13 @@ DBGPerspective::get_current_source_editor ()
     return iter->second ;
 }
 
-SessMgr*
+ISessMgr*
 DBGPerspective::get_session_manager ()
 {
     THROW_IF_FAIL (m_priv) ;
 
     if (!m_priv->session_manager) {
-        m_priv->session_manager = new SessMgr (plugin_path ()) ;
+        m_priv->session_manager = ISessMgr::create (plugin_path ()) ;
         THROW_IF_FAIL (m_priv->session_manager) ;
     }
     return m_priv->session_manager.get () ;
@@ -1256,34 +1279,47 @@ void
 DBGPerspective::save_session ()
 {
     THROW_IF_FAIL (m_priv) ;
-    SessMgr::Session session ;
-    UString session_name = m_priv->prog_name_or_pid ;
+    ISessMgr::Session session ;
+    save_session (session) ;
+}
+
+void
+DBGPerspective::save_session (ISessMgr::Session &a_session)
+{
+    THROW_IF_FAIL (m_priv) ;
+    ISessMgr::Session session ;
+    UString session_name = m_priv->prog_name ;
     if (session_name == "") {return;}
 
     UString today ;
     dateutils::get_current_datetime (today) ;
     session_name += "-" + today ;
 
-    session.properties ()["sessionname"] = session_name;
+    a_session.properties ()[SESSION_NAME] = session_name ;
+    a_session.properties ()[PROGRAM_NAME] = m_priv->prog_name ;
+    a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
+    a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
 
     map<UString, int>::const_iterator uri_iter =
         m_priv->uri_2_pagenum_map.begin () ;
     for (;
          uri_iter != m_priv->uri_2_pagenum_map.end ();
          ++uri_iter) {
-        session.opened_files ().push_back (uri_iter->first) ;
+        a_session.opened_files ().push_back (uri_iter->first) ;
     }
 
     map<int, IDebugger::BreakPoint>::const_iterator break_iter ;
     for (break_iter = m_priv->breakpoints.begin ();
          break_iter != m_priv->breakpoints.end ();
          ++break_iter) {
-        session.breakpoints ().push_back
-            (SessMgr::BreakPoint (break_iter->second.full_file_name (),
-                                  break_iter->second.line ())) ;
+        a_session.breakpoints ().push_back
+            (ISessMgr::BreakPoint (break_iter->second.full_file_name (),
+                                   break_iter->second.line ())) ;
     }
     THROW_IF_FAIL (get_session_manager ()) ;
-    get_session_manager ()->store_session (session) ;
+    get_session_manager ()->store_session
+                            (a_session,
+                             get_session_manager ()->default_transaction ()) ;
 }
 
 
@@ -1322,6 +1358,7 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     init_signals () ;
     init_debugger_output_handlers () ;
     m_priv->initialized = true ;
+    session_manager ().load_sessions (session_manager ().default_transaction ());
     m_priv->workbench->shutting_down_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_shutdown_signal)) ;
 }
@@ -1486,6 +1523,22 @@ DBGPerspective::close_file (const UString &a_uri)
     }
 }
 
+ISessMgr&
+DBGPerspective::session_manager ()
+{
+    return *get_session_manager () ;
+}
+
+void
+DBGPerspective::execute_session (ISessMgr::Session &a_session)
+{
+    m_priv->session = a_session ;
+    execute_program (a_session.properties ()[PROGRAM_NAME],
+                     a_session.properties ()[PROGRAM_ARGS],
+                     a_session.properties ()[PROGRAM_CWD]) ;
+    m_priv->reused_session = true ;
+}
+
 void
 DBGPerspective::execute_program ()
 {
@@ -1505,6 +1558,7 @@ DBGPerspective::execute_program ()
     THROW_IF_FAIL (cwd != "") ;
 
     execute_program (prog, args, cwd) ;
+    m_priv->reused_session = false ;
 }
 
 void
@@ -1517,6 +1571,7 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
     ++iter ;
     UString prog_name=argv[0], args = UString::join (iter, end_iter);
     execute_program (prog_name, args, a_cwd) ;
+    m_priv->reused_session = false ;
 }
 
 void
@@ -1544,7 +1599,9 @@ DBGPerspective::execute_program (const UString &a_prog,
 
     debugger_ready_signal ().emit (true) ;
 
-    m_priv->prog_name_or_pid = a_prog ;
+    m_priv->prog_name = a_prog ;
+    m_priv->prog_args = a_args ;
+    m_priv->prog_cwd = a_cwd ;
 
     NEMIVER_CATCH
 }
@@ -1601,7 +1658,6 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
                                 int a_line)
 {
     debugger ()->set_breakpoint (a_file_path, a_line) ;
-    debugger_ready_signal ().emit (false) ;
 }
 
 void

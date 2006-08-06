@@ -283,6 +283,7 @@ Workbench::init_glade ()
 
     m_priv->root_window =
        env::get_widget_from_glade<Gtk::Window> (m_priv->glade, "workbench");
+    m_priv->root_window->hide () ;
 }
 
 void

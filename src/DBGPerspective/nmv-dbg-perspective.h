@@ -25,11 +25,14 @@
 #ifndef __NMV_DBG_PERSPECTIVE_H__
 #define __NMV_DBG_PERSPECTIVE_H__
 
+#include <list>
 #include <libgnomevfsmm/uri.h>
 #include <libgnomevfsmm/handle.h>
 #include "nmv-i-perspective.h"
 #include "nmv-source-editor.h"
 #include "nmv-i-debugger.h"
+#include "nmv-sess-mgr.h"
+
 namespace nemiver {
 
 class NEMIVER_API IDBGPerspective : public IPerspective {
@@ -65,6 +68,10 @@ public:
     virtual void close_current_file () = 0;
 
     virtual void close_file (const UString &a_uri) = 0;
+
+    virtual ISessMgr& session_manager () = 0;
+
+    virtual void execute_session (ISessMgr::Session &a_session) = 0;
 
     virtual void execute_program () = 0;
 

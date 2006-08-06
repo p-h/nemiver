@@ -38,8 +38,10 @@ using nemiver::IWorkbench ;
 using nemiver::IWorkbenchSafePtr ;
 using nemiver::IDBGPerspective ;
 using nemiver::common::UString ;
+using nemiver::ISessMgr ;
 
 static gchar *gv_prog_arg=NULL ;
+static bool gv_list_sessions=false ;
 
 static GOptionEntry entries[] =
 {
@@ -51,6 +53,14 @@ static GOptionEntry entries[] =
       "debug a prog",
       "<prog-name-and-args>"
     },
+    { "listsessions",
+      0,
+      0,
+      G_OPTION_ARG_NONE,
+      &gv_list_sessions,
+      "list the saved debugging sessions",
+      NULL
+    },
     {NULL}
 };
 
@@ -61,7 +71,10 @@ main (int a_argc, char *a_argv[])
     Gtk::Main main_loop (a_argc, a_argv);
     GOptionContext *context=NULL ;
 
-    context = g_option_context_new ("- debug a program") ;
+    //***************************
+    //parse command line options
+    //***************************
+    context = g_option_context_new ("- a C/C++ debugger for GNOME") ;
     g_option_context_add_main_entries (context, entries, "") ;
     g_option_context_add_group (context, gtk_get_option_group (TRUE)) ;
     g_option_context_parse (context, &a_argc, &a_argv, NULL) ;
@@ -72,6 +85,34 @@ main (int a_argc, char *a_argv[])
 
     IWorkbenchSafePtr workbench = module_manager.load<IWorkbench> ("workbench");
     workbench->do_init (main_loop) ;
+
+    //********************************
+    //<process command line arguments>
+    //********************************
+    if (gv_list_sessions) {
+        IDBGPerspective *debug_persp =
+            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+                                                            ("DBGPerspective")) ;
+        if (debug_persp) {
+            debug_persp->session_manager ().load_sessions () ;
+            list<ISessMgr::Session>::iterator session_iter ;
+            list<ISessMgr::Session>& sessions =
+                            debug_persp->session_manager ().sessions () ;
+            for (session_iter = sessions.begin ();
+                 session_iter != sessions.end ();
+                 ++session_iter) {
+                cout << session_iter->session_id ()
+                     << " "
+                     << session_iter->properties ()["sessionname"]
+                     << "\n"
+                     ;
+            }
+            return 0 ;
+        } else {
+            cerr << "Could not find the DBGPerspective\n" ;
+            return -1 ;
+        }
+    }
 
     if (gv_prog_arg) {
         IDBGPerspective *debug_persp =
@@ -88,15 +129,15 @@ main (int a_argc, char *a_argv[])
         gv_prog_arg = NULL;
 
     }
+    //********************************
+    //</process command line arguments>
+    //********************************
 
-    //***************************
-    //parse command line options
-    //***************************
 
+    workbench->get_root_window ().show_all () ;
     main_loop.run (workbench->get_root_window ()) ;
 
     NEMIVER_CATCH
-
 
     return 0 ;
 }

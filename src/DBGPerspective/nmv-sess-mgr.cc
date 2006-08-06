@@ -42,10 +42,39 @@ static const char *REQUIRED_DB_SCHEMA_VERSION = "1.0" ;
 
 namespace nemiver {
 
+class SessMgr : public ISessMgr {
+    //non copyable
+    SessMgr (const SessMgr&) ;
+    SessMgr& operator= (const SessMgr&) ;
+    struct Priv ;
+    SafePtr<Priv> m_priv ;
+
+protected:
+    SessMgr () ;
+
+public:
+    SessMgr (const UString &root_dir) ;
+    virtual ~SessMgr () ;
+    Transaction& default_transaction () ;
+    list<Session>& sessions () ;
+    const list<Session>& sessions () const ;
+    void store_session (Session &a_session,
+                        Transaction &a_trans) ;
+    void store_sessions (Transaction &a_trans) ;
+    void load_session (Session &a_session,
+                       Transaction &a_trans) ;
+    void load_sessions (Transaction &a_trans);
+    void load_sessions ();
+    void delete_session (gint64 a_id,
+                         Transaction &a_trans) ;
+    void delete_sessions (Transaction &a_trans) ;
+};//end class SessMgr
+
 struct SessMgr::Priv {
     UString root_dir ;
     list<Session> sessions ;
     ConnectionSafePtr conn ;
+    TransactionSafePtr default_transaction ;
 
     Priv () {}
     Priv (const UString &a_root_dir) :
@@ -127,23 +156,40 @@ SessMgr::~SessMgr ()
 {
 }
 
+Transaction&
+SessMgr::default_transaction ()
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    if (!m_priv->default_transaction) {
+        m_priv->default_transaction = new Transaction (*m_priv->connection ()) ;
+        THROW_IF_FAIL (m_priv->default_transaction) ;
+    }
+    return *m_priv->default_transaction ;
+}
+
 list<SessMgr::Session>&
 SessMgr::sessions ()
 {
     return m_priv->sessions ;
 }
 
+const list<SessMgr::Session>&
+SessMgr::sessions () const
+{
+    return m_priv->sessions ;
+}
+
 void
-SessMgr::store_session (Session &a_session)
+SessMgr::store_session (Session &a_session,
+                        Transaction &a_trans)
 {
     THROW_IF_FAIL (m_priv) ;
-
-    Transaction transaction (*m_priv->connection ());
 
     //The next line starts a transaction.
     //If we get off from this function without reaching
     //the trans.end() call, every db request we made gets rolled back.
-    TransactionAutoHelper trans (transaction) ;
+    TransactionAutoHelper trans (a_trans) ;
 
     UString query ;
     if (!a_session.session_id ()) {
@@ -217,18 +263,19 @@ SessMgr::store_session (Session &a_session)
 }
 
 void
-SessMgr::store_sessions ()
+SessMgr::store_sessions (Transaction &a_trans)
 {
     list<Session>::iterator session_iter ;
     for (session_iter = sessions ().begin ();
          session_iter != sessions ().end ();
          ++session_iter) {
-        store_session (*session_iter) ;
+        store_session (*session_iter, a_trans) ;
     }
 }
 
 void
-SessMgr::load_session (Session &a_session)
+SessMgr::load_session (Session &a_session,
+                       Transaction &a_trans)
 {
     if (!a_session.session_id ()) {
         THROW ("Session has null ID. Can't load if from database") ;
@@ -236,14 +283,13 @@ SessMgr::load_session (Session &a_session)
 
     THROW_IF_FAIL (m_priv) ;
 
-    Transaction transaction (*m_priv->connection ());
     Session session ;
     session.session_id (a_session.session_id ()) ;
 
     //The next line starts a transaction.
     //If we get off from this function without reaching
     //the trans.end() call, every db request we made gets rolled back.
-    TransactionAutoHelper trans (transaction) ;
+    TransactionAutoHelper trans (a_trans) ;
 
     //load the attributes
     UString query="select attributes.name, attributes.value "
@@ -275,7 +321,7 @@ SessMgr::load_session (Session &a_session)
 
     //load the opened files
     query = "select openedfiles.filename from openedfiles where "
-            "openedfile.sessionid = "
+            "openedfiles.sessionid = "
             + UString::from_int (session.session_id ()) ;
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 
@@ -291,19 +337,18 @@ SessMgr::load_session (Session &a_session)
 }
 
 void
-SessMgr::load_sessions ()
+SessMgr::load_sessions (Transaction &a_trans)
 {
     THROW_IF_FAIL (m_priv) ;
-    UString query = "select session.id from sessions" ;
+    UString query = "select sessions.id from sessions" ;
 
-    Transaction transaction (*m_priv->connection ()) ;
-    TransactionAutoHelper trans (transaction) ;
+    TransactionAutoHelper trans (a_trans) ;
 
     list<Session> sessions ;
-    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     while (trans.get ().get_connection ().read_next_row ()) {
         gint64 session_id=0 ;
-        transaction.get_connection ().get_column_content (0, session_id) ;
+        trans.get ().get_connection ().get_column_content (0, session_id) ;
         THROW_IF_FAIL (session_id) ;
         sessions.push_back (Session (session_id)) ;
     }
@@ -311,47 +356,60 @@ SessMgr::load_sessions ()
     for (session_iter = sessions.begin ();
          session_iter != sessions.end ();
          ++session_iter) {
-        load_session (*session_iter) ;
+        load_session (*session_iter, default_transaction ()) ;
     }
     m_priv->sessions = sessions ;
     trans.end () ;
 }
 
 void
-SessMgr::delete_session (gint64 a_id)
+SessMgr::load_sessions ()
+{
+    load_sessions (default_transaction ()) ;
+}
+
+void
+SessMgr::delete_session (gint64 a_id,
+                         Transaction &a_trans)
 {
     THROW_IF_FAIL (m_priv) ;
-    Transaction transaction (*m_priv->connection ()) ;
-    TransactionAutoHelper trans (transaction) ;
+    TransactionAutoHelper trans (a_trans) ;
 
     UString query = "delete from attributes where "
                     "sessionid = " + UString::from_int (a_id);
-    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 
     query = "delete from breakpoints where "
             "sessionid = " + UString::from_int (a_id) ;
-    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 
     query = "delete from openedfiles where "
             "sessionid = " + UString::from_int (a_id) ;
-    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 
     query = "delete from sessions where "
             "id = " + UString::from_int (a_id) ;
-    THROW_IF_FAIL (transaction.get_connection ().execute_statement (query)) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 
     trans.end () ;
 }
 
 void
-SessMgr::delete_sessions ()
+SessMgr::delete_sessions (Transaction &a_trans)
 {
     list<Session>::const_iterator iter ;
     for (iter = sessions ().begin ();
          iter != sessions ().end ();
          ++iter) {
-        delete_session (iter->session_id ()) ;
+        delete_session (iter->session_id (),
+                        a_trans) ;
     }
+}
+
+ISessMgrSafePtr
+ISessMgr::create (const UString &a_root_path)
+{
+    return ISessMgrSafePtr (new SessMgr (a_root_path)) ;
 }
 
 }//end namespace nemiver
