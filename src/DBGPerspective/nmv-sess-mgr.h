@@ -126,7 +126,9 @@ public:
     virtual void load_sessions () = 0;
     virtual void delete_session (gint64 a_id,
                                  Transaction &a_trans) = 0;
+    virtual void delete_session (gint64 a_id) = 0;
     virtual void delete_sessions (Transaction &a_trans)  = 0;
+    virtual void delete_sessions () = 0;
     static ISessMgrSafePtr create (const UString &a_root_dir) ;
 };//end class SessMgr
 

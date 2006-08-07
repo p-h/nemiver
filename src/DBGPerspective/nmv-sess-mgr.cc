@@ -67,7 +67,9 @@ public:
     void load_sessions ();
     void delete_session (gint64 a_id,
                          Transaction &a_trans) ;
+    void delete_session (gint64 a_id) ;
     void delete_sessions (Transaction &a_trans) ;
+    void delete_sessions () ;
 };//end class SessMgr
 
 struct SessMgr::Priv {
@@ -395,6 +397,12 @@ SessMgr::delete_session (gint64 a_id,
 }
 
 void
+SessMgr::delete_session (gint64 a_id)
+{
+    delete_session (a_id, default_transaction ()) ;
+}
+
+void
 SessMgr::delete_sessions (Transaction &a_trans)
 {
     list<Session>::const_iterator iter ;
@@ -404,6 +412,12 @@ SessMgr::delete_sessions (Transaction &a_trans)
         delete_session (iter->session_id (),
                         a_trans) ;
     }
+}
+
+void
+SessMgr::delete_sessions ()
+{
+    delete_sessions (default_transaction ()) ;
 }
 
 ISessMgrSafePtr

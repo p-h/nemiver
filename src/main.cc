@@ -42,6 +42,8 @@ using nemiver::ISessMgr ;
 
 static gchar *gv_prog_arg=NULL ;
 static bool gv_list_sessions=false ;
+static bool gv_purge_sessions=false ;
+static int gv_execute_session=0;
 
 static GOptionEntry entries[] =
 {
@@ -60,6 +62,22 @@ static GOptionEntry entries[] =
       &gv_list_sessions,
       "list the saved debugging sessions",
       NULL
+    },
+    { "purgesessions",
+      0,
+      0,
+      G_OPTION_ARG_NONE,
+      &gv_purge_sessions,
+      "erase the saved debugging sessions",
+      NULL
+    },
+    { "executesession",
+      0,
+      0,
+      G_OPTION_ARG_INT,
+      &gv_execute_session,
+      "debug the program that was of session number N",
+      "N"
     },
     {NULL}
 };
@@ -114,6 +132,45 @@ main (int a_argc, char *a_argv[])
         }
     }
 
+    if (gv_purge_sessions) {
+        IDBGPerspective *debug_persp =
+            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+                                                            ("DBGPerspective")) ;
+        if (debug_persp) {
+            debug_persp->session_manager ().delete_sessions () ;
+        }
+        return 0 ;
+    }
+
+    if (gv_execute_session) {
+        IDBGPerspective *debug_persp =
+            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+                                                            ("DBGPerspective")) ;
+        if (debug_persp) {
+            debug_persp->session_manager ().load_sessions () ;
+            list<ISessMgr::Session>::iterator session_iter ;
+            list<ISessMgr::Session>& sessions =
+                            debug_persp->session_manager ().sessions () ;
+            bool found_session=false ;
+            for (session_iter = sessions.begin ();
+                 session_iter != sessions.end ();
+                 ++session_iter) {
+                if (session_iter->session_id () == gv_execute_session) {
+                    debug_persp->execute_session (*session_iter) ;
+                    found_session = true ;
+                }
+            }
+
+            if (!found_session) {
+                cerr << "Could not find session of number "
+                     << gv_execute_session
+                     << "\n";
+                return -1 ;
+            }
+            goto run_app ;
+        }
+    }
+
     if (gv_prog_arg) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
@@ -127,12 +184,14 @@ main (int a_argc, char *a_argv[])
         }
         g_free (gv_prog_arg);
         gv_prog_arg = NULL;
+        goto run_app ;
 
     }
     //********************************
     //</process command line arguments>
     //********************************
 
+run_app:
 
     workbench->get_root_window ().show_all () ;
     main_loop.run (workbench->get_root_window ()) ;
