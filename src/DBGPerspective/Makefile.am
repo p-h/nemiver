@@ -21,7 +21,10 @@ nmv-source-editor.h \
 nmv-run-program-dialog.cc \
 nmv-run-program-dialog.h \
 nmv-sess-mgr.cc \
-nmv-sess-mgr.h
+nmv-sess-mgr.h \
+nmv-proc-mgr.cc \
+nmv-proc-mgr.h
+
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LIBADD= \
