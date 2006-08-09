@@ -23,8 +23,9 @@ nmv-run-program-dialog.h \
 nmv-sess-mgr.cc \
 nmv-sess-mgr.h \
 nmv-proc-mgr.cc \
-nmv-proc-mgr.h
-
+nmv-proc-mgr.h \
+nmv-proc-list-dialog.cc \
+nmv-proc-list-dialog.h
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LIBADD= \

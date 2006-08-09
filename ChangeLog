@@ -1,3 +1,9 @@
+mercredi 9 août 2006, 18:37:32 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-proc-list-dialog.cc,h: started to work on the
+	proc list dialog. Nothing works for now.
+
+
 mercredi 9 août 2006, 15:19:45 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-mgr.cc,h: more work on the libgtop
