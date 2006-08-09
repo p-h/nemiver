@@ -26,6 +26,8 @@
 #ifndef __NMV_PROC_MGR_H__
 #define __NMV_PROC_MGR_H__
 
+#include <sys/types.h>
+#include <pwd.h>
 #include <list>
 #include "nmv-object.h"
 #include "nmv-ustring.h"
@@ -55,25 +57,50 @@ public:
 
     class Process {
         unsigned int m_pid ;
+        unsigned int m_ppid ;
+        unsigned int m_uid ;
+        unsigned int m_euid ;
+        UString m_user_name ;
         list<UString> m_args ;
 
     public:
 
         Process () :
-            m_pid (0)
+            m_pid (0),
+            m_ppid (0),
+            m_uid (0),
+            m_euid (0)
         {}
 
         Process (unsigned int a_pid, const list<UString> a_args) :
             m_pid (a_pid),
+            m_ppid (0),
+            m_uid (0),
+            m_euid (0),
             m_args (a_args)
         {}
 
         Process (unsigned int a_pid) :
-            m_pid (a_pid)
+            m_pid (a_pid),
+            m_ppid (0),
+            m_uid (0),
+            m_euid (0)
         {}
 
         unsigned int pid () const {return m_pid;}
         void pid (unsigned int a_pid) {m_pid = a_pid;}
+
+        unsigned int ppid () const {return m_ppid;}
+        void ppid (unsigned int a_ppid) {m_ppid = a_ppid;}
+
+        unsigned int uid () const {return m_uid;}
+        void uid (unsigned int a_uid) {m_uid = a_uid;}
+
+        unsigned int euid () const {return m_euid;}
+        void euid (unsigned int a_euid) {m_euid = a_euid;}
+
+        const UString& user_name () const {return m_user_name;}
+        void user_name (const UString &a_name) {m_user_name = a_name;}
 
         const list<UString>& args () const {return m_args;}
         list<UString>& args () {return m_args;}

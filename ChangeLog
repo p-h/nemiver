@@ -1,3 +1,8 @@
+mercredi 9 août 2006, 15:19:45 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-proc-mgr.cc,h: more work on the libgtop
+	  wrapper.
+
 mardi 8 août 2006, 22:29:16 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-mgr.cc,h: added this small class to

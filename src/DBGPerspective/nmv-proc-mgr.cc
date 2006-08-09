@@ -25,6 +25,7 @@
 #include <glibtop.h>
 #include <glibtop/proclist.h>
 #include <glibtop/procargs.h>
+#include <glibtop/procuid.h>
 
 #include "nmv-proc-mgr.h"
 
@@ -75,12 +76,18 @@ ProcMgr::get_all_process_list ()
     glibtop_proclist buf_desc={0} ;
     unsigned int *pids=NULL;
     char **argv=NULL ;
+
     m_process_list.clear () ;
 
     try {
+        //get the list of pids
         pids = glibtop_get_proclist (&buf_desc, GLIBTOP_KERN_PROC_ALL, 0)  ;
+
+        //get a couple of info about each pocess
         for (unsigned i=0 ; i < buf_desc.number ; ++i) {
             Process process (pids[i]) ;
+
+            //get the process arguments
             glibtop_proc_args process_args_desc = {0} ;
             argv = glibtop_get_proc_argv (&process_args_desc, pids[i], 30) ;
             char **cur_arg = argv ;
@@ -93,8 +100,23 @@ ProcMgr::get_all_process_list ()
                 g_strfreev (argv) ;
                 argv=NULL ;
             }
+
+            //the the process ppid and uid, euid and user_name.
+            glibtop_proc_uid proc_info={0} ;
+            glibtop_get_proc_uid (&proc_info, process.pid ()) ;
+            process.ppid (proc_info.ppid) ;
+            process.uid (proc_info.uid) ;
+            process.euid (proc_info.uid) ;
+            struct passwd *passwd_info=NULL ;
+            passwd_info = getpwuid (process.uid ()) ;
+            if (passwd_info) {
+                process.user_name (passwd_info->pw_name) ;
+            }
+            //no need to free(passwd_info).
+
             m_process_list.push_back (process) ;
         }
+
     } catch (...) {
     }
     if (pids) {
