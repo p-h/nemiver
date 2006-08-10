@@ -1,3 +1,8 @@
+jeudi 10 août 2006, 17:58:37 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-proc-list-dialog.cc,h:  more work on this.
+	Nothing works yet.
+
 mercredi 9 août 2006, 18:37:32 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-list-dialog.cc,h: started to work on the

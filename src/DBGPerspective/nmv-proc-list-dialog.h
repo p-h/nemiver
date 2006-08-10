@@ -35,15 +35,19 @@ namespace common {
 
 namespace nemiver {
 class ProcListDialog : public Object {
+    struct Priv ;
     //non copyable
     ProcListDialog (const ProcListDialog &) ;
     ProcListDialog& operator= (const ProcListDialog &) ;
 
     ProcListDialog () ;
 
+    SafePtr<Priv> m_priv ;
+
 public:
 
-    ProcListDialog (const UString &a_root_path) ;
+    ProcListDialog (const UString &a_root_path,
+                    IProcMgr &a_proc_mgr) ;
     virtual ~ProcListDialog () {}
 
     gint run () ;
