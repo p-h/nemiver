@@ -5,6 +5,8 @@
         <placeholder name="FileMenuAdditions">
             <menuitem action="ExecuteProgramMenuItemAction"
                       name="ExecuteProgramMenuItem"/>
+            <menuitem action="AttachToProgramMenuItemAction"
+                      name="AttachToProgramMenuItem"/>
             <menuitem action="OpenMenuItemAction" name="OpenMenuItem"/>
             <menuitem action="CloseMenuItemAction" name="CloseMenuItem"/>
         </placeholder>

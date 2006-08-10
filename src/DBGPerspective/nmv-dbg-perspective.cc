@@ -29,6 +29,7 @@
 #include "nmv-ui-utils.h"
 #include "nmv-env.h"
 #include "nmv-run-program-dialog.h"
+#include "nmv-proc-list-dialog.h"
 #include "nmv-ui-utils.h"
 #include "nmv-sess-mgr.h"
 #include "nmv-date-utils.h"
@@ -106,6 +107,7 @@ private:
     void on_open_action () ;
     void on_close_action () ;
     void on_execute_program_action () ;
+    void on_attach_to_program_action () ;
     void on_run_action () ;
     void on_next_action () ;
     void on_step_into_action () ;
@@ -150,6 +152,7 @@ private:
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
     void save_session () ;
     void save_session (ISessMgr::Session &a_session) ;
+    IProcMgr* get_process_manager () ;
 
 public:
 
@@ -192,6 +195,7 @@ public:
     void execute_program (const UString &a_prog,
                           const UString &a_args,
                           const UString &a_cwd=".") ;
+    void attach_to_program () ;
     void run () ;
     void step_over () ;
     void step_into () ;
@@ -475,6 +479,7 @@ struct DBGPerspective::Priv {
     map<int, IDebugger::BreakPoint> breakpoints ;
     ISessMgrSafePtr session_manager ;
     ISessMgr::Session session ;
+    IProcMgrSafePtr process_manager ;
 
     Priv () :
         initialized (false),
@@ -523,6 +528,16 @@ DBGPerspective::on_execute_program_action ()
     NEMIVER_TRY
 
     execute_program () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_attach_to_program_action ()
+{
+    NEMIVER_TRY
+
+    attach_to_program () ;
 
     NEMIVER_CATCH
 }
@@ -881,6 +896,14 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_execute_program_action)
         },
+        {
+            "AttachToProgramMenuItemAction",
+            nil_stock_id,
+            "_Attach ...",
+            "Attach to a running program",
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_attach_to_program_action)
+        }
     };
 
     static ui_utils::ActionEntry s_file_opened_action_entries [] = {
@@ -1283,6 +1306,17 @@ DBGPerspective::save_session ()
     save_session (session) ;
 }
 
+IProcMgr*
+DBGPerspective::get_process_manager ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->process_manager) {
+        m_priv->process_manager = IProcMgr::create () ;
+        THROW_IF_FAIL (m_priv->process_manager) ;
+    }
+    return m_priv->process_manager.get () ;
+}
+
 void
 DBGPerspective::save_session (ISessMgr::Session &a_session)
 {
@@ -1604,6 +1638,16 @@ DBGPerspective::execute_program (const UString &a_prog,
     m_priv->prog_cwd = a_cwd ;
 
     NEMIVER_CATCH
+}
+
+void
+DBGPerspective::attach_to_program ()
+{
+    IProcMgr *process_manager = get_process_manager () ;
+    THROW_IF_FAIL (process_manager) ;
+    ProcListDialog dialog (plugin_path (),
+                           *process_manager);
+    dialog.run () ;
 }
 
 void

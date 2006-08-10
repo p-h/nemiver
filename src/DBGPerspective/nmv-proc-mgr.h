@@ -51,7 +51,7 @@ class IProcMgr : public Object {
     IProcMgr& operator= (const IProcMgr &) ;
 
 protected:
-    IProcMgr () ;
+    IProcMgr () {}
 
 public:
 
@@ -108,7 +108,7 @@ public:
     };//end class Process
 
     virtual ~IProcMgr () {}
-    static IProcMgrSafePtr create_proc_mgr () ;
+    static IProcMgrSafePtr create () ;
 
     virtual list<Process>& get_all_process_list () = 0 ;
 };//end IProcMgr

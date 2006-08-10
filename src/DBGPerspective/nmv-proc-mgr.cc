@@ -22,10 +22,12 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#include <glibtop.h>
+extern "C" {
+#include "glibtop.h"
 #include <glibtop/proclist.h>
 #include <glibtop/procargs.h>
 #include <glibtop/procuid.h>
+}
 
 #include "nmv-proc-mgr.h"
 
@@ -89,7 +91,9 @@ ProcMgr::get_all_process_list ()
 
             //get the process arguments
             glibtop_proc_args process_args_desc = {0} ;
-            argv = glibtop_get_proc_argv (&process_args_desc, pids[i], 30) ;
+            argv = glibtop_get_proc_argv (&process_args_desc,
+                                          pids[i],
+                                          1024) ;
             char **cur_arg = argv ;
             while (*cur_arg) {
                 process.args ().push_back
@@ -127,7 +131,7 @@ ProcMgr::get_all_process_list ()
 }
 
 IProcMgrSafePtr
-IProcMgr::create_proc_mgr ()
+IProcMgr::create ()
 {
     IProcMgrSafePtr result (new ProcMgr) ;
     return result ;

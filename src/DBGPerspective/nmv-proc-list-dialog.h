@@ -48,7 +48,7 @@ public:
 
     ProcListDialog (const UString &a_root_path,
                     IProcMgr &a_proc_mgr) ;
-    virtual ~ProcListDialog () {}
+    virtual ~ProcListDialog () ;
 
     gint run () ;
     bool has_selected_process () ;

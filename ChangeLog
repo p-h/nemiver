@@ -1,3 +1,11 @@
+vendredi 11 août 2006, 00:42:11 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/menus/menus.xml: add a menu item for the attach
+	  to a process dialog.
+	* src/DBGPerspective/nmv-proc-list-dialog.cc,h: went forward on this.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: wired the "attach to
+	  process dialog" so that we can test it.
+
 jeudi 10 août 2006, 17:58:37 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-list-dialog.cc,h:  more work on this.
