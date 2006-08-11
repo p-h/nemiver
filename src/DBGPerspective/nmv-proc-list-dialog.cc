@@ -37,18 +37,21 @@ using namespace nemiver::common ;
 namespace nemiver {
 
 struct Cols : public Gtk::TreeModel::ColumnRecord {
+    Gtk::TreeModelColumn<IProcMgr::Process> process ;
     Gtk::TreeModelColumn<unsigned int> pid ;
     Gtk::TreeModelColumn<Glib::ustring> user_name ;
     Gtk::TreeModelColumn<Glib::ustring> proc_args ;
 
     enum ColsOffset {
-        PID=0,
+        PROCESS=0,
+        PID,
         USER_NAME,
         PROC_ARGS
     };
 
     Cols ()
     {
+        add (process) ;
         add (pid) ;
         add (user_name) ;
         add (proc_args) ;
@@ -69,11 +72,14 @@ struct ProcListDialog::Priv {
     SafePtr<Gtk::Dialog> dialog ;
     Gtk::TreeView *proclist_view ;
     Glib::RefPtr<Gtk::ListStore> proclist_store ;
+    IProcMgr::Process selected_process ;
+    bool process_selected ;
 
     Priv (const UString &a_root_path,
           IProcMgr &a_proc_mgr) :
         proc_mgr (a_proc_mgr),
-        root_path (a_root_path)
+        root_path (a_root_path),
+        process_selected (false)
     {
         init () ;
     }
@@ -100,6 +106,19 @@ struct ProcListDialog::Priv {
         init_widget () ;
     }
 
+    void on_selection_changed_signal ()
+    {
+        vector<Gtk::TreeModel::Path> paths =
+           proclist_view->get_selection ()->get_selected_rows () ;
+
+        if (paths.empty ()) {return;}
+
+        Gtk::TreeModel::iterator row_it = proclist_store->get_iter (paths[0]) ;
+        if (row_it == proclist_store->children ().end ()) {return;}
+        selected_process = (*row_it)[columns ().process] ;
+        process_selected = true ;
+    }
+
     void init_widget ()
     {
         dialog->hide () ;
@@ -109,21 +128,21 @@ struct ProcListDialog::Priv {
         proclist_view->set_model (proclist_store) ;
 
         proclist_view->append_column ("PID", columns ().pid) ;
-        Gtk::TreeViewColumn *col = proclist_view->get_column (Cols::PID) ;
+        Gtk::TreeViewColumn *col = proclist_view->get_column (0) ;
         THROW_IF_FAIL (col) ;
         col->set_clickable (true) ;
         col->set_resizable (true) ;
         col->set_sort_column_id (columns ().pid) ;
 
         proclist_view->append_column ("User Name", columns ().user_name) ;
-        col = proclist_view->get_column (Cols::USER_NAME) ;
+        col = proclist_view->get_column (1) ;
         THROW_IF_FAIL (col) ;
         col->set_clickable (true) ;
         col->set_resizable (true) ;
         col->set_sort_column_id (columns ().user_name) ;
 
         proclist_view->append_column ("Proc Args", columns ().proc_args) ;
-        col = proclist_view->get_column (Cols::PROC_ARGS) ;
+        col = proclist_view->get_column (2) ;
         THROW_IF_FAIL (col) ;
         col->set_clickable (true) ;
         col->set_resizable (true) ;
@@ -131,10 +150,15 @@ struct ProcListDialog::Priv {
 
         proclist_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
         col = proclist_view->get_column (Cols::PID) ;
+
+        proclist_view->get_selection ()->signal_changed ().connect
+                                                        (sigc::mem_fun (*this,
+                                                         &Priv::on_selection_changed_signal)) ;
     }
 
     void load_process_list ()
     {
+        process_selected = false ;
         Gtk::TreeModel::iterator store_it ;
         list<IProcMgr::Process> process_list = proc_mgr.get_all_process_list ();
         list<IProcMgr::Process>::iterator process_iter;
@@ -157,6 +181,7 @@ struct ProcListDialog::Priv {
                 args_str += *str_iter + " " ;
             }
             (*store_it)[columns ().proc_args] = args_str ;
+            (*store_it)[columns ().process] = *process_iter;
         }
     }
 };//end ProcListDialog
@@ -182,13 +207,15 @@ ProcListDialog::run ()
 bool
 ProcListDialog::has_selected_process ()
 {
-    return false ;
+    return m_priv->process_selected;
 }
 
 bool
 ProcListDialog::get_selected_process (IProcMgr::Process &a_proc)
 {
-    return false ;
+    if (!m_priv->process_selected) {return false;}
+    a_proc = m_priv->selected_process ;
+    return true;
 }
 
 }//end namespace nemiver

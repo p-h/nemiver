@@ -523,6 +523,8 @@ public:
                  const vector<UString> &a_source_search_dirs,
                  bool a_run_event_loops=false) = 0;
 
+    virtual void attach_to_program (unsigned int a_pid) = 0;
+
     virtual void do_continue (bool a_run_event_loops=false) = 0;
 
     virtual void run (bool a_run_event_loops=false) = 0 ;

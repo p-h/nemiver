@@ -1,3 +1,10 @@
+vendredi 11 août 2006, 18:39:06 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: provide the 'attach to
+	  process' at this level.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: wire the 'attach to process'
+	  functionality so that I can debug it. Okay, it highly broken today ...
+
 vendredi 11 août 2006, 00:42:11 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/menus/menus.xml: add a menu item for the attach

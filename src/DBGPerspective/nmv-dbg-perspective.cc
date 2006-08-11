@@ -196,6 +196,7 @@ public:
                           const UString &a_args,
                           const UString &a_cwd=".") ;
     void attach_to_program () ;
+    void attach_to_program (unsigned int a_pid) ;
     void run () ;
     void step_over () ;
     void step_into () ;
@@ -1647,7 +1648,23 @@ DBGPerspective::attach_to_program ()
     THROW_IF_FAIL (process_manager) ;
     ProcListDialog dialog (plugin_path (),
                            *process_manager);
-    dialog.run () ;
+    int result = dialog.run () ;
+    if (result != Gtk::RESPONSE_OK) {
+        return;
+    }
+    if (!dialog.has_selected_process ()) {
+        LOG ("no process has been selected") ;
+    } else {
+        IProcMgr::Process process ;
+        THROW_IF_FAIL (dialog.get_selected_process (process));
+        attach_to_program (process.pid ()) ;
+    }
+}
+
+void
+DBGPerspective::attach_to_program (unsigned int a_pid)
+{
+    debugger ()->attach_to_program (a_pid) ;
 }
 
 void

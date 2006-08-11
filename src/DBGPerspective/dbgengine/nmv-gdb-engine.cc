@@ -77,6 +77,7 @@ public:
     void load_program (const vector<UString> &a_argv,
                        const vector<UString> &a_source_search_dirs,
                        bool a_run_event_loops) ;
+    void attach_to_program (unsigned int a_pid) ;
     void do_continue (bool a_run_event_loops) ;
     void run (bool a_run_event_loops)  ;
     void step_in (bool a_run_event_loops) ;
@@ -401,7 +402,9 @@ struct GDBEngine::Priv {
                  ++i) {
                 args.get ()[i] =
                             const_cast<char*> (a_args[i].c_str ());
+                LOG ("args["<< (int)i << "]=" << args.get ()[i]) ;
             }
+
             execvp (args.get ()[0], args.get ()) ;
             exit (-1) ;
         } else if (pid > 0) {
@@ -470,7 +473,8 @@ struct GDBEngine::Priv {
     }
 
     bool launch_gdb (const vector<UString> &a_prog_args,
-                     const vector<UString> &a_source_search_dirs)
+                     const vector<UString> &a_source_search_dirs,
+                     const UString a_gdb_options="")
     {
         if (is_gdb_running ()) {
             kill_gdb () ;
@@ -478,7 +482,12 @@ struct GDBEngine::Priv {
         argv.clear () ;
         argv.push_back (env::get_gdb_program ()) ;
         argv.push_back ("--interpreter=mi2") ;
-        argv.push_back (a_prog_args[0]) ;
+        if (a_gdb_options != "") {
+            argv.push_back (a_gdb_options) ;
+        }
+        if (!a_prog_args.empty ()) {
+            argv.push_back (a_prog_args[0]) ;
+        }
 
 
         source_search_dirs = a_source_search_dirs;
@@ -528,13 +537,15 @@ struct GDBEngine::Priv {
              gdb_stdout_channel,
              get_event_loop_context ()) ;
 
-        UString args ;
-        for (vector<UString>::size_type i=1; i < a_prog_args.size () ; ++i) {
-            args += a_prog_args[i] + " " ;
-        }
+        if (!a_prog_args.empty ()) {
+            UString args ;
+            for (vector<UString>::size_type i=1; i < a_prog_args.size () ; ++i) {
+                args += a_prog_args[i] + " " ;
+            }
 
-        if (args != "") {
-            return issue_command (Command ("set args " + args)) ;
+            if (args != "") {
+                return issue_command (Command ("set args " + args)) ;
+            }
         }
         return true ;
     }
@@ -562,59 +573,68 @@ struct GDBEngine::Priv {
 
     bool on_gdb_master_pty_has_data_signal (Glib::IOCondition a_cond)
     {
-        THROW_IF_FAIL (gdb_master_pty_channel) ;
-        if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
-            char buf[513] = {0} ;
-            gsize nb_read (0), CHUNK_SIZE(512) ;
-            Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
-            bool got_data (false) ;
-            while (true) {
-                status = gdb_master_pty_channel->read (buf,
-                                                       CHUNK_SIZE,
-                                                       nb_read) ;
-                if (status == Glib::IO_STATUS_NORMAL
-                        && nb_read && (nb_read <= CHUNK_SIZE)) {
-                    if (gdb_master_pty_buffer_status == FILLED) {
-                        gdb_master_pty_buffer.clear () ;
-                        gdb_master_pty_buffer_status = FILLING ;
+        LOG ("here") ;
+        try {
+
+            RETURN_VAL_IF_FAIL (gdb_master_pty_channel, false) ;
+            if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
+                char buf[513] = {0} ;
+                gsize nb_read (0), CHUNK_SIZE(512) ;
+                Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
+                bool got_data (false) ;
+                while (true) {
+                    status = gdb_master_pty_channel->read (buf,
+                            CHUNK_SIZE,
+                            nb_read) ;
+                    if (status == Glib::IO_STATUS_NORMAL
+                            && nb_read && (nb_read <= CHUNK_SIZE)) {
+                        if (gdb_master_pty_buffer_status == FILLED) {
+                            gdb_master_pty_buffer.clear () ;
+                            gdb_master_pty_buffer_status = FILLING ;
+                        }
+                        std::string raw_str(buf, nb_read) ;
+                        UString tmp = Glib::locale_to_utf8 (raw_str) ;
+                        gdb_master_pty_buffer.append (tmp) ;
+                        UString::size_type len = gdb_master_pty_buffer.size () ;
+                        if (gdb_stdout_buffer[len - 1] == '\n'
+                                && gdb_master_pty_buffer[len - 2] == ' '
+                                && gdb_master_pty_buffer[len - 3] == ')'
+                                && gdb_master_pty_buffer[len - 4] == 'b'
+                                && gdb_master_pty_buffer[len - 5] == 'd'
+                                && gdb_master_pty_buffer[len - 6] == 'g'
+                                && gdb_master_pty_buffer[len - 7] == '(') {
+                            got_data = true ;
+                        }
+                    } else {
+                        break ;
                     }
-                    std::string raw_str(buf, nb_read) ;
-                    UString tmp = Glib::locale_to_utf8 (raw_str) ;
-                    gdb_master_pty_buffer.append (tmp) ;
-                    UString::size_type len = gdb_master_pty_buffer.size () ;
-                    if (gdb_stdout_buffer[len - 1] == '\n'
-                        && gdb_master_pty_buffer[len - 2] == ' '
-                        && gdb_master_pty_buffer[len - 3] == ')'
-                        && gdb_master_pty_buffer[len - 4] == 'b'
-                        && gdb_master_pty_buffer[len - 5] == 'd'
-                        && gdb_master_pty_buffer[len - 6] == 'g'
-                        && gdb_master_pty_buffer[len - 7] == '(') {
-                        got_data = true ;
-                    }
-                } else {
-                    break ;
+                    nb_read = 0 ;
                 }
-                nb_read = 0 ;
+                if (got_data) {
+                    gdb_master_pty_buffer_status = FILLED ;
+                    gdb_master_pty_signal.emit (gdb_master_pty_buffer) ;
+                    gdb_master_pty_buffer.clear () ;
+                }
             }
-            if (got_data) {
-                gdb_master_pty_buffer_status = FILLED ;
-                gdb_master_pty_signal.emit (gdb_master_pty_buffer) ;
-                gdb_master_pty_buffer.clear () ;
+            if (a_cond & Glib::IO_HUP) {
+                LOG_ERROR ("Connection lost") ;
+                gdb_master_pty_channel.clear () ;
+                kill_gdb () ;
+                gdb_died_signal.emit () ;
             }
-        }
-        if (a_cond & Glib::IO_HUP) {
-            LOG_ERROR ("Connection lost") ;
-            kill_gdb () ;
-            gdb_died_signal.emit () ;
-        }
-        if (a_cond & Glib::IO_ERR) {
-            LOG_ERROR ("Error over the wire") ;
+            if (a_cond & Glib::IO_ERR) {
+                LOG_ERROR ("Error over the wire") ;
+            }
+        } catch (exception &e) {
+        } catch (Glib::Error &e) {
         }
         return true ;
     }
 
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
     {
+        LOG ("here") ;
+        RETURN_VAL_IF_FAIL (gdb_stdout_channel, false) ;
         try {
             if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
                 gsize nb_read (0), CHUNK_SIZE(512) ;
@@ -632,6 +652,7 @@ struct GDBEngine::Priv {
                         }
                         std::string raw_str(buf, nb_read) ;
                         UString tmp = Glib::locale_to_utf8 (raw_str) ;
+                        LOG ("got buffer: " << tmp) ;
                         gdb_stdout_buffer.append (tmp) ;
                         UString::size_type len = gdb_stdout_buffer.size (), i=0 ;
 
@@ -642,6 +663,7 @@ struct GDBEngine::Priv {
                         LOG ("'" << (char) gdb_stdout_buffer[len-i-3] << "'") ;
                         LOG ("'" << (char) gdb_stdout_buffer[len-i-4] << "'") ;
                         LOG ("'" << (char) gdb_stdout_buffer[len-i-5] << "'") ;
+
 
                         if (gdb_stdout_buffer[len-i-1] == ')'
                             && gdb_stdout_buffer[len-i-2] == 'b'
@@ -658,15 +680,16 @@ struct GDBEngine::Priv {
                 }
                 if (got_data) {
                     gdb_stdout_buffer_status = FILLED ;
-                    LOG ("emited") ;
                     gdb_stdout_signal.emit (gdb_stdout_buffer) ;
                     gdb_stdout_buffer.clear () ;
                 }
             }
             if (a_cond & Glib::IO_HUP) {
                 LOG_ERROR ("Connection lost") ;
+                gdb_stdout_channel.clear () ;
                 kill_gdb () ;
                 gdb_died_signal.emit () ;
+                LOG_ERROR ("GDB killed") ;
             }
             if (a_cond & Glib::IO_ERR) {
                 LOG_ERROR ("Error over the wire") ;
@@ -681,45 +704,55 @@ struct GDBEngine::Priv {
             LOG_ERROR ("got an unknown exception") ;
             return false ;
         }
+
         return true ;
     }
 
     bool on_gdb_stderr_has_data_signal (Glib::IOCondition a_cond)
     {
+        LOG ("here") ;
+        RETURN_VAL_IF_FAIL (gdb_stderr_channel, false) ;
+        try {
 
-        if (a_cond & Glib::IO_IN || a_cond & Glib::IO_PRI) {
-            char buf[513] = {0} ;
-            gsize nb_read (0), CHUNK_SIZE(512) ;
-            Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
-            bool got_data (false) ;
-            while (true) {
-                status = gdb_stderr_channel->read (buf,
-                                                   CHUNK_SIZE,
-                                                   nb_read) ;
-                if (status == Glib::IO_STATUS_NORMAL
-                        && nb_read && (nb_read <= CHUNK_SIZE)) {
-                    if (error_buffer_status == FILLED) {
-                        gdb_stderr_buffer.clear () ;
-                        error_buffer_status = FILLING ;
+            if (a_cond & Glib::IO_IN || a_cond & Glib::IO_PRI) {
+                char buf[513] = {0} ;
+                gsize nb_read (0), CHUNK_SIZE(512) ;
+                Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
+                bool got_data (false) ;
+                while (true) {
+                    status = gdb_stderr_channel->read (buf,
+                            CHUNK_SIZE,
+                            nb_read) ;
+                    if (status == Glib::IO_STATUS_NORMAL
+                            && nb_read && (nb_read <= CHUNK_SIZE)) {
+                        if (error_buffer_status == FILLED) {
+                            gdb_stderr_buffer.clear () ;
+                            error_buffer_status = FILLING ;
+                        }
+                        std::string raw_str(buf, nb_read) ;
+                        UString tmp = Glib::locale_to_utf8 (raw_str) ;
+                        gdb_stderr_buffer.append (tmp) ;
+                        got_data = true ;
+
+                    } else {
+                        break ;
                     }
-                    std::string raw_str(buf, nb_read) ;
-                    UString tmp = Glib::locale_to_utf8 (raw_str) ;
-                    gdb_stdout_buffer.append (tmp) ;
-                    got_data = true ;
-
-                } else {
-                    break ;
+                    nb_read = 0 ;
                 }
-                nb_read = 0 ;
+                if (got_data) {
+                    error_buffer_status = FILLED ;
+                    gdb_stderr_signal.emit (gdb_stderr_buffer) ;
+                    gdb_stderr_buffer.clear () ;
+                }
             }
-            if (got_data) {
-                error_buffer_status = FILLED ;
-                gdb_stderr_signal.emit (gdb_stderr_buffer) ;
-                gdb_stderr_buffer.clear () ;
+
+            if (a_cond & Glib::IO_HUP) {
+                gdb_stderr_channel.clear () ;
+                kill_gdb () ;
+                gdb_died_signal.emit () ;
             }
-        } else if (a_cond & Glib::IO_HUP) {
-            kill_gdb () ;
-            gdb_died_signal.emit () ;
+        } catch (exception e) {
+        } catch (Glib::Error &e) {
         }
         return true ;
     }
@@ -1547,8 +1580,24 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         command.value ("set args " + args) ;
         queue_command (command) ;
     }
+}
 
-    return ;
+void
+GDBEngine::attach_to_program (unsigned int a_pid)
+{
+    THROW_IF_FAIL (m_priv) ;
+    vector<UString> args, source_search_dirs ;
+
+    if (!m_priv->is_gdb_running ()) {
+        THROW_IF_FAIL (m_priv->launch_gdb (args, source_search_dirs, "--pid " + UString::from_int (a_pid))) ;
+
+        IDebugger::Command command ;
+
+        command.value ("set breakpoint pending auto") ;
+        queue_command (command) ;
+    } else {
+        queue_command (Command ("-target-attach " + UString::from_int (a_pid))) ;
+    }
 }
 
 void
