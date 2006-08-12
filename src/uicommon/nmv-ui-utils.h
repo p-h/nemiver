@@ -31,9 +31,6 @@
 #include "nmv-ustring.h"
 #include "nmv-api-macros.h"
 
-#ifndef NEMIVER_TRY
-#define NEMIVER_TRY try {
-#endif
 
 #ifndef NEMIVER_CATCH
 #define NEMIVER_CATCH \

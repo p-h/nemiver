@@ -111,6 +111,35 @@ get_widget_from_glade (const UString &a_glade_file_name,
     return get_widget_from_glade<T> (a_glade, a_widget_name) ;
 }
 
+#ifndef NEMIVER_TRY
+#define NEMIVER_TRY try {
+#endif
+
+#ifndef NEMIVER_CATCH_NOX
+#define NEMIVER_CATCH_NOX \
+} catch (Glib::Exception &e) { \
+    LOG_ERROR (e.what ()) ; \
+} catch (std::exception &e) { \
+    LOG_ERROR (e.what ()) ; \
+} catch (...) { \
+    LOG_ERROR ("An unknown error occured") ; \
+}
+#endif
+
+#ifndef NEMIVER_CATCH_AND_RETURN_NOX
+#define NEMIVER_CATCH_AND_RETURN_NOX(a_value) \
+} catch (Glib::Exception &e) { \
+    LOG_ERROR (e.what ()) ; \
+    return a_value ; \
+} catch (std::exception &e) { \
+    LOG_ERROR (e.what ()) ; \
+    return a_value ; \
+} catch (...) { \
+    LOG_ERROR ("An unknown error occured") ; \
+    return a_value ; \
+}
+#endif
+
 }//end namespace env
 }//end namespace common
 }//end namespace nemiver

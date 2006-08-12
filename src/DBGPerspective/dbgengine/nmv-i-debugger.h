@@ -505,7 +505,49 @@ public:
     virtual sigc::signal<void, CommandAndOutput&>& stdout_signal () const = 0;
     virtual sigc::signal<void>& engine_died_signal () const = 0 ;
 
+    virtual sigc::signal<void,
+                         const UString&,
+                         IDebugger::CommandAndOutput&>&
+                             console_message_signal () const = 0 ;
+
+    virtual sigc::signal<void,
+                         const UString&,
+                         IDebugger::CommandAndOutput&>&
+                             target_output_message_signal () const = 0 ;
+
+    virtual sigc::signal<void,
+                         const UString&,
+                         IDebugger::CommandAndOutput&>&
+                             error_message_signal () const = 0 ;
+
+    virtual sigc::signal<void,
+                         const UString&,
+                         IDebugger::CommandAndOutput&>&
+                             command_done_signal () const = 0;
+
+    virtual sigc::signal<void,
+                         const IDebugger::BreakPoint&,
+                         int,
+                         IDebugger::CommandAndOutput&>&
+                             breakpoint_deleted_signal () const  = 0;
+
+    virtual sigc::signal<void,
+                         const map<int, IDebugger::BreakPoint>&,
+                         IDebugger::CommandAndOutput&>&
+                             breakpoints_set_signal () const = 0;
+
+    virtual sigc::signal<void,
+                         const IDebugger::Frame&,
+                         IDebugger::CommandAndOutput&>&
+                             stopped_signal () const = 0;
+
+    virtual sigc::signal<void,
+                         IDebugger::CommandAndOutput&>&
+                                         running_signal () const = 0;
+
     /// @}
+
+    virtual map<UString, UString>& properties () = 0;
 
     virtual void set_event_loop_context
                         (const Glib::RefPtr<Glib::MainContext> &) = 0 ;

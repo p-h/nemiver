@@ -1,3 +1,19 @@
+samedi 12 août 2006, 19:53:35 (UTC+0200) Dodji Seketeli
+
+	* src/workbench/nmv-workbench.cc, nmw-i-workbenc.h: added
+	  IWorkbenc::get_properties().
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	  added a bunch of rather precise signals to reflect the state of the
+	  debugger. This is a big step in direction of IDebugger api that
+	  does not adhere to anything gdb specific. This will also hopefully
+	  help to simplify the client code.
+	  Did a bit of cleanup too.  Also make the "attach to process"
+	  thing work.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: started to wire the
+	  this to the new IDebugger signals, to simplify this code. There
+	  should not be any knowledge of gdb/mi in this class.
+
+
 vendredi 11 août 2006, 18:39:06 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: provide the 'attach to

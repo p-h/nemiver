@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 
+#include <algorithm>
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #include "nmv-dbg-perspective.h"
@@ -125,6 +126,30 @@ private:
                                            int a_dont_know) ;
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
     void on_shutdown_signal () ;
+
+    void on_debugger_console_message_signal (const UString &a_msg,
+                                             IDebugger::CommandAndOutput &) ;
+
+    void on_debugger_target_output_message_signal (const UString &a_msg,
+                                                   IDebugger::CommandAndOutput &);
+    void on_debugger_error_message_signal (const UString &a_msg,
+                                           IDebugger::CommandAndOutput &) ;
+
+    void on_debugger_command_done_signal (const UString &a_command,
+                                          IDebugger::CommandAndOutput &) ;
+
+    void on_debugger_breakpoints_set_signal
+                                (const map<int, IDebugger::BreakPoint> &,
+                                 IDebugger::CommandAndOutput &) ;
+
+    void on_debugger_breakpoint_deleted_signal (const IDebugger::BreakPoint&,
+                                                int,
+                                                IDebugger::CommandAndOutput&) ;
+
+    void on_debugger_stopped_signal (const IDebugger::Frame&,
+                                     IDebugger::CommandAndOutput&) ;
+
+    void on_debugger_running_signal (IDebugger::CommandAndOutput&) ;
     //************
     //</signal slots>
     //************
@@ -140,6 +165,7 @@ private:
     void init_toolbar () ;
     void init_body () ;
     void init_signals () ;
+    void init_debugger_signals () ;
     void init_debugger_output_handlers () ;
     void append_source_editor (SourceEditor &a_sv,
                                const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
@@ -364,7 +390,6 @@ struct OnBreakPointHandler: OutputHandler {
 
         //if breakpoint where set, put them in cache !
         if (has_breakpoints_set (a_in)) {
-            LOG ("breakpoint set detected") ;
             append_breakpoints_to_list
                 (a_in.output ().result_record ().breakpoints ()) ;
         }
@@ -374,18 +399,13 @@ struct OnBreakPointHandler: OutputHandler {
                == IDebugger::Output::ResultRecord::DONE
             && a_in.command ().value ().find ("-break-delete")
                 != Glib::ustring::npos) {
-            LOG ("-break-delete command issued detected") ;
-            LOG ("command was: " << a_in.command ().value ()) ;
             UString tmp = a_in.command ().value () ;
             tmp = tmp.erase (0, 13) ;
             if (tmp.size () == 0) {return ;}
             tmp.chomp () ;
-            LOG ("bkpoint number as str: '" << tmp << "'") ;
             int bkpt_number = atoi (tmp.c_str ()) ;
-            LOG ("bkpoint number as int: " << bkpt_number) ;
             if (bkpt_number) {
                 m_dbg_perspective->delete_visual_breakpoint (bkpt_number) ;
-                LOG ("visual breakpoint deleted: " << (int)bkpt_number) ;
             }
         }
     }
@@ -717,6 +737,86 @@ DBGPerspective::on_shutdown_signal ()
     NEMIVER_CATCH
 }
 
+void
+DBGPerspective::on_debugger_console_message_signal (const UString &a_msg,
+                                                    IDebugger::CommandAndOutput &)
+{
+    NEMIVER_TRY
+
+    add_text_to_command_view (a_msg + "\n") ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_target_output_message_signal
+                                            (const UString &a_msg,
+                                             IDebugger::CommandAndOutput &)
+{
+    NEMIVER_TRY
+
+    add_text_to_program_output_view (a_msg + "\n") ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_error_message_signal (const UString &a_msg,
+                                                  IDebugger::CommandAndOutput &)
+{
+    NEMIVER_TRY
+
+    add_text_to_error_view (a_msg + "\n") ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
+                                                 IDebugger::CommandAndOutput &)
+{
+    NEMIVER_TRY
+    LOG ("here") ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_breakpoints_set_signal
+                                    (const map<int, IDebugger::BreakPoint> &,
+                                     IDebugger::CommandAndOutput &)
+{
+    NEMIVER_TRY
+    LOG ("here") ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_stopped_signal (const IDebugger::Frame&,
+                                            IDebugger::CommandAndOutput&)
+{
+    NEMIVER_TRY
+    LOG ("here") ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_breakpoint_deleted_signal
+                                            (const IDebugger::BreakPoint&,
+                                             int,
+                                             IDebugger::CommandAndOutput&)
+{
+    NEMIVER_TRY
+    LOG ("here") ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_running_signal (IDebugger::CommandAndOutput &a_in)
+{
+    NEMIVER_TRY
+    LOG ("here") ;
+    NEMIVER_CATCH
+}
 
 //****************************
 //</slots>
@@ -1079,6 +1179,34 @@ DBGPerspective::init_signals ()
 }
 
 void
+DBGPerspective::init_debugger_signals ()
+{
+    debugger ()->console_message_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_console_message_signal)) ;
+
+    debugger ()->target_output_message_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_target_output_message_signal)) ;
+
+    debugger ()->error_message_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_error_message_signal)) ;
+
+    debugger ()->command_done_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_command_done_signal)) ;
+
+    debugger ()->breakpoints_set_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_breakpoints_set_signal)) ;
+
+    debugger ()->breakpoint_deleted_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_breakpoint_deleted_signal)) ;
+
+    debugger ()->stopped_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_stopped_signal)) ;
+
+    debugger ()->running_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_running_signal)) ;
+}
+
+void
 DBGPerspective::init_debugger_output_handlers ()
 {
     m_priv->output_handlers.push_back
@@ -1095,8 +1223,6 @@ void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                       const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri)
 {
-    LOG ("a_uri: '"  << a_uri->get_path () << "'") ;
-
     if (!a_uri) {return;}
 
     if (m_priv->uri_2_pagenum_map.find (a_uri->get_path ())
@@ -1392,6 +1518,7 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     init_body () ;
     init_signals () ;
     init_debugger_output_handlers () ;
+    init_debugger_signals () ;
     m_priv->initialized = true ;
     session_manager ().load_sessions (session_manager ().default_transaction ());
     m_priv->workbench->shutting_down_signal ().connect (sigc::mem_fun
@@ -1540,8 +1667,6 @@ DBGPerspective::close_current_file ()
 void
 DBGPerspective::close_file (const UString &a_uri)
 {
-    LOG (a_uri) ;
-
     map<UString, int>::const_iterator nil, iter ;
     nil = m_priv->uri_2_pagenum_map.end () ;
     iter = m_priv->uri_2_pagenum_map.find (a_uri) ;
@@ -1581,7 +1706,6 @@ DBGPerspective::execute_program ()
 
     int result = dialog.run () ;
     if (result != Gtk::RESPONSE_OK) {
-        LOG ("user asked to cancel") ;
         return;
     }
 
@@ -1616,10 +1740,8 @@ DBGPerspective::execute_program (const UString &a_prog,
 {
     NEMIVER_TRY
 
-    LOG ("a_prog: " << a_prog
-         << " a_args: " << a_args
-         << " a_cwd: " << a_cwd) ;
-
+    m_priv->debugger->properties ().operator=
+                                    (m_priv->workbench->get_properties ()) ;
     IDebuggerSafePtr dbg_engine = debugger () ;
     THROW_IF_FAIL (dbg_engine) ;
     vector<UString> args = a_args.split (" ") ;
@@ -1652,9 +1774,7 @@ DBGPerspective::attach_to_program ()
     if (result != Gtk::RESPONSE_OK) {
         return;
     }
-    if (!dialog.has_selected_process ()) {
-        LOG ("no process has been selected") ;
-    } else {
+    if (dialog.has_selected_process ()) {
         IProcMgr::Process process ;
         THROW_IF_FAIL (dialog.get_selected_process (process));
         attach_to_program (process.pid ()) ;
@@ -1776,7 +1896,7 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
     map<int, IDebugger::BreakPoint>::iterator iter =
         m_priv->breakpoints.find (a_breakpoint_num) ;
     if (iter == m_priv->breakpoints.end ()) {
-        LOG ("breakpoint " << (int) a_breakpoint_num << " not found") ;
+        LOG_ERROR ("breakpoint " << (int) a_breakpoint_num << " not found") ;
         return false ;
     }
     debugger ()->delete_breakpoint (a_breakpoint_num) ;
@@ -1787,7 +1907,6 @@ void
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum)
 {
-    LOG ("file_name: " << a_file_name << "\nlinenum: " << (int)a_linenum) ;
     if (a_linenum < 0) {a_linenum = 0;}
 
     SourceEditor *source_editor = get_source_editor_from_uri (a_file_name) ;
@@ -1802,8 +1921,6 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
 void
 DBGPerspective::delete_visual_breakpoint (const UString &a_file_name, int a_linenum)
 {
-    LOG ("filename: " << a_file_name << "\nlinenum: " << (int)a_linenum) ;
-
     SourceEditor *source_editor = get_source_editor_from_uri (a_file_name) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (a_linenum) ;
@@ -1815,14 +1932,13 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
     map<int, IDebugger::BreakPoint>::iterator iter =
         m_priv->breakpoints.find (a_breakpoint_num) ;
     if (iter == m_priv->breakpoints.end ()) {
-        LOG ("breakpoint " << (int) a_breakpoint_num << " not found") ;
+        LOG_ERROR ("breakpoint " << (int) a_breakpoint_num << " not found") ;
         return ;
     }
 
     SourceEditor *source_editor =
         get_source_editor_from_uri (iter->second.full_file_name ()) ;
     THROW_IF_FAIL (source_editor) ;
-    LOG ("removing visual bkpt marker from line: " << (int) iter->second.line ()) ;
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
     m_priv->breakpoints.erase (iter);
 }

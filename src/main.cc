@@ -44,6 +44,7 @@ static gchar *gv_prog_arg=NULL ;
 static bool gv_list_sessions=false ;
 static bool gv_purge_sessions=false ;
 static int gv_execute_session=0;
+static bool gv_log_debugger_output=false ;
 
 static GOptionEntry entries[] =
 {
@@ -79,6 +80,14 @@ static GOptionEntry entries[] =
       "debug the program that was of session number N",
       "N"
     },
+    { "logdebuggeroutput",
+      0,
+      0,
+      G_OPTION_ARG_NONE,
+      &gv_log_debugger_output,
+      "log the debugger output",
+      NULL
+    },
     {NULL}
 };
 
@@ -107,6 +116,9 @@ main (int a_argc, char *a_argv[])
     //********************************
     //<process command line arguments>
     //********************************
+    if (gv_log_debugger_output) {
+        workbench->get_properties ()["log-debugger-output"] = "yes" ;
+    }
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
@@ -196,7 +208,7 @@ run_app:
     workbench->get_root_window ().show_all () ;
     main_loop.run (workbench->get_root_window ()) ;
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH_NOX
 
     return 0 ;
 }

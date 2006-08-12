@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <memory>
 #include <fstream>
+#include <iostream>
 #include "nmv-i-debugger.h"
 #include "nmv-env.h"
 #include "nmv-exception.h"
@@ -64,11 +65,66 @@ public:
     void get_info (Info &a_info) const ;
     void do_init () ;
 
+    //*************
+    //<signals>
+    //*************
     sigc::signal<void, Output&>& pty_signal () const ;
+
     sigc::signal<void, CommandAndOutput&>& stdout_signal () const ;
+
     sigc::signal<void, Output&>& stderr_signal () const ;
+
     sigc::signal<void>& engine_died_signal () const ;
 
+    sigc::signal<void,
+                 const UString&,
+                 IDebugger::CommandAndOutput&>&
+                     console_message_signal () const ;
+
+    sigc::signal<void,
+                 const UString&,
+                 IDebugger::CommandAndOutput&>&
+                             target_output_message_signal () const ;
+
+    sigc::signal<void,
+                 const UString&,
+                 IDebugger::CommandAndOutput&>&
+                             error_message_signal () const ;
+
+    sigc::signal<void,
+                 const UString&,
+                 IDebugger::CommandAndOutput&>& command_done_signal () const ;
+
+    sigc::signal<void,
+                 const map<int, IDebugger::BreakPoint>&,
+                 IDebugger::CommandAndOutput&>& breakpoints_set_signal () const ;
+
+    sigc::signal<void,
+                 const IDebugger::BreakPoint&,
+                 int,
+                 IDebugger::CommandAndOutput&>& breakpoint_deleted_signal () const ;
+
+
+    sigc::signal<void,
+                 const IDebugger::Frame&,
+                 IDebugger::CommandAndOutput&>& stopped_signal () const ;
+
+    sigc::signal<void, IDebugger::CommandAndOutput&>& running_signal () const ;
+    //*************
+    //</signals>
+    //*************
+
+    //***************
+    //<signal handlers>
+    //***************
+
+    void on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao) ;
+    //***************
+    //</signal handlers>
+    //***************
+
+    void init () ;
+    map<UString, UString>& properties () ;
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
     void execute_command (const Command &a_command) ;
@@ -78,6 +134,8 @@ public:
                        const vector<UString> &a_source_search_dirs,
                        bool a_run_event_loops) ;
     void attach_to_program (unsigned int a_pid) ;
+    void init_output_handlers () ;
+    void append_breakpoints_to_cache (const map<int, IDebugger::BreakPoint>&) ;
     void do_continue (bool a_run_event_loops) ;
     void run (bool a_run_event_loops)  ;
     void step_in (bool a_run_event_loops) ;
@@ -90,7 +148,7 @@ public:
                          gint a_line_num,
                          bool a_run_event_loops)  ;
     void list_breakpoints (bool a_run_event_loops) ;
-    const map<int, BreakPoint>& get_cached_breakpoints () ;
+    map<int, BreakPoint>& get_cached_breakpoints () ;
     void set_breakpoint (const UString &a_func_name,
                          bool a_run_event_loops)  ;
     void enable_breakpoint (const UString &a_path,
@@ -104,8 +162,25 @@ public:
                             bool a_run_event_loops) ;
     void delete_breakpoint (gint a_break_num,
                             bool a_run_event_loops) ;
+
 };//end class GDBEngine
 
+
+
+
+struct OutputHandler : Object {
+
+    //a method supposed to return
+    //true if the current handler knows
+    //how to handle a given debugger output
+    virtual bool can_handle (IDebugger::CommandAndOutput &){return false;}
+
+    //a method supposed to return
+    //true if the current handler knows
+    //how to handle a given debugger output
+    virtual void do_handle (IDebugger::CommandAndOutput &) {}
+};//end struct OutputHandler
+typedef SafePtr<OutputHandler, ObjectRef, ObjectUnref> OutputHandlerSafePtr ;
 
 //*************************
 //<GDBEngine::Priv struct>
@@ -115,6 +190,7 @@ struct GDBEngine::Priv {
     //***********************
     //<GDBEngine attributes>
     //************************
+    map<UString, UString> properties ;
     UString cwd ;
     vector<UString> argv ;
     vector<UString> source_search_dirs ;
@@ -142,14 +218,50 @@ struct GDBEngine::Priv {
     InBufferStatus error_buffer_status ;
     Glib::RefPtr<Glib::MainContext> loop_context ;
 
+    list<OutputHandlerSafePtr> output_handlers ;
     sigc::signal<void> gdb_died_signal;
     sigc::signal<void, const UString& > gdb_master_pty_signal;
     sigc::signal<void, const UString& > gdb_stdout_signal;
     sigc::signal<void, const UString& > gdb_stderr_signal;
 
     mutable sigc::signal<void, Output&> pty_signal  ;
+
     mutable sigc::signal<void, CommandAndOutput&> stdout_signal  ;
+
     mutable sigc::signal<void, Output&> stderr_signal  ;
+
+    mutable sigc::signal<void,
+                         const UString&,
+                         IDebugger::CommandAndOutput&>
+                             console_message_signal ;
+    mutable sigc::signal<void,
+                         const UString&,
+                         IDebugger::CommandAndOutput&>
+                             target_output_message_signal ;
+
+    mutable sigc::signal<void,
+                         const UString&,
+                         IDebugger::CommandAndOutput&>
+                             error_message_signal ;
+
+    mutable sigc::signal<void,
+                         const UString&,
+                         CommandAndOutput&> command_done_signal ;
+
+    mutable sigc::signal<void,
+                         const map<int, IDebugger::BreakPoint>&,
+                         CommandAndOutput&> breakpoints_set_signal ;
+
+    mutable sigc::signal<void,
+                         const IDebugger::BreakPoint&,
+                         int,
+                         CommandAndOutput&> breakpoint_deleted_signal ;
+
+    mutable sigc::signal<void,
+                        const IDebugger::Frame&,
+                        CommandAndOutput&> stopped_signal ;
+
+    mutable sigc::signal<void, IDebugger::CommandAndOutput&> running_signal ;
 
     //***********************
     //</GDBEngine attributes>
@@ -214,11 +326,14 @@ struct GDBEngine::Priv {
 
     void on_gdb_stdout_signal (const UString &a_buf)
     {
+        if (properties["log-debugger-output"] == "yes") {
+            LOG ("<debuggeroutput>\n" << a_buf << "\n</debuggeroutput>") ;
+        }
+
         Output output (a_buf);
 
         UString::size_type from (0), to (0), end (a_buf.size ()) ;
         for (; from < end ;) {
-            LOG ("buf: " << a_buf) ;
             if (!parse_output_record (a_buf, from, to, output)) {
                 LOG_ERROR ("output record parsing failed: "
                            << a_buf.substr (from, end - from)
@@ -275,8 +390,6 @@ struct GDBEngine::Priv {
                 (*this, &Priv::on_gdb_pty_signal)) ;
         gdb_stderr_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_gdb_stderr_signal)) ;
-        stdout_signal.connect (sigc::mem_fun
-                (*this, &Priv::on_stdout_signal_default)) ;
     }
 
     void free_resources ()
@@ -326,6 +439,13 @@ struct GDBEngine::Priv {
                          int &a_stdout_fd,
                          int &a_stderr_fd)
     {
+        for (vector<UString>::const_iterator it = a_args.begin () ;
+             it != a_args.end ();
+             ++it) {
+            cout << *it << " " ;
+        }
+        cout << "\n" ;
+
         RETURN_VAL_IF_FAIL (!a_args.empty (), false) ;
 
         enum ReadWritePipe {
@@ -402,7 +522,6 @@ struct GDBEngine::Priv {
                  ++i) {
                 args.get ()[i] =
                             const_cast<char*> (a_args[i].c_str ());
-                LOG ("args["<< (int)i << "]=" << args.get ()[i]) ;
             }
 
             execvp (args.get ()[0], args.get ()) ;
@@ -565,7 +684,6 @@ struct GDBEngine::Priv {
             THROW_IF_FAIL (started_commands.size () <= 1) ;
 
             started_commands.push_back (a_command) ;
-            LOG ("issued command: " << a_command.value ()) ;
             return true ;
         }
         return false ;
@@ -573,7 +691,6 @@ struct GDBEngine::Priv {
 
     bool on_gdb_master_pty_has_data_signal (Glib::IOCondition a_cond)
     {
-        LOG ("here") ;
         try {
 
             RETURN_VAL_IF_FAIL (gdb_master_pty_channel, false) ;
@@ -617,10 +734,10 @@ struct GDBEngine::Priv {
                 }
             }
             if (a_cond & Glib::IO_HUP) {
-                LOG_ERROR ("Connection lost") ;
+                LOG_ERROR ("Connection lost from master pty channel") ;
                 gdb_master_pty_channel.clear () ;
-                kill_gdb () ;
-                gdb_died_signal.emit () ;
+                //kill_gdb () ;
+                //gdb_died_signal.emit () ;
             }
             if (a_cond & Glib::IO_ERR) {
                 LOG_ERROR ("Error over the wire") ;
@@ -633,7 +750,6 @@ struct GDBEngine::Priv {
 
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
     {
-        LOG ("here") ;
         RETURN_VAL_IF_FAIL (gdb_stdout_channel, false) ;
         try {
             if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
@@ -652,18 +768,10 @@ struct GDBEngine::Priv {
                         }
                         std::string raw_str(buf, nb_read) ;
                         UString tmp = Glib::locale_to_utf8 (raw_str) ;
-                        LOG ("got buffer: " << tmp) ;
                         gdb_stdout_buffer.append (tmp) ;
                         UString::size_type len = gdb_stdout_buffer.size (), i=0 ;
 
                         while (isspace (gdb_stdout_buffer[len-i-1])) {++i;}
-
-                        LOG ("'" << (char) gdb_stdout_buffer[len-i-1] << "'") ;
-                        LOG ("'" << (char) gdb_stdout_buffer[len-i-2] << "'") ;
-                        LOG ("'" << (char) gdb_stdout_buffer[len-i-3] << "'") ;
-                        LOG ("'" << (char) gdb_stdout_buffer[len-i-4] << "'") ;
-                        LOG ("'" << (char) gdb_stdout_buffer[len-i-5] << "'") ;
-
 
                         if (gdb_stdout_buffer[len-i-1] == ')'
                             && gdb_stdout_buffer[len-i-2] == 'b'
@@ -671,7 +779,6 @@ struct GDBEngine::Priv {
                             && gdb_stdout_buffer[len-i-4] == 'g'
                             && gdb_stdout_buffer[len-i-5] == '(') {
                             got_data = true ;
-                            LOG ("got data") ;
                         }
                     } else {
                         break ;
@@ -685,7 +792,7 @@ struct GDBEngine::Priv {
                 }
             }
             if (a_cond & Glib::IO_HUP) {
-                LOG_ERROR ("Connection lost") ;
+                LOG_ERROR ("Connection lost from stdout channel to gdb") ;
                 gdb_stdout_channel.clear () ;
                 kill_gdb () ;
                 gdb_died_signal.emit () ;
@@ -710,7 +817,6 @@ struct GDBEngine::Priv {
 
     bool on_gdb_stderr_has_data_signal (Glib::IOCondition a_cond)
     {
-        LOG ("here") ;
         RETURN_VAL_IF_FAIL (gdb_stderr_channel, false) ;
         try {
 
@@ -748,8 +854,8 @@ struct GDBEngine::Priv {
 
             if (a_cond & Glib::IO_HUP) {
                 gdb_stderr_channel.clear () ;
-                kill_gdb () ;
-                gdb_died_signal.emit () ;
+                //kill_gdb () ;
+                //gdb_died_signal.emit () ;
             }
         } catch (exception e) {
         } catch (Glib::Error &e) {
@@ -768,14 +874,6 @@ struct GDBEngine::Priv {
             return true ;
         }
         return false ;
-    }
-
-    void on_stdout_signal_default (const CommandAndOutput &a_in)
-    {
-        if (a_in.output ().has_result_record ()
-            && !a_in.output ().result_record ().breakpoints ().empty ()) {
-            cached_breakpoints= a_in.output ().result_record ().breakpoints ();
-        }
     }
 
     bool parse_attribute (const UString &a_input,
@@ -1540,11 +1638,212 @@ fetch_out_of_band_record:
 //*************************
 
 //****************************
+//<GDBengine output handlers
+//***************************
+
+struct OnStreamRecordHandler: OutputHandler{
+    GDBEngine *m_engine ;
+
+    OnStreamRecordHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (!a_in.output ().has_out_of_band_record ()) {
+            return false;
+        }
+        return true ;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+
+        list<IDebugger::Output::OutOfBandRecord>::const_iterator iter ;
+        for (iter = a_in.output ().out_of_band_records ().begin ();
+             iter != a_in.output ().out_of_band_records ().end ();
+             ++iter) {
+            if (iter->has_stream_record ()) {
+                if (iter->stream_record ().debugger_console () != ""){
+                    m_engine->console_message_signal ().emit
+                        (iter->stream_record ().debugger_console (), a_in) ;
+                }
+                if (iter->stream_record ().target_output () != ""){
+                    m_engine->target_output_message_signal ().emit
+                        (iter->stream_record ().target_output (), a_in) ;
+                }
+                if (iter->stream_record ().debugger_log () != ""){
+                    m_engine->error_message_signal ().emit
+                        (iter->stream_record ().debugger_log (), a_in) ;
+                }
+            }
+        }
+
+    }
+};//end struct OnStreamRecordHandler
+
+struct OnBreakPointHandler: OutputHandler {
+    GDBEngine * m_engine ;
+
+    OnBreakPointHandler (GDBEngine *a_engine=NULL) :
+        m_engine (a_engine)
+    {}
+
+    bool has_breakpoints_set (IDebugger::CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().breakpoints ().size ()) {
+            return true ;
+        }
+        return false ;
+    }
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (!a_in.output ().has_result_record ()) {
+            return false;
+        }
+        return true ;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+
+        bool has_breaks=false ;
+        //if breakpoint where set, put them in cache !
+        if (has_breakpoints_set (a_in)) {
+            m_engine->append_breakpoints_to_cache
+                (a_in.output ().result_record ().breakpoints ()) ;
+            has_breaks=true;
+        }
+
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().kind ()
+               == IDebugger::Output::ResultRecord::DONE
+            && a_in.command ().value ().find ("-break-delete")
+                != Glib::ustring::npos) {
+            UString tmp = a_in.command ().value () ;
+            tmp = tmp.erase (0, 13) ;
+            if (tmp.size () == 0) {return ;}
+            tmp.chomp () ;
+            int bkpt_number = atoi (tmp.c_str ()) ;
+            if (bkpt_number) {
+                map<int, IDebugger::BreakPoint>::iterator iter ;
+                map<int, IDebugger::BreakPoint> &breaks =
+                                    m_engine->get_cached_breakpoints () ;
+                iter = breaks.find (bkpt_number) ;
+                if (iter != breaks.end ()) {
+                    m_engine->breakpoint_deleted_signal ().emit
+                    (iter->second, iter->first, a_in) ;
+                    breaks.erase (iter) ;
+                }
+            }
+        } else if (has_breaks){
+            m_engine->breakpoints_set_signal ().emit
+                        (a_in.output ().result_record ().breakpoints (),
+                         a_in) ;
+        }
+    }
+};//end struct OnBreakPointHandler
+
+struct OnStoppedHandler: OutputHandler {
+    GDBEngine *m_engine ;
+    IDebugger::Output::OutOfBandRecord m_out_of_band_record ;
+    bool m_is_stopped ;
+
+    OnStoppedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine),
+        m_is_stopped (false)
+    {}
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (!a_in.output ().has_out_of_band_record ()) {
+            return false;
+        }
+        m_is_stopped = true ;
+        list<IDebugger::Output::OutOfBandRecord>::iterator iter ;
+
+        for (iter = a_in.output ().out_of_band_records ().begin () ;
+             iter != a_in.output ().out_of_band_records ().end () ;
+             ++iter) {
+            if (iter->is_stopped () && iter->has_frame ()) {
+                m_out_of_band_record = *iter ;
+                return true ;
+            }
+        }
+        return false;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_is_stopped
+                       && m_engine) ;
+        m_engine->stopped_signal ().emit (m_out_of_band_record.frame (), a_in) ;
+    }
+};//end struct OnStoppedHandler
+
+struct OnCommandDoneHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnCommandDoneHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record () &&
+            a_in.output ().result_record ().kind ()
+            == IDebugger::Output::ResultRecord::DONE) {
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        m_engine->command_done_signal ().emit (a_in.command ().value (), a_in) ;
+    }
+};//struct OnCommandDoneHandler
+
+struct OnRunningHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnRunningHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record () &&
+            a_in.output ().result_record ().kind ()
+            == IDebugger::Output::ResultRecord::RUNNING) {
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (IDebugger::CommandAndOutput &a_in)
+    {
+        m_engine->running_signal ().emit (a_in) ;
+    }
+};//struct OnRunningHandler
+
+//****************************
+//</GDBengine output handlers
+//***************************
+
+//****************************
 //<GDBEngine methods>
 //****************************
 GDBEngine::GDBEngine ()
 {
     m_priv = new Priv ;
+    init () ;
 }
 
 GDBEngine::~GDBEngine ()
@@ -1589,15 +1888,29 @@ GDBEngine::attach_to_program (unsigned int a_pid)
     vector<UString> args, source_search_dirs ;
 
     if (!m_priv->is_gdb_running ()) {
-        THROW_IF_FAIL (m_priv->launch_gdb (args, source_search_dirs, "--pid " + UString::from_int (a_pid))) ;
+        THROW_IF_FAIL (m_priv->launch_gdb (args,
+                                           source_search_dirs)) ;
 
         IDebugger::Command command ;
-
         command.value ("set breakpoint pending auto") ;
         queue_command (command) ;
-    } else {
-        queue_command (Command ("-target-attach " + UString::from_int (a_pid))) ;
     }
+        queue_command (Command ("attach " + UString::from_int (a_pid))) ;
+}
+
+void
+GDBEngine::init_output_handlers ()
+{
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnStreamRecordHandler (this))) ;
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnStoppedHandler (this))) ;
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnBreakPointHandler (this))) ;
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnCommandDoneHandler (this))) ;
+    m_priv->output_handlers.push_back
+        (OutputHandlerSafePtr (new OnRunningHandler (this))) ;
 }
 
 void
@@ -1639,6 +1952,114 @@ GDBEngine::engine_died_signal () const
     return m_priv->gdb_died_signal ;
 }
 
+sigc::signal<void,
+             const UString&,
+             IDebugger::CommandAndOutput&>&
+GDBEngine::console_message_signal () const
+{
+    return m_priv->console_message_signal ;
+}
+
+sigc::signal<void,
+             const UString&,
+             IDebugger::CommandAndOutput&>&
+GDBEngine::target_output_message_signal () const
+{
+    return m_priv->target_output_message_signal ;
+}
+
+sigc::signal<void,
+             const UString&,
+             IDebugger::CommandAndOutput&>&
+GDBEngine::error_message_signal () const
+{
+    return m_priv->error_message_signal ;
+}
+
+sigc::signal<void,
+             const UString&,
+             IDebugger::CommandAndOutput&>&
+GDBEngine::command_done_signal () const
+{
+    return m_priv->command_done_signal ;
+}
+
+sigc::signal<void,
+             const IDebugger::BreakPoint&,
+             int,
+             IDebugger::CommandAndOutput&>&
+GDBEngine::breakpoint_deleted_signal () const
+{
+    return m_priv->breakpoint_deleted_signal ;
+}
+
+sigc::signal<void,
+             const map<int, IDebugger::BreakPoint>&,
+             IDebugger::CommandAndOutput&>&
+GDBEngine::breakpoints_set_signal () const
+{
+    return m_priv->breakpoints_set_signal ;
+}
+
+sigc::signal<void,
+             const IDebugger::Frame&,
+             IDebugger::CommandAndOutput&>&
+GDBEngine::stopped_signal () const
+{
+    return m_priv->stopped_signal ;
+}
+
+sigc::signal<void, IDebugger::CommandAndOutput&>&
+GDBEngine::running_signal () const
+{
+    return m_priv->running_signal ;
+}
+
+//******************
+//<signal handlers>
+//******************
+void
+GDBEngine::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
+{
+    //****************************************
+    //call the output handlers so that we can
+    //emit proper, more precise signal
+    //to give greater benefit to the clients.
+    //****************************************
+
+    NEMIVER_TRY
+
+    list<OutputHandlerSafePtr>::iterator iter ;
+    for (iter = m_priv->output_handlers.begin () ;
+         iter != m_priv->output_handlers.end ();
+         ++iter)
+    {
+        if ((*iter)->can_handle (a_cao)) {
+            (*iter)->do_handle (a_cao) ;
+        }
+    }
+
+    NEMIVER_CATCH_NOX
+}
+
+//******************
+//</signal handlers>
+//******************
+void
+GDBEngine::init ()
+{
+    stdout_signal ().connect
+                    (sigc::mem_fun (*this,
+                                    &GDBEngine::on_debugger_stdout_signal)) ;
+    init_output_handlers () ;
+}
+
+map<UString, UString>&
+GDBEngine::properties ()
+{
+    return m_priv->properties;
+}
+
 void
 GDBEngine::set_event_loop_context
                         (const Glib::RefPtr<Glib::MainContext> &a_ctxt)
@@ -1665,15 +2086,10 @@ GDBEngine::queue_command (const Command &a_command)
 {
     bool result (false) ;
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
-    LOG ("command queue size before push: " << (int) m_priv->queued_commands.size ()) ;
     m_priv->queued_commands.push_back (a_command) ;
-    LOG ("command queue size after push: " << (int) m_priv->queued_commands.size ()) ;
     if (m_priv->started_commands.empty ()) {
-        LOG ("command issued: " << m_priv->queued_commands.begin ()->value ()) ;
         result = m_priv->issue_command (*m_priv->queued_commands.begin ()) ;
-        LOG ("command erased: " << m_priv->queued_commands.begin ()->value ()) ;
         m_priv->queued_commands.erase (m_priv->queued_commands.begin ()) ;
-    LOG ("command queue size after erase: " << (int) m_priv->queued_commands.size ()) ;
     }
     return result ;
 }
@@ -1758,11 +2174,21 @@ GDBEngine::list_breakpoints (bool a_run_event_loops)
     queue_command (Command ("-break-list")) ;
 }
 
-const map<int, IDebugger::BreakPoint>&
+map<int, IDebugger::BreakPoint>&
 GDBEngine::get_cached_breakpoints ()
 {
     THROW_IF_FAIL (m_priv) ;
     return m_priv->cached_breakpoints ;
+}
+
+void
+GDBEngine::append_breakpoints_to_cache
+                        (const map<int, IDebugger::BreakPoint> &a_breaks)
+{
+    map<int, IDebugger::BreakPoint>::const_iterator iter ;
+    for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
+        m_priv->cached_breakpoints[iter->first] = iter->second ;
+    }
 }
 
 void
@@ -1811,6 +2237,7 @@ GDBEngine::delete_breakpoint (gint a_break_num,
 //****************************
 //</GDBEngine methods>
 //****************************
+
 }//end namespace nemiver
 
 //the dynmod initial factory.

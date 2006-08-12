@@ -103,6 +103,8 @@ public:
 
     virtual IPerspective* get_perspective (const UString &a_name) = 0;
 
+    virtual map<UString, UString>& get_properties () = 0;
+
     ///@}
 
     /// \name signals

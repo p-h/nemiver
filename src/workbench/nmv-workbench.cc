@@ -79,6 +79,7 @@ public:
     Gtk::Window& get_root_window () ;
     Glib::RefPtr<Gtk::UIManager>& get_ui_manager ()  ;
     IPerspective* get_perspective (const UString &a_name) ;
+    map<UString, UString>& get_properties () ;
     sigc::signal<void>& shutting_down_signal () ;
 };//end class Workbench
 
@@ -96,6 +97,7 @@ struct Workbench::Priv {
     list<IPerspectiveSafePtr> perspectives ;
     map<IPerspective*, int> toolbars_index_map ;
     map<IPerspective*, int> bodies_index_map ;
+    map<UString, UString> properties ;
     sigc::signal<void> shutting_down_signal ;
 
     Priv () :
@@ -263,6 +265,12 @@ Workbench::get_perspective (const UString &a_name)
     }
     LOG_ERROR ("could not find perspective: '" << a_name << "'") ;
     return NULL;
+}
+
+map<UString, UString>&
+Workbench::get_properties ()
+{
+    return m_priv->properties ;
 }
 
 sigc::signal<void>&
