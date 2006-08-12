@@ -1,3 +1,9 @@
+samedi 12 août 2006, 22:14:31 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: make this rely on the
+	  new IDebugger API only. Remove the knowledge of GDM/MI from here.
+	  There are part of this class that are much nicer now.
+
 samedi 12 août 2006, 19:53:35 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc, nmw-i-workbenc.h: added

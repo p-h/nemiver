@@ -24,6 +24,7 @@
  */
 
 #include <algorithm>
+#include <iostream>
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #include "nmv-dbg-perspective.h"
@@ -118,7 +119,6 @@ private:
     void on_unset_breakpoint_action () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
-    void on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao) ;
     void on_debugger_ready_signal (bool a_is_ready) ;
 
     void on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_iter,
@@ -166,7 +166,6 @@ private:
     void init_body () ;
     void init_signals () ;
     void init_debugger_signals () ;
-    void init_debugger_output_handlers () ;
     void append_source_editor (SourceEditor &a_sv,
                                const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
     SourceEditor* get_current_source_editor () ;
@@ -231,7 +230,7 @@ public:
     void set_breakpoint () ;
     void set_breakpoint (const UString &a_file,
                          int a_line) ;
-    void append_breakpoints (map<int, IDebugger::BreakPoint> &a_breaks) ;
+    void append_breakpoints (const map<int, IDebugger::BreakPoint> &a_breaks) ;
     bool get_breakpoint_number (const UString &a_file_name,
                                 int a_linenum,
                                 int &a_break_num) ;
@@ -289,179 +288,6 @@ struct UnrefGObjectNative {
     }
 };
 
-/// A container of handlers
-/// to handle output coming from
-/// the debugger engine
-struct OutputHandler : Object {
-
-    //a method supposed to return
-    //true if the current handler knows
-    //how to handle a given debugger output
-    virtual bool can_handle (IDebugger::CommandAndOutput &){return false;}
-
-    //a method supposed to return
-    //true if the current handler knows
-    //how to handle a given debugger output
-    virtual void do_handle (IDebugger::CommandAndOutput &) {}
-};//end struct OutputHandler
-typedef SafePtr<OutputHandler, ObjectRef, ObjectUnref> OutputHandlerSafePtr ;
-
-struct OnStreamRecordHandler: OutputHandler{
-    DBGPerspective *m_persp ;
-
-    OnStreamRecordHandler (DBGPerspective *a_persp) :
-        m_persp (a_persp)
-    {}
-
-    bool can_handle (IDebugger::CommandAndOutput &a_in)
-    {
-        if (!a_in.output ().has_out_of_band_record ()) {
-            return false;
-        }
-        return true ;
-    }
-
-    void do_handle (IDebugger::CommandAndOutput &a_in)
-    {
-        THROW_IF_FAIL (m_persp
-                       && m_persp->get_command_view ()
-                       && m_persp->get_program_output_view ()
-                       && m_persp->get_error_view ()) ;
-
-        list<IDebugger::Output::OutOfBandRecord>::const_iterator iter ;
-        for (iter = a_in.output ().out_of_band_records ().begin ();
-             iter != a_in.output ().out_of_band_records ().end ();
-             ++iter) {
-            if (iter->has_stream_record ()) {
-                if (m_persp->get_command_view ()
-                    && iter->stream_record ().debugger_console () != ""){
-                    m_persp->add_text_to_command_view
-                        (iter->stream_record ().debugger_console () + "\n") ;
-                }
-                if (m_persp->get_program_output_view ()
-                    && iter->stream_record ().target_output () != ""){
-                    m_persp->add_text_to_program_output_view
-                        (iter->stream_record ().target_output () + "\n") ;
-                }
-                if (m_persp->get_error_view ()
-                    && iter->stream_record ().debugger_log () != ""){
-                    m_persp->add_text_to_error_view
-                        (iter->stream_record ().debugger_log () + "\n") ;
-                }
-            }
-        }
-
-    }
-};//end struct OnStreamRecordHandler
-
-struct OnBreakPointHandler: OutputHandler {
-    DBGPerspective* m_dbg_perspective ;
-
-    OnBreakPointHandler (DBGPerspective *a_persp=NULL) :
-        m_dbg_perspective (a_persp)
-    {}
-
-    bool has_breakpoints_set (IDebugger::CommandAndOutput &a_in)
-    {
-        if (a_in.output ().has_result_record ()
-            && a_in.output ().result_record ().breakpoints ().size ()) {
-            return true ;
-        }
-        return false ;
-    }
-
-    void append_breakpoints_to_list (map<int, IDebugger::BreakPoint> &a_breaks)
-    {
-        THROW_IF_FAIL (m_dbg_perspective) ;
-        m_dbg_perspective->append_breakpoints (a_breaks) ;
-    }
-
-    bool can_handle (IDebugger::CommandAndOutput &a_in)
-    {
-        if (!a_in.output ().has_result_record ()) {
-            return false;
-        }
-        return true ;
-    }
-
-    void do_handle (IDebugger::CommandAndOutput &a_in)
-    {
-        THROW_IF_FAIL (m_dbg_perspective) ;
-
-        //if breakpoint where set, put them in cache !
-        if (has_breakpoints_set (a_in)) {
-            append_breakpoints_to_list
-                (a_in.output ().result_record ().breakpoints ()) ;
-        }
-
-        if (a_in.output ().has_result_record ()
-            && a_in.output ().result_record ().kind ()
-               == IDebugger::Output::ResultRecord::DONE
-            && a_in.command ().value ().find ("-break-delete")
-                != Glib::ustring::npos) {
-            UString tmp = a_in.command ().value () ;
-            tmp = tmp.erase (0, 13) ;
-            if (tmp.size () == 0) {return ;}
-            tmp.chomp () ;
-            int bkpt_number = atoi (tmp.c_str ()) ;
-            if (bkpt_number) {
-                m_dbg_perspective->delete_visual_breakpoint (bkpt_number) ;
-            }
-        }
-    }
-};//end struct OnBreakPointHandler
-
-struct OnStoppedHandler: OutputHandler {
-    DBGPerspective* m_dbg_perspective ;
-    IDebugger::Output::OutOfBandRecord m_out_of_band_record ;
-    bool m_is_stopped ;
-
-    OnStoppedHandler (DBGPerspective *a_persp) :
-        m_dbg_perspective (a_persp),
-        m_is_stopped (false)
-    {}
-
-    bool can_handle (IDebugger::CommandAndOutput &a_in)
-    {
-        if (!a_in.output ().has_out_of_band_record ()) {
-            return false;
-        }
-        m_is_stopped = true ;
-        list<IDebugger::Output::OutOfBandRecord>::iterator iter ;
-
-        for (iter = a_in.output ().out_of_band_records ().begin () ;
-             iter != a_in.output ().out_of_band_records ().end () ;
-             ++iter) {
-            if (iter->is_stopped () && iter->has_frame ()) {
-                m_out_of_band_record = *iter ;
-                return true ;
-            }
-        }
-        return false;
-    }
-
-    void do_handle (IDebugger::CommandAndOutput &a_in)
-    {
-        THROW_IF_FAIL (m_dbg_perspective->get_command_view ()
-                       && m_is_stopped
-                       && m_dbg_perspective) ;
-        m_dbg_perspective->debugger_ready_signal ().emit (true) ;
-        if (m_out_of_band_record.frame ().function () != ""
-            && m_out_of_band_record.frame ().line () == 0) {
-            display_warning (UString ("No line info available for symbol '")
-                             + m_out_of_band_record.frame ().function ()
-                             + "' of library "
-                             + m_out_of_band_record.frame ().library ()) ;
-        } else if (m_out_of_band_record.frame ().line () > 0
-                   && m_out_of_band_record.frame ().file_full_name () != "") {
-            m_dbg_perspective->set_where
-                (m_out_of_band_record.frame ().file_full_name (),
-                 m_out_of_band_record.frame ().line ()) ;
-        } else {
-            display_error ("Symbol not available") ;
-        }
-    }
-};//end struct OnStoppedHandler
 
 struct DBGPerspective::Priv {
     bool initialized ;
@@ -496,7 +322,6 @@ struct DBGPerspective::Priv {
     Gtk::TextView *error_view ;
     int current_page_num ;
     IDebuggerSafePtr debugger ;
-    list<OutputHandlerSafePtr> output_handlers ;
     map<int, IDebugger::BreakPoint> breakpoints ;
     ISessMgrSafePtr session_manager ;
     ISessMgr::Session session ;
@@ -519,6 +344,17 @@ struct DBGPerspective::Priv {
 #ifndef CHECK_P_INIT
 #define CHECK_P_INIT THROW_IF_FAIL(m_priv && m_priv->initialized) ;
 #endif
+
+ostream&
+operator<< (ostream &a_out,
+            const IDebugger::Frame &a_frame)
+{
+    a_out << "file-full-name: " << a_frame.file_full_name () << "\n"
+          << "file-name: "      << a_frame.file_name () << "\n"
+          << "line number: "    << a_frame.line () << "\n";
+
+    return a_out ;
+}
 
 //****************************
 //<slots>
@@ -632,23 +468,6 @@ DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num
 {
     NEMIVER_TRY
     m_priv->current_page_num = a_page_num;
-    NEMIVER_CATCH
-}
-
-void
-DBGPerspective::on_debugger_stdout_signal (IDebugger::CommandAndOutput &a_cao)
-{
-    NEMIVER_TRY
-    list<OutputHandlerSafePtr>::iterator iter ;
-    for (iter = m_priv->output_handlers.begin () ;
-         iter != m_priv->output_handlers.end ();
-         ++iter)
-    {
-        if ((*iter)->can_handle (a_cao)) {
-            (*iter)->do_handle (a_cao) ;
-        }
-    }
-    add_text_to_command_view ("\n(gdb) ") ;
     NEMIVER_CATCH
 }
 
@@ -776,37 +595,49 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
                                                  IDebugger::CommandAndOutput &)
 {
     NEMIVER_TRY
-    LOG ("here") ;
+    debugger_ready_signal ().emit (true) ;
     NEMIVER_CATCH
 }
 
 void
 DBGPerspective::on_debugger_breakpoints_set_signal
-                                    (const map<int, IDebugger::BreakPoint> &,
-                                     IDebugger::CommandAndOutput &)
+                                (const map<int, IDebugger::BreakPoint> &a_breaks,
+                                 IDebugger::CommandAndOutput &)
 {
     NEMIVER_TRY
-    LOG ("here") ;
+    append_breakpoints (a_breaks) ;
     NEMIVER_CATCH
 }
 
+
 void
-DBGPerspective::on_debugger_stopped_signal (const IDebugger::Frame&,
+DBGPerspective::on_debugger_stopped_signal (const IDebugger::Frame &a_frame,
                                             IDebugger::CommandAndOutput&)
 {
     NEMIVER_TRY
-    LOG ("here") ;
+
+    debugger_ready_signal ().emit (true) ;
+
+    if (a_frame.file_full_name () != ""
+        && a_frame.line () != 0) {
+        set_where (a_frame.file_full_name (), a_frame.line ()) ;
+    } else if (a_frame.file_full_name () == ""
+               && a_frame.file_name () != "") {
+        display_error ("Did not find file " + a_frame.file_name ()) ;
+    } else {
+        display_error ("Can't do anything with current frame") ;
+    }
     NEMIVER_CATCH
 }
 
 void
 DBGPerspective::on_debugger_breakpoint_deleted_signal
-                                            (const IDebugger::BreakPoint&,
-                                             int,
-                                             IDebugger::CommandAndOutput&)
+                                        (const IDebugger::BreakPoint &a_break,
+                                         int a_break_number,
+                                         IDebugger::CommandAndOutput &)
 {
     NEMIVER_TRY
-    LOG ("here") ;
+    delete_visual_breakpoint (a_break_number) ;
     NEMIVER_CATCH
 }
 
@@ -814,7 +645,7 @@ void
 DBGPerspective::on_debugger_running_signal (IDebugger::CommandAndOutput &a_in)
 {
     NEMIVER_TRY
-    LOG ("here") ;
+    debugger_ready_signal ().emit (false) ;
     NEMIVER_CATCH
 }
 
@@ -983,6 +814,14 @@ DBGPerspective::init_actions ()
 
     static ui_utils::ActionEntry s_default_action_entries [] = {
         {
+            "DebugMenuAction",
+            nil_stock_id,
+            "_Debug",
+            "",
+            nil_slot
+        }
+        ,
+        {
             "OpenMenuItemAction",
             Gtk::Stock::OPEN,
             "_Open",
@@ -1008,14 +847,6 @@ DBGPerspective::init_actions ()
     };
 
     static ui_utils::ActionEntry s_file_opened_action_entries [] = {
-        {
-            "DebugMenuAction",
-            nil_stock_id,
-            "_Debug",
-            "",
-            nil_slot
-        }
-        ,
         {
             "CloseMenuItemAction",
             Gtk::Stock::CLOSE,
@@ -1099,24 +930,6 @@ DBGPerspective::init_toolbar ()
     button = dynamic_cast<Gtk::ToolButton*>
     (m_priv->workbench->get_ui_manager ()->get_widget ("/ToolBar/RunToolItem")) ;
     THROW_IF_FAIL (button) ;
-
-    /*
-    button = Gtk::manage (new Gtk::ToolButton ("run")) ;
-    m_priv->toolbar->append (*button) ;
-
-    button = Gtk::manage (new Gtk::ToolButton ("next")) ;
-    m_priv->toolbar->append (*button) ;
-
-    button = Gtk::manage (new Gtk::ToolButton ("step")) ;
-    m_priv->toolbar->append (*button) ;
-
-    button = Gtk::manage (new Gtk::ToolButton ("continue")) ;
-    m_priv->toolbar->append (*button) ;
-
-    button = Gtk::manage (new Gtk::ToolButton ("break")) ;
-    m_priv->toolbar->append (*button) ;
-    */
-
 }
 
 void
@@ -1206,18 +1019,6 @@ DBGPerspective::init_debugger_signals ()
             (*this, &DBGPerspective::on_debugger_running_signal)) ;
 }
 
-void
-DBGPerspective::init_debugger_output_handlers ()
-{
-    m_priv->output_handlers.push_back
-        (OutputHandlerSafePtr (new OnStreamRecordHandler (this))) ;
-
-    m_priv->output_handlers.push_back
-        (OutputHandlerSafePtr (new OnStoppedHandler (this))) ;
-
-    m_priv->output_handlers.push_back
-        (OutputHandlerSafePtr (new OnBreakPointHandler (this))) ;
-}
 
 void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,
@@ -1517,7 +1318,6 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     init_toolbar () ;
     init_body () ;
     init_signals () ;
-    init_debugger_output_handlers () ;
     init_debugger_signals () ;
     m_priv->initialized = true ;
     session_manager ().load_sessions (session_manager ().default_transaction ());
@@ -1842,7 +1642,7 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
 }
 
 void
-DBGPerspective::append_breakpoints (map<int, IDebugger::BreakPoint> &a_breaks)
+DBGPerspective::append_breakpoints (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
     for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
@@ -1973,8 +1773,6 @@ DBGPerspective::debugger ()
                                              *plugin_entry_point_loader ()) ;
         m_priv->debugger->set_event_loop_context
                                     (Glib::MainContext::get_default ()) ;
-        m_priv->debugger->stdout_signal ().connect (sigc::mem_fun
-                (*this, &DBGPerspective::on_debugger_stdout_signal)) ;
     }
     THROW_IF_FAIL (m_priv->debugger) ;
     return m_priv->debugger ;

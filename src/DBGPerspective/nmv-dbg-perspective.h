@@ -90,7 +90,7 @@ public:
     virtual void set_breakpoint (const UString &a_file,
                                  int a_line) = 0;
     virtual void append_breakpoints
-            (map<int, IDebugger::BreakPoint> &a_breaks) = 0 ;
+            (const map<int, IDebugger::BreakPoint> &a_breaks) = 0 ;
     virtual bool get_breakpoint_number (const UString &a_file_name,
                                         int a_linenum,
                                         int &a_break_num) = 0 ;
