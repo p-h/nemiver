@@ -1,3 +1,17 @@
+dimanche 13 août 2006, 11:07:40 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
+	  src/DBGPerspective/dbgengine/nmv-i-debugger.h	: added an
+	  IDebuggger::program_finished_signal() here.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: added some keyboard
+	  shortcuts to pilot the debugger: F5 (continue), shift-F5 (run),
+	  F7 (step into), shift-F7 (step out), F8 (step over). Fix
+	  the handling of IDebugger::stopped_signal(), handle the
+	  "program-exited" event.
+	* src/DBGPerspective/nmv-source-editor.cc,h:
+	  added SourceEditor::unset_where_marker() to remove the "where
+	  marker" from the source editor.
+
 samedi 12 août 2006, 22:14:31 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: make this rely on the

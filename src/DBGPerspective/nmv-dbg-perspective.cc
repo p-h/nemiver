@@ -119,12 +119,18 @@ private:
     void on_unset_breakpoint_action () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
+
+    void on_attached_to_target_signal (bool a_is_attached) ;
+
     void on_debugger_ready_signal (bool a_is_ready) ;
 
     void on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_iter,
                                            const Glib::ustring &a_text,
                                            int a_dont_know) ;
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
+
+    bool on_key_pressed_in_source_view_signal (GdkEventKey *a_event) ;
+
     void on_shutdown_signal () ;
 
     void on_debugger_console_message_signal (const UString &a_msg,
@@ -146,7 +152,9 @@ private:
                                                 int,
                                                 IDebugger::CommandAndOutput&) ;
 
-    void on_debugger_stopped_signal (const IDebugger::Frame&,
+    void on_debugger_stopped_signal (const UString &a_reason,
+                                     bool a_has_frame,
+                                     const IDebugger::Frame&,
                                      IDebugger::CommandAndOutput&) ;
 
     void on_debugger_running_signal (IDebugger::CommandAndOutput&) ;
@@ -251,8 +259,10 @@ public:
     void add_text_to_program_output_view (const UString &a_text) ;
     void add_text_to_error_view (const UString &a_text) ;
     void set_where (const UString &a_uri, int line) ;
+    void unset_where () ;
     Gtk::Widget* get_contextual_menu () ;
     sigc::signal<void, bool>& activated_signal () ;
+    sigc::signal<void, bool>& attached_to_target_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
 };//end class DBGPerspective
 
@@ -295,6 +305,7 @@ struct DBGPerspective::Priv {
     UString prog_name ;
     UString prog_args ;
     UString prog_cwd ;
+    Glib::RefPtr<Gtk::ActionGroup> target_connected_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
@@ -308,6 +319,7 @@ struct DBGPerspective::Priv {
     IWorkbench *workbench ;
     Gtk::Toolbar *toolbar ;
     sigc::signal<void, bool> activated_signal;
+    sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
@@ -478,8 +490,23 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 
     if (a_is_ready) {
         m_priv->debugger_ready_action_group->set_sensitive (true) ;
+        attached_to_target_signal ().emit (true) ;
     } else {
         m_priv->debugger_ready_action_group->set_sensitive (false) ;
+    }
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_attached_to_target_signal (bool a_is_ready)
+{
+    NEMIVER_TRY
+
+    if (a_is_ready) {
+        m_priv->target_connected_action_group->set_sensitive (true) ;
+    } else {
+        m_priv->target_connected_action_group->set_sensitive (false) ;
     }
 
     NEMIVER_CATCH
@@ -536,6 +563,46 @@ DBGPerspective::on_button_pressed_in_source_view_signal (GdkEventButton *a_event
 
     NEMIVER_CATCH
     return true ;
+}
+
+bool
+DBGPerspective::on_key_pressed_in_source_view_signal (GdkEventKey *a_event)
+{
+    if (a_event->type != GDK_KEY_PRESS) {
+        return false ;
+    }
+
+    if (a_event->state == 0
+        && a_event->keyval == GDK_F7){
+        step_into () ;
+        return true ;
+    }
+
+    if ((a_event->state & GDK_SHIFT_MASK)
+        && a_event->keyval == GDK_F7){
+        step_out () ;
+        return true ;
+    }
+
+    if (a_event->state == 0
+        && a_event->keyval == GDK_F8){
+        step_over () ;
+        return true ;
+    }
+
+    if (a_event->state == 0
+        && a_event->keyval == GDK_F5){
+        do_continue () ;
+        return true ;
+    }
+
+    if ((a_event->state & GDK_SHIFT_MASK)
+        && a_event->keyval == GDK_F5){
+        run () ;
+        return true ;
+    }
+
+    return false ;
 }
 
 void
@@ -595,6 +662,7 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
                                                  IDebugger::CommandAndOutput &)
 {
     NEMIVER_TRY
+    attached_to_target_signal ().emit (true) ;
     debugger_ready_signal ().emit (true) ;
     NEMIVER_CATCH
 }
@@ -611,19 +679,30 @@ DBGPerspective::on_debugger_breakpoints_set_signal
 
 
 void
-DBGPerspective::on_debugger_stopped_signal (const IDebugger::Frame &a_frame,
+DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
+                                            bool a_has_frame,
+                                            const IDebugger::Frame &a_frame,
                                             IDebugger::CommandAndOutput&)
 {
     NEMIVER_TRY
 
     debugger_ready_signal ().emit (true) ;
 
-    if (a_frame.file_full_name () != ""
+    if (a_has_frame
+        && a_frame.file_full_name () != ""
         && a_frame.line () != 0) {
         set_where (a_frame.file_full_name (), a_frame.line ()) ;
-    } else if (a_frame.file_full_name () == ""
+    } else if (a_has_frame
+               && a_frame.file_full_name () == ""
                && a_frame.file_name () != "") {
         display_error ("Did not find file " + a_frame.file_name ()) ;
+    } else if (a_reason == "exited-signalled"
+               || a_reason == "exited-normally"
+               || a_reason == "exited") {
+        unset_where () ;
+        debugger_ready_signal ().emit (false) ;
+        attached_to_target_signal ().emit (true) ;
+        display_info ("Program exited") ;
     } else {
         display_error ("Can't do anything with current frame") ;
     }
@@ -745,7 +824,7 @@ DBGPerspective::init_actions ()
 {
     Gtk::StockID nil_stock_id ("") ;
     sigc::slot<void> nil_slot ;
-    static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
+    static ui_utils::ActionEntry s_target_connected_action_entries [] = {
         {
             "RunMenuItemAction",
             nemiver::STOCK_RUN_DEBUGGER,
@@ -753,7 +832,9 @@ DBGPerspective::init_actions ()
             "Run the debugger starting from program's begining",
             sigc::mem_fun (*this, &DBGPerspective::on_run_action)
         }
-        ,
+    };
+
+    static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
         {
             "NextMenuItemAction",
             nemiver::STOCK_STEP_OVER,
@@ -856,6 +937,10 @@ DBGPerspective::init_actions ()
         }
     };
 
+    m_priv->target_connected_action_group =
+                Gtk::ActionGroup::create ("target-connected-action-group") ;
+    m_priv->target_connected_action_group->set_sensitive (false) ;
+
     m_priv->debugger_ready_action_group =
                 Gtk::ActionGroup::create ("debugger-ready-action-group") ;
     m_priv->debugger_ready_action_group->set_sensitive (false) ;
@@ -869,6 +954,13 @@ DBGPerspective::init_actions ()
     m_priv->opened_file_action_group->set_sensitive (false) ;
 
     int num_actions =
+     sizeof (s_target_connected_action_entries)/sizeof (ui_utils::ActionEntry);
+    ui_utils::add_action_entries_to_action_group
+                        (s_target_connected_action_entries,
+                         num_actions,
+                         m_priv->target_connected_action_group) ;
+
+    num_actions =
          sizeof (s_debugger_ready_action_entries)/sizeof (ui_utils::ActionEntry) ;
 
     ui_utils::add_action_entries_to_action_group
@@ -904,6 +996,8 @@ DBGPerspective::init_actions ()
                          num_actions,
                          m_priv->opened_file_action_group) ;
 
+    m_priv->workbench->get_ui_manager ()->insert_action_group
+                                        (m_priv->target_connected_action_group) ;
     m_priv->workbench->get_ui_manager ()->insert_action_group
                                             (m_priv->debugger_busy_action_group) ;
     m_priv->workbench->get_ui_manager ()->insert_action_group
@@ -989,6 +1083,9 @@ DBGPerspective::init_signals ()
         (sigc::mem_fun (*this, &DBGPerspective::on_switch_page_signal)) ;
     debugger_ready_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_ready_signal)) ;
+    attached_to_target_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_attached_to_target_signal)) ;
+
 }
 
 void
@@ -1143,6 +1240,17 @@ DBGPerspective::set_where (const UString &a_uri,
     SourceEditor *source_editor = get_source_editor_from_uri (a_uri) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->move_where_marker_to_line (a_line) ;
+}
+
+void
+DBGPerspective::unset_where ()
+{
+    map<int, SourceEditor*>::iterator iter ;
+    for (iter = m_priv->pagenum_2_source_editor_map.begin ();
+         iter !=m_priv->pagenum_2_source_editor_map.end ();
+         ++iter) {
+        iter->second->unset_where_marker () ;
+    }
 }
 
 Gtk::Widget*
@@ -1443,11 +1551,16 @@ DBGPerspective::open_file (const UString &a_uri,
     append_source_editor (*source_editor, uri) ;
 
     if (!source_editor->source_view ().has_no_window ()) {
-        source_editor->source_view ().add_events (Gdk::BUTTON3_MOTION_MASK) ;
+        source_editor->source_view ().add_events
+                        (Gdk::BUTTON3_MOTION_MASK |Gdk::KEY_PRESS_MASK) ;
         source_editor->source_view ().signal_button_press_event ().connect
             (sigc::mem_fun
              (*this,
               &DBGPerspective::on_button_pressed_in_source_view_signal)) ;
+        source_editor->source_view ().signal_key_press_event ().connect
+            (sigc::mem_fun
+             (*this,
+              &DBGPerspective::on_key_pressed_in_source_view_signal)) ;
     }
 
     m_priv->opened_file_action_group->set_sensitive (true) ;
@@ -1554,6 +1667,7 @@ DBGPerspective::execute_program (const UString &a_prog,
 
     dbg_engine->queue_command (IDebugger::Command ("-exec-run")) ;
 
+    attached_to_target_signal ().emit (true) ;
     debugger_ready_signal ().emit (true) ;
 
     m_priv->prog_name = a_prog ;
@@ -1642,7 +1756,8 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
 }
 
 void
-DBGPerspective::append_breakpoints (const map<int, IDebugger::BreakPoint> &a_breaks)
+DBGPerspective::append_breakpoints
+                    (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
     for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
@@ -1858,6 +1973,12 @@ DBGPerspective::activated_signal ()
 {
     CHECK_P_INIT ;
     return m_priv->activated_signal ;
+}
+
+sigc::signal<void, bool>&
+DBGPerspective::attached_to_target_signal ()
+{
+    return m_priv->attached_to_target_signal ;
 }
 
 sigc::signal<void, bool>&

@@ -60,6 +60,7 @@ public:
     gint current_column () ;
     void current_column (gint &a_col) ;
     void move_where_marker_to_line (int a_line) ;
+    void unset_where_marker () ;
     void set_visual_breakpoint_at_line (int a_line) ;
     void remove_visual_breakpoint_from_line (int a_line) ;
     void scroll_to_line (int a_line) ;

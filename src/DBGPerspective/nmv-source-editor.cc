@@ -56,6 +56,12 @@ public:
             return Gtk::Widget::on_button_press_event (a_event) ;
         }
     }
+
+    bool on_key_press_event (GdkEventKey *a_event)
+    {
+        Gtk::Widget::on_key_press_event (a_event) ;
+        return false ;
+    }
 };//end class Sourceview
 
 struct SourceEditor::Priv {
@@ -295,6 +301,16 @@ SourceEditor::move_where_marker_to_line (int a_line)
 }
 
 void
+SourceEditor::unset_where_marker ()
+{
+    Glib::RefPtr<SourceMarker> where_marker =
+        source_view ().get_source_buffer ()->get_marker ("where-marker") ;
+    if (where_marker) {
+        source_view ().get_source_buffer ()->delete_marker (where_marker) ;
+    }
+}
+
+void
 SourceEditor::set_visual_breakpoint_at_line (int a_line)
 {
     if (m_priv->markers.find (a_line) !=  m_priv->markers.end ()) {
@@ -319,10 +335,8 @@ SourceEditor::remove_visual_breakpoint_from_line (int a_line)
     std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
     iter = m_priv->markers.find (a_line) ;
     if (iter == m_priv->markers.end ()) {
-        LOG ("no bkpoint marker found at line: " << (int) a_line) ;
         return ;
     }
-    LOG ("gonna delete marker: " << iter->second->get_name ()) ;
     source_view ().get_source_buffer ()->delete_marker (iter->second) ;
     m_priv->markers.erase (iter) ;
 }

@@ -106,10 +106,15 @@ public:
 
 
     sigc::signal<void,
+                 const UString&,
+                 bool,
                  const IDebugger::Frame&,
                  IDebugger::CommandAndOutput&>& stopped_signal () const ;
 
     sigc::signal<void, IDebugger::CommandAndOutput&>& running_signal () const ;
+
+    sigc::signal<void, IDebugger::CommandAndOutput&>&
+                                         program_finished_signal () const ;
     //*************
     //</signals>
     //*************
@@ -258,10 +263,15 @@ struct GDBEngine::Priv {
                          CommandAndOutput&> breakpoint_deleted_signal ;
 
     mutable sigc::signal<void,
-                        const IDebugger::Frame&,
-                        CommandAndOutput&> stopped_signal ;
+                         const UString&,
+                         bool,
+                         const IDebugger::Frame&,
+                         CommandAndOutput&> stopped_signal ;
 
     mutable sigc::signal<void, IDebugger::CommandAndOutput&> running_signal ;
+
+    mutable sigc::signal<void, IDebugger::CommandAndOutput&>
+                                                        program_finished_signal ;
 
     //***********************
     //</GDBEngine attributes>
@@ -1763,13 +1773,13 @@ struct OnStoppedHandler: OutputHandler {
         if (!a_in.output ().has_out_of_band_record ()) {
             return false;
         }
-        m_is_stopped = true ;
         list<IDebugger::Output::OutOfBandRecord>::iterator iter ;
 
         for (iter = a_in.output ().out_of_band_records ().begin () ;
              iter != a_in.output ().out_of_band_records ().end () ;
              ++iter) {
-            if (iter->is_stopped () && iter->has_frame ()) {
+            if (iter->is_stopped ()) {
+                m_is_stopped = true ;
                 m_out_of_band_record = *iter ;
                 return true ;
             }
@@ -1781,7 +1791,11 @@ struct OnStoppedHandler: OutputHandler {
     {
         THROW_IF_FAIL (m_is_stopped
                        && m_engine) ;
-        m_engine->stopped_signal ().emit (m_out_of_band_record.frame (), a_in) ;
+        m_engine->stopped_signal ().emit
+            (m_out_of_band_record.stop_reason_as_str (),
+             m_out_of_band_record.has_frame (),
+             m_out_of_band_record.frame (),
+             a_in) ;
     }
 };//end struct OnStoppedHandler
 
@@ -2002,6 +2016,8 @@ GDBEngine::breakpoints_set_signal () const
 }
 
 sigc::signal<void,
+             const UString&,
+             bool,
              const IDebugger::Frame&,
              IDebugger::CommandAndOutput&>&
 GDBEngine::stopped_signal () const
@@ -2013,6 +2029,11 @@ sigc::signal<void, IDebugger::CommandAndOutput&>&
 GDBEngine::running_signal () const
 {
     return m_priv->running_signal ;
+}
+sigc::signal<void, IDebugger::CommandAndOutput&>&
+GDBEngine::program_finished_signal () const
+{
+    return m_priv->program_finished_signal ;
 }
 
 //******************

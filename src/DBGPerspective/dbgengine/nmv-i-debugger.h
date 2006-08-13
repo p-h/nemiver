@@ -304,7 +304,55 @@ public:
 
             OutOfBandRecord () {clear ();}
 
-            /// \name
+            UString stop_reason_to_string (StopReason a_reason) const
+            {
+                UString result ("undefined") ;
+
+                switch (a_reason) {
+                    case UNDEFINED:
+                        return "undefined" ;
+                        break ;
+                    case BREAKPOINT_HIT:
+                        return "breakpoint-hit" ;
+                        break ;
+                    case WATCHPOINT_TRIGGER:
+                        return "watchpoint-trigger" ;
+                        break ;
+                    case READ_WATCHPOINT_TRIGGER:
+                        return "read-watchpoint-trigger" ;
+                        break ;
+                    case ACCESS_WATCHPOINT_TRIGGER:
+                        return "access-watchpoint-trigger" ;
+                        break ;
+                    case FUNCTION_FINISHED:
+                        return "function-finished" ;
+                        break ;
+                    case LOCATION_REACHED:
+                        return "location-reacherd" ;
+                        break ;
+                    case WATCHPOINT_SCOPE:
+                        return "watchpoint-scope" ;
+                        break ;
+                    case END_STEPPING_RANGE:
+                        return "end-stepping-range" ;
+                        break ;
+                    case EXITED_SIGNALLED:
+                        return "exited-signalled" ;
+                        break ;
+                    case EXITED:
+                        return "exited" ;
+                        break ;
+                    case EXITED_NORMALLY:
+                        return "exited-normally" ;
+                        break ;
+                    case SIGNAL_RECEIVED:
+                        return "signal-received" ;
+                        break ;
+                }
+                return result ;
+            }
+
+            /// \accessors
 
 
             /// @{
@@ -319,6 +367,10 @@ public:
             void is_stopped (bool a_in) {m_is_stopped = a_in;}
 
             StopReason stop_reason () const {return m_stop_reason ;}
+            UString stop_reason_as_str () const
+            {
+                return stop_reason_to_string (m_stop_reason) ;
+            }
             void stop_reason (StopReason a_in) {m_stop_reason = a_in;}
 
             bool has_frame () const {return m_has_frame;}
@@ -537,6 +589,8 @@ public:
                              breakpoints_set_signal () const = 0;
 
     virtual sigc::signal<void,
+                         const UString&,
+                         bool,
                          const IDebugger::Frame&,
                          IDebugger::CommandAndOutput&>&
                              stopped_signal () const = 0;
@@ -544,6 +598,9 @@ public:
     virtual sigc::signal<void,
                          IDebugger::CommandAndOutput&>&
                                          running_signal () const = 0;
+    virtual sigc::signal<void,
+                         IDebugger::CommandAndOutput&>&
+                                         program_finished_signal () const = 0;
 
     /// @}
 
