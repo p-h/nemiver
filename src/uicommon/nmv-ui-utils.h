@@ -74,6 +74,7 @@ public:
     common::UString m_tooltip ;
     sigc::slot<void> m_activate_slot;
     Type m_type;
+    common::UString m_accel ;
 
     Glib::RefPtr<Gtk::Action> to_action () const
     {

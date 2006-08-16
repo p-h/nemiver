@@ -1,6 +1,13 @@
+mercredi 16 août 2006, 13:43:22 (UTC+0200) Dodji Seketeli
+
+	* src/workbench/nmv-workbench.cc: cleanup the actions and ui_manager init code.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: properly menu accelerators.
+	* src/uicommon/nmv-ui-utils.h,cc: add support for accelerators.
+
+
 mercredi 16 août 2006, 11:08:22 (UTC+0200) Dodji Seketeli
 
-        * src/uicommon/nmv-ui-utils.h: change the api of ui_utils::ActionEntry
+	* src/uicommon/nmv-ui-utils.h: change the api of ui_utils::ActionEntry
 	    to support the creation of ActionToggle objects, as well as Action
 	    objects.
 	* src/workbench/nmv-workbench.cc: reflect the change of

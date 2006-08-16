@@ -246,8 +246,11 @@ Workbench::get_root_window ()
 Glib::RefPtr<Gtk::UIManager>&
 Workbench::get_ui_manager ()
 {
-    CHECK_WB_INIT ;
-    THROW_IF_FAIL (m_priv && m_priv->ui_manager) ;
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->ui_manager) {
+        m_priv->ui_manager = Gtk::UIManager::create () ;
+        THROW_IF_FAIL (m_priv->ui_manager) ;
+    }
     return m_priv->ui_manager ;
 }
 
@@ -304,10 +307,11 @@ Workbench::init_actions ()
         {
             "FileMenuAction",
             nil_stock_id,
-            "_File",
+            "File",
             "",
             nil_slot,
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         }
         ,
         {
@@ -316,7 +320,8 @@ Workbench::init_actions ()
             "_Quit",
             "Quit the application",
             sigc::mem_fun (*this, &Workbench::on_quit_menu_item_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         }
         ,
         {
@@ -325,7 +330,8 @@ Workbench::init_actions ()
             "_Help",
             "",
             nil_slot,
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         }
         ,
         {
@@ -334,17 +340,19 @@ Workbench::init_actions ()
             "_About",
             "",
             nil_slot,
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         }
     };
 
     m_priv->default_action_group =
-        Gtk::ActionGroup::create ("default-action-group") ;
+        Gtk::ActionGroup::create ("workbench-default-action-group") ;
     int num_default_actions =
          sizeof (s_default_action_entries)/sizeof (ui_utils::ActionEntry) ;
     ui_utils::add_action_entries_to_action_group (s_default_action_entries,
                                                   num_default_actions,
                                                   m_priv->default_action_group) ;
+    get_ui_manager ()->insert_action_group (m_priv->default_action_group) ;
 }
 
 void
@@ -352,7 +360,6 @@ Workbench::init_menubar ()
 {
     THROW_IF_FAIL (m_priv && m_priv->default_action_group) ;
 
-    m_priv->ui_manager = Gtk::UIManager::create () ;
 
     UString file_path = env::build_path_to_menu_file ("menubar.xml") ;
     m_priv->ui_manager->insert_action_group (m_priv->default_action_group) ;

@@ -966,7 +966,8 @@ DBGPerspective::init_actions ()
             "_Run",
             "Run the debugger starting from program's begining",
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            "<shift>F5"
         }
     };
 
@@ -977,7 +978,8 @@ DBGPerspective::init_actions ()
             "_Next",
             "Execute next instruction steping over the next function, if any",
             sigc::mem_fun (*this, &DBGPerspective::on_next_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            "F6"
         }
         ,
         {
@@ -986,7 +988,8 @@ DBGPerspective::init_actions ()
             "_Step",
             "Execute next instruction, steping into the next function, if any",
             sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            "F7"
         }
         ,
         {
@@ -995,7 +998,8 @@ DBGPerspective::init_actions ()
             "Step _out",
             "Finish the execution of the current function",
             sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            "<shift>F7"
         }
         ,
         {
@@ -1004,7 +1008,8 @@ DBGPerspective::init_actions ()
             "_Continue",
             "Continue program execution until the next breakpoint",
             sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            "F5"
         }
         ,
         {
@@ -1013,7 +1018,8 @@ DBGPerspective::init_actions ()
             "_Break",
             "Set a breakpoint the current cursor location",
             sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            "<ctrl>b"
         },
         {
             "UnSetBreakPointMenuItemAction",
@@ -1126,7 +1132,7 @@ DBGPerspective::init_actions ()
     m_priv->debugger_ready_action_group->set_sensitive (false) ;
 
     m_priv->default_action_group =
-                Gtk::ActionGroup::create ("default-action-group") ;
+                Gtk::ActionGroup::create ("debugger-default-action-group") ;
     m_priv->default_action_group->set_sensitive (true) ;
 
     m_priv->opened_file_action_group =
@@ -1186,6 +1192,9 @@ DBGPerspective::init_actions ()
                                             (m_priv->default_action_group);
     m_priv->workbench->get_ui_manager ()->insert_action_group
                                             (m_priv->opened_file_action_group);
+
+    m_priv->workbench->get_root_window ().add_accel_group
+        (m_priv->workbench->get_ui_manager ()->get_accel_group ()) ;
 }
 
 
@@ -1747,10 +1756,11 @@ DBGPerspective::open_file (const UString &a_uri,
             (sigc::mem_fun
              (*this,
               &DBGPerspective::on_button_pressed_in_source_view_signal)) ;
-        source_editor->source_view ().signal_key_press_event ().connect
+        /*source_editor->source_view ().signal_key_press_event ().connect
             (sigc::mem_fun
              (*this,
               &DBGPerspective::on_key_pressed_in_source_view_signal)) ;
+          */
     }
 
     m_priv->opened_file_action_group->set_sensitive (true) ;
