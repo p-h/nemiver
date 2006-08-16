@@ -12,6 +12,14 @@
         </placeholder>
     </menu>
     <placeholder name="MenuBarAdditions">
+        <menu action="ViewMenuAction" name="ViewMenu">
+            <menuitem action="ShowCommandsMenuAction"
+                      name="ShowCommandsMenuItem"/>
+            <menuitem action="ShowErrorsMenuAction"
+                      name="ShowErrorsMenuItem"/>
+            <menuitem action="ShowTargetOutputMenuAction"
+                      name="ShowTargetOutputMenuItem"/>
+        </menu>
         <menu action="DebugMenuAction" name="DebugMenu">
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>

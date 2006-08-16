@@ -60,22 +60,48 @@
 namespace nemiver {
 namespace ui_utils {
 
-struct ActionEntry {
+class ActionEntry {
+
+public:
+    enum Type {
+        DEFAULT=0,
+        TOGGLE
+    };
+
     common::UString m_name ;
     Gtk::StockID m_stock_id ;
     common::UString m_label ;
     common::UString m_tooltip ;
     sigc::slot<void> m_activate_slot;
-
-public:
+    Type m_type;
 
     Glib::RefPtr<Gtk::Action> to_action () const
     {
         Glib::RefPtr<Gtk::Action> result ;
-        if (m_stock_id.get_string () != "") {
-            result = Gtk::Action::create (m_name, m_stock_id, m_label, m_tooltip);
-        } else {
-            result = Gtk::Action::create (m_name, m_label, m_tooltip);
+        switch (m_type) {
+            case DEFAULT:
+                if (m_stock_id.get_string () != "") {
+                    result =
+                        Gtk::Action::create (m_name, m_stock_id,
+                                             m_label, m_tooltip);
+                } else {
+                    result =
+                        Gtk::Action::create (m_name, m_label, m_tooltip);
+                }
+                break ;
+            case TOGGLE:
+                if (m_stock_id.get_string () != "") {
+                    result =
+                        Gtk::ToggleAction::create (m_name, m_stock_id,
+                                                   m_label, m_tooltip);
+                } else {
+                    result =
+                        Gtk::ToggleAction::create (m_name, m_label, m_tooltip);
+                }
+                break;
+
+            default:
+                THROW ("should never reach this point") ;
         }
         return result ;
     }

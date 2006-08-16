@@ -1,3 +1,15 @@
+mercredi 16 août 2006, 11:08:22 (UTC+0200) Dodji Seketeli
+
+        * src/uicommon/nmv-ui-utils.h: change the api of ui_utils::ActionEntry
+	    to support the creation of ActionToggle objects, as well as Action
+	    objects.
+	* src/workbench/nmv-workbench.cc: reflect the change of
+	    ui_utils::ActionEntry api.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: support showing/hidding
+	    the command, errors and target output views. This is not well tested
+	    yet. I know need to make these views scroll <grin/>.
+
+
 dimanche 13 août 2006, 11:07:40 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,

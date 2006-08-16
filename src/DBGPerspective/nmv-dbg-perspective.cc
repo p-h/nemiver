@@ -117,6 +117,9 @@ private:
     void on_continue_action () ;
     void on_set_breakpoint_action () ;
     void on_unset_breakpoint_action () ;
+    void on_show_commands_action () ;
+    void on_show_errors_action () ;
+    void on_show_target_output_action () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
 
@@ -132,6 +135,12 @@ private:
     bool on_key_pressed_in_source_view_signal (GdkEventKey *a_event) ;
 
     void on_shutdown_signal () ;
+
+    void on_show_command_view_changed_signal (bool) ;
+
+    void on_show_target_output_view_changed_signal (bool) ;
+
+    void on_show_error_view_changed_signal (bool) ;
 
     void on_debugger_console_message_signal (const UString &a_msg,
                                              IDebugger::CommandAndOutput &) ;
@@ -167,6 +176,7 @@ private:
                          const UString &icon_dir,
                          const UString &icon_name) ;
     void add_perspective_menu_entries () ;
+    void init_perspective_menu_entries () ;
     void add_perspective_toolbar_entries () ;
     void init_icon_factory () ;
     void init_actions () ;
@@ -252,15 +262,21 @@ public:
     void delete_visual_breakpoint (int a_breaknum) ;
 
     IDebuggerSafePtr& debugger () ;
-    Gtk::TextView* get_command_view () ;
-    Gtk::TextView* get_program_output_view () ;
-    Gtk::TextView* get_error_view () ;
+    Glib::RefPtr<Gtk::TextView>& get_command_view () ;
+    Glib::RefPtr<Gtk::TextView>& get_target_output_view () ;
+    Glib::RefPtr<Gtk::TextView>& get_error_view () ;
+    void set_show_command_view (bool) ;
+    void set_show_target_output_view (bool) ;
+    void set_show_error_view (bool) ;
     void add_text_to_command_view (const UString &a_text) ;
-    void add_text_to_program_output_view (const UString &a_text) ;
+    void add_text_to_target_output_view (const UString &a_text) ;
     void add_text_to_error_view (const UString &a_text) ;
     void set_where (const UString &a_uri, int line) ;
     void unset_where () ;
     Gtk::Widget* get_contextual_menu () ;
+    sigc::signal<void, bool>& show_command_view_signal () ;
+    sigc::signal<void, bool>& show_target_output_view_signal () ;
+    sigc::signal<void, bool>& show_error_view_signal () ;
     sigc::signal<void, bool>& activated_signal () ;
     sigc::signal<void, bool>& attached_to_target_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
@@ -321,6 +337,12 @@ struct DBGPerspective::Priv {
     sigc::signal<void, bool> activated_signal;
     sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
+    sigc::signal<void, bool> show_command_view_signal  ;
+    sigc::signal<void, bool> show_target_output_view_signal  ;
+    sigc::signal<void, bool> show_error_view_signal ;
+    bool command_view_is_visible ;
+    bool target_output_view_is_visible ;
+    bool error_view_is_visible ;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
@@ -329,9 +351,12 @@ struct DBGPerspective::Priv {
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_uri_map ;
     Gtk::Notebook *statuses_notebook ;
-    Gtk::TextView *command_view ;
-    Gtk::TextView *program_output_view;
-    Gtk::TextView *error_view ;
+    Glib::RefPtr<Gtk::TextView> command_view ;
+    int command_view_pagenum ;
+    Glib::RefPtr<Gtk::TextView> target_output_view;
+    int target_output_view_pagenum ;
+    Glib::RefPtr<Gtk::TextView> error_view ;
+    int error_view_pagenum ;
     int current_page_num ;
     IDebuggerSafePtr debugger ;
     map<int, IDebugger::BreakPoint> breakpoints ;
@@ -347,8 +372,14 @@ struct DBGPerspective::Priv {
         contextual_menu_merge_id(0),
         contextual_menu (NULL),
         workbench (NULL),
+        command_view_is_visible (false),
+        target_output_view_is_visible (false),
+        error_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
+        command_view_pagenum (-1),
+        target_output_view_pagenum (-1),
+        error_view_pagenum (-1),
         current_page_num (0)
     {}
 };//end struct DBGPerspective::Priv
@@ -472,6 +503,64 @@ DBGPerspective::on_unset_breakpoint_action ()
 {
     NEMIVER_TRY
     delete_breakpoint () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_show_commands_action ()
+{
+    NEMIVER_TRY
+    Glib::RefPtr<Gtk::ToggleAction> action =
+        Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
+            (m_priv->workbench->get_ui_manager ()->get_action
+                 ("/MenuBar/MenuBarAdditions/ViewMenu/ShowCommandsMenuItem")) ;
+    THROW_IF_FAIL (action) ;
+
+    if (action->get_active ()) {
+        set_show_command_view (true) ;
+    } else {
+        set_show_command_view (false) ;
+    }
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_show_errors_action ()
+{
+    NEMIVER_TRY
+
+    Glib::RefPtr<Gtk::ToggleAction> action =
+        Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
+            (m_priv->workbench->get_ui_manager ()->get_action
+                 ("/MenuBar/MenuBarAdditions/ViewMenu/ShowErrorsMenuItem")) ;
+    THROW_IF_FAIL (action) ;
+
+    if (action->get_active ()) {
+        set_show_error_view (true) ;
+    } else {
+        set_show_command_view (false) ;
+    }
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_show_target_output_action ()
+{
+    NEMIVER_TRY
+
+    Glib::RefPtr<Gtk::ToggleAction> action =
+        Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
+            (m_priv->workbench->get_ui_manager ()->get_action
+                 ("/MenuBar/MenuBarAdditions/ViewMenu/ShowTargetOutputMenuItem")) ;
+    THROW_IF_FAIL (action) ;
+
+    if (action->get_active ()) {
+        set_show_target_output_view (true) ;
+    } else {
+        set_show_target_output_view (false) ;
+    }
+
     NEMIVER_CATCH
 }
 
@@ -624,6 +713,44 @@ DBGPerspective::on_shutdown_signal ()
 }
 
 void
+DBGPerspective::on_show_command_view_changed_signal (bool a_show)
+{
+    Glib::RefPtr<Gtk::ToggleAction> action =
+            Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
+                (m_priv->workbench->get_ui_manager ()->get_action
+                    ("/MenuBar/MenuBarAdditions/ViewMenu/ShowCommandsMenuItem"));
+    THROW_IF_FAIL (action) ;
+    action->set_active (a_show) ;
+}
+
+void
+DBGPerspective::on_show_target_output_view_changed_signal (bool a_show)
+{
+    m_priv->target_output_view_is_visible = a_show ;
+
+    Glib::RefPtr<Gtk::ToggleAction> action =
+        Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
+            (m_priv->workbench->get_ui_manager ()->get_action
+                ("/MenuBar/MenuBarAdditions/ViewMenu/ShowTargetOutputMenuItem"));
+    THROW_IF_FAIL (action) ;
+    action->set_active (a_show) ;
+}
+
+void
+DBGPerspective::on_show_error_view_changed_signal (bool a_show)
+{
+    m_priv->error_view_is_visible = a_show ;
+
+    Glib::RefPtr<Gtk::ToggleAction> action =
+        Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
+            (m_priv->workbench->get_ui_manager ()->get_action
+                    ("/MenuBar/MenuBarAdditions/ViewMenu/ShowErrorsMenuItem"));
+    THROW_IF_FAIL (action) ;
+
+    action->set_active (a_show) ;
+}
+
+void
 DBGPerspective::on_debugger_console_message_signal (const UString &a_msg,
                                                     IDebugger::CommandAndOutput &)
 {
@@ -641,7 +768,7 @@ DBGPerspective::on_debugger_target_output_message_signal
 {
     NEMIVER_TRY
 
-    add_text_to_program_output_view (a_msg + "\n") ;
+    add_text_to_target_output_view (a_msg + "\n") ;
 
     NEMIVER_CATCH
 }
@@ -791,6 +918,14 @@ DBGPerspective::add_perspective_menu_entries ()
 }
 
 void
+DBGPerspective::init_perspective_menu_entries ()
+{
+    set_show_command_view (false) ;
+    set_show_target_output_view (false) ;
+    set_show_error_view (false) ;
+}
+
+void
 DBGPerspective::add_perspective_toolbar_entries ()
 {
     string relative_path = Glib::build_filename ("menus",
@@ -830,7 +965,8 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_RUN_DEBUGGER,
             "_Run",
             "Run the debugger starting from program's begining",
-            sigc::mem_fun (*this, &DBGPerspective::on_run_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
+            ActionEntry::DEFAULT
         }
     };
 
@@ -840,7 +976,8 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_STEP_OVER,
             "_Next",
             "Execute next instruction steping over the next function, if any",
-            sigc::mem_fun (*this, &DBGPerspective::on_next_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_next_action),
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -848,7 +985,8 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_STEP_INTO,
             "_Step",
             "Execute next instruction, steping into the next function, if any",
-            sigc::mem_fun (*this, &DBGPerspective::on_step_into_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -856,7 +994,8 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_STEP_OUT,
             "Step _out",
             "Finish the execution of the current function",
-            sigc::mem_fun (*this, &DBGPerspective::on_step_out_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -864,7 +1003,8 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_CONTINUE,
             "_Continue",
             "Continue program execution until the next breakpoint",
-            sigc::mem_fun (*this, &DBGPerspective::on_continue_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -872,14 +1012,16 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_SET_BREAKPOINT,
             "_Break",
             "Set a breakpoint the current cursor location",
-            sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
+            ActionEntry::DEFAULT
         },
         {
             "UnSetBreakPointMenuItemAction",
             nil_stock_id,
             "_Unset breakpoint",
             "Unset the breakpoint the current cursor location",
-            sigc::mem_fun (*this, &DBGPerspective::on_unset_breakpoint_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_unset_breakpoint_action),
+            ActionEntry::DEFAULT
         }
     };
 
@@ -889,17 +1031,51 @@ DBGPerspective::init_actions ()
             nil_stock_id,
             "Sto_p",
             "Stop the debugger",
-            nil_slot
+            nil_slot,
+            ActionEntry::DEFAULT
         }
     };
 
     static ui_utils::ActionEntry s_default_action_entries [] = {
         {
+            "ViewMenuAction",
+            nil_stock_id,
+            "_View",
+            "",
+            nil_slot,
+            ActionEntry::DEFAULT
+        },
+        {
+            "ShowCommandsMenuAction",
+            nil_stock_id,
+            "Show commands",
+            "Show the debugger commands tab",
+            sigc::mem_fun (*this, &DBGPerspective::on_show_commands_action),
+            ActionEntry::TOGGLE
+        },
+        {
+            "ShowErrorsMenuAction",
+            nil_stock_id,
+            "Show errors",
+            "Show the errors commands tab",
+            sigc::mem_fun (*this, &DBGPerspective::on_show_errors_action),
+            ActionEntry::TOGGLE
+        },
+        {
+            "ShowTargetOutputMenuAction",
+            nil_stock_id,
+            "Show output",
+            "Show the debugged target output tab",
+            sigc::mem_fun (*this, &DBGPerspective::on_show_target_output_action),
+            ActionEntry::TOGGLE
+        },
+        {
             "DebugMenuAction",
             nil_stock_id,
             "_Debug",
             "",
-            nil_slot
+            nil_slot,
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -907,7 +1083,8 @@ DBGPerspective::init_actions ()
             Gtk::Stock::OPEN,
             "_Open",
             "Open a file",
-            sigc::mem_fun (*this, &DBGPerspective::on_open_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_open_action),
+            ActionEntry::DEFAULT
         },
         {
             "ExecuteProgramMenuItemAction",
@@ -915,7 +1092,8 @@ DBGPerspective::init_actions ()
             "_Execute",
             "Execute a program",
             sigc::mem_fun (*this,
-                           &DBGPerspective::on_execute_program_action)
+                           &DBGPerspective::on_execute_program_action),
+            ActionEntry::DEFAULT
         },
         {
             "AttachToProgramMenuItemAction",
@@ -923,7 +1101,8 @@ DBGPerspective::init_actions ()
             "_Attach ...",
             "Attach to a running program",
             sigc::mem_fun (*this,
-                           &DBGPerspective::on_attach_to_program_action)
+                           &DBGPerspective::on_attach_to_program_action),
+            ActionEntry::DEFAULT
         }
     };
 
@@ -933,7 +1112,8 @@ DBGPerspective::init_actions ()
             Gtk::Stock::CLOSE,
             "_Close",
             "Close the opened file",
-            sigc::mem_fun (*this, &DBGPerspective::on_close_action)
+            sigc::mem_fun (*this, &DBGPerspective::on_close_action),
+            ActionEntry::DEFAULT
         }
     };
 
@@ -1054,21 +1234,24 @@ DBGPerspective::init_body ()
     m_priv->statuses_notebook =
         env::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                    "statusesnotebook") ;
-    m_priv->command_view =
-        env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
-                                                   "commandview") ;
+    m_priv->command_view = Glib::RefPtr<Gtk::TextView> (new Gtk::TextView) ;
+    //m_priv->command_view = Glib::RefPtr<Gtk::TextView>
+    //   (env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
+    //                                             "commandview")) ;
+    m_priv->command_view->reference () ;
     m_priv->command_view->set_editable (true) ;
     m_priv->command_view->get_buffer ()->signal_insert ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_insert_in_command_view_signal)) ;
 
-    m_priv->program_output_view =
-        env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
-                                                   "programoutputview") ;
-    m_priv->program_output_view->set_editable (false) ;
+    m_priv->target_output_view = Glib::RefPtr<Gtk::TextView> (new Gtk::TextView);
+    //m_priv->target_output_view = Glib::RefPtr<Gtk::TextView>
+    //    (env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
+    //                                               "programoutputview")) ;
+    m_priv->target_output_view->reference () ;
+    m_priv->target_output_view->set_editable (false) ;
 
-    m_priv->error_view =
-        env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
-                                                   "errorview") ;
+    m_priv->error_view = Glib::RefPtr<Gtk::TextView> (new Gtk::TextView) ;
+    m_priv->error_view->reference () ;
     m_priv->error_view->set_editable (false) ;
 
     m_priv->body_main_paned->unparent () ;
@@ -1085,6 +1268,12 @@ DBGPerspective::init_signals ()
             (*this, &DBGPerspective::on_debugger_ready_signal)) ;
     attached_to_target_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_attached_to_target_signal)) ;
+    show_command_view_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_show_command_view_changed_signal)) ;
+    show_target_output_view_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_show_target_output_view_changed_signal));
+    show_error_view_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_show_error_view_changed_signal));
 
 }
 
@@ -1465,6 +1654,7 @@ DBGPerspective::edit_workbench_menu ()
     CHECK_P_INIT ;
 
     add_perspective_menu_entries () ;
+    init_perspective_menu_entries () ;
 }
 
 void
@@ -1893,26 +2083,121 @@ DBGPerspective::debugger ()
     return m_priv->debugger ;
 }
 
-Gtk::TextView*
+Glib::RefPtr<Gtk::TextView>&
 DBGPerspective::get_command_view ()
 {
+    THROW_IF_FAIL (m_priv->command_view) ;
     return m_priv->command_view ;
 }
 
-Gtk::TextView*
-DBGPerspective::get_program_output_view ()
+Glib::RefPtr<Gtk::TextView>&
+DBGPerspective::get_target_output_view ()
 {
-    return m_priv->program_output_view ;
+    THROW_IF_FAIL (m_priv->target_output_view) ;
+    return m_priv->target_output_view ;
 }
 
-Gtk::TextView*
+Glib::RefPtr<Gtk::TextView>&
 DBGPerspective::get_error_view ()
 {
+    THROW_IF_FAIL (m_priv->error_view) ;
     return m_priv->error_view ;
 }
 
+void
+DBGPerspective::set_show_command_view (bool a_show)
+{
+    THROW_IF_FAIL (get_command_view ()) ;
+    if (a_show) {
+        if (!get_command_view ()->get_parent ()
+                && m_priv->command_view_pagenum == -1
+                && m_priv->command_view_is_visible == false) {
+            LOG ("adding command view") ;
+            get_command_view ()->show_all () ;
+            m_priv->command_view_pagenum =
+            m_priv->statuses_notebook->insert_page
+            (*get_command_view ().operator->(), "Commands", 0) ;
+            m_priv->command_view_is_visible = true ;
+        }
+    } else {
+        if (get_command_view ()->get_parent ()
+                && m_priv->command_view_pagenum != -1
+                && m_priv->command_view_is_visible) {
+            LOG ("removing command view") ;
+            m_priv->statuses_notebook->remove_page
+                (m_priv->command_view_pagenum);
+            m_priv->command_view_is_visible = false;
+            m_priv->command_view_pagenum = -1 ;
+
+        }
+    }
+    show_command_view_signal ().emit (a_show) ;
+}
+
+void
+DBGPerspective::set_show_target_output_view (bool a_show)
+{
+    THROW_IF_FAIL (get_target_output_view ()) ;
+    if (a_show) {
+        if (get_target_output_view ()->get_parent ()
+            && m_priv->target_output_view_pagenum == -1
+            && m_priv->target_output_view_is_visible == false) {
+            LOG ("adding prog output view") ;
+            get_target_output_view ()->show_all () ;
+            m_priv->target_output_view_pagenum =
+                m_priv->statuses_notebook->insert_page
+                    (*get_target_output_view ().operator->(), "Output", 1) ;
+            m_priv->target_output_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page (m_priv->target_output_view_pagenum);
+        }
+    } else {
+        if (get_target_output_view ()->get_parent ()
+            && m_priv->target_output_view_pagenum != -1
+            && m_priv->target_output_view_is_visible) {
+            LOG ("removing target output view") ;
+            m_priv->statuses_notebook->remove_page
+                (m_priv->target_output_view_pagenum);
+            m_priv->target_output_view_is_visible = false;
+            m_priv->target_output_view_pagenum = -1 ;
+        }
+        m_priv->target_output_view_is_visible = false;
+    }
+    show_target_output_view_signal ().emit (a_show) ;
+}
+
+void
+DBGPerspective::set_show_error_view (bool a_show)
+{
+    THROW_IF_FAIL (get_error_view ()) ;
+    if (a_show) {
+        if (get_error_view ()->get_parent ()
+            && m_priv->error_view_pagenum == -1
+            && m_priv->error_view_is_visible == false) {
+            LOG ("adding prog output view") ;
+            get_error_view ()->show_all () ;
+            m_priv->error_view_pagenum =
+                m_priv->statuses_notebook->insert_page
+                    (*get_error_view ().operator->(), "Output", 1) ;
+            m_priv->error_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page (m_priv->error_view_pagenum);
+        }
+    } else {
+        if (get_error_view ()->get_parent ()
+            && m_priv->error_view_pagenum != -1
+            && m_priv->error_view_is_visible) {
+            LOG ("removing target output view") ;
+            m_priv->statuses_notebook->remove_page
+                (m_priv->error_view_pagenum);
+            m_priv->error_view_is_visible = false;
+            m_priv->error_view_pagenum = -1 ;
+        }
+        m_priv->error_view_is_visible = false;
+    }
+    show_error_view_signal ().emit (a_show) ;
+}
+
 struct ScrollTextViewToEndClosure {
-    Gtk::TextView *text_view ;
+    Glib::RefPtr<Gtk::TextView> text_view ;
 
     ScrollTextViewToEndClosure (Gtk::TextView *a_view=NULL) :
         text_view (a_view)
@@ -1944,14 +2229,14 @@ DBGPerspective::add_text_to_command_view (const UString &a_text)
 }
 
 void
-DBGPerspective::add_text_to_program_output_view (const UString &a_text)
+DBGPerspective::add_text_to_target_output_view (const UString &a_text)
 {
-    THROW_IF_FAIL (m_priv && m_priv->program_output_view) ;
-    m_priv->program_output_view->get_buffer ()->insert
-        (m_priv->program_output_view->get_buffer ()->end (),
+    THROW_IF_FAIL (m_priv && m_priv->target_output_view) ;
+    m_priv->target_output_view->get_buffer ()->insert
+        (m_priv->target_output_view->get_buffer ()->end (),
          a_text) ;
     static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
-    s_scroll_to_end_closure.text_view = m_priv->program_output_view ;
+    s_scroll_to_end_closure.text_view = m_priv->target_output_view ;
     Glib::signal_idle ().connect (sigc::mem_fun
             (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
 }
@@ -1985,6 +2270,24 @@ sigc::signal<void, bool>&
 DBGPerspective::debugger_ready_signal ()
 {
     return m_priv->debugger_ready_signal ;
+}
+
+sigc::signal<void, bool>&
+DBGPerspective::show_command_view_signal ()
+{
+    return m_priv->show_command_view_signal ;
+}
+
+sigc::signal<void, bool>&
+DBGPerspective::show_target_output_view_signal ()
+{
+    return m_priv->show_target_output_view_signal ;
+}
+
+sigc::signal<void, bool>&
+DBGPerspective::show_error_view_signal ()
+{
+    return m_priv->show_error_view_signal ;
 }
 
 }//end namespace nemiver

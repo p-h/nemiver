@@ -33,7 +33,6 @@
 using namespace std ;
 using namespace nemiver ;
 using namespace nemiver::common ;
-
 namespace nemiver {
 
 class Workbench : public IWorkbench {
@@ -299,13 +298,16 @@ Workbench::init_actions ()
 {
     Gtk::StockID nil_stock_id ("") ;
     sigc::slot<void> nil_slot ;
-    static ui_utils::ActionEntry s_default_action_entries [] = {
+    using ui_utils::ActionEntry ;
+
+    static ActionEntry s_default_action_entries [] = {
         {
             "FileMenuAction",
             nil_stock_id,
             "_File",
             "",
-            nil_slot
+            nil_slot,
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -313,7 +315,8 @@ Workbench::init_actions ()
             Gtk::Stock::QUIT,
             "_Quit",
             "Quit the application",
-            sigc::mem_fun (*this, &Workbench::on_quit_menu_item_action)
+            sigc::mem_fun (*this, &Workbench::on_quit_menu_item_action),
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -321,7 +324,8 @@ Workbench::init_actions ()
             nil_stock_id,
             "_Help",
             "",
-            nil_slot
+            nil_slot,
+            ActionEntry::DEFAULT
         }
         ,
         {
@@ -329,7 +333,8 @@ Workbench::init_actions ()
             Gtk::Stock::ABOUT,
             "_About",
             "",
-            nil_slot
+            nil_slot,
+            ActionEntry::DEFAULT
         }
     };
 

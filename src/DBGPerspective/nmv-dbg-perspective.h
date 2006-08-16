@@ -105,11 +105,11 @@ public:
     virtual void delete_visual_breakpoint (int a_breaknum) = 0;
 
     virtual IDebuggerSafePtr& debugger () = 0;
-    virtual Gtk::TextView* get_command_view () = 0;
-    virtual Gtk::TextView* get_program_output_view () = 0;
-    virtual Gtk::TextView* get_error_view () = 0;
+    virtual Glib::RefPtr<Gtk::TextView>& get_command_view () = 0;
+    virtual Glib::RefPtr<Gtk::TextView>& get_target_output_view () = 0;
+    virtual Glib::RefPtr<Gtk::TextView>& get_error_view () = 0;
     virtual void add_text_to_command_view (const UString &a_text) = 0;
-    virtual void add_text_to_program_output_view (const UString &a_text) = 0;
+    virtual void add_text_to_target_output_view (const UString &a_text) = 0;
     virtual void add_text_to_error_view (const UString &a_text) = 0;
     virtual void set_where (const UString &a_uri, int line) = 0;
     virtual Gtk::Widget* get_contextual_menu () = 0;
