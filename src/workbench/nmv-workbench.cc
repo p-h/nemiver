@@ -362,8 +362,6 @@ Workbench::init_menubar ()
 
 
     UString file_path = env::build_path_to_menu_file ("menubar.xml") ;
-    m_priv->ui_manager->insert_action_group (m_priv->default_action_group) ;
-
     m_priv->ui_manager->add_ui_from_file (file_path) ;
 
     m_priv->menubar = m_priv->ui_manager->get_widget ("/MenuBar") ;

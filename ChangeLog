@@ -1,3 +1,11 @@
+jeudi 17 août 2006, 17:05:35 (UTC+0200) Dodji Seketeli
+
+	* src/workbench/nmv-workbench.cc: don't add the same action group twice.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: make the command, error and
+	  target output scroll. Debunk the beast a bit.
+
+
+
 mercredi 16 août 2006, 13:43:22 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc: cleanup the actions and ui_manager init code.

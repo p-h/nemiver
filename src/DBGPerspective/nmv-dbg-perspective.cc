@@ -262,9 +262,12 @@ public:
     void delete_visual_breakpoint (int a_breaknum) ;
 
     IDebuggerSafePtr& debugger () ;
-    Glib::RefPtr<Gtk::TextView>& get_command_view () ;
-    Glib::RefPtr<Gtk::TextView>& get_target_output_view () ;
-    Glib::RefPtr<Gtk::TextView>& get_error_view () ;
+    Gtk::TextView& get_command_view () ;
+    Gtk::ScrolledWindow& get_command_view_scrolled_win () ;
+    Gtk::TextView& get_target_output_view () ;
+    Gtk::ScrolledWindow& get_target_output_view_scrolled_win () ;
+    Gtk::TextView& get_error_view () ;
+    Gtk::ScrolledWindow& get_error_view_scrolled_win () ;
     void set_show_command_view (bool) ;
     void set_show_target_output_view (bool) ;
     void set_show_error_view (bool) ;
@@ -351,11 +354,14 @@ struct DBGPerspective::Priv {
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_uri_map ;
     Gtk::Notebook *statuses_notebook ;
-    Glib::RefPtr<Gtk::TextView> command_view ;
+    SafePtr<Gtk::TextView> command_view ;
+    SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win ;
     int command_view_pagenum ;
-    Glib::RefPtr<Gtk::TextView> target_output_view;
+    SafePtr<Gtk::TextView> target_output_view;
+    SafePtr<Gtk::ScrolledWindow> target_output_view_scrolled_win;
     int target_output_view_pagenum ;
-    Glib::RefPtr<Gtk::TextView> error_view ;
+    SafePtr<Gtk::TextView> error_view ;
+    SafePtr<Gtk::ScrolledWindow> error_view_scrolled_win ;
     int error_view_pagenum ;
     int current_page_num ;
     IDebuggerSafePtr debugger ;
@@ -1243,24 +1249,20 @@ DBGPerspective::init_body ()
     m_priv->statuses_notebook =
         env::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                    "statusesnotebook") ;
-    m_priv->command_view = Glib::RefPtr<Gtk::TextView> (new Gtk::TextView) ;
-    //m_priv->command_view = Glib::RefPtr<Gtk::TextView>
-    //   (env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
-    //                                             "commandview")) ;
-    m_priv->command_view->reference () ;
+    m_priv->command_view = new Gtk::TextView ;
+    THROW_IF_FAIL (m_priv->command_view) ;
+    get_command_view_scrolled_win ().add (*m_priv->command_view) ;
     m_priv->command_view->set_editable (true) ;
     m_priv->command_view->get_buffer ()->signal_insert ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_insert_in_command_view_signal)) ;
 
-    m_priv->target_output_view = Glib::RefPtr<Gtk::TextView> (new Gtk::TextView);
-    //m_priv->target_output_view = Glib::RefPtr<Gtk::TextView>
-    //    (env::get_widget_from_glade<Gtk::TextView> (m_priv->body_glade,
-    //                                               "programoutputview")) ;
-    m_priv->target_output_view->reference () ;
+    m_priv->target_output_view = new Gtk::TextView;
+    THROW_IF_FAIL (m_priv->target_output_view) ;
+    get_target_output_view_scrolled_win ().add (*m_priv->target_output_view) ;
     m_priv->target_output_view->set_editable (false) ;
 
-    m_priv->error_view = Glib::RefPtr<Gtk::TextView> (new Gtk::TextView) ;
-    m_priv->error_view->reference () ;
+    m_priv->error_view = new Gtk::TextView ;
+    get_error_view_scrolled_win ().add (*m_priv->error_view) ;
     m_priv->error_view->set_editable (false) ;
 
     m_priv->body_main_paned->unparent () ;
@@ -2093,46 +2095,78 @@ DBGPerspective::debugger ()
     return m_priv->debugger ;
 }
 
-Glib::RefPtr<Gtk::TextView>&
+Gtk::TextView&
 DBGPerspective::get_command_view ()
 {
-    THROW_IF_FAIL (m_priv->command_view) ;
-    return m_priv->command_view ;
+    THROW_IF_FAIL (m_priv && m_priv->command_view) ;
+    return *m_priv->command_view ;
 }
 
-Glib::RefPtr<Gtk::TextView>&
+Gtk::ScrolledWindow&
+DBGPerspective::get_command_view_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    if (!m_priv->command_view_scrolled_win) {
+        m_priv->command_view_scrolled_win = new Gtk::ScrolledWindow ;
+        THROW_IF_FAIL (m_priv->command_view_scrolled_win) ;
+    }
+    return *m_priv->command_view_scrolled_win ;
+}
+
+Gtk::TextView&
 DBGPerspective::get_target_output_view ()
 {
-    THROW_IF_FAIL (m_priv->target_output_view) ;
-    return m_priv->target_output_view ;
+    THROW_IF_FAIL (m_priv && m_priv->target_output_view) ;
+    return *m_priv->target_output_view ;
 }
 
-Glib::RefPtr<Gtk::TextView>&
+Gtk::ScrolledWindow&
+DBGPerspective::get_target_output_view_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->target_output_view_scrolled_win) {
+        m_priv->target_output_view_scrolled_win =  new Gtk::ScrolledWindow ;
+        THROW_IF_FAIL (m_priv->target_output_view_scrolled_win) ;
+    }
+    return *m_priv->target_output_view_scrolled_win ;
+}
+
+Gtk::TextView&
 DBGPerspective::get_error_view ()
 {
-    THROW_IF_FAIL (m_priv->error_view) ;
-    return m_priv->error_view ;
+    THROW_IF_FAIL (m_priv && m_priv->error_view) ;
+    return *m_priv->error_view ;
+}
+
+Gtk::ScrolledWindow&
+DBGPerspective::get_error_view_scrolled_win ()
+{
+    if (!m_priv->error_view_scrolled_win) {
+        m_priv->error_view_scrolled_win = new Gtk::ScrolledWindow ;
+        THROW_IF_FAIL (m_priv->error_view_scrolled_win) ;
+    }
+    return *m_priv->error_view_scrolled_win ;
 }
 
 void
 DBGPerspective::set_show_command_view (bool a_show)
 {
-    THROW_IF_FAIL (get_command_view ()) ;
     if (a_show) {
-        if (!get_command_view ()->get_parent ()
-                && m_priv->command_view_pagenum == -1
-                && m_priv->command_view_is_visible == false) {
+        if (!get_command_view_scrolled_win ().get_parent ()
+            && m_priv->command_view_pagenum == -1
+            && m_priv->command_view_is_visible == false) {
             LOG ("adding command view") ;
-            get_command_view ()->show_all () ;
+            get_command_view_scrolled_win ().show_all () ;
             m_priv->command_view_pagenum =
             m_priv->statuses_notebook->insert_page
-            (*get_command_view ().operator->(), "Commands", 0) ;
+            (get_command_view_scrolled_win (), "Commands", 0) ;
             m_priv->command_view_is_visible = true ;
         }
     } else {
-        if (get_command_view ()->get_parent ()
-                && m_priv->command_view_pagenum != -1
-                && m_priv->command_view_is_visible) {
+        if (get_command_view_scrolled_win ().get_parent ()
+            && m_priv->command_view_pagenum != -1
+            && m_priv->command_view_is_visible) {
             LOG ("removing command view") ;
             m_priv->statuses_notebook->remove_page
                 (m_priv->command_view_pagenum);
@@ -2147,21 +2181,21 @@ DBGPerspective::set_show_command_view (bool a_show)
 void
 DBGPerspective::set_show_target_output_view (bool a_show)
 {
-    THROW_IF_FAIL (get_target_output_view ()) ;
     if (a_show) {
-        if (get_target_output_view ()->get_parent ()
+        if (get_target_output_view_scrolled_win ().get_parent ()
             && m_priv->target_output_view_pagenum == -1
             && m_priv->target_output_view_is_visible == false) {
             LOG ("adding prog output view") ;
-            get_target_output_view ()->show_all () ;
+            get_target_output_view_scrolled_win ().show_all () ;
             m_priv->target_output_view_pagenum =
                 m_priv->statuses_notebook->insert_page
-                    (*get_target_output_view ().operator->(), "Output", 1) ;
+                    (get_target_output_view_scrolled_win (), "Output", 1) ;
             m_priv->target_output_view_is_visible = true ;
-            m_priv->statuses_notebook->set_current_page (m_priv->target_output_view_pagenum);
+            m_priv->statuses_notebook->set_current_page
+                                        (m_priv->target_output_view_pagenum);
         }
     } else {
-        if (get_target_output_view ()->get_parent ()
+        if (get_target_output_view_scrolled_win ().get_parent ()
             && m_priv->target_output_view_pagenum != -1
             && m_priv->target_output_view_is_visible) {
             LOG ("removing target output view") ;
@@ -2178,21 +2212,20 @@ DBGPerspective::set_show_target_output_view (bool a_show)
 void
 DBGPerspective::set_show_error_view (bool a_show)
 {
-    THROW_IF_FAIL (get_error_view ()) ;
     if (a_show) {
-        if (get_error_view ()->get_parent ()
+        if (get_error_view_scrolled_win ().get_parent ()
             && m_priv->error_view_pagenum == -1
             && m_priv->error_view_is_visible == false) {
             LOG ("adding prog output view") ;
-            get_error_view ()->show_all () ;
+            get_error_view_scrolled_win ().show_all () ;
             m_priv->error_view_pagenum =
                 m_priv->statuses_notebook->insert_page
-                    (*get_error_view ().operator->(), "Output", 1) ;
+                    (get_error_view_scrolled_win (), "Output", 1) ;
             m_priv->error_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (m_priv->error_view_pagenum);
         }
     } else {
-        if (get_error_view ()->get_parent ()
+        if (get_error_view_scrolled_win ().get_parent ()
             && m_priv->error_view_pagenum != -1
             && m_priv->error_view_is_visible) {
             LOG ("removing target output view") ;
@@ -2207,7 +2240,7 @@ DBGPerspective::set_show_error_view (bool a_show)
 }
 
 struct ScrollTextViewToEndClosure {
-    Glib::RefPtr<Gtk::TextView> text_view ;
+    Gtk::TextView* text_view ;
 
     ScrollTextViewToEndClosure (Gtk::TextView *a_view=NULL) :
         text_view (a_view)
@@ -2230,10 +2263,9 @@ DBGPerspective::add_text_to_command_view (const UString &a_text)
 {
     THROW_IF_FAIL (m_priv && m_priv->command_view) ;
     m_priv->command_view->get_buffer ()->insert
-        (m_priv->command_view->get_buffer ()->end (),
-         a_text) ;
+        (get_command_view ().get_buffer ()->end (), a_text) ;
     static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
-    s_scroll_to_end_closure.text_view = m_priv->command_view ;
+    s_scroll_to_end_closure.text_view = m_priv->command_view.get () ;
     Glib::signal_idle ().connect (sigc::mem_fun
             (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
 }
@@ -2243,10 +2275,10 @@ DBGPerspective::add_text_to_target_output_view (const UString &a_text)
 {
     THROW_IF_FAIL (m_priv && m_priv->target_output_view) ;
     m_priv->target_output_view->get_buffer ()->insert
-        (m_priv->target_output_view->get_buffer ()->end (),
+        (get_target_output_view ().get_buffer ()->end (),
          a_text) ;
     static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
-    s_scroll_to_end_closure.text_view = m_priv->target_output_view ;
+    s_scroll_to_end_closure.text_view = m_priv->target_output_view.get () ;
     Glib::signal_idle ().connect (sigc::mem_fun
             (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
 }
@@ -2256,9 +2288,9 @@ DBGPerspective::add_text_to_error_view (const UString &a_text)
 {
     THROW_IF_FAIL (m_priv && m_priv->error_view) ;
     m_priv->error_view->get_buffer ()->insert
-        (m_priv->error_view->get_buffer ()->end (), a_text) ;
+        (get_error_view ().get_buffer ()->end (), a_text) ;
     static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
-    s_scroll_to_end_closure.text_view = m_priv->error_view ;
+    s_scroll_to_end_closure.text_view = m_priv->error_view.get () ;
     Glib::signal_idle ().connect (sigc::mem_fun
             (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
 }
