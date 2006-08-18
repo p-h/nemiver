@@ -50,7 +50,7 @@ struct ObjectRef {
         if (a_ptr)
             a_ptr->ref () ;
     }
-}; //end ObjectReference
+};//end ObjectRef
 
 struct ObjectUnref {
 
@@ -62,7 +62,7 @@ struct ObjectUnref {
         }
         return true ;
     }
-}; //end ObjectUnReference
+};//end ObjectUnRef
 
 struct GCharRef {
     void

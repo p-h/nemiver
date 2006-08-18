@@ -66,9 +66,9 @@ struct DeleteFunctor
 };
 
 template<class PointerType,
-class ReferenceFunctor = DefaultReferenceFunctor,
-class UnreferenceFunctor = DeleteFunctor<PointerType> >
-
+         class ReferenceFunctor = DefaultReferenceFunctor,
+         class UnreferenceFunctor = DeleteFunctor<PointerType>
+        >
 class SafePtr
 {
 protected:

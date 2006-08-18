@@ -142,31 +142,24 @@ private:
 
     void on_show_error_view_changed_signal (bool) ;
 
-    void on_debugger_console_message_signal (const UString &a_msg,
-                                             IDebugger::CommandAndOutput &) ;
+    void on_debugger_console_message_signal (const UString &a_msg) ;
 
-    void on_debugger_target_output_message_signal (const UString &a_msg,
-                                                   IDebugger::CommandAndOutput &);
-    void on_debugger_error_message_signal (const UString &a_msg,
-                                           IDebugger::CommandAndOutput &) ;
+    void on_debugger_target_output_message_signal (const UString &a_msg);
+    void on_debugger_error_message_signal (const UString &a_msg) ;
 
-    void on_debugger_command_done_signal (const UString &a_command,
-                                          IDebugger::CommandAndOutput &) ;
+    void on_debugger_command_done_signal (const UString &a_command) ;
 
     void on_debugger_breakpoints_set_signal
-                                (const map<int, IDebugger::BreakPoint> &,
-                                 IDebugger::CommandAndOutput &) ;
+                                (const map<int, IDebugger::BreakPoint> &) ;
 
-    void on_debugger_breakpoint_deleted_signal (const IDebugger::BreakPoint&,
-                                                int,
-                                                IDebugger::CommandAndOutput&) ;
+    void on_debugger_breakpoint_deleted_signal
+                                        (const IDebugger::BreakPoint&, int) ;
 
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
-                                     const IDebugger::Frame&,
-                                     IDebugger::CommandAndOutput&) ;
+                                     const IDebugger::Frame &) ;
 
-    void on_debugger_running_signal (IDebugger::CommandAndOutput&) ;
+    void on_debugger_running_signal () ;
     //************
     //</signal slots>
     //************
@@ -522,11 +515,8 @@ DBGPerspective::on_show_commands_action ()
                  ("/MenuBar/MenuBarAdditions/ViewMenu/ShowCommandsMenuItem")) ;
     THROW_IF_FAIL (action) ;
 
-    if (action->get_active ()) {
-        set_show_command_view (true) ;
-    } else {
-        set_show_command_view (false) ;
-    }
+    set_show_command_view (action->get_active ()) ;
+
     NEMIVER_CATCH
 }
 
@@ -541,11 +531,7 @@ DBGPerspective::on_show_errors_action ()
                  ("/MenuBar/MenuBarAdditions/ViewMenu/ShowErrorsMenuItem")) ;
     THROW_IF_FAIL (action) ;
 
-    if (action->get_active ()) {
-        set_show_error_view (true) ;
-    } else {
-        set_show_command_view (false) ;
-    }
+    set_show_error_view (action->get_active ()) ;
 
     NEMIVER_CATCH
 }
@@ -561,11 +547,7 @@ DBGPerspective::on_show_target_output_action ()
                  ("/MenuBar/MenuBarAdditions/ViewMenu/ShowTargetOutputMenuItem")) ;
     THROW_IF_FAIL (action) ;
 
-    if (action->get_active ()) {
-        set_show_target_output_view (true) ;
-    } else {
-        set_show_target_output_view (false) ;
-    }
+    set_show_target_output_view (action->get_active ()) ;
 
     NEMIVER_CATCH
 }
@@ -757,8 +739,7 @@ DBGPerspective::on_show_error_view_changed_signal (bool a_show)
 }
 
 void
-DBGPerspective::on_debugger_console_message_signal (const UString &a_msg,
-                                                    IDebugger::CommandAndOutput &)
+DBGPerspective::on_debugger_console_message_signal (const UString &a_msg)
 {
     NEMIVER_TRY
 
@@ -769,8 +750,7 @@ DBGPerspective::on_debugger_console_message_signal (const UString &a_msg,
 
 void
 DBGPerspective::on_debugger_target_output_message_signal
-                                            (const UString &a_msg,
-                                             IDebugger::CommandAndOutput &)
+                                            (const UString &a_msg)
 {
     NEMIVER_TRY
 
@@ -780,8 +760,7 @@ DBGPerspective::on_debugger_target_output_message_signal
 }
 
 void
-DBGPerspective::on_debugger_error_message_signal (const UString &a_msg,
-                                                  IDebugger::CommandAndOutput &)
+DBGPerspective::on_debugger_error_message_signal (const UString &a_msg)
 {
     NEMIVER_TRY
 
@@ -791,8 +770,7 @@ DBGPerspective::on_debugger_error_message_signal (const UString &a_msg,
 }
 
 void
-DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
-                                                 IDebugger::CommandAndOutput &)
+DBGPerspective::on_debugger_command_done_signal (const UString &a_command)
 {
     NEMIVER_TRY
     attached_to_target_signal ().emit (true) ;
@@ -802,8 +780,7 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
 
 void
 DBGPerspective::on_debugger_breakpoints_set_signal
-                                (const map<int, IDebugger::BreakPoint> &a_breaks,
-                                 IDebugger::CommandAndOutput &)
+                                (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     NEMIVER_TRY
     append_breakpoints (a_breaks) ;
@@ -814,8 +791,7 @@ DBGPerspective::on_debugger_breakpoints_set_signal
 void
 DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
                                             bool a_has_frame,
-                                            const IDebugger::Frame &a_frame,
-                                            IDebugger::CommandAndOutput&)
+                                            const IDebugger::Frame &a_frame)
 {
     NEMIVER_TRY
 
@@ -845,8 +821,7 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
 void
 DBGPerspective::on_debugger_breakpoint_deleted_signal
                                         (const IDebugger::BreakPoint &a_break,
-                                         int a_break_number,
-                                         IDebugger::CommandAndOutput &)
+                                         int a_break_number)
 {
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
@@ -854,7 +829,7 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
 }
 
 void
-DBGPerspective::on_debugger_running_signal (IDebugger::CommandAndOutput &a_in)
+DBGPerspective::on_debugger_running_signal ()
 {
     NEMIVER_TRY
     debugger_ready_signal ().emit (false) ;
@@ -2160,7 +2135,7 @@ DBGPerspective::set_show_command_view (bool a_show)
             get_command_view_scrolled_win ().show_all () ;
             m_priv->command_view_pagenum =
             m_priv->statuses_notebook->insert_page
-            (get_command_view_scrolled_win (), "Commands", 0) ;
+                            (get_command_view_scrolled_win (), "Commands", 0) ;
             m_priv->command_view_is_visible = true ;
         }
     } else {
@@ -2169,7 +2144,7 @@ DBGPerspective::set_show_command_view (bool a_show)
             && m_priv->command_view_is_visible) {
             LOG ("removing command view") ;
             m_priv->statuses_notebook->remove_page
-                (m_priv->command_view_pagenum);
+                                        (get_command_view_scrolled_win ());
             m_priv->command_view_is_visible = false;
             m_priv->command_view_pagenum = -1 ;
 
@@ -2182,7 +2157,7 @@ void
 DBGPerspective::set_show_target_output_view (bool a_show)
 {
     if (a_show) {
-        if (get_target_output_view_scrolled_win ().get_parent ()
+        if (!get_target_output_view_scrolled_win ().get_parent ()
             && m_priv->target_output_view_pagenum == -1
             && m_priv->target_output_view_is_visible == false) {
             LOG ("adding prog output view") ;
@@ -2200,7 +2175,7 @@ DBGPerspective::set_show_target_output_view (bool a_show)
             && m_priv->target_output_view_is_visible) {
             LOG ("removing target output view") ;
             m_priv->statuses_notebook->remove_page
-                (m_priv->target_output_view_pagenum);
+                                    (get_target_output_view_scrolled_win ());
             m_priv->target_output_view_is_visible = false;
             m_priv->target_output_view_pagenum = -1 ;
         }
@@ -2213,24 +2188,25 @@ void
 DBGPerspective::set_show_error_view (bool a_show)
 {
     if (a_show) {
-        if (get_error_view_scrolled_win ().get_parent ()
+        if (!get_error_view_scrolled_win ().get_parent ()
             && m_priv->error_view_pagenum == -1
             && m_priv->error_view_is_visible == false) {
-            LOG ("adding prog output view") ;
+            LOG ("adding error view") ;
             get_error_view_scrolled_win ().show_all () ;
             m_priv->error_view_pagenum =
                 m_priv->statuses_notebook->insert_page
-                    (get_error_view_scrolled_win (), "Output", 1) ;
+                    (get_error_view_scrolled_win (), "Errors", 1) ;
             m_priv->error_view_is_visible = true ;
-            m_priv->statuses_notebook->set_current_page (m_priv->error_view_pagenum);
+            m_priv->statuses_notebook->set_current_page
+                                                (m_priv->error_view_pagenum);
         }
     } else {
         if (get_error_view_scrolled_win ().get_parent ()
             && m_priv->error_view_pagenum != -1
             && m_priv->error_view_is_visible) {
-            LOG ("removing target output view") ;
+            LOG ("removing error view") ;
             m_priv->statuses_notebook->remove_page
-                (m_priv->error_view_pagenum);
+                                        (get_error_view_scrolled_win ());
             m_priv->error_view_is_visible = false;
             m_priv->error_view_pagenum = -1 ;
         }

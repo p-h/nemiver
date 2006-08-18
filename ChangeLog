@@ -1,3 +1,16 @@
+vendredi 18 août 2006, 10:03:38 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
+	  src/DBGPerspective/dbgengine/nmv-gdb-engine.cc, :
+	  Change in the IDebugger api so that it does not export any knowledge
+	  of GDB/MI. IDebugger is now a good citizen of the
+	  "encapsulation-and-code-against-interface" land. This also
+	  simplifies the client code a lot.
+	* src/DBGPerspective/nmv-call-stack.cc,h: started to hack on a call
+	  stack type. Everything has to be done.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: reflect the changes in
+	  the IDebugger API in here.
+
 jeudi 17 août 2006, 17:05:35 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc: don't add the same action group twice.

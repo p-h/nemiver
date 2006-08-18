@@ -10,74 +10,6 @@ using namespace nemiver;
 using namespace nemiver::common ;
 
 void
-on_pty_signal (IDebugger::Output &a_result)
-{
-    UString parsing_succeeded ;
-
-    if (a_result.parsing_succeeded ()) {
-        parsing_succeeded = "succeded";
-    } else {
-        parsing_succeeded = "failed" ;
-    }
-
-    cout <<"**********************************\n"
-         <<"<pty parsing='" << parsing_succeeded << "'>\n"
-         <<"**********************************\n"
-         << a_result.raw_value () << "\n"
-         <<"**********************************\n"
-         <<"</pty>\n"
-         <<"**********************************\n"
-     ;
-}
-
-void
-on_stdout_signal (IDebugger::CommandAndOutput &a_result)
-{
-    UString parsing_succeeded ;
-
-    if (a_result.output ().parsing_succeeded ()) {
-        parsing_succeeded = "succeded";
-    } else {
-        parsing_succeeded = "failed" ;
-    }
-
-    cout <<"**********************************\n"
-         <<"<stdout parsing='" << parsing_succeeded << "'" ;
-    if (a_result.has_command ()) {
-        cout << " command='" << a_result.command ().value () << "'>\n" ;
-    } else {
-        cout << ">\n" ;
-    }
-
-    cout <<"**********************************\n"
-         << a_result.output ().raw_value () << "\n"
-         <<"**********************************\n"
-         <<"</stdout>\n"
-         <<"**********************************\n"
-     ;
-}
-void
-on_stderr_signal (IDebugger::Output &a_result)
-{
-    UString parsing_succeeded ;
-
-    if (a_result.parsing_succeeded ()) {
-        parsing_succeeded = "succeded";
-    } else {
-        parsing_succeeded = "failed" ;
-    }
-
-    cout <<"**********************************\n"
-         <<"<stderr parsing='" << parsing_succeeded << "'>\n"
-         <<"**********************************\n"
-         << a_result.raw_value () << "\n"
-         <<"**********************************\n"
-         <<"</stderr>\n"
-         <<"**********************************\n"
-     ;
-}
-
-void
 on_engine_died_signal ()
 {
     cout << "!!!!!engine died!!!!\n" ;
@@ -115,14 +47,6 @@ main (int argc, char *argv[])
                     module_manager.load<IDebugger> ("gdbengine") ;
 
         debugger->set_event_loop_context (loop->get_context ()) ;
-
-        debugger->pty_signal ().connect (sigc::ptr_fun (&on_pty_signal)) ;
-
-        debugger->stdout_signal ().connect
-                (sigc::ptr_fun (&on_stdout_signal)) ;
-
-        debugger->stderr_signal ().connect
-                (sigc::ptr_fun (&on_stderr_signal)) ;
 
         debugger->engine_died_signal ().connect
                 (sigc::ptr_fun (&on_engine_died_signal)) ;
