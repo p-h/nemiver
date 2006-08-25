@@ -114,7 +114,7 @@ public:
     }
 
     SafePtr<PointerType, ReferenceFunctor, UnreferenceFunctor>&
-    operator = (const PointerType *a_pointer)
+    operator= (const PointerType *a_pointer)
     {
         reset (a_pointer) ;
         return *this ;

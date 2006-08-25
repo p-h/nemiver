@@ -240,6 +240,9 @@ public:
     virtual sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
                                                      stopped_signal () const = 0;
 
+    virtual sigc::signal<void, const list<IDebugger::Frame>& >&
+                                                frames_listed_signal () const=0;
+
     virtual sigc::signal<void>& running_signal () const = 0;
     virtual sigc::signal<void>& program_finished_signal () const = 0;
 

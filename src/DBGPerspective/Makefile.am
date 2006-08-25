@@ -30,6 +30,7 @@ nmv-call-stack.cc \
 nmv-call-stack.h
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
+libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version
 libdbgperspectiveplugin_la_LIBADD= \
 @NEMIVER_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la

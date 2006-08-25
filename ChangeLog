@@ -1,8 +1,22 @@
+vendredi 25 août 2006, 10:38:44 (UTC+0200) Dodji Seketeli
+
+	* src/workbench/Makefile.am, src/DBGPerspective/dbgengine/Makefile.am,
+	  src/DBGPerspective/Makefile.am, src/dbdimpl/sqlite/Makefile.am:
+	  add -module -avoid-version options to
+	  this module.
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: started to work on
+	  parsing the generic "variable=value" syntax of GDB/MI. Nothing works
+	  yet. This is to build the ground for the callstack management.
+	* src/DBGPerspective/dbgengine/nmv-i-debugger.h: added
+	  IDebugger::frame_listed_signal()
+	* src/DBGPerspective/nmv-call-stack.cc,h: more work on this. Nothing
+	  works yet
+
 vendredi 18 août 2006, 10:03:38 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
 	  src/DBGPerspective/dbgengine/nmv-gdb-engine.cc, :
-	  Change in the IDebugger api so that it does not export any knowledge
+	  Change the IDebugger api so that it does not export any knowledge
 	  of GDB/MI. IDebugger is now a good citizen of the
 	  "encapsulation-and-code-against-interface" land. This also
 	  simplifies the client code a lot.

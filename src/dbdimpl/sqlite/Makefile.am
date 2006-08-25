@@ -9,7 +9,9 @@ nmv-libsqlite-macros.h
 
 libnemiverdbdsqlite_la_SOURCES=$(sources)
 
-libnemiverdbdsqlite_la_LIBADD=@SQLITE3_LIBS@ @NEMIVER_LIBS@ \
+libnemiverdbdsqlite_la_LDFLAGS= -module -avoid-version
+libnemiverdbdsqlite_la_LIBADD= \
+@SQLITE3_LIBS@ @NEMIVER_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 INCLUDES=@NEMIVER_CFLAGS@ -I$(top_srcdir)/src/common \

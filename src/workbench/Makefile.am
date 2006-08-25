@@ -14,7 +14,7 @@ nmv-pref-mgr.cc
 publicheaders_DATA=$(headers)
 publicheadersdir=$(prefix)/include/dbgengine
 
-libworkbenchmod_la_LDFLAGS=@NEMIVER_LIBS@
+libworkbenchmod_la_LDFLAGS=@NEMIVER_LIBS@ -module -avoid-version
 
 config_DATA=workbench.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@

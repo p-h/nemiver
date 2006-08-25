@@ -10,7 +10,7 @@ libgdbmod_la_SOURCES= \
 $(headers) \
 nmv-gdb-engine.cc
 
-libgdbmod_la_LDFLAGS=@NEMIVER_LIBS@
+libgdbmod_la_LDFLAGS=@NEMIVER_LIBS@ -module -avoid-version
 
 config_DATA=gdbengine.conf
 configdir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)

@@ -35,6 +35,7 @@
 #include "nmv-ui-utils.h"
 #include "nmv-sess-mgr.h"
 #include "nmv-date-utils.h"
+#include "nmv-call-stack.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -255,21 +256,43 @@ public:
     void delete_visual_breakpoint (int a_breaknum) ;
 
     IDebuggerSafePtr& debugger () ;
+
     Gtk::TextView& get_command_view () ;
+
     Gtk::ScrolledWindow& get_command_view_scrolled_win () ;
+
     Gtk::TextView& get_target_output_view () ;
+
     Gtk::ScrolledWindow& get_target_output_view_scrolled_win () ;
+
     Gtk::TextView& get_error_view () ;
+
     Gtk::ScrolledWindow& get_error_view_scrolled_win () ;
+
+    CallStack& get_call_stack () ;
+
+    Gtk::ScrolledWindow& get_call_stack_scrolled_win () ;
+
     void set_show_command_view (bool) ;
+
     void set_show_target_output_view (bool) ;
+
     void set_show_error_view (bool) ;
+
+    void set_show_call_stack_view (bool) ;
+
     void add_text_to_command_view (const UString &a_text) ;
+
     void add_text_to_target_output_view (const UString &a_text) ;
+
     void add_text_to_error_view (const UString &a_text) ;
+
     void set_where (const UString &a_uri, int line) ;
+
     void unset_where () ;
+
     Gtk::Widget* get_contextual_menu () ;
+
     sigc::signal<void, bool>& show_command_view_signal () ;
     sigc::signal<void, bool>& show_target_output_view_signal () ;
     sigc::signal<void, bool>& show_error_view_signal () ;
@@ -339,6 +362,7 @@ struct DBGPerspective::Priv {
     bool command_view_is_visible ;
     bool target_output_view_is_visible ;
     bool error_view_is_visible ;
+    bool call_stack_view_is_visible ;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
@@ -349,13 +373,12 @@ struct DBGPerspective::Priv {
     Gtk::Notebook *statuses_notebook ;
     SafePtr<Gtk::TextView> command_view ;
     SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win ;
-    int command_view_pagenum ;
     SafePtr<Gtk::TextView> target_output_view;
     SafePtr<Gtk::ScrolledWindow> target_output_view_scrolled_win;
-    int target_output_view_pagenum ;
     SafePtr<Gtk::TextView> error_view ;
     SafePtr<Gtk::ScrolledWindow> error_view_scrolled_win ;
-    int error_view_pagenum ;
+    SafePtr<CallStack> call_stack ;
+    SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
     int current_page_num ;
     IDebuggerSafePtr debugger ;
     map<int, IDebugger::BreakPoint> breakpoints ;
@@ -374,11 +397,9 @@ struct DBGPerspective::Priv {
         command_view_is_visible (false),
         target_output_view_is_visible (false),
         error_view_is_visible (false),
+        call_stack_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
-        command_view_pagenum (-1),
-        target_output_view_pagenum (-1),
-        error_view_pagenum (-1),
         current_page_num (0)
     {}
 };//end struct DBGPerspective::Priv
@@ -815,6 +836,7 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
     } else {
         display_error ("Can't do anything with current frame") ;
     }
+    add_text_to_command_view ("\n(gdb)") ;
     NEMIVER_CATCH
 }
 
@@ -1239,6 +1261,10 @@ DBGPerspective::init_body ()
     m_priv->error_view = new Gtk::TextView ;
     get_error_view_scrolled_win ().add (*m_priv->error_view) ;
     m_priv->error_view->set_editable (false) ;
+
+    get_call_stack_scrolled_win ().add (get_call_stack ().widget ()) ;
+
+    set_show_call_stack_view (true) ;
 
     m_priv->body_main_paned->unparent () ;
     m_priv->body_main_paned->show_all () ;
@@ -2084,6 +2110,8 @@ DBGPerspective::get_command_view_scrolled_win ()
 
     if (!m_priv->command_view_scrolled_win) {
         m_priv->command_view_scrolled_win = new Gtk::ScrolledWindow ;
+        m_priv->command_view_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                       Gtk::POLICY_AUTOMATIC) ;
         THROW_IF_FAIL (m_priv->command_view_scrolled_win) ;
     }
     return *m_priv->command_view_scrolled_win ;
@@ -2102,6 +2130,9 @@ DBGPerspective::get_target_output_view_scrolled_win ()
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->target_output_view_scrolled_win) {
         m_priv->target_output_view_scrolled_win =  new Gtk::ScrolledWindow ;
+        m_priv->target_output_view_scrolled_win->set_policy
+                                                    (Gtk::POLICY_AUTOMATIC,
+                                                     Gtk::POLICY_AUTOMATIC) ;
         THROW_IF_FAIL (m_priv->target_output_view_scrolled_win) ;
     }
     return *m_priv->target_output_view_scrolled_win ;
@@ -2117,37 +2148,69 @@ DBGPerspective::get_error_view ()
 Gtk::ScrolledWindow&
 DBGPerspective::get_error_view_scrolled_win ()
 {
+    THROW_IF_FAIL (m_priv) ;
     if (!m_priv->error_view_scrolled_win) {
         m_priv->error_view_scrolled_win = new Gtk::ScrolledWindow ;
+        m_priv->error_view_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                     Gtk::POLICY_AUTOMATIC) ;
         THROW_IF_FAIL (m_priv->error_view_scrolled_win) ;
     }
     return *m_priv->error_view_scrolled_win ;
 }
+
+CallStack&
+DBGPerspective::get_call_stack ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->call_stack) {
+        m_priv->call_stack = new CallStack (debugger ()) ;
+        THROW_IF_FAIL (m_priv) ;
+    }
+    return *m_priv->call_stack ;
+}
+
+Gtk::ScrolledWindow&
+DBGPerspective::get_call_stack_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->call_stack_scrolled_win) {
+        m_priv->call_stack_scrolled_win = new Gtk::ScrolledWindow () ;
+        m_priv->call_stack_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                     Gtk::POLICY_AUTOMATIC) ;
+        THROW_IF_FAIL (m_priv->call_stack_scrolled_win) ;
+    }
+    return *m_priv->call_stack_scrolled_win ;
+}
+
+
+enum ViewsIndex{
+    COMMAND_VIEW_INDEX=0,
+    TARGET_OUTPUT_VIEW_INDEX,
+    ERROR_VIEW_INDEX,
+    CALL_STACK_VIEW_INDEX
+};
 
 void
 DBGPerspective::set_show_command_view (bool a_show)
 {
     if (a_show) {
         if (!get_command_view_scrolled_win ().get_parent ()
-            && m_priv->command_view_pagenum == -1
             && m_priv->command_view_is_visible == false) {
-            LOG ("adding command view") ;
             get_command_view_scrolled_win ().show_all () ;
-            m_priv->command_view_pagenum =
+            int pagenum =
             m_priv->statuses_notebook->insert_page
-                            (get_command_view_scrolled_win (), "Commands", 0) ;
+                            (get_command_view_scrolled_win (),
+                             "Commands",
+                             COMMAND_VIEW_INDEX) ;
+            m_priv->statuses_notebook->set_current_page (pagenum) ;
             m_priv->command_view_is_visible = true ;
         }
     } else {
         if (get_command_view_scrolled_win ().get_parent ()
-            && m_priv->command_view_pagenum != -1
             && m_priv->command_view_is_visible) {
-            LOG ("removing command view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_command_view_scrolled_win ());
             m_priv->command_view_is_visible = false;
-            m_priv->command_view_pagenum = -1 ;
-
         }
     }
     show_command_view_signal ().emit (a_show) ;
@@ -2158,26 +2221,22 @@ DBGPerspective::set_show_target_output_view (bool a_show)
 {
     if (a_show) {
         if (!get_target_output_view_scrolled_win ().get_parent ()
-            && m_priv->target_output_view_pagenum == -1
             && m_priv->target_output_view_is_visible == false) {
-            LOG ("adding prog output view") ;
             get_target_output_view_scrolled_win ().show_all () ;
-            m_priv->target_output_view_pagenum =
+            int page_num =
                 m_priv->statuses_notebook->insert_page
-                    (get_target_output_view_scrolled_win (), "Output", 1) ;
+                    (get_target_output_view_scrolled_win (),
+                     "Output",
+                     TARGET_OUTPUT_VIEW_INDEX) ;
             m_priv->target_output_view_is_visible = true ;
-            m_priv->statuses_notebook->set_current_page
-                                        (m_priv->target_output_view_pagenum);
+            m_priv->statuses_notebook->set_current_page (page_num);
         }
     } else {
         if (get_target_output_view_scrolled_win ().get_parent ()
-            && m_priv->target_output_view_pagenum != -1
             && m_priv->target_output_view_is_visible) {
-            LOG ("removing target output view") ;
             m_priv->statuses_notebook->remove_page
                                     (get_target_output_view_scrolled_win ());
             m_priv->target_output_view_is_visible = false;
-            m_priv->target_output_view_pagenum = -1 ;
         }
         m_priv->target_output_view_is_visible = false;
     }
@@ -2189,30 +2248,53 @@ DBGPerspective::set_show_error_view (bool a_show)
 {
     if (a_show) {
         if (!get_error_view_scrolled_win ().get_parent ()
-            && m_priv->error_view_pagenum == -1
             && m_priv->error_view_is_visible == false) {
-            LOG ("adding error view") ;
             get_error_view_scrolled_win ().show_all () ;
-            m_priv->error_view_pagenum =
+            int page_num =
                 m_priv->statuses_notebook->insert_page
-                    (get_error_view_scrolled_win (), "Errors", 1) ;
+                    (get_error_view_scrolled_win (),
+                     "Errors",
+                     ERROR_VIEW_INDEX) ;
             m_priv->error_view_is_visible = true ;
-            m_priv->statuses_notebook->set_current_page
-                                                (m_priv->error_view_pagenum);
+            m_priv->statuses_notebook->set_current_page (page_num);
         }
     } else {
         if (get_error_view_scrolled_win ().get_parent ()
-            && m_priv->error_view_pagenum != -1
             && m_priv->error_view_is_visible) {
             LOG ("removing error view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_error_view_scrolled_win ());
-            m_priv->error_view_is_visible = false;
-            m_priv->error_view_pagenum = -1 ;
         }
         m_priv->error_view_is_visible = false;
     }
     show_error_view_signal ().emit (a_show) ;
+}
+
+void
+DBGPerspective::set_show_call_stack_view (bool a_show)
+{
+    if (a_show) {
+        if (!get_call_stack_scrolled_win ().get_parent ()
+            && m_priv->call_stack_view_is_visible == false) {
+            get_call_stack_scrolled_win ().show_all () ;
+            int page_num = m_priv->statuses_notebook->insert_page
+                                            (get_call_stack_scrolled_win (),
+                                             "Call stack",
+                                             CALL_STACK_VIEW_INDEX) ;
+            m_priv->call_stack_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page
+                                                (page_num);
+        }
+    } else {
+        if (get_call_stack_scrolled_win ().get_parent ()
+            && m_priv->call_stack_view_is_visible) {
+            LOG ("removing error view") ;
+            m_priv->statuses_notebook->remove_page
+                                        (get_call_stack_scrolled_win ());
+            m_priv->call_stack_view_is_visible = false;
+        }
+        m_priv->call_stack_view_is_visible = false;
+    }
 }
 
 struct ScrollTextViewToEndClosure {
@@ -2239,7 +2321,7 @@ DBGPerspective::add_text_to_command_view (const UString &a_text)
 {
     THROW_IF_FAIL (m_priv && m_priv->command_view) ;
     m_priv->command_view->get_buffer ()->insert
-        (get_command_view ().get_buffer ()->end (), a_text) ;
+        (get_command_view ().get_buffer ()->end (), a_text ) ;
     static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
     s_scroll_to_end_closure.text_view = m_priv->command_view.get () ;
     Glib::signal_idle ().connect (sigc::mem_fun
