@@ -42,7 +42,7 @@ fi
 
 libtoolize --copy --force
 aclocal $ACLOCAL_FLAGS
-automake --add-missing
+automake-1.9 --add-missing
 autoconf
 
 $topsrcdir/configure "$@"
