@@ -526,25 +526,38 @@ public:
 
     virtual ~ResultValueList () {}
     ContentType content_type () const {return (ContentType) m_content.which ();}
-    void append (const ResultSafePtr &a_in)
+
+    bool empty () {return m_content.empty () ;}
+
+    void append (const ResultSafePtr &a_result)
     {
-        THROW_IF_FAIL (boost::get<list<ResultSafePtr> > (&m_content)) ;
-        boost::get<list<ResultSafePtr> > (&m_content)->push_back (a_in);
+        if (!boost::get<list<ResultSafePtr> > (&m_content)) {
+            list<ResultSafePtr> list ;
+            list.push_back (a_result) ;
+            m_content = list ;
+        } else {
+            boost::get<list<ResultSafePtr> > (&m_content)->push_back (a_result);
+        }
     }
-    void append (const ValueSafePtr &a_in)
+    void append (const ValueSafePtr &a_value)
     {
-        THROW_IF_FAIL (boost::get<list<ValueSafePtr> > (&m_content)) ;
-        boost::get<list<ValueSafePtr> > (&m_content)->push_back (a_in);
+        if (!boost::get<list<ValueSafePtr> > (&m_content)) {
+            list<ValueSafePtr> list ;
+            list.push_back (a_value) ;
+            m_content = list ;
+        } else {
+            boost::get<list<ValueSafePtr> > (&m_content)->push_back (a_value);
+        }
     }
     const list<ResultSafePtr> get_result_content () const
     {
-        THROW_IF_FAIL (content_type () == RESULT_TYPE) ;
+        THROW_IF_FAIL (!m_content.empty () && content_type () == RESULT_TYPE) ;
         return *boost::get<list<ResultSafePtr> > (&m_content) ;
     }
 
     const list<ValueSafePtr> get_value_content () const
     {
-        THROW_IF_FAIL (content_type () == VALUE_TYPE) ;
+        THROW_IF_FAIL (!m_content.empty () && content_type () == VALUE_TYPE) ;
         return *boost::get<list<ValueSafePtr> > (&m_content) ;
     }
 };//end class ResultValueList
@@ -1617,7 +1630,7 @@ struct GDBEngine::Priv {
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
-        ResultValueListSafePtr return_list (new ResultValueList) ;
+        ResultValueListSafePtr return_list ;
         if (a_input[cur] != '[') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
@@ -1638,7 +1651,11 @@ struct GDBEngine::Priv {
         ResultSafePtr result ;
         if (parse_result (a_input, cur, cur, result)) {
             THROW_IF_FAIL (result) ;
-            return_list->append (result) ;
+            if (!return_list) {
+                return_list = ResultValueListSafePtr (new ResultValueList (result)) ;
+            } else {
+                return_list->append (result) ;
+            }
             CHECK_END (a_input, cur, end) ;
             for (;;) {
                 if (a_input[cur] == ',') {
@@ -1650,7 +1667,11 @@ struct GDBEngine::Priv {
             }
         } else if (parse_value (a_input, cur, cur, value)) {
             THROW_IF_FAIL (value);
-            return_list->append (value) ;
+            if (!return_list) {
+                return_list = ResultValueListSafePtr (new ResultValueList (value)) ;
+            } else {
+                return_list->append (value) ;
+            }
             CHECK_END (a_input, cur, end) ;
             for (;;) {
                 if (a_input[cur] == ',') {
@@ -2332,6 +2353,23 @@ struct GDBEngine::Priv {
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
                     LOG ("parsed result") ;
+                } else if (a_input.compare (cur, 7, "frame={")) {
+                    ResultSafePtr result ;
+                    parse_result (a_input, cur, cur, result) ;
+                    THROW_IF_FAIL (result) ;
+                    LOG ("parsed result") ;
+                } else if (a_input.compare (cur, 7, "depth=\"")) {
+                    ResultSafePtr result ;
+                    parse_result (a_input, cur, cur, result) ;
+                    THROW_IF_FAIL (result) ;
+                    LOG ("parsed result") ;
+                } else if (a_input.compare (cur, 12, "stack-args=[")) {
+                    ResultSafePtr result ;
+                    parse_result (a_input, cur, cur, result) ;
+                    THROW_IF_FAIL (result) ;
+                    LOG ("parsed result") ;
+                } else {
+                    LOG_PARSING_ERROR (a_input, cur) ;
                 }
 
                 for (;cur < end && a_input[cur] != '\n';++cur) {}

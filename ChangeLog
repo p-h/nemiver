@@ -1,3 +1,8 @@
+vendredi 25 août 2006, 19:06:34 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: mode debugging of the
+	  GDB/MI variable=value parsing code.
+
 vendredi 25 août 2006, 10:38:44 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/Makefile.am, src/DBGPerspective/dbgengine/Makefile.am,
