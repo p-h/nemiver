@@ -2454,10 +2454,12 @@ struct GDBEngine::Priv {
                     parse_breakpoint_table (a_input, cur, cur, breaks) ;
                     result_record.breakpoints () = breaks ;
                 } else if (!a_input.compare (cur, 7, "stack=[")) {
-                    ResultSafePtr result ;
-                    parse_result (a_input, cur, cur, result) ;
-                    THROW_IF_FAIL (result) ;
-                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
+                    list<IDebugger::Frame> call_stack ;
+                    if (!parse_call_stack (a_input, cur, cur, call_stack)) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                        return false ;
+                    }
+                    LOG_D ("parsed call stack", NMV_DEFAULT_DOMAIN) ;
                 } else if (a_input.compare (cur, 7, "frame={")) {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;

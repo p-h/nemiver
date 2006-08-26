@@ -1242,6 +1242,7 @@ DBGPerspective::init_body ()
                                                    "sourceviewsnotebook") ;
     m_priv->sourceviews_notebook->remove_page () ;
     m_priv->sourceviews_notebook->set_show_tabs () ;
+    m_priv->sourceviews_notebook->set_scrollable () ;
 
     m_priv->statuses_notebook =
         env::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,

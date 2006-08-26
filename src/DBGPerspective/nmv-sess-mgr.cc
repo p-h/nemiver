@@ -120,7 +120,7 @@ struct SessMgr::Priv {
         UString version ;
         RETURN_VAL_IF_FAIL (connection ()->get_column_content (0, version),
                             false) ;
-        LOG ("version: " << version) ;
+        LOG_D ("version: " << version, NMV_DEFAULT_DOMAIN) ;
         if (version != REQUIRED_DB_SCHEMA_VERSION) {
             return false ;
         }
