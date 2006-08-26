@@ -309,24 +309,6 @@ SqliteCnxDrv::get_column_content (gulong a_offset,
     return true ;
 }
 
-bool
-SqliteCnxDrv::get_column_content (gulong a_offset,
-                                  long &a_column_content) const
-{
-    LOG_FUNCTION_SCOPE ;
-    THROW_IF_FAIL (m_priv) ;
-
-    RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
-    int type = sqlite3_column_type (m_priv->cur_stmt, a_offset) ;
-    if ((type != SQLITE_INTEGER)
-        && (type != SQLITE_FLOAT)
-        && (type != SQLITE_NULL)) {
-        LOG_ERROR ("column number " << a_offset << " is not of numeric type") ;
-        return false ;
-    }
-    a_column_content = sqlite3_column_int (m_priv->cur_stmt, a_offset) ;
-    return true ;
-}
 
 bool
 SqliteCnxDrv::get_column_content (gulong a_offset,

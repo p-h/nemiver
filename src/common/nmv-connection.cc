@@ -229,17 +229,6 @@ Connection::get_column_content (gulong a_offset,
 
 bool
 Connection::get_column_content (gulong a_offset,
-                                long &a_column_content)
-{
-    LOG_FUNCTION_SCOPE ;
-    THROW_IF_FAIL (m_priv) ;
-    Glib::Mutex::Lock lock (m_priv->mutex) ;
-    return m_priv->get_driver ().get_column_content
-           (a_offset, a_column_content);
-}
-
-bool
-Connection::get_column_content (gulong a_offset,
                                 double& a_column_content)
 {
     LOG_FUNCTION_SCOPE ;

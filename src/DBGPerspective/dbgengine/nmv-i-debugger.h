@@ -209,6 +209,7 @@ public:
             m_file_name = "" ;
             m_file_full_name = "" ;
             m_line = 0 ;
+            m_library.clear () ;
         }
     };//end class Frame
 

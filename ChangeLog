@@ -1,3 +1,13 @@
+samedi 26 août 2006, 17:48:32 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more stack trace
+	  parsing work. Nothing works yet.
+	* src/common/nmv-i-connection-driver.h,
+	  src/common/nmv-connection.cc,h,
+	  src/dbdimpl/sqlite/nmv-sqlite-cnx-drv.cc,h: long int and int64 are
+	  the same on amd64 ...
+
+
 samedi 26 août 2006, 15:01:16 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,

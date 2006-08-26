@@ -81,9 +81,6 @@ public:
                              gint64 &a_column_content) const ;
 
     bool get_column_content (gulong a_offset,
-                             long &a_column_content) const ;
-
-    bool get_column_content (gulong a_offset,
                              double& a_column_content) const ;
 
     bool get_column_content (gulong a_offset,

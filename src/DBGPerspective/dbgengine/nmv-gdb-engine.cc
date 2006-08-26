@@ -420,6 +420,12 @@ public:
     void clear () {m_content.clear ();}
 };//end class Tuple
 
+/// A GDB/MI Value.
+/// the syntax of a GDB/MI value is:
+/// VALUE ==> CONST | TUPLE | LIST
+/// In our case, CONST is a UString class, TUPLE is a Tuple class and
+/// LIST is a ResultValueList class.
+/// please, read the GDB/MI output syntax documentation for more.
 class Value : public Object {
     Value (const Value&) ;
     Value& operator= (const Value&) ;
@@ -427,10 +433,11 @@ class Value : public Object {
     friend class Result ;
 
     Value () {}
+
 public:
-    enum ValueTypes {
+    enum ValueType {
         STRING_TYPE=0,
-        RESULT_OR_VALUE_LIST_TYPE,
+        RESULT_VALUE_LIST_TYPE,
         TUPLE_TYPE
     };
 
@@ -446,11 +453,42 @@ public:
         m_content = a_tuple ;
     }
 
+    ValueType content_type () const {return (ValueType) m_content.which ();}
+
     void append (const UString &a_str)
     {
         THROW_IF_FAIL (boost::get<UString> (&m_content)) ;
         boost::get<UString> (m_content) ;
     }
+
+    const UString& get_string_content ()
+    {
+        THROW_IF_FAIL (content_type () == STRING_TYPE) ;
+        return boost::get<UString> (content ()) ;
+    }
+
+    const ResultValueListSafePtr get_result_value_list_content () const
+    {
+        THROW_IF_FAIL (content_type () == RESULT_VALUE_LIST_TYPE) ;
+        return boost::get<ResultValueListSafePtr> (content ()) ;
+    }
+    ResultValueListSafePtr get_result_value_list_content ()
+    {
+        THROW_IF_FAIL (content_type () == RESULT_VALUE_LIST_TYPE) ;
+        return boost::get<ResultValueListSafePtr> (content ()) ;
+    }
+
+    const TupleSafePtr get_tuple_content () const
+    {
+        THROW_IF_FAIL (content_type () == TUPLE_TYPE) ;
+        return boost::get<TupleSafePtr> (content ()) ;
+    }
+    TupleSafePtr get_tuple_content ()
+    {
+        THROW_IF_FAIL (content_type () == TUPLE_TYPE) ;
+        return boost::get<TupleSafePtr> (content ()) ;
+    }
+
 
     const boost::variant<UString,ResultValueListSafePtr,TupleSafePtr>&
     content () const
@@ -464,6 +502,9 @@ public:
     }
 };//end class value
 
+/// A GDB/MI Result . This is the
+/// It syntax looks like VARIABLE=VALUE,
+/// where VALUE is a complex type.
 class Result : public Object {
     Result (const Result&) ;
     Result& operator= (const Result&) ;
@@ -486,6 +527,7 @@ public:
     void value (const ValueSafePtr &a_in) {m_value = a_in;}
 };//end class Result
 
+/// A GDB/MI LIST. It can be a list of either GDB/MI Result or GDB/MI Value.
 class ResultValueList : public Object {
     ResultValueList (const ResultValueList &) ;
     ResultValueList& operator= (const ResultValueList &) ;
@@ -559,8 +601,18 @@ public:
         THROW_IF_FAIL (!m_content.empty () && content_type () == RESULT_TYPE) ;
         return *boost::get<list<ResultSafePtr> > (&m_content) ;
     }
+    list<ResultSafePtr> get_result_content ()
+    {
+        THROW_IF_FAIL (!m_content.empty () && content_type () == RESULT_TYPE) ;
+        return *boost::get<list<ResultSafePtr> > (&m_content) ;
+    }
 
     const list<ValueSafePtr> get_value_content () const
+    {
+        THROW_IF_FAIL (!m_content.empty () && content_type () == VALUE_TYPE) ;
+        return *boost::get<list<ValueSafePtr> > (&m_content) ;
+    }
+    list<ValueSafePtr> get_value_content ()
     {
         THROW_IF_FAIL (!m_content.empty () && content_type () == VALUE_TYPE) ;
         return *boost::get<list<ValueSafePtr> > (&m_content) ;
@@ -1564,6 +1616,9 @@ struct GDBEngine::Priv {
         return true;
     }
 
+    /// parse a GDB/MI Tuple is a actualy a set of name=value constructs,
+    /// where 'value' can be quite complicated.
+    /// Look at the GDB/MI output syntax for more.
     bool parse_tuple (const UString &a_input,
                       UString::size_type a_from,
                       UString::size_type &a_to,
@@ -1622,6 +1677,9 @@ struct GDBEngine::Priv {
         return true ;
     }
 
+    /// Parse a GDB/MI list. A list is either a list of GDB/MI Results
+    /// or a list of GDB/MI Values.
+    /// Look at the GDB/MI output syntax documentation for more.
     bool parse_result_value_list (const UString &a_input,
                                   UString::size_type a_from,
                                   UString::size_type &a_to,
@@ -1650,10 +1708,12 @@ struct GDBEngine::Priv {
 
         ValueSafePtr value ;
         ResultSafePtr result ;
-        if (parse_result (a_input, cur, cur, result)) {
+        if ((isalpha (a_input[cur]) || a_input[cur] == '_')
+             && parse_result (a_input, cur, cur, result)) {
             THROW_IF_FAIL (result) ;
             if (!return_list) {
-                return_list = ResultValueListSafePtr (new ResultValueList (result)) ;
+                return_list = ResultValueListSafePtr
+                                            (new ResultValueList (result)) ;
             } else {
                 return_list->append (result) ;
             }
@@ -1669,7 +1729,8 @@ struct GDBEngine::Priv {
         } else if (parse_value (a_input, cur, cur, value)) {
             THROW_IF_FAIL (value);
             if (!return_list) {
-                return_list = ResultValueListSafePtr (new ResultValueList (value)) ;
+                return_list =
+                    ResultValueListSafePtr (new ResultValueList (value)) ;
             } else {
                 return_list->append (value) ;
             }
@@ -1692,6 +1753,11 @@ struct GDBEngine::Priv {
         return true ;
     }
 
+    /// parse a GDB/MI Result data structure.
+    /// A result basically has the form:
+    /// variable=value.
+    /// Beware value is more complicated than what it looks like :-)
+    /// Look at the GDB/MI spec for more.
     bool parse_result (const UString &a_input,
                        UString::size_type a_from,
                        UString::size_type &a_to,
@@ -1729,12 +1795,19 @@ struct GDBEngine::Priv {
         return true ;
     }
 
-    /// \brief parse a GDB/MI value type.
+    /// \brief parse a GDB/MI value.
     /// GDB/MI value type is defined as:
     /// VALUE ==> CONST | TUPLE | LIST
+    /// CONSTis a string, basically. Look at parse_string() for more.
+    /// TUPLE is a GDB/MI tuple. Look at parse_tuple() for more.
+    /// LIST is a GDB/MI list. It is either  a list of GDB/MI Result or
+    /// a list of GDB/MI value. Yeah, that can be recursive ...
+    /// To parse a GDB/MI list, we use parse_result_value_list() defined above.
+    /// You can look at the GDB/MI output syntax for more.
     /// \param a_input the input string to parse
     /// \param a_from where to start parsing from
-    /// \param a_to (out parameter) a pointer to the current char, after the parsing.
+    /// \param a_to (out parameter) a pointer to the current char,
+    /// after the parsing.
     //// \param a_value the result of the parsing.
     bool parse_value (const UString &a_input,
                       UString::size_type a_from,
@@ -1781,7 +1854,81 @@ struct GDBEngine::Priv {
                            UString::size_type &a_to,
                            list<IDebugger::Frame> &a_stack)
     {
-        return false ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.size () ;
+        CHECK_END (a_input, cur, end) ;
+
+        ResultSafePtr result ;
+        if (!parse_result (a_input, cur, cur, result)) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        THROW_IF_FAIL (result) ;
+        CHECK_END (a_input, cur, end) ;
+
+        if (result->variable () != "stack") {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        if (!result->value ()
+            ||!result->value ()->content_type ()
+                    != Value::RESULT_VALUE_LIST_TYPE) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        ResultValueListSafePtr result_value_list =
+            result->value ()->get_result_value_list_content () ;
+        if (!result_value_list) {
+            a_to = cur ;
+            a_stack.clear () ;
+            return true ;
+        }
+
+        if (!result_value_list->content_type ()
+                    != ResultValueList::RESULT_TYPE) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        list<ResultSafePtr> result_list =
+            result_value_list->get_result_content () ;
+
+        TupleSafePtr frame_tuple ;
+        list<IDebugger::Frame> stack ;
+        list<ResultSafePtr>::const_iterator iter, frame_part_iter ;
+        UString value ;
+        for (iter = result_list.begin (); iter != result_list.end () ; ++iter) {
+            if (!(*iter)) {continue;}
+            THROW_IF_FAIL ((*iter)->value ()
+                           && (*iter)->value ()->content_type ()
+                           == Value::TUPLE_TYPE) ;
+
+            frame_tuple = (*iter)->value ()->get_tuple_content () ;
+            THROW_IF_FAIL (frame_tuple) ;
+            IDebugger::Frame frame ;
+            for (frame_part_iter = frame_tuple->content ().begin ();
+                 frame_part_iter != frame_tuple->content ().end ();
+                 ++frame_part_iter) {
+                THROW_IF_FAIL ((*frame_part_iter)->value ()) ;
+                value = (*frame_part_iter)->value ()->get_string_content () ;
+                if ((*frame_part_iter)->variable () == "addr") {
+                    frame.address (value) ;
+                } else if ((*frame_part_iter)->variable () == "func") {
+                    frame.function (value) ;
+                } else if ((*frame_part_iter)->variable () == "file") {
+                    frame.file_name (value) ;
+                } else if ((*frame_part_iter)->variable () == "fullname") {
+                    frame.file_full_name (value) ;
+                } else if ((*frame_part_iter)->variable () == "line") {
+                    frame.line (atol (value.c_str ())) ;
+                }
+                stack.push_back (frame) ;
+            }
+        }
+        a_stack = stack ;
+        a_to = cur ;
+        return true ;
     }
 
     /// \brief parse function arguments list
