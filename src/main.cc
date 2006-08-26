@@ -44,6 +44,7 @@ static gchar *gv_prog_arg=NULL ;
 static bool gv_list_sessions=false ;
 static bool gv_purge_sessions=false ;
 static int gv_execute_session=0;
+static gchar *gv_log_domains=0;
 static bool gv_log_debugger_output=false ;
 
 static GOptionEntry entries[] =
@@ -79,6 +80,14 @@ static GOptionEntry entries[] =
       &gv_execute_session,
       "debug the program that was of session number N",
       "N"
+    },
+    { "log-domains",
+      0,
+      0,
+      G_OPTION_ARG_STRING,
+      &gv_log_domains,
+      "Enable logging domains DOMAINS",
+      "DOMAINS"
     },
     { "logdebuggeroutput",
       0,
@@ -118,6 +127,7 @@ main (int a_argc, char *a_argv[])
     //********************************
     if (gv_log_debugger_output) {
         workbench->get_properties ()["log-debugger-output"] = "yes" ;
+        LOG_STREAM.enable_domain ("gdbmi-output-domain") ;
     }
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
@@ -183,12 +193,25 @@ main (int a_argc, char *a_argv[])
         }
     }
 
+    if (gv_log_domains) {
+        UString log_domains (gv_log_domains) ;
+        vector<UString> domains = log_domains.split (" ") ;
+        for (vector<UString>::const_iterator iter = domains.begin () ;
+             iter != domains.end ();
+             ++iter) {
+            LOG_STREAM.enable_domain (*iter) ;
+        }
+        goto run_app ;
+    }
+
     if (gv_prog_arg) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
                                                             ("DBGPerspective")) ;
         if (debug_persp) {
-            LOG ("going to debug program: '" << UString (gv_prog_arg) << "'\n") ;
+            LOG_D ("going to debug program: '"
+                   << UString (gv_prog_arg) << "'\n",
+                   NMV_DEFAULT_DOMAIN) ;
             debug_persp->execute_program (UString (gv_prog_arg)) ;
         } else {
             cerr << "Could not find the DBGPerspective\n" ;
@@ -202,6 +225,7 @@ main (int a_argc, char *a_argv[])
     //********************************
     //</process command line arguments>
     //********************************
+
 
 run_app:
 

@@ -68,9 +68,19 @@
 LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << HERE << message << "\n"
 #endif
 
+#ifndef LOG_D
+#define LOG_D(message, domain) \
+LOG_STREAM.push_domain (domain) ; LOG (message) ; LOG_STREAM.pop_domain ();
+#endif
+
 #ifndef LOG_ERROR
 #define LOG_ERROR(message) \
 LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_ERROR << HERE << message << "\n"
+#endif
+
+#ifndef LOG_ERROR_D
+#define LOG_ERROR_D(message, domain) \
+LOG_STREAM.push_domain (domain) ; LOG_ERROR (message) ; LOG_STREAM.pop_domain() ;
 #endif
 
 #ifndef LOG_VERBOSE
@@ -78,9 +88,20 @@ LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_ERROR << HERE << message << "\n"
 LOG_STREAM << LOG_LEVEL_VERBOSE___ << LOG_MARKER_INFO << HERE << message << "\n"
 #endif
 
+#ifndef LOG_VERBOSE_D
+#define LOG_VERBOSE_D(message) \
+LOG_STREAM.push_domain (domain) ; LOG_VERBOSE(message) ;LOG_STREAM.pop_domain();
+#endif
+
 #ifndef LOG_SCOPE
 #define LOG_SCOPE(scopename) \
 nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE) ;
+#endif
+
+#ifndef LOG_SCOPE_D
+#define LOG_SCOPE_D(scopename, domain) \
+nemiver::common::ScopeLogger scope_logger \
+        (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE, domain) ;
 #endif
 
 #ifndef LOG_SCOPE_NORMAL
@@ -88,13 +109,28 @@ nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream
 nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL) ;
 #endif
 
+#ifndef LOG_SCOPE_NORMAL_D
+#define LOG_SCOPE_NORMAL_D(scopename, domain) \
+nemiver::common::ScopeLogger scope_logger \
+    (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL, domain) ;
+#endif
+
 #ifndef LOG_FUNCTION_SCOPE
 #define LOG_FUNCTION_SCOPE LOG_SCOPE(PRETTY_FUNCTION_NAME_)
-#endif //LOG_FUNCTION_SCOPE
+#endif
+
+#ifndef LOG_FUNCTION_SCOPE_D
+#define LOG_FUNCTION_SCOPE_D(domain) LOG_SCOPE_D(PRETTY_FUNCTION_NAME_, domain)
+#endif
 
 #ifndef LOG_FUNCTION_SCOPE_NORMAL
 #define LOG_FUNCTION_SCOPE_NORMAL LOG_SCOPE_NORMAL(PRETTY_FUNCTION_NAME_)
-#endif //LOG_FUNCTION_SCOPE
+#endif
+
+#ifndef LOG_FUNCTION_SCOPE_NORMAL_D
+#define LOG_FUNCTION_SCOPE_NORMAL_D(domain) \
+    LOG_SCOPE_NORMAL_D(PRETTY_FUNCTION_NAME_, domain)
+#endif
 
 #endif // NMV_LOG_STREAM_UTILS_H__
 

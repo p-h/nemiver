@@ -32,6 +32,7 @@
 
 #include "nmv-api-macros.h"
 #include "nmv-log-stream-utils.h"
+#include "nmv-safe-ptr-utils.h"
 
 namespace nemiver {
 namespace common {
@@ -41,7 +42,7 @@ class NEMIVER_API ScopeLogger
 {
     friend struct ScopeLoggerPriv ;
 
-    ScopeLoggerPriv *m_priv ;
+    SafePtr<ScopeLoggerPriv> m_priv ;
     //forbid copy/assignation
     ScopeLogger (ScopeLogger const &) ;
     ScopeLogger& operator= (ScopeLogger const &) ;
@@ -49,14 +50,10 @@ class NEMIVER_API ScopeLogger
 
 public:
 
-    ScopeLogger (const char*a_scope_name) ;
-
     ScopeLogger (const char*a_scope_name,
-                 enum LogStream::LogLevel a_level) ;
-
-    ScopeLogger (const char*a_scope_name,
-                 enum LogStream::LogLevel a_level,
-                 const char* a_log_domain) ;
+                 enum LogStream::LogLevel a_level=LogStream::LOG_LEVEL_NORMAL,
+                 const UString &a_log_domain="general",
+                 bool a_use_default_log_stream=true) ;
 
     virtual ~ScopeLogger () ;
 

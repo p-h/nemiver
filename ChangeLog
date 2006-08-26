@@ -1,6 +1,22 @@
+samedi 26 août 2006, 15:01:16 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
+	  src/DBGPerspective/nmv-dbg-perspective.cc :
+	  updated this code to use the domain aware
+	  logging feature that's newly available
+	  in src/common/nmv-log-stream-utils.h.
+	* src/common/nmv-log-stream.cc,h,
+	  src/common/nmv-scope-logger.h: add a working support for
+	  logging domain. Basically, one can trigger/disable logging by
+	  associating a set a logs to a domain name. Enabling/diabling a
+	  log domain then causes all the logs associated to that logging domain
+	  to be enabled/disabled.
+	* src/main.cc: one can now do nemiver --log-domains "foo bar" to
+	  enable logging for the domains foo and bar.
+
 vendredi 25 août 2006, 19:06:34 (UTC+0200) Dodji Seketeli
 
-	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: mode debugging of the
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more debugging of the
 	  GDB/MI variable=value parsing code.
 
 vendredi 25 août 2006, 10:38:44 (UTC+0200) Dodji Seketeli

@@ -39,61 +39,68 @@ struct ScopeLoggerPriv
 {
     Glib::Timer timer ;
     LogStream *out ;
+    bool can_free ;
     UString name ;
+    UString domain ;
 
-    ScopeLoggerPriv (): out (NULL)
-    {}
+    ScopeLoggerPriv (const char*a_scope_name,
+                     enum LogStream::LogLevel a_level,
+                     const UString &a_log_domain,
+                     bool a_use_default_log_stream) :
+        out (NULL), can_free (false)
+    {
+        if (!a_use_default_log_stream) {
+            out = new LogStream (a_level);
+            can_free = true ;
+        } else {
+            out = &(LogStream::default_log_stream ()) ;
+            can_free = false ;
+        }
+        name = a_scope_name ;
+        domain = a_log_domain ;
+
+        out->push_domain (a_log_domain) ;
+        *out  << "|{|" << name << ":{\n" ;
+        out->pop_domain () ;
+
+        timer.start () ;
+        out = out ;
+    }
+
+    ~ScopeLoggerPriv ()
+    {
+        timer.stop () ;
+
+        if (!out) {return;}
+
+        out->push_domain (domain) ;
+        *out << "|}|" << name <<":}elapsed: " << timer.elapsed () << "secs \n" ;
+        out->pop_domain () ;
+        if (can_free) {
+            if (out) {
+                delete out ;
+            }
+        }
+        out = NULL ;
+    }
 }
 ;
 
-ScopeLogger::ScopeLogger (const char*a_scope_name)
-{
-    m_priv = new ScopeLoggerPriv () ;
-    LogStream *out  = new LogStream () ;
-    m_priv->name = a_scope_name ;
-
-    *out << timestamp << "|" << m_priv->name << ":{\n" ;
-    m_priv->timer.start () ;
-    m_priv->out = out ;
-}
-
-ScopeLogger::ScopeLogger (const char*a_scope_name,
-                          enum LogStream::LogLevel a_level)
-{
-    m_priv = new ScopeLoggerPriv () ;
-    LogStream *out = new LogStream (a_level);
-    m_priv->name = a_scope_name ;
-
-    *out << timestamp << "|" << m_priv->name << ": {\n" ;
-    m_priv->timer.start () ;
-    m_priv->out = out ;
-}
 
 ScopeLogger::ScopeLogger (const char*a_scope_name,
                           enum LogStream::LogLevel a_level,
-                          const char* a_log_domain)
+                          const UString &a_log_domain,
+                          bool a_use_default_log_stream)
 {
-    m_priv = new ScopeLoggerPriv () ;
-    LogStream *out = new LogStream (a_level, a_log_domain);
-    m_priv->name = a_scope_name ;
-
-    *out << timestamp << "|" << m_priv->name << ": {\n" ;
-    m_priv->timer.start () ;
-    m_priv->out = out ;
+    m_priv = new ScopeLoggerPriv (a_scope_name,
+                                  a_level,
+                                  a_log_domain,
+                                  a_use_default_log_stream) ;
 }
 
 ScopeLogger::~ScopeLogger ()
 {
-    THROW_IF_FAIL (m_priv && m_priv->out) ;
-    if (m_priv) {
-        m_priv->timer.stop () ;
-        *m_priv->out << timestamp << "|" << m_priv->name <<": } elapsed: "
-        << m_priv->timer.elapsed () << "secs \n" ;
-        delete m_priv->out ;
-        m_priv->out = NULL ;
-        delete m_priv ;
-        m_priv = NULL ;
-    }
+    m_priv = NULL ;
 }
 
 }//end namespace common

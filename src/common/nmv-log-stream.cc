@@ -29,6 +29,8 @@
  */
 #include <sys/time.h>
 #include <iostream>
+#include <map>
+#include <list>
 #include <fstream>
 #include <glibmm.h>
 #include <glibmm/thread.h>
@@ -202,20 +204,34 @@ struct LogStream::Priv
     enum LogStream::StreamType stream_type ;
     SafePtr<LogSink, ObjectRef, ObjectUnref> sink ;
 
-    //the domain of this log stream
-    UString domain ;
+    //the stack of default domains name
+    //to consider when logging functions don't
+    //specify the domain name in their parameters
+    list<UString> default_domains ;
+
+    //the list of domains (keywords) this stream
+    //is allowed to log against. (It is a map, just for speed purposes)
+    //logging against a domain means "log a message associated with a domain".
+    //Logging domains are just keywords associated to the messages that are
+    //going to be logged. This helps in for filtering the messages that
+    //are to be logged or not.
+    std::map<UString, bool> allowed_domains ;
 
     //the log level of this log stream
     enum LogStream::LogLevel level ;
 
-    Priv ():
+    Priv (const UString &a_domain=NMV_GENERAL_DOMAIN) :
             stream_type (LogStream::COUT_STREAM),
-            domain ("general"),
             level (LogStream::LOG_LEVEL_NORMAL)
-    {}
+    {
+        default_domains.clear () ;
+        default_domains.push_front (a_domain) ;
 
-    static UString&
-    get_stream_file_path_private ()
+        //NMV_GENERAL_DOMAIN is always enabled by default.
+        allowed_domains[NMV_GENERAL_DOMAIN] = true ;
+    }
+
+    static UString& get_stream_file_path_private ()
     {
         static UString s_stream_file_path ;
         if (s_stream_file_path == "") {
@@ -227,36 +243,32 @@ struct LogStream::Priv
         return s_stream_file_path ;
     }
 
-    static UString&
-    get_domain_filter_private ()
+    static UString& get_domain_filter_private ()
     {
         static UString s_domain_filter ("all") ;
         return s_domain_filter ;
     }
 
-    static bool
-    is_logging_allowed (LogStream &a_this)
+    bool is_logging_allowed (const UString &a_domain)
     {
-        if (!a_this.m_priv) {
-            return false ;
-        }
         if (!LogStream::is_active ())
             return false ;
 
         //check domain
-        UString domain_filter ("general");
-        if (get_domain_filter_private () != "") {
-            domain_filter = get_domain_filter_private ();
-        }
-        if (domain_filter != "all"
-            && a_this.m_priv->domain != domain_filter) {
+        if (allowed_domains.find (a_domain) == allowed_domains.end ()) {
             return false ;
         }
+
         //check log level
-        if (a_this.m_priv->level > s_level_filter) {
+        if (level > s_level_filter) {
             return false;
         }
         return true ;
+    }
+
+    bool is_logging_allowed ()
+    {
+        return is_logging_allowed (default_domains.front ()) ;
     }
 }
 ;//end LogStream::Priv
@@ -314,14 +326,14 @@ LogStream::is_active ()
 LogStream&
 LogStream::default_log_stream ()
 {
-    static LogStream s_default_stream (LOG_LEVEL_NORMAL, "general") ;
+    static LogStream s_default_stream (LOG_LEVEL_NORMAL, NMV_GENERAL_DOMAIN) ;
     return s_default_stream ;
 }
 
 LogStream::LogStream (enum LogLevel a_level,
-                      const char* a_domain)
+                      const UString &a_domain)
 {
-    m_priv = new LogStream::Priv ;
+    m_priv = new LogStream::Priv (a_domain);
     std::string file_path ;
     if (get_stream_type () == FILE_STREAM) {
         m_priv->sink = new OfstreamLogSink (get_stream_file_path ()) ;
@@ -335,7 +347,6 @@ LogStream::LogStream (enum LogLevel a_level,
     }
     m_priv->stream_type = get_stream_type ();
     m_priv->level = a_level ;
-    m_priv->domain = a_domain ;
 }
 
 LogStream::~LogStream ()
@@ -345,10 +356,31 @@ LogStream::~LogStream ()
     m_priv = NULL ;
 }
 
-LogStream&
-LogStream::write (const char* a_buf, long a_buflen)
+void
+LogStream::enable_domain (const UString &a_domain,
+                          bool a_do_enable)
 {
-    if (!LogStream::Priv::is_logging_allowed (*this))
+    if (a_do_enable) {
+        m_priv->allowed_domains[a_domain] = true ;
+    } else {
+        m_priv->allowed_domains.erase (a_domain) ;
+    }
+}
+
+bool
+LogStream::is_domain_enabled (const UString &a_domain)
+{
+    if (m_priv->allowed_domains.find (a_domain)
+        != m_priv->allowed_domains.end ()) {
+        return true ;
+    }
+    return false ;
+}
+
+LogStream&
+LogStream::write (const char* a_buf, long a_buflen, const UString &a_domain)
+{
+    if (!m_priv->is_logging_allowed (a_domain))
         return *this ;
 
     long len = 0 ;
@@ -369,88 +401,127 @@ LogStream::write (const char* a_buf, long a_buflen)
 }
 
 LogStream&
+LogStream::write (int a_msg, const UString &a_domain)
+{
+    if (!m_priv || !m_priv->sink)
+        return *this ;
+
+    if (!m_priv->is_logging_allowed (a_domain))
+        return *this ;
+
+    *m_priv->sink << a_msg;
+    if (m_priv->sink->bad ()) {
+        cout << "write failed" ;
+        throw Exception ("write failed") ;
+    }
+    return *this ;
+}
+
+LogStream&
+LogStream::write (unsigned long int a_msg,
+                  const UString &a_domain)
+{
+    if (!m_priv || !m_priv->sink)
+        return *this ;
+
+    if (!m_priv->is_logging_allowed (a_domain))
+        return *this ;
+
+    *m_priv->sink << a_msg;
+    if (m_priv->sink->bad ()) {
+        cout << "write failed" ;
+        throw Exception ("write failed") ;
+    }
+    return *this ;
+}
+
+LogStream&
+LogStream::write (double a_msg,
+                  const UString &a_domain)
+{
+    if (!m_priv || !m_priv->sink)
+        return *this ;
+
+    if (!m_priv->is_logging_allowed (a_domain))
+        return *this ;
+
+    *m_priv->sink << a_msg;
+    if (m_priv->sink->bad ()) {
+        cout << "write failed" ;
+        throw Exception ("write failed") ;
+    }
+    return *this ;
+}
+
+LogStream&
+LogStream::write (char a_msg,
+                  const UString &a_domain)
+{
+    if (!m_priv || !m_priv->sink)
+        return *this ;
+
+    if (!m_priv->is_logging_allowed (a_domain))
+        return *this ;
+
+    *m_priv->sink << a_msg;
+    if (m_priv->sink->bad ()) {
+        cout << "write failed" ;
+        throw Exception ("write failed") ;
+    }
+    return *this ;
+}
+
+void
+LogStream::push_domain (const UString &a_domain)
+{
+    m_priv->default_domains.push_front (a_domain) ;
+}
+
+void
+LogStream::pop_domain ()
+{
+    if (m_priv->default_domains.size () <= 1) {
+        return ;
+    }
+    m_priv->default_domains.pop_front () ;
+}
+
+LogStream&
+LogStream::write (const UString &a_msg, const UString &a_domain)
+{
+    return write (a_msg.c_str (), a_msg.bytes (), a_domain) ;
+}
+
+
+LogStream&
 LogStream::operator<< (const UString &a_string)
 {
-    if (!m_priv || !m_priv->sink)
-        return *this ;
-
-    if (!LogStream::Priv::is_logging_allowed (*this))
-        return *this ;
-
-    *m_priv->sink << a_string ;
-    if (m_priv->sink->bad ()) {
-        cout << "write failed" ;
-        throw Exception ("write failed") ;
-    }
-    return *this ;
+    return write (a_string, m_priv->default_domains.front ()) ;
 }
 
 LogStream&
-LogStream::operator<< (int an_int)
+LogStream::operator<< (int a_msg)
 {
-    if (!m_priv || !m_priv->sink)
-        return *this ;
-
-    if (!LogStream::Priv::is_logging_allowed (*this))
-        return *this ;
-
-    *m_priv->sink << an_int;
-    if (m_priv->sink->bad ()) {
-        cout << "write failed" ;
-        throw Exception ("write failed") ;
-    }
-    return *this ;
+    return write (a_msg, m_priv->default_domains.front ()) ;
 }
 
 LogStream&
-LogStream::operator<< (unsigned long an_int)
+LogStream::operator<< (unsigned long a_msg)
 {
-    if (!m_priv || !m_priv->sink)
-        return *this ;
-
-    if (!LogStream::Priv::is_logging_allowed (*this))
-        return *this ;
-
-    *m_priv->sink << an_int;
-    if (m_priv->sink->bad ()) {
-        cout << "write failed" ;
-        throw Exception ("write failed") ;
-    }
-    return *this ;
+    return write (a_msg, m_priv->default_domains.front ()) ;
 }
 
 LogStream&
-LogStream::operator<< (double a_double)
+LogStream::operator<< (double a_msg)
 {
-    if (!m_priv || !m_priv->sink)
-        return *this ;
-
-    if (!LogStream::Priv::is_logging_allowed (*this))
-        return *this ;
-
-    *m_priv->sink << a_double;
-    if (m_priv->sink->bad ()) {
-        cout << "write failed" ;
-        throw Exception ("write failed") ;
-    }
-    return *this ;
+    return write (a_msg, m_priv->default_domains.front ()) ;
 }
 
 LogStream&
-LogStream::operator<< (char a_char)
+LogStream::operator<< (char a_msg)
 {
-    if (!m_priv || !m_priv->sink)
-        return *this ;
+    return write (a_msg, m_priv->default_domains.front ()) ;
 
-    if (!LogStream::Priv::is_logging_allowed (*this))
-        return *this ;
-
-    *m_priv->sink << a_char ;
-    if (m_priv->sink->bad ()) {
-        cout << "write failed" ;
-        throw Exception ("write failed") ;
-    }
-    return *this ;
 }
 
 LogStream&
@@ -463,7 +534,7 @@ LogStream::operator<< (LogStream& (*a_manipulator) (LogStream &))
 LogStream&
 timestamp (LogStream &a_stream)
 {
-    if (!LogStream::Priv::is_logging_allowed (a_stream))
+    if (!a_stream.m_priv->is_logging_allowed ())
         return a_stream ;
     UString now_str ;
     dateutils::get_current_datetime (now_str) ;
@@ -474,7 +545,7 @@ timestamp (LogStream &a_stream)
 LogStream&
 flush (LogStream &a_stream)
 {
-    if (!LogStream::Priv::is_logging_allowed (a_stream))
+    if (!a_stream.m_priv->is_logging_allowed ())
         return a_stream ;
 
     a_stream.m_priv->sink->flush () ;
@@ -484,8 +555,8 @@ flush (LogStream &a_stream)
 LogStream&
 endl (LogStream &a_stream)
 {
-    if (!LogStream::Priv::is_logging_allowed (a_stream))
-        return a_stream;
+    if (!a_stream.m_priv->is_logging_allowed ())
+        return a_stream ;
 
     a_stream  << '\n' ;
     a_stream << flush  ;

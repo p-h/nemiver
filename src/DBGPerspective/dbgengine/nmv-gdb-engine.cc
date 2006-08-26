@@ -37,12 +37,17 @@
 #include "nmv-exception.h"
 #include "nmv-sequence.h"
 
+const nemiver::common::UString GDBMI_FRAME_PARSING_DOMAIN =
+                                                    "gdbmi-frame-parsing-domain";
+const nemiver::common::UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain" ;
+
 #define LOG_PARSING_ERROR(a_buf, a_from) \
 { \
 Glib::ustring str_01 (a_buf, (a_from), a_buf.size () - (a_from)) ;\
-LOG_ERROR ("parsing failed for buf: >>>" \
-           << a_buf << "<<<" \
-           << " cur index was: " << (int)(a_from)) ;\
+LOG_ERROR_D ("parsing failed for buf: >>>" \
+             << a_buf << "<<<" \
+             << " cur index was: " << (int)(a_from), \
+             NMV_DEFAULT_DOMAIN) ;\
 }
 
 #define CHECK_END(a_input, a_current, a_end) \
@@ -816,9 +821,8 @@ struct GDBEngine::Priv {
 
     void on_gdb_stdout_signal (const UString &a_buf)
     {
-        if (properties["log-debugger-output"] == "yes") {
-            LOG ("<debuggeroutput>\n" << a_buf << "\n</debuggeroutput>") ;
-        }
+        LOG_D ("<debuggeroutput>\n" << a_buf << "\n</debuggeroutput>",
+               GDBMI_OUTPUT_DOMAIN) ;
 
         Output output (a_buf);
 
@@ -929,13 +933,6 @@ struct GDBEngine::Priv {
             int &a_stdout_fd,
             int &a_stderr_fd)
     {
-        for (vector<UString>::const_iterator it = a_args.begin () ;
-                it != a_args.end ();
-                ++it) {
-            cout << *it << " " ;
-        }
-        cout << "\n" ;
-
         RETURN_VAL_IF_FAIL (!a_args.empty (), false) ;
 
         enum ReadWritePipe {
@@ -1366,11 +1363,15 @@ struct GDBEngine::Priv {
         return false ;
     }
 
+    //*****************************************************************
+    //                 <GDB/MI parsing functions>
+    //*****************************************************************
+
     bool parse_attribute (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            UString &a_name,
-            UString &a_value)
+                          UString::size_type a_from,
+                          UString::size_type &a_to,
+                          UString &a_name,
+                          UString &a_value)
     {
         UString::size_type cur = a_from,
         end = a_input.size (),
@@ -1568,7 +1569,7 @@ struct GDBEngine::Priv {
                       UString::size_type &a_to,
                       TupleSafePtr &a_tuple)
     {
-        LOG_FUNCTION_SCOPE_NORMAL ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1626,7 +1627,7 @@ struct GDBEngine::Priv {
                                   UString::size_type &a_to,
                                   ResultValueListSafePtr &a_list)
     {
-        LOG_FUNCTION_SCOPE_NORMAL ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1696,7 +1697,7 @@ struct GDBEngine::Priv {
                        UString::size_type &a_to,
                        ResultSafePtr &a_value)
     {
-        LOG_FUNCTION_SCOPE_NORMAL ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1740,7 +1741,7 @@ struct GDBEngine::Priv {
                       UString::size_type &a_to,
                       ValueSafePtr &a_value)
     {
-        LOG_FUNCTION_SCOPE_NORMAL ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1801,6 +1802,7 @@ struct GDBEngine::Priv {
                               UString::size_type &a_to,
                               map<UString, UString> a_args)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
 
         if (a_input.compare (cur, 1, "{")) {
@@ -1899,6 +1901,7 @@ struct GDBEngine::Priv {
             UString::size_type &a_to,
             IDebugger::Frame &a_frame)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         if (a_input.compare (a_from, 7, "frame={")) {
             return false ;
@@ -1943,49 +1946,6 @@ struct GDBEngine::Priv {
         return true;
     }
 
-    /*
-    /// parses a string that has the form:
-    /// \"blah\"
-    bool parse_c_string (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            UString &a_c_string)
-    {
-        UString::size_type cur=a_from, end = a_input.size () ;
-
-        if (cur >= end) {
-            LOG_PARSING_ERROR (a_input, cur) ;
-            return false;
-        }
-        if (a_input[cur] != '"') {return false;}
-        ++cur ;
-
-        if (cur >= end) {
-            LOG_PARSING_ERROR (a_input, cur) ;
-            return false;
-        }
-        UString::size_type str_start = cur, str_end (0) ;
-
-        while (true) {
-            if (cur >= end) {
-                LOG_PARSING_ERROR (a_input, cur) ;
-                return false;
-            }
-            if (a_input[cur] == '"' && a_input[cur - 1] != '\\') {break ;}
-            ++cur ;
-        }
-        if (a_input[cur] != '"') {
-            LOG_PARSING_ERROR (a_input, cur) ;
-            return false;
-        }
-        str_end = cur - 1 ;
-        ++cur ;
-        Glib::ustring str (a_input, str_start, str_end - str_start + 1) ;
-        a_c_string = str ;
-        a_to = cur ;
-        return true ;
-    }
-    */
 
     /// parses a string that has the form:
     /// \"blah\"
@@ -1994,7 +1954,6 @@ struct GDBEngine::Priv {
             UString::size_type &a_to,
             UString &a_c_string)
     {
-        LOG_FUNCTION_SCOPE_NORMAL ;
         UString::size_type cur=a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2027,7 +1986,6 @@ struct GDBEngine::Priv {
                               UString::size_type &a_to,
                               UString &a_string)
     {
-        LOG_FUNCTION_SCOPE_NORMAL ;
         UString::size_type cur=a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2070,7 +2028,7 @@ struct GDBEngine::Priv {
                        UString::size_type &a_to,
                        UString &a_string)
     {
-        LOG_FUNCTION_SCOPE_NORMAL ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur=a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2352,22 +2310,22 @@ struct GDBEngine::Priv {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG ("parsed result") ;
+                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
                 } else if (a_input.compare (cur, 7, "frame={")) {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG ("parsed result") ;
+                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
                 } else if (a_input.compare (cur, 7, "depth=\"")) {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG ("parsed result") ;
+                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
                 } else if (a_input.compare (cur, 12, "stack-args=[")) {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG ("parsed result") ;
+                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
                 } else {
                     LOG_PARSING_ERROR (a_input, cur) ;
                 }
@@ -2475,6 +2433,10 @@ fetch_out_of_band_record:
         a_to = cur ;
         return true;
     }
+
+    //*****************************************************************
+    //                 </GDB/MI parsing functions>
+    //*****************************************************************
 
     ~Priv ()
     {

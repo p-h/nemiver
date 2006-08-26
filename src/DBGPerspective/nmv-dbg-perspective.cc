@@ -2261,7 +2261,7 @@ DBGPerspective::set_show_error_view (bool a_show)
     } else {
         if (get_error_view_scrolled_win ().get_parent ()
             && m_priv->error_view_is_visible) {
-            LOG ("removing error view") ;
+            LOG_D ("removing error view", NMV_DEFAULT_DOMAIN) ;
             m_priv->statuses_notebook->remove_page
                                         (get_error_view_scrolled_win ());
         }
@@ -2288,7 +2288,7 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
     } else {
         if (get_call_stack_scrolled_win ().get_parent ()
             && m_priv->call_stack_view_is_visible) {
-            LOG ("removing error view") ;
+            LOG_D ("removing error view", NMV_DEFAULT_DOMAIN) ;
             m_priv->statuses_notebook->remove_page
                                         (get_call_stack_scrolled_win ());
             m_priv->call_stack_view_is_visible = false;
