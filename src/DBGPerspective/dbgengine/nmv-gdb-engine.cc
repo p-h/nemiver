@@ -1,3 +1,4 @@
+// Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -1677,7 +1678,7 @@ struct GDBEngine::Priv {
         return true ;
     }
 
-    /// Parse a GDB/MI list. A list is either a list of GDB/MI Results
+    /// Parse a GDB/MI LIST. A list is either a list of GDB/MI Results
     /// or a list of GDB/MI Values.
     /// Look at the GDB/MI output syntax documentation for more.
     bool parse_result_value_list (const UString &a_input,
@@ -1710,40 +1711,47 @@ struct GDBEngine::Priv {
         ResultSafePtr result ;
         if ((isalpha (a_input[cur]) || a_input[cur] == '_')
              && parse_result (a_input, cur, cur, result)) {
-            THROW_IF_FAIL (result) ;
-            if (!return_list) {
-                return_list = ResultValueListSafePtr
-                                            (new ResultValueList (result)) ;
-            } else {
-                return_list->append (result) ;
-            }
             CHECK_END (a_input, cur, end) ;
+            THROW_IF_FAIL (result) ;
+            return_list = ResultValueListSafePtr
+                                            (new ResultValueList (result)) ;
             for (;;) {
                 if (a_input[cur] == ',') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
-                    continue ;
+                    result = NULL ;
+                    if (parse_result (a_input, cur, cur, result)) {
+                        THROW_IF_FAIL (result) ;
+                        return_list->append (result) ;
+                        continue ;
+                    }
                 }
                 break ;
             }
         } else if (parse_value (a_input, cur, cur, value)) {
-            THROW_IF_FAIL (value);
-            if (!return_list) {
-                return_list =
-                    ResultValueListSafePtr (new ResultValueList (value)) ;
-            } else {
-                return_list->append (value) ;
-            }
             CHECK_END (a_input, cur, end) ;
+            THROW_IF_FAIL (value);
+            return_list =
+                    ResultValueListSafePtr (new ResultValueList (value)) ;
             for (;;) {
                 if (a_input[cur] == ',') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
-                    continue ;
+                    value = NULL ;
+                    if (parse_value (a_input, cur, cur, value)) {
+                        THROW_IF_FAIL (value) ;
+                        return_list->append (value) ;
+                        continue ;
+                    }
                 }
                 break ;
             }
         } else {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        if (a_input[cur] != ']') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -1849,6 +1857,8 @@ struct GDBEngine::Priv {
         return true ;
     }
 
+    /// parse a callstack as returned by the gdb/mi command:
+    /// -stack-list-frames
     bool parse_call_stack (const UString &a_input,
                            const UString::size_type a_from,
                            UString::size_type &a_to,
@@ -1872,7 +1882,7 @@ struct GDBEngine::Priv {
         }
 
         if (!result->value ()
-            ||!result->value ()->content_type ()
+            ||result->value ()->content_type ()
                     != Value::RESULT_VALUE_LIST_TYPE) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
@@ -1886,8 +1896,7 @@ struct GDBEngine::Priv {
             return true ;
         }
 
-        if (!result_value_list->content_type ()
-                    != ResultValueList::RESULT_TYPE) {
+        if (result_value_list->content_type () != ResultValueList::RESULT_TYPE) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -1923,8 +1932,10 @@ struct GDBEngine::Priv {
                 } else if ((*frame_part_iter)->variable () == "line") {
                     frame.line (atol (value.c_str ())) ;
                 }
-                stack.push_back (frame) ;
             }
+            THROW_IF_FAIL (frame.address () != "") ;
+            stack.push_back (frame) ;
+            frame.clear () ;
         }
         a_stack = stack ;
         a_to = cur ;
@@ -2153,6 +2164,7 @@ struct GDBEngine::Priv {
         for (;;) {
             if (isascii (a_input[cur])) {
                 if (a_input[cur] == '"' && a_input[cur-1] != '\\') {
+                    str_end = cur - 1 ;
                     break ;
                 }
                 ++cur ;
@@ -2459,22 +2471,31 @@ struct GDBEngine::Priv {
                         LOG_PARSING_ERROR (a_input, cur) ;
                         return false ;
                     }
-                    LOG_D ("parsed call stack", NMV_DEFAULT_DOMAIN) ;
+                    LOG_D ("parsed a call stack of depth: "
+                           << (int) call_stack.size (),
+                           GDBMI_FRAME_PARSING_DOMAIN) ;
+                    list<IDebugger::Frame>::iterator frame_iter ;
+                    for (frame_iter = call_stack.begin () ;
+                         frame_iter != call_stack.end ();
+                         ++frame_iter) {
+                        LOG_D ("function-name: " << frame_iter->function (),
+                               GDBMI_FRAME_PARSING_DOMAIN) ;
+                    }
                 } else if (a_input.compare (cur, 7, "frame={")) {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
+                    LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
                 } else if (a_input.compare (cur, 7, "depth=\"")) {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
+                    LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
                 } else if (a_input.compare (cur, 12, "stack-args=[")) {
                     ResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG_D ("parsed result", NMV_DEFAULT_DOMAIN) ;
+                    LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
                 } else {
                     LOG_PARSING_ERROR (a_input, cur) ;
                 }

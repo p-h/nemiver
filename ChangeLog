@@ -1,3 +1,10 @@
+dimanche 27 août 2006, 10:17:30 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more stack trace
+	  parsing. Things are getting better and more solid. Still nothing visible
+	  yet.
+	* src/main.cc: fix the --log-domains option handling.
+
 samedi 26 août 2006, 20:26:14 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more stack trace

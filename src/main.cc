@@ -113,10 +113,14 @@ main (int a_argc, char *a_argv[])
     context = g_option_context_new ("- a C/C++ debugger for GNOME") ;
     g_option_context_add_main_entries (context, entries, "") ;
     g_option_context_add_group (context, gtk_get_option_group (TRUE)) ;
+    g_option_context_set_ignore_unknown_options (context, FALSE) ;
     g_option_context_parse (context, &a_argc, &a_argv, NULL) ;
 
     NEMIVER_TRY
 
+    //**********************************
+    //load the workbench dynamic module
+    //**********************************
     DynamicModuleManager module_manager ;
 
     IWorkbenchSafePtr workbench = module_manager.load<IWorkbench> ("workbench");
@@ -129,6 +133,17 @@ main (int a_argc, char *a_argv[])
         workbench->get_properties ()["log-debugger-output"] = "yes" ;
         LOG_STREAM.enable_domain ("gdbmi-output-domain") ;
     }
+
+    if (gv_log_domains) {
+        UString log_domains (gv_log_domains) ;
+        vector<UString> domains = log_domains.split (" ") ;
+        for (vector<UString>::const_iterator iter = domains.begin () ;
+             iter != domains.end ();
+             ++iter) {
+            LOG_STREAM.enable_domain (*iter) ;
+        }
+    }
+
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
@@ -193,16 +208,6 @@ main (int a_argc, char *a_argv[])
         }
     }
 
-    if (gv_log_domains) {
-        UString log_domains (gv_log_domains) ;
-        vector<UString> domains = log_domains.split (" ") ;
-        for (vector<UString>::const_iterator iter = domains.begin () ;
-             iter != domains.end ();
-             ++iter) {
-            LOG_STREAM.enable_domain (*iter) ;
-        }
-        goto run_app ;
-    }
 
     if (gv_prog_arg) {
         IDBGPerspective *debug_persp =
