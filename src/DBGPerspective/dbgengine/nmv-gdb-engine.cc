@@ -643,18 +643,17 @@ public:
         m_content.push_back (a_value) ;
         m_empty = false ;
     }
-    list<GDBMIResultSafePtr> get_result_content () const
+
+    void get_result_content (list<GDBMIResultSafePtr> &a_list) const
     {
         THROW_IF_FAIL (!empty () && content_type () == RESULT_TYPE) ;
         list<boost::variant<GDBMIResultSafePtr,GDBMIValueSafePtr> >::const_iterator it;
-        list<GDBMIResultSafePtr> result ;
         for (it= m_content.begin () ; it!= m_content.end () ; ++it) {
-            result.push_back (boost::get<GDBMIResultSafePtr> (*it)) ;
+            a_list.push_back (boost::get<GDBMIResultSafePtr> (*it)) ;
         }
-        return  result;
     }
 
-    list<GDBMIValueSafePtr> get_value_content () const
+    void get_value_content (list<GDBMIValueSafePtr> a_list) const
     {
         THROW_IF_FAIL (!empty () && content_type () == VALUE_TYPE) ;
         list<boost::variant<GDBMIResultSafePtr,GDBMIValueSafePtr> >::const_iterator it;
@@ -662,7 +661,6 @@ public:
         for (it= m_content.begin () ; it!= m_content.end () ; ++it) {
             result.push_back (boost::get<GDBMIValueSafePtr> (*it)) ;
         }
-        return  result;
     }
 };//end class GDBMIList
 
@@ -712,7 +710,8 @@ operator<< (ostream &a_out, const GDBMIListSafePtr a_list)
     if (a_list->content_type () == GDBMIList::RESULT_TYPE) {
         a_out << "<list type='result'>" ;
         list<GDBMIResultSafePtr>::const_iterator iter ;
-        list<GDBMIResultSafePtr> result_list = a_list->get_result_content () ;
+        list<GDBMIResultSafePtr> result_list ;
+        a_list->get_result_content (result_list) ;
         for (iter = result_list.begin () ;
              iter != result_list.end ();
              ++iter) {
@@ -722,7 +721,8 @@ operator<< (ostream &a_out, const GDBMIListSafePtr a_list)
     } else if (a_list->content_type () == GDBMIList::VALUE_TYPE) {
         a_out << "<list type='value'>" ;
         list<GDBMIValueSafePtr>::const_iterator iter ;
-        list<GDBMIValueSafePtr> value_list = a_list->get_value_content () ;
+        list<GDBMIValueSafePtr> value_list;
+        a_list->get_value_content (value_list) ;
         for (iter = value_list.begin () ;
              iter != value_list.end ();
              ++iter) {
@@ -1816,7 +1816,6 @@ struct GDBEngine::Priv {
                 }
                 if (a_input[cur] == '}') {
                     ++cur ;
-                    break ;
                 }
             } else {
                 LOG_PARSING_ERROR (a_input, cur) ;
@@ -1842,10 +1841,10 @@ struct GDBEngine::Priv {
     /// Parse a GDB/MI LIST. A list is either a list of GDB/MI Results
     /// or a list of GDB/MI Values.
     /// Look at the GDB/MI output syntax documentation for more.
-    bool parse_result_value_list (const UString &a_input,
-                                  UString::size_type a_from,
-                                  UString::size_type &a_to,
-                                  GDBMIListSafePtr &a_list)
+    bool parse_list (const UString &a_input,
+                     UString::size_type a_from,
+                     UString::size_type &a_to,
+                     GDBMIListSafePtr &a_list)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -1858,7 +1857,7 @@ struct GDBEngine::Priv {
         }
         CHECK_END (a_input, cur + 1, end) ;
         if (a_input[cur + 1] == ']') {
-            ++cur ;
+            cur += 2;
             a_list = GDBMIListSafePtr (new GDBMIList);
             a_to = ++cur ;
             return true ;
@@ -1915,6 +1914,7 @@ struct GDBEngine::Priv {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
+        ++cur ;
 
         a_to = cur ;
         a_list = return_list ;
@@ -1970,7 +1970,7 @@ struct GDBEngine::Priv {
     /// TUPLE is a GDB/MI tuple. Look at parse_tuple() for more.
     /// LIST is a GDB/MI list. It is either  a list of GDB/MI Result or
     /// a list of GDB/MI value. Yeah, that can be recursive ...
-    /// To parse a GDB/MI list, we use parse_result_value_list() defined above.
+    /// To parse a GDB/MI list, we use parse_list() defined above.
     /// You can look at the GDB/MI output syntax for more.
     /// \param a_input the input string to parse
     /// \param a_from where to start parsing from
@@ -2000,7 +2000,7 @@ struct GDBEngine::Priv {
             }
         } else if (a_input[cur] == '[') {
             GDBMIListSafePtr list ;
-            if (parse_result_value_list (a_input, cur, cur, list)) {
+            if (parse_list (a_input, cur, cur, list)) {
                 THROW_IF_FAIL (list) ;
                 value = GDBMIValueSafePtr (new GDBMIValue (list)) ;
             }
@@ -2060,8 +2060,8 @@ struct GDBEngine::Priv {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
-        list<GDBMIResultSafePtr> result_list =
-            result_value_list->get_result_content () ;
+        list<GDBMIResultSafePtr> result_list  ;
+        result_value_list->get_result_content (result_list) ;
 
         GDBMITupleSafePtr frame_tuple ;
         vector<IDebugger::Frame> stack ;
@@ -2150,8 +2150,11 @@ struct GDBEngine::Priv {
             return false ;
         }
 
-        list<GDBMIResultSafePtr> frames_params_list =
-            gdbmi_list->get_result_content () ;
+        list<GDBMIResultSafePtr> frames_params_list ;
+        gdbmi_list->get_result_content (frames_params_list) ;
+        LOG_D ("number of frames: " << (int) frames_params_list.size (),
+               GDBMI_FRAME_PARSING_DOMAIN) ;
+
         list<GDBMIResultSafePtr>::const_iterator frames_iter,
                                             params_records_iter,
                                             params_iter;
@@ -2162,7 +2165,10 @@ struct GDBEngine::Priv {
         for (frames_iter = frames_params_list.begin () ;
              frames_iter != frames_params_list.end ();
              ++frames_iter) {
-            if (!(*frames_iter)) {continue;}
+            if (!(*frames_iter)) {
+                LOG_D ("Got a null frmae, skipping", GDBMI_FRAME_PARSING_DOMAIN) ;
+                continue;
+            }
             THROW_IF_FAIL ((*frames_iter)->variable () != "stack") ;
             THROW_IF_FAIL ((*frames_iter)->value ()
                             && (*frames_iter)->value ()->content_type ()
@@ -2208,9 +2214,10 @@ struct GDBEngine::Priv {
                         LOG_D ("arg list is *not* empty for frame level '"
                                << (int)cur_frame_level,
                                GDBMI_FRAME_PARSING_DOMAIN) ;
-                        //walk each parameter. Each parameter is a tuple (in a value)
-                        list<GDBMIValueSafePtr> arg_as_value_list =
-                            arg_list->get_value_content();
+                        //walk each parameter.
+                        //Each parameter is a tuple (in a value)
+                        list<GDBMIValueSafePtr> arg_as_value_list ;
+                        arg_list->get_value_content (arg_as_value_list);
                         for (args_as_value_iter=arg_as_value_list.begin();
                              args_as_value_iter!=arg_as_value_list.end();
                              ++args_as_value_iter) {
