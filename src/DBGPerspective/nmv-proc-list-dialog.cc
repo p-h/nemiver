@@ -36,7 +36,7 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 
-struct Cols : public Gtk::TreeModel::ColumnRecord {
+struct ProcListCols : public Gtk::TreeModel::ColumnRecord {
     Gtk::TreeModelColumn<IProcMgr::Process> process ;
     Gtk::TreeModelColumn<unsigned int> pid ;
     Gtk::TreeModelColumn<Glib::ustring> user_name ;
@@ -49,7 +49,7 @@ struct Cols : public Gtk::TreeModel::ColumnRecord {
         PROC_ARGS
     };
 
-    Cols ()
+    ProcListCols ()
     {
         add (process) ;
         add (pid) ;
@@ -58,10 +58,10 @@ struct Cols : public Gtk::TreeModel::ColumnRecord {
     }
 };//end class Gtk::TreeModel
 
-static Cols&
+static ProcListCols&
 columns ()
 {
-    static Cols s_columns ;
+    static ProcListCols s_columns ;
     return s_columns ;
 }
 
@@ -149,7 +149,7 @@ struct ProcListDialog::Priv {
         col->set_sort_column_id (columns ().proc_args) ;
 
         proclist_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
-        col = proclist_view->get_column (Cols::PID) ;
+        col = proclist_view->get_column (ProcListCols::PID) ;
 
         proclist_view->get_selection ()->signal_changed ().connect
                                                         (sigc::mem_fun (*this,

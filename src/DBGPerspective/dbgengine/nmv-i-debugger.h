@@ -160,11 +160,27 @@ public:
 
     /// \brief a function frame as seen by the debugger.
     class Frame {
+
+    public:
+        class Parameter {
+            UString m_name ;
+            UString m_value ;
+
+        public:
+            const UString& name () const {return m_name;}
+            void name (const UString &a_in) {m_name = a_in;}
+
+            const UString& value () const {return m_value;}
+            void value (const UString &a_in) {m_value = a_in;}
+        };//end class Argument
+
+    private:
         UString m_address ;
         UString m_function ;
         map<UString, UString> m_args ;
         //present if the target has debugging info
         UString m_file_name ;
+        //present if the target has sufficient debugging info
         UString m_file_full_name ;
         int m_line ;
         //present if the target doesn't have debugging info
@@ -210,8 +226,29 @@ public:
             m_file_full_name = "" ;
             m_line = 0 ;
             m_library.clear () ;
+            m_args.clear () ;
         }
     };//end class Frame
+
+    /// the parameters of a frame.
+    /// In GDB/MI, this is something separate
+    /// from the frames. There is a request to get
+    /// the description of all he frames (without their parameters),
+    /// and there is a request to get the description of all the
+    /// frame parameters.
+    /// Hence the separation here between the class IDebugger::Frame
+    /// and IDebugger::FrameParameters
+    class FrameParameter {
+        UString m_name;
+        UString m_value ;
+
+    public:
+        const UString& name () const {return m_name;}
+        void name (const UString &a_in) {m_name = a_in;}
+
+        const UString& value () const {return m_value;}
+        void value (const UString &a_in) {m_value = a_in;}
+    };//end class FrameParameter
 
 
     virtual ~IDebugger () {}
@@ -221,6 +258,8 @@ public:
     /// @{
 
     virtual sigc::signal<void>& engine_died_signal () const = 0 ;
+
+    virtual sigc::signal<void>& program_finished_signal () const = 0;
 
     virtual sigc::signal<void, const UString&>&
                                      console_message_signal () const = 0 ;
@@ -241,11 +280,15 @@ public:
     virtual sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
                                                      stopped_signal () const = 0;
 
-    virtual sigc::signal<void, const list<IDebugger::Frame>& >&
+    virtual sigc::signal<void, const vector<IDebugger::Frame>& >&
                                                 frames_listed_signal () const=0;
 
+    virtual sigc::signal<void,
+                         const map<int, vector<IDebugger::FrameParameter> >&>&
+                                        frames_params_listed_signal () const=0;
+
     virtual sigc::signal<void>& running_signal () const = 0;
-    virtual sigc::signal<void>& program_finished_signal () const = 0;
+
 
     /// @}
 
@@ -303,6 +346,10 @@ public:
                                     bool a_run_event_loops=false) = 0;
     virtual void delete_breakpoint (gint a_break_num,
                                     bool a_run_event_loops=false) = 0;
+    virtual void list_frames () = 0;
+
+    virtual void list_frames_arguments (int a_low_frame=-1,
+                                        int a_high_frame=-1) = 0;
 };//end IDebugger
 
 }//end namespace nemiver

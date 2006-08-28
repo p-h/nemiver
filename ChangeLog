@@ -1,3 +1,13 @@
+lundi 28 août 2006, 10:02:48 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: cleanup, more call
+	stack parsing. Started to work on frame parameters parsing. Still
+	bugged atm.
+	* src/DBGPerspective/dbgengine/nmv-i-debugger.h: added
+	IDebugger::frames_params_listed_signal(), not plugged yet.
+	* src/DBGPerspective/nmv-call-stack.h,cc: the callstack thing starts
+	working somehow. The function parameters part still doesn't, though.
+
 dimanche 27 août 2006, 10:17:30 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more stack trace

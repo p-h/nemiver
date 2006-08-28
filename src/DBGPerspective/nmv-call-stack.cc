@@ -49,52 +49,63 @@ struct GObjectMMUnref {
 
 typedef SafePtr<Glib::Object, GObjectMMRef, GObjectMMUnref> GObjectMMSafePtr ;
 
-struct Cols : public Gtk::TreeModelColumnRecord {
-    Gtk::TreeModelColumn<Glib::ustring> function_name ;
+struct CallStackCols : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> location ;
+    Gtk::TreeModelColumn<Glib::ustring> function_name ;
 
     enum Index {
         LOCATION=0,
         FUNCTION_NAME
     };
 
-    Cols ()
+    CallStackCols ()
     {
-        add (function_name) ;
         add (location) ;
+        add (function_name) ;
     }
 };//end cols
 
-static Cols&
+static CallStackCols&
 columns ()
 {
-    static Cols s_cols ;
+    static CallStackCols s_cols ;
     return s_cols ;
 }
 
 struct CallStack::Priv {
     IDebuggerSafePtr debugger ;
-    list<IDebugger::Frame> frames ;
+    vector<IDebugger::Frame> frames ;
     Glib::RefPtr<Gtk::ListStore> store ;
     GObjectMMSafePtr widget ;
+    bool args_collection_started ;
     sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal ;
 
     Priv (IDebuggerSafePtr a_dbg) :
-        debugger (a_dbg)
-    {}
-
-    void on_debugger_stopped_signal (const UString &,
-                                     bool,
-                                     const IDebugger::Frame &)
+        debugger (a_dbg),
+        args_collection_started (false)
     {
+        connect_debugger_signals () ;
     }
 
-    void on_frames_listed_signal (const list<IDebugger::Frame>&)
+    void on_debugger_stopped_signal (const UString &a_reason,
+                                     bool a_has_frame,
+                                     const IDebugger::Frame &a_frame)
     {
+        THROW_IF_FAIL (debugger) ;
+        debugger->list_frames () ;
+    }
+
+    void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack)
+    {
+        THROW_IF_FAIL (debugger) ;
+        debugger->list_frames_arguments () ;
+        set_frame_list (a_stack) ;
     }
 
     void connect_debugger_signals ()
     {
+        THROW_IF_FAIL (debugger) ;
+
         THROW_IF_FAIL (debugger) ;
 
         debugger->stopped_signal ().connect (sigc::mem_fun
@@ -114,7 +125,7 @@ struct CallStack::Priv {
         if (widget) {
             return ;
         }
-        Glib::RefPtr<Gtk::ListStore> store = Gtk::ListStore::create (columns ());
+        store = Gtk::ListStore::create (columns ());
         Gtk::TreeView *tree_view = new Gtk::TreeView (store) ;
         THROW_IF_FAIL (tree_view) ;
         widget = tree_view ;
@@ -122,35 +133,39 @@ struct CallStack::Priv {
         tree_view->append_column ("function", columns ().function_name) ;
         tree_view->set_headers_visible (true) ;
         Gtk::TreeViewColumn* column =
-                            tree_view->get_column (Cols::FUNCTION_NAME) ;
+                            tree_view->get_column (CallStackCols::FUNCTION_NAME) ;
         THROW_IF_FAIL (column) ;
         column->set_clickable (false) ;
         column->set_reorderable (false) ;
 
-        THROW_IF_FAIL (column = tree_view->get_column (Cols::LOCATION)) ;
+        THROW_IF_FAIL (column = tree_view->get_column (CallStackCols::LOCATION)) ;
         column->set_clickable (false) ;
         column->set_reorderable (false) ;
     }
 
-    void set_frame_list (const list<IDebugger::Frame> &a_list)
+    void set_frame_list (const vector<IDebugger::Frame> &a_list)
     {
-        Gtk::TreeModel::iterator store_iter ;
-        list<IDebugger::Frame>::const_iterator frame_iter ;
+        THROW_IF_FAIL (get_widget ()) ;
 
+        clear_frame_list () ;
+
+        Gtk::TreeModel::iterator store_iter ;
+        vector<IDebugger::Frame>::const_iterator frame_iter ;
         for (frame_iter = a_list.begin () ;
              frame_iter != a_list.end () ;
              ++frame_iter) {
             store_iter = store->append () ;
             (*store_iter)[columns ().function_name] = frame_iter->function () ;
             (*store_iter)[columns ().location] =
-                frame_iter->file_name ()
-                    + ":"
-                    + UString::from_int (frame_iter->line ()) ;
+                            frame_iter->file_name ()
+                                + ":"
+                                + UString::from_int (frame_iter->line ()) ;
         }
     }
 
-    void clear ()
+    void clear_frame_list ()
     {
+        THROW_IF_FAIL (store) ;
         store->clear () ;
     }
 };//end struct CallStack::Priv
@@ -166,13 +181,6 @@ CallStack::~CallStack ()
     m_priv = NULL ;
 }
 
-void
-CallStack::push_frame (const IDebugger::Frame &a_frame)
-{
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->frames.push_front (a_frame) ;
-}
-
 bool
 CallStack::is_empty ()
 {
@@ -180,24 +188,8 @@ CallStack::is_empty ()
     return m_priv->frames.empty () ;
 }
 
-IDebugger::Frame&
-CallStack::peek_frame () const
-{
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (!m_priv->frames.empty ()) ;
-    return m_priv->frames.front () ;
-}
 
-IDebugger::Frame
-CallStack::pop_frame ()
-{
-    THROW_IF_FAIL (m_priv) ;
-    IDebugger::Frame frame = m_priv->frames.front () ;
-    m_priv->frames.pop_front () ;
-    return frame ;
-}
-
-list<IDebugger::Frame>&
+const vector<IDebugger::Frame>&
 CallStack::frames () const
 {
     THROW_IF_FAIL (m_priv) ;

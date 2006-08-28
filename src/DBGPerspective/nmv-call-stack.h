@@ -55,11 +55,8 @@ public:
 
     CallStack (IDebuggerSafePtr &) ;
     virtual ~CallStack () ;
-    void push_frame (const IDebugger::Frame &) ;
     bool is_empty () ;
-    IDebugger::Frame& peek_frame () const ;
-    IDebugger::Frame pop_frame () ;
-    list<IDebugger::Frame>& frames () const ;
+    const vector<IDebugger::Frame>& frames () const ;
     Gtk::Widget& widget () const ;
     void update_stack () ;
     sigc::signal<void, int, const IDebugger::Frame&>&
