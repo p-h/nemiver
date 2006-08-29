@@ -40,9 +40,17 @@ add_action_entries_to_action_group (const ActionEntry a_tab[],
 
     for (int i=0; i < a_num_entries ; ++i) {
         Glib::RefPtr<Gtk::Action> action = a_tab[i].to_action () ;
-        a_group->add (action,
-                      Gtk::AccelKey (a_tab[i].m_accel),
-                      a_tab[i].m_activate_slot) ;
+        if (a_tab[i].m_accel != "")
+        {
+            a_group->add (action,
+                    Gtk::AccelKey (a_tab[i].m_accel),
+                    a_tab[i].m_activate_slot) ;
+        }
+        else
+        {
+            a_group->add (action,
+                    a_tab[i].m_activate_slot) ;
+        }
     }
 }
 int

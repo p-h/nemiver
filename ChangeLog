@@ -5,6 +5,17 @@ mardi 29 août 2006, 11:48:05 (UTC+0200) Dodji Seketeli
 	* Makefile.am, nemiver.desktop: applied a patch from Jonathon Jongsma to
 	  add a nemiver.desktop file.
 
+2006-08-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/uicommon/nmv-ui-utils.cc: check to see if an accel key is registered
+	for each action and if not, use an overloaded ActionGroup::add() function
+	that doesn't set an accelkey.  This way, any menu items that use a
+	Gtk::StockID automatically get their standard accel keys registered.  Now
+	menu items Open (<control>O), Quit (<control>Q), and Close (<control>W) all
+	work correctly
+	* src/workbench/nmv-workbench.cc: Add mnemonic for the _File menu (so that
+	<alt>F works).
+
 lundi 28 août 2006, 23:42:43 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: debunked the

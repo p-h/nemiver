@@ -307,7 +307,7 @@ Workbench::init_actions ()
         {
             "FileMenuAction",
             nil_stock_id,
-            "File",
+            "_File",
             "",
             nil_slot,
             ActionEntry::DEFAULT,
