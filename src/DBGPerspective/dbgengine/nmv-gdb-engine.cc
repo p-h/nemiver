@@ -15,7 +15,7 @@
  *See the GNU General Public License for more details.
  *
  *You should have received a copy of the
- *GNU General Public License along with Goupil;
+ *GNU General Public License along with Nemiver;
  *see the file COPYING.
  *If not, write to the Free Software Foundation,
  *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -277,7 +277,7 @@ public:
         map<UString, UString> m_attrs ;
         vector<IDebugger::Frame> m_call_stack ;
         bool m_has_call_stack ;
-        map<int, IDebugger::FrameParameter> m_frames_parameters ;
+        map<int, vector<IDebugger::FrameParameter> > m_frames_parameters ;
         bool m_has_frames_parameters;
 
     public:
@@ -309,13 +309,14 @@ public:
             has_call_stack (true) ;
         }
 
-        const map<int, IDebugger::FrameParameter>& frames_parameters () const
+        const map<int, vector<IDebugger::FrameParameter> >& frames_parameters () const
         {
             return m_frames_parameters ;
         }
-        void frames_parameters (const map<int, IDebugger::FrameParameter> &a_in)
+        void frames_parameters (const map<int, vector<IDebugger::FrameParameter> > &a_in)
         {
             m_frames_parameters = a_in ;
+            has_frames_parameters (true) ;
         }
 
         bool has_frames_parameters () const {return m_has_frames_parameters;}
@@ -2807,7 +2808,6 @@ struct GDBEngine::Priv {
                         return false ;
                     }
                     result_record.call_stack (call_stack) ;
-                    //debugging logs ...
                     LOG_D ("parsed a call stack of depth: "
                            << (int) call_stack.size (),
                            GDBMI_FRAME_PARSING_DOMAIN) ;
@@ -2833,6 +2833,7 @@ struct GDBEngine::Priv {
                     if (!parse_stack_arguments (a_input, cur, cur, frames_args)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     }
+                    result_record.frames_parameters (frames_args)  ;
                     LOG_D ("parsed stack args", GDBMI_FRAME_PARSING_DOMAIN) ;
                 } else {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -3196,7 +3197,7 @@ struct OnFramesParamsListedHandler : OutputHandler {
         if (a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
-            && (a_in.output ().result_record ().has_call_stack ())) {
+            && (a_in.output ().result_record ().has_frames_parameters ())) {
             LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
             return true ;
         }
@@ -3205,8 +3206,8 @@ struct OnFramesParamsListedHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
-        m_engine->frames_listed_signal ().emit
-            (a_in.output ().result_record ().call_stack ()) ;
+        m_engine->frames_params_listed_signal ().emit
+            (a_in.output ().result_record ().frames_parameters ()) ;
     }
 };//struct OnFramesParamsListedHandler
 
@@ -3291,6 +3292,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnRunningHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnFramesListedHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnFramesParamsListedHandler (this))) ;
 }
 
 void

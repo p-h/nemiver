@@ -102,6 +102,12 @@ struct CallStack::Priv {
         set_frame_list (a_stack) ;
     }
 
+    void on_frames_params_listed_signal
+            (const map<int, vector<IDebugger::FrameParameter> > &a_frames_params)
+    {
+        LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN) ;
+    }
+
     void connect_debugger_signals ()
     {
         THROW_IF_FAIL (debugger) ;
@@ -112,6 +118,8 @@ struct CallStack::Priv {
                     (*this, &CallStack::Priv::on_debugger_stopped_signal)) ;
         debugger->frames_listed_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_frames_listed_signal)) ;
+        debugger->frames_params_listed_signal ().connect (sigc::mem_fun
+                    (*this, &CallStack::Priv::on_frames_params_listed_signal)) ;
     }
 
     Gtk::Widget* get_widget ()

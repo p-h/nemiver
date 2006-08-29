@@ -1,3 +1,12 @@
+mardi 29 août 2006, 19:35:39 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: properly emit the
+	  IDebugger::frames_params_listed_signal(), yay !.
+	* src/DBGPerspective/nmv-call-stack.cc: hook on the
+	  IDebugger::frames_params_listed_signal(). The CallStack widget doesn't
+	  do anything useful with it yet. Next stop is to display the frames
+	  parameters arguments ... cheers.
+
 mardi 29 août 2006, 11:48:05 (UTC+0200) Dodji Seketeli
 
 	* src/common/Makefile.am: add nmv-connection.h and
