@@ -4,8 +4,7 @@ sqlitedriverdir=@NEMIVER_MODULES_DIR@
 sources=nmv-sqlite-cnx-mgr-drv.cc \
 nmv-sqlite-cnx-mgr-drv.h \
 nmv-sqlite-cnx-drv.cc \
-nmv-sqlite-cnx-drv.h \
-nmv-libsqlite-macros.h
+nmv-sqlite-cnx-drv.h
 
 libnemiverdbdsqlite_la_SOURCES=$(sources)
 

@@ -20,7 +20,9 @@ nmv-plugin.h \
 nmv-sequence.h \
 nmv-option-utils.h \
 nmv-i-connection-driver.h \
+nmv-connection.h \
 nmv-i-connection-manager-driver.h \
+nmv-connection-manager.h \
 nmv-parsing-utils.h  \
 nmv-conf-manager.h \
 nmv-buffer.h \
