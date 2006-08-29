@@ -1,3 +1,12 @@
+mercredi 30 août 2006, 00:23:39 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: debug the
+	GDBMIList::get_value_content() method so that the frame params parsing
+	works better. Add a bunch of logs for further debug, in any case.
+	* src/DBGPerspective/nmv-call-stack.cc: add the function parameters
+	to the treeview and update them accordingly. Wow, it seems to *work*. Now
+	I can go sleep, I am tired.
+
 mardi 29 août 2006, 19:35:39 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: properly emit the

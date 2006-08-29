@@ -654,13 +654,12 @@ public:
         }
     }
 
-    void get_value_content (list<GDBMIValueSafePtr> a_list) const
+    void get_value_content (list<GDBMIValueSafePtr> &a_list) const
     {
         THROW_IF_FAIL (!empty () && content_type () == VALUE_TYPE) ;
         list<boost::variant<GDBMIResultSafePtr,GDBMIValueSafePtr> >::const_iterator it;
-        list<GDBMIValueSafePtr> result ;
         for (it= m_content.begin () ; it!= m_content.end () ; ++it) {
-            result.push_back (boost::get<GDBMIValueSafePtr> (*it)) ;
+            a_list.push_back (boost::get<GDBMIValueSafePtr> (*it)) ;
         }
     }
 };//end class GDBMIList
@@ -2219,10 +2218,15 @@ struct GDBEngine::Priv {
                         //Each parameter is a tuple (in a value)
                         list<GDBMIValueSafePtr> arg_as_value_list ;
                         arg_list->get_value_content (arg_as_value_list);
+                        LOG_D ("arg list size: "
+                               << (int)arg_as_value_list.size (),
+                               GDBMI_FRAME_PARSING_DOMAIN) ;
                         for (args_as_value_iter=arg_as_value_list.begin();
                              args_as_value_iter!=arg_as_value_list.end();
                              ++args_as_value_iter) {
                             if (!*args_as_value_iter) {
+                                LOG_D ("got NULL arg, skipping",
+                                       GDBMI_FRAME_PARSING_DOMAIN) ;
                                 continue;
                             }
                             GDBMITupleSafePtr args =
@@ -2260,6 +2264,12 @@ struct GDBEngine::Priv {
                                << (int)cur_frame_level,
                                GDBMI_FRAME_PARSING_DOMAIN) ;
                     }
+                    THROW_IF_FAIL (cur_frame_level >= 0) ;
+                    LOG_D ("cur_frame_level: '"
+                           << (int) cur_frame_level
+                           << "', NB Params: "
+                           << (int) cur_frame_args.size (),
+                           NMV_DEFAULT_DOMAIN) ;
                     all_frames_args[cur_frame_level] = cur_frame_args ;
                 } else {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2271,6 +2281,9 @@ struct GDBEngine::Priv {
 
         a_to = cur ;
         a_params = all_frames_args ;
+        LOG_D ("number of frames parsed: "
+               << (int)a_params.size (),
+               NMV_DEFAULT_DOMAIN) ;
         return true;
     }
 

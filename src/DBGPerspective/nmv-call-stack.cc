@@ -52,16 +52,19 @@ typedef SafePtr<Glib::Object, GObjectMMRef, GObjectMMUnref> GObjectMMSafePtr ;
 struct CallStackCols : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> location ;
     Gtk::TreeModelColumn<Glib::ustring> function_name ;
+    Gtk::TreeModelColumn<Glib::ustring> function_args;
 
     enum Index {
         LOCATION=0,
-        FUNCTION_NAME
+        FUNCTION_NAME,
+        FUNCTION_ARGS
     };
 
     CallStackCols ()
     {
         add (location) ;
         add (function_name) ;
+        add (function_args) ;
     }
 };//end cols
 
@@ -77,12 +80,12 @@ struct CallStack::Priv {
     vector<IDebugger::Frame> frames ;
     Glib::RefPtr<Gtk::ListStore> store ;
     GObjectMMSafePtr widget ;
-    bool args_collection_started ;
+    bool waiting_for_stack_args ;
     sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal ;
 
     Priv (IDebuggerSafePtr a_dbg) :
         debugger (a_dbg),
-        args_collection_started (false)
+        waiting_for_stack_args (false)
     {
         connect_debugger_signals () ;
     }
@@ -97,15 +100,23 @@ struct CallStack::Priv {
 
     void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack)
     {
+        LOG_D ("frames listed", NMV_DEFAULT_DOMAIN) ;
         THROW_IF_FAIL (debugger) ;
+        frames = a_stack ;
+        waiting_for_stack_args = true ;
         debugger->list_frames_arguments () ;
-        set_frame_list (a_stack) ;
     }
 
     void on_frames_params_listed_signal
             (const map<int, vector<IDebugger::FrameParameter> > &a_frames_params)
     {
         LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN) ;
+        if (waiting_for_stack_args) {
+            set_frame_list (frames, a_frames_params) ;
+            waiting_for_stack_args = false ;
+        } else {
+            LOG_D ("not in the frame setting transaction", NMV_DEFAULT_DOMAIN) ;
+        }
     }
 
     void connect_debugger_signals ()
@@ -139,6 +150,7 @@ struct CallStack::Priv {
         widget = tree_view ;
         tree_view->append_column ("line", columns ().location) ;
         tree_view->append_column ("function", columns ().function_name) ;
+        tree_view->append_column ("arguments", columns ().function_args) ;
         tree_view->set_headers_visible (true) ;
         Gtk::TreeViewColumn* column =
                             tree_view->get_column (CallStackCols::FUNCTION_NAME) ;
@@ -149,25 +161,52 @@ struct CallStack::Priv {
         THROW_IF_FAIL (column = tree_view->get_column (CallStackCols::LOCATION)) ;
         column->set_clickable (false) ;
         column->set_reorderable (false) ;
+
+        THROW_IF_FAIL (column = tree_view->get_column
+                                                (CallStackCols::FUNCTION_ARGS)) ;
+        column->set_clickable (false) ;
+        column->set_reorderable (false) ;
     }
 
-    void set_frame_list (const vector<IDebugger::Frame> &a_list)
+    void set_frame_list
+                (const vector<IDebugger::Frame> &a_frames,
+                 const map<int, vector<IDebugger::FrameParameter> >&a_params)
     {
         THROW_IF_FAIL (get_widget ()) ;
 
         clear_frame_list () ;
 
         Gtk::TreeModel::iterator store_iter ;
-        vector<IDebugger::Frame>::const_iterator frame_iter ;
-        for (frame_iter = a_list.begin () ;
-             frame_iter != a_list.end () ;
-             ++frame_iter) {
+        vector<IDebugger::FrameParameter>::const_iterator params_iter;
+        for (unsigned int i = 0 ; i < a_frames.size () ; ++i) {
             store_iter = store->append () ;
-            (*store_iter)[columns ().function_name] = frame_iter->function () ;
+            (*store_iter)[columns ().function_name] = a_frames[i].function () ;
             (*store_iter)[columns ().location] =
-                            frame_iter->file_name ()
-                                + ":"
-                                + UString::from_int (frame_iter->line ()) ;
+                            a_frames[i].file_name () + ":"
+                            + UString::from_int (a_frames[i].line ()) ;
+            UString params_string = "(";
+            map<int, vector<IDebugger::FrameParameter> >::const_iterator iter ;
+            iter = a_params.find (i) ;
+            if (iter != a_params.end ()) {
+                const vector<IDebugger::FrameParameter> parameters = iter->second;
+                LOG_D ("for frame "
+                       << (int) i
+                       << " NB params: "
+                       << (int) parameters.size (), NMV_DEFAULT_DOMAIN) ;
+
+                params_iter = parameters.begin () ;
+                if (params_iter != parameters.end ()) {
+                    params_string += params_iter->name ()
+                                     + "=" + params_iter->value () ;
+                    ++params_iter ;
+                }
+                for ( ; params_iter != parameters.end (); ++params_iter) {
+                     params_string += ", " + params_iter->name ()
+                                     + "=" + params_iter->value () ;
+                }
+            }
+            params_string += ")" ;
+            (*store_iter)[columns ().function_args] = params_string ;
         }
     }
 
