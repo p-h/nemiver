@@ -28,6 +28,8 @@ nmv-proc-list-dialog.cc \
 nmv-proc-list-dialog.h \
 nmv-call-stack.cc \
 nmv-call-stack.h
+#nmv-throbbler.cc \
+#nmv-throbbler.h
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version

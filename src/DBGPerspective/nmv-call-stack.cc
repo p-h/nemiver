@@ -196,13 +196,11 @@ struct CallStack::Priv {
 
                 params_iter = parameters.begin () ;
                 if (params_iter != parameters.end ()) {
-                    params_string += params_iter->name ()
-                                     + "=" + params_iter->value () ;
+                    params_string += params_iter->name () ;
                     ++params_iter ;
                 }
                 for ( ; params_iter != parameters.end (); ++params_iter) {
-                     params_string += ", " + params_iter->name ()
-                                     + "=" + params_iter->value () ;
+                     params_string += ", " + params_iter->name () ;
                 }
             }
             params_string += ")" ;
