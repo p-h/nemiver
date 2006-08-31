@@ -28,11 +28,13 @@
 #include <gtkmm/widget.h>
 #include "nmv-object.h"
 #include "nmv-safe-ptr-utils.h"
+#include "nmv-ustring.h"
 
 using nemiver::common::Object ;
 using nemiver::common::SafePtr ;
 using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
+using nemiver::common::UString ;
 
 namespace nemiver {
 class Throbbler ;
@@ -43,10 +45,11 @@ class Throbbler : public Object {
     SafePtr<Priv> m_priv ;
 
     Throbbler () ;
+    Throbbler (const UString &a_root_path) ;
 
 public:
     virtual ~Throbbler ()  ;
-    static ThrobblerSafeptr create () ;
+    static ThrobblerSafePtr create (const UString &a_root_path) ;
     void start () ;
     bool is_started () const ;
     void stop () ;

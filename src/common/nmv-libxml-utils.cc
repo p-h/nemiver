@@ -67,23 +67,23 @@ reader_io_close_callback (ReaderIOContext *a_read_context)
 bool
 goto_next_element_node (XMLTextReaderSafePtr &a_reader)
 {
-    int result = xmlTextReaderRead (a_reader) ;
+    int result = xmlTextReaderRead (a_reader.get ()) ;
     if (result == 0) {
         return false ;
     } else if (result < 0) {
         THROW ("parsing error") ;
     }
     xmlReaderTypes node_type =
-        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader)) ;
+        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader.get ())) ;
     while (node_type != XML_READER_TYPE_ELEMENT) {
-        result = xmlTextReaderRead (a_reader) ;
+        result = xmlTextReaderRead (a_reader.get ()) ;
         if (result == 0) {
             return false ;
         } else if (result < 0) {
             THROW ("parsing error") ;
         }
         node_type = static_cast<xmlReaderTypes>
-                    (xmlTextReaderNodeType (a_reader)) ;
+                    (xmlTextReaderNodeType (a_reader.get ())) ;
     }
     return true ;
 }
@@ -96,7 +96,7 @@ goto_next_element_node_and_check (XMLTextReaderSafePtr &a_reader,
         return false ;
     }
     UString name = reinterpret_cast<const char*>
-                        (xmlTextReaderConstName (a_reader)) ;
+                        (xmlTextReaderConstName (a_reader.get ())) ;
     if (name != a_element_name) {
         return false ;
     }
@@ -114,17 +114,17 @@ search_next_element_node (XMLTextReaderSafePtr &a_reader,
     int status (0) ;
     xmlReaderTypes node_type ;
     for (;;) {
-        status = xmlTextReaderRead (a_reader) ;
+        status = xmlTextReaderRead (a_reader.get ()) ;
         if (status == 0) {
             return false ;
         } else if (result < 0) {
             THROW ("parsing error") ;
         }
         node_type = static_cast<xmlReaderTypes>
-                    (xmlTextReaderNodeType (a_reader)) ;
+                    (xmlTextReaderNodeType (a_reader.get ())) ;
         UString name =
             reinterpret_cast<const char*>
-                (XMLCharSafePtr (xmlTextReaderLocalName (a_reader)).get ());
+                (XMLCharSafePtr (xmlTextReaderLocalName (a_reader.get ())).get ());
         if (node_type == XML_READER_TYPE_ELEMENT
             && name == a_element_name) {
             result=true ;
@@ -137,23 +137,23 @@ search_next_element_node (XMLTextReaderSafePtr &a_reader,
 bool
 goto_next_text_node (XMLTextReaderSafePtr &a_reader)
 {
-    int result = xmlTextReaderRead (a_reader) ;
+    int result = xmlTextReaderRead (a_reader.get ()) ;
     if (result == 0) {
         return false ;
     } else if (result < 0) {
         THROW ("parsing error") ;
     }
     xmlReaderTypes node_type =
-        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader)) ;
+        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader.get ())) ;
     while (node_type != XML_READER_TYPE_TEXT) {
-        result = xmlTextReaderRead (a_reader) ;
+        result = xmlTextReaderRead (a_reader.get ()) ;
         if (result == 0) {
             return false ;
         } else if (result < 0) {
             THROW ("parsing error") ;
         }
         node_type = static_cast<xmlReaderTypes>
-                    (xmlTextReaderNodeType (a_reader)) ;
+                    (xmlTextReaderNodeType (a_reader.get ())) ;
     }
     return true ;
 }
@@ -162,7 +162,7 @@ bool
 read_next_and_check_node (XMLTextReaderSafePtr &a_reader,
                           xmlReaderTypes a_node_type_to_be)
 {
-    int result = xmlTextReaderRead (a_reader) ;
+    int result = xmlTextReaderRead (a_reader.get ()) ;
     if (result == 0) {
         return false ;
     } else if (result < 0) {
@@ -170,7 +170,7 @@ read_next_and_check_node (XMLTextReaderSafePtr &a_reader,
     }
     xmlReaderTypes node_type =
         static_cast<xmlReaderTypes>
-        (xmlTextReaderNodeType (a_reader));
+        (xmlTextReaderNodeType (a_reader.get ()));
     if (node_type == a_node_type_to_be) {
         return true ;
     }
@@ -181,7 +181,7 @@ bool
 is_empty_element (XMLTextReaderSafePtr &a_reader)
 {
     THROW_IF_FAIL (a_reader) ;
-    int status = xmlTextReaderIsEmptyElement (a_reader) ;
+    int status = xmlTextReaderIsEmptyElement (a_reader.get ()) ;
     if (status == 1) {
         return true ;
     } else if (status == 0) {

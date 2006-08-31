@@ -110,7 +110,7 @@ decide:
             break;
         case SQLITE_ERROR:
             LOG_ERROR ("sqlite3_step() encountered a runtime error:"
-                 << sqlite3_errmsg (sqlite)) ;
+                 << sqlite3_errmsg (sqlite.get ())) ;
             if (cur_stmt) {
                 sqlite3_finalize (cur_stmt) ;
                 cur_stmt = NULL ;
@@ -166,7 +166,7 @@ const char*
 SqliteCnxDrv::get_last_error () const
 {
     if (m_priv && m_priv->sqlite) {
-        return sqlite3_errmsg (m_priv->sqlite);
+        return sqlite3_errmsg (m_priv->sqlite.get ());
     }
     return NULL ;
 }
@@ -215,7 +215,7 @@ SqliteCnxDrv::execute_statement (const SQLStatement &a_statement)
     if (a_statement.to_string().bytes () == 0)
         return false ;
 
-    int status = sqlite3_prepare (m_priv->sqlite,
+    int status = sqlite3_prepare (m_priv->sqlite.get (),
                                   a_statement.to_string ().c_str (),
                                   a_statement.to_string ().bytes (),
                                   &m_priv->cur_stmt,

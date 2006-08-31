@@ -212,14 +212,14 @@ DynamicModule::Loader::parse_module_config_file (const UString &a_path)
     if (!goto_next_element_node_and_check (reader, "name")) {
         THROW ("expected 'name' node as child of 'module' node") ;
     }
-    xml_str = xmlTextReaderReadString (reader) ;
+    xml_str = xmlTextReaderReadString (reader.get ()) ;
     module_name = reinterpret_cast<const char*> (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "libraryname")) {
         THROW ("expected 'libraryname' node as second child "
                "of 'module' node") ;
     }
-    xml_str = xmlTextReaderReadString (reader) ;
+    xml_str = xmlTextReaderReadString (reader.get ()) ;
     library_name = reinterpret_cast<const char*> (xml_str.get ()) ;
     if (module_name != "" && library_name != "") {
         config->library_name = library_name ;
@@ -231,11 +231,11 @@ DynamicModule::Loader::parse_module_config_file (const UString &a_path)
                "of 'module' node") ;
     }
     UString path;
-    name = reinterpret_cast<const char*> (xmlTextReaderConstName (reader));
+    name = reinterpret_cast<const char*> (xmlTextReaderConstName (reader.get ()));
     if (name == "customsearchpaths") {
         for (;;) {
             if (goto_next_element_node_and_check (reader, "path")) {
-                xml_str = xmlTextReaderReadString (reader) ;
+                xml_str = xmlTextReaderReadString (reader.get ()) ;
                 path = reinterpret_cast<const char*> (xml_str.get ()) ;
                 if (path != "") {
                     config->custom_library_search_paths.push_back (path) ;

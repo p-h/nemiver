@@ -54,7 +54,7 @@ public:
 
     virtual const UString& get_perspective_identifier () = 0;
 
-    virtual void get_toolbars (list<Gtk::Toolbar*> &a_tbs) = 0;
+    virtual void get_toolbars (list<Gtk::Widget*> &a_tbs) = 0;
 
     virtual Gtk::Widget* get_body () = 0;
 

@@ -1,3 +1,16 @@
+jeudi 31 août 2006, 21:14:37 (UTC+0200) Dodji Seketeli
+
+	* src/common/nmv-safe-ptr.h: removed the cast operator to PointerType* .
+	  This leads to safer code. I needed to update a lot of files in the
+	  entire project to reflect this change.
+	* src/DBGPerspective/nmv-throbbler.cc,h: make the throbbler work somehow.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: pack the throbbler at the
+	  right hand side of the toolbar. Start it when the debugger engine is running,
+	  stop it otherwise, woot. Okay, now that the mechanics are in place,
+	  we need some much better artwork.
+	* src/DBGPerspective/icons/green.png: added this png file show in the
+	  throbbler when it is stopped.
+
 mercredi 30 août 2006, 18:06:04 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-call-stack.cc: do not show the arguments values

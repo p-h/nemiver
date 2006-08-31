@@ -36,6 +36,7 @@
 #include "nmv-sess-mgr.h"
 #include "nmv-date-utils.h"
 #include "nmv-call-stack.h"
+#include "nmv-throbbler.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -205,7 +206,7 @@ public:
 
     const UString& get_perspective_identifier () ;
 
-    void get_toolbars (list<Gtk::Toolbar*> &a_tbs)  ;
+    void get_toolbars (list<Gtk::Widget*> &a_tbs)  ;
 
     Gtk::Widget* get_body ()  ;
 
@@ -351,8 +352,9 @@ struct DBGPerspective::Priv {
     Gtk::UIManager::ui_merge_id toolbar_merge_id ;
     Gtk::UIManager::ui_merge_id contextual_menu_merge_id;
     Gtk::Widget *contextual_menu ;
-    IWorkbench *workbench ;
-    Gtk::Toolbar *toolbar ;
+    IWorkbenchSafePtr workbench ;
+    SafePtr<Gtk::HBox> toolbar ;
+    ThrobblerSafePtr throbbler ;
     sigc::signal<void, bool> activated_signal;
     sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
@@ -586,7 +588,12 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 {
     NEMIVER_TRY
 
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->debugger_ready_action_group) ;
+    THROW_IF_FAIL (m_priv->throbbler) ;
+
     if (a_is_ready) {
+        m_priv->throbbler->stop () ;
         m_priv->debugger_ready_action_group->set_sensitive (true) ;
         attached_to_target_signal ().emit (true) ;
     } else {
@@ -855,6 +862,8 @@ DBGPerspective::on_debugger_running_signal ()
 {
     NEMIVER_TRY
     debugger_ready_signal ().emit (false) ;
+    THROW_IF_FAIL (m_priv->throbbler) ;
+    m_priv->throbbler->start () ;
     NEMIVER_CATCH
 }
 
@@ -939,8 +948,8 @@ DBGPerspective::add_perspective_toolbar_entries ()
                                            absolute_path)) ;
 
     m_priv->toolbar_merge_id =
-    m_priv->workbench->get_ui_manager ()->add_ui_from_file
-                                        (Glib::locale_to_utf8 (absolute_path)) ;
+        m_priv->workbench->get_ui_manager ()->add_ui_from_file
+                                            (Glib::locale_to_utf8 (absolute_path)) ;
 }
 
 void
@@ -1206,9 +1215,14 @@ DBGPerspective::init_toolbar ()
 {
     add_perspective_toolbar_entries () ;
 
-    m_priv->toolbar = dynamic_cast<Gtk::Toolbar*>
-        (m_priv->workbench->get_ui_manager ()->get_widget ("/ToolBar")) ;
+    m_priv->throbbler = Throbbler::create (plugin_path ()) ;
+    m_priv->toolbar = new Gtk::HBox ;
     THROW_IF_FAIL (m_priv->toolbar) ;
+    m_priv->toolbar->pack_end (m_priv->throbbler->get_widget (), Gtk::PACK_SHRINK) ;
+    Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
+            (m_priv->workbench->get_ui_manager ()->get_widget ("/ToolBar")) ;
+    THROW_IF_FAIL (glade_toolbar) ;
+    m_priv->toolbar->pack_start (*glade_toolbar) ;
     m_priv->toolbar->show_all () ;
 
     Gtk::ToolButton *button=NULL ;
@@ -1648,10 +1662,10 @@ DBGPerspective::get_perspective_identifier ()
 }
 
 void
-DBGPerspective::get_toolbars (list<Gtk::Toolbar*>  &a_tbs)
+DBGPerspective::get_toolbars (list<Gtk::Widget*>  &a_tbs)
 {
     CHECK_P_INIT ;
-    a_tbs.push_back (m_priv->toolbar) ;
+    a_tbs.push_back (m_priv->toolbar.get ()) ;
 }
 
 Gtk::Widget*
@@ -1724,9 +1738,9 @@ DBGPerspective::open_file (const UString &a_uri,
     guint nb_bytes_read (0) ;
 
     for (;;) {
-        nb_bytes_read = handle.read (buf, buf_size) ;
+        nb_bytes_read = handle.read (buf.get (), buf_size) ;
         if (nb_bytes_read) {
-            source_buffer->insert (source_buffer->end (), buf,
+            source_buffer->insert (source_buffer->end (), buf.get (),
                                    buf.get () + nb_bytes_read) ;
         }
         if (nb_bytes_read != buf_size) {break;}
@@ -2081,7 +2095,7 @@ IDebuggerSafePtr&
 DBGPerspective::debugger ()
 {
     if (!m_priv->debugger) {
-        DynamicModule::Loader *loader = plugin_entry_point_loader () ;
+        DynamicModule::Loader *loader = plugin_entry_point_loader ().get() ;
         THROW_IF_FAIL (loader) ;
         DynamicModuleManager *module_manager =
                             loader->get_dynamic_module_manager () ;

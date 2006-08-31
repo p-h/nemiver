@@ -1,3 +1,4 @@
+// Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -76,7 +77,7 @@ public:
     /// \params a_tbs the list of toolbars. The implementation of this method
     /// must fill this parameter with the list of toolbars it wants the workbench
     /// to display when this perspective becomes active.
-    virtual void get_toolbars (list<Gtk::Toolbar*> &a_tbs) = 0 ;
+    virtual void get_toolbars (list<Gtk::Widget*> &a_tbs) = 0 ;
 
     /// \returns the body of the perspective.
     virtual Gtk::Widget* get_body () = 0 ;

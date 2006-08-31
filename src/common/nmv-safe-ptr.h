@@ -88,9 +88,9 @@ public:
     }
 
     SafePtr (const SafePtr<PointerType,
-             ReferenceFunctor,
-             UnreferenceFunctor> &a_safe_ptr) :
-            m_pointer (a_safe_ptr.m_pointer)
+                           ReferenceFunctor,
+                           UnreferenceFunctor> &a_safe_ptr) :
+             m_pointer (a_safe_ptr.m_pointer)
     {
         reference () ;
     }
@@ -132,10 +132,12 @@ public:
         return m_pointer ;
     }
 
+    /*
     operator PointerType* ()
     {
         return m_pointer ;
     }
+    */
 
     bool operator== (const SafePtr<PointerType,
                      ReferenceFunctor,

@@ -328,7 +328,7 @@ PluginManager::parse_descriptor (const UString &a_path,
     if (!goto_next_element_node_and_check (reader, "plugindescriptor")) {
         THROW ("first element node should be 'plugindescriptor'") ;
     }
-    xml_str = xmlTextReaderGetAttribute (reader,
+    xml_str = xmlTextReaderGetAttribute (reader.get (),
                                          (const xmlChar*)"autoactivate");
     UString autoactivate = xml_str.get () ;
 
@@ -340,7 +340,7 @@ PluginManager::parse_descriptor (const UString &a_path,
 
     desc->can_deactivate (true) ;
     if (desc->auto_activate ()) {
-        xml_str = xmlTextReaderGetAttribute (reader,
+        xml_str = xmlTextReaderGetAttribute (reader.get (),
                                              (const xmlChar*) "candeactivate");
         UString candeactivate = xml_str.get () ;
         if (candeactivate == "no") {
@@ -350,31 +350,31 @@ PluginManager::parse_descriptor (const UString &a_path,
 
     if (!goto_next_element_node_and_check (reader, "name")) {
         THROW ("expected element 'name', got: "
-               + UString (xmlTextReaderConstName (reader)));
+               + UString (xmlTextReaderConstName (reader.get ())));
     }
 
-    xml_str = xmlTextReaderReadString (reader) ;
+    xml_str = xmlTextReaderReadString (reader.get ()) ;
     desc->name (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "version")) {
         THROW ("expected element 'version', got: "
-               + UString (xmlTextReaderConstName (reader)));
+               + UString (xmlTextReaderConstName (reader.get ())));
     }
 
-    xml_str = xmlTextReaderReadString (reader);
+    xml_str = xmlTextReaderReadString (reader.get ());
     desc->version (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "entrypoint")) {
         THROW ("expected element 'entrypoint', got: "
-               + UString (xmlTextReaderConstName (reader)));
+               + UString (xmlTextReaderConstName (reader.get ())));
     }
 
-    xml_str = xmlTextReaderReadString (reader);
+    xml_str = xmlTextReaderReadString (reader.get ());
     desc->entry_point_name (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "dependencies")) {
         THROW ("expected element 'dependencies', got: "
-               + UString (xmlTextReaderConstName (reader)));
+               + UString (xmlTextReaderConstName (reader.get ())));
     }
 
     UString name ;
@@ -384,16 +384,16 @@ PluginManager::parse_descriptor (const UString &a_path,
         }
         if (!goto_next_element_node_and_check (reader, "name")) {
             THROW ("expected element 'name', got: "
-                   + UString (xmlTextReaderConstName (reader)));
+                   + UString (xmlTextReaderConstName (reader.get ())));
         }
-        xml_str = xmlTextReaderReadString (reader) ;
-        name = xml_str ;
+        xml_str = xmlTextReaderReadString (reader.get ()) ;
+        name = xml_str.get () ;
         if (!goto_next_element_node_and_check (reader, "version")) {
             THROW ("expected element 'version', got: "
-                   + UString (xmlTextReaderConstName (reader)));
+                   + UString (xmlTextReaderConstName (reader.get ())));
         }
-        xml_str = xmlTextReaderReadString (reader) ;
-        desc->dependencies ()[name] = xml_str ;
+        xml_str = xmlTextReaderReadString (reader.get ()) ;
+        desc->dependencies ()[name] = xml_str.get () ;
     }
 
     a_out = desc ;

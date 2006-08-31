@@ -58,10 +58,10 @@ private:
     void init_menubar () ;
     void init_toolbar () ;
     void init_body () ;
-    void add_perspective_toolbars (IPerspective *a_perspective,
-                                   list<Gtk::Toolbar*> &a_tbs) ;
-    void add_perspective_body (IPerspective *a_perspective, Gtk::Widget *a_body) ;
-    void select_perspective (IPerspective *a_perspective) ;
+    void add_perspective_toolbars (IPerspectiveSafePtr &a_perspective,
+                                   list<Gtk::Widget*> &a_tbs) ;
+    void add_perspective_body (IPerspectiveSafePtr &a_perspective, Gtk::Widget *a_body) ;
+    void select_perspective (IPerspectiveSafePtr &a_perspective) ;
 
     void do_init () {}
     void shut_down () ;
@@ -172,7 +172,7 @@ Workbench::do_init (Gtk::Main &a_main)
         map<UString, PluginSafePtr>::const_iterator plugin_iter ;
         IPerspectiveSafePtr perspective ;
         Plugin::EntryPointSafePtr entry_point ;
-        list<Gtk::Toolbar*> toolbars ;
+        list<Gtk::Widget*> toolbars ;
         IWorkbenchSafePtr thiz (this, true) ;
 
         //**************************************************************
@@ -390,37 +390,37 @@ Workbench::init_body ()
 }
 
 void
-Workbench::add_perspective_toolbars (IPerspective *a_perspective,
-                                     list<Gtk::Toolbar*> &a_tbs)
+Workbench::add_perspective_toolbars (IPerspectiveSafePtr &a_perspective,
+                                     list<Gtk::Widget*> &a_tbs)
 {
     if (a_tbs.empty ()) {return ;}
 
     SafePtr<Gtk::Box> box (Gtk::manage (new Gtk::VBox)) ;
-    list<Gtk::Toolbar*>::const_iterator iter ;
+    list<Gtk::Widget*>::const_iterator iter ;
 
     for (iter = a_tbs.begin (); iter != a_tbs.end () ; ++iter) {
         box->pack_start (**iter) ;
     }
 
     box->show_all () ;
-    m_priv->toolbars_index_map [a_perspective] =
+    m_priv->toolbars_index_map [a_perspective.get ()] =
                     m_priv->toolbar_container->insert_page (*box, -1) ;
 
     box.release () ;
 }
 
 void
-Workbench::add_perspective_body (IPerspective *a_perspective,
+Workbench::add_perspective_body (IPerspectiveSafePtr &a_perspective,
                                  Gtk::Widget *a_body)
 {
     if (!a_body || !a_perspective) {return;}
 
-    m_priv->bodies_index_map[a_perspective] =
+    m_priv->bodies_index_map[a_perspective.get ()] =
         m_priv->bodies_container->insert_page (*a_body, -1);
 }
 
 void
-Workbench::select_perspective (IPerspective *a_perspective)
+Workbench::select_perspective (IPerspectiveSafePtr &a_perspective)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->toolbar_container) ;
@@ -430,13 +430,13 @@ Workbench::select_perspective (IPerspective *a_perspective)
     int toolbar_index=0, body_index=0 ;
 
     nil = m_priv->toolbars_index_map.end () ;
-    iter = m_priv->toolbars_index_map.find (a_perspective) ;
+    iter = m_priv->toolbars_index_map.find (a_perspective.get ()) ;
     if (iter != nil) {
         toolbar_index = iter->second ;
     }
 
     nil = m_priv->bodies_index_map.end () ;
-    iter = m_priv->bodies_index_map.find (a_perspective) ;
+    iter = m_priv->bodies_index_map.find (a_perspective.get ()) ;
     if (iter != nil) {
         body_index = iter->second ;
     }

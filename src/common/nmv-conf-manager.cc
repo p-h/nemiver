@@ -146,20 +146,20 @@ ConfManager::parse_config_file (const UString &a_path)
     xmlReaderTypes type ;
     int type_tmp (0) ;
     int res (0) ;
-    for (res = xmlTextReaderRead (reader) ;
+    for (res = xmlTextReaderRead (reader.get ()) ;
             res > 0;
-            res = xmlTextReaderRead (reader)) {
+            res = xmlTextReaderRead (reader.get ())) {
 
-        type_tmp = xmlTextReaderNodeType (reader) ;
+        type_tmp = xmlTextReaderNodeType (reader.get ()) ;
         THROW_IF_FAIL2 (type_tmp >= 0, "got an error while parsing conf file") ;
         type = static_cast<xmlReaderTypes> (type_tmp) ;
 
         switch (type) {
         case XML_READER_TYPE_ELEMENT: {
-                libxmlutils::XMLCharSafePtr str (xmlTextReaderName (reader)) ;
+                libxmlutils::XMLCharSafePtr str (xmlTextReaderName (reader.get ())) ;
                 UString name = reinterpret_cast<const char*> (str.get ()) ;
                 if (name == "database") {
-                    xmlNode* node = xmlTextReaderExpand (reader) ;
+                    xmlNode* node = xmlTextReaderExpand (reader.get ()) ;
                     THROW_IF_FAIL (node) ;
                     for (xmlNode *cur_node=node->children ;
                             cur_node ;
@@ -197,7 +197,7 @@ ConfManager::parse_config_file (const UString &a_path)
                         }
                     }
                 } else if (name == "logging") {
-                    xmlNode* node = xmlTextReaderExpand (reader) ;
+                    xmlNode* node = xmlTextReaderExpand (reader.get ()) ;
                     THROW_IF_FAIL (node) ;
                     for (xmlNode *cur_node=node->children ;
                             cur_node ;
@@ -235,7 +235,7 @@ ConfManager::parse_config_file (const UString &a_path)
                     }
                 } else if (name == "config") {
                     libxmlutils::XMLCharSafePtr value (xmlTextReaderGetAttribute
-                        (reader, (const xmlChar*)"version")) ;
+                        (reader.get (), (const xmlChar*)"version")) ;
                     conf.set_property ("config.version",
                                        (const char*)value.get ()) ;
                 }

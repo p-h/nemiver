@@ -162,9 +162,9 @@ class OfstreamLogSink : public LogSink {
         GCharSafePtr dir (g_path_get_dirname (a_file_path.c_str ())) ;
 
         if (!Glib::file_test (dir.get (),  Glib::FILE_TEST_IS_DIR)) {
-            if (g_mkdir_with_parents (dir, S_IRWXU)) {
+            if (g_mkdir_with_parents (dir.get (), S_IRWXU)) {
                 throw Exception (UString ("failed to create '")
-                                 + static_cast<gchar*> (dir) + "'") ;
+                                 + static_cast<gchar*> (dir.get ()) + "'") ;
             }
         }
         m_ofstream = new ofstream (a_file_path.c_str ()) ;
