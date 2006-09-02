@@ -26,8 +26,6 @@
 #define __NMV_DBG_PERSPECTIVE_H__
 
 #include <list>
-#include <libgnomevfsmm/uri.h>
-#include <libgnomevfsmm/handle.h>
 #include "nmv-i-perspective.h"
 #include "nmv-source-editor.h"
 #include "nmv-i-debugger.h"

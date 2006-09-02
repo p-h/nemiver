@@ -24,7 +24,7 @@
 #include <locale.h>
 #include <glibmm.h>
 #include <libxml/parser.h>
-#include <libgnomevfsmm/init.h>
+#include <libgnomevfs/gnome-vfs-init.h>
 #include "nmv-initializer.h"
 #include "nmv-conf-manager.h"
 
@@ -35,12 +35,13 @@ Initializer::Initializer ()
 {
     setlocale (LC_ALL, "") ;
     Glib::thread_init () ;
-    Gnome::Vfs::init () ;
+    gnome_vfs_init () ;
     ConfManager::init () ;
 }
 
 Initializer::~Initializer ()
 {
+    gnome_vfs_shutdown () ;
     xmlCleanupParser () ;
 }
 

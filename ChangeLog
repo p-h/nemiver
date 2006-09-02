@@ -1,3 +1,13 @@
+samedi 2 septembre 2006, 13:13:12 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: consider paths as local
+	everywhere, not like URIs. No more gnomevfs is involved in handling
+	path. I still use gnomevfs (the C api) to detect file mime types.
+	I think I need to wrap the gnome_vfs_get_mime_type_for_name() api.
+	It doesn't seems to be wrapped atm. This should fix a bug reported
+	by Jonathon Jongsma when trying to open files that have paths with
+	characters that must be escaped to have a valid URI.
+
 samedi 2 septembre 2006, 03:05:33 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-call-stack.cc: emit the

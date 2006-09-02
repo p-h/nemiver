@@ -25,6 +25,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <libgnomevfs/gnome-vfs-mime-utils.h>
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #include "nmv-dbg-perspective.h"
@@ -80,7 +82,7 @@ class DBGPerspective : public IDBGPerspective {
 private:
 
     struct SlotedButton : Gtk::Button {
-        UString uri ;
+        UString file_path;
         DBGPerspective *perspective ;
 
         SlotedButton () :
@@ -96,7 +98,7 @@ private:
         void on_clicked ()
         {
             if (perspective) {
-                perspective->close_file (uri) ;
+                perspective->close_file (file_path) ;
             }
         }
 
@@ -181,12 +183,12 @@ private:
     void init_signals () ;
     void init_debugger_signals () ;
     void append_source_editor (SourceEditor &a_sv,
-                               const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri) ;
+                               const UString &a_path) ;
     SourceEditor* get_current_source_editor () ;
     ISessMgr* get_session_manager () ;
     UString get_current_file_path () ;
-    SourceEditor* get_source_editor_from_uri (const UString &a_uri) ;
-    void bring_source_as_current (const UString &a_uri) ;
+    SourceEditor* get_source_editor_from_path (const UString &a_path) ;
+    void bring_source_as_current (const UString &a_path) ;
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
     void save_session () ;
@@ -215,12 +217,12 @@ public:
 
     void open_file () ;
 
-    bool open_file (const UString &a_uri,
+    bool open_file (const UString &a_path,
                     int current_line=-1) ;
 
     void close_current_file () ;
 
-    void close_file (const UString &a_uri) ;
+    void close_file (const UString &a_path) ;
 
     ISessMgr& session_manager () ;
 
@@ -250,7 +252,7 @@ public:
                                 int &a_break_num) ;
     bool delete_breakpoint () ;
     bool delete_breakpoint (int a_breakpoint_num) ;
-    bool delete_breakpoint (const UString &a_file_uri,
+    bool delete_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
     void append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum) ;
@@ -289,7 +291,7 @@ public:
 
     void add_text_to_error_view (const UString &a_text) ;
 
-    void set_where (const UString &a_uri, int line) ;
+    void set_where (const UString &a_path, int line) ;
 
     void unset_where () ;
 
@@ -370,9 +372,9 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::Window> body_window ;
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
     Gtk::Notebook *sourceviews_notebook ;
-    map<UString, int> uri_2_pagenum_map ;
+    map<UString, int> path_2_pagenum_map ;
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
-    map<int, UString> pagenum_2_uri_map ;
+    map<int, UString> pagenum_2_path_map ;
     Gtk::Notebook *statuses_notebook ;
     SafePtr<Gtk::TextView> command_view ;
     SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win ;
@@ -1345,19 +1347,20 @@ DBGPerspective::init_debugger_signals ()
 
 void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,
-                                      const Glib::RefPtr<Gnome::Vfs::Uri> &a_uri)
+                                      const UString &a_path)
 {
-    if (!a_uri) {return;}
+    if (a_path == "") {return;}
 
-    if (m_priv->uri_2_pagenum_map.find (a_uri->get_path ())
-        != m_priv->uri_2_pagenum_map.end ()) {
-        THROW (UString ("File of '")
-               + a_uri->get_path ()
-               + "' is already loaded") ;
+    if (m_priv->path_2_pagenum_map.find (a_path)
+        != m_priv->path_2_pagenum_map.end ()) {
+        THROW (UString ("File of '") + a_path + "' is already loaded") ;
     }
 
+    UString basename = Glib::locale_to_utf8
+        (Glib::path_get_basename (Glib::locale_from_utf8 (a_path))) ;
+
     SafePtr<Gtk::Label> label (Gtk::manage
-                            (new Gtk::Label (a_uri->extract_short_name ()))) ;
+                            (new Gtk::Label (basename))) ;
     SafePtr<Gtk::Image> cicon (manage
                 (new Gtk::Image (Gtk::StockID ("gtk-close"),
                                                Gtk::ICON_SIZE_BUTTON))) ;
@@ -1369,7 +1372,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->set_size_request (w+4, h+4) ;
     close_button->set_relief (Gtk::RELIEF_NONE) ;
     close_button->add (*cicon) ;
-    close_button->uri = a_uri->get_path () ;
+    close_button->file_path = a_path ;
     close_button->signal_clicked ().connect
             (sigc::mem_fun (*close_button, &SlotedButton::on_clicked)) ;
 
@@ -1381,9 +1384,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
                                                               *table,
                                                               -1);
-    m_priv->uri_2_pagenum_map[a_uri->get_path ()] = page_num ;
+    m_priv->path_2_pagenum_map[a_path] = page_num ;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
-    m_priv->pagenum_2_uri_map[page_num] = a_uri->get_path ();
+    m_priv->pagenum_2_path_map[page_num] = a_path ;
 
     table.release () ;
     close_button.release () ;
@@ -1433,37 +1436,37 @@ DBGPerspective::get_current_file_path ()
 }
 
 SourceEditor*
-DBGPerspective::get_source_editor_from_uri (const UString &a_uri)
+DBGPerspective::get_source_editor_from_path (const UString &a_path)
 {
     map<UString, int>::iterator iter =
-        m_priv->uri_2_pagenum_map.find (a_uri) ;
-    if (iter == m_priv->uri_2_pagenum_map.end ()) {
+        m_priv->path_2_pagenum_map.find (a_path) ;
+    if (iter == m_priv->path_2_pagenum_map.end ()) {
         return NULL ;
     }
     return m_priv->pagenum_2_source_editor_map[iter->second] ;
 }
 
 void
-DBGPerspective::bring_source_as_current (const UString &a_uri)
+DBGPerspective::bring_source_as_current (const UString &a_path)
 {
-    SourceEditor *source_editor = get_source_editor_from_uri (a_uri) ;
+    SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
     if (!source_editor) {
-        open_file (a_uri) ;
+        open_file (a_path) ;
     }
-    source_editor = get_source_editor_from_uri (a_uri) ;
+    source_editor = get_source_editor_from_path (a_path) ;
     THROW_IF_FAIL (source_editor) ;
     map<UString, int>::iterator iter =
-        m_priv->uri_2_pagenum_map.find (a_uri) ;
-    THROW_IF_FAIL (iter != m_priv->uri_2_pagenum_map.end ()) ;
+        m_priv->path_2_pagenum_map.find (a_path) ;
+    THROW_IF_FAIL (iter != m_priv->path_2_pagenum_map.end ()) ;
     m_priv->sourceviews_notebook->set_current_page (iter->second) ;
 }
 
 void
-DBGPerspective::set_where (const UString &a_uri,
+DBGPerspective::set_where (const UString &a_path,
                            int a_line)
 {
-    bring_source_as_current (a_uri) ;
-    SourceEditor *source_editor = get_source_editor_from_uri (a_uri) ;
+    bring_source_as_current (a_path) ;
+    SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->move_where_marker_to_line (a_line) ;
 }
@@ -1596,12 +1599,12 @@ DBGPerspective::save_session (ISessMgr::Session &a_session)
     a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
 
-    map<UString, int>::const_iterator uri_iter =
-        m_priv->uri_2_pagenum_map.begin () ;
+    map<UString, int>::const_iterator path_iter =
+        m_priv->path_2_pagenum_map.begin () ;
     for (;
-         uri_iter != m_priv->uri_2_pagenum_map.end ();
-         ++uri_iter) {
-        a_session.opened_files ().push_back (uri_iter->first) ;
+         path_iter != m_priv->path_2_pagenum_map.end ();
+         ++path_iter) {
+        a_session.opened_files ().push_back (path_iter->first) ;
     }
 
     map<int, IDebugger::BreakPoint>::const_iterator break_iter ;
@@ -1708,32 +1711,37 @@ DBGPerspective::open_file ()
 
     if (result != Gtk::RESPONSE_OK) {return;}
 
-    list<UString> uris = file_chooser.get_uris () ;
+    list<UString> paths = file_chooser.get_uris () ;
     list<UString>::const_iterator iter ;
 
-    for (iter = uris.begin () ; iter != uris.end () ; ++iter) {
+    for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
         open_file (*iter) ;
     }
 }
 
 
 bool
-DBGPerspective::open_file (const UString &a_uri,
+DBGPerspective::open_file (const UString &a_path,
                            int a_current_line)
 {
-    if (!a_uri) {return false;}
-    if (get_source_editor_from_uri (a_uri)) {return true ;}
+    if (a_path == "") {return false;}
+    if (get_source_editor_from_path (a_path)) {return true ;}
 
-    Glib::RefPtr<Gnome::Vfs::Uri> uri = Gnome::Vfs::Uri::create (a_uri) ;
-    Gnome::Vfs::Handle handle ;
+    ifstream file (Glib::locale_from_utf8 (a_path).c_str ()) ;
+    if (!file.good () && !file.eof ()) {
+        LOG_ERROR ("Could not open file " + a_path) ;
+        ui_utils::display_error ("Could not open file: " + a_path) ;
+        return false ;
+    }
 
     NEMIVER_TRY
 
-    handle.open (a_uri, Gnome::Vfs::OPEN_READ) ;
-    UString base_name = uri->extract_short_name () ;
+    UString base_name = Glib::locale_to_utf8
+        (Glib::path_get_basename (Glib::locale_from_utf8 (a_path))) ;
+
     UString mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ()) ;
     if (mime_type == "") {
-        mime_type = "text/plain" ;
+        mime_type = "text/x-c++" ;
     }
 
     SourceLanguagesManager lang_manager ;
@@ -1743,25 +1751,23 @@ DBGPerspective::open_file (const UString &a_uri,
     Glib::RefPtr<SourceBuffer> source_buffer = SourceBuffer::create (lang) ;
     THROW_IF_FAIL (source_buffer) ;
 
-    guint buf_size = 10 * 1024 ;
-    SafePtr<gchar> buf (new gchar [buf_size]) ;
-    guint nb_bytes_read (0) ;
+    gint buf_size = 10 * 1024 ;
+    SafePtr<gchar> buf (new gchar [buf_size + 1]) ;
 
     for (;;) {
-        nb_bytes_read = handle.read (buf.get (), buf_size) ;
-        if (nb_bytes_read) {
-            source_buffer->insert (source_buffer->end (), buf.get (),
-                                   buf.get () + nb_bytes_read) ;
-        }
-        if (nb_bytes_read != buf_size) {break;}
+        file.read (buf.get (), buf_size) ;
+        THROW_IF_FAIL (file.good () || file.eof ()) ;
+        source_buffer->insert (source_buffer->end (), buf.get (),
+                               buf.get () + file.gcount ()) ;
+        if (file.gcount () != buf_size) {break;}
     }
-    handle.close () ;
+    file.close () ;
 
     source_buffer->set_highlight () ;
     SourceEditor *source_editor (Gtk::manage
                                 (new SourceEditor (plugin_path (),
                                  source_buffer)));
-    source_editor->set_path (uri->get_path ()) ;
+    source_editor->set_path (a_path) ;
 
     if (a_current_line > 0) {
         Gtk::TextIter cur_line_iter =
@@ -1775,7 +1781,7 @@ DBGPerspective::open_file (const UString &a_uri,
         }
     }
     source_editor->show_all () ;
-    append_source_editor (*source_editor, uri) ;
+    append_source_editor (*source_editor, a_path) ;
 
     if (!source_editor->source_view ().has_no_window ()) {
         source_editor->source_view ().add_events
@@ -1784,11 +1790,6 @@ DBGPerspective::open_file (const UString &a_uri,
             (sigc::mem_fun
              (*this,
               &DBGPerspective::on_button_pressed_in_source_view_signal)) ;
-        /*source_editor->source_view ().signal_key_press_event ().connect
-            (sigc::mem_fun
-             (*this,
-              &DBGPerspective::on_key_pressed_in_source_view_signal)) ;
-          */
     }
 
     m_priv->opened_file_action_group->set_sensitive (true) ;
@@ -1802,22 +1803,22 @@ DBGPerspective::close_current_file ()
 {
     if (!get_n_pages ()) {return;}
 
-    close_file (m_priv->pagenum_2_uri_map[m_priv->current_page_num]) ;
+    close_file (m_priv->pagenum_2_path_map[m_priv->current_page_num]) ;
 }
 
 void
-DBGPerspective::close_file (const UString &a_uri)
+DBGPerspective::close_file (const UString &a_path)
 {
     map<UString, int>::const_iterator nil, iter ;
-    nil = m_priv->uri_2_pagenum_map.end () ;
-    iter = m_priv->uri_2_pagenum_map.find (a_uri) ;
+    nil = m_priv->path_2_pagenum_map.end () ;
+    iter = m_priv->path_2_pagenum_map.find (a_path) ;
     if (iter == nil) {return;}
 
-    int page_num = m_priv->uri_2_pagenum_map[a_uri] ;
+    int page_num = m_priv->path_2_pagenum_map[a_path] ;
     m_priv->sourceviews_notebook->remove_page (page_num) ;
-    m_priv->uri_2_pagenum_map.erase (a_uri) ;
+    m_priv->path_2_pagenum_map.erase (a_path) ;
     m_priv->pagenum_2_source_editor_map.erase (page_num) ;
-    m_priv->pagenum_2_uri_map.erase (page_num) ;
+    m_priv->pagenum_2_path_map.erase (page_num) ;
 
     if (!get_n_pages ()) {
         m_priv->opened_file_action_group->set_sensitive (false) ;
@@ -2052,10 +2053,10 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
 {
     if (a_linenum < 0) {a_linenum = 0;}
 
-    SourceEditor *source_editor = get_source_editor_from_uri (a_file_name) ;
+    SourceEditor *source_editor = get_source_editor_from_path (a_file_name) ;
     if (!source_editor) {
         open_file (a_file_name) ;
-        source_editor = get_source_editor_from_uri (a_file_name) ;
+        source_editor = get_source_editor_from_path (a_file_name) ;
     }
     THROW_IF_FAIL (source_editor) ;
     source_editor->set_visual_breakpoint_at_line (a_linenum) ;
@@ -2064,7 +2065,7 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
 void
 DBGPerspective::delete_visual_breakpoint (const UString &a_file_name, int a_linenum)
 {
-    SourceEditor *source_editor = get_source_editor_from_uri (a_file_name) ;
+    SourceEditor *source_editor = get_source_editor_from_path (a_file_name) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (a_linenum) ;
 }
@@ -2080,7 +2081,7 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
     }
 
     SourceEditor *source_editor =
-        get_source_editor_from_uri (iter->second.full_file_name ()) ;
+        get_source_editor_from_path (iter->second.full_file_name ()) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
     m_priv->breakpoints.erase (iter);
