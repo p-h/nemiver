@@ -1,3 +1,13 @@
+samedi 2 septembre 2006, 03:05:33 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-call-stack.cc: emit the
+	  CallStack::frame_selection_signal() when the user selects a
+	  frame. Select the frame 0 by default when a new call stack is
+	  set.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: move the where marker
+	  when the CallStack::frame_selection_signal() is fired, no more
+	  when the IDebugger::debugger_stopped_signal() is fired.
+
 jeudi 31 août 2006, 21:14:37 (UTC+0200) Dodji Seketeli
 
 	* src/common/nmv-safe-ptr.h: removed the cast operator to PointerType* .

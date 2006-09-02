@@ -53,6 +53,7 @@ struct CallStackCols : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> location ;
     Gtk::TreeModelColumn<Glib::ustring> function_name ;
     Gtk::TreeModelColumn<Glib::ustring> function_args;
+    Gtk::TreeModelColumn<int> frame_index;
 
     enum Index {
         LOCATION=0,
@@ -65,6 +66,7 @@ struct CallStackCols : public Gtk::TreeModelColumnRecord {
         add (location) ;
         add (function_name) ;
         add (function_args) ;
+        add (frame_index) ;
     }
 };//end cols
 
@@ -119,6 +121,22 @@ struct CallStack::Priv {
         }
     }
 
+    void on_selection_changed_signal ()
+    {
+        Gtk::TreeView *tree_view = dynamic_cast<Gtk::TreeView*> (widget.get ());
+        THROW_IF_FAIL (tree_view) ;
+        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
+        THROW_IF_FAIL (selection) ;
+        list<Gtk::TreePath> selected_rows = selection->get_selected_rows () ;
+        if (selected_rows.empty ()) {return;}
+
+        Gtk::TreeModel::iterator row_iter =
+                store->get_iter (selected_rows.front ()) ;
+        int index = (*row_iter)[columns ().frame_index] ;
+        IDebugger::Frame &frame = frames[index] ;
+        frame_selected_signal.emit (index, frame) ;
+    }
+
     void connect_debugger_signals ()
     {
         THROW_IF_FAIL (debugger) ;
@@ -152,6 +170,11 @@ struct CallStack::Priv {
         tree_view->append_column ("function", columns ().function_name) ;
         tree_view->append_column ("arguments", columns ().function_args) ;
         tree_view->set_headers_visible (true) ;
+        tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
+        tree_view->get_selection ()->signal_changed ().connect
+            (sigc::mem_fun (*this,
+                            &CallStack::Priv::on_selection_changed_signal)) ;
+
         Gtk::TreeViewColumn* column =
                             tree_view->get_column (CallStackCols::FUNCTION_NAME) ;
         THROW_IF_FAIL (column) ;
@@ -184,6 +207,7 @@ struct CallStack::Priv {
             (*store_iter)[columns ().location] =
                             a_frames[i].file_name () + ":"
                             + UString::from_int (a_frames[i].line ()) ;
+            (*store_iter)[columns ().frame_index] = i ;
             UString params_string = "(";
             map<int, vector<IDebugger::FrameParameter> >::const_iterator iter ;
             iter = a_params.find (i) ;
@@ -206,6 +230,10 @@ struct CallStack::Priv {
             params_string += ")" ;
             (*store_iter)[columns ().function_args] = params_string ;
         }
+        Gtk::TreeView *tree_view =
+            dynamic_cast<Gtk::TreeView*> (widget.get ()) ;
+        THROW_IF_FAIL (tree_view) ;
+        tree_view->get_selection ()->select (Gtk::TreePath ("0")) ;
     }
 
     void clear_frame_list ()

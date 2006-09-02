@@ -160,6 +160,7 @@ private:
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
                                      const IDebugger::Frame &) ;
+    void on_frame_selected_signal (int, const IDebugger::Frame &) ;
 
     void on_debugger_running_signal () ;
     //************
@@ -826,12 +827,8 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
     debugger_ready_signal ().emit (true) ;
 
     if (a_has_frame
-        && a_frame.file_full_name () != ""
-        && a_frame.line () != 0) {
-        set_where (a_frame.file_full_name (), a_frame.line ()) ;
-    } else if (a_has_frame
-               && a_frame.file_full_name () == ""
-               && a_frame.file_name () != "") {
+        && a_frame.file_full_name () == ""
+        && a_frame.file_name () != "") {
         display_error ("Did not find file " + a_frame.file_name ()) ;
     } else if (a_reason == "exited-signalled"
                || a_reason == "exited-normally"
@@ -840,10 +837,21 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
         debugger_ready_signal ().emit (false) ;
         attached_to_target_signal ().emit (true) ;
         display_info ("Program exited") ;
-    } else {
-        display_error ("Can't do anything with current frame") ;
     }
     add_text_to_command_view ("\n(gdb)") ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_frame_selected_signal (int a_index,
+                                          const IDebugger::Frame &a_frame)
+{
+    NEMIVER_TRY
+
+    if (a_frame.file_full_name () != ""
+        && a_frame.line () != 0) {
+        set_where (a_frame.file_full_name (), a_frame.line ()) ;
+    }
     NEMIVER_CATCH
 }
 
@@ -1301,6 +1309,8 @@ DBGPerspective::init_signals ()
             (*this, &DBGPerspective::on_show_target_output_view_changed_signal));
     show_error_view_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_show_error_view_changed_signal));
+    get_call_stack ().frame_selected_signal ().connect
+        (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
 
 }
 

@@ -59,8 +59,7 @@ public:
     const vector<IDebugger::Frame>& frames () const ;
     Gtk::Widget& widget () const ;
     void update_stack () ;
-    sigc::signal<void, int, const IDebugger::Frame&>&
-                                                frame_selected_signal () const ;
+    sigc::signal<void, int, const IDebugger::Frame&>& frame_selected_signal () const ;
 };//end class CallStack
 
 }//end namespace nemiver
