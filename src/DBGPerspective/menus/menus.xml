@@ -21,6 +21,7 @@
                       name="ShowTargetOutputMenuItem"/>
         </menu>
         <menu action="DebugMenuAction" name="DebugMenu">
+            <menuitem action="StopMenuItemAction" name="StopMenuItem"/>
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>

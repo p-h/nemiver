@@ -83,8 +83,8 @@ public:
 
         StreamRecord () {clear ();}
         StreamRecord (const UString &a_debugger_console,
-                const UString &a_target_output,
-                const UString &a_debugger_log) :
+                      const UString &a_target_output,
+                      const UString &a_debugger_log) :
             m_debugger_console (a_debugger_console),
             m_target_output (a_target_output),
             m_debugger_log (a_debugger_log)
@@ -401,7 +401,7 @@ class CommandAndOutput {
 public:
 
     CommandAndOutput (const IDebugger::Command &a_command,
-            const Output &a_output) :
+                      const Output &a_output) :
         m_has_command (true),
         m_command (a_command),
         m_output (a_output)
@@ -815,6 +815,8 @@ public:
                                  vector<IDebugger::FrameParameter> >&>&
                                         frames_params_listed_signal () const;
 
+    sigc::signal<void, int>& got_proc_info_signal () const  ;
+
     sigc::signal<void>& running_signal () const ;
 
     sigc::signal<void>& program_finished_signal () const ;
@@ -827,6 +829,7 @@ public:
     //***************
 
     void on_debugger_stdout_signal (CommandAndOutput &a_cao) ;
+    void on_got_proc_info_signal (int a_pid) ;
     //***************
     //</signal handlers>
     //***************
@@ -835,13 +838,15 @@ public:
     map<UString, UString>& properties () ;
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
+    bool stop (bool a_run_event_loops=false)  ;
     void execute_command (const IDebugger::Command &a_command) ;
-    bool queue_command (const IDebugger::Command &a_command) ;
+    bool queue_command (const IDebugger::Command &a_command,
+                        bool a_run_event_loops=false) ;
     bool busy () const ;
     void load_program (const vector<UString> &a_argv,
             const vector<UString> &a_source_search_dirs,
             bool a_run_event_loops) ;
-    void attach_to_program (unsigned int a_pid) ;
+    bool attach_to_program (unsigned int a_pid) ;
     void init_output_handlers () ;
     void append_breakpoints_to_cache (const map<int, IDebugger::BreakPoint>&) ;
     void do_continue (bool a_run_event_loops) ;
@@ -853,25 +858,26 @@ public:
             gint a_line_num,
             bool a_run_event_loops)  ;
     void set_breakpoint (const UString &a_path,
-            gint a_line_num,
-            bool a_run_event_loops)  ;
+                         gint a_line_num,
+                         bool a_run_event_loops)  ;
     void list_breakpoints (bool a_run_event_loops) ;
     map<int, IDebugger::BreakPoint>& get_cached_breakpoints () ;
     void set_breakpoint (const UString &a_func_name,
-            bool a_run_event_loops)  ;
+                         bool a_run_event_loops)  ;
     void enable_breakpoint (const UString &a_path,
-            gint a_line_num,
-            bool a_run_event_loops) ;
+                            gint a_line_num,
+                            bool a_run_event_loops) ;
     void disable_breakpoint (const UString &a_path,
-            gint a_line_num,
-            bool a_run_event_loops) ;
+                             gint a_line_num,
+                             bool a_run_event_loops) ;
     void delete_breakpoint (const UString &a_path,
-            gint a_line_num,
-            bool a_run_event_loops) ;
+                            gint a_line_num,
+                            bool a_run_event_loops) ;
     void delete_breakpoint (gint a_break_num,
-            bool a_run_event_loops) ;
+                            bool a_run_event_loops) ;
     void list_frames () ;
     void list_frames_arguments (int a_low_frame=-1, int a_high_frame=-1) ;
+    bool extract_proc_info (Output &a_output, int &a_proc_pid) ;
 
 };//end class GDBEngine
 
@@ -902,6 +908,7 @@ struct GDBEngine::Priv {
     vector<UString> argv ;
     vector<UString> source_search_dirs ;
     Glib::Pid gdb_pid ;
+    Glib::Pid target_pid ;
     int gdb_stdout_fd ;
     int gdb_stderr_fd ;
     int gdb_master_pty_fd ;
@@ -960,6 +967,8 @@ struct GDBEngine::Priv {
                                          vector<IDebugger::FrameParameter> >&>
                                                 frames_params_listed_signal ;
 
+    sigc::signal<void, int> got_proc_info_signal ;
+
     mutable sigc::signal<void> running_signal ;
 
     mutable sigc::signal<void> program_finished_signal ;
@@ -989,7 +998,7 @@ struct GDBEngine::Priv {
         loop_context = a_ctxt ;
     }
 
-    void run_loop_iterations (int a_nb_iters)
+    void run_loop_iterations_real (int a_nb_iters)
     {
         if (!a_nb_iters) return ;
 
@@ -1079,8 +1088,9 @@ struct GDBEngine::Priv {
     }
 
     Priv () :
-        cwd ("."), gdb_pid (0), gdb_stdout_fd (0),
-        gdb_stderr_fd (0), gdb_master_pty_fd (0),
+        cwd ("."), gdb_pid (0), target_pid (0),
+        gdb_stdout_fd (0), gdb_stderr_fd (0),
+        gdb_master_pty_fd (0),
         gdb_master_pty_buffer_status (FILLED),
         error_buffer_status (FILLED)
     {
@@ -1363,16 +1373,20 @@ struct GDBEngine::Priv {
     }
 
     bool issue_command (const IDebugger::Command &a_command,
-            bool a_run_event_loops=false)
+                        bool a_run_event_loops=false)
     {
         if (!gdb_master_pty_channel) {
             return false ;
         }
+
+        LOG_D ("issuing command: '" << a_command.value () << "'",
+               NMV_DEFAULT_DOMAIN) ;
+
         if (gdb_master_pty_channel->write
                 (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
             gdb_master_pty_channel->flush () ;
             if (a_run_event_loops) {
-                run_loop_iterations (-1) ;
+                run_loop_iterations_real (-1) ;
             }
             THROW_IF_FAIL (started_commands.size () <= 1) ;
 
@@ -2891,10 +2905,11 @@ struct GDBEngine::Priv {
         return true;
     }
 
+    /// parse a GDB/MI output record
     bool parse_output_record (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            Output &a_output)
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              Output &a_output)
     {
         UString::size_type cur=a_from, end=a_input.size () ;
 
@@ -3224,6 +3239,41 @@ struct OnFramesParamsListedHandler : OutputHandler {
     }
 };//struct OnFramesParamsListedHandler
 
+struct OnInfoProcHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnInfoProcHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.has_command ()
+            && (a_in.command ().value ().find ("info proc")
+                != Glib::ustring::npos)
+            && (a_in.output ().has_out_of_band_record ())) {
+
+            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+
+        int pid=0 ;
+        if (!m_engine->extract_proc_info (a_in.output (), pid)) {
+            LOG_D ("failed to extract proc info", NMV_DEFAULT_DOMAIN) ;
+            return ;
+        }
+        THROW_IF_FAIL (pid) ;
+        m_engine->got_proc_info_signal ().emit (pid) ;
+    }
+};//struct OnInfoProcHandler
+
 //****************************
 //</GDBengine output handlers
 //***************************
@@ -3269,25 +3319,31 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         queue_command (command) ;
 
         command.value ("set args " + args) ;
-        queue_command (command) ;
+        queue_command (command, a_run_event_loops) ;
+        command.value ("info proc") ;
+        queue_command (command, a_run_event_loops) ;
     }
 }
 
-void
+bool
 GDBEngine::attach_to_program (unsigned int a_pid)
 {
     THROW_IF_FAIL (m_priv) ;
     vector<UString> args, source_search_dirs ;
 
     if (!m_priv->is_gdb_running ()) {
-        THROW_IF_FAIL (m_priv->launch_gdb (args,
-                    source_search_dirs)) ;
+        THROW_IF_FAIL (m_priv->launch_gdb (args, source_search_dirs)) ;
 
         IDebugger::Command command ;
         command.value ("set breakpoint pending auto") ;
         queue_command (command) ;
     }
+    if (a_pid == (unsigned int)m_priv->gdb_pid) {
+        return false ;
+    }
     queue_command (Command ("attach " + UString::from_int (a_pid))) ;
+    queue_command (Command ("info proc")) ;
+    return true ;
 }
 
 void
@@ -3307,6 +3363,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnFramesListedHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnFramesParamsListedHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnInfoProcHandler (this))) ;
 }
 
 void
@@ -3396,6 +3454,12 @@ GDBEngine::frames_listed_signal () const
     return m_priv->frames_listed_signal ;
 }
 
+sigc::signal<void, int>&
+GDBEngine::got_proc_info_signal () const
+{
+    return m_priv->got_proc_info_signal ;
+}
+
 sigc::signal<void, const map< int, vector<IDebugger::FrameParameter> >&>&
 GDBEngine::frames_params_listed_signal () const
 {
@@ -3441,15 +3505,28 @@ GDBEngine::on_debugger_stdout_signal (CommandAndOutput &a_cao)
     NEMIVER_CATCH_NOX
 }
 
+void
+GDBEngine::on_got_proc_info_signal (int a_pid)
+{
+    NEMIVER_TRY
+
+    LOG_D ("target pid: '" << (int) a_pid << "'", NMV_DEFAULT_DOMAIN) ;
+    m_priv->target_pid = a_pid ;
+
+    NEMIVER_CATCH_NOX
+}
+
 //******************
 //</signal handlers>
 //******************
 void
 GDBEngine::init ()
 {
-    stdout_signal ().connect
-    (sigc::mem_fun (*this,
-                    &GDBEngine::on_debugger_stdout_signal)) ;
+    stdout_signal ().connect (sigc::mem_fun
+            (*this, &GDBEngine::on_debugger_stdout_signal)) ;
+    got_proc_info_signal ().connect (sigc::mem_fun
+            (*this, &GDBEngine::on_got_proc_info_signal)) ;
+
     init_output_handlers () ;
 }
 
@@ -3470,8 +3547,9 @@ void
 GDBEngine::run_loop_iterations (int a_nb_iters)
 {
     THROW_IF_FAIL (m_priv) ;
-    m_priv->run_loop_iterations (a_nb_iters) ;
+    m_priv->run_loop_iterations_real (a_nb_iters) ;
 }
+
 
 void
 GDBEngine::execute_command (const IDebugger::Command &a_command)
@@ -3481,13 +3559,17 @@ GDBEngine::execute_command (const IDebugger::Command &a_command)
 }
 
 bool
-GDBEngine::queue_command (const IDebugger::Command &a_command)
+GDBEngine::queue_command (const IDebugger::Command &a_command,
+                          bool a_run_event_loops)
 {
     bool result (false) ;
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
+    LOG_D ("queuing command: '" << a_command.value () << "'",
+           NMV_DEFAULT_DOMAIN) ;
     m_priv->queued_commands.push_back (a_command) ;
     if (m_priv->started_commands.empty ()) {
-        result = m_priv->issue_command (*m_priv->queued_commands.begin ()) ;
+        result = m_priv->issue_command (*m_priv->queued_commands.begin (),
+                                        a_run_event_loops) ;
         m_priv->queued_commands.erase (m_priv->queued_commands.begin ()) ;
     }
     return result ;
@@ -3504,35 +3586,49 @@ void
 GDBEngine::do_continue (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-continue")) ;
+    LOG_D ("sending -exec-continue to gdb", NMV_DEFAULT_DOMAIN) ;
+    queue_command (Command ("-exec-continue"), a_run_event_loops) ;
 }
 
 void
 GDBEngine::run (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-run")) ;
+    LOG_D ("sending -exec-run to gdb", NMV_DEFAULT_DOMAIN) ;
+    queue_command (Command ("-exec-run"), a_run_event_loops) ;
+    queue_command (Command ("info proc"), a_run_event_loops) ;
+}
+
+bool
+GDBEngine::stop (bool a_run_event_loops)
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->is_gdb_running ()) {
+        LOG_ERROR_D ("GDB is not running", NMV_DEFAULT_DOMAIN) ;
+        return false;
+    }
+    return  (kill (m_priv->target_pid, SIGINT) == 0) ;
 }
 
 void
 GDBEngine::step_in (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-step")) ;
+    queue_command (Command ("-exec-step"), a_run_event_loops) ;
 }
 
 void
 GDBEngine::step_out (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-finish")) ;
+    queue_command (Command ("-exec-finish"), a_run_event_loops) ;
 }
 
 void
 GDBEngine::step_over (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-next")) ;
+    queue_command (Command ("-exec-next"), a_run_event_loops) ;
 }
 
 void
@@ -3549,8 +3645,8 @@ GDBEngine::continue_to_position (const UString &a_path,
 
 void
 GDBEngine::set_breakpoint (const UString &a_path,
-        gint a_line_num,
-        bool a_run_event_loops)
+                           gint a_line_num,
+                           bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
     //here, don't use the gdb/mi format, because only the cmd line
@@ -3560,9 +3656,9 @@ GDBEngine::set_breakpoint (const UString &a_path,
     //Also, we don't neet to explicitely 'set breakpoint pending' to have it
     //work. Even worse, setting it doesn't work.
     queue_command (Command ("break "
-                + a_path
-                + ":"
-                + UString::from_int (a_line_num))) ;
+                    + a_path
+                    + ":"
+                    + UString::from_int (a_line_num))) ;
     queue_command (Command ("-break-list ")) ;
 }
 
@@ -3650,6 +3746,56 @@ GDBEngine::list_frames_arguments (int a_low_frame,
                                 + " "
                                 + UString::from_int (a_high_frame))) ;
     }
+}
+
+/// Extracts proc info from the out of band records
+bool
+GDBEngine::extract_proc_info (Output &a_output, int &a_pid)
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    if (!a_output.has_out_of_band_record ()) {
+        LOG_ERROR_D ("output has no out of band record", NMV_DEFAULT_DOMAIN) ;
+        return false ;
+    }
+
+    //********************************************
+    //search the out of band record
+    //that contains the debugger console
+    //stream record with the string process <pid>
+    //********************************************
+    UString record ;
+    UString::size_type index ;
+    bool found=false ;
+    list<Output::OutOfBandRecord>::const_iterator record_iter =
+                                    a_output.out_of_band_records ().begin ();
+    for (; record_iter != a_output.out_of_band_records ().end (); ++record_iter) {
+        if (!record_iter->has_stream_record ()) {continue;}
+
+        record = record_iter->stream_record ().debugger_console () ;
+        if (record == "") {continue;}
+
+        LOG_D ("found a debugger console stream record", NMV_DEFAULT_DOMAIN) ;
+
+        index = record.find ("process ");
+        if (index == Glib::ustring::npos) {continue;}
+        found = true ;
+        break ;
+    }
+    if (!found) {
+        LOG_D ("output has no process info", NMV_DEFAULT_DOMAIN) ;
+        return false;
+    }
+    index += 7 ;
+    UString pid ;
+    while (index < record.size () && isspace (record[index])) {++index;}
+    while (index < record.size () && isdigit (record[index])) {
+        pid += record[index];
+        ++index ;
+    }
+    LOG_D ("extracted PID: '" << pid << "'", NMV_DEFAULT_DOMAIN) ;
+    a_pid = atoi (pid.c_str ()) ;
+    return true ;
 }
 
 //****************************

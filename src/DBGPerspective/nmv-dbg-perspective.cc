@@ -114,6 +114,7 @@ private:
     void on_close_action () ;
     void on_execute_program_action () ;
     void on_attach_to_program_action () ;
+    void on_stop_debugger_action ();
     void on_run_action () ;
     void on_next_action () ;
     void on_step_into_action () ;
@@ -149,6 +150,7 @@ private:
     void on_debugger_console_message_signal (const UString &a_msg) ;
 
     void on_debugger_target_output_message_signal (const UString &a_msg);
+
     void on_debugger_error_message_signal (const UString &a_msg) ;
 
     void on_debugger_command_done_signal (const UString &a_command) ;
@@ -239,6 +241,7 @@ public:
     void attach_to_program () ;
     void attach_to_program (unsigned int a_pid) ;
     void run () ;
+    void stop () ;
     void step_over () ;
     void step_into () ;
     void step_out () ;
@@ -478,6 +481,17 @@ DBGPerspective::on_run_action ()
 }
 
 void
+DBGPerspective::on_stop_debugger_action (void)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+    NEMIVER_TRY
+
+    stop () ;
+
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_next_action ()
 {
     NEMIVER_TRY
@@ -598,9 +612,11 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
     if (a_is_ready) {
         m_priv->throbbler->stop () ;
         m_priv->debugger_ready_action_group->set_sensitive (true) ;
+        m_priv->debugger_busy_action_group->set_sensitive (false) ;
         attached_to_target_signal ().emit (true) ;
     } else {
         m_priv->debugger_ready_action_group->set_sensitive (false) ;
+        m_priv->debugger_busy_action_group->set_sensitive (true) ;
     }
 
     NEMIVER_CATCH
@@ -853,6 +869,14 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     if (a_frame.file_full_name () != ""
         && a_frame.line () != 0) {
         set_where (a_frame.file_full_name (), a_frame.line ()) ;
+    } else if (a_frame.file_full_name () == "") {
+        display_warning ("File path info is missing "
+                         "for function '" + a_frame.function () + "'") ;
+        //TODO: we should disassemble the current frame and display it.
+    } else if (a_frame.line () == 0) {
+        display_warning ("Line info is missing for function '"
+                         + a_frame.function () + "'") ;
+        //TODO: we should disassemble the current frame and display it.
     }
     NEMIVER_CATCH
 }
@@ -1055,11 +1079,11 @@ DBGPerspective::init_actions ()
 
     static ui_utils::ActionEntry s_debugger_busy_action_entries [] = {
         {
-            "StopDebuggerMenuItemAction",
+            "StopMenuItemAction",
             nil_stock_id,
-            "Sto_p",
+            "Stop",
             "Stop the debugger",
-            nil_slot,
+            sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
             ActionEntry::DEFAULT
         }
     };
@@ -1153,6 +1177,10 @@ DBGPerspective::init_actions ()
                 Gtk::ActionGroup::create ("debugger-ready-action-group") ;
     m_priv->debugger_ready_action_group->set_sensitive (false) ;
 
+    m_priv->debugger_busy_action_group =
+                Gtk::ActionGroup::create ("debugger-busy-action-group") ;
+    m_priv->debugger_busy_action_group->set_sensitive (false) ;
+
     m_priv->default_action_group =
                 Gtk::ActionGroup::create ("debugger-default-action-group") ;
     m_priv->default_action_group->set_sensitive (true) ;
@@ -1175,10 +1203,6 @@ DBGPerspective::init_actions ()
                         (s_debugger_ready_action_entries,
                          num_actions,
                          m_priv->debugger_ready_action_group) ;
-
-    m_priv->debugger_busy_action_group =
-                Gtk::ActionGroup::create ("debugger-busy-action-group") ;
-    m_priv->debugger_busy_action_group->set_sensitive (false) ;
 
     num_actions =
          sizeof (s_debugger_busy_action_entries)/sizeof (ui_utils::ActionEntry) ;
@@ -1892,9 +1916,9 @@ DBGPerspective::execute_program (const UString &a_prog,
 
     dbg_engine->load_program (args, source_search_dirs) ;
 
-    dbg_engine->queue_command (IDebugger::Command ("-break-insert main")) ;
+    dbg_engine->set_breakpoint ("main") ;
 
-    dbg_engine->queue_command (IDebugger::Command ("-exec-run")) ;
+    dbg_engine->run () ;
 
     attached_to_target_signal ().emit (true) ;
     debugger_ready_signal ().emit (true) ;
@@ -1927,7 +1951,14 @@ DBGPerspective::attach_to_program ()
 void
 DBGPerspective::attach_to_program (unsigned int a_pid)
 {
-    debugger ()->attach_to_program (a_pid) ;
+    if (a_pid == (unsigned int) getpid ()) {
+        ui_utils::display_warning ("You can not attach to nemiver itself") ;
+        return ;
+    }
+    if (!debugger ()->attach_to_program (a_pid)) {
+        ui_utils::display_warning ("You can not attach to the "
+                                   "underlying debugger engine") ;
+    }
 }
 
 void
@@ -1936,6 +1967,16 @@ DBGPerspective::run ()
     debugger ()->run () ;
     debugger_ready_signal ().emit (false) ;
 }
+
+void
+DBGPerspective::stop ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+    if (!debugger ()->stop ()) {
+        ui_utils::display_error ("Failed to stop the debugger") ;
+    }
+}
+
 void
 DBGPerspective::step_over ()
 {

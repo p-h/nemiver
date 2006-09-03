@@ -1,3 +1,20 @@
+dimanche 3 septembre 2006, 17:59:07 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
+	  src/DBGPerspective/dbgengine/nmv-i-debugger.h: issue the
+	  "info proc" command upon IDebugger::run(), IDebugger::attach()
+	  and IDebugger::load_program() so that we can get the PID of the
+	  target program being debugged. I have added the signal
+	  IDebugger::got_proc_info_signal() to emit that information.
+	  Based on that work, added IDebugger::stop() to stop the
+	  current program when it is 'running'. Did a bit of cleanup.
+	* src/DBGPerspective/menus/menus.xml,
+	  src/DBGPerspective/nmv-dbg-perspective.cc:
+	  added a "stop" menuitem, wired it to the new IDebugger::stop()
+	  function.
+	  Prevent a user from attaching to nemiver itself.
+
+
 samedi 2 septembre 2006, 13:13:12 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: consider paths as local

@@ -287,6 +287,8 @@ public:
                          const map<int, vector<IDebugger::FrameParameter> >&>&
                                         frames_params_listed_signal () const=0;
 
+    virtual sigc::signal<void, int>& got_proc_info_signal () const = 0 ;
+
     virtual sigc::signal<void>& running_signal () const = 0;
 
 
@@ -301,7 +303,8 @@ public:
 
     virtual void execute_command (const Command &a_command) = 0;
 
-    virtual bool queue_command (const Command &a_command) = 0;
+    virtual bool queue_command (const Command &a_command,
+                                bool a_run_event_loop=false) = 0;
 
     virtual bool busy () const = 0;
 
@@ -310,11 +313,13 @@ public:
                  const vector<UString> &a_source_search_dirs,
                  bool a_run_event_loops=false) = 0;
 
-    virtual void attach_to_program (unsigned int a_pid) = 0;
+    virtual bool attach_to_program (unsigned int a_pid) = 0;
 
     virtual void do_continue (bool a_run_event_loops=false) = 0;
 
     virtual void run (bool a_run_event_loops=false) = 0 ;
+
+    virtual bool stop (bool a_run_event_loops=false) = 0 ;
 
     virtual void step_in (bool a_run_event_loops=false) = 0;
 
