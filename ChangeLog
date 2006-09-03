@@ -1,3 +1,15 @@
+dimanche 3 septembre 2006, 19:27:39 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/menus/menus.xml,
+	  src/DBGPerspective/nmv-dbg-perspective.cc: replace the "set/unset"
+	  breakpoint menu entries by a single "toggle break" menu entry.
+	  I did the same in the contextual menu. I find this more convenient.
+	  Also, place the selection cursor at the same line as the
+	  "where marker".
+
+	* src/DBGPerspective/nmv-source-editor.cc,h: add some helper code
+	  here.
+
 dimanche 3 septembre 2006, 17:59:07 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,

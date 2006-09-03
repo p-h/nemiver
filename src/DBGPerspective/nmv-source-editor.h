@@ -1,3 +1,4 @@
+//Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -63,6 +64,7 @@ public:
     void unset_where_marker () ;
     void set_visual_breakpoint_at_line (int a_line) ;
     void remove_visual_breakpoint_from_line (int a_line) ;
+    bool is_visual_breakpoint_set_at_line (int a_line) ;
     void scroll_to_line (int a_line) ;
     void set_path (const UString &a_path) ;
     UString get_path () const ;

@@ -120,8 +120,7 @@ private:
     void on_step_into_action () ;
     void on_step_out_action () ;
     void on_continue_action () ;
-    void on_set_breakpoint_action () ;
-    void on_unset_breakpoint_action () ;
+    void on_toggle_breakpoint_action () ;
     void on_show_commands_action () ;
     void on_show_errors_action () ;
     void on_show_target_output_action () ;
@@ -257,6 +256,11 @@ public:
     bool delete_breakpoint (int a_breakpoint_num) ;
     bool delete_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
+    bool is_breakpoint_set_at_line (const UString &a_file_path,
+                                    int a_linenum) ;
+    void toggle_breakpoint (const UString &a_file_path,
+                            int a_linenum) ;
+    void toggle_breakpoint () ;
     void append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum) ;
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum) ;
@@ -530,18 +534,10 @@ DBGPerspective::on_continue_action ()
 }
 
 void
-DBGPerspective::on_set_breakpoint_action ()
+DBGPerspective::on_toggle_breakpoint_action ()
 {
     NEMIVER_TRY
-    set_breakpoint () ;
-    NEMIVER_CATCH
-}
-
-void
-DBGPerspective::on_unset_breakpoint_action ()
-{
-    NEMIVER_TRY
-    delete_breakpoint () ;
+    toggle_breakpoint () ;
     NEMIVER_CATCH
 }
 
@@ -1059,21 +1055,13 @@ DBGPerspective::init_actions ()
         }
         ,
         {
-            "SetBreakPointMenuItemAction",
+            "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            "_Break",
-            "Set a breakpoint the current cursor location",
-            sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
+            "Toggle _break",
+            "Set/Unset a breakpoint at the current cursor location",
+            sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
-            "<ctrl>b"
-        },
-        {
-            "UnSetBreakPointMenuItemAction",
-            nil_stock_id,
-            "_Unset breakpoint",
-            "Unset the breakpoint the current cursor location",
-            sigc::mem_fun (*this, &DBGPerspective::on_unset_breakpoint_action),
-            ActionEntry::DEFAULT
+            "F8"
         }
     };
 
@@ -1493,6 +1481,10 @@ DBGPerspective::set_where (const UString &a_path,
     SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->move_where_marker_to_line (a_line) ;
+    Gtk::TextBuffer::iterator iter =
+        source_editor->source_view().get_buffer ()->get_iter_at_line (a_line-1) ;
+    if (!iter) {return;}
+        source_editor->source_view().get_buffer ()->place_cursor (iter) ;
 }
 
 void
@@ -1516,14 +1508,8 @@ DBGPerspective::get_contextual_menu ()
         m_priv->workbench->get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
-             "UnSetBreakPointMenuItem",
-             "UnSetBreakPointMenuItemAction") ;
-
-        m_priv->workbench->get_ui_manager ()->add_ui
-            (m_priv->contextual_menu_merge_id,
-             "/ContextualMenu",
-             "SetBreakPointMenuItem",
-             "SetBreakPointMenuItemAction") ;
+             "ToggleBreakPointMenuItem",
+             "ToggleBreakPointMenuItemAction") ;
 
         m_priv->workbench->get_ui_manager ()->ensure_update () ;
         m_priv->contextual_menu =
@@ -1550,7 +1536,6 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
     int buffer_x=0, buffer_y=0, line_top=0;
     Gtk::TextBuffer::iterator cur_iter ;
     UString file_name ;
-    int break_num=0 ;
 
     editor->source_view ().window_to_buffer_coords (Gtk::TEXT_WINDOW_TEXT,
                                                     (int)a_event->x,
@@ -1559,27 +1544,6 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
     editor->source_view ().get_line_at_y (cur_iter, buffer_y, line_top) ;
 
     file_name = editor->get_path () ;
-    bool breakpoint_found=false ;
-    if (get_breakpoint_number (file_name,
-                                cur_iter.get_line () + 1,
-                                break_num)) {
-        breakpoint_found = true ;
-    }
-    Glib::RefPtr<Gtk::Action> break_action =
-        m_priv->debugger_ready_action_group->get_action
-                                            ("SetBreakPointMenuItemAction") ;
-    THROW_IF_FAIL (break_action) ;
-    Glib::RefPtr<Gtk::Action> unbreak_action =
-        m_priv->debugger_ready_action_group->get_action
-                                            ("UnSetBreakPointMenuItemAction") ;
-    THROW_IF_FAIL (unbreak_action) ;
-    if (breakpoint_found) {
-        break_action->set_sensitive (false) ;
-        unbreak_action->set_sensitive (true) ;
-    } else {
-        break_action->set_sensitive (true) ;
-        unbreak_action->set_sensitive (false) ;
-    }
 
     Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
     THROW_IF_FAIL (menu) ;
@@ -2141,6 +2105,41 @@ DBGPerspective::delete_breakpoint (const UString &a_file_name,
     if (breakpoint_number < 1) {return false;}
 
     return delete_breakpoint (breakpoint_number) ;
+}
+
+bool
+DBGPerspective::is_breakpoint_set_at_line (const UString &a_file_path,
+                                           int a_line_num)
+{
+    int break_num=0 ;
+    if (get_breakpoint_number (a_file_path, a_line_num, break_num)) {
+        return true ;
+    }
+    return false ;
+}
+
+void
+DBGPerspective::toggle_breakpoint (const UString &a_file_path,
+                                   int a_line_num)
+{
+    if (is_breakpoint_set_at_line (a_file_path, a_line_num)) {
+        delete_breakpoint (a_file_path, a_line_num) ;
+    } else {
+        set_breakpoint (a_file_path, a_line_num) ;
+    }
+}
+
+void
+DBGPerspective::toggle_breakpoint ()
+{
+    SourceEditor *source_editor = get_current_source_editor () ;
+    THROW_IF_FAIL (source_editor) ;
+    THROW_IF_FAIL (source_editor->get_path () != "") ;
+
+    gint current_line =
+        source_editor->source_view ().get_source_buffer ()->get_insert
+                ()->get_iter ().get_line () + 1;
+    toggle_breakpoint (source_editor->get_path (), current_line) ;
 }
 
 IDebuggerSafePtr&

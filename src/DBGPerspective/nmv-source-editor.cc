@@ -1,3 +1,4 @@
+//Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -339,6 +340,17 @@ SourceEditor::remove_visual_breakpoint_from_line (int a_line)
     }
     source_view ().get_source_buffer ()->delete_marker (iter->second) ;
     m_priv->markers.erase (iter) ;
+}
+
+bool
+SourceEditor::is_visual_breakpoint_set_at_line (int a_line)
+{
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
+    iter = m_priv->markers.find (a_line) ;
+    if (iter == m_priv->markers.end ()) {
+        return false ;
+    }
+    return true ;
 }
 
 struct ScrollToLine {
