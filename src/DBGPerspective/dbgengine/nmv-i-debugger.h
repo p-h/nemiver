@@ -41,6 +41,7 @@ using nemiver::common::DynamicModule ;
 using nemiver::common::ObjectRef;
 using nemiver::common::ObjectUnref;
 using nemiver::common::UString ;
+using nemiver::common::Object ;
 using std::vector ;
 using std::string ;
 using std::map ;
@@ -249,6 +250,44 @@ public:
         const UString& value () const {return m_value;}
         void value (const UString &a_in) {m_value = a_in;}
     };//end class FrameParameter
+
+    class Variable ;
+    typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr ;
+    class Variable : public Object {
+        list<VariableSafePtr> m_members;
+        UString m_name ;
+        UString m_value ;
+        UString m_type ;
+
+    public:
+
+        Variable (const UString &a_name,
+                  const UString &a_value,
+                  const UString &a_type) :
+            m_name (a_name),
+            m_value (a_value),
+            m_type (a_type)
+        {}
+
+        Variable (const UString &a_name) :
+            m_name (a_name)
+        {}
+
+        Variable () {}
+
+        const list<VariableSafePtr>& members () const {return m_members;}
+
+        void append (const VariableSafePtr &a_var) {m_members.push_back (a_var);}
+
+        const UString& name () const {return m_name;}
+        void name (const UString &a_name) {m_name = a_name;}
+
+        const UString& value () const {return m_value;}
+        void value (const UString &a_value) {m_value = a_value;}
+
+        const UString& type () const {return m_type;}
+        void type (const UString &a_type) {m_type = a_type;}
+    };//end class Variable
 
 
     virtual ~IDebugger () {}

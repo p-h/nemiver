@@ -1,3 +1,11 @@
+mercredi 6 septembre 2006, 00:16:00 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
+	  src/DBGPerspective/dbgengine/nmv-i-debugger.h: started to work
+	  the local variables parsing code. Nothing works yet.
+	* src/DBGPerspective/nmv-dbg-perspective.cc:  don't add a "\n(gdb)"
+	  string each time a string is sent to the command view.
+
 dimanche 3 septembre 2006, 19:27:39 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/menus/menus.xml,

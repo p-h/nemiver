@@ -103,7 +103,8 @@ public:
     virtual void delete_visual_breakpoint (int a_breaknum) = 0;
 
     virtual IDebuggerSafePtr& debugger () = 0;
-    virtual void add_text_to_command_view (const UString &a_text) = 0;
+    virtual void add_text_to_command_view (const UString &a_text,
+                                           bool a_no_repeat=true) = 0;
     virtual void add_text_to_target_output_view (const UString &a_text) = 0;
     virtual void add_text_to_error_view (const UString &a_text) = 0;
     virtual void set_where (const UString &a_uri, int line) = 0;

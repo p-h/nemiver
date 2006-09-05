@@ -448,7 +448,7 @@ public:
 
     GDBMITuple () {}
     virtual ~GDBMITuple () {}
-    list<GDBMIResultSafePtr>& content () {return m_content;}
+    const list<GDBMIResultSafePtr>& content () const {return m_content;}
     void content (const list<GDBMIResultSafePtr> &a_in) {m_content = a_in;}
     void append (const GDBMIResultSafePtr &a_result) {m_content .push_back (a_result);}
     void clear () {m_content.clear ();}
@@ -1162,7 +1162,7 @@ struct GDBEngine::Priv {
         int master_pty_fd (0) ;
 
         RETURN_VAL_IF_FAIL (pipe (stdout_pipes) == 0, false) ;
-        //TODO: this line leaks the preceding pipes if it fails
+        //argh, this line leaks the preceding pipes if it fails
         RETURN_VAL_IF_FAIL (pipe (stderr_pipes) == 0, false) ;
         //RETURN_VAL_IF_FAIL (pipe (stdin_pipes) == 0, false) ;
 
@@ -2301,6 +2301,117 @@ struct GDBEngine::Priv {
         return true;
     }
 
+    /// parse a list of local variables as returned by
+    /// the GDBMI command -stack-list-locals 2
+    bool parse_local_var_list
+                        (const UString &a_input,
+                         UString::size_type a_from,
+                         UString::size_type &a_to,
+                         list<IDebugger::VariableSafePtr> &a_vars)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.size () ;
+        CHECK_END (a_input, cur, end) ;
+
+        if (a_input.compare (cur, 8, "locals=[")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        GDBMIResultSafePtr gdbmi_result ;
+        if (!parse_result (a_input, cur, cur, gdbmi_result)) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        THROW_IF_FAIL (gdbmi_result
+                       && gdbmi_result->variable () == "locals") ;
+
+        if (!gdbmi_result->value ()
+            || gdbmi_result->value ()->content_type ()
+                != GDBMIValue::LIST_TYPE) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        GDBMIListSafePtr gdbmi_list =
+            gdbmi_result->value ()->get_list_content () ;
+        if (!gdbmi_list) {
+            a_to = cur ;
+            a_vars.clear () ;
+            return true ;
+        }
+        RETURN_VAL_IF_FAIL (gdbmi_list->content_type () == GDBMIList::VALUE_TYPE,
+                            false);
+
+        std::list<GDBMIValueSafePtr> gdbmi_value_list ;
+        gdbmi_list->get_value_content (gdbmi_value_list) ;
+        RETURN_VAL_IF_FAIL (!gdbmi_value_list.empty (), false) ;
+
+        std::list<IDebugger::VariableSafePtr> variables ;
+        std::list<GDBMIValueSafePtr>::const_iterator value_iter;
+        std::list<GDBMIResultSafePtr> tuple_content ;
+        std::list<GDBMIResultSafePtr>::const_iterator tuple_iter ;
+        for (value_iter = gdbmi_value_list.begin () ;
+             value_iter != gdbmi_value_list.end () ;
+             ++value_iter) {
+            if (!(*value_iter)) {continue;}
+            if ((*value_iter)->content_type () != GDBMIValue::TUPLE_TYPE) {
+                LOG_ERROR_D ("list of tuple should contain only tuples",
+                             GDBMI_FRAME_PARSING_DOMAIN) ;
+                continue ;
+            }
+            GDBMITupleSafePtr gdbmi_tuple = (*value_iter)->get_tuple_content ();
+            RETURN_VAL_IF_FAIL (gdbmi_tuple, false) ;
+            RETURN_VAL_IF_FAIL (!gdbmi_tuple->content ().empty (), false) ;
+
+            tuple_content.clear () ;
+            tuple_content = gdbmi_tuple->content () ;
+            RETURN_VAL_IF_FAIL (!tuple_content.empty (), false) ;
+            IDebugger::VariableSafePtr variable (new Variable) ;
+            for (tuple_iter = tuple_content.begin () ;
+                 tuple_iter != tuple_content.end ();
+                 ++tuple_iter) {
+                if (!(*tuple_iter)) {
+                    LOG_ERROR_D ("got and empty tuple member",
+                                 GDBMI_FRAME_PARSING_DOMAIN) ;
+                    continue ;
+                }
+
+                if (!(*tuple_iter)->value ()
+                    ||(*tuple_iter)->value ()->content_type ()
+                        != GDBMIValue::STRING_TYPE) {
+                    LOG_ERROR_D ("Got a tuple member which value is not a string",
+                                 GDBMI_FRAME_PARSING_DOMAIN) ;
+                    continue ;
+                }
+
+                UString str = (*tuple_iter)->variable () ;
+                if (str == "name") {
+                    variable->name (str) ;
+                } else if (str == "type") {
+                    variable->type (str) ;
+                } else if (str == "value") {
+                    variable->value (str) ;
+                } else {
+                    LOG_ERROR_D ("got an unknown tuple member with name: '"
+                                 << str << "'",
+                                 GDBMI_FRAME_PARSING_DOMAIN)
+                    continue ;
+                }
+
+            }
+            variables.push_back (variable) ;
+        }
+
+        LOG_D ("got '" << (int)variables.size () << "' variables",
+               GDBMI_FRAME_PARSING_DOMAIN) ;
+
+        a_vars = variables ;
+        a_to = cur ;
+        return true;
+    }
+
+
     /// \brief parse function arguments list
     ///
     /// function args list have the form:
@@ -2796,9 +2907,9 @@ struct GDBEngine::Priv {
     /// a result record is the result of the command that has been issued right
     /// before.
     bool parse_result_record (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            Output::ResultRecord &a_record)
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              Output::ResultRecord &a_record)
     {
         UString::size_type cur=a_from, end=a_input.size () ;
         if (cur == end) {
@@ -2859,9 +2970,18 @@ struct GDBEngine::Priv {
                     map<int, vector<IDebugger::FrameParameter> > frames_args ;
                     if (!parse_stack_arguments (a_input, cur, cur, frames_args)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
+                    } else {
+                        LOG_D ("parsed stack args", GDBMI_FRAME_PARSING_DOMAIN) ;
                     }
                     result_record.frames_parameters (frames_args)  ;
-                    LOG_D ("parsed stack args", GDBMI_FRAME_PARSING_DOMAIN) ;
+                } else if (!a_input.compare (cur, 8, "locals=[")) {
+                    //TODO: finish this!
+                    list<VariableSafePtr> vars ;
+                    if (!parse_local_var_list (a_input, cur, cur, vars)) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                    } else {
+                        LOG_D ("parsed local vars", GDBMI_FRAME_PARSING_DOMAIN) ;
+                    }
                 } else {
                     LOG_PARSING_ERROR (a_input, cur) ;
                 }

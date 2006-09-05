@@ -292,7 +292,8 @@ public:
 
     void set_show_call_stack_view (bool) ;
 
-    void add_text_to_command_view (const UString &a_text) ;
+    void add_text_to_command_view (const UString &a_text,
+                                   bool a_no_repeat=false) ;
 
     void add_text_to_target_output_view (const UString &a_text) ;
 
@@ -397,6 +398,7 @@ struct DBGPerspective::Priv {
     ISessMgrSafePtr session_manager ;
     ISessMgr::Session session ;
     IProcMgrSafePtr process_manager ;
+    UString last_command_text ;
 
     Priv () :
         initialized (false),
@@ -662,6 +664,7 @@ DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterato
             IDebuggerSafePtr dbg = debugger () ;
             THROW_IF_FAIL (dbg) ;
             dbg->execute_command (IDebugger::Command (line)) ;
+            m_priv->last_command_text = "" ;
         }
     }
     NEMIVER_CATCH
@@ -852,7 +855,7 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
         attached_to_target_signal ().emit (true) ;
         display_info ("Program exited") ;
     }
-    add_text_to_command_view ("\n(gdb)") ;
+    add_text_to_command_view ("\n(gdb)", true) ;
     NEMIVER_CATCH
 }
 
@@ -1072,7 +1075,8 @@ DBGPerspective::init_actions ()
             "Stop",
             "Stop the debugger",
             sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            "F9"
         }
     };
 
@@ -2383,8 +2387,13 @@ struct ScrollTextViewToEndClosure {
 };//end struct ScrollTextViewToEndClosure
 
 void
-DBGPerspective::add_text_to_command_view (const UString &a_text)
+DBGPerspective::add_text_to_command_view (const UString &a_text,
+                                          bool a_no_repeat)
 {
+    if (a_no_repeat) {
+        if (a_text == m_priv->last_command_text)
+            return ;
+    }
     THROW_IF_FAIL (m_priv && m_priv->command_view) ;
     m_priv->command_view->get_buffer ()->insert
         (get_command_view ().get_buffer ()->end (), a_text ) ;
@@ -2392,6 +2401,7 @@ DBGPerspective::add_text_to_command_view (const UString &a_text)
     s_scroll_to_end_closure.text_view = m_priv->command_view.get () ;
     Glib::signal_idle ().connect (sigc::mem_fun
             (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
+    m_priv->last_command_text = a_text ;
 }
 
 void

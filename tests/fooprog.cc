@@ -1,3 +1,4 @@
+#include <string>
 #include <iostream>
 
 void
@@ -42,6 +43,15 @@ struct Person {
 
     int get_age () const {return m_age;}
     void set_age (int a_age) {m_age = a_age;}
+
+    void do_this ()
+    {
+        std::string foo = "something";
+        foo += " good" ;
+        std::string bar = " can" ;
+
+        foo += bar ;
+    }
 };//class TestClass
 
 int
@@ -52,9 +62,10 @@ main (int a_argc, char *a_argv[])
     func2 (1, 2) ;
 
     Person person ("Bob", "Barton", 15) ;
-
     person.set_first_name ("Ali") ;
     person.set_family_name ("BABA") ;
+    person.do_this () ;
+
 
     return 0 ;
 }
