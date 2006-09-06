@@ -1,3 +1,13 @@
+mercredi 6 septembre 2006, 23:28:32 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
+	  src/DBGPerspective/dbgengine/nmv-i-debugger.h:
+	  don't use the IDebugger::FrameParameter, use IDebugger::Variable
+	  instead. Implement the IDebugger::list_local_variables() call.
+	  Make it fire the IDebugger::local_variables_listed_signal() event.
+	* src/DBGPerspective/nmv-call-stack.cc: update this to use
+	  IDebugger::Variable instead of IDebugger::FrameParameter
+
 mercredi 6 septembre 2006, 00:16:00 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,

@@ -110,7 +110,7 @@ struct CallStack::Priv {
     }
 
     void on_frames_params_listed_signal
-            (const map<int, vector<IDebugger::FrameParameter> > &a_frames_params)
+            (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params)
     {
         LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN) ;
         if (waiting_for_stack_args) {
@@ -193,14 +193,13 @@ struct CallStack::Priv {
 
     void set_frame_list
                 (const vector<IDebugger::Frame> &a_frames,
-                 const map<int, vector<IDebugger::FrameParameter> >&a_params)
+                 const map<int, list<IDebugger::VariableSafePtr> >&a_params)
     {
         THROW_IF_FAIL (get_widget ()) ;
 
         clear_frame_list () ;
 
         Gtk::TreeModel::iterator store_iter ;
-        vector<IDebugger::FrameParameter>::const_iterator params_iter;
         for (unsigned int i = 0 ; i < a_frames.size () ; ++i) {
             store_iter = store->append () ;
             (*store_iter)[columns ().function_name] = a_frames[i].function () ;
@@ -209,22 +208,25 @@ struct CallStack::Priv {
                             + UString::from_int (a_frames[i].line ()) ;
             (*store_iter)[columns ().frame_index] = i ;
             UString params_string = "(";
-            map<int, vector<IDebugger::FrameParameter> >::const_iterator iter ;
+            map<int, list<IDebugger::VariableSafePtr> >::const_iterator iter ;
+            list<IDebugger::VariableSafePtr>::const_iterator params_iter ;
             iter = a_params.find (i) ;
             if (iter != a_params.end ()) {
-                const vector<IDebugger::FrameParameter> parameters = iter->second;
                 LOG_D ("for frame "
                        << (int) i
                        << " NB params: "
-                       << (int) parameters.size (), NMV_DEFAULT_DOMAIN) ;
+                       << (int) iter->second.size (), NMV_DEFAULT_DOMAIN) ;
 
-                params_iter = parameters.begin () ;
-                if (params_iter != parameters.end ()) {
-                    params_string += params_iter->name () ;
+                params_iter = iter->second.begin () ;
+                if (params_iter != iter->second.end ()) {
+                    if (*params_iter) {
+                        params_string += (*params_iter)->name () ;
+                    }
                     ++params_iter ;
                 }
-                for ( ; params_iter != parameters.end (); ++params_iter) {
-                     params_string += ", " + params_iter->name () ;
+                for ( ; params_iter != iter->second.end (); ++params_iter) {
+                    if (!*params_iter) {continue;}
+                     params_string += ", " + (*params_iter)->name () ;
                 }
             }
             params_string += ")" ;

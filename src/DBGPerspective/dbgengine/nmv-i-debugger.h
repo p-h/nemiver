@@ -231,26 +231,6 @@ public:
         }
     };//end class Frame
 
-    /// the parameters of a frame.
-    /// In GDB/MI, this is something separate
-    /// from the frames. There is a request to get
-    /// the description of all he frames (without their parameters),
-    /// and there is a request to get the description of all the
-    /// frame parameters.
-    /// Hence the separation here between the class IDebugger::Frame
-    /// and IDebugger::FrameParameters
-    class FrameParameter {
-        UString m_name;
-        UString m_value ;
-
-    public:
-        const UString& name () const {return m_name;}
-        void name (const UString &a_in) {m_name = a_in;}
-
-        const UString& value () const {return m_value;}
-        void value (const UString &a_in) {m_value = a_in;}
-    };//end class FrameParameter
-
     class Variable ;
     typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr ;
     class Variable : public Object {
@@ -323,12 +303,16 @@ public:
                                                 frames_listed_signal () const=0;
 
     virtual sigc::signal<void,
-                         const map<int, vector<IDebugger::FrameParameter> >&>&
+                         const map<int, list<IDebugger::VariableSafePtr> >&>&
                                         frames_params_listed_signal () const=0;
+
+    virtual sigc::signal<void, const list<VariableSafePtr>& >&
+                        local_variables_listed_signal () const = 0;
 
     virtual sigc::signal<void, int>& got_proc_info_signal () const = 0 ;
 
     virtual sigc::signal<void>& running_signal () const = 0;
+
 
 
     /// @}
@@ -393,7 +377,10 @@ public:
     virtual void list_frames () = 0;
 
     virtual void list_frames_arguments (int a_low_frame=-1,
-                                        int a_high_frame=-1) = 0;
+                                        int a_high_frame=-1,
+                                        bool a_run_event_loops=false) = 0;
+
+    virtual void list_local_variables (bool a_run_event_loops=false)  = 0;
 };//end IDebugger
 
 }//end namespace nemiver

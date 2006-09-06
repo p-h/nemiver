@@ -277,8 +277,10 @@ public:
         map<UString, UString> m_attrs ;
         vector<IDebugger::Frame> m_call_stack ;
         bool m_has_call_stack ;
-        map<int, vector<IDebugger::FrameParameter> > m_frames_parameters ;
+        map<int, list<IDebugger::VariableSafePtr> > m_frames_parameters ;
         bool m_has_frames_parameters;
+        list<IDebugger::VariableSafePtr> m_local_variables ;
+        bool m_has_local_variables ;
 
     public:
         ResultRecord () {clear () ;}
@@ -309,11 +311,13 @@ public:
             has_call_stack (true) ;
         }
 
-        const map<int, vector<IDebugger::FrameParameter> >& frames_parameters () const
+        const map<int, list<IDebugger::VariableSafePtr> >&
+                                                    frames_parameters () const
         {
             return m_frames_parameters ;
         }
-        void frames_parameters (const map<int, vector<IDebugger::FrameParameter> > &a_in)
+        void frames_parameters
+                    (const map<int, list<IDebugger::VariableSafePtr> > &a_in)
         {
             m_frames_parameters = a_in ;
             has_frames_parameters (true) ;
@@ -321,6 +325,19 @@ public:
 
         bool has_frames_parameters () const {return m_has_frames_parameters;}
         void has_frames_parameters (bool a_yes) {m_has_frames_parameters = a_yes;}
+
+        const list<IDebugger::VariableSafePtr>& local_variables () const
+        {
+            return m_local_variables ;
+        }
+        void local_variables (const list<IDebugger::VariableSafePtr> &a_in)
+        {
+            m_local_variables = a_in ;
+            has_local_variables (true) ;
+        }
+
+        bool has_local_variables () const {return m_has_local_variables;}
+        void has_local_variables (bool a_in) {m_has_local_variables = a_in;}
 
         /// @}
 
@@ -333,6 +350,8 @@ public:
             m_has_call_stack = false ;
             m_frames_parameters.clear () ;
             m_has_frames_parameters = false ;
+            m_local_variables.clear () ;
+            m_has_local_variables = false ;
         }
     };//end class ResultRecord
 
@@ -812,8 +831,11 @@ public:
                                                 frames_listed_signal () const ;
 
     sigc::signal<void, const map<int,
-                                 vector<IDebugger::FrameParameter> >&>&
+                                 list<IDebugger::VariableSafePtr> >&>&
                                         frames_params_listed_signal () const;
+
+    sigc::signal<void, const list<VariableSafePtr>& >&
+                        local_variables_listed_signal () const ;
 
     sigc::signal<void, int>& got_proc_info_signal () const  ;
 
@@ -874,9 +896,12 @@ public:
                             gint a_line_num,
                             bool a_run_event_loops) ;
     void delete_breakpoint (gint a_break_num,
-                            bool a_run_event_loops) ;
+                            bool a_run_event_loops=false) ;
     void list_frames () ;
-    void list_frames_arguments (int a_low_frame=-1, int a_high_frame=-1) ;
+    void list_frames_arguments (int a_low_frame,
+                                int a_high_frame,
+                                bool a_run_event_loops) ;
+    void list_local_variables (bool a_run_event_loops) ;
     bool extract_proc_info (Output &a_output, int &a_proc_pid) ;
 
 };//end class GDBEngine
@@ -964,8 +989,11 @@ struct GDBEngine::Priv {
                                                     frames_listed_signal ;
 
     mutable sigc::signal<void, const map<int,
-                                         vector<IDebugger::FrameParameter> >&>
+                                         list<IDebugger::VariableSafePtr> >&>
                                                 frames_params_listed_signal ;
+
+    mutable sigc::signal<void, const list<VariableSafePtr>& >
+                                    local_variables_listed_signal  ;
 
     sigc::signal<void, int> got_proc_info_signal ;
 
@@ -2125,7 +2153,7 @@ struct GDBEngine::Priv {
                         (const UString &a_input,
                          UString::size_type a_from,
                          UString::size_type &a_to,
-                         map<int, vector<IDebugger::FrameParameter> > &a_params)
+                         map<int, list<IDebugger::VariableSafePtr> > &a_params)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -2172,7 +2200,7 @@ struct GDBEngine::Priv {
         list<GDBMIResultSafePtr>::const_iterator frames_iter,
                                             params_records_iter,
                                             params_iter;
-        map<int, vector<IDebugger::FrameParameter> > all_frames_args;
+        map<int, list<IDebugger::VariableSafePtr> > all_frames_args;
         //walk through the list of frames
         //each frame is a tuple of the form:
         //{level="2", args=[list-of-arguments]}
@@ -2223,7 +2251,7 @@ struct GDBEngine::Priv {
                     GDBMIListSafePtr arg_list =
                         (*params_records_iter)->value ()->get_list_content () ;
                     list<GDBMIValueSafePtr>::const_iterator args_as_value_iter ;
-                    vector<IDebugger::FrameParameter> cur_frame_args;
+                    list<IDebugger::VariableSafePtr> cur_frame_args;
                     if (arg_list && !(arg_list->empty ())) {
                         LOG_D ("arg list is *not* empty for frame level '"
                                << (int)cur_frame_level,
@@ -2246,7 +2274,9 @@ struct GDBEngine::Priv {
                             GDBMITupleSafePtr args =
                                 (*args_as_value_iter)->get_tuple_content () ;
                             list<GDBMIResultSafePtr>::const_iterator arg_iter ;
-                            IDebugger::FrameParameter param ;
+                            IDebugger::VariableSafePtr parameter
+                                                    (new IDebugger::Variable) ;
+                            THROW_IF_FAIL (parameter) ;
                             THROW_IF_FAIL (args) ;
                             //walk the name and value of the parameter
                             for (arg_iter = args->content ().begin ();
@@ -2255,23 +2285,23 @@ struct GDBEngine::Priv {
                                 THROW_IF_FAIL (*arg_iter) ;
                                 if ((*arg_iter)->variable () == "name") {
                                     THROW_IF_FAIL ((*arg_iter)->value ()) ;
-                                    param.name
-                                        ((*arg_iter)->value()->get_string_content()) ;
+                                    parameter->name
+                                    ((*arg_iter)->value()->get_string_content());
                                 } else if ((*arg_iter)->variable () == "value") {
                                     THROW_IF_FAIL ((*arg_iter)->value ()) ;
-                                    param.value
+                                    parameter->value
                                         ((*arg_iter)->value()->get_string_content()) ;
                                 } else {
                                     THROW ("should not reach this line") ;
                                 }
                             }
                             LOG_D ("pushing arg '"
-                                   <<param.name()<<"'='"<<param.value() <<"'"
+                                   <<parameter->name()<<"'='"<<parameter->value() <<"'"
                                    <<" for frame level='"
                                    <<(int)cur_frame_level
                                    <<"'",
                                    GDBMI_FRAME_PARSING_DOMAIN) ;
-                            cur_frame_args.push_back (param) ;
+                            cur_frame_args.push_back (parameter) ;
                         }
                     } else {
                         LOG_D ("arg list is empty for frame level '"
@@ -2967,7 +2997,7 @@ struct GDBEngine::Priv {
                     THROW_IF_FAIL (result) ;
                     LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
                 } else if (!a_input.compare (cur, 12, "stack-args=[")) {
-                    map<int, vector<IDebugger::FrameParameter> > frames_args ;
+                    map<int, list<IDebugger::VariableSafePtr> > frames_args ;
                     if (!parse_stack_arguments (a_input, cur, cur, frames_args)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
@@ -2981,6 +3011,7 @@ struct GDBEngine::Priv {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
                         LOG_D ("parsed local vars", GDBMI_FRAME_PARSING_DOMAIN) ;
+                        result_record.local_variables (vars) ;
                     }
                 } else {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -3394,6 +3425,34 @@ struct OnInfoProcHandler : OutputHandler {
     }
 };//struct OnInfoProcHandler
 
+struct OnLocalVariablesListedHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnLocalVariablesListedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.output ().result_record ().has_local_variables ())) {
+            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+
+        m_engine->local_variables_listed_signal ().emit
+            (a_in.output ().result_record ().local_variables ()) ;
+    }
+};//struct OnLocalVariablesListedHandler
 //****************************
 //</GDBengine output handlers
 //***************************
@@ -3485,6 +3544,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnFramesParamsListedHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnInfoProcHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnLocalVariablesListedHandler (this))) ;
 }
 
 void
@@ -3580,10 +3641,16 @@ GDBEngine::got_proc_info_signal () const
     return m_priv->got_proc_info_signal ;
 }
 
-sigc::signal<void, const map< int, vector<IDebugger::FrameParameter> >&>&
+sigc::signal<void, const map< int, list<IDebugger::VariableSafePtr> >&>&
 GDBEngine::frames_params_listed_signal () const
 {
     return m_priv->frames_params_listed_signal ;
+}
+
+sigc::signal<void, const list<IDebugger::VariableSafePtr>& >&
+GDBEngine::local_variables_listed_signal () const
+{
+    return m_priv->local_variables_listed_signal ;
 }
 
 sigc::signal<void>&
@@ -3856,7 +3923,8 @@ GDBEngine::list_frames ()
 
 void
 GDBEngine::list_frames_arguments (int a_low_frame,
-                                  int a_high_frame)
+                                  int a_high_frame,
+                                  bool a_run_event_loops)
 {
     if (a_low_frame < 0 || a_high_frame < 0) {
         queue_command (Command ("-stack-list-arguments 1" )) ;
@@ -3864,8 +3932,16 @@ GDBEngine::list_frames_arguments (int a_low_frame,
         queue_command (Command ("-stack-list-arguments 1 "
                                 + UString::from_int (a_low_frame)
                                 + " "
-                                + UString::from_int (a_high_frame))) ;
+                                + UString::from_int (a_high_frame)),
+                       a_run_event_loops) ;
     }
+}
+
+void
+GDBEngine::list_local_variables (bool a_run_event_loops)
+{
+    Command command ("-stack-list-locals 2") ;
+    queue_command (command, a_run_event_loops) ;
 }
 
 /// Extracts proc info from the out of band records
