@@ -1,0 +1,17 @@
+This is a random short term todo list. Items written here are subject to discussion.
+Feel free to ask on nemiver-list@gna.org about particular topics that you may be interested to take over.
+
+1) Add I18n support to the project.
+
+2) Once attached to the debugger, popup a dialog telling the user she can set breakpoints before hiting the "run" button.
+That dialog can propose to open files to set the breakpoints.
+
+3) Display a nice "where-marker" for the cases where the classical "where-marker" (the arrow) and the breakpoint marker (the red circle)
+   are on the same line. Today, this is not precisely handled so it looks very ugly.
+
+4) add support for loading core files and showing the stack trace.
+
+5) write a gdb command interpreter widget (prolly based on Gtk::TextView), using IDebugger. It should accept commands with the same syntax as the classical
+   gdb syntax and call IDebugger in the background.
+
+6) write a local variables visualisation widget based on the new local variable listing api added to IDebugger. [started by Dodji.]
