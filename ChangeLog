@@ -1,3 +1,13 @@
+vendredi 8 septembre 2006, 17:27:33 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
+	src/common/nmv-proc-utils.cc,h: remove
+	* autogen.sh: add autoheader in there.
+	 GDBEngine::Priv::launch_program() and
+	 GDBEngine::Priv::attach_channel_to_loop_context_as_source(). Put them
+	 in nmv-proc-utils.h.
+
+
 2006-09-07  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* Makefile.am:
@@ -12,8 +22,7 @@
 	* src/workbench/nmv-workbench.cc:
 	* src/DBGPerspective/nmv-dbg-perspective.cc:
 	* src/DBGPerspective/nmv-proc-list-dialog.cc:
-	* src/DBGPerspective/nmv-run-program-dialog.cc: mark a bunch of strings as
-	translatable
+	* src/DBGPerspective/nmv-run-program-dialog.cc: mark a bunch of strings as translatable
 	* config.h.in: remove generated file
 
 mercredi 6 septembre 2006, 23:28:32 (UTC+0200) Dodji Seketeli

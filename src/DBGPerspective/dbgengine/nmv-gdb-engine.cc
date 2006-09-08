@@ -37,6 +37,7 @@
 #include "nmv-env.h"
 #include "nmv-exception.h"
 #include "nmv-sequence.h"
+#include "nmv-proc-utils.h"
 
 const nemiver::common::UString GDBMI_FRAME_PARSING_DOMAIN =
                                                     "gdbmi-frame-parsing-domain";
@@ -1005,23 +1006,7 @@ struct GDBEngine::Priv {
     //</GDBEngine attributes>
     //************************
 
-    void attach_channel_to_loop_context_as_source
-    (Glib::IOCondition a_cond,
-     const sigc::slot<bool, Glib::IOCondition> &a_slot,
-     const Glib::RefPtr<Glib::IOChannel> &a_chan,
-     const Glib::RefPtr<Glib::MainContext>&a_ctxt)
-    {
-        THROW_IF_FAIL (a_chan) ;
-        THROW_IF_FAIL (a_ctxt) ;
-
-        Glib::RefPtr<Glib::IOSource> io_source =
-        Glib::IOSource::create (a_chan, a_cond) ;
-        io_source->connect (a_slot) ;
-        io_source->attach (a_ctxt) ;
-    }
-
-    void set_event_loop_context
-    (const Glib::RefPtr<Glib::MainContext> &a_ctxt)
+    void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &a_ctxt)
     {
         loop_context = a_ctxt ;
     }
@@ -1171,149 +1156,6 @@ struct GDBEngine::Priv {
         free_resources() ;
     }
 
-    bool launch_program (const vector<UString> &a_args,
-            int &a_pid,
-            int &a_master_pty_fd,
-            int &a_stdout_fd,
-            int &a_stderr_fd)
-    {
-        RETURN_VAL_IF_FAIL (!a_args.empty (), false) ;
-
-        enum ReadWritePipe {
-            READ_PIPE=0,
-            WRITE_PIPE=1
-        };
-
-        int stdout_pipes[2] = {0};
-        int stderr_pipes[2]= {0} ;
-        //int stdin_pipes[2]= {0} ;
-        int master_pty_fd (0) ;
-
-        RETURN_VAL_IF_FAIL (pipe (stdout_pipes) == 0, false) ;
-        //argh, this line leaks the preceding pipes if it fails
-        RETURN_VAL_IF_FAIL (pipe (stderr_pipes) == 0, false) ;
-        //RETURN_VAL_IF_FAIL (pipe (stdin_pipes) == 0, false) ;
-
-        int pid  = forkpty (&master_pty_fd, NULL, NULL, NULL);
-        //int pid  = fork () ;
-        if (pid == 0) {
-            //in the child process
-            //*******************************************
-            //wire stderr to stderr_pipes[WRITER] pipe
-            //******************************************
-            close (2) ;
-            dup (stderr_pipes[WRITE_PIPE]) ;
-
-            //*******************************************
-            //wire stdout to stdout_pipes[WRITER] pipe
-            //******************************************
-            close (1) ;
-            dup (stdout_pipes[WRITE_PIPE]) ;
-
-            //close (0) ;
-            //log << "at 5" << endl;
-            //dup (stdin_pipes[READ_PIPE]) ;
-            //log << "at 6" << endl;
-
-            //*****************************
-            //close the unnecessary pipes
-            //****************************
-            close (stderr_pipes[READ_PIPE]) ;
-            close (stdout_pipes[READ_PIPE]) ;
-            //close (stdin_pipes[WRITE_PIPE]) ;
-
-            //**********************************************
-            //configure the pipes to be to have no buffering
-            //*********************************************
-            int state_flag (0) ;
-            if ((state_flag = fcntl (stdout_pipes[WRITE_PIPE],
-                            F_GETFL)) != -1) {
-                fcntl (stdout_pipes[WRITE_PIPE],
-                        F_SETFL,
-                        O_SYNC | state_flag) ;
-            }
-            if ((state_flag = fcntl (stderr_pipes[WRITE_PIPE],
-                            F_GETFL)) != -1) {
-                fcntl (stderr_pipes[WRITE_PIPE],
-                        F_SETFL,
-                        O_SYNC | state_flag) ;
-            }
-
-            auto_ptr<char *> args;
-            args.reset (new char* [a_args.size () + 1]) ;
-            memset (args.get (), 0,
-                    sizeof (char*) * (a_args.size () + 1)) ;
-            if (!args.get ()) {
-                exit (-1) ;
-            }
-            vector<UString>::const_iterator iter ;
-            unsigned int i (0) ;
-            for (i=0 ;
-                    i < a_args.size () ;
-                    ++i) {
-                args.get ()[i] =
-                const_cast<char*> (a_args[i].c_str ());
-            }
-
-            execvp (args.get ()[0], args.get ()) ;
-            exit (-1) ;
-        } else if (pid > 0) {
-            //in the parent process
-
-            //**************************
-            //close the useless pipes
-            //*************************
-            close (stderr_pipes[WRITE_PIPE]) ;
-            close (stdout_pipes[WRITE_PIPE]) ;
-            //close (stdin_pipes[READ_PIPE]) ;
-
-            //****************************************
-            //configure the pipes to be non blocking
-            //****************************************
-            int state_flag (0) ;
-            if ((state_flag = fcntl (stdout_pipes[READ_PIPE],
-                            F_GETFL)) != -1) {
-                fcntl (stdout_pipes[READ_PIPE], F_SETFL, O_NONBLOCK|state_flag);
-            }
-            if ((state_flag = fcntl (stderr_pipes[READ_PIPE],
-                            F_GETFL)) != -1) {
-                fcntl (stderr_pipes[READ_PIPE], F_SETFL, O_NONBLOCK|state_flag);
-            }
-
-            if ((state_flag = fcntl (master_pty_fd, F_GETFL)) != -1) {
-                fcntl (master_pty_fd, F_SETFL, O_NONBLOCK|state_flag);
-            }
-            struct termios termios_flags;
-            tcgetattr (master_pty_fd, &termios_flags);
-            termios_flags.c_iflag &= ~(IGNPAR | INPCK
-                    |INLCR | IGNCR
-                    | ICRNL | IXON
-                    |IXOFF | ISTRIP);
-            termios_flags.c_iflag |= IGNBRK | BRKINT | IMAXBEL | IXANY;
-            termios_flags.c_oflag &= ~OPOST;
-            termios_flags.c_cflag &= ~(CSTOPB | CREAD | PARENB | HUPCL);
-            termios_flags.c_cflag |= CS8 | CLOCAL;
-            termios_flags.c_cc[VMIN] = 0;
-            //echo off
-            termios_flags.c_lflag &= ~(ECHOKE | ECHOE |ECHO| ECHONL | ECHOPRT
-                    |ECHOCTL | ISIG | ICANON
-                    |IEXTEN | NOFLSH | TOSTOP);
-            cfsetospeed(&termios_flags, __MAX_BAUD);
-            tcsetattr(master_pty_fd, TCSANOW, &termios_flags);
-            a_pid = pid ;
-            a_master_pty_fd = master_pty_fd ;
-            a_stdout_fd = stdout_pipes[READ_PIPE] ;
-            a_stderr_fd = stderr_pipes[READ_PIPE] ;
-            gdb_pid = pid ;
-        } else {
-            //the fork failed.
-            close (stderr_pipes[READ_PIPE]) ;
-            close (stdout_pipes[READ_PIPE]) ;
-            LOG_ERROR ("fork() failed\n") ;
-            return false ;
-        }
-        return true ;
-    }
 
     void set_communication_charset (const string &a_charset)
     {
@@ -1323,8 +1165,8 @@ struct GDBEngine::Priv {
     }
 
     bool launch_gdb (const vector<UString> &a_prog_args,
-            const vector<UString> &a_source_search_dirs,
-            const UString a_gdb_options="")
+                     const vector<UString> &a_source_search_dirs,
+                     const UString a_gdb_options="")
     {
         if (is_gdb_running ()) {
             kill_gdb () ;
@@ -1342,10 +1184,10 @@ struct GDBEngine::Priv {
 
         source_search_dirs = a_source_search_dirs;
         RETURN_VAL_IF_FAIL (launch_program (argv,
-                    gdb_pid,
-                    gdb_master_pty_fd,
-                    gdb_stdout_fd,
-                    gdb_stderr_fd),
+                                            gdb_pid,
+                                            gdb_master_pty_fd,
+                                            gdb_stdout_fd,
+                                            gdb_stderr_fd),
                 false) ;
         if (!gdb_pid) {return false;}
 
@@ -1361,31 +1203,31 @@ struct GDBEngine::Priv {
         set_communication_charset (charset) ;
 
         attach_channel_to_loop_context_as_source
-        (Glib::IO_IN | Glib::IO_PRI
-         | Glib::IO_HUP | Glib::IO_ERR,
-         sigc::mem_fun
-         (this,
-          &Priv::on_gdb_master_pty_has_data_signal),
-         gdb_master_pty_channel,
-         get_event_loop_context ()) ;
+                                (Glib::IO_IN | Glib::IO_PRI
+                                 | Glib::IO_HUP | Glib::IO_ERR,
+                                 sigc::mem_fun
+                                     (this,
+                                      &Priv::on_gdb_master_pty_has_data_signal),
+                                 gdb_master_pty_channel,
+                                 get_event_loop_context ()) ;
 
         attach_channel_to_loop_context_as_source
-        (Glib::IO_IN | Glib::IO_PRI
-         | Glib::IO_HUP | Glib::IO_ERR,
-         sigc::mem_fun
-         (this,
-          &Priv::on_gdb_stderr_has_data_signal),
-         gdb_stderr_channel,
-         get_event_loop_context ()) ;
+                                (Glib::IO_IN | Glib::IO_PRI
+                                 | Glib::IO_HUP | Glib::IO_ERR,
+                                 sigc::mem_fun
+                                     (this,
+                                      &Priv::on_gdb_stderr_has_data_signal),
+                                 gdb_stderr_channel,
+                                 get_event_loop_context ()) ;
 
         attach_channel_to_loop_context_as_source
-        (Glib::IO_IN | Glib::IO_PRI
-         | Glib::IO_HUP | Glib::IO_ERR,
-         sigc::mem_fun
-         (this,
-          &Priv::on_gdb_stdout_has_data_signal),
-         gdb_stdout_channel,
-         get_event_loop_context ()) ;
+                                (Glib::IO_IN | Glib::IO_PRI
+                                 | Glib::IO_HUP | Glib::IO_ERR,
+                                 sigc::mem_fun
+                                     (this,
+                                      &Priv::on_gdb_stdout_has_data_signal),
+                                 gdb_stdout_channel,
+                                 get_event_loop_context ()) ;
 
         if (!a_prog_args.empty ()) {
             UString args ;

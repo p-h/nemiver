@@ -65,6 +65,7 @@ glib-gettextize --force --copy || exit $?
 intltoolize --force --copy --automake || exit $?
 aclocal $ACLOCAL_FLAGS || exit $?
 automake-1.9 --add-missing || exit $?
+autoheader
 autoconf || exit $?
 
 $topsrcdir/configure "$@"

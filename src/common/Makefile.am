@@ -30,7 +30,8 @@ nmv-tools.h \
 nmv-transaction.h \
 nmv-sql-statement.h \
 nmv-insert-statement.h \
-nmv-delete-statement.h
+nmv-delete-statement.h \
+nmv-proc-utils.h
 
 libnemivercommon_la_SOURCES= $(headers) \
 nmv-ustring.cc \
@@ -54,7 +55,8 @@ nmv-tools.cc \
 nmv-transaction.cc \
 nmv-sql-statement.cc \
 nmv-insert-statement.cc \
-nmv-delete-statement.cc
+nmv-delete-statement.cc \
+nmv-proc-utils.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(prefix)/include/libnemivercommon
