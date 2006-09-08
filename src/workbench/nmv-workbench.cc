@@ -23,6 +23,7 @@
  */
 
 #include <vector>
+#include <glib/gi18n.h>
 #include "nmv-exception.h"
 #include "nmv-plugin.h"
 #include "nmv-ui-utils.h"
@@ -307,7 +308,7 @@ Workbench::init_actions ()
         {
             "FileMenuAction",
             nil_stock_id,
-            "_File",
+            _("_File"),
             "",
             nil_slot,
             ActionEntry::DEFAULT,
@@ -317,8 +318,8 @@ Workbench::init_actions ()
         {
             "QuitMenuItemAction",
             Gtk::Stock::QUIT,
-            "_Quit",
-            "Quit the application",
+            _("_Quit"),
+            _("Quit the application"),
             sigc::mem_fun (*this, &Workbench::on_quit_menu_item_action),
             ActionEntry::DEFAULT,
             ""
@@ -327,7 +328,7 @@ Workbench::init_actions ()
         {
             "HelpMenuAction",
             nil_stock_id,
-            "_Help",
+            _("_Help"),
             "",
             nil_slot,
             ActionEntry::DEFAULT,
@@ -337,7 +338,7 @@ Workbench::init_actions ()
         {
             "AboutMenuItemAction",
             Gtk::Stock::ABOUT,
-            "_About",
+            _("_About"),
             "",
             nil_slot,
             ActionEntry::DEFAULT,

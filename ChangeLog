@@ -1,3 +1,21 @@
+2006-09-07  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* Makefile.am:
+	* autogen.sh:
+	* configure.ac:
+	* nemiver.desktop:
+	* nemiver.desktop.in:
+	* po/LINGUAS:
+	* po/POTFILES.in:
+	* src/Makefile.am:
+	* src/main.cc: Implement i18n support using intltool, glib-gettext
+	* src/workbench/nmv-workbench.cc:
+	* src/DBGPerspective/nmv-dbg-perspective.cc:
+	* src/DBGPerspective/nmv-proc-list-dialog.cc:
+	* src/DBGPerspective/nmv-run-program-dialog.cc: mark a bunch of strings as
+	translatable
+	* config.h.in: remove generated file
+
 mercredi 6 septembre 2006, 23:28:32 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,

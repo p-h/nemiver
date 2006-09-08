@@ -8,6 +8,7 @@ $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/uicommon/libnemiveruicommon.la
 
 INCLUDES=\
+-DNEMIVERLOCALEDIR=\"$(nemiverlocaledir)\" \
 @NEMIVER_CFLAGS@ \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/uicommon \

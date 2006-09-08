@@ -7,7 +7,7 @@ AC_CONFIG_SRCDIR(README)
 AC_CANONICAL_TARGET
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADER(config.h)
 
 MAJOR_VERSION=0
 MINOR_VERSION=0
@@ -54,6 +54,20 @@ AC_SUBST(GDB_PROG)
 ENABLE_IDEBUGGER_ONLY=no
 ENABLE_DBGENGINE=yes
 ENABLE_WORKBENCH=yes
+
+dnl *************************************
+dnl Internationalization support
+dnl *************************************
+dnl To add a new language, add language code xx to po/LINGUAS
+IT_PROG_INTLTOOL([0.35.0])
+GETTEXT_PACKAGE=nemiver
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"],
+                   [The domain to use with gettext])
+AM_GLIB_GNU_GETTEXT
+
+nemiverlocaledir=[${datadir}/locale]
+AC_SUBST(nemiverlocaledir)
 
 dnl ***************************
 dnl a list of enablexxx options
@@ -187,7 +201,7 @@ AC_SUBST(NEMIVER_TEST_MODULES_DIR)
 
 AC_PROG_MAKE_SET
 
-AC_OUTPUT([Makefile
+AC_CONFIG_FILES([Makefile
 src/Makefile
   src/common/Makefile
   src/dbdimpl/Makefile
@@ -207,7 +221,10 @@ src/Makefile
     src/DBGPerspective/sqlscripts/sqlite/Makefile
 glade/Makefile
 menus/Makefile
-tests/Makefile])
+tests/Makefile
+po/Makefile.in])
+
+AC_OUTPUT()
 
 cat <<EOT
 

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <glib/gi18n.h>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
@@ -1008,8 +1009,8 @@ DBGPerspective::init_actions ()
         {
             "RunMenuItemAction",
             nemiver::STOCK_RUN_DEBUGGER,
-            "_Run",
-            "Run the debugger starting from program's begining",
+            _("_Run"),
+            _("Run the debugger starting from program's begining"),
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
             "<shift>F5"
@@ -1020,8 +1021,8 @@ DBGPerspective::init_actions ()
         {
             "NextMenuItemAction",
             nemiver::STOCK_STEP_OVER,
-            "_Next",
-            "Execute next instruction steping over the next function, if any",
+            _("_Next"),
+            _("Execute next instruction steping over the next function, if any"),
             sigc::mem_fun (*this, &DBGPerspective::on_next_action),
             ActionEntry::DEFAULT,
             "F6"
@@ -1030,8 +1031,8 @@ DBGPerspective::init_actions ()
         {
             "StepMenuItemAction",
             nemiver::STOCK_STEP_INTO,
-            "_Step",
-            "Execute next instruction, steping into the next function, if any",
+            _("_Step"),
+            _("Execute next instruction, steping into the next function, if any"),
             sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
             ActionEntry::DEFAULT,
             "F7"
@@ -1040,8 +1041,8 @@ DBGPerspective::init_actions ()
         {
             "StepOutMenuItemAction",
             nemiver::STOCK_STEP_OUT,
-            "Step _out",
-            "Finish the execution of the current function",
+            _("Step _out"),
+            _("Finish the execution of the current function"),
             sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
             ActionEntry::DEFAULT,
             "<shift>F7"
@@ -1050,8 +1051,8 @@ DBGPerspective::init_actions ()
         {
             "ContinueMenuItemAction",
             nemiver::STOCK_CONTINUE,
-            "_Continue",
-            "Continue program execution until the next breakpoint",
+            _("_Continue"),
+            _("Continue program execution until the next breakpoint"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
             ActionEntry::DEFAULT,
             "F5"
@@ -1060,8 +1061,8 @@ DBGPerspective::init_actions ()
         {
             "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            "Toggle _break",
-            "Set/Unset a breakpoint at the current cursor location",
+            _("Toggle _break"),
+            _("Set/Unset a breakpoint at the current cursor location"),
             sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
             "F8"
@@ -1072,8 +1073,8 @@ DBGPerspective::init_actions ()
         {
             "StopMenuItemAction",
             nil_stock_id,
-            "Stop",
-            "Stop the debugger",
+            _("Stop"),
+            _("Stop the debugger"),
             sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
             ActionEntry::DEFAULT,
             "F9"
@@ -1084,7 +1085,7 @@ DBGPerspective::init_actions ()
         {
             "ViewMenuAction",
             nil_stock_id,
-            "_View",
+            _("_View"),
             "",
             nil_slot,
             ActionEntry::DEFAULT
@@ -1092,31 +1093,31 @@ DBGPerspective::init_actions ()
         {
             "ShowCommandsMenuAction",
             nil_stock_id,
-            "Show commands",
-            "Show the debugger commands tab",
+            _("Show commands"),
+            _("Show the debugger commands tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_commands_action),
             ActionEntry::TOGGLE
         },
         {
             "ShowErrorsMenuAction",
             nil_stock_id,
-            "Show errors",
-            "Show the errors commands tab",
+            _("Show errors"),
+            _("Show the errors commands tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_errors_action),
             ActionEntry::TOGGLE
         },
         {
             "ShowTargetOutputMenuAction",
             nil_stock_id,
-            "Show output",
-            "Show the debugged target output tab",
+            _("Show output"),
+            _("Show the debugged target output tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_target_output_action),
             ActionEntry::TOGGLE
         },
         {
             "DebugMenuAction",
             nil_stock_id,
-            "_Debug",
+            _("_Debug"),
             "",
             nil_slot,
             ActionEntry::DEFAULT
@@ -1125,16 +1126,16 @@ DBGPerspective::init_actions ()
         {
             "OpenMenuItemAction",
             Gtk::Stock::OPEN,
-            "_Open",
-            "Open a file",
+            _("_Open"),
+            _("Open a file"),
             sigc::mem_fun (*this, &DBGPerspective::on_open_action),
             ActionEntry::DEFAULT
         },
         {
             "ExecuteProgramMenuItemAction",
             nil_stock_id,
-            "_Execute",
-            "Execute a program",
+            _("_Execute"),
+            _("Execute a program"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_execute_program_action),
             ActionEntry::DEFAULT
@@ -1142,8 +1143,8 @@ DBGPerspective::init_actions ()
         {
             "AttachToProgramMenuItemAction",
             nil_stock_id,
-            "_Attach ...",
-            "Attach to a running program",
+            _("_Attach ..."),
+            _("Attach to a running program"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_attach_to_program_action),
             ActionEntry::DEFAULT
@@ -1154,8 +1155,8 @@ DBGPerspective::init_actions ()
         {
             "CloseMenuItemAction",
             Gtk::Stock::CLOSE,
-            "_Close",
-            "Close the opened file",
+            _("_Close"),
+            _("Close the opened file"),
             sigc::mem_fun (*this, &DBGPerspective::on_close_action),
             ActionEntry::DEFAULT
         }
@@ -1692,7 +1693,7 @@ DBGPerspective::edit_workbench_menu ()
 void
 DBGPerspective::open_file ()
 {
-    Gtk::FileChooserDialog file_chooser ("Open file",
+    Gtk::FileChooserDialog file_chooser (_("Open file"),
                                          Gtk::FILE_CHOOSER_ACTION_OPEN) ;
 
     file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
@@ -2270,7 +2271,7 @@ DBGPerspective::set_show_command_view (bool a_show)
             int pagenum =
             m_priv->statuses_notebook->insert_page
                             (get_command_view_scrolled_win (),
-                             "Commands",
+                             _("Commands"),
                              COMMAND_VIEW_INDEX) ;
             m_priv->statuses_notebook->set_current_page (pagenum) ;
             m_priv->command_view_is_visible = true ;
@@ -2296,7 +2297,7 @@ DBGPerspective::set_show_target_output_view (bool a_show)
             int page_num =
                 m_priv->statuses_notebook->insert_page
                     (get_target_output_view_scrolled_win (),
-                     "Output",
+                     _("Output"),
                      TARGET_OUTPUT_VIEW_INDEX) ;
             m_priv->target_output_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
@@ -2323,7 +2324,7 @@ DBGPerspective::set_show_error_view (bool a_show)
             int page_num =
                 m_priv->statuses_notebook->insert_page
                     (get_error_view_scrolled_win (),
-                     "Errors",
+                     _("Errors"),
                      ERROR_VIEW_INDEX) ;
             m_priv->error_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
@@ -2349,7 +2350,7 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
             get_call_stack_scrolled_win ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_call_stack_scrolled_win (),
-                                             "Call stack",
+                                             _("Call stack"),
                                              CALL_STACK_VIEW_INDEX) ;
             m_priv->call_stack_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page

@@ -24,12 +24,14 @@
 #include <iostream>
 #include <gtkmm.h>
 #include <libglademm.h>
+#include <glib/gi18n.h>
 #include "nmv-exception.h"
 #include "nmv-initializer.h"
 #include "nmv-i-workbench.h"
 #include "nmv-ui-utils.h"
 #include "nmv-env.h"
 #include "nmv-dbg-perspective.h"
+#include "config.h"
 
 using namespace std ;
 using nemiver::common::DynamicModuleManager ;
@@ -54,15 +56,15 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_STRING,
       &gv_prog_arg,
-      "debug a prog",
-      "<prog-name-and-args>"
+      _("debug a prog"),
+      _("<prog-name-and-args>")
     },
     { "listsessions",
       0,
       0,
       G_OPTION_ARG_NONE,
       &gv_list_sessions,
-      "list the saved debugging sessions",
+      _("list the saved debugging sessions"),
       NULL
     },
     { "purgesessions",
@@ -70,7 +72,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_NONE,
       &gv_purge_sessions,
-      "erase the saved debugging sessions",
+      _("erase the saved debugging sessions"),
       NULL
     },
     { "executesession",
@@ -78,7 +80,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_INT,
       &gv_execute_session,
-      "debug the program that was of session number N",
+      _("debug the program that was of session number N"),
       "N"
     },
     { "log-domains",
@@ -86,7 +88,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_STRING,
       &gv_log_domains,
-      "Enable logging domains DOMAINS",
+      _("Enable logging domains DOMAINS"),
       "DOMAINS"
     },
     { "logdebuggeroutput",
@@ -94,7 +96,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_NONE,
       &gv_log_debugger_output,
-      "log the debugger output",
+      _("log the debugger output"),
       NULL
     },
     {NULL}
@@ -103,6 +105,9 @@ static GOptionEntry entries[] =
 int
 main (int a_argc, char *a_argv[])
 {
+    bindtextdomain (GETTEXT_PACKAGE, NEMIVERLOCALEDIR) ;
+    bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8") ;
+    textdomain (GETTEXT_PACKAGE) ;
     Initializer::do_init () ;
     Gtk::Main main_loop (a_argc, a_argv);
     GOptionContext *context=NULL ;
@@ -110,7 +115,7 @@ main (int a_argc, char *a_argv[])
     //***************************
     //parse command line options
     //***************************
-    context = g_option_context_new ("- a C/C++ debugger for GNOME") ;
+    context = g_option_context_new (_("- a C/C++ debugger for GNOME")) ;
     g_option_context_add_main_entries (context, entries, "") ;
     g_option_context_add_group (context, gtk_get_option_group (TRUE)) ;
     g_option_context_set_ignore_unknown_options (context, FALSE) ;

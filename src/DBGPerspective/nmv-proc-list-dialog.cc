@@ -27,6 +27,7 @@
 #include <list>
 #include <libglademm.h>
 #include <gtkmm.h>
+#include <glib/gi18n.h>
 #include "nmv-proc-list-dialog.h"
 #include "nmv-proc-mgr.h"
 #include "nmv-env.h"
@@ -134,14 +135,14 @@ struct ProcListDialog::Priv {
         col->set_resizable (true) ;
         col->set_sort_column_id (columns ().pid) ;
 
-        proclist_view->append_column ("User Name", columns ().user_name) ;
+        proclist_view->append_column (_("User Name"), columns ().user_name) ;
         col = proclist_view->get_column (1) ;
         THROW_IF_FAIL (col) ;
         col->set_clickable (true) ;
         col->set_resizable (true) ;
         col->set_sort_column_id (columns ().user_name) ;
 
-        proclist_view->append_column ("Proc Args", columns ().proc_args) ;
+        proclist_view->append_column (_("Proc Args"), columns ().proc_args) ;
         col = proclist_view->get_column (2) ;
         THROW_IF_FAIL (col) ;
         col->set_clickable (true) ;

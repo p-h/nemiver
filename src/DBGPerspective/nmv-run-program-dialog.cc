@@ -24,6 +24,7 @@
  */
 
 #include <vector>
+#include <glib/gi18n.h>
 #include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/entry.h>
@@ -49,7 +50,7 @@ struct RunProgramDialog::Priv {
 
     void on_browse_program_button_clicked ()
     {
-        Gtk::FileChooserDialog file_chooser ("Choose a program",
+        Gtk::FileChooserDialog file_chooser (_("Choose a program"),
                                              Gtk::FILE_CHOOSER_ACTION_OPEN) ;
         file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
         file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
@@ -68,7 +69,7 @@ struct RunProgramDialog::Priv {
     void on_browse_dir_button_clicked ()
     {
         Gtk::FileChooserDialog file_chooser
-                                    ("Open file",
+                                    (_("Open file"),
                                      Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) ;
         file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
         file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
