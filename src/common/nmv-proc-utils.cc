@@ -65,21 +65,16 @@ launch_program (const std::vector<UString> &a_args,
     if (pid == 0) {
         //in the child process
         //*******************************************
-        //wire stderr to stderr_pipes[WRITER] pipe
+        //wire stderr to stderr_pipes[WRITE_PIPE] pipe
         //******************************************
         close (2) ;
         dup (stderr_pipes[WRITE_PIPE]) ;
 
         //*******************************************
-        //wire stdout to stdout_pipes[WRITER] pipe
+        //wire stdout to stdout_pipes[WRITE_PIPE] pipe
         //******************************************
         close (1) ;
         dup (stdout_pipes[WRITE_PIPE]) ;
-
-        //close (0) ;
-        //log << "at 5" << endl;
-        //dup (stdin_pipes[READ_PIPE]) ;
-        //log << "at 6" << endl;
 
         //*****************************
         //close the unnecessary pipes

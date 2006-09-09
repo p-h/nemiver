@@ -207,13 +207,13 @@ src/Makefile
   src/dbdimpl/Makefile
   src/dbdimpl/sqlite/Makefile
   src/dbdimpl/sqlite/org.nemiver.db.sqlitedriver.conf
+  src/dbgengine/Makefile
+  src/dbgengine/gdbengine.conf
   src/uicommon/Makefile
   src/workbench/Makefile
   src/workbench/workbench.conf
   src/DBGPerspective/Makefile
   src/DBGPerspective/DBGPerspective.conf
-    src/DBGPerspective/dbgengine/Makefile
-    src/DBGPerspective/dbgengine/gdbengine.conf
     src/DBGPerspective/glade/Makefile
     src/DBGPerspective/menus/Makefile
     src/DBGPerspective/icons/Makefile

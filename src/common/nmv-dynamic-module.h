@@ -151,10 +151,12 @@ private:
 
     void set_module_loader (Loader *a_loader) ;
 
-protected:
-    Loader* get_module_loader () ;
 
 public:
+
+    /// \brief get the module loader class
+    /// \return the module loader
+    Loader* get_module_loader () ;
 
     /// \brief gets the path of the library this module has been instanciated
     /// from.

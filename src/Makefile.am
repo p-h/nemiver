@@ -1,4 +1,4 @@
-SUBDIRS=common dbdimpl uicommon workbench DBGPerspective
+SUBDIRS=common dbdimpl dbgengine uicommon workbench DBGPerspective
 
 bin_PROGRAMS=nemiver
 nemiver_SOURCES=main.cc
@@ -11,8 +11,8 @@ INCLUDES=\
 -DNEMIVERLOCALEDIR=\"$(nemiverlocaledir)\" \
 @NEMIVER_CFLAGS@ \
 -I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \
 -I$(top_srcdir)/src/workbench \
--I$(top_srcdir)/src/DBGPerspective \
--I$(top_srcdir)/src/DBGPerspective/dbgengine
+-I$(top_srcdir)/src/DBGPerspective
 

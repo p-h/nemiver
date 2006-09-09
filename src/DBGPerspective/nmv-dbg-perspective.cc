@@ -164,6 +164,7 @@ private:
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
                                      const IDebugger::Frame &) ;
+    void on_program_finished_signal () ;
     void on_frame_selected_signal (int, const IDebugger::Frame &) ;
 
     void on_debugger_running_signal () ;
@@ -848,15 +849,21 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
         && a_frame.file_full_name () == ""
         && a_frame.file_name () != "") {
         display_error ("Did not find file " + a_frame.file_name ()) ;
-    } else if (a_reason == "exited-signalled"
-               || a_reason == "exited-normally"
-               || a_reason == "exited") {
-        unset_where () ;
-        debugger_ready_signal ().emit (false) ;
-        attached_to_target_signal ().emit (true) ;
-        display_info ("Program exited") ;
     }
     add_text_to_command_view ("\n(gdb)", true) ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_program_finished_signal ()
+{
+    NEMIVER_TRY
+
+    unset_where () ;
+    debugger_ready_signal ().emit (false) ;
+    attached_to_target_signal ().emit (true) ;
+    display_info ("Program exited") ;
+
     NEMIVER_CATCH
 }
 
@@ -1356,6 +1363,9 @@ DBGPerspective::init_debugger_signals ()
 
     debugger ()->stopped_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_stopped_signal)) ;
+
+    debugger ()->program_finished_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_program_finished_signal)) ;
 
     debugger ()->running_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_running_signal)) ;
@@ -2151,15 +2161,16 @@ IDebuggerSafePtr&
 DBGPerspective::debugger ()
 {
     if (!m_priv->debugger) {
-        DynamicModule::Loader *loader = plugin_entry_point_loader ().get() ;
+        THROW_IF_FAIL (m_priv->workbench) ;
+
+        DynamicModule::Loader *loader = m_priv->workbench->get_module_loader () ;
         THROW_IF_FAIL (loader) ;
         DynamicModuleManager *module_manager =
                             loader->get_dynamic_module_manager () ;
         THROW_IF_FAIL (module_manager) ;
 
         m_priv->debugger =
-            module_manager->load<IDebugger> ("gdbengine",
-                                             *plugin_entry_point_loader ()) ;
+            module_manager->load<IDebugger> ("gdbengine") ;
         m_priv->debugger->set_event_loop_context
                                     (Glib::MainContext::get_default ()) ;
     }

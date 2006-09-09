@@ -10,8 +10,7 @@ runcore_SOURCES=test-core.cc
 runcore_LDFLAGS=@NEMIVER_LIBS@
 
 INCLUDES=-I$(top_srcdir)/src/common \
--I$(top_srcdir)/src/DBGPerspective/dbgengine \
--DDBG_PERSPECTIVE_PLUGIN_PATH=\"@NEMIVER_PLUGINS_DIR@/DBGPerspective\" \
+-I$(top_srcdir)/src/dbgengine \
 @NEMIVER_CFLAGS@
 
 LDADD=$(top_builddir)/src/common/libnemivercommon.la
