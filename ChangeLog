@@ -1,3 +1,9 @@
+2006-09-09  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* autogen.sh: use gnome-autogen.sh from gnome-common instead of maintaining
+	a separate autogen.sh script
+	* depcomp, install-sh, missing: remove automake-generated files
+
 samedi 9 septembre 2006, 11:32:36 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine: moved src/DBGPerspective/dbgengine over here.
