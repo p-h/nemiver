@@ -1,3 +1,27 @@
+samedi 9 septembre 2006, 11:32:36 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine: moved src/DBGPerspective/dbgengine over here.
+	Now, the dbgengine dynmod is "independant" from the the Debugger
+	graphical perspective. One can use it from outside that perspective.
+	See the test/test-breakpoing.cc test as an example.
+	To run that test, do cd tests ; ./runtestbreakpoint .libs/fooprog .
+	* src/dbgengine/nmv-gdb-engine.cc: do a bit of cleanup. Wire the
+	IDebugger::program_finished_signal(). I forgot to wire it in the
+	first place.
+	* src/dbgengine/nmv-i-debugger.h: Remove the
+	IDebugger::Frame::Parameter, as it is no used. Remember, I use
+	IDebugger::Variabl instead.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: use the
+	IDebugger::program_finished_signal() instead of fiddling with
+	the IDebugger::stopped_signal() and the "StopReason" field.
+	* src/common/nmv-dynamic-module.h: make
+	DynamicModule::get_module_loader() public.
+	* src/common/nmv-proc-utils.cc,h: make a bit of cleanup.
+	* tests/test-breakpoint.cc: make this work properly with the main
+	loop. Remove the former sleep(1) hacks. Now this properly works
+	with the mainloop. What a beauty.
+
+
 vendredi 8 septembre 2006, 17:27:33 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
