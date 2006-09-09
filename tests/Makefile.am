@@ -1,4 +1,4 @@
-noinst_PROGRAMS=fooprog runtestbreakpoint runcore
+noinst_PROGRAMS=fooprog runtestbreakpoint runtestcore docore
 
 fooprog_SOURCES=fooprog.cc
 fooprog_LDFLAGS=@NEMIVER_LIBS@
@@ -6,8 +6,11 @@ fooprog_LDFLAGS=@NEMIVER_LIBS@
 runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDFLAGS=@NEMIVER_LIBS@
 
-runcore_SOURCES=test-core.cc
-runcore_LDFLAGS=@NEMIVER_LIBS@
+runtestcore_SOURCES=test-core.cc
+runtestcore_LDFLAGS=@NEMIVER_LIBS@
+
+docore_SOURCES=do-core.cc
+docore_LDFLAGS=@NEMIVER_LIBS@
 
 INCLUDES=-I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/dbgengine \

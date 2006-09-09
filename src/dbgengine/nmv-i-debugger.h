@@ -171,7 +171,6 @@ public:
         int m_line ;
         //present if the target doesn't have debugging info
         UString m_library ;
-
     public:
 
         Frame () {clear ();}
@@ -291,6 +290,13 @@ public:
                          const map<int, list<IDebugger::VariableSafePtr> >&>&
                                         frames_params_listed_signal () const=0;
 
+    /// called when a core file is loaded.
+    /// it signals the current frame, i.e the frame in which
+    /// the core got dumped.
+    virtual sigc::signal<void, int, IDebugger::Frame&> &
+                                            current_frame_signal () const = 0 ;
+
+
     virtual sigc::signal<void, const list<VariableSafePtr>& >&
                         local_variables_listed_signal () const = 0;
 
@@ -318,6 +324,10 @@ public:
                 (const vector<UString> &a_argv,
                  const vector<UString> &a_source_search_dirs,
                  bool a_run_event_loops=false) = 0;
+
+    virtual void load_core_file (const UString &a_prog_file,
+                                 const UString &a_core_file,
+                                 bool a_run_event_loop=false) = 0;
 
     virtual bool attach_to_program (unsigned int a_pid) = 0;
 

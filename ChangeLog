@@ -1,3 +1,30 @@
+dimanche 10 septembre 2006, 00:53:26 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	 add a IDebugger::currenf_frame_signal() emitted when the user
+	 loads a core file. This indicates the number of the frame where
+	 the signal occured, which is basically zero. I added this signal
+	 for debugging purposes, because working on it helped me iron out
+	 lots of glitches here and there. Parse what gdbs throws out when we
+	 load a core file.
+	 Add a IDebugger::load_core_file() entry point. The says it all.
+	 * src/DBGPerspective/menus/menus.xml,
+	 src/DBGPerspective/nmv-dbg-perspective.cc:added "load core" menu
+	 entries/actions. Today, the user is asked twice to load a file.
+	 Once to load a core file, and the other time to load a program
+	 image. We should come up with a nice widget that shows the two
+	 step at the same place so that the user has a better experience
+	 in this process.
+	 * src/common/nmv-log-stream.cc: add support for the environement
+	 variable nmv_log_domain="domain" to set up domain filters for
+	 logging. Oh, I have also added the wildcard 'all' domain.
+	 Setting nmv_log_domain=all pulls *all* the logs from all the domains.
+	 Beware, that *is* verbose.
+	 * tests/Makefile.am, tests/test-core.cc: added a test to load
+	 core files. To run it, do ./runtestcore <prog> <core>
+	 * tests/do-core.cc: added this crasher which sole job is to dump
+	 a core that can be used later by runtestcore.
+
 2006-09-09  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* autogen.sh: use gnome-autogen.sh from gnome-common instead of maintaining

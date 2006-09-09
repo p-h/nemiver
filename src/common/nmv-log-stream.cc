@@ -31,6 +31,7 @@
 #include <iostream>
 #include <map>
 #include <list>
+#include <vector>
 #include <fstream>
 #include <glibmm.h>
 #include <glibmm/thread.h>
@@ -220,6 +221,8 @@ struct LogStream::Priv
     //the log level of this log stream
     enum LogStream::LogLevel level ;
 
+    std::vector<UString> enabled_domains_from_env ;
+
     Priv (const UString &a_domain=NMV_GENERAL_DOMAIN) :
             stream_type (LogStream::COUT_STREAM),
             level (LogStream::LOG_LEVEL_NORMAL)
@@ -255,8 +258,10 @@ struct LogStream::Priv
             return false ;
 
         //check domain
-        if (allowed_domains.find (a_domain) == allowed_domains.end ()) {
-            return false ;
+        if (allowed_domains.find ("all") == allowed_domains.end ()) {
+            if (allowed_domains.find (a_domain) == allowed_domains.end ()) {
+                return false ;
+            }
         }
 
         //check log level
@@ -269,6 +274,14 @@ struct LogStream::Priv
     bool is_logging_allowed ()
     {
         return is_logging_allowed (default_domains.front ()) ;
+    }
+
+    void load_enabled_domains_from_env ()
+    {
+        char *str = getenv ("nmv_log_domains") ;
+        if (!str) {return;}
+        UString domains_str = Glib::locale_to_utf8 (str) ;
+        enabled_domains_from_env = domains_str.split (" ") ;
     }
 }
 ;//end LogStream::Priv
@@ -347,6 +360,14 @@ LogStream::LogStream (enum LogLevel a_level,
     }
     m_priv->stream_type = get_stream_type ();
     m_priv->level = a_level ;
+    m_priv->load_enabled_domains_from_env () ;
+
+    std::vector<UString>::const_iterator d ;
+    for (d = m_priv->enabled_domains_from_env.begin ();
+         d != m_priv->enabled_domains_from_env.end ();
+         ++d) {
+        enable_domain (*d) ;
+    }
 }
 
 LogStream::~LogStream ()

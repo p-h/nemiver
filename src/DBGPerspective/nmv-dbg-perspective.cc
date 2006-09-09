@@ -114,6 +114,7 @@ private:
     void on_open_action () ;
     void on_close_action () ;
     void on_execute_program_action () ;
+    void on_load_core_file_action () ;
     void on_attach_to_program_action () ;
     void on_stop_debugger_action ();
     void on_run_action () ;
@@ -241,6 +242,9 @@ public:
                           const UString &a_cwd=".") ;
     void attach_to_program () ;
     void attach_to_program (unsigned int a_pid) ;
+    void load_core_file () ;
+    void load_core_file (const UString &a_prog_file,
+                         const UString &a_core_file_path) ;
     void run () ;
     void stop () ;
     void step_over () ;
@@ -464,6 +468,16 @@ DBGPerspective::on_execute_program_action ()
     NEMIVER_TRY
 
     execute_program () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_load_core_file_action ()
+{
+    NEMIVER_TRY
+
+    load_core_file () ;
 
     NEMIVER_CATCH
 }
@@ -1148,6 +1162,15 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT
         },
         {
+            "LoadCoreMenuItemAction",
+            nil_stock_id,
+            _("_Load core"),
+            _("Load a core file"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_load_core_file_action),
+            ActionEntry::DEFAULT
+        },
+        {
             "AttachToProgramMenuItemAction",
             nil_stock_id,
             _("_Attach ..."),
@@ -1714,7 +1737,7 @@ DBGPerspective::open_file ()
 
     if (result != Gtk::RESPONSE_OK) {return;}
 
-    list<UString> paths = file_chooser.get_uris () ;
+    list<UString> paths = file_chooser.get_filenames () ;
     list<UString>::const_iterator iter ;
 
     for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
@@ -1945,6 +1968,44 @@ DBGPerspective::run ()
 {
     debugger ()->run () ;
     debugger_ready_signal ().emit (false) ;
+}
+
+void
+DBGPerspective::load_core_file ()
+{
+    Gtk::FileChooserDialog file_chooser (_("Choose the core file to load"),
+                                         Gtk::FILE_CHOOSER_ACTION_OPEN) ;
+
+    file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
+    file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
+    file_chooser.set_select_multiple (false) ;
+    file_chooser.set_show_hidden (true) ;
+
+    int result = file_chooser.run () ;
+
+    if (result != Gtk::RESPONSE_OK) {return;}
+
+    list<UString> paths = file_chooser.get_filenames () ;
+    if (paths.empty ()) {return;}
+    UString core_path, prog_path ;
+    core_path = paths.front () ;
+
+    file_chooser.set_title (_("Select the program that generated the core file"));
+    result = file_chooser.run () ;
+    if (result != Gtk::RESPONSE_OK) {return;}
+    paths = file_chooser.get_filenames () ;
+    if (paths.empty ()) {return;}
+    prog_path = paths.front () ;
+
+    load_core_file (prog_path, core_path) ;
+}
+
+void
+DBGPerspective::load_core_file (const UString &a_prog_path,
+                                const UString &a_core_file_path)
+{
+    debugger ()->load_core_file (a_prog_path, a_core_file_path) ;
+    debugger ()->list_frames () ;
 }
 
 void

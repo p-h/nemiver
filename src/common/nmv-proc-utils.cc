@@ -32,6 +32,7 @@
 #include <memory>
 #include "nmv-proc-utils.h"
 #include "nmv-exception.h"
+#include "nmv-log-stream-utils.h"
 
 namespace nemiver {
 namespace common {
@@ -44,6 +45,15 @@ launch_program (const std::vector<UString> &a_args,
                 int &a_stderr_fd)
 {
     RETURN_VAL_IF_FAIL (!a_args.empty (), false) ;
+
+    //logging stuff
+    UString str ;
+    for (std::vector<UString>::const_iterator it=a_args.begin ();
+         it != a_args.end ();
+         ++it) {
+        str += *it + " " ;
+    }
+    LOG_D ("launching program with args: '" << str << "'", NMV_DEFAULT_DOMAIN) ;
 
     enum ReadWritePipe {
         READ_PIPE=0,

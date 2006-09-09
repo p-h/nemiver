@@ -79,37 +79,64 @@ public:
     virtual void execute_program (const UString &a_prog,
                                   const UString &a_args,
                                   const UString &a_cwd=".") = 0;
+
+    virtual void load_core_file () = 0;
+
+    virtual void load_core_file (const UString &a_prog_path,
+                                 const UString &a_core_file_path) = 0;
+
     virtual void run () = 0;
+
     virtual void step_over () = 0;
+
     virtual void step_into () = 0;
+
     virtual void step_out () = 0;
+
     virtual void do_continue () = 0;
+
     virtual void set_breakpoint () = 0;
+
     virtual void set_breakpoint (const UString &a_file,
                                  int a_line) = 0;
+
     virtual void append_breakpoints
             (const map<int, IDebugger::BreakPoint> &a_breaks) = 0 ;
+
     virtual bool get_breakpoint_number (const UString &a_file_name,
                                         int a_linenum,
                                         int &a_break_num) = 0 ;
+
     virtual bool delete_breakpoint () = 0;
+
     virtual bool delete_breakpoint (int a_breakpoint_num) = 0;
+
     virtual bool delete_breakpoint (const UString &a_file_uri,
                                     int a_linenum) = 0;
+
     virtual void append_visual_breakpoint (const UString &a_file_name,
                                            int a_linenum) = 0;
+
     virtual void delete_visual_breakpoint (const UString &a_file_name,
                                            int a_linenum) = 0;
+
     virtual void delete_visual_breakpoint (int a_breaknum) = 0;
 
     virtual IDebuggerSafePtr& debugger () = 0;
+
     virtual void add_text_to_command_view (const UString &a_text,
                                            bool a_no_repeat=true) = 0;
+
     virtual void add_text_to_target_output_view (const UString &a_text) = 0;
+
     virtual void add_text_to_error_view (const UString &a_text) = 0;
+
     virtual void set_where (const UString &a_uri, int line) = 0;
+
     virtual Gtk::Widget* get_contextual_menu () = 0;
+
     virtual sigc::signal<void, bool>& activated_signal () = 0;
+
     virtual sigc::signal<void, bool>& debugger_ready_signal () = 0;
 };//end class IDBGPerspective
 }//end namespace nemiver

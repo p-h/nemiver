@@ -56,7 +56,7 @@ LOG_ERROR_D ("parsing failed for buf: >>>" \
 if (a_current >= (a_end)) {LOG_PARSING_ERROR (a_input, (a_current)); return false ;}
 
 #define SKIP_WS(a_input, a_from, a_to) \
-while (isspace (a_input[a_from])) {CHECK_END (a_input, a_from, end)} a_to = a_from ;
+while (isspace (a_input[a_from])) {CHECK_END (a_input, a_from, end);++a_from;} a_to = a_from ;
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -441,7 +441,10 @@ public:
 
     const IDebugger::Command& command () const {return m_command;}
     IDebugger::Command& command () {return m_command;}
-    void command (const IDebugger::Command &a_in) {m_command = a_in; has_command (true);}
+    void command (const IDebugger::Command &a_in)
+    {
+        m_command = a_in; has_command (true);
+    }
 
     const Output& output () const {return m_output;}
     Output& output () {return m_output;}
@@ -470,7 +473,10 @@ public:
     virtual ~GDBMITuple () {}
     const list<GDBMIResultSafePtr>& content () const {return m_content;}
     void content (const list<GDBMIResultSafePtr> &a_in) {m_content = a_in;}
-    void append (const GDBMIResultSafePtr &a_result) {m_content .push_back (a_result);}
+    void append (const GDBMIResultSafePtr &a_result)
+    {
+        m_content .push_back (a_result);
+    }
     void clear () {m_content.clear ();}
 };//end class GDBMITuple
 
@@ -835,6 +841,8 @@ public:
                                  list<IDebugger::VariableSafePtr> >&>&
                                         frames_params_listed_signal () const;
 
+    sigc::signal<void, int, IDebugger::Frame&> & current_frame_signal () const  ;
+
     sigc::signal<void, const list<VariableSafePtr>& >&
                         local_variables_listed_signal () const ;
 
@@ -866,43 +874,69 @@ public:
     bool queue_command (const IDebugger::Command &a_command,
                         bool a_run_event_loops=false) ;
     bool busy () const ;
+
     void load_program (const vector<UString> &a_argv,
-            const vector<UString> &a_source_search_dirs,
-            bool a_run_event_loops) ;
+                       const vector<UString> &a_source_search_dirs,
+                       bool a_run_event_loops) ;
+
+    void load_core_file (const UString &a_prog_file,
+                         const UString &a_core_path,
+                         bool a_run_event_loop);
+
     bool attach_to_program (unsigned int a_pid) ;
+
     void init_output_handlers () ;
+
     void append_breakpoints_to_cache (const map<int, IDebugger::BreakPoint>&) ;
+
     void do_continue (bool a_run_event_loops) ;
+
     void run (bool a_run_event_loops)  ;
+
     void step_in (bool a_run_event_loops) ;
+
     void step_out (bool a_run_event_loops) ;
+
     void step_over (bool a_run_event_loops) ;
+
     void continue_to_position (const UString &a_path,
-            gint a_line_num,
-            bool a_run_event_loops)  ;
+                               gint a_line_num,
+                               bool a_run_event_loops)  ;
+
     void set_breakpoint (const UString &a_path,
                          gint a_line_num,
                          bool a_run_event_loops)  ;
+
     void list_breakpoints (bool a_run_event_loops) ;
+
     map<int, IDebugger::BreakPoint>& get_cached_breakpoints () ;
+
     void set_breakpoint (const UString &a_func_name,
                          bool a_run_event_loops)  ;
+
     void enable_breakpoint (const UString &a_path,
                             gint a_line_num,
                             bool a_run_event_loops) ;
+
     void disable_breakpoint (const UString &a_path,
                              gint a_line_num,
                              bool a_run_event_loops) ;
+
     void delete_breakpoint (const UString &a_path,
                             gint a_line_num,
                             bool a_run_event_loops) ;
+
     void delete_breakpoint (gint a_break_num,
                             bool a_run_event_loops) ;
+
     void list_frames (bool a_run_event_loops) ;
+
     void list_frames_arguments (int a_low_frame,
                                 int a_high_frame,
                                 bool a_run_event_loops) ;
+
     void list_local_variables (bool a_run_event_loops) ;
+
     bool extract_proc_info (Output &a_output, int &a_proc_pid) ;
 
 };//end class GDBEngine
@@ -992,6 +1026,8 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, const map<int,
                                          list<IDebugger::VariableSafePtr> >&>
                                                 frames_params_listed_signal ;
+
+    mutable sigc::signal<void, int, IDebugger::Frame&> current_frame_signal ;
 
     mutable sigc::signal<void, const list<VariableSafePtr>& >
                                     local_variables_listed_signal  ;
@@ -1164,26 +1200,9 @@ struct GDBEngine::Priv {
         gdb_master_pty_channel->set_encoding (a_charset) ;
     }
 
-    bool launch_gdb (const vector<UString> &a_prog_args,
-                     const vector<UString> &a_source_search_dirs,
-                     const UString a_gdb_options="")
+    bool launch_gdb_real (const vector<UString> a_argv)
     {
-        if (is_gdb_running ()) {
-            kill_gdb () ;
-        }
-        argv.clear () ;
-        argv.push_back (env::get_gdb_program ()) ;
-        argv.push_back ("--interpreter=mi2") ;
-        if (a_gdb_options != "") {
-            argv.push_back (a_gdb_options) ;
-        }
-        if (!a_prog_args.empty ()) {
-            argv.push_back (a_prog_args[0]) ;
-        }
-
-
-        source_search_dirs = a_source_search_dirs;
-        RETURN_VAL_IF_FAIL (launch_program (argv,
+        RETURN_VAL_IF_FAIL (launch_program (a_argv,
                                             gdb_pid,
                                             gdb_master_pty_fd,
                                             gdb_stdout_fd,
@@ -1233,6 +1252,43 @@ struct GDBEngine::Priv {
                                  gdb_stdout_channel,
                                  get_event_loop_context ()) ;
 
+        return true ;
+    }
+
+
+    bool launch_gdb (const vector<UString> &a_source_search_dirs,
+                     const vector<UString> &a_gdb_options,
+                     const UString a_prog="")
+    {
+        if (is_gdb_running ()) {
+            kill_gdb () ;
+        }
+        argv.clear () ;
+        argv.push_back (env::get_gdb_program ()) ;
+        argv.push_back ("--interpreter=mi2") ;
+        if (!a_gdb_options.empty ()) {
+            for (vector<UString>::const_iterator it = a_gdb_options.begin ();
+                 it != a_gdb_options.end ();
+                 ++it) {
+                argv.push_back (*it) ;
+            }
+        }
+        if (a_prog != "") {
+            argv.push_back (a_prog) ;
+        }
+
+        source_search_dirs = a_source_search_dirs;
+        return launch_gdb_real (argv) ;
+    }
+
+    bool launch_gdb_and_set_args (const vector<UString> &a_source_search_dirs,
+                                  const vector<UString> &a_prog_args,
+                                  const vector<UString> a_gdb_options)
+    {
+        bool result (false);
+        result = launch_gdb (a_source_search_dirs, a_gdb_options, a_prog_args[0]);
+        if (!result) {return false;}
+
         if (!a_prog_args.empty ()) {
             UString args ;
             for (vector<UString>::size_type i=1; i < a_prog_args.size () ; ++i) {
@@ -1243,7 +1299,18 @@ struct GDBEngine::Priv {
                 return issue_command (Command ("set args " + args)) ;
             }
         }
-        return true ;
+        return true;
+    }
+
+    bool launch_gdb_on_core_file (const UString &a_prog_path,
+                                  const UString &a_core_path)
+    {
+        vector<UString> argv ;
+        argv.push_back (env::get_gdb_program ()) ;
+        argv.push_back ("--interpreter=mi2") ;
+        argv.push_back (a_prog_path) ;
+        argv.push_back (a_core_path) ;
+        return launch_gdb_real (argv) ;
     }
 
     bool issue_command (const IDebugger::Command &a_command,
@@ -1745,9 +1812,9 @@ struct GDBEngine::Priv {
         }
         CHECK_END (a_input, cur + 1, end) ;
         if (a_input[cur + 1] == ']') {
-            cur += 2;
             a_list = GDBMIListSafePtr (new GDBMIList);
-            a_to = ++cur ;
+            cur += 2;
+            a_to = cur ;
             return true ;
         }
 
@@ -1901,6 +1968,76 @@ struct GDBEngine::Priv {
             return false ;
         }
         a_value = value ;
+        a_to = cur ;
+        return true ;
+    }
+
+    bool parse_frame (const UString &a_input,
+                      UString::size_type a_from,
+                      UString::size_type &a_to,
+                      IDebugger::Frame &a_frame,
+                      int &a_level)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.size () ;
+        CHECK_END (a_input, cur, end) ;
+
+        GDBMIResultSafePtr result ;
+        if (!parse_result (a_input, cur, cur, result)) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        THROW_IF_FAIL (result) ;
+        CHECK_END (a_input, cur, end) ;
+
+        if (result->variable () != "frame") {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        if (!result->value ()
+            ||result->value ()->content_type ()
+                    != GDBMIValue::TUPLE_TYPE) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        GDBMITupleSafePtr result_value_tuple =
+                                    result->value ()->get_tuple_content () ;
+        if (!result_value_tuple) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        list<GDBMIResultSafePtr>::const_iterator res_it ;
+        GDBMIResultSafePtr tmp_res ;
+        Frame frame ;
+        UString name, value, level_str;
+        for (res_it = result_value_tuple->content ().begin () ;
+             res_it != result_value_tuple->content ().end ();
+             ++res_it) {
+            if (!(*res_it)) {continue;}
+            tmp_res = *res_it ;
+            if (!tmp_res->value ()
+                ||tmp_res->value ()->content_type () != GDBMIValue::STRING_TYPE) {
+                continue ;
+            }
+            name = tmp_res->variable () ;
+            value = tmp_res->value ()->get_string_content () ;
+            if (name == "level") {
+                level_str = value ;
+            } else if (name == "addr") {
+                frame.address (value) ;
+            } else if (name == "func") {
+                frame.function (value) ;
+            }
+        }
+        int level=-1 ;
+        if (level_str != "") {
+            level = atoi (level_str.c_str ()) ;
+        }
+
+        a_level = level ;
+        a_frame = frame ;
         a_to = cur ;
         return true ;
     }
@@ -2798,7 +2935,11 @@ struct GDBEngine::Priv {
         if (!a_input.compare (cur, 5, "^done")) {
             cur += 5 ;
             result_record.kind (Output::ResultRecord::DONE) ;
+
+
             if (cur < end && a_input[cur] == ',') {
+
+fetch_gdbmi_result:
                 cur++;
                 if (cur >= end) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2833,10 +2974,28 @@ struct GDBEngine::Priv {
                                GDBMI_FRAME_PARSING_DOMAIN) ;
                     }
                 } else if (!a_input.compare (cur, 7, "frame={")) {
-                    GDBMIResultSafePtr result ;
-                    parse_result (a_input, cur, cur, result) ;
-                    THROW_IF_FAIL (result) ;
-                    LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
+                    IDebugger::Frame frame ;
+                    int level=-1 ;
+                    if (!parse_frame (a_input, cur, cur, frame, level)) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                    } else {
+                        LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
+                        THROW_IF_FAIL (level != -1) ;
+                        //this is a hack in the model used thoughout the
+                        //GDBEngine code. Normally, output handlers
+                        //are responsible of filtering the parsed
+                        //result record and fire the right signal based
+                        //on the result of the filtering. Here, I find
+                        //that gdb is not very "consistent" in the way
+                        //it handles core file stack trace listing, compared
+                        //to stack trace listing in "normal operation".
+                        //That's why I shunt the output handler scheme.
+                        //Otherwise, I don't know how  I could add this
+                        //frame level information the the parse result record
+                        //without making it look ugly.
+                        //So I fire the signal directly from here.
+                        current_frame_signal.emit (level, frame) ;
+                    }
                 } else if (!a_input.compare (cur, 7, "depth=\"")) {
                     GDBMIResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
@@ -2860,7 +3019,17 @@ struct GDBEngine::Priv {
                         result_record.local_variables (vars) ;
                     }
                 } else {
-                    LOG_PARSING_ERROR (a_input, cur) ;
+                    GDBMIResultSafePtr result ;
+                    if (!parse_result (a_input, cur, cur, result)) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                    } else {
+                        LOG_D ("parsed unknown gdbmi result",
+                               GDBMI_FRAME_PARSING_DOMAIN) ;
+                    }
+                }
+
+                if (a_input[cur] == ',') {
+                    goto fetch_gdbmi_result;
                 }
 
                 //skip the remaining things we couldn't parse, until the
@@ -3333,7 +3502,9 @@ GDBEngine::load_program (const vector<UString> &a_argv,
     THROW_IF_FAIL (!a_argv.empty ()) ;
 
     if (!m_priv->is_gdb_running ()) {
-        THROW_IF_FAIL (m_priv->launch_gdb (a_argv, a_source_search_dirs)) ;
+        vector<UString> gdb_opts ;
+        THROW_IF_FAIL (m_priv->launch_gdb_and_set_args
+                                    (a_source_search_dirs, a_argv, gdb_opts));
 
         IDebugger::Command command ;
 
@@ -3357,6 +3528,20 @@ GDBEngine::load_program (const vector<UString> &a_argv,
     }
 }
 
+void
+GDBEngine::load_core_file (const UString &a_prog_path,
+                           const UString &a_core_path,
+                           bool a_run_event_loop)
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (m_priv->is_gdb_running ()) {
+        m_priv->kill_gdb () ;
+    }
+
+    vector<UString> src_dirs, gdb_opts ;
+    THROW_IF_FAIL (m_priv->launch_gdb_on_core_file (a_prog_path, a_core_path)) ;
+}
+
 bool
 GDBEngine::attach_to_program (unsigned int a_pid)
 {
@@ -3364,7 +3549,8 @@ GDBEngine::attach_to_program (unsigned int a_pid)
     vector<UString> args, source_search_dirs ;
 
     if (!m_priv->is_gdb_running ()) {
-        THROW_IF_FAIL (m_priv->launch_gdb (args, source_search_dirs)) ;
+        vector<UString> gdb_opts ;
+        THROW_IF_FAIL (m_priv->launch_gdb (source_search_dirs, gdb_opts)) ;
 
         IDebugger::Command command ;
         command.value ("set breakpoint pending auto") ;
@@ -3498,6 +3684,12 @@ sigc::signal<void, const map< int, list<IDebugger::VariableSafePtr> >&>&
 GDBEngine::frames_params_listed_signal () const
 {
     return m_priv->frames_params_listed_signal ;
+}
+
+sigc::signal<void, int, IDebugger::Frame&> &
+GDBEngine::current_frame_signal () const
+{
+    return m_priv->current_frame_signal ;
 }
 
 sigc::signal<void, const list<IDebugger::VariableSafePtr>& >&
