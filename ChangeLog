@@ -1,3 +1,10 @@
+lundi 11 septembre 2006, 00:10:04 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-vars-editor.cc,h: added this.
+	Started to hack on the variable editor. I am still far far in the
+	limbos.
+	* short-term-todo-list.txt: updated the todo list.
+
 dimanche 10 septembre 2006, 00:53:26 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
