@@ -28,6 +28,7 @@
 #include <gtkmm/treerowreference.h>
 #include "nmv-vars-editor.h"
 #include "nmv-exception.h"
+#include "nmv-ui-utils.h"
 
 namespace nemiver {
 
@@ -65,6 +66,9 @@ public:
     {
         THROW_IF_FAIL (a_debugger) ;
         debugger = a_debugger ;
+        build_tree_view () ;
+        re_init_tree_view () ;
+        connect_to_debugger_signals () ;
     }
 
     void build_tree_view ()
@@ -79,6 +83,13 @@ public:
         tree_view->append_column (_("type"), get_variable_columns ().type) ;
         tree_view->append_column (_("value"), get_variable_columns ().value) ;
 
+    }
+
+    void re_init_tree_view ()
+    {
+        THROW_IF_FAIL (tree_store) ;
+        tree_store->clear () ;
+
         //****************************************************
         //add two rows: local variables and global variable.
         //Store row refs on both rows
@@ -88,6 +99,7 @@ public:
         (*it)[get_variable_columns ().name] = _("local variables");
         local_variables_row_ref =
             new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)) ;
+        THROW_IF_FAIL (local_variables_row_ref) ;
 
         it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
@@ -95,6 +107,82 @@ public:
         global_variables_row_ref =
             new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)) ;
         THROW_IF_FAIL (global_variables_row_ref) ;
+    }
+
+    void set_variables_real (const std::list<IDebugger::VariableSafePtr> &a_vars,
+                             Gtk::TreeRowReference &a_vars_row_ref)
+    {
+        std::list<IDebugger::VariableSafePtr>::const_iterator it ;
+        IDebugger::VariableSafePtr cur_var ;
+        Gtk::TreeModel::iterator vars_row_it =
+            tree_store->get_iter (a_vars_row_ref.get_path ()) ;
+        THROW_IF_FAIL (vars_row_it) ;
+        Gtk::TreeModel::iterator cur_row_it ;
+        for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
+            if (!(*it)) {continue ;}
+            cur_var = *it ;
+            cur_row_it = tree_store->append (vars_row_it->children ()) ;
+            THROW_IF_FAIL (cur_row_it) ;
+            (*cur_row_it)[get_variable_columns ().name] = cur_var->name () ;
+            (*cur_row_it)[get_variable_columns ().type] = cur_var->type () ;
+            if (cur_var->value () != "") {
+                (*cur_row_it)[get_variable_columns ().type] = cur_var->value () ;
+            }
+        }
+    }
+
+    void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
+    {
+        THROW_IF_FAIL (tree_store) ;
+        THROW_IF_FAIL (local_variables_row_ref) ;
+
+        set_variables_real (a_vars, *local_variables_row_ref) ;
+        tree_view->expand_row (local_variables_row_ref->get_path (), false) ;
+    }
+
+    void set_global_variables
+                    (const std::list<IDebugger::VariableSafePtr> &a_vars)
+    {
+        THROW_IF_FAIL (tree_store) ;
+        THROW_IF_FAIL (global_variables_row_ref) ;
+
+        set_variables_real (a_vars, *global_variables_row_ref) ;
+        tree_view->expand_row (global_variables_row_ref->get_path (), false) ;
+    }
+
+    void on_local_variables_listed_signal
+                                (const list<IDebugger::VariableSafePtr> &a_vars)
+    {
+        NEMIVER_TRY
+
+        set_local_variables (a_vars) ;
+
+        NEMIVER_CATCH
+    }
+
+    void on_stopped_signal (const UString &a_str,
+                            bool a_has_frame,
+                            const IDebugger::Frame &a_frame)
+    {
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (debugger) ;
+        if (a_has_frame) {
+            THROW_IF_FAIL (tree_store) ;
+            re_init_tree_view () ;
+            debugger->list_local_variables () ;
+        }
+
+        NEMIVER_CATCH
+    }
+
+    void connect_to_debugger_signals ()
+    {
+        THROW_IF_FAIL (debugger) ;
+        debugger->local_variables_listed_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
+        debugger->stopped_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_stopped_signal)) ;
     }
 
 };//end class VarsEditor
@@ -109,7 +197,7 @@ VarsEditor::~VarsEditor ()
 }
 
 Gtk::Widget&
-VarsEditor::get_widget () const
+VarsEditor::widget () const
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->tree_view) ;
@@ -117,17 +205,19 @@ VarsEditor::get_widget () const
 }
 
 void
-VarsEditor::set_local_variables (std::list<IDebugger::VariableSafePtr> &a_vars)
+VarsEditor::set_local_variables
+                        (const std::list<IDebugger::VariableSafePtr> &a_vars)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW (_("not implemented yet")) ;
+    m_priv->set_local_variables (a_vars) ;
 }
 
 void
-VarsEditor::set_global_variables (std::list<IDebugger::VariableSafePtr> &a_vars)
+VarsEditor::set_global_variables
+                        (const std::list<IDebugger::VariableSafePtr> &a_vars)
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW (_("not implemented yet")) ;
+    m_priv->set_global_variables (a_vars) ;
 }
 
 }//end namespace nemiver

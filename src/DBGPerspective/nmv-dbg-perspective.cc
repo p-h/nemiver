@@ -40,6 +40,7 @@
 #include "nmv-date-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-throbbler.h"
+#include "nmv-vars-editor.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -290,6 +291,10 @@ public:
 
     Gtk::ScrolledWindow& get_call_stack_scrolled_win () ;
 
+    VarsEditor& get_variables_editor () ;
+
+    Gtk::ScrolledWindow& get_variables_editor_scrolled_win () ;
+
     void set_show_command_view (bool) ;
 
     void set_show_target_output_view (bool) ;
@@ -297,6 +302,8 @@ public:
     void set_show_error_view (bool) ;
 
     void set_show_call_stack_view (bool) ;
+
+    void set_show_variables_editor_view (bool) ;
 
     void add_text_to_command_view (const UString &a_text,
                                    bool a_no_repeat=false) ;
@@ -382,6 +389,7 @@ struct DBGPerspective::Priv {
     bool target_output_view_is_visible ;
     bool error_view_is_visible ;
     bool call_stack_view_is_visible ;
+    bool variables_editor_view_is_visible ;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
@@ -398,6 +406,8 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> error_view_scrolled_win ;
     SafePtr<CallStack> call_stack ;
     SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
+    SafePtr<VarsEditor> variables_editor ;
+    SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
     int current_page_num ;
     IDebuggerSafePtr debugger ;
     map<int, IDebugger::BreakPoint> breakpoints ;
@@ -418,6 +428,7 @@ struct DBGPerspective::Priv {
         target_output_view_is_visible (false),
         error_view_is_visible (false),
         call_stack_view_is_visible (false),
+        variables_editor_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0)
@@ -1335,8 +1346,10 @@ DBGPerspective::init_body ()
     m_priv->error_view->set_editable (false) ;
 
     get_call_stack_scrolled_win ().add (get_call_stack ().widget ()) ;
+    get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
 
     set_show_call_stack_view (true) ;
+    set_show_variables_editor_view (true) ;
 
     m_priv->body_main_paned->unparent () ;
     m_priv->body_main_paned->show_all () ;
@@ -2325,12 +2338,36 @@ DBGPerspective::get_call_stack_scrolled_win ()
     return *m_priv->call_stack_scrolled_win ;
 }
 
+VarsEditor&
+DBGPerspective::get_variables_editor ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->variables_editor) {
+        m_priv->variables_editor = new VarsEditor (debugger ()) ;
+        THROW_IF_FAIL (m_priv->variables_editor) ;
+    }
+    return *m_priv->variables_editor ;
+}
+
+Gtk::ScrolledWindow&
+DBGPerspective::get_variables_editor_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->variables_editor_scrolled_win) {
+        m_priv->variables_editor_scrolled_win = new Gtk::ScrolledWindow () ;
+        m_priv->variables_editor_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                     Gtk::POLICY_AUTOMATIC) ;
+        THROW_IF_FAIL (m_priv->variables_editor_scrolled_win) ;
+    }
+    return *m_priv->variables_editor_scrolled_win ;
+}
 
 enum ViewsIndex{
     COMMAND_VIEW_INDEX=0,
     TARGET_OUTPUT_VIEW_INDEX,
     ERROR_VIEW_INDEX,
-    CALL_STACK_VIEW_INDEX
+    CALL_STACK_VIEW_INDEX,
+    VARIABLES_VIEW_INDEX
 };
 
 void
@@ -2437,6 +2474,33 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
             m_priv->call_stack_view_is_visible = false;
         }
         m_priv->call_stack_view_is_visible = false;
+    }
+}
+
+void
+DBGPerspective::set_show_variables_editor_view (bool a_show)
+{
+    if (a_show) {
+        if (!get_variables_editor_scrolled_win ().get_parent ()
+            && m_priv->variables_editor_view_is_visible == false) {
+            get_variables_editor_scrolled_win ().show_all () ;
+            int page_num = m_priv->statuses_notebook->insert_page
+                                            (get_variables_editor_scrolled_win (),
+                                             _("Variables"),
+                                             VARIABLES_VIEW_INDEX) ;
+            m_priv->variables_editor_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page
+                                                (page_num);
+        }
+    } else {
+        if (get_variables_editor_scrolled_win ().get_parent ()
+            && m_priv->variables_editor_view_is_visible) {
+            LOG_D ("removing error view", NMV_DEFAULT_DOMAIN) ;
+            m_priv->statuses_notebook->remove_page
+                                        (get_variables_editor_scrolled_win ());
+            m_priv->variables_editor_view_is_visible = false;
+        }
+        m_priv->variables_editor_view_is_visible = false;
     }
 }
 

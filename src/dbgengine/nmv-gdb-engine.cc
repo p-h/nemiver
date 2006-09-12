@@ -2398,16 +2398,18 @@ struct GDBEngine::Priv {
                     continue ;
                 }
 
-                UString str = (*tuple_iter)->variable () ;
-                if (str == "name") {
-                    variable->name (str) ;
-                } else if (str == "type") {
-                    variable->type (str) ;
-                } else if (str == "value") {
-                    variable->value (str) ;
+                UString variable_str = (*tuple_iter)->variable () ;
+                UString value_str =
+                            (*tuple_iter)->value ()->get_string_content () ;
+                if (variable_str == "name") {
+                    variable->name (value_str) ;
+                } else if (variable_str == "type") {
+                    variable->type (value_str) ;
+                } else if (variable_str == "value") {
+                    variable->value (value_str) ;
                 } else {
                     LOG_ERROR_D ("got an unknown tuple member with name: '"
-                                 << str << "'",
+                                 << variable_str << "'",
                                  GDBMI_FRAME_PARSING_DOMAIN)
                     continue ;
                 }

@@ -1,3 +1,12 @@
+mardi 12 septembre 2006, 23:12:47 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: debug the parsing of local
+	variables.
+	* src/DBGPerspective/nmv-vars-editor.cc,h: went forward on the variable
+	editor. It can now show variables, but not their attributes.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: show the variable editor
+	in the notebook.
+
 lundi 11 septembre 2006, 00:10:04 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-vars-editor.cc,h: added this.

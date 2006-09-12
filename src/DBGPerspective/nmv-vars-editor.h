@@ -48,9 +48,11 @@ public:
 
     VarsEditor (IDebuggerSafePtr &a_dbg) ;
     virtual ~VarsEditor () ;
-    Gtk::Widget& get_widget () const ;
-    void set_local_variables (std::list<IDebugger::VariableSafePtr> &a_vars) ;
-    void set_global_variables (std::list<IDebugger::VariableSafePtr> &a_vars) ;
+    Gtk::Widget& widget () const ;
+    void set_local_variables
+                    (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
+    void set_global_variables
+                    (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
 };//end VarsEditor
 
 }//end namespace nemiver
