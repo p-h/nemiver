@@ -357,6 +357,7 @@ public:
         void variable_value (const IDebugger::VariableSafePtr &a_in)
         {
             m_variable_value = a_in ;
+            has_variable_value (true) ;
         }
 
         bool has_variable_value () const {return m_has_variable_value;}
@@ -988,7 +989,7 @@ public:
     void evaluate_expression (const UString &a_expr,
                               bool a_run_event_loops) ;
 
-    void print_variable (const UString &a_var_name,
+    void print_variable_value (const UString &a_var_name,
                          bool a_run_event_loops) ;
 
     bool extract_proc_info (Output &a_output, int &a_proc_pid) ;
@@ -2502,6 +2503,7 @@ struct GDBEngine::Priv {
         }
 
         cur += 7 ;
+        a_var = IDebugger::VariableSafePtr (new IDebugger::Variable) ;
         if (!parse_member_variable (a_input, cur, cur, a_var)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
@@ -2516,9 +2518,11 @@ struct GDBEngine::Priv {
     bool parse_member_variable (const UString &a_input,
                                 const UString::size_type a_from,
                                 UString::size_type &a_to,
-                                IDebugger::VariableSafePtr a_var)
+                                IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+        THROW_IF_FAIL (a_var) ;
+
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2532,7 +2536,6 @@ struct GDBEngine::Priv {
 
         UString name, value ;
         UString::size_type name_start=0, name_end=0, value_start=0, value_end=0 ;
-        IDebugger::VariableSafePtr resulting_var (new IDebugger::Variable) ;
 
         while (true /*fetch name*/) {
             name_start=0, name_end=0, value_start=0, value_end=0 ;
@@ -2541,7 +2544,9 @@ struct GDBEngine::Priv {
             SKIP_WS (a_input, cur, cur) ;
             name_start = cur ;
             while (true) {
-                if (cur < a_input.size () && a_input[cur] != '=') {
+                if (cur < a_input.size ()
+                    && a_input[cur] != '='
+                    && a_input[cur] != '}') {
                     ++cur ;
                 } else {
                     break ;
@@ -2549,20 +2554,25 @@ struct GDBEngine::Priv {
             }
             name_end = cur - 1 ;
             name.assign (a_input, name_start, name_end - name_start + 1) ;
+
             IDebugger::VariableSafePtr cur_var (new IDebugger::Variable) ;
             cur_var->name (name) ;
+
+            if (a_input[cur] == '}') {
+                ++cur ;
+                cur_var->value ("") ;
+                a_var->append (cur_var) ;
+                break;
+            }
 
             ++cur ;
             CHECK_END (a_input, cur, end) ;
             SKIP_WS (a_input, cur, cur) ;
 
             if (a_input[cur] == '{') {
-                IDebugger::VariableSafePtr var ;
-                if (!parse_member_variable (a_input, cur, cur, var)) {
+                if (!parse_member_variable (a_input, cur, cur, cur_var)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
                     return false ;
-                } else {
-                    resulting_var->append (var) ;
                 }
             } else {
                 SKIP_WS (a_input, cur, cur) ;
@@ -2575,12 +2585,16 @@ struct GDBEngine::Priv {
                         break ;
                     }
                 }
-                value_end = cur - 1;
-                value.assign (a_input, value_start, value_end - value_start + 1) ;
-                cur_var->name (name) ;
+                if (cur != value_start) {
+                    value_end = cur - 1;
+                    value.assign (a_input, value_start,
+                                  value_end - value_start + 1) ;
+                } else {
+                    value = "" ;
+                }
                 cur_var->value (value) ;
-                resulting_var->append (cur_var) ;
             }
+            a_var->append (cur_var) ;
 
             SKIP_WS (a_input, cur, cur) ;
 
@@ -2590,12 +2604,10 @@ struct GDBEngine::Priv {
             } else if (a_input[cur] == '}') {
                 ++cur ;
             }
-
             break ;
         }//end while
 
         a_to = cur ;
-        a_var = resulting_var ;
         return true ;
     }
 
@@ -3203,6 +3215,8 @@ fetch_gdbmi_result:
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
                         LOG_D ("parsed var value", GDBMI_PARSING_DOMAIN) ;
+                        THROW_IF_FAIL (var) ;
+                        result_record.variable_value (var) ;
                     }
                 } else {
                     GDBMIResultSafePtr result ;
@@ -3686,6 +3700,17 @@ struct OnVariableValueHandler : OutputHandler {
     {
         THROW_IF_FAIL (m_engine) ;
 
+        UString var_name = a_in.command ().tag1 () ;
+        THROW_IF_FAIL (var_name != "") ;
+        THROW_IF_FAIL (a_in.output ().result_record ().variable_value ()) ;
+
+        if (a_in.output ().result_record ().variable_value ()->name () == "") {
+            a_in.output ().result_record ().variable_value ()->name (var_name) ;
+        } else {
+            THROW_IF_FAIL
+                (a_in.output ().result_record ().variable_value ()->name ()
+                 == var_name) ;
+        }
         m_engine->variable_value_signal ().emit
                     (a_in.command ().tag1 (),
                      a_in.output ().result_record ().variable_value ()) ;
@@ -4225,8 +4250,8 @@ GDBEngine::evaluate_expression (const UString &a_expr,
 }
 
 void
-GDBEngine::print_variable (const UString &a_var_name,
-                           bool a_run_event_loops)
+GDBEngine::print_variable_value (const UString &a_var_name,
+                                 bool a_run_event_loops)
 {
     if (a_var_name == "") {return;}
 

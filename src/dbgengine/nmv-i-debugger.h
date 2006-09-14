@@ -390,8 +390,8 @@ public:
     virtual void evaluate_expression (const UString &a_expr,
                                       bool a_run_event_loops=false)  = 0;
 
-    virtual void print_variable (const UString &a_var_name,
-                                 bool a_run_event_loops=false)  = 0;
+    virtual void print_variable_value (const UString &a_var_name,
+                                       bool a_run_event_loops=false)  = 0;
 };//end IDebugger
 
 }//end namespace nemiver

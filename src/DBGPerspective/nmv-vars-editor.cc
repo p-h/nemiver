@@ -22,6 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <map>
+#include <list>
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
@@ -63,6 +65,7 @@ public:
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> global_variables_row_ref ;
+    std::map<UString, bool> local_vars_to_set ;
 
     Priv (IDebuggerSafePtr &a_debugger)
     {
@@ -82,8 +85,8 @@ public:
 
         //create the columns of the tree view
         tree_view->append_column (_("variable"), get_variable_columns ().name) ;
-        tree_view->append_column (_("type"), get_variable_columns ().type) ;
         tree_view->append_column (_("value"), get_variable_columns ().value) ;
+        tree_view->append_column (_("type"), get_variable_columns ().type) ;
 
     }
 
@@ -171,8 +174,12 @@ public:
         THROW_IF_FAIL (tree_store) ;
         THROW_IF_FAIL (local_variables_row_ref) ;
 
-        set_variables_real (a_vars, *local_variables_row_ref) ;
-        tree_view->expand_row (local_variables_row_ref->get_path (), false) ;
+        std::list<IDebugger::VariableSafePtr>::const_iterator it ;
+        for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
+            THROW_IF_FAIL ((*it)->name () != "") ;
+            local_vars_to_set[(*it)->name ()] = true ;
+            debugger->print_variable_value ((*it)->name ()) ;
+        }
     }
 
     void set_global_variables
@@ -211,6 +218,33 @@ public:
         NEMIVER_CATCH
     }
 
+    void on_variable_value_signal (const UString &a_var_name,
+                                   const IDebugger::VariableSafePtr &a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+        NEMIVER_TRY
+
+        if (local_vars_to_set.empty ()) {return;}
+
+        std::map<UString, bool>::const_iterator it =
+                                    local_vars_to_set.find (a_var_name) ;
+        if (it == local_vars_to_set.end ()) {return ;}
+
+        THROW_IF_FAIL (tree_store) ;
+        THROW_IF_FAIL (local_variables_row_ref) ;
+
+        Gtk::TreeModel::iterator row_it ;
+        LOG_D ("adding local variable '" << a_var_name << "to vars editor",
+               NMV_DEFAULT_DOMAIN) ;
+        set_a_variable
+            (a_var,
+             tree_store->get_iter (local_variables_row_ref->get_path ()),
+             row_it) ;
+        tree_view->expand_row (local_variables_row_ref->get_path (), false) ;
+
+        NEMIVER_CATCH
+    }
+
     void connect_to_debugger_signals ()
     {
         THROW_IF_FAIL (debugger) ;
@@ -218,6 +252,8 @@ public:
             (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
         debugger->stopped_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_stopped_signal)) ;
+        debugger->variable_value_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_variable_value_signal)) ;
     }
 
 };//end class VarsEditor
@@ -244,7 +280,10 @@ VarsEditor::set_local_variables
                         (const std::list<IDebugger::VariableSafePtr> &a_vars)
 {
     THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->debugger) ;
+
     m_priv->set_local_variables (a_vars) ;
+
 }
 
 void

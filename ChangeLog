@@ -1,3 +1,24 @@
+vendredi 15 septembre 2006, 00:00:56 (UTC+0200) Dodji seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	 GDBEngine::Priv::parse_member_variable(): debugged this to a point
+	 that makes it suck much less. It seems like the parsing is quite
+	 right. The main problem being that I have to learn what to parse
+	 by sending data to gdb and see what comes out <grin/>.
+	 GDBEngine::Priv::parse_result_record(): make this parse variable
+	 value when needed. Okay, IDebugger know fires a
+	 IDebugger::variable_value_signal() as the result of the
+	 IDebugger::print_variable_value() now. YAY !
+	* src/DBGPerspective/nmv-vars-editor.cc: make this show the local
+	variables. Basically, when we get the list of local variables, loop
+	over that list and call IDebugger::print_variable_value() for each.
+	These calls further results in a bunch of events
+	IDebugger::variable_value_signal(), feeding us with the complete
+	description of the variable. We just show that complete list.
+
+	This entry basically shows the local variables in each frame \o/ .
+	It still need some polish though, but the basics are in the box.
+
 jeudi 14 septembre 2006, 01:59:07 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: fought hard to parse gdbmi variable
