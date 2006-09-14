@@ -1,3 +1,13 @@
+jeudi 14 septembre 2006, 01:59:07 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: fought hard to parse gdbmi variable
+	  value (result of -data-evaluate-expression). I still have to debug
+	  the result of the parsing and make sure it is correct.
+	  At this point, nothing is visible yet.
+	* src/DBGPerspective/nmv-vars-editor.cc: started to prepare the code
+	  here for when we get IDebugger::Variable with full info from
+	  IDebugger. We are not there yet.
+
 mardi 12 septembre 2006, 23:12:47 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: debug the parsing of local

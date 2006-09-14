@@ -67,8 +67,9 @@ public:
 
     /// \brief A container of the textual command sent to the debugger
     class Command {
-        string m_value ;
-        mutable long m_id ;
+        UString m_value ;
+        UString m_tag0 ;
+        UString m_tag1 ;
 
     public:
 
@@ -83,17 +84,21 @@ public:
 
         /// @{
 
-        const string& value () const {return m_value;}
-        void value (const string &a_in) {m_value = a_in; m_id=-1;}
+        const UString& value () const {return m_value;}
+        void value (const UString &a_in) {m_value = a_in;}
 
-        long id () const {return m_id;}
-        void id (long a_in) const {m_id = a_in;}
+        const UString& tag0 () const {return m_tag0;}
+        void tag0 (const UString &a_in) {m_tag0 = a_in;}
+
+        const UString& tag1 () const {return m_tag1;}
+        void tag1 (const UString &a_in) {m_tag1 = a_in;}
 
         /// @}
 
         void clear ()
         {
-            m_id = -1 ;
+            m_tag0 = "" ;
+            m_tag1 = "" ;
             m_value = "" ;
         }
 
@@ -298,7 +303,10 @@ public:
 
 
     virtual sigc::signal<void, const list<VariableSafePtr>& >&
-                        local_variables_listed_signal () const = 0;
+                            local_variables_listed_signal () const = 0;
+
+    virtual sigc::signal<void, const UString&, const VariableSafePtr&>&
+                                        variable_value_signal () const = 0 ;
 
     virtual sigc::signal<void, int>& got_proc_info_signal () const = 0 ;
 
@@ -378,6 +386,12 @@ public:
                                         bool a_run_event_loops=false) = 0;
 
     virtual void list_local_variables (bool a_run_event_loops=false)  = 0;
+
+    virtual void evaluate_expression (const UString &a_expr,
+                                      bool a_run_event_loops=false)  = 0;
+
+    virtual void print_variable (const UString &a_var_name,
+                                 bool a_run_event_loops=false)  = 0;
 };//end IDebugger
 
 }//end namespace nemiver

@@ -36,12 +36,14 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> name ;
     Gtk::TreeModelColumn<Glib::ustring> type ;
     Gtk::TreeModelColumn<Glib::ustring> value ;
+    Gtk::TreeModelColumn<IDebugger::VariableSafePtr> variable ;
 
     VariableColumns ()
     {
         add (name) ;
         add (type) ;
         add (value) ;
+        add (variable) ;
     }
 };//end Cols
 
@@ -109,27 +111,60 @@ public:
         THROW_IF_FAIL (global_variables_row_ref) ;
     }
 
+    void set_a_variable_real (const IDebugger::VariableSafePtr &a_var,
+                              const Gtk::TreeModel::iterator &a_parent,
+                              Gtk::TreeModel::iterator &a_result)
+    {
+        THROW_IF_FAIL (a_var) ;
+        THROW_IF_FAIL (a_parent) ;
+
+        Gtk::TreeModel::iterator cur_row_it =
+                            tree_store->append (a_parent->children ()) ;
+        THROW_IF_FAIL (cur_row_it) ;
+
+        (*cur_row_it)[get_variable_columns ().variable] = a_var ;
+        (*cur_row_it)[get_variable_columns ().name] = a_var->name () ;
+        (*cur_row_it)[get_variable_columns ().type] = a_var->type () ;
+        if (a_var->value () != "") {
+            (*cur_row_it)[get_variable_columns ().type] = a_var->value () ;
+        }
+        a_result = cur_row_it ;
+    }
+
+    void set_a_variable (const IDebugger::VariableSafePtr &a_var,
+                         const Gtk::TreeModel::iterator &a_parent,
+                         Gtk::TreeModel::iterator &a_result)
+    {
+        Gtk::TreeModel::iterator parent_iter, tmp_iter;
+
+        set_a_variable_real (a_var, a_parent, parent_iter);
+
+        if (a_var->members ().empty ()) {return;}
+
+        std::list<IDebugger::VariableSafePtr>::const_iterator member_iter ;
+        for (member_iter = a_var->members ().begin ();
+             member_iter != a_var->members ().end ();
+             ++member_iter) {
+            set_a_variable (*member_iter, parent_iter, tmp_iter) ;
+        }
+    }
+
     void set_variables_real (const std::list<IDebugger::VariableSafePtr> &a_vars,
                              Gtk::TreeRowReference &a_vars_row_ref)
     {
-        std::list<IDebugger::VariableSafePtr>::const_iterator it ;
-        IDebugger::VariableSafePtr cur_var ;
         Gtk::TreeModel::iterator vars_row_it =
             tree_store->get_iter (a_vars_row_ref.get_path ()) ;
+        Gtk::TreeModel::iterator tmp_iter ;
+
         THROW_IF_FAIL (vars_row_it) ;
-        Gtk::TreeModel::iterator cur_row_it ;
+        std::list<IDebugger::VariableSafePtr>::const_iterator it ;
         for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
             if (!(*it)) {continue ;}
-            cur_var = *it ;
-            cur_row_it = tree_store->append (vars_row_it->children ()) ;
-            THROW_IF_FAIL (cur_row_it) ;
-            (*cur_row_it)[get_variable_columns ().name] = cur_var->name () ;
-            (*cur_row_it)[get_variable_columns ().type] = cur_var->type () ;
-            if (cur_var->value () != "") {
-                (*cur_row_it)[get_variable_columns ().type] = cur_var->value () ;
-            }
+            set_a_variable (*it, vars_row_it, tmp_iter) ;
         }
     }
+
+    //before setting a variable, query its full description
 
     void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {

@@ -39,8 +39,8 @@
 #include "nmv-sequence.h"
 #include "nmv-proc-utils.h"
 
-const nemiver::common::UString GDBMI_FRAME_PARSING_DOMAIN =
-                                                    "gdbmi-frame-parsing-domain";
+const nemiver::common::UString GDBMI_PARSING_DOMAIN =
+                                                    "gdbmi-parsing-domain";
 const nemiver::common::UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain" ;
 
 #define LOG_PARSING_ERROR(a_buf, a_from) \
@@ -53,15 +53,23 @@ LOG_ERROR_D ("parsing failed for buf: >>>" \
 }
 
 #define CHECK_END(a_input, a_current, a_end) \
-if (a_current >= (a_end)) {LOG_PARSING_ERROR (a_input, (a_current)); return false ;}
+if ((a_current) >= (a_end)) {\
+LOG_D ("hit end index " << (int) a_end,\
+       NMV_DEFAULT_DOMAIN) \
+LOG_PARSING_ERROR (a_input, (a_current)); return false ;\
+}
 
 #define SKIP_WS(a_input, a_from, a_to) \
-while (isspace (a_input[a_from])) {CHECK_END (a_input, a_from, end);++a_from;} a_to = a_from ;
+while (a_from < a_input.size () && isspace (a_input[a_from])) { \
+    CHECK_END (a_input, a_from, end);++a_from; \
+} \
+a_to = a_from ;
 
 using namespace std ;
 using namespace nemiver::common ;
 
 namespace nemiver {
+
 
 /// \brief the output received from the debugger.
 ///
@@ -282,6 +290,8 @@ public:
         bool m_has_frames_parameters;
         list<IDebugger::VariableSafePtr> m_local_variables ;
         bool m_has_local_variables ;
+        IDebugger::VariableSafePtr m_variable_value ;
+        bool m_has_variable_value ;
 
     public:
         ResultRecord () {clear () ;}
@@ -340,6 +350,18 @@ public:
         bool has_local_variables () const {return m_has_local_variables;}
         void has_local_variables (bool a_in) {m_has_local_variables = a_in;}
 
+        const IDebugger::VariableSafePtr& variable_value () const
+        {
+            return m_variable_value ;
+        }
+        void variable_value (const IDebugger::VariableSafePtr &a_in)
+        {
+            m_variable_value = a_in ;
+        }
+
+        bool has_variable_value () const {return m_has_variable_value;}
+        void has_variable_value (bool a_in) {m_has_variable_value = a_in;}
+
         /// @}
 
         void clear ()
@@ -353,6 +375,8 @@ public:
             m_has_frames_parameters = false ;
             m_local_variables.clear () ;
             m_has_local_variables = false ;
+            m_variable_value = NULL ;
+            m_has_variable_value = false ;
         }
     };//end class ResultRecord
 
@@ -785,6 +809,27 @@ operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val)
     }
     return a_out ;
 }
+
+std::ostream&
+operator<< (std::ostream &a_out, const IDebugger::Variable &a_var)
+{
+    a_out << "<variable>"
+          << "<name>"<< a_var.name () << "</name>"
+          << "<type>"<< a_var.type () << "</type>"
+          << "<members>" ;
+
+    if (!a_var.members ().empty ()) {
+        list<IDebugger::VariableSafePtr>::const_iterator it ;
+        for (it = a_var.members ().begin () ;
+             it != a_var.members ().end () ;
+             ++it) {
+            a_out << *(*it) ;
+        }
+    }
+    a_out << "</members></variable>" ;
+    return a_out ;
+}
+
 //******************************************
 //</gdbmi datastructure streaming operators>
 //******************************************
@@ -845,6 +890,9 @@ public:
 
     sigc::signal<void, const list<VariableSafePtr>& >&
                         local_variables_listed_signal () const ;
+
+    sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
+                                            variable_value_signal () const  ;
 
     sigc::signal<void, int>& got_proc_info_signal () const  ;
 
@@ -936,6 +984,12 @@ public:
                                 bool a_run_event_loops) ;
 
     void list_local_variables (bool a_run_event_loops) ;
+
+    void evaluate_expression (const UString &a_expr,
+                              bool a_run_event_loops) ;
+
+    void print_variable (const UString &a_var_name,
+                         bool a_run_event_loops) ;
 
     bool extract_proc_info (Output &a_output, int &a_proc_pid) ;
 
@@ -1032,7 +1086,10 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, const list<VariableSafePtr>& >
                                     local_variables_listed_signal  ;
 
-    sigc::signal<void, int> got_proc_info_signal ;
+    mutable sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>
+                                            variable_value_signal ;
+
+    mutable sigc::signal<void, int> got_proc_info_signal ;
 
     mutable sigc::signal<void> running_signal ;
 
@@ -1733,7 +1790,7 @@ struct GDBEngine::Priv {
                       UString::size_type &a_to,
                       GDBMITupleSafePtr &a_tuple)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1783,7 +1840,7 @@ struct GDBEngine::Priv {
                    << "' for text >>>"
                    << a_input
                    << "<<<",
-                   GDBMI_FRAME_PARSING_DOMAIN) ;
+                   GDBMI_PARSING_DOMAIN) ;
             break ;
         }
 
@@ -1801,7 +1858,7 @@ struct GDBEngine::Priv {
                      UString::size_type &a_to,
                      GDBMIListSafePtr &a_list)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1886,7 +1943,7 @@ struct GDBEngine::Priv {
                        UString::size_type &a_to,
                        GDBMIResultSafePtr &a_value)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1937,7 +1994,7 @@ struct GDBEngine::Priv {
                       UString::size_type &a_to,
                       GDBMIValueSafePtr &a_value)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -1978,7 +2035,7 @@ struct GDBEngine::Priv {
                       IDebugger::Frame &a_frame,
                       int &a_level)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2049,7 +2106,7 @@ struct GDBEngine::Priv {
                            UString::size_type &a_to,
                            vector<IDebugger::Frame> &a_stack)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2138,7 +2195,7 @@ struct GDBEngine::Priv {
                          UString::size_type &a_to,
                          map<int, list<IDebugger::VariableSafePtr> > &a_params)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2178,7 +2235,7 @@ struct GDBEngine::Priv {
         list<GDBMIResultSafePtr> frames_params_list ;
         gdbmi_list->get_result_content (frames_params_list) ;
         LOG_D ("number of frames: " << (int) frames_params_list.size (),
-               GDBMI_FRAME_PARSING_DOMAIN) ;
+               GDBMI_PARSING_DOMAIN) ;
 
         list<GDBMIResultSafePtr>::const_iterator frames_iter,
                                             params_records_iter,
@@ -2191,7 +2248,7 @@ struct GDBEngine::Priv {
              frames_iter != frames_params_list.end ();
              ++frames_iter) {
             if (!(*frames_iter)) {
-                LOG_D ("Got a null frmae, skipping", GDBMI_FRAME_PARSING_DOMAIN) ;
+                LOG_D ("Got a null frmae, skipping", GDBMI_PARSING_DOMAIN) ;
                 continue;
             }
             THROW_IF_FAIL ((*frames_iter)->variable () != "stack") ;
@@ -2221,7 +2278,7 @@ struct GDBEngine::Priv {
                         ((*params_records_iter)->value
                              ()->get_string_content ().c_str ());
                     LOG_D ("frame level '" << (int) cur_frame_level << "'",
-                           GDBMI_FRAME_PARSING_DOMAIN) ;
+                           GDBMI_PARSING_DOMAIN) ;
                 } else if ((*params_records_iter)->variable () == "args") {
                     //this gdbmi result is of the form:
                     //args=[{name="foo0", value="bar0"},
@@ -2238,20 +2295,20 @@ struct GDBEngine::Priv {
                     if (arg_list && !(arg_list->empty ())) {
                         LOG_D ("arg list is *not* empty for frame level '"
                                << (int)cur_frame_level,
-                               GDBMI_FRAME_PARSING_DOMAIN) ;
+                               GDBMI_PARSING_DOMAIN) ;
                         //walk each parameter.
                         //Each parameter is a tuple (in a value)
                         list<GDBMIValueSafePtr> arg_as_value_list ;
                         arg_list->get_value_content (arg_as_value_list);
                         LOG_D ("arg list size: "
                                << (int)arg_as_value_list.size (),
-                               GDBMI_FRAME_PARSING_DOMAIN) ;
+                               GDBMI_PARSING_DOMAIN) ;
                         for (args_as_value_iter=arg_as_value_list.begin();
                              args_as_value_iter!=arg_as_value_list.end();
                              ++args_as_value_iter) {
                             if (!*args_as_value_iter) {
                                 LOG_D ("got NULL arg, skipping",
-                                       GDBMI_FRAME_PARSING_DOMAIN) ;
+                                       GDBMI_PARSING_DOMAIN) ;
                                 continue;
                             }
                             GDBMITupleSafePtr args =
@@ -2283,13 +2340,13 @@ struct GDBEngine::Priv {
                                    <<" for frame level='"
                                    <<(int)cur_frame_level
                                    <<"'",
-                                   GDBMI_FRAME_PARSING_DOMAIN) ;
+                                   GDBMI_PARSING_DOMAIN) ;
                             cur_frame_args.push_back (parameter) ;
                         }
                     } else {
                         LOG_D ("arg list is empty for frame level '"
                                << (int)cur_frame_level,
-                               GDBMI_FRAME_PARSING_DOMAIN) ;
+                               GDBMI_PARSING_DOMAIN) ;
                     }
                     THROW_IF_FAIL (cur_frame_level >= 0) ;
                     LOG_D ("cur_frame_level: '"
@@ -2322,7 +2379,7 @@ struct GDBEngine::Priv {
                          UString::size_type &a_to,
                          list<IDebugger::VariableSafePtr> &a_vars)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2370,7 +2427,7 @@ struct GDBEngine::Priv {
             if (!(*value_iter)) {continue;}
             if ((*value_iter)->content_type () != GDBMIValue::TUPLE_TYPE) {
                 LOG_ERROR_D ("list of tuple should contain only tuples",
-                             GDBMI_FRAME_PARSING_DOMAIN) ;
+                             GDBMI_PARSING_DOMAIN) ;
                 continue ;
             }
             GDBMITupleSafePtr gdbmi_tuple = (*value_iter)->get_tuple_content ();
@@ -2386,7 +2443,7 @@ struct GDBEngine::Priv {
                  ++tuple_iter) {
                 if (!(*tuple_iter)) {
                     LOG_ERROR_D ("got and empty tuple member",
-                                 GDBMI_FRAME_PARSING_DOMAIN) ;
+                                 GDBMI_PARSING_DOMAIN) ;
                     continue ;
                 }
 
@@ -2394,7 +2451,7 @@ struct GDBEngine::Priv {
                     ||(*tuple_iter)->value ()->content_type ()
                         != GDBMIValue::STRING_TYPE) {
                     LOG_ERROR_D ("Got a tuple member which value is not a string",
-                                 GDBMI_FRAME_PARSING_DOMAIN) ;
+                                 GDBMI_PARSING_DOMAIN) ;
                     continue ;
                 }
 
@@ -2410,7 +2467,7 @@ struct GDBEngine::Priv {
                 } else {
                     LOG_ERROR_D ("got an unknown tuple member with name: '"
                                  << variable_str << "'",
-                                 GDBMI_FRAME_PARSING_DOMAIN)
+                                 GDBMI_PARSING_DOMAIN)
                     continue ;
                 }
 
@@ -2419,11 +2476,127 @@ struct GDBEngine::Priv {
         }
 
         LOG_D ("got '" << (int)variables.size () << "' variables",
-               GDBMI_FRAME_PARSING_DOMAIN) ;
+               GDBMI_PARSING_DOMAIN) ;
 
         a_vars = variables ;
         a_to = cur ;
         return true;
+    }
+
+    /// parse the result of -data-evaluate-expression <var-name>
+    /// the result is a gdbmi result of the form:
+    /// value={attrname0=val0, attrname1=val1,...} where val0 and val1
+    /// can be simili tuples representing complex types as well.
+    bool parse_variable_value (const UString &a_input,
+                               const UString::size_type a_from,
+                               UString::size_type &a_to,
+                               IDebugger::VariableSafePtr &a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.size () ;
+        CHECK_END (a_input, cur, end) ;
+
+        if (a_input.compare (cur, 8, "value=\"{")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        cur += 7 ;
+        if (!parse_member_variable (a_input, cur, cur, a_var)) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        THROW_IF_FAIL (a_input[cur] == '"') ;
+        ++cur ;
+        a_to = cur ;
+        return true ;
+    }
+
+    bool parse_member_variable (const UString &a_input,
+                                const UString::size_type a_from,
+                                UString::size_type &a_to,
+                                IDebugger::VariableSafePtr a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.size () ;
+        CHECK_END (a_input, cur, end) ;
+
+        if (a_input[cur] != '{') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        ++cur ;
+        CHECK_END (a_input, cur, end) ;
+
+        UString name, value ;
+        UString::size_type name_start=0, name_end=0, value_start=0, value_end=0 ;
+        IDebugger::VariableSafePtr resulting_var (new IDebugger::Variable) ;
+
+        while (true /*fetch name*/) {
+            name_start=0, name_end=0, value_start=0, value_end=0 ;
+            name = "" , value = "" ;
+
+            SKIP_WS (a_input, cur, cur) ;
+            name_start = cur ;
+            while (true) {
+                if (cur < a_input.size () && a_input[cur] != '=') {
+                    ++cur ;
+                } else {
+                    break ;
+                }
+            }
+            name_end = cur - 1 ;
+            name.assign (a_input, name_start, name_end - name_start + 1) ;
+            IDebugger::VariableSafePtr cur_var (new IDebugger::Variable) ;
+            cur_var->name (name) ;
+
+            ++cur ;
+            CHECK_END (a_input, cur, end) ;
+            SKIP_WS (a_input, cur, cur) ;
+
+            if (a_input[cur] == '{') {
+                IDebugger::VariableSafePtr var ;
+                if (!parse_member_variable (a_input, cur, cur, var)) {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                    return false ;
+                } else {
+                    resulting_var->append (var) ;
+                }
+            } else {
+                SKIP_WS (a_input, cur, cur) ;
+                value_start = cur ;
+                while (true) {
+                    if (a_input[cur] != ',' && a_input[cur] != '}') {
+                        ++cur ;
+                        CHECK_END (a_input, cur, end) ;
+                    } else {
+                        break ;
+                    }
+                }
+                value_end = cur - 1;
+                value.assign (a_input, value_start, value_end - value_start + 1) ;
+                cur_var->name (name) ;
+                cur_var->value (value) ;
+                resulting_var->append (cur_var) ;
+            }
+
+            SKIP_WS (a_input, cur, cur) ;
+
+            if (a_input[cur] == ',') {
+                ++cur ;
+                continue /*got fetch name*/ ;
+            } else if (a_input[cur] == '}') {
+                ++cur ;
+            }
+
+            break ;
+        }//end while
+
+        a_to = cur ;
+        a_var = resulting_var ;
+        return true ;
     }
 
 
@@ -2445,7 +2618,7 @@ struct GDBEngine::Priv {
                               UString::size_type &a_to,
                               map<UString, UString> a_args)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
@@ -2545,7 +2718,7 @@ struct GDBEngine::Priv {
             UString::size_type &a_to,
             IDebugger::Frame &a_frame)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         if (a_input.compare (a_from, 7, "frame={")) {
             return false ;
@@ -2673,11 +2846,14 @@ struct GDBEngine::Priv {
                        UString::size_type &a_to,
                        UString &a_string)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_FRAME_PARSING_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur=a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
-        if (!isalpha (a_input[cur]) && a_input[cur] != '_') {
+        if (!isalpha (a_input[cur])
+            && a_input[cur] != '_'
+            && a_input[cur] != '<'
+            && a_input[cur] != '>') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2688,7 +2864,9 @@ struct GDBEngine::Priv {
         for (;;) {
             if (isalnum (a_input[cur])
                 || a_input[cur] == '_'
-                || a_input[cur] == '-') {
+                || a_input[cur] == '-'
+                || a_input[cur] == '>'
+                || a_input[cur] == '<') {
                 ++cur ;
                 CHECK_END (a_input, cur, end) ;
                 continue ;
@@ -2967,13 +3145,13 @@ fetch_gdbmi_result:
                     result_record.call_stack (call_stack) ;
                     LOG_D ("parsed a call stack of depth: "
                            << (int) call_stack.size (),
-                           GDBMI_FRAME_PARSING_DOMAIN) ;
+                           GDBMI_PARSING_DOMAIN) ;
                     vector<IDebugger::Frame>::iterator frame_iter ;
                     for (frame_iter = call_stack.begin () ;
                          frame_iter != call_stack.end ();
                          ++frame_iter) {
                         LOG_D ("function-name: " << frame_iter->function (),
-                               GDBMI_FRAME_PARSING_DOMAIN) ;
+                               GDBMI_PARSING_DOMAIN) ;
                     }
                 } else if (!a_input.compare (cur, 7, "frame={")) {
                     IDebugger::Frame frame ;
@@ -2981,7 +3159,7 @@ fetch_gdbmi_result:
                     if (!parse_frame (a_input, cur, cur, frame, level)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
-                        LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
+                        LOG_D ("parsed result", GDBMI_PARSING_DOMAIN) ;
                         THROW_IF_FAIL (level != -1) ;
                         //this is a hack in the model used thoughout the
                         //GDBEngine code. Normally, output handlers
@@ -3002,23 +3180,29 @@ fetch_gdbmi_result:
                     GDBMIResultSafePtr result ;
                     parse_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
-                    LOG_D ("parsed result", GDBMI_FRAME_PARSING_DOMAIN) ;
+                    LOG_D ("parsed result", GDBMI_PARSING_DOMAIN) ;
                 } else if (!a_input.compare (cur, 12, "stack-args=[")) {
                     map<int, list<IDebugger::VariableSafePtr> > frames_args ;
                     if (!parse_stack_arguments (a_input, cur, cur, frames_args)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
-                        LOG_D ("parsed stack args", GDBMI_FRAME_PARSING_DOMAIN) ;
+                        LOG_D ("parsed stack args", GDBMI_PARSING_DOMAIN) ;
                     }
                     result_record.frames_parameters (frames_args)  ;
                 } else if (!a_input.compare (cur, 8, "locals=[")) {
-                    //TODO: finish this!
                     list<VariableSafePtr> vars ;
                     if (!parse_local_var_list (a_input, cur, cur, vars)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
-                        LOG_D ("parsed local vars", GDBMI_FRAME_PARSING_DOMAIN) ;
+                        LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN) ;
                         result_record.local_variables (vars) ;
+                    }
+                } else if (!a_input.compare (cur, 8, "value=\"{")) {
+                    VariableSafePtr var ;
+                    if (!parse_variable_value (a_input, cur, cur, var)) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                    } else {
+                        LOG_D ("parsed var value", GDBMI_PARSING_DOMAIN) ;
                     }
                 } else {
                     GDBMIResultSafePtr result ;
@@ -3026,7 +3210,7 @@ fetch_gdbmi_result:
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
                         LOG_D ("parsed unknown gdbmi result",
-                               GDBMI_FRAME_PARSING_DOMAIN) ;
+                               GDBMI_PARSING_DOMAIN) ;
                     }
                 }
 
@@ -3477,6 +3661,36 @@ struct OnLocalVariablesListedHandler : OutputHandler {
             (a_in.output ().result_record ().local_variables ()) ;
     }
 };//struct OnLocalVariablesListedHandler
+
+struct OnVariableValueHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnVariableValueHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.output ().result_record ().has_variable_value ())) {
+            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+
+        m_engine->variable_value_signal ().emit
+                    (a_in.command ().tag1 (),
+                     a_in.output ().result_record ().variable_value ()) ;
+    }
+};//struct OnVariableValueHandler
 //****************************
 //</GDBengine output handlers
 //***************************
@@ -3587,6 +3801,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnInfoProcHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnLocalVariablesListedHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnVariableValueHandler (this))) ;
 }
 
 void
@@ -3698,6 +3914,12 @@ sigc::signal<void, const list<IDebugger::VariableSafePtr>& >&
 GDBEngine::local_variables_listed_signal () const
 {
     return m_priv->local_variables_listed_signal ;
+}
+
+sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
+GDBEngine::variable_value_signal () const
+{
+    return m_priv->variable_value_signal ;
 }
 
 sigc::signal<void>&
@@ -3988,6 +4210,30 @@ void
 GDBEngine::list_local_variables (bool a_run_event_loops)
 {
     Command command ("-stack-list-locals 2") ;
+    queue_command (command, a_run_event_loops) ;
+}
+
+void
+GDBEngine::evaluate_expression (const UString &a_expr,
+                                bool a_run_event_loops)
+{
+    if (a_expr == "") {return;}
+
+    Command command ("-data-evaluate-expression " + a_expr) ;
+    command.tag0 ("evaluate-expression") ;
+    queue_command (command, a_run_event_loops) ;
+}
+
+void
+GDBEngine::print_variable (const UString &a_var_name,
+                           bool a_run_event_loops)
+{
+    if (a_var_name == "") {return;}
+
+    Command command ("-data-evaluate-expression " + a_var_name) ;
+    command.tag0 ("print-variable") ;
+    command.tag1 (a_var_name) ;
+
     queue_command (command, a_run_event_loops) ;
 }
 
