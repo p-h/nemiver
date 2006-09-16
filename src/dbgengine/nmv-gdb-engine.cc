@@ -2332,6 +2332,10 @@ struct GDBEngine::Priv {
                                     THROW_IF_FAIL ((*arg_iter)->value ()) ;
                                     parameter->value
                                         ((*arg_iter)->value()->get_string_content()) ;
+                                    //TODO: call parse_member_variable() in
+                                    //case parameter->value() is compound.
+                                    //This would let us fill parameter->members().
+                                    //with the structured member.
                                 } else {
                                     THROW ("should not reach this line") ;
                                 }
@@ -2497,19 +2501,32 @@ struct GDBEngine::Priv {
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
 
-        if (a_input.compare (cur, 8, "value=\"{")) {
+        if (a_input.compare (cur, 7, "value=\"")) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
-        cur += 7 ;
+        cur += 6 ;
+        CHECK_END (a_input, cur, end) ;
+        CHECK_END (a_input, cur+1, end) ;
+
         a_var = IDebugger::VariableSafePtr (new IDebugger::Variable) ;
-        if (!parse_member_variable (a_input, cur, cur, a_var)) {
-            LOG_PARSING_ERROR (a_input, cur) ;
-            return false ;
+        if (a_input[cur+1] == '{') {
+            ++cur ;
+            if (!parse_member_variable (a_input, cur, cur, a_var)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            THROW_IF_FAIL (a_input[cur] == '"') ;
+        } else {
+            UString value ;
+            if (!parse_c_string (a_input, cur, cur, value)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            a_var->value (value) ;
         }
 
-        THROW_IF_FAIL (a_input[cur] == '"') ;
         ++cur ;
         a_to = cur ;
         return true ;
@@ -2892,6 +2909,20 @@ struct GDBEngine::Priv {
         return true ;
     }
 
+    /// remove the trailing chars "\\n" at the end of a string
+    /// these chars are found at the end gdb stream records.
+    void
+    remove_stream_record_trailing_chars (UString &a_str)
+    {
+        if (a_str.size () < 2) {return;}
+        UString::size_type i = a_str.size () - 1;
+        LOG_DD ("stream record: '" << a_str << "' size=" << (int) a_str.size ()) ;
+        if (a_str[i] == 'n' && a_str[i-1] == '\\') {
+            i = i-1 ;
+            a_str.erase (i, 2) ;
+            a_str.append ("\n") ;
+        }
+    }
 
     bool parse_stream_record (const UString &a_input,
             UString::size_type a_from,
@@ -2949,14 +2980,17 @@ struct GDBEngine::Priv {
         bool found (false) ;
         if (!console.empty ()) {
             found = true ;
+            remove_stream_record_trailing_chars (console) ;
             a_record.debugger_console (console) ;
         }
         if (!target.empty ()) {
             found = true ;
+            remove_stream_record_trailing_chars (target) ;
             a_record.target_output (target) ;
         }
         if (!log.empty ()) {
             found = true ;
+            remove_stream_record_trailing_chars (log) ;
             a_record.debugger_log (log) ;
         }
 
@@ -3173,11 +3207,11 @@ fetch_gdbmi_result:
                     } else {
                         LOG_D ("parsed result", GDBMI_PARSING_DOMAIN) ;
                         THROW_IF_FAIL (level != -1) ;
-                        //this is a hack in the model used thoughout the
+                        //this is a hack in the model used throughout the
                         //GDBEngine code. Normally, output handlers
                         //are responsible of filtering the parsed
                         //result record and fire the right signal based
-                        //on the result of the filtering. Here, I find
+                        //on the result of that filtering. Here, I find
                         //that gdb is not very "consistent" in the way
                         //it handles core file stack trace listing, compared
                         //to stack trace listing in "normal operation".
@@ -3209,7 +3243,7 @@ fetch_gdbmi_result:
                         LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN) ;
                         result_record.local_variables (vars) ;
                     }
-                } else if (!a_input.compare (cur, 8, "value=\"{")) {
+                } else if (!a_input.compare (cur, 7, "value=\"")) {
                     VariableSafePtr var ;
                     if (!parse_variable_value (a_input, cur, cur, var)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
@@ -3349,13 +3383,14 @@ fetch_out_of_band_record:
     }
 };//end GDBEngine::Priv
 
-    //*************************
-    //</GDBEngine::Priv struct>
-    //*************************
+//*************************
+//</GDBEngine::Priv struct>
+//*************************
 
 //****************************
 //<GDBengine output handlers
 //***************************
+
 
 struct OnStreamRecordHandler: OutputHandler{
     GDBEngine *m_engine ;
@@ -3377,23 +3412,35 @@ struct OnStreamRecordHandler: OutputHandler{
         THROW_IF_FAIL (m_engine) ;
 
         list<Output::OutOfBandRecord>::const_iterator iter ;
+        UString debugger_console, target_output, debugger_log ;
+
         for (iter = a_in.output ().out_of_band_records ().begin ();
                 iter != a_in.output ().out_of_band_records ().end ();
                 ++iter) {
             if (iter->has_stream_record ()) {
                 if (iter->stream_record ().debugger_console () != ""){
-                    m_engine->console_message_signal ().emit
-                    (iter->stream_record ().debugger_console ()) ;
+                    debugger_console +=
+                        iter->stream_record ().debugger_console () ;
                 }
                 if (iter->stream_record ().target_output () != ""){
-                    m_engine->target_output_message_signal ().emit
-                    (iter->stream_record ().target_output ()) ;
+                    target_output += iter->stream_record ().target_output () ;
                 }
                 if (iter->stream_record ().debugger_log () != ""){
-                    m_engine->error_message_signal ().emit
-                    (iter->stream_record ().debugger_log ()) ;
+                    debugger_log += iter->stream_record ().debugger_log () ;
                 }
             }
+        }
+
+        if (!debugger_console.empty ()) {
+            m_engine->console_message_signal ().emit (debugger_console) ;
+        }
+
+        if (!target_output.empty ()) {
+            m_engine->target_output_message_signal ().emit (target_output) ;
+        }
+
+        if (!debugger_log.empty ()) {
+            m_engine->error_message_signal ().emit (debugger_log) ;
         }
 
     }

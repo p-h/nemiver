@@ -301,7 +301,7 @@ SqliteCnxDrv::get_column_content (gulong a_offset,
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
     int type = sqlite3_column_type (m_priv->cur_stmt, a_offset) ;
     if ((type != SQLITE_INTEGER) && (type != SQLITE_NULL)) {
-        LOG_ERROR ("column number "<< static_cast<unsigned long>(a_column_content)
+        LOG_ERROR ("column number "<< static_cast<int> (a_column_content)
                                    << " is not of integer type") ;
         return false ;
     }
@@ -319,7 +319,8 @@ SqliteCnxDrv::get_column_content (gulong a_offset,
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
     int type = sqlite3_column_type (m_priv->cur_stmt, a_offset) ;
     if ((type != SQLITE_FLOAT) && (type != SQLITE_NULL)) {
-        LOG_ERROR ("column number " << a_offset << " is not of type float") ;
+        LOG_ERROR ("column number " << (int) a_offset
+                   << " is not of type float") ;
         return false ;
     }
     a_column_content = sqlite3_column_double (m_priv->cur_stmt, a_offset) ;
@@ -336,7 +337,7 @@ SqliteCnxDrv::get_column_content (gulong a_offset,
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
     int type = sqlite3_column_type (m_priv->cur_stmt, a_offset) ;
     if (type == SQLITE_BLOB) {
-        LOG_ERROR ("column number " << a_offset << " is of type blob") ;
+        LOG_ERROR ("column number " << (int) a_offset << " is of type blob") ;
         return false ;
     }
     a_column_content =

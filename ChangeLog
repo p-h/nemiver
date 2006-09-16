@@ -1,3 +1,32 @@
+samedi 16 septembre 2006, 14:05:31 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	GDBEngine::Priv::parse_variable_value(): don't forget to parse
+	simple variable value as well eg: value="8". We did parse compound
+	values only.
+	GDBEngine::Priv::parse_stream_record(): replace the leading chars
+	"\\n" in stream record by an end-of-line character. Stream records
+	are now nicers to print.
+	GDBEngine::Priv::parse_result_record(): reflect the change in
+	GDBEngine::Priv::parse_variable_value().
+	OnStreamRecordHandler::do_handle(): group all the stream records of
+	of a given gdb output record and fire just one signal per type of
+	record (IDebugger::console_message_signal(),
+	IDebugger::target_ouput(), or IDebugger::debugger_log()). In the
+	past, I use to fire one signal per stream record.
+	* src/DBGPerspective/nmv-vars-editor.cc: now show function arguments
+	as well as local variables. Fixing the debugger engine leads
+	to correctly showing simple variables as well. Show local variable
+	types when the information is available.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: add traces to help
+	debug the breakpoints setting workflows.
+	Make sure that the callstack status notebook tab gets selected by default.
+	* src/common/nmv-log-stream.cc,h,nmv-log-stream-utils:
+	  Did some code cleanup in here.
+	* src/common/nmv-exception.h: prefix the exception log messages by
+	 "|X|".
+
+
 vendredi 15 septembre 2006, 00:00:56 (UTC+0200) Dodji seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:

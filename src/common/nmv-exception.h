@@ -51,50 +51,50 @@ public:
 
 #define THROW_IF_FAIL(a_cond) \
 if (!(a_cond)) { \
-LOG ("condition (" << #a_cond << ") failed; raising exception\n" ) ;\
+LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception\n" ) ;\
 throw nemiver::common::Exception \
     (nemiver::common::UString ("Assertion failed: ") + #a_cond)  ;\
 }
 
 #define THROW_IF_FAIL2(a_cond, a_reason) \
 if (!(a_cond)) { \
-LOG ("condition (" << #a_cond << ") failed; raising exception " << a_reason <<"\n");\
+LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << a_reason <<"\n");\
 throw nemiver::common::Exception (a_reason)  ;\
 }
 
 #define THROW_IF_FAIL3(a_cond, type, a_reason) \
 if (!(a_cond)) { \
-LOG ("condition (" << #a_cond << ") failed; raising exception " << #type << \
+LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << #type << \
 << ":  " << a_reason << "\n" ) ; throw type (a_reason)  ;\
 }
 
 #define THROW(a_reason) \
-LOG ("raised exception: "<< (nemiver::common::UString (a_reason)) << "\n"); \
+LOG_EXCEPTION ("raised exception: "<< (nemiver::common::UString (a_reason)) << "\n"); \
 throw nemiver::common::Exception (nemiver::common::UString (a_reason))  ;
 
 #define THROW_EMPTY \
-LOG ("raised empty exception " << endl) ; \
+LOG_EXCEPTION ("raised empty exception " << endl) ; \
 throw ;
 
 #define THROW_EXCEPTION(type, message) \
-LOG ("raised " << #type << ": "<< message<< "\n") ; \
+LOG_EXCEPTION ("raised " << #type << ": "<< message<< "\n") ; \
 throw type (message) ;
 
 #define TRACE_EXCEPTION(exception) \
-LOG ("catched exception: " << exception.what () << "\n")
+LOG_EXCEPTION ("catched exception: " << exception.what () << "\n")
 
 #define RETHROW_EXCEPTION(exception) \
-LOG ("catched and rethrowing exception: " << exception.what() << "\n")
+LOG_EXCEPTION ("catched and rethrowing exception: " << exception.what() << "\n")
 
 #define RETURN_VAL_IF_FAIL(expression, value) \
 if (!(expression)) { \
-LOG ("assertion " << #expression << " failed. Returning " << #value << "\n") ; \
+LOG_EXCEPTION ("assertion " << #expression << " failed. Returning " << #value << "\n") ; \
 return value ; \
 }
 
 #define RETURN_IF_FAIL(expression) \
 if (!(expression)) { \
-LOG ("assertion " << #expression << " failed. Returning.\n") ; \
+LOG_EXCEPTION ("assertion " << #expression << " failed. Returning.\n") ; \
 return ; \
 }
 

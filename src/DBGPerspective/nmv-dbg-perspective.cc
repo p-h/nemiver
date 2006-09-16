@@ -435,6 +435,14 @@ struct DBGPerspective::Priv {
     {}
 };//end struct DBGPerspective::Priv
 
+enum ViewsIndex{
+    COMMAND_VIEW_INDEX=0,
+    TARGET_OUTPUT_VIEW_INDEX,
+    ERROR_VIEW_INDEX,
+    CALL_STACK_VIEW_INDEX,
+    VARIABLES_VIEW_INDEX
+};
+
 #ifndef CHECK_P_INIT
 #define CHECK_P_INIT THROW_IF_FAIL(m_priv && m_priv->initialized) ;
 #endif
@@ -856,6 +864,7 @@ DBGPerspective::on_debugger_breakpoints_set_signal
                                 (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     NEMIVER_TRY
+    LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
     NEMIVER_CATCH
 }
@@ -1001,6 +1010,9 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_command_view (false) ;
     set_show_target_output_view (false) ;
     set_show_error_view (false) ;
+    set_show_call_stack_view (true) ;
+    set_show_variables_editor_view (true) ;
+    m_priv->statuses_notebook->set_current_page (0) ;
 }
 
 void
@@ -1348,12 +1360,16 @@ DBGPerspective::init_body ()
     get_call_stack_scrolled_win ().add (get_call_stack ().widget ()) ;
     get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
 
+    /*
     set_show_call_stack_view (true) ;
     set_show_variables_editor_view (true) ;
+    */
 
     m_priv->body_main_paned->unparent () ;
     m_priv->body_main_paned->show_all () ;
 
+    //must be last
+    init_perspective_menu_entries () ;
 }
 
 void
@@ -1733,7 +1749,7 @@ DBGPerspective::edit_workbench_menu ()
     CHECK_P_INIT ;
 
     add_perspective_menu_entries () ;
-    init_perspective_menu_entries () ;
+    //init_perspective_menu_entries () ;
 }
 
 void
@@ -2065,6 +2081,9 @@ DBGPerspective::set_breakpoint ()
     THROW_IF_FAIL (source_editor) ;
     THROW_IF_FAIL (source_editor->get_path () != "") ;
 
+    //line numbers start at 0 in GtkSourceView, but at 1 in GDB <grin/>
+    //so in DGBPerspective, the line number are set in the GDB's reference.
+
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
             ()->get_iter ().get_line () + 1;
@@ -2075,6 +2094,7 @@ void
 DBGPerspective::set_breakpoint (const UString &a_file_path,
                                 int a_line)
 {
+    LOG_DD ("set bkpoint request for " << a_file_path << ":" << a_line) ;
     debugger ()->set_breakpoint (a_file_path, a_line) ;
 }
 
@@ -2084,9 +2104,15 @@ DBGPerspective::append_breakpoints
 {
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
     for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
+        LOG_DD ("record breakpoint "
+                << iter->second.full_file_name ()
+                << ":" << iter->second.line ()) ;
         m_priv->breakpoints[iter->first] = iter->second ;
+        LOG_DD ("append visual breakpoint at source view line: "
+                << iter->second.full_file_name () << ":"
+                << iter->second.line () - 1) ;
         append_visual_breakpoint (iter->second.full_file_name (),
-                                  iter->second.line ()-1) ;
+                                  iter->second.line () - 1) ;
     }
 }
 
@@ -2095,16 +2121,24 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
                                        int a_line_num,
                                        int &a_break_num)
 {
+    UString breakpoint = a_file_name + ":" + UString::from_int (a_line_num) ;
+
+    LOG_DD ("searching for breakpoint " << breakpoint << ": ") ;
+
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
     for (iter = m_priv->breakpoints.begin () ;
          iter != m_priv->breakpoints.end () ;
          ++iter) {
+        LOG_DD ("got breakpoint " << iter->second.full_file_name ()
+                << ":" << iter->second.line () << "...") ;
         if (   (iter->second.full_file_name () == a_file_name)
             && (iter->second.line () == a_line_num)) {
             a_break_num= iter->second.number () ;
+            LOG_DD ("found breakpoint " << breakpoint << " !") ;
             return true ;
         }
     }
+    LOG_DD ("did not find breakpoint " + breakpoint) ;
     return false ;
 }
 
@@ -2211,9 +2245,14 @@ void
 DBGPerspective::toggle_breakpoint (const UString &a_file_path,
                                    int a_line_num)
 {
+    LOG_DD ("file_path:" << a_file_path
+           << ", line_num: " << a_file_path) ;
+
     if (is_breakpoint_set_at_line (a_file_path, a_line_num)) {
+        LOG_DD ("breakpoint set already, delete it!") ;
         delete_breakpoint (a_file_path, a_line_num) ;
     } else {
+        LOG_DD ("breakpoint no set yet, set it!") ;
         set_breakpoint (a_file_path, a_line_num) ;
     }
 }
@@ -2362,13 +2401,6 @@ DBGPerspective::get_variables_editor_scrolled_win ()
     return *m_priv->variables_editor_scrolled_win ;
 }
 
-enum ViewsIndex{
-    COMMAND_VIEW_INDEX=0,
-    TARGET_OUTPUT_VIEW_INDEX,
-    ERROR_VIEW_INDEX,
-    CALL_STACK_VIEW_INDEX,
-    VARIABLES_VIEW_INDEX
-};
 
 void
 DBGPerspective::set_show_command_view (bool a_show)
@@ -2441,7 +2473,7 @@ DBGPerspective::set_show_error_view (bool a_show)
     } else {
         if (get_error_view_scrolled_win ().get_parent ()
             && m_priv->error_view_is_visible) {
-            LOG_D ("removing error view", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("removing error view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_error_view_scrolled_win ());
         }
@@ -2468,7 +2500,7 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
     } else {
         if (get_call_stack_scrolled_win ().get_parent ()
             && m_priv->call_stack_view_is_visible) {
-            LOG_D ("removing error view", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("removing error view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_call_stack_scrolled_win ());
             m_priv->call_stack_view_is_visible = false;
@@ -2495,7 +2527,7 @@ DBGPerspective::set_show_variables_editor_view (bool a_show)
     } else {
         if (get_variables_editor_scrolled_win ().get_parent ()
             && m_priv->variables_editor_view_is_visible) {
-            LOG_D ("removing error view", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("removing error view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_variables_editor_scrolled_win ());
             m_priv->variables_editor_view_is_visible = false;

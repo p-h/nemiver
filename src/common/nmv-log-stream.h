@@ -175,9 +175,6 @@ public:
     LogStream& write (int a_msg,
                       const UString &a_domain=NMV_GENERAL_DOMAIN) ;
 
-    LogStream& write (unsigned long int a_msg,
-                      const UString &a_domain=NMV_GENERAL_DOMAIN) ;
-
     LogStream& write (double a_msg,
                       const UString &a_domain=NMV_GENERAL_DOMAIN) ;
 
@@ -201,10 +198,6 @@ public:
     /// \brief log an integer
     /// \param an_int the integer to log
     LogStream& operator<< (int an_int) ;
-
-    /// \brief log an unsigned long
-    /// \param an_int the integer to log
-    LogStream& operator<< (unsigned long an_int) ;
 
     /// \brief log a double
     /// \param the double to log

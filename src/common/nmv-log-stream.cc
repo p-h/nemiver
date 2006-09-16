@@ -118,14 +118,6 @@ public:
         return *this ;
     }
 
-    LogSink& operator<< (unsigned long int an_int)
-    {
-        if (!m_out) throw runtime_error ("underlying ostream not initialized") ;
-        Glib::Mutex::Lock lock (m_ostream_mutex) ;
-        *m_out << an_int ;
-        return *this ;
-    }
-
     LogSink& operator<< (double a_double)
     {
         if (!m_out) throw runtime_error ("underlying ostream not initialized") ;
@@ -439,24 +431,6 @@ LogStream::write (int a_msg, const UString &a_domain)
 }
 
 LogStream&
-LogStream::write (unsigned long int a_msg,
-                  const UString &a_domain)
-{
-    if (!m_priv || !m_priv->sink)
-        return *this ;
-
-    if (!m_priv->is_logging_allowed (a_domain))
-        return *this ;
-
-    *m_priv->sink << a_msg;
-    if (m_priv->sink->bad ()) {
-        cout << "write failed" ;
-        throw Exception ("write failed") ;
-    }
-    return *this ;
-}
-
-LogStream&
 LogStream::write (double a_msg,
                   const UString &a_domain)
 {
@@ -522,12 +496,6 @@ LogStream::operator<< (const UString &a_string)
 
 LogStream&
 LogStream::operator<< (int a_msg)
-{
-    return write (a_msg, m_priv->default_domains.front ()) ;
-}
-
-LogStream&
-LogStream::operator<< (unsigned long a_msg)
 {
     return write (a_msg, m_priv->default_domains.front ()) ;
 }

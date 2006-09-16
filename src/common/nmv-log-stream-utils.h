@@ -55,6 +55,10 @@
 #define LOG_MARKER_ERROR "|E|"
 #endif
 
+#ifndef LOG_MARKER_EXCEPTION
+#define LOG_MARKER_EXCEPTION "|X|"
+#endif
+
 #ifndef LOG_LEVEL_NORMAL___
 #define LOG_LEVEL_NORMAL___ nemiver::common::level_normal
 #endif
@@ -73,14 +77,27 @@ LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << HERE << message << "\n"
 LOG_STREAM.push_domain (domain) ; LOG (message) ; LOG_STREAM.pop_domain ();
 #endif
 
+#ifndef LOG_DD
+#define LOG_DD(message) LOG_D(message, NMV_DEFAULT_DOMAIN)
+#endif
+
 #ifndef LOG_ERROR
 #define LOG_ERROR(message) \
 LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_ERROR << HERE << message << "\n"
 #endif
 
+#ifndef LOG_EXCEPTION
+#define LOG_EXCEPTION(message) \
+LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_EXCEPTION << HERE << message << "\n"
+#endif
+
 #ifndef LOG_ERROR_D
 #define LOG_ERROR_D(message, domain) \
 LOG_STREAM.push_domain (domain) ; LOG_ERROR (message) ; LOG_STREAM.pop_domain() ;
+#endif
+
+#ifndef LOG_ERROR_DD
+#define LOG_ERROR_DD(message) LOG_ERROR_D (message, NMV_DEFAULT_DOMAIN)
 #endif
 
 #ifndef LOG_VERBOSE

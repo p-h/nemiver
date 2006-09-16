@@ -63,11 +63,17 @@ public:
     IDebuggerSafePtr debugger ;
     SafePtr<Gtk::TreeView> tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
-    SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
-    SafePtr<Gtk::TreeRowReference> global_variables_row_ref ;
-    std::map<UString, bool> local_vars_to_set ;
+    Gtk::TreeRowReference *local_variables_row_ref ;
+    Gtk::TreeRowReference *function_arguments_row_ref ;
+    Gtk::TreeRowReference *global_variables_row_ref ;
+    std::map<UString, IDebugger::VariableSafePtr> local_vars_to_set ;
+    std::map<UString, IDebugger::VariableSafePtr> function_arguments_to_set ;
+    std::map<UString, IDebugger::VariableSafePtr> global_vars_to_set ;
 
-    Priv (IDebuggerSafePtr &a_debugger)
+    Priv (IDebuggerSafePtr &a_debugger) :
+        local_variables_row_ref (NULL),
+        function_arguments_row_ref (NULL),
+        global_variables_row_ref (NULL)
     {
         THROW_IF_FAIL (a_debugger) ;
         debugger = a_debugger ;
@@ -108,10 +114,18 @@ public:
 
         it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
+        (*it)[get_variable_columns ().name] = _("function arguments");
+        function_arguments_row_ref =
+            new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)) ;
+        THROW_IF_FAIL (function_arguments_row_ref) ;
+
+        it = tree_store->append () ;
+        THROW_IF_FAIL (it) ;
         (*it)[get_variable_columns ().name] = _("global variables");
         global_variables_row_ref =
             new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)) ;
         THROW_IF_FAIL (global_variables_row_ref) ;
+
     }
 
     void set_a_variable_real (const IDebugger::VariableSafePtr &a_var,
@@ -127,10 +141,10 @@ public:
 
         (*cur_row_it)[get_variable_columns ().variable] = a_var ;
         (*cur_row_it)[get_variable_columns ().name] = a_var->name () ;
-        (*cur_row_it)[get_variable_columns ().type] = a_var->type () ;
         if (a_var->value () != "") {
-            (*cur_row_it)[get_variable_columns ().type] = a_var->value () ;
+            (*cur_row_it)[get_variable_columns ().value] = a_var->value () ;
         }
+        (*cur_row_it)[get_variable_columns ().type] = a_var->type () ;
         a_result = cur_row_it ;
     }
 
@@ -177,14 +191,31 @@ public:
         std::list<IDebugger::VariableSafePtr>::const_iterator it ;
         for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
             THROW_IF_FAIL ((*it)->name () != "") ;
-            local_vars_to_set[(*it)->name ()] = true ;
+            local_vars_to_set[(*it)->name ()] = *it ;
             debugger->print_variable_value ((*it)->name ()) ;
         }
+    }
+
+    void set_function_arguments
+                (const std::list<IDebugger::VariableSafePtr> &a_vars)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+        THROW_IF_FAIL (tree_store) ;
+        THROW_IF_FAIL (function_arguments_row_ref) ;
+
+        std::list<IDebugger::VariableSafePtr>::const_iterator it ;
+        for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
+            THROW_IF_FAIL ((*it)->name () != "") ;
+            function_arguments_to_set[(*it)->name ()] = *it ;
+            debugger->print_variable_value ((*it)->name ()) ;
+        }
+
     }
 
     void set_global_variables
                     (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
         THROW_IF_FAIL (tree_store) ;
         THROW_IF_FAIL (global_variables_row_ref) ;
 
@@ -195,6 +226,7 @@ public:
     void on_local_variables_listed_signal
                                 (const list<IDebugger::VariableSafePtr> &a_vars)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
         NEMIVER_TRY
 
         set_local_variables (a_vars) ;
@@ -202,10 +234,28 @@ public:
         NEMIVER_CATCH
     }
 
+    void on_frames_params_listed_signal
+            (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+        NEMIVER_TRY
+
+        map<int, list<IDebugger::VariableSafePtr> >::const_iterator it ;
+        it = a_frames_params.find (0) ;
+        if (it == a_frames_params.end ()) {return;}
+
+        set_function_arguments (it->second) ;
+
+        NEMIVER_CATCH
+    }
+
+
     void on_stopped_signal (const UString &a_str,
                             bool a_has_frame,
                             const IDebugger::Frame &a_frame)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+
         NEMIVER_TRY
 
         THROW_IF_FAIL (debugger) ;
@@ -222,31 +272,63 @@ public:
                                    const IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+
         NEMIVER_TRY
 
-        if (local_vars_to_set.empty ()) {return;}
-
-        std::map<UString, bool>::const_iterator it =
-                                    local_vars_to_set.find (a_var_name) ;
-        if (it == local_vars_to_set.end ()) {return ;}
-
         THROW_IF_FAIL (tree_store) ;
-        THROW_IF_FAIL (local_variables_row_ref) ;
 
-        Gtk::TreeModel::iterator row_it ;
-        LOG_D ("adding local variable '" << a_var_name << "to vars editor",
-               NMV_DEFAULT_DOMAIN) ;
-        set_a_variable
-            (a_var,
-             tree_store->get_iter (local_variables_row_ref->get_path ()),
-             row_it) ;
-        tree_view->expand_row (local_variables_row_ref->get_path (), false) ;
+        std::map<UString, IDebugger::VariableSafePtr>::const_iterator it, nil ;
+        std::map<UString, IDebugger::VariableSafePtr> *map_ptr = NULL ;
+        Gtk::TreeRowReference *row_ref = NULL ;
+
+        it = local_vars_to_set.find (a_var_name) ;
+        nil = local_vars_to_set.end () ;
+        row_ref = local_variables_row_ref ;
+        map_ptr = &local_vars_to_set ;
+
+        if (it == nil) {
+            it = function_arguments_to_set.find (a_var_name) ;
+            nil = function_arguments_to_set.end () ;
+            row_ref = function_arguments_row_ref ;
+            map_ptr = &function_arguments_to_set ;
+        }
+
+        if (it == nil) {
+            it = global_vars_to_set.find (a_var_name) ;
+            nil = global_vars_to_set.end () ;
+            row_ref = global_variables_row_ref ;
+            map_ptr = &global_vars_to_set ;
+        }
+
+        if (it == nil) {
+            LOG_DD ("variable '" << a_var_name
+                    << " does not belong in frame, arg vars or global vars") ;
+            return ;
+        }
+
+        THROW_IF_FAIL (map_ptr) ;
+        THROW_IF_FAIL (row_ref) ;
+
+        Gtk::TreeModel::iterator row_it =
+                                tree_store->get_iter (row_ref->get_path ()) ;
+
+        LOG_DD ("adding variable '" << a_var_name << " to vars editor") ;
+
+        a_var->type (it->second->type ()) ;
+        set_a_variable (a_var,
+                        tree_store->get_iter (row_ref->get_path ()),
+                        row_it) ;
+
+        map_ptr->erase (a_var_name) ;
+        tree_view->expand_row (row_ref->get_path (), false) ;
 
         NEMIVER_CATCH
     }
 
     void connect_to_debugger_signals ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+
         THROW_IF_FAIL (debugger) ;
         debugger->local_variables_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
@@ -254,6 +336,8 @@ public:
             (sigc::mem_fun (*this, &Priv::on_stopped_signal)) ;
         debugger->variable_value_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_variable_value_signal)) ;
+        debugger->frames_params_listed_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_frames_params_listed_signal)) ;
     }
 
 };//end class VarsEditor
