@@ -2517,7 +2517,10 @@ struct GDBEngine::Priv {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false ;
             }
-            THROW_IF_FAIL (a_input[cur] == '"') ;
+            if (a_input[cur] != '"') {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
         } else {
             UString value ;
             if (!parse_c_string (a_input, cur, cur, value)) {

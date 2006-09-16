@@ -1,3 +1,11 @@
+samedi 16 septembre 2006, 19:01:04 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	GDBEngine::Priv::parse_variable_value(): don't throw exeception
+	on parsing errors.
+	* tests/inout.cc: added this testing material prog to work on
+	target input/output handling.
+
 samedi 16 septembre 2006, 14:05:31 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:
