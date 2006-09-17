@@ -1026,12 +1026,11 @@ struct GDBEngine::Priv {
     Glib::Pid target_pid ;
     int gdb_stdout_fd ;
     int gdb_stderr_fd ;
-    int gdb_master_pty_fd ;
+    int master_pty_fd ;
     Glib::RefPtr<Glib::IOChannel> gdb_stdout_channel;
     Glib::RefPtr<Glib::IOChannel> gdb_stderr_channel ;
-    Glib::RefPtr<Glib::IOChannel> gdb_master_pty_channel;
+    Glib::RefPtr<Glib::IOChannel> master_pty_channel;
     UString gdb_stdout_buffer ;
-    UString gdb_master_pty_buffer ;
     UString gdb_stderr_buffer;
     list<IDebugger::Command> command_queue ;
     list<IDebugger::Command> queued_commands ;
@@ -1042,14 +1041,13 @@ struct GDBEngine::Priv {
         FILLING,
         FILLED
     };
-    InBufferStatus gdb_master_pty_buffer_status ;
     InBufferStatus gdb_stdout_buffer_status ;
     InBufferStatus error_buffer_status ;
     Glib::RefPtr<Glib::MainContext> loop_context ;
 
     list<OutputHandlerSafePtr> output_handlers ;
     sigc::signal<void> gdb_died_signal;
-    sigc::signal<void, const UString& > gdb_master_pty_signal;
+    sigc::signal<void, const UString& > master_pty_signal;
     sigc::signal<void, const UString& > gdb_stdout_signal;
     sigc::signal<void, const UString& > gdb_stderr_signal;
 
@@ -1129,14 +1127,18 @@ struct GDBEngine::Priv {
         return loop_context ;
     }
 
-    void on_gdb_pty_signal (const UString &a_buf)
+    void on_master_pty_signal (const UString &a_buf)
     {
+        LOG_D ("<debuggerpty>\n" << a_buf << "\n</debuggerpty>",
+               GDBMI_OUTPUT_DOMAIN) ;
         Output result (a_buf) ;
         pty_signal.emit (result) ;
     }
 
     void on_gdb_stderr_signal (const UString &a_buf)
     {
+        LOG_D ("<debuggerstderr>\n" << a_buf << "\n</debuggerstderr>",
+               GDBMI_OUTPUT_DOMAIN) ;
         Output result (a_buf) ;
         stderr_signal.emit (result) ;
     }
@@ -1197,14 +1199,13 @@ struct GDBEngine::Priv {
     Priv () :
         cwd ("."), gdb_pid (0), target_pid (0),
         gdb_stdout_fd (0), gdb_stderr_fd (0),
-        gdb_master_pty_fd (0),
-        gdb_master_pty_buffer_status (FILLED),
+        master_pty_fd (0),
         error_buffer_status (FILLED)
     {
         gdb_stdout_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_gdb_stdout_signal)) ;
-        gdb_master_pty_signal.connect (sigc::mem_fun
-                (*this, &Priv::on_gdb_pty_signal)) ;
+        master_pty_signal.connect (sigc::mem_fun
+                (*this, &Priv::on_master_pty_signal)) ;
         gdb_stderr_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_gdb_stderr_signal)) ;
     }
@@ -1219,9 +1220,9 @@ struct GDBEngine::Priv {
             gdb_stdout_channel->close () ;
             gdb_stdout_channel.clear () ;
         }
-        if (gdb_master_pty_channel) {
-            gdb_master_pty_channel->close () ;
-            gdb_master_pty_channel.clear () ;
+        if (master_pty_channel) {
+            master_pty_channel->close () ;
+            master_pty_channel.clear () ;
         }
         if (gdb_stderr_channel) {
             gdb_stderr_channel->close () ;
@@ -1255,14 +1256,14 @@ struct GDBEngine::Priv {
     {
         gdb_stdout_channel->set_encoding (a_charset) ;
         gdb_stderr_channel->set_encoding (a_charset) ;
-        gdb_master_pty_channel->set_encoding (a_charset) ;
+        master_pty_channel->set_encoding (a_charset) ;
     }
 
     bool launch_gdb_real (const vector<UString> a_argv)
     {
         RETURN_VAL_IF_FAIL (launch_program (a_argv,
                                             gdb_pid,
-                                            gdb_master_pty_fd,
+                                            master_pty_fd,
                                             gdb_stdout_fd,
                                             gdb_stderr_fd),
                             false) ;
@@ -1275,22 +1276,14 @@ struct GDBEngine::Priv {
         gdb_stderr_channel = Glib::IOChannel::create_from_fd (gdb_stderr_fd) ;
         THROW_IF_FAIL (gdb_stderr_channel) ;
 
-        gdb_master_pty_channel = Glib::IOChannel::create_from_fd
-                                                            (gdb_master_pty_fd) ;
-        THROW_IF_FAIL (gdb_master_pty_channel) ;
+        master_pty_channel = Glib::IOChannel::create_from_fd
+                                                            (master_pty_fd) ;
+        THROW_IF_FAIL (master_pty_channel) ;
 
         string charset ;
         Glib::get_charset (charset) ;
         set_communication_charset (charset) ;
 
-        attach_channel_to_loop_context_as_source
-                                (Glib::IO_IN | Glib::IO_PRI
-                                 | Glib::IO_HUP | Glib::IO_ERR,
-                                 sigc::mem_fun
-                                     (this,
-                                      &Priv::on_gdb_master_pty_has_data_signal),
-                                 gdb_master_pty_channel,
-                                 get_event_loop_context ()) ;
 
         attach_channel_to_loop_context_as_source
                                 (Glib::IO_IN | Glib::IO_PRI
@@ -1374,16 +1367,16 @@ struct GDBEngine::Priv {
     bool issue_command (const IDebugger::Command &a_command,
                         bool a_run_event_loops=false)
     {
-        if (!gdb_master_pty_channel) {
+        if (!master_pty_channel) {
             return false ;
         }
 
         LOG_D ("issuing command: '" << a_command.value () << "'",
                NMV_DEFAULT_DOMAIN) ;
 
-        if (gdb_master_pty_channel->write
+        if (master_pty_channel->write
                 (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
-            gdb_master_pty_channel->flush () ;
+            master_pty_channel->flush () ;
             if (a_run_event_loops) {
                 run_loop_iterations_real (-1) ;
             }
@@ -1395,64 +1388,6 @@ struct GDBEngine::Priv {
         return false ;
     }
 
-    bool on_gdb_master_pty_has_data_signal (Glib::IOCondition a_cond)
-    {
-        try {
-
-            RETURN_VAL_IF_FAIL (gdb_master_pty_channel, false) ;
-            if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
-                char buf[513] = {0} ;
-                gsize nb_read (0), CHUNK_SIZE(512) ;
-                Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
-                bool got_data (false) ;
-                while (true) {
-                    status = gdb_master_pty_channel->read (buf,
-                            CHUNK_SIZE,
-                            nb_read) ;
-                    if (status == Glib::IO_STATUS_NORMAL
-                            && nb_read && (nb_read <= CHUNK_SIZE)) {
-                        if (gdb_master_pty_buffer_status == FILLED) {
-                            gdb_master_pty_buffer.clear () ;
-                            gdb_master_pty_buffer_status = FILLING ;
-                        }
-                        std::string raw_str(buf, nb_read) ;
-                        UString tmp = Glib::locale_to_utf8 (raw_str) ;
-                        gdb_master_pty_buffer.append (tmp) ;
-                        UString::size_type len = gdb_master_pty_buffer.size () ;
-                        if (gdb_stdout_buffer[len - 1] == '\n'
-                                && gdb_master_pty_buffer[len - 2] == ' '
-                                && gdb_master_pty_buffer[len - 3] == ')'
-                                && gdb_master_pty_buffer[len - 4] == 'b'
-                                && gdb_master_pty_buffer[len - 5] == 'd'
-                                && gdb_master_pty_buffer[len - 6] == 'g'
-                                && gdb_master_pty_buffer[len - 7] == '(') {
-                            got_data = true ;
-                        }
-                    } else {
-                        break ;
-                    }
-                    nb_read = 0 ;
-                }
-                if (got_data) {
-                    gdb_master_pty_buffer_status = FILLED ;
-                    gdb_master_pty_signal.emit (gdb_master_pty_buffer) ;
-                    gdb_master_pty_buffer.clear () ;
-                }
-            }
-            if (a_cond & Glib::IO_HUP) {
-                LOG_ERROR ("Connection lost from master pty channel") ;
-                gdb_master_pty_channel.clear () ;
-                kill_gdb () ;
-                gdb_died_signal.emit () ;
-            }
-            if (a_cond & Glib::IO_ERR) {
-                LOG_ERROR ("Error over the wire") ;
-            }
-        } catch (exception &e) {
-        } catch (Glib::Error &e) {
-        }
-        return true ;
-    }
 
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
     {

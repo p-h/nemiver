@@ -70,7 +70,11 @@ launch_program (const std::vector<UString> &a_args,
     RETURN_VAL_IF_FAIL (pipe (stderr_pipes) == 0, false) ;
     //RETURN_VAL_IF_FAIL (pipe (stdin_pipes) == 0, false) ;
 
-    int pid  = forkpty (&master_pty_fd, NULL, NULL, NULL);
+    char pts_name[256]={0} ;
+    int pid  = forkpty (&master_pty_fd, pts_name, NULL, NULL);
+    LOG_DD ("process forked. pts_name: '"
+            << pts_name << "', pid: '" << pid << "'") ;
+
     //int pid  = fork () ;
     if (pid == 0) {
         //in the child process

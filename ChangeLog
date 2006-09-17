@@ -1,3 +1,11 @@
+dimanche 17 septembre 2006, 14:55:46 (UTC+0200) Dodji Seketeli
+
+	* sed.sh, sed2.sh: remove these from repository.
+	* src/dbgengine/nmv-gdb-engine.cc: did a bit of code cleanup.
+	* configure.ac: rely on libgtksourceview-1.0, version 0.1.0 now.
+	no more gtksourceviewmm-1.0
+	* tests/inout.cc: added some logs.
+
 samedi 16 septembre 2006, 19:01:04 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:
