@@ -1799,9 +1799,10 @@ DBGPerspective::open_file (const UString &a_path,
         mime_type = "text/x-c++" ;
     }
 
-    SourceLanguagesManager lang_manager ;
+    Glib::RefPtr<SourceLanguagesManager> lang_manager =
+                                    SourceLanguagesManager::create () ;
     Glib::RefPtr<SourceLanguage> lang =
-        lang_manager.get_language_from_mime_type (mime_type) ;
+        lang_manager->get_language_from_mime_type (mime_type) ;
 
     Glib::RefPtr<SourceBuffer> source_buffer = SourceBuffer::create (lang) ;
     THROW_IF_FAIL (source_buffer) ;

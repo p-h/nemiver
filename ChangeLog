@@ -1,3 +1,22 @@
+lundi 18 septembre 2006, 00:17:20 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: change this to reflect
+	  the API change in libgsvmm 0.1.0
+	* src/term/nmv-terminal.cc: started to hack up this small vte based
+	  terminal called nmvterm.
+	  The aim is not to have a full featured terminal but
+	  something light so that we can redirect targets' tty to it.
+	  I think I will need to code an ITerminal interface responsible
+	  to drive this terminal process from inside nemiver. I will
+	  also use Gtk::Socket/Plug to make sure nmvterm's widget show up
+	  in a widget embedded in a nemiver's debugger perspetive. Nice hacks
+	  to come.
+	* src/common/nmv-env.h: added NEMIVER_BEGIN_NAMESPACE and
+	  NEMIVER_AND_NAMESPACE macros to keep emacs users indentation support
+	  happy.
+	* configure.ac: check the availability of vte.
+
+
 dimanche 17 septembre 2006, 14:55:46 (UTC+0200) Dodji Seketeli
 
 	* sed.sh, sed2.sh: remove these from repository.

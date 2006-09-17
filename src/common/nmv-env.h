@@ -140,6 +140,16 @@ get_widget_from_glade (const UString &a_glade_file_name,
 }
 #endif
 
+#ifndef NEMIVER_BEGIN_NAMESPACE
+#define NEMIVER_BEGIN_NAMESPACE(name) namespace name {
+#endif
+
+
+#ifndef NEMIVER_END_NAMESPACE
+#define NEMIVER_END_NAMESPACE }
+#endif
+
+
 }//end namespace env
 }//end namespace common
 }//end namespace nemiver

@@ -1,4 +1,4 @@
-SUBDIRS=common dbdimpl dbgengine uicommon workbench DBGPerspective
+SUBDIRS=common dbdimpl dbgengine uicommon workbench DBGPerspective term
 
 bin_PROGRAMS=nemiver
 nemiver_SOURCES=main.cc

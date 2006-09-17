@@ -1,3 +1,4 @@
+//Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -22,7 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include <iostream>
-#include <gtkmm.h>
+#include <gtkmm/window.h>
 #include <libglademm.h>
 #include <glib/gi18n.h>
 #include "nmv-exception.h"
