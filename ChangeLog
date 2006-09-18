@@ -1,5 +1,19 @@
 2006-09-17  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/DBGPerspective/Makefile.am: added new LoadCoreDialog files
+	* src/DBGPerspective/glade/Makefile.am: Added new glade file for the new
+	Load Core Dialog window
+	* src/DBGPerspective/glade/loadcoredialog.glade: new file
+	* src/DBGPerspective/nmv-load-core-dialog.cc: new file
+	* src/DBGPerspective/nmv-load-core-dialog.h: new file
+	* src/DBGPerspective/nmv-dbg-perspective.cc: integrate the new Load Core
+	file dialog, update the menu text and accelerators for a couple of the
+	actions in the 'File' menu. (loading a core file is now Alt+F -> C).
+	* src/DBGPerspective/nmv-run-program-dialog.cc: removed an extra include
+	that is no longer needed
+
+2006-09-17  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* svn:ignore: Cleanup.  Ignore a bunch more files
 	* src/DBGPerspective/glade/runprogramdialog.glade.bak: I thought I removed
 	this last time

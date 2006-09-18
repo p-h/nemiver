@@ -34,6 +34,7 @@
 #include "nmv-ui-utils.h"
 #include "nmv-env.h"
 #include "nmv-run-program-dialog.h"
+#include "nmv-load-core-dialog.h"
 #include "nmv-proc-list-dialog.h"
 #include "nmv-ui-utils.h"
 #include "nmv-sess-mgr.h"
@@ -1177,7 +1178,7 @@ DBGPerspective::init_actions ()
         },
         {
             "ExecuteProgramMenuItemAction",
-            nil_stock_id,
+            Gtk::Stock::EXECUTE,
             _("_Execute..."),
             _("Execute a program"),
             sigc::mem_fun (*this,
@@ -1187,8 +1188,8 @@ DBGPerspective::init_actions ()
         {
             "LoadCoreMenuItemAction",
             nil_stock_id,
-            _("_Load core"),
-            _("Load a core file"),
+            _("Load _core file..."),
+            _("Load a core file from disk"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_load_core_file_action),
             ActionEntry::DEFAULT
@@ -1196,8 +1197,8 @@ DBGPerspective::init_actions ()
         {
             "AttachToProgramMenuItemAction",
             nil_stock_id,
-            _("_Attach ..."),
-            _("Attach to a running program"),
+            _("_Attach to running program..."),
+            _("Debug a program that's already running"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_attach_to_program_action),
             ActionEntry::DEFAULT
@@ -2003,29 +2004,18 @@ DBGPerspective::run ()
 void
 DBGPerspective::load_core_file ()
 {
-    Gtk::FileChooserDialog file_chooser (_("Choose the core file to load"),
-                                         Gtk::FILE_CHOOSER_ACTION_OPEN) ;
+    LoadCoreDialog dialog (plugin_path ()) ;
 
-    file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
-    file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
-    file_chooser.set_select_multiple (false) ;
-    file_chooser.set_show_hidden (true) ;
+    int result = dialog.run () ;
+    if (result != Gtk::RESPONSE_OK) {
+        return;
+    }
 
-    int result = file_chooser.run () ;
-
-    if (result != Gtk::RESPONSE_OK) {return;}
-
-    list<UString> paths = file_chooser.get_filenames () ;
-    if (paths.empty ()) {return;}
-    UString core_path, prog_path ;
-    core_path = paths.front () ;
-
-    file_chooser.set_title (_("Select the program that generated the core file"));
-    result = file_chooser.run () ;
-    if (result != Gtk::RESPONSE_OK) {return;}
-    paths = file_chooser.get_filenames () ;
-    if (paths.empty ()) {return;}
-    prog_path = paths.front () ;
+    UString prog_path, core_path ;
+    prog_path = dialog.program_name () ;
+    THROW_IF_FAIL (prog_path != "") ;
+    core_path = dialog.core_file () ;
+    THROW_IF_FAIL (core_path != "") ;
 
     load_core_file (prog_path, core_path) ;
 }

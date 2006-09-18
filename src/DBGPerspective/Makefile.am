@@ -20,6 +20,8 @@ nmv-source-editor.cc \
 nmv-source-editor.h \
 nmv-run-program-dialog.cc \
 nmv-run-program-dialog.h \
+nmv-load-core-dialog.cc \
+nmv-load-core-dialog.h \
 nmv-sess-mgr.cc \
 nmv-sess-mgr.h \
 nmv-proc-mgr.cc \
