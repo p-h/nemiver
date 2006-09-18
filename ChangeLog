@@ -1,3 +1,8 @@
+lundi 18 septembre 2006, 21:35:14 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-load-core-dialog.cc,h: put Jonner as the
+	author here.
+
 2006-09-17  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/Makefile.am: added new LoadCoreDialog files

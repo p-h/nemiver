@@ -1,4 +1,4 @@
-//Author: Dodji Seketeli
+//Author: Jonathon Jongsma
 /*
  *This file is part of the Nemiver project
  *
