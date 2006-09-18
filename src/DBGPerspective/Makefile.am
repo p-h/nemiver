@@ -33,7 +33,9 @@ nmv-call-stack.h \
 nmv-throbbler.cc \
 nmv-throbbler.h \
 nmv-vars-editor.cc \
-nmv-vars-editor.h
+nmv-vars-editor.h \
+nmv-terminal.h \
+nmv-terminal.cc
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version

@@ -1,3 +1,16 @@
+lundi 18 septembre 2006, 23:43:15 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	add a tty parameter to IDebugger::attach_to_program()
+        and IDebugger::load_program().
+	* src/DBGPerspective/nmv-terminal.cc,h:
+	added this small and simple terminal implementation based on vte.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: added a "target terminal"
+	in so that targets' terminal can be redirected there.
+	When a target needs some stdout/stdin interaction with the user,
+	it can now be done via that tab.
+
+
 lundi 18 septembre 2006, 21:35:14 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-load-core-dialog.cc,h: put Jonner as the

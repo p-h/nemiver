@@ -926,13 +926,15 @@ public:
 
     void load_program (const vector<UString> &a_argv,
                        const vector<UString> &a_source_search_dirs,
+                       const UString &a_tty_path,
                        bool a_run_event_loops) ;
 
     void load_core_file (const UString &a_prog_file,
                          const UString &a_core_path,
                          bool a_run_event_loop);
 
-    bool attach_to_program (unsigned int a_pid) ;
+    bool attach_to_program (unsigned int a_pid,
+                            const UString &a_tty_path) ;
 
     void init_output_handlers () ;
 
@@ -3722,6 +3724,7 @@ GDBEngine::~GDBEngine ()
 void
 GDBEngine::load_program (const vector<UString> &a_argv,
                          const vector<UString> &a_source_search_dirs,
+                         const UString &a_tty_path,
                          bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
@@ -3734,8 +3737,8 @@ GDBEngine::load_program (const vector<UString> &a_argv,
 
         IDebugger::Command command ;
 
-        command.value ("set breakpoint pending auto") ;
-        queue_command (command) ;
+        queue_command (Command ("set breakpoint pending auto")) ;
+        queue_command (Command ("set inferior-tty " + a_tty_path)) ;
     } else {
         UString args ;
         UString::size_type len (a_argv.size ()) ;
@@ -3751,6 +3754,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         queue_command (command, a_run_event_loops) ;
         command.value ("info proc") ;
         queue_command (command, a_run_event_loops) ;
+        queue_command (Command ("set inferior-tty " + a_tty_path)) ;
     }
 }
 
@@ -3765,11 +3769,13 @@ GDBEngine::load_core_file (const UString &a_prog_path,
     }
 
     vector<UString> src_dirs, gdb_opts ;
-    THROW_IF_FAIL (m_priv->launch_gdb_on_core_file (a_prog_path, a_core_path)) ;
+    THROW_IF_FAIL (m_priv->launch_gdb_on_core_file (a_prog_path,
+                                                    a_core_path)) ;
 }
 
 bool
-GDBEngine::attach_to_program (unsigned int a_pid)
+GDBEngine::attach_to_program (unsigned int a_pid,
+                              const UString &a_tty_path)
 {
     THROW_IF_FAIL (m_priv) ;
     vector<UString> args, source_search_dirs ;
@@ -3787,6 +3793,9 @@ GDBEngine::attach_to_program (unsigned int a_pid)
     }
     queue_command (Command ("attach " + UString::from_int (a_pid))) ;
     queue_command (Command ("info proc")) ;
+    if (a_tty_path != "") {
+        queue_command (Command ("tty " + a_tty_path)) ;
+    }
     return true ;
 }
 

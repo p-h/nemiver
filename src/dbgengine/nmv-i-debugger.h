@@ -331,13 +331,15 @@ public:
     virtual void load_program
                 (const vector<UString> &a_argv,
                  const vector<UString> &a_source_search_dirs,
+                 const UString &a_tty_path="",
                  bool a_run_event_loops=false) = 0;
 
     virtual void load_core_file (const UString &a_prog_file,
                                  const UString &a_core_file,
                                  bool a_run_event_loop=false) = 0;
 
-    virtual bool attach_to_program (unsigned int a_pid) = 0;
+    virtual bool attach_to_program (unsigned int a_pid,
+                                    const UString &a_tty_path="") = 0;
 
     virtual void do_continue (bool a_run_event_loops=false) = 0;
 

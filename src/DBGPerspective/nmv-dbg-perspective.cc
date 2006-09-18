@@ -42,6 +42,7 @@
 #include "nmv-call-stack.h"
 #include "nmv-throbbler.h"
 #include "nmv-vars-editor.h"
+#include "nmv-terminal.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -296,6 +297,10 @@ public:
 
     Gtk::ScrolledWindow& get_variables_editor_scrolled_win () ;
 
+    Terminal& get_terminal () ;
+
+    Gtk::ScrolledWindow& get_terminal_scrolled_win () ;
+
     void set_show_command_view (bool) ;
 
     void set_show_target_output_view (bool) ;
@@ -305,6 +310,8 @@ public:
     void set_show_call_stack_view (bool) ;
 
     void set_show_variables_editor_view (bool) ;
+
+    void set_show_terminal_view (bool) ;
 
     void add_text_to_command_view (const UString &a_text,
                                    bool a_no_repeat=false) ;
@@ -391,6 +398,7 @@ struct DBGPerspective::Priv {
     bool error_view_is_visible ;
     bool call_stack_view_is_visible ;
     bool variables_editor_view_is_visible ;
+    bool terminal_view_is_visible ;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
@@ -409,6 +417,9 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
     SafePtr<VarsEditor> variables_editor ;
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
+    SafePtr<Terminal> terminal ;
+    SafePtr<Gtk::ScrolledWindow> terminal_scrolled_win ;
+
     int current_page_num ;
     IDebuggerSafePtr debugger ;
     map<int, IDebugger::BreakPoint> breakpoints ;
@@ -430,6 +441,7 @@ struct DBGPerspective::Priv {
         error_view_is_visible (false),
         call_stack_view_is_visible (false),
         variables_editor_view_is_visible (false),
+        terminal_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0)
@@ -441,7 +453,8 @@ enum ViewsIndex{
     TARGET_OUTPUT_VIEW_INDEX,
     ERROR_VIEW_INDEX,
     CALL_STACK_VIEW_INDEX,
-    VARIABLES_VIEW_INDEX
+    VARIABLES_VIEW_INDEX,
+    TERMINAL_VIEW_INDEX
 };
 
 #ifndef CHECK_P_INIT
@@ -1013,6 +1026,7 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_error_view (false) ;
     set_show_call_stack_view (true) ;
     set_show_variables_editor_view (true) ;
+    set_show_terminal_view (true) ;
     m_priv->statuses_notebook->set_current_page (0) ;
 }
 
@@ -1360,6 +1374,8 @@ DBGPerspective::init_body ()
 
     get_call_stack_scrolled_win ().add (get_call_stack ().widget ()) ;
     get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
+
+    get_terminal_scrolled_win ().add (get_terminal ().widget ()) ;
 
     /*
     set_show_call_stack_view (true) ;
@@ -1947,7 +1963,8 @@ DBGPerspective::execute_program (const UString &a_prog,
     args.insert (args.begin (), a_prog) ;
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
 
-    dbg_engine->load_program (args, source_search_dirs) ;
+    dbg_engine->load_program (args, source_search_dirs,
+                              get_terminal ().slave_pts_name ()) ;
 
     dbg_engine->set_breakpoint ("main") ;
 
@@ -1988,7 +2005,8 @@ DBGPerspective::attach_to_program (unsigned int a_pid)
         ui_utils::display_warning ("You can not attach to nemiver itself") ;
         return ;
     }
-    if (!debugger ()->attach_to_program (a_pid)) {
+    if (!debugger ()->attach_to_program (a_pid,
+                                         get_terminal ().slave_pts_name ())) {
         ui_utils::display_warning ("You can not attach to the "
                                    "underlying debugger engine") ;
     }
@@ -2374,8 +2392,8 @@ DBGPerspective::get_variables_editor ()
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->variables_editor) {
         m_priv->variables_editor = new VarsEditor (debugger ()) ;
-        THROW_IF_FAIL (m_priv->variables_editor) ;
     }
+    THROW_IF_FAIL (m_priv->variables_editor) ;
     return *m_priv->variables_editor ;
 }
 
@@ -2384,14 +2402,39 @@ DBGPerspective::get_variables_editor_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->variables_editor_scrolled_win) {
-        m_priv->variables_editor_scrolled_win = new Gtk::ScrolledWindow () ;
+        m_priv->variables_editor_scrolled_win = new Gtk::ScrolledWindow ;
         m_priv->variables_editor_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
                                                      Gtk::POLICY_AUTOMATIC) ;
-        THROW_IF_FAIL (m_priv->variables_editor_scrolled_win) ;
     }
+    THROW_IF_FAIL (m_priv->variables_editor_scrolled_win) ;
     return *m_priv->variables_editor_scrolled_win ;
 }
 
+
+Terminal&
+DBGPerspective::get_terminal ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->terminal) {
+        m_priv->terminal = new Terminal ;
+    }
+    THROW_IF_FAIL (m_priv->terminal) ;
+    return *m_priv->terminal ;
+}
+
+Gtk::ScrolledWindow&
+DBGPerspective::get_terminal_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->terminal_scrolled_win) {
+        m_priv->terminal_scrolled_win = new Gtk::ScrolledWindow ;
+        THROW_IF_FAIL (m_priv->terminal_scrolled_win) ;
+        m_priv->terminal_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                   Gtk::POLICY_AUTOMATIC) ;
+    }
+    THROW_IF_FAIL (m_priv->terminal_scrolled_win) ;
+    return *m_priv->terminal_scrolled_win ;
+}
 
 void
 DBGPerspective::set_show_command_view (bool a_show)
@@ -2524,6 +2567,32 @@ DBGPerspective::set_show_variables_editor_view (bool a_show)
             m_priv->variables_editor_view_is_visible = false;
         }
         m_priv->variables_editor_view_is_visible = false;
+    }
+}
+
+void
+DBGPerspective::set_show_terminal_view (bool a_show)
+{
+    if (a_show) {
+        if (!get_terminal_scrolled_win ().get_parent ()
+            && m_priv->terminal_view_is_visible == false) {
+            get_terminal_scrolled_win ().show_all () ;
+            int page_num = m_priv->statuses_notebook->insert_page
+                                            (get_terminal_scrolled_win (),
+                                             _("Target terminal"),
+                                             TERMINAL_VIEW_INDEX) ;
+            m_priv->terminal_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page (page_num);
+        }
+    } else {
+        if (get_terminal_scrolled_win ().get_parent ()
+            && m_priv->terminal_view_is_visible) {
+            LOG_DD ("removing error view") ;
+            m_priv->statuses_notebook->remove_page
+                                        (get_terminal_scrolled_win ());
+            m_priv->terminal_view_is_visible = false;
+        }
+        m_priv->terminal_view_is_visible = false;
     }
 }
 
