@@ -1,5 +1,11 @@
 2006-09-17  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* svn:ignore: Cleanup.  Ignore a bunch more files
+	* src/DBGPerspective/glade/runprogramdialog.glade.bak: I thought I removed
+	this last time
+
+2006-09-17  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/DBGPerspective/glade/runprogramdialog.glade: Added new glade dialog
 	window from Baptiste Mille-Mathias.  Thanks!  Modified slightly to increase
 	width to fit a title.  Also, the environment variables portion of the dialog
