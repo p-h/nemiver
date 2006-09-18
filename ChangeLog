@@ -1,3 +1,16 @@
+2006-09-17  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/glade/runprogramdialog.glade: Added new glade dialog
+	window from Baptiste Mille-Mathias.  Thanks!  Modified slightly to increase
+	width to fit a title.  Also, the environment variables portion of the dialog
+	is hidden for now until we add support for setting environment variables.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: add "..." at the end of the
+	"Execute" menu item to make it more obvious that it will open a dialog
+	window instead of immediately perform an action.
+	* src/DBGPerspective/nmv-run-program-dialog.cc: integrate new glade file
+	* src/DBGPerspective/glade/runprogramdialog.glade.bak: removed
+	* src/DBGPerspective/glade/runprogramdialog.gladep.bak: removed
+
 lundi 18 septembre 2006, 00:17:20 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: change this to reflect

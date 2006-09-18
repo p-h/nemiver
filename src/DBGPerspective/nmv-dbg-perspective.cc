@@ -1178,7 +1178,7 @@ DBGPerspective::init_actions ()
         {
             "ExecuteProgramMenuItemAction",
             nil_stock_id,
-            _("_Execute"),
+            _("_Execute..."),
             _("Execute a program"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_execute_program_action),
