@@ -223,7 +223,6 @@ src/Makefile
     src/DBGPerspective/icons/Makefile
     src/DBGPerspective/sqlscripts/Makefile
     src/DBGPerspective/sqlscripts/sqlite/Makefile
-  src/term/Makefile
 glade/Makefile
 menus/Makefile
 tests/Makefile

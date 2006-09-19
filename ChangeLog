@@ -1,3 +1,7 @@
+mardi 19 septembre 2006, 08:30:06 (UTC+0200) Dodji Seketeli
+
+	* configure.ac, src/term: removed the src/temp directory
+
 lundi 18 septembre 2006, 23:43:15 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
