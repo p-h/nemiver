@@ -1,3 +1,15 @@
+2006-09-19  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/nmv-dialog.cc, src/DBGPerspective/nmv-dialog.h:
+	abstracted out a common base Dialog class for nemiver
+	* src/DBGPerspective/Makefile.am: add new base Dialog files
+	* src/DBGPerspective/nmv-load-core-dialog.cc,
+	src/DBGPerspective/nmv-load-core-dialog.h: inherit from Dialog
+	* src/DBGPerspective/nmv-proc-list-dialog.cc,
+	src/DBGPerspective/nmv-proc-list-dialog.h: inherit from Dialog
+	* src/DBGPerspective/nmv-run-program-dialog.cc,
+	src/DBGPerspective/nmv-run-program-dialog.h: inherit from Dialog
+
 mardi 19 septembre 2006, 08:30:06 (UTC+0200) Dodji Seketeli
 
 	* configure.ac, src/term: removed the src/temp directory

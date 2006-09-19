@@ -25,7 +25,7 @@
 #ifndef __NMV_PROC_LIST_DIALOG_H__
 #define __NMV_PROC_LIST_DIALOG_H__
 
-#include "nmv-object.h"
+#include "nmv-dialog.h"
 #include "nmv-safe-ptr-utils.h"
 #include "nmv-proc-mgr.h"
 
@@ -34,25 +34,27 @@ namespace common {
 }
 
 namespace nemiver {
-class ProcListDialog : public Object {
-    struct Priv ;
-    //non copyable
-    ProcListDialog (const ProcListDialog &) ;
-    ProcListDialog& operator= (const ProcListDialog &) ;
-
-    ProcListDialog () ;
-
-    SafePtr<Priv> m_priv ;
+class ProcListDialog : public Dialog {
 
 public:
 
     ProcListDialog (const UString &a_root_path,
                     IProcMgr &a_proc_mgr) ;
     virtual ~ProcListDialog () ;
+    virtual gint run () ;
 
-    gint run () ;
     bool has_selected_process () ;
     bool get_selected_process (IProcMgr::Process &a_proc/*out param*/) ;
+
+private:
+    void on_selection_changed_signal ();
+    void load_process_list ();
+
+    IProcMgr &proc_mgr ;
+    Gtk::TreeView *proclist_view ;
+    Glib::RefPtr<Gtk::ListStore> proclist_store ;
+    IProcMgr::Process selected_process ;
+    bool process_selected ;
 };//end class ProcListDialog
 }//end namespace nemiver
 

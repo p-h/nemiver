@@ -39,64 +39,21 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 
-struct LoadCoreDialog::Priv {
-    UString root_path ;
-    UString program_name ;
-    UString arguments ;
-    UString core_file ;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
-    SafePtr<Gtk::Dialog> dialog ;
-
-    void load_glade_file ()
-    {
-        vector<string> path_elems ;
-        path_elems.push_back (Glib::locale_from_utf8 (root_path)) ;
-        path_elems.push_back ("glade");
-        path_elems.push_back ("loadcoredialog.glade");
-        string glade_path = Glib::build_filename (path_elems) ;
-        if (!Glib::file_test (glade_path, Glib::FILE_TEST_IS_REGULAR)) {
-            THROW (UString ("could not find file ") + glade_path) ;
-        }
-        glade = Gnome::Glade::Xml::create (glade_path) ;
-        THROW_IF_FAIL (glade) ;
-        dialog = env::get_widget_from_glade<Gtk::Dialog> (glade,
-                                                          "loadcoredialog") ;
-        dialog->hide () ;
-    }
-
-};//end struct LoadCoreDialog::Priv
-
-LoadCoreDialog::LoadCoreDialog ()
+LoadCoreDialog::LoadCoreDialog (const UString &a_root_path) :
+    Dialog(a_root_path, "loadcoredialog.glade", "loadcoredialog")
 {
-    m_priv = new LoadCoreDialog::Priv ();
-    m_priv->load_glade_file () ;
-}
-
-LoadCoreDialog::LoadCoreDialog (const UString &a_root_path)
-{
-    m_priv = new LoadCoreDialog::Priv ();
-    m_priv->root_path = a_root_path ;
-    m_priv->load_glade_file () ;
     core_file (Glib::get_current_dir ()) ;
 }
 
 LoadCoreDialog::~LoadCoreDialog ()
 {
-    m_priv = NULL ;
-}
-
-int
-LoadCoreDialog::run ()
-{
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->dialog->run () ;
 }
 
 UString
 LoadCoreDialog::program_name () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+    THROW_IF_FAIL (glade) ;
+    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_executable") ;
     return chooser->get_filename () ;
 }
@@ -104,8 +61,8 @@ LoadCoreDialog::program_name () const
 void
 LoadCoreDialog::program_name (const UString &a_name)
 {
-    THROW_IF_FAIL (m_priv) ;
-    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+    THROW_IF_FAIL (glade) ;
+    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_executable") ;
     chooser->set_filename (a_name) ;
 }
@@ -113,9 +70,9 @@ LoadCoreDialog::program_name (const UString &a_name)
 UString
 LoadCoreDialog::core_file () const
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *chooser =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_corefile");
     return chooser->get_filename () ;
 }
@@ -123,9 +80,9 @@ LoadCoreDialog::core_file () const
 void
 LoadCoreDialog::core_file (const UString &a_dir)
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *chooser =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_corefile");
     chooser->set_filename (a_dir) ;
 }

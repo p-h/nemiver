@@ -1,4 +1,4 @@
-//Author: Dodji Seketeli
+//Author: Jonathon Jongsma
 /*
  *This file is part of the Nemiver project
  *
@@ -22,10 +22,10 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NEMIVER_RUN_PROGRAM_DIALOG_H__
-#define __NEMIVER_RUN_PROGRAM_DIALOG_H__
+#ifndef __NEMIVER_DIALOG_H__
+#define __NEMIVER_DIALOG_H__
 
-#include "nmv-dialog.h"
+#include "nmv-object.h"
 #include "nmv-safe-ptr-utils.h"
 
 namespace nemiver {
@@ -37,26 +37,32 @@ class UString ;
 using nemiver::common::UString ;
 using nemiver::common::SafePtr ;
 
-class RunProgramDialog : public Dialog {
+class Dialog : public common::Object {
+    //non copyable
+    Dialog (const Dialog&) ;
+    Dialog& operator= (const Dialog&) ;
 
+    //force to create on the stack
+    void* operator new (size_t) ;
+
+    Dialog () ;
 public:
 
-    RunProgramDialog (const UString &a_resource_root_path) ;
+    Dialog (const UString &a_resource_root_path,
+            const UString &a_glade_filename,
+            const UString &a_widget_name) ;
 
-    virtual ~RunProgramDialog () ;
+    virtual ~Dialog () ;
 
-    UString program_name () const ;
-    void program_name (const UString &a_name) ;
+    virtual gint run () ;
 
-    UString arguments () const ;
-    void arguments (const UString &a_args) ;
-
-    UString working_directory () const ;
-    void working_directory (const UString &) ;
-
+protected:
+    SafePtr<Gtk::Dialog> dialog ;
+    Glib::RefPtr<Gnome::Glade::Xml> glade ;
 };//end class nemiver
 
 }//end namespace nemiver
 
-#endif //__NEMIVER_RUN_PROGRAM_DIALOG_H__
+#endif //__NEMIVER_DIALOG_H__
+
 

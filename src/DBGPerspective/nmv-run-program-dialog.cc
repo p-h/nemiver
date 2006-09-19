@@ -40,64 +40,21 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 
-struct RunProgramDialog::Priv {
-    UString root_path ;
-    UString program_name ;
-    UString arguments ;
-    UString working_directory ;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
-    SafePtr<Gtk::Dialog> dialog ;
-
-    void load_glade_file ()
-    {
-        vector<string> path_elems ;
-        path_elems.push_back (Glib::locale_from_utf8 (root_path)) ;
-        path_elems.push_back ("glade");
-        path_elems.push_back ("runprogramdialog.glade");
-        string glade_path = Glib::build_filename (path_elems) ;
-        if (!Glib::file_test (glade_path, Glib::FILE_TEST_IS_REGULAR)) {
-            THROW (UString ("could not find file ") + glade_path) ;
-        }
-        glade = Gnome::Glade::Xml::create (glade_path) ;
-        THROW_IF_FAIL (glade) ;
-        dialog = env::get_widget_from_glade<Gtk::Dialog> (glade,
-                                                          "runprogramdialog") ;
-        dialog->hide () ;
-    }
-
-};//end struct RunProgramDialog::Priv
-
-RunProgramDialog::RunProgramDialog ()
+RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
+    Dialog(a_root_path, "runprogramdialog.glade", "runprogramdialog")
 {
-    m_priv = new RunProgramDialog::Priv ();
-    m_priv->load_glade_file () ;
-}
-
-RunProgramDialog::RunProgramDialog (const UString &a_root_path)
-{
-    m_priv = new RunProgramDialog::Priv ();
-    m_priv->root_path = a_root_path ;
-    m_priv->load_glade_file () ;
     working_directory (Glib::get_current_dir ()) ;
 }
 
 RunProgramDialog::~RunProgramDialog ()
 {
-    m_priv = NULL ;
-}
-
-int
-RunProgramDialog::run ()
-{
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->dialog->run () ;
 }
 
 UString
 RunProgramDialog::program_name () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    Gtk::FileChooserButton *fcb = env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+    THROW_IF_FAIL (glade) ;
+    Gtk::FileChooserButton *fcb = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_program") ;
     return fcb->get_filename () ;
 }
@@ -105,8 +62,8 @@ RunProgramDialog::program_name () const
 void
 RunProgramDialog::program_name (const UString &a_name)
 {
-    THROW_IF_FAIL (m_priv) ;
-    Gtk::FileChooserButton *fcb = env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+    THROW_IF_FAIL (glade) ;
+    Gtk::FileChooserButton *fcb = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_program") ;
     fcb->set_filename (a_name) ;
 }
@@ -114,8 +71,8 @@ RunProgramDialog::program_name (const UString &a_name)
 UString
 RunProgramDialog::arguments () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    Gtk::Entry *entry = env::get_widget_from_glade<Gtk::Entry> (m_priv->glade,
+    THROW_IF_FAIL (glade) ;
+    Gtk::Entry *entry = env::get_widget_from_glade<Gtk::Entry> (glade,
                                                                 "argumentsentry");
     return entry->get_text () ;
 }
@@ -123,8 +80,8 @@ RunProgramDialog::arguments () const
 void
 RunProgramDialog::arguments (const UString &a_args)
 {
-    THROW_IF_FAIL (m_priv) ;
-    Gtk::Entry *entry = env::get_widget_from_glade<Gtk::Entry> (m_priv->glade,
+    THROW_IF_FAIL (glade) ;
+    Gtk::Entry *entry = env::get_widget_from_glade<Gtk::Entry> (glade,
                                                                 "argumentsentry");
     entry->set_text (a_args) ;
 }
@@ -132,9 +89,9 @@ RunProgramDialog::arguments (const UString &a_args)
 UString
 RunProgramDialog::working_directory () const
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *fcb =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_workingdir");
     return fcb->get_filename () ;
 }
@@ -142,9 +99,9 @@ RunProgramDialog::working_directory () const
 void
 RunProgramDialog::working_directory (const UString &a_dir)
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *fcb =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (m_priv->glade,
+        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_workingdir");
     fcb->set_filename (a_dir) ;
 }

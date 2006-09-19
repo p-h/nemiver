@@ -25,7 +25,7 @@
 #ifndef __NEMIVER_LOAD_CORE_DIALOG_H__
 #define __NEMIVER_LOAD_CORE_DIALOG_H__
 
-#include "nmv-object.h"
+#include "nmv-dialog.h"
 #include "nmv-safe-ptr-utils.h"
 
 namespace nemiver {
@@ -37,25 +37,11 @@ class UString ;
 using nemiver::common::UString ;
 using nemiver::common::SafePtr ;
 
-class LoadCoreDialog : public common::Object {
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+class LoadCoreDialog : public Dialog {
 
-    //non copyable
-    LoadCoreDialog (const LoadCoreDialog&) ;
-    LoadCoreDialog& operator= (const LoadCoreDialog&) ;
-
-    //force to create on the stack
-    void* operator new (size_t) ;
-
-    LoadCoreDialog () ;
 public:
-
     LoadCoreDialog (const UString &a_resource_root_path) ;
-
     virtual ~LoadCoreDialog () ;
-
-    gint run () ;
 
     UString program_name () const ;
     void program_name (const UString &a_name) ;

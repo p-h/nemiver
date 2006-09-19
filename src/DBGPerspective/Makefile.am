@@ -18,6 +18,8 @@ nmv-dbg-perspective.cc \
 nmv-dbg-perspective.h \
 nmv-source-editor.cc \
 nmv-source-editor.h \
+nmv-dialog.cc \
+nmv-dialog.h \
 nmv-run-program-dialog.cc \
 nmv-run-program-dialog.h \
 nmv-load-core-dialog.cc \
