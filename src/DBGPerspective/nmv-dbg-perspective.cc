@@ -1202,7 +1202,7 @@ DBGPerspective::init_actions ()
         {
             "LoadCoreMenuItemAction",
             nil_stock_id,
-            _("Load _core file..."),
+            _("_Load core file..."),
             _("Load a core file from disk"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_load_core_file_action),

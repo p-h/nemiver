@@ -1,5 +1,10 @@
 2006-09-19  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/DBGPerspective/nmv-dbg-perspective.cc: switch back the accelerator for
+	loading a core file to "L" since "C" is already taken by "Close"
+
+2006-09-19  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/DBGPerspective/nmv-dialog.cc, src/DBGPerspective/nmv-dialog.h:
 	abstracted out a common base Dialog class for nemiver
 	* src/DBGPerspective/Makefile.am: add new base Dialog files
