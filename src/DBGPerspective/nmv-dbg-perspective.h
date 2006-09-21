@@ -74,10 +74,12 @@ public:
     virtual void execute_program () = 0;
 
     virtual void execute_program (const UString &a_prog_and_args,
+                                  const map<UString, UString> &a_env,
                                   const UString &a_cwd=".") = 0;
 
     virtual void execute_program (const UString &a_prog,
                                   const UString &a_args,
+                                  const map<UString, UString> &a_env,
                                   const UString &a_cwd=".") = 0;
 
     virtual void load_core_file () = 0;
@@ -129,7 +131,7 @@ public:
 
     virtual void add_text_to_target_output_view (const UString &a_text) = 0;
 
-    virtual void add_text_to_error_view (const UString &a_text) = 0;
+    virtual void add_text_to_log_view (const UString &a_text) = 0;
 
     virtual void set_where (const UString &a_uri, int line) = 0;
 

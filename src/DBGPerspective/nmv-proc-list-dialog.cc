@@ -152,7 +152,7 @@ ProcListDialog::ProcListDialog (const UString &a_root_path,
 gint ProcListDialog::run ()
 {
     load_process_list();
-    Dialog::run();
+    return Dialog::run();
 }
 
 ProcListDialog::~ProcListDialog ()

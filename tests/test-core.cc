@@ -128,7 +128,7 @@ main (int a_argc, char *a_argv[])
         debugger->console_message_signal ().connect
             (sigc::ptr_fun (&on_console_message_signal)) ;
 
-        debugger->error_message_signal ().connect
+        debugger->log_message_signal ().connect
             (sigc::ptr_fun (&on_error_message_signal)) ;
         //*********************************************
         //</connect to the events emited by the debugger>

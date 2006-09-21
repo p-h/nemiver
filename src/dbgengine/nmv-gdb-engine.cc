@@ -158,6 +158,8 @@ public:
         IDebugger::Frame m_frame ;
         long m_breakpoint_number ;
         long m_thread_id ;
+        UString m_signal_type ;
+        UString m_signal_meaning ;
 
     public:
 
@@ -244,6 +246,15 @@ public:
 
         long thread_id () const {return m_thread_id;}
         void thread_id (long a_in) {m_thread_id = a_in;}
+
+        const UString& signal_type () const {return m_signal_type;}
+        void signal_type (const UString &a_in) {m_signal_type = a_in;}
+
+        const UString& signal_meaning () const {return m_signal_meaning;}
+        void signal_meaning (const UString &a_in) {m_signal_meaning = a_in;}
+
+        bool has_signal () const {return m_signal_type != "";}
+
         /// @}
 
         void clear ()
@@ -256,6 +267,7 @@ public:
             m_frame.clear () ;
             m_breakpoint_number = 0 ;
             m_thread_id = 0 ;
+            m_signal_type.clear () ;
         }
     };//end class OutOfBandRecord
 
@@ -866,7 +878,7 @@ public:
 
     sigc::signal<void, const UString&>& target_output_message_signal () const ;
 
-    sigc::signal<void, const UString&>& error_message_signal () const ;
+    sigc::signal<void, const UString&>& log_message_signal () const ;
 
     sigc::signal<void, const UString&>& command_done_signal () const ;
 
@@ -898,6 +910,11 @@ public:
     sigc::signal<void, int>& got_proc_info_signal () const  ;
 
     sigc::signal<void>& running_signal () const ;
+
+    sigc::signal<void, const UString&, const UString&>&
+                                                signal_received_signal () const ;
+
+    sigc::signal<void, const UString&>& error_signal () const ;
 
     sigc::signal<void>& program_finished_signal () const ;
     //*************
@@ -935,6 +952,8 @@ public:
 
     bool attach_to_program (unsigned int a_pid,
                             const UString &a_tty_path) ;
+
+    void add_env_variables (const map<UString, UString> &a_vars) ;
 
     void init_output_handlers () ;
 
@@ -1062,7 +1081,7 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, const UString&> console_message_signal ;
     mutable sigc::signal<void, const UString&> target_output_message_signal;
 
-    mutable sigc::signal<void, const UString&> error_message_signal ;
+    mutable sigc::signal<void, const UString&> log_message_signal ;
 
     mutable sigc::signal<void, const UString&> command_done_signal ;
 
@@ -1093,6 +1112,10 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, int> got_proc_info_signal ;
 
     mutable sigc::signal<void> running_signal ;
+
+    mutable sigc::signal<void, const UString&, const UString&>
+                                                        signal_received_signal ;
+    mutable sigc::signal<void, const UString&> error_signal ;
 
     mutable sigc::signal<void> program_finished_signal ;
 
@@ -1373,8 +1396,7 @@ struct GDBEngine::Priv {
             return false ;
         }
 
-        LOG_D ("issuing command: '" << a_command.value () << "'",
-               NMV_DEFAULT_DOMAIN) ;
+        LOG_DD ("issuing command: '" << a_command.value () << "'") ;
 
         if (master_pty_channel->write
                 (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
@@ -2295,7 +2317,7 @@ struct GDBEngine::Priv {
                            << (int) cur_frame_level
                            << "', NB Params: "
                            << (int) cur_frame_args.size (),
-                           NMV_DEFAULT_DOMAIN) ;
+                           GDBMI_PARSING_DOMAIN) ;
                     all_frames_args[cur_frame_level] = cur_frame_args ;
                 } else {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2307,9 +2329,8 @@ struct GDBEngine::Priv {
 
         a_to = cur ;
         a_params = all_frames_args ;
-        LOG_D ("number of frames parsed: "
-               << (int)a_params.size (),
-               NMV_DEFAULT_DOMAIN) ;
+        LOG_D ("number of frames parsed: " << (int)a_params.size (),
+               GDBMI_PARSING_DOMAIN) ;
         return true;
     }
 
@@ -2865,9 +2886,9 @@ struct GDBEngine::Priv {
     }
 
     bool parse_stream_record (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            Output::StreamRecord &a_record)
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              Output::StreamRecord &a_record)
     {
         UString::size_type cur=a_from, end = a_input.size () ;
 
@@ -2942,13 +2963,19 @@ struct GDBEngine::Priv {
         return true;
     }
 
+    /// parse GDBMI async output that says that the debugger has
+    /// stopped.
+    /// the string looks like:
+    /// *stopped,reason="foo",var0="foo0",var1="foo1",frame={<a-frame>}
     bool parse_stopped_async_output (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            bool &a_got_frame,
-            IDebugger::Frame &a_frame,
-            map<UString, UString> &a_attrs)
+                                     UString::size_type a_from,
+                                     UString::size_type &a_to,
+                                     bool &a_got_frame,
+                                     IDebugger::Frame &a_frame,
+                                     map<UString, UString> &a_attrs)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
         UString::size_type cur=a_from, end=a_input.size () ;
 
         if (cur >= end) {return false;}
@@ -2999,7 +3026,7 @@ struct GDBEngine::Priv {
     }
 
     Output::OutOfBandRecord::StopReason str_to_stopped_reason
-    (const UString &a_str)
+                                                        (const UString &a_str)
     {
         if (a_str == "breakpoint-hit") {
             return Output::OutOfBandRecord::BREAKPOINT_HIT ;
@@ -3029,10 +3056,12 @@ struct GDBEngine::Priv {
     }
 
     bool parse_out_of_band_record (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            Output::OutOfBandRecord &a_record)
+                                   UString::size_type a_from,
+                                   UString::size_type &a_to,
+                                   Output::OutOfBandRecord &a_record)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
         UString::size_type cur=a_from, end = a_input.size () ;
         if (cur >= end) {
             LOG_PARSING_ERROR (a_input, cur) ;
@@ -3040,12 +3069,9 @@ struct GDBEngine::Priv {
         }
 
         Output::OutOfBandRecord record ;
-        if (   a_input[cur] == '~'
-                || a_input[cur] == '@'
-                || a_input[cur] == '&') {
+        if (a_input[cur] == '~' || a_input[cur] == '@' || a_input[cur] == '&') {
             Output::StreamRecord stream_record ;
-            if (!parse_stream_record (a_input, cur, cur,
-                        stream_record)) {
+            if (!parse_stream_record (a_input, cur, cur, stream_record)) {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false;
             }
@@ -3060,7 +3086,7 @@ struct GDBEngine::Priv {
             bool got_frame (false) ;
             IDebugger::Frame frame ;
             if (!parse_stopped_async_output (a_input, cur, cur,
-                        got_frame, frame, attrs)) {
+                                             got_frame, frame, attrs)) {
                 return false ;
             }
             record.is_stopped (true) ;
@@ -3074,6 +3100,8 @@ struct GDBEngine::Priv {
                 record.breakpoint_number (atoi (attrs["bkptno"].c_str ())) ;
             }
             record.thread_id (atoi (attrs["thread-id"].c_str ())) ;
+            record.signal_type (attrs["signal-name"]) ;
+            record.signal_meaning (attrs["signal-meaning"]) ;
         }
 
         while (cur < end && isspace (a_input[cur])) {++cur;}
@@ -3090,6 +3118,8 @@ struct GDBEngine::Priv {
                               UString::size_type &a_to,
                               Output::ResultRecord &a_record)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
         UString::size_type cur=a_from, end=a_input.size () ;
         if (cur == end) {
             LOG_PARSING_ERROR (a_input, cur) ;
@@ -3194,7 +3224,7 @@ fetch_gdbmi_result:
                     }
                 } else {
                     GDBMIResultSafePtr result ;
-                    if (!parse_result (a_input, cur, cur, result)) {
+                    if (!parse_result (a_input, cur, cur, result) || !result) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
                         LOG_D ("parsed unknown gdbmi result",
@@ -3224,17 +3254,24 @@ fetch_gdbmi_result:
             for (;cur < end && a_input[cur] != '\n';++cur) {}
         } else if (!a_input.compare (cur, 6, "^error")) {
             result_record.kind (Output::ResultRecord::ERROR) ;
-            cur += 6 ; if (cur >= end)
+            cur += 6 ;
+            CHECK_END (a_input, cur, end) ;
             if (cur < end && a_input[cur] == ',') {++cur ;}
-            if (cur >= end) {return false;}
+            CHECK_END (a_input, cur, end) ;
             if (!parse_attribute (a_input, cur, cur, name, value)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
                 return false;
             }
             if (name != "") {
+                LOG_DD ("got error with attribute: '"
+                        << name << "':'" << value << "'") ;
                 result_record.attrs ()[name] = value ;
+            } else {
+                LOG_ERROR ("weird, got error with no attribute. continuing.") ;
             }
             for (;cur < end && a_input[cur] != '\n';++cur) {}
         } else {
+            LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
@@ -3355,8 +3392,8 @@ struct OnStreamRecordHandler: OutputHandler{
         UString debugger_console, target_output, debugger_log ;
 
         for (iter = a_in.output ().out_of_band_records ().begin ();
-                iter != a_in.output ().out_of_band_records ().end ();
-                ++iter) {
+             iter != a_in.output ().out_of_band_records ().end ();
+             ++iter) {
             if (iter->has_stream_record ()) {
                 if (iter->stream_record ().debugger_console () != ""){
                     debugger_console +=
@@ -3380,7 +3417,7 @@ struct OnStreamRecordHandler: OutputHandler{
         }
 
         if (!debugger_log.empty ()) {
-            m_engine->error_message_signal ().emit (debugger_log) ;
+            m_engine->log_message_signal ().emit (debugger_log) ;
         }
 
     }
@@ -3559,7 +3596,7 @@ struct OnFramesListedHandler : OutputHandler {
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
             && (a_in.output ().result_record ().has_call_stack ())) {
-            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("handler selected") ;
             return true ;
         }
         return false ;
@@ -3586,7 +3623,7 @@ struct OnFramesParamsListedHandler : OutputHandler {
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
             && (a_in.output ().result_record ().has_frames_parameters ())) {
-            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("handler selected") ;
             return true ;
         }
         return false ;
@@ -3614,7 +3651,7 @@ struct OnInfoProcHandler : OutputHandler {
                 != Glib::ustring::npos)
             && (a_in.output ().has_out_of_band_record ())) {
 
-            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("handler selected") ;
             return true ;
         }
         return false ;
@@ -3626,7 +3663,7 @@ struct OnInfoProcHandler : OutputHandler {
 
         int pid=0 ;
         if (!m_engine->extract_proc_info (a_in.output (), pid)) {
-            LOG_D ("failed to extract proc info", NMV_DEFAULT_DOMAIN) ;
+            LOG_ERROR ("failed to extract proc info") ;
             return ;
         }
         THROW_IF_FAIL (pid) ;
@@ -3648,7 +3685,7 @@ struct OnLocalVariablesListedHandler : OutputHandler {
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
             && (a_in.output ().result_record ().has_local_variables ())) {
-            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("handler selected") ;
             return true ;
         }
         return false ;
@@ -3677,7 +3714,7 @@ struct OnVariableValueHandler : OutputHandler {
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
             && (a_in.output ().result_record ().has_variable_value ())) {
-            LOG_D ("handler selected", NMV_DEFAULT_DOMAIN) ;
+            LOG_DD ("handler selected") ;
             return true ;
         }
         return false ;
@@ -3703,6 +3740,70 @@ struct OnVariableValueHandler : OutputHandler {
                      a_in.output ().result_record ().variable_value ()) ;
     }
 };//struct OnVariableValueHandler
+
+struct OnSignalReceivedHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+    Output::OutOfBandRecord oo_record ;
+
+    OnSignalReceivedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (!a_in.output ().has_out_of_band_record ()) {
+            return false ;
+        }
+        list<Output::OutOfBandRecord>::const_iterator it ;
+        for (it = a_in.output ().out_of_band_records ().begin ();
+             it != a_in.output ().out_of_band_records ().end ();
+             ++it) {
+            if (it->stop_reason () == Output::OutOfBandRecord::SIGNAL_RECEIVED) {
+                oo_record = *it ;
+                LOG_DD ("output handler selected") ;
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        m_engine->signal_received_signal ().emit (oo_record.signal_type (),
+                                                  oo_record.signal_meaning ()) ;
+    }
+};//struct OnSignalReceivedHandler
+
+struct OnErrorHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnErrorHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::ERROR)) {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        m_engine->error_signal ().emit
+            (a_in.output ().result_record ().attrs ()["msg"]) ;
+    }
+};//struct OnErrorHandler
+
+
 //****************************
 //</GDBengine output handlers
 //***************************
@@ -3800,6 +3901,20 @@ GDBEngine::attach_to_program (unsigned int a_pid,
 }
 
 void
+GDBEngine::add_env_variables (const map<UString, UString> &a_vars)
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->is_gdb_running ()) ;
+
+    Command command ;
+    map<UString, UString>::const_iterator it ;
+    for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
+        command.value ("set environment " + it->first + " " + it->second) ;
+        queue_command (command) ;
+    }
+}
+
+void
 GDBEngine::init_output_handlers ()
 {
     m_priv->output_handlers.push_back
@@ -3822,6 +3937,10 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnLocalVariablesListedHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnVariableValueHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnSignalReceivedHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnErrorHandler (this))) ;
 }
 
 void
@@ -3876,9 +3995,9 @@ GDBEngine::target_output_message_signal () const
 }
 
 sigc::signal<void, const UString&>&
-GDBEngine::error_message_signal () const
+GDBEngine::log_message_signal () const
 {
-    return m_priv->error_message_signal ;
+    return m_priv->log_message_signal ;
 }
 
 sigc::signal<void, const UString&>&
@@ -3947,6 +4066,18 @@ GDBEngine::running_signal () const
     return m_priv->running_signal ;
 }
 
+sigc::signal<void, const UString&, const UString&>&
+GDBEngine::signal_received_signal () const
+{
+    return m_priv->signal_received_signal ;
+}
+
+sigc::signal<void, const UString&>&
+GDBEngine::error_signal () const
+{
+    return m_priv->error_signal ;
+}
+
 sigc::signal<void>&
 GDBEngine::program_finished_signal () const
 {
@@ -3985,7 +4116,7 @@ GDBEngine::on_got_proc_info_signal (int a_pid)
 {
     NEMIVER_TRY
 
-    LOG_D ("target pid: '" << (int) a_pid << "'", NMV_DEFAULT_DOMAIN) ;
+    LOG_DD ("target pid: '" << (int) a_pid << "'") ;
     m_priv->target_pid = a_pid ;
 
     NEMIVER_CATCH_NOX
@@ -4039,8 +4170,7 @@ GDBEngine::queue_command (const IDebugger::Command &a_command,
 {
     bool result (false) ;
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
-    LOG_D ("queuing command: '" << a_command.value () << "'",
-           NMV_DEFAULT_DOMAIN) ;
+    LOG_DD ("queuing command: '" << a_command.value () << "'") ;
     m_priv->queued_commands.push_back (a_command) ;
     if (m_priv->started_commands.empty ()) {
         result = m_priv->issue_command (*m_priv->queued_commands.begin (),
@@ -4069,7 +4199,7 @@ void
 GDBEngine::run (bool a_run_event_loops)
 {
     THROW_IF_FAIL (m_priv) ;
-    LOG_D ("sending -exec-run to gdb", NMV_DEFAULT_DOMAIN) ;
+    LOG_DD ("sending -exec-run to gdb") ;
     queue_command (Command ("-exec-run"), a_run_event_loops) ;
     queue_command (Command ("info proc"), a_run_event_loops) ;
 }
@@ -4301,7 +4431,7 @@ GDBEngine::extract_proc_info (Output &a_output, int &a_pid)
         pid += record[index];
         ++index ;
     }
-    LOG_D ("extracted PID: '" << pid << "'", NMV_DEFAULT_DOMAIN) ;
+    LOG_DD ("extracted PID: '" << pid << "'") ;
     a_pid = atoi (pid.c_str ()) ;
     return true ;
 }
@@ -4322,4 +4452,5 @@ NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance
 }
 
 }//end extern C
+
 

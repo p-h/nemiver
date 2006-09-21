@@ -149,13 +149,13 @@ private:
 
     void on_show_target_output_view_changed_signal (bool) ;
 
-    void on_show_error_view_changed_signal (bool) ;
+    void on_show_log_view_changed_signal (bool) ;
 
     void on_debugger_console_message_signal (const UString &a_msg) ;
 
     void on_debugger_target_output_message_signal (const UString &a_msg);
 
-    void on_debugger_error_message_signal (const UString &a_msg) ;
+    void on_debugger_log_message_signal (const UString &a_msg) ;
 
     void on_debugger_command_done_signal (const UString &a_command) ;
 
@@ -172,6 +172,11 @@ private:
     void on_frame_selected_signal (int, const IDebugger::Frame &) ;
 
     void on_debugger_running_signal () ;
+
+    void on_signal_received_by_target_signal (const UString &a_signal,
+                                              const UString &a_meaning) ;
+
+    void on_debugger_error_signal (const UString &a_msg) ;
     //************
     //</signal slots>
     //************
@@ -238,11 +243,14 @@ public:
     void execute_program () ;
 
     void execute_program (const UString &a_prog_and_args,
+                          const map<UString, UString> &a_env,
                           const UString &a_cwd=".") ;
 
     void execute_program (const UString &a_prog,
                           const UString &a_args,
+                          const map<UString, UString> &a_env,
                           const UString &a_cwd=".") ;
+
     void attach_to_program () ;
     void attach_to_program (unsigned int a_pid) ;
     void load_core_file () ;
@@ -285,9 +293,9 @@ public:
 
     Gtk::ScrolledWindow& get_target_output_view_scrolled_win () ;
 
-    Gtk::TextView& get_error_view () ;
+    Gtk::TextView& get_log_view () ;
 
-    Gtk::ScrolledWindow& get_error_view_scrolled_win () ;
+    Gtk::ScrolledWindow& get_log_view_scrolled_win () ;
 
     CallStack& get_call_stack () ;
 
@@ -305,7 +313,7 @@ public:
 
     void set_show_target_output_view (bool) ;
 
-    void set_show_error_view (bool) ;
+    void set_show_log_view (bool) ;
 
     void set_show_call_stack_view (bool) ;
 
@@ -318,7 +326,7 @@ public:
 
     void add_text_to_target_output_view (const UString &a_text) ;
 
-    void add_text_to_error_view (const UString &a_text) ;
+    void add_text_to_log_view (const UString &a_text) ;
 
     void set_where (const UString &a_path, int line) ;
 
@@ -328,7 +336,7 @@ public:
 
     sigc::signal<void, bool>& show_command_view_signal () ;
     sigc::signal<void, bool>& show_target_output_view_signal () ;
-    sigc::signal<void, bool>& show_error_view_signal () ;
+    sigc::signal<void, bool>& show_log_view_signal () ;
     sigc::signal<void, bool>& activated_signal () ;
     sigc::signal<void, bool>& attached_to_target_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
@@ -392,10 +400,10 @@ struct DBGPerspective::Priv {
     sigc::signal<void, bool> debugger_ready_signal;
     sigc::signal<void, bool> show_command_view_signal  ;
     sigc::signal<void, bool> show_target_output_view_signal  ;
-    sigc::signal<void, bool> show_error_view_signal ;
+    sigc::signal<void, bool> show_log_view_signal ;
     bool command_view_is_visible ;
     bool target_output_view_is_visible ;
-    bool error_view_is_visible ;
+    bool log_view_is_visible ;
     bool call_stack_view_is_visible ;
     bool variables_editor_view_is_visible ;
     bool terminal_view_is_visible ;
@@ -411,8 +419,8 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win ;
     SafePtr<Gtk::TextView> target_output_view;
     SafePtr<Gtk::ScrolledWindow> target_output_view_scrolled_win;
-    SafePtr<Gtk::TextView> error_view ;
-    SafePtr<Gtk::ScrolledWindow> error_view_scrolled_win ;
+    SafePtr<Gtk::TextView> log_view ;
+    SafePtr<Gtk::ScrolledWindow> log_view_scrolled_win ;
     SafePtr<CallStack> call_stack ;
     SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
     SafePtr<VarsEditor> variables_editor ;
@@ -438,7 +446,7 @@ struct DBGPerspective::Priv {
         workbench (NULL),
         command_view_is_visible (false),
         target_output_view_is_visible (false),
-        error_view_is_visible (false),
+        log_view_is_visible (false),
         call_stack_view_is_visible (false),
         variables_editor_view_is_visible (false),
         terminal_view_is_visible (false),
@@ -618,7 +626,7 @@ DBGPerspective::on_show_errors_action ()
                  ("/MenuBar/MenuBarAdditions/ViewMenu/ShowErrorsMenuItem")) ;
     THROW_IF_FAIL (action) ;
 
-    set_show_error_view (action->get_active ()) ;
+    set_show_log_view (action->get_active ()) ;
 
     NEMIVER_CATCH
 }
@@ -668,6 +676,7 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 
     NEMIVER_CATCH
 }
+
 
 void
 DBGPerspective::on_attached_to_target_signal (bool a_is_ready)
@@ -820,9 +829,9 @@ DBGPerspective::on_show_target_output_view_changed_signal (bool a_show)
 }
 
 void
-DBGPerspective::on_show_error_view_changed_signal (bool a_show)
+DBGPerspective::on_show_log_view_changed_signal (bool a_show)
 {
-    m_priv->error_view_is_visible = a_show ;
+    m_priv->log_view_is_visible = a_show ;
 
     Glib::RefPtr<Gtk::ToggleAction> action =
         Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
@@ -855,11 +864,11 @@ DBGPerspective::on_debugger_target_output_message_signal
 }
 
 void
-DBGPerspective::on_debugger_error_message_signal (const UString &a_msg)
+DBGPerspective::on_debugger_log_message_signal (const UString &a_msg)
 {
     NEMIVER_TRY
 
-    add_text_to_error_view (a_msg + "\n") ;
+    add_text_to_log_view (a_msg + "\n") ;
 
     NEMIVER_CATCH
 }
@@ -956,6 +965,30 @@ DBGPerspective::on_debugger_running_signal ()
     NEMIVER_CATCH
 }
 
+void
+DBGPerspective::on_signal_received_by_target_signal (const UString &a_signal,
+                                                     const UString &a_meaning)
+{
+    NEMIVER_TRY
+
+    debugger_ready_signal ().emit (true) ;
+    ui_utils::display_info (_("Target received a signal : ")
+                            + a_signal + ", " + a_meaning) ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_error_signal (const UString &a_msg)
+{
+    NEMIVER_TRY
+
+    debugger_ready_signal ().emit (true) ;
+    ui_utils::display_error (_("An error occured: ") + a_msg) ;
+
+    NEMIVER_CATCH
+}
+
 //****************************
 //</slots>
 //***************************
@@ -1023,7 +1056,7 @@ DBGPerspective::init_perspective_menu_entries ()
 {
     set_show_command_view (false) ;
     set_show_target_output_view (false) ;
-    set_show_error_view (false) ;
+    set_show_log_view (false) ;
     set_show_call_stack_view (true) ;
     set_show_variables_editor_view (true) ;
     set_show_terminal_view (true) ;
@@ -1368,9 +1401,9 @@ DBGPerspective::init_body ()
     get_target_output_view_scrolled_win ().add (*m_priv->target_output_view) ;
     m_priv->target_output_view->set_editable (false) ;
 
-    m_priv->error_view = new Gtk::TextView ;
-    get_error_view_scrolled_win ().add (*m_priv->error_view) ;
-    m_priv->error_view->set_editable (false) ;
+    m_priv->log_view = new Gtk::TextView ;
+    get_log_view_scrolled_win ().add (*m_priv->log_view) ;
+    m_priv->log_view->set_editable (false) ;
 
     get_call_stack_scrolled_win ().add (get_call_stack ().widget ()) ;
     get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
@@ -1402,8 +1435,8 @@ DBGPerspective::init_signals ()
             (*this, &DBGPerspective::on_show_command_view_changed_signal)) ;
     show_target_output_view_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_show_target_output_view_changed_signal));
-    show_error_view_signal ().connect (sigc::mem_fun
-            (*this, &DBGPerspective::on_show_error_view_changed_signal));
+    show_log_view_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_show_log_view_changed_signal));
     get_call_stack ().frame_selected_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
 
@@ -1418,8 +1451,8 @@ DBGPerspective::init_debugger_signals ()
     debugger ()->target_output_message_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_target_output_message_signal)) ;
 
-    debugger ()->error_message_signal ().connect (sigc::mem_fun
-            (*this, &DBGPerspective::on_debugger_error_message_signal)) ;
+    debugger ()->log_message_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_log_message_signal)) ;
 
     debugger ()->command_done_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_command_done_signal)) ;
@@ -1438,6 +1471,12 @@ DBGPerspective::init_debugger_signals ()
 
     debugger ()->running_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_running_signal)) ;
+
+    debugger ()->signal_received_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_signal_received_by_target_signal)) ;
+
+    debugger ()->error_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_error_signal)) ;
 }
 
 
@@ -1908,8 +1947,10 @@ void
 DBGPerspective::execute_session (ISessMgr::Session &a_session)
 {
     m_priv->session = a_session ;
+    map<UString, UString> env ;//TODO: get env from session
     execute_program (a_session.properties ()[PROGRAM_NAME],
                      a_session.properties ()[PROGRAM_ARGS],
+                     env,
                      a_session.properties ()[PROGRAM_CWD]) ;
     m_priv->reused_session = true ;
 }
@@ -1931,12 +1972,14 @@ DBGPerspective::execute_program ()
     cwd = dialog.working_directory () ;
     THROW_IF_FAIL (cwd != "") ;
 
-    execute_program (prog, args, cwd) ;
+    map<UString, UString> env ;//TODO: get env variables from the dialog
+    execute_program (prog, args, env, cwd) ;
     m_priv->reused_session = false ;
 }
 
 void
 DBGPerspective::execute_program (const UString &a_prog_and_args,
+                                 const map<UString, UString> &a_env,
                                  const UString &a_cwd)
 {
     vector<UString> argv = a_prog_and_args.split (" ") ;
@@ -1944,13 +1987,14 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
     vector<UString>::const_iterator end_iter = argv.end () ;
     ++iter ;
     UString prog_name=argv[0], args = UString::join (iter, end_iter);
-    execute_program (prog_name, args, a_cwd) ;
+    execute_program (prog_name, args, a_env, a_cwd) ;
     m_priv->reused_session = false ;
 }
 
 void
 DBGPerspective::execute_program (const UString &a_prog,
                                  const UString &a_args,
+                                 const map<UString, UString> &a_env,
                                  const UString &a_cwd)
 {
     NEMIVER_TRY
@@ -1965,6 +2009,8 @@ DBGPerspective::execute_program (const UString &a_prog,
 
     dbg_engine->load_program (args, source_search_dirs,
                               get_terminal ().slave_pts_name ()) ;
+
+    dbg_engine->add_env_variables (a_env) ;
 
     dbg_engine->set_breakpoint ("main") ;
 
@@ -2343,23 +2389,23 @@ DBGPerspective::get_target_output_view_scrolled_win ()
 }
 
 Gtk::TextView&
-DBGPerspective::get_error_view ()
+DBGPerspective::get_log_view ()
 {
-    THROW_IF_FAIL (m_priv && m_priv->error_view) ;
-    return *m_priv->error_view ;
+    THROW_IF_FAIL (m_priv && m_priv->log_view) ;
+    return *m_priv->log_view ;
 }
 
 Gtk::ScrolledWindow&
-DBGPerspective::get_error_view_scrolled_win ()
+DBGPerspective::get_log_view_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
-    if (!m_priv->error_view_scrolled_win) {
-        m_priv->error_view_scrolled_win = new Gtk::ScrolledWindow ;
-        m_priv->error_view_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+    if (!m_priv->log_view_scrolled_win) {
+        m_priv->log_view_scrolled_win = new Gtk::ScrolledWindow ;
+        m_priv->log_view_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
                                                      Gtk::POLICY_AUTOMATIC) ;
-        THROW_IF_FAIL (m_priv->error_view_scrolled_win) ;
+        THROW_IF_FAIL (m_priv->log_view_scrolled_win) ;
     }
-    return *m_priv->error_view_scrolled_win ;
+    return *m_priv->log_view_scrolled_win ;
 }
 
 CallStack&
@@ -2490,30 +2536,28 @@ DBGPerspective::set_show_target_output_view (bool a_show)
 }
 
 void
-DBGPerspective::set_show_error_view (bool a_show)
+DBGPerspective::set_show_log_view (bool a_show)
 {
     if (a_show) {
-        if (!get_error_view_scrolled_win ().get_parent ()
-            && m_priv->error_view_is_visible == false) {
-            get_error_view_scrolled_win ().show_all () ;
+        if (!get_log_view_scrolled_win ().get_parent ()
+            && m_priv->log_view_is_visible == false) {
+            get_log_view_scrolled_win ().show_all () ;
             int page_num =
                 m_priv->statuses_notebook->insert_page
-                    (get_error_view_scrolled_win (),
-                     _("Errors"),
-                     ERROR_VIEW_INDEX) ;
-            m_priv->error_view_is_visible = true ;
+                    (get_log_view_scrolled_win (), _("Logs"), ERROR_VIEW_INDEX) ;
+            m_priv->log_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
         }
     } else {
-        if (get_error_view_scrolled_win ().get_parent ()
-            && m_priv->error_view_is_visible) {
+        if (get_log_view_scrolled_win ().get_parent ()
+            && m_priv->log_view_is_visible) {
             LOG_DD ("removing error view") ;
             m_priv->statuses_notebook->remove_page
-                                        (get_error_view_scrolled_win ());
+                                        (get_log_view_scrolled_win ());
         }
-        m_priv->error_view_is_visible = false;
+        m_priv->log_view_is_visible = false;
     }
-    show_error_view_signal ().emit (a_show) ;
+    show_log_view_signal ().emit (a_show) ;
 }
 
 void
@@ -2647,13 +2691,13 @@ DBGPerspective::add_text_to_target_output_view (const UString &a_text)
 }
 
 void
-DBGPerspective::add_text_to_error_view (const UString &a_text)
+DBGPerspective::add_text_to_log_view (const UString &a_text)
 {
-    THROW_IF_FAIL (m_priv && m_priv->error_view) ;
-    m_priv->error_view->get_buffer ()->insert
-        (get_error_view ().get_buffer ()->end (), a_text) ;
+    THROW_IF_FAIL (m_priv && m_priv->log_view) ;
+    m_priv->log_view->get_buffer ()->insert
+        (get_log_view ().get_buffer ()->end (), a_text) ;
     static ScrollTextViewToEndClosure s_scroll_to_end_closure ;
-    s_scroll_to_end_closure.text_view = m_priv->error_view.get () ;
+    s_scroll_to_end_closure.text_view = m_priv->log_view.get () ;
     Glib::signal_idle ().connect (sigc::mem_fun
             (s_scroll_to_end_closure, &ScrollTextViewToEndClosure::do_exec)) ;
 }
@@ -2690,9 +2734,9 @@ DBGPerspective::show_target_output_view_signal ()
 }
 
 sigc::signal<void, bool>&
-DBGPerspective::show_error_view_signal ()
+DBGPerspective::show_log_view_signal ()
 {
-    return m_priv->show_error_view_signal ;
+    return m_priv->show_log_view_signal ;
 }
 
 }//end namespace nemiver

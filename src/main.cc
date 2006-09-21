@@ -223,7 +223,8 @@ main (int a_argc, char *a_argv[])
             LOG_D ("going to debug program: '"
                    << UString (gv_prog_arg) << "'\n",
                    NMV_DEFAULT_DOMAIN) ;
-            debug_persp->execute_program (UString (gv_prog_arg)) ;
+            map<UString, UString> env ;
+            debug_persp->execute_program (UString (gv_prog_arg), env) ;
         } else {
             cerr << "Could not find the DBGPerspective\n" ;
             return -1 ;

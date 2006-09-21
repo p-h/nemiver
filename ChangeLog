@@ -1,3 +1,27 @@
+mercredi 20 septembre 2006, 23:48:41 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	  detect when the target received a signal or an error.
+	  Add two new signals: IDebugger::signal_received_signal() and
+	  IDebugger:error_signal(). Renamed IDebugger::error_message_signal()
+	  into IDebugger::log_message_signal(). The later name reflects more
+	  what the signal is about. Did some logging cleanup. Fix the
+	  debugger error detection parsing code.
+	  Added a new IDebugger::add_env_variables() to support setting
+	  environment variables for running the target.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: notify the user whenever
+	  the target receives a signal or when the debugger engine itself gets
+	  and error. Also made the API change to prepare the support of
+	  setting environment variables for the target. Now everything is
+	  in place, we just need to get the enviroment variable values from
+	  the GUI.
+	* src/DBGPerspective/nmv-proc-list-dialog.cc:
+	  ProcListDialog::run(): fix a gdb warning: the function must return
+	  a value.
+	* src/main.cc: DBGPerspective::execute_program() now takes
+	  an environment variables map.
+
+
 2006-09-19  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: switch back the accelerator for

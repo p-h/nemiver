@@ -275,7 +275,7 @@ public:
     virtual sigc::signal<void, const UString&>&
                                  target_output_message_signal () const = 0 ;
 
-    virtual sigc::signal<void, const UString&>& error_message_signal () const = 0 ;
+    virtual sigc::signal<void, const UString&>& log_message_signal () const = 0 ;
 
     virtual sigc::signal<void, const UString&>& command_done_signal () const = 0;
 
@@ -310,7 +310,13 @@ public:
 
     virtual sigc::signal<void, int>& got_proc_info_signal () const = 0 ;
 
-    virtual sigc::signal<void>& running_signal () const = 0;
+    virtual sigc::signal<void>&
+                                                    running_signal () const = 0;
+
+    virtual sigc::signal<void, const UString&, const UString&>&
+                                            signal_received_signal () const = 0;
+
+    virtual sigc::signal<void, const UString&>& error_signal () const = 0 ;
 
     /// @}
 
@@ -340,6 +346,8 @@ public:
 
     virtual bool attach_to_program (unsigned int a_pid,
                                     const UString &a_tty_path="") = 0;
+
+    virtual void add_env_variables (const map<UString, UString> &a_vars) = 0;
 
     virtual void do_continue (bool a_run_event_loops=false) = 0;
 
