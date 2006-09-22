@@ -1,5 +1,10 @@
 2006-09-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* glade/workbench.glade.bak, glade/workbench.gladep.bak: more cleanup.
+	Removed some glade backup files from version control
+
+2006-09-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/workbench/Workbench.conf, src/workbench/Workbench.conf.in: remove
 	duplicate and unused configuration files for the workbench
 
