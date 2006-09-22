@@ -24,6 +24,7 @@
  */
 
 #include <vector>
+#include <iostream>
 #include <glib/gi18n.h>
 #include <libglademm.h>
 #include <gtkmm/dialog.h>
@@ -40,10 +41,31 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 
-RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
-    Dialog(a_root_path, "runprogramdialog.glade", "runprogramdialog")
+void RunProgramDialog::on_add_new_variable()
 {
+    // This will add a new blank row the the treeview for now.  Then the user
+    // can click in the new row and edit the cells to define environment
+    // variables.  There will be a better way to do this in the future, but I'm
+    // not sure how it will be done yet.
+    m_model->append();
+}
+
+RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
+    Dialog(a_root_path, "runprogramdialog.glade", "runprogramdialog"),
+    m_model(Gtk::ListStore::create(m_env_columns))
+{
+    THROW_IF_FAIL (glade) ;
     working_directory (Glib::get_current_dir ()) ;
+    m_treeview_environment = env::get_widget_from_glade<Gtk::TreeView> (glade,
+            "treeview_environment");
+    m_treeview_environment->set_model (m_model);
+    m_treeview_environment->append_column_editable ("Variable", m_env_columns.varname);
+    m_treeview_environment->append_column_editable ("Value", m_env_columns.value);
+
+    Gtk::Button* button = env::get_widget_from_glade<Gtk::Button> (glade,
+            "button_new_var");
+    THROW_IF_FAIL (button) ;
+    button->signal_clicked().connect(sigc::mem_fun(*this, &RunProgramDialog::on_add_new_variable));
 }
 
 RunProgramDialog::~RunProgramDialog ()
@@ -54,18 +76,18 @@ UString
 RunProgramDialog::program_name () const
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *fcb = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_program") ;
-    return fcb->get_filename () ;
+    return chooser->get_filename () ;
 }
 
 void
 RunProgramDialog::program_name (const UString &a_name)
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *fcb = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_program") ;
-    fcb->set_filename (a_name) ;
+    chooser->set_filename (a_name) ;
 }
 
 UString
@@ -90,20 +112,51 @@ UString
 RunProgramDialog::working_directory () const
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *fcb =
+    Gtk::FileChooserButton *chooser =
         env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_workingdir");
-    return fcb->get_filename () ;
+    return chooser->get_filename () ;
 }
 
 void
 RunProgramDialog::working_directory (const UString &a_dir)
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *fcb =
+    Gtk::FileChooserButton *chooser =
         env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_workingdir");
-    fcb->set_filename (a_dir) ;
+    chooser->set_filename (a_dir) ;
+}
+
+map<UString, UString>
+RunProgramDialog::environment_variables () const
+{
+    THROW_IF_FAIL (m_treeview_environment) ;
+    map<UString, UString> env_vars;
+    for (Gtk::TreeModel::iterator iter = m_model->children().begin();
+            iter != m_model->children().end(); ++iter)
+    {
+        // for some reason I have to explicitly convert from Glib::ustring to
+        // UString here or it won't compile
+        env_vars[UString((*iter)[m_env_columns.varname])] =
+            UString((*iter)[m_env_columns.value]);
+    }
+    return env_vars;
+}
+
+void
+RunProgramDialog::environment_variables (const map<UString, UString> &vars)
+{
+    THROW_IF_FAIL (m_treeview_environment) ;
+    // clear out the old data so we can set the new data
+    m_model->clear();
+    for (map<UString, UString>::const_iterator iter = vars.begin();
+            iter != vars.end(); ++iter)
+    {
+        Gtk::TreeModel::iterator treeiter = m_model->append();
+        (*treeiter)[m_env_columns.varname] = iter->first;
+        (*treeiter)[m_env_columns.value] = iter->second;
+    }
 }
 
 }//end namespace nemiver

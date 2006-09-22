@@ -1972,7 +1972,7 @@ DBGPerspective::execute_program ()
     cwd = dialog.working_directory () ;
     THROW_IF_FAIL (cwd != "") ;
 
-    map<UString, UString> env ;//TODO: get env variables from the dialog
+    map<UString, UString> env = dialog.environment_variables();
     execute_program (prog, args, env, cwd) ;
     m_priv->reused_session = false ;
 }

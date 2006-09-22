@@ -25,8 +25,11 @@
 #ifndef __NEMIVER_RUN_PROGRAM_DIALOG_H__
 #define __NEMIVER_RUN_PROGRAM_DIALOG_H__
 
+#include <map>
 #include "nmv-dialog.h"
 #include "nmv-safe-ptr-utils.h"
+#include <gtkmm/treeview.h>
+#include <gtkmm/liststore.h>
 
 namespace nemiver {
 
@@ -38,6 +41,19 @@ using nemiver::common::UString ;
 using nemiver::common::SafePtr ;
 
 class RunProgramDialog : public Dialog {
+
+    Gtk::TreeView* m_treeview_environment;
+
+    struct EnvVarModelColumns : public Gtk::TreeModel::ColumnRecord
+    {
+        // I tried using UString here, but it didn't want to compile... jmj
+        Gtk::TreeModelColumn<Glib::ustring> varname;
+        Gtk::TreeModelColumn<Glib::ustring> value;
+        EnvVarModelColumns() { add (varname); add (value); }
+    };
+    EnvVarModelColumns m_env_columns;
+    Glib::RefPtr<Gtk::ListStore> m_model;
+    void on_add_new_variable();
 
 public:
 
@@ -53,6 +69,9 @@ public:
 
     UString working_directory () const ;
     void working_directory (const UString &) ;
+
+    std::map<UString, UString> environment_variables () const;
+    void environment_variables (const std::map<UString, UString> &);
 
 };//end class nemiver
 

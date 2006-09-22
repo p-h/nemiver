@@ -1,3 +1,19 @@
+2006-09-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/glade/runprogramdialog.glade: Enable the environment
+	variables treeview
+	* src/DBGPerspective/nmv-run-program-dialog.cc, nmv-run-program-dialog.h:
+	Beginning implementation of the ability to set environment variables in the
+	"Execute" dialog.  It's a really bad user experience right now, but I
+	haven't decided on a final approach yet.  Currently there's an "Add" button
+	that will append an empty row onto the treeview of environment variables.
+	The User can then click on that blank row and edit the cells to define the
+	variable name and value.  This isn't very discoverable, because it's not
+	obvious that a new empty row has been added.  We need a better solution for
+	the UI.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: connect to dialog to get the
+	environment variables map
+
 mercredi 20 septembre 2006, 23:48:41 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
