@@ -1,5 +1,10 @@
 2006-09-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/workbench/Workbench.conf, src/workbench/Workbench.conf.in: remove
+	duplicate and unused configuration files for the workbench
+
+2006-09-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/DBGPerspective/glade/runprogramdialog.glade: Enable the environment
 	variables treeview
 	* src/DBGPerspective/nmv-run-program-dialog.cc, nmv-run-program-dialog.h:
