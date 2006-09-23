@@ -1,3 +1,13 @@
+2006-09-23  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/glade/runprogramdialog.glade: Moved the button for
+	adding a new environment variable beside the treeview.  Added a remove
+	button.
+	* src/DBGPerspective/nmv-run-program-dialog.cc,
+	src/DBGPerspective/nmv-run-program-dialog.h: connected the 'remove variable'
+	button actions and made it set sensitivity based on whether a row was
+	selected in the treeview
+
 samedi 23 septembre 2006, 18:09:37 (UTC+0200) Dodji Seketeli
 
 	* short-term-todo-list.txt: updated this a bit. Surprisingly, some

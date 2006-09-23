@@ -51,6 +51,31 @@ void RunProgramDialog::on_add_new_variable ()
             *m_treeview_environment->get_column (0), true);
 }
 
+void RunProgramDialog::on_remove_variable ()
+{
+    Gtk::TreeModel::iterator treeiter =
+        m_treeview_environment->get_selection ()->get_selected ();
+    if (treeiter)
+    {
+        m_model->erase(treeiter);
+    }
+}
+
+void RunProgramDialog::on_variable_selection_changed ()
+{
+    Gtk::Button* remove_button = env::get_widget_from_glade<Gtk::Button> (glade,
+            "button_remove_var");
+    THROW_IF_FAIL (remove_button) ;
+    if (m_treeview_environment->get_selection ()->count_selected_rows ())
+    {
+        remove_button->set_sensitive();
+    }
+    else
+    {
+        remove_button->set_sensitive(false);
+    }
+}
+
 RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
     Dialog(a_root_path, "runprogramdialog.glade", "runprogramdialog"),
     m_model(Gtk::ListStore::create(m_env_columns))
@@ -63,10 +88,20 @@ RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
     m_treeview_environment->append_column_editable (_("Name"), m_env_columns.varname);
     m_treeview_environment->append_column_editable (_("Value"), m_env_columns.value);
 
-    Gtk::Button* button = env::get_widget_from_glade<Gtk::Button> (glade,
-            "button_new_var");
-    THROW_IF_FAIL (button) ;
-    button->signal_clicked().connect(sigc::mem_fun(*this, &RunProgramDialog::on_add_new_variable));
+    Gtk::Button* add_button = env::get_widget_from_glade<Gtk::Button> (glade,
+            "button_add_var");
+    THROW_IF_FAIL (add_button) ;
+    add_button->signal_clicked().connect(sigc::mem_fun(*this, &RunProgramDialog::on_add_new_variable));
+
+    Gtk::Button* remove_button = env::get_widget_from_glade<Gtk::Button> (glade,
+            "button_remove_var");
+    THROW_IF_FAIL (remove_button) ;
+    remove_button->signal_clicked().connect(sigc::mem_fun(*this, &RunProgramDialog::on_remove_variable));
+
+    // we need to disable / enable sensitivity of the "Remove variable" button
+    // based on whether a variable is selected in the treeview.
+    m_treeview_environment->get_selection ()->signal_changed ().connect(
+            sigc::mem_fun(*this, &RunProgramDialog::on_variable_selection_changed));
 }
 
 RunProgramDialog::~RunProgramDialog ()

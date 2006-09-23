@@ -53,7 +53,9 @@ class RunProgramDialog : public Dialog {
     };
     EnvVarModelColumns m_env_columns;
     Glib::RefPtr<Gtk::ListStore> m_model;
-    void on_add_new_variable();
+    void on_add_new_variable ();
+    void on_remove_variable ();
+    void on_variable_selection_changed ();
 
 public:
 
