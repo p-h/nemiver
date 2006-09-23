@@ -7,13 +7,13 @@ That dialog can propose to open files to set the breakpoints.
 2) Display a nice "where-marker" for the cases where the classical "where-marker" (the arrow) and the breakpoint marker (the red circle)
    are on the same line. Today, this is not precisely handled so it looks very ugly.
 
-3) add support for loading core files and showing the stack trace.
-
-4) write a gdb command interpreter widget (prolly based on Gtk::TextView), using IDebugger. It should accept commands with the same syntax as the classical
+3) write a gdb command interpreter widget (prolly based on Gtk::TextView), using IDebugger. It should accept commands with the same syntax as the classical
    gdb syntax and call IDebugger in the background.
 
-5) write a local variables visualisation widget based on the new local variable listing api added to IDebugger. [started by Dodji.]
+4) finish the variable visualization widget so that it shows global variables as well.
 
-6) For the "load core" workflow: write a custom dialog asking the user to open
-the core file *and* the program that generated it. Maybe it would be nice to go
-look in the core file what program generated it, and propose some hints to the user.
+5) when the user clicks in the "markers region" of the source editor, that should set/unset a breakpoint on that line.
+
+6) Make what's in the "debug" menu show up in a contextual menu (the menu that pops up when the user right clicks on the source editor)
+
+7) Add IDebugger::state_changed () signal to notify when the debugger changes its states (RUNNING or READY, basically) .
