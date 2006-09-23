@@ -15,5 +15,3 @@ That dialog can propose to open files to set the breakpoints.
 5) when the user clicks in the "markers region" of the source editor, that should set/unset a breakpoint on that line.
 
 6) Make what's in the "debug" menu show up in a contextual menu (the menu that pops up when the user right clicks on the source editor)
-
-7) Add IDebugger::state_changed () signal to notify when the debugger changes its states (RUNNING or READY, basically) .
