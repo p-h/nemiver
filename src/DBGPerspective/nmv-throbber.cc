@@ -28,14 +28,14 @@
 #include <gdkmm/pixbufanimation.h>
 #include "nmv-exception.h"
 #include "nmv-ustring.h"
-#include "nmv-throbbler.h"
+#include "nmv-throbber.h"
 
 using namespace std ;
 using namespace nemiver::common ;
 
 namespace nemiver {
 
-class Throbbler::Priv {
+class Throbber::Priv {
     Priv () ;
 
 public:
@@ -61,7 +61,7 @@ public:
         path_elems.push_back (Glib::locale_from_utf8 (root_path)) ;
         path_elems.push_back ("icons") ;
         string base_dir = Glib::build_filename (path_elems) ;
-        string moving_gif_path = Glib::build_filename (base_dir, "throbbler.gif") ;
+        string moving_gif_path = Glib::build_filename (base_dir, "throbber.gif") ;
         if (!Glib::file_test (moving_gif_path, Glib::FILE_TEST_IS_REGULAR)) {
             THROW ("could not find file " + moving_gif_path) ;
         }
@@ -83,26 +83,26 @@ public:
         widget = new Gtk::Button () ;
         widget->set_image (*stopped_image) ;
     }
-};//end struct Throbbler::Priv
+};//end struct Throbber::Priv
 
-Throbbler::~Throbbler ()
+Throbber::~Throbber ()
 {
 }
 
-Throbbler::Throbbler (const UString &a_root_path)
+Throbber::Throbber (const UString &a_root_path)
 {
     m_priv = new Priv (a_root_path);
 }
 
-ThrobblerSafePtr
-Throbbler::create (const UString &a_root_path)
+ThrobberSafePtr
+Throbber::create (const UString &a_root_path)
 {
-    ThrobblerSafePtr result (new Throbbler (a_root_path)) ;
+    ThrobberSafePtr result (new Throbber (a_root_path)) ;
     return result ;
 }
 
 void
-Throbbler::start ()
+Throbber::start ()
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->widget) ;
@@ -112,13 +112,13 @@ Throbbler::start ()
 }
 
 bool
-Throbbler::is_started () const
+Throbber::is_started () const
 {
     return m_priv->is_started ;
 }
 
 void
-Throbbler::stop ()
+Throbber::stop ()
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->widget) ;
@@ -128,7 +128,7 @@ Throbbler::stop ()
 }
 
 void
-Throbbler::toggle_state ()
+Throbber::toggle_state ()
 {
     if (is_started ()) {
         stop () ;
@@ -138,7 +138,7 @@ Throbbler::toggle_state ()
 }
 
 Gtk::Widget&
-Throbbler::get_widget () const
+Throbber::get_widget () const
 {
     THROW_IF_FAIL (m_priv && m_priv->widget) ;
     return *m_priv->widget ;

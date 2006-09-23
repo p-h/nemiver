@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_THROBBLER_H__
-#define __NMV_THROBBLER_H__
+#ifndef __NMV_THROBBER_H__
+#define __NMV_THROBBER_H__
 
 #include <gtkmm/widget.h>
 #include "nmv-object.h"
@@ -37,26 +37,26 @@ using nemiver::common::ObjectUnref ;
 using nemiver::common::UString ;
 
 namespace nemiver {
-class Throbbler ;
-typedef SafePtr<Throbbler, ObjectRef, ObjectUnref> ThrobblerSafePtr ;
+class Throbber ;
+typedef SafePtr<Throbber, ObjectRef, ObjectUnref> ThrobberSafePtr ;
 
-class Throbbler : public Object {
+class Throbber : public Object {
     class Priv ;
     SafePtr<Priv> m_priv ;
 
-    Throbbler () ;
-    Throbbler (const UString &a_root_path) ;
+    Throbber () ;
+    Throbber (const UString &a_root_path) ;
 
 public:
-    virtual ~Throbbler ()  ;
-    static ThrobblerSafePtr create (const UString &a_root_path) ;
+    virtual ~Throbber ()  ;
+    static ThrobberSafePtr create (const UString &a_root_path) ;
     void start () ;
     bool is_started () const ;
     void stop () ;
     void toggle_state () ;
     Gtk::Widget& get_widget () const ;
-};//end class Throbbler
+};//end class Throbber
 
 }//end namespace nemiver
-#endif //__NMV_THROBBLER_H__
+#endif //__NMV_THROBBER_H__
 

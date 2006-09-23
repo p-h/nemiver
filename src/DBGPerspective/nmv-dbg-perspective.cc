@@ -40,7 +40,7 @@
 #include "nmv-sess-mgr.h"
 #include "nmv-date-utils.h"
 #include "nmv-call-stack.h"
-#include "nmv-throbbler.h"
+#include "nmv-throbber.h"
 #include "nmv-vars-editor.h"
 #include "nmv-terminal.h"
 
@@ -177,6 +177,8 @@ private:
                                               const UString &a_meaning) ;
 
     void on_debugger_error_signal (const UString &a_msg) ;
+
+    void on_debugger_state_changed_signal (IDebugger::State a_state) ;
     //************
     //</signal slots>
     //************
@@ -394,7 +396,7 @@ struct DBGPerspective::Priv {
     Gtk::Widget *contextual_menu ;
     IWorkbenchSafePtr workbench ;
     SafePtr<Gtk::HBox> toolbar ;
-    ThrobblerSafePtr throbbler ;
+    ThrobberSafePtr throbber ;
     sigc::signal<void, bool> activated_signal;
     sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
@@ -662,10 +664,10 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->debugger_ready_action_group) ;
-    THROW_IF_FAIL (m_priv->throbbler) ;
+    THROW_IF_FAIL (m_priv->throbber) ;
 
     if (a_is_ready) {
-        m_priv->throbbler->stop () ;
+        m_priv->throbber->stop () ;
         m_priv->debugger_ready_action_group->set_sensitive (true) ;
         m_priv->debugger_busy_action_group->set_sensitive (false) ;
         attached_to_target_signal ().emit (true) ;
@@ -878,7 +880,6 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command)
 {
     NEMIVER_TRY
     attached_to_target_signal ().emit (true) ;
-    debugger_ready_signal ().emit (true) ;
     NEMIVER_CATCH
 }
 
@@ -900,8 +901,6 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
 {
     NEMIVER_TRY
 
-    debugger_ready_signal ().emit (true) ;
-
     if (a_has_frame
         && a_frame.file_full_name () == ""
         && a_frame.file_name () != "") {
@@ -917,7 +916,6 @@ DBGPerspective::on_program_finished_signal ()
     NEMIVER_TRY
 
     unset_where () ;
-    debugger_ready_signal ().emit (false) ;
     attached_to_target_signal ().emit (true) ;
     display_info ("Program exited") ;
 
@@ -959,9 +957,8 @@ void
 DBGPerspective::on_debugger_running_signal ()
 {
     NEMIVER_TRY
-    debugger_ready_signal ().emit (false) ;
-    THROW_IF_FAIL (m_priv->throbbler) ;
-    m_priv->throbbler->start () ;
+    THROW_IF_FAIL (m_priv->throbber) ;
+    m_priv->throbber->start () ;
     NEMIVER_CATCH
 }
 
@@ -971,7 +968,6 @@ DBGPerspective::on_signal_received_by_target_signal (const UString &a_signal,
 {
     NEMIVER_TRY
 
-    debugger_ready_signal ().emit (true) ;
     ui_utils::display_info (_("Target received a signal : ")
                             + a_signal + ", " + a_meaning) ;
 
@@ -983,8 +979,21 @@ DBGPerspective::on_debugger_error_signal (const UString &a_msg)
 {
     NEMIVER_TRY
 
-    debugger_ready_signal ().emit (true) ;
     ui_utils::display_error (_("An error occured: ") + a_msg) ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
+{
+    NEMIVER_TRY
+
+    if (a_state == IDebugger::READY) {
+        debugger_ready_signal ().emit (true) ;
+    } else {
+        debugger_ready_signal ().emit (false) ;
+    }
 
     NEMIVER_CATCH
 }
@@ -1343,10 +1352,10 @@ DBGPerspective::init_toolbar ()
 {
     add_perspective_toolbar_entries () ;
 
-    m_priv->throbbler = Throbbler::create (plugin_path ()) ;
+    m_priv->throbber = Throbber::create (plugin_path ()) ;
     m_priv->toolbar = new Gtk::HBox ;
     THROW_IF_FAIL (m_priv->toolbar) ;
-    m_priv->toolbar->pack_end (m_priv->throbbler->get_widget (), Gtk::PACK_SHRINK) ;
+    m_priv->toolbar->pack_end (m_priv->throbber->get_widget (), Gtk::PACK_SHRINK) ;
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
             (m_priv->workbench->get_ui_manager ()->get_widget ("/ToolBar")) ;
     THROW_IF_FAIL (glade_toolbar) ;
@@ -1477,6 +1486,9 @@ DBGPerspective::init_debugger_signals ()
 
     debugger ()->error_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_error_signal)) ;
+
+    debugger ()->state_changed_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_state_changed_signal)) ;
 }
 
 
@@ -2017,7 +2029,6 @@ DBGPerspective::execute_program (const UString &a_prog,
     dbg_engine->run () ;
 
     attached_to_target_signal ().emit (true) ;
-    debugger_ready_signal ().emit (true) ;
 
     m_priv->prog_name = a_prog ;
     m_priv->prog_args = a_args ;
@@ -2062,7 +2073,6 @@ void
 DBGPerspective::run ()
 {
     debugger ()->run () ;
-    debugger_ready_signal ().emit (false) ;
 }
 
 void
@@ -2105,28 +2115,24 @@ void
 DBGPerspective::step_over ()
 {
     debugger ()->step_over () ;
-    debugger_ready_signal ().emit (false) ;
 }
 
 void
 DBGPerspective::step_into ()
 {
     debugger ()->step_in () ;
-    debugger_ready_signal ().emit (false) ;
 }
 
 void
 DBGPerspective::step_out ()
 {
     debugger ()->step_out () ;
-    debugger_ready_signal ().emit (false) ;
 }
 
 void
 DBGPerspective::do_continue ()
 {
     debugger ()->do_continue () ;
-    debugger_ready_signal ().emit (false) ;
 }
 
 void

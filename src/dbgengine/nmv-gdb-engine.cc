@@ -917,6 +917,8 @@ public:
     sigc::signal<void, const UString&>& error_signal () const ;
 
     sigc::signal<void>& program_finished_signal () const ;
+
+    sigc::signal<void, IDebugger::State>& state_changed_signal () const;
     //*************
     //</signals>
     //*************
@@ -1118,6 +1120,8 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, const UString&> error_signal ;
 
     mutable sigc::signal<void> program_finished_signal ;
+
+    mutable sigc::signal<void, IDebugger::State> state_changed_signal ;
 
     //***********************
     //</GDBEngine attributes>
@@ -1407,6 +1411,11 @@ struct GDBEngine::Priv {
             THROW_IF_FAIL (started_commands.size () <= 1) ;
 
             started_commands.push_back (a_command) ;
+
+            //usually, when we send a command to the debugger,
+            //it becomes busy (in a running state), untill it gets
+            //back to us saying the converse.
+            state_changed_signal.emit (IDebugger::RUNNING) ;
             return true ;
         }
         return false ;
@@ -3482,7 +3491,8 @@ struct OnBreakPointHandler: OutputHandler {
             }
         } else if (has_breaks){
             m_engine->breakpoints_set_signal ().emit
-            (a_in.output ().result_record ().breakpoints ()) ;
+                            (a_in.output ().result_record ().breakpoints ()) ;
+            m_engine->state_changed_signal ().emit (IDebugger::READY) ;
         }
     }
 };//end struct OnBreakPointHandler
@@ -3518,18 +3528,24 @@ struct OnStoppedHandler: OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
-        THROW_IF_FAIL (m_is_stopped
-                && m_engine) ;
+        THROW_IF_FAIL (m_is_stopped && m_engine) ;
+
         m_engine->stopped_signal ().emit
                     (m_out_of_band_record.stop_reason_as_str (),
                      m_out_of_band_record.has_frame (),
                      m_out_of_band_record.frame ()) ;
+
         UString reason = m_out_of_band_record.stop_reason_as_str () ;
 
         if (reason == "exited-signalled"
             || reason == "exited-normally"
             || reason == "exited") {
+
             m_engine->program_finished_signal ().emit () ;
+
+            m_engine->state_changed_signal ().emit (IDebugger::PROGRAM_EXITED) ;
+        } else {
+            m_engine->state_changed_signal ().emit (IDebugger::READY) ;
         }
     }
 };//end struct OnStoppedHandler
@@ -3555,6 +3571,7 @@ struct OnCommandDoneHandler : OutputHandler {
     void do_handle (CommandAndOutput &a_in)
     {
         m_engine->command_done_signal ().emit (a_in.command ().value ()) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnCommandDoneHandler
 
@@ -3606,6 +3623,7 @@ struct OnFramesListedHandler : OutputHandler {
     {
         m_engine->frames_listed_signal ().emit
             (a_in.output ().result_record ().call_stack ()) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnFramesListedHandler
 
@@ -3633,6 +3651,7 @@ struct OnFramesParamsListedHandler : OutputHandler {
     {
         m_engine->frames_params_listed_signal ().emit
             (a_in.output ().result_record ().frames_parameters ()) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnFramesParamsListedHandler
 
@@ -3668,6 +3687,7 @@ struct OnInfoProcHandler : OutputHandler {
         }
         THROW_IF_FAIL (pid) ;
         m_engine->got_proc_info_signal ().emit (pid) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnInfoProcHandler
 
@@ -3697,6 +3717,7 @@ struct OnLocalVariablesListedHandler : OutputHandler {
 
         m_engine->local_variables_listed_signal ().emit
             (a_in.output ().result_record ().local_variables ()) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnLocalVariablesListedHandler
 
@@ -3738,6 +3759,7 @@ struct OnVariableValueHandler : OutputHandler {
         m_engine->variable_value_signal ().emit
                     (a_in.command ().tag1 (),
                      a_in.output ().result_record ().variable_value ()) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnVariableValueHandler
 
@@ -3773,6 +3795,7 @@ struct OnSignalReceivedHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->signal_received_signal ().emit (oo_record.signal_type (),
                                                   oo_record.signal_meaning ()) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnSignalReceivedHandler
 
@@ -3800,6 +3823,7 @@ struct OnErrorHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->error_signal ().emit
             (a_in.output ().result_record ().attrs ()["msg"]) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnErrorHandler
 
@@ -4084,6 +4108,12 @@ GDBEngine::program_finished_signal () const
     return m_priv->program_finished_signal ;
 }
 
+sigc::signal<void, IDebugger::State>&
+GDBEngine::state_changed_signal () const
+{
+    return m_priv->state_changed_signal ;
+}
+
 //******************
 //<signal handlers>
 //******************
@@ -4190,16 +4220,16 @@ GDBEngine::busy () const
 void
 GDBEngine::do_continue (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    LOG_D ("sending -exec-continue to gdb", NMV_DEFAULT_DOMAIN) ;
     queue_command (Command ("-exec-continue"), a_run_event_loops) ;
 }
 
 void
 GDBEngine::run (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    LOG_DD ("sending -exec-run to gdb") ;
     queue_command (Command ("-exec-run"), a_run_event_loops) ;
     queue_command (Command ("info proc"), a_run_event_loops) ;
 }
@@ -4207,6 +4237,7 @@ GDBEngine::run (bool a_run_event_loops)
 bool
 GDBEngine::stop (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->is_gdb_running ()) {
         LOG_ERROR_D ("GDB is not running", NMV_DEFAULT_DOMAIN) ;
@@ -4218,6 +4249,7 @@ GDBEngine::stop (bool a_run_event_loops)
 void
 GDBEngine::step_in (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-exec-step"), a_run_event_loops) ;
 }
@@ -4225,6 +4257,7 @@ GDBEngine::step_in (bool a_run_event_loops)
 void
 GDBEngine::step_out (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-exec-finish"), a_run_event_loops) ;
 }
@@ -4232,15 +4265,17 @@ GDBEngine::step_out (bool a_run_event_loops)
 void
 GDBEngine::step_over (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-exec-next"), a_run_event_loops) ;
 }
 
 void
 GDBEngine::continue_to_position (const UString &a_path,
-        gint a_line_num,
-        bool a_run_event_loops)
+                                 gint a_line_num,
+                                 bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-exec-until "
                 + a_path
@@ -4253,6 +4288,7 @@ GDBEngine::set_breakpoint (const UString &a_path,
                            gint a_line_num,
                            bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     //here, don't use the gdb/mi format, because only the cmd line
     //format supports the 'set breakpoint pending' option that lets
@@ -4270,6 +4306,7 @@ GDBEngine::set_breakpoint (const UString &a_path,
 void
 GDBEngine::list_breakpoints (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-break-list"), a_run_event_loops) ;
 }
@@ -4295,6 +4332,7 @@ void
 GDBEngine::set_breakpoint (const UString &a_func_name,
                            bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-break-insert " + a_func_name), a_run_event_loops) ;
 }
@@ -4320,6 +4358,7 @@ GDBEngine::delete_breakpoint (const UString &a_path,
                               gint a_line_num,
                               bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     queue_command (Command ("-break-delete "
                 + a_path
                 + ":"
@@ -4329,6 +4368,7 @@ GDBEngine::delete_breakpoint (const UString &a_path,
 void
 GDBEngine::delete_breakpoint (gint a_break_num, bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     queue_command (Command ("-break-delete "
                 + UString::from_int (a_break_num)), a_run_event_loops) ;
 }
@@ -4336,6 +4376,7 @@ GDBEngine::delete_breakpoint (gint a_break_num, bool a_run_event_loops)
 void
 GDBEngine::list_frames (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     queue_command (Command ("-stack-list-frames" ), a_run_event_loops) ;
 }
 
@@ -4344,6 +4385,7 @@ GDBEngine::list_frames_arguments (int a_low_frame,
                                   int a_high_frame,
                                   bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_low_frame < 0 || a_high_frame < 0) {
         queue_command (Command ("-stack-list-arguments 1" ), a_run_event_loops) ;
     } else {
@@ -4358,6 +4400,7 @@ GDBEngine::list_frames_arguments (int a_low_frame,
 void
 GDBEngine::list_local_variables (bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     Command command ("-stack-list-locals 2") ;
     queue_command (command, a_run_event_loops) ;
 }
@@ -4366,6 +4409,7 @@ void
 GDBEngine::evaluate_expression (const UString &a_expr,
                                 bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_expr == "") {return;}
 
     Command command ("-data-evaluate-expression " + a_expr) ;
@@ -4377,6 +4421,7 @@ void
 GDBEngine::print_variable_value (const UString &a_var_name,
                                  bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_var_name == "") {return;}
 
     Command command ("-data-evaluate-expression " + a_var_name) ;
@@ -4390,6 +4435,7 @@ GDBEngine::print_variable_value (const UString &a_var_name,
 bool
 GDBEngine::extract_proc_info (Output &a_output, int &a_pid)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
 
     if (!a_output.has_out_of_band_record ()) {

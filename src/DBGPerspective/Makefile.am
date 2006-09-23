@@ -32,8 +32,8 @@ nmv-proc-list-dialog.cc \
 nmv-proc-list-dialog.h \
 nmv-call-stack.cc \
 nmv-call-stack.h \
-nmv-throbbler.cc \
-nmv-throbbler.h \
+nmv-throbber.cc \
+nmv-throbber.h \
 nmv-vars-editor.cc \
 nmv-vars-editor.h \
 nmv-terminal.h \

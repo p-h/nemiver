@@ -258,6 +258,12 @@ public:
         void type (const UString &a_type) {m_type = a_type;}
     };//end class Variable
 
+    enum State {
+        READY = 0,
+        RUNNING,
+        PROGRAM_EXITED
+    };//enum State
+
 
     virtual ~IDebugger () {}
 
@@ -317,6 +323,8 @@ public:
                                             signal_received_signal () const = 0;
 
     virtual sigc::signal<void, const UString&>& error_signal () const = 0 ;
+
+    virtual sigc::signal<void, IDebugger::State>& state_changed_signal () const=0;
 
     /// @}
 

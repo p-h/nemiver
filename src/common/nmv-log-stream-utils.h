@@ -149,5 +149,9 @@ nemiver::common::ScopeLogger scope_logger \
     LOG_SCOPE_NORMAL_D(PRETTY_FUNCTION_NAME_, domain)
 #endif
 
+#ifndef LOG_FUNCTION_SCOPE_NORMAL_DD
+#define LOG_FUNCTION_SCOPE_NORMAL_DD LOG_FUNCTION_SCOPE_NORMAL_D(NMV_DEFAULT_DOMAIN)
+#endif
+
 #endif // NMV_LOG_STREAM_UTILS_H__
 
