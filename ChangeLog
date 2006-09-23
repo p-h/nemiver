@@ -1,3 +1,13 @@
+2006-09-23  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/nmv-run-program-dialog.cc: Mark the columm headers of
+	the environment variable treeview for translation (also renamed "variable"
+	to "name" since the section title already says "environment variables").  
+	Improved the process of adding a variable significantly by selecting the
+	newly added row and setting the cursor so the user can immediately start
+	typing the variable name and value.  I still need to add the ability to be
+	able to <tab> from one column to the next.
+
 2006-09-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* glade/workbench.glade.bak, glade/workbench.gladep.bak: more cleanup.

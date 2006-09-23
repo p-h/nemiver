@@ -41,13 +41,14 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 
-void RunProgramDialog::on_add_new_variable()
+void RunProgramDialog::on_add_new_variable ()
 {
-    // This will add a new blank row the the treeview for now.  Then the user
-    // can click in the new row and edit the cells to define environment
-    // variables.  There will be a better way to do this in the future, but I'm
-    // not sure how it will be done yet.
-    m_model->append();
+    Gtk::TreeModel::iterator treeiter = m_model->append ();
+    Gtk::TreeModel::Path path = m_model->get_path (treeiter);
+    // activate the first cell of the newly added row so that the user can start
+    // typing in the name and value of the variable
+    m_treeview_environment->set_cursor (path,
+            *m_treeview_environment->get_column (0), true);
 }
 
 RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
@@ -59,8 +60,8 @@ RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
     m_treeview_environment = env::get_widget_from_glade<Gtk::TreeView> (glade,
             "treeview_environment");
     m_treeview_environment->set_model (m_model);
-    m_treeview_environment->append_column_editable ("Variable", m_env_columns.varname);
-    m_treeview_environment->append_column_editable ("Value", m_env_columns.value);
+    m_treeview_environment->append_column_editable (_("Name"), m_env_columns.varname);
+    m_treeview_environment->append_column_editable (_("Value"), m_env_columns.value);
 
     Gtk::Button* button = env::get_widget_from_glade<Gtk::Button> (glade,
             "button_new_var");
