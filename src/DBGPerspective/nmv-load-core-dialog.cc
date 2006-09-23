@@ -42,7 +42,6 @@ namespace nemiver {
 LoadCoreDialog::LoadCoreDialog (const UString &a_root_path) :
     Dialog(a_root_path, "loadcoredialog.glade", "loadcoredialog")
 {
-    core_file (Glib::get_current_dir ()) ;
 }
 
 LoadCoreDialog::~LoadCoreDialog ()

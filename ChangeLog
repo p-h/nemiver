@@ -1,3 +1,12 @@
+2006-09-23  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* AUTHORS: I guess I'm an author now
+	* src/DBGPerspective/nmv-load-core-dialog.cc: don't set the initial value of
+	the core file to the current working directory.  This doesn't make much
+	sense to me.  It already uses the current working directory for the starting
+	point for browing for a core file.
+	* src/workbench/nmv-workbench.cc: added an "About" dialog.
+
 samedi 23 septembre 2006, 21:39:56 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc, src/dbgengine/nmv-i-debugger.h:

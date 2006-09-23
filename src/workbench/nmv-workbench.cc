@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <glib/gi18n.h>
+#include <gtkmm/aboutdialog.h>
 #include "nmv-exception.h"
 #include "nmv-plugin.h"
 #include "nmv-ui-utils.h"
@@ -50,6 +51,7 @@ private:
     //<slots (signal callbacks)>
     //************************
     void on_quit_menu_item_action () ;
+    void on_about_menu_item_action () ;
     //************************
     //</slots (signal callbacks)>
     //************************
@@ -124,6 +126,42 @@ void
 Workbench::on_quit_menu_item_action ()
 {
     shut_down () ;
+}
+
+void
+Workbench::on_about_menu_item_action ()
+{
+    Gtk::AboutDialog dialog;
+    dialog.set_name (PACKAGE_NAME);
+    dialog.set_version (PACKAGE_VERSION);
+    dialog.set_comments(_("A GNOME frontend for the GNU Debugger"));
+
+    list<Glib::ustring> authors;
+    authors.push_back("Dodji Seketeli <dodji@gnome.org>");
+    authors.push_back("Jonathon Jongsma <jjongsma@gnome.org>");
+    dialog.set_authors(authors);
+
+    dialog.set_website("http://home.gna.org/nemiver/");
+    dialog.set_website_label("Project Website");
+
+    Glib::ustring license =
+        "This program is free software; you can redistribute it and/or modify\n"
+        "it under the terms of the GNU General Public License as published by\n"
+        "the Free Software Foundation; either version 2 of the License, or\n"
+        "(at your option) any later version.\n\n"
+
+        "This program is distributed in the hope that it will be useful,\n"
+        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+        "GNU General Public License for more details.\n\n"
+
+        "You should have received a copy of the GNU General Public License\n"
+        "along with this program; if not, write to the \n"
+        "Free Software Foundation, Inc., 59 Temple Place, Suite 330, \n"
+        "Boston, MA  02111-1307  USA\n";
+    dialog.set_license(license);
+
+    dialog.run ();
 }
 
 Workbench::Workbench ()
@@ -339,8 +377,8 @@ Workbench::init_actions ()
             "AboutMenuItemAction",
             Gtk::Stock::ABOUT,
             _("_About"),
-            "",
-            nil_slot,
+            _("Display information about this application"),
+            sigc::mem_fun (*this, &Workbench::on_about_menu_item_action),
             ActionEntry::DEFAULT,
             ""
         }
