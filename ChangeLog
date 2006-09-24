@@ -1,3 +1,18 @@
+dimanche 24 septembre 2006, 02:05:26 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-source-editor.cc,h: okay, fire a
+	  SourceEditor::marker_region_got_clicked_signal() whenever
+	  a user left clicks in the marker region of the source view.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: toggle breakpoint
+	  when the user clicks in the marker region.
+	* short-term-todo-list.txt: udpated todo list.
+	* src/dbgengine/nmv-gdb-engine.cc: add more traces to the breakpoints
+	  parsing code. Do not require the breakpoint gdbmi output to have
+	  the fullname property as some debug info set don't have it. Client
+	  code should work things out with the file property only.
+	  I haven't updated client code for the moment, though.
+	  Traces on the client side should show and empty fullname property.
+
 2006-09-23  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* AUTHORS: I guess I'm an author now

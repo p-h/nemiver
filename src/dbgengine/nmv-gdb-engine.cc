@@ -1659,18 +1659,34 @@ struct GDBEngine::Priv {
     {
         Glib::ustring::size_type cur = a_from, end = a_input.size () ;
 
-        if (a_input.compare (cur, 6, "bkpt={")) {return false;}
+        if (a_input.compare (cur, 6, "bkpt={")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         cur += 6 ;
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         map<UString, UString> attrs ;
         bool is_ok = parse_attributes (a_input, cur, cur, attrs) ;
-        if (!is_ok) {return false;}
+        if (!is_ok) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
-        if (a_input[cur++] != '}') {return false;}
+        if (a_input[cur++] != '}') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         map<UString, UString>::iterator iter, null_iter = attrs.end () ;
+        //we use to require that the "fullname" property be present as
+        //well, but it seems that a lot debug info set got shipped without
+        //that property. Client code should do what they can with the
+        //file property only.
         if (   (iter = attrs.find ("number"))  == null_iter
                 || (iter = attrs.find ("type"))    == null_iter
                 || (iter = attrs.find ("disp"))    == null_iter
@@ -1678,10 +1694,10 @@ struct GDBEngine::Priv {
                 || (iter = attrs.find ("addr"))    == null_iter
                 || (iter = attrs.find ("func"))    == null_iter
                 || (iter = attrs.find ("file"))    == null_iter
-                || (iter = attrs.find ("fullname"))== null_iter
                 || (iter = attrs.find ("line"))    == null_iter
                 || (iter = attrs.find ("times"))   == null_iter
            ) {
+            LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
@@ -1707,15 +1723,27 @@ struct GDBEngine::Priv {
     {
         UString::size_type cur=a_from, end=a_input.size () ;
 
-        if (a_input.compare (cur, 17, "BreakpointTable={")) {return false;}
+        if (a_input.compare (cur, 17, "BreakpointTable={")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         cur += 17 ;
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         //skip table headers and got to table body.
         cur = a_input.find ("body=[", 0)  ;
-        if (!cur) {return false;}
+        if (!cur) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         cur += 6 ;
-        if (cur >= end) {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         map<int, IDebugger::BreakPoint> breakpoint_table ;
         if (a_input[cur] == ']') {
@@ -1730,20 +1758,36 @@ struct GDBEngine::Priv {
                 breakpoint_table[breakpoint.number ()] = breakpoint ;
                 if (a_input[cur] == ',') {
                     ++cur ;
-                    if (cur >= end) {return false;}
+                    if (cur >= end) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                        return false;
+                    }
                 }
                 breakpoint.clear () ;
             }
-            if (breakpoint_table.empty ()) {return false;}
+            if (breakpoint_table.empty ()) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
         } else {
             //weird things are happening, get out.
+            LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
-        if (a_input[cur] != ']') {return false;}
+        if (a_input[cur] != ']') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         ++cur ;
-        if (cur >= end) {return false;}
-        if (a_input[cur] != '}') {return false;}
+        if (cur >= end) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
+        if (a_input[cur] != '}') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
         ++cur ;
 
         a_to = cur ;
@@ -3442,7 +3486,7 @@ struct OnBreakPointHandler: OutputHandler {
     bool has_breakpoints_set (CommandAndOutput &a_in)
     {
         if (a_in.output ().has_result_record ()
-                && a_in.output ().result_record ().breakpoints ().size ()) {
+            && a_in.output ().result_record ().breakpoints ().size ()) {
             return true ;
         }
         return false ;
@@ -3453,6 +3497,7 @@ struct OnBreakPointHandler: OutputHandler {
         if (!a_in.output ().has_result_record ()) {
             return false;
         }
+        LOG_DD ("handler selected") ;
         return true ;
     }
 
@@ -3469,10 +3514,12 @@ struct OnBreakPointHandler: OutputHandler {
         }
 
         if (a_in.output ().has_result_record ()
-                && a_in.output ().result_record ().kind ()
-                == Output::ResultRecord::DONE
-                && a_in.command ().value ().find ("-break-delete")
-                != Glib::ustring::npos) {
+            && a_in.output ().result_record ().kind ()
+            == Output::ResultRecord::DONE
+            && a_in.command ().value ().find ("-break-delete")
+            != Glib::ustring::npos) {
+
+            LOG_DD ("detected break-delete") ;
             UString tmp = a_in.command ().value () ;
             tmp = tmp.erase (0, 13) ;
             if (tmp.size () == 0) {return ;}
@@ -3484,15 +3531,19 @@ struct OnBreakPointHandler: OutputHandler {
                 m_engine->get_cached_breakpoints () ;
                 iter = breaks.find (bkpt_number) ;
                 if (iter != breaks.end ()) {
+                    LOG_DD ("firing IDebugger::breakpoint_deleted_signal()") ;
                     m_engine->breakpoint_deleted_signal ().emit
                     (iter->second, iter->first) ;
                     breaks.erase (iter) ;
                 }
             }
         } else if (has_breaks){
+            LOG_DD ("firing IDebugger::breakpoint_set_signal()") ;
             m_engine->breakpoints_set_signal ().emit
                             (a_in.output ().result_record ().breakpoints ()) ;
             m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        } else {
+            LOG_DD ("finally, no breakpoint was detected as set/deleted") ;
         }
     }
 };//end struct OnBreakPointHandler

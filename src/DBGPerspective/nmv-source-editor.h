@@ -68,6 +68,11 @@ public:
     void scroll_to_line (int a_line) ;
     void set_path (const UString &a_path) ;
     UString get_path () const ;
+
+    /// \name signals
+    /// @{
+    sigc::signal<void, int>& marker_region_got_clicked_signal () ;
+    /// @}
 };//end class SourceEditor
 
 }//end namespace nemiver

@@ -40,6 +40,8 @@ namespace nemiver {
 
 class SourceView : public gtksourceview::SourceView {
 
+    sigc::signal<void, int> m_marker_region_got_clicked_signal ;
+
 public:
     SourceView (Glib::RefPtr<SourceBuffer> &a_buf) :
         gtksourceview::SourceView (a_buf)
@@ -49,12 +51,44 @@ public:
         gtksourceview::SourceView ()
     {}
 
+    void do_custom_button_press_event_handling (GdkEventButton *a_event)
+    {
+        THROW_IF_FAIL (a_event) ;
+
+        if (a_event->type == GDK_BUTTON_PRESS && a_event->button != 1) {
+            return ;
+        }
+        Glib::RefPtr<Gdk::Window> markers_window =
+                                        get_window (Gtk::TEXT_WINDOW_LEFT) ;
+        THROW_IF_FAIL (markers_window) ;
+
+        if (markers_window.operator->()->gobj () != a_event->window) {
+            LOG_DD ("didn't clicked in markers region") ;
+            return ;
+        }
+        LOG_DD ("got clicked in markers region !") ;
+        Gtk::TextBuffer::iterator iter ;
+        int line_top=0, x=0, y=0 ;
+
+        window_to_buffer_coords (Gtk::TEXT_WINDOW_LEFT,
+                                 (int)a_event->x, (int)a_event->y, x, y) ;
+
+        get_line_at_y (iter, (int) y, line_top) ;
+
+        THROW_IF_FAIL (iter) ;
+
+        LOG_DD ("got clicked on line: " << iter.get_line ()) ;
+        marker_region_got_clicked_signal ().emit (iter.get_line ()) ; ;
+    }
+
     bool on_button_press_event (GdkEventButton *a_event)
     {
         if (a_event->type == GDK_BUTTON_PRESS && a_event->button == 3) {
             return false ;
         } else {
-            return Gtk::Widget::on_button_press_event (a_event) ;
+            bool res = Gtk::Widget::on_button_press_event (a_event) ;
+            do_custom_button_press_event_handling (a_event) ;
+            return res ;
         }
     }
 
@@ -62,6 +96,11 @@ public:
     {
         Gtk::Widget::on_key_press_event (a_event) ;
         return false ;
+    }
+
+    sigc::signal<void, int>& marker_region_got_clicked_signal ()
+    {
+        return m_marker_region_got_clicked_signal ;
     }
 };//end class Sourceview
 
@@ -76,11 +115,17 @@ struct SourceEditor::Priv {
     Gtk::Label *line_col_label ;
     Gtk::Label *line_count;
     sigc::signal<void, gint, gint> signal_insertion_moved ;
+    sigc::signal<void, int> marker_region_got_clicked_signal ;
     UString path ;
 
     //**************
     //<signal slots>
     //**************
+    void on_marker_region_got_clicked (int a_line)
+    {
+        marker_region_got_clicked_signal.emit (a_line) ;
+    }
+
     void on_mark_set_signal (const Gtk::TextBuffer::iterator &a_iter,
                              const Glib::RefPtr<Gtk::TextBuffer::Mark> &a_mark)
     {
@@ -106,6 +151,9 @@ struct SourceEditor::Priv {
 
     void init_signals ()
     {
+        source_view->marker_region_got_clicked_signal ().connect
+            (sigc::mem_fun (*this,
+                            &SourceEditor::Priv::on_marker_region_got_clicked)) ;
         source_view->get_buffer ()->signal_mark_set ().connect
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_mark_set_signal)) ;
         source_view->get_buffer ()->signal_insert ().connect
@@ -402,5 +450,10 @@ SourceEditor::get_path () const
     return m_priv->path ;
 }
 
+sigc::signal<void, int>&
+SourceEditor::marker_region_got_clicked_signal ()
+{
+    return m_priv->marker_region_got_clicked_signal ;
+}
 }//end namespace nemiver
 

@@ -139,6 +139,9 @@ private:
     void on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_iter,
                                            const Glib::ustring &a_text,
                                            int a_dont_know) ;
+
+    void on_source_view_markers_region_clicked_signal (int a_line) ;
+
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
 
     bool on_key_pressed_in_source_view_signal (GdkEventKey *a_event) ;
@@ -728,6 +731,14 @@ DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterato
         }
     }
     NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
+{
+    SourceEditor *cur_editor = get_current_source_editor () ;
+    THROW_IF_FAIL (cur_editor) ;
+    toggle_breakpoint (cur_editor->get_path (), a_line + 1 ) ;
 }
 
 bool
@@ -1892,6 +1903,10 @@ DBGPerspective::open_file (const UString &a_path,
                                 (new SourceEditor (plugin_path (),
                                  source_buffer)));
     source_editor->set_path (a_path) ;
+    source_editor->marker_region_got_clicked_signal ().connect
+        (sigc::mem_fun
+                 (*this,
+                  &DBGPerspective::on_source_view_markers_region_clicked_signal));
 
     if (a_current_line > 0) {
         Gtk::TextIter cur_line_iter =
