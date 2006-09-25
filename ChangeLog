@@ -1,3 +1,12 @@
+mardi 26 septembre 2006, 00:08:44 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/schemas/Makefile.am,
+	src/DBGPerspective/schemas/nemiver-dbgperspective.schemas,
+	src/DBGPerspective/Makefile.am,
+	configure.ac: added a gconf schema to store nemiver's properties
+	to come.
+
+
 2006-09-25  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: Add ability to load environment

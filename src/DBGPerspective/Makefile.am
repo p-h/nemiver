@@ -1,4 +1,14 @@
-SUBDIRS=glade menus icons sqlscripts
+SUBDIRS=glade menus icons sqlscripts schemas
+
+install-data-local: install-schemas
+
+uninstall-local: uninstall-schemas
+
+install-schemas:
+	$(MAKE) -C schemas $(AM_MAKEFLAGS) install-schemas
+
+uninstall-schemas:
+	$(MAKE) -C schemas $(AM_MAKEFLAGS)  uninstall-schemas
 
 plugin_config_files= \
 plugin-descriptor.xml \
