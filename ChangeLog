@@ -1,3 +1,11 @@
+2006-09-24  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/common/nmv-ustring.cc: Fixed a minor bug where when joining from
+	iterators.  This came up when you pass an argument on the command line (e.g.
+	nemiver --debug="/path/to/foo --arg" which ended up duplicating the first
+	argument (i.e. it would show "--arg --arg" as the arguments for that
+	session).  Fixed by incrementing the iterator before entering the loop
+
 dimanche 24 septembre 2006, 02:05:26 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-source-editor.cc,h: okay, fire a

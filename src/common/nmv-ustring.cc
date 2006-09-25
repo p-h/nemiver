@@ -216,7 +216,7 @@ UString::join (vector<UString>::const_iterator &a_from,
 
     vector<UString>::const_iterator iter = a_from ;
     UString result = *iter ;
-    for (; iter != a_to ; ++iter) {
+    for (; ++iter != a_to ; ) {
         result += a_delim + *iter ;
     }
     return result ;
