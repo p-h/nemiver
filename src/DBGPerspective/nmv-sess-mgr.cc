@@ -228,6 +228,24 @@ SessMgr::store_session (Session &a_session,
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
     }
 
+    //store the environment variables
+    query = "delete from env_variables where sessionid = "
+            + UString::from_int (a_session.session_id ()) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+
+    map<UString, UString>::const_iterator var_iter ;
+    for (var_iter = a_session.env_variables ().begin ();
+         var_iter != a_session.env_variables ().end ();
+         ++var_iter) {
+        query = "insert into env_variables values(NULL, "
+                + UString::from_int (a_session.session_id ()) + ", '"
+                + var_iter->first + "', '"
+                + var_iter->second
+                + "')"
+                ;
+        THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+    }
+
     //store the breakpoints
     query = "delete from breakpoints where sessionid = "
             + UString::from_int (a_session.session_id ()) ;
@@ -303,6 +321,18 @@ SessMgr::load_session (Session &a_session,
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, name)) ;
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (1, value)) ;
         session.properties ()[name] = value ;
+    }
+
+    //load the environment variables
+    query="select env_variables.name, env_variables.value "
+                  "from env_variables where env_variables.sessionid = "
+                  + UString::from_int (a_session.session_id ());
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    while (trans.get ().get_connection ().read_next_row ()) {
+        UString name, value ;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, name)) ;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (1, value)) ;
+        session.env_variables ()[name] = value ;
     }
 
     //load the breakpoints

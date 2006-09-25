@@ -86,6 +86,7 @@ public:
     class Session {
         gint64 m_session_id ;
         map<UString, UString> m_properties ;
+        map<UString, UString> m_env_variables ;
         list<BreakPoint> m_breakpoints ;
         list<UString> m_opened_files ;
 
@@ -103,6 +104,9 @@ public:
 
         const map<UString, UString>& properties ()  const {return m_properties;}
         map<UString, UString>& properties () {return m_properties;}
+
+        const map<UString, UString>& env_variables ()  const {return m_env_variables;}
+        map<UString, UString>& env_variables () {return m_env_variables;}
 
         list<BreakPoint>& breakpoints () {return m_breakpoints;}
         const list<BreakPoint>& breakpoints () const

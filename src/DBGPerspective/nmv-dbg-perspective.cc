@@ -386,6 +386,7 @@ struct DBGPerspective::Priv {
     UString prog_name ;
     UString prog_args ;
     UString prog_cwd ;
+    map<UString, UString> env_variables ;
     Glib::RefPtr<Gtk::ActionGroup> target_connected_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
@@ -1732,6 +1733,7 @@ DBGPerspective::save_session (ISessMgr::Session &a_session)
     a_session.properties ()[PROGRAM_NAME] = m_priv->prog_name ;
     a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
+    a_session.env_variables () = m_priv->env_variables;
 
     map<UString, int>::const_iterator path_iter =
         m_priv->path_2_pagenum_map.begin () ;
@@ -1974,10 +1976,9 @@ void
 DBGPerspective::execute_session (ISessMgr::Session &a_session)
 {
     m_priv->session = a_session ;
-    map<UString, UString> env ;//TODO: get env from session
     execute_program (a_session.properties ()[PROGRAM_NAME],
                      a_session.properties ()[PROGRAM_ARGS],
-                     env,
+                     a_session.env_variables (),
                      a_session.properties ()[PROGRAM_CWD]) ;
     m_priv->reused_session = true ;
 }
@@ -1986,6 +1987,12 @@ void
 DBGPerspective::execute_program ()
 {
     RunProgramDialog dialog (plugin_path ()) ;
+
+    // set defaults from session
+    dialog.program_name (m_priv->prog_name) ;
+    dialog.arguments (m_priv->prog_args) ;
+    dialog.working_directory (m_priv->prog_cwd) ;
+    dialog.environment_variables (m_priv->env_variables) ;
 
     int result = dialog.run () ;
     if (result != Gtk::RESPONSE_OK) {
@@ -1998,8 +2005,8 @@ DBGPerspective::execute_program ()
     args = dialog.arguments () ;
     cwd = dialog.working_directory () ;
     THROW_IF_FAIL (cwd != "") ;
-
     map<UString, UString> env = dialog.environment_variables();
+
     execute_program (prog, args, env, cwd) ;
     m_priv->reused_session = false ;
 }
@@ -2048,6 +2055,7 @@ DBGPerspective::execute_program (const UString &a_prog,
     m_priv->prog_name = a_prog ;
     m_priv->prog_args = a_args ;
     m_priv->prog_cwd = a_cwd ;
+    m_priv->env_variables = a_env ;
 
     NEMIVER_CATCH
 }

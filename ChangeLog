@@ -1,3 +1,13 @@
+2006-09-25  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: Add ability to load environment
+	variables that have been saved with the session and display them in the
+	Execute dialog, etc.
+	* src/DBGPerspective/nmv-sess-mgr.cc, src/DBGPerspective/nmv-sess-mgr.h:
+	save and restore environment variables when saving and restoring sessions
+	* src/DBGPerspective/sqlscripts/sqlite/create-tables.sql: add an
+	env_variables table to the session database
+
 2006-09-24  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/common/nmv-ustring.cc: Fixed a minor bug where when joining from
