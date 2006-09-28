@@ -30,6 +30,7 @@
 #include "nmv-dialog.h"
 #include "nmv-env.h"
 #include "nmv-ustring.h"
+#include "nmv-ui-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -50,8 +51,8 @@ Dialog::Dialog (const UString &a_resource_root_path,
         }
         glade = Gnome::Glade::Xml::create (glade_path) ;
         THROW_IF_FAIL (glade) ;
-        dialog = env::get_widget_from_glade<Gtk::Dialog> (glade,
-                                                          a_widget_name) ;
+        dialog = ui_utils::get_widget_from_glade<Gtk::Dialog> (glade,
+                                                               a_widget_name) ;
         dialog->hide () ;
 }
 

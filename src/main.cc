@@ -136,7 +136,6 @@ main (int a_argc, char *a_argv[])
     //<process command line arguments>
     //********************************
     if (gv_log_debugger_output) {
-        workbench->get_properties ()["log-debugger-output"] = "yes" ;
         LOG_STREAM.enable_domain ("gdbmi-output-domain") ;
     }
 

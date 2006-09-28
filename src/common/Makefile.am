@@ -2,6 +2,7 @@ lib_LTLIBRARIES=libnemivercommon.la
 
 headers= \
 nmv-api-macros.h \
+nmv-namespace.h \
 nmv-ustring.h \
 nmv-libxml-utils.h \
 nmv-safe-ptr-utils.h \

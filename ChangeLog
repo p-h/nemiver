@@ -1,3 +1,52 @@
+jeudi 28 septembre 2006, 23:12:22 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-i-debugger.h: renamed
+	IDebugger::BreakPoint::full_file_name() into
+	IDebugger::Breakpoint::file_full_name() so that it is homogeneous with
+	IDebugger::Frame::file_full_name().
+
+	* src/dbgengine/nmv-gdb-engine.cc,
+	src/DBGPerspective/nmv-sess-mgr.h,cc:
+	  propagated the IDebugger::Breakpoint::full_file_name() change.
+	  Also, add a ISessMgr::BreakPoint::file_full_name() property.
+
+	* src/DBGPerspective/sqlscripts/sqlite/create-tables.sql: updated
+	  the database to add the new file_full_name property in the
+	  breakpoints table.
+
+	* src/uicommon/nmv-ui-utils.h: move the get_widget_from_glade()
+          helpers from nmv-env.h to here. nmv-env.h doesn't depend on Gtk+
+	  anymore.
+
+	* src/common/nmv-namespace.h: add a couple of namespace macros
+	  to keep emacs users happy with w.r.t indentation and namespaces.
+
+	* src/DBGPerspective/nmv-dialog.cc,
+	  src/DBGPerspective/nmv-load-core-dialog.cc,
+	  src/DBGPerspective/nmv-run-program-dialog.cc,
+	  src/DBGPerspective/nmv-proc-list-dialog.cc:
+	 propagated the ui_utils::get_widget_from_glade() move.
+
+	* src/confmgr/nmv-i-conf-mgr.h,nmv-gconf-mgr.h: added a new
+	  IConfMgr dynmod to abstract configuration properties storage
+	  management.
+	  Today, only a gconf backend implementation is provided.
+	  Should a sqlite3 backend be needed, it could be easily be added.
+
+	* src/workbench/nmv-i-workbench.h,,nmv-workbench.cc:
+	  remove the previous propertie map.
+	  Add a IWorkbench::get_configuration_manager() entry point to get
+	  the Conf manager. Do the proper initialisation of the ConfManager.
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: When the debugging info
+	  don't provide the full source file paths, use IConfMgr to look up
+	  source files in the list of directories pointed to by the
+	  /apps/nemiver/dbgperspective/source-search-dirs key. It seems to
+	  work. We still lack a GUI to update settings that sit in gconf.
+
+	* src/main.cc: don't use the IWorkbench::properties() anymore as
+	  it has disapeared.
+
 mardi 26 septembre 2006, 00:08:44 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/schemas/Makefile.am,

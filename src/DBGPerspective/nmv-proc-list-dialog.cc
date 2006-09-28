@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 #include "nmv-proc-list-dialog.h"
 #include "nmv-env.h"
+#include "nmv-ui-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -115,7 +116,7 @@ ProcListDialog::ProcListDialog (const UString &a_root_path,
     process_selected (false)
 {
     dialog->hide () ;
-    proclist_view = env::get_widget_from_glade<Gtk::TreeView>
+    proclist_view = ui_utils::get_widget_from_glade<Gtk::TreeView>
         (glade, "proclisttreeview") ;
     proclist_store = Gtk::ListStore::create (columns ()) ;
     proclist_view->set_model (proclist_store) ;

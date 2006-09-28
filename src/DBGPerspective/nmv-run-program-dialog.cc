@@ -35,6 +35,7 @@
 #include "nmv-run-program-dialog.h"
 #include "nmv-env.h"
 #include "nmv-ustring.h"
+#include "nmv-ui-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -63,7 +64,7 @@ void RunProgramDialog::on_remove_variable ()
 
 void RunProgramDialog::on_variable_selection_changed ()
 {
-    Gtk::Button* remove_button = env::get_widget_from_glade<Gtk::Button> (glade,
+    Gtk::Button* remove_button = ui_utils::get_widget_from_glade<Gtk::Button> (glade,
             "button_remove_var");
     THROW_IF_FAIL (remove_button) ;
     if (m_treeview_environment->get_selection ()->count_selected_rows ())
@@ -82,18 +83,18 @@ RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
 {
     THROW_IF_FAIL (glade) ;
     working_directory (Glib::get_current_dir ()) ;
-    m_treeview_environment = env::get_widget_from_glade<Gtk::TreeView> (glade,
+    m_treeview_environment = ui_utils::get_widget_from_glade<Gtk::TreeView> (glade,
             "treeview_environment");
     m_treeview_environment->set_model (m_model);
     m_treeview_environment->append_column_editable (_("Name"), m_env_columns.varname);
     m_treeview_environment->append_column_editable (_("Value"), m_env_columns.value);
 
-    Gtk::Button* add_button = env::get_widget_from_glade<Gtk::Button> (glade,
+    Gtk::Button* add_button = ui_utils::get_widget_from_glade<Gtk::Button> (glade,
             "button_add_var");
     THROW_IF_FAIL (add_button) ;
     add_button->signal_clicked().connect(sigc::mem_fun(*this, &RunProgramDialog::on_add_new_variable));
 
-    Gtk::Button* remove_button = env::get_widget_from_glade<Gtk::Button> (glade,
+    Gtk::Button* remove_button = ui_utils::get_widget_from_glade<Gtk::Button> (glade,
             "button_remove_var");
     THROW_IF_FAIL (remove_button) ;
     remove_button->signal_clicked().connect(sigc::mem_fun(*this, &RunProgramDialog::on_remove_variable));
@@ -112,7 +113,7 @@ UString
 RunProgramDialog::program_name () const
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+    Gtk::FileChooserButton *chooser = ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_program") ;
     return chooser->get_filename () ;
 }
@@ -121,7 +122,7 @@ void
 RunProgramDialog::program_name (const UString &a_name)
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+    Gtk::FileChooserButton *chooser = ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_program") ;
     chooser->set_filename (a_name) ;
 }
@@ -130,7 +131,7 @@ UString
 RunProgramDialog::arguments () const
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::Entry *entry = env::get_widget_from_glade<Gtk::Entry> (glade,
+    Gtk::Entry *entry = ui_utils::get_widget_from_glade<Gtk::Entry> (glade,
                                                                 "argumentsentry");
     return entry->get_text () ;
 }
@@ -139,7 +140,7 @@ void
 RunProgramDialog::arguments (const UString &a_args)
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::Entry *entry = env::get_widget_from_glade<Gtk::Entry> (glade,
+    Gtk::Entry *entry = ui_utils::get_widget_from_glade<Gtk::Entry> (glade,
                                                                 "argumentsentry");
     entry->set_text (a_args) ;
 }
@@ -149,7 +150,7 @@ RunProgramDialog::working_directory () const
 {
     THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *chooser =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_workingdir");
     return chooser->get_filename () ;
 }
@@ -159,7 +160,7 @@ RunProgramDialog::working_directory (const UString &a_dir)
 {
     THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *chooser =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_workingdir");
     chooser->set_filename (a_dir) ;
 }

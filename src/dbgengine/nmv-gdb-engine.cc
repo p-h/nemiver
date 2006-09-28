@@ -1710,7 +1710,7 @@ struct GDBEngine::Priv {
         a_bkpt.address (attrs["addr"]) ;
         a_bkpt.function (attrs["func"]) ;
         a_bkpt.file_name (attrs["file"]) ;
-        a_bkpt.full_file_name (attrs["fullname"]) ;
+        a_bkpt.file_full_name (attrs["fullname"]) ;
         a_bkpt.line (atoi (attrs["line"].c_str ())) ;
         a_to = cur ;
         return true;

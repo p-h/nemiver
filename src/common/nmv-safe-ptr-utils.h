@@ -33,10 +33,10 @@
 #include <glib.h>
 #include "nmv-object.h"
 #include "nmv-safe-ptr.h"
+#include "nmv-namespace.h"
 
-namespace nemiver {
-
-namespace common {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+NEMIVER_BEGIN_NAMESPACE (common)
 
 //*******************************
 //misc functors
@@ -99,7 +99,8 @@ struct CharArrayUnref {
 typedef SafePtr <gchar, GCharRef, GCharUnref> GCharSafePtr ;
 typedef SafePtr <Object, ObjectRef, ObjectUnref> ObjectSafePtr ;
 
-}//end namespace common
-}//end namespace nemiver
-#endif //__VERISSIMUS_SAFE_GOBJECT_PTR_H__
+NEMIVER_END_NAMESPACE //common
+NEMIVER_END_NAMESPACE //nemiver
+
+#endif
 

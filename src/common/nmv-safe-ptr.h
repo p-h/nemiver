@@ -132,12 +132,6 @@ public:
         return m_pointer ;
     }
 
-    /*
-    operator PointerType* ()
-    {
-        return m_pointer ;
-    }
-    */
 
     bool operator== (const SafePtr<PointerType,
                      ReferenceFunctor,

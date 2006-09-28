@@ -25,12 +25,13 @@
 #include <vector>
 #include <glib/gi18n.h>
 #include <gtkmm/aboutdialog.h>
+//#include "nmv-env.h"
 #include "nmv-exception.h"
 #include "nmv-plugin.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 #include "nmv-i-perspective.h"
-#include "nmv-env.h"
+#include "nmv-i-conf-mgr.h"
 
 using namespace std ;
 using namespace nemiver ;
@@ -81,7 +82,7 @@ public:
     Gtk::Window& get_root_window () ;
     Glib::RefPtr<Gtk::UIManager>& get_ui_manager ()  ;
     IPerspective* get_perspective (const UString &a_name) ;
-    map<UString, UString>& get_properties () ;
+    IConfMgr& get_configuration_manager ()  ;
     sigc::signal<void>& shutting_down_signal () ;
 };//end class Workbench
 
@@ -100,6 +101,7 @@ struct Workbench::Priv {
     map<IPerspective*, int> toolbars_index_map ;
     map<IPerspective*, int> bodies_index_map ;
     map<UString, UString> properties ;
+    IConfMgrSafePtr conf_mgr ;
     sigc::signal<void> shutting_down_signal ;
 
     Priv () :
@@ -308,10 +310,24 @@ Workbench::get_perspective (const UString &a_name)
     return NULL;
 }
 
-map<UString, UString>&
-Workbench::get_properties ()
+IConfMgr&
+Workbench::get_configuration_manager ()
 {
-    return m_priv->properties ;
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->conf_mgr) {
+        DynamicModule::Loader *loader = get_module_loader () ;
+        THROW_IF_FAIL (loader) ;
+
+        DynamicModuleManager *dynmod_manager =
+                loader->get_dynamic_module_manager () ;
+        THROW_IF_FAIL (dynmod_manager) ;
+
+        m_priv->conf_mgr = dynmod_manager->load<IConfMgr> ("gconfmgr") ;
+        m_priv->conf_mgr->do_init () ;
+        m_priv->conf_mgr->set_key_dir_to_notify ("/apps/nemiver") ;
+    }
+    THROW_IF_FAIL (m_priv->conf_mgr) ;
+    return *m_priv->conf_mgr ;
 }
 
 sigc::signal<void>&
@@ -331,7 +347,7 @@ Workbench::init_glade ()
     THROW_IF_FAIL (m_priv->glade) ;
 
     m_priv->root_window =
-       env::get_widget_from_glade<Gtk::Window> (m_priv->glade, "workbench");
+       ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade, "workbench");
     m_priv->root_window->hide () ;
 }
 
@@ -407,7 +423,7 @@ Workbench::init_menubar ()
     THROW_IF_FAIL (m_priv->menubar) ;
 
     Gtk::Box *menu_container =
-        env::get_widget_from_glade<Gtk::Box> (m_priv->glade, "menucontainer");
+        ui_utils::get_widget_from_glade<Gtk::Box> (m_priv->glade, "menucontainer");
     menu_container->pack_start (*m_priv->menubar) ;
     menu_container->show_all () ;
 }
@@ -416,16 +432,16 @@ void
 Workbench::init_toolbar ()
 {
     m_priv->toolbar_container =
-        env::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
-                                                   "toolbarcontainer") ;
+        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
+                                                        "toolbarcontainer") ;
 }
 
 void
 Workbench::init_body ()
 {
     m_priv->bodies_container =
-        env::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
-                                                   "bodynotebook") ;
+        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
+                                                        "bodynotebook") ;
 }
 
 void

@@ -33,6 +33,7 @@
 #include "nmv-load-core-dialog.h"
 #include "nmv-env.h"
 #include "nmv-ustring.h"
+#include "nmv-ui-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -52,7 +53,8 @@ UString
 LoadCoreDialog::program_name () const
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+    Gtk::FileChooserButton *chooser =
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_executable") ;
     return chooser->get_filename () ;
 }
@@ -61,7 +63,8 @@ void
 LoadCoreDialog::program_name (const UString &a_name)
 {
     THROW_IF_FAIL (glade) ;
-    Gtk::FileChooserButton *chooser = env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+    Gtk::FileChooserButton *chooser =
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                                 "filechooserbutton_executable") ;
     chooser->set_filename (a_name) ;
 }
@@ -71,7 +74,7 @@ LoadCoreDialog::core_file () const
 {
     THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *chooser =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
                                                 "filechooserbutton_corefile");
     return chooser->get_filename () ;
 }
@@ -81,8 +84,8 @@ LoadCoreDialog::core_file (const UString &a_dir)
 {
     THROW_IF_FAIL (glade) ;
     Gtk::FileChooserButton *chooser =
-        env::get_widget_from_glade<Gtk::FileChooserButton> (glade,
-                                                "filechooserbutton_corefile");
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+                                                                 "filechooserbutton_corefile");
     chooser->set_filename (a_dir) ;
 }
 

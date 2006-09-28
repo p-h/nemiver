@@ -111,7 +111,7 @@ public:
         UString m_address ;
         UString m_function ;
         UString m_file_name ;
-        UString m_full_file_name ;
+        UString m_file_full_name ;
         int m_line ;
 
     public:
@@ -136,8 +136,8 @@ public:
         const UString& file_name () const {return m_file_name;}
         void file_name (const UString &a_in) {m_file_name = a_in;}
 
-        const UString& full_file_name () const {return m_full_file_name;}
-        void full_file_name (const UString &a_in) {m_full_file_name = a_in;}
+        const UString& file_full_name () const {return m_file_full_name;}
+        void file_full_name (const UString &a_in) {m_file_full_name = a_in;}
 
         int line () const {return m_line;}
         void line (int a_in) {m_line = a_in;}
@@ -159,7 +159,7 @@ public:
             m_address = "" ;
             m_function = "" ;
             m_file_name = "" ;
-            m_full_file_name = "" ;
+            m_file_full_name = "" ;
             m_line = 0 ;
         }
     };//end class BreakPoint

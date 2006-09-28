@@ -22,17 +22,37 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NEMIVER_I_WORKBENCH_H__
-#define __NEMIVER_I_WORKBENCH_H__
+#ifndef __NMV_I_WORKBENCH_H__
+#define __NMV_I_WORKBENCH_H__
 
-#include <gtkmm.h>
 #include "nmv-api-macros.h"
 #include "nmv-dynamic-module.h"
-#include "nmv-ustring.h"
+
+//*******************
+//some Gtk forward decls
+//******************
+namespace Gtk {
+    class Widget ;
+    class Notebook ;
+    class Window ;
+    class ActionGroup ;
+    class UIManager ;
+    class Main ;
+}//end namespace Gtk
 
 namespace nemiver {
+namespace commmon {
+    class UString ;
+}
+}
 
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+
+//*******************
+//some forward decls
+//******************
 class IPerspective ;
+class IConfMgr ;
 using nemiver::common::SafePtr ;
 using nemiver::common::DynamicModule;
 using nemiver::common::ObjectRef ;
@@ -74,7 +94,7 @@ protected:
 
 public:
 
-    virtual ~IWorkbench () {} ;
+    virtual ~IWorkbench () {}
 
     /// \brief initialization function
     /// \param a_main the main loop created by the application.
@@ -101,10 +121,11 @@ public:
     /// \return the Gtk::UIManager of the workbench
     virtual Glib::RefPtr<Gtk::UIManager>& get_ui_manager () = 0 ;
 
+    /// \return the perspective that which name matches a_name
     virtual IPerspective* get_perspective (const UString &a_name) = 0;
 
-    virtual map<UString, UString>& get_properties () = 0;
-
+    /// \return the interface of the configuration manager.
+    virtual IConfMgr& get_configuration_manager () = 0 ;
     ///@}
 
     /// \name signals
@@ -117,7 +138,7 @@ public:
     /// @}
 };//end class IWorkbench
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE //end namespace nemiver
 
-#endif //__NEMIVER_I_WORKBENCH
+#endif //__NMV_I_WORKBENCH
 

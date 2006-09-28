@@ -257,7 +257,8 @@ SessMgr::store_session (Session &a_session,
          ++break_iter) {
         query = "insert into breakpoints values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + break_iter->filename () + "', "
+                + break_iter->file_name () + "', "
+                + break_iter->file_full_name () + "', "
                 + UString::from_int (break_iter->line_number ())
                 + ")"
                 ;
@@ -336,18 +337,22 @@ SessMgr::load_session (Session &a_session,
     }
 
     //load the breakpoints
-    query = "select breakpoints.filename, breakpoints.linenumber from "
+    query = "select breakpoints.filename, breakpoints.filefullname, "
+            "breakpoints.linenumber from "
             "breakpoints where breakpoints.sessionid = "
             + UString::from_int (session.session_id ())
             ;
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     while (trans.get ().get_connection ().read_next_row ()) {
-        UString filename, linenumber;
+        UString filename, filefullname, linenumber;
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                                 (0, filename));
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
-                                                                (1, linenumber));
+                                                            (1, filefullname));
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                                (2, linenumber));
         session.breakpoints ().push_back (SessMgr::BreakPoint (filename,
+                                                               filefullname,
                                                                linenumber)) ;
     }
 

@@ -43,6 +43,7 @@
 #include "nmv-throbber.h"
 #include "nmv-vars-editor.h"
 #include "nmv-terminal.h"
+#include "nmv-i-conf-mgr.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -65,6 +66,9 @@ const char *SESSION_NAME = "sessionname" ;
 const char *PROGRAM_NAME= "programname" ;
 const char *PROGRAM_ARGS= "programarguments" ;
 const char *PROGRAM_CWD= "programcwd" ;
+
+static const UString CONF_KEY_NEMIVER_SOURCE_DIRS =
+                "/apps/nemiver/dbgperspective/source-search-dirs" ;
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
@@ -153,6 +157,9 @@ private:
     void on_show_target_output_view_changed_signal (bool) ;
 
     void on_show_log_view_changed_signal (bool) ;
+
+    void on_conf_key_changed_signal (const UString &a_key,
+                                     IConfMgr::Value &a_value) ;
 
     void on_debugger_console_message_signal (const UString &a_msg) ;
 
@@ -339,6 +346,13 @@ public:
 
     Gtk::Widget* get_contextual_menu () ;
 
+    void init_conf_mgr () ;
+
+    vector<UString>& get_source_dirs () ;
+
+    bool find_file_in_source_dirs (const UString &a_file_name,
+                                   UString &a_file_path) ;
+
     sigc::signal<void, bool>& show_command_view_signal () ;
     sigc::signal<void, bool>& show_target_output_view_signal () ;
     sigc::signal<void, bool>& show_log_view_signal () ;
@@ -441,6 +455,7 @@ struct DBGPerspective::Priv {
     ISessMgr::Session session ;
     IProcMgrSafePtr process_manager ;
     UString last_command_text ;
+    vector<UString> source_dirs ;
 
     Priv () :
         initialized (false),
@@ -857,6 +872,16 @@ DBGPerspective::on_show_log_view_changed_signal (bool a_show)
 }
 
 void
+DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
+                                            IConfMgr::Value &a_value)
+{
+    if (a_key == CONF_KEY_NEMIVER_SOURCE_DIRS) {
+        LOG_DD ("updated key source-dirs") ;
+        m_priv->source_dirs = boost::get<UString> (a_value).split (":") ;
+    }
+}
+
+void
 DBGPerspective::on_debugger_console_message_signal (const UString &a_msg)
 {
     NEMIVER_TRY
@@ -916,7 +941,10 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
     if (a_has_frame
         && a_frame.file_full_name () == ""
         && a_frame.file_name () != "") {
-        display_error ("Did not find file " + a_frame.file_name ()) ;
+        UString file_path ;
+        if (!find_file_in_source_dirs (a_frame.file_name (), file_path)) {
+            display_error ("Did not find file " + a_frame.file_name ()) ;
+        }
     }
     add_text_to_command_view ("\n(gdb)", true) ;
     NEMIVER_CATCH
@@ -940,18 +968,27 @@ DBGPerspective::on_frame_selected_signal (int a_index,
 {
     NEMIVER_TRY
 
-    if (a_frame.file_full_name () != ""
-        && a_frame.line () != 0) {
-        set_where (a_frame.file_full_name (), a_frame.line ()) ;
-    } else if (a_frame.file_full_name () == "") {
-        display_warning ("File path info is missing "
-                         "for function '" + a_frame.function () + "'") ;
-        //TODO: we should disassemble the current frame and display it.
-    } else if (a_frame.line () == 0) {
+    UString file_path = a_frame.file_full_name () ;
+
+    if (file_path == "") {
+        file_path = a_frame.file_name () ;
+        if (!find_file_in_source_dirs (file_path, file_path)) {
+            display_warning ("File path info is missing "
+                             "for function '" + a_frame.function () + "'") ;
+            return ;
+            //TODO: we should disassemble the current frame and display it.
+        }
+    }
+
+    if (a_frame.line () == 0) {
         display_warning ("Line info is missing for function '"
                          + a_frame.function () + "'") ;
+        return ;
         //TODO: we should disassemble the current frame and display it.
     }
+
+    set_where (file_path, a_frame.line ()) ;
+
     NEMIVER_CATCH
 }
 
@@ -1392,24 +1429,24 @@ DBGPerspective::init_body ()
                                            absolute_path)) ;
     m_priv->body_glade = Gnome::Glade::Xml::create (absolute_path) ;
     m_priv->body_window =
-        env::get_widget_from_glade<Gtk::Window> (m_priv->body_glade,
-                                                 "bodycontainer") ;
+        ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->body_glade,
+                                                      "bodycontainer") ;
     Glib::RefPtr<Gtk::Paned> paned
-        (env::get_widget_from_glade<Gtk::Paned> (m_priv->body_glade,
-                                                 "mainbodypaned")) ;
+        (ui_utils::get_widget_from_glade<Gtk::Paned> (m_priv->body_glade,
+                                                      "mainbodypaned")) ;
     paned->reference () ;
     m_priv->body_main_paned = paned ;
 
     m_priv->sourceviews_notebook =
-        env::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
-                                                   "sourceviewsnotebook") ;
+        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
+                                                        "sourceviewsnotebook") ;
     m_priv->sourceviews_notebook->remove_page () ;
     m_priv->sourceviews_notebook->set_show_tabs () ;
     m_priv->sourceviews_notebook->set_scrollable () ;
 
     m_priv->statuses_notebook =
-        env::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
-                                                   "statusesnotebook") ;
+        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
+                                                        "statusesnotebook") ;
     m_priv->command_view = new Gtk::TextView ;
     THROW_IF_FAIL (m_priv->command_view) ;
     get_command_view_scrolled_win ().add (*m_priv->command_view) ;
@@ -1460,7 +1497,6 @@ DBGPerspective::init_signals ()
             (*this, &DBGPerspective::on_show_log_view_changed_signal));
     get_call_stack ().frame_selected_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
-
 }
 
 void
@@ -1667,6 +1703,55 @@ DBGPerspective::get_contextual_menu ()
     return m_priv->contextual_menu ;
 }
 
+vector<UString>&
+DBGPerspective::get_source_dirs ()
+{
+
+    THROW_IF_FAIL (m_priv) ;
+
+    if (m_priv->source_dirs.empty ()) {
+        init_conf_mgr () ;
+    }
+    return m_priv->source_dirs ;
+}
+
+bool
+DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
+                                          UString &a_file_path)
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    vector<UString>::const_iterator it ;
+    string file_name = Glib::locale_from_utf8 (a_file_name), path, candidate ;
+    for (it = m_priv->source_dirs.begin () ;
+         it != m_priv->source_dirs.end ();
+         ++it) {
+        path = Glib::locale_from_utf8 (*it) ;
+        candidate = Glib::build_filename (path, file_name) ;
+        if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+            a_file_path = Glib::locale_to_utf8 (candidate) ;
+            return true ;
+        }
+    }
+    return false ;
+}
+
+void
+DBGPerspective::init_conf_mgr ()
+{
+    if (m_priv->source_dirs.empty ()) {
+        THROW_IF_FAIL (m_priv->workbench) ;
+        IConfMgr &conf_mgr = m_priv->workbench->get_configuration_manager () ;
+        UString dirs ;
+        conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs) ;
+        LOG_DD ("got source dirs '" << dirs << "' from conf mgr") ;
+        m_priv->source_dirs = dirs.split (":") ;
+        LOG_DD ("that makes '" <<(int)m_priv->source_dirs.size()<< "' dir paths");
+        conf_mgr.value_changed_signal ().connect
+            (sigc::mem_fun (*this, &DBGPerspective::on_conf_key_changed_signal)) ;
+    }
+}
+
 int
 DBGPerspective::get_n_pages ()
 {
@@ -1748,7 +1833,8 @@ DBGPerspective::save_session (ISessMgr::Session &a_session)
          break_iter != m_priv->breakpoints.end ();
          ++break_iter) {
         a_session.breakpoints ().push_back
-            (ISessMgr::BreakPoint (break_iter->second.full_file_name (),
+            (ISessMgr::BreakPoint (break_iter->second.file_name (),
+                                   break_iter->second.file_full_name (),
                                    break_iter->second.line ())) ;
     }
     THROW_IF_FAIL (get_session_manager ()) ;
@@ -1796,6 +1882,7 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     session_manager ().load_sessions (session_manager ().default_transaction ());
     m_priv->workbench->shutting_down_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_shutdown_signal)) ;
+    init_conf_mgr () ;
 }
 
 DBGPerspective::~DBGPerspective ()
@@ -2033,8 +2120,6 @@ DBGPerspective::execute_program (const UString &a_prog,
 {
     NEMIVER_TRY
 
-    m_priv->debugger->properties ().operator=
-                                    (m_priv->workbench->get_properties ()) ;
     IDebuggerSafePtr dbg_engine = debugger () ;
     THROW_IF_FAIL (dbg_engine) ;
     vector<UString> args = a_args.split (" ") ;
@@ -2187,16 +2272,23 @@ DBGPerspective::append_breakpoints
                     (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
+    UString file_path ;
     for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
-        LOG_DD ("record breakpoint "
-                << iter->second.full_file_name ()
-                << ":" << iter->second.line ()) ;
-        m_priv->breakpoints[iter->first] = iter->second ;
-        LOG_DD ("append visual breakpoint at source view line: "
-                << iter->second.full_file_name () << ":"
+        file_path = iter->second.file_full_name () ;
+        if (file_path == "") {
+            if (!find_file_in_source_dirs (iter->second.file_name (),
+                                           file_path)){
+                //TODO: display a dialog that lets the user select the
+                //path to the source file.
+                ui_utils::display_error (_("Could not find file: ")
+                                         +iter->second.file_name ()) ;
+            }
+        }
+        LOG_DD ("record breakpoint " << file_path << ":"
                 << iter->second.line () - 1) ;
-        append_visual_breakpoint (iter->second.full_file_name (),
-                                  iter->second.line () - 1) ;
+        m_priv->breakpoints[iter->first] = iter->second ;
+        m_priv->breakpoints[iter->first].file_full_name (file_path) ;
+        append_visual_breakpoint (file_path, iter->second.line () - 1) ;
     }
 }
 
@@ -2213,9 +2305,9 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
     for (iter = m_priv->breakpoints.begin () ;
          iter != m_priv->breakpoints.end () ;
          ++iter) {
-        LOG_DD ("got breakpoint " << iter->second.full_file_name ()
+        LOG_DD ("got breakpoint " << iter->second.file_full_name ()
                 << ":" << iter->second.line () << "...") ;
-        if (   (iter->second.full_file_name () == a_file_name)
+        if ((iter->second.file_full_name () == a_file_name)
             && (iter->second.line () == a_line_num)) {
             a_break_num= iter->second.number () ;
             LOG_DD ("found breakpoint " << breakpoint << " !") ;
@@ -2293,7 +2385,7 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
     }
 
     SourceEditor *source_editor =
-        get_source_editor_from_path (iter->second.full_file_name ()) ;
+        get_source_editor_from_path (iter->second.file_full_name ()) ;
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
     m_priv->breakpoints.erase (iter);

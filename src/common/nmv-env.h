@@ -75,41 +75,9 @@ NEMIVER_API UString build_path_to_menu_file (const UString &a_ui_file_name) ;
 
 NEMIVER_API UString build_path_to_image_file (const UString &a_image_file_name) ;
 
-template <class T>
-T*
-get_widget_from_glade (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
-                       const UString &a_widget_name)
-{
-    Gtk::Widget *widget = a_glade->get_widget (a_widget_name) ;
-    if (!widget) {
-        THROW ("couldn't find widget '"
-               + a_widget_name
-               + "' in glade file: " + a_glade->get_filename ().c_str ());
-    }
-    T *result = dynamic_cast<T*> (widget) ;
-    if (!result) {
-        //TODO: we may leak widget here if it is a toplevel widget
-        //like Gtk::Window. In this case, we should make sure to delete it
-        //before bailing out.
-        THROW ("widget " + a_widget_name + " is not of the expected type") ;
-    }
-    return result ;
-}
-
-template <class T>
-T*
-get_widget_from_glade (const UString &a_glade_file_name,
-                       const UString &a_widget_name,
-                       const Glib::RefPtr<Gnome::Glade::Xml> &a_glade)
-{
-    UString path_to_glade_file =
-                common::env::build_path_to_glade_file (a_glade_file_name) ;
-    a_glade = Gnome::Glade::Xml::create (path_to_glade_file) ;
-    if (!a_glade) {
-        THROW ("Could not create glade from file " + path_to_glade_file) ;
-    }
-    return get_widget_from_glade<T> (a_glade, a_widget_name) ;
-}
+}//end namespace env
+}//end namespace common
+}//end namespace nemiver
 
 #ifndef NEMIVER_TRY
 #define NEMIVER_TRY try {
@@ -139,20 +107,6 @@ get_widget_from_glade (const UString &a_glade_file_name,
     return a_value ; \
 }
 #endif
-
-#ifndef NEMIVER_BEGIN_NAMESPACE
-#define NEMIVER_BEGIN_NAMESPACE(name) namespace name {
-#endif
-
-
-#ifndef NEMIVER_END_NAMESPACE
-#define NEMIVER_END_NAMESPACE }
-#endif
-
-
-}//end namespace env
-}//end namespace common
-}//end namespace nemiver
 
 #endif //__NEMIVER_ENV_H__
 

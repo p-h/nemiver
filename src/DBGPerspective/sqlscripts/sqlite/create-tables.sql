@@ -17,6 +17,7 @@ create table attributes (id integer primary key,
 create table breakpoints (id integer primary key,
                           sessionid integer,
                           filename text,
+                          filefullname text,
                           linenumber integer) ;
 
 create table openedfiles (id integer primary key,

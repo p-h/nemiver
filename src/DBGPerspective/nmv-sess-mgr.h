@@ -56,19 +56,24 @@ protected:
 
 public:
     class BreakPoint {
-        UString m_filename ;
+        UString m_file_name ;
+        UString m_file_full_name ;
         int m_line_number ;
 
     public:
-        BreakPoint (const UString &a_filename,
+        BreakPoint (const UString &a_file_name,
+                    const UString &a_file_full_name,
                     const UString &a_line_number) :
-            m_filename (a_filename),
+            m_file_name (a_file_name),
+            m_file_full_name (a_file_full_name),
             m_line_number (atoi (a_line_number.c_str ()))
         {}
 
-        BreakPoint (const UString &a_filename,
+        BreakPoint (const UString &a_file_name,
+                    const UString &a_file_full_name,
                     int a_line_number) :
-            m_filename (a_filename),
+            m_file_name (a_file_name),
+            m_file_full_name (a_file_full_name),
             m_line_number (a_line_number)
         {}
 
@@ -76,8 +81,11 @@ public:
             m_line_number (0)
         {}
 
-        const UString& filename () const {return m_filename;}
-        void filename (const UString &a_in) {m_filename = a_in;}
+        const UString& file_name () const {return m_file_name;}
+        void file_name (const UString &a_in) {m_file_name = a_in;}
+
+        const UString& file_full_name () const {return m_file_full_name;}
+        void file_full_name (const UString &a_in) {m_file_full_name = a_in;}
 
         int line_number () const {return m_line_number;}
         void line_number (int a_in) {m_line_number = a_in;}

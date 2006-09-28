@@ -57,6 +57,7 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \
 -I$(top_srcdir)/src/workbench \
