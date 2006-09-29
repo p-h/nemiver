@@ -257,7 +257,7 @@ SessMgr::store_session (Session &a_session,
          ++break_iter) {
         query = "insert into breakpoints values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + break_iter->file_name () + "', "
+                + break_iter->file_name () + "', '"
                 + break_iter->file_full_name () + "', "
                 + UString::from_int (break_iter->line_number ())
                 + ")"

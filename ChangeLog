@@ -1,3 +1,10 @@
+2006-09-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/nmv-sess-mgr.cc: missing quote for fullfilename in add
+	breakpoint sql query.
+	* src/DBGPerspective/schemas/Makefile.am: $schemafiles was not defined, use
+	$files instead
+
 jeudi 28 septembre 2006, 23:12:22 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-i-debugger.h: renamed

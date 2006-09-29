@@ -1,7 +1,7 @@
 files=nemiver-dbgperspective.schemas
 
 schemasdir = $(GCONF_SCHEMA_FILE_DIR)
-schemas_DATA = $(schemafiles)
+schemas_DATA = $(files)
 
 GCONFTOOL=@GCONFTOOL@
 
