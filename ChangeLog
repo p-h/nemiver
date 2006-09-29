@@ -1,3 +1,20 @@
+2006-09-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/glade/savedsessionsdialog.glade: First crack at
+	creating a dialog for executing saved debugging sessions from the GUI
+	* src/DBGPerspective/glade/Makefile.am: install new glade file
+	* src/DBGPerspective/menus/menus.xml: add menu item for launching the saved
+	sessions dialog
+	* src/DBGPerspective/Makefile.am,
+	src/DBGPerspective/nmv-saved-sessions-dialog.cc,
+	src/DBGPerspective/nmv-saved-sessions-dialog.h: add a Saved Sessions dialog.
+	The functionality works, but it's just the bare minimum right now (e.g. pick
+	a session and execute it).  You can't yet edit anything about the session or
+	remove a session from the list.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: connect the new saved sessions
+	menu item to the dialog, and execute the selected session if the user clicks
+	OK on the dialog.
+
 2006-09-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/nmv-sess-mgr.cc: missing quote for fullfilename in add

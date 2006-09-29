@@ -34,6 +34,8 @@ nmv-run-program-dialog.cc \
 nmv-run-program-dialog.h \
 nmv-load-core-dialog.cc \
 nmv-load-core-dialog.h \
+nmv-saved-sessions-dialog.h \
+nmv-saved-sessions-dialog.cc \
 nmv-sess-mgr.cc \
 nmv-sess-mgr.h \
 nmv-proc-mgr.cc \

@@ -35,6 +35,7 @@
 #include "nmv-env.h"
 #include "nmv-run-program-dialog.h"
 #include "nmv-load-core-dialog.h"
+#include "nmv-saved-sessions-dialog.h"
 #include "nmv-proc-list-dialog.h"
 #include "nmv-ui-utils.h"
 #include "nmv-sess-mgr.h"
@@ -123,6 +124,7 @@ private:
     void on_execute_program_action () ;
     void on_load_core_file_action () ;
     void on_attach_to_program_action () ;
+    void on_saved_sessions_action () ;
     void on_stop_debugger_action ();
     void on_run_action () ;
     void on_next_action () ;
@@ -268,6 +270,8 @@ public:
     void load_core_file () ;
     void load_core_file (const UString &a_prog_file,
                          const UString &a_core_file_path) ;
+    void saved_sessions () ;
+
     void run () ;
     void stop () ;
     void step_over () ;
@@ -550,6 +554,16 @@ DBGPerspective::on_attach_to_program_action ()
     NEMIVER_TRY
 
     attach_to_program () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_saved_sessions_action ()
+{
+    NEMIVER_TRY
+
+    saved_sessions () ;
 
     NEMIVER_CATCH
 }
@@ -1306,6 +1320,15 @@ DBGPerspective::init_actions ()
             _("Debug a program that's already running"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_attach_to_program_action),
+            ActionEntry::DEFAULT
+        },
+        {
+            "SavedSessionsMenuItemAction",
+            nil_stock_id,
+            _("_Saved Sessions..."),
+            _("Manage previously saved debugging sessions"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_saved_sessions_action),
             ActionEntry::DEFAULT
         }
     };
@@ -2175,6 +2198,18 @@ DBGPerspective::attach_to_program (unsigned int a_pid)
         ui_utils::display_warning ("You can not attach to the "
                                    "underlying debugger engine") ;
     }
+}
+
+void
+DBGPerspective::saved_sessions ()
+{
+    SavedSessionsDialog dialog (plugin_path (), get_session_manager ()) ;
+    int result = dialog.run ();
+    if (result != Gtk::RESPONSE_OK) {
+        return;
+    }
+    ISessMgr::Session session = dialog.session ();
+    execute_session (session);
 }
 
 void

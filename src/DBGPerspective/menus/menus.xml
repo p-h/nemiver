@@ -9,6 +9,8 @@
                       name="LoadCoreMenuItem"/>
             <menuitem action="AttachToProgramMenuItemAction"
                       name="AttachToProgramMenuItem"/>
+            <menuitem action="SavedSessionsMenuItemAction"
+                      name="SavedSessionsMenuItem" />
             <menuitem action="OpenMenuItemAction" name="OpenMenuItem"/>
             <menuitem action="CloseMenuItemAction" name="CloseMenuItem"/>
         </placeholder>
