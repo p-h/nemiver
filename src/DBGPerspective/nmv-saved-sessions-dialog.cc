@@ -40,15 +40,17 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 
-SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path, ISessMgr *a_sesssion_manager) :
+SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
+                                          ISessMgr *a_sesssion_manager) :
     Dialog(a_root_path, "savedsessionsdialog.glade", "savedsessionsdialog"),
     m_model(Gtk::ListStore::create(m_session_columns))
 {
-    THROW_IF_FAIL (glade) ;
+    THROW_IF_FAIL (m_glade) ;
     THROW_IF_FAIL(a_sesssion_manager != NULL);
     list<ISessMgr::Session> sessions = a_sesssion_manager->sessions ();
-    m_treeview_sessions = ui_utils::get_widget_from_glade<Gtk::TreeView> (glade,
-            "treeview_sessions") ;
+    m_treeview_sessions =
+        ui_utils::get_widget_from_glade<Gtk::TreeView> (m_glade,
+                                                        "treeview_sessions") ;
     m_treeview_sessions->set_model (m_model);
     m_treeview_sessions->append_column (_("Session"), m_session_columns.name);
     //m_treeview_sessions->append_column (_("id"), m_session_columns.id);

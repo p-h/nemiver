@@ -1,3 +1,23 @@
+samedi 30 septembre 2006, 20:53:08 (UTC+0200) Dodji Seketeli
+
+	* menus/menubar.xml,src/workbench/nmv-workbench.cc: add an edit menu.
+
+	* src/dbgengine/nmv-gdb-engine.cc: add some more traces.
+
+	* src/DBGPerspective/nmv-dialog.h: add Gtk::Dialog, and
+	  Gnome::Glade::Xml forward decls to make this .h file self contained
+	  w.r.t type declarations. Also, prefix the member attributes by "m_".
+	  All the inherited classes have also been changed to reflect these
+	  changes.
+	* src/DBGPerspective/glade/currentsessiondialog.glade,
+	  src/DBGPerspective/nmv-cur-session-props-dialog.h,cc: a new
+	  preference dialogs. It started as a dialog to edit the session
+	  properties but I turned that it is better putting all the preference
+	  editing here. I must then change the name of the dialog into
+	  nmv-preference-dialog.h,cc, I think.
+	* src/DBGPerspective/menus/menus.xml: add a edit -> preferences menu.
+
+
 2006-09-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/glade/savedsessionsdialog.glade: First crack at

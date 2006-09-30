@@ -7,6 +7,7 @@
       <menuitem action="QuitMenuItemAction" name="QuitMenuItem"/>
     </menu>
     <placeholder name="MenuBarAdditions"/>
+    <menu action="EditMenuAction" name ="EditMenu"/>
     <menu action="HelpMenuAction" name ="HelpMenu">
       <menuitem action="AboutMenuItemAction" name="AboutMenuItem"/>
     </menu>

@@ -49,11 +49,11 @@ Dialog::Dialog (const UString &a_resource_root_path,
         if (!Glib::file_test (glade_path, Glib::FILE_TEST_IS_REGULAR)) {
             THROW (UString ("could not find file ") + glade_path) ;
         }
-        glade = Gnome::Glade::Xml::create (glade_path) ;
-        THROW_IF_FAIL (glade) ;
-        dialog = ui_utils::get_widget_from_glade<Gtk::Dialog> (glade,
-                                                               a_widget_name) ;
-        dialog->hide () ;
+        m_glade = Gnome::Glade::Xml::create (glade_path) ;
+        THROW_IF_FAIL (m_glade) ;
+        m_dialog = ui_utils::get_widget_from_glade<Gtk::Dialog> (m_glade,
+                                                                 a_widget_name) ;
+        m_dialog->hide () ;
 }
 
 Dialog::~Dialog ()
@@ -63,8 +63,8 @@ Dialog::~Dialog ()
 int
 Dialog::run ()
 {
-    THROW_IF_FAIL (dialog) ;
-    return dialog->run () ;
+    THROW_IF_FAIL (m_dialog) ;
+    return m_dialog->run () ;
 }
 
 }//end namespace nemiver

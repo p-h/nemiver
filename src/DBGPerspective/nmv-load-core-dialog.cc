@@ -52,9 +52,9 @@ LoadCoreDialog::~LoadCoreDialog ()
 UString
 LoadCoreDialog::program_name () const
 {
-    THROW_IF_FAIL (glade) ;
+    THROW_IF_FAIL (m_glade) ;
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (m_glade,
                                                                 "filechooserbutton_executable") ;
     return chooser->get_filename () ;
 }
@@ -62,9 +62,9 @@ LoadCoreDialog::program_name () const
 void
 LoadCoreDialog::program_name (const UString &a_name)
 {
-    THROW_IF_FAIL (glade) ;
+    THROW_IF_FAIL (m_glade) ;
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (m_glade,
                                                                 "filechooserbutton_executable") ;
     chooser->set_filename (a_name) ;
 }
@@ -72,9 +72,9 @@ LoadCoreDialog::program_name (const UString &a_name)
 UString
 LoadCoreDialog::core_file () const
 {
-    THROW_IF_FAIL (glade) ;
+    THROW_IF_FAIL (m_glade) ;
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (m_glade,
                                                 "filechooserbutton_corefile");
     return chooser->get_filename () ;
 }
@@ -82,9 +82,9 @@ LoadCoreDialog::core_file () const
 void
 LoadCoreDialog::core_file (const UString &a_dir)
 {
-    THROW_IF_FAIL (glade) ;
+    THROW_IF_FAIL (m_glade) ;
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton> (m_glade,
                                                                  "filechooserbutton_corefile");
     chooser->set_filename (a_dir) ;
 }

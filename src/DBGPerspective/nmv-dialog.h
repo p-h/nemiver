@@ -28,6 +28,16 @@
 #include "nmv-object.h"
 #include "nmv-safe-ptr-utils.h"
 
+namespace Gtk {
+    class Dialog ;
+}
+
+namespace Gnome {
+    namespace Glade {
+        class Xml ;
+    }
+}
+
 namespace nemiver {
 
 namespace common {
@@ -57,8 +67,8 @@ public:
     virtual gint run () ;
 
 protected:
-    SafePtr<Gtk::Dialog> dialog ;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
+    SafePtr<Gtk::Dialog> m_dialog ;
+    Glib::RefPtr<Gnome::Glade::Xml> m_glade ;
 };//end class nemiver
 
 }//end namespace nemiver

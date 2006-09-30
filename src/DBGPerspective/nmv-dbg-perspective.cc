@@ -45,6 +45,7 @@
 #include "nmv-vars-editor.h"
 #include "nmv-terminal.h"
 #include "nmv-i-conf-mgr.h"
+#include "nmv-cur-session-props-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -125,6 +126,7 @@ private:
     void on_load_core_file_action () ;
     void on_attach_to_program_action () ;
     void on_saved_sessions_action () ;
+    void on_current_session_properties_action () ;
     void on_stop_debugger_action ();
     void on_run_action () ;
     void on_next_action () ;
@@ -211,14 +213,14 @@ private:
     void append_source_editor (SourceEditor &a_sv,
                                const UString &a_path) ;
     SourceEditor* get_current_source_editor () ;
-    ISessMgr* get_session_manager () ;
+    ISessMgr* session_manager_ptr () ;
     UString get_current_file_path () ;
     SourceEditor* get_source_editor_from_path (const UString &a_path) ;
     void bring_source_as_current (const UString &a_path) ;
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
-    void save_session () ;
-    void save_session (ISessMgr::Session &a_session) ;
+    void record_and_save_new_session () ;
+    void record_and_save_session (ISessMgr::Session &a_session) ;
     IProcMgr* get_process_manager () ;
 
 public:
@@ -271,6 +273,7 @@ public:
     void load_core_file (const UString &a_prog_file,
                          const UString &a_core_file_path) ;
     void saved_sessions () ;
+    void edit_preferences () ;
 
     void run () ;
     void stop () ;
@@ -569,6 +572,15 @@ DBGPerspective::on_saved_sessions_action ()
 }
 
 void
+DBGPerspective::on_current_session_properties_action ()
+{
+    NEMIVER_TRY
+
+    edit_preferences () ;
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_run_action ()
 {
     NEMIVER_TRY
@@ -839,9 +851,9 @@ DBGPerspective::on_shutdown_signal ()
     }
 
     if (m_priv->reused_session) {
-        save_session (m_priv->session) ;
+        record_and_save_session (m_priv->session) ;
     } else {
-        save_session () ;
+        record_and_save_new_session () ;
     }
 
     NEMIVER_CATCH
@@ -1330,6 +1342,15 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_saved_sessions_action),
             ActionEntry::DEFAULT
+        },
+        {
+            "CurrentSessionPropertiesMenuItemAction",
+            Gtk::Stock::PREFERENCES,
+            _("_preferences"),
+            _("Edit the properties of the current session"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_current_session_properties_action),
+            ActionEntry::DEFAULT
         }
     };
 
@@ -1634,7 +1655,7 @@ DBGPerspective::get_current_source_editor ()
 }
 
 ISessMgr*
-DBGPerspective::get_session_manager ()
+DBGPerspective::session_manager_ptr ()
 {
     THROW_IF_FAIL (m_priv) ;
 
@@ -1807,11 +1828,11 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
 }
 
 void
-DBGPerspective::save_session ()
+DBGPerspective::record_and_save_new_session ()
 {
     THROW_IF_FAIL (m_priv) ;
     ISessMgr::Session session ;
-    save_session (session) ;
+    record_and_save_session (session) ;
 }
 
 IProcMgr*
@@ -1826,7 +1847,7 @@ DBGPerspective::get_process_manager ()
 }
 
 void
-DBGPerspective::save_session (ISessMgr::Session &a_session)
+DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 {
     THROW_IF_FAIL (m_priv) ;
     ISessMgr::Session session ;
@@ -1860,10 +1881,10 @@ DBGPerspective::save_session (ISessMgr::Session &a_session)
                                    break_iter->second.file_full_name (),
                                    break_iter->second.line ())) ;
     }
-    THROW_IF_FAIL (get_session_manager ()) ;
-    get_session_manager ()->store_session
+    THROW_IF_FAIL (session_manager_ptr ()) ;
+    session_manager_ptr ()->store_session
                             (a_session,
-                             get_session_manager ()->default_transaction ()) ;
+                             session_manager_ptr ()->default_transaction ()) ;
 }
 
 
@@ -1901,11 +1922,11 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     init_body () ;
     init_signals () ;
     init_debugger_signals () ;
-    m_priv->initialized = true ;
+    init_conf_mgr () ;
     session_manager ().load_sessions (session_manager ().default_transaction ());
     m_priv->workbench->shutting_down_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_shutdown_signal)) ;
-    init_conf_mgr () ;
+    m_priv->initialized = true ;
 }
 
 DBGPerspective::~DBGPerspective ()
@@ -2079,7 +2100,7 @@ DBGPerspective::close_file (const UString &a_path)
 ISessMgr&
 DBGPerspective::session_manager ()
 {
-    return *get_session_manager () ;
+    return *session_manager_ptr () ;
 }
 
 void
@@ -2203,13 +2224,25 @@ DBGPerspective::attach_to_program (unsigned int a_pid)
 void
 DBGPerspective::saved_sessions ()
 {
-    SavedSessionsDialog dialog (plugin_path (), get_session_manager ()) ;
+    SavedSessionsDialog dialog (plugin_path (), session_manager_ptr ()) ;
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
         return;
     }
     ISessMgr::Session session = dialog.session ();
     execute_session (session);
+}
+
+void
+DBGPerspective::edit_preferences ()
+{
+    CurSessionPropsDialog dialog (plugin_path ());
+    dialog.source_directories (m_priv->source_dirs) ;
+
+    int res = dialog.run () ;
+    if (res != Gtk::RESPONSE_OK) {return;}
+
+    m_priv->source_dirs = dialog.source_directories () ;
 }
 
 void

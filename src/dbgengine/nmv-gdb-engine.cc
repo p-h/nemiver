@@ -2876,6 +2876,10 @@ struct GDBEngine::Priv {
             str_end = cur - 1 ;
             break;
         }
+        if (a_input[cur] != '"') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
         Glib::ustring str (a_input, str_start, str_end - str_start + 1) ;
         a_string = str ;
         a_to = cur ;

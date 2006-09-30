@@ -16,6 +16,10 @@
         </placeholder>
     </menu>
     <placeholder name="MenuBarAdditions">
+        <menu action="EditMenuAction" name="EditMenu">
+            <menuitem action="CurrentSessionPropertiesMenuItemAction"
+                      name="CurrentSessionPropertiesMenuItem"/>
+        </menu>
         <menu action="ViewMenuAction" name="ViewMenu">
             <menuitem action="ShowCommandsMenuAction"
                       name="ShowCommandsMenuItem"/>

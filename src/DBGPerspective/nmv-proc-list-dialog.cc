@@ -115,9 +115,9 @@ ProcListDialog::ProcListDialog (const UString &a_root_path,
     proc_mgr (a_proc_mgr),
     process_selected (false)
 {
-    dialog->hide () ;
+    m_dialog->hide () ;
     proclist_view = ui_utils::get_widget_from_glade<Gtk::TreeView>
-        (glade, "proclisttreeview") ;
+        (m_glade, "proclisttreeview") ;
     proclist_store = Gtk::ListStore::create (columns ()) ;
     proclist_view->set_model (proclist_store) ;
 

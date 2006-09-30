@@ -380,6 +380,16 @@ Workbench::init_actions ()
         }
         ,
         {
+            "EditMenuAction",
+            nil_stock_id,
+            _("_Edit"),
+            "",
+            nil_slot,
+            ActionEntry::DEFAULT,
+            ""
+        }
+        ,
+        {
             "HelpMenuAction",
             nil_stock_id,
             _("_Help"),
