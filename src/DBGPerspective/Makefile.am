@@ -36,8 +36,8 @@ nmv-load-core-dialog.cc \
 nmv-load-core-dialog.h \
 nmv-saved-sessions-dialog.h \
 nmv-saved-sessions-dialog.cc \
-nmv-cur-session-props-dialog.h \
-nmv-cur-session-props-dialog.cc \
+nmv-preferences-dialog.h \
+nmv-preferences-dialog.cc \
 nmv-sess-mgr.cc \
 nmv-sess-mgr.h \
 nmv-proc-mgr.cc \

@@ -25,7 +25,7 @@
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
-#include "nmv-cur-session-props-dialog.h"
+#include "nmv-preferences-dialog.h"
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE(nemiver)
@@ -46,7 +46,7 @@ source_dirs_cols ()
     return s_cols ;
 }
 
-class CurSessionPropsDialog::Priv {
+class PreferencesDialog::Priv {
     Priv () {}
 
 public:
@@ -79,16 +79,19 @@ public:
 
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
 
+        tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
+                (this, &PreferencesDialog::Priv::on_tree_view_selection_changed));
+
         Gtk::Button *button =
             ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "adddirbutton");
         button->signal_clicked ().connect (sigc::mem_fun
-                (this, &CurSessionPropsDialog::Priv::on_add_dir_button_clicked)) ;
+                (this, &PreferencesDialog::Priv::on_add_dir_button_clicked)) ;
 
         remove_dir_button =
             ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
                                                           "suppressdirbutton") ;
-        button->signal_clicked ().connect (sigc::mem_fun
-            (this, &CurSessionPropsDialog::Priv::on_remove_dir_button_clicked)) ;
+        remove_dir_button->signal_clicked ().connect (sigc::mem_fun
+            (this, &PreferencesDialog::Priv::on_remove_dir_button_clicked)) ;
         remove_dir_button->set_sensitive (false) ;
     }
 
@@ -160,22 +163,24 @@ public:
             (*row_it)[source_dirs_cols ().dir] = *dir_it ;
         }
     }
-};//end CurSessionPropsDialog
+};//end PreferencesDialog
 
-CurSessionPropsDialog::CurSessionPropsDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "currentsessiondialog.glade", "currentsessiondialog")
+PreferencesDialog::PreferencesDialog (const UString &a_root_path) :
+    Dialog (a_root_path,
+            "preferencesdialog.glade",
+            "preferencesdialog")
 {
     m_priv = new Priv (m_glade) ;
 }
 
-CurSessionPropsDialog::~CurSessionPropsDialog ()
+PreferencesDialog::~PreferencesDialog ()
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv = 0 ;
 }
 
 const std::vector<UString>&
-CurSessionPropsDialog::source_directories () const
+PreferencesDialog::source_directories () const
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv->collect_source_dirs () ;
@@ -183,7 +188,7 @@ CurSessionPropsDialog::source_directories () const
 }
 
 void
-CurSessionPropsDialog::source_directories (const std::vector<UString> &a_dirs)
+PreferencesDialog::source_directories (const std::vector<UString> &a_dirs)
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv->source_dirs = a_dirs ;

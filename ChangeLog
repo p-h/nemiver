@@ -1,3 +1,16 @@
+samedi 30 septembre 2006, 21:27:48 (UTC+0200) Dodji Seketeli
+
+	* src/DBGPerspective/nmv-preferences-dialog.cc,h: renamed
+	  nmv-cur-session-props-dialog.h,cc. Also fix some bugs in
+	  adding/removing directories.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: propagate the
+	  rename of nmv-cur-session-props-dialog.h into
+	  nmv-preference-dialog.h
+	* src/DBGPerspective/glade/preferencesialog.glade: make the
+	  scrollbars automatic. Renamed currentsessiondialog.glade into
+	  preferencesdialog.glade.
+
+
 samedi 30 septembre 2006, 20:53:08 (UTC+0200) Dodji Seketeli
 
 	* menus/menubar.xml,src/workbench/nmv-workbench.cc: add an edit menu.

@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_CUR_SESSION_PROPS_DIALOG_H__
-#define __NMV_CUR_SESSION_PROPS_DIALOG_H__
+#ifndef __NMV_PREFERENCES_DIALOG_H__
+#define __NMV_PREFERENCES_DIALOG_H__
 
 #include <vector>
 #include "nmv-ustring.h"
@@ -33,22 +33,22 @@ using nemiver::common::UString ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class CurSessionPropsDialog : public Dialog {
+class PreferencesDialog : public Dialog {
 
     class Priv ;
     SafePtr<Priv> m_priv ;
 
-    CurSessionPropsDialog () ;
+    PreferencesDialog () ;
 
 public:
-    CurSessionPropsDialog (const UString &a_resource_root_path) ;
-    CurSessionPropsDialog (const UString &a_resource_root_path,
+    PreferencesDialog (const UString &a_resource_root_path) ;
+    PreferencesDialog (const UString &a_resource_root_path,
                            std::vector<UString> &a_source_dirs) ;
-    virtual ~CurSessionPropsDialog () ;
+    virtual ~PreferencesDialog () ;
     const std::vector<UString>& source_directories () const ;
     void source_directories (const std::vector<UString> &a_dirs) ;
-};//end class CurSessionPropsDialog
+};//end class PreferencesDialog
 
 NEMIVER_END_NAMESPACE //nemiver
 
-#endif //__NMV_CUR_SESSION_PROPS_DIALOG_H__
+#endif //__NMV_PREFERENCES_DIALOG

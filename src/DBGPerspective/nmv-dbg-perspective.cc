@@ -45,7 +45,7 @@
 #include "nmv-vars-editor.h"
 #include "nmv-terminal.h"
 #include "nmv-i-conf-mgr.h"
-#include "nmv-cur-session-props-dialog.h"
+#include "nmv-preferences-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -2236,7 +2236,7 @@ DBGPerspective::saved_sessions ()
 void
 DBGPerspective::edit_preferences ()
 {
-    CurSessionPropsDialog dialog (plugin_path ());
+    PreferencesDialog dialog (plugin_path ());
     dialog.source_directories (m_priv->source_dirs) ;
 
     int res = dialog.run () ;
