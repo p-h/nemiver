@@ -1335,6 +1335,26 @@ struct GDBEngine::Priv {
         return true ;
     }
 
+    bool find_prog_in_path (const UString &a_prog,
+                            UString &a_prog_path)
+    {
+        const char *tmp = getenv ("PATH") ;
+        if (!tmp) {return false;}
+        vector<UString> path_dirs = UString (tmp).split (":") ;
+        path_dirs.insert (path_dirs.begin (), (".")) ;
+        vector<UString>::const_iterator it ;
+        string file_path ;
+        for (it = path_dirs.begin (); it != path_dirs.end () ; ++it) {
+            file_path = Glib::build_filename (Glib::locale_from_utf8 (*it),
+                                              Glib::locale_from_utf8 (a_prog)) ;
+            if (Glib::file_test (file_path,
+                                 Glib::FILE_TEST_IS_REGULAR)) {
+                a_prog_path = Glib::locale_to_utf8 (file_path) ;
+                return true ;
+            }
+        }
+        return false ;
+    }
 
     bool launch_gdb (const vector<UString> &a_source_search_dirs,
                      const vector<UString> &a_gdb_options,
@@ -1354,7 +1374,15 @@ struct GDBEngine::Priv {
             }
         }
         if (a_prog != "") {
-            argv.push_back (a_prog) ;
+            UString prog_path = a_prog ;
+            if (!Glib::file_test (Glib::locale_from_utf8 (prog_path),
+                                  Glib::FILE_TEST_IS_REGULAR)) {
+                if (!find_prog_in_path (prog_path, prog_path)) {
+                    LOG_ERROR ("Could not find program '" << prog_path << "'") ;
+                    return false ;
+                }
+            }
+            argv.push_back (prog_path) ;
         }
 
         source_search_dirs = a_source_search_dirs;

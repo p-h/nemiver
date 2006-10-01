@@ -1,3 +1,17 @@
+dimanche 1 octobre 2006, 12:04:37 (UTC+0200) Dodji Seketeli
+
+	* src/main.cc: now,  "nemiver myprog progarg0 progarg1" works.
+          no more need to do nemiver --debug myprog progarg0 progarg1.
+	* src/DBGPerspective/glade/runprogramdialog.gladep: removed this
+	  file from svn.
+	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::Priv::launch_gdb():
+	  locate the absolute filepath of the program being launched, scanning
+	  the PATH environement variable and the cwd.
+	  If the program is not found, return an error.
+	  Now, if I type 'nemiver aprog', the debugger will locate
+	  aprog in the path and launch it. There is no more need to give
+	  the exact absolute path.
+
 samedi 30 septembre 2006, 21:27:48 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-preferences-dialog.cc,h: renamed

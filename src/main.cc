@@ -43,7 +43,6 @@ using nemiver::IDBGPerspective ;
 using nemiver::common::UString ;
 using nemiver::ISessMgr ;
 
-static gchar *gv_prog_arg=NULL ;
 static bool gv_list_sessions=false ;
 static bool gv_purge_sessions=false ;
 static int gv_execute_session=0;
@@ -52,14 +51,6 @@ static bool gv_log_debugger_output=false ;
 
 static GOptionEntry entries[] =
 {
-    { "debug",
-      'd',
-      0,
-      G_OPTION_ARG_STRING,
-      &gv_prog_arg,
-      _("debug a prog"),
-      _("<prog-name-and-args>")
-    },
     { "listsessions",
       0,
       0,
@@ -116,7 +107,8 @@ main (int a_argc, char *a_argv[])
     //***************************
     //parse command line options
     //***************************
-    context = g_option_context_new (_("- a C/C++ debugger for GNOME")) ;
+    context = g_option_context_new
+        (_(" [<prog-to-debug> [prog-args]] - a C/C++ debugger for GNOME")) ;
     g_option_context_add_main_entries (context, entries, "") ;
     g_option_context_add_group (context, gtk_get_option_group (TRUE)) ;
     g_option_context_set_ignore_unknown_options (context, FALSE) ;
@@ -214,22 +206,24 @@ main (int a_argc, char *a_argv[])
     }
 
 
-    if (gv_prog_arg) {
+    if (a_argc > 1) {
+        UString prog_args ;
+        for (int i=1 ; i < a_argc ;++i) {
+            prog_args += Glib::locale_to_utf8 (a_argv[i]) ;
+        }
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
                                                             ("DBGPerspective")) ;
         if (debug_persp) {
             LOG_D ("going to debug program: '"
-                   << UString (gv_prog_arg) << "'\n",
+                   << prog_args << "'\n",
                    NMV_DEFAULT_DOMAIN) ;
             map<UString, UString> env ;
-            debug_persp->execute_program (UString (gv_prog_arg), env) ;
+            debug_persp->execute_program (prog_args, env) ;
         } else {
             cerr << "Could not find the DBGPerspective\n" ;
             return -1 ;
         }
-        g_free (gv_prog_arg);
-        gv_prog_arg = NULL;
         goto run_app ;
 
     }
