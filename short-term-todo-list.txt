@@ -19,5 +19,7 @@ make sense like those related to stepping and breakpoint setting.
 
 7) code a thread selection tab in the status notebook.
 
-8) add a IDebugger::get_target_path() api so that the "execute dialog" can
-be defaulted to the current target.
+8) add 'continue to current line' and 'jump to current line'.
+
+9) add a search facility to search text in the source editor, also maybe add find in files.
+ 
