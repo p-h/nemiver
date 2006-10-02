@@ -907,7 +907,7 @@ public:
     sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
                                             variable_value_signal () const  ;
 
-    sigc::signal<void, int>& got_proc_info_signal () const  ;
+    sigc::signal<void, int, const UString&>& got_proc_info_signal () const  ;
 
     sigc::signal<void>& running_signal () const ;
 
@@ -928,7 +928,7 @@ public:
     //***************
 
     void on_debugger_stdout_signal (CommandAndOutput &a_cao) ;
-    void on_got_proc_info_signal (int a_pid) ;
+    void on_got_proc_info_signal (int a_pid, const UString& a_exe_path) ;
     //***************
     //</signal handlers>
     //***************
@@ -956,6 +956,10 @@ public:
                             const UString &a_tty_path) ;
 
     void add_env_variables (const map<UString, UString> &a_vars) ;
+
+    map<UString, UString>& get_env_variables ()  ;
+
+    const UString& get_target_path () ;
 
     void init_output_handlers () ;
 
@@ -1015,7 +1019,9 @@ public:
     void print_variable_value (const UString &a_var_name,
                          bool a_run_event_loops) ;
 
-    bool extract_proc_info (Output &a_output, int &a_proc_pid) ;
+    bool extract_proc_info (Output &a_output,
+                            int &a_proc_pid,
+                            UString &a_exe_path) ;
 
 };//end class GDBEngine
 
@@ -1045,6 +1051,8 @@ struct GDBEngine::Priv {
     UString cwd ;
     vector<UString> argv ;
     vector<UString> source_search_dirs ;
+    map<UString, UString> env_variables ;
+    UString exe_path ;
     Glib::Pid gdb_pid ;
     Glib::Pid target_pid ;
     int gdb_stdout_fd ;
@@ -1111,7 +1119,7 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>
                                             variable_value_signal ;
 
-    mutable sigc::signal<void, int> got_proc_info_signal ;
+    mutable sigc::signal<void, int, const UString&> got_proc_info_signal ;
 
     mutable sigc::signal<void> running_signal ;
 
@@ -2449,7 +2457,8 @@ struct GDBEngine::Priv {
 
         GDBMIListSafePtr gdbmi_list =
             gdbmi_result->value ()->get_list_content () ;
-        if (!gdbmi_list) {
+        if (!gdbmi_list
+            || gdbmi_list->content_type () == GDBMIList::UNDEFINED_TYPE) {
             a_to = cur ;
             a_vars.clear () ;
             return true ;
@@ -3763,13 +3772,13 @@ struct OnInfoProcHandler : OutputHandler {
     {
         THROW_IF_FAIL (m_engine) ;
 
-        int pid=0 ;
-        if (!m_engine->extract_proc_info (a_in.output (), pid)) {
+        int pid=0 ; UString exe_path ;
+        if (!m_engine->extract_proc_info (a_in.output (), pid, exe_path)) {
             LOG_ERROR ("failed to extract proc info") ;
             return ;
         }
         THROW_IF_FAIL (pid) ;
-        m_engine->got_proc_info_signal ().emit (pid) ;
+        m_engine->got_proc_info_signal ().emit (pid, exe_path) ;
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnInfoProcHandler
@@ -3960,8 +3969,6 @@ GDBEngine::load_program (const vector<UString> &a_argv,
 
         command.value ("set args " + args) ;
         queue_command (command, a_run_event_loops) ;
-        command.value ("info proc") ;
-        queue_command (command, a_run_event_loops) ;
         queue_command (Command ("set inferior-tty " + a_tty_path)) ;
     }
 }
@@ -4013,12 +4020,28 @@ GDBEngine::add_env_variables (const map<UString, UString> &a_vars)
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->is_gdb_running ()) ;
 
+    m_priv->env_variables = a_vars ;
+
     Command command ;
     map<UString, UString>::const_iterator it ;
     for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
         command.value ("set environment " + it->first + " " + it->second) ;
         queue_command (command) ;
     }
+}
+
+map<UString, UString>&
+GDBEngine::get_env_variables ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    return m_priv->env_variables ;
+}
+
+const UString&
+GDBEngine::get_target_path ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    return m_priv->exe_path ;
 }
 
 void
@@ -4137,7 +4160,7 @@ GDBEngine::frames_listed_signal () const
     return m_priv->frames_listed_signal ;
 }
 
-sigc::signal<void, int>&
+sigc::signal<void, int, const UString&>&
 GDBEngine::got_proc_info_signal () const
 {
     return m_priv->got_proc_info_signal ;
@@ -4225,12 +4248,13 @@ GDBEngine::on_debugger_stdout_signal (CommandAndOutput &a_cao)
 }
 
 void
-GDBEngine::on_got_proc_info_signal (int a_pid)
+GDBEngine::on_got_proc_info_signal (int a_pid, const UString &a_exe_path)
 {
     NEMIVER_TRY
 
     LOG_DD ("target pid: '" << (int) a_pid << "'") ;
     m_priv->target_pid = a_pid ;
+    m_priv->exe_path = a_exe_path ;
 
     NEMIVER_CATCH_NOX
 }
@@ -4516,7 +4540,9 @@ GDBEngine::print_variable_value (const UString &a_var_name,
 
 /// Extracts proc info from the out of band records
 bool
-GDBEngine::extract_proc_info (Output &a_output, int &a_pid)
+GDBEngine::extract_proc_info (Output &a_output,
+                              int &a_pid,
+                              UString &a_exe_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
@@ -4527,13 +4553,13 @@ GDBEngine::extract_proc_info (Output &a_output, int &a_pid)
     }
 
     //********************************************
-    //search the out of band record
+    //search the out of band records
     //that contains the debugger console
-    //stream record with the string process <pid>
+    //stream record with the string 'process <pid>'
+    //and the one that contains the string 'exe = <exepath>'
     //********************************************
-    UString record ;
-    UString::size_type index ;
-    bool found=false ;
+    UString record, process_record, exe_record ;
+    UString::size_type process_index=0, exe_index=0, index=0 ;
     list<Output::OutOfBandRecord>::const_iterator record_iter =
                                     a_output.out_of_band_records ().begin ();
     for (; record_iter != a_output.out_of_band_records ().end (); ++record_iter) {
@@ -4542,26 +4568,74 @@ GDBEngine::extract_proc_info (Output &a_output, int &a_pid)
         record = record_iter->stream_record ().debugger_console () ;
         if (record == "") {continue;}
 
-        LOG_D ("found a debugger console stream record", NMV_DEFAULT_DOMAIN) ;
+        LOG_DD ("found a debugger console stream record '" << record << "'") ;
 
         index = record.find ("process ");
-        if (index == Glib::ustring::npos) {continue;}
-        found = true ;
-        break ;
+        if (index != Glib::ustring::npos) {
+            process_record = record ;
+            process_index = index ;
+            LOG_DD ("found process stream record: '" << process_record << "'") ;
+            LOG_DD ("process_index: '" << (int)process_index << "'") ;
+            continue ;
+        }
+        index = record.find ("exe = '") ;
+        if (index != Glib::ustring::npos) {
+            exe_record = record ;
+            exe_index = index ;
+            continue ;
+        }
     }
-    if (!found) {
-        LOG_D ("output has no process info", NMV_DEFAULT_DOMAIN) ;
+    if (process_record == "" || exe_record == "") {
+        LOG_ERROR_DD ("output has no process info") ;
         return false;
     }
-    index += 7 ;
+
+    //extract pid
+    process_index += 7 ;
     UString pid ;
-    while (index < record.size () && isspace (record[index])) {++index;}
-    while (index < record.size () && isdigit (record[index])) {
-        pid += record[index];
-        ++index ;
+    while (process_index < process_record.size ()
+           && isspace (process_record[process_index])) {
+        ++process_index;
     }
+    RETURN_VAL_IF_FAIL (process_index < process_record.size (), false) ;
+    while (process_index < process_record.size ()
+           && isdigit (process_record[process_index])) {
+        pid += process_record[process_index];
+        ++process_index ;
+    }
+    RETURN_VAL_IF_FAIL (process_index < process_record.size (), false) ;
     LOG_DD ("extracted PID: '" << pid << "'") ;
     a_pid = atoi (pid.c_str ()) ;
+
+    //extract exe path
+    exe_index += 3 ;
+    while (exe_index < exe_record.size ()
+           && isspace (exe_record[exe_index])) {
+        ++exe_index ;
+    }
+    RETURN_VAL_IF_FAIL (exe_index < exe_record.size (), false) ;
+    RETURN_VAL_IF_FAIL (exe_record[exe_index] == '=', false) ;
+    ++exe_index ;
+    while (exe_index < exe_record.size ()
+           && isspace (exe_record[exe_index])) {
+        ++exe_index ;
+    }
+    RETURN_VAL_IF_FAIL (exe_index < exe_record.size (), false) ;
+    RETURN_VAL_IF_FAIL (exe_record[exe_index] == '\'', false) ;
+    ++exe_index ;
+    UString::size_type exe_path_start = exe_index ;
+
+    while (exe_index < exe_record.size ()
+           && exe_record[exe_index] != '\'') {
+        ++exe_index ;
+    }
+    RETURN_VAL_IF_FAIL (exe_index < exe_record.size (), false) ;
+    UString::size_type exe_path_end = exe_index - 1;
+    UString exe_path ;
+    exe_path.assign (exe_record, exe_path_start, exe_path_end-exe_path_start+1) ;
+    LOG_DD ("extracted exe path: '" << exe_path << "'") ;
+    a_exe_path = exe_path ;
+
     return true ;
 }
 

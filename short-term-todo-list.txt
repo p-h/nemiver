@@ -16,3 +16,8 @@ That dialog can propose to open files to set the breakpoints.
 
 6) in the "load core file" workflow, grey out debugging actions that don't
 make sense like those related to stepping and breakpoint setting.
+
+7) code a thread selection tab in the status notebook.
+
+8) add a IDebugger::get_target_path() api so that the "execute dialog" can
+be defaulted to the current target.

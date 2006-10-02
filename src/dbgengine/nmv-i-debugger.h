@@ -314,10 +314,10 @@ public:
     virtual sigc::signal<void, const UString&, const VariableSafePtr&>&
                                         variable_value_signal () const = 0 ;
 
-    virtual sigc::signal<void, int>& got_proc_info_signal () const = 0 ;
+    virtual sigc::signal<void, int, const UString&>&
+                                            got_proc_info_signal () const = 0 ;
 
-    virtual sigc::signal<void>&
-                                                    running_signal () const = 0;
+    virtual sigc::signal<void>& running_signal () const = 0;
 
     virtual sigc::signal<void, const UString&, const UString&>&
                                             signal_received_signal () const = 0;
@@ -356,6 +356,10 @@ public:
                                     const UString &a_tty_path="") = 0;
 
     virtual void add_env_variables (const map<UString, UString> &a_vars) = 0;
+
+    virtual map<UString, UString>& get_env_variables () = 0 ;
+
+    virtual const UString& get_target_path () = 0 ;
 
     virtual void do_continue (bool a_run_event_loops=false) = 0;
 

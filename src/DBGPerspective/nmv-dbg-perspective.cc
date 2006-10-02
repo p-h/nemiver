@@ -1736,7 +1736,65 @@ DBGPerspective::get_contextual_menu ()
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "ToggleBreakPointMenuItem",
-             "ToggleBreakPointMenuItemAction") ;
+             "ToggleBreakPointMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "NextMenuItem",
+             "NextMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "StepMenuItem",
+             "StepMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "StepMenuItem",
+             "StepMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "StepOutMenuItem",
+             "StepOutMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "ContinueMenuItem",
+             "ContinueMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "StopMenuItem",
+             "StopMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "RunMenuItem",
+             "RunMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
 
         m_priv->workbench->get_ui_manager ()->ensure_update () ;
         m_priv->contextual_menu =
@@ -2120,7 +2178,7 @@ DBGPerspective::execute_program ()
     RunProgramDialog dialog (plugin_path ()) ;
 
     // set defaults from session
-    dialog.program_name (m_priv->prog_name) ;
+    dialog.program_name (debugger ()->get_target_path ()) ;
     dialog.arguments (m_priv->prog_args) ;
     dialog.working_directory (m_priv->prog_cwd) ;
     dialog.environment_variables (m_priv->env_variables) ;

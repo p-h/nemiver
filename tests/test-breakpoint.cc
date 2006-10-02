@@ -52,9 +52,10 @@ on_running_signal ()
 }
 
 void
-on_got_proc_info_signal (int a_pid)
+on_got_proc_info_signal (int a_pid, const UString &a_exe_path)
 {
-    std::cout << "debugging program of pid: '" << a_pid << "'\n" ;
+    std::cout << "debugging program '"<< a_exe_path
+              << "' of pid: '" << a_pid << "'\n" ;
 }
 
 void
