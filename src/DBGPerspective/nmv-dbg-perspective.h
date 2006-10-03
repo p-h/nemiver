@@ -80,7 +80,8 @@ public:
     virtual void execute_program (const UString &a_prog,
                                   const UString &a_args,
                                   const map<UString, UString> &a_env,
-                                  const UString &a_cwd=".") = 0;
+                                  const UString &a_cwd,
+                                  const vector<IDebugger::BreakPoint> &) = 0;
 
     virtual void load_core_file () = 0;
 

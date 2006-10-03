@@ -1,3 +1,11 @@
+Tue, 03 Oct 2006 08:42:00 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc,h:
+	  DBGPerspective::execute_program(): add a vector of breakpoints to set,
+	  in parameter.
+	  In DBGPerspective::execute_session(): load the breapoints saved in
+	  the session and call DBGPerspective::execute_program() with them.
+
 2006-10-02  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* short-term-todo-list.txt: remove an item from the TODO list that Dodji

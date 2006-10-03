@@ -265,7 +265,8 @@ public:
     void execute_program (const UString &a_prog,
                           const UString &a_args,
                           const map<UString, UString> &a_env,
-                          const UString &a_cwd=".") ;
+                          const UString &a_cwd,
+                          const vector<IDebugger::BreakPoint> &a_breaks) ;
 
     void attach_to_program () ;
     void attach_to_program (unsigned int a_pid) ;
@@ -2165,10 +2166,25 @@ void
 DBGPerspective::execute_session (ISessMgr::Session &a_session)
 {
     m_priv->session = a_session ;
+
+    IDebugger::BreakPoint breakpoint ;
+    vector<IDebugger::BreakPoint> breakpoints ;
+    list<ISessMgr::BreakPoint>::const_iterator it ;
+    for (it = m_priv->session.breakpoints ().begin () ;
+         it != m_priv->session.breakpoints ().end ();
+         ++it) {
+        breakpoint.clear () ;
+        breakpoint.line (it->line_number ()) ;
+        breakpoint.file_name (it->file_name ()) ;
+        breakpoint.file_full_name (it->file_full_name ()) ;
+        breakpoints.push_back (breakpoint) ;
+    }
+
     execute_program (a_session.properties ()[PROGRAM_NAME],
                      a_session.properties ()[PROGRAM_ARGS],
                      a_session.env_variables (),
-                     a_session.properties ()[PROGRAM_CWD]) ;
+                     a_session.properties ()[PROGRAM_CWD],
+                     breakpoints) ;
     m_priv->reused_session = true ;
 }
 
@@ -2196,7 +2212,8 @@ DBGPerspective::execute_program ()
     THROW_IF_FAIL (cwd != "") ;
     map<UString, UString> env = dialog.environment_variables();
 
-    execute_program (prog, args, env, cwd) ;
+    vector<IDebugger::BreakPoint> breaks ;
+    execute_program (prog, args, env, cwd, breaks) ;
     m_priv->reused_session = false ;
 }
 
@@ -2210,7 +2227,8 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
     vector<UString>::const_iterator end_iter = argv.end () ;
     ++iter ;
     UString prog_name=argv[0], args = UString::join (iter, end_iter);
-    execute_program (prog_name, args, a_env, a_cwd) ;
+    vector<IDebugger::BreakPoint> breaks ;
+    execute_program (prog_name, args, a_env, a_cwd, breaks) ;
     m_priv->reused_session = false ;
 }
 
@@ -2218,7 +2236,8 @@ void
 DBGPerspective::execute_program (const UString &a_prog,
                                  const UString &a_args,
                                  const map<UString, UString> &a_env,
-                                 const UString &a_cwd)
+                                 const UString &a_cwd,
+                                 const vector<IDebugger::BreakPoint> &a_breaks)
 {
     NEMIVER_TRY
 
@@ -2233,7 +2252,15 @@ DBGPerspective::execute_program (const UString &a_prog,
 
     dbg_engine->add_env_variables (a_env) ;
 
-    dbg_engine->set_breakpoint ("main") ;
+    if (a_breaks.empty ()) {
+        dbg_engine->set_breakpoint ("main") ;
+    } else {
+        vector<IDebugger::BreakPoint>::const_iterator it ;
+        for (it = a_breaks.begin () ; it != a_breaks.end () ; ++it) {
+            dbg_engine->set_breakpoint (it->file_full_name (),
+                                        it->line ()) ;
+        }
+    }
 
     dbg_engine->run () ;
 
