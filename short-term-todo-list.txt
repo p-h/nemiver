@@ -12,14 +12,12 @@ That dialog can propose to open files to set the breakpoints.
 
 4) finish the variable visualization widget so that it shows global variables as well.
 
-5) Make what's in the "debug" menu show up in a contextual menu (the menu that pops up when the user right clicks on the source editor)
-
-6) in the "load core file" workflow, grey out debugging actions that don't
+5) in the "load core file" workflow, grey out debugging actions that don't
 make sense like those related to stepping and breakpoint setting.
 
-7) code a thread selection tab in the status notebook.
+6) code a thread selection tab in the status notebook.
 
-8) add 'continue to current line' and 'jump to current line'.
+7) add 'continue to current line' and 'jump to current line'.
 
-9) add a search facility to search text in the source editor, also maybe add find in files.
+8) add a search facility to search text in the source editor, also maybe add find in files.
  

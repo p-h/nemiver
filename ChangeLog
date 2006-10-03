@@ -1,3 +1,10 @@
+2006-10-02  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* short-term-todo-list.txt: remove an item from the TODO list that Dodji
+	already implemented.  I haven't had much time to hack on nemiver lately, but
+	at least I can do a little housekeeping :)  Also added a few more things to
+	svn:ignore
+
 Mon, 02 Oct 2006 22:21:56 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-i-debugger.h: add a new parameter to
