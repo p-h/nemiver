@@ -70,6 +70,8 @@ public:
     void delete_session (gint64 a_id) ;
     void delete_sessions (Transaction &a_trans) ;
     void delete_sessions () ;
+    void clear_session (gint64 a_id, Transaction &a_trans) ;
+    void clear_session (gint64 a_id) ;
 };//end class SessMgr
 
 struct SessMgr::Priv {
@@ -410,22 +412,12 @@ SessMgr::delete_session (gint64 a_id,
                          Transaction &a_trans)
 {
     THROW_IF_FAIL (m_priv) ;
+
     TransactionAutoHelper trans (a_trans) ;
 
-    UString query = "delete from attributes where "
-                    "sessionid = " + UString::from_int (a_id);
-    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
-
-    query = "delete from breakpoints where "
-            "sessionid = " + UString::from_int (a_id) ;
-    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
-
-    query = "delete from openedfiles where "
-            "sessionid = " + UString::from_int (a_id) ;
-    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
-
-    query = "delete from sessions where "
-            "id = " + UString::from_int (a_id) ;
+    clear_session (a_id, a_trans) ;
+    UString query = "delete from sessions where "
+                    "id = " + UString::from_int (a_id) ;
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 
     trans.end () ;
@@ -453,6 +445,33 @@ void
 SessMgr::delete_sessions ()
 {
     delete_sessions (default_transaction ()) ;
+}
+
+void
+SessMgr::clear_session (gint64 a_id, Transaction &a_trans)
+{
+    THROW_IF_FAIL (m_priv) ;
+    TransactionAutoHelper trans (a_trans) ;
+
+    UString query = "delete from attributes where "
+                    "sessionid = " + UString::from_int (a_id);
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+
+    query = "delete from breakpoints where "
+            "sessionid = " + UString::from_int (a_id) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+
+    query = "delete from openedfiles where "
+            "sessionid = " + UString::from_int (a_id) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+
+    trans.end () ;
+}
+
+void
+SessMgr::clear_session (gint64 a_id)
+{
+    clear_session (a_id, default_transaction ()) ;
 }
 
 ISessMgrSafePtr

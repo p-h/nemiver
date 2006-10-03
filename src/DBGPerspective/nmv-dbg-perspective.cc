@@ -853,7 +853,9 @@ DBGPerspective::on_shutdown_signal ()
 
     if (m_priv->reused_session) {
         record_and_save_session (m_priv->session) ;
+        LOG_DD ("saved current session") ;
     } else {
+        LOG_DD ("recorded a new session") ;
         record_and_save_new_session () ;
     }
 
@@ -1909,20 +1911,27 @@ void
 DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 {
     THROW_IF_FAIL (m_priv) ;
-    ISessMgr::Session session ;
     UString session_name = m_priv->prog_name ;
     if (session_name == "") {return;}
+
+    if (a_session.session_id ()) {
+        session_manager ().clear_session (a_session.session_id ()) ;
+        LOG_DD ("cleared current session: "
+                << (int) m_priv->session.session_id ()) ;
+    }
 
     UString today ;
     dateutils::get_current_datetime (today) ;
     session_name += "-" + today ;
 
+    a_session.properties ().clear () ;
     a_session.properties ()[SESSION_NAME] = session_name ;
     a_session.properties ()[PROGRAM_NAME] = m_priv->prog_name ;
     a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
     a_session.env_variables () = m_priv->env_variables;
 
+    a_session.opened_files ().clear () ;
     map<UString, int>::const_iterator path_iter =
         m_priv->path_2_pagenum_map.begin () ;
     for (;
@@ -1931,6 +1940,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
         a_session.opened_files ().push_back (path_iter->first) ;
     }
 
+    a_session.breakpoints ().clear () ;
     map<int, IDebugger::BreakPoint>::const_iterator break_iter ;
     for (break_iter = m_priv->breakpoints.begin ();
          break_iter != m_priv->breakpoints.end ();
@@ -2542,6 +2552,7 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
     m_priv->breakpoints.erase (iter);
+    LOG_DD ("erased breakpoint number " << (int) a_breakpoint_num) ;
 }
 
 bool

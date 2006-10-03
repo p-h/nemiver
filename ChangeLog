@@ -1,3 +1,19 @@
+Wed, 04 Oct 2006 00:46:31 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-sess-mgr.h,cc: added a
+	  ISessMgr::clear_session() api, to clear an existing session without
+	  deleting it. Deleting means erasing everything including erasing the
+	  session entry in the sessions table. clearing meanings erasing the
+	  session content, but keeping the entry in the sessions table.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: 
+	  in DBGPerspective::record_and_save_session() clear what's in the
+	  session before adding more stuff to it. Otherwise, the session
+	  content keeps growing, which leads to the duplication of data
+	  pointed to by Jonner in
+	  https://mail.gna.org/public/nemiver-list/2006-10/msg00001.html .
+	  This should fix that bug.
+
+
 Tue, 03 Oct 2006 08:42:00 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc,h:
