@@ -46,16 +46,14 @@ const nemiver::common::UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain" ;
 #define LOG_PARSING_ERROR(a_buf, a_from) \
 { \
 Glib::ustring str_01 (a_buf, (a_from), a_buf.size () - (a_from)) ;\
-LOG_ERROR_D ("parsing failed for buf: >>>" \
+LOG_ERROR ("parsing failed for buf: >>>" \
              << a_buf << "<<<" \
-             << " cur index was: " << (int)(a_from), \
-             NMV_DEFAULT_DOMAIN) ;\
+             << " cur index was: " << (int)(a_from)); \
 }
 
 #define CHECK_END(a_input, a_current, a_end) \
 if ((a_current) >= (a_end)) {\
-LOG_D ("hit end index " << (int) a_end,\
-       NMV_DEFAULT_DOMAIN) \
+LOG_ERROR ("hit end index " << (int) a_end) ; \
 LOG_PARSING_ERROR (a_input, (a_current)); return false ;\
 }
 
@@ -1753,9 +1751,9 @@ struct GDBEngine::Priv {
     }
 
     bool parse_breakpoint_table (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            map<int, IDebugger::BreakPoint> &a_breakpoints)
+                                 UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 map<int, IDebugger::BreakPoint> &a_breakpoints)
     {
         UString::size_type cur=a_from, end=a_input.size () ;
 
@@ -1788,8 +1786,10 @@ struct GDBEngine::Priv {
             //there are some breakpoints
             IDebugger::BreakPoint breakpoint ;
             while (true) {
+                if (a_input.compare (cur, 6, "bkpt={")) {break;}
                 if (!parse_breakpoint (a_input, cur, cur, breakpoint)) {
-                    break;
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                    return false ;
                 }
                 breakpoint_table[breakpoint.number ()] = breakpoint ;
                 if (a_input[cur] == ',') {
@@ -2586,9 +2586,11 @@ struct GDBEngine::Priv {
     bool parse_member_variable (const UString &a_input,
                                 const UString::size_type a_from,
                                 UString::size_type &a_to,
-                                IDebugger::VariableSafePtr &a_var)
+                                IDebugger::VariableSafePtr &a_var,
+                                bool a_in_unnamed_var=false)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+        LOG_D ("in_unnamed_var = " <<(int)a_in_unnamed_var, GDBMI_PARSING_DOMAIN);
         THROW_IF_FAIL (a_var) ;
 
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -2607,21 +2609,26 @@ struct GDBEngine::Priv {
 
         while (true /*fetch name*/) {
             name_start=0, name_end=0, value_start=0, value_end=0 ;
-            name = "" , value = "" ;
+            name = "#unnamed#" , value = "" ;
 
             SKIP_WS (a_input, cur, cur) ;
-            name_start = cur ;
-            while (true) {
-                if (cur < a_input.size ()
-                    && a_input[cur] != '='
-                    && a_input[cur] != '}') {
-                    ++cur ;
-                } else {
-                    break ;
+            LOG_D ("fetching name ...", GDBMI_PARSING_DOMAIN) ;
+            if (a_input[cur] != '{') {
+                SKIP_WS (a_input, cur, cur) ;
+                name_start = cur ;
+                while (true) {
+                    if (cur < a_input.size ()
+                        && a_input[cur] != '='
+                        && a_input[cur] != '}') {
+                        ++cur ;
+                    } else {
+                        break ;
+                    }
                 }
+                name_end = cur - 1 ;
+                name.assign (a_input, name_start, name_end - name_start + 1) ;
+                LOG_D ("got name '" << name << "'", GDBMI_PARSING_DOMAIN) ;
             }
-            name_end = cur - 1 ;
-            name.assign (a_input, name_start, name_end - name_start + 1) ;
 
             IDebugger::VariableSafePtr cur_var (new IDebugger::Variable) ;
             cur_var->name (name) ;
@@ -2630,15 +2637,30 @@ struct GDBEngine::Priv {
                 ++cur ;
                 cur_var->value ("") ;
                 a_var->append (cur_var) ;
+                CHECK_END (a_input, cur, end) ;
+                LOG_D ("reached '}' after '"
+                       << name << "'",
+                       GDBMI_PARSING_DOMAIN) ;
                 break;
             }
 
-            ++cur ;
-            CHECK_END (a_input, cur, end) ;
             SKIP_WS (a_input, cur, cur) ;
+            if (a_input[cur] != '{') {
+                ++cur ;
+                CHECK_END (a_input, cur, end) ;
+                SKIP_WS (a_input, cur, cur) ;
+            }
 
             if (a_input[cur] == '{') {
-                if (!parse_member_variable (a_input, cur, cur, cur_var)) {
+                bool in_unnamed = true;
+                if (name == "#unnamed#") {
+                    in_unnamed = false;
+                }
+                if (!parse_member_variable (a_input,
+                                            cur,
+                                            cur,
+                                            cur_var,
+                                            in_unnamed)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
                     return false ;
                 }
@@ -2657,8 +2679,12 @@ struct GDBEngine::Priv {
                     value_end = cur - 1;
                     value.assign (a_input, value_start,
                                   value_end - value_start + 1) ;
+                    LOG_D ("got value: '"
+                           << value << "'",
+                           GDBMI_PARSING_DOMAIN) ;
                 } else {
                     value = "" ;
+                    LOG_D ("got empty value", GDBMI_PARSING_DOMAIN) ;
                 }
                 cur_var->value (value) ;
             }
@@ -2666,11 +2692,38 @@ struct GDBEngine::Priv {
 
             SKIP_WS (a_input, cur, cur) ;
 
-            if (a_input[cur] == ',') {
-                ++cur ;
-                continue /*got fetch name*/ ;
-            } else if (a_input[cur] == '}') {
-                ++cur ;
+            if (a_in_unnamed_var == false) {
+                if (a_input[cur] == ',') {
+                    ++cur ;
+                    CHECK_END (a_input, cur, end) ;
+                    LOG_D ("got ',' going to fetch name ", GDBMI_PARSING_DOMAIN) ;
+                    continue /*goto fetch name*/ ;
+                } else if (a_input[cur] == '}') {
+                    ++cur ;
+                    LOG_D ("got '}' getting out", GDBMI_PARSING_DOMAIN) ;
+                    break ;
+                }
+            } else {
+                if (a_input[cur] == '}') {
+                    ++cur ;
+                    CHECK_END (a_input, cur, end) ;
+                    if (a_input[cur] == ',') {
+                        cur ++ ;
+                        CHECK_END (a_input, cur, end) ;
+                        LOG_D ("got '},' going to fetch name",
+                               GDBMI_PARSING_DOMAIN) ;
+                        continue  /*goto fetch name*/ ;
+                    } else {
+                        LOG_D ("got '}', getting out", GDBMI_PARSING_DOMAIN) ;
+                        break ;
+                    }
+                } else if (a_input[cur] == ',') {
+                    ++cur ;
+                    CHECK_END (a_input, cur, end) ;
+                    LOG_D ("got ',' , going to fetch name",
+                           GDBMI_PARSING_DOMAIN) ;
+                    continue /*goto fetch name*/ ;
+                }
             }
             break ;
         }//end while

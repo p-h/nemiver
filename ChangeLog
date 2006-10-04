@@ -1,3 +1,16 @@
+Wed, 04 Oct 2006 23:35:26 +0200 Dodji Seketeli
+
+	* src/nmv-dbg-engine.cc: make LOG_PARSING_ERROR() show up in the
+	  default domain because I suspect a couple of parsing errors to occurs.
+	  So I want to make them appear.
+	  GDBEngine::Priv::parse_member_variable(): Fix this function to make
+	  it support objects/structure table parsing too. GDBMI is a bit
+	  harsh because when you get ^done,value="<foo>", you don't know if
+	  foo is going to be a table or not. This function is really getting a
+	  bit hackish to my taste. Maybe I should find a way to split it into
+	  several functions, each one parsing a different kind of variable.
+
+mercredi 4 octobre 2006, 23:35:21 (UTC+0200)
 Wed, 04 Oct 2006 00:46:31 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-sess-mgr.h,cc: added a
