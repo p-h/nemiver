@@ -1,3 +1,13 @@
+Thu, 05 Oct 2006 23:56:29 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-vars-editor.cc: removed the global variables
+	  row from the variable editor because there are way too much global
+	  variables in a program. Showing them there is counter productive.
+	  Instead, VarsEditor should turn into a real variable inspector widget
+	  that could show the content of arbitrary variables and be able to
+	  edit variables, as well. This is obviously a post 0.1 feature.
+	* short-term-todo-list.txt: updated this.
+
 Wed, 04 Oct 2006 23:35:26 +0200 Dodji Seketeli
 
 	* src/nmv-dbg-engine.cc: make LOG_PARSING_ERROR() show up in the

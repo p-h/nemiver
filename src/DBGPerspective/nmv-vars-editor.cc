@@ -65,15 +65,12 @@ public:
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeRowReference *local_variables_row_ref ;
     Gtk::TreeRowReference *function_arguments_row_ref ;
-    Gtk::TreeRowReference *global_variables_row_ref ;
     std::map<UString, IDebugger::VariableSafePtr> local_vars_to_set ;
     std::map<UString, IDebugger::VariableSafePtr> function_arguments_to_set ;
-    std::map<UString, IDebugger::VariableSafePtr> global_vars_to_set ;
 
     Priv (IDebuggerSafePtr &a_debugger) :
         local_variables_row_ref (NULL),
-        function_arguments_row_ref (NULL),
-        global_variables_row_ref (NULL)
+        function_arguments_row_ref (NULL)
     {
         THROW_IF_FAIL (a_debugger) ;
         debugger = a_debugger ;
@@ -102,7 +99,7 @@ public:
         tree_store->clear () ;
 
         //****************************************************
-        //add two rows: local variables and global variable.
+        //add two rows: local variables and function arguments.
         //Store row refs on both rows
         //****************************************************
         Gtk::TreeModel::iterator it = tree_store->append () ;
@@ -118,14 +115,6 @@ public:
         function_arguments_row_ref =
             new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)) ;
         THROW_IF_FAIL (function_arguments_row_ref) ;
-
-        it = tree_store->append () ;
-        THROW_IF_FAIL (it) ;
-        (*it)[get_variable_columns ().name] = _("global variables");
-        global_variables_row_ref =
-            new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)) ;
-        THROW_IF_FAIL (global_variables_row_ref) ;
-
     }
 
     void set_a_variable_real (const IDebugger::VariableSafePtr &a_var,
@@ -181,7 +170,9 @@ public:
         }
     }
 
+    //*******************************************************
     //before setting a variable, query its full description
+    //*******************************************************
 
     void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
@@ -212,16 +203,6 @@ public:
 
     }
 
-    void set_global_variables
-                    (const std::list<IDebugger::VariableSafePtr> &a_vars)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
-        THROW_IF_FAIL (tree_store) ;
-        THROW_IF_FAIL (global_variables_row_ref) ;
-
-        set_variables_real (a_vars, *global_variables_row_ref) ;
-        tree_view->expand_row (global_variables_row_ref->get_path (), false) ;
-    }
 
     void on_local_variables_listed_signal
                                 (const list<IDebugger::VariableSafePtr> &a_vars)
@@ -294,13 +275,6 @@ public:
         }
 
         if (it == nil) {
-            it = global_vars_to_set.find (a_var_name) ;
-            nil = global_vars_to_set.end () ;
-            row_ref = global_variables_row_ref ;
-            map_ptr = &global_vars_to_set ;
-        }
-
-        if (it == nil) {
             LOG_DD ("variable '" << a_var_name
                     << " does not belong in frame, arg vars or global vars") ;
             return ;
@@ -368,14 +342,6 @@ VarsEditor::set_local_variables
 
     m_priv->set_local_variables (a_vars) ;
 
-}
-
-void
-VarsEditor::set_global_variables
-                        (const std::list<IDebugger::VariableSafePtr> &a_vars)
-{
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->set_global_variables (a_vars) ;
 }
 
 }//end namespace nemiver

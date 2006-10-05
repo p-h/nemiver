@@ -51,8 +51,6 @@ public:
     Gtk::Widget& widget () const ;
     void set_local_variables
                     (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
-    void set_global_variables
-                    (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
 };//end VarsEditor
 
 }//end namespace nemiver

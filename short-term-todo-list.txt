@@ -10,7 +10,7 @@ That dialog can propose to open files to set the breakpoints.
 3) write a gdb command interpreter widget (prolly based on Gtk::TextView), using IDebugger. It should accept commands with the same syntax as the classical
    gdb syntax and call IDebugger in the background.
 
-4) finish the variable visualization widget so that it shows global variables as well.
+4) when the mouse crosses a word, if the word is a variable, show it value as a tooltip.
 
 5) in the "load core file" workflow, grey out debugging actions that don't
 make sense like those related to stepping and breakpoint setting.
