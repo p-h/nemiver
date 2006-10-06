@@ -10,14 +10,16 @@ That dialog can propose to open files to set the breakpoints.
 3) write a gdb command interpreter widget (prolly based on Gtk::TextView), using IDebugger. It should accept commands with the same syntax as the classical
    gdb syntax and call IDebugger in the background.
 
-4) when the mouse crosses a word, if the word is a variable, show it value as a tooltip.
+4) when the mouse crosses a word, if the word is a variable, show it value as a tooltip.[pre 0.1]
 
 5) in the "load core file" workflow, grey out debugging actions that don't
-make sense like those related to stepping and breakpoint setting.
+make sense like those related to stepping and breakpoint setting. 
 
-6) code a thread selection tab in the status notebook.
+6) code a thread selection tab in the status notebook. [pre 0.1]
 
 7) add 'continue to current line' and 'jump to current line'.
 
 8) add a search facility to search text in the source editor, also maybe add find in files.
- 
+
+9) write a C/C++ type declaration parser and be able to determine if it's a pointer (or a reference) or not.
+   If it's a reference, add the ability in to dereference the pointer (inspect the pointed object). [pre 0.1]
