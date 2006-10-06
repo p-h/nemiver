@@ -83,6 +83,7 @@ public:
     Glib::RefPtr<Gtk::UIManager>& get_ui_manager ()  ;
     IPerspective* get_perspective (const UString &a_name) ;
     IConfMgr& get_configuration_manager ()  ;
+    Glib::RefPtr<Glib::MainContext> get_main_context ()  ;
     sigc::signal<void>& shutting_down_signal () ;
 };//end class Workbench
 
@@ -328,6 +329,13 @@ Workbench::get_configuration_manager ()
     }
     THROW_IF_FAIL (m_priv->conf_mgr) ;
     return *m_priv->conf_mgr ;
+}
+
+Glib::RefPtr<Glib::MainContext>
+Workbench::get_main_context ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    return Glib::MainContext::get_default () ;
 }
 
 sigc::signal<void>&

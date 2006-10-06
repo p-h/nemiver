@@ -86,9 +86,9 @@ public:
         if (a_event->type == GDK_BUTTON_PRESS && a_event->button == 3) {
             return false ;
         } else {
-            bool res = Gtk::Widget::on_button_press_event (a_event) ;
+            Gtk::Widget::on_button_press_event (a_event) ;
             do_custom_button_press_event_handling (a_event) ;
-            return res ;
+            return false ;
         }
     }
 

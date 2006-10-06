@@ -40,6 +40,10 @@ namespace Gtk {
     class Main ;
 }//end namespace Gtk
 
+namespace Glib {
+    class MainContext ;
+}
+
 namespace nemiver {
 namespace commmon {
     class UString ;
@@ -128,6 +132,7 @@ public:
     virtual IConfMgr& get_configuration_manager () = 0 ;
     ///@}
 
+    virtual Glib::RefPtr<Glib::MainContext> get_main_context () = 0 ;
     /// \name signals
 
     /// @{

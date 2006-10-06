@@ -68,6 +68,8 @@ const char *SESSION_NAME = "sessionname" ;
 const char *PROGRAM_NAME= "programname" ;
 const char *PROGRAM_ARGS= "programarguments" ;
 const char *PROGRAM_CWD= "programcwd" ;
+const char * DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
+                                "dbg-perspective-mouse-motion-domain" ;
 
 static const UString CONF_KEY_NEMIVER_SOURCE_DIRS =
                 "/apps/nemiver/dbgperspective/source-search-dirs" ;
@@ -152,7 +154,9 @@ private:
 
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
 
-    bool on_key_pressed_in_source_view_signal (GdkEventKey *a_event) ;
+    bool on_motion_notify_event_signal (GdkEventMotion *a_event) ;
+
+    bool on_mouse_immobile_timer_signal () ;
 
     void on_shutdown_signal () ;
 
@@ -222,6 +226,8 @@ private:
     void record_and_save_new_session () ;
     void record_and_save_session (ISessMgr::Session &a_session) ;
     IProcMgr* get_process_manager () ;
+    void try_to_show_variable_value_at_position (gdouble a_x, gdouble a_y) ;
+    void restart_mouse_immobile_timer () ;
 
 public:
 
@@ -464,6 +470,9 @@ struct DBGPerspective::Priv {
     IProcMgrSafePtr process_manager ;
     UString last_command_text ;
     vector<UString> source_dirs ;
+    sigc::connection timeout_source_connection ;
+    int mouse_in_source_editor_x ;
+    int mouse_in_source_editor_y ;
 
     Priv () :
         initialized (false),
@@ -481,7 +490,9 @@ struct DBGPerspective::Priv {
         terminal_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
-        current_page_num (0)
+        current_page_num (0),
+        mouse_in_source_editor_x (0),
+        mouse_in_source_editor_y (0)
     {}
 };//end struct DBGPerspective::Priv
 
@@ -793,58 +804,57 @@ DBGPerspective::on_button_pressed_in_source_view_signal (GdkEventButton *a_event
         return false ;
     }
 
-    if (a_event->button != 3) {
-        return false ;
+    if (a_event->button == 3) {
+        popup_source_view_contextual_menu (a_event) ;
+        return true ;
     }
-    popup_source_view_contextual_menu (a_event) ;
 
     NEMIVER_CATCH
-    return true ;
+
+    return false ;
+}
+
+
+bool
+DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D(DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
+    NEMIVER_TRY
+    int x=0, y=0;
+    GdkModifierType state=(GdkModifierType)0;
+
+    if (a_event->is_hint) {
+        gdk_window_get_pointer (a_event->window, &x, &y, &state) ;
+    } else {
+        x = (int) a_event->x;
+        y = (int) a_event->y;
+        state = (GdkModifierType)a_event->state;
+    }
+
+    LOG_D ("(x,y) => (" << (int)x << ", " << (int)y << ")",
+           DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
+    m_priv->mouse_in_source_editor_x = x ;
+    m_priv->mouse_in_source_editor_y = y ;
+    restart_mouse_immobile_timer () ;
+    NEMIVER_CATCH
+    return false ;
 }
 
 bool
-DBGPerspective::on_key_pressed_in_source_view_signal (GdkEventKey *a_event)
+DBGPerspective::on_mouse_immobile_timer_signal ()
 {
-    if (a_event->type != GDK_KEY_PRESS) {
-        return false ;
-    }
-
-    if (a_event->state == 0
-        && a_event->keyval == GDK_F7){
-        step_into () ;
-        return true ;
-    }
-
-    if ((a_event->state & GDK_SHIFT_MASK)
-        && a_event->keyval == GDK_F7){
-        step_out () ;
-        return true ;
-    }
-
-    if (a_event->state == 0
-        && a_event->keyval == GDK_F8){
-        step_over () ;
-        return true ;
-    }
-
-    if (a_event->state == 0
-        && a_event->keyval == GDK_F5){
-        do_continue () ;
-        return true ;
-    }
-
-    if ((a_event->state & GDK_SHIFT_MASK)
-        && a_event->keyval == GDK_F5){
-        run () ;
-        return true ;
-    }
-
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+    NEMIVER_TRY
+    try_to_show_variable_value_at_position (m_priv->mouse_in_source_editor_x,
+                                            m_priv->mouse_in_source_editor_y) ;
+    NEMIVER_CATCH
     return false ;
 }
 
 void
 DBGPerspective::on_shutdown_signal ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     if (m_priv->prog_name == "") {
@@ -1908,6 +1918,78 @@ DBGPerspective::get_process_manager ()
 }
 
 void
+DBGPerspective::try_to_show_variable_value_at_position (gdouble a_x, gdouble a_y)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    THROW_IF_FAIL (m_priv) ;
+    SourceEditor *editor = get_current_source_editor () ;
+    THROW_IF_FAIL (editor) ;
+    int buffer_x=0, buffer_y=0 ;
+    editor->source_view ().window_to_buffer_coords (Gtk::TEXT_WINDOW_TEXT,
+                                                    (int)a_x,
+                                                    (int)a_y,
+                                                    buffer_x, buffer_y) ;
+    Gtk::TextBuffer::iterator clicked_at_iter ;
+    editor->source_view ().get_iter_at_location (clicked_at_iter,
+                                                 buffer_x, buffer_y) ;
+    THROW_IF_FAIL (clicked_at_iter) ;
+
+    //go find the first white space before clicked_at_iter
+    Gtk::TextBuffer::iterator cur_iter = clicked_at_iter;
+    if (!cur_iter) {return;}
+
+    while (cur_iter.backward_char () && !isspace (cur_iter.get_char ())) {}
+    THROW_IF_FAIL (cur_iter.forward_char ()) ;
+    Gtk::TextBuffer::iterator start_word_iter = cur_iter ;
+
+    //go find the first white space after clicked_at_iter
+    cur_iter = clicked_at_iter ;
+    while (cur_iter.forward_char () && !isspace (cur_iter.get_char ())) {}
+    Gtk::TextBuffer::iterator end_word_iter = cur_iter ;
+
+    UString var_name = start_word_iter.get_slice (end_word_iter);
+    while (var_name != "" && !isalpha (var_name[0]) && var_name[0] != '_') {
+        var_name.erase (0, 1) ;
+    }
+    while (var_name != ""
+           && !isalnum (var_name[var_name.size () - 1])
+           && var_name[var_name.size () - 1] != '_') {
+        var_name.erase (var_name.size () - 1, 1) ;
+    }
+
+    Gdk::Rectangle start_rect, end_rect ;
+    editor->source_view ().get_iter_location (start_word_iter, start_rect) ;
+    editor->source_view ().get_iter_location (end_word_iter, end_rect) ;
+    if (!(start_rect.get_x () <= buffer_x) || !(buffer_x <= end_rect.get_x ())) {
+        LOG_DD ("mouse not really on word: '" << var_name << "'") ;
+        return ;
+    }
+    LOG_DD ("got variable candidate name: '" << var_name << "'") ;
+    //TODO:
+    //Popup var_name in a label here. Okay this is only done to prepare the real
+    //meat to come that will be:
+    //send a request to gdb to get the value of what can be a variable and
+    //pop it up in a window below the var_name.
+    //one day, source code analysis may tell us if it's a variable name or not.
+    //I seriously doubt it, though
+}
+
+void
+DBGPerspective::restart_mouse_immobile_timer ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->workbench) ;
+
+    m_priv->timeout_source_connection.disconnect () ;
+    m_priv->timeout_source_connection = Glib::signal_timeout ().connect
+        (sigc::mem_fun (*this, &DBGPerspective::on_mouse_immobile_timer_signal),
+         1000);
+}
+
+void
 DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 {
     THROW_IF_FAIL (m_priv) ;
@@ -2131,6 +2213,11 @@ DBGPerspective::open_file (const UString &a_path,
             (sigc::mem_fun
              (*this,
               &DBGPerspective::on_button_pressed_in_source_view_signal)) ;
+
+        source_editor->source_view ().signal_motion_notify_event ().connect
+            (sigc::mem_fun
+             (*this,
+              &DBGPerspective::on_motion_notify_event_signal)) ;
     }
 
     m_priv->opened_file_action_group->set_sensitive (true) ;
@@ -2414,7 +2501,7 @@ DBGPerspective::set_breakpoint ()
     THROW_IF_FAIL (source_editor->get_path () != "") ;
 
     //line numbers start at 0 in GtkSourceView, but at 1 in GDB <grin/>
-    //so in DGBPerspective, the line number are set in the GDB's reference.
+    //so in DBGPerspective, the line number are set in the GDB's reference.
 
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert

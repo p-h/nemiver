@@ -1,3 +1,15 @@
+Sat, 07 Oct 2006 01:44:09 +0200 Dodji Seketeli
+
+	* src/worbench/nmv-workbench.cc,nmv-i-workbench: add a
+	  IWorkbench::get_main_context() API.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: started to add
+	  some infrastructure code to help trigger an action when the mouse
+	  is put on a word for more than one second. This will be used to
+	  popup a tooltip showing the content of a variable when the mouse is
+	  set over the variable for at least one second or so. More on this
+	  later.
+	* src/DBGPerspective/nmv-source-editor.cc: a bit of cleanup.
+
 Thu, 05 Oct 2006 23:56:29 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-vars-editor.cc: removed the global variables
