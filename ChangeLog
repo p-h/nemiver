@@ -1,3 +1,13 @@
+Sun, 08 Oct 2006 16:10:47 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: update
+	  DBGPerspective::Priv::prog_path with what comes from
+	  IDebugger::got_proc_info_signal (). That way,
+	  DBGPerspective::Priv::prog_name is alway set to the absolute
+	  prog path. A side effect is that the absolute prog path is saved
+	  in the on disk saved session. This fixes a problem reported by
+	  Jonner at https://mail.gna.org/public/nemiver-list/2006-10/msg00004.html .
+
 Sat, 07 Oct 2006 01:44:09 +0200 Dodji Seketeli
 
 	* src/worbench/nmv-workbench.cc,nmv-i-workbench: add a

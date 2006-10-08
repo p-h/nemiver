@@ -1687,10 +1687,12 @@ struct GDBEngine::Priv {
     /// \param a_output the output datatructure filled upon parsing.
     /// \return true in case of successful parsing, false otherwise.
     bool parse_breakpoint (const UString &a_input,
-            Glib::ustring::size_type a_from,
-            Glib::ustring::size_type &a_to,
-            IDebugger::BreakPoint &a_bkpt)
+                           Glib::ustring::size_type a_from,
+                           Glib::ustring::size_type &a_to,
+                           IDebugger::BreakPoint &a_bkpt)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
         Glib::ustring::size_type cur = a_from, end = a_input.size () ;
 
         if (a_input.compare (cur, 6, "bkpt={")) {
@@ -1755,6 +1757,7 @@ struct GDBEngine::Priv {
                                  UString::size_type &a_to,
                                  map<int, IDebugger::BreakPoint> &a_breakpoints)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur=a_from, end=a_input.size () ;
 
         if (a_input.compare (cur, 17, "BreakpointTable={")) {

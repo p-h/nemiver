@@ -169,6 +169,9 @@ private:
     void on_conf_key_changed_signal (const UString &a_key,
                                      IConfMgr::Value &a_value) ;
 
+    void on_debugger_got_proc_info_signal (int a_pid,
+                                           const UString &a_exe_path) ;
+
     void on_debugger_console_message_signal (const UString &a_msg) ;
 
     void on_debugger_target_output_message_signal (const UString &a_msg);
@@ -411,7 +414,7 @@ struct UnrefGObjectNative {
 struct DBGPerspective::Priv {
     bool initialized ;
     bool reused_session ;
-    UString prog_name ;
+    UString prog_path ;
     UString prog_args ;
     UString prog_cwd ;
     map<UString, UString> env_variables ;
@@ -857,7 +860,7 @@ DBGPerspective::on_shutdown_signal ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
-    if (m_priv->prog_name == "") {
+    if (m_priv->prog_path == "") {
         return ;
     }
 
@@ -914,10 +917,24 @@ void
 DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
                                             IConfMgr::Value &a_value)
 {
+    NEMIVER_TRY
     if (a_key == CONF_KEY_NEMIVER_SOURCE_DIRS) {
         LOG_DD ("updated key source-dirs") ;
         m_priv->source_dirs = boost::get<UString> (a_value).split (":") ;
     }
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_got_proc_info_signal (int a_pid,
+                                                  const UString &a_exe_path)
+{
+    NEMIVER_TRY
+    THROW_IF_FAIL (m_priv) ;
+    if (a_exe_path != "") {
+        m_priv->prog_path = a_exe_path ;
+    }
+    NEMIVER_CATCH
 }
 
 void
@@ -1594,6 +1611,9 @@ DBGPerspective::init_debugger_signals ()
 
     debugger ()->state_changed_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_state_changed_signal)) ;
+
+    debugger ()->got_proc_info_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_got_proc_info_signal)) ;
 }
 
 
@@ -1993,7 +2013,9 @@ void
 DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 {
     THROW_IF_FAIL (m_priv) ;
-    UString session_name = m_priv->prog_name ;
+    UString session_name = Glib::path_get_basename
+        (Glib::locale_from_utf8 (m_priv->prog_path)) ;
+
     if (session_name == "") {return;}
 
     if (a_session.session_id ()) {
@@ -2008,7 +2030,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 
     a_session.properties ().clear () ;
     a_session.properties ()[SESSION_NAME] = session_name ;
-    a_session.properties ()[PROGRAM_NAME] = m_priv->prog_name ;
+    a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path ;
     a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
     a_session.env_variables () = m_priv->env_variables;
@@ -2363,7 +2385,7 @@ DBGPerspective::execute_program (const UString &a_prog,
 
     attached_to_target_signal ().emit (true) ;
 
-    m_priv->prog_name = a_prog ;
+    m_priv->prog_path = a_prog ;
     m_priv->prog_args = a_args ;
     m_priv->prog_cwd = a_cwd ;
     m_priv->env_variables = a_env ;
