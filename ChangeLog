@@ -1,3 +1,12 @@
+Mon, 09 Oct 2006 22:21:59 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-popup-tip.cc: use a textview instead of a
+	  label. Labels don't work very well for long texts.
+	* src/DBGPerspective/nmv-dbg-perspective.cc:
+	  DBGPerspective::on_debugger_variable_value_signal ():
+	  show variable names in the popup tips.
+
+
 Mon, 09 Oct 2006 19:42:42 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:

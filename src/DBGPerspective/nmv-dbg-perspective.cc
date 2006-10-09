@@ -1166,7 +1166,7 @@ DBGPerspective::on_debugger_variable_value_signal
     UString var_str ;
     if (m_priv->in_show_var_value_at_pos_transaction
         && m_priv->var_to_popup == a_var_name) {
-        a_var->to_string (var_str) ;
+        a_var->to_string (var_str, true) ;
         show_underline_tip_at_position (m_priv->var_popup_tip_x,
                                         m_priv->var_popup_tip_y,
                                         var_str) ;

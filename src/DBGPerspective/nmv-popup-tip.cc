@@ -33,7 +33,9 @@ class PopupTip::Priv {
     Priv () ;
 
 public:
-    Gtk::Label *label ;
+    Gtk::TextView *text_view ;
+    Gtk::ScrolledWindow *scr_win ;
+    Glib::RefPtr<Gtk::TextBuffer> text_buffer ;
     sigc::connection expose_event_connection ;
     Gtk::Window &window ;
     int show_position_x ;
@@ -41,19 +43,28 @@ public:
 
     Priv (const UString &a_message,
           Gtk::Window &a_window) :
-        label (0),
+        text_view (0),
+        scr_win (0),
         window (a_window),
         show_position_x (0),
         show_position_y (0)
     {
-        label = Gtk::manage (new Gtk::Label (a_message)) ;
-        label->set_single_line_mode (false) ;
+        scr_win = Gtk::manage (new Gtk::ScrolledWindow) ;
+        THROW_IF_FAIL (scr_win) ;
+        scr_win->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_NEVER) ;
+        text_view = Gtk::manage (new Gtk::TextView) ;
+        THROW_IF_FAIL (text_view) ;
+        scr_win->add (*text_view) ;
+        text_buffer = Gtk::TextBuffer::create () ;
+        THROW_IF_FAIL (text_buffer) ;
+        text_buffer->set_text (a_message) ;
+        text_view->set_buffer (text_buffer) ;
         expose_event_connection = window.signal_expose_event ().connect
         (sigc::mem_fun (*this, &Priv::on_expose_event_signal)) ;
         window.set_resizable (false) ;
         window.set_app_paintable (true) ;
         window.set_border_width (4) ;
-        window.add (*label) ;
+        window.add (*scr_win) ;
         window.hide () ;
     }
 
@@ -106,16 +117,16 @@ PopupTip::text (const UString &a_text)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->label) ;
-    m_priv->label->set_text (a_text) ;
+    THROW_IF_FAIL (m_priv->text_buffer) ;
+    m_priv->text_buffer->set_text (a_text) ;
 }
 
 UString
 PopupTip::text () const
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->label) ;
-    return m_priv->label->get_text () ;
+    THROW_IF_FAIL (m_priv->text_buffer) ;
+    return m_priv->text_buffer->get_text () ;
 }
 
 void
