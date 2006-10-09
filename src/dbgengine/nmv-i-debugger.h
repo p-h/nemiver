@@ -256,6 +256,35 @@ public:
 
         const UString& type () const {return m_type;}
         void type (const UString &a_type) {m_type = a_type;}
+
+        void to_string (UString &a_str,
+                        bool a_show_var_name = false,
+                        const UString &a_indent_str="") const
+        {
+            if (a_show_var_name) {
+                if (name () != "") {
+                    a_str += a_indent_str + name () ;
+                }
+            }
+            if (value () != "") {
+                if (a_show_var_name) {
+                    a_str += "=" ;
+                }
+                a_str += value () ;
+            }
+            if (members ().empty ()) {
+                a_str += "\n" ;
+                return ;
+            }
+            UString indent_str = a_indent_str + "  " ;
+            a_str += "\n" + a_indent_str + "{\n";
+            list<VariableSafePtr>::const_iterator it ;
+            for (it = members ().begin () ; it != members ().end () ; ++it) {
+                if (!(*it)) {continue;}
+                (*it)->to_string (a_str, true, indent_str) ;
+            }
+            a_str += a_indent_str + "}\n" ;
+        }
     };//end class Variable
 
     enum State {

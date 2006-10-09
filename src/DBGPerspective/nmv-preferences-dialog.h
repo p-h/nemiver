@@ -49,6 +49,6 @@ public:
     void source_directories (const std::vector<UString> &a_dirs) ;
 };//end class PreferencesDialog
 
-NEMIVER_END_NAMESPACE //nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_PREFERENCES_DIALOG

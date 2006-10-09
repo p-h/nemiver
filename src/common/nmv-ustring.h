@@ -34,12 +34,13 @@
 #include <string>
 #include "config.h"
 #include <glibmm.h>
+#include "nmv-namespace.h"
 #include "nmv-api-macros.h"
 
 using namespace std ;
 
-namespace nemiver {
-namespace common {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+NEMIVER_BEGIN_NAMESPACE (common)
 
 class NEMIVER_API UString: public Glib::ustring {
 
@@ -69,8 +70,8 @@ public:
     void chomp () ;
 };//end class UString
 
-}//end namespace common
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
+NEMIVER_END_NAMESPACE (common)
 
 #endif
 

@@ -39,8 +39,7 @@
 #include "nmv-sequence.h"
 #include "nmv-proc-utils.h"
 
-const nemiver::common::UString GDBMI_PARSING_DOMAIN =
-                                                    "gdbmi-parsing-domain";
+const nemiver::common::UString GDBMI_PARSING_DOMAIN = "gdbmi-parsing-domain";
 const nemiver::common::UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain" ;
 
 #define LOG_PARSING_ERROR(a_buf, a_from) \
@@ -1718,6 +1717,31 @@ struct GDBEngine::Priv {
             return false;
         }
 
+        if (attrs["addr"] == "<PENDING>") {
+            UString pending = attrs["pending"] ;
+            if (pending == "") {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            LOG_DD ("got pending breakpoint: '" << pending << "'") ;
+            vector<UString> str_tab = pending.split (":") ;
+            LOG_DD ("filepath: '" << str_tab[0] << "'") ;
+            LOG_DD ("linenum: '" << str_tab[1] << "'") ;
+            if (str_tab.size () != 2) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            string path = Glib::locale_from_utf8 (str_tab[0]) ;
+            if (Glib::path_is_absolute (path)) {
+                attrs["file"] = Glib::locale_to_utf8
+                                        (Glib::path_get_basename (path)) ;
+                attrs["fullname"] = Glib::locale_to_utf8 (path) ;
+            } else {
+                attrs["file"] = Glib::locale_to_utf8 (path) ;;
+            }
+            attrs["line"] = str_tab[1] ;
+        }
+
         map<UString, UString>::iterator iter, null_iter = attrs.end () ;
         //we use to require that the "fullname" property be present as
         //well, but it seems that a lot debug info set got shipped without
@@ -1728,7 +1752,6 @@ struct GDBEngine::Priv {
                 || (iter = attrs.find ("disp"))    == null_iter
                 || (iter = attrs.find ("enabled")) == null_iter
                 || (iter = attrs.find ("addr"))    == null_iter
-                || (iter = attrs.find ("func"))    == null_iter
                 || (iter = attrs.find ("file"))    == null_iter
                 || (iter = attrs.find ("line"))    == null_iter
                 || (iter = attrs.find ("times"))   == null_iter
@@ -2568,9 +2591,15 @@ struct GDBEngine::Priv {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false ;
             }
+            SKIP_WS (a_input, cur, end) ;
             if (a_input[cur] != '"') {
-                LOG_PARSING_ERROR (a_input, cur) ;
-                return false ;
+                UString value  ;
+                if (!parse_c_string_body (a_input, cur, end, value)) {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                    return false ;
+                }
+                value = a_var->value () + " " + value ;
+                a_var->value (value) ;
             }
         } else {
             UString value ;

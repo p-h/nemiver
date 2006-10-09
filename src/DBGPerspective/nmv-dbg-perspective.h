@@ -31,7 +31,7 @@
 #include "nmv-i-debugger.h"
 #include "nmv-sess-mgr.h"
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class NEMIVER_API IDBGPerspective : public IPerspective {
     //non copyable
@@ -142,6 +142,6 @@ public:
 
     virtual sigc::signal<void, bool>& debugger_ready_signal () = 0;
 };//end class IDBGPerspective
-}//end namespace nemiver
 
+NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_DBG_PERSPECTIVE_H__

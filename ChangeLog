@@ -1,3 +1,36 @@
+Mon, 09 Oct 2006 19:42:42 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  GDBEngine::Priv::parse_breakpoint(): take the pending breakpoints
+	  partially in account. In the future we will need to really flag
+	  pending breakpoints as such so that client code can make the
+	  difference between breakpoints that are set end pending ones.
+	  This fixes an annoying bug were pending breakpoints were not
+	  visible by client code.
+	* src/dbgengine/nmv-i-debugger.h:  Add a
+	  IDebugger:Variable::to_string() method.
+	* src/DBGPerspective/nmv-popup-tip.cc,h: added this new widget.
+	  Its there to carry the content of variables which popup when the
+	  mouse is left over a variable for one second.
+	* src/DBGPerspective/schemas/nemiver-dbgperspective.schemas: added
+	  a key /apps/nemiver/dbgperspective/show-dbg-error-dialogs to
+	  determine if we should show error messages coming from the
+	  underlying debugger engine (read gdb here). It's set to false by
+	  default.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: When the mouse is left
+	  over a word (in the source view), we consider that word as being
+	  an expression and we ask IDebugger to evaluate that expression.
+	  If that evaluation doesn't lead to an error, the result is shown in
+	  a "popup tip" below the word we were talking about. This way, to
+	  quickly know the content of a variable, just let the mouse over that
+	  variable for one second.
+	*  src/DBGPerspective/nmv-source-editor.cc,h: added
+	   SourceEditor::get_word_at_position() to get a word at x,y position.
+	*  src/DBGPerspective/nmv-call-stack.cc : make call stack aquisition
+	   be robust w.r.t some debugger engine errors.
+	* src/* : made some general cleanups.
+
+
 Sun, 08 Oct 2006 16:10:47 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: update

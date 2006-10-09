@@ -143,7 +143,7 @@ public:
     /// @}
 };//end class IWorkbench
 
-NEMIVER_END_NAMESPACE //end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_I_WORKBENCH
 

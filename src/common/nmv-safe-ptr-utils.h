@@ -99,8 +99,8 @@ struct CharArrayUnref {
 typedef SafePtr <gchar, GCharRef, GCharUnref> GCharSafePtr ;
 typedef SafePtr <Object, ObjectRef, ObjectUnref> ObjectSafePtr ;
 
-NEMIVER_END_NAMESPACE //common
-NEMIVER_END_NAMESPACE //nemiver
+NEMIVER_END_NAMESPACE(common)
+NEMIVER_END_NAMESPACE(nemiver)
 
 #endif
 

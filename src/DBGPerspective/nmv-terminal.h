@@ -55,5 +55,5 @@ public:
     UString slave_pts_name () const ;
 };//end class Terminal
 
-NEMIVER_END_NAMESPACE //nemiver
+NEMIVER_END_NAMESPACE(nemiver)
 #endif //NMV_TERMINAL

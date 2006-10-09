@@ -106,6 +106,19 @@ struct CallStack::Priv {
         THROW_IF_FAIL (debugger) ;
         frames = a_stack ;
         waiting_for_stack_args = true ;
+
+        //**************************************************************
+        //set the frame list without frame parameters,
+        //then, request IDebugger for frame parameters.
+        //When the frame params arrives, we will set the
+        //the frame list again, that time with the parameters.
+        //Okay, this forces us to set the frame list twice,
+        //but it is more robust because sometimes, the second
+        //request to IDebugger fail (the one to get the parameters).
+        //This way, we have at the least the frame list withouht params.
+        //**************************************************************
+        map<int, list<IDebugger::VariableSafePtr> > frames_params ;
+        set_frame_list (frames, frames_params) ;
         debugger->list_frames_arguments () ;
     }
 

@@ -195,4 +195,4 @@ PreferencesDialog::source_directories (const std::vector<UString> &a_dirs)
     m_priv->set_source_dirs (m_priv->source_dirs) ;
 }
 
-NEMIVER_END_NAMESPACE
+NEMIVER_END_NAMESPACE (nemiver)

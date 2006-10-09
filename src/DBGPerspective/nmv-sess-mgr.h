@@ -41,7 +41,7 @@ using nemiver::common::ObjectUnref ;
 using nemiver::common::SafePtr ;
 using nemiver::common::Transaction ;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class ISessMgr ;
 typedef SafePtr<ISessMgr, ObjectRef, ObjectUnref> ISessMgrSafePtr  ;
@@ -147,8 +147,7 @@ public:
     static ISessMgrSafePtr create (const UString &a_root_dir) ;
 };//end class SessMgr
 
-
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_SESS_MGR_H__
 

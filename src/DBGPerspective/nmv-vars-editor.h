@@ -31,7 +31,7 @@
 #include "nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class NEMIVER_API VarsEditor : public nemiver::common::Object {
     //non copyable
@@ -53,7 +53,7 @@ public:
                     (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
 };//end VarsEditor
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_VARS_EDITOR_H__
 

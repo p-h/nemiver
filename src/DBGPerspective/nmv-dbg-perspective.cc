@@ -46,13 +46,14 @@
 #include "nmv-terminal.h"
 #include "nmv-i-conf-mgr.h"
 #include "nmv-preferences-dialog.h"
+#include "nmv-popup-tip.h"
 
 using namespace std ;
 using namespace nemiver::common ;
 using namespace nemiver::ui_utils;
 using namespace gtksourceview ;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 const char *SET_BREAKPOINT    = "nmv-set-breakpoint" ;
 const char *CONTINUE          = "nmv-continue" ;
@@ -73,6 +74,8 @@ const char * DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
 
 static const UString CONF_KEY_NEMIVER_SOURCE_DIRS =
                 "/apps/nemiver/dbgperspective/source-search-dirs" ;
+static const UString CONF_KEY_SHOW_DBG_ERROR_DIALOGS =
+                "/apps/nemiver/dbgperspective/show-dbg-error-dialogs";
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
@@ -200,6 +203,10 @@ private:
     void on_debugger_error_signal (const UString &a_msg) ;
 
     void on_debugger_state_changed_signal (IDebugger::State a_state) ;
+
+    void on_debugger_variable_value_signal
+                                    (const UString &a_var_name,
+                                     const IDebugger::VariableSafePtr &a_var) ;
     //************
     //</signal slots>
     //************
@@ -229,8 +236,11 @@ private:
     void record_and_save_new_session () ;
     void record_and_save_session (ISessMgr::Session &a_session) ;
     IProcMgr* get_process_manager () ;
-    void try_to_show_variable_value_at_position (gdouble a_x, gdouble a_y) ;
+    void try_to_request_show_variable_value_at_position (int a_x, int a_y) ;
+    void show_underline_tip_at_position (int a_x, int a_y,
+                                         const UString &a_text);
     void restart_mouse_immobile_timer () ;
+    PopupTip& get_popup_tip () ;
 
 public:
 
@@ -473,9 +483,29 @@ struct DBGPerspective::Priv {
     IProcMgrSafePtr process_manager ;
     UString last_command_text ;
     vector<UString> source_dirs ;
+    bool show_dbg_errors ;
     sigc::connection timeout_source_connection ;
+    //**************************************
+    //<detect mouse immobility > N seconds
+    //**************************************
     int mouse_in_source_editor_x ;
     int mouse_in_source_editor_y ;
+    //**************************************
+    //</detect mouse immobility > N seconds
+    //**************************************
+
+    //****************************************
+    //<variable value popup tip related data>
+    //****************************************
+    SafePtr<PopupTip> popup_tip ;
+    bool in_show_var_value_at_pos_transaction ;
+    UString var_to_popup ;
+    int var_popup_tip_x ;
+    int var_popup_tip_y ;
+    //****************************************
+    //</variable value popup tip related data>
+    //****************************************
+
 
     Priv () :
         initialized (false),
@@ -494,8 +524,12 @@ struct DBGPerspective::Priv {
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0),
+        show_dbg_errors (false),
         mouse_in_source_editor_x (0),
-        mouse_in_source_editor_y (0)
+        mouse_in_source_editor_y (0),
+        in_show_var_value_at_pos_transaction (false),
+        var_popup_tip_x (0),
+        var_popup_tip_y (0)
     {}
 };//end struct DBGPerspective::Priv
 
@@ -795,13 +829,19 @@ DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
 {
     SourceEditor *cur_editor = get_current_source_editor () ;
     THROW_IF_FAIL (cur_editor) ;
-    toggle_breakpoint (cur_editor->get_path (), a_line + 1 ) ;
+    UString path ;
+    cur_editor->get_path (path) ;
+    toggle_breakpoint (path, a_line + 1 ) ;
 }
 
 bool
 DBGPerspective::on_button_pressed_in_source_view_signal (GdkEventButton *a_event)
 {
     NEMIVER_TRY
+
+    if (get_popup_tip ().is_visible ()) {
+        get_popup_tip ().hide () ;
+    }
 
     if (a_event->type != GDK_BUTTON_PRESS) {
         return false ;
@@ -848,8 +888,16 @@ DBGPerspective::on_mouse_immobile_timer_signal ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
     NEMIVER_TRY
-    try_to_show_variable_value_at_position (m_priv->mouse_in_source_editor_x,
-                                            m_priv->mouse_in_source_editor_y) ;
+
+    if (get_contextual_menu ()
+        && get_contextual_menu ()->is_visible ())
+    {
+        return false ;
+    }
+
+    try_to_request_show_variable_value_at_position
+                                        (m_priv->mouse_in_source_editor_x,
+                                         m_priv->mouse_in_source_editor_y) ;
     NEMIVER_CATCH
     return false ;
 }
@@ -921,6 +969,8 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
     if (a_key == CONF_KEY_NEMIVER_SOURCE_DIRS) {
         LOG_DD ("updated key source-dirs") ;
         m_priv->source_dirs = boost::get<UString> (a_value).split (":") ;
+    } else if (a_key == CONF_KEY_SHOW_DBG_ERROR_DIALOGS) {
+        m_priv->show_dbg_errors = boost::get<bool> (a_value) ;
     }
     NEMIVER_CATCH
 }
@@ -1084,7 +1134,9 @@ DBGPerspective::on_debugger_error_signal (const UString &a_msg)
 {
     NEMIVER_TRY
 
-    ui_utils::display_error (_("An error occured: ") + a_msg) ;
+    if (m_priv->show_dbg_errors) {
+        ui_utils::display_error (_("An error occured: ") + a_msg) ;
+    }
 
     NEMIVER_CATCH
 }
@@ -1100,6 +1152,27 @@ DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
         debugger_ready_signal ().emit (false) ;
     }
 
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_variable_value_signal
+                                        (const UString &a_var_name,
+                                         const IDebugger::VariableSafePtr &a_var)
+{
+    NEMIVER_TRY
+    THROW_IF_FAIL (m_priv) ;
+
+    UString var_str ;
+    if (m_priv->in_show_var_value_at_pos_transaction
+        && m_priv->var_to_popup == a_var_name) {
+        a_var->to_string (var_str) ;
+        show_underline_tip_at_position (m_priv->var_popup_tip_x,
+                                        m_priv->var_popup_tip_y,
+                                        var_str) ;
+        m_priv->in_show_var_value_at_pos_transaction = false ;
+        m_priv->var_to_popup = "" ;
+    }
     NEMIVER_CATCH
 }
 
@@ -1612,6 +1685,9 @@ DBGPerspective::init_debugger_signals ()
     debugger ()->state_changed_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_state_changed_signal)) ;
 
+    debugger ()->variable_value_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_variable_value_signal)) ;
+
     debugger ()->got_proc_info_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_got_proc_info_signal)) ;
 }
@@ -1704,7 +1780,9 @@ DBGPerspective::get_current_file_path ()
 {
     SourceEditor *source_editor = get_current_source_editor () ;
     if (!source_editor) {return "";}
-    return source_editor->get_path () ;
+    UString path ;
+    source_editor->get_path (path) ;
+    return path ;
 }
 
 SourceEditor*
@@ -1877,11 +1955,16 @@ DBGPerspective::init_conf_mgr ()
     if (m_priv->source_dirs.empty ()) {
         THROW_IF_FAIL (m_priv->workbench) ;
         IConfMgr &conf_mgr = m_priv->workbench->get_configuration_manager () ;
+
         UString dirs ;
         conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs) ;
         LOG_DD ("got source dirs '" << dirs << "' from conf mgr") ;
         m_priv->source_dirs = dirs.split (":") ;
         LOG_DD ("that makes '" <<(int)m_priv->source_dirs.size()<< "' dir paths");
+
+        conf_mgr.get_key_value (CONF_KEY_SHOW_DBG_ERROR_DIALOGS,
+                                m_priv->show_dbg_errors);
+
         conf_mgr.value_changed_signal ().connect
             (sigc::mem_fun (*this, &DBGPerspective::on_conf_key_changed_signal)) ;
     }
@@ -1910,7 +1993,7 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
                                                     buffer_x, buffer_y) ;
     editor->source_view ().get_line_at_y (cur_iter, buffer_y, line_top) ;
 
-    file_name = editor->get_path () ;
+    editor->get_path (file_name) ;
 
     Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
     THROW_IF_FAIL (menu) ;
@@ -1937,62 +2020,44 @@ DBGPerspective::get_process_manager ()
     return m_priv->process_manager.get () ;
 }
 
+
 void
-DBGPerspective::try_to_show_variable_value_at_position (gdouble a_x, gdouble a_y)
+DBGPerspective::try_to_request_show_variable_value_at_position (int a_x, int a_y)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
-
-    THROW_IF_FAIL (m_priv) ;
     SourceEditor *editor = get_current_source_editor () ;
-    THROW_IF_FAIL (editor) ;
-    int buffer_x=0, buffer_y=0 ;
-    editor->source_view ().window_to_buffer_coords (Gtk::TEXT_WINDOW_TEXT,
-                                                    (int)a_x,
-                                                    (int)a_y,
-                                                    buffer_x, buffer_y) ;
-    Gtk::TextBuffer::iterator clicked_at_iter ;
-    editor->source_view ().get_iter_at_location (clicked_at_iter,
-                                                 buffer_x, buffer_y) ;
-    THROW_IF_FAIL (clicked_at_iter) ;
+    THROW_IF_FAIL (editor);
 
-    //go find the first white space before clicked_at_iter
-    Gtk::TextBuffer::iterator cur_iter = clicked_at_iter;
-    if (!cur_iter) {return;}
-
-    while (cur_iter.backward_char () && !isspace (cur_iter.get_char ())) {}
-    THROW_IF_FAIL (cur_iter.forward_char ()) ;
-    Gtk::TextBuffer::iterator start_word_iter = cur_iter ;
-
-    //go find the first white space after clicked_at_iter
-    cur_iter = clicked_at_iter ;
-    while (cur_iter.forward_char () && !isspace (cur_iter.get_char ())) {}
-    Gtk::TextBuffer::iterator end_word_iter = cur_iter ;
-
-    UString var_name = start_word_iter.get_slice (end_word_iter);
-    while (var_name != "" && !isalpha (var_name[0]) && var_name[0] != '_') {
-        var_name.erase (0, 1) ;
-    }
-    while (var_name != ""
-           && !isalnum (var_name[var_name.size () - 1])
-           && var_name[var_name.size () - 1] != '_') {
-        var_name.erase (var_name.size () - 1, 1) ;
-    }
-
+    UString var_name ;
     Gdk::Rectangle start_rect, end_rect ;
-    editor->source_view ().get_iter_location (start_word_iter, start_rect) ;
-    editor->source_view ().get_iter_location (end_word_iter, end_rect) ;
-    if (!(start_rect.get_x () <= buffer_x) || !(buffer_x <= end_rect.get_x ())) {
-        LOG_DD ("mouse not really on word: '" << var_name << "'") ;
-        return ;
-    }
-    LOG_DD ("got variable candidate name: '" << var_name << "'") ;
-    //TODO:
-    //Popup var_name in a label here. Okay this is only done to prepare the real
-    //meat to come that will be:
-    //send a request to gdb to get the value of what can be a variable and
-    //pop it up in a window below the var_name.
-    //one day, source code analysis may tell us if it's a variable name or not.
-    //I seriously doubt it, though
+    get_current_source_editor ()->get_word_at_position (a_x, a_y,
+                                                        var_name,
+                                                        start_rect,
+                                                        end_rect) ;
+    if (var_name == "") {return;}
+    Glib::RefPtr<Gdk::Window> gdk_window =
+                        ((Gtk::Widget&)editor->source_view ()).get_window () ;
+    THROW_IF_FAIL (gdk_window) ;
+    int abs_x=0, abs_y=0 ;
+    gdk_window->get_origin (abs_x, abs_y) ;
+    abs_x += a_x ;
+    abs_y += a_y + start_rect.get_height () / 2 ;
+    m_priv->in_show_var_value_at_pos_transaction = true ;
+    m_priv->var_popup_tip_x = abs_x ;
+    m_priv->var_popup_tip_y = abs_y ;
+    m_priv->var_to_popup = var_name ;
+    debugger ()->print_variable_value (var_name) ;
+}
+
+void
+DBGPerspective::show_underline_tip_at_position (int a_x,
+                                                int a_y,
+                                                const UString &a_text)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+    get_popup_tip ().text (a_text) ;
+    get_popup_tip ().set_show_position (a_x, a_y) ;
+    get_popup_tip ().show_all () ;
 }
 
 void
@@ -2007,6 +2072,19 @@ DBGPerspective::restart_mouse_immobile_timer ()
     m_priv->timeout_source_connection = Glib::signal_timeout ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_mouse_immobile_timer_signal),
          1000);
+    get_popup_tip ().hide () ;
+}
+
+PopupTip&
+DBGPerspective::get_popup_tip ()
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    if (!m_priv->popup_tip) {
+        m_priv->popup_tip = new PopupTip ;
+    }
+    THROW_IF_FAIL (m_priv->popup_tip) ;
+    return *m_priv->popup_tip ;
 }
 
 void
@@ -2520,7 +2598,9 @@ DBGPerspective::set_breakpoint ()
 {
     SourceEditor *source_editor = get_current_source_editor () ;
     THROW_IF_FAIL (source_editor) ;
-    THROW_IF_FAIL (source_editor->get_path () != "") ;
+    UString path ;
+    source_editor->get_path (path) ;
+    THROW_IF_FAIL (path != "") ;
 
     //line numbers start at 0 in GtkSourceView, but at 1 in GDB <grin/>
     //so in DBGPerspective, the line number are set in the GDB's reference.
@@ -2528,7 +2608,7 @@ DBGPerspective::set_breakpoint ()
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
             ()->get_iter ().get_line () + 1;
-    set_breakpoint (source_editor->get_path (), current_line) ;
+    set_breakpoint (path, current_line) ;
 }
 
 void
@@ -2595,13 +2675,15 @@ DBGPerspective::delete_breakpoint ()
 {
     SourceEditor *source_editor = get_current_source_editor () ;
     THROW_IF_FAIL (source_editor) ;
-    THROW_IF_FAIL (source_editor->get_path () != "") ;
+    UString path ;
+    source_editor->get_path (path);
+    THROW_IF_FAIL (path  != "") ;
 
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
             ()->get_iter ().get_line () + 1;
     int break_num=0 ;
-    if (!get_breakpoint_number (source_editor->get_path (),
+    if (!get_breakpoint_number (path,
                                 current_line,
                                 break_num)) {
         return false ;
@@ -2711,12 +2793,14 @@ DBGPerspective::toggle_breakpoint ()
 {
     SourceEditor *source_editor = get_current_source_editor () ;
     THROW_IF_FAIL (source_editor) ;
-    THROW_IF_FAIL (source_editor->get_path () != "") ;
+    UString path ;
+    source_editor->get_path (path) ;
+    THROW_IF_FAIL (path != "") ;
 
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
                 ()->get_iter ().get_line () + 1;
-    toggle_breakpoint (source_editor->get_path (), current_line) ;
+    toggle_breakpoint (path, current_line) ;
 }
 
 IDebuggerSafePtr&
@@ -3133,7 +3217,7 @@ DBGPerspective::show_log_view_signal ()
     return m_priv->show_log_view_signal ;
 }
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 //the dynmod initial factory.
 extern "C" {

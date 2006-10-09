@@ -37,7 +37,7 @@ using nemiver::common::SafePtr ;
 using nemiver::common::Object ;
 using nemiver::IDebugger ;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class NEMIVER_API CallStack : public Object {
     //non copyable
@@ -62,7 +62,7 @@ public:
     sigc::signal<void, int, const IDebugger::Frame&>& frame_selected_signal () const ;
 };//end class CallStack
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_CALL_STACK_H__
 

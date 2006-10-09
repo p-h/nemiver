@@ -31,7 +31,7 @@
 #include "nmv-plugin.h"
 #include "nmv-i-workbench.h"
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 using nemiver::common::Plugin ;
 using std::list ;
@@ -118,7 +118,7 @@ public:
 
 };//end class IPerspective
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NEMIVER_I_PERSPECTIVE_H__
 

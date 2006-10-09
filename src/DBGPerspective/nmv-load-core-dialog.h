@@ -28,7 +28,7 @@
 #include "nmv-dialog.h"
 #include "nmv-safe-ptr-utils.h"
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
 class UString ;
@@ -51,7 +51,7 @@ public:
 
 };//end class nemiver
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NEMIVER_LOAD_CORE_DIALOG_H__
 

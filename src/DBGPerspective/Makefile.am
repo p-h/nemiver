@@ -51,7 +51,9 @@ nmv-throbber.h \
 nmv-vars-editor.cc \
 nmv-vars-editor.h \
 nmv-terminal.h \
-nmv-terminal.cc
+nmv-terminal.cc \
+nmv-popup-tip.h \
+nmv-popup-tip.cc
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version

@@ -12,5 +12,17 @@
 	<long>The list of directories where to search for source files. This is used only when there is not enough information in the binary to locate the file.</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/show-dbg-error-dialogs</key>
+      <applyto>/apps/nemiver/dbgperspective/show-dbg-error-dialogs</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+	<short>Show or don't show errors coming from the debugger engine</short>
+	<long>If set to yes, popups error message dialogs showing errors coming from the underlying debugger engine</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
+

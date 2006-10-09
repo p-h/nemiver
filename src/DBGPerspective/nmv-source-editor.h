@@ -55,23 +55,28 @@ public:
     SourceEditor (const UString &a_root_dir,
                   Glib::RefPtr<SourceBuffer> &a_buf) ;
     virtual ~SourceEditor () ;
-    SourceView& source_view () ;
-    gint current_line () ;
+    SourceView& source_view () const ;
+    gint current_line () const ;
     void current_line (gint &a_line) ;
-    gint current_column () ;
+    gint current_column () const ;
     void current_column (gint &a_col) ;
     void move_where_marker_to_line (int a_line) ;
     void unset_where_marker () ;
     void set_visual_breakpoint_at_line (int a_line) ;
     void remove_visual_breakpoint_from_line (int a_line) ;
-    bool is_visual_breakpoint_set_at_line (int a_line) ;
+    bool is_visual_breakpoint_set_at_line (int a_line) const ;
     void scroll_to_line (int a_line) ;
     void set_path (const UString &a_path) ;
-    UString get_path () const ;
+    void get_path (UString &a_path) const ;
+    void get_word_at_position (int a_x,
+                               int a_y,
+                               UString &a_word,
+                               Gdk::Rectangle &a_start_rect,
+                               Gdk::Rectangle &a_end_rect) const ;
 
     /// \name signals
     /// @{
-    sigc::signal<void, int>& marker_region_got_clicked_signal () ;
+    sigc::signal<void, int>& marker_region_got_clicked_signal () const ;
     /// @}
 };//end class SourceEditor
 

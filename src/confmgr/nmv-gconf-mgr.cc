@@ -302,7 +302,7 @@ GConfMgr::value_changed_signal ()
     return m_value_changed_signal ;
 }
 
-NEMIVER_END_NAMESPACE
+NEMIVER_END_NAMESPACE (nemiver)
 
 extern "C" {
 bool

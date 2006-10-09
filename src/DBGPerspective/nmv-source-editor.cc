@@ -294,14 +294,14 @@ SourceEditor::~SourceEditor ()
 }
 
 gtksourceview::SourceView&
-SourceEditor::source_view ()
+SourceEditor::source_view () const
 {
     THROW_IF_FAIL (m_priv && m_priv->source_view) ;
     return *m_priv->source_view ;
 }
 
 gint
-SourceEditor::current_line ()
+SourceEditor::current_line () const
 {
     return m_priv->current_line ;
 }
@@ -313,7 +313,7 @@ SourceEditor::current_line (gint &a_line)
 }
 
 gint
-SourceEditor::current_column ()
+SourceEditor::current_column () const
 {
     return m_priv->current_column ;
 }
@@ -391,7 +391,7 @@ SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 }
 
 bool
-SourceEditor::is_visual_breakpoint_set_at_line (int a_line)
+SourceEditor::is_visual_breakpoint_set_at_line (int a_line) const
 {
     std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
     iter = m_priv->markers.find (a_line) ;
@@ -444,14 +444,69 @@ SourceEditor::set_path (const UString &a_path)
     m_priv->path = a_path ;
 }
 
-UString
-SourceEditor::get_path () const
+void
+SourceEditor::get_path (UString &a_path) const
 {
-    return m_priv->path ;
+    a_path = m_priv->path ;
+}
+
+void
+SourceEditor::get_word_at_position (int a_x,
+                                    int a_y,
+                                    UString &a_word,
+                                    Gdk::Rectangle &a_start_rect,
+                                    Gdk::Rectangle &a_end_rect) const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    THROW_IF_FAIL (m_priv) ;
+    int buffer_x=0, buffer_y=0 ;
+    source_view ().window_to_buffer_coords (Gtk::TEXT_WINDOW_TEXT,
+                                            (int)a_x,
+                                            (int)a_y,
+                                            buffer_x, buffer_y) ;
+    Gtk::TextBuffer::iterator clicked_at_iter ;
+    source_view ().get_iter_at_location (clicked_at_iter, buffer_x, buffer_y) ;
+    THROW_IF_FAIL (clicked_at_iter) ;
+
+    //go find the first white space before clicked_at_iter
+    Gtk::TextBuffer::iterator cur_iter = clicked_at_iter;
+    if (!cur_iter) {return;}
+
+    while (cur_iter.backward_char () && !isspace (cur_iter.get_char ())) {}
+    THROW_IF_FAIL (cur_iter.forward_char ()) ;
+    Gtk::TextBuffer::iterator start_word_iter = cur_iter ;
+
+    //go find the first white space after clicked_at_iter
+    cur_iter = clicked_at_iter ;
+    while (cur_iter.forward_char () && !isspace (cur_iter.get_char ())) {}
+    Gtk::TextBuffer::iterator end_word_iter = cur_iter ;
+
+    UString var_name = start_word_iter.get_slice (end_word_iter);
+    while (var_name != "" && !isalpha (var_name[0]) && var_name[0] != '_') {
+        var_name.erase (0, 1) ;
+    }
+    while (var_name != ""
+           && !isalnum (var_name[var_name.size () - 1])
+           && var_name[var_name.size () - 1] != '_') {
+        var_name.erase (var_name.size () - 1, 1) ;
+    }
+
+    Gdk::Rectangle start_rect, end_rect ;
+    source_view ().get_iter_location (start_word_iter, start_rect) ;
+    source_view ().get_iter_location (end_word_iter, end_rect) ;
+    if (!(start_rect.get_x () <= buffer_x) || !(buffer_x <= end_rect.get_x ())) {
+        LOG_DD ("mouse not really on word: '" << var_name << "'") ;
+        return ;
+    }
+    LOG_DD ("got variable candidate name: '" << var_name << "'") ;
+    a_word = var_name ;
+    a_start_rect = start_rect ;
+    a_end_rect = end_rect ;
 }
 
 sigc::signal<void, int>&
-SourceEditor::marker_region_got_clicked_signal ()
+SourceEditor::marker_region_got_clicked_signal () const
 {
     return m_priv->marker_region_got_clicked_signal ;
 }

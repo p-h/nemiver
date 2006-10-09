@@ -1,4 +1,4 @@
-//Author: Dodji Seketeli
+// Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -22,41 +22,35 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_PROC_LIST_DIALOG_H__
-#define __NMV_PROC_LIST_DIALOG_H__
 
-#include "nmv-dialog.h"
+#ifndef __NMV_POPUP_TIP_H__
+#define __NMV_POPUP_TIP_H__
+
+#include <gtkmm/window.h>
+#include "nmv-ustring.h"
 #include "nmv-safe-ptr-utils.h"
-#include "nmv-proc-mgr.h"
 
-namespace common {
-    class UString ;
-}
+using nemiver::common::UString ;
+using nemiver::common::SafePtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
-class ProcListDialog : public Dialog {
+
+class PopupTip : public Gtk::Window {
+    //non copyable
+    PopupTip (const PopupTip&) ;
+    PopupTip& operator= (const PopupTip&) ;
+    class Priv ;
+    SafePtr<Priv> m_priv ;
 
 public:
 
-    ProcListDialog (const UString &a_root_path,
-                    IProcMgr &a_proc_mgr) ;
-    virtual ~ProcListDialog () ;
-    virtual gint run () ;
+    PopupTip (const UString &a_text="") ;
+    virtual ~PopupTip ();
+    void text (const UString &) ;
+    UString text () const ;
+    void set_show_position (int a_x, int a_y) ;
+};//end class PopupTip
 
-    bool has_selected_process () ;
-    bool get_selected_process (IProcMgr::Process &a_proc/*out param*/) ;
-
-private:
-    void on_selection_changed_signal ();
-    void load_process_list ();
-
-    IProcMgr &proc_mgr ;
-    Gtk::TreeView *proclist_view ;
-    Glib::RefPtr<Gtk::ListStore> proclist_store ;
-    IProcMgr::Process selected_process ;
-    bool process_selected ;
-};//end class ProcListDialog
 NEMIVER_END_NAMESPACE (nemiver)
-
-#endif //__NMV_PROC_LIST_DIALOG_H__
+#endif //__NMV_POPUP_TIP_H__
 

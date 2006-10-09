@@ -73,6 +73,6 @@ public:
 
 };//end class IConfMgr
 
-NEMIVER_END_NAMESPACE //nemiver
+NEMIVER_END_NAMESPACE(nemiver)
 
 #endif //__NMV_CONF_MGR_H__

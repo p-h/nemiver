@@ -142,4 +142,5 @@ Terminal::slave_pts_name () const
     return result ;
 }
 
-NEMIVER_END_NAMESPACE //nemiver
+NEMIVER_END_NAMESPACE(nemiver)
+

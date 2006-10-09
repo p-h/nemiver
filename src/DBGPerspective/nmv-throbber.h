@@ -36,7 +36,7 @@ using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
 using nemiver::common::UString ;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 class Throbber ;
 typedef SafePtr<Throbber, ObjectRef, ObjectUnref> ThrobberSafePtr ;
 
@@ -57,6 +57,6 @@ public:
     Gtk::Widget& get_widget () const ;
 };//end class Throbber
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_THROBBER_H__
 

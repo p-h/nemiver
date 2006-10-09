@@ -28,15 +28,14 @@
  *
  */
 #ifndef __NMV_NAMESPACE_H__
+#define __NMV_NAMESPACE_H__
 
 #ifndef NEMIVER_BEGIN_NAMESPACE
 #define NEMIVER_BEGIN_NAMESPACE(name) namespace name {
 #endif
 
 #ifndef NEMIVER_END_NAMESPACE
-#define NEMIVER_END_NAMESPACE }
+#define NEMIVER_END_NAMESPACE(name) }
 #endif
-#define __NMV_NAMESPACE_H__
-
 #endif //__NMV_NAMESPACE_H__
 
