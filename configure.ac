@@ -175,15 +175,6 @@ dnl *******************
 dnl gconf
 dnl *******************
 
-dnl ***************************
-dnl Set Dodjicommon devel environment.
-dnl ***************************
-
-DEVEL_FLAGS="-g -Wall -Wundef -Wpointer-arith -Wcast-align \
--Wwrite-strings   -Wsign-compare \
--Waggregate-return -Wmissing-prototypes  -Wmissing-declarations \
--Wmissing-format-attribute  -Wredundant-decls -Wnested-externs \
--Werror"
 
 if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes ; then
     REQUIRED_FLAGS="-fvisibility=hidden -fvisibility-inlines-hidden"
@@ -191,9 +182,12 @@ else
     REQUIRED_FLAGS=""
 fi
 
+dnl ***************************
+dnl Set Dodji devel environment.
+dnl ***************************
 if test  "x$NEMIVER_DEVEL" = "xon" ; then
     CFLAGS=$DODJI_FLAGS
-    CXXFLAGS="-Wall -g -Werror -fuse-cxa-atexit $REQUIRED_FLAGS"
+    CXXFLAGS="-Wall -g -Werror -Wextra -fuse-cxa-atexit $REQUIRED_FLAGS"
     ENABLE_DEBUG=yes
 else
     CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit $REQUIRED_FLAGS"

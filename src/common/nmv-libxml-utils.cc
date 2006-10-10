@@ -61,6 +61,7 @@ reader_io_read_callback (ReaderIOContext *a_read_context,
 int
 reader_io_close_callback (ReaderIOContext *a_read_context)
 {
+    if (a_read_context) {}
     return 0 ;
 }
 

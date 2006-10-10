@@ -76,7 +76,8 @@ Connection::Connection ()
     m_priv = new ConnectionPriv () ;
 }
 
-Connection::Connection (const Connection &a_con)
+Connection::Connection (const Connection &a_con) :
+    Object (a_con)
 {
     m_priv = new ConnectionPriv () ;
     m_priv->driver_iface = a_con.m_priv->driver_iface ;

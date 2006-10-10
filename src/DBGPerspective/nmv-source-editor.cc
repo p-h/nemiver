@@ -138,11 +138,13 @@ struct SourceEditor::Priv {
                            const Glib::ustring &a_text,
                            int a_unknown)
     {
+        if (a_text == "" || a_unknown) {}
         update_line_col_info_from_iter (a_iter) ;
     }
 
     void on_signal_insertion_moved (gint a_line, gint a_col)
     {
+        if (a_line || a_col) {}
         update_line_col_label ();
     }
     //**************
@@ -184,6 +186,7 @@ struct SourceEditor::Priv {
 
     gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)
     {
+        if (a_iter) {}
         //TODO: code this !
         return 0 ;
     }

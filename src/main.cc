@@ -91,7 +91,7 @@ static GOptionEntry entries[] =
       _("log the debugger output"),
       NULL
     },
-    {NULL}
+    {0,0,0,(GOptionArg)0,0,0,0}
 };
 
 int

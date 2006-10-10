@@ -75,7 +75,8 @@ ProcMgr::~ProcMgr ()
 list<ProcMgr::Process>&
 ProcMgr::get_all_process_list ()
 {
-    glibtop_proclist buf_desc={0} ;
+    glibtop_proclist buf_desc ;
+    memset (&buf_desc, 0, sizeof (buf_desc)) ;
     unsigned int *pids=NULL;
     char **argv=NULL ;
 
@@ -90,7 +91,8 @@ ProcMgr::get_all_process_list ()
             Process process (pids[i]) ;
 
             //get the process arguments
-            glibtop_proc_args process_args_desc = {0} ;
+            glibtop_proc_args process_args_desc ;
+            memset (&process_args_desc, 0, sizeof (process_args_desc)) ;
             argv = glibtop_get_proc_argv (&process_args_desc,
                                           pids[i],
                                           1024) ;
@@ -106,7 +108,8 @@ ProcMgr::get_all_process_list ()
             }
 
             //the the process ppid and uid, euid and user_name.
-            glibtop_proc_uid proc_info={0} ;
+            glibtop_proc_uid proc_info ;
+            memset (&proc_info, 0, sizeof (proc_info)) ;
             glibtop_get_proc_uid (&proc_info, process.pid ()) ;
             process.ppid (proc_info.ppid) ;
             process.uid (proc_info.uid) ;

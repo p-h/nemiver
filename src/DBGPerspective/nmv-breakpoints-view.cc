@@ -33,13 +33,13 @@
 
 namespace nemiver {
 
-struct VariableColumns : public Gtk::TreeModelColumnRecord {
+struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<int> id ;
     Gtk::TreeModelColumn<bool> enabled ;
     Gtk::TreeModelColumn<Glib::ustring> filename ;
     Gtk::TreeModelColumn<int> line ;
 
-    VariableColumns ()
+    BPColumns ()
     {
         add (id) ;
         add (enabled) ;
@@ -48,10 +48,10 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
     }
 };//end Cols
 
-static VariableColumns&
-get_variable_columns ()
+static BPColumns&
+get_bp_columns ()
 {
-    static VariableColumns s_cols ;
+    static BPColumns s_cols ;
     return s_cols ;
 }
 
@@ -72,14 +72,14 @@ public:
     {
         if (tree_view) {return;}
         //create a default tree store and a tree view
-        list_store = Gtk::ListStore::create (get_variable_columns ()) ;
+        list_store = Gtk::ListStore::create (get_bp_columns ()) ;
         tree_view = new Gtk::TreeView (list_store) ;
 
         //create the columns of the tree view
-        //tree_view->append_column ("", get_variable_columns ().enabled) ;
-        tree_view->append_column (_("ID"), get_variable_columns ().id) ;
-        tree_view->append_column (_("Filename"), get_variable_columns ().filename) ;
-        tree_view->append_column (_("Line"), get_variable_columns ().line) ;
+        //tree_view->append_column ("", get_bp_columns ().enabled) ;
+        tree_view->append_column (_("ID"), get_bp_columns ().id) ;
+        tree_view->append_column (_("Filename"), get_bp_columns ().filename) ;
+        tree_view->append_column (_("Line"), get_bp_columns ().line) ;
     }
 
     void set_breakpoints (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
@@ -91,10 +91,10 @@ public:
                 ++break_iter)
         {
             Gtk::TreeModel::iterator tree_iter = list_store->append();
-            (*tree_iter)[get_variable_columns ().id] = break_iter->first;
-            (*tree_iter)[get_variable_columns ().enabled] = break_iter->second.enabled () ;
-            (*tree_iter)[get_variable_columns ().filename] = break_iter->second.file_name () ;
-            (*tree_iter)[get_variable_columns ().line] = break_iter->second.line () ;
+            (*tree_iter)[get_bp_columns ().id] = break_iter->first;
+            (*tree_iter)[get_bp_columns ().enabled] = break_iter->second.enabled () ;
+            (*tree_iter)[get_bp_columns ().filename] = break_iter->second.file_name () ;
+            (*tree_iter)[get_bp_columns ().line] = break_iter->second.line () ;
         }
     }
 

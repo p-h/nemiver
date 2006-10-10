@@ -402,7 +402,7 @@ public:
 
     Output () {clear ();}
 
-    Output (const UString &a_value) {clear ();}
+    Output (const UString &a_value) {clear ();if (a_value == "") {}}
 
     /// \name accessors
 
@@ -1264,9 +1264,10 @@ struct GDBEngine::Priv {
         }
     }
 
-    void on_child_died_signal (Glib::Pid a_pid,
-            int a_priority)
+    void on_child_died_signal (Glib::Pid a_pid, int a_priority)
     {
+        if (a_pid) {}
+        if (a_priority) {}
         gdb_died_signal.emit () ;
         free_resources () ;
     }
@@ -2814,7 +2815,10 @@ struct GDBEngine::Priv {
                 return false;
             }
             name_start = cur;
-            for (; cur < end && a_input[cur] != '"'; ++cur) {}
+            for (;
+                 cur < end && (a_input[cur] != '"' || a_input[cur -1] == '\\');
+                 ++cur) {
+            }
             if (a_input[cur] != '"') {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false;
@@ -2833,7 +2837,10 @@ struct GDBEngine::Priv {
                 return false;
             }
             value_start = cur ;
-            for (; cur < end && a_input[cur] != '"'; ++cur) {}
+            for (;
+                 cur < end && (a_input[cur] != '"' || a_input[cur-1] == '\\');
+                 ++cur) {
+            }
             if (a_input[cur] != '"') {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false;
@@ -3706,6 +3713,7 @@ struct OnStoppedHandler: OutputHandler {
     void do_handle (CommandAndOutput &a_in)
     {
         THROW_IF_FAIL (m_is_stopped && m_engine) ;
+        if (a_in.has_command ()) {}
 
         m_engine->stopped_signal ().emit
                     (m_out_of_band_record.stop_reason_as_str (),
@@ -3772,6 +3780,7 @@ struct OnRunningHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        if (a_in.has_command ()) {}
         m_engine->running_signal ().emit () ;
     }
 };//struct OnRunningHandler
@@ -3969,6 +3978,7 @@ struct OnSignalReceivedHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        if (a_in.has_command ()) {}
         THROW_IF_FAIL (m_engine) ;
         m_engine->signal_received_signal ().emit (oo_record.signal_type (),
                                                   oo_record.signal_meaning ()) ;
@@ -4063,6 +4073,7 @@ GDBEngine::load_core_file (const UString &a_prog_path,
                            const UString &a_core_path,
                            bool a_run_event_loop)
 {
+    if (a_run_event_loop) {}
     THROW_IF_FAIL (m_priv) ;
     if (m_priv->is_gdb_running ()) {
         m_priv->kill_gdb () ;
@@ -4429,6 +4440,7 @@ GDBEngine::run (bool a_run_event_loops)
 bool
 GDBEngine::stop (bool a_run_event_loops)
 {
+    if (a_run_event_loops) {}
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->is_gdb_running ()) {
@@ -4467,6 +4479,7 @@ GDBEngine::continue_to_position (const UString &a_path,
                                  gint a_line_num,
                                  bool a_run_event_loops)
 {
+    if (a_run_event_loops) {}
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-exec-until "
@@ -4534,6 +4547,7 @@ GDBEngine::enable_breakpoint (const UString &a_path,
                               gint a_line_num,
                               bool a_run_event_loops)
 {
+    if (a_path == "" || a_line_num || a_run_event_loops) {}
     //TODO: code this
 }
 
@@ -4542,6 +4556,7 @@ GDBEngine::disable_breakpoint (const UString &a_path,
                                gint a_line_num,
                                bool a_run_event_loops)
 {
+    if (a_path == "" || a_line_num || a_run_event_loops) {}
     //TODO: code this
 }
 

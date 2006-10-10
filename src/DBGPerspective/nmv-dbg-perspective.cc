@@ -779,6 +779,8 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
 void
 DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num)
 {
+    if (a_page) {}
+
     NEMIVER_TRY
     m_priv->current_page_num = a_page_num;
     NEMIVER_CATCH
@@ -827,6 +829,7 @@ DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterato
                                                   int a_dont_know)
 {
     NEMIVER_TRY
+    if (a_dont_know) {}
     if (a_text == "") {return;}
 
     if (a_text == "\n") {
@@ -1012,6 +1015,7 @@ void
 DBGPerspective::on_debugger_got_proc_info_signal (int a_pid,
                                                   const UString &a_exe_path)
 {
+    if (a_exe_path == "" || a_pid) {}
     NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
     if (a_exe_path != "") {
@@ -1054,6 +1058,7 @@ DBGPerspective::on_debugger_log_message_signal (const UString &a_msg)
 void
 DBGPerspective::on_debugger_command_done_signal (const UString &a_command)
 {
+    if (a_command == "") {}
     NEMIVER_TRY
     attached_to_target_signal ().emit (true) ;
     NEMIVER_CATCH
@@ -1076,6 +1081,7 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
                                             bool a_has_frame,
                                             const IDebugger::Frame &a_frame)
 {
+    if (a_reason == "") {}
     NEMIVER_TRY
 
     if (a_has_frame
@@ -1106,6 +1112,7 @@ void
 DBGPerspective::on_frame_selected_signal (int a_index,
                                           const IDebugger::Frame &a_frame)
 {
+    if (a_index) {}
     NEMIVER_TRY
 
     UString file_path = a_frame.file_full_name () ;
@@ -1153,6 +1160,7 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
                                         (const IDebugger::BreakPoint &a_break,
                                          int a_break_number)
 {
+    if (a_break.number ()) {}
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
     get_breakpoints_view ().set_breakpoints (m_priv->breakpoints);
@@ -1419,7 +1427,8 @@ DBGPerspective::init_actions ()
             _("_View"),
             "",
             nil_slot,
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         },
         {
             "ShowCommandsMenuAction",
@@ -1427,7 +1436,8 @@ DBGPerspective::init_actions ()
             _("Show commands"),
             _("Show the debugger commands tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_commands_action),
-            ActionEntry::TOGGLE
+            ActionEntry::TOGGLE,
+            ""
         },
         {
             "ShowErrorsMenuAction",
@@ -1435,7 +1445,8 @@ DBGPerspective::init_actions ()
             _("Show errors"),
             _("Show the errors commands tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_errors_action),
-            ActionEntry::TOGGLE
+            ActionEntry::TOGGLE,
+            ""
         },
         {
             "ShowTargetOutputMenuAction",
@@ -1443,7 +1454,8 @@ DBGPerspective::init_actions ()
             _("Show output"),
             _("Show the debugged target output tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_target_output_action),
-            ActionEntry::TOGGLE
+            ActionEntry::TOGGLE,
+            ""
         },
         {
             "DebugMenuAction",
@@ -1451,16 +1463,18 @@ DBGPerspective::init_actions ()
             _("_Debug"),
             "",
             nil_slot,
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         }
         ,
         {
             "OpenMenuItemAction",
             Gtk::Stock::OPEN,
-            _("_Open"),
-            _("Open a file"),
+            _("_Open source file ..."),
+            _("Open a source file for viewing"),
             sigc::mem_fun (*this, &DBGPerspective::on_open_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         },
         {
             "ExecuteProgramMenuItemAction",
@@ -1469,7 +1483,8 @@ DBGPerspective::init_actions ()
             _("Execute a program"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_execute_program_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         },
         {
             "LoadCoreMenuItemAction",
@@ -1478,7 +1493,8 @@ DBGPerspective::init_actions ()
             _("Load a core file from disk"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_load_core_file_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         },
         {
             "AttachToProgramMenuItemAction",
@@ -1487,7 +1503,8 @@ DBGPerspective::init_actions ()
             _("Debug a program that's already running"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_attach_to_program_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         },
         {
             "SavedSessionsMenuItemAction",
@@ -1496,7 +1513,8 @@ DBGPerspective::init_actions ()
             _("Manage previously saved debugging sessions"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_saved_sessions_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         },
         {
             "CurrentSessionPropertiesMenuItemAction",
@@ -1505,7 +1523,8 @@ DBGPerspective::init_actions ()
             _("Edit the properties of the current session"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_current_session_properties_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         }
     };
 
@@ -1516,7 +1535,8 @@ DBGPerspective::init_actions ()
             _("_Close"),
             _("Close the opened file"),
             sigc::mem_fun (*this, &DBGPerspective::on_close_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         }
     };
 
@@ -1527,15 +1547,18 @@ DBGPerspective::init_actions ()
             _("_Delete"),
             _("Remove this breakpoint"),
             sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_delete_action),
-            ActionEntry::DEFAULT
+            ActionEntry::DEFAULT,
+            ""
         },
         {
             "GoToSourceBreakpointMenuItemAction",
             Gtk::Stock::JUMP_TO,
             _("_Go to Source"),
             _("Find this breakpoint in the source editor"),
-            sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_go_to_source_action),
-            ActionEntry::DEFAULT
+            sigc::mem_fun (*this,
+                            &DBGPerspective::on_breakpoint_go_to_source_action),
+            ActionEntry::DEFAULT,
+            ""
         }
     };
 

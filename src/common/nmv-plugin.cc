@@ -104,6 +104,7 @@ void
 Plugin::EntryPoint::activate (bool a_activate,
                               ObjectSafePtr &a_ctxt)
 {
+    if (a_ctxt) {}
     m_priv->is_activated = a_activate ;
 }
 

@@ -96,6 +96,7 @@ struct CallStack::Priv {
                                      bool a_has_frame,
                                      const IDebugger::Frame &a_frame)
     {
+        if (a_reason == "" || a_has_frame || a_frame.line ()) {}
         THROW_IF_FAIL (debugger) ;
         debugger->list_frames () ;
     }

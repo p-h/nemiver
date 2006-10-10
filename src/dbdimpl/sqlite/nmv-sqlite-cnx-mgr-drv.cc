@@ -97,6 +97,9 @@ SqliteCnxMgrDrv::connect_to_db (const DBDesc &a_db_desc,
                                 const UString &a_user,
                                 const UString &a_pass)
 {
+
+    if (a_user == "") {}
+    if (a_pass == "") {}
     sqlite3 *sqlite (NULL);
 
     //HACK. As we are using sqlite, make sure to use a db file

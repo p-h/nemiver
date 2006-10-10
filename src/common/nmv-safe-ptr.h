@@ -38,8 +38,7 @@ namespace common {
 struct DefaultReferenceFunctor
 {
     void
-    operator () (const void* a_ptr)
-    {}
+    operator () (const void* a_ptr) {if (a_ptr) {}}
 }
 ; //end struct DefaultReference
 

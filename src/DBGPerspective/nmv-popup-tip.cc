@@ -89,6 +89,7 @@ public:
     bool on_expose_event_signal (GdkEventExpose *a_event)
     {
         NEMIVER_TRY
+        if (a_event) {}
 
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         paint_window () ;

@@ -65,7 +65,8 @@ Transaction::Transaction (Connection &a_con)
     m_priv = new TransactionPriv (a_con) ;
 }
 
-Transaction::Transaction (const Transaction &a_trans)
+Transaction::Transaction (const Transaction &a_trans) :
+    Object (a_trans)
 {
     m_priv = new TransactionPriv (*a_trans.m_priv->connection) ;
     m_priv->is_started = a_trans.m_priv->is_started ;

@@ -232,12 +232,10 @@ UString::chomp ()
         ++ws_end;
         ++ i ;
     }
-    Glib::ustring::size_type n = ws_end - ws_start ;
-    if (n < 0) {n = 0;}
-    /*LOG ("ws_end: " << (int)ws_end
-         << ", ws_start: " << (int) ws_start
-         << ", n: " << (int)n) ;
-    */
+    Glib::ustring::size_type n = 0;
+    if (ws_end >= ws_start ) {
+        n = ws_end - ws_start ;
+    }
     erase (ws_start, n) ;
     //LOG ("after first erase: '" << *this << "'") ;
 
@@ -245,17 +243,12 @@ UString::chomp ()
     i = size ()  - 1;
     ws_end = i ;
     ws_start = i ;
-    while (i >= 0 && isspace (at (i))) {
-     //   LOG ("boucle 2, i: " << (int)i) ;
+    while (isspace (at (i))) {
         --ws_start ;
         --i ;
     }
     if (ws_start != ws_end) {++ws_start;}
     n = ws_end - ws_start ;
-    /*LOG ("ws_end: " << (int)ws_end
-         << ", ws_start: " << (int) ws_start
-         << ", n: " << (int)n) ;
-    */
     erase (ws_start, n) ;
     //LOG ("after second erase: '" << *this << "'") ;
 }

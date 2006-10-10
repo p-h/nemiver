@@ -39,6 +39,7 @@ on_stopped_signal (const UString &a_reason,
 void
 on_current_frame_signal (int a_cur, IDebugger::Frame &a_frame)
 {
+    if (a_frame.line ()) {}
     gv_cur_frame = a_cur ;
 }
 
@@ -64,6 +65,7 @@ void
 on_frames_params_listed_signal
     (const std::map< int, std::list<IDebugger::VariableSafePtr> >& a_frame_params)
 {
+    if (a_frame_params.empty ()) {}
 }
 
 void

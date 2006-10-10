@@ -65,7 +65,8 @@ Config::Config ()
     m_priv = new ConfigPriv ;
 }
 
-Config::Config (const Config &a_conf)
+Config::Config (const Config &a_conf) :
+    Object (a_conf)
 {
     m_priv = new ConfigPriv () ;
     m_priv->props = a_conf.m_priv->props ;

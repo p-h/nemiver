@@ -44,8 +44,7 @@ namespace libxmlutils {
 struct XMLTextReaderRef {
 
     void
-    operator () (xmlTextReader* a_ptr)
-    {}
+    operator () (xmlTextReader* a_ptr) {if (a_ptr){}}
 
 };//end XMLReaderRef
 
@@ -64,8 +63,7 @@ struct XMLTextReaderUnref {
 
 struct XMLXPathContextRef {
     void
-    operator () (xmlXPathContext *a_ptr)
-    {}
+    operator () (xmlXPathContext *a_ptr) {if (a_ptr){}}
 };//end XPathContextRef
 
 struct XMLXPathContextUnref {
@@ -81,8 +79,7 @@ struct XMLXPathContextUnref {
 
 struct XMLXPathObjectRef {
     void
-    operator () (xmlXPathObject *a_ptr)
-    {}
+    operator () (xmlXPathObject *a_ptr) {if (a_ptr) {}}
 };//end XMLXPathObjectRef
 
 struct XMLXPathObjectUnref {
@@ -98,8 +95,7 @@ struct XMLXPathObjectUnref {
 
 struct XMLCharRef {
     void
-    operator () (xmlChar *a_ptr)
-    {}
+    operator () (xmlChar *a_ptr) {if (a_ptr) {}}
 };//end XMLCharRef
 
 struct XMLCharUnref {

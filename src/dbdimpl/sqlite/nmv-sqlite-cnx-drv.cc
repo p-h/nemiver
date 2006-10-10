@@ -39,9 +39,7 @@ namespace common {
 namespace sqlite {
 
 struct Sqlite3Ref {
-    void operator () (sqlite3 *a_ptr)
-    {
-    }
+    void operator () (sqlite3 *a_ptr) {if (a_ptr) {}}
 };//end struct Sqlite3Ref
 
 struct Sqlite3Unref {

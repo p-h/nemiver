@@ -141,6 +141,7 @@ public:
                          const Gtk::TreeModel::iterator &a_parent,
                          Gtk::TreeModel::iterator &a_result)
     {
+        if (a_result) {}
         Gtk::TreeModel::iterator parent_iter, tmp_iter;
 
         set_a_variable_real (a_var, a_parent, parent_iter);
@@ -236,6 +237,7 @@ public:
                             const IDebugger::Frame &a_frame)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+        if (a_str == "" || a_frame.line ()) {}
 
         NEMIVER_TRY
 

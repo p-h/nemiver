@@ -66,8 +66,7 @@ struct ObjectUnref {
 
 struct GCharRef {
     void
-    operator () (char* a_ptr)
-    {}
+    operator () (char* a_ptr) {if (a_ptr){}}
 }
 ;
 
@@ -84,9 +83,7 @@ struct GCharUnref {
 };
 
 struct CharArrayRef {
-    void operator () (char *a_tab)
-    {
-    }
+    void operator () (char *a_tab) {if (a_tab){}}
 };//end struct CharArraryRef
 
 struct CharArrayUnref {

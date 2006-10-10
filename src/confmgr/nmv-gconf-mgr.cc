@@ -69,7 +69,7 @@ public:
 static const char * NEMIVER_KEY_DIR = "/app/nemiver" ;
 
 struct GErrorRef {
-    void operator () (GError *a_error) {}
+    void operator () (GError *a_error) {if (a_error) {}}
 };
 
 struct GErrorUnref {

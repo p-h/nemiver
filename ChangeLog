@@ -1,3 +1,21 @@
+Tue, 10 Oct 2006 11:37:45 +0200 Dodji Seketeli
+
+	* configure.ac: add -Wextra to the devel super hot flags (activated by
+	   NEMIVER_DEVEL=on). This triggers a lot of compilation errors,
+	   mostly unused parameters, that I fixed. This was pointed out by
+	   Christophe Fergeau, aka teuf,  on IRC.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  GDBEngine::Priv::parse_function_args(): take in account arguments that
+	  have \" in their content. This should fix a bug reported on IRC by
+          Jean-Francois Rameau, aka JFR.
+	* src/DBGPerspective/nmv-breakpoints-view.cc: it seems like
+	  the static variable of type VariableColumns was bound to another
+	  static instance of the of another type that happened to have the
+	  same name. Weird. That was responsible of dumping of a lot of gtk
+	  warnings in the terminal.
+          So I renamed VariableColumns here, calling it BPColumns.
+          The warnings are gone now.
+
 2006-10-09  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: I figured out how to trigger
@@ -9,10 +27,11 @@
 
 	* src/DBGPerspective/nmv-breakpoints-view.cc,
 	src/DBGPerspective/nmv-breakpoints-view.h: a new widget for displaying the
-	list of currently set breakpoints in the status notebook area.  It currently
-	displays a list of breakpoints that gets updated in a rather crude way after
-	breakpoints are added or removed.  It also pops up a context menu which has
-	a choice of 'delete' or 'go to source', but these menu items don't currently
+	list of currently set breakpoints in the status notebook area.
+	It currently displays a list of breakpoints that gets updated
+	in a rather crude way after breakpoints are added or removed.
+	It also pops up a context menu which has a choice of 'delete'
+	or 'go to source', but these menu items don't currently
 	do anything yet.  I thought I'd just commit what I had for now.
 	* src/DBGPerspective/Makefile.am: add new breakpoints-view files
 	* src/DBGPerspective/menus/Makefile.am,
