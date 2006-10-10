@@ -1,3 +1,14 @@
+mardi 10 octobre 2006, 21:33:30 (UTC+0200) Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  GDBEngine::Priv::on_gdb_stdout_has_data_signal(): in some cases
+	  gdb can send a complete ouptut record + a part of the next one.
+	  So detect the end of an output record, parse that relevant part of
+	  it, and append the coming gdb output to what remains in the incoming
+	  buffer. This is not done really efficiently for now as it involves
+	  too much copying and memory allocation. But let's see if this works
+	  first, optimization will come up later.
+
 Tue, 10 Oct 2006 11:37:45 +0200 Dodji Seketeli
 
 	* configure.ac: add -Wextra to the devel super hot flags (activated by

@@ -1465,6 +1465,8 @@ struct GDBEngine::Priv {
                 char buf[CHUNK_SIZE+1] ;
                 Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
                 bool got_data (false) ;
+                UString::size_type len = 0, i=0 ;
+                UString meaningfull_buffer ;
                 while (true) {
                     memset (buf, 0, CHUNK_SIZE + 1) ;
                     status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read) ;
@@ -1477,15 +1479,15 @@ struct GDBEngine::Priv {
                         std::string raw_str(buf, nb_read) ;
                         UString tmp = Glib::locale_to_utf8 (raw_str) ;
                         gdb_stdout_buffer.append (tmp) ;
-                        UString::size_type len = gdb_stdout_buffer.size (), i=0 ;
+                        len = gdb_stdout_buffer.size (), i=0 ;
 
                         while (isspace (gdb_stdout_buffer[len-i-1])) {++i;}
 
                         if (gdb_stdout_buffer[len-i-1] == ')'
-                                && gdb_stdout_buffer[len-i-2] == 'b'
-                                && gdb_stdout_buffer[len-i-3] == 'd'
-                                && gdb_stdout_buffer[len-i-4] == 'g'
-                                && gdb_stdout_buffer[len-i-5] == '(') {
+                            && gdb_stdout_buffer[len-i-2] == 'b'
+                            && gdb_stdout_buffer[len-i-3] == 'd'
+                            && gdb_stdout_buffer[len-i-4] == 'g'
+                            && gdb_stdout_buffer[len-i-5] == '(') {
                             got_data = true ;
                         }
                     } else {
@@ -1495,8 +1497,21 @@ struct GDBEngine::Priv {
                 }
                 if (got_data) {
                     gdb_stdout_buffer_status = FILLED ;
-                    gdb_stdout_signal.emit (gdb_stdout_buffer) ;
-                    gdb_stdout_buffer.clear () ;
+                    int size = len-i+1 ;
+                    //basically, gdb can send more or less than a complete
+                    //output record. So let's take that in account in the way
+                    //we manage he incoming buffer.
+                    //TODO: optimize the way we handle this so that we do
+                    //less allocation and copying.
+                    meaningfull_buffer = gdb_stdout_buffer.substr (0, size) ;
+                    meaningfull_buffer.chomp () ;
+                    meaningfull_buffer += '\n' ;
+                    gdb_stdout_signal.emit (meaningfull_buffer) ;
+                    gdb_stdout_buffer.erase (0, size) ;
+                    while (!gdb_stdout_buffer.empty ()
+                           && isspace (gdb_stdout_buffer[0])) {
+                        gdb_stdout_buffer.erase (0,1) ;
+                    }
                 }
             }
             if (a_cond & Glib::IO_HUP) {
@@ -3461,7 +3476,10 @@ fetch_gdbmi_result:
             return false ;
         }
 
-        if (a_input[cur] != '\n') {return false;}
+        if (a_input[cur] != '\n') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
 
         a_record = result_record ;
         a_to = cur ;
@@ -3484,12 +3502,12 @@ fetch_gdbmi_result:
         Output output ;
 
 fetch_out_of_band_record:
-        if (   a_input[cur] == '*'
-                || a_input[cur] == '~'
-                || a_input[cur] == '@'
-                || a_input[cur] == '&'
-                || a_input[cur] == '+'
-                || a_input[cur] == '=') {
+        if (a_input[cur] == '*'
+             || a_input[cur] == '~'
+             || a_input[cur] == '@'
+             || a_input[cur] == '&'
+             || a_input[cur] == '+'
+             || a_input[cur] == '=') {
             Output::OutOfBandRecord oo_record ;
             if (!parse_out_of_band_record (a_input, cur, cur, oo_record)) {
                 LOG_PARSING_ERROR (a_input, cur) ;
