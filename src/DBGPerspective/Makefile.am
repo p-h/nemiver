@@ -52,6 +52,8 @@ nmv-vars-editor.cc \
 nmv-vars-editor.h \
 nmv-terminal.h \
 nmv-terminal.cc \
+nmv-breakpoints-view.cc \
+nmv-breakpoints-view.h \
 nmv-popup-tip.h \
 nmv-popup-tip.cc
 

@@ -192,6 +192,7 @@ main (int a_argc, char *a_argv[])
                 if (session_iter->session_id () == gv_execute_session) {
                     debug_persp->execute_session (*session_iter) ;
                     found_session = true ;
+                    break;
                 }
             }
 

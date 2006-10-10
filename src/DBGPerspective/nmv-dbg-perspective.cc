@@ -44,6 +44,7 @@
 #include "nmv-throbber.h"
 #include "nmv-vars-editor.h"
 #include "nmv-terminal.h"
+#include "nmv-breakpoints-view.h"
 #include "nmv-i-conf-mgr.h"
 #include "nmv-preferences-dialog.h"
 #include "nmv-popup-tip.h"
@@ -142,6 +143,8 @@ private:
     void on_show_commands_action () ;
     void on_show_errors_action () ;
     void on_show_target_output_action () ;
+    void on_breakpoint_delete_action () ;
+    void on_breakpoint_go_to_source_action () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
 
@@ -194,6 +197,7 @@ private:
                                      const IDebugger::Frame &) ;
     void on_program_finished_signal () ;
     void on_frame_selected_signal (int, const IDebugger::Frame &) ;
+    bool on_breakpoints_view_button_press_signal (GdkEventButton *a_event) ;
 
     void on_debugger_running_signal () ;
 
@@ -233,6 +237,7 @@ private:
     void bring_source_as_current (const UString &a_path) ;
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
+    void popup_breakpoints_view_menu (GdkEventButton *a_event) ;
     void record_and_save_new_session () ;
     void record_and_save_session (ISessMgr::Session &a_session) ;
     IProcMgr* get_process_manager () ;
@@ -348,6 +353,10 @@ public:
 
     Gtk::ScrolledWindow& get_terminal_scrolled_win () ;
 
+    Gtk::ScrolledWindow& get_breakpoints_scrolled_win () ;
+
+    BreakpointsView& get_breakpoints_view () ;
+
     void set_show_command_view (bool) ;
 
     void set_show_target_output_view (bool) ;
@@ -359,6 +368,8 @@ public:
     void set_show_variables_editor_view (bool) ;
 
     void set_show_terminal_view (bool) ;
+
+    void set_show_breakpoints_view (bool) ;
 
     void add_text_to_command_view (const UString &a_text,
                                    bool a_no_repeat=false) ;
@@ -372,6 +383,7 @@ public:
     void unset_where () ;
 
     Gtk::Widget* get_contextual_menu () ;
+    Gtk::Widget* get_breakpoints_menu () ;
 
     void init_conf_mgr () ;
 
@@ -433,12 +445,14 @@ struct DBGPerspective::Priv {
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
     Glib::RefPtr<Gtk::ActionGroup> opened_file_action_group;
+    Glib::RefPtr<Gtk::ActionGroup> breakpoints_action_group;
     Glib::RefPtr<Gtk::UIManager> ui_manager ;
     Glib::RefPtr<Gtk::IconFactory> icon_factory ;
     Gtk::UIManager::ui_merge_id menubar_merge_id ;
     Gtk::UIManager::ui_merge_id toolbar_merge_id ;
     Gtk::UIManager::ui_merge_id contextual_menu_merge_id;
     Gtk::Widget *contextual_menu ;
+    Gtk::Widget *breakpoints_menu ;
     IWorkbenchSafePtr workbench ;
     SafePtr<Gtk::HBox> toolbar ;
     ThrobberSafePtr throbber ;
@@ -454,6 +468,7 @@ struct DBGPerspective::Priv {
     bool call_stack_view_is_visible ;
     bool variables_editor_view_is_visible ;
     bool terminal_view_is_visible ;
+    bool breakpoints_view_is_visible ;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
@@ -474,6 +489,8 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
     SafePtr<Terminal> terminal ;
     SafePtr<Gtk::ScrolledWindow> terminal_scrolled_win ;
+    SafePtr<Gtk::ScrolledWindow> breakpoints_scrolled_win ;
+    SafePtr<BreakpointsView> breakpoints_view ;
 
     int current_page_num ;
     IDebuggerSafePtr debugger ;
@@ -514,6 +531,7 @@ struct DBGPerspective::Priv {
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
         contextual_menu (NULL),
+        breakpoints_menu (NULL),
         workbench (NULL),
         command_view_is_visible (false),
         target_output_view_is_visible (false),
@@ -521,6 +539,7 @@ struct DBGPerspective::Priv {
         call_stack_view_is_visible (false),
         variables_editor_view_is_visible (false),
         terminal_view_is_visible (false),
+        breakpoints_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0),
@@ -539,7 +558,8 @@ enum ViewsIndex{
     ERROR_VIEW_INDEX,
     CALL_STACK_VIEW_INDEX,
     VARIABLES_VIEW_INDEX,
-    TERMINAL_VIEW_INDEX
+    TERMINAL_VIEW_INDEX,
+    BREAKPOINTS_VIEW_INDEX
 };
 
 #ifndef CHECK_P_INIT
@@ -742,6 +762,19 @@ DBGPerspective::on_show_target_output_action ()
 
     NEMIVER_CATCH
 }
+
+void
+DBGPerspective::on_breakpoint_delete_action ()
+{
+    // FIXME: implement function
+}
+
+void
+DBGPerspective::on_breakpoint_go_to_source_action ()
+{
+    // FIXME: implement function
+}
+
 
 void
 DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num)
@@ -1033,6 +1066,7 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     NEMIVER_TRY
     LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
+    get_breakpoints_view ().set_breakpoints (a_breaks);
     NEMIVER_CATCH
 }
 
@@ -1098,6 +1132,27 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     NEMIVER_CATCH
 }
 
+bool
+DBGPerspective::on_breakpoints_view_button_press_signal (GdkEventButton *a_event)
+{
+    NEMIVER_TRY
+
+    /* commented out until I can figure out why button_press_event isn't working
+     */
+    //if (a_event->type != GDK_BUTTON_PRESS) {
+        //return false ;
+    //}
+
+    if (a_event->button == 3) {
+        popup_breakpoints_view_menu (a_event) ;
+        return true ;
+    }
+
+    NEMIVER_CATCH
+
+    return false ;
+}
+
 void
 DBGPerspective::on_debugger_breakpoint_deleted_signal
                                         (const IDebugger::BreakPoint &a_break,
@@ -1105,6 +1160,7 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
 {
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
+    get_breakpoints_view ().set_breakpoints (m_priv->breakpoints);
     NEMIVER_CATCH
 }
 
@@ -1247,6 +1303,7 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_call_stack_view (true) ;
     set_show_variables_editor_view (true) ;
     set_show_terminal_view (true) ;
+    set_show_breakpoints_view (true) ;
     m_priv->statuses_notebook->set_current_page (0) ;
 }
 
@@ -1468,6 +1525,25 @@ DBGPerspective::init_actions ()
         }
     };
 
+    static ui_utils::ActionEntry s_breakpoints_action_entries [] = {
+        {
+            "DeleteBreakpointMenuItemAction",
+            Gtk::Stock::DELETE,
+            _("_Delete"),
+            _("Remove this breakpoint"),
+            sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_delete_action),
+            ActionEntry::DEFAULT
+        },
+        {
+            "GoToSourceBreakpointMenuItemAction",
+            Gtk::Stock::JUMP_TO,
+            _("_Go to Source"),
+            _("Find this breakpoint in the source editor"),
+            sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_go_to_source_action),
+            ActionEntry::DEFAULT
+        }
+    };
+
     m_priv->target_connected_action_group =
                 Gtk::ActionGroup::create ("target-connected-action-group") ;
     m_priv->target_connected_action_group->set_sensitive (false) ;
@@ -1487,6 +1563,9 @@ DBGPerspective::init_actions ()
     m_priv->opened_file_action_group =
                 Gtk::ActionGroup::create ("opened-file-action-group") ;
     m_priv->opened_file_action_group->set_sensitive (false) ;
+    m_priv->breakpoints_action_group =
+                Gtk::ActionGroup::create ("breakpoints-action-group") ;
+    m_priv->breakpoints_action_group->set_sensitive (true) ;
 
     int num_actions =
      sizeof (s_target_connected_action_entries)/sizeof (ui_utils::ActionEntry);
@@ -1527,6 +1606,14 @@ DBGPerspective::init_actions ()
                          num_actions,
                          m_priv->opened_file_action_group) ;
 
+    num_actions =
+         sizeof (s_breakpoints_action_entries)/sizeof (ui_utils::ActionEntry) ;
+
+    ui_utils::add_action_entries_to_action_group
+                        (s_breakpoints_action_entries,
+                         num_actions,
+                         m_priv->breakpoints_action_group) ;
+
     m_priv->workbench->get_ui_manager ()->insert_action_group
                                         (m_priv->target_connected_action_group) ;
     m_priv->workbench->get_ui_manager ()->insert_action_group
@@ -1537,6 +1624,8 @@ DBGPerspective::init_actions ()
                                             (m_priv->default_action_group);
     m_priv->workbench->get_ui_manager ()->insert_action_group
                                             (m_priv->opened_file_action_group);
+    m_priv->workbench->get_ui_manager ()->insert_action_group
+                                            (m_priv->breakpoints_action_group);
 
     m_priv->workbench->get_root_window ().add_accel_group
         (m_priv->workbench->get_ui_manager ()->get_accel_group ()) ;
@@ -1614,6 +1703,7 @@ DBGPerspective::init_body ()
     get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
 
     get_terminal_scrolled_win ().add (get_terminal ().widget ()) ;
+    get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
 
     /*
     set_show_call_stack_view (true) ;
@@ -1644,6 +1734,12 @@ DBGPerspective::init_signals ()
             (*this, &DBGPerspective::on_show_log_view_changed_signal));
     get_call_stack ().frame_selected_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
+    // FIXME: for some reason, I can't connect to
+    // TreeView::signal_button_press_event (nothing happens when I click on it),
+    // so for now I'm using button_release event.  It does work if I derive from
+    // TreeView and use the default virtual signal handler, however.
+    get_breakpoints_view ().widget ().signal_button_release_event ().connect
+        (sigc::mem_fun (*this, &DBGPerspective::on_breakpoints_view_button_press_signal));
 }
 
 void
@@ -1916,6 +2012,28 @@ DBGPerspective::get_contextual_menu ()
     return m_priv->contextual_menu ;
 }
 
+Gtk::Widget*
+DBGPerspective::get_breakpoints_menu ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->breakpoints_menu) {
+        string relative_path = Glib::build_filename ("menus",
+                "breakpointspopup.xml") ;
+        string absolute_path ;
+        THROW_IF_FAIL (build_absolute_resource_path
+                (Glib::locale_to_utf8 (relative_path),
+                 absolute_path)) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui_from_file
+            (Glib::locale_to_utf8 (absolute_path)) ;
+        m_priv->breakpoints_menu = 
+            m_priv->workbench->get_ui_manager ()->get_widget ("/BreakpointsPopup");
+        THROW_IF_FAIL (m_priv->breakpoints_menu);
+    }
+    return m_priv->breakpoints_menu;
+}
+
+
 vector<UString>&
 DBGPerspective::get_source_dirs ()
 {
@@ -1998,6 +2116,14 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
     Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
     THROW_IF_FAIL (menu) ;
     editor->source_view ().get_buffer ()->place_cursor (cur_iter) ;
+    menu->popup (a_event->button, a_event->time) ;
+}
+
+void
+DBGPerspective::popup_breakpoints_view_menu (GdkEventButton *a_event)
+{
+    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_breakpoints_menu ()) ;
+    THROW_IF_FAIL (menu) ;
     menu->popup (a_event->button, a_event->time) ;
 }
 
@@ -2960,6 +3086,31 @@ DBGPerspective::get_terminal_scrolled_win ()
     return *m_priv->terminal_scrolled_win ;
 }
 
+Gtk::ScrolledWindow&
+DBGPerspective::get_breakpoints_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->breakpoints_scrolled_win) {
+        m_priv->breakpoints_scrolled_win = new Gtk::ScrolledWindow ;
+        THROW_IF_FAIL (m_priv->breakpoints_scrolled_win) ;
+        m_priv->breakpoints_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                   Gtk::POLICY_AUTOMATIC) ;
+    }
+    THROW_IF_FAIL (m_priv->breakpoints_scrolled_win) ;
+    return *m_priv->breakpoints_scrolled_win ;
+}
+
+BreakpointsView&
+DBGPerspective::get_breakpoints_view ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->breakpoints_view) {
+        m_priv->breakpoints_view = new BreakpointsView () ;
+    }
+    THROW_IF_FAIL (m_priv->breakpoints_view) ;
+    return *m_priv->breakpoints_view ;
+}
+
 void
 DBGPerspective::set_show_command_view (bool a_show)
 {
@@ -3029,7 +3180,7 @@ DBGPerspective::set_show_log_view (bool a_show)
     } else {
         if (get_log_view_scrolled_win ().get_parent ()
             && m_priv->log_view_is_visible) {
-            LOG_DD ("removing error view") ;
+            LOG_DD ("removing log view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_log_view_scrolled_win ());
         }
@@ -3056,7 +3207,7 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
     } else {
         if (get_call_stack_scrolled_win ().get_parent ()
             && m_priv->call_stack_view_is_visible) {
-            LOG_DD ("removing error view") ;
+            LOG_DD ("removing call stack view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_call_stack_scrolled_win ());
             m_priv->call_stack_view_is_visible = false;
@@ -3083,7 +3234,7 @@ DBGPerspective::set_show_variables_editor_view (bool a_show)
     } else {
         if (get_variables_editor_scrolled_win ().get_parent ()
             && m_priv->variables_editor_view_is_visible) {
-            LOG_DD ("removing error view") ;
+            LOG_DD ("removing variables editor") ;
             m_priv->statuses_notebook->remove_page
                                         (get_variables_editor_scrolled_win ());
             m_priv->variables_editor_view_is_visible = false;
@@ -3109,12 +3260,38 @@ DBGPerspective::set_show_terminal_view (bool a_show)
     } else {
         if (get_terminal_scrolled_win ().get_parent ()
             && m_priv->terminal_view_is_visible) {
-            LOG_DD ("removing error view") ;
+            LOG_DD ("removing terminal view") ;
             m_priv->statuses_notebook->remove_page
                                         (get_terminal_scrolled_win ());
             m_priv->terminal_view_is_visible = false;
         }
         m_priv->terminal_view_is_visible = false;
+    }
+}
+
+void
+DBGPerspective::set_show_breakpoints_view (bool a_show)
+{
+    if (a_show) {
+        if (!get_breakpoints_scrolled_win ().get_parent ()
+            && m_priv->breakpoints_view_is_visible == false) {
+            get_breakpoints_scrolled_win ().show_all () ;
+            int page_num = m_priv->statuses_notebook->insert_page
+                                            (get_breakpoints_scrolled_win (),
+                                             _("Breakpoints"),
+                                             BREAKPOINTS_VIEW_INDEX) ;
+            m_priv->breakpoints_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page (page_num);
+        }
+    } else {
+        if (get_breakpoints_scrolled_win ().get_parent ()
+            && m_priv->breakpoints_view_is_visible) {
+            LOG_DD ("removing breakpoints view") ;
+            m_priv->statuses_notebook->remove_page
+                                        (get_breakpoints_scrolled_win ());
+            m_priv->breakpoints_view_is_visible = false;
+        }
+        m_priv->breakpoints_view_is_visible = false;
     }
 }
 

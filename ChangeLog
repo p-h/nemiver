@@ -1,3 +1,21 @@
+2006-10-09  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/nmv-breakpoints-view.cc,
+	src/DBGPerspective/nmv-breakpoints-view.h: a new widget for displaying the
+	list of currently set breakpoints in the status notebook area.  It currently
+	displays a list of breakpoints that gets updated in a rather crude way after
+	breakpoints are added or removed.  It also pops up a context menu which has
+	a choice of 'delete' or 'go to source', but these menu items don't currently
+	do anything yet.  I thought I'd just commit what I had for now.
+	* src/DBGPerspective/Makefile.am: add new breakpoints-view files
+	* src/DBGPerspective/menus/Makefile.am,
+	src/DBGPerspective/menus/breakpointspopup.xml: add new breakpoints list
+	popup menu
+	* src/DBGPerspective/nmv-dbg-perspective.cc: incorporate the new Breakpoint
+	list widget and popup menu.  Still needs a lot of work, but it's a start.
+	* src/main.cc: break out of the loop after we find the session we're looking
+	for.
+
 Mon, 09 Oct 2006 22:21:59 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-popup-tip.cc: use a textview instead of a
