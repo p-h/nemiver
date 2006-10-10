@@ -197,7 +197,7 @@ private:
                                      const IDebugger::Frame &) ;
     void on_program_finished_signal () ;
     void on_frame_selected_signal (int, const IDebugger::Frame &) ;
-    bool on_breakpoints_view_button_press_signal (GdkEventButton *a_event) ;
+    void on_breakpoints_view_button_press_signal (GdkEventButton *a_event) ;
 
     void on_debugger_running_signal () ;
 
@@ -1132,25 +1132,20 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     NEMIVER_CATCH
 }
 
-bool
+void
 DBGPerspective::on_breakpoints_view_button_press_signal (GdkEventButton *a_event)
 {
     NEMIVER_TRY
 
-    /* commented out until I can figure out why button_press_event isn't working
-     */
-    //if (a_event->type != GDK_BUTTON_PRESS) {
-        //return false ;
-    //}
+    if (a_event->type != GDK_BUTTON_PRESS) {
+        return ;
+    }
 
     if (a_event->button == 3) {
         popup_breakpoints_view_menu (a_event) ;
-        return true ;
     }
 
     NEMIVER_CATCH
-
-    return false ;
 }
 
 void
@@ -1734,11 +1729,7 @@ DBGPerspective::init_signals ()
             (*this, &DBGPerspective::on_show_log_view_changed_signal));
     get_call_stack ().frame_selected_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
-    // FIXME: for some reason, I can't connect to
-    // TreeView::signal_button_press_event (nothing happens when I click on it),
-    // so for now I'm using button_release event.  It does work if I derive from
-    // TreeView and use the default virtual signal handler, however.
-    get_breakpoints_view ().widget ().signal_button_release_event ().connect
+    get_breakpoints_view ().widget ().signal_button_press_event ().connect_notify
         (sigc::mem_fun (*this, &DBGPerspective::on_breakpoints_view_button_press_signal));
 }
 

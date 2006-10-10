@@ -1,5 +1,12 @@
 2006-10-09  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/DBGPerspective/nmv-dbg-perspective.cc: I figured out how to trigger
+	the popup menu on button press instead of button release.  It needs to be
+	connected with connect_notify() instead of just connect() (see gtkmm bug
+	#89780)
+
+2006-10-09  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/DBGPerspective/nmv-breakpoints-view.cc,
 	src/DBGPerspective/nmv-breakpoints-view.h: a new widget for displaying the
 	list of currently set breakpoints in the status notebook area.  It currently
