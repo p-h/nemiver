@@ -1,3 +1,8 @@
+2006-10-12  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* short-term-todo-list.txt: update to mention the copy/paste stack trace
+	feature so that I don't forget about it.
+
 Thu, 12 Oct 2006 14:42:13 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: renamed
