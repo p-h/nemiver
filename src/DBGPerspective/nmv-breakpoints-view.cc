@@ -38,6 +38,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<bool> enabled ;
     Gtk::TreeModelColumn<Glib::ustring> filename ;
     Gtk::TreeModelColumn<int> line ;
+    Gtk::TreeModelColumn<IDebugger::BreakPoint> breakpoint ;
 
     BPColumns ()
     {
@@ -45,6 +46,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
         add (enabled) ;
         add (filename) ;
         add (line) ;
+        add (breakpoint) ;
     }
 };//end Cols
 
@@ -92,6 +94,7 @@ public:
         {
             Gtk::TreeModel::iterator tree_iter = list_store->append();
             (*tree_iter)[get_bp_columns ().id] = break_iter->first;
+            (*tree_iter)[get_bp_columns ().breakpoint] = break_iter->second;
             (*tree_iter)[get_bp_columns ().enabled] = break_iter->second.enabled () ;
             (*tree_iter)[get_bp_columns ().filename] = break_iter->second.file_name () ;
             (*tree_iter)[get_bp_columns ().line] = break_iter->second.line () ;
@@ -124,6 +127,22 @@ BreakpointsView::set_breakpoints
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv->set_breakpoints (a_breakpoints) ;
+}
+
+
+IDebugger::BreakPoint
+BreakpointsView::get_selected_breakpoint () const
+{
+    THROW_IF_FAIL(m_priv)
+    THROW_IF_FAIL(m_priv->tree_view)
+    Glib::RefPtr<Gtk::TreeSelection> selection = m_priv->tree_view->get_selection ();
+    Gtk::TreeModel::iterator tree_iter = selection->get_selected();
+    if (tree_iter) {
+        return (*tree_iter)[get_bp_columns ().breakpoint];
+    }
+    else {
+        return IDebugger::BreakPoint();
+    }
 }
 
 }//end namespace nemiver

@@ -47,6 +47,7 @@ public:
     virtual ~BreakpointsView () ;
     Gtk::Widget& widget () const ;
     void set_breakpoints (const std::map<int, IDebugger::BreakPoint> &a_breakpoints) ;
+    IDebugger::BreakPoint get_selected_breakpoint () const;
 
 };//end BreakpointsView
 

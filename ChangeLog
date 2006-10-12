@@ -1,3 +1,14 @@
+2006-10-11  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/menus/breakpointspopup.xml: Move "Go to source" above
+	"delete" in the menu
+	* src/DBGPerspective/nmv-breakpoints-view.cc,
+	src/DBGPerspective/nmv-breakpoints-view.h: add new get_selected_breakpoint()
+	function, store breakpoint object in treemodel
+	* src/DBGPerspective/nmv-dbg-perspective.cc: Implement actions for
+	breakpoint view context menu (i.e. "Go to source" and "delete").  In
+	addition, you can jump to a breakpoint in source by double-clicking on it.
+
 mardi 10 octobre 2006, 21:33:30 (UTC+0200) Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:

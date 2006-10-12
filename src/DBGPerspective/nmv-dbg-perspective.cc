@@ -766,13 +766,33 @@ DBGPerspective::on_show_target_output_action ()
 void
 DBGPerspective::on_breakpoint_delete_action ()
 {
-    // FIXME: implement function
+    IDebugger::BreakPoint bp = get_breakpoints_view ().get_selected_breakpoint ();
+    delete_breakpoint (bp.number ());
 }
 
 void
 DBGPerspective::on_breakpoint_go_to_source_action ()
 {
-    // FIXME: implement function
+    NEMIVER_TRY
+    IDebugger::BreakPoint bp = get_breakpoints_view ().get_selected_breakpoint ();
+    UString file_path = bp.file_full_name ();
+    if (file_path == "") {
+        file_path = bp.file_name () ;
+        if (!find_file_in_source_dirs (file_path, file_path)) {
+            display_warning ("File path info is missing "
+                             "for breakpoint '" + UString::from_int (bp.number ()) + "'") ;
+            return ;
+        }
+    }
+
+    bring_source_as_current (file_path);
+    SourceEditor *source_editor = get_source_editor_from_path (file_path) ;
+    THROW_IF_FAIL (source_editor);
+    Gtk::TextBuffer::iterator txt_iter =
+        source_editor->source_view().get_buffer ()->get_iter_at_line (bp.line () - 1) ;
+    source_editor->source_view ().scroll_to (txt_iter) ;
+
+    NEMIVER_CATCH
 }
 
 
@@ -1144,12 +1164,19 @@ DBGPerspective::on_breakpoints_view_button_press_signal (GdkEventButton *a_event
 {
     NEMIVER_TRY
 
-    if (a_event->type != GDK_BUTTON_PRESS) {
-        return ;
+    // double-clicking a breakpoint item should go to the source location for
+    // the breakpoint
+    if (a_event->type == GDK_2BUTTON_PRESS) {
+        if (a_event->button == 1) {
+            on_breakpoint_go_to_source_action();
+        }
     }
 
-    if (a_event->button == 3) {
-        popup_breakpoints_view_menu (a_event) ;
+    // right-clicking should pop up a context menu
+    else if (a_event->type == GDK_BUTTON_PRESS) {
+        if (a_event->button == 3) {
+            popup_breakpoints_view_menu (a_event) ;
+        }
     }
 
     NEMIVER_CATCH
