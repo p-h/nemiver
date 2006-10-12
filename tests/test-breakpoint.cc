@@ -71,6 +71,14 @@ on_stopped_signal (const UString &a_command,
 }
 
 void
+on_variable_type_signal (const UString &a_variable_name,
+                         const UString &a_variable_type)
+{
+    std::cout << "type of variable '" << a_variable_name
+              << "' is '" << a_variable_type << "'\n" ;
+}
+
+void
 display_help ()
 {
     std::cout << "test-basic <prog-to-debug>\n" ;
@@ -120,6 +128,9 @@ main (int argc, char *argv[])
         debugger->stopped_signal ().connect
             (sigc::ptr_fun (&on_stopped_signal)) ;
 
+        debugger->variable_type_signal ().connect
+            (sigc::ptr_fun (&on_variable_type_signal)) ;
+
         //*****************************
         //</connect to IDebugger events>
         //*****************************
@@ -138,6 +149,10 @@ main (int argc, char *argv[])
         std::cout << "nb of breakpoints: "
                   << debugger->get_cached_breakpoints ().size ()
                   << "\n" ;
+        debugger->step_over () ;
+        debugger->print_variable_type ("i") ;
+        debugger->step_out () ;
+        debugger->print_variable_type ("person") ;
         debugger->do_continue () ;
         debugger->do_continue () ;
         loop->run () ;

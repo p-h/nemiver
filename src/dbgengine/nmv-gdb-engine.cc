@@ -100,6 +100,7 @@ public:
 
         /// @{
         const UString& debugger_console () const {return m_debugger_console;}
+        UString& debugger_console () {return m_debugger_console;}
         void debugger_console (const UString &a_in)
         {
             m_debugger_console = a_in;
@@ -904,6 +905,9 @@ public:
     sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
                                             variable_value_signal () const  ;
 
+    sigc::signal<void, const UString&, const UString&>&
+                                        variable_type_signal () const ;
+
     sigc::signal<void, int, const UString&>& got_proc_info_signal () const  ;
 
     sigc::signal<void>& running_signal () const ;
@@ -1014,7 +1018,10 @@ public:
                               bool a_run_event_loops) ;
 
     void print_variable_value (const UString &a_var_name,
-                         bool a_run_event_loops) ;
+                              bool a_run_event_loops) ;
+
+    void print_variable_type (const UString &a_var_name,
+                              bool a_run_event_loops=false) ;
 
     bool extract_proc_info (Output &a_output,
                             int &a_proc_pid,
@@ -1114,7 +1121,10 @@ struct GDBEngine::Priv {
                                     local_variables_listed_signal  ;
 
     mutable sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>
-                                            variable_value_signal ;
+                                                        variable_value_signal ;
+
+    mutable sigc::signal<void, const UString&, const UString&>
+                                                    variable_type_signal  ;
 
     mutable sigc::signal<void, int, const UString&> got_proc_info_signal ;
 
@@ -3935,7 +3945,8 @@ struct OnVariableValueHandler : OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
-        if (a_in.output ().has_result_record ()
+        if (a_in.command ().tag0 () == "print-variable-value"
+            && a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
             && (a_in.output ().result_record ().has_variable_value ())) {
@@ -3966,6 +3977,71 @@ struct OnVariableValueHandler : OutputHandler {
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnVariableValueHandler
+
+struct OnVariableTypeHandler : OutputHandler {
+    GDBEngine *m_engine ;
+
+    OnVariableTypeHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {
+        THROW_IF_FAIL (m_engine) ;
+    }
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.command ().tag0 () == "print-variable-type"
+            && a_in.output ().has_out_of_band_record ()) {
+            list<Output::OutOfBandRecord>::const_iterator it ;
+            for (it = a_in.output ().out_of_band_records ().begin ();
+                 it != a_in.output ().out_of_band_records ().end ();
+                 ++it) {
+                if (it->has_stream_record ()
+                    && !it->stream_record ().debugger_log ().compare
+                                                            (0, 6, "ptype ")) {
+
+                    LOG_DD ("handler selected") ;
+                    return true ;
+                }
+            }
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        UString var_name = a_in.command ().tag1 () ;
+        if (var_name == "") {return;}
+        UString type ;
+        list<Output::OutOfBandRecord>::const_iterator it ;
+        it = a_in.output ().out_of_band_records ().begin () ;
+        THROW_IF_FAIL (it->has_stream_record ()
+                       && !it->stream_record ().debugger_log ().compare
+                                               (0, 6, "ptype ")) ;
+        ++it ;
+        THROW_IF_FAIL (it->has_stream_record ()
+                       && !it->stream_record ().debugger_console ().compare
+                                               (0, 7, "type = ")) ;
+        UString console = it->stream_record ().debugger_console () ;
+        console.erase (0, 7) ;
+        type += console ;
+        ++it ;
+        for (;
+             it != a_in.output ().out_of_band_records ().end ();
+             ++it) {
+            if (it->has_stream_record ()
+                && it->stream_record ().debugger_console () != "") {
+                console = it->stream_record ().debugger_console () ;
+                type += console ;
+            }
+        }
+        type.chomp () ;
+        LOG_DD ("got type: " << type) ;
+        if (type != "") {
+            m_engine->variable_type_signal ().emit (var_name, type) ;
+        }
+    }
+};//struct VariableTypeHandler
 
 struct OnSignalReceivedHandler : OutputHandler {
 
@@ -4031,7 +4107,6 @@ struct OnErrorHandler : OutputHandler {
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnErrorHandler
-
 
 //****************************
 //</GDBengine output handlers
@@ -4182,6 +4257,8 @@ GDBEngine::init_output_handlers ()
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnVariableValueHandler (this))) ;
     m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnVariableTypeHandler (this))) ;
+    m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnSignalReceivedHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnErrorHandler (this))) ;
@@ -4302,6 +4379,11 @@ sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
 GDBEngine::variable_value_signal () const
 {
     return m_priv->variable_value_signal ;
+}
+sigc::signal<void, const UString&, const UString&>&
+GDBEngine::variable_type_signal () const
+{
+    return m_priv->variable_type_signal ;
 }
 
 sigc::signal<void>&
@@ -4650,7 +4732,21 @@ GDBEngine::print_variable_value (const UString &a_var_name,
     if (a_var_name == "") {return;}
 
     Command command ("-data-evaluate-expression " + a_var_name) ;
-    command.tag0 ("print-variable") ;
+    command.tag0 ("print-variable-value") ;
+    command.tag1 (a_var_name) ;
+
+    queue_command (command, a_run_event_loops) ;
+}
+
+void
+GDBEngine::print_variable_type (const UString &a_var_name,
+                                bool a_run_event_loops)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    if (a_var_name == "") {return;}
+
+    Command command ("ptype " + a_var_name) ;
+    command.tag0 ("print-variable-type") ;
     command.tag1 (a_var_name) ;
 
     queue_command (command, a_run_event_loops) ;

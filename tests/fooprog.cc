@@ -57,11 +57,12 @@ struct Person {
 int
 main (int a_argc, char *a_argv[])
 {
+    if (a_argc || a_argv) {}
+    Person person ("Bob", "Barton", 15) ;
     func1 () ;
 
     func2 (1, 2) ;
 
-    Person person ("Bob", "Barton", 15) ;
     person.set_first_name ("Ali") ;
     person.set_family_name ("BABA") ;
     person.do_this () ;

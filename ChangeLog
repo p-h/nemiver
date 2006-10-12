@@ -1,3 +1,13 @@
+Thu, 12 Oct 2006 08:53:28 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-i-debugger.h,nmv-gdb-engine.cc: added a new
+	  IDebugger::print_variable_type() interface. This requests the
+	  engine to print the type of a named variable. As an answer,
+	  IDebugger later emits the IDebugger::variable_type_signal() event
+	  carrying a pair variable name/variable type.
+	* tests/fooprog.cc,test-breakpoint.cc: updated this to test the
+	  new IDebugger::print_variable_type() interface.
+
 2006-10-11  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/nmv-source-editor.cc: use monospace font for source

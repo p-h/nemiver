@@ -342,6 +342,8 @@ public:
 
     virtual sigc::signal<void, const UString&, const VariableSafePtr&>&
                                         variable_value_signal () const = 0 ;
+    virtual sigc::signal<void, const UString&, const UString&>&
+                                        variable_type_signal () const = 0 ;
 
     virtual sigc::signal<void, int, const UString&>&
                                             got_proc_info_signal () const = 0 ;
@@ -443,6 +445,9 @@ public:
 
     virtual void print_variable_value (const UString &a_var_name,
                                        bool a_run_event_loops=false)  = 0;
+
+    virtual void print_variable_type (const UString &a_var_name,
+                                      bool a_run_event_loops=false) = 0;
 };//end IDebugger
 
 }//end namespace nemiver
