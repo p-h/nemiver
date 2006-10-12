@@ -45,11 +45,21 @@ class SourceView : public gtksourceview::SourceView {
 public:
     SourceView (Glib::RefPtr<SourceBuffer> &a_buf) :
         gtksourceview::SourceView (a_buf)
-    {}
+    {
+        init_font ();
+    }
 
     SourceView () :
         gtksourceview::SourceView ()
-    {}
+    {
+        init_font ();
+    }
+
+    void init_font ()
+    {
+        Pango::FontDescription font("monospace");
+        modify_font(font);
+    }
 
     void do_custom_button_press_event_handling (GdkEventButton *a_event)
     {

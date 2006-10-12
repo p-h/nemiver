@@ -1,5 +1,10 @@
 2006-10-11  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/DBGPerspective/nmv-source-editor.cc: use monospace font for source
+	editor.
+
+2006-10-11  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/DBGPerspective/menus/breakpointspopup.xml: Move "Go to source" above
 	"delete" in the menu
 	* src/DBGPerspective/nmv-breakpoints-view.cc,
