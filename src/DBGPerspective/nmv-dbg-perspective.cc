@@ -175,7 +175,7 @@ private:
     void on_conf_key_changed_signal (const UString &a_key,
                                      IConfMgr::Value &a_value) ;
 
-    void on_debugger_got_proc_info_signal (int a_pid,
+    void on_debugger_got_target_info_signal (int a_pid,
                                            const UString &a_exe_path) ;
 
     void on_debugger_console_message_signal (const UString &a_msg) ;
@@ -436,6 +436,7 @@ struct UnrefGObjectNative {
 struct DBGPerspective::Priv {
     bool initialized ;
     bool reused_session ;
+    bool debugger_has_just_run ;
     UString prog_path ;
     UString prog_args ;
     UString prog_cwd ;
@@ -527,6 +528,7 @@ struct DBGPerspective::Priv {
     Priv () :
         initialized (false),
         reused_session (false),
+        debugger_has_just_run (false),
         menubar_merge_id (0),
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
@@ -1032,9 +1034,10 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
 }
 
 void
-DBGPerspective::on_debugger_got_proc_info_signal (int a_pid,
+DBGPerspective::on_debugger_got_target_info_signal (int a_pid,
                                                   const UString &a_exe_path)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_exe_path == "" || a_pid) {}
     NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
@@ -1047,6 +1050,7 @@ DBGPerspective::on_debugger_got_proc_info_signal (int a_pid,
 void
 DBGPerspective::on_debugger_console_message_signal (const UString &a_msg)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     add_text_to_command_view (a_msg + "\n") ;
@@ -1058,6 +1062,7 @@ void
 DBGPerspective::on_debugger_target_output_message_signal
                                             (const UString &a_msg)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     add_text_to_target_output_view (a_msg + "\n") ;
@@ -1068,6 +1073,7 @@ DBGPerspective::on_debugger_target_output_message_signal
 void
 DBGPerspective::on_debugger_log_message_signal (const UString &a_msg)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     add_text_to_log_view (a_msg + "\n") ;
@@ -1078,6 +1084,7 @@ DBGPerspective::on_debugger_log_message_signal (const UString &a_msg)
 void
 DBGPerspective::on_debugger_command_done_signal (const UString &a_command)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_command == "") {}
     NEMIVER_TRY
     attached_to_target_signal ().emit (true) ;
@@ -1088,6 +1095,7 @@ void
 DBGPerspective::on_debugger_breakpoints_set_signal
                                 (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
@@ -1101,8 +1109,12 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
                                             bool a_has_frame,
                                             const IDebugger::Frame &a_frame)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_reason == "") {}
+
     NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
 
     if (a_has_frame
         && a_frame.file_full_name () == ""
@@ -1112,6 +1124,12 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
             display_error ("Did not find file " + a_frame.file_name ()) ;
         }
     }
+
+    if (m_priv->debugger_has_just_run) {
+        debugger ()->get_target_info () ;
+        m_priv->debugger_has_just_run = false ;
+    }
+
     add_text_to_command_view ("\n(gdb)", true) ;
     NEMIVER_CATCH
 }
@@ -1187,6 +1205,7 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
                                         (const IDebugger::BreakPoint &a_break,
                                          int a_break_number)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_break.number ()) {}
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
@@ -1197,6 +1216,7 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
 void
 DBGPerspective::on_debugger_running_signal ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     THROW_IF_FAIL (m_priv->throbber) ;
     m_priv->throbber->start () ;
@@ -1207,6 +1227,7 @@ void
 DBGPerspective::on_signal_received_by_target_signal (const UString &a_signal,
                                                      const UString &a_meaning)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     ui_utils::display_info (_("Target received a signal : ")
@@ -1218,6 +1239,7 @@ DBGPerspective::on_signal_received_by_target_signal (const UString &a_signal,
 void
 DBGPerspective::on_debugger_error_signal (const UString &a_msg)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     if (m_priv->show_dbg_errors) {
@@ -1230,6 +1252,7 @@ DBGPerspective::on_debugger_error_signal (const UString &a_msg)
 void
 DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     if (a_state == IDebugger::READY) {
@@ -1246,6 +1269,7 @@ DBGPerspective::on_debugger_variable_value_signal
                                         (const UString &a_var_name,
                                          const IDebugger::VariableSafePtr &a_var)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
 
@@ -1375,8 +1399,8 @@ DBGPerspective::init_actions ()
         {
             "RunMenuItemAction",
             nemiver::STOCK_RUN_DEBUGGER,
-            _("_Run"),
-            _("Run the debugger starting from program's begining"),
+            _("_Run in a new process"),
+            _("Run the target from the beginning, starting a new process"),
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
             "<shift>F5"
@@ -1825,8 +1849,8 @@ DBGPerspective::init_debugger_signals ()
     debugger ()->variable_value_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_variable_value_signal)) ;
 
-    debugger ()->got_proc_info_signal ().connect (sigc::mem_fun
-            (*this, &DBGPerspective::on_debugger_got_proc_info_signal)) ;
+    debugger ()->got_target_info_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_got_target_info_signal)) ;
 }
 
 
@@ -2627,6 +2651,7 @@ DBGPerspective::execute_program (const UString &a_prog,
     }
 
     dbg_engine->run () ;
+    m_priv->debugger_has_just_run = true ;
 
     attached_to_target_signal ().emit (true) ;
 
@@ -2697,7 +2722,9 @@ DBGPerspective::edit_preferences ()
 void
 DBGPerspective::run ()
 {
+    THROW_IF_FAIL (m_priv) ;
     debugger ()->run () ;
+    m_priv->debugger_has_just_run = true ;
 }
 
 void

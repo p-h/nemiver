@@ -908,7 +908,7 @@ public:
     sigc::signal<void, const UString&, const UString&>&
                                         variable_type_signal () const ;
 
-    sigc::signal<void, int, const UString&>& got_proc_info_signal () const  ;
+    sigc::signal<void, int, const UString&>& got_target_info_signal () const  ;
 
     sigc::signal<void>& running_signal () const ;
 
@@ -929,7 +929,7 @@ public:
     //***************
 
     void on_debugger_stdout_signal (CommandAndOutput &a_cao) ;
-    void on_got_proc_info_signal (int a_pid, const UString& a_exe_path) ;
+    void on_got_target_info_signal (int a_pid, const UString& a_exe_path) ;
     //***************
     //</signal handlers>
     //***************
@@ -969,6 +969,8 @@ public:
     void do_continue (bool a_run_event_loops) ;
 
     void run (bool a_run_event_loops)  ;
+
+    void get_target_info (bool a_run_event_loops) ;
 
     void step_in (bool a_run_event_loops) ;
 
@@ -1126,7 +1128,7 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, const UString&, const UString&>
                                                     variable_type_signal  ;
 
-    mutable sigc::signal<void, int, const UString&> got_proc_info_signal ;
+    mutable sigc::signal<void, int, const UString&> got_target_info_signal ;
 
     mutable sigc::signal<void> running_signal ;
 
@@ -1749,10 +1751,11 @@ struct GDBEngine::Priv {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false ;
             }
-            LOG_DD ("got pending breakpoint: '" << pending << "'") ;
+            LOG_D ("got pending breakpoint: '" << pending << "'",
+                   GDBMI_OUTPUT_DOMAIN) ;
             vector<UString> str_tab = pending.split (":") ;
-            LOG_DD ("filepath: '" << str_tab[0] << "'") ;
-            LOG_DD ("linenum: '" << str_tab[1] << "'") ;
+            LOG_D ("filepath: '" << str_tab[0] << "'", GDBMI_OUTPUT_DOMAIN) ;
+            LOG_D ("linenum: '" << str_tab[1] << "'", GDBMI_OUTPUT_DOMAIN) ;
             if (str_tab.size () != 2) {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false ;
@@ -3088,7 +3091,8 @@ struct GDBEngine::Priv {
     {
         if (a_str.size () < 2) {return;}
         UString::size_type i = a_str.size () - 1;
-        LOG_DD ("stream record: '" << a_str << "' size=" << (int) a_str.size ()) ;
+        LOG_D ("stream record: '" << a_str << "' size=" << (int) a_str.size (),
+               GDBMI_PARSING_DOMAIN) ;
         if (a_str[i] == 'n' && a_str[i-1] == '\\') {
             i = i-1 ;
             a_str.erase (i, 2) ;
@@ -3900,7 +3904,7 @@ struct OnInfoProcHandler : OutputHandler {
             return ;
         }
         THROW_IF_FAIL (pid) ;
-        m_engine->got_proc_info_signal ().emit (pid, exe_path) ;
+        m_engine->got_target_info_signal ().emit (pid, exe_path) ;
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnInfoProcHandler
@@ -4132,6 +4136,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
                          const UString &a_tty_path,
                          bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (!a_argv.empty ()) ;
 
@@ -4166,6 +4171,7 @@ GDBEngine::load_core_file (const UString &a_prog_path,
                            const UString &a_core_path,
                            bool a_run_event_loop)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_run_event_loop) {}
     THROW_IF_FAIL (m_priv) ;
     if (m_priv->is_gdb_running ()) {
@@ -4181,6 +4187,7 @@ bool
 GDBEngine::attach_to_program (unsigned int a_pid,
                               const UString &a_tty_path)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     vector<UString> args, source_search_dirs ;
 
@@ -4206,6 +4213,7 @@ GDBEngine::attach_to_program (unsigned int a_pid,
 void
 GDBEngine::add_env_variables (const map<UString, UString> &a_vars)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->is_gdb_running ()) ;
 
@@ -4222,6 +4230,7 @@ GDBEngine::add_env_variables (const map<UString, UString> &a_vars)
 map<UString, UString>&
 GDBEngine::get_env_variables ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     return m_priv->env_variables ;
 }
@@ -4229,6 +4238,7 @@ GDBEngine::get_env_variables ()
 const UString&
 GDBEngine::get_target_path ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     return m_priv->exe_path ;
 }
@@ -4352,9 +4362,9 @@ GDBEngine::frames_listed_signal () const
 }
 
 sigc::signal<void, int, const UString&>&
-GDBEngine::got_proc_info_signal () const
+GDBEngine::got_target_info_signal () const
 {
-    return m_priv->got_proc_info_signal ;
+    return m_priv->got_target_info_signal ;
 }
 
 sigc::signal<void, const map< int, list<IDebugger::VariableSafePtr> >&>&
@@ -4444,7 +4454,7 @@ GDBEngine::on_debugger_stdout_signal (CommandAndOutput &a_cao)
 }
 
 void
-GDBEngine::on_got_proc_info_signal (int a_pid, const UString &a_exe_path)
+GDBEngine::on_got_target_info_signal (int a_pid, const UString &a_exe_path)
 {
     NEMIVER_TRY
 
@@ -4463,8 +4473,8 @@ GDBEngine::init ()
 {
     stdout_signal ().connect (sigc::mem_fun
             (*this, &GDBEngine::on_debugger_stdout_signal)) ;
-    got_proc_info_signal ().connect (sigc::mem_fun
-            (*this, &GDBEngine::on_got_proc_info_signal)) ;
+    got_target_info_signal ().connect (sigc::mem_fun
+            (*this, &GDBEngine::on_got_target_info_signal)) ;
 
     init_output_handlers () ;
 }
@@ -4534,6 +4544,13 @@ GDBEngine::run (bool a_run_event_loops)
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("-exec-run"), a_run_event_loops) ;
+}
+
+void
+GDBEngine::get_target_info (bool a_run_event_loops)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("info proc"), a_run_event_loops) ;
 }
 
@@ -4547,6 +4564,11 @@ GDBEngine::stop (bool a_run_event_loops)
         LOG_ERROR_D ("GDB is not running", NMV_DEFAULT_DOMAIN) ;
         return false;
     }
+
+    if (!m_priv->target_pid) {
+        return false ;
+    }
+
     return  (kill (m_priv->target_pid, SIGINT) == 0) ;
 }
 

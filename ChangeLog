@@ -1,3 +1,30 @@
+Thu, 12 Oct 2006 14:42:13 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: renamed
+	  IDebugger::got_proc_info_signal() into
+	  IDebugger::got_target_info_signal(). Added
+	  IDebugger::get_target_info() to trigger target info acquisition.
+	  Also, prevent IDebugger::stop() from sending the stop signal to
+	  target when we don't have the target PID, otherwise, we would be
+	  sending the stop signal to PID 0, which exits the current process.
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: we get target info (PID
+	  and absolute path of the exe) using IDebugger::get_target_info().
+	  Make sure we make that request the first time the target is
+	  stopped, after we have requested IDebugger::run().
+	  The problem with that approach is that we cannot stop the target
+	  (send the stop signal) until the target hasn't stopped at least
+	  once, because IDebugger needs to know the PID of the target in order
+	  to send him the signal. Remember, we can't get that PID before the
+	  target stops at least once.
+	  The work around would be to find a way to know the PID of the
+	  target. We can guestimate that looking a the child processes of GDB.
+	  Also, renamed "Run" menuitem into "Run in a new process", to stress
+	  that it creates a new process, otherwise people tend to use it
+	  instead of using "continue".
+	* src/DBGPerspective/menus/toolbar.xml,menu.xml: move the run
+	  menuitem/toolbutton to the end. Put continue at the beginning.
+
 Thu, 12 Oct 2006 08:53:28 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-i-debugger.h,nmv-gdb-engine.cc: added a new

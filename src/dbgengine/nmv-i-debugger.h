@@ -346,7 +346,7 @@ public:
                                         variable_type_signal () const = 0 ;
 
     virtual sigc::signal<void, int, const UString&>&
-                                            got_proc_info_signal () const = 0 ;
+                                            got_target_info_signal () const = 0 ;
 
     virtual sigc::signal<void>& running_signal () const = 0;
 
@@ -395,6 +395,8 @@ public:
     virtual void do_continue (bool a_run_event_loops=false) = 0;
 
     virtual void run (bool a_run_event_loops=false) = 0 ;
+
+    virtual void get_target_info (bool a_run_event_loops=false) = 0 ;
 
     virtual bool stop (bool a_run_event_loops=false) = 0 ;
 

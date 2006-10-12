@@ -122,7 +122,7 @@ main (int argc, char *argv[])
 
         debugger->running_signal ().connect (sigc::ptr_fun (&on_running_signal));
 
-        debugger->got_proc_info_signal ().connect
+        debugger->got_target_info_signal ().connect
             (sigc::ptr_fun (&on_got_proc_info_signal)) ;
 
         debugger->stopped_signal ().connect

@@ -30,14 +30,14 @@
         </menu>
         <menu action="DebugMenuAction" name="DebugMenu">
             <menuitem action="StopMenuItemAction" name="StopMenuItem"/>
-            <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
+            <menuitem action="ContinueMenuItemAction"
+                      name="ContinueMenuItem"/>
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
-            <menuitem action="ContinueMenuItemAction"
-                      name="ContinueMenuItem"/>
             <menuitem action="ToggleBreakPointMenuItemAction"
                       name="ToggleBreakMenuItem"/>
+            <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
         </menu>
     </placeholder>
   </menubar>
