@@ -1,3 +1,8 @@
+Thu, 12 Oct 2006 22:22:22 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: change the name of the
+	  RunMenuItem into "Restart".
+
 2006-10-12  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* short-term-todo-list.txt: update to mention the copy/paste stack trace

@@ -1399,8 +1399,8 @@ DBGPerspective::init_actions ()
         {
             "RunMenuItemAction",
             nemiver::STOCK_RUN_DEBUGGER,
-            _("_Run in a new process"),
-            _("Run the target from the beginning, starting a new process"),
+            _("_Restart"),
+            _("Restart the target, killing this process and starting a new one"),
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
             "<shift>F5"
