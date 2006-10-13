@@ -1,3 +1,7 @@
+2006-10-13  Hubert Figuiere  <hub@figuiere.net>
+
+	* debian/*: added Debian packaging.
+
 Thu, 12 Oct 2006 22:22:22 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: change the name of the
