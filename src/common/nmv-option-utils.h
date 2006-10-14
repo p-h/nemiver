@@ -53,7 +53,7 @@ public:
         m_long_name (a_long_name),
         m_short_name (a_short_name),
         m_description (a_description),
-        m_arg_description (a_description),
+        m_arg_description (a_arg_description),
         m_flags (a_flags)
     {}
 

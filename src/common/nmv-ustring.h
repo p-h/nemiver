@@ -68,10 +68,16 @@ public:
                          vector<UString>::const_iterator &a_to,
                          const UString &a_delim=" ") ;
     void chomp () ;
+
+    UString::size_type get_number_of_lines () const ;
+
+    void printf (const UString &a_format, ...) ;
+
+    void vprintf (const UString &a_format, va_list a_args);
 };//end class UString
 
-NEMIVER_END_NAMESPACE (nemiver)
 NEMIVER_END_NAMESPACE (common)
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif
 

@@ -905,6 +905,9 @@ public:
     sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
                                             variable_value_signal () const  ;
 
+    sigc::signal<void, const UString&, const VariableSafePtr&>&
+                                    pointed_variable_value_signal () const  ;
+
     sigc::signal<void, const UString&, const UString&>&
                                         variable_type_signal () const ;
 
@@ -1022,8 +1025,11 @@ public:
     void print_variable_value (const UString &a_var_name,
                               bool a_run_event_loops) ;
 
+    void print_pointed_variable_value (const UString &a_var_name,
+                                       bool a_run_event_loops) ;
+
     void print_variable_type (const UString &a_var_name,
-                              bool a_run_event_loops=false) ;
+                              bool a_run_event_loops) ;
 
     bool extract_proc_info (Output &a_output,
                             int &a_proc_pid,
@@ -1124,6 +1130,9 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>
                                                         variable_value_signal ;
+
+    mutable sigc::signal<void, const UString&, const VariableSafePtr&>
+                                                pointed_variable_value_signal;
 
     mutable sigc::signal<void, const UString&, const UString&>
                                                     variable_type_signal  ;
@@ -3949,7 +3958,8 @@ struct OnVariableValueHandler : OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
-        if (a_in.command ().tag0 () == "print-variable-value"
+        if ((a_in.command ().tag0 () == "print-variable-value"
+             || a_in.command ().tag0 () == "print-pointed-variable-value")
             && a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
@@ -3975,9 +3985,19 @@ struct OnVariableValueHandler : OutputHandler {
                 (a_in.output ().result_record ().variable_value ()->name ()
                  == var_name) ;
         }
-        m_engine->variable_value_signal ().emit
-                    (a_in.command ().tag1 (),
-                     a_in.output ().result_record ().variable_value ()) ;
+        if (a_in.command ().tag0 () == "print-variable-value") {
+            m_engine->variable_value_signal ().emit
+                        (a_in.command ().tag1 (),
+                         a_in.output ().result_record ().variable_value ()) ;
+        } else if (a_in.command ().tag0 () == "print-pointed-variable-value") {
+            IDebugger::VariableSafePtr variable =
+                            a_in.output ().result_record ().variable_value () ;
+            variable->name ("*" + variable->name ()) ;
+            m_engine->pointed_variable_value_signal ().emit
+                        (a_in.command ().tag1 (), variable) ;
+        } else {
+            THROW ("unknown command tag: " + a_in.command ().tag0 ()) ;
+        }
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnVariableValueHandler
@@ -4390,6 +4410,13 @@ GDBEngine::variable_value_signal () const
 {
     return m_priv->variable_value_signal ;
 }
+
+sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
+GDBEngine::pointed_variable_value_signal () const
+{
+    return m_priv->pointed_variable_value_signal ;
+}
+
 sigc::signal<void, const UString&, const UString&>&
 GDBEngine::variable_type_signal () const
 {
@@ -4755,6 +4782,20 @@ GDBEngine::print_variable_value (const UString &a_var_name,
 
     Command command ("-data-evaluate-expression " + a_var_name) ;
     command.tag0 ("print-variable-value") ;
+    command.tag1 (a_var_name) ;
+
+    queue_command (command, a_run_event_loops) ;
+}
+
+void
+GDBEngine::print_pointed_variable_value (const UString &a_var_name,
+                                         bool a_run_event_loops)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+    if (a_var_name == "") {return ;}
+
+    Command command ("-data-evaluate-expression *" + a_var_name) ;
+    command.tag0 ("print-pointed-variable-value") ;
     command.tag1 (a_var_name) ;
 
     queue_command (command, a_run_event_loops) ;

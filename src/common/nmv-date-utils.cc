@@ -37,9 +37,8 @@ namespace dateutils {
 time_t
 get_current_datetime ()
 {
-    struct timeval tv = {
-                            0
-                        } ;
+    struct timeval tv ;
+    memset (&tv, 0, sizeof (tv)) ;
     gettimeofday (&tv, NULL) ;
     return tv.tv_sec ;
 }
@@ -54,9 +53,9 @@ get_current_datetime (struct tm &a_tm)
 void
 get_current_datetime (UString &a_datetime)
 {
-    struct tm now = {
-                        0
-                    } ;
+    struct tm now ;
+    memset (&now, 0, sizeof (now)) ;
+
     get_current_datetime (now) ;
     char now_str[21] = {0} ;
     strftime (now_str, 20, "%Y-%m-%d %H:%M:%S", &now) ;

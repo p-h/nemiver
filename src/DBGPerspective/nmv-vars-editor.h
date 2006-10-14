@@ -33,6 +33,8 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+class IWorkbench ;
+
 class NEMIVER_API VarsEditor : public nemiver::common::Object {
     //non copyable
     VarsEditor (const VarsEditor&) ;
@@ -46,7 +48,7 @@ protected:
 
 public:
 
-    VarsEditor (IDebuggerSafePtr &a_dbg) ;
+    VarsEditor (IDebuggerSafePtr &a_dbg, IWorkbench &a_wb) ;
     virtual ~VarsEditor () ;
     Gtk::Widget& widget () const ;
     void set_local_variables

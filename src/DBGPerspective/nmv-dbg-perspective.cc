@@ -781,8 +781,9 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
     if (file_path == "") {
         file_path = bp.file_name () ;
         if (!find_file_in_source_dirs (file_path, file_path)) {
-            display_warning ("File path info is missing "
-                             "for breakpoint '" + UString::from_int (bp.number ()) + "'") ;
+            display_warning (_("File path info is missing "
+                             "for breakpoint '")
+                             + UString::from_int (bp.number ()) + "'") ;
             return ;
         }
     }
@@ -791,7 +792,8 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
     SourceEditor *source_editor = get_source_editor_from_path (file_path) ;
     THROW_IF_FAIL (source_editor);
     Gtk::TextBuffer::iterator txt_iter =
-        source_editor->source_view().get_buffer ()->get_iter_at_line (bp.line () - 1) ;
+        source_editor->source_view().get_buffer ()->get_iter_at_line
+                                                                (bp.line () - 1) ;
     source_editor->source_view ().scroll_to (txt_iter) ;
 
     NEMIVER_CATCH
@@ -2083,7 +2085,7 @@ DBGPerspective::get_breakpoints_menu ()
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->breakpoints_menu) {
         string relative_path = Glib::build_filename ("menus",
-                "breakpointspopup.xml") ;
+                                                     "breakpointspopup.xml") ;
         string absolute_path ;
         THROW_IF_FAIL (build_absolute_resource_path
                 (Glib::locale_to_utf8 (relative_path),
@@ -3108,8 +3110,11 @@ VarsEditor&
 DBGPerspective::get_variables_editor ()
 {
     THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->workbench) ;
+
     if (!m_priv->variables_editor) {
-        m_priv->variables_editor = new VarsEditor (debugger ()) ;
+        m_priv->variables_editor = new VarsEditor (debugger (),
+                                                   *m_priv->workbench) ;
     }
     THROW_IF_FAIL (m_priv->variables_editor) ;
     return *m_priv->variables_editor ;

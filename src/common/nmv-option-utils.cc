@@ -31,12 +31,11 @@ void
 option_desc_to_option (OptionDesc &a_desc,
                        Glib::OptionEntry &a_entry)
 {
-    Glib::OptionEntry entry ;
-    entry.set_long_name (a_desc.long_name ()) ;
-    entry.set_short_name (a_desc.short_name ()) ;
-    entry.set_description (a_desc.description ()) ;
-    entry.set_arg_description (a_desc.arg_description ()) ;
-    entry.set_flags (a_desc.flags ()) ;
+    a_entry.set_long_name (a_desc.long_name ()) ;
+    a_entry.set_short_name (a_desc.short_name ()) ;
+    a_entry.set_description (a_desc.description ()) ;
+    a_entry.set_arg_description (a_desc.arg_description ()) ;
+    a_entry.set_flags (a_desc.flags ()) ;
 }
 
 void

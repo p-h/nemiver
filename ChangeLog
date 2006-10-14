@@ -1,3 +1,37 @@
+Sat, 14 Oct 2006 01:53:56 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-i-debugger.h,nmv-gdb-engine.cc: added
+	  IDebugger::print_pointed_variable_value() and
+	  IDebugger::pointed_variable_value_signal() to support printing
+	  the type of a variable.
+
+	* src/DBGPerspective/nmv-vars-editor.cc,h:
+	  The local variables widget colums are resizable.
+	  Now, the type of all the local variables are
+	  printed in the "type" column. Sometimes, the type name spans over
+	  several lines. In that case, what's shown in the type column is only
+	  the first line, followed by an ellipsis (...). The user can then right
+	  click on the row and hit "show type". A dialog popups,
+	  showing the entire type. This is necessary with non POD types.
+	  Also, when a row contains a variable "V" which is a pointer,
+	  the user can right click and choose "dereference". "V"
+	  immediately gets a child, named "*V" which represents what V
+	  points to. There are two problems with this for nowre are two
+	  problems with this for now. First, *V's members don't have type
+	  information updated yet. Second, each time you hit "next" or
+	  "continue", the dereferenced variables are lost. You need to right
+	  click and hit dereference to have them again. Fixing that is a bit
+	  hard so I commit what I have for now.
+
+	* src/common/nmv-ustring.h,cc: Added UString::printf() and
+	  UString::vprintf. This allows doing things like:
+	  UString foo ; foo.printf ("do %", "this"); It sets foo to
+	  "do this".  This can be usefull to come up with strings that are
+	  better translatable. Also added UString::get_number_of_lines().
+
+	* src/common/nmv-option-utils.cc,h: fixed some stupidities here.
+	  I should use Glib::OptionEntry instead of the C api one day.
+
 2006-10-13  Hubert Figuiere  <hub@figuiere.net>
 
 	* debian/*: added Debian packaging.

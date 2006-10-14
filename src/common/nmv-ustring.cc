@@ -33,8 +33,9 @@
 #include "nmv-log-stream-utils.h"
 
 using namespace std ;
-namespace nemiver {
-namespace common {
+
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+NEMIVER_BEGIN_NAMESPACE (common)
 
 UString
 UString::from_int (long long an_int)
@@ -240,18 +241,43 @@ UString::chomp ()
     //LOG ("after first erase: '" << *this << "'") ;
 
     //remove the ws from the end of the string.
-    i = size ()  - 1;
-    ws_end = i ;
-    ws_start = i ;
-    while (isspace (at (i))) {
-        --ws_start ;
-        --i ;
+    i = size () ;
+    if (!i) {return;}
+    --i ;
+    while (i > 0 && isspace (at (i))) {
+        erase (i, 1) ;
+        i = size () ;
+        if (!i) {return;}
+        --i;
     }
-    if (ws_start != ws_end) {++ws_start;}
-    n = ws_end - ws_start ;
-    erase (ws_start, n) ;
-    //LOG ("after second erase: '" << *this << "'") ;
+    if (i == 0 && isspace (at (i))) {erase (0, 1);}
 }
 
-}//end namespace common
-}//end namespace nemiver
+UString::size_type
+UString::get_number_of_lines () const
+{
+    UString::size_type res = 0 ;
+    for (UString::const_iterator it = begin () ; it != end () ; ++it) {
+        if (*it == '\n') {++res;}
+    }
+    return res ;
+}
+
+void
+UString::vprintf (const UString &a_format, va_list a_args)
+{
+    GCharSafePtr str (g_strdup_vprintf (a_format.c_str (), a_args)) ;
+    assign (str.get ()) ;
+}
+
+void
+UString::printf (const UString &a_format, ...)
+{
+    va_list args;
+    va_start (args, a_format);
+    this->vprintf (a_format, args);
+    va_end (args);
+}
+
+NEMIVER_END_NAMESPACE (nemiver)
+NEMIVER_END_NAMESPACE (common)
