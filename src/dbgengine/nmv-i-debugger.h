@@ -227,6 +227,7 @@ public:
         UString m_name ;
         UString m_value ;
         UString m_type ;
+        Variable *m_parent ;
 
     public:
 
@@ -235,18 +236,28 @@ public:
                   const UString &a_type) :
             m_name (a_name),
             m_value (a_value),
-            m_type (a_type)
+            m_type (a_type),
+            m_parent (0)
+
         {}
 
         Variable (const UString &a_name) :
-            m_name (a_name)
+            m_name (a_name),
+            m_parent (0)
         {}
 
-        Variable () {}
+        Variable () :
+            m_parent (0)
+        {}
 
         const list<VariableSafePtr>& members () const {return m_members;}
 
-        void append (const VariableSafePtr &a_var) {m_members.push_back (a_var);}
+        void append (const VariableSafePtr &a_var)
+        {
+            if (!a_var) {return;}
+            m_members.push_back (a_var);
+            a_var->parent (this) ;
+        }
 
         const UString& name () const {return m_name;}
         void name (const UString &a_name) {m_name = a_name;}
@@ -256,6 +267,12 @@ public:
 
         const UString& type () const {return m_type;}
         void type (const UString &a_type) {m_type = a_type;}
+
+        Variable* parent () const {return m_parent ;}
+        void parent (Variable *a_parent)
+        {
+            m_parent = a_parent ;
+        }
 
         void to_string (UString &a_str,
                         bool a_show_var_name = false,
@@ -284,6 +301,22 @@ public:
                 (*it)->to_string (a_str, true, indent_str) ;
             }
             a_str += a_indent_str + "}\n" ;
+        }
+
+        void build_qname (UString &a_qname) const
+        {
+            UString qname ;
+            if (parent () == 0) {
+                a_qname = "" ;
+            } else {
+                parent ()->build_qname (qname) ;
+                if (qname == "") {
+                    qname = name () ;
+                } else {
+                    qname += "." + name () ;
+                }
+                a_qname = qname ;
+            }
         }
     };//end class Variable
 

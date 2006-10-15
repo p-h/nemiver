@@ -226,19 +226,12 @@ UString::join (vector<UString>::const_iterator &a_from,
 void
 UString::chomp ()
 {
-    Glib::ustring::size_type i = 0, ws_start =0, ws_end = 0;
+    Glib::ustring::size_type i = 0 ;
 
     //remove the ws from the beginning of the string.
-    while (i < size () && isspace (at (i))) {
-        ++ws_end;
-        ++ i ;
+    while (isspace (at (0)) && size ()) {
+        erase (0, 1) ;
     }
-    Glib::ustring::size_type n = 0;
-    if (ws_end >= ws_start ) {
-        n = ws_end - ws_start ;
-    }
-    erase (ws_start, n) ;
-    //LOG ("after first erase: '" << *this << "'") ;
 
     //remove the ws from the end of the string.
     i = size () ;

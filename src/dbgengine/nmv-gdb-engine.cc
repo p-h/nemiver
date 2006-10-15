@@ -4778,7 +4778,10 @@ GDBEngine::print_variable_value (const UString &a_var_name,
                                  bool a_run_event_loops)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_var_name == "") {return;}
+    if (a_var_name == "") {
+        LOG_ERROR ("got empty variable name") ;
+        return;
+    }
 
     Command command ("-data-evaluate-expression " + a_var_name) ;
     command.tag0 ("print-variable-value") ;
@@ -4792,7 +4795,10 @@ GDBEngine::print_pointed_variable_value (const UString &a_var_name,
                                          bool a_run_event_loops)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
-    if (a_var_name == "") {return ;}
+    if (a_var_name == "") {
+        LOG_ERROR ("got empty variable name") ;
+        return ;
+    }
 
     Command command ("-data-evaluate-expression *" + a_var_name) ;
     command.tag0 ("print-pointed-variable-value") ;

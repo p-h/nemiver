@@ -175,6 +175,8 @@ public:
 
     void set_a_variable_type (const UString &a_var, const UString &a_type)
     {
+        //TODO: rewrite this using get_varable_iter_from_qname() like
+        //how on_pointed_variable_value_signal() got rewriten.
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (tree_store) ;
         tree_store->foreach_iter (sigc::bind
@@ -337,8 +339,165 @@ public:
         if (!cur_selected_row) {return;}
         UString name =
             (Glib::ustring) (*cur_selected_row)[get_variable_columns ().name] ;
-        THROW_IF_FAIL (name!= "") ;
+        THROW_IF_FAIL (name != "") ;
         debugger->print_pointed_variable_value (name) ;
+    }
+
+    bool add_dereferenced_pointer_walker (const Gtk::TreeModel::iterator &a_it,
+                                          const UString &a_var_name,
+                                          const IDebugger::VariableSafePtr &a_var)
+    {
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (a_it) ;
+        UString name = (Glib::ustring) (*a_it)[get_variable_columns ().name] ;
+
+        if (name != a_var_name) {return false;}
+
+        Gtk::TreeModel::iterator it ;
+        set_a_variable (a_var, a_it, it) ;
+        debugger->print_variable_type (a_var->name ()) ;
+
+        NEMIVER_CATCH
+        return true ;
+    }
+
+    bool break_qname_into_name_elements (const UString &a_qname,
+                                         std::list<UString> &a_name_elems)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD
+
+        THROW_IF_FAIL (a_qname != "") ;
+
+        UString::size_type len=a_qname.size (),cur=0, name_start=0, name_end=0 ;
+        UString name_element ;
+        std::list<UString> name_elems ;
+
+fetch_element:
+        name_start = cur ;
+        name_element="" ;
+        for (;
+             cur < len && (isalnum (a_qname[cur]) || a_qname[cur] == '_')
+             ; ++cur) {
+        }
+        if (cur == name_start) {
+            name_element = "";
+        } else if (a_qname[cur] == '.'
+                   || (cur + 1 < len
+                       && a_qname[cur] == '-'
+                       && a_qname[cur+1] == '>')
+                   || cur >= len){
+            name_end = cur - 1 ;
+            name_element = a_qname.substr (name_start, name_end - name_start + 1);
+            if (a_qname[cur] == '-') {
+                name_element = '*' + name_element ;
+                cur += 2 ;
+            } else if (cur < len){
+                ++cur ;
+            }
+        } else {
+            LOG_ERROR ("failed to parse name element. Index was: "
+                       << (int) cur << " buf was '" << a_qname) ;
+            return false ;
+        }
+        LOG_DD ("got name element: '" << name_element << "'") ;
+        name_elems.push_back (name_element) ;
+        if (cur < len) {
+            LOG_DD ("go fetch next name element") ;
+            goto fetch_element ;
+        }
+        LOG_DD ("getting out") ;
+        a_name_elems = name_elems ;
+        return true ;
+    }
+
+    bool get_variable_iter_from_qname
+                        (const std::list<UString> &a_name_elems,
+                         const std::list<UString>::const_iterator &a_cur_elem_it,
+                         const Gtk::TreeModel::iterator &a_from_it,
+                         Gtk::TreeModel::iterator &a_result)
+    {
+        THROW_IF_FAIL (!a_name_elems.empty ()) ;
+        if (!a_from_it) {
+            LOG_ERROR ("got null a_from iterator") ;
+            return false ;
+        }
+        std::list<UString>::const_iterator cur_elem_it = a_cur_elem_it;
+        if (cur_elem_it == a_name_elems.end ()) {
+            a_result = a_from_it ;
+            return true;
+        }
+
+        Gtk::TreeModel::const_iterator row_it ;
+        for (row_it = a_from_it->children ().begin () ;
+             row_it != a_from_it->children ().end () ;
+             ++row_it) {
+            if ((Glib::ustring)((*row_it)[get_variable_columns ().name])
+                  == *cur_elem_it) {
+                LOG_DD ("walked to path element: '" << *cur_elem_it) ;
+                return get_variable_iter_from_qname (a_name_elems,
+                                                     ++cur_elem_it,
+                                                     row_it,
+                                                     a_result) ;
+            }
+
+        }
+        LOG_ERROR ("failed") ;
+        return false ;
+    }
+
+    bool get_variable_iter_from_qname (const UString &a_var_qname,
+                                       const Gtk::TreeModel::iterator &a_from,
+                                       Gtk::TreeModel::iterator &a_result)
+    {
+        THROW_IF_FAIL (a_var_qname != "") ;
+
+        if (!a_from) {
+            LOG_ERROR ("got null a_from iterator") ;
+            return false ;
+        }
+        std::list<UString> name_elems ;
+        bool is_ok = break_qname_into_name_elements (a_var_qname, name_elems) ;
+        if (!is_ok) {
+            LOG_ERROR ("failed to break qname into path elements") ;
+            return false ;
+        }
+
+        bool ret = get_variable_iter_from_qname (name_elems,
+                                                 name_elems.begin (),
+                                                 a_from,
+                                                 a_result) ;
+        return ret ;
+    }
+
+    void connect_to_debugger_signals ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        THROW_IF_FAIL (debugger) ;
+        debugger->local_variables_listed_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
+        debugger->stopped_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_stopped_signal)) ;
+        debugger->variable_value_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_variable_value_signal)) ;
+        debugger->variable_type_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_variable_type_signal)) ;
+        debugger->frames_params_listed_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_frames_params_listed_signal)) ;
+        debugger->pointed_variable_value_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_pointed_variable_value_signal)) ;
+    }
+
+    void init_graphical_signals ()
+    {
+        THROW_IF_FAIL (tree_view) ;
+        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
+        THROW_IF_FAIL (selection) ;
+        selection->signal_changed ().connect
+            (sigc::mem_fun (*this, &Priv::on_tree_view_selection_changed_signal));
+        tree_view->signal_button_press_event ().connect_notify (sigc::mem_fun
+                (*this, &Priv::on_button_press_event_signal)) ;
     }
 
     void on_local_variables_listed_signal
@@ -495,65 +654,44 @@ public:
         NEMIVER_CATCH
     }
 
-    bool add_dereferenced_pointer_walker (const Gtk::TreeModel::iterator &a_it,
-                                          const UString &a_var_name,
-                                          const IDebugger::VariableSafePtr &a_var)
-    {
-        NEMIVER_TRY
 
-        THROW_IF_FAIL (a_it) ;
-        UString name = (Glib::ustring) (*a_it)[get_variable_columns ().name] ;
-
-        if (name != a_var_name) {return false;}
-
-        Gtk::TreeModel::iterator it ;
-        set_a_variable (a_var, a_it, it) ;
-        debugger->print_variable_type (a_var->name ()) ;
-
-        NEMIVER_CATCH
-        return true ;
-    }
-
+    /*
     void on_pointed_variable_value_signal
                                 (const UString &a_var_name,
                                  const IDebugger::VariableSafePtr &a_value)
     {
+        NEMIVER_TRY
+
         LOG_FUNCTION_SCOPE_NORMAL_DD
         if (a_var_name == "" || a_value) {}
         THROW_IF_FAIL (tree_store) ;
         tree_store->foreach_iter (sigc::bind
                 (sigc::mem_fun (*this, &Priv::add_dereferenced_pointer_walker),
                  a_var_name, a_value)) ;
+
+        NEMIVER_CATCH
     }
+    */
 
-    void connect_to_debugger_signals ()
+    void on_pointed_variable_value_signal
+                                (const UString &a_var_name,
+                                 const IDebugger::VariableSafePtr &a_var)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD
 
-        THROW_IF_FAIL (debugger) ;
-        debugger->local_variables_listed_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
-        debugger->stopped_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_stopped_signal)) ;
-        debugger->variable_value_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_variable_value_signal)) ;
-        debugger->variable_type_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_variable_type_signal)) ;
-        debugger->frames_params_listed_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_frames_params_listed_signal)) ;
-        debugger->pointed_variable_value_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_pointed_variable_value_signal)) ;
-    }
+        NEMIVER_TRY
 
-    void init_graphical_signals ()
-    {
-        THROW_IF_FAIL (tree_view) ;
-        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
-        THROW_IF_FAIL (selection) ;
-        selection->signal_changed ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_selection_changed_signal));
-        tree_view->signal_button_press_event ().connect_notify (sigc::mem_fun
-                (*this, &Priv::on_button_press_event_signal)) ;
+        Gtk::TreeModel::iterator row_it ;
+        bool ret = get_variable_iter_from_qname
+                                        (a_var_name,
+                                         tree_store->children ().begin (),
+                                         row_it) ;
+        THROW_IF_FAIL (ret) ;
+        THROW_IF_FAIL (row_it) ;
+        Gtk::TreeModel::iterator result_row_it ;
+        set_a_variable (a_var, row_it, result_row_it) ;
+        debugger->print_variable_type (a_var_name) ;
+        NEMIVER_CATCH
     }
 
 };//end class VarsEditor

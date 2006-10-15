@@ -1,3 +1,17 @@
+Mon, 16 Oct 2006 00:12:57 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: add traces in cases of error.
+	* src/dbgengine/nmv-i-debugger.h: added
+	  IDebugger::Variable::build_qname() to get the qualified name of a
+	  variable (eg foo.bar, when bar is a  member of foo).
+	* src/DBGPerspective/nmv-vars-editor.cc:  started to add
+	  infrastructure for better handling of variable inspection
+	  (including pointer dereferencing and the like). Nothing is visible
+	  yet, though.
+	* src/common/nmv-ustring.cc: made a better implementation of
+	  UString::chomp(). The previous one was too complicated.
+	* short-term-todo-list.txt: updated this.
+
 Sat, 14 Oct 2006 01:53:56 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-i-debugger.h,nmv-gdb-engine.cc: added
