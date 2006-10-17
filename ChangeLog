@@ -1,3 +1,11 @@
+Wed, 18 Oct 2006 00:39:42 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: OnVariableTypeHandler::do_handle():
+	  When a request to print a type of a variable fails because the
+	  variable doesn't exist, don't log an error in the defaut domain.
+	  Log it in the nmv-gdb-engine.cc log domain, instead.
+
+
 Wed, 18 Oct 2006 00:17:05 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:

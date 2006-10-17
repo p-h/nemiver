@@ -4035,8 +4035,8 @@ struct OnVariableTypeHandler : OutputHandler {
             //TODO: debug this further. I don't know why we would get
             //empty stream records after the result of ptype stream record.
             //This happens though.
-            LOG_ERROR ("expected result of ptype, got : '"
-                       <<it->stream_record ().debugger_console () << "'") ;
+            LOG_ERROR_DD ("expected result of ptype, got : '"
+                          <<it->stream_record ().debugger_console () << "'") ;
             return ;
         }
 
