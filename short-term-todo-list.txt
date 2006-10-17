@@ -30,3 +30,8 @@ make sense like those related to stepping and breakpoint setting.
 
 12) add show/hide line numbers in preferences [pre 0.1]
 
+13) Add a variable "Watch" widget so that the user can inspect the values of
+    arbitrary variables
+
+14) Change the color of variables in the 'locals' and 'watch' widgets when their
+    values change between one break and the next
