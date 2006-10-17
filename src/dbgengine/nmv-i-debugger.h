@@ -307,11 +307,15 @@ public:
         {
             UString qname ;
             if (parent () == 0) {
-                a_qname = "" ;
+                a_qname = name ();
+                if (a_qname[0] == '*') {
+                    a_qname.erase (0, 1) ;
+                }
             } else {
                 parent ()->build_qname (qname) ;
-                if (qname == "") {
-                    qname = name () ;
+                qname.chomp () ;
+                if (parent ()->name ()[0] == '*') {
+                    qname += "->" + name () ;
                 } else {
                     qname += "." + name () ;
                 }

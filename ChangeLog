@@ -1,3 +1,15 @@
+Wed, 18 Oct 2006 00:17:05 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	A bit of cleanup.
+	IDebugger::Priv::parse_member_variable(): fix so that it parses sub
+        attributes correctly. This is also a bit less complex now.
+	* src/dbgengine/nmv-i-debugger.h: fixed
+	  IDebugger::Variable::build_qname().
+	* src/DBGPerspective/nmv-vars-editor.cc: heavily debunk this and  make
+	  it show and inspect local variables correctly. It sort of works now.
+
+
 Mon, 16 Oct 2006 00:12:57 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: add traces in cases of error.

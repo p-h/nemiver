@@ -2439,11 +2439,12 @@ struct GDBEngine::Priv {
                                 if ((*arg_iter)->variable () == "name") {
                                     THROW_IF_FAIL ((*arg_iter)->value ()) ;
                                     parameter->name
-                                    ((*arg_iter)->value()->get_string_content());
+                                    ((*arg_iter)->value()->get_string_content ());
                                 } else if ((*arg_iter)->variable () == "value") {
                                     THROW_IF_FAIL ((*arg_iter)->value ()) ;
                                     parameter->value
-                                        ((*arg_iter)->value()->get_string_content()) ;
+                                        ((*arg_iter)->value
+                                                     ()->get_string_content()) ;
                                     //TODO: call parse_member_variable() in
                                     //case parameter->value() is compound.
                                     //This would let us fill parameter->members().
@@ -2575,6 +2576,7 @@ struct GDBEngine::Priv {
                 UString variable_str = (*tuple_iter)->variable () ;
                 UString value_str =
                             (*tuple_iter)->value ()->get_string_content () ;
+                value_str.chomp () ;
                 if (variable_str == "name") {
                     variable->name (value_str) ;
                 } else if (variable_str == "type") {
@@ -2701,6 +2703,7 @@ struct GDBEngine::Priv {
             }
 
             IDebugger::VariableSafePtr cur_var (new IDebugger::Variable) ;
+            name.chomp () ;
             cur_var->name (name) ;
 
             if (a_input[cur] == '}') {
@@ -2762,40 +2765,17 @@ struct GDBEngine::Priv {
 
             SKIP_WS (a_input, cur, cur) ;
 
-            if (a_in_unnamed_var == false) {
-                if (a_input[cur] == ',') {
-                    ++cur ;
-                    CHECK_END (a_input, cur, end) ;
-                    LOG_D ("got ',' going to fetch name ", GDBMI_PARSING_DOMAIN) ;
-                    continue /*goto fetch name*/ ;
-                } else if (a_input[cur] == '}') {
-                    ++cur ;
-                    LOG_D ("got '}' getting out", GDBMI_PARSING_DOMAIN) ;
-                    break ;
-                }
-            } else {
-                if (a_input[cur] == '}') {
-                    ++cur ;
-                    CHECK_END (a_input, cur, end) ;
-                    if (a_input[cur] == ',') {
-                        cur ++ ;
-                        CHECK_END (a_input, cur, end) ;
-                        LOG_D ("got '},' going to fetch name",
-                               GDBMI_PARSING_DOMAIN) ;
-                        continue  /*goto fetch name*/ ;
-                    } else {
-                        LOG_D ("got '}', getting out", GDBMI_PARSING_DOMAIN) ;
-                        break ;
-                    }
-                } else if (a_input[cur] == ',') {
-                    ++cur ;
-                    CHECK_END (a_input, cur, end) ;
-                    LOG_D ("got ',' , going to fetch name",
-                           GDBMI_PARSING_DOMAIN) ;
-                    continue /*goto fetch name*/ ;
-                }
+            if (a_input[cur] == '}') {
+                ++cur ;
+                break ;
+            } else if (a_input[cur] == ',') {
+                ++cur ;
+                CHECK_END (a_input, cur, end) ;
+                LOG_D ("got ',' , going to fetch name",
+                       GDBMI_PARSING_DOMAIN) ;
+                continue /*goto fetch name*/ ;
             }
-            break ;
+            THROW ("should not be reached") ;
         }//end while
 
         a_to = cur ;
@@ -3979,6 +3959,7 @@ struct OnVariableValueHandler : OutputHandler {
         THROW_IF_FAIL (a_in.output ().result_record ().variable_value ()) ;
 
         if (a_in.output ().result_record ().variable_value ()->name () == "") {
+            var_name.chomp () ;
             a_in.output ().result_record ().variable_value ()->name (var_name) ;
         } else {
             THROW_IF_FAIL
@@ -4043,9 +4024,22 @@ struct OnVariableTypeHandler : OutputHandler {
                        && !it->stream_record ().debugger_log ().compare
                                                (0, 6, "ptype ")) ;
         ++it ;
-        THROW_IF_FAIL (it->has_stream_record ()
-                       && !it->stream_record ().debugger_console ().compare
-                                               (0, 7, "type = ")) ;
+        if (!it->has_stream_record ()
+            || it->stream_record ().debugger_console ().compare
+                                               (0, 7, "type = "))
+        {
+            if (!it->has_stream_record ()) {
+                LOG_ERROR ("no more stream record !") ;
+                return ;
+            }
+            //TODO: debug this further. I don't know why we would get
+            //empty stream records after the result of ptype stream record.
+            //This happens though.
+            LOG_ERROR ("expected result of ptype, got : '"
+                       <<it->stream_record ().debugger_console () << "'") ;
+            return ;
+        }
+
         UString console = it->stream_record ().debugger_console () ;
         console.erase (0, 7) ;
         type += console ;

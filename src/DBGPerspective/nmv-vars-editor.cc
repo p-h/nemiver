@@ -144,44 +144,48 @@ public:
         THROW_IF_FAIL (function_arguments_row_ref) ;
     }
 
-    bool set_variable_type_walker (const Gtk::TreeModel::iterator a_it,
-                                   const UString &a_var,
-                                   const UString &a_type)
+    void get_function_arguments_row_iterator (Gtk::TreeModel::iterator &a_it)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        if (!a_it) {return false;}
-        guint nb_lines = 0 ;
-        UString type_caption,tmp_str ;
-        tmp_str = (Glib::ustring) (*a_it)[get_variable_columns ().name]  ;
-        LOG_DD ("scanning row of name '"
-                << tmp_str << "'") ;
-        if (tmp_str == a_var) {
-            LOG_DD ("found variable '" << a_var << "', of type '"
-                    << a_type << "'") ;
-            (*a_it)[get_variable_columns ().type] =  a_type ;
-            nb_lines = a_type.get_number_of_lines () ;
-            type_caption = a_type ;
-            if (nb_lines) {--nb_lines;}
-            if (nb_lines) {
-                UString::size_type i = a_type.find ('\n') ;
-                type_caption.erase (i) ;
-                type_caption += "..." ;
-            }
-            (*a_it)[get_variable_columns ().type_caption] =  type_caption ;
-            return true;
-        }
-        return false ;
+        THROW_IF_FAIL (function_arguments_row_ref) ;
+        a_it = tree_store->get_iter (function_arguments_row_ref->get_path ()) ;
     }
 
-    void set_a_variable_type (const UString &a_var, const UString &a_type)
+    void get_local_variables_row_iterator (Gtk::TreeModel::iterator &a_it)
     {
-        //TODO: rewrite this using get_varable_iter_from_qname() like
-        //how on_pointed_variable_value_signal() got rewriten.
+        THROW_IF_FAIL (local_variables_row_ref) ;
+        a_it = tree_store->get_iter (local_variables_row_ref->get_path ()) ;
+    }
+
+    void set_a_variable_type (const UString &a_var_name, const UString &a_type)
+    {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (tree_store) ;
-        tree_store->foreach_iter (sigc::bind
-                (sigc::mem_fun (*this, &Priv::set_variable_type_walker),
-                 a_var, a_type)) ;
+        Gtk::TreeModel::iterator row_it ;
+        LOG_DD ("going to get iter on variable of name: '" << a_var_name << "'") ;
+
+        Gtk::TreeModel::iterator root_it ;
+        get_local_variables_row_iterator (root_it) ;
+        bool ret = get_variable_iter_from_qname (a_var_name, root_it, row_it) ;
+        if (!ret) {
+            get_function_arguments_row_iterator (root_it) ;
+            ret = get_variable_iter_from_qname (a_var_name, root_it, row_it) ;
+        }
+        THROW_IF_FAIL (ret) ;
+        THROW_IF_FAIL (row_it) ;
+        (*row_it)[get_variable_columns ().type] =  a_type ;
+        int nb_lines = a_type.get_number_of_lines () ;
+        UString type_caption = a_type ;
+        if (nb_lines) {--nb_lines;}
+        if (nb_lines) {
+            UString::size_type i = a_type.find ('\n') ;
+            type_caption.erase (i) ;
+            type_caption += "..." ;
+        }
+        (*row_it)[get_variable_columns ().type_caption] =  type_caption ;
+        IDebugger::VariableSafePtr variable =
+        (IDebugger::VariableSafePtr)(*row_it)[get_variable_columns ().variable];
+        THROW_IF_FAIL (variable) ;
+        variable->type (type_caption) ;
     }
 
     void set_a_variable_real (const IDebugger::VariableSafePtr &a_var,
@@ -197,11 +201,19 @@ public:
         THROW_IF_FAIL (cur_row_it) ;
 
         (*cur_row_it)[get_variable_columns ().variable] = a_var ;
-        (*cur_row_it)[get_variable_columns ().name] = a_var->name () ;
+        UString var_name = a_var->name ();
+        var_name.chomp () ;
+        (*cur_row_it)[get_variable_columns ().name] = var_name ;
         if (a_var->value () != "") {
             (*cur_row_it)[get_variable_columns ().value] = a_var->value () ;
         }
         (*cur_row_it)[get_variable_columns ().type] = a_var->type () ;
+
+        UString qname ;
+        a_var->build_qname (qname) ;
+        LOG_DD ("set variable with qname '" << qname << "'") ;
+        debugger->print_variable_type (qname) ;
+        LOG_DD ("did query type of variable '" << qname << "'") ;
         a_result = cur_row_it ;
     }
 
@@ -256,7 +268,6 @@ public:
             THROW_IF_FAIL ((*it)->name () != "") ;
             local_vars_to_set[(*it)->name ()] = *it ;
             debugger->print_variable_value ((*it)->name ()) ;
-            debugger->print_variable_type ((*it)->name ()) ;
         }
     }
 
@@ -330,36 +341,29 @@ public:
             (Glib::ustring) (*cur_selected_row)[get_variable_columns ().type] ;
         UString message ;
         message.printf (_("Variable type is: \n %s"), type.c_str ()) ;
+
+        IDebugger::VariableSafePtr variable =
+            (IDebugger::VariableSafePtr)
+                cur_selected_row->get_value (get_variable_columns ().variable);
+        THROW_IF_FAIL (variable) ;
+        //message += "\nDumped for debug: \n" ;
+        //variable->to_string (message, false) ;
         ui_utils::display_info (message) ;
     }
 
     void print_pointed_variable_value ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         if (!cur_selected_row) {return;}
-        UString name =
-            (Glib::ustring) (*cur_selected_row)[get_variable_columns ().name] ;
-        THROW_IF_FAIL (name != "") ;
-        debugger->print_pointed_variable_value (name) ;
-    }
 
-    bool add_dereferenced_pointer_walker (const Gtk::TreeModel::iterator &a_it,
-                                          const UString &a_var_name,
-                                          const IDebugger::VariableSafePtr &a_var)
-    {
-        NEMIVER_TRY
-
-        THROW_IF_FAIL (a_it) ;
-        UString name = (Glib::ustring) (*a_it)[get_variable_columns ().name] ;
-
-        if (name != a_var_name) {return false;}
-
-        Gtk::TreeModel::iterator it ;
-        set_a_variable (a_var, a_it, it) ;
-        debugger->print_variable_type (a_var->name ()) ;
-
-        NEMIVER_CATCH
-        return true ;
+        IDebugger::VariableSafePtr  variable =
+            (IDebugger::VariableSafePtr) cur_selected_row->get_value
+                                            (get_variable_columns ().variable) ;
+        THROW_IF_FAIL (variable) ;
+        UString qname ;
+        variable->build_qname (qname) ;
+        debugger->print_pointed_variable_value (qname) ;
     }
 
     bool break_qname_into_name_elements (const UString &a_qname,
@@ -377,7 +381,9 @@ fetch_element:
         name_start = cur ;
         name_element="" ;
         for (;
-             cur < len && (isalnum (a_qname[cur]) || a_qname[cur] == '_')
+             cur < len && (isalnum (a_qname[cur])
+                           || a_qname[cur] == '_'
+                           || isspace (a_qname[cur]))
              ; ++cur) {
         }
         if (cur == name_start) {
@@ -397,9 +403,10 @@ fetch_element:
             }
         } else {
             LOG_ERROR ("failed to parse name element. Index was: "
-                       << (int) cur << " buf was '" << a_qname) ;
+                       << (int) cur << " buf was '" << a_qname << "'") ;
             return false ;
         }
+        name_element.chomp () ;
         LOG_DD ("got name element: '" << name_element << "'") ;
         name_elems.push_back (name_element) ;
         if (cur < len) {
@@ -439,10 +446,18 @@ fetch_element:
                                                      ++cur_elem_it,
                                                      row_it,
                                                      a_result) ;
+            } else if (row_it->children () && row_it->children ().begin ()) {
+                Gtk::TreeModel::iterator it = row_it->children ().begin () ;
+                if ((Glib::ustring) (*it)[get_variable_columns ().name]
+                    == *cur_elem_it) {
+                    LOG_DD ("walked to path element: '" << *cur_elem_it) ;
+                    return get_variable_iter_from_qname (a_name_elems,
+                                                         ++cur_elem_it,
+                                                         it,
+                                                         a_result) ;
+                }
             }
-
         }
-        LOG_ERROR ("failed") ;
         return false ;
     }
 
@@ -617,6 +632,13 @@ fetch_element:
         Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
         THROW_IF_FAIL (sel) ;
         cur_selected_row = sel->get_selected () ;
+        if (!cur_selected_row) {return;}
+        IDebugger::VariableSafePtr variable =
+        (IDebugger::VariableSafePtr)(*cur_selected_row)[get_variable_columns ().variable] ;
+        if (!variable) {return;}
+        UString qname ;
+        variable->build_qname (qname) ;
+        LOG_DD ("row of variable '" << qname << "'") ;
 
         NEMIVER_CATCH
     }
@@ -654,25 +676,6 @@ fetch_element:
         NEMIVER_CATCH
     }
 
-
-    /*
-    void on_pointed_variable_value_signal
-                                (const UString &a_var_name,
-                                 const IDebugger::VariableSafePtr &a_value)
-    {
-        NEMIVER_TRY
-
-        LOG_FUNCTION_SCOPE_NORMAL_DD
-        if (a_var_name == "" || a_value) {}
-        THROW_IF_FAIL (tree_store) ;
-        tree_store->foreach_iter (sigc::bind
-                (sigc::mem_fun (*this, &Priv::add_dereferenced_pointer_walker),
-                 a_var_name, a_value)) ;
-
-        NEMIVER_CATCH
-    }
-    */
-
     void on_pointed_variable_value_signal
                                 (const UString &a_var_name,
                                  const IDebugger::VariableSafePtr &a_var)
@@ -680,6 +683,7 @@ fetch_element:
         LOG_FUNCTION_SCOPE_NORMAL_DD
 
         NEMIVER_TRY
+        THROW_IF_FAIL (tree_store) ;
 
         Gtk::TreeModel::iterator row_it ;
         bool ret = get_variable_iter_from_qname
