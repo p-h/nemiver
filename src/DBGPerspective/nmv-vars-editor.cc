@@ -156,7 +156,9 @@ public:
         a_it = tree_store->get_iter (local_variables_row_ref->get_path ()) ;
     }
 
-    void set_a_variable_type (const UString &a_var_name, const UString &a_type)
+    void set_a_variable_type (const UString &a_var_name,
+                              const UString &a_type,
+                              Gtk::TreeModel::iterator &a_it)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (tree_store) ;
@@ -172,7 +174,7 @@ public:
         }
         THROW_IF_FAIL (ret) ;
         THROW_IF_FAIL (row_it) ;
-        (*row_it)[get_variable_columns ().type] =  a_type ;
+        row_it->set_value (get_variable_columns ().type, (Glib::ustring)a_type) ;
         int nb_lines = a_type.get_number_of_lines () ;
         UString type_caption = a_type ;
         if (nb_lines) {--nb_lines;}
@@ -186,6 +188,13 @@ public:
         (IDebugger::VariableSafePtr)(*row_it)[get_variable_columns ().variable];
         THROW_IF_FAIL (variable) ;
         variable->type (type_caption) ;
+        a_it = row_it ;
+    }
+
+    void set_a_variable_type (const UString &a_var_name, const UString &a_type)
+    {
+        Gtk::TreeModel::iterator it ;
+        set_a_variable_type (a_var_name, a_type, it) ;
     }
 
     void set_a_variable_real (const IDebugger::VariableSafePtr &a_var,
@@ -196,8 +205,12 @@ public:
         THROW_IF_FAIL (a_var) ;
         THROW_IF_FAIL (a_parent) ;
 
-        Gtk::TreeModel::iterator cur_row_it =
-                            tree_store->append (a_parent->children ()) ;
+        Gtk::TreeModel::iterator cur_row_it  = a_parent->children ().begin () ;
+        if (!cur_row_it
+            ||(Glib::ustring)
+                cur_row_it->get_value (get_variable_columns ().name) != "") {
+            cur_row_it = tree_store->append (a_parent->children ()) ;
+        }
         THROW_IF_FAIL (cur_row_it) ;
 
         (*cur_row_it)[get_variable_columns ().variable] = a_var ;
@@ -298,41 +311,6 @@ public:
         return false ;
     }
 
-    Gtk::Menu& get_contextual_menu ()
-    {
-        if (!contextual_menu) {
-            contextual_menu.reset ( new Gtk::Menu) ;
-            Gtk::MenuItem *mi =
-                Gtk::manage (new Gtk::MenuItem (_("show variable type"))) ;
-            mi->signal_activate ().connect (sigc::mem_fun
-                (*this, &Priv::on_show_variable_type_menu_item)) ;
-            contextual_menu->append (*mi) ;
-            mi = Gtk::manage (new Gtk::MenuItem (_("Dereference"))) ;
-            mi->signal_activate ().connect (sigc::mem_fun
-                (*this, &Priv::on_dereference_variable_menu_item)) ;
-            contextual_menu->append (*mi) ;
-            dereference_mi = mi;
-            dereference_mi->set_sensitive (false) ;
-        }
-        THROW_IF_FAIL (contextual_menu) ;
-        if (cur_selected_row) {
-            THROW_IF_FAIL (dereference_mi) ;
-            UString type =
-            (Glib::ustring) (*cur_selected_row)[get_variable_columns ().type] ;
-            if (is_type_a_pointer (type)) {
-                dereference_mi->set_sensitive (true) ;
-            } else {
-                dereference_mi->set_sensitive (false) ;
-            }
-        }
-        return *contextual_menu ;
-    }
-
-    void popup_contextual_menu (GdkEventButton *a_event)
-    {
-        get_contextual_menu ().show_all () ;
-        get_contextual_menu ().popup (a_event->button, a_event->time) ;
-    }
 
     void show_variable_type_in_dialog ()
     {
@@ -511,8 +489,10 @@ fetch_element:
         THROW_IF_FAIL (selection) ;
         selection->signal_changed ().connect
             (sigc::mem_fun (*this, &Priv::on_tree_view_selection_changed_signal));
-        tree_view->signal_button_press_event ().connect_notify (sigc::mem_fun
-                (*this, &Priv::on_button_press_event_signal)) ;
+        tree_view->signal_row_expanded ().connect
+            (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal)) ;
+        tree_view->signal_row_activated ().connect
+            (sigc::mem_fun (*this, &Priv::on_tree_view_row_activated_signal)) ;
     }
 
     void on_local_variables_listed_signal
@@ -618,7 +598,20 @@ fetch_element:
         NEMIVER_TRY
 
         LOG_DD ("var: '" << a_var_name << "', type: '" << a_type << "'") ;
-        set_a_variable_type (a_var_name, a_type) ;
+
+        Gtk::TreeModel::iterator row_it ;
+        set_a_variable_type (a_var_name, a_type, row_it) ;
+        if (!row_it) {return;}
+
+        UString type =
+            (Glib::ustring) row_it->get_value (get_variable_columns ().type) ;
+        if (type == "" || !is_type_a_pointer (type)) {return;}
+
+        THROW_IF_FAIL (tree_store) ;
+
+        if (!row_it->children ().begin ()) {
+            tree_store->append (row_it->children ()) ;
+        }
 
         NEMIVER_CATCH
     }
@@ -634,7 +627,8 @@ fetch_element:
         cur_selected_row = sel->get_selected () ;
         if (!cur_selected_row) {return;}
         IDebugger::VariableSafePtr variable =
-        (IDebugger::VariableSafePtr)(*cur_selected_row)[get_variable_columns ().variable] ;
+        (IDebugger::VariableSafePtr)cur_selected_row->get_value
+                                            (get_variable_columns ().variable) ;
         if (!variable) {return;}
         UString qname ;
         variable->build_qname (qname) ;
@@ -643,38 +637,48 @@ fetch_element:
         NEMIVER_CATCH
     }
 
-    void on_button_press_event_signal (GdkEventButton *a_event)
+    void on_tree_view_row_expanded_signal (const Gtk::TreeModel::iterator &a_it,
+                                           const Gtk::TreeModel::Path &a_path)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         NEMIVER_TRY
 
-        if (!cur_selected_row) {return ;}
-        THROW_IF_FAIL (a_event) ;
-        if (a_event->button != 3) {return ;}
-        popup_contextual_menu (a_event) ;
+        THROW_IF_FAIL (a_it) ;
 
-        NEMIVER_CATCH
-    }
+        if (a_path.get_depth ()) {}
 
-    void on_show_variable_type_menu_item ()
-    {
-        NEMIVER_TRY
+        IDebugger::VariableSafePtr var =
+            (IDebugger::VariableSafePtr)
+                a_it->get_value (get_variable_columns ().variable) ;
+        if (!var) {return;}
+        Gtk::TreeModel::iterator child_it = a_it->children ().begin ();
+        if (!child_it) {return;}
+        var = child_it->get_value (get_variable_columns ().variable) ;
+        if (var) {return;}
 
-        show_variable_type_in_dialog () ;
-
-        NEMIVER_CATCH
-    }
-
-    void on_dereference_variable_menu_item ()
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        NEMIVER_TRY
-
+        cur_selected_row = a_it ;
         print_pointed_variable_value () ;
 
         NEMIVER_CATCH
     }
+
+    void on_tree_view_row_activated_signal (const Gtk::TreeModel::Path &a_path,
+                                            Gtk::TreeViewColumn *a_col)
+    {
+        NEMIVER_TRY
+        THROW_IF_FAIL (tree_store) ;
+        Gtk::TreeModel::iterator it = tree_store->get_iter (a_path) ;
+        UString type =
+            (Glib::ustring) it->get_value (get_variable_columns ().type) ;
+        if (type == "") {return;}
+
+        if (a_col != tree_view->get_column (2)) {return;}
+        cur_selected_row = it ;
+        show_variable_type_in_dialog () ;
+        NEMIVER_CATCH
+    }
+
 
     void on_pointed_variable_value_signal
                                 (const UString &a_var_name,

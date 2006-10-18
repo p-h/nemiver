@@ -1,3 +1,14 @@
+Thu, 19 Oct 2006 00:21:28 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-vars-editor.cc: no more need to right click
+	  in the local-vars-editor to either dereference pointers or to look
+	  at the complete type of a variable. Now, to look at the complete
+	  type, double click in the type column, on the variable row.
+	  Pointer variables are dereferenced automatically. When they can't be
+	  dereferenced, for example because the pointer is set to NULL, the
+	  pointer has an empty child row. Maybe we could set the name of this
+	  row to "<undefined value>" or something like that.
+
 Wed, 18 Oct 2006 00:39:42 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: OnVariableTypeHandler::do_handle():
