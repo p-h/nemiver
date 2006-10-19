@@ -1,3 +1,17 @@
+2006-10-18  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/nmv-call-stack.cc: hack up a little
+	copy-stack-trace-to-clipboard functionality.  Currently it's triggered by
+	double-clicking on the call stack treeview, but that's just for testing.  It
+	will be changed to a right-click context menu soon.  I seem to be having
+	some utf-8 onversion issues from time to time that will probably need to be
+	investigated.  I can't help thinking that there's a better way to do this
+	whole thing though.  Currently we have two basic data sources: a list of
+	Frames and a map of argument lists that apply to these frames.  It seems
+	like the argument list should be a member of the Frame class itself.  Then
+	we could easily convert the stack Frame to a string by implementing
+	Frame::operator<<()
+
 Thu, 19 Oct 2006 00:21:28 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-vars-editor.cc: no more need to right click
