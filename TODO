@@ -22,8 +22,6 @@ make sense like those related to stepping and breakpoint setting.
 *) write a C/C++ type declaration parser and be able to determine if it's a pointer (or a reference) or not.
    If it's a reference, add the ability in to dereference the pointer (inspect the pointed object). [pre 0.1]
 
-*) Add ability to copy/paste a stack trace for submitting with bug reports, etc.  [pre 0.1]
-
 *) add ability to trigger session saving, on demand. [pre 0.1]
 
 *) add show/hide line numbers in preferences [pre 0.1]
