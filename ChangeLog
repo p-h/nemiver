@@ -1,3 +1,21 @@
+Fri, 20 Oct 2006 08:59:21 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: replaced
+	  parse_tuple(), parse_list(), parse_value(), parse_result()
+	  by parse_gdbmi_tuple(), parse_gdbmi_list(),
+	  parse_gdbmi_value(), parse_gdbmi_result() for better legibility.
+	  Started to add GDBEngine::Priv::parse_threads_list() to parse
+	  the thread list result record, which is the result of the
+	  gdb command "-thread-list-ids". It isn't used yet.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: renamed
+	  DBGPerspective::on_call_stack_copy_to_clipboard into
+	  DBGperspective::on_call_stack_copy_to_clipboad_action() to keep
+	  the naming scheme homogenous with what already exists.
+	  In DBGPerspective::load_menu(): put the return statement outside the
+	  try/catch block to prevent gcc from warn about the function not
+	  returning any value.
+	* TODO: updated this. Pointer dereferencing is done now.
+
 2006-10-19  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/menus/Makefile.am,

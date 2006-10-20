@@ -1898,10 +1898,10 @@ struct GDBEngine::Priv {
     /// parse a GDB/MI Tuple is a actualy a set of name=value constructs,
     /// where 'value' can be quite complicated.
     /// Look at the GDB/MI output syntax for more.
-    bool parse_tuple (const UString &a_input,
-                      UString::size_type a_from,
-                      UString::size_type &a_to,
-                      GDBMITupleSafePtr &a_tuple)
+    bool parse_gdbmi_tuple (const UString &a_input,
+                            UString::size_type a_from,
+                            UString::size_type &a_to,
+                            GDBMITupleSafePtr &a_tuple)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -1924,7 +1924,7 @@ struct GDBEngine::Priv {
         GDBMIResultSafePtr result ;
 
         for (;;) {
-            if (parse_result (a_input, cur, cur, result)) {
+            if (parse_gdbmi_result (a_input, cur, cur, result)) {
                 THROW_IF_FAIL (result) ;
                 SKIP_WS (a_input, cur, cur) ;
                 CHECK_END (a_input, cur, end) ;
@@ -1966,10 +1966,10 @@ struct GDBEngine::Priv {
     /// Parse a GDB/MI LIST. A list is either a list of GDB/MI Results
     /// or a list of GDB/MI Values.
     /// Look at the GDB/MI output syntax documentation for more.
-    bool parse_list (const UString &a_input,
-                     UString::size_type a_from,
-                     UString::size_type &a_to,
-                     GDBMIListSafePtr &a_list)
+    bool parse_gdbmi_list (const UString &a_input,
+                           UString::size_type a_from,
+                           UString::size_type &a_to,
+                           GDBMIListSafePtr &a_list)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -1995,7 +1995,7 @@ struct GDBEngine::Priv {
         GDBMIValueSafePtr value ;
         GDBMIResultSafePtr result ;
         if ((isalpha (a_input[cur]) || a_input[cur] == '_')
-             && parse_result (a_input, cur, cur, result)) {
+             && parse_gdbmi_result (a_input, cur, cur, result)) {
             CHECK_END (a_input, cur, end) ;
             THROW_IF_FAIL (result) ;
             return_list = GDBMIListSafePtr (new GDBMIList (result)) ;
@@ -2004,7 +2004,7 @@ struct GDBEngine::Priv {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
                     result = NULL ;
-                    if (parse_result (a_input, cur, cur, result)) {
+                    if (parse_gdbmi_result (a_input, cur, cur, result)) {
                         THROW_IF_FAIL (result) ;
                         return_list->append (result) ;
                         continue ;
@@ -2012,7 +2012,7 @@ struct GDBEngine::Priv {
                 }
                 break ;
             }
-        } else if (parse_value (a_input, cur, cur, value)) {
+        } else if (parse_gdbmi_value (a_input, cur, cur, value)) {
             CHECK_END (a_input, cur, end) ;
             THROW_IF_FAIL (value);
             return_list =
@@ -2022,7 +2022,7 @@ struct GDBEngine::Priv {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
                     value = NULL ;
-                    if (parse_value (a_input, cur, cur, value)) {
+                    if (parse_gdbmi_value (a_input, cur, cur, value)) {
                         THROW_IF_FAIL (value) ;
                         return_list->append (value) ;
                         continue ;
@@ -2051,10 +2051,10 @@ struct GDBEngine::Priv {
     /// variable=value.
     /// Beware value is more complicated than what it looks like :-)
     /// Look at the GDB/MI spec for more.
-    bool parse_result (const UString &a_input,
-                       UString::size_type a_from,
-                       UString::size_type &a_to,
-                       GDBMIResultSafePtr &a_value)
+    bool parse_gdbmi_result (const UString &a_input,
+                             UString::size_type a_from,
+                             UString::size_type &a_to,
+                             GDBMIResultSafePtr &a_value)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -2075,7 +2075,7 @@ struct GDBEngine::Priv {
         CHECK_END (a_input, cur, end) ;
 
         GDBMIValueSafePtr value;
-        if (!parse_value (a_input, cur, cur, value)) {
+        if (!parse_gdbmi_value (a_input, cur, cur, value)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2102,10 +2102,10 @@ struct GDBEngine::Priv {
     /// \param a_to (out parameter) a pointer to the current char,
     /// after the parsing.
     //// \param a_value the result of the parsing.
-    bool parse_value (const UString &a_input,
-                      UString::size_type a_from,
-                      UString::size_type &a_to,
-                      GDBMIValueSafePtr &a_value)
+    bool parse_gdbmi_value (const UString &a_input,
+                            UString::size_type a_from,
+                            UString::size_type &a_to,
+                            GDBMIValueSafePtr &a_value)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -2119,13 +2119,13 @@ struct GDBEngine::Priv {
             }
         } else if (a_input[cur] == '{') {
             GDBMITupleSafePtr tuple ;
-            if (parse_tuple (a_input, cur, cur, tuple)) {
+            if (parse_gdbmi_tuple (a_input, cur, cur, tuple)) {
                 THROW_IF_FAIL (tuple) ;
                 value = GDBMIValueSafePtr (new GDBMIValue (tuple)) ;
             }
         } else if (a_input[cur] == '[') {
             GDBMIListSafePtr list ;
-            if (parse_list (a_input, cur, cur, list)) {
+            if (parse_gdbmi_list (a_input, cur, cur, list)) {
                 THROW_IF_FAIL (list) ;
                 value = GDBMIValueSafePtr (new GDBMIValue (list)) ;
             }
@@ -2153,7 +2153,7 @@ struct GDBEngine::Priv {
         CHECK_END (a_input, cur, end) ;
 
         GDBMIResultSafePtr result ;
-        if (!parse_result (a_input, cur, cur, result)) {
+        if (!parse_gdbmi_result (a_input, cur, cur, result)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2224,7 +2224,7 @@ struct GDBEngine::Priv {
         CHECK_END (a_input, cur, end) ;
 
         GDBMIResultSafePtr result ;
-        if (!parse_result (a_input, cur, cur, result)) {
+        if (!parse_gdbmi_result (a_input, cur, cur, result)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2318,7 +2318,7 @@ struct GDBEngine::Priv {
         }
 
         GDBMIResultSafePtr gdbmi_result ;
-        if (!parse_result (a_input, cur, cur, gdbmi_result)) {
+        if (!parse_gdbmi_result (a_input, cur, cur, gdbmi_result)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2454,7 +2454,8 @@ struct GDBEngine::Priv {
                                 }
                             }
                             LOG_D ("pushing arg '"
-                                   <<parameter->name()<<"'='"<<parameter->value() <<"'"
+                                   <<parameter->name()
+                                   <<"'='"<<parameter->value() <<"'"
                                    <<" for frame level='"
                                    <<(int)cur_frame_level
                                    <<"'",
@@ -2506,7 +2507,7 @@ struct GDBEngine::Priv {
         }
 
         GDBMIResultSafePtr gdbmi_result ;
-        if (!parse_result (a_input, cur, cur, gdbmi_result)) {
+        if (!parse_gdbmi_result (a_input, cur, cur, gdbmi_result)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2903,9 +2904,9 @@ struct GDBEngine::Priv {
     ///  returns true.
     /// \return true upon successful parsing, false otherwise.
     bool parse_frame (const UString &a_input,
-            UString::size_type a_from,
-            UString::size_type &a_to,
-            IDebugger::Frame &a_frame)
+                      UString::size_type a_from,
+                      UString::size_type &a_to,
+                      IDebugger::Frame &a_frame)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -2952,6 +2953,87 @@ struct GDBEngine::Priv {
         return true;
     }
 
+    //TODO: finish this.
+    bool parse_threads_list (const UString &a_input,
+                             UString::size_type a_from,
+                             UString::size_type &a_to,
+                             std::list<int> &a_thread_ids)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.size () ;
+
+        if (a_input.compare (cur, 12, "thread-ids={")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        GDBMIResultSafePtr gdbmi_result ;
+        if (!parse_gdbmi_result (a_input, cur, cur, gdbmi_result)) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        if (a_input[cur] != ',') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        ++cur ;
+        CHECK_END (a_input, cur, end) ;
+
+        if (gdbmi_result->variable () != "thread-ids") {
+            LOG_ERROR ("expected gdbmi variable 'thread-ids', got: '"
+                       << gdbmi_result->variable () << "\'") ;
+            return false ;
+        }
+        THROW_IF_FAIL (gdbmi_result->value ()) ;
+        THROW_IF_FAIL (gdbmi_result->value ()->content_type ()
+                       == GDBMIValue::LIST_TYPE) ;
+
+        GDBMIListSafePtr gdbmi_list =
+                    gdbmi_result->value ()->get_list_content () ;
+        THROW_IF_FAIL (gdbmi_list) ;
+        THROW_IF_FAIL (gdbmi_list->content_type ()
+                       == GDBMIList::VALUE_TYPE) ;
+
+        list<GDBMIResultSafePtr> result_list ;
+        gdbmi_list->get_result_content (result_list) ;
+        list<GDBMIResultSafePtr>::const_iterator it ;
+        int thread_id=0 ;
+        std::list<int> thread_ids ;
+        for (it = result_list.begin () ; it != result_list.end () ; ++it) {
+            THROW_IF_FAIL (*it) ;
+            if ((*it)->variable () != "thread-id") {
+                LOG_ERROR ("expected a gdbmi value with variable name 'thread-id'"
+                           ". Got '" << (*it)->variable () << "'") ;
+                return false ;
+            }
+            THROW_IF_FAIL ((*it)->value ()
+                           && ((*it)->value ()->content_type ()
+                               == GDBMIValue::STRING_TYPE));
+            thread_id = atoi ((*it)->value ()->get_string_content ().c_str ()) ;
+            THROW_IF_FAIL (thread_id) ;
+            thread_ids.push_back (thread_id) ;
+        }
+
+        if (!parse_gdbmi_result (a_input, cur, cur, gdbmi_result)) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        if (gdbmi_result->variable () != "number-of-threads") {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        THROW_IF_FAIL (gdbmi_result->value ()
+                       && gdbmi_result->value ()->content_type ()
+                           == GDBMIValue::STRING_TYPE) ;
+        unsigned int num_threads =
+            atoi (gdbmi_result->value ()->get_string_content ().c_str ()) ;
+
+        THROW_IF_FAIL (num_threads == thread_ids.size ()) ;
+
+        a_thread_ids = thread_ids ;
+        a_to = cur ;
+        return true;
+    }
 
     /// parses a string that has the form:
     /// \"blah\"
@@ -3398,7 +3480,7 @@ fetch_gdbmi_result:
                     }
                 } else if (!a_input.compare (cur, 7, "depth=\"")) {
                     GDBMIResultSafePtr result ;
-                    parse_result (a_input, cur, cur, result) ;
+                    parse_gdbmi_result (a_input, cur, cur, result) ;
                     THROW_IF_FAIL (result) ;
                     LOG_D ("parsed result", GDBMI_PARSING_DOMAIN) ;
                 } else if (!a_input.compare (cur, 12, "stack-args=[")) {
@@ -3428,7 +3510,8 @@ fetch_gdbmi_result:
                     }
                 } else {
                     GDBMIResultSafePtr result ;
-                    if (!parse_result (a_input, cur, cur, result) || !result) {
+                    if (!parse_gdbmi_result (a_input, cur, cur, result)
+                        || !result) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
                         LOG_D ("parsed unknown gdbmi result",

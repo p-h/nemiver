@@ -19,9 +19,6 @@ make sense like those related to stepping and breakpoint setting.
 
 *) add a search facility to search text in the source editor, also maybe add find in files.
 
-*) write a C/C++ type declaration parser and be able to determine if it's a pointer (or a reference) or not.
-   If it's a reference, add the ability in to dereference the pointer (inspect the pointed object). [pre 0.1]
-
 *) add ability to trigger session saving, on demand. [pre 0.1]
 
 *) add show/hide line numbers in preferences [pre 0.1]

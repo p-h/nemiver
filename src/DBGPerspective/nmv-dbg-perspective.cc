@@ -146,7 +146,7 @@ private:
     void on_show_target_output_action () ;
     void on_breakpoint_delete_action () ;
     void on_breakpoint_go_to_source_action () ;
-    void on_call_stack_copy_to_clipboard () ;
+    void on_call_stack_copy_to_clipboard_action () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
 
@@ -809,7 +809,7 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
 }
 
 void
-DBGPerspective::on_call_stack_copy_to_clipboard ()
+DBGPerspective::on_call_stack_copy_to_clipboard_action ()
 {
     UString call_stack_string = get_call_stack ().to_string ();
     Gtk::Clipboard::get ()->set_text (call_stack_string);
@@ -1652,7 +1652,9 @@ DBGPerspective::init_actions ()
             Gtk::Stock::COPY,
             _("_Copy"),
             _("Copy the stack trace to the clipboard"),
-            sigc::mem_fun (*this, &DBGPerspective::on_call_stack_copy_to_clipboard),
+            sigc::mem_fun
+                    (*this,
+                     &DBGPerspective::on_call_stack_copy_to_clipboard_action),
             ActionEntry::DEFAULT,
             ""
         }
@@ -2150,11 +2152,10 @@ DBGPerspective::load_menu (UString a_filename, UString a_widget_name)
 
     m_priv->workbench->get_ui_manager ()->add_ui_from_file
         (Glib::locale_to_utf8 (absolute_path)) ;
-    return m_priv->workbench->get_ui_manager ()->get_widget (a_widget_name);
 
     NEMIVER_CATCH
+    return m_priv->workbench->get_ui_manager ()->get_widget (a_widget_name);
 }
-
 
 Gtk::Widget*
 DBGPerspective::get_breakpoints_menu ()
@@ -2174,7 +2175,7 @@ DBGPerspective::get_call_stack_menu ()
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->callstack_menu) {
         m_priv->callstack_menu = load_menu ("callstackpopup.xml",
-                "/CallStackPopup");
+                                            "/CallStackPopup");
         THROW_IF_FAIL (m_priv->callstack_menu);
     }
     return m_priv->callstack_menu;
