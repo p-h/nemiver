@@ -1,5 +1,5 @@
 PLUGIN_NAME=DBGPerspective
-menusfiles = menus.xml toolbar.xml contextualmenu.xml breakpointspopup.xml
+menusfiles = menus.xml toolbar.xml contextualmenu.xml breakpointspopup.xml callstackpopup.xml
 
 menusdir = @NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)/menus
 menus_DATA = $(menusfiles)

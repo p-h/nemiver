@@ -153,51 +153,6 @@ struct CallStack::Priv {
         frame_selected_signal.emit (index, frame) ;
     }
 
-    void copy_stack_trace()
-    {
-        int i = 0;
-        std::ostringstream frame_stream;
-        vector<IDebugger::Frame>::const_iterator frame_iter;
-        map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
-        // convert list of stack frames to a string (maybe Frame should just
-        // implement operator<< ?
-        for (frame_iter = frames.begin(), params_iter = m_params.begin();
-                frame_iter != frames.end(); ++frame_iter)
-        {
-            frame_stream << "#" << UString::from_int(i++) << "  " <<
-                frame_iter->function () << " (";
-            // if the params map exists, add the function params to the stack trace
-            if (params_iter != m_params.end())
-            {
-                for (list<IDebugger::VariableSafePtr>::const_iterator it =
-                        params_iter->second.begin();
-                        it != params_iter->second.end(); ++it)
-                {
-                    if (it != params_iter->second.begin())
-                        frame_stream << ", ";
-                    frame_stream << (*it)->name() << "=" << (*it)->value();
-                }
-                // advance to the list of params for the next stack frame
-                ++params_iter;
-            }
-            frame_stream << ") at " << frame_iter->file_name () << ":"
-                << UString::from_int(frame_iter->line ()) << std::endl;
-        }
-        // FIXME: there still seem to be some utf conversion issues here
-        Gtk::Clipboard::get ()->set_text
-            (Glib::locale_to_utf8(frame_stream.str()));
-    }
-
-    void on_button_press_event(GdkEventButton* event)
-    {
-        // FIXME: yes, it's stupid to trigger the 'copy stack trace' action via
-        // double-click.  It'll change soon.
-        if ((event->type == GDK_2BUTTON_PRESS) && (event->button == 1))
-        {
-            copy_stack_trace();
-        }
-    }
-
     void connect_debugger_signals ()
     {
         THROW_IF_FAIL (debugger) ;
@@ -235,9 +190,6 @@ struct CallStack::Priv {
         tree_view->get_selection ()->signal_changed ().connect
             (sigc::mem_fun (*this,
                             &CallStack::Priv::on_selection_changed_signal)) ;
-        tree_view->signal_button_press_event ().connect_notify
-            (sigc::mem_fun (*this,
-                            &CallStack::Priv::on_button_press_event)) ;
 
         Gtk::TreeViewColumn* column =
                             tree_view->get_column (CallStackCols::FUNCTION_NAME) ;
@@ -263,8 +215,8 @@ struct CallStack::Priv {
 
         clear_frame_list () ;
 
-        // save the list of params around so that we can use it when copying a
-        // stack trace to the clipboard later.
+        // save the list of params around so that we can use it when converting
+        // to a string later
         m_params = a_params;
 
         Gtk::TreeModel::iterator store_iter ;
@@ -331,6 +283,41 @@ CallStack::is_empty ()
     return m_priv->frames.empty () ;
 }
 
+
+UString
+CallStack::to_string()
+{
+    THROW_IF_FAIL (m_priv) ;
+    int i = 0;
+    std::ostringstream frame_stream;
+    vector<IDebugger::Frame>::const_iterator frame_iter;
+    map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
+    // convert list of stack frames to a string (maybe Frame should just
+    // implement operator<< ?
+    for (frame_iter = m_priv->frames.begin(), params_iter = m_priv->m_params.begin();
+            frame_iter != m_priv->frames.end(); ++frame_iter)
+    {
+        frame_stream << "#" << UString::from_int(i++) << "  " <<
+            frame_iter->function () << " (";
+        // if the params map exists, add the function params to the stack trace
+        if (params_iter != m_priv->m_params.end())
+        {
+            for (list<IDebugger::VariableSafePtr>::const_iterator it =
+                    params_iter->second.begin();
+                    it != params_iter->second.end(); ++it)
+            {
+                if (it != params_iter->second.begin())
+                    frame_stream << ", ";
+                frame_stream << (*it)->name() << "=" << (*it)->value();
+            }
+            // advance to the list of params for the next stack frame
+            ++params_iter;
+        }
+        frame_stream << ") at " << frame_iter->file_name () << ":"
+            << UString::from_int(frame_iter->line ()) << std::endl;
+    }
+    return frame_stream.str();
+}
 
 const vector<IDebugger::Frame>&
 CallStack::frames () const

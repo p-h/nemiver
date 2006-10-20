@@ -1,3 +1,15 @@
+2006-10-19  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/menus/Makefile.am,
+	src/DBGPerspective/menus/callstackpopup.xml: added new context menu for
+	copying the call stack to the clipboard
+	* src/DBGPerspective/nmv-call-stack.cc, src/DBGPerspective/nmv-call-stack.h:
+	Don't copy to clipboard on double-click anymore, just provide a to_string()
+	function that we can use to get a string representation of the full call
+	stack and can copy to the clipboard when a menu item is selected
+	* src/DBGPerspective/nmv-dbg-perspective.cc: popup a context menu when
+	right-clicking on the call stack to copy it to the clipboard
+
 2006-10-18  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/nmv-call-stack.cc: hack up a little

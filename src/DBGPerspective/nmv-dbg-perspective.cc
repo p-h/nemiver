@@ -30,6 +30,7 @@
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
+#include <gtkmm/clipboard.h>
 #include "nmv-dbg-perspective.h"
 #include "nmv-ui-utils.h"
 #include "nmv-env.h"
@@ -145,6 +146,7 @@ private:
     void on_show_target_output_action () ;
     void on_breakpoint_delete_action () ;
     void on_breakpoint_go_to_source_action () ;
+    void on_call_stack_copy_to_clipboard () ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
 
@@ -198,6 +200,7 @@ private:
     void on_program_finished_signal () ;
     void on_frame_selected_signal (int, const IDebugger::Frame &) ;
     void on_breakpoints_view_button_press_signal (GdkEventButton *a_event) ;
+    void on_call_stack_button_press_signal (GdkEventButton *a_event) ;
 
     void on_debugger_running_signal () ;
 
@@ -238,6 +241,7 @@ private:
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
     void popup_breakpoints_view_menu (GdkEventButton *a_event) ;
+    void popup_call_stack_menu (GdkEventButton *a_event) ;
     void record_and_save_new_session () ;
     void record_and_save_session (ISessMgr::Session &a_session) ;
     IProcMgr* get_process_manager () ;
@@ -382,8 +386,10 @@ public:
 
     void unset_where () ;
 
+    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name) ;
     Gtk::Widget* get_contextual_menu () ;
     Gtk::Widget* get_breakpoints_menu () ;
+    Gtk::Widget* get_call_stack_menu () ;
 
     void init_conf_mgr () ;
 
@@ -447,6 +453,7 @@ struct DBGPerspective::Priv {
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
     Glib::RefPtr<Gtk::ActionGroup> opened_file_action_group;
     Glib::RefPtr<Gtk::ActionGroup> breakpoints_action_group;
+    Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
     Glib::RefPtr<Gtk::UIManager> ui_manager ;
     Glib::RefPtr<Gtk::IconFactory> icon_factory ;
     Gtk::UIManager::ui_merge_id menubar_merge_id ;
@@ -454,6 +461,7 @@ struct DBGPerspective::Priv {
     Gtk::UIManager::ui_merge_id contextual_menu_merge_id;
     Gtk::Widget *contextual_menu ;
     Gtk::Widget *breakpoints_menu ;
+    Gtk::Widget *callstack_menu ;
     IWorkbenchSafePtr workbench ;
     SafePtr<Gtk::HBox> toolbar ;
     ThrobberSafePtr throbber ;
@@ -534,6 +542,7 @@ struct DBGPerspective::Priv {
         contextual_menu_merge_id(0),
         contextual_menu (NULL),
         breakpoints_menu (NULL),
+        callstack_menu (NULL),
         workbench (NULL),
         command_view_is_visible (false),
         target_output_view_is_visible (false),
@@ -797,6 +806,13 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
     source_editor->source_view ().scroll_to (txt_iter) ;
 
     NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_call_stack_copy_to_clipboard ()
+{
+    UString call_stack_string = get_call_stack ().to_string ();
+    Gtk::Clipboard::get ()->set_text (call_stack_string);
 }
 
 
@@ -1197,6 +1213,21 @@ DBGPerspective::on_breakpoints_view_button_press_signal (GdkEventButton *a_event
         if (a_event->button == 3) {
             popup_breakpoints_view_menu (a_event) ;
         }
+    }
+
+    NEMIVER_CATCH
+}
+
+
+void
+DBGPerspective::on_call_stack_button_press_signal (GdkEventButton *a_event)
+{
+    NEMIVER_TRY
+
+    // right-clicking should pop up a context menu
+    if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3))
+    {
+        popup_call_stack_menu (a_event) ;
     }
 
     NEMIVER_CATCH
@@ -1615,6 +1646,18 @@ DBGPerspective::init_actions ()
         }
     };
 
+    static ui_utils::ActionEntry s_call_stack_action_entries [] = {
+        {
+            "CopyCallStackMenuItemAction",
+            Gtk::Stock::COPY,
+            _("_Copy"),
+            _("Copy the stack trace to the clipboard"),
+            sigc::mem_fun (*this, &DBGPerspective::on_call_stack_copy_to_clipboard),
+            ActionEntry::DEFAULT,
+            ""
+        }
+    };
+
     m_priv->target_connected_action_group =
                 Gtk::ActionGroup::create ("target-connected-action-group") ;
     m_priv->target_connected_action_group->set_sensitive (false) ;
@@ -1637,6 +1680,9 @@ DBGPerspective::init_actions ()
     m_priv->breakpoints_action_group =
                 Gtk::ActionGroup::create ("breakpoints-action-group") ;
     m_priv->breakpoints_action_group->set_sensitive (true) ;
+    m_priv->call_stack_action_group =
+                Gtk::ActionGroup::create ("callstack-action-group") ;
+    m_priv->call_stack_action_group->set_sensitive (true) ;
 
     int num_actions =
      sizeof (s_target_connected_action_entries)/sizeof (ui_utils::ActionEntry);
@@ -1685,6 +1731,14 @@ DBGPerspective::init_actions ()
                          num_actions,
                          m_priv->breakpoints_action_group) ;
 
+    num_actions =
+         sizeof (s_call_stack_action_entries)/sizeof (ui_utils::ActionEntry) ;
+
+    ui_utils::add_action_entries_to_action_group
+                        (s_call_stack_action_entries,
+                         num_actions,
+                         m_priv->call_stack_action_group) ;
+
     m_priv->workbench->get_ui_manager ()->insert_action_group
                                         (m_priv->target_connected_action_group) ;
     m_priv->workbench->get_ui_manager ()->insert_action_group
@@ -1697,6 +1751,8 @@ DBGPerspective::init_actions ()
                                             (m_priv->opened_file_action_group);
     m_priv->workbench->get_ui_manager ()->insert_action_group
                                             (m_priv->breakpoints_action_group);
+    m_priv->workbench->get_ui_manager ()->insert_action_group
+                                            (m_priv->call_stack_action_group);
 
     m_priv->workbench->get_root_window ().add_accel_group
         (m_priv->workbench->get_ui_manager ()->get_accel_group ()) ;
@@ -1807,6 +1863,8 @@ DBGPerspective::init_signals ()
         (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
     get_breakpoints_view ().widget ().signal_button_press_event ().connect_notify
         (sigc::mem_fun (*this, &DBGPerspective::on_breakpoints_view_button_press_signal));
+    get_call_stack ().widget ().signal_button_press_event ().connect_notify
+        (sigc::mem_fun (*this, &DBGPerspective::on_call_stack_button_press_signal));
 }
 
 void
@@ -2080,24 +2138,46 @@ DBGPerspective::get_contextual_menu ()
 }
 
 Gtk::Widget*
+DBGPerspective::load_menu (UString a_filename, UString a_widget_name)
+{
+    THROW_IF_FAIL (m_priv) ;
+    NEMIVER_TRY
+    string relative_path = Glib::build_filename ("menus", a_filename) ;
+    string absolute_path ;
+    THROW_IF_FAIL (build_absolute_resource_path
+            (Glib::locale_to_utf8 (relative_path),
+             absolute_path)) ;
+
+    m_priv->workbench->get_ui_manager ()->add_ui_from_file
+        (Glib::locale_to_utf8 (absolute_path)) ;
+    return m_priv->workbench->get_ui_manager ()->get_widget (a_widget_name);
+
+    NEMIVER_CATCH
+}
+
+
+Gtk::Widget*
 DBGPerspective::get_breakpoints_menu ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->breakpoints_menu) {
-        string relative_path = Glib::build_filename ("menus",
-                                                     "breakpointspopup.xml") ;
-        string absolute_path ;
-        THROW_IF_FAIL (build_absolute_resource_path
-                (Glib::locale_to_utf8 (relative_path),
-                 absolute_path)) ;
-
-        m_priv->workbench->get_ui_manager ()->add_ui_from_file
-            (Glib::locale_to_utf8 (absolute_path)) ;
-        m_priv->breakpoints_menu = 
-            m_priv->workbench->get_ui_manager ()->get_widget ("/BreakpointsPopup");
+        m_priv->breakpoints_menu = load_menu ("breakpointspopup.xml",
+                "/BreakpointsPopup");
         THROW_IF_FAIL (m_priv->breakpoints_menu);
     }
     return m_priv->breakpoints_menu;
+}
+
+Gtk::Widget*
+DBGPerspective::get_call_stack_menu ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->callstack_menu) {
+        m_priv->callstack_menu = load_menu ("callstackpopup.xml",
+                "/CallStackPopup");
+        THROW_IF_FAIL (m_priv->callstack_menu);
+    }
+    return m_priv->callstack_menu;
 }
 
 
@@ -2190,6 +2270,13 @@ void
 DBGPerspective::popup_breakpoints_view_menu (GdkEventButton *a_event)
 {
     Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_breakpoints_menu ()) ;
+    THROW_IF_FAIL (menu) ;
+    menu->popup (a_event->button, a_event->time) ;
+}
+
+void DBGPerspective::popup_call_stack_menu (GdkEventButton *a_event)
+{
+    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_call_stack_menu ()) ;
     THROW_IF_FAIL (menu) ;
     menu->popup (a_event->button, a_event->time) ;
 }

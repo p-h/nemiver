@@ -56,6 +56,7 @@ public:
     CallStack (IDebuggerSafePtr &) ;
     virtual ~CallStack () ;
     bool is_empty () ;
+    UString to_string () ;
     const vector<IDebugger::Frame>& frames () const ;
     Gtk::Widget& widget () const ;
     void update_stack () ;
