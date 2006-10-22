@@ -1,7 +1,13 @@
+Sun, 22 Oct 2006 23:50:27 +0200 Dodji Seketeli
+
+	* TODO: updated this. Move the [pre 0.1] task to the top. Add
+	  a libnemivercommon.pc task.
+
 Sun, 22 Oct 2006 23:31:50 +0200 Dodji Seketeli
 
 	* src/*Makefile.am: cleanup to make sure the public header get
 	  installed in $(prefix)/include/nemiver.
+
 
 Sun, 22 Oct 2006 22:42:34 +0200 Dodji Seketeli
 
