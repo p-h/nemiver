@@ -10,6 +10,9 @@ libgdbmod_la_SOURCES= \
 $(headers) \
 nmv-gdb-engine.cc
 
+publicheaders_DATA=$(headers)
+publicheadersdir=$(prefix)/include/nemiver/dbgengine
+
 libgdbmod_la_LDFLAGS=@NEMIVER_LIBS@ -module -avoid-version
 
 config_DATA=gdbengine.conf

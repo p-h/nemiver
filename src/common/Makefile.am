@@ -60,7 +60,7 @@ nmv-delete-statement.cc \
 nmv-proc-utils.cc
 
 publicheaders_DATA=$(headers)
-publicheadersdir=$(prefix)/include/libnemivercommon
+publicheadersdir=$(prefix)/include/nemiver/libnemivercommon
 libnemivercommon_la_LDFLAGS=@NEMIVER_LIBS@
 
 INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \

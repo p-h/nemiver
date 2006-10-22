@@ -1,3 +1,8 @@
+Sun, 22 Oct 2006 23:31:50 +0200 Dodji Seketeli
+
+	* src/*Makefile.am: cleanup to make sure the public header get
+	  installed in $(prefix)/include/nemiver.
+
 Sun, 22 Oct 2006 22:42:34 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: we can now list
