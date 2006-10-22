@@ -1,3 +1,17 @@
+Sun, 22 Oct 2006 22:42:34 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: we can now list
+	  the threads of the target and select select one of them.
+	  Functions are IDebugger::list_threads() and
+	  IDebugger::select_thread(). The two signaling functions are
+	  IDebugger::threads_listed_signal() and
+	  IDebugger::thread_selected_signal().
+
+	* tests/test-breakpoint.cc:  updated this to test the new thread
+	  thing. The way I use this is:
+	  cd tests ; ./runtestbreakpoints .libs/fooprog
+	  And I look at the output :-)
+
 2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/glade/bodycontainer.glade: made it so that the status

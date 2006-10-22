@@ -294,14 +294,33 @@ public:
         Kind m_kind ;
         map<int, IDebugger::BreakPoint> m_breakpoints ;
         map<UString, UString> m_attrs ;
+
+        //call stack listed members
         vector<IDebugger::Frame> m_call_stack ;
         bool m_has_call_stack ;
+
+        //frame parameters listed members
         map<int, list<IDebugger::VariableSafePtr> > m_frames_parameters ;
         bool m_has_frames_parameters;
+
+        //local variable listed members
         list<IDebugger::VariableSafePtr> m_local_variables ;
         bool m_has_local_variables ;
+
+        //variable value evaluated members
         IDebugger::VariableSafePtr m_variable_value ;
         bool m_has_variable_value ;
+
+        //threads listed members
+        std::list<int> m_thread_list ;
+        bool m_has_thread_list ;
+
+        //new thread id selected members
+        int m_frame_level ;
+        int m_thread_id ;
+        IDebugger::Frame m_frame_in_thread ;
+        bool m_thread_id_got_selected ;
+        //TODO: finish (re)initialisation of thread id selected members
 
     public:
         ResultRecord () {clear () ;}
@@ -373,6 +392,35 @@ public:
         bool has_variable_value () const {return m_has_variable_value;}
         void has_variable_value (bool a_in) {m_has_variable_value = a_in;}
 
+        bool has_thread_list () const {return m_has_thread_list;}
+        void has_thread_list (bool a_in) {m_has_thread_list = a_in;}
+
+        const std::list<int>& thread_list () const {return m_thread_list;}
+        void thread_list (const std::list<int> &a_in)
+        {
+            m_thread_list = a_in;
+            has_thread_list (true) ;
+        }
+
+        bool thread_id_got_selected () const {return m_thread_id_got_selected;}
+        void thread_id_got_selected (bool a_in) {m_thread_id_got_selected = a_in;}
+
+        int frame_level_in_thread () const {return m_frame_level;}
+        int thread_id () const {return m_thread_id;}
+        const IDebugger::Frame& frame_in_thread () const
+        {
+            return m_frame_in_thread;
+        }
+        void thread_id_selected_info (int a_thread_id,
+                                      int a_frame_level,
+                                      const IDebugger::Frame &a_frame_in_thread)
+        {
+            m_frame_level = a_frame_level ;
+            m_thread_id = a_thread_id ;
+            m_frame_in_thread = a_frame_in_thread ;
+            thread_id_got_selected (true) ;
+        }
+
         /// @}
 
         void clear ()
@@ -388,6 +436,12 @@ public:
             m_has_local_variables = false ;
             m_variable_value = NULL ;
             m_has_variable_value = false ;
+            m_thread_list.clear () ;
+            m_has_thread_list = false ;
+            m_frame_level = 0;
+            m_thread_id = 0;
+            m_frame_in_thread.clear () ;
+            m_thread_id_got_selected = false;
         }
     };//end class ResultRecord
 
@@ -890,6 +944,10 @@ public:
     sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
                                                         stopped_signal () const ;
 
+    sigc::signal<void, const list<int> >& threads_listed_signal () const ;
+
+    sigc::signal<void, int, int, const Frame&>& thread_selected_signal () const  ;
+
     sigc::signal<void, const vector<IDebugger::Frame>& >&
                                                 frames_listed_signal () const ;
 
@@ -1008,6 +1066,11 @@ public:
                             gint a_line_num,
                             bool a_run_event_loops) ;
 
+    void list_threads (bool a_run_event_loops) ;
+
+    void select_thread (unsigned int a_thread_id,
+                        bool a_run_event_loops) ;
+
     void delete_breakpoint (gint a_break_num,
                             bool a_run_event_loops) ;
 
@@ -1115,6 +1178,10 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, const UString&,
                          bool, const IDebugger::Frame&> stopped_signal ;
+
+    mutable sigc::signal<void, const list<int> > threads_listed_signal ;
+
+    mutable sigc::signal<void, int, int, const Frame&> thread_selected_signal ;
 
     mutable sigc::signal<void, const vector<IDebugger::Frame>& >
                                                     frames_listed_signal ;
@@ -2953,7 +3020,8 @@ struct GDBEngine::Priv {
         return true;
     }
 
-    //TODO: finish this.
+    /// parses the result of the gdbmi command
+    /// "-thread-list-ids".
     bool parse_threads_list (const UString &a_input,
                              UString::size_type a_from,
                              UString::size_type &a_to,
@@ -2986,16 +3054,13 @@ struct GDBEngine::Priv {
         }
         THROW_IF_FAIL (gdbmi_result->value ()) ;
         THROW_IF_FAIL (gdbmi_result->value ()->content_type ()
-                       == GDBMIValue::LIST_TYPE) ;
+                       == GDBMIValue::TUPLE_TYPE) ;
 
-        GDBMIListSafePtr gdbmi_list =
-                    gdbmi_result->value ()->get_list_content () ;
-        THROW_IF_FAIL (gdbmi_list) ;
-        THROW_IF_FAIL (gdbmi_list->content_type ()
-                       == GDBMIList::VALUE_TYPE) ;
+        GDBMITupleSafePtr gdbmi_tuple =
+                    gdbmi_result->value ()->get_tuple_content () ;
+        THROW_IF_FAIL (gdbmi_tuple) ;
 
-        list<GDBMIResultSafePtr> result_list ;
-        gdbmi_list->get_result_content (result_list) ;
+        list<GDBMIResultSafePtr> result_list = gdbmi_tuple->content () ;
         list<GDBMIResultSafePtr>::const_iterator it ;
         int thread_id=0 ;
         std::list<int> thread_ids ;
@@ -3028,11 +3093,87 @@ struct GDBEngine::Priv {
         unsigned int num_threads =
             atoi (gdbmi_result->value ()->get_string_content ().c_str ()) ;
 
-        THROW_IF_FAIL (num_threads == thread_ids.size ()) ;
+        if (num_threads != thread_ids.size ()) {
+            LOG_ERROR ("num_threads: '"
+                       << (int) num_threads
+                       << "', thread_ids.size(): '"
+                       << (int) thread_ids.size ()
+                       << "'") ;
+            return false ;
+        }
 
         a_thread_ids = thread_ids ;
         a_to = cur ;
         return true;
+    }
+
+    /// parses the result of the gdbmi command
+    /// "-thread-select"
+    /// \param a_input the input string to parse
+    /// \param a_from the offset from where to start the parsing
+    /// \param a_to. out parameter. The next offset after the end of what
+    /// got parsed.
+    /// \param a_thread_id out parameter. The id of the selected thread.
+    /// \param a_frame out parameter. The current frame in the selected thread.
+    /// \param a_level out parameter. the level
+    bool parse_new_thread_id (const UString &a_input,
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              int &a_thread_id,
+                              IDebugger::Frame &a_frame,
+                              int &a_level)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.size () ;
+
+        if (a_input.compare (cur, 15, "new-thread-id=\"")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        GDBMIResultSafePtr gdbmi_result ;
+        if (!parse_gdbmi_result (a_input, cur, cur, gdbmi_result)
+            || !gdbmi_result) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        if (gdbmi_result->variable () != "new-thread-id") {
+            LOG_ERROR ("expected 'new-thread-id', got '"
+                       << gdbmi_result->variable () << "'") ;
+            return false ;
+        }
+        THROW_IF_FAIL (gdbmi_result->value ()) ;
+        THROW_IF_FAIL (gdbmi_result->value ()->content_type ()
+                       == GDBMIValue::STRING_TYPE) ;
+        CHECK_END (a_input, cur, end) ;
+
+        int thread_id =
+            atoi (gdbmi_result->value ()->get_string_content ().c_str ()) ;
+        if (!thread_id) {
+            LOG_ERROR ("got null thread id") ;
+            return false ;
+        }
+
+        SKIP_WS (a_input, cur, cur) ;
+
+        if (a_input[cur] != ',') {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        ++cur ;
+        CHECK_END (a_input, cur, end) ;
+
+        IDebugger::Frame frame ;
+        int level=0 ;
+        if (!parse_frame (a_input, cur, cur, frame, level)) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+
+        a_to = cur ;
+        a_thread_id = thread_id ;
+        a_level = level ;
+        a_frame = frame ;
+        return true ;
     }
 
     /// parses a string that has the form:
@@ -3436,8 +3577,23 @@ fetch_gdbmi_result:
                     }
                 } else if (!a_input.compare (cur, 17, "BreakpointTable={")) {
                     map<int, IDebugger::BreakPoint> breaks ;
-                    parse_breakpoint_table (a_input, cur, cur, breaks) ;
-                    result_record.breakpoints () = breaks ;
+                    if (parse_breakpoint_table (a_input, cur, cur, breaks)) {
+                        result_record.breakpoints () = breaks ;
+                    }
+                } else if (!a_input.compare (cur, 12, "thread-ids={")) {
+                    std::list<int> thread_ids ;
+                    if (parse_threads_list (a_input, cur, cur, thread_ids)) {
+                        result_record.thread_list (thread_ids) ;
+                    }
+                } else if (!a_input.compare (cur, 15, "new-thread-id=\"")) {
+                    IDebugger::Frame frame ;
+                    int thread_id=0,level=0 ;
+                    if (parse_new_thread_id (a_input, cur, cur,
+                                             thread_id, frame, level)) {
+                        //finish this !
+                        result_record.thread_id_selected_info (thread_id,
+                                                               level, frame) ;
+                    }
                 } else if (!a_input.compare (cur, 7, "stack=[")) {
                     vector<IDebugger::Frame> call_stack ;
                     if (!parse_call_stack (a_input, cur, cur, call_stack)) {
@@ -3838,6 +3994,58 @@ struct OnStoppedHandler: OutputHandler {
         }
     }
 };//end struct OnStoppedHandler
+
+struct OnThreadListHandler : OutputHandler {
+    GDBEngine *m_engine ;
+
+    OnThreadListHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().has_thread_list ()) {
+            return true;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        m_engine->threads_listed_signal ().emit
+            (a_in.output ().result_record ().thread_list ()) ;
+    }
+};//end OnThreadListHandler
+
+struct OnThreadSelectedHandler : OutputHandler {
+    GDBEngine *m_engine ;
+
+    OnThreadSelectedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().thread_id_got_selected ()) {
+            return true;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        m_engine->thread_selected_signal ().emit
+            (a_in.output ().result_record ().thread_id (),
+             a_in.output ().result_record ().frame_level_in_thread (),
+             a_in.output ().result_record ().frame_in_thread ()) ;
+    }
+};//end OnThreadSelectedHandler
 
 struct OnCommandDoneHandler : OutputHandler {
 
@@ -4369,6 +4577,10 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnSignalReceivedHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnErrorHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnThreadListHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnThreadSelectedHandler (this))) ;
 }
 
 void
@@ -4450,6 +4662,18 @@ sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
 GDBEngine::stopped_signal () const
 {
     return m_priv->stopped_signal ;
+}
+
+sigc::signal<void, const list<int> >&
+GDBEngine::threads_listed_signal () const
+{
+    return m_priv->threads_listed_signal ;
+}
+
+sigc::signal<void, int, int, const IDebugger::Frame&>&
+GDBEngine::thread_selected_signal () const
+{
+    return m_priv->thread_selected_signal ;
 }
 
 sigc::signal<void, const vector<IDebugger::Frame>& >&
@@ -4773,6 +4997,7 @@ GDBEngine::enable_breakpoint (const UString &a_path,
                               gint a_line_num,
                               bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_path == "" || a_line_num || a_run_event_loops) {}
     //TODO: code this
 }
@@ -4782,8 +5007,28 @@ GDBEngine::disable_breakpoint (const UString &a_path,
                                gint a_line_num,
                                bool a_run_event_loops)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_path == "" || a_line_num || a_run_event_loops) {}
     //TODO: code this
+}
+
+void
+GDBEngine::list_threads (bool a_run_event_loops)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+    queue_command (Command ("-thread-list-ids"), a_run_event_loops) ;
+}
+
+void
+GDBEngine::select_thread (unsigned int a_thread_id,
+                          bool a_run_event_loops)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (a_thread_id) ;
+    queue_command (Command ("-thread-select " + UString::from_int (a_thread_id)),
+                   a_run_event_loops) ;
 }
 
 void

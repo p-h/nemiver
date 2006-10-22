@@ -79,6 +79,27 @@ on_variable_type_signal (const UString &a_variable_name,
 }
 
 void
+on_threads_listed_signal (const std::list<int> &a_thread_ids)
+{
+
+    std::cout << "number of threads: '" << a_thread_ids.size () << "'\n";
+    std::list<int>::const_iterator it ;
+    for (it = a_thread_ids.begin () ; it != a_thread_ids.end () ; ++it) {
+        std::cout << "thread-id: '" << *it << "'\n";
+    }
+}
+
+void
+on_thread_selected_signal (int a_thread_id,
+                           int a_frame_level,
+                           const IDebugger::Frame &a_frame)
+{
+    std::cout << "thread selected: '" << a_thread_id << "'\n" ;
+    std::cout << "frame in thread : '" << a_frame_level << "'\n" ;
+    std::cout << "frame.function: '" << a_frame.function () << "'\n" ;
+}
+
+void
 display_help ()
 {
     std::cout << "test-basic <prog-to-debug>\n" ;
@@ -131,6 +152,12 @@ main (int argc, char *argv[])
         debugger->variable_type_signal ().connect
             (sigc::ptr_fun (&on_variable_type_signal)) ;
 
+        debugger->threads_listed_signal ().connect
+            (sigc::ptr_fun (&on_threads_listed_signal)) ;
+
+        debugger->thread_selected_signal ().connect
+            (sigc::ptr_fun (&on_thread_selected_signal)) ;
+
         //*****************************
         //</connect to IDebugger events>
         //*****************************
@@ -142,6 +169,8 @@ main (int argc, char *argv[])
         debugger->load_program (args, source_search_dir);
         debugger->set_breakpoint ("main") ;
         debugger->run () ;
+        debugger->list_threads () ;
+        debugger->select_thread (1) ;
         debugger->set_breakpoint ("func1") ;
         debugger->set_breakpoint ("func2") ;
         debugger->list_breakpoints () ;

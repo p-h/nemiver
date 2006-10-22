@@ -360,6 +360,15 @@ public:
     virtual sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
                                                      stopped_signal () const = 0;
 
+    virtual sigc::signal<void, const list<int> >&
+                                        threads_listed_signal () const = 0;
+
+    virtual sigc::signal<void,
+                         int/*thread id*/,
+                         int/*frame level*/,
+                         const Frame&/*frame in thread*/> &
+                                            thread_selected_signal () const = 0 ;
+
     virtual sigc::signal<void, const vector<IDebugger::Frame>& >&
                                                 frames_listed_signal () const=0;
 
@@ -386,7 +395,7 @@ public:
     virtual sigc::signal<void, const UString&, const UString&>&
                                         variable_type_signal () const = 0 ;
 
-    virtual sigc::signal<void, int, const UString&>&
+    virtual sigc::signal<void, int/*pid*/, const UString&/*target path*/>&
                                             got_target_info_signal () const = 0 ;
 
     virtual sigc::signal<void>& running_signal () const = 0;
@@ -474,6 +483,11 @@ public:
 
     virtual void delete_breakpoint (gint a_break_num,
                                     bool a_run_event_loops=false) = 0;
+
+    virtual void list_threads (bool a_run_event_loops=false) = 0 ;
+
+    virtual void select_thread (unsigned int a_thread_id,
+                                bool a_run_event_loops=false) = 0;
 
     virtual void list_frames (bool a_run_event_loops=false) = 0;
 
