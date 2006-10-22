@@ -1,3 +1,8 @@
+2006-10-21  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* README: added a note about compiling without symbols visibility control on
+	amd64 machines.
+
 Fri, 20 Oct 2006 08:59:21 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: replaced

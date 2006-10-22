@@ -1,4 +1,18 @@
-Nemiver is an projet to write a debugger that integrates well in the GNOME desktop.
-It uses the well known GNU Debugger.
+About
+=====
+Nemiver is an project to write a standalone graphical debugger that integrates
+well in the GNOME desktop.
+It uses the well known GNU Debugger gdb.
 
+AMD64 issues:
+=============
+If you compile nemiver on a 64-bit architecture such as amd64, you may get
+something like the following error:
 
+/usr/bin/ld: .libs/nmv-ustring.o: relocation R_X86_64_PC32 against
+`std::basic_ostringstream<char, std::char_traits<char>, std::allocator<char>
+>::basic_ostringstream(std::_Ios_Openmode)@@GLIBCXX_3.4' can not be used when
+making a shared object; recompile with -fPIC
+
+You can get around this by configuring nemiver with the
+`--disable-symbolsvisibilitycontrol' option
