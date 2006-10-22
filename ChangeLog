@@ -1,3 +1,11 @@
+2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/glade/bodycontainer.glade: made it so that the status
+	notebook pane doesn't resize with the main window.  In other words, when you
+	make the main window bigger or smaller, the status notebook will stay the
+	same size and the sourceview section will get bigger or smaller.  I think
+	this is a more expected behavior.
+
 2006-10-21  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* README: added a note about compiling without symbols visibility control on
