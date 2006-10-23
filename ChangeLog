@@ -1,5 +1,25 @@
 2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* Makefile.am: Add some infrastructure to make it easier to do releases.
+	making the 'release-publish' target will automatically do a distcheck, sign
+	the release tarball with gpg, tag the release in svn, and upload to the gna
+	download server.  I haven't actually tested the svn tagging and uploading
+	yet.  It's early, but I figured I'd get this stuff in place so when we want
+	to make a release it goes quickly.  Also added a few files to DISTCLEANFILES
+	to pass distcheck.
+	* configure.ac: disable symbols visibility control by default for x86_64
+	architectures so that I don't need to specify it manually everytime I
+	re-autogen.  Disable gconf schemas installation during distcheck so that
+	distcheck doesn't fail
+	* README: removed the note about symbols visibility on amd64 since it's
+	disabled by default for x86_64 in configure.ac
+	* src/DBGPerspective/schemas/Makefile.am: Only install the schemas if the
+	--enable-schemas-install configure option is set (default = yes)
+	* po/ChangeLog: added this file (empty) since distcheck seems to insist on
+	having it
+
+2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/uicommon/nmv-ui-utils.h: oops, need to add libglademm.h include here.
 	Removing it from nmv-env.h broke this.
 

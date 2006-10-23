@@ -117,9 +117,6 @@ AC_ARG_ENABLE(symbolsvisibilitycontrol,
                              [use the gcc symbols visibility feature. >=n gcc4. default is yes)]),
               ENABLE_GCC_SYMBOLS_VISIBILITY=$enableval,
               ENABLE_GCC_SYMBOLS_VISIBILITY=yes)
-if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes ; then
-    AC_DEFINE(HAS_GCC_VISIBILITY_SUPPORT,1,[gcc visibility support])
-fi
 
 dnl *******************************
 dnl checking for libraries we use
@@ -179,7 +176,8 @@ dnl gconf
 dnl *******************
 
 
-if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes ; then
+if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes && test x$host_cpu != xx86_64 ; then
+    AC_DEFINE(HAS_GCC_VISIBILITY_SUPPORT,1,[gcc visibility support])
     REQUIRED_FLAGS="-fvisibility=hidden -fvisibility-inlines-hidden"
 else
     REQUIRED_FLAGS=""
@@ -212,6 +210,10 @@ AC_SUBST(NEMIVER_SYSTEM_CONFIG_DIR)
 AC_SUBST(NEMIVER_MODULES_DIR)
 AC_SUBST(NEMIVER_PLUGINS_DIR)
 AC_SUBST(NEMIVER_TEST_MODULES_DIR)
+
+dnl don't try to install gconf schemas during distcheck
+DISTCHECK_CONFIGURE_FLAGS="--disable-schemas-install"
+AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
 
 AC_PROG_MAKE_SET
 
