@@ -27,6 +27,7 @@
 #define __NEMIVER_UI_UTILS_H__
 
 #include <gtkmm.h>
+#include <libglademm.h>
 #include "nmv-env.h"
 #include "nmv-ustring.h"
 #include "nmv-api-macros.h"

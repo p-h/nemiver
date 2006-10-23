@@ -1,5 +1,10 @@
 2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/uicommon/nmv-ui-utils.h: oops, need to add libglademm.h include here.
+	Removing it from nmv-env.h broke this.
+
+2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* configure.ac: generate .pc files from .pc.in files, define a symbol for
 	NEMIVER_INCLUDE_DIR that can be used in subdir makefiles and .pc files
 	* src/common/libnemivercommon.pc.in, src/common/Makefile.am: install
