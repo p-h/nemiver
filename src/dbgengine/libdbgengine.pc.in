@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@NEMIVER_INCLUDE_DIR@/dbgengine
+
+Name: libdbgengine
+Description: A debugger library interface
+Version: @VERSION@
+Requires: libnemivercommon
+# dbgengine is a header-only 'library' that provides an interface that can be
+# implemented by debugger backends
+Libs:
+Cflags: -I${includedir}

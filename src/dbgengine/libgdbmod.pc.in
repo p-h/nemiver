@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+
+Name: libgdbmod
+Description: A backend debugger engine based on the GNU debugger gdb
+Version: @VERSION@
+Requires: libdbgengine
+Libs: -L${libdir} -lgdbmod
+Cflags:

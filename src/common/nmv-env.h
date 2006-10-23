@@ -30,7 +30,6 @@
 #ifndef __NEMIVER_ENV_H__
 #define __NEMIVER_ENV_H__
 
-#include <libglademm.h>
 #include "nmv-api-macros.h"
 #include "nmv-ustring.h"
 #include "nmv-exception.h"

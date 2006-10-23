@@ -168,8 +168,11 @@ NEMIVER_CFLAGS="$NEMIVER_CFLAGS $LIBGNOMEVFS_CFLAGS $LIBGTKSOURCEVIEWMM_CFLAGS"
 NEMIVER_CFLAGS="$NEMIVER_CFLAGS $LIBGLADEMM_CFLAGS $LIBGTOP_CFLAGS"
 NEMIVER_CFLAGS="$NEMIVER_CFLAGS $LIBVTE_CFLAGS $GCONF_CFLAGS"
 
+NEMIVER_INCLUDE_DIR=$includedir/nemiver
+
 AC_SUBST(NEMIVER_LIBS)
 AC_SUBST(NEMIVER_CFLAGS)
+AC_SUBST(NEMIVER_INCLUDE_DIR)
 
 dnl *******************
 dnl gconf
@@ -215,11 +218,14 @@ AC_PROG_MAKE_SET
 AC_CONFIG_FILES([Makefile
 src/Makefile
   src/common/Makefile
+  src/common/libnemivercommon.pc
   src/dbdimpl/Makefile
   src/dbdimpl/sqlite/Makefile
   src/dbdimpl/sqlite/org.nemiver.db.sqlitedriver.conf
   src/dbgengine/Makefile
   src/dbgengine/gdbengine.conf
+  src/dbgengine/libgdbmod.pc
+  src/dbgengine/libdbgengine.pc
   src/confmgr/Makefile
   src/confmgr/gconfmgr.conf
   src/uicommon/Makefile

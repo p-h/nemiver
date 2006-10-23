@@ -11,7 +11,7 @@ libnemiveruicommon_la_LIBADD=@NEMIVER_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 uicommonheaders_DATA=$(public_headers)
-uicommonheadersdir=$(prefix)/include/nemiver/uicommon
+uicommonheadersdir=$(NEMIVER_INCLUDE_DIR)/uicommon
 
 INCLUDES=@NEMIVER_CFLAGS@ \
 -I$(top_srcdir) \

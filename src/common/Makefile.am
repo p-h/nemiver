@@ -60,8 +60,11 @@ nmv-delete-statement.cc \
 nmv-proc-utils.cc
 
 publicheaders_DATA=$(headers)
-publicheadersdir=$(prefix)/include/nemiver/libnemivercommon
+publicheadersdir=$(NEMIVER_INCLUDE_DIR)/libnemivercommon
 libnemivercommon_la_LDFLAGS=@NEMIVER_LIBS@
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libnemivercommon.pc
 
 INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -DNEMIVER_INSTALL_PREFIX=\"@NEMIVER_INSTALL_PREFIX@\" \
@@ -71,3 +74,4 @@ INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -DNEMIVER_VERSION=\"@NEMIVER_VERSION@\" \
 -DGDB_PROG=\"@GDB_PROG@\"
 
+EXTRA_DIST = $(pkgconfig_DATA)

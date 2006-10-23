@@ -9,8 +9,6 @@ Feel free to ask on nemiver-list@gna.org about particular topics that you may be
 
 *) add show/hide line numbers in preferences [pre 0.1]
 
-*) add a libnemivercommon.pc file to the distribution. [pre 0.1]
-
 *) Once attached to the debugger, popup a dialog telling the
    user she can set breakpoints before hiting the "run" button.
    That dialog can propose to open files to set the breakpoints.

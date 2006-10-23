@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@NEMIVER_INCLUDE_DIR@/libnemivercommon
+
+Name: libnemivercommon
+Description: Common infrastructure for the Nemiver debugger and library
+Version: @VERSION@
+Requires: glibmm-2.4 gnome-vfs-2.0
+Libs: -L${libdir} -lnemivercommon
+Cflags: -I${includedir}

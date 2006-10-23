@@ -1,3 +1,19 @@
+2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* configure.ac: generate .pc files from .pc.in files, define a symbol for
+	NEMIVER_INCLUDE_DIR that can be used in subdir makefiles and .pc files
+	* src/common/libnemivercommon.pc.in, src/common/Makefile.am: install
+	pkg-config file for libnemivercommon
+	* src/common/nmv-env.h: remove include for libglademm.h since we don't
+	actually use any symbols from libglademm and we don't want this as a
+	dependency in libnemivercommon
+	* src/dbgengine/Makefile.am, src/dbgengine/libdbgengine.pc.in,
+	src/dbgengine/libgdbmod.pc.in: install new pkg-config files for dbgengine
+	and the gdb backend
+	* src/confmgr/Makefile.am, src/uicommon/Makefile.am,
+	src/workbench/Makefile.am: use new NEMIVER_INCLUDE_DIR variable
+	* TODO: remove libnemivercommon.pc task
+
 Sun, 22 Oct 2006 23:50:27 +0200 Dodji Seketeli
 
 	* TODO: updated this. Move the [pre 0.1] task to the top. Add
