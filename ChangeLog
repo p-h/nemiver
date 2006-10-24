@@ -1,3 +1,18 @@
+2006-10-23  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* configure.ac: add more fine-grained _LIBS and _CFLAGS variables so that we
+	don't have to link all libraries against every dependency
+	* src/common/libnemivercommon.pc.in: improve dependencies, only add
+	NEMIVER_INCLUDE_DIR to the include path instead of
+	NEMIVER_INCLUD_DIR/libnemivercommon.  To include a header from
+	libnemivercommon, you must now specify libnemivercommon/header.h
+	* src/uicommon/Makefile.am, src/workbench/Makefile.am,
+	src/common/Makefile.am, src/confmgr/Makefile.am,
+	src/dbdimpl/sqlite/Makefile.am, src/dbgengine/Makefile.am: only link against
+	required libraries instead of all libraries
+	* src/dbgengine/libdbgengine.pc.in: only include NEMIVER_INCLUDE_DIR
+	* src/dbgengine/libgdbmod.pc.in: renamed to nemiver-gdb-plugin.pc.in
+
 2006-10-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* Makefile.am: Add some infrastructure to make it easier to do releases.

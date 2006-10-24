@@ -10,12 +10,12 @@ nmv-gconf-mgr.cc
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/confmgr
 
-libgconfmgrmod_la_LDFLAGS=@NEMIVER_LIBS@ -module -avoid-version
+libgconfmgrmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ @GCONF_LIBS@ -module -avoid-version
 
 config_DATA=gconfmgr.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
-INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+INCLUDES=@NEMIVERCOMMON_CFLAGS@ @GCONF_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/common
 
 EXTRA_DIST=gconfmgr.conf.in

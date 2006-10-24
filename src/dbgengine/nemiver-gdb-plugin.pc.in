@@ -1,10 +1,7 @@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-
-Name: libgdbmod
+Name: nemiver-gdb-plugin
 Description: A backend debugger engine based on the GNU debugger gdb
 Version: @VERSION@
 Requires: libdbgengine
-Libs: -L${libdir} -lgdbmod
+# no libs to link, only a dynamically loadable module
+Libs:
 Cflags:

@@ -13,7 +13,7 @@ nmv-gdb-engine.cc
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dbgengine
 
-libgdbmod_la_LDFLAGS=@NEMIVER_LIBS@ -module -avoid-version
+libgdbmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libgdbmod.pc libdbgengine.pc
@@ -21,7 +21,7 @@ pkgconfig_DATA = libgdbmod.pc libdbgengine.pc
 config_DATA=gdbengine.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
-INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+INCLUDES=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/common
 
 EXTRA_DIST=gdbengine.conf.in $(pkgconfig_DATA)

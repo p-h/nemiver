@@ -10,10 +10,10 @@ libnemiverdbdsqlite_la_SOURCES=$(sources)
 
 libnemiverdbdsqlite_la_LDFLAGS= -module -avoid-version
 libnemiverdbdsqlite_la_LIBADD= \
-@SQLITE3_LIBS@ @NEMIVER_LIBS@ \
+@SQLITE3_LIBS@ @NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-INCLUDES=@NEMIVER_CFLAGS@ -I$(top_srcdir)/src/common \
+INCLUDES=@SQLITE3_CFLAGS@ @NEMIVERCOMMON_CFLAGS@ -I$(top_srcdir)/src/common \
 -DIN_LIBSQLITE_DSO
 
 config_DATA=org.nemiver.db.sqlitedriver.conf

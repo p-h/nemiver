@@ -7,13 +7,13 @@ libnemiveruicommon_la_SOURCES= \
 $(public_headers) \
 nmv-ui-utils.cc
 
-libnemiveruicommon_la_LIBADD=@NEMIVER_LIBS@ \
+libnemiveruicommon_la_LIBADD=@NEMIVERUICOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 uicommonheaders_DATA=$(public_headers)
 uicommonheadersdir=$(NEMIVER_INCLUDE_DIR)/uicommon
 
-INCLUDES=@NEMIVER_CFLAGS@ \
+INCLUDES=@NEMIVERUICOMMON_CFLAGS@ \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/uicommon

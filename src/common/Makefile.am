@@ -61,12 +61,13 @@ nmv-proc-utils.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/libnemivercommon
-libnemivercommon_la_LDFLAGS=@NEMIVER_LIBS@
+libnemivercommon_la_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libnemivercommon.pc
 
-INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+INCLUDES=@NEMIVERCOMMON_CFLAGS@ \
+-DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -DNEMIVER_INSTALL_PREFIX=\"@NEMIVER_INSTALL_PREFIX@\" \
 -DNEMIVER_SYSTEM_CONFIG_DIR=\"@NEMIVER_SYSTEM_CONFIG_DIR@\" \
 -DNEMIVER_MODULES_DIR=\"@NEMIVER_MODULES_DIR@\" \
