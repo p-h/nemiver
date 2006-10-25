@@ -1,3 +1,9 @@
+Wed, 25 Oct 2006 23:22:54 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-tread-list.cc,h: started to hack on this
+	  thread list component. . I just push what I have for now.
+	  Nothing is visible yet.
+
 2006-10-23  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* configure.ac: add more fine-grained _LIBS and _CFLAGS variables so that we

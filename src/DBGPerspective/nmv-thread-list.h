@@ -22,48 +22,42 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
-#ifndef __NMV_CALL_STACK_H__
-#define __NMV_CALL_STACK_H__
+#ifndef __NMV_THREAD_LIST_H__
+#define __NMV_THREAD_LIST_H__
 
 #include <list>
 #include <gtkmm/widget.h>
-#include "nmv-i-debugger.h"
-#include "nmv-safe-ptr-utils.h"
 #include "nmv-object.h"
+#include "nmv-safe-ptr-utils.h"
+#include "nmv-i-debugger.h"
 
-using namespace std ;
-using nemiver::common::SafePtr ;
 using nemiver::common::Object ;
-using nemiver::IDebugger ;
+using nemiver::common::SafePtr ;
+using nemiver::IDebuggerSafePtr ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class NEMIVER_API CallStack : public Object {
+class NEMIVER_API ThreadList : public Object {
     //non copyable
-
-    CallStack (const CallStack &) ;
-    CallStack& operator= (const CallStack &) ;
+    ThreadList (const ThreadList &) ;
+    ThreadList& operator=  (const ThreadList &) ;
 
     struct Priv ;
     SafePtr<Priv> m_priv ;
 
 protected:
-    CallStack () ;
+    ThreadList () ;
 
 public:
 
-    CallStack (IDebuggerSafePtr &) ;
-    virtual ~CallStack () ;
-    bool is_empty () ;
-    UString to_string () ;
-    const vector<IDebugger::Frame>& frames () const ;
-    void update_stack () ;
+    ThreadList (IDebuggerSafePtr &) ;
+    virtual ~ThreadList () ;
+    const std::list<int>& thread_ids () const ;
+    int current_thread_id () const ;
     Gtk::Widget& widget () const ;
-    sigc::signal<void, int, const IDebugger::Frame&>& frame_selected_signal () const ;
-};//end class CallStack
+    sigc::signal<void, int>& thread_selected_signal () const ;
+};//end class ThreadList
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_CALL_STACK_H__
-
+#endif //__NMV_THREAD_LIST_H__

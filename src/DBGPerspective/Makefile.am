@@ -55,7 +55,9 @@ nmv-terminal.cc \
 nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
 nmv-popup-tip.h \
-nmv-popup-tip.cc
+nmv-popup-tip.cc \
+nmv-thread-list.h \
+nmv-thread-list.cc
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version
