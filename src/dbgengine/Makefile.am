@@ -1,5 +1,3 @@
-PLUGIN_NAME=DBGPerspective
-
 gdbmod_LTLIBRARIES=libgdbmod.la
 gdbmoddir=@NEMIVER_MODULES_DIR@
 
@@ -16,7 +14,7 @@ publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dbgengine
 libgdbmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libgdbmod.pc libdbgengine.pc
+pkgconfig_DATA = nemiver-gdb-plugin.pc libdbgengine.pc
 
 config_DATA=gdbengine.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
