@@ -196,7 +196,8 @@ private:
 
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
-                                     const IDebugger::Frame &) ;
+                                     const IDebugger::Frame &,
+                                     int a_thread_id) ;
     void on_program_finished_signal () ;
     void on_frame_selected_signal (int, const IDebugger::Frame &) ;
     void on_breakpoints_view_button_press_signal (GdkEventButton *a_event) ;
@@ -1125,10 +1126,11 @@ DBGPerspective::on_debugger_breakpoints_set_signal
 void
 DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
                                             bool a_has_frame,
-                                            const IDebugger::Frame &a_frame)
+                                            const IDebugger::Frame &a_frame,
+                                            int a_thread_id)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_reason == "") {}
+    if (a_reason == "" || a_thread_id) {}
 
     NEMIVER_TRY
 

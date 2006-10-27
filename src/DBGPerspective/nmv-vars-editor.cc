@@ -524,10 +524,11 @@ fetch_element:
 
     void on_stopped_signal (const UString &a_str,
                             bool a_has_frame,
-                            const IDebugger::Frame &a_frame)
+                            const IDebugger::Frame &a_frame,
+                            int a_thread_id)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
-        if (a_str == "" || a_frame.line ()) {}
+        if (a_str == "" || a_frame.line () || a_thread_id) {}
 
         NEMIVER_TRY
 

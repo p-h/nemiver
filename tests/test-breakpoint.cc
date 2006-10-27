@@ -61,13 +61,14 @@ on_got_proc_info_signal (int a_pid, const UString &a_exe_path)
 void
 on_stopped_signal (const UString &a_command,
                    bool a_has_frame,
-                   const IDebugger::Frame &a_frame)
+                   const IDebugger::Frame &a_frame,
+                   int a_thread_id)
 {
     std::cout << "stopped, reason is '" << a_command << "'\n" ;
     if (a_has_frame) {
-        std::cout << "in frame: " << a_frame.function () ;
+        std::cout << "in frame: " << a_frame.function () << "\n";
     }
-    std::cout << "\n" ;
+    std::cout << "thread-id is '" << a_thread_id << "'\n" ;
 }
 
 void
@@ -91,11 +92,10 @@ on_threads_listed_signal (const std::list<int> &a_thread_ids)
 
 void
 on_thread_selected_signal (int a_thread_id,
-                           int a_frame_level,
                            const IDebugger::Frame &a_frame)
 {
     std::cout << "thread selected: '" << a_thread_id << "'\n" ;
-    std::cout << "frame in thread : '" << a_frame_level << "'\n" ;
+    std::cout << "frame in thread : '" << a_frame.level () << "'\n" ;
     std::cout << "frame.function: '" << a_frame.function () << "'\n" ;
 }
 

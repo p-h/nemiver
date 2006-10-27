@@ -78,34 +78,6 @@ NEMIVER_API UString build_path_to_image_file (const UString &a_image_file_name) 
 }//end namespace common
 }//end namespace nemiver
 
-#ifndef NEMIVER_TRY
-#define NEMIVER_TRY try {
-#endif
-
-#ifndef NEMIVER_CATCH_NOX
-#define NEMIVER_CATCH_NOX \
-} catch (Glib::Exception &e) { \
-    LOG_ERROR (e.what ()) ; \
-} catch (std::exception &e) { \
-    LOG_ERROR (e.what ()) ; \
-} catch (...) { \
-    LOG_ERROR ("An unknown error occured") ; \
-}
-#endif
-
-#ifndef NEMIVER_CATCH_AND_RETURN_NOX
-#define NEMIVER_CATCH_AND_RETURN_NOX(a_value) \
-} catch (Glib::Exception &e) { \
-    LOG_ERROR (e.what ()) ; \
-    return a_value ; \
-} catch (std::exception &e) { \
-    LOG_ERROR (e.what ()) ; \
-    return a_value ; \
-} catch (...) { \
-    LOG_ERROR ("An unknown error occured") ; \
-    return a_value ; \
-}
-#endif
 
 #endif //__NEMIVER_ENV_H__
 

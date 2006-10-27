@@ -1,3 +1,17 @@
+Fri, 27 Oct 2006 08:07:36 +0200 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: cleanup the API a
+	  bit. Make IDebugger::Frame contain the frame level. Remove the
+	  a_level param from the GDBEngine::Priv::parse_frame() function.
+	  Remove the duplicate of that function. Because of the (public) API
+	  cleanup, I was obliged to update many of the clients of
+	  nmv-i-debugger.h .
+
+	* src/DBGPerspective/nmv-thread-list.cc: connect to debugger and
+	  widget signals. Still nothing visible yet. I still have to make
+	  IDebugger list the frame stack and the local variables when the user
+	  switches from a thread to another.
+
 Wed, 25 Oct 2006 23:22:54 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-tread-list.cc,h: started to hack on this

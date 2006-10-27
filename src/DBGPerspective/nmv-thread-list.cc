@@ -28,6 +28,7 @@
 #include "nmv-thread-list.h"
 #include "nmv-exception.h"
 #include "nmv-i-debugger.h"
+#include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -52,20 +53,74 @@ struct ThreadList::Priv {
     std::list<int> thread_ids ;
     int current_thread ;
     SafePtr<Gtk::TreeView> tree_view ;
-    Glib::RefPtr<Gtk::TreeStore> tree_store ;
+    Glib::RefPtr<Gtk::ListStore> list_store ;
     sigc::signal<void, int> thread_selected_signal ;
+    int current_thread_id;
 
     Priv (IDebuggerSafePtr &a_debugger) :
         debugger (a_debugger),
-        current_thread (0)
+        current_thread (0),
+        current_thread_id (0)
     {
+        build_widget () ;
+        connect_to_debugger_signals () ;
+        connect_to_widget_signals () ;
+    }
+
+    void on_debugger_stopped_signal (const UString &a_reason,
+                                     bool a_has_frame,
+                                     const IDebugger::Frame &a_frame,
+                                     int a_thread_id)
+    {
+        NEMIVER_TRY
+        if (a_reason == "" || a_has_frame || a_frame.level ()) {}
+
+        current_thread_id = a_thread_id ;
+        debugger->list_threads () ;
+        NEMIVER_CATCH
+    }
+
+    void on_debugger_threads_listed_signal (const std::list<int> &a_threads)
+    {
+        NEMIVER_TRY
+
+        set_thread_id_list (a_threads) ;
+
+        NEMIVER_CATCH
+    }
+
+    void on_debugger_thread_selected_signal (int a_tid,
+                                             const IDebugger::Frame &a_frame)
+    {
+        NEMIVER_TRY
+
+        if (a_frame.level ()) {}
+        current_thread_id = a_tid ;
+
+        NEMIVER_CATCH
+    }
+
+    void on_tree_view_selection_changed_signal ()
+    {
+        NEMIVER_TRY
+
+        int thread_id =
+             (int) tree_view->get_selection()->get_selected ()->get_value
+                                                        (columns ().thread_id);
+        THROW_IF_FAIL (thread_id > 0) ;
+        THROW_IF_FAIL (debugger) ;
+
+        debugger->select_thread (thread_id) ;
+
+        NEMIVER_CATCH
     }
 
     void build_widget ()
     {
-        tree_store = Gtk::TreeStore::create (columns ()) ;
+        list_store = Gtk::ListStore::create (columns ()) ;
         tree_view = new Gtk::TreeView () ;
-        tree_view->set_model (tree_store) ;
+        tree_view->set_model (list_store) ;
+        tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
         int col_num =
             tree_view->append_column ("Thread ID", columns ().thread_id) ;
         Gtk::TreeViewColumn *column = tree_view->get_column (col_num) ;
@@ -74,10 +129,32 @@ struct ThreadList::Priv {
         column->set_reorderable (false) ;
     }
 
+    void connect_to_debugger_signals ()
+    {
+        THROW_IF_FAIL (debugger) ;
+
+        debugger->stopped_signal ().connect (sigc::mem_fun
+            (*this, &Priv::on_debugger_stopped_signal)) ;
+
+        debugger->threads_listed_signal ().connect (sigc::mem_fun
+            (*this, &Priv::on_debugger_threads_listed_signal)) ;
+
+        debugger->thread_selected_signal ().connect (sigc::mem_fun
+            (*this, &Priv::on_debugger_thread_selected_signal)) ;
+    }
+
+    void connect_to_widget_signals ()
+    {
+        THROW_IF_FAIL (debugger) ;
+        THROW_IF_FAIL (tree_view && tree_view->get_selection ()) ;
+        tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
+            (*this, &Priv::on_tree_view_selection_changed_signal)) ;
+    }
+
     void set_a_thread_id (int a_id)
     {
-        THROW_IF_FAIL (tree_store) ;
-        Gtk::TreeModel::iterator iter = tree_store->append () ;
+        THROW_IF_FAIL (list_store) ;
+        Gtk::TreeModel::iterator iter = list_store->append () ;
         iter->set_value (columns ().thread_id, a_id) ;
     }
 
@@ -88,7 +165,20 @@ struct ThreadList::Priv {
             set_a_thread_id (*it) ;
         }
     }
-    //TODO: connect to signals and make this live !
+
+    void select_thread_id (int a_tid)
+    {
+        THROW_IF_FAIL (list_store) ;
+
+        Gtk::TreeModel::iterator it  ;
+        for (it = list_store->children ().begin () ;
+             it != list_store->children ().end () ;
+             ++it) {
+            if ((int)(*it)->get_value (columns ().thread_id) == a_tid) {
+                tree_view->get_selection ()->select (it) ;
+            }
+        }
+    }
 };//end ThreadList::Priv
 
 ThreadList::ThreadList (IDebuggerSafePtr &a_debugger)
@@ -130,3 +220,4 @@ ThreadList::thread_selected_signal () const
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
+

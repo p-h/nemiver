@@ -96,9 +96,10 @@ struct CallStack::Priv {
 
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
-                                     const IDebugger::Frame &a_frame)
+                                     const IDebugger::Frame &a_frame,
+                                     int a_thread_id)
     {
-        if (a_reason == "" || a_has_frame || a_frame.line ()) {}
+        if (a_reason == "" || a_has_frame || a_frame.line () || a_thread_id) {}
         THROW_IF_FAIL (debugger) ;
         debugger->list_frames () ;
     }

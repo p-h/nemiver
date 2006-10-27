@@ -169,6 +169,7 @@ public:
         UString m_address ;
         UString m_function ;
         map<UString, UString> m_args ;
+        int m_level ;
         //present if the target has debugging info
         UString m_file_name ;
         //present if the target has sufficient debugging info
@@ -192,6 +193,9 @@ public:
         const map<UString, UString>& args () const {return m_args;}
         map<UString, UString>& args () {return m_args;}
 
+        int level () const {return m_level;}
+        void level (int a_level) {m_level = a_level;}
+
         const UString& file_name () const {return m_file_name;}
         void file_name (const UString &a_in) {m_file_name = a_in;}
 
@@ -212,6 +216,7 @@ public:
             m_address = "" ;
             m_function = "" ;
             m_args.clear () ;
+            m_level = 0 ;
             m_file_name = "" ;
             m_file_full_name = "" ;
             m_line = 0 ;
@@ -357,16 +362,18 @@ public:
     virtual sigc::signal<void, const map<int, IDebugger::BreakPoint>&>&
                                              breakpoints_set_signal () const = 0;
 
-    virtual sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
-                                                     stopped_signal () const = 0;
+    virtual sigc::signal<void,
+                         const UString&/*reason*/,
+                         bool /*has frame*/,
+                         const IDebugger::Frame&/*the frame*/,
+                         int /*thread id*/>& stopped_signal () const = 0;
 
     virtual sigc::signal<void, const list<int> >&
                                         threads_listed_signal () const = 0;
 
     virtual sigc::signal<void,
                          int/*thread id*/,
-                         int/*frame level*/,
-                         const Frame&/*frame in thread*/> &
+                         const IDebugger::Frame&/*frame in thread*/> &
                                             thread_selected_signal () const = 0 ;
 
     virtual sigc::signal<void, const vector<IDebugger::Frame>& >&
@@ -379,31 +386,42 @@ public:
     /// called when a core file is loaded.
     /// it signals the current frame, i.e the frame in which
     /// the core got dumped.
-    virtual sigc::signal<void, int, IDebugger::Frame&> &
+    virtual sigc::signal<void, const IDebugger::Frame&>&
                                             current_frame_signal () const = 0 ;
 
 
     virtual sigc::signal<void, const list<VariableSafePtr>& >&
                             local_variables_listed_signal () const = 0;
 
-    virtual sigc::signal<void, const UString&, const VariableSafePtr&>&
-                                        variable_value_signal () const = 0 ;
+    virtual sigc::signal<void,
+                         const UString&/*variable name*/,
+                         const VariableSafePtr&/*variable*/>&
+                                            variable_value_signal () const = 0 ;
 
-    virtual sigc::signal<void, const UString&, const VariableSafePtr&>&
+    virtual sigc::signal<void,
+                         const UString&/*variable name*/,
+                         const VariableSafePtr&/*variable*/>&
                                     pointed_variable_value_signal () const = 0 ;
 
-    virtual sigc::signal<void, const UString&, const UString&>&
+    virtual sigc::signal<void,
+                         const UString&/*variable name*/,
+                         const UString&/*type*/>&
                                         variable_type_signal () const = 0 ;
 
-    virtual sigc::signal<void, int/*pid*/, const UString&/*target path*/>&
+    virtual sigc::signal<void,
+                         int/*pid*/,
+                         const UString&/*target path*/>&
                                             got_target_info_signal () const = 0 ;
 
     virtual sigc::signal<void>& running_signal () const = 0;
 
-    virtual sigc::signal<void, const UString&, const UString&>&
+    virtual sigc::signal<void,
+                         const UString&/*signal name*/,
+                         const UString&/*signal description*/>&
                                             signal_received_signal () const = 0;
 
-    virtual sigc::signal<void, const UString&>& error_signal () const = 0 ;
+    virtual sigc::signal<void, const UString&/*error message*/>&
+                                                    error_signal () const = 0;
 
     virtual sigc::signal<void, IDebugger::State>& state_changed_signal () const=0;
 

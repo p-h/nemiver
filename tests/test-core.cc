@@ -28,19 +28,19 @@ on_engine_died_signal ()
 void
 on_stopped_signal (const UString &a_reason,
                    bool a_has_frame,
-                   const IDebugger::Frame &a_frame)
+                   const IDebugger::Frame &a_frame,
+                   int a_thread_id)
 {
     std::cout << "stopped, reason: " << a_reason << " " ;
     if (a_has_frame) {
         std::cout << "in frame: " << a_frame.function () ;
     }
-    std::cout << "\n" ;
+    std::cout << "thread-id: '" << a_thread_id << "'\n" ;
 }
 void
-on_current_frame_signal (int a_cur, IDebugger::Frame &a_frame)
+on_current_frame_signal (const IDebugger::Frame &a_frame)
 {
-    if (a_frame.line ()) {}
-    gv_cur_frame = a_cur ;
+    gv_cur_frame = a_frame.level ();
 }
 
 void

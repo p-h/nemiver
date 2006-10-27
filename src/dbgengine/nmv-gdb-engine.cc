@@ -316,7 +316,6 @@ public:
         bool m_has_thread_list ;
 
         //new thread id selected members
-        int m_frame_level ;
         int m_thread_id ;
         IDebugger::Frame m_frame_in_thread ;
         bool m_thread_id_got_selected ;
@@ -405,17 +404,14 @@ public:
         bool thread_id_got_selected () const {return m_thread_id_got_selected;}
         void thread_id_got_selected (bool a_in) {m_thread_id_got_selected = a_in;}
 
-        int frame_level_in_thread () const {return m_frame_level;}
         int thread_id () const {return m_thread_id;}
         const IDebugger::Frame& frame_in_thread () const
         {
             return m_frame_in_thread;
         }
         void thread_id_selected_info (int a_thread_id,
-                                      int a_frame_level,
                                       const IDebugger::Frame &a_frame_in_thread)
         {
-            m_frame_level = a_frame_level ;
             m_thread_id = a_thread_id ;
             m_frame_in_thread = a_frame_in_thread ;
             thread_id_got_selected (true) ;
@@ -438,7 +434,6 @@ public:
             m_has_variable_value = false ;
             m_thread_list.clear () ;
             m_has_thread_list = false ;
-            m_frame_level = 0;
             m_thread_id = 0;
             m_frame_in_thread.clear () ;
             m_thread_id_got_selected = false;
@@ -941,12 +936,12 @@ public:
                                             breakpoint_deleted_signal () const ;
 
 
-    sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
+    sigc::signal<void, const UString&, bool, const IDebugger::Frame&, int>&
                                                         stopped_signal () const ;
 
     sigc::signal<void, const list<int> >& threads_listed_signal () const ;
 
-    sigc::signal<void, int, int, const Frame&>& thread_selected_signal () const  ;
+    sigc::signal<void, int, const Frame&>& thread_selected_signal () const  ;
 
     sigc::signal<void, const vector<IDebugger::Frame>& >&
                                                 frames_listed_signal () const ;
@@ -955,7 +950,7 @@ public:
                                  list<IDebugger::VariableSafePtr> >&>&
                                         frames_params_listed_signal () const;
 
-    sigc::signal<void, int, IDebugger::Frame&> & current_frame_signal () const  ;
+    sigc::signal<void, const IDebugger::Frame&>& current_frame_signal () const  ;
 
     sigc::signal<void, const list<VariableSafePtr>& >&
                         local_variables_listed_signal () const ;
@@ -1177,11 +1172,12 @@ struct GDBEngine::Priv {
                                                 breakpoint_deleted_signal ;
 
     mutable sigc::signal<void, const UString&,
-                         bool, const IDebugger::Frame&> stopped_signal ;
+                         bool, const IDebugger::Frame&,
+                         int> stopped_signal ;
 
     mutable sigc::signal<void, const list<int> > threads_listed_signal ;
 
-    mutable sigc::signal<void, int, int, const Frame&> thread_selected_signal ;
+    mutable sigc::signal<void, int, const Frame&> thread_selected_signal ;
 
     mutable sigc::signal<void, const vector<IDebugger::Frame>& >
                                                     frames_listed_signal ;
@@ -1190,7 +1186,7 @@ struct GDBEngine::Priv {
                                          list<IDebugger::VariableSafePtr> >&>
                                                 frames_params_listed_signal ;
 
-    mutable sigc::signal<void, int, IDebugger::Frame&> current_frame_signal ;
+    mutable sigc::signal<void, const IDebugger::Frame&> current_frame_signal ;
 
     mutable sigc::signal<void, const list<VariableSafePtr>& >
                                     local_variables_listed_signal  ;
@@ -2209,15 +2205,31 @@ struct GDBEngine::Priv {
         return true ;
     }
 
+    /// \brief parses a function frame
+    ///
+    /// function frames have the form:
+    /// frame={addr="0x080485fa",func="func1",args=[{name="foo", value="bar"}],
+    /// file="fooprog.cc",fullname="/foo/fooprog.cc",line="6"}
+    ///
+    /// \param a_input the input string to parse
+    /// \param a_from where to parse from.
+    /// \param a_to out parameter. Where the parser went after the parsing.
+    /// \param a_frame the parsed frame. It is set if and only if the function
+    ///  returns true.
+    /// \return true upon successful parsing, false otherwise.
     bool parse_frame (const UString &a_input,
                       UString::size_type a_from,
                       UString::size_type &a_to,
-                      IDebugger::Frame &a_frame,
-                      int &a_level)
+                      IDebugger::Frame &a_frame)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
         CHECK_END (a_input, cur, end) ;
+
+        if (a_input.compare (a_from, 7, "frame={")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
 
         GDBMIResultSafePtr result ;
         if (!parse_gdbmi_result (a_input, cur, cur, result)) {
@@ -2248,7 +2260,7 @@ struct GDBEngine::Priv {
         list<GDBMIResultSafePtr>::const_iterator res_it ;
         GDBMIResultSafePtr tmp_res ;
         Frame frame ;
-        UString name, value, level_str;
+        UString name, value ;
         for (res_it = result_value_tuple->content ().begin () ;
              res_it != result_value_tuple->content ().end ();
              ++res_it) {
@@ -2261,19 +2273,13 @@ struct GDBEngine::Priv {
             name = tmp_res->variable () ;
             value = tmp_res->value ()->get_string_content () ;
             if (name == "level") {
-                level_str = value ;
+                frame.level (atoi (value.c_str ())) ;
             } else if (name == "addr") {
                 frame.address (value) ;
             } else if (name == "func") {
                 frame.function (value) ;
             }
         }
-        int level=-1 ;
-        if (level_str != "") {
-            level = atoi (level_str.c_str ()) ;
-        }
-
-        a_level = level ;
         a_frame = frame ;
         a_to = cur ;
         return true ;
@@ -2958,18 +2964,7 @@ struct GDBEngine::Priv {
         return true;
     }
 
-    /// \brief parses a function frame
-    ///
-    /// function frames have the form:
-    /// frame={addr="0x080485fa",func="func1",args=[{name="foo", value="bar"}],
-    /// file="fooprog.cc",fullname="/foo/fooprog.cc",line="6"}
-    ///
-    /// \param a_input the input string to parse
-    /// \param a_from where to parse from.
-    /// \param a_to out parameter. Where the parser went after the parsing.
-    /// \param a_frame the parsed frame. It is set if and only if the function
-    ///  returns true.
-    /// \return true upon successful parsing, false otherwise.
+    /*
     bool parse_frame (const UString &a_input,
                       UString::size_type a_from,
                       UString::size_type &a_to,
@@ -3019,6 +3014,7 @@ struct GDBEngine::Priv {
         a_to = cur ;
         return true;
     }
+    */
 
     /// parses the result of the gdbmi command
     /// "-thread-list-ids".
@@ -3120,8 +3116,7 @@ struct GDBEngine::Priv {
                               UString::size_type a_from,
                               UString::size_type &a_to,
                               int &a_thread_id,
-                              IDebugger::Frame &a_frame,
-                              int &a_level)
+                              IDebugger::Frame &a_frame)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
         UString::size_type cur = a_from, end = a_input.size () ;
@@ -3163,15 +3158,13 @@ struct GDBEngine::Priv {
         CHECK_END (a_input, cur, end) ;
 
         IDebugger::Frame frame ;
-        int level=0 ;
-        if (!parse_frame (a_input, cur, cur, frame, level)) {
+        if (!parse_frame (a_input, cur, cur, frame)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
 
         a_to = cur ;
         a_thread_id = thread_id ;
-        a_level = level ;
         a_frame = frame ;
         return true ;
     }
@@ -3587,12 +3580,11 @@ fetch_gdbmi_result:
                     }
                 } else if (!a_input.compare (cur, 15, "new-thread-id=\"")) {
                     IDebugger::Frame frame ;
-                    int thread_id=0,level=0 ;
+                    int thread_id=0 ;
                     if (parse_new_thread_id (a_input, cur, cur,
-                                             thread_id, frame, level)) {
+                                             thread_id, frame)) {
                         //finish this !
-                        result_record.thread_id_selected_info (thread_id,
-                                                               level, frame) ;
+                        result_record.thread_id_selected_info (thread_id, frame) ;
                     }
                 } else if (!a_input.compare (cur, 7, "stack=[")) {
                     vector<IDebugger::Frame> call_stack ;
@@ -3613,12 +3605,10 @@ fetch_gdbmi_result:
                     }
                 } else if (!a_input.compare (cur, 7, "frame={")) {
                     IDebugger::Frame frame ;
-                    int level=-1 ;
-                    if (!parse_frame (a_input, cur, cur, frame, level)) {
+                    if (!parse_frame (a_input, cur, cur, frame)) {
                         LOG_PARSING_ERROR (a_input, cur) ;
                     } else {
                         LOG_D ("parsed result", GDBMI_PARSING_DOMAIN) ;
-                        THROW_IF_FAIL (level != -1) ;
                         //this is a hack in the model used throughout the
                         //GDBEngine code. Normally, output handlers
                         //are responsible of filtering the parsed
@@ -3632,7 +3622,7 @@ fetch_gdbmi_result:
                         //frame level information the the parse result record
                         //without making it look ugly.
                         //So I fire the signal directly from here.
-                        current_frame_signal.emit (level, frame) ;
+                        current_frame_signal.emit (frame) ;
                     }
                 } else if (!a_input.compare (cur, 7, "depth=\"")) {
                     GDBMIResultSafePtr result ;
@@ -3760,7 +3750,7 @@ fetch_out_of_band_record:
             goto fetch_out_of_band_record ;
         }
 
-        if (cur >= end) {
+        if (cur > end) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false;
         }
@@ -3975,10 +3965,13 @@ struct OnStoppedHandler: OutputHandler {
         THROW_IF_FAIL (m_is_stopped && m_engine) ;
         if (a_in.has_command ()) {}
 
+        int thread_id = m_out_of_band_record.thread_id () ;
+
         m_engine->stopped_signal ().emit
                     (m_out_of_band_record.stop_reason_as_str (),
                      m_out_of_band_record.has_frame (),
-                     m_out_of_band_record.frame ()) ;
+                     m_out_of_band_record.frame (),
+                     thread_id) ;
 
         UString reason = m_out_of_band_record.stop_reason_as_str () ;
 
@@ -4042,7 +4035,6 @@ struct OnThreadSelectedHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->thread_selected_signal ().emit
             (a_in.output ().result_record ().thread_id (),
-             a_in.output ().result_record ().frame_level_in_thread (),
              a_in.output ().result_record ().frame_in_thread ()) ;
     }
 };//end OnThreadSelectedHandler
@@ -4658,7 +4650,7 @@ GDBEngine::breakpoints_set_signal () const
     return m_priv->breakpoints_set_signal ;
 }
 
-sigc::signal<void, const UString&, bool, const IDebugger::Frame&>&
+sigc::signal<void, const UString&, bool, const IDebugger::Frame&, int>&
 GDBEngine::stopped_signal () const
 {
     return m_priv->stopped_signal ;
@@ -4670,7 +4662,7 @@ GDBEngine::threads_listed_signal () const
     return m_priv->threads_listed_signal ;
 }
 
-sigc::signal<void, int, int, const IDebugger::Frame&>&
+sigc::signal<void, int, const IDebugger::Frame&>&
 GDBEngine::thread_selected_signal () const
 {
     return m_priv->thread_selected_signal ;
@@ -4694,7 +4686,7 @@ GDBEngine::frames_params_listed_signal () const
     return m_priv->frames_params_listed_signal ;
 }
 
-sigc::signal<void, int, IDebugger::Frame&> &
+sigc::signal<void, const IDebugger::Frame&> &
 GDBEngine::current_frame_signal () const
 {
     return m_priv->current_frame_signal ;
