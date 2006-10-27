@@ -49,6 +49,7 @@
 #include "nmv-i-conf-mgr.h"
 #include "nmv-preferences-dialog.h"
 #include "nmv-popup-tip.h"
+#include "nmv-thread-list.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -147,6 +148,7 @@ private:
     void on_breakpoint_delete_action () ;
     void on_breakpoint_go_to_source_action () ;
     void on_call_stack_copy_to_clipboard_action () ;
+    void on_thread_list_thread_selected_signal (int a_tid) ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
 
@@ -362,6 +364,8 @@ public:
 
     BreakpointsView& get_breakpoints_view () ;
 
+    ThreadList& get_thread_list () ;
+
     void set_show_command_view (bool) ;
 
     void set_show_target_output_view (bool) ;
@@ -501,6 +505,8 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> terminal_scrolled_win ;
     SafePtr<Gtk::ScrolledWindow> breakpoints_scrolled_win ;
     SafePtr<BreakpointsView> breakpoints_view ;
+    SafePtr<ThreadList> thread_list ;
+
 
     int current_page_num ;
     IDebuggerSafePtr debugger ;
@@ -812,8 +818,27 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
 void
 DBGPerspective::on_call_stack_copy_to_clipboard_action ()
 {
+    NEMIVER_TRY
+
     UString call_stack_string = get_call_stack ().to_string ();
     Gtk::Clipboard::get ()->set_text (call_stack_string);
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
+{
+    if (a_tid) {}
+
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (debugger ()) ;
+
+    debugger ()->list_frames () ;
+    debugger ()->list_local_variables () ;
+
+    NEMIVER_CATCH
 }
 
 
@@ -1830,7 +1855,11 @@ DBGPerspective::init_body ()
     get_log_view_scrolled_win ().add (*m_priv->log_view) ;
     m_priv->log_view->set_editable (false) ;
 
-    get_call_stack_scrolled_win ().add (get_call_stack ().widget ()) ;
+    Gtk::HPaned *p = Gtk::manage (new Gtk::HPaned) ;
+    THROW_IF_FAIL (p) ;
+    p->add1 (get_thread_list ().widget ()) ;
+    p->add2 (get_call_stack ().widget ()) ;
+    get_call_stack_scrolled_win ().add (*p) ;
     get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
 
     get_terminal_scrolled_win ().add (get_terminal ().widget ()) ;
@@ -1869,6 +1898,9 @@ DBGPerspective::init_signals ()
         (sigc::mem_fun (*this, &DBGPerspective::on_breakpoints_view_button_press_signal));
     get_call_stack ().widget ().signal_button_press_event ().connect_notify
         (sigc::mem_fun (*this, &DBGPerspective::on_call_stack_button_press_signal));
+
+    get_thread_list ().thread_selected_signal ().connect (sigc::mem_fun
+        (*this, &DBGPerspective::on_thread_list_thread_selected_signal)) ;
 }
 
 void
@@ -2169,6 +2201,17 @@ DBGPerspective::get_breakpoints_menu ()
         THROW_IF_FAIL (m_priv->breakpoints_menu);
     }
     return m_priv->breakpoints_menu;
+}
+ThreadList&
+DBGPerspective::get_thread_list ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (debugger ()) ;
+    if (!m_priv->thread_list) {
+        m_priv->thread_list = new ThreadList (debugger ()) ;
+    }
+    THROW_IF_FAIL (m_priv->thread_list) ;
+    return *m_priv->thread_list ;
 }
 
 Gtk::Widget*

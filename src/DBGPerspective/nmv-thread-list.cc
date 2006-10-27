@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 
+#include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
 #include "nmv-thread-list.h"
@@ -42,7 +43,7 @@ struct ThreadListColumns : public Gtk::TreeModelColumnRecord {
 };//end class ThreadListColumns
 
 static ThreadListColumns&
-columns ()
+thread_list_columns ()
 {
     static ThreadListColumns s_thread_list_columns ;
     return s_thread_list_columns ;
@@ -56,6 +57,7 @@ struct ThreadList::Priv {
     Glib::RefPtr<Gtk::ListStore> list_store ;
     sigc::signal<void, int> thread_selected_signal ;
     int current_thread_id;
+    sigc::connection tree_view_selection_changed_connection ;
 
     Priv (IDebuggerSafePtr &a_debugger) :
         debugger (a_debugger),
@@ -84,7 +86,9 @@ struct ThreadList::Priv {
     {
         NEMIVER_TRY
 
+        clear_threads () ;
         set_thread_id_list (a_threads) ;
+        select_thread_id (current_thread_id, false) ;
 
         NEMIVER_CATCH
     }
@@ -92,10 +96,11 @@ struct ThreadList::Priv {
     void on_debugger_thread_selected_signal (int a_tid,
                                              const IDebugger::Frame &a_frame)
     {
+        if (a_frame.level ()) {}
         NEMIVER_TRY
 
-        if (a_frame.level ()) {}
-        current_thread_id = a_tid ;
+        select_thread_id (a_tid, false) ;
+        thread_selected_signal.emit (a_tid) ;
 
         NEMIVER_CATCH
     }
@@ -104,10 +109,15 @@ struct ThreadList::Priv {
     {
         NEMIVER_TRY
 
-        int thread_id =
-             (int) tree_view->get_selection()->get_selected ()->get_value
-                                                        (columns ().thread_id);
-        THROW_IF_FAIL (thread_id > 0) ;
+        if (!tree_view) {return;}
+        if (!tree_view->get_selection ()) {return;}
+
+        Gtk::TreeModel::iterator it  = tree_view->get_selection ()->get_selected () ;
+        if (!it) {return;}
+
+        int thread_id = (int) it->get_value (thread_list_columns ().thread_id);
+        if (thread_id <= 0) {return;}
+
         THROW_IF_FAIL (debugger) ;
 
         debugger->select_thread (thread_id) ;
@@ -117,13 +127,12 @@ struct ThreadList::Priv {
 
     void build_widget ()
     {
-        list_store = Gtk::ListStore::create (columns ()) ;
+        list_store = Gtk::ListStore::create (thread_list_columns ()) ;
         tree_view = new Gtk::TreeView () ;
         tree_view->set_model (list_store) ;
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
-        int col_num =
-            tree_view->append_column ("Thread ID", columns ().thread_id) ;
-        Gtk::TreeViewColumn *column = tree_view->get_column (col_num) ;
+        tree_view->append_column (_("Thread ID"), thread_list_columns ().thread_id) ;
+        Gtk::TreeViewColumn *column = tree_view->get_column (0) ;
         THROW_IF_FAIL (column) ;
         column->set_clickable (false) ;
         column->set_reorderable (false) ;
@@ -147,15 +156,16 @@ struct ThreadList::Priv {
     {
         THROW_IF_FAIL (debugger) ;
         THROW_IF_FAIL (tree_view && tree_view->get_selection ()) ;
-        tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
-            (*this, &Priv::on_tree_view_selection_changed_signal)) ;
+        tree_view_selection_changed_connection =
+            tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_tree_view_selection_changed_signal)) ;
     }
 
     void set_a_thread_id (int a_id)
     {
         THROW_IF_FAIL (list_store) ;
         Gtk::TreeModel::iterator iter = list_store->append () ;
-        iter->set_value (columns ().thread_id, a_id) ;
+        iter->set_value (thread_list_columns ().thread_id, a_id) ;
     }
 
     void set_thread_id_list (const std::list<int> &a_list)
@@ -166,7 +176,13 @@ struct ThreadList::Priv {
         }
     }
 
-    void select_thread_id (int a_tid)
+    void clear_threads ()
+    {
+        THROW_IF_FAIL (list_store) ;
+        list_store->clear () ;
+    }
+
+    void select_thread_id (int a_tid, bool a_emit_signal)
     {
         THROW_IF_FAIL (list_store) ;
 
@@ -174,16 +190,22 @@ struct ThreadList::Priv {
         for (it = list_store->children ().begin () ;
              it != list_store->children ().end () ;
              ++it) {
-            if ((int)(*it)->get_value (columns ().thread_id) == a_tid) {
+            LOG_DD ("testing list row") ;
+            if ((int)(*it)->get_value (thread_list_columns ().thread_id) == a_tid) {
+                if (!a_emit_signal) {
+                    tree_view_selection_changed_connection.block (true) ;
+                }
                 tree_view->get_selection ()->select (it) ;
+                tree_view_selection_changed_connection.block (false) ;
             }
+            LOG_DD ("tested list row") ;
         }
+        current_thread_id = a_tid ;
     }
 };//end ThreadList::Priv
 
 ThreadList::ThreadList (IDebuggerSafePtr &a_debugger)
 {
-    THROW_IF_FAIL (m_priv) ;
     m_priv = new ThreadList::Priv (a_debugger);
 }
 

@@ -1,3 +1,12 @@
+Fri, 27 Oct 2006 20:02:32 +0200 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-thread-list.cc: make this work somehow.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: Pack the thread-list widget
+	  in the call stack view widget. when the user selects a new
+	  thread, make sure we list the local variables and the call stack.
+	  Okay this is the first changeset in which we have the thread list
+	  working somehow.
+
 Fri, 27 Oct 2006 08:07:36 +0200 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: cleanup the API a
