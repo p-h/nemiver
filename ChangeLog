@@ -1,3 +1,10 @@
+Sat, 28 Oct 2006 14:06:44 +0200 Dodji Seketeli
+
+	* TODO: removed the "continue until" task from TODO.
+	  I won't do the "jump to line" task for now because it seems there
+	  is no gdb/mi command to do "jump to line". I will need to do this
+	  using the defaut gdb interpreter, but later.
+
 Sat, 28 Oct 2006 13:05:55 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc,
