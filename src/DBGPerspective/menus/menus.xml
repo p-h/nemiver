@@ -11,6 +11,8 @@
                       name="AttachToProgramMenuItem"/>
             <menuitem action="SavedSessionsMenuItemAction"
                       name="SavedSessionsMenuItem" />
+            <menuitem action="SaveSessionMenuItemAction"
+                      name="SaveSessionMenuItem" />
             <menuitem action="OpenMenuItemAction" name="OpenMenuItem"/>
             <menuitem action="CloseMenuItemAction" name="CloseMenuItem"/>
         </placeholder>

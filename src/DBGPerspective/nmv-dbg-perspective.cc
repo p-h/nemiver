@@ -139,6 +139,7 @@ private:
     void on_current_session_properties_action () ;
     void on_stop_debugger_action ();
     void on_run_action () ;
+    void on_save_session_action () ;
     void on_next_action () ;
     void on_step_into_action () ;
     void on_step_out_action () ;
@@ -680,6 +681,22 @@ DBGPerspective::on_run_action ()
     NEMIVER_TRY
 
     run () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_save_session_action ()
+{
+    NEMIVER_TRY
+
+    if (m_priv->reused_session) {
+        record_and_save_session (m_priv->session) ;
+        LOG_DD ("saved current session") ;
+    } else {
+        LOG_DD ("recorded a new session") ;
+        record_and_save_new_session () ;
+    }
 
     NEMIVER_CATCH
 }
@@ -1486,7 +1503,16 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
             "<shift>F5"
-        }
+        },
+        {
+            "SaveSessionMenuItemAction",
+            nil_stock_id,
+            _("_Save session to disk"),
+            _("save the current debugging session to disk"),
+            sigc::mem_fun (*this, &DBGPerspective::on_save_session_action),
+            ActionEntry::DEFAULT,
+            ""
+        },
     };
 
     static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {

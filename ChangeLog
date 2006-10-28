@@ -1,3 +1,12 @@
+Sat, 28 Oct 2006 22:28:46 +0200 Dodji Seketeli
+
+	* TODO: remove the on demand session serialisation from TODO. This
+	  item is now done.
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc,
+	  src/DBGPerspective/menus/menus.xml: added the save session
+	  menu action.
+
 Sat, 28 Oct 2006 14:06:44 +0200 Dodji Seketeli
 
 	* TODO: removed the "continue until" task from TODO.
