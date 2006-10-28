@@ -1,8 +1,6 @@
 This is a random short term todo list. Items written here are subject to discussion.
 Feel free to ask on nemiver-list@gna.org about particular topics that you may be interested to take over.
 
-*) code a thread selection tab in the status notebook. [pre 0.1]
-
 *) add 'continue to current line' and 'jump to current line'. [pre 0.1]
 
 *) add ability to trigger session saving, on demand. [pre 0.1]
