@@ -143,6 +143,7 @@ private:
     void on_step_into_action () ;
     void on_step_out_action () ;
     void on_continue_action () ;
+    void on_continue_until_action () ;
     void on_toggle_breakpoint_action () ;
     void on_show_commands_action () ;
     void on_show_errors_action () ;
@@ -318,6 +319,7 @@ public:
     void step_into () ;
     void step_out () ;
     void do_continue () ;
+    void do_continue_until () ;
     void set_breakpoint () ;
     void set_breakpoint (const UString &a_file,
                          int a_line) ;
@@ -728,6 +730,14 @@ DBGPerspective::on_continue_action ()
 {
     NEMIVER_TRY
     do_continue () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_continue_until_action ()
+{
+    NEMIVER_TRY
+    do_continue_until () ;
     NEMIVER_CATCH
 }
 
@@ -1521,6 +1531,17 @@ DBGPerspective::init_actions ()
         }
         ,
         {
+            "ContinueUntilMenuItemAction",
+            nil_stock_id,
+            _("Continue until"),
+            _("Continue program execution until the currently selected "
+              "line is reached"),
+            sigc::mem_fun (*this, &DBGPerspective::on_continue_until_action),
+            ActionEntry::DEFAULT,
+            "F11"
+        }
+        ,
+        {
             "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
             _("Toggle _break"),
@@ -2164,6 +2185,14 @@ DBGPerspective::get_contextual_menu ()
              "/ContextualMenu",
              "ContinueMenuItem",
              "ContinueMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        m_priv->workbench->get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "ContinueUntilMenuItem",
+             "ContinueUntilMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
@@ -2967,6 +2996,19 @@ void
 DBGPerspective::do_continue ()
 {
     debugger ()->do_continue () ;
+}
+
+void
+DBGPerspective::do_continue_until ()
+{
+    SourceEditor *editor = get_current_source_editor () ;
+    THROW_IF_FAIL (editor) ;
+
+    UString file_path ;
+    editor->get_file_name (file_path) ;
+    int current_line = editor->current_line () ;
+
+    debugger ()->continue_to_position (file_path, current_line) ;
 }
 
 void

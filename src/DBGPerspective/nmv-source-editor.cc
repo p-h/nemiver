@@ -464,6 +464,15 @@ SourceEditor::get_path (UString &a_path) const
 }
 
 void
+SourceEditor::get_file_name (UString &a_file_name)
+{
+    string path ;
+    path = Glib::locale_from_utf8 (m_priv->path) ;
+    path = Glib::path_get_basename (path) ;
+    a_file_name = Glib::locale_to_utf8 (path) ;
+}
+
+void
 SourceEditor::get_word_at_position (int a_x,
                                     int a_y,
                                     UString &a_word,

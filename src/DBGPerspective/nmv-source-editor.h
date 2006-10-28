@@ -68,6 +68,7 @@ public:
     void scroll_to_line (int a_line) ;
     void set_path (const UString &a_path) ;
     void get_path (UString &a_path) const ;
+    void get_file_name (UString &a_file_name) ;
     void get_word_at_position (int a_x,
                                int a_y,
                                UString &a_word,

@@ -32,6 +32,8 @@
             <menuitem action="StopMenuItemAction" name="StopMenuItem"/>
             <menuitem action="ContinueMenuItemAction"
                       name="ContinueMenuItem"/>
+            <menuitem action="ContinueUntilMenuItemAction"
+                      name="ContinueUntilMenuItem"/>
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
