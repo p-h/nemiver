@@ -1,3 +1,40 @@
+Sat, 28 Oct 2006 11:25:01 +0200 Dodji Seketeli
+
+	* configure.ac, */Makefile.am: cleanup link time deps to that
+	  libraries links with what they need _only_ .
+
+	* src/workbench/nmv-workbench.cc: do the gnomevfs init here so that
+	  it is not done in src/common/nmv-initializer.cc anymore. This way
+	  libnemivercommon.so only depends on glibmm .
+	
+	* src/DBGPerspective/nmv-dbg-perspective.cc: when the user hovers on the
+	  file editor notebook label, show the full path of the file.
+	  Stop the mouse immobile timer when the mouse leaves the source
+	  editor. This prevents from randomly showing the variable content
+	  popup tip.
+	  Cleaner way to update the call stack and the local variables
+	  when the user selects another thread.
+	  Limit the number of saved debugging session to 5. I need to set a
+	  gconf for that, instead of the hardcoding the value '5'.
+
+	* src/DBGPerspective/nmv-vars-editor.cc: kill a memory leak in here.
+	  Add VarsEditor::show_local_variables_of_current_function() to
+	  trigger the display of the local variables of the current function,
+	  on demand.
+	
+	 * src/DBGPerspective/nmv-call-stack.cc: implement the
+	   CallStack::update_stack() function that was cowardly left
+	   unimplemented.
+	
+	 * src/common/nmv-initializer.cc: remove
+	   gnome_vfs_init/gnome_vfs_shutdown() from here. This avoids linking
+	   libnemivercommon against the world, including avahi. That was too
+	   much.
+
+	* src/main.cc: kill a memory leak in here.
+	* tests/Makefile.am: link against libnemivercommon.so only.
+
+
 Fri, 27 Oct 2006 20:02:32 +0200 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-thread-list.cc: make this work somehow.

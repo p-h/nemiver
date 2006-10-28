@@ -27,7 +27,6 @@
 
 #include <list>
 #include "nmv-i-perspective.h"
-#include "nmv-source-editor.h"
 #include "nmv-i-debugger.h"
 #include "nmv-sess-mgr.h"
 

@@ -32,6 +32,7 @@
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #include <gtkmm/clipboard.h>
 #include "nmv-dbg-perspective.h"
+#include "nmv-source-editor.h"
 #include "nmv-ui-utils.h"
 #include "nmv-env.h"
 #include "nmv-run-program-dialog.h"
@@ -102,6 +103,7 @@ private:
     struct SlotedButton : Gtk::Button {
         UString file_path;
         DBGPerspective *perspective ;
+        SafePtr<Gtk::Tooltips> tooltips ;
 
         SlotedButton () :
             Gtk::Button (),
@@ -165,6 +167,8 @@ private:
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
 
     bool on_motion_notify_event_signal (GdkEventMotion *a_event) ;
+
+    bool on_leave_notify_event_signal (GdkEventCrossing *a_event) ;
 
     bool on_mouse_immobile_timer_signal () ;
 
@@ -252,6 +256,7 @@ private:
     void show_underline_tip_at_position (int a_x, int a_y,
                                          const UString &a_text);
     void restart_mouse_immobile_timer () ;
+    void stop_mouse_immobile_timer () ;
     PopupTip& get_popup_tip () ;
 
 public:
@@ -833,10 +838,8 @@ DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
 
     NEMIVER_TRY
 
-    THROW_IF_FAIL (debugger ()) ;
-
-    debugger ()->list_frames () ;
-    debugger ()->list_local_variables () ;
+    get_call_stack ().update_stack () ;
+    get_variables_editor ().show_local_variables_of_current_function () ;
 
     NEMIVER_CATCH
 }
@@ -982,6 +985,15 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
     m_priv->mouse_in_source_editor_y = y ;
     restart_mouse_immobile_timer () ;
     NEMIVER_CATCH
+    return false ;
+}
+
+bool
+DBGPerspective::on_leave_notify_event_signal (GdkEventCrossing *a_event)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D(DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
+    if (a_event) {}
+    stop_mouse_immobile_timer () ;
     return false ;
 }
 
@@ -1980,14 +1992,21 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->file_path = a_path ;
     close_button->signal_clicked ().connect
             (sigc::mem_fun (*close_button, &SlotedButton::on_clicked)) ;
+    close_button->tooltips = new Gtk::Tooltips ;
+    close_button->tooltips->set_tip (*close_button,
+                                     _("close") +  UString (" ") + a_path) ;
 
     SafePtr<Gtk::Table> table (Gtk::manage (new Gtk::Table (1, 2))) ;
     table->attach (*label, 0, 1, 0, 1) ;
     table->attach (*close_button, 1, 2, 0, 1) ;
+    close_button->tooltips->set_tip (*table, a_path) ;
 
     table->show_all () ;
+    Gtk::EventBox *event_box = Gtk::manage (new Gtk::EventBox) ;
+    event_box->add (*table) ;
+    close_button->tooltips->set_tip (*event_box, a_path) ;
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
-                                                              *table,
+                                                              *event_box,
                                                               -1);
     m_priv->path_2_pagenum_map[a_path] = page_num ;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
@@ -2401,6 +2420,13 @@ DBGPerspective::restart_mouse_immobile_timer ()
     get_popup_tip ().hide () ;
 }
 
+void
+DBGPerspective::stop_mouse_immobile_timer ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
+    m_priv->timeout_source_connection.disconnect () ;
+}
+
 PopupTip&
 DBGPerspective::get_popup_tip ()
 {
@@ -2459,6 +2485,23 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
                                    break_iter->second.line ())) ;
     }
     THROW_IF_FAIL (session_manager_ptr ()) ;
+
+    //erase all sessions but the 5 last ones, otherwise, the number
+    //of debugging session stored will explode with time.
+    std::list<ISessMgr::Session> sessions = session_manager_ptr ()->sessions () ;
+    int nb_sessions = sessions.size () ;
+    if (nb_sessions > 5) {
+        int nb_sessions_to_erase = sessions.size () - 5 ;
+        std::list<ISessMgr::Session>::const_iterator it ;
+        for (int i=0 ; i < nb_sessions_to_erase ; ++i) {
+            THROW_IF_FAIL (sessions.begin () != sessions.end ()) ;
+            session_manager_ptr ()->delete_session
+                (sessions.begin ()->session_id ()) ;
+            sessions.erase (sessions.begin ()) ;
+        }
+    }
+
+    //now store the current session
     session_manager_ptr ()->store_session
                             (a_session,
                              session_manager_ptr ()->default_transaction ()) ;
@@ -2644,6 +2687,10 @@ DBGPerspective::open_file (const UString &a_path,
             (sigc::mem_fun
              (*this,
               &DBGPerspective::on_motion_notify_event_signal)) ;
+
+        source_editor->source_view ().signal_leave_notify_event ().connect
+            (sigc::mem_fun (*this,
+                            &DBGPerspective::on_leave_notify_event_signal)) ;
     }
 
     m_priv->opened_file_action_group->set_sensitive (true) ;

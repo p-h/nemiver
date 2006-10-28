@@ -32,11 +32,31 @@
 #include "nmv-i-workbench.h"
 #include "nmv-i-perspective.h"
 #include "nmv-i-conf-mgr.h"
+#include <libgnomevfs/gnome-vfs-init.h>
 
 using namespace std ;
 using namespace nemiver ;
 using namespace nemiver::common ;
 namespace nemiver {
+
+class WorkbenchStaticInit {
+    WorkbenchStaticInit ()
+    {
+        gnome_vfs_init () ;
+    }
+
+    ~WorkbenchStaticInit ()
+    {
+        gnome_vfs_shutdown () ;
+    }
+
+public:
+    static void do_init ()
+    {
+        static WorkbenchStaticInit s_wb_init ;
+    }
+
+};//end class WorkbenchStaticInit
 
 class Workbench : public IWorkbench {
     struct Priv ;
@@ -64,10 +84,14 @@ private:
     void init_body () ;
     void add_perspective_toolbars (IPerspectiveSafePtr &a_perspective,
                                    list<Gtk::Widget*> &a_tbs) ;
-    void add_perspective_body (IPerspectiveSafePtr &a_perspective, Gtk::Widget *a_body) ;
+    void add_perspective_body (IPerspectiveSafePtr &a_perspective,
+                               Gtk::Widget *a_body) ;
     void select_perspective (IPerspectiveSafePtr &a_perspective) ;
 
-    void do_init () {}
+    void do_init ()
+    {
+        WorkbenchStaticInit::do_init ();
+    }
     void shut_down () ;
 
 public:

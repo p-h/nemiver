@@ -94,6 +94,22 @@ static GOptionEntry entries[] =
     {0,0,0,(GOptionArg)0,0,0,0}
 };
 
+struct GOptionContextUnref {
+    void operator () (GOptionContext *a_opt)
+    {
+        if (a_opt) {
+            g_option_context_free (a_opt) ;
+        }
+    }
+};//end struct GOptoinContextUnref
+
+struct GOptionContextRef {
+    void operator () (GOptionContext *a_opt)
+    {
+        if (a_opt) {}
+    }
+};//end struct GOptoinContextRef
+
 int
 main (int a_argc, char *a_argv[])
 {
@@ -101,18 +117,18 @@ main (int a_argc, char *a_argv[])
     bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8") ;
     textdomain (GETTEXT_PACKAGE) ;
     Initializer::do_init () ;
-    Gtk::Main main_loop (a_argc, a_argv);
-    GOptionContext *context=NULL ;
+    Gtk::Main gtk_kit (a_argc, a_argv);
+    SafePtr<GOptionContext, GOptionContextRef, GOptionContextUnref> context ;
 
     //***************************
     //parse command line options
     //***************************
     context = g_option_context_new
         (_(" [<prog-to-debug> [prog-args]] - a C/C++ debugger for GNOME")) ;
-    g_option_context_add_main_entries (context, entries, "") ;
-    g_option_context_add_group (context, gtk_get_option_group (TRUE)) ;
-    g_option_context_set_ignore_unknown_options (context, FALSE) ;
-    g_option_context_parse (context, &a_argc, &a_argv, NULL) ;
+    g_option_context_add_main_entries (context.get (), entries, "") ;
+    g_option_context_add_group (context.get (), gtk_get_option_group (TRUE)) ;
+    g_option_context_set_ignore_unknown_options (context.get (), FALSE) ;
+    g_option_context_parse (context.get (), &a_argc, &a_argv, NULL) ;
 
     NEMIVER_TRY
 
@@ -122,7 +138,7 @@ main (int a_argc, char *a_argv[])
     DynamicModuleManager module_manager ;
 
     IWorkbenchSafePtr workbench = module_manager.load<IWorkbench> ("workbench");
-    workbench->do_init (main_loop) ;
+    workbench->do_init (gtk_kit) ;
 
     //********************************
     //<process command line arguments>
@@ -236,7 +252,7 @@ main (int a_argc, char *a_argv[])
 run_app:
 
     workbench->get_root_window ().show_all () ;
-    main_loop.run (workbench->get_root_window ()) ;
+    gtk_kit.run (workbench->get_root_window ()) ;
 
     NEMIVER_CATCH_NOX
 

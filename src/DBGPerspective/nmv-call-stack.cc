@@ -295,7 +295,7 @@ CallStack::to_string()
     map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
     // convert list of stack frames to a string (maybe Frame should just
     // implement operator<< ?
-    for (frame_iter = m_priv->frames.begin(), params_iter = m_priv->m_params.begin();
+    for (frame_iter=m_priv->frames.begin(), params_iter=m_priv->m_params.begin();
             frame_iter != m_priv->frames.end(); ++frame_iter)
     {
         frame_stream << "#" << UString::from_int(i++) << "  " <<
@@ -342,7 +342,10 @@ CallStack::widget () const
 void
 CallStack::update_stack ()
 {
-    //TODO: code this once the widget and the IDebugger engine are ready
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->debugger) ;
+
+    m_priv->debugger->list_frames () ;
 }
 
 sigc::signal<void, int, const IDebugger::Frame&>&

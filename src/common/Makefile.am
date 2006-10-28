@@ -61,7 +61,7 @@ nmv-proc-utils.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/libnemivercommon
-libnemivercommon_la_LDFLAGS=@NEMIVERCOMMON_LIBS@
+libnemivercommon_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -lutil
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libnemivercommon.pc

@@ -62,10 +62,10 @@ nmv-thread-list.cc
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version
 libdbgperspectiveplugin_la_LIBADD= \
-@NEMIVER_LIBS@ \
+@NEMIVERDBGPERSP_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-INCLUDES=@NEMIVER_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+INCLUDES=@NEMIVERDBGPERSP_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \

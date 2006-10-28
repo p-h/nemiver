@@ -60,7 +60,9 @@ public:
     const vector<IDebugger::Frame>& frames () const ;
     void update_stack () ;
     Gtk::Widget& widget () const ;
-    sigc::signal<void, int, const IDebugger::Frame&>& frame_selected_signal () const ;
+    sigc::signal<void,
+                 int,
+                 const IDebugger::Frame&>& frame_selected_signal () const ;
 };//end class CallStack
 
 NEMIVER_END_NAMESPACE (nemiver)

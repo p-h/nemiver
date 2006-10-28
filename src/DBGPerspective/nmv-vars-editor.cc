@@ -68,8 +68,8 @@ public:
     SafePtr<Gtk::TreeView> tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeModel::iterator cur_selected_row ;
-    Gtk::TreeRowReference *local_variables_row_ref ;
-    Gtk::TreeRowReference *function_arguments_row_ref ;
+    SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
+    SafePtr<Gtk::TreeRowReference> function_arguments_row_ref ;
     std::map<UString, IDebugger::VariableSafePtr> local_vars_to_set ;
     std::map<UString, IDebugger::VariableSafePtr> function_arguments_to_set ;
     SafePtr<Gtk::Menu> contextual_menu ;
@@ -78,8 +78,6 @@ public:
     Priv (IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench) :
         workbench (a_workbench),
-        local_variables_row_ref (0),
-        function_arguments_row_ref (0),
         dereference_mi (0)
     {
         THROW_IF_FAIL (a_debugger) ;
@@ -557,13 +555,13 @@ fetch_element:
 
         it = local_vars_to_set.find (a_var_name) ;
         nil = local_vars_to_set.end () ;
-        row_ref = local_variables_row_ref ;
+        row_ref = local_variables_row_ref.get () ;
         map_ptr = &local_vars_to_set ;
 
         if (it == nil) {
             it = function_arguments_to_set.find (a_var_name) ;
             nil = function_arguments_to_set.end () ;
-            row_ref = function_arguments_row_ref ;
+            row_ref = function_arguments_row_ref.get () ;
             map_ptr = &function_arguments_to_set ;
         }
 
@@ -731,6 +729,16 @@ VarsEditor::set_local_variables
     THROW_IF_FAIL (m_priv->debugger) ;
 
     m_priv->set_local_variables (a_vars) ;
+}
+
+void
+VarsEditor::show_local_variables_of_current_function ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->debugger) ;
+
+    m_priv->re_init_tree_view () ;
+    m_priv->debugger->list_local_variables () ;
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
