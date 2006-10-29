@@ -1586,7 +1586,7 @@ DBGPerspective::init_actions ()
         {
             "ContinueUntilMenuItemAction",
             nil_stock_id,
-            _("Continue until"),
+            _("Run to cursor"),
             _("Continue program execution until the currently selected "
               "line is reached"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_until_action),
@@ -1608,7 +1608,7 @@ DBGPerspective::init_actions ()
     static ui_utils::ActionEntry s_debugger_busy_action_entries [] = {
         {
             "StopMenuItemAction",
-            nil_stock_id,
+            Gtk::Stock::STOP,
             _("Stop"),
             _("Stop the debugger"),
             sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
@@ -1716,7 +1716,7 @@ DBGPerspective::init_actions ()
         {
             "CurrentSessionPropertiesMenuItemAction",
             Gtk::Stock::PREFERENCES,
-            _("_preferences"),
+            _("_Preferences"),
             _("Edit the properties of the current session"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_current_session_properties_action),

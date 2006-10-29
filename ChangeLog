@@ -1,3 +1,13 @@
+2006-10-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/glade/preferencesdialog.glade,
+	src/DBGPerspective/glade/proclistdialog.glade,
+	src/DBGPerspective/glade/savedsessionsdialog.glade: a few minor HIG fixes,
+	mostly involving spacing, border widths, and capitalization.
+	* src/DBGPerspective/nmv-dbg-perspective.cc: add a stock icon for stop,
+	capitalize the 'preference' menu item, Renamed the "Continue until" menu
+	"Run to cursor".  Feel free to change it back if you don't like it.
+
 Sun, 29 Oct 2006 23:00:24 +0100 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: make sure the
