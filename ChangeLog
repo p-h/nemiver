@@ -1,3 +1,29 @@
+Sun, 29 Oct 2006 21:51:28 +0100 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-preferences-dialog.cc,h: make this talk
+	  with confmgr to store the prefs changed by the user and to init
+	  the widget. Make the dialog take an IWorkbench& in parameter to
+	  acess the IConfMgr singleton.
+	  Take the new source editor related prefs in account.
+
+	* src/DBGPerspective/schemas/nemiver-dbgperspective.schemas: added
+	  two new keys: /apps/nemiver/dbgperspective/show-source-line-numbers
+	  and: /apps/nemiver/dbgperspective/highlight-source-code.
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: update this to
+	  enjoy the new PreferencesDialog. Get the "highlight source code" and
+	  "show line numbers" prefs from confmgr.
+
+	* src/DBGPerspective/nmv-source-editor.cc: don't show line numbers by
+	  default. Clients will do that.
+
+	* src/DBGPerspective/glade/preferencesdialog.glade: add
+	  source editor related preferences.
+
+	* src/confmgr/nmv-gconf-mgr.cc: in client_notify_func(), cast to bool
+	  when setting gboolean value to a boost variant, otherwise, the
+	  variant later thinks it has an int.
+
 2006-10-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: add a Save icon to the new

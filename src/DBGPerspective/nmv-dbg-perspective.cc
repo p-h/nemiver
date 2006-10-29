@@ -80,6 +80,11 @@ static const UString CONF_KEY_NEMIVER_SOURCE_DIRS =
                 "/apps/nemiver/dbgperspective/source-search-dirs" ;
 static const UString CONF_KEY_SHOW_DBG_ERROR_DIALOGS =
                 "/apps/nemiver/dbgperspective/show-dbg-error-dialogs";
+static const UString CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
+                "/apps/nemiver/dbgperspective/show-source-line-numbers" ;
+static const UString CONF_KEY_HIGHLIGHT_SOURCE_CODE =
+                "/apps/nemiver/dbgperspective/highlight-source-code" ;
+
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
@@ -246,6 +251,7 @@ private:
     ISessMgr* session_manager_ptr () ;
     UString get_current_file_path () ;
     SourceEditor* get_source_editor_from_path (const UString &a_path) ;
+    IWorkbench& workbench () const ;
     void bring_source_as_current (const UString &a_path) ;
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
@@ -343,6 +349,8 @@ public:
     void delete_visual_breakpoint (int a_breaknum) ;
 
     IDebuggerSafePtr& debugger () ;
+
+    IConfMgr& conf_mgr () ;
 
     Gtk::TextView& get_command_view () ;
 
@@ -772,7 +780,7 @@ DBGPerspective::on_show_commands_action ()
     NEMIVER_TRY
     Glib::RefPtr<Gtk::ToggleAction> action =
         Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
-            (m_priv->workbench->get_ui_manager ()->get_action
+            (workbench ().get_ui_manager ()->get_action
                  ("/MenuBar/MenuBarAdditions/ViewMenu/ShowCommandsMenuItem")) ;
     THROW_IF_FAIL (action) ;
 
@@ -788,7 +796,7 @@ DBGPerspective::on_show_errors_action ()
 
     Glib::RefPtr<Gtk::ToggleAction> action =
         Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
-            (m_priv->workbench->get_ui_manager ()->get_action
+            (workbench ().get_ui_manager ()->get_action
                  ("/MenuBar/MenuBarAdditions/ViewMenu/ShowErrorsMenuItem")) ;
     THROW_IF_FAIL (action) ;
 
@@ -804,7 +812,7 @@ DBGPerspective::on_show_target_output_action ()
 
     Glib::RefPtr<Gtk::ToggleAction> action =
         Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
-            (m_priv->workbench->get_ui_manager ()->get_action
+            (workbench ().get_ui_manager ()->get_action
                  ("/MenuBar/MenuBarAdditions/ViewMenu/ShowTargetOutputMenuItem")) ;
     THROW_IF_FAIL (action) ;
 
@@ -1069,7 +1077,7 @@ DBGPerspective::on_show_command_view_changed_signal (bool a_show)
 {
     Glib::RefPtr<Gtk::ToggleAction> action =
             Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
-                (m_priv->workbench->get_ui_manager ()->get_action
+                (workbench ().get_ui_manager ()->get_action
                     ("/MenuBar/MenuBarAdditions/ViewMenu/ShowCommandsMenuItem"));
     THROW_IF_FAIL (action) ;
     action->set_active (a_show) ;
@@ -1082,7 +1090,7 @@ DBGPerspective::on_show_target_output_view_changed_signal (bool a_show)
 
     Glib::RefPtr<Gtk::ToggleAction> action =
         Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
-            (m_priv->workbench->get_ui_manager ()->get_action
+            (workbench ().get_ui_manager ()->get_action
                 ("/MenuBar/MenuBarAdditions/ViewMenu/ShowTargetOutputMenuItem"));
     THROW_IF_FAIL (action) ;
     action->set_active (a_show) ;
@@ -1095,7 +1103,7 @@ DBGPerspective::on_show_log_view_changed_signal (bool a_show)
 
     Glib::RefPtr<Gtk::ToggleAction> action =
         Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
-            (m_priv->workbench->get_ui_manager ()->get_action
+            (workbench ().get_ui_manager ()->get_action
                     ("/MenuBar/MenuBarAdditions/ViewMenu/ShowErrorsMenuItem"));
     THROW_IF_FAIL (action) ;
 
@@ -1112,6 +1120,26 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         m_priv->source_dirs = boost::get<UString> (a_value).split (":") ;
     } else if (a_key == CONF_KEY_SHOW_DBG_ERROR_DIALOGS) {
         m_priv->show_dbg_errors = boost::get<bool> (a_value) ;
+    } else if (a_key == CONF_KEY_SHOW_SOURCE_LINE_NUMBERS) {
+        map<int, SourceEditor*>::iterator it ;
+        for (it = m_priv->pagenum_2_source_editor_map.begin () ;
+             it != m_priv->pagenum_2_source_editor_map.end ();
+             ++it) {
+            if (it->second) {
+                it->second->source_view ().set_show_line_numbers
+                    (boost::get<bool> (a_value)) ;
+            }
+        }
+    } else if (a_key == CONF_KEY_HIGHLIGHT_SOURCE_CODE) {
+        map<int, SourceEditor*>::iterator it ;
+        for (it = m_priv->pagenum_2_source_editor_map.begin () ;
+             it != m_priv->pagenum_2_source_editor_map.end ();
+             ++it) {
+            if (it->second && it->second->source_view ().get_buffer ()) {
+                it->second->source_view ().get_source_buffer ()->set_highlight
+                                                (boost::get<bool> (a_value)) ;
+            }
+        }
     }
     NEMIVER_CATCH
 }
@@ -1435,7 +1463,7 @@ DBGPerspective::add_perspective_menu_entries ()
                                            absolute_path)) ;
 
     m_priv->menubar_merge_id =
-        m_priv->workbench->get_ui_manager ()->add_ui_from_file
+        workbench ().get_ui_manager ()->add_ui_from_file
                                         (Glib::locale_to_utf8 (absolute_path)) ;
 
     relative_path = Glib::build_filename ("menus", "contextualmenu.xml") ;
@@ -1443,7 +1471,7 @@ DBGPerspective::add_perspective_menu_entries ()
                     (Glib::locale_to_utf8 (relative_path),
                                            absolute_path)) ;
     m_priv->contextual_menu_merge_id =
-        m_priv->workbench->get_ui_manager ()->add_ui_from_file
+        workbench ().get_ui_manager ()->add_ui_from_file
                                         (Glib::locale_to_utf8 (absolute_path)) ;
 }
 
@@ -1471,7 +1499,7 @@ DBGPerspective::add_perspective_toolbar_entries ()
                                            absolute_path)) ;
 
     m_priv->toolbar_merge_id =
-        m_priv->workbench->get_ui_manager ()->add_ui_from_file
+        workbench ().get_ui_manager ()->add_ui_from_file
                                             (Glib::locale_to_utf8 (absolute_path)) ;
 }
 
@@ -1827,23 +1855,23 @@ DBGPerspective::init_actions ()
                          num_actions,
                          m_priv->call_stack_action_group) ;
 
-    m_priv->workbench->get_ui_manager ()->insert_action_group
+    workbench ().get_ui_manager ()->insert_action_group
                                         (m_priv->target_connected_action_group) ;
-    m_priv->workbench->get_ui_manager ()->insert_action_group
+    workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->debugger_busy_action_group) ;
-    m_priv->workbench->get_ui_manager ()->insert_action_group
+    workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->debugger_ready_action_group);
-    m_priv->workbench->get_ui_manager ()->insert_action_group
+    workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->default_action_group);
-    m_priv->workbench->get_ui_manager ()->insert_action_group
+    workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->opened_file_action_group);
-    m_priv->workbench->get_ui_manager ()->insert_action_group
+    workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->breakpoints_action_group);
-    m_priv->workbench->get_ui_manager ()->insert_action_group
+    workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->call_stack_action_group);
 
-    m_priv->workbench->get_root_window ().add_accel_group
-        (m_priv->workbench->get_ui_manager ()->get_accel_group ()) ;
+    workbench ().get_root_window ().add_accel_group
+        (workbench ().get_ui_manager ()->get_accel_group ()) ;
 }
 
 
@@ -1857,7 +1885,7 @@ DBGPerspective::init_toolbar ()
     THROW_IF_FAIL (m_priv->toolbar) ;
     m_priv->toolbar->pack_end (m_priv->throbber->get_widget (), Gtk::PACK_SHRINK) ;
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
-            (m_priv->workbench->get_ui_manager ()->get_widget ("/ToolBar")) ;
+            (workbench ().get_ui_manager ()->get_widget ("/ToolBar")) ;
     THROW_IF_FAIL (glade_toolbar) ;
     m_priv->toolbar->pack_start (*glade_toolbar) ;
     m_priv->toolbar->show_all () ;
@@ -1865,7 +1893,7 @@ DBGPerspective::init_toolbar ()
     Gtk::ToolButton *button=NULL ;
 
     button = dynamic_cast<Gtk::ToolButton*>
-    (m_priv->workbench->get_ui_manager ()->get_widget ("/ToolBar/RunToolItem")) ;
+    (workbench ().get_ui_manager ()->get_widget ("/ToolBar/RunToolItem")) ;
     THROW_IF_FAIL (button) ;
 }
 
@@ -2119,6 +2147,15 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path)
     return m_priv->pagenum_2_source_editor_map[iter->second] ;
 }
 
+IWorkbench&
+DBGPerspective::workbench () const
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->workbench) ;
+
+    return *m_priv->workbench ;
+}
+
 void
 DBGPerspective::bring_source_as_current (const UString &a_path)
 {
@@ -2166,7 +2203,7 @@ DBGPerspective::get_contextual_menu ()
 
     if (!m_priv->contextual_menu) {
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "ToggleBreakPointMenuItem",
@@ -2174,7 +2211,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "NextMenuItem",
@@ -2182,7 +2219,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "StepMenuItem",
@@ -2190,7 +2227,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "StepMenuItem",
@@ -2198,7 +2235,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "StepOutMenuItem",
@@ -2206,7 +2243,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "ContinueMenuItem",
@@ -2214,7 +2251,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "ContinueUntilMenuItem",
@@ -2222,7 +2259,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "StopMenuItem",
@@ -2230,7 +2267,7 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->add_ui
+        workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
              "RunMenuItem",
@@ -2238,9 +2275,9 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        m_priv->workbench->get_ui_manager ()->ensure_update () ;
+        workbench ().get_ui_manager ()->ensure_update () ;
         m_priv->contextual_menu =
-            m_priv->workbench->get_ui_manager ()->get_widget
+            workbench ().get_ui_manager ()->get_widget
             ("/ContextualMenu") ;
         THROW_IF_FAIL (m_priv->contextual_menu) ;
     }
@@ -2258,11 +2295,11 @@ DBGPerspective::load_menu (UString a_filename, UString a_widget_name)
             (Glib::locale_to_utf8 (relative_path),
              absolute_path)) ;
 
-    m_priv->workbench->get_ui_manager ()->add_ui_from_file
+    workbench ().get_ui_manager ()->add_ui_from_file
         (Glib::locale_to_utf8 (absolute_path)) ;
 
     NEMIVER_CATCH
-    return m_priv->workbench->get_ui_manager ()->get_widget (a_widget_name);
+    return workbench ().get_ui_manager ()->get_widget (a_widget_name);
 }
 
 Gtk::Widget*
@@ -2339,7 +2376,7 @@ DBGPerspective::init_conf_mgr ()
 {
     if (m_priv->source_dirs.empty ()) {
         THROW_IF_FAIL (m_priv->workbench) ;
-        IConfMgr &conf_mgr = m_priv->workbench->get_configuration_manager () ;
+        IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
 
         UString dirs ;
         conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs) ;
@@ -2599,7 +2636,7 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
     init_debugger_signals () ;
     init_conf_mgr () ;
     session_manager ().load_sessions (session_manager ().default_transaction ());
-    m_priv->workbench->shutting_down_signal ().connect (sigc::mem_fun
+    workbench ().shutting_down_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_shutdown_signal)) ;
     m_priv->initialized = true ;
 }
@@ -2706,10 +2743,15 @@ DBGPerspective::open_file (const UString &a_path,
     }
     file.close () ;
 
-    source_buffer->set_highlight () ;
-    SourceEditor *source_editor (Gtk::manage
-                                (new SourceEditor (plugin_path (),
-                                 source_buffer)));
+    bool do_highlight=false ;
+    conf_mgr ().get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE, do_highlight) ;
+    source_buffer->set_highlight (do_highlight) ;
+    SourceEditor *source_editor (Gtk::manage (new SourceEditor (plugin_path (),
+                                                                source_buffer)));
+    bool show_line_numbers=true ;
+    conf_mgr ().get_key_value (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS,
+                               show_line_numbers) ;
+    source_editor->source_view ().set_show_line_numbers (show_line_numbers) ;
     source_editor->set_path (a_path) ;
     source_editor->marker_region_got_clicked_signal ().connect
         (sigc::mem_fun
@@ -2947,13 +2989,9 @@ DBGPerspective::saved_sessions ()
 void
 DBGPerspective::edit_preferences ()
 {
-    PreferencesDialog dialog (plugin_path ());
-    dialog.source_directories (m_priv->source_dirs) ;
-
-    int res = dialog.run () ;
-    if (res != Gtk::RESPONSE_OK) {return;}
-
-    m_priv->source_dirs = dialog.source_directories () ;
+    THROW_IF_FAIL (m_priv) ;
+    PreferencesDialog dialog (workbench (), plugin_path ());
+    dialog.run () ;
 }
 
 void
@@ -3251,9 +3289,7 @@ IDebuggerSafePtr&
 DBGPerspective::debugger ()
 {
     if (!m_priv->debugger) {
-        THROW_IF_FAIL (m_priv->workbench) ;
-
-        DynamicModule::Loader *loader = m_priv->workbench->get_module_loader () ;
+        DynamicModule::Loader *loader = workbench ().get_module_loader () ;
         THROW_IF_FAIL (loader) ;
         DynamicModuleManager *module_manager =
                             loader->get_dynamic_module_manager () ;
@@ -3266,6 +3302,12 @@ DBGPerspective::debugger ()
     }
     THROW_IF_FAIL (m_priv->debugger) ;
     return m_priv->debugger ;
+}
+
+IConfMgr&
+DBGPerspective::conf_mgr ()
+{
+    return workbench ().get_configuration_manager () ;
 }
 
 Gtk::TextView&

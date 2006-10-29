@@ -27,6 +27,10 @@
 #include <gtkmm/liststore.h>
 #include "nmv-preferences-dialog.h"
 #include "nmv-ui-utils.h"
+#include "nmv-i-conf-mgr.h"
+#include "nmv-i-workbench.h"
+
+using nemiver::common::DynamicModuleManager ;
 
 NEMIVER_BEGIN_NAMESPACE(nemiver)
 
@@ -47,20 +51,91 @@ source_dirs_cols ()
 }
 
 class PreferencesDialog::Priv {
-    Priv () {}
+    Priv () ;
 
 public:
+    IWorkbench &workbench ;
+    mutable IConfMgrSafePtr configuration_manager ;
+
+    //source directories property widgets
     vector<UString> source_dirs ;
     Glib::RefPtr<Gtk::ListStore> list_store ;
     Gtk::TreeView *tree_view ;
     Gtk::TreeModel::iterator cur_dir_iter ;
     Gtk::Button *remove_dir_button ;
 
-    Priv (Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+    //source editor properties widgets
+    Gtk::CheckButton *show_lines_check_button ;
+    Gtk::CheckButton *highlight_source_check_button ;
+
+    Priv (Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          IWorkbench &a_workbench) :
+        workbench (a_workbench),
         tree_view (0),
-        remove_dir_button (0)
+        remove_dir_button (0),
+        show_lines_check_button (0),
+        highlight_source_check_button (0)
     {
         init (a_glade) ;
+    }
+
+    void on_tree_view_selection_changed ()
+    {
+        THROW_IF_FAIL (tree_view) ;
+        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
+        THROW_IF_FAIL (sel) ;
+        cur_dir_iter = sel->get_selected () ;
+        if (cur_dir_iter) {
+            remove_dir_button->set_sensitive (true) ;
+        } else {
+            remove_dir_button->set_sensitive (false) ;
+        }
+    }
+
+    void on_add_dir_button_clicked ()
+    {
+        NEMIVER_TRY
+        Gtk::FileChooserDialog file_chooser
+                                (_("Choose directory"),
+                                 Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) ;
+
+        file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
+        file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
+        file_chooser.set_select_multiple (false) ;
+
+        int result = file_chooser.run () ;
+
+        if (result != Gtk::RESPONSE_OK) {LOG_DD ("cancelled") ; return;}
+
+        UString path = file_chooser.get_filename () ;
+
+        if (path == "") {LOG_DD ("Got null dir") ;return;}
+
+        Gtk::TreeModel::iterator iter = list_store->append () ;
+        (*iter)[source_dirs_cols ().dir] = path ;
+
+        update_source_dirs_key () ;
+
+        NEMIVER_CATCH
+    }
+
+    void on_remove_dir_button_clicked ()
+    {
+        NEMIVER_TRY
+        if (!cur_dir_iter) {return;}
+        list_store->erase (cur_dir_iter) ;
+        update_source_dirs_key () ;
+        NEMIVER_CATCH
+    }
+
+    void on_show_lines_toggled_signal ()
+    {
+        update_show_source_line_numbers_key () ;
+    }
+
+    void on_highlight_source_toggled_signal ()
+    {
+        update_highlight_source_keys () ;
     }
 
     void init (Glib::RefPtr<Gnome::Glade::Xml> &a_glade)
@@ -93,52 +168,22 @@ public:
         remove_dir_button->signal_clicked ().connect (sigc::mem_fun
             (this, &PreferencesDialog::Priv::on_remove_dir_button_clicked)) ;
         remove_dir_button->set_sensitive (false) ;
-    }
 
-    void on_tree_view_selection_changed ()
-    {
-        THROW_IF_FAIL (tree_view) ;
-        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
-        THROW_IF_FAIL (sel) ;
-        cur_dir_iter = sel->get_selected () ;
-        if (cur_dir_iter) {
-            remove_dir_button->set_sensitive (true) ;
-        } else {
-            remove_dir_button->set_sensitive (false) ;
-        }
-    }
+        show_lines_check_button  =
+            ui_utils::get_widget_from_glade<Gtk::CheckButton>
+                                            (a_glade, "showlinescheckbutton") ;
+        THROW_IF_FAIL (show_lines_check_button) ;
+        show_lines_check_button->signal_toggled ().connect (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_show_lines_toggled_signal)) ;
 
-    void on_add_dir_button_clicked ()
-    {
-        NEMIVER_TRY
-
-        Gtk::FileChooserDialog file_chooser
-                                (_("Choose directory"),
-                                 Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) ;
-
-        file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
-        file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
-        file_chooser.set_select_multiple (false) ;
-
-        int result = file_chooser.run () ;
-
-        if (result != Gtk::RESPONSE_OK) {LOG_DD ("cancelled") ; return;}
-
-        UString path = file_chooser.get_filename () ;
-
-        if (path == "") {LOG_DD ("Got null dir") ;return;}
-
-        Gtk::TreeModel::iterator iter = list_store->append () ;
-        (*iter)[source_dirs_cols ().dir] = path ;
-        NEMIVER_CATCH
-    }
-
-    void on_remove_dir_button_clicked ()
-    {
-        NEMIVER_TRY
-        if (!cur_dir_iter) {return;}
-        list_store->erase (cur_dir_iter) ;
-        NEMIVER_CATCH
+        highlight_source_check_button  =
+            ui_utils::get_widget_from_glade<Gtk::CheckButton>
+                                    (a_glade, "highlightsourcecheckbutton") ;
+        THROW_IF_FAIL (highlight_source_check_button) ;
+        highlight_source_check_button->signal_toggled ().connect (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_highlight_source_toggled_signal)) ;
     }
 
     void collect_source_dirs ()
@@ -163,14 +208,111 @@ public:
             (*row_it)[source_dirs_cols ().dir] = *dir_it ;
         }
     }
+
+    IConfMgr& conf_manager () const
+    {
+        if (!configuration_manager) {
+            DynamicModule::Loader *loader =
+                workbench.get_module_loader () ;
+            THROW_IF_FAIL (loader) ;
+            DynamicModuleManager *module_manager =
+                loader->get_dynamic_module_manager () ;
+            THROW_IF_FAIL (module_manager) ;
+            configuration_manager =
+                    module_manager->load<IConfMgr> ("gconfmgr") ;
+        }
+        THROW_IF_FAIL (configuration_manager) ;
+        return *configuration_manager ;
+    }
+
+    void update_source_dirs_key ()
+    {
+        collect_source_dirs () ;
+        UString source_dirs_str ;
+        for (vector<UString>::const_iterator it = source_dirs.begin () ;
+             it != source_dirs.end () ;
+             ++it) {
+            if (source_dirs_str == "") {
+                source_dirs_str = *it ;
+            } else {
+                source_dirs_str += ":"  + *it;
+            }
+        }
+        conf_manager ().set_key_value
+            ("/apps/nemiver/dbgperspective/source-search-dirs",
+             source_dirs_str) ;
+    }
+
+    void update_show_source_line_numbers_key ()
+    {
+        THROW_IF_FAIL (show_lines_check_button) ;
+        bool is_on = show_lines_check_button->get_active () ;
+        conf_manager ().set_key_value
+                    ("/apps/nemiver/dbgperspective/show-source-line-numbers",
+                     is_on) ;
+    }
+
+    void update_highlight_source_keys ()
+    {
+        THROW_IF_FAIL (highlight_source_check_button) ;
+        bool is_on = highlight_source_check_button->get_active () ;
+        conf_manager ().set_key_value
+                    ("/apps/nemiver/dbgperspective/highlight-source-code",
+                     is_on) ;
+    }
+
+    void update_widget_from_source_dirs_key ()
+    {
+        UString paths_str ;
+        if (!conf_manager ().get_key_value
+                        ("/apps/nemiver/dbgperspective/source-search-dirs",
+                         paths_str)) {
+            return ;
+        }
+        if (paths_str == "") {return;}
+        std::vector<UString> paths = paths_str.split (":") ;
+        set_source_dirs (paths) ;
+    }
+
+    void update_widget_from_editor_keys ()
+    {
+        THROW_IF_FAIL (show_lines_check_button) ;
+        THROW_IF_FAIL (highlight_source_check_button) ;
+
+        bool is_on=true;
+        if (!conf_manager ().get_key_value
+                    ("/apps/nemiver/dbgperspective/show-source-line-numbers",
+                     is_on)) {
+            LOG_ERROR ("failed to get gconf key") ;
+        } else {
+            show_lines_check_button->set_active (is_on) ;
+        }
+
+        is_on=true ;
+        if (!conf_manager ().get_key_value
+                    ("/apps/nemiver/dbgperspective/highlight-source-code",
+                     is_on)) {
+            LOG_ERROR ("failed to get gconf key") ;
+        } else {
+            highlight_source_check_button->set_active (is_on) ;
+        }
+    }
+
+    void update_widget_from_conf ()
+    {
+        update_widget_from_source_dirs_key () ;
+        update_widget_from_editor_keys () ;
+    }
 };//end PreferencesDialog
 
-PreferencesDialog::PreferencesDialog (const UString &a_root_path) :
+PreferencesDialog::PreferencesDialog (IWorkbench &a_workbench,
+                                      const UString &a_root_path) :
     Dialog (a_root_path,
             "preferencesdialog.glade",
             "preferencesdialog")
 {
-    m_priv = new Priv (m_glade) ;
+    m_priv = new Priv (m_glade, a_workbench) ;
+    m_priv->update_widget_from_conf () ;
 }
 
 PreferencesDialog::~PreferencesDialog ()

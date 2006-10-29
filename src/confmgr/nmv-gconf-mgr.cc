@@ -111,20 +111,24 @@ client_notify_func (GConfClient *a_client,
     switch (a_value->type) {
         case GCONF_VALUE_STRING:
             value = UString (gconf_value_get_string (a_value)) ;
+            LOG_DD ("key value is: '" << boost::get<UString> (value) << "'") ;
             break ;
         case GCONF_VALUE_INT:
             value = gconf_value_get_int (a_value) ;
+            LOG_DD ("key value is: '" << boost::get<int> (value) << "'") ;
             break ;
         case GCONF_VALUE_FLOAT:
             value = gconf_value_get_float (a_value) ;
+            LOG_DD ("key value is: '" << boost::get<double> (value) << "'") ;
             break ;
         case GCONF_VALUE_BOOL:
-            value = gconf_value_get_bool (a_value) ;
+            value = (bool) gconf_value_get_bool (a_value) ;
+            LOG_DD ("key value is: '" << boost::get<bool> (value) << "'") ;
             break ;
         default:
-            LOG_ERROR_DD ("unsupported key type '"
-                          << (int)a_value->type
-                          << "'") ;
+            LOG_ERROR ("unsupported key type '"
+                       << (int)a_value->type
+                       << "'") ;
             return ;
     }
     a_conf_mgr->value_changed_signal ().emit (a_key, value) ;
@@ -174,7 +178,7 @@ GConfMgr::get_key_value (const UString &a_key, UString &a_value)
                                                  &err));
     GErrorSafePtr error (err) ;
     if (error) {
-        LOG_ERROR_DD (error->message) ;
+        LOG_ERROR (error->message) ;
         return false ;
     }
     a_value = value.get () ;
@@ -208,7 +212,7 @@ GConfMgr::get_key_value (const UString &a_key, bool &a_value)
                                      &err);
     GErrorSafePtr error (err) ;
     if (error) {
-        LOG_ERROR_DD (error->message) ;
+        LOG_ERROR (error->message) ;
         return false ;
     }
     return true ;
@@ -241,7 +245,7 @@ GConfMgr::get_key_value (const UString &a_key, int &a_value)
                                     &err);
     GErrorSafePtr error (err) ;
     if (error) {
-        LOG_ERROR_DD (error->message) ;
+        LOG_ERROR (error->message) ;
         return false ;
     }
     return true ;
@@ -274,7 +278,7 @@ GConfMgr::get_key_value (const UString &a_key, double &a_value)
                                       &err);
     GErrorSafePtr error (err) ;
     if (error) {
-        LOG_ERROR_DD (error->message) ;
+        LOG_ERROR (error->message) ;
         return false ;
     }
     return true ;

@@ -285,7 +285,6 @@ SourceEditor::init ()
     source_view ().set_marker_pixbuf ("line-pointer-marker", lp_pixbuf) ;
 
     source_view ().set_show_line_markers (true) ;
-    source_view ().set_show_line_numbers (true);
 }
 
 SourceEditor::SourceEditor ()

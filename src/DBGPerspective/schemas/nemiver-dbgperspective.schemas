@@ -23,6 +23,28 @@
 	<long>If set to yes, popups error message dialogs showing errors coming from the underlying debugger engine</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/show-source-line-numbers</key>
+      <applyto>/apps/nemiver/dbgperspective/show-source-line-numbers</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+	<short>Show or don't show source lines numbers</short>
+	<long>If set to yes, show the source code line number on the left hand side of each line</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/highlight-source-code</key>
+      <applyto>/apps/nemiver/dbgperspective/highlight-source-code</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+	<short>Highlight source code</short>
+	<long>If set to yes, highlight source code</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
 

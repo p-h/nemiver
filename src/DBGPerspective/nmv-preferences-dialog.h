@@ -33,6 +33,7 @@ using nemiver::common::UString ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+class IWorkbench ;
 class PreferencesDialog : public Dialog {
 
     class Priv ;
@@ -41,9 +42,11 @@ class PreferencesDialog : public Dialog {
     PreferencesDialog () ;
 
 public:
-    PreferencesDialog (const UString &a_resource_root_path) ;
-    PreferencesDialog (const UString &a_resource_root_path,
-                           std::vector<UString> &a_source_dirs) ;
+    PreferencesDialog (IWorkbench &a_workbench,
+                       const UString &a_root_path) ;
+    PreferencesDialog (IWorkbench &a_workbench,
+                       const UString &a_root_path,
+                       const std::vector<UString> &a_source_dirs) ;
     virtual ~PreferencesDialog () ;
     const std::vector<UString>& source_directories () const ;
     void source_directories (const std::vector<UString> &a_dirs) ;
