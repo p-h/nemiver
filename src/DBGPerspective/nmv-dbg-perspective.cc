@@ -1506,7 +1506,7 @@ DBGPerspective::init_actions ()
         },
         {
             "SaveSessionMenuItemAction",
-            nil_stock_id,
+            Gtk::Stock::SAVE,
             _("_Save session to disk"),
             _("save the current debugging session to disk"),
             sigc::mem_fun (*this, &DBGPerspective::on_save_session_action),

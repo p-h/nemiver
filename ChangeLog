@@ -1,3 +1,8 @@
+2006-10-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: add a Save icon to the new
+	"Save session to disk" menu item
+
 Sat, 28 Oct 2006 22:28:46 +0200 Dodji Seketeli
 
 	* TODO: remove the on demand session serialisation from TODO. This
