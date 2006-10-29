@@ -47,6 +47,7 @@ public:
         gtksourceview::SourceView (a_buf)
     {
         init_font ();
+        enable_events () ;
     }
 
     SourceView () :
@@ -59,6 +60,13 @@ public:
     {
         Pango::FontDescription font("monospace");
         modify_font(font);
+    }
+
+    void enable_events ()
+    {
+        add_events (Gdk::LEAVE_NOTIFY_MASK
+                    |Gdk::BUTTON_PRESS_MASK
+                    |Gdk::KEY_PRESS_MASK) ;
     }
 
     void do_custom_button_press_event_handling (GdkEventButton *a_event)

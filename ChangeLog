@@ -1,3 +1,14 @@
+Sun, 29 Oct 2006 23:00:24 +0100 Dodji Seketeli
+
+	* src/DBGPerspective/nmv-dbg-perspective.cc: make sure the
+	source_editor->source_view ().signal_leave_notify_event() get
+	delivered to us before it get delivered to the default slot.
+	* src/DBGPerspective/nmv-source-editor.cc: oops, forgot to
+	 ::add_masks() a bunch of events, especially the
+	 Gdk::LEAVE_NOTIFY_MASK. Otherwise, we don't detect when we get out
+	 of the source view area. This lead to a hover on variables bugs
+	 reported by Jonathon Jongsma. I hope this entry fixes it.
+
 Sun, 29 Oct 2006 21:51:28 +0100 Dodji Seketeli
 
 	* src/DBGPerspective/nmv-preferences-dialog.cc,h: make this talk

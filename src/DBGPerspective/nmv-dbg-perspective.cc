@@ -175,7 +175,7 @@ private:
 
     bool on_motion_notify_event_signal (GdkEventMotion *a_event) ;
 
-    bool on_leave_notify_event_signal (GdkEventCrossing *a_event) ;
+    void on_leave_notify_event_signal (GdkEventCrossing *a_event) ;
 
     bool on_mouse_immobile_timer_signal () ;
 
@@ -1023,13 +1023,12 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
     return false ;
 }
 
-bool
+void
 DBGPerspective::on_leave_notify_event_signal (GdkEventCrossing *a_event)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D(DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
     if (a_event) {}
     stop_mouse_immobile_timer () ;
-    return false ;
 }
 
 bool
@@ -2785,7 +2784,7 @@ DBGPerspective::open_file (const UString &a_path,
              (*this,
               &DBGPerspective::on_motion_notify_event_signal)) ;
 
-        source_editor->source_view ().signal_leave_notify_event ().connect
+        source_editor->source_view ().signal_leave_notify_event ().connect_notify
             (sigc::mem_fun (*this,
                             &DBGPerspective::on_leave_notify_event_signal)) ;
     }
