@@ -71,5 +71,6 @@ INCLUDES=@NEMIVERDBGPERSP_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \
 -I$(top_srcdir)/src/workbench \
+-I$(top_srcdir)/src/persp \
 -I$(top_srcdir)/src/dbgperspective
 

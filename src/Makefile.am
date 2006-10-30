@@ -14,5 +14,6 @@ INCLUDES=\
 -I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \
 -I$(top_srcdir)/src/workbench \
+-I$(top_srcdir)/src/persp \
 -I$(top_srcdir)/src/persp/dbgperspective
 

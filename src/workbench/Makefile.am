@@ -3,7 +3,6 @@ workbenchmoddir=@NEMIVER_MODULES_DIR@
 
 headers= \
 nmv-i-workbench.h \
-nmv-i-perspective.h \
 nmv-i-pref-mgr.h
 
 libworkbenchmod_la_SOURCES= \
@@ -12,7 +11,7 @@ nmv-workbench.cc \
 nmv-pref-mgr.cc
 
 publicheaders_DATA=$(headers)
-publicheadersdir=$(NEMIVER_INCLUDE_DIR)/workbench
+publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libworkbenchmod_la_LDFLAGS=@NEMIVERWORKBENCH_LIBS@ -module -avoid-version
 
@@ -23,7 +22,8 @@ INCLUDES=@NEMIVERWORKBENCH_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \
--I$(top_srcdir)/src/uicommon
+-I$(top_srcdir)/src/uicommon \
+-I$(top_srcdir)/src/persp
 
 EXTRA_DIST=workbench.conf.in
 

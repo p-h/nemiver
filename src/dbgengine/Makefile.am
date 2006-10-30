@@ -9,7 +9,7 @@ $(headers) \
 nmv-gdb-engine.cc
 
 publicheaders_DATA=$(headers)
-publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dbgengine
+publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgdbmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
 

@@ -7,7 +7,7 @@ Name: libdbgengine
 Description: A debugger interface library
 Version: @VERSION@
 Requires: libnemivercommon
-# dbgengine is a header-only 'library' that provides an interface that can be
-# implemented by debugger backends
+# dbgengine is a header-only 'library' that provides the main interface
+# implemented by debugger backends.
 Libs:
 Cflags: -I${includedir}

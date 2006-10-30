@@ -8,7 +8,7 @@ $(headers) \
 nmv-gconf-mgr.cc
 
 publicheaders_DATA=$(headers)
-publicheadersdir=$(NEMIVER_INCLUDE_DIR)/confmgr
+publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgconfmgrmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ @GCONF_LIBS@ -module -avoid-version
 
