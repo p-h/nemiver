@@ -1,0 +1,8 @@
+<moduleconfig>
+    <module>
+        <name>dbgperspective</name>
+        <libraryname>dbgperspectiveplugin</libraryname>
+    </module>
+    <customsearchpaths/>
+</moduleconfig>
+
