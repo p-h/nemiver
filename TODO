@@ -30,4 +30,8 @@ Feel free to ask on nemiver-list@gna.org about particular topics that you may be
 *) in the "load core file" workflow, grey out debugging actions that don't
    make sense like those related to stepping and breakpoint setting.
 
+*) Keep the 'where-marker' in the middle 1/3 of the source editor.  If the
+   marker advances past this area to the edge of the editor window, recenter the
+   current line so you can always see some context around the currently
+   executing line.
 

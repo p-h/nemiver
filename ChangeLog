@@ -1,3 +1,16 @@
+2006-10-30  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* TODO: add a note about keeping the current line centered in the source
+	editor so I don't forget about it
+	* src/DBGPerspective/glade/preferencesdialog.glade: Change the stock ID on
+	the button to "Remove" source directories from Stock::DELETE to
+	Stock::REMOVE.  This matches the Remove button for environment variables now
+	* src/DBGPerspective/glade/proclistdialog.glade: Fix capitalization of the
+	window title of the Attach to process dialog.  Also change the wording to
+	match the menu item more closely (i.e. "Attach to a running program" instead
+	of "Attach to a process" since the menu item says "Attach to running
+	program")
+
 Mon, 30 Oct 2006 10:07:07 +0100 Dodji Seketeli
 
 	* TODO: removed the "add/show lines numbers in prefs" from TODO. This task
