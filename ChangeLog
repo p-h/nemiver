@@ -1,3 +1,8 @@
+Mon, 30 Oct 2006 10:07:07 +0100 Dodji Seketeli
+
+	* TODO: removed the "add/show lines numbers in prefs" from TODO. This task
+	  is done. Added new tasks in here. Nothing targeted for pre-0.1 though.
+
 2006-10-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/DBGPerspective/glade/preferencesdialog.glade,
