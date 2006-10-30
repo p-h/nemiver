@@ -1,10 +1,10 @@
 glade/workbench.glade
 nemiver.desktop.in
-src/DBGPerspective/glade/bodycontainer.glade
-src/DBGPerspective/glade/proclistdialog.glade
-src/DBGPerspective/glade/runprogramdialog.glade
-src/DBGPerspective/nmv-dbg-perspective.cc
-src/DBGPerspective/nmv-proc-list-dialog.cc
-src/DBGPerspective/nmv-run-program-dialog.cc
+src/dbgperspective/glade/bodycontainer.glade
+src/dbgperspective/glade/proclistdialog.glade
+src/dbgperspective/glade/runprogramdialog.glade
+src/dbgperspective/nmv-dbg-perspective.cc
+src/dbgperspective/nmv-proc-list-dialog.cc
+src/dbgperspective/nmv-run-program-dialog.cc
 src/main.cc
 src/workbench/nmv-workbench.cc

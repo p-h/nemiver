@@ -1,4 +1,4 @@
-PLUGIN_NAME=DBGPerspective
+PLUGIN_NAME=dbgperspective
 gladefiles = bodycontainer.glade \
 runprogramdialog.glade \
 proclistdialog.glade \

@@ -12,7 +12,7 @@ install-schemas:
 if GCONF_SCHEMAS_INSTALL
 	if test -z "$(DESTDIR)" ; then \
 	for s in `echo $$files | tr ' ' '\n'` ; do \
-	$(GCONFTOOL) --makefile-install-rule $(top_srcdir)/src/DBGPerspective/schemas/$$s ; done && killall -HUP gconfd-2; \
+	$(GCONFTOOL) --makefile-install-rule $(top_srcdir)/src/dbgperspective/schemas/$$s ; done && killall -HUP gconfd-2; \
 	fi
 endif
 
@@ -20,7 +20,7 @@ endif
 uninstall-schemas:
 if GCONF_SCHEMAS_INSTALL
 	if test -z "$(DESTDIR)" ; then \
-	for s in `echo $$files | tr ' ' '\n'` ; do $(GCONFTOOL) --makefile-uninstall-rule $(top_srcdir)/src/DBGPerspective/schemas/$$s ; done \
+	for s in `echo $$files | tr ' ' '\n'` ; do $(GCONFTOOL) --makefile-uninstall-rule $(top_srcdir)/src/dbgperspective/schemas/$$s ; done \
 	fi
 endif
 

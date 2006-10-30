@@ -12,13 +12,13 @@ uninstall-schemas:
 
 plugin_config_files= \
 plugin-descriptor.xml \
-DBGPerspective.conf
+dbgperspective.conf
 
 EXTRA_DIST=$(plugin_config_files)
 
 pluginconfig_DATA=$(plugin_config_files)
 
-PLUGIN_NAME=DBGPerspective
+PLUGIN_NAME=dbgperspective
 pluginconfigdir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 
 plugin_LTLIBRARIES=libdbgperspectiveplugin.la
@@ -71,5 +71,5 @@ INCLUDES=@NEMIVERDBGPERSP_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \
 -I$(top_srcdir)/src/workbench \
--I$(top_srcdir)/src/DBGPerspective
+-I$(top_srcdir)/src/dbgperspective
 

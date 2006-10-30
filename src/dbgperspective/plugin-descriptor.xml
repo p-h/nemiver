@@ -1,10 +1,10 @@
 <plugindescriptor autoactivate="yes" candeactivate="no">
-    <name>DBGPerspective</name>
+    <name>dbgperspective</name>
     <version>0.0.1</version>
-    <entrypoint>DBGPerspective</entrypoint>
+    <entrypoint>dbgperspective</entrypoint>
     <dependencies>
         <plugin>
-            <name>DBGPerspective</name>
+            <name>dbgperspective</name>
             <version>0.0.1</version>
         </plugin>
     </dependencies>

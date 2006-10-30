@@ -1,4 +1,4 @@
-SUBDIRS=common dbdimpl dbgengine confmgr uicommon workbench DBGPerspective
+SUBDIRS=common dbdimpl dbgengine confmgr uicommon workbench dbgperspective
 
 bin_PROGRAMS=nemiver
 nemiver_SOURCES=main.cc
@@ -14,5 +14,5 @@ INCLUDES=\
 -I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \
 -I$(top_srcdir)/src/workbench \
--I$(top_srcdir)/src/DBGPerspective
+-I$(top_srcdir)/src/dbgperspective
 

@@ -1,4 +1,4 @@
-PLUGIN_NAME=DBGPerspective
+PLUGIN_NAME=dbgperspective
 
 sqlfileslist=create-tables.sql
 

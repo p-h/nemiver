@@ -1,4 +1,4 @@
-PLUGIN_NAME=DBGPerspective
+PLUGIN_NAME=dbgperspective
 iconsfiles = \
 set-breakpoint.xpm \
 breakpoint-marker.png \
