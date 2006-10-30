@@ -261,14 +261,15 @@ src/Makefile
   src/uicommon/Makefile
   src/workbench/Makefile
   src/workbench/workbench.conf
-  src/dbgperspective/Makefile
-  src/dbgperspective/dbgperspective.conf
-    src/dbgperspective/glade/Makefile
-    src/dbgperspective/menus/Makefile
-    src/dbgperspective/icons/Makefile
-    src/dbgperspective/sqlscripts/Makefile
-    src/dbgperspective/sqlscripts/sqlite/Makefile
-    src/dbgperspective/schemas/Makefile
+  src/persp/Makefile
+  src/persp/dbgperspective/Makefile
+  src/persp/dbgperspective/dbgperspective.conf
+    src/persp/dbgperspective/glade/Makefile
+    src/persp/dbgperspective/menus/Makefile
+    src/persp/dbgperspective/icons/Makefile
+    src/persp/dbgperspective/sqlscripts/Makefile
+    src/persp/dbgperspective/sqlscripts/sqlite/Makefile
+    src/persp/dbgperspective/schemas/Makefile
 glade/Makefile
 menus/Makefile
 tests/Makefile
