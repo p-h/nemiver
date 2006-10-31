@@ -1,17 +1,9 @@
-lib_LTLIBRARIES=libnemiveruicommon.la
+noinst_LIBRARIES=libnemiveruicommon.a
 
-public_headers= \
-nmv-ui-utils.h
-
-libnemiveruicommon_la_SOURCES= \
+libnemiveruicommon_a_SOURCES= \
 $(public_headers) \
+nmv-ui-utils.h \
 nmv-ui-utils.cc
-
-libnemiveruicommon_la_LIBADD=@NEMIVERUICOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
-
-uicommonheaders_DATA=$(public_headers)
-uicommonheadersdir=$(NEMIVER_INCLUDE_DIR)/uicommon
 
 INCLUDES=@NEMIVERUICOMMON_CFLAGS@ \
 -I$(top_srcdir) \

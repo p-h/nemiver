@@ -14,6 +14,7 @@ publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libworkbenchmod_la_LDFLAGS=@NEMIVERWORKBENCH_LIBS@ -module -avoid-version
+libworkbenchmod_la_LIBADD=$(top_builddir)/src/uicommon/libnemiveruicommon.a
 
 config_DATA=workbench.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@

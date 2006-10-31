@@ -1,3 +1,15 @@
+Tue, 31 Oct 2006 15:07:28 +0100 Dodji Seketeli
+
+	* src/workbench/Makefile.am: link against the now static library
+	  libnemiveruicommon.a .
+	* src/dbgengine/libdbgengine.pc.in: remove this file from repository.
+	* src/uicommon/Makefile.am: make libnemiveruicommon.a be a static
+	  library that is not installed.
+	* src/Makefile.am: make the nemiver executable link with the now static
+	  libnemiveruicommon.a
+	* configure.ac: removed src/dbgengine/nemiver-gdb-plugin.pc and
+	  src/dbgengine/libdbgengine.cc from distribution.
+
 2006-10-30  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-source-editor.cc: change the do_scroll()
