@@ -1,3 +1,16 @@
+2006-10-30  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-source-editor.cc: change the do_scroll()
+	function so that the current line must be at least within a 10% margin on
+	the top and bottom of the source editor.  It turns out that this was as
+	simple as adding an extra argument to the TextView::scroll_to() function. I
+	tried a few different values (including 50% which tried to keep the current
+	line always in the middle of the source editor), but 10% seemed about right
+	to me.  That way the text doesn't scroll too often (which makes me lose my
+	place), but it still makes sure that you have enough context around to make
+	sense of the code.  But the value could be tweaked if desired.
+	* TODO: remove finished item from the list
+
 Mon, 30 Oct 2006 22:37:11 +0100 Dodji Seketeli
 
 	* src/dbgengine/Makefile.am: install the dynmod iface into

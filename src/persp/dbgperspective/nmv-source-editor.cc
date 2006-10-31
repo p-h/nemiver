@@ -443,7 +443,7 @@ struct ScrollToLine {
         Gtk::TextIter iter =
             m_source_view->get_buffer ()->get_iter_at_line (m_line) ;
         if (!iter) {return false;}
-        m_source_view->scroll_to (iter) ;
+        m_source_view->scroll_to (iter, 0.1) ;
         return false ;
     }
 };
