@@ -1,3 +1,24 @@
+Wed, 01 Nov 2006 22:05:54 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: Add an "EMPTY_TYPE" content type
+	  to GDBMIValue.
+	  GDBEngine::parse_gdbmi_tuple(): fixed a typo here. When the typle
+	  was empty ("{}") the a_to out parameter was not set. not good.
+	  GDBEngine::parse_gdbmi_value(): in the case of an empty gdbmi tuple,
+	  set the value content to EMPTY_TYPE .
+	  GDBEngine::parse_threads_list(): beware the thread list can be empty
+	  in some cases, for instance, when an app has exited. We get the
+	  signal in a context where the target has zero threads (the target
+	  has exited).
+	* src/persp/dbgperspective/nmv-throbber.cc,h: make the functions
+	  virtual so that we can derive from it and switch from one
+	  implementation to an other.
+	* src/persp/dbgperspective/nmv-ephy-throbber.h,cc: create an
+	  EphyTrhobber widget that uses the epiphany throbber.
+	* src/persp/dbgperspective/ephy-spinner.c,h: add these files from
+	  epiphany source code. We now have a throbber that features a moving
+	  foot. Nemiver is now DaMovingFoot !!!
+
 2006-11-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* TODO: Added a couple new items

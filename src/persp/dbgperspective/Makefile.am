@@ -48,6 +48,10 @@ nmv-call-stack.cc \
 nmv-call-stack.h \
 nmv-throbber.cc \
 nmv-throbber.h \
+ephy-spinner.c \
+ephy-spinner.h \
+nmv-ephy-throbber.h \
+nmv-ephy-throbber.cc \
 nmv-vars-editor.cc \
 nmv-vars-editor.h \
 nmv-terminal.h \

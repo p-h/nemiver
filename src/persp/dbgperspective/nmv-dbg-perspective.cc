@@ -43,7 +43,7 @@
 #include "nmv-sess-mgr.h"
 #include "nmv-date-utils.h"
 #include "nmv-call-stack.h"
-#include "nmv-throbber.h"
+#include "nmv-ephy-throbber.h"
 #include "nmv-vars-editor.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
@@ -1879,7 +1879,7 @@ DBGPerspective::init_toolbar ()
 {
     add_perspective_toolbar_entries () ;
 
-    m_priv->throbber = Throbber::create (plugin_path ()) ;
+    m_priv->throbber = EphyThrobber::create () ;
     m_priv->toolbar = new Gtk::HBox ;
     THROW_IF_FAIL (m_priv->toolbar) ;
     m_priv->toolbar->pack_end (m_priv->throbber->get_widget (), Gtk::PACK_SHRINK) ;

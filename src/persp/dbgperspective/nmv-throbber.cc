@@ -89,6 +89,10 @@ Throbber::~Throbber ()
 {
 }
 
+Throbber::Throbber ()
+{
+}
+
 Throbber::Throbber (const UString &a_root_path)
 {
     m_priv = new Priv (a_root_path);

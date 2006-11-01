@@ -573,17 +573,23 @@ public:
 class GDBMIValue : public Object {
     GDBMIValue (const GDBMIValue&) ;
     GDBMIValue& operator= (const GDBMIValue&) ;
-    boost::variant<UString, GDBMIListSafePtr, GDBMITupleSafePtr> m_content ;
+    typedef boost::variant<bool,
+                           UString,
+                           GDBMIListSafePtr,
+                           GDBMITupleSafePtr> ContentType ;
+    ContentType m_content ;
     friend class GDBMIResult ;
 
-    GDBMIValue () {}
 
 public:
     enum Type {
-        STRING_TYPE=0,
+        EMPTY_TYPE=0,
+        STRING_TYPE,
         LIST_TYPE,
-        TUPLE_TYPE
+        TUPLE_TYPE,
     };
+
+    GDBMIValue () {m_content = false;}
 
     GDBMIValue (const UString &a_str) {m_content = a_str ;}
 
@@ -630,13 +636,11 @@ public:
     }
 
 
-    const boost::variant<UString,GDBMIListSafePtr,GDBMITupleSafePtr>&
-    content () const
+    const ContentType& content () const
     {
         return m_content;
     }
-    void content
-        (const boost::variant<UString,GDBMIListSafePtr,GDBMITupleSafePtr> &a_in)
+    void content (const ContentType &a_in)
     {
         m_content = a_in;
     }
@@ -853,6 +857,9 @@ operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val)
     }
 
     switch (a_val->content_type ()) {
+        case GDBMIValue::EMPTY_TYPE:
+            a_out << "<value type='empty'/>" ;
+            break ;
         case GDBMIValue::TUPLE_TYPE :
             a_out << "<value type='tuple'>"
                   << a_val->get_tuple_content ()
@@ -1979,7 +1986,7 @@ struct GDBEngine::Priv {
 
         if (a_input[cur] == '}') {
             ++cur ;
-            a_from = cur ;
+            a_to = cur ;
             return true ;
         }
 
@@ -2078,8 +2085,7 @@ struct GDBEngine::Priv {
         } else if (parse_gdbmi_value (a_input, cur, cur, value)) {
             CHECK_END (a_input, cur, end) ;
             THROW_IF_FAIL (value);
-            return_list =
-                    GDBMIListSafePtr (new GDBMIList (value)) ;
+            return_list = GDBMIListSafePtr (new GDBMIList (value)) ;
             for (;;) {
                 if (a_input[cur] == ',') {
                     ++cur ;
@@ -2183,8 +2189,11 @@ struct GDBEngine::Priv {
         } else if (a_input[cur] == '{') {
             GDBMITupleSafePtr tuple ;
             if (parse_gdbmi_tuple (a_input, cur, cur, tuple)) {
-                THROW_IF_FAIL (tuple) ;
-                value = GDBMIValueSafePtr (new GDBMIValue (tuple)) ;
+                if (!tuple) {
+                    value = GDBMIValueSafePtr (new GDBMIValue ()) ;
+                } else {
+                    value = GDBMIValueSafePtr (new GDBMIValue (tuple)) ;
+                }
             }
         } else if (a_input[cur] == '[') {
             GDBMIListSafePtr list ;
@@ -3049,14 +3058,23 @@ struct GDBEngine::Priv {
             return false ;
         }
         THROW_IF_FAIL (gdbmi_result->value ()) ;
-        THROW_IF_FAIL (gdbmi_result->value ()->content_type ()
-                       == GDBMIValue::TUPLE_TYPE) ;
+        THROW_IF_FAIL ((gdbmi_result->value ()->content_type ()
+                           == GDBMIValue::TUPLE_TYPE)
+                       ||
+                       (gdbmi_result->value ()->content_type ()
+                            == GDBMIValue::EMPTY_TYPE)) ;
 
-        GDBMITupleSafePtr gdbmi_tuple =
-                    gdbmi_result->value ()->get_tuple_content () ;
-        THROW_IF_FAIL (gdbmi_tuple) ;
+        GDBMITupleSafePtr gdbmi_tuple ;
+        if (gdbmi_result->value ()->content_type ()
+             != GDBMIValue::EMPTY_TYPE) {
+            gdbmi_tuple = gdbmi_result->value ()->get_tuple_content () ;
+            THROW_IF_FAIL (gdbmi_tuple) ;
+        }
 
-        list<GDBMIResultSafePtr> result_list = gdbmi_tuple->content () ;
+        list<GDBMIResultSafePtr> result_list ;
+        if (gdbmi_tuple) {
+            result_list = gdbmi_tuple->content () ;
+        }
         list<GDBMIResultSafePtr>::const_iterator it ;
         int thread_id=0 ;
         std::list<int> thread_ids ;

@@ -44,17 +44,18 @@ class Throbber : public Object {
     class Priv ;
     SafePtr<Priv> m_priv ;
 
+protected:
     Throbber () ;
     Throbber (const UString &a_root_path) ;
 
 public:
     virtual ~Throbber ()  ;
     static ThrobberSafePtr create (const UString &a_root_path) ;
-    void start () ;
-    bool is_started () const ;
-    void stop () ;
-    void toggle_state () ;
-    Gtk::Widget& get_widget () const ;
+    virtual void start () ;
+    virtual bool is_started () const ;
+    virtual void stop () ;
+    virtual void toggle_state () ;
+    virtual Gtk::Widget& get_widget () const ;
 };//end class Throbber
 
 NEMIVER_END_NAMESPACE (nemiver)
