@@ -160,7 +160,7 @@ main (int a_argc, char *a_argv[])
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            ("DBGPerspective")) ;
+                                                            ("dbgperspective")) ;
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
             list<ISessMgr::Session>::iterator session_iter ;

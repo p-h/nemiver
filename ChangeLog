@@ -1,3 +1,10 @@
+Wed, 01 Nov 2006 17:14:30 +0100 Dodji Seketeli
+
+	* src/main.cc: DBGPerspective plugin is now called dbgperspective.
+	* src/persp/dbgperspective/schemas/Makefile.am: by default, don't
+	  killall -HUP gconf2-d. You can nevertheless do RESTART_GCONF=1 make
+	  install, if you wan't to restart gconfd upon install.
+
 2006-10-31  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* README: Added some basic documentation in preparation for the first
