@@ -1,3 +1,7 @@
+Wed, 01 Nov 2006 19:04:45 +0100 Dodji Seketeli
+
+	* src/main.cc: man, don't reference "DBGPerspective" anywhere anymore.
+
 Wed, 01 Nov 2006 17:14:30 +0100 Dodji Seketeli
 
 	* src/main.cc: DBGPerspective plugin is now called dbgperspective.

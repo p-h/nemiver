@@ -43,6 +43,7 @@ using nemiver::IDBGPerspective ;
 using nemiver::common::UString ;
 using nemiver::ISessMgr ;
 
+static const UString DBGPERSPECTIVE_PLUGIN_NAME="dbgperspective" ;
 static bool gv_list_sessions=false ;
 static bool gv_purge_sessions=false ;
 static int gv_execute_session=0;
@@ -160,7 +161,7 @@ main (int a_argc, char *a_argv[])
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            ("dbgperspective")) ;
+                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
             list<ISessMgr::Session>::iterator session_iter ;
@@ -177,7 +178,7 @@ main (int a_argc, char *a_argv[])
             }
             return 0 ;
         } else {
-            cerr << "Could not find the DBGPerspective\n" ;
+            cerr << "Could not find the debugger perpective plugin" ;
             return -1 ;
         }
     }
@@ -185,7 +186,7 @@ main (int a_argc, char *a_argv[])
     if (gv_purge_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            ("DBGPerspective")) ;
+                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().delete_sessions () ;
         }
@@ -195,7 +196,7 @@ main (int a_argc, char *a_argv[])
     if (gv_execute_session) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            ("DBGPerspective")) ;
+                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
             list<ISessMgr::Session>::iterator session_iter ;
@@ -230,7 +231,7 @@ main (int a_argc, char *a_argv[])
         }
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            ("DBGPerspective")) ;
+                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             LOG_D ("going to debug program: '"
                    << prog_args << "'\n",
@@ -238,7 +239,7 @@ main (int a_argc, char *a_argv[])
             map<UString, UString> env ;
             debug_persp->execute_program (prog_args, env) ;
         } else {
-            cerr << "Could not find the DBGPerspective\n" ;
+            cerr << "Could not find the debugger perspective plugin\n" ;
             return -1 ;
         }
         goto run_app ;
