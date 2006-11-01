@@ -30,3 +30,8 @@ Feel free to ask on nemiver-list@gna.org about particular topics that you may be
 *) in the "load core file" workflow, grey out debugging actions that don't
    make sense like those related to stepping and breakpoint setting.
 
+*) add a plugin to list all of the source files that make up the current
+   executable so that you can easily open them by double-clicking their names
+   rather than searching the filesystem (using -file-list-exec-source-files)
+
+*) Add ability to show disassembly of the source
