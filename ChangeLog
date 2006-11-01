@@ -1,3 +1,13 @@
+2006-10-31  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* AUTHORS: add information about the mailing list and encourage people to
+	contact us via the mailing list
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Fix another instance of
+	keyboard shortcut duplication.  Both "_Saved Sessions..." and "_Save Session
+	to disk" used "S" as the keyboard shortcut.  Since "S" is a standard
+	shortcut for the action of saving something, I changed the first one to "v"
+	and reworded it slightly to "Resume Sa_ved Session..."
+
 Tue, 31 Oct 2006 15:07:28 +0100 Dodji Seketeli
 
 	* src/workbench/Makefile.am: link against the now static library

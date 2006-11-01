@@ -1706,7 +1706,7 @@ DBGPerspective::init_actions ()
         {
             "SavedSessionsMenuItemAction",
             nil_stock_id,
-            _("_Saved Sessions..."),
+            _("Resume Sa_ved Session..."),
             _("Manage previously saved debugging sessions"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_saved_sessions_action),
