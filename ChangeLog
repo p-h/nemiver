@@ -1,5 +1,10 @@
 2006-10-31  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* README: Added some basic documentation in preparation for the first
+	release.
+
+2006-10-31  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* AUTHORS: add information about the mailing list and encourage people to
 	contact us via the mailing list
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Fix another instance of
