@@ -847,10 +847,7 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
     bring_source_as_current (file_path);
     SourceEditor *source_editor = get_source_editor_from_path (file_path) ;
     THROW_IF_FAIL (source_editor);
-    Gtk::TextBuffer::iterator txt_iter =
-        source_editor->source_view().get_buffer ()->get_iter_at_line
-                                                                (bp.line () - 1) ;
-    source_editor->source_view ().scroll_to (txt_iter) ;
+    source_editor->scroll_to_line (bp.line ()) ;
 
     NEMIVER_CATCH
 }

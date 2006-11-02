@@ -1,5 +1,11 @@
 2006-11-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: use
+	SourceEditor::scroll_to_line() instead of doing it manually so that
+	scrolling to the breakpoints also uses the 10% margin
+
+2006-11-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	Changing the libnemiveruicommon library to a static library was causing
 	the following warning when linking the workbench module:
 	*** Warning: Linking the shared library libworkbenchmod.la against the
