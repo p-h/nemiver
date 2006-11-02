@@ -41,18 +41,8 @@ using nemiver::common::UString ;
 using nemiver::common::SafePtr ;
 
 class SavedSessionsDialog : public Dialog {
-    Gtk::TreeView* m_treeview_sessions;
-
-    struct SessionModelColumns : public Gtk::TreeModel::ColumnRecord
-    {
-        // I tried using UString here, but it didn't want to compile... jmj
-        Gtk::TreeModelColumn<Glib::ustring> name;
-        Gtk::TreeModelColumn<gint64> id;
-        Gtk::TreeModelColumn<ISessMgr::Session> session;
-        SessionModelColumns() { add (name); add (id); add (session); }
-    };
-    SessionModelColumns m_session_columns;
-    Glib::RefPtr<Gtk::ListStore> m_model;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
     SavedSessionsDialog (const UString &a_root_path, ISessMgr *a_sesssion_manager) ;

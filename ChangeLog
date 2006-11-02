@@ -1,5 +1,32 @@
 2006-11-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/glade/runprogramdialog.glade,
+	src/persp/dbgperspective/glade/savedsessionsdialog.glade: marked the
+	"Execute" button as the default action for the dialog so that, for example,
+	double-clicking a treeview row or pressing enter in the dialog will
+	automatically select the default action.  Minor changes, but they make
+	keyboard usability much better.
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.h,
+	src/persp/dbgperspective/nmv-run-program-dialog.h: reverted dialog back to
+	using the Priv idiom like they were before we abstracted out a common Dialog
+	base class because I was sick of needing to recompile the entire
+	nmv-dbg-perspective.cc file whenever changing private members of dialogs.
+	I don't have a lot of experience with the Priv idiom, however, so there may
+	be some ugliness there, so I'd recommend a quick review.  In particular, the
+	base Dialog class contains members m_glade (the glade Xml), and m_dialog
+	(the Gtk::Dialog) which i needed to access from within the Priv class
+	functions, so I had to pass around pointers to these things.  If there's a
+	better way to do this, please feel free to improve it.
+	* src/persp/dbgperspective/nmv-run-program-dialog.cc,
+	src/persp/dbgperspective/nmv-saved-sessions-dialog.cc: re-organize these
+	files to use the Priv idiom and implement the default action activation
+	mentioned above.  In the 'run program' dialog, you can now press enter when
+	you're in the 'arguments' text entry to click the OK buttton, and in the
+	'saved sessions' dialog, you can either press enter when a tree row is
+	selected or double-click an item in the treeview to click 'OK'
+
+2006-11-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: use
 	SourceEditor::scroll_to_line() instead of doing it manually so that
 	scrolling to the breakpoints also uses the 10% margin

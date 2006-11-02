@@ -42,20 +42,8 @@ using nemiver::common::SafePtr ;
 
 class RunProgramDialog : public Dialog {
 
-    Gtk::TreeView* m_treeview_environment;
-
-    struct EnvVarModelColumns : public Gtk::TreeModel::ColumnRecord
-    {
-        // I tried using UString here, but it didn't want to compile... jmj
-        Gtk::TreeModelColumn<Glib::ustring> varname;
-        Gtk::TreeModelColumn<Glib::ustring> value;
-        EnvVarModelColumns() { add (varname); add (value); }
-    };
-    EnvVarModelColumns m_env_columns;
-    Glib::RefPtr<Gtk::ListStore> m_model;
-    void on_add_new_variable ();
-    void on_remove_variable ();
-    void on_variable_selection_changed ();
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 

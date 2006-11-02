@@ -40,28 +40,85 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 
-SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
-                                          ISessMgr *a_sesssion_manager) :
-    Dialog(a_root_path, "savedsessionsdialog.glade", "savedsessionsdialog"),
-    m_model(Gtk::ListStore::create(m_session_columns))
+struct SavedSessionsDialog::Priv
 {
-    THROW_IF_FAIL (m_glade) ;
-    THROW_IF_FAIL(a_sesssion_manager != NULL);
-    list<ISessMgr::Session> sessions = a_sesssion_manager->sessions ();
-    m_treeview_sessions =
-        ui_utils::get_widget_from_glade<Gtk::TreeView> (m_glade,
-                                                        "treeview_sessions") ;
-    m_treeview_sessions->set_model (m_model);
-    m_treeview_sessions->append_column (_("Session"), m_session_columns.name);
-    //m_treeview_sessions->append_column (_("id"), m_session_columns.id);
-    for (list<ISessMgr::Session>::iterator iter = sessions.begin();
-            iter != sessions.end(); ++iter)
+    SafePtr<Gtk::TreeView> m_treeview_sessions;
+    SafePtr<Gtk::Button> m_okbutton;
+    Gtk::Dialog* m_dialog;
+
+    struct SessionModelColumns : public Gtk::TreeModel::ColumnRecord
     {
-        Gtk::TreeModel::iterator treeiter = m_model->append ();
-        (*treeiter)[m_session_columns.id] = iter->session_id ();
-        (*treeiter)[m_session_columns.name] = iter->properties ()["sessionname"];
-        (*treeiter)[m_session_columns.session] = *iter;
+        // I tried using UString here, but it didn't want to compile... jmj
+        Gtk::TreeModelColumn<Glib::ustring> name;
+        Gtk::TreeModelColumn<gint64> id;
+        Gtk::TreeModelColumn<ISessMgr::Session> session;
+        SessionModelColumns() { add (name); add (id); add (session); }
+    };
+    SessionModelColumns m_session_columns;
+    Glib::RefPtr<Gtk::ListStore> m_model;
+
+    Priv() :
+        m_model(Gtk::ListStore::create(m_session_columns))
+    {
     }
+
+    void init(Gtk::Dialog* dialog, const Glib::RefPtr<Gnome::Glade::Xml>& xml, ISessMgr *a_session_manager)
+    {
+        THROW_IF_FAIL (dialog) ;
+        m_dialog = dialog;
+        THROW_IF_FAIL (xml) ;
+        m_okbutton = ui_utils::get_widget_from_glade<Gtk::Button> (xml, "okbutton1") ;
+        m_treeview_sessions =
+            ui_utils::get_widget_from_glade<Gtk::TreeView> (xml, "treeview_sessions") ;
+        m_okbutton->set_sensitive(false);
+        THROW_IF_FAIL (a_session_manager);
+        list<ISessMgr::Session> sessions = a_session_manager->sessions ();
+        THROW_IF_FAIL (m_model);
+        for (list<ISessMgr::Session>::iterator iter = sessions.begin();
+                iter != sessions.end(); ++iter)
+        {
+            Gtk::TreeModel::iterator treeiter = m_model->append ();
+            (*treeiter)[m_session_columns.id] = iter->session_id ();
+            (*treeiter)[m_session_columns.name] = iter->properties ()["sessionname"];
+            (*treeiter)[m_session_columns.session] = *iter;
+        }
+
+        THROW_IF_FAIL (m_treeview_sessions);
+        m_treeview_sessions->set_model (m_model);
+        m_treeview_sessions->append_column (_("Session"), m_session_columns.name);
+
+        // update the sensitivity of the OK button when the selection is changed
+        m_treeview_sessions->get_selection ()->signal_changed ().connect
+            (sigc::mem_fun(*this, &SavedSessionsDialog::Priv::on_selection_changed));
+
+        m_treeview_sessions->signal_row_activated ().connect (
+                sigc::mem_fun(*this, &SavedSessionsDialog::Priv::on_row_activated));
+    }
+
+    void on_selection_changed ()
+    {
+        THROW_IF_FAIL (m_okbutton);
+        m_okbutton->set_sensitive
+            (m_treeview_sessions->get_selection ()->count_selected_rows ());
+    }
+
+    void on_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col)
+    {
+        THROW_IF_FAIL (m_dialog);
+        m_dialog->activate_default();
+    }
+};
+
+SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
+                                          ISessMgr *a_session_manager) :
+    Dialog(a_root_path, "savedsessionsdialog.glade", "savedsessionsdialog")
+{
+    m_priv = new Priv();
+    THROW_IF_FAIL (m_priv) ;
+    // passing the pointer to the Gtk::Dialog here is kind of an ugly hack, but
+    // I wan't to activate the dialog's default action when a row in the
+    // treeview is activated, so I need a ref to the Dialog from within Priv
+    m_priv->init(m_dialog.get(), m_glade, a_session_manager);
 }
 
 SavedSessionsDialog::~SavedSessionsDialog ()
@@ -71,9 +128,16 @@ SavedSessionsDialog::~SavedSessionsDialog ()
 ISessMgr::Session
 SavedSessionsDialog::session () const
 {
-    Glib::RefPtr<Gtk::TreeSelection> selection = m_treeview_sessions->get_selection ();
+    THROW_IF_FAIL (m_priv);
+    Glib::RefPtr<Gtk::TreeSelection> selection =
+        m_priv->m_treeview_sessions->get_selection ();
     Gtk::TreeModel::iterator iter = selection->get_selected ();
-    return (*iter)[m_session_columns.session];
+    if (iter)
+    {
+        return (*iter)[m_priv->m_session_columns.session];
+    }
+    // return an 'invalid' session if there is no selection
+    return ISessMgr::Session();
 }
 
 }//end namespace nemiver
