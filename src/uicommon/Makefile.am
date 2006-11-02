@@ -1,6 +1,6 @@
-noinst_LIBRARIES=libnemiveruicommon.a
+noinst_LTLIBRARIES=libnemiveruicommon.la
 
-libnemiveruicommon_a_SOURCES= \
+libnemiveruicommon_la_SOURCES= \
 $(public_headers) \
 nmv-ui-utils.h \
 nmv-ui-utils.cc

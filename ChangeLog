@@ -1,3 +1,25 @@
+2006-11-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	Changing the libnemiveruicommon library to a static library was causing
+	the following warning when linking the workbench module:
+	*** Warning: Linking the shared library libworkbenchmod.la against the
+	*** static library ../../src/uicommon/libnemiveruicommon.a is not portable!
+
+	Resulting in this error on my amd64 machine:
+	/usr/bin/ld: ../../src/uicommon/libnemiveruicommon.a(nmv-ui-utils.o):
+	relocation R_X86_64_32 against `a local symbol' can not be used when making
+	a shared object; recompile with -fPIC
+	../../src/uicommon/libnemiveruicommon.a: could not read symbols: Bad value
+	
+	The fix is to make the 'static' library also a LTLIBRARY, but don't install
+	it.  See http://sources.redhat.com/ml/automake/2003-07/msg00064.html
+
+	* src/uicommon/Makefile.am: Change library back to an LTLIBRARY, but still
+	don't install it
+	* src/Makefile.am: update library filename (.la vs .a)
+	* src/persp/dbgperspective/Makefile.am: update library filename (.la vs .a)
+	* src/workbench/Makefile.am: update library filename (.la vs .a)
+
 Wed, 01 Nov 2006 22:05:54 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: Add an "EMPTY_TYPE" content type

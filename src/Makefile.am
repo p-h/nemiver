@@ -5,7 +5,7 @@ nemiver_SOURCES=main.cc
 nemiver_LDADD= \
 @NEMIVER_LIBS@  \
 $(top_builddir)/src/common/libnemivercommon.la \
-$(top_builddir)/src/uicommon/libnemiveruicommon.a
+$(top_builddir)/src/uicommon/libnemiveruicommon.la
 
 INCLUDES=\
 -DNEMIVERLOCALEDIR=\"$(nemiverlocaledir)\" \
