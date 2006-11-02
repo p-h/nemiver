@@ -48,6 +48,9 @@ using nemiver::common::UString ;
 using nemiver::common::SafePtr ;
 
 class Dialog : public common::Object {
+    class Priv ;
+    friend class Priv ;
+    SafePtr<Priv> m_priv ;
     //non copyable
     Dialog (const Dialog&) ;
     Dialog& operator= (const Dialog&) ;
@@ -56,6 +59,14 @@ class Dialog : public common::Object {
     void* operator new (size_t) ;
 
     Dialog () ;
+
+protected:
+    //the actual underlying Gtk::Dialog widget
+    Gtk::Dialog& widget () const ;
+
+    //the actual glade object loaded by this dialog.
+    const Glib::RefPtr<Gnome::Glade::Xml> glade ()  const ;
+
 public:
 
     Dialog (const UString &a_resource_root_path,
@@ -66,9 +77,6 @@ public:
 
     virtual gint run () ;
 
-protected:
-    SafePtr<Gtk::Dialog> m_dialog ;
-    Glib::RefPtr<Gnome::Glade::Xml> m_glade ;
 };//end class nemiver
 
 }//end namespace nemiver

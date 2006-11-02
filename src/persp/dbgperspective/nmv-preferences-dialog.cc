@@ -63,20 +63,21 @@ public:
     Gtk::TreeView *tree_view ;
     Gtk::TreeModel::iterator cur_dir_iter ;
     Gtk::Button *remove_dir_button ;
-
     //source editor properties widgets
     Gtk::CheckButton *show_lines_check_button ;
     Gtk::CheckButton *highlight_source_check_button ;
+    Glib::RefPtr<Gnome::Glade::Xml> glade ;
 
-    Priv (Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
           IWorkbench &a_workbench) :
         workbench (a_workbench),
         tree_view (0),
         remove_dir_button (0),
         show_lines_check_button (0),
-        highlight_source_check_button (0)
+        highlight_source_check_button (0),
+        glade (a_glade)
     {
-        init (a_glade) ;
+        init () ;
     }
 
     void on_tree_view_selection_changed ()
@@ -138,12 +139,12 @@ public:
         update_highlight_source_keys () ;
     }
 
-    void init (Glib::RefPtr<Gnome::Glade::Xml> &a_glade)
+    void init ()
     {
 
         list_store = Gtk::ListStore::create (source_dirs_cols ()) ;
         tree_view =
-            ui_utils::get_widget_from_glade<Gtk::TreeView> (a_glade,
+            ui_utils::get_widget_from_glade<Gtk::TreeView> (glade,
                                                             "dirstreeview") ;
         tree_view->append_column (_("Source directories"),
                                   source_dirs_cols ().dir) ;
@@ -158,12 +159,12 @@ public:
                 (this, &PreferencesDialog::Priv::on_tree_view_selection_changed));
 
         Gtk::Button *button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "adddirbutton");
+            ui_utils::get_widget_from_glade<Gtk::Button> (glade, "adddirbutton");
         button->signal_clicked ().connect (sigc::mem_fun
                 (this, &PreferencesDialog::Priv::on_add_dir_button_clicked)) ;
 
         remove_dir_button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+            ui_utils::get_widget_from_glade<Gtk::Button> (glade,
                                                           "suppressdirbutton") ;
         remove_dir_button->signal_clicked ().connect (sigc::mem_fun
             (this, &PreferencesDialog::Priv::on_remove_dir_button_clicked)) ;
@@ -171,7 +172,7 @@ public:
 
         show_lines_check_button  =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                            (a_glade, "showlinescheckbutton") ;
+                                            (glade, "showlinescheckbutton") ;
         THROW_IF_FAIL (show_lines_check_button) ;
         show_lines_check_button->signal_toggled ().connect (sigc::mem_fun
             (*this,
@@ -179,7 +180,7 @@ public:
 
         highlight_source_check_button  =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                    (a_glade, "highlightsourcecheckbutton") ;
+                                    (glade, "highlightsourcecheckbutton") ;
         THROW_IF_FAIL (highlight_source_check_button) ;
         highlight_source_check_button->signal_toggled ().connect (sigc::mem_fun
             (*this,
@@ -311,7 +312,7 @@ PreferencesDialog::PreferencesDialog (IWorkbench &a_workbench,
             "preferencesdialog.glade",
             "preferencesdialog")
 {
-    m_priv = new Priv (m_glade, a_workbench) ;
+    m_priv = new Priv (glade (), a_workbench) ;
     m_priv->update_widget_from_conf () ;
 }
 

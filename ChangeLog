@@ -1,3 +1,41 @@
+Thu, 02 Nov 2006 23:02:13 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dialog.cc,h: put the priv idom back
+	  here. Added  Dialog::widget() and Dialog::glade() protected methods
+	  to access the private bits children classes may need.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc: refactorise
+	  this according to the change in nemiver::Dialog.
+	  Instanciate Preference::Priv with the necessary bits coming from
+	  nemiver::Dialog .
+	* src/persp/dbgperspective/nmv-load-core-dialog.cc,h: use
+	  Dialog::widget() and Dialog::glade() to access the parent Dialog
+	  private bits.
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc: same thing
+	  as in the other dialogs. Try to respect the style of the project:
+	  members of m_priv don't start with m_, because they'll be accessed
+	  via m_priv->foo. m_priv has the m_ already. Function arguments are
+	  prefixed with a_ . Try to have lines not much longuer than 80
+	  characters.
+	* src/persp/dbgperspective/nmv-run-program-dialog.cc: same as the other
+	  dialogs.
+	* src/persp/dbgperspective/nmv-proc-list-dialog.cc: same  as the other
+	  dialogs.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  Make RunProgramDialog::working_directory() gets called with
+	  absolute paths. Otherwise, I get some warnings at runtime.
+	  Also, the nemiver::Terminal's scrolled window needs some special care:
+	  It must be Gtk::ScrolledWindow::set_vadjustment() to the adjustment of
+	  nemiver::Terminal. Otherwise, scrolling is broken in the
+	  notebook status terminal.
+	* src/persp/dbgperspective/nmv-terminal.cc,h: added
+	  Terminal::adjustment () to get the adjustment of the terminal.
+	  This is necessary when the terminal is packed in a scrolled window.
+	  In that case, the scrolled window's must share the same adjustment
+	  object as the terminal. Otherwise, the scrolled windows won't be
+	  able to control the terminal's scrolling.
+	  Also, enable text text scrolling in the vte terminal underlying
+	  widget.
+
 2006-11-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/glade/runprogramdialog.glade,

@@ -35,7 +35,10 @@ using nemiver::common::UString ;
 using nemiver::common::Object ;
 using nemiver::common::SafePtr ;
 
-namespace Gtk {class Widget;}
+namespace Gtk {
+    class Widget;
+    class Adjustment ;
+}
 
 NEMIVER_BEGIN_NAMESPACE(nemiver)
 
@@ -52,6 +55,7 @@ public:
     Terminal () ;
     ~Terminal () ;
     Gtk::Widget& widget () const ;
+    Gtk::Adjustment& adjustment () const;
     UString slave_pts_name () const ;
 };//end class Terminal
 

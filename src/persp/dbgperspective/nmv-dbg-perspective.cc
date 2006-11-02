@@ -1946,6 +1946,7 @@ DBGPerspective::init_body ()
     get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
 
     get_terminal_scrolled_win ().add (get_terminal ().widget ()) ;
+    get_terminal_scrolled_win ().set_vadjustment (get_terminal ().adjustment ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
 
     /*
@@ -2859,6 +2860,9 @@ DBGPerspective::execute_program ()
     // set defaults from session
     dialog.program_name (debugger ()->get_target_path ()) ;
     dialog.arguments (m_priv->prog_args) ;
+    if (m_priv->prog_cwd == "") {
+        m_priv->prog_cwd = Glib::locale_to_utf8 (Glib::get_current_dir ()) ;
+    }
     dialog.working_directory (m_priv->prog_cwd) ;
     dialog.environment_variables (m_priv->env_variables) ;
 
@@ -2885,13 +2889,19 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
                                  const map<UString, UString> &a_env,
                                  const UString &a_cwd)
 {
+    UString cwd ;
+    if (a_cwd == "." || a_cwd == "") {
+        cwd = Glib::locale_to_utf8 (Glib::get_current_dir ()) ;
+    } else {
+        cwd = a_cwd ;
+    }
     vector<UString> argv = a_prog_and_args.split (" ") ;
     vector<UString>::const_iterator iter = argv.begin () ;
     vector<UString>::const_iterator end_iter = argv.end () ;
     ++iter ;
     UString prog_name=argv[0], args = UString::join (iter, end_iter);
     vector<IDebugger::BreakPoint> breaks ;
-    execute_program (prog_name, args, a_env, a_cwd, breaks) ;
+    execute_program (prog_name, args, a_env, cwd, breaks) ;
     m_priv->reused_session = false ;
 }
 

@@ -41,8 +41,9 @@ using nemiver::common::UString ;
 using nemiver::common::SafePtr ;
 
 class SavedSessionsDialog : public Dialog {
-    struct Priv;
-    SafePtr<Priv> m_priv;
+    class Priv;
+    friend class Priv;
+    SafePtr<SavedSessionsDialog::Priv> m_priv;
 
 public:
     SavedSessionsDialog (const UString &a_root_path, ISessMgr *a_sesssion_manager) ;

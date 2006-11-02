@@ -29,6 +29,7 @@
 #include <gtkmm/bin.h>
 #include <gtkmm/main.h>
 #include <gtkmm/window.h>
+#include <gtkmm/adjustment.h>
 #include <vte/vte.h>
 #include "nmv-exception.h"
 #include "nmv-log-stream-utils.h"
@@ -39,28 +40,32 @@ NEMIVER_BEGIN_NAMESPACE(nemiver)
 struct Terminal::Priv {
     //the master pty of the terminal (and of the whole process)
     int master_pty ;
-
     int slave_pty ;
-
     //the real vte terminal widget
     VteTerminal *vte ;
-
     //the same object as
     //m_vte, but wrapped as a Gtk::Widget
     Gtk::Widget *widget ;
+    Gtk::Adjustment *adjustment ;
 
     Priv () :
         master_pty (0),
         slave_pty (0),
-        vte (NULL),
-        widget (NULL)
+        vte (0),
+        widget (0),
+        adjustment (0)
     {
         GtkWidget *w = vte_terminal_new () ;
         vte = VTE_TERMINAL (w) ;
         THROW_IF_FAIL (vte) ;
+        vte_terminal_set_scroll_on_output (vte, TRUE) ;
+        vte_terminal_set_scrollback_lines (vte, 500) ;
 
         widget = Glib::wrap (w) ;
         THROW_IF_FAIL (widget) ;
+
+        adjustment = Glib::wrap (vte_terminal_get_adjustment (vte)) ;
+        THROW_IF_FAIL (adjustment) ;
 
         widget->reference () ;
         THROW_IF_FAIL (init_pty ()) ;
@@ -125,6 +130,14 @@ Terminal::widget () const
 {
     THROW_IF_FAIL (m_priv->widget && m_priv->vte) ;
     return *m_priv->widget ;
+}
+
+Gtk::Adjustment&
+Terminal::adjustment () const
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->adjustment) ;
+    return *m_priv->adjustment ;
 }
 
 UString
