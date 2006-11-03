@@ -1,5 +1,7 @@
 Thu, 02 Nov 2006 23:02:13 +0100 Dodji Seketeli
 
+	* po/POTFILES.in: added missing files in here.
+
 	* src/persp/dbgperspective/nmv-dialog.cc,h: put the priv idom back
 	  here. Added  Dialog::widget() and Dialog::glade() protected methods
 	  to access the private bits children classes may need.
