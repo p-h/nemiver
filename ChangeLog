@@ -1,3 +1,14 @@
+Sat, 04 Nov 2006 01:19:18 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/glade/loadcoredialog.glade: put the default
+	  size (width,height) of the dialog to (350,200) because it's needed
+	  to carry the french translated text in that widget. <sigh/>.
+	* src/persp/dbgperspective/glade/savedsessionsdialog.glade: ditto.
+	* src/persp/dbgperspective/glade/runprogramdialog.glade: ditto.
+	* po/LINGUAS: added a line with fr here.
+	* po/fr.po:  added initial french translation.
+	* po/nemiver.pot: added this file as well.
+
 Thu, 02 Nov 2006 23:02:13 +0100 Dodji Seketeli
 
 	* po/POTFILES.in: added missing files in here.
