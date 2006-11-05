@@ -2858,7 +2858,9 @@ DBGPerspective::execute_program ()
     RunProgramDialog dialog (plugin_path ()) ;
 
     // set defaults from session
-    dialog.program_name (debugger ()->get_target_path ()) ;
+    if (debugger ()->get_target_path () != "") {
+        dialog.program_name (debugger ()->get_target_path ()) ;
+    }
     dialog.arguments (m_priv->prog_args) ;
     if (m_priv->prog_cwd == "") {
         m_priv->prog_cwd = Glib::locale_to_utf8 (Glib::get_current_dir ()) ;

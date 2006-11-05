@@ -45,7 +45,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="button1">
+	    <widget class="GtkButton" id="executebutton">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="has_default">True</property>
@@ -92,7 +92,7 @@
 		  <property name="right_padding">0</property>
 
 		  <child>
-		    <widget class="GtkFileChooserButton" id="filechooserbutton_program">
+		    <widget class="GtkFileChooserButton" id="filechooserbutton">
 		      <property name="visible">True</property>
 		      <property name="title" translatable="yes">Sélectionner un fichier</property>
 		      <property name="action">GTK_FILE_CHOOSER_ACTION_OPEN</property>

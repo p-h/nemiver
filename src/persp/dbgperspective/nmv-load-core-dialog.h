@@ -38,7 +38,8 @@ using nemiver::common::UString ;
 using nemiver::common::SafePtr ;
 
 class LoadCoreDialog : public Dialog {
-
+    class Priv ;
+    SafePtr<Priv> m_priv ;
 public:
     LoadCoreDialog (const UString &a_resource_root_path) ;
     virtual ~LoadCoreDialog () ;

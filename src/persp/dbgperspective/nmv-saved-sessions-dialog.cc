@@ -53,7 +53,7 @@ class SavedSessionsDialog::Priv
 {
 public:
     SafePtr<Gtk::TreeView> treeview_sessions;
-    SafePtr<Gtk::Button> okbutton;
+    Gtk::Button *okbutton;
     SessionModelColumns session_columns;
     Glib::RefPtr<Gtk::ListStore> model;
     Gtk::Dialog &dialog;
@@ -64,6 +64,7 @@ private:
 
 public:
     Priv (Gtk::Dialog &a_dialog, const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+        okbutton (0),
         model(Gtk::ListStore::create (session_columns)),
         dialog (a_dialog),
         glade (a_glade)
@@ -72,9 +73,11 @@ public:
 
     void init (ISessMgr *a_session_manager)
     {
-        okbutton = ui_utils::get_widget_from_glade<Gtk::Button> (glade, "okbutton1") ;
+        okbutton =
+            ui_utils::get_widget_from_glade<Gtk::Button> (glade, "okbutton1") ;
         treeview_sessions =
-            ui_utils::get_widget_from_glade<Gtk::TreeView> (glade, "treeview_sessions") ;
+            ui_utils::get_widget_from_glade<Gtk::TreeView>
+                                                (glade, "treeview_sessions") ;
         okbutton->set_sensitive (false);
         THROW_IF_FAIL (a_session_manager);
         list<ISessMgr::Session> sessions = a_session_manager->sessions ();
@@ -107,7 +110,8 @@ public:
             (treeview_sessions->get_selection ()->count_selected_rows ());
     }
 
-    void on_row_activated(const Gtk::TreeModel::Path& a_path, Gtk::TreeViewColumn* a_col)
+    void on_row_activated (const Gtk::TreeModel::Path& a_path,
+                           Gtk::TreeViewColumn* a_col)
     {
         if (a_path.get_depth () || a_col) {}
         dialog.activate_default();

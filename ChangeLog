@@ -1,3 +1,12 @@
+Sun, 05 Nov 2006 03:40:46 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-load-core-dialog.cc: grey out the ok
+	  button until the makes a choice.
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc,h: ditto.
+	* src/persp/dbgperspective/nmv-run-program-dialog.cc: ditto.
+	* src/persp/dbgperspective/nmv-proc-list-dialog.cc: ditto + made a bit
+	  of cleanup. Use the priv idiom here.
+
 Sat, 04 Nov 2006 01:19:18 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/glade/loadcoredialog.glade: put the default

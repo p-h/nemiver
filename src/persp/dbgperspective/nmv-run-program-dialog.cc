@@ -52,6 +52,12 @@ struct EnvVarModelColumns : public Gtk::TreeModel::ColumnRecord
 
 struct RunProgramDialog::Priv
 {
+private:
+    Priv () ;
+
+public:
+    Gtk::FileChooserButton *fcbutton  ;
+    Gtk::Button *okbutton ;
     Gtk::TreeView* treeview_environment;
     Gtk::Button* remove_button;
     Gtk::Button* add_button;
@@ -62,20 +68,35 @@ struct RunProgramDialog::Priv
 
 
     Priv (Gtk::Dialog &a_dialog, const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
-        model(Gtk::ListStore::create(env_columns)),
+        fcbutton (0),
+        okbutton (0),
+        treeview_environment (0),
+        remove_button (0),
+        add_button (0),
+        model (Gtk::ListStore::create (env_columns)),
         dialog (a_dialog),
         glade (a_glade)
     {
+        init () ;
     }
 
     void init ()
     {
+        okbutton =
+            ui_utils::get_widget_from_glade<Gtk::Button>
+                (glade, "executebutton") ;
+        THROW_IF_FAIL (okbutton) ;
+        okbutton->set_sensitive (false) ;
+
         treeview_environment =
             ui_utils::get_widget_from_glade<Gtk::TreeView>
                                                 (glade, "treeview_environment");
+
         treeview_environment->set_model (model);
+
         treeview_environment->append_column_editable
                                         (_("Name"), env_columns.varname);
+
         treeview_environment->append_column_editable
                                             (_("Value"), env_columns.value);
 
@@ -83,6 +104,7 @@ struct RunProgramDialog::Priv
             ui_utils::get_widget_from_glade<Gtk::Button>
                                                     (glade, "button_add_var");
         THROW_IF_FAIL (add_button) ;
+
         add_button->signal_clicked().connect(sigc::mem_fun(*this,
                     &RunProgramDialog::Priv::on_add_new_variable));
 
@@ -98,6 +120,13 @@ struct RunProgramDialog::Priv
             (sigc::mem_fun
                  (*this,
                   &RunProgramDialog::Priv::on_variable_selection_changed));
+
+        fcbutton =
+            ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
+                                                    (glade, "filechooserbutton") ;
+        THROW_IF_FAIL (fcbutton) ;
+        fcbutton->signal_selection_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_file_selection_changed)) ;
 
         // activate the default action (execute) when pressing enter in the
         // arguments text box
@@ -141,9 +170,20 @@ struct RunProgramDialog::Priv
         }
     }
 
-    void on_activate_textentry(void)
+    void on_activate_textentry ()
     {
         dialog.activate_default ();
+    }
+
+    void on_file_selection_changed ()
+    {
+        if (okbutton && fcbutton) {
+            if (Glib::file_test
+                    (Glib::locale_from_utf8 (fcbutton->get_filename ()),
+                                             Glib::FILE_TEST_IS_EXECUTABLE)) {
+                okbutton->set_sensitive (true) ;
+            }
+        }
     }
 };
 
@@ -165,16 +205,19 @@ RunProgramDialog::program_name () const
 {
     Gtk::FileChooserButton *chooser =
         ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                        (glade (), "filechooserbutton_program") ;
+                                        (glade (), "filechooserbutton") ;
     return chooser->get_filename () ;
 }
 
 void
 RunProgramDialog::program_name (const UString &a_name)
 {
+    THROW_IF_FAIL (m_priv) ;
+
     Gtk::FileChooserButton *chooser =
         ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                    (glade (), "filechooserbutton_program") ;
+                                    (glade (), "filechooserbutton") ;
+    THROW_IF_FAIL (chooser) ;
     chooser->set_filename (a_name) ;
 }
 
@@ -183,6 +226,7 @@ RunProgramDialog::arguments () const
 {
     Gtk::Entry *entry =
         ui_utils::get_widget_from_glade<Gtk::Entry> (glade (), "argumentsentry");
+    THROW_IF_FAIL (entry) ;
     return entry->get_text () ;
 }
 
@@ -191,6 +235,7 @@ RunProgramDialog::arguments (const UString &a_args)
 {
     Gtk::Entry *entry =
         ui_utils::get_widget_from_glade<Gtk::Entry> (glade (), "argumentsentry");
+    THROW_IF_FAIL (entry) ;
     entry->set_text (a_args) ;
 }
 

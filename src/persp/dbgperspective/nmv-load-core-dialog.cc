@@ -39,10 +39,62 @@ using namespace std ;
 using namespace nemiver::common ;
 
 namespace nemiver {
+class LoadCoreDialog::Priv {
+    Gtk::FileChooserButton *fcbutton_core_file ;
+    Gtk::FileChooserButton *fcbutton_executable;
+    Gtk::Button *okbutton ;
+
+public:
+    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+        fcbutton_core_file (0),
+        fcbutton_executable (0),
+        okbutton (0)
+    {
+
+        okbutton =
+            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
+        THROW_IF_FAIL (okbutton) ;
+        okbutton->set_sensitive (false) ;
+
+        fcbutton_executable =
+            ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
+                (a_glade, "filechooserbutton_executable") ;
+        fcbutton_executable->signal_selection_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_file_selection_changed_signal)) ;
+
+        fcbutton_core_file =
+            ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
+                (a_glade, "filechooserbutton_corefile") ;
+        fcbutton_core_file->signal_selection_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_file_selection_changed_signal)) ;
+    }
+
+    void on_file_selection_changed_signal ()
+    {
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (fcbutton_executable) ;
+        THROW_IF_FAIL (fcbutton_core_file) ;
+
+        if (Glib::file_test (fcbutton_executable->get_filename (),
+                             Glib::FILE_TEST_IS_EXECUTABLE)) {
+            if (Glib::file_test (fcbutton_core_file->get_filename (),
+                                 Glib::FILE_TEST_IS_REGULAR)) {
+                okbutton->set_sensitive (true) ;
+            } else {
+                okbutton->set_sensitive (false) ;
+            }
+        } else {
+            okbutton->set_sensitive (false) ;
+        }
+        NEMIVER_CATCH
+    }
+};//end class LoadCoreDialog::Priv
 
 LoadCoreDialog::LoadCoreDialog (const UString &a_root_path) :
-    Dialog(a_root_path, "loadcoredialog.glade", "loadcoredialog")
+    Dialog (a_root_path, "loadcoredialog.glade", "loadcoredialog")
 {
+    m_priv = new Priv (glade ()) ;
 }
 
 LoadCoreDialog::~LoadCoreDialog ()

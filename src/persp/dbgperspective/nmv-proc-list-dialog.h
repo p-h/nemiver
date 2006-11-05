@@ -35,6 +35,8 @@ namespace common {
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 class ProcListDialog : public Dialog {
+    class Priv ;
+    SafePtr<Priv> m_priv ;
 
 public:
 
@@ -45,16 +47,6 @@ public:
 
     bool has_selected_process () ;
     bool get_selected_process (IProcMgr::Process &a_proc/*out param*/) ;
-
-private:
-    void on_selection_changed_signal ();
-    void load_process_list ();
-
-    IProcMgr &proc_mgr ;
-    Gtk::TreeView *proclist_view ;
-    Glib::RefPtr<Gtk::ListStore> proclist_store ;
-    IProcMgr::Process selected_process ;
-    bool process_selected ;
 };//end class ProcListDialog
 NEMIVER_END_NAMESPACE (nemiver)
 
