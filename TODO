@@ -1,8 +1,7 @@
 This is a random short term todo list. Items written here are subject to discussion.
 Feel free to ask on nemiver-list@gna.org about particular topics that you may be interested to take over.
 
-*) In file open: make all the dialog disable (grey out) the okay button if nothing is selected in the dialog.
-   In that case, only the cancel button should be "enabled"
+*) add a nemiver --attach <pid|prog-name> switch to the command line.
 
 *) make VarsEditor more effective: it shouldn't clear and set all the variables each time
    the debugger stops. It should instead detect when several stops occur in the same function.

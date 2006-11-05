@@ -1,3 +1,9 @@
+Sun, 05 Nov 2006 12:42:08 +0100 Dodji Seketeli
+
+	* TODO: removed that item: 'grey out' dialogs okay buttons until the user
+	  selected something. It can be considered done now. Added a new item
+	  there as well.
+
 Sun, 05 Nov 2006 03:40:46 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-load-core-dialog.cc: grey out the ok
