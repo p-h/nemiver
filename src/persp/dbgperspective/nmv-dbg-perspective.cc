@@ -2740,7 +2740,7 @@ DBGPerspective::open_file (const UString &a_path,
     }
     file.close () ;
 
-    bool do_highlight=false ;
+    bool do_highlight=true;
     conf_mgr ().get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE, do_highlight) ;
     source_buffer->set_highlight (do_highlight) ;
     SourceEditor *source_editor (Gtk::manage (new SourceEditor (plugin_path (),
