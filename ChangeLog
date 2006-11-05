@@ -1,3 +1,11 @@
+Sun, 05 Nov 2006 13:46:41 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/schemas/Makefile.am: update gconf2-d by
+	  default now again.
+	* src/persp/dbgperspective/glade/preferencesdialog.glade: 
+	  The preferences dialog doesn't need a cancel button. Properties are
+	  instant apply, so there is nothing to cancel.
+
 Sun, 05 Nov 2006 13:17:16 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
