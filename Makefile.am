@@ -25,9 +25,9 @@ $(desktop_in_files)
 # Host *.gna.org
 # 	User your-gna-username
 
-RELEASE_UPLOAD_HOST = download.gna.org
-RELEASE_UPLOAD_BASE = /upload/nemiver/
-RELEASE_URL_BASE = http://download.gna.org/nemiver/
+RELEASE_UPLOAD_HOST = master.gnome.org
+RELEASE_UPLOAD_BASE = /home/users/$(USER)
+RELEASE_URL_BASE = ftp://ftp.gnome.org/pub/GNOME/sources/nemiver/
 SVN_ROOT = svn+ssh://svn.gna.org/svn/nemiver
 RELEASE_ANNOUNCE_LIST = nemiver-list@gna.org (cc gnome-announce-list@gnome.org)
 tar_gz_file = $(PACKAGE)-$(VERSION).tar.gz
@@ -41,9 +41,9 @@ tag-release: distcheck
 	svn copy -m "$(PACKAGE_NAME) release $(VERSION)" \
 		$(SVN_ROOT)/trunk $(SVN_ROOT)/tags/$(PACKAGE_NAME)-$(VERSION)
 
-release-upload: tag-release $(tar_gz_file) $(sig_file)
+release-upload: tag-release $(tar_gz_file) release-upload-only
+release-upload-only:
 	scp $(tar_gz_file) $(RELEASE_UPLOAD_HOST):$(RELEASE_UPLOAD_BASE)/
-	scp $(sig_file) $(RELEASE_UPLOAD_HOST):$(RELEASE_UPLOAD_BASE)/
 
 release-publish: release-upload
 	@echo ""
@@ -57,16 +57,15 @@ release-publish: release-upload
 	@echo ""
 	@echo "What is it?"
 	@echo "==========="
-	@echo "$(PACKAGE_NAME) front-end for the GNU Debugger for the GNOME Desktop"
+	@echo "$(PACKAGE_NAME) is a standalone graphical debugger that integrates well in the GNOME desktop environment."
+	@echo "It currently features a backend which uses the GNU debugger gdb for debugging C/C++ programs."
 	@echo ""
 	@echo "Where to get it?"
 	@echo "================"
 	@echo "This release is available as a source package in tar.gz format"
 	@echo "and can be downloaded from:"
 	@echo ""
-	@echo "$(RELEASE_URL_BASE)/$(tar_gz_file)"
-	@echo "    which can be verified with:"
-	@echo "$(RELEASE_URL_BASE)/$(sig_file)"
+	@echo "$(RELEASE_URL_BASE)
 	@echo ""
 	@echo "What's Changed?"
 	@echo "==============="

@@ -1,3 +1,11 @@
+Wed, 08 Nov 2006 22:58:44 +0100 Dodji Seketeli
+
+	* configure.ac: set version number to 0.1.0
+	* Makefile.am: update releasing information.
+	* NEWS: update this, preparing the 0.1.0 release.
+	* po/fr.po: set encoding to utf8
+
+
 Sun, 05 Nov 2006 15:06:53 +0100 Dodji Seketeli
 
 	* src/persp/Makefile.am: added the headers to the EXTRA_DIST.
