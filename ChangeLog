@@ -1,3 +1,7 @@
+Fri, 10 Nov 2006 13:21:02 +0100 Dodji Seketeli
+
+	* Makefile.am: fix the tag-release-only target.
+
 Fri, 10 Nov 2006 12:47:18 +0100 Dodji Seketeli
 
 	* README: udpated this according to the last discussion I had with Jonner.

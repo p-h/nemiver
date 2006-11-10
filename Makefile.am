@@ -38,7 +38,7 @@ $(sig_file): $(tar_gz_file)
 	gpg --output $@ --detach $^
 
 tag-release: distcheck tag-release-only
-tag-release-only: distcheck
+tag-release-only:
 	svn copy -m "$(PACKAGE_NAME) release $(VERSION)" \
 		$(SVN_ROOT)/trunk $(SVN_ROOT)/tags/$(PACKAGE_NAME)-$(VERSION)
 
