@@ -37,7 +37,8 @@ sig_file = $(tar_gz_file).sig
 $(sig_file): $(tar_gz_file)
 	gpg --output $@ --detach $^
 
-tag-release: distcheck
+tag-release: distcheck tag-release-only
+tag-release-only: distcheck
 	svn copy -m "$(PACKAGE_NAME) release $(VERSION)" \
 		$(SVN_ROOT)/trunk $(SVN_ROOT)/tags/$(PACKAGE_NAME)-$(VERSION)
 
@@ -45,7 +46,8 @@ release-upload: tag-release $(tar_gz_file) release-upload-only
 release-upload-only:
 	scp $(tar_gz_file) $(RELEASE_UPLOAD_HOST):$(RELEASE_UPLOAD_BASE)/
 
-release-publish: release-upload
+release : release-upload cat-announcement
+cat-announcement:
 	@echo ""
 	@echo "Please send an announcement to $(RELEASE_ANNOUNCE_LIST)"
 	@echo "including the following:"
@@ -63,9 +65,7 @@ release-publish: release-upload
 	@echo "Where to get it?"
 	@echo "================"
 	@echo "This release is available as a source package in tar.gz format"
-	@echo "and can be downloaded from:"
-	@echo ""
-	@echo "$(RELEASE_URL_BASE)
+	@echo "and can be downloaded from: $(RELEASE_URL_BASE)"
 	@echo ""
 	@echo "What's Changed?"
 	@echo "==============="

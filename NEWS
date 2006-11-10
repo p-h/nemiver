@@ -1,9 +1,8 @@
-What is Nemiver ?
-=================
-
-Nemiver is a standalone graphical C/C++ debugger that integrates
-well in the GNOME desktop environment.
-It currently features a backend which uses the GNU debugger gdb.
+Disclaimer:
+============
+This it the first official release, so remember that it could eat your cat or
+make your landlord divorce. In any case, let us know the problems you encounter so that
+we can fix them in coming releases.
 
 Features
 ================================
