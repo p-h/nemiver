@@ -392,15 +392,27 @@ public:
 
     bool is_type_a_pointer (const UString &a_type)
     {
-        int i = a_type.size ();
-        if (i) {--i;}
-        while (i > 0 && isspace (a_type[i])) {--i;}
-        if (a_type[i] == '*') {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_DD ("type: '" << a_type << "'") ;
+
+        UString type (a_type);
+        type.chomp () ;
+        if (type[type.size () - 1] == '*') {
+            LOG_DD ("type is a pointer") ;
             return true ;
         }
+        if (type.size () < 8) {
+            LOG_DD ("type is not a pointer") ;
+            return false ;
+        }
+        UString::size_type i = type.size () - 7 ;
+        if (!a_type.compare (i, 7, "* const")) {
+            LOG_DD ("type is a pointer") ;
+            return true ;
+        }
+        LOG_DD ("type is not a pointer") ;
         return false ;
     }
-
 
     void show_variable_type_in_dialog ()
     {
@@ -829,13 +841,20 @@ fetch_element:
         LOG_FUNCTION_SCOPE_NORMAL_DD
 
         NEMIVER_TRY
+
+        LOG_DD ("a_var_name: '" << a_var_name << "'") ;
         THROW_IF_FAIL (tree_store) ;
 
-        Gtk::TreeModel::iterator row_it ;
+        Gtk::TreeModel::iterator start_row_it, row_it ;
+        get_local_variables_row_iterator (start_row_it) ;
         bool ret = get_variable_iter_from_qname
                                         (a_var_name,
-                                         tree_store->children ().begin (),
+                                         start_row_it,
                                          row_it) ;
+        if (!ret) {
+            get_function_arguments_row_iterator (start_row_it) ;
+            ret = get_variable_iter_from_qname (a_var_name, start_row_it, row_it);
+        }
         THROW_IF_FAIL (ret) ;
         THROW_IF_FAIL (row_it) ;
         Gtk::TreeModel::iterator result_row_it ;

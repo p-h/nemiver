@@ -1,3 +1,13 @@
+Sun, 12 Nov 2006 23:57:13 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-vars-editor.cc:
+	 in VarsEditor::Priv::is_type_a_pointer(): detect when a type is a
+	 Foo * const. (not only Foo*). GDB reports const pointers like that.
+	 in VarsEditor::Priv::on_pointed_variable_value_signal(): lookup
+	 dereferenced variables in locals _and_ in function arguments.
+	 This entry now lets you dereference the 'this' pointer, when he shows
+	 up among function arguments.
+
 Sun, 12 Nov 2006 17:25:25 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: renamed
