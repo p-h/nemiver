@@ -479,7 +479,7 @@ SourceEditor::get_file_name (UString &a_file_name)
     a_file_name = Glib::locale_to_utf8 (path) ;
 }
 
-void
+bool
 SourceEditor::get_word_at_position (int a_x,
                                     int a_y,
                                     UString &a_word,
@@ -496,11 +496,13 @@ SourceEditor::get_word_at_position (int a_x,
                                             buffer_x, buffer_y) ;
     Gtk::TextBuffer::iterator clicked_at_iter ;
     source_view ().get_iter_at_location (clicked_at_iter, buffer_x, buffer_y) ;
-    THROW_IF_FAIL (clicked_at_iter) ;
+    if (!clicked_at_iter) {
+        return false ;
+    }
 
     //go find the first white space before clicked_at_iter
     Gtk::TextBuffer::iterator cur_iter = clicked_at_iter;
-    if (!cur_iter) {return;}
+    if (!cur_iter) {return false;}
 
     while (cur_iter.backward_char () && !isspace (cur_iter.get_char ())) {}
     THROW_IF_FAIL (cur_iter.forward_char ()) ;
@@ -526,12 +528,13 @@ SourceEditor::get_word_at_position (int a_x,
     source_view ().get_iter_location (end_word_iter, end_rect) ;
     if (!(start_rect.get_x () <= buffer_x) || !(buffer_x <= end_rect.get_x ())) {
         LOG_DD ("mouse not really on word: '" << var_name << "'") ;
-        return ;
+        return false ;
     }
     LOG_DD ("got variable candidate name: '" << var_name << "'") ;
     a_word = var_name ;
     a_start_rect = start_rect ;
     a_end_rect = end_rect ;
+    return true ;
 }
 
 sigc::signal<void, int>&

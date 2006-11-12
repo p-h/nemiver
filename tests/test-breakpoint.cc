@@ -66,7 +66,7 @@ on_stopped_signal (const UString &a_command,
 {
     std::cout << "stopped, reason is '" << a_command << "'\n" ;
     if (a_has_frame) {
-        std::cout << "in frame: " << a_frame.function () << "\n";
+        std::cout << "in frame: " << a_frame.function_name () << "\n";
     }
     std::cout << "thread-id is '" << a_thread_id << "'\n" ;
 }
@@ -96,7 +96,7 @@ on_thread_selected_signal (int a_thread_id,
 {
     std::cout << "thread selected: '" << a_thread_id << "'\n" ;
     std::cout << "frame in thread : '" << a_frame.level () << "'\n" ;
-    std::cout << "frame.function: '" << a_frame.function () << "'\n" ;
+    std::cout << "frame.function: '" << a_frame.function_name () << "'\n" ;
 }
 
 void

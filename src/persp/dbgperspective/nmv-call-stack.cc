@@ -223,7 +223,7 @@ struct CallStack::Priv {
         Gtk::TreeModel::iterator store_iter ;
         for (unsigned int i = 0 ; i < a_frames.size () ; ++i) {
             store_iter = store->append () ;
-            (*store_iter)[columns ().function_name] = a_frames[i].function () ;
+            (*store_iter)[columns ().function_name] = a_frames[i].function_name ();
             (*store_iter)[columns ().location] =
                             a_frames[i].file_name () + ":"
                             + UString::from_int (a_frames[i].line ()) ;
@@ -299,7 +299,7 @@ CallStack::to_string()
             frame_iter != m_priv->frames.end(); ++frame_iter)
     {
         frame_stream << "#" << UString::from_int(i++) << "  " <<
-            frame_iter->function () << " (";
+            frame_iter->function_name () << " (";
         // if the params map exists, add the function params to the stack trace
         if (params_iter != m_priv->m_params.end())
         {

@@ -226,6 +226,8 @@ UString::join (vector<UString>::const_iterator &a_from,
 void
 UString::chomp ()
 {
+    if (!size ()) {return;}
+
     Glib::ustring::size_type i = 0 ;
 
     //remove the ws from the beginning of the string.

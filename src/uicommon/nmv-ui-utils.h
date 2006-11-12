@@ -36,10 +36,13 @@
 #ifndef NEMIVER_CATCH
 #define NEMIVER_CATCH \
 } catch (Glib::Exception &e) { \
+    LOG_ERROR (std::string ("caught exception: '") + e.what () + "'") ; \
     nemiver::ui_utils::display_error (e.what ()) ; \
 } catch (std::exception &e) { \
+    LOG_ERROR (std::string ("caught exception: '") + e.what () + "'") ; \
     nemiver::ui_utils::display_error (e.what ()) ; \
 } catch (...) { \
+    LOG_ERROR ("caught unknown exception") ; \
     nemiver::ui_utils::display_error ("An unknown error occured") ; \
 }
 #endif
@@ -47,12 +50,15 @@
 #ifndef NEMIVER_CATCH_AND_RETURN
 #define NEMIVER_CATCH_AND_RETURN(a_value) \
 } catch (Glib::Exception &e) { \
+    LOG_ERROR (std::string ("caught exception: '") + e.what () + "'") ; \
     nemiver::ui_utils::display_error (e.what ()) ; \
     return a_value ; \
 } catch (std::exception &e) { \
+    LOG_ERROR (std::string ("caught exception: '") + e.what () + "'") ; \
     nemiver::ui_utils::display_error (e.what ()) ; \
     return a_value ; \
 } catch (...) { \
+    LOG_ERROR ("Caught unknown exception") ; \
     nemiver::ui_utils::display_error ("An unknown error occured") ; \
     return a_value ; \
 }

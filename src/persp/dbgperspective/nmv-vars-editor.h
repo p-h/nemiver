@@ -54,6 +54,7 @@ public:
     void set_local_variables
                     (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
     void show_local_variables_of_current_function () ;
+    void re_init_widget () ;
 };//end VarsEditor
 
 NEMIVER_END_NAMESPACE (nemiver)

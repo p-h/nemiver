@@ -1,3 +1,29 @@
+Sun, 12 Nov 2006 17:25:25 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: renamed
+	  IDebugger::Frame::function() in IDebugger::Frame::function_name().
+	* src/uicommon/nmv-ui-utils.h,src/common/nmv-exception.h: log an error
+	  when an exception is caught.
+	* src/common/nmv-ustring.cc: in UString::chomp() : fix this for the
+	  cases when the string has zero size.
+	* src/persp/dbgperspective/schemas/Makefile.am: fix a typo here.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add a
+	  DBGPerspective::going_to_run_target_signal(). In the default
+	  callback initialize the local variables editor because now that
+	  editor is not necessarily initialized at each stop.
+	  In DBGPerspective::try_to_request_show_variable_value_at_position():
+	  when the mouse is not on a 'word', don't generate an exception.
+	  Return quietly.
+	* src/persp/dbgperspective/nmv-source-editor.cc,h:
+	  SourceEditor::get_word_at_position(): make this return a boolean to
+	  notify whether if the word has been found or not.
+	* src/persp/dbgperspective/nmv-vars-editor.cc: big changes in here.
+	  Basically, don't clear and redraw the widget at each target stop.
+	  Variables are updated in an incremental way now.
+	  Also, variables that have changed between two stop are now
+	  highlighted in red. woot. This is a rather big change, so it needs
+	  some testing.
+
 Fri, 10 Nov 2006 13:44:03 +0100 Dodji Seketeli
 
 ================ released 0.1.0 ================

@@ -167,7 +167,7 @@ public:
     /// \brief a function frame as seen by the debugger.
     class Frame {
         UString m_address ;
-        UString m_function ;
+        UString m_function_name ;
         map<UString, UString> m_args ;
         int m_level ;
         //present if the target has debugging info
@@ -187,8 +187,8 @@ public:
         const UString& address () const {return m_address;}
         void address (const UString &a_in) {m_address = a_in;}
 
-        const UString& function () const {return m_function;}
-        void function (const UString &a_in) {m_function = a_in;}
+        const UString& function_name () const {return m_function_name ;}
+        void function_name (const UString &a_in) {m_function_name = a_in;}
 
         const map<UString, UString>& args () const {return m_args;}
         map<UString, UString>& args () {return m_args;}
@@ -214,7 +214,7 @@ public:
         void clear ()
         {
             m_address = "" ;
-            m_function = "" ;
+            m_function_name = "" ;
             m_args.clear () ;
             m_level = 0 ;
             m_file_name = "" ;

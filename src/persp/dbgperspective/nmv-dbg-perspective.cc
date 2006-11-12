@@ -165,6 +165,8 @@ private:
 
     void on_debugger_ready_signal (bool a_is_ready) ;
 
+    void on_going_to_run_target_signal () ;
+
     void on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_iter,
                                            const Glib::ustring &a_text,
                                            int a_dont_know) ;
@@ -425,6 +427,7 @@ public:
     sigc::signal<void, bool>& activated_signal () ;
     sigc::signal<void, bool>& attached_to_target_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
+    sigc::signal<void>& going_to_run_target_signal () ;
 };//end class DBGPerspective
 
 struct RefGObject {
@@ -489,6 +492,7 @@ struct DBGPerspective::Priv {
     sigc::signal<void, bool> activated_signal;
     sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
+    sigc::signal<void> going_to_run_target_signal ;
     sigc::signal<void, bool> show_command_view_signal  ;
     sigc::signal<void, bool> show_target_output_view_signal  ;
     sigc::signal<void, bool> show_log_view_signal ;
@@ -909,6 +913,11 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
     NEMIVER_CATCH
 }
 
+void
+DBGPerspective::on_going_to_run_target_signal ()
+{
+    get_variables_editor ().re_init_widget () ;
+}
 
 void
 DBGPerspective::on_attached_to_target_signal (bool a_is_ready)
@@ -1267,7 +1276,7 @@ DBGPerspective::on_frame_selected_signal (int a_index,
         file_path = a_frame.file_name () ;
         if (!find_file_in_source_dirs (file_path, file_path)) {
             display_warning ("File path info is missing "
-                             "for function '" + a_frame.function () + "'") ;
+                             "for function '" + a_frame.function_name () + "'") ;
             return ;
             //TODO: we should disassemble the current frame and display it.
         }
@@ -1275,7 +1284,7 @@ DBGPerspective::on_frame_selected_signal (int a_index,
 
     if (a_frame.line () == 0) {
         display_warning ("Line info is missing for function '"
-                         + a_frame.function () + "'") ;
+                         + a_frame.function_name () + "'") ;
         return ;
         //TODO: we should disassemble the current frame and display it.
     }
@@ -1966,22 +1975,35 @@ DBGPerspective::init_signals ()
 {
     m_priv->sourceviews_notebook->signal_switch_page ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_switch_page_signal)) ;
+
     debugger_ready_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_ready_signal)) ;
+
+    going_to_run_target_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_going_to_run_target_signal)) ;
+
     attached_to_target_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_attached_to_target_signal)) ;
+
     show_command_view_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_show_command_view_changed_signal)) ;
+
     show_target_output_view_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_show_target_output_view_changed_signal));
+
     show_log_view_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_show_log_view_changed_signal));
+
     get_call_stack ().frame_selected_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
+
     get_breakpoints_view ().widget ().signal_button_press_event ().connect_notify
-        (sigc::mem_fun (*this, &DBGPerspective::on_breakpoints_view_button_press_signal));
+        (sigc::mem_fun (*this,
+                        &DBGPerspective::on_breakpoints_view_button_press_signal));
+
     get_call_stack ().widget ().signal_button_press_event ().connect_notify
-        (sigc::mem_fun (*this, &DBGPerspective::on_call_stack_button_press_signal));
+        (sigc::mem_fun (*this,
+                        &DBGPerspective::on_call_stack_button_press_signal));
 
     get_thread_list ().thread_selected_signal ().connect (sigc::mem_fun
         (*this, &DBGPerspective::on_thread_list_thread_selected_signal)) ;
@@ -2464,10 +2486,13 @@ DBGPerspective::try_to_request_show_variable_value_at_position (int a_x, int a_y
 
     UString var_name ;
     Gdk::Rectangle start_rect, end_rect ;
-    get_current_source_editor ()->get_word_at_position (a_x, a_y,
-                                                        var_name,
-                                                        start_rect,
-                                                        end_rect) ;
+    if (!get_current_source_editor ()->get_word_at_position (a_x, a_y,
+                                                             var_name,
+                                                             start_rect,
+                                                             end_rect)) {
+        return ;
+    }
+
     if (var_name == "") {return;}
     Glib::RefPtr<Gdk::Window> gdk_window =
                         ((Gtk::Widget&)editor->source_view ()).get_window () ;
@@ -3006,6 +3031,7 @@ void
 DBGPerspective::run ()
 {
     THROW_IF_FAIL (m_priv) ;
+    going_to_run_target_signal ().emit () ;
     debugger ()->run () ;
     m_priv->debugger_has_just_run = true ;
 }
@@ -3745,6 +3771,12 @@ sigc::signal<void, bool>&
 DBGPerspective::debugger_ready_signal ()
 {
     return m_priv->debugger_ready_signal ;
+}
+
+sigc::signal<void>&
+DBGPerspective::going_to_run_target_signal ()
+{
+    return m_priv->going_to_run_target_signal ;
 }
 
 sigc::signal<void, bool>&

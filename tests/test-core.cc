@@ -33,7 +33,7 @@ on_stopped_signal (const UString &a_reason,
 {
     std::cout << "stopped, reason: " << a_reason << " " ;
     if (a_has_frame) {
-        std::cout << "in frame: " << a_frame.function () ;
+        std::cout << "in frame: " << a_frame.function_name () ;
     }
     std::cout << "thread-id: '" << a_thread_id << "'\n" ;
 }
@@ -49,7 +49,7 @@ on_frames_listed_signal (const std::vector<IDebugger::Frame> &a_frames)
     std::cout << "frame stack list: \n" ;
     vector<IDebugger::Frame>::size_type i = 0 ;
     for (i = 0 ; i < a_frames.size () ; ++i) {
-        std::cout << a_frames[i].function () << "() ";
+        std::cout << a_frames[i].function_name () << "() ";
         if ((int) i == gv_cur_frame) {
             std::cout << "<---" ;
         }

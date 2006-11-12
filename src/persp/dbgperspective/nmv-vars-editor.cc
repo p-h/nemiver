@@ -36,11 +36,23 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver) ;
 
 struct VariableColumns : public Gtk::TreeModelColumnRecord {
+    enum Offset {
+        NAME_OFFSET=0,
+        VALUE_OFFSET,
+        TYPE_OFFSET,
+        TYPE_CAPTION_OFFSET,
+        VARIABLE_OFFSET,
+        IS_HIGHLIGHTED_OFFSET,
+        FG_COLOR_OFFSET
+    };
+
     Gtk::TreeModelColumn<Glib::ustring> name ;
     Gtk::TreeModelColumn<Glib::ustring> value ;
     Gtk::TreeModelColumn<Glib::ustring> type ;
     Gtk::TreeModelColumn<Glib::ustring> type_caption ;
     Gtk::TreeModelColumn<IDebugger::VariableSafePtr> variable ;
+    Gtk::TreeModelColumn<bool> is_highlighted;
+    Gtk::TreeModelColumn<Gdk::Color> fg_color;
 
     VariableColumns ()
     {
@@ -49,6 +61,8 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
         add (type) ;
         add (type_caption) ;
         add (variable) ;
+        add (is_highlighted) ;
+        add (fg_color) ;
     }
 };//end Cols
 
@@ -74,12 +88,17 @@ public:
     std::map<UString, IDebugger::VariableSafePtr> function_arguments_to_set ;
     SafePtr<Gtk::Menu> contextual_menu ;
     Gtk::MenuItem *dereference_mi ;
+    UString previous_function_name ;
+    bool is_new_frame ;
 
     Priv (IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench) :
         workbench (a_workbench),
-        dereference_mi (0)
+        dereference_mi (0),
+        is_new_frame (true)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (a_debugger) ;
         debugger = a_debugger ;
         build_tree_view () ;
@@ -109,6 +128,9 @@ public:
         col = tree_view->get_column (1) ;
         THROW_IF_FAIL (col) ;
         col->set_resizable (true) ;
+        col->add_attribute (*col->get_first_cell_renderer (),
+                            "foreground-gdk",
+                            VariableColumns::FG_COLOR_OFFSET) ;
 
         tree_view->append_column (_("type"),
                                   get_variable_columns ().type_caption);
@@ -154,7 +176,7 @@ public:
         a_it = tree_store->get_iter (local_variables_row_ref->get_path ()) ;
     }
 
-    void set_a_variable_type (const UString &a_var_name,
+    bool set_a_variable_type (const UString &a_var_name,
                               const UString &a_type,
                               Gtk::TreeModel::iterator &a_it)
     {
@@ -170,7 +192,9 @@ public:
             get_function_arguments_row_iterator (root_it) ;
             ret = get_variable_iter_from_qname (a_var_name, root_it, row_it) ;
         }
-        THROW_IF_FAIL (ret) ;
+        if (!ret) {
+            return false ;
+        }
         THROW_IF_FAIL (row_it) ;
         row_it->set_value (get_variable_columns ().type, (Glib::ustring)a_type) ;
         int nb_lines = a_type.get_number_of_lines () ;
@@ -187,17 +211,60 @@ public:
         THROW_IF_FAIL (variable) ;
         variable->type (type_caption) ;
         a_it = row_it ;
+        return true ;
     }
 
-    void set_a_variable_type (const UString &a_var_name, const UString &a_type)
+    bool set_a_variable_type (const UString &a_var_name, const UString &a_type)
     {
         Gtk::TreeModel::iterator it ;
-        set_a_variable_type (a_var_name, a_type, it) ;
+        return set_a_variable_type (a_var_name, a_type, it) ;
     }
 
-    void set_a_variable_real (const IDebugger::VariableSafePtr &a_var,
-                              const Gtk::TreeModel::iterator &a_parent,
-                              Gtk::TreeModel::iterator &a_result)
+    void update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
+                                 Gtk::TreeModel::iterator &a_iter,
+                                 bool a_handle_highlight=true)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        (*a_iter)[get_variable_columns ().variable] = a_var ;
+        UString var_name = a_var->name ();
+        var_name.chomp () ;
+        (*a_iter)[get_variable_columns ().name] = var_name ;
+        (*a_iter)[get_variable_columns ().is_highlighted]  = false ;
+        bool do_highlight = false ;
+        if (a_handle_highlight && !is_new_frame) {
+            UString prev_value =
+                (UString) (*a_iter)[get_variable_columns ().value] ;
+            if (prev_value != a_var->value ()) {
+                do_highlight = true ;
+            }
+        }
+
+        if (do_highlight) {
+            LOG_DD ("do highlight variable") ;
+            (*a_iter)[get_variable_columns ().is_highlighted]  = true;
+            (*a_iter)[get_variable_columns ().fg_color]  = Gdk::Color ("red");
+        } else {
+            LOG_DD ("remove highlight from variable") ;
+            (*a_iter)[get_variable_columns ().is_highlighted]  = false ;
+            (*a_iter)[get_variable_columns ().fg_color]  =
+                tree_view->get_style ()->get_fg (Gtk::STATE_NORMAL);
+        }
+
+        (*a_iter)[get_variable_columns ().value] = a_var->value () ;
+        (*a_iter)[get_variable_columns ().type] = a_var->type () ;
+
+        UString qname ;
+        a_var->build_qname (qname) ;
+        LOG_DD ("set variable with qname '" << qname << "'") ;
+        debugger->print_variable_type (qname) ;
+        LOG_DD ("did query type of variable '" << qname << "'") ;
+    }
+
+
+    void append_a_variable_real (const IDebugger::VariableSafePtr &a_var,
+                                 const Gtk::TreeModel::iterator &a_parent,
+                                 Gtk::TreeModel::iterator &a_result)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (a_var) ;
@@ -210,33 +277,57 @@ public:
             cur_row_it = tree_store->append (a_parent->children ()) ;
         }
         THROW_IF_FAIL (cur_row_it) ;
-
-        (*cur_row_it)[get_variable_columns ().variable] = a_var ;
-        UString var_name = a_var->name ();
-        var_name.chomp () ;
-        (*cur_row_it)[get_variable_columns ().name] = var_name ;
-        if (a_var->value () != "") {
-            (*cur_row_it)[get_variable_columns ().value] = a_var->value () ;
-        }
-        (*cur_row_it)[get_variable_columns ().type] = a_var->type () ;
-
-        UString qname ;
-        a_var->build_qname (qname) ;
-        LOG_DD ("set variable with qname '" << qname << "'") ;
-        debugger->print_variable_type (qname) ;
-        LOG_DD ("did query type of variable '" << qname << "'") ;
+        update_a_variable_real (a_var, cur_row_it) ;
         a_result = cur_row_it ;
     }
 
-    void set_a_variable (const IDebugger::VariableSafePtr &a_var,
-                         const Gtk::TreeModel::iterator &a_parent,
-                         Gtk::TreeModel::iterator &a_result)
+    void update_a_variable (const IDebugger::VariableSafePtr &a_var,
+                            Gtk::TreeModel::iterator &a_iter)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
+        update_a_variable_real (a_var, a_iter) ;
+
+        if (a_var->members ().empty ()) {return;}
+
+        std::list<IDebugger::VariableSafePtr>::const_iterator member ;
+        for (member = a_var->members ().begin ();
+             member != a_var->members ().end ();
+             ++member) {
+
+            THROW_IF_FAIL (*member) ;
+
+            //hmmh, this makes the current function have an O(n!) exec time.
+            //Doing it in less time is too difficult for the time being.
+            Gtk::TreeModel::iterator tree_node_iter ;
+            if (!get_variable_iter_from_qname ((*member)->name (),
+                                               a_iter,
+                                               tree_node_iter)) {
+                THROW (UString ("Could not find tree node for variable '")
+                       + (*member)->name ()
+                       + "'. Parent var was: '"
+                       + a_var->name ()
+                       + "'") ;
+            }
+            THROW_IF_FAIL (tree_node_iter) ;
+
+            update_a_variable (*member, tree_node_iter) ;
+        }//end for.
+
+        NEMIVER_CATCH
+    }
+
+    void append_a_variable (const IDebugger::VariableSafePtr &a_var,
+                            const Gtk::TreeModel::iterator &a_parent,
+                            Gtk::TreeModel::iterator &a_result)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         if (a_result) {}
-        Gtk::TreeModel::iterator parent_iter, tmp_iter;
+        Gtk::TreeModel::iterator result_iter, tmp_iter;
 
-        set_a_variable_real (a_var, a_parent, parent_iter);
+        append_a_variable_real (a_var, a_parent, result_iter);
 
         if (a_var->members ().empty ()) {return;}
 
@@ -244,8 +335,9 @@ public:
         for (member_iter = a_var->members ().begin ();
              member_iter != a_var->members ().end ();
              ++member_iter) {
-            set_a_variable (*member_iter, parent_iter, tmp_iter) ;
+            append_a_variable (*member_iter, result_iter, tmp_iter) ;
         }
+        a_result = result_iter ;
     }
 
     void set_variables_real (const std::list<IDebugger::VariableSafePtr> &a_vars,
@@ -260,7 +352,7 @@ public:
         std::list<IDebugger::VariableSafePtr>::const_iterator it ;
         for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
             if (!(*it)) {continue ;}
-            set_a_variable (*it, vars_row_it, tmp_iter) ;
+            append_a_variable (*it, vars_row_it, tmp_iter) ;
         }
     }
 
@@ -312,6 +404,8 @@ public:
 
     void show_variable_type_in_dialog ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         if (!cur_selected_row) {return;}
         UString type =
             (Glib::ustring) (*cur_selected_row)[get_variable_columns ().type] ;
@@ -347,7 +441,10 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD
 
+        NEMIVER_TRY
+
         THROW_IF_FAIL (a_qname != "") ;
+        LOG_DD ("qname: '" << a_qname << "'") ;
 
         UString::size_type len=a_qname.size (),cur=0, name_start=0, name_end=0 ;
         UString name_element ;
@@ -359,11 +456,17 @@ fetch_element:
         for (;
              cur < len && (isalnum (a_qname[cur])
                            || a_qname[cur] == '_'
+                           || a_qname[cur] == '<'
+                           || a_qname[cur] == ':'
+                           || a_qname[cur] == '>'
+                           || a_qname[cur] == '#'
                            || isspace (a_qname[cur]))
              ; ++cur) {
         }
         if (cur == name_start) {
             name_element = "";
+        } else if (cur >= len) {
+            name_element = a_qname ;
         } else if (a_qname[cur] == '.'
                    || (cur + 1 < len
                        && a_qname[cur] == '-'
@@ -391,6 +494,9 @@ fetch_element:
         }
         LOG_DD ("getting out") ;
         a_name_elems = name_elems ;
+
+        NEMIVER_CATCH_AND_RETURN (false)
+
         return true ;
     }
 
@@ -400,6 +506,8 @@ fetch_element:
                          const Gtk::TreeModel::iterator &a_from_it,
                          Gtk::TreeModel::iterator &a_result)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (!a_name_elems.empty ()) ;
         if (!a_from_it) {
             LOG_ERROR ("got null a_from iterator") ;
@@ -408,6 +516,7 @@ fetch_element:
         std::list<UString>::const_iterator cur_elem_it = a_cur_elem_it;
         if (cur_elem_it == a_name_elems.end ()) {
             a_result = a_from_it ;
+            LOG_DD ("found iter") ;
             return true;
         }
 
@@ -434,6 +543,7 @@ fetch_element:
                 }
             }
         }
+        LOG_DD ("iter not found") ;
         return false ;
     }
 
@@ -441,7 +551,10 @@ fetch_element:
                                        const Gtk::TreeModel::iterator &a_from,
                                        Gtk::TreeModel::iterator &a_result)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (a_var_qname != "") ;
+        LOG_DD ("a_var_qname: '" << a_var_qname << "'") ;
 
         if (!a_from) {
             LOG_ERROR ("got null a_from iterator") ;
@@ -458,6 +571,14 @@ fetch_element:
                                                  name_elems.begin (),
                                                  a_from,
                                                  a_result) ;
+        if (!ret) {
+            name_elems.clear () ;
+            name_elems.push_back (a_var_qname) ;
+            ret = get_variable_iter_from_qname (name_elems,
+                                                name_elems.begin (),
+                                                a_from,
+                                                a_result) ;
+        }
         return ret ;
     }
 
@@ -525,15 +646,26 @@ fetch_element:
                             const IDebugger::Frame &a_frame,
                             int a_thread_id)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         if (a_str == "" || a_frame.line () || a_thread_id) {}
 
         NEMIVER_TRY
 
         THROW_IF_FAIL (debugger) ;
         if (a_has_frame) {
+            LOG_DD ("prev frame address: '" << previous_function_name << "'") ;
+            LOG_DD ("cur frame address: " << a_frame.function_name () << "'") ;
+            if (previous_function_name == a_frame.function_name ()) {
+                is_new_frame = false ;
+            } else {
+                is_new_frame = true ;
+            }
+            previous_function_name = a_frame.function_name () ;
             THROW_IF_FAIL (tree_store) ;
-            re_init_tree_view () ;
+            if (is_new_frame) {
+                LOG_DD ("init tree view") ;
+                re_init_tree_view () ;
+            }
             debugger->list_local_variables () ;
         }
 
@@ -580,9 +712,18 @@ fetch_element:
         LOG_DD ("adding variable '" << a_var_name << " to vars editor") ;
 
         a_var->type (it->second->type ()) ;
-        set_a_variable (a_var,
-                        tree_store->get_iter (row_ref->get_path ()),
-                        row_it) ;
+        Gtk::TreeModel::iterator var_iter ;
+        if (get_variable_iter_from_qname
+                                (a_var_name,
+                                 tree_store->get_iter (row_ref->get_path ()),
+                                 var_iter)) {
+            THROW_IF_FAIL (var_iter) ;
+            update_a_variable (a_var, var_iter) ;
+        } else {
+            append_a_variable (a_var,
+                               tree_store->get_iter (row_ref->get_path ()),
+                               row_it) ;
+        }
 
         map_ptr->erase (a_var_name) ;
         tree_view->expand_row (row_ref->get_path (), false) ;
@@ -599,8 +740,10 @@ fetch_element:
         LOG_DD ("var: '" << a_var_name << "', type: '" << a_type << "'") ;
 
         Gtk::TreeModel::iterator row_it ;
-        set_a_variable_type (a_var_name, a_type, row_it) ;
-        if (!row_it) {return;}
+        if (!set_a_variable_type (a_var_name, a_type, row_it)) {
+            return ;
+        }
+        THROW_IF_FAIL (row_it) ;
 
         UString type =
             (Glib::ustring) row_it->get_value (get_variable_columns ().type) ;
@@ -696,7 +839,7 @@ fetch_element:
         THROW_IF_FAIL (ret) ;
         THROW_IF_FAIL (row_it) ;
         Gtk::TreeModel::iterator result_row_it ;
-        set_a_variable (a_var, row_it, result_row_it) ;
+        append_a_variable (a_var, row_it, result_row_it) ;
         debugger->print_variable_type (a_var_name) ;
         NEMIVER_CATCH
     }
@@ -725,6 +868,8 @@ void
 VarsEditor::set_local_variables
                         (const std::list<IDebugger::VariableSafePtr> &a_vars)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->debugger) ;
 
@@ -734,11 +879,21 @@ VarsEditor::set_local_variables
 void
 VarsEditor::show_local_variables_of_current_function ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->debugger) ;
 
-    m_priv->re_init_tree_view () ;
+    re_init_widget () ;
     m_priv->debugger->list_local_variables () ;
+}
+
+void
+VarsEditor::re_init_widget ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+
+    m_priv->re_init_tree_view () ;
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

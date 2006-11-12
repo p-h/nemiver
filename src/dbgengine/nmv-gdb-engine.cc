@@ -2286,7 +2286,7 @@ struct GDBEngine::Priv {
             } else if (name == "addr") {
                 frame.address (value) ;
             } else if (name == "func") {
-                frame.function (value) ;
+                frame.function_name (value) ;
             }
         }
         a_frame = frame ;
@@ -2361,7 +2361,7 @@ struct GDBEngine::Priv {
                 if ((*frame_part_iter)->variable () == "addr") {
                     frame.address (value) ;
                 } else if ((*frame_part_iter)->variable () == "func") {
-                    frame.function (value) ;
+                    frame.function_name (value) ;
                 } else if ((*frame_part_iter)->variable () == "file") {
                     frame.file_name (value) ;
                 } else if ((*frame_part_iter)->variable () == "fullname") {
@@ -3618,7 +3618,7 @@ fetch_gdbmi_result:
                     for (frame_iter = call_stack.begin () ;
                          frame_iter != call_stack.end ();
                          ++frame_iter) {
-                        LOG_D ("function-name: " << frame_iter->function (),
+                        LOG_D ("function-name: " << frame_iter->function_name (),
                                GDBMI_PARSING_DOMAIN) ;
                     }
                 } else if (!a_input.compare (cur, 7, "frame={")) {
