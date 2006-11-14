@@ -69,7 +69,7 @@
 
 #ifndef LOG
 #define LOG(message) \
-LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << HERE << message << "\n"
+LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << HERE << message << nemiver::common::endl
 #endif
 
 #ifndef LOG_D
@@ -83,12 +83,12 @@ LOG_STREAM.push_domain (domain) ; LOG (message) ; LOG_STREAM.pop_domain ();
 
 #ifndef LOG_ERROR
 #define LOG_ERROR(message) \
-LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_ERROR << HERE << message << "\n"
+LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_ERROR << HERE << message << nemiver::common::endl
 #endif
 
 #ifndef LOG_EXCEPTION
 #define LOG_EXCEPTION(message) \
-LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_EXCEPTION << HERE << message << "\n"
+LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_EXCEPTION << HERE << message << nemiver::common::endl
 #endif
 
 #ifndef LOG_ERROR_D
@@ -102,7 +102,7 @@ LOG_STREAM.push_domain (domain) ; LOG_ERROR (message) ; LOG_STREAM.pop_domain() 
 
 #ifndef LOG_VERBOSE
 #define LOG_VERBOSE(message) \
-LOG_STREAM << LOG_LEVEL_VERBOSE___ << LOG_MARKER_INFO << HERE << message << "\n"
+LOG_STREAM << LOG_LEVEL_VERBOSE___ << LOG_MARKER_INFO << HERE << message << nemiver::common::endl
 #endif
 
 #ifndef LOG_VERBOSE_D

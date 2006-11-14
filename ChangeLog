@@ -1,3 +1,8 @@
+Tue, 14 Nov 2006 12:10:20 +0100 Dodji Seketeli
+
+	* src/common/nmv-log-stream-utils.h: sync each logged line to disk.
+	* TODO,NEWS: update these.
+
 Tue, 14 Nov 2006 11:02:08 +0100 Dodji Seketeli
 
 	* TODO: added a new item in here, removed the varseditor modification

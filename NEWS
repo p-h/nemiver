@@ -1,10 +1,15 @@
-coming release
+coming release <-- rename this at release time.
 ==============
 
 new features
 ============
-    * highlight the last changed variable (in the local variables tab)
+    * highlight the last changed variable (in the local variables tab) [Dodji seketeli]
 
+bug fixes/improvements
+======================
+    * don't redraw the local variables widget at each stop [Dodji Seketeli]
+    * don't assert when hover on empty space [Dodji Seketeli]
+    * sync each log line to disk [Dodji Seketeli]
 
 |||||||||||||||||||||||||||||||||||||||||||||||||
 
