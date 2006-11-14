@@ -828,8 +828,10 @@ DBGPerspective::on_show_target_output_action ()
 void
 DBGPerspective::on_breakpoint_delete_action ()
 {
+    NEMIVER_TRY
     IDebugger::BreakPoint bp = get_breakpoints_view ().get_selected_breakpoint ();
     delete_breakpoint (bp.number ());
+    NEMIVER_CATCH
 }
 
 void
@@ -916,7 +918,9 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 void
 DBGPerspective::on_going_to_run_target_signal ()
 {
+    NEMIVER_TRY
     get_variables_editor ().re_init_widget () ;
+    NEMIVER_CATCH
 }
 
 void
@@ -973,11 +977,15 @@ DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterato
 void
 DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
 {
+    NEMIVER_TRY
+
     SourceEditor *cur_editor = get_current_source_editor () ;
     THROW_IF_FAIL (cur_editor) ;
     UString path ;
     cur_editor->get_path (path) ;
     toggle_breakpoint (path, a_line + 1 ) ;
+
+    NEMIVER_CATCH
 }
 
 bool
