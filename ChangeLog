@@ -1,3 +1,8 @@
+Tue, 14 Nov 2006 11:02:08 +0100 Dodji Seketeli
+
+	* TODO: added a new item in here, removed the varseditor modification
+	        items.
+
 Sun, 12 Nov 2006 23:57:13 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-vars-editor.cc:
