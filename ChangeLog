@@ -1,3 +1,12 @@
+Wed, 15 Nov 2006 18:40:31 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  DBGPerspective::get_source_editor_from_path(): added a param to lookup
+	  source editors based on file basemanes.
+	  DBGPerspective::append_breakpoints(): when looking up files that don't
+	  have full path information, lookup in opened files first.
+
+
 Tue, 14 Nov 2006 13:41:10 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: forgot to catch some

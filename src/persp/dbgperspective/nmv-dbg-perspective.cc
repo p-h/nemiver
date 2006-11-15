@@ -252,7 +252,8 @@ private:
     SourceEditor* get_current_source_editor () ;
     ISessMgr* session_manager_ptr () ;
     UString get_current_file_path () ;
-    SourceEditor* get_source_editor_from_path (const UString &a_path) ;
+    SourceEditor* get_source_editor_from_path (const UString &a_path,
+                                               bool a_basename_only=false) ;
     IWorkbench& workbench () const ;
     void bring_source_as_current (const UString &a_path) ;
     int get_n_pages () ;
@@ -508,6 +509,7 @@ struct DBGPerspective::Priv {
     Glib::RefPtr<Gtk::Paned> body_main_paned ;
     Gtk::Notebook *sourceviews_notebook ;
     map<UString, int> path_2_pagenum_map ;
+    map<UString, int> basename_2_pagenum_map ;
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_path_map ;
     Gtk::Notebook *statuses_notebook ;
@@ -2111,6 +2113,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                                               *event_box,
                                                               -1);
     m_priv->path_2_pagenum_map[a_path] = page_num ;
+    std::string base_name = Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
+    THROW_IF_FAIL (base_name != "") ;
+    m_priv->basename_2_pagenum_map[Glib::locale_to_utf8 (base_name)]= page_num ;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
     m_priv->pagenum_2_path_map[page_num] = a_path ;
 
@@ -2164,14 +2169,31 @@ DBGPerspective::get_current_file_path ()
 }
 
 SourceEditor*
-DBGPerspective::get_source_editor_from_path (const UString &a_path)
+DBGPerspective::get_source_editor_from_path (const UString &a_path,
+                                             bool a_basename_only)
 {
-    map<UString, int>::iterator iter =
-        m_priv->path_2_pagenum_map.find (a_path) ;
-    if (iter == m_priv->path_2_pagenum_map.end ()) {
-        return NULL ;
+    if (a_path == "") {return 0;}
+
+    map<UString, int>::iterator iter, nil ;
+    SourceEditor *result=0;
+
+    if (a_basename_only) {
+        std::string basename =
+            Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
+        THROW_IF_FAIL (basename != "") ;
+        iter = m_priv->basename_2_pagenum_map.find (Glib::locale_to_utf8 (basename)) ;
+        nil = m_priv->basename_2_pagenum_map.end () ;
+        result = m_priv->pagenum_2_source_editor_map[iter->second] ;
+    } else {
+        iter = m_priv->path_2_pagenum_map.find (a_path) ;
+        nil = m_priv->path_2_pagenum_map.end () ;
+        result = m_priv->pagenum_2_source_editor_map[iter->second] ;
     }
-    return m_priv->pagenum_2_source_editor_map[iter->second] ;
+    if (iter == nil) {
+        return 0 ;
+    }
+    THROW_IF_FAIL (result) ;
+    return result ;
 }
 
 IWorkbench&
@@ -2845,6 +2867,8 @@ DBGPerspective::close_file (const UString &a_path)
     int page_num = m_priv->path_2_pagenum_map[a_path] ;
     m_priv->sourceviews_notebook->remove_page (page_num) ;
     m_priv->path_2_pagenum_map.erase (a_path) ;
+    std::string basename = Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
+    m_priv->basename_2_pagenum_map.erase (Glib::locale_from_utf8 (basename)) ;
     m_priv->pagenum_2_source_editor_map.erase (page_num) ;
     m_priv->pagenum_2_path_map.erase (page_num) ;
 
@@ -3144,16 +3168,35 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
 }
 
 void
-DBGPerspective::append_breakpoints
-                    (const map<int, IDebugger::BreakPoint> &a_breaks)
+DBGPerspective::append_breakpoints (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
     UString file_path ;
     for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
-        file_path = iter->second.file_full_name () ;
+         file_path = iter->second.file_full_name () ;
+        //if the file full path info is not present,
+        //1/ lookup in the files opened in the perspective already.
+        //2/ lookup in the list of source directories
         if (file_path == "") {
-            if (!find_file_in_source_dirs (iter->second.file_name (),
-                                           file_path)){
+            LOG_DD ("no full path info present for file '"
+                    + iter->second.file_name () + "'") ;
+            UString file_name = iter->second.file_name () ;
+            if (file_name == "") {
+                ui_utils::display_error
+                    (_("There is no file name info for symbol@addr: ")
+                     +iter->second.function () + "@" + iter->second.address ()) ;
+            }
+            LOG_DD ("looking up file in opened files ...") ;
+            SourceEditor *editor = get_source_editor_from_path (file_name, true) ;
+            if (editor) {
+                editor->get_path (file_path) ;
+                LOG_DD ("found file in opened files:'" + file_path + "'") ;
+                THROW_IF_FAIL (file_path != "") ;
+            } else if (!find_file_in_source_dirs (file_name, file_path)) {
+                LOG_DD ("didn't find file neither in opened file "
+                        " nor in source dirs:") ;
                 //TODO: display a dialog that lets the user select the
                 //path to the source file.
                 ui_utils::display_error (_("Could not find file: ")
