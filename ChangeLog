@@ -1,3 +1,7 @@
+Thu, 16 Nov 2006 09:03:07 +0100 Dodji Seketeli
+
+	 * TODO, NEWS: the "files lookup during breakpoint workflow" item is done.
+
 Wed, 15 Nov 2006 18:40:31 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 

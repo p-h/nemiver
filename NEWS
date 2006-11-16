@@ -10,6 +10,7 @@ bug fixes/improvements
     * don't redraw the local variables widget at each stop [Dodji Seketeli]
     * don't assert when hover on empty space [Dodji Seketeli]
     * sync each log line to disk [Dodji Seketeli]
+    * in the breakpoint workflow, lookup files in already opened files first [Dodji Seketeli]
 
 |||||||||||||||||||||||||||||||||||||||||||||||||
 
