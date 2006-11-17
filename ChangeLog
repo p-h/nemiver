@@ -1,3 +1,17 @@
+Sat, 18 Nov 2006 00:46:06 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: don't put
+	  the terminal in a scrolledwindow. It doesn't handle vte scrolling
+	  properly when the size of text thrown at it > scrollback buffer
+	  size. Build a vbox + scrollbar ourselves instead. That works much
+	  better.
+	* src/persp/dbgperspective/nmv-terminal.cc: set the size of
+	  scrollback size to 1000 lines and set the terminal emulation to
+	  xterm by default.
+	* tests/test-stdout.cc: added this test program that spits a lot of
+	  lines to stdout to test the behaviour of nemiver's terminal widget.
+	* tests/Makefile.am: compile the new test program.
+
 Fri, 17 Nov 2006 21:58:13 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-local-vars-inspector.cc,h: renamed

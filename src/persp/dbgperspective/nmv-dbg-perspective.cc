@@ -377,7 +377,7 @@ public:
 
     Terminal& get_terminal () ;
 
-    Gtk::ScrolledWindow& get_terminal_scrolled_win () ;
+    Gtk::Box& get_terminal_box () ;
 
     Gtk::ScrolledWindow& get_breakpoints_scrolled_win () ;
 
@@ -524,7 +524,7 @@ struct DBGPerspective::Priv {
     SafePtr<LocalVarsInspector> variables_editor ;
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
     SafePtr<Terminal> terminal ;
-    SafePtr<Gtk::ScrolledWindow> terminal_scrolled_win ;
+    SafePtr<Gtk::Box> terminal_box ;
     SafePtr<Gtk::ScrolledWindow> breakpoints_scrolled_win ;
     SafePtr<BreakpointsView> breakpoints_view ;
     SafePtr<ThreadList> thread_list ;
@@ -1963,9 +1963,6 @@ DBGPerspective::init_body ()
     p->add2 (get_call_stack ().widget ()) ;
     get_call_stack_scrolled_win ().add (*p) ;
     get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
-
-    get_terminal_scrolled_win ().add (get_terminal ().widget ()) ;
-    get_terminal_scrolled_win ().set_vadjustment (get_terminal ().adjustment ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
 
     /*
@@ -3520,18 +3517,20 @@ DBGPerspective::get_terminal ()
     return *m_priv->terminal ;
 }
 
-Gtk::ScrolledWindow&
-DBGPerspective::get_terminal_scrolled_win ()
+Gtk::Box &
+DBGPerspective::get_terminal_box ()
 {
     THROW_IF_FAIL (m_priv) ;
-    if (!m_priv->terminal_scrolled_win) {
-        m_priv->terminal_scrolled_win = new Gtk::ScrolledWindow ;
-        THROW_IF_FAIL (m_priv->terminal_scrolled_win) ;
-        m_priv->terminal_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
-                                                   Gtk::POLICY_AUTOMATIC) ;
+    if (!m_priv->terminal_box) {
+        m_priv->terminal_box = new Gtk::HBox ;
+        THROW_IF_FAIL (m_priv->terminal_box) ;
+        Gtk::VScrollbar *scrollbar = Gtk::manage (new Gtk::VScrollbar) ;
+        m_priv->terminal_box->pack_end (*scrollbar, false, false, 0) ;
+        m_priv->terminal_box->pack_start (get_terminal ().widget ()) ;
+        scrollbar->set_adjustment (get_terminal ().adjustment ()) ;
     }
-    THROW_IF_FAIL (m_priv->terminal_scrolled_win) ;
-    return *m_priv->terminal_scrolled_win ;
+    THROW_IF_FAIL (m_priv->terminal_box) ;
+    return *m_priv->terminal_box;
 }
 
 Gtk::ScrolledWindow&
@@ -3695,22 +3694,22 @@ void
 DBGPerspective::set_show_terminal_view (bool a_show)
 {
     if (a_show) {
-        if (!get_terminal_scrolled_win ().get_parent ()
+        if (!get_terminal_box ().get_parent ()
             && m_priv->terminal_view_is_visible == false) {
-            get_terminal_scrolled_win ().show_all () ;
+            get_terminal_box ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
-                                            (get_terminal_scrolled_win (),
+                                            (get_terminal_box (),
                                              _("Target terminal"),
                                              TERMINAL_VIEW_INDEX) ;
             m_priv->terminal_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
         }
     } else {
-        if (get_terminal_scrolled_win ().get_parent ()
+        if (get_terminal_box ().get_parent ()
             && m_priv->terminal_view_is_visible) {
             LOG_DD ("removing terminal view") ;
             m_priv->statuses_notebook->remove_page
-                                        (get_terminal_scrolled_win ());
+                                        (get_terminal_box ());
             m_priv->terminal_view_is_visible = false;
         }
         m_priv->terminal_view_is_visible = false;

@@ -59,7 +59,8 @@ struct Terminal::Priv {
         vte = VTE_TERMINAL (w) ;
         THROW_IF_FAIL (vte) ;
         vte_terminal_set_scroll_on_output (vte, TRUE) ;
-        vte_terminal_set_scrollback_lines (vte, 500) ;
+        vte_terminal_set_scrollback_lines (vte, 1000) ;
+        vte_terminal_set_emulation (vte, "xterm") ;
 
         widget = Glib::wrap (w) ;
         THROW_IF_FAIL (widget) ;
@@ -85,8 +86,8 @@ struct Terminal::Priv {
 
         if (widget) {
             widget->unreference () ;
-            widget = NULL ;
-            vte = NULL ;
+            widget = 0;
+            vte = 0;
         }
     }
 
