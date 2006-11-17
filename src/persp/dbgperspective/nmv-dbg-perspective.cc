@@ -44,7 +44,7 @@
 #include "nmv-date-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-ephy-throbber.h"
-#include "nmv-vars-editor.h"
+#include "nmv-local-vars-inspector.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
 #include "nmv-i-conf-mgr.h"
@@ -371,7 +371,7 @@ public:
 
     Gtk::ScrolledWindow& get_call_stack_scrolled_win () ;
 
-    VarsEditor& get_variables_editor () ;
+    LocalVarsInspector& get_variables_editor () ;
 
     Gtk::ScrolledWindow& get_variables_editor_scrolled_win () ;
 
@@ -521,7 +521,7 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> log_view_scrolled_win ;
     SafePtr<CallStack> call_stack ;
     SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
-    SafePtr<VarsEditor> variables_editor ;
+    SafePtr<LocalVarsInspector> variables_editor ;
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
     SafePtr<Terminal> terminal ;
     SafePtr<Gtk::ScrolledWindow> terminal_scrolled_win ;
@@ -3481,15 +3481,15 @@ DBGPerspective::get_call_stack_scrolled_win ()
     return *m_priv->call_stack_scrolled_win ;
 }
 
-VarsEditor&
+LocalVarsInspector&
 DBGPerspective::get_variables_editor ()
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->workbench) ;
 
     if (!m_priv->variables_editor) {
-        m_priv->variables_editor = new VarsEditor (debugger (),
-                                                   *m_priv->workbench) ;
+        m_priv->variables_editor = new LocalVarsInspector (debugger (),
+                                                           *m_priv->workbench) ;
     }
     THROW_IF_FAIL (m_priv->variables_editor) ;
     return *m_priv->variables_editor ;

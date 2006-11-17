@@ -1,3 +1,13 @@
+Fri, 17 Nov 2006 21:58:13 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc,h: renamed
+	  src/persp/dbgperspective/nmv-vars-editor.cc,h into this file.
+	* src/persp/dbgperspective/Makefile.am: reflect that modification in
+	  here.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: progagate that
+	  change here
+
+
 Thu, 16 Nov 2006 09:03:07 +0100 Dodji Seketeli
 
 	 * TODO, NEWS: the "files lookup during breakpoint workflow" item is done.

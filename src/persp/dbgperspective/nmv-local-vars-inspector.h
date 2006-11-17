@@ -35,27 +35,27 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class IWorkbench ;
 
-class NEMIVER_API VarsEditor : public nemiver::common::Object {
+class NEMIVER_API LocalVarsInspector : public nemiver::common::Object {
     //non copyable
-    VarsEditor (const VarsEditor&) ;
-    VarsEditor& operator= (const VarsEditor&) ;
+    LocalVarsInspector (const LocalVarsInspector&) ;
+    LocalVarsInspector& operator= (const LocalVarsInspector&) ;
 
     struct Priv ;
     SafePtr<Priv> m_priv ;
 
 protected:
-    VarsEditor () ;
+    LocalVarsInspector () ;
 
 public:
 
-    VarsEditor (IDebuggerSafePtr &a_dbg, IWorkbench &a_wb) ;
-    virtual ~VarsEditor () ;
+    LocalVarsInspector (IDebuggerSafePtr &a_dbg, IWorkbench &a_wb) ;
+    virtual ~LocalVarsInspector () ;
     Gtk::Widget& widget () const ;
     void set_local_variables
                     (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
     void show_local_variables_of_current_function () ;
     void re_init_widget () ;
-};//end VarsEditor
+};//end LocalVarsInspector
 
 NEMIVER_END_NAMESPACE (nemiver)
 

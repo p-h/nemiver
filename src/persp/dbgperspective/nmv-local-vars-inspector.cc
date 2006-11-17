@@ -28,7 +28,7 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
 #include <gtkmm/treerowreference.h>
-#include "nmv-vars-editor.h"
+#include "nmv-local-vars-inspector.h"
 #include "nmv-exception.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
@@ -73,7 +73,7 @@ get_variable_columns ()
     return s_cols ;
 }
 
-struct VarsEditor::Priv {
+struct LocalVarsInspector::Priv {
 private:
     Priv ();
 public:
@@ -863,20 +863,20 @@ fetch_element:
         NEMIVER_CATCH
     }
 
-};//end class VarsEditor
+};//end class LocalVarsInspector
 
-VarsEditor::VarsEditor (IDebuggerSafePtr &a_debugger,
-                        IWorkbench &a_workbench)
+LocalVarsInspector::LocalVarsInspector (IDebuggerSafePtr &a_debugger,
+                                        IWorkbench &a_workbench)
 {
     m_priv = new Priv (a_debugger, a_workbench);
 }
 
-VarsEditor::~VarsEditor ()
+LocalVarsInspector::~LocalVarsInspector ()
 {
 }
 
 Gtk::Widget&
-VarsEditor::widget () const
+LocalVarsInspector::widget () const
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->tree_view) ;
@@ -884,7 +884,7 @@ VarsEditor::widget () const
 }
 
 void
-VarsEditor::set_local_variables
+LocalVarsInspector::set_local_variables
                         (const std::list<IDebugger::VariableSafePtr> &a_vars)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -896,7 +896,7 @@ VarsEditor::set_local_variables
 }
 
 void
-VarsEditor::show_local_variables_of_current_function ()
+LocalVarsInspector::show_local_variables_of_current_function ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
@@ -907,7 +907,7 @@ VarsEditor::show_local_variables_of_current_function ()
 }
 
 void
-VarsEditor::re_init_widget ()
+LocalVarsInspector::re_init_widget ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;

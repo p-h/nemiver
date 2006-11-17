@@ -52,8 +52,8 @@ ephy-spinner.c \
 ephy-spinner.h \
 nmv-ephy-throbber.h \
 nmv-ephy-throbber.cc \
-nmv-vars-editor.cc \
-nmv-vars-editor.h \
+nmv-local-vars-inspector.cc \
+nmv-local-vars-inspector.h \
 nmv-terminal.h \
 nmv-terminal.cc \
 nmv-breakpoints-view.cc \
