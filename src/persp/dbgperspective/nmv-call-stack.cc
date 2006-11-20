@@ -149,7 +149,7 @@ struct CallStack::Priv {
     {
         LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN) ;
         if (waiting_for_stack_args) {
-            set_frame_list (frames, a_frames_params, true) ;
+            set_frame_list (frames, a_frames_params) ;
             waiting_for_stack_args = false ;
         } else {
             LOG_D ("not in the frame setting transaction", NMV_DEFAULT_DOMAIN) ;

@@ -48,7 +48,7 @@ public:
     virtual ~VarInspectorDialog () ;
 
     UString variable_name () const ;
-    void variable_name (const UString &) ;
+    void inspect_variable (const UString &a_variable_name) ;
     const IDebugger::VariableSafePtr variable () const ;
 };//end class VarInspectorDialog
 

@@ -58,7 +58,7 @@ public:
           IWorkbench &a_workbench) :
         workbench (a_workbench),
         dereference_mi (0),
-        is_new_frame (true)
+        is_new_frame (false)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 

@@ -1258,13 +1258,17 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
 
     THROW_IF_FAIL (m_priv) ;
 
+    UString file_path (a_frame.file_full_name ());
     if (a_has_frame
         && a_frame.file_full_name () == ""
         && a_frame.file_name () != "") {
-        UString file_path ;
         if (!find_file_in_source_dirs (a_frame.file_name (), file_path)) {
             display_error ("Did not find file " + a_frame.file_name ()) ;
+            return ;
         }
+    }
+    if (a_has_frame && file_path != "") {
+        set_where (file_path, a_frame.line ()) ;
     }
 
     if (m_priv->debugger_has_just_run) {
@@ -1316,7 +1320,6 @@ DBGPerspective::on_frame_selected_signal (int a_index,
         //TODO: we should disassemble the current frame and display it.
     }
 
-    set_where (file_path, a_frame.line ()) ;
     get_local_vars_inspector ().show_local_variables_of_current_function () ;
 
     NEMIVER_CATCH
@@ -2239,6 +2242,9 @@ DBGPerspective::workbench () const
 void
 DBGPerspective::bring_source_as_current (const UString &a_path)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    LOG_DD ("file pat: '" << a_path << "'") ;
+
     SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
     if (!source_editor) {
         open_file (a_path) ;
@@ -2255,6 +2261,8 @@ void
 DBGPerspective::set_where (const UString &a_path,
                            int a_line)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     bring_source_as_current (a_path) ;
     SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
     THROW_IF_FAIL (source_editor) ;
@@ -2282,6 +2290,17 @@ DBGPerspective::get_contextual_menu ()
     THROW_IF_FAIL (m_priv && m_priv->contextual_menu_merge_id) ;
 
     if (!m_priv->contextual_menu) {
+
+        workbench ().get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "InspectVariableMenuItem",
+             "InspectVariableMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        workbench ().get_ui_manager ()->add_ui_separator
+            (m_priv->contextual_menu_merge_id, "/ContextualMenu") ;
 
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
@@ -2354,6 +2373,7 @@ DBGPerspective::get_contextual_menu ()
              "RunMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false) ;
+
 
         workbench ().get_ui_manager ()->ensure_update () ;
         m_priv->contextual_menu =
@@ -2483,11 +2503,12 @@ DBGPerspective::get_n_pages ()
 void
 DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
 {
-    SourceEditor *editor = get_current_source_editor () ;
-    THROW_IF_FAIL (editor) ;
     int buffer_x=0, buffer_y=0, line_top=0;
     Gtk::TextBuffer::iterator cur_iter ;
     UString file_name ;
+
+    SourceEditor *editor = get_current_source_editor () ;
+    THROW_IF_FAIL (editor) ;
 
     editor->source_view ().window_to_buffer_coords (Gtk::TEXT_WINDOW_TEXT,
                                                     (int)a_event->x,
@@ -2499,7 +2520,19 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
 
     Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ()) ;
     THROW_IF_FAIL (menu) ;
+
+    Gtk::TextIter start, end ;
+    Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+                            editor->source_view ().get_source_buffer () ;
+    THROW_IF_FAIL (buffer) ;
+    bool has_selected_text=false ;
+    if (buffer->get_selection_bounds (start, end)) {
+        has_selected_text = true ;
+    }
     editor->source_view ().get_buffer ()->place_cursor (cur_iter) ;
+    if (has_selected_text) {
+        buffer->select_range (start, end) ;
+    }
     menu->popup (a_event->button, a_event->time) ;
 }
 
@@ -3404,7 +3437,19 @@ DBGPerspective::toggle_breakpoint ()
 void
 DBGPerspective::inspect_variable ()
 {
-    inspect_variable ("") ;
+    THROW_IF_FAIL (m_priv) ;
+
+    Gtk::TextIter start, end ;
+    SourceEditor *source_editor = get_current_source_editor () ;
+    THROW_IF_FAIL (source_editor) ;
+    Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+                            source_editor->source_view ().get_source_buffer () ;
+    THROW_IF_FAIL (buffer) ;
+    UString variable_name ;
+    if (buffer->get_selection_bounds (start, end)) {
+        variable_name= buffer->get_slice (start, end) ;
+    }
+    inspect_variable (variable_name) ;
 }
 
 void
@@ -3413,7 +3458,7 @@ DBGPerspective::inspect_variable (const UString &a_variable_name)
     THROW_IF_FAIL (debugger ()) ;
     VarInspectorDialog dialog (plugin_path (), *debugger ()) ;
     if (a_variable_name != "") {
-        dialog.variable_name (a_variable_name) ;
+        dialog.inspect_variable (a_variable_name) ;
     }
     dialog.run () ;
 }

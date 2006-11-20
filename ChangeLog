@@ -1,3 +1,35 @@
+Tue, 21 Nov 2006 00:41:27 +0100 Dodji Seketeli
+
+	* nmv-gdb-engine.cc: GDBEngine::Priv::parse_frame(): forgot to parse
+	  file_name, file_full_name and line information of frame.
+	  This was leading to subtle bugs in the IDebugger::stopped_signal()
+	  frame parameter not carrying filename and line information.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  DBGPerspective::on_debugger_stopped_signal(): update the where
+	  pointer in here.
+	  DBGPerspective::on_frame_selected_signal(): don't update the where
+	  pointer in here.
+	  DBGPerspective::get_contextual_menu(): add an "inspect variable"
+	  menu item to the contextual menu.
+	  DBGPerspective::popup_source_view_contextual_menu(): make sure
+	  poping the contextual menu up don't clear the text (variable name)
+	  that may have been selected.
+	  DBGPerspective::inspect_variable(): detect if a text was selected
+	  when the variable inspecting request arises. If yes, consider it as
+	  variable name, and try to inspect that variable.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc,h:  rename
+	  VarInspectorDialog::variable_name() into
+	  VarInspectorDialog::inspect_variable(). It does what you think it
+	  does.
+	* src/persp/dbgperspective/nmv-call-stack.cc: 
+	  Priv::on_frames_params_listed_signal(): don't emit a signal when
+	  listing frames and selecting the frame 0.
+
+
+Mon, 20 Nov 2006 20:30:30 +0100 Dodji Seketeli
+
+	* TODO: updated
+
 Mon, 20 Nov 2006 19:06:43 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: added the

@@ -2290,6 +2290,12 @@ struct GDBEngine::Priv {
                 frame.address (value) ;
             } else if (name == "func") {
                 frame.function_name (value) ;
+            } else if (name == "file") {
+                frame.file_name (value) ;
+            } else if (name == "fullname") {
+                frame.file_full_name (value) ;
+            } else if (name == "line") {
+                frame.line (atoi (value.c_str ())) ;
             }
         }
         a_frame = frame ;

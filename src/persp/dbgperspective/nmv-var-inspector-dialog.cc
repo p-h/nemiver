@@ -173,11 +173,16 @@ VarInspectorDialog::variable_name () const
 }
 
 void
-VarInspectorDialog::variable_name (const UString &a_var_name)
+VarInspectorDialog::inspect_variable (const UString &a_var_name)
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->var_name_entry) ;
-    m_priv->var_name_entry->set_text (a_var_name) ;
+    THROW_IF_FAIL (m_priv->var_inspector) ;
+
+    if (a_var_name != "") {
+        m_priv->var_name_entry->set_text (a_var_name) ;
+        m_priv->var_inspector->inspect_variable (a_var_name) ;
+    }
 }
 
 const IDebugger::VariableSafePtr
