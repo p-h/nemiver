@@ -26,6 +26,8 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
 #include "nmv-call-stack.h"
+#include "nmv-exception.h"
+#include "nmv-ui-utils.h"
 
 namespace nemiver {
 
@@ -85,11 +87,17 @@ struct CallStack::Priv {
     Glib::RefPtr<Gtk::ListStore> store ;
     SafePtr<Gtk::TreeView> widget ;
     bool waiting_for_stack_args ;
+    bool in_set_cur_frame_trans ;
+    IDebugger::Frame cur_frame ;
+    int cur_frame_index ;
     sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal ;
+    sigc::connection on_selection_changed_connection ;
 
     Priv (IDebuggerSafePtr a_dbg) :
         debugger (a_dbg),
-        waiting_for_stack_args (false)
+        waiting_for_stack_args (false),
+        in_set_cur_frame_trans (false),
+        cur_frame_index (-1)
     {
         connect_debugger_signals () ;
     }
@@ -99,16 +107,24 @@ struct CallStack::Priv {
                                      const IDebugger::Frame &a_frame,
                                      int a_thread_id)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
         if (a_reason == "" || a_has_frame || a_frame.line () || a_thread_id) {}
         THROW_IF_FAIL (debugger) ;
         debugger->list_frames () ;
+
+        NEMIVER_CATCH
     }
 
     void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack)
     {
-        LOG_D ("frames listed", NMV_DEFAULT_DOMAIN) ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
         THROW_IF_FAIL (debugger) ;
-        frames = a_stack ;
         waiting_for_stack_args = true ;
 
         //**************************************************************
@@ -119,11 +135,13 @@ struct CallStack::Priv {
         //Okay, this forces us to set the frame list twice,
         //but it is more robust because sometimes, the second
         //request to IDebugger fail (the one to get the parameters).
-        //This way, we have at the least the frame list withouht params.
+        //This way, we have at least the frame list withouht params.
         //**************************************************************
         map<int, list<IDebugger::VariableSafePtr> > frames_params ;
-        set_frame_list (frames, frames_params) ;
+        set_frame_list (a_stack, frames_params) ;
         debugger->list_frames_arguments () ;
+
+        NEMIVER_CATCH
     }
 
     void on_frames_params_listed_signal
@@ -131,15 +149,35 @@ struct CallStack::Priv {
     {
         LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN) ;
         if (waiting_for_stack_args) {
-            set_frame_list (frames, a_frames_params) ;
+            set_frame_list (frames, a_frames_params, true) ;
             waiting_for_stack_args = false ;
         } else {
             LOG_D ("not in the frame setting transaction", NMV_DEFAULT_DOMAIN) ;
         }
     }
 
+    void on_command_done_signal (const UString &a_command)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
+        if (a_command == "") {}
+        if (in_set_cur_frame_trans
+            && !a_command.compare (0, 19, "-stack-select-frame")) {
+            in_set_cur_frame_trans = false ;
+            frame_selected_signal.emit (cur_frame_index, cur_frame) ;
+            LOG_DD ("sent the frame selected signal") ;
+        }
+        NEMIVER_CATCH
+    }
+
     void on_selection_changed_signal ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
         Gtk::TreeView *tree_view = dynamic_cast<Gtk::TreeView*> (widget.get ());
         THROW_IF_FAIL (tree_view) ;
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
@@ -149,9 +187,15 @@ struct CallStack::Priv {
 
         Gtk::TreeModel::iterator row_iter =
                 store->get_iter (selected_rows.front ()) ;
-        int index = (*row_iter)[columns ().frame_index] ;
-        IDebugger::Frame &frame = frames[index] ;
-        frame_selected_signal.emit (index, frame) ;
+        cur_frame_index = (*row_iter)[columns ().frame_index] ;
+        cur_frame = frames[cur_frame_index] ;
+        THROW_IF_FAIL (cur_frame.level () >= 0) ;
+        in_set_cur_frame_trans = true ;
+        LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'") ;
+        LOG_DD ("frame level: '" << (int) cur_frame.level () << "'") ;
+        debugger->select_frame (cur_frame_index) ;
+
+        NEMIVER_CATCH
     }
 
     void connect_debugger_signals ()
@@ -166,6 +210,8 @@ struct CallStack::Priv {
                     (*this, &CallStack::Priv::on_frames_listed_signal)) ;
         debugger->frames_params_listed_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_frames_params_listed_signal)) ;
+        debugger->command_done_signal ().connect (sigc::mem_fun
+                    (*this, &CallStack::Priv::on_command_done_signal)) ;
     }
 
     Gtk::Widget* get_widget ()
@@ -188,7 +234,9 @@ struct CallStack::Priv {
         tree_view->append_column ("arguments", columns ().function_args) ;
         tree_view->set_headers_visible (true) ;
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
-        tree_view->get_selection ()->signal_changed ().connect
+
+        on_selection_changed_connection =
+            tree_view->get_selection ()->signal_changed ().connect
             (sigc::mem_fun (*this,
                             &CallStack::Priv::on_selection_changed_signal)) ;
 
@@ -210,11 +258,13 @@ struct CallStack::Priv {
 
     void set_frame_list
                 (const vector<IDebugger::Frame> &a_frames,
-                 const map<int, list<IDebugger::VariableSafePtr> >&a_params)
+                 const map<int, list<IDebugger::VariableSafePtr> >&a_params,
+                 bool a_emit_signal=false)
     {
         THROW_IF_FAIL (get_widget ()) ;
 
         clear_frame_list () ;
+        frames = a_frames ;
 
         // save the list of params around so that we can use it when converting
         // to a string later
@@ -256,7 +306,14 @@ struct CallStack::Priv {
         Gtk::TreeView *tree_view =
             dynamic_cast<Gtk::TreeView*> (widget.get ()) ;
         THROW_IF_FAIL (tree_view) ;
+
+        if (!a_emit_signal) {
+            on_selection_changed_connection.block () ;
+        }
         tree_view->get_selection ()->select (Gtk::TreePath ("0")) ;
+        if (!a_emit_signal) {
+            on_selection_changed_connection.unblock () ;
+        }
     }
 
     void clear_frame_list ()

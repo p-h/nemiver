@@ -507,6 +507,9 @@ public:
     virtual void select_thread (unsigned int a_thread_id,
                                 bool a_run_event_loops=false) = 0;
 
+    virtual void select_frame (int a_frame_id,
+                               bool a_run_event_loops=false) = 0;
+
     virtual void list_frames (bool a_run_event_loops=false) = 0;
 
     virtual void list_frames_arguments (int a_low_frame=-1,

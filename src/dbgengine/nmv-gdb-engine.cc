@@ -1076,6 +1076,9 @@ public:
     void delete_breakpoint (gint a_break_num,
                             bool a_run_event_loops) ;
 
+    void select_frame (int a_frame_id,
+                       bool a_run_event_loops) ;
+
     void list_frames (bool a_run_event_loops) ;
 
     void list_frames_arguments (int a_low_frame,
@@ -5066,6 +5069,16 @@ GDBEngine::list_frames (bool a_run_event_loops)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     queue_command (Command ("-stack-list-frames" ), a_run_event_loops) ;
+}
+
+void
+GDBEngine::select_frame (int a_frame_id,
+                         bool a_run_event_loops)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    queue_command (Command ("-stack-select-frame "
+                            + UString::from_int (a_frame_id) ),
+                   a_run_event_loops) ;
 }
 
 void

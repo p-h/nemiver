@@ -375,9 +375,9 @@ public:
 
     Gtk::ScrolledWindow& get_call_stack_scrolled_win () ;
 
-    LocalVarsInspector& get_variables_editor () ;
+    LocalVarsInspector& get_local_vars_inspector () ;
 
-    Gtk::ScrolledWindow& get_variables_editor_scrolled_win () ;
+    Gtk::ScrolledWindow& get_local_vars_inspector_scrolled_win () ;
 
     Terminal& get_terminal () ;
 
@@ -894,7 +894,7 @@ DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
     NEMIVER_TRY
 
     get_call_stack ().update_stack () ;
-    get_variables_editor ().show_local_variables_of_current_function () ;
+    get_local_vars_inspector ().show_local_variables_of_current_function () ;
 
     NEMIVER_CATCH
 }
@@ -936,7 +936,7 @@ void
 DBGPerspective::on_going_to_run_target_signal ()
 {
     NEMIVER_TRY
-    get_variables_editor ().re_init_widget () ;
+    get_local_vars_inspector ().re_init_widget () ;
     NEMIVER_CATCH
 }
 
@@ -1292,6 +1292,8 @@ void
 DBGPerspective::on_frame_selected_signal (int a_index,
                                           const IDebugger::Frame &a_frame)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     if (a_index) {}
     NEMIVER_TRY
 
@@ -1315,6 +1317,7 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     }
 
     set_where (file_path, a_frame.line ()) ;
+    get_local_vars_inspector ().show_local_variables_of_current_function () ;
 
     NEMIVER_CATCH
 }
@@ -1322,6 +1325,8 @@ DBGPerspective::on_frame_selected_signal (int a_index,
 void
 DBGPerspective::on_breakpoints_view_button_press_signal (GdkEventButton *a_event)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     NEMIVER_TRY
 
     // double-clicking a breakpoint item should go to the source location for
@@ -1346,6 +1351,8 @@ DBGPerspective::on_breakpoints_view_button_press_signal (GdkEventButton *a_event
 void
 DBGPerspective::on_call_stack_button_press_signal (GdkEventButton *a_event)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     NEMIVER_TRY
 
     // right-clicking should pop up a context menu
@@ -1989,7 +1996,7 @@ DBGPerspective::init_body ()
     p->add1 (get_thread_list ().widget ()) ;
     p->add2 (get_call_stack ().widget ()) ;
     get_call_stack_scrolled_win ().add (*p) ;
-    get_variables_editor_scrolled_win ().add (get_variables_editor ().widget ());
+    get_local_vars_inspector_scrolled_win ().add (get_local_vars_inspector ().widget ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
 
     /*
@@ -3523,7 +3530,7 @@ DBGPerspective::get_call_stack_scrolled_win ()
 }
 
 LocalVarsInspector&
-DBGPerspective::get_variables_editor ()
+DBGPerspective::get_local_vars_inspector ()
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->workbench) ;
@@ -3537,7 +3544,7 @@ DBGPerspective::get_variables_editor ()
 }
 
 Gtk::ScrolledWindow&
-DBGPerspective::get_variables_editor_scrolled_win ()
+DBGPerspective::get_local_vars_inspector_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->variables_editor_scrolled_win) {
@@ -3711,11 +3718,11 @@ void
 DBGPerspective::set_show_variables_editor_view (bool a_show)
 {
     if (a_show) {
-        if (!get_variables_editor_scrolled_win ().get_parent ()
+        if (!get_local_vars_inspector_scrolled_win ().get_parent ()
             && m_priv->variables_editor_view_is_visible == false) {
-            get_variables_editor_scrolled_win ().show_all () ;
+            get_local_vars_inspector_scrolled_win ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
-                                            (get_variables_editor_scrolled_win (),
+                                            (get_local_vars_inspector_scrolled_win (),
                                              _("Variables"),
                                              VARIABLES_VIEW_INDEX) ;
             m_priv->variables_editor_view_is_visible = true ;
@@ -3723,11 +3730,11 @@ DBGPerspective::set_show_variables_editor_view (bool a_show)
                                                 (page_num);
         }
     } else {
-        if (get_variables_editor_scrolled_win ().get_parent ()
+        if (get_local_vars_inspector_scrolled_win ().get_parent ()
             && m_priv->variables_editor_view_is_visible) {
             LOG_DD ("removing variables editor") ;
             m_priv->statuses_notebook->remove_page
-                                        (get_variables_editor_scrolled_win ());
+                                        (get_local_vars_inspector_scrolled_win ());
             m_priv->variables_editor_view_is_visible = false;
         }
         m_priv->variables_editor_view_is_visible = false;
