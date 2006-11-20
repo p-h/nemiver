@@ -137,9 +137,11 @@ ConfManager::parse_config_file (const UString &a_path)
         THROW ("Got path \"\" to config file") ;
     }
 
-    libxmlutils::XMLTextReaderSafePtr reader ;
+    using libxmlutils::XMLTextReaderSafePtr ;
+    using libxmlutils::XMLCharSafePtr  ;
+    XMLTextReaderSafePtr reader ;
 
-    reader = xmlNewTextReaderFilename (a_path.c_str ()) ;
+    reader.reset (xmlNewTextReaderFilename (a_path.c_str ())) ;
     if (!reader) {
         THROW ("could not create xml reader") ;
     }
@@ -148,8 +150,8 @@ ConfManager::parse_config_file (const UString &a_path)
     int type_tmp (0) ;
     int res (0) ;
     for (res = xmlTextReaderRead (reader.get ()) ;
-            res > 0;
-            res = xmlTextReaderRead (reader.get ())) {
+         res > 0;
+         res = xmlTextReaderRead (reader.get ())) {
 
         type_tmp = xmlTextReaderNodeType (reader.get ()) ;
         THROW_IF_FAIL2 (type_tmp >= 0, "got an error while parsing conf file") ;
@@ -157,14 +159,14 @@ ConfManager::parse_config_file (const UString &a_path)
 
         switch (type) {
         case XML_READER_TYPE_ELEMENT: {
-                libxmlutils::XMLCharSafePtr str (xmlTextReaderName (reader.get ())) ;
+                XMLCharSafePtr str (xmlTextReaderName (reader.get ())) ;
                 UString name = reinterpret_cast<const char*> (str.get ()) ;
                 if (name == "database") {
                     xmlNode* node = xmlTextReaderExpand (reader.get ()) ;
                     THROW_IF_FAIL (node) ;
                     for (xmlNode *cur_node=node->children ;
-                            cur_node ;
-                            cur_node = cur_node->next) {
+                         cur_node ;
+                         cur_node = cur_node->next) {
                         if (cur_node->type == XML_ELEMENT_NODE
                             && cur_node->name) {
                             if (!strncmp ("connection",
@@ -172,7 +174,7 @@ ConfManager::parse_config_file (const UString &a_path)
                                 THROW_IF_FAIL (cur_node->children
                                         && xmlNodeIsText
                                         (cur_node->children)) ;
-                                libxmlutils::XMLCharSafePtr con
+                                XMLCharSafePtr con
                                     (xmlNodeGetContent (cur_node->children)) ;
                                 conf.set_property ("database.connection",
                                         (char*)con.get ()) ;
@@ -181,7 +183,7 @@ ConfManager::parse_config_file (const UString &a_path)
                                 THROW_IF_FAIL (cur_node->children
                                         && xmlNodeIsText
                                         (cur_node->children)) ;
-                                libxmlutils::XMLCharSafePtr user
+                                XMLCharSafePtr user
                                     (xmlNodeGetContent (cur_node->children)) ;
                                 conf.set_property ("database.username",
                                         (const char*) user.get ()) ;
@@ -190,7 +192,7 @@ ConfManager::parse_config_file (const UString &a_path)
                                 THROW_IF_FAIL (cur_node->children
                                         && xmlNodeIsText
                                         (cur_node->children)) ;
-                                libxmlutils::XMLCharSafePtr user
+                                XMLCharSafePtr user
                                     (xmlNodeGetContent (cur_node->children)) ;
                                 conf.set_property ("database.password",
                                         (const char*)user.get ()) ;
@@ -201,19 +203,19 @@ ConfManager::parse_config_file (const UString &a_path)
                     xmlNode* node = xmlTextReaderExpand (reader.get ()) ;
                     THROW_IF_FAIL (node) ;
                     for (xmlNode *cur_node=node->children ;
-                            cur_node ;
-                            cur_node = cur_node->next) {
-                        if (cur_node->type == XML_ELEMENT_NODE
+                         cur_node ;
+                         cur_node = cur_node->next) {
+                         if (cur_node->type == XML_ELEMENT_NODE
                             && cur_node->name ) {
                             if (!strncmp ("enabled",
                                          (const char*)cur_node->name, 7)) {
-                                libxmlutils::XMLCharSafePtr value
+                                XMLCharSafePtr value
                                     (xmlGetProp (cur_node, (xmlChar*) "value")) ;
                                 conf.set_property ("logging.enabled",
                                         (const char*)value.get ()) ;
                             } else if (!strncmp ("level",
                                                  (const char*)cur_node->name, 5)){
-                                libxmlutils::XMLCharSafePtr value
+                                XMLCharSafePtr value
                                 ((xmlChar*)xmlGetProp (cur_node,
                                                       (const xmlChar*)"value")) ;
                                 conf.set_property ("logging.level",
@@ -235,7 +237,7 @@ ConfManager::parse_config_file (const UString &a_path)
                         }
                     }
                 } else if (name == "config") {
-                    libxmlutils::XMLCharSafePtr value (xmlTextReaderGetAttribute
+                    XMLCharSafePtr value (xmlTextReaderGetAttribute
                         (reader.get (), (const xmlChar*)"version")) ;
                     conf.set_property ("config.version",
                                        (const char*)value.get ()) ;

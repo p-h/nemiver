@@ -22,46 +22,36 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_LOCAL_VARS_INSPECTOR_H__
-#define __NMV_LOCAL_VARS_INSPECTOR_H__
+#ifndef __NMV_VAR_INSPECTOR_DIALOG_H__
+#define __NMV_VAR_INSPECTOR_DIALOG_H__
 
-#include <list>
-#include "nmv-object.h"
-#include "nmv-safe-ptr-utils.h"
+#include "nmv-dialog.h"
 #include "nmv-i-debugger.h"
 
-namespace Gtk {
-    class Widget ;
-}
-
 NEMIVER_BEGIN_NAMESPACE (nemiver)
+class IDebugger ;
 
-class IWorkbench ;
-
-class NEMIVER_API LocalVarsInspector : public nemiver::common::Object {
+class VarInspectorDialog : public Dialog {
     //non copyable
-    LocalVarsInspector (const LocalVarsInspector&) ;
-    LocalVarsInspector& operator= (const LocalVarsInspector&) ;
+    VarInspectorDialog (const VarInspectorDialog &) ;
+    VarInspectorDialog& operator= (const VarInspectorDialog &) ;
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    //tell me why you would want to extend this.
+    VarInspectorDialog () ;
 
-protected:
-    LocalVarsInspector () ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 public:
+    VarInspectorDialog (const UString &a_resource_root_path,
+                        IDebugger &a_debugger) ;
+    virtual ~VarInspectorDialog () ;
 
-    LocalVarsInspector (IDebuggerSafePtr &a_dbg, IWorkbench &a_wb) ;
-    virtual ~LocalVarsInspector () ;
-    Gtk::Widget& widget () const ;
-    void set_local_variables
-                    (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
-    void show_local_variables_of_current_function () ;
-    void re_init_widget () ;
-};//end LocalVarsInspector
+    UString variable_name () const ;
+    void variable_name (const UString &) ;
+    const IDebugger::VariableSafePtr variable () const ;
+};//end class VarInspectorDialog
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_LOCAL_VARS_INSPECTOR_H__
-
-
+#endif //__NMV_VAR_INSPECTOR_DIALOG_H__

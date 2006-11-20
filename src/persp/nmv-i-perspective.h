@@ -65,7 +65,7 @@ public:
     /// of the workbench that loads it.
     /// \param a_workbench, the workbench that loaded the
     /// current perspective.
-    virtual void do_init (IWorkbenchSafePtr &a_workbench) = 0;
+    virtual void do_init (IWorkbench *a_workbench) = 0;
 
     /// Get a unique identifier of the perspective.
     /// It is a good practice that this remains legible.

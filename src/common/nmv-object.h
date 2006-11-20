@@ -57,7 +57,11 @@ public:
 
     void ref () ;
 
-    bool unref () ;
+    void unref () ;
+
+    void enable_refcount (bool a_enabled=true) ;
+
+    bool is_refcount_enabled () const ;
 
     long get_refcount () const ;
 

@@ -57,8 +57,9 @@ public:
         }
         glade = Gnome::Glade::Xml::create (glade_path) ;
         THROW_IF_FAIL (glade) ;
-        dialog = ui_utils::get_widget_from_glade<Gtk::Dialog> (glade,
-                                                               a_widget_name) ;
+        dialog.reset
+            (ui_utils::get_widget_from_glade<Gtk::Dialog> (glade,
+                                                           a_widget_name)) ;
         THROW_IF_FAIL (dialog) ;
         dialog->hide () ;
     }
@@ -68,9 +69,9 @@ Dialog::Dialog (const UString &a_resource_root_path,
                 const UString &a_glade_filename,
                 const UString &a_widget_name)
 {
-    m_priv = new Priv (a_resource_root_path,
-                       a_glade_filename,
-                       a_widget_name) ;
+    m_priv.reset (new Priv (a_resource_root_path,
+                            a_glade_filename,
+                            a_widget_name)) ;
 }
 
 Gtk::Dialog&

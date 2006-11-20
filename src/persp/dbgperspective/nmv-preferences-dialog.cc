@@ -312,14 +312,14 @@ PreferencesDialog::PreferencesDialog (IWorkbench &a_workbench,
             "preferencesdialog.glade",
             "preferencesdialog")
 {
-    m_priv = new Priv (glade (), a_workbench) ;
+    m_priv.reset (new Priv (glade (), a_workbench)) ;
     m_priv->update_widget_from_conf () ;
 }
 
 PreferencesDialog::~PreferencesDialog ()
 {
+    LOG_D ("delete", "destructor-domain") ;
     THROW_IF_FAIL (m_priv) ;
-    m_priv = 0 ;
 }
 
 const std::vector<UString>&

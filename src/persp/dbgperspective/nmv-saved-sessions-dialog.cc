@@ -75,9 +75,8 @@ public:
     {
         okbutton =
             ui_utils::get_widget_from_glade<Gtk::Button> (glade, "okbutton1") ;
-        treeview_sessions =
-            ui_utils::get_widget_from_glade<Gtk::TreeView>
-                                                (glade, "treeview_sessions") ;
+        treeview_sessions.reset (ui_utils::get_widget_from_glade<Gtk::TreeView>
+                                                (glade, "treeview_sessions")) ;
         okbutton->set_sensitive (false);
         THROW_IF_FAIL (a_session_manager);
         list<ISessMgr::Session> sessions = a_session_manager->sessions ();
@@ -122,7 +121,7 @@ SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
                                           ISessMgr *a_session_manager) :
     Dialog(a_root_path, "savedsessionsdialog.glade", "savedsessionsdialog")
 {
-    m_priv = new Priv (widget (), glade ());
+    m_priv.reset (new Priv (widget (), glade ()));
     THROW_IF_FAIL (m_priv) ;
     m_priv->init (a_session_manager);
 }

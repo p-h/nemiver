@@ -193,12 +193,12 @@ Workbench::on_about_menu_item_action ()
 
 Workbench::Workbench ()
 {
-    m_priv = new Priv ();
+    m_priv.reset (new Priv ());
 }
 
 Workbench::~Workbench ()
 {
-    m_priv = NULL ;
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 void
@@ -230,7 +230,8 @@ Workbench::do_init (Gtk::Main &a_main)
 
     m_priv->initialized = true ;
 
-    m_priv->plugin_manager  = new PluginManager (*dynmod_manager) ;
+    m_priv->plugin_manager =
+        PluginManagerSafePtr (new PluginManager (*dynmod_manager)) ;
 
     NEMIVER_TRY
         m_priv->plugin_manager->load_plugins () ;
@@ -239,7 +240,6 @@ Workbench::do_init (Gtk::Main &a_main)
         IPerspectiveSafePtr perspective ;
         Plugin::EntryPointSafePtr entry_point ;
         list<Gtk::Widget*> toolbars ;
-        IWorkbenchSafePtr thiz (this, true) ;
 
         //**************************************************************
         //store the list of perspectives we may have loaded as plugins,
@@ -248,17 +248,27 @@ Workbench::do_init (Gtk::Main &a_main)
         for (plugin_iter = m_priv->plugin_manager->plugins_map ().begin () ;
              plugin_iter != m_priv->plugin_manager->plugins_map ().end ();
              ++plugin_iter) {
+             LOG_D ("plugin '"
+                    << plugin_iter->second->descriptor ()->name ()
+                    << "' refcount: "
+                    << (int) plugin_iter->second->get_refcount (),
+                    "refcount-domain") ;
             if (plugin_iter->second && plugin_iter->second->entry_point_ptr ()) {
                 entry_point = plugin_iter->second->entry_point_ptr () ;
                 perspective = entry_point.do_dynamic_cast<IPerspective> () ;
                 if (perspective) {
                     m_priv->perspectives.push_front (perspective) ;
-                    perspective->do_init (thiz) ;
+                    perspective->do_init (const_cast<Workbench*> (this)) ;
                     perspective->edit_workbench_menu () ;
                     toolbars.clear () ;
                     perspective->get_toolbars (toolbars) ;
                     add_perspective_toolbars (perspective, toolbars) ;
                     add_perspective_body (perspective, perspective->get_body ()) ;
+                    LOG_D ("perspective '"
+                           << perspective->get_perspective_identifier ()
+                           << "' refcount: "
+                           << (int) perspective->get_refcount (),
+                           "refcount-domain") ;
                 }
             }
         }
@@ -378,8 +388,9 @@ Workbench::init_glade ()
     m_priv->glade = Gnome::Glade::Xml::create (file_path) ;
     THROW_IF_FAIL (m_priv->glade) ;
 
-    m_priv->root_window =
-       ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade, "workbench");
+    m_priv->root_window.reset
+           (ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade,
+                                                          "workbench"));
     m_priv->root_window->hide () ;
 }
 

@@ -43,7 +43,7 @@ struct Plugin::EntryPoint::Loader::Priv {
 
 Plugin::EntryPoint::Loader::Loader (const UString &a_plugin_path)
 {
-    m_priv = new Plugin::EntryPoint::Loader::Priv ;
+    m_priv.reset (new Plugin::EntryPoint::Loader::Priv) ;
     THROW_IF_FAIL (m_priv) ;
 
     config_search_paths ().clear () ;
@@ -56,6 +56,7 @@ Plugin::EntryPoint::Loader::Loader (const UString &a_plugin_path)
 
 Plugin::EntryPoint::Loader::~Loader ()
 {
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 const UString&
@@ -93,11 +94,12 @@ Plugin::EntryPoint::plugin_entry_point_loader
 
 Plugin::EntryPoint::EntryPoint ()
 {
-    m_priv = new Plugin::EntryPoint::Priv ;
+    m_priv.reset (new Plugin::EntryPoint::Priv) ;
 }
 
 Plugin::EntryPoint::~EntryPoint ()
 {
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 void
@@ -181,11 +183,16 @@ Plugin::load_entry_point ()
 
     try {
         EntryPoint::LoaderSafePtr loader
-                    (new EntryPoint::Loader (m_priv->descriptor->plugin_path ())) ;
+                    (new EntryPoint::Loader (m_priv->descriptor->plugin_path ()));
         m_priv->entry_point =
             m_priv->module_manager.load<Plugin::EntryPoint>
                                     (m_priv->descriptor->entry_point_name (),
                                      *loader) ;
+        LOG_D ("plugin entry point '"
+                << m_priv->descriptor->entry_point_name ()
+                << "' refcount: "
+                << (int) m_priv->entry_point->get_refcount (),
+                "refcount-domain") ;
         m_priv->entry_point->plugin_entry_point_loader (loader) ;
         m_priv->entry_point->descriptor (m_priv->descriptor) ;
     } catch (...) {
@@ -202,13 +209,14 @@ Plugin::Plugin (Plugin::DescriptorSafePtr &a_desc,
     THROW_IF_FAIL (Glib::file_test (a_desc->plugin_path (),
                                     Glib::FILE_TEST_IS_DIR)) ;
 
-    m_priv = new Plugin::Priv (a_desc, a_manager);
+    m_priv.reset (new Plugin::Priv (a_desc, a_manager)) ;
 
     load_entry_point () ;
 }
 
 Plugin::~Plugin ()
 {
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 Plugin::DescriptorSafePtr
@@ -272,12 +280,13 @@ struct PluginManager::Priv {
 
 PluginManager::PluginManager (DynamicModuleManager &a_in)
 {
-    m_priv = new PluginManager::Priv (a_in) ;
+    m_priv.reset (new PluginManager::Priv (a_in)) ;
     plugins_search_path ().push_back (env::get_system_plugins_dir ()) ;
 }
 
 PluginManager::~PluginManager ()
 {
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 UString
@@ -311,10 +320,13 @@ PluginManager::parse_descriptor (const UString &a_path,
     }
 
 
-    libxmlutils::XMLTextReaderSafePtr reader ;
-    libxmlutils::XMLCharSafePtr xml_str ;
+    using libxmlutils::XMLTextReaderSafePtr ;
+    using libxmlutils::XMLCharSafePtr ;
 
-    reader = xmlNewTextReaderFilename (a_path.c_str ()) ;
+    XMLTextReaderSafePtr reader ;
+    XMLCharSafePtr xml_str ;
+
+    reader.reset (xmlNewTextReaderFilename (a_path.c_str ())) ;
     if (!reader) {
         LOG_ERROR ("could not create xml reader") ;
         return false ;
@@ -329,8 +341,8 @@ PluginManager::parse_descriptor (const UString &a_path,
     if (!goto_next_element_node_and_check (reader, "plugindescriptor")) {
         THROW ("first element node should be 'plugindescriptor'") ;
     }
-    xml_str = xmlTextReaderGetAttribute (reader.get (),
-                                         (const xmlChar*)"autoactivate");
+    xml_str.reset (xmlTextReaderGetAttribute (reader.get (),
+                                             (const xmlChar*)"autoactivate")) ;
     UString autoactivate = xml_str.get () ;
 
     if (autoactivate == "yes") {
@@ -341,8 +353,8 @@ PluginManager::parse_descriptor (const UString &a_path,
 
     desc->can_deactivate (true) ;
     if (desc->auto_activate ()) {
-        xml_str = xmlTextReaderGetAttribute (reader.get (),
-                                             (const xmlChar*) "candeactivate");
+        xml_str.reset (xmlTextReaderGetAttribute (reader.get (),
+                                                  (const xmlChar*) "candeactivate"));
         UString candeactivate = xml_str.get () ;
         if (candeactivate == "no") {
             desc->can_deactivate (false) ;
@@ -354,7 +366,8 @@ PluginManager::parse_descriptor (const UString &a_path,
                + UString (xmlTextReaderConstName (reader.get ())));
     }
 
-    xml_str = xmlTextReaderReadString (reader.get ()) ;
+    xml_str.reset (xmlTextReaderReadString (reader.get ())) ;
+
     desc->name (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "version")) {
@@ -362,7 +375,7 @@ PluginManager::parse_descriptor (const UString &a_path,
                + UString (xmlTextReaderConstName (reader.get ())));
     }
 
-    xml_str = xmlTextReaderReadString (reader.get ());
+    xml_str.reset (xmlTextReaderReadString (reader.get ()));
     desc->version (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "entrypoint")) {
@@ -370,7 +383,7 @@ PluginManager::parse_descriptor (const UString &a_path,
                + UString (xmlTextReaderConstName (reader.get ())));
     }
 
-    xml_str = xmlTextReaderReadString (reader.get ());
+    xml_str.reset (xmlTextReaderReadString (reader.get ()));
     desc->entry_point_name (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "dependencies")) {
@@ -387,13 +400,13 @@ PluginManager::parse_descriptor (const UString &a_path,
             THROW ("expected element 'name', got: "
                    + UString (xmlTextReaderConstName (reader.get ())));
         }
-        xml_str = xmlTextReaderReadString (reader.get ()) ;
+        xml_str.reset (xmlTextReaderReadString (reader.get ())) ;
         name = xml_str.get () ;
         if (!goto_next_element_node_and_check (reader, "version")) {
             THROW ("expected element 'version', got: "
                    + UString (xmlTextReaderConstName (reader.get ())));
         }
-        xml_str = xmlTextReaderReadString (reader.get ()) ;
+        xml_str.reset (xmlTextReaderReadString (reader.get ())) ;
         desc->dependencies ()[name] = xml_str.get () ;
     }
 
@@ -439,7 +452,7 @@ PluginManager::load_dependant_descriptors
                                 (const Plugin::Descriptor &a_desc,
                                  vector<Plugin::DescriptorSafePtr> &a_descs)
 {
-    bool result (false) ;
+    bool result (true) ;
     map<UString, UString>::const_iterator cur_dep ;
     Plugin::DescriptorSafePtr desc ;
     for (cur_dep = a_desc.dependencies ().begin () ;
@@ -537,17 +550,20 @@ PluginManager::load_plugin_from_path (const UString &a_plugin_path,
          cur_desc != dependant_descs.end ();
          ++cur_desc) {
         try {
-            plugin = new Plugin (*cur_desc, m_priv->module_manager) ;
+            plugin.reset (new Plugin (*cur_desc, m_priv->module_manager)) ;
         } catch (...) {
             LOG_ERROR ("Failed to load dependant plugin '"
                        + (*cur_desc)->name () + "'") ;
             return result ;
         }
         dependances.push_back (plugin) ;
+        UString ppath = plugin->descriptor ()->plugin_path () ;
+        if (plugins_map ().find (ppath) == plugins_map ().end ())
+        plugins_map ()[ppath] = plugin ;
     }
 
     try {
-        plugin = new Plugin (descriptor, m_priv->module_manager) ;
+        plugin.reset (new Plugin (descriptor, m_priv->module_manager)) ;
     } catch (...) {
         LOG_ERROR ("failed to load plugin '" + descriptor->name () + "'") ;
         return result ;
@@ -555,12 +571,19 @@ PluginManager::load_plugin_from_path (const UString &a_plugin_path,
 
     a_deps = dependances ;
     result = plugin ;
+    if (result) {
+        LOG_D ("plugin '"
+                << a_plugin_path
+                << "' refcount: "
+                << (int) result->get_refcount (),
+                "refcount-domain") ;
+    }
     return result ;
 }
 
 PluginSafePtr
 PluginManager::load_plugin_from_name (const UString &a_name,
-                                        vector<PluginSafePtr> &a_deps)
+                                      vector<PluginSafePtr> &a_deps)
 {
     PluginSafePtr result;
 
@@ -583,7 +606,14 @@ PluginManager::load_plugin_from_name (const UString &a_name,
                                             a_deps) ;
         } catch (...) {}
 
-        if (result) {break;}
+        if (result) {
+            LOG_D ("plugin '"
+                    << a_name
+                    << "' refcount: "
+                    << (int) result->get_refcount (),
+                    "refcount-domain") ;
+            break;
+        }
     }
     return result ;
 }
@@ -603,22 +633,27 @@ PluginManager::load_plugins ()
     vector<UString>::const_iterator cur_dir ;
     string path ;
     for (cur_dir = plugins_search_path ().begin ();
-            cur_dir != plugins_search_path ().end ();
-            ++cur_dir) {
+         cur_dir != plugins_search_path ().end ();
+         ++cur_dir) {
         try {
             Glib::Dir opened_dir (*cur_dir) ;
             for (Glib::DirIterator it = opened_dir.begin ();
-                    it != opened_dir.end ();
-                    ++it) {
+                 it != opened_dir.end ();
+                 ++it) {
                 path = Glib::build_filename (*cur_dir, *it) ;
-                if (plugins_map ().find (Glib::locale_to_utf8 (*it))
-                        != plugins_map ().end ()) {
+                if (plugins_map ().find (Glib::locale_to_utf8 (path))
+                    != plugins_map ().end ()) {
                     continue;
                 }
                 plugin = load_plugin_from_path (Glib::locale_to_utf8 (path),
-                        dependances) ;
+                                                dependances) ;
                 if (plugin) {
-                    plugins_map ()[Glib::locale_to_utf8 (*it)] = plugin ;
+                    plugins_map ()[Glib::locale_to_utf8 (path)] = plugin ;
+                    LOG_D ("plugin '"
+                            << path
+                            << "' put in  map. Refcount: "
+                            << (int) plugin->get_refcount (),
+                            "refcount-domain") ;
                 }
             }
         } catch (...) {

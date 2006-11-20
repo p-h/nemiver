@@ -160,7 +160,7 @@ class OfstreamLogSink : public LogSink {
                                  + static_cast<gchar*> (dir.get ()) + "'") ;
             }
         }
-        m_ofstream = new ofstream (a_file_path.c_str ()) ;
+        m_ofstream.reset (new ofstream (a_file_path.c_str ())) ;
         THROW_IF_FAIL (m_ofstream) ;
         if (!m_ofstream->good ()) {
             THROW ("Could not open file " + a_file_path) ;
@@ -187,15 +187,16 @@ public:
         if (m_ofstream) {
             m_ofstream->flush ();
             m_ofstream->close ();
-            m_ofstream = NULL ;
+            m_ofstream.reset () ;
         }
     }
 };//end class OfstreamLogSink
 
+typedef SafePtr<LogSink, ObjectRef, ObjectUnref> LogSinkSafePtr ;
 struct LogStream::Priv
 {
     enum LogStream::StreamType stream_type ;
-    SafePtr<LogSink, ObjectRef, ObjectUnref> sink ;
+    LogSinkSafePtr sink ;
 
     //the stack of default domains name
     //to consider when logging functions don't
@@ -338,14 +339,16 @@ LogStream::default_log_stream ()
 LogStream::LogStream (enum LogLevel a_level,
                       const UString &a_domain)
 {
-    m_priv = new LogStream::Priv (a_domain);
+    m_priv.reset (new LogStream::Priv (a_domain)) ;
+
     std::string file_path ;
     if (get_stream_type () == FILE_STREAM) {
-        m_priv->sink = new OfstreamLogSink (get_stream_file_path ()) ;
+        m_priv->sink = LogSinkSafePtr
+            (new OfstreamLogSink (get_stream_file_path ())) ;
     } else if (get_stream_type () == COUT_STREAM) {
-        m_priv->sink = new CoutLogSink ;
+        m_priv->sink = LogSinkSafePtr (new CoutLogSink) ;
     } else if (get_stream_type () == CERR_STREAM) {
-        m_priv->sink = new CerrLogSink ;
+        m_priv->sink = LogSinkSafePtr (new CerrLogSink) ;
     } else {
         g_critical ("LogStream type not supported") ;
         throw Exception ("LogStream type not supported") ;
@@ -364,9 +367,9 @@ LogStream::LogStream (enum LogLevel a_level,
 
 LogStream::~LogStream ()
 {
+    LOG_D ("delete", "destructor-domain") ;
     if (!m_priv) throw runtime_error ("double free in LogStrea::~LogStream") ;
-
-    m_priv = NULL ;
+    m_priv.reset () ;
 }
 
 void

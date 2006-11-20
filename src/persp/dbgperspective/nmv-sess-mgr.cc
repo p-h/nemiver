@@ -146,18 +146,19 @@ struct SessMgr::Priv {
 
 SessMgr::SessMgr ()
 {
-    m_priv = new SessMgr::Priv ;
+    m_priv.reset (new SessMgr::Priv) ;
     m_priv->init () ;
 }
 
 SessMgr::SessMgr (const UString &a_root_dir)
 {
-    m_priv = new SessMgr::Priv (a_root_dir) ;
+    m_priv.reset (new SessMgr::Priv (a_root_dir)) ;
     m_priv->init () ;
 }
 
 SessMgr::~SessMgr ()
 {
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 Transaction&
@@ -166,7 +167,8 @@ SessMgr::default_transaction ()
     THROW_IF_FAIL (m_priv) ;
 
     if (!m_priv->default_transaction) {
-        m_priv->default_transaction = new Transaction (*m_priv->connection ()) ;
+        m_priv->default_transaction =
+            TransactionSafePtr (new Transaction (*m_priv->connection ())) ;
         THROW_IF_FAIL (m_priv->default_transaction) ;
     }
     return *m_priv->default_transaction ;

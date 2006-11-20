@@ -25,6 +25,7 @@
 #ifndef __NEMIVER_DIALOG_H__
 #define __NEMIVER_DIALOG_H__
 
+#include <libglademm/xml.h>
 #include "nmv-object.h"
 #include "nmv-safe-ptr-utils.h"
 

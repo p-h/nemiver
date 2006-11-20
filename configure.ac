@@ -67,7 +67,7 @@ dnl *************************************
 dnl Internationalization support
 dnl *************************************
 dnl To add a new language, add language code xx to po/LINGUAS
-IT_PROG_INTLTOOL([0.35.0])
+IT_PROG_INTLTOOL([0.33.0])
 GETTEXT_PACKAGE=nemiver
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"],

@@ -67,7 +67,8 @@ public:
     Priv ()
     {
         build_tree_view () ;
-        void set_breakpoints (const std::map<int, IDebugger::BreakPoint> &a_breakpoints);
+        void set_breakpoints
+                (const std::map<int, IDebugger::BreakPoint> &a_breakpoints);
     }
 
     void build_tree_view ()
@@ -75,7 +76,7 @@ public:
         if (tree_view) {return;}
         //create a default tree store and a tree view
         list_store = Gtk::ListStore::create (get_bp_columns ()) ;
-        tree_view = new Gtk::TreeView (list_store) ;
+        tree_view.reset (new Gtk::TreeView (list_store)) ;
 
         //create the columns of the tree view
         //tree_view->append_column ("", get_bp_columns ().enabled) ;
@@ -105,11 +106,12 @@ public:
 
 BreakpointsView::BreakpointsView ()
 {
-    m_priv = new Priv ();
+    m_priv.reset (new Priv ());
 }
 
 BreakpointsView::~BreakpointsView ()
 {
+    LOG_D ("deleted", "destructor-domain") ;
 }
 
 Gtk::Widget&

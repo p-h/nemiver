@@ -51,6 +51,7 @@
 #include "nmv-preferences-dialog.h"
 #include "nmv-popup-tip.h"
 #include "nmv-thread-list.h"
+#include "nmv-var-inspector-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -151,6 +152,7 @@ private:
     void on_continue_action () ;
     void on_continue_until_action () ;
     void on_toggle_breakpoint_action () ;
+    void on_inspect_variable_action () ;
     void on_show_commands_action () ;
     void on_show_errors_action () ;
     void on_show_target_output_action () ;
@@ -280,7 +282,7 @@ public:
 
     void do_init () ;
 
-    void do_init (IWorkbenchSafePtr &a_workbench) ;
+    void do_init (IWorkbench *a_workbench) ;
 
     const UString& get_perspective_identifier () ;
 
@@ -345,6 +347,8 @@ public:
                                     int a_linenum) ;
     void toggle_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
+    void inspect_variable () ;
+    void inspect_variable (const UString &a_variable_name) ;
     void toggle_breakpoint () ;
     void append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum) ;
@@ -472,6 +476,17 @@ struct DBGPerspective::Priv {
     UString prog_args ;
     UString prog_cwd ;
     map<UString, UString> env_variables ;
+    Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
+    Gtk::Window *body_window ;
+    SafePtr<Gtk::TextView> command_view ;
+    SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win ;
+    SafePtr<Gtk::TextView> target_output_view;
+    SafePtr<Gtk::ScrolledWindow> target_output_view_scrolled_win;
+    SafePtr<Gtk::TextView> log_view ;
+    SafePtr<Gtk::ScrolledWindow> log_view_scrolled_win ;
+    SafePtr<CallStack> call_stack ;
+    SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
+
     Glib::RefPtr<Gtk::ActionGroup> target_connected_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
@@ -487,7 +502,10 @@ struct DBGPerspective::Priv {
     Gtk::Widget *contextual_menu ;
     Gtk::Widget *breakpoints_menu ;
     Gtk::Widget *callstack_menu ;
-    IWorkbenchSafePtr workbench ;
+    SafePtr<Gtk::Paned,
+            ui_utils::WidgetRef,
+            ui_utils::WidgetUnref> body_main_paned ;
+    IWorkbench *workbench ;
     SafePtr<Gtk::HBox> toolbar ;
     ThrobberSafePtr throbber ;
     sigc::signal<void, bool> activated_signal;
@@ -504,23 +522,12 @@ struct DBGPerspective::Priv {
     bool variables_editor_view_is_visible ;
     bool terminal_view_is_visible ;
     bool breakpoints_view_is_visible ;
-    Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
-    SafePtr<Gtk::Window> body_window ;
-    Glib::RefPtr<Gtk::Paned> body_main_paned ;
     Gtk::Notebook *sourceviews_notebook ;
     map<UString, int> path_2_pagenum_map ;
     map<UString, int> basename_2_pagenum_map ;
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_path_map ;
     Gtk::Notebook *statuses_notebook ;
-    SafePtr<Gtk::TextView> command_view ;
-    SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win ;
-    SafePtr<Gtk::TextView> target_output_view;
-    SafePtr<Gtk::ScrolledWindow> target_output_view_scrolled_win;
-    SafePtr<Gtk::TextView> log_view ;
-    SafePtr<Gtk::ScrolledWindow> log_view_scrolled_win ;
-    SafePtr<CallStack> call_stack ;
-    SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
     SafePtr<LocalVarsInspector> variables_editor ;
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
     SafePtr<Terminal> terminal ;
@@ -528,7 +535,6 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> breakpoints_scrolled_win ;
     SafePtr<BreakpointsView> breakpoints_view ;
     SafePtr<ThreadList> thread_list ;
-
 
     int current_page_num ;
     IDebuggerSafePtr debugger ;
@@ -566,13 +572,14 @@ struct DBGPerspective::Priv {
         initialized (false),
         reused_session (false),
         debugger_has_just_run (false),
+        body_window (0),
         menubar_merge_id (0),
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
-        contextual_menu (NULL),
-        breakpoints_menu (NULL),
-        callstack_menu (NULL),
-        workbench (NULL),
+        contextual_menu (0),
+        breakpoints_menu (0),
+        callstack_menu (0),
+        workbench (0),
         command_view_is_visible (false),
         target_output_view_is_visible (false),
         log_view_is_visible (false),
@@ -777,6 +784,14 @@ DBGPerspective::on_toggle_breakpoint_action ()
 {
     NEMIVER_TRY
     toggle_breakpoint () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_inspect_variable_action ()
+{
+    NEMIVER_TRY
+    inspect_variable () ;
     NEMIVER_CATCH
 }
 
@@ -1618,6 +1633,16 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
             "F8"
+        },
+
+        {
+            "InspectVariableMenuItemAction",
+            nil_stock_id,
+            _("Inspect a variable"),
+            _("Inspect a global or local variable"),
+            sigc::mem_fun (*this, &DBGPerspective::on_inspect_variable_action),
+            ActionEntry::DEFAULT,
+            ""
         }
     };
 
@@ -1896,7 +1921,7 @@ DBGPerspective::init_toolbar ()
     add_perspective_toolbar_entries () ;
 
     m_priv->throbber = EphyThrobber::create () ;
-    m_priv->toolbar = new Gtk::HBox ;
+    m_priv->toolbar.reset ((new Gtk::HBox)) ;
     THROW_IF_FAIL (m_priv->toolbar) ;
     m_priv->toolbar->pack_end (m_priv->throbber->get_widget (), Gtk::PACK_SHRINK) ;
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
@@ -1925,12 +1950,14 @@ DBGPerspective::init_body ()
     m_priv->body_window =
         ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->body_glade,
                                                       "bodycontainer") ;
-    Glib::RefPtr<Gtk::Paned> paned
+    //need to ref this because we want to keep
+    //it alive even after we unparent it from glade.
+    //it's actual parent will the the workbench perspective bodies
+    //container
+    m_priv->body_main_paned.reset
         (ui_utils::get_widget_from_glade<Gtk::Paned> (m_priv->body_glade,
-                                                      "mainbodypaned")) ;
-    paned->reference () ;
-    m_priv->body_main_paned = paned ;
-
+                                                      "mainbodypaned"),
+         true) ;
     m_priv->sourceviews_notebook =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                         "sourceviewsnotebook") ;
@@ -1941,19 +1968,19 @@ DBGPerspective::init_body ()
     m_priv->statuses_notebook =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                         "statusesnotebook") ;
-    m_priv->command_view = new Gtk::TextView ;
+    m_priv->command_view.reset (new Gtk::TextView) ;
     THROW_IF_FAIL (m_priv->command_view) ;
     get_command_view_scrolled_win ().add (*m_priv->command_view) ;
     m_priv->command_view->set_editable (true) ;
     m_priv->command_view->get_buffer ()->signal_insert ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_insert_in_command_view_signal)) ;
 
-    m_priv->target_output_view = new Gtk::TextView;
+    m_priv->target_output_view.reset (new Gtk::TextView);
     THROW_IF_FAIL (m_priv->target_output_view) ;
     get_target_output_view_scrolled_win ().add (*m_priv->target_output_view) ;
     m_priv->target_output_view->set_editable (false) ;
 
-    m_priv->log_view = new Gtk::TextView ;
+    m_priv->log_view.reset (new Gtk::TextView) ;
     get_log_view_scrolled_win ().add (*m_priv->log_view) ;
     m_priv->log_view->set_editable (false) ;
 
@@ -2093,7 +2120,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->file_path = a_path ;
     close_button->signal_clicked ().connect
             (sigc::mem_fun (*close_button, &SlotedButton::on_clicked)) ;
-    close_button->tooltips = new Gtk::Tooltips ;
+    close_button->tooltips.reset (new Gtk::Tooltips) ;
     close_button->tooltips->set_tip (*close_button,
                                      _("close") +  UString (" ") + a_path) ;
 
@@ -2365,7 +2392,7 @@ DBGPerspective::get_thread_list ()
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (debugger ()) ;
     if (!m_priv->thread_list) {
-        m_priv->thread_list = new ThreadList (debugger ()) ;
+        m_priv->thread_list.reset  (new ThreadList (debugger ()));
     }
     THROW_IF_FAIL (m_priv->thread_list) ;
     return *m_priv->thread_list ;
@@ -2574,7 +2601,7 @@ DBGPerspective::get_popup_tip ()
     THROW_IF_FAIL (m_priv) ;
 
     if (!m_priv->popup_tip) {
-        m_priv->popup_tip = new PopupTip ;
+        m_priv->popup_tip.reset (new PopupTip) ;
     }
     THROW_IF_FAIL (m_priv->popup_tip) ;
     return *m_priv->popup_tip ;
@@ -2655,7 +2682,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 
 DBGPerspective::DBGPerspective ()
 {
-    m_priv = new Priv ;
+    m_priv.reset (new Priv) ;
 }
 
 void
@@ -2673,7 +2700,7 @@ DBGPerspective::do_init ()
 }
 
 void
-DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
+DBGPerspective::do_init (IWorkbench *a_workbench)
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv->workbench = a_workbench ;
@@ -2692,7 +2719,7 @@ DBGPerspective::do_init (IWorkbenchSafePtr &a_workbench)
 
 DBGPerspective::~DBGPerspective ()
 {
-    m_priv = NULL ;
+    LOG_D ("deleted", "destructor-domain") ;
 }
 
 const UString&
@@ -2713,7 +2740,7 @@ Gtk::Widget*
 DBGPerspective::get_body ()
 {
     CHECK_P_INIT ;
-    return m_priv->body_main_paned.operator->() ;
+    return m_priv->body_main_paned.get () ;
 }
 
 void
@@ -3367,6 +3394,23 @@ DBGPerspective::toggle_breakpoint ()
     toggle_breakpoint (path, current_line) ;
 }
 
+void
+DBGPerspective::inspect_variable ()
+{
+    inspect_variable ("") ;
+}
+
+void
+DBGPerspective::inspect_variable (const UString &a_variable_name)
+{
+    THROW_IF_FAIL (debugger ()) ;
+    VarInspectorDialog dialog (plugin_path (), *debugger ()) ;
+    if (a_variable_name != "") {
+        dialog.variable_name (a_variable_name) ;
+    }
+    dialog.run () ;
+}
+
 IDebuggerSafePtr&
 DBGPerspective::debugger ()
 {
@@ -3405,7 +3449,7 @@ DBGPerspective::get_command_view_scrolled_win ()
     THROW_IF_FAIL (m_priv) ;
 
     if (!m_priv->command_view_scrolled_win) {
-        m_priv->command_view_scrolled_win = new Gtk::ScrolledWindow ;
+        m_priv->command_view_scrolled_win.reset (new Gtk::ScrolledWindow) ;
         m_priv->command_view_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
                                                        Gtk::POLICY_AUTOMATIC) ;
         THROW_IF_FAIL (m_priv->command_view_scrolled_win) ;
@@ -3425,7 +3469,7 @@ DBGPerspective::get_target_output_view_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->target_output_view_scrolled_win) {
-        m_priv->target_output_view_scrolled_win =  new Gtk::ScrolledWindow ;
+        m_priv->target_output_view_scrolled_win.reset (new Gtk::ScrolledWindow) ;
         m_priv->target_output_view_scrolled_win->set_policy
                                                     (Gtk::POLICY_AUTOMATIC,
                                                      Gtk::POLICY_AUTOMATIC) ;
@@ -3446,7 +3490,7 @@ DBGPerspective::get_log_view_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->log_view_scrolled_win) {
-        m_priv->log_view_scrolled_win = new Gtk::ScrolledWindow ;
+        m_priv->log_view_scrolled_win.reset (new Gtk::ScrolledWindow) ;
         m_priv->log_view_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
                                                      Gtk::POLICY_AUTOMATIC) ;
         THROW_IF_FAIL (m_priv->log_view_scrolled_win) ;
@@ -3459,7 +3503,7 @@ DBGPerspective::get_call_stack ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->call_stack) {
-        m_priv->call_stack = new CallStack (debugger ()) ;
+        m_priv->call_stack.reset (new CallStack (debugger ())) ;
         THROW_IF_FAIL (m_priv) ;
     }
     return *m_priv->call_stack ;
@@ -3470,7 +3514,7 @@ DBGPerspective::get_call_stack_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->call_stack_scrolled_win) {
-        m_priv->call_stack_scrolled_win = new Gtk::ScrolledWindow () ;
+        m_priv->call_stack_scrolled_win.reset (new Gtk::ScrolledWindow ()) ;
         m_priv->call_stack_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
                                                      Gtk::POLICY_AUTOMATIC) ;
         THROW_IF_FAIL (m_priv->call_stack_scrolled_win) ;
@@ -3485,8 +3529,8 @@ DBGPerspective::get_variables_editor ()
     THROW_IF_FAIL (m_priv->workbench) ;
 
     if (!m_priv->variables_editor) {
-        m_priv->variables_editor = new LocalVarsInspector (debugger (),
-                                                           *m_priv->workbench) ;
+        m_priv->variables_editor.reset
+            (new LocalVarsInspector (debugger (), *m_priv->workbench)) ;
     }
     THROW_IF_FAIL (m_priv->variables_editor) ;
     return *m_priv->variables_editor ;
@@ -3497,9 +3541,9 @@ DBGPerspective::get_variables_editor_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->variables_editor_scrolled_win) {
-        m_priv->variables_editor_scrolled_win = new Gtk::ScrolledWindow ;
+        m_priv->variables_editor_scrolled_win.reset (new Gtk::ScrolledWindow) ;
         m_priv->variables_editor_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
-                                                     Gtk::POLICY_AUTOMATIC) ;
+                                                           Gtk::POLICY_AUTOMATIC);
     }
     THROW_IF_FAIL (m_priv->variables_editor_scrolled_win) ;
     return *m_priv->variables_editor_scrolled_win ;
@@ -3511,7 +3555,7 @@ DBGPerspective::get_terminal ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->terminal) {
-        m_priv->terminal = new Terminal ;
+        m_priv->terminal.reset (new Terminal) ;
     }
     THROW_IF_FAIL (m_priv->terminal) ;
     return *m_priv->terminal ;
@@ -3522,7 +3566,7 @@ DBGPerspective::get_terminal_box ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->terminal_box) {
-        m_priv->terminal_box = new Gtk::HBox ;
+        m_priv->terminal_box.reset (new Gtk::HBox) ;
         THROW_IF_FAIL (m_priv->terminal_box) ;
         Gtk::VScrollbar *scrollbar = Gtk::manage (new Gtk::VScrollbar) ;
         m_priv->terminal_box->pack_end (*scrollbar, false, false, 0) ;
@@ -3538,7 +3582,7 @@ DBGPerspective::get_breakpoints_scrolled_win ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->breakpoints_scrolled_win) {
-        m_priv->breakpoints_scrolled_win = new Gtk::ScrolledWindow ;
+        m_priv->breakpoints_scrolled_win.reset (new Gtk::ScrolledWindow) ;
         THROW_IF_FAIL (m_priv->breakpoints_scrolled_win) ;
         m_priv->breakpoints_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
                                                    Gtk::POLICY_AUTOMATIC) ;
@@ -3552,7 +3596,7 @@ DBGPerspective::get_breakpoints_view ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->breakpoints_view) {
-        m_priv->breakpoints_view = new BreakpointsView () ;
+        m_priv->breakpoints_view.reset (new BreakpointsView ()) ;
     }
     THROW_IF_FAIL (m_priv->breakpoints_view) ;
     return *m_priv->breakpoints_view ;

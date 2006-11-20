@@ -94,7 +94,7 @@ public:
 LoadCoreDialog::LoadCoreDialog (const UString &a_root_path) :
     Dialog (a_root_path, "loadcoredialog.glade", "loadcoredialog")
 {
-    m_priv = new Priv (glade ()) ;
+    m_priv.reset (new Priv (glade ())) ;
 }
 
 LoadCoreDialog::~LoadCoreDialog ()

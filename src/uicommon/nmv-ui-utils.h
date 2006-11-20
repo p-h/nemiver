@@ -30,6 +30,7 @@
 #include <libglademm.h>
 #include "nmv-env.h"
 #include "nmv-ustring.h"
+#include "nmv-safe-ptr-utils.h"
 #include "nmv-api-macros.h"
 
 
@@ -169,6 +170,23 @@ get_widget_from_glade (const UString &a_glade_file_name,
     return get_widget_from_glade<T> (a_glade, a_widget_name) ;
 }
 
+struct WidgetRef {
+    void operator () (Gtk::Widget *a_widget)
+    {
+        if (a_widget) {
+            a_widget->reference () ;
+        }
+    }
+};//end struct WidgetRef
+
+struct WidgetUnref {
+    void operator () (Gtk::Widget *a_widget)
+    {
+        if (a_widget) {
+            a_widget->unreference () ;
+        }
+    }
+};//end struct WidgetUnref
 }//end namespace ui_utils
 }//end namespace nemiver
 

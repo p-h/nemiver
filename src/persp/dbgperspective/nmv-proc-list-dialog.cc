@@ -178,7 +178,7 @@ ProcListDialog::ProcListDialog (const UString &a_root_path,
                                 IProcMgr &a_proc_mgr) :
     Dialog(a_root_path, "proclistdialog.glade", "proclistdialog")
 {
-    m_priv = new Priv (glade (), a_proc_mgr);
+    m_priv.reset (new Priv (glade (), a_proc_mgr));
     widget ().hide () ;
 }
 

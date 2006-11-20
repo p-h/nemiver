@@ -119,13 +119,16 @@ main (int a_argc, char *a_argv[])
     textdomain (GETTEXT_PACKAGE) ;
     Initializer::do_init () ;
     Gtk::Main gtk_kit (a_argc, a_argv);
-    SafePtr<GOptionContext, GOptionContextRef, GOptionContextUnref> context ;
+    typedef SafePtr<GOptionContext,
+                    GOptionContextRef,
+                    GOptionContextUnref> GOptionContextSafePtr ;
+    GOptionContextSafePtr context ;
 
     //***************************
     //parse command line options
     //***************************
-    context = g_option_context_new
-        (_(" [<prog-to-debug> [prog-args]] - a C/C++ debugger for GNOME")) ;
+    context.reset (g_option_context_new
+            (_(" [<prog-to-debug> [prog-args]] - a C/C++ debugger for GNOME"))) ;
     g_option_context_add_main_entries (context.get (), entries, "") ;
     g_option_context_add_group (context.get (), gtk_get_option_group (TRUE)) ;
     g_option_context_set_ignore_unknown_options (context.get (), FALSE) ;
@@ -139,7 +142,11 @@ main (int a_argc, char *a_argv[])
     DynamicModuleManager module_manager ;
 
     IWorkbenchSafePtr workbench = module_manager.load<IWorkbench> ("workbench");
+    LOG_D ("workbench refcount: " <<  (int) workbench->get_refcount (),
+            "refcount-domain") ;
     workbench->do_init (gtk_kit) ;
+    LOG_D ("workbench refcount: " <<  (int) workbench->get_refcount (),
+           "refcount-domain") ;
 
     //********************************
     //<process command line arguments>

@@ -73,6 +73,7 @@ class SafePtr
 protected:
     mutable PointerType *m_pointer ;
 
+
 public:
     explicit SafePtr (const PointerType *a_pointer, bool a_do_ref=false) :
         m_pointer (const_cast<PointerType*> (a_pointer))
@@ -82,7 +83,7 @@ public:
         }
     }
 
-    SafePtr () : m_pointer (NULL)
+    SafePtr () : m_pointer (0)
     {
     }
 
@@ -112,12 +113,14 @@ public:
         return *this ;
     }
 
+    /*
     SafePtr<PointerType, ReferenceFunctor, UnreferenceFunctor>&
     operator= (const PointerType *a_pointer)
     {
         reset (a_pointer) ;
         return *this ;
     }
+    */
 
     PointerType&
     operator* () const
@@ -166,6 +169,24 @@ public:
         return !this->operator== (a_safe_ptr);
     }
 
+    void
+    reset ()
+    {
+        reset (0) ;
+    }
+
+    void
+    reset (const PointerType *a_pointer, bool a_do_ref=false)
+    {
+        if (a_pointer != m_pointer) {
+            unreference () ;
+            m_pointer = const_cast<PointerType*> (a_pointer) ;
+            if (a_do_ref) {
+                reference () ;
+            }
+        }
+    }
+
     PointerType*
     get () const
     {
@@ -186,8 +207,10 @@ public:
     do_dynamic_cast ()
     {
         T *pointer = dynamic_cast<T*> (m_pointer) ;
-        SafePtr<T, ReferenceFunctor, UnreferenceFunctor> result ;
-        result = pointer ;
+        SafePtr<T, ReferenceFunctor, UnreferenceFunctor> result (pointer) ;
+        if (result) {
+            result.reference () ;
+        }
         return result ;
     }
 
@@ -199,15 +222,6 @@ public:
         return  pointer ;
     }
 
-    void
-    reset (const PointerType *a_pointer = NULL)
-    {
-        if (a_pointer != m_pointer) {
-            unreference () ;
-            m_pointer = const_cast<PointerType*> (a_pointer) ;
-            reference () ;
-        }
-    }
 
     void
     swap (SafePtr<PointerType,

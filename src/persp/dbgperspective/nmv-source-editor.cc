@@ -297,20 +297,20 @@ SourceEditor::init ()
 
 SourceEditor::SourceEditor ()
 {
-    m_priv = new Priv ;
+    m_priv.reset (new Priv) ;
     init () ;
 }
 
 SourceEditor::SourceEditor (const UString &a_root_dir,
                             Glib::RefPtr<SourceBuffer> &a_buf)
 {
-    m_priv = new Priv (a_root_dir, a_buf) ;
+    m_priv.reset (new Priv (a_root_dir, a_buf)) ;
     init () ;
 }
 
 SourceEditor::~SourceEditor ()
 {
-    LOG ("deleted") ;
+    LOG_D ("deleted", "destructor-domain") ;
 }
 
 gtksourceview::SourceView&

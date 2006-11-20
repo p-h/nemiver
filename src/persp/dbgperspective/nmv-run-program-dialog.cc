@@ -190,7 +190,7 @@ public:
 RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
     Dialog (a_root_path, "runprogramdialog.glade", "runprogramdialog")
 {
-    m_priv = new Priv (widget (), glade ());
+    m_priv.reset (new Priv (widget (), glade ()));
     THROW_IF_FAIL (m_priv);
 
     working_directory (Glib::get_current_dir ()) ;

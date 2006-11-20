@@ -228,7 +228,10 @@ load_db_driver_module (const common::DBDesc &a_desc)
     }
 
     s_cnx_mgr_drv =
-            get_module_manager ().load<IConnectionManagerDriver> (driver_module_name);
+        get_module_manager ().load<IConnectionManagerDriver> (driver_module_name);
+    LOG_D ("cnx mgr refcount: " << (int) s_cnx_mgr_drv->get_refcount (),
+           "refcount-domain") ;
+
     if (!s_cnx_mgr_drv) {
         THROW (UString ("db driver module ")
                 + driver_module_name

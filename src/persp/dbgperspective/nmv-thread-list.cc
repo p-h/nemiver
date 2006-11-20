@@ -128,7 +128,7 @@ struct ThreadList::Priv {
     void build_widget ()
     {
         list_store = Gtk::ListStore::create (thread_list_columns ()) ;
-        tree_view = new Gtk::TreeView () ;
+        tree_view.reset (new Gtk::TreeView ()) ;
         tree_view->set_model (list_store) ;
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
         tree_view->append_column (_("Thread ID"), thread_list_columns ().thread_id) ;
@@ -206,7 +206,7 @@ struct ThreadList::Priv {
 
 ThreadList::ThreadList (IDebuggerSafePtr &a_debugger)
 {
-    m_priv = new ThreadList::Priv (a_debugger);
+    m_priv.reset (new ThreadList::Priv (a_debugger));
 }
 
 ThreadList::~ThreadList ()

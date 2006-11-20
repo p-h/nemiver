@@ -430,7 +430,7 @@ public:
             m_has_frames_parameters = false ;
             m_local_variables.clear () ;
             m_has_local_variables = false ;
-            m_variable_value = NULL ;
+            m_variable_value.reset () ;
             m_has_variable_value = false ;
             m_thread_list.clear () ;
             m_has_thread_list = false ;
@@ -2073,7 +2073,7 @@ struct GDBEngine::Priv {
                 if (a_input[cur] == ',') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
-                    result = NULL ;
+                    result.reset () ;
                     if (parse_gdbmi_result (a_input, cur, cur, result)) {
                         THROW_IF_FAIL (result) ;
                         return_list->append (result) ;
@@ -2090,7 +2090,7 @@ struct GDBEngine::Priv {
                 if (a_input[cur] == ',') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
-                    value = NULL ;
+                    value.reset ();
                     if (parse_gdbmi_value (a_input, cur, cur, value)) {
                         THROW_IF_FAIL (value) ;
                         return_list->append (value) ;
@@ -4436,13 +4436,13 @@ struct OnErrorHandler : OutputHandler {
     //****************************
 GDBEngine::GDBEngine ()
 {
-    m_priv = new Priv ;
+    m_priv.reset (new Priv) ;
     init () ;
 }
 
 GDBEngine::~GDBEngine ()
 {
-    m_priv = 0;
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 void

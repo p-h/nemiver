@@ -45,7 +45,7 @@ nemiver_common_create_dynamic_module_instance (void **a_new_instance)
     try {
         nemiver::common::IConnectionManagerDriverSafePtr manager
             (nemiver::common::sqlite::SqliteCnxMgrDrv::get_connection_manager_driver ());
-        *a_new_instance = manager.ref_and_get () ;
+        *a_new_instance = manager.get () ;
 
     } catch (std::exception &e) {
         TRACE_EXCEPTION (e) ;
@@ -71,6 +71,9 @@ struct SqliteCnxMgrDrvPriv {
 SqliteCnxMgrDrv::SqliteCnxMgrDrv ()
 {
     m_priv = new SqliteCnxMgrDrvPriv () ;
+
+    //this is a singleton.
+    enable_refcount (false) ;
 }
 
 SqliteCnxMgrDrv::~SqliteCnxMgrDrv ()
@@ -129,11 +132,8 @@ SqliteCnxMgrDrv::connect_to_db (const DBDesc &a_db_desc,
 IConnectionManagerDriverSafePtr
 SqliteCnxMgrDrv::get_connection_manager_driver ()
 {
-    static IConnectionManagerDriverSafePtr s_connection_manager_driver (NULL);
-    if (!s_connection_manager_driver) {
-        s_connection_manager_driver = new SqliteCnxMgrDrv ;
-    }
-    return s_connection_manager_driver ;
+    static SqliteCnxMgrDrv s_connection_manager_driver ;
+    return IConnectionManagerDriverSafePtr (&s_connection_manager_driver) ;
 }
 
 void

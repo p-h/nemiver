@@ -233,16 +233,16 @@ SafePtr<T, ObjectRef, ObjectUnref>
 DynamicModuleManager::load (const UString &a_name,
                             DynamicModule::Loader &a_loader)
 {
-    DynamicModuleSafePtr module = load (a_name, a_loader) ;
-    SafePtr<T, ObjectRef, ObjectUnref> result ;
+    DynamicModuleSafePtr module (load (a_name, a_loader)) ;
+    typedef SafePtr<T, ObjectRef, ObjectUnref> TSafePtr ;
+    TSafePtr result ;
     if (!module) {THROW (UString ("failed to load module '") + a_name);};
-    result = dynamic_cast<T*> (module.get ());
+    result.reset (dynamic_cast<T*> (module.get ()), true);
     if (!result) {THROW ("module is not of the expected type'");}
-    result.reference () ;
     return result ;
 }
 
-}
+}//end namespace common
 }//end namespace nemiver
 
 #endif// __NEMIVER_DYNAMIC_MODULE_H__

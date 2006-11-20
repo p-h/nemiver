@@ -49,7 +49,7 @@ public:
         is_started (false)
     {
         root_path = a_root_path ;
-        widget = new Gtk::Button ;
+        widget.reset (new Gtk::Button) ;
         THROW_IF_FAIL (widget) ;
         widget->set_focus_on_click (false) ;
         build_widget () ;
@@ -77,10 +77,10 @@ public:
         Glib::RefPtr<Gdk::PixbufAnimation> stopped_pixbuf =
             Gdk::PixbufAnimation::create_from_file (Glib::locale_to_utf8
                                                                 (stopped_img_path)) ;
-        animated_image = new Gtk::Image (anim) ;
-        stopped_image = new Gtk::Image (stopped_pixbuf) ;
+        animated_image.reset (new Gtk::Image (anim)) ;
+        stopped_image.reset (new Gtk::Image (stopped_pixbuf)) ;
         THROW_IF_FAIL (animated_image) ;
-        widget = new Gtk::Button () ;
+        widget.reset (new Gtk::Button ()) ;
         widget->set_image (*stopped_image) ;
     }
 };//end struct Throbber::Priv
@@ -95,7 +95,7 @@ Throbber::Throbber ()
 
 Throbber::Throbber (const UString &a_root_path)
 {
-    m_priv = new Priv (a_root_path);
+    m_priv.reset (new Priv (a_root_path));
 }
 
 ThrobberSafePtr

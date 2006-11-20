@@ -39,22 +39,23 @@ namespace common {
 
 struct ObjectPriv {
     long refcount ;
+    bool refcount_enabled ;
     map<UString, const Object*> objects_map ;
 
-    ObjectPriv ():refcount (1)
+    ObjectPriv () :
+        refcount (1),
+        refcount_enabled (true)
     {}
 };//end struct ObjectPriv
 
 Object::Object ():
-        m_priv (NULL)
+        m_priv (new ObjectPriv ())
 {
-    m_priv = new ObjectPriv () ;
 }
 
 Object::Object (Object const &a_object):
-        m_priv (NULL)
+        m_priv (new ObjectPriv ())
 {
-    m_priv = new ObjectPriv ();
     *m_priv = *a_object.m_priv ;
 }
 
@@ -74,21 +75,40 @@ Object::~Object ()
 void
 Object::ref ()
 {
+    if (!is_refcount_enabled ()) {return ;}
     m_priv->refcount ++ ;
 }
 
-bool
+void
 Object::unref ()
 {
-    if (m_priv->refcount) {
+    if (!is_refcount_enabled ()) {return ;}
+    if (m_priv && m_priv->refcount) {
         m_priv->refcount -- ;
     }
 
-    if (m_priv->refcount <= 0) {
+    if (m_priv && m_priv->refcount <= 0) {
+        m_priv.reset () ;
         delete this ;
-        return true ;
     }
-    return false ;
+}
+
+void
+Object::enable_refcount (bool a_enabled)
+{
+    if (m_priv) {
+        m_priv->refcount_enabled = a_enabled;
+    }
+}
+
+bool
+Object::is_refcount_enabled () const
+{
+    bool res (true) ;
+    if (m_priv) {
+        res = m_priv->refcount_enabled ;
+    }
+    return res ;
 }
 
 long

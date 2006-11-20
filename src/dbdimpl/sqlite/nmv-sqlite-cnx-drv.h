@@ -37,12 +37,10 @@ class SQLStatement ;
 namespace common {
 namespace sqlite {
 
-struct SqliteCnxDrvPriv ;
-
 class SqliteCnxDrv: public common::IConnectionDriver {
-    friend struct SqliteCnxDrvPriv ;
+    struct Priv ;
     friend class SqliteCnxMgrDrv ;
-    SqliteCnxDrvPriv *m_priv ;
+    SafePtr<Priv> m_priv ;
 
     //forbid copy
     SqliteCnxDrv (const SqliteCnxDrv &) ;

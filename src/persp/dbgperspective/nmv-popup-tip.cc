@@ -104,13 +104,12 @@ PopupTip::PopupTip (const UString &a_text) :
     Gtk::Window (Gtk::WINDOW_POPUP)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    m_priv = new PopupTip::Priv (a_text, *this);
+    m_priv.reset (new PopupTip::Priv (a_text, *this));
 }
 
 PopupTip::~PopupTip ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    m_priv = NULL ;
 }
 
 void

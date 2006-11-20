@@ -48,7 +48,7 @@ struct ModuleRegistry::Priv {
 
 ModuleRegistry::ModuleRegistry ()
 {
-    m_priv = new ModuleRegistry::Priv ;
+    m_priv.reset (new ModuleRegistry::Priv) ;
 }
 
 ModuleRegistry::~ModuleRegistry ()
@@ -89,7 +89,7 @@ struct DynamicModule::Loader::Priv {
 
 DynamicModule::Loader::Loader ()
 {
-    m_priv = new Loader::Priv ;
+    m_priv.reset (new Loader::Priv) ;
 
     //init the module config search path to system config dir
     config_search_paths ().push_back (env::get_system_config_dir ());
@@ -123,7 +123,8 @@ DynamicModule::Loader::module_config (const string &a_module_name)
                                     m_priv->config_map.find (a_module_name) ;
     if (iter == m_priv->config_map.end ()) {
         //we didn't find the module config in config cache.
-        //Let's walk the module conf paths and try to parse module confs from there.
+        //Let's walk the module conf paths
+        //and try to parse module confs from there.
         for (vector<UString>::const_iterator it = config_search_paths ().begin ();
              it != config_search_paths ().end ();
              ++it) {
@@ -131,7 +132,6 @@ DynamicModule::Loader::module_config (const string &a_module_name)
             path_elements.push_back (it->c_str ()) ;
             path_elements.push_back (a_module_name + ".conf") ;
             string path = Glib::build_filename (path_elements) ;
-
             if (!Glib::file_test (path, Glib::FILE_TEST_EXISTS)) {continue;}
 
             result = parse_module_config_file (path.c_str ()) ;
@@ -189,11 +189,13 @@ DynamicModule::Loader::parse_module_config_file (const UString &a_path)
         THROW ("Got path \"\" to modules config file") ;
     }
 
-    libxmlutils::XMLTextReaderSafePtr reader ;
+    using libxmlutils::XMLTextReaderSafePtr ;
+    using libxmlutils::XMLCharSafePtr ;
+    XMLTextReaderSafePtr reader ;
     UString name ;
     libxmlutils::XMLCharSafePtr xml_str ;
 
-    reader = xmlNewTextReaderFilename (a_path.c_str ()) ;
+    reader.reset (xmlNewTextReaderFilename (a_path.c_str ())) ;
     if (!reader) {
         THROW ("could not create xml reader") ;
     }
@@ -212,14 +214,14 @@ DynamicModule::Loader::parse_module_config_file (const UString &a_path)
     if (!goto_next_element_node_and_check (reader, "name")) {
         THROW ("expected 'name' node as child of 'module' node") ;
     }
-    xml_str = xmlTextReaderReadString (reader.get ()) ;
+    xml_str.reset (xmlTextReaderReadString (reader.get ())) ;
     module_name = reinterpret_cast<const char*> (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "libraryname")) {
         THROW ("expected 'libraryname' node as second child "
                "of 'module' node") ;
     }
-    xml_str = xmlTextReaderReadString (reader.get ()) ;
+    xml_str.reset (xmlTextReaderReadString (reader.get ())) ;
     library_name = reinterpret_cast<const char*> (xml_str.get ()) ;
     if (module_name != "" && library_name != "") {
         config->library_name = library_name ;
@@ -235,7 +237,7 @@ DynamicModule::Loader::parse_module_config_file (const UString &a_path)
     if (name == "customsearchpaths") {
         for (;;) {
             if (goto_next_element_node_and_check (reader, "path")) {
-                xml_str = xmlTextReaderReadString (reader.get ()) ;
+                xml_str.reset (xmlTextReaderReadString (reader.get ())) ;
                 path = reinterpret_cast<const char*> (xml_str.get ()) ;
                 if (path != "") {
                     config->custom_library_search_paths.push_back (path) ;
@@ -252,7 +254,6 @@ UString
 DynamicModule::Loader::module_library_path (const UString &a_module_name)
 {
     UString library_name, library_path ;
-    std::map<UString, UString>::iterator it ;
     DynamicModule::ConfigSafePtr mod_conf = module_config (a_module_name) ;
     THROW_IF_FAIL2 (mod_conf,
                     UString ("couldn't get module config for module ")
@@ -339,6 +340,11 @@ DynamicModule::Loader::create_dynamic_module_instance (GModule *a_module)
     //**********************************************
     //return a safe pointer DynamicModuleSafePtr
     //**********************************************
+    LOG_D ("module '"
+           << g_module_name (a_module)
+           << "' refcount: "
+           << (int) safe_ptr->get_refcount (),
+           "module-refcount-domain") ;
     return safe_ptr ;
 }
 
@@ -352,7 +358,7 @@ DynamicModule::Loader::load (const UString &a_name)
         return DynamicModuleSafePtr (0);
     }
 
-    DynamicModuleSafePtr result = create_dynamic_module_instance (lib) ;
+    DynamicModuleSafePtr result (create_dynamic_module_instance (lib)) ;
     if (result) {
         result->set_module_loader (this) ;
     }
@@ -394,7 +400,7 @@ struct DynamicModule::Priv {
 
 DynamicModule::DynamicModule ()
 {
-    m_priv = new DynamicModule::Priv ;
+    m_priv.reset (new DynamicModule::Priv) ;
 }
 
 DynamicModule::~DynamicModule ()
@@ -436,7 +442,7 @@ struct DynamicModuleManager::Priv {
     get_module_loader ()
     {
         if (!loader) {
-            loader = new DefaultModuleLoader ;
+            loader.reset (new DefaultModuleLoader) ;
         }
         THROW_IF_FAIL (loader) ;
         return loader ;
@@ -445,7 +451,7 @@ struct DynamicModuleManager::Priv {
 
 DynamicModuleManager::DynamicModuleManager ()
 {
-    m_priv = new DynamicModuleManager::Priv ;
+    m_priv.reset (new DynamicModuleManager::Priv) ;
 }
 
 DynamicModuleManager::~DynamicModuleManager ()
@@ -456,10 +462,7 @@ DynamicModuleSafePtr
 DynamicModuleManager::load (const UString &a_name,
                             DynamicModule::Loader &a_loader)
 {
-    GModule *lib (0) ;
-    DynamicModuleSafePtr result ;
-
-    lib = module_registry ().get_library_from_cache (a_name) ;
+    GModule *lib = module_registry ().get_library_from_cache (a_name) ;
     if (!lib) {
         //dll doesn't exist in library cache.
         //try to load the dll from disk and put it in library cache.
@@ -469,15 +472,26 @@ DynamicModuleManager::load (const UString &a_name,
         }
     }
     if (!lib) {
-        LOG ("could not load the dynamic library of the dynmod '" +a_name+ "'");
-        return result ;
+        LOG_ERROR
+            ("could not load the dynamic library of the dynmod '" +a_name+ "'");
+        return DynamicModuleSafePtr (0);
     }
-
     DynamicModuleSafePtr module = a_loader.create_dynamic_module_instance (lib) ;
     THROW_IF_FAIL (module) ;
+    LOG_D ("module '"
+            << a_name
+            << "' refcount: "
+            << (int) module->get_refcount (),
+           "module-refcount-domain") ;
 
     module->set_module_loader (&a_loader) ;
     a_loader.set_dynamic_module_manager (this) ;
+
+    LOG_D ("module "
+           << a_name 
+           << "' refcount: "
+           << (int) module->get_refcount (),
+           "module-refcount-domain") ;
     return module ;
 }
 
@@ -520,7 +534,7 @@ DynamicModule::LoaderSafePtr&
 DynamicModuleManager::module_loader ()
 {
     if (!m_priv->loader) {
-        m_priv->loader = new DefaultModuleLoader ;
+        m_priv->loader.reset (new DefaultModuleLoader) ;
     }
     THROW_IF_FAIL (m_priv->loader) ;
     return m_priv->loader ;

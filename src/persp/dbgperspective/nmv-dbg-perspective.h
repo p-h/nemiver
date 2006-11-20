@@ -47,7 +47,7 @@ public:
 
     virtual void do_init ()  = 0;
 
-    virtual void do_init (IWorkbenchSafePtr &a_workbench)  = 0;
+    virtual void do_init (IWorkbench *a_workbench)  = 0;
 
     virtual const UString& get_perspective_identifier () = 0;
 

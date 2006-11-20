@@ -83,8 +83,7 @@ struct ScopeLoggerPriv
         }
         out = NULL ;
     }
-}
-;
+};
 
 
 ScopeLogger::ScopeLogger (const char*a_scope_name,
@@ -92,15 +91,13 @@ ScopeLogger::ScopeLogger (const char*a_scope_name,
                           const UString &a_log_domain,
                           bool a_use_default_log_stream)
 {
-    m_priv = new ScopeLoggerPriv (a_scope_name,
-                                  a_level,
-                                  a_log_domain,
-                                  a_use_default_log_stream) ;
+    m_priv.reset (new ScopeLoggerPriv (a_scope_name, a_level,
+                                      a_log_domain, a_use_default_log_stream)) ;
 }
 
 ScopeLogger::~ScopeLogger ()
 {
-    m_priv = NULL ;
+    LOG_DD ("delete") ;
 }
 
 }//end namespace common

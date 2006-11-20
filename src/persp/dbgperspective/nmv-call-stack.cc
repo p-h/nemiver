@@ -83,7 +83,7 @@ struct CallStack::Priv {
     vector<IDebugger::Frame> frames ;
     map<int, list<IDebugger::VariableSafePtr> > m_params;
     Glib::RefPtr<Gtk::ListStore> store ;
-    GObjectMMSafePtr widget ;
+    SafePtr<Gtk::TreeView> widget ;
     bool waiting_for_stack_args ;
     sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal ;
 
@@ -170,8 +170,8 @@ struct CallStack::Priv {
 
     Gtk::Widget* get_widget ()
     {
-        if (!widget) {return NULL;}
-        return widget.do_dynamic_cast<Gtk::Widget> ().get () ;
+        if (!widget) {return 0;}
+        return widget.get () ;
     }
 
     void build_widget ()
@@ -182,7 +182,7 @@ struct CallStack::Priv {
         store = Gtk::ListStore::create (columns ());
         Gtk::TreeView *tree_view = new Gtk::TreeView (store) ;
         THROW_IF_FAIL (tree_view) ;
-        widget = tree_view ;
+        widget.reset (tree_view) ;
         tree_view->append_column ("line", columns ().location) ;
         tree_view->append_column ("function", columns ().function_name) ;
         tree_view->append_column ("arguments", columns ().function_args) ;
@@ -269,12 +269,12 @@ struct CallStack::Priv {
 CallStack::CallStack (IDebuggerSafePtr &a_debugger)
 {
     THROW_IF_FAIL (a_debugger) ;
-    m_priv = new Priv (a_debugger) ;
+    m_priv.reset (new Priv (a_debugger)) ;
 }
 
 CallStack::~CallStack ()
 {
-    m_priv = NULL ;
+    LOG_D ("deleted", "destructor-domain") ;
 }
 
 bool

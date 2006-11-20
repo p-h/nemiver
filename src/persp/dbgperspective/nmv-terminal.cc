@@ -117,12 +117,12 @@ struct Terminal::Priv {
 
 Terminal::Terminal ()
 {
-    m_priv = new Priv ;
+    m_priv.reset (new Priv) ;
 }
 
 Terminal::~Terminal ()
 {
-    m_priv = NULL ;
+    LOG_D ("deleted, ", "destructor-domain") ;
 }
 
 

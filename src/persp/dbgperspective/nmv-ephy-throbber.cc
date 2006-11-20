@@ -56,7 +56,7 @@ struct EphyThrobber::Priv {
     Gtk::Widget *widget ;
 
     Priv () :
-        spinner (EPHY_SPINNER (ephy_spinner_new ())),
+        spinner (EPHY_SPINNER (ephy_spinner_new ()), true),
         is_started (false),
         widget (0)
     {
@@ -78,7 +78,7 @@ EphyThrobber::~EphyThrobber ()
 
 EphyThrobber::EphyThrobber ()
 {
-    m_priv = new Priv ;
+    m_priv.reset (new Priv) ;
 }
 
 ThrobberSafePtr

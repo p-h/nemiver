@@ -261,10 +261,9 @@ Connection::close ()
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     if (m_priv->driver_iface) {
         m_priv->driver_iface->close () ;
-        //use SafePtr magic
-        m_priv->driver_iface = NULL ;
     }
     deinitialize () ;
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 }//end namespace common

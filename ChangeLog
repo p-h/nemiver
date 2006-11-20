@@ -1,3 +1,38 @@
+Mon, 20 Nov 2006 07:09:10 +0100 Dodji Seketeli
+
+	* src/common/nmv-safe-ptr.h: removed operaror=(const PointerType *) .
+	"FooSafePtr s = new Foo" Is no more possible. You have to use the
+	SafePtr::reset() function: "FooSafePtr s; s.reset (new Foor)"
+	or "FooSafePtr s (new Foo)" ;
+	* */*: prograted that safeptr change. Added logging to numerous
+	     destructors in the "destructor-domain" log domain.
+	* src/uicommon/nmv-ui-utils.h: added WigetRef/WidgetUnref functors
+	to be used with SafePtr.
+	* src/common/nmv-object.h,cc: added Object::enable_refcount() and
+	Object::is_refcount_enable() so that refcount can be disabled for
+	Objects supposed to be singleton.
+	* src/persp/dbgperspective/nmv-variables-utils.cc,h: created this
+	  to share graphical variables management functions among different
+	  graphical variable management widgets.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc: renamed
+	 VarsEditor into this. Refactored this to put some code in
+	 nmv-variables-utils.h
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add a
+	  variable inspector dialog.
+	  It not prefilled with the currently selected variable yet.
+	  You have to type in the variable name for the moment.
+	* src/persp/dbgperspective/nmv-var-inspector.h,cc: created a
+	  VariableInspector widget.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc,h: created
+	  a new variable inspector dialog using the VariableInspector widget.
+	* src/persp/dbgperspective/menus/menus.xml: added the
+	"inspectVariableMenuItem".
+	* src/dbdimpl/sqlite/nmv-sqlite-cnx-mgr-drv.cc: make the connection
+	  manager be a singleton.
+	* configure.ac: downgrade intltool requirement to 0.33 .
+
+
+
 Sat, 18 Nov 2006 00:46:06 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: don't put

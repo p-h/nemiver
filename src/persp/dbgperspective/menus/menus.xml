@@ -42,6 +42,8 @@
             <menuitem action="ToggleBreakPointMenuItemAction"
                       name="ToggleBreakMenuItem"/>
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
+            <menuitem action="InspectVariableMenuItemAction"
+                      name="InspectVariableMenuItem"/>
         </menu>
     </placeholder>
   </menubar>

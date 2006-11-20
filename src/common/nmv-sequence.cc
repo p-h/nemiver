@@ -41,12 +41,12 @@ struct Sequence::Priv {
 
 Sequence::Sequence ()
 {
-    m_priv = new Sequence::Priv () ;
+    m_priv.reset (new Sequence::Priv ()) ;
 }
 
 Sequence::~Sequence ()
 {
-    m_priv = NULL ;
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 long long

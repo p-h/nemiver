@@ -54,13 +54,10 @@ struct ObjectRef {
 
 struct ObjectUnref {
 
-    bool
+    void
     operator () (nemiver::common::Object* a_ptr)
     {
-        if (a_ptr) {
-            return a_ptr->unref () ;
-        }
-        return true ;
+        if (a_ptr) {a_ptr->unref ();}
     }
 };//end ObjectUnRef
 

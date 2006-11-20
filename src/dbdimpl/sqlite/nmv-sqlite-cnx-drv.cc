@@ -49,11 +49,12 @@ struct Sqlite3Unref {
     }
 };//end struct Sqlite3Unref
 
-struct SqliteCnxDrvPriv {
+typedef common::SafePtr<sqlite3, Sqlite3Ref, Sqlite3Unref> Sqlite3SafePtr ;
+struct SqliteCnxDrv::Priv {
     //sqlite3 database connection handle.
     //Must be de-allocated by a call to
     //sqlite3_close ();
-    common::SafePtr<sqlite3, Sqlite3Ref, Sqlite3Unref> sqlite ;
+    Sqlite3SafePtr sqlite ;
 
     //the current prepared sqlite statement.
     //It must be deallocated after the result set
@@ -64,19 +65,20 @@ struct SqliteCnxDrvPriv {
     //the result of the last sqlite3_step() function, or -333
     int last_execution_result ;
 
-    SqliteCnxDrvPriv ():
-            sqlite (NULL),
-            cur_stmt (NULL),
-            last_execution_result (-333)
-             {}
+    Priv ():
+        sqlite (NULL),
+        cur_stmt (NULL),
+        last_execution_result (-333)
+     {
+     }
 
     bool step_cur_statement () ;
 
     bool check_offset (gulong a_offset) ;
-} ;
+};
 
 bool
-SqliteCnxDrvPriv::step_cur_statement ()
+SqliteCnxDrv::Priv::step_cur_statement ()
 {
     RETURN_VAL_IF_FAIL (cur_stmt, false) ;
     last_execution_result = sqlite3_step (cur_stmt) ;
@@ -136,7 +138,7 @@ decide:
 }
 
 bool
-SqliteCnxDrvPriv::check_offset (gulong a_offset)
+SqliteCnxDrv::Priv::check_offset (gulong a_offset)
 {
     if (!cur_stmt
         || (static_cast<glong> (a_offset) >= sqlite3_column_count (cur_stmt)))
@@ -147,17 +149,14 @@ SqliteCnxDrvPriv::check_offset (gulong a_offset)
 SqliteCnxDrv::SqliteCnxDrv (sqlite3 *a_sqlite_handle)
 {
     THROW_IF_FAIL (a_sqlite_handle) ;
-    m_priv = new SqliteCnxDrvPriv () ;
-    m_priv->sqlite=a_sqlite_handle ;
+    m_priv.reset (new Priv) ;
+    m_priv->sqlite.reset (a_sqlite_handle) ;
 }
 
 SqliteCnxDrv::~SqliteCnxDrv ()
 {
-    if (m_priv) {
-        close () ;
-        delete m_priv ;
-        m_priv = NULL ;
-    }
+    LOG_D ("delete", "destructor-domain") ;
+    close () ;
 }
 
 const char*
@@ -400,7 +399,6 @@ SqliteCnxDrv::close ()
             sqlite3_finalize (m_priv->cur_stmt) ;
             m_priv->cur_stmt = NULL;
         }
-        m_priv->sqlite = NULL ;
     }
 }
 

@@ -52,8 +52,14 @@ ephy-spinner.c \
 ephy-spinner.h \
 nmv-ephy-throbber.h \
 nmv-ephy-throbber.cc \
+nmv-variables-utils.cc \
+nmv-variables-utils.h \
 nmv-local-vars-inspector.cc \
 nmv-local-vars-inspector.h \
+nmv-var-inspector.cc \
+nmv-var-inspector.h \
+nmv-var-inspector-dialog.cc \
+nmv-var-inspector-dialog.h \
 nmv-terminal.h \
 nmv-terminal.cc \
 nmv-breakpoints-view.cc \

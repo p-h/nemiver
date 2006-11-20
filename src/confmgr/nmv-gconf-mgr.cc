@@ -66,7 +66,7 @@ public:
 
 };//end class GCongMgr
 
-static const char * NEMIVER_KEY_DIR = "/app/nemiver" ;
+//static const char * NEMIVER_KEY_DIR = "/app/nemiver" ;
 
 struct GErrorRef {
     void operator () (GError *a_error) {if (a_error) {}}
@@ -161,10 +161,7 @@ GConfMgr::GConfMgr () :
 
 GConfMgr::~GConfMgr ()
 {
-    if (m_gconf_client) {
-        gconf_client_remove_dir (m_gconf_client, NEMIVER_KEY_DIR, NULL) ;
-        m_gconf_client = NULL ;
-    }
+    LOG_D ("delete", "destructor-domain") ;
 }
 
 bool
