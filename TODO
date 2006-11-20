@@ -6,6 +6,10 @@ Feel free to ask on nemiver-list@gna.org about particular topics that you may be
 
 *) add a nemiver --attach <pid|prog-name> switch to the command line.
 
+*) add a cookie parameter to the command methods of IDebugger so that api users
+   can know which command generated the IDebuger::command_done_signal() without having to know anything about
+   the string names of gdb commands.
+
 *) write a gdb command interpreter widget (prolly based on Gtk::TextView),
    using IDebugger. It should accept commands with the
    same syntax as the classical gdb syntax and call IDebugger in the background.
