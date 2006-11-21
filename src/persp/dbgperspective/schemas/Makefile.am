@@ -12,7 +12,7 @@ install-schemas:
 if GCONF_SCHEMAS_INSTALL
 	if test -z "$(DESTDIR)" ; then \
 	for s in `echo $$files | tr ' ' '\n'` ; do \
-	$(GCONFTOOL) --makefile-install-rule $(top_srcdir)/src/persp/dbgperspective/schemas/$$s ; done && if test x$$NO_RESTART_GCONF = x ; then killall -HUP gconfd-2; fi ; \
+	$(GCONFTOOL) --makefile-install-rule $(top_srcdir)/src/persp/dbgperspective/schemas/$$s ; done && if test x$$NO_RESTART_GCONF = x ; then $(GCONFTOOL) --shutdown; fi ; \
 	fi
 endif
 

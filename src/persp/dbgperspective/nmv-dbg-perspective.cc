@@ -2798,6 +2798,7 @@ DBGPerspective::open_file ()
 {
     Gtk::FileChooserDialog file_chooser (_("Open file"),
                                          Gtk::FILE_CHOOSER_ACTION_OPEN) ;
+    file_chooser.set_current_folder (m_priv->prog_cwd) ;
 
     file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
     file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;

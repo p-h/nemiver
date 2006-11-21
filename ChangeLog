@@ -1,3 +1,14 @@
+2006-11-21  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: When opening a source
+	file (e.g. file > open) start the filechooser in the working directory
+	specified in the session settings.
+	* src/persp/dbgperspective/schemas/Makefile.am: restart gconfd via
+	'gconftool-2 --shutdown' instead of 'killall' as recommended on the gconf
+	website
+	* src/persp/dbgperspective/sqlscripts/sqlite/Makefile.am:  remove
+	unnecessary trailing slash on sqlscripts directory
+
 Tue, 21 Nov 2006 08:01:40 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
