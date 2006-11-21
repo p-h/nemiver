@@ -1321,6 +1321,7 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     }
 
     get_local_vars_inspector ().show_local_variables_of_current_function () ;
+    set_where (file_path, a_frame.line ()) ;
 
     NEMIVER_CATCH
 }
