@@ -1,5 +1,16 @@
 2006-11-21  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Fix a bug where the
+	target executable keeps running after quitting nemiver.  To reproduce the
+	problem, start nemiver, select File > Resume Saved Session... > [pick a
+	session to resume].  After the session has been loaded, immediately press
+	Ctrl-Q to quit nemiver.  The nemiver window will disappear, but the target
+	executable window will pop up and you have to manually close it.  This
+	change explicitly calls stop() on the debugger when it gets the shutdown
+	signal so that the target won't continue running.
+
+2006-11-21  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: When opening a source
 	file (e.g. file > open) start the filechooser in the working directory
 	specified in the session settings.
