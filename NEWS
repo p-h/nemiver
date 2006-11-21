@@ -3,17 +3,31 @@ coming release <-- rename this at release time.
 
 new features
 ============
+
+    [Dodji Seketeli]
+
     * highlight the last changed variable (in the local variables tab)
     * new variable inspector targeted at global variables.
 
 bug fixes/improvements
 ======================
+
+    [Jonathon Jongsma]
+
+    * don't let the target executable run after quitting nemiver.
+    * when opening a source file start filechooser in the working dir
+      specified in sessin settings.
+    * restart gconfd (instead of sending the HUP signal) upon schemas install
+
+    [Dodji Seketeli]
+
     * don't redraw the local variables widget at each stop
     * don't assert when hover on empty space
     * sync each log line to disk
     * in the breakpoint workflow, lookup files in already opened files first
     * fix target terminal scrolling issues
     * update local variables when selecting frames
+    * fix gdbmi frame data parsing
 
 translations
 =============

@@ -29,10 +29,11 @@
 #include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
 #include "nmv-sess-mgr.h"
+#include <sigc++/trackable.h>
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class NEMIVER_API IDBGPerspective : public IPerspective {
+class NEMIVER_API IDBGPerspective : public IPerspective, public sigc::trackable {
     //non copyable
     IDBGPerspective (const IPerspective&) ;
     IDBGPerspective& operator= (const IPerspective&) ;
