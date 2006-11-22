@@ -1,3 +1,29 @@
+Wed, 22 Nov 2006 23:29:49 +0100 Dodji Seketeli
+
+	* src/common/nmv-plugin.cc:
+	  PluginManager::load_plugin_from_path(): lookup plugins in
+	  in the in-memory plugin map before instanciating a new plugin
+	  object. That ensures that we don't have two (different)
+	  physical object representing the same logical plugin. 
+	  Also, put all instanciated plugins the in memory plugin map, even the
+	  dependencies.
+	* src/workbench/nmv-workbench.cc: remove perspective bodies from
+	  their container at destructions time.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  DBGPerspective::init_body (): mak m_priv->body_main_paned be
+	  destroys by DBGPerspective because we unparent
+	  it from the bodycontainer.glade, and it will be later packed
+	  to widgets coming from workbench.glade.
+	  It seems like unparenting makes "us" (DBGPerspective) responsible
+	  of managing the destruction of that widget. That's why the
+	  the sourceviews notebook (child of m_priv->body_main_paned) was not
+	  getting destroyed as a result of the destruction of
+	  workbench.glade widgets. This entry is a second at fixing #377872.
+	  I hope this fixes the root cause.
+	* src/persp/dbgperspective/nmv-dbg-perspective.h: don't make this
+	  inherit sigc::trackable. I made that to try fix #377872, but
+	  I hope changes made in this entry will better fix that bug.
+
 2006-11-22  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* update svn:ignore properties

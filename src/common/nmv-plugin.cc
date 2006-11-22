@@ -543,6 +543,7 @@ PluginManager::load_plugin_from_path (const UString &a_plugin_path,
         return result ;
     }
 
+    UString ppath ;
     vector<Plugin::DescriptorSafePtr>::iterator cur_desc;
     vector<PluginSafePtr> dependances ;
     PluginSafePtr plugin ;
@@ -550,20 +551,30 @@ PluginManager::load_plugin_from_path (const UString &a_plugin_path,
          cur_desc != dependant_descs.end ();
          ++cur_desc) {
         try {
-            plugin.reset (new Plugin (*cur_desc, m_priv->module_manager)) ;
+            THROW_IF_FAIL (*cur_desc) ;
+            ppath = (*cur_desc)->plugin_path () ;
+            if (plugins_map ().find (ppath) != plugins_map ().end ()) {
+                plugin = plugins_map ()[ppath] ;
+            } else {
+                plugin.reset (new Plugin (*cur_desc, m_priv->module_manager)) ;
+                plugins_map ()[ppath] = plugin ;
+            }
         } catch (...) {
             LOG_ERROR ("Failed to load dependant plugin '"
                        + (*cur_desc)->name () + "'") ;
             return result ;
         }
         dependances.push_back (plugin) ;
-        UString ppath = plugin->descriptor ()->plugin_path () ;
-        if (plugins_map ().find (ppath) == plugins_map ().end ())
-        plugins_map ()[ppath] = plugin ;
     }
 
     try {
-        plugin.reset (new Plugin (descriptor, m_priv->module_manager)) ;
+        ppath = descriptor->plugin_path () ;
+        if (plugins_map ().find (ppath) != plugins_map ().end ()) {
+            plugin = plugins_map ()[ppath] ;
+        } else {
+            plugin.reset (new Plugin (descriptor, m_priv->module_manager)) ;
+            plugins_map ()[ppath] = plugin ;
+        }
     } catch (...) {
         LOG_ERROR ("failed to load plugin '" + descriptor->name () + "'") ;
         return result ;
@@ -648,7 +659,6 @@ PluginManager::load_plugins ()
                 plugin = load_plugin_from_path (Glib::locale_to_utf8 (path),
                                                 dependances) ;
                 if (plugin) {
-                    plugins_map ()[Glib::locale_to_utf8 (path)] = plugin ;
                     LOG_D ("plugin '"
                             << path
                             << "' put in  map. Refcount: "

@@ -33,7 +33,7 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class NEMIVER_API IDBGPerspective : public IPerspective, public sigc::trackable {
+class NEMIVER_API IDBGPerspective : public IPerspective {
     //non copyable
     IDBGPerspective (const IPerspective&) ;
     IDBGPerspective& operator= (const IPerspective&) ;

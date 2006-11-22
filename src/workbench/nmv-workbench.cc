@@ -86,6 +86,8 @@ private:
                                    list<Gtk::Widget*> &a_tbs) ;
     void add_perspective_body (IPerspectiveSafePtr &a_perspective,
                                Gtk::Widget *a_body) ;
+    bool remove_perspective_body (IPerspectiveSafePtr &a_perspective) ;
+    void remove_all_perspective_bodies () ;
     void select_perspective (IPerspectiveSafePtr &a_perspective) ;
 
     void do_init ()
@@ -131,10 +133,11 @@ struct Workbench::Priv {
 
     Priv () :
         initialized (false),
-        main (NULL),
-        root_window (NULL),
-        menubar (NULL),
-        toolbar_container (NULL)
+        main (0),
+        root_window (0),
+        menubar (0),
+        toolbar_container (0),
+        bodies_container (0)
     {}
 };//end Workbench::Priv
 
@@ -198,6 +201,7 @@ Workbench::Workbench ()
 
 Workbench::~Workbench ()
 {
+    remove_all_perspective_bodies () ;
     LOG_D ("delete", "destructor-domain") ;
 }
 
@@ -525,6 +529,36 @@ Workbench::add_perspective_body (IPerspectiveSafePtr &a_perspective,
 
     m_priv->bodies_index_map[a_perspective.get ()] =
         m_priv->bodies_container->insert_page (*a_body, -1);
+}
+
+bool
+Workbench::remove_perspective_body (IPerspectiveSafePtr &a_perspective)
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->bodies_container) ;
+
+    if (!a_perspective) {return false;}
+
+    map<IPerspective*, int>::iterator it;
+    it = m_priv->bodies_index_map.find (a_perspective.get ()) ;
+    if (it == m_priv->bodies_index_map.end ()) {
+        return false ;
+    }
+    m_priv->bodies_container->remove_page (it->second)  ;
+    m_priv->bodies_index_map.erase (it) ;
+    return true ;
+}
+
+void
+Workbench::remove_all_perspective_bodies ()
+{
+    map<IPerspective*, int>::iterator it ;
+    for (it = m_priv->bodies_index_map.begin ();
+         it != m_priv->bodies_index_map.end ();
+         ++it) {
+        m_priv->bodies_container->remove_page (it->second) ;
+    }
+    m_priv->bodies_index_map.clear () ;
 }
 
 void

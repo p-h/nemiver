@@ -477,7 +477,7 @@ struct DBGPerspective::Priv {
     UString prog_cwd ;
     map<UString, UString> env_variables ;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
-    Gtk::Window *body_window ;
+    SafePtr<Gtk::Window> body_window ;
     SafePtr<Gtk::TextView> command_view ;
     SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win ;
     SafePtr<Gtk::TextView> target_output_view;
@@ -502,9 +502,8 @@ struct DBGPerspective::Priv {
     Gtk::Widget *contextual_menu ;
     Gtk::Widget *breakpoints_menu ;
     Gtk::Widget *callstack_menu ;
-    SafePtr<Gtk::Paned,
-            ui_utils::WidgetRef,
-            ui_utils::WidgetUnref> body_main_paned ;
+    Gtk::Box *top_box;
+    SafePtr<Gtk::Paned> body_main_paned ;
     IWorkbench *workbench ;
     SafePtr<Gtk::HBox> toolbar ;
     ThrobberSafePtr throbber ;
@@ -572,13 +571,14 @@ struct DBGPerspective::Priv {
         initialized (false),
         reused_session (false),
         debugger_has_just_run (false),
-        body_window (0),
         menubar_merge_id (0),
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
         contextual_menu (0),
         breakpoints_menu (0),
         callstack_menu (0),
+        top_box (0),
+        /*body_main_paned (0),*/
         workbench (0),
         command_view_is_visible (false),
         target_output_view_is_visible (false),
@@ -1962,17 +1962,16 @@ DBGPerspective::init_body ()
                     (Glib::locale_to_utf8 (relative_path),
                                            absolute_path)) ;
     m_priv->body_glade = Gnome::Glade::Xml::create (absolute_path) ;
-    m_priv->body_window =
-        ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->body_glade,
-                                                      "bodycontainer") ;
-    //need to ref this because we want to keep
-    //it alive even after we unparent it from glade.
-    //it's actual parent will the the workbench perspective bodies
-    //container
+    m_priv->body_window.reset
+        (ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->body_glade,
+                                                      "bodycontainer")) ;
+    m_priv->top_box =
+        ui_utils::get_widget_from_glade<Gtk::Box> (m_priv->body_glade,
+                                                   "topbox") ;
     m_priv->body_main_paned.reset
         (ui_utils::get_widget_from_glade<Gtk::Paned> (m_priv->body_glade,
-                                                      "mainbodypaned"),
-         true) ;
+                                                      "mainbodypaned")) ;
+
     m_priv->sourceviews_notebook =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                         "sourceviewsnotebook") ;
@@ -2012,7 +2011,9 @@ DBGPerspective::init_body ()
     set_show_variables_editor_view (true) ;
     */
 
-    m_priv->body_main_paned->unparent () ;
+    //unparent the body_main_paned, so that we can pack it
+    //in the workbench later
+    m_priv->top_box->remove (*m_priv->body_main_paned) ;
     m_priv->body_main_paned->show_all () ;
 
     //must be last
