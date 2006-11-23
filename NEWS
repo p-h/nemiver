@@ -28,6 +28,7 @@ bug fixes/improvements
     * fix target terminal scrolling issues
     * update local variables when selecting frames
     * fix gdbmi frame data parsing
+    * better plugins lifetime management
 
 translations
 =============

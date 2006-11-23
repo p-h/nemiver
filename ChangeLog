@@ -1,3 +1,9 @@
+Thu, 23 Nov 2006 16:01:30 +0100 Dodji Seketeli
+
+	* COPYING: updated the FSF address
+	* NEWS: updated.
+
+
 Wed, 22 Nov 2006 23:29:49 +0100 Dodji Seketeli
 
 	* src/common/nmv-plugin.cc:
