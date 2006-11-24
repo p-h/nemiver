@@ -2833,10 +2833,14 @@ struct GDBEngine::Priv {
                 SKIP_WS (a_input, cur, cur) ;
                 value_start = cur ;
                 while (true) {
-                    if (a_input[cur] != ',' && a_input[cur] != '}') {
+                    if ((a_input[cur] != ','
+                            || ((cur+1 < end) && a_input[cur+1] != ' '))
+                         && a_input[cur] != '}') {
                         ++cur ;
                         CHECK_END (a_input, cur, end) ;
                     } else {
+                        //getting out condition is either ", " or "}".
+                        //check out the the 'if' condition.
                         break ;
                     }
                 }

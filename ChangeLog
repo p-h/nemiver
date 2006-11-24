@@ -1,3 +1,14 @@
+Fri, 24 Nov 2006 23:02:28 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  GDBEngine::Priv::parse_member_variable(): during the parsing
+	  of a value inside a member variable, do not assume the end
+	  the end of the value is the "," string, but rather ", ".
+	  Because some values can be Foo<int,char> (notice the comma).
+	  This entry is the first attempt at fixing #377623 .
+	* tests/test-templated-var.cc: wrote this smallish test code
+	  to reproduce #377623 and serve a regression test it.
+
 Fri, 24 Nov 2006 14:28:48 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

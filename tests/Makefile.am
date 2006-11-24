@@ -1,5 +1,6 @@
 noinst_PROGRAMS=fooprog runtestbreakpoint \
 runtestcore runteststdout \
+runtesttemplatedvar \
 docore inout
 
 fooprog_SOURCES=fooprog.cc
@@ -13,6 +14,9 @@ runtestcore_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 runteststdout_SOURCES=test-stdout.cc
 runteststdout_LDFLAGS=@NEMIVERCOMMON_LIBS@
+
+runtesttemplatedvar_SOURCES=test-templated-var.cc
+runtesttemplatedvar_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 docore_SOURCES=do-core.cc
 docore_LDFLAGS=@NEMIVERCOMMON_LIBS@
