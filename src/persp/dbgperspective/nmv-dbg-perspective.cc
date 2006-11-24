@@ -2212,6 +2212,11 @@ SourceEditor*
 DBGPerspective::get_source_editor_from_path (const UString &a_path,
                                              bool a_basename_only)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    LOG_DD ("a_path: " << a_path) ;
+    LOG_DD ("a_basename_only" << (int) a_basename_only) ;
+
     if (a_path == "") {return 0;}
 
     map<UString, int>::iterator iter, nil ;
@@ -2255,6 +2260,9 @@ DBGPerspective::bring_source_as_current (const UString &a_path)
     if (!source_editor) {
         open_file (a_path) ;
     }
+    if (!source_editor) {
+        source_editor = get_source_editor_from_path (a_path, true) ;
+    }
     source_editor = get_source_editor_from_path (a_path) ;
     THROW_IF_FAIL (source_editor) ;
     map<UString, int>::iterator iter =
@@ -2271,6 +2279,9 @@ DBGPerspective::set_where (const UString &a_path,
 
     bring_source_as_current (a_path) ;
     SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
+    if (!source_editor) {
+        source_editor = get_source_editor_from_path (a_path, true) ;
+    }
     THROW_IF_FAIL (source_editor) ;
     source_editor->move_where_marker_to_line (a_line) ;
     Gtk::TextBuffer::iterator iter =
@@ -3354,6 +3365,9 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
         open_file (a_file_name) ;
         source_editor = get_source_editor_from_path (a_file_name) ;
     }
+    if (!source_editor) {
+        source_editor = get_source_editor_from_path (a_file_name, true) ;
+    }
     THROW_IF_FAIL (source_editor) ;
     source_editor->set_visual_breakpoint_at_line (a_linenum) ;
 }
@@ -3362,6 +3376,9 @@ void
 DBGPerspective::delete_visual_breakpoint (const UString &a_file_name, int a_linenum)
 {
     SourceEditor *source_editor = get_source_editor_from_path (a_file_name) ;
+    if (!source_editor) {
+        source_editor = get_source_editor_from_path (a_file_name, true) ;
+    }
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (a_linenum) ;
 }
@@ -3378,6 +3395,10 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
 
     SourceEditor *source_editor =
         get_source_editor_from_path (iter->second.file_full_name ()) ;
+    if (!source_editor) {
+        source_editor = get_source_editor_from_path (iter->second.file_full_name (),
+                                                     true) ;
+    }
     THROW_IF_FAIL (source_editor) ;
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
     m_priv->breakpoints.erase (iter);

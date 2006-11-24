@@ -1,3 +1,14 @@
+Fri, 24 Nov 2006 14:28:48 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  DBGPerspective::get_source_editor_from_path(): add some loggin in the
+	  default domain.
+	  DBGPerspective::set_where(): when the file is not found in the opened
+	  files (based on it fullname), look it up in the opened files based on it
+	  base name only.
+	  DBGPerspective::append_visual_breakpoint(): ditto
+	  DBGPerspective::delete_visual_breakpoint(): ditto
+
 Thu, 23 Nov 2006 16:01:30 +0100 Dodji Seketeli
 
 	* COPYING: updated the FSF address
