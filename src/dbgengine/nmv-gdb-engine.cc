@@ -4572,8 +4572,8 @@ GDBEngine::load_program (const vector<UString> &a_argv,
             args += " " + a_argv[i] ;
         }
 
-        Command command
-                        (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
+        Command command ("load-program",
+                         UString ("-file-exec-and-symbols ") + a_argv[0]) ;
         queue_command (command) ;
 
         command.value ("set args " + args) ;

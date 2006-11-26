@@ -1,3 +1,11 @@
+Sun, 26 Nov 2006 19:42:01 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::load_program():
+	  set the command name as "load-program". Once we attached to the
+	  program, get the target info, so that we can later stop it.
+	  Among the target info is the target pid. We need that so that we
+	  we can later send the STOP signal to the target to stop it.
+
 Sun, 26 Nov 2006 19:13:43 +0100 Dodji Seketeli
 
 	* TODO, NEWS: updated both. Put the "search facility" item on top
