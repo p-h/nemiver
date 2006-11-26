@@ -59,7 +59,7 @@ struct ProcListCols : public Gtk::TreeModel::ColumnRecord {
     }
 };//end class Gtk::TreeModel
 
-    static ProcListCols&
+static ProcListCols&
 columns ()
 {
     static ProcListCols s_columns ;
@@ -93,6 +93,8 @@ public:
         THROW_IF_FAIL (proclist_view) ;
         proclist_store = Gtk::ListStore::create (columns ()) ;
         proclist_view->set_model (proclist_store) ;
+        proclist_view->set_search_column (ProcListCols::PROC_ARGS) ;
+        proclist_view->set_enable_search (true) ;
 
         proclist_view->append_column ("PID", columns ().pid) ;
         Gtk::TreeViewColumn *col = proclist_view->get_column (0) ;
@@ -121,6 +123,8 @@ public:
         proclist_view->get_selection ()->signal_changed ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_selection_changed_signal)) ;
+        proclist_view->signal_row_activated ().connect (sigc::mem_fun
+                (*this, &Priv::on_row_activated_signal)) ;
     }
 
     void on_selection_changed_signal ()
@@ -139,6 +143,26 @@ public:
 
         THROW_IF_FAIL (okbutton) ;
         okbutton->set_sensitive (true) ;
+
+        NEMIVER_CATCH
+    }
+
+    void on_row_activated_signal (const Gtk::TreeModel::Path &a_path,
+                                  Gtk::TreeViewColumn *a_col)
+    {
+        if (a_col) {}
+
+        LOG_FUNCTION_SCOPE_NORMAL_DD
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (okbutton) ;
+
+        Gtk::TreeModel::iterator row_it = proclist_store->get_iter (a_path) ;
+        if (!row_it) {return;}
+        selected_process = (*row_it)[columns ().process] ;
+        process_selected = true ;
+        okbutton->clicked () ;
 
         NEMIVER_CATCH
     }

@@ -203,7 +203,8 @@ private:
 
     void on_debugger_log_message_signal (const UString &a_msg) ;
 
-    void on_debugger_command_done_signal (const UString &a_command) ;
+    void on_debugger_command_done_signal (const UString &a_command_name,
+                                          const UString &a_cookie) ;
 
     void on_debugger_breakpoints_set_signal
                                 (const map<int, IDebugger::BreakPoint> &) ;
@@ -984,7 +985,7 @@ DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterato
         if (!line.empty ()) {
             IDebuggerSafePtr dbg = debugger () ;
             THROW_IF_FAIL (dbg) ;
-            dbg->execute_command (IDebugger::Command (line)) ;
+            //dbg->execute_command (IDebugger::Command (line)) ;
             m_priv->last_command_text = "" ;
         }
     }
@@ -1227,12 +1228,19 @@ DBGPerspective::on_debugger_log_message_signal (const UString &a_msg)
 }
 
 void
-DBGPerspective::on_debugger_command_done_signal (const UString &a_command)
+DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
+                                                 const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_command == "") {}
+
+    LOG_DD ("a_command: " << a_command) ;
+    LOG_DD ("a_cookie: " << a_cookie) ;
+
     NEMIVER_TRY
-    attached_to_target_signal ().emit (true) ;
+    if (a_command == "attach-to-program") {
+        //attached_to_target_signal ().emit (true) ;
+        debugger ()->step_over () ;
+    }
     NEMIVER_CATCH
 }
 
@@ -1255,6 +1263,7 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
                                             const IDebugger::Frame &a_frame,
                                             int a_thread_id)
 {
+
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_reason == "" || a_thread_id) {}
 
@@ -1266,13 +1275,20 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
     if (a_has_frame
         && a_frame.file_full_name () == ""
         && a_frame.file_name () != "") {
-        if (!find_file_in_source_dirs (a_frame.file_name (), file_path)) {
-            display_error ("Did not find file " + a_frame.file_name ()) ;
+        file_path = a_frame.file_name () ;
+        if (!find_file_in_source_dirs (file_path, file_path)) {
+            display_error (_("Could not find file ") + file_path) ;
             return ;
         }
     }
     if (a_has_frame && file_path != "") {
         set_where (file_path, a_frame.line ()) ;
+    } else if (a_has_frame && 
+               a_frame.file_full_name () == ""
+               && a_frame.file_name () == "") {
+            display_warning (_("File path info is missing "
+                               "for function ")
+                             + UString ("'") + a_frame.function_name () + "'") ;
     }
 
     if (m_priv->debugger_has_just_run) {
@@ -1310,8 +1326,9 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     if (file_path == "") {
         file_path = a_frame.file_name () ;
         if (!find_file_in_source_dirs (file_path, file_path)) {
-            display_warning ("File path info is missing "
-                             "for function '" + a_frame.function_name () + "'") ;
+            display_warning (_("File path info is missing "
+                             "for function ")
+                             + UString ("'") + a_frame.function_name () + "'") ;
             return ;
             //TODO: we should disassemble the current frame and display it.
         }
@@ -3092,6 +3109,8 @@ DBGPerspective::execute_program (const UString &a_prog,
 void
 DBGPerspective::attach_to_program ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
     IProcMgr *process_manager = get_process_manager () ;
     THROW_IF_FAIL (process_manager) ;
     ProcListDialog dialog (plugin_path (),
@@ -3110,6 +3129,10 @@ DBGPerspective::attach_to_program ()
 void
 DBGPerspective::attach_to_program (unsigned int a_pid)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    LOG_DD ("a_pid: " << (int) a_pid) ;
+
     if (a_pid == (unsigned int) getpid ()) {
         ui_utils::display_warning ("You can not attach to nemiver itself") ;
         return ;
@@ -3250,7 +3273,8 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
 }
 
 void
-DBGPerspective::append_breakpoints (const map<int, IDebugger::BreakPoint> &a_breaks)
+DBGPerspective::append_breakpoints
+                        (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -3279,10 +3303,14 @@ DBGPerspective::append_breakpoints (const map<int, IDebugger::BreakPoint> &a_bre
             } else if (!find_file_in_source_dirs (file_name, file_path)) {
                 LOG_DD ("didn't find file neither in opened file "
                         " nor in source dirs:") ;
-                //TODO: display a dialog that lets the user select the
-                //path to the source file.
                 ui_utils::display_error (_("Could not find file: ")
-                                         +iter->second.file_name ()) ;
+                                         +iter->second.file_name ()
+                                         + "\n"
+                                         + _("Please, consider setting "
+                                             "the source files "
+                                             "search directories"
+                                             "property, in the application "
+                                             "settings")) ;
             }
         }
         LOG_DD ("record breakpoint " << file_path << ":"
@@ -3358,6 +3386,11 @@ void
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    LOG_DD ("a_file_name: " << a_file_name) ;
+    LOG_DD ("a_linenum: " << (int)a_linenum) ;
+
     if (a_linenum < 0) {a_linenum = 0;}
 
     SourceEditor *source_editor = get_source_editor_from_path (a_file_name) ;
@@ -3368,7 +3401,19 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
     if (!source_editor) {
         source_editor = get_source_editor_from_path (a_file_name, true) ;
     }
-    THROW_IF_FAIL (source_editor) ;
+    if (!source_editor) {
+            ui_utils::display_error (_("Could not find file: ")
+                                     +a_file_name
+                                     + "\n"
+                                     + _("Please, consider setting "
+                                         "the source files "
+                                         "search directories"
+                                         "property, in the application "
+                                         "settings")) ;
+        LOG_ERROR ("Could not find source editor for file: '"
+                   << a_file_name
+                   << "'") ;
+    }
     source_editor->set_visual_breakpoint_at_line (a_linenum) ;
 }
 

@@ -26,9 +26,14 @@ on_program_finished_signal ()
 }
 
 void
-on_command_done_signal (const UString &a_command)
+on_command_done_signal (const UString &a_command,
+                        const UString &a_cookie)
 {
-    std::cout << "command done: '" << a_command << "'\n" ;
+    std::cout << "command done: '"
+              << a_command
+              << "', cookie: '"
+              << a_cookie
+              << "'\n" ;
 }
 
 void

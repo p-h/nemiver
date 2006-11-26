@@ -156,15 +156,17 @@ struct CallStack::Priv {
         }
     }
 
-    void on_command_done_signal (const UString &a_command)
+    void on_command_done_signal (const UString &a_command,
+                                 const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
+        if (a_cookie == "") {}
+
         NEMIVER_TRY
 
-        if (a_command == "") {}
         if (in_set_cur_frame_trans
-            && !a_command.compare (0, 19, "-stack-select-frame")) {
+            && a_command == "select-frame") {
             in_set_cur_frame_trans = false ;
             frame_selected_signal.emit (cur_frame_index, cur_frame) ;
             LOG_DD ("sent the frame selected signal") ;

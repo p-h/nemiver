@@ -83,6 +83,7 @@ public:
                                   const UString &a_cwd,
                                   const vector<IDebugger::BreakPoint> &) = 0;
 
+    virtual void attach_to_program (unsigned int a_pid) = 0;
     virtual void load_core_file () = 0;
 
     virtual void load_core_file (const UString &a_prog_path,

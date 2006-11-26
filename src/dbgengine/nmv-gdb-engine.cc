@@ -68,6 +68,70 @@ using namespace nemiver::common ;
 namespace nemiver {
 
 
+/// \brief A container of the textual command sent to the debugger
+class Command {
+    UString m_name ;
+    UString m_value ;
+    UString m_tag0 ;
+    UString m_tag1 ;
+    UString m_cookie ;
+
+public:
+
+    Command ()  {clear ();}
+
+    /// \param a_value a textual command to send to the debugger.
+    Command (const UString &a_value) :
+        m_value (a_value)
+    {
+    }
+
+    Command (const UString &a_name, const UString &a_value) :
+        m_name (a_name),
+        m_value (a_value)
+    {
+    }
+
+    Command (const UString &a_name,
+             const UString &a_value,
+             const UString &a_cookie) :
+        m_name (a_name),
+        m_value (a_value),
+        m_cookie (a_cookie)
+    {
+    }
+
+    /// \name accesors
+
+    /// @{
+
+    const UString& name () const {return m_name;}
+    void name (const UString &a_in) {m_name = a_in;}
+
+    const UString& value () const {return m_value;}
+    void value (const UString &a_in) {m_value = a_in;}
+
+    const UString& cookie () const {return m_cookie;}
+    void cookie (const UString &a_in) {m_cookie = a_in;}
+
+    const UString& tag0 () const {return m_tag0;}
+    void tag0 (const UString &a_in) {m_tag0 = a_in;}
+
+    const UString& tag1 () const {return m_tag1;}
+    void tag1 (const UString &a_in) {m_tag1 = a_in;}
+
+    /// @}
+
+    void clear ()
+    {
+        m_name.clear () ;
+        m_value.clear ();
+        m_tag0.clear ();
+        m_tag1.clear ();
+    }
+
+};//end class Command
+
 /// \brief the output received from the debugger.
 ///
 /// This is tightly modeled after the interface exposed
@@ -495,16 +559,16 @@ public:
     }
 };//end class Output
 
-/// A container of the IDebugger::Command sent to the debugger
+/// A container of the Command sent to the debugger
 /// and the output it sent back.
 class CommandAndOutput {
     bool m_has_command ;
-    IDebugger::Command m_command ;
+    Command m_command ;
     Output m_output ;
 
 public:
 
-    CommandAndOutput (const IDebugger::Command &a_command,
+    CommandAndOutput (const Command &a_command,
                       const Output &a_output) :
         m_has_command (true),
         m_command (a_command),
@@ -523,9 +587,9 @@ public:
     bool has_command () const {return m_has_command ;}
     void has_command (bool a_in) {m_has_command = a_in;}
 
-    const IDebugger::Command& command () const {return m_command;}
-    IDebugger::Command& command () {return m_command;}
-    void command (const IDebugger::Command &a_in)
+    const Command& command () const {return m_command;}
+    Command& command () {return m_command;}
+    void command (const Command &a_in)
     {
         m_command = a_in; has_command (true);
     }
@@ -934,7 +998,8 @@ public:
 
     sigc::signal<void, const UString&>& log_message_signal () const ;
 
-    sigc::signal<void, const UString&>& command_done_signal () const ;
+    sigc::signal<void, const UString&, const UString&>&
+                                        command_done_signal () const ;
 
     sigc::signal<void, const map<int, IDebugger::BreakPoint>& >&
                                                 breakpoints_set_signal () const ;
@@ -1001,20 +1066,17 @@ public:
     map<UString, UString>& properties () ;
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
-    bool stop (bool a_run_event_loops=false)  ;
-    void execute_command (const IDebugger::Command &a_command) ;
-    bool queue_command (const IDebugger::Command &a_command,
-                        bool a_run_event_loops=false) ;
+    bool stop ()  ;
+    void execute_command (const Command &a_command) ;
+    bool queue_command (const Command &a_command) ;
     bool busy () const ;
 
     void load_program (const vector<UString> &a_argv,
                        const vector<UString> &a_source_search_dirs,
-                       const UString &a_tty_path,
-                       bool a_run_event_loops) ;
+                       const UString &a_tty_path) ;
 
     void load_core_file (const UString &a_prog_file,
-                         const UString &a_core_path,
-                         bool a_run_event_loop);
+                         const UString &a_core_path);
 
     bool attach_to_program (unsigned int a_pid,
                             const UString &a_tty_path) ;
@@ -1029,75 +1091,75 @@ public:
 
     void append_breakpoints_to_cache (const map<int, IDebugger::BreakPoint>&) ;
 
-    void do_continue (bool a_run_event_loops) ;
+    void do_continue (const UString &a_cookie) ;
 
-    void run (bool a_run_event_loops)  ;
+    void run (const UString &a_cookie)  ;
 
-    void get_target_info (bool a_run_event_loops) ;
+    void get_target_info (const UString &a_cookie) ;
 
-    void step_in (bool a_run_event_loops) ;
+    void step_in (const UString &a_cookie) ;
 
-    void step_out (bool a_run_event_loops) ;
+    void step_out (const UString &a_cookie) ;
 
-    void step_over (bool a_run_event_loops) ;
+    void step_over (const UString &a_cookie) ;
 
     void continue_to_position (const UString &a_path,
                                gint a_line_num,
-                               bool a_run_event_loops)  ;
+                               const UString &a_cookie)  ;
 
     void set_breakpoint (const UString &a_path,
                          gint a_line_num,
-                         bool a_run_event_loops)  ;
+                         const UString &a_cookie)  ;
 
-    void list_breakpoints (bool a_run_event_loops) ;
+    void list_breakpoints (const UString &a_cookie) ;
 
     map<int, IDebugger::BreakPoint>& get_cached_breakpoints () ;
 
     void set_breakpoint (const UString &a_func_name,
-                         bool a_run_event_loops)  ;
+                         const UString &a_cookie)  ;
 
     void enable_breakpoint (const UString &a_path,
                             gint a_line_num,
-                            bool a_run_event_loops) ;
+                            const UString &a_cookie) ;
 
     void disable_breakpoint (const UString &a_path,
                              gint a_line_num,
-                             bool a_run_event_loops) ;
+                             const UString &a_cookie) ;
 
     void delete_breakpoint (const UString &a_path,
                             gint a_line_num,
-                            bool a_run_event_loops) ;
+                            const UString &a_cookie) ;
 
-    void list_threads (bool a_run_event_loops) ;
+    void list_threads (const UString &a_cookie) ;
 
     void select_thread (unsigned int a_thread_id,
-                        bool a_run_event_loops) ;
+                        const UString &a_cookie) ;
 
     void delete_breakpoint (gint a_break_num,
-                            bool a_run_event_loops) ;
+                            const UString &a_cookie) ;
 
     void select_frame (int a_frame_id,
-                       bool a_run_event_loops) ;
+                       const UString &a_cookie) ;
 
-    void list_frames (bool a_run_event_loops) ;
+    void list_frames (const UString &a_cookie) ;
 
     void list_frames_arguments (int a_low_frame,
                                 int a_high_frame,
-                                bool a_run_event_loops) ;
+                                const UString &a_cookie) ;
 
-    void list_local_variables (bool a_run_event_loops) ;
+    void list_local_variables (const UString &a_cookie) ;
 
     void evaluate_expression (const UString &a_expr,
-                              bool a_run_event_loops) ;
+                              const UString &a_cookie) ;
 
     void print_variable_value (const UString &a_var_name,
-                              bool a_run_event_loops) ;
+                              const UString &a_cookie) ;
 
     void print_pointed_variable_value (const UString &a_var_name,
-                                       bool a_run_event_loops) ;
+                                       const UString &a_cookie) ;
 
     void print_variable_type (const UString &a_var_name,
-                              bool a_run_event_loops) ;
+                              const UString &a_cookie) ;
 
     bool extract_proc_info (Output &a_output,
                             int &a_proc_pid,
@@ -1143,9 +1205,9 @@ struct GDBEngine::Priv {
     Glib::RefPtr<Glib::IOChannel> master_pty_channel;
     UString gdb_stdout_buffer ;
     UString gdb_stderr_buffer;
-    list<IDebugger::Command> command_queue ;
-    list<IDebugger::Command> queued_commands ;
-    list<IDebugger::Command> started_commands ;
+    list<Command> command_queue ;
+    list<Command> queued_commands ;
+    list<Command> started_commands ;
     map<int, IDebugger::BreakPoint> cached_breakpoints;
     Sequence command_sequence ;
     enum InBufferStatus {
@@ -1173,7 +1235,8 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, const UString&> log_message_signal ;
 
-    mutable sigc::signal<void, const UString&> command_done_signal ;
+    mutable sigc::signal<void, const UString&, const UString&>
+                                                        command_done_signal ;
 
     mutable sigc::signal<void, const map<int, IDebugger::BreakPoint>&>
                                                     breakpoints_set_signal;
@@ -1292,7 +1355,7 @@ struct GDBEngine::Priv {
 
             //parsing GDB/MI output succeeded.
             //Check if the output contains the result to a command issued by
-            //the user. If yes, build the IDebugger::CommandAndResult, update the
+            //the user. If yes, build the CommandAndResult, update the
             //command queue and notify the user that the command it issued
             //has a result.
             //
@@ -1521,7 +1584,7 @@ struct GDBEngine::Priv {
         return launch_gdb_real (argv) ;
     }
 
-    bool issue_command (const IDebugger::Command &a_command,
+    bool issue_command (const Command &a_command,
                         bool a_run_event_loops=false)
     {
         if (!master_pty_channel) {
@@ -3853,6 +3916,8 @@ struct OnStreamRecordHandler: OutputHandler{
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (m_engine) ;
 
         list<Output::OutOfBandRecord>::const_iterator iter ;
@@ -3917,6 +3982,8 @@ struct OnBreakPointHandler: OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (m_engine) ;
 
         bool has_breaks=false ;
@@ -3993,6 +4060,8 @@ struct OnStoppedHandler: OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (m_is_stopped && m_engine) ;
         if (a_in.has_command ()) {}
 
@@ -4038,6 +4107,8 @@ struct OnThreadListHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (m_engine) ;
         m_engine->threads_listed_signal ().emit
             (a_in.output ().result_record ().thread_list ()) ;
@@ -4063,6 +4134,8 @@ struct OnThreadSelectedHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (m_engine) ;
         m_engine->thread_selected_signal ().emit
             (a_in.output ().result_record ().thread_id (),
@@ -4090,7 +4163,10 @@ struct OnCommandDoneHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
-        m_engine->command_done_signal ().emit (a_in.command ().value ()) ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        m_engine->command_done_signal ().emit (a_in.command ().name (),
+                                               a_in.command ().cookie ()) ;
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnCommandDoneHandler
@@ -4115,6 +4191,7 @@ struct OnRunningHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         if (a_in.has_command ()) {}
         m_engine->running_signal ().emit () ;
     }
@@ -4142,6 +4219,7 @@ struct OnFramesListedHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         m_engine->frames_listed_signal ().emit
             (a_in.output ().result_record ().call_stack ()) ;
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
@@ -4170,6 +4248,8 @@ struct OnFramesParamsListedHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         m_engine->frames_params_listed_signal ().emit
             (a_in.output ().result_record ().frames_parameters ()) ;
         m_engine->state_changed_signal ().emit (IDebugger::READY) ;
@@ -4199,6 +4279,7 @@ struct OnInfoProcHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (m_engine) ;
 
         int pid=0 ; UString exe_path ;
@@ -4234,6 +4315,7 @@ struct OnLocalVariablesListedHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (m_engine) ;
 
         m_engine->local_variables_listed_signal ().emit
@@ -4266,6 +4348,7 @@ struct OnVariableValueHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (m_engine) ;
 
         UString var_name = a_in.command ().tag1 () ;
@@ -4328,6 +4411,8 @@ struct OnVariableTypeHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (m_engine) ;
         UString var_name = a_in.command ().tag1 () ;
         if (var_name == "") {return;}
@@ -4404,6 +4489,8 @@ struct OnSignalReceivedHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         if (a_in.has_command ()) {}
         THROW_IF_FAIL (m_engine) ;
         m_engine->signal_received_signal ().emit (oo_record.signal_type (),
@@ -4433,6 +4520,8 @@ struct OnErrorHandler : OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         THROW_IF_FAIL (m_engine) ;
         m_engine->error_signal ().emit
             (a_in.output ().result_record ().attrs ()["msg"]) ;
@@ -4461,8 +4550,7 @@ GDBEngine::~GDBEngine ()
 void
 GDBEngine::load_program (const vector<UString> &a_argv,
                          const vector<UString> &a_source_search_dirs,
-                         const UString &a_tty_path,
-                         bool a_run_event_loops)
+                         const UString &a_tty_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
@@ -4473,7 +4561,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         THROW_IF_FAIL (m_priv->launch_gdb_and_set_args
                                     (a_source_search_dirs, a_argv, gdb_opts));
 
-        IDebugger::Command command ;
+        Command command ;
 
         queue_command (Command ("set breakpoint pending auto")) ;
         queue_command (Command ("set inferior-tty " + a_tty_path)) ;
@@ -4484,23 +4572,21 @@ GDBEngine::load_program (const vector<UString> &a_argv,
             args += " " + a_argv[i] ;
         }
 
-        IDebugger::Command command
+        Command command
                         (UString ("-file-exec-and-symbols ") + a_argv[0]) ;
         queue_command (command) ;
 
         command.value ("set args " + args) ;
-        queue_command (command, a_run_event_loops) ;
+        queue_command (command) ;
         queue_command (Command ("set inferior-tty " + a_tty_path)) ;
     }
 }
 
 void
 GDBEngine::load_core_file (const UString &a_prog_path,
-                           const UString &a_core_path,
-                           bool a_run_event_loop)
+                           const UString &a_core_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_run_event_loop) {}
     THROW_IF_FAIL (m_priv) ;
     if (m_priv->is_gdb_running ()) {
         m_priv->kill_gdb () ;
@@ -4523,14 +4609,15 @@ GDBEngine::attach_to_program (unsigned int a_pid,
         vector<UString> gdb_opts ;
         THROW_IF_FAIL (m_priv->launch_gdb (source_search_dirs, gdb_opts)) ;
 
-        IDebugger::Command command ;
+        Command command ;
         command.value ("set breakpoint pending auto") ;
         queue_command (command) ;
     }
     if (a_pid == (unsigned int)m_priv->gdb_pid) {
         return false ;
     }
-    queue_command (Command ("attach " + UString::from_int (a_pid))) ;
+    queue_command (Command ("attach-to-program",
+                            "attach " + UString::from_int (a_pid))) ;
     queue_command (Command ("info proc")) ;
     if (a_tty_path != "") {
         queue_command (Command ("tty " + a_tty_path)) ;
@@ -4663,7 +4750,7 @@ GDBEngine::log_message_signal () const
     return m_priv->log_message_signal ;
 }
 
-sigc::signal<void, const UString&>&
+sigc::signal<void, const UString&, const UString&>&
 GDBEngine::command_done_signal () const
 {
     return m_priv->command_done_signal ;
@@ -4837,8 +4924,7 @@ GDBEngine::properties ()
 }
 
 void
-GDBEngine::set_event_loop_context
-(const Glib::RefPtr<Glib::MainContext> &a_ctxt)
+GDBEngine::set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &a_ctxt)
 {
     m_priv->set_event_loop_context (a_ctxt) ;
 }
@@ -4852,15 +4938,14 @@ GDBEngine::run_loop_iterations (int a_nb_iters)
 
 
 void
-GDBEngine::execute_command (const IDebugger::Command &a_command)
+GDBEngine::execute_command (const Command &a_command)
 {
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
     queue_command (a_command) ;
 }
 
 bool
-GDBEngine::queue_command (const IDebugger::Command &a_command,
-                          bool a_run_event_loops)
+GDBEngine::queue_command (const Command &a_command)
 {
     bool result (false) ;
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
@@ -4868,7 +4953,7 @@ GDBEngine::queue_command (const IDebugger::Command &a_command,
     m_priv->queued_commands.push_back (a_command) ;
     if (m_priv->started_commands.empty ()) {
         result = m_priv->issue_command (*m_priv->queued_commands.begin (),
-                                        a_run_event_loops) ;
+                                        false) ;
         m_priv->queued_commands.erase (m_priv->queued_commands.begin ()) ;
     }
     return result ;
@@ -4882,33 +4967,32 @@ GDBEngine::busy () const
 
 
 void
-GDBEngine::do_continue (bool a_run_event_loops)
+GDBEngine::do_continue (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-continue"), a_run_event_loops) ;
+    queue_command (Command ("do-continue", "-exec-continue", a_cookie)) ;
 }
 
 void
-GDBEngine::run (bool a_run_event_loops)
+GDBEngine::run (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-run"), a_run_event_loops) ;
+    queue_command (Command ("run", "-exec-run", a_cookie)) ;
 }
 
 void
-GDBEngine::get_target_info (bool a_run_event_loops)
+GDBEngine::get_target_info (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("info proc"), a_run_event_loops) ;
+    queue_command (Command ("get-target-info", "info proc", a_cookie)) ;
 }
 
 bool
-GDBEngine::stop (bool a_run_event_loops)
+GDBEngine::stop ()
 {
-    if (a_run_event_loops) {}
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->is_gdb_running ()) {
@@ -4924,47 +5008,47 @@ GDBEngine::stop (bool a_run_event_loops)
 }
 
 void
-GDBEngine::step_in (bool a_run_event_loops)
+GDBEngine::step_in (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-step"), a_run_event_loops) ;
+    queue_command (Command ("step-in", "-exec-step", a_cookie)) ;
 }
 
 void
-GDBEngine::step_out (bool a_run_event_loops)
+GDBEngine::step_out (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-finish"), a_run_event_loops) ;
+    queue_command (Command ("step-out", "-exec-finish", a_cookie)) ;
 }
 
 void
-GDBEngine::step_over (bool a_run_event_loops)
+GDBEngine::step_over (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-next"), a_run_event_loops) ;
+    queue_command (Command ("step-over", "-exec-next", a_cookie)) ;
 }
 
 void
 GDBEngine::continue_to_position (const UString &a_path,
                                  gint a_line_num,
-                                 bool a_run_event_loops)
+                                 const UString &a_cookie)
 {
-    if (a_run_event_loops) {}
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-exec-until "
-                + a_path
-                + ":"
-                + UString::from_int (a_line_num))) ;
+    queue_command (Command ("continue-to-position", "-exec-until "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num),
+                            a_cookie)) ;
 }
 
 void
 GDBEngine::set_breakpoint (const UString &a_path,
                            gint a_line_num,
-                           bool a_run_event_loops)
+                           const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
@@ -4974,19 +5058,20 @@ GDBEngine::set_breakpoint (const UString &a_path,
     //read http://sourceware.org/gdb/current/onlinedocs/gdb_6.html#SEC33
     //Also, we don't neet to explicitely 'set breakpoint pending' to have it
     //work. Even worse, setting it doesn't work.
-    queue_command (Command ("break "
+    queue_command (Command ("set-breakpoint", "break "
                     + a_path
                     + ":"
-                    + UString::from_int (a_line_num))) ;
-    queue_command (Command ("-break-list "), a_run_event_loops) ;
+                    + UString::from_int (a_line_num),
+                    a_cookie)) ;
+    list_breakpoints (a_cookie) ;
 }
 
 void
-GDBEngine::list_breakpoints (bool a_run_event_loops)
+GDBEngine::list_breakpoints (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-break-list"), a_run_event_loops) ;
+    queue_command (Command ("list-breakpoint", "-break-list", a_cookie)) ;
 }
 
 map<int, IDebugger::BreakPoint>&
@@ -5008,129 +5093,146 @@ GDBEngine::append_breakpoints_to_cache
 
 void
 GDBEngine::set_breakpoint (const UString &a_func_name,
-                           bool a_run_event_loops)
+                           const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-break-insert " + a_func_name), a_run_event_loops) ;
+    queue_command (Command ("set-breakpoint",
+                            "-break-insert " + a_func_name,
+                            a_cookie)) ;
 }
 
 void
 GDBEngine::enable_breakpoint (const UString &a_path,
                               gint a_line_num,
-                              bool a_run_event_loops)
+                              const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_path == "" || a_line_num || a_run_event_loops) {}
+    if (a_path == "" || a_line_num || a_cookie.size ()) {}
     //TODO: code this
 }
 
 void
 GDBEngine::disable_breakpoint (const UString &a_path,
                                gint a_line_num,
-                               bool a_run_event_loops)
+                               const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_path == "" || a_line_num || a_run_event_loops) {}
+    if (a_path == "" || a_line_num || a_cookie.size ()) {}
     //TODO: code this
 }
 
 void
-GDBEngine::list_threads (bool a_run_event_loops)
+GDBEngine::list_threads (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("-thread-list-ids"), a_run_event_loops) ;
+    queue_command (Command ("list-threads", "-thread-list-ids", a_cookie)) ;
 }
 
 void
 GDBEngine::select_thread (unsigned int a_thread_id,
-                          bool a_run_event_loops)
+                          const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (a_thread_id) ;
-    queue_command (Command ("-thread-select " + UString::from_int (a_thread_id)),
-                   a_run_event_loops) ;
+    queue_command (Command ("select-thread", "-thread-select "
+                            + UString::from_int (a_thread_id),
+                            a_cookie));
 }
 
 void
 GDBEngine::delete_breakpoint (const UString &a_path,
                               gint a_line_num,
-                              bool a_run_event_loops)
+                              const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    queue_command (Command ("-break-delete "
-                + a_path
-                + ":"
-                + UString::from_int (a_line_num)), a_run_event_loops) ;
+    queue_command (Command ("delete-breakpoint",
+                            "-break-delete "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num),
+                            a_cookie)) ;
 }
 
 void
-GDBEngine::delete_breakpoint (gint a_break_num, bool a_run_event_loops)
+GDBEngine::delete_breakpoint (gint a_break_num,
+                              const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    queue_command (Command ("-break-delete "
-                + UString::from_int (a_break_num)), a_run_event_loops) ;
+    queue_command (Command ("delete-breakpoint",
+                            "-break-delete " + UString::from_int (a_break_num),
+                            a_cookie)) ;
 }
 
 void
-GDBEngine::list_frames (bool a_run_event_loops)
+GDBEngine::list_frames (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    queue_command (Command ("-stack-list-frames" ), a_run_event_loops) ;
+    queue_command (Command ("list-frames",
+                            "-stack-list-frames",
+                            a_cookie)) ;
 }
 
 void
 GDBEngine::select_frame (int a_frame_id,
-                         bool a_run_event_loops)
+                         const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    queue_command (Command ("-stack-select-frame "
-                            + UString::from_int (a_frame_id) ),
-                   a_run_event_loops) ;
+    queue_command (Command ("select-frame",
+                            "-stack-select-frame "
+                                    + UString::from_int (a_frame_id),
+                            a_cookie)) ;
 }
 
 void
 GDBEngine::list_frames_arguments (int a_low_frame,
                                   int a_high_frame,
-                                  bool a_run_event_loops)
+                                  const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_low_frame < 0 || a_high_frame < 0) {
-        queue_command (Command ("-stack-list-arguments 1" ), a_run_event_loops) ;
+        queue_command (Command ("list-frames-arguments",
+                                "-stack-list-arguments 1",
+                                a_cookie)) ;
     } else {
-        queue_command (Command ("-stack-list-arguments 1 "
-                                + UString::from_int (a_low_frame)
-                                + " "
-                                + UString::from_int (a_high_frame)),
-                       a_run_event_loops) ;
+        queue_command (Command ("list-frames-arguments",
+                                "-stack-list-arguments 1 "
+                                    + UString::from_int (a_low_frame)
+                                    + " "
+                                    + UString::from_int (a_high_frame),
+                                    a_cookie)) ;
     }
 }
 
 void
-GDBEngine::list_local_variables (bool a_run_event_loops)
+GDBEngine::list_local_variables (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    Command command ("-stack-list-locals 2") ;
-    queue_command (command, a_run_event_loops) ;
+    Command command ("list-local-variables",
+                     "-stack-list-locals 2",
+                     a_cookie) ;
+    queue_command (command) ;
 }
 
 void
 GDBEngine::evaluate_expression (const UString &a_expr,
-                                bool a_run_event_loops)
+                                const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_expr == "") {return;}
 
-    Command command ("-data-evaluate-expression " + a_expr) ;
+    Command command ("evaluate-expression",
+                     "-data-evaluate-expression " + a_expr,
+                     a_cookie) ;
     command.tag0 ("evaluate-expression") ;
-    queue_command (command, a_run_event_loops) ;
+    queue_command (command) ;
 }
 
 void
 GDBEngine::print_variable_value (const UString &a_var_name,
-                                 bool a_run_event_loops)
+                                 const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_var_name == "") {
@@ -5138,16 +5240,18 @@ GDBEngine::print_variable_value (const UString &a_var_name,
         return;
     }
 
-    Command command ("-data-evaluate-expression " + a_var_name) ;
+    Command command ("print-variable-value",
+                     "-data-evaluate-expression " + a_var_name,
+                     a_cookie) ;
     command.tag0 ("print-variable-value") ;
     command.tag1 (a_var_name) ;
 
-    queue_command (command, a_run_event_loops) ;
+    queue_command (command) ;
 }
 
 void
 GDBEngine::print_pointed_variable_value (const UString &a_var_name,
-                                         bool a_run_event_loops)
+                                         const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
     if (a_var_name == "") {
@@ -5155,25 +5259,29 @@ GDBEngine::print_pointed_variable_value (const UString &a_var_name,
         return ;
     }
 
-    Command command ("-data-evaluate-expression *" + a_var_name) ;
+    Command command ("print-pointed-variable",
+                     "-data-evaluate-expression *" + a_var_name,
+                     a_cookie) ;
     command.tag0 ("print-pointed-variable-value") ;
     command.tag1 (a_var_name) ;
 
-    queue_command (command, a_run_event_loops) ;
+    queue_command (command) ;
 }
 
 void
 GDBEngine::print_variable_type (const UString &a_var_name,
-                                bool a_run_event_loops)
+                                const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_var_name == "") {return;}
 
-    Command command ("ptype " + a_var_name) ;
+    Command command ("print-variable-type",
+                     "ptype " + a_var_name,
+                     a_cookie) ;
     command.tag0 ("print-variable-type") ;
     command.tag1 (a_var_name) ;
 
-    queue_command (command, a_run_event_loops) ;
+    queue_command (command) ;
 }
 
 /// Extracts proc info from the out of band records

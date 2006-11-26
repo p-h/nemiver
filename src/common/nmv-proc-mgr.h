@@ -40,12 +40,13 @@ using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
 using nemiver::common::SafePtr ;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+NEMIVER_BEGIN_NAMESPACE (common)
 
 class IProcMgr ;
 typedef SafePtr<IProcMgr, ObjectRef, ObjectUnref> IProcMgrSafePtr ;
 
-class IProcMgr : public Object {
+class NEMIVER_API IProcMgr : public Object {
     //non copyable
     IProcMgr (const IProcMgr &) ;
     IProcMgr& operator= (const IProcMgr &) ;
@@ -105,15 +106,32 @@ public:
         const list<UString>& args () const {return m_args;}
         list<UString>& args () {return m_args;}
         void args (const list<UString> &a_in) {m_args = a_in;}
+
+        bool operator== (const Process &an_other)
+        {
+            if (pid () == an_other.pid ()
+                && ppid () == an_other.ppid ()
+                && uid () == an_other.uid ()
+                && euid () == an_other.euid ()) {
+                return true ;
+            }
+            return false ;
+        }
     };//end class Process
 
     virtual ~IProcMgr () {}
     static IProcMgrSafePtr create () ;
-
-    virtual list<Process>& get_all_process_list () = 0 ;
+    virtual const list<Process>& get_all_process_list () const = 0;
+    virtual bool get_process_from_pid (unsigned int a_pid,
+                                       Process &a_process) const = 0;
+    virtual bool get_process_from_name
+                                    (const UString &a_pname,
+                                     Process &a_process,
+                                     bool a_fuzzy_search=false) const = 0;
 };//end IProcMgr
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (common)
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_PROC_MGR_H__
 

@@ -65,44 +65,6 @@ protected:
 
 public:
 
-    /// \brief A container of the textual command sent to the debugger
-    class Command {
-        UString m_value ;
-        UString m_tag0 ;
-        UString m_tag1 ;
-
-    public:
-
-        Command ()  {clear ();}
-
-        /// \param a_value a textual command to send to the debugger.
-        Command (const string &a_value) :
-            m_value (a_value)
-        {}
-
-        /// \name accesors
-
-        /// @{
-
-        const UString& value () const {return m_value;}
-        void value (const UString &a_in) {m_value = a_in;}
-
-        const UString& tag0 () const {return m_tag0;}
-        void tag0 (const UString &a_in) {m_tag0 = a_in;}
-
-        const UString& tag1 () const {return m_tag1;}
-        void tag1 (const UString &a_in) {m_tag1 = a_in;}
-
-        /// @}
-
-        void clear ()
-        {
-            m_tag0 = "" ;
-            m_tag1 = "" ;
-            m_value = "" ;
-        }
-
-    };//end class Command
 
     /// \brief a breakpoint descriptor
     class BreakPoint {
@@ -354,7 +316,10 @@ public:
 
     virtual sigc::signal<void, const UString&>& log_message_signal () const = 0 ;
 
-    virtual sigc::signal<void, const UString&>& command_done_signal () const = 0;
+    virtual sigc::signal<void,
+                         const UString&/*command name*/,
+                         const UString&/*command cookie*/>&
+                                                 command_done_signal () const = 0;
 
     virtual sigc::signal<void, const IDebugger::BreakPoint&, int>&
                                          breakpoint_deleted_signal () const  = 0;
@@ -434,22 +399,21 @@ public:
 
     virtual void run_loop_iterations (int a_nb_iters) = 0;
 
+    /*
     virtual void execute_command (const Command &a_command) = 0;
 
-    virtual bool queue_command (const Command &a_command,
-                                bool a_run_event_loop=false) = 0;
+    virtual bool queue_command (const Command &a_command) = 0;
+    */
 
     virtual bool busy () const = 0;
 
     virtual void load_program
                 (const vector<UString> &a_argv,
                  const vector<UString> &a_source_search_dirs,
-                 const UString &a_tty_path="",
-                 bool a_run_event_loops=false) = 0;
+                 const UString &a_tty_path="") = 0;
 
     virtual void load_core_file (const UString &a_prog_file,
-                                 const UString &a_core_file,
-                                 bool a_run_event_loop=false) = 0;
+                                 const UString &a_core_file) = 0;
 
     virtual bool attach_to_program (unsigned int a_pid,
                                     const UString &a_tty_path="") = 0;
@@ -460,75 +424,75 @@ public:
 
     virtual const UString& get_target_path () = 0 ;
 
-    virtual void do_continue (bool a_run_event_loops=false) = 0;
+    virtual void do_continue (const UString &a_cookie="") = 0;
 
-    virtual void run (bool a_run_event_loops=false) = 0 ;
+    virtual void run (const UString &a_cookie="") = 0 ;
 
-    virtual void get_target_info (bool a_run_event_loops=false) = 0 ;
+    virtual void get_target_info (const UString &a_cookie="") = 0 ;
 
-    virtual bool stop (bool a_run_event_loops=false) = 0 ;
+    virtual bool stop () = 0 ;
 
-    virtual void step_in (bool a_run_event_loops=false) = 0;
+    virtual void step_in (const UString &a_cookie="") = 0;
 
-    virtual void step_over (bool a_run_event_loops=false) = 0;
+    virtual void step_over (const UString &a_cookie="") = 0;
 
-    virtual void step_out (bool a_run_event_loops=false) = 0;
+    virtual void step_out (const UString &a_cookie="") = 0;
 
     virtual void continue_to_position (const UString &a_path,
                                        gint a_line_num,
-                                       bool a_run_event_loops=false ) = 0 ;
+                                       const UString &a_cookie="") = 0 ;
     virtual void set_breakpoint (const UString &a_path,
                                  gint a_line_num,
-                                 bool a_run_event_loops=false) = 0 ;
+                                 const UString &a_cookie="") = 0 ;
     virtual void set_breakpoint (const UString &a_func_name,
-                                 bool a_run_event_loops=false) = 0 ;
+                                 const UString &a_cookie="") = 0 ;
 
-    virtual void list_breakpoints (bool a_run_event_loops=false) = 0 ;
+    virtual void list_breakpoints (const UString &a_cookie="") = 0 ;
 
     virtual const map<int, BreakPoint>& get_cached_breakpoints () = 0 ;
 
     virtual void enable_breakpoint (const UString &a_path,
                                     gint a_line_num,
-                                    bool a_run_event_loops=false) = 0;
+                                    const UString &a_cookie="") = 0;
 
     virtual void disable_breakpoint (const UString &a_path,
                                      gint a_line_num,
-                                     bool a_run_event_loops=false) = 0;
+                                     const UString &a_cookie="") = 0;
 
     virtual void delete_breakpoint (const UString &a_path,
                                     gint a_line_num,
-                                    bool a_run_event_loops=false) = 0;
+                                    const UString &a_cookie="") = 0;
 
     virtual void delete_breakpoint (gint a_break_num,
-                                    bool a_run_event_loops=false) = 0;
+                                    const UString &a_cookie="") = 0;
 
-    virtual void list_threads (bool a_run_event_loops=false) = 0 ;
+    virtual void list_threads (const UString &a_cookie="") = 0 ;
 
     virtual void select_thread (unsigned int a_thread_id,
-                                bool a_run_event_loops=false) = 0;
+                                const UString &a_cookie="") = 0;
 
     virtual void select_frame (int a_frame_id,
-                               bool a_run_event_loops=false) = 0;
+                               const UString &a_cookie="") = 0;
 
-    virtual void list_frames (bool a_run_event_loops=false) = 0;
+    virtual void list_frames (const UString &a_cookie="") = 0;
 
     virtual void list_frames_arguments (int a_low_frame=-1,
                                         int a_high_frame=-1,
-                                        bool a_run_event_loops=false) = 0;
+                                        const UString &a_cookie="") = 0;
 
-    virtual void list_local_variables (bool a_run_event_loops=false)  = 0;
+    virtual void list_local_variables (const UString &a_cookie="")  = 0;
 
     virtual void evaluate_expression (const UString &a_expr,
-                                      bool a_run_event_loops=false)  = 0;
+                                      const UString &a_cookie="")  = 0;
 
     virtual void print_variable_value (const UString &a_var_name,
-                                       bool a_run_event_loops=false)  = 0;
+                                       const UString &a_cookie="")  = 0;
 
     virtual void print_pointed_variable_value (const UString &a_var_name,
-                                               bool a_run_event_loops=false) = 0;
+                                               const UString &a_cookie="") = 0;
 
     virtual void print_variable_type (const UString &a_var_name,
-                                      bool a_run_event_loops=false) = 0;
+                                      const UString &a_cookie="") = 0;
 
 };//end IDebugger
 

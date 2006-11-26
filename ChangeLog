@@ -1,3 +1,50 @@
+Sun, 26 Nov 2006 18:13:14 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: 
+	  Remove the IDebugger::Command class from the public api. Make it
+	  hidden.
+	  Remove the "run_loop" argument from the IDebugger entry points.
+	  Add support for cookies here. A cookie is a string of text
+	  that can be "attached" to the command send to the underlying
+	  debugger engine. That cookie is latter sent back to the caller
+	  in the IDebugger::command_done_signal() so that she knows
+	  the command that got done was the one she previously
+	  attached the cookie to.
+	  Also, each command now gets a "name" that is different from
+	  the "gdb" command name. That way, clients can make tests against
+	  these command names in a portable (w.r.t underlying debugger
+	  engines) way.
+	* src/common/nmv-proc-mgr.h,cc: added
+	  Process::get_process_from_pid(),
+	  Process::get_process_from_name(). refactored
+	  ProcMgr::get_all_process_list to make it use
+	  Process::get_process_from_pid().
+	  Also, moved src/persp/dbgperspective/nmv-proc-mgr.cc,h into
+	  src/common
+	* src/main.cc: added the "nemiver --attach <foo>" option.
+	  foo can be either a pid, or a process name.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: after we attached
+	  to the target, do a little IDebugger::step_over() to make the
+	  perspective update the callstack, local variables etc.
+	  Display a user message to tell the user to try to update the
+	  source file search directories option when nemiver doesn't find
+	  a source file.
+	* src/persp/dbgperspective/menus/menus.xml: don't display the
+	  "ShowCommandMenu" anymore, because the IDebugger::execute_command()
+	  got removed from the public API. It was making the public api
+	  specific to gdb. I really need to code a symbolic interpreter on top
+	  of the IDebugger public api.
+	* src/persp/dbgperspective/nmv-proc-list-dialog.cc: double clicking
+	  on a row makes nemiver attach to the process.
+	* src/persp/dbgperspective/nmv-call-stack.cc: update this to comply
+	  with the IDebugger api changes.
+	* src/persp/dbgperspective/glade/bodycontainer.glade: give more space
+	  to the status notebook.
+	* tests/test-breakpoint.cc: update to comply with IDebugger api
+	  changes.
+	* configure.ac: bump version number to 0.2.0
+
+
 Fri, 24 Nov 2006 23:02:28 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:

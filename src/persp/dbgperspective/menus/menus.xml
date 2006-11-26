@@ -23,8 +23,8 @@
                       name="CurrentSessionPropertiesMenuItem"/>
         </menu>
         <menu action="ViewMenuAction" name="ViewMenu">
-            <menuitem action="ShowCommandsMenuAction"
-                      name="ShowCommandsMenuItem"/>
+            <!--<menuitem action="ShowCommandsMenuAction"
+                      name="ShowCommandsMenuItem"/> -->
             <menuitem action="ShowErrorsMenuAction"
                       name="ShowErrorsMenuItem"/>
             <menuitem action="ShowTargetOutputMenuAction"

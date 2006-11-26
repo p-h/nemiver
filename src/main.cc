@@ -30,6 +30,7 @@
 #include "nmv-initializer.h"
 #include "nmv-i-workbench.h"
 #include "nmv-ui-utils.h"
+#include "nmv-proc-mgr.h"
 #include "nmv-env.h"
 #include "nmv-dbg-perspective.h"
 #include "config.h"
@@ -44,6 +45,7 @@ using nemiver::common::UString ;
 using nemiver::ISessMgr ;
 
 static const UString DBGPERSPECTIVE_PLUGIN_NAME="dbgperspective" ;
+static gchar *gv_process_to_attach_to=0;
 static bool gv_list_sessions=false ;
 static bool gv_purge_sessions=false ;
 static int gv_execute_session=0;
@@ -52,6 +54,15 @@ static bool gv_log_debugger_output=false ;
 
 static GOptionEntry entries[] =
 {
+    {
+      "attach",
+      0,
+      0,
+      G_OPTION_ARG_STRING,
+      &gv_process_to_attach_to,
+      _("attach to a process"),
+      "<pid|process name>"
+    },
     { "listsessions",
       0,
       0,
@@ -165,10 +176,53 @@ main (int a_argc, char *a_argv[])
         }
     }
 
+    if (gv_process_to_attach_to) {
+        using nemiver::common::IProcMgrSafePtr ;
+        using nemiver::common::IProcMgr ;
+
+        IDBGPerspective *debug_persp =
+        dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+                                                    (DBGPERSPECTIVE_PLUGIN_NAME));
+        if (!debug_persp) {
+            cerr << "Could not get the debugging perspective" << endl ;
+            return -1 ;
+        }
+        int pid = atoi (gv_process_to_attach_to) ;
+        if (!pid) {
+            IProcMgrSafePtr proc_mgr = IProcMgr::create () ;
+            if (!proc_mgr) {
+                cerr << "Could not create proc mgr" << endl ;
+                return -1 ;
+            }
+            IProcMgr::Process process ;
+            if (!proc_mgr->get_process_from_name (gv_process_to_attach_to,
+                        process,
+                        true)) {
+                cerr << "Could not find any process named '"
+                << gv_process_to_attach_to
+                << "'"
+                << endl
+                ;
+                return -1 ;
+            }
+            pid = process.pid () ;
+        }
+        if (!pid) {
+            cerr << "Could not find any process '"
+                 << gv_process_to_attach_to
+                 << "'"
+                 << endl
+                 ;
+            return -1 ;
+        } else {
+            debug_persp->attach_to_program (pid) ;
+        }
+    }
+
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                    (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
             list<ISessMgr::Session>::iterator session_iter ;
@@ -193,7 +247,7 @@ main (int a_argc, char *a_argv[])
     if (gv_purge_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                    (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().delete_sessions () ;
         }
@@ -203,7 +257,7 @@ main (int a_argc, char *a_argv[])
     if (gv_execute_session) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (workbench->get_perspective
-                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                    (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
             list<ISessMgr::Session>::iterator session_iter ;

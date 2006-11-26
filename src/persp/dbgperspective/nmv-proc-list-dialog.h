@@ -34,6 +34,9 @@ namespace common {
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
+
+using nemiver::common::IProcMgr ;
+
 class ProcListDialog : public Dialog {
     class Priv ;
     SafePtr<Priv> m_priv ;

@@ -40,8 +40,6 @@ nmv-preferences-dialog.h \
 nmv-preferences-dialog.cc \
 nmv-sess-mgr.cc \
 nmv-sess-mgr.h \
-nmv-proc-mgr.cc \
-nmv-proc-mgr.h \
 nmv-proc-list-dialog.cc \
 nmv-proc-list-dialog.h \
 nmv-call-stack.cc \
