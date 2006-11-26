@@ -7,7 +7,8 @@ new features
     [Dodji Seketeli]
 
     * highlight the last changed variable (in the local variables tab)
-    * new variable inspector targeted at global variables.
+    * new variable inspector targeted at global variables
+    * added a --attach <pid|prog-nam> option
 
 bug fixes/improvements
 ======================
@@ -29,11 +30,11 @@ bug fixes/improvements
     * update local variables when selecting frames
     * fix gdbmi frame data parsing
     * better plugins lifetime management
+    * code cleanup and refactoring here and there
 
 translations
 =============
 [fr] updated.
-
 
 |||||||||||||||||||||||||||||||||||||||||||||||||
 

@@ -1,3 +1,8 @@
+Sun, 26 Nov 2006 19:13:43 +0100 Dodji Seketeli
+
+	* TODO, NEWS: updated both. Put the "search facility" item on top
+	  of the TODO.
+
 Sun, 26 Nov 2006 18:13:14 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: 

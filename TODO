@@ -1,21 +1,12 @@
 This is a random short term todo list. Items written here are subject to discussion.
 Feel free to ask on nemiver-list@gna.org about particular topics that you may be interested to take over.
 
-*) add an end user understandable error message when nemiver doesn't find a source file (e.g: during breakpoint setting workflows)
-   that message should suggest that user go add source directories to the source dirs search paths.
-
-*) add a nemiver --attach <pid|prog-name> switch to the command line.
-
-*) add a cookie parameter to the command methods of IDebugger so that api users
-   can know which command generated the IDebuger::command_done_signal() without having to know anything about
-   the string names of gdb commands.
+*) add a search facility to search text in the source editor,
+   also maybe add find in files.
 
 *) write a gdb command interpreter widget (prolly based on Gtk::TextView),
    using IDebugger. It should accept commands with the
    same syntax as the classical gdb syntax and call IDebugger in the background.
-
-*) add a search facility to search text in the source editor,
-   also maybe add find in files.
 
 *) Add a variable "Watch" widget so that the user can inspect the values of
     arbitrary variables
