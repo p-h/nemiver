@@ -3307,11 +3307,11 @@ DBGPerspective::append_breakpoints
                 ui_utils::display_error (_("Could not find file: ")
                                          +iter->second.file_name ()
                                          + "\n"
-                                         + _("Please, consider setting "
-                                             "the source files "
-                                             "search directories"
-                                             "property, in the application "
-                                             "settings")) ;
+                                         + _("Please consider adding "
+                                             "the location of this file "
+                                             "to the list of search directories "
+                                             "in the application "
+                                             "preferences")) ;
             }
         }
         LOG_DD ("record breakpoint " << file_path << ":"
@@ -3406,16 +3406,17 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
             ui_utils::display_error (_("Could not find file: ")
                                      +a_file_name
                                      + "\n"
-                                     + _("Please, consider setting "
-                                         "the source files "
-                                         "search directories"
-                                         "property, in the application "
-                                         "settings")) ;
+                                     + _("Please consider adding "
+                                         "the location of this file "
+                                         "to the list of search directories "
+                                         "in the application "
+                                         "preferences")) ;
         LOG_ERROR ("Could not find source editor for file: '"
                    << a_file_name
                    << "'") ;
+    } else {
+        source_editor->set_visual_breakpoint_at_line (a_linenum) ;
     }
-    source_editor->set_visual_breakpoint_at_line (a_linenum) ;
 }
 
 void

@@ -1,3 +1,9 @@
+2006-11-26  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: quick fix for a segfault
+	when gdb doesn't return full path information.  Also slightly re-worded the
+	popup dialog suggesting to add the file path to the preferences
+
 Sun, 26 Nov 2006 19:42:01 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::load_program():
