@@ -1,3 +1,16 @@
+Tue, 28 Nov 2006 23:52:58 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-var-inspector.cc: 
+	  make VarInspector::Priv inherit from sigc::trackable so that
+	  it gets disconnected from the treeview if it gets destroyed first.
+	  It seems that happens has someone reported a crash that makes me
+	  think about it.
+	  VarInspector::Priv::build_widget(): Share the ownership of the
+	  treeview with the container widget it is packed it.
+	  VarInspector::Priv::set_variale_type(): add an assert here.
+	  VarInspector::Priv::on_pointed_variable_value_signal(): solve an
+	  assert that was getting hit too much.
+
 Tue, 28 Nov 2006 08:04:17 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-load-core-dialog.cc:

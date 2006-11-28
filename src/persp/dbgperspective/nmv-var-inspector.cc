@@ -35,7 +35,7 @@ using namespace nemiver::variables_utils ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class VarInspector::Priv {
+class VarInspector::Priv : public sigc::trackable {
     friend class VarInspector ;
     Priv () ;
 
@@ -43,7 +43,8 @@ class VarInspector::Priv {
     bool requested_type ;
     IDebugger &debugger ;
     IDebugger::VariableSafePtr variable ;
-    SafePtr<Gtk::TreeView> tree_view ;
+    typedef SafePtr<Gtk::TreeView, WidgetRef, WidgetUnref> TreeViewSafePtr ;
+    TreeViewSafePtr tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeModel::iterator var_row_it ;
     Gtk::TreeModel::iterator cur_selected_row;
@@ -52,7 +53,7 @@ class VarInspector::Priv {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         tree_store = Gtk::TreeStore::create (get_variable_columns ()) ;
-        tree_view.reset (new Gtk::TreeView (tree_store)) ;
+        tree_view.reset (Gtk::manage (new Gtk::TreeView (tree_store)), true) ;
         tree_view->set_headers_clickable (true) ;
         Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
         THROW_IF_FAIL (sel) ;
@@ -121,6 +122,7 @@ class VarInspector::Priv {
                            debugger, false, false,
                            var_row_it) ;
 
+        THROW_IF_FAIL (var_row_it) ;
         requested_type = true ;
         debugger.print_variable_type (a_variable->name ()) ;
     }
@@ -301,7 +303,9 @@ class VarInspector::Priv {
         LOG_DD ("a_var_name: '" << a_var_name << "'") ;
         THROW_IF_FAIL (tree_store) ;
 
-
+        if (!var_row_it) {
+            var_row_it = tree_store->children ().begin () ;
+        }
         THROW_IF_FAIL (var_row_it) ;
 
         Gtk::TreeModel::iterator row_it ;
