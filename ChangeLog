@@ -1,3 +1,8 @@
+2006-11-27  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* tests/test-templated-var.cc: add a more complex variable to the test to
+	trigger the behavior described in comment #7 of bug #377623
+
 2006-11-26  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: quick fix for a segfault
