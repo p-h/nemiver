@@ -1,5 +1,11 @@
 2006-11-27  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/nmv-load-core-dialog.cc: use the Priv data member
+	widgets instead of getting the widget from glade every time in the getters
+	and setters for program_name and core_file.
+
+2006-11-27  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* tests/test-templated-var.cc: add a more complex variable to the test to
 	trigger the behavior described in comment #7 of bug #377623
 

@@ -40,6 +40,7 @@ using namespace nemiver::common ;
 
 namespace nemiver {
 class LoadCoreDialog::Priv {
+    public:
     Gtk::FileChooserButton *fcbutton_core_file ;
     Gtk::FileChooserButton *fcbutton_executable;
     Gtk::Button *okbutton ;
@@ -104,37 +105,49 @@ LoadCoreDialog::~LoadCoreDialog ()
 UString
 LoadCoreDialog::program_name () const
 {
-    Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                        (glade (), "filechooserbutton_executable") ;
-    return chooser->get_filename () ;
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->fcbutton_executable) ;
+    return m_priv->fcbutton_executable->get_filename () ;
+
+    NEMIVER_CATCH
 }
 
 void
 LoadCoreDialog::program_name (const UString &a_name)
 {
-    Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                            (glade (), "filechooserbutton_executable") ;
-    chooser->set_filename (a_name) ;
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->fcbutton_executable) ;
+    m_priv->fcbutton_executable->set_filename (a_name) ;
+
+    NEMIVER_CATCH
 }
 
 UString
 LoadCoreDialog::core_file () const
 {
-    Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                            (glade (), "filechooserbutton_corefile");
-    return chooser->get_filename () ;
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->fcbutton_core_file) ;
+    return m_priv->fcbutton_core_file->get_filename () ;
+
+    NEMIVER_CATCH
 }
 
 void
 LoadCoreDialog::core_file (const UString &a_dir)
 {
-    Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                            (glade (), "filechooserbutton_corefile");
-    chooser->set_filename (a_dir) ;
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->fcbutton_core_file) ;
+    m_priv->fcbutton_core_file->set_filename (a_dir) ;
+
+    NEMIVER_CATCH
 }
 
 }//end namespace nemiver
