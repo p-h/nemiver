@@ -1,3 +1,18 @@
+Tue, 28 Nov 2006 08:04:17 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-load-core-dialog.cc:
+	  LoadCoreDialog::program_name(): put the return statement outside the
+	  try/catch block to keep the compiler happy.
+	  LoadCoreDialog::core_file(): ditto
+
+Mon, 27 Nov 2006 23:31:27 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: added the "F12"
+	  shortcut to display the variable inspector.
+	* src/persp/dbgperspective/nmv-var-inspector.cc: add support for
+	  variable dereferencing (for variables that are of pointer type)
+	  in the variable inspector.
+
 2006-11-27  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-load-core-dialog.cc: use the Priv data member

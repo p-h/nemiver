@@ -1675,7 +1675,7 @@ DBGPerspective::init_actions ()
             _("Inspect a global or local variable"),
             sigc::mem_fun (*this, &DBGPerspective::on_inspect_variable_action),
             ActionEntry::DEFAULT,
-            ""
+            "F12"
         }
     };
 

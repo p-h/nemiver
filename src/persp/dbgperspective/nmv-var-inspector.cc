@@ -77,7 +77,7 @@ class VarInspector::Priv {
         col->set_resizable (true) ;
     }
 
-    void connect_to_debugger_signals ()
+    void connect_to_signals ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         debugger.variable_value_signal ().connect
@@ -86,6 +86,10 @@ class VarInspector::Priv {
         debugger.variable_type_signal ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_variable_type_signal)) ;
+        debugger.pointed_variable_value_signal ().connect
+            (sigc::mem_fun (*this,
+                            &Priv::on_pointed_variable_value_signal)) ;
+
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
         THROW_IF_FAIL (selection) ;
         selection->signal_changed ().connect
@@ -93,6 +97,8 @@ class VarInspector::Priv {
                             &Priv::on_tree_view_selection_changed_signal));
         tree_view->signal_row_activated ().connect
             (sigc::mem_fun (*this, &Priv::on_tree_view_row_activated_signal)) ;
+        tree_view->signal_row_expanded ().connect (sigc::mem_fun
+            (*this, &Priv::on_tree_view_row_expanded_signal)) ;
     }
 
     void re_init_tree_view ()
@@ -120,7 +126,8 @@ class VarInspector::Priv {
     }
 
     void set_variable_type (const UString &a_var_name,
-                            const UString &a_var_type)
+                            const UString &a_var_type,
+                            Gtk::TreeModel::iterator &a_row_it)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -139,6 +146,7 @@ class VarInspector::Priv {
         }
         THROW_IF_FAIL (it) ;
         set_a_variable_type_real (it, a_var_type) ;
+        a_row_it = it ;
         NEMIVER_CATCH
     }
 
@@ -160,6 +168,22 @@ class VarInspector::Priv {
         //variable->to_string (message, false) ;
         ui_utils::display_info (message) ;
     }
+
+    void print_pointed_variable_value ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (!cur_selected_row) {return;}
+
+        IDebugger::VariableSafePtr  variable =
+            (IDebugger::VariableSafePtr) cur_selected_row->get_value
+                            (variables_utils::get_variable_columns ().variable) ;
+        THROW_IF_FAIL (variable) ;
+        UString qname ;
+        variable->build_qname (qname) ;
+        debugger.print_pointed_variable_value (qname) ;
+    }
+
 
     // ******************
     // <signal handlers>
@@ -218,11 +242,90 @@ class VarInspector::Priv {
     void on_variable_type_signal (const UString &a_var_name,
                                   const UString &a_type)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         LOG_DD ("variable_name: '" << a_var_name << "'") ;
         LOG_DD ("variable_type: '" << a_type << "'") ;
+
+        NEMIVER_TRY
+
         if (!requested_type) {return;}
-        set_variable_type (a_var_name, a_type) ;
+        Gtk::TreeModel::iterator row_it ;
+        set_variable_type (a_var_name, a_type, row_it) ;
         requested_type = false ;
+
+        UString type =
+            (Glib::ustring) row_it->get_value (get_variable_columns ().type) ;
+        if (type == "" || !is_type_a_pointer (type)) {return;}
+        THROW_IF_FAIL (tree_store) ;
+        if (!row_it->children ().begin ()) {
+            tree_store->append (row_it->children ()) ;
+        }
+
+        NEMIVER_CATCH
+    }
+
+    void on_tree_view_row_expanded_signal (const Gtk::TreeModel::iterator &a_it,
+                                           const Gtk::TreeModel::Path &a_path)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_path.get_depth ()) {}
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (a_it) ;
+
+        IDebugger::VariableSafePtr var =
+            (IDebugger::VariableSafePtr)
+                a_it->get_value (get_variable_columns ().variable) ;
+        if (!var) {return;}
+        Gtk::TreeModel::iterator child_it = a_it->children ().begin ();
+        if (!child_it) {return;}
+        var = child_it->get_value (get_variable_columns ().variable) ;
+        if (var) {return;}
+
+        cur_selected_row = a_it ;
+        print_pointed_variable_value () ;
+        NEMIVER_CATCH
+    }
+
+    void on_pointed_variable_value_signal
+                                (const UString &a_var_name,
+                                 const IDebugger::VariableSafePtr &a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD
+
+        NEMIVER_TRY
+
+        LOG_DD ("a_var_name: '" << a_var_name << "'") ;
+        THROW_IF_FAIL (tree_store) ;
+
+
+        THROW_IF_FAIL (var_row_it) ;
+
+        Gtk::TreeModel::iterator row_it ;
+        if ((Glib::ustring) var_row_it->get_value (get_variable_columns ().name)
+             == a_var_name) {
+            row_it = var_row_it ;
+        } else {
+            bool ret = get_variable_iter_from_qname (a_var_name,
+                                                     var_row_it,
+                                                     row_it);
+            if (!ret) {
+                LOG_ERROR ("could not find variable '" << a_var_name << "'") ;
+                ui_utils::display_error (_("Could not find variable '")
+                                         + a_var_name + "'") ;
+                return ;
+            }
+            THROW_IF_FAIL (ret) ;
+        }
+        THROW_IF_FAIL (row_it) ;
+        Gtk::TreeModel::iterator result_row_it ;
+        append_a_variable (a_var, row_it, tree_store, *tree_view,
+                           debugger, false, false, result_row_it) ;
+        debugger.print_variable_type (a_var_name) ;
+        NEMIVER_CATCH
     }
 
 
@@ -239,7 +342,7 @@ public:
     {
         build_widget () ;
         re_init_tree_view () ;
-        connect_to_debugger_signals () ;
+        connect_to_signals () ;
     }
 };//end class VarInspector::Priv
 

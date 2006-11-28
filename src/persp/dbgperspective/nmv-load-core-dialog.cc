@@ -109,9 +109,9 @@ LoadCoreDialog::program_name () const
 
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->fcbutton_executable) ;
-    return m_priv->fcbutton_executable->get_filename () ;
 
     NEMIVER_CATCH
+    return m_priv->fcbutton_executable->get_filename () ;
 }
 
 void
@@ -133,9 +133,9 @@ LoadCoreDialog::core_file () const
 
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->fcbutton_core_file) ;
-    return m_priv->fcbutton_core_file->get_filename () ;
 
     NEMIVER_CATCH
+    return m_priv->fcbutton_core_file->get_filename () ;
 }
 
 void
