@@ -92,6 +92,7 @@ public:
 
         THROW_IF_FAIL (treeview_sessions);
         treeview_sessions->set_model (model);
+        treeview_sessions->append_column (_("ID"), session_columns.id);
         treeview_sessions->append_column (_("Session"), session_columns.name);
 
         // update the sensitivity of the OK button when the selection is changed

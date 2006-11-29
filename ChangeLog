@@ -1,3 +1,9 @@
+2006-11-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc: add an ID column to
+	the list of saved sessions so that you can easily correlate the list in this
+	dialog to the list from `nemiver --listsessions`
+
 Tue, 28 Nov 2006 23:52:58 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-var-inspector.cc: 
