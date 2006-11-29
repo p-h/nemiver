@@ -1,3 +1,10 @@
+Wed, 29 Nov 2006 23:58:25 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-run-program-dialog.cc:
+	  properly convert the current working dir name to utf8.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: use
+	  Glib::filename_to_utf8() to convert filenames to utf8.
+
 2006-11-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc: add an ID column to

@@ -3020,7 +3020,7 @@ DBGPerspective::execute_program ()
     }
     dialog.arguments (m_priv->prog_args) ;
     if (m_priv->prog_cwd == "") {
-        m_priv->prog_cwd = Glib::locale_to_utf8 (Glib::get_current_dir ()) ;
+        m_priv->prog_cwd = Glib::filename_to_utf8 (Glib::get_current_dir ()) ;
     }
     dialog.working_directory (m_priv->prog_cwd) ;
     dialog.environment_variables (m_priv->env_variables) ;
@@ -3050,7 +3050,7 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
 {
     UString cwd ;
     if (a_cwd == "." || a_cwd == "") {
-        cwd = Glib::locale_to_utf8 (Glib::get_current_dir ()) ;
+        cwd = Glib::filename_to_utf8 (Glib::get_current_dir ()) ;
     } else {
         cwd = a_cwd ;
     }

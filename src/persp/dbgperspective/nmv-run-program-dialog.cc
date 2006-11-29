@@ -193,7 +193,7 @@ RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
     m_priv.reset (new Priv (widget (), glade ()));
     THROW_IF_FAIL (m_priv);
 
-    working_directory (Glib::get_current_dir ()) ;
+    working_directory (Glib::filename_to_utf8 (Glib::get_current_dir ())) ;
 }
 
 RunProgramDialog::~RunProgramDialog ()
