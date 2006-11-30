@@ -284,6 +284,22 @@ SessMgr::store_session (Session &a_session,
                 + "')" ;
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     }
+
+    //store the search paths
+    query = "delete from searchpaths where sessionid = "
+            + UString::from_int (a_session.session_id ()) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+
+    list<UString>::const_iterator path_iter ;
+    for (path_iter = a_session.search_paths ().begin ();
+         path_iter != a_session.search_paths ().end ();
+         ++path_iter) {
+        query = "insert into searchpaths values(NULL, "
+                + UString::from_int (a_session.session_id ()) + ", '"
+                + *path_iter
+                + "')" ;
+        THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    }
     trans.end () ;
 }
 
@@ -358,6 +374,19 @@ SessMgr::load_session (Session &a_session,
         session.breakpoints ().push_back (SessMgr::BreakPoint (filename,
                                                                filefullname,
                                                                linenumber)) ;
+    }
+
+    //load the search paths
+    query = "select searchpaths.path from "
+            "searchpaths where searchpaths.sessionid = "
+            + UString::from_int (session.session_id ())
+            ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+    while (trans.get ().get_connection ().read_next_row ()) {
+        UString path;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                                (0, path));
+        session.search_paths ().push_back (path) ;
     }
 
     //load the opened files
@@ -464,6 +493,10 @@ SessMgr::clear_session (gint64 a_id, Transaction &a_trans)
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 
     query = "delete from openedfiles where "
+            "sessionid = " + UString::from_int (a_id) ;
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
+
+    query = "delete from searchpaths where "
             "sessionid = " + UString::from_int (a_id) ;
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
 

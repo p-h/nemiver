@@ -478,6 +478,7 @@ struct DBGPerspective::Priv {
     UString prog_args ;
     UString prog_cwd ;
     map<UString, UString> env_variables ;
+    list<UString> search_paths ;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade ;
     SafePtr<Gtk::Window> body_window ;
     SafePtr<Gtk::TextView> command_view ;
@@ -1091,7 +1092,7 @@ DBGPerspective::on_shutdown_signal ()
 
     // stop the debugger so that the target executable doesn't go on running
     // after we shut down
-    debugger ()->stop ();
+    stop ();
 
     if (m_priv->prog_path == "") {
         return ;
@@ -2492,12 +2493,25 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
 {
     THROW_IF_FAIL (m_priv) ;
 
-    vector<UString>::const_iterator it ;
     string file_name = Glib::locale_from_utf8 (a_file_name), path, candidate ;
-    for (it = m_priv->source_dirs.begin () ;
-         it != m_priv->source_dirs.end ();
-         ++it) {
-        path = Glib::locale_from_utf8 (*it) ;
+    // first look in the session-specific search paths
+    list<UString>::const_iterator session_iter ;
+    for (session_iter = m_priv->search_paths.begin () ;
+         session_iter != m_priv->search_paths.end ();
+         ++session_iter) {
+        path = Glib::locale_from_utf8 (*session_iter) ;
+        candidate = Glib::build_filename (path, file_name) ;
+        if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+            a_file_path = Glib::locale_to_utf8 (candidate) ;
+            return true ;
+        }
+    }
+    // if not found, then look in the global search paths
+    vector<UString>::const_iterator global_iter ;
+    for (global_iter = m_priv->source_dirs.begin () ;
+         global_iter != m_priv->source_dirs.end ();
+         ++global_iter) {
+        path = Glib::locale_from_utf8 (*global_iter) ;
         candidate = Glib::build_filename (path, file_name) ;
         if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
             a_file_path = Glib::locale_to_utf8 (candidate) ;
@@ -2727,6 +2741,15 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
             (ISessMgr::BreakPoint (break_iter->second.file_name (),
                                    break_iter->second.file_full_name (),
                                    break_iter->second.line ())) ;
+    }
+    THROW_IF_FAIL (session_manager_ptr ()) ;
+
+    a_session.search_paths ().clear () ;
+    list<UString>::const_iterator search_path_iter ;
+    for (search_path_iter = m_priv->search_paths.begin ();
+         search_path_iter != m_priv->search_paths.end ();
+         ++search_path_iter) {
+        a_session.search_paths ().push_back (*search_path_iter);
     }
     THROW_IF_FAIL (session_manager_ptr ()) ;
 
@@ -3000,6 +3023,24 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
         breakpoint.file_name (it->file_name ()) ;
         breakpoint.file_full_name (it->file_full_name ()) ;
         breakpoints.push_back (breakpoint) ;
+    }
+
+    // populate the list of search paths from the current session
+    list<UString>::const_iterator path_iter;
+    m_priv->search_paths.clear();
+    for (path_iter = m_priv->session.search_paths ().begin ();
+            path_iter != m_priv->session.search_paths ().end ();
+            ++path_iter)
+    {
+        m_priv->search_paths.push_back (*path_iter);
+    }
+
+    // open the previously opened files
+    for (path_iter = m_priv->session.opened_files ().begin ();
+            path_iter != m_priv->session.opened_files ().end ();
+            ++path_iter)
+    {
+        open_file(*path_iter);
     }
 
     execute_program (a_session.properties ()[PROGRAM_NAME],
@@ -3324,7 +3365,12 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
          ++iter) {
         LOG_DD ("got breakpoint " << iter->second.file_full_name ()
                 << ":" << iter->second.line () << "...") ;
-        if ((iter->second.file_full_name () == a_file_name)
+        // because some versions of gdb don't return the full file path info for
+        // breakpoints, we have to also check to see if the basenames match
+        if (((iter->second.file_full_name () == a_file_name) ||
+                    (Glib::path_get_basename (iter->second.file_full_name ()) ==
+                     Glib::path_get_basename (a_file_name))
+            )
             && (iter->second.line () == a_line_num)) {
             a_break_num= iter->second.number () ;
             LOG_DD ("found breakpoint " << breakpoint << " !") ;
@@ -3411,29 +3457,13 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                 THROW_IF_FAIL(parent_dir != "");
 
                 // Also add the parent directory to the list of paths to search
-                // so you don't have to keep selecting files if they're all in
-                // the same directory.
-                UString paths_str ;
-                if (conf_mgr ().get_key_value
-                        ("/apps/nemiver/dbgperspective/source-search-dirs",
-                         paths_str))
-                {
-                    // We can assume that the parent directory is not already in
-                    // the list of source dirs (or else it would have been found
-                    // and the user wouldn't have had to locate it manually) so
-                    // just tack it on the end of the list
-                    if (paths_str == "")
-                    {
-                        paths_str = parent_dir;
-                    }
-                    else
-                    {
-                        paths_str += ":" + parent_dir;
-                    }
-                    conf_mgr ().set_key_value
-                        ("/apps/nemiver/dbgperspective/source-search-dirs",
-                         paths_str) ;
-                }
+                // for this session so you don't have to keep selecting files if
+                // they're all in the same directory.
+                // We can assume that the parent directory is not already in the
+                // list of source dirs (or else it would have been found and the
+                // user wouldn't have had to locate it manually) so just tack it
+                // on the end of the list
+                m_priv->search_paths.push_back (parent_dir);
             }
         }
 

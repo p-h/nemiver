@@ -1,5 +1,31 @@
 2006-11-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the search path stuff
+	so that if you select the location of a file manually, it gets added to a
+	session-specific search path list.  This reduces the possibility of adding
+	paths for two different projects to a global search list and then having the
+	wrong main.cc accidentally be opened by nemiver because it was first in the
+	search path list.
+	Also fixed an error with some versions of gdb where attempting to
+	toggle a breakpoint would actually add duplicate breakpoints because it
+	would check to see if a breakpoint already existed and it would be comparing
+	a full pathname against a basename and thinking there was no breakpoint set
+	yet so it would set another.  Hopefully none of these changes cause
+	regressions for those that have a well-behaved version of gdb.
+	Also open all of the 'opened files' in the session when executing a saved
+	session.
+	* src/persp/dbgperspective/nmv-sess-mgr.cc,
+	src/persp/dbgperspective/nmv-sess-mgr.h: add functionality to store and load
+	search paths in the session database
+	* src/persp/dbgperspective/sqlscripts/sqlite/create-tables.sql: add a new
+	table to the database: searchpaths.  This stores a list of searchpaths
+	related to particular sessions.
+	*** WARNING: this modifies the database, so you'll need to either remove
+	your old session database or create the new table manually for nemiver to
+	work correctly ***
+
+2006-11-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Fix for poorly-behaved
 	versions of gdb such as the one that ships with ubuntu dapper.  These
 	versions of gdb don't return the full file path when they return information

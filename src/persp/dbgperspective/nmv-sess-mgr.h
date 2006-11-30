@@ -97,6 +97,7 @@ public:
         map<UString, UString> m_env_variables ;
         list<BreakPoint> m_breakpoints ;
         list<UString> m_opened_files ;
+        list<UString> m_search_paths ;
 
     public:
         Session () :
@@ -117,12 +118,13 @@ public:
         map<UString, UString>& env_variables () {return m_env_variables;}
 
         list<BreakPoint>& breakpoints () {return m_breakpoints;}
-        const list<BreakPoint>& breakpoints () const
-        {
-            return m_breakpoints;
-        }
+        const list<BreakPoint>& breakpoints () const { return m_breakpoints; }
+
         list<UString>& opened_files () {return m_opened_files;}
         const list<UString>& opened_files () const {return m_opened_files;}
+
+        list<UString>& search_paths () {return m_search_paths;}
+        const list<UString>& search_paths () const {return m_search_paths;}
     };//end class Session
 
     virtual ~ISessMgr () {}

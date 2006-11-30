@@ -24,3 +24,7 @@ create table openedfiles (id integer primary key,
                           sessionid integer,
                           filename text) ;
 
+create table searchpaths (id integer primary key,
+                          sessionid integer,
+                          path text) ;
+
