@@ -32,6 +32,8 @@ nmv-dialog.cc \
 nmv-dialog.h \
 nmv-run-program-dialog.cc \
 nmv-run-program-dialog.h \
+nmv-locate-file-dialog.cc \
+nmv-locate-file-dialog.h \
 nmv-load-core-dialog.cc \
 nmv-load-core-dialog.h \
 nmv-saved-sessions-dialog.h \

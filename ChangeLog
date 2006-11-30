@@ -1,3 +1,23 @@
+2006-11-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Fix for poorly-behaved
+	versions of gdb such as the one that ships with ubuntu dapper.  These
+	versions of gdb don't return the full file path when they return information
+	about a set breakpoint, so it's not easy to konw where to apply the
+	breakpoint marker.  What this patch does is first looks for a file of the
+	given name in the search path directories and if that fails, pops up a
+	dialog asking the user to locate the file on disk.  It also automatically
+	adds the parent directory to the list of search files, though this will be
+	changed to only add it to a list of session-specific search paths when
+	session-specific search paths are added. This is a partial fix for bug
+	#378294
+	* src/persp/dbgperspective/nmv-locate-file-dialog.cc,
+	src/persp/dbgperspective/nmv-locate-file-dialog.h,
+	src/persp/dbgperspective/Makefile.am: add new 'locate file' dialog source
+	files
+	* src/persp/dbgperspective/glade/locatefiledialog.glade,
+	src/persp/dbgperspective/glade/Makefile.am: add glade file for new dialog
+
 Wed, 29 Nov 2006 23:58:25 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-run-program-dialog.cc:

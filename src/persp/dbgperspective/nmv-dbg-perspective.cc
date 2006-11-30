@@ -37,6 +37,7 @@
 #include "nmv-env.h"
 #include "nmv-run-program-dialog.h"
 #include "nmv-load-core-dialog.h"
+#include "nmv-locate-file-dialog.h"
 #include "nmv-saved-sessions-dialog.h"
 #include "nmv-proc-list-dialog.h"
 #include "nmv-ui-utils.h"
@@ -3287,31 +3288,17 @@ DBGPerspective::append_breakpoints
         //1/ lookup in the files opened in the perspective already.
         //2/ lookup in the list of source directories
         if (file_path == "") {
-            LOG_DD ("no full path info present for file '"
-                    + iter->second.file_name () + "'") ;
             UString file_name = iter->second.file_name () ;
+            LOG_DD ("no full path info present for file '"
+                    + file_name + "'") ;
             if (file_name == "") {
                 ui_utils::display_error
                     (_("There is no file name info for symbol@addr: ")
                      +iter->second.function () + "@" + iter->second.address ()) ;
             }
-            LOG_DD ("looking up file in opened files ...") ;
-            SourceEditor *editor = get_source_editor_from_path (file_name, true) ;
-            if (editor) {
-                editor->get_path (file_path) ;
-                LOG_DD ("found file in opened files:'" + file_path + "'") ;
-                THROW_IF_FAIL (file_path != "") ;
-            } else if (!find_file_in_source_dirs (file_name, file_path)) {
-                LOG_DD ("didn't find file neither in opened file "
-                        " nor in source dirs:") ;
-                ui_utils::display_error (_("Could not find file: ")
-                                         +iter->second.file_name ()
-                                         + "\n"
-                                         + _("Please consider adding "
-                                             "the location of this file "
-                                             "to the list of search directories "
-                                             "in the application "
-                                             "preferences")) ;
+            else
+            {
+                file_path = file_name ;
             }
         }
         LOG_DD ("record breakpoint " << file_path << ":"
@@ -3387,6 +3374,7 @@ void
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum)
 {
+    THROW_IF_FAIL (!a_file_name.empty());
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
     LOG_DD ("a_file_name: " << a_file_name) ;
@@ -3395,28 +3383,76 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
     if (a_linenum < 0) {a_linenum = 0;}
 
     SourceEditor *source_editor = get_source_editor_from_path (a_file_name) ;
+    // first assume that it's a full pathname and just try to open it
     if (!source_editor) {
-        open_file (a_file_name) ;
-        source_editor = get_source_editor_from_path (a_file_name) ;
+        if (Glib::file_test (a_file_name, Glib::FILE_TEST_IS_REGULAR)) {
+            open_file (a_file_name) ;
+            source_editor = get_source_editor_from_path (a_file_name) ;
+        }
     }
+    // if that didn't work, look for an open source editor that matches the base
+    // name
     if (!source_editor) {
         source_editor = get_source_editor_from_path (a_file_name, true) ;
     }
+    // if that still didn't work, look for a file of that name in the search
+    // directories and then as a last resort ask teh user to locate it manually
     if (!source_editor) {
-            ui_utils::display_error (_("Could not find file: ")
-                                     +a_file_name
-                                     + "\n"
-                                     + _("Please consider adding "
-                                         "the location of this file "
-                                         "to the list of search directories "
-                                         "in the application "
-                                         "preferences")) ;
+        UString file_path;
+        if (!find_file_in_source_dirs (a_file_name, file_path)) {
+            LOG_DD ("didn't find file either in opened files "
+                    " or in source dirs:") ;
+            // Pop up a dialog asking user to select the specified file
+            LocateFileDialog dialog (plugin_path (), a_file_name) ;
+            int result = dialog.run () ;
+            if (result == Gtk::RESPONSE_OK) {
+                file_path = dialog.file_location () ;
+                UString parent_dir = Glib::path_get_dirname(dialog.file_location ());
+                THROW_IF_FAIL(parent_dir != "");
+
+                // Also add the parent directory to the list of paths to search
+                // so you don't have to keep selecting files if they're all in
+                // the same directory.
+                UString paths_str ;
+                if (conf_mgr ().get_key_value
+                        ("/apps/nemiver/dbgperspective/source-search-dirs",
+                         paths_str))
+                {
+                    // We can assume that the parent directory is not already in
+                    // the list of source dirs (or else it would have been found
+                    // and the user wouldn't have had to locate it manually) so
+                    // just tack it on the end of the list
+                    if (paths_str == "")
+                    {
+                        paths_str = parent_dir;
+                    }
+                    else
+                    {
+                        paths_str += ":" + parent_dir;
+                    }
+                    conf_mgr ().set_key_value
+                        ("/apps/nemiver/dbgperspective/source-search-dirs",
+                         paths_str) ;
+                }
+            }
+        }
+
+        open_file (file_path) ;
+        source_editor = get_source_editor_from_path (file_path) ;
+    }
+
+    // finally, if none of these things worked, display an error
+    if (!source_editor) {
         LOG_ERROR ("Could not find source editor for file: '"
-                   << a_file_name
-                   << "'") ;
+                << a_file_name
+                << "'") ;
+        ui_utils::display_error (_("Could not find file: ")
+                + a_file_name 
+                + "\n") ;
     } else {
         source_editor->set_visual_breakpoint_at_line (a_linenum) ;
     }
+
 }
 
 void

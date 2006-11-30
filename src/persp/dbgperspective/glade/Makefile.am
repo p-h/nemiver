@@ -3,6 +3,7 @@ gladefiles = bodycontainer.glade \
 runprogramdialog.glade \
 proclistdialog.glade \
 loadcoredialog.glade \
+locatefiledialog.glade \
 savedsessionsdialog.glade \
 preferencesdialog.glade \
 varinspectordialog.glade
