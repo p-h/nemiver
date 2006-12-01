@@ -94,7 +94,7 @@
 		  <child>
 		    <widget class="GtkFileChooserButton" id="filechooserbutton">
 		      <property name="visible">True</property>
-		      <property name="title" translatable="yes">Sélectionner un fichier</property>
+		      <property name="title" translatable="yes">Choose an executable</property>
 		      <property name="action">GTK_FILE_CHOOSER_ACTION_OPEN</property>
 		      <property name="local_only">True</property>
 		      <property name="show_hidden">False</property>
@@ -221,7 +221,7 @@
 		  <child>
 		    <widget class="GtkFileChooserButton" id="filechooserbutton_workingdir">
 		      <property name="visible">True</property>
-		      <property name="title" translatable="yes">Sélectionner un fichier</property>
+		      <property name="title" translatable="yes">Choose an executable</property>
 		      <property name="action">GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER</property>
 		      <property name="local_only">True</property>
 		      <property name="show_hidden">False</property>
