@@ -46,8 +46,8 @@ public:
     Gtk::Button *okbutton ;
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade, const UString& a_filename) :
         fcbutton_location (0),
-        okbutton (0),
-        label_filename(0)
+        label_filename(0),
+        okbutton (0)
     {
 
         okbutton =
@@ -99,12 +99,11 @@ UString
 LocateFileDialog::file_location () const
 {
     NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->fcbutton_location) ;
-    return m_priv->fcbutton_location->get_filename () ;
-
     NEMIVER_CATCH
+
+    return m_priv->fcbutton_location->get_filename () ;
 }
 
 void

@@ -1,3 +1,11 @@
+Fri, 01 Dec 2006 21:40:36 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-locate-file-dialog.cc: fixed
+	compilation warnings/error triggered by the NEMIVER_DEVEL=on env
+	variable. This variable if turned on at configure time triggers some
+	rather aggressive gcc flags that nicely catch lots of potential
+	warnings/errors.
+
 2006-11-29  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the search path stuff
