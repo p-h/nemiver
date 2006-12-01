@@ -29,6 +29,7 @@
 #include "nmv-parsing-utils.h"
 #include "nmv-sql-statement.h"
 #include "nmv-buffer.h"
+#include "nmv-exception.h"
 
 namespace nemiver {
 namespace common {
@@ -37,7 +38,8 @@ namespace tools {
 bool
 execute_sql_command_file (const UString &a_sql_command_file,
                           Transaction &a_trans,
-                          ostream &a_ostream)
+                          ostream &a_ostream,
+                          bool a_stop_at_first_error)
 {
     if (!Glib::file_test (Glib::locale_from_utf8 (a_sql_command_file),
                           Glib::FILE_TEST_IS_REGULAR)) {
@@ -64,7 +66,8 @@ execute_sql_command_file (const UString &a_sql_command_file,
 
     bool is_ok = execute_sql_commands_from_istream (inputfile,
                                                     a_trans,
-                                                    a_ostream);
+                                                    a_ostream,
+                                                    a_stop_at_first_error);
     inputfile.close () ;
     return is_ok ;
 }
@@ -72,14 +75,20 @@ execute_sql_command_file (const UString &a_sql_command_file,
 bool
 execute_sql_commands_from_istream (istream &a_istream,
                                    Transaction &a_trans,
-                                   ostream &a_ostream)
+                                   ostream &a_ostream,
+                                   bool a_stop_at_first_error)
 {
     //loop parsing everything untill ';' or eof and execute it.
     bool is_ok (false) ;
     UString cmd_line, tmp_str ;
     char c=0;
 
-    TransactionAutoHelper safe_trans (a_trans) ;
+    bool ignore_trans = !a_stop_at_first_error ;
+    TransactionAutoHelper safe_trans (a_trans,
+                                      "generic-transation",
+                                      ignore_trans) ;
+
+    NEMIVER_TRY
 
     while (true) {
         a_istream.get (c) ;
@@ -89,12 +98,12 @@ execute_sql_commands_from_istream (istream &a_istream,
         if (a_istream.eof ()) {
             tmp_str="" ;
             if (cmd_line != ""
-                    && !parsing_utils::is_white_string (cmd_line)) {
-                LOG_VERBOSE ("executing: " << cmd_line << "...") ;
+                && !parsing_utils::is_white_string (cmd_line)) {
+                LOG_DD ("executing: " << cmd_line << "...") ;
                 is_ok = execute_one_statement (cmd_line,
                                                a_trans,
                                                a_ostream) ;
-                LOG_VERBOSE ("done.") ;
+                LOG_DD ("done.") ;
                 break ;
             } else {
                 break ;
@@ -105,24 +114,26 @@ execute_sql_commands_from_istream (istream &a_istream,
             tmp_str="" ;
             if (cmd_line != ""
                 && !parsing_utils::is_white_string (cmd_line)) {
-                LOG_VERBOSE ("executing: " << cmd_line << "...") ;
+                LOG_DD ("executing: " << cmd_line << "...") ;
                 is_ok = execute_one_statement (cmd_line,
                                                a_trans,
                                                a_ostream) ;
-                if (!is_ok) {
-                    LOG_VERBOSE ("execution failed") ;
+                if (!is_ok && a_stop_at_first_error) {
+                    LOG_DD ("execution failed") ;
                     return false ;
                 }
-                LOG_VERBOSE ("done.") ;
+                LOG_DD ("done.") ;
             }
-            if (!is_ok) {
+            if (!is_ok && a_stop_at_first_error) {
                 return false ;
             }
             cmd_line = "" ;
         }//end (c == ';')
     }
 
-    if (!is_ok) {
+    NEMIVER_CATCH_NOX
+
+    if (!is_ok && a_stop_at_first_error) {
         return false ;
     }
     safe_trans.end () ;
@@ -143,7 +154,7 @@ execute_one_statement (const UString &a_sql_string,
                 (SQLStatement (a_sql_string)) ;
     } catch (Exception &e) {
         a_ostream << "statement execution error: " << e.what () ;
-        LOG_VERBOSE ("error occured when executing statetement: " << a_sql_string) ;
+        LOG_DD ("error occured when executing statetement: " << a_sql_string) ;
         return false ;
     }
     if (!is_ok) {

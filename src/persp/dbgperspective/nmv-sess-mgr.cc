@@ -29,6 +29,7 @@
 #include "nmv-tools.h"
 #include "nmv-transaction.h"
 #include "nmv-sql-statement.h"
+#include "nmv-ui-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -38,9 +39,9 @@ using nemiver::common::ConnectionManager ;
 using nemiver::common::Transaction ;
 using nemiver::common::SQLStatement ;
 
-static const char *REQUIRED_DB_SCHEMA_VERSION = "1.0" ;
+static const char *REQUIRED_DB_SCHEMA_VERSION = "1.1" ;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class SessMgr : public ISessMgr {
     //non copyable
@@ -94,27 +95,54 @@ struct SessMgr::Priv {
         return conn;
     }
 
-    UString path_to_create_table_script ()
+    UString path_to_create_tables_script ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         string path = Glib::build_filename
                                     (Glib::locale_from_utf8 (root_dir),
                                      "sqlscripts/create-tables.sql") ;
         return Glib::locale_to_utf8 (path) ;
     }
 
+    UString path_to_drop_tables_script ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        string path = Glib::build_filename
+                                    (Glib::locale_from_utf8 (root_dir),
+                                     "sqlscripts/drop-tables.sql") ;
+        return Glib::locale_to_utf8 (path) ;
+    }
+
     bool create_db ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-        UString path_to_script = path_to_create_table_script () ;
+        UString path_to_script = path_to_create_tables_script () ;
         Transaction transaction (*conn) ;
         return tools::execute_sql_command_file
-                                        (path_to_create_table_script (),
+                                        (path_to_script,
+                                         transaction,
+                                         cerr) ;
+    }
+
+    bool drop_db ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        UString path_to_script = path_to_drop_tables_script () ;
+        Transaction transaction (*conn) ;
+        return tools::execute_sql_command_file
+                                        (path_to_script,
                                          transaction,
                                          cerr) ;
     }
 
     bool check_db_version ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        NEMIVER_TRY
+
         SQLStatement query ("select version from schemainfo") ;
 
         RETURN_VAL_IF_FAIL (connection ()->execute_statement (query), false) ;
@@ -122,25 +150,35 @@ struct SessMgr::Priv {
         UString version ;
         RETURN_VAL_IF_FAIL (connection ()->get_column_content (0, version),
                             false) ;
-        LOG_D ("version: " << version, NMV_DEFAULT_DOMAIN) ;
+        LOG_DD ("version: " << version) ;
         if (version != REQUIRED_DB_SCHEMA_VERSION) {
             return false ;
         }
+        NEMIVER_CATCH_AND_RETURN (false)
         return true ;
     }
 
     void init_db ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
         //if the db version is not what we expect, create
         //a new db with the schema we expect.
         if (!check_db_version ()) {
+            drop_db () ;
             THROW_IF_FAIL (create_db ()) ;
         }
+        NEMIVER_CATCH
     }
 
     void init ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
         init_db () ;
+        NEMIVER_CATCH
     }
 };//end struct SessMgr::Priv
 
@@ -515,6 +553,6 @@ ISessMgr::create (const UString &a_root_path)
     return ISessMgrSafePtr (new SessMgr (a_root_path)) ;
 }
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 

@@ -1,13 +1,13 @@
 create table schemainfo (version text not null) ;
 
-insert into schemainfo (version) values ('1.0') ;
+insert into schemainfo (version) values ('1.1') ;
 
 create table sessions (id integer primary key) ;
 
 create table env_variables (id integer primary key,
-                         sessionid integer,
-                         name text,
-                         value text) ;
+                            sessionid integer,
+                            name text,
+                            value text) ;
 
 create table attributes (id integer primary key,
                          sessionid integer,

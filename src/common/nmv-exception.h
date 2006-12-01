@@ -88,13 +88,13 @@ LOG_EXCEPTION ("catched and rethrowing exception: " << exception.what() << "\n")
 
 #define RETURN_VAL_IF_FAIL(expression, value) \
 if (!(expression)) { \
-LOG_EXCEPTION ("assertion " << #expression << " failed. Returning " << #value << "\n") ; \
+LOG_ERROR ("assertion " << #expression << " failed. Returning " << #value << "\n") ; \
 return value ; \
 }
 
 #define RETURN_IF_FAIL(expression) \
 if (!(expression)) { \
-LOG_EXCEPTION ("assertion " << #expression << " failed. Returning.\n") ; \
+LOG_ERROR ("assertion " << #expression << " failed. Returning.\n") ; \
 return ; \
 }
 

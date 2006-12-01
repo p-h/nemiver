@@ -82,17 +82,26 @@ struct TransactionAutoHelper
 {
     Transaction &m_trans ;
     bool m_is_started ;
+    bool m_ignore ;
 
     TransactionAutoHelper (common::Transaction &a_trans,
-                           const common::UString &a_name ="generic-transaction") :
-            m_trans (a_trans)
+                           const common::UString &a_name ="generic-transaction",
+                           bool a_ignore=false) :
+            m_trans (a_trans),
+            m_ignore (a_ignore)
     {
+        if (m_ignore) {
+            return ;
+        }
         THROW_IF_FAIL (m_trans.begin (a_name)) ;
         m_is_started = true;
     }
 
     void end (const common::UString& a_name="generic-transaction")
     {
+        if (m_ignore) {
+            return ;
+        }
         THROW_IF_FAIL (m_trans.commit (a_name)) ;
         m_is_started = false ;
     }
@@ -109,6 +118,9 @@ struct TransactionAutoHelper
 
     ~TransactionAutoHelper ()
     {
+        if (m_ignore) {
+            return ;
+        }
         if (m_is_started) {
             THROW_IF_FAIL (m_trans.rollback ()) ;
             m_is_started = false ;
