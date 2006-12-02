@@ -1072,6 +1072,7 @@ public:
     bool busy () const ;
 
     void load_program (const vector<UString> &a_argv,
+                       const UString &working_dir,
                        const vector<UString> &a_source_search_dirs,
                        const UString &a_tty_path) ;
 
@@ -1519,7 +1520,8 @@ struct GDBEngine::Priv {
         return false ;
     }
 
-    bool launch_gdb (const vector<UString> &a_source_search_dirs,
+    bool launch_gdb (const UString &working_dir,
+                     const vector<UString> &a_source_search_dirs,
                      const vector<UString> &a_gdb_options,
                      const UString a_prog="")
     {
@@ -1528,6 +1530,10 @@ struct GDBEngine::Priv {
         }
         argv.clear () ;
         argv.push_back (env::get_gdb_program ()) ;
+        if (working_dir != "") {
+            // FIXME: Do we need some path escaping here?
+            argv.push_back ("--cd=" + working_dir);
+        }
         argv.push_back ("--interpreter=mi2") ;
         if (!a_gdb_options.empty ()) {
             for (vector<UString>::const_iterator it = a_gdb_options.begin ();
@@ -1552,12 +1558,13 @@ struct GDBEngine::Priv {
         return launch_gdb_real (argv) ;
     }
 
-    bool launch_gdb_and_set_args (const vector<UString> &a_source_search_dirs,
+    bool launch_gdb_and_set_args (const UString &working_dir,
+                                  const vector<UString> &a_source_search_dirs,
                                   const vector<UString> &a_prog_args,
                                   const vector<UString> a_gdb_options)
     {
         bool result (false);
-        result = launch_gdb (a_source_search_dirs, a_gdb_options, a_prog_args[0]);
+        result = launch_gdb (working_dir, a_source_search_dirs, a_gdb_options, a_prog_args[0]);
         if (!result) {return false;}
 
         if (!a_prog_args.empty ()) {
@@ -4549,6 +4556,7 @@ GDBEngine::~GDBEngine ()
 
 void
 GDBEngine::load_program (const vector<UString> &a_argv,
+                         const UString &working_dir,
                          const vector<UString> &a_source_search_dirs,
                          const UString &a_tty_path)
 {
@@ -4559,7 +4567,8 @@ GDBEngine::load_program (const vector<UString> &a_argv,
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts ;
         THROW_IF_FAIL (m_priv->launch_gdb_and_set_args
-                                    (a_source_search_dirs, a_argv, gdb_opts));
+                                    (working_dir, a_source_search_dirs, 
+                                     a_argv, gdb_opts));
 
         Command command ;
 
@@ -4607,7 +4616,7 @@ GDBEngine::attach_to_program (unsigned int a_pid,
 
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts ;
-        THROW_IF_FAIL (m_priv->launch_gdb (source_search_dirs, gdb_opts)) ;
+        THROW_IF_FAIL (m_priv->launch_gdb ("", source_search_dirs, gdb_opts)) ;
 
         Command command ;
         command.value ("set breakpoint pending auto") ;

@@ -3121,7 +3121,7 @@ DBGPerspective::execute_program (const UString &a_prog,
     args.insert (args.begin (), a_prog) ;
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
 
-    dbg_engine->load_program (args, source_search_dirs,
+    dbg_engine->load_program (args, a_cwd, source_search_dirs,
                               get_terminal ().slave_pts_name ()) ;
 
     dbg_engine->add_env_variables (a_env) ;

@@ -1,5 +1,18 @@
 2006-12-02  Ruben Vermeersch  <ruben@savanne.be>
 
+	* src/dbgengine/nmv-i-debugger.h: Added a working_dir parameter to
+	load_program.
+	* src/dbgengine/nmv-gdb-engine.cc: Implemented the new working_dir
+	parameter from load_program. It is passed to gdb using the --cd parameter.
+	This fixes the "select working dir" folder chooser, it now actually
+	selects the working dir.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Pass the working dir to
+	the debugger.
+	* tests/test-breakpoint.cc: Fix the test to work with the new debugger
+	interface.
+
+2006-12-02  Ruben Vermeersch  <ruben@savanne.be>
+
 	* src/persp/dbgperspective/glade/runprogramdialog.glade: Changed the title
 	of the working dir folder chooser from "Choose an executable" to the more
 	appropriate "Choose a working directory".

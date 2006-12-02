@@ -171,7 +171,7 @@ main (int argc, char *argv[])
         args.push_back (prog_to_debug) ;
         source_search_dir.push_back (".") ;
 
-        debugger->load_program (args, source_search_dir);
+        debugger->load_program (args, "", source_search_dir);
         debugger->set_breakpoint ("main") ;
         debugger->run () ;
         debugger->list_threads () ;

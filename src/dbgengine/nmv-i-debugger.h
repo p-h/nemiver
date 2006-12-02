@@ -409,6 +409,7 @@ public:
 
     virtual void load_program
                 (const vector<UString> &a_argv,
+                 const UString &working_dir,
                  const vector<UString> &a_source_search_dirs,
                  const UString &a_tty_path="") = 0;
 
