@@ -79,13 +79,20 @@ break_qname_into_name_elements (const UString &a_qname,
 fetch_element:
     name_start = cur ;
     name_element="" ;
+    //okay, let's define what characters can be part of a variable name.
+    //Note that variable names can be a template type -
+    //in case a templated class extends another one, inline; in that
+    //cases, the child templated class will have an anonymous member carring
+    //the parent class's members.
+    //this can looks funny sometimes.
     for (;
          cur < len && (isalnum (a_qname[cur])
                        || a_qname[cur] == '_'
-                       || a_qname[cur] == '<'
-                       || a_qname[cur] == ':'
-                       || a_qname[cur] == '>'
-                       || a_qname[cur] == '#'
+                       || a_qname[cur] == '<'/*anonymous names from templates*/
+                       || a_qname[cur] == ':'/*fully qualified names*/
+                       || a_qname[cur] == '>'/*templates again*/
+                       || a_qname[cur] == '#'/*we can have names like '#unnamed#'*/
+                       || a_qname[cur] == ','/*template parameters*/
                        || isspace (a_qname[cur]))
          ; ++cur) {
     }
@@ -245,6 +252,12 @@ update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
+    if (a_var) {
+        LOG_DD ("going to really update variable '" << a_var->name () << "'") ;
+    } else {
+        LOG_DD ("eek, got null variable") ;
+    }
+
     (*a_iter)[get_variable_columns ().variable] = a_var ;
     UString var_name = a_var->name ();
     var_name.chomp () ;
@@ -287,6 +300,7 @@ append_a_variable_real (const IDebugger::VariableSafePtr &a_var,
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     THROW_IF_FAIL (a_var) ;
+    LOG_DD ("going to append variable: '" << a_var->name () << "'") ;
 
     Gtk::TreeModel::iterator cur_row_it;
     if (a_parent) {
@@ -324,6 +338,9 @@ update_a_variable (const IDebugger::VariableSafePtr &a_var,
 
     NEMIVER_TRY
 
+    if (a_var) {
+        LOG_DD ("going to update variable: '" << a_var->name () << "'") ;
+    }
     update_a_variable_real (a_var, a_iter, a_tree_view, true, a_is_new_frame) ;
 
     if (a_var->members ().empty ()) {return;}

@@ -166,10 +166,10 @@ UString::operator= (UString const &a_cstr)
 bool
 UString::operator! () const
 {
-    if (*this == ("")) {
-        return true ;
+    if (*this == ("") || this->empty ()) {
+        return true;
     }
-    return false ;
+    return false;
 }
 
 vector<UString>

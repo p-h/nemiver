@@ -157,7 +157,7 @@ class OfstreamLogSink : public LogSink {
         if (!Glib::file_test (dir.get (),  Glib::FILE_TEST_IS_DIR)) {
             if (g_mkdir_with_parents (dir.get (), S_IRWXU)) {
                 throw Exception (UString ("failed to create '")
-                                 + static_cast<gchar*> (dir.get ()) + "'") ;
+                                 + UString ((dir.get ())) + "'") ;
             }
         }
         m_ofstream.reset (new ofstream (a_file_path.c_str ())) ;
