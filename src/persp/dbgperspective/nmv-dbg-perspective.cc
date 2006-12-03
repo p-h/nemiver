@@ -1092,7 +1092,7 @@ DBGPerspective::on_shutdown_signal ()
 
     // stop the debugger so that the target executable doesn't go on running
     // after we shut down
-    stop ();
+    debugger ()->stop ();
 
     if (m_priv->prog_path == "") {
         return ;
