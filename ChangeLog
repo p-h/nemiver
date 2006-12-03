@@ -1,3 +1,9 @@
+Sun, 03 Dec 2006 18:33:40 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::stop(): send
+	  Send the SIGINT signal to gdb itself and have it stop the
+	  the target as a result. This should fix #381912.
+
 2006-12-03  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: call IDebugger::stop()

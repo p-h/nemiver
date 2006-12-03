@@ -1531,7 +1531,6 @@ struct GDBEngine::Priv {
         argv.clear () ;
         argv.push_back (env::get_gdb_program ()) ;
         if (working_dir != "") {
-            // FIXME: Do we need some path escaping here?
             argv.push_back ("--cd=" + working_dir);
         }
         argv.push_back ("--interpreter=mi2") ;
@@ -4573,7 +4572,8 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         Command command ;
 
         queue_command (Command ("set breakpoint pending auto")) ;
-        queue_command (Command ("set inferior-tty " + a_tty_path)) ;
+        //tell gdb not to pass the SIGINT signal to the target.
+        queue_command (Command ("handle SIGINT stop, print nopass")) ;
     } else {
         UString args ;
         UString::size_type len (a_argv.size ()) ;
@@ -4587,8 +4587,8 @@ GDBEngine::load_program (const vector<UString> &a_argv,
 
         command.value ("set args " + args) ;
         queue_command (command) ;
-        queue_command (Command ("set inferior-tty " + a_tty_path)) ;
     }
+    queue_command (Command ("set inferior-tty " + a_tty_path)) ;
 }
 
 void
@@ -5013,7 +5013,8 @@ GDBEngine::stop ()
         return false ;
     }
 
-    return  (kill (m_priv->target_pid, SIGINT) == 0) ;
+    //return  (kill (m_priv->target_pid, SIGINT) == 0) ;
+    return  (kill (m_priv->gdb_pid, SIGINT) == 0) ;
 }
 
 void
