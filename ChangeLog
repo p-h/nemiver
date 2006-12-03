@@ -1,3 +1,12 @@
+2006-12-02  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: When gdb doesn't give us
+	the full path to a filename, start looking in the working directory first.
+	If the user is debugging with the working directory where their source files
+	are located, then they might never have to manually choose the location of
+	the source file.  Also when the user has to manually choose the location of
+	the source file, start looking in the working directory.
+
 2006-12-02  Ruben Vermeersch  <ruben@savanne.be>
 
 	* src/dbgengine/nmv-i-debugger.h: Added a working_dir parameter to

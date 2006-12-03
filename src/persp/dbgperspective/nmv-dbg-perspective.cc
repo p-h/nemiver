@@ -2494,7 +2494,13 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
     THROW_IF_FAIL (m_priv) ;
 
     string file_name = Glib::locale_from_utf8 (a_file_name), path, candidate ;
-    // first look in the session-specific search paths
+    // first look in the working directory
+    candidate = Glib::build_filename (m_priv->prog_cwd, file_name) ;
+    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+        a_file_path = Glib::locale_to_utf8 (candidate) ;
+        return true ;
+    }
+    // then look in the session-specific search paths
     list<UString>::const_iterator session_iter ;
     for (session_iter = m_priv->search_paths.begin () ;
          session_iter != m_priv->search_paths.end ();
@@ -3421,6 +3427,7 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum)
 {
     THROW_IF_FAIL (!a_file_name.empty());
+    THROW_IF_FAIL(m_priv);
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
     LOG_DD ("a_file_name: " << a_file_name) ;
@@ -3450,11 +3457,16 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                     " or in source dirs:") ;
             // Pop up a dialog asking user to select the specified file
             LocateFileDialog dialog (plugin_path (), a_file_name) ;
+            // start looking in the working directory
+            dialog.file_location(m_priv->prog_cwd);
             int result = dialog.run () ;
             if (result == Gtk::RESPONSE_OK) {
                 file_path = dialog.file_location () ;
+                THROW_IF_FAIL(Glib::file_test(file_path, Glib::FILE_TEST_IS_REGULAR));
+                THROW_IF_FAIL(Glib::path_get_basename(a_file_name) ==
+                        Glib::path_get_basename(file_path));
                 UString parent_dir = Glib::path_get_dirname(dialog.file_location ());
-                THROW_IF_FAIL(parent_dir != "");
+                THROW_IF_FAIL(Glib::file_test(parent_dir, Glib::FILE_TEST_IS_DIR));
 
                 // Also add the parent directory to the list of paths to search
                 // for this session so you don't have to keep selecting files if
