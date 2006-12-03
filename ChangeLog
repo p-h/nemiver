@@ -1,3 +1,10 @@
+Sun, 03 Dec 2006 20:43:45 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: 
+	GDBEngine::stop(): do not test the presence of target_pid anymore.
+	we send the SIGINT signal to gdb directly.
+	* NEWS: updated this.
+
 Sun, 03 Dec 2006 18:33:40 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::stop(): send
@@ -144,9 +151,10 @@ Wed, 29 Nov 2006 23:58:25 +0100 Dodji Seketeli
 
 2006-11-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
-	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc: add an ID column to
-	the list of saved sessions so that you can easily correlate the list in this
-	dialog to the list from `nemiver --listsessions`
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:
+	  add an ID column to the list of saved sessions so that
+	  you can easily correlate the list in this
+	  dialog to the list from `nemiver --listsessions`
 
 Tue, 28 Nov 2006 23:52:58 +0100 Dodji Seketeli
 
@@ -267,7 +275,7 @@ Fri, 24 Nov 2006 23:02:28 +0100 Dodji Seketeli
 Fri, 24 Nov 2006 14:28:48 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
-	  DBGPerspective::get_source_editor_from_path(): add some loggin in the
+	  DBGPerspective::get_source_editor_from_path(): add some logging in the
 	  default domain.
 	  DBGPerspective::set_where(): when the file is not found in the opened
 	  files (based on it fullname), look it up in the opened files based on it
@@ -294,7 +302,7 @@ Wed, 22 Nov 2006 23:29:49 +0100 Dodji Seketeli
 	  their container at destructions time.
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
 	  DBGPerspective::init_body (): mak m_priv->body_main_paned be
-	  destroys by DBGPerspective because we unparent
+	  destroyed by DBGPerspective because we unparent
 	  it from the bodycontainer.glade, and it will be later packed
 	  to widgets coming from workbench.glade.
 	  It seems like unparenting makes "us" (DBGPerspective) responsible

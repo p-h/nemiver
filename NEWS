@@ -19,6 +19,7 @@ bug fixes/improvements
     * when opening a source file start filechooser in the working dir
       specified in sessin settings.
     * restart gconfd (instead of sending the HUP signal) upon schemas install
+    * #378294 gdb 6.4debian sometimes doesn't provide full path to source file info
 
     [Dodji Seketeli]
 
@@ -30,7 +31,15 @@ bug fixes/improvements
     * update local variables when selecting frames
     * fix gdbmi frame data parsing
     * better plugins lifetime management
+    * #377623 Local variables parsing error on multi-parameter template types
+    * #381912 stopping the targets fails when runned without break
+    * fix utf8 paths issues
     * code cleanup and refactoring here and there
+
+    [Ruben Vermeersch]
+
+    * fix typos in some dialogs
+    * fix bad support of 'current working directory'
 
 translations
 =============

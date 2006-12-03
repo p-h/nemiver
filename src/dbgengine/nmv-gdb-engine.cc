@@ -5009,7 +5009,7 @@ GDBEngine::stop ()
         return false;
     }
 
-    if (!m_priv->target_pid) {
+    if (!m_priv->gdb_pid) {
         return false ;
     }
 
