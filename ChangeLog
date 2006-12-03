@@ -1,3 +1,7 @@
+Sun, 03 Dec 2006 21:35:30 +0100 Dodji Seketeli
+
+	* coding-style.txt: updated this. Added variable initialization rules.
+
 Sun, 03 Dec 2006 20:43:45 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: 

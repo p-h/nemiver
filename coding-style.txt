@@ -214,3 +214,19 @@ Null, false
       if (count == 0) {
           // code
       }
+
+Generic stuff
+
+        1. variables that of builtin types must always be initialized at declaration time.
+
+            Right:
+
+            int foo=0 ;
+
+            Wrong:
+
+            int foo ;
+
+        2. always provide default constructors for user defined types (classes). If you don't want
+           to be used with the default constructor, declare the default constructor private.
+
