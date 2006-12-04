@@ -1,3 +1,10 @@
+Tue, 05 Dec 2006 00:55:02 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-popup-tip.cc: cleanup up PopupTip a
+	  bit. Make it use Gtk::Label again (instead of Gtk::TextView). This
+	  makes it look more like a normal tooltip. This is a first attempt
+	  at fixing #381402 .
+
 Sun, 03 Dec 2006 21:35:30 +0100 Dodji Seketeli
 
 	* coding-style.txt: updated this. Added variable initialization rules.
