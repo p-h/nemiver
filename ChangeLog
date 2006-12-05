@@ -1,3 +1,11 @@
+Tue, 05 Dec 2006 22:00:30 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-popup-tip.cc:
+	  PopupTip::Priv::paint_window(): okay now we have the outline on the
+	  borders of the popuptip just like for normal tooltips. I was making
+	  the stupid error of not setting the origin of the box to paint to [0,0].
+	  Hooray !
+
 Tue, 05 Dec 2006 00:55:02 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-popup-tip.cc: cleanup up PopupTip a

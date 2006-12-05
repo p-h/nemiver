@@ -74,8 +74,8 @@ public:
                                              zero_rect,
                                              window,
                                              "tooltip",
-                                             show_position_x,
-                                             show_position_y,
+                                             0,
+                                             0,
                                              req.width,
                                              req.height);
     }
