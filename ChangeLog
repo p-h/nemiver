@@ -1,3 +1,12 @@
+2006-12-05  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* NEWS: fixed a typo
+	* src/persp/dbgperspective/nmv-locate-file-dialog.cc,
+	  src/persp/dbgperspective/glade/locatefiledialog.glade: Changed title of
+	  the filechooserbutton so that when it pops up the window title doesn't say
+	  "select a core file" or something similar.  Now it prompts you to select
+	  the source file that we're looking for.
+
 Tue, 05 Dec 2006 22:00:30 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-popup-tip.cc:

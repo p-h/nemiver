@@ -17,7 +17,7 @@ bug fixes/improvements
 
     * don't let the target executable run after quitting nemiver.
     * when opening a source file start filechooser in the working dir
-      specified in sessin settings.
+      specified in session settings.
     * restart gconfd (instead of sending the HUP signal) upon schemas install
     * #378294 gdb 6.4debian sometimes doesn't provide full path to source file info
 

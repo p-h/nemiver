@@ -60,6 +60,7 @@ public:
                 (a_glade, "filechooserbutton_location") ;
         fcbutton_location->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal)) ;
+        fcbutton_location->set_title(fcbutton_location->get_title() + a_filename);
 
         label_filename =
             ui_utils::get_widget_from_glade<Gtk::Label> (a_glade, "label_filename") ;
