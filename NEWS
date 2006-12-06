@@ -10,6 +10,10 @@ new features
     * new variable inspector targeted at global variables
     * added a --attach <pid|prog-nam> option
 
+    [Jonathon Jongmas]
+
+    * new dialog to locate files when no full path debugging information is available
+
 bug fixes/improvements
 ======================
 
@@ -20,6 +24,7 @@ bug fixes/improvements
       specified in session settings.
     * restart gconfd (instead of sending the HUP signal) upon schemas install
     * #378294 gdb 6.4debian sometimes doesn't provide full path to source file info
+    * fixed typos in NEWS file
 
     [Dodji Seketeli]
 
@@ -33,6 +38,7 @@ bug fixes/improvements
     * better plugins lifetime management
     * #377623 Local variables parsing error on multi-parameter template types
     * #381912 stopping the targets fails when runned without break
+    * #381402 variables content in popup tip on hover very invisible
     * fix utf8 paths issues
     * code cleanup and refactoring here and there
 
@@ -40,6 +46,7 @@ bug fixes/improvements
 
     * fix typos in some dialogs
     * fix bad support of 'current working directory'
+    * update README file
 
 translations
 =============
