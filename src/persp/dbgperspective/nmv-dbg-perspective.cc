@@ -2665,8 +2665,7 @@ DBGPerspective::show_underline_tip_at_position (int a_x,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
     get_popup_tip ().text (a_text) ;
-    get_popup_tip ().set_show_position (a_x, a_y) ;
-    get_popup_tip ().show_all () ;
+    get_popup_tip ().show_at_position (a_x, a_y) ;
 }
 
 void

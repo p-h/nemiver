@@ -49,6 +49,9 @@ public:
     void text (const UString &) ;
     UString text () const ;
     void set_show_position (int a_x, int a_y) ;
+    void show () ;
+    void show_all () ;
+    void show_at_position (int a_x, int a_y) ;
 };//end class PopupTip
 
 NEMIVER_END_NAMESPACE (nemiver)

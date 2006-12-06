@@ -26,6 +26,7 @@
 #include "nmv-popup-tip.h"
 #include "nmv-exception.h"
 #include "nmv-ui-utils.h"
+#include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -46,6 +47,7 @@ public:
         show_position_x (0),
         show_position_y (0)
     {
+        window.hide () ;
         window.set_name ("gtk-tooltips");
         window.set_resizable (false) ;
         window.set_app_paintable (true) ;
@@ -60,7 +62,7 @@ public:
                             (sigc::mem_fun (*this,
                                             &Priv::on_expose_event_signal)) ;
 
-        //window.ensure_style () ;
+        window.ensure_style () ;
     }
 
     void paint_window ()
@@ -87,7 +89,6 @@ public:
 
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         paint_window () ;
-        window.move (show_position_x, show_position_y) ;
 
         NEMIVER_CATCH
         return false ;
@@ -129,6 +130,29 @@ PopupTip::set_show_position (int a_x, int a_y)
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     m_priv->show_position_x = a_x ;
     m_priv->show_position_y = a_y ;
+}
+
+void
+PopupTip::show ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    move (m_priv->show_position_x, m_priv->show_position_y) ;
+    Gtk::Window::show () ;
+}
+
+void
+PopupTip::show_all ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    move (m_priv->show_position_x, m_priv->show_position_y) ;
+    Gtk::Window::show_all () ;
+}
+
+void
+PopupTip::show_at_position (int a_x, int a_y)
+{
+    set_show_position (a_x, a_y) ;
+    show () ;
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

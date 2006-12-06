@@ -1,3 +1,20 @@
+Wed, 06 Dec 2006 07:53:06 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-popup-tip.h,cc:
+	  PopupTip::Priv::paint_window(): don't move window after painting it.
+	  It makes weird flashes on some parts of the root window, otherwise.
+	  Overload PopupTip::show() and PopupTip::show_all() (initially
+	  defined in the parent Gtk::Widget class) to make the popuptip move
+	  _before_ showing. Added PopupTip::show_at_position() so that we can
+	  set the position at which the tip must be shown at before moving it
+	  and showing it.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  DBGPerspective::show_underline_tip_at_position(): use
+	  the new PopupTip::show_at_position() to make the popuptip appear
+	  where we want. This should fix the issue raised in comment #6 of bug
+	  #381402. This bug is maybe going to be killed eventually. Let's keep
+	  hope.
+
 2006-12-05  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* NEWS: fixed a typo
@@ -13,7 +30,7 @@ Tue, 05 Dec 2006 22:00:30 +0100 Dodji Seketeli
 	  PopupTip::Priv::paint_window(): okay now we have the outline on the
 	  borders of the popuptip just like for normal tooltips. I was making
 	  the stupid error of not setting the origin of the box to paint to [0,0].
-	  Hooray !
+	  Hooray ! #381402 fixing is a bit closer.
 
 Tue, 05 Dec 2006 00:55:02 +0100 Dodji Seketeli
 
