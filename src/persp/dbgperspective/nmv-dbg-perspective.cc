@@ -1613,7 +1613,7 @@ DBGPerspective::init_actions ()
             "NextMenuItemAction",
             nemiver::STOCK_STEP_OVER,
             _("_Next"),
-            _("Execute next instruction steping over the next function, if any"),
+            _("Execute next line stepping over the next function, if any"),
             sigc::mem_fun (*this, &DBGPerspective::on_next_action),
             ActionEntry::DEFAULT,
             "F6"
@@ -1623,7 +1623,7 @@ DBGPerspective::init_actions ()
             "StepMenuItemAction",
             nemiver::STOCK_STEP_INTO,
             _("_Step"),
-            _("Execute next instruction, steping into the next function, if any"),
+            _("Execute next line, stepping into the next function, if any"),
             sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
             ActionEntry::DEFAULT,
             "F7"

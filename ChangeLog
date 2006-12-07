@@ -1,3 +1,8 @@
+Thu, 07 Dec 2006 20:49:54 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fixed some typos.
+	* TODO: updated this.
+
 Thu, 07 Dec 2006 17:20:53 +0100 Dodji Seketeli
 
 	* src/common/nmv-dynamic-module.cc: added some logs in the
