@@ -1958,7 +1958,8 @@ DBGPerspective::init_toolbar ()
     m_priv->throbber = EphyThrobber::create () ;
     m_priv->toolbar.reset ((new Gtk::HBox)) ;
     THROW_IF_FAIL (m_priv->toolbar) ;
-    m_priv->toolbar->pack_end (m_priv->throbber->get_widget (), Gtk::PACK_SHRINK) ;
+    m_priv->toolbar->pack_end (m_priv->throbber->get_widget (),
+                               Gtk::PACK_SHRINK);
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
             (workbench ().get_ui_manager ()->get_widget ("/ToolBar")) ;
     THROW_IF_FAIL (glade_toolbar) ;
@@ -2784,9 +2785,9 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 //</private methods>
 //*******************
 
-DBGPerspective::DBGPerspective ()
+DBGPerspective::DBGPerspective () :
+    m_priv (new Priv)
 {
-    m_priv.reset (new Priv) ;
 }
 
 void

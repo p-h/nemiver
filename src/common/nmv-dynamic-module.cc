@@ -46,9 +46,9 @@ struct ModuleRegistry::Priv {
     map<UString, GModule*> library_cache  ;
 };//end ModuleRegistry::Priv
 
-ModuleRegistry::ModuleRegistry ()
+ModuleRegistry::ModuleRegistry () :
+    m_priv (new ModuleRegistry::Priv)
 {
-    m_priv.reset (new ModuleRegistry::Priv) ;
 }
 
 ModuleRegistry::~ModuleRegistry ()
@@ -87,9 +87,9 @@ struct DynamicModule::Loader::Priv {
     {}
 };//end struct Loader::Priv
 
-DynamicModule::Loader::Loader ()
+DynamicModule::Loader::Loader () :
+    m_priv (new Loader::Priv)
 {
-    m_priv.reset (new Loader::Priv) ;
 
     //init the module config search path to system config dir
     config_search_paths ().push_back (env::get_system_config_dir ());
@@ -402,9 +402,9 @@ struct DynamicModule::Priv {
     {}
 };//end struct DynamicModule::Priv
 
-DynamicModule::DynamicModule ()
+DynamicModule::DynamicModule () :
+    m_priv (new DynamicModule::Priv)
 {
-    m_priv.reset (new DynamicModule::Priv) ;
 }
 
 DynamicModule::~DynamicModule ()
@@ -453,9 +453,9 @@ struct DynamicModuleManager::Priv {
     }
 };//end struct DynamicModuleManager::Priv
 
-DynamicModuleManager::DynamicModuleManager ()
+DynamicModuleManager::DynamicModuleManager () :
+    m_priv (new DynamicModuleManager::Priv)
 {
-    m_priv.reset (new DynamicModuleManager::Priv) ;
 }
 
 DynamicModuleManager::~DynamicModuleManager ()

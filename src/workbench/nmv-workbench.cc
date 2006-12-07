@@ -249,6 +249,7 @@ Workbench::do_init (Gtk::Main &a_main)
         //store the list of perspectives we may have loaded as plugins,
         //and init each of them.
         //**************************************************************
+        IWorkbench *workbench = dynamic_cast<IWorkbench*> (this) ;
         for (plugin_iter = m_priv->plugin_manager->plugins_map ().begin () ;
              plugin_iter != m_priv->plugin_manager->plugins_map ().end ();
              ++plugin_iter) {
@@ -262,7 +263,7 @@ Workbench::do_init (Gtk::Main &a_main)
                 perspective = entry_point.do_dynamic_cast<IPerspective> () ;
                 if (perspective) {
                     m_priv->perspectives.push_front (perspective) ;
-                    perspective->do_init (const_cast<Workbench*> (this)) ;
+                    perspective->do_init (workbench) ;
                     perspective->edit_workbench_menu () ;
                     toolbars.clear () ;
                     perspective->get_toolbars (toolbars) ;

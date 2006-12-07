@@ -337,9 +337,9 @@ LogStream::default_log_stream ()
 }
 
 LogStream::LogStream (enum LogLevel a_level,
-                      const UString &a_domain)
+                      const UString &a_domain) :
+    m_priv (new LogStream::Priv (a_domain))
 {
-    m_priv.reset (new LogStream::Priv (a_domain)) ;
 
     std::string file_path ;
     if (get_stream_type () == FILE_STREAM) {

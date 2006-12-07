@@ -1,3 +1,15 @@
+Thu, 07 Dec 2006 23:38:12 +0100 Dodji Seketeli
+
+	* src/workbench/nmv-workbench.cc: dynamic cast Workbench into
+	  IWorkbench. Maybe this can fix #383170 that is showing up on
+	  an EM64T architecture only.
+
+	* src/common/nmv-plugin.cc,nmv-dynamic-module.cc,
+	  src/common/nmv-sequence.cc, src/common/nmv-log-stream.cc,
+	  src/common/nmv-scope-logger.cc,
+	  src/persp/dbgperspective/nmv-dbg-perspective.cc: did some style
+	  cleanup.
+
 Thu, 07 Dec 2006 20:49:54 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fixed some typos.

@@ -39,9 +39,9 @@ struct Sequence::Priv {
     {}
 };//end struct Sequence::Priv
 
-Sequence::Sequence ()
+Sequence::Sequence () :
+    m_priv (new Sequence::Priv ())
 {
-    m_priv.reset (new Sequence::Priv ()) ;
 }
 
 Sequence::~Sequence ()

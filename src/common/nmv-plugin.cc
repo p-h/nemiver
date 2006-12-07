@@ -41,9 +41,9 @@ struct Plugin::EntryPoint::Loader::Priv {
     UString plugin_path ;
 };//end struct Plugin::EntryPoint::Loader::Priv
 
-Plugin::EntryPoint::Loader::Loader (const UString &a_plugin_path)
+Plugin::EntryPoint::Loader::Loader (const UString &a_plugin_path) :
+    m_priv (new Plugin::EntryPoint::Loader::Priv)
 {
-    m_priv.reset (new Plugin::EntryPoint::Loader::Priv) ;
     THROW_IF_FAIL (m_priv) ;
 
     config_search_paths ().clear () ;
@@ -92,9 +92,9 @@ Plugin::EntryPoint::plugin_entry_point_loader
     m_priv->entry_point_loader = a_loader ;
 }
 
-Plugin::EntryPoint::EntryPoint ()
+Plugin::EntryPoint::EntryPoint () :
+    m_priv (new Plugin::EntryPoint::Priv)
 {
-    m_priv.reset (new Plugin::EntryPoint::Priv) ;
 }
 
 Plugin::EntryPoint::~EntryPoint ()
@@ -203,14 +203,12 @@ Plugin::load_entry_point ()
 }
 
 Plugin::Plugin (Plugin::DescriptorSafePtr &a_desc,
-                DynamicModuleManager &a_manager)
+                DynamicModuleManager &a_manager) :
+    m_priv (new Plugin::Priv (a_desc, a_manager))
 {
     THROW_IF_FAIL (a_desc) ;
     THROW_IF_FAIL (Glib::file_test (a_desc->plugin_path (),
                                     Glib::FILE_TEST_IS_DIR)) ;
-
-    m_priv.reset (new Plugin::Priv (a_desc, a_manager)) ;
-
     load_entry_point () ;
 }
 
@@ -278,9 +276,9 @@ struct PluginManager::Priv {
     {}
 };//end struct PluginManagerPriv
 
-PluginManager::PluginManager (DynamicModuleManager &a_in)
+PluginManager::PluginManager (DynamicModuleManager &a_in) :
+    m_priv (new PluginManager::Priv (a_in))
 {
-    m_priv.reset (new PluginManager::Priv (a_in)) ;
     plugins_search_path ().push_back (env::get_system_plugins_dir ()) ;
 }
 
