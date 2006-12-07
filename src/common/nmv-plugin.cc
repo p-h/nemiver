@@ -589,6 +589,7 @@ PluginManager::load_plugin_from_path (const UString &a_plugin_path,
                 << (int) result->get_refcount (),
                 "refcount-domain") ;
     }
+    LOG_D ("loaded plugin from path " << Glib::locale_from_utf8 (a_plugin_path), "plugin-loading-domain") ;
     return result ;
 }
 
@@ -626,6 +627,7 @@ PluginManager::load_plugin_from_name (const UString &a_name,
             break;
         }
     }
+    LOG_D ("loaded plugin " << Glib::locale_from_utf8 (a_name), "plugin-loading-domain") ;
     return result ;
 }
 

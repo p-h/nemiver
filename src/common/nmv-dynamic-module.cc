@@ -280,6 +280,8 @@ DynamicModule::Loader::load_library_from_path (const UString &a_library_path)
                + ": " + Glib::locale_from_utf8 (g_module_error ())) ;
     }
     g_module_make_resident (module);//we don't want to unload a module for now
+    LOG_D ("loaded module at path: " << Glib::locale_from_utf8 (a_library_path),
+           "module-loading-domain") ;
     return module ;
 }
 
@@ -294,6 +296,7 @@ DynamicModule::Loader::load_library_from_module_name (const UString &a_name)
     if (!lib) {
         THROW (UString ("failed to load shared library ") + library_path) ;
     }
+    LOG_D ("loaded module " << Glib::locale_from_utf8 (a_name), "module-loading-domain") ;
     return lib;
 }
 
@@ -375,6 +378,7 @@ DynamicModule::Loader::load_from_path (const UString &a_lib_path)
              +a_lib_path+ "'");
         return DynamicModuleSafePtr (0);
     }
+    LOG_D ("loaded module from path: "<< Glib::locale_from_utf8 (a_lib_path), "module-loading-domain") ;
     return create_dynamic_module_instance (lib) ;
 }
 
@@ -492,6 +496,8 @@ DynamicModuleManager::load (const UString &a_name,
            << "' refcount: "
            << (int) module->get_refcount (),
            "module-refcount-domain") ;
+
+    LOG_D ("loaded module " << Glib::locale_from_utf8 (a_name), "module-loading-domain") ;
     return module ;
 }
 
@@ -513,6 +519,7 @@ DynamicModuleManager::load_from_path (const UString &a_library_path,
     a_loader.set_dynamic_module_manager (this) ;
     DynamicModuleSafePtr module = a_loader.create_dynamic_module_instance (lib) ;
     module->set_module_loader (&a_loader) ;
+    LOG_D ("loaded module from path " << Glib::locale_from_utf8 (a_library_path), "module-loading-domain") ;
 
     return module;
 }
@@ -520,6 +527,7 @@ DynamicModuleManager::load_from_path (const UString &a_library_path,
 DynamicModuleSafePtr
 DynamicModuleManager::load_from_path (const UString &a_library_path)
 {
+    LOG_D ("loaded module from path " << Glib::locale_from_utf8 (a_library_path), "module-loading-domain") ;
     return load_from_path (a_library_path, *module_loader ()) ;
 }
 
