@@ -1,3 +1,10 @@
+Thu, 07 Dec 2006 23:50:52 +0100 Dodji Seketeli
+
+	* configure.ac: fix a typo that broke NEMIVERWORKBENCH_LIBS being
+	* src/workbench/Makefile.am: make libworkbenchmod link with the
+	  --as-needed option of GNU ld. This entry is a patch from
+	  Rémi Cardonna <remi2402@free.fr>.
+
 Thu, 07 Dec 2006 23:38:12 +0100 Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc: dynamic cast Workbench into

@@ -13,8 +13,8 @@ nmv-pref-mgr.cc
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
-libworkbenchmod_la_LDFLAGS=@NEMIVERWORKBENCH_LIBS@ -module -avoid-version
-libworkbenchmod_la_LIBADD=$(top_builddir)/src/uicommon/libnemiveruicommon.la
+libworkbenchmod_la_LDFLAGS=-module -avoid-version
+libworkbenchmod_la_LIBADD=@NEMIVERWORKBENCH_LIBS@ $(top_builddir)/src/uicommon/libnemiveruicommon.la
 
 config_DATA=workbench.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
