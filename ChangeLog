@@ -1,3 +1,13 @@
+Thu, 07 Dec 2006 13:58:13 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+		DBGPerspective::init_actions():  put the RunMenuItemAction in
+		s_debugger_ready_action_entries (remove it from
+		s_target_connected_action_entries) so that we can restart the target
+		only when the debugger is in the ready state. Otherwise, some users
+		are tempted to restart the target while it is running (without
+		stopping it first), and that is impossible.
+
 Wed, 06 Dec 2006 11:32:20 +0100 Dodji Seketeli
 
 	* NEWS: updated this

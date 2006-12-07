@@ -1589,15 +1589,6 @@ DBGPerspective::init_actions ()
     sigc::slot<void> nil_slot ;
     static ui_utils::ActionEntry s_target_connected_action_entries [] = {
         {
-            "RunMenuItemAction",
-            nemiver::STOCK_RUN_DEBUGGER,
-            _("_Restart"),
-            _("Restart the target, killing this process and starting a new one"),
-            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
-            ActionEntry::DEFAULT,
-            "<shift>F5"
-        },
-        {
             "SaveSessionMenuItemAction",
             Gtk::Stock::SAVE,
             _("_Save session to disk"),
@@ -1609,6 +1600,15 @@ DBGPerspective::init_actions ()
     };
 
     static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
+        {
+            "RunMenuItemAction",
+            nemiver::STOCK_RUN_DEBUGGER,
+            _("_Restart"),
+            _("Restart the target, killing this process and starting a new one"),
+            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
+            ActionEntry::DEFAULT,
+            "<shift>F5"
+        },
         {
             "NextMenuItemAction",
             nemiver::STOCK_STEP_OVER,
