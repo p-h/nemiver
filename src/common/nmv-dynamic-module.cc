@@ -171,9 +171,13 @@ DynamicModule::Loader::build_library_path (const UString &a_module_name,
     }
 
     for (; it != end ; ++it) {
+        LOG_D ("in directory '" << Glib::locale_from_utf8 (*it) << "' ...",
+               "module-loading-domain") ;
         common::GCharSafePtr system_lib_path
             (g_module_build_path (it->c_str (), a_lib_name.c_str ())) ;
-        if (Glib::file_test (system_lib_path.get (),
+        LOG_D ("looking for library '" << Glib::locale_from_utf8 (system_lib_path.get ()),
+               "module-loading-domain") ;
+        if (Glib::file_test (Glib::filename_from_utf8 (system_lib_path.get ()),
                              Glib::FILE_TEST_EXISTS)) {
             return system_lib_path.get () ;
         }

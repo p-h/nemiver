@@ -1,3 +1,8 @@
+Fri, 08 Dec 2006 17:26:34 +0100 Dodji Seketeli
+
+	* src/common/nmv-dynamic-module.cc: add more logging in the
+	"module-loading-domain".
+
 Thu, 07 Dec 2006 23:50:52 +0100 Dodji Seketeli
 
 	* configure.ac: fix a typo that broke NEMIVERWORKBENCH_LIBS being
