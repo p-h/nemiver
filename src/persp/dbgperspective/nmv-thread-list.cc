@@ -74,9 +74,14 @@ struct ThreadList::Priv {
                                      const IDebugger::Frame &a_frame,
                                      int a_thread_id)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         NEMIVER_TRY
-        if (a_reason == "" || a_has_frame || a_frame.level ()) {}
+        if (a_has_frame || a_frame.level ()) {}
 
+        if (a_reason == "exited-signaled"
+            || a_reason == "exited-normally") {
+            return ;
+        }
         current_thread_id = a_thread_id ;
         debugger->list_threads () ;
         NEMIVER_CATCH
@@ -84,6 +89,7 @@ struct ThreadList::Priv {
 
     void on_debugger_threads_listed_signal (const std::list<int> &a_threads)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         NEMIVER_TRY
 
         clear_threads () ;
@@ -96,6 +102,7 @@ struct ThreadList::Priv {
     void on_debugger_thread_selected_signal (int a_tid,
                                              const IDebugger::Frame &a_frame)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         if (a_frame.level ()) {}
         NEMIVER_TRY
 
@@ -107,12 +114,14 @@ struct ThreadList::Priv {
 
     void on_tree_view_selection_changed_signal ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         NEMIVER_TRY
 
         if (!tree_view) {return;}
         if (!tree_view->get_selection ()) {return;}
 
-        Gtk::TreeModel::iterator it  = tree_view->get_selection ()->get_selected () ;
+        Gtk::TreeModel::iterator it =
+                                tree_view->get_selection ()->get_selected () ;
         if (!it) {return;}
 
         int thread_id = (int) it->get_value (thread_list_columns ().thread_id);
@@ -131,7 +140,8 @@ struct ThreadList::Priv {
         tree_view.reset (new Gtk::TreeView ()) ;
         tree_view->set_model (list_store) ;
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
-        tree_view->append_column (_("Thread ID"), thread_list_columns ().thread_id) ;
+        tree_view->append_column (_("Thread ID"),
+                                  thread_list_columns ().thread_id) ;
         Gtk::TreeViewColumn *column = tree_view->get_column (0) ;
         THROW_IF_FAIL (column) ;
         column->set_clickable (false) ;
@@ -216,6 +226,8 @@ ThreadList::~ThreadList ()
 const list<int>&
 ThreadList::thread_ids () const
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv) ;
     return m_priv->thread_ids ;
 }
@@ -223,6 +235,8 @@ ThreadList::thread_ids () const
 int
 ThreadList::current_thread_id () const
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv) ;
     return m_priv->current_thread ;
 }
@@ -230,8 +244,22 @@ ThreadList::current_thread_id () const
 Gtk::Widget&
 ThreadList::widget () const
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv) ;
     return *m_priv->tree_view ;
+}
+
+void
+ThreadList::clear ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    THROW_IF_FAIL (m_priv) ;
+    if (m_priv->list_store) {
+        m_priv->list_store->clear () ;
+    }
+    m_priv->current_thread_id = -1 ;
 }
 
 sigc::signal<void, int>&

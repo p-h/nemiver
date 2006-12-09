@@ -330,15 +330,22 @@ public:
     }
 
 
-    void on_stopped_signal (const UString &a_str,
+    void on_stopped_signal (const UString &a_reason,
                             bool a_has_frame,
                             const IDebugger::Frame &a_frame,
                             int a_thread_id)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        if (a_str == "" || a_frame.line () || a_thread_id) {}
+        if (a_frame.line () || a_thread_id) {}
 
         NEMIVER_TRY
+        LOG_DD ("stopped, reason: " << a_reason) ;
+
+        if (a_reason == "exited-signaled"
+            || a_reason == "exited-normally"
+            || a_reason == "exited") {
+            return ;
+        }
 
         THROW_IF_FAIL (debugger) ;
         if (a_has_frame) {

@@ -293,10 +293,31 @@ public:
     };//end class Variable
 
     enum State {
-        READY = 0,
+        NOT_STARTED=0,
+        READY,
         RUNNING,
         PROGRAM_EXITED
     };//enum State
+
+    static UString state_to_string (State a_state)
+    {
+        UString str ;
+        switch (a_state) {
+            case NOT_STARTED:
+                str = "NO_STARTED" ;
+                break;
+            case READY:
+                str = "READY" ;
+                break;
+            case RUNNING:
+                str = "RUNNING" ;
+                break ;
+            case PROGRAM_EXITED:
+                str = "PROGRAM_EXITED" ;
+                break ;
+        }
+        return str ;
+    }
 
 
     virtual ~IDebugger () {}

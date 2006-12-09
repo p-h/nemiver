@@ -110,8 +110,16 @@ struct CallStack::Priv {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         NEMIVER_TRY
+        LOG_DD ("stopped, reason: " << a_reason) ;
 
-        if (a_reason == "" || a_has_frame || a_frame.line () || a_thread_id) {}
+        if (a_has_frame || a_frame.line () || a_thread_id) {}
+
+        if (a_reason == "exited-signaled"
+            || a_reason == "exited-normally"
+            || a_reason == "exited") {
+            return ;
+        }
+
         THROW_IF_FAIL (debugger) ;
         debugger->list_frames () ;
 
@@ -401,10 +409,25 @@ CallStack::widget () const
 void
 CallStack::update_stack ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->debugger) ;
 
     m_priv->debugger->list_frames () ;
+}
+
+void
+CallStack::clear ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+
+    if (m_priv->store) {
+        m_priv->store->clear () ;
+    }
+    m_priv->cur_frame_index = - 1 ;
+    m_priv->waiting_for_stack_args  = false ;
+    m_priv->in_set_cur_frame_trans = false ;
 }
 
 sigc::signal<void, int, const IDebugger::Frame&>&

@@ -491,6 +491,7 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
 
     Glib::RefPtr<Gtk::ActionGroup> target_connected_action_group ;
+    Glib::RefPtr<Gtk::ActionGroup> target_not_started_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
@@ -925,9 +926,11 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
     if (a_is_ready) {
         m_priv->throbber->stop () ;
         m_priv->debugger_ready_action_group->set_sensitive (true) ;
+        m_priv->target_not_started_action_group->set_sensitive (true) ;
         m_priv->debugger_busy_action_group->set_sensitive (false) ;
         attached_to_target_signal ().emit (true) ;
     } else {
+        m_priv->target_not_started_action_group->set_sensitive (false) ;
         m_priv->debugger_ready_action_group->set_sensitive (false) ;
         m_priv->debugger_busy_action_group->set_sensitive (true) ;
     }
@@ -1272,6 +1275,8 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
 
     NEMIVER_TRY
 
+    LOG_DD ("stopped, reason: " << a_reason) ;
+
     THROW_IF_FAIL (m_priv) ;
 
     UString file_path (a_frame.file_full_name ());
@@ -1306,12 +1311,31 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
 void
 DBGPerspective::on_program_finished_signal ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     unset_where () ;
     attached_to_target_signal ().emit (true) ;
-    display_info ("Program exited") ;
+    display_info (_("Program exited")) ;
 
+    //****************************
+    //grey out all the menu
+    //items but the one
+    //to restart the debugger
+    //***************************
+    THROW_IF_FAIL (m_priv) ;
+
+    m_priv->target_not_started_action_group->set_sensitive (true) ;
+    m_priv->debugger_ready_action_group->set_sensitive (false) ;
+    m_priv->debugger_busy_action_group->set_sensitive (false) ;
+
+    //**********************
+    //clear threads list and
+    //call stack
+    //**********************
+    get_thread_list ().clear () ;
+    get_call_stack ().clear () ;
+    get_local_vars_inspector ().re_init_widget () ;
     NEMIVER_CATCH
 }
 
@@ -1398,6 +1422,7 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
                                          int a_break_number)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     if (a_break.number ()) {}
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
@@ -1447,7 +1472,11 @@ DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
+    LOG_DD ("state is '" << IDebugger::state_to_string (a_state) << "'") ;
+
     if (a_state == IDebugger::READY) {
+        debugger_ready_signal ().emit (true) ;
+    } else if (a_state == IDebugger::PROGRAM_EXITED) {
         debugger_ready_signal ().emit (true) ;
     } else {
         debugger_ready_signal ().emit (false) ;
@@ -1599,7 +1628,7 @@ DBGPerspective::init_actions ()
         },
     };
 
-    static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
+    static ui_utils::ActionEntry s_target_not_started_action_entries [] = {
         {
             "RunMenuItemAction",
             nemiver::STOCK_RUN_DEBUGGER,
@@ -1608,7 +1637,10 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
             "<shift>F5"
-        },
+        }
+    };
+
+    static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
         {
             "NextMenuItemAction",
             nemiver::STOCK_STEP_OVER,
@@ -1853,6 +1885,10 @@ DBGPerspective::init_actions ()
                 Gtk::ActionGroup::create ("target-connected-action-group") ;
     m_priv->target_connected_action_group->set_sensitive (false) ;
 
+    m_priv->target_not_started_action_group =
+                Gtk::ActionGroup::create ("target-not-started-action-group") ;
+    m_priv->target_not_started_action_group->set_sensitive (false) ;
+
     m_priv->debugger_ready_action_group =
                 Gtk::ActionGroup::create ("debugger-ready-action-group") ;
     m_priv->debugger_ready_action_group->set_sensitive (false) ;
@@ -1881,6 +1917,13 @@ DBGPerspective::init_actions ()
                         (s_target_connected_action_entries,
                          num_actions,
                          m_priv->target_connected_action_group) ;
+
+    num_actions =
+     sizeof (s_target_not_started_action_entries)/sizeof (ui_utils::ActionEntry);
+    ui_utils::add_action_entries_to_action_group
+                        (s_target_not_started_action_entries,
+                         num_actions,
+                         m_priv->target_not_started_action_group) ;
 
     num_actions =
          sizeof (s_debugger_ready_action_entries)/sizeof (ui_utils::ActionEntry) ;
@@ -1931,7 +1974,9 @@ DBGPerspective::init_actions ()
                          m_priv->call_stack_action_group) ;
 
     workbench ().get_ui_manager ()->insert_action_group
-                                        (m_priv->target_connected_action_group) ;
+                                        (m_priv->target_connected_action_group);
+    workbench ().get_ui_manager ()->insert_action_group
+                                        (m_priv->target_not_started_action_group);
     workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->debugger_busy_action_group) ;
     workbench ().get_ui_manager ()->insert_action_group

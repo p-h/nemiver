@@ -59,6 +59,7 @@ public:
     UString to_string () ;
     const vector<IDebugger::Frame>& frames () const ;
     void update_stack () ;
+    void clear () ;
     Gtk::Widget& widget () const ;
     sigc::signal<void,
                  int,

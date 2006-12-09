@@ -55,6 +55,7 @@ public:
     const std::list<int>& thread_ids () const ;
     int current_thread_id () const ;
     Gtk::Widget& widget () const ;
+    void clear () ;
     sigc::signal<void, int>& thread_selected_signal () const ;
 };//end class ThreadList
 

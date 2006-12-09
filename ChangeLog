@@ -1,3 +1,37 @@
+Sat, 09 Dec 2006 20:24:17 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: 
+	  OutOfBandRecord::stop_reason_to_string(): fix some typos.
+	  GDBEngine::Priv::on_state_changed_signal(): store the debugger
+	  state.
+	  OnStoppedHandler::do_handle(): emit the
+	  IDebugger::state_changed_signal() before
+	  IDebugger::state_program_finished_signal(). Maybe we should just
+	  ditch IDebugger:state_program_finished_signal() in the future. I'd
+	  like to get the behaviour right, first.
+	  OnVariableTypeHandler::do_handle(): emit
+	  IDebugger::state_changed_signal() to notify the IDebugger::READY
+	  state when the debugger returns a variable type.
+	* src/dbgengine/nmv-i-debugger.h: added IDebugger::state_to_string()
+	  to allow client code to log debugger state as a string.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc: 
+	  LocalVarsInspector::Priv::on_stopped_signal(): stop working when
+	  target exits.
+	* src/persp/dbgperspective/nmv-call-stack.h,cc: 
+	  Add a CallStack::clear() method to reinit the widget.
+	* src/persp/dbgperspective/nmv-thread-list.cc,h: added a
+	  ThreadList::clear() method to reinit the widget.
+	  Add some logging.
+	  ThreadList::Priv::on_debugger_stopped_signal(): stop working when
+	  the target exits.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add the "restart"
+	  action in its own action group so that its sensitivity can be
+	  controlled apart. When the target exits, make the debugger actions
+	  not sensitive. Only the "restart" stays sensitive.
+	  Also, clear call , thread list and local variables widget upon
+	  program exit.
+	  This entry tries to fix #381694.
+
 Sat, 09 Dec 2006 14:53:20 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-i-debugger.h:in IDebugger::Variable::to_string(): 

@@ -251,7 +251,7 @@ public:
                     return "function-finished" ;
                     break ;
                 case LOCATION_REACHED:
-                    return "location-reacherd" ;
+                    return "location-reached" ;
                     break ;
                 case WATCHPOINT_SCOPE:
                     return "watchpoint-scope" ;
@@ -260,7 +260,7 @@ public:
                     return "end-stepping-range" ;
                     break ;
                 case EXITED_SIGNALLED:
-                    return "exited-signalled" ;
+                    return "exited-signaled" ;
                     break ;
                 case EXITED:
                     return "exited" ;
@@ -1220,6 +1220,7 @@ struct GDBEngine::Priv {
     Glib::RefPtr<Glib::MainContext> loop_context ;
 
     list<OutputHandlerSafePtr> output_handlers ;
+    IDebugger::State state ;
     sigc::signal<void> gdb_died_signal;
     sigc::signal<void, const UString& > master_pty_signal;
     sigc::signal<void, const UString& > gdb_stdout_signal;
@@ -1392,7 +1393,8 @@ struct GDBEngine::Priv {
         cwd ("."), gdb_pid (0), target_pid (0),
         gdb_stdout_fd (0), gdb_stderr_fd (0),
         master_pty_fd (0),
-        error_buffer_status (FILLED)
+        error_buffer_status (FILLED),
+        state (IDebugger::NOT_STARTED)
     {
         gdb_stdout_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_gdb_stdout_signal)) ;
@@ -1400,6 +1402,9 @@ struct GDBEngine::Priv {
                 (*this, &Priv::on_master_pty_signal)) ;
         gdb_stderr_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_gdb_stderr_signal)) ;
+
+        state_changed_signal.connect (sigc::mem_fun
+                (*this, &Priv::on_state_changed_signal)) ;
     }
 
     void free_resources ()
@@ -1747,6 +1752,11 @@ struct GDBEngine::Priv {
         } catch (Glib::Error &e) {
         }
         return true ;
+    }
+
+    void on_state_changed_signal (IDebugger::State a_state)
+    {
+        state = a_state ;
     }
 
     bool breakpoint_has_failed (const CommandAndOutput &a_in)
@@ -4084,10 +4094,8 @@ struct OnStoppedHandler: OutputHandler {
         if (reason == "exited-signalled"
             || reason == "exited-normally"
             || reason == "exited") {
-
-            m_engine->program_finished_signal ().emit () ;
-
             m_engine->state_changed_signal ().emit (IDebugger::PROGRAM_EXITED) ;
+            m_engine->program_finished_signal ().emit () ;
         } else {
             m_engine->state_changed_signal ().emit (IDebugger::READY) ;
         }
@@ -4173,7 +4181,6 @@ struct OnCommandDoneHandler : OutputHandler {
 
         m_engine->command_done_signal ().emit (a_in.command ().name (),
                                                a_in.command ().cookie ()) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnCommandDoneHandler
 
@@ -4463,6 +4470,7 @@ struct OnVariableTypeHandler : OutputHandler {
         if (type != "") {
             m_engine->variable_type_signal ().emit (var_name, type) ;
         }
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct VariableTypeHandler
 
@@ -4531,7 +4539,6 @@ struct OnErrorHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->error_signal ().emit
             (a_in.output ().result_record ().attrs ()["msg"]) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
 };//struct OnErrorHandler
 
