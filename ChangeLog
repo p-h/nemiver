@@ -1,3 +1,16 @@
+Sat, 09 Dec 2006 00:32:57 +0100 Dodji Seketeli
+
+	* configure.ac: do a little hack to detect when library related
+	  stuff have to be installed in $prefix/lib64 instead of $prefix/lib.
+	  I do that because I would have loved to see $libdir expand in
+	  an absolute path. It expands in ${exec_prefix}/lib or
+	  ${exec_prefix}/lib64. So I build an absolute path myself, to be used
+	  in *.conf files, so I need to detect if the lib dir name is 'lib' or
+	  'lib64'. 
+	* src/*/*.conf.in: use @prefix@/@NEMIVER_LIB_DIR_NAME@ instead of
+	  @prefix@/lib. NEMIVER_LIB_DIR_NAME expands either in 'lib' or 'lib64'
+	  This should help fix #383170.
+
 Fri, 08 Dec 2006 17:26:34 +0100 Dodji Seketeli
 
 	* src/common/nmv-dynamic-module.cc: add more logging in the
