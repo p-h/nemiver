@@ -1,3 +1,9 @@
+Sat, 09 Dec 2006 10:17:22 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/glade/preferencesdialog.glade:
+	  applied patch attached to #383886, from Guillaume Desmottes.
+	  This should close that bug.
+
 Sat, 09 Dec 2006 00:32:57 +0100 Dodji Seketeli
 
 	* configure.ac: do a little hack to detect when library related
