@@ -257,17 +257,18 @@ public:
                 a_str += value () ;
             }
             if (members ().empty ()) {
-                a_str += "\n" ;
                 return ;
             }
             UString indent_str = a_indent_str + "  " ;
-            a_str += "\n" + a_indent_str + "{\n";
+            a_str += "\n" + a_indent_str + "{";
             list<VariableSafePtr>::const_iterator it ;
             for (it = members ().begin () ; it != members ().end () ; ++it) {
                 if (!(*it)) {continue;}
+                a_str += "\n" ;
                 (*it)->to_string (a_str, true, indent_str) ;
             }
-            a_str += a_indent_str + "}\n" ;
+            a_str += "\n" + a_indent_str + "}";
+            a_str.chomp () ;
         }
 
         void build_qname (UString &a_qname) const

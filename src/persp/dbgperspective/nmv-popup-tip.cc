@@ -40,8 +40,7 @@ public:
     int show_position_x ;
     int show_position_y ;
 
-    Priv (const UString &a_message,
-          Gtk::Window &a_window) :
+    Priv (Gtk::Window &a_window) :
         label (0),
         window (a_window),
         show_position_x (0),
@@ -53,7 +52,6 @@ public:
         window.set_app_paintable (true) ;
         window.set_border_width (4) ;
         label = Gtk::manage (new Gtk::Label) ;
-        label->set_text (a_message) ;
         label->set_line_wrap (true) ;
         label->set_alignment (0.5, 0.5) ;
         label->show () ;
@@ -99,7 +97,8 @@ PopupTip::PopupTip (const UString &a_text) :
     Gtk::Window (Gtk::WINDOW_POPUP)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    m_priv.reset (new PopupTip::Priv (a_text, *this));
+    m_priv.reset (new PopupTip::Priv (*this));
+    text (a_text) ;
 }
 
 PopupTip::~PopupTip ()
@@ -113,6 +112,14 @@ PopupTip::text (const UString &a_text)
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->label) ;
+
+    if (a_text != "" ) {
+        if (a_text.get_number_of_lines () > 1) {
+            m_priv->label->set_single_line_mode (false) ;
+        } else {
+            m_priv->label->set_single_line_mode (true) ;
+        }
+    }
     m_priv->label->set_text (a_text) ;
 }
 

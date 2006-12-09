@@ -2665,6 +2665,9 @@ DBGPerspective::show_underline_tip_at_position (int a_x,
                                                 const UString &a_text)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
+    LOG_DD ("showing text in popup: '"
+            << Glib::locale_from_utf8 (a_text)
+            << "'") ;
     get_popup_tip ().text (a_text) ;
     get_popup_tip ().show_at_position (a_x, a_y) ;
 }

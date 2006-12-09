@@ -1,3 +1,13 @@
+Sat, 09 Dec 2006 14:53:20 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-i-debugger.h:in IDebugger::Variable::to_string(): 
+	  Make sure no new line gets added at the end of variables.
+	  Cleanup the implementation compound variables serialization.
+	* src/persp/dbgperspective/nmv-popup-tip.cc: a bit of a cleanup here
+	  again. This entry should fix #381402.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add more logging.
+	* autogen.sh: require intltool 0.33 to stay in sync with configure.ac
+
 Sat, 09 Dec 2006 10:17:22 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/glade/preferencesdialog.glade:
