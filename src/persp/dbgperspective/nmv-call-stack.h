@@ -39,6 +39,9 @@ using nemiver::IDebugger ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+class IWorkbench;
+class IPerspective;
+
 class NEMIVER_API CallStack : public Object {
     //non copyable
 
@@ -53,10 +56,10 @@ protected:
 
 public:
 
-    CallStack (IDebuggerSafePtr &) ;
+    CallStack (IDebuggerSafePtr &a_debugger, IWorkbench& a_workbench,
+            IPerspective& a_perspective);
     virtual ~CallStack () ;
     bool is_empty () ;
-    UString to_string () ;
     const vector<IDebugger::Frame>& frames () const ;
     void update_stack () ;
     void clear () ;

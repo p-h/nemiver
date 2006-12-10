@@ -25,9 +25,12 @@
 #include <sstream>
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
+#include <glib/gi18n.h>
 #include "nmv-call-stack.h"
 #include "nmv-exception.h"
 #include "nmv-ui-utils.h"
+#include "nmv-i-workbench.h"
+#include "nmv-i-perspective.h"
 
 namespace nemiver {
 
@@ -82,6 +85,8 @@ columns ()
 
 struct CallStack::Priv {
     IDebuggerSafePtr debugger ;
+    IWorkbench& workbench;
+    IPerspective& perspective;
     vector<IDebugger::Frame> frames ;
     map<int, list<IDebugger::VariableSafePtr> > m_params;
     Glib::RefPtr<Gtk::ListStore> store ;
@@ -92,15 +97,79 @@ struct CallStack::Priv {
     int cur_frame_index ;
     sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal ;
     sigc::connection on_selection_changed_connection ;
+    Gtk::Widget *callstack_menu ;
+    Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
 
-    Priv (IDebuggerSafePtr a_dbg) :
+    Priv (IDebuggerSafePtr a_dbg, IWorkbench& a_workbench, IPerspective& a_perspective) :
         debugger (a_dbg),
+        workbench (a_workbench),
+        perspective (a_perspective),
         waiting_for_stack_args (false),
         in_set_cur_frame_trans (false),
-        cur_frame_index (-1)
+        cur_frame_index (-1),
+        callstack_menu (0)
     {
         connect_debugger_signals () ;
+        init_actions ();
     }
+
+    void init_actions ()
+    {
+
+        static ui_utils::ActionEntry s_call_stack_action_entries [] = {
+            {
+                "CopyCallStackMenuItemAction",
+                Gtk::Stock::COPY,
+                _("_Copy"),
+                _("Copy the stack trace to the clipboard"),
+                sigc::mem_fun
+                    (*this,
+                     &Priv::on_call_stack_copy_to_clipboard_action),
+                ui_utils::ActionEntry::DEFAULT,
+                ""
+            }
+        };
+
+        call_stack_action_group =
+            Gtk::ActionGroup::create ("callstack-action-group") ;
+        call_stack_action_group->set_sensitive (true) ;
+        int num_actions =
+            sizeof (s_call_stack_action_entries)/sizeof (ui_utils::ActionEntry) ;
+
+        ui_utils::add_action_entries_to_action_group
+            (s_call_stack_action_entries,
+             num_actions,
+             call_stack_action_group) ;
+
+        workbench.get_ui_manager ()->insert_action_group (call_stack_action_group);
+    }
+
+    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
+    {
+        NEMIVER_TRY
+        string relative_path = Glib::build_filename ("menus", a_filename) ;
+        string absolute_path ;
+        THROW_IF_FAIL (perspective.build_absolute_resource_path
+                (Glib::locale_to_utf8 (relative_path),
+                 absolute_path)) ;
+
+        workbench.get_ui_manager ()->add_ui_from_file
+            (Glib::locale_to_utf8 (absolute_path)) ;
+
+        NEMIVER_CATCH
+        return workbench.get_ui_manager ()->get_widget (a_widget_name);
+    }
+
+    Gtk::Widget* get_call_stack_menu ()
+    {
+        if (!callstack_menu) {
+            callstack_menu = load_menu ("callstackpopup.xml",
+                    "/CallStackPopup");
+            THROW_IF_FAIL (callstack_menu);
+        }
+        return callstack_menu;
+    }
+
 
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
@@ -212,8 +281,6 @@ struct CallStack::Priv {
     {
         THROW_IF_FAIL (debugger) ;
 
-        THROW_IF_FAIL (debugger) ;
-
         debugger->stopped_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_debugger_stopped_signal)) ;
         debugger->frames_listed_signal ().connect (sigc::mem_fun
@@ -222,6 +289,73 @@ struct CallStack::Priv {
                     (*this, &CallStack::Priv::on_frames_params_listed_signal)) ;
         debugger->command_done_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_command_done_signal)) ;
+    }
+
+    void on_call_stack_button_press_signal (GdkEventButton *a_event)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        NEMIVER_TRY
+
+        // right-clicking should pop up a context menu
+        if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3)) {
+            popup_call_stack_menu (a_event) ;
+        }
+
+        NEMIVER_CATCH
+    }
+
+    void popup_call_stack_menu (GdkEventButton *a_event)
+    {
+        THROW_IF_FAIL (a_event);
+        THROW_IF_FAIL (widget);
+        Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_call_stack_menu ()) ;
+        THROW_IF_FAIL (menu) ;
+        // only pop up a menu if a row exists at that position
+        Gtk::TreeModel::Path path;
+        Gtk::TreeViewColumn* p_column = NULL;
+        int cell_x=0, cell_y=0;
+        if (widget->get_path_at_pos(static_cast<int>(a_event->x),
+                    static_cast<int>(a_event->y), path, p_column, cell_x,
+                    cell_y)) {
+            menu->popup (a_event->button, a_event->time) ;
+        }
+    }
+
+    void on_call_stack_copy_to_clipboard_action ()
+    {
+        NEMIVER_TRY
+
+        int i = 0;
+        std::ostringstream frame_stream;
+        vector<IDebugger::Frame>::const_iterator frame_iter;
+        map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
+        // convert list of stack frames to a string (FIXME: maybe Frame should
+        // just implement operator<< ?
+        for (frame_iter=frames.begin(), params_iter=m_params.begin();
+                frame_iter != frames.end(); ++frame_iter)
+        {
+            frame_stream << "#" << UString::from_int(i++) << "  " <<
+                frame_iter->function_name () << " (";
+            // if the params map exists, add the function params to the stack trace
+            if (params_iter != m_params.end())
+            {
+                for (list<IDebugger::VariableSafePtr>::const_iterator it =
+                        params_iter->second.begin();
+                        it != params_iter->second.end(); ++it)
+                {
+                    if (it != params_iter->second.begin())
+                        frame_stream << ", ";
+                    frame_stream << (*it)->name() << "=" << (*it)->value();
+                }
+                // advance to the list of params for the next stack frame
+                ++params_iter;
+            }
+            frame_stream << ") at " << frame_iter->file_name () << ":"
+                << UString::from_int(frame_iter->line ()) << std::endl;
+        }
+        Gtk::Clipboard::get ()->set_text (frame_stream.str());
+
+        NEMIVER_CATCH
     }
 
     Gtk::Widget* get_widget ()
@@ -264,6 +398,10 @@ struct CallStack::Priv {
                                                 (CallStackCols::FUNCTION_ARGS)) ;
         column->set_clickable (false) ;
         column->set_reorderable (false) ;
+
+        tree_view->signal_button_press_event ().connect_notify
+            (sigc::mem_fun (*this,
+                            &Priv::on_call_stack_button_press_signal));
     }
 
     void set_frame_list
@@ -333,10 +471,11 @@ struct CallStack::Priv {
     }
 };//end struct CallStack::Priv
 
-CallStack::CallStack (IDebuggerSafePtr &a_debugger)
+CallStack::CallStack (IDebuggerSafePtr &a_debugger, IWorkbench& a_workbench,
+        IPerspective& a_perspective)
 {
     THROW_IF_FAIL (a_debugger) ;
-    m_priv.reset (new Priv (a_debugger)) ;
+    m_priv.reset (new Priv (a_debugger, a_workbench, a_perspective)) ;
 }
 
 CallStack::~CallStack ()
@@ -349,42 +488,6 @@ CallStack::is_empty ()
 {
     THROW_IF_FAIL (m_priv) ;
     return m_priv->frames.empty () ;
-}
-
-
-UString
-CallStack::to_string()
-{
-    THROW_IF_FAIL (m_priv) ;
-    int i = 0;
-    std::ostringstream frame_stream;
-    vector<IDebugger::Frame>::const_iterator frame_iter;
-    map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
-    // convert list of stack frames to a string (maybe Frame should just
-    // implement operator<< ?
-    for (frame_iter=m_priv->frames.begin(), params_iter=m_priv->m_params.begin();
-            frame_iter != m_priv->frames.end(); ++frame_iter)
-    {
-        frame_stream << "#" << UString::from_int(i++) << "  " <<
-            frame_iter->function_name () << " (";
-        // if the params map exists, add the function params to the stack trace
-        if (params_iter != m_priv->m_params.end())
-        {
-            for (list<IDebugger::VariableSafePtr>::const_iterator it =
-                    params_iter->second.begin();
-                    it != params_iter->second.end(); ++it)
-            {
-                if (it != params_iter->second.begin())
-                    frame_stream << ", ";
-                frame_stream << (*it)->name() << "=" << (*it)->value();
-            }
-            // advance to the list of params for the next stack frame
-            ++params_iter;
-        }
-        frame_stream << ") at " << frame_iter->file_name () << ":"
-            << UString::from_int(frame_iter->line ()) << std::endl;
-    }
-    return frame_stream.str();
 }
 
 const vector<IDebugger::Frame>&

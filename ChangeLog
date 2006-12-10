@@ -1,3 +1,12 @@
+2006-12-10  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	* src/persp/dbgperspective/nmv-call-stack.h: refactor the CallStack widget
+	in the same way as the BreakpointsView widget was refactored (see bug
+	#381702 for brief explanation).
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: move context menu, etc.
+	to the Callstack widget
+
 Sun, 10 Dec 2006 22:46:37 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: GDB::exit_engine(): don't queue the
