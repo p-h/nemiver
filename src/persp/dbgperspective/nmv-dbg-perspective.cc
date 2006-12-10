@@ -157,8 +157,8 @@ private:
     void on_show_commands_action () ;
     void on_show_errors_action () ;
     void on_show_target_output_action () ;
-    void on_breakpoint_delete_action () ;
-    void on_breakpoint_go_to_source_action () ;
+    void on_breakpoint_delete_action (const IDebugger::BreakPoint& a_breakpoint) ;
+    void on_breakpoint_go_to_source_action (const IDebugger::BreakPoint& a_breakpoint) ;
     void on_call_stack_copy_to_clipboard_action () ;
     void on_thread_list_thread_selected_signal (int a_tid) ;
 
@@ -219,7 +219,6 @@ private:
                                      int a_thread_id) ;
     void on_program_finished_signal () ;
     void on_frame_selected_signal (int, const IDebugger::Frame &) ;
-    void on_breakpoints_view_button_press_signal (GdkEventButton *a_event) ;
     void on_call_stack_button_press_signal (GdkEventButton *a_event) ;
 
     void on_debugger_running_signal () ;
@@ -262,7 +261,6 @@ private:
     void bring_source_as_current (const UString &a_path) ;
     int get_n_pages () ;
     void popup_source_view_contextual_menu (GdkEventButton *a_event) ;
-    void popup_breakpoints_view_menu (GdkEventButton *a_event) ;
     void popup_call_stack_menu (GdkEventButton *a_event) ;
     void record_and_save_new_session () ;
     void record_and_save_session (ISessMgr::Session &a_session) ;
@@ -418,7 +416,6 @@ public:
 
     Gtk::Widget* load_menu (UString a_filename, UString a_widget_name) ;
     Gtk::Widget* get_contextual_menu () ;
-    Gtk::Widget* get_breakpoints_menu () ;
     Gtk::Widget* get_call_stack_menu () ;
 
     void init_conf_mgr () ;
@@ -496,7 +493,6 @@ struct DBGPerspective::Priv {
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
     Glib::RefPtr<Gtk::ActionGroup> opened_file_action_group;
-    Glib::RefPtr<Gtk::ActionGroup> breakpoints_action_group;
     Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
     Glib::RefPtr<Gtk::UIManager> ui_manager ;
     Glib::RefPtr<Gtk::IconFactory> icon_factory ;
@@ -504,7 +500,6 @@ struct DBGPerspective::Priv {
     Gtk::UIManager::ui_merge_id toolbar_merge_id ;
     Gtk::UIManager::ui_merge_id contextual_menu_merge_id;
     Gtk::Widget *contextual_menu ;
-    Gtk::Widget *breakpoints_menu ;
     Gtk::Widget *callstack_menu ;
     Gtk::Box *top_box;
     SafePtr<Gtk::Paned> body_main_paned ;
@@ -579,7 +574,6 @@ struct DBGPerspective::Priv {
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
         contextual_menu (0),
-        breakpoints_menu (0),
         callstack_menu (0),
         top_box (0),
         /*body_main_paned (0),*/
@@ -847,26 +841,27 @@ DBGPerspective::on_show_target_output_action ()
 }
 
 void
-DBGPerspective::on_breakpoint_delete_action ()
+DBGPerspective::on_breakpoint_delete_action (const IDebugger::BreakPoint& a_breakpoint)
 {
     NEMIVER_TRY
-    IDebugger::BreakPoint bp = get_breakpoints_view ().get_selected_breakpoint ();
-    delete_breakpoint (bp.number ());
+    delete_breakpoint (a_breakpoint.number ());
     NEMIVER_CATCH
 }
 
 void
-DBGPerspective::on_breakpoint_go_to_source_action ()
+DBGPerspective::on_breakpoint_go_to_source_action (const IDebugger::BreakPoint& a_breakpoint)
 {
+    // FIXME: this should put the same effort into finding the source file that
+    // append_visual_breakpoint() does.  Maybe this should be abstracted out
+    // somehow
     NEMIVER_TRY
-    IDebugger::BreakPoint bp = get_breakpoints_view ().get_selected_breakpoint ();
-    UString file_path = bp.file_full_name ();
+    UString file_path = a_breakpoint.file_full_name ();
     if (file_path == "") {
-        file_path = bp.file_name () ;
+        file_path = a_breakpoint.file_name () ;
         if (!find_file_in_source_dirs (file_path, file_path)) {
             display_warning (_("File path info is missing "
                              "for breakpoint '")
-                             + UString::from_int (bp.number ()) + "'") ;
+                             + UString::from_int (a_breakpoint.number ()) + "'") ;
             return ;
         }
     }
@@ -874,7 +869,7 @@ DBGPerspective::on_breakpoint_go_to_source_action ()
     bring_source_as_current (file_path);
     SourceEditor *source_editor = get_source_editor_from_path (file_path) ;
     THROW_IF_FAIL (source_editor);
-    source_editor->scroll_to_line (bp.line ()) ;
+    source_editor->scroll_to_line (a_breakpoint.line ()) ;
 
     NEMIVER_CATCH
 }
@@ -1374,31 +1369,6 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     NEMIVER_CATCH
 }
 
-void
-DBGPerspective::on_breakpoints_view_button_press_signal (GdkEventButton *a_event)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-
-    NEMIVER_TRY
-
-    // double-clicking a breakpoint item should go to the source location for
-    // the breakpoint
-    if (a_event->type == GDK_2BUTTON_PRESS) {
-        if (a_event->button == 1) {
-            on_breakpoint_go_to_source_action();
-        }
-    }
-
-    // right-clicking should pop up a context menu
-    else if (a_event->type == GDK_BUTTON_PRESS) {
-        if (a_event->button == 3) {
-            popup_breakpoints_view_menu (a_event) ;
-        }
-    }
-
-    NEMIVER_CATCH
-}
-
 
 void
 DBGPerspective::on_call_stack_button_press_signal (GdkEventButton *a_event)
@@ -1845,28 +1815,6 @@ DBGPerspective::init_actions ()
         }
     };
 
-    static ui_utils::ActionEntry s_breakpoints_action_entries [] = {
-        {
-            "DeleteBreakpointMenuItemAction",
-            Gtk::Stock::DELETE,
-            _("_Delete"),
-            _("Remove this breakpoint"),
-            sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_delete_action),
-            ActionEntry::DEFAULT,
-            ""
-        },
-        {
-            "GoToSourceBreakpointMenuItemAction",
-            Gtk::Stock::JUMP_TO,
-            _("_Go to Source"),
-            _("Find this breakpoint in the source editor"),
-            sigc::mem_fun (*this,
-                            &DBGPerspective::on_breakpoint_go_to_source_action),
-            ActionEntry::DEFAULT,
-            ""
-        }
-    };
-
     static ui_utils::ActionEntry s_call_stack_action_entries [] = {
         {
             "CopyCallStackMenuItemAction",
@@ -1904,9 +1852,6 @@ DBGPerspective::init_actions ()
     m_priv->opened_file_action_group =
                 Gtk::ActionGroup::create ("opened-file-action-group") ;
     m_priv->opened_file_action_group->set_sensitive (false) ;
-    m_priv->breakpoints_action_group =
-                Gtk::ActionGroup::create ("breakpoints-action-group") ;
-    m_priv->breakpoints_action_group->set_sensitive (true) ;
     m_priv->call_stack_action_group =
                 Gtk::ActionGroup::create ("callstack-action-group") ;
     m_priv->call_stack_action_group->set_sensitive (true) ;
@@ -1958,14 +1903,6 @@ DBGPerspective::init_actions ()
                          m_priv->opened_file_action_group) ;
 
     num_actions =
-         sizeof (s_breakpoints_action_entries)/sizeof (ui_utils::ActionEntry) ;
-
-    ui_utils::add_action_entries_to_action_group
-                        (s_breakpoints_action_entries,
-                         num_actions,
-                         m_priv->breakpoints_action_group) ;
-
-    num_actions =
          sizeof (s_call_stack_action_entries)/sizeof (ui_utils::ActionEntry) ;
 
     ui_utils::add_action_entries_to_action_group
@@ -1985,8 +1922,6 @@ DBGPerspective::init_actions ()
                                             (m_priv->default_action_group);
     workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->opened_file_action_group);
-    workbench ().get_ui_manager ()->insert_action_group
-                                            (m_priv->breakpoints_action_group);
     workbench ().get_ui_manager ()->insert_action_group
                                             (m_priv->call_stack_action_group);
 
@@ -2113,13 +2048,15 @@ DBGPerspective::init_signals ()
     get_call_stack ().frame_selected_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_frame_selected_signal));
 
-    get_breakpoints_view ().widget ().signal_button_press_event ().connect_notify
-        (sigc::mem_fun (*this,
-                        &DBGPerspective::on_breakpoints_view_button_press_signal));
-
     get_call_stack ().widget ().signal_button_press_event ().connect_notify
         (sigc::mem_fun (*this,
                         &DBGPerspective::on_call_stack_button_press_signal));
+
+    get_breakpoints_view ().go_to_breakpoint_signal ().connect
+        (sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_go_to_source_action));
+
+    get_breakpoints_view ().delete_breakpoint_signal ().connect
+        (sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_delete_action));
 
     get_thread_list ().thread_selected_signal ().connect (sigc::mem_fun
         (*this, &DBGPerspective::on_thread_list_thread_selected_signal)) ;
@@ -2485,17 +2422,6 @@ DBGPerspective::load_menu (UString a_filename, UString a_widget_name)
     return workbench ().get_ui_manager ()->get_widget (a_widget_name);
 }
 
-Gtk::Widget*
-DBGPerspective::get_breakpoints_menu ()
-{
-    THROW_IF_FAIL (m_priv) ;
-    if (!m_priv->breakpoints_menu) {
-        m_priv->breakpoints_menu = load_menu ("breakpointspopup.xml",
-                "/BreakpointsPopup");
-        THROW_IF_FAIL (m_priv->breakpoints_menu);
-    }
-    return m_priv->breakpoints_menu;
-}
 ThreadList&
 DBGPerspective::get_thread_list ()
 {
@@ -2635,14 +2561,6 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
     if (has_selected_text) {
         buffer->select_range (start, end) ;
     }
-    menu->popup (a_event->button, a_event->time) ;
-}
-
-void
-DBGPerspective::popup_breakpoints_view_menu (GdkEventButton *a_event)
-{
-    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_breakpoints_menu ()) ;
-    THROW_IF_FAIL (menu) ;
     menu->popup (a_event->button, a_event->time) ;
 }
 
@@ -3849,7 +3767,8 @@ DBGPerspective::get_breakpoints_view ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->breakpoints_view) {
-        m_priv->breakpoints_view.reset (new BreakpointsView ()) ;
+        m_priv->breakpoints_view.reset (new BreakpointsView (
+                    workbench (), *this)) ;
     }
     THROW_IF_FAIL (m_priv->breakpoints_view) ;
     return *m_priv->breakpoints_view ;

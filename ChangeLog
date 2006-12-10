@@ -1,3 +1,19 @@
+Sun, 10 Dec 2006 18:02:11 +0100 Dodji Seketeli
+
+	* src/common/nmv-plugin.h: make
+	  Plugin::EntryPoint::build_absolute_resource_path() public.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: refactor the
+	  breakpoint view management so that most of the stuff that belong
+	  into BreakpointsView goes in there. Connect to
+	  BreakpointsView::go_to_breakpoint_signal() and
+	  BreakpointsView::delete_breakpoint_signal() to handle these two
+	  event.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc,h: 
+	  Make this handle contextual menu stuff. Emit signals
+	  BreakpointsView::got_to_breakpoint_signal() and
+	  BreakpointView::delete_breakpoint_signal() upon user action.
+	  This entry is a patch from Jonathon Jongsma to fix bug #381702.
+
 2006-12-10  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-source-editor.cc: add an border (shadow) to

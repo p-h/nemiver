@@ -31,7 +31,13 @@
 #include "nmv-i-debugger.h"
 #include "nmv-safe-ptr-utils.h"
 
+namespace Gtk {
+class UIManager;
+}
 namespace nemiver {
+
+class IWorkbench;
+class IPerspective;
 
 class NEMIVER_API BreakpointsView : public nemiver::common::Object {
     //non copyable
@@ -43,11 +49,14 @@ class NEMIVER_API BreakpointsView : public nemiver::common::Object {
 
 public:
 
-    BreakpointsView () ;
+    BreakpointsView (IWorkbench& a_workbench, IPerspective& a_perspective) ;
     virtual ~BreakpointsView () ;
     Gtk::Widget& widget () const ;
     void set_breakpoints (const std::map<int, IDebugger::BreakPoint> &a_breakpoints) ;
-    IDebugger::BreakPoint get_selected_breakpoint () const;
+    sigc::signal<void,
+                 const IDebugger::BreakPoint&>& go_to_breakpoint_signal () const ;
+    sigc::signal<void,
+                 const IDebugger::BreakPoint&>& delete_breakpoint_signal () const ;
 
 };//end BreakpointsView
 
