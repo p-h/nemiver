@@ -279,6 +279,7 @@ SourceEditor::init ()
     scrolled->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC) ;
     scrolled->add (*m_priv->source_view) ;
     scrolled->show_all () ;
+    scrolled->set_shadow_type (Gtk::SHADOW_IN);
     pack_start (*scrolled) ;
     pack_end (*m_priv->status_box, Gtk::PACK_SHRINK) ;
 
