@@ -1,3 +1,32 @@
+Sun, 10 Dec 2006 21:17:12 +0100 Dodji Seketeli
+
+	* src/workbench/nmv-workbench.cc: edited Ruben's patch to save
+	  geometry only at shutdown time. Added more logging. Also, set
+	  window size request to a minumum size,
+	  otherwise, setting window size (through Gtk::Windo::resize())
+	  sets the window minimum to the newly set size <grin/>.
+	* src/persp/dbgperspective/nmv-throbber.cc,h: make
+	  throbber::get_widget() return a Gtk::ToolItem so that we can embedd
+	  it toolbar our toolbar. I'll  maybe need to refactor this later so
+	  that we have a ThrobberToolItem and a classical Throbber.
+	* src/persp/dbgperspective/nmv-ephy-throbber.h,cc: ditto. The new
+	  tooltip based EphyThrobber widget is based on
+	  ephy-spinner-tool-item.cc,h, freshly copied from epiphany cvs.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: pack the ephy
+	  throbber into the toolbar instead of in the container
+	  box.
+
+2006-12-05  Ruben Vermeersch  <ruben@savanne.be>
+
+	* configure.ac: Add the new src/workbench/schemas/Makefile.
+	* src/workbench/Makefile.am: Add the schemas subdir and gconf code.
+	* src/workbench/nmv-workbench.cc: Implement saving of the window position
+	and size, restore it when starting nemiver again. This makes nemiver
+	"spatial".
+	* src/workbench/schemas/Makefile.am: New file, installs the gconf schemas.
+	* src/workbench/schemas/nemiver-workbench.schemas: Gconf schemas for the
+	window position/size saving.
+
 2006-12-10  Jean-François Rameau  <jf.rameau@gmail.com>
 
 	* src/persp/dbgperspective/nmv-terminal.cc: set a default font for the

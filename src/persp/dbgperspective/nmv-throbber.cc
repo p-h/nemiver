@@ -24,7 +24,7 @@
  */
 #include <string>
 #include <gtkmm/image.h>
-#include <gtkmm/button.h>
+#include <gtkmm/toolbutton.h>
 #include <gdkmm/pixbufanimation.h>
 #include "nmv-exception.h"
 #include "nmv-ustring.h"
@@ -43,15 +43,14 @@ public:
     UString root_path ;
     SafePtr<Gtk::Image> animated_image ;
     SafePtr<Gtk::Image> stopped_image ;
-    SafePtr<Gtk::Button> widget ;
+    SafePtr<Gtk::ToolButton> widget ;
 
     Priv (const UString &a_root_path) :
         is_started (false)
     {
         root_path = a_root_path ;
-        widget.reset (new Gtk::Button) ;
+        widget.reset (new Gtk::ToolButton) ;
         THROW_IF_FAIL (widget) ;
-        widget->set_focus_on_click (false) ;
         build_widget () ;
     }
 
@@ -80,8 +79,8 @@ public:
         animated_image.reset (new Gtk::Image (anim)) ;
         stopped_image.reset (new Gtk::Image (stopped_pixbuf)) ;
         THROW_IF_FAIL (animated_image) ;
-        widget.reset (new Gtk::Button ()) ;
-        widget->set_image (*stopped_image) ;
+        widget.reset (new Gtk::ToolButton ()) ;
+        widget->set_icon_widget (*stopped_image) ;
     }
 };//end struct Throbber::Priv
 
@@ -111,7 +110,7 @@ Throbber::start ()
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->widget) ;
     THROW_IF_FAIL (m_priv->animated_image) ;
-    m_priv->widget->set_image (*m_priv->animated_image) ;
+    m_priv->widget->set_icon_widget (*m_priv->animated_image) ;
     m_priv->is_started = true ;
 }
 
@@ -127,7 +126,7 @@ Throbber::stop ()
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->widget) ;
     THROW_IF_FAIL (m_priv->animated_image) ;
-    m_priv->widget->set_image (*m_priv->stopped_image) ;
+    m_priv->widget->set_icon_widget (*m_priv->stopped_image) ;
     m_priv->is_started = false ;
 }
 
@@ -141,7 +140,7 @@ Throbber::toggle_state ()
     }
 }
 
-Gtk::Widget&
+Gtk::ToolItem&
 Throbber::get_widget () const
 {
     THROW_IF_FAIL (m_priv && m_priv->widget) ;

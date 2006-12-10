@@ -25,11 +25,12 @@
 #ifndef __NMV_THROBBER_H__
 #define __NMV_THROBBER_H__
 
-#include <gtkmm/widget.h>
 #include "nmv-object.h"
 #include "nmv-safe-ptr-utils.h"
 #include "nmv-ustring.h"
-
+namespace Gtk {
+    class ToolItem ;
+}
 using nemiver::common::Object ;
 using nemiver::common::SafePtr ;
 using nemiver::common::ObjectRef ;
@@ -55,7 +56,7 @@ public:
     virtual bool is_started () const ;
     virtual void stop () ;
     virtual void toggle_state () ;
-    virtual Gtk::Widget& get_widget () const ;
+    virtual Gtk::ToolItem& get_widget () const ;
 };//end class Throbber
 
 NEMIVER_END_NAMESPACE (nemiver)

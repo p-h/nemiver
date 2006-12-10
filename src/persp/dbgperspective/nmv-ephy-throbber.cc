@@ -22,13 +22,14 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <gtkmm/toolbutton.h>
 #include "nmv-ephy-throbber.h"
-#include "ephy-spinner.h"
+#include "ephy-spinner-tool-item.h"
 #include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 struct ESpinnerRef {
-    void operator () (EphySpinner *o)
+    void operator () (EphySpinnerToolItem *o)
     {
         if (o && G_IS_OBJECT (o)) {
             g_object_ref (G_OBJECT (o)) ;
@@ -39,7 +40,7 @@ struct ESpinnerRef {
 };
 
 struct ESpinnerUnref {
-    void operator () (EphySpinner *o)
+    void operator () (EphySpinnerToolItem *o)
     {
         if (o && G_IS_OBJECT (o)) {
             g_object_unref (G_OBJECT (o)) ;
@@ -51,17 +52,17 @@ struct ESpinnerUnref {
 };
 
 struct EphyThrobber::Priv {
-    SafePtr<EphySpinner, ESpinnerRef, ESpinnerUnref> spinner ;
+    SafePtr<EphySpinnerToolItem, ESpinnerRef, ESpinnerUnref> spinner ;
     bool is_started ;
-    Gtk::Widget *widget ;
+    Gtk::ToolItem *widget ;
 
     Priv () :
-        spinner (EPHY_SPINNER (ephy_spinner_new ()), true),
+        spinner (EPHY_SPINNER_TOOL_ITEM (ephy_spinner_tool_item_new ()), true),
         is_started (false),
         widget (0)
     {
         THROW_IF_FAIL (GTK_IS_WIDGET (spinner.get ())) ;
-        widget = Glib::wrap (GTK_WIDGET (spinner.get ())) ;
+        widget = Glib::wrap (GTK_TOOL_ITEM (spinner.get ())) ;
         THROW_IF_FAIL (widget) ;
     }
 
@@ -95,7 +96,7 @@ EphyThrobber::start ()
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->spinner) ;
 
-    ephy_spinner_start (m_priv->spinner.get ()) ;
+    ephy_spinner_tool_item_set_spinning (m_priv->spinner.get (), true) ;
     m_priv->is_started = true ;
 }
 
@@ -114,7 +115,7 @@ EphyThrobber::stop ()
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->spinner) ;
 
-    ephy_spinner_stop (m_priv->spinner.get ()) ;
+    ephy_spinner_tool_item_set_spinning (m_priv->spinner.get (), false) ;
     m_priv->is_started = false ;
 }
 
@@ -128,7 +129,7 @@ EphyThrobber::toggle_state ()
     }
 }
 
-Gtk::Widget&
+Gtk::ToolItem&
 EphyThrobber::get_widget () const
 {
     THROW_IF_FAIL (m_priv) ;

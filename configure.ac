@@ -269,6 +269,7 @@ src/Makefile
   src/uicommon/Makefile
   src/workbench/Makefile
   src/workbench/workbench.conf
+  src/workbench/schemas/Makefile
   src/persp/Makefile
   src/persp/dbgperspective/Makefile
   src/persp/dbgperspective/dbgperspective.conf

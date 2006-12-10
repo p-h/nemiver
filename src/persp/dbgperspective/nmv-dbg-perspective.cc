@@ -31,6 +31,7 @@
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #include <gtkmm/clipboard.h>
+#include <gtkmm/separatortoolitem.h>
 #include "nmv-dbg-perspective.h"
 #include "nmv-source-editor.h"
 #include "nmv-ui-utils.h"
@@ -1938,19 +1939,16 @@ DBGPerspective::init_toolbar ()
     m_priv->throbber = EphyThrobber::create () ;
     m_priv->toolbar.reset ((new Gtk::HBox)) ;
     THROW_IF_FAIL (m_priv->toolbar) ;
-    m_priv->toolbar->pack_end (m_priv->throbber->get_widget (),
-                               Gtk::PACK_SHRINK);
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
             (workbench ().get_ui_manager ()->get_widget ("/ToolBar")) ;
     THROW_IF_FAIL (glade_toolbar) ;
-    m_priv->toolbar->pack_start (*glade_toolbar) ;
+    Gtk::SeparatorToolItem *sep = Gtk::manage (new Gtk::SeparatorToolItem) ;
+    gtk_separator_tool_item_set_draw (sep->gobj (), false) ;
+    sep->set_expand (true) ;
+    glade_toolbar->insert (*sep, -1) ;
+    glade_toolbar->insert (m_priv->throbber->get_widget (), -1) ;
+    m_priv->toolbar->pack_start (*glade_toolbar);
     m_priv->toolbar->show_all () ;
-
-    Gtk::ToolButton *button=NULL ;
-
-    button = dynamic_cast<Gtk::ToolButton*>
-    (workbench ().get_ui_manager ()->get_widget ("/ToolBar/RunToolItem")) ;
-    THROW_IF_FAIL (button) ;
 }
 
 void

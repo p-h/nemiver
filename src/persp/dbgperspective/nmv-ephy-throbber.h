@@ -37,7 +37,7 @@ public:
     bool is_started () const ;
     void stop () ;
     void toggle_state () ;
-    Gtk::Widget& get_widget () const ;
+    Gtk::ToolItem& get_widget () const ;
 };//end class EphyThrobber
 
 NEMIVER_END_NAMESPACE (nemiver)

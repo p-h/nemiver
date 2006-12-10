@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gconfschemafile>
+  <schemalist>
+    <schema>
+      <key>/schemas/apps/nemiver/workbench/window-width</key>
+      <applyto>/apps/nemiver/workbench/window-width</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>800</default>
+      <locale name="C">
+	<short>window width</short>
+	<long>The width of the workbench window.</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/workbench/window-height</key>
+      <applyto>/apps/nemiver/workbench/window-height</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>600</default>
+      <locale name="C">
+	<short>window height</short>
+	<long>The height of the workbench window.</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/workbench/window-position-x</key>
+      <applyto>/apps/nemiver/workbench/window-position-x</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>10</default>
+      <locale name="C">
+	<short>window x position</short>
+	<long>The X coordinate of the workbench window.</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/workbench/window-position-y</key>
+      <applyto>/apps/nemiver/workbench/window-position-y</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>10</default>
+      <locale name="C">
+	<short>window y position</short>
+	<long>The Y coordinate of the workbench window.</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/workbench/window-maximized</key>
+      <applyto>/apps/nemiver/workbench/window-maximized</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+	<short>window maximization</short>
+	<long>Whether the workbench window is maximized.</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/workbench/window-minimum-width</key>
+      <applyto>/apps/nemiver/workbench/window-minimum-width</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>700</default>
+      <locale name="C">
+	<short>window minim width</short>
+	<long>The workbench main window minium width.</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/workbench/window-minimum-height</key>
+      <applyto>/apps/nemiver/workbench/window-minimum-height</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>500</default>
+      <locale name="C">
+	<short>window minimum height</short>
+	<long>The workbench main window minium height.</long>
+      </locale>
+    </schema>
+  </schemalist>
+</gconfschemafile>

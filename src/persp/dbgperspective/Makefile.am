@@ -50,6 +50,8 @@ nmv-throbber.cc \
 nmv-throbber.h \
 ephy-spinner.c \
 ephy-spinner.h \
+ephy-spinner-tool-item.c \
+ephy-spinner-tool-item.h \
 nmv-ephy-throbber.h \
 nmv-ephy-throbber.cc \
 nmv-variables-utils.cc \

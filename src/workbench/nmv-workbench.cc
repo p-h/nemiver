@@ -33,11 +33,28 @@
 #include "nmv-i-perspective.h"
 #include "nmv-i-conf-mgr.h"
 #include <libgnomevfs/gnome-vfs-init.h>
+#include "nmv-log-stream-utils.h"
 
 using namespace std ;
 using namespace nemiver ;
 using namespace nemiver::common ;
 namespace nemiver {
+
+static const UString CONF_KEY_NEMIVER_WINDOW_WIDTH =
+                "/apps/nemiver/workbench/window-width" ;
+static const UString CONF_KEY_NEMIVER_WINDOW_HEIGHT =
+                "/apps/nemiver/workbench/window-height" ;
+static const UString CONF_KEY_NEMIVER_WINDOW_POSITION_X =
+                "/apps/nemiver/workbench/window-position-x" ;
+static const UString CONF_KEY_NEMIVER_WINDOW_POSITION_Y =
+                "/apps/nemiver/workbench/window-position-y" ;
+static const UString CONF_KEY_NEMIVER_WINDOW_MAXIMIZED =
+                "/apps/nemiver/workbench/window-maximized" ;
+static const UString CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH=
+                "/apps/nemiver/workbench/window-minimum-width" ;
+static const UString CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT=
+                "/apps/nemiver/workbench/window-minimum-height" ;
+
 
 class WorkbenchStaticInit {
     WorkbenchStaticInit ()
@@ -73,11 +90,13 @@ private:
     //************************
     void on_quit_menu_item_action () ;
     void on_about_menu_item_action () ;
+    void on_shutting_down_signal () ;
     //************************
     //</slots (signal callbacks)>
     //************************
 
     void init_glade () ;
+    void init_window () ;
     void init_actions () ;
     void init_menubar () ;
     void init_toolbar () ;
@@ -89,6 +108,9 @@ private:
     bool remove_perspective_body (IPerspectiveSafePtr &a_perspective) ;
     void remove_all_perspective_bodies () ;
     void select_perspective (IPerspectiveSafePtr &a_perspective) ;
+
+    void save_window_geometry () ;
+
 
     void do_init ()
     {
@@ -138,7 +160,9 @@ struct Workbench::Priv {
         menubar (0),
         toolbar_container (0),
         bodies_container (0)
-    {}
+    {
+    }
+
 };//end Workbench::Priv
 
 #ifndef CHECK_WB_INIT
@@ -194,6 +218,16 @@ Workbench::on_about_menu_item_action ()
     dialog.run ();
 }
 
+void
+Workbench::on_shutting_down_signal ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    NEMIVER_TRY
+    save_window_geometry () ;
+    NEMIVER_CATCH
+}
+
 Workbench::Workbench ()
 {
     m_priv.reset (new Priv ());
@@ -227,6 +261,7 @@ Workbench::do_init (Gtk::Main &a_main)
     m_priv->main = &a_main ;
 
     init_glade () ;
+    init_window () ;
     init_actions () ;
     init_menubar () ;
     init_toolbar () ;
@@ -389,6 +424,7 @@ void
 Workbench::init_glade ()
 {
     THROW_IF_FAIL (m_priv) ;
+
     UString file_path = env::build_path_to_glade_file ("workbench.glade") ;
     m_priv->glade = Gnome::Glade::Xml::create (file_path) ;
     THROW_IF_FAIL (m_priv->glade) ;
@@ -396,7 +432,54 @@ Workbench::init_glade ()
     m_priv->root_window.reset
            (ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade,
                                                           "workbench"));
+   // m_priv->root_window->property_allow_shrink ().set_value (true) ;
     m_priv->root_window->hide () ;
+}
+void
+
+Workbench::init_window ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->root_window) ;
+    IConfMgr &conf_mgr = get_configuration_manager () ;
+
+    int width=0, height=0, pos_x=0, pos_y=0 ;
+    LOG_DD ("getting windows geometry from confmgr ...") ;
+    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
+    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_HEIGHT, height) ;
+    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_X, pos_x) ;
+    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
+    bool maximized=false ;
+    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
+    LOG_DD ("got windows geometry from confmgr.") ;
+
+    if (width) {
+        LOG_DD ("restoring windows geometry from confmgr ...") ;
+        m_priv->root_window->resize (width, height) ;
+        m_priv->root_window->move (pos_x, pos_y) ;
+        if (maximized) {
+            m_priv->root_window->maximize () ;
+        }
+        LOG_DD ("restored windows geometry from confmgr") ;
+    } else {
+        LOG_DD ("null window geometry from confmgr.") ;
+    }
+
+    //set the minimum width/height of nemiver, just in case.
+    width=700, height=500 ;
+    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH, width) ;
+    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT, height) ;
+    m_priv->root_window->set_size_request (width, height) ;
+    LOG_DD ("set windows min size to ("
+            << (int) width
+            << ","
+            << (int) height
+            << ")") ;
+
+    shutting_down_signal ().connect (sigc::mem_fun
+                        (*this, &Workbench::on_shutting_down_signal)) ;
 }
 
 void
@@ -471,6 +554,7 @@ Workbench::init_actions ()
 void
 Workbench::init_menubar ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv && m_priv->default_action_group) ;
 
 
@@ -497,6 +581,7 @@ Workbench::init_toolbar ()
 void
 Workbench::init_body ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     m_priv->bodies_container =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
                                                         "bodynotebook") ;
@@ -506,6 +591,8 @@ void
 Workbench::add_perspective_toolbars (IPerspectiveSafePtr &a_perspective,
                                      list<Gtk::Widget*> &a_tbs)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     if (a_tbs.empty ()) {return ;}
 
     SafePtr<Gtk::Box> box (Gtk::manage (new Gtk::VBox)) ;
@@ -526,6 +613,8 @@ void
 Workbench::add_perspective_body (IPerspectiveSafePtr &a_perspective,
                                  Gtk::Widget *a_body)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     if (!a_body || !a_perspective) {return;}
 
     m_priv->bodies_index_map[a_perspective.get ()] =
@@ -535,6 +624,8 @@ Workbench::add_perspective_body (IPerspectiveSafePtr &a_perspective,
 bool
 Workbench::remove_perspective_body (IPerspectiveSafePtr &a_perspective)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->bodies_container) ;
 
@@ -548,6 +639,34 @@ Workbench::remove_perspective_body (IPerspectiveSafePtr &a_perspective)
     m_priv->bodies_container->remove_page (it->second)  ;
     m_priv->bodies_index_map.erase (it) ;
     return true ;
+}
+
+void
+Workbench::save_window_geometry () 
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->root_window) ;
+    IConfMgr &conf_mgr = get_configuration_manager () ;
+
+    int width=0, height=0, pos_x=0, pos_y=0 ;
+    m_priv->root_window->get_size (width, height) ;
+    m_priv->root_window->get_position (pos_x, pos_y) ;
+    bool maximized = (m_priv->root_window->get_window()->get_state()
+                      & Gdk::WINDOW_STATE_MAXIMIZED);
+
+    conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
+    if (!maximized) {
+        LOG_DD ("storing windows geometry to confmgr...") ;
+        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
+        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_HEIGHT, height) ;
+        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_X, pos_x) ;
+        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
+        LOG_DD ("windows geometry stored to confmgr") ;
+    } else {
+        LOG_DD ("windows was maximized, didn't store its geometry") ;
+    }
 }
 
 void
@@ -588,6 +707,7 @@ Workbench::select_perspective (IPerspectiveSafePtr &a_perspective)
 
     m_priv->bodies_container->set_current_page (body_index) ;
 }
+
 
 //the dynmod initial factory.
 extern "C" {
