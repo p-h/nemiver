@@ -1,3 +1,9 @@
+Sun, 10 Dec 2006 22:46:37 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: GDB::exit_engine(): don't queue the
+	  "quit" command, send it to gdb directly, otherwise nemiver may quit
+	  before gdb. This is a second attempt at fixing #384057.
+
 Sun, 10 Dec 2006 21:17:12 +0100 Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc: edited Ruben's patch to save

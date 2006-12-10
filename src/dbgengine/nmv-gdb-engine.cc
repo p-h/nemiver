@@ -5046,7 +5046,19 @@ GDBEngine::exit_engine ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
-    queue_command (Command ("exit-engine", "quit")) ;
+
+    //**************************************************
+    //don't queue the command, send it the gdb directly,
+    //because we want the engine to exit _now_
+    //okay we SHOULD NEVER DO THIS but exit engine is an emergency case.
+    //**************************************************
+
+    //erase the pending commands queue. this is bad but well, gdb is getting
+    //killed anyway.
+    m_priv->queued_commands.clear () ;
+
+    //send the lethal command and run the event loop to flush everything.
+    m_priv->issue_command (Command ("quit"), true) ;
 }
 
 void
