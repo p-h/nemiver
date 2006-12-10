@@ -1,3 +1,11 @@
+Sun, 10 Dec 2006 13:45:51 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: add a GDBEngine::get_state()
+	  method.
+	  OnErrorHandler::do_handle(): emit change the debugger state to
+	  IDebugger::READY when an error occurs and when the debugger is _not_
+	  in the IDebugger::PROGRAM_EXITED stated.
+
 Sat, 09 Dec 2006 20:24:17 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: 

@@ -1088,6 +1088,8 @@ public:
 
     const UString& get_target_path () ;
 
+    IDebugger::State get_state () const ;
+
     void init_output_handlers () ;
 
     void append_breakpoints_to_cache (const map<int, IDebugger::BreakPoint>&) ;
@@ -4539,6 +4541,11 @@ struct OnErrorHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->error_signal ().emit
             (a_in.output ().result_record ().attrs ()["msg"]) ;
+
+        if (m_engine->get_state () != IDebugger::PROGRAM_EXITED
+            || m_engine->get_state () != IDebugger::NOT_STARTED) {
+            m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        }
     }
 };//struct OnErrorHandler
 
@@ -4672,6 +4679,15 @@ GDBEngine::get_target_path ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     return m_priv->exe_path ;
+}
+
+IDebugger::State
+GDBEngine::get_state () const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+
+    return m_priv->state ;
 }
 
 void
