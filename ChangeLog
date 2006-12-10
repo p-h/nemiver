@@ -1,3 +1,8 @@
+2006-12-10  Jean-François Rameau  <jf.rameau@gmail.com>
+
+	* src/persp/dbgperspective/nmv-terminal.cc: set a default font for the
+	terminal widget to fix a bug with vte 0.14 (fixes bug #384172)
+
 Sun, 10 Dec 2006 18:38:26 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-preferences-dialog.cc:

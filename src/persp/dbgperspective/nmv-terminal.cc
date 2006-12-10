@@ -58,6 +58,10 @@ struct Terminal::Priv {
         GtkWidget *w = vte_terminal_new () ;
         vte = VTE_TERMINAL (w) ;
         THROW_IF_FAIL (vte) ;
+
+	// Mandatory for vte 0.14	
+	vte_terminal_set_font_from_string (vte, "monospace");
+
         vte_terminal_set_scroll_on_output (vte, TRUE) ;
         vte_terminal_set_scrollback_lines (vte, 1000) ;
         vte_terminal_set_emulation (vte, "xterm") ;
