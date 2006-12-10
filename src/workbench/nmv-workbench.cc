@@ -117,6 +117,7 @@ private:
         WorkbenchStaticInit::do_init ();
     }
     void shut_down () ;
+    bool on_delete_event (GdkEventAny* event) ;
 
 public:
     Workbench () ;
@@ -176,6 +177,17 @@ struct Workbench::Priv {
 //*********************
 //signal slots methods
 //*********************
+bool
+Workbench::on_delete_event (GdkEventAny* event)
+{
+    // use event so that compilation doesn't fail with -Werror :(
+    event = NULL;
+    // clicking the window manager's X and shutting down the with Quit menu item
+    // should do the same thing
+    on_quit_menu_item_action();
+    return false;   // keep propagating
+}
+
 void
 Workbench::on_quit_menu_item_action ()
 {
@@ -480,6 +492,8 @@ Workbench::init_window ()
 
     shutting_down_signal ().connect (sigc::mem_fun
                         (*this, &Workbench::on_shutting_down_signal)) ;
+    m_priv->root_window->signal_delete_event ().connect (
+            sigc::mem_fun (*this, &Workbench::on_delete_event));
 }
 
 void

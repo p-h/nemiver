@@ -1,5 +1,18 @@
 2006-12-10  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/workbench/nmv-workbench.cc: EUREKA!  I figured out why I was never
+	seeing the 'quit' command queued to gdb.  It's because the shutting down
+	signal was never being emitted when I shut down nemiver.  This is because I
+	was using the window-manager's close button instead of the 'Quit' menu item.
+	To fix this, I now connect to the root window's delete-event and call the
+	on_quit_menu_item_action() so both of these methods result in the same
+	shutdown procedure.  This means that the queueing of the quit command (look
+	down 2 changes) might have actually been fine, but it just simply wasn't
+	being done at all before (depending on which method you used to shut down
+	the application).
+
+2006-12-10  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/nmv-call-stack.cc:
 	* src/persp/dbgperspective/nmv-call-stack.h: refactor the CallStack widget
 	in the same way as the BreakpointsView widget was refactored (see bug
