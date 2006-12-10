@@ -55,8 +55,6 @@ class PreferencesDialog::Priv {
 
 public:
     IWorkbench &workbench ;
-    mutable IConfMgrSafePtr configuration_manager ;
-
     //source directories property widgets
     vector<UString> source_dirs ;
     Glib::RefPtr<Gtk::ListStore> list_store ;
@@ -212,18 +210,7 @@ public:
 
     IConfMgr& conf_manager () const
     {
-        if (!configuration_manager) {
-            DynamicModule::Loader *loader =
-                workbench.get_module_loader () ;
-            THROW_IF_FAIL (loader) ;
-            DynamicModuleManager *module_manager =
-                loader->get_dynamic_module_manager () ;
-            THROW_IF_FAIL (module_manager) ;
-            configuration_manager =
-                    module_manager->load<IConfMgr> ("gconfmgr") ;
-        }
-        THROW_IF_FAIL (configuration_manager) ;
-        return *configuration_manager ;
+        return workbench.get_configuration_manager () ;
     }
 
     void update_source_dirs_key ()
