@@ -1093,13 +1093,13 @@ DBGPerspective::on_shutdown_signal ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
-    // stop the debugger so that the target executable doesn't go on running
-    // after we shut down
-    debugger ()->stop ();
-
     if (m_priv->prog_path == "") {
         return ;
     }
+
+    // stop the debugger so that the target executable doesn't go on running
+    // after we shut down
+    debugger ()->exit_engine ();
 
     if (m_priv->reused_session) {
         record_and_save_session (m_priv->session) ;
@@ -3301,7 +3301,7 @@ void
 DBGPerspective::stop ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
-    if (!debugger ()->stop ()) {
+    if (!debugger ()->stop_target ()) {
         ui_utils::display_error ("Failed to stop the debugger") ;
     }
 }

@@ -1066,7 +1066,8 @@ public:
     map<UString, UString>& properties () ;
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
-    bool stop ()  ;
+    bool stop_target ()  ;
+    void exit_engine () ;
     void execute_command (const Command &a_command) ;
     bool queue_command (const Command &a_command) ;
     bool busy () const ;
@@ -5023,7 +5024,7 @@ GDBEngine::get_target_info (const UString &a_cookie)
 }
 
 bool
-GDBEngine::stop ()
+GDBEngine::stop_target ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
@@ -5038,6 +5039,14 @@ GDBEngine::stop ()
 
     //return  (kill (m_priv->target_pid, SIGINT) == 0) ;
     return  (kill (m_priv->gdb_pid, SIGINT) == 0) ;
+}
+
+void
+GDBEngine::exit_engine ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+    queue_command (Command ("exit-engine", "quit")) ;
 }
 
 void

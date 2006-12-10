@@ -1,3 +1,14 @@
+Sun, 10 Dec 2006 16:26:44 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: added
+	  IDebugger::exit_engine(), renamed IDebugger::stop() into
+	  IDebugger::stop_target().
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  DBGPerspective::on_shutdown_signal(): use IDebugger::exit_engine()
+	  upon nemiver shutdown. This should fix #384057.
+	  DBGPerspective::stop() Also, use IDebugger::stop_target()
+	  instead of IDebugger::stop().
+
 Sun, 10 Dec 2006 13:45:51 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: add a GDBEngine::get_state()

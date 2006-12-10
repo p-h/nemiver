@@ -453,7 +453,9 @@ public:
 
     virtual void get_target_info (const UString &a_cookie="") = 0 ;
 
-    virtual bool stop () = 0 ;
+    virtual bool stop_target () = 0 ;
+
+    virtual void exit_engine () = 0 ;
 
     virtual void step_in (const UString &a_cookie="") = 0;
 
