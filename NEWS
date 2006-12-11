@@ -14,6 +14,10 @@ new features
 
     * new dialog to locate files when no full path debugging information is available
 
+    [Ruben Vermeersch]
+
+    * remember last nemiver window geometry (makes nemiver 'spatial')
+
 bug fixes/improvements
 ======================
 
@@ -23,8 +27,11 @@ bug fixes/improvements
     * when opening a source file start filechooser in the working dir
       specified in session settings.
     * restart gconfd (instead of sending the HUP signal) upon schemas install
-    * #378294 gdb 6.4debian sometimes doesn't provide full path to source file info
     * fixed typos in NEWS file
+    * fixed typos in dialogs
+    * hook the windown 'delete-event' to the normal shutdown procedure
+    * #378294 gdb 6.4debian sometimes doesn't provide full path to source file info
+    * #381702 double-clicking breakpoint list when there are no breakpoints causes an error
 
     [Dodji Seketeli]
 
@@ -34,13 +41,18 @@ bug fixes/improvements
     * in the breakpoint workflow, lookup files in already opened files first
     * fix target terminal scrolling issues
     * update local variables when selecting frames
+    * fix utf8 paths issues
     * fix gdbmi frame data parsing
+    * code cleanup and refactoring here and there
+    * allow target restart only from the READY state
     * better plugins lifetime management
     * #377623 Local variables parsing error on multi-parameter template types
     * #381912 stopping the targets fails when runned without break
     * #381402 variables content in popup tip on hover very invisible
-    * fix utf8 paths issues
-    * code cleanup and refactoring here and there
+    * #383170 segfault at startup on EM64T archictecture
+    * #381694 disable the continue and step buttons when target program exits
+    * #384057 Target executable still runs after nemiver shuts down
+    * #384406 nemiver crashed when activating line numbers
 
     [Ruben Vermeersch]
 
@@ -48,9 +60,23 @@ bug fixes/improvements
     * fix bad support of 'current working directory'
     * update README file
 
+    [Remi Cardonna]
+
+    * make libworkbenchmod.so link with the --as--needed option of GNU ld
+
+    [Guillaume Desmottes]
+
+    * #383886 Preferences dialog should not appear in the windows list
+
+    [Jean-Francois Rameau]
+
+    * #384172 Clicking on "Target terminal" tab makes the top window very large
+
+
 translations
 =============
-[fr] updated.
+
+fr [Dodji Seketeli]
 
 |||||||||||||||||||||||||||||||||||||||||||||||||
 

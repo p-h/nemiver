@@ -1,3 +1,7 @@
+Mon, 11 Dec 2006 11:33:26 +0100 Dodji Seketeli
+
+	* NEWS: updated this
+
 Mon, 11 Dec 2006 10:25:16 +0100 Dodji Seketeli
 
 	* po/fr.po: updated French translation.
@@ -35,7 +39,7 @@ Sun, 10 Dec 2006 21:17:12 +0100 Dodji Seketeli
 	* src/workbench/nmv-workbench.cc: edited Ruben's patch to save
 	  geometry only at shutdown time. Added more logging. Also, set
 	  window size request to a minumum size,
-	  otherwise, setting window size (through Gtk::Windo::resize())
+	  otherwise, setting window size (through Gtk::Window::resize())
 	  sets the window minimum to the newly set size <grin/>.
 	* src/persp/dbgperspective/nmv-throbber.cc,h: make
 	  throbber::get_widget() return a Gtk::ToolItem so that we can embedd
