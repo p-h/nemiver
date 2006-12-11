@@ -2060,14 +2060,11 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     SafePtr<Gtk::Label> label (Gtk::manage
                             (new Gtk::Label (basename))) ;
     SafePtr<Gtk::Image> cicon (manage
-                (new Gtk::Image (Gtk::StockID ("gtk-close"),
-                                               Gtk::ICON_SIZE_BUTTON))) ;
+                (new Gtk::Image (Gtk::StockID (Gtk::Stock::CLOSE),
+                                               Gtk::ICON_SIZE_MENU))) ;
 
-    int w=0, h=0 ;
-    Gtk::IconSize::lookup (Gtk::ICON_SIZE_MENU, w, h) ;
     SafePtr<SlotedButton> close_button (Gtk::manage (new SlotedButton ())) ;
     close_button->perspective = this ;
-    close_button->set_size_request (w+4, h+4) ;
     close_button->set_relief (Gtk::RELIEF_NONE) ;
     close_button->add (*cicon) ;
     close_button->file_path = a_path ;
