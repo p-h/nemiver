@@ -53,6 +53,7 @@ bug fixes/improvements
     * #381694 disable the continue and step buttons when target program exits
     * #384057 Target executable still runs after nemiver shuts down
     * #384406 nemiver crashed when activating line numbers
+    * #384456 Close button on tab is truncated
 
     [Ruben Vermeersch]
 
@@ -77,6 +78,7 @@ translations
 =============
 
 fr [Dodji Seketeli]
+sv [Daniel Nylander]
 
 |||||||||||||||||||||||||||||||||||||||||||||||||
 
