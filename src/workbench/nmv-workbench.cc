@@ -178,25 +178,42 @@ struct Workbench::Priv {
 //signal slots methods
 //*********************
 bool
-Workbench::on_delete_event (GdkEventAny* event)
+Workbench::on_delete_event (GdkEventAny* a_event)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    NEMIVER_TRY
     // use event so that compilation doesn't fail with -Werror :(
-    event = NULL;
+    if (a_event) {}
+
     // clicking the window manager's X and shutting down the with Quit menu item
     // should do the same thing
-    on_quit_menu_item_action();
-    return false;   // keep propagating
+    on_quit_menu_item_action () ;
+    NEMIVER_CATCH
+
+    //keep propagating
+    return false;
 }
 
 void
 Workbench::on_quit_menu_item_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    NEMIVER_TRY
+
     shut_down () ;
+
+    NEMIVER_CATCH
 }
 
 void
 Workbench::on_about_menu_item_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    NEMIVER_TRY
+
     Gtk::AboutDialog dialog;
     dialog.set_name (PACKAGE_NAME);
     dialog.set_version (PACKAGE_VERSION);
@@ -228,6 +245,8 @@ Workbench::on_about_menu_item_action ()
     dialog.set_license(license);
 
     dialog.run ();
+
+    NEMIVER_CATCH
 }
 
 void
@@ -263,6 +282,7 @@ Workbench::get_info (Info &a_info) const
 void
 Workbench::do_init (Gtk::Main &a_main)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     DynamicModule::Loader *loader = get_module_loader () ;
     THROW_IF_FAIL (loader) ;
@@ -334,6 +354,8 @@ Workbench::do_init (Gtk::Main &a_main)
 void
 Workbench::shut_down ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     shutting_down_signal ().emit () ;
     m_priv->main->quit () ;
 }
@@ -341,6 +363,8 @@ Workbench::shut_down ()
 Glib::RefPtr<Gtk::ActionGroup>
 Workbench::get_default_action_group ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     CHECK_WB_INIT ;
     THROW_IF_FAIL (m_priv) ;
     return m_priv->default_action_group ;
@@ -435,6 +459,8 @@ Workbench::shutting_down_signal ()
 void
 Workbench::init_glade ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv) ;
 
     UString file_path = env::build_path_to_glade_file ("workbench.glade") ;
@@ -499,6 +525,8 @@ Workbench::init_window ()
 void
 Workbench::init_actions ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     Gtk::StockID nil_stock_id ("") ;
     sigc::slot<void> nil_slot ;
     using ui_utils::ActionEntry ;
@@ -569,6 +597,7 @@ void
 Workbench::init_menubar ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv && m_priv->default_action_group) ;
 
 
@@ -587,6 +616,8 @@ Workbench::init_menubar ()
 void
 Workbench::init_toolbar ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     m_priv->toolbar_container =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
                                                         "toolbarcontainer") ;
@@ -686,6 +717,8 @@ Workbench::save_window_geometry ()
 void
 Workbench::remove_all_perspective_bodies ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     map<IPerspective*, int>::iterator it ;
     for (it = m_priv->bodies_index_map.begin ();
          it != m_priv->bodies_index_map.end ();
@@ -698,6 +731,8 @@ Workbench::remove_all_perspective_bodies ()
 void
 Workbench::select_perspective (IPerspectiveSafePtr &a_perspective)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->toolbar_container) ;
     THROW_IF_FAIL (m_priv->bodies_container) ;

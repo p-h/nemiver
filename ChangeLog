@@ -1,3 +1,8 @@
+Mon, 11 Dec 2006 11:59:41 +0100 Dodji Seketeli
+
+	* src/workbench/nmv-workbench.cc: added more logging and some try/catch
+	  blocks to signal handlers.
+
 Mon, 11 Dec 2006 11:33:26 +0100 Dodji Seketeli
 
 	* NEWS: updated this
