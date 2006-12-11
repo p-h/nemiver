@@ -307,6 +307,8 @@ cat <<EOT
     NEMIVER_CFLAGS                  : ${NEMIVER_CFLAGS}
 
 Now, Type 'make' to compile Nemiver
+Once done, type 'make install' with sufficient privileges to install it to $prefix
+
 I hope you will enjoy it.
 
 --Dodji
