@@ -1,6 +1,31 @@
-nemiver (0.1+r294) unstable; urgency=low
+nemiver (0.1.0+svn20061211) unstable; urgency=low
 
-  * Initial release
+  * SVN current
 
- -- Hubert Figuiere <hub@figuiere.net>  Sun, 10 Dec 2006 10:31:43 -0500
+ -- Hubert Figuiere <hub@figuiere.net>  Mon, 11 Dec 2006 00:28:42 -0500
+
+nemiver (0.1.0-0ubuntu2) feisty; urgency=low
+
+  * debian/copyright:
+    - added information about MIT licensed files.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Thu, 23 Nov 2006 12:00:57 +0100
+
+nemiver (0.1.0-0ubuntu1) feisty; urgency=low
+
+  * First official upstream release.
+  * debian/control, debian/libnemiveruicommon*.install:
+    - dropped libnemiveruicommon* packages, dropped upstream.
+  * debian/rules:
+    - build with --with-gconf-schema-file-dir=/usr/share/gconf/schemas.
+  * debian/nemiver-dev.install:
+    - install additional header files.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Tue, 21 Nov 2006 18:56:49 +0100
+
+nemiver (0.0.1~svn20061030-0ubuntu1) feisty; urgency=low
+
+  * Initial release.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Mon, 30 Oct 2006 17:38:59 +0100
 

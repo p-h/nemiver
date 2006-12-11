@@ -1,14 +1,49 @@
 Source: nemiver
-Section: devel
+Section: gnome
 Priority: optional
-Maintainer: Hubert Figuiere <hunb@figuiere.net>
-Build-Depends: debhelper (> 5.0.0), cdbs, libgtksourceviewmm-1.0-dev (>= 0.1.0), libsqlite3-dev, libvte-dev (>= 0.12), libgconf2-dev (>= 2.14.0), libglademm-2.4-dev (>= 2.6.0), libgtop2-dev (>=2.14), libgnome-vfsmm-2.6-dev (>= 2.14), gdb (>= 6), libxml-parser-perl, libboost-dev
+Maintainer: Daniel Holbach <daniel.holbach@ubuntu.com>
+Build-Depends: cdbs, debhelper (>= 5), libglibmm-2.4-dev (>= 2.8.2), libgnomevfs2-dev (>= 2.14), libxml2-dev (>= 2.6.22), libgtkmm-2.4-dev (>= 2.6.0), libgtksourceviewmm-1.0-dev (>= 0.1.0), libsqlite3-dev (>= 3.0), libgtop2-dev (>= 2.14), libvte-dev (>= 0.12.0), libgconf2-dev (>= 2.14.0), intltool (>= 0.35), libboost-dev, libglademm-2.4-dev (>= 2.6.0), gdb
 Standards-Version: 3.7.2
 
 Package: nemiver
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, gdb (>= 6)
-Description: A Gtk frontend to GDB debugger.
- Nemiver is a Gtk frontend to the GNU Debugger gdb.
+Section: gnome
+Depends: ${shlibs:Depends}, ${misc:Depends}, gdb
+Description: graphical debugger for GNOME
+ Nemiver is an project to write a standalone graphical debugger that 
+ integrates well in the GNOME desktop.
+ It uses the well known GNU Debugger gdb.
+
+Package: libnemivercommon0
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Description: common library of nemiver
+ Nemiver is an project to write a standalone graphical debugger that
+ integrates well in the GNOME desktop.
+ It uses the well known GNU Debugger gdb.
  .
- http://home.gna.org/nemiver/
+ This package contains its common library.
+
+Package: libnemivercommon-dev
+Architecture: any
+Section: libdevel
+Depends: libnemivercommon0 (= ${Source-Version}), libxml2-dev (>= 2.6.22), libglibmm-2.4-dev (>= 2.8.2)
+Description: common library of nemiver - headers
+ Nemiver is an project to write a standalone graphical debugger that
+ integrates well in the GNOME desktop.
+ It uses the well known GNU Debugger gdb.
+ .
+ This package contains its common library.
+
+Package: nemiver-dev
+Architecture: any
+Section: devel
+Depends: libnemivercommon-dev (= ${Source-Version}), nemiver (= ${Source-Version}), libgnomevfs2-dev (>= 2.14), libgtksourceviewmm-1.0-dev (>= 0.1.0), libsqlite3-dev (>= 3.0), libgtop2-dev (>= 2.14), libvte-dev (>= 0.12.0), libgconf2-dev (>= 2.14.0), libboost-dev
+Description: graphical debugger for GNOME - development files
+ Nemiver is an project to write a standalone graphical debugger that
+ integrates well in the GNOME desktop.
+ It uses the well known GNU Debugger gdb.
+ .
+ This package contains development files.
+

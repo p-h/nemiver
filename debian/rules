@@ -1,5 +1,12 @@
 #!/usr/bin/make -f
+DEB_AUTO_CLEANUP_RCS            := yes
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/class/gnome.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+DEB_CONFIGURE_EXTRA_FLAGS	:= --with-gconf-schema-file-dir=/usr/share/gconf/schemas
+
+binary-post-install/nemiver::
+	-rm debian/tmp/usr/lib/nemiver/plugins/*.la
+	-rm debian/tmp/usr/lib/nemiver/plugins/*.a
+

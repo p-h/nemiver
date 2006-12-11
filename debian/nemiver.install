@@ -1,0 +1,5 @@
+debian/tmp/usr/lib/nemiver/config
+debian/tmp/usr/lib/nemiver/modules/*.so
+debian/tmp/usr/lib/nemiver/plugins
+debian/tmp/usr/bin
+debian/tmp/usr/share
