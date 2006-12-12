@@ -87,7 +87,10 @@ static const UString CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
                 "/apps/nemiver/dbgperspective/show-source-line-numbers" ;
 static const UString CONF_KEY_HIGHLIGHT_SOURCE_CODE =
                 "/apps/nemiver/dbgperspective/highlight-source-code" ;
-
+static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
+                "/apps/nemiver/dbgperspective/status-widget-minimum-width" ;
+static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
+                "/apps/nemiver/dbgperspective/status-widget-minimum-height" ;
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
@@ -1921,6 +1924,16 @@ DBGPerspective::init_body ()
     m_priv->statuses_notebook =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                         "statusesnotebook") ;
+    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
+    int width=100, height=70 ;
+    conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH, width) ;
+    conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT, height) ;
+    LOG_DD ("setting status widget min size: width: "
+            << width
+            << ", height: "
+            << height) ;
+    m_priv->statuses_notebook->set_size_request (width, height) ;
+
     m_priv->command_view.reset (new Gtk::TextView) ;
     THROW_IF_FAIL (m_priv->command_view) ;
     get_command_view_scrolled_win ().add (*m_priv->command_view) ;

@@ -45,6 +45,28 @@
 	<long>If set to yes, highlight source code</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/status-widget-minimum-width</key>
+      <applyto>/apps/nemiver/dbgperspective/status-widget-minimum-width</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>100</default>
+      <locale name="C">
+	<short>The minimum width of the status widget</short>
+	<long>The minimum width of the status widget</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/status-widget-minimum-height</key>
+      <applyto>/apps/nemiver/dbgperspective/status-widget-minimum-height</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>70</default>
+      <locale name="C">
+	<short>The minimum height of the status widget</short>
+	<long>The minimum height of the status widget</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
 

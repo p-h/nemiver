@@ -1,3 +1,20 @@
+Tue, 12 Dec 2006 21:31:56 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: set a minimum size
+	to the status notebook widget.
+	* src/persp/dbgperspective/schemas/Makefile.am: I have seen that
+	gconfd-2 --shutdown was not really reliable on my system. When
+	launched from the makefile, sometimes it just doesn't restart gconf.
+	In any case, what I wanted was not really to restart it, but just make
+	it reload its data. So, I switched back to sending it the HUP signal -
+	to make it reload its configuration _without_ restarting it -,
+	but I test the presence of a gconf process before sending the HUP signal.
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas: add
+	a new pair of keys to host the minimum size of the notebook widget.
+	* src/persp/dbgperspective/glade/bodycontainer.glade: don't allow the
+	status notebook to shrink beyond its minimum size.
+	This entry fixes 384474.
+
 Mon, 11 Dec 2006 23:47:02 +0100 Dodji Seketeli
 
 	* NEWS: updated this
