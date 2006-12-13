@@ -1,4 +1,4 @@
-coming release <-- rename this at release time.
+0.2.0 Release
 ==============
 
 new features
@@ -54,6 +54,9 @@ bug fixes/improvements
     * #384057 Target executable still runs after nemiver shuts down
     * #384406 nemiver crashed when activating line numbers
     * #384456 Close button on tab is truncated
+    * #384474 Bottom widget could disappeared under gtkvsperator
+    * #385186 Tab too high
+    * #385195 toolbar widgets to clean
 
     [Ruben Vermeersch]
 
@@ -81,6 +84,9 @@ fr [Dodji Seketeli]
 sv [Daniel Nylander]
 
 |||||||||||||||||||||||||||||||||||||||||||||||||
+
+Initial 0.1.0 release
+========================
 
 Disclaimer:
 ============

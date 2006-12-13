@@ -1,7 +1,7 @@
 dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
-AC_INIT(nemiver, 0.1.0)
+AC_INIT(nemiver, 0.2.0)
 AC_PREREQ(2.59)
 AC_CONFIG_SRCDIR(README)
 AC_CANONICAL_TARGET

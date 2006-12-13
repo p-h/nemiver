@@ -1,3 +1,7 @@
+Wed, 13 Dec 2006 22:31:20 +0100 Dodji Seketeli
+
+	* ChangeLog, configure.ac, NEWS: some few updates to prepare 0.2.0
+
 Wed, 13 Dec 2006 08:37:50 +0100 Dodji Seketeli
 
 	* glade/workbench.glade: don't show the the border of the toolbar
@@ -26,7 +30,7 @@ Tue, 12 Dec 2006 21:31:56 +0100 Dodji Seketeli
 	a new pair of keys to host the minimum size of the notebook widget.
 	* src/persp/dbgperspective/glade/bodycontainer.glade: don't allow the
 	status notebook to shrink beyond its minimum size.
-	This entry fixes 384474.
+	This entry fixes #384474.
 
 Mon, 11 Dec 2006 23:47:02 +0100 Dodji Seketeli
 
