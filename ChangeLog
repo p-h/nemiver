@@ -1,3 +1,11 @@
+Wed, 13 Dec 2006 08:24:30 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  DBGPerspective::append_source_editor(): more work on the damned
+	  close button size. Man, so much try/error cycles. Now it seems
+	  to have a decent size. This should close #385186.
+
+
 Tue, 12 Dec 2006 21:31:56 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: set a minimum size

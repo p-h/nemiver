@@ -2077,8 +2077,21 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                                Gtk::ICON_SIZE_MENU))) ;
 
     SafePtr<SlotedButton> close_button (Gtk::manage (new SlotedButton ())) ;
+    //okay, make the button as small as possible.
+    /*
+    Glib::RefPtr<Gtk::Style> style = close_button->get_style ()->copy () ;
+    THROW_IF_FAIL (style) ;
+    style->set_xthickness (1) ;
+    style->set_ythickness (1) ;
+    close_button->set_style (style) ;
+    */
+    int w=0, h=0 ;
+    Gtk::IconSize::lookup (Gtk::ICON_SIZE_MENU, w, h) ;
+    close_button->set_size_request (w+2, h+2) ;
+
     close_button->perspective = this ;
     close_button->set_relief (Gtk::RELIEF_NONE) ;
+    //close_button->set_focus_on_click (false) ;
     close_button->add (*cicon) ;
     close_button->file_path = a_path ;
     close_button->signal_clicked ().connect
@@ -2088,19 +2101,19 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                      _("close") +  UString (" ") + a_path) ;
 
     SafePtr<Gtk::Table> table (Gtk::manage (new Gtk::Table (1, 2))) ;
-    table->attach (*label, 0, 1, 0, 1) ;
-    table->attach (*close_button, 1, 2, 0, 1) ;
-    close_button->tooltips->set_tip (*table, a_path) ;
 
-    table->show_all () ;
     Gtk::EventBox *event_box = Gtk::manage (new Gtk::EventBox) ;
-    event_box->add (*table) ;
+    event_box->add (*label) ;
+    table->attach (*event_box, 0, 1, 0, 1) ;
+    table->attach (*close_button, 1, 2, 0, 1) ;
     close_button->tooltips->set_tip (*event_box, a_path) ;
+    table->show_all () ;
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
-                                                              *event_box,
+                                                              *table,
                                                               -1);
     m_priv->path_2_pagenum_map[a_path] = page_num ;
-    std::string base_name = Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
+    std::string base_name =
+                    Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
     THROW_IF_FAIL (base_name != "") ;
     m_priv->basename_2_pagenum_map[Glib::locale_to_utf8 (base_name)]= page_num ;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
