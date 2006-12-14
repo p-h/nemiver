@@ -1,8 +1,8 @@
-nemiver (0.1.0+svn20061211) unstable; urgency=low
+nemiver (0.2.0+svn20061213) unstable; urgency=low
 
   * SVN current
 
- -- Hubert Figuiere <hub@figuiere.net>  Mon, 11 Dec 2006 00:28:42 -0500
+ -- Hubert Figuiere <hub@figuiere.net>  Wed, 13 Dec 2006 17:12:29 -0500
 
 nemiver (0.1.0-0ubuntu2) feisty; urgency=low
 
