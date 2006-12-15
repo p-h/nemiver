@@ -1,3 +1,12 @@
+Sat, 16 Dec 2006 00:03:25 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/: moved nmv-ui-utils.cc nmv-throbber.cc,
+	 nmv-throbber.h, ephy-spinner.c, ephy-spinner.h,
+	 ephy-spinner-tool-item.c, ephy-spinner-tool-item.h,
+	 nmv-ephy-throbber.h, nmv-ephy-throbber.cc, nmv-popup-tip.cc,
+	 nmv-popup-tip.h, nmv-terminal.cc, nmv-terminal.h
+	 to src/uicommon. Sharing is good.
+
 2006-12-14  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* glade/workbench.glade:

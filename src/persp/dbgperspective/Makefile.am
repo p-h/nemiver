@@ -46,14 +46,6 @@ nmv-proc-list-dialog.cc \
 nmv-proc-list-dialog.h \
 nmv-call-stack.cc \
 nmv-call-stack.h \
-nmv-throbber.cc \
-nmv-throbber.h \
-ephy-spinner.c \
-ephy-spinner.h \
-ephy-spinner-tool-item.c \
-ephy-spinner-tool-item.h \
-nmv-ephy-throbber.h \
-nmv-ephy-throbber.cc \
 nmv-variables-utils.cc \
 nmv-variables-utils.h \
 nmv-local-vars-inspector.cc \
@@ -62,12 +54,8 @@ nmv-var-inspector.cc \
 nmv-var-inspector.h \
 nmv-var-inspector-dialog.cc \
 nmv-var-inspector-dialog.h \
-nmv-terminal.h \
-nmv-terminal.cc \
 nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
-nmv-popup-tip.h \
-nmv-popup-tip.cc \
 nmv-thread-list.h \
 nmv-thread-list.cc
 
