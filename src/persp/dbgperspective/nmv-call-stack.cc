@@ -373,9 +373,9 @@ struct CallStack::Priv {
         Gtk::TreeView *tree_view = new Gtk::TreeView (store) ;
         THROW_IF_FAIL (tree_view) ;
         widget.reset (tree_view) ;
-        tree_view->append_column ("line", columns ().location) ;
-        tree_view->append_column ("function", columns ().function_name) ;
-        tree_view->append_column ("arguments", columns ().function_args) ;
+        tree_view->append_column ("Line", columns ().location) ;
+        tree_view->append_column ("Function", columns ().function_name) ;
+        tree_view->append_column ("Arguments", columns ().function_args) ;
         tree_view->set_headers_visible (true) ;
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
 

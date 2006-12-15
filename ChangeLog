@@ -1,3 +1,15 @@
+2006-12-14  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* glade/workbench.glade:
+	* src/persp/dbgperspective/glade/loadcoredialog.glade:
+	* src/persp/dbgperspective/glade/proclistdialog.glade:
+	* src/persp/dbgperspective/glade/runprogramdialog.glade:
+	* src/persp/dbgperspective/glade/varinspectordialog.glade:
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/persp/dbgperspective/nmv-var-inspector.cc: A whole bunch of little HIG
+	fixes related to capitalization.
+
 Thu, 14 Dec 2006 07:55:07 +0100 Dodji Seketeli
 
 	============== 0.2.0 release ===========

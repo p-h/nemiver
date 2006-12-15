@@ -58,12 +58,12 @@ class VarInspector::Priv : public sigc::trackable {
         Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
         THROW_IF_FAIL (sel) ;
         sel->set_mode (Gtk::SELECTION_SINGLE) ;
-        tree_view->append_column (_("variable"),
+        tree_view->append_column (_("Variable"),
                                  variables_utils::get_variable_columns ().name) ;
         Gtk::TreeViewColumn * col = tree_view->get_column (0) ;
         THROW_IF_FAIL (col) ;
         col->set_resizable (true) ;
-        tree_view->append_column (_("value"), get_variable_columns ().value) ;
+        tree_view->append_column (_("Value"), get_variable_columns ().value) ;
         col = tree_view->get_column (1) ;
         THROW_IF_FAIL (col) ;
         col->set_resizable (true) ;
@@ -71,7 +71,7 @@ class VarInspector::Priv : public sigc::trackable {
                             "foreground-gdk",
                             variables_utils::VariableColumns::FG_COLOR_OFFSET) ;
 
-        tree_view->append_column (_("type"),
+        tree_view->append_column (_("Type"),
                                   get_variable_columns ().type_caption);
         col = tree_view->get_column (2) ;
         THROW_IF_FAIL (col) ;

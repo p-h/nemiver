@@ -1561,8 +1561,8 @@ DBGPerspective::init_actions ()
         {
             "SaveSessionMenuItemAction",
             Gtk::Stock::SAVE,
-            _("_Save session to disk"),
-            _("save the current debugging session to disk"),
+            _("_Save Session to Disk"),
+            _("Save the current debugging session to disk"),
             sigc::mem_fun (*this, &DBGPerspective::on_save_session_action),
             ActionEntry::DEFAULT,
             ""
@@ -1605,7 +1605,7 @@ DBGPerspective::init_actions ()
         {
             "StepOutMenuItemAction",
             nemiver::STOCK_STEP_OUT,
-            _("Step _out"),
+            _("Step _Out"),
             _("Finish the execution of the current function"),
             sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
             ActionEntry::DEFAULT,
@@ -1625,7 +1625,7 @@ DBGPerspective::init_actions ()
         {
             "ContinueUntilMenuItemAction",
             nil_stock_id,
-            _("Run to cursor"),
+            _("Run to Cursor"),
             _("Continue program execution until the currently selected "
               "line is reached"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_until_action),
@@ -1636,7 +1636,7 @@ DBGPerspective::init_actions ()
         {
             "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            _("Toggle _break"),
+            _("Toggle _Break"),
             _("Set/Unset a breakpoint at the current cursor location"),
             sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
@@ -1646,7 +1646,7 @@ DBGPerspective::init_actions ()
         {
             "InspectVariableMenuItemAction",
             nil_stock_id,
-            _("Inspect a variable"),
+            _("Inspect a Variable"),
             _("Inspect a global or local variable"),
             sigc::mem_fun (*this, &DBGPerspective::on_inspect_variable_action),
             ActionEntry::DEFAULT,
@@ -1659,7 +1659,7 @@ DBGPerspective::init_actions ()
             "StopMenuItemAction",
             Gtk::Stock::STOP,
             _("Stop"),
-            _("Stop the debugger"),
+            _("Stop the Debugger"),
             sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
             ActionEntry::DEFAULT,
             "F9"
@@ -1679,7 +1679,7 @@ DBGPerspective::init_actions ()
         {
             "ShowCommandsMenuAction",
             nil_stock_id,
-            _("Show commands"),
+            _("Show Commands"),
             _("Show the debugger commands tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_commands_action),
             ActionEntry::TOGGLE,
@@ -1688,7 +1688,7 @@ DBGPerspective::init_actions ()
         {
             "ShowErrorsMenuAction",
             nil_stock_id,
-            _("Show errors"),
+            _("Show Errors"),
             _("Show the errors commands tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_errors_action),
             ActionEntry::TOGGLE,
@@ -1697,7 +1697,7 @@ DBGPerspective::init_actions ()
         {
             "ShowTargetOutputMenuAction",
             nil_stock_id,
-            _("Show output"),
+            _("Show Output"),
             _("Show the debugged target output tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_target_output_action),
             ActionEntry::TOGGLE,
@@ -1716,7 +1716,7 @@ DBGPerspective::init_actions ()
         {
             "OpenMenuItemAction",
             Gtk::Stock::OPEN,
-            _("_Open source file ..."),
+            _("_Open Source File ..."),
             _("Open a source file for viewing"),
             sigc::mem_fun (*this, &DBGPerspective::on_open_action),
             ActionEntry::DEFAULT,
@@ -1735,7 +1735,7 @@ DBGPerspective::init_actions ()
         {
             "LoadCoreMenuItemAction",
             nil_stock_id,
-            _("_Load core file..."),
+            _("_Load Core File..."),
             _("Load a core file from disk"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_load_core_file_action),
@@ -1745,7 +1745,7 @@ DBGPerspective::init_actions ()
         {
             "AttachToProgramMenuItemAction",
             nil_stock_id,
-            _("_Attach to running program..."),
+            _("_Attach to Running Program..."),
             _("Debug a program that's already running"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_attach_to_program_action),
