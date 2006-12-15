@@ -22,14 +22,14 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_THROBBER_H__
-#define __NMV_THROBBER_H__
+#ifndef __NMV_SPINNER_H__
+#define __NMV_SPINNER_H__
 
 #include "nmv-object.h"
 #include "nmv-safe-ptr-utils.h"
 #include "nmv-ustring.h"
 namespace Gtk {
-    class ToolItem ;
+    class Widget;
 }
 using nemiver::common::Object ;
 using nemiver::common::SafePtr ;
@@ -38,27 +38,27 @@ using nemiver::common::ObjectUnref ;
 using nemiver::common::UString ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
-class Throbber ;
-typedef SafePtr<Throbber, ObjectRef, ObjectUnref> ThrobberSafePtr ;
+class Spinner ;
+typedef SafePtr<Spinner, ObjectRef, ObjectUnref> SpinnerSafePtr ;
 
-class Throbber : public Object {
+class Spinner : public Object {
     class Priv ;
     SafePtr<Priv> m_priv ;
 
 protected:
-    Throbber () ;
-    Throbber (const UString &a_root_path) ;
+    Spinner () ;
+    Spinner (const UString &a_root_path) ;
 
 public:
-    virtual ~Throbber ()  ;
-    static ThrobberSafePtr create (const UString &a_root_path) ;
+    virtual ~Spinner ()  ;
+    static SpinnerSafePtr create () ;
     virtual void start () ;
     virtual bool is_started () const ;
     virtual void stop () ;
     virtual void toggle_state () ;
-    virtual Gtk::ToolItem& get_widget () const ;
-};//end class Throbber
+    virtual Gtk::Widget& get_widget () const ;
+};//end class Spinner
 
 NEMIVER_END_NAMESPACE (nemiver)
-#endif //__NMV_THROBBER_H__
+#endif //__NMV_SPINNER_H__
 

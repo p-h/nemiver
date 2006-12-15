@@ -45,7 +45,7 @@
 #include "nmv-sess-mgr.h"
 #include "nmv-date-utils.h"
 #include "nmv-call-stack.h"
-#include "nmv-ephy-throbber.h"
+#include "nmv-spinner-tool-item.h"
 #include "nmv-local-vars-inspector.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
@@ -504,7 +504,7 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::Paned> body_main_paned ;
     IWorkbench *workbench ;
     SafePtr<Gtk::HBox> toolbar ;
-    ThrobberSafePtr throbber ;
+    SpinnerToolItemSafePtr throbber ;
     sigc::signal<void, bool> activated_signal;
     sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
@@ -1879,7 +1879,7 @@ DBGPerspective::init_toolbar ()
 {
     add_perspective_toolbar_entries () ;
 
-    m_priv->throbber = EphyThrobber::create () ;
+    m_priv->throbber = SpinnerToolItem::create () ;
     m_priv->toolbar.reset ((new Gtk::HBox)) ;
     THROW_IF_FAIL (m_priv->toolbar) ;
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>

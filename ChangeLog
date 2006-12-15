@@ -1,3 +1,15 @@
+Sat, 16 Dec 2006 00:48:25 +0100 Dodji Seketeli
+
+	* src/uicommon/nmv-spinner.h,cc: moved nmv-throbber.h,cc to
+	  nmv-spinner.h,cc. It's basically a wrapper of EphySpinner.
+	* src/uicommon/nmv-spinner-tool-item.cc: make
+	  nemiver::SpinnerToolItem, wrap
+	  EphySpinnerToolItem. It's does not extend nemiver::Spinner. It's a
+	  tool item that can be put in the toolbar.
+	  Now, our spinner model is cleaner, at least from a naming perspective.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: use
+	  nemiver::SpinnerToolItem instead of nemiver::EphyThrobber.
+
 Sat, 16 Dec 2006 00:03:25 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/: moved nmv-ui-utils.cc nmv-throbber.cc,

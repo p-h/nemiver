@@ -15,21 +15,22 @@
  *See the GNU General Public License for more details.
  *
  *You should have received a copy of the
- *GNU General Public License along with Goupil;
+ *GNU General Public License along with Nemiver;
  *see the file COPYING.
  *If not, write to the Free Software Foundation,
  *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *See COPYRIGHT file copyright information.
  */
-#include <gtkmm/toolbutton.h>
-#include "nmv-ephy-throbber.h"
-#include "ephy-spinner-tool-item.h"
+
+#include <gtkmm/widget.h>
+#include "nmv-spinner.h"
+#include "ephy-spinner.h"
 #include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 struct ESpinnerRef {
-    void operator () (EphySpinnerToolItem *o)
+    void operator () (EphySpinner *o)
     {
         if (o && G_IS_OBJECT (o)) {
             g_object_ref (G_OBJECT (o)) ;
@@ -40,7 +41,7 @@ struct ESpinnerRef {
 };
 
 struct ESpinnerUnref {
-    void operator () (EphySpinnerToolItem *o)
+    void operator () (EphySpinner *o)
     {
         if (o && G_IS_OBJECT (o)) {
             g_object_unref (G_OBJECT (o)) ;
@@ -51,18 +52,18 @@ struct ESpinnerUnref {
 
 };
 
-struct EphyThrobber::Priv {
-    SafePtr<EphySpinnerToolItem, ESpinnerRef, ESpinnerUnref> spinner ;
+struct Spinner::Priv {
+    SafePtr<EphySpinner, ESpinnerRef, ESpinnerUnref> spinner ;
     bool is_started ;
-    Gtk::ToolItem *widget ;
+    Gtk::Widget *widget ;
 
     Priv () :
-        spinner (EPHY_SPINNER_TOOL_ITEM (ephy_spinner_tool_item_new ()), true),
+        spinner (EPHY_SPINNER (ephy_spinner_new ()), true),
         is_started (false),
         widget (0)
     {
         THROW_IF_FAIL (GTK_IS_WIDGET (spinner.get ())) ;
-        widget = Glib::wrap (GTK_TOOL_ITEM (spinner.get ())) ;
+        widget = Glib::wrap (GTK_WIDGET (spinner.get ())) ;
         THROW_IF_FAIL (widget) ;
     }
 
@@ -71,37 +72,37 @@ struct EphyThrobber::Priv {
         widget = 0 ;
         is_started = false ;
     }
-};//end struct EphyThrobber::Priv
+};//end struct Spinner::Priv
 
-EphyThrobber::~EphyThrobber ()
+Spinner::~Spinner ()
 {
 }
 
-EphyThrobber::EphyThrobber ()
+Spinner::Spinner ()
 {
     m_priv.reset (new Priv) ;
 }
 
-ThrobberSafePtr
-EphyThrobber::create ()
+SpinnerSafePtr
+Spinner::create ()
 {
-    ThrobberSafePtr result (new EphyThrobber) ;
+    SpinnerSafePtr result (new Spinner) ;
     THROW_IF_FAIL (result) ;
     return result ;
 }
 
 void
-EphyThrobber::start ()
+Spinner::start ()
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->spinner) ;
 
-    ephy_spinner_tool_item_set_spinning (m_priv->spinner.get (), true) ;
+    ephy_spinner_start (m_priv->spinner.get ()) ;
     m_priv->is_started = true ;
 }
 
 bool
-EphyThrobber::is_started () const
+Spinner::is_started () const
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->spinner) ;
@@ -110,17 +111,17 @@ EphyThrobber::is_started () const
 }
 
 void
-EphyThrobber::stop ()
+Spinner::stop ()
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->spinner) ;
 
-    ephy_spinner_tool_item_set_spinning (m_priv->spinner.get (), false) ;
+    ephy_spinner_stop (m_priv->spinner.get ()) ;
     m_priv->is_started = false ;
 }
 
 void
-EphyThrobber::toggle_state ()
+Spinner::toggle_state ()
 {
     if (is_started ()) {
         stop () ;
@@ -129,8 +130,8 @@ EphyThrobber::toggle_state ()
     }
 }
 
-Gtk::ToolItem&
-EphyThrobber::get_widget () const
+Gtk::Widget&
+Spinner::get_widget () const
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->widget) ;
@@ -138,4 +139,3 @@ EphyThrobber::get_widget () const
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
-

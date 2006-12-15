@@ -30,11 +30,12 @@
 #ifndef __NMV_OBJECT_H__
 #define __NMV_OBJECT_H__
 
-#include "nmv-safe-ptr.h"
 #include "nmv-api-macros.h"
+#include "nmv-namespace.h"
+#include "nmv-safe-ptr.h"
 
-namespace nemiver {
-namespace common {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+NEMIVER_BEGIN_NAMESPACE (common)
 
 struct ObjectPriv ;
 class UString ;
@@ -73,8 +74,8 @@ public:
 
 };//end class Object
 
-}//end namespace common
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (common)
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_OBJECT_H__
 
