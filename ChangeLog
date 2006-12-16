@@ -1,3 +1,9 @@
+Sat, 16 Dec 2006 11:57:13 +0100 Dodji Seketeli
+
+	* TODO: updated this, adding links to bugzilla when enhancement
+	  requests have been filled. Maybe we should be filling an enh to
+	  bugzilla for each TODO item now.
+
 Sat, 16 Dec 2006 01:42:03 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-variables-utils.cc: 

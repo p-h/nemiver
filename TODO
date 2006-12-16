@@ -4,19 +4,26 @@ Feel free to ask on nemiver-list@gna.org about particular topics that you may be
 *) add a search facility to search text in the source editor,
    also maybe add find in files.
 
-*) add a way to show all the source files of a loaded binary. People should be able to
-   open these files by clicking on them.
+*) list all of the source files that make up the current
+l  executable so that you can easily open them by double-clicking their names
+   rather than searching the filesystem (using -file-list-exec-source-files)
+   See bug http://bugzilla.gnome.org/show_bug.cgi?id=384043 for description.
+
+* add a watchpoint setting dialog.
+  See bug http://bugzilla.gnome.org/show_bug.cgi?id=386450 for description.
+
+* add a detach action.
+  See bug http://bugzilla.gnome.org/show_bug.cgi?id=384847 for description.
+
+*  Close all open files when switching to a new debug session.
+   See http://bugzilla.gnome.org/show_bug.cgi?id=381703 for description.
+
+* Add Support for remote debugging.
+  See http://bugzilla.gnome.org/show_bug.cgi?id=384418 for description.
 
 *) write a gdb command interpreter widget (prolly based on Gtk::TextView),
    using IDebugger. It should accept commands with the
    same syntax as the classical gdb syntax and call IDebugger in the background.
-
-*) Add a variable "Watch" widget so that the user can inspect the values of
-    arbitrary variables
-
-*) Once attached to the debugger, popup a dialog telling the
-   user she can set breakpoints before hiting the "run" button.
-   That dialog can propose to open files to set the breakpoints.
 
 *) Display a nice "where-marker" for the cases where the classical
    "where-marker" (the arrow) and the breakpoint marker (the red circle)
@@ -25,9 +32,5 @@ Feel free to ask on nemiver-list@gna.org about particular topics that you may be
 
 *) in the "load core file" workflow, grey out debugging actions that don't
    make sense like those related to stepping and breakpoint setting.
-
-*) add a plugin to list all of the source files that make up the current
-l  executable so that you can easily open them by double-clicking their names
-   rather than searching the filesystem (using -file-list-exec-source-files)
 
 *) Add ability to show disassembly of the source
