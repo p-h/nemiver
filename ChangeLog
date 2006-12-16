@@ -1,3 +1,8 @@
+Sat, 16 Dec 2006 16:21:02 +0100 Dodji Seketeli
+
+	* configure.ac: bump version number to differentiate the trunk branch
+	  from the 0.2 branch
+
 Sat, 16 Dec 2006 01:42:03 +0100 Dodji Seketeli
 
 	==
