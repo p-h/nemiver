@@ -1,10 +1,24 @@
+Sat, 16 Dec 2006 01:42:03 +0100 Dodji Seketeli
+
+	==
+	 merged revision #318 from branch
+	 http://svn.gna.org/svn/nemiver/tags/nemiver-0.2.0.
+	 This pulls bugfix #386473 in.
+	==
+
+Sat, 16 Dec 2006 13:26:08 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: emit set the debugger state to
+	  IDebugger::READY when a breakpoint gets deleted. This
+	  fixes #386473.
+
 Sat, 16 Dec 2006 11:57:13 +0100 Dodji Seketeli
 
 	* TODO: updated this, adding links to bugzilla when enhancement
 	  requests have been filled. Maybe we should be filling an enh to
 	  bugzilla for each TODO item now.
 
-Sat, 16 Dec 2006 01:42:03 +0100 Dodji Seketeli
+Sat, 16 Dec 2006 13:23:54 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-variables-utils.cc: 
 	  break_qname_into_name_elements(): make sure to parse arithmetic
