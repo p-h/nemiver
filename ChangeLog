@@ -1,3 +1,15 @@
+Sat, 16 Dec 2006 01:42:03 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-variables-utils.cc: 
+	  break_qname_into_name_elements(): make sure to parse arithmetic
+	  expressions as variable names, so that I can type 3+4 in the
+	  variable inspector and have the debugger show me the result ;-).
+	* src/persp/dbgperspective/nmv-source-editor.cc: mark strings
+	  translatable here.
+	* src/persp/dbgperspective/nmv-call-stack.cc: mark some string
+	  translatable here as well
+	* po/fr.po:  updated french translation.
+
 Sat, 16 Dec 2006 00:48:25 +0100 Dodji Seketeli
 
 	* src/uicommon/nmv-spinner.h,cc: moved nmv-throbber.h,cc to

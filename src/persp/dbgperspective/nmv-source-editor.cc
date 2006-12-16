@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include <map>
+#include <glib/gi18n.h>
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
@@ -197,9 +198,9 @@ struct SourceEditor::Priv {
             line_count = source_view->get_buffer ()->get_line_count () ;
         }
         line_col_label->set_text
-            (UString ("line: ") + UString::from_int (current_line)
-             + UString (", column: " + UString::from_int (current_column))
-             + UString (", lines: ") + UString::from_int (line_count)) ;
+            (UString (_("Line: ")) + UString::from_int (current_line)
+             + UString (_(", Column: ") + UString::from_int (current_column))
+             + UString (_(", Lines: ")) + UString::from_int (line_count)) ;
     }
 
     gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)

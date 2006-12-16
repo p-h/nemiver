@@ -93,6 +93,11 @@ fetch_element:
                        || a_qname[cur] == '>'/*templates again*/
                        || a_qname[cur] == '#'/*we can have names like '#unnamed#'*/
                        || a_qname[cur] == ','/*template parameters*/
+                       || a_qname[cur] == '+' /*for arithmethic expressions*/
+                       || a_qname[cur] == '*' /*ditto*/
+                       || a_qname[cur] == '/' /*ditto*/
+                       || a_qname[cur] == '(' /*ditto*/
+                       || a_qname[cur] == ')' /*ditto*/
                        || isspace (a_qname[cur]))
          ; ++cur) {
     }
