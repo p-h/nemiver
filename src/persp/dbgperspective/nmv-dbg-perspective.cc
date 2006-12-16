@@ -146,7 +146,7 @@ private:
     void on_execute_program_action () ;
     void on_load_core_file_action () ;
     void on_attach_to_program_action () ;
-    void on_saved_sessions_action () ;
+    void on_choose_a_saved_session_action () ;
     void on_current_session_properties_action () ;
     void on_stop_debugger_action ();
     void on_run_action () ;
@@ -302,6 +302,8 @@ public:
 
     void close_file (const UString &a_path) ;
 
+    void close_all_opened_files () ;
+
     ISessMgr& session_manager () ;
 
     void execute_session (ISessMgr::Session &a_session) ;
@@ -310,20 +312,24 @@ public:
 
     void execute_program (const UString &a_prog_and_args,
                           const map<UString, UString> &a_env,
-                          const UString &a_cwd=".") ;
+                          const UString &a_cwd=".",
+                          bool a_close_opened_files=false) ;
 
     void execute_program (const UString &a_prog,
                           const UString &a_args,
                           const map<UString, UString> &a_env,
                           const UString &a_cwd,
-                          const vector<IDebugger::BreakPoint> &a_breaks) ;
+                          const vector<IDebugger::BreakPoint> &a_breaks,
+                          bool a_close_opened_files=false) ;
 
     void attach_to_program () ;
-    void attach_to_program (unsigned int a_pid) ;
+    void attach_to_program (unsigned int a_pid,
+                            bool a_close_opened_files=false) ;
     void load_core_file () ;
     void load_core_file (const UString &a_prog_file,
                          const UString &a_core_file_path) ;
-    void saved_sessions () ;
+    void save_current_session () ;
+    void choose_a_saved_session () ;
     void edit_preferences () ;
 
     void run () ;
@@ -626,6 +632,7 @@ operator<< (ostream &a_out,
 void
 DBGPerspective::on_open_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     open_file () ;
@@ -636,6 +643,7 @@ DBGPerspective::on_open_action ()
 void
 DBGPerspective::on_close_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     close_current_file () ;
@@ -646,6 +654,7 @@ DBGPerspective::on_close_action ()
 void
 DBGPerspective::on_execute_program_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     execute_program () ;
@@ -656,6 +665,7 @@ DBGPerspective::on_execute_program_action ()
 void
 DBGPerspective::on_load_core_file_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     load_core_file () ;
@@ -666,6 +676,7 @@ DBGPerspective::on_load_core_file_action ()
 void
 DBGPerspective::on_attach_to_program_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     attach_to_program () ;
@@ -674,11 +685,12 @@ DBGPerspective::on_attach_to_program_action ()
 }
 
 void
-DBGPerspective::on_saved_sessions_action ()
+DBGPerspective::on_choose_a_saved_session_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
-    saved_sessions () ;
+    choose_a_saved_session () ;
 
     NEMIVER_CATCH
 }
@@ -686,15 +698,18 @@ DBGPerspective::on_saved_sessions_action ()
 void
 DBGPerspective::on_current_session_properties_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     edit_preferences () ;
+
     NEMIVER_CATCH
 }
 
 void
 DBGPerspective::on_run_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     run () ;
@@ -705,15 +720,10 @@ DBGPerspective::on_run_action ()
 void
 DBGPerspective::on_save_session_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
-    if (m_priv->reused_session) {
-        record_and_save_session (m_priv->session) ;
-        LOG_DD ("saved current session") ;
-    } else {
-        LOG_DD ("recorded a new session") ;
-        record_and_save_new_session () ;
-    }
+    save_current_session () ;
 
     NEMIVER_CATCH
 }
@@ -721,7 +731,7 @@ DBGPerspective::on_save_session_action ()
 void
 DBGPerspective::on_stop_debugger_action (void)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     stop () ;
@@ -732,6 +742,7 @@ DBGPerspective::on_stop_debugger_action (void)
 void
 DBGPerspective::on_next_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     step_over () ;
@@ -742,6 +753,7 @@ DBGPerspective::on_next_action ()
 void
 DBGPerspective::on_step_into_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     step_into () ;
@@ -752,6 +764,7 @@ DBGPerspective::on_step_into_action ()
 void
 DBGPerspective::on_step_out_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     step_out () ;
@@ -762,6 +775,7 @@ DBGPerspective::on_step_out_action ()
 void
 DBGPerspective::on_continue_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     do_continue () ;
     NEMIVER_CATCH
@@ -770,6 +784,7 @@ DBGPerspective::on_continue_action ()
 void
 DBGPerspective::on_continue_until_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     do_continue_until () ;
     NEMIVER_CATCH
@@ -778,6 +793,7 @@ DBGPerspective::on_continue_until_action ()
 void
 DBGPerspective::on_toggle_breakpoint_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     toggle_breakpoint () ;
     NEMIVER_CATCH
@@ -786,6 +802,7 @@ DBGPerspective::on_toggle_breakpoint_action ()
 void
 DBGPerspective::on_inspect_variable_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     inspect_variable () ;
     NEMIVER_CATCH
@@ -794,6 +811,7 @@ DBGPerspective::on_inspect_variable_action ()
 void
 DBGPerspective::on_show_commands_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     Glib::RefPtr<Gtk::ToggleAction> action =
         Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
@@ -809,6 +827,7 @@ DBGPerspective::on_show_commands_action ()
 void
 DBGPerspective::on_show_errors_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     Glib::RefPtr<Gtk::ToggleAction> action =
@@ -825,6 +844,7 @@ DBGPerspective::on_show_errors_action ()
 void
 DBGPerspective::on_show_target_output_action ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     Glib::RefPtr<Gtk::ToggleAction> action =
@@ -839,16 +859,20 @@ DBGPerspective::on_show_target_output_action ()
 }
 
 void
-DBGPerspective::on_breakpoint_delete_action (const IDebugger::BreakPoint& a_breakpoint)
+DBGPerspective::on_breakpoint_delete_action
+                                    (const IDebugger::BreakPoint& a_breakpoint)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     delete_breakpoint (a_breakpoint.number ());
     NEMIVER_CATCH
 }
 
 void
-DBGPerspective::on_breakpoint_go_to_source_action (const IDebugger::BreakPoint& a_breakpoint)
+DBGPerspective::on_breakpoint_go_to_source_action
+                                    (const IDebugger::BreakPoint& a_breakpoint)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     // FIXME: this should put the same effort into finding the source file that
     // append_visual_breakpoint() does.  Maybe this should be abstracted out
     // somehow
@@ -875,6 +899,7 @@ DBGPerspective::on_breakpoint_go_to_source_action (const IDebugger::BreakPoint& 
 void
 DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_tid) {}
 
     NEMIVER_TRY
@@ -889,6 +914,7 @@ DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
 void
 DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_page) {}
 
     NEMIVER_TRY
@@ -899,6 +925,7 @@ DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num
 void
 DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     THROW_IF_FAIL (m_priv) ;
@@ -923,6 +950,7 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
 void
 DBGPerspective::on_going_to_run_target_signal ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     get_local_vars_inspector ().re_init_widget () ;
     NEMIVER_CATCH
@@ -931,6 +959,7 @@ DBGPerspective::on_going_to_run_target_signal ()
 void
 DBGPerspective::on_attached_to_target_signal (bool a_is_ready)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     if (a_is_ready) {
@@ -943,10 +972,12 @@ DBGPerspective::on_attached_to_target_signal (bool a_is_ready)
 }
 
 void
-DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_it,
-                                                  const Glib::ustring &a_text,
-                                                  int a_dont_know)
+DBGPerspective::on_insert_in_command_view_signal
+                                        (const Gtk::TextBuffer::iterator &a_it,
+                                         const Glib::ustring &a_text,
+                                         int a_dont_know)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     if (a_dont_know) {}
     if (a_text == "") {return;}
@@ -982,6 +1013,7 @@ DBGPerspective::on_insert_in_command_view_signal (const Gtk::TextBuffer::iterato
 void
 DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     SourceEditor *cur_editor = get_current_source_editor () ;
@@ -996,6 +1028,7 @@ DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
 bool
 DBGPerspective::on_button_pressed_in_source_view_signal (GdkEventButton *a_event)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
     if (get_popup_tip ().is_visible ()) {
@@ -1097,6 +1130,7 @@ DBGPerspective::on_shutdown_signal ()
 void
 DBGPerspective::on_show_command_view_changed_signal (bool a_show)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     Glib::RefPtr<Gtk::ToggleAction> action =
             Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic
                 (workbench ().get_ui_manager ()->get_action
@@ -1108,6 +1142,7 @@ DBGPerspective::on_show_command_view_changed_signal (bool a_show)
 void
 DBGPerspective::on_show_target_output_view_changed_signal (bool a_show)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     m_priv->target_output_view_is_visible = a_show ;
 
     Glib::RefPtr<Gtk::ToggleAction> action =
@@ -1121,6 +1156,7 @@ DBGPerspective::on_show_target_output_view_changed_signal (bool a_show)
 void
 DBGPerspective::on_show_log_view_changed_signal (bool a_show)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     m_priv->log_view_is_visible = a_show ;
 
     Glib::RefPtr<Gtk::ToggleAction> action =
@@ -1136,6 +1172,7 @@ void
 DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
                                             IConfMgr::Value &a_value)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     if (a_key == CONF_KEY_NEMIVER_SOURCE_DIRS) {
         LOG_DD ("updated key source-dirs") ;
@@ -1758,7 +1795,7 @@ DBGPerspective::init_actions ()
             _("Resume Sa_ved Session..."),
             _("Manage previously saved debugging sessions"),
             sigc::mem_fun (*this,
-                           &DBGPerspective::on_saved_sessions_action),
+                           &DBGPerspective::on_choose_a_saved_session_action),
             ActionEntry::DEFAULT,
             ""
         },
@@ -2884,6 +2921,7 @@ DBGPerspective::open_file (const UString &a_path,
 void
 DBGPerspective::close_current_file ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (!get_n_pages ()) {return;}
 
     close_file (m_priv->pagenum_2_path_map[m_priv->current_page_num]) ;
@@ -2892,21 +2930,43 @@ DBGPerspective::close_current_file ()
 void
 DBGPerspective::close_file (const UString &a_path)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    LOG_DD ("removing file: " << a_path) ;
     map<UString, int>::const_iterator nil, iter ;
     nil = m_priv->path_2_pagenum_map.end () ;
     iter = m_priv->path_2_pagenum_map.find (a_path) ;
-    if (iter == nil) {return;}
+    if (iter == nil) {
+        LOG_DD ("could not find page " << a_path) ;
+        return;
+    }
 
     int page_num = m_priv->path_2_pagenum_map[a_path] ;
+    LOG_DD ("removing notebook tab number " << (int) (page_num)) ;
     m_priv->sourceviews_notebook->remove_page (page_num) ;
     m_priv->path_2_pagenum_map.erase (a_path) ;
-    std::string basename = Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
+    std::string basename = Glib::path_get_basename
+                                            (Glib::locale_from_utf8 (a_path)) ;
     m_priv->basename_2_pagenum_map.erase (Glib::locale_from_utf8 (basename)) ;
     m_priv->pagenum_2_source_editor_map.erase (page_num) ;
     m_priv->pagenum_2_path_map.erase (page_num) ;
 
     if (!get_n_pages ()) {
         m_priv->opened_file_action_group->set_sensitive (false) ;
+    }
+}
+
+void
+DBGPerspective::close_all_opened_files ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    if (!get_n_pages ()) {return;}
+
+    map<int, UString>::iterator it, end_it;
+    end_it = m_priv->pagenum_2_path_map.end () ;
+    while ((it = m_priv->pagenum_2_path_map.begin ()) != end_it) {
+        LOG_DD ("closing page " << it->second) ;
+        close_file (it->second) ;
     }
 }
 
@@ -2920,6 +2980,11 @@ void
 DBGPerspective::execute_session (ISessMgr::Session &a_session)
 {
     m_priv->session = a_session ;
+
+    if (a_session.properties ()[PROGRAM_CWD] != m_priv->prog_path
+        && get_n_pages ()) {
+        close_all_opened_files () ;
+    }
 
     IDebugger::BreakPoint breakpoint ;
     vector<IDebugger::BreakPoint> breakpoints ;
@@ -2990,14 +3055,15 @@ DBGPerspective::execute_program ()
     map<UString, UString> env = dialog.environment_variables();
 
     vector<IDebugger::BreakPoint> breaks ;
-    execute_program (prog, args, env, cwd, breaks) ;
+    execute_program (prog, args, env, cwd, breaks, true) ;
     m_priv->reused_session = false ;
 }
 
 void
 DBGPerspective::execute_program (const UString &a_prog_and_args,
                                  const map<UString, UString> &a_env,
-                                 const UString &a_cwd)
+                                 const UString &a_cwd,
+                                 bool a_close_opened_files)
 {
     UString cwd ;
     if (a_cwd == "." || a_cwd == "") {
@@ -3011,7 +3077,7 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
     ++iter ;
     UString prog_name=argv[0], args = UString::join (iter, end_iter);
     vector<IDebugger::BreakPoint> breaks ;
-    execute_program (prog_name, args, a_env, cwd, breaks) ;
+    execute_program (prog_name, args, a_env, cwd, breaks, a_close_opened_files) ;
     m_priv->reused_session = false ;
 }
 
@@ -3020,12 +3086,28 @@ DBGPerspective::execute_program (const UString &a_prog,
                                  const UString &a_args,
                                  const map<UString, UString> &a_env,
                                  const UString &a_cwd,
-                                 const vector<IDebugger::BreakPoint> &a_breaks)
+                                 const vector<IDebugger::BreakPoint> &a_breaks,
+                                 bool a_close_opened_files)
 {
     NEMIVER_TRY
 
+    THROW_IF_FAIL (m_priv) ;
+
     IDebuggerSafePtr dbg_engine = debugger () ;
     THROW_IF_FAIL (dbg_engine) ;
+
+    LOG_DD ("debugger state: '"
+            << IDebugger::state_to_string (dbg_engine->get_state ())
+            << "'") ;
+    if (dbg_engine->get_state () == IDebugger::RUNNING) {
+        dbg_engine->stop_target () ;
+        LOG_DD ("stopped dbg_engine") ;
+    }
+
+    if (a_close_opened_files && a_prog != m_priv->prog_path && get_n_pages ()) {
+        close_all_opened_files () ;
+    }
+
     vector<UString> args = a_args.split (" ") ;
     args.insert (args.begin (), a_prog) ;
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
@@ -3079,9 +3161,14 @@ DBGPerspective::attach_to_program ()
 }
 
 void
-DBGPerspective::attach_to_program (unsigned int a_pid)
+DBGPerspective::attach_to_program (unsigned int a_pid,
+                                   bool a_close_opened_files)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    if (a_close_opened_files && get_n_pages ()) {
+        close_all_opened_files () ;
+    }
 
     LOG_DD ("a_pid: " << (int) a_pid) ;
 
@@ -3097,7 +3184,19 @@ DBGPerspective::attach_to_program (unsigned int a_pid)
 }
 
 void
-DBGPerspective::saved_sessions ()
+DBGPerspective::save_current_session ()
+{
+    if (m_priv->reused_session) {
+        record_and_save_session (m_priv->session) ;
+        LOG_DD ("saved current session") ;
+    } else {
+        LOG_DD ("recorded a new session") ;
+        record_and_save_new_session () ;
+    }
+}
+
+void
+DBGPerspective::choose_a_saved_session ()
 {
     SavedSessionsDialog dialog (plugin_path (), session_manager_ptr ()) ;
     int result = dialog.run ();
@@ -3148,6 +3247,12 @@ void
 DBGPerspective::load_core_file (const UString &a_prog_path,
                                 const UString &a_core_file_path)
 {
+    THROW_IF_FAIL (m_priv) ;
+
+    if (a_prog_path != m_priv->prog_path && get_n_pages ()) {
+        close_all_opened_files () ;
+    }
+
     debugger ()->load_core_file (a_prog_path, a_core_file_path) ;
     debugger ()->list_frames () ;
 }

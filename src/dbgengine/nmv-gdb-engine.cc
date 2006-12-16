@@ -1089,8 +1089,6 @@ public:
 
     const UString& get_target_path () ;
 
-    IDebugger::State get_state () const ;
-
     void init_output_handlers () ;
 
     void append_breakpoints_to_cache (const map<int, IDebugger::BreakPoint>&) ;
@@ -1100,6 +1098,8 @@ public:
     void run (const UString &a_cookie)  ;
 
     void get_target_info (const UString &a_cookie) ;
+
+    IDebugger::State get_state () const ;
 
     void step_in (const UString &a_cookie) ;
 
@@ -5064,6 +5064,7 @@ GDBEngine::exit_engine ()
 
     //send the lethal command and run the event loop to flush everything.
     m_priv->issue_command (Command ("quit"), true) ;
+    m_priv->state = IDebugger::NOT_STARTED ;
 }
 
 void

@@ -67,6 +67,8 @@ public:
 
     virtual void close_file (const UString &a_uri) = 0;
 
+    virtual void close_all_opened_files () = 0;
+
     virtual ISessMgr& session_manager () = 0;
 
     virtual void execute_session (ISessMgr::Session &a_session) = 0;
@@ -75,15 +77,19 @@ public:
 
     virtual void execute_program (const UString &a_prog_and_args,
                                   const map<UString, UString> &a_env,
-                                  const UString &a_cwd=".") = 0;
+                                  const UString &a_cwd=".",
+                                  bool a_close_opened_files=false) = 0;
 
     virtual void execute_program (const UString &a_prog,
                                   const UString &a_args,
                                   const map<UString, UString> &a_env,
                                   const UString &a_cwd,
-                                  const vector<IDebugger::BreakPoint> &) = 0;
+                                  const vector<IDebugger::BreakPoint> &a_breaks,
+                                  bool a_close_opened_files=false) = 0;
 
-    virtual void attach_to_program (unsigned int a_pid) = 0;
+    virtual void attach_to_program (unsigned int a_pid,
+                                    bool a_close_open_files=false) = 0;
+
     virtual void load_core_file () = 0;
 
     virtual void load_core_file (const UString &a_prog_path,

@@ -1,3 +1,18 @@
+Sat, 16 Dec 2006 20:17:00 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h: added the
+	  IDebugger::get_state() function.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  Added the DBGPerspective::close_all_files() function.
+	  With that weapon, close files already opened when:
+	   => a session is going to be executed, with a target different from
+	      the previous target we debugged.
+	   => a target (different from the previous one) is going to be debugged
+	  renamed DBGPerspection::saved_sessions() into
+	  DBGPerspective::choose_a_saved_session(). Added a bunch of logs.
+	  Did a bit of cleanup.
+	  This entry fixes #381703.
+
 Sat, 16 Dec 2006 16:21:02 +0100 Dodji Seketeli
 
 	* configure.ac: bump version number to differentiate the trunk branch
