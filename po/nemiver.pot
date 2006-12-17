@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-16 01:35+0100\n"
+"POT-Creation-Date: 2006-12-17 15:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,7 +121,7 @@ msgid "Saved Sessions"
 msgstr ""
 
 #: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1649
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1686
 msgid "Inspect a Variable"
 msgstr ""
 
@@ -133,236 +133,236 @@ msgstr ""
 msgid "inspect"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:860
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:884
 msgid "File path info is missing for breakpoint '"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1270
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1307
 msgid "Could not find file "
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1279
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1338
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1316
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1375
 msgid "File path info is missing for function "
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1301
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1338
 msgid "Program exited"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1391
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1428
 msgid "Target received a signal : "
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1404
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1441
 msgid "An error occured: "
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1564
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1601
 msgid "_Save Session to Disk"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1565
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1602
 msgid "Save the current debugging session to disk"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1576
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1613
 msgid "_Restart"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1577
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1614
 msgid "Restart the target, killing this process and starting a new one"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1588
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1625
 msgid "_Next"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1589
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1626
 msgid "Execute next line stepping over the next function, if any"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1598
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1635
 msgid "_Step"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1599
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1636
 msgid "Execute next line, stepping into the next function, if any"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1608
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1645
 msgid "Step _Out"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1609
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1646
 msgid "Finish the execution of the current function"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1618
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1655
 msgid "_Continue"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1619
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1656
 msgid "Continue program execution until the next breakpoint"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1628
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1665
 msgid "Run to Cursor"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1629
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1666
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1639
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1676
 msgid "Toggle _Break"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1640
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1677
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1650
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1687
 msgid "Inspect a global or local variable"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1661
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1698
 msgid "Stop"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1662
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1699
 msgid "Stop the Debugger"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1673
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1710
 msgid "_View"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1682
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1719
 msgid "Show Commands"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1683
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1720
 msgid "Show the debugger commands tab"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1691
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1728
 msgid "Show Errors"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1692
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1729
 msgid "Show the errors commands tab"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1700
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1737
 msgid "Show Output"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1701
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1738
 msgid "Show the debugged target output tab"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1709
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1746
 msgid "_Debug"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1719
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1756
 msgid "_Open Source File ..."
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1720
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1757
 msgid "Open a source file for viewing"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1728
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1765
 msgid "_Execute..."
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1729
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1766
 msgid "Execute a program"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1738
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1775
 msgid "_Load Core File..."
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1739
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1776
 msgid "Load a core file from disk"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1748
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1785
 msgid "_Attach to Running Program..."
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1749
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1786
 msgid "Debug a program that's already running"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1758
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1795
 msgid "Resume Sa_ved Session..."
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1759
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1796
 msgid "Manage previously saved debugging sessions"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1768
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1805
 msgid "_Preferences"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1769
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1806
 msgid "Edit the properties of the current session"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1781
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1818
 msgid "_Close"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1782
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1819
 msgid "Close the opened file"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2101
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2138
 msgid "close"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2766
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2803
 msgid "Open file"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3246
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3351
 msgid "There is no file name info for symbol@addr: "
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3394
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
 msgid "Could not find file: "
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3724
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3829
 msgid "Commands"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3750
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3855
 msgid "Output"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3776
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3881
 msgid "Logs"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3801
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3906
 msgid "Call stack"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3828
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3933
 msgid "Variables"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3855
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3960
 msgid "Target terminal"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3881
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3986
 msgid "Breakpoints"
 msgstr ""
 

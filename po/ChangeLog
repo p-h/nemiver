@@ -1,3 +1,8 @@
+Sun, 17 Dec 2006 18:17:52 +0100 Dodji Seketeli
+
+	* nemiver.pot, nl.po: apply patch to add "nl" support, by Reinout van
+	  Schouwen.
+
 Sun, 17 Dec 2006 18:16:22 +0100 Dodji Seketeli
 
 	* reverted bad nl.po patch application. file impacted are (LINGUAS and
