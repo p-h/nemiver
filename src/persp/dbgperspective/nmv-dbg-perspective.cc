@@ -201,6 +201,8 @@ private:
     void on_conf_key_changed_signal (const UString &a_key,
                                      IConfMgr::Value &a_value) ;
 
+    void on_debugger_detached_from_target_signal () ;
+
     void on_debugger_got_target_info_signal (int a_pid,
                                            const UString &a_exe_path) ;
 
@@ -255,6 +257,7 @@ private:
     void init_body () ;
     void init_signals () ;
     void init_debugger_signals () ;
+    void clear_status_notebook () ;
     void append_source_editor (SourceEditor &a_sv,
                                const UString &a_path) ;
     SourceEditor* get_current_source_editor () ;
@@ -1260,6 +1263,12 @@ DBGPerspective::on_debugger_got_target_info_signal (int a_pid,
 }
 
 void
+DBGPerspective::on_debugger_detached_from_target_signal ()
+{
+    clear_status_notebook () ;
+}
+
+void
 DBGPerspective::on_debugger_console_message_signal (const UString &a_msg)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -1394,9 +1403,7 @@ DBGPerspective::on_program_finished_signal ()
     //clear threads list and
     //call stack
     //**********************
-    get_thread_list ().clear () ;
-    get_call_stack ().clear () ;
-    get_local_vars_inspector ().re_init_widget () ;
+    clear_status_notebook () ;
     NEMIVER_CATCH
 }
 
@@ -2047,7 +2054,8 @@ DBGPerspective::init_body ()
     p->add1 (get_thread_list ().widget ()) ;
     p->add2 (get_call_stack ().widget ()) ;
     get_call_stack_scrolled_win ().add (*p) ;
-    get_local_vars_inspector_scrolled_win ().add (get_local_vars_inspector ().widget ());
+    get_local_vars_inspector_scrolled_win ().add
+                                    (get_local_vars_inspector ().widget ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
 
     /*
@@ -2107,6 +2115,9 @@ DBGPerspective::init_signals ()
 void
 DBGPerspective::init_debugger_signals ()
 {
+    debugger ()->detached_from_target_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_detached_from_target_signal)) ;
+
     debugger ()->console_message_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_console_message_signal)) ;
 
@@ -2150,6 +2161,14 @@ DBGPerspective::init_debugger_signals ()
             (*this, &DBGPerspective::on_debugger_got_target_info_signal)) ;
 }
 
+void
+DBGPerspective::clear_status_notebook ()
+{
+    get_thread_list ().clear () ;
+    get_call_stack ().clear () ;
+    get_local_vars_inspector ().re_init_widget () ;
+    get_breakpoints_view ().clear () ;
+}
 
 void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,

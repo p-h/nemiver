@@ -159,7 +159,7 @@ Null, false
 
    1. The null pointer value should be written as 0.
    2. True and false values of type bool, or just generic true/false values, should be written as true and false.
-   3. Tests for null pointers, false values and 0 values should all be done directly, not through an inqueality or equality comparison.
+   3. Tests for null pointers, false values and 0 values should all be done directly, not through an inequality or equality comparison.
 
       Right:
 

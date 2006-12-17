@@ -1,3 +1,18 @@
+Sun, 17 Dec 2006 19:29:49 +0100 Dodji Seketeli
+
+	* coding-style.txt: fixed a typo here.
+	* src/dbgengine/nmv-gdb-engine.cc: don't requite attributes
+	  "file" and "line" to be present in breakpoints wire description.
+	  They can be omitted by gdb when debugging a target that hasn't been
+	  compiled with -g. More work is necessary to support those targets
+	  though.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  Add a DBGPerspective::clear_status_notebook() function.
+	  Use it to clear the status notebook when nemiver detaches from
+	  a target and when the target exits.
+	* src/persp/dbgperspective/nmv-breakpoints-view.h,cc: added
+	  BreakpointsView::clear() function.
+
 Sun, 17 Dec 2006 17:23:24 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:  renamed

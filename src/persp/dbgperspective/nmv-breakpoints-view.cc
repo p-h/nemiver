@@ -270,6 +270,15 @@ BreakpointsView::set_breakpoints
     m_priv->set_breakpoints (a_breakpoints) ;
 }
 
+void
+BreakpointsView::clear ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (m_priv->list_store) {
+        m_priv->list_store->clear () ;
+    }
+}
+
 sigc::signal<void, const IDebugger::BreakPoint&>&
 BreakpointsView::go_to_breakpoint_signal () const
 {

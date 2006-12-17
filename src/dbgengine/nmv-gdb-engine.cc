@@ -1951,8 +1951,8 @@ struct GDBEngine::Priv {
                 || (iter = attrs.find ("disp"))    == null_iter
                 || (iter = attrs.find ("enabled")) == null_iter
                 || (iter = attrs.find ("addr"))    == null_iter
-                || (iter = attrs.find ("file"))    == null_iter
-                || (iter = attrs.find ("line"))    == null_iter
+                //|| (iter = attrs.find ("file"))== null_iter => may not be there
+                //|| (iter = attrs.find ("line"))== null_iter => ditto
                 || (iter = attrs.find ("times"))   == null_iter
            ) {
             LOG_PARSING_ERROR (a_input, cur) ;
@@ -1967,9 +1967,11 @@ struct GDBEngine::Priv {
         }
         a_bkpt.address (attrs["addr"]) ;
         a_bkpt.function (attrs["func"]) ;
-        a_bkpt.file_name (attrs["file"]) ;
-        a_bkpt.file_full_name (attrs["fullname"]) ;
-        a_bkpt.line (atoi (attrs["line"].c_str ())) ;
+        a_bkpt.file_name (attrs["file"]) ; //may be nil
+        a_bkpt.file_full_name (attrs["fullname"]) ; //may be nil
+        a_bkpt.line (atoi (attrs["line"].c_str ())) ; //may be nil
+        //TODO: get the 'at' attribute that is present on targets that
+        //are not compiled with -g.
         a_to = cur ;
         return true;
     }

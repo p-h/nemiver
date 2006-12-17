@@ -52,7 +52,9 @@ public:
     BreakpointsView (IWorkbench& a_workbench, IPerspective& a_perspective) ;
     virtual ~BreakpointsView () ;
     Gtk::Widget& widget () const ;
-    void set_breakpoints (const std::map<int, IDebugger::BreakPoint> &a_breakpoints) ;
+    void set_breakpoints
+                    (const std::map<int, IDebugger::BreakPoint> &a_breakpoints) ;
+    void clear () ;
     sigc::signal<void,
                  const IDebugger::BreakPoint&>& go_to_breakpoint_signal () const ;
     sigc::signal<void,
