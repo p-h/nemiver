@@ -1,0 +1,562 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Reinout van Schouwen <reinouts@gnome.org>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Nemiver\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-12-17 15:45+0100\n"
+"PO-Revision-Date: 2006-12-17 16:25+0100\n"
+"Last-Translator: Reinout van Schouwen <reinouts@gnome.org> \n"
+"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade/workbench.glade.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../nemiver.desktop.in.h:1
+msgid "Debug Applications"
+msgstr "Toepassingen debuggen"
+
+#: ../src/persp/dbgperspective/glade/bodycontainer.glade.h:1
+msgid "bodycontainer"
+msgstr "bodycontainer"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:1
+msgid "<b>Choose a Process to Debug</b>"
+msgstr "<b>Kies een te debuggen proces</b>"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:2
+msgid "Attach to a Running Program"
+msgstr "Aanhaken bij een draaiend programma"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:1
+msgid "<b>Arguments:</b>"
+msgstr "<b>Argumenten:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:2
+msgid "<b>Environment Variables:</b>"
+msgstr "<b>Omgevingsvariabelen:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:3
+msgid "<b>Program:</b>"
+msgstr "<b>Programma:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:4
+msgid "<b>Working Directory:</b>"
+msgstr "<b>Werkmap:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:5
+msgid "Choose a Program to Execute"
+msgstr "Kies een uit te voeren programma"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:6
+msgid "Choose a working directory"
+msgstr "Kies een werkmap"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:7
+msgid "Choose an executable"
+msgstr "Kies een uitvoerbaar bestand"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:8
+msgid "_Add"
+msgstr "_Toevoegen"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:9
+msgid "_Remove"
+msgstr "_Verwijderen"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:1
+msgid "<b>Core File:</b>"
+msgstr "<b>Core-bestand:</b>"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:2
+msgid "<b>Executable:</b>"
+msgstr "<b>Uitvoerbaar bestand:</b>"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:3
+msgid "Choose a Core File to Debug"
+msgstr "Kies een te debuggen core-bestand"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:4
+msgid "Select A Core File"
+msgstr "Selecteer een core-bestand"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:5
+msgid "Select the executable that created the core file"
+msgstr "Selecteer het uitvoerbare bestand day het core-bestand genereerde"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:1
+msgid "Highlight source code"
+msgstr "Broncode kleuren"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:2
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:3
+msgid "Show line numbers"
+msgstr "Regelnummers tonen"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:4
+msgid "Source Directories"
+msgstr "Broncode-mappen"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:5
+msgid "Source Editor"
+msgstr "Broncode-editor"
+
+#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:1
+msgid "<b>Choose a Session to Debug</b>"
+msgstr "<b>Kies een te debuggen sessie</b>"
+
+#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:2
+msgid "Saved Sessions"
+msgstr "Opgeslagen sessies"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1686
+msgid "Inspect a Variable"
+msgstr "Variabele inspecteren"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:2
+msgid "_Variable Name:"
+msgstr "Variabele_naam:"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:3
+msgid "inspect"
+msgstr "inspecteren"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:884
+msgid "File path info is missing for breakpoint '"
+msgstr "Padinformatie van bestand ontbreekt voor breakpoint '"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1307
+msgid "Could not find file "
+msgstr "Kan bestand niet vinden "
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1316
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1375
+msgid "File path info is missing for function "
+msgstr "Padinformatie van bestand ontbreekt voor breakpoint '"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1338
+msgid "Program exited"
+msgstr "Programma verlaten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1428
+msgid "Target received a signal : "
+msgstr "Doel ontving een signaal: "
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1441
+msgid "An error occured: "
+msgstr "Er is een fout opgetreden: "
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1601
+msgid "_Save Session to Disk"
+msgstr "Sessie op_slaan naar schijf"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1602
+msgid "Save the current debugging session to disk"
+msgstr "De huidige debugsessie opslaan naar schijf"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1613
+msgid "_Restart"
+msgstr "_Herstarten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1614
+msgid "Restart the target, killing this process and starting a new one"
+msgstr "Het doel herstarten, waarmee dit proces wordt afgebroken en een nieuw gestart"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1625
+msgid "_Next"
+msgstr "V_olgende"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1626
+msgid "Execute next line stepping over the next function, if any"
+msgstr "Volgende regel uitvoeren waarbij de volgende functie wordt overgeslagen, indien aanwezig"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1635
+msgid "_Step"
+msgstr "_Stappen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1636
+msgid "Execute next line, stepping into the next function, if any"
+msgstr "Volgende regel uitvoeren waarbij de volgende functie wordt doorlopen, indien aanwezig"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1645
+msgid "Step _Out"
+msgstr "_Uitstappen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1646
+msgid "Finish the execution of the current function"
+msgstr "De uitvoering van de huidige functie beëindigen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1655
+msgid "_Continue"
+msgstr "_Doorgaan"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1656
+msgid "Continue program execution until the next breakpoint"
+msgstr "Doorgaan met uitvoeren van programma tot volgende breakpoint"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1665
+msgid "Run to Cursor"
+msgstr "Uitvoeren tot cursor"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1666
+msgid "Continue program execution until the currently selected line is reached"
+msgstr "Doorgaan met uitvoeren totdat de momenteel geselecteerde regel is bereikt"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1676
+msgid "Toggle _Break"
+msgstr "_Break omschakelen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1677
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "Een breakpoint aan/uitzetten op de huidige cursorlocatie"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1687
+msgid "Inspect a global or local variable"
+msgstr "Een globale of lokale variabele inspecteren"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1698
+msgid "Stop"
+msgstr "Stoppen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1699
+msgid "Stop the Debugger"
+msgstr "De debugger stoppen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1710
+msgid "_View"
+msgstr "Beel_d"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1719
+msgid "Show Commands"
+msgstr "Opdrachten tonen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1720
+msgid "Show the debugger commands tab"
+msgstr "Het tabblad debugger-opdrachten tonen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1728
+msgid "Show Errors"
+msgstr "Foutmeldingen tonen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1729
+msgid "Show the errors commands tab"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1737
+msgid "Show Output"
+msgstr "Uitvoer tonen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1738
+msgid "Show the debugged target output tab"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1746
+msgid "_Debug"
+msgstr "_Debuggen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1756
+msgid "_Open Source File ..."
+msgstr "Broncodebestand _openen..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1757
+msgid "Open a source file for viewing"
+msgstr "Een broncodebestand bekijken"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1765
+msgid "_Execute..."
+msgstr "Ui_tvoeren..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1766
+msgid "Execute a program"
+msgstr "Een programma uitvoeren"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1775
+msgid "_Load Core File..."
+msgstr "Core-bestand i_nladen..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1776
+msgid "Load a core file from disk"
+msgstr "Een core-bestand laden van schijf"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1785
+msgid "_Attach to Running Program..."
+msgstr "Aan_haken bij een draaiend programma..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1786
+msgid "Debug a program that's already running"
+msgstr "Een programma debuggen dat al draait"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1795
+msgid "Resume Sa_ved Session..."
+msgstr "Op_geslagen sessie hervatten..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1796
+msgid "Manage previously saved debugging sessions"
+msgstr "Eerder opgeslagen debugging-sessies beheren"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1805
+msgid "_Preferences"
+msgstr "_Voorkeuren"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1806
+msgid "Edit the properties of the current session"
+msgstr "De eigenschappen van de huidige sessie bewerken"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1818
+msgid "_Close"
+msgstr "Sl_uiten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1819
+msgid "Close the opened file"
+msgstr "Het geopende bestand sluiten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2138
+msgid "close"
+msgstr "sluiten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2803
+msgid "Open file"
+msgstr "Bestand openen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3351
+msgid "There is no file name info for symbol@addr: "
+msgstr "Er is geen bestandsnaaminformatie voor symbol@addr: "
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
+msgid "Could not find file: "
+msgstr "Kan bestand niet vinden: "
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3829
+msgid "Commands"
+msgstr "Opdrachten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3855
+msgid "Output"
+msgstr "Uitvoer"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3881
+msgid "Logs"
+msgstr "Logboeken"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3906
+msgid "Call stack"
+msgstr "Call-stack"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3933
+msgid "Variables"
+msgstr "Variabelen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3960
+msgid "Target terminal"
+msgstr "Doelterminal"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3986
+msgid "Breakpoints"
+msgstr "Breakpoints"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:106
+msgid "User Name"
+msgstr "Gebruikersnaam"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:113
+msgid "Proc Args"
+msgstr "Proc Args"
+
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:98
+msgid "Name"
+msgstr "Naam"
+
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:101
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:66
+msgid "Value"
+msgstr "Waarde"
+
+#. create the columns of the tree view
+#. trnfoee_view->append_column ("", get_bp_columns ().enabled) ;
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:98
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:95
+msgid "ID"
+msgstr "ID"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:99
+msgid "Filename"
+msgstr "Bestandsnaam"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:100
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:376
+msgid "Line"
+msgstr "Regel"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:211
+msgid "_Delete"
+msgstr "Ver_wijderen"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:212
+msgid "Remove this breakpoint"
+msgstr "Dit breakpoint verwijderen"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:220
+msgid "_Go to Source"
+msgstr "Naar broncode _gaan"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:221
+msgid "Find this breakpoint in the source editor"
+msgstr "Dit breakpoint opzoeken in de broncode-editor"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:98
+msgid "Choose directory"
+msgstr "Map kiezen"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:147
+msgid "Source directories"
+msgstr "Bronmappen"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:96
+msgid "Session"
+msgstr "Sessie"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:143
+msgid "Thread ID"
+msgstr "Thread ID"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:89
+msgid "variable"
+msgstr "variable"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:98
+msgid "value"
+msgstr "waarde"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:106
+msgid "type"
+msgstr "type"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:126
+msgid "local variables"
+msgstr "lokale variabelen"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:135
+msgid "function arguments"
+msgstr "functie-argumenten"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:248
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:163
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
+msgstr ""
+"Variabele-type is: \n"
+" %s"
+
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:61
+msgid "Variable"
+msgstr "Variabele"
+
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:74
+msgid "Type"
+msgstr "Type"
+
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:321
+msgid "Could not find variable '"
+msgstr "Kan variabele niet vinden '"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:123
+msgid "_Copy"
+msgstr "_Kopiëren"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:124
+msgid "Copy the stack trace to the clipboard"
+msgstr "De stacktrace naar het klembord kopiëren"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:377
+msgid "Function"
+msgstr "Functie"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:378
+msgid "Arguments"
+msgstr "Argumenten"
+
+#: ../src/persp/dbgperspective/nmv-source-editor.cc:201
+msgid "Line: "
+msgstr "Regel: "
+
+#: ../src/persp/dbgperspective/nmv-source-editor.cc:202
+msgid ", Column: "
+msgstr ", kolom: "
+
+#: ../src/persp/dbgperspective/nmv-source-editor.cc:203
+msgid ", Lines: "
+msgstr ", regels: "
+
+#: ../src/main.cc:63
+msgid "attach to a process"
+msgstr "aanhaken bij een proces"
+
+#: ../src/main.cc:71
+msgid "list the saved debugging sessions"
+msgstr "de opgeslagen debugsessies opsommen"
+
+#: ../src/main.cc:79
+msgid "erase the saved debugging sessions"
+msgstr "de opgeslagen debugsessies wissen"
+
+#: ../src/main.cc:87
+msgid "debug the program that was of session number N"
+msgstr "het programme debuggen uit sessienummer N"
+
+#: ../src/main.cc:95
+msgid "Enable logging domains DOMAINS"
+msgstr "Loggingdomeinen DOMAINS inschakelen"
+
+#: ../src/main.cc:103
+msgid "log the debugger output"
+msgstr "de debugger-uitvoer loggen"
+
+#: ../src/main.cc:142
+msgid " [<prog-to-debug> [prog-args]] - a C/C++ debugger for GNOME"
+msgstr " [<prog-to-debug> [prog-args]] - een C/C++ debugger voor GNOME"
+
+#: ../src/workbench/nmv-workbench.cc:220
+msgid "A GNOME frontend for the GNU Debugger"
+msgstr "Een GNOME-schil voor de GNU debugger"
+
+#: ../src/workbench/nmv-workbench.cc:538
+msgid "_File"
+msgstr "_Bestand"
+
+#: ../src/workbench/nmv-workbench.cc:548
+msgid "_Quit"
+msgstr "A_fsluiten"
+
+#: ../src/workbench/nmv-workbench.cc:549
+msgid "Quit the application"
+msgstr "De toepassing verlaten"
+
+#: ../src/workbench/nmv-workbench.cc:558
+msgid "_Edit"
+msgstr "Be_werken"
+
+#: ../src/workbench/nmv-workbench.cc:568
+msgid "_Help"
+msgstr "_Hulp"
+
+#: ../src/workbench/nmv-workbench.cc:578
+msgid "_About"
+msgstr "I_nfo"
+
+#: ../src/workbench/nmv-workbench.cc:579
+msgid "Display information about this application"
+msgstr "Informatie tonen over deze toepassing"
