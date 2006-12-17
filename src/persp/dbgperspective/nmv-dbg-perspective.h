@@ -67,7 +67,7 @@ public:
 
     virtual void close_file (const UString &a_uri) = 0;
 
-    virtual void close_all_opened_files () = 0;
+    virtual void close_opened_files () = 0;
 
     virtual ISessMgr& session_manager () = 0;
 

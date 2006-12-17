@@ -9,6 +9,8 @@
                       name="LoadCoreMenuItem"/>
             <menuitem action="AttachToProgramMenuItemAction"
                       name="AttachToProgramMenuItem"/>
+            <menuitem action="DetachFromProgramMenuItemAction"
+                      name="DetachFromProgramMenuItem"/>
             <menuitem action="SavedSessionsMenuItemAction"
                       name="SavedSessionsMenuItem" />
             <menuitem action="SaveSessionMenuItemAction"

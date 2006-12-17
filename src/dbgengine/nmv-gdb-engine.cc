@@ -1001,6 +1001,8 @@ public:
     sigc::signal<void, const UString&, const UString&>&
                                         command_done_signal () const ;
 
+    sigc::signal<void>& detached_from_target_signal () const ;
+
     sigc::signal<void, const map<int, IDebugger::BreakPoint>& >&
                                                 breakpoints_set_signal () const ;
 
@@ -1080,8 +1082,10 @@ public:
     void load_core_file (const UString &a_prog_file,
                          const UString &a_core_path);
 
-    bool attach_to_program (unsigned int a_pid,
-                            const UString &a_tty_path) ;
+    bool attach_to_target (unsigned int a_pid,
+                           const UString &a_tty_path) ;
+
+    void detach_from_target (const UString &a_cookie="") ;
 
     void add_env_variables (const map<UString, UString> &a_vars) ;
 
@@ -1242,6 +1246,8 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, const UString&, const UString&>
                                                         command_done_signal ;
+
+    sigc::signal<void> detached_from_target_signal ;
 
     mutable sigc::signal<void, const map<int, IDebugger::BreakPoint>&>
                                                     breakpoints_set_signal;
@@ -3974,12 +3980,44 @@ struct OnStreamRecordHandler: OutputHandler{
     }
 };//end struct OnStreamRecordHandler
 
+struct OnDetachHandler : OutputHandler {
+    GDBEngine * m_engine ;
+
+    OnDetachHandler (GDBEngine *a_engine=0) :
+        m_engine (a_engine)
+    {
+    }
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().kind ()
+                    == Output::ResultRecord::DONE
+            && a_in.command ().name () == "detach-from-target") {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        if (a_in.command ().name () == "") {
+        }
+        THROW_IF_FAIL (m_engine) ;
+        m_engine->detached_from_target_signal ().emit () ;
+        m_engine->state_changed_signal ().emit (IDebugger::NOT_STARTED) ;
+    }
+};//end OnDetachHandler
+
 struct OnBreakPointHandler: OutputHandler {
     GDBEngine * m_engine ;
 
-    OnBreakPointHandler (GDBEngine *a_engine=NULL) :
+    OnBreakPointHandler (GDBEngine *a_engine=0) :
         m_engine (a_engine)
-    {}
+    {
+    }
 
     bool has_breakpoints_set (CommandAndOutput &a_in)
     {
@@ -4627,8 +4665,8 @@ GDBEngine::load_core_file (const UString &a_prog_path,
 }
 
 bool
-GDBEngine::attach_to_program (unsigned int a_pid,
-                              const UString &a_tty_path)
+GDBEngine::attach_to_target (unsigned int a_pid,
+                             const UString &a_tty_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
@@ -4652,6 +4690,14 @@ GDBEngine::attach_to_program (unsigned int a_pid,
         queue_command (Command ("tty " + a_tty_path)) ;
     }
     return true ;
+}
+
+void
+GDBEngine::detach_from_target (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+    queue_command (Command ("detach-from-target", "-target-detach", a_cookie)) ;
 }
 
 void
@@ -4701,6 +4747,8 @@ GDBEngine::init_output_handlers ()
 {
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnStreamRecordHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnDetachHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnStoppedHandler (this))) ;
     m_priv->output_handlers.push_back
@@ -4792,6 +4840,12 @@ sigc::signal<void, const UString&, const UString&>&
 GDBEngine::command_done_signal () const
 {
     return m_priv->command_done_signal ;
+}
+
+sigc::signal<void>&
+GDBEngine::detached_from_target_signal () const
+{
+    return m_priv->detached_from_target_signal ;
 }
 
 sigc::signal<void, const IDebugger::BreakPoint&, int>&
@@ -5064,7 +5118,7 @@ GDBEngine::exit_engine ()
 
     //send the lethal command and run the event loop to flush everything.
     m_priv->issue_command (Command ("quit"), true) ;
-    m_priv->state = IDebugger::NOT_STARTED ;
+    state_changed_signal ().emit (IDebugger::NOT_STARTED) ;
 }
 
 void

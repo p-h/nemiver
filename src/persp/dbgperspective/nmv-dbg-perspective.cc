@@ -146,6 +146,7 @@ private:
     void on_execute_program_action () ;
     void on_load_core_file_action () ;
     void on_attach_to_program_action () ;
+    void on_detach_from_program_action () ;
     void on_choose_a_saved_session_action () ;
     void on_current_session_properties_action () ;
     void on_stop_debugger_action ();
@@ -170,6 +171,8 @@ private:
     void on_attached_to_target_signal (bool a_is_attached) ;
 
     void on_debugger_ready_signal (bool a_is_ready) ;
+
+    void on_debugger_not_started_signal () ;
 
     void on_going_to_run_target_signal () ;
 
@@ -302,7 +305,7 @@ public:
 
     void close_file (const UString &a_path) ;
 
-    void close_all_opened_files () ;
+    void close_opened_files () ;
 
     ISessMgr& session_manager () ;
 
@@ -325,6 +328,7 @@ public:
     void attach_to_program () ;
     void attach_to_program (unsigned int a_pid,
                             bool a_close_opened_files=false) ;
+    void detach_from_program () ;
     void load_core_file () ;
     void load_core_file (const UString &a_prog_file,
                          const UString &a_core_file_path) ;
@@ -438,6 +442,7 @@ public:
     sigc::signal<void, bool>& activated_signal () ;
     sigc::signal<void, bool>& attached_to_target_signal () ;
     sigc::signal<void, bool>& debugger_ready_signal () ;
+    sigc::signal<void>& debugger_not_started_signal () ;
     sigc::signal<void>& going_to_run_target_signal () ;
 };//end class DBGPerspective
 
@@ -514,6 +519,7 @@ struct DBGPerspective::Priv {
     sigc::signal<void, bool> activated_signal;
     sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
+    sigc::signal<void> debugger_not_started_signal ;
     sigc::signal<void> going_to_run_target_signal ;
     sigc::signal<void, bool> show_command_view_signal  ;
     sigc::signal<void, bool> show_target_output_view_signal  ;
@@ -680,6 +686,17 @@ DBGPerspective::on_attach_to_program_action ()
     NEMIVER_TRY
 
     attach_to_program () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_detach_from_program_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    NEMIVER_TRY
+
+    detach_from_program () ;
 
     NEMIVER_CATCH
 }
@@ -945,6 +962,31 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
     }
 
     NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_not_started_signal ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->throbber) ;
+    THROW_IF_FAIL (m_priv->default_action_group) ;
+    THROW_IF_FAIL (m_priv->target_connected_action_group) ;
+    THROW_IF_FAIL (m_priv->target_not_started_action_group) ;
+    THROW_IF_FAIL (m_priv->debugger_ready_action_group) ;
+    THROW_IF_FAIL (m_priv->debugger_busy_action_group) ;
+    THROW_IF_FAIL (m_priv->opened_file_action_group) ;
+
+    m_priv->throbber->stop () ;
+    m_priv->default_action_group->set_sensitive (true) ;
+    m_priv->target_connected_action_group->set_sensitive (false) ;
+    m_priv->target_not_started_action_group->set_sensitive (false) ;
+    m_priv->debugger_ready_action_group->set_sensitive (false) ;
+    m_priv->debugger_busy_action_group->set_sensitive (false) ;
+    m_priv->opened_file_action_group->set_sensitive (false);
+
+    if (get_n_pages ()) {
+        close_opened_files () ;
+    }
 }
 
 void
@@ -1456,6 +1498,8 @@ DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
         debugger_ready_signal ().emit (true) ;
     } else if (a_state == IDebugger::PROGRAM_EXITED) {
         debugger_ready_signal ().emit (true) ;
+    } else if (a_state == IDebugger::NOT_STARTED) {
+        debugger_not_started_signal ().emit () ;
     } else {
         debugger_ready_signal ().emit (false) ;
     }
@@ -1619,6 +1663,17 @@ DBGPerspective::init_actions ()
     };
 
     static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
+        {
+            "DetachFromProgramMenuItemAction",
+            nil_stock_id,
+            _("_Detach from the Running Program..."),
+            _("Disconnect the debugger from the running target "
+              "without killing it"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_detach_from_program_action),
+            ActionEntry::DEFAULT,
+            ""
+        },
         {
             "NextMenuItemAction",
             nemiver::STOCK_STEP_OVER,
@@ -2017,6 +2072,9 @@ DBGPerspective::init_signals ()
 
     debugger_ready_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_ready_signal)) ;
+
+    debugger_not_started_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_not_started_signal)) ;
 
     going_to_run_target_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_going_to_run_target_signal)) ;
@@ -2957,7 +3015,7 @@ DBGPerspective::close_file (const UString &a_path)
 }
 
 void
-DBGPerspective::close_all_opened_files ()
+DBGPerspective::close_opened_files ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (!get_n_pages ()) {return;}
@@ -2983,7 +3041,7 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
 
     if (a_session.properties ()[PROGRAM_CWD] != m_priv->prog_path
         && get_n_pages ()) {
-        close_all_opened_files () ;
+        close_opened_files () ;
     }
 
     IDebugger::BreakPoint breakpoint ;
@@ -3105,7 +3163,7 @@ DBGPerspective::execute_program (const UString &a_prog,
     }
 
     if (a_close_opened_files && a_prog != m_priv->prog_path && get_n_pages ()) {
-        close_all_opened_files () ;
+        close_opened_files () ;
     }
 
     vector<UString> args = a_args.split (" ") ;
@@ -3167,7 +3225,7 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
     if (a_close_opened_files && get_n_pages ()) {
-        close_all_opened_files () ;
+        close_opened_files () ;
     }
 
     LOG_DD ("a_pid: " << (int) a_pid) ;
@@ -3176,11 +3234,18 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
         ui_utils::display_warning ("You can not attach to nemiver itself") ;
         return ;
     }
-    if (!debugger ()->attach_to_program (a_pid,
-                                         get_terminal ().slave_pts_name ())) {
+    if (!debugger ()->attach_to_target (a_pid,
+                                        get_terminal ().slave_pts_name ())) {
         ui_utils::display_warning ("You can not attach to the "
                                    "underlying debugger engine") ;
     }
+}
+
+void
+DBGPerspective::detach_from_program ()
+{
+    THROW_IF_FAIL (debugger ()) ;
+    debugger ()->detach_from_target () ;
 }
 
 void
@@ -3250,7 +3315,7 @@ DBGPerspective::load_core_file (const UString &a_prog_path,
     THROW_IF_FAIL (m_priv) ;
 
     if (a_prog_path != m_priv->prog_path && get_n_pages ()) {
-        close_all_opened_files () ;
+        close_opened_files () ;
     }
 
     debugger ()->load_core_file (a_prog_path, a_core_file_path) ;
@@ -4079,6 +4144,12 @@ sigc::signal<void, bool>&
 DBGPerspective::debugger_ready_signal ()
 {
     return m_priv->debugger_ready_signal ;
+}
+
+sigc::signal<void>&
+DBGPerspective::debugger_not_started_signal ()
+{
+    return m_priv->debugger_not_started_signal ;
 }
 
 sigc::signal<void>&

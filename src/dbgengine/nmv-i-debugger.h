@@ -343,6 +343,8 @@ public:
                          const UString&/*command cookie*/>&
                                                  command_done_signal () const = 0;
 
+    virtual sigc::signal<void>& detached_from_target_signal () const = 0 ;
+
     virtual sigc::signal<void, const IDebugger::BreakPoint&, int>&
                                          breakpoint_deleted_signal () const  = 0;
 
@@ -438,8 +440,10 @@ public:
     virtual void load_core_file (const UString &a_prog_file,
                                  const UString &a_core_file) = 0;
 
-    virtual bool attach_to_program (unsigned int a_pid,
+    virtual bool attach_to_target (unsigned int a_pid,
                                     const UString &a_tty_path="") = 0;
+
+    virtual void detach_from_target (const UString &a_cookie="") = 0;
 
     virtual void add_env_variables (const map<UString, UString> &a_vars) = 0;
 

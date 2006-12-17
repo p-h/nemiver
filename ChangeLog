@@ -1,3 +1,14 @@
+Sun, 17 Dec 2006 17:23:24 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:  renamed
+	  IDebugger::attach_to_program() into IDebugger::attach_to_target().
+	  Added IDebugger::detach_from_target(),
+	  and IDebugger::detached_from_target_signal ().
+	  When the debugger detaches from the target,
+	  the IDebugger::debugger_state_changed_signal() is emitted and the
+	  the debugger state is set to IDebugger::NOT_STARTED.
+	  This entry fixes enh #384847.
+
 Sat, 16 Dec 2006 20:17:00 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h: added the
