@@ -1,6 +1,7 @@
-Sun, 17 Dec 2006 17:42:40 +0100 Dodji Seketeli
+Sun, 17 Dec 2006 18:16:22 +0100 Dodji Seketeli
 
-	* nl.po: initial "nl" translation by Reinout van Schouwen.
+	* reverted bad nl.po patch application. file impacted are (LINGUAS and
+	  nl.po)
 
 Sat, 16 Dec 2006 20:30:19 +0100 Dodji Seketeli
 
