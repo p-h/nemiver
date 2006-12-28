@@ -5,6 +5,7 @@ src/persp/dbgperspective/glade/bodycontainer.glade
 src/persp/dbgperspective/glade/proclistdialog.glade
 src/persp/dbgperspective/glade/runprogramdialog.glade
 src/persp/dbgperspective/glade/loadcoredialog.glade
+src/persp/dbgperspective/glade/locatefiledialog.glade
 src/persp/dbgperspective/glade/preferencesdialog.glade
 src/persp/dbgperspective/glade/savedsessionsdialog.glade
 src/persp/dbgperspective/glade/varinspectordialog.glade

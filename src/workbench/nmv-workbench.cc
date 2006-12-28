@@ -244,6 +244,9 @@ Workbench::on_about_menu_item_action ()
         "Boston, MA  02111-1307  USA\n";
     dialog.set_license(license);
 
+    // Translators: change this to your name, separate multiple names with \n
+    dialog.set_translator_credits(_("translator-credits"));
+
     dialog.run ();
 
     NEMIVER_CATCH

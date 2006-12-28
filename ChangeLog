@@ -1,3 +1,10 @@
+2006-12-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* po/POTFILES.in: added glade file for locating files without full pathnames
+	from gdb
+	* src/workbench/nmv-workbench.cc: added translation credits to the About
+	dialog
+
 Sat, 23 Dec 2006 10:37:18 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
