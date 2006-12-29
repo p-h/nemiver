@@ -66,6 +66,7 @@ public:
     void remove_visual_breakpoint_from_line (int a_line) ;
     bool is_visual_breakpoint_set_at_line (int a_line) const ;
     void scroll_to_line (int a_line) ;
+    void scroll_to_iter (Gtk::TextIter &a_iter) ;
     void set_path (const UString &a_path) ;
     void get_path (UString &a_path) const ;
     void get_file_name (UString &a_file_name) ;
@@ -74,6 +75,13 @@ public:
                                UString &a_word,
                                Gdk::Rectangle &a_start_rect,
                                Gdk::Rectangle &a_end_rect) const ;
+
+    bool do_search (const UString &a_str,
+                    Gtk::TextIter &a_start,
+                    Gtk::TextIter &a_end,
+                    bool a_match_case=false,
+                    bool a_match_entire_word=false,
+                    bool a_search_backwards=false) ;
 
     /// \name signals
     /// @{

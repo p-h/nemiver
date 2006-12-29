@@ -31,6 +31,8 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/filechooserbutton.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/liststore.h>
 #include "nmv-exception.h"
 #include "nmv-run-program-dialog.h"
 #include "nmv-env.h"
@@ -198,6 +200,7 @@ RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
 
 RunProgramDialog::~RunProgramDialog ()
 {
+    LOG_D ("destroyed", "destructor-domain") ;
 }
 
 UString

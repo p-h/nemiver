@@ -28,8 +28,6 @@
 #include <map>
 #include "nmv-dialog.h"
 #include "nmv-safe-ptr-utils.h"
-#include <gtkmm/treeview.h>
-#include <gtkmm/liststore.h>
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

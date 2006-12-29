@@ -6,7 +6,8 @@ loadcoredialog.glade \
 locatefiledialog.glade \
 savedsessionsdialog.glade \
 preferencesdialog.glade \
-varinspectordialog.glade
+varinspectordialog.glade \
+findtextdialog.glade
 
 gladedir = @NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)/glade
 glade_DATA = $(gladefiles)

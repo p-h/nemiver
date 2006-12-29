@@ -27,7 +27,6 @@
 
 #include <libglademm/xml.h>
 #include "nmv-object.h"
-#include "nmv-safe-ptr-utils.h"
 
 namespace Gtk {
     class Dialog ;
@@ -56,9 +55,6 @@ class Dialog : public common::Object {
     Dialog (const Dialog&) ;
     Dialog& operator= (const Dialog&) ;
 
-    //force to create on the stack
-    void* operator new (size_t) ;
-
     Dialog () ;
 
 protected:
@@ -77,6 +73,8 @@ public:
     virtual ~Dialog () ;
 
     virtual gint run () ;
+
+    virtual void hide () ;
 
 };//end class nemiver
 

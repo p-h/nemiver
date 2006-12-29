@@ -21,6 +21,8 @@
     </menu>
     <placeholder name="MenuBarAdditions">
         <menu action="EditMenuAction" name="EditMenu">
+            <menuitem action="FindMenuItemAction"
+                      name="FindMenutItem"/>
             <menuitem action="CurrentSessionPropertiesMenuItemAction"
                       name="CurrentSessionPropertiesMenuItem"/>
         </menu>

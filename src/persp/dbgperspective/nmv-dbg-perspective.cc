@@ -54,6 +54,7 @@
 #include "nmv-popup-tip.h"
 #include "nmv-thread-list.h"
 #include "nmv-var-inspector-dialog.h"
+#include "nmv-find-text-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -143,6 +144,7 @@ private:
     //************
     void on_open_action () ;
     void on_close_action () ;
+    void on_find_action () ;
     void on_execute_program_action () ;
     void on_load_core_file_action () ;
     void on_attach_to_program_action () ;
@@ -278,6 +280,7 @@ private:
     void restart_mouse_immobile_timer () ;
     void stop_mouse_immobile_timer () ;
     PopupTip& get_popup_tip () ;
+    FindTextDialog& get_find_text_dialog () ;
 
 public:
 
@@ -305,6 +308,8 @@ public:
                     int current_line=-1) ;
 
     void close_current_file () ;
+
+    void find_in_current_file () ;
 
     void close_file (const UString &a_path) ;
 
@@ -579,6 +584,9 @@ struct DBGPerspective::Priv {
     //</variable value popup tip related data>
     //****************************************
 
+    //find text dialog
+    FindTextDialogSafePtr find_text_dialog ;
+
 
     Priv () :
         initialized (false),
@@ -656,6 +664,17 @@ DBGPerspective::on_close_action ()
     NEMIVER_TRY
 
     close_current_file () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_find_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    NEMIVER_TRY
+
+    find_in_current_file () ;
 
     NEMIVER_CATCH
 }
@@ -1882,6 +1901,15 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_close_action),
             ActionEntry::DEFAULT,
             ""
+        },
+        {
+            "FindMenuItemAction",
+            Gtk::Stock::FIND,
+            _("_Find"),
+            _("Find a text string in file"),
+            sigc::mem_fun (*this, &DBGPerspective::on_find_action),
+            ActionEntry::DEFAULT,
+            "<Control>f"
         }
     };
 
@@ -2465,6 +2493,17 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
+        workbench ().get_ui_manager ()->add_ui_separator (m_priv->contextual_menu_merge_id,
+                                                          "/ContextualMenu") ;
+
+        workbench ().get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "FindMenutItem",
+             "FindMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
 
         workbench ().get_ui_manager ()->ensure_update () ;
         m_priv->contextual_menu =
@@ -2718,6 +2757,18 @@ DBGPerspective::get_popup_tip ()
     }
     THROW_IF_FAIL (m_priv->popup_tip) ;
     return *m_priv->popup_tip ;
+}
+
+FindTextDialog&
+DBGPerspective::get_find_text_dialog ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->find_text_dialog) {
+        m_priv->find_text_dialog.reset (new FindTextDialog (plugin_path ())) ;
+    }
+    THROW_IF_FAIL (m_priv->find_text_dialog) ;
+
+    return *m_priv->find_text_dialog ;
 }
 
 void
@@ -3002,6 +3053,35 @@ DBGPerspective::close_current_file ()
     if (!get_n_pages ()) {return;}
 
     close_file (m_priv->pagenum_2_path_map[m_priv->current_page_num]) ;
+}
+
+void
+DBGPerspective::find_in_current_file ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    SourceEditor *editor = get_current_source_editor () ;
+    THROW_IF_FAIL (editor) ;
+
+    FindTextDialog& find_text_dialog  = get_find_text_dialog () ;
+
+    for (;;) {
+        int result = find_text_dialog.run () ;
+        if (result != Gtk::RESPONSE_OK) {
+            break ;
+        }
+
+        UString search_str;
+        find_text_dialog.get_search_string (search_str) ;
+        if (search_str == "") {break;}
+
+        Gtk::TextIter start, end ;
+        if (!editor->do_search (search_str, start, end)) {
+            UString message ; message.printf (_("Could not find string %s"), search_str.c_str ()) ;
+            ui_utils::display_info (message) ;
+        }
+    }
+    find_text_dialog.hide () ;
 }
 
 void

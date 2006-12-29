@@ -102,5 +102,13 @@ Dialog::run ()
     return m_priv->dialog->run () ;
 }
 
+void
+Dialog::hide ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->dialog) ;
+    return m_priv->dialog->hide () ;
+}
+
 }//end namespace nemiver
 

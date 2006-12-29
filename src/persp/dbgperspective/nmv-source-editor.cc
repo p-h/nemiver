@@ -28,14 +28,17 @@
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtksourceviewmm/sourcemarker.h>
+#include <gtksourceviewmm/sourceiter.h>
 #include "nmv-exception.h"
 #include "nmv-source-editor.h"
 #include "nmv-ustring.h"
 #include "nmv-sequence.h"
 
 using namespace std ;
-using namespace nemiver::common ;
-using gtksourceview::SourceMarker ;
+using namespace nemiver::common;
+using gtksourceview::SourceMarker;
+using gtksourceview::SourceIter;
+using gtksourceview::SearchFlags;
 
 namespace nemiver {
 
@@ -429,11 +432,10 @@ struct ScrollToLine {
 
     ScrollToLine () :
         m_line (0),
-        m_source_view (NULL)
+        m_source_view (0)
     {}
 
-    ScrollToLine (SourceView *a_source_view,
-                  int a_line) :
+    ScrollToLine (SourceView *a_source_view, int a_line) :
         m_line (a_line),
         m_source_view (a_source_view)
     {
@@ -442,8 +444,7 @@ struct ScrollToLine {
     bool do_scroll ()
     {
         if (!m_source_view) {return false;}
-        Gtk::TextIter iter =
-            m_source_view->get_buffer ()->get_iter_at_line (m_line) ;
+        Gtk::TextIter iter = m_source_view->get_buffer ()->get_iter_at_line (m_line) ;
         if (!iter) {return false;}
         m_source_view->scroll_to (iter, 0.1) ;
         return false ;
@@ -455,6 +456,20 @@ SourceEditor::scroll_to_line (int a_line)
 {
     static ScrollToLine s_scroll_functor ;
     s_scroll_functor.m_line = a_line ;
+    s_scroll_functor.m_source_view = m_priv->source_view ;
+    Glib::signal_idle ().connect (sigc::mem_fun (s_scroll_functor,
+                                                 &ScrollToLine::do_scroll)) ;
+}
+
+void
+SourceEditor::scroll_to_iter (Gtk::TextIter &a_iter)
+{
+    if (!a_iter) {
+        LOG_DD ("iter points at end of buffer") ;
+        return ;
+    }
+    static ScrollToLine s_scroll_functor ;
+    s_scroll_functor.m_line = a_iter.get_line ();
     s_scroll_functor.m_source_view = m_priv->source_view ;
     Glib::signal_idle ().connect (sigc::mem_fun (s_scroll_functor,
                                                  &ScrollToLine::do_scroll)) ;
@@ -537,6 +552,68 @@ SourceEditor::get_word_at_position (int a_x,
     a_start_rect = start_rect ;
     a_end_rect = end_rect ;
     return true ;
+}
+
+bool
+SourceEditor::do_search (const UString &a_str,
+                         Gtk::TextIter &a_start,
+                         Gtk::TextIter &a_end,
+                         bool a_match_case,
+                         bool a_match_entire_word,
+                         bool a_search_backwards)
+{
+    Glib::RefPtr<SourceBuffer> source_buffer = source_view ().get_source_buffer () ;
+    THROW_IF_FAIL (source_buffer) ;
+
+    SourceIter search_iter, limit ;
+    if (a_search_backwards) {
+        search_iter = source_buffer->end () ;
+        search_iter-- ;
+        limit = source_buffer->begin () ;
+    } else {
+        search_iter = source_buffer->begin () ;
+        limit = source_buffer->end () ;
+        limit-- ;
+    }
+
+    Gtk::TextIter start, end ;
+    if (source_buffer->get_selection_bounds (start, end)) {
+        if (a_search_backwards) {
+            search_iter = start ;
+        } else {
+            search_iter = end ;
+        }
+    }
+
+    //*********************
+    //build search flags
+    //**********************
+    namespace gsv=gtksourceview ;
+    gsv::SearchFlags search_flags = gsv::SEARCH_TEXT_ONLY ;
+    if (!a_match_case) {
+        search_flags |= gsv::SEARCH_CASE_INSENSITIVE ;
+    }
+
+    bool found=false ;
+    if (a_search_backwards) {
+        if (search_iter.backward_search (a_str, search_flags,
+                                         a_start, a_end, limit)) {
+            if (a_match_entire_word) {/*ignore for now*/}
+            found = true ;
+        }
+    } else {
+        if (search_iter.forward_search (a_str, search_flags,
+                    a_start, a_end, limit)) {
+            if (a_match_entire_word) {/*ignore for now*/}
+            found = true;
+        }
+    }
+    if (found) {
+        source_buffer->select_range (a_start, a_end) ;
+        scroll_to_iter (a_start) ;
+        return true ;
+    }
+    return false ;
 }
 
 sigc::signal<void, int>&

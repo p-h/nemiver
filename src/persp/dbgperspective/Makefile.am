@@ -24,8 +24,6 @@ pluginconfigdir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 plugin_LTLIBRARIES=libdbgperspectiveplugin.la
 plugindir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 sources= \
-nmv-dbg-perspective.cc \
-nmv-dbg-perspective.h \
 nmv-source-editor.cc \
 nmv-source-editor.h \
 nmv-dialog.cc \
@@ -40,10 +38,14 @@ nmv-saved-sessions-dialog.h \
 nmv-saved-sessions-dialog.cc \
 nmv-preferences-dialog.h \
 nmv-preferences-dialog.cc \
-nmv-sess-mgr.cc \
-nmv-sess-mgr.h \
 nmv-proc-list-dialog.cc \
 nmv-proc-list-dialog.h \
+nmv-var-inspector-dialog.cc \
+nmv-var-inspector-dialog.h \
+nmv-find-text-dialog.cc \
+nmv-find-text-dialog.h \
+nmv-sess-mgr.cc \
+nmv-sess-mgr.h \
 nmv-call-stack.cc \
 nmv-call-stack.h \
 nmv-variables-utils.cc \
@@ -52,12 +54,12 @@ nmv-local-vars-inspector.cc \
 nmv-local-vars-inspector.h \
 nmv-var-inspector.cc \
 nmv-var-inspector.h \
-nmv-var-inspector-dialog.cc \
-nmv-var-inspector-dialog.h \
 nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
 nmv-thread-list.h \
-nmv-thread-list.cc
+nmv-thread-list.cc \
+nmv-dbg-perspective.cc \
+nmv-dbg-perspective.h
 
 libdbgperspectiveplugin_la_SOURCES=$(sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version
