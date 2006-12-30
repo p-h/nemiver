@@ -201,7 +201,7 @@ struct LogStream::Priv
     //the stack of default domains name
     //to consider when logging functions don't
     //specify the domain name in their parameters
-    list<UString> default_domains ;
+    list<string> default_domains ;
 
     //the list of domains (keywords) this stream
     //is allowed to log against. (It is a map, just for speed purposes)
@@ -209,14 +209,14 @@ struct LogStream::Priv
     //Logging domains are just keywords associated to the messages that are
     //going to be logged. This helps in for filtering the messages that
     //are to be logged or not.
-    std::map<UString, bool> allowed_domains ;
+    std::map<std::string, bool> allowed_domains ;
 
     //the log level of this log stream
     enum LogStream::LogLevel level ;
 
     std::vector<UString> enabled_domains_from_env ;
 
-    Priv (const UString &a_domain=NMV_GENERAL_DOMAIN) :
+    Priv (const string &a_domain=NMV_GENERAL_DOMAIN) :
             stream_type (LogStream::COUT_STREAM),
             level (LogStream::LOG_LEVEL_NORMAL)
     {
@@ -245,7 +245,7 @@ struct LogStream::Priv
         return s_domain_filter ;
     }
 
-    bool is_logging_allowed (const UString &a_domain)
+    bool is_logging_allowed (const std::string &a_domain)
     {
         if (!LogStream::is_active ())
             return false ;
@@ -337,7 +337,7 @@ LogStream::default_log_stream ()
 }
 
 LogStream::LogStream (enum LogLevel a_level,
-                      const UString &a_domain) :
+                      const string &a_domain) :
     m_priv (new LogStream::Priv (a_domain))
 {
 
@@ -373,7 +373,7 @@ LogStream::~LogStream ()
 }
 
 void
-LogStream::enable_domain (const UString &a_domain,
+LogStream::enable_domain (const string &a_domain,
                           bool a_do_enable)
 {
     if (a_do_enable) {
@@ -384,7 +384,7 @@ LogStream::enable_domain (const UString &a_domain,
 }
 
 bool
-LogStream::is_domain_enabled (const UString &a_domain)
+LogStream::is_domain_enabled (const std::string &a_domain)
 {
     if (m_priv->allowed_domains.find (a_domain)
         != m_priv->allowed_domains.end ()) {
@@ -394,7 +394,7 @@ LogStream::is_domain_enabled (const UString &a_domain)
 }
 
 LogStream&
-LogStream::write (const char* a_buf, long a_buflen, const UString &a_domain)
+LogStream::write (const char* a_buf, long a_buflen, const string &a_domain)
 {
     if (!m_priv->is_logging_allowed (a_domain))
         return *this ;
@@ -417,7 +417,7 @@ LogStream::write (const char* a_buf, long a_buflen, const UString &a_domain)
 }
 
 LogStream&
-LogStream::write (int a_msg, const UString &a_domain)
+LogStream::write (int a_msg, const string &a_domain)
 {
     if (!m_priv || !m_priv->sink)
         return *this ;
@@ -435,7 +435,7 @@ LogStream::write (int a_msg, const UString &a_domain)
 
 LogStream&
 LogStream::write (double a_msg,
-                  const UString &a_domain)
+                  const string &a_domain)
 {
     if (!m_priv || !m_priv->sink)
         return *this ;
@@ -453,7 +453,7 @@ LogStream::write (double a_msg,
 
 LogStream&
 LogStream::write (char a_msg,
-                  const UString &a_domain)
+                  const string &a_domain)
 {
     if (!m_priv || !m_priv->sink)
         return *this ;
@@ -470,7 +470,7 @@ LogStream::write (char a_msg,
 }
 
 void
-LogStream::push_domain (const UString &a_domain)
+LogStream::push_domain (const string &a_domain)
 {
     m_priv->default_domains.push_front (a_domain) ;
 }
@@ -485,7 +485,7 @@ LogStream::pop_domain ()
 }
 
 LogStream&
-LogStream::write (const UString &a_msg, const UString &a_domain)
+LogStream::write (const UString &a_msg, const string &a_domain)
 {
     return write (a_msg.c_str (), a_msg.bytes (), a_domain) ;
 }

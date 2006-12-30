@@ -29,6 +29,7 @@
  */
 #ifndef __NMV_LOG_STREAM_H__
 #define __NMV_LOG_STREAM_H__
+#include <string>
 #include "nmv-api-macros.h"
 #include "nmv-ustring.h"
 #include "nmv-safe-ptr.h"
@@ -42,6 +43,7 @@
 #define NMV_GENERAL_DOMAIN "general-domain"
 #endif
 
+using std::string ;
 namespace nemiver {
 namespace common {
 
@@ -142,7 +144,7 @@ public:
     /// its log level is <= to the log level filter, *and* if its domain equals
     /// the domain filter.
     LogStream (enum LogLevel a_level=LOG_LEVEL_NORMAL,
-               const UString &a_default_domain=NMV_GENERAL_DOMAIN) ;
+               const string &a_default_domain=NMV_GENERAL_DOMAIN) ;
 
     /// \brief destructor of the log stream class
     virtual ~LogStream () ;
@@ -151,11 +153,11 @@ public:
     /// \param a_domain the domain to enable logging for
     /// \param a_do_enable when set to true, enables the logging for domain
     /// @a_domain, disable it otherwise.
-    void enable_domain (const UString &a_domain,
+    void enable_domain (const string &a_domain,
                         bool a_do_enable=true) ;
 
     /// \return true is logging is enabled for domain @a_domain
-    bool is_domain_enabled (const UString &a_domain) ;
+    bool is_domain_enabled (const string &a_domain) ;
 
     /// \brief writes a text string to the stream
     /// \param a_buf the buffer that contains the text string.
@@ -164,29 +166,29 @@ public:
     /// \param a_domain the domain the string has to be logged against.
     LogStream& write (const char *a_buf,
                       long a_buflen =-1,
-                      const UString &a_domain=NMV_GENERAL_DOMAIN) ;
+                      const string &a_domain=NMV_GENERAL_DOMAIN) ;
 
     /// \brief log a message to the stream
     /// \param a_msg the message to log
     /// \param a_domain the domain to log against
     LogStream& write (const UString &a_msg,
-                      const UString &a_domain=NMV_GENERAL_DOMAIN) ;
+                      const string &a_domain=NMV_GENERAL_DOMAIN) ;
 
     LogStream& write (int a_msg,
-                      const UString &a_domain=NMV_GENERAL_DOMAIN) ;
+                      const string &a_domain=NMV_GENERAL_DOMAIN) ;
 
     LogStream& write (double a_msg,
-                      const UString &a_domain=NMV_GENERAL_DOMAIN) ;
+                      const string &a_domain=NMV_GENERAL_DOMAIN) ;
 
     LogStream& write (char a_msg,
-                      const UString &a_domain=NMV_GENERAL_DOMAIN) ;
+                      const string &a_domain=NMV_GENERAL_DOMAIN) ;
 
     /// set the domain in against which all the coming
     /// messages will be logged.
     /// This is to be used in association with the << operators where
     /// we cannot specify the domain to log against, unlike LogStream::write() .
     /// \param a_domain the domain to log against.
-    void push_domain (const UString &a_domain) ;
+    void push_domain (const string &a_domain) ;
 
     /// pops the last domain that has been pushed using LogStream::push_domain.
     void pop_domain () ;
