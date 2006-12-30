@@ -1,3 +1,9 @@
+2006-12-30  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/glade/findtextdialog.glade: A few HIG-related
+	improvements to the new find dialog (spacing, etc), and added some keyboard
+	mnemonics to the options in the dialog.
+
 Sat, 30 Dec 2006 00:30:02 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-find-text-dialog.cc: by default
