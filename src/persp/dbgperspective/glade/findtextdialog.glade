@@ -47,7 +47,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="button1">
+	    <widget class="GtkButton" id="searchbutton">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
@@ -183,7 +183,7 @@
 		      <property name="spacing">0</property>
 
 		      <child>
-			<widget class="GtkCheckButton" id="checkbutton2">
+			<widget class="GtkCheckButton" id="matchcasecheckbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Match case</property>
@@ -202,7 +202,7 @@
 		      </child>
 
 		      <child>
-			<widget class="GtkCheckButton" id="checkbutton3">
+			<widget class="GtkCheckButton" id="matchentirewordcheckbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Match entire word only</property>
@@ -281,7 +281,7 @@
 		      <property name="spacing">0</property>
 
 		      <child>
-			<widget class="GtkCheckButton" id="checkbutton4">
+			<widget class="GtkCheckButton" id="wraparoundcheckbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Wrap around</property>
@@ -300,7 +300,7 @@
 		      </child>
 
 		      <child>
-			<widget class="GtkCheckButton" id="checkbutton5">
+			<widget class="GtkCheckButton" id="searchbackwardscheckbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Search backwards</property>

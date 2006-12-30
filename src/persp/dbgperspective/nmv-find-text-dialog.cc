@@ -36,7 +36,6 @@ class FindTextDialog::Priv {
     friend class FindTextDialog ;
     Gtk::Dialog &dialog ;
     Glib::RefPtr<Gnome::Glade::Xml> glade ;
-    bool search_succeeded ;
     Gtk::TextIter match_start ;
     Gtk::TextIter match_end ;
 
@@ -47,10 +46,19 @@ public:
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
         dialog (a_dialog),
-        glade (a_glade),
-        search_succeeded (false)
+        glade (a_glade)
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK) ;
+
+        get_search_text_combo ()->get_entry ()->signal_activate ().connect
+            (sigc::mem_fun (*this, &Priv::on_search_entry_activated_signal)) ;
+    }
+
+    void on_search_entry_activated_signal ()
+    {
+        NEMIVER_TRY
+        get_search_button ()->clicked () ;
+        NEMIVER_CATCH
     }
 
     Gtk::Button* get_search_button ()
@@ -134,13 +142,6 @@ FindTextDialog::FindTextDialog (const UString &a_root_path) :
 FindTextDialog::~FindTextDialog ()
 {
     LOG_D ("destroyed", "destructor-domain") ;
-}
-
-bool
-FindTextDialog::did_search_succeed () const
-{
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->search_succeeded ;
 }
 
 Gtk::TextIter&

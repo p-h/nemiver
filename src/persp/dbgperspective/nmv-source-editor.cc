@@ -560,10 +560,16 @@ SourceEditor::do_search (const UString &a_str,
                          Gtk::TextIter &a_end,
                          bool a_match_case,
                          bool a_match_entire_word,
-                         bool a_search_backwards)
+                         bool a_search_backwards,
+                         bool a_clear_selection)
 {
     Glib::RefPtr<SourceBuffer> source_buffer = source_view ().get_source_buffer () ;
     THROW_IF_FAIL (source_buffer) ;
+
+    if (a_clear_selection) {
+        source_buffer->select_range (source_buffer->end (),
+                                     source_buffer->end ()) ;
+    }
 
     SourceIter search_iter, limit ;
     if (a_search_backwards) {

@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __FIND_TEXT_DIALOG_H__
-#define __FIND_TEXT_DIALOG_H__
+#ifndef __NMV_FIND_TEXT_DIALOG_H__
+#define __NMV_FIND_TEXT_DIALOG_H__
 
 #include "nmv-dialog.h"
 
@@ -42,9 +42,10 @@ class FindTextDialog : public Dialog {
     SafePtr<Priv> m_priv ;
 
 public:
+
     FindTextDialog (const UString &a_resource_root_path) ;
     virtual ~FindTextDialog () ;
-    bool did_search_succeed () const ;
+
     Gtk::TextIter& get_search_match_start () const ;
     Gtk::TextIter& get_search_match_end () const ;
 
@@ -66,4 +67,5 @@ public:
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__FIND_TEXT_DIALOG_H__
+#endif //__NMV_FIND_TEXT_DIALOG_H__
+

@@ -1,3 +1,19 @@
+Sat, 30 Dec 2006 00:30:02 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-find-text-dialog.cc: by default
+	  when the user enters a search string and type "Enter" a search is
+	  triggered. Not need to go click on the "Find" button.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  DBGPerspective::find_in_current_file(): support for "match-case",
+	  "search-backward" and "wrap-around". Support of "match-entire-word"
+	  is still not implemented.
+	* src/persp/dbgperspective/nmv-source-editor.cc,h: add facility
+	  to support the "wrap-around".
+	* src/persp/dbgperspective/glade/findtextdialog.glade: give
+	  proper names to widgets so that they can be queried.
+	  This entry makes the "Find" useable. Only the "match-entire-word"
+	  feature is not implemented.
+
 Fri, 29 Dec 2006 19:04:55 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dialog.cc,h: don't prevent from

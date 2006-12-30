@@ -81,7 +81,8 @@ public:
                     Gtk::TextIter &a_end,
                     bool a_match_case=false,
                     bool a_match_entire_word=false,
-                    bool a_search_backwards=false) ;
+                    bool a_search_backwards=false,
+                    bool a_clear_selection=false) ;
 
     /// \name signals
     /// @{

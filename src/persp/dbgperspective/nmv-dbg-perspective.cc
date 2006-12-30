@@ -3065,6 +3065,7 @@ DBGPerspective::find_in_current_file ()
 
     FindTextDialog& find_text_dialog  = get_find_text_dialog () ;
 
+    bool clear_selection=false ;
     for (;;) {
         int result = find_text_dialog.run () ;
         if (result != Gtk::RESPONSE_OK) {
@@ -3076,9 +3077,23 @@ DBGPerspective::find_in_current_file ()
         if (search_str == "") {break;}
 
         Gtk::TextIter start, end ;
-        if (!editor->do_search (search_str, start, end)) {
-            UString message ; message.printf (_("Could not find string %s"), search_str.c_str ()) ;
+        if (!editor->do_search (search_str, start, end,
+                                find_text_dialog.get_match_case (),
+                                find_text_dialog.get_match_entire_word (),
+                                find_text_dialog.get_search_backward (),
+                                clear_selection)) {
+            UString message ;
+            if (find_text_dialog.get_wrap_around ()) {
+                message = _("Reached end of file") ;
+                clear_selection = true ;
+            } else {
+                message.printf (_("Could not find string %s"),
+                                search_str.c_str ()) ;
+                clear_selection = false ;
+            }
             ui_utils::display_info (message) ;
+        } else {
+            clear_selection = false ;
         }
     }
     find_text_dialog.hide () ;
