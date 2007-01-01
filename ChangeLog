@@ -1,3 +1,39 @@
+2007-01-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	Reorganization of the source file list widget.  It was previously in a
+	notebook tab in the status notebook.  Now it is located in the dialog that
+	appears when the user selects the 'File -> Open' menu item.
+	It isn't perfect yet.  For example, after opening this dialog (and therefore
+	querying GDB for the list of source files), all debugging actions become
+	disabled, and I couldn't figure out how to fix it since I'm not familiar
+	with this code.
+	Also, it queries gdb to build the list every time the dialog is opened
+	instead of caching it.  This could probably be optimized, but it's quick
+	enough now that it probably doesn't matter too much.
+
+	* src/persp/dbgperspective/Makefile.am: add nmv-open-file-dialog.h,cc
+	* src/persp/dbgperspective/glade/Makefile.am: add openfiledialog.glade
+	* src/persp/dbgperspective/glade/openfiledialog.glade: add new dialog for
+	opening source files either from a list determined by gdb or from the
+	filesystem.
+	* src/persp/dbgperspective/menus/Makefile.am: remove filelistpopup.xml
+	* src/persp/dbgperspective/menus/filelistpopup.xml: deleted -- no need for a
+	context menu now that the file list widget is in a dialog.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Use the new
+	OpenFileDialog to select a source file to open instead of using the standard
+	Gtk::FileChooserDialog.  This allows the user to select either from a list
+	of source files that make up the executable or select from the filesystem
+	manually
+	* src/persp/dbgperspective/nmv-file-list.cc: update to fit the new use case
+	better.
+	* src/persp/dbgperspective/nmv-file-list.h: add a new get_filenames()
+	function and simplify the constructor since we don't need references to the
+	workbench or perspective anymore since there's no context menu for the
+	widget.
+	* src/persp/dbgperspective/nmv-open-file-dialog.cc,h: New dialog for opening
+	source files that lets you choose from the filesystem or from a list of
+	files that make up the target executable
+
 Mon, 01 Jan 2007 21:21:04 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc:

@@ -49,7 +49,7 @@
 #include "nmv-local-vars-inspector.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
-#include "nmv-file-list.h"
+#include "nmv-open-file-dialog.h"
 #include "nmv-i-conf-mgr.h"
 #include "nmv-preferences-dialog.h"
 #include "nmv-popup-tip.h"
@@ -167,7 +167,6 @@ private:
     void on_show_target_output_action () ;
     void on_breakpoint_delete_action (const IDebugger::BreakPoint& a_breakpoint) ;
     void on_breakpoint_go_to_source_action (const IDebugger::BreakPoint& a_breakpoint) ;
-    void on_file_list_file_selected_action (const std::string& a_filepath) ;
     void on_thread_list_thread_selected_signal (int a_tid) ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
@@ -404,13 +403,9 @@ public:
 
     Gtk::Box& get_terminal_box () ;
 
-    Gtk::ScrolledWindow& get_file_list_scrolled_win () ;
-
     Gtk::ScrolledWindow& get_breakpoints_scrolled_win () ;
 
     BreakpointsView& get_breakpoints_view () ;
-
-    FileList& get_file_list () ;
 
     ThreadList& get_thread_list () ;
 
@@ -427,8 +422,6 @@ public:
     void set_show_terminal_view (bool) ;
 
     void set_show_breakpoints_view (bool) ;
-
-    void set_show_file_list (bool) ;
 
     void add_text_to_command_view (const UString &a_text,
                                    bool a_no_repeat=false) ;
@@ -547,7 +540,6 @@ struct DBGPerspective::Priv {
     bool variables_editor_view_is_visible ;
     bool terminal_view_is_visible ;
     bool breakpoints_view_is_visible ;
-    bool file_list_is_visible ;
     Gtk::Notebook *sourceviews_notebook ;
     map<UString, int> path_2_pagenum_map ;
     map<UString, int> basename_2_pagenum_map ;
@@ -559,9 +551,7 @@ struct DBGPerspective::Priv {
     SafePtr<Terminal> terminal ;
     SafePtr<Gtk::Box> terminal_box ;
     SafePtr<Gtk::ScrolledWindow> breakpoints_scrolled_win ;
-    SafePtr<Gtk::ScrolledWindow> file_list_scrolled_win ;
     SafePtr<BreakpointsView> breakpoints_view ;
-    SafePtr<FileList> file_list ;
     SafePtr<ThreadList> thread_list ;
 
     int current_page_num ;
@@ -617,7 +607,6 @@ struct DBGPerspective::Priv {
         variables_editor_view_is_visible (false),
         terminal_view_is_visible (false),
         breakpoints_view_is_visible (false),
-        file_list_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0),
@@ -916,17 +905,6 @@ DBGPerspective::on_breakpoint_delete_action
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     delete_breakpoint (a_breakpoint.number ());
-    NEMIVER_CATCH
-}
-
-void
-DBGPerspective::on_file_list_file_selected_action
-                                    (const std::string& a_filepath)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    NEMIVER_TRY
-    open_file (a_filepath);
-    bring_source_as_current (a_filepath);
     NEMIVER_CATCH
 }
 
@@ -1650,7 +1628,6 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_variables_editor_view (true) ;
     set_show_terminal_view (true) ;
     set_show_breakpoints_view (true) ;
-    set_show_file_list (true) ;
     m_priv->statuses_notebook->set_current_page (0) ;
 }
 
@@ -2109,7 +2086,6 @@ DBGPerspective::init_body ()
     get_local_vars_inspector_scrolled_win ().add
                                     (get_local_vars_inspector ().widget ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
-    get_file_list_scrolled_win ().add (get_file_list ().widget());
 
     /*
     set_show_call_stack_view (true) ;
@@ -2160,9 +2136,6 @@ DBGPerspective::init_signals ()
 
     get_breakpoints_view ().delete_breakpoint_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_delete_action));
-
-    get_file_list ().signal_file_selected ().connect
-        (sigc::mem_fun (*this, &DBGPerspective::on_file_list_file_selected_action));
 
     get_thread_list ().thread_selected_signal ().connect (sigc::mem_fun
         (*this, &DBGPerspective::on_thread_list_thread_selected_signal)) ;
@@ -2956,19 +2929,14 @@ DBGPerspective::edit_workbench_menu ()
 void
 DBGPerspective::open_file ()
 {
-    Gtk::FileChooserDialog file_chooser (_("Open file"),
-                                         Gtk::FILE_CHOOSER_ACTION_OPEN) ;
-    file_chooser.set_current_folder (m_priv->prog_cwd) ;
+    OpenFileDialog dialog (plugin_path (), debugger ());
+    //file_chooser.set_current_folder (m_priv->prog_cwd) ;
 
-    file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
-    file_chooser.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK) ;
-    file_chooser.set_select_multiple (true) ;
-
-    int result = file_chooser.run () ;
+    int result = dialog.run () ;
 
     if (result != Gtk::RESPONSE_OK) {return;}
 
-    list<UString> paths = file_chooser.get_filenames () ;
+    list<UString> paths = dialog.get_filenames () ;
     list<UString>::const_iterator iter ;
 
     for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
@@ -4011,20 +3979,6 @@ DBGPerspective::get_breakpoints_scrolled_win ()
     return *m_priv->breakpoints_scrolled_win ;
 }
 
-Gtk::ScrolledWindow&
-DBGPerspective::get_file_list_scrolled_win ()
-{
-    THROW_IF_FAIL (m_priv) ;
-    if (!m_priv->file_list_scrolled_win) {
-        m_priv->file_list_scrolled_win.reset (new Gtk::ScrolledWindow) ;
-        THROW_IF_FAIL (m_priv->file_list_scrolled_win) ;
-        m_priv->file_list_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
-                                                   Gtk::POLICY_AUTOMATIC) ;
-    }
-    THROW_IF_FAIL (m_priv->file_list_scrolled_win) ;
-    return *m_priv->file_list_scrolled_win ;
-}
-
 BreakpointsView&
 DBGPerspective::get_breakpoints_view ()
 {
@@ -4035,17 +3989,6 @@ DBGPerspective::get_breakpoints_view ()
     }
     THROW_IF_FAIL (m_priv->breakpoints_view) ;
     return *m_priv->breakpoints_view ;
-}
-
-FileList&
-DBGPerspective::get_file_list ()
-{
-    THROW_IF_FAIL (m_priv) ;
-    if (!m_priv->file_list) {
-        m_priv->file_list.reset (new FileList (debugger (), workbench (), *this)) ;
-    }
-    THROW_IF_FAIL (m_priv->file_list) ;
-    return *m_priv->file_list ;
 }
 
 void
@@ -4232,32 +4175,6 @@ DBGPerspective::set_show_breakpoints_view (bool a_show)
     }
 }
 
-
-void
-DBGPerspective::set_show_file_list (bool a_show)
-{
-    if (a_show) {
-        if (!get_file_list_scrolled_win ().get_parent ()
-            && m_priv->file_list_is_visible == false) {
-            get_file_list_scrolled_win ().show_all () ;
-            int page_num = m_priv->statuses_notebook->insert_page
-                                            (get_file_list_scrolled_win (),
-                                             _("File List"),
-                                             BREAKPOINTS_VIEW_INDEX) ;
-            m_priv->file_list_is_visible = true ;
-            m_priv->statuses_notebook->set_current_page (page_num);
-        }
-    } else {
-        if (get_file_list_scrolled_win ().get_parent ()
-            && m_priv->file_list_is_visible) {
-            LOG_DD ("removing file list view") ;
-            m_priv->statuses_notebook->remove_page
-                                        (get_file_list_scrolled_win ());
-            m_priv->file_list_is_visible = false;
-        }
-        m_priv->file_list_is_visible = false;
-    }
-}
 
 struct ScrollTextViewToEndClosure {
     Gtk::TextView* text_view ;

@@ -15,45 +15,41 @@
  *See the GNU General Public License for more details.
  *
  *You should have received a copy of the
- *GNU General Public License along with Nemiver;
+ *GNU General Public License along with Goupil;
  *see the file COPYING.
  *If not, write to the Free Software Foundation,
  *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_FILE_LIST_H__
-#define __NMV_FILE_LIST_H__
+#ifndef __NEMIVER_OPEN_FILE_DIALOG_H__
+#define __NEMIVER_OPEN_FILE_DIALOG_H__
 
-#include <list>
-#include <gtkmm/widget.h>
-#include "nmv-object.h"
+#include "nmv-dialog.h"
 #include "nmv-i-debugger.h"
 #include "nmv-safe-ptr-utils.h"
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class NEMIVER_API FileList : public nemiver::common::Object {
-    //non copyable
-    FileList (const FileList&) ;
-    FileList& operator= (const FileList&) ;
+namespace common {
+class UString ;
+}
 
-    struct Priv ;
+using nemiver::common::UString ;
+using nemiver::common::SafePtr ;
+
+class OpenFileDialog : public Dialog {
+    class Priv ;
     SafePtr<Priv> m_priv ;
-
 public:
+    OpenFileDialog (const UString &a_resource_root_path, IDebuggerSafePtr& a_debugger) ;
+    virtual ~OpenFileDialog () ;
 
-    FileList (IDebuggerSafePtr& a_debugger) ;
-    virtual ~FileList () ;
-    Gtk::Widget& widget () const ;
-    sigc::signal<void,
-                 const UString&>& signal_file_selected () const ;
-    list<UString> get_filenames () const;
+    list<UString> get_filenames () const ;
 
-};//end FileList
+};//end class nemiver
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_FILE_LIST_H__
-
+#endif //__NEMIVER_OPEN_FILE_DIALOG_H__
 
