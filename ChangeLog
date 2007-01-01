@@ -1,3 +1,21 @@
+2006-12-31  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/dbgengine/nmv-gdb-engine.cc: add functionality for listing source
+	files that make up the current executable and optimize some things to use
+	the c_str() buffer instead of using UString directly to reduce the utf8
+	processing costs
+	* src/dbgengine/nmv-i-debugger.h: Add list_files() and file_listed_signal()
+	interfaces to the IDebugger interface.
+	* src/persp/dbgperspective/Makefile.am: add new files for file list widget
+	* src/persp/dbgperspective/menus/Makefile.am: add new file list menu source
+	* src/persp/dbgperspective/menus/filelistpopup.xml: add right-click context
+	menu for the file list widget
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Set up a source file list
+	in the status notebook for now.  Eventually we should make this into a
+	dialog window or something different, but for now get something usable.
+	* src/persp/dbgperspective/nmv-file-list.[cc,h]: define a new file list
+	widget that can be used in the status notebook of the debugger perspective
+
 Sat, 30 Dec 2006 19:38:36 +0100 Dodji Seketeli
 
 	* src/common/nmv-log-stream.cc,h: performance hack.

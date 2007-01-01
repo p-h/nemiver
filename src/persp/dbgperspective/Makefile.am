@@ -58,6 +58,8 @@ nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
 nmv-thread-list.h \
 nmv-thread-list.cc \
+nmv-file-list.cc \
+nmv-file-list.h \
 nmv-dbg-perspective.cc \
 nmv-dbg-perspective.h
 

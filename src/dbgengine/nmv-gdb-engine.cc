@@ -57,7 +57,7 @@ LOG_PARSING_ERROR (a_input, (a_current)); return false ;\
 }
 
 #define SKIP_WS(a_input, a_from, a_to) \
-while (a_from < a_input.size () && isspace (a_input[a_from])) { \
+while (a_from < a_input.bytes () && isspace (a_input.c_str ()[a_from])) { \
     CHECK_END (a_input, a_from, end);++a_from; \
 } \
 a_to = a_from ;
@@ -379,6 +379,10 @@ public:
         std::list<int> m_thread_list ;
         bool m_has_thread_list ;
 
+        //files listed members
+        std::vector<UString> m_file_list ;
+        bool m_has_file_list ;
+
         //new thread id selected members
         int m_thread_id ;
         IDebugger::Frame m_frame_in_thread ;
@@ -481,6 +485,16 @@ public:
             thread_id_got_selected (true) ;
         }
 
+        bool has_file_list () const {return m_has_file_list;}
+        void has_file_list (bool a_in) {m_has_file_list = a_in;}
+
+        const std::vector<UString>& file_list () const {return m_file_list;}
+        void file_list (const std::vector<UString> &a_in)
+        {
+            m_file_list = a_in;
+            has_file_list (true) ;
+        }
+
         /// @}
 
         void clear ()
@@ -501,6 +515,8 @@ public:
             m_thread_id = 0;
             m_frame_in_thread.clear () ;
             m_thread_id_got_selected = false;
+            m_file_list.clear () ;
+            m_has_file_list = false ;
         }
     };//end class ResultRecord
 
@@ -623,7 +639,7 @@ public:
     void content (const list<GDBMIResultSafePtr> &a_in) {m_content = a_in;}
     void append (const GDBMIResultSafePtr &a_result)
     {
-        m_content .push_back (a_result);
+        m_content.push_back (a_result);
     }
     void clear () {m_content.clear ();}
 };//end class GDBMITuple
@@ -1015,6 +1031,8 @@ public:
 
     sigc::signal<void, const list<int> >& threads_listed_signal () const ;
 
+    sigc::signal<void, const vector<UString>& >& files_listed_signal () const;
+
     sigc::signal<void, int, const Frame&>& thread_selected_signal () const  ;
 
     sigc::signal<void, const vector<IDebugger::Frame>& >&
@@ -1169,6 +1187,8 @@ public:
     void print_variable_type (const UString &a_var_name,
                               const UString &a_cookie) ;
 
+    void list_files (const UString &a_cookie="");
+
     bool extract_proc_info (Output &a_output,
                             int &a_proc_pid,
                             UString &a_exe_path) ;
@@ -1260,6 +1280,8 @@ struct GDBEngine::Priv {
                          int> stopped_signal ;
 
     mutable sigc::signal<void, const list<int> > threads_listed_signal ;
+
+    mutable sigc::signal<void, const vector<UString>& > files_listed_signal;
 
     mutable sigc::signal<void, int, const Frame&> thread_selected_signal ;
 
@@ -1636,81 +1658,75 @@ struct GDBEngine::Priv {
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
     {
         RETURN_VAL_IF_FAIL (gdb_stdout_channel, false) ;
-        try {
-            if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
-                gsize nb_read (0), CHUNK_SIZE(512) ;
-                char buf[CHUNK_SIZE+1] ;
-                Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
-                bool got_data (false) ;
-                UString::size_type len = 0, i=0 ;
-                UString meaningfull_buffer ;
-                while (true) {
-                    memset (buf, 0, CHUNK_SIZE + 1) ;
-                    status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read) ;
-                    if (status == Glib::IO_STATUS_NORMAL
-                            && nb_read && (nb_read <= CHUNK_SIZE)) {
-                        if (gdb_stdout_buffer_status == FILLED) {
-                            gdb_stdout_buffer.clear () ;
-                            gdb_stdout_buffer_status = FILLING ;
-                        }
-                        std::string raw_str(buf, nb_read) ;
-                        UString tmp = Glib::locale_to_utf8 (raw_str) ;
-                        gdb_stdout_buffer.append (tmp) ;
-                        len = gdb_stdout_buffer.size (), i=0 ;
 
-                        while (isspace (gdb_stdout_buffer[len-i-1])) {++i;}
+        NEMIVER_TRY
 
-                        if (gdb_stdout_buffer[len-i-1] == ')'
-                            && gdb_stdout_buffer[len-i-2] == 'b'
-                            && gdb_stdout_buffer[len-i-3] == 'd'
-                            && gdb_stdout_buffer[len-i-4] == 'g'
-                            && gdb_stdout_buffer[len-i-5] == '(') {
-                            got_data = true ;
-                        }
-                    } else {
-                        break ;
+        if ((a_cond & Glib::IO_IN) || (a_cond & Glib::IO_PRI)) {
+            gsize nb_read (0), CHUNK_SIZE(512) ;
+            char buf[CHUNK_SIZE+1] ;
+            Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
+            bool got_data (false) ;
+            UString::size_type len = 0, i=0 ;
+            UString meaningfull_buffer ;
+            while (true) {
+                memset (buf, 0, CHUNK_SIZE + 1) ;
+                status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read) ;
+                if (status == Glib::IO_STATUS_NORMAL
+                        && nb_read && (nb_read <= CHUNK_SIZE)) {
+                    if (gdb_stdout_buffer_status == FILLED) {
+                        gdb_stdout_buffer.clear () ;
+                        gdb_stdout_buffer_status = FILLING ;
                     }
-                    nb_read = 0 ;
-                }
-                if (got_data) {
-                    gdb_stdout_buffer_status = FILLED ;
-                    int size = len-i+1 ;
-                    //basically, gdb can send more or less than a complete
-                    //output record. So let's take that in account in the way
-                    //we manage he incoming buffer.
-                    //TODO: optimize the way we handle this so that we do
-                    //less allocation and copying.
-                    meaningfull_buffer = gdb_stdout_buffer.substr (0, size) ;
-                    meaningfull_buffer.chomp () ;
-                    meaningfull_buffer += '\n' ;
-                    gdb_stdout_signal.emit (meaningfull_buffer) ;
-                    gdb_stdout_buffer.erase (0, size) ;
-                    while (!gdb_stdout_buffer.empty ()
-                           && isspace (gdb_stdout_buffer[0])) {
-                        gdb_stdout_buffer.erase (0,1) ;
+                    std::string raw_str(buf, nb_read) ;
+                    UString tmp = Glib::locale_to_utf8 (raw_str) ;
+                    gdb_stdout_buffer.append (tmp) ;
+                    len = gdb_stdout_buffer.bytes (), i=0 ;
+
+                    while (isspace (gdb_stdout_buffer.c_str ()[len-i-1])) {++i;}
+
+                    if (gdb_stdout_buffer.c_str ()[len-i-1] == ')'
+                        && gdb_stdout_buffer.c_str ()[len-i-2] == 'b'
+                        && gdb_stdout_buffer.c_str ()[len-i-3] == 'd'
+                        && gdb_stdout_buffer.c_str ()[len-i-4] == 'g'
+                        && gdb_stdout_buffer.c_str ()[len-i-5] == '(') {
+                        got_data = true ;
                     }
+                } else {
+                    break ;
+                }
+                nb_read = 0 ;
+            }
+            if (got_data) {
+                gdb_stdout_buffer_status = FILLED ;
+                int size = len-i+1 ;
+                //basically, gdb can send more or less than a complete
+                //output record. So let's take that in account in the way
+                //we manage he incoming buffer.
+                //TODO: optimize the way we handle this so that we do
+                //less allocation and copying.
+                meaningfull_buffer = gdb_stdout_buffer.substr (0, size) ;
+                meaningfull_buffer.chomp () ;
+                meaningfull_buffer += '\n' ;
+                gdb_stdout_signal.emit (meaningfull_buffer) ;
+                gdb_stdout_buffer.erase (0, size) ;
+                while (!gdb_stdout_buffer.empty ()
+                       && isspace (gdb_stdout_buffer[0])) {
+                    gdb_stdout_buffer.erase (0,1) ;
                 }
             }
-            if (a_cond & Glib::IO_HUP) {
-                LOG_ERROR ("Connection lost from stdout channel to gdb") ;
-                gdb_stdout_channel.clear () ;
-                kill_gdb () ;
-                gdb_died_signal.emit () ;
-                LOG_ERROR ("GDB killed") ;
-            }
-            if (a_cond & Glib::IO_ERR) {
-                LOG_ERROR ("Error over the wire") ;
-            }
-        } catch (Glib::Error &e) {
-            TRACE_EXCEPTION (e) ;
-            return false ;
-        } catch (exception &e) {
-            TRACE_EXCEPTION (e) ;
-            return false ;
-        } catch (...) {
-            LOG_ERROR ("got an unknown exception") ;
-            return false ;
         }
+        if (a_cond & Glib::IO_HUP) {
+            LOG_ERROR ("Connection lost from stdout channel to gdb") ;
+            gdb_stdout_channel.clear () ;
+            kill_gdb () ;
+            gdb_died_signal.emit () ;
+            LOG_ERROR ("GDB killed") ;
+        }
+        if (a_cond & Glib::IO_ERR) {
+            LOG_ERROR ("Error over the wire") ;
+        }
+
+        NEMIVER_CATCH_NOX
 
         return true ;
     }
@@ -1982,7 +1998,7 @@ struct GDBEngine::Priv {
                                  map<int, IDebugger::BreakPoint> &a_breakpoints)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
-        UString::size_type cur=a_from, end=a_input.size () ;
+        UString::size_type cur=a_from, end=a_input.bytes () ;
 
         if (a_input.compare (cur, 17, "BreakpointTable={")) {
             LOG_PARSING_ERROR (a_input, cur) ;
@@ -2007,7 +2023,7 @@ struct GDBEngine::Priv {
         }
 
         map<int, IDebugger::BreakPoint> breakpoint_table ;
-        if (a_input[cur] == ']') {
+        if (a_input.c_str ()[cur] == ']') {
             //there are zero breakpoints ...
         } else if (!a_input.compare (cur, 6, "bkpt={")){
             //there are some breakpoints
@@ -2038,7 +2054,7 @@ struct GDBEngine::Priv {
             return false ;
         }
 
-        if (a_input[cur] != ']') {
+        if (a_input.c_str ()[cur] != ']') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false;
         }
@@ -2047,7 +2063,7 @@ struct GDBEngine::Priv {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false;
         }
-        if (a_input[cur] != '}') {
+        if (a_input.c_str ()[cur] != '}') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false;
         }
@@ -2067,17 +2083,17 @@ struct GDBEngine::Priv {
                             GDBMITupleSafePtr &a_tuple)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
-        UString::size_type cur = a_from, end = a_input.size () ;
+        UString::size_type cur = a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
-        if (a_input[cur] != '{') {
+        if (a_input.c_str ()[cur] != '{') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
         ++cur ;
         CHECK_END (a_input, cur, end) ;
 
-        if (a_input[cur] == '}') {
+        if (a_input.c_str ()[cur] == '}') {
             ++cur ;
             a_to = cur ;
             return true ;
@@ -2096,13 +2112,13 @@ struct GDBEngine::Priv {
                     THROW_IF_FAIL (tuple) ;
                 }
                 tuple->append (result) ;
-                if (a_input[cur] == ',') {
+                if (a_input.c_str ()[cur] == ',') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
                     SKIP_WS (a_input, cur, cur) ;
                     continue ;
                 }
-                if (a_input[cur] == '}') {
+                if (a_input.c_str ()[cur] == '}') {
                     ++cur ;
                 }
             } else {
@@ -2110,7 +2126,7 @@ struct GDBEngine::Priv {
                 return false ;
             }
             LOG_D ("getting out at char '"
-                   << (char)a_input[cur]
+                   << (char)a_input.c_str ()[cur]
                    << "', at offset '"
                    << (int)cur
                    << "' for text >>>"
@@ -2135,16 +2151,16 @@ struct GDBEngine::Priv {
                            GDBMIListSafePtr &a_list)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
-        UString::size_type cur = a_from, end = a_input.size () ;
+        UString::size_type cur = a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
         GDBMIListSafePtr return_list ;
-        if (a_input[cur] != '[') {
+        if (a_input.c_str ()[cur] != '[') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
         CHECK_END (a_input, cur + 1, end) ;
-        if (a_input[cur + 1] == ']') {
+        if (a_input.c_str ()[cur + 1] == ']') {
             a_list = GDBMIListSafePtr (new GDBMIList);
             cur += 2;
             a_to = cur ;
@@ -2157,13 +2173,13 @@ struct GDBEngine::Priv {
 
         GDBMIValueSafePtr value ;
         GDBMIResultSafePtr result ;
-        if ((isalpha (a_input[cur]) || a_input[cur] == '_')
+        if ((isalpha (a_input.c_str ()[cur]) || a_input.c_str ()[cur] == '_')
              && parse_gdbmi_result (a_input, cur, cur, result)) {
             CHECK_END (a_input, cur, end) ;
             THROW_IF_FAIL (result) ;
             return_list = GDBMIListSafePtr (new GDBMIList (result)) ;
             for (;;) {
-                if (a_input[cur] == ',') {
+                if (a_input.c_str ()[cur] == ',') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
                     result.reset () ;
@@ -2180,7 +2196,7 @@ struct GDBEngine::Priv {
             THROW_IF_FAIL (value);
             return_list = GDBMIListSafePtr (new GDBMIList (value)) ;
             for (;;) {
-                if (a_input[cur] == ',') {
+                if (a_input.c_str ()[cur] == ',') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
                     value.reset ();
@@ -2197,7 +2213,7 @@ struct GDBEngine::Priv {
             return false ;
         }
 
-        if (a_input[cur] != ']') {
+        if (a_input.c_str ()[cur] != ']') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2219,7 +2235,7 @@ struct GDBEngine::Priv {
                              GDBMIResultSafePtr &a_value)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
-        UString::size_type cur = a_from, end = a_input.size () ;
+        UString::size_type cur = a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
         UString variable ;
@@ -2229,7 +2245,7 @@ struct GDBEngine::Priv {
         }
         CHECK_END (a_input, cur, end) ;
         SKIP_WS (a_input, cur, cur) ;
-        if (a_input[cur] != '=') {
+        if (a_input.c_str ()[cur] != '=') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2270,16 +2286,16 @@ struct GDBEngine::Priv {
                             GDBMIValueSafePtr &a_value)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
-        UString::size_type cur = a_from, end = a_input.size () ;
+        UString::size_type cur = a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
         GDBMIValueSafePtr value ;
-        if (a_input[cur] == '"') {
+        if (a_input.c_str ()[cur] == '"') {
             UString const_string ;
             if (parse_c_string (a_input, cur, cur, const_string)) {
                 value = GDBMIValueSafePtr (new GDBMIValue (const_string)) ;
             }
-        } else if (a_input[cur] == '{') {
+        } else if (a_input.c_str ()[cur] == '{') {
             GDBMITupleSafePtr tuple ;
             if (parse_gdbmi_tuple (a_input, cur, cur, tuple)) {
                 if (!tuple) {
@@ -2288,7 +2304,7 @@ struct GDBEngine::Priv {
                     value = GDBMIValueSafePtr (new GDBMIValue (tuple)) ;
                 }
             }
-        } else if (a_input[cur] == '[') {
+        } else if (a_input.c_str ()[cur] == '[') {
             GDBMIListSafePtr list ;
             if (parse_gdbmi_list (a_input, cur, cur, list)) {
                 THROW_IF_FAIL (list) ;
@@ -2847,10 +2863,10 @@ struct GDBEngine::Priv {
         LOG_D ("in_unnamed_var = " <<(int)a_in_unnamed_var, GDBMI_PARSING_DOMAIN);
         THROW_IF_FAIL (a_var) ;
 
-        UString::size_type cur = a_from, end = a_input.size () ;
+        UString::size_type cur = a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
-        if (a_input[cur] != '{') {
+        if (a_input.c_str ()[cur] != '{') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -2867,13 +2883,13 @@ struct GDBEngine::Priv {
 
             SKIP_WS (a_input, cur, cur) ;
             LOG_D ("fetching name ...", GDBMI_PARSING_DOMAIN) ;
-            if (a_input[cur] != '{') {
+            if (a_input.c_str ()[cur] != '{') {
                 SKIP_WS (a_input, cur, cur) ;
                 name_start = cur ;
                 while (true) {
-                    if (cur < a_input.size ()
-                        && a_input[cur] != '='
-                        && a_input[cur] != '}') {
+                    if (cur < a_input.bytes ()
+                        && a_input.c_str ()[cur] != '='
+                        && a_input.c_str ()[cur] != '}') {
                         ++cur ;
                     } else {
                         break ;
@@ -2888,7 +2904,7 @@ struct GDBEngine::Priv {
             name.chomp () ;
             cur_var->name (name) ;
 
-            if (a_input[cur] == '}') {
+            if (a_input.c_str ()[cur] == '}') {
                 ++cur ;
                 cur_var->value ("") ;
                 a_var->append (cur_var) ;
@@ -2900,13 +2916,13 @@ struct GDBEngine::Priv {
             }
 
             SKIP_WS (a_input, cur, cur) ;
-            if (a_input[cur] != '{') {
+            if (a_input.c_str ()[cur] != '{') {
                 ++cur ;
                 CHECK_END (a_input, cur, end) ;
                 SKIP_WS (a_input, cur, cur) ;
             }
 
-            if (a_input[cur] == '{') {
+            if (a_input.c_str ()[cur] == '{') {
                 bool in_unnamed = true;
                 if (name == "#unnamed#") {
                     in_unnamed = false;
@@ -2923,9 +2939,9 @@ struct GDBEngine::Priv {
                 SKIP_WS (a_input, cur, cur) ;
                 value_start = cur ;
                 while (true) {
-                    if ((a_input[cur] != ','
+                    if ((a_input.c_str ()[cur] != ','
                             || ((cur+1 < end) && a_input[cur+1] != ' '))
-                         && a_input[cur] != '}') {
+                         && a_input.c_str ()[cur] != '}') {
                         ++cur ;
                         CHECK_END (a_input, cur, end) ;
                     } else {
@@ -2951,10 +2967,10 @@ struct GDBEngine::Priv {
 
             SKIP_WS (a_input, cur, cur) ;
 
-            if (a_input[cur] == '}') {
+            if (a_input.c_str ()[cur] == '}') {
                 ++cur ;
                 break ;
-            } else if (a_input[cur] == ',') {
+            } else if (a_input.c_str ()[cur] == ',') {
                 ++cur ;
                 CHECK_END (a_input, cur, end) ;
                 LOG_D ("got ',' , going to fetch name",
@@ -2977,9 +2993,10 @@ struct GDBEngine::Priv {
     /// This function parses only started from (including) the first '{'
     /// \param a_input the input string to parse
     /// \param a_from where to parse from.
-    /// \param out parameter. End of the parsed string. This is a past the end
-    ///  offset.
-    /// \param a_args the map of the parsed attributes. This is set if and
+    /// \param out parameter. End of the parsed string.
+    /// This is a past the end  offset.
+    /// \param a_args the map of the parsed attributes.
+    /// This is set if and
     /// only if the function returned true.
     /// \return true upon successful parsing, false otherwise.
     bool parse_function_args (const UString &a_input,
@@ -3224,6 +3241,97 @@ struct GDBEngine::Priv {
         return true;
     }
 
+    struct QuickUStringLess :
+                    public std::binary_function<const UString,
+                                                const UString,
+                                                bool> {
+        bool operator() (const UString &a_lhs,
+                         const UString &a_rhs)
+        {
+            if (!a_lhs.c_str ()) {return true;}
+            if (!a_rhs.c_str ()) {return false;}
+            //this is false for non ascii characters
+            //but is way faster than UString::compare().
+            int res = strcmp (a_lhs.c_str (), a_rhs.c_str ()) ;
+            if (res < 0) {return true;}
+            return false ;
+        }
+    };
+    /// parses the result of the gdbmi command
+    /// "-file-list-exec-source-files".
+    bool parse_file_list (const UString &a_input,
+                          UString::size_type a_from,
+                          UString::size_type &a_to,
+                          std::vector<UString> &a_files)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+        UString::size_type cur = a_from, end = a_input.bytes () ;
+
+        if (a_input.compare (cur, 7, "files=[")) {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false ;
+        }
+        cur += 7;
+
+        std::vector<GDBMITupleSafePtr> tuples;
+        while (cur <= end)
+        {
+            GDBMITupleSafePtr tuple;
+            if (!parse_gdbmi_tuple(a_input, cur, cur, tuple)) {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            tuples.push_back(tuple);
+            if (a_input.c_str ()[cur] == ',') {
+                ++cur;
+            } else if (a_input.c_str ()[cur] == ']') {
+                // at the end of the list, just get out
+                break;
+            } else {
+                // unexpected data
+                LOG_PARSING_ERROR (a_input, cur) ;
+            }
+        }
+
+        std::vector<UString> files ;
+        for (vector<GDBMITupleSafePtr>::const_iterator file_iter = tuples.begin();
+                file_iter != tuples.end(); ++file_iter)
+        {
+            UString filename ;
+            for (list<GDBMIResultSafePtr>::const_iterator attr_it =
+                    (*file_iter)->content ().begin ();
+                    attr_it != (*file_iter)->content ().end (); ++attr_it) {
+                THROW_IF_FAIL ((*attr_it)->value ()
+                               && ((*attr_it)->value ()->content_type ()
+                                   == GDBMIValue::STRING_TYPE));
+                if ((*attr_it)->variable () == "file") {
+                    // only use the 'file' attribute if the
+                    // fullname isn't already set
+                    // FIXME: do we even want to list these at all?
+                    if (filename.empty ()) {
+                        filename = (*attr_it)->value ()->get_string_content ();
+                    }
+                } else if ((*attr_it)->variable () == "fullname") {
+                    // use the fullname attribute, overwriting the 'file' attribute
+                    // if necessary
+                    filename = (*attr_it)->value ()->get_string_content ();
+                } else {
+                    LOG_ERROR ("expected a gdbmi value with "
+                                "variable name 'file' or 'fullname'"
+                                ". Got '" << (*attr_it)->variable () << "'") ;
+                    return false ;
+                }
+            }
+            THROW_IF_FAIL (!filename.empty()) ;
+            files.push_back (filename) ;
+        }
+
+        std::sort(files.begin(), files.end(), QuickUStringLess());
+        a_files = files ;
+        a_to = cur ;
+        return true;
+    }
+
     /// parses the result of the gdbmi command
     /// "-thread-select"
     /// \param a_input the input string to parse
@@ -3297,10 +3405,10 @@ struct GDBEngine::Priv {
             UString::size_type &a_to,
             UString &a_c_string)
     {
-        UString::size_type cur=a_from, end = a_input.size () ;
+        UString::size_type cur=a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
-        if (a_input[cur] != '"') {
+        if (a_input.c_str ()[cur] != '"') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false;
         }
@@ -3313,7 +3421,7 @@ struct GDBEngine::Priv {
             return false ;
         }
 
-        if (a_input[cur] != '"') {
+        if (a_input.c_str ()[cur] != '"') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -3329,16 +3437,17 @@ struct GDBEngine::Priv {
                               UString::size_type &a_to,
                               UString &a_string)
     {
-        UString::size_type cur=a_from, end = a_input.size () ;
+        UString::size_type cur=a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
-        if (a_input[cur] == '"') {
+        UString::value_type ch = a_input.c_str()[cur], prev_ch;
+        if (ch == '"') {
             a_string = "" ;
             a_to = cur ;
             return true ;
         }
 
-        if (!isascii (a_input[cur])) {
+        if (!isascii (ch)) {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -3347,8 +3456,10 @@ struct GDBEngine::Priv {
         CHECK_END (a_input, cur, end) ;
 
         for (;;) {
-            if (isascii (a_input[cur])) {
-                if (a_input[cur] == '"' && a_input[cur-1] != '\\') {
+            prev_ch = ch;
+            ch = a_input.c_str()[cur];
+            if (isascii (ch)) {
+                if (ch == '"' && prev_ch != '\\') {
                     str_end = cur - 1 ;
                     break ;
                 }
@@ -3359,11 +3470,13 @@ struct GDBEngine::Priv {
             str_end = cur - 1 ;
             break;
         }
-        if (a_input[cur] != '"') {
+
+        if (ch != '"') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
-        Glib::ustring str (a_input, str_start, str_end - str_start + 1) ;
+        Glib::ustring str (a_input.c_str () + str_start,
+                           str_end - str_start + 1) ;
         a_string = str ;
         a_to = cur ;
         return true ;
@@ -3377,13 +3490,14 @@ struct GDBEngine::Priv {
                        UString &a_string)
     {
         LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
-        UString::size_type cur=a_from, end = a_input.size () ;
+        UString::size_type cur=a_from, end = a_input.bytes () ;
         CHECK_END (a_input, cur, end) ;
 
-        if (!isalpha (a_input[cur])
-            && a_input[cur] != '_'
-            && a_input[cur] != '<'
-            && a_input[cur] != '>') {
+        UString::value_type ch = a_input.c_str ()[cur];
+        if (!isalpha (ch)
+            && ch != '_'
+            && ch != '<'
+            && ch != '>') {
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
@@ -3392,11 +3506,12 @@ struct GDBEngine::Priv {
         CHECK_END (a_input, cur, end) ;
 
         for (;;) {
-            if (isalnum (a_input[cur])
-                || a_input[cur] == '_'
-                || a_input[cur] == '-'
-                || a_input[cur] == '>'
-                || a_input[cur] == '<') {
+            ch = a_input.c_str ()[cur];
+            if (isalnum (ch)
+                || ch == '_'
+                || ch == '-'
+                || ch == '>'
+                || ch == '<') {
                 ++cur ;
                 CHECK_END (a_input, cur, end) ;
                 continue ;
@@ -3404,7 +3519,8 @@ struct GDBEngine::Priv {
             str_end = cur - 1 ;
             break;
         }
-        Glib::ustring str (a_input, str_start, str_end - str_start + 1) ;
+        Glib::ustring str (a_input.c_str () +str_start,
+                           str_end - str_start + 1) ;
         a_string = str ;
         a_to = cur ;
         return true ;
@@ -3707,6 +3823,16 @@ fetch_gdbmi_result:
                         //finish this !
                         result_record.thread_id_selected_info (thread_id, frame) ;
                     }
+                } else if (!a_input.compare (cur, 7, "files=[")) {
+                    vector<UString> files ;
+                    if (!parse_file_list (a_input, cur, cur, files)) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                        return false ;
+                    }
+                    result_record.file_list (files) ;
+                    LOG_D ("parsed a list of files: "
+                           << (int) files.size (),
+                           GDBMI_PARSING_DOMAIN) ;
                 } else if (!a_input.compare (cur, 7, "stack=[")) {
                     vector<IDebugger::Frame> call_stack ;
                     if (!parse_call_stack (a_input, cur, cur, call_stack)) {
@@ -4149,6 +4275,34 @@ struct OnStoppedHandler: OutputHandler {
         }
     }
 };//end struct OnStoppedHandler
+
+struct OnFileListHandler : OutputHandler {
+    GDBEngine *m_engine ;
+
+    OnFileListHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (m_engine) ;
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().has_file_list ()) {
+            LOG_DD ("handler selected") ;
+            return true;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        THROW_IF_FAIL (m_engine) ;
+        m_engine->files_listed_signal ().emit
+            (a_in.output ().result_record ().file_list ()) ;
+    }
+};//end OnThreadListHandler
 
 struct OnThreadListHandler : OutputHandler {
     GDBEngine *m_engine ;
@@ -4779,6 +4933,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnThreadListHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnThreadSelectedHandler (this))) ;
+    m_priv->output_handlers.push_back
+            (OutputHandlerSafePtr (new OnFileListHandler (this))) ;
 }
 
 void
@@ -4872,6 +5028,13 @@ sigc::signal<void, const list<int> >&
 GDBEngine::threads_listed_signal () const
 {
     return m_priv->threads_listed_signal ;
+}
+
+
+sigc::signal<void, const vector<UString>& >&
+GDBEngine::files_listed_signal () const
+{
+    return m_priv->files_listed_signal ;
 }
 
 sigc::signal<void, int, const IDebugger::Frame&>&
@@ -5399,6 +5562,17 @@ GDBEngine::print_variable_type (const UString &a_var_name,
 
     queue_command (command) ;
 }
+
+/// Lists the source files htat make up the executable
+void
+GDBEngine::list_files (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    queue_command (Command ("list-files",
+                            "-file-list-exec-source-files",
+                            a_cookie)) ;
+}
+
 
 /// Extracts proc info from the out of band records
 bool

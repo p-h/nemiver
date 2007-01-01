@@ -397,6 +397,9 @@ public:
                          const UString&/*type*/>&
                                         variable_type_signal () const = 0 ;
 
+    virtual sigc::signal<void, const vector<UString>& >&
+                            files_listed_signal () const = 0;
+
     virtual sigc::signal<void,
                          int/*pid*/,
                          const UString&/*target path*/>&
@@ -524,6 +527,8 @@ public:
 
     virtual void print_variable_type (const UString &a_var_name,
                                       const UString &a_cookie="") = 0;
+
+    virtual void list_files (const UString &a_cookie="") = 0 ;
 
 };//end IDebugger
 
