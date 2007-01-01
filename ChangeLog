@@ -1,4 +1,9 @@
-2007-01-01  ZeBob  <zebob.m gmail.com>
+2007-01-01  Bob Mauchin  <zebob.m gmail.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix two minor string
+	problems.  Fixes #389175
+
+2007-01-01  Bob Mauchin  <zebob.m gmail.com>
 
 	* src/persp/dbgperspective/nmv-call-stack.cc: Minor rewording of 'copy call
 	stack' description.  Fixes #389177

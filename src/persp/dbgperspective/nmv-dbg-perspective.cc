@@ -1516,7 +1516,7 @@ DBGPerspective::on_signal_received_by_target_signal (const UString &a_signal,
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
-    ui_utils::display_info (_("Target received a signal : ")
+    ui_utils::display_info (_("Target received a signal: ")
                             + a_signal + ", " + a_meaning) ;
 
     NEMIVER_CATCH
@@ -1778,7 +1778,7 @@ DBGPerspective::init_actions ()
         {
             "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            _("Toggle _Break"),
+            _("Toggle _Breakpoint"),
             _("Set/Unset a breakpoint at the current cursor location"),
             sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
