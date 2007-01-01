@@ -1,6 +1,7 @@
 noinst_PROGRAMS=fooprog runtestbreakpoint \
 runtestcore runteststdout \
 runtesttemplatedvar \
+runtestunicode \
 docore inout
 
 fooprog_SOURCES=fooprog.cc
@@ -18,11 +19,15 @@ runteststdout_LDFLAGS=@NEMIVERCOMMON_LIBS@
 runtesttemplatedvar_SOURCES=test-templated-var.cc
 runtesttemplatedvar_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
+runtestunicode_SOURCES=test-unicode.cc
+runtestunicode_LDFLAGS=@NEMIVERCOMMON_LIBS@
+
 docore_SOURCES=do-core.cc
 docore_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 inout_SOURCES=inout.cc
 inout_LDFLAGS=@NEMIVERCOMMON_LIBS@
+
 
 INCLUDES=-I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/dbgengine \

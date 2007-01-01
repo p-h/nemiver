@@ -48,7 +48,8 @@ UString::from_int (long long an_int)
 }
 
 UString::UString ()
-{}
+{
+}
 
 UString::UString (const char *a_cstr, long a_len)
 {
@@ -258,21 +259,206 @@ UString::get_number_of_lines () const
     return res ;
 }
 
-void
+UString&
 UString::vprintf (const UString &a_format, va_list a_args)
 {
     GCharSafePtr str (g_strdup_vprintf (a_format.c_str (), a_args)) ;
     assign (str.get ()) ;
+    return *this ;
 }
 
-void
+UString&
 UString::printf (const UString &a_format, ...)
 {
     va_list args;
     va_start (args, a_format);
     this->vprintf (a_format, args);
     va_end (args);
+    return *this ;
 }
 
+WString::WString () : super_type ()
+{
+}
+
+WString::WString (const super_type &a_str) : super_type (a_str)
+{
+}
+
+WString::WString (const char* a_str, unsigned int a_len)
+{
+    if (!a_str) {
+        assign ("") ;
+    } else {
+        assign (a_str, a_len) ;
+    }
+}
+
+WString::WString (const super_type::allocator_type &a) : super_type (a)
+{
+}
+
+WString::WString (const WString &str) : super_type (str)
+{
+}
+
+WString::WString (const WString &str,
+                  size_type position,
+                  size_type n) :
+    super_type (str, position, n)
+{
+}
+
+WString::WString (const WString &str, size_type position,
+                  size_type n,
+                  const super_type::allocator_type &a) :
+    super_type (str, position, n, a)
+{
+}
+
+WString::WString (const gunichar *s,
+                  super_type::size_type n,
+                  const super_type::allocator_type &a) :
+    super_type (s, n, a)
+
+{
+}
+
+WString::WString (const gunichar *s,
+                  const super_type::allocator_type &a) :
+    super_type (s, a)
+{
+}
+
+WString::WString (size_type n,
+                  gunichar c,
+                  const super_type::allocator_type &a) :
+    super_type (n, c, a)
+{
+}
+
+WString&
+WString::assign (const char *a_str, long a_len)
+{
+    if (!a_str) {
+        static gunichar s_empty_str[]={0} ;
+        super_type::assign (s_empty_str) ;
+    } else {
+        if (a_len <0) {
+            a_len = strlen (a_str) ;
+        }
+        if (a_len) {
+            if ((long)capacity () < a_len) {resize (a_len);}
+            for (long i=0; i < a_len ; ++i) {
+                at (i) = a_str[i] ;
+            }
+        }
+    }
+    return *this ;
+}
+
+WString&
+WString::assign (const WString &a_str)
+{
+    super_type::assign (a_str) ;
+    return *this ;
+}
+
+WString&
+WString::assign (const WString &a_str, size_type a_position,
+                 super_type::size_type a_n)
+{
+    super_type::assign ((super_type)a_str, a_position, a_n) ;
+    return *this ;
+}
+
+WString&
+WString::assign (const gunichar *a_str,
+                 super_type::size_type a_n)
+{
+    super_type::assign (a_str, a_n) ;
+    return *this ;
+}
+
+WString&
+WString::assign (const gunichar *a_str)
+{
+    super_type::assign (a_str) ;
+    return *this ;
+}
+
+WString&
+WString::assign (super_type::size_type a_n, gunichar a_c)
+{
+    super_type::assign (a_n, a_c) ;
+    return *this ;
+}
+
+struct GErrorRef {
+    void operator () (GError *)
+    {
+    }
+};
+
+struct GErrorUnref {
+    void operator () (GError *a_err)
+    {
+        if (a_err) {
+            g_error_free (a_err) ;
+        }
+    }
+};
+
+bool
+wstring_to_ustring (const WString &a_wstr,
+                    UString &a_ustr)
+{
+    glong wstr_len=0, utf8_bytes_len=0 ;
+    GCharSafePtr utf8_buf ;
+    GError *err=0 ;
+    utf8_buf.reset (g_ucs4_to_utf8 (a_wstr.c_str (),
+                                    a_wstr.size (), &wstr_len,
+                                    &utf8_bytes_len, &err)) ;
+    SafePtr<GError, GErrorRef, GErrorUnref> error;
+    error.reset (err) ;
+    if (error) {
+        LOG_ERROR ("got error conversion error: '" << error->message << "'") ;
+        return false ;
+    }
+
+    if (!utf8_bytes_len && a_wstr.size ()) {
+        LOG_ERROR ("Conversion from ucs4 str to utf8 str failed.") ;
+        return false;
+    }
+    a_ustr.assign (utf8_buf.get (), wstr_len) ;
+    return true ;
+}
+
+bool
+ustring_to_wstring (const UString &a_ustr,
+                    WString &a_wstr)
+{
+    glong wstr_len=0, utf8_bytes_len=0 ;
+    SafePtr<gunichar, DefaultRef, FreeUnref> wbuf ;
+    GError *err=0 ;
+    wbuf.reset (g_utf8_to_ucs4 (a_ustr.c_str (),
+                                a_ustr.bytes (),
+                                &utf8_bytes_len,
+                                &wstr_len,
+                                &err)) ;
+    SafePtr<GError, GErrorRef, GErrorUnref> error;
+    error.reset (err) ;
+    if (error) {
+        LOG_ERROR ("got error conversion error: '" << error->message << "'") ;
+        return false ;
+    }
+    if (!wstr_len && a_ustr.bytes ()) {
+        LOG_ERROR ("Conversion from utf8 str to ucs4 str failed") ;
+        return false ;
+    }
+    a_wstr.assign (wbuf.get (), wstr_len) ;
+    return true ;
+}
 NEMIVER_END_NAMESPACE (nemiver)
 NEMIVER_END_NAMESPACE (common)
+

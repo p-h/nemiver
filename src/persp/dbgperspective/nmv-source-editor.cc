@@ -497,6 +497,15 @@ SourceEditor::get_file_name (UString &a_file_name)
 }
 
 bool
+is_word_delimiter (gunichar a_char)
+{
+    if (!isalnum (a_char) && a_char != '_') {
+        return true ;
+    }
+    return false ;
+}
+
+bool
 SourceEditor::get_word_at_position (int a_x,
                                     int a_y,
                                     UString &a_word,
@@ -517,17 +526,19 @@ SourceEditor::get_word_at_position (int a_x,
         return false ;
     }
 
-    //go find the first white space before clicked_at_iter
+    //go find the first white word delimiter before clicked_at_iter
     Gtk::TextBuffer::iterator cur_iter = clicked_at_iter;
     if (!cur_iter) {return false;}
 
-    while (cur_iter.backward_char () && !isspace (cur_iter.get_char ())) {}
+    while (cur_iter.backward_char ()
+           && !is_word_delimiter (cur_iter.get_char ())) {}
     THROW_IF_FAIL (cur_iter.forward_char ()) ;
     Gtk::TextBuffer::iterator start_word_iter = cur_iter ;
 
-    //go find the first white space after clicked_at_iter
+    //go find the first word delimiter after clicked_at_iter
     cur_iter = clicked_at_iter ;
-    while (cur_iter.forward_char () && !isspace (cur_iter.get_char ())) {}
+    while (cur_iter.forward_char ()
+           && !is_word_delimiter (cur_iter.get_char ())) {}
     Gtk::TextBuffer::iterator end_word_iter = cur_iter ;
 
     UString var_name = start_word_iter.get_slice (end_word_iter);

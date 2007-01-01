@@ -127,6 +127,7 @@ public:
             ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
                                                     (glade, "filechooserbutton") ;
         THROW_IF_FAIL (fcbutton) ;
+        fcbutton->set_show_hidden (true) ;
         fcbutton->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed)) ;
 

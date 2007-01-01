@@ -1,3 +1,20 @@
+Mon, 01 Jan 2007 21:21:04 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  GDBEngine::Priv::parse_file_list(): remove duplicated files from the
+	  list.
+	* src/persp/dbgperspective/nmv-run-program-dialog.cc: show hidden
+	  directories in the program file chooser.
+	* src/persp/dbgperspective/nmv-source-editor.cc: better detection
+	  of variables in the "hover-on-variable" workflow.
+	* src/common/nmv-safe-ptr.h: cleanup some naming here.
+	* src/common/nmv-ustring.h,c: added a WString type for wide char
+	  strings. This is basically a std::basic_char<gunichar>.
+	  Added some conversion functions from UString to WString and vis
+	  versa.
+	* tests/test-unicode.cc: added a test case for the new WString type
+	  and WString <-> UString conversion functions.
+
 2007-01-01  Bob Mauchin  <zebob.m gmail.com>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix two minor string

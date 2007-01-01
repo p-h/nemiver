@@ -209,7 +209,7 @@ struct LogStream::Priv
     //Logging domains are just keywords associated to the messages that are
     //going to be logged. This helps in for filtering the messages that
     //are to be logged or not.
-    std::map<std::string, bool> allowed_domains ;
+    map<std::string, bool> allowed_domains ;
 
     //the log level of this log stream
     enum LogStream::LogLevel level ;

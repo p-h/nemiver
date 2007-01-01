@@ -35,14 +35,14 @@
 namespace nemiver {
 namespace common {
 
-struct DefaultReferenceFunctor
+struct DefaultRef
 {
     void
     operator () (const void* a_ptr) {if (a_ptr) {}}
 }
 ; //end struct DefaultReference
 
-struct FreeFunctor
+struct FreeUnref
 {
     void
     operator () (const void* a_ptr)
@@ -65,7 +65,7 @@ struct DeleteFunctor
 };
 
 template<class PointerType,
-         class ReferenceFunctor = DefaultReferenceFunctor,
+         class ReferenceFunctor = DefaultRef,
          class UnreferenceFunctor = DeleteFunctor<PointerType>
         >
 class SafePtr

@@ -42,6 +42,7 @@ using namespace std ;
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
 
+class WString ;
 class NEMIVER_API UString: public Glib::ustring {
 
 public:
@@ -71,10 +72,65 @@ public:
 
     UString::size_type get_number_of_lines () const ;
 
-    void printf (const UString &a_format, ...) ;
+    UString& printf (const UString &a_format, ...) ;
 
-    void vprintf (const UString &a_format, va_list a_args);
+    UString& vprintf (const UString &a_format, va_list a_args);
 };//end class UString
+
+class NEMIVER_API WString : public basic_string<gunichar> {
+
+typedef basic_string<gunichar> super_type ;
+
+public:
+
+    WString () ;
+
+    WString (const super_type &a_str) ;
+
+    WString (const char* a_str, unsigned int a_len=-1) ;
+
+    WString (const super_type::allocator_type &a) ;
+
+    WString (const WString &str) ;
+
+    WString (const WString &str,
+             size_type position,
+             size_type n=npos) ;
+
+    WString (const WString &str, size_type position,
+             size_type n,
+             const super_type::allocator_type &a) ;
+
+    WString (const gunichar *s,
+             super_type::size_type n,
+             const super_type::allocator_type &a=super_type::allocator_type()) ;
+
+    WString (const gunichar *s,
+             const super_type::allocator_type &a=super_type::allocator_type()) ;
+
+    WString (size_type n,
+             gunichar c,
+             const super_type::allocator_type &a=super_type::allocator_type()) ;
+
+    WString& assign (const char *a_str, long a_len=-1) ;
+
+    WString&  assign (const WString &a_str) ;
+
+    WString&  assign (const WString &a_str, size_type a_position,
+                       super_type::size_type a_n) ;
+
+    WString&  assign (const gunichar *a_str,
+                       super_type::size_type a_n) ;
+
+    WString&  assign (const gunichar *a_str) ;
+
+    WString&  assign (super_type::size_type a_n, gunichar a_c) ;
+};//end WString
+
+bool NEMIVER_API wstring_to_ustring (const WString &a_wstr,
+                                     UString &a_ustr) ;
+bool NEMIVER_API ustring_to_wstring (const UString &a_ustr,
+                                     WString &a_wstr) ;
 
 NEMIVER_END_NAMESPACE (common)
 NEMIVER_END_NAMESPACE (nemiver)

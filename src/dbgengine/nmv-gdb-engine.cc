@@ -3327,6 +3327,7 @@ struct GDBEngine::Priv {
         }
 
         std::sort(files.begin(), files.end(), QuickUStringLess());
+        std::unique (files.begin (), files.end ()) ;
         a_files = files ;
         a_to = cur ;
         return true;
