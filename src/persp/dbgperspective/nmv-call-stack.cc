@@ -121,7 +121,7 @@ struct CallStack::Priv {
                 "CopyCallStackMenuItemAction",
                 Gtk::Stock::COPY,
                 _("_Copy"),
-                _("Copy the stack trace to the clipboard"),
+                _("Copy the call stack to the clipboard"),
                 sigc::mem_fun
                     (*this,
                      &Priv::on_call_stack_copy_to_clipboard_action),

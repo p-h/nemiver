@@ -1,3 +1,8 @@
+2007-01-01  ZeBob  <zebob.m gmail.com>
+
+	* src/persp/dbgperspective/nmv-call-stack.cc: Minor rewording of 'copy call
+	stack' description.  Fixes #389177
+
 2006-12-31  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/dbgengine/nmv-gdb-engine.cc: add functionality for listing source
