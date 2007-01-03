@@ -1,3 +1,21 @@
+Wed, 03 Jan 2007 17:06:31 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: OnFileListHandler::do_handle(): set the
+	  state to IDebugger::READY.
+	* src/persp/dbgperspective/nmv-open-file-dialog.cc,h: Don't make any assumption
+	  about the nature of FileList::get_widget(). It's a Gtk::Widget. FileList
+	  now emits FileList::files_selected_signal() so it's no more needed to
+	  cast FileList::get_widget() into a Gtk::TreeView to get a selection.
+	  Also, listen to the new FileList::file_activated_signal() to react to
+	  the user double clicking on file, or selecting it and hitting "Enter".
+	* src/persp/dbgperspective/nmv-file-list.cc,h: added FileList::files_selected_signal()
+	  to notify file selection. Added FileList::file_activated_signal() to notify
+	  when the user double clicks or selects a file and types "Enter".
+	  Changed list<UString> FileList::get_filenames() into
+	  void FileList::get_filenames(list<UString> &) so that we have a chance to
+	  avoid copying the list. Propagated this change to all the users of this
+	  function.
+
 Wed, 03 Jan 2007 11:57:26 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::load_program() and

@@ -4303,8 +4303,9 @@ struct OnFileListHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->files_listed_signal ().emit
             (a_in.output ().result_record ().file_list ()) ;
+        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
     }
-};//end OnThreadListHandler
+};//end OnFileListHandler
 
 struct OnThreadListHandler : OutputHandler {
     GDBEngine *m_engine ;

@@ -41,11 +41,12 @@ using nemiver::common::SafePtr ;
 class OpenFileDialog : public Dialog {
     class Priv ;
     SafePtr<Priv> m_priv ;
+
 public:
     OpenFileDialog (const UString &a_resource_root_path, IDebuggerSafePtr& a_debugger) ;
     virtual ~OpenFileDialog () ;
 
-    list<UString> get_filenames () const ;
+    void get_filenames (list<UString> &a_filenames) const ;
 
 };//end class nemiver
 

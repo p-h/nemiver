@@ -55,7 +55,9 @@ public:
     SafePtr<Gtk::TreeView> tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_model ;
     sigc::signal<void,
-                 const UString&> file_selected_signal;
+                 const UString&> file_activated_signal;
+    sigc::signal<void> files_selected_signal;
+
     Glib::RefPtr<Gtk::ActionGroup> file_list_action_group;
     IDebuggerSafePtr debugger;
 
@@ -63,10 +65,7 @@ public:
         debugger(a_debugger)
     {
         build_tree_view () ;
-        tree_view->signal_button_press_event ().connect_notify (sigc::mem_fun
-                (*this, &Priv::on_file_list_button_press_signal));
-        debugger->files_listed_signal ().connect(sigc::mem_fun(*this,
-                    &Priv::set_files));
+        debugger->files_listed_signal ().connect(sigc::mem_fun(*this, &Priv::set_files));
         debugger->list_files();
     }
 
@@ -81,6 +80,10 @@ public:
         //create the columns of the tree view
         tree_view->append_column (_("Filename"), get_file_list_columns ().display_name) ;
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_MULTIPLE);
+        tree_view->signal_row_activated ().connect (sigc::mem_fun
+                (*this, &Priv::on_row_activated_signal)) ;
+        tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_file_list_selection_changed_signal)) ;
     }
 
     struct ComparePathMap :
@@ -161,44 +164,44 @@ public:
         }
     }
 
-    void on_file_list_button_press_signal (GdkEventButton *a_event)
+    void on_row_activated_signal (const Gtk::TreeModel::Path &a_path, Gtk::TreeViewColumn *a_col)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-
         NEMIVER_TRY
 
-        // double-clicking a filename should activate the file-selected action
-        if (a_event->type == GDK_2BUTTON_PRESS) {
-            if (a_event->button == 1) {
-                on_file_selected_action ();
-            }
-        }
+        if (!a_col) {return;}
+        Gtk::TreeIter it = tree_model->get_iter (a_path) ;
+        if (!it) {return;}
+        Glib::ustring path = (*it)[get_file_list_columns ().path] ;
+        file_activated_signal.emit (path) ;
 
         NEMIVER_CATCH
     }
 
-    list<UString> get_selected_filenames () const
+    void on_file_list_selection_changed_signal ()
+    {
+        NEMIVER_TRY
+
+        if (!tree_view->get_selection ()->count_selected_rows ()) {
+            return ;
+        }
+        files_selected_signal.emit () ;
+
+        NEMIVER_CATCH
+    }
+
+    void get_selected_filenames (list<UString> &a_filenames) const
     {
         THROW_IF_FAIL (tree_view)
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
         THROW_IF_FAIL (selection);
         list<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
 
-        list<UString> filenames;
         for (list<Gtk::TreeModel::Path>::iterator path_iter = paths.begin ();
                 path_iter != paths.end (); ++path_iter)
         {
             Gtk::TreeModel::iterator tree_iter = (tree_view->get_model ()->get_iter(*path_iter));
-            filenames.push_back (UString((*tree_iter)[get_file_list_columns ().path]));
+            a_filenames.push_back (UString((*tree_iter)[get_file_list_columns ().path]));
         }
-        return filenames;
-    }
-
-    void on_file_selected_action ()
-    {
-        NEMIVER_TRY
-        //file_selected_signal.emit (get_selected_filename ());
-        NEMIVER_CATCH
     }
 
 };//end class FileList::Priv
@@ -223,17 +226,24 @@ FileList::widget () const
 }
 
 sigc::signal<void, const UString&>&
-FileList::signal_file_selected () const
+FileList::file_activated_signal () const
 {
     THROW_IF_FAIL(m_priv);
-    return m_priv->file_selected_signal;
+    return m_priv->file_activated_signal;
 }
 
-list<UString>
-FileList::get_filenames () const
+sigc::signal<void>&
+FileList::files_selected_signal () const
+{
+    THROW_IF_FAIL (m_priv) ;
+    return m_priv->files_selected_signal ;
+}
+
+void
+FileList::get_filenames (list<UString> &a_filenames) const
 {
     THROW_IF_FAIL (m_priv);
-    return m_priv->get_selected_filenames ();
+    m_priv->get_selected_filenames (a_filenames);
 }
 
 }//end namespace nemiver

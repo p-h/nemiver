@@ -59,6 +59,7 @@ public:
         file_list(a_debugger),
         okbutton (0)
     {
+
         file_chooser.set_select_multiple (true);
         okbutton =
             ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
@@ -77,9 +78,10 @@ public:
         radio_button_chooser->signal_toggled ().connect (sigc::mem_fun
                     (*this, &Priv::on_radio_button_toggled));
 
-        Gtk::TreeView& treeview = dynamic_cast<Gtk::TreeView&>(file_list.widget ());
-        treeview.get_selection ()->signal_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_file_list_selection_changed_signal)) ;
+        file_list.file_activated_signal ().connect (sigc::mem_fun (*this,
+                                                                    &Priv::on_file_activated_signal)) ;
+        file_list.files_selected_signal ().connect (sigc::mem_fun
+                (*this, &Priv::on_files_selected_signal)) ;
 
         file_chooser.signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_chooser_selection_changed_signal)) ;
@@ -118,32 +120,57 @@ public:
         NEMIVER_CATCH
     }
 
-    bool validate_source_files(list<UString> files)
+    bool validate_source_files(const list<UString> &files)
     {
         if (files.empty()) {
             return false;
         }
 
-        for (list<UString>::iterator iter = files.begin ();
+        for (list<UString>::const_iterator iter = files.begin ();
                 iter != files.end (); ++iter) {
-            if (!Glib::file_test(*iter, Glib::FILE_TEST_IS_REGULAR)) {
-                return false;
+            if (!validate_source_file (*iter)) {
+                return false ;
             }
         }
         return true;
     }
 
-    void on_file_list_selection_changed_signal ()
+    bool validate_source_file (const UString &a_file)
+    {
+        if (!Glib::file_test (a_file, Glib::FILE_TEST_IS_REGULAR)) {
+            return false;
+        }
+        return true ;
+    }
+
+    void on_file_activated_signal (const UString &a_file)
     {
         NEMIVER_TRY
 
         THROW_IF_FAIL(okbutton);
 
-        if (validate_source_files (file_list.get_filenames ())) {
+        if (validate_source_file (a_file)) {
+            okbutton->clicked () ;
+        } else {
+            okbutton->set_sensitive (false) ;
+        }
+        NEMIVER_CATCH
+    }
+
+    void on_files_selected_signal ()
+    {
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (okbutton);
+
+        list<UString> filenames ;
+        file_list.get_filenames (filenames) ;
+        if (validate_source_files (filenames)){
             okbutton->set_sensitive (true) ;
         } else {
             okbutton->set_sensitive (false) ;
         }
+
         NEMIVER_CATCH
     }
 
@@ -151,7 +178,7 @@ public:
     {
         NEMIVER_TRY
 
-        THROW_IF_FAIL(okbutton);
+        THROW_IF_FAIL (okbutton);
 
         if (validate_source_files (file_chooser.get_filenames ())) {
             okbutton->set_sensitive (true) ;
@@ -161,23 +188,18 @@ public:
         NEMIVER_CATCH
     }
 
-    list<UString> get_filenames()
+    void get_filenames (list<UString> &a_files)
     {
         THROW_IF_FAIL(radio_button_file_list);
         THROW_IF_FAIL(radio_button_chooser);
 
         if (radio_button_file_list->get_active ())
         {
-            return file_list.get_filenames ();
+            file_list.get_filenames (a_files);
         }
         else if (radio_button_chooser->get_active ())
         {
-            return file_chooser.get_filenames ();
-        }
-        else
-        {
-            // empty list
-            return list<UString>();
+            a_files = file_chooser.get_filenames ();
         }
     }
 };//end class OpenFileDialog::Priv
@@ -194,15 +216,15 @@ OpenFileDialog::~OpenFileDialog ()
     LOG_D ("deleted", "destructor-domain") ;
 }
 
-list<UString>
-OpenFileDialog::get_filenames () const
+void
+OpenFileDialog::get_filenames (list<UString> &a_files) const
 {
     NEMIVER_TRY
 
     THROW_IF_FAIL (m_priv) ;
+    m_priv->get_filenames (a_files) ;
 
     NEMIVER_CATCH
-    return m_priv->get_filenames () ;
 }
 
 }//end namespace nemiver

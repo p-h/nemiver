@@ -2936,9 +2936,9 @@ DBGPerspective::open_file ()
 
     if (result != Gtk::RESPONSE_OK) {return;}
 
-    list<UString> paths = dialog.get_filenames () ;
+    list<UString> paths ;
+    dialog.get_filenames (paths) ;
     list<UString>::const_iterator iter ;
-
     for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
         open_file (*iter) ;
     }

@@ -47,8 +47,9 @@ public:
     virtual ~FileList () ;
     Gtk::Widget& widget () const ;
     sigc::signal<void,
-                 const UString&>& signal_file_selected () const ;
-    list<UString> get_filenames () const;
+                 const UString&>& file_activated_signal () const ;
+    sigc::signal<void>& files_selected_signal () const ;
+    void get_filenames (list<UString> &a_filenames) const;
 
 };//end FileList
 
