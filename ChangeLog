@@ -1,3 +1,8 @@
+Wed, 03 Jan 2007 22:29:05 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-source-editor.cc: 
+	  SourceEditor::do_search(): implement the "match-entire-word" option.
+
 Wed, 03 Jan 2007 17:06:31 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: OnFileListHandler::do_handle(): set the

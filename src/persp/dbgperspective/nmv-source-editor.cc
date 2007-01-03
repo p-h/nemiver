@@ -615,16 +615,30 @@ SourceEditor::do_search (const UString &a_str,
     if (a_search_backwards) {
         if (search_iter.backward_search (a_str, search_flags,
                                          a_start, a_end, limit)) {
-            if (a_match_entire_word) {/*ignore for now*/}
             found = true ;
         }
     } else {
         if (search_iter.forward_search (a_str, search_flags,
                     a_start, a_end, limit)) {
-            if (a_match_entire_word) {/*ignore for now*/}
-            found = true;
+            found = true ;
         }
     }
+
+    if (found && a_match_entire_word) {
+        Gtk::TextIter iter = a_start ;
+        if (iter.backward_char ()) {
+            if (!is_word_delimiter (*iter)) {
+                found = false ;
+            }
+        }
+        if (found) {
+            iter = a_end ;
+            if (!is_word_delimiter (*iter)) {
+                found = false;
+            }
+        }
+    }
+
     if (found) {
         source_buffer->select_range (a_start, a_end) ;
         scroll_to_iter (a_start) ;
