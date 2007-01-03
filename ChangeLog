@@ -1,3 +1,10 @@
+Wed, 03 Jan 2007 11:57:26 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::load_program() and
+	  GDBEngine::attach_to_target(): set the LD_BIND_NOW env variable to
+	  something. This prevents gdb from being very slow when stepping into a
+	  function that is in another dll than the current one.
+
 2007-01-02  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/dbgengine/nmv-gdb-engine.cc: Fix unique-ification of the file list by

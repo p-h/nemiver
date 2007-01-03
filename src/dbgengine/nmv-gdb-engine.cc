@@ -4790,6 +4790,11 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         queue_command (Command ("set breakpoint pending auto")) ;
         //tell gdb not to pass the SIGINT signal to the target.
         queue_command (Command ("handle SIGINT stop, print nopass")) ;
+        //tell the linker to do all relocations at program load
+        //time so that some "step into" don't take for ever.
+        //On GDB, it seems that stepping into a function that is
+        //in a share lib takes stepping through GNU ld, so it can take time.
+        queue_command (Command ("set env LD_BIND_NOW 1")) ;
     } else {
         UString args ;
         UString::size_type len (a_argv.size ()) ;
@@ -4837,6 +4842,11 @@ GDBEngine::attach_to_target (unsigned int a_pid,
         Command command ;
         command.value ("set breakpoint pending auto") ;
         queue_command (command) ;
+        //tell the linker to do all relocations at program load
+        //time so that some "step into" don't take for ever.
+        //On GDB, it seems that stepping into a function that is
+        //in a share lib takes stepping through GNU ld, so it can take time.
+        queue_command (Command ("set env LD_BIND_NOW 1")) ;
     }
     if (a_pid == (unsigned int)m_priv->gdb_pid) {
         return false ;
