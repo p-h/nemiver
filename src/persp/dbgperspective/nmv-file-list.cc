@@ -25,7 +25,7 @@
 #include <vector>
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
-#include <gtkmm/liststore.h>
+#include <gtkmm/treestore.h>
 #include "nmv-file-list.h"
 #include "nmv-exception.h"
 #include "nmv-ui-utils.h"
@@ -53,7 +53,7 @@ get_file_list_columns ()
 struct FileList::Priv : public sigc::trackable {
 public:
     SafePtr<Gtk::TreeView> tree_view ;
-    Glib::RefPtr<Gtk::ListStore> list_store ;
+    Glib::RefPtr<Gtk::TreeStore> tree_model ;
     sigc::signal<void,
                  const UString&> file_selected_signal;
     Glib::RefPtr<Gtk::ActionGroup> file_list_action_group;
@@ -74,29 +74,90 @@ public:
     {
         if (tree_view) {return;}
         //create a default tree store and a tree view
-        list_store = Gtk::ListStore::create (get_file_list_columns ()) ;
-        tree_view.reset (new Gtk::TreeView (list_store)) ;
+        tree_model = Gtk::TreeStore::create (get_file_list_columns ()) ;
+        tree_view.reset (new Gtk::TreeView (tree_model)) ;
 
+        tree_view->set_headers_visible (false);
         //create the columns of the tree view
         tree_view->append_column (_("Filename"), get_file_list_columns ().display_name) ;
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_MULTIPLE);
     }
 
+    struct ComparePathMap :
+                    public std::binary_function<const std::pair<UString, Gtk::TreeModel::iterator>,
+                                                const UString,
+                                                bool> {
+        bool operator()(const std::pair<UString, Gtk::TreeModel::iterator>& map,
+                const UString& path_component)
+        {
+            return path_component == map.first;
+        }
+    };
+
     void set_files (const std::vector<UString> &a_files)
     {
-        THROW_IF_FAIL (list_store) ;
-        if (!(list_store->children ().empty ())) {
-            list_store->clear();
+        // NOTE: This assumes a sorted file list.  If the file list is not
+        // sorted, this function will not work as expected
+
+        THROW_IF_FAIL (tree_model) ;
+        if (!(tree_model->children ().empty ())) {
+            tree_model->clear();
         }
+
+        // a map vector to keep track of what directory levels we have most
+        // recently added so that its easier to figure out where new paths need
+        // to be added to the tree structure
+        typedef std::pair<UString, Gtk::TreeModel::iterator> folder_map_t;
+        typedef vector<folder_map_t> folder_map_list_t;
+        folder_map_list_t folder_map;
+
         std::vector<UString>::const_iterator file_iter;
         for (file_iter = a_files.begin (); file_iter != a_files.end ();
                 ++file_iter)
         {
-            Gtk::TreeModel::iterator tree_iter = list_store->append();
-            (*tree_iter)[get_file_list_columns ().path] = *file_iter;
-            (*tree_iter)[get_file_list_columns ().display_name] =
-                Glib::filename_display_name (Glib::locale_to_utf8
-                        (*file_iter));
+            vector<UString> path_components;
+            // only add absolute paths to the treeview
+            if (Glib::path_is_absolute (*file_iter)) {
+                path_components = (*file_iter).split (G_DIR_SEPARATOR_S);
+                // find the first point where the last added path and the new
+                // path do not match
+                pair<folder_map_list_t::iterator, vector<UString>::iterator>
+                    mismatch_iter = std::mismatch(folder_map.begin (),
+                            folder_map.end (), path_components.begin (),
+                            ComparePathMap());
+                // ASSUMPTION: there will always be a mismatch found before we
+                // run out of components of the new path since all paths in the
+                // list should be unique
+                THROW_IF_FAIL(mismatch_iter.second != path_components.end ());
+                // truncate the folder_map vector at the point of the mismatch
+                folder_map.erase (mismatch_iter.first, folder_map.end ());
+
+                // loop through any remaining new path elements and add them to
+                // the tree
+                for (vector<UString>::iterator iter =
+                        mismatch_iter.second; iter !=
+                        path_components.end (); ++iter) {
+                    Gtk::TreeModel::iterator tree_iter;
+                    if (folder_map.empty ()) {
+                        // add as children of the root level
+                        tree_iter = tree_model->append ();
+                    } else {
+                        // add as children of the last matched item in the folder map
+                        tree_iter = tree_model->append (folder_map.rbegin ()->second->children ());
+                    }
+                    // build the full path name up to this element
+                    (*tree_iter)[get_file_list_columns ().path] = "/" + // add back the root element
+                        Glib::build_filename (std::vector<UString>(path_components.begin(),
+                                    iter + 1)); // we want to include this iter element in the array, so + 1
+                    Glib::ustring display_name =
+                        Glib::filename_display_name (Glib::locale_to_utf8 (*iter));
+                    (*tree_iter)[get_file_list_columns ().display_name] =
+                        display_name.empty () ? "/" : display_name;
+                    // store the element in the folder map for use next time
+                    // around
+                    folder_map.push_back (folder_map_t(*iter, tree_iter));
+                }
+            }
         }
     }
 
@@ -157,7 +218,7 @@ FileList::widget () const
 {
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->tree_view) ;
-    THROW_IF_FAIL (m_priv->list_store) ;
+    THROW_IF_FAIL (m_priv->tree_model) ;
     return *m_priv->tree_view ;
 }
 

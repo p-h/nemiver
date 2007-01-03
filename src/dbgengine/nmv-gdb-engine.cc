@@ -3327,8 +3327,9 @@ struct GDBEngine::Priv {
         }
 
         std::sort(files.begin(), files.end(), QuickUStringLess());
-        std::unique (files.begin (), files.end ()) ;
-        a_files = files ;
+        std::vector<UString>::iterator last_unique =
+            std::unique (files.begin (), files.end ()) ;
+        a_files = std::vector<UString>(files.begin (), last_unique) ;
         a_to = cur ;
         return true;
     }

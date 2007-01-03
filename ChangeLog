@@ -1,3 +1,15 @@
+2007-01-02  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/dbgengine/nmv-gdb-engine.cc: Fix unique-ification of the file list by
+	only copying the unique files into the output parameter (previously,
+	non-unique elements were left at the end of the list)
+	* src/persp/dbgperspective/nmv-file-list.cc: change the list of files from a
+	ListStore to a TreeStore and put files into an expandable folder heirarchy
+	to make it easier to find the interesting files.
+	* src/persp/dbgperspective/nmv-open-file-dialog.cc: validate all selected
+	files are open-able before enabling the OK button, also set a shadow on the
+	scrolled window
+
 2007-01-01  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	Reorganization of the source file list widget.  It was previously in a

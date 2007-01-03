@@ -85,6 +85,7 @@ public:
                 (*this, &Priv::on_chooser_selection_changed_signal)) ;
 
         scrolled_window.set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+        scrolled_window.set_shadow_type (Gtk::SHADOW_IN);
         scrolled_window.add(file_list.widget ());
 
         on_radio_button_toggled ();
@@ -117,13 +118,28 @@ public:
         NEMIVER_CATCH
     }
 
+    bool validate_source_files(list<UString> files)
+    {
+        if (files.empty()) {
+            return false;
+        }
+
+        for (list<UString>::iterator iter = files.begin ();
+                iter != files.end (); ++iter) {
+            if (!Glib::file_test(*iter, Glib::FILE_TEST_IS_REGULAR)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     void on_file_list_selection_changed_signal ()
     {
         NEMIVER_TRY
 
         THROW_IF_FAIL(okbutton);
 
-        if (!file_list.get_filenames ().empty ()) {
+        if (validate_source_files (file_list.get_filenames ())) {
             okbutton->set_sensitive (true) ;
         } else {
             okbutton->set_sensitive (false) ;
@@ -137,7 +153,7 @@ public:
 
         THROW_IF_FAIL(okbutton);
 
-        if (!file_chooser.get_filenames ().empty ()) {
+        if (validate_source_files (file_chooser.get_filenames ())) {
             okbutton->set_sensitive (true) ;
         } else {
             okbutton->set_sensitive (false) ;
