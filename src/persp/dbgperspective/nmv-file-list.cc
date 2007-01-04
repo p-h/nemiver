@@ -35,11 +35,13 @@ namespace nemiver {
 struct FileListColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> display_name ;
     Gtk::TreeModelColumn<Glib::ustring> path ;
+    Gtk::TreeModelColumn<Gtk::StockID> stock_icon ;
 
     FileListColumns ()
     {
         add (display_name) ;
         add (path) ;
+        add (stock_icon) ;
     }
 };//end Cols
 
@@ -78,7 +80,15 @@ public:
 
         tree_view->set_headers_visible (false);
         //create the columns of the tree view
-        tree_view->append_column (_("Filename"), get_file_list_columns ().display_name) ;
+        Gtk::TreeViewColumn *view_column = new Gtk::TreeViewColumn(_("Filename"));
+        Gtk::CellRendererPixbuf renderer_pixbuf;
+        Gtk::CellRendererText renderer_text;
+        view_column->pack_start(renderer_pixbuf, false /* don't expand */);
+        view_column->add_attribute(renderer_pixbuf, "stock-id", get_file_list_columns ().stock_icon);
+        view_column->pack_start(renderer_text);
+        view_column->add_attribute(renderer_text, "text", get_file_list_columns ().display_name);
+        tree_view->append_column(*view_column);
+
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_MULTIPLE);
         tree_view->signal_row_activated ().connect (sigc::mem_fun
                 (*this, &Priv::on_row_activated_signal)) ;
@@ -149,13 +159,21 @@ public:
                         tree_iter = tree_model->append (folder_map.rbegin ()->second->children ());
                     }
                     // build the full path name up to this element
-                    (*tree_iter)[get_file_list_columns ().path] = "/" + // add back the root element
+                    Glib::ustring path = "/" + // add back the root element
                         Glib::build_filename (std::vector<UString>(path_components.begin(),
                                     iter + 1)); // we want to include this iter element in the array, so + 1
+                    (*tree_iter)[get_file_list_columns ().path] = path;
                     Glib::ustring display_name =
                         Glib::filename_display_name (Glib::locale_to_utf8 (*iter));
                     (*tree_iter)[get_file_list_columns ().display_name] =
                         display_name.empty () ? "/" : display_name;
+                    if (Glib::file_test(path, Glib::FILE_TEST_IS_REGULAR)) {
+                        (*tree_iter)[get_file_list_columns ().stock_icon] = Gtk::Stock::FILE;
+                    }
+                    else if (Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
+                        (*tree_iter)[get_file_list_columns ().stock_icon] = Gtk::Stock::DIRECTORY;
+                    }
+
                     // store the element in the folder map for use next time
                     // around
                     folder_map.push_back (folder_map_t(*iter, tree_iter));

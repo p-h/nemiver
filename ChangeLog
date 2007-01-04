@@ -1,5 +1,13 @@
 2007-01-03  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/nmv-file-list.cc: Add file and directory icons to
+	the treeview of source files extracted from the target executable.  I think
+	this makes it much easier to scan, but it might slow it down a bit, so if it
+	gets too slow to scan whether each item is a file or a directory, we might
+	need to rip this back out.
+
+2007-01-03  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/glade/openfiledialog.glade: fix title of the
 	'open files' dialog to indicate that you can open multiple files at once
 
