@@ -45,7 +45,7 @@ namespace Glib {
 }
 
 namespace nemiver {
-namespace commmon {
+namespace common {
     class UString ;
 }
 }

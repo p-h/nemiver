@@ -1,3 +1,8 @@
+2007-01-04  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/workbench/nmv-i-workbench.h: fixed a minor typo where the 'common'
+	namespace was misspelled 'commmon'
+
 2007-01-03  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-file-list.cc: Add file and directory icons to
