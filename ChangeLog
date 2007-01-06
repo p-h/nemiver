@@ -1,5 +1,11 @@
 2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Replace a lot of string
+	concatenations with printf-style strings to make it easier for translation.
+	Also marked a couple of extra strings for translation.
+
+2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/glade/findtextdialog.glade: change the response
 	ID of the 'close' button to GTK_RESPONSE_CANCEL instead of
 	GTK_RESPONSE_CLOSE since GTK_RESPONSE_CANCEL automatically makes it so that

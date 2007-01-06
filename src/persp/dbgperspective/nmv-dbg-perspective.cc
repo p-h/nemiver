@@ -921,9 +921,10 @@ DBGPerspective::on_breakpoint_go_to_source_action
     if (file_path == "") {
         file_path = a_breakpoint.file_name () ;
         if (!find_file_in_source_dirs (file_path, file_path)) {
-            display_warning (_("File path info is missing "
-                             "for breakpoint '")
-                             + UString::from_int (a_breakpoint.number ()) + "'") ;
+            UString message;
+            message.printf (_("File path info is missing "
+                             "for breakpoint '%i'"), a_breakpoint.number ());
+            display_warning (message);
             return ;
         }
     }
@@ -1382,7 +1383,9 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
         && a_frame.file_name () != "") {
         file_path = a_frame.file_name () ;
         if (!find_file_in_source_dirs (file_path, file_path)) {
-            display_error (_("Could not find file ") + file_path) ;
+            UString message;
+            message.printf(_("Could not find file %s"), file_path.c_str ());
+            display_error (message) ;
             return ;
         }
     }
@@ -1391,9 +1394,10 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
     } else if (a_has_frame && 
                a_frame.file_full_name () == ""
                && a_frame.file_name () == "") {
-            display_warning (_("File path info is missing "
-                               "for function ")
-                             + UString ("'") + a_frame.function_name () + "'") ;
+        UString message;
+        message.printf(_("File path info is missing for function '%s'"),
+                             a_frame.function_name ().c_str ()) ;
+        display_warning (message);
     }
 
     if (m_priv->debugger_has_just_run) {
@@ -1448,9 +1452,10 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     if (file_path == "") {
         file_path = a_frame.file_name () ;
         if (!find_file_in_source_dirs (file_path, file_path)) {
-            display_warning (_("File path info is missing "
-                             "for function ")
-                             + UString ("'") + a_frame.function_name () + "'") ;
+            UString message;
+            message.printf (_("File path info is missing for function '%s'"),
+                    a_frame.function_name ().c_str ());
+            display_warning (message);
             return ;
             //TODO: we should disassemble the current frame and display it.
         }
@@ -1501,8 +1506,11 @@ DBGPerspective::on_signal_received_by_target_signal (const UString &a_signal,
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
-    ui_utils::display_info (_("Target received a signal: ")
-                            + a_signal + ", " + a_meaning) ;
+    UString message;
+    // translators: first %s is the signal name, second one is the reason
+    message.printf (_("Target received a signal: %s, %s"),
+            a_signal.c_str (), a_meaning.c_str ()) ;
+    ui_utils::display_info (message);
 
     NEMIVER_CATCH
 }
@@ -1514,7 +1522,9 @@ DBGPerspective::on_debugger_error_signal (const UString &a_msg)
     NEMIVER_TRY
 
     if (m_priv->show_dbg_errors) {
-        ui_utils::display_error (_("An error occured: ") + a_msg) ;
+        UString message;
+        message.printf (_("An error occured: %s"), a_msg.c_str ()) ;
+        ui_utils::display_error (message);
     }
 
     NEMIVER_CATCH
@@ -1815,7 +1825,7 @@ DBGPerspective::init_actions ()
             "ShowErrorsMenuAction",
             nil_stock_id,
             _("Show Errors"),
-            _("Show the errors commands tab"),
+            _("Show the errors tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_errors_action),
             ActionEntry::TOGGLE,
             ""
@@ -2247,8 +2257,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->signal_clicked ().connect
             (sigc::mem_fun (*close_button, &SlotedButton::on_clicked)) ;
     close_button->tooltips.reset (new Gtk::Tooltips) ;
-    close_button->tooltips->set_tip (*close_button,
-                                     _("close") +  UString (" ") + a_path) ;
+    UString message;
+    message.printf (_("Close %s"), a_path.c_str ()) ;
+    close_button->tooltips->set_tip (*close_button, message);
 
     SafePtr<Gtk::Table> table (Gtk::manage (new Gtk::Table (1, 2))) ;
 
@@ -2364,7 +2375,7 @@ void
 DBGPerspective::bring_source_as_current (const UString &a_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    LOG_DD ("file pat: '" << a_path << "'") ;
+    LOG_DD ("file path: '" << a_path << "'") ;
 
     SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
     if (!source_editor) {
@@ -3350,13 +3361,13 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
     LOG_DD ("a_pid: " << (int) a_pid) ;
 
     if (a_pid == (unsigned int) getpid ()) {
-        ui_utils::display_warning ("You can not attach to nemiver itself") ;
+        ui_utils::display_warning (_("You cannot attach to Nemiver itself")) ;
         return ;
     }
     if (!debugger ()->attach_to_target (a_pid,
                                         get_terminal ().slave_pts_name ())) {
-        ui_utils::display_warning ("You can not attach to the "
-                                   "underlying debugger engine") ;
+        ui_utils::display_warning (_("You cannot attach to the "
+                                   "underlying debugger engine")) ;
     }
 }
 
@@ -3446,7 +3457,7 @@ DBGPerspective::stop ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN) ;
     if (!debugger ()->stop_target ()) {
-        ui_utils::display_error ("Failed to stop the debugger") ;
+        ui_utils::display_error (_("Failed to stop the debugger")) ;
     }
 }
 
@@ -3531,9 +3542,12 @@ DBGPerspective::append_breakpoints
             LOG_DD ("no full path info present for file '"
                     + file_name + "'") ;
             if (file_name == "") {
-                ui_utils::display_error
-                    (_("There is no file name info for symbol@addr: ")
-                     +iter->second.function () + "@" + iter->second.address ()) ;
+                UString message;
+                message.printf (
+                    _("There is no file name info for symbol@addr: %s@%s"),
+                     iter->second.function ().c_str (),
+                     iter->second.address ().c_str ()) ;
+                ui_utils::display_error (message);
             }
             else
             {
@@ -3680,9 +3694,10 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
         LOG_ERROR ("Could not find source editor for file: '"
                 << a_file_name
                 << "'") ;
-        ui_utils::display_error (_("Could not find file: ")
-                + a_file_name 
-                + "\n") ;
+        UString message;
+        message.printf (_("Could not find file: %s\n"),
+                a_file_name.c_str ());
+        ui_utils::display_error (message);
     } else {
         source_editor->set_visual_breakpoint_at_line (a_linenum) ;
     }
