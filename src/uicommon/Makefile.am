@@ -17,6 +17,8 @@ nmv-popup-tip.h \
 nmv-terminal.cc \
 nmv-terminal.h
 
+libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@
+
 INCLUDES=@NEMIVERUICOMMON_CFLAGS@ \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/common \
