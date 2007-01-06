@@ -2942,6 +2942,7 @@ DBGPerspective::open_file ()
     for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
         open_file (*iter) ;
     }
+    bring_source_as_current (*(paths.begin()));
 }
 
 
