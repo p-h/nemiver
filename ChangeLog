@@ -1,5 +1,13 @@
 2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/glade/findtextdialog.glade: change the response
+	ID of the 'close' button to GTK_RESPONSE_CANCEL instead of
+	GTK_RESPONSE_CLOSE since GTK_RESPONSE_CANCEL automatically makes it so that
+	pressing 'esc' closes the dialog window and we don't really use this
+	response code anyway.
+
+2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/glade/locatefiledialog.glade: Don't mark a couple
 	of strings as translatable as they're simply placeholders and they'll be
 	replaced in code with printf-style strings.
