@@ -1,5 +1,14 @@
 2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* src/persp/dbgperspective/glade/locatefiledialog.glade: Don't mark a couple
+	of strings as translatable as they're simply placeholders and they'll be
+	replaced in code with printf-style strings.
+	* src/persp/dbgperspective/nmv-locate-file-dialog.cc: Convert a couple
+	things to use the new UString::printf()-style strings so that they're more
+	easily translateable.
+
+2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Update the titlebar to
 	display information about the target executable when we get the target info
 	signal.  Delete the titlebar info when we get the 'detached' signal

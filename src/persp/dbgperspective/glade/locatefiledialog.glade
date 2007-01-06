@@ -122,7 +122,7 @@
 	  <child>
 	    <widget class="GtkFileChooserButton" id="filechooserbutton_location">
 	      <property name="visible">True</property>
-	      <property name="title" translatable="yes">Select File Location: </property>
+	      <property name="title">Select File Location: </property>
 	      <property name="action">GTK_FILE_CHOOSER_ACTION_OPEN</property>
 	      <property name="local_only">True</property>
 	      <property name="show_hidden">False</property>

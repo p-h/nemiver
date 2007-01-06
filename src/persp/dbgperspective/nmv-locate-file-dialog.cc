@@ -60,13 +60,18 @@ public:
                 (a_glade, "filechooserbutton_location") ;
         fcbutton_location->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal)) ;
-        fcbutton_location->set_title(fcbutton_location->get_title() + a_filename);
+        UString chooser_title;
+        chooser_title.printf (_("Select Location For %s"), a_filename.c_str ());
+        fcbutton_location->set_title (chooser_title);
 
         label_filename =
             ui_utils::get_widget_from_glade<Gtk::Label> (a_glade, "label_filename") ;
         THROW_IF_FAIL (label_filename) ;
-        label_filename->set_text("Cannot find file '<b>" + a_filename + "</b>'.\n" +
-                "Please specify the location of this file:");
+        UString instructions;
+        instructions.printf (
+                _("Cannot find file '<b>%s</b>'.\nPlease specify the location of this file:"),
+                a_filename.c_str ());
+        label_filename->set_text(instructions);
         label_filename->set_use_markup ();
     }
 
