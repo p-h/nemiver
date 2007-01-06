@@ -122,6 +122,9 @@ public:
     /// \return the Workbench root window
     virtual Gtk::Window& get_root_window () = 0 ;
 
+    /// Set state-related information to be appended to the window title
+    virtual void set_title_extension (const UString &a_str) = 0 ;
+
     /// \return the Gtk::UIManager of the workbench
     virtual Glib::RefPtr<Gtk::UIManager>& get_ui_manager () = 0 ;
 

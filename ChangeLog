@@ -1,3 +1,12 @@
+2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Update the titlebar to
+	display information about the target executable when we get the target info
+	signal.  Delete the titlebar info when we get the 'detached' signal
+	* src/workbench/nmv-i-workbench.h: add set_title_extension() to allow the
+	DBGPerspective to update the titlebar with state-specific information
+	* src/workbench/nmv-workbench.cc: implement set_title_extension()
+
 2007-01-06  Marko Anastasov   <marko@marko.anastasov.name>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

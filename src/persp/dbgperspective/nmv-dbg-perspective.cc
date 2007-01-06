@@ -1273,12 +1273,18 @@ DBGPerspective::on_debugger_got_target_info_signal (int a_pid,
                                                   const UString &a_exe_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_exe_path == "" || a_pid) {}
     NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
     if (a_exe_path != "") {
         m_priv->prog_path = a_exe_path ;
     }
+
+    UString prog_info;
+    prog_info.printf(_("%s (path=\"%s\", pid=%i)"),
+            Glib::filename_display_basename(a_exe_path).c_str (),
+            a_exe_path.c_str (), a_pid);
+    workbench ().set_title_extension (prog_info);
+
     NEMIVER_CATCH
 }
 
@@ -1286,6 +1292,7 @@ void
 DBGPerspective::on_debugger_detached_from_target_signal ()
 {
     clear_status_notebook () ;
+    workbench ().set_title_extension ("");
 }
 
 void
@@ -3246,6 +3253,7 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
     ++iter ;
     UString prog_name=argv[0], args = UString::join (iter, end_iter);
     vector<IDebugger::BreakPoint> breaks ;
+
     execute_program (prog_name, args, a_env, cwd, breaks, a_close_opened_files) ;
     m_priv->reused_session = false ;
 }

@@ -129,6 +129,7 @@ public:
     Gtk::Widget& get_menubar ();
     Gtk::Notebook& get_toolbar_container ();
     Gtk::Window& get_root_window () ;
+    void set_title_extension (const UString &a_str) ;
     Glib::RefPtr<Gtk::UIManager>& get_ui_manager ()  ;
     IPerspective* get_perspective (const UString &a_name) ;
     IConfMgr& get_configuration_manager ()  ;
@@ -153,6 +154,7 @@ struct Workbench::Priv {
     map<UString, UString> properties ;
     IConfMgrSafePtr conf_mgr ;
     sigc::signal<void> shutting_down_signal ;
+    UString base_title;
 
     Priv () :
         initialized (false),
@@ -398,6 +400,16 @@ Workbench::get_root_window ()
     return *m_priv->root_window ;
 }
 
+void
+Workbench::set_title_extension (const UString &a_str)
+{
+    if (a_str.empty ()) {
+        get_root_window ().set_title (m_priv->base_title);
+    } else {
+        get_root_window ().set_title (a_str + " - " + m_priv->base_title);
+    }
+}
+
 Glib::RefPtr<Gtk::UIManager>&
 Workbench::get_ui_manager ()
 {
@@ -473,6 +485,12 @@ Workbench::init_glade ()
     m_priv->root_window.reset
            (ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade,
                                                           "workbench"));
+    THROW_IF_FAIL (m_priv->root_window) ;
+    // get the title of the root window as specified in the glade file and save
+    // it so that later we can add state-specific extensions to this base title
+    // if needed
+    m_priv->base_title = m_priv->root_window->get_title ();
+
    // m_priv->root_window->property_allow_shrink ().set_value (true) ;
     m_priv->root_window->hide () ;
 }
