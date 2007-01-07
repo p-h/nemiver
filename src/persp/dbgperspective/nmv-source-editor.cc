@@ -200,10 +200,10 @@ struct SourceEditor::Priv {
         if (source_view && source_view->get_buffer ()) {
             line_count = source_view->get_buffer ()->get_line_count () ;
         }
-        line_col_label->set_text
-            (UString (_("Line: ")) + UString::from_int (current_line)
-             + UString (_(", Column: ") + UString::from_int (current_column))
-             + UString (_(", Lines: ")) + UString::from_int (line_count)) ;
+        UString message;
+        message.printf (_("Line: %i, Column: %i, Lines: %i"),
+                    current_line, current_column, line_count) ;
+        line_col_label->set_text (message);
     }
 
     gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)

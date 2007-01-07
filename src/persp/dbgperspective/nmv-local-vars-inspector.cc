@@ -86,7 +86,7 @@ public:
         sel->set_mode (Gtk::SELECTION_SINGLE) ;
 
         //create the columns of the tree view
-        tree_view->append_column (_("variable"),
+        tree_view->append_column (_("Variable"),
                                  variables_utils::get_variable_columns ().name) ;
         Gtk::TreeViewColumn * col = tree_view->get_column (0) ;
         THROW_IF_FAIL (col) ;
@@ -95,7 +95,7 @@ public:
                             "foreground-gdk",
                             variables_utils::VariableColumns::FG_COLOR_OFFSET) ;
 
-        tree_view->append_column (_("value"), get_variable_columns ().value) ;
+        tree_view->append_column (_("Value"), get_variable_columns ().value) ;
         col = tree_view->get_column (1) ;
         THROW_IF_FAIL (col) ;
         col->set_resizable (true) ;
@@ -103,7 +103,7 @@ public:
                             "foreground-gdk",
                             variables_utils::VariableColumns::FG_COLOR_OFFSET) ;
 
-        tree_view->append_column (_("type"),
+        tree_view->append_column (_("Type"),
                                   get_variable_columns ().type_caption);
         col = tree_view->get_column (2) ;
         THROW_IF_FAIL (col) ;
@@ -123,7 +123,7 @@ public:
         Gtk::TreeModel::iterator it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
         (*it)[variables_utils::get_variable_columns ().name] =
-                                                        _("local variables");
+                                                        _("Local Variables");
         local_variables_row_ref.reset
                     (new Gtk::TreeRowReference (tree_store,
                                                 tree_store->get_path (it))) ;
@@ -132,7 +132,7 @@ public:
         it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
         (*it)[variables_utils::get_variable_columns ().name] =
-                                                        _("function arguments");
+                                                        _("Function Arguments");
         function_arguments_row_ref.reset
             (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it))) ;
         THROW_IF_FAIL (function_arguments_row_ref) ;
