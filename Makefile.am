@@ -1,9 +1,5 @@
 SUBDIRS = src glade menus tests po data
 
-desktopdir = $(datadir)/applications
-desktop_in_files = nemiver.desktop.in
-desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-@INTLTOOL_DESKTOP_RULE@
 INTLTOOL_FILES= intltool-extract.in \
 				intltool-merge.in \
 				intltool-update.in
@@ -13,8 +9,7 @@ README \
 INSTALL \
 COPYING \
 COPYRIGHT \
-$(INTLTOOL_FILES) \
-$(desktop_in_files)
+$(INTLTOOL_FILES)
 
 ###############################
 # RELEASE TARGETS
@@ -78,4 +73,4 @@ cat-announcement:
 	@echo "Last but not least, do not forget to bump up the micro"
 	@echo "version component to the next (odd) number and commit."
 
-DISTCLEANFILES = $(desktop_DATA) $(INTLTOOL_FILES:.in=)
+DISTCLEANFILES = $(INTLTOOL_FILES:.in=)

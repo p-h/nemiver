@@ -1,5 +1,12 @@
 2007-01-07  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
+	* Makefile.am: remove desktop rules from here
+	* data/Makefile.am: move desktop rules here
+	* data/nemiver.desktop.in: move the nemiver.desktop file to the data/
+	directory and add the icon to the desktop file
+
+2007-01-07  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
 	* Makefile.am: add data subdir
 	* configure.ac: Add Makefiles for installing icons
 	* data/icons/*: added icons from Steven Brown

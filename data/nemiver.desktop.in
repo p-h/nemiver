@@ -4,6 +4,6 @@ Encoding=UTF-8
 Type=Application
 Name=Nemiver
 _Comment=Debug Applications
-#Icon=icon.png
+Icon=nemiver
 Exec=nemiver
 Categories=GNOME;Application;Development;
