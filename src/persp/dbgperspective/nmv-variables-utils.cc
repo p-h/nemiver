@@ -62,58 +62,97 @@ is_type_a_pointer (const UString &a_type)
 }
 
 bool
+is_qname_a_pointer_member (const UString &a_qname)
+{
+    LOG_DD ("a_qname: " << a_qname) ;
+    std::list<NameElement> name_elems ;
+
+    if (!break_qname_into_name_elements (a_qname, name_elems)) {
+        LOG_DD ("return false") ;
+        return false ;
+    }
+    std::list<NameElement>::const_iterator end_it = name_elems.end () ;
+    --end_it;
+    if (end_it == name_elems.end ()) {
+        LOG_DD ("return false") ;
+        return false ;
+    }
+
+    LOG_DD ("result: " << (int) end_it->is_pointer_member ()) ;
+    return end_it->is_pointer_member () ;
+}
+
+bool
 break_qname_into_name_elements (const UString &a_qname,
-                                std::list<UString> &a_name_elems)
+                                std::list<NameElement> &a_name_elems)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
     NEMIVER_TRY
 
     THROW_IF_FAIL (a_qname != "") ;
-    LOG_DD ("qname: '" << a_qname << "'") ;
+    LOG_D ("qname: '" << a_qname << "'", "break-qname-domain") ;
 
     UString::size_type len=a_qname.size (),cur=0, name_start=0, name_end=0 ;
     UString name_element ;
-    std::list<UString> name_elems ;
+    bool is_pointer=false, is_pointer_member=false ;
+    std::list<NameElement> name_elems ;
 
 fetch_element:
     name_start = cur ;
     name_element="" ;
+    gunichar c = 0 ;
     //okay, let's define what characters can be part of a variable name.
     //Note that variable names can be a template type -
     //in case a templated class extends another one, inline; in that
     //cases, the child templated class will have an anonymous member carring
     //the parent class's members.
     //this can looks funny sometimes.
-    for (;
-         cur < len && (isalnum (a_qname[cur])
-                       || a_qname[cur] == '_'
-                       || a_qname[cur] == '<'/*anonymous names from templates*/
-                       || a_qname[cur] == ':'/*fully qualified names*/
-                       || a_qname[cur] == '>'/*templates again*/
-                       || a_qname[cur] == '#'/*we can have names like '#unnamed#'*/
-                       || a_qname[cur] == ','/*template parameters*/
-                       || a_qname[cur] == '+' /*for arithmethic expressions*/
-                       || a_qname[cur] == '*' /*ditto*/
-                       || a_qname[cur] == '/' /*ditto*/
-                       || a_qname[cur] == '(' /*ditto*/
-                       || a_qname[cur] == ')' /*ditto*/
-                       || isspace (a_qname[cur]))
+    for (c = a_qname[cur];
+         cur < len &&
+         (c = a_qname[cur]) &&
+         c != '-' &&
+         (isalnum (c) ||
+              c == '_' ||
+              c == '<'/*anonymous names from templates*/ ||
+              c == ':'/*fully qualified names*/ ||
+              c == '>'/*templates again*/ ||
+              c == '#'/*we can have names like '#unnamed#'*/ ||
+              c == ','/*template parameters*/ ||
+              c == '+' /*for arithmethic expressions*/ ||
+              c == '*' /*ditto*/ ||
+              c == '/' /*ditto*/ ||
+              c == '(' /*ditto*/ ||
+              c == ')' /*ditto*/ ||
+              isspace (c)
+         )
          ; ++cur) {
+    }
+    if (is_pointer) {
+        is_pointer_member = true ;
     }
     if (cur == name_start) {
         name_element = "";
     } else if (cur >= len) {
-        name_element = a_qname ;
-    } else if (a_qname[cur] == '.'
+        name_end = cur - 1 ;
+        name_element = a_qname.substr (name_start, name_end - name_start + 1);
+        is_pointer = false ;
+    } else if (c == '.'
                || (cur + 1 < len
-                   && a_qname[cur] == '-'
+                   && c == '-'
                    && a_qname[cur+1] == '>')
                || cur >= len){
         name_end = cur - 1 ;
         name_element = a_qname.substr (name_start, name_end - name_start + 1);
-        if (a_qname[cur] == '-') {
-            name_element = '*' + name_element ;
+
+        //update is_pointer state
+        if (c != '.' || name_element[0] == '*') {
+            is_pointer = true ;
+        }
+
+        //advance cur.
+        if (c == '-') {
+            //name_element = '*' + name_element ;
             cur += 2 ;
         } else if (cur < len){
             ++cur ;
@@ -124,13 +163,23 @@ fetch_element:
         return false ;
     }
     name_element.chomp () ;
-    LOG_DD ("got name element: '" << name_element << "'") ;
-    name_elems.push_back (name_element) ;
+    LOG_D ("got name element: '" << name_element << "'", "break-qname-domain") ;
+    LOG_D ("is_pointer: '" << (int) is_pointer << "'", "break-qname-domain") ;
+    LOG_D ("is_pointer_member: '" << (int) is_pointer_member << "'",
+           "break-qname-domain") ;
+    name_elems.push_back (NameElement (name_element,
+                                       is_pointer,
+                                       is_pointer_member)) ;
     if (cur < len) {
-        LOG_DD ("go fetch next name element") ;
+        LOG_D ("go fetch next name element", "break-qname-domain") ;
         goto fetch_element ;
     }
-    LOG_DD ("getting out") ;
+    LOG_D ("getting out", "break-qname-domain") ;
+    if (a_qname[0] == '*' && !name_elems.empty ()) {
+        std::list<NameElement>::iterator it = name_elems.end () ;
+        --it ;
+        it->is_pointer (true) ;
+    }
     a_name_elems = name_elems ;
 
     NEMIVER_CATCH_AND_RETURN (false)
@@ -140,19 +189,27 @@ fetch_element:
 
 bool
 get_variable_iter_from_qname
-                    (const std::list<UString> &a_name_elems,
-                     const std::list<UString>::const_iterator &a_cur_elem_it,
+                    (const std::list<NameElement> &a_name_elems,
+                     const std::list<NameElement>::const_iterator &a_cur_elem_it,
                      const Gtk::TreeModel::iterator &a_from_it,
                      Gtk::TreeModel::iterator &a_result)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     THROW_IF_FAIL (!a_name_elems.empty ()) ;
+    if (a_cur_elem_it != a_name_elems.end ()) {
+        LOG_DD ("a_cur_elem_it: " << a_cur_elem_it->get_name ()) ;
+        LOG_DD ("a_cur_elem_it->is_pointer: "
+                << (int) a_cur_elem_it->is_pointer ()) ;
+    } else {
+        LOG_DD ("a_cur_elem_it: end") ;
+    }
+
     if (!a_from_it) {
         LOG_ERROR ("got null a_from iterator") ;
         return false ;
     }
-    std::list<UString>::const_iterator cur_elem_it = a_cur_elem_it;
+    std::list<NameElement>::const_iterator cur_elem_it = a_cur_elem_it;
     if (cur_elem_it == a_name_elems.end ()) {
         a_result = a_from_it ;
         LOG_DD ("found iter") ;
@@ -163,18 +220,36 @@ get_variable_iter_from_qname
     for (row_it = a_from_it->children ().begin () ;
          row_it != a_from_it->children ().end () ;
          ++row_it) {
-        if ((Glib::ustring)((*row_it)[get_variable_columns ().name])
-              == *cur_elem_it) {
-            LOG_DD ("walked to path element: '" << *cur_elem_it) ;
+        UString iter_name_col =
+            (Glib::ustring)((*row_it)[get_variable_columns ().name]) ;
+        LOG_DD ("current row_it: "
+                << iter_name_col) ;
+
+        if (cur_elem_it->is_pointer () == (iter_name_col[0] == '*')
+            && iter_name_col == cur_elem_it->get_name ()) {
+            LOG_DD ("walked to path element: '" << cur_elem_it->get_name ()) ;
             return get_variable_iter_from_qname (a_name_elems,
                                                  ++cur_elem_it,
                                                  row_it,
                                                  a_result) ;
-        } else if (row_it->children () && row_it->children ().begin ()) {
+        } else if (row_it->children ()
+                   && row_it->children ().begin ()) {
             Gtk::TreeModel::iterator it = row_it->children ().begin () ;
-            if ((Glib::ustring) (*it)[get_variable_columns ().name]
-                == *cur_elem_it) {
-                LOG_DD ("walked to path element: '" << *cur_elem_it) ;
+            UString name_col =
+                (Glib::ustring) (*it)[get_variable_columns ().name] ;
+            std::list<NameElement> elems ;
+            if (name_col != ""
+                && break_qname_into_name_elements (name_col, elems)
+                && !elems.empty ()) {
+                std::list<NameElement>::const_iterator iter = elems.end () ;
+                --iter ;
+                name_col = iter->get_name () ;
+            }
+            LOG_DD ("testing against child row: " << name_col) ;
+            if (name_col == ("*" + cur_elem_it->get_name ())
+                || name_col == cur_elem_it->get_name ()) {
+                LOG_DD ("walked to path element: '"
+                         << name_col) ;
                 return get_variable_iter_from_qname (a_name_elems,
                                                      ++cur_elem_it,
                                                      it,
@@ -200,7 +275,7 @@ get_variable_iter_from_qname (const UString &a_var_qname,
         LOG_ERROR ("got null a_from iterator") ;
         return false ;
     }
-    std::list<UString> name_elems ;
+    std::list<NameElement> name_elems ;
     bool is_ok =
         variables_utils::break_qname_into_name_elements (a_var_qname,
                                                          name_elems) ;
@@ -230,7 +305,7 @@ set_a_variable_type_real (Gtk::TreeModel::iterator &a_var_it,
 {
     THROW_IF_FAIL (a_var_it) ;
     a_var_it->set_value (variables_utils::get_variable_columns ().type,
-                     (Glib::ustring)a_type) ;
+                         (Glib::ustring)a_type) ;
     int nb_lines = a_type.get_number_of_lines () ;
     UString type_caption = a_type ;
     if (nb_lines) {--nb_lines;}
@@ -245,7 +320,7 @@ set_a_variable_type_real (Gtk::TreeModel::iterator &a_var_it,
         (IDebugger::VariableSafePtr) a_var_it->get_value
                                         (get_variable_columns ().variable);
     THROW_IF_FAIL (variable) ;
-    variable->type (type_caption) ;
+    variable->type (a_type) ;
 }
 
 void
@@ -266,7 +341,14 @@ update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
     (*a_iter)[get_variable_columns ().variable] = a_var ;
     UString var_name = a_var->name ();
     var_name.chomp () ;
-    (*a_iter)[get_variable_columns ().name] = var_name ;
+    UString prev_var_name =
+            (Glib::ustring)(*a_iter)[get_variable_columns ().name] ;
+    LOG_DD ("Prev variable name: " << prev_var_name) ;
+    LOG_DD ("new variable name: " << var_name) ;
+    LOG_DD ("Didn't update variable name") ;
+    if (prev_var_name == "") {
+        (*a_iter)[get_variable_columns ().name] = var_name;
+    }
     (*a_iter)[get_variable_columns ().is_highlighted]=false ;
     bool do_highlight = false ;
     if (a_handle_highlight && !a_is_new_frame) {
@@ -335,9 +417,9 @@ append_a_variable_real (const IDebugger::VariableSafePtr &a_var,
 
 void
 update_a_variable (const IDebugger::VariableSafePtr &a_var,
-                        Gtk::TreeView &a_tree_view,
-                        bool a_is_new_frame,
-                        Gtk::TreeModel::iterator &a_iter)
+                   Gtk::TreeView &a_tree_view,
+                   bool a_is_new_frame,
+                   Gtk::TreeModel::iterator &a_iter)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 

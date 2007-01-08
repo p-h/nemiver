@@ -69,12 +69,57 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
 
 VariableColumns& get_variable_columns () ;
 bool is_type_a_pointer (const UString &a_type) ;
+bool is_qname_a_pointer_member (const UString &a_qname) ;
+
+class NameElement {
+    UString m_name ;
+    bool m_is_pointer ;
+    bool m_is_pointer_member ;
+
+public:
+
+    NameElement () :
+        m_is_pointer (false),
+        m_is_pointer_member (false)
+    {
+    }
+
+    NameElement (const UString &a_name) :
+        m_name (a_name),
+        m_is_pointer (false),
+        m_is_pointer_member (false)
+    {
+    }
+
+    NameElement (const UString &a_name,
+                 bool a_is_pointer,
+                 bool a_is_pointer_member) :
+        m_name (a_name) ,
+        m_is_pointer (a_is_pointer),
+        m_is_pointer_member (a_is_pointer_member)
+    {
+    }
+
+    ~NameElement ()
+    {
+    }
+
+    const UString& get_name () const {return m_name;}
+    void set_name (const UString &a_name) {m_name = a_name;}
+
+    bool is_pointer () const {return m_is_pointer;}
+    void is_pointer (bool a_flag) {m_is_pointer = a_flag;}
+
+    bool is_pointer_member () const {return m_is_pointer_member;}
+    void is_pointer_member (bool a_flag) {m_is_pointer_member = a_flag;}
+};//end NameElement
+
 bool break_qname_into_name_elements (const UString &a_qname,
-                                     std::list<UString> &a_name_elems) ;
+                                     std::list<NameElement> &a_name_elems) ;
 
 bool get_variable_iter_from_qname
-                    (const std::list<UString> &a_name_elems,
-                     const std::list<UString>::const_iterator &a_cur_elem_it,
+                    (const std::list<NameElement> &a_name_elems,
+                     const std::list<NameElement>::const_iterator &a_cur_elem_it,
                      const Gtk::TreeModel::iterator &a_from_it,
                      Gtk::TreeModel::iterator &a_result) ;
 

@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <signal.h>
 #include <iostream>
 #include <gtkmm/window.h>
 #include <libglademm.h>
@@ -122,6 +123,22 @@ struct GOptionContextRef {
     }
 };//end struct GOptoinContextRef
 
+static IWorkbench *s_workbench=0 ;
+
+void
+sigint_handler (int a_signum)
+{
+    if (a_signum != SIGINT) {
+        return ;
+    }
+    static bool s_got_down = false ;
+    if (!s_got_down && s_workbench) {
+        s_workbench->shut_down () ;
+        s_workbench = 0 ;
+        s_got_down = true ;
+    }
+}
+
 int
 main (int a_argc, char *a_argv[])
 {
@@ -153,10 +170,11 @@ main (int a_argc, char *a_argv[])
     DynamicModuleManager module_manager ;
 
     IWorkbenchSafePtr workbench = module_manager.load<IWorkbench> ("workbench");
-    LOG_D ("workbench refcount: " <<  (int) workbench->get_refcount (),
+    s_workbench = workbench.get () ;
+    LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
             "refcount-domain") ;
-    workbench->do_init (gtk_kit) ;
-    LOG_D ("workbench refcount: " <<  (int) workbench->get_refcount (),
+    s_workbench->do_init (gtk_kit) ;
+    LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
            "refcount-domain") ;
 
     //********************************
@@ -181,7 +199,7 @@ main (int a_argc, char *a_argv[])
         using nemiver::common::IProcMgr ;
 
         IDBGPerspective *debug_persp =
-        dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+        dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                     (DBGPERSPECTIVE_PLUGIN_NAME));
         if (!debug_persp) {
             cerr << "Could not get the debugging perspective" << endl ;
@@ -221,7 +239,7 @@ main (int a_argc, char *a_argv[])
 
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                     (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
@@ -246,7 +264,7 @@ main (int a_argc, char *a_argv[])
 
     if (gv_purge_sessions) {
         IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                     (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().delete_sessions () ;
@@ -256,7 +274,7 @@ main (int a_argc, char *a_argv[])
 
     if (gv_execute_session) {
         IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                     (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
@@ -291,7 +309,7 @@ main (int a_argc, char *a_argv[])
             prog_args += Glib::locale_to_utf8 (a_argv[i]) ;
         }
         IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (workbench->get_perspective
+            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                             (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             LOG_D ("going to debug program: '"
@@ -313,10 +331,13 @@ main (int a_argc, char *a_argv[])
 
 run_app:
 
-    workbench->get_root_window ().show_all () ;
-    gtk_kit.run (workbench->get_root_window ()) ;
+    //intercept ctrl-c/SIGINT
+    signal (SIGINT, sigint_handler) ;
+    s_workbench->get_root_window ().show_all () ;
+    gtk_kit.run (s_workbench->get_root_window ()) ;
 
     NEMIVER_CATCH_NOX
+    s_workbench = 0 ;
 
     return 0 ;
 }

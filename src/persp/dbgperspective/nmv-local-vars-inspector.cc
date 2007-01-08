@@ -202,10 +202,6 @@ public:
         }
     }
 
-    //*******************************************************
-    //before setting a variable, query its full description
-    //*******************************************************
-
     void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -234,6 +230,76 @@ public:
             debugger->print_variable_value ((*it)->name ()) ;
         }
 
+    }
+
+    ///walk the all the variables in the
+    //inspector, detect those who are dereferenced pointers
+    //and query the debugger to get their (new) content.
+    void update_derefed_pointer_variables ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        Gtk::TreeModel::iterator it ;
+        get_local_variables_row_iterator (it) ;
+        if (it) {
+            update_derefed_pointer_variable_children (it) ;
+        }
+        get_function_arguments_row_iterator (it) ;
+        if (it) {
+            update_derefed_pointer_variable_children (it) ;
+        }
+    }
+
+    ///walk the children of a variable
+    //detect those who are dereferenced pointers
+    //and query the debugger to get their (new) content.
+    void update_derefed_pointer_variable_children
+                                    (Gtk::TreeModel::iterator &a_parent_iter)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        if (!a_parent_iter || !a_parent_iter->children ().begin ()) {
+            return ;
+        }
+
+        using namespace variables_utils ;
+        Gtk::TreeModel::iterator it ;
+        UString variable_name ;
+        for (it = a_parent_iter->children ().begin (); it; ++it) {
+            variable_name =
+                (Glib::ustring) it->get_value (get_variable_columns ().name);
+            LOG_DD ("variable name: " << variable_name) ;
+            if (variable_name != "" && variable_name[0] == '*') {
+                update_derefed_pointer_variable (it) ;
+                for (Gtk::TreeModel::iterator child_it = it->children ().begin ();
+                     child_it;
+                     ++child_it) {
+                    update_derefed_pointer_variable (it) ;
+                }
+            }
+            if (it->children ().begin ()){
+                update_derefed_pointer_variable_children (it) ;
+            }
+        }
+    }
+
+    ///if a variable is a derefed pointer, query the debugger
+    ///for its (new) content.
+    /// \a_row_it the row from which to get the variable to consider.
+    void update_derefed_pointer_variable (Gtk::TreeModel::iterator &a_row_it)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        THROW_IF_FAIL (a_row_it) ;
+
+        using namespace variables_utils ;
+        UString variable_name =
+            (Glib::ustring) a_row_it->get_value (get_variable_columns ().name) ;
+        LOG_DD ("variable name: " << variable_name) ;
+        if (variable_name != "" && variable_name[0] == '*') {
+            LOG_DD ("asking update for " << variable_name) ;
+            variable_name.erase (0, 1) ;
+            debugger->print_pointed_variable_value (variable_name) ;
+        } else {
+            LOG_DD ("variable " << variable_name << " is not a pointed value") ;
+        }
     }
 
     void show_variable_type_in_dialog ()
@@ -361,6 +427,10 @@ public:
             if (is_new_frame) {
                 LOG_DD ("init tree view") ;
                 re_init_tree_view () ;
+            } else {
+                //walk the variables to detect the
+                //pointer (direct or indirect) members and update them.
+                update_derefed_pointer_variables () ;
             }
             debugger->list_local_variables () ;
         }
@@ -406,7 +476,6 @@ public:
         Gtk::TreeModel::iterator row_it =
                                 tree_store->get_iter (row_ref->get_path ()) ;
 
-        LOG_DD ("adding variable '" << a_var_name << " to vars editor") ;
 
         a_var->type (it->second->type ()) ;
         Gtk::TreeModel::iterator var_iter ;
@@ -415,8 +484,33 @@ public:
                                  tree_store->get_iter (row_ref->get_path ()),
                                  var_iter)) {
             THROW_IF_FAIL (var_iter) ;
+            LOG_DD ("updating variable '" << a_var_name << "' into vars editor") ;
             update_a_variable (a_var, *tree_view, is_new_frame, var_iter) ;
+            UString value =
+                (Glib::ustring) var_iter->get_value
+                                            (get_variable_columns ().value) ;
+            LOG_DD ("updated variable '"
+                    << a_var_name
+                    << "' to value '"
+                    << value
+                    << "'") ;
+            if (value == "0" || value == "0x0") {
+                if (a_var->type () != "" && is_type_a_pointer (a_var->type ())) {
+                    LOG_DD ("pointer is null, erase it's children") ;
+                    while (true) {
+                        Gtk::TreeModel::iterator it =
+                            var_iter->children ().begin () ;
+                        if (it) {
+                            tree_store->erase (it) ;
+                        } else {
+                            break ;
+                        }
+                    }
+                    tree_store->append (var_iter->children ()) ;
+                }
+            }
         } else {
+            LOG_DD ("adding variable '" << a_var_name << " to vars editor") ;
             append_a_variable (a_var,
                                tree_store->get_iter (row_ref->get_path ()),
                                tree_store,
@@ -429,6 +523,7 @@ public:
 
         map_ptr->erase (a_var_name) ;
         tree_view->expand_row (row_ref->get_path (), false) ;
+        debugger->print_variable_type (a_var_name) ;
 
         NEMIVER_CATCH
     }
@@ -457,7 +552,6 @@ public:
         if (!row_it->children ().begin ()) {
             tree_store->append (row_it->children ()) ;
         }
-
         NEMIVER_CATCH
     }
 
@@ -542,20 +636,82 @@ public:
 
         Gtk::TreeModel::iterator start_row_it, row_it ;
         get_local_variables_row_iterator (start_row_it) ;
-        bool ret = get_variable_iter_from_qname
-                                        (a_var_name,
-                                         start_row_it,
-                                         row_it) ;
+        bool ret = false, update_ptr_member=false;
+
+
+        //Try to see if a variable named '*'$a_var_name
+        //('*' followed by the content of a_var_name) exists
+        //in the inspector. If yes, it is likely that we got
+        //asked (by a call to update_derefed_pointer_variables())
+        //to update the content of a dereferenced pointer.
+        ret = get_variable_iter_from_qname ("*" + a_var_name,
+                                            start_row_it,
+                                            row_it) ;
+        if (ret) {
+            //we were asked to to update the content of a dereferenced
+            //pointer. The variable that represents the dereferenced
+            //pointer is at row_it.
+            update_ptr_member = true ;
+        } else {
+            ret = get_variable_iter_from_qname (a_var_name, start_row_it, row_it);
+        }
         if (!ret) {
             get_function_arguments_row_iterator (start_row_it) ;
-            ret = get_variable_iter_from_qname (a_var_name, start_row_it, row_it);
+            ret = get_variable_iter_from_qname ("*" + a_var_name,
+                                                start_row_it, row_it);
+            if (ret) {
+                update_ptr_member = true ;
+            } else {
+                ret = get_variable_iter_from_qname (a_var_name,
+                                                    start_row_it,
+                                                    row_it);
+            }
         }
         THROW_IF_FAIL (ret) ;
         THROW_IF_FAIL (row_it) ;
+
         Gtk::TreeModel::iterator result_row_it ;
-        append_a_variable (a_var, row_it, tree_store,
-                           *tree_view, *debugger,
-                           true, is_new_frame, result_row_it) ;
+        if (update_ptr_member) {
+            //we want to update children variables of a derefed pointer.
+            //the dereferenced pointer is row_it.
+            //We will suppose that the children variables we are updating are not
+            //derefed pointer themselves. there are normal pointers.
+            LOG_DD ("going to query pointed variable members!") ;
+            if (row_it->children ().begin () && row_it->children ().size ()) {
+                //the derefed pointer actually has members.
+                for (Gtk::TreeModel::iterator it = row_it->children ().begin ();
+                     it ;
+                     ++it) {
+                    UString member_name = (Glib::ustring)it->get_value
+                                                (get_variable_columns ().name) ;
+                    if (member_name == "") {
+                        //the user has not yet derefed the pointer
+                        //so the content if the derefed pointer is nil.
+                        //go create that content.
+                       goto append_pointed_variable;
+                    }
+                    UString qname = a_var_name + "->" + member_name ;
+                    LOG_DD ("querying pointed variable member: "
+                            << qname) ;
+                    local_vars_to_set[qname] =
+                                it->get_value (get_variable_columns ().variable);
+                    debugger->print_variable_value (qname) ;
+                }
+            } else {
+                //the derefed pointer does not have children.
+                //update its value.
+                LOG_DD ("updating pointed variable!") ;
+                IDebugger::VariableSafePtr var =
+                    (IDebugger::VariableSafePtr) row_it->get_value
+                                            (get_variable_columns ().variable) ;
+                update_a_variable (var, *tree_view, true, row_it) ;
+            }
+        } else {
+append_pointed_variable:
+            append_a_variable (a_var, row_it, tree_store,
+                               *tree_view, *debugger,
+                               true, is_new_frame, result_row_it) ;
+        }
         debugger->print_variable_type (a_var_name) ;
         NEMIVER_CATCH
     }

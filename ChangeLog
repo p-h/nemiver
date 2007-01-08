@@ -1,3 +1,22 @@
+Mon, 08 Jan 2007 09:55:59 +0100 Dodji Sekteli
+
+	* src/workbench/nmv-workbench.cc, nmv-i-workbench.h: make
+	  IWorbench::shut_down() public now.
+	* src/main.cc: catch ctrl-c (or kill -SIGINT) to shutdown
+	  gracefully .
+	* src/persp/dbgperspective/nmv-variables-utils.cc,h: added
+	  is_qname_a_pointer_member(). heavily fixed
+	  break_qname_into_name_elements(). Also fixed
+	  get_variable_iter_from_qname() to better handle paths like
+	  foo->bar->baz.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc: heavily
+	  modified this so that members of dereferenced pointers
+	  get updated at each stepping. This change also allows proper
+	  dereferencing of pointers, no matter how nested the dereferencing
+	  is. This entry should fix #386594.
+	* tests/pointer-deref.cc: added this to debug/test the variable
+	  derefing workflows.
+
 2007-01-07  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* Makefile.am: remove desktop rules from here
@@ -57,6 +76,12 @@
 	* src/workbench/nmv-i-workbench.h: add set_title_extension() to allow the
 	DBGPerspective to update the titlebar with state-specific information
 	* src/workbench/nmv-workbench.cc: implement set_title_extension()
+
+Sat, 06 Jan 2007 18:09:59 +0100 Dodji Seketeli
+
+	* src/uicommon/Makefile.am, configure.ac: add libvte to the link
+	  dependancies of uicommon as the nmv-terminal.cc moved there
+	  recently. This should fix #392590.
 
 2007-01-06  Marko Anastasov   <marko@marko.anastasov.name>
 

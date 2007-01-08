@@ -117,7 +117,6 @@ private:
     {
         WorkbenchStaticInit::do_init ();
     }
-    void shut_down () ;
     bool on_delete_event (GdkEventAny* event) ;
 
 public:
@@ -125,6 +124,7 @@ public:
     virtual ~Workbench () ;
     void get_info (Info &a_info) const ;
     void do_init (Gtk::Main &a_main) ;
+    void shut_down () ;
     Glib::RefPtr<Gtk::ActionGroup> get_default_action_group () ;
     Glib::RefPtr<Gtk::ActionGroup> get_debugger_ready_action_group ();
     Gtk::Widget& get_menubar ();

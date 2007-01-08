@@ -2,7 +2,8 @@ noinst_PROGRAMS=fooprog runtestbreakpoint \
 runtestcore runteststdout \
 runtesttemplatedvar \
 runtestunicode \
-docore inout
+docore inout \
+pointerderef
 
 fooprog_SOURCES=fooprog.cc
 fooprog_LDFLAGS=@NEMIVERCOMMON_LIBS@
@@ -27,6 +28,9 @@ docore_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 inout_SOURCES=inout.cc
 inout_LDFLAGS=@NEMIVERCOMMON_LIBS@
+
+pointerderef_SOURCES=pointer-deref.cc
+pointerderef_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 
 INCLUDES=-I$(top_srcdir)/src/common \

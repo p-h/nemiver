@@ -104,6 +104,8 @@ public:
     /// \param a_main the main loop created by the application.
     virtual void do_init (Gtk::Main &a_main) = 0;
 
+    virtual void shut_down () = 0 ;
+
     /// \brief signal
 
 
