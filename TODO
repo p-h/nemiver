@@ -1,19 +1,8 @@
 This is a random short term todo list. Items written here are subject to discussion.
 Feel free to ask on nemiver-list@gna.org about particular topics that you may be interested to take over.
 
-*) add a search facility to search text in the source editor,
-   also maybe add find in files.
-
-*) list all of the source files that make up the current
-l  executable so that you can easily open them by double-clicking their names
-   rather than searching the filesystem (using -file-list-exec-source-files)
-   See bug http://bugzilla.gnome.org/show_bug.cgi?id=384043 for description.
-
 * add a watchpoint setting dialog.
   See bug http://bugzilla.gnome.org/show_bug.cgi?id=386450 for description.
-
-* add a detach action.
-  See bug http://bugzilla.gnome.org/show_bug.cgi?id=384847 for description.
 
 *  Close all open files when switching to a new debug session.
    See http://bugzilla.gnome.org/show_bug.cgi?id=381703 for description.
