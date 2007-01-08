@@ -107,6 +107,28 @@ public:
 
 };//end struct foo
 
+void
+change_baz (baz *a_baz)
+{
+    if (a_baz) {
+        a_baz->set_a (20) ;
+        a_baz->set_b (21) ;
+    }
+}
+
+void
+change_baz_ptr (baz **a_baz)
+{
+    baz *my_baz = 0;
+    if (a_baz) {
+        my_baz = *a_baz ;
+    }
+    if (my_baz) {
+        my_baz->set_a (30) ;
+        my_baz->set_b (31) ;
+    }
+}
+
 int
 main ()
 {
@@ -119,6 +141,10 @@ main ()
 
     bar_ptr->set_baz (baz_ptr) ;
     foo_ptr->set_bar (bar_ptr) ;
+
+    change_baz (baz_ptr) ;
+    change_baz_ptr (&baz_ptr) ;
+
     delete foo_ptr ;
 
     return 0 ;

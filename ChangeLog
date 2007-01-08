@@ -1,3 +1,12 @@
+Mon, 08 Jan 2007 23:02:50 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc: fix
+	  the inspector to make it update function members that are
+	  dereferenced. Update means updating the values of the dereferenced
+	  pointer at each stepping.
+	* tests/pointer-deref.cc: update this test to add function argument
+	  related workflows.
+
 Mon, 08 Jan 2007 09:55:59 +0100 Dodji Sekteli
 
 	* src/workbench/nmv-workbench.cc, nmv-i-workbench.h: make

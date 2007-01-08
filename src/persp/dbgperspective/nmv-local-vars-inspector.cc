@@ -241,10 +241,12 @@ public:
         Gtk::TreeModel::iterator it ;
         get_local_variables_row_iterator (it) ;
         if (it) {
+            LOG_DD ("scheduling local derefed pointers updating") ;
             update_derefed_pointer_variable_children (it) ;
         }
         get_function_arguments_row_iterator (it) ;
         if (it) {
+            LOG_DD ("scheduling function args derefed pointers updating") ;
             update_derefed_pointer_variable_children (it) ;
         }
     }
@@ -635,9 +637,12 @@ public:
         THROW_IF_FAIL (tree_store) ;
 
         Gtk::TreeModel::iterator start_row_it, row_it ;
-        get_local_variables_row_iterator (start_row_it) ;
-        bool ret = false, update_ptr_member=false;
+        std::map<UString, IDebugger::VariableSafePtr>* vars_to_set_map = 0;
 
+        get_local_variables_row_iterator (start_row_it) ;
+        vars_to_set_map = &local_vars_to_set ;
+
+        bool ret = false, update_ptr_member=false;
 
         //Try to see if a variable named '*'$a_var_name
         //('*' followed by the content of a_var_name) exists
@@ -659,6 +664,7 @@ public:
             get_function_arguments_row_iterator (start_row_it) ;
             ret = get_variable_iter_from_qname ("*" + a_var_name,
                                                 start_row_it, row_it);
+            vars_to_set_map = &function_arguments_to_set ;
             if (ret) {
                 update_ptr_member = true ;
             } else {
@@ -669,6 +675,7 @@ public:
         }
         THROW_IF_FAIL (ret) ;
         THROW_IF_FAIL (row_it) ;
+        THROW_IF_FAIL (vars_to_set_map) ;
 
         Gtk::TreeModel::iterator result_row_it ;
         if (update_ptr_member) {
@@ -693,7 +700,7 @@ public:
                     UString qname = a_var_name + "->" + member_name ;
                     LOG_DD ("querying pointed variable member: "
                             << qname) ;
-                    local_vars_to_set[qname] =
+                    (*vars_to_set_map)[qname] =
                                 it->get_value (get_variable_columns ().variable);
                     debugger->print_variable_value (qname) ;
                 }
