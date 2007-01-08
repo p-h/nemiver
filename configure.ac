@@ -281,6 +281,13 @@ src/Makefile
     src/persp/dbgperspective/sqlscripts/Makefile
     src/persp/dbgperspective/sqlscripts/sqlite/Makefile
     src/persp/dbgperspective/schemas/Makefile
+data/Makefile
+    data/icons/Makefile
+        data/icons/16x16/Makefile
+        data/icons/24x24/Makefile
+        data/icons/32x32/Makefile
+        data/icons/64x64/Makefile
+        data/icons/scalable/Makefile
 glade/Makefile
 menus/Makefile
 tests/Makefile

@@ -23,9 +23,10 @@
  */
 
 #include <vector>
+#include <iostream>
 #include <glib/gi18n.h>
 #include <gtkmm/aboutdialog.h>
-//#include "nmv-env.h"
+#include <gtkmm/icontheme.h>
 #include "nmv-exception.h"
 #include "nmv-plugin.h"
 #include "nmv-ui-utils.h"
@@ -249,6 +250,17 @@ Workbench::on_about_menu_item_action ()
     // Translators: change this to your name, separate multiple names with \n
     dialog.set_translator_credits(_("translator-credits"));
 
+    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
+    if (theme->has_icon("nemiver")) {
+        Glib::RefPtr<Gdk::Pixbuf> icon = theme->load_icon("nemiver", 128,
+                Gtk::ICON_LOOKUP_USE_BUILTIN);
+        dialog.set_logo(icon);
+    }
+
+    vector<Glib::ustring> artists;
+    artists.push_back("Steven Brown <swjb@interchange.ubc.ca>");
+    dialog.set_artists(artists);
+
     dialog.run ();
 
     NEMIVER_CATCH
@@ -296,6 +308,16 @@ Workbench::do_init (Gtk::Main &a_main)
     THROW_IF_FAIL (dynmod_manager) ;
 
     m_priv->main = &a_main ;
+
+    // set the icon that will be used by all workbench windows that don't
+    // explicitly call set_icon() (must be set before the root window is
+    // constructed)
+    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
+    if (theme->has_icon("nemiver")) {
+        Glib::RefPtr<Gdk::Pixbuf> icon = theme->load_icon("nemiver", 16,
+                Gtk::ICON_LOOKUP_USE_BUILTIN);
+        m_priv->root_window->set_default_icon(icon);
+    }
 
     init_glade () ;
     init_window () ;

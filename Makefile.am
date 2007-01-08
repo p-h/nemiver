@@ -1,4 +1,4 @@
-SUBDIRS = src glade menus tests po
+SUBDIRS = src glade menus tests po data
 
 desktopdir = $(datadir)/applications
 desktop_in_files = nemiver.desktop.in

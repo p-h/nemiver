@@ -1,3 +1,11 @@
+2007-01-07  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* Makefile.am: add data subdir
+	* configure.ac: Add Makefiles for installing icons
+	* data/icons/*: added icons from Steven Brown
+	* src/workbench/nmv-workbench.cc: set the 16x16 icon as the default icon for
+	all nemiver windows and set a 128x128 icon as the logo in the About dialog
+
 2007-01-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* po/POTFILES.in: added a few new files that were missing
