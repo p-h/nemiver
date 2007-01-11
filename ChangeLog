@@ -1,3 +1,10 @@
+2007-01-11  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* data/nemiver.desktop.in: add a GenericName field, and add a bit more
+	description to the name so that people can just look at the name and know
+	that it's a debugger.  This means that the "Name" field must also now be
+	translated
+
 2007-01-09  Marko Anastasov   <marko@marko.anastasov.name>
 
 	* src/persp/dbgperspective/nmv-file-list.cc:
