@@ -1,3 +1,13 @@
+2007-01-09  Marko Anastasov   <marko@marko.anastasov.name>
+
+	* src/persp/dbgperspective/nmv-file-list.cc:
+	For quicker navigation, catch the following events:
+	return: expand row (directory); ctrl-return: expand recursively;
+	if a row has already been expanded, they will collapse it;
+	double-click: expand. Also added a popup menu.
+	This is implemented in the new FileListView class, which encapsulates
+	all treeview code, old and new. Discussed in #394469.
+
 Mon, 08 Jan 2007 23:02:50 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-local-vars-inspector.cc: fix
