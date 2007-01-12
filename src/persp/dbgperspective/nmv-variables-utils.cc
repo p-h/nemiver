@@ -309,13 +309,21 @@ set_a_variable_type_real (Gtk::TreeModel::iterator &a_var_it,
     int nb_lines = a_type.get_number_of_lines () ;
     UString type_caption = a_type ;
     if (nb_lines) {--nb_lines;}
+
+    UString::size_type truncation_index = 0 ;
+    static const UString::size_type MAX_TYPE_STRING_LENGTH = 15 ;
     if (nb_lines) {
-        UString::size_type i = a_type.find ('\n') ;
-        type_caption.erase (i) ;
+        truncation_index = a_type.find ('\n') ;
+    } else if (a_type.size () > MAX_TYPE_STRING_LENGTH) {
+        truncation_index = MAX_TYPE_STRING_LENGTH ;
+    }
+    if (truncation_index) {
+        type_caption.erase (truncation_index) ;
         type_caption += "..." ;
     }
+
     a_var_it->set_value (variables_utils::get_variable_columns ().type_caption,
-                     (Glib::ustring)type_caption) ;
+                         (Glib::ustring)type_caption) ;
     IDebugger::VariableSafePtr variable =
         (IDebugger::VariableSafePtr) a_var_it->get_value
                                         (get_variable_columns ().variable);

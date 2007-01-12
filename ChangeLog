@@ -1,3 +1,10 @@
+Fri, 12 Jan 2007 15:33:05 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-variables-utils.cc:
+	  set_a_variable_type_real():  don't let type captions be longer than
+	  MAX_TYPE_STRING_LENGTH, which means 15 characters as of today.
+	  This should fix #394485.
+
 Fri, 12 Jan 2007 14:38:23 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: added an NMV_DONT_LD_BIND_NOW env
