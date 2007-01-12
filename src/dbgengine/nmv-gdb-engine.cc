@@ -4795,7 +4795,13 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         //time so that some "step into" don't take for ever.
         //On GDB, it seems that stepping into a function that is
         //in a share lib takes stepping through GNU ld, so it can take time.
-        queue_command (Command ("set env LD_BIND_NOW 1")) ;
+        const char *nmv_dont_ld_bind_now = getenv ("NMV_DONT_LD_BIND_NOW") ;
+        if (!nmv_dont_ld_bind_now || !atoi (nmv_dont_ld_bind_now)) {
+            LOG_DD ("setting LD_BIND_NOW=1") ;
+            queue_command (Command ("set env LD_BIND_NOW 1")) ;
+        } else {
+            LOG_DD ("not setting LD_BIND_NOW environment variable ") ;
+        }
     } else {
         UString args ;
         UString::size_type len (a_argv.size ()) ;
@@ -4847,7 +4853,13 @@ GDBEngine::attach_to_target (unsigned int a_pid,
         //time so that some "step into" don't take for ever.
         //On GDB, it seems that stepping into a function that is
         //in a share lib takes stepping through GNU ld, so it can take time.
-        queue_command (Command ("set env LD_BIND_NOW 1")) ;
+        const char *nmv_dont_ld_bind_now = getenv ("NMV_DONT_LD_BIND_NOW") ;
+        if (!nmv_dont_ld_bind_now || !atoi (nmv_dont_ld_bind_now)) {
+            LOG_DD ("setting LD_BIND_NOW=1") ;
+            queue_command (Command ("set env LD_BIND_NOW environment variable to 1")) ;
+        } else {
+            LOG_DD ("not setting LD_BIND_NOW environment variable ") ;
+        }
     }
     if (a_pid == (unsigned int)m_priv->gdb_pid) {
         return false ;
