@@ -29,6 +29,7 @@
 #include "nmv-file-list.h"
 #include "nmv-exception.h"
 #include "nmv-ui-utils.h"
+#include "nmv-i-debugger.h"
 
 namespace nemiver {
 
@@ -71,24 +72,22 @@ protected:
             return path_component == map.first;
         }
     };
-    
+
     virtual void on_row_activated (const Gtk::TreeModel::Path& path,
                                    Gtk::TreeViewColumn* column);
     virtual void on_file_list_selection_changed ();
-    
     virtual bool on_button_press_event (GdkEventButton *ev);
     virtual bool on_key_press_event (GdkEventKey *ev);
-    
     virtual void on_menu_popup_expand_clicked ();
     virtual void on_menu_popup_expand_all_clicked ();
     virtual void on_menu_popup_collapse_clicked ();
 
     void expand_selected (bool recursive, bool collapse_if_expanded);
-    
+
     FileListColumns m_columns;
-    
+
     Glib::RefPtr<Gtk::TreeStore> m_tree_model;
-    
+
     Gtk::Menu m_menu_popup;
 }; // end class FileListView
 
@@ -349,13 +348,12 @@ public:
     Glib::RefPtr<Gtk::ActionGroup> file_list_action_group;
     IDebuggerSafePtr debugger;
 
-    Priv (IDebuggerSafePtr& a_debugger) :
-        debugger(a_debugger)
+    Priv (IDebuggerSafePtr &a_debugger) :
+        debugger (a_debugger)
     {
         build_tree_view () ;
         debugger->files_listed_signal ().connect(
             sigc::mem_fun(*(this->tree_view.get()), &FileListView::set_files));
-        debugger->list_files ();
     }
 
     void build_tree_view ()
@@ -366,7 +364,7 @@ public:
 
 };//end class FileList::Priv
 
-FileList::FileList (IDebuggerSafePtr& a_debugger)
+FileList::FileList (IDebuggerSafePtr &a_debugger)
 {
     m_priv.reset (new Priv (a_debugger));
 }
@@ -382,6 +380,14 @@ FileList::widget () const
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->tree_view) ;
     return *m_priv->tree_view ;
+}
+
+void
+FileList::update_content ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->debugger) ;
+    m_priv->debugger->list_files () ;
 }
 
 sigc::signal<void, const UString&>&

@@ -48,16 +48,19 @@ class OpenFileDialog::Priv {
     Gtk::FileChooserWidget file_chooser;
     FileList file_list;
     Gtk::Button *okbutton ;
+    IDebugger *debugger ; //a poor man weak ref. I don't want to ref this here.
 
 public:
-    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade, IDebuggerSafePtr&
-            a_debugger) :
+
+    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          IDebuggerSafePtr &a_debugger) :
         vbox_file_list (0),
         radio_button_file_list (0),
         radio_button_chooser (0),
         file_chooser(Gtk::FILE_CHOOSER_ACTION_OPEN),
         file_list(a_debugger),
-        okbutton (0)
+        okbutton (0),
+        debugger (a_debugger.get ())
     {
 
         file_chooser.set_select_multiple (true);
@@ -65,21 +68,24 @@ public:
             ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
         THROW_IF_FAIL (okbutton) ;
         vbox_file_list =
-            ui_utils::get_widget_from_glade<Gtk::VBox> (a_glade, "vbox_file_list") ;
+            ui_utils::get_widget_from_glade<Gtk::VBox> (a_glade,
+                                                        "vbox_file_list") ;
         THROW_IF_FAIL (vbox_file_list) ;
         radio_button_file_list =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton> (a_glade, "radiobutton_target") ;
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+                                                (a_glade, "radiobutton_target") ;
         THROW_IF_FAIL (radio_button_file_list) ;
         radio_button_file_list->signal_toggled ().connect (sigc::mem_fun
                     (*this, &Priv::on_radio_button_toggled));
         radio_button_chooser =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton> (a_glade, "radiobutton_other") ;
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+                                                (a_glade, "radiobutton_other") ;
         THROW_IF_FAIL (radio_button_chooser) ;
         radio_button_chooser->signal_toggled ().connect (sigc::mem_fun
                     (*this, &Priv::on_radio_button_toggled));
 
-        file_list.file_activated_signal ().connect (sigc::mem_fun (*this,
-                                                                    &Priv::on_file_activated_signal)) ;
+        file_list.file_activated_signal ().connect
+                (sigc::mem_fun (*this, &Priv::on_file_activated_signal)) ;
         file_list.files_selected_signal ().connect (sigc::mem_fun
                 (*this, &Priv::on_files_selected_signal)) ;
 
@@ -90,7 +96,7 @@ public:
         scrolled_window.set_shadow_type (Gtk::SHADOW_IN);
         scrolled_window.add(file_list.widget ());
 
-        on_radio_button_toggled ();
+        update_from_debugger_state () ;
     }
 
     void on_radio_button_toggled()
@@ -118,6 +124,29 @@ public:
             file_chooser.show_all ();
         }
         NEMIVER_CATCH
+    }
+
+    void update_from_debugger_state ()
+    {
+        if (debugger) {
+            LOG_DD ("debugger state: " << (int) debugger->get_state ()) ;
+        } else {
+            LOG_DD ("have null debugger") ;
+        }
+
+        if (debugger && debugger->get_state () == IDebugger::READY) {
+            LOG_DD ("debugger ready detected") ;
+            file_list.update_content () ;
+            radio_button_file_list->set_active (true) ;
+            radio_button_file_list->set_sensitive (true) ;
+        } else {
+            LOG_DD ("debugger not ready detected") ;
+            radio_button_chooser->set_active (true) ;
+            radio_button_file_list->set_sensitive (false) ;
+        }
+        //it seems that the radiobutton widgets doesn't
+        //emit this signal when you toggle them programatically ???
+        on_radio_button_toggled ();
     }
 
     bool validate_source_files(const list<UString> &files)

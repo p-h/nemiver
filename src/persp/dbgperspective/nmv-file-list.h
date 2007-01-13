@@ -32,7 +32,15 @@
 #include "nmv-safe-ptr-utils.h"
 
 namespace nemiver {
+using nemiver::common::SafePtr ;
+using nemiver::common::UString ;
 
+/// display the list of source files that got compiled
+/// to produce the executable being currently debugged.
+/// When the widget is instanciated, it doesn't show anything.
+/// The client code has to invoke FileList::update_content() to
+/// have the FileList query the IDebugger interface for the source
+///file list.
 class NEMIVER_API FileList : public nemiver::common::Object {
     //non copyable
     FileList (const FileList&) ;
@@ -43,13 +51,13 @@ class NEMIVER_API FileList : public nemiver::common::Object {
 
 public:
 
-    FileList (IDebuggerSafePtr& a_debugger) ;
+    FileList (IDebuggerSafePtr &a_debugger) ;
     virtual ~FileList () ;
     Gtk::Widget& widget () const ;
-    sigc::signal<void,
-                 const UString&>& file_activated_signal () const ;
+    sigc::signal<void, const UString&>& file_activated_signal () const ;
     sigc::signal<void>& files_selected_signal () const ;
     void get_filenames (list<UString> &a_filenames) const;
+    void update_content () ;
 
 };//end FileList
 

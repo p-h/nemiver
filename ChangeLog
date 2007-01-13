@@ -1,3 +1,14 @@
+Sat, 13 Jan 2007 10:43:36 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-open-file-dialog.cc: query
+	  IDebugger for file list only if the said IDebugger is present and
+	  in the IDebugger::READY state. Display the FileChooser otherwise.
+	* src/persp/dbgperspective/nmv-file-list.cc,h: Don't query IDebugger
+	  for file list at instanciation time. Rather expose a
+	  FileList::update_content() to allow client code to query IDebugger
+	  on demand.
+	  This entry should fix bug #394128.
+
 Fri, 12 Jan 2007 15:33:05 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-variables-utils.cc:
