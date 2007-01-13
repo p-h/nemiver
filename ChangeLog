@@ -1,3 +1,10 @@
+Sat, 13 Jan 2007 16:53:20 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: when a new file is
+	  loaded, reset the visual breakpoints that migth have been
+	  set on that file. This is for the case when the file got opened in
+	  the past, but got closed. This should fix bug #384427.
+
 Sat, 13 Jan 2007 10:43:36 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-open-file-dialog.cc: query

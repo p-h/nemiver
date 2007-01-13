@@ -124,7 +124,7 @@ public:
     virtual bool delete_breakpoint (const UString &a_file_uri,
                                     int a_linenum) = 0;
 
-    virtual void append_visual_breakpoint (const UString &a_file_name,
+    virtual bool append_visual_breakpoint (const UString &a_file_name,
                                            int a_linenum) = 0;
 
     virtual void delete_visual_breakpoint (const UString &a_file_name,

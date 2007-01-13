@@ -268,6 +268,9 @@ private:
     UString get_current_file_path () ;
     SourceEditor* get_source_editor_from_path (const UString &a_path,
                                                bool a_basename_only=false) ;
+    SourceEditor* get_source_editor_from_path (const UString &a_path,
+                                               UString &a_actual_file_path,
+                                               bool a_basename_only=false) ;
     IWorkbench& workbench () const ;
     void bring_source_as_current (const UString &a_path) ;
     int get_n_pages () ;
@@ -307,6 +310,10 @@ public:
 
     bool open_file (const UString &a_path,
                     int current_line=-1) ;
+
+    bool open_file (const UString &a_path,
+                    int current_line,
+                    bool a_reload_visual_breakpoint) ;
 
     void close_current_file () ;
 
@@ -355,7 +362,12 @@ public:
     void set_breakpoint () ;
     void set_breakpoint (const UString &a_file,
                          int a_line) ;
-    void append_breakpoints (const map<int, IDebugger::BreakPoint> &a_breaks) ;
+
+    void append_breakpoint (int a_bp_num,
+                            const IDebugger::BreakPoint &a_breakpoint) ;
+    void append_breakpoints
+                    (const map<int, IDebugger::BreakPoint> &a_breaks) ;
+
     bool get_breakpoint_number (const UString &a_file_name,
                                 int a_linenum,
                                 int &a_break_num) ;
@@ -370,7 +382,10 @@ public:
     void inspect_variable () ;
     void inspect_variable (const UString &a_variable_name) ;
     void toggle_breakpoint () ;
-    void append_visual_breakpoint (const UString &a_file_name,
+    bool append_visual_breakpoint (const UString &a_file_name,
+                                   int a_linenum,
+                                   UString &a_actual_file_name) ;
+    bool append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum) ;
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum) ;
     void delete_visual_breakpoint (int a_breaknum) ;
@@ -556,6 +571,7 @@ struct DBGPerspective::Priv {
 
     int current_page_num ;
     IDebuggerSafePtr debugger ;
+    IDebugger::Frame current_frame ;
     map<int, IDebugger::BreakPoint> breakpoints ;
     ISessMgrSafePtr session_manager ;
     ISessMgr::Session session ;
@@ -1350,7 +1366,7 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
 
 void
 DBGPerspective::on_debugger_breakpoints_set_signal
-                                (const map<int, IDebugger::BreakPoint> &a_breaks)
+                            (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
@@ -1390,13 +1406,15 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
         }
     }
     if (a_has_frame && file_path != "") {
+        m_priv->current_frame = a_frame ;
+        m_priv->current_frame.file_name (file_path) ;
         set_where (file_path, a_frame.line ()) ;
-    } else if (a_has_frame && 
+    } else if (a_has_frame &&
                a_frame.file_full_name () == ""
                && a_frame.file_name () == "") {
         UString message;
         message.printf(_("File path info is missing for function '%s'"),
-                             a_frame.function_name ().c_str ()) ;
+                       a_frame.function_name ().c_str ()) ;
         display_warning (message);
     }
 
@@ -2333,6 +2351,17 @@ SourceEditor*
 DBGPerspective::get_source_editor_from_path (const UString &a_path,
                                              bool a_basename_only)
 {
+    UString actual_file_path ;
+    return get_source_editor_from_path (a_path,
+                                        actual_file_path,
+                                        a_basename_only) ;
+}
+
+SourceEditor*
+DBGPerspective::get_source_editor_from_path (const UString &a_path,
+                                             UString &a_actual_file_path,
+                                             bool a_basename_only)
+{
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
     LOG_DD ("a_path: " << a_path) ;
@@ -2347,7 +2376,8 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
         std::string basename =
             Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
         THROW_IF_FAIL (basename != "") ;
-        iter = m_priv->basename_2_pagenum_map.find (Glib::locale_to_utf8 (basename)) ;
+        iter = m_priv->basename_2_pagenum_map.find
+                                            (Glib::locale_to_utf8 (basename)) ;
         nil = m_priv->basename_2_pagenum_map.end () ;
         result = m_priv->pagenum_2_source_editor_map[iter->second] ;
     } else {
@@ -2359,6 +2389,7 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
         return 0 ;
     }
     THROW_IF_FAIL (result) ;
+    result->get_path (a_actual_file_path) ;
     return result ;
 }
 
@@ -2808,10 +2839,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     UString today ;
     dateutils::get_current_datetime (today) ;
     session_name += "-" + today ;
-
-    a_session.properties ().clear () ;
-    a_session.properties ()[SESSION_NAME] = session_name ;
-    a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path ;
+a_session.properties ().clear () ; a_session.properties ()[SESSION_NAME] = session_name ; a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path ;
     a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
     a_session.env_variables () = m_priv->env_variables;
@@ -2958,7 +2986,7 @@ DBGPerspective::open_file ()
     dialog.get_filenames (paths) ;
     list<UString>::const_iterator iter ;
     for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
-        open_file (*iter) ;
+        open_file (*iter, -1, true) ;
     }
     bring_source_as_current (*(paths.begin()));
 }
@@ -3059,6 +3087,30 @@ DBGPerspective::open_file (const UString &a_path,
 
     NEMIVER_CATCH_AND_RETURN (false);
     return true ;
+}
+
+bool
+DBGPerspective::open_file (const UString &a_path,
+                           int current_line,
+                           bool a_reload_visual_breakpoint)
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    bool res = open_file (a_path, current_line) ;
+    if (res && a_reload_visual_breakpoint) {
+        map<int, IDebugger::BreakPoint>::const_iterator it ;
+        for (it = m_priv->breakpoints.begin () ;
+             it != m_priv->breakpoints.end ();
+             ++it) {
+            if (a_path == it->second.file_full_name ())
+            append_visual_breakpoint (a_path, it->second.line () - 1) ;
+        }
+        if (m_priv->current_frame.file_name () == a_path) {
+            set_where (m_priv->current_frame.file_name (),
+                       m_priv->current_frame.line ()) ;
+        }
+    }
+    return res ;
 }
 
 void
@@ -3525,40 +3577,47 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
 }
 
 void
+DBGPerspective::append_breakpoint (int a_bp_num,
+                                   const IDebugger::BreakPoint &a_breakpoint)
+{
+    UString file_path ;
+    file_path = a_breakpoint.file_full_name () ;
+    //if the file full path info is not present,
+    //1/ lookup in the files opened in the perspective already.
+    //2/ lookup in the list of source directories
+    if (file_path == "") {
+        UString file_name = a_breakpoint.file_name () ;
+        LOG_DD ("no full path info present for file '"
+                + file_name + "'") ;
+        if (file_name == "") {
+            UString message;
+            message.printf (
+                    _("There is no file name info for symbol@addr: %s@%s"),
+                    a_breakpoint.function ().c_str (),
+                    a_breakpoint.address ().c_str ()) ;
+            ui_utils::display_error (message);
+        }
+        else
+        {
+            file_path = file_name ;
+        }
+    }
+    LOG_DD ("record breakpoint " << file_path << ":"
+            << a_breakpoint.line () - 1) ;
+    m_priv->breakpoints[a_bp_num] = a_breakpoint ;
+    m_priv->breakpoints[a_bp_num].file_full_name (file_path) ;
+    append_visual_breakpoint (file_path, a_breakpoint.line () - 1) ;
+}
+
+void
 DBGPerspective::append_breakpoints
                         (const map<int, IDebugger::BreakPoint> &a_breaks)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     map<int, IDebugger::BreakPoint>::const_iterator iter ;
-    UString file_path ;
     for (iter = a_breaks.begin () ; iter != a_breaks.end () ; ++iter) {
-         file_path = iter->second.file_full_name () ;
-        //if the file full path info is not present,
-        //1/ lookup in the files opened in the perspective already.
-        //2/ lookup in the list of source directories
-        if (file_path == "") {
-            UString file_name = iter->second.file_name () ;
-            LOG_DD ("no full path info present for file '"
-                    + file_name + "'") ;
-            if (file_name == "") {
-                UString message;
-                message.printf (
-                    _("There is no file name info for symbol@addr: %s@%s"),
-                     iter->second.function ().c_str (),
-                     iter->second.address ().c_str ()) ;
-                ui_utils::display_error (message);
-            }
-            else
-            {
-                file_path = file_name ;
-            }
-        }
-        LOG_DD ("record breakpoint " << file_path << ":"
-                << iter->second.line () - 1) ;
-        m_priv->breakpoints[iter->first] = iter->second ;
-        m_priv->breakpoints[iter->first].file_full_name (file_path) ;
-        append_visual_breakpoint (file_path, iter->second.line () - 1) ;
+        append_breakpoint (iter->first, iter->second) ;
     }
 }
 
@@ -3628,9 +3687,18 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
     return true ;
 }
 
-void
+bool
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum)
+{
+    UString actual_file_path ;
+    return append_visual_breakpoint (a_file_name, a_linenum, actual_file_path) ;
+}
+
+bool
+DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
+                                          int a_linenum,
+                                          UString &a_actual_file_name)
 {
     THROW_IF_FAIL (!a_file_name.empty());
     THROW_IF_FAIL(m_priv);
@@ -3641,21 +3709,26 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
 
     if (a_linenum < 0) {a_linenum = 0;}
 
-    SourceEditor *source_editor = get_source_editor_from_path (a_file_name) ;
+    UString actual_file_name ;
+    SourceEditor *source_editor = get_source_editor_from_path (a_file_name,
+                                                               actual_file_name) ;
     // first assume that it's a full pathname and just try to open it
     if (!source_editor) {
         if (Glib::file_test (a_file_name, Glib::FILE_TEST_IS_REGULAR)) {
             open_file (a_file_name) ;
-            source_editor = get_source_editor_from_path (a_file_name) ;
+            source_editor = get_source_editor_from_path (a_file_name,
+                                                         actual_file_name) ;
         }
     }
-    // if that didn't work, look for an open source editor that matches the base
+    // if that didn't work, look for an opened source editor that matches the base
     // name
     if (!source_editor) {
-        source_editor = get_source_editor_from_path (a_file_name, true) ;
+        source_editor = get_source_editor_from_path (a_file_name,
+                                                     actual_file_name,
+                                                     true) ;
     }
     // if that still didn't work, look for a file of that name in the search
-    // directories and then as a last resort ask teh user to locate it manually
+    // directories and then as a last resort ask the user to locate it manually
     if (!source_editor) {
         UString file_path;
         if (!find_file_in_source_dirs (a_file_name, file_path)) {
@@ -3668,25 +3741,29 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
             int result = dialog.run () ;
             if (result == Gtk::RESPONSE_OK) {
                 file_path = dialog.file_location () ;
-                THROW_IF_FAIL(Glib::file_test(file_path, Glib::FILE_TEST_IS_REGULAR));
-                THROW_IF_FAIL(Glib::path_get_basename(a_file_name) ==
+                THROW_IF_FAIL (Glib::file_test (file_path,
+                                                Glib::FILE_TEST_IS_REGULAR));
+                THROW_IF_FAIL (Glib::path_get_basename(a_file_name) ==
                         Glib::path_get_basename(file_path));
-                UString parent_dir = Glib::path_get_dirname(dialog.file_location ());
-                THROW_IF_FAIL(Glib::file_test(parent_dir, Glib::FILE_TEST_IS_DIR));
+                UString parent_dir = Glib::path_get_dirname
+                                                    (dialog.file_location ());
+                THROW_IF_FAIL (Glib::file_test (parent_dir,
+                                                Glib::FILE_TEST_IS_DIR));
 
                 // Also add the parent directory to the list of paths to search
                 // for this session so you don't have to keep selecting files if
                 // they're all in the same directory.
                 // We can assume that the parent directory is not already in the
                 // list of source dirs (or else it would have been found and the
-                // user wouldn't have had to locate it manually) so just tack it
+                // user wouldn't have had to locate it manually) so just stack it
                 // on the end of the list
                 m_priv->search_paths.push_back (parent_dir);
             }
         }
 
         open_file (file_path) ;
-        source_editor = get_source_editor_from_path (file_path) ;
+        source_editor = get_source_editor_from_path (file_path,
+                                                     actual_file_name) ;
     }
 
     // finally, if none of these things worked, display an error
@@ -3695,13 +3772,15 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                 << a_file_name
                 << "'") ;
         UString message;
-        message.printf (_("Could not find file: %s\n"),
-                a_file_name.c_str ());
+        message.printf (_("Could not find file: %s\n"), a_file_name.c_str ());
         ui_utils::display_error (message);
+        return false ;
     } else {
         source_editor->set_visual_breakpoint_at_line (a_linenum) ;
     }
 
+    a_actual_file_name = actual_file_name ;
+    return true ;
 }
 
 void

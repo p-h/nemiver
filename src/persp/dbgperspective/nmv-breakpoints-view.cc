@@ -100,19 +100,23 @@ public:
         tree_view->append_column (_("Line"), get_bp_columns ().line) ;
     }
 
-    void set_breakpoints (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
+    void set_breakpoints
+        (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
     {
         THROW_IF_FAIL (list_store) ;
         list_store->clear();
         std::map<int, IDebugger::BreakPoint>::const_iterator break_iter;
-        for (break_iter = a_breakpoints.begin (); break_iter != a_breakpoints.end ();
-                ++break_iter)
+        for (break_iter = a_breakpoints.begin ();
+             break_iter != a_breakpoints.end ();
+             ++break_iter)
         {
             Gtk::TreeModel::iterator tree_iter = list_store->append();
             (*tree_iter)[get_bp_columns ().id] = break_iter->first;
             (*tree_iter)[get_bp_columns ().breakpoint] = break_iter->second;
-            (*tree_iter)[get_bp_columns ().enabled] = break_iter->second.enabled () ;
-            (*tree_iter)[get_bp_columns ().filename] = break_iter->second.file_name () ;
+            (*tree_iter)[get_bp_columns ().enabled] =
+                                                break_iter->second.enabled () ;
+            (*tree_iter)[get_bp_columns ().filename] =
+                                                break_iter->second.file_name () ;
             (*tree_iter)[get_bp_columns ().line] = break_iter->second.line () ;
         }
     }
@@ -125,7 +129,8 @@ public:
         THROW_IF_FAIL (perspective.build_absolute_resource_path
                 (Glib::locale_to_utf8 (relative_path), absolute_path)) ;
 
-        workbench.get_ui_manager ()->add_ui_from_file (Glib::locale_to_utf8 (absolute_path)) ;
+        workbench.get_ui_manager ()->add_ui_from_file
+                                        (Glib::locale_to_utf8 (absolute_path)) ;
 
         NEMIVER_CATCH
         return workbench.get_ui_manager ()->get_widget (a_widget_name);
@@ -264,7 +269,7 @@ BreakpointsView::widget () const
 
 void
 BreakpointsView::set_breakpoints
-                        (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
+                (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv->set_breakpoints (a_breakpoints) ;
