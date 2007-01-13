@@ -1,3 +1,63 @@
+0.3.0 Release
+=============
+
+new features
+============
+
+    [Dodji Seketeli]
+
+    * added a "detach from target" functionality
+    * added a basic "find text in source file" functionality
+
+    [Jonathon Jongsma]
+
+    * added a "list source files that make up the current executable"
+      functionality. Integrate it into the "open source file" dialog
+
+    [Steven Brown]
+
+    * new set of Nemiver icons
+
+bug fixes/improvements
+======================
+
+    [Dodji Seketeli]
+
+    * better spinner model
+    * better debugger engine state management
+    * better handling of targets not compiled with -g
+    * properly clear the status notebook when target is no more being debugged
+    * massive gdb controlling interface performance speedup (> 7X speedup)
+    * show hidden directories in the "Run program" dialog
+    * better detection of variables in the "hover on variable" workflow
+    * set the LD_BIND_NOW environment variable to prevent slow stepping into
+      functions that are in DSOs.
+    * make ctrl-c (SIGINT) triggers a graceful shutdown
+    * better pointer dereferencing behaviour
+    * #386473 deleting a breakpoint greys out all actions
+    * #381703 Close all open files when switching to a new debug session
+    * #386594 update dereferenced pointers during stepping
+    * #394485 Variable line-height too high for some variables
+    * #384427 breakpoints are not shown on newly open files
+
+    [Jonathon Jongsma]
+
+    * HIG fixes
+    * update translation credits in the About dialog
+    * make the window title show information about the target being debugged
+    * mark more strings as being translatable
+    * better management of the nemiver.desktop file
+    * #386806 Use placeholder strings (%s) for filenames in messages
+
+    [Bob Mauchin]
+
+    * #389177 String misleading in nmv-call-stack.cc
+    * #389175 Typos in nmv-dbg-perspective.cc
+
+    [Marko Anastasov]
+
+    * 394469 – Quicker access to source files
+
 0.2.0 Release
 ==============
 
