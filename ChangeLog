@@ -1,3 +1,10 @@
+Sun, 14 Jan 2007 00:03:10 +0100 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  DBGPerspective::bring_source_as_current(): restaure breakpoints
+	  on opened files (when applicable) even when the file hasn't
+	  been opened via "File -> open source file"
+
 Sat, 13 Jan 2007 22:07:15 +0100 Dodji Seketeli
 
 	*  NEWS: update this for the coming 0.3 release

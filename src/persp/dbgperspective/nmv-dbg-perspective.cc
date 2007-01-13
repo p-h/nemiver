@@ -2410,7 +2410,7 @@ DBGPerspective::bring_source_as_current (const UString &a_path)
 
     SourceEditor *source_editor = get_source_editor_from_path (a_path) ;
     if (!source_editor) {
-        open_file (a_path) ;
+        open_file (a_path, -1, true) ;
     }
     if (!source_editor) {
         source_editor = get_source_editor_from_path (a_path, true) ;
