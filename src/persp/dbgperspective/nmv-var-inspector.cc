@@ -318,8 +318,10 @@ class VarInspector::Priv : public sigc::trackable {
                                                      row_it);
             if (!ret) {
                 LOG_ERROR ("could not find variable '" << a_var_name << "'") ;
-                ui_utils::display_error (_("Could not find variable '")
-                                         + a_var_name + "'") ;
+                UString message ;
+                message.printf (_("Could not find variable '%s'"),
+                                a_var_name.c_str ()) ;
+                ui_utils::display_error (message) ;
                 return ;
             }
             THROW_IF_FAIL (ret) ;
