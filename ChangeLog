@@ -1,3 +1,9 @@
+Tue, 16 Jan 2007 21:53:55 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: added a GDBEngine::set_state()
+	  method and use it to set the debugger state instead of emiting the
+	  signal "by hand".
+
 Mon, 15 Jan 2007 12:24:01 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-var-inspector.cc: fixed a string format

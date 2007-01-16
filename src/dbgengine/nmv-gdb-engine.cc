@@ -1086,6 +1086,7 @@ public:
     map<UString, UString>& properties () ;
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
+    void set_state (IDebugger::State a_state) ;
     bool stop_target ()  ;
     void exit_engine () ;
     void execute_command (const Command &a_command) ;
@@ -1466,6 +1467,13 @@ struct GDBEngine::Priv {
         free_resources () ;
     }
 
+    void set_state (IDebugger::State a_state)
+    {
+        if (state != a_state) {
+            state_changed_signal.emit (a_state) ;
+        }
+    }
+
     bool is_gdb_running ()
     {
         if (gdb_pid) {return true ;}
@@ -1648,7 +1656,7 @@ struct GDBEngine::Priv {
             //usually, when we send a command to the debugger,
             //it becomes busy (in a running state), untill it gets
             //back to us saying the converse.
-            state_changed_signal.emit (IDebugger::RUNNING) ;
+            set_state (IDebugger::RUNNING) ;
             return true ;
         }
         return false ;
@@ -4137,7 +4145,7 @@ struct OnDetachHandler : OutputHandler {
         }
         THROW_IF_FAIL (m_engine) ;
         m_engine->detached_from_target_signal ().emit () ;
-        m_engine->state_changed_signal ().emit (IDebugger::NOT_STARTED) ;
+        m_engine->set_state (IDebugger::NOT_STARTED) ;
     }
 };//end OnDetachHandler
 
@@ -4204,7 +4212,7 @@ struct OnBreakPointHandler: OutputHandler {
                     (iter->second, iter->first) ;
                     breaks.erase (iter) ;
                 }
-                m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+                m_engine->set_state (IDebugger::READY) ;
             } else {
                 LOG_ERROR ("Got deleted breakpoint number '"
                            << tmp
@@ -4214,7 +4222,7 @@ struct OnBreakPointHandler: OutputHandler {
             LOG_DD ("firing IDebugger::breakpoint_set_signal()") ;
             m_engine->breakpoints_set_signal ().emit
                             (a_in.output ().result_record ().breakpoints ()) ;
-            m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+            m_engine->set_state (IDebugger::READY) ;
         } else {
             LOG_DD ("finally, no breakpoint was detected as set/deleted") ;
         }
@@ -4270,10 +4278,10 @@ struct OnStoppedHandler: OutputHandler {
         if (reason == "exited-signalled"
             || reason == "exited-normally"
             || reason == "exited") {
-            m_engine->state_changed_signal ().emit (IDebugger::PROGRAM_EXITED) ;
+            m_engine->set_state (IDebugger::PROGRAM_EXITED) ;
             m_engine->program_finished_signal ().emit () ;
         } else {
-            m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+            m_engine->set_state (IDebugger::READY) ;
         }
     }
 };//end struct OnStoppedHandler
@@ -4303,7 +4311,7 @@ struct OnFileListHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->files_listed_signal ().emit
             (a_in.output ().result_record ().file_list ()) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//end OnFileListHandler
 
@@ -4440,7 +4448,7 @@ struct OnFramesListedHandler : OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         m_engine->frames_listed_signal ().emit
             (a_in.output ().result_record ().call_stack ()) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnFramesListedHandler
 
@@ -4470,7 +4478,7 @@ struct OnFramesParamsListedHandler : OutputHandler {
 
         m_engine->frames_params_listed_signal ().emit
             (a_in.output ().result_record ().frames_parameters ()) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnFramesParamsListedHandler
 
@@ -4507,7 +4515,7 @@ struct OnInfoProcHandler : OutputHandler {
         }
         THROW_IF_FAIL (pid) ;
         m_engine->got_target_info_signal ().emit (pid, exe_path) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnInfoProcHandler
 
@@ -4538,7 +4546,7 @@ struct OnLocalVariablesListedHandler : OutputHandler {
 
         m_engine->local_variables_listed_signal ().emit
             (a_in.output ().result_record ().local_variables ()) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnLocalVariablesListedHandler
 
@@ -4594,7 +4602,7 @@ struct OnVariableValueHandler : OutputHandler {
         } else {
             THROW ("unknown command tag: " + a_in.command ().tag0 ()) ;
         }
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnVariableValueHandler
 
@@ -4675,7 +4683,7 @@ struct OnVariableTypeHandler : OutputHandler {
         if (type != "") {
             m_engine->variable_type_signal ().emit (var_name, type) ;
         }
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct VariableTypeHandler
 
@@ -4714,7 +4722,7 @@ struct OnSignalReceivedHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->signal_received_signal ().emit (oo_record.signal_type (),
                                                   oo_record.signal_meaning ()) ;
-        m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnSignalReceivedHandler
 
@@ -4747,7 +4755,7 @@ struct OnErrorHandler : OutputHandler {
 
         if (m_engine->get_state () != IDebugger::PROGRAM_EXITED
             || m_engine->get_state () != IDebugger::NOT_STARTED) {
-            m_engine->state_changed_signal ().emit (IDebugger::READY) ;
+            m_engine->set_state (IDebugger::READY) ;
         }
     }
 };//struct OnErrorHandler
@@ -5218,6 +5226,13 @@ GDBEngine::run_loop_iterations (int a_nb_iters)
     m_priv->run_loop_iterations_real (a_nb_iters) ;
 }
 
+void
+GDBEngine::set_state (IDebugger::State a_state)
+{
+    THROW_IF_FAIL (m_priv) ;
+    m_priv->set_state (a_state) ;
+}
+
 
 void
 GDBEngine::execute_command (const Command &a_command)
@@ -5308,7 +5323,7 @@ GDBEngine::exit_engine ()
 
     //send the lethal command and run the event loop to flush everything.
     m_priv->issue_command (Command ("quit"), true) ;
-    state_changed_signal ().emit (IDebugger::NOT_STARTED) ;
+    set_state (IDebugger::NOT_STARTED) ;
 }
 
 void
