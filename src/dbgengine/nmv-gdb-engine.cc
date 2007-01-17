@@ -1234,7 +1234,6 @@ struct GDBEngine::Priv {
     Glib::RefPtr<Glib::IOChannel> master_pty_channel;
     UString gdb_stdout_buffer ;
     UString gdb_stderr_buffer;
-    list<Command> command_queue ;
     list<Command> queued_commands ;
     list<Command> started_commands ;
     map<int, IDebugger::BreakPoint> cached_breakpoints;
@@ -1469,9 +1468,34 @@ struct GDBEngine::Priv {
 
     void set_state (IDebugger::State a_state)
     {
-        if (state != a_state) {
-            state_changed_signal.emit (a_state) ;
+        //okay, changing state "too much"
+        //can cause serious performance problems
+        //to client code because some clients
+        //have to update their user interface at
+        //each state change.
+        //So we try to minimize the number of useless
+        //signal emission here.
+
+        //If the command queue is _NOT_ empty
+        //and we get a request to set the state
+        //to IDebugger::READY, it is very likely
+        //that the state quickly switches to IDebugger::RUNNING
+        //right after. Yeah, the next command in the queue will somehow
+        //have to be issued to the underlying debugger, leading to
+        //the state being switched to IDebugger::RUNNING
+        if (a_state == IDebugger::READY &&
+            !queued_commands.empty ()) {
+            return ;
         }
+
+        //don't emit any signal if a_state equals the
+        //current state.
+        if (state == a_state) {
+            return;
+        }
+
+        //if we reach this line, just emit the signal.
+        state_changed_signal.emit (a_state) ;
     }
 
     bool is_gdb_running ()

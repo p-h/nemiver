@@ -1,3 +1,10 @@
+Wed, 17 Jan 2007 10:18:49 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: GDBEngine::Priv::set_state(): do basic
+	  state changement control here. It helps a bit in reducing the number
+	  of IDebugger::state_changed_signal() emitted. I need to profile this to
+	  see if the gain is significant.
+
 2007-01-16  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-call-stack.cc: Display the frame number in
