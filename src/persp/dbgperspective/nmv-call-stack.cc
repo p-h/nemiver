@@ -373,6 +373,7 @@ struct CallStack::Priv {
         Gtk::TreeView *tree_view = new Gtk::TreeView (store) ;
         THROW_IF_FAIL (tree_view) ;
         widget.reset (tree_view) ;
+        tree_view->append_column (_("Frame"), columns ().frame_index) ;
         tree_view->append_column (_("Line"), columns ().location) ;
         tree_view->append_column (_("Function"), columns ().function_name) ;
         tree_view->append_column (_("Arguments"), columns ().function_args) ;
