@@ -3026,6 +3026,7 @@ DBGPerspective::open_file (const UString &a_path,
 
     gint buf_size = 10 * 1024 ;
     SafePtr<gchar> buf (new gchar [buf_size + 1]) ;
+    memset (buf.get (), 0, buf_size + 1) ;
 
     for (;;) {
         file.read (buf.get (), buf_size) ;

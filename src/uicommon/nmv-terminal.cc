@@ -59,8 +59,8 @@ struct Terminal::Priv {
         vte = VTE_TERMINAL (w) ;
         THROW_IF_FAIL (vte) ;
 
-	// Mandatory for vte 0.14	
-	vte_terminal_set_font_from_string (vte, "monospace");
+        // Mandatory for vte 0.14	
+        vte_terminal_set_font_from_string (vte, "monospace");
 
         vte_terminal_set_scroll_on_output (vte, TRUE) ;
         vte_terminal_set_scrollback_lines (vte, 1000) ;
@@ -68,9 +68,11 @@ struct Terminal::Priv {
 
         widget = Glib::wrap (w) ;
         THROW_IF_FAIL (widget) ;
+        widget->set_manage () ;
 
         adjustment = Glib::wrap (vte_terminal_get_adjustment (vte)) ;
         THROW_IF_FAIL (adjustment) ;
+        adjustment->set_manage () ;
 
         widget->reference () ;
         THROW_IF_FAIL (init_pty ()) ;

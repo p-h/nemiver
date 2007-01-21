@@ -1239,6 +1239,7 @@ struct GDBEngine::Priv {
     map<int, IDebugger::BreakPoint> cached_breakpoints;
     Sequence command_sequence ;
     enum InBufferStatus {
+        DEFAULT,
         FILLING,
         FILLED
     };
@@ -1424,7 +1425,8 @@ struct GDBEngine::Priv {
         cwd ("."), gdb_pid (0), target_pid (0),
         gdb_stdout_fd (0), gdb_stderr_fd (0),
         master_pty_fd (0),
-        error_buffer_status (FILLED),
+        gdb_stdout_buffer_status (DEFAULT),
+        error_buffer_status (DEFAULT),
         state (IDebugger::NOT_STARTED)
     {
         gdb_stdout_signal.connect (sigc::mem_fun
