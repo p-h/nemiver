@@ -1,6 +1,6 @@
 [encoding: UTF-8]
 glade/workbench.glade
-nemiver.desktop.in
+data/nemiver.desktop.in
 src/main.cc
 src/persp/dbgperspective/glade/bodycontainer.glade
 src/persp/dbgperspective/glade/findtextdialog.glade

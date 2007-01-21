@@ -1,7 +1,7 @@
 0.3.0 Release
 =============
 
-new features
+New features
 ============
 
     [Dodji Seketeli]
@@ -18,7 +18,7 @@ new features
 
     * new set of Nemiver icons
 
-bug fixes/improvements
+Bug fixes/improvements
 ======================
 
     [Dodji Seketeli]
@@ -57,6 +57,14 @@ bug fixes/improvements
     [Marko Anastasov]
 
     * 394469 – Quicker access to source files
+
+Translations
+=============
+    * [nl] Reinout Van Shouwen
+    * [de] Carsten Reith
+    * [es] Juan
+    * [fr] Dodji Seketeli, Bob Mauchin
+
 
 0.2.0 Release
 ==============
