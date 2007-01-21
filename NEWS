@@ -48,6 +48,7 @@ Bug fixes/improvements
     * mark more strings as being translatable
     * better management of the nemiver.desktop file
     * #386806 Use placeholder strings (%s) for filenames in messages
+    * #396773 call stack widget does not show the frame number
 
     [Bob Mauchin]
 

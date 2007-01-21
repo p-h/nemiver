@@ -22,7 +22,7 @@ $(INTLTOOL_FILES)
 
 RELEASE_UPLOAD_HOST = master.gnome.org
 RELEASE_UPLOAD_BASE = /home/users/$(USER)
-RELEASE_URL_BASE = ftp://ftp.gnome.org/pub/GNOME/sources/nemiver/
+RELEASE_URL_BASE = http://ftp.gnome.org/pub/GNOME/sources/nemiver/
 SVN_ROOT = svn+ssh://svn.gna.org/svn/nemiver
 RELEASE_ANNOUNCE_LIST = nemiver-list@gna.org (cc gnome-announce-list@gnome.org)
 tar_gz_file = $(PACKAGE)-$(VERSION).tar.gz
