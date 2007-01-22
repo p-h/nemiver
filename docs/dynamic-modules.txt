@@ -1,0 +1,18 @@
+This document describes the dynamic module framework used throughout nemiver
+to support modularity and extensibility.
+
+Rationale
+==========
+
+We needed a way to separate programming interfaces from their implementation, so that
+a given programming interface could have several different implementations.
+
+Clients of a given interface  must me able to load a particular implementation
+of that interfaces at runtime, without the need to recompile or statically re-linking the involved binaries.
+
+
+The Dynamic Module type
+=======================
+
+The nemiver common framework uses the concept of a "Dynamic Module", also known as "DynMod".
+A dynmod if a dynamic shared object (or a dynamically linked library if you prefer)

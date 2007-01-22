@@ -1,4 +1,4 @@
-SUBDIRS = src glade menus tests po data
+SUBDIRS = src glade menus tests po data docs
 
 INTLTOOL_FILES= intltool-extract.in \
 				intltool-merge.in \
@@ -10,6 +10,9 @@ INSTALL \
 COPYING \
 COPYRIGHT \
 $(INTLTOOL_FILES)
+
+doc:
+	$(MAKE) -C docs doc
 
 ###############################
 # RELEASE TARGETS

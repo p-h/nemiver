@@ -258,6 +258,8 @@ AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
 AC_PROG_MAKE_SET
 
 AC_CONFIG_FILES([Makefile
+docs/Makefile
+docs/Doxyfile
 src/Makefile
   src/common/Makefile
   src/common/libnemivercommon.pc
