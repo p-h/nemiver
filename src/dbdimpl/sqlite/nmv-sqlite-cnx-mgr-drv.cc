@@ -34,41 +34,15 @@
 
 using namespace nemiver::common ;
 
-extern "C" {
-
-bool
-NEMIVER_API
-nemiver_common_create_dynamic_module_instance (void **a_new_instance)
-{
-    RETURN_VAL_IF_FAIL (a_new_instance, false) ;
-
-    try {
-        nemiver::common::IConnectionManagerDriverSafePtr manager
-            (nemiver::common::sqlite::SqliteCnxMgrDrv::get_connection_manager_driver ());
-        *a_new_instance = manager.get () ;
-
-    } catch (std::exception &e) {
-        TRACE_EXCEPTION (e) ;
-        return false ;
-    } catch (Glib::Exception &e) {
-        TRACE_EXCEPTION (e) ;
-        return false ;
-    } catch (...) {
-        LOG ("Got an unknown exception") ;
-        return false ;
-    }
-    return true ;
-}
-}//end extern C
-
-namespace nemiver {
-namespace common {
-namespace sqlite {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+NEMIVER_BEGIN_NAMESPACE (common)
+NEMIVER_BEGIN_NAMESPACE (sqlite)
 
 struct SqliteCnxMgrDrvPriv {
 };//end SqliteCnxMgrDrvPriv
 
-SqliteCnxMgrDrv::SqliteCnxMgrDrv ()
+SqliteCnxMgrDrv::SqliteCnxMgrDrv (DynamicModule *a_dynmod) :
+    IConnectionManagerDriver (a_dynmod)
 {
     m_priv = new SqliteCnxMgrDrvPriv () ;
 
@@ -86,14 +60,6 @@ SqliteCnxMgrDrv::~SqliteCnxMgrDrv ()
     m_priv = NULL ;
 }
 
-void
-SqliteCnxMgrDrv::get_info (Info &a_info) const
-{
-    a_info.module_name = "org.nemiver.db.sqlitedriver.default" ;
-    a_info.module_description = "The nemiver database driver for sqlite."
-                                " Implements the IConnectionManagerDriver iface" ;
-    a_info.module_version = "0.0.1" ;
-}
 
 IConnectionDriverSafePtr
 SqliteCnxMgrDrv::connect_to_db (const DBDesc &a_db_desc,
@@ -129,19 +95,60 @@ SqliteCnxMgrDrv::connect_to_db (const DBDesc &a_db_desc,
     return connection_driver ;
 }
 
-IConnectionManagerDriverSafePtr
-SqliteCnxMgrDrv::get_connection_manager_driver ()
+class SqliteCnxMgrModule : public DynamicModule {
+    void get_info (Info &a_info) const
+    {
+        a_info.module_name = "org.nemiver.db.sqlitedriver.default" ;
+        a_info.module_description = "The nemiver database driver for sqlite."
+                                    " Implements the IConnectionManagerDriver "
+                                    "iface" ;
+        a_info.module_version = "0.0.1" ;
+    }
+
+    void do_init ()
+    {
+    }
+
+    bool lookup_interface (const std::string &a_iface_name,
+                           DynModIfaceSafePtr &a_iface)
+    {
+        if (a_iface_name == "IConnectionManagerDriver") {
+            static SqliteCnxMgrDrv s_driver (this) ;
+            s_driver.enable_refcount (false) ;
+            a_iface.reset (&s_driver, true) ;
+        } else {
+            return false ;
+        }
+        return true ;
+    }
+};//end class SqliteCnxMgrModule
+
+NEMIVER_END_NAMESPACE (sqlite)
+NEMIVER_END_NAMESPACE (common)
+NEMIVER_END_NAMESPACE (nemiver)
+
+extern "C" {
+
+bool
+NEMIVER_API
+nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
-    static SqliteCnxMgrDrv s_connection_manager_driver ;
-    return IConnectionManagerDriverSafePtr (&s_connection_manager_driver) ;
+    RETURN_VAL_IF_FAIL (a_new_instance, false) ;
+
+    try {
+        nemiver::common::sqlite::SqliteCnxMgrModule *module =
+            new nemiver::common::sqlite::SqliteCnxMgrModule ;
+        *a_new_instance = module ;
+    } catch (std::exception &e) {
+        TRACE_EXCEPTION (e) ;
+        return false ;
+    } catch (Glib::Exception &e) {
+        TRACE_EXCEPTION (e) ;
+        return false ;
+    } catch (...) {
+        LOG ("Got an unknown exception") ;
+        return false ;
+    }
+    return true ;
 }
-
-void
-SqliteCnxMgrDrv::do_init ()
-{
-}
-
-}//end sqlite
-}//end namespace common
-}//end namespace  nemiver
-
+}//end extern C

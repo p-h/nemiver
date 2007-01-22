@@ -84,8 +84,13 @@ public:
     } ;
 };//end class DBDesc
 
-class NEMIVER_PURE_IFACE IConnectionManagerDriver : public common::DynamicModule {
+class NEMIVER_PURE_IFACE IConnectionManagerDriver :
+        public common::DynModIface {
 public:
+    IConnectionManagerDriver (DynamicModule *a_dynmod) :
+        common::DynModIface (a_dynmod)
+    {
+    }
 
     virtual ~IConnectionManagerDriver () {};
     virtual IConnectionDriverSafePtr connect_to_db

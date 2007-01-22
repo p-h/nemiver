@@ -41,11 +41,7 @@ class GConfMgr : public IConfMgr {
 
 public:
 
-    void get_info (Info &a_info) const ;
-
-    void do_init () ;
-
-    GConfMgr () ;
+    GConfMgr (DynamicModule *a_dynmod) ;
     virtual ~GConfMgr () ;
 
     void set_key_dir_to_notify (const UString &a_key_dir) ;
@@ -77,21 +73,6 @@ struct GErrorUnref {
 };
 
 typedef SafePtr<GError, GErrorRef, GErrorUnref> GErrorSafePtr ;
-
-
-void
-GConfMgr::get_info (Info &a_info) const
-{
-    a_info.module_name = "GConfMgr" ;
-    a_info.module_description =
-        "A GConf implementation of the IConfMgr interface" ;
-    a_info.module_version = "1.0" ;
-}
-
-void
-GConfMgr::do_init ()
-{
-}
 
 void
 client_notify_func (GConfClient *a_client,
@@ -138,7 +119,7 @@ void
 GConfMgr::set_key_dir_to_notify (const UString &a_key_dir)
 {
     THROW_IF_FAIL (m_gconf_client) ;
-    GError *err=NULL ;
+    GError *err=0;
     gconf_client_add_dir (m_gconf_client,
                           a_key_dir.c_str (),
                           GCONF_CLIENT_PRELOAD_NONE,
@@ -148,8 +129,9 @@ GConfMgr::set_key_dir_to_notify (const UString &a_key_dir)
     LOG_DD ("watching key for notification: '" << a_key_dir << "'") ;
 }
 
-GConfMgr::GConfMgr () :
-    m_gconf_client (NULL)
+GConfMgr::GConfMgr (DynamicModule *a_dynmod) :
+    IConfMgr (a_dynmod),
+    m_gconf_client (0)
 {
     m_gconf_client = gconf_client_get_default () ;
     THROW_IF_FAIL (m_gconf_client) ;
@@ -303,13 +285,42 @@ GConfMgr::value_changed_signal ()
     return m_value_changed_signal ;
 }
 
+using nemiver::common::DynModIfaceSafePtr ;
+class GConfMgrModule : public DynamicModule {
+
+public:
+    void get_info (Info &a_info) const
+    {
+        a_info.module_name = "GConfMgr" ;
+        a_info.module_description =
+            "A GConf implementation of the IConfMgr interface" ;
+        a_info.module_version = "1.0" ;
+    }
+
+    /// \brief module init routinr
+    void do_init ()
+    {
+    }
+
+    bool lookup_interface (const std::string &a_iface_name,
+                           DynModIfaceSafePtr &a_iface)
+    {
+        if (a_iface_name == "IConfMgr") {
+            a_iface.reset (new GConfMgr (this)) ;
+        } else {
+            return false ;
+        }
+        return true ;
+    }
+};//end class GConfMgrModule
+
 NEMIVER_END_NAMESPACE (nemiver)
 
 extern "C" {
 bool
 NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
-    *a_new_instance = new nemiver::GConfMgr () ;
+    *a_new_instance = new nemiver::GConfMgrModule () ;
     return (*a_new_instance != 0) ;
 }
 

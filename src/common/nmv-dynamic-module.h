@@ -61,6 +61,9 @@ namespace common {
 class DynamicModule ;
 typedef SafePtr<DynamicModule, ObjectRef, ObjectUnref> DynamicModuleSafePtr ;
 
+class DynModIface ;
+typedef SafePtr<DynModIface, ObjectRef, ObjectUnref> DynModIfaceSafePtr ;
+
 class DynamicModuleManager ;
 typedef SafePtr<DynamicModuleManager,
                 ObjectRef,
@@ -171,7 +174,39 @@ public:
 
     /// \brief module init routinr
     virtual void do_init () = 0;
+
+    virtual bool lookup_interface (const std::string &a_iface_name,
+                                   DynModIfaceSafePtr &a_iface) = 0 ;
 };//end class DynamicModule
+
+class NEMIVER_API DynModIface : public Object {
+    DynamicModuleSafePtr m_dynamic_module ;
+    //subclassers _MUST_ not use the default constructor,
+    //but rather use the DynModIface (DynamicModule &a_dynmod) one.
+    DynModIface () ;
+    DynModIface (const DynModIface &) ;
+    DynModIface& operator= (const DynModIface &) ;
+
+public:
+
+    DynModIface (DynamicModuleSafePtr &a_dynmod) :
+        m_dynamic_module (a_dynmod)
+    {
+        THROW_IF_FAIL (m_dynamic_module) ;
+    }
+
+    DynModIface (DynamicModule *a_dynmod) :
+        m_dynamic_module (DynamicModuleSafePtr (a_dynmod, true))
+    {
+        THROW_IF_FAIL (m_dynamic_module) ;
+    }
+
+    DynamicModule& get_dynamic_module () const
+    {
+        THROW_IF_FAIL (m_dynamic_module) ;
+        return *m_dynamic_module ;
+    }
+};//end class DynModIface
 
 class NEMIVER_API ModuleRegistry : public Object {
     struct Priv ;
@@ -198,48 +233,70 @@ public:
     DynamicModuleManager () ;
     virtual ~DynamicModuleManager () ;
 
-    DynamicModuleSafePtr load (const UString &a_name,
-                               DynamicModule::Loader &) ;
+    DynamicModuleSafePtr load_module (const UString &a_name,
+                                      DynamicModule::Loader &) ;
 
-    DynamicModuleSafePtr load (const UString &a_name) ;
+    DynamicModuleSafePtr load_module (const UString &a_name) ;
 
-    DynamicModuleSafePtr load_from_path (const UString &a_library_path,
-                                         DynamicModule::Loader &) ;
+    DynamicModuleSafePtr load_module_from_path (const UString &a_library_path,
+                                                DynamicModule::Loader &) ;
 
-    DynamicModuleSafePtr load_from_path (const UString &a_library_path) ;
+    DynamicModuleSafePtr load_module_from_path (const UString &a_library_path) ;
 
     template <class T> SafePtr<T,
                                ObjectRef,
-                               ObjectUnref> load (const UString &a_name,
-                                                  DynamicModule::Loader &) ;
+                               ObjectUnref> load_iface
+                                           (const UString &a_module_name,
+                                            const UString &a_iface_name,
+                                            DynamicModule::Loader &) ;
     template <class T> SafePtr<T,
                                ObjectRef,
-                               ObjectUnref> load (const UString &a_name) ;
+                               ObjectUnref> load_iface
+                                           (const UString &a_module_name,
+                                            const UString &a_iface_name) ;
     ModuleRegistry& module_registry () ;
     DynamicModule::LoaderSafePtr& module_loader () ;
     void module_loader (DynamicModule::LoaderSafePtr &a_loader) ;
 };//end class DynamicModuleManager
 
-
 template <class T>
 SafePtr<T, ObjectRef, ObjectUnref>
-DynamicModuleManager::load (const UString &a_name)
+DynamicModuleManager::load_iface (const UString &a_module_name,
+                                  const UString &a_iface_name,
+                                  DynamicModule::Loader &a_loader)
 {
-    return load<T> (a_name, *module_loader ()) ;
+    DynamicModuleSafePtr module (load_module (a_module_name, a_loader)) ;
+    typedef SafePtr<T, ObjectRef, ObjectUnref> TSafePtr ;
+    if (!module) {
+        THROW (UString ("failed to load module '") + a_module_name);
+    }
+    module->do_init () ;
+    LOG_REF_COUNT (module, a_module_name) ;
+    DynModIfaceSafePtr tmp_iface ;
+    if (!module->lookup_interface (a_iface_name, tmp_iface)) {
+        THROW (UString ("module does not have interface: ") + a_iface_name) ;
+    }
+    THROW_IF_FAIL (tmp_iface) ;
+    LOG_REF_COUNT (module, a_module_name) ;
+    TSafePtr result ;
+    result = tmp_iface.do_dynamic_cast<T> ();
+    LOG_REF_COUNT (module, a_module_name) ;
+    if (!result) {
+        THROW (UString ("interface named ")
+               + a_iface_name
+               + " is not of the expected type'") ;
+    }
+    return result ;
 }
 
 template <class T>
 SafePtr<T, ObjectRef, ObjectUnref>
-DynamicModuleManager::load (const UString &a_name,
-                            DynamicModule::Loader &a_loader)
+DynamicModuleManager::load_iface (const UString &a_module_name,
+                                  const UString &a_iface_name)
 {
-    DynamicModuleSafePtr module (load (a_name, a_loader)) ;
-    typedef SafePtr<T, ObjectRef, ObjectUnref> TSafePtr ;
-    TSafePtr result ;
-    if (!module) {THROW (UString ("failed to load module '") + a_name);};
-    result.reset (dynamic_cast<T*> (module.get ()), true);
-    if (!result) {THROW ("module is not of the expected type'");}
-    return result ;
+    return load_iface<T> (a_module_name,
+                          a_iface_name,
+                          *module_loader ()) ;
 }
 
 }//end namespace common

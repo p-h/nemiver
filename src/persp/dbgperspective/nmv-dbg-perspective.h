@@ -40,13 +40,12 @@ class NEMIVER_API IDBGPerspective : public IPerspective {
 
 public:
 
-    IDBGPerspective () {};
+    IDBGPerspective (DynamicModule *a_dynmod) :
+        IPerspective (a_dynmod)
+    {
+    }
 
     virtual ~IDBGPerspective () {};
-
-    virtual void get_info (Info &a_info) const = 0;
-
-    virtual void do_init ()  = 0;
 
     virtual void do_init (IWorkbench *a_workbench)  = 0;
 

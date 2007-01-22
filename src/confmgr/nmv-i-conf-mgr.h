@@ -31,6 +31,8 @@
 
 using nemiver::common::SafePtr ;
 using nemiver::common::DynamicModule ;
+using nemiver::common::DynamicModuleSafePtr ;
+using nemiver::common::DynModIface ;
 using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
 using nemiver::common::UString ;
@@ -40,13 +42,16 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 class IConfMgr ;
 typedef SafePtr<IConfMgr, ObjectRef, ObjectUnref> IConfMgrSafePtr ;
 
-class NEMIVER_API IConfMgr : public DynamicModule {
+class NEMIVER_API IConfMgr : public DynModIface {
     //non copyable
     IConfMgr (const IConfMgr &) ;
     IConfMgr& operator= (const IConfMgr &) ;
 
 protected:
-    IConfMgr () {}
+
+    IConfMgr (DynamicModule *a_dynmod) : DynModIface (a_dynmod)
+    {
+    }
 
 public:
 

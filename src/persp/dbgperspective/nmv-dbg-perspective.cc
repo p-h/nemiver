@@ -288,13 +288,9 @@ private:
 
 public:
 
-    DBGPerspective () ;
+    DBGPerspective (DynamicModule *a_dynmod) ;
 
     virtual ~DBGPerspective () ;
-
-    void get_info (Info &a_info) const ;
-
-    void do_init () ;
 
     void do_init (IWorkbench *a_workbench) ;
 
@@ -2900,22 +2896,9 @@ a_session.properties ().clear () ; a_session.properties ()[SESSION_NAME] = sessi
 //</private methods>
 //*******************
 
-DBGPerspective::DBGPerspective () :
+DBGPerspective::DBGPerspective (DynamicModule *a_dynmod) :
+    IDBGPerspective (a_dynmod),
     m_priv (new Priv)
-{
-}
-
-void
-DBGPerspective::get_info (Info &a_info) const
-{
-    static Info s_info ("Debugger perspective plugin",
-                        "The debugger perspective of Nemiver",
-                        "1.0") ;
-    a_info = s_info ;
-}
-
-void
-DBGPerspective::do_init ()
 {
 }
 
@@ -3031,7 +3014,8 @@ DBGPerspective::open_file (const UString &a_path,
     for (;;) {
         file.read (buf.get (), buf_size) ;
         THROW_IF_FAIL (file.good () || file.eof ()) ;
-        source_buffer->insert (source_buffer->end (), buf.get (),
+        source_buffer->insert (source_buffer->end (),
+                               buf.get (),
                                buf.get () + file.gcount ()) ;
         if (file.gcount () != buf_size) {break;}
     }
@@ -3907,14 +3891,16 @@ IDebuggerSafePtr&
 DBGPerspective::debugger ()
 {
     if (!m_priv->debugger) {
-        DynamicModule::Loader *loader = workbench ().get_module_loader () ;
+        DynamicModule::Loader *loader =
+            workbench ().get_dynamic_module ().get_module_loader () ;
         THROW_IF_FAIL (loader) ;
+
         DynamicModuleManager *module_manager =
                             loader->get_dynamic_module_manager () ;
         THROW_IF_FAIL (module_manager) ;
 
         m_priv->debugger =
-            module_manager->load<IDebugger> ("gdbengine") ;
+            module_manager->load_iface <IDebugger> ("gdbengine", "IDebugger") ;
         m_priv->debugger->set_event_loop_context
                                     (Glib::MainContext::get_default ()) ;
     }
@@ -4391,6 +4377,38 @@ DBGPerspective::show_log_view_signal ()
     return m_priv->show_log_view_signal ;
 }
 
+class DBGPerspectiveModule : DynamicModule {
+
+public:
+
+    void get_info (Info &a_info) const
+    {
+        static Info s_info ("Debugger perspective plugin",
+                            "The debugger perspective of Nemiver",
+                            "1.0") ;
+        a_info = s_info ;
+    }
+
+    void do_init ()
+    {
+    }
+
+    bool lookup_interface (const std::string &a_iface_name,
+                           DynModIfaceSafePtr &a_iface)
+    {
+        LOG_DD ("looking up interface: " + a_iface_name) ;
+        if (a_iface_name == "IPerspective") {
+            a_iface.reset (new DBGPerspective (this)) ;
+        } else if (a_iface_name == "IDBGPerspective") {
+            a_iface.reset (new DBGPerspective (this)) ;
+        } else {
+            return false ;
+        }
+        LOG_DD ("interface " + a_iface_name + " found") ;
+        return true ;
+    }
+};// end class DBGPerspective
+
 NEMIVER_END_NAMESPACE (nemiver)
 
 //the dynmod initial factory.
@@ -4399,7 +4417,7 @@ bool
 NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
     gtksourceview::init () ;
-    *a_new_instance = new nemiver::DBGPerspective () ;
+    *a_new_instance = new nemiver::DBGPerspectiveModule () ;
     return (*a_new_instance != 0) ;
 }
 

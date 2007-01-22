@@ -1,8 +1,7 @@
 <moduleconfig>
     <module>
-        <name>gconfmgr</name>
-        <!-- Remember, Interface name is IGConfMgr-->
-        <libraryname>gconfmgrmod</libraryname>
+        <name>varlist</name>
+        <libraryname>varlistmod</libraryname>
     </module>
     <customsearchpaths>
         <path>@prefix@/@NEMIVER_LIB_DIR_NAME@/nemiver/modules</path>

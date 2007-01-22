@@ -76,7 +76,8 @@ struct Plugin::EntryPoint::Priv {
 
     Priv () :
         is_activated (false)
-    {}
+    {
+    }
 };//end Plugin::EntryPoint::Priv
 
 Plugin::EntryPoint::LoaderSafePtr
@@ -89,10 +90,18 @@ void
 Plugin::EntryPoint::plugin_entry_point_loader
                         (Plugin::EntryPoint::LoaderSafePtr &a_loader)
 {
+    THROW_IF_FAIL (m_priv) ;
     m_priv->entry_point_loader = a_loader ;
 }
 
-Plugin::EntryPoint::EntryPoint () :
+Plugin::EntryPoint::EntryPoint (DynamicModuleSafePtr &a_module) :
+    DynModIface (a_module),
+    m_priv (new Plugin::EntryPoint::Priv)
+{
+}
+
+Plugin::EntryPoint::EntryPoint (DynamicModule *a_module) :
+    DynModIface (a_module),
     m_priv (new Plugin::EntryPoint::Priv)
 {
 }
@@ -107,12 +116,14 @@ Plugin::EntryPoint::activate (bool a_activate,
                               ObjectSafePtr &a_ctxt)
 {
     if (a_ctxt) {}
+    THROW_IF_FAIL (m_priv) ;
     m_priv->is_activated = a_activate ;
 }
 
 bool
 Plugin::EntryPoint::is_activated ()
 {
+    THROW_IF_FAIL (m_priv) ;
     return m_priv->is_activated ;
 }
 
@@ -145,12 +156,14 @@ Plugin::EntryPoint::build_absolute_resource_path
 Plugin::DescriptorSafePtr
 Plugin::EntryPoint::descriptor ()
 {
+    THROW_IF_FAIL (m_priv) ;
     return m_priv->descriptor ;
 }
 
 void
 Plugin::EntryPoint::descriptor (Plugin::DescriptorSafePtr &a_desc)
 {
+    THROW_IF_FAIL (m_priv) ;
     m_priv->descriptor = a_desc ;
 }
 
@@ -183,21 +196,24 @@ Plugin::load_entry_point ()
 
     try {
         EntryPoint::LoaderSafePtr loader
-                    (new EntryPoint::Loader (m_priv->descriptor->plugin_path ()));
+                (new EntryPoint::Loader (m_priv->descriptor->plugin_path ()));
         m_priv->entry_point =
-            m_priv->module_manager.load<Plugin::EntryPoint>
-                                    (m_priv->descriptor->entry_point_name (),
-                                     *loader) ;
-        LOG_D ("plugin entry point '"
-                << m_priv->descriptor->entry_point_name ()
-                << "' refcount: "
-                << (int) m_priv->entry_point->get_refcount (),
-                "refcount-domain") ;
+            m_priv->module_manager.load_iface<Plugin::EntryPoint>
+                                (m_priv->descriptor->entry_point_module_name (),
+                                 m_priv->descriptor->entry_point_interface_name(),
+                                 *loader) ;
+        THROW_IF_FAIL (m_priv->entry_point) ;
+        LOG_REF_COUNT (m_priv->entry_point,
+                       m_priv->descriptor->entry_point_interface_name ()) ;
+
+        LOG_REF_COUNT (loader, "plugin-entry-point-loader") ;
         m_priv->entry_point->plugin_entry_point_loader (loader) ;
+        LOG_REF_COUNT (loader, "plugin-loader") ;
+
         m_priv->entry_point->descriptor (m_priv->descriptor) ;
     } catch (...) {
         THROW ("failed to load plugin entry point '"
-               + m_priv->descriptor->entry_point_name ()
+               + m_priv->descriptor->entry_point_module_name ()
                + " for plugin '" + m_priv->descriptor->name () + "'") ;
     }
 }
@@ -206,6 +222,7 @@ Plugin::Plugin (Plugin::DescriptorSafePtr &a_desc,
                 DynamicModuleManager &a_manager) :
     m_priv (new Plugin::Priv (a_desc, a_manager))
 {
+    THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (a_desc) ;
     THROW_IF_FAIL (Glib::file_test (a_desc->plugin_path (),
                                     Glib::FILE_TEST_IS_DIR)) ;
@@ -227,6 +244,7 @@ Plugin::descriptor ()
 void
 Plugin::descriptor (const Plugin::DescriptorSafePtr &a_desc)
 {
+    THROW_IF_FAIL (m_priv) ;
     m_priv->descriptor = a_desc ;
 }
 
@@ -381,8 +399,21 @@ PluginManager::parse_descriptor (const UString &a_path,
                + UString (xmlTextReaderConstName (reader.get ())));
     }
 
+    if (!goto_next_element_node_and_check (reader, "modulename")) {
+        THROW ("expected element 'modulename', got: "
+               + UString (xmlTextReaderConstName (reader.get ()))) ;
+    }
+
     xml_str.reset (xmlTextReaderReadString (reader.get ()));
-    desc->entry_point_name (xml_str.get ()) ;
+    desc->entry_point_module_name (xml_str.get ()) ;
+
+    if (!goto_next_element_node_and_check (reader, "interfacename")) {
+        THROW ("expected element 'interfacename', got: "
+               + UString (xmlTextReaderConstName (reader.get ()))) ;
+    }
+
+    xml_str.reset (xmlTextReaderReadString (reader.get ()));
+    desc->entry_point_interface_name (xml_str.get ()) ;
 
     if (!goto_next_element_node_and_check (reader, "dependencies")) {
         THROW ("expected element 'dependencies', got: "
@@ -587,7 +618,8 @@ PluginManager::load_plugin_from_path (const UString &a_plugin_path,
                 << (int) result->get_refcount (),
                 "refcount-domain") ;
     }
-    LOG_D ("loaded plugin from path " << Glib::locale_from_utf8 (a_plugin_path), "plugin-loading-domain") ;
+    LOG_D ("loaded plugin from path " << Glib::locale_from_utf8 (a_plugin_path),
+            "plugin-loading-domain") ;
     return result ;
 }
 
@@ -625,7 +657,8 @@ PluginManager::load_plugin_from_name (const UString &a_name,
             break;
         }
     }
-    LOG_D ("loaded plugin " << Glib::locale_from_utf8 (a_name), "plugin-loading-domain") ;
+    LOG_D ("loaded plugin " << Glib::locale_from_utf8 (a_name),
+           "plugin-loading-domain") ;
     return result ;
 }
 

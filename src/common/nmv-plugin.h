@@ -2,7 +2,8 @@
 
 /*Copyright (c) 2005-2006 Dodji Seketeli
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this
  * software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute,
@@ -10,7 +11,8 @@
  * persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
+ * The above copyright notice and this permission
+ * notice shall be included in all copies
  * or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS",
@@ -67,11 +69,10 @@ private:
     //non copyable
     Plugin (const Plugin &) ;
     Plugin& operator= (const Plugin &) ;
-
-private:
     //forbid default constructor
     Plugin () ;
 
+private:
     Plugin (DescriptorSafePtr &a_descriptor,
             DynamicModuleManager &a_bootstrap_module_manager) ;
 
@@ -85,7 +86,8 @@ public:
         UString m_name ;
         UString m_version ;
         UString m_plugin_path ;
-        UString m_entry_point_name ;
+        UString m_entry_point_module_name ;
+        UString m_entry_point_interface_name ;
         //map of deps, made of plugin/versions
         std::map<UString, UString> m_dependencies ;
 
@@ -105,8 +107,23 @@ public:
         const UString& name () const {return m_name;}
         void name (const UString &a_in) {m_name = a_in;}
 
-        const UString& entry_point_name () const {return m_entry_point_name;}
-        void entry_point_name (const UString &a_in) {m_entry_point_name = a_in;}
+        const UString& entry_point_module_name () const
+        {
+            return m_entry_point_module_name;
+        }
+        void entry_point_module_name (const UString &a_in)
+        {
+            m_entry_point_module_name = a_in;
+        }
+
+        const UString& entry_point_interface_name () const
+        {
+            return m_entry_point_interface_name;
+        }
+        void entry_point_interface_name (const UString &a_in)
+        {
+            m_entry_point_interface_name = a_in;
+        }
 
         std::map<UString, UString>& dependencies () {return m_dependencies;}
         const std::map<UString, UString>& dependencies () const
@@ -127,7 +144,7 @@ public:
 
 public:
 
-    class NEMIVER_API EntryPoint : public DynamicModule {
+    class NEMIVER_API EntryPoint : public DynModIface {
         friend class Plugin ;
     public:
         class Loader ;
@@ -141,6 +158,7 @@ public:
         //non copyable
         EntryPoint (const EntryPoint &) ;
         EntryPoint& operator= (const EntryPoint &) ;
+        EntryPoint () ;
 
 
     protected:
@@ -149,7 +167,8 @@ public:
         void plugin_entry_point_loader (Plugin::EntryPoint::LoaderSafePtr &) ;
 
         //must be created by a factory
-        EntryPoint () ;
+        EntryPoint (DynamicModuleSafePtr &a_module) ;
+        EntryPoint (DynamicModule *a_module) ;
         virtual void activate (bool a_activate,
                                ObjectSafePtr &a_activation_context) ;
         virtual bool is_activated () ;

@@ -1,19 +1,29 @@
 gdbmod_LTLIBRARIES=libgdbmod.la
 gdbmoddir=@NEMIVER_MODULES_DIR@
+varlistmod_LTLIBRARIES=libvarlistmod.la
+varlistmoddir=@NEMIVER_MODULES_DIR@
 
-headers= \
+idebuggerheaders= \
 nmv-i-debugger.h
 
+ivarlistheaders= \
+nmv-i-var-list.h
+
+dynmodheaders = $(idebugheaders) $(ivarlistheaders)
 libgdbmod_la_SOURCES= \
-$(headers) \
+$(idebuggerheaders)  \
 nmv-gdb-engine.cc
 
-publicheaders_DATA=$(headers)
+libvarlistmod_la_SOURCES= \
+$(ivarlistheaders) \
+nmv-var-list.cc
+
+publicheaders_DATA=$(dynmodheaders)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgdbmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
 
-config_DATA=gdbengine.conf
+config_DATA=gdbengine.conf varlist.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
 INCLUDES=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \

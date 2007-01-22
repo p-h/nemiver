@@ -34,10 +34,12 @@
 #include "nmv-dynamic-module.h"
 #include "nmv-safe-ptr-utils.h"
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 using nemiver::common::SafePtr ;
-using nemiver::common::DynamicModule ;
+using nemiver::common::DynamicModule;
+using nemiver::common::DynamicModuleSafePtr;
+using nemiver::common::DynModIface ;
 using nemiver::common::ObjectRef;
 using nemiver::common::ObjectUnref;
 using nemiver::common::UString ;
@@ -55,13 +57,16 @@ typedef SafePtr<IDebugger, ObjectRef, ObjectUnref> IDebuggerSafePtr ;
 ///It should abstract the real debugger used underneath, but
 ///it is modeled after the interfaces exposed by gdb.
 ///Please, read GDB/MI interface documentation for more.
-class NEMIVER_API IDebugger : public DynamicModule {
+class NEMIVER_API IDebugger : public DynModIface {
 
     IDebugger (const IDebugger&) ;
     IDebugger& operator= (const IDebugger&) ;
 
 protected:
-    IDebugger () {};
+
+    IDebugger (DynamicModule *a_dynmod) : DynModIface (a_dynmod)
+    {
+    }
 
 public:
 
@@ -532,7 +537,7 @@ public:
 
 };//end IDebugger
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NEMIVER_I_DEBUGGER_H__
 

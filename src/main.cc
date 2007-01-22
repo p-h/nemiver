@@ -169,7 +169,8 @@ main (int a_argc, char *a_argv[])
     //**********************************
     DynamicModuleManager module_manager ;
 
-    IWorkbenchSafePtr workbench = module_manager.load<IWorkbench> ("workbench");
+    IWorkbenchSafePtr workbench =
+        module_manager.load_iface<IWorkbench> ("workbench", "IWorkbench");
     s_workbench = workbench.get () ;
     LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
             "refcount-domain") ;

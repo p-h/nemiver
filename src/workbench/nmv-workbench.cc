@@ -39,7 +39,8 @@
 using namespace std ;
 using namespace nemiver ;
 using namespace nemiver::common ;
-namespace nemiver {
+
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 static const UString CONF_KEY_NEMIVER_WINDOW_WIDTH =
                 "/apps/nemiver/workbench/window-width" ;
@@ -120,9 +121,8 @@ private:
     bool on_delete_event (GdkEventAny* event) ;
 
 public:
-    Workbench () ;
+    Workbench (DynamicModule *a_dynmod) ;
     virtual ~Workbench () ;
-    void get_info (Info &a_info) const ;
     void do_init (Gtk::Main &a_main) ;
     void shut_down () ;
     Glib::RefPtr<Gtk::ActionGroup> get_default_action_group () ;
@@ -220,15 +220,15 @@ Workbench::on_about_menu_item_action ()
     Gtk::AboutDialog dialog;
     dialog.set_name (PACKAGE_NAME);
     dialog.set_version (PACKAGE_VERSION);
-    dialog.set_comments(_("A GNOME frontend for the GNU Debugger"));
+    dialog.set_comments(_("A C/C++ debugger for GNOME"));
 
     list<Glib::ustring> authors;
-    authors.push_back("Dodji Seketeli <dodji@gnome.org>");
-    authors.push_back("Jonathon Jongsma <jjongsma@gnome.org>");
-    dialog.set_authors(authors);
+    authors.push_back ("Dodji Seketeli <dodji@gnome.org>");
+    authors.push_back ("Jonathon Jongsma <jjongsma@gnome.org>");
+    dialog.set_authors (authors);
 
-    dialog.set_website("http://home.gna.org/nemiver/");
-    dialog.set_website_label("Project Website");
+    dialog.set_website ("http://home.gna.org/nemiver/");
+    dialog.set_website_label ("Project Website");
 
     Glib::ustring license =
         "This program is free software; you can redistribute it and/or modify\n"
@@ -245,21 +245,22 @@ Workbench::on_about_menu_item_action ()
         "along with this program; if not, write to the \n"
         "Free Software Foundation, Inc., 59 Temple Place, Suite 330, \n"
         "Boston, MA  02111-1307  USA\n";
-    dialog.set_license(license);
+    dialog.set_license (license);
 
     // Translators: change this to your name, separate multiple names with \n
-    dialog.set_translator_credits(_("translator-credits"));
+    dialog.set_translator_credits (_("translator-credits"));
 
-    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
-    if (theme->has_icon("nemiver")) {
-        Glib::RefPtr<Gdk::Pixbuf> icon = theme->load_icon("nemiver", 128,
-                Gtk::ICON_LOOKUP_USE_BUILTIN);
-        dialog.set_logo(icon);
+    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default ();
+    if (theme->has_icon ("nemiver")) {
+        Glib::RefPtr<Gdk::Pixbuf> icon =
+        theme->load_icon ("nemiver", 128,
+                          Gtk::ICON_LOOKUP_USE_BUILTIN);
+        dialog.set_logo (icon);
     }
 
     vector<Glib::ustring> artists;
-    artists.push_back("Steven Brown <swjb@interchange.ubc.ca>");
-    dialog.set_artists(artists);
+    artists.push_back ("Steven Brown <swjb@interchange.ubc.ca>");
+    dialog.set_artists (artists);
 
     dialog.run ();
 
@@ -276,7 +277,8 @@ Workbench::on_shutting_down_signal ()
     NEMIVER_CATCH
 }
 
-Workbench::Workbench ()
+Workbench::Workbench (DynamicModule *a_dynmod) :
+    IWorkbench (a_dynmod)
 {
     m_priv.reset (new Priv ());
 }
@@ -288,20 +290,11 @@ Workbench::~Workbench ()
 }
 
 void
-Workbench::get_info (Info &a_info) const
-{
-    static Info s_info ("workbench",
-                        "The workbench of Nemiver",
-                        "1.0") ;
-    a_info = s_info ;
-}
-
-void
 Workbench::do_init (Gtk::Main &a_main)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-    DynamicModule::Loader *loader = get_module_loader () ;
+    DynamicModule::Loader *loader = get_dynamic_module ().get_module_loader () ;
     THROW_IF_FAIL (loader) ;
 
     DynamicModuleManager *dynmod_manager = loader->get_dynamic_module_manager () ;
@@ -463,15 +456,16 @@ Workbench::get_configuration_manager ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->conf_mgr) {
-        DynamicModule::Loader *loader = get_module_loader () ;
+        DynamicModule::Loader *loader =
+            get_dynamic_module ().get_module_loader () ;
         THROW_IF_FAIL (loader) ;
 
         DynamicModuleManager *dynmod_manager =
                 loader->get_dynamic_module_manager () ;
         THROW_IF_FAIL (dynmod_manager) ;
 
-        m_priv->conf_mgr = dynmod_manager->load<IConfMgr> ("gconfmgr") ;
-        m_priv->conf_mgr->do_init () ;
+        m_priv->conf_mgr = dynmod_manager->load_iface <IConfMgr> ("gconfmgr",
+                                                                  "IConfMgr") ;
         m_priv->conf_mgr->set_key_dir_to_notify ("/apps/nemiver") ;
     }
     THROW_IF_FAIL (m_priv->conf_mgr) ;
@@ -800,17 +794,45 @@ Workbench::select_perspective (IPerspectiveSafePtr &a_perspective)
     m_priv->bodies_container->set_current_page (body_index) ;
 }
 
+class WorkbenchModule : public DynamicModule {
+public:
+
+    void do_init ()
+    {
+        WorkbenchStaticInit::do_init ();
+    }
+
+    void get_info (Info &a_info) const
+    {
+        static Info s_info ("workbench",
+                            "The workbench of Nemiver",
+                            "1.0") ;
+        a_info = s_info ;
+    }
+
+    bool lookup_interface (const std::string &a_iface_name,
+                           DynModIfaceSafePtr &a_iface)
+    {
+        if (a_iface_name == "IWorkbench") {
+            a_iface.reset (new Workbench (this)) ;
+        } else {
+            return false ;
+        }
+        return true ;
+    }
+};//end class WorkbenchModule
+
+NEMIVER_END_NAMESPACE (nemiver)
 
 //the dynmod initial factory.
 extern "C" {
 bool
 NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
-    *a_new_instance = new nemiver::Workbench () ;
+    *a_new_instance = new nemiver::WorkbenchModule ();
     return (*a_new_instance != 0) ;
 }
 
 }//end extern C
 
-}//end namespace nemiver
 

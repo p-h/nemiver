@@ -90,7 +90,7 @@ public:
     SafePtr (const SafePtr<PointerType,
                            ReferenceFunctor,
                            UnreferenceFunctor> &a_safe_ptr) :
-             m_pointer (a_safe_ptr.m_pointer)
+        m_pointer (a_safe_ptr.m_pointer)
     {
         reference () ;
     }

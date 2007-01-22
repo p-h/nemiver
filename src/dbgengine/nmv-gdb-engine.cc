@@ -65,8 +65,7 @@ a_to = a_from ;
 using namespace std ;
 using namespace nemiver::common ;
 
-namespace nemiver {
-
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 /// \brief A container of the textual command sent to the debugger
 class Command {
@@ -992,10 +991,8 @@ class GDBEngine : public IDebugger {
 
 public:
 
-    GDBEngine () ;
+    GDBEngine (DynamicModule *a_dynmod) ;
     virtual ~GDBEngine () ;
-    void get_info (Info &a_info) const ;
-    void do_init () ;
 
     //*************
     //<signals>
@@ -4793,7 +4790,8 @@ struct OnErrorHandler : OutputHandler {
     //****************************
     //<GDBEngine methods>
     //****************************
-GDBEngine::GDBEngine ()
+GDBEngine::GDBEngine (DynamicModule *a_dynmod) :
+    IDebugger (a_dynmod)
 {
     m_priv.reset (new Priv) ;
     init () ;
@@ -4994,21 +4992,6 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnThreadSelectedHandler (this))) ;
     m_priv->output_handlers.push_back
             (OutputHandlerSafePtr (new OnFileListHandler (this))) ;
-}
-
-void
-GDBEngine::get_info (Info &a_info) const
-{
-    const static Info s_info ("debuggerengine",
-                              "The GDB debugger engine backend. "
-                              "Implements the IDebugger interface",
-                              "1.0") ;
-    a_info = s_info ;
-}
-
-void
-GDBEngine::do_init ()
-{
 }
 
 sigc::signal<void, Output&>&
@@ -5745,14 +5728,43 @@ GDBEngine::extract_proc_info (Output &a_output,
 //</GDBEngine methods>
 //****************************
 
-}//end namespace nemiver
+class GDBEngineModule : public DynamicModule {
+
+public:
+
+    void get_info (Info &a_info) const
+    {
+        const static Info s_info ("debuggerengine",
+                                  "The GDB debugger engine backend. "
+                                  "Implements the IDebugger interface",
+                                  "1.0") ;
+        a_info = s_info ;
+    }
+
+    void do_init ()
+    {
+    }
+
+    bool lookup_interface (const std::string &a_iface_name,
+                           DynModIfaceSafePtr &a_iface)
+    {
+        if (a_iface_name == "IDebugger") {
+            a_iface.reset (new GDBEngine (this)) ;
+        } else {
+            return false ;
+        }
+        return true ;
+    }
+};//end class GDBEngineModule
+
+NEMIVER_END_NAMESPACE (nemiver)
 
 //the dynmod initial factory.
 extern "C" {
 bool
 NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
-    *a_new_instance = new nemiver::GDBEngine () ;
+    *a_new_instance = new nemiver::GDBEngineModule () ;
     return (*a_new_instance != 0) ;
 }
 

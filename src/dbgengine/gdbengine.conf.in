@@ -1,6 +1,7 @@
 <moduleconfig>
     <module>
         <name>gdbengine</name>
+        <!-- Remember, Interface name is IDebugger -->
         <libraryname>gdbmod</libraryname>
     </module>
     <customsearchpaths>

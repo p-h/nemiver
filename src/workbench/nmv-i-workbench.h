@@ -59,6 +59,9 @@ class IPerspective ;
 class IConfMgr ;
 using nemiver::common::SafePtr ;
 using nemiver::common::DynamicModule;
+using nemiver::common::DynamicModuleSafePtr;
+using nemiver::common::DynModIface;
+using nemiver::common::DynModIfaceSafePtr;
 using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
 using nemiver::common::UString ;
@@ -86,15 +89,17 @@ typedef SafePtr<IWorkbench, ObjectRef, ObjectUnref> IWorkbenchSafePtr ;
 /// for the toolbars to display when the perspective becomes active. As a result,
 /// The workbench appends the toolbars in a Gtk::Notebook and shows the appropriate
 /// toolbars when the perspective becomes active.
-class NEMIVER_API IWorkbench : public DynamicModule {
+class NEMIVER_API IWorkbench : public DynModIface {
 
     //non copyable
     IWorkbench (const IWorkbench&) ;
     IWorkbench& operator= (const IWorkbench&) ;
 
 protected:
-    // must created by the dynamic modules factory
-    IWorkbench () {}
+    // must be created by the dynamic modules factory
+    IWorkbench (DynamicModule *a_dynmod) : DynModIface (a_dynmod)
+    {
+    }
 
 public:
 

@@ -36,26 +36,22 @@ namespace sqlite {
 struct SqliteCnxMgrDrvPriv ;
 class SqliteCnxMgrDrv : public common::IConnectionManagerDriver {
     friend struct SqliteCnxMgrDrvPriv ;
+    friend class SqliteCnxMgrModule ;
     struct SqliteCnxMgrDrvPriv *m_priv ;
 
     //forbid copy
     SqliteCnxMgrDrv (const SqliteCnxMgrDrv&) ;
     SqliteCnxMgrDrv& operator= (const SqliteCnxMgrDrv&) ;
 
-    SqliteCnxMgrDrv () ;
+    SqliteCnxMgrDrv (DynamicModule *a_dynmod) ;
     virtual ~SqliteCnxMgrDrv () ;
 
 public:
-
-    void get_info (Info &a_info) const ;
-
-    static common::IConnectionManagerDriverSafePtr get_connection_manager_driver();
 
     common::IConnectionDriverSafePtr connect_to_db
                                     (const common::DBDesc &a_desc,
                                      const common::UString &a_user,
                                      const common::UString &a_pass) ;
-    void do_init () ;
 };//end SqliteCnxMgrDrv
 
 }//end namespace sqlite

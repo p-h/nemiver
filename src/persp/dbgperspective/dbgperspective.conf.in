@@ -1,6 +1,7 @@
 <moduleconfig>
     <module>
         <name>dbgperspective</name>
+        <!-- Remember, Interface names are IPerspective and IDBGPerspective-->
         <libraryname>dbgperspectiveplugin</libraryname>
     </module>
     <customsearchpaths/>

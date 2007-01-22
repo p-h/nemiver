@@ -2,7 +2,8 @@
 
 /*Copyright (c) 2005-2006 Dodji Seketeli
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this
  * software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute,
@@ -10,7 +11,8 @@
  * persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
+ * The above copyright notice and this permission
+ * notice shall be included in all copies
  * or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS",
@@ -83,7 +85,7 @@ struct DynamicModule::Loader::Priv {
     DynamicModuleManager * module_manager ;
 
     Priv () :
-        module_manager (NULL)
+        module_manager (0)
     {}
 };//end struct Loader::Priv
 
@@ -347,11 +349,7 @@ DynamicModule::Loader::create_dynamic_module_instance (GModule *a_module)
     //**********************************************
     //return a safe pointer DynamicModuleSafePtr
     //**********************************************
-    LOG_D ("module '"
-           << g_module_name (a_module)
-           << "' refcount: "
-           << (int) safe_ptr->get_refcount (),
-           "module-refcount-domain") ;
+    LOG_REF_COUNT (safe_ptr, g_module_name (a_module)) ;
     return safe_ptr ;
 }
 
@@ -413,6 +411,7 @@ DynamicModule::DynamicModule () :
 
 DynamicModule::~DynamicModule ()
 {
+    LOG_D ("deleted", "destructor-domain") ;
 }
 const UString&
 DynamicModule::get_real_library_path () const
@@ -467,8 +466,8 @@ DynamicModuleManager::~DynamicModuleManager ()
 }
 
 DynamicModuleSafePtr
-DynamicModuleManager::load (const UString &a_name,
-                            DynamicModule::Loader &a_loader)
+DynamicModuleManager::load_module (const UString &a_name,
+                                   DynamicModule::Loader &a_loader)
 {
     GModule *lib = module_registry ().get_library_from_cache (a_name) ;
     if (!lib) {
@@ -486,34 +485,20 @@ DynamicModuleManager::load (const UString &a_name,
     }
     DynamicModuleSafePtr module = a_loader.create_dynamic_module_instance (lib) ;
     THROW_IF_FAIL (module) ;
-    LOG_D ("module '"
-            << a_name
-            << "' refcount: "
-            << (int) module->get_refcount (),
-           "module-refcount-domain") ;
+    LOG_REF_COUNT (module, a_name) ;
 
     module->set_module_loader (&a_loader) ;
     a_loader.set_dynamic_module_manager (this) ;
+    LOG_REF_COUNT (module, a_name) ;
 
-    LOG_D ("module "
-           << a_name 
-           << "' refcount: "
-           << (int) module->get_refcount (),
-           "module-refcount-domain") ;
-
-    LOG_D ("loaded module " << Glib::locale_from_utf8 (a_name), "module-loading-domain") ;
+    LOG_D ("loaded module " << Glib::locale_from_utf8 (a_name),
+            "module-loading-domain") ;
     return module ;
 }
 
 DynamicModuleSafePtr
-DynamicModuleManager::load (const UString &a_name)
-{
-    return load (a_name, *module_loader ()) ;
-}
-
-DynamicModuleSafePtr
-DynamicModuleManager::load_from_path (const UString &a_library_path,
-                                      DynamicModule::Loader &a_loader)
+DynamicModuleManager::load_module_from_path (const UString &a_library_path,
+                                             DynamicModule::Loader &a_loader)
 {
     GModule *lib = a_loader.load_library_from_path (a_library_path) ;
     if (!lib) {
@@ -523,16 +508,18 @@ DynamicModuleManager::load_from_path (const UString &a_library_path,
     a_loader.set_dynamic_module_manager (this) ;
     DynamicModuleSafePtr module = a_loader.create_dynamic_module_instance (lib) ;
     module->set_module_loader (&a_loader) ;
-    LOG_D ("loaded module from path " << Glib::locale_from_utf8 (a_library_path), "module-loading-domain") ;
+    LOG_D ("loaded module from path " << Glib::locale_from_utf8 (a_library_path),
+           "module-loading-domain") ;
 
     return module;
 }
 
 DynamicModuleSafePtr
-DynamicModuleManager::load_from_path (const UString &a_library_path)
+DynamicModuleManager::load_module_from_path (const UString &a_library_path)
 {
-    LOG_D ("loaded module from path " << Glib::locale_from_utf8 (a_library_path), "module-loading-domain") ;
-    return load_from_path (a_library_path, *module_loader ()) ;
+    LOG_D ("loaded module from path " << Glib::locale_from_utf8 (a_library_path),
+           "module-loading-domain") ;
+    return load_module_from_path (a_library_path, *module_loader ()) ;
 }
 
 

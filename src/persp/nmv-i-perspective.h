@@ -55,9 +55,13 @@ class NEMIVER_API IPerspective : public Plugin::EntryPoint {
     //non copyable
     IPerspective (const IPerspective&) ;
     IPerspective& operator= (const IPerspective&) ;
+    IPerspective () ;
 
 protected:
-    IPerspective () {}
+    IPerspective (DynamicModule *a_dynmod) :
+        Plugin::EntryPoint (a_dynmod)
+    {
+    }
 
 public:
 

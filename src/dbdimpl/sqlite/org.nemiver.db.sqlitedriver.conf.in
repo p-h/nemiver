@@ -1,6 +1,7 @@
 <moduleconfig>
     <module>
         <name>org.nemiver.db.sqlitedriver</name>
+        <!-- Remember, Interface name is IConnectionManagerDriver -->
         <libraryname>nemiverdbdsqlite</libraryname>
     </module>
     <customsearchpaths>

@@ -127,7 +127,7 @@ main (int argc, char *argv[])
 
         DynamicModuleManager module_manager ;
         IDebuggerSafePtr debugger =
-                    module_manager.load<IDebugger> ("gdbengine") ;
+                module_manager.load_iface<IDebugger> ("gdbengine", "IDebugger");
 
         debugger->set_event_loop_context (loop->get_context ()) ;
 
