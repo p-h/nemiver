@@ -1,10 +1,17 @@
+docfiles=dynamic-modules.txt mainpage.txt
+
+doc : reference/html/index.html
+
 DOXYGEN=$(shell which doxygen)
-doc: reference/html/index.html
 
 reference/html/index.html:
-	if test x$(DOXYGEN) = x ; then echo "doxygen is not installed, please install it!" ; exit -1 ; fi
+	@if test x$(DOXYGEN) = x ; \
+     then "echo ARGH, you do not have doxygen installed. Please install it !" ;exit -1;fi
 	$(DOXYGEN) Doxyfile
 
 clean-local:
-	-rm -rf reference
-	-rm doxygen-warnings.txt
+	-rm -rf reference doxygen-warnings.txt
+
+EXTRA_DIST=Doxyfile.in $(docfiles)
+
+
