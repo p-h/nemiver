@@ -211,7 +211,8 @@ public:
             m_type (a_type),
             m_parent (0)
 
-        {}
+        {
+        }
 
         Variable (const UString &a_name) :
             m_name (a_name),

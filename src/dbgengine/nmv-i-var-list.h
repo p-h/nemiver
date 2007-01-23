@@ -34,20 +34,29 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 using nemiver::common::ObjectRef ;
 using nemiver::common::ObjectUnref ;
 using nemiver::common::SafePtr ;
-using nemiver::common::DynamicModule ;
+using nemiver::common::DynModIface ;
+using nemiver::common::DynModIfaceSafePtr ;
 
 class IVarList ;
 typedef SafePtr<IVarList, ObjectRef, ObjectUnref> VarListSafePtr ;
-class NEMIVER_API IVarList : public DynamicModule {
+class NEMIVER_API IVarList : public DynModIface {
     IVarList () ;
     IVarList (const IVarList &) ;
+
+protected:
+    IVarList (DynamicModule *a_dynmod) :
+        DynModIface (a_dynmod)
+    {
+    }
 
 public:
 
     /// \name signals
     ///@{
-    virtual sigc::signal<void,IDebugger::VariableSafePtr&>& variable_added ()=0;
-    virtual sigc::signal<void,IDebugger::VariableSafePtr&>& variable_removed ()=0;
+    virtual sigc::signal<void,IDebugger::VariableSafePtr&>&
+                                                variable_added_signal () = 0;
+    virtual sigc::signal<void,IDebugger::VariableSafePtr&>&
+                                                variable_removed_signal () = 0;
     ///@}
 
     /// \brief intialize the interface with a given IDebugger pointer.
@@ -60,7 +69,7 @@ public:
     virtual void initialize (IDebuggerSafePtr &a_debugger) = 0;
 
     /// \return the raw list of variables maintained internally.
-    virtual const std::list<IDebugger::VariableSafePtr>& get_raw_list () = 0 ;
+    virtual const std::list<IDebugger::VariableSafePtr>& get_raw_list() const = 0;
 
     /// \brief append a variable to the list
     ///
@@ -70,12 +79,22 @@ public:
     /// \brief remove a variable from the list
     ///
     /// \param a_var the variable to remove from the list
-    virtual void remove_variable (const IDebugger::VariableSafePtr &a_var) = 0 ;
+    /// \return true if the variable has been found and removed
+    virtual bool remove_variable (const IDebugger::VariableSafePtr &a_var) = 0 ;
 
     /// \brief remove a variable from the list
     ///
-    /// \param a_str the name of the variable to remove
-    virtual void remove_variable (const UString &a_str) = 0 ;
+    /// \param a_var_name the name of the variable to remove
+    /// \return true if the variable has been found and removed
+    virtual bool remove_variable (const UString &a_var_name) = 0 ;
+
+    /// \brief lookup a variable from its name
+    ///
+    /// \param a_var_name the name of the variable to look for
+    /// \param a_var where to put the variable, if found.
+    /// \return true if the variable were found, false otherwise.
+    virtual bool find_variable (const UString &a_var_name,
+                                IDebugger::VariableSafePtr &a_var) = 0;
 
     /// \brief update the state of the all the variables of the list
     ///
