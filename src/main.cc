@@ -307,7 +307,7 @@ main (int a_argc, char *a_argv[])
     if (a_argc > 1) {
         UString prog_args ;
         for (int i=1 ; i < a_argc ;++i) {
-            prog_args += Glib::locale_to_utf8 (a_argv[i]) ;
+            prog_args +=  Glib::locale_to_utf8 (a_argv[i]) + " ";
         }
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
