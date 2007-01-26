@@ -1,3 +1,10 @@
+2007-01-25  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* docs/Doxyfile.in: Attempt to make doxygen understand the
+	NEMIVER_BEGIN/END_NAMESPACE macros so that the generated docs have correct
+	namespaces
+	* docs/Makefile.am: rebuild documentation if Doxyfile config is updated
+
 Wed, 24 Jan 2007 00:00:04 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-var-list.cc: starting to think about a variable

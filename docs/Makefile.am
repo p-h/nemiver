@@ -4,7 +4,7 @@ doc : reference/html/index.html
 
 DOXYGEN=$(shell which doxygen)
 
-reference/html/index.html:
+reference/html/index.html: Doxyfile
 	@if test x$(DOXYGEN) = x ; \
      then "echo ARGH, you do not have doxygen installed. Please install it !" ;exit -1;fi
 	$(DOXYGEN) Doxyfile

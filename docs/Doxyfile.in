@@ -176,12 +176,15 @@ PERLMOD_MAKEVAR_PREFIX =
 # Configuration options related to the preprocessor   
 #---------------------------------------------------------------------------
 ENABLE_PREPROCESSING   = YES
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = 
 INCLUDE_FILE_PATTERNS  = 
-PREDEFINED             = 
+# ideally, we should be able to put NEMIVER_BEGIN/END_NAMESPACE in the
+# EXPAND_AS_DEFINED configuration option, but that doesn't seem to work, whereas
+# re-defining them in the PREDEFINED option does work.
+PREDEFINED             = "NEMIVER_BEGIN_NAMESPACE(A)=namespace A {" "NEMIVER_END_NAMESPACE(B)=}"
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
