@@ -228,7 +228,7 @@ Workbench::on_about_menu_item_action ()
     dialog.set_authors (authors);
 
     dialog.set_website ("http://home.gna.org/nemiver/");
-    dialog.set_website_label ("Project Website");
+    dialog.set_website_label (_("Project Website"));
 
     Glib::ustring license =
         "This program is free software; you can redistribute it and/or modify\n"
