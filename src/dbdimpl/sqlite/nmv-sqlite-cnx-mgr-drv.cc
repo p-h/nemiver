@@ -25,12 +25,12 @@
  */
 #include "config.h"
 #include <sqlite3.h>
-#include "nmv-ustring.h"
-#include "nmv-exception.h"
-#include "nmv-safe-ptr-utils.h"
+#include "common/nmv-ustring.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-env.h"
 #include "nmv-sqlite-cnx-drv.h"
 #include "nmv-sqlite-cnx-mgr-drv.h"
-#include "nmv-env.h"
 
 using namespace nemiver::common ;
 

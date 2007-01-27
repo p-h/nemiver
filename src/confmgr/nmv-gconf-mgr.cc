@@ -24,9 +24,9 @@
  */
 #include <gconf/gconf-client.h>
 #include "nmv-i-conf-mgr.h"
-#include "nmv-ustring.h"
-#include "nmv-exception.h"
-#include "nmv-safe-ptr-utils.h"
+#include "common/nmv-ustring.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-safe-ptr-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

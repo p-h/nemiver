@@ -23,9 +23,9 @@
  *See COPYRIGHT file copyright information.
  */
 #include <gtkmm/toolbutton.h>
+#include "common/nmv-exception.h"
 #include "nmv-spinner-tool-item.h"
 #include "ephy-spinner-tool-item.h"
-#include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 struct ESpinnerRef {

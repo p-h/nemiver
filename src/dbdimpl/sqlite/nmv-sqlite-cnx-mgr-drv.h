@@ -26,8 +26,8 @@
 #ifndef __NEMIVER_SQLITE_CNX_MGR_DRV_H__
 #define __NEMIVER_SQLITE_CNX_MGR_DRV_H__
 
-#include "nmv-i-connection-manager-driver.h"
-#include "nmv-i-connection-driver.h"
+#include "common/nmv-i-connection-manager-driver.h"
+#include "common/nmv-i-connection-driver.h"
 
 namespace nemiver {
 namespace common {

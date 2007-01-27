@@ -26,10 +26,10 @@
 #ifndef NMV_TERMINAL
 #define NMV_TERMINAL
 
-#include "nmv-safe-ptr-utils.h"
-#include "nmv-env.h"
-#include "nmv-ustring.h"
-#include "nmv-object.h"
+#include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-env.h"
+#include "common/nmv-ustring.h"
+#include "common/nmv-object.h"
 
 using nemiver::common::UString ;
 using nemiver::common::Object ;

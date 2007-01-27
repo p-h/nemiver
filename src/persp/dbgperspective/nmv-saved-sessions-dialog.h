@@ -27,9 +27,9 @@
 
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
-#include "nmv-dialog.h"
-#include "nmv-safe-ptr-utils.h"
+#include "common/nmv-safe-ptr-utils.h"
 #include "nmv-sess-mgr.h"
+#include "nmv-dialog.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

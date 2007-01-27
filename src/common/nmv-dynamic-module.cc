@@ -497,6 +497,35 @@ DynamicModuleManager::load_module (const UString &a_name,
 }
 
 DynamicModuleSafePtr
+DynamicModuleManager::load_module (const UString &a_name)
+{
+    LOG_D ("loading module " << Glib::locale_from_utf8 (a_name),
+           "module-loading-domain") ;
+    return load_module (a_name, *module_loader ()) ;
+}
+
+DynamicModuleManager&
+DynamicModuleManager::get_default_manager ()
+{
+    static DynamicModuleManager s_default_dynmod_mgr ;
+    return s_default_dynmod_mgr ;
+}
+
+DynamicModuleSafePtr
+DynamicModuleManager::load_module_with_default_manager
+                                            (const UString &a_mod_name,
+                                             DynamicModule::Loader &a_loader)
+{
+    return get_default_manager ().load_module (a_mod_name, a_loader) ;
+}
+
+DynamicModuleSafePtr
+DynamicModuleManager::load_module_with_default_manager (const UString &a_mod_name)
+{
+    return get_default_manager ().load_module (a_mod_name) ;
+}
+
+DynamicModuleSafePtr
 DynamicModuleManager::load_module_from_path (const UString &a_library_path,
                                              DynamicModule::Loader &a_loader)
 {
@@ -517,7 +546,7 @@ DynamicModuleManager::load_module_from_path (const UString &a_library_path,
 DynamicModuleSafePtr
 DynamicModuleManager::load_module_from_path (const UString &a_library_path)
 {
-    LOG_D ("loaded module from path " << Glib::locale_from_utf8 (a_library_path),
+    LOG_D ("loading module from path " << Glib::locale_from_utf8 (a_library_path),
            "module-loading-domain") ;
     return load_module_from_path (a_library_path, *module_loader ()) ;
 }

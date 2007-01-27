@@ -30,7 +30,7 @@
 #include <gtkmm/treestore.h>
 #include <gtkmm/treemodelcolumn.h>
 #include <gdkmm/color.h>
-#include "nmv-ustring.h"
+#include "common/nmv-ustring.h"
 #include "nmv-i-debugger.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)

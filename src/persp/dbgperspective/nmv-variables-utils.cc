@@ -23,7 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include "nmv-variables-utils.h"
-#include "nmv-exception.h"
+#include "common/nmv-exception.h"
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)

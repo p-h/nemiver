@@ -25,8 +25,8 @@
 #ifndef __NMV_SPINNER_TOOL_ITEM_H__
 #define __NMV_SPINNER_TOOL_ITEM_H__
 
-#include "nmv-object.h"
-#include "nmv-safe-ptr-utils.h"
+#include "common/nmv-object.h"
+#include "common/nmv-safe-ptr-utils.h"
 
 namespace Gtk {
     class ToolItem ;

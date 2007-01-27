@@ -1,18 +1,168 @@
+/*!
+
+\page DynamicModules "Nemiver dynamic framework a.k.a DynMods"
+
 This document describes the dynamic module framework used throughout nemiver
 to support modularity and extensibility.
 
-Rationale
-==========
+\section DynamicModulesRationale Rationale
 
-We needed a way to separate programming interfaces from their implementation, so that
-a given programming interface could have several different implementations.
-
+We needed a way to separate programming interfaces from their implementation,
+so that a given programming interface could have several different
+implementations.
 Clients of a given interface  must me able to load a particular implementation
-of that interfaces at runtime, without the need to recompile or statically re-linking the involved binaries.
+of that interfaces at runtime, without the need to recompile
+or statically re-linking to the involved binaries.
 
 
-The Dynamic Module type
-=======================
+\section FirstLookAtDynamicModules first look at Dynamic Modules
 
-The nemiver common framework uses the concept of a "Dynamic Module", also known as "DynMod".
-A dynmod if a dynamic shared object (or a dynamically linked library if you prefer)
+The nemiver common framework uses the concept of "Dynamic Module",
+also known as \em DynMod.
+A \em dynmod is a dynamic shared object (surprise!) that contains service objects.
+The aim of these service objects is to offer services to client code.
+The only way for client code to use a service object embedded in
+a \em dynmod is to
+acquire an abstract interface of that service object.
+Once the interface is acquired,
+using the service object is just as easy as
+calling methods of that interface.
+
+\section DynModQuickExample Quick example of Loading a dynmod and getting a service
+object interface
+ 
+Please find below a small code example to load the \em dynmod that contains the a
+service object that knows how to control GDB.
+The name of that \em dynmod is \em "gdbengine". 
+\em gdbengine exposes the IDebugger interface
+(all public service object abstract interfaces name are prefixed by 'I').
+Once the "gdbengine" \em dynmod is loaded, the code snippet queries it to get a pointer
+to the IDebugger interface embedded in it.
+
+For the fearless readers around, before compiling the code snippet below,
+please make sure you have compiled nemiver and typed
+\code make install \endcode in order to get the dynmod framework
+headers and binaries properly installed.
+
+\code
+//******************************************************************************
+//to compile this code, type:
+//g++ -Wall -g `pkg-config --cflags --libs libnemivercommon` -o testdynmod test-dynmod.cc
+//*****************************************************************************
+
+#include <iostream>
+#include <common/nmv-initializer.h>
+#include <common/nmv-dynamic-module.h>
+#include <common/nmv-dynamic-module.h>
+#include <dynmods/nmv-i-debugger.h>
+
+using namespace std ;
+using namespace nemiver ;
+using namespace nemiver::common ;
+
+int
+main ()
+{
+    //initialize the plumbing
+    Initializer::do_init () ;
+
+    //create a module manager
+    //the module manager knows how
+    //to load the dynmods
+    DynamicModuleManager mod_mgr ;
+
+    //load a dynmod called "gdbengine".
+    //It contains a service object that knows
+    //how to talk with gdb
+    DynamicModuleSafePtr dynmod = mod_mgr.load_module ("gdbengine") ;
+
+    //initialize the dynamic module
+    if (dynmod) {
+        dynmod->do_init () ;
+        cout << "Cool ! got the gdbengine dynmod !\n" ;
+    } else {
+        cout << "Argh, failed to load the dynmod\n" ;
+        return -1 ;
+    }
+
+    //get a pointer to the abstract interface named "IDebugger".
+    //All the public abstract interfaces of service objects embedded in dynmods
+    //extend the DynModIface type.
+    //So the result of the interface look is a pointer to a DynModIface type.
+    DynModIfaceSafePtr iface ;
+    if (!dynmod->lookup_interface ("IDebugger", iface)) {
+        cout << "Could not get the IDebugger interface\n" ;
+    }
+
+   //cast the iface into a IDebugger interface
+    IDebuggerSafePtr debugger = iface.do_dynamic_cast<IDebugger>  () ;
+
+    //Now we are ready to work with our newly acquired IDebugger interface.
+    if (debugger) {
+        cout << "Yay, got the IDebugger interface\n";
+    } else {
+        cout << "Argh, failed to get IDebugger interface\n" ;
+    }
+    return 0 ;
+}
+
+\endcode
+
+Okay, that code is a bit long, but it is made on purpose to make you see the different
+steps of the service object interface loading mechanism:
+\li instanciate a dynmod manager. It knows how to instanciate a dynmod, given the dynmod's name.
+\li load the dynmod, using the dynmod manager you've previously instanciated. The dynmod is of type nemiver::common::DynamicModule
+\li get a pointer on a service object interface. All service object interfaces extend the type nemiver::common::DynModIface
+\li enjoy the service object interface !
+
+For real life usage, you can you a shorter code path, like the example below:
+
+\code
+//******************************************************************************
+//to compile this code, type:
+//g++ -Wall -g `pkg-config --cflags --libs libnemivercommon` -o testdynmod test-dynmod.cc
+//*****************************************************************************
+
+#include <iostream>
+#include <common/nmv-initializer.h>
+#include <common/nmv-dynamic-module.h>
+#include <common/nmv-dynamic-module.h>
+#include <dynmods/nmv-i-debugger.h>
+
+using namespace std ;
+using namespace nemiver ;
+using namespace nemiver::common ;
+int
+main ()
+{
+    //Initialize the plumbing
+    Initializer::do_init () ;
+
+    //Load the gdbengine dynmod using the
+    //default dynmod manager, and also get a pointer
+    //to the IDebugger service object interface from that dynmod.
+    //All in one call.
+    IDebuggerSafePtr debugger =
+        DynamicModuleManager::load_iface_with_default_manager<nemiver::IDebugger>
+                                                    ("gdbengine", "IDebugger") ;
+    if (!debugger) {
+        cout << "Could not get the IDebugger interface "
+                "from the gdbengine dynmod\n" ;
+        return -1 ;
+    }
+    cout << "yay !! got the IDebugger interface ! I can now do fancy stuff\n" ;
+    return 0 ;
+}
+\endcode
+
+In this example, we use the default module manager
+(that is present during the lifetime of the main function) to load the
+"gdbengine" dynmod on which we query a pointer to the IDebugger interface.
+The function DynamicModuleManager::load_iface_with_default_manager() fails
+if no interface with the queried name and type exists.
+
+\section DynamicModulesDeployment
+
+to be continued ...
+
+*/

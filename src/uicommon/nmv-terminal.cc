@@ -25,14 +25,13 @@
 #include "nmv-terminal.h"
 #include <pty.h>
 #include <iostream>
-#include "nmv-ustring.h"
 #include <gtkmm/bin.h>
 #include <gtkmm/main.h>
 #include <gtkmm/window.h>
 #include <gtkmm/adjustment.h>
 #include <vte/vte.h>
-#include "nmv-exception.h"
-#include "nmv-log-stream-utils.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-log-stream-utils.h"
 #include <utmp.h>
 
 NEMIVER_BEGIN_NAMESPACE(nemiver)

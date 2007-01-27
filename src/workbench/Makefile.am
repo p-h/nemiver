@@ -32,7 +32,7 @@ config_DATA=workbench.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
 INCLUDES=@NEMIVERWORKBENCH_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
--I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \

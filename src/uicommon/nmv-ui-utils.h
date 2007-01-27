@@ -28,10 +28,10 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "nmv-env.h"
-#include "nmv-ustring.h"
-#include "nmv-safe-ptr-utils.h"
-#include "nmv-api-macros.h"
+#include "common/nmv-env.h"
+#include "common/nmv-ustring.h"
+#include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-api-macros.h"
 
 
 #ifndef NEMIVER_CATCH

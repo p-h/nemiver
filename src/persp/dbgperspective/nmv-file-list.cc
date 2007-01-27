@@ -26,8 +26,8 @@
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
+#include "common/nmv-exception.h"
 #include "nmv-file-list.h"
-#include "nmv-exception.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-debugger.h"
 

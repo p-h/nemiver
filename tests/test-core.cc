@@ -1,9 +1,9 @@
 #include <iostream>
 #include <glibmm.h>
+#include "common/nmv-initializer.h"
+#include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-dynamic-module.h"
 #include "nmv-i-debugger.h"
-#include "nmv-initializer.h"
-#include "nmv-safe-ptr-utils.h"
-#include "nmv-dynamic-module.h"
 
 using namespace nemiver;
 using namespace nemiver::common ;

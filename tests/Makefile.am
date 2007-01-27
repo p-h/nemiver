@@ -33,7 +33,7 @@ pointerderef_SOURCES=pointer-deref.cc
 pointerderef_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 
-INCLUDES=-I$(top_srcdir)/src/common \
+INCLUDES=-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/dbgengine \
 @NEMIVERCOMMON_CFLAGS@
 

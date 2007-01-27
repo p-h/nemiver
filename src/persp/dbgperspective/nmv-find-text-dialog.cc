@@ -23,8 +23,8 @@
  *See COPYRIGHT file copyright information.
  */
 #include <gtksourceviewmm/sourceiter.h>
+#include "common/nmv-exception.h"
 #include "nmv-find-text-dialog.h"
-#include "nmv-exception.h"
 #include "nmv-ui-utils.h"
 #include "nmv-source-editor.h"
 

@@ -26,8 +26,8 @@
 #define __NMV_CONF_MGR_H__
 
 #include <boost/variant.hpp>
-#include "nmv-dynamic-module.h"
-#include "nmv-env.h"
+#include "common/nmv-dynamic-module.h"
+#include "common/nmv-env.h"
 
 using nemiver::common::SafePtr ;
 using nemiver::common::DynamicModule ;

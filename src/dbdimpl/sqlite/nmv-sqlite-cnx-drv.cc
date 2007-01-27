@@ -26,11 +26,11 @@
 #include "config.h"
 
 #include <sqlite3.h>
-#include "nmv-log-stream-utils.h"
+#include "common/nmv-log-stream-utils.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-buffer.h"
+#include "common/nmv-sql-statement.h"
 #include "nmv-sqlite-cnx-drv.h"
-#include "nmv-exception.h"
-#include "nmv-sql-statement.h"
-#include "nmv-buffer.h"
 
 using namespace nemiver::common ;
 

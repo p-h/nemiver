@@ -27,8 +27,8 @@
 #define __NMV_POPUP_TIP_H__
 
 #include <gtkmm/window.h>
-#include "nmv-ustring.h"
-#include "nmv-safe-ptr-utils.h"
+#include "common/nmv-ustring.h"
+#include "common/nmv-safe-ptr-utils.h"
 
 using nemiver::common::UString ;
 using nemiver::common::SafePtr;

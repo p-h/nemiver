@@ -72,7 +72,7 @@ WARN_LOGFILE           = @top_builddir@/docs/doxygen-warnings.txt
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = @top_srcdir@/src/common @top_srcdir@/src/confmgr @top_srcdir@/src/dbdimpl @top_srcdir@/src/dbgengine @top_srcdir@/src/persp @top_srcdir@/src/persp/dbgperspective @top_srcdir@/src/uicommon @top_srcdir@/src/workbench @top_srcdir@/docs/dynamic-modules.txt
+INPUT                  = @top_srcdir@/src/common @top_srcdir@/src/confmgr @top_srcdir@/src/dbdimpl @top_srcdir@/src/dbgengine @top_srcdir@/src/persp @top_srcdir@/src/persp/dbgperspective @top_srcdir@/src/uicommon @top_srcdir@/src/workbench @top_srcdir@/docs/mainpage.txt @top_srcdir@/docs/dynamic-modules.txt
 FILE_PATTERNS          = *.h
 RECURSIVE              = NO
 EXCLUDE                = 

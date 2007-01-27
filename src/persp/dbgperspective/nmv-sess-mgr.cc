@@ -22,14 +22,14 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#include "nmv-safe-ptr-utils.h"
-#include "nmv-sess-mgr.h"
-#include "nmv-connection.h"
-#include "nmv-connection-manager.h"
-#include "nmv-tools.h"
-#include "nmv-transaction.h"
-#include "nmv-sql-statement.h"
+#include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-connection.h"
+#include "common/nmv-connection-manager.h"
+#include "common/nmv-tools.h"
+#include "common/nmv-transaction.h"
+#include "common/nmv-sql-statement.h"
 #include "nmv-ui-utils.h"
+#include "nmv-sess-mgr.h"
 
 using namespace std ;
 using namespace nemiver::common ;

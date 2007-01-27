@@ -25,8 +25,8 @@
 #ifndef __NMV_I_WORKBENCH_H__
 #define __NMV_I_WORKBENCH_H__
 
-#include "nmv-api-macros.h"
-#include "nmv-dynamic-module.h"
+#include "common/nmv-api-macros.h"
+#include "common/nmv-dynamic-module.h"
 
 //*******************
 //some Gtk forward decls

@@ -34,10 +34,10 @@
 #include <fstream>
 #include <iostream>
 #include "nmv-i-debugger.h"
-#include "nmv-env.h"
-#include "nmv-exception.h"
-#include "nmv-sequence.h"
-#include "nmv-proc-utils.h"
+#include "common/nmv-env.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-sequence.h"
+#include "common/nmv-proc-utils.h"
 
 const nemiver::common::UString GDBMI_PARSING_DOMAIN = "gdbmi-parsing-domain";
 const nemiver::common::UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain" ;

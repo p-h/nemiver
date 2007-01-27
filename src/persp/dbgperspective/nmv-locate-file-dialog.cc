@@ -29,11 +29,11 @@
 #include <gtkmm/dialog.h>
 #include <gtkmm/filechooserbutton.h>
 #include <gtkmm/stock.h>
-#include "nmv-exception.h"
-#include "nmv-locate-file-dialog.h"
-#include "nmv-env.h"
-#include "nmv-ustring.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-env.h"
+#include "common/nmv-ustring.h"
 #include "nmv-ui-utils.h"
+#include "nmv-locate-file-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;

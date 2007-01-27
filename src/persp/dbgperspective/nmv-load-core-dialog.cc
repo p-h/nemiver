@@ -29,10 +29,10 @@
 #include <gtkmm/dialog.h>
 #include <gtkmm/filechooserbutton.h>
 #include <gtkmm/stock.h>
-#include "nmv-exception.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-env.h"
+#include "common/nmv-ustring.h"
 #include "nmv-load-core-dialog.h"
-#include "nmv-env.h"
-#include "nmv-ustring.h"
 #include "nmv-ui-utils.h"
 
 using namespace std ;

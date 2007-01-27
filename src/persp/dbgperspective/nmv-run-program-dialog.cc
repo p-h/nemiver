@@ -33,10 +33,10 @@
 #include <gtkmm/stock.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
-#include "nmv-exception.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-env.h"
+#include "common/nmv-ustring.h"
 #include "nmv-run-program-dialog.h"
-#include "nmv-env.h"
-#include "nmv-ustring.h"
 #include "nmv-ui-utils.h"
 
 using namespace std ;

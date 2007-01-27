@@ -23,10 +23,9 @@
  *See COPYRIGHT file copyright information.
  */
 #include <gtkmm/label.h>
+#include "common/nmv-exception.h"
 #include "nmv-popup-tip.h"
-#include "nmv-exception.h"
 #include "nmv-ui-utils.h"
-#include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

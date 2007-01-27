@@ -26,7 +26,7 @@
 #define __NEMIVER_DIALOG_H__
 
 #include <libglademm/xml.h>
-#include "nmv-object.h"
+#include "common/nmv-object.h"
 
 namespace Gtk {
     class Dialog ;

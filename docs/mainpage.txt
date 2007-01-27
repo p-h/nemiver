@@ -1,0 +1,12 @@
+/*!
+
+\mainpage Nemiver internals documentation
+
+
+This document is the main entry point to learn more about the
+internals of the Nemiver debugger project. Different topics covered by
+this document are:
+
+\subpage DynamicModules "Nemiver dynamic modules framework"
+
+*/

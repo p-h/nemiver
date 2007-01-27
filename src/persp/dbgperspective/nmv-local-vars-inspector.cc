@@ -28,9 +28,9 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
 #include <gtkmm/treerowreference.h>
+#include "common/nmv-exception.h"
 #include "nmv-local-vars-inspector.h"
 #include "nmv-variables-utils.h"
-#include "nmv-exception.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 

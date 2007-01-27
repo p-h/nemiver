@@ -25,10 +25,10 @@
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
+#include "common/nmv-exception.h"
 #include "nmv-var-inspector.h"
 #include "nmv-variables-utils.h"
 #include "nmv-ui-utils.h"
-#include "nmv-exception.h"
 
 using namespace nemiver::ui_utils ;
 using namespace nemiver::variables_utils ;

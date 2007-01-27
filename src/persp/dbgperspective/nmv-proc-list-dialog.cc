@@ -28,8 +28,8 @@
 #include <libglademm.h>
 #include <gtkmm.h>
 #include <glib/gi18n.h>
+#include "common/nmv-env.h"
 #include "nmv-proc-list-dialog.h"
-#include "nmv-env.h"
 #include "nmv-ui-utils.h"
 
 using namespace std ;

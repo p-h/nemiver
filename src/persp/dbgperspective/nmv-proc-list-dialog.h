@@ -25,9 +25,9 @@
 #ifndef __NMV_PROC_LIST_DIALOG_H__
 #define __NMV_PROC_LIST_DIALOG_H__
 
+#include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-proc-mgr.h"
 #include "nmv-dialog.h"
-#include "nmv-safe-ptr-utils.h"
-#include "nmv-proc-mgr.h"
 
 namespace common {
     class UString ;

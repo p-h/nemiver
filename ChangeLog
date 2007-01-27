@@ -1,3 +1,22 @@
+Sat, 27 Jan 2007 01:56:54 +0100 Dodji Seketeli
+
+	* */*: in my quest to enable client code outside of the nemiver tree
+	 to use the headers, I have been obliged to specify the 'common' directory
+	 in all #include "common/nmv-foo.h" directive used by public headers.
+	 This is because when deployed, headers go in
+	 $prefix/include/nemiver/common or $prefix/inlcude/nemiver/dynmods.
+	 Headers in $prefix/include/nemiver/dynmods almost always do
+	 #include "nmv-foo.h" with nmv-foo.h coming from
+	 $prefix/include/nemiver/common, leading to compilation error.
+	 So from now on, all files including headers comming from
+	 the common directory must do #include "common/nmv-foo.h".
+	 * docs/mainpage.txt, dynamic-modules.txt: started to describe
+	 the principles of the dynmod system, and writing some example code
+	 to illustrate my sayings. The code example should compile outside
+	 the nemiver source tree. Hence the change done above.
+	* src/common/nmv-dynamic-module.h,cc: added some functions to
+	 ease the use of dynmods. That makes the doc prettier ;-)
+
 Fri, 26 Jan 2007 17:45:19 +0100 Dodji Seketeli
 
 	* src/main.cc: make nemiver prog arg1 arg2, work.

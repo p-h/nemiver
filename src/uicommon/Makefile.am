@@ -21,6 +21,6 @@ libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@
 
 INCLUDES=@NEMIVERUICOMMON_CFLAGS@ \
 -I$(top_srcdir) \
--I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/uicommon
 

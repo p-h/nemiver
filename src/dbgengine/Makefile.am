@@ -9,7 +9,7 @@ nmv-i-debugger.h
 ivarlistheaders= \
 nmv-i-var-list.h
 
-dynmodheaders = $(idebugheaders) $(ivarlistheaders)
+dynmodheaders = $(idebuggerheaders) $(ivarlistheaders)
 libgdbmod_la_SOURCES= \
 $(idebuggerheaders)  \
 nmv-gdb-engine.cc
@@ -27,5 +27,5 @@ config_DATA=gdbengine.conf varlist.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
 INCLUDES=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
--I$(top_srcdir)/src/common
+-I$(top_srcdir)/src
 

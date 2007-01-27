@@ -26,11 +26,11 @@
 #include <vector>
 #include <libglademm.h>
 #include <gtkmm/dialog.h>
-#include "nmv-exception.h"
-#include "nmv-dialog.h"
-#include "nmv-env.h"
-#include "nmv-ustring.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-env.h"
+#include "common/nmv-ustring.h"
 #include "nmv-ui-utils.h"
+#include "nmv-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;

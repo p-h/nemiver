@@ -23,7 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#include "nmv-exception.h"
+#include "common/nmv-exception.h"
 #include "nmv-ui-utils.h"
 
 using namespace nemiver::common ;

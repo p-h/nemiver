@@ -1,5 +1,10 @@
 SUBDIRS = src glade menus tests po data docs
 
+headers= config.h
+
+publicheaders_DATA=$(headers)
+publicheadersdir=$(NEMIVER_INCLUDE_DIR)/common
+
 INTLTOOL_FILES= intltool-extract.in \
 				intltool-merge.in \
 				intltool-update.in
@@ -9,6 +14,7 @@ README \
 INSTALL \
 COPYING \
 COPYRIGHT \
+$(headers) \
 $(INTLTOOL_FILES)
 
 doc:

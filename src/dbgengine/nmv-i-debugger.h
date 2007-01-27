@@ -29,10 +29,10 @@
 #include <string>
 #include <map>
 #include <list>
-#include "nmv-api-macros.h"
-#include "nmv-ustring.h"
-#include "nmv-dynamic-module.h"
-#include "nmv-safe-ptr-utils.h"
+#include "common/nmv-api-macros.h"
+#include "common/nmv-ustring.h"
+#include "common/nmv-dynamic-module.h"
+#include "common/nmv-safe-ptr-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

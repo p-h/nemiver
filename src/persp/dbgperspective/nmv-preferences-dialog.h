@@ -26,7 +26,7 @@
 #define __NMV_PREFERENCES_DIALOG_H__
 
 #include <vector>
-#include "nmv-ustring.h"
+#include "common/nmv-ustring.h"
 #include "nmv-dialog.h"
 
 using nemiver::common::UString ;

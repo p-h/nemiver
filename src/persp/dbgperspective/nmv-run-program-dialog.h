@@ -26,8 +26,8 @@
 #define __NEMIVER_RUN_PROGRAM_DIALOG_H__
 
 #include <map>
+#include "common/nmv-safe-ptr-utils.h"
 #include "nmv-dialog.h"
-#include "nmv-safe-ptr-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

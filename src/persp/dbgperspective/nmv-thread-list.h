@@ -27,8 +27,8 @@
 
 #include <list>
 #include <gtkmm/widget.h>
-#include "nmv-object.h"
-#include "nmv-safe-ptr-utils.h"
+#include "common/nmv-object.h"
+#include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
 
 using nemiver::common::Object ;

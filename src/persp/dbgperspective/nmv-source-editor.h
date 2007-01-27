@@ -28,8 +28,8 @@
 #include <list>
 #include <gtkmm/box.h>
 #include <gtksourceviewmm/sourceview.h>
-#include "nmv-safe-ptr-utils.h"
-#include "nmv-ustring.h"
+#include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-ustring.h"
 
 using gtksourceview::SourceView ;
 using gtksourceview::SourceBuffer ;

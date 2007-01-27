@@ -25,16 +25,16 @@
 #include <vector>
 #include <iostream>
 #include <glib/gi18n.h>
+#include <libgnomevfs/gnome-vfs-init.h>
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/icontheme.h>
-#include "nmv-exception.h"
-#include "nmv-plugin.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-plugin.h"
+#include "common/nmv-log-stream-utils.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 #include "nmv-i-perspective.h"
 #include "nmv-i-conf-mgr.h"
-#include <libgnomevfs/gnome-vfs-init.h>
-#include "nmv-log-stream-utils.h"
 
 using namespace std ;
 using namespace nemiver ;

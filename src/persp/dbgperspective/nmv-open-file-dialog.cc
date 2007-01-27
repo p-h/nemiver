@@ -30,9 +30,9 @@
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/button.h>
 #include <gtkmm/box.h>
-#include "nmv-exception.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-ustring.h"
 #include "nmv-open-file-dialog.h"
-#include "nmv-ustring.h"
 #include "nmv-ui-utils.h"
 #include "nmv-file-list.h"
 

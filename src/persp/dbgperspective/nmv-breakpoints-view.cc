@@ -27,8 +27,8 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/treerowreference.h>
+#include "common/nmv-exception.h"
 #include "nmv-breakpoints-view.h"
-#include "nmv-exception.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 #include "nmv-i-perspective.h"

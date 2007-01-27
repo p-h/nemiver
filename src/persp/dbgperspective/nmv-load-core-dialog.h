@@ -25,8 +25,8 @@
 #ifndef __NEMIVER_LOAD_CORE_DIALOG_H__
 #define __NEMIVER_LOAD_CORE_DIALOG_H__
 
+#include "common/nmv-safe-ptr-utils.h"
 #include "nmv-dialog.h"
-#include "nmv-safe-ptr-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

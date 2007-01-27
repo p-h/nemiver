@@ -24,7 +24,7 @@
  */
 #include <algorithm>
 #include "nmv-i-var-list.h"
-#include "nmv-exception.h"
+#include "common/nmv-exception.h"
 
 static const char* INSTANCE_NOT_INITIALIZED = "instance not initialized" ;
 

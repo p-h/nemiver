@@ -27,8 +27,8 @@
 
 #include <gtkmm.h>
 #include <list>
-#include "nmv-api-macros.h"
-#include "nmv-plugin.h"
+#include "common/nmv-api-macros.h"
+#include "common/nmv-plugin.h"
 #include "nmv-i-workbench.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)

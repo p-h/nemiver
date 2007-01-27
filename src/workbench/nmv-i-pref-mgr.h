@@ -27,8 +27,8 @@
 
 #include <list>
 #include <boost/variant.hpp>
-#include "nmv-dynamic-module.h"
-#include "nmv-ustring.h"
+#include "common/nmv-dynamic-module.h"
+#include "common/nmv-ustring.h"
 
 using namespace std ;
 using nemiver::common::UString ;

@@ -29,10 +29,10 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtksourceviewmm/sourcemarker.h>
 #include <gtksourceviewmm/sourceiter.h>
-#include "nmv-exception.h"
+#include "common/nmv-exception.h"
+#include "common/nmv-sequence.h"
+#include "common/nmv-ustring.h"
 #include "nmv-source-editor.h"
-#include "nmv-ustring.h"
-#include "nmv-sequence.h"
 
 using namespace std ;
 using namespace nemiver::common;
