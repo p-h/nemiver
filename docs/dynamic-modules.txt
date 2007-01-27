@@ -53,7 +53,6 @@ headers and binaries properly installed.
 #include <iostream>
 #include <common/nmv-initializer.h>
 #include <common/nmv-dynamic-module.h>
-#include <common/nmv-dynamic-module.h>
 #include <dynmods/nmv-i-debugger.h>
 
 using namespace std ;
@@ -125,7 +124,6 @@ For real life usage, you can you a shorter code path, like the example below:
 
 #include <iostream>
 #include <common/nmv-initializer.h>
-#include <common/nmv-dynamic-module.h>
 #include <common/nmv-dynamic-module.h>
 #include <dynmods/nmv-i-debugger.h>
 
