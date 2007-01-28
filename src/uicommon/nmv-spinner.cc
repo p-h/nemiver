@@ -24,9 +24,9 @@
  */
 
 #include <gtkmm/widget.h>
+#include "common/nmv-exception.h"
 #include "nmv-spinner.h"
 #include "ephy-spinner.h"
-#include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 struct ESpinnerRef {
