@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <glibmm.h>
-#include "nmv-ustring.h"
-#include "nmv-initializer.h"
+#include "common/nmv-ustring.h"
+#include "common/nmv-initializer.h"
 
 using nemiver::common::Initializer ;
 using nemiver::common::UString ;

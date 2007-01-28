@@ -1,7 +1,7 @@
 #include <iostream>
 #include <glibmm.h>
-#include "nmv-initializer.h"
-#include "nmv-log-stream-utils.h"
+#include "common/nmv-initializer.h"
+#include "common/nmv-log-stream-utils.h"
 
 int
 main ()
