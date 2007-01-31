@@ -307,9 +307,18 @@ Workbench::do_init (Gtk::Main &a_main)
     // constructed)
     Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
     if (theme->has_icon("nemiver")) {
-        Glib::RefPtr<Gdk::Pixbuf> icon = theme->load_icon("nemiver", 16,
+        Glib::RefPtr<Gdk::Pixbuf> icon16 = theme->load_icon("nemiver", 16,
                 Gtk::ICON_LOOKUP_USE_BUILTIN);
-        m_priv->root_window->set_default_icon(icon);
+        Glib::RefPtr<Gdk::Pixbuf> icon32 = theme->load_icon("nemiver", 32,
+                Gtk::ICON_LOOKUP_USE_BUILTIN);
+        Glib::RefPtr<Gdk::Pixbuf> icon48 = theme->load_icon("nemiver", 48,
+                Gtk::ICON_LOOKUP_USE_BUILTIN);
+
+        std::list<Glib::RefPtr<Gdk::Pixbuf> > icon_list;
+        icon_list.push_back(icon16);
+        icon_list.push_back(icon32);
+        icon_list.push_back(icon48);
+        m_priv->root_window->set_default_icon_list(icon_list);
     }
 
     init_glade () ;
