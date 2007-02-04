@@ -219,17 +219,21 @@ private:
                                           const UString &a_cookie) ;
 
     void on_debugger_breakpoints_set_signal
-                                (const map<int, IDebugger::BreakPoint> &) ;
+                                (const map<int, IDebugger::BreakPoint> &,
+                                 const UString &a_cookie) ;
 
     void on_debugger_breakpoint_deleted_signal
-                                        (const IDebugger::BreakPoint&, int) ;
+                                        (const IDebugger::BreakPoint&,
+                                         int,
+                                         const UString &a_cookie) ;
 
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
                                      const IDebugger::Frame &,
-                                     int a_thread_id) ;
+                                     int a_thread_id,
+                                     const UString&) ;
     void on_program_finished_signal () ;
-    void on_frame_selected_signal (int, const IDebugger::Frame &) ;
+    void on_frame_selected_signal (int, const IDebugger::Frame &);
 
     void on_debugger_running_signal () ;
 
@@ -242,7 +246,8 @@ private:
 
     void on_debugger_variable_value_signal
                                     (const UString &a_var_name,
-                                     const IDebugger::VariableSafePtr &a_var) ;
+                                     const IDebugger::VariableSafePtr &a_var,
+                                     const UString &a_cooker) ;
     //************
     //</signal slots>
     //************
@@ -1362,9 +1367,12 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
 
 void
 DBGPerspective::on_debugger_breakpoints_set_signal
-                            (const map<int, IDebugger::BreakPoint> &a_breaks)
+                            (const map<int, IDebugger::BreakPoint> &a_breaks,
+                             const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    if (a_cookie.empty ()) {}
+
     NEMIVER_TRY
     LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
@@ -1377,11 +1385,12 @@ void
 DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
                                             bool a_has_frame,
                                             const IDebugger::Frame &a_frame,
-                                            int a_thread_id)
+                                            int a_thread_id,
+                                            const UString &a_cookie)
 {
 
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_reason == "" || a_thread_id) {}
+    if (a_reason == "" || a_thread_id || a_cookie.empty ()) {}
 
     NEMIVER_TRY
 
@@ -1492,11 +1501,13 @@ DBGPerspective::on_frame_selected_signal (int a_index,
 void
 DBGPerspective::on_debugger_breakpoint_deleted_signal
                                         (const IDebugger::BreakPoint &a_break,
-                                         int a_break_number)
+                                         int a_break_number,
+                                         const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-    if (a_break.number ()) {}
+    if (a_break.number () || a_cookie.empty ()) {}
+
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
     get_breakpoints_view ().set_breakpoints (m_priv->breakpoints);
@@ -1568,9 +1579,12 @@ DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
 void
 DBGPerspective::on_debugger_variable_value_signal
                                         (const UString &a_var_name,
-                                         const IDebugger::VariableSafePtr &a_var)
+                                         const IDebugger::VariableSafePtr &a_var,
+                                         const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    if (a_cookie.empty ()) {}
+
     NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
 

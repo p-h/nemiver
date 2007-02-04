@@ -231,9 +231,12 @@ class VarInspector::Priv : public sigc::trackable {
 
     void on_debugger_variable_value_signal
                                 (const UString &a_variable_name,
-                                 const IDebugger::VariableSafePtr &a_variable)
+                                 const IDebugger::VariableSafePtr &a_variable,
+                                 const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_cookie.empty ()) {}
 
         LOG_DD ("variable_name: '" << a_variable_name << "'") ;
         if (!requested_variable) {return;}
@@ -242,9 +245,12 @@ class VarInspector::Priv : public sigc::trackable {
     }
 
     void on_variable_type_signal (const UString &a_var_name,
-                                  const UString &a_type)
+                                  const UString &a_type,
+                                  const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_cookie.empty ()) {}
 
         LOG_DD ("variable_name: '" << a_var_name << "'") ;
         LOG_DD ("variable_type: '" << a_type << "'") ;
@@ -267,36 +273,14 @@ class VarInspector::Priv : public sigc::trackable {
         NEMIVER_CATCH
     }
 
-    void on_tree_view_row_expanded_signal (const Gtk::TreeModel::iterator &a_it,
-                                           const Gtk::TreeModel::Path &a_path)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-
-        if (a_path.get_depth ()) {}
-
-        NEMIVER_TRY
-
-        THROW_IF_FAIL (a_it) ;
-
-        IDebugger::VariableSafePtr var =
-            (IDebugger::VariableSafePtr)
-                a_it->get_value (get_variable_columns ().variable) ;
-        if (!var) {return;}
-        Gtk::TreeModel::iterator child_it = a_it->children ().begin ();
-        if (!child_it) {return;}
-        var = child_it->get_value (get_variable_columns ().variable) ;
-        if (var) {return;}
-
-        cur_selected_row = a_it ;
-        print_pointed_variable_value () ;
-        NEMIVER_CATCH
-    }
-
     void on_pointed_variable_value_signal
                                 (const UString &a_var_name,
-                                 const IDebugger::VariableSafePtr &a_var)
+                                 const IDebugger::VariableSafePtr &a_var,
+                                 const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD
+
+        if (a_cookie.empty ()) {}
 
         NEMIVER_TRY
 
@@ -334,6 +318,30 @@ class VarInspector::Priv : public sigc::trackable {
         NEMIVER_CATCH
     }
 
+    void on_tree_view_row_expanded_signal (const Gtk::TreeModel::iterator &a_it,
+                                           const Gtk::TreeModel::Path &a_path)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_path.get_depth ()) {}
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (a_it) ;
+
+        IDebugger::VariableSafePtr var =
+            (IDebugger::VariableSafePtr)
+                a_it->get_value (get_variable_columns ().variable) ;
+        if (!var) {return;}
+        Gtk::TreeModel::iterator child_it = a_it->children ().begin ();
+        if (!child_it) {return;}
+        var = child_it->get_value (get_variable_columns ().variable) ;
+        if (var) {return;}
+
+        cur_selected_row = a_it ;
+        print_pointed_variable_value () ;
+        NEMIVER_CATCH
+    }
 
     // ******************
     // </signal handlers>

@@ -307,6 +307,7 @@ public:
                  load_iface_with_default_manager (const UString &a_module_name,
                                                   const UString &a_iface_name) ;
 
+
     ModuleRegistry& module_registry () ;
     DynamicModule::LoaderSafePtr& module_loader () ;
     void module_loader (DynamicModule::LoaderSafePtr &a_loader) ;
@@ -378,8 +379,9 @@ DynamicModuleManager::load_iface (const UString &a_module_name,
 
 template <class T>
 SafePtr<T, ObjectRef, ObjectUnref>
-DynamicModuleManager::load_iface_with_default_manager (const UString &a_mod_name,
-                                                       const UString &a_iface_name)
+DynamicModuleManager::load_iface_with_default_manager
+                                            (const UString &a_mod_name,
+                                             const UString &a_iface_name)
 {
     return get_default_manager ().load_iface<T> (a_mod_name, a_iface_name) ;
 }

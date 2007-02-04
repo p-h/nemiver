@@ -22,6 +22,7 @@ publicheaders_DATA=$(dynmodheaders)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgdbmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
+libvarlistmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
 
 config_DATA=gdbengine.conf varlist.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@

@@ -342,68 +342,84 @@ public:
     virtual sigc::signal<void, const UString&>&
                                  target_output_message_signal () const = 0 ;
 
-    virtual sigc::signal<void, const UString&>& log_message_signal () const = 0 ;
+    virtual sigc::signal<void, const UString&>& log_message_signal () const=0 ;
 
     virtual sigc::signal<void,
                          const UString&/*command name*/,
                          const UString&/*command cookie*/>&
-                                                 command_done_signal () const = 0;
+                                             command_done_signal () const=0;
 
     virtual sigc::signal<void>& detached_from_target_signal () const = 0 ;
 
-    virtual sigc::signal<void, const IDebugger::BreakPoint&, int>&
+    virtual sigc::signal<void,
+                        const IDebugger::BreakPoint&,
+                        int /*breakpoint command*/,
+                        const UString & /*cookie*/>&
                                          breakpoint_deleted_signal () const  = 0;
 
-    virtual sigc::signal<void, const map<int, IDebugger::BreakPoint>&>&
+    virtual sigc::signal<void,
+                         const map<int, IDebugger::BreakPoint>&,
+                         const UString& /*cookie*/>&
                                              breakpoints_set_signal () const = 0;
 
     virtual sigc::signal<void,
                          const UString&/*reason*/,
                          bool /*has frame*/,
                          const IDebugger::Frame&/*the frame*/,
-                         int /*thread id*/>& stopped_signal () const = 0;
+                         int /*thread id*/,
+                         const UString& /*cookie*/>& stopped_signal () const = 0;
 
-    virtual sigc::signal<void, const list<int> >&
+    virtual sigc::signal<void,
+                         const list<int>/*thread ids*/,
+                         const UString& /*cookie*/>&
                                         threads_listed_signal () const = 0;
 
     virtual sigc::signal<void,
                          int/*thread id*/,
-                         const IDebugger::Frame&/*frame in thread*/> &
-                                            thread_selected_signal () const = 0 ;
-
-    virtual sigc::signal<void, const vector<IDebugger::Frame>& >&
-                                                frames_listed_signal () const=0;
+                         const IDebugger::Frame&/*frame in thread*/,
+                         const UString& /*cookie*/> &
+                                             thread_selected_signal () const = 0 ;
 
     virtual sigc::signal<void,
-                         const map<int, list<IDebugger::VariableSafePtr> >&>&
+                        const vector<IDebugger::Frame>&,
+                        const UString&>& frames_listed_signal () const=0;
+
+    virtual sigc::signal<void,
+                         const map<int, list<IDebugger::VariableSafePtr> >&,
+                         const UString&>&
                                         frames_params_listed_signal () const=0;
 
     /// called when a core file is loaded.
     /// it signals the current frame, i.e the frame in which
     /// the core got dumped.
-    virtual sigc::signal<void, const IDebugger::Frame&>&
+    virtual sigc::signal<void,
+                        const IDebugger::Frame&,
+                        const UString& /*cookie*/>&
                                             current_frame_signal () const = 0 ;
 
 
-    virtual sigc::signal<void, const list<VariableSafePtr>& >&
+    virtual sigc::signal<void, const list<VariableSafePtr>&, const UString& >&
                             local_variables_listed_signal () const = 0;
 
     virtual sigc::signal<void,
                          const UString&/*variable name*/,
-                         const VariableSafePtr&/*variable*/>&
-                                            variable_value_signal () const = 0 ;
+                         const VariableSafePtr&/*variable*/,
+                         const UString& /*cookie*/>&
+                                             variable_value_signal () const = 0;
 
     virtual sigc::signal<void,
                          const UString&/*variable name*/,
-                         const VariableSafePtr&/*variable*/>&
-                                    pointed_variable_value_signal () const = 0 ;
+                         const VariableSafePtr&/*variable*/,
+                         const UString& /*cookie*/>&
+                                    pointed_variable_value_signal () const = 0;
 
     virtual sigc::signal<void,
                          const UString&/*variable name*/,
-                         const UString&/*type*/>&
+                         const UString&/*type*/,
+                         const UString&/*cookie*/>&
                                         variable_type_signal () const = 0 ;
 
-    virtual sigc::signal<void, const vector<UString>& >&
+    virtual sigc::signal<void, const vector<UString>&, const UString&>&
                             files_listed_signal () const = 0;
 
     virtual sigc::signal<void,

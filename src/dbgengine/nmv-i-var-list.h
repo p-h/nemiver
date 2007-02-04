@@ -37,8 +37,9 @@ using nemiver::common::SafePtr ;
 using nemiver::common::DynModIface ;
 using nemiver::common::DynModIfaceSafePtr ;
 
+typedef std::list<IDebugger::VariableSafePtr> DebuggerVariableList ;
 class IVarList ;
-typedef SafePtr<IVarList, ObjectRef, ObjectUnref> VarListSafePtr ;
+typedef SafePtr<IVarList, ObjectRef, ObjectUnref> IVarListSafePtr ;
 class NEMIVER_API IVarList : public DynModIface {
     IVarList () ;
     IVarList (const IVarList &) ;
@@ -68,13 +69,19 @@ public:
     //// the variables.
     virtual void initialize (IDebuggerSafePtr &a_debugger) = 0;
 
+    virtual IDebugger& get_debugger () const = 0 ;
+
     /// \return the raw list of variables maintained internally.
-    virtual const std::list<IDebugger::VariableSafePtr>& get_raw_list() const = 0;
+    virtual const DebuggerVariableList& get_raw_list() const = 0;
 
     /// \brief append a variable to the list
     ///
     /// \param a_var the new variable to append
-    virtual void append_variable (const IDebugger::VariableSafePtr &a_var) = 0 ;
+    /// \param a_update_type if true, update the type field of the
+    ///  the variable. This will trigger an invocation of the IDebugger
+    ///  interface.
+    virtual void append_variable (const IDebugger::VariableSafePtr &a_var,
+                                  bool a_update_type=true) = 0 ;
 
     /// \brief remove a variable from the list
     ///
@@ -95,6 +102,16 @@ public:
     /// \return true if the variable were found, false otherwise.
     virtual bool find_variable (const UString &a_var_name,
                                 IDebugger::VariableSafePtr &a_var) = 0;
+
+    /// \brief get the variable addressed by a qualified variable name.
+    ///
+    /// a qualified variable name has a form similar to: foo.bar.baz
+    /// \param a_qname the qualified variable name
+    /// \param a_var out parameters. The resulting variable, if found.
+    /// \return true if the a variable matching that the qname a_qname
+    /// has been found, false otherwise.
+    virtual bool find_variable_from_qname (const UString &a_qname,
+                                           IDebugger::VariableSafePtr &a_var)=0;
 
     /// \brief update the state of the all the variables of the list
     ///

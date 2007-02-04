@@ -37,8 +37,11 @@ on_command_done_signal (const UString &a_command,
 }
 
 void
-on_breakpoints_set_signal (const std::map<int, IDebugger::BreakPoint> &a_breaks)
+on_breakpoints_set_signal (const std::map<int, IDebugger::BreakPoint> &a_breaks,
+                           const UString &a_cookie)
 {
+    if (a_cookie.empty ()) {}
+
     std::cout  << "breakpoints set: \n" ;
     std::map<int, IDebugger::BreakPoint>::const_iterator it ;
     for (it = a_breaks.begin () ; it != a_breaks.end () ; ++it) {
@@ -67,8 +70,11 @@ void
 on_stopped_signal (const UString &a_command,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
-                   int a_thread_id)
+                   int a_thread_id,
+                   const UString &a_cookie)
 {
+    if (a_cookie.empty ()) {}
+
     std::cout << "stopped, reason is '" << a_command << "'\n" ;
     if (a_has_frame) {
         std::cout << "in frame: " << a_frame.function_name () << "\n";
@@ -78,15 +84,21 @@ on_stopped_signal (const UString &a_command,
 
 void
 on_variable_type_signal (const UString &a_variable_name,
-                         const UString &a_variable_type)
+                         const UString &a_variable_type,
+                         const UString &a_cookie)
 {
+    if (a_cookie.empty ()) {}
+
     std::cout << "type of variable '" << a_variable_name
               << "' is '" << a_variable_type << "'\n" ;
 }
 
 void
-on_threads_listed_signal (const std::list<int> &a_thread_ids)
+on_threads_listed_signal (const std::list<int> &a_thread_ids,
+                          const UString &a_cookie)
 {
+
+    if (a_cookie.empty ()) {}
 
     std::cout << "number of threads: '" << a_thread_ids.size () << "'\n";
     std::list<int>::const_iterator it ;
@@ -97,8 +109,11 @@ on_threads_listed_signal (const std::list<int> &a_thread_ids)
 
 void
 on_thread_selected_signal (int a_thread_id,
-                           const IDebugger::Frame &a_frame)
+                           const IDebugger::Frame &a_frame,
+                           const UString &a_cookie)
 {
+    if (a_cookie.empty ()) {}
+
     std::cout << "thread selected: '" << a_thread_id << "'\n" ;
     std::cout << "frame in thread : '" << a_frame.level () << "'\n" ;
     std::cout << "frame.function: '" << a_frame.function_name () << "'\n" ;

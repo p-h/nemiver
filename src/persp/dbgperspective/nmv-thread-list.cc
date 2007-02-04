@@ -72,11 +72,12 @@ struct ThreadList::Priv {
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
                                      const IDebugger::Frame &a_frame,
-                                     int a_thread_id)
+                                     int a_thread_id,
+                                     const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         NEMIVER_TRY
-        if (a_has_frame || a_frame.level ()) {}
+        if (a_has_frame || a_frame.level () || a_cookie.empty ()) {}
 
         if (a_reason == "exited-signaled"
             || a_reason == "exited-normally") {
@@ -87,9 +88,13 @@ struct ThreadList::Priv {
         NEMIVER_CATCH
     }
 
-    void on_debugger_threads_listed_signal (const std::list<int> &a_threads)
+    void on_debugger_threads_listed_signal (const std::list<int> &a_threads,
+                                            const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_cookie.empty ()) {}
+
         NEMIVER_TRY
 
         clear_threads () ;
@@ -100,10 +105,13 @@ struct ThreadList::Priv {
     }
 
     void on_debugger_thread_selected_signal (int a_tid,
-                                             const IDebugger::Frame &a_frame)
+                                             const IDebugger::Frame &a_frame,
+                                             const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        if (a_frame.level ()) {}
+
+        if (a_frame.level () || a_cookie.empty ()) {}
+
         NEMIVER_TRY
 
         select_thread_id (a_tid, false) ;

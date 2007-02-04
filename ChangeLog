@@ -1,3 +1,24 @@
+Sun, 04 Feb 2007 23:36:36 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: 
+	  Each query to the IDebugger can be associated to a cookie.
+	  Now, the cookie set by client code at query time is
+	  returned in the signal triggered by the query result.
+	* src/dbgengine/nmv-var-list.cc, nmv-i-var-list.h:
+	  More work on the IVarList interface and implementation.
+	  Nothing works yet, but the model is shaping up.
+	* tests/test-var-list.cc: started to add a playground for the
+	  IVarList interface
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc: propagated
+	the cookie related changes done on IDebugger.
+	* src/persp/dbgperspective/nmv-thread-list.cc: ditto
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: ditto
+	* src/persp/dbgperspective/nmv-file-list.cc: ditto
+	* src/persp/dbgperspective/nmv-call-stack.cc: ditto
+	* src/persp/dbgperspective/nmv-var-inspector.cc: ditto
+	* tests/test-breakpoint.cc: ditto
+	* tests/test-core.cc: ditto
+
 2007-01-30  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/workbench/nmv-workbench.cc: use an icon list for the default window

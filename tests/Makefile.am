@@ -1,9 +1,11 @@
-noinst_PROGRAMS=fooprog runtestbreakpoint \
+noinst_PROGRAMS=runtestbreakpoint \
 runtestcore runteststdout \
 runtesttemplatedvar \
 runtestunicode \
+runtestvarlist \
 docore inout \
-pointerderef
+pointerderef \
+fooprog
 
 fooprog_SOURCES=fooprog.cc
 fooprog_LDFLAGS=@NEMIVERCOMMON_LIBS@
@@ -22,6 +24,9 @@ runtesttemplatedvar_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 runtestunicode_SOURCES=test-unicode.cc
 runtestunicode_LDFLAGS=@NEMIVERCOMMON_LIBS@
+
+runtestvarlist_SOURCES=test-var-list.cc
+runtestvarlist_LDFLAGS=@NEMIVERCOMMON_LIBS@
 
 docore_SOURCES=do-core.cc
 docore_LDFLAGS=@NEMIVERCOMMON_LIBS@

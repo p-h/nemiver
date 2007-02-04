@@ -353,13 +353,27 @@ public:
     {
         build_tree_view () ;
         debugger->files_listed_signal ().connect(
-            sigc::mem_fun(*(this->tree_view.get()), &FileListView::set_files));
+            sigc::mem_fun(*this, &FileList::Priv::on_files_listed_signal));
     }
 
     void build_tree_view ()
     {
         if (tree_view) {return;}
         tree_view.reset (new FileListView ()) ;
+    }
+
+    void on_files_listed_signal (const vector<UString> &a_files,
+                                 const UString &a_cooker)
+    {
+        NEMIVER_TRY
+
+        if (a_cooker.empty ()) {}
+
+        THROW_IF_FAIL (tree_view) ;
+
+        tree_view->set_files (a_files) ;
+
+        NEMIVER_CATCH
     }
 
 };//end class FileList::Priv

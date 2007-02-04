@@ -1016,41 +1016,56 @@ public:
 
     sigc::signal<void>& detached_from_target_signal () const ;
 
-    sigc::signal<void, const map<int, IDebugger::BreakPoint>& >&
+    sigc::signal<void, const map<int, IDebugger::BreakPoint>&, const UString&>&
                                                 breakpoints_set_signal () const ;
 
-    sigc::signal<void, const IDebugger::BreakPoint&, int>&
+    sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>&
                                             breakpoint_deleted_signal () const ;
 
 
-    sigc::signal<void, const UString&, bool, const IDebugger::Frame&, int>&
-                                                        stopped_signal () const ;
+    sigc::signal<void,
+                const UString&,
+                bool,
+                const IDebugger::Frame&,
+                int,
+                const UString& /*cookie*/>& stopped_signal () const ;
 
-    sigc::signal<void, const list<int> >& threads_listed_signal () const ;
+    sigc::signal<void,
+                 const list<int>,
+                 const UString& >& threads_listed_signal () const ;
 
-    sigc::signal<void, const vector<UString>& >& files_listed_signal () const;
+    sigc::signal<void, const vector<UString>&, const UString& >&
+                                                    files_listed_signal () const;
 
-    sigc::signal<void, int, const Frame&>& thread_selected_signal () const  ;
+    sigc::signal<void,
+                 int,
+                 const Frame&,
+                 const UString&>& thread_selected_signal () const  ;
 
-    sigc::signal<void, const vector<IDebugger::Frame>& >&
-                                                frames_listed_signal () const ;
+    sigc::signal<void,
+                 const vector<IDebugger::Frame>&,
+                 const UString&>& frames_listed_signal () const ;
 
-    sigc::signal<void, const map<int,
-                                 list<IDebugger::VariableSafePtr> >&>&
+    sigc::signal<void,
+                 const map<int, list<IDebugger::VariableSafePtr> >&,
+                 const UString& /*cookie*/>&
                                         frames_params_listed_signal () const;
 
-    sigc::signal<void, const IDebugger::Frame&>& current_frame_signal () const  ;
+    sigc::signal<void, const IDebugger::Frame&, const UString&>&
+                                                current_frame_signal () const ;
 
-    sigc::signal<void, const list<VariableSafePtr>& >&
+    sigc::signal<void, const list<VariableSafePtr>&, const UString&>&
                         local_variables_listed_signal () const ;
 
-    sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
-                                            variable_value_signal () const  ;
+    sigc::signal<void,
+                 const UString&,
+                 const IDebugger::VariableSafePtr&,
+                 const UString&>& variable_value_signal () const  ;
 
-    sigc::signal<void, const UString&, const VariableSafePtr&>&
+    sigc::signal<void, const UString&, const VariableSafePtr&, const UString&>&
                                     pointed_variable_value_signal () const  ;
 
-    sigc::signal<void, const UString&, const UString&>&
+    sigc::signal<void, const UString&, const UString&, const UString&>&
                                         variable_type_signal () const ;
 
     sigc::signal<void, int, const UString&>& got_target_info_signal () const  ;
@@ -1267,42 +1282,53 @@ struct GDBEngine::Priv {
 
     sigc::signal<void> detached_from_target_signal ;
 
-    mutable sigc::signal<void, const map<int, IDebugger::BreakPoint>&>
-                                                    breakpoints_set_signal;
+    mutable sigc::signal<void,
+                        const map<int, IDebugger::BreakPoint>&,
+                        const UString&> breakpoints_set_signal;
 
-    mutable sigc::signal<void, const IDebugger::BreakPoint&, int>
+    mutable sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>
                                                 breakpoint_deleted_signal ;
 
     mutable sigc::signal<void, const UString&,
                          bool, const IDebugger::Frame&,
-                         int> stopped_signal ;
+                         int, const UString&> stopped_signal ;
 
-    mutable sigc::signal<void, const list<int> > threads_listed_signal ;
+    mutable sigc::signal<void,
+                         const list<int>,
+                         const UString& > threads_listed_signal ;
 
-    mutable sigc::signal<void, const vector<UString>& > files_listed_signal;
+    mutable sigc::signal<void,
+                         const vector<UString>&,
+                         const UString& > files_listed_signal;
 
-    mutable sigc::signal<void, int, const Frame&> thread_selected_signal ;
+    mutable sigc::signal<void, int, const Frame&, const UString&>
+                                                        thread_selected_signal ;
 
-    mutable sigc::signal<void, const vector<IDebugger::Frame>& >
+    mutable sigc::signal<void, const vector<IDebugger::Frame>&, const UString&>
                                                     frames_listed_signal ;
 
-    mutable sigc::signal<void, const map<int,
-                                         list<IDebugger::VariableSafePtr> >&>
-                                                frames_params_listed_signal ;
+    mutable sigc::signal<void,
+                         const map<int, list<IDebugger::VariableSafePtr> >&,
+                         const UString&> frames_params_listed_signal ;
 
-    mutable sigc::signal<void, const IDebugger::Frame&> current_frame_signal ;
+    mutable sigc::signal<void, const IDebugger::Frame&, const UString&>
+                                                        current_frame_signal ;
 
-    mutable sigc::signal<void, const list<VariableSafePtr>& >
+    mutable sigc::signal<void, const list<VariableSafePtr>&, const UString& >
                                     local_variables_listed_signal  ;
 
-    mutable sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>
-                                                        variable_value_signal ;
+    mutable sigc::signal<void,
+                         const UString&,
+                         const IDebugger::VariableSafePtr&,
+                         const UString&>             variable_value_signal ;
 
-    mutable sigc::signal<void, const UString&, const VariableSafePtr&>
-                                                pointed_variable_value_signal;
+    mutable sigc::signal<void,
+                         const UString&,
+                         const VariableSafePtr&,
+                         const UString&> pointed_variable_value_signal;
 
-    mutable sigc::signal<void, const UString&, const UString&>
-                                                    variable_type_signal  ;
+    mutable sigc::signal<void, const UString&, const UString&, const UString&>
+                                                            variable_type_signal;
 
     mutable sigc::signal<void, int, const UString&> got_target_info_signal ;
 
@@ -3902,7 +3928,7 @@ fetch_gdbmi_result:
                         //frame level information the the parse result record
                         //without making it look ugly.
                         //So I fire the signal directly from here.
-                        current_frame_signal.emit (frame) ;
+                        current_frame_signal.emit (frame, "") ;
                     }
                 } else if (!a_input.compare (cur, 7, "depth=\"")) {
                     GDBMIResultSafePtr result ;
@@ -4232,7 +4258,7 @@ struct OnBreakPointHandler: OutputHandler {
                 if (iter != breaks.end ()) {
                     LOG_DD ("firing IDebugger::breakpoint_deleted_signal()") ;
                     m_engine->breakpoint_deleted_signal ().emit
-                    (iter->second, iter->first) ;
+                    (iter->second, iter->first, a_in.command ().cookie ()) ;
                     breaks.erase (iter) ;
                 }
                 m_engine->set_state (IDebugger::READY) ;
@@ -4244,7 +4270,8 @@ struct OnBreakPointHandler: OutputHandler {
         } else if (has_breaks){
             LOG_DD ("firing IDebugger::breakpoint_set_signal()") ;
             m_engine->breakpoints_set_signal ().emit
-                            (a_in.output ().result_record ().breakpoints ()) ;
+                            (a_in.output ().result_record ().breakpoints (),
+                             a_in.command ().cookie ()) ;
             m_engine->set_state (IDebugger::READY) ;
         } else {
             LOG_DD ("finally, no breakpoint was detected as set/deleted") ;
@@ -4294,7 +4321,8 @@ struct OnStoppedHandler: OutputHandler {
                     (m_out_of_band_record.stop_reason_as_str (),
                      m_out_of_band_record.has_frame (),
                      m_out_of_band_record.frame (),
-                     thread_id) ;
+                     thread_id,
+                     a_in.command ().cookie ()) ;
 
         UString reason = m_out_of_band_record.stop_reason_as_str () ;
 
@@ -4333,7 +4361,8 @@ struct OnFileListHandler : OutputHandler {
 
         THROW_IF_FAIL (m_engine) ;
         m_engine->files_listed_signal ().emit
-            (a_in.output ().result_record ().file_list ()) ;
+            (a_in.output ().result_record ().file_list (),
+             a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
     }
 };//end OnFileListHandler
@@ -4361,7 +4390,8 @@ struct OnThreadListHandler : OutputHandler {
 
         THROW_IF_FAIL (m_engine) ;
         m_engine->threads_listed_signal ().emit
-            (a_in.output ().result_record ().thread_list ()) ;
+            (a_in.output ().result_record ().thread_list (),
+             a_in.command ().cookie ()) ;
     }
 };//end OnThreadListHandler
 
@@ -4389,7 +4419,8 @@ struct OnThreadSelectedHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
         m_engine->thread_selected_signal ().emit
             (a_in.output ().result_record ().thread_id (),
-             a_in.output ().result_record ().frame_in_thread ()) ;
+             a_in.output ().result_record ().frame_in_thread (),
+             a_in.command ().cookie ()) ;
     }
 };//end OnThreadSelectedHandler
 
@@ -4470,7 +4501,8 @@ struct OnFramesListedHandler : OutputHandler {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         m_engine->frames_listed_signal ().emit
-            (a_in.output ().result_record ().call_stack ()) ;
+            (a_in.output ().result_record ().call_stack (),
+             a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnFramesListedHandler
@@ -4500,7 +4532,8 @@ struct OnFramesParamsListedHandler : OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         m_engine->frames_params_listed_signal ().emit
-            (a_in.output ().result_record ().frames_parameters ()) ;
+            (a_in.output ().result_record ().frames_parameters (),
+             a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnFramesParamsListedHandler
@@ -4568,7 +4601,8 @@ struct OnLocalVariablesListedHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
 
         m_engine->local_variables_listed_signal ().emit
-            (a_in.output ().result_record ().local_variables ()) ;
+            (a_in.output ().result_record ().local_variables (),
+             a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnLocalVariablesListedHandler
@@ -4615,13 +4649,16 @@ struct OnVariableValueHandler : OutputHandler {
         if (a_in.command ().tag0 () == "print-variable-value") {
             m_engine->variable_value_signal ().emit
                         (a_in.command ().tag1 (),
-                         a_in.output ().result_record ().variable_value ()) ;
+                         a_in.output ().result_record ().variable_value (),
+                         a_in.command ().cookie ()) ;
         } else if (a_in.command ().tag0 () == "print-pointed-variable-value") {
             IDebugger::VariableSafePtr variable =
                             a_in.output ().result_record ().variable_value () ;
             variable->name ("*" + variable->name ()) ;
             m_engine->pointed_variable_value_signal ().emit
-                        (a_in.command ().tag1 (), variable) ;
+                                                    (a_in.command ().tag1 (),
+                                                     variable,
+                                                     a_in.command ().cookie ()) ;
         } else {
             THROW ("unknown command tag: " + a_in.command ().tag0 ()) ;
         }
@@ -4704,7 +4741,9 @@ struct OnVariableTypeHandler : OutputHandler {
         type.chomp () ;
         LOG_DD ("got type: " << type) ;
         if (type != "") {
-            m_engine->variable_type_signal ().emit (var_name, type) ;
+            m_engine->variable_type_signal ().emit (var_name,
+                                                    type,
+                                                    a_in.command ().cookie ()) ;
         }
         m_engine->set_state (IDebugger::READY) ;
     }
@@ -5048,44 +5087,46 @@ GDBEngine::detached_from_target_signal () const
     return m_priv->detached_from_target_signal ;
 }
 
-sigc::signal<void, const IDebugger::BreakPoint&, int>&
+sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>&
 GDBEngine::breakpoint_deleted_signal () const
 {
     return m_priv->breakpoint_deleted_signal ;
 }
 
-sigc::signal<void, const map<int, IDebugger::BreakPoint>&>&
+sigc::signal<void, const map<int, IDebugger::BreakPoint>&, const UString&>&
 GDBEngine::breakpoints_set_signal () const
 {
     return m_priv->breakpoints_set_signal ;
 }
 
-sigc::signal<void, const UString&, bool, const IDebugger::Frame&, int>&
+sigc::signal<void, const UString&, bool,
+             const IDebugger::Frame&, int,
+             const UString&>&
 GDBEngine::stopped_signal () const
 {
     return m_priv->stopped_signal ;
 }
 
-sigc::signal<void, const list<int> >&
+sigc::signal<void, const list<int>, const UString& >&
 GDBEngine::threads_listed_signal () const
 {
     return m_priv->threads_listed_signal ;
 }
 
 
-sigc::signal<void, const vector<UString>& >&
+sigc::signal<void, const vector<UString>&, const UString&>&
 GDBEngine::files_listed_signal () const
 {
     return m_priv->files_listed_signal ;
 }
 
-sigc::signal<void, int, const IDebugger::Frame&>&
+sigc::signal<void, int, const IDebugger::Frame&, const UString&>&
 GDBEngine::thread_selected_signal () const
 {
     return m_priv->thread_selected_signal ;
 }
 
-sigc::signal<void, const vector<IDebugger::Frame>& >&
+sigc::signal<void, const vector<IDebugger::Frame>&, const UString& >&
 GDBEngine::frames_listed_signal () const
 {
     return m_priv->frames_listed_signal ;
@@ -5097,37 +5138,46 @@ GDBEngine::got_target_info_signal () const
     return m_priv->got_target_info_signal ;
 }
 
-sigc::signal<void, const map< int, list<IDebugger::VariableSafePtr> >&>&
+sigc::signal<void,
+             const map< int, list<IDebugger::VariableSafePtr> >&,
+             const UString&>&
 GDBEngine::frames_params_listed_signal () const
 {
     return m_priv->frames_params_listed_signal ;
 }
 
-sigc::signal<void, const IDebugger::Frame&> &
+sigc::signal<void, const IDebugger::Frame&, const UString&> &
 GDBEngine::current_frame_signal () const
 {
     return m_priv->current_frame_signal ;
 }
 
-sigc::signal<void, const list<IDebugger::VariableSafePtr>& >&
+sigc::signal<void, const list<IDebugger::VariableSafePtr>&, const UString& >&
 GDBEngine::local_variables_listed_signal () const
 {
     return m_priv->local_variables_listed_signal ;
 }
 
-sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
+sigc::signal<void,
+             const UString&,
+             const IDebugger::VariableSafePtr&,
+             const UString&>&
 GDBEngine::variable_value_signal () const
 {
     return m_priv->variable_value_signal ;
 }
 
-sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&>&
+sigc::signal<void,
+            const
+            UString&,
+            const IDebugger::VariableSafePtr&,
+            const UString&>&
 GDBEngine::pointed_variable_value_signal () const
 {
     return m_priv->pointed_variable_value_signal ;
 }
 
-sigc::signal<void, const UString&, const UString&>&
+sigc::signal<void, const UString&, const UString&, const UString&>&
 GDBEngine::variable_type_signal () const
 {
     return m_priv->variable_type_signal ;

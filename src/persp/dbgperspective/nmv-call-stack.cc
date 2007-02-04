@@ -174,14 +174,15 @@ struct CallStack::Priv {
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
                                      const IDebugger::Frame &a_frame,
-                                     int a_thread_id)
+                                     int a_thread_id,
+                                     const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         NEMIVER_TRY
         LOG_DD ("stopped, reason: " << a_reason) ;
 
-        if (a_has_frame || a_frame.line () || a_thread_id) {}
+        if (a_has_frame || a_frame.line () || a_thread_id || a_cookie.empty ()) {}
 
         if (a_reason == "exited-signaled"
             || a_reason == "exited-normally"
@@ -195,9 +196,12 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack)
+    void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack,
+                                  const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_cookie.empty ()) {}
 
         NEMIVER_TRY
 
@@ -222,9 +226,12 @@ struct CallStack::Priv {
     }
 
     void on_frames_params_listed_signal
-            (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params)
+            (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params,
+             const UString &a_cookie)
     {
         LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN) ;
+        if (a_cookie.empty ()) {}
+
         if (waiting_for_stack_args) {
             set_frame_list (frames, a_frames_params) ;
             waiting_for_stack_args = false ;
