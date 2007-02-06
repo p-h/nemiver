@@ -19,6 +19,17 @@ Sun, 04 Feb 2007 23:36:36 +0100 Dodji Seketeli
 	* tests/test-breakpoint.cc: ditto
 	* tests/test-core.cc: ditto
 
+2007-02-04  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-breakpoints-view.h,cc: add ability to
+	manually force breakpoints view to refresh its list of breakpoints
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: force breakpoints view to
+	refresh its breakpoints when the user clicks the "restart" button on the
+	toolbar.  This is necessary because when a program runs to completion, it
+	clears everything in the status notebook tabs, and restarting the executable
+	doesn't result in a 'breakpoints-set' signal being fired, so we have to
+	force the breakpoints to be re-listed.
+
 2007-02-03  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/dbgengine/nmv-i-debugger.h: add API to enable and disable a breakpoint

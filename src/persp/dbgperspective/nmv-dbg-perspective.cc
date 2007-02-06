@@ -1038,6 +1038,7 @@ DBGPerspective::on_going_to_run_target_signal ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     get_local_vars_inspector ().re_init_widget () ;
+    get_breakpoints_view ().re_init ();
     NEMIVER_CATCH
 }
 

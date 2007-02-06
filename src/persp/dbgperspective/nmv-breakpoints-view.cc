@@ -297,6 +297,11 @@ public:
         workbench.get_ui_manager ()->insert_action_group (breakpoints_action_group);
     }
 
+    void re_init ()
+    {
+        debugger->list_breakpoints ();
+    }
+
 };//end class BreakpointsView::Priv
 
 BreakpointsView::BreakpointsView (IWorkbench& a_workbench,
@@ -334,6 +339,13 @@ BreakpointsView::clear ()
     if (m_priv->list_store) {
         m_priv->list_store->clear () ;
     }
+}
+
+void
+BreakpointsView::re_init ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    m_priv->re_init ();
 }
 
 sigc::signal<void, const IDebugger::BreakPoint&>&
