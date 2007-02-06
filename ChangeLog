@@ -1,3 +1,16 @@
+2007-02-05  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	 * src/persp/dbgperspective/nmv-dbg-perspective.cc: if breakpoints loaded
+	 from a stored session are disabled, add the breakpoint with a cookie
+	 indicating that they need to be immediately disabled.  Then in
+	 on_debugger_breakpoint_set_signal, disable the appropriate breakpoint
+	 * src/persp/dbgperspective/nmv-sess-mgr.cc,h: save the enable/disable status
+	 of breakpoints in the sessions db
+	 * src/persp/dbgperspective/sqlscripts/sqlite/create-tables.sql: update the
+	 session DB to add a field for breakpoint enable/disable.  Also bumped the
+	 database schema version.  WARNING: this means that your existing database
+	 will be deleted when first run after you update to this version.
+
 Sun, 04 Feb 2007 23:36:36 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h: 

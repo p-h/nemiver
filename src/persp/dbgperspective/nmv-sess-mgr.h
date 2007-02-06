@@ -59,22 +59,27 @@ public:
         UString m_file_name ;
         UString m_file_full_name ;
         int m_line_number ;
+        bool m_enabled ;
 
     public:
         BreakPoint (const UString &a_file_name,
                     const UString &a_file_full_name,
-                    const UString &a_line_number) :
+                    const UString &a_line_number,
+                    const UString &a_enabled) :
             m_file_name (a_file_name),
             m_file_full_name (a_file_full_name),
-            m_line_number (atoi (a_line_number.c_str ()))
+            m_line_number (atoi (a_line_number.c_str ())),
+            m_enabled (atoi (a_enabled.c_str ()))
         {}
 
         BreakPoint (const UString &a_file_name,
                     const UString &a_file_full_name,
-                    int a_line_number) :
+                    int a_line_number,
+                    bool a_enabled) :
             m_file_name (a_file_name),
             m_file_full_name (a_file_full_name),
-            m_line_number (a_line_number)
+            m_line_number (a_line_number),
+            m_enabled (a_enabled)
         {}
 
         BreakPoint () :
@@ -89,6 +94,9 @@ public:
 
         int line_number () const {return m_line_number;}
         void line_number (int a_in) {m_line_number = a_in;}
+
+        bool enabled () const { return m_enabled; }
+        void enabled (bool a_in) { m_enabled = a_in; }
     };
 
     class Session {

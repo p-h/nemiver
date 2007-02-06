@@ -1377,6 +1377,24 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     if (a_cookie.empty ()) {}
 
     NEMIVER_TRY
+    // if a breakpoint was stored in the session db as disabled, it must be set
+    // initially and then immediately disabled.  When the breakpoint is set, it
+    // will send a 'cookie' along of the form "initiallly-disabled#filename.cc#123"
+    if (a_cookie.find("initially-disabled") != UString::npos) {
+        UString::size_type start_of_file = a_cookie.find('#') + 1;
+        UString::size_type start_of_line = a_cookie.rfind('#') + 1;
+        UString file = a_cookie.substr(start_of_file, (start_of_line - 1) - start_of_file);
+        int line = atoi(a_cookie.substr (start_of_line, a_cookie.size () - start_of_line).c_str ());
+        for (map<int, IDebugger::BreakPoint>::const_iterator break_iter = a_breaks.begin ();
+                break_iter != a_breaks.end ();
+                ++break_iter) {
+            if ((break_iter->second.file_full_name () == file ||
+                        break_iter->second.file_name () == file) &&
+                    break_iter->second.line () == line) {
+                debugger ()->disable_breakpoint(break_iter->second.number ());
+            }
+        }
+    }
     LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
     NEMIVER_CATCH
@@ -2869,7 +2887,8 @@ a_session.properties ().clear () ; a_session.properties ()[SESSION_NAME] = sessi
         a_session.breakpoints ().push_back
             (ISessMgr::BreakPoint (break_iter->second.file_name (),
                                    break_iter->second.file_full_name (),
-                                   break_iter->second.line ())) ;
+                                   break_iter->second.line (),
+                                   break_iter->second.enabled ())) ;
     }
     THROW_IF_FAIL (session_manager_ptr ()) ;
 
@@ -3232,6 +3251,7 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
         breakpoint.line (it->line_number ()) ;
         breakpoint.file_name (it->file_name ()) ;
         breakpoint.file_full_name (it->file_full_name ()) ;
+        breakpoint.enabled (it->enabled ()) ;
         breakpoints.push_back (breakpoint) ;
     }
 
@@ -3359,8 +3379,15 @@ DBGPerspective::execute_program (const UString &a_prog,
     } else {
         vector<IDebugger::BreakPoint>::const_iterator it ;
         for (it = a_breaks.begin () ; it != a_breaks.end () ; ++it) {
+            // if the breakpoint was marked as 'disabled' in the session DB, we
+            // have set the breakpoint and immediately disable it.  We need to
+            // pass along some additional information in the 'cookie' to
+            // determine which breakpoint needs to be disabling after it is set.
+            UString cookie = it->enabled() ? "" : "initially-disabled#" +
+                it->file_full_name () + "#" + UString::from_int(it->line ());
             dbg_engine->set_breakpoint (it->file_full_name (),
-                                        it->line ()) ;
+                                        it->line (),
+                                        cookie) ;
         }
     }
 

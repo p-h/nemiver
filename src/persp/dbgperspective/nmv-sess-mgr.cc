@@ -39,7 +39,7 @@ using nemiver::common::ConnectionManager ;
 using nemiver::common::Transaction ;
 using nemiver::common::SQLStatement ;
 
-static const char *REQUIRED_DB_SCHEMA_VERSION = "1.1" ;
+static const char *REQUIRED_DB_SCHEMA_VERSION = "1.2" ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -301,7 +301,8 @@ SessMgr::store_session (Session &a_session,
                 + UString::from_int (a_session.session_id ()) + ", '"
                 + break_iter->file_name () + "', '"
                 + break_iter->file_full_name () + "', "
-                + UString::from_int (break_iter->line_number ())
+                + UString::from_int (break_iter->line_number ()) + ", "
+                + UString::from_int (break_iter->enabled ())
                 + ")"
                 ;
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
@@ -396,22 +397,25 @@ SessMgr::load_session (Session &a_session,
 
     //load the breakpoints
     query = "select breakpoints.filename, breakpoints.filefullname, "
-            "breakpoints.linenumber from "
+            "breakpoints.linenumber, breakpoints.enabled from "
             "breakpoints where breakpoints.sessionid = "
             + UString::from_int (session.session_id ())
             ;
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     while (trans.get ().get_connection ().read_next_row ()) {
-        UString filename, filefullname, linenumber;
+        UString filename, filefullname, linenumber, enabled;
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                                 (0, filename));
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                             (1, filefullname));
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                                 (2, linenumber));
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                                (3, enabled));
         session.breakpoints ().push_back (SessMgr::BreakPoint (filename,
                                                                filefullname,
-                                                               linenumber)) ;
+                                                               linenumber,
+                                                               enabled)) ;
     }
 
     //load the search paths
