@@ -66,16 +66,16 @@ public:
     Gtk::Widget *breakpoints_menu;
     sigc::signal<void,
                  const IDebugger::BreakPoint&> go_to_breakpoint_signal;
-    sigc::signal<void,
-                 const IDebugger::BreakPoint&> delete_breakpoint_signal;
     Glib::RefPtr<Gtk::ActionGroup> breakpoints_action_group;
     IWorkbench& workbench;
     IPerspective& perspective;
+    IDebuggerSafePtr& debugger;
 
-    Priv (IWorkbench& a_workbench, IPerspective& a_perspective) :
+    Priv (IWorkbench& a_workbench, IPerspective& a_perspective, IDebuggerSafePtr& a_debugger) :
         breakpoints_menu(0),
         workbench(a_workbench),
-        perspective(a_perspective)
+        perspective(a_perspective),
+        debugger(a_debugger)
     {
         init_actions ();
         build_tree_view () ;
@@ -84,6 +84,13 @@ public:
         tree_view->signal_button_press_event ().connect_notify
             (sigc::mem_fun (*this,
                             &Priv::on_breakpoints_view_button_press_signal));
+
+        // update breakpoint list when debugger indicates that the list of
+        // breakpoints has changed.
+        debugger->breakpoint_deleted_signal ().connect (sigc::mem_fun
+                (*this, &Priv::on_debugger_breakpoint_deleted_signal)) ;
+        debugger->breakpoints_set_signal ().connect (sigc::mem_fun
+                (*this, &Priv::on_debugger_breakpoints_set_signal)) ;
     }
 
     void build_tree_view ()
@@ -94,11 +101,31 @@ public:
         tree_view.reset (new Gtk::TreeView (list_store)) ;
 
         //create the columns of the tree view
-        //trnfoee_view->append_column ("", get_bp_columns ().enabled) ;
+        tree_view->append_column_editable ("", get_bp_columns ().enabled) ;
         tree_view->append_column (_("ID"), get_bp_columns ().id) ;
         tree_view->append_column (_("Filename"), get_bp_columns ().filename) ;
         tree_view->append_column (_("Line"), get_bp_columns ().line) ;
+        Gtk::CellRendererToggle *enabled_toggle =
+            dynamic_cast<Gtk::CellRendererToggle*> (tree_view->get_column_cell_renderer(0));
+        if (enabled_toggle) {
+            enabled_toggle->signal_toggled ().connect (sigc::mem_fun (*this,
+                        &BreakpointsView::Priv::on_breakpoint_enable_toggled));
+        }
     }
+
+    void on_breakpoint_enable_toggled (const Glib::ustring& path)
+    {
+        THROW_IF_FAIL (tree_view);
+        Gtk::TreeModel::iterator tree_iter = tree_view->get_model ()->get_iter (path);
+        if (tree_iter) {
+            if ((*tree_iter)[get_bp_columns ().enabled]) {
+                debugger->enable_breakpoint((*tree_iter)[get_bp_columns ().id]);
+            } else {
+                debugger->disable_breakpoint((*tree_iter)[get_bp_columns ().id]);
+            }
+        }
+    }
+
 
     void set_breakpoints
         (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
@@ -107,9 +134,8 @@ public:
         list_store->clear();
         std::map<int, IDebugger::BreakPoint>::const_iterator break_iter;
         for (break_iter = a_breakpoints.begin ();
-             break_iter != a_breakpoints.end ();
-             ++break_iter)
-        {
+                break_iter != a_breakpoints.end ();
+                ++break_iter) {
             Gtk::TreeModel::iterator tree_iter = list_store->append();
             (*tree_iter)[get_bp_columns ().id] = break_iter->first;
             (*tree_iter)[get_bp_columns ().breakpoint] = break_iter->second;
@@ -119,6 +145,32 @@ public:
                                                 break_iter->second.file_name () ;
             (*tree_iter)[get_bp_columns ().line] = break_iter->second.line () ;
         }
+    }
+
+    void on_debugger_breakpoints_set_signal (const map<int, IDebugger::BreakPoint> &a_breaks,
+            const UString &a_cookie)
+    {
+        NEMIVER_TRY
+        if (a_cookie.empty ()) {}
+        set_breakpoints (a_breaks);
+        NEMIVER_CATCH
+    }
+
+    void on_debugger_breakpoint_deleted_signal (
+            const IDebugger::BreakPoint &a_break, int a_break_number,
+            const UString &a_cookie)
+    {
+        if (a_break.number () || a_cookie.empty()) {}
+        NEMIVER_TRY
+        for (Gtk::TreeModel::iterator iter = list_store->children ().begin ();
+                iter != list_store->children ().end ();
+                ++iter) {
+            if ((*iter)[get_bp_columns ().id] == a_break_number) {
+                list_store->erase(iter);
+                break;
+            }
+        }
+        NEMIVER_CATCH
     }
 
     Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
@@ -203,7 +255,7 @@ public:
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
         Gtk::TreeModel::iterator tree_iter = selection->get_selected();
         if (tree_iter) {
-            delete_breakpoint_signal.emit ((*tree_iter)[get_bp_columns ().breakpoint]);
+            debugger->delete_breakpoint ((*tree_iter)[get_bp_columns ().id]);
         }
     }
 
@@ -248,9 +300,9 @@ public:
 };//end class BreakpointsView::Priv
 
 BreakpointsView::BreakpointsView (IWorkbench& a_workbench,
-        IPerspective& a_perspective)
+        IPerspective& a_perspective, IDebuggerSafePtr& a_debugger)
 {
-    m_priv.reset (new Priv (a_workbench, a_perspective));
+    m_priv.reset (new Priv (a_workbench, a_perspective, a_debugger));
 }
 
 BreakpointsView::~BreakpointsView ()
@@ -289,13 +341,6 @@ BreakpointsView::go_to_breakpoint_signal () const
 {
     THROW_IF_FAIL(m_priv);
     return m_priv->go_to_breakpoint_signal;
-}
-
-sigc::signal<void, const IDebugger::BreakPoint&>&
-BreakpointsView::delete_breakpoint_signal () const
-{
-    THROW_IF_FAIL(m_priv);
-    return m_priv->delete_breakpoint_signal;
 }
 
 }//end namespace nemiver

@@ -124,7 +124,8 @@ public:
                                     int a_linenum) = 0;
 
     virtual bool append_visual_breakpoint (const UString &a_file_name,
-                                           int a_linenum) = 0;
+                                           int a_linenum,
+                                           bool enabled=true) = 0;
 
     virtual void delete_visual_breakpoint (const UString &a_file_name,
                                            int a_linenum) = 0;

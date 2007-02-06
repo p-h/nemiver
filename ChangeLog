@@ -19,6 +19,42 @@ Sun, 04 Feb 2007 23:36:36 +0100 Dodji Seketeli
 	* tests/test-breakpoint.cc: ditto
 	* tests/test-core.cc: ditto
 
+2007-02-03  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/dbgengine/nmv-i-debugger.h: add API to enable and disable a breakpoint
+	by breakpoint number (id).  Add signals for enabling/disabling breakpoints
+	* src/dbgengine/nmv-gdb-engine.cc: Implement new enable/disable
+	functionality
+	* src/persp/dbgperspective/icons/breakpoint-disabled-marker.png,
+	src/persp/dbgperspective/icons/Makefile.am: add disabled breakpoint icon
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc,h: refactor to keep a
+	reference to debugger so that it can update the list of breakpoints itself
+	instead of having the DBGPerspective set the breakpoints every time they
+	change.  Also allows the breakpoints view to send enable/disable commands to
+	gdb easily when user clicks the checkbox.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc,h: modify
+	append_visual_breakpoint() to add a parameter which determines whether to
+	add an enabled or a disabled breakpoint icon marker
+	* src/persp/dbgperspective/nmv-source-editor.cc,h: Use the SourceMarker
+	'type' property to indicate whether it's a disabled or an enabled
+	breakpoint.  Previously, each breakpoint marker had its type equal to its
+	unique name, so each had to register a marker type when it was added.  Now
+	we register just two marker types in init(): "breakpoint-enabled-type" and
+	"breakpoint-disabled-type" and switch between these types when somebody
+	enables or disables a breakpoint.  
+
+	* This patch needs some work yet.  For instance, when you enable/disable the
+	breakpoint that also has a 'where marker' on the same line, the breakpoint
+	markers don't appear correctly until it gets redrawn (e.g. either the
+	where-marker or the breakpoing marker will not be visible).  Also, when you
+	click the checkbox to enable/disable a breakpoint, what happens is that
+	breakpoint gets selected, then it sends a command to gdb to disable the
+	breakpoint, eventually we get a breakpoints-set signal and remove all
+	breakpoints from the view and re-add them.  So what happens is that the
+	selection gets lost, which is unexpected.  Also, I haven't yet saved the
+	enable/disable state to the session DB, so when a breakpoint is disabled, it
+	will be enabled when you resume debugging the session next time.
+
 2007-01-30  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/workbench/nmv-workbench.cc: use an icon list for the default window

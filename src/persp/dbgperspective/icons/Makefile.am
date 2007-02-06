@@ -2,6 +2,7 @@ PLUGIN_NAME=dbgperspective
 iconsfiles = \
 set-breakpoint.xpm \
 breakpoint-marker.png \
+breakpoint-disabled-marker.png \
 continue.xpm \
 stop-debugger.xpm \
 run-debugger.xpm \

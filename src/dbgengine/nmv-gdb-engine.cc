@@ -1022,6 +1022,12 @@ public:
     sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>&
                                             breakpoint_deleted_signal () const ;
 
+    sigc::signal<void, const IDebugger::BreakPoint&, int>&
+                                            breakpoint_disabled_signal () const ;
+
+    sigc::signal<void, const IDebugger::BreakPoint&, int>&
+                                            breakpoint_enabled_signal () const ;
+
 
     sigc::signal<void,
                 const UString&,
@@ -1161,9 +1167,15 @@ public:
                             gint a_line_num,
                             const UString &a_cookie) ;
 
+    void enable_breakpoint (gint a_break_num,
+                            const UString &a_cookie="");
+
     void disable_breakpoint (const UString &a_path,
                              gint a_line_num,
                              const UString &a_cookie) ;
+
+    void disable_breakpoint (gint a_break_num,
+                             const UString &a_cookie="");
 
     void delete_breakpoint (const UString &a_path,
                             gint a_line_num,
@@ -1288,6 +1300,12 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>
                                                 breakpoint_deleted_signal ;
+
+    mutable sigc::signal<void, const IDebugger::BreakPoint&, int>
+                                                breakpoint_disabled_signal ;
+
+    mutable sigc::signal<void, const IDebugger::BreakPoint&, int>
+                                                breakpoint_enabled_signal ;
 
     mutable sigc::signal<void, const UString&,
                          bool, const IDebugger::Frame&,
@@ -5487,7 +5505,24 @@ GDBEngine::enable_breakpoint (const UString &a_path,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_path == "" || a_line_num || a_cookie.size ()) {}
-    //TODO: code this
+    queue_command (Command ("enable-breakpoint",
+                            "-break-enable "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num),
+                            a_cookie)) ;
+    list_breakpoints(a_cookie);
+}
+
+void
+GDBEngine::enable_breakpoint (gint a_break_num,
+                              const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    queue_command (Command ("enable-breakpoint",
+                            "-break-enable " + UString::from_int (a_break_num),
+                            a_cookie)) ;
+    list_breakpoints(a_cookie);
 }
 
 void
@@ -5497,7 +5532,24 @@ GDBEngine::disable_breakpoint (const UString &a_path,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_path == "" || a_line_num || a_cookie.size ()) {}
-    //TODO: code this
+    queue_command (Command ("disable-breakpoint",
+                            "-break-disable "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num),
+                            a_cookie)) ;
+    list_breakpoints(a_cookie);
+}
+
+void
+GDBEngine::disable_breakpoint (gint a_break_num,
+                               const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    queue_command (Command ("disable-breakpoint",
+                            "-break-disable " + UString::from_int (a_break_num),
+                            a_cookie)) ;
+    list_breakpoints(a_cookie);
 }
 
 void

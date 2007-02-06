@@ -385,9 +385,11 @@ public:
     void toggle_breakpoint () ;
     bool append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum,
-                                   UString &a_actual_file_name) ;
+                                   UString &a_actual_file_name,
+                                   bool enabled=true) ;
     bool append_visual_breakpoint (const UString &a_file_name,
-                                   int a_linenum) ;
+                                   int a_linenum,
+                                   bool enabled=true) ;
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum) ;
     void delete_visual_breakpoint (int a_breaknum) ;
 
@@ -1376,7 +1378,6 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     NEMIVER_TRY
     LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
-    get_breakpoints_view ().set_breakpoints (a_breaks);
     NEMIVER_CATCH
 }
 
@@ -1510,7 +1511,6 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
 
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
-    get_breakpoints_view ().set_breakpoints (m_priv->breakpoints);
     NEMIVER_CATCH
 }
 
@@ -2178,9 +2178,6 @@ DBGPerspective::init_signals ()
 
     get_breakpoints_view ().go_to_breakpoint_signal ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_go_to_source_action));
-
-    get_breakpoints_view ().delete_breakpoint_signal ().connect
-        (sigc::mem_fun (*this, &DBGPerspective::on_breakpoint_delete_action));
 
     get_thread_list ().thread_selected_signal ().connect (sigc::mem_fun
         (*this, &DBGPerspective::on_thread_list_thread_selected_signal)) ;
@@ -3605,7 +3602,7 @@ DBGPerspective::append_breakpoint (int a_bp_num,
             << a_breakpoint.line () - 1) ;
     m_priv->breakpoints[a_bp_num] = a_breakpoint ;
     m_priv->breakpoints[a_bp_num].file_full_name (file_path) ;
-    append_visual_breakpoint (file_path, a_breakpoint.line () - 1) ;
+    append_visual_breakpoint (file_path, a_breakpoint.line () - 1, a_breakpoint.enabled ()) ;
 }
 
 void
@@ -3688,16 +3685,16 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
 
 bool
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
-                                          int a_linenum)
+                                          int a_linenum, bool enabled)
 {
     UString actual_file_path ;
-    return append_visual_breakpoint (a_file_name, a_linenum, actual_file_path) ;
+    return append_visual_breakpoint (a_file_name, a_linenum, actual_file_path, enabled) ;
 }
 
 bool
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum,
-                                          UString &a_actual_file_name)
+                                          UString &a_actual_file_name, bool enabled)
 {
     THROW_IF_FAIL (!a_file_name.empty());
     THROW_IF_FAIL(m_priv);
@@ -3775,7 +3772,7 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
         ui_utils::display_error (message);
         return false ;
     } else {
-        source_editor->set_visual_breakpoint_at_line (a_linenum) ;
+        source_editor->set_visual_breakpoint_at_line (a_linenum, enabled) ;
     }
 
     a_actual_file_name = actual_file_name ;
@@ -4089,7 +4086,7 @@ DBGPerspective::get_breakpoints_view ()
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->breakpoints_view) {
         m_priv->breakpoints_view.reset (new BreakpointsView (
-                    workbench (), *this)) ;
+                    workbench (), *this, debugger ())) ;
     }
     THROW_IF_FAIL (m_priv->breakpoints_view) ;
     return *m_priv->breakpoints_view ;

@@ -231,12 +231,12 @@ struct SourceEditor::Priv {
         return result ;
     }
 
-    void register_breakpoint_marker_name (const UString &a_name)
+    void register_breakpoint_marker_type (const UString &a_name, const UString &a_image)
     {
         string path ;
-        if (!get_absolute_resource_path ("icons/breakpoint-marker.png",
-                                                 path)) {
-            THROW ("could not get path to breakpoint-marker.png") ;
+        if (!get_absolute_resource_path (a_image,
+                                         path)) {
+            THROW ("could not get path to " + a_image) ;
         }
 
         Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf =
@@ -250,6 +250,8 @@ struct SourceEditor::Priv {
         status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
         init_signals () ;
         source_view->set_editable (false) ;
+        register_breakpoint_marker_type ("breakpoint-enabled-type", "icons/breakpoint-marker.png");
+        register_breakpoint_marker_type ("breakpoint-disabled-type", "icons/breakpoint-disabled-marker.png");
     }
 
     Priv () :
@@ -385,22 +387,39 @@ SourceEditor::unset_where_marker ()
 }
 
 void
-SourceEditor::set_visual_breakpoint_at_line (int a_line)
+SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 {
-    if (m_priv->markers.find (a_line) !=  m_priv->markers.end ()) {
-        return ;
+    UString marker_type;
+    if (enabled) {
+        marker_type = "breakpoint-enabled-type";
+    } else {
+        marker_type = "breakpoint-disabled-type";
     }
 
-    Gtk::TextIter iter =
-        source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
-    THROW_IF_FAIL (iter) ;
-    UString marker_name = UString::from_int (a_line);
-    m_priv->register_breakpoint_marker_name (marker_name) ;
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator mark_iter =
+        m_priv->markers.find (a_line);
+    if (mark_iter !=  m_priv->markers.end ()) {
+        // FIXME: gtksourceviewmm doesn't wrap this yet.  Change it when it gets
+        // wrapped
+        if (gtk_source_marker_get_marker_type(mark_iter->second->gobj()) == marker_type) {
+            // marker already exists and is of the correct type.
+            return;
+        } else {
+            // marker already exists but is wrong type.  change it.
+            gtk_source_marker_set_marker_type(mark_iter->second->gobj(), marker_type.c_str());
+        }
+    } else {
+        // marker doesn't yet exist, so create one of the correct type
+        Gtk::TextIter iter =
+            source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
+        THROW_IF_FAIL (iter) ;
+        UString marker_name = UString::from_int (a_line);
 
-    Glib::RefPtr<gtksourceview::SourceMarker> marker =
-        source_view ().get_source_buffer ()->create_marker
-            (marker_name, marker_name, iter) ;
-    m_priv->markers[a_line] = marker ;
+        Glib::RefPtr<gtksourceview::SourceMarker> marker =
+            source_view ().get_source_buffer ()->create_marker
+            (marker_name, marker_type, iter) ;
+        m_priv->markers[a_line] = marker ;
+    }
 }
 
 void

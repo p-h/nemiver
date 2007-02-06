@@ -49,7 +49,7 @@ class NEMIVER_API BreakpointsView : public nemiver::common::Object {
 
 public:
 
-    BreakpointsView (IWorkbench& a_workbench, IPerspective& a_perspective) ;
+    BreakpointsView (IWorkbench& a_workbench, IPerspective& a_perspective, IDebuggerSafePtr& a_debugger) ;
     virtual ~BreakpointsView () ;
     Gtk::Widget& widget () const ;
     void set_breakpoints
@@ -57,8 +57,6 @@ public:
     void clear () ;
     sigc::signal<void,
                  const IDebugger::BreakPoint&>& go_to_breakpoint_signal () const ;
-    sigc::signal<void,
-                 const IDebugger::BreakPoint&>& delete_breakpoint_signal () const ;
 
 };//end BreakpointsView
 
