@@ -67,6 +67,17 @@
 	<long>The minimum height of the status widget</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/status-pane-location</key>
+      <applyto>/apps/nemiver/dbgperspective/status-pane-location</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>-1</default>
+      <locale name="C">
+	<short>The location of the status pane</short>
+	<long>The location of the status pane</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
 

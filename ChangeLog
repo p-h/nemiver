@@ -1,3 +1,15 @@
+2007-02-06  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: save and restore the
+	position of the status pane between sessions.  Note that this implementation
+	maintains the position of the pane from the top of the window, It does not
+	maintain the height of the status window.  It might be better to maintain
+	the height of the status window, but this way was simpler (i.e. I don't have
+	to wait for the workbench to set its size and then subtract the height of th
+	pane to calculate the position it should be set to)
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas: add a
+	gconf setting for status pane location
+
 2007-02-05  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	 * src/persp/dbgperspective/nmv-dbg-perspective.cc: if breakpoints loaded

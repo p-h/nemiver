@@ -93,6 +93,8 @@ static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-width" ;
 static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-height" ;
+static const UString CONF_KEY_STATUS_PANE_LOCATION=
+                "/apps/nemiver/dbgperspective/status-pane-location" ;
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
@@ -1194,6 +1196,12 @@ DBGPerspective::on_shutdown_signal ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
+    // save the location of the status pane so that it'll open in the same place
+    // next time.
+    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
+    int pane_location = m_priv->body_main_paned->get_position();
+    conf_mgr.set_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location) ;
+
     if (m_priv->prog_path == "") {
         return ;
     }
@@ -2105,6 +2113,13 @@ DBGPerspective::init_body ()
     m_priv->body_main_paned.reset
         (ui_utils::get_widget_from_glade<Gtk::Paned> (m_priv->body_glade,
                                                       "mainbodypaned")) ;
+    // set the position of the status pane to the last saved position
+    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
+    int pane_location = -1; // don't specifically set a location if we can't read the last location from gconf
+    conf_mgr.get_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location) ;
+    if (pane_location > 0) {
+        m_priv->body_main_paned->set_position (pane_location);
+    }
 
     m_priv->sourceviews_notebook =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
@@ -2116,7 +2131,6 @@ DBGPerspective::init_body ()
     m_priv->statuses_notebook =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                         "statusesnotebook") ;
-    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
     int width=100, height=70 ;
     conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH, width) ;
     conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT, height) ;
