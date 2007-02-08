@@ -71,7 +71,9 @@ public:
     IProcMgr &proc_mgr ;
     Gtk::Button *okbutton ;
     Gtk::TreeView *proclist_view ;
+    Gtk::Entry *entry_filter ;
     Glib::RefPtr<Gtk::ListStore> proclist_store ;
+    Glib::RefPtr<Gtk::TreeModelFilter> filter_store ;
     IProcMgr::Process selected_process ;
     bool process_selected ;
 
@@ -80,6 +82,7 @@ public:
         proc_mgr (a_proc_mgr),
         okbutton (0),
         proclist_view (0),
+        entry_filter (0),
         process_selected (false)
     {
         okbutton =
@@ -87,12 +90,21 @@ public:
         THROW_IF_FAIL (okbutton) ;
         okbutton->set_sensitive (false) ;
 
+        entry_filter =
+            ui_utils::get_widget_from_glade<Gtk::Entry> (a_glade,
+                                                         "entry_filter");
+        THROW_IF_FAIL (entry_filter) ;
+        entry_filter->signal_changed ().connect (sigc::mem_fun(*this,
+                    &Priv::on_filter_entry_changed));
         proclist_view =
             ui_utils::get_widget_from_glade<Gtk::TreeView> (a_glade,
                                                             "proclisttreeview");
         THROW_IF_FAIL (proclist_view) ;
         proclist_store = Gtk::ListStore::create (columns ()) ;
-        proclist_view->set_model (proclist_store) ;
+        filter_store = Gtk::TreeModelFilter::create (proclist_store);
+        filter_store->set_visible_func(sigc::mem_fun(*this,
+                    &Priv::is_row_visible));
+        proclist_view->set_model (filter_store) ;
         proclist_view->set_search_column (ProcListCols::PROC_ARGS) ;
         proclist_view->set_enable_search (true) ;
 
@@ -127,24 +139,59 @@ public:
                 (*this, &Priv::on_row_activated_signal)) ;
     }
 
+    void on_filter_entry_changed ()
+    {
+        NEMIVER_TRY
+
+        filter_store->refilter ();
+        update_button_sensitivity ();
+
+        NEMIVER_CATCH
+    }
+
+    bool is_row_visible (const Gtk::TreeModel::const_iterator& iter)
+    {
+        UString filter_term = entry_filter->get_text ();
+        UString proc = iter->get_value (columns ().proc_args);
+        UString user_name = iter->get_value (columns ().user_name);
+        UString pid = UString::from_int(iter->get_value (columns ().pid));
+        //show the row if the search term matches any of the columns
+        return
+            proc.find(filter_term) != UString::npos ||
+            user_name.find(filter_term) != UString::npos ||
+            pid.find(filter_term) != UString::npos;
+    }
+
     void on_selection_changed_signal ()
     {
         NEMIVER_TRY
 
+        update_button_sensitivity ();
+
+        NEMIVER_CATCH
+    }
+
+    void update_button_sensitivity()
+    {
+        THROW_IF_FAIL (okbutton) ;
         vector<Gtk::TreeModel::Path> paths =
             proclist_view->get_selection ()->get_selected_rows () ;
 
-        if (paths.empty ()) {return;}
+        if (!paths.empty ()) {
 
-        Gtk::TreeModel::iterator row_it = proclist_store->get_iter (paths[0]) ;
-        if (row_it == proclist_store->children ().end ()) {return;}
-        selected_process = (*row_it)[columns ().process] ;
-        process_selected = true ;
+            Gtk::TreeModel::const_iterator row_it = filter_store->get_iter (paths[0]) ;
+            if (row_it != filter_store->children ().end () && is_row_visible(row_it)) {
+                selected_process = (*row_it)[columns ().process] ;
+                process_selected = true ;
+                okbutton->set_sensitive (true) ;
 
-        THROW_IF_FAIL (okbutton) ;
-        okbutton->set_sensitive (true) ;
+                return;
+            }
+        }
 
-        NEMIVER_CATCH
+        selected_process = 0;
+        process_selected = false ;
+        okbutton->set_sensitive (false) ;
     }
 
     void on_row_activated_signal (const Gtk::TreeModel::Path &a_path,
@@ -158,7 +205,7 @@ public:
 
         THROW_IF_FAIL (okbutton) ;
 
-        Gtk::TreeModel::iterator row_it = proclist_store->get_iter (a_path) ;
+        Gtk::TreeModel::iterator row_it = filter_store->get_iter (a_path) ;
         if (!row_it) {return;}
         selected_process = (*row_it)[columns ().process] ;
         process_selected = true ;
