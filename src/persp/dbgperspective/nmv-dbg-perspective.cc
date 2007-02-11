@@ -2330,11 +2330,11 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
                                                               *table,
                                                               -1);
-    m_priv->path_2_pagenum_map[a_path] = page_num ;
     std::string base_name =
                     Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
     THROW_IF_FAIL (base_name != "") ;
-    m_priv->basename_2_pagenum_map[Glib::locale_to_utf8 (base_name)]= page_num ;
+    m_priv->basename_2_pagenum_map[Glib::locale_to_utf8 (base_name)]= page_num;
+    m_priv->path_2_pagenum_map[a_path] = page_num ;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
     m_priv->pagenum_2_path_map[page_num] = a_path ;
 
@@ -2489,6 +2489,7 @@ DBGPerspective::unset_where ()
     for (iter = m_priv->pagenum_2_source_editor_map.begin ();
          iter !=m_priv->pagenum_2_source_editor_map.end ();
          ++iter) {
+        if (!(iter->second)) {continue;}
         iter->second->unset_where_marker () ;
     }
 }
@@ -3231,11 +3232,17 @@ DBGPerspective::close_opened_files ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (!get_n_pages ()) {return;}
 
-    map<int, UString>::iterator it, end_it;
-    end_it = m_priv->pagenum_2_path_map.end () ;
-    while ((it = m_priv->pagenum_2_path_map.begin ()) != end_it) {
-        LOG_DD ("closing page " << it->second) ;
-        close_file (it->second) ;
+    map<UString, int>::iterator it;
+    //loop until all the files are closed or until
+    //we did 50 iterations. This prevents us against
+    //infinite loops
+    for (int i=0 ; i < 50 ; ++i) {
+        it = m_priv->path_2_pagenum_map.begin () ;
+        if (it == m_priv->path_2_pagenum_map.end ()) {
+            break ;
+        }
+        LOG_DD ("closing page " << it->first) ;
+        close_file (it->first) ;
     }
 }
 
