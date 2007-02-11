@@ -1055,7 +1055,7 @@ public:
     sigc::signal<void,
                  const map<int, list<IDebugger::VariableSafePtr> >&,
                  const UString& /*cookie*/>&
-                                        frames_params_listed_signal () const;
+                                    frames_arguments_listed_signal () const;
 
     sigc::signal<void, const IDebugger::Frame&, const UString&>&
                                                 current_frame_signal () const ;
@@ -1110,6 +1110,9 @@ public:
     void execute_command (const Command &a_command) ;
     bool queue_command (const Command &a_command) ;
     bool busy () const ;
+
+    void load_program (const UString &a_prog_with_args,
+                       const UString &a_working_dir) ;
 
     void load_program (const vector<UString> &a_argv,
                        const UString &working_dir,
@@ -1327,7 +1330,7 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void,
                          const map<int, list<IDebugger::VariableSafePtr> >&,
-                         const UString&> frames_params_listed_signal ;
+                         const UString&> frames_arguments_listed_signal ;
 
     mutable sigc::signal<void, const IDebugger::Frame&, const UString&>
                                                         current_frame_signal ;
@@ -4549,7 +4552,7 @@ struct OnFramesParamsListedHandler : OutputHandler {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-        m_engine->frames_params_listed_signal ().emit
+        m_engine->frames_arguments_listed_signal ().emit
             (a_in.output ().result_record ().frames_parameters (),
              a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
@@ -4860,6 +4863,20 @@ GDBEngine::~GDBEngine ()
 }
 
 void
+GDBEngine::load_program (const UString &a_prog_with_args,
+                         const UString &a_working_dir)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+
+    vector<UString> args = a_prog_with_args.split (" ") ;
+    vector<UString> search_paths ;
+    UString tty_path ;
+
+    load_program (args, a_working_dir, search_paths, tty_path) ;
+}
+
+void
 GDBEngine::load_program (const vector<UString> &a_argv,
                          const UString &working_dir,
                          const vector<UString> &a_source_search_dirs,
@@ -5159,9 +5176,9 @@ GDBEngine::got_target_info_signal () const
 sigc::signal<void,
              const map< int, list<IDebugger::VariableSafePtr> >&,
              const UString&>&
-GDBEngine::frames_params_listed_signal () const
+GDBEngine::frames_arguments_listed_signal () const
 {
-    return m_priv->frames_params_listed_signal ;
+    return m_priv->frames_arguments_listed_signal ;
 }
 
 sigc::signal<void, const IDebugger::Frame&, const UString&> &

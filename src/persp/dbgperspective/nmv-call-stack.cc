@@ -292,7 +292,7 @@ struct CallStack::Priv {
                     (*this, &CallStack::Priv::on_debugger_stopped_signal)) ;
         debugger->frames_listed_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_frames_listed_signal)) ;
-        debugger->frames_params_listed_signal ().connect (sigc::mem_fun
+        debugger->frames_arguments_listed_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_frames_params_listed_signal)) ;
         debugger->command_done_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_command_done_signal)) ;

@@ -1,3 +1,21 @@
+Sun, 11 Feb 2007 23:36:36 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h: added
+	  a IDebugger::load_program() convenience overload function.
+	  Changed IDebugger::frame_params_listed_signal() into
+	  IDebugger::frame_arguments_listed_signal() for more coherence.
+	* src/dbgengine/nmv-var-list.cc, nmv-i-var-list.h: added
+	  IVarList::append_variables(), IVarList::remove_variables()
+	  for convenience. Make IVarList::append_variable() emit
+	  the IVarList::variable_added_signal(). Make
+	  IVarList::remove_variable() emit the
+	  IVarList::variable_removed_signal()
+	* src/common/nmv-scope-logger.h: fix the scope logger so that
+	  it logs in the general log domain by default
+	* tests/test-var-list.cc: updated this to start testing
+	  variable lookup. Still have to do more testing (and debugging)
+	  around that feature.
+
 2007-02-11  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
 
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Don't clear the list of

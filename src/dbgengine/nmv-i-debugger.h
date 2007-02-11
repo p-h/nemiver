@@ -385,9 +385,10 @@ public:
                         const UString&>& frames_listed_signal () const=0;
 
     virtual sigc::signal<void,
+                         //a frame number/argument list map
                          const map<int, list<IDebugger::VariableSafePtr> >&,
-                         const UString&>&
-                                        frames_params_listed_signal () const=0;
+                         const UString& /*cookie*/>&
+                                    frames_arguments_listed_signal () const=0;
 
     /// called when a core file is loaded.
     /// it signals the current frame, i.e the frame in which
@@ -455,6 +456,9 @@ public:
     */
 
     virtual bool busy () const = 0;
+
+    virtual void load_program (const UString &a_prog_with_args,
+                               const UString &a_working_dir) = 0 ;
 
     virtual void load_program
                 (const vector<UString> &a_argv,

@@ -133,7 +133,7 @@ main (int a_argc, char *a_argv[])
         debugger->frames_listed_signal ().connect
             (sigc::ptr_fun (&on_frames_listed_signal)) ;
 
-        debugger->frames_params_listed_signal ().connect
+        debugger->frames_arguments_listed_signal ().connect
             (sigc::ptr_fun (&on_frames_params_listed_signal)) ;
 
         debugger->console_message_signal ().connect

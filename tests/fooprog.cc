@@ -52,7 +52,13 @@ struct Person {
 
         foo += bar ;
     }
-};//class TestClass
+};//class Person
+
+void
+func3 (Person &a_param)
+{
+    a_param.do_this () ;
+}
 
 int
 main (int a_argc, char *a_argv[])
@@ -67,6 +73,7 @@ main (int a_argc, char *a_argv[])
     person.set_family_name ("BABA") ;
     person.do_this () ;
 
+    func3 (person) ;
 
     return 0 ;
 }

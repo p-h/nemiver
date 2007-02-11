@@ -60,7 +60,7 @@ struct ScopeLoggerPriv
         domain = a_log_domain ;
 
         out->push_domain (a_log_domain) ;
-        *out  << "|{|" << name << ":{\n" ;
+        *out  << "|{|" << name << ":{" << common::endl ;
         out->pop_domain () ;
 
         timer.start () ;
@@ -74,7 +74,8 @@ struct ScopeLoggerPriv
         if (!out) {return;}
 
         out->push_domain (domain) ;
-        *out << "|}|" << name <<":}elapsed: " << timer.elapsed () << "secs \n" ;
+        *out << "|}|" << name <<":}elapsed: "
+             << timer.elapsed () << "secs" << common::endl ;
         out->pop_domain () ;
         if (can_free) {
             if (out) {

@@ -352,7 +352,7 @@ public:
             (sigc::mem_fun (*this, &Priv::on_variable_value_signal)) ;
         debugger->variable_type_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_variable_type_signal)) ;
-        debugger->frames_params_listed_signal ().connect
+        debugger->frames_arguments_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_frames_params_listed_signal)) ;
         debugger->pointed_variable_value_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_pointed_variable_value_signal)) ;

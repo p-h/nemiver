@@ -110,9 +110,14 @@ LOG_STREAM << LOG_LEVEL_VERBOSE___ << LOG_MARKER_INFO << HERE << message << nemi
 LOG_STREAM.push_domain (domain) ; LOG_VERBOSE(message) ;LOG_STREAM.pop_domain();
 #endif
 
+#ifndef LOG_SCOPE_VERBOSE
+#define LOG_SCOPE_VERBOSE(scopename) \
+nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE) ;
+#endif
+
 #ifndef LOG_SCOPE
 #define LOG_SCOPE(scopename) \
-nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE) ;
+nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL) ;
 #endif
 
 #ifndef LOG_SCOPE_D
@@ -142,6 +147,10 @@ nemiver::common::ScopeLogger scope_logger \
 
 #ifndef LOG_FUNCTION_SCOPE_NORMAL
 #define LOG_FUNCTION_SCOPE_NORMAL LOG_SCOPE_NORMAL(PRETTY_FUNCTION_NAME_)
+#endif
+
+#ifndef LOG_FUNCTION_SCOPE_VERBOSE
+#define LOG_FUNCTION_SCOPE_VERBOSE LOG_SCOPE_VERBOSE(PRETTY_FUNCTION_NAME_)
 #endif
 
 #ifndef LOG_FUNCTION_SCOPE_NORMAL_D

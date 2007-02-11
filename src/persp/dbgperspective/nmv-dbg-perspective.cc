@@ -3212,7 +3212,9 @@ DBGPerspective::close_file (const UString &a_path)
     }
 
     int page_num = m_priv->path_2_pagenum_map[a_path] ;
-    LOG_DD ("removing notebook tab number " << (int) (page_num)) ;
+    LOG_DD ("removing notebook tab number "
+            << (int) (page_num)
+            << ", path " << a_path) ;
     m_priv->sourceviews_notebook->remove_page (page_num) ;
     m_priv->path_2_pagenum_map.erase (a_path) ;
     std::string basename = Glib::path_get_basename

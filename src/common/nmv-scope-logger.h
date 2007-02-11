@@ -52,7 +52,7 @@ public:
 
     ScopeLogger (const char*a_scope_name,
                  enum LogStream::LogLevel a_level=LogStream::LOG_LEVEL_NORMAL,
-                 const UString &a_log_domain="general",
+                 const UString &a_log_domain=NMV_GENERAL_DOMAIN,
                  bool a_use_default_log_stream=true) ;
 
     virtual ~ScopeLogger () ;

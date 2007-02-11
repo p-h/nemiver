@@ -264,8 +264,10 @@ fetch_element:
 //******************************
 
 class VarList : public IVarList {
-    sigc::signal<void,IDebugger::VariableSafePtr&> m_variable_added_signal ;
-    sigc::signal<void,IDebugger::VariableSafePtr&> m_variable_removed_signal ;
+    sigc::signal<void, const IDebugger::VariableSafePtr&>
+                                                    m_variable_added_signal;
+    sigc::signal<void, const IDebugger::VariableSafePtr&>
+                                                    m_variable_removed_signal;
 
     DebuggerVariableList m_raw_list ;
     IDebuggerSafePtr m_debugger ;
@@ -281,12 +283,14 @@ public:
     //*******************
     //<events getters>
     //*******************
-    sigc::signal<void,IDebugger::VariableSafePtr&>& variable_added_signal ()
+    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+                                                    variable_added_signal ()
     {
         return m_variable_added_signal ;
     }
 
-    sigc::signal<void,IDebugger::VariableSafePtr&>& variable_removed_signal ()
+    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+                                                    variable_removed_signal ()
     {
         return m_variable_removed_signal ;
     }
@@ -321,9 +325,14 @@ public:
     void append_variable (const IDebugger::VariableSafePtr &a_var,
                           bool a_update_type) ;
 
+    void append_variables (const DebuggerVariableList& a_vars,
+                           bool a_update_type) ;
+
     bool remove_variable (const IDebugger::VariableSafePtr &a_var);
 
     bool remove_variable (const UString &a_var_name) ;
+
+    void remove_variables () ;
 
     bool find_variable (const UString &a_var_name,
                         IDebugger::VariableSafePtr &a_var) ;
@@ -421,6 +430,19 @@ VarList::append_variable (const IDebugger::VariableSafePtr &a_var,
     if (a_update_type) {
         get_debugger ().print_variable_type (a_var->name (), VAR_LIST_COOKIE) ;
     }
+    variable_added_signal ().emit (a_var) ;
+}
+
+void
+VarList::append_variables (const DebuggerVariableList& a_vars,
+                           bool a_update_type)
+{
+    CHECK_INIT ;
+
+    DebuggerVariableList::const_iterator var_iter ;
+    for (var_iter = a_vars.begin (); var_iter != a_vars.end () ; ++ var_iter) {
+        append_variable (*var_iter, a_update_type) ;
+    }
 }
 
 bool
@@ -432,7 +454,11 @@ VarList::remove_variable (const IDebugger::VariableSafePtr &a_var)
     if (result_iter == get_raw_list ().end ()) {
         return false;
     }
+
+    IDebugger::VariableSafePtr variable = *result_iter ;
     m_raw_list.erase (result_iter) ;
+    variable_removed_signal ().emit (variable) ;
+
     return true ;
 }
 
@@ -447,11 +473,29 @@ VarList::remove_variable (const UString &a_var_name)
             continue ;
         }
         if ((*iter)->name () == a_var_name) {
+            IDebugger::VariableSafePtr variable = *iter ;
             m_raw_list.erase (iter) ;
+            variable_removed_signal ().emit (variable) ;
             return true;
         }
     }
     return false ;
+}
+
+void
+VarList::remove_variables ()
+{
+    CHECK_INIT ;
+
+    DebuggerVariableList::iterator var_iter ;
+
+    if (m_raw_list.empty ()) {return;}
+
+    for (var_iter = m_raw_list.begin () ;
+         var_iter != m_raw_list.end () ;
+         var_iter = m_raw_list.begin ()) {
+        remove_variable (*var_iter) ;
+    }
 }
 
 bool

@@ -54,9 +54,9 @@ public:
 
     /// \name signals
     ///@{
-    virtual sigc::signal<void,IDebugger::VariableSafePtr&>&
+    virtual sigc::signal<void, const IDebugger::VariableSafePtr&>&
                                                 variable_added_signal () = 0;
-    virtual sigc::signal<void,IDebugger::VariableSafePtr&>&
+    virtual sigc::signal<void, const IDebugger::VariableSafePtr&>&
                                                 variable_removed_signal () = 0;
     ///@}
 
@@ -83,6 +83,15 @@ public:
     virtual void append_variable (const IDebugger::VariableSafePtr &a_var,
                                   bool a_update_type=true) = 0 ;
 
+    /// \brief append a set list of variables to the list
+    ///
+    /// \param a_vars the new variable list to append
+    /// \param a_update_type if true, update the type field of the
+    ///  the variable. This will trigger an invocation of the IDebugger
+    ///  interface.
+    virtual void append_variables (const DebuggerVariableList& a_vars,
+                                   bool a_update_type=true) = 0 ;
+
     /// \brief remove a variable from the list
     ///
     /// \param a_var the variable to remove from the list
@@ -94,6 +103,9 @@ public:
     /// \param a_var_name the name of the variable to remove
     /// \return true if the variable has been found and removed
     virtual bool remove_variable (const UString &a_var_name) = 0 ;
+
+    /// \brief remove all variables from the list
+    virtual void remove_variables () = 0 ;
 
     /// \brief lookup a variable from its name
     ///
