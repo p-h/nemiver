@@ -1,4 +1,4 @@
-//Author: Dodji Seketeli
+//Author: Dodji Seketeli, Jonathon Jongsma
 /*
  *This file is part of the Nemiver project
  *
@@ -130,21 +130,108 @@ public:
     void set_breakpoints
         (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
     {
+        if (a_breakpoints.empty ()) {
+            return;
+        }
+
+        if (list_store->children ().empty ()) {
+            // there are no breakpoints in the list yet, so no need to do any
+            // searching for things to update, just add them all directly
+            add_breakpoints(a_breakpoints);
+        } else {
+            // find and remove breakpoints which were already in the list_store
+            // but are not in the new list of breakpoints.  (I don't know if
+            // this situation will ever happen, but for completeness sake this
+            // is included here)
+            for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
+                    tree_iter != list_store->children ().end ();
+                    ++tree_iter)
+            {
+                if (!breakpoint_list_has_id(a_breakpoints,
+                                            (*tree_iter)[get_bp_columns ().id])) {
+                    list_store->erase (tree_iter);
+                }
+            }
+
+            // now find breakpoints that need adding or updating
+            for (std::map<int, IDebugger::BreakPoint>::const_iterator breakmap_iter = a_breakpoints.begin ();
+                    breakmap_iter != a_breakpoints.end ();
+                    ++breakmap_iter) {
+                Gtk::TreeModel::iterator tree_iter = find_breakpoint_in_model(breakmap_iter->second);
+                if (tree_iter) {
+                    update_breakpoint(tree_iter, breakmap_iter->second);
+                } else {
+                    append_breakpoint(breakmap_iter->second);
+                }
+            }
+        }
+    }
+
+    void add_breakpoints (const std::map<int, IDebugger::BreakPoint>
+            &a_breakpoints)
+    {
         THROW_IF_FAIL (list_store) ;
-        list_store->clear();
+
         std::map<int, IDebugger::BreakPoint>::const_iterator break_iter;
         for (break_iter = a_breakpoints.begin ();
                 break_iter != a_breakpoints.end ();
                 ++break_iter) {
-            Gtk::TreeModel::iterator tree_iter = list_store->append();
-            (*tree_iter)[get_bp_columns ().id] = break_iter->first;
-            (*tree_iter)[get_bp_columns ().breakpoint] = break_iter->second;
-            (*tree_iter)[get_bp_columns ().enabled] =
-                                                break_iter->second.enabled () ;
-            (*tree_iter)[get_bp_columns ().filename] =
-                                                break_iter->second.file_name () ;
-            (*tree_iter)[get_bp_columns ().line] = break_iter->second.line () ;
+            append_breakpoint(break_iter->second);
         }
+    }
+
+    bool breakpoint_list_has_id (const std::map<int, IDebugger::BreakPoint>
+            &a_breakpoints, int a_id)
+    {
+        for (std::map<int, IDebugger::BreakPoint>::const_iterator breakmap_iter = a_breakpoints.begin ();
+                breakmap_iter != a_breakpoints.end (); ++ breakmap_iter) {
+            if (a_id == breakmap_iter->second.number ()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Gtk::TreeModel::iterator find_breakpoint_in_model(const IDebugger::BreakPoint
+            &a_breakpoint)
+    {
+        THROW_IF_FAIL (list_store) ;
+
+        Gtk::TreeModel::iterator iter;
+        for (iter = list_store->children ().begin ();
+                iter != list_store->children ().end ();
+                ++iter) {
+            if ((*iter)[get_bp_columns ().id] == a_breakpoint.number ()) {
+                return iter;
+            }
+        }
+        // Breakpoint not found in model, return an invalid iter
+        return Gtk::TreeModel::iterator();
+    }
+
+    void update_breakpoint(Gtk::TreeModel::iterator& a_iter,
+            const IDebugger::BreakPoint &a_breakpoint)
+    {
+        // we should only be 'updating' a breakpoint in the list if they have
+        // the same ID
+        THROW_IF_FAIL((*a_iter)[get_bp_columns ().id] == a_breakpoint.number ());
+        (*a_iter)[get_bp_columns ().breakpoint] = a_breakpoint;
+        (*a_iter)[get_bp_columns ().enabled] = a_breakpoint.enabled () ;
+        (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name () ;
+        (*a_iter)[get_bp_columns ().line] = a_breakpoint.line () ;
+    }
+
+    Gtk::TreeModel::iterator append_breakpoint(const IDebugger::BreakPoint
+            &a_breakpoint)
+    {
+        Gtk::TreeModel::iterator tree_iter = list_store->append();
+        (*tree_iter)[get_bp_columns ().id] = a_breakpoint.number ();
+        (*tree_iter)[get_bp_columns ().breakpoint] = a_breakpoint;
+        (*tree_iter)[get_bp_columns ().enabled] = a_breakpoint.enabled ();
+        (*tree_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
+        (*tree_iter)[get_bp_columns ().line] = a_breakpoint.line ();
+
+        return tree_iter;
     }
 
     void on_debugger_breakpoints_set_signal (const map<int, IDebugger::BreakPoint> &a_breaks,

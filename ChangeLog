@@ -1,3 +1,14 @@
+2007-02-11  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Don't clear the list of
+	breakpoints every time we get a 'breakpoints-set' signal.  Instead, search
+	through the list of breakpoints and update breakpoints that already exist,
+	add breakpoints that are new, and delete others.  This makes it so that when
+	disabling a breakpoint, the row doesn't get briefly selected and then
+	de-selected, which is rather annoying. This also fixes another
+	long-standing, but slightly less annoying thing: when you set a new
+	breakpoint, the selected row in the breakpoints view would get de-selected.
+
 Sun, 11 Feb 2007 17:59:51 +0100 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
