@@ -25,6 +25,7 @@
 #include <vector>
 #include <iostream>
 #include <glib/gi18n.h>
+#include <libgnome/gnome-help.h>
 #include <libgnomevfs/gnome-vfs-init.h>
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/icontheme.h>
@@ -92,6 +93,7 @@ private:
     //************************
     void on_quit_menu_item_action () ;
     void on_about_menu_item_action () ;
+    void on_contents_menu_item_action () ;
     void on_shutting_down_signal () ;
     //************************
     //</slots (signal callbacks)>
@@ -211,6 +213,14 @@ Workbench::on_quit_menu_item_action ()
 }
 
 void
+Workbench::on_contents_menu_item_action ()
+{
+    gnome_help_display("nemiver.xml",
+                       NULL, /*link id*/
+                       NULL /*GError*/);
+}
+
+void
 Workbench::on_about_menu_item_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -226,6 +236,10 @@ Workbench::on_about_menu_item_action ()
     authors.push_back ("Dodji Seketeli <dodji@gnome.org>");
     authors.push_back ("Jonathon Jongsma <jjongsma@gnome.org>");
     dialog.set_authors (authors);
+
+    list<Glib::ustring> documenters;
+    documenters.push_back ("Jonathon Jongsma <jjongsma@gnome.org>");
+    dialog.set_documenters (documenters);
 
     dialog.set_website ("http://home.gna.org/nemiver/");
     dialog.set_website_label (_("Project Website"));
@@ -626,6 +640,16 @@ Workbench::init_actions ()
             sigc::mem_fun (*this, &Workbench::on_about_menu_item_action),
             ActionEntry::DEFAULT,
             ""
+        }
+        ,
+        {
+            "ContentsMenuItemAction",
+            Gtk::Stock::HELP,
+            _("_Contents"),
+            _("Display the user manual for this application"),
+            sigc::mem_fun (*this, &Workbench::on_contents_menu_item_action),
+            ActionEntry::DEFAULT,
+            "F1"
         }
     };
 

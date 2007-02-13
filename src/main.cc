@@ -27,6 +27,7 @@
 #include <gtkmm/window.h>
 #include <libglademm.h>
 #include <glib/gi18n.h>
+#include <libgnome/gnome-init.h>
 #include "nmv-exception.h"
 #include "nmv-initializer.h"
 #include "nmv-i-workbench.h"
@@ -147,6 +148,11 @@ main (int a_argc, char *a_argv[])
     textdomain (GETTEXT_PACKAGE) ;
     Initializer::do_init () ;
     Gtk::Main gtk_kit (a_argc, a_argv);
+
+    // intialize gnome libraries
+    gnome_program_init(PACKAGE, PACKAGE_VERSION, LIBGNOME_MODULE,
+            a_argc, a_argv, GNOME_PROGRAM_STANDARD_PROPERTIES, NULL);
+
     typedef SafePtr<GOptionContext,
                     GOptionContextRef,
                     GOptionContextUnref> GOptionContextSafePtr ;

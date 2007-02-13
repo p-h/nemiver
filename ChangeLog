@@ -1,3 +1,11 @@
+2007-02-13  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* added the beginnings of a user manual for Nemiver and hooked it up to the
+	help menu.  There is now a libgnome dependency for the workbench and the
+	'nemiver' executable, since we use gnome_help_display() to launch the help
+	browser and this function doesn't work unless our application has been
+	initialized as a gnome program with gnome_program_init()
+
 Sun, 11 Feb 2007 23:36:36 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h: added

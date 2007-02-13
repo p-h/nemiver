@@ -9,6 +9,7 @@
     <placeholder name="MenuBarAdditions"/>
     <menu action="EditMenuAction" name ="EditMenu"/>
     <menu action="HelpMenuAction" name ="HelpMenu">
+      <menuitem action="ContentsMenuItemAction" name="ContentsMenuItem"/>
       <menuitem action="AboutMenuItemAction" name="AboutMenuItem"/>
     </menu>
   </menubar>

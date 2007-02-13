@@ -1,4 +1,4 @@
-SUBDIRS = src glade menus tests po data docs
+SUBDIRS = src glade menus tests po data docs help
 
 headers= config.h
 
@@ -15,7 +15,8 @@ INSTALL \
 COPYING \
 COPYRIGHT \
 $(headers) \
-$(INTLTOOL_FILES)
+$(INTLTOOL_FILES) \
+gnome-doc-utils.make
 
 doc:
 	$(MAKE) -C docs doc
@@ -82,4 +83,7 @@ cat-announcement:
 	@echo "Last but not least, do not forget to bump up the micro"
 	@echo "version component to the next (odd) number and commit."
 
-DISTCLEANFILES = $(INTLTOOL_FILES:.in=)
+DISTCLEANFILES = $(INTLTOOL_FILES:.in=) \
+	gnome-doc-utils.make
+
+DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper

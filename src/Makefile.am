@@ -9,6 +9,10 @@ $(top_builddir)/src/uicommon/libnemiveruicommon.la
 
 INCLUDES=\
 -DNEMIVERLOCALEDIR=\"$(nemiverlocaledir)\" \
+-DPREFIX=\""$(prefix)"\" \
+-DSYSCONFDIR=\""$(sysconfdir)"\" \
+-DLIBDIR=\""$(libdir)"\" \
+-DDATADIR=\""$(datadir)"\" \
 @NEMIVER_CFLAGS@ \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/dbgengine \
