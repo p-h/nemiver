@@ -108,7 +108,7 @@ parse_connection_string (const common::UString &a_str,
 {
 #define CHECK_INDEX(i) if ((i) >= a_str.size ()) {return false;}
 
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     common::UString::size_type i = 5 ;
     common::UString dbtypename, host, port, dbschemaname ;
 
@@ -221,7 +221,7 @@ parse_schemaname:
 static void
 load_db_driver_module (const common::DBDesc &a_desc)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     common::UString driver_module_name = get_driver_module_name (a_desc.type ()) ;
     if (driver_module_name == "") {
         THROW (UString ("database '") + a_desc.type () + "' is not supported") ;
@@ -267,7 +267,7 @@ ConnectionManager::create_db_connection (const common::UString &a_con_str,
                                          const common::UString &a_pass,
                                          Connection &a_connection)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     if (a_con_str == "") {
         THROW ("got connection string") ;
     }

@@ -69,7 +69,7 @@ InsertStatement::to_string () const
 {
     UString str ;
 
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     if (m_priv->string_repr == "") {
         RETURN_VAL_IF_FAIL (m_priv->table_name != "", m_priv->string_repr) ;

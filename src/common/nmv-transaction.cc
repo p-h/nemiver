@@ -96,7 +96,7 @@ Transaction::operator= (const Transaction &a_trans)
 
 Transaction::~Transaction ()
 {
-    LOG_FUNCTION_SCOPE;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     rollback () ;
     if (m_priv) {
@@ -114,7 +114,7 @@ Transaction::get_connection ()
 bool
 Transaction::begin (const UString &a_subtransaction_name)
 {
-    LOG_FUNCTION_SCOPE;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     THROW_IF_FAIL (m_priv) ;
     m_priv->transaction_stack.push (a_subtransaction_name) ;
@@ -132,7 +132,7 @@ Transaction::begin (const UString &a_subtransaction_name)
 bool
 Transaction::commit (const UString &a_subtrans_name)
 {
-    LOG_FUNCTION_SCOPE;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     THROW_IF_FAIL (m_priv) ;
 
@@ -176,7 +176,7 @@ Transaction::is_commited ()
 bool
 Transaction::rollback ()
 {
-    LOG_FUNCTION_SCOPE;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     THROW_IF_FAIL (m_priv) ;
     while (m_priv->transaction_stack.size ()) {

@@ -171,7 +171,7 @@ SqliteCnxDrv::get_last_error () const
 bool
 SqliteCnxDrv::start_transaction ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv && m_priv->sqlite) ;
     return execute_statement (SQLStatement ("begin transaction")) ;
 }
@@ -179,7 +179,7 @@ SqliteCnxDrv::start_transaction ()
 bool
 SqliteCnxDrv::commit_transaction ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv && m_priv->sqlite) ;
     return execute_statement (SQLStatement ("commit")) ;
 }
@@ -187,7 +187,7 @@ SqliteCnxDrv::commit_transaction ()
 bool
 SqliteCnxDrv::rollback_transaction ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv && m_priv->sqlite) ;
     return execute_statement (SQLStatement ("rollback")) ;
 }
@@ -195,7 +195,7 @@ SqliteCnxDrv::rollback_transaction ()
 bool
 SqliteCnxDrv::execute_statement (const SQLStatement &a_statement)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv && m_priv->sqlite) ;
     LOG_VERBOSE ("sql string: " << a_statement) ;
 
@@ -234,7 +234,7 @@ SqliteCnxDrv::execute_statement (const SQLStatement &a_statement)
 bool
 SqliteCnxDrv::should_have_data () const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
 
     if (get_number_of_columns () > 0)
@@ -245,7 +245,7 @@ SqliteCnxDrv::should_have_data () const
 bool
 SqliteCnxDrv::read_next_row ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     if (m_priv->cur_stmt) {
         if (m_priv->last_execution_result == SQLITE_DONE) {
@@ -278,7 +278,7 @@ bool
 SqliteCnxDrv::get_column_content (unsigned long a_offset,
                                   Buffer &a_column_content) const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
 
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
@@ -292,7 +292,7 @@ bool
 SqliteCnxDrv::get_column_content (gulong a_offset,
                                   gint64 &a_column_content) const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
 
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
@@ -311,7 +311,7 @@ bool
 SqliteCnxDrv::get_column_content (gulong a_offset,
                                   double& a_column_content) const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
     int type = sqlite3_column_type (m_priv->cur_stmt, a_offset) ;
@@ -328,7 +328,7 @@ bool
 SqliteCnxDrv::get_column_content (gulong a_offset,
                                   UString& a_column_content) const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
 
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
@@ -346,7 +346,7 @@ bool
 SqliteCnxDrv::get_column_type (unsigned long a_offset,
                                enum ColumnType &a_type) const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
     int type = sqlite3_column_type (m_priv->cur_stmt, a_offset) ;
@@ -378,7 +378,7 @@ SqliteCnxDrv::get_column_type (unsigned long a_offset,
 bool
 SqliteCnxDrv::get_column_name (unsigned long a_offset, Buffer &a_name) const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     RETURN_VAL_IF_FAIL (m_priv->check_offset (a_offset), false) ;
     const char* name = sqlite3_column_name (m_priv->cur_stmt, a_offset) ;
@@ -391,7 +391,7 @@ SqliteCnxDrv::get_column_name (unsigned long a_offset, Buffer &a_name) const
 void
 SqliteCnxDrv::close ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
 
     if (m_priv->sqlite) {

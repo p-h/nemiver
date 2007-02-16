@@ -52,7 +52,7 @@ Sequence::~Sequence ()
 long long
 Sequence::create_next_integer ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     Glib::Mutex::Lock (m_priv->integer_seq_mutex) ;
     long long new_val = ++m_priv->integer_seq ;
     if (new_val < m_priv->integer_seq) {

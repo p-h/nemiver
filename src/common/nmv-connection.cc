@@ -114,7 +114,7 @@ Connection::~Connection ()
 const char*
 Connection::get_last_error () const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_last_error () ;
@@ -123,7 +123,7 @@ Connection::get_last_error () const
 bool
 Connection::start_transaction ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     return m_priv->get_driver ().start_transaction () ;
 }
@@ -131,7 +131,7 @@ Connection::start_transaction ()
 bool
 Connection::commit_transaction ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().commit_transaction () ;
@@ -140,7 +140,7 @@ Connection::commit_transaction ()
 bool
 Connection::rollback_transaction ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().rollback_transaction () ;
@@ -149,7 +149,7 @@ Connection::rollback_transaction ()
 bool
 Connection::execute_statement (const common::SQLStatement &a_statement)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().execute_statement (a_statement) ;
@@ -158,7 +158,7 @@ Connection::execute_statement (const common::SQLStatement &a_statement)
 bool
 Connection::should_have_data () const
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().should_have_data () ;
@@ -167,7 +167,7 @@ Connection::should_have_data () const
 bool
 Connection::read_next_row ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     if (!should_have_data ()) {
         return false ;
@@ -179,7 +179,7 @@ Connection::read_next_row ()
 unsigned long
 Connection::get_number_of_columns ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_number_of_columns () ;
@@ -190,7 +190,7 @@ bool
 Connection::get_column_type (unsigned long a_offset,
                              enum common::ColumnType &a_type)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_column_type (a_offset, a_type);
@@ -200,7 +200,7 @@ bool
 Connection::get_column_name (unsigned long a_offset,
                              common::Buffer &a_name)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_column_name (a_offset, a_name) ;
@@ -210,7 +210,7 @@ bool
 Connection::get_column_content (unsigned long a_offset,
                                 common::Buffer &a_column_content)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_column_content
@@ -221,7 +221,7 @@ bool
 Connection::get_column_content (gulong a_offset,
                                 gint64 &a_column_content)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_column_content
@@ -232,7 +232,7 @@ bool
 Connection::get_column_content (gulong a_offset,
                                 double& a_column_content)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_column_content
@@ -243,7 +243,7 @@ bool
 Connection::get_column_content (gulong a_offset,
                                 UString& a_column_content)
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     Glib::Mutex::Lock lock (m_priv->mutex) ;
     return m_priv->get_driver ().get_column_content
@@ -253,7 +253,7 @@ Connection::get_column_content (gulong a_offset,
 void
 Connection::close ()
 {
-    LOG_FUNCTION_SCOPE ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
 
     //successive calls to this method
