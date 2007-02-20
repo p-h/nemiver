@@ -461,9 +461,9 @@ Template last modified Jan 30, 2002
     <sect2 id="nemiver-sect-saving-sessions">
       <title>Saving Sessions</title>
       <para>
-        &app; will save your session automatically on exit, you don't even have
-        to worry it.  However, if you want to explicitly save the session before
-        closing &app;, you can do so by selecting 
+        &app; will save your session automatically on exit, so you don't even
+        have to worry about it.  However, if you want to explicitly save the
+        session before closing &app;, you can do so by selecting 
         <menuchoice>
           <guimenu>File</guimenu>
           <guimenuitem>Save Session To Disk</guimenuitem>
