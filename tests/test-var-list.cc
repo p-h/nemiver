@@ -99,10 +99,9 @@ on_stopped_signal (const UString &a_reason,
 
 void
 on_frames_arguments_listed_signal
-                (const map<int, list<IDebugger::VariableSafePtr> >
-                                                             &a_frames_params,
-                 const UString &a_cookie,
-                 IVarListSafePtr &a_var_list)
+        (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params,
+         const UString &a_cookie,
+         IVarListSafePtr &a_var_list)
 {
     LOG_FUNCTION_SCOPE_NORMAL
     if (a_cookie.empty ()) {/*keep compiler happy*/}
@@ -115,6 +114,20 @@ on_frames_arguments_listed_signal
     }
     a_var_list->remove_variables () ;
     a_var_list->append_variables (it->second) ;
+    /*
+    for (DebuggerVariableList::iterator i = a_frames_params.begin ();
+         i != a_frames_param.end ();
+         ++i) {
+        if (!(*i)) {
+            continue ;
+        }
+        UString str ;
+        (*it)->to_string (str) ;
+        LOG_D ("got frame argument: '"
+                << (*it)->name () "' |content->|"
+                << str, "debugvars") ;
+    }
+    */
 }
 
 void
@@ -199,6 +212,12 @@ lookup_variable (IVarListSafePtr &a_var_list)
         cout << "OK: found variable a_param\n" ;
     } else {
         cout << "KO: could not find variable a_param\n" ;
+    }
+
+    if (a_var_list->find_variable ("a_param.m_first_name", variable)) {
+        cout << "OK: found variable a_param.m_first_name\n" ;
+    } else {
+        cout << "KO: could not find variable a_param.m_first_name\n" ;
     }
 }
 

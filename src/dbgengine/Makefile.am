@@ -1,7 +1,10 @@
 gdbmod_LTLIBRARIES=libgdbmod.la
 gdbmoddir=@NEMIVER_MODULES_DIR@
+
 varlistmod_LTLIBRARIES=libvarlistmod.la
 varlistmoddir=@NEMIVER_MODULES_DIR@
+
+noinst_LTLIBRARIES=libgdbmiparser.la libdbgcommon.la
 
 idebuggerheaders= \
 nmv-i-debugger.h
@@ -18,11 +21,23 @@ libvarlistmod_la_SOURCES= \
 $(ivarlistheaders) \
 nmv-var-list.cc
 
+libgdbmiparser_la_SOURCES= \
+nmv-gdbmi-parser.cc \
+nmv-gdbmi-parser.h
+
+libdbgcommon_la_SOURCES= \
+nmv-dbg-common.cc \
+nmv-dbg-common.h
+
+
 publicheaders_DATA=$(dynmodheaders)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
-libgdbmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
-libvarlistmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -module -avoid-version
+libgdbmod_la_LDFLAGS=-module -avoid-version
+libgdbmod_la_LIBADD=libdbgcommon.la libgdbmiparser.la @NEMIVERCOMMON_LIBS@
+
+libvarlistmod_la_LDFLAGS=-module -avoid-version
+libvarlistmod_la_LIBADD=@NEMIVERCOMMON_LIBS@
 
 config_DATA=gdbengine.conf varlist.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@

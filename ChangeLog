@@ -1,3 +1,20 @@
+Tue, 27 Feb 2007 22:10:35 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdbmi-parser.h : added this new file
+	  to hold the gdbmi parser declarations and definitions.
+	* src/dbgengine/nmv-dbg-common.[cc|h]: put here stuff that
+	  would be common to different implementations of IDebugger.
+	  e.g.: Command, Output, CommandAndOutput, etc.
+	* src/dbgengine/nmv-gdb-engine.cc: rip the gdbmi parsing code
+	  of from here and put it in nmv-gdbmi-parser.h/.cc
+	* src/dbgengine/nmv-var-list.cc: debugged the
+	  IVarList::find_variable_from_qname() code a bit. I still
+	  have to look into some variable parsing code problems.
+	* tests/test-var-list.cc: more on the varlist test. There are
+	  still some issues because I the lookup of fully qualified variable
+	  names fails, especially when the fqvn contains a dot, e.g:
+	  var.member. Still working on it.
+
 2007-02-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* help/C/nemiver.xml: fix a tiny typo in the user manual

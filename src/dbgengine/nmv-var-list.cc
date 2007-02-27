@@ -351,7 +351,7 @@ public:
 
     bool find_variable_from_qname
                     (const UString &a_qname,
-                     DebuggerVariableList::iterator &a_from,
+                     const DebuggerVariableList::iterator &a_from,
                      IDebugger::VariableSafePtr &a_var) ;
 
 
@@ -504,23 +504,15 @@ VarList::find_variable (const UString &a_var_name,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     CHECK_INIT ;
-    DebuggerVariableList::iterator iter ;
-    for (iter = m_raw_list.begin () ; iter != m_raw_list.end () ; ++iter) {
-        if (!(*iter)) {
-            continue ;
-        }
-        if ((*iter)->name () == a_var_name) {
-            a_var = *iter ;
-            return true ;
-        }
-    }
-    return false ;
+    return VarList::find_variable_from_qname (a_var_name,
+                                              m_raw_list.begin (),
+                                              a_var) ;
 }
 
 bool
 VarList::find_variable_from_qname
                 (const UString &a_var_qname,
-                 DebuggerVariableList::iterator &a_from,
+                 const DebuggerVariableList::iterator &a_from,
                  IDebugger::VariableSafePtr &a_result)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -628,6 +620,13 @@ VarList::find_variable_in_tree
         LOG_DD ("variable name doesn't match name element, returning false") ;
         return false ;
     }
+
+    UString str ; variable->to_string (str) ;
+    LOG_DD ("inspecting variable: '"
+            << variable->name ()
+            << "' |content->|"
+            << str);
+
     ++name_elem_it ;
     if (name_elem_it == a_name_elems.end ()) {
         a_result = variable ;
