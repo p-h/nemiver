@@ -1,3 +1,20 @@
+Sun, 04 Mar 2007 21:23:43 +0100 Dodji Seketeli
+
+	* src/dbgengine/Makefile.am: added missing link time deps to the
+	  libgdmiparser.la
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  parse_stack_arguments(): when an argument is compound, gdb puts
+	  its members into the argument value as serialized into a string.
+	  To get the parameter members, we now parse the argument's value to
+	  to deserialise the members that might have been encoded there.
+	* tests/test-gdbmi.cc: added this to test gdbmi parsing functions.
+	  This is based on cppunit. It's the first of a long serie of non
+	  regression tests to come. I will need to call them automatically
+	  from the makefile via a 'test' target.
+	* configure.ac: bumped version number to 0.4 and added cppunit
+	  dependency, turned off by default, but added automatically when
+	  the variable NEMIVER_DEVEL=on is set before configure.
+
 Tue, 27 Feb 2007 22:10:35 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdbmi-parser.h : added this new file

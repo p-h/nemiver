@@ -1,7 +1,7 @@
 dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
-AC_INIT(nemiver, 0.3.0)
+AC_INIT(nemiver, 0.4.0)
 AC_PREREQ(2.59)
 AC_CONFIG_SRCDIR(README)
 AC_CANONICAL_TARGET
@@ -10,7 +10,7 @@ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AC_CONFIG_HEADER(config.h)
 
 MAJOR_VERSION=0
-MINOR_VERSION=3
+MINOR_VERSION=4
 MICRO_VERSION=0
 
 NEMIVER_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION"
@@ -40,6 +40,7 @@ SQLITE3_VERSION=3.0
 LIBGTOP_VERSION=2.14
 LIBVTE_VERSION=0.12.0
 GCONF_VERSION=2.14.0
+CPPUNIT_VERSION=1.10.0
 
 dnl *********************
 dnl Checks for programs.
@@ -97,6 +98,23 @@ if test x$ENABLE_IDEBUGGER_ONLY = xyes ; then
     ENABLE_DBGENGINE=yes
     ENABLE_WORKBENCH=no
 fi
+
+AC_ARG_ENABLE(autotests,
+              AC_HELP_STRING([--enable-autotests=yes|no],
+                             [enable automated tests (default is no)]),
+              ENABLE_AUTOTESTS=$enableval,
+              ENABLE_AUTOTESTS=no)
+if test x$NEMIVER_DEVEL = xon ; then
+    ENABLE_AUTOTESTS=yes
+fi
+
+if test x$ENABLE_AUTOTESTS = xyes ; then
+    AM_PATH_CPPUNIT($CPP_UNIT_VERSION)
+    AC_MSG_NOTICE(support of automated tests enabled)
+else
+    AC_MSG_NOTICE(disabled support of automated tests)
+fi
+AM_CONDITIONAL(AUTOTESTS, test x$ENABLE_AUTOTESTS = xyes)
 
 AC_ARG_ENABLE(workbench,
               AC_HELP_STRING([--enable-workbench=yes|no],
@@ -320,7 +338,8 @@ cat <<EOT
     Source code location            : ${srcdir}
     C Compiler                      : ${CC}
     C++ Compiler                    : ${CXX}
-    NEMIVER_DEVEL env var              : ${NEMIVER_DEVEL}
+    NEMIVER_DEVEL env var           : ${NEMIVER_DEVEL}
+    Enable autotests                : ${ENABLE_AUTOTESTS}
     Enable verbose debug messages   : ${ENABLE_DEBUG}
     Enable workbench                : ${ENABLE_WORKBENCH}
     Maintainer mode                 : ${USER_MAINTAINER_MODE}

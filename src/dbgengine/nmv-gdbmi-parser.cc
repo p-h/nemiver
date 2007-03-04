@@ -1026,10 +1026,19 @@ parse_stack_arguments (const UString &a_input,
                                 parameter->value
                                     ((*arg_iter)->value
                                                  ()->get_string_content()) ;
-                                //TODO: call parse_member_variable() in
-                                //case parameter->value() is compound.
-                                //This would let us fill parameter->members().
-                                //with the structured member.
+                                UString::size_type pos;
+                                pos = parameter->value ().find ("{") ;
+                                if (pos != Glib::ustring::npos) {
+                                    //fill parameter->members().
+                                    //with the structured member
+                                    //embedded in parameter->value()
+                                    //and set parameter->value() to nothing
+                                    THROW_IF_FAIL
+                                        (parse_member_variable
+                                            (parameter->value (),
+                                             pos, pos, parameter, true)) ;
+                                    parameter->value ("") ;
+                                }
                             } else {
                                 THROW ("should not reach this line") ;
                             }

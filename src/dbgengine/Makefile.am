@@ -39,6 +39,10 @@ libgdbmod_la_LIBADD=libdbgcommon.la libgdbmiparser.la @NEMIVERCOMMON_LIBS@
 libvarlistmod_la_LDFLAGS=-module -avoid-version
 libvarlistmod_la_LIBADD=@NEMIVERCOMMON_LIBS@
 
+libgdbmiparser_la_LIBADD= \
+@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
 config_DATA=gdbengine.conf varlist.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
