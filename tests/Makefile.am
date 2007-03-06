@@ -8,12 +8,12 @@ noinst_PROGRAMS= \
 $(AUTOMATED_TESTS) \
 runtestbreakpoint \
 runtestcore runteststdout \
-runtesttemplatedvar \
 runtestunicode \
 runtestvarlist \
 docore inout \
 pointerderef \
-fooprog
+fooprog \
+templatedvar
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
 runtestgdbmi_LDADD= \
@@ -37,12 +37,12 @@ runteststdout_SOURCES=test-stdout.cc
 runteststdout_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-runtesttemplatedvar_SOURCES=test-templated-var.cc
-runtesttemplatedvar_LDADD=@NEMIVERCOMMON_LIBS@ \
+templatedvar_SOURCES=templated-var.cc
+templatedvar_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestunicode_SOURCES=test-unicode.cc
-runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ \
+runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ @CPPUNIT_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestvarlist_SOURCES=test-var-list.cc

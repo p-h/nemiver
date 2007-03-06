@@ -277,6 +277,10 @@ UString::printf (const UString &a_format, ...)
     return *this ;
 }
 
+WString::~WString ()
+{
+}
+
 WString::WString () : super_type ()
 {
 }
@@ -455,6 +459,10 @@ ustring_to_wstring (const UString &a_ustr,
     if (!wstr_len && a_ustr.bytes ()) {
         LOG_ERROR ("Conversion from utf8 str to ucs4 str failed") ;
         return false ;
+    }
+
+    if ((gulong)wstr_len != a_ustr.size ()) {
+        LOG_ERROR ("Conversion from utf8 str to ucs4 str failed") ;
     }
     a_wstr.assign (wbuf.get (), wstr_len) ;
     return true ;

@@ -85,6 +85,8 @@ public:
 
     WString () ;
 
+    ~WString () ;
+
     WString (const super_type &a_str) ;
 
     WString (const char* a_str, unsigned int a_len=-1) ;

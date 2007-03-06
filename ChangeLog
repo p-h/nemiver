@@ -1,3 +1,11 @@
+Tue, 06 Mar 2007 22:30:20 +0100 Dodji Seketeli
+
+	*  src/common/nmv-ustring.h,cc: declare a destructor for WString,
+	   otherwise weird things happen
+	* tests/test-templated-var.cc: moved this into templated-var.cc
+	* tests/test-unicode.cc: port this over cppunit
+
+
 Sun, 04 Mar 2007 21:23:43 +0100 Dodji Seketeli
 
 	* src/dbgengine/Makefile.am: added missing link time deps to the
