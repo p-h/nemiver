@@ -1,3 +1,9 @@
+Wed, 07 Mar 2007 23:44:46 +0100 Dodji Seketeli
+
+	* configure.ac: really check cppunit optionally. Not by default
+	* tests/Makefile.am: only compile test-unicode when cppunit support
+	  is present
+
 Tue, 06 Mar 2007 22:30:20 +0100 Dodji Seketeli
 
 	*  src/common/nmv-ustring.h,cc: declare a destructor for WString,

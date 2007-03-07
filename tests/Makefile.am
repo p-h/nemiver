@@ -1,5 +1,5 @@
 if AUTOTESTS
-AUTOMATED_TESTS=runtestgdbmi
+AUTOMATED_TESTS=runtestgdbmi runtestunicode
 else
 AUTOMATED_TESTS=
 endif
@@ -8,7 +8,6 @@ noinst_PROGRAMS= \
 $(AUTOMATED_TESTS) \
 runtestbreakpoint \
 runtestcore runteststdout \
-runtestunicode \
 runtestvarlist \
 docore inout \
 pointerderef \
