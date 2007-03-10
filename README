@@ -48,6 +48,12 @@ Nemiver also provides an event-based debugger library (which currently features
 a gdb backend, but others could be added in the future) that could be re-used by
 other projects seeking to implement a debugger as a part of an IDE, for example.
 
+Automated Tests
+===============
+Nemiver includes several automated unit tests which can be run with `make
+check`.  Because nemiver uses dynamically-loaded modules, however, these tests
+must be run after installing nemiver, otherwise they will not work.
+
 Reporting Bugs
 ==============
 If you've found a bug with Nemiver, we'd like to know about it.  Bugs are

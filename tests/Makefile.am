@@ -1,11 +1,12 @@
 if AUTOTESTS
-AUTOMATED_TESTS=runtestgdbmi runtestunicode runtestcpptrait
+# 'make check' automatically runs programs listed in the TESTS variable
+TESTS=runtestgdbmi runtestunicode runtestcpptrait
 else
-AUTOMATED_TESTS=
+TESTS=
 endif
 
 noinst_PROGRAMS= \
-$(AUTOMATED_TESTS) \
+$(TESTS) \
 runtestbreakpoint \
 runtestcore runteststdout \
 runtestvarlist \

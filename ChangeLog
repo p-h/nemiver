@@ -1,3 +1,8 @@
+2007-03-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* README: indicate that tests must be run after installing nemiver
+	* tests/Makefile.am: make unit tests run in `make check`
+
 Sat, 10 Mar 2007 15:08:45 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h:
