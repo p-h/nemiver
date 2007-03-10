@@ -33,6 +33,7 @@
 #include "common/nmv-ustring.h"
 #include "common/nmv-dynamic-module.h"
 #include "common/nmv-safe-ptr-utils.h"
+#include "nmv-i-lang-trait.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -480,11 +481,13 @@ public:
 
     virtual const UString& get_target_path () = 0 ;
 
+    virtual void get_target_info (const UString &a_cookie="") = 0 ;
+
+    virtual ILangTraitSafePtr get_language_trait () = 0 ;
+
     virtual void do_continue (const UString &a_cookie="") = 0;
 
     virtual void run (const UString &a_cookie="") = 0 ;
-
-    virtual void get_target_info (const UString &a_cookie="") = 0 ;
 
     virtual IDebugger::State get_state () const = 0;
 

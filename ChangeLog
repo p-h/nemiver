@@ -1,3 +1,16 @@
+Sat, 10 Mar 2007 15:08:45 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h:
+	  added and IDebugger::get_language_trait() to have information
+	  and behaviour related to the language of the current target.
+	  Today, this returns a c++ trait only. But in the future,
+	  we will actually detect the language of the target and
+	  return a trait really matching the language of the target.
+	  Take this as a bootstrap of the story of the multiple language
+	  language support.
+	* tests/test-cpptrait.cc: added a small test for
+	  IDebugger::get_language_trait()
+
 Sat, 10 Mar 2007 00:58:18 +0100 Dodji Seketeli
 
 	* src/dbgengine/cpptrait.conf.in: added this file

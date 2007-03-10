@@ -5,6 +5,7 @@
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"
 #include "nmv-i-lang-trait.h"
+#include "nmv-i-debugger.h"
 
 using namespace std ;
 using CppUnit::TestFixture ;
@@ -55,6 +56,19 @@ public:
         CPPUNIT_ASSERT (trait->is_type_a_pointer ("char *")) ;
         CPPUNIT_ASSERT (trait->is_type_a_pointer ("AType * const")) ;
     }
+
+    void test_debugger ()
+    {
+        using nemiver::IDebugger ;
+        using nemiver::IDebuggerSafePtr ;
+        IDebuggerSafePtr debugger =
+            DynamicModuleManager::load_iface_with_default_manager<IDebugger>
+                ("gdbengine", "IDebugger") ;
+        CPPUNIT_ASSERT (debugger) ;
+        ILangTraitSafePtr trait = debugger->get_language_trait () ;
+        CPPUNIT_ASSERT (trait) ;
+        CPPUNIT_ASSERT (trait->get_name () == "cpptrait") ;
+    }
 };//end tests
 
 int
@@ -71,6 +85,8 @@ main ()
                                            &tests::test_name)) ;
     suite->addTest (new TestCaller<tests> ("test_is_pointer",
                                            &tests::test_is_pointer)) ;
+    suite->addTest (new TestCaller<tests> ("test_debugger",
+                                           &tests::test_debugger)) ;
 
     TestRunner runner ;
     runner.addTest (suite) ;

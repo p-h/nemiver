@@ -212,6 +212,10 @@ public:
 
     void get_target_info (const UString &a_cookie) ;
 
+    ILangTraitSafePtr create_language_trait () ;
+
+    ILangTraitSafePtr get_language_trait () ;
+
     IDebugger::State get_state () const ;
 
     void step_in (const UString &a_cookie) ;
@@ -330,6 +334,7 @@ struct GDBEngine::Priv {
 
     OutputHandlerList output_handler_list ;
     IDebugger::State state ;
+    ILangTraitSafePtr lang_trait ;
     sigc::signal<void> gdb_died_signal;
     sigc::signal<void, const UString& > master_pty_signal;
     sigc::signal<void, const UString& > gdb_stdout_signal;
@@ -2216,6 +2221,37 @@ GDBEngine::get_target_info (const UString &a_cookie)
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("get-target-info", "info proc", a_cookie)) ;
+}
+
+ILangTraitSafePtr
+GDBEngine::create_language_trait ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+
+    //TODO: detect the actual language of the target being
+    //debugged and create a matching language trait on the fly for it.
+    //For now, let's say we just debug only c++
+    DynamicModule::Loader* loader = get_dynamic_module ().get_module_loader ();
+    THROW_IF_FAIL (loader) ;
+    DynamicModuleManager *mgr = loader->get_dynamic_module_manager () ;
+    THROW_IF_FAIL (mgr) ;
+
+    ILangTraitSafePtr trait =
+        mgr->load_iface<ILangTrait> ("cpptrait", "ILangTrait") ;
+
+    return trait ;
+}
+
+ILangTraitSafePtr
+GDBEngine::get_language_trait ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->lang_trait) {
+        m_priv->lang_trait = create_language_trait () ;
+    }
+    return m_priv->lang_trait ;
 }
 
 bool
