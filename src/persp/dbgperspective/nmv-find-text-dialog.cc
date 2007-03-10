@@ -49,9 +49,7 @@ public:
         glade (a_glade)
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK) ;
-
-        get_search_text_combo ()->get_entry ()->signal_activate ().connect
-            (sigc::mem_fun (*this, &Priv::on_search_entry_activated_signal)) ;
+        connect_dialog_signals ();
     }
 
     void on_search_entry_activated_signal ()
@@ -59,6 +57,28 @@ public:
         NEMIVER_TRY
         get_search_button ()->clicked () ;
         NEMIVER_CATCH
+    }
+
+    void on_dialog_show ()
+    {
+        NEMIVER_TRY
+        // return the focus to the search text entry and highlight the search
+        // term so that it can be overwritten by simply typing a new term
+        get_search_text_combo ()->get_entry ()->grab_focus ();
+        UString search_text = get_search_text_combo ()->get_entry ()->get_text ();
+        if (search_text.size ())
+        {
+            get_search_text_combo ()->get_entry ()->select_region(0, search_text.size ());
+        }
+        NEMIVER_CATCH
+    }
+
+    Gtk::Button* get_close_button ()
+    {
+        Gtk::Button *button =
+            ui_utils::get_widget_from_glade<Gtk::Button> (glade,
+                                                          "closebutton1") ;
+        return button ;
     }
 
     Gtk::Button* get_search_button ()
@@ -111,9 +131,12 @@ public:
 
     void connect_dialog_signals ()
     {
-        Gtk::Button *button = get_search_button () ;
-        THROW_IF_FAIL (button) ;
-        button->signal_clicked ().connect (sigc::mem_fun
+        Gtk::Button *search_button = get_search_button () ;
+        THROW_IF_FAIL (search_button) ;
+        get_search_text_combo ()->get_entry ()->signal_activate ().connect
+            (sigc::mem_fun (*this, &Priv::on_search_entry_activated_signal)) ;
+        dialog.signal_show ().connect (sigc::mem_fun (*this, &Priv::on_dialog_show));
+        search_button->signal_clicked ().connect (sigc::mem_fun
                                     (*this, &Priv::on_search_button_clicked)) ;
     }
 
@@ -123,9 +146,9 @@ public:
     void on_search_button_clicked ()
     {
         NEMIVER_TRY
-
         NEMIVER_CATCH
     }
+
     //*******************
     //</signal handlers>
     //*******************

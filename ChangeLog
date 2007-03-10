@@ -1,5 +1,14 @@
 2007-03-10  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-find-text-dialog.cc: Make it so that when the
+	'find' dialog is re-shown, it automatically selects the current search term
+	and puts the focus in the search entry box.  Previously, if you had clicked
+	the close button and then opened the 'find' dialog again, pressing enter
+	would have closed the dialog (since the 'close' button was still focused)
+	instead of finding the next match.
+
+2007-03-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* README: indicate that tests must be run after installing nemiver
 	* tests/Makefile.am: make unit tests run in `make check`
 
