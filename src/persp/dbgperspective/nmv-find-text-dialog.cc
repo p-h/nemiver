@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include <gtksourceviewmm/sourceiter.h>
+#include <gtkmm/liststore.h>
 #include "common/nmv-exception.h"
 #include "nmv-find-text-dialog.h"
 #include "nmv-ui-utils.h"
@@ -30,12 +31,29 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+struct SearchTermCols : public Gtk::TreeModel::ColumnRecord {
+    Gtk::TreeModelColumn<Glib::ustring> term ;
+
+    SearchTermCols ()
+    {
+        add (term);
+    }
+};
+
+static SearchTermCols&
+columns ()
+{
+    static SearchTermCols s_columns ;
+    return s_columns;
+}
+
 using namespace gtksourceview ;
 
 class FindTextDialog::Priv {
     friend class FindTextDialog ;
     Gtk::Dialog &dialog ;
     Glib::RefPtr<Gnome::Glade::Xml> glade ;
+    Glib::RefPtr<Gtk::ListStore> searchterm_store;
     Gtk::TextIter match_start ;
     Gtk::TextIter match_end ;
 
@@ -50,6 +68,9 @@ public:
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK) ;
         connect_dialog_signals ();
+        searchterm_store = Gtk::ListStore::create (columns ());
+        get_search_text_combo ()->set_model (searchterm_store);
+        get_search_text_combo ()->set_text_column (columns ().term);
     }
 
     void on_search_entry_activated_signal ()
@@ -146,6 +167,21 @@ public:
     void on_search_button_clicked ()
     {
         NEMIVER_TRY
+        UString new_term = get_search_text_combo ()->get_entry ()->get_text ();
+        bool found = false;
+        // first check if this term is already in the list
+        for (Gtk::TreeModel::iterator tree_iter = searchterm_store->children ().begin ();
+                tree_iter != searchterm_store->children ().end (); ++tree_iter) {
+            if (new_term == (*tree_iter)[columns ().term]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            // if it's not already in the list, add it.
+            Gtk::TreeModel::iterator new_iter = searchterm_store->append ();
+            (*new_iter)[columns ().term] = new_term;
+        }
         NEMIVER_CATCH
     }
 

@@ -1,5 +1,12 @@
 2007-03-10  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-find-text-dialog.cc: Add support for
+	remembering previous search terms in the combobox drop-down.  Search terms
+	are added when a search is performed, but only if the term is not already in
+	the list.
+
+2007-03-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-find-text-dialog.cc: Make it so that when the
 	'find' dialog is re-shown, it automatically selects the current search term
 	and puts the focus in the search entry box.  Previously, if you had clicked
