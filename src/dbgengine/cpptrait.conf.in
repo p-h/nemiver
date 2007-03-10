@@ -1,0 +1,10 @@
+<moduleconfig>
+    <module>
+        <name>cpptrait</name>
+        <libraryname>cpptraitmod</libraryname>
+    </module>
+    <customsearchpaths>
+        <path>@prefix@/@NEMIVER_LIB_DIR_NAME@/nemiver/modules</path>
+    </customsearchpaths>
+</moduleconfig>
+

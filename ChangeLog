@@ -1,3 +1,11 @@
+Sat, 10 Mar 2007 00:58:18 +0100 Dodji Seketeli
+
+	* src/dbgengine/cpptrait.conf.in: added this file
+	* src/dbgengine/nmv-cpp-trait.cc,nmv-i-lang-trait.h: starting
+	  to think about dealing about language specifics with a ILangTrait
+	  interface. The only language supported is cpp atm.
+	* tests/test-cpptrait.cc: added some tests for the ILangTrait iface
+
 Wed, 07 Mar 2007 23:44:46 +0100 Dodji Seketeli
 
 	* configure.ac: really check cppunit optionally. Not by default

@@ -1,5 +1,5 @@
 if AUTOTESTS
-AUTOMATED_TESTS=runtestgdbmi runtestunicode
+AUTOMATED_TESTS=runtestgdbmi runtestunicode runtestcpptrait
 else
 AUTOMATED_TESTS=
 endif
@@ -34,6 +34,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runteststdout_SOURCES=test-stdout.cc
 runteststdout_LDADD=@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestcpptrait_SOURCES=test-cpptrait.cc
+runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 templatedvar_SOURCES=templated-var.cc
