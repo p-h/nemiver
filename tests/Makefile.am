@@ -1,13 +1,12 @@
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
-TESTS=runtestgdbmi runtestunicode runtestcpptrait runtestvarlist
+TESTS=runtestgdbmi runtestunicode runtestcpptrait runtestvarlist runtestbreakpoint
 else
 TESTS=
 endif
 
 noinst_PROGRAMS= \
 $(TESTS) \
-runtestbreakpoint \
 runtestcore \
 runteststdout \
 docore inout \

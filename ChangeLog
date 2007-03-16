@@ -1,3 +1,7 @@
+Fri, 16 Mar 2007 12:50:24 +0100 Dodji Seketeli
+
+	* tests/Makefile.am: add test-breakpoint.c to the list of auto tests
+
 Thu, 15 Mar 2007 12:33:15 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdbmi-parser.cc,h:
