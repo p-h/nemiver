@@ -72,6 +72,11 @@
 LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << HERE << message << nemiver::common::endl
 #endif
 
+#ifndef MESSAGE
+#define MESSAGE(message) \
+LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << message << nemiver::common::endl
+#endif
+
 #ifndef LOG_D
 #define LOG_D(message, domain) \
 LOG_STREAM.push_domain (domain) ; LOG (message) ; LOG_STREAM.pop_domain ();

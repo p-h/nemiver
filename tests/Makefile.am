@@ -1,6 +1,6 @@
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
-TESTS=runtestgdbmi runtestunicode runtestcpptrait
+TESTS=runtestgdbmi runtestunicode runtestcpptrait runtestvarlist
 else
 TESTS=
 endif
@@ -8,16 +8,15 @@ endif
 noinst_PROGRAMS= \
 $(TESTS) \
 runtestbreakpoint \
-runtestcore runteststdout \
-runtestvarlist \
+runtestcore \
+runteststdout \
 docore inout \
 pointerderef \
 fooprog \
 templatedvar
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
-runtestgdbmi_LDADD= \
-@NEMIVERCOMMON_LIBS@ @CPPUNIT_LIBS@ \
+runtestgdbmi_LDADD=  @NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libgdbmiparser.la
 
@@ -26,7 +25,7 @@ fooprog_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestbreakpoint_SOURCES=test-breakpoint.cc
-runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
+runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestcore_SOURCES=test-core.cc
@@ -38,7 +37,7 @@ runteststdout_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestcpptrait_SOURCES=test-cpptrait.cc
-runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ \
+runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 templatedvar_SOURCES=templated-var.cc
@@ -46,11 +45,11 @@ templatedvar_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestunicode_SOURCES=test-unicode.cc
-runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ @CPPUNIT_LIBS@ \
+runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestvarlist_SOURCES=test-var-list.cc
-runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@ \
+runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 docore_SOURCES=do-core.cc

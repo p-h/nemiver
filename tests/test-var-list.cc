@@ -1,4 +1,5 @@
 #include <iostream>
+#include <boost/test/test_tools.hpp>
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
 #include "common/nmv-safe-ptr-utils.h"
@@ -19,37 +20,27 @@ IDebugger::Frame s_current_frame ;
 void lookup_variable (IVarListSafePtr &a_var_list) ;
 
 void
-display_help ()
-{
-    cout << "usage: runtestvarlist <program-containing variables>" << endl;
-}
-
-void
 on_command_done_signal (const UString &a_name,
                         const UString &a_cookie)
 {
-    LOG_FUNCTION_SCOPE
     if (a_cookie.empty ()) {
     }
-    LOG ("command " << a_name << " done") ;
+    MESSAGE ("command " << a_name << " done") ;
 }
 
 void
 on_engine_died_signal ()
 {
-    LOG_FUNCTION_SCOPE
 }
 
 void
 on_program_finished_signal ()
 {
-    LOG_FUNCTION_SCOPE
 }
 
 void
 on_running_signal ()
 {
-    LOG_FUNCTION_SCOPE
 }
 
 void
@@ -60,8 +51,7 @@ on_stopped_signal (const UString &a_reason,
                    const UString &a_cookie,
                    IDebuggerSafePtr &a_debugger)
 {
-    LOG_FUNCTION_SCOPE
-    THROW_IF_FAIL (a_debugger) ;
+    BOOST_REQUIRE (a_debugger) ;
 
     if (a_reason.empty () || a_has_frame || a_frame.level () || a_thread_id ||
         a_cookie.empty () || a_debugger) {
@@ -69,19 +59,21 @@ on_stopped_signal (const UString &a_reason,
     }
 
     if (a_reason == "exited-normally") {
-        LOG ("program exited normally") ;
+        MESSAGE ("program exited normally") ;
         s_loop->quit () ;
         return ;
     }
 
     if (!a_has_frame) {
-        LOG ("stopped, but not in a frame, reason: " << a_reason) ;
+        MESSAGE ("stopped, but not in a frame, reason: " << a_reason) ;
         return ;
     }
 
     s_current_frame = a_frame ;
 
-    LOG ("stopped in function: '" << a_frame.function_name () << "()'") ;
+    MESSAGE ("stopped in function: '"
+                   << a_frame.function_name ()
+                   << "()'") ;
     a_debugger->list_local_variables () ;
     a_debugger->list_frames_arguments () ;
 
@@ -103,9 +95,8 @@ on_frames_arguments_listed_signal
          const UString &a_cookie,
          IVarListSafePtr &a_var_list)
 {
-    LOG_FUNCTION_SCOPE_NORMAL
     if (a_cookie.empty ()) {/*keep compiler happy*/}
-    THROW_IF_FAIL (a_var_list) ;
+    BOOST_REQUIRE (a_var_list) ;
     map<int, list<IDebugger::VariableSafePtr> >::const_iterator it ;
     it = a_frames_params.find (0) ;
     if (it == a_frames_params.end ()) {
@@ -113,7 +104,7 @@ on_frames_arguments_listed_signal
         return ;
     }
     a_var_list->remove_variables () ;
-    a_var_list->append_variables (it->second) ;
+    a_var_list->append_variables (it->second,false/*don't update type*/) ;
     /*
     for (DebuggerVariableList::iterator i = a_frames_params.begin ();
          i != a_frames_param.end ();
@@ -135,12 +126,11 @@ on_local_variables_listed_signal (const DebuggerVariableList &a_variables,
                                   const UString &a_cookie,
                                   IVarListSafePtr &a_var_list)
 {
-    LOG_FUNCTION_SCOPE_NORMAL
     if (a_variables.empty () || a_cookie.empty ()) {
     }
-    THROW_IF_FAIL (a_var_list) ;
+    BOOST_REQUIRE (a_var_list) ;
     a_var_list->remove_variables () ;
-    a_var_list->append_variables (a_variables) ;
+    a_var_list->append_variables (a_variables, false/*don't update type*/) ;
 }
 
 void
@@ -149,7 +139,6 @@ on_variable_value_signal (const UString &a_variable_name,
                           const UString &a_cookie,
                           const IVarListSafePtr &a_var_list)
 {
-    LOG_FUNCTION_SCOPE_NORMAL
     if (a_variable_name.empty () || a_variable ||
         a_cookie.empty () || a_var_list) {
         /*keep compiler happy*/
@@ -162,7 +151,6 @@ on_variable_type_signal (const UString &a_variable_name,
                          const UString &a_cookie,
                          const IVarListSafePtr &a_var_list)
 {
-    LOG_FUNCTION_SCOPE_NORMAL
     if (a_variable_name.empty () || a_variable_type.empty () ||
         a_cookie.empty () || a_var_list) {
     }
@@ -171,7 +159,10 @@ on_variable_type_signal (const UString &a_variable_name,
 void
 on_variable_removed_signal (const IDebugger::VariableSafePtr &a_var)
 {
-    LOG_FUNCTION_SCOPE;
+    BOOST_REQUIRE (a_var) ;
+    MESSAGE ("variable removed: " << a_var->name ()) ;
+
+    /*
     cout << "=================\n" ;
     if (a_var) {
         UString str ;
@@ -179,13 +170,21 @@ on_variable_removed_signal (const IDebugger::VariableSafePtr &a_var)
         cout << str ;
     }
     cout << "\n=================" << endl ;
+    */
 }
 
 void
 on_variable_added_signal (const IDebugger::VariableSafePtr &a_var,
                           IVarListSafePtr &a_var_list)
 {
-    LOG_FUNCTION_SCOPE;
+    BOOST_REQUIRE (a_var) ;
+    BOOST_REQUIRE (a_var_list) ;
+
+    MESSAGE ("variable added: " << a_var->name ()) ;
+    IDebugger::VariableSafePtr variable ;
+    BOOST_REQUIRE (a_var_list->find_variable (a_var->name (), variable)) ;
+
+    /*
     cout << "=================\n" ;
     if (a_var) {
         UString str ;
@@ -193,6 +192,7 @@ on_variable_added_signal (const IDebugger::VariableSafePtr &a_var,
         cout << str ;
     }
     cout << "\n=================" << endl ;
+    */
     if (s_current_frame.function_name () == "func3") {
         lookup_variable (a_var_list) ;
     }
@@ -201,35 +201,26 @@ on_variable_added_signal (const IDebugger::VariableSafePtr &a_var,
 void
 lookup_variable (IVarListSafePtr &a_var_list)
 {
-    LOG_FUNCTION_SCOPE ;
-    THROW_IF_FAIL (a_var_list) ;
+    BOOST_REQUIRE (a_var_list) ;
 
     if (s_current_frame.function_name () != "func3") {
         return ;
     }
     IDebugger::VariableSafePtr variable ;
-    if (a_var_list->find_variable ("a_param", variable)) {
-        cout << "OK: found variable a_param\n" ;
-    } else {
-        cout << "KO: could not find variable a_param\n" ;
-    }
-
-    if (a_var_list->find_variable ("a_param.m_first_name", variable)) {
-        cout << "OK: found variable a_param.m_first_name\n" ;
-    } else {
-        cout << "KO: could not find variable a_param.m_first_name\n" ;
-    }
+    MESSAGE ("Looking for simple variable ...") ;
+    BOOST_REQUIRE (a_var_list->find_variable ("a_param", variable)) ;
+    MESSAGE ("OK") ;
+    MESSAGE ("Looking for fully qualified variable ...") ;
+    BOOST_REQUIRE (a_var_list->find_variable ("a_param.m_first_name",
+                                              variable)) ;
+    MESSAGE ("OK") ;
 }
 
-int
-main (int argc, char **argv)
+NEMIVER_API int
+test_main (int argc, char **argv)
 {
+    if (argc || argv) {/*keep compiler happy*/}
     NEMIVER_TRY
-
-    if (argc != 2 || !argv) {
-        display_help () ;
-        return -1 ;
-    }
 
     Initializer::do_init () ;
 
@@ -281,7 +272,7 @@ main (int argc, char **argv)
     //</connect to IDebugger events>
     //******************************
 
-    debugger->load_program (argv[1], ".") ;
+    debugger->load_program (".libs/fooprog", ".") ;
     debugger->set_breakpoint ("main") ;
     debugger->set_breakpoint ("func1") ;
     debugger->set_breakpoint ("func2") ;

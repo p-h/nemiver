@@ -1,13 +1,13 @@
 SUBDIRS = src glade menus tests po data docs help
-
+ACLOCAL_AMFLAGS = -I m4
 headers= config.h
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/common
 
 INTLTOOL_FILES= intltool-extract.in \
-				intltool-merge.in \
-				intltool-update.in
+intltool-merge.in \
+intltool-update.in
 
 EXTRA_DIST= \
 README \

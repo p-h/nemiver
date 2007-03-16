@@ -19,4 +19,5 @@ which gnome-autogen.sh || {
     echo "You need to install gnome-common from the GNOME CVS"
     exit 1
 }
+ACLOCAL_FLAGS="-I m4"
 REQUIRED_AUTOMAKE_VERSION=1.7 REQUIRED_INTLTOOL_VERSION=0.33 . gnome-autogen.sh

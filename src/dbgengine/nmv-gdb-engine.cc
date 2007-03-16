@@ -328,13 +328,13 @@ struct GDBEngine::Priv {
     UString gdb_stderr_buffer;
     list<Command> queued_commands ;
     list<Command> started_commands ;
+    bool line_busy ;
     map<int, IDebugger::BreakPoint> cached_breakpoints;
     enum InBufferStatus {
         DEFAULT,
         FILLING,
         FILLED
     };
-    InBufferStatus gdb_stdout_buffer_status ;
     InBufferStatus error_buffer_status ;
     Glib::RefPtr<Glib::MainContext> loop_context ;
 
@@ -366,8 +366,10 @@ struct GDBEngine::Priv {
                         const map<int, IDebugger::BreakPoint>&,
                         const UString&> breakpoints_set_signal;
 
-    mutable sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>
-                                                breakpoint_deleted_signal ;
+    mutable sigc::signal<void,
+                         const IDebugger::BreakPoint&,
+                         int,
+                         const UString&> breakpoint_deleted_signal ;
 
     mutable sigc::signal<void, const IDebugger::BreakPoint&, int>
                                                 breakpoint_disabled_signal ;
@@ -516,15 +518,21 @@ struct GDBEngine::Priv {
                 }
             }
             command_and_output.output (output) ;
+            LOG_DD ("received command was: '"
+                    << command_and_output.command ().name ()
+                    << "'") ;
             stdout_signal.emit (command_and_output) ;
             from = to ;
             while (to < end && isspace (a_buf[from])) {++from;}
-            if (output.has_result_record ()) {
+            if (output.has_result_record ()/*gdb acknowledged previous cmd*/) {
                 if (!started_commands.empty ()) {
                     started_commands.erase (started_commands.begin ()) ;
+                    //we can send another cmd down the wire
+                    line_busy = false ;
                 }
-                if (started_commands.empty ()
-                        && !queued_commands.empty ()) {
+                if (!line_busy
+                    && started_commands.empty ()
+                    && !queued_commands.empty ()) {
                     issue_command (*queued_commands.begin ()) ;
                     queued_commands.erase (queued_commands.begin ()) ;
                 }
@@ -536,7 +544,7 @@ struct GDBEngine::Priv {
         cwd ("."), gdb_pid (0), target_pid (0),
         gdb_stdout_fd (0), gdb_stderr_fd (0),
         master_pty_fd (0),
-        gdb_stdout_buffer_status (DEFAULT),
+        line_busy (false),
         error_buffer_status (DEFAULT),
         state (IDebugger::NOT_STARTED)
     {
@@ -743,9 +751,15 @@ struct GDBEngine::Priv {
                                   const vector<UString> &a_prog_args,
                                   const vector<UString> a_gdb_options)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
         bool result (false);
         result = launch_gdb (working_dir, a_source_search_dirs,
                              a_gdb_options, a_prog_args[0]);
+        LOG_DD ("workingdir:" << working_dir
+                << "\nsearchpath:" << UString::join (a_source_search_dirs)
+                << "\nprogargs:" << UString::join (a_prog_args)
+                << "\ngdboptions:" << UString::join (a_gdb_options)) ;
+
         if (!result) {return false;}
 
         if (!a_prog_args.empty ()) {
@@ -781,7 +795,8 @@ struct GDBEngine::Priv {
             return false ;
         }
 
-        LOG_DD ("issuing command: '" << a_command.value () << "'") ;
+        LOG_DD ("issuing command: '" << a_command.value () << "': name: '"
+                << a_command.name () << "'") ;
 
         if (master_pty_channel->write
                 (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
@@ -814,39 +829,35 @@ struct GDBEngine::Priv {
             char buf[CHUNK_SIZE+1] ;
             Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
             bool got_data (false) ;
-            UString::size_type len = 0, i=0 ;
             UString meaningfull_buffer ;
             while (true) {
                 memset (buf, 0, CHUNK_SIZE + 1) ;
                 status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read) ;
-                if (status == Glib::IO_STATUS_NORMAL
-                        && nb_read && (nb_read <= CHUNK_SIZE)) {
-                    if (gdb_stdout_buffer_status == FILLED) {
-                        gdb_stdout_buffer.clear () ;
-                        gdb_stdout_buffer_status = FILLING ;
-                    }
+                if (status == Glib::IO_STATUS_NORMAL &&
+                    nb_read && (nb_read <= CHUNK_SIZE)) {
                     std::string raw_str(buf, nb_read) ;
                     UString tmp = Glib::locale_to_utf8 (raw_str) ;
                     gdb_stdout_buffer.append (tmp) ;
-                    len = gdb_stdout_buffer.bytes (), i=0 ;
 
-                    while (isspace (gdb_stdout_buffer.c_str ()[len-i-1])) {++i;}
 
-                    if (gdb_stdout_buffer.c_str ()[len-i-1] == ')'
-                        && gdb_stdout_buffer.c_str ()[len-i-2] == 'b'
-                        && gdb_stdout_buffer.c_str ()[len-i-3] == 'd'
-                        && gdb_stdout_buffer.c_str ()[len-i-4] == 'g'
-                        && gdb_stdout_buffer.c_str ()[len-i-5] == '(') {
-                        got_data = true ;
-                    }
                 } else {
                     break ;
                 }
                 nb_read = 0 ;
             }
-            if (got_data) {
-                gdb_stdout_buffer_status = FILLED ;
-                int size = len-i+1 ;
+            LOG_DD ("gdb_stdout_buffer: <buf got_data="
+                    << (int)got_data
+                    << ">"
+                    << gdb_stdout_buffer
+                    << "</buf>") ;
+
+            UString::size_type i=0 ;
+            while ((i = gdb_stdout_buffer.raw ().find ("(gdb)")) !=
+                    std::string::npos) {
+                i += 4 ;/*is the offset in the buffer of the end of
+                         *of the '(gdb)' prompt
+                         */
+                int size = i+1 ;
                 //basically, gdb can send more or less than a complete
                 //output record. So let's take that in account in the way
                 //we manage he incoming buffer.
@@ -972,6 +983,7 @@ struct OnStreamRecordHandler: OutputHandler{
         if (!a_in.output ().has_out_of_band_record ()) {
             return false;
         }
+        LOG_DD ("handler selected") ;
         return true ;
     }
 
@@ -1563,12 +1575,17 @@ struct OnVariableTypeHandler : OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
+        LOG_DD ("command: " << a_in.command ().name ()) ;
+        LOG_DD ("has out of band: "
+                << (int)a_in.output ().has_out_of_band_record ()) ;
         if (a_in.command ().name () == "print-variable-type"
             && a_in.output ().has_out_of_band_record ()) {
             list<Output::OutOfBandRecord>::const_iterator it ;
             for (it = a_in.output ().out_of_band_records ().begin ();
                  it != a_in.output ().out_of_band_records ().end ();
                  ++it) {
+                LOG_DD ("checking debugger log: "
+                        << it->stream_record ().debugger_log ()) ;
                 if (it->has_stream_record ()
                     && !it->stream_record ().debugger_log ().compare
                                                             (0, 6, "ptype ")) {
@@ -1591,9 +1608,11 @@ struct OnVariableTypeHandler : OutputHandler {
         UString type ;
         list<Output::OutOfBandRecord>::const_iterator it ;
         it = a_in.output ().out_of_band_records ().begin () ;
-        THROW_IF_FAIL (it->has_stream_record ()
-                       && !it->stream_record ().debugger_log ().compare
-                                               (0, 6, "ptype ")) ;
+        THROW_IF_FAIL2 (it->has_stream_record ()
+                        && !it->stream_record ().debugger_log ().compare
+                                               (0, 6, "ptype "),
+                        "stream_record: " +
+                        it->stream_record ().debugger_log ()) ;
         ++it ;
         if (!it->has_stream_record ()
             || it->stream_record ().debugger_console ().compare
@@ -1761,7 +1780,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
 
         queue_command (Command ("set breakpoint pending auto")) ;
         //tell gdb not to pass the SIGINT signal to the target.
-        queue_command (Command ("handle SIGINT stop, print nopass")) ;
+        queue_command (Command ("handle SIGINT stop print nopass")) ;
         //tell the linker to do all relocations at program load
         //time so that some "step into" don't take for ever.
         //On GDB, it seems that stepping into a function that is
@@ -1787,7 +1806,9 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         command.value ("set args " + args) ;
         queue_command (command) ;
     }
-    queue_command (Command ("set inferior-tty " + a_tty_path)) ;
+    if (!a_tty_path.empty ()) {
+        queue_command (Command ("set inferior-tty " + a_tty_path)) ;
+    }
 }
 
 void
@@ -2208,7 +2229,7 @@ GDBEngine::queue_command (const Command &a_command)
     THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ()) ;
     LOG_DD ("queuing command: '" << a_command.value () << "'") ;
     m_priv->queued_commands.push_back (a_command) ;
-    if (m_priv->started_commands.empty ()) {
+    if (!m_priv->line_busy && m_priv->started_commands.empty ()) {
         result = m_priv->issue_command (*m_priv->queued_commands.begin (),
                                         false) ;
         m_priv->queued_commands.erase (m_priv->queued_commands.begin ()) ;
@@ -2602,7 +2623,7 @@ GDBEngine::print_pointed_variable_value (const UString &a_var_name,
         return ;
     }
 
-    Command command ("print-pointed-variable",
+    Command command ("print-pointed-variable-value",
                      "-data-evaluate-expression *" + a_var_name,
                      a_cookie) ;
     command.tag0 ("print-pointed-variable-value") ;

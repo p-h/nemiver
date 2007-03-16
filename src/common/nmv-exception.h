@@ -68,6 +68,11 @@ LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << #ty
 << ":  " << a_reason << "\n" ) ; throw type (a_reason)  ;\
 }
 
+#define ABORT_IF_FAIL(a_cond, a_reason) \
+if (!(a_cond)) { \
+LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << a_reason <<"\n"); abort();\
+}
+
 #define THROW(a_reason) \
 LOG_EXCEPTION ("raised exception: "<< (nemiver::common::UString (a_reason)) << "\n"); \
 throw nemiver::common::Exception (nemiver::common::UString (a_reason))  ;

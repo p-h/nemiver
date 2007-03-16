@@ -92,11 +92,6 @@ typedef std::list<NameElement> NameElementList ;
 static bool break_qname_into_name_elements (const UString &a_qname,
                                             NameElementList &a_name_elems) ;
 
-/*
-static bool is_type_a_pointer (const UString &a_type) ;
-
-static bool is_qname_a_pointer_member (const UString &a_qname) ;
-*/
 
 //******************************
 //</static function declarations>
@@ -108,31 +103,6 @@ static bool is_qname_a_pointer_member (const UString &a_qname) ;
 //******************************
 
 /*
-static bool
-is_type_a_pointer (const UString &a_type)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    LOG_DD ("type: '" << a_type << "'") ;
-
-    UString type (a_type);
-    type.chomp () ;
-    if (type[type.size () - 1] == '*') {
-        LOG_DD ("type is a pointer") ;
-        return true ;
-    }
-    if (type.size () < 8) {
-        LOG_DD ("type is not a pointer") ;
-        return false ;
-    }
-    UString::size_type i = type.size () - 7 ;
-    if (!a_type.compare (i, 7, "* const")) {
-        LOG_DD ("type is a pointer") ;
-        return true ;
-    }
-    LOG_DD ("type is not a pointer") ;
-    return false ;
-}
-
 static bool
 is_qname_a_pointer_member (const UString &a_qname)
 {

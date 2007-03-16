@@ -12,6 +12,15 @@
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #undef HAVE_BIND_TEXTDOMAIN_CODESET
 
+/* define if the Boost library is available */
+#undef HAVE_BOOST
+
+/* define if the Boost::Test_Exec_Monitor library is available */
+#undef HAVE_BOOST_TEST_EXEC_MONITOR
+
+/* define if the Boost::Unit_Test_Framework library is available */
+#undef HAVE_BOOST_UNIT_TEST_FRAMEWORK
+
 /* Define to 1 if you have the <boost/variant.hpp> header file. */
 #undef HAVE_BOOST_VARIANT_HPP
 

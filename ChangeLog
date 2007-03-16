@@ -1,4 +1,34 @@
-Sun, 11 Mar 2007 00:10:02 +0100 Dodji Seketeli 
+Wed, 14 Mar 2007 10:30:13 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: fixed numerous bugs in here.
+	  Better control of the flow on the wire between us and gdb
+	  to avoir overflow it. Overflowing was causing some subtle errors
+	  like some command result being ignored by us.
+	  Added better detection and processing of gdb results that
+	  come in group, i.e more than a result at a time.
+	* src/dbgengine/nmv-var-list.cc: a bit of cleanup
+	* tests/Makefile.am: update test deps. Use boost::test when applicable
+	* tests/test-breakpoint.cc: make this use boost::test
+	* tests/test-cpptrait.cc: ditto
+	* tests/test-gdbmi.cc: ditto. Added more test cases.
+	* tests/test-unicode.cc: ditto.
+	* tests/test-var-list.cc: ditto
+
+	* Makefile.am: make aclocal use our custom m4 autoconf macros
+
+Sun, 11 Mar 2007 13:36:12 +0100 Dodji Seketeli
+
+	* configure.ac: properly detect boost::test libs. Don't use cppunit
+	  anymore.
+	* m4: added this new dir packed with autoconf macros to detect
+	  boost libraries.
+	* src/common/nmv-exception.h: add an ABORT_IF_FAIL() macro to
+	  ease debugging in some cases.
+	* src/common/nmv-log-stream-utils.h: added MESSAGE() macro
+	  to log basic messages without location information. This is
+	  used in some test files.
+
+Sun, 11 Mar 2007 00:10:02 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-dbg-common.h: we can now store a
 	  IDebugger::Variable into a Command
