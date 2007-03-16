@@ -149,24 +149,29 @@ main (int a_argc, char *a_argv[])
     Initializer::do_init () ;
     Gtk::Main gtk_kit (a_argc, a_argv);
 
-    // intialize gnome libraries
-    gnome_program_init(PACKAGE, PACKAGE_VERSION, LIBGNOME_MODULE,
-            a_argc, a_argv, GNOME_PROGRAM_STANDARD_PROPERTIES, NULL);
-
+    //***************************
+    //parse command line options
+    //***************************
     typedef SafePtr<GOptionContext,
                     GOptionContextRef,
                     GOptionContextUnref> GOptionContextSafePtr ;
     GOptionContextSafePtr context ;
-
-    //***************************
-    //parse command line options
-    //***************************
     context.reset (g_option_context_new
-            (_(" [<prog-to-debug> [prog-args]] - a C/C++ debugger for GNOME"))) ;
-    g_option_context_add_main_entries (context.get (), entries, "") ;
-    g_option_context_add_group (context.get (), gtk_get_option_group (TRUE)) ;
-    g_option_context_set_ignore_unknown_options (context.get (), FALSE) ;
-    g_option_context_parse (context.get (), &a_argc, &a_argv, NULL) ;
+        (_(" [<prog-to-debug> [prog-args]]")));
+    g_option_context_set_summary (context.get (),
+                                  _("a C/C++ debugger for GNOME")) ;
+    g_option_context_set_help_enabled (context.get (), true) ;
+    g_option_context_add_main_entries (context.get (),
+                                       entries,
+                                       GETTEXT_PACKAGE) ;
+    //g_option_context_add_group (context.get (), gtk_get_option_group (true)) ;
+    g_option_context_set_ignore_unknown_options (context.get (), true) ;
+    g_option_context_parse (context.get (), &a_argc, &a_argv, 0) ;
+
+    // intialize gnome libraries
+    gnome_program_init (PACKAGE, PACKAGE_VERSION,
+                        LIBGNOME_MODULE, a_argc, a_argv,
+                        GNOME_PROGRAM_STANDARD_PROPERTIES, NULL);
 
     NEMIVER_TRY
 
@@ -206,8 +211,8 @@ main (int a_argc, char *a_argv[])
         using nemiver::common::IProcMgr ;
 
         IDBGPerspective *debug_persp =
-        dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                    (DBGPERSPECTIVE_PLUGIN_NAME));
+                dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
+                                                (DBGPERSPECTIVE_PLUGIN_NAME));
         if (!debug_persp) {
             cerr << "Could not get the debugging perspective" << endl ;
             return -1 ;
@@ -247,7 +252,7 @@ main (int a_argc, char *a_argv[])
     if (gv_list_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                    (DBGPERSPECTIVE_PLUGIN_NAME));
+                                                (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
             list<ISessMgr::Session>::iterator session_iter ;
@@ -272,7 +277,7 @@ main (int a_argc, char *a_argv[])
     if (gv_purge_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                    (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().delete_sessions () ;
         }
@@ -282,7 +287,7 @@ main (int a_argc, char *a_argv[])
     if (gv_execute_session) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                    (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions () ;
             list<ISessMgr::Session>::iterator session_iter ;
@@ -317,7 +322,7 @@ main (int a_argc, char *a_argv[])
         }
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                            (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
         if (debug_persp) {
             LOG_D ("going to debug program: '"
                    << prog_args << "'\n",

@@ -1,3 +1,9 @@
+Wed, 14 Mar 2007 11:21:11 +0100 Dodji Seketeli
+
+	* src/main.cc: unbreak command line handling due to
+	  the libgnome init that was done before our parsing the command
+	  line.
+
 Wed, 14 Mar 2007 10:30:13 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: fixed numerous bugs in here.
