@@ -1,3 +1,17 @@
+Thu, 15 Mar 2007 12:33:15 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdbmi-parser.cc,h:
+	 parse_member_variable(): make this work for cases where
+	 an escaped string is embedded in the value being parsed.
+	 To parse that string, use the new parse_embedded_c_string().
+         The string is not yet "interpreted" yet, so the result
+	 of the parsing is not really readable in the resulting
+	 member variable. But at least, the parsing does not fail
+	 anymore.
+	* tests/test-gdbmi.cc b/tests/test-gdbmi.cc:update this
+	  to reflect the new member variable with embedded string
+	  things.
+
 Wed, 14 Mar 2007 11:21:11 +0100 Dodji Seketeli
 
 	* src/main.cc: unbreak command line handling due to

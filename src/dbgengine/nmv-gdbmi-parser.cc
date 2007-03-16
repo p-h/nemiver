@@ -1278,6 +1278,7 @@ parse_member_variable (const UString &a_input,
 
         SKIP_WS (a_input, cur, cur) ;
         LOG_D ("fetching name ...", GDBMI_PARSING_DOMAIN) ;
+        //we should be at the begining of A = B. lets try to parse A
         if (a_input.c_str ()[cur] != '{') {
             SKIP_WS (a_input, cur, cur) ;
             name_start = cur ;
@@ -1290,6 +1291,7 @@ parse_member_variable (const UString &a_input,
                     break ;
                 }
             }
+            //we should be at the end of A (as in A = B)
             name_end = cur - 1 ;
             name.assign (a_input, name_start, name_end - name_start + 1) ;
             LOG_D ("got name '" << name << "'", GDBMI_PARSING_DOMAIN) ;
@@ -1317,6 +1319,10 @@ parse_member_variable (const UString &a_input,
             SKIP_WS (a_input, cur, cur) ;
         }
 
+        //if we are at a '{', (like in A = {B}),
+        //the B is said to be a member variable of A
+        //you can also call it a member attribute of A
+        //In this case, let's try to parse {B}
         if (a_input.c_str ()[cur] == '{') {
             bool in_unnamed = true;
             if (name == "#unnamed#") {
@@ -1331,12 +1337,28 @@ parse_member_variable (const UString &a_input,
                 return false ;
             }
         } else {
+            //else, we are at a B, (like in A = B),
+            //so let's try to parse B
             SKIP_WS (a_input, cur, cur) ;
             value_start = cur ;
             while (true) {
-                if ((a_input.c_str ()[cur] != ','
-                        || ((cur+1 < end) && a_input[cur+1] != ' '))
-                     && a_input.c_str ()[cur] != '}') {
+                UString str ;
+                if (a_input.c_str ()[cur] == '"' &&
+                    a_input.c_str()[cur -1] != '\\') {
+                    if (!parse_c_string (a_input, cur, cur, str)) {
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                        return false ;
+                    }
+                } else if (cur + 1 < end &&
+                           a_input.c_str ()[cur] == '\\' &&
+                           a_input.c_str ()[cur+1] == '"') {
+                    if (!parse_embedded_c_string (a_input, cur, cur, str)){
+                        LOG_PARSING_ERROR (a_input, cur) ;
+                        return false ;
+                    }
+                } else if ((a_input.c_str ()[cur] != ','
+                               || ((cur+1 < end) && a_input[cur+1] != ' '))
+                           && a_input.c_str ()[cur] != '}') {
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
                 } else {
@@ -1360,9 +1382,19 @@ parse_member_variable (const UString &a_input,
         }
         a_var->append (cur_var) ;
 
+        LOG_D ("cur char: " << (char) a_input.c_str()[cur],
+               GDBMI_PARSING_DOMAIN) ;
+        LOG_D ("skipping ws ...",
+                GDBMI_PARSING_DOMAIN) ;
+
         SKIP_WS (a_input, cur, cur) ;
 
-        if (a_input.c_str ()[cur] == '}') {
+        LOG_D ("cur char: " << (char) a_input.c_str()[cur],
+                GDBMI_PARSING_DOMAIN) ;
+
+        if (cur == end) {
+            break ;
+        } else if (a_input.c_str ()[cur] == '}') {
             ++cur ;
             break ;
         } else if (a_input.c_str ()[cur] == ',') {
@@ -1372,6 +1404,7 @@ parse_member_variable (const UString &a_input,
                    GDBMI_PARSING_DOMAIN) ;
             continue /*goto fetch name*/ ;
         }
+        LOG_PARSING_ERROR (a_input, cur) ;
         THROW ("should not be reached") ;
     }//end while
 
@@ -1755,6 +1788,8 @@ parse_c_string (const UString &a_input,
                 UString::size_type &a_to,
                 UString &a_c_string)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
     UString::size_type cur=a_from, end = a_input.bytes () ;
     CHECK_END (a_input, cur, end) ;
 
@@ -1788,6 +1823,8 @@ parse_c_string_body (const UString &a_input,
                      UString::size_type &a_to,
                      UString &a_string)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
     UString::size_type cur=a_from, end = a_input.bytes () ;
     CHECK_END (a_input, cur, end) ;
 
@@ -1830,6 +1867,95 @@ parse_c_string_body (const UString &a_input,
                        str_end - str_start + 1) ;
     a_string = str ;
     a_to = cur ;
+    return true ;
+}
+
+bool
+parse_embedded_c_string_body (const UString &a_input,
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              UString &a_string)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
+    UString::size_type cur=a_from, end = a_input.bytes () ;
+    CHECK_END (a_input, cur, end) ;
+    CHECK_END (a_input, cur+1, end) ;
+
+    if (a_input.c_str ()[cur] != '\\' || a_input.c_str ()[cur+1] != '"') {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    cur += 2;
+    CHECK_END (a_input, cur, end) ;
+    UString escaped_str ;
+    escaped_str += '"' ;
+
+    //first walk the string, and unescape everything we find escaped
+    UString::value_type ch, prev_ch ;
+    bool escaping = false, found_end=false ;
+    for (; cur != end ; ++cur) {
+        ch = a_input[cur] ;
+        if (ch == '\\') {
+            if (escaping) {
+                prev_ch = ch ;
+                escaped_str += ch ;
+                escaping = false ;
+            } else {
+                escaping = true ;
+            }
+        } else if (ch == '"') {
+            if (escaping) {
+                if (prev_ch != '\\') {
+                    //found the end of string
+                    found_end = true ;
+                }
+                prev_ch = ch ;
+                escaped_str += ch ;
+                escaping = false ;
+                if (found_end) {
+                    break ;
+                }
+            } else {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+        } else {
+            escaped_str += ch ;
+            prev_ch = ch ;
+            escaping = false ;
+        }
+    }
+    if (!found_end) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    //TODO:debug this.
+    a_string = escaped_str ;
+    a_to = cur ;
+    return true;
+}
+
+bool
+parse_embedded_c_string (const UString &a_input,
+                         UString::size_type a_from,
+                         UString::size_type &a_to,
+                         UString &a_string)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
+    UString::size_type cur=a_from, end = a_input.bytes () ;
+    CHECK_END (a_input, cur, end) ;
+
+    if (a_input.c_str ()[cur] != '\\' || a_input.c_str ()[cur+1] != '"') {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    if (!parse_embedded_c_string_body (a_input, cur, cur, a_string)) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    a_to = ++cur ;
     return true ;
 }
 

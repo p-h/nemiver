@@ -546,12 +546,18 @@ bool parse_c_string (const UString &a_input,
                      UString::size_type &a_to,
                      UString &a_c_string);
 
+
 /// parses a string that has the form:
 /// blah
 bool parse_string (const UString &a_input,
                    UString::size_type a_from,
                    UString::size_type &a_to,
                    UString &a_string);
+
+bool parse_embedded_c_string (const UString &a_input,
+                              UString::size_type a_from,
+                              UString::size_type &a_to,
+                              UString &a_string) ;
 
 NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_GDBMI_PARSER_H
