@@ -143,12 +143,15 @@ public:
     sigc::signal<void, const UString&, const UString&, const UString&>&
                                         variable_type_signal () const ;
 
+    sigc::signal<void, const VariableSafePtr&, const UString&>
+                                      variable_dereferenced_signal () const ;
+
     sigc::signal<void, int, const UString&>& got_target_info_signal () const  ;
 
     sigc::signal<void>& running_signal () const ;
 
     sigc::signal<void, const UString&, const UString&>&
-                                                signal_received_signal () const ;
+                                        signal_received_signal () const ;
 
     sigc::signal<void, const UString&>& error_signal () const ;
 
@@ -288,7 +291,10 @@ public:
     void print_variable_type (const UString &a_var_name,
                               const UString &a_cookie) ;
 
-    void list_files (const UString &a_cookie="");
+    bool dereference_variable (const VariableSafePtr &a_var,
+                               const UString &a_cookie) ;
+
+    void list_files (const UString &a_cookie);
 
     bool extract_proc_info (Output &a_output,
                             int &a_proc_pid,
@@ -409,6 +415,8 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, const UString&, const UString&, const UString&>
                                                             variable_type_signal;
+    mutable sigc::signal<void, const VariableSafePtr&, const UString&>
+                                      variable_dereferenced_signal ;
 
     mutable sigc::signal<void, int, const UString&> got_target_info_signal ;
 
@@ -1485,8 +1493,8 @@ struct OnVariableValueHandler : OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
-        if ((a_in.command ().tag0 () == "print-variable-value"
-             || a_in.command ().tag0 () == "print-pointed-variable-value")
+        if ((a_in.command ().name () == "print-variable-value"
+             || a_in.command ().name () == "print-pointed-variable-value")
             && a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
@@ -1514,12 +1522,12 @@ struct OnVariableValueHandler : OutputHandler {
                 (a_in.output ().result_record ().variable_value ()->name ()
                  == var_name) ;
         }
-        if (a_in.command ().tag0 () == "print-variable-value") {
+        if (a_in.command ().name () == "print-variable-value") {
             m_engine->variable_value_signal ().emit
                         (a_in.command ().tag1 (),
                          a_in.output ().result_record ().variable_value (),
                          a_in.command ().cookie ()) ;
-        } else if (a_in.command ().tag0 () == "print-pointed-variable-value") {
+        } else if (a_in.command ().name () == "print-pointed-variable-value") {
             IDebugger::VariableSafePtr variable =
                             a_in.output ().result_record ().variable_value () ;
             variable->name ("*" + variable->name ()) ;
@@ -1527,8 +1535,18 @@ struct OnVariableValueHandler : OutputHandler {
                                                     (a_in.command ().tag1 (),
                                                      variable,
                                                      a_in.command ().cookie ()) ;
+        } else if (a_in.command ().name () == "dereference-variable") {
+            //the variable we where dereferencing must be
+            //in a_in.command ().variable ().
+            THROW_IF_FAIL (a_in.command ().variable ()) ;
+            IDebugger::VariableSafePtr derefed =
+                            a_in.output ().result_record ().variable_value () ;
+            a_in.command ().variable ()->set_dereferenced (derefed) ;
+            m_engine->variable_dereferenced_signal ().emit
+                                                (a_in.command ().variable (),
+                                                 a_in.command ().cookie ()) ;
         } else {
-            THROW ("unknown command tag: " + a_in.command ().tag0 ()) ;
+            THROW ("unknown command : " + a_in.command ().name ()) ;
         }
         m_engine->set_state (IDebugger::READY) ;
     }
@@ -1545,7 +1563,7 @@ struct OnVariableTypeHandler : OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
-        if (a_in.command ().tag0 () == "print-variable-type"
+        if (a_in.command ().name () == "print-variable-type"
             && a_in.output ().has_out_of_band_record ()) {
             list<Output::OutOfBandRecord>::const_iterator it ;
             for (it = a_in.output ().out_of_band_records ().begin ();
@@ -2067,6 +2085,12 @@ GDBEngine::variable_type_signal () const
     return m_priv->variable_type_signal ;
 }
 
+sigc::signal<void, const IDebugger::VariableSafePtr&, const UString&>
+GDBEngine::variable_dereferenced_signal () const
+{
+    return m_priv->variable_dereferenced_signal ;
+}
+
 sigc::signal<void>&
 GDBEngine::running_signal () const
 {
@@ -2546,7 +2570,6 @@ GDBEngine::evaluate_expression (const UString &a_expr,
     Command command ("evaluate-expression",
                      "-data-evaluate-expression " + a_expr,
                      a_cookie) ;
-    command.tag0 ("evaluate-expression") ;
     queue_command (command) ;
 }
 
@@ -2602,6 +2625,38 @@ GDBEngine::print_variable_type (const UString &a_var_name,
     command.tag1 (a_var_name) ;
 
     queue_command (command) ;
+}
+
+bool
+GDBEngine::dereference_variable (const VariableSafePtr &a_var,
+                                 const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (a_var) ;
+    THROW_IF_FAIL (a_var->name ().empty ()) ;
+
+    ILangTraitSafePtr lang_trait = get_language_trait () ;
+    THROW_IF_FAIL (lang_trait) ;
+
+    if (!lang_trait->has_pointers ()) {
+        LOG_ERROR ("current language does not support pointers") ;
+        return false ;
+    }
+
+    if (!a_var->type ().empty () &&
+        !lang_trait->is_type_a_pointer (a_var->type ())) {
+        LOG_ERROR ("The variable you want to dereference is not a pointer:"
+                   "name: " << a_var->name ()
+                   << ":type: " << a_var->type ()) ;
+        return false ;
+    }
+
+    Command command ("dereference-variable",
+                     "-data-evaluate-expression *" + a_var->name (),
+                     a_cookie) ;
+
+    queue_command (command) ;
+    return true ;
 }
 
 /// Lists the source files htat make up the executable

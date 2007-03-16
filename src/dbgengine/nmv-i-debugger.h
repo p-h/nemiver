@@ -201,6 +201,10 @@ public:
         UString m_value ;
         UString m_type ;
         Variable *m_parent ;
+        //if this variable is a pointer,
+        //it can be dereferenced. The variable
+        //it points to is stored in m_dereferenced
+        VariableSafePtr m_dereferenced ;
 
     public:
 
@@ -297,6 +301,22 @@ public:
                 a_qname = qname ;
             }
         }
+
+        void set_dereferenced (VariableSafePtr a_derefed)
+        {
+            m_dereferenced  = a_derefed ;
+        }
+
+        VariableSafePtr get_dereferenced ()
+        {
+            return m_dereferenced ;
+        }
+
+        bool is_dereferenced ()
+        {
+            if (m_dereferenced) {return true;}
+            return false ;
+        }
     };//end class Variable
 
     enum State {
@@ -368,18 +388,18 @@ public:
                          bool /*has frame*/,
                          const IDebugger::Frame&/*the frame*/,
                          int /*thread id*/,
-                         const UString& /*cookie*/>& stopped_signal () const = 0;
+                         const UString& /*cookie*/>& stopped_signal () const =0;
 
     virtual sigc::signal<void,
                          const list<int>/*thread ids*/,
                          const UString& /*cookie*/>&
-                                        threads_listed_signal () const = 0;
+                                        threads_listed_signal () const =0;
 
     virtual sigc::signal<void,
                          int/*thread id*/,
                          const IDebugger::Frame&/*frame in thread*/,
                          const UString& /*cookie*/> &
-                                             thread_selected_signal () const = 0 ;
+                                             thread_selected_signal () const =0;
 
     virtual sigc::signal<void,
                         const vector<IDebugger::Frame>&,
@@ -397,7 +417,7 @@ public:
     virtual sigc::signal<void,
                         const IDebugger::Frame&,
                         const UString& /*cookie*/>&
-                                            current_frame_signal () const = 0 ;
+                                            current_frame_signal () const = 0;
 
 
     virtual sigc::signal<void, const list<VariableSafePtr>&, const UString& >&
@@ -420,6 +440,10 @@ public:
                          const UString&/*type*/,
                          const UString&/*cookie*/>&
                                         variable_type_signal () const = 0 ;
+    virtual sigc::signal<void,
+                         const VariableSafePtr&/*the variable we derefed*/,
+                         const UString&/*cookie*/>
+                                      variable_dereferenced_signal () const =0;
 
     virtual sigc::signal<void, const vector<UString>&, const UString&>&
                             files_listed_signal () const = 0;
@@ -562,6 +586,9 @@ public:
 
     virtual void print_variable_type (const UString &a_var_name,
                                       const UString &a_cookie="") = 0;
+
+    virtual bool dereference_variable (const VariableSafePtr &a_var,
+                                       const UString &a_cookie="") = 0 ;
 
     virtual void list_files (const UString &a_cookie="") = 0 ;
 
