@@ -1,4 +1,4 @@
-Sun, 11 Mar 2007 00:10:02 +0100 Dodji Seketeli
+Sun, 11 Mar 2007 00:10:02 +0100 Dodji Seketeli 
 
 	* src/dbgengine/nmv-dbg-common.h: we can now store a
 	  IDebugger::Variable into a Command
