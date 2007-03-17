@@ -1,3 +1,20 @@
+Sat, 17 Mar 2007 20:19:19 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	  added IDebugger::get_variable_type(), that takes an
+	  VariableSafePtr in parameter.
+	  IDebugger::variable_type_set_signal() returns that
+	  very same variable, with its type set.
+	  For the record, this is complementary
+	  to IDebugger::print_variable_type(),
+	  that doesn't take an VariableSafePtr in parameter,
+	  but rather a string representing a variable name.
+	  Its matching IDebugger::variable_type_signal() slot
+	  returns a string representing the type.
+	* tests/test-deref.cc: updated this to test
+	  IDebugger::get_variable_type(). Now, we only dereference
+	  a variable when its type is a pointer.
+
 Sat, 17 Mar 2007 17:20:34 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc: make

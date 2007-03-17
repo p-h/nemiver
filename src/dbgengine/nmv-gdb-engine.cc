@@ -143,6 +143,9 @@ public:
     sigc::signal<void, const UString&, const UString&, const UString&>&
                                         variable_type_signal () const ;
 
+    sigc::signal<void, const VariableSafePtr&, const UString&>&
+                                    variable_type_set_signal () const ;
+
     sigc::signal<void, const VariableSafePtr&, const UString&>
                                       variable_dereferenced_signal () const ;
 
@@ -291,6 +294,9 @@ public:
     void print_variable_type (const UString &a_var_name,
                               const UString &a_cookie) ;
 
+    void get_variable_type (const VariableSafePtr &a_var,
+                            const UString &a_cookie) ;
+
     bool dereference_variable (const VariableSafePtr &a_var,
                                const UString &a_cookie) ;
 
@@ -417,6 +423,10 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, const UString&, const UString&, const UString&>
                                                         variable_type_signal;
+
+    mutable sigc::signal<void, const VariableSafePtr&, const UString&>
+                                                    variable_type_set_signal ;
+
     mutable sigc::signal<void, const VariableSafePtr&, const UString&>
                                       variable_dereferenced_signal ;
 
@@ -1587,7 +1597,8 @@ struct OnVariableTypeHandler : OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
-        if (a_in.command ().name () == "print-variable-type"
+        if ((a_in.command ().name () == "print-variable-type"
+            ||a_in.command ().name () == "get-variable-type")
             && a_in.output ().has_out_of_band_record ()) {
             list<Output::OutOfBandRecord>::const_iterator it ;
             for (it = a_in.output ().out_of_band_records ().begin ();
@@ -1612,8 +1623,6 @@ struct OnVariableTypeHandler : OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         THROW_IF_FAIL (m_engine) ;
-        UString var_name = a_in.command ().tag1 () ;
-        if (var_name == "") {return;}
         UString type ;
         list<Output::OutOfBandRecord>::const_iterator it ;
         it = a_in.output ().out_of_band_records ().begin () ;
@@ -1655,9 +1664,24 @@ struct OnVariableTypeHandler : OutputHandler {
         type.chomp () ;
         LOG_DD ("got type: " << type) ;
         if (type != "") {
-            m_engine->variable_type_signal ().emit (var_name,
-                                                    type,
-                                                    a_in.command ().cookie ()) ;
+            if (a_in.command ().name () == "print-variable-type") {
+                UString var_name = a_in.command ().tag1 () ;
+                THROW_IF_FAIL (var_name != "") ;
+                m_engine->variable_type_signal ().emit
+                                            (var_name,
+                                             type,
+                                             a_in.command ().cookie ()) ;
+            } else if (a_in.command ().name () == "get-variable-type") {
+                IDebugger::VariableSafePtr var ;
+                var = a_in.command ().variable () ;
+                THROW_IF_FAIL (var) ;
+                THROW_IF_FAIL (var->name () != "") ;
+                var->type (type) ;
+                m_engine->variable_type_set_signal ().emit
+                                            (var, a_in.command ().cookie ()) ;
+            } else {
+                THROW ("should not be reached") ;
+            }
         }
         m_engine->set_state (IDebugger::READY) ;
     }
@@ -2113,6 +2137,12 @@ sigc::signal<void, const UString&, const UString&, const UString&>&
 GDBEngine::variable_type_signal () const
 {
     return m_priv->variable_type_signal ;
+}
+
+sigc::signal<void, const IDebugger::VariableSafePtr&, const UString&>&
+GDBEngine::variable_type_set_signal () const
+{
+    return m_priv->variable_type_set_signal ;
 }
 
 sigc::signal<void, const IDebugger::VariableSafePtr&, const UString&>
@@ -2653,6 +2683,23 @@ GDBEngine::print_variable_type (const UString &a_var_name,
                      a_cookie) ;
     command.tag0 ("print-variable-type") ;
     command.tag1 (a_var_name) ;
+
+    queue_command (command) ;
+}
+
+void
+GDBEngine::get_variable_type (const VariableSafePtr &a_var,
+                              const UString &a_cookie="")
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    THROW_IF_FAIL (a_var) ;
+    THROW_IF_FAIL (a_var->name () != "") ;
+
+    Command command ("get-variable-type",
+                     "ptype " + a_var->name (),
+                     a_cookie) ;
+    command.variable (a_var) ;
 
     queue_command (command) ;
 }

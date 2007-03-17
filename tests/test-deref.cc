@@ -13,6 +13,7 @@ static Glib::RefPtr<Glib::MainLoop> loop =
 
 static int nb_stops = 0 ;
 static int nb_derefed = 0 ;
+static int nb_type_set = 0 ;
 
 void
 on_variable_derefed_signal (const IDebugger::VariableSafePtr &a_var,
@@ -57,15 +58,39 @@ on_variable_value_signal (const UString &a_var_name,
     if (a_var_name == "foo_ptr" ||
         a_var_name == "bar_ptr" ||
         a_var_name == "baz_ptr") {
-        ILangTraitSafePtr lang_trait = a_debugger->get_language_trait () ;
-        BOOST_REQUIRE (lang_trait->get_name () == "cpptrait") ;
-        BOOST_REQUIRE (lang_trait->has_pointers ()) ;
-        a_debugger->dereference_variable (a_var) ;
+        a_debugger->get_variable_type (a_var) ;
     } else {
         BOOST_FAIL ("Got variable name: " << a_var_name) ;
     }
 }
 
+void
+on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
+                             const UString &a_cookie,
+                             IDebuggerSafePtr &a_debugger)
+{
+    if (!a_cookie.empty ()) {}
+
+    BOOST_REQUIRE (a_var) ;
+    BOOST_REQUIRE (a_debugger) ;
+
+    ++nb_type_set ;
+
+    MESSAGE ("got type of var set '" << a_var->name () << "':'"
+             << a_var->type () << ":") ;
+
+    if (a_var->name () == "foo_ptr" ||
+        a_var->name () == "bar_ptr" ||
+        a_var->name () == "baz_ptr") {
+        ILangTraitSafePtr lang_trait = a_debugger->get_language_trait () ;
+        BOOST_REQUIRE (lang_trait->get_name () == "cpptrait") ;
+        BOOST_REQUIRE (lang_trait->has_pointers ()) ;
+        BOOST_REQUIRE (lang_trait->is_type_a_pointer (a_var->type ())) ;
+        a_debugger->dereference_variable (a_var) ;
+    } else {
+        BOOST_FAIL ("Got variable name: " << a_var->name ()) ;
+    }
+}
 void
 on_stopped_signal (const UString &a_reason,
                    bool a_has_frame,
@@ -82,6 +107,8 @@ on_stopped_signal (const UString &a_reason,
         loop->quit () ;
         BOOST_REQUIRE_MESSAGE (nb_derefed == 3,
                 "nb_derefed is " << nb_derefed) ;
+        BOOST_REQUIRE_MESSAGE (nb_type_set == 3,
+                "nb_type_set is " << nb_type_set) ;
         return ;
     }
     ++nb_stops ;
@@ -121,6 +148,9 @@ test_main (int argc, char **argv)
                                             (&on_stopped_signal, debugger)) ;
     debugger->variable_value_signal ().connect (sigc::bind
                                         (&on_variable_value_signal, debugger)) ;
+
+    debugger->variable_type_set_signal ().connect (sigc::bind
+                                    (&on_variable_type_set_signal, debugger)) ;
 
     debugger->variable_dereferenced_signal ().connect
                                             (&on_variable_derefed_signal) ;
