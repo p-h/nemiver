@@ -3,7 +3,6 @@
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
 #include "common/nmv-safe-ptr-utils.h"
-#include "common/nmv-dynamic-module.h"
 #include "nmv-i-debugger.h"
 
 using namespace nemiver;

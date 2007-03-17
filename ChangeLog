@@ -1,3 +1,11 @@
+Sat, 17 Mar 2007 17:20:34 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc: make
+	  IDebugger::dereference_variable() work.
+	* tests/test-deref.cc: write this to debug the
+	  IDebugger::dereference_variable()
+	* tests/test-breakpoint.cc: a bit of cleanup
+
 Fri, 16 Mar 2007 12:50:24 +0100 Dodji Seketeli
 
 	* tests/Makefile.am: add test-breakpoint.c to the list of auto tests

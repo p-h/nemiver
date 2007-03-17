@@ -1,8 +1,13 @@
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
-TESTS=runtestgdbmi runtestunicode runtestcpptrait runtestvarlist runtestbreakpoint
+TESTS=\
+runtestgdbmi runtestunicode \
+runtestcpptrait runtestvarlist \
+runtestbreakpoint runtestderef
 else
+
 TESTS=
+
 endif
 
 noinst_PROGRAMS= \
@@ -39,9 +44,6 @@ runtestcpptrait_SOURCES=test-cpptrait.cc
 runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-templatedvar_SOURCES=templated-var.cc
-templatedvar_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
 
 runtestunicode_SOURCES=test-unicode.cc
 runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
@@ -49,6 +51,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestvarlist_SOURCES=test-var-list.cc
 runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestderef_SOURCES=test-deref.cc
+runtestderef_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 docore_SOURCES=do-core.cc
@@ -61,6 +67,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 pointerderef_SOURCES=pointer-deref.cc
 pointerderef_LDADD=@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+templatedvar_SOURCES=templated-var.cc
+templatedvar_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 

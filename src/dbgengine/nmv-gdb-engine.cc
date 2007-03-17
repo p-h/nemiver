@@ -416,7 +416,7 @@ struct GDBEngine::Priv {
                          const UString&> pointed_variable_value_signal;
 
     mutable sigc::signal<void, const UString&, const UString&, const UString&>
-                                                            variable_type_signal;
+                                                        variable_type_signal;
     mutable sigc::signal<void, const VariableSafePtr&, const UString&>
                                       variable_dereferenced_signal ;
 
@@ -1506,7 +1506,8 @@ struct OnVariableValueHandler : OutputHandler {
     bool can_handle (CommandAndOutput &a_in)
     {
         if ((a_in.command ().name () == "print-variable-value"
-             || a_in.command ().name () == "print-pointed-variable-value")
+             || a_in.command ().name () == "print-pointed-variable-value"
+             || a_in.command ().name () == "dereference-variable")
             && a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
@@ -1523,7 +1524,6 @@ struct OnVariableValueHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
 
         UString var_name = a_in.command ().tag1 () ;
-        THROW_IF_FAIL (var_name != "") ;
         THROW_IF_FAIL (a_in.output ().result_record ().variable_value ()) ;
 
         if (a_in.output ().result_record ().variable_value ()->name () == "") {
@@ -1535,24 +1535,36 @@ struct OnVariableValueHandler : OutputHandler {
                  == var_name) ;
         }
         if (a_in.command ().name () == "print-variable-value") {
+            LOG_DD ("got print-variable-value") ;
+            THROW_IF_FAIL (var_name != "") ;
+            if (a_in.output ().result_record ().variable_value ()->name ()
+                == "") {
+                a_in.output ().result_record ().variable_value ()->name
+                    (a_in.command ().tag1 ()) ;
+            }
             m_engine->variable_value_signal ().emit
                         (a_in.command ().tag1 (),
                          a_in.output ().result_record ().variable_value (),
                          a_in.command ().cookie ()) ;
         } else if (a_in.command ().name () == "print-pointed-variable-value") {
+            LOG_DD ("got print-pointed-variable-value") ;
+            THROW_IF_FAIL (var_name != "") ;
             IDebugger::VariableSafePtr variable =
                             a_in.output ().result_record ().variable_value () ;
             variable->name ("*" + variable->name ()) ;
             m_engine->pointed_variable_value_signal ().emit
-                                                    (a_in.command ().tag1 (),
-                                                     variable,
-                                                     a_in.command ().cookie ()) ;
+                                                (a_in.command ().tag1 (),
+                                                 variable,
+                                                 a_in.command ().cookie ()) ;
         } else if (a_in.command ().name () == "dereference-variable") {
+            LOG_DD ("got dereference-variable") ;
             //the variable we where dereferencing must be
             //in a_in.command ().variable ().
             THROW_IF_FAIL (a_in.command ().variable ()) ;
             IDebugger::VariableSafePtr derefed =
                             a_in.output ().result_record ().variable_value () ;
+            THROW_IF_FAIL (derefed) ;
+            derefed->name (a_in.command ().variable ()->name ()) ;
             a_in.command ().variable ()->set_dereferenced (derefed) ;
             m_engine->variable_dereferenced_signal ().emit
                                                 (a_in.command ().variable (),
@@ -1575,9 +1587,6 @@ struct OnVariableTypeHandler : OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
-        LOG_DD ("command: " << a_in.command ().name ()) ;
-        LOG_DD ("has out of band: "
-                << (int)a_in.output ().has_out_of_band_record ()) ;
         if (a_in.command ().name () == "print-variable-type"
             && a_in.output ().has_out_of_band_record ()) {
             list<Output::OutOfBandRecord>::const_iterator it ;
@@ -2654,7 +2663,7 @@ GDBEngine::dereference_variable (const VariableSafePtr &a_var,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (a_var) ;
-    THROW_IF_FAIL (a_var->name ().empty ()) ;
+    THROW_IF_FAIL (!a_var->name ().empty ()) ;
 
     ILangTraitSafePtr lang_trait = get_language_trait () ;
     THROW_IF_FAIL (lang_trait) ;
@@ -2675,6 +2684,7 @@ GDBEngine::dereference_variable (const VariableSafePtr &a_var,
     Command command ("dereference-variable",
                      "-data-evaluate-expression *" + a_var->name (),
                      a_cookie) ;
+    command.variable (a_var) ;
 
     queue_command (command) ;
     return true ;
