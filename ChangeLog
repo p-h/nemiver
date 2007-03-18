@@ -1,3 +1,16 @@
+Sun, 18 Mar 2007 19:04:53 +0100 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h:
+	  Added IDebugger::variable_value_set_signal(),
+	  and IDebugger::get_variable_value(). To ease variable
+	  value updating workflows.
+	* src/dbgengine/nmv-i-var-list.h, nmv-var-list.cc:
+	  Fix value and type updating workflows. Now it seems
+	  variable values and type are correctly updated when doing
+	  IVarList::update_state(). woot.
+	* test/test-local-vars-list.cc: wrote this to debug
+	  variable state udpating.
+
 Sat, 17 Mar 2007 20:19:19 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:

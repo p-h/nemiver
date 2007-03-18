@@ -2,8 +2,6 @@
 #include <boost/test/test_tools.hpp>
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
-#include "common/nmv-safe-ptr-utils.h"
-#include "common/nmv-dynamic-module.h"
 #include "common/nmv-exception.h"
 #include "nmv-i-var-list.h"
 
@@ -105,20 +103,6 @@ on_frames_arguments_listed_signal
     }
     a_var_list->remove_variables () ;
     a_var_list->append_variables (it->second,false/*don't update type*/) ;
-    /*
-    for (DebuggerVariableList::iterator i = a_frames_params.begin ();
-         i != a_frames_param.end ();
-         ++i) {
-        if (!(*i)) {
-            continue ;
-        }
-        UString str ;
-        (*it)->to_string (str) ;
-        LOG_D ("got frame argument: '"
-                << (*it)->name () "' |content->|"
-                << str, "debugvars") ;
-    }
-    */
 }
 
 void
@@ -184,15 +168,6 @@ on_variable_added_signal (const IDebugger::VariableSafePtr &a_var,
     IDebugger::VariableSafePtr variable ;
     BOOST_REQUIRE (a_var_list->find_variable (a_var->name (), variable)) ;
 
-    /*
-    cout << "=================\n" ;
-    if (a_var) {
-        UString str ;
-        a_var->to_string (str, true) ;
-        cout << str ;
-    }
-    cout << "\n=================" << endl ;
-    */
     if (s_current_frame.function_name () == "func3") {
         lookup_variable (a_var_list) ;
     }

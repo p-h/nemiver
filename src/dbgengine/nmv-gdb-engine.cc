@@ -137,6 +137,11 @@ public:
                  const IDebugger::VariableSafePtr&,
                  const UString&>& variable_value_signal () const  ;
 
+    sigc::signal<void,
+                 const VariableSafePtr&/*variable*/,
+                 const UString& /*cookie*/>&
+                                     variable_value_set_signal () const ;
+
     sigc::signal<void, const UString&, const VariableSafePtr&, const UString&>&
                                     pointed_variable_value_signal () const  ;
 
@@ -288,6 +293,9 @@ public:
     void print_variable_value (const UString &a_var_name,
                               const UString &a_cookie) ;
 
+    void get_variable_value (const VariableSafePtr &a_var,
+                             const UString &a_cookie) ;
+
     void print_pointed_variable_value (const UString &a_var_name,
                                        const UString &a_cookie) ;
 
@@ -415,6 +423,11 @@ struct GDBEngine::Priv {
                          const UString&,
                          const IDebugger::VariableSafePtr&,
                          const UString&>             variable_value_signal ;
+
+    mutable sigc::signal<void,
+                         const VariableSafePtr&/*variable*/,
+                         const UString& /*cookie*/>
+                                     variable_value_set_signal ;
 
     mutable sigc::signal<void,
                          const UString&,
@@ -1516,6 +1529,7 @@ struct OnVariableValueHandler : OutputHandler {
     bool can_handle (CommandAndOutput &a_in)
     {
         if ((a_in.command ().name () == "print-variable-value"
+             || a_in.command ().name () == "get-variable-value"
              || a_in.command ().name () == "print-pointed-variable-value"
              || a_in.command ().name () == "dereference-variable")
             && a_in.output ().has_result_record ()
@@ -1534,6 +1548,10 @@ struct OnVariableValueHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
 
         UString var_name = a_in.command ().tag1 () ;
+        if (var_name == "") {
+            THROW_IF_FAIL (a_in.command ().variable ()) ;
+            var_name = a_in.command ().variable ()->name () ;
+        }
         THROW_IF_FAIL (a_in.output ().result_record ().variable_value ()) ;
 
         if (a_in.output ().result_record ().variable_value ()->name () == "") {
@@ -1556,6 +1574,20 @@ struct OnVariableValueHandler : OutputHandler {
                         (a_in.command ().tag1 (),
                          a_in.output ().result_record ().variable_value (),
                          a_in.command ().cookie ()) ;
+        } else if (a_in.command ().name () == "get-variable-value") {
+            IDebugger::VariableSafePtr var = a_in.command ().variable () ;
+            THROW_IF_FAIL (var) ;
+            a_in.output ().result_record ().variable_value ()->name
+                                                                (var->name ()) ;
+            a_in.output ().result_record ().variable_value ()->type
+                                                                (var->type ()) ;
+            if (var->is_dereferenced ()) {
+                a_in.output ().result_record ().variable_value
+                        ()->set_dereferenced (var->get_dereferenced ()) ;
+            }
+            var = a_in.output ().result_record ().variable_value () ;
+            m_engine->variable_value_set_signal ().emit
+                                            (var, a_in.command ().cookie ()) ;
         } else if (a_in.command ().name () == "print-pointed-variable-value") {
             LOG_DD ("got print-pointed-variable-value") ;
             THROW_IF_FAIL (var_name != "") ;
@@ -2124,6 +2156,14 @@ GDBEngine::variable_value_signal () const
 }
 
 sigc::signal<void,
+             const IDebugger::VariableSafePtr&,
+             const UString&>&
+GDBEngine::variable_value_set_signal () const
+{
+    return m_priv->variable_value_set_signal ;
+}
+
+sigc::signal<void,
             const
             UString&,
             const IDebugger::VariableSafePtr&,
@@ -2648,6 +2688,22 @@ GDBEngine::print_variable_value (const UString &a_var_name,
                      a_cookie) ;
     command.tag0 ("print-variable-value") ;
     command.tag1 (a_var_name) ;
+
+    queue_command (command) ;
+}
+
+void
+GDBEngine::get_variable_value (const VariableSafePtr &a_var,
+                               const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    RETURN_IF_FAIL (a_var) ;
+    RETURN_IF_FAIL (a_var->name ()) ;
+
+    Command command ("get-variable-value",
+                     "-data-evaluate-expression " + a_var->name (),
+                     a_cookie) ;
+    command.variable (a_var) ;
 
     queue_command (command) ;
 }

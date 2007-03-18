@@ -56,6 +56,10 @@ public:
     ///@{
     virtual sigc::signal<void, const IDebugger::VariableSafePtr&>&
                                                 variable_added_signal () = 0;
+    virtual sigc::signal<void, const IDebugger::VariableSafePtr>&
+                                                variable_value_set_signal ()=0;
+    virtual sigc::signal<void, const IDebugger::VariableSafePtr&>&
+                                                variable_type_set_signal () = 0;
     virtual sigc::signal<void, const IDebugger::VariableSafePtr&>&
                                                 variable_removed_signal () = 0;
     ///@}

@@ -3,7 +3,8 @@ if AUTOTESTS
 TESTS=\
 runtestgdbmi runtestunicode \
 runtestcpptrait runtestvarlist \
-runtestbreakpoint runtestderef
+runtestbreakpoint runtestderef \
+runtestlocalvarslist
 else
 
 TESTS=
@@ -55,6 +56,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestderef_SOURCES=test-deref.cc
 runtestderef_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestlocalvarslist_SOURCES=test-local-vars-list.cc
+runtestlocalvarslist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 docore_SOURCES=do-core.cc

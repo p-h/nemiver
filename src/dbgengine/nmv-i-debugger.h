@@ -428,6 +428,10 @@ public:
                          const VariableSafePtr&/*variable*/,
                          const UString& /*cookie*/>&
                                              variable_value_signal () const = 0;
+    virtual sigc::signal<void,
+                         const VariableSafePtr&/*variable*/,
+                         const UString& /*cookie*/>&
+                                     variable_value_set_signal () const = 0;
 
     virtual sigc::signal<void,
                          const UString&/*variable name*/,
@@ -585,6 +589,9 @@ public:
 
     virtual void print_variable_value (const UString &a_var_name,
                                        const UString &a_cookie="")  = 0;
+
+    virtual void get_variable_value (const VariableSafePtr &a_var,
+                                     const UString &a_cookie="")  = 0;
 
     virtual void print_pointed_variable_value (const UString &a_var_name,
                                                const UString &a_cookie="") = 0;

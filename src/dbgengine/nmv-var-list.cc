@@ -236,6 +236,12 @@ fetch_element:
 class VarList : public IVarList {
     sigc::signal<void, const IDebugger::VariableSafePtr&>
                                                     m_variable_added_signal;
+    sigc::signal<void, const IDebugger::VariableSafePtr>
+                                                m_variable_value_set_signal;
+    sigc::signal<void, const IDebugger::VariableSafePtr&>
+                                                m_variable_type_set_signal;
+    sigc::signal<void, const IDebugger::VariableSafePtr&>
+                                                m_variable_updated_signal ;
     sigc::signal<void, const IDebugger::VariableSafePtr&>
                                                     m_variable_removed_signal;
 
@@ -259,6 +265,24 @@ public:
         return m_variable_added_signal ;
     }
 
+    sigc::signal<void, const IDebugger::VariableSafePtr>&
+                                                variable_value_set_signal ()
+    {
+        return m_variable_value_set_signal ;
+    }
+
+    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+                                                variable_type_set_signal ()
+    {
+        return m_variable_type_set_signal ;
+    }
+
+    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+                                                variable_updated_signal ()
+    {
+        return m_variable_updated_signal ;
+    }
+
     sigc::signal<void, const IDebugger::VariableSafePtr&>&
                                                     variable_removed_signal ()
     {
@@ -271,13 +295,11 @@ public:
     //***************
     //<signal slots>
     //***************
-    void on_variable_type_signal (const UString &a_var_name,
-                                  const UString &a_var_type,
-                                  const UString &a_cookie) ;
+    void on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                      const UString &a_cookie) ;
 
-    void on_variable_value_signal (const UString &a_var_name,
-                                   const IDebugger::VariableSafePtr &a_var,
-                                   const UString &a_cookie) ;
+    void on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                       const UString &a_cookie) ;
     //***************
     //</signal slots>
     //***************
@@ -335,36 +357,37 @@ public:
 };//end class VarList
 
 void
-VarList::on_variable_type_signal (const UString &a_var_name,
-                                  const UString &a_var_type,
-                                  const UString &a_cookie)
+VarList::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                      const UString &a_cookie)
 {
-    NEMIVER_TRY
-
     if (a_cookie != VAR_LIST_COOKIE) {return;}
 
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (a_var && a_var->name () != "" && a_var->type () != "") ;
+
     IDebugger::VariableSafePtr variable ;
-    if (find_variable (a_var_name, variable) && variable) {
-        variable->type (a_var_type) ;
-    }
+    THROW_IF_FAIL (find_variable (a_var->name (), variable)) ;
+    THROW_IF_FAIL (variable == a_var) ;
+    THROW_IF_FAIL (variable->type () != "") ;
+
+    variable_type_set_signal ().emit (a_var) ;
 
     NEMIVER_CATCH_NOX
 }
 
 void
-VarList::on_variable_value_signal (const UString &a_var_name,
-                                   const IDebugger::VariableSafePtr &a_var,
-                                   const UString &a_cookie)
+VarList::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                       const UString &a_cookie)
 {
     NEMIVER_TRY
 
     if (a_cookie != VAR_LIST_COOKIE) {return;}
 
-    if (update_variable (a_var_name, a_var)) {
-        LOG_DD ("variable '" << a_var_name << "' updated") ;
-    } else {
-        LOG_DD ("could not find variable '" << a_var_name << "' to updated it");
-    }
+    THROW_IF_FAIL (update_variable (a_var->name (), a_var)) ;
+
+    variable_value_set_signal ().emit (a_var) ;
+    variable_updated_signal ().emit (a_var) ;
 
     NEMIVER_CATCH_NOX
 }
@@ -375,10 +398,10 @@ VarList::initialize (IDebuggerSafePtr &a_debugger)
     m_debugger = a_debugger ;
 
     THROW_IF_FAIL (m_debugger) ;
-    m_debugger->variable_type_signal ().connect (sigc::mem_fun
-                                    (*this, &VarList::on_variable_type_signal));
-    m_debugger->variable_value_signal ().connect (sigc::mem_fun
-                                (*this, &VarList::on_variable_value_signal));
+    m_debugger->variable_type_set_signal ().connect (sigc::mem_fun
+                                (*this, &VarList::on_variable_type_set_signal));
+    m_debugger->variable_value_set_signal ().connect (sigc::mem_fun
+                            (*this, &VarList::on_variable_value_set_signal));
 }
 
 const DebuggerVariableList&
@@ -398,7 +421,7 @@ VarList::append_variable (const IDebugger::VariableSafePtr &a_var,
 
     m_raw_list.push_back (a_var) ;
     if (a_update_type) {
-        get_debugger ().print_variable_type (a_var->name (), VAR_LIST_COOKIE) ;
+        get_debugger ().get_variable_type (a_var, VAR_LIST_COOKIE) ;
     }
     variable_added_signal ().emit (a_var) ;
 }
@@ -683,8 +706,7 @@ VarList::update_state ()
         if (!(*var_it) || (*var_it)->name () == "") {
             continue ;
         }
-        get_debugger ().print_variable_value ((*var_it)->name (),
-                                              VAR_LIST_COOKIE) ;
+        get_debugger ().get_variable_value (*var_it, VAR_LIST_COOKIE) ;
     }
 }
 
