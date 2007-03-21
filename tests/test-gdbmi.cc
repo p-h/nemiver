@@ -8,6 +8,9 @@
 using namespace std ;
 using namespace nemiver ;
 
+static const char* gv_str0 = "\"abracadabra\"" ;
+static const char* gv_str1 = "\"/home/dodji/misc/no\\303\\253l-\\303\\251-\\303\\240/test.c\"" ;
+
 //the partial result of a gdbmi command: -stack-list-argument 1 command
 //this command is used to implement IDebugger::list_frames_arguments()
 static const char* gv_stacks_arguments =
@@ -24,6 +27,31 @@ static const char* gv_member_var =
 "{static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x8048ce1 \"\\311\\303\\220U\\211\\345S\\203\\354\\024\\213E\\b\\211\\004$\\350\\202\\373\\377\\377\\213E\\b\\203\\300\\004\\211\\004$\\350t\\373\\377\\377\\213U\\b\\213E\\f\\211D$\\004\\211\\024$\\350\\002\\373\\377\\377\\213U\\b\\203\\302\\004\\213E\\020\\211D$\\004\\211\\024$\\350\\355\\372\\377\\377\\213U\\b\\213E\\024\\211B\\b\\3538\\211E\\370\\213]\\370\\213E\\b\\203\\300\\004\\211\\004$\\350\\276\\372\\377\\377\\211]\\370\\353\\003\\211E\\370\\213]\\370\\213E\\b\\211\\004$\\350\\250\\372\\377\\377\\211]\\370\\213E\\370\\211\\004$\\350\\032\\373\\377\\377\\203\\304\\024[]\\303U\\211\\345S\\203\\354$\\215E\\372\\211\\004$\\350\\\"\\373\\377\\377\\215E\\372\\211D$\\b\\307D$\\004\\370\\217\\004\\b\\215E\\364\\211\\004$\\350\\230\\372\\377\\377\\215E\\372\\211\\004$\\350}\\372\"...}}" ;
 
 static const char* gv_var_with_member = "value=\"{static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x8048ce1 \"\\311\\303\\220U\\211\\345S\\203\\354\\024\\213E\\b\\211\\004$\\350\\202\\373\\377\\377\\213E\\b\\203\\300\\004\\211\\004$\\350t\\373\\377\\377\\213U\\b\\213E\\f\\211D$\\004\\211\\024$\\350\\002\\373\\377\\377\\213U\\b\\203\\302\\004\\213E\\020\\211D$\\004\\211\\024$\\350\\355\\372\\377\\377\\213U\\b\\213E\\024\\211B\\b\\3538\\211E\\370\\213]\\370\\213E\\b\\203\\300\\004\\211\\004$\\350\\276\\372\\377\\377\\211]\\370\\353\\003\\211E\\370\\213]\\370\\213E\\b\\211\\004$\\350\\250\\372\\377\\377\\211]\\370\\213E\\370\\211\\004$\\350\\032\\373\\377\\377\\203\\304\\024[]\\303U\\211\\345S\\203\\354$\\215E\\372\\211\\004$\\350\\\"\\373\\377\\377\\215E\\372\\211D$\\b\\307D$\\004\\370\\217\\004\\b\\215E\\364\\211\\004$\\350\\230\\372\\377\\377\\215E\\372\\211\\004$\\350}\\372\"...}}\"" ;
+
+void
+test_str0 ()
+{
+    bool is_ok =false ;
+
+    UString res ;
+    UString::size_type to=0 ;
+    is_ok = parse_c_string (gv_str0, 0, to, res) ;
+    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE (res == "abracadabra") ;
+}
+
+void
+test_str1 ()
+{
+    bool is_ok =false ;
+
+    UString res ;
+    UString::size_type to=0 ;
+    is_ok = parse_c_string (gv_str1, 0, to, res) ;
+    BOOST_REQUIRE (is_ok) ;
+    MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'") ;
+    BOOST_REQUIRE_MESSAGE (res.size () == 32, "res size was: " << res.size ());
+}
 
 void
 test_stack_arguments ()
@@ -99,6 +127,8 @@ init_unit_test_suite (int argc, char **argv)
     nemiver::common::Initializer::do_init () ;
 
     test_suite *suite = BOOST_TEST_SUITE ("GDBMI tests") ;
+    suite->add (BOOST_TEST_CASE (&test_str0)) ;
+    suite->add (BOOST_TEST_CASE (&test_str1)) ;
     suite->add (BOOST_TEST_CASE (&test_stack_arguments)) ;
     suite->add (BOOST_TEST_CASE (&test_local_vars)) ;
     suite->add (BOOST_TEST_CASE (&test_member_variable)) ;

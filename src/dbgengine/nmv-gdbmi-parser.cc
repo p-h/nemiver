@@ -59,6 +59,11 @@ bool parse_c_string_body (const UString &a_input,
                           UString::size_type &a_to,
                           UString &a_string) ;
 
+///TODO: this is way too hackish.
+/// parse_attributes() that call this
+/// function should be re-written
+/// to use the GDBMI direct functions.
+/// this function must be removed
 bool
 parse_attribute (const UString &a_input,
                  UString::size_type a_from,
@@ -108,6 +113,12 @@ parse_attribute (const UString &a_input,
     name.assign (a_input, name_start, name_end - name_start + 1);
     value.assign (a_input, value_start, value_end-value_start + 1);
 
+    name = '"' + name + '"' ;
+    value = '"' + value + '"';
+    UString::size_type to ;
+    RETURN_VAL_IF_FAIL (parse_c_string (name, 0, to, name), false) ;
+    RETURN_VAL_IF_FAIL (parse_c_string (value, 0, to, value), false) ;
+
     a_to = ++cur ;
     a_name = name ;
     a_value = value ;
@@ -118,6 +129,8 @@ parse_attribute (const UString &a_input,
 ///
 /// An attribute list has the form:
 /// attr0="val0",attr1="bal1",attr2="val2"
+///TODO: this is way too hackish. Rewrite this
+/// using the direct GDBMI datastructures
 bool
 parse_attributes (const UString &a_input,
                   UString::size_type a_from,
@@ -514,6 +527,7 @@ parse_gdbmi_result (const UString &a_input,
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
+    LOG_D ("got gdbmi variable: " << variable, GDBMI_PARSING_DOMAIN) ;
     ++cur ;
     CHECK_END (a_input, cur, end) ;
 
@@ -560,6 +574,10 @@ parse_gdbmi_value (const UString &a_input,
         UString const_string ;
         if (parse_c_string (a_input, cur, cur, const_string)) {
             value = GDBMIValueSafePtr (new GDBMIValue (const_string)) ;
+            LOG_D ("got str gdbmi value: '"
+                    << const_string
+                    << "'",
+                   GDBMI_PARSING_DOMAIN) ;
         }
     } else if (a_input.c_str ()[cur] == '{') {
         GDBMITupleSafePtr tuple ;
@@ -1817,6 +1835,84 @@ parse_c_string (const UString &a_input,
     return true ;
 }
 
+/// parse an octal escape.
+/// it as the form: "\xxx"
+/// where x is an character between
+/// '0' and '9', so that isdigit(x) returns true.
+/// the result of the parsing is the character code
+///of the actual charactere being escaped
+/// \param a_input the input string to parse from
+/// \param a_from  the byte index to start parsing from
+/// \param a_to out parameter. Index pointing after the parsed octal escape
+/// \param a_byte_value the resulting byte value parsed
+//
+static bool
+parse_octal_escape (const UString &a_input,
+                    UString::size_type a_from,
+                    UString::size_type &a_to,
+                    unsigned char &a_byte_value)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+    UString::size_type cur=a_from, end = a_input.bytes () ;
+
+    if (cur+3 >= end)
+        return false ;
+
+    if (a_input.c_str ()[cur] != '\\'
+        || !isdigit (a_input.c_str ()[cur+1])
+        || !isdigit (a_input.c_str ()[cur+2])
+        || !isdigit (a_input.c_str ()[cur+3])) {
+        return false ;
+    }
+
+    a_byte_value = (a_input.c_str ()[cur+1] - '0') * 64 +
+                   (a_input.c_str ()[cur+2] - '0') * 8 +
+                   (a_input.c_str ()[cur+3] - '0') ;
+
+    a_to = cur + 4 ;
+    return true;
+}
+
+/// parse a sequence of bytes expressed in octal escapes.
+/// The result is a string, (in utf8).
+/// \param a_input the string (containing the octal escapes.) to parse from
+/// \param a_from in index to start parsing from
+/// \param a_to out param. The index pointing after what got parsed.
+/// \param a_result out param. The resulting parsed string
+static bool
+parse_octal_escape_sequence (const UString &a_input,
+                             UString::size_type a_from,
+                             UString::size_type &a_to,
+                             UString &a_result)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+    UString::size_type cur=a_from, end = a_input.bytes () ;
+
+    if (cur+3 >= end)
+        return false ;
+
+    CHECK_END (a_input, cur, end) ;
+    CHECK_END (a_input, cur+1, end) ;
+
+    unsigned char b=0 ;
+    string raw ;
+    while (a_input.c_str ()[cur] == '\\') {
+        if (parse_octal_escape (a_input, cur, cur, b)) {
+            raw += b ;
+        } else {
+            break ;
+        }
+    }
+    if (raw.empty ()) return false ;
+    try {
+        a_result = Glib::locale_to_utf8 (raw) ;
+    } catch (...) {
+        a_result.assign (raw.size (), '?') ;
+    }
+    a_to = cur ;
+    return true ;
+}
+
 bool
 parse_c_string_body (const UString &a_input,
                      UString::size_type a_from,
@@ -1835,12 +1931,28 @@ parse_c_string_body (const UString &a_input,
         return true ;
     }
 
-    if (!isascii (ch)) {
+    if (!isascii (ch) && ch != '\\') {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
-    UString::size_type str_start (cur), str_end (0) ;
-    ++cur ;
+
+    UString result ;
+    if (ch != '\\') {
+        result += ch ;
+        ++cur ;
+    } else {
+        UString seq ;
+        if ((cur+3 < end)
+            && isdigit (a_input.c_str ()[cur +1])
+            && isdigit (a_input.c_str ()[cur +2])
+            && isdigit (a_input.c_str ()[cur +3])
+            && parse_octal_escape_sequence (a_input, cur, cur, seq)) {
+            result += seq ;
+        } else {
+            result += ch ;
+            ++cur ;
+        }
+    }
     CHECK_END (a_input, cur, end) ;
 
     for (;;) {
@@ -1848,14 +1960,28 @@ parse_c_string_body (const UString &a_input,
         ch = a_input.c_str()[cur];
         if (isascii (ch)) {
             if (ch == '"' && prev_ch != '\\') {
-                str_end = cur - 1 ;
                 break ;
             }
-            ++cur ;
+            if (ch == '\\') {
+                UString seq ;
+                if ((cur+3 < end)
+                    && isdigit (a_input.c_str ()[cur +1])
+                    && isdigit (a_input.c_str ()[cur +2])
+                    && isdigit (a_input.c_str ()[cur +3])
+                    && parse_octal_escape_sequence (a_input, cur, cur, seq)) {
+                    ch = seq[seq.size ()-1] ;
+                    result += seq ;
+                } else {
+                    result += ch ;
+                    ++cur ;
+                }
+            } else {
+                result += ch ;
+                ++cur ;
+            }
             CHECK_END (a_input, cur, end) ;
             continue ;
         }
-        str_end = cur - 1 ;
         break;
     }
 
@@ -1863,9 +1989,7 @@ parse_c_string_body (const UString &a_input,
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
-    Glib::ustring str (a_input.c_str () + str_start,
-                       str_end - str_start + 1) ;
-    a_string = str ;
+    a_string = result ;
     a_to = cur ;
     return true ;
 }

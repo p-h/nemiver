@@ -1,3 +1,29 @@
+2007-03-21 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  make parse_c_string_body() parse escaped octal sequences of bytes.
+	  This makes the resulting string be a real unicode string now.
+	  This helps unescaping some file paths expressed in an escaped
+	  form in the debugging info. All the generic GDBMI datastructure
+	  based parsing functions directly benefit from this change.
+	  parse_attributes() (written before we had generic GDBMI parsing
+	  capabilities) didn't benefit it directly because it was parsing
+	  strings directly, without using parse_c_string.
+	  I did add a hack there, where the resulting string
+	  as parsed by parse_attribute() is reparsed again using
+	  parse_c_string(), so that it gets a chance to unsescape the octal
+	  escape sequences it might contain. This should fix bug
+	  #414334.
+	  * src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	    Replace a bunch of Glib::locale_from_utf8() into
+	    Glib::filename_from_utf8() when converting paths to
+	    utf8. This should be the proper way to do it.
+	 * tests/test-gdbmi.cc: added test cases with strings containing
+	   octal escape sequences. This should catch regressions on related
+	   to bug #414334.
+
+
+
 Sun, 18 Mar 2007 19:04:53 +0100 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h:

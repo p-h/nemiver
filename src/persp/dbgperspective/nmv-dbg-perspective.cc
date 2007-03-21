@@ -1640,8 +1640,9 @@ DBGPerspective::on_debugger_variable_value_signal
 string
 DBGPerspective::build_resource_path (const UString &a_dir, const UString &a_name)
 {
-    string relative_path = Glib::build_filename (Glib::locale_from_utf8 (a_dir),
-                                                 Glib::locale_from_utf8 (a_name));
+    string relative_path =
+        Glib::build_filename (Glib::filename_from_utf8 (a_dir),
+                              Glib::filename_from_utf8 (a_name));
     string absolute_path ;
     THROW_IF_FAIL (build_absolute_resource_path
                     (Glib::locale_to_utf8 (relative_path),
@@ -2286,7 +2287,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     }
 
     UString basename = Glib::locale_to_utf8
-        (Glib::path_get_basename (Glib::locale_from_utf8 (a_path))) ;
+        (Glib::path_get_basename (Glib::filename_from_utf8 (a_path))) ;
 
     SafePtr<Gtk::Label> label (Gtk::manage
                             (new Gtk::Label (basename))) ;
@@ -2331,7 +2332,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                                               *table,
                                                               -1);
     std::string base_name =
-                    Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
+                    Glib::path_get_basename (Glib::filename_from_utf8 (a_path));
     THROW_IF_FAIL (base_name != "") ;
     m_priv->basename_2_pagenum_map[Glib::locale_to_utf8 (base_name)]= page_num;
     m_priv->path_2_pagenum_map[a_path] = page_num ;
@@ -2414,7 +2415,7 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
 
     if (a_basename_only) {
         std::string basename =
-            Glib::path_get_basename (Glib::locale_from_utf8 (a_path)) ;
+            Glib::path_get_basename (Glib::filename_from_utf8 (a_path)) ;
         THROW_IF_FAIL (basename != "") ;
         iter = m_priv->basename_2_pagenum_map.find
                                             (Glib::locale_to_utf8 (basename)) ;
@@ -2653,11 +2654,11 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
 {
     THROW_IF_FAIL (m_priv) ;
 
-    string file_name = Glib::locale_from_utf8 (a_file_name), path, candidate ;
+    string file_name = Glib::filename_from_utf8 (a_file_name), path, candidate ;
     // first look in the working directory
     candidate = Glib::build_filename (m_priv->prog_cwd, file_name) ;
     if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-        a_file_path = Glib::locale_to_utf8 (candidate) ;
+        a_file_path = Glib::filename_to_utf8 (candidate) ;
         return true ;
     }
     // then look in the session-specific search paths
@@ -2665,10 +2666,10 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
     for (session_iter = m_priv->search_paths.begin () ;
          session_iter != m_priv->search_paths.end ();
          ++session_iter) {
-        path = Glib::locale_from_utf8 (*session_iter) ;
+        path = Glib::filename_from_utf8 (*session_iter) ;
         candidate = Glib::build_filename (path, file_name) ;
         if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::locale_to_utf8 (candidate) ;
+            a_file_path = Glib::filename_to_utf8 (candidate) ;
             return true ;
         }
     }
@@ -2677,10 +2678,10 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
     for (global_iter = m_priv->source_dirs.begin () ;
          global_iter != m_priv->source_dirs.end ();
          ++global_iter) {
-        path = Glib::locale_from_utf8 (*global_iter) ;
+        path = Glib::filename_from_utf8 (*global_iter) ;
         candidate = Glib::build_filename (path, file_name) ;
         if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::locale_to_utf8 (candidate) ;
+            a_file_path = Glib::filename_to_utf8 (candidate) ;
             return true ;
         }
     }
@@ -2867,7 +2868,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 {
     THROW_IF_FAIL (m_priv) ;
     UString session_name = Glib::path_get_basename
-        (Glib::locale_from_utf8 (m_priv->prog_path)) ;
+        (Glib::filename_from_utf8 (m_priv->prog_path)) ;
 
     if (session_name == "") {return;}
 
@@ -3218,8 +3219,8 @@ DBGPerspective::close_file (const UString &a_path)
     m_priv->sourceviews_notebook->remove_page (page_num) ;
     m_priv->path_2_pagenum_map.erase (a_path) ;
     std::string basename = Glib::path_get_basename
-                                            (Glib::locale_from_utf8 (a_path)) ;
-    m_priv->basename_2_pagenum_map.erase (Glib::locale_from_utf8 (basename)) ;
+                                            (Glib::filename_from_utf8 (a_path));
+    m_priv->basename_2_pagenum_map.erase (Glib::filename_from_utf8 (basename)) ;
     m_priv->pagenum_2_source_editor_map.erase (page_num) ;
     m_priv->pagenum_2_path_map.erase (page_num) ;
 
