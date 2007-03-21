@@ -1,5 +1,9 @@
 2007-03-21 Dodji Seketeli
 
+	+ configure.ac: fixed a typo: AX_BOOST_TEST_FRAMEWORK does not exit
+
+2007-03-21 Dodji Seketeli
+
 	* src/dbgengine/nmv-gdbmi-parser.cc:
 	  make parse_c_string_body() parse escaped octal sequences of bytes.
 	  This makes the resulting string be a real unicode string now.
