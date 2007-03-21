@@ -49,6 +49,12 @@ while (a_from < a_input.bytes () && isspace (a_input.c_str ()[a_from])) { \
 } \
 a_to = a_from ;
 
+#define SKIP_BLANK(a_input, a_from, a_to) \
+while (a_from < a_input.bytes () && isblank (a_input.c_str ()[a_from])) { \
+    CHECK_END (a_input, a_from, end);++a_from; \
+} \
+a_to = a_from ;
+
 using namespace std ;
 using namespace nemiver::common ;
 
@@ -59,11 +65,8 @@ bool parse_c_string_body (const UString &a_input,
                           UString::size_type &a_to,
                           UString &a_string) ;
 
-///TODO: this is way too hackish.
-/// parse_attributes() that call this
-/// function should be re-written
-/// to use the GDBMI direct functions.
-/// this function must be removed
+static bool is_string_start (gunichar a_c) ;
+
 bool
 parse_attribute (const UString &a_input,
                  UString::size_type a_from,
@@ -71,57 +74,20 @@ parse_attribute (const UString &a_input,
                  UString &a_name,
                  UString &a_value)
 {
-    UString::size_type cur = a_from,
-    end = a_input.size (),
-    name_start = cur ;
-    if (cur >= end) {return false;}
+    UString::size_type cur = a_from, end = a_input.size () ;
+    if (cur >= end || !is_string_start (a_input.c_str ()[cur])) {return false;}
 
-    UString name, value ;
-    UString::value_type sep (0);
-    //goto first '='
-    for (;
-            cur<end
-            && !isspace (a_input[cur])
-            && a_input[cur] != '=';
-            ++cur) {
-    }
-
-    if (a_input[cur] != '='
-            || ++cur >= end ) {
+    GDBMIResultSafePtr result ;
+    if (!parse_gdbmi_result (a_input, cur, a_to, result)
+        || !result
+        || !result->value ()
+        || result->value ()->content_type () != GDBMIValue::STRING_TYPE) {
+        LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
 
-    sep = a_input[cur] ;
-    if (sep != '"' && sep != '{' && sep != '[') {return false;}
-    if (sep == '{') {sep = '}';}
-    if (sep == '[') {sep = ']';}
-
-    if (++cur >= end) {
-        return false;
-    }
-    UString::size_type name_end = cur-3, value_start = cur ;
-
-    //goto $sep
-    for (;
-            cur<end
-            && a_input[cur] != sep;
-            ++cur) {
-    }
-    if (a_input[cur] != sep) {return false;}
-    UString::size_type value_end = cur-1 ;
-
-    name.assign (a_input, name_start, name_end - name_start + 1);
-    value.assign (a_input, value_start, value_end-value_start + 1);
-
-    name = '"' + name + '"' ;
-    value = '"' + value + '"';
-    UString::size_type to ;
-    RETURN_VAL_IF_FAIL (parse_c_string (name, 0, to, name), false) ;
-    RETURN_VAL_IF_FAIL (parse_c_string (value, 0, to, value), false) ;
-
-    a_to = ++cur ;
-    a_name = name ;
-    a_value = value ;
+    a_name = result->variable () ;
+    a_value = result->value ()->get_string_content () ;
     return true ;
 }
 
@@ -381,7 +347,7 @@ parse_gdbmi_tuple (const UString &a_input,
     for (;;) {
         if (parse_gdbmi_result (a_input, cur, cur, result)) {
             THROW_IF_FAIL (result) ;
-            SKIP_WS (a_input, cur, cur) ;
+            SKIP_BLANK (a_input, cur, cur) ;
             CHECK_END (a_input, cur, end) ;
             if (!tuple) {
                 tuple = GDBMITupleSafePtr (new GDBMITuple) ;
@@ -391,7 +357,7 @@ parse_gdbmi_tuple (const UString &a_input,
             if (a_input.c_str ()[cur] == ',') {
                 ++cur ;
                 CHECK_END (a_input, cur, end) ;
-                SKIP_WS (a_input, cur, cur) ;
+                SKIP_BLANK (a_input, cur, cur) ;
                 continue ;
             }
             if (a_input.c_str ()[cur] == '}') {
@@ -412,7 +378,7 @@ parse_gdbmi_tuple (const UString &a_input,
         break ;
     }
 
-    SKIP_WS (a_input, cur, cur) ;
+    SKIP_BLANK (a_input, cur, cur) ;
     a_to = cur ;
     a_tuple = tuple ;
     return true ;
@@ -446,7 +412,7 @@ parse_gdbmi_list (const UString &a_input,
 
     ++cur ;
     CHECK_END (a_input, cur, end) ;
-    SKIP_WS (a_input, cur, cur) ;
+    SKIP_BLANK (a_input, cur, cur) ;
 
     GDBMIValueSafePtr value ;
     GDBMIResultSafePtr result ;
@@ -522,7 +488,7 @@ parse_gdbmi_result (const UString &a_input,
         return false ;
     }
     CHECK_END (a_input, cur, end) ;
-    SKIP_WS (a_input, cur, cur) ;
+    SKIP_BLANK (a_input, cur, cur) ;
     if (a_input.c_str ()[cur] != '=') {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
@@ -756,7 +722,7 @@ parse_frame (const UString &a_input,
         return false ;
     }
     THROW_IF_FAIL (result) ;
-    CHECK_END (a_input, cur, end) ;
+    //CHECK_END (a_input, cur, end) ;
 
     if (result->variable () != "frame") {
         LOG_PARSING_ERROR (a_input, cur) ;
@@ -1241,7 +1207,7 @@ parse_variable_value (const UString &a_input,
             LOG_PARSING_ERROR (a_input, cur) ;
             return false ;
         }
-        SKIP_WS (a_input, cur, end) ;
+        SKIP_BLANK (a_input, cur, end) ;
         if (a_input[cur] != '"') {
             UString value  ;
             if (!parse_c_string_body (a_input, cur, end, value)) {
@@ -1294,11 +1260,11 @@ parse_member_variable (const UString &a_input,
         name_start=0, name_end=0, value_start=0, value_end=0 ;
         name = "#unnamed#" , value = "" ;
 
-        SKIP_WS (a_input, cur, cur) ;
+        SKIP_BLANK (a_input, cur, cur) ;
         LOG_D ("fetching name ...", GDBMI_PARSING_DOMAIN) ;
         //we should be at the begining of A = B. lets try to parse A
         if (a_input.c_str ()[cur] != '{') {
-            SKIP_WS (a_input, cur, cur) ;
+            SKIP_BLANK (a_input, cur, cur) ;
             name_start = cur ;
             while (true) {
                 if (cur < a_input.bytes ()
@@ -1330,11 +1296,11 @@ parse_member_variable (const UString &a_input,
             break;
         }
 
-        SKIP_WS (a_input, cur, cur) ;
+        SKIP_BLANK (a_input, cur, cur) ;
         if (a_input.c_str ()[cur] != '{') {
             ++cur ;
             CHECK_END (a_input, cur, end) ;
-            SKIP_WS (a_input, cur, cur) ;
+            SKIP_BLANK (a_input, cur, cur) ;
         }
 
         //if we are at a '{', (like in A = {B}),
@@ -1357,7 +1323,7 @@ parse_member_variable (const UString &a_input,
         } else {
             //else, we are at a B, (like in A = B),
             //so let's try to parse B
-            SKIP_WS (a_input, cur, cur) ;
+            SKIP_BLANK (a_input, cur, cur) ;
             value_start = cur ;
             while (true) {
                 UString str ;
@@ -1405,7 +1371,7 @@ parse_member_variable (const UString &a_input,
         LOG_D ("skipping ws ...",
                 GDBMI_PARSING_DOMAIN) ;
 
-        SKIP_WS (a_input, cur, cur) ;
+        SKIP_BLANK (a_input, cur, cur) ;
 
         LOG_D ("cur char: " << (char) a_input.c_str()[cur],
                 GDBMI_PARSING_DOMAIN) ;
@@ -1777,7 +1743,7 @@ parse_new_thread_id (const UString &a_input,
         return false ;
     }
 
-    SKIP_WS (a_input, cur, cur) ;
+    SKIP_BLANK (a_input, cur, cur) ;
 
     if (a_input[cur] != ',') {
         LOG_PARSING_ERROR (a_input, cur) ;
@@ -2083,6 +2049,15 @@ parse_embedded_c_string (const UString &a_input,
     return true ;
 }
 
+static bool
+is_string_start (gunichar a_c)
+{
+    if (!isalpha (a_c) && a_c != '_' && a_c != '<' && a_c != '>') {
+        return false ;
+    }
+    return true ;
+}
+
 /// parses a string that has the form:
 /// blah
 bool
@@ -2096,10 +2071,7 @@ parse_string (const UString &a_input,
     CHECK_END (a_input, cur, end) ;
 
     UString::value_type ch = a_input.c_str ()[cur];
-    if (!isalpha (ch)
-        && ch != '_'
-        && ch != '<'
-        && ch != '>') {
+    if (!is_string_start (ch)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
