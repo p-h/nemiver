@@ -1613,7 +1613,7 @@ struct QuickUStringLess : public std::binary_function<const UString,
         if (!a_rhs.c_str ()) {return false;}
         //this is false for non ascii characters
         //but is way faster than UString::compare().
-        int res = strcmp (a_lhs.c_str (), a_rhs.c_str ()) ;
+        int res = strncmp (a_lhs.c_str (), a_rhs.c_str (), a_lhs.bytes ()) ;
         if (res < 0) {return true;}
         return false ;
     }

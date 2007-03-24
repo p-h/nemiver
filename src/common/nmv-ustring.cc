@@ -179,10 +179,10 @@ UString::split (const UString &a_delim) const
     vector<UString> result ;
     if (size () == Glib::ustring::size_type (0)) {return result;}
 
-    gint len = size () + 1 ;
-    SafePtr<gchar> buf (new gchar[size () + 1]) ;
+    gint len = bytes () + 1 ;
+    SafePtr<gchar> buf (new gchar[len]) ;
     memset (buf.get (), 0, len) ;
-    memcpy (buf.get (), c_str (), size ()) ;
+    memcpy (buf.get (), c_str (), bytes ()) ;
 
     gchar **splited = g_strsplit (buf.get (), a_delim.c_str (), -1) ;
     try {

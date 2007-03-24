@@ -1,3 +1,12 @@
+2007-03-24 Dodji Seketeli
+
+	* src/common/nmv-ustring.cc: UString::split():  make this
+	  work when characters which code > ascii 127 are present
+	  in the string.
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  QuickUStringLess::operator()(): use strncmp() and not strcmp().
+	  You never know.
+
 2007-03-21 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdbmi-parser.cc: fixed a couple of bugs in here.
