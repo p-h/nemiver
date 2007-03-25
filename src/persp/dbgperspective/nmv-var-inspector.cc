@@ -35,6 +35,8 @@ using namespace nemiver::variables_utils ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+static const char* VAR_INSPECTOR_COOKIE = "nmv-var-inspector-cookie" ;
+
 class VarInspector::Priv : public sigc::trackable {
     friend class VarInspector ;
     Priv () ;
@@ -124,10 +126,13 @@ class VarInspector::Priv : public sigc::trackable {
 
         THROW_IF_FAIL (var_row_it) ;
         requested_type = true ;
-        debugger.print_variable_type (a_variable->name ()) ;
+        LOG_DD ("printing variable type for variable: "
+                << a_variable->name ()) ;
+        debugger.print_variable_type (a_variable->name (),
+                                      VAR_INSPECTOR_COOKIE) ;
     }
 
-    void set_variable_type (const UString &a_var_name,
+    bool set_variable_type (const UString &a_var_name,
                             const UString &a_var_type,
                             Gtk::TreeModel::iterator &a_row_it)
     {
@@ -144,12 +149,13 @@ class VarInspector::Priv : public sigc::trackable {
         } else if (!get_variable_iter_from_qname (a_var_name, var_row_it, it)) {
             LOG_ERROR ("could not get iter for variable: '"
                        << a_var_name << "'") ;
-            return ;
+            return false ;
         }
         THROW_IF_FAIL (it) ;
         set_a_variable_type_real (it, a_var_type) ;
         a_row_it = it ;
-        NEMIVER_CATCH
+        NEMIVER_CATCH_AND_RETURN (false)
+        return true ;
     }
 
     void show_variable_type_in_dialog ()
@@ -179,11 +185,11 @@ class VarInspector::Priv : public sigc::trackable {
 
         IDebugger::VariableSafePtr  variable =
             (IDebugger::VariableSafePtr) cur_selected_row->get_value
-                            (variables_utils::get_variable_columns ().variable) ;
+                        (variables_utils::get_variable_columns ().variable) ;
         THROW_IF_FAIL (variable) ;
         UString qname ;
         variable->build_qname (qname) ;
-        debugger.print_pointed_variable_value (qname) ;
+        debugger.print_pointed_variable_value (qname, VAR_INSPECTOR_COOKIE) ;
     }
 
 
@@ -236,9 +242,10 @@ class VarInspector::Priv : public sigc::trackable {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-        if (a_cookie.empty ()) {}
+        if (a_cookie != VAR_INSPECTOR_COOKIE) {return;}
 
         LOG_DD ("variable_name: '" << a_variable_name << "'") ;
+        LOG_DD ("variable_name: '" << a_variable->name () << "'") ;
         if (!requested_variable) {return;}
         set_variable (a_variable) ;
         requested_variable = false ;
@@ -250,7 +257,7 @@ class VarInspector::Priv : public sigc::trackable {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-        if (a_cookie.empty ()) {}
+        if (a_cookie != VAR_INSPECTOR_COOKIE) {return ;}
 
         LOG_DD ("variable_name: '" << a_var_name << "'") ;
         LOG_DD ("variable_type: '" << a_type << "'") ;
@@ -259,7 +266,9 @@ class VarInspector::Priv : public sigc::trackable {
 
         if (!requested_type) {return;}
         Gtk::TreeModel::iterator row_it ;
-        set_variable_type (a_var_name, a_type, row_it) ;
+        if (!set_variable_type (a_var_name, a_type, row_it)) {
+            return ;
+        }
         requested_type = false ;
 
         UString type =
@@ -280,7 +289,7 @@ class VarInspector::Priv : public sigc::trackable {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD
 
-        if (a_cookie.empty ()) {}
+        if (a_cookie != VAR_INSPECTOR_COOKIE) {return ;}
 
         NEMIVER_TRY
 
@@ -314,7 +323,9 @@ class VarInspector::Priv : public sigc::trackable {
         Gtk::TreeModel::iterator result_row_it ;
         append_a_variable (a_var, row_it, tree_store, *tree_view,
                            debugger, false, false, result_row_it) ;
-        debugger.print_variable_type (a_var_name) ;
+        LOG_DD ("printing variable type for variable: "
+                << a_var_name) ;
+        debugger.print_variable_type (a_var_name, VAR_INSPECTOR_COOKIE) ;
         NEMIVER_CATCH
     }
 
@@ -392,7 +403,8 @@ VarInspector::inspect_variable (const UString &a_variable_name)
     if (a_variable_name == "") {return;}
     THROW_IF_FAIL (m_priv) ;
     m_priv->requested_variable = true;
-    m_priv->debugger.print_variable_value (a_variable_name) ; ;
+    m_priv->debugger.print_variable_value (a_variable_name,
+                                           VAR_INSPECTOR_COOKIE);
 }
 
 IDebugger::VariableSafePtr

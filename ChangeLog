@@ -1,3 +1,24 @@
+2007-03-25 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-var-inspector.cc:
+	  VarInspector::Priv::set_variable(): request variable type
+	  using a private cookie.
+	  VarInspector::Priv::set_variable_type(): make this return
+	  a success status.
+	  VarInspector::Priv::print_pointed_variable_value():
+	  request pointed variable value using a private cookie.
+	  VarInspector::Priv::on_debugger_variable_value_signal():
+	  only consider answers that have our private cookie.
+	  VarInspector::Priv::on_variable_type_signal():
+	  only consider answers that have our private cookie.
+	  get out gracefully if we could not actually set the variable
+	  type.
+	  VarInspector::Priv::on_pointed_variable_value_signal():
+	  request variable type using a private cookie.
+	  VarInspector::inspect_variable(): request variable value
+	  using a private cookie.
+
+
 2007-03-24 Dodji Seketeli
 
 	* src/common/nmv-ustring.cc: UString::split():  make this
