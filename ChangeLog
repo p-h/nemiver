@@ -1,3 +1,9 @@
+2007-03-27 Dodji Seketeli
+
+	* sdata/nemiver.desktop.in: fix a typo to make the
+	  nemiver menu icon show up
+	* po/fr.po: fixed a typo.
+
 2007-03-25 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-var-inspector.cc:
