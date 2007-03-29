@@ -3055,7 +3055,7 @@ DBGPerspective::open_file (const UString &a_path,
     THROW_IF_FAIL (source_buffer) ;
 
     gint buf_size = 10 * 1024 ;
-    SafePtr<gchar> buf (new gchar [buf_size + 1]) ;
+    CharSafePtr buf (new gchar [buf_size + 1]) ;
     memset (buf.get (), 0, buf_size + 1) ;
 
     for (;;) {
@@ -3071,8 +3071,8 @@ DBGPerspective::open_file (const UString &a_path,
     bool do_highlight=true;
     conf_mgr ().get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE, do_highlight) ;
     source_buffer->set_highlight (do_highlight) ;
-    SourceEditor *source_editor (Gtk::manage (new SourceEditor (plugin_path (),
-                                                                source_buffer)));
+    SourceEditor *source_editor (Gtk::manage
+                        (new SourceEditor (plugin_path (), source_buffer)));
     bool show_line_numbers=true ;
     conf_mgr ().get_key_value (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS,
                                show_line_numbers) ;

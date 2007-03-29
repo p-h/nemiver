@@ -180,7 +180,7 @@ UString::split (const UString &a_delim) const
     if (size () == Glib::ustring::size_type (0)) {return result;}
 
     gint len = bytes () + 1 ;
-    SafePtr<gchar> buf (new gchar[len]) ;
+    CharSafePtr buf (new gchar[len]) ;
     memset (buf.get (), 0, len) ;
     memcpy (buf.get (), c_str (), bytes ()) ;
 

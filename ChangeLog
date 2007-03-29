@@ -1,3 +1,16 @@
+2007-03-30 Dodji Seketeli
+
+	* src/common/nmv-safe-ptr-utils.h: add safeptrs for
+	  arrays of gchar and gunichars allocated with the new() operator,
+	  and so de-allocated with the delete operator. Call them
+	  CharSafePtr and UnicharSafePtr.
+	* src/common/nmv-ustring.cc: UString::split(): use CharSafePtr
+	  to remove mismatched free/delete errors. These were pratically
+	  harmless, but there are still bugs. And they pollute valgrind
+	  reports.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  DBGPerspective::open_file(): ditto.
+
 2007-03-29 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
