@@ -1,3 +1,13 @@
+2007-03-29 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	 parse_member_variable(): when the last component of
+	 the member variable (before the ending '}') is name,
+	 allow the ending '}' to be the last character of the input
+	 stream. This is likely to fix bug #423846.
+	* tests/test-gdbmi.cc: added a test case/non regrestion test for
+	  that bug.
+
 2007-03-27 Dodji Seketeli
 
 	* sdata/nemiver.desktop.in: fix a typo to make the

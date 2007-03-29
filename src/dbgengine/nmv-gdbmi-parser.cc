@@ -1289,7 +1289,6 @@ parse_member_variable (const UString &a_input,
             ++cur ;
             cur_var->value ("") ;
             a_var->append (cur_var) ;
-            CHECK_END (a_input, cur, end) ;
             LOG_D ("reached '}' after '"
                    << name << "'",
                    GDBMI_PARSING_DOMAIN) ;
