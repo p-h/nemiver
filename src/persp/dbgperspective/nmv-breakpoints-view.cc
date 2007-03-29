@@ -143,21 +143,30 @@ public:
             // but are not in the new list of breakpoints.  (I don't know if
             // this situation will ever happen, but for completeness sake this
             // is included here)
-            for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
-                    tree_iter != list_store->children ().end ();
-                    ++tree_iter)
-            {
-                if (!breakpoint_list_has_id(a_breakpoints,
-                                            (*tree_iter)[get_bp_columns ().id])) {
-                    list_store->erase (tree_iter);
+            list<Gtk::TreeModel::iterator> iters_to_erase ;
+            for (Gtk::TreeModel::iterator tree_iter =
+                    list_store->children ().begin ();
+                 tree_iter != list_store->children ().end ();
+                ++tree_iter) {
+                if (!breakpoint_list_has_id
+                        (a_breakpoints, (*tree_iter)[get_bp_columns ().id])) {
+                    iters_to_erase.push_back (tree_iter) ;
                 }
+            }
+            for (list<Gtk::TreeModel::iterator>::iterator it =
+                                                    iters_to_erase.begin ();
+                 it != iters_to_erase.end ();
+                 ++it) {
+                list_store->erase (*it) ;
             }
 
             // now find breakpoints that need adding or updating
-            for (std::map<int, IDebugger::BreakPoint>::const_iterator breakmap_iter = a_breakpoints.begin ();
-                    breakmap_iter != a_breakpoints.end ();
-                    ++breakmap_iter) {
-                Gtk::TreeModel::iterator tree_iter = find_breakpoint_in_model(breakmap_iter->second);
+            std::map<int, IDebugger::BreakPoint>::const_iterator breakmap_iter;
+            for (breakmap_iter = a_breakpoints.begin ();
+                 breakmap_iter != a_breakpoints.end ();
+                 ++breakmap_iter) {
+                Gtk::TreeModel::iterator tree_iter =
+                    find_breakpoint_in_model(breakmap_iter->second);
                 if (tree_iter) {
                     update_breakpoint(tree_iter, breakmap_iter->second);
                 } else {
@@ -249,13 +258,20 @@ public:
     {
         if (a_break.number () || a_cookie.empty()) {}
         NEMIVER_TRY
+        list<Gtk::TreeModel::iterator> iters_to_erase ;
         for (Gtk::TreeModel::iterator iter = list_store->children ().begin ();
                 iter != list_store->children ().end ();
                 ++iter) {
             if ((*iter)[get_bp_columns ().id] == a_break_number) {
-                list_store->erase(iter);
+                iters_to_erase.push_back (iter) ;
                 break;
             }
+        }
+        for (list<Gtk::TreeModel::iterator>::iterator it =
+                iters_to_erase.begin ();
+             it != iters_to_erase.end ();
+             ++it) {
+            list_store->erase (*it) ;
         }
         NEMIVER_CATCH
     }

@@ -1,5 +1,15 @@
 2007-03-29 Dodji Seketeli
 
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	  BreakpointsView::Priv::set_breakpoints(): when we erase
+	  an element from a list, the iterator pointing at the erased
+	  element becomes invalid. We can not use it anymore.
+	  BreakpointsView::Priv::on_debugger_breakpoint_deleted_signal():
+	  ditto.
+	  This entry should fix bug #424069
+
+2007-03-29 Dodji Seketeli
+
 	* src/dbgengine/nmv-gdbmi-parser.cc:
 	 parse_member_variable(): when the last component of
 	 the member variable (before the ending '}') is name,
