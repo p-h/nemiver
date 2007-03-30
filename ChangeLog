@@ -1,5 +1,9 @@
 2007-03-30 Dodji Seketeli
 
+	* po/nemiver.pot: remove this generated file from version control
+
+2007-03-30 Dodji Seketeli
+
 	* src/common/nmv-safe-ptr-utils.h: add safeptrs for
 	  arrays of gchar and gunichars allocated with the new() operator,
 	  and so de-allocated with the delete operator. Call them
