@@ -459,7 +459,11 @@ public:
 
         NEMIVER_TRY
 
+        THROW_IF_FAIL (a_var) ;
         THROW_IF_FAIL (tree_store) ;
+
+        LOG_DD ("a_var_name: " << a_var_name) ;
+        LOG_DD ("a_var->name: " << a_var->name ()) ;
 
         std::map<UString, IDebugger::VariableSafePtr>::const_iterator it, nil ;
         std::map<UString, IDebugger::VariableSafePtr> *map_ptr = NULL ;

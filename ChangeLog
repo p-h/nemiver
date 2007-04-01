@@ -1,3 +1,9 @@
+2007-04-01 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	  LocalVarsInpector::Priv::on_variable_value_signal():
+	  make sure the variable is not nil. Log its name.
+
 2007-03-30 Dodji Seketeli
 
 	* po/nemiver.pot: remove this generated file from version control
