@@ -1,3 +1,15 @@
+2007-04-03 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: added
+	  a menu item + contextual menu to reload a file.
+	  Monitor the file changes using gnome-vfs to propose
+	  a reload to the user.
+	  The reload is very basic atm as it looses buffer decorations
+	  like breakpoint and current line markers etc.
+	  DBGPerspective::close_opened_files (): fix a crasher here.
+	  typically, don't hold an iterator that is being invalidated.
+	* src/persp/dbgperspective/menus/menus.xml: added menu items in here.
+
 2007-04-01 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

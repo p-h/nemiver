@@ -28,10 +28,14 @@
 #include <fstream>
 #include <glib/gi18n.h>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
+#include <libgnomevfs/gnome-vfs-monitor.h>
+#include <libgnomevfs/gnome-vfs-ops.h>
+#include <libgnomevfs/gnome-vfs-utils.h>
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
+#include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-env.h"
 #include "common/nmv-date-utils.h"
 #include "nmv-sess-mgr.h"
@@ -106,7 +110,7 @@ const Gtk::StockID STOCK_STEP_INTO (STEP_INTO) ;
 const Gtk::StockID STOCK_STEP_OVER (STEP_OVER) ;
 const Gtk::StockID STOCK_STEP_OUT (STEP_OUT) ;
 
-class DBGPerspective : public IDBGPerspective {
+class DBGPerspective : public IDBGPerspective, public sigc::trackable {
     //non copyable
     DBGPerspective (const IPerspective&) ;
     DBGPerspective& operator= (const IPerspective&) ;
@@ -147,6 +151,7 @@ private:
     //************
     void on_open_action () ;
     void on_close_action () ;
+    void on_reload_action () ;
     void on_find_action () ;
     void on_execute_program_action () ;
     void on_load_core_file_action () ;
@@ -311,6 +316,9 @@ public:
 
     void open_file () ;
 
+    bool load_file (const UString &a_file,
+                    Glib::RefPtr<SourceBuffer> &a_source_buffer) ;
+
     bool open_file (const UString &a_path,
                     int current_line=-1) ;
 
@@ -325,6 +333,9 @@ public:
     void close_file (const UString &a_path) ;
 
     void close_opened_files () ;
+
+    bool reload_file (const UString &a_file) ;
+    bool reload_file () ;
 
     ISessMgr& session_manager () ;
 
@@ -465,6 +476,10 @@ public:
     bool find_file_in_source_dirs (const UString &a_file_name,
                                    UString &a_file_path) ;
 
+    bool do_monitor_file (const UString &a_path) ;
+
+    bool do_unmonitor_file (const UString &a_path) ;
+
     sigc::signal<void, bool>& show_command_view_signal () ;
     sigc::signal<void, bool>& show_target_output_view_signal () ;
     sigc::signal<void, bool>& show_log_view_signal () ;
@@ -507,6 +522,12 @@ struct UnrefGObjectNative {
     }
 };
 
+static
+void file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
+                      const gchar *a_monitor_uri,
+                      const gchar *a_info_uri,
+                      GnomeVFSMonitorEventType a_event_type,
+                      DBGPerspective *a_persp) ;
 
 struct DBGPerspective::Priv {
     bool initialized ;
@@ -565,6 +586,8 @@ struct DBGPerspective::Priv {
     map<UString, int> basename_2_pagenum_map ;
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_path_map ;
+    typedef map<UString, GnomeVFSMonitorHandle*> Path2MHandleMap ;
+    Path2MHandleMap path_2_mhandle_map;
     Gtk::Notebook *statuses_notebook ;
     SafePtr<LocalVarsInspector> variables_editor ;
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
@@ -640,7 +663,8 @@ struct DBGPerspective::Priv {
     {}
 };//end struct DBGPerspective::Priv
 
-enum ViewsIndex{
+enum ViewsIndex
+{
     COMMAND_VIEW_INDEX=0,
     TARGET_OUTPUT_VIEW_INDEX,
     ERROR_VIEW_INDEX,
@@ -653,6 +677,40 @@ enum ViewsIndex{
 #ifndef CHECK_P_INIT
 #define CHECK_P_INIT THROW_IF_FAIL(m_priv && m_priv->initialized) ;
 #endif
+
+static void
+file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
+                 const gchar *a_monitor_uri,
+                 const gchar *a_info_uri,
+                 GnomeVFSMonitorEventType a_event_type,
+                 DBGPerspective *a_persp)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    RETURN_IF_FAIL (a_info_uri) ;
+
+    NEMIVER_TRY
+
+    if (a_handle) {}
+
+    LOG_DD ("monitor_uri: " << a_monitor_uri << "\n"
+         "info_uri: " << a_info_uri) ;
+
+    if (a_event_type == GNOME_VFS_MONITOR_EVENT_CHANGED) {
+        LOG_DD ("file content changed") ;
+        GnomeVFSURI *uri = gnome_vfs_uri_new (a_info_uri) ;
+        if (gnome_vfs_uri_get_path (uri)) {
+            UString msg ;
+            msg.printf (_("File %s has been modified. Do want to reload it ?"),
+                         gnome_vfs_uri_get_path (uri));
+            if (ask_yes_no_question (msg) == Gtk::RESPONSE_YES) {
+                a_persp->reload_file (gnome_vfs_uri_get_path (uri)) ;
+            }
+        }
+        gnome_vfs_uri_unref (uri) ;
+    }
+    NEMIVER_CATCH
+}
 
 ostream&
 operator<< (ostream &a_out,
@@ -686,6 +744,16 @@ DBGPerspective::on_close_action ()
     NEMIVER_TRY
 
     close_current_file () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_reload_action ()
+{
+    NEMIVER_TRY
+
+    reload_file () ;
 
     NEMIVER_CATCH
 }
@@ -1964,6 +2032,15 @@ DBGPerspective::init_actions ()
 
     static ui_utils::ActionEntry s_file_opened_action_entries [] = {
         {
+            "ReloadSourceMenuItemAction",
+            Gtk::Stock::REFRESH,
+            _("_Reload Source File ..."),
+            _("Reloads the source file"),
+            sigc::mem_fun (*this, &DBGPerspective::on_reload_action),
+            ActionEntry::DEFAULT,
+            "<control>R"
+        },
+        {
             "CloseMenuItemAction",
             Gtk::Stock::CLOSE,
             _("_Close"),
@@ -2327,6 +2404,10 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
     m_priv->pagenum_2_path_map[page_num] = a_path ;
 
+    if (!do_monitor_file (a_path)) {
+        LOG_ERROR ("Failed to start monitoring file: " << a_path) ;
+    }
+
     table.release () ;
     close_button.release () ;
     label.release () ;
@@ -2573,8 +2654,9 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
-        workbench ().get_ui_manager ()->add_ui_separator (m_priv->contextual_menu_merge_id,
-                                                          "/ContextualMenu") ;
+        workbench ().get_ui_manager ()->add_ui_separator
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu") ;
 
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
@@ -2584,6 +2666,13 @@ DBGPerspective::get_contextual_menu ()
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
+        workbench ().get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "ReloadSourceMenutItem",
+             "ReloadSourceMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
 
         workbench ().get_ui_manager ()->ensure_update () ;
         m_priv->contextual_menu =
@@ -2675,6 +2764,52 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
     return false ;
 }
 
+bool
+DBGPerspective::do_monitor_file (const UString &a_path)
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    if (m_priv->path_2_mhandle_map.find (a_path) !=
+        m_priv->path_2_mhandle_map.end ()) {
+        return false ;
+    }
+    GnomeVFSMonitorHandle *handle=0 ;
+    GCharSafePtr uri (gnome_vfs_get_uri_from_local_path (a_path.c_str ()));
+    GnomeVFSResult result = gnome_vfs_monitor_add
+                                    (&handle, uri.get (),
+                                     GNOME_VFS_MONITOR_FILE,
+                                     (GnomeVFSMonitorCallback)file_monitor_cb,
+                                     (gpointer)this) ;
+    if (result != GNOME_VFS_OK) {
+        LOG_ERROR ("failed to start monitoring file '" << a_path << "'") ;
+        if (handle) {
+            gnome_vfs_monitor_cancel (handle) ;
+            handle = 0 ;
+        }
+        return false ;
+    }
+    THROW_IF_FAIL (handle) ;
+    m_priv->path_2_mhandle_map[a_path] = handle ;
+    LOG_DD ("Monitoring file '" << Glib::filename_from_utf8 (a_path)) ;
+    return true ;
+}
+
+bool
+DBGPerspective::do_unmonitor_file (const UString &a_path)
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    map<UString, GnomeVFSMonitorHandle*>::iterator it =
+                                    m_priv->path_2_mhandle_map.find (a_path);
+    if (it == m_priv->path_2_mhandle_map.end ()) {
+        return false ;
+    }
+    if (it->second ) {
+        gnome_vfs_monitor_cancel (it->second) ;
+    }
+    m_priv->path_2_mhandle_map.erase (it) ;
+    return true ;
+}
 void
 DBGPerspective::init_conf_mgr ()
 {
@@ -2989,32 +3124,11 @@ DBGPerspective::edit_workbench_menu ()
     //init_perspective_menu_entries () ;
 }
 
-void
-DBGPerspective::open_file ()
-{
-    OpenFileDialog dialog (plugin_path (), debugger ());
-    //file_chooser.set_current_folder (m_priv->prog_cwd) ;
-
-    int result = dialog.run () ;
-
-    if (result != Gtk::RESPONSE_OK) {return;}
-
-    list<UString> paths ;
-    dialog.get_filenames (paths) ;
-    list<UString>::const_iterator iter ;
-    for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
-        open_file (*iter, -1, true) ;
-    }
-    bring_source_as_current (*(paths.begin()));
-}
-
-
 bool
-DBGPerspective::open_file (const UString &a_path,
-                           int a_current_line)
+DBGPerspective::load_file (const UString &a_path,
+                           Glib::RefPtr<SourceBuffer> &a_source_buffer)
 {
-    if (a_path == "") {return false;}
-    if (get_source_editor_from_path (a_path)) {return true ;}
+    NEMIVER_TRY
 
     ifstream file (Glib::filename_from_utf8 (a_path).c_str ()) ;
     if (!file.good () && !file.eof ()) {
@@ -3023,7 +3137,6 @@ DBGPerspective::open_file (const UString &a_path,
         return false ;
     }
 
-    NEMIVER_TRY
 
     UString base_name = Glib::filename_to_utf8
         (Glib::path_get_basename (Glib::filename_from_utf8 (a_path))) ;
@@ -3059,6 +3172,51 @@ DBGPerspective::open_file (const UString &a_path,
     bool do_highlight=true;
     conf_mgr ().get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE, do_highlight) ;
     source_buffer->set_highlight (do_highlight) ;
+
+    a_source_buffer = source_buffer ;
+    NEMIVER_CATCH_AND_RETURN (false) ;
+
+    return true ;
+}
+
+void
+DBGPerspective::open_file ()
+{
+    OpenFileDialog dialog (plugin_path (), debugger ());
+    //file_chooser.set_current_folder (m_priv->prog_cwd) ;
+
+    int result = dialog.run () ;
+
+    if (result != Gtk::RESPONSE_OK) {return;}
+
+    list<UString> paths ;
+    dialog.get_filenames (paths) ;
+    list<UString>::const_iterator iter ;
+    for (iter = paths.begin () ; iter != paths.end () ; ++iter) {
+        open_file (*iter, -1, true) ;
+    }
+    bring_source_as_current (*(paths.begin()));
+}
+
+
+bool
+DBGPerspective::open_file (const UString &a_path,
+                           int a_current_line)
+{
+    if (a_path == "") {return false;}
+    if (get_source_editor_from_path (a_path)) {return true ;}
+
+    NEMIVER_TRY
+
+    ifstream file (Glib::filename_from_utf8 (a_path).c_str ()) ;
+    if (!file.good () && !file.eof ()) {
+        LOG_ERROR ("Could not open file " + a_path) ;
+        ui_utils::display_error ("Could not open file: " + a_path) ;
+        return false ;
+    }
+
+    Glib::RefPtr<SourceBuffer> source_buffer ;
+    RETURN_VAL_IF_FAIL (load_file (a_path, source_buffer), false) ;
     SourceEditor *source_editor (Gtk::manage
                         (new SourceEditor (plugin_path (), source_buffer)));
     bool show_line_numbers=true ;
@@ -3068,8 +3226,8 @@ DBGPerspective::open_file (const UString &a_path,
     source_editor->set_path (a_path) ;
     source_editor->marker_region_got_clicked_signal ().connect
         (sigc::mem_fun
-                 (*this,
-                  &DBGPerspective::on_source_view_markers_region_clicked_signal));
+             (*this,
+              &DBGPerspective::on_source_view_markers_region_clicked_signal));
 
     if (a_current_line > 0) {
         Gtk::TextIter cur_line_iter =
@@ -3086,8 +3244,8 @@ DBGPerspective::open_file (const UString &a_path,
     append_source_editor (*source_editor, a_path) ;
 
     if (!source_editor->source_view ().has_no_window ()) {
-        source_editor->source_view ().add_events
-                        (Gdk::BUTTON3_MOTION_MASK |Gdk::KEY_PRESS_MASK) ;
+        source_editor->source_view ().add_events (Gdk::BUTTON3_MOTION_MASK
+                                                  |Gdk::KEY_PRESS_MASK) ;
         source_editor->source_view ().signal_button_press_event ().connect
             (sigc::mem_fun
              (*this,
@@ -3098,14 +3256,15 @@ DBGPerspective::open_file (const UString &a_path,
              (*this,
               &DBGPerspective::on_motion_notify_event_signal)) ;
 
-        source_editor->source_view ().signal_leave_notify_event ().connect_notify
-            (sigc::mem_fun (*this,
+        source_editor->source_view ().signal_leave_notify_event
+                    ().connect_notify (sigc::mem_fun
+                           (*this,
                             &DBGPerspective::on_leave_notify_event_signal)) ;
     }
 
     m_priv->opened_file_action_group->set_sensitive (true) ;
 
-    NEMIVER_CATCH_AND_RETURN (false);
+    NEMIVER_CATCH_AND_RETURN (false)
     return true ;
 }
 
@@ -3215,6 +3374,9 @@ DBGPerspective::close_file (const UString &a_path)
     if (!get_n_pages ()) {
         m_priv->opened_file_action_group->set_sensitive (false) ;
     }
+    if (!do_monitor_file (a_path)) {
+        LOG_ERROR ("failed to unmonitor file " << a_path) ;
+    }
 }
 
 void
@@ -3233,8 +3395,42 @@ DBGPerspective::close_opened_files ()
             break ;
         }
         LOG_DD ("closing page " << it->first) ;
-        close_file (it->first) ;
+        UString path = it->first ;
+        close_file (path) ;
     }
+}
+
+bool
+DBGPerspective::reload_file (const UString &a_path)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    SourceEditor *editor = get_source_editor_from_path (a_path) ;
+
+    if (!editor)
+        return open_file (a_path) ;
+
+    Glib::RefPtr<SourceBuffer> buffer ;
+    if (!load_file (a_path, buffer))
+        return false ;
+    editor->source_view ().set_source_buffer (buffer) ;
+    return true ;
+}
+
+bool
+DBGPerspective::reload_file ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    SourceEditor *editor = get_current_source_editor () ;
+    if (!editor)
+        return false ;
+    UString path ;
+    editor->get_path (path) ;
+    if (path.empty ())
+        return false ;
+    LOG_DD ("going to reload file path: "
+            << Glib::filename_from_utf8 (path)) ;
+    reload_file (path) ;
+    return true ;
 }
 
 ISessMgr&

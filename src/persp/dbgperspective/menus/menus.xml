@@ -15,7 +15,10 @@
                       name="SavedSessionsMenuItem" />
             <menuitem action="SaveSessionMenuItemAction"
                       name="SaveSessionMenuItem" />
-            <menuitem action="OpenMenuItemAction" name="OpenMenuItem"/>
+            <menuitem action="OpenMenuItemAction"
+                      name="OpenMenuItem"/>
+            <menuitem action="ReloadSourceMenuItemAction"
+                      name="ReloadSourceMenuItem"/>
             <menuitem action="CloseMenuItemAction" name="CloseMenuItem"/>
         </placeholder>
     </menu>
