@@ -3137,7 +3137,6 @@ DBGPerspective::load_file (const UString &a_path,
         return false ;
     }
 
-
     UString base_name = Glib::filename_to_utf8
         (Glib::path_get_basename (Glib::filename_from_utf8 (a_path))) ;
 
@@ -3152,7 +3151,15 @@ DBGPerspective::load_file (const UString &a_path,
     Glib::RefPtr<SourceLanguage> lang =
         lang_manager->get_language_from_mime_type (mime_type) ;
 
-    Glib::RefPtr<SourceBuffer> source_buffer = SourceBuffer::create (lang) ;
+    Glib::RefPtr<SourceBuffer> source_buffer ;
+    if (a_source_buffer) {
+        source_buffer = a_source_buffer ;
+        source_buffer->set_language (lang) ;
+        source_buffer->erase (source_buffer->begin (),
+                              source_buffer->end ()) ;
+    } else {
+        source_buffer = SourceBuffer::create (lang) ;
+    }
     THROW_IF_FAIL (source_buffer) ;
 
     gint buf_size = 10 * 1024 ;
@@ -3409,7 +3416,8 @@ DBGPerspective::reload_file (const UString &a_path)
     if (!editor)
         return open_file (a_path) ;
 
-    Glib::RefPtr<SourceBuffer> buffer ;
+    Glib::RefPtr<SourceBuffer> buffer =
+        editor->source_view ().get_source_buffer ();
     if (!load_file (a_path, buffer))
         return false ;
     editor->source_view ().set_source_buffer (buffer) ;
