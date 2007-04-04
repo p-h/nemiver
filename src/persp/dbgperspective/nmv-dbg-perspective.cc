@@ -406,6 +406,8 @@ public:
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum) ;
     void delete_visual_breakpoint (int a_breaknum) ;
 
+    bool apply_decorations_to_text (const UString &a_file_path) ;
+
     IDebuggerSafePtr& debugger () ;
 
     IConfMgr& conf_mgr () ;
@@ -3284,6 +3286,8 @@ DBGPerspective::open_file (const UString &a_path,
 
     bool res = open_file (a_path, current_line) ;
     if (res && a_reload_visual_breakpoint) {
+        apply_decorations_to_text (a_path) ;
+        /*
         map<int, IDebugger::BreakPoint>::const_iterator it ;
         for (it = m_priv->breakpoints.begin () ;
              it != m_priv->breakpoints.end ();
@@ -3295,6 +3299,7 @@ DBGPerspective::open_file (const UString &a_path,
             set_where (m_priv->current_frame.file_name (),
                        m_priv->current_frame.line ()) ;
         }
+        */
     }
     return res ;
 }
@@ -3421,6 +3426,7 @@ DBGPerspective::reload_file (const UString &a_path)
     if (!load_file (a_path, buffer))
         return false ;
     editor->source_view ().set_source_buffer (buffer) ;
+    apply_decorations_to_text (a_path) ;
     return true ;
 }
 
@@ -3932,13 +3938,15 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum, bool enabled)
 {
     UString actual_file_path ;
-    return append_visual_breakpoint (a_file_name, a_linenum, actual_file_path, enabled) ;
+    return append_visual_breakpoint (a_file_name, a_linenum,
+                                     actual_file_path, enabled) ;
 }
 
 bool
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum,
-                                          UString &a_actual_file_name, bool enabled)
+                                          UString &a_actual_file_name,
+                                          bool enabled)
 {
     THROW_IF_FAIL (!a_file_name.empty());
     THROW_IF_FAIL(m_priv);
@@ -3950,8 +3958,9 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
     if (a_linenum < 0) {a_linenum = 0;}
 
     UString actual_file_name ;
-    SourceEditor *source_editor = get_source_editor_from_path (a_file_name,
-                                                               actual_file_name) ;
+    SourceEditor *source_editor =
+                        get_source_editor_from_path (a_file_name,
+                                                     actual_file_name) ;
     // first assume that it's a full pathname and just try to open it
     if (!source_editor) {
         if (Glib::file_test (a_file_name, Glib::FILE_TEST_IS_REGULAR)) {
@@ -3960,8 +3969,8 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                                          actual_file_name) ;
         }
     }
-    // if that didn't work, look for an opened source editor that matches the base
-    // name
+    // if that didn't work, look for an opened source editor
+    // that matches the base name
     if (!source_editor) {
         source_editor = get_source_editor_from_path (a_file_name,
                                                      actual_file_name,
@@ -4016,6 +4025,7 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
         ui_utils::display_error (message);
         return false ;
     } else {
+        LOG_DD ("setting actual visual bp in the source editor") ;
         source_editor->set_visual_breakpoint_at_line (a_linenum, enabled) ;
     }
 
@@ -4054,6 +4064,27 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
     m_priv->breakpoints.erase (iter);
     LOG_DD ("erased breakpoint number " << (int) a_breakpoint_num) ;
+}
+
+bool
+DBGPerspective::apply_decorations_to_text (const UString &a_file_path)
+{
+    SourceEditor *editor = get_source_editor_from_path (a_file_path) ;
+    RETURN_VAL_IF_FAIL (editor, false) ;
+
+    map<int, IDebugger::BreakPoint>::const_iterator it ;
+    for (it = m_priv->breakpoints.begin () ;
+         it != m_priv->breakpoints.end ();
+         ++it) {
+        if (a_file_path == it->second.file_full_name ()) {
+            append_visual_breakpoint (a_file_path, it->second.line () - 1) ;
+        }
+    }
+    if (m_priv->current_frame.file_name () == a_file_path) {
+        set_where (m_priv->current_frame.file_name (),
+                   m_priv->current_frame.line ()) ;
+    }
+    return true ;
 }
 
 bool

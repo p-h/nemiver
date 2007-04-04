@@ -1,3 +1,22 @@
+2007-04-05 Dodji Seketeli
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  DBPerspective::apply_decorations_to_text(): add
+	  this function to add breakpoints and current line
+	  pointer to a source editor that got freshly reloaded
+	  DBGPerspective::reload_file (const UString &a_path):
+	  Call the new DBPerspective::apply_decorations_to_text()
+	  function to apply text decoration.
+	* src/persp/dbgperspective/nmv-source-editor.cc:
+	  SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled):
+	  When marker were set a line we want to set a new one, delete it
+	  and reset it. Otherwise, when we clear a source buffer, it markers
+	  stay there but are not visible. To make them visible, the only way
+	  I have found was to delete them and set them again.
+	  This entry makes the reloading of a source file works so what decently.
+	  It now reset the text decorations (breakpoints and current line
+	  markers)
+
 2007-04-03 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

@@ -389,6 +389,8 @@ SourceEditor::unset_where_marker ()
 void
 SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
     UString marker_type;
     if (enabled) {
         marker_type = "breakpoint-enabled-type";
@@ -396,30 +398,24 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
         marker_type = "breakpoint-disabled-type";
     }
 
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator mark_iter =
-        m_priv->markers.find (a_line);
+    std::map<int,
+            Glib::RefPtr<gtksourceview::SourceMarker> >::iterator mark_iter =
+                                            m_priv->markers.find (a_line);
     if (mark_iter !=  m_priv->markers.end ()) {
         // FIXME: gtksourceviewmm doesn't wrap this yet.  Change it when it gets
         // wrapped
-        if (gtk_source_marker_get_marker_type(mark_iter->second->gobj()) == marker_type) {
-            // marker already exists and is of the correct type.
-            return;
-        } else {
-            // marker already exists but is wrong type.  change it.
-            gtk_source_marker_set_marker_type(mark_iter->second->gobj(), marker_type.c_str());
-        }
-    } else {
-        // marker doesn't yet exist, so create one of the correct type
-        Gtk::TextIter iter =
-            source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
-        THROW_IF_FAIL (iter) ;
-        UString marker_name = UString::from_int (a_line);
-
-        Glib::RefPtr<gtksourceview::SourceMarker> marker =
-            source_view ().get_source_buffer ()->create_marker
-            (marker_name, marker_type, iter) ;
-        m_priv->markers[a_line] = marker ;
+        source_view ().get_source_buffer ()->delete_marker (mark_iter->second) ;
     }
+    // marker doesn't yet exist, so create one of the correct type
+    Gtk::TextIter iter =
+        source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
+    THROW_IF_FAIL (iter) ;
+    UString marker_name = UString::from_int (a_line);
+
+    Glib::RefPtr<gtksourceview::SourceMarker> marker =
+        source_view ().get_source_buffer ()->create_marker
+                                        (marker_name, marker_type, iter) ;
+    m_priv->markers[a_line] = marker ;
 }
 
 void
