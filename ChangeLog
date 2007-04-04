@@ -1,5 +1,11 @@
 2007-04-01 Dodji Seketeli
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  cleanup: use Glib::filename_to_utf8() instead of
+	  Glib::locale_to_utf8() when applicable.
+
+2007-04-01 Dodji Seketeli
+
 	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
 	  LocalVarsInpector::Priv::on_variable_value_signal():
 	  make sure the variable is not nil. Log its name.

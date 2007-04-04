@@ -1645,8 +1645,7 @@ DBGPerspective::build_resource_path (const UString &a_dir, const UString &a_name
                               Glib::filename_from_utf8 (a_name));
     string absolute_path ;
     THROW_IF_FAIL (build_absolute_resource_path
-                    (Glib::locale_to_utf8 (relative_path),
-                                           absolute_path)) ;
+                    (Glib::filename_to_utf8 (relative_path), absolute_path)) ;
     return absolute_path ;
 }
 
@@ -1675,20 +1674,18 @@ DBGPerspective::add_perspective_menu_entries ()
                                                  "menus.xml") ;
     string absolute_path ;
     THROW_IF_FAIL (build_absolute_resource_path
-                    (Glib::locale_to_utf8 (relative_path),
-                                           absolute_path)) ;
+                    (Glib::filename_to_utf8 (relative_path), absolute_path)) ;
 
     m_priv->menubar_merge_id =
         workbench ().get_ui_manager ()->add_ui_from_file
-                                        (Glib::locale_to_utf8 (absolute_path)) ;
+                                    (Glib::filename_to_utf8 (absolute_path));
 
     relative_path = Glib::build_filename ("menus", "contextualmenu.xml") ;
     THROW_IF_FAIL (build_absolute_resource_path
-                    (Glib::locale_to_utf8 (relative_path),
-                                           absolute_path)) ;
+                    (Glib::filename_to_utf8 (relative_path), absolute_path)) ;
     m_priv->contextual_menu_merge_id =
         workbench ().get_ui_manager ()->add_ui_from_file
-                                        (Glib::locale_to_utf8 (absolute_path)) ;
+                                    (Glib::filename_to_utf8 (absolute_path)) ;
 }
 
 void
@@ -1711,12 +1708,11 @@ DBGPerspective::add_perspective_toolbar_entries ()
                                                  "toolbar.xml") ;
     string absolute_path ;
     THROW_IF_FAIL (build_absolute_resource_path
-                    (Glib::locale_to_utf8 (relative_path),
-                                           absolute_path)) ;
+                    (Glib::filename_to_utf8 (relative_path), absolute_path)) ;
 
     m_priv->toolbar_merge_id =
         workbench ().get_ui_manager ()->add_ui_from_file
-                                            (Glib::locale_to_utf8 (absolute_path)) ;
+                                    (Glib::filename_to_utf8 (absolute_path)) ;
 }
 
 void
@@ -2102,12 +2098,11 @@ DBGPerspective::init_body ()
                                                  "bodycontainer.glade") ;
     string absolute_path ;
     THROW_IF_FAIL (build_absolute_resource_path
-                    (Glib::locale_to_utf8 (relative_path),
-                                           absolute_path)) ;
+                    (Glib::filename_to_utf8 (relative_path), absolute_path)) ;
     m_priv->body_glade = Gnome::Glade::Xml::create (absolute_path) ;
     m_priv->body_window.reset
         (ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->body_glade,
-                                                      "bodycontainer")) ;
+                                                       "bodycontainer")) ;
     m_priv->top_box =
         ui_utils::get_widget_from_glade<Gtk::Box> (m_priv->body_glade,
                                                    "topbox") ;
@@ -2286,7 +2281,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
         THROW (UString ("File of '") + a_path + "' is already loaded") ;
     }
 
-    UString basename = Glib::locale_to_utf8
+    UString basename = Glib::filename_to_utf8
         (Glib::path_get_basename (Glib::filename_from_utf8 (a_path))) ;
 
     SafePtr<Gtk::Label> label (Gtk::manage
@@ -2297,13 +2292,6 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
 
     SafePtr<SlotedButton> close_button (Gtk::manage (new SlotedButton ())) ;
     //okay, make the button as small as possible.
-    /*
-    Glib::RefPtr<Gtk::Style> style = close_button->get_style ()->copy () ;
-    THROW_IF_FAIL (style) ;
-    style->set_xthickness (1) ;
-    style->set_ythickness (1) ;
-    close_button->set_style (style) ;
-    */
     int w=0, h=0 ;
     Gtk::IconSize::lookup (Gtk::ICON_SIZE_MENU, w, h) ;
     close_button->set_size_request (w+2, h+2) ;
@@ -2334,7 +2322,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     std::string base_name =
                     Glib::path_get_basename (Glib::filename_from_utf8 (a_path));
     THROW_IF_FAIL (base_name != "") ;
-    m_priv->basename_2_pagenum_map[Glib::locale_to_utf8 (base_name)]= page_num;
+    m_priv->basename_2_pagenum_map[Glib::filename_to_utf8 (base_name)]=page_num;
     m_priv->path_2_pagenum_map[a_path] = page_num ;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
     m_priv->pagenum_2_path_map[page_num] = a_path ;
@@ -2418,7 +2406,7 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
             Glib::path_get_basename (Glib::filename_from_utf8 (a_path)) ;
         THROW_IF_FAIL (basename != "") ;
         iter = m_priv->basename_2_pagenum_map.find
-                                            (Glib::locale_to_utf8 (basename)) ;
+                                            (Glib::filename_to_utf8 (basename));
         nil = m_priv->basename_2_pagenum_map.end () ;
         result = m_priv->pagenum_2_source_editor_map[iter->second] ;
     } else {
@@ -2614,11 +2602,10 @@ DBGPerspective::load_menu (UString a_filename, UString a_widget_name)
     string relative_path = Glib::build_filename ("menus", a_filename) ;
     string absolute_path ;
     THROW_IF_FAIL (build_absolute_resource_path
-            (Glib::locale_to_utf8 (relative_path),
-             absolute_path)) ;
+            (Glib::filename_to_utf8 (relative_path), absolute_path)) ;
 
     workbench ().get_ui_manager ()->add_ui_from_file
-        (Glib::locale_to_utf8 (absolute_path)) ;
+                                    (Glib::filename_to_utf8 (absolute_path)) ;
 
     NEMIVER_CATCH
     return workbench ().get_ui_manager ()->get_widget (a_widget_name);
@@ -3038,13 +3025,14 @@ DBGPerspective::open_file (const UString &a_path,
 
     NEMIVER_TRY
 
-    UString base_name = Glib::locale_to_utf8
+    UString base_name = Glib::filename_to_utf8
         (Glib::path_get_basename (Glib::filename_from_utf8 (a_path))) ;
 
     UString mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ()) ;
     if (mime_type == "") {
         mime_type = "text/x-c++" ;
     }
+    LOG_DD ("file has mime type: " << mime_type) ;
 
     Glib::RefPtr<SourceLanguagesManager> lang_manager =
                                     SourceLanguagesManager::create () ;
