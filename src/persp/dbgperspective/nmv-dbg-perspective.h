@@ -114,7 +114,8 @@ public:
 
     virtual bool get_breakpoint_number (const UString &a_file_name,
                                         int a_linenum,
-                                        int &a_break_num) = 0 ;
+                                        int &a_break_num,
+                                        bool &a_enabled) = 0 ;
 
     virtual bool delete_breakpoint () = 0;
 

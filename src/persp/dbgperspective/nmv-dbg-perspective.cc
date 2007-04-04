@@ -168,6 +168,7 @@ private:
     void on_continue_action () ;
     void on_continue_until_action () ;
     void on_toggle_breakpoint_action () ;
+    void on_toggle_enable_breakpoint_action () ;
     void on_inspect_variable_action () ;
     void on_show_commands_action () ;
     void on_show_errors_action () ;
@@ -384,18 +385,24 @@ public:
 
     bool get_breakpoint_number (const UString &a_file_name,
                                 int a_linenum,
-                                int &a_break_num) ;
+                                int &a_break_num,
+                                bool &a_enabled) ;
     bool delete_breakpoint () ;
     bool delete_breakpoint (int a_breakpoint_num) ;
     bool delete_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
     bool is_breakpoint_set_at_line (const UString &a_file_path,
-                                    int a_linenum) ;
+                                    int a_linenum,
+                                    bool &a_enabled) ;
     void toggle_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
+
     void inspect_variable () ;
     void inspect_variable (const UString &a_variable_name) ;
     void toggle_breakpoint () ;
+    void toggle_breakpoint_enabled (const UString &a_file_path,
+                                    int a_linenum) ;
+    void toggle_breakpoint_enabled () ;
     bool append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum,
                                    UString &a_actual_file_name,
@@ -923,6 +930,15 @@ DBGPerspective::on_continue_until_action ()
 
 void
 DBGPerspective::on_toggle_breakpoint_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    NEMIVER_TRY
+    toggle_breakpoint () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_toggle_enable_breakpoint_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
@@ -1902,6 +1918,17 @@ DBGPerspective::init_actions ()
         },
 
         {
+            "ToggleEnableBreakPointMenuItemAction",
+            nemiver::STOCK_SET_BREAKPOINT,
+            _("Toggle enable Breakpoint"),
+            _("Enable/Disable the breakpoint at the current cursor location"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_toggle_enable_breakpoint_action),
+            ActionEntry::DEFAULT,
+            ""
+        },
+
+        {
             "InspectVariableMenuItemAction",
             nil_stock_id,
             _("Inspect a Variable"),
@@ -2595,16 +2622,16 @@ DBGPerspective::get_contextual_menu ()
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
-             "NextMenuItem",
-             "NextMenuItemAction",
+             "ToggleEnableBreakPointMenuItem",
+             "ToggleEnableBreakPointMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
-             "StepMenuItem",
-             "StepMenuItemAction",
+             "NextMenuItem",
+             "NextMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
@@ -3870,7 +3897,8 @@ DBGPerspective::append_breakpoints
 bool
 DBGPerspective::get_breakpoint_number (const UString &a_file_name,
                                        int a_line_num,
-                                       int &a_break_num)
+                                       int &a_break_num,
+                                       bool &a_enabled)
 {
     UString breakpoint = a_file_name + ":" + UString::from_int (a_line_num) ;
 
@@ -3889,7 +3917,8 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
                      Glib::path_get_basename (a_file_name))
             )
             && (iter->second.line () == a_line_num)) {
-            a_break_num= iter->second.number () ;
+            a_break_num = iter->second.number () ;
+            a_enabled = iter->second.enabled () ;
             LOG_DD ("found breakpoint " << breakpoint << " !") ;
             return true ;
         }
@@ -3911,9 +3940,9 @@ DBGPerspective::delete_breakpoint ()
         source_editor->source_view ().get_source_buffer ()->get_insert
             ()->get_iter ().get_line () + 1;
     int break_num=0 ;
-    if (!get_breakpoint_number (path,
-                                current_line,
-                                break_num)) {
+    bool enabled=false ;
+    if (!get_breakpoint_number (path, current_line,
+                                break_num, enabled)) {
         return false ;
     }
     THROW_IF_FAIL (break_num) ;
@@ -4092,9 +4121,9 @@ DBGPerspective::delete_breakpoint (const UString &a_file_name,
                                    int a_line_num)
 {
     int breakpoint_number=0 ;
-    if (!get_breakpoint_number (a_file_name,
-                                a_line_num,
-                                breakpoint_number)) {
+    bool enabled=false ;
+    if (!get_breakpoint_number (a_file_name, a_line_num,
+                                breakpoint_number, enabled)) {
         return false ;
     }
     if (breakpoint_number < 1) {return false;}
@@ -4104,10 +4133,12 @@ DBGPerspective::delete_breakpoint (const UString &a_file_name,
 
 bool
 DBGPerspective::is_breakpoint_set_at_line (const UString &a_file_path,
-                                           int a_line_num)
+                                           int a_line_num,
+                                           bool &a_enabled)
 {
     int break_num=0 ;
-    if (get_breakpoint_number (a_file_path, a_line_num, break_num)) {
+    if (get_breakpoint_number (a_file_path, a_line_num,
+                               break_num, a_enabled)) {
         return true ;
     }
     return false ;
@@ -4120,7 +4151,8 @@ DBGPerspective::toggle_breakpoint (const UString &a_file_path,
     LOG_DD ("file_path:" << a_file_path
            << ", line_num: " << a_file_path) ;
 
-    if (is_breakpoint_set_at_line (a_file_path, a_line_num)) {
+    bool enabled=false ;
+    if (is_breakpoint_set_at_line (a_file_path, a_line_num, enabled)) {
         LOG_DD ("breakpoint set already, delete it!") ;
         delete_breakpoint (a_file_path, a_line_num) ;
     } else {
@@ -4142,6 +4174,42 @@ DBGPerspective::toggle_breakpoint ()
         source_editor->source_view ().get_source_buffer ()->get_insert
                 ()->get_iter ().get_line () + 1;
     toggle_breakpoint (path, current_line) ;
+}
+
+void
+DBGPerspective::toggle_breakpoint_enabled ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    SourceEditor *source_editor = get_current_source_editor () ;
+    THROW_IF_FAIL (source_editor) ;
+    UString path ;
+    source_editor->get_path (path) ;
+    THROW_IF_FAIL (path != "") ;
+
+    gint current_line =
+        source_editor->source_view ().get_source_buffer ()->get_insert
+                ()->get_iter ().get_line () + 1;
+    toggle_breakpoint_enabled (path, current_line) ;
+}
+
+void
+DBGPerspective::toggle_breakpoint_enabled (const UString &a_file_path,
+                                           int a_line_num)
+{
+    LOG_DD ("file_path:" << a_file_path
+            << ", line_num: " << a_line_num) ;
+
+    bool enabled=false ;
+    if (is_breakpoint_set_at_line (a_file_path, a_line_num, enabled)) {
+        LOG_DD ("breakpoint set") ;
+        if (enabled) {
+            debugger ()->disable_breakpoint (a_file_path, a_line_num) ;
+        } else {
+            debugger ()->enable_breakpoint (a_file_path, a_line_num) ;
+        }
+    } else {
+        LOG_DD ("breakpoint no set") ;
+    }
 }
 
 void

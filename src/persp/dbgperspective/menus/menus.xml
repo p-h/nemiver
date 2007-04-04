@@ -48,6 +48,8 @@
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
             <menuitem action="ToggleBreakPointMenuItemAction"
                       name="ToggleBreakMenuItem"/>
+            <menuitem action="ToggleEnableBreakPointMenuItemAction"
+                      name="ToggleEnableBreakMenuItem"/>
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
             <menuitem action="InspectVariableMenuItemAction"
                       name="InspectVariableMenuItem"/>
