@@ -3374,7 +3374,7 @@ DBGPerspective::close_file (const UString &a_path)
     if (!get_n_pages ()) {
         m_priv->opened_file_action_group->set_sensitive (false) ;
     }
-    if (!do_monitor_file (a_path)) {
+    if (!do_unmonitor_file (a_path)) {
         LOG_ERROR ("failed to unmonitor file " << a_path) ;
     }
 }

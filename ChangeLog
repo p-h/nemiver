@@ -1,5 +1,15 @@
 2007-04-03 Dodji Seketeli
 
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  GDBEngine::Priv::on_gdb_stdout_has_data_signal():
+	  GDBEngine::Priv::on_gdb_stderr_has_data_signal(): log
+	  channel disconnection in the default domain.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  DBGPerspective::close_file(): fix a typo in here. Unmonitor
+	  the closed file, instead of trying to monitor it again.
+
+2007-04-03 Dodji Seketeli
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: added
 	  a menu item + contextual menu to reload a file.
 	  Monitor the file changes using gnome-vfs to propose

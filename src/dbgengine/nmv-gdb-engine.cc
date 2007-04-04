@@ -843,7 +843,10 @@ struct GDBEngine::Priv {
 
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
     {
-        RETURN_VAL_IF_FAIL (gdb_stdout_channel, false) ;
+        if (!gdb_stdout_channel) {
+            LOG_ERROR_DD ("lost stdout channel") ;
+            return false ;
+        }
 
         NEMIVER_TRY
 
@@ -915,7 +918,11 @@ struct GDBEngine::Priv {
 
     bool on_gdb_stderr_has_data_signal (Glib::IOCondition a_cond)
     {
-        RETURN_VAL_IF_FAIL (gdb_stderr_channel, false) ;
+       if (!gdb_stderr_channel) {
+           LOG_ERROR_DD ("lost stderr channel") ;
+           return false ;
+       }
+
         try {
 
             if (a_cond & Glib::IO_IN || a_cond & Glib::IO_PRI) {
