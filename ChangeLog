@@ -1,3 +1,18 @@
+2007-04-06 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	  gdb does not support breakpoint enabling/disabling 
+	  when breakpoints are addressed by file:number. You
+	  need to address breakpoints by number.
+	  So I removed the methods that were claiming doing
+	  file:number addressing. There were confusing at best.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  toggle_enable_breakpoint into on_toggle_breakpoint_enabled.
+	  DBGPerspective::toggle_breakpoint_enabled(): address
+	  breakpoints by their number otherwise gdb does not understand.
+	  This entry should unfuck breakpoint enabling/disabling
+	  via the contextual menu.
+
 2007-04-05 Dodji Seketeli
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

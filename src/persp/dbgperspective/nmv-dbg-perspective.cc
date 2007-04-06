@@ -168,7 +168,7 @@ private:
     void on_continue_action () ;
     void on_continue_until_action () ;
     void on_toggle_breakpoint_action () ;
-    void on_toggle_enable_breakpoint_action () ;
+    void on_toggle_breakpoint_enabled_action () ;
     void on_inspect_variable_action () ;
     void on_show_commands_action () ;
     void on_show_errors_action () ;
@@ -938,11 +938,11 @@ DBGPerspective::on_toggle_breakpoint_action ()
 }
 
 void
-DBGPerspective::on_toggle_enable_breakpoint_action ()
+DBGPerspective::on_toggle_breakpoint_enabled_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
-    toggle_breakpoint () ;
+    toggle_breakpoint_enabled () ;
     NEMIVER_CATCH
 }
 
@@ -1922,8 +1922,9 @@ DBGPerspective::init_actions ()
             nemiver::STOCK_SET_BREAKPOINT,
             _("Toggle enable Breakpoint"),
             _("Enable/Disable the breakpoint at the current cursor location"),
-            sigc::mem_fun (*this,
-                           &DBGPerspective::on_toggle_enable_breakpoint_action),
+            sigc::mem_fun
+                        (*this,
+                         &DBGPerspective::on_toggle_breakpoint_enabled_action),
             ActionEntry::DEFAULT,
             ""
         },
@@ -4211,13 +4212,15 @@ DBGPerspective::toggle_breakpoint_enabled (const UString &a_file_path,
     LOG_DD ("file_path:" << a_file_path
             << ", line_num: " << a_line_num) ;
 
+    int break_num=-1 ;
     bool enabled=false ;
-    if (is_breakpoint_set_at_line (a_file_path, a_line_num, enabled)) {
+    if (get_breakpoint_number (a_file_path, a_line_num, break_num, enabled)
+        && break_num > 0) {
         LOG_DD ("breakpoint set") ;
         if (enabled) {
-            debugger ()->disable_breakpoint (a_file_path, a_line_num) ;
+            debugger ()->disable_breakpoint (break_num) ;
         } else {
-            debugger ()->enable_breakpoint (a_file_path, a_line_num) ;
+            debugger ()->enable_breakpoint (break_num) ;
         }
     } else {
         LOG_DD ("breakpoint no set") ;

@@ -547,16 +547,8 @@ public:
 
     virtual const map<int, BreakPoint>& get_cached_breakpoints () = 0 ;
 
-    virtual void enable_breakpoint (const UString &a_path,
-                                    gint a_line_num,
-                                    const UString &a_cookie="") = 0;
-
     virtual void enable_breakpoint (gint a_break_num,
                                     const UString &a_cookie="") = 0;
-
-    virtual void disable_breakpoint (const UString &a_path,
-                                     gint a_line_num,
-                                     const UString &a_cookie="") = 0;
 
     virtual void disable_breakpoint (gint a_break_num,
                                      const UString &a_cookie="") = 0;

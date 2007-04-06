@@ -250,16 +250,8 @@ public:
     void set_breakpoint (const UString &a_func_name,
                          const UString &a_cookie)  ;
 
-    void enable_breakpoint (const UString &a_path,
-                            gint a_line_num,
-                            const UString &a_cookie) ;
-
     void enable_breakpoint (gint a_break_num,
                             const UString &a_cookie="");
-
-    void disable_breakpoint (const UString &a_path,
-                             gint a_line_num,
-                             const UString &a_cookie) ;
 
     void disable_breakpoint (gint a_break_num,
                              const UString &a_cookie="");
@@ -2520,44 +2512,12 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
 }
 
 void
-GDBEngine::enable_breakpoint (const UString &a_path,
-                              gint a_line_num,
-                              const UString &a_cookie)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_path == "" || a_line_num || a_cookie.size ()) {}
-    queue_command (Command ("enable-breakpoint",
-                            "-break-enable "
-                            + a_path
-                            + ":"
-                            + UString::from_int (a_line_num),
-                            a_cookie)) ;
-    list_breakpoints(a_cookie);
-}
-
-void
 GDBEngine::enable_breakpoint (gint a_break_num,
                               const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     queue_command (Command ("enable-breakpoint",
                             "-break-enable " + UString::from_int (a_break_num),
-                            a_cookie)) ;
-    list_breakpoints(a_cookie);
-}
-
-void
-GDBEngine::disable_breakpoint (const UString &a_path,
-                               gint a_line_num,
-                               const UString &a_cookie)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_path == "" || a_line_num || a_cookie.size ()) {}
-    queue_command (Command ("disable-breakpoint",
-                            "-break-disable "
-                            + a_path
-                            + ":"
-                            + UString::from_int (a_line_num),
                             a_cookie)) ;
     list_breakpoints(a_cookie);
 }
