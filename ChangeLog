@@ -1,5 +1,23 @@
 2007-04-05 Dodji Seketeli
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  Modify DBGPerspective::set_where() so that we can choose
+	  to scroll to the position of the where marker or not.
+	  DBGPerspective::reload_file(): before reloading the file,
+	  remind the current line/col to reset after reloading.
+	  After reloading, scroll to the current line, if the user
+	  precedently selected a line, otherwise scroll to the where marker
+	* src/persp/dbgperspective/nmv-source-editor.cc:
+	  SourceEditor::Priv::on_signal_insertion_moved(): properly set the
+	  current line/col, dammit.
+	  SourceEditor::move_where_marker_to_line(): allow this function to
+	  scroll (to the where marker) *or not*.
+	  SourceEditor::unset_where_marker(): guard against deleting marker
+	  twice.
+	  SourceEditor::set_visual_breakpoint_at_line(): ditto
+
+2007-04-05 Dodji Seketeli
+
 	* src/persp/dbgperspective/menus/menus.xml: add the
 	  ToggleEnableBreakpointMenuItem
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

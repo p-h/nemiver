@@ -470,7 +470,7 @@ public:
 
     void add_text_to_log_view (const UString &a_text) ;
 
-    void set_where (const UString &a_path, int line) ;
+    void set_where (const UString &a_path, int line, bool a_do_scroll=true) ;
 
     void unset_where () ;
 
@@ -2564,7 +2564,8 @@ DBGPerspective::bring_source_as_current (const UString &a_path)
 
 void
 DBGPerspective::set_where (const UString &a_path,
-                           int a_line)
+                           int a_line,
+                           bool a_do_scroll)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -2574,11 +2575,13 @@ DBGPerspective::set_where (const UString &a_path,
         source_editor = get_source_editor_from_path (a_path, true) ;
     }
     THROW_IF_FAIL (source_editor) ;
-    source_editor->move_where_marker_to_line (a_line) ;
+    source_editor->move_where_marker_to_line (a_line, a_do_scroll) ;
     Gtk::TextBuffer::iterator iter =
         source_editor->source_view().get_buffer ()->get_iter_at_line (a_line-1) ;
-    if (!iter) {return;}
-        source_editor->source_view().get_buffer ()->place_cursor (iter) ;
+    if (!iter) {
+        return;
+    }
+    source_editor->source_view().get_buffer ()->place_cursor (iter) ;
 }
 
 void
@@ -3314,19 +3317,6 @@ DBGPerspective::open_file (const UString &a_path,
     bool res = open_file (a_path, current_line) ;
     if (res && a_reload_visual_breakpoint) {
         apply_decorations_to_text (a_path) ;
-        /*
-        map<int, IDebugger::BreakPoint>::const_iterator it ;
-        for (it = m_priv->breakpoints.begin () ;
-             it != m_priv->breakpoints.end ();
-             ++it) {
-            if (a_path == it->second.file_full_name ())
-            append_visual_breakpoint (a_path, it->second.line () - 1) ;
-        }
-        if (m_priv->current_frame.file_name () == a_path) {
-            set_where (m_priv->current_frame.file_name (),
-                       m_priv->current_frame.line ()) ;
-        }
-        */
     }
     return res ;
 }
@@ -3450,9 +3440,13 @@ DBGPerspective::reload_file (const UString &a_path)
 
     Glib::RefPtr<SourceBuffer> buffer =
         editor->source_view ().get_source_buffer ();
+    int current_line = editor->current_line () ;
+    int current_column = editor->current_column () ;
     if (!load_file (a_path, buffer))
         return false ;
     editor->source_view ().set_source_buffer (buffer) ;
+    editor->current_line (current_line) ;
+    editor->current_column (current_column) ;
     apply_decorations_to_text (a_path) ;
     return true ;
 }
@@ -4109,9 +4103,25 @@ DBGPerspective::apply_decorations_to_text (const UString &a_file_path)
             append_visual_breakpoint (a_file_path, it->second.line () - 1) ;
         }
     }
+    //scroll to the line that was precedently selected
+    //or to the one pointed to by the current line marker
+    bool scroll_to_where_marker = false ;
+    int cur_line = editor->current_line () ;
+    if (cur_line > 0) {
+        LOG_DD ("scroll to cur_line: " << (int)cur_line) ;
+        Gtk::TextBuffer::iterator iter =
+        editor->source_view().get_buffer ()->get_iter_at_line (cur_line) ;
+        if (iter)
+            editor->source_view ().get_buffer ()->place_cursor (iter) ;
+        editor->scroll_to_line (cur_line) ;
+        scroll_to_where_marker=false ;
+    } else {
+        scroll_to_where_marker=true ;
+    }
     if (m_priv->current_frame.file_name () == a_file_path) {
         set_where (m_priv->current_frame.file_name (),
-                   m_priv->current_frame.line ()) ;
+                   m_priv->current_frame.line (),
+                   scroll_to_where_marker) ;
     }
     return true ;
 }
@@ -4173,7 +4183,8 @@ DBGPerspective::toggle_breakpoint ()
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
                 ()->get_iter ().get_line () + 1;
-    toggle_breakpoint (path, current_line) ;
+    if (current_line >= 0)
+        toggle_breakpoint (path, current_line) ;
 }
 
 void
@@ -4189,7 +4200,8 @@ DBGPerspective::toggle_breakpoint_enabled ()
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
                 ()->get_iter ().get_line () + 1;
-    toggle_breakpoint_enabled (path, current_line) ;
+    if (current_line >= 0)
+        toggle_breakpoint_enabled (path, current_line) ;
 }
 
 void

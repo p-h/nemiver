@@ -142,7 +142,9 @@ public:
 
     virtual void add_text_to_log_view (const UString &a_text) = 0;
 
-    virtual void set_where (const UString &a_uri, int line) = 0;
+    virtual void set_where (const UString &a_uri,
+                            int line,
+                            bool a_do_scroll=true) = 0;
 
     virtual Gtk::Widget* get_contextual_menu () = 0;
 

@@ -167,6 +167,8 @@ struct SourceEditor::Priv {
     void on_signal_insertion_moved (gint a_line, gint a_col)
     {
         if (a_line || a_col) {}
+        current_line = a_line ;
+        current_column = a_col ;
         update_line_col_label ();
     }
     //**************
@@ -202,7 +204,7 @@ struct SourceEditor::Priv {
         }
         UString message;
         message.printf (_("Line: %i, Column: %i, Lines: %i"),
-                    current_line, current_column, line_count) ;
+                        current_line, current_column, line_count) ;
         line_col_label->set_text (message);
     }
 
@@ -231,7 +233,8 @@ struct SourceEditor::Priv {
         return result ;
     }
 
-    void register_breakpoint_marker_type (const UString &a_name, const UString &a_image)
+    void register_breakpoint_marker_type (const UString &a_name,
+                                          const UString &a_image)
     {
         string path ;
         if (!get_absolute_resource_path (a_image,
@@ -250,13 +253,16 @@ struct SourceEditor::Priv {
         status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
         init_signals () ;
         source_view->set_editable (false) ;
-        register_breakpoint_marker_type ("breakpoint-enabled-type", "icons/breakpoint-marker.png");
-        register_breakpoint_marker_type ("breakpoint-disabled-type", "icons/breakpoint-disabled-marker.png");
+        register_breakpoint_marker_type ("breakpoint-enabled-type",
+                                         "icons/breakpoint-marker.png");
+        register_breakpoint_marker_type
+                                ("breakpoint-disabled-type",
+                                 "icons/breakpoint-disabled-marker.png");
     }
 
     Priv () :
-        current_column (1),
-        current_line (1),
+        current_column (-1),
+        current_line (-1),
         source_view (Gtk::manage (new SourceView)),
         status_box (Gtk::manage (new Gtk::HBox )),
         line_col_label (Gtk::manage (new Gtk::Label ()))
@@ -268,8 +274,8 @@ struct SourceEditor::Priv {
     Priv (const UString &a_root_dir,
           Glib::RefPtr<SourceBuffer> &a_buf) :
         root_dir (a_root_dir),
-        current_column (1),
-        current_line (1),
+        current_column (-1),
+        current_line (-1),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
         line_col_label (Gtk::manage (new Gtk::Label ()))
@@ -336,6 +342,7 @@ SourceEditor::current_line () const
 void
 SourceEditor::current_line (gint &a_line)
 {
+    LOG ("current line: " << (int)a_line) ;
     m_priv->current_line = a_line;
 }
 
@@ -348,11 +355,12 @@ SourceEditor::current_column () const
 void
 SourceEditor::current_column (gint &a_col)
 {
+    LOG_DD ("current colnum " << (int) a_col) ;
     m_priv->current_column = a_col ;
 }
 
 void
-SourceEditor::move_where_marker_to_line (int a_line)
+SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
 {
     THROW_IF_FAIL (a_line >= 0) ;
 
@@ -373,7 +381,10 @@ SourceEditor::move_where_marker_to_line (int a_line)
         source_view ().get_source_buffer ()->move_marker (where_marker,
                                                           line_iter) ;
     }
-    scroll_to_line (a_line) ;
+    if (a_do_scroll) {
+        scroll_to_line (a_line) ;
+    }
+
 }
 
 void
@@ -381,7 +392,7 @@ SourceEditor::unset_where_marker ()
 {
     Glib::RefPtr<SourceMarker> where_marker =
         source_view ().get_source_buffer ()->get_marker ("where-marker") ;
-    if (where_marker) {
+    if (where_marker && !where_marker->get_deleted ()) {
         source_view ().get_source_buffer ()->delete_marker (where_marker) ;
     }
 }
@@ -402,9 +413,12 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
             Glib::RefPtr<gtksourceview::SourceMarker> >::iterator mark_iter =
                                             m_priv->markers.find (a_line);
     if (mark_iter !=  m_priv->markers.end ()) {
-        // FIXME: gtksourceviewmm doesn't wrap this yet.  Change it when it gets
-        // wrapped
-        source_view ().get_source_buffer ()->delete_marker (mark_iter->second) ;
+        if (!mark_iter->second->get_deleted ()) {
+            LOG_DD ("deleting marker") ;
+            source_view ().get_source_buffer ()->delete_marker
+                                                    (mark_iter->second);
+        }
+        m_priv->markers.erase (a_line);
     }
     // marker doesn't yet exist, so create one of the correct type
     Gtk::TextIter iter =
@@ -412,6 +426,7 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     THROW_IF_FAIL (iter) ;
     UString marker_name = UString::from_int (a_line);
 
+    LOG_DD ("creating marker of type: " << marker_type) ;
     Glib::RefPtr<gtksourceview::SourceMarker> marker =
         source_view ().get_source_buffer ()->create_marker
                                         (marker_name, marker_type, iter) ;
@@ -426,7 +441,8 @@ SourceEditor::remove_visual_breakpoint_from_line (int a_line)
     if (iter == m_priv->markers.end ()) {
         return ;
     }
-    source_view ().get_source_buffer ()->delete_marker (iter->second) ;
+    if (!iter->second->get_deleted ())
+        source_view ().get_source_buffer ()->delete_marker (iter->second) ;
     m_priv->markers.erase (iter) ;
 }
 

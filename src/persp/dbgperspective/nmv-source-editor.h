@@ -60,7 +60,7 @@ public:
     void current_line (gint &a_line) ;
     gint current_column () const ;
     void current_column (gint &a_col) ;
-    void move_where_marker_to_line (int a_line) ;
+    void move_where_marker_to_line (int a_line, bool a_do_scroll=true) ;
     void unset_where_marker () ;
     void set_visual_breakpoint_at_line (int a_line, bool enabled=true) ;
     void remove_visual_breakpoint_from_line (int a_line) ;
