@@ -47,6 +47,7 @@ using nemiver::common::UString ;
 using nemiver::ISessMgr ;
 
 static const UString DBGPERSPECTIVE_PLUGIN_NAME="dbgperspective" ;
+static gchar *gv_env_vars=0;
 static gchar *gv_process_to_attach_to=0;
 static bool gv_list_sessions=false ;
 static bool gv_purge_sessions=false ;
@@ -56,6 +57,15 @@ static bool gv_log_debugger_output=false ;
 
 static GOptionEntry entries[] =
 {
+    {
+      "env",
+      0,
+      0,
+      G_OPTION_ARG_STRING,
+      &gv_env_vars,
+      _("set the environment of the program to debug"),
+      "\"var0=val0 var1=val1 var2=val2 ...\""
+    },
     {
       "attach",
       0,
@@ -328,6 +338,23 @@ main (int a_argc, char *a_argv[])
                    << prog_args << "'\n",
                    NMV_DEFAULT_DOMAIN) ;
             map<UString, UString> env ;
+            if (gv_env_vars) {
+                vector<UString> env_vars = UString (gv_env_vars).split (" ") ;
+                for (vector<UString>::const_iterator it = env_vars.begin ();
+                     it != env_vars.end () ;
+                     ++it) {
+                    vector<UString> env_var = it->split ("=") ;
+                    if (env_var.size () != 2) {
+                        continue ;
+                    }
+                    UString name = env_var[0] ;
+                    name.chomp () ;
+                    UString value = env_var[1] ;
+                    value.chomp () ;
+                    LOG_DD ("got env var: " << name << "=" << value) ;
+                    env[name] = value ;
+                }
+            }
             debug_persp->execute_program (prog_args, env) ;
         } else {
             cerr << "Could not find the debugger perspective plugin\n" ;

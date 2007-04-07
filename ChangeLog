@@ -1,3 +1,8 @@
+2007-04-07 Dodji Seketeli
+
+	* src/main.cc: added a --env option that can be used as in:
+	  nemiver --env "foo=bar foobar=baz" prog-to-debug
+
 2007-04-06 Dodji Seketeli
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
