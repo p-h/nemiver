@@ -41,12 +41,18 @@ class SetBreakpointDialog::Priv {
     public:
     Gtk::Entry *entry_filename ;
     Gtk::Entry *entry_line;
+    Gtk::Entry *entry_function;
+    Gtk::RadioButton *radio_source_location;
+    Gtk::RadioButton *radio_function_name;
     Gtk::Button *okbutton ;
 
 public:
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
         entry_filename (0),
         entry_line (0),
+        entry_function (0),
+        radio_source_location (0),
+        radio_function_name (0),
         okbutton (0)
     {
 
@@ -66,25 +72,123 @@ public:
                 (a_glade, "entry_line") ;
         entry_line->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal)) ;
+
+        entry_function =
+            ui_utils::get_widget_from_glade<Gtk::Entry>
+                (a_glade, "entry_function") ;
+        entry_function->signal_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_text_changed_signal)) ;
+
+        radio_source_location =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+                (a_glade, "radiobutton_source_location") ;
+        radio_source_location->signal_clicked ().connect (sigc::mem_fun
+                (*this, &Priv::on_radiobutton_changed)) ;
+
+        radio_function_name =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+                (a_glade, "radiobutton_function_name") ;
+        radio_function_name->signal_clicked ().connect (sigc::mem_fun
+                (*this, &Priv::on_radiobutton_changed)) ;
+
+        // set the 'source location' mode active by default
+        mode (MODE_SOURCE_LOCATION);
+    }
+
+    void update_ok_button_sensitivity ()
+    {
+        THROW_IF_FAIL (entry_filename) ;
+        THROW_IF_FAIL (entry_line) ;
+
+        if (mode () == MODE_SOURCE_LOCATION) {
+            // make sure there's something in both entries
+            if (!entry_filename->get_text ().empty () &&
+                    !entry_line->get_text ().empty () &&
+                    // make sure the line number field is a valid number
+                    atoi(entry_line->get_text ().c_str ())) {
+                okbutton->set_sensitive (true) ;
+            } else {
+                okbutton->set_sensitive (false) ;
+            }
+        } else {
+            if (!entry_function->get_text ().empty ()) {
+                okbutton->set_sensitive (true) ;
+            } else {
+                okbutton->set_sensitive (false) ;
+            }
+        }
     }
 
     void on_text_changed_signal ()
     {
         NEMIVER_TRY
+        update_ok_button_sensitivity ();
+        NEMIVER_CATCH
+    }
+
+    void on_radiobutton_changed ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        NEMIVER_TRY
 
         THROW_IF_FAIL (entry_filename) ;
         THROW_IF_FAIL (entry_line) ;
+        THROW_IF_FAIL (entry_function) ;
 
-        // make sure there's something in both entries
-        if (!entry_filename->get_text ().empty () &&
-                !entry_line->get_text ().empty () &&
-                // make sure the line number field is a valid number
-                atoi(entry_line->get_text ().c_str ())) {
-            okbutton->set_sensitive (true) ;
+        if (mode () == MODE_SOURCE_LOCATION) {
+            LOG_DD ("Setting Sensitivity for SOURCE_LOCATION");
+            entry_function->set_sensitive (false);
+            entry_filename->set_sensitive (true);
+            entry_line->set_sensitive (true);
         } else {
-            okbutton->set_sensitive (false) ;
+            LOG_DD ("Setting Sensitivity for FUNCTION_NAME");
+            entry_function->set_sensitive (true);
+            entry_filename->set_sensitive (false);
+            entry_line->set_sensitive (false);
         }
+        update_ok_button_sensitivity ();
         NEMIVER_CATCH
+    }
+
+    void mode (SetBreakpointDialog::Mode a_mode)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (radio_source_location) ;
+        THROW_IF_FAIL (radio_function_name) ;
+
+        switch (a_mode)
+        {
+            case MODE_SOURCE_LOCATION:
+                LOG_DD ("Changing Mode to SOURCE_LOCATION");
+                radio_source_location->set_active ();
+                break;
+            case MODE_FUNCTION_NAME:
+                LOG_DD ("Changing Mode to FUNCTION_NAME");
+                radio_function_name->set_active ();
+                break;
+            default:
+                g_assert_not_reached ();
+        }
+
+        NEMIVER_CATCH
+    }
+
+    SetBreakpointDialog::Mode mode () const
+    {
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (radio_source_location) ;
+        THROW_IF_FAIL (radio_function_name) ;
+
+        NEMIVER_CATCH
+
+        if (radio_source_location->get_active ()) {
+            return MODE_SOURCE_LOCATION;
+        } else {
+            return MODE_FUNCTION_NAME;
+        }
     }
 };//end class SetBreakpointDialog::Priv
 
@@ -142,6 +246,52 @@ SetBreakpointDialog::line_number (int a_line)
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->entry_line) ;
     m_priv->entry_line->set_text (UString::from_int(a_line)) ;
+
+    NEMIVER_CATCH
+}
+
+UString
+SetBreakpointDialog::function () const
+{
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->entry_function) ;
+
+    NEMIVER_CATCH
+    return m_priv->entry_function->get_text () ;
+}
+
+void
+SetBreakpointDialog::function (const UString &a_name)
+{
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->entry_function) ;
+    m_priv->entry_function->set_text (a_name) ;
+
+    NEMIVER_CATCH
+}
+
+SetBreakpointDialog::Mode
+SetBreakpointDialog::mode () const
+{
+    NEMIVER_TRY
+    THROW_IF_FAIL (m_priv) ;
+    NEMIVER_CATCH
+
+    return m_priv->mode ();
+}
+
+
+void
+SetBreakpointDialog::mode (Mode a_mode)
+{
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (m_priv) ;
+    m_priv->mode (a_mode);
 
     NEMIVER_CATCH
 }

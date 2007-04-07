@@ -1,5 +1,15 @@
 2007-04-07 Jonathon Jongsma	<jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/setbreakpoint.glade,
+	src/persp/dbgperspective/nmv-dbg-perspective.cc,
+	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h: Add ability to set
+	a breakpoint by function name in addition to source file and line number.
+	There seems to be some errors in the gdbmi parsing that cause failures when
+	trying to set breakpoints on certain function names.  This requires more
+	digging.
+
+2007-04-07 Jonathon Jongsma	<jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc,
 	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h: Add a little bit of
 	error-handling for unreasonable line numbers (i.e. don't try to set a

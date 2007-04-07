@@ -4221,19 +4221,27 @@ DBGPerspective::set_breakpoint_dialog ()
         return;
     }
 
-    UString filename;
-    filename = dialog.file_name () ;
-    THROW_IF_FAIL (filename != "") ;
-    int line = dialog.line_number () ;
-    LOG_DD ("setting breakpoint in file " << filename << " at line " << line) ;
+    if (dialog.mode () == SetBreakpointDialog::MODE_SOURCE_LOCATION) {
 
-    // only try to set the breakpoint if it's a reasonable value
-    if (line && line != INT_MAX && line != INT_MIN) {
-        set_breakpoint (filename, line) ;
+        UString filename;
+        filename = dialog.file_name () ;
+        THROW_IF_FAIL (filename != "") ;
+        int line = dialog.line_number () ;
+        LOG_DD ("setting breakpoint in file " << filename << " at line " << line) ;
+
+        // only try to set the breakpoint if it's a reasonable value
+        if (line && line != INT_MAX && line != INT_MIN) {
+            set_breakpoint (filename, line) ;
+        } else {
+            UString msg;
+            msg.printf (_("Invalid line number: %i"), line);
+            display_warning (msg);
+        }
+
     } else {
-        UString msg;
-        msg.printf (_("Invalid line number: %i"), line);
-        display_warning (msg);
+        UString function = dialog.function ();
+        THROW_IF_FAIL (function != "") ;
+        debugger ()->set_breakpoint (function);
     }
 }
 

@@ -41,6 +41,12 @@ class SetBreakpointDialog : public Dialog {
     class Priv ;
     SafePtr<Priv> m_priv ;
 public:
+    typedef enum
+    {
+        MODE_SOURCE_LOCATION,
+        MODE_FUNCTION_NAME
+    } Mode;
+
     SetBreakpointDialog (const UString &a_resource_root_path) ;
     virtual ~SetBreakpointDialog () ;
 
@@ -49,6 +55,12 @@ public:
 
     int line_number () const ;
     void line_number (int) ;
+
+    UString function () const ;
+    void function (const UString &a_name) ;
+
+    Mode mode () const;
+    void mode (Mode);
 
 };//end class nemiver
 
