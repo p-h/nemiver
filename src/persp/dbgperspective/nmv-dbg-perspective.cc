@@ -60,6 +60,7 @@
 #include "nmv-thread-list.h"
 #include "nmv-var-inspector-dialog.h"
 #include "nmv-find-text-dialog.h"
+#include "nmv-set-breakpoint-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -167,6 +168,7 @@ private:
     void on_step_out_action () ;
     void on_continue_action () ;
     void on_continue_until_action () ;
+    void on_set_breakpoint_action () ;
     void on_toggle_breakpoint_action () ;
     void on_toggle_breakpoint_enabled_action () ;
     void on_inspect_variable_action () ;
@@ -396,6 +398,7 @@ public:
                                     bool &a_enabled) ;
     void toggle_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
+    void set_breakpoint_dialog ();
 
     void inspect_variable () ;
     void inspect_variable (const UString &a_variable_name) ;
@@ -934,6 +937,15 @@ DBGPerspective::on_toggle_breakpoint_action ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     toggle_breakpoint () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_set_breakpoint_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    NEMIVER_TRY
+    set_breakpoint_dialog () ;
     NEMIVER_CATCH
 }
 
@@ -1927,6 +1939,16 @@ DBGPerspective::init_actions ()
                          &DBGPerspective::on_toggle_breakpoint_enabled_action),
             ActionEntry::DEFAULT,
             ""
+        },
+
+        {
+            "SetBreakPointMenuItemAction",
+            nemiver::STOCK_SET_BREAKPOINT,
+            _("Set Breakpoint"),
+            _("Set a breakpoint at an arbitrary location"),
+            sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
+            ActionEntry::DEFAULT,
+            "<control>B"
         },
 
         {
@@ -4186,6 +4208,29 @@ DBGPerspective::toggle_breakpoint ()
                 ()->get_iter ().get_line () + 1;
     if (current_line >= 0)
         toggle_breakpoint (path, current_line) ;
+}
+
+void
+DBGPerspective::set_breakpoint_dialog ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    SetBreakpointDialog dialog (plugin_path ()) ;
+
+    int result = dialog.run () ;
+    if (result != Gtk::RESPONSE_OK) {
+        return;
+    }
+
+    UString filename, line_str ;
+    filename = dialog.file_name () ;
+    THROW_IF_FAIL (filename != "") ;
+    line_str = dialog.line_number () ;
+    THROW_IF_FAIL (line_str != "") ;
+    int line = atoi(line_str.c_str ());
+    LOG_DD ("setting breakpoint in file " << filename << " at line " << line) ;
+
+    // FIXME: need some error handling in here yet
+    set_breakpoint (filename, line) ;
 }
 
 void

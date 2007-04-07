@@ -50,6 +50,8 @@
                       name="ToggleBreakMenuItem"/>
             <menuitem action="ToggleEnableBreakPointMenuItemAction"
                       name="ToggleEnableBreakMenuItem"/>
+            <menuitem action="SetBreakPointMenuItemAction"
+                      name="SetBreakMenuItem"/>
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
             <menuitem action="InspectVariableMenuItemAction"
                       name="InspectVariableMenuItem"/>

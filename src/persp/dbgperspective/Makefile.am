@@ -62,6 +62,8 @@ nmv-file-list.cc \
 nmv-file-list.h \
 nmv-open-file-dialog.cc \
 nmv-open-file-dialog.h \
+nmv-set-breakpoint-dialog.cc \
+nmv-set-breakpoint-dialog.h \
 nmv-dbg-perspective.cc \
 nmv-dbg-perspective.h
 
