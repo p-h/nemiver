@@ -4221,16 +4221,20 @@ DBGPerspective::set_breakpoint_dialog ()
         return;
     }
 
-    UString filename, line_str ;
+    UString filename;
     filename = dialog.file_name () ;
     THROW_IF_FAIL (filename != "") ;
-    line_str = dialog.line_number () ;
-    THROW_IF_FAIL (line_str != "") ;
-    int line = atoi(line_str.c_str ());
+    int line = dialog.line_number () ;
     LOG_DD ("setting breakpoint in file " << filename << " at line " << line) ;
 
-    // FIXME: need some error handling in here yet
-    set_breakpoint (filename, line) ;
+    // only try to set the breakpoint if it's a reasonable value
+    if (line && line != INT_MAX && line != INT_MIN) {
+        set_breakpoint (filename, line) ;
+    } else {
+        UString msg;
+        msg.printf (_("Invalid line number: %i"), line);
+        display_warning (msg);
+    }
 }
 
 void

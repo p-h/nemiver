@@ -1,5 +1,13 @@
 2007-04-07 Jonathon Jongsma	<jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc,
+	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h: Add a little bit of
+	error-handling for unreasonable line numbers (i.e. don't try to set a
+	breakpoint if the atoi call has been clamped to INT_MIN or INT_MAX or if it
+	couldn't find an integer value and returned 0.
+
+2007-04-07 Jonathon Jongsma	<jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/glade/Makefile.am,
 	src/persp/dbgperspective/glade/setbreakpoint.glade,
 	src/persp/dbgperspective/menus/menus.xml,

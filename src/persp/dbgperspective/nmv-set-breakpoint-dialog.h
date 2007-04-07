@@ -47,7 +47,7 @@ public:
     UString file_name () const ;
     void file_name (const UString &a_name) ;
 
-    UString line_number () const ;
+    int line_number () const ;
     void line_number (int) ;
 
 };//end class nemiver

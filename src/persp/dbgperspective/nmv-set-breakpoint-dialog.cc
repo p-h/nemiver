@@ -77,7 +77,9 @@ public:
 
         // make sure there's something in both entries
         if (!entry_filename->get_text ().empty () &&
-                !entry_line->get_text ().empty ()) {
+                !entry_line->get_text ().empty () &&
+                // make sure the line number field is a valid number
+                atoi(entry_line->get_text ().c_str ())) {
             okbutton->set_sensitive (true) ;
         } else {
             okbutton->set_sensitive (false) ;
@@ -120,7 +122,7 @@ SetBreakpointDialog::file_name (const UString &a_name)
     NEMIVER_CATCH
 }
 
-UString
+int
 SetBreakpointDialog::line_number () const
 {
     NEMIVER_TRY
@@ -129,7 +131,7 @@ SetBreakpointDialog::line_number () const
     THROW_IF_FAIL (m_priv->entry_line) ;
 
     NEMIVER_CATCH
-    return m_priv->entry_line->get_text () ;
+    return atoi (m_priv->entry_line->get_text ().c_str ()) ;
 }
 
 void
