@@ -370,25 +370,30 @@ public:
                          const UString&/*command cookie*/>&
                                              command_done_signal () const=0;
 
-    virtual sigc::signal<void>& detached_from_target_signal () const = 0 ;
+    virtual sigc::signal<void>& detached_from_target_signal () const=0 ;
 
     virtual sigc::signal<void,
                         const IDebugger::BreakPoint&,
                         int /*breakpoint command*/,
                         const UString & /*cookie*/>&
-                                         breakpoint_deleted_signal () const  = 0;
+                                         breakpoint_deleted_signal () const=0;
 
+    /// returns a list of breakpoints set. It is not all the breakpoints
+    /// set. Some of the breakpoints in the list can have been
+    /// already returned in a previous call. This is done so because
+    /// IDebugger does not cache the list of breakpoints. This must
+    /// be fixed at some point.
     virtual sigc::signal<void,
                          const map<int, IDebugger::BreakPoint>&,
                          const UString& /*cookie*/>&
-                                             breakpoints_set_signal () const = 0;
+                                             breakpoints_set_signal () const=0;
 
     virtual sigc::signal<void,
                          const UString&/*reason*/,
                          bool /*has frame*/,
                          const IDebugger::Frame&/*the frame*/,
                          int /*thread id*/,
-                         const UString& /*cookie*/>& stopped_signal () const =0;
+                         const UString& /*cookie*/>& stopped_signal () const=0;
 
     virtual sigc::signal<void,
                          const list<int>/*thread ids*/,
@@ -399,7 +404,7 @@ public:
                          int/*thread id*/,
                          const IDebugger::Frame&/*frame in thread*/,
                          const UString& /*cookie*/> &
-                                             thread_selected_signal () const =0;
+                                             thread_selected_signal () const=0;
 
     virtual sigc::signal<void,
                         const vector<IDebugger::Frame>&,

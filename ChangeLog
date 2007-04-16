@@ -1,5 +1,15 @@
 2007-04-14 Dodji Seketeli
 
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	  (BreakpointsView::Priv::set_breakpoints()): do not remove
+	  breakpoints that are not in the list of breakpoints returned
+	  by IDebugger. IDebugger does not always return the list of
+	  *all* breakpoints set.
+	* src/persp/dbgperspective/nmv-i-debugger.h: added some comments
+	  to IDebugger::breakpoints_set_signal().
+
+2007-04-14 Dodji Seketeli
+
 	* src/dbgengine/nmv-gdbmi-parser.cc: added
 	  a CHECK_END_BREAK() macro useful in debugging conditions.
 	  (parse_stack_arguments()): A parameter value string can contain
