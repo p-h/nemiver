@@ -1,3 +1,13 @@
+2007-04-14 Dodji Seketeli
+
+	* src/dbgengine/nmv-gdbmi-parser.cc: added
+	  a CHECK_END_BREAK() macro useful in debugging conditions.
+	  (parse_stack_arguments()): A parameter value string can contain
+	  a '{' character and yet not carry an unnamed variable. In that
+	  case, don't bail out. Just keep that parameter value as it is.
+	  This fixes a hang that was appearing randomly.
+	* tests/test-gdbmi.cc: added a non regression test to catch this.
+
 2007-04-07 Jonathon Jongsma	<jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/glade/setbreakpoint.glade,

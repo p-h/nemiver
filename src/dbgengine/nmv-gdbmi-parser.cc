@@ -40,7 +40,13 @@ LOG_ERROR ("parsing failed for buf: >>>" \
 #define CHECK_END(a_input, a_current, a_end) \
 if ((a_current) >= (a_end)) {\
 LOG_ERROR ("hit end index " << (int) a_end) ; \
-LOG_PARSING_ERROR (a_input, (a_current)); return false ;\
+return false ;\
+}
+
+#define CHECK_END_BREAK(a_input, a_current, a_end) \
+if ((a_current) >= (a_end)) {\
+LOG_ERROR ("hit end index " << (int) a_end) ; \
+G_BREAKPOINT() ;\
 }
 
 #define SKIP_WS(a_input, a_from, a_to) \
@@ -1013,15 +1019,28 @@ parse_stack_arguments (const UString &a_input,
                                 UString::size_type pos;
                                 pos = parameter->value ().find ("{") ;
                                 if (pos != Glib::ustring::npos) {
-                                    //fill parameter->members().
+                                    //in certain cases
+                                    //(gdbmi is not strict enough to be sure)
+                                    //having a '{' in the parameter value
+                                    //means the parameter has an anonymous
+                                    //member variable. So let's try to
+                                    //parse an anonymous member variable
+                                    //and in case of success,
+                                    //fill parameter->members()
                                     //with the structured member
                                     //embedded in parameter->value()
                                     //and set parameter->value() to nothing
-                                    THROW_IF_FAIL
-                                        (parse_member_variable
+                                    //This is shity performancewise
+                                    //(and his ugly) but that's the way
+                                    //of gdbmi
+                                    if (parse_member_variable
                                             (parameter->value (),
-                                             pos, pos, parameter, true)) ;
-                                    parameter->value ("") ;
+                                             pos, pos, parameter, true)) {
+                                        parameter->value ("") ;
+                                    } else {
+                                        LOG_ERROR ("Oops, '{' was not for "
+                                                   "for an embedded variable") ;
+                                    }
                                 }
                             } else {
                                 THROW ("should not reach this line") ;
