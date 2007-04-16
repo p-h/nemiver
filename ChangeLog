@@ -1,5 +1,18 @@
 2007-04-14 Dodji Seketeli
 
+	* src/persp/dbgperspective/glade/setbreakpoint.glade:
+	  set the okay button as the default one.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:
+	  By default, activates the "function name" mode. Make the
+	  function name entry activate the default button -
+	  the ok button of the dialog - when the user hits Enter.
+	  Now, the user can do ctrl-b, followed by the name of a function,
+	  followed by the enter key, to set a breakpoint in a function.
+	  I feel this more convenient as setting a breakpoint in a function
+	  is the what developers do the most, when they set breakpoints.
+
+2007-04-14 Dodji Seketeli
+
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
 	  (BreakpointsView::Priv::set_breakpoints()): do not remove
 	  breakpoints that are not in the list of breakpoints returned

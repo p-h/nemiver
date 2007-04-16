@@ -72,12 +72,14 @@ public:
                 (a_glade, "entry_line") ;
         entry_line->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal)) ;
+        entry_line->set_activates_default () ;
 
         entry_function =
             ui_utils::get_widget_from_glade<Gtk::Entry>
                 (a_glade, "entry_function") ;
         entry_function->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal)) ;
+        entry_function->set_activates_default () ;
 
         radio_source_location =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
@@ -91,8 +93,8 @@ public:
         radio_function_name->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed)) ;
 
-        // set the 'source location' mode active by default
-        mode (MODE_SOURCE_LOCATION);
+        // set the 'function name' mode active by default
+        mode (MODE_FUNCTION_NAME);
     }
 
     void update_ok_button_sensitivity ()
@@ -157,19 +159,24 @@ public:
 
         THROW_IF_FAIL (radio_source_location) ;
         THROW_IF_FAIL (radio_function_name) ;
+        THROW_IF_FAIL (entry_line) ;
+        THROW_IF_FAIL (entry_filename) ;
+        THROW_IF_FAIL (entry_function) ;
 
         switch (a_mode)
         {
             case MODE_SOURCE_LOCATION:
                 LOG_DD ("Changing Mode to SOURCE_LOCATION");
                 radio_source_location->set_active ();
+                entry_filename->grab_focus () ;
                 break;
             case MODE_FUNCTION_NAME:
                 LOG_DD ("Changing Mode to FUNCTION_NAME");
                 radio_function_name->set_active ();
+                entry_function->grab_focus () ;
                 break;
             default:
-                g_assert_not_reached ();
+                THROW ("Should not be reached") ;
         }
 
         NEMIVER_CATCH
