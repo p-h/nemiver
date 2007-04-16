@@ -86,7 +86,10 @@ public:
     sigc::signal<void>& detached_from_target_signal () const ;
 
     sigc::signal<void, const map<int, IDebugger::BreakPoint>&, const UString&>&
-                                                breakpoints_set_signal () const ;
+                                            breakpoints_set_signal () const ;
+
+    sigc::signal<void, const vector<OverloadsChoiceEntry>&, const UString&>&
+                                    got_overloads_choice_signal () const;
 
     sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>&
                                             breakpoint_deleted_signal () const ;
@@ -260,6 +263,9 @@ public:
                             gint a_line_num,
                             const UString &a_cookie) ;
 
+    void choose_function_overload (int a_overload_number,
+                                   const UString &a_cookie) ;
+
     void list_threads (const UString &a_cookie) ;
 
     void select_thread (unsigned int a_thread_id,
@@ -371,6 +377,10 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void,
                         const map<int, IDebugger::BreakPoint>&,
                         const UString&> breakpoints_set_signal;
+
+    mutable sigc::signal<void,
+                         const vector<OverloadsChoiceEntry>&,
+                         const UString&> got_overloads_choice_signal ;
 
     mutable sigc::signal<void,
                          const IDebugger::BreakPoint&,
@@ -521,7 +531,6 @@ struct GDBEngine::Priv {
             //command queue and notify the user that the command it issued
             //has a result.
             //
-
             output.parsing_succeeded (true) ;
             UString output_value ;
             output_value.assign (a_buf, from, to - from +1) ;
@@ -538,10 +547,12 @@ struct GDBEngine::Priv {
                     << "'") ;
             stdout_signal.emit (command_and_output) ;
             from = to ;
-            while (to < end && isspace (a_buf[from])) {++from;}
+            while (from < end && isspace (a_buf.raw ()[from])) {++from;}
             if (output.has_result_record ()/*gdb acknowledged previous cmd*/) {
+                LOG_DD ("here") ;
                 if (!started_commands.empty ()) {
                     started_commands.erase (started_commands.begin ()) ;
+                    LOG_DD ("clearing the line") ;
                     //we can send another cmd down the wire
                     line_busy = false ;
                 }
@@ -804,7 +815,7 @@ struct GDBEngine::Priv {
     }
 
     bool issue_command (const Command &a_command,
-                        bool a_run_event_loops=false)
+                        bool a_do_record=true)
     {
         if (!master_pty_channel) {
             return false ;
@@ -816,12 +827,10 @@ struct GDBEngine::Priv {
         if (master_pty_channel->write
                 (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
             master_pty_channel->flush () ;
-            if (a_run_event_loops) {
-                run_loop_iterations_real (-1) ;
-            }
             THROW_IF_FAIL (started_commands.size () <= 1) ;
 
-            started_commands.push_back (a_command) ;
+            if (a_do_record)
+                started_commands.push_back (a_command) ;
 
             //usually, when we send a command to the debugger,
             //it becomes busy (in a running state), untill it gets
@@ -847,7 +856,7 @@ struct GDBEngine::Priv {
             char buf[CHUNK_SIZE+1] ;
             Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
             bool got_data (false) ;
-            UString meaningfull_buffer ;
+            UString meaningful_buffer ;
             while (true) {
                 memset (buf, 0, CHUNK_SIZE + 1) ;
                 status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read) ;
@@ -881,15 +890,27 @@ struct GDBEngine::Priv {
                 //we manage he incoming buffer.
                 //TODO: optimize the way we handle this so that we do
                 //less allocation and copying.
-                meaningfull_buffer = gdb_stdout_buffer.substr (0, size) ;
-                meaningfull_buffer.chomp () ;
-                meaningfull_buffer += '\n' ;
-                gdb_stdout_signal.emit (meaningfull_buffer) ;
+                meaningful_buffer = gdb_stdout_buffer.substr (0, size) ;
+                meaningful_buffer.chomp () ;
+                meaningful_buffer += '\n' ;
+                LOG_DD ("emiting gdb_stdout_signal ()") ;
+                gdb_stdout_signal.emit (meaningful_buffer) ;
                 gdb_stdout_buffer.erase (0, size) ;
                 while (!gdb_stdout_buffer.empty ()
                        && isspace (gdb_stdout_buffer[0])) {
                     gdb_stdout_buffer.erase (0,1) ;
                 }
+            }
+            if (gdb_stdout_buffer.raw ().find ("[0] cancel")
+                    != std::string::npos
+                && gdb_stdout_buffer.raw ().find ("> ")
+                    != std::string::npos) {
+                //this is not a gdbmi ouptut, but rather a plain gdb
+                //command line. It is actually a prompt sent by gdb
+                //to let the user choose between a list of overloaded functions
+                LOG_DD ("emitting gdb_stdout_signal.emit()") ;
+                gdb_stdout_signal.emit (gdb_stdout_buffer) ;
+                gdb_stdout_buffer.clear () ;
             }
         }
         if (a_cond & Glib::IO_HUP) {
@@ -1083,10 +1104,51 @@ struct OnDetachHandler : OutputHandler {
 
 struct OnBreakPointHandler: OutputHandler {
     GDBEngine * m_engine ;
+    vector<UString>m_prompt_choices ;
 
     OnBreakPointHandler (GDBEngine *a_engine=0) :
         m_engine (a_engine)
     {
+    }
+
+    bool has_overloads_prompt (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_out_of_band_record ()) {
+            list<Output::OutOfBandRecord>::const_iterator it ;
+            for (it = a_in.output ().out_of_band_records ().begin ();
+                 it != a_in.output ().out_of_band_records ().end ();
+                 ++it) {
+                if (it->has_stream_record ()
+                    && !it->stream_record ().debugger_console ().empty ()
+                    && !it->stream_record ().debugger_console ().compare
+                            (0, 10, "[0] cancel")) {
+                    return true ;
+                }
+            }
+        }
+        return false ;
+    }
+
+
+    bool extract_overloads_choice_prompt_values
+                        (CommandAndOutput &a_in,
+                         vector<IDebugger::OverloadsChoiceEntry> &a_prompts)
+    {
+        UString input ;
+        UString::size_type cur=0 ;
+        vector<IDebugger::OverloadsChoiceEntry> prompts ;
+        list<Output::OutOfBandRecord>::const_iterator it ;
+        for (it = a_in.output ().out_of_band_records ().begin ();
+             it != a_in.output ().out_of_band_records ().end ();
+             ++it) {
+            if (it->has_stream_record ()
+                && !it->stream_record ().debugger_console ().empty ()
+                && !it->stream_record ().debugger_console ().compare
+                        (0, 1, "[")) {
+                input += it->stream_record ().debugger_console () ;
+            }
+        }
+        return parse_overloads_choice_prompt (input, cur, cur, a_prompts) ;
     }
 
     bool has_breakpoints_set (CommandAndOutput &a_in)
@@ -1100,7 +1162,8 @@ struct OnBreakPointHandler: OutputHandler {
 
     bool can_handle (CommandAndOutput &a_in)
     {
-        if (!a_in.output ().has_result_record ()) {
+        if (!a_in.output ().has_result_record ()
+            && !has_overloads_prompt (a_in)) {
             return false;
         }
         LOG_DD ("handler selected") ;
@@ -1112,6 +1175,27 @@ struct OnBreakPointHandler: OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         THROW_IF_FAIL (m_engine) ;
+
+        //first check if gdb asks us to
+        //choose between several overloaded
+        //functions. I call this a prompt (proposed by gdb)
+        //note: maybe I should put this into another output handler
+        if (has_overloads_prompt (a_in)) {
+            //try to extract the choices out of
+            //the prompt
+            LOG_DD ("got overloads prompt") ;
+            vector<IDebugger::OverloadsChoiceEntry> prompts ;
+            if (extract_overloads_choice_prompt_values (a_in, prompts)
+                && !prompts.empty ()) {
+                LOG_DD ("firing got_overloads_choice_signal () ") ;
+                m_engine->got_overloads_choice_signal ().emit
+                                    (prompts, a_in.command ().cookie ()) ;
+            } else {
+                LOG_ERROR ("failed to parse overloads choice prompt") ;
+            }
+            m_engine->set_state (IDebugger::READY) ;
+            return ;
+        }
 
         bool has_breaks=false ;
         //if breakpoint where set, put them in cache !
@@ -1331,6 +1415,7 @@ struct OnCommandDoneHandler : OutputHandler {
 
         m_engine->command_done_signal ().emit (a_in.command ().name (),
                                                a_in.command ().cookie ()) ;
+        m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnCommandDoneHandler
 
@@ -2086,6 +2171,14 @@ GDBEngine::breakpoints_set_signal () const
     return m_priv->breakpoints_set_signal ;
 }
 
+sigc::signal<void,
+             const vector<IDebugger::OverloadsChoiceEntry>&,
+             const UString&>&
+GDBEngine::got_overloads_choice_signal () const
+{
+    return m_priv->got_overloads_choice_signal ;
+}
+
 sigc::signal<void, const UString&, bool,
              const IDebugger::Frame&, int,
              const UString&>&
@@ -2309,7 +2402,7 @@ GDBEngine::queue_command (const Command &a_command)
     m_priv->queued_commands.push_back (a_command) ;
     if (!m_priv->line_busy && m_priv->started_commands.empty ()) {
         result = m_priv->issue_command (*m_priv->queued_commands.begin (),
-                                        false) ;
+                                        true) ;
         m_priv->queued_commands.erase (m_priv->queued_commands.begin ()) ;
     }
     return result ;
@@ -2412,7 +2505,7 @@ GDBEngine::exit_engine ()
     m_priv->queued_commands.clear () ;
 
     //send the lethal command and run the event loop to flush everything.
-    m_priv->issue_command (Command ("quit"), true) ;
+    m_priv->issue_command (Command ("quit"), false) ;
     set_state (IDebugger::NOT_STARTED) ;
 }
 
@@ -2565,6 +2658,17 @@ GDBEngine::delete_breakpoint (const UString &a_path,
                             + ":"
                             + UString::from_int (a_line_num),
                             a_cookie)) ;
+}
+
+void
+GDBEngine::choose_function_overload (int a_overload_number,
+                                      const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    if (a_cookie.empty ()) {}
+
+    m_priv->issue_command (UString::from_int (a_overload_number), false) ;
 }
 
 void

@@ -237,6 +237,10 @@ private:
                                          int,
                                          const UString &a_cookie) ;
 
+    void on_debugger_got_overloads_choice_signal
+                    (const vector<IDebugger::OverloadsChoiceEntry> &entries,
+                     const UString &a_cookie) ;
+
     void on_debugger_stopped_signal (const UString &a_reason,
                                      bool a_has_frame,
                                      const IDebugger::Frame &,
@@ -415,6 +419,8 @@ public:
                                    bool enabled=true) ;
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum) ;
     void delete_visual_breakpoint (int a_breaknum) ;
+    void choose_function_overload
+                    (const vector<IDebugger::OverloadsChoiceEntry> &a_entries) ;
 
     bool apply_decorations_to_text (const UString &a_file_path) ;
 
@@ -1640,6 +1646,20 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
 }
 
 void
+DBGPerspective::on_debugger_got_overloads_choice_signal
+                    (const vector<IDebugger::OverloadsChoiceEntry> &entries,
+                     const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    if (a_cookie.empty ()) {}
+
+    NEMIVER_TRY
+    choose_function_overload (entries) ;
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_debugger_running_signal ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -2364,6 +2384,9 @@ DBGPerspective::init_debugger_signals ()
 
     debugger ()->breakpoint_deleted_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_breakpoint_deleted_signal)) ;
+
+    debugger ()->got_overloads_choice_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_got_overloads_choice_signal)) ;
 
     debugger ()->stopped_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_stopped_signal)) ;
@@ -3994,7 +4017,10 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           UString &a_actual_file_name,
                                           bool enabled)
 {
-    THROW_IF_FAIL (!a_file_name.empty());
+    if (a_file_name.empty()) {
+        LOG_ERROR_DD ("a_file_name is empty") ;
+        return false ;
+    }
     THROW_IF_FAIL(m_priv);
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
@@ -4110,6 +4136,18 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
     source_editor->remove_visual_breakpoint_from_line (iter->second.line ()-1) ;
     m_priv->breakpoints.erase (iter);
     LOG_DD ("erased breakpoint number " << (int) a_breakpoint_num) ;
+}
+
+void
+DBGPerspective::choose_function_overload
+                    (const vector<IDebugger::OverloadsChoiceEntry> &a_entries)
+{
+    if (a_entries.empty ()) {
+        LOG_DD ("got an empty list of overloads choice") ;
+        return ;
+    }
+    THROW_IF_FAIL (debugger ()) ;
+    debugger ()->choose_function_overload (1) /*select all overloads for now*/;
 }
 
 bool

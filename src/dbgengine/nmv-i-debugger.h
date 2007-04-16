@@ -132,6 +132,72 @@ public:
         }
     };//end class BreakPoint
 
+    /// \brief an entry of a choice list
+    /// to choose between a list of overloaded
+    /// functions. This is used for instance
+    /// to propose a choice between several
+    /// overloaded functions when the user asked
+    /// to break into a function by name and when
+    /// that name has several overloads.
+    class OverloadsChoiceEntry {
+    public:
+        enum Kind {
+            CANCEL=0,
+            ALL=1,
+            LOCATION
+        };
+
+    private:
+        Kind m_kind ;
+        int m_index ;
+        UString m_function_name ;
+        UString m_file_name ;
+        int m_line_number ;
+
+        void init (Kind a_kind, int a_index,
+                   const UString &a_function_name,
+                   const UString &a_file_name,
+                   int a_line_number)
+        {
+            kind (a_kind) ;
+            index (a_index) ;
+            function_name (a_function_name) ;
+            file_name (a_file_name) ;
+            line_number (a_line_number) ;
+        }
+
+    public:
+        OverloadsChoiceEntry (Kind a_kind,
+                              int a_index,
+                              UString &a_function_name,
+                              UString a_file_name,
+                              int a_line_number)
+        {
+            init (a_kind, a_index, a_function_name,
+                  a_file_name, a_line_number) ;
+        }
+
+        OverloadsChoiceEntry ()
+        {
+            init (CANCEL, 0, "", "", 0) ;
+        }
+
+        Kind kind () const {return m_kind;}
+        void kind (Kind a_kind) {m_kind = a_kind;}
+
+        int index () const {return m_index;}
+        void index (int a_index) {m_index = a_index ;}
+
+        const UString& function_name () const {return m_function_name;}
+        void function_name (const UString& a_in) {m_function_name = a_in;}
+
+        const UString& file_name () const {return m_file_name;}
+        void file_name (const UString &a_in) {m_file_name = a_in;}
+
+        int line_number () const {return m_line_number;}
+        void line_number (int a_in) {m_line_number = a_in ;}
+    };//end class OverloadsChoiceEntry
+
     /// \brief a function frame as seen by the debugger.
     class Frame {
         UString m_address ;
@@ -376,7 +442,7 @@ public:
                         const IDebugger::BreakPoint&,
                         int /*breakpoint command*/,
                         const UString & /*cookie*/>&
-                                         breakpoint_deleted_signal () const=0;
+                                     breakpoint_deleted_signal () const=0;
 
     /// returns a list of breakpoints set. It is not all the breakpoints
     /// set. Some of the breakpoints in the list can have been
@@ -386,7 +452,12 @@ public:
     virtual sigc::signal<void,
                          const map<int, IDebugger::BreakPoint>&,
                          const UString& /*cookie*/>&
-                                             breakpoints_set_signal () const=0;
+                                         breakpoints_set_signal () const=0;
+
+    virtual sigc::signal<void,
+                         const vector<OverloadsChoiceEntry>&,
+                         const UString& /*cookie*/>&
+                                        got_overloads_choice_signal () const=0;
 
     virtual sigc::signal<void,
                          const UString&/*reason*/,
@@ -561,6 +632,9 @@ public:
     virtual void delete_breakpoint (const UString &a_path,
                                     gint a_line_num,
                                     const UString &a_cookie="") = 0;
+
+    virtual void choose_function_overload (int a_overload_number,
+                                           const UString &a_cookie="") = 0 ;
 
     virtual void delete_breakpoint (gint a_break_num,
                                     const UString &a_cookie="") = 0;

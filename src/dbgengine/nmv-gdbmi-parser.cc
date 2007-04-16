@@ -2149,7 +2149,7 @@ parse_stream_record (const UString &a_input,
 
     UString console, target, log ;
 
-    if (a_input[cur] == '~') {
+    if (a_input.raw ()[cur] == '~') {
         //console stream output
         ++cur ;
         if (cur >= end) {
@@ -2160,7 +2160,14 @@ parse_stream_record (const UString &a_input,
             LOG_PARSING_ERROR (a_input, cur) ;
             return false;
         }
-    } else if (a_input[cur] == '@') {
+        SKIP_WS (a_input, cur, cur) ;
+        if (cur + 1 < end
+            && a_input.raw ()[cur] == '>'
+            && isspace (a_input.raw ()[cur+1])) {
+            cur += 2 ;
+        }
+        SKIP_BLANK (a_input, cur, cur) ;
+    } else if (a_input.raw ()[cur] == '@') {
         //target stream output
         ++cur ;
         if (cur >= end) {
@@ -2171,7 +2178,7 @@ parse_stream_record (const UString &a_input,
             LOG_PARSING_ERROR (a_input, cur) ;
             return false;
         }
-    } else if (a_input[cur] == '&') {
+    } else if (a_input.raw ()[cur] == '&') {
         //log stream output
         ++cur ;
         if (cur >= end) {
@@ -2187,7 +2194,7 @@ parse_stream_record (const UString &a_input,
         return false ;
     }
 
-    for (; cur < end && isspace (a_input[cur]) ; ++cur) {}
+    for (; cur < end && isspace (a_input.raw ()[cur]) ; ++cur) {}
     bool found (false) ;
     if (!console.empty ()) {
         found = true ;
@@ -2556,6 +2563,8 @@ parse_output_record (const UString &a_input,
                      UString::size_type &a_to,
                      Output &a_output)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+
     UString::size_type cur=a_from, end=a_input.size () ;
 
     if (cur >= end) {
@@ -2616,6 +2625,184 @@ fetch_out_of_band_record:
     a_output = output ;
     a_to = cur ;
     return true;
+}
+
+bool
+parse_overloads_choice_prompt
+                    (const UString &a_input,
+                     UString::size_type a_from,
+                     UString::size_type &a_to,
+                     vector<IDebugger::OverloadsChoiceEntry> &a_prompts)
+{
+    UString::size_type cur=a_from, end=a_input.size () ;
+    gunichar c = 0 ;
+
+    if (cur >= end) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false;
+    }
+
+    if (a_input[cur] != '[') {
+        LOG_PARSING_ERROR (a_input, cur) ;
+    }
+
+    string index_str ;
+    vector<IDebugger::OverloadsChoiceEntry> prompts ;
+    c = a_input.raw ()[cur] ;
+    while (c == '[') {
+        CHECK_END (a_input, cur, end) ;
+        index_str.clear () ;
+        ++cur ;
+        c = a_input.raw ()[cur] ;
+        //look for the numerical index of the current prompt entry
+        for (;;) {
+            CHECK_END (a_input, cur, end) ;
+            c = a_input.raw ()[cur] ;
+            if (c >=  '0' && c <= '9') {
+                index_str += a_input[cur] ;
+            } else if (c == ']') {
+                break ;
+            } else {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            ++cur ;
+            c = a_input.raw ()[cur] ;
+        }
+        //we should have the numerical index of the current prompt entry
+        //by now.
+        if (index_str.empty ()) {
+            LOG_ERROR ("Could not parse prompt index") ;
+            return false ;
+        }
+        LOG_DD ("prompt index: " << index_str) ;
+        ++cur ;
+        CHECK_END (a_input, cur, end) ;
+        SKIP_BLANK (a_input, cur, cur) ;
+        c = a_input.raw ()[cur] ;
+
+        //now parse the prompt value.
+        //it is either  "all", "cancel", or a function name/file location.
+        IDebugger::OverloadsChoiceEntry entry ;
+        entry.index (atoi (index_str.c_str ())) ;
+        if (end - cur >= 3
+            && !a_input.raw ().compare (cur, 3, "all")) {
+            entry.kind (IDebugger::OverloadsChoiceEntry::ALL) ;
+            cur += 3 ;
+            SKIP_BLANK (a_input, cur, cur) ;
+            c = a_input.raw ()[cur] ;
+            LOG_DD ("pushing entry: " << (int) entry.index ()
+                    << ", all" ) ;
+            prompts.push_back (entry) ;
+            if (cur+1 < end && c == '\\' && a_input.raw ()[cur+1] == 'n') {
+                cur += 2 ;
+                c = a_input.raw ()[cur] ;
+            } else {
+                ++cur ;
+                if (cur >= end) {
+                    LOG_DD ("reached end, break") ;
+                    break ;
+                }
+                c = a_input.raw ()[cur] ;
+                continue ;
+            }
+        } else if  (end - cur >= 6
+                    && !a_input.compare (cur, 6, "cancel")) {
+            entry.kind (IDebugger::OverloadsChoiceEntry::CANCEL) ;
+            cur += 6 ;
+            SKIP_BLANK (a_input, cur, cur) ;
+            c = a_input.raw ()[cur] ;
+            LOG_DD ("pushing entry: " << (int) entry.index ()
+                    << ", cancel") ;
+            prompts.push_back (entry) ;
+            if (cur+1 < end && c == '\\' && a_input.raw ()[cur+1] == 'n') {
+                cur += 2 ;
+                c = a_input.raw ()[cur] ;
+            } else {
+                ++cur ;
+                if (cur >= end) {
+                    LOG_DD ("reached end, break") ;
+                    break ;
+                }
+                c = a_input.raw ()[cur] ;
+                continue ;
+            }
+        } else {
+            //try to parse a breakpoint location
+            UString function_name, file_name, line_num ;
+            UString::size_type b=0, e=0 ;
+            b = cur ;
+            while (cur < end && a_input.raw ().compare (cur, 4, " at ")) {
+                ++cur ;
+            }
+            c = a_input.raw ()[cur] ;
+            if (cur < end && !a_input.raw ().compare (cur, 4, " at ")) {
+                e = cur ;
+            } else {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            function_name.assign (a_input, b, e-b) ;
+
+            cur += 4 ;
+            SKIP_BLANK (a_input, cur, cur) ;
+            c = a_input.raw ()[cur] ;
+            b=cur ; e=0 ;
+            while (cur < end && c != ':') {
+                ++cur ;
+                c = a_input.raw ()[cur] ;
+            }
+            if (cur < end && c == ':') {
+                e = cur ;
+            } else {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false ;
+            }
+            file_name.assign (a_input, b, e-b) ;
+            ++cur ;
+            SKIP_BLANK (a_input, cur, cur) ;
+            c = a_input.raw ()[cur] ;
+
+            while (cur < end
+                   && c >= '0' && c <= '9') {
+                c = a_input.raw ()[cur] ;
+                line_num += c ;
+                ++cur ;
+            }
+            entry.kind (IDebugger::OverloadsChoiceEntry::LOCATION) ;
+            entry.function_name (function_name) ;
+            entry.file_name (file_name) ;
+            entry.line_number (atoi (line_num.c_str ())) ;
+            LOG_DD ("pushing entry: " << (int) entry.index ()
+                    << ", " << entry.function_name ()) ;
+            prompts.push_back (entry) ;
+            if (cur >= end) {
+                LOG_DD ("reached end, getting out") ;
+                break ;
+            }
+            SKIP_BLANK (a_input, cur, cur) ;
+            c = a_input.raw ()[cur] ;
+            if (cur+1 < end
+                && c == '\\' && a_input.raw ()[cur+1] == 'n') {
+                cur += 2 ;
+                c = a_input.raw ()[cur] ;
+            } else {
+                ++cur ;
+                if (cur >= end) {
+                }
+                c = a_input.raw ()[cur] ;
+            }
+            SKIP_BLANK (a_input, cur, cur) ;
+            c = a_input.raw ()[cur] ;
+            if (cur >= end)
+                break ;
+        }
+    }//end while//parse a prompt entry
+    if (prompts.empty ())
+        return false ;
+    a_prompts = prompts ;
+    a_to = cur ;
+    return true ;
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

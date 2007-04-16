@@ -383,11 +383,6 @@ bool parse_out_of_band_record (const UString &a_input,
                                UString::size_type &a_to,
                                Output::OutOfBandRecord &a_record);
 
-bool parse_out_of_band_record (const UString &a_input,
-                               UString::size_type a_from,
-                               UString::size_type &a_to,
-                               Output::OutOfBandRecord &a_record);
-
 /// parse a GDB/MI output record
 bool parse_output_record (const UString &a_input,
                           UString::size_type a_from,
@@ -559,6 +554,12 @@ bool parse_embedded_c_string (const UString &a_input,
                               UString::size_type &a_to,
                               UString &a_string) ;
 
+
+bool parse_overloads_choice_prompt
+                        (const UString &a_input,
+                         UString::size_type a_from,
+                         UString::size_type &a_to,
+                         vector<IDebugger::OverloadsChoiceEntry> &a_prompts) ;
 NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_GDBMI_PARSER_H
 
