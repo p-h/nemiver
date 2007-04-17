@@ -95,6 +95,11 @@ public:
 
         // set the 'function name' mode active by default
         mode (MODE_FUNCTION_NAME);
+        // hack to ensure that the correct text entry fields get insensitive at
+        // startup since if the glade file initializes MODE_FUNCTION_NAME to
+        // active, the 'changed' signal won't be emitted here (is there a better
+        // way to do this?)
+        on_radiobutton_changed ();
     }
 
     void update_ok_button_sensitivity ()
