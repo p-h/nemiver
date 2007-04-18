@@ -101,6 +101,7 @@ public:
         //create a default tree store and a tree view
         list_store = Gtk::ListStore::create (get_bp_columns ()) ;
         tree_view.reset (new Gtk::TreeView (list_store)) ;
+        tree_view->get_selection ()->set_mode (Gtk::SELECTION_MULTIPLE) ;
 
         //create the columns of the tree view
         tree_view->append_column_editable ("", get_bp_columns ().enabled) ;
@@ -108,7 +109,8 @@ public:
         tree_view->append_column (_("Filename"), get_bp_columns ().filename) ;
         tree_view->append_column (_("Line"), get_bp_columns ().line) ;
         Gtk::CellRendererToggle *enabled_toggle =
-            dynamic_cast<Gtk::CellRendererToggle*> (tree_view->get_column_cell_renderer(0));
+            dynamic_cast<Gtk::CellRendererToggle*>
+                                    (tree_view->get_column_cell_renderer(0));
         if (enabled_toggle) {
             enabled_toggle->signal_toggled ().connect (sigc::mem_fun (*this,
                         &BreakpointsView::Priv::on_breakpoint_enable_toggled));
@@ -118,7 +120,8 @@ public:
     void on_breakpoint_enable_toggled (const Glib::ustring& path)
     {
         THROW_IF_FAIL (tree_view);
-        Gtk::TreeModel::iterator tree_iter = tree_view->get_model ()->get_iter (path);
+        Gtk::TreeModel::iterator tree_iter =
+                                    tree_view->get_model ()->get_iter (path);
         if (tree_iter) {
             if ((*tree_iter)[get_bp_columns ().enabled]) {
                 debugger->enable_breakpoint((*tree_iter)[get_bp_columns ().id]);
@@ -236,9 +239,9 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_debugger_breakpoint_deleted_signal (
-            const IDebugger::BreakPoint &a_break, int a_break_number,
-            const UString &a_cookie)
+    void on_debugger_breakpoint_deleted_signal
+            (const IDebugger::BreakPoint &a_break, int a_break_number,
+             const UString &a_cookie)
     {
         if (a_break.number () || a_cookie.empty()) {}
         NEMIVER_TRY
@@ -278,7 +281,7 @@ public:
     {
         if (!breakpoints_menu) {
             breakpoints_menu = load_menu ("breakpointspopup.xml",
-                    "/BreakpointsPopup");
+                                          "/BreakpointsPopup");
             THROW_IF_FAIL (breakpoints_menu);
         }
         return breakpoints_menu;
@@ -294,9 +297,33 @@ public:
         Gtk::TreeModel::Path path;
         Gtk::TreeViewColumn* p_column = NULL;
         int cell_x=0, cell_y=0;
-        if (tree_view->get_path_at_pos(static_cast<int>(a_event->x),
-                    static_cast<int>(a_event->y), path, p_column, cell_x,
-                    cell_y)) {
+        if (tree_view->get_path_at_pos
+                (static_cast<int>(a_event->x),
+                 static_cast<int>(a_event->y),
+                 path, p_column, cell_x, cell_y)) {
+            if (tree_view->get_selection ()->count_selected_rows () > 1) {
+                Glib::RefPtr<Gtk::Action> action =
+                    workbench.get_ui_manager ()->get_action
+                            ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
+                if (action) {
+                    action->set_sensitive (false) ;
+                } else {
+                    LOG_ERROR
+                        ("Could not get action "
+                         "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
+                }
+            } else {
+                Glib::RefPtr<Gtk::Action> action =
+                    workbench.get_ui_manager ()->get_action
+                            ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
+                if (action) {
+                    action->set_sensitive (true) ;
+                } else {
+                    LOG_ERROR
+                        ("Could not get action "
+                         "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
+                }
+            }
             menu->popup (a_event->button, a_event->time) ;
         }
     }
@@ -331,17 +358,26 @@ public:
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
         Gtk::TreeModel::iterator tree_iter = selection->get_selected();
         if (tree_iter) {
-            go_to_breakpoint_signal.emit ((*tree_iter)[get_bp_columns ().breakpoint]);
+            go_to_breakpoint_signal.emit
+                            ((*tree_iter)[get_bp_columns ().breakpoint]);
         }
     }
 
     void on_breakpoint_delete_action ()
     {
-        THROW_IF_FAIL(tree_view)
+        THROW_IF_FAIL (tree_view)
+        THROW_IF_FAIL (list_store) ;
+
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
-        Gtk::TreeModel::iterator tree_iter = selection->get_selected();
-        if (tree_iter) {
-            debugger->delete_breakpoint ((*tree_iter)[get_bp_columns ().id]);
+        vector<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
+        vector<Gtk::TreeModel::Path>::const_iterator it ;
+        Gtk::TreeModel::iterator tree_iter ;
+        for (it=paths.begin () ; it != paths.end (); ++it) {
+            tree_iter = list_store->get_iter (*it) ;
+            if (tree_iter) {
+                debugger->delete_breakpoint
+                                ((*tree_iter)[get_bp_columns ().id]);
+            }
         }
     }
 
@@ -377,10 +413,11 @@ public:
             sizeof (s_breakpoints_action_entries)/sizeof (ui_utils::ActionEntry) ;
 
         ui_utils::add_action_entries_to_action_group
-            (s_breakpoints_action_entries, num_actions,
-             breakpoints_action_group) ;
+                        (s_breakpoints_action_entries, num_actions,
+                         breakpoints_action_group) ;
 
-        workbench.get_ui_manager ()->insert_action_group (breakpoints_action_group);
+        workbench.get_ui_manager ()->insert_action_group
+                                                (breakpoints_action_group);
     }
 
     void re_init ()
@@ -431,6 +468,7 @@ void
 BreakpointsView::re_init ()
 {
     THROW_IF_FAIL (m_priv) ;
+    clear () ;
     m_priv->re_init ();
 }
 

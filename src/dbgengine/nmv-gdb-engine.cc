@@ -1220,7 +1220,7 @@ struct OnBreakPointHandler: OutputHandler {
             if (bkpt_number) {
                 map<int, IDebugger::BreakPoint>::iterator iter ;
                 map<int, IDebugger::BreakPoint> &breaks =
-                m_engine->get_cached_breakpoints () ;
+                                        m_engine->get_cached_breakpoints () ;
                 iter = breaks.find (bkpt_number) ;
                 if (iter != breaks.end ()) {
                     LOG_DD ("firing IDebugger::breakpoint_deleted_signal()") ;

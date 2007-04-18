@@ -1,5 +1,10 @@
 2007-04-18 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: allow selection
+	  of multiple rows to delete multiple breakpoints at once.
+
+2007-04-18 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
 	  (DBGPerspective::execute_program()): before loading a new
 	  program, delete the breakpoints we might have set while
