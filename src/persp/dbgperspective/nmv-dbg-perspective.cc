@@ -3658,6 +3658,15 @@ DBGPerspective::execute_program (const UString &a_prog,
     args.insert (args.begin (), a_prog) ;
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
 
+    map<int, IDebugger::BreakPoint>::const_iterator bp_it ;
+    for (bp_it = m_priv->breakpoints.begin () ;
+         bp_it != m_priv->breakpoints.end ();
+         ++bp_it) {
+        dbg_engine->delete_breakpoint (bp_it->first) ;
+    }
+
+    clear_session_data () ;
+    clear_status_notebook () ;
     dbg_engine->load_program (args, a_cwd, source_search_dirs,
                               get_terminal ().slave_pts_name ()) ;
 

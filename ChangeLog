@@ -1,3 +1,16 @@
+2007-04-18 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  (DBGPerspective::execute_program()): before loading a new
+	  program, delete the breakpoints we might have set while
+	  debugging the previous binary. We are obliged to do that because
+	  the gdbmi command -file-exec-and-symbols is buggy. It tries
+	  to set breakpoints coming from the previous debugging session.
+	  So this is the reason why we when doing two debugging sessions
+	  without shutting down nemiver (with the same gdb process then),
+	  we see (disabled) breakpoints of the first session
+	  inside the second session.
+
 2007-04-16 Dodji Seketeli <dodji@gnome.com>
 
 	* src/dbgengine/nmv-i-debugger.h: added
