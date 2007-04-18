@@ -280,6 +280,7 @@ private:
     void init_signals () ;
     void init_debugger_signals () ;
     void clear_status_notebook () ;
+    void clear_session_data () ;
     void append_source_editor (SourceEditor &a_sv,
                                const UString &a_path) ;
     SourceEditor* get_current_source_editor () ;
@@ -1143,6 +1144,7 @@ DBGPerspective::on_going_to_run_target_signal ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
+    clear_session_data () ;
     get_local_vars_inspector ().re_init_widget () ;
     get_breakpoints_view ().re_init ();
     NEMIVER_CATCH
@@ -1491,19 +1493,24 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     NEMIVER_TRY
     // if a breakpoint was stored in the session db as disabled, it must be set
     // initially and then immediately disabled.  When the breakpoint is set, it
-    // will send a 'cookie' along of the form "initiallly-disabled#filename.cc#123"
+    // will send a 'cookie' along of the form
+    // "initiallly-disabled#filename.cc#123"
     if (a_cookie.find("initially-disabled") != UString::npos) {
         UString::size_type start_of_file = a_cookie.find('#') + 1;
         UString::size_type start_of_line = a_cookie.rfind('#') + 1;
-        UString file = a_cookie.substr(start_of_file, (start_of_line - 1) - start_of_file);
-        int line = atoi(a_cookie.substr (start_of_line, a_cookie.size () - start_of_line).c_str ());
-        for (map<int, IDebugger::BreakPoint>::const_iterator break_iter = a_breaks.begin ();
-                break_iter != a_breaks.end ();
-                ++break_iter) {
-            if ((break_iter->second.file_full_name () == file ||
-                        break_iter->second.file_name () == file) &&
-                    break_iter->second.line () == line) {
-                debugger ()->disable_breakpoint(break_iter->second.number ());
+        UString file = a_cookie.substr (start_of_file,
+                                        (start_of_line - 1) - start_of_file);
+        int line = atoi
+                (a_cookie.substr (start_of_line,
+                                  a_cookie.size () - start_of_line).c_str ());
+        map<int, IDebugger::BreakPoint>::const_iterator break_iter ;
+        for (break_iter = a_breaks.begin ();
+             break_iter != a_breaks.end ();
+             ++break_iter) {
+            if ((break_iter->second.file_full_name () == file
+                    || break_iter->second.file_name () == file)
+                 && break_iter->second.line () == line) {
+                debugger ()->disable_breakpoint (break_iter->second.number ());
             }
         }
     }
@@ -2420,6 +2427,17 @@ DBGPerspective::clear_status_notebook ()
     get_call_stack ().clear () ;
     get_local_vars_inspector ().re_init_widget () ;
     get_breakpoints_view ().clear () ;
+}
+
+void
+DBGPerspective::clear_session_data ()
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    m_priv->env_variables.clear () ;
+    m_priv->search_paths.clear () ;
+    m_priv->breakpoints.clear () ;
+    m_priv->source_dirs.clear () ;
 }
 
 void
@@ -3918,6 +3936,7 @@ DBGPerspective::append_breakpoint (int a_bp_num,
                     a_breakpoint.function ().c_str (),
                     a_breakpoint.address ().c_str ()) ;
             ui_utils::display_error (message);
+            return ;
         }
         else
         {
@@ -3928,7 +3947,8 @@ DBGPerspective::append_breakpoint (int a_bp_num,
             << a_breakpoint.line () - 1) ;
     m_priv->breakpoints[a_bp_num] = a_breakpoint ;
     m_priv->breakpoints[a_bp_num].file_full_name (file_path) ;
-    append_visual_breakpoint (file_path, a_breakpoint.line () - 1, a_breakpoint.enabled ()) ;
+    append_visual_breakpoint (file_path, a_breakpoint.line () - 1,
+                              a_breakpoint.enabled ()) ;
 }
 
 void

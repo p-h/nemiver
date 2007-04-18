@@ -1,5 +1,19 @@
 2007-04-18 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	  (DBGPerspective::on_debugger_breakpoints_set_signal): re indented
+	  this a bit because lines are too long.
+	  (DBGPerspective::clear_session_data): added this to clear
+	  session data stuff we keep in memory like env variables,
+	  search paths, breakpoints and source dirs.
+	  (DBGPerspective::on_going_to_run_target_signal): clear session data
+	  befoore running a target. This is needed because otherwise,
+	  data from the previous session can be saved in the current one,
+	  if the two sessions have been executed without quitting nemiver.
+
+
+2007-04-18 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: allow selection
 	  of multiple rows to delete multiple breakpoints at once.
 
