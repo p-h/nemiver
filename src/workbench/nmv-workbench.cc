@@ -274,6 +274,7 @@ Workbench::on_about_menu_item_action ()
 
     vector<Glib::ustring> artists;
     artists.push_back ("Steven Brown <swjb@interchange.ubc.ca>");
+    artists.push_back ("Andreas Nilsson <andreas@andreasn.se>");
     dialog.set_artists (artists);
 
     dialog.run ();
