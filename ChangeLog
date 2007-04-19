@@ -1,3 +1,22 @@
+2007-04-19 Jonathon Jongsma <jjongsma@gnome.org>
+
+    A few fixes for the new icons
+
+    Talking with Andreas, he suggested that we should provide both 22x22 and 24x24
+    icons since the GNOME menu uses 24x24 and the KDE menu (and some GNOME themes)
+    uses 22x22 icons.  So he provided a 24x24 icon which I've added.  I also fixed a
+    couple mistakes in the installation where the 48x48 icons were still getting
+    installed to the 64x64 directory.
+
+2007-04-19 Jonathon Jongsma <jjongsma@gnome.org>
+
+    Add new icons from Andreas Nilsson
+
+    The new icon is a more 'tango'-ish icon, and uses a bugspray metaphor.  The
+    sizes now provided are 16x16, 22x22 (instead of 24x24), 32x32, 48x48 (instead of
+    64x64) and scalable.  Also added Andreas' name to the artist credits in the
+    About dialog
+
 2007-04-18 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc
