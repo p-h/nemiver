@@ -1,21 +1,26 @@
-2007-04-19 Jonathon Jongsma <jjongsma@gnome.org>
+2007-04-19 Dodji Seketeli <dodji@gnome.org>
 
-    A few fixes for the new icons
-
-    Talking with Andreas, he suggested that we should provide both 22x22 and 24x24
-    icons since the GNOME menu uses 24x24 and the KDE menu (and some GNOME themes)
-    uses 22x22 icons.  So he provided a 24x24 icon which I've added.  I also fixed a
-    couple mistakes in the installation where the 48x48 icons were still getting
-    installed to the 64x64 directory.
+	* data/nemiver.desktop.in: refer to the icon without the ending .png
 
 2007-04-19 Jonathon Jongsma <jjongsma@gnome.org>
 
-    Add new icons from Andreas Nilsson
+	A few fixes for the new icons
 
-    The new icon is a more 'tango'-ish icon, and uses a bugspray metaphor.  The
-    sizes now provided are 16x16, 22x22 (instead of 24x24), 32x32, 48x48 (instead of
-    64x64) and scalable.  Also added Andreas' name to the artist credits in the
-    About dialog
+	Talking with Andreas, he suggested that we should provide
+	both 22x22 and 24x24 icons since the GNOME menu uses 24x24
+	and the KDE menu (and some GNOME themes) uses 22x22 icons.
+	So he provided a 24x24 icon which I've added.  I also fixed a
+	couple mistakes in the installation where the 48x48 icons
+	were still getting installed to the 64x64 directory.
+
+2007-04-19 Jonathon Jongsma <jjongsma@gnome.org>
+
+	Add new icons from Andreas Nilsson
+
+	The new icon is a more 'tango'-ish icon, and uses a bugspray
+	metaphor.  The sizes now provided are 16x16,
+	22x22 (instead of 24x24), 32x32, 48x48 (instead of 64x64) and scalable.
+	Also added Andreas' name to the artist credits in the About dialog
 
 2007-04-18 Dodji Seketeli <dodji@gnome.org>
 
@@ -121,19 +126,21 @@
 
 	* src/persp/dbgperspective/glade/setbreakpoint.glade,
 	src/persp/dbgperspective/nmv-dbg-perspective.cc,
-	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h: Add ability to set
-	a breakpoint by function name in addition to source file and line number.
-	There seems to be some errors in the gdbmi parsing that cause failures when
-	trying to set breakpoints on certain function names.  This requires more
-	digging.
+	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h:
+	Add ability to set a breakpoint by function name
+	in addition to source file and line number.
+	There seems to be some errors in the gdbmi parsing
+	that cause failures when trying to set breakpoints
+	on certain function names.  This requires more digging.
 
 2007-04-07 Jonathon Jongsma	<jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc,
-	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h: Add a little bit of
+	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h:
+	Add a little bit of
 	error-handling for unreasonable line numbers (i.e. don't try to set a
-	breakpoint if the atoi call has been clamped to INT_MIN or INT_MAX or if it
-	couldn't find an integer value and returned 0.
+	breakpoint if the atoi call has been clamped to INT_MIN or
+	INT_MAX or if it couldn't find an integer value and returned 0.
 
 2007-04-07 Jonathon Jongsma	<jjongsma@gnome.org>
 

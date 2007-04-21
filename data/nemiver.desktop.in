@@ -5,6 +5,6 @@ Type=Application
 _Name=Nemiver Debugger
 _GenericName=C/C++ Debugger
 _Comment=Debug Applications
-Icon=nemiver.png
+Icon=nemiver
 Exec=nemiver
 Categories=GNOME;Application;Development;
