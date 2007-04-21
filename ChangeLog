@@ -1,6 +1,6 @@
 2007-04-21 Jonathon Jongsma <jjongsma@gnome.org>
 
-	* data/icons/Makefile.am: add 24x24 directory to SUBDIRS
+	* data/icons/Makefile.am: add 24x24 directory to SUBDIRS 
 
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 
