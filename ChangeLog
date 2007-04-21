@@ -1,5 +1,10 @@
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-source-editor.cc: 
+	  (SourceEditor::current_line ()): remove a debugging log.
+
+2007-04-21 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
 	  (on_breakpoint_go_to_source_action()): don't forget
 	  that the treeview supports multiselection now.

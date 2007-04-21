@@ -342,7 +342,6 @@ SourceEditor::current_line () const
 void
 SourceEditor::current_line (gint &a_line)
 {
-    LOG ("current line: " << (int)a_line) ;
     m_priv->current_line = a_line;
 }
 
