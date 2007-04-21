@@ -1,3 +1,12 @@
+2007-04-21 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
+	  (on_file_content_changed()): make this handle the dialog
+	  to let the user decide to load the file when its content changes.
+	  (file_monitor_cb()): do not launch a dialog in here as it causes
+	  gnome-vfs to crash. Rather schedule the dialog showing in and idle
+	  the idle function on_file_content_changed().
+
 2007-04-19 Dodji Seketeli <dodji@gnome.org>
 
 	* data/nemiver.desktop.in: refer to the icon without the ending .png

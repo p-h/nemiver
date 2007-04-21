@@ -697,6 +697,26 @@ enum ViewsIndex
 #define CHECK_P_INIT THROW_IF_FAIL(m_priv && m_priv->initialized) ;
 #endif
 
+bool
+on_file_content_changed (const UString &a_path,
+                         DBGPerspective *a_persp)
+{
+    LOG_DD ("file content changed") ;
+
+    NEMIVER_TRY
+    THROW_IF_FAIL (a_persp) ;
+    if (!a_path.empty ()) {
+        UString msg ;
+        msg.printf (_("File %s has been modified. Do want to reload it ?"),
+                    a_path.c_str ());
+        if (ask_yes_no_question (msg) == Gtk::RESPONSE_YES) {
+            a_persp->reload_file (a_path) ;
+        }
+    }
+    NEMIVER_CATCH
+    return false ;
+}
+
 static void
 file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
                  const gchar *a_monitor_uri,
@@ -719,12 +739,11 @@ file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
         LOG_DD ("file content changed") ;
         GnomeVFSURI *uri = gnome_vfs_uri_new (a_info_uri) ;
         if (gnome_vfs_uri_get_path (uri)) {
-            UString msg ;
-            msg.printf (_("File %s has been modified. Do want to reload it ?"),
-                         gnome_vfs_uri_get_path (uri));
-            if (ask_yes_no_question (msg) == Gtk::RESPONSE_YES) {
-                a_persp->reload_file (gnome_vfs_uri_get_path (uri)) ;
-            }
+            UString path = Glib::filename_to_utf8
+                                            (gnome_vfs_uri_get_path (uri)) ;
+            Glib::signal_idle ().connect (sigc::bind
+                                            (&on_file_content_changed,
+                                             path, a_persp)) ;
         }
         gnome_vfs_uri_unref (uri) ;
     }
