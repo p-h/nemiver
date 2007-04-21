@@ -356,7 +356,10 @@ public:
     {
         THROW_IF_FAIL(tree_view)
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
-        Gtk::TreeModel::iterator tree_iter = selection->get_selected();
+        vector<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
+        if (paths.empty ())
+            return ;
+        Gtk::TreeModel::iterator tree_iter = list_store->get_iter (paths[0]) ;
         if (tree_iter) {
             go_to_breakpoint_signal.emit
                             ((*tree_iter)[get_bp_columns ().breakpoint]);
@@ -368,7 +371,8 @@ public:
         THROW_IF_FAIL (tree_view)
         THROW_IF_FAIL (list_store) ;
 
-        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
+        Glib::RefPtr<Gtk::TreeSelection> selection =
+                                                tree_view->get_selection ();
         vector<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
         vector<Gtk::TreeModel::Path>::const_iterator it ;
         Gtk::TreeModel::iterator tree_iter ;

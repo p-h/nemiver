@@ -1,5 +1,11 @@
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	  (on_breakpoint_go_to_source_action()): don't forget
+	  that the treeview supports multiselection now.
+
+2007-04-21 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 
 	  (on_file_content_changed()): make this handle the dialog
 	  to let the user decide to load the file when its content changes.
