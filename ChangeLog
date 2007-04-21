@@ -35,7 +35,6 @@
 	  data from the previous session can be saved in the current one,
 	  if the two sessions have been executed without quitting nemiver.
 
-
 2007-04-18 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: allow selection
@@ -150,11 +149,12 @@
 	src/persp/dbgperspective/Makefile.am,
 	src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc|h,
 	src/persp/dbgperspective/nmv-dbg-perspective.cc: beginning of an
-	implementation of a dialog for setting arbitrary breakpoints.  Currently it
-	has a text entry for 'filename' and one for 'line number' and attempts to
-	set a breakpoint at the requested line.  There's not really any error
-	handling yet, but it works for simple cases.  Eventually there should be a
-	way to set a breakpoint on a function name as well -- not sure whether that
+	implementation of a dialog for setting arbitrary breakpoints.
+	Currently it has a text entry for 'filename' and one for 'line number'
+	and attempts to set a breakpoint at the requested line.
+	There's not really any error handling yet, but it works for simple
+	cases.  Eventually there should be a way to set a breakpoint
+	on a function name as well -- not sure whether that
 	should be a separate option in the UI or combined somehow.
 
 2007-04-07 Dodji Seketeli
