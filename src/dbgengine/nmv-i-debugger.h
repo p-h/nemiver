@@ -143,7 +143,7 @@ public:
     public:
         enum Kind {
             CANCEL=0,
-            ALL=1,
+            ALL,
             LOCATION
         };
 
@@ -635,6 +635,9 @@ public:
 
     virtual void choose_function_overload (int a_overload_number,
                                            const UString &a_cookie="") = 0 ;
+
+    virtual void choose_function_overloads (const vector<int> &a_numbers,
+                                            const UString &a_cookie="") = 0 ;
 
     virtual void delete_breakpoint (gint a_break_num,
                                     const UString &a_cookie="") = 0;

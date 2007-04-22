@@ -95,10 +95,10 @@ public:
                                             breakpoint_deleted_signal () const ;
 
     sigc::signal<void, const IDebugger::BreakPoint&, int>&
-                                            breakpoint_disabled_signal () const ;
+                                        breakpoint_disabled_signal () const ;
 
     sigc::signal<void, const IDebugger::BreakPoint&, int>&
-                                            breakpoint_enabled_signal () const ;
+                                        breakpoint_enabled_signal () const ;
 
 
     sigc::signal<void,
@@ -113,7 +113,7 @@ public:
                  const UString& >& threads_listed_signal () const ;
 
     sigc::signal<void, const vector<UString>&, const UString& >&
-                                                    files_listed_signal () const;
+                                                files_listed_signal () const;
 
     sigc::signal<void,
                  int,
@@ -265,6 +265,9 @@ public:
 
     void choose_function_overload (int a_overload_number,
                                    const UString &a_cookie) ;
+
+    void choose_function_overloads (const vector<int> &a_numbers,
+                                    const UString &a_cookie) ;
 
     void list_threads (const UString &a_cookie) ;
 
@@ -1148,6 +1151,7 @@ struct OnBreakPointHandler: OutputHandler {
                 input += it->stream_record ().debugger_console () ;
             }
         }
+        LOG_DD ("going to parse overloads: >>>" << input << "<<<") ;
         return parse_overloads_choice_prompt (input, cur, cur, a_prompts) ;
     }
 
@@ -2669,6 +2673,22 @@ GDBEngine::choose_function_overload (int a_overload_number,
     if (a_cookie.empty ()) {}
 
     m_priv->issue_command (UString::from_int (a_overload_number), false) ;
+}
+
+void
+GDBEngine::choose_function_overloads (const vector<int> &a_nums,
+                                      const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    UString str ;
+
+    if (a_cookie.empty ()) {}
+
+    for (unsigned int i=0 ; i < a_nums.size () ; ++i) {
+        str += UString::from_int (a_nums[i]) + " ";
+    }
+    if (!str.empty ())
+        m_priv->issue_command (str, false) ;
 }
 
 void

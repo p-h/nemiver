@@ -4,6 +4,12 @@
 
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  added IDebugger::choose_overloaded_functions() to choose
+	  several function overloads at once.
+
+2007-04-21 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/glade/setbreakpoint.glade:
 	  rename this into setbreakpointdialog.glade because in nemiver,
 	  glade files have the same name as their topmost widget name.
