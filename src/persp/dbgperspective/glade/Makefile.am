@@ -9,7 +9,8 @@ preferencesdialog.glade \
 varinspectordialog.glade \
 findtextdialog.glade \
 openfiledialog.glade \
-setbreakpoint.glade
+setbreakpointdialog.glade \
+chooseoverloadsdialog.glade
 
 gladedir = @NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)/glade
 glade_DATA = $(gladefiles)

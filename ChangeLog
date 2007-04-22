@@ -4,6 +4,19 @@
 
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/glade/setbreakpoint.glade:
+	  rename this into setbreakpointdialog.glade because in nemiver,
+	  glade files have the same name as their topmost widget name.
+	* src/persp/dbgperspective/Makefile.am:
+	* src/persp/dbgperspective/glade/Makefile.am:
+	* src/persp/dbgperspective/glade/Makefile.am:
+	* src/persp/dbgperspective/glade/chooseoverloadsdialog.glade:
+	* src/persp/dbgperspective/nmv-choose-overloads-dialog.cc,h:
+	  Added a new ChooseOverloadsDialog to let the user choose
+	  among several overloaded funtions.
+
+2007-04-21 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-source-editor.cc: 
 	  (SourceEditor::current_line ()): remove a debugging log.
 
