@@ -1,6 +1,13 @@
-2007-04-21 Jonathon Jongsma <jjongsma@gnome.org>
+2007-04-22 Dodji Seketeli <dodji@gnome.org>
 
-	* data/icons/Makefile.am: add 24x24 directory to SUBDIRS 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::choose_function_overload()):
+	  Use the new ChooserOverloadsDialog dialog to let the user
+	  choose among function overloads, when applicable.
+	  This is used when the user sets a breakpoint by specifying the
+	  function name, and it appears that name has overloads.
+	* tests/fooprog.cc: added function overloads here so that
+	  we can test the new overloaded function choice dialog.
 
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 
@@ -28,6 +35,10 @@
 	* src/persp/dbgperspective/nmv-choose-overloads-dialog.cc,h:
 	  Added a new ChooseOverloadsDialog to let the user choose
 	  among several overloaded funtions.
+
+2007-04-21 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* data/icons/Makefile.am: add 24x24 directory to SUBDIRS
 
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 

@@ -16,6 +16,7 @@ func2 (int a_a, int a_b)
     j = j + a_b ;
 }
 
+
 struct Person {
     std::string m_first_name;
     std::string m_family_name;
@@ -52,6 +53,18 @@ struct Person {
 
         foo += bar ;
     }
+
+    void overload ()
+    {
+        int i = 0 ;
+        ++i ;
+    }
+
+    void overload (int i)
+    {
+        ++i ;
+        i= 0 ;
+    }
 };//class Person
 
 void
@@ -72,6 +85,8 @@ main (int a_argc, char *a_argv[])
     person.set_first_name ("Ali") ;
     person.set_family_name ("BABA") ;
     person.do_this () ;
+    person.overload () ;
+    person.overload (0) ;
 
     func3 (person) ;
 

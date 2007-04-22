@@ -61,6 +61,7 @@
 #include "nmv-var-inspector-dialog.h"
 #include "nmv-find-text-dialog.h"
 #include "nmv-set-breakpoint-dialog.h"
+#include "nmv-choose-overloads-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -4195,7 +4196,22 @@ DBGPerspective::choose_function_overload
         return ;
     }
     THROW_IF_FAIL (debugger ()) ;
-    debugger ()->choose_function_overload (1) /*select all overloads for now*/;
+    ChooseOverloadsDialog dialog (plugin_path (), a_entries) ;
+    int result = dialog.run () ;
+    if (result != Gtk::RESPONSE_OK) {
+        debugger ()->choose_function_overload (0)/*cancel*/;
+        return ;
+    }
+    vector<IDebugger::OverloadsChoiceEntry> overloads =
+                                            dialog.overloaded_functions () ;
+
+    vector<IDebugger::OverloadsChoiceEntry>::const_iterator it ;
+    vector<int> nums ;
+    for (it = overloads.begin () ; it != overloads.end () ; ++it) {
+        nums.push_back (it->index ()) ;
+    }
+    if (!nums.empty ())
+        debugger ()->choose_function_overloads (nums) ;
 }
 
 bool
