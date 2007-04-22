@@ -38,7 +38,7 @@ namespace Gnome {
     }
 }
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
 class UString ;
@@ -78,7 +78,7 @@ public:
 
 };//end class nemiver
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NEMIVER_DIALOG_H__
 

@@ -86,10 +86,12 @@ public:
         // return the focus to the search text entry and highlight the search
         // term so that it can be overwritten by simply typing a new term
         get_search_text_combo ()->get_entry ()->grab_focus ();
-        UString search_text = get_search_text_combo ()->get_entry ()->get_text ();
+        UString search_text =
+            get_search_text_combo ()->get_entry ()->get_text ();
         if (search_text.size ())
         {
-            get_search_text_combo ()->get_entry ()->select_region(0, search_text.size ());
+            get_search_text_combo ()->get_entry ()->select_region
+                                                    (0, search_text.size ());
         }
         NEMIVER_CATCH
     }
@@ -170,8 +172,9 @@ public:
         UString new_term = get_search_text_combo ()->get_entry ()->get_text ();
         bool found = false;
         // first check if this term is already in the list
-        for (Gtk::TreeModel::iterator tree_iter = searchterm_store->children ().begin ();
-                tree_iter != searchterm_store->children ().end (); ++tree_iter) {
+        Gtk::TreeModel::iterator tree_iter ;
+        for (tree_iter = searchterm_store->children ().begin ();
+             tree_iter != searchterm_store->children ().end (); ++tree_iter) {
             if (new_term == (*tree_iter)[columns ().term]) {
                 found = true;
                 break;
