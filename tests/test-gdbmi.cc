@@ -47,6 +47,12 @@ static const char*  gv_overloads_prompt0=
 "[3] nemiver::GDBEngine::set_breakpoint(nemiver::common::UString const&, int, nemiver::common::UString const&) at nmv-gdb-engine.cc:2462\\n"
 ;
 
+static const char* gv_overloads_prompt1=
+"[0] cancel\n[1] all\n"
+"[2] Person::overload(int) at fooprog.cc:65\n"
+"[3] Person::overload() at fooprog.cc:59"
+;
+
 void
 test_str0 ()
 {
@@ -212,6 +218,13 @@ test_overloads_prompt ()
     vector<IDebugger::OverloadsChoiceEntry> prompts ;
     UString::size_type cur = 0 ;
     BOOST_REQUIRE (parse_overloads_choice_prompt (gv_overloads_prompt0,
+                                                  cur, cur, prompts)) ;
+    BOOST_REQUIRE_MESSAGE (prompts.size () == 4,
+                           "actually got " << prompts.size ()) ;
+
+    cur=0 ;
+    prompts.clear () ;
+    BOOST_REQUIRE (parse_overloads_choice_prompt (gv_overloads_prompt1,
                                                   cur, cur, prompts)) ;
     BOOST_REQUIRE_MESSAGE (prompts.size () == 4,
                            "actually got " << prompts.size ()) ;

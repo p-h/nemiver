@@ -2645,20 +2645,20 @@ parse_overloads_choice_prompt
     if (a_input[cur] != '[') {
         LOG_PARSING_ERROR (a_input, cur) ;
     }
+    c = a_input.raw ()[cur] ;
 
     string index_str ;
     vector<IDebugger::OverloadsChoiceEntry> prompts ;
-    c = a_input.raw ()[cur] ;
     while (c == '[') {
+        ++cur ;
         CHECK_END (a_input, cur, end) ;
         index_str.clear () ;
-        ++cur ;
         c = a_input.raw ()[cur] ;
         //look for the numerical index of the current prompt entry
         for (;;) {
             CHECK_END (a_input, cur, end) ;
             c = a_input.raw ()[cur] ;
-            if (c >=  '0' && c <= '9') {
+            if (isdigit (c)) {
                 index_str += a_input[cur] ;
             } else if (c == ']') {
                 break ;
@@ -2667,6 +2667,8 @@ parse_overloads_choice_prompt
                 return false ;
             }
             ++cur ;
+            if (cur >= end)
+                break ;
             c = a_input.raw ()[cur] ;
         }
         //we should have the numerical index of the current prompt entry
@@ -2678,7 +2680,7 @@ parse_overloads_choice_prompt
         LOG_DD ("prompt index: " << index_str) ;
         ++cur ;
         CHECK_END (a_input, cur, end) ;
-        SKIP_BLANK (a_input, cur, cur) ;
+        SKIP_WS (a_input, cur, cur) ;
         c = a_input.raw ()[cur] ;
 
         //now parse the prompt value.
@@ -2689,7 +2691,7 @@ parse_overloads_choice_prompt
             && !a_input.raw ().compare (cur, 3, "all")) {
             entry.kind (IDebugger::OverloadsChoiceEntry::ALL) ;
             cur += 3 ;
-            SKIP_BLANK (a_input, cur, cur) ;
+            SKIP_WS (a_input, cur, cur) ;
             c = a_input.raw ()[cur] ;
             LOG_DD ("pushing entry: " << (int) entry.index ()
                     << ", all" ) ;
@@ -2697,20 +2699,12 @@ parse_overloads_choice_prompt
             if (cur+1 < end && c == '\\' && a_input.raw ()[cur+1] == 'n') {
                 cur += 2 ;
                 c = a_input.raw ()[cur] ;
-            } else {
-                ++cur ;
-                if (cur >= end) {
-                    LOG_DD ("reached end, break") ;
-                    break ;
-                }
-                c = a_input.raw ()[cur] ;
-                continue ;
             }
         } else if  (end - cur >= 6
                     && !a_input.compare (cur, 6, "cancel")) {
             entry.kind (IDebugger::OverloadsChoiceEntry::CANCEL) ;
             cur += 6 ;
-            SKIP_BLANK (a_input, cur, cur) ;
+            SKIP_WS (a_input, cur, cur) ;
             c = a_input.raw ()[cur] ;
             LOG_DD ("pushing entry: " << (int) entry.index ()
                     << ", cancel") ;
@@ -2718,14 +2712,6 @@ parse_overloads_choice_prompt
             if (cur+1 < end && c == '\\' && a_input.raw ()[cur+1] == 'n') {
                 cur += 2 ;
                 c = a_input.raw ()[cur] ;
-            } else {
-                ++cur ;
-                if (cur >= end) {
-                    LOG_DD ("reached end, break") ;
-                    break ;
-                }
-                c = a_input.raw ()[cur] ;
-                continue ;
             }
         } else {
             //try to parse a breakpoint location
@@ -2745,11 +2731,13 @@ parse_overloads_choice_prompt
             function_name.assign (a_input, b, e-b) ;
 
             cur += 4 ;
-            SKIP_BLANK (a_input, cur, cur) ;
+            SKIP_WS (a_input, cur, cur) ;
             c = a_input.raw ()[cur] ;
             b=cur ; e=0 ;
-            while (cur < end && c != ':') {
+            while (c != ':') {
                 ++cur ;
+                if (cur >= end)
+                    break ;
                 c = a_input.raw ()[cur] ;
             }
             if (cur < end && c == ':') {
@@ -2760,14 +2748,15 @@ parse_overloads_choice_prompt
             }
             file_name.assign (a_input, b, e-b) ;
             ++cur ;
-            SKIP_BLANK (a_input, cur, cur) ;
+            SKIP_WS (a_input, cur, cur) ;
             c = a_input.raw ()[cur] ;
 
-            while (cur < end
-                   && c >= '0' && c <= '9') {
-                c = a_input.raw ()[cur] ;
+            while (isdigit (c)) {
                 line_num += c ;
                 ++cur ;
+                if (cur >= end)
+                    break ;
+                c = a_input.raw ()[cur] ;
             }
             entry.kind (IDebugger::OverloadsChoiceEntry::LOCATION) ;
             entry.function_name (function_name) ;
@@ -2780,19 +2769,14 @@ parse_overloads_choice_prompt
                 LOG_DD ("reached end, getting out") ;
                 break ;
             }
-            SKIP_BLANK (a_input, cur, cur) ;
+            SKIP_WS (a_input, cur, cur) ;
             c = a_input.raw ()[cur] ;
             if (cur+1 < end
                 && c == '\\' && a_input.raw ()[cur+1] == 'n') {
                 cur += 2 ;
                 c = a_input.raw ()[cur] ;
-            } else {
-                ++cur ;
-                if (cur >= end) {
-                }
-                c = a_input.raw ()[cur] ;
             }
-            SKIP_BLANK (a_input, cur, cur) ;
+            SKIP_WS (a_input, cur, cur) ;
             c = a_input.raw ()[cur] ;
             if (cur >= end)
                 break ;

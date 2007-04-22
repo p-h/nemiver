@@ -4,6 +4,14 @@
 
 2007-04-21 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdbmi-parser.cc: 
+	  (parse_overloads_choice_prompt): fix bugs in this to correctly
+	   parse overloads choice prompts.
+	* tests/test-gdbmi.cc: added a regression test for overloads choice
+	  prompt parsing.
+
+2007-04-21 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc:
 	  added IDebugger::choose_overloaded_functions() to choose
 	  several function overloads at once.
