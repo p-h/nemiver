@@ -83,9 +83,16 @@ public:
         build_tree_view () ;
         void set_breakpoints
                 (const std::map<int, IDebugger::BreakPoint> &a_breakpoints);
-        tree_view->signal_button_press_event ().connect_notify
+
+        // we must handle the button press event before the default button
+        // handler since there are cases when we need to prevent the default
+        // handler from running
+        tree_view->signal_button_press_event ().connect
             (sigc::mem_fun (*this,
-                            &Priv::on_breakpoints_view_button_press_signal));
+                            &Priv::on_breakpoints_view_button_press_signal),
+             false /*connect before*/);
+        tree_view->get_selection ()->signal_changed ().connect (
+                sigc::mem_fun (*this, &Priv::on_treeview_selection_changed));
 
         // update breakpoint list when debugger indicates that the list of
         // breakpoints has changed.
@@ -293,44 +300,13 @@ public:
         THROW_IF_FAIL (tree_view) ;
         Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_breakpoints_menu ()) ;
         THROW_IF_FAIL (menu) ;
-        // only pop up a menu if a row exists at that position
-        Gtk::TreeModel::Path path;
-        Gtk::TreeViewColumn* p_column = NULL;
-        int cell_x=0, cell_y=0;
-        if (tree_view->get_path_at_pos
-                (static_cast<int>(a_event->x),
-                 static_cast<int>(a_event->y),
-                 path, p_column, cell_x, cell_y)) {
-            if (tree_view->get_selection ()->count_selected_rows () > 1) {
-                Glib::RefPtr<Gtk::Action> action =
-                    workbench.get_ui_manager ()->get_action
-                            ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
-                if (action) {
-                    action->set_sensitive (false) ;
-                } else {
-                    LOG_ERROR
-                        ("Could not get action "
-                         "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
-                }
-            } else {
-                Glib::RefPtr<Gtk::Action> action =
-                    workbench.get_ui_manager ()->get_action
-                            ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
-                if (action) {
-                    action->set_sensitive (true) ;
-                } else {
-                    LOG_ERROR
-                        ("Could not get action "
-                         "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
-                }
-            }
-            menu->popup (a_event->button, a_event->time) ;
-        }
+        menu->popup (a_event->button, a_event->time) ;
     }
 
-    void on_breakpoints_view_button_press_signal (GdkEventButton *a_event)
+    bool on_breakpoints_view_button_press_signal (GdkEventButton *a_event)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        bool handled = false;
 
         NEMIVER_TRY
 
@@ -345,10 +321,59 @@ public:
         // right-clicking should pop up a context menu
         else if (a_event->type == GDK_BUTTON_PRESS) {
             if (a_event->button == 3) {
-                popup_breakpoints_view_menu (a_event) ;
+                // only pop up a context menu if there's a valid item at the
+                // point where the user clicked
+                Gtk::TreeModel::Path path;
+                Gtk::TreeViewColumn* p_column = NULL;
+                int cell_x=0, cell_y=0;
+                if (tree_view->get_path_at_pos (
+                            static_cast<int>(a_event->x),
+                            static_cast<int>(a_event->y),
+                            path, p_column, cell_x, cell_y)) {
+                    popup_breakpoints_view_menu (a_event) ;
+                    Glib::RefPtr<Gtk::TreeView::Selection> selection =
+                        tree_view->get_selection ();
+                    if (selection->is_selected(path)) {
+                        // don't continue to handle this event.  This is necessary
+                        // because if multiple items are selected, we don't want
+                        // them to become de-selected when we pop up a context menu
+                        handled = true;
+                    }
+                }
             }
         }
 
+        NEMIVER_CATCH
+        return handled;
+    }
+
+    void on_treeview_selection_changed ()
+    {
+        NEMIVER_TRY
+        THROW_IF_FAIL(tree_view)
+        if (tree_view->get_selection ()->count_selected_rows () > 1) {
+            Glib::RefPtr<Gtk::Action> action =
+                workbench.get_ui_manager ()->get_action
+                ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
+            if (action) {
+                action->set_sensitive (false) ;
+            } else {
+                LOG_ERROR
+                    ("Could not get action "
+                     "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
+            }
+        } else {
+            Glib::RefPtr<Gtk::Action> action =
+                workbench.get_ui_manager ()->get_action
+                ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
+            if (action) {
+                action->set_sensitive (true) ;
+            } else {
+                LOG_ERROR
+                    ("Could not get action "
+                     "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
+            }
+        }
         NEMIVER_CATCH
     }
 

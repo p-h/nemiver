@@ -1,3 +1,21 @@
+2007-04-24 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Allow multiple
+	breakpoints to be deleted at the same time.  Although the breakpoints view
+	supported multiple selection, when you right-click a group of selected
+	breakpoints, all but the one you clicked on became de-selected.  To fix
+	this, I had to connect the button-press-event signal before the default
+	handler and prevent the default handler from being executed if the user
+	right-clicked on an already-selected item.
+
+	Moving the signal connection before the default handler caused problems for
+	the code that figures out which actions in the context menu are valid,
+	however.  The problem was that we use the current selection to determine
+	which menu items are valid, but the selection has not been updated by the
+	default handler at the time we want to pop up the menu.  To solve this, I
+	connected to the treeview selections 'changed' signal, and update the
+	actions here instead of while we are displaying the menu.
+
 2007-04-22 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dialog.h:
