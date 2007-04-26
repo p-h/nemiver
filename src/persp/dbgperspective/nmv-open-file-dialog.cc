@@ -53,12 +53,12 @@ class OpenFileDialog::Priv {
 public:
 
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
-          IDebuggerSafePtr &a_debugger) :
+          IDebuggerSafePtr &a_debugger, const UString &a_working_dir) :
         vbox_file_list (0),
         radio_button_file_list (0),
         radio_button_chooser (0),
         file_chooser(Gtk::FILE_CHOOSER_ACTION_OPEN),
-        file_list(a_debugger),
+        file_list(a_debugger, a_working_dir),
         okbutton (0),
         debugger (a_debugger.get ())
     {
@@ -234,10 +234,10 @@ public:
 };//end class OpenFileDialog::Priv
 
 OpenFileDialog::OpenFileDialog (const UString &a_root_path, IDebuggerSafePtr&
-            a_debugger) :
+            a_debugger, const UString &a_working_dir) :
     Dialog (a_root_path, "openfiledialog.glade", "dialog_open_source_file")
 {
-    m_priv.reset (new Priv (glade (), a_debugger)) ;
+    m_priv.reset (new Priv (glade (), a_debugger, a_working_dir)) ;
 }
 
 OpenFileDialog::~OpenFileDialog ()

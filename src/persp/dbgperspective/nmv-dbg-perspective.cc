@@ -3305,7 +3305,8 @@ DBGPerspective::load_file (const UString &a_path,
 void
 DBGPerspective::open_file ()
 {
-    OpenFileDialog dialog (plugin_path (), debugger ());
+    OpenFileDialog dialog (plugin_path (), debugger (), get_current_file_path ());
+
     //file_chooser.set_current_folder (m_priv->prog_cwd) ;
 
     int result = dialog.run () ;

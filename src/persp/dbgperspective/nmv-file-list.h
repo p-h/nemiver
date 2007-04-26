@@ -51,13 +51,14 @@ class NEMIVER_API FileList : public nemiver::common::Object {
 
 public:
 
-    FileList (IDebuggerSafePtr &a_debugger) ;
+    FileList (IDebuggerSafePtr &a_debugger, const UString &a_starting_path) ;
     virtual ~FileList () ;
     Gtk::Widget& widget () const ;
     sigc::signal<void, const UString&>& file_activated_signal () const ;
     sigc::signal<void>& files_selected_signal () const ;
     void get_filenames (list<UString> &a_filenames) const;
     void update_content () ;
+    void expand_to_filename (const UString &a_filename);
 
 };//end FileList
 

@@ -51,10 +51,11 @@ class FileListView : public Gtk::TreeView
 public:
     FileListView ();
     virtual ~FileListView ();
-    
+
     void set_files (const std::vector<UString> &a_files);
     void get_selected_filenames (list<UString> &a_filenames) const;
-    
+    void expand_to_filename (const UString &a_filename);
+
     sigc::signal<void,
                  const UString&> file_activated_signal;
     sigc::signal<void> files_selected_signal;
@@ -72,6 +73,8 @@ protected:
             return path_component == map.first;
         }
     };
+
+    Gtk::TreeModel::iterator find_filename_recursive(const Gtk::TreeModel::iterator &a_iter, const UString &a_filename);
 
     virtual void on_row_activated (const Gtk::TreeModel::Path& path,
                                    Gtk::TreeViewColumn* column);
@@ -319,16 +322,16 @@ void
 FileListView::expand_selected (bool recursive, bool collapse_if_expanded)
 {
     Glib::RefPtr<Gtk::TreeView::Selection> selection = get_selection ();
-    
+
     if (selection) {
         list<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
-        
+
         for (list<Gtk::TreeModel::Path>::iterator path_iter = paths.begin ();
              path_iter != paths.end ();
              ++path_iter) {
             Gtk::TreeModel::iterator tree_iter =
                 (m_tree_model->get_iter (*path_iter));
-            
+
             if (Glib::file_test (UString ((*tree_iter)[m_columns.path]),
                                  Glib::FILE_TEST_IS_DIR)) {
                 if ((row_expanded(*path_iter)) && collapse_if_expanded) {
@@ -341,15 +344,56 @@ FileListView::expand_selected (bool recursive, bool collapse_if_expanded)
     }
 }
 
+void
+FileListView::expand_to_filename (const UString &a_filename)
+{
+    for (Gtk::TreeModel::iterator tree_iter = m_tree_model->children ().begin ();
+            tree_iter != m_tree_model->children ().end (); ++tree_iter)
+    {
+        Gtk::TreeModel::iterator iter = find_filename_recursive (tree_iter, a_filename);
+        if (iter)
+        {
+            expand_to_path (Gtk::TreeModel::Path(iter));
+            break;
+        }
+    }
+}
+
+Gtk::TreeModel::iterator
+FileListView::find_filename_recursive(const Gtk::TreeModel::iterator &a_iter, const UString &a_filename)
+{
+    Gtk::TreeModel::iterator tree_iter;
+    // first check the iter we were passed
+    if ((*a_iter)[m_columns.path] == a_filename) {
+        return a_iter;
+    }
+    // then check all of its children
+    if (!a_iter->children ().empty ()) {
+        for (tree_iter = a_iter->children ().begin ();
+                tree_iter != a_iter->children ().end ();
+                ++tree_iter) {
+            Gtk::TreeModel::iterator child_iter = find_filename_recursive (tree_iter, a_filename);
+            if (child_iter) {
+                return child_iter;
+            }
+            // else continue on to the next child
+        }
+    }
+    // if we get to this point without having found it, return an invalid iter 
+    return Gtk::TreeModel::iterator();
+}
+
 struct FileList::Priv : public sigc::trackable {
 public:
     SafePtr<FileListView> tree_view ;
 
     Glib::RefPtr<Gtk::ActionGroup> file_list_action_group;
     IDebuggerSafePtr debugger;
+    UString start_path;
 
-    Priv (IDebuggerSafePtr &a_debugger) :
-        debugger (a_debugger)
+    Priv (IDebuggerSafePtr &a_debugger, const UString &a_starting_path) :
+        debugger (a_debugger),
+        start_path (a_starting_path)
     {
         build_tree_view () ;
         debugger->files_listed_signal ().connect(
@@ -363,24 +407,28 @@ public:
     }
 
     void on_files_listed_signal (const vector<UString> &a_files,
-                                 const UString &a_cooker)
+                                 const UString &a_cookie)
     {
         NEMIVER_TRY
 
-        if (a_cooker.empty ()) {}
+        if (a_cookie.empty ()) {}
 
         THROW_IF_FAIL (tree_view) ;
 
         tree_view->set_files (a_files) ;
+        // this signal should only be called once per dialog -- the first time
+        // it loads up the list of files from the debugger.  So it should be OK
+        // to expand to the 'starting path' in this handler
+        tree_view->expand_to_filename (start_path);
 
         NEMIVER_CATCH
     }
 
 };//end class FileList::Priv
 
-FileList::FileList (IDebuggerSafePtr &a_debugger)
+FileList::FileList (IDebuggerSafePtr &a_debugger, const UString &a_starting_path)
 {
-    m_priv.reset (new Priv (a_debugger));
+    m_priv.reset (new Priv (a_debugger, a_starting_path));
 }
 
 FileList::~FileList ()
@@ -425,6 +473,14 @@ FileList::get_filenames (list<UString> &a_filenames) const
 {
     THROW_IF_FAIL (m_priv);
     m_priv->tree_view->get_selected_filenames (a_filenames);
+}
+
+void
+FileList::expand_to_filename (const UString &a_filename)
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->tree_view);
+    m_priv->tree_view->expand_to_filename (a_filename);
 }
 
 }//end namespace nemiver

@@ -43,7 +43,7 @@ class OpenFileDialog : public Dialog {
     SafePtr<Priv> m_priv ;
 
 public:
-    OpenFileDialog (const UString &a_resource_root_path, IDebuggerSafePtr& a_debugger) ;
+    OpenFileDialog (const UString &a_resource_root_path, IDebuggerSafePtr& a_debugger, const UString &a_working_dir) ;
     virtual ~OpenFileDialog () ;
 
     void get_filenames (list<UString> &a_filenames) const ;

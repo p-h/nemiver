@@ -1,3 +1,15 @@
+2007-04-25 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* Fix for Bug #431073, to expand the file treeview to a sane default
+	location.
+	* src/persp/dbgperspective/nmv-file-list.cc,h:
+	* src/persp/dbgperspective/nmv-open-file-dialog.cc,h: add a construction
+	parameter which specifies the starting location for the OpenFileDialog.  The
+	list of files will be expanded automatically so that the starting location
+	is visible by default when the dialog is opened.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: pass the path of the
+	current source file as the starting path for the OpenFileDialog
+
 2007-04-24 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Allow multiple
