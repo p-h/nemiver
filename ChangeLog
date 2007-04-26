@@ -1,5 +1,12 @@
 2007-04-25 Jonathon Jongsma <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/openfiledialog.glade: don't specify the
+	'open' stock icon for the Open files dialog so that it uses the nemiver
+	application icon instead.  Otherwise it's not obvious which application the
+	dialog belongs to if you just look at the taskbar.
+
+2007-04-25 Jonathon Jongsma <jjongsma@gnome.org>
+
 	* Fix for Bug #431073, to expand the file treeview to a sane default
 	location.
 	* src/persp/dbgperspective/nmv-file-list.cc,h:
