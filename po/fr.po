@@ -289,7 +289,7 @@ msgstr "Le chemin de fichier est manquant pour le point d'arrêt « %i »"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1300
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
-msgstr "%s (path=« %s », pid=%i"
+msgstr "%s (path=« %s », pid=%i)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1403
 #, c-format
