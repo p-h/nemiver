@@ -1,3 +1,9 @@
+2007-04-28 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-variables-utils.cc: use the 'text' color from
+	the theme, no the 'fg' color.  In some themes these colors apparently are
+	different and the text can become difficult to read.
+
 2007-04-25 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/glade/openfiledialog.glade: don't specify the

@@ -375,7 +375,7 @@ update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
         LOG_DD ("remove highlight from variable") ;
         (*a_iter)[get_variable_columns ().is_highlighted]  = false ;
         (*a_iter)[get_variable_columns ().fg_color]  =
-            a_tree_view.get_style ()->get_fg (Gtk::STATE_NORMAL);
+            a_tree_view.get_style ()->get_text (Gtk::STATE_NORMAL);
     }
 
     (*a_iter)[get_variable_columns ().value] = a_var->value () ;
