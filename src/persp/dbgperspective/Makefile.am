@@ -24,8 +24,6 @@ pluginconfigdir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 plugin_LTLIBRARIES=libdbgperspectiveplugin.la
 plugindir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 sources= \
-nmv-source-editor.cc \
-nmv-source-editor.h \
 nmv-dialog.cc \
 nmv-dialog.h \
 nmv-run-program-dialog.cc \
@@ -66,6 +64,8 @@ nmv-set-breakpoint-dialog.cc \
 nmv-set-breakpoint-dialog.h \
 nmv-choose-overloads-dialog.cc \
 nmv-choose-overloads-dialog.h \
+nmv-remote-target-dialog.cc \
+nmv-remote-target-dialog.h \
 nmv-dbg-perspective.cc \
 nmv-dbg-perspective.h
 

@@ -15,7 +15,9 @@ nmv-spinner-tool-item.cc \
 nmv-popup-tip.cc \
 nmv-popup-tip.h \
 nmv-terminal.cc \
-nmv-terminal.h
+nmv-terminal.h \
+nmv-source-editor.cc \
+nmv-source-editor.h
 
 libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@
 
