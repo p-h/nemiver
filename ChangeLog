@@ -1,5 +1,12 @@
 2007-04-30 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/glade/Makefile.am,
+	  src/persp/dbgperspective/nmv-remote-target-dialog.cc,h:
+	  added a new RemoteTargetDialog to select a remote debugging server
+	  to connect to. It is not used yet.
+
+2007-04-30 Dodji Seketeli <dodji@gnome.org>
+
 	* configure.ac,src/persp/dbgperspective/Makefile.am,
 	  src/uicommon/Makefile.am:
 	  mv src/persp/dbgperspective/nmv-source-editor.cc,h to
