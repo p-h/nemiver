@@ -559,12 +559,6 @@ public:
 
     virtual void run_loop_iterations (int a_nb_iters) = 0;
 
-    /*
-    virtual void execute_command (const Command &a_command) = 0;
-
-    virtual bool queue_command (const Command &a_command) = 0;
-    */
-
     virtual bool busy () const = 0;
 
     virtual void load_program (const UString &a_prog_with_args,
@@ -580,7 +574,12 @@ public:
                                  const UString &a_core_file) = 0;
 
     virtual bool attach_to_target (unsigned int a_pid,
-                                    const UString &a_tty_path="") = 0;
+                                   const UString &a_tty_path="") = 0;
+
+    virtual bool attach_to_remote_target (const UString &a_host,
+                                          int a_port) = 0;
+
+    virtual bool attach_to_remote_target (const UString &a_serial_line) = 0;
 
     virtual void detach_from_target (const UString &a_cookie="") = 0;
 

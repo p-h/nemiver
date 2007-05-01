@@ -208,6 +208,10 @@ public:
     bool attach_to_target (unsigned int a_pid,
                            const UString &a_tty_path) ;
 
+    bool attach_to_remote_target (const UString &a_host, int a_port) ;
+
+    bool attach_to_remote_target (const UString &a_serial_line) ;
+
     void detach_from_target (const UString &a_cookie="") ;
 
     void add_env_variables (const map<UString, UString> &a_vars) ;
@@ -2015,6 +2019,21 @@ GDBEngine::attach_to_target (unsigned int a_pid,
     if (a_tty_path != "") {
         queue_command (Command ("tty " + a_tty_path)) ;
     }
+    return true ;
+}
+
+bool
+GDBEngine::attach_to_remote_target (const UString &a_host, int a_port)
+{
+    queue_command (Command ("-target-select remote " + a_host +
+                            ":" + UString::from_int (a_port))) ;
+    return true ;
+}
+
+bool
+GDBEngine::attach_to_remote_target (const UString &a_serial_line)
+{
+    queue_command (Command ("-target-select remote " + a_serial_line)) ;
     return true ;
 }
 
