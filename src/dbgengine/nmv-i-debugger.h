@@ -436,6 +436,8 @@ public:
                          const UString&/*command cookie*/>&
                                              command_done_signal () const=0;
 
+    virtual sigc::signal<void>& connected_to_server_signal () const=0 ;
+
     virtual sigc::signal<void>& detached_from_target_signal () const=0 ;
 
     virtual sigc::signal<void,

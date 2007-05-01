@@ -1,6 +1,19 @@
 2007-04-30 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	  Added an output handler to handle the connection to the gdbserver.
+	  Added IDebugger::connected_to_server_signal() to notify when
+	  connected to the remote debugging server.
+	  This makes support of connection to gdbserver work.
+	* src/persp/dbgperspective/menus/menus.xml,
+	  src/persp/dbgperspective/nmv-dbg-perspective.cc: added a
+	  "Connect to remote target" menu item. Popup a dialog to
+	  let the user choose the gdbserver to connect to.
+	  This entry adds a basic support of connection to gdbserver. woot.
+
+2007-04-30 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
 	  add an IDebugger::attach_to_remote_target() entry point.
 
 2007-04-30 Dodji Seketeli <dodji@gnome.org>

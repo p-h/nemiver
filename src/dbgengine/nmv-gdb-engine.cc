@@ -83,6 +83,8 @@ public:
     sigc::signal<void, const UString&, const UString&>&
                                         command_done_signal () const ;
 
+    sigc::signal<void>& connected_to_server_signal () const ;
+
     sigc::signal<void>& detached_from_target_signal () const ;
 
     sigc::signal<void, const map<int, IDebugger::BreakPoint>&, const UString&>&
@@ -379,11 +381,13 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, const UString&, const UString&>
                                                         command_done_signal ;
 
-    sigc::signal<void> detached_from_target_signal ;
+    mutable sigc::signal<void> connected_to_server_signal ;
+
+    mutable sigc::signal<void> detached_from_target_signal ;
 
     mutable sigc::signal<void,
-                        const map<int, IDebugger::BreakPoint>&,
-                        const UString&> breakpoints_set_signal;
+                         const map<int, IDebugger::BreakPoint>&,
+                         const UString&> breakpoints_set_signal;
 
     mutable sigc::signal<void,
                          const vector<OverloadsChoiceEntry>&,
@@ -1438,7 +1442,7 @@ struct OnRunningHandler : OutputHandler {
     bool can_handle (CommandAndOutput &a_in)
     {
         if (a_in.output ().has_result_record () &&
-                a_in.output ().result_record ().kind ()
+            a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::RUNNING) {
             return true ;
         }
@@ -1453,6 +1457,32 @@ struct OnRunningHandler : OutputHandler {
     }
 };//struct OnRunningHandler
 
+struct OnConnectedHandler : OutputHandler {
+    GDBEngine *m_engine ;
+
+    OnConnectedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record () &&
+            a_in.output ().result_record ().kind () ==
+              Output::ResultRecord::CONNECTED) {
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        if (a_in.has_command ()) {}
+        m_engine->set_state (IDebugger::READY) ;
+        m_engine->connected_to_server_signal ().emit () ;
+    }
+
+};//struct OnConnectedHandler
 struct OnFramesListedHandler : OutputHandler {
 
     GDBEngine *m_engine ;
@@ -2103,6 +2133,8 @@ GDBEngine::init_output_handlers ()
     m_priv->output_handler_list.add
                 (OutputHandlerSafePtr (new OnRunningHandler (this))) ;
     m_priv->output_handler_list.add
+                (OutputHandlerSafePtr (new OnConnectedHandler (this))) ;
+    m_priv->output_handler_list.add
                 (OutputHandlerSafePtr (new OnFramesListedHandler (this)));
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnFramesParamsListedHandler (this))) ;
@@ -2174,6 +2206,12 @@ sigc::signal<void, const UString&, const UString&>&
 GDBEngine::command_done_signal () const
 {
     return m_priv->command_done_signal ;
+}
+
+sigc::signal<void>&
+GDBEngine::connected_to_server_signal () const
+{
+    return m_priv->connected_to_server_signal ;
 }
 
 sigc::signal<void>&

@@ -56,6 +56,8 @@ struct RemoteTargetDialog::Priv {
     //*******************
     void on_radio_button_toggled_signal ()
     {
+        NEMIVER_TRY
+
         Gtk::RadioButton *radio =
             get_widget_from_glade<Gtk::RadioButton> (glade, "tcpradiobutton") ;
         Gtk::Widget *tcp_connection_container =
@@ -73,10 +75,14 @@ struct RemoteTargetDialog::Priv {
             tcp_connection_container->set_sensitive (false) ;
             serial_connection_container->set_sensitive (true) ;
         }
+
+        NEMIVER_CATCH
     }
 
     void on_selection_changed_signal ()
     {
+        NEMIVER_TRY
+
         Gtk::FileChooser *chooser =
             get_widget_from_glade<Gtk::FileChooser> (glade,
                                                      "filechooserbutton") ;
@@ -86,10 +92,14 @@ struct RemoteTargetDialog::Priv {
                 get_widget_from_glade<Gtk::Entry> (glade, "execfileentry") ;
             entry->set_text (file_name) ;
         }
+
+        NEMIVER_CATCH
     }
 
     void on_entry_changed_signal ()
     {
+        NEMIVER_TRY
+
         Gtk::Button *button =
             get_widget_from_glade<Gtk::Button> (glade, "okbutton") ;
         if (can_enable_ok_button ()) {
@@ -97,6 +107,8 @@ struct RemoteTargetDialog::Priv {
         } else {
             button->set_sensitive (false) ;
         }
+
+        NEMIVER_CATCH
     }
 
     //*******************
@@ -118,10 +130,12 @@ struct RemoteTargetDialog::Priv {
         radio->signal_toggled ().connect (sigc::mem_fun
                 (*this, &Priv::on_radio_button_toggled_signal)) ;
         radio->set_active (true) ;
+        on_radio_button_toggled_signal ();//it does not get called otherwise
 
         Gtk::FileChooser *chooser =
             get_widget_from_glade<Gtk::FileChooser> (glade,
                                                      "filechooserbutton") ;
+        chooser->set_show_hidden (true) ;
         chooser->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_selection_changed_signal)) ;
 
@@ -151,7 +165,7 @@ struct RemoteTargetDialog::Priv {
     bool can_enable_ok_button () const
     {
         Gtk::Entry *entry =
-            get_widget_from_glade<Gtk::Entry> (glade, "exefileentry") ;
+            get_widget_from_glade<Gtk::Entry> (glade, "execfileentry") ;
         if (entry->get_text ().empty ())
             return false ;
         if (connection_type == RemoteTargetDialog::TCP_CONNECTION_TYPE) {

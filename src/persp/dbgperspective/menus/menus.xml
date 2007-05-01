@@ -7,14 +7,20 @@
                       name="ExecuteProgramMenuItem"/>
             <menuitem action="LoadCoreMenuItemAction"
                       name="LoadCoreMenuItem"/>
+            <separator/>
             <menuitem action="AttachToProgramMenuItemAction"
                       name="AttachToProgramMenuItem"/>
+            <menuitem action="ConnectToRemoteTargetMenuItemAction"
+                      name="ConnectToRemoteTargetMenuItem"/>
+            <separator/>
             <menuitem action="DetachFromProgramMenuItemAction"
                       name="DetachFromProgramMenuItem"/>
+            <separator/>
             <menuitem action="SavedSessionsMenuItemAction"
                       name="SavedSessionsMenuItem" />
             <menuitem action="SaveSessionMenuItemAction"
                       name="SaveSessionMenuItem" />
+            <separator/>
             <menuitem action="OpenMenuItemAction"
                       name="OpenMenuItem"/>
             <menuitem action="ReloadSourceMenuItemAction"

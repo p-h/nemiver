@@ -62,6 +62,7 @@
 #include "nmv-find-text-dialog.h"
 #include "nmv-set-breakpoint-dialog.h"
 #include "nmv-choose-overloads-dialog.h"
+#include "nmv-remote-target-dialog.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -158,6 +159,7 @@ private:
     void on_execute_program_action () ;
     void on_load_core_file_action () ;
     void on_attach_to_program_action () ;
+    void on_connect_to_remote_target_action () ;
     void on_detach_from_program_action () ;
     void on_choose_a_saved_session_action () ;
     void on_current_session_properties_action () ;
@@ -176,8 +178,10 @@ private:
     void on_show_commands_action () ;
     void on_show_errors_action () ;
     void on_show_target_output_action () ;
-    void on_breakpoint_delete_action (const IDebugger::BreakPoint& a_breakpoint) ;
-    void on_breakpoint_go_to_source_action (const IDebugger::BreakPoint& a_breakpoint) ;
+    void on_breakpoint_delete_action
+                                (const IDebugger::BreakPoint& a_breakpoint) ;
+    void on_breakpoint_go_to_source_action
+                                (const IDebugger::BreakPoint& a_breakpoint) ;
     void on_thread_list_thread_selected_signal (int a_tid) ;
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num) ;
@@ -190,9 +194,10 @@ private:
 
     void on_going_to_run_target_signal () ;
 
-    void on_insert_in_command_view_signal (const Gtk::TextBuffer::iterator &a_iter,
-                                           const Glib::ustring &a_text,
-                                           int a_dont_know) ;
+    void on_insert_in_command_view_signal
+                                    (const Gtk::TextBuffer::iterator &a_iter,
+                                     const Glib::ustring &a_text,
+                                     int a_dont_know) ;
 
     void on_source_view_markers_region_clicked_signal (int a_line) ;
 
@@ -214,6 +219,8 @@ private:
 
     void on_conf_key_changed_signal (const UString &a_key,
                                      IConfMgr::Value &a_value) ;
+
+    void on_debugger_connected_to_remote_target_signal () ;
 
     void on_debugger_detached_from_target_signal () ;
 
@@ -367,6 +374,10 @@ public:
     void attach_to_program () ;
     void attach_to_program (unsigned int a_pid,
                             bool a_close_opened_files=false) ;
+    void connect_to_remote_target () ;
+    void connect_to_remote_target (const UString &a_server_address,
+                                   int a_server_port) ;
+    void connect_to_remote_target (const UString &a_serial_line) ;
     void detach_from_program () ;
     void load_core_file () ;
     void load_core_file (const UString &a_prog_file,
@@ -837,6 +848,18 @@ DBGPerspective::on_attach_to_program_action ()
     NEMIVER_TRY
 
     attach_to_program () ;
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_connect_to_remote_target_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    NEMIVER_TRY
+
+    connect_to_remote_target () ;
 
     NEMIVER_CATCH
 }
@@ -1444,10 +1467,24 @@ DBGPerspective::on_debugger_got_target_info_signal (int a_pid,
 }
 
 void
+DBGPerspective::on_debugger_connected_to_remote_target_signal ()
+{
+    NEMIVER_TRY
+
+    ui_utils::display_info (_("Connected to remote target !")) ;
+
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_debugger_detached_from_target_signal ()
 {
+    NEMIVER_TRY
+
     clear_status_notebook () ;
     workbench ().set_title_extension ("");
+
+    NEMIVER_CATCH
 }
 
 void
@@ -2108,6 +2145,16 @@ DBGPerspective::init_actions ()
             ""
         },
         {
+            "ConnectToRemoteTargetMenuItemAction",
+            nil_stock_id,
+            _("_Connect to remote target..."),
+            _("Connect to a debugging server to debug a remote target"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_connect_to_remote_target_action),
+            ActionEntry::DEFAULT,
+            ""
+        },
+        {
             "SavedSessionsMenuItemAction",
             nil_stock_id,
             _("Resume Sa_ved Session..."),
@@ -2391,9 +2438,12 @@ DBGPerspective::init_signals ()
 void
 DBGPerspective::init_debugger_signals ()
 {
+    debugger ()->connected_to_server_signal ().connect (sigc::mem_fun
+            (*this,
+             &DBGPerspective::on_debugger_connected_to_remote_target_signal)) ;
+
     debugger ()->detached_from_target_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_detached_from_target_signal)) ;
-
     debugger ()->console_message_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_console_message_signal)) ;
 
@@ -2937,13 +2987,15 @@ DBGPerspective::init_conf_mgr ()
         conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs) ;
         LOG_DD ("got source dirs '" << dirs << "' from conf mgr") ;
         m_priv->source_dirs = dirs.split (":") ;
-        LOG_DD ("that makes '" <<(int)m_priv->source_dirs.size()<< "' dir paths");
+        LOG_DD ("that makes '" <<(int)m_priv->source_dirs.size()
+                << "' dir paths");
 
         conf_mgr.get_key_value (CONF_KEY_SHOW_DBG_ERROR_DIALOGS,
                                 m_priv->show_dbg_errors);
 
         conf_mgr.value_changed_signal ().connect
-            (sigc::mem_fun (*this, &DBGPerspective::on_conf_key_changed_signal)) ;
+            (sigc::mem_fun (*this,
+                            &DBGPerspective::on_conf_key_changed_signal)) ;
     }
 }
 
@@ -3785,8 +3837,54 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
 }
 
 void
+DBGPerspective::connect_to_remote_target ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    RemoteTargetDialog dialog (plugin_path ()) ;
+
+    int result = dialog.run () ;
+
+    if (result != Gtk::RESPONSE_OK)
+        return ;
+
+    debugger ()->load_program (dialog.get_executable_path (), ".") ;
+
+    if (dialog.get_connection_type () ==
+            RemoteTargetDialog::TCP_CONNECTION_TYPE) {
+        connect_to_remote_target (dialog.get_server_address (),
+                                  dialog.get_server_port ()) ;
+    } else if (dialog.get_connection_type () ==
+                RemoteTargetDialog::SERIAL_CONNECTION_TYPE) {
+        connect_to_remote_target (dialog.get_serial_port_name ()) ;
+    }
+}
+
+void
+DBGPerspective::connect_to_remote_target (const UString &a_server_address,
+                                          int a_server_port)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+    THROW_IF_FAIL (debugger ()) ;
+
+    debugger ()->attach_to_remote_target (a_server_address, a_server_port) ;
+
+}
+
+void
+DBGPerspective::connect_to_remote_target (const UString &a_serial_line)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    THROW_IF_FAIL (debugger ()) ;
+    debugger ()->attach_to_remote_target (a_serial_line) ;
+}
+
+void
 DBGPerspective::detach_from_program ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
     THROW_IF_FAIL (debugger ()) ;
     debugger ()->detach_from_target () ;
 }
