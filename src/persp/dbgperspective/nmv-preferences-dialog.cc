@@ -62,6 +62,9 @@ public:
     Gtk::TreeModel::iterator cur_dir_iter ;
     Gtk::Button *remove_dir_button ;
     //source editor properties widgets
+    Gtk::CheckButton *system_font_check_button ;
+    Gtk::FontButton *custom_font_button ;
+    Gtk::HBox *custom_font_box ;
     Gtk::CheckButton *show_lines_check_button ;
     Gtk::CheckButton *highlight_source_check_button ;
     Glib::RefPtr<Gnome::Glade::Xml> glade ;
@@ -71,6 +74,9 @@ public:
         workbench (a_workbench),
         tree_view (0),
         remove_dir_button (0),
+        system_font_check_button (0),
+        custom_font_button (0),
+        custom_font_box (0),
         show_lines_check_button (0),
         highlight_source_check_button (0),
         glade (a_glade)
@@ -137,6 +143,17 @@ public:
         update_highlight_source_keys () ;
     }
 
+    void on_system_font_toggled_signal ()
+    {
+        update_system_font_key ();
+        custom_font_box->set_sensitive (!system_font_check_button->get_active ());
+    }
+
+    void on_custom_font_set_signal ()
+    {
+        update_custom_font_key ();
+    }
+
     void init ()
     {
 
@@ -183,6 +200,27 @@ public:
         highlight_source_check_button->signal_toggled ().connect (sigc::mem_fun
             (*this,
              &PreferencesDialog::Priv::on_highlight_source_toggled_signal)) ;
+
+        system_font_check_button =
+            ui_utils::get_widget_from_glade<Gtk::CheckButton>
+            (glade, "systemfontcheckbutton") ;
+        THROW_IF_FAIL (system_font_check_button) ;
+        system_font_check_button->signal_toggled ().connect (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_system_font_toggled_signal)) ;
+
+        custom_font_button =
+            ui_utils::get_widget_from_glade<Gtk::FontButton>
+            (glade, "customfontfontbutton") ;
+        THROW_IF_FAIL (custom_font_button) ;
+        custom_font_button->signal_font_set ().connect (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_custom_font_set_signal)) ;
+
+        custom_font_box =
+            ui_utils::get_widget_from_glade<Gtk::HBox>
+            (glade, "customfonthbox") ;
+        THROW_IF_FAIL (custom_font_box) ;
     }
 
     void collect_source_dirs ()
@@ -262,15 +300,36 @@ public:
         set_source_dirs (paths) ;
     }
 
+    void update_system_font_key ()
+    {
+        THROW_IF_FAIL (system_font_check_button) ;
+        bool is_on = system_font_check_button->get_active () ;
+        conf_manager ().set_key_value
+                    ("/apps/nemiver/dbgperspective/use-system-font",
+                     is_on) ;
+    }
+
+    void update_custom_font_key ()
+    {
+        THROW_IF_FAIL (custom_font_button) ;
+        UString font_name = custom_font_button->get_font_name () ;
+        conf_manager ().set_key_value
+                    ("/apps/nemiver/dbgperspective/custom-font-name",
+                     font_name) ;
+    }
+
     void update_widget_from_editor_keys ()
     {
         THROW_IF_FAIL (show_lines_check_button) ;
         THROW_IF_FAIL (highlight_source_check_button) ;
+        THROW_IF_FAIL (system_font_check_button) ;
+        THROW_IF_FAIL (custom_font_button) ;
+        THROW_IF_FAIL (custom_font_box) ;
 
         bool is_on=true;
         if (!conf_manager ().get_key_value
-                    ("/apps/nemiver/dbgperspective/show-source-line-numbers",
-                     is_on)) {
+                ("/apps/nemiver/dbgperspective/show-source-line-numbers",
+                 is_on)) {
             LOG_ERROR ("failed to get gconf key") ;
         } else {
             show_lines_check_button->set_active (is_on) ;
@@ -278,11 +337,27 @@ public:
 
         is_on=true ;
         if (!conf_manager ().get_key_value
-                    ("/apps/nemiver/dbgperspective/highlight-source-code",
-                     is_on)) {
+                ("/apps/nemiver/dbgperspective/highlight-source-code",
+                 is_on)) {
             LOG_ERROR ("failed to get gconf key") ;
         } else {
             highlight_source_check_button->set_active (is_on) ;
+        }
+
+        is_on = true;
+        if (!conf_manager ().get_key_value
+                ("/apps/nemiver/dbgperspective/use-system-font", is_on)) {
+            LOG_ERROR ("failed to get gconf key") ;
+        } else {
+            system_font_check_button->set_active (is_on) ;
+            custom_font_box->set_sensitive (!is_on);
+        }
+        UString font_name;
+        if (!conf_manager ().get_key_value
+                ("/apps/nemiver/dbgperspective/custom-font-name", font_name)) {
+            LOG_ERROR ("failed to get gconf key") ;
+        } else {
+            custom_font_button->set_font_name (font_name);
         }
     }
 

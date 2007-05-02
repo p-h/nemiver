@@ -1,3 +1,14 @@
+2007-05-01 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/glade/preferencesdialog.glade: added preference
+	for setting a custom font for the source editor widget
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc: Add support for
+	setting custom font
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: watch for changes to font
+	settings and update source editors as necessary
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas: add
+	configuration settings for custom font
+
 2007-04-30 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:

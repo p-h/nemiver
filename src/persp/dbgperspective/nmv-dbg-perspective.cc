@@ -33,6 +33,7 @@
 #include <libgnomevfs/gnome-vfs-utils.h>
 #include <gtksourceviewmm/init.h>
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
+#include <pangomm/fontdescription.h>
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
 #include "common/nmv-safe-ptr-utils.h"
@@ -96,12 +97,17 @@ static const UString CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
                 "/apps/nemiver/dbgperspective/show-source-line-numbers" ;
 static const UString CONF_KEY_HIGHLIGHT_SOURCE_CODE =
                 "/apps/nemiver/dbgperspective/highlight-source-code" ;
+static const UString CONF_KEY_USE_SYSTEM_FONT =
+                "/apps/nemiver/dbgperspective/use-system-font" ;
+static const UString CONF_KEY_CUSTOM_FONT_NAME=
+                "/apps/nemiver/dbgperspective/custom-font-name" ;
 static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-width" ;
 static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-height" ;
 static const UString CONF_KEY_STATUS_PANE_LOCATION=
                 "/apps/nemiver/dbgperspective/status-pane-location" ;
+
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
 const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
@@ -638,6 +644,10 @@ struct DBGPerspective::Priv {
     UString last_command_text ;
     vector<UString> source_dirs ;
     bool show_dbg_errors ;
+    bool use_system_font ;
+    bool show_line_numbers ;
+    bool enable_syntax_highlight ;
+    UString custom_font_name ;
     sigc::connection timeout_source_connection ;
     //**************************************
     //<detect mouse immobility > N seconds
@@ -686,6 +696,9 @@ struct DBGPerspective::Priv {
         statuses_notebook (NULL),
         current_page_num (0),
         show_dbg_errors (false),
+        use_system_font (true),
+        show_line_numbers (true),
+        enable_syntax_highlight (true),
         mouse_in_source_editor_x (0),
         mouse_in_source_editor_y (0),
         in_show_var_value_at_pos_transaction (false),
@@ -1440,6 +1453,39 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
             if (it->second && it->second->source_view ().get_buffer ()) {
                 it->second->source_view ().get_source_buffer ()->set_highlight
                                                 (boost::get<bool> (a_value)) ;
+            }
+        }
+    } else if (a_key == CONF_KEY_USE_SYSTEM_FONT) {
+        m_priv->use_system_font = boost::get<bool> (a_value);
+        UString font_name ;
+        if (m_priv->use_system_font) {
+            // FIXME: get GNOME default fixed-width font
+            // /desktop/gnome/interface/monospace_font_name (?)
+            font_name = "monospace";
+        } else {
+            font_name = m_priv->custom_font_name;
+        }
+        Pango::FontDescription font_desc (font_name);
+        map<int, SourceEditor*>::iterator it ;
+        for (it = m_priv->pagenum_2_source_editor_map.begin () ;
+                it != m_priv->pagenum_2_source_editor_map.end ();
+                ++it) {
+            if (it->second) {
+                it->second->source_view ().modify_font (font_desc);
+            }
+        }
+    } else if (a_key == CONF_KEY_CUSTOM_FONT_NAME) {
+        m_priv->custom_font_name = boost::get<UString> (a_value);
+        if (!m_priv->use_system_font) {
+            map<int, SourceEditor*>::iterator it ;
+            for (it = m_priv->pagenum_2_source_editor_map.begin () ;
+                    it != m_priv->pagenum_2_source_editor_map.end ();
+                    ++it) {
+                if (it->second) {
+                    Pango::FontDescription font_desc (
+                            m_priv->custom_font_name);
+                    it->second->source_view ().modify_font (font_desc);
+                }
             }
         }
     }
@@ -2979,10 +3025,9 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
 void
 DBGPerspective::init_conf_mgr ()
 {
+    THROW_IF_FAIL (m_priv->workbench) ;
+    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
     if (m_priv->source_dirs.empty ()) {
-        THROW_IF_FAIL (m_priv->workbench) ;
-        IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
-
         UString dirs ;
         conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs) ;
         LOG_DD ("got source dirs '" << dirs << "' from conf mgr") ;
@@ -2997,6 +3042,14 @@ DBGPerspective::init_conf_mgr ()
             (sigc::mem_fun (*this,
                             &DBGPerspective::on_conf_key_changed_signal)) ;
     }
+    conf_mgr.get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE,
+                               m_priv->enable_syntax_highlight) ;
+    conf_mgr.get_key_value (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS,
+                               m_priv->show_line_numbers) ;
+    conf_mgr.get_key_value (CONF_KEY_USE_SYSTEM_FONT,
+                            m_priv->use_system_font);
+    conf_mgr.get_key_value (CONF_KEY_CUSTOM_FONT_NAME,
+                            m_priv->custom_font_name);
 }
 
 int
@@ -3344,9 +3397,7 @@ DBGPerspective::load_file (const UString &a_path,
     }
     file.close () ;
 
-    bool do_highlight=true;
-    conf_mgr ().get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE, do_highlight) ;
-    source_buffer->set_highlight (do_highlight) ;
+    source_buffer->set_highlight (m_priv->enable_syntax_highlight) ;
 
     a_source_buffer = source_buffer ;
     NEMIVER_CATCH_AND_RETURN (false) ;
@@ -3395,10 +3446,11 @@ DBGPerspective::open_file (const UString &a_path,
     RETURN_VAL_IF_FAIL (load_file (a_path, source_buffer), false) ;
     SourceEditor *source_editor (Gtk::manage
                         (new SourceEditor (plugin_path (), source_buffer)));
-    bool show_line_numbers=true ;
-    conf_mgr ().get_key_value (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS,
-                               show_line_numbers) ;
-    source_editor->source_view ().set_show_line_numbers (show_line_numbers) ;
+    source_editor->source_view ().set_show_line_numbers (m_priv->show_line_numbers) ;
+    if (!m_priv->use_system_font) {
+        Pango::FontDescription font_desc(m_priv->custom_font_name);
+        source_editor->source_view ().modify_font (font_desc) ;
+    }
     source_editor->set_path (a_path) ;
     source_editor->marker_region_got_clicked_signal ().connect
         (sigc::mem_fun

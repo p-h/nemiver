@@ -46,6 +46,28 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/use-system-font</key>
+      <applyto>/apps/nemiver/dbgperspective/use-system-font</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Whether to use the system font for the source editor</short>
+        <long>Whether to use the system font for the source editor</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/custom-font-name</key>
+      <applyto>/apps/nemiver/dbgperspective/custom-font-name</applyto>
+      <owner>nemiver</owner>
+      <type>string</type>
+      <default>monospace 12</default>
+      <locale name="C">
+        <short>The custom font to use if we're not using the system font</short>
+        <long>The custom font to use for the source editor if we're not using the system font</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/status-widget-minimum-width</key>
       <applyto>/apps/nemiver/dbgperspective/status-widget-minimum-width</applyto>
       <owner>nemiver</owner>
