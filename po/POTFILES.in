@@ -12,6 +12,10 @@ src/persp/dbgperspective/glade/proclistdialog.glade
 src/persp/dbgperspective/glade/runprogramdialog.glade
 src/persp/dbgperspective/glade/savedsessionsdialog.glade
 src/persp/dbgperspective/glade/varinspectordialog.glade
+src/persp/dbgperspective/glade/chooseoverloadsdialog.glade
+src/persp/dbgperspective/glade/remotetargetdialog.glade
+src/persp/dbgperspective/glade/setbreakpointdialog.glade
+src/persp/dbgperspective/nmv-choose-overloads-dialog.cc
 src/persp/dbgperspective/nmv-breakpoints-view.cc
 src/persp/dbgperspective/nmv-call-stack.cc
 src/persp/dbgperspective/nmv-dbg-perspective.cc
@@ -22,7 +26,7 @@ src/persp/dbgperspective/nmv-preferences-dialog.cc
 src/persp/dbgperspective/nmv-proc-list-dialog.cc
 src/persp/dbgperspective/nmv-run-program-dialog.cc
 src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
-src/persp/dbgperspective/nmv-source-editor.cc
+src/uicommon/nmv-source-editor.cc
 src/persp/dbgperspective/nmv-thread-list.cc
 src/persp/dbgperspective/nmv-var-inspector.cc
 src/persp/dbgperspective/nmv-var-inspector-dialog.cc

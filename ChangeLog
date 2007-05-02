@@ -1,5 +1,9 @@
 2007-05-01 Jonathon Jongsma <jjongsma@gnome.org>
 
+	* po/POTFILES.in: Add some missing files so that they get translated
+
+2007-05-01 Jonathon Jongsma <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/glade/preferencesdialog.glade: minor re-wording
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Get the system monospace
 	font from gconf and use that instead of setting it to a generic 'monospace'
