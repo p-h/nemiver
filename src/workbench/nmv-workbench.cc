@@ -491,6 +491,7 @@ Workbench::get_configuration_manager ()
         m_priv->conf_mgr = dynmod_manager->load_iface <IConfMgr> ("gconfmgr",
                                                                   "IConfMgr") ;
         m_priv->conf_mgr->set_key_dir_to_notify ("/apps/nemiver") ;
+        m_priv->conf_mgr->set_key_dir_to_notify ("/desktop/gnome/interface") ;
     }
     THROW_IF_FAIL (m_priv->conf_mgr) ;
     return *m_priv->conf_mgr ;

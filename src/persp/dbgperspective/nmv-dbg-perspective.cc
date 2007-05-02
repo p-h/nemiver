@@ -101,6 +101,8 @@ static const UString CONF_KEY_USE_SYSTEM_FONT =
                 "/apps/nemiver/dbgperspective/use-system-font" ;
 static const UString CONF_KEY_CUSTOM_FONT_NAME=
                 "/apps/nemiver/dbgperspective/custom-font-name" ;
+static const UString CONF_KEY_SYSTEM_FONT_NAME=
+                "/desktop/gnome/interface/monospace_font_name" ;
 static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-width" ;
 static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
@@ -648,6 +650,7 @@ struct DBGPerspective::Priv {
     bool show_line_numbers ;
     bool enable_syntax_highlight ;
     UString custom_font_name ;
+    UString system_font_name ;
     sigc::connection timeout_source_connection ;
     //**************************************
     //<detect mouse immobility > N seconds
@@ -705,6 +708,21 @@ struct DBGPerspective::Priv {
         var_popup_tip_x (0),
         var_popup_tip_y (0)
     {}
+
+    void
+    modify_source_editor_fonts (const UString &a_font_name)
+    {
+        Pango::FontDescription font_desc (a_font_name);
+        map<int, SourceEditor*>::iterator it ;
+        for (it = pagenum_2_source_editor_map.begin () ;
+                it != pagenum_2_source_editor_map.end ();
+                ++it) {
+            if (it->second) {
+                it->second->source_view ().modify_font (font_desc);
+            }
+        }
+    }
+
 };//end struct DBGPerspective::Priv
 
 enum ViewsIndex
@@ -1457,36 +1475,23 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         }
     } else if (a_key == CONF_KEY_USE_SYSTEM_FONT) {
         m_priv->use_system_font = boost::get<bool> (a_value);
-        UString font_name ;
+        UString font_name;
         if (m_priv->use_system_font) {
-            // FIXME: get GNOME default fixed-width font
-            // /desktop/gnome/interface/monospace_font_name (?)
-            font_name = "monospace";
+            font_name = m_priv->system_font_name;
         } else {
             font_name = m_priv->custom_font_name;
         }
-        Pango::FontDescription font_desc (font_name);
-        map<int, SourceEditor*>::iterator it ;
-        for (it = m_priv->pagenum_2_source_editor_map.begin () ;
-                it != m_priv->pagenum_2_source_editor_map.end ();
-                ++it) {
-            if (it->second) {
-                it->second->source_view ().modify_font (font_desc);
-            }
-        }
+        m_priv->modify_source_editor_fonts (font_name);
     } else if (a_key == CONF_KEY_CUSTOM_FONT_NAME) {
         m_priv->custom_font_name = boost::get<UString> (a_value);
         if (!m_priv->use_system_font) {
-            map<int, SourceEditor*>::iterator it ;
-            for (it = m_priv->pagenum_2_source_editor_map.begin () ;
-                    it != m_priv->pagenum_2_source_editor_map.end ();
-                    ++it) {
-                if (it->second) {
-                    Pango::FontDescription font_desc (
-                            m_priv->custom_font_name);
-                    it->second->source_view ().modify_font (font_desc);
-                }
-            }
+            m_priv->modify_source_editor_fonts (m_priv->custom_font_name);
+        }
+    } else if (a_key == CONF_KEY_SYSTEM_FONT_NAME) {
+        // keep a cached copy of the system fixed-width font
+        m_priv->system_font_name = boost::get<UString> (a_value);
+        if (m_priv->use_system_font) {
+            m_priv->modify_source_editor_fonts (m_priv->system_font_name);
         }
     }
     NEMIVER_CATCH
@@ -3050,6 +3055,8 @@ DBGPerspective::init_conf_mgr ()
                             m_priv->use_system_font);
     conf_mgr.get_key_value (CONF_KEY_CUSTOM_FONT_NAME,
                             m_priv->custom_font_name);
+    conf_mgr.get_key_value (CONF_KEY_SYSTEM_FONT_NAME,
+                            m_priv->system_font_name);
 }
 
 int
@@ -3447,7 +3454,10 @@ DBGPerspective::open_file (const UString &a_path,
     SourceEditor *source_editor (Gtk::manage
                         (new SourceEditor (plugin_path (), source_buffer)));
     source_editor->source_view ().set_show_line_numbers (m_priv->show_line_numbers) ;
-    if (!m_priv->use_system_font) {
+    if (m_priv->use_system_font) {
+        Pango::FontDescription font_desc(m_priv->system_font_name);
+        source_editor->source_view ().modify_font (font_desc) ;
+    } else {
         Pango::FontDescription font_desc(m_priv->custom_font_name);
         source_editor->source_view ().modify_font (font_desc) ;
     }
