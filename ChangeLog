@@ -1,5 +1,14 @@
 2007-05-02 Jonathon Jongsma <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/remotetargetdialog.glade: use only
+	FileChooserButton instead of a FileChooserButton and a Gtk::Entry widget.
+	This make it more consistent with the 'execute' dialog and the 'load core'
+	dialog
+	* src/persp/dbgperspective/nmv-remote-target-dialog.cc: update due to
+	changes in the glade file
+
+2007-05-02 Jonathon Jongsma <jjongsma@gnome.org>
+
 	* src/confmgr/nmv-i-conf-mgr.h: add new API: add_key_to_notify() so that we
 	can 'subscribe' to be notified when individual keys are changed, not just
 	whole key directories.

@@ -83,23 +83,6 @@ struct RemoteTargetDialog::Priv {
     {
         NEMIVER_TRY
 
-        Gtk::FileChooser *chooser =
-            get_widget_from_glade<Gtk::FileChooser> (glade,
-                                                     "filechooserbutton") ;
-        UString file_name = chooser->get_filename () ;
-        if (!file_name.empty ()) {
-            Gtk::Entry * entry =
-                get_widget_from_glade<Gtk::Entry> (glade, "execfileentry") ;
-            entry->set_text (file_name) ;
-        }
-
-        NEMIVER_CATCH
-    }
-
-    void on_entry_changed_signal ()
-    {
-        NEMIVER_TRY
-
         Gtk::Button *button =
             get_widget_from_glade<Gtk::Button> (glade, "okbutton") ;
         if (can_enable_ok_button ()) {
@@ -134,27 +117,22 @@ struct RemoteTargetDialog::Priv {
 
         Gtk::FileChooser *chooser =
             get_widget_from_glade<Gtk::FileChooser> (glade,
-                                                     "filechooserbutton") ;
+                                                     "execfilechooserbutton") ;
         chooser->set_show_hidden (true) ;
         chooser->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_selection_changed_signal)) ;
 
-        Gtk::Entry *entry =
-            get_widget_from_glade<Gtk::Entry> (glade, "execfileentry") ;
+        Gtk::Entry* entry = get_widget_from_glade<Gtk::Entry> (glade, "addressentry") ;
         entry->signal_changed ().connect (sigc::mem_fun
-                                    (*this, &Priv::on_entry_changed_signal)) ;
-
-        entry = get_widget_from_glade<Gtk::Entry> (glade, "addressentry") ;
-        entry->signal_changed ().connect (sigc::mem_fun
-                                    (*this, &Priv::on_entry_changed_signal)) ;
+                                    (*this, &Priv::on_selection_changed_signal)) ;
 
         entry = get_widget_from_glade<Gtk::Entry> (glade, "portentry") ;
         entry->signal_changed ().connect (sigc::mem_fun
-                                    (*this, &Priv::on_entry_changed_signal)) ;
+                                    (*this, &Priv::on_selection_changed_signal)) ;
 
         entry = get_widget_from_glade<Gtk::Entry> (glade, "serialentry") ;
         entry->signal_changed ().connect (sigc::mem_fun
-                                    (*this, &Priv::on_entry_changed_signal)) ;
+                                    (*this, &Priv::on_selection_changed_signal)) ;
 
 
         Gtk::Button *button =
@@ -164,9 +142,10 @@ struct RemoteTargetDialog::Priv {
 
     bool can_enable_ok_button () const
     {
-        Gtk::Entry *entry =
-            get_widget_from_glade<Gtk::Entry> (glade, "execfileentry") ;
-        if (entry->get_text ().empty ())
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_glade<Gtk::FileChooserButton> (glade, "execfilechooserbutton") ;
+        Gtk::Entry *entry = 0;
+        if (chooser->get_filename ().empty ())
             return false ;
         if (connection_type == RemoteTargetDialog::TCP_CONNECTION_TYPE) {
             entry = get_widget_from_glade<Gtk::Entry> (glade, "portentry") ;
@@ -186,17 +165,17 @@ struct RemoteTargetDialog::Priv {
 
     const UString& get_executable_path () const
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry>(glade,
-                                                              "execfileentry");
-        executable_path = entry->get_text () ;
+        Gtk::FileChooserButton *chooser = get_widget_from_glade<Gtk::FileChooserButton>(glade,
+                                                              "execfilechooserbutton");
+        executable_path = chooser->get_filename () ;
         return executable_path ;
     }
 
     void set_executable_path (const UString &a_path)
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry>(glade,
-                                                              "execfileentry");
-        entry->set_text (a_path) ;
+        Gtk::FileChooserButton *chooser = get_widget_from_glade<Gtk::FileChooserButton>(glade,
+                                                              "execfilechooserbutton");
+        chooser->set_filename (a_path) ;
     }
 
     void set_connection_type (RemoteTargetDialog::ConnectionType &a_type)
