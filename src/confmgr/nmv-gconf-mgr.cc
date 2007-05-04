@@ -45,6 +45,7 @@ public:
     virtual ~GConfMgr () ;
 
     void set_key_dir_to_notify (const UString &a_key_dir) ;
+    void add_key_to_notify (const UString &a_key);
 
     bool get_key_value (const UString &a_key, UString &a_value) ;
     void set_key_value (const UString &a_key, const UString &a_key) ;
@@ -116,6 +117,23 @@ client_notify_func (GConfClient *a_client,
 }
 
 void
+client_notify_add_func (GConfClient *a_client,
+                        guint a_cnxn_id,
+                        GConfEntry *a_entry,
+                        GConfMgr *a_conf_mgr)
+{
+    THROW_IF_FAIL (a_client) ;
+    THROW_IF_FAIL (a_entry) ;
+    THROW_IF_FAIL (a_conf_mgr) ;
+    if (a_cnxn_id) {}
+
+    client_notify_func (a_client,
+                        a_entry->key,
+                        a_entry->value,
+                        a_conf_mgr);
+}
+
+void
 GConfMgr::set_key_dir_to_notify (const UString &a_key_dir)
 {
     THROW_IF_FAIL (m_gconf_client) ;
@@ -127,6 +145,22 @@ GConfMgr::set_key_dir_to_notify (const UString &a_key_dir)
     GErrorSafePtr error (err) ;
     THROW_IF_FAIL2 (!error, error->message) ;
     LOG_DD ("watching key for notification: '" << a_key_dir << "'") ;
+}
+
+void
+GConfMgr::add_key_to_notify (const UString &a_key)
+{
+    THROW_IF_FAIL (m_gconf_client) ;
+    GError *err=0;
+    gconf_client_notify_add (m_gconf_client,
+                             a_key.c_str (),
+                             (GConfClientNotifyFunc) client_notify_add_func,
+                             this,
+                             NULL,
+                             &err) ;
+    GErrorSafePtr error (err) ;
+    THROW_IF_FAIL2 (!error, error->message) ;
+    LOG_DD ("watching key for notification: '" << a_key << "'") ;
 }
 
 GConfMgr::GConfMgr (DynamicModule *a_dynmod) :

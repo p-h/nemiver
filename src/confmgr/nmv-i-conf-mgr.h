@@ -60,6 +60,7 @@ public:
     virtual ~IConfMgr () {}
 
     virtual void set_key_dir_to_notify (const UString &a_key_dir) = 0;
+    virtual void add_key_to_notify (const UString &a_key) = 0;
 
     virtual bool get_key_value (const UString &a_key, UString &a_value) = 0 ;
     virtual void set_key_value (const UString &a_key, const UString &a_key) = 0;

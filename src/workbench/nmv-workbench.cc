@@ -491,7 +491,8 @@ Workbench::get_configuration_manager ()
         m_priv->conf_mgr = dynmod_manager->load_iface <IConfMgr> ("gconfmgr",
                                                                   "IConfMgr") ;
         m_priv->conf_mgr->set_key_dir_to_notify ("/apps/nemiver") ;
-        m_priv->conf_mgr->set_key_dir_to_notify ("/desktop/gnome/interface") ;
+        m_priv->conf_mgr->add_key_to_notify (
+                "/desktop/gnome/interface/monospace_font_name") ;
     }
     THROW_IF_FAIL (m_priv->conf_mgr) ;
     return *m_priv->conf_mgr ;

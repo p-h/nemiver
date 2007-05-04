@@ -1,3 +1,14 @@
+2007-05-02 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/confmgr/nmv-i-conf-mgr.h: add new API: add_key_to_notify() so that we
+	can 'subscribe' to be notified when individual keys are changed, not just
+	whole key directories.
+	* src/confmgr/nmv-gconf-mgr.cc: implement add_key_to_notify() so that when
+	the key is modified, it emits the value_changed signal on IConfMgr
+	* src/workbench/nmv-workbench.cc: add notification of the individual key for
+	the GNOME system monospace font instead of watching the entire
+	/desktop/gnome/interface directory
+
 2007-05-01 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* po/POTFILES.in: Add some missing files so that they get translated
