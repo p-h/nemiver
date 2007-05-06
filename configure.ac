@@ -4,6 +4,7 @@ dnl **************************************************************
 AC_INIT(nemiver, 0.4.0)
 AC_PREREQ(2.59)
 AC_CONFIG_SRCDIR(README)
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_TARGET
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
