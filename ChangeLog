@@ -1,3 +1,8 @@
+2007-05-12 Dodji Seketeli <dodji@gnome.org>
+
+	* configure.ac: disable symbols visibility control by default, due
+	  to a bug in gcc 4.1.2. See bug #410710 to track this.
+
 2007-05-05 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* autogen.sh: Don't modify ACLOCAL_FLAGS (bug #436226)

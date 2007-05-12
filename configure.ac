@@ -143,12 +143,12 @@ else
 fi
 
 
-ENABLE_GCC_SYMBOLS_VISIBILITY=yes
-AC_ARG_ENABLE(symbolsvisibilitycontrol,
-              AC_HELP_STRING([--enable-symbolsvisibilitycontrol=yes|no],
-                             [use the gcc symbols visibility feature. >=n gcc4. default is yes)]),
+ENABLE_GCC_SYMBOLS_VISIBILITY=no
+AC_ARG_ENABLE(symsvis,
+              AC_HELP_STRING([--enable-symvis=yes|no],
+                             [use the gcc symbols visibility feature. >=n gcc4.  default is no)]),
               ENABLE_GCC_SYMBOLS_VISIBILITY=$enableval,
-              ENABLE_GCC_SYMBOLS_VISIBILITY=yes)
+              ENABLE_GCC_SYMBOLS_VISIBILITY=no)
 
 dnl *******************************
 dnl checking for libraries we use
@@ -354,6 +354,7 @@ cat <<EOT
     Enable autotests                : ${ENABLE_AUTOTESTS}
     Enable verbose debug messages   : ${ENABLE_DEBUG}
     Enable workbench                : ${ENABLE_WORKBENCH}
+    Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
     Maintainer mode                 : ${USER_MAINTAINER_MODE}
     CFLAGS                          : ${CFLAGS}
     CXXFLAGS                        : ${CXXFLAGS}
