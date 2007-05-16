@@ -1,3 +1,8 @@
+2007-05-15  David Lodge <dave@cirt.net>
+
+	* en_GB.po: Added British English translation.
+	* LINGUAS: Added en_GB and resorted the file
+
 2007-04-28 Jonathon Jongsma
 
 	* po/fr.po: Added a missing closing parentheses
