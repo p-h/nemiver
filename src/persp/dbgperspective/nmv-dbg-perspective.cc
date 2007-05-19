@@ -36,6 +36,7 @@
 #include <pangomm/fontdescription.h>
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
+#include <gdkmm/cursor.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-env.h"
 #include "common/nmv-date-utils.h"
@@ -1177,6 +1178,8 @@ DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
     THROW_IF_FAIL (m_priv->throbber) ;
 
     if (a_is_ready) {
+        // reset to default cursor
+        workbench ().get_root_window ().get_window ()->set_cursor ();
         m_priv->throbber->stop () ;
         m_priv->debugger_ready_action_group->set_sensitive (true) ;
         m_priv->target_not_started_action_group->set_sensitive (true) ;
@@ -1203,6 +1206,8 @@ DBGPerspective::on_debugger_not_started_signal ()
     THROW_IF_FAIL (m_priv->debugger_busy_action_group) ;
     THROW_IF_FAIL (m_priv->opened_file_action_group) ;
 
+    // reset to default cursor
+    workbench ().get_root_window ().get_window ()->set_cursor ();
     m_priv->throbber->stop () ;
     m_priv->default_action_group->set_sensitive (true) ;
     m_priv->target_connected_action_group->set_sensitive (false) ;
@@ -1803,6 +1808,9 @@ DBGPerspective::on_debugger_running_signal ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     THROW_IF_FAIL (m_priv->throbber) ;
+    THROW_IF_FAIL (m_priv->sourceviews_notebook) ;
+    workbench ().get_root_window ().get_window ()->set_cursor
+                                                (Gdk::Cursor (Gdk::WATCH));
     m_priv->throbber->start () ;
     NEMIVER_CATCH
 }

@@ -1,5 +1,12 @@
 2007-05-19 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: applied patch
+	  #87217, that fixes #433332 entitled 
+	  "witch mouse pointer to 'busy' cursor when gdb is running"
+	  The patch was made by Jonathon Jongsma <jjongsma@gnome.org>.
+
+2007-05-19 Dodji Seketeli <dodji@gnome.org>
+
 	* src/uicommon/nmv-source-editor.cc,h: Make SourceEditor emit a
 	  SourceEditor::insertion_changed_signal() notifying when a user clicks
 	  somewhere in the editor.
