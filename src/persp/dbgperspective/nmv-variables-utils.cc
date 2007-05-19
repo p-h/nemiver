@@ -29,6 +29,8 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (variables_utils)
 
+UString qname_to_string (const std::list<NameElement> &a_name_elems) ;
+
 VariableColumns&
 get_variable_columns ()
 {
@@ -91,7 +93,7 @@ break_qname_into_name_elements (const UString &a_qname,
     NEMIVER_TRY
 
     THROW_IF_FAIL (a_qname != "") ;
-    LOG_D ("qname: '" << a_qname << "'", "break-qname-domain") ;
+    LOG_DD ("qname: '" << a_qname << "'") ;
 
     UString::size_type len=a_qname.size (),cur=0, name_start=0, name_end=0 ;
     UString name_element ;
@@ -111,21 +113,21 @@ fetch_element:
     for (c = a_qname[cur];
          cur < len &&
          (c = a_qname[cur]) &&
-         c != '-' &&
-         (isalnum (c) ||
-              c == '_' ||
-              c == '<'/*anonymous names from templates*/ ||
-              c == ':'/*fully qualified names*/ ||
-              c == '>'/*templates again*/ ||
-              c == '#'/*we can have names like '#unnamed#'*/ ||
-              c == ','/*template parameters*/ ||
-              c == '+' /*for arithmethic expressions*/ ||
-              c == '*' /*ditto*/ ||
-              c == '/' /*ditto*/ ||
-              c == '(' /*ditto*/ ||
-              c == ')' /*ditto*/ ||
-              isspace (c)
-         )
+             c != '-' &&
+                 (isalnum (c) ||
+                  c == '_' ||
+                  c == '<'/*anonymous names from templates*/ ||
+                  c == ':'/*fully qualified names*/ ||
+                  c == '>'/*templates again*/ ||
+                  c == '#'/*we can have names like '#unnamed#'*/ ||
+                  c == ','/*template parameters*/ ||
+                  c == '+' /*for arithmethic expressions*/ ||
+                  c == '*' /*ditto*/ ||
+                  c == '/' /*ditto*/ ||
+                  c == '(' /*ditto*/ ||
+                  c == ')' /*ditto*/ ||
+                  isspace (c)
+                 )
          ; ++cur) {
     }
     if (is_pointer) {
@@ -181,22 +183,39 @@ fetch_element:
         it->is_pointer (true) ;
     }
     a_name_elems = name_elems ;
+    LOG_DD ("broke qname in: '" << qname_to_string (a_name_elems) << "'") ;
 
     NEMIVER_CATCH_AND_RETURN (false)
 
     return true ;
 }
 
+UString
+qname_to_string (const std::list<NameElement> &a_name_elems)
+{
+    UString res ;
+    std::list<NameElement>::const_iterator it ;
+    for (it = a_name_elems.begin (); it != a_name_elems.end () ; ++it) {
+        if (!res.empty ()) {
+            res += '/' ;
+        }
+        res += it->get_name () ;
+    }
+    return res ;
+}
+
 bool
 get_variable_iter_from_qname
-                    (const std::list<NameElement> &a_name_elems,
-                     const std::list<NameElement>::const_iterator &a_cur_elem_it,
-                     const Gtk::TreeModel::iterator &a_from_it,
-                     Gtk::TreeModel::iterator &a_result)
+                (const std::list<NameElement> &a_name_elems,
+                 const std::list<NameElement>::const_iterator &a_cur_elem_it,
+                 const Gtk::TreeModel::iterator &a_from_it,
+                 Gtk::TreeModel::iterator &a_result)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     THROW_IF_FAIL (!a_name_elems.empty ()) ;
+    LOG_DD ("qname: " << qname_to_string (a_name_elems)) ;
+
     if (a_cur_elem_it != a_name_elems.end ()) {
         LOG_DD ("a_cur_elem_it: " << a_cur_elem_it->get_name ()) ;
         LOG_DD ("a_cur_elem_it->is_pointer: "
@@ -217,6 +236,9 @@ get_variable_iter_from_qname
     }
 
     Gtk::TreeModel::const_iterator row_it ;
+    LOG_DD ("parent tree node: "
+            << a_from_it->get_value (get_variable_columns ().name)) ;
+
     for (row_it = a_from_it->children ().begin () ;
          row_it != a_from_it->children ().end () ;
          ++row_it) {
@@ -234,26 +256,31 @@ get_variable_iter_from_qname
                                                  a_result) ;
         } else if (row_it->children ()
                    && row_it->children ().begin ()) {
-            Gtk::TreeModel::iterator it = row_it->children ().begin () ;
-            UString name_col =
+            Gtk::TreeModel::iterator it ;
+            for (it = row_it->children ().begin ();
+                 it != row_it->children ().end ();
+                 ++it) {
+                UString name_col =
                 (Glib::ustring) (*it)[get_variable_columns ().name] ;
-            std::list<NameElement> elems ;
-            if (name_col != ""
-                && break_qname_into_name_elements (name_col, elems)
-                && !elems.empty ()) {
-                std::list<NameElement>::const_iterator iter = elems.end () ;
-                --iter ;
-                name_col = iter->get_name () ;
-            }
-            LOG_DD ("testing against child row: " << name_col) ;
-            if (name_col == ("*" + cur_elem_it->get_name ())
-                || name_col == cur_elem_it->get_name ()) {
-                LOG_DD ("walked to path element: '"
-                         << name_col) ;
-                return get_variable_iter_from_qname (a_name_elems,
-                                                     ++cur_elem_it,
-                                                     it,
-                                                     a_result) ;
+                std::list<NameElement> elems ;
+                if (name_col != ""
+                    && break_qname_into_name_elements (name_col, elems)
+                    && !elems.empty ()) {
+                    std::list<NameElement>::const_iterator iter = elems.end () ;
+                    --iter ;
+                    name_col = iter->get_name () ;
+                }
+                LOG_DD ("testing against child row: " << name_col) ;
+                if (name_col == ("*" + cur_elem_it->get_name ())
+                        || name_col == cur_elem_it->get_name ()) {
+                    LOG_DD ("walked to path element: '"
+                            << name_col) ;
+                    bool is_okay = get_variable_iter_from_qname (a_name_elems,
+                            ++cur_elem_it,
+                            it, a_result) ;
+                    if (is_okay)
+                        return true ;
+                }
             }
         }
     }
@@ -353,7 +380,6 @@ update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
             (Glib::ustring)(*a_iter)[get_variable_columns ().name] ;
     LOG_DD ("Prev variable name: " << prev_var_name) ;
     LOG_DD ("new variable name: " << var_name) ;
-    LOG_DD ("Didn't update variable name") ;
     if (prev_var_name == "") {
         (*a_iter)[get_variable_columns ().name] = var_name;
     }
@@ -423,7 +449,7 @@ append_a_variable_real (const IDebugger::VariableSafePtr &a_var,
     a_result = cur_row_it ;
 }
 
-void
+bool
 update_a_variable (const IDebugger::VariableSafePtr &a_var,
                    Gtk::TreeView &a_tree_view,
                    bool a_is_new_frame,
@@ -438,7 +464,7 @@ update_a_variable (const IDebugger::VariableSafePtr &a_var,
     }
     update_a_variable_real (a_var, a_iter, a_tree_view, true, a_is_new_frame) ;
 
-    if (a_var->members ().empty ()) {return;}
+    if (a_var->members ().empty ()) {return true;}
 
     std::list<IDebugger::VariableSafePtr>::const_iterator member ;
     for (member = a_var->members ().begin ();
@@ -450,21 +476,33 @@ update_a_variable (const IDebugger::VariableSafePtr &a_var,
         //hmmh, this makes the current function have an O(n!) exec time.
         //Doing it in less time is too difficult for the time being.
         Gtk::TreeModel::iterator tree_node_iter ;
+        //TODO: here we should have a get_variable_iter() that works
+        //from a variable, and not only a variable name.
+        //Based on that we should also have an insert_variable_to_vis_tree()
+        //with those two variable, we should be able to modify
+        //update_variable() so that we can handle the case of variables that
+        //are instanciated in the middle of blocks.
         if (!get_variable_iter_from_qname ((*member)->name (),
                                            a_iter,
                                            tree_node_iter)) {
-            THROW (UString ("Could not find tree node for variable '")
-                   + (*member)->name ()
-                   + "'. Parent var was: '"
-                   + a_var->name ()
-                   + "'") ;
+            UString qname ;
+            a_var->build_qname (qname) ;
+            LOG_ERROR (UString ("Could not find tree node for variable '")
+                       + (*member)->name ()
+                       + "'. Parent var was: '"
+                       + qname
+                       + "'") ;
+            return false ;
         }
         THROW_IF_FAIL (tree_node_iter) ;
 
-        update_a_variable (*member, a_tree_view, a_is_new_frame, tree_node_iter) ;
+        return update_a_variable (*member, a_tree_view,
+                                  a_is_new_frame, tree_node_iter) ;
     }//end for.
 
+    return true ;
     NEMIVER_CATCH
+    return false ;
 }
 
 void

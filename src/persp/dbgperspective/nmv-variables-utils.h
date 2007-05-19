@@ -145,7 +145,7 @@ void append_a_variable_real (const IDebugger::VariableSafePtr &a_var,
                              bool a_is_new_frame,
                              Gtk::TreeModel::iterator &a_result) ;
 
-void update_a_variable (const IDebugger::VariableSafePtr &a_var,
+bool update_a_variable (const IDebugger::VariableSafePtr &a_var,
                         Gtk::TreeView &a_tree_view,
                         bool a_is_new_frame,
                         Gtk::TreeModel::iterator &a_iter) ;
