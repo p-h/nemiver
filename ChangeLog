@@ -1,9 +1,20 @@
+2007-05-19 Dodji Seketeli <dodji@gnome.org>
+
+	* src/uicommon/nmv-source-editor.cc,h: Make SourceEditor emit a
+	  SourceEditor::insertion_changed_signal() notifying when a user clicks
+	  somewhere in the editor.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: changed
+	  the last patch to make it use the
+	  SourceEditor::insertion_changed_signal() event instead of doing
+	  lower level stuff in the perspective.
+
 2007-05-14 Jonathon Jongsma <jjongsma@gnome.org>
 
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Add handling for when the
-	cursor position changes so that we can enable or disable certain actions
-	depending on what line we're on.  Now, the "toggle enable breakpoint"
-	action is set insensitive when there's no breakpoint set on a particular
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Add handling for
+	when the cursor position changes so that we can enable or
+	disable certain actions depending on what line we're on.
+	Now, the "toggle enable breakpoint" action is set
+	insensitive when there's no breakpoint set on a particular
 	line.  This is a partial fix for bug #430346.  The method I used to
 	implement this feels a little bit 'brute-force'-ish, so if you know of
 	better ways to accomplish this, let me know.
@@ -21,22 +32,23 @@
 2007-05-02 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/glade/remotetargetdialog.glade: use only
-	FileChooserButton instead of a FileChooserButton and a Gtk::Entry widget.
-	This make it more consistent with the 'execute' dialog and the 'load core'
-	dialog
+	FileChooserButton instead of a FileChooserButton and a
+	Gtk::Entry widget.  This make it more consistent 
+	with the 'execute' dialog and the 'load core' dialog
 	* src/persp/dbgperspective/nmv-remote-target-dialog.cc: update due to
 	changes in the glade file
 
 2007-05-02 Jonathon Jongsma <jjongsma@gnome.org>
 
-	* src/confmgr/nmv-i-conf-mgr.h: add new API: add_key_to_notify() so that we
-	can 'subscribe' to be notified when individual keys are changed, not just
-	whole key directories.
-	* src/confmgr/nmv-gconf-mgr.cc: implement add_key_to_notify() so that when
-	the key is modified, it emits the value_changed signal on IConfMgr
-	* src/workbench/nmv-workbench.cc: add notification of the individual key for
-	the GNOME system monospace font instead of watching the entire
-	/desktop/gnome/interface directory
+	* src/confmgr/nmv-i-conf-mgr.h: add new API: add_key_to_notify()
+	   so that we can 'subscribe' to be notified when individual
+	   keys are changed, not just whole key directories.
+	* src/confmgr/nmv-gconf-mgr.cc: implement add_key_to_notify()
+	  so that when the key is modified, it emits the
+	  value_changed signal on IConfMgr
+	* src/workbench/nmv-workbench.cc: add notification of the
+	individual key for the GNOME system monospace font instead
+	of watching the entire /desktop/gnome/interface directory
 
 2007-05-01 Jonathon Jongsma <jjongsma@gnome.org>
 

@@ -124,6 +124,7 @@ public:
     {
         return m_marker_region_got_clicked_signal ;
     }
+
 };//end class Sourceview
 
 struct SourceEditor::Priv {
@@ -138,6 +139,8 @@ struct SourceEditor::Priv {
     Gtk::Label *line_count;
     sigc::signal<void, gint, gint> signal_insertion_moved ;
     sigc::signal<void, int> marker_region_got_clicked_signal ;
+    sigc::signal<void, const Gtk::TextBuffer::iterator&>
+                                                    insertion_changed_signal;
     UString path ;
 
     //**************
@@ -171,6 +174,20 @@ struct SourceEditor::Priv {
         current_column = a_col ;
         update_line_col_label ();
     }
+
+    void on_signal_mark_set
+                        (const Gtk::TextBuffer::iterator &a_iter,
+                         const Glib::RefPtr<Gtk::TextBuffer::Mark > &a_mark)
+    {
+        THROW_IF_FAIL (source_view) ;
+
+        Glib::RefPtr<Gtk::TextBuffer::Mark> insert_mark =
+                                source_view->get_buffer ()->get_insert ();
+        if (insert_mark == a_mark) {
+            insertion_changed_signal.emit (a_iter) ;
+        }
+    }
+
     //**************
     //</signal slots>
     //**************
@@ -187,6 +204,8 @@ struct SourceEditor::Priv {
         signal_insertion_moved.connect
             (sigc::mem_fun (*this,
                             &SourceEditor::Priv::on_signal_insertion_moved)) ;
+        source_view->get_buffer ()->signal_mark_set ().connect
+            (sigc::mem_fun (*this, &SourceEditor::Priv::on_signal_mark_set)) ;
     }
 
     void update_line_col_info_from_iter (const Gtk::TextBuffer::iterator &a_iter)
@@ -682,5 +701,12 @@ SourceEditor::marker_region_got_clicked_signal () const
 {
     return m_priv->marker_region_got_clicked_signal ;
 }
+
+sigc::signal<void, const Gtk::TextBuffer::iterator&>&
+SourceEditor::insertion_changed_signal () const
+{
+    return m_priv->insertion_changed_signal ;
+}
+
 }//end namespace nemiver
 

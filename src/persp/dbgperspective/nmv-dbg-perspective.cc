@@ -217,6 +217,9 @@ private:
 
     bool on_mouse_immobile_timer_signal () ;
 
+    void on_insertion_changed_signal (const Gtk::TextBuffer::iterator& iter,
+                                      SourceEditor *a_editor);
+
     void on_shutdown_signal () ;
 
     void on_show_command_view_changed_signal (bool) ;
@@ -349,9 +352,6 @@ public:
     bool open_file (const UString &a_path,
                     int current_line,
                     bool a_reload_visual_breakpoint) ;
-    void on_cursor_moved (const Gtk::TextBuffer::iterator& iter,
-            const Glib::RefPtr<Gtk::TextBuffer::Mark >& mark,
-            SourceEditor* editor);
 
     void close_current_file () ;
 
@@ -1371,6 +1371,26 @@ DBGPerspective::on_mouse_immobile_timer_signal ()
                                          m_priv->mouse_in_source_editor_y) ;
     NEMIVER_CATCH
     return false ;
+}
+
+void
+DBGPerspective::on_insertion_changed_signal
+                                    (const Gtk::TextBuffer::iterator& iter,
+                                     SourceEditor *a_editor)
+{
+    NEMIVER_TRY
+
+    THROW_IF_FAIL (a_editor) ;
+
+    Glib::RefPtr<Gtk::Action> toggle_enable_action =
+         workbench ().get_ui_manager ()->get_action
+        ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleEnableBreakMenuItem") ;
+    THROW_IF_FAIL (toggle_enable_action);
+
+    toggle_enable_action->set_sensitive
+            (a_editor->is_visual_breakpoint_set_at_line (iter.get_line ()));
+
+    NEMIVER_CATCH
 }
 
 void
@@ -3435,35 +3455,6 @@ DBGPerspective::open_file ()
     bring_source_as_current (*(paths.begin()));
 }
 
-
-void DBGPerspective::on_cursor_moved (const Gtk::TextBuffer::iterator& iter,
-        const Glib::RefPtr<Gtk::TextBuffer::Mark >& mark,
-        SourceEditor* editor)
-{
-    NEMIVER_TRY
-
-    THROW_IF_FAIL (mark);
-    THROW_IF_FAIL (editor);
-
-    // I can't figure out a way to be signalled only when the 'insert' mark is
-    // set, so i have to watch for all mark-set signals and filter out
-    // everything but the cursor mark.  If there's a better way to do this,
-    // please tell me.
-    Glib::RefPtr<Gtk::TextBuffer::Mark> insert_mark =
-        editor->source_view ().get_buffer ()->get_insert ();
-    if (mark == insert_mark)
-    {
-        Glib::RefPtr<Gtk::Action> toggle_enable_action = 
-            workbench ().get_ui_manager ()->get_action
-            ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleEnableBreakMenuItem") ;
-        THROW_IF_FAIL (toggle_enable_action);
-        toggle_enable_action->set_sensitive
-            (editor->is_visual_breakpoint_set_at_line (iter.get_line ()));
-    }
-
-    NEMIVER_CATCH
-}
-
 bool
 DBGPerspective::open_file (const UString &a_path,
                            int a_current_line)
@@ -3484,13 +3475,17 @@ DBGPerspective::open_file (const UString &a_path,
     RETURN_VAL_IF_FAIL (load_file (a_path, source_buffer), false) ;
     SourceEditor *source_editor (Gtk::manage
                         (new SourceEditor (plugin_path (), source_buffer)));
-    source_editor->source_view ().set_show_line_numbers (m_priv->show_line_numbers) ;
+    source_editor->source_view ().set_show_line_numbers
+                                                (m_priv->show_line_numbers) ;
 
-    // capture mark-set signals so we can know when the cursor position changes
-    // and we can enable / disable actions that are valid for only certain lines
-    source_buffer->signal_mark_set ().connect (sigc::bind (
-                sigc::mem_fun (*this, &DBGPerspective::on_cursor_moved),
-                    source_editor));
+    // detect when the user clicks on the editor
+    // so we can know when the cursor position changes
+    // and we can enable / disable actions that are valid
+    // for only certain lines
+    source_editor->insertion_changed_signal ().connect
+        (sigc::bind (sigc::mem_fun
+                         (*this, &DBGPerspective::on_insertion_changed_signal),
+                      source_editor)) ;
 
     if (m_priv->use_system_font) {
         Pango::FontDescription font_desc(m_priv->system_font_name);
