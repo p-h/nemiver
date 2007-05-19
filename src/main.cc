@@ -63,7 +63,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_STRING,
       &gv_env_vars,
-      _("set the environment of the program to debug"),
+      _("Set the environment of the program to debug"),
       "\"var0=val0 var1=val1 var2=val2 ...\""
     },
     {
@@ -72,7 +72,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_STRING,
       &gv_process_to_attach_to,
-      _("attach to a process"),
+      _("Attach to a process"),
       "<pid|process name>"
     },
     { "listsessions",
@@ -80,7 +80,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_NONE,
       &gv_list_sessions,
-      _("list the saved debugging sessions"),
+      _("List the saved debugging sessions"),
       NULL
     },
     { "purgesessions",
@@ -88,7 +88,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_NONE,
       &gv_purge_sessions,
-      _("erase the saved debugging sessions"),
+      _("Erase the saved debugging sessions"),
       NULL
     },
     { "executesession",
@@ -96,7 +96,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_INT,
       &gv_execute_session,
-      _("debug the program that was of session number N"),
+      _("Debug the program that was of session number N"),
       "N"
     },
     { "log-domains",
@@ -112,7 +112,7 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_NONE,
       &gv_log_debugger_output,
-      _("log the debugger output"),
+      _("Log the debugger output"),
       NULL
     },
     {0,0,0,(GOptionArg)0,0,0,0}
@@ -169,7 +169,7 @@ main (int a_argc, char *a_argv[])
     context.reset (g_option_context_new
         (_(" [<prog-to-debug> [prog-args]]")));
     g_option_context_set_summary (context.get (),
-                                  _("a C/C++ debugger for GNOME")) ;
+                                  _("A C/C++ debugger for GNOME")) ;
     g_option_context_set_help_enabled (context.get (), true) ;
     g_option_context_add_main_entries (context.get (),
                                        entries,
