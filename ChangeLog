@@ -147,15 +147,12 @@
 	  mv src/persp/dbgperspective/nmv-source-editor.cc,h to
 	  src/uicommon/nmv-source-editor.cc,h
 
-<<<<<<< HEAD:ChangeLog
 2007-04-28 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-variables-utils.cc: use the 'text' color from
 	the theme, no the 'fg' color.  In some themes these colors apparently are
 	different and the text can become difficult to read.
 
-=======
->>>>>>> mv source editor from the debug perspective to uicommon:ChangeLog
 2007-04-25 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/glade/openfiledialog.glade: don't specify the
@@ -713,7 +710,7 @@ Thu, 15 Mar 2007 12:33:15 +0100 Dodji Seketeli
 	 parse_member_variable(): make this work for cases where
 	 an escaped string is embedded in the value being parsed.
 	 To parse that string, use the new parse_embedded_c_string().
-         The string is not yet "interpreted" yet, so the result
+	 The string is not yet "interpreted" yet, so the result
 	 of the parsing is not really readable in the resulting
 	 member variable. But at least, the parsing does not fail
 	 anymore.
