@@ -2088,7 +2088,7 @@ DBGPerspective::init_actions ()
         {
             "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            _("Toggle _Breakpoint"),
+            _("Toggle _Breakpoint At Cursor"),
             _("Set/Unset a breakpoint at the current cursor location"),
             sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
@@ -2098,20 +2098,20 @@ DBGPerspective::init_actions ()
         {
             "ToggleEnableBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            _("Toggle enable Breakpoint"),
-            _("Enable/Disable the breakpoint at the current cursor location"),
+            _("Enable/Disable Breakpoint"),
+            _("Enable or disable the breakpoint that is set at the current cursor location"),
             sigc::mem_fun
                         (*this,
                          &DBGPerspective::on_toggle_breakpoint_enabled_action),
             ActionEntry::DEFAULT,
-            ""
+            "<shift>F8"
         },
 
         {
             "SetBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            _("Set Breakpoint"),
-            _("Set a breakpoint at an arbitrary location"),
+            _("Set Breakpoint..."),
+            _("Set a breakpoint at a function or line number"),
             sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
             ActionEntry::DEFAULT,
             "<control>B"

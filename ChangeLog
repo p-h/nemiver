@@ -1,3 +1,9 @@
+2007-05-20 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: clean up the breakpoint
+	menu items.  Improve the menu item names and descriptions, add a keyboard
+	shortcut <shift>F8 for enabling/disabling an existing breakpoint
+
 2007-05-20 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/menus/menus.xml:
