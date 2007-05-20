@@ -21,7 +21,7 @@
 2007-05-20 Dodji Seketeli <dodji@gnome.org>
 
 	* src/main.c: Fix some strings typos. Patch from 
-	  "St閜hane Raimbault" <stephane.raimbault@gmail.com>
+	  "St茅phane Raimbault" <stephane.raimbault@gmail.com>
 
 2007-05-20 Dodji Seketeli <dodji@gnome.org>
 
@@ -1719,7 +1719,7 @@ Sun, 10 Dec 2006 21:17:12 +0100 Dodji Seketeli
 	* src/workbench/schemas/nemiver-workbench.schemas: Gconf schemas for the
 	window position/size saving.
 
-2006-12-10  Jean-Fran鏾is Rameau  <jf.rameau@gmail.com>
+2006-12-10  Jean-Fran莽ois Rameau  <jf.rameau@gmail.com>
 
 	* src/persp/dbgperspective/nmv-terminal.cc: set a default font for the
 	terminal widget to fix a bug with vte 0.14 (fixes bug #384172)
@@ -1843,7 +1843,7 @@ Thu, 07 Dec 2006 23:50:52 +0100 Dodji Seketeli
 	* configure.ac: fix a typo that broke NEMIVERWORKBENCH_LIBS being
 	* src/workbench/Makefile.am: make libworkbenchmod link with the
 	  --as-needed option of GNU ld. This entry is a patch from
-	  R閙i Cardonna <remi2402@free.fr>.
+	  R茅mi Cardonna <remi2402@free.fr>.
 
 Thu, 07 Dec 2006 23:38:12 +0100 Dodji Seketeli
 
@@ -2014,7 +2014,7 @@ Fri, 01 Dec 2006 23:52:51 +0100 Dodji Seketeli
 2006-12-01  Ruben Vermeersch  <ruben@savanne.be>
 
 	* src/persp/dbgperspective/glade/runprogramdialog.glade: Changed
-	"S閘ectionner un fichier" to "Choose an executable".
+	"S茅lectionner un fichier" to "Choose an executable".
 
 Fri, 01 Dec 2006 21:40:36 +0100 Dodji Seketeli
 
@@ -3971,7 +3971,7 @@ samedi 2 septembre 2006, 03:05:33 (UTC+0200) Dodji Seketeli
 	  when the CallStack::frame_selection_signal() is fired, no more
 	  when the IDebugger::debugger_stopped_signal() is fired.
 
-jeudi 31 ao鹴 2006, 21:14:37 (UTC+0200) Dodji Seketeli
+jeudi 31 ao没t 2006, 21:14:37 (UTC+0200) Dodji Seketeli
 
 	* src/common/nmv-safe-ptr.h: removed the cast operator to PointerType* .
 	  This leads to safer code. I needed to update a lot of files in the
@@ -3984,14 +3984,14 @@ jeudi 31 ao鹴 2006, 21:14:37 (UTC+0200) Dodji Seketeli
 	* src/DBGPerspective/icons/green.png: added this png file show in the
 	  throbbler when it is stopped.
 
-mercredi 30 ao鹴 2006, 18:06:04 (UTC+0200) Dodji Seketeli
+mercredi 30 ao没t 2006, 18:06:04 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-call-stack.cc: do not show the arguments values
 		in the callstack because it can get very long.
 	* src/DBGPerspective/nmv-throbbler.cc,h: started to hack on this. Far from
 	  being finished
 
-mercredi 30 ao鹴 2006, 00:23:39 (UTC+0200) Dodji Seketeli
+mercredi 30 ao没t 2006, 00:23:39 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: debug the
 	GDBMIList::get_value_content() method so that the frame params parsing
@@ -4000,7 +4000,7 @@ mercredi 30 ao鹴 2006, 00:23:39 (UTC+0200) Dodji Seketeli
 	to the treeview and update them accordingly. Wow, it seems to *work*. Now
 	I can go sleep, I am tired.
 
-mardi 29 ao鹴 2006, 19:35:39 (UTC+0200) Dodji Seketeli
+mardi 29 ao没t 2006, 19:35:39 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: properly emit the
 	  IDebugger::frames_params_listed_signal(), yay !.
@@ -4009,7 +4009,7 @@ mardi 29 ao鹴 2006, 19:35:39 (UTC+0200) Dodji Seketeli
 	  do anything useful with it yet. Next stop is to display the frames
 	  parameters arguments ... cheers.
 
-mardi 29 ao鹴 2006, 11:48:05 (UTC+0200) Dodji Seketeli
+mardi 29 ao没t 2006, 11:48:05 (UTC+0200) Dodji Seketeli
 
 	* src/common/Makefile.am: add nmv-connection.h and
 	  nmv-connection-manager.h  so that we pass make distcheck.
@@ -4027,14 +4027,14 @@ mardi 29 ao鹴 2006, 11:48:05 (UTC+0200) Dodji Seketeli
 	* src/workbench/nmv-workbench.cc: Add mnemonic for the _File menu (so that
 	<alt>F works).
 
-lundi 28 ao鹴 2006, 23:42:43 (UTC+0200) Dodji Seketeli
+lundi 28 ao没t 2006, 23:42:43 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: debunked the
 	gdb/mi list parsing code. It seems to work now. Next stop is to
 	emit the proper signal and then to show the function arguments in
 	the call stack widget.
 
-lundi 28 ao鹴 2006, 20:22:36 (UTC+0200) Dodji Seketeli
+lundi 28 ao没t 2006, 20:22:36 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc:
 	  spent a lot of time debugging the crash that
@@ -4054,7 +4054,7 @@ lundi 28 ao鹴 2006, 20:22:36 (UTC+0200) Dodji Seketeli
 	  are returning *different* list objects.
 	  I must change the signature of that method, for sure.
 
-lundi 28 ao鹴 2006, 10:02:48 (UTC+0200) Dodji Seketeli
+lundi 28 ao没t 2006, 10:02:48 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: cleanup, more call
 	stack parsing. Started to work on frame parameters parsing. Still
@@ -4064,14 +4064,14 @@ lundi 28 ao鹴 2006, 10:02:48 (UTC+0200) Dodji Seketeli
 	* src/DBGPerspective/nmv-call-stack.h,cc: the callstack thing starts
 	working somehow. The function parameters part still doesn't, though.
 
-dimanche 27 ao鹴 2006, 10:17:30 (UTC+0200) Dodji Seketeli
+dimanche 27 ao没t 2006, 10:17:30 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more stack trace
 	  parsing. Things are getting better and more solid. Still nothing visible
 	  yet.
 	* src/main.cc: fix the --log-domains option handling.
 
-samedi 26 ao鹴 2006, 20:26:14 (UTC+0200) Dodji Seketeli
+samedi 26 ao没t 2006, 20:26:14 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more stack trace
 	  parsing. Still does not work.
@@ -4083,7 +4083,7 @@ samedi 26 ao鹴 2006, 20:26:14 (UTC+0200) Dodji Seketeli
 	  number.
 	* ltmain.sh,aclocal.m4: remove generated files from repository.
 
-samedi 26 ao鹴 2006, 17:48:32 (UTC+0200) Dodji Seketeli
+samedi 26 ao没t 2006, 17:48:32 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more stack trace
 	  parsing work. Nothing works yet.
@@ -4093,7 +4093,7 @@ samedi 26 ao鹴 2006, 17:48:32 (UTC+0200) Dodji Seketeli
 	  the same on amd64 ...
 
 
-samedi 26 ao鹴 2006, 15:01:16 (UTC+0200) Dodji Seketeli
+samedi 26 ao没t 2006, 15:01:16 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
 	  src/DBGPerspective/nmv-dbg-perspective.cc :
@@ -4109,12 +4109,12 @@ samedi 26 ao鹴 2006, 15:01:16 (UTC+0200) Dodji Seketeli
 	* src/main.cc: one can now do nemiver --log-domains "foo bar" to
 	  enable logging for the domains foo and bar.
 
-vendredi 25 ao鹴 2006, 19:06:34 (UTC+0200) Dodji Seketeli
+vendredi 25 ao没t 2006, 19:06:34 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: more debugging of the
 	  GDB/MI variable=value parsing code.
 
-vendredi 25 ao鹴 2006, 10:38:44 (UTC+0200) Dodji Seketeli
+vendredi 25 ao没t 2006, 10:38:44 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/Makefile.am, src/DBGPerspective/dbgengine/Makefile.am,
 	  src/DBGPerspective/Makefile.am, src/dbdimpl/sqlite/Makefile.am:
@@ -4128,7 +4128,7 @@ vendredi 25 ao鹴 2006, 10:38:44 (UTC+0200) Dodji Seketeli
 	* src/DBGPerspective/nmv-call-stack.cc,h: more work on this. Nothing
 	  works yet
 
-vendredi 18 ao鹴 2006, 10:03:38 (UTC+0200) Dodji Seketeli
+vendredi 18 ao没t 2006, 10:03:38 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
 	  src/DBGPerspective/dbgengine/nmv-gdb-engine.cc, :
@@ -4141,7 +4141,7 @@ vendredi 18 ao鹴 2006, 10:03:38 (UTC+0200) Dodji Seketeli
 	* src/DBGPerspective/nmv-dbg-perspective.cc: reflect the changes in
 	  the IDebugger API in here.
 
-jeudi 17 ao鹴 2006, 17:05:35 (UTC+0200) Dodji Seketeli
+jeudi 17 ao没t 2006, 17:05:35 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc: don't add the same action group twice.
 	* src/DBGPerspective/nmv-dbg-perspective.cc: make the command, error and
@@ -4149,14 +4149,14 @@ jeudi 17 ao鹴 2006, 17:05:35 (UTC+0200) Dodji Seketeli
 
 
 
-mercredi 16 ao鹴 2006, 13:43:22 (UTC+0200) Dodji Seketeli
+mercredi 16 ao没t 2006, 13:43:22 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc: cleanup the actions and ui_manager init code.
 	* src/DBGPerspective/nmv-dbg-perspective.cc: properly menu accelerators.
 	* src/uicommon/nmv-ui-utils.h,cc: add support for accelerators.
 
 
-mercredi 16 ao鹴 2006, 11:08:22 (UTC+0200) Dodji Seketeli
+mercredi 16 ao没t 2006, 11:08:22 (UTC+0200) Dodji Seketeli
 
 	* src/uicommon/nmv-ui-utils.h: change the api of ui_utils::ActionEntry
 	    to support the creation of ActionToggle objects, as well as Action
@@ -4168,7 +4168,7 @@ mercredi 16 ao鹴 2006, 11:08:22 (UTC+0200) Dodji Seketeli
 	    yet. I know need to make these views scroll <grin/>.
 
 
-dimanche 13 ao鹴 2006, 11:07:40 (UTC+0200) Dodji Seketeli
+dimanche 13 ao没t 2006, 11:07:40 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc,
 	  src/DBGPerspective/dbgengine/nmv-i-debugger.h	: added an
@@ -4182,13 +4182,13 @@ dimanche 13 ao鹴 2006, 11:07:40 (UTC+0200) Dodji Seketeli
 	  added SourceEditor::unset_where_marker() to remove the "where
 	  marker" from the source editor.
 
-samedi 12 ao鹴 2006, 22:14:31 (UTC+0200) Dodji Seketeli
+samedi 12 ao没t 2006, 22:14:31 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: make this rely on the
 	  new IDebugger API only. Remove the knowledge of GDM/MI from here.
 	  There are part of this class that are much nicer now.
 
-samedi 12 ao鹴 2006, 19:53:35 (UTC+0200) Dodji Seketeli
+samedi 12 ao没t 2006, 19:53:35 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc, nmw-i-workbenc.h: added
 	  IWorkbenc::get_properties().
@@ -4204,14 +4204,14 @@ samedi 12 ao鹴 2006, 19:53:35 (UTC+0200) Dodji Seketeli
 	  should not be any knowledge of gdb/mi in this class.
 
 
-vendredi 11 ao鹴 2006, 18:39:06 (UTC+0200) Dodji Seketeli
+vendredi 11 ao没t 2006, 18:39:06 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: provide the 'attach to
 	  process' at this level.
 	* src/DBGPerspective/nmv-dbg-perspective.cc: wire the 'attach to process'
 	  functionality so that I can debug it. Okay, it highly broken today ...
 
-vendredi 11 ao鹴 2006, 00:42:11 (UTC+0200) Dodji Seketeli
+vendredi 11 ao没t 2006, 00:42:11 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/menus/menus.xml: add a menu item for the attach
 	  to a process dialog.
@@ -4219,28 +4219,28 @@ vendredi 11 ao鹴 2006, 00:42:11 (UTC+0200) Dodji Seketeli
 	* src/DBGPerspective/nmv-dbg-perspective.cc: wired the "attach to
 	  process dialog" so that we can test it.
 
-jeudi 10 ao鹴 2006, 17:58:37 (UTC+0200) Dodji Seketeli
+jeudi 10 ao没t 2006, 17:58:37 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-list-dialog.cc,h:  more work on this.
 	Nothing works yet.
 
-mercredi 9 ao鹴 2006, 18:37:32 (UTC+0200) Dodji Seketeli
+mercredi 9 ao没t 2006, 18:37:32 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-list-dialog.cc,h: started to work on the
 	proc list dialog. Nothing works for now.
 
 
-mercredi 9 ao鹴 2006, 15:19:45 (UTC+0200) Dodji Seketeli
+mercredi 9 ao没t 2006, 15:19:45 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-mgr.cc,h: more work on the libgtop
 	  wrapper.
 
-mardi 8 ao鹴 2006, 22:29:16 (UTC+0200) Dodji Seketeli
+mardi 8 ao没t 2006, 22:29:16 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-proc-mgr.cc,h: added this small class to
 	  show the list of running processes. Not tested yet.
 
-lundi 7 ao鹴 2006, 23:25:11 (UTC+0200) Dodji Seketeli
+lundi 7 ao没t 2006, 23:25:11 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-sess-mgr.cc,h: implemented
 	SessMgr::delete_sessions() and SessMgr::delete_session() with default
@@ -4248,7 +4248,7 @@ lundi 7 ao鹴 2006, 23:25:11 (UTC+0200) Dodji Seketeli
 	* src/main.cc: implemented the --purgesssions and --executesession
 	options.
 
-dimanche 6 ao鹴 2006, 20:35:48 (UTC+0200) Dodji Seketeli
+dimanche 6 ao没t 2006, 20:35:48 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-workbench.cc: hide the main window by default.
 	* src/DBGPerspective/dbgengine/nmv-gdb-engine.cc: fix a long standing
@@ -4260,7 +4260,7 @@ dimanche 6 ao鹴 2006, 20:35:48 (UTC+0200) Dodji Seketeli
 	* src/main.cc: support the --listsessions option. Next stop is to
 	  add a --debugsession <sessionnum> option.
 
-samedi 5 ao鹴 2006, 18:34:12 (UTC+0200) Dodji Seketeli
+samedi 5 ao没t 2006, 18:34:12 (UTC+0200) Dodji Seketeli
 
 	* src/workbench/nmv-i-perspective.h: added some comments.
 	* src/workbench/nmv-workbench.cc: emit the
@@ -4276,39 +4276,39 @@ samedi 5 ao鹴 2006, 18:34:12 (UTC+0200) Dodji Seketeli
 	  file before opening it.
 	* src/common/nmv-date-utils.h: properly export the functions here.
 
-vendredi 4 ao鹴 2006, 18:39:23 (UTC+0200) Dodji Seketeli
+vendredi 4 ao没t 2006, 18:39:23 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-sess-mgr.cc,h,
 	  src/DBGPerspective/sqlscripts/sqlite/create-tables.sql:
 	  more work on the debugger session
 	  manager. Nothing works yet though.
 
-jeudi 3 ao鹴 2006, 23:51:55 (UTC+0200) Dodji Seketeli
+jeudi 3 ao没t 2006, 23:51:55 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc:
 	(DBGPerpective::append_source_editor): fix a typo: don't use
 	 Gnome::Vfs::Uri::to_string(), but rather Gnome::Vfs::Uri::get_path()
 	everywhere. This should fix some annoying bugs.
 
-jeudi 3 ao鹴 2006, 23:46:30 (UTC+0200) Dodji Seketeli
+jeudi 3 ao没t 2006, 23:46:30 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: properly close
 	the right source editor when asked.
 
-jeudi 3 ao鹴 2006, 23:21:04 (UTC+0200) Dodji Seketeli
+jeudi 3 ao没t 2006, 23:21:04 (UTC+0200) Dodji Seketeli
 
 	* src/*lot-of-files*: started to work on a session manager.
 	  also, tried to make the nmv-dbg-perspective.cc code more robust.
 	  Don't emit the "debugger-not-ready' signal after we send the
 	  "break" command to gdb.
 
-mardi 1 ao鹴 2006, 19:12:56 (UTC+0200) Dodji Seketeli
+mardi 1 ao没t 2006, 19:12:56 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: okay, I think I understood
 	  the cause of the previous crash ==> intialize
 	  DBGPerspective::Priv::contextual_menu .
 
-mardi 1 ao鹴 2006, 18:51:29 (UTC+0200) Dodji Seketeli
+mardi 1 ao没t 2006, 18:51:29 (UTC+0200) Dodji Seketeli
 
 	* src/DBGPerspective/nmv-dbg-perspective.cc: better handling of the editor
 	 state. Don't dynamic_cast in DBGPerspective::popup_source_view_contextual_menu(),
@@ -4316,13 +4316,13 @@ mardi 1 ao鹴 2006, 18:51:29 (UTC+0200) Dodji Seketeli
 	* src/DBGPerspective/nmv-source-editor.cc: code cleanup. Set the source
 	 editor in the view only state.
 
-mardi 1 ao鹴 2006, 14:09:17 (UTC+0200) Dodji Seketeli
+mardi 1 ao没t 2006, 14:09:17 (UTC+0200) Dodji Seketeli
 
 	* src/common/nmv-ustring.cc: (UString::join): fix a crasher.
 	* src/main.cc: more command line option work. Seems like we can now launch
 	  the debugger via the command line now.
 
-mardi 1 ao鹴 2006, 10:20:00 (UTC+0200) Dodji Seketeli
+mardi 1 ao没t 2006, 10:20:00 (UTC+0200) Dodji Seketeli
 
 	* src/main.cc,src/common/nmv-ustring.cc,h,src/DBGPerspective/nmv-dbg-perspective.h,cc:
 	  more work on the command line handling.
