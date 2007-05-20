@@ -76,6 +76,7 @@ public:
         THROW_IF_FAIL (var_inspector) ;
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow) ;
         scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC) ;
+        scr->set_shadow_type (Gtk::SHADOW_IN);
         scr->add (var_inspector->widget ()) ;
         box->pack_start (*scr) ;
         dialog.show_all () ;
