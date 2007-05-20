@@ -1,5 +1,10 @@
 2007-05-20 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/menus/menus.xml:
+	  separate menu items into logical groups.
+
+2007-05-20 Dodji Seketeli <dodji@gnome.org>
+
 	* src/main.c: Fix some strings typos. Patch from 
 	  "Stéphane Raimbault" <stephane.raimbault@gmail.com>
 

@@ -44,21 +44,24 @@
                       name="ShowTargetOutputMenuItem"/>
         </menu>
         <menu action="DebugMenuAction" name="DebugMenu">
+            <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
             <menuitem action="StopMenuItemAction" name="StopMenuItem"/>
             <menuitem action="ContinueMenuItemAction"
                       name="ContinueMenuItem"/>
             <menuitem action="ContinueUntilMenuItemAction"
                       name="ContinueUntilMenuItem"/>
+            <separator/>
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
+            <separator/>
             <menuitem action="ToggleBreakPointMenuItemAction"
                       name="ToggleBreakMenuItem"/>
             <menuitem action="ToggleEnableBreakPointMenuItemAction"
                       name="ToggleEnableBreakMenuItem"/>
             <menuitem action="SetBreakPointMenuItemAction"
                       name="SetBreakMenuItem"/>
-            <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
+            <separator/>
             <menuitem action="InspectVariableMenuItemAction"
                       name="InspectVariableMenuItem"/>
         </menu>
