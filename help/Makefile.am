@@ -9,4 +9,4 @@ DOC_FIGURES = \
 			  figures/load-core-dialog.png \
 			  figures/main-window.png \
 			  figures/sessions-dialog.png
-DOC_LINGUAS =
+DOC_LINGUAS = sv
