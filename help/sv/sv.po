@@ -1,0 +1,429 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver doc\n"
+"POT-Creation-Date: 2007-05-31 03:38+0100\n"
+"PO-Revision-Date: 2007-05-31 14:42+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:133(None)
+msgid "@@image: 'figures/main-window.png'; md5=98f9a8b2b358e34d5ae09619332e6557"
+msgstr "@@image: 'figures/main-window.png'; md5=98f9a8b2b358e34d5ae09619332e6557"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:293(None)
+msgid "@@image: 'figures/execute-dialog.png'; md5=4ed2b568c68c30613fe0474dadd0d6ab"
+msgstr "@@image: 'figures/execute-dialog.png'; md5=4ed2b568c68c30613fe0474dadd0d6ab"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:363(None)
+msgid "@@image: 'figures/attach-dialog.png'; md5=15875311bd98ebfa1fea19cf9af06cca"
+msgstr "@@image: 'figures/attach-dialog.png'; md5=15875311bd98ebfa1fea19cf9af06cca"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:412(None)
+msgid "@@image: 'figures/load-core-dialog.png'; md5=7bba55bf735e2c83a240713346b03621"
+msgstr "@@image: 'figures/load-core-dialog.png'; md5=7bba55bf735e2c83a240713346b03621"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:490(None)
+msgid "@@image: 'figures/sessions-dialog.png'; md5=b3e9731d03539a638a366ca724463a03"
+msgstr "@@image: 'figures/sessions-dialog.png'; md5=b3e9731d03539a638a366ca724463a03"
+
+#: C/nemiver.xml:25(title)
+msgid "Nemiver Manual"
+msgstr "Handbok för Nemiver"
+
+#: C/nemiver.xml:27(year)
+#: C/nemiver.xml:74(date)
+msgid "2007"
+msgstr "2007"
+
+#: C/nemiver.xml:28(holder)
+msgid "Jonathon Jongsma"
+msgstr "Jonathon Jongsma"
+
+#: C/nemiver.xml:39(publishername)
+msgid "Nemiver Project"
+msgstr "Nemiver-projektet"
+
+#: C/nemiver.xml:46(firstname)
+msgid "Jonathon"
+msgstr "Jonathon"
+
+#: C/nemiver.xml:47(surname)
+msgid "Jongsma"
+msgstr "Jongsma"
+
+#: C/nemiver.xml:49(orgname)
+msgid "GNOME"
+msgstr "GNOME"
+
+#: C/nemiver.xml:73(revnumber)
+msgid "1.0"
+msgstr "1.0"
+
+#: C/nemiver.xml:76(para)
+msgid "Initial version"
+msgstr ""
+
+#: C/nemiver.xml:80(releaseinfo)
+msgid "This manual describes version 0.3.0 of Nemiver."
+msgstr "Den här handboken beskriver version 0.3.0 av Nemiver."
+
+#: C/nemiver.xml:83(title)
+msgid "Feedback"
+msgstr "Återkoppling"
+
+#: C/nemiver.xml:84(para)
+msgid "To report a bug or make a suggestion regarding the <application>Nemiver</application> application or this manual, see the <ulink url=\"http://home.gna.org/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
+msgstr ""
+
+#: C/nemiver.xml:92(para)
+msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
+msgstr "Nemiver är en grafisk felsökare för skrivbordsmiljön GNOME."
+
+#: C/nemiver.xml:97(primary)
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: C/nemiver.xml:98(primary)
+msgid "debugger"
+msgstr "felsökare"
+
+#: C/nemiver.xml:99(primary)
+msgid "gdb"
+msgstr "gdb"
+
+#: C/nemiver.xml:104(title)
+msgid "Introduction"
+msgstr "Introduktion"
+
+#: C/nemiver.xml:105(para)
+msgid "Nemiver is an ongoing effort to write a standalone graphical debugger that integrates well in the GNOME desktop environment. It currently features a backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr ""
+
+#: C/nemiver.xml:112(title)
+msgid "Perspectives"
+msgstr ""
+
+#: C/nemiver.xml:113(para)
+msgid "Nemiver is built with a plugin system that can offer several different perspectives. Currently the only perspective provided is a debugging perspective, but in the future, there may be perspectives added for valgrind, or for profiling tools such as oprofile."
+msgstr ""
+
+#: C/nemiver.xml:123(title)
+msgid "The Nemiver window"
+msgstr ""
+
+#: C/nemiver.xml:124(para)
+msgid "When you start Nemiver, you will see a window that looks very much like the following:"
+msgstr ""
+
+#: C/nemiver.xml:129(title)
+msgid "Nemiver Window"
+msgstr ""
+
+#: C/nemiver.xml:135(phrase)
+msgid "Shows Nemiver main window."
+msgstr ""
+
+#: C/nemiver.xml:140(para)
+msgid "The <application>Nemiver</application> window contains the following elements:"
+msgstr ""
+
+#: C/nemiver.xml:145(term)
+msgid "Menubar"
+msgstr ""
+
+#: C/nemiver.xml:147(para)
+msgid "The menus on the menubar contain all of the commands you need to use <application>Nemiver</application>."
+msgstr ""
+
+#: C/nemiver.xml:153(term)
+msgid "Toolbar"
+msgstr ""
+
+#: C/nemiver.xml:155(para)
+msgid "The toolbar contains the basic debugging actions that can be used to run or step through the program being debugged."
+msgstr ""
+
+#: C/nemiver.xml:161(term)
+msgid "Source View Notebook"
+msgstr ""
+
+#: C/nemiver.xml:163(para)
+msgid "When source files are open, this area will display source files of the program being debugged."
+msgstr ""
+
+#: C/nemiver.xml:169(term)
+msgid "Status Notebook"
+msgstr ""
+
+#: C/nemiver.xml:171(para)
+msgid "The Status notebook contains several tabs for displaying information about the program being debugged. These include the following:"
+msgstr ""
+
+#: C/nemiver.xml:178(term)
+msgid "Call Stack"
+msgstr ""
+
+#: C/nemiver.xml:182(para)
+msgid "Displays the current state of the call stack of the program being debugged."
+msgstr ""
+
+#: C/nemiver.xml:189(term)
+msgid "Variables"
+msgstr ""
+
+#: C/nemiver.xml:193(para)
+msgid "Displays a list of all local variables and function arguments, in addition to their values and types."
+msgstr ""
+
+#: C/nemiver.xml:200(term)
+msgid "Target Terminal"
+msgstr ""
+
+#: C/nemiver.xml:204(para)
+msgid "If the program being debugged prints any output to the terminal, that output will be displayed in this tab."
+msgstr ""
+
+#: C/nemiver.xml:211(term)
+msgid "Breakpoints"
+msgstr ""
+
+#: C/nemiver.xml:215(para)
+msgid "This tab displays a list of all breakpoints that have been set. You can view the source code of a particular breakpoint by double-clicking an item in the list or by right-clicking and selecting <menuchoice><guimenuitem>Go to Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints can be deleted, enabled, or disabled in this tab."
+msgstr ""
+
+#: C/nemiver.xml:234(title)
+msgid "Getting Started"
+msgstr ""
+
+#: C/nemiver.xml:235(para)
+msgid "This section explains how to start Nemiver and gives a basic overview of the application."
+msgstr ""
+
+#: C/nemiver.xml:240(title)
+msgid "Starting Nemiver"
+msgstr ""
+
+#: C/nemiver.xml:241(para)
+msgid "You can start Nemiver in the following ways:"
+msgstr "Du kan starta Nemiver på följande sätt:"
+
+#: C/nemiver.xml:246(term)
+msgid "<guimenu>Applications</guimenu> menu"
+msgstr ""
+
+#: C/nemiver.xml:248(para)
+msgid "Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver Debugger</guimenuitem></menuchoice>."
+msgstr ""
+
+#: C/nemiver.xml:255(term)
+msgid "Command line"
+msgstr "Kommandorad"
+
+#: C/nemiver.xml:257(para)
+msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
+msgstr ""
+
+#: C/nemiver.xml:262(title)
+msgid "Additional Command-line Options"
+msgstr ""
+
+#: C/nemiver.xml:263(para)
+msgid "You can find a list of options that can be passed to Nemiver on the command line by typing <command>nemiver --help-all</command>."
+msgstr ""
+
+#: C/nemiver.xml:273(title)
+msgid "Debugging an Executable"
+msgstr ""
+
+#: C/nemiver.xml:276(title)
+#: C/nemiver.xml:346(title)
+#: C/nemiver.xml:394(title)
+#: C/nemiver.xml:476(title)
+msgid "Using the Workbench"
+msgstr ""
+
+#: C/nemiver.xml:277(para)
+msgid "To select an executable program to debug, select <menuchoice><guimenu> File </guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should display the following dialog:"
+msgstr ""
+
+#: C/nemiver.xml:289(title)
+msgid "Execute Dialog"
+msgstr ""
+
+#: C/nemiver.xml:295(phrase)
+msgid "Shows dialog for selecting an executable to run"
+msgstr ""
+
+#: C/nemiver.xml:300(para)
+msgid "In this dialog, you can select the program to be debugged, any arguments or options to be passed to the executable on the command line, the working directory to run the executable in, and any Environment Variables that should be set when the executable is being debugged."
+msgstr ""
+
+#: C/nemiver.xml:309(title)
+#: C/nemiver.xml:380(title)
+#: C/nemiver.xml:422(title)
+msgid "Using the Command Line"
+msgstr ""
+
+#: C/nemiver.xml:310(para)
+msgid "To start an executable program to debug from the command line, simply specify the name of the executable. You can either give an absolute path to the executable, or if it is in the path, you can simply give the basename of the executable. For example, if <filename>/usr/bin</filename> is in your path, both of the following are valid:"
+msgstr ""
+
+#: C/nemiver.xml:321(command)
+msgid "nemiver /usr/bin/progname"
+msgstr "nemiver /usr/bin/programnamn"
+
+#: C/nemiver.xml:326(command)
+msgid "nemiver progname"
+msgstr "nemiver programnamn"
+
+#: C/nemiver.xml:331(title)
+msgid "Passing Options on the Command Line"
+msgstr ""
+
+#: C/nemiver.xml:332(para)
+msgid "If you would like to pass command line options to the program that you are debugging, you should enclose them in quotes to prevent Nemiver from processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
+msgstr ""
+
+#: C/nemiver.xml:344(title)
+msgid "Attaching to a Running Program"
+msgstr ""
+
+#: C/nemiver.xml:347(para)
+msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Attach to Running Program... </guimenuitem></menuchoice>, which should display the following dialog:"
+msgstr ""
+
+#: C/nemiver.xml:359(title)
+msgid "Attach Dialog"
+msgstr ""
+
+#: C/nemiver.xml:365(phrase)
+msgid "Shows dialog for attaching to a running program"
+msgstr ""
+
+#: C/nemiver.xml:370(para)
+msgid "Select a process from the list and click <guibutton>OK</guibutton> to start debugging the selected program. There may be a lot of processes listed in the dialog, so you can filter the list to only ones that that you are interested in by typing some text into the text entry located just below the list."
+msgstr ""
+
+#: C/nemiver.xml:381(para)
+msgid "To attach to a running program from the command line, use the <option>--attach</option> option. The <option>--attach</option> option accepts either a pid or a process name. So, for example, to debug the running process <command>foo</command> which has a pid of 1121, you could either type <command>nemiver --attach foo</command> or <command>nemiver --attach 1121</command>."
+msgstr ""
+
+#: C/nemiver.xml:392(title)
+msgid "Loading a Core File"
+msgstr ""
+
+#: C/nemiver.xml:395(para)
+msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load Core File... </guimenuitem></menuchoice> to bring up the following dialog, which will let you load a core file:"
+msgstr ""
+
+#: C/nemiver.xml:408(title)
+msgid "Load Core File Dialog"
+msgstr ""
+
+#: C/nemiver.xml:414(phrase)
+msgid "Shows dialog for loading a core file"
+msgstr ""
+
+#: C/nemiver.xml:423(para)
+msgid "Core files cannot be loaded from the command line."
+msgstr ""
+
+#: C/nemiver.xml:431(title)
+msgid "Using Nemiver"
+msgstr ""
+
+#: C/nemiver.xml:433(title)
+msgid "Basic Debugging actions"
+msgstr ""
+
+#: C/nemiver.xml:434(para)
+msgid "step in, step out, step over, etc."
+msgstr ""
+
+#: C/nemiver.xml:439(title)
+msgid "Inspecting variables"
+msgstr ""
+
+#: C/nemiver.xml:440(para)
+#: C/nemiver.xml:446(para)
+msgid "TODO"
+msgstr ""
+
+#: C/nemiver.xml:445(title)
+msgid "Setting Breakpoints"
+msgstr ""
+
+#: C/nemiver.xml:452(title)
+msgid "Debugging Sessions"
+msgstr ""
+
+#: C/nemiver.xml:453(para)
+msgid "Nemiver can save your debugging sessions for you so that you can resume them at a later time. This includes saving information such as which executable is being debugged, what environment variables are set, what command-line options are passed to the executable, which files are open, and which breakpoints are set so that you can get back to where you left off last time as quickly as possible."
+msgstr ""
+
+#: C/nemiver.xml:462(title)
+msgid "Saving Sessions"
+msgstr ""
+
+#: C/nemiver.xml:463(para)
+msgid "Nemiver will save your session automatically on exit, so you don't even have to worry about it. However, if you want to explicitly save the session before closing Nemiver, you can do so by selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</guimenuitem></menuchoice>."
+msgstr ""
+
+#: C/nemiver.xml:474(title)
+msgid "Resuming Saved Sessions"
+msgstr ""
+
+#: C/nemiver.xml:477(para)
+msgid "Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved Session...</guimenuitem></menuchoice> and select a session from the list."
+msgstr ""
+
+#: C/nemiver.xml:486(title)
+msgid "Session Dialog"
+msgstr ""
+
+#: C/nemiver.xml:492(phrase)
+msgid "Shows dialog for resuming a saved session"
+msgstr ""
+
+#: C/nemiver.xml:499(title)
+msgid "From the Command Line"
+msgstr ""
+
+#: C/nemiver.xml:500(para)
+msgid "If you know the session ID of the session you want to run, you can start that debugging session from the command line. For example, if you want to run session number 3, you can do so with the following command: <command>nemiver --executesession 3</command>."
+msgstr ""
+
+#: C/nemiver.xml:513(title)
+msgid "About Nemiver"
+msgstr "Om Nemiver"
+
+#: C/nemiver.xml:514(para)
+msgid "<application>Nemiver</application> was written by Dodji Seketeli and Jonathon Jongsma, with contributions from many others. To find more information about Nemiver, please visit the <ulink url=\"http://home.gna.org/nemiver/\" type=\"http\">Nemiver project website</ulink>."
+msgstr ""
+
+#: C/nemiver.xml:520(para)
+msgid "To report a bug or make a suggestion regarding this application or this manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
+msgstr ""
+
+#: C/nemiver.xml:527(para)
+msgid "This program is distributed under the terms of the GNU General Public license as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. A copy of this license can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or in the file COPYING included with the source code of this program."
+msgstr ""
+
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2.
+#: C/nemiver.xml:0(None)
+msgid "translator-credits"
+msgstr "Daniel Nylander <po@danielnylander.se>, 2007"
+
