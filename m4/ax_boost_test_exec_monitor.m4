@@ -73,12 +73,23 @@ AC_DEFUN([AX_BOOST_TEST_EXEC_MONITOR],
 		if test "x$ax_cv_boost_test_exec_monitor" = "xyes"; then
 			AC_DEFINE(HAVE_BOOST_TEST_EXEC_MONITOR,,[define if the Boost::Test_Exec_Monitor library is available])
 			BN=boost_test_exec_monitor
+			BN2=boost_prg_exec_monitor
             if test "x$ax_boost_user_test_exec_monitor_lib" = "x"; then
          		saved_ldflags="${LDFLAGS}"
-		    	for ax_lib in $BN $BN-$CC $BN-$CC-mt $BN-$CC-mt-s $BN-$CC-s \
-                             lib$BN lib$BN-$CC lib$BN-$CC-mt lib$BN-$CC-mt-s lib$BN-$CC-s \
-                             $BN-mgw $BN-mgw $BN-mgw-mt $BN-mgw-mt-s $BN-mgw-s ; do
-                   LDFLAGS="${LDFLAGS} -l$ax_lib"
+		    	for ax_lib in $BN $BN2 $BN-mt $BN2-mt $BN-mt-s \
+                                      $BN2-mt-s $BN-s $BN2-s  $BN-$CC \
+                                      $BN2-$CC $BN-$CC-mt $BN2-$CC-mt \
+                                      $BN-$CC-mt-s $BN2-$CC-mt-s \
+                                      $BN-$CC-s $BN2-$CC-s lib$BN \
+                                      lib$BN2 lib$BN-$CC lib$BN2-$CC \
+                                      lib$BN-$CC-mt lib$BN2-$CC-mt \
+                                      lib$BN-$CC-mt-s lib$BN2-$CC-mt-s \
+                                      lib$BN-$CC-s lib$BN2-$CC-s \
+                                      $BN-mgw $BN2-mgw $BN-mgw-mt \
+                                      $BN2-mgw-mt $BN-mgw-mt-s \
+                                      $BN2-mgw-mt-s $BN-mgw-s \
+                                      $BN2-mgw-s  ; do
+                   LDFLAGS="${LDFLAGS} ${BOOST_UNIT_TEST_FRAMEWORK_LIB} -l$ax_lib"
     			   AC_CACHE_CHECK(Boost::TestExecMonitor library linkage,
 	      			    		   ax_cv_boost_test_exec_monitor_link,
 						  [AC_LANG_PUSH([C++])
@@ -95,7 +106,7 @@ AC_DEFUN([AX_BOOST_TEST_EXEC_MONITOR],
                   LDFLAGS="${saved_ldflags}"
 
 			      if test "x$link_test_exec_monitor" = "xyes"; then
-                      BOOST_TEST_EXEC_MONITOR_LIB="-l$ax_lib"
+                      BOOST_TEST_EXEC_MONITOR_LIB="-l$ax_lib ${BOOST_UNIT_TEST_FRAMEWORK_LIB}"
                       AC_SUBST(BOOST_TEST_EXEC_MONITOR_LIB)
 					  break
 				  fi
