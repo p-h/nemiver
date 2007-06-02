@@ -183,9 +183,8 @@ public:
         return set_a_variable_type (a_var_name, a_type, it) ;
     }
 
-    void set_variables_real
-                        (const std::list<IDebugger::VariableSafePtr> &a_vars,
-                         Gtk::TreeRowReference &a_vars_row_ref)
+    void set_variables_real (const std::list<IDebugger::VariableSafePtr> &a_vars,
+                             Gtk::TreeRowReference &a_vars_row_ref)
     {
         using namespace variables_utils ;
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -502,12 +501,8 @@ public:
                                  tree_store->get_iter (row_ref->get_path ()),
                                  var_iter)) {
             THROW_IF_FAIL (var_iter) ;
-            LOG_DD ("updating variable '"
-                    << a_var_name << "' into vars editor") ;
-            THROW_IF_FAIL2 (update_a_variable (a_var, *tree_view,
-                                              is_new_frame, var_iter),
-                            "Failed to update variable '"
-                             + a_var_name + "'") ;
+            LOG_DD ("updating variable '" << a_var_name << "' into vars editor") ;
+            update_a_variable (a_var, *tree_view, is_new_frame, var_iter) ;
             UString value =
                 (Glib::ustring) var_iter->get_value
                                             (get_variable_columns ().value) ;
@@ -533,9 +528,6 @@ public:
             }
         } else {
             LOG_DD ("adding variable '" << a_var_name << " to vars editor") ;
-            UString str ;
-            a_var->to_string (str, true) ;
-            LOG_DD ("variable detail:'" << str << "'") ;
             append_a_variable (a_var,
                                tree_store->get_iter (row_ref->get_path ()),
                                tree_store,
@@ -673,9 +665,7 @@ public:
                 IDebugger::VariableSafePtr var =
                     (IDebugger::VariableSafePtr) row_it->get_value
                                             (get_variable_columns ().variable) ;
-                THROW_IF_FAIL2
-                    (update_a_variable (var, *tree_view, true, row_it),
-                     "Failed to update variable '" + var->name () + "'") ;
+                update_a_variable (var, *tree_view, true, row_it) ;
             }
         } else {
 append_pointed_variable:
