@@ -21,7 +21,8 @@ fooprog \
 templatedvar
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
-runtestgdbmi_LDADD=  @NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestgdbmi_LDADD= @NEMIVERCOMMON_LIBS@ \
+@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libgdbmiparser.la
 
@@ -42,12 +43,14 @@ runteststdout_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestcpptrait_SOURCES=test-cpptrait.cc
-runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
+runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ \
+@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 
 runtestunicode_SOURCES=test-unicode.cc
-runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
+runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ \
+@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestvarlist_SOURCES=test-var-list.cc

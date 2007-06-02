@@ -171,9 +171,18 @@ PKG_CHECK_MODULES(SQLITE3, [sqlite3 >= $SQLITE3_VERSION])
 PKG_CHECK_MODULES(LIBVTE, [vte >= $LIBVTE_VERSION])
 
 if test x$ENABLE_AUTOTESTS = xyes ; then
-AX_BOOST_BASE([1.33.1])
-AX_BOOST_UNIT_TEST_FRAMEWORK
-AX_BOOST_TEST_EXEC_MONITOR
+    AX_BOOST_BASE([1.33.1])
+    AX_BOOST_UNIT_TEST_FRAMEWORK
+    AX_BOOST_TEST_EXEC_MONITOR
+
+    unit_framework_lib_candidates="/usr/lib/libboost_unit_test_framework-st.a"
+    for i in $unit_framework_lib_candidates ; do
+        if test -f $i ; then
+            BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB=$i
+            break
+        fi
+    done
+    AC_SUBST(BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB)
 fi
 
 if test x$ENABLE_WORKBENCH = xyes ; then

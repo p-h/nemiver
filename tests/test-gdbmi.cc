@@ -1,6 +1,5 @@
 #include <list>
 #include <map>
-#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include "dbgengine/nmv-gdbmi-parser.h"
 #include "common/nmv-exception.h"
