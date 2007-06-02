@@ -1,5 +1,11 @@
-2007-05-20 Jonathon Jongsma <jjongsma@gnome.org>
+2007-05-21 Dodji Seketeli <dodji@gnome.org>
 
+	* m4/ax_boost_unit_test_framework.m4: detect
+	  libboost_unit_test_framework in the 1.34 version.
+	  This library's naming scheme has changed in from 1.33.x
+	  The MACRO still works with boost version 1.33.
+
+2007-05-20 Jonathon Jongsma <jjongsma@gnome.org>
 	* src/persp/dbgperspective/glade/varinspectordialog.glade: HIG fixes: add
 	6px border around the dialog so that things match up a bit better and things
 	don't look so crowded, remove separator
