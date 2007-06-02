@@ -1,3 +1,4 @@
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"

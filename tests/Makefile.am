@@ -21,7 +21,7 @@ fooprog \
 templatedvar
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
-runtestgdbmi_LDADD=  @NEMIVERCOMMON_LIBS@ @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
+runtestgdbmi_LDADD=  @NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libgdbmiparser.la
 
@@ -81,7 +81,7 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 INCLUDES=-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/dbgengine \
-@NEMIVERCOMMON_CFLAGS@
+@NEMIVERCOMMON_CFLAGS@ -DBOOST_TEST_DYN_LINK
 
 LDADD=$(top_builddir)/src/common/libnemivercommon.la
 

@@ -1,3 +1,13 @@
+2007-06-02 Dodji Seketeli <dodji@gnome.org>
+
+	* tests/Makefile.am: adapt tests to the last m4 machinery change wrt
+	  boost 1.34 detection.
+	* tests/test-breakpoint.cc, tests/test-cpptrait.cc,
+	  tests/test-cpptrait.cc, tests/test-deref.cc,
+	  tests/test-gdbmi.cc, tests/test-local-vars-list.cc,
+	  tests/test-local-vars-list.cc, tests/test-unicode.cc,
+	  tests/test-var-list.cc: update these to use boost 1.34
+
 2007-05-21 Dodji Seketeli <dodji@gnome.org>
 
 	* m4/ax_boost_test_exec_monitor.m4: updated this

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <boost/test/test_tools.hpp>
+#include <boost/test/minimal.hpp>
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"

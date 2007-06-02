@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <glibmm.h>
 #include "common/nmv-ustring.h"

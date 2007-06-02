@@ -1,4 +1,5 @@
 #include <iostream>
+#include <boost/test/minimal.hpp>
 #include <boost/test/test_tools.hpp>
 #include <glibmm.h>
 #include "nmv-i-debugger.h"
