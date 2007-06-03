@@ -33,7 +33,7 @@ doc:
 RELEASE_UPLOAD_HOST = master.gnome.org
 RELEASE_UPLOAD_BASE = /home/users/$(USER)
 RELEASE_URL_BASE = http://ftp.gnome.org/pub/GNOME/sources/nemiver/
-SVN_ROOT = svn+ssh://svn.gna.org/svn/nemiver
+SVN_ROOT = svn+ssh://svn.gnome.org/svn/nemiver
 RELEASE_ANNOUNCE_LIST = nemiver-list@gna.org (cc gnome-announce-list@gnome.org)
 tar_gz_file = $(PACKAGE)-$(VERSION).tar.gz
 sig_file = $(tar_gz_file).sig
@@ -42,7 +42,7 @@ sig_file = $(tar_gz_file).sig
 $(sig_file): $(tar_gz_file)
 	gpg --output $@ --detach $^
 
-tag-release: distcheck tag-release-only
+tag-release: dist tag-release-only
 tag-release-only:
 	svn copy -m "$(PACKAGE_NAME) release $(VERSION)" \
 		$(SVN_ROOT)/trunk $(SVN_ROOT)/tags/$(PACKAGE_NAME)-$(VERSION)
