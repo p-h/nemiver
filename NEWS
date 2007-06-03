@@ -1,7 +1,66 @@
-0.3.0 Release
+0.4.0 Release
 =============
 
 New features
+-------------
+
+    [Jonathon Jongsma]
+
+    * enable/disable breakpoints
+    * enable refresh of breakpoints view at will
+    * enable filtering of process list
+    * added a user manual
+    * set breakpoints by typing function name or file location
+    * added a font selection settings
+    * switch mouse pointer to busy cursor when gdb is running
+
+    [Dodji Seketeli]
+
+    * added a --env option as in nemiver --env "foo=bar foobar=baz" prog-to-debug
+    * handle methods overload choosing when setting freeform breakpoints.
+    * allow remote processes debugging using gdbserver.
+
+    [Andreas Nilsson]
+
+    * new nemiver icons set
+
+Bug fixes, improvements
+-----------------------
+
+    [Jonathon Jongsma]
+
+    * #401249 Use icon list for window icon
+    * save and restore status pane position between sessions
+    * many UI related fixes an improvements
+
+    [Dodji Seketeli]
+
+    * #414334 nemiver not internationalized filename friendly
+    * #423846 GDBMI parsing fails in nemiver::parse_member_variable()
+    * #424069 Crashed
+    * #417775 nemiver doesn't detect new versions of source files
+    * improved dynmods API
+    * better gdb flow control.
+    * many gdbmi parsing fixes
+    * better variables management
+    * better breakpoints handling
+    * fixed a couple of crashers
+    * lots of internal refactoring
+
+Translations
+------------
+
+     * fr  [Stephane Raimbault]
+     * en_GB [David Lodge]
+     * ja [Takeshi AIHANA]
+
+
+
+
+0.3.0 Release
+============ 
+
+    features
 ============
 
     [Dodji Seketeli]

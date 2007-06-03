@@ -1,3 +1,7 @@
+2007-06-03 Dodji Seketeli <dodji@gnome.org>
+
+	* NEWS: updated this to prepare the 0.4 release
+
 2007-06-02 Dodji Seketeli <dodji@gnome.org>
 
 	* configure.ac: detect the static library
