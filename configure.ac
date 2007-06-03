@@ -104,9 +104,13 @@ AC_ARG_ENABLE(autotests,
               AC_HELP_STRING([--enable-autotests=yes|no],
                              [enable automated tests (default is no)]),
               ENABLE_AUTOTESTS=$enableval,
-              ENABLE_AUTOTESTS=no)
-if test x$NEMIVER_DEVEL = xon ; then
-    ENABLE_AUTOTESTS=yes
+              ENABLE_AUTOTESTS=auto)
+if test x$ENABLE_AUTOTESTS = xauto ; then
+    if test x$NEMIVER_DEVEL = xon ; then
+        ENABLE_AUTOTESTS=yes
+    else
+        ENABLE_AUTOTESTS=no
+    fi
 fi
 
 if test x$ENABLE_AUTOTESTS = xyes ; then

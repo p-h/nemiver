@@ -1,3 +1,11 @@
+2007-06-03 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* configure.ac: add the ability to disable building of automated tests even
+	when the NEMIVER_DEVEL environment variable is set.  Hopefully this won't be
+	necessary for much longer, but currently the tests don't build for me with
+	boost 1.33.x.  I should really look into why it doesn't build, but this lets
+	me build nemiver in the meantime
+
 2007-06-03 Dodji Seketeli <dodji@gnome.org>
 
 	* Makefile.am: do not distcheck for release, only dist. Update svn path
