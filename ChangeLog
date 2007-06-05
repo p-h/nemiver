@@ -1,3 +1,10 @@
+2007-06-05 Dodji Seketeli <dodji@gnome.org>
+
+	* src/common/nmv-proc-mgr.cc,h:
+	  change ProcMgr::get_process_from_pid() to make it use the pid_t
+	  type instead of int. This is to reflect the API change
+	  in libgtop HEAD that would break the compilation otherwise.
+
 2007-06-03 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* configure.ac: add the ability to disable building of automated tests even

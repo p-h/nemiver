@@ -51,7 +51,7 @@ protected:
 public:
     virtual ~ProcMgr () ;
     const list<Process>& get_all_process_list () const  ;
-    bool get_process_from_pid (unsigned int a_pid,
+    bool get_process_from_pid (pid_t a_pid,
                                Process &a_process) const;
     bool get_process_from_name (const UString &a_pname,
                                 Process &a_process,
@@ -85,13 +85,17 @@ ProcMgr::get_all_process_list () const
 {
     glibtop_proclist buf_desc ;
     memset (&buf_desc, 0, sizeof (buf_desc)) ;
-    unsigned int *pids=NULL;
+    pid_t *pids=NULL;
 
     m_process_list.clear () ;
 
     try {
         //get the list of pids
-        pids = glibtop_get_proclist (&buf_desc, GLIBTOP_KERN_PROC_ALL, 0)  ;
+        //this is an ugly cast, but I am quite obliged
+        //since I have to support one version of glibtop_get_proclist()
+        //that returns an int* and one that returns pid_t*
+        pids = (pid_t*) glibtop_get_proclist (&buf_desc,
+                                               GLIBTOP_KERN_PROC_ALL, 0)  ;
 
         //get a couple of info about each pocess
         for (unsigned i=0 ; i < buf_desc.number ; ++i) {
@@ -118,7 +122,7 @@ IProcMgr::create ()
 }
 
 bool
-ProcMgr::get_process_from_pid (unsigned int a_pid,
+ProcMgr::get_process_from_pid (pid_t a_pid,
                                IProcMgr::Process &a_process) const
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;

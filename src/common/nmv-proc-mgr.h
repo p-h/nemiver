@@ -122,7 +122,7 @@ public:
     virtual ~IProcMgr () {}
     static IProcMgrSafePtr create () ;
     virtual const list<Process>& get_all_process_list () const = 0;
-    virtual bool get_process_from_pid (unsigned int a_pid,
+    virtual bool get_process_from_pid (pid_t a_pid,
                                        Process &a_process) const = 0;
     virtual bool get_process_from_name
                                     (const UString &a_pname,
