@@ -1,3 +1,11 @@
+2007-06-09 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/glade/chooseoverloadsdialog.glade,
+	src/persp/dbgperspective/nmv-choose-overloads-dialog.cc: cleanup of the
+	'Choose Overloaded Function' dialog so that it looks a little bit cleaner.
+	Provide a bit of explanation of what is going on, and add a bit of spacing
+	per the HIG.
+
 2007-06-05 Dodji Seketeli <dodji@gnome.org>
 
 	* src/common/nmv-proc-mgr.cc,h:

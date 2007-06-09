@@ -26,6 +26,7 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/dialog.h>
+#include <gtkmm/scrolledwindow.h>
 #include "nmv-choose-overloads-dialog.h"
 #include "nmv-ui-utils.h"
 
@@ -83,10 +84,10 @@ struct ChooseOverloadsDialog::Priv {
 
     void pack_tree_view_into_glade ()
     {
-        Gtk::Box *box =
-            ui_utils::get_widget_from_glade<Gtk::Box> (glade,
-                                                       "treeviewcontainer");
-        box->pack_start (*tree_view) ;
+        Gtk::ScrolledWindow *sw =
+            ui_utils::get_widget_from_glade<Gtk::ScrolledWindow> (glade,
+                                                       "treeviewscrolledwindow");
+        sw->add (*tree_view) ;
     }
 
     void clear ()
@@ -105,9 +106,9 @@ struct ChooseOverloadsDialog::Priv {
             list_store = Gtk::ListStore::create (columns ()) ;
         }
         tree_view = Gtk::manage (new Gtk::TreeView (list_store)) ;
-        tree_view->append_column (_("function name"),
+        tree_view->append_column (_("Function Name"),
                                   columns ().function_name) ;
-        tree_view->append_column (_("function location"),
+        tree_view->append_column (_("Location"),
                                   columns ().function_location) ;
 
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_MULTIPLE) ;
