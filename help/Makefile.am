@@ -8,5 +8,8 @@ DOC_FIGURES = \
 			  figures/execute-dialog.png \
 			  figures/load-core-dialog.png \
 			  figures/main-window.png \
-			  figures/sessions-dialog.png
+			  figures/sessions-dialog.png \
+			  figures/variable-inspector.png \
+			  figures/set-breakpoint-dialog.png \
+			  figures/open-files-target.png
 DOC_LINGUAS = sv
