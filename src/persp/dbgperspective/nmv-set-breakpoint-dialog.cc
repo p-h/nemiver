@@ -205,7 +205,7 @@ public:
 };//end class SetBreakpointDialog::Priv
 
 SetBreakpointDialog::SetBreakpointDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "setbreakpoint.glade", "setbreakpointdialog")
+    Dialog (a_root_path, "setbreakpointdialog.glade", "setbreakpointdialog")
 {
     m_priv.reset (new Priv (glade ())) ;
 }

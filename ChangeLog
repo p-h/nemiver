@@ -1,5 +1,16 @@
 2007-06-09 Jonathon Jongsma <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/setbreakpointdialog.glade: make the set
+	breakpoint dialog a little bit wider by default.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc: some time ago,
+	setbreakpoint.glade was renamed to setbreakpointdialog.glade, but apparently
+	we've still been trying to load the widget from setbreakpoint.glade.  So in
+	0.4.0, the new set a breakpoint on a function name feature would not have
+	  worked at all.  We didn't notice because we probably both had the old
+	  glade file installed in /usr/local, so it was just loading the old file.
+
+2007-06-09 Jonathon Jongsma <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/glade/chooseoverloadsdialog.glade,
 	src/persp/dbgperspective/nmv-choose-overloads-dialog.cc: cleanup of the
 	'Choose Overloaded Function' dialog so that it looks a little bit cleaner.
