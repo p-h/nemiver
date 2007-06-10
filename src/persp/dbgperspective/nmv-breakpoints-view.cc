@@ -100,6 +100,8 @@ public:
                 (*this, &Priv::on_debugger_breakpoint_deleted_signal)) ;
         debugger->breakpoints_set_signal ().connect (sigc::mem_fun
                 (*this, &Priv::on_debugger_breakpoints_set_signal)) ;
+        breakpoints_menu = load_menu ("breakpointspopup.xml",
+                "/BreakpointsPopup");
     }
 
     void build_tree_view ()
@@ -286,11 +288,7 @@ public:
 
     Gtk::Widget* get_breakpoints_menu ()
     {
-        if (!breakpoints_menu) {
-            breakpoints_menu = load_menu ("breakpointspopup.xml",
-                                          "/BreakpointsPopup");
-            THROW_IF_FAIL (breakpoints_menu);
-        }
+        THROW_IF_FAIL (breakpoints_menu);
         return breakpoints_menu;
     }
 
@@ -351,28 +349,19 @@ public:
     {
         NEMIVER_TRY
         THROW_IF_FAIL(tree_view)
-        if (tree_view->get_selection ()->count_selected_rows () > 1) {
-            Glib::RefPtr<Gtk::Action> action =
-                workbench.get_ui_manager ()->get_action
-                ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
-            if (action) {
+
+        Glib::RefPtr<Gtk::Action> action = workbench.get_ui_manager ()->get_action
+            ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
+        if (action) {
+            if (tree_view->get_selection ()->count_selected_rows () > 1) {
                 action->set_sensitive (false) ;
             } else {
-                LOG_ERROR
-                    ("Could not get action "
-                     "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
+                action->set_sensitive (true) ;
             }
         } else {
-            Glib::RefPtr<Gtk::Action> action =
-                workbench.get_ui_manager ()->get_action
-                ("/BreakpointsPopup/GoToSourceBreakpointMenuItem");
-            if (action) {
-                action->set_sensitive (true) ;
-            } else {
-                LOG_ERROR
-                    ("Could not get action "
-                     "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
-            }
+            LOG_ERROR
+                ("Could not get action "
+                 "/BreakpointsPopup/GoToSourceBreakpointMenuItem") ;
         }
         NEMIVER_CATCH
     }

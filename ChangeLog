@@ -1,3 +1,13 @@
+2007-06-10 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: load the breakpoints
+	popup menu in the constructor instead of in the get_breakpoints_menu()
+	function.  This is needed because we update the sensitivity of the menu
+	actions when the treeview selection changes, and this can happen before
+	we've ever popped up the menu, which results in error logs printed to the
+	terminal.  In the process, I also reduced some code duplication in
+	on_treeview_selection_changed()
+
 2007-06-09 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* help/C/nemiver.xml: Added some basic content for all of the user manual
