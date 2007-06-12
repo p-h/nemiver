@@ -94,6 +94,9 @@ public:
         tree_view->get_selection ()->signal_changed ().connect (
                 sigc::mem_fun (*this, &Priv::on_treeview_selection_changed));
 
+        tree_view->signal_key_press_event ().connect (sigc::mem_fun (*this,
+                    &Priv::on_key_press_event));
+
         // update breakpoint list when debugger indicates that the list of
         // breakpoints has changed.
         debugger->breakpoint_deleted_signal ().connect (sigc::mem_fun
@@ -441,6 +444,15 @@ public:
     void re_init ()
     {
         debugger->list_breakpoints ();
+    }
+
+    bool on_key_press_event (GdkEventKey* event)
+    {
+        if (event && event->keyval == GDK_Delete)
+        {
+            on_breakpoint_delete_action ();
+        }
+        return false;
     }
 
 };//end class BreakpointsView::Priv
