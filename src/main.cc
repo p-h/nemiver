@@ -52,6 +52,7 @@ static gchar *gv_process_to_attach_to=0;
 static bool gv_list_sessions=false ;
 static bool gv_purge_sessions=false ;
 static int gv_execute_session=0;
+static bool gv_last_session=false ;
 static gchar *gv_log_domains=0;
 static bool gv_log_debugger_output=false ;
 
@@ -98,6 +99,14 @@ static GOptionEntry entries[] =
       &gv_execute_session,
       _("Debug the program that was of session number N"),
       "N"
+    },
+    { "last",
+      0,
+      0,
+      G_OPTION_ARG_NONE,
+      &gv_last_session,
+      _("Execute the last session"),
+      NULL
     },
     { "log-domains",
       0,
@@ -317,6 +326,28 @@ main (int a_argc, char *a_argv[])
             if (!found_session) {
                 cerr << "Could not find session of number "
                      << gv_execute_session
+                     << "\n";
+                return -1 ;
+            }
+            goto run_app ;
+        }
+    }
+
+    // execute the last session if one exists
+    if (gv_last_session) {
+        IDBGPerspective *debug_persp =
+            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
+                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+        if (debug_persp) {
+            debug_persp->session_manager ().load_sessions () ;
+            list<ISessMgr::Session>::reverse_iterator session_iter ;
+            list<ISessMgr::Session>& sessions =
+                            debug_persp->session_manager ().sessions () ;
+            session_iter = sessions.rbegin ();
+            if (session_iter != sessions.rend ()) {
+                debug_persp->execute_session (*session_iter) ;
+            } else {
+                cerr << "Could not find any sessions"
                      << "\n";
                 return -1 ;
             }
