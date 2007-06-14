@@ -1,0 +1,853 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-06-08 03:40+0100\n"
+"PO-Revision-Date: 2007-06-11 17:44+0530\n"
+"Last-Translator: yumkee lhamo <yumkeyl08@hotmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade/workbench.glade.h:1
+msgid "Nemiver"
+msgstr "ནི་མི་བར་"
+
+#: ../data/nemiver.desktop.in.h:1
+msgid "C/C++ Debugger"
+msgstr "སི/སི++ ཌི་བགག་ཇར་"
+
+#: ../data/nemiver.desktop.in.h:2
+msgid "Debug Applications"
+msgstr "གློག་རིམ་ཚུ་རྐྱེན་སེལ་འབད་"
+
+#: ../data/nemiver.desktop.in.h:3
+msgid "Nemiver Debugger"
+msgstr "ནིཨི་མི་བར་ རྐྱན་སེལ་འབད་མི་"
+
+#: ../src/main.cc:66
+msgid "Set the environment of the program to debug"
+msgstr "ལས་རིམ་གྱི་མཐའ་འཁོར་འདི་རྐྱེན་སེལ་ལེགཞི་སྒྲིག་འབད་"
+
+#: ../src/main.cc:75
+msgid "Attach to a process"
+msgstr "ལས་སྦྱོར་གཅིག་དང་མཉམ་སྒྲག་འབད་"
+
+#: ../src/main.cc:83
+msgid "List the saved debugging sessions"
+msgstr "སྲུངས་བཞག་འབད་ཡོད་མི་ལཱ་ཡུན་རྐྱན་སེལ་མི་ཚུ་ཐོ་བཀོད་འབད་"
+
+#: ../src/main.cc:91
+msgid "Erase the saved debugging sessions"
+msgstr "སྲུངས་བཞག་འབད་ཡོད་མི་ལཱ་ཡུན་རྐྱན་སེལ་ཚུ་ཀྲེག་གཏང་"
+
+#: ../src/main.cc:99
+msgid "Debug the program that was of session number N"
+msgstr "ཧེ་མ་ལཱ་ཡུན་ཨང་ཨེན་གྱི་ནང་ཡོད་མི་ལས་རིམ་འདི་རྐྱན་སེལ་འབད་"
+
+#: ../src/main.cc:107
+msgid "Enable logging domains DOMAINS"
+msgstr "ལོ་གིང་ཌོ་མེནསི ཌོ་མེནསི་ ལྕོགས་ཅན་བཟོ་"
+
+#: ../src/main.cc:115
+msgid "Log the debugger output"
+msgstr "རྐྱེན་སེལ་འབད་མི་ཨཱོཊི་པུཊི་དྲེན་དེབ་འབད་"
+
+#: ../src/main.cc:170
+msgid " [<prog-to-debug> [prog-args]]"
+msgstr " [<prog-to-debug> [prog-args]]"
+
+#: ../src/main.cc:172
+#: ../src/workbench/nmv-workbench.cc:233
+msgid "A C/C++ debugger for GNOME"
+msgstr "A C/C++ཇི་ནོམ་གྱི་དོན་རྐྱེན་སེལ་འབད་མི་"
+
+#: ../src/persp/dbgperspective/glade/bodycontainer.glade.h:1
+msgid "bodycontainer"
+msgstr "མ་གཟུགས་ཀྱི་འཛིན་སྣོད་"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:1
+msgid "<b>Cycling Options:</b>"
+msgstr "<b>བསྐྱར་འཁོར་འབད་བའི་གདམ་ཁ་ཚུ་:</b>"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:2
+msgid "<b>Match Options:</b>"
+msgstr "<b>མཐུན་སྒྲིག་གདམ་ཁ་ཚུ་:</b>"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:3
+msgid "Find text"
+msgstr "ཚིག་ཡིག་འཚོལ་"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:4
+msgid "Match _entire word only"
+msgstr "མིང་ཚིག་ཧྲིལ་བུ་རྐྱངམ་ཅིག་མཐུན་སྒྲིག་འབད་(_e)"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:5
+msgid "Match c_ase"
+msgstr "གནད་དོན་མཐུན་སྒྲིག་(_a)"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:6
+msgid "Search _backwards"
+msgstr "རྒྱབ་བསྐྱོད་ཚུ་འཚོལ་ཞིབ་འབད་(_b)"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:7
+msgid "_Search:"
+msgstr "འཚོལ་ཞིབ་:(_S)"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:8
+msgid "_Wrap around"
+msgstr "མཐའ་འཁོར་ལོག་མཚམས་(_W)"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:1
+msgid "<b>Core File:</b>"
+msgstr "<b>ཡིག་སྣོད་ནང་སྙིང་:</b>"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:2
+msgid "<b>Executable:</b>"
+msgstr "<b>ལག་ལེན་འཐབ་བཏུབ་:</b>"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:3
+msgid "Choose a Core File to Debug"
+msgstr "རྐྱེན་སེལ་ལུ་ཡིག་སྣོད་ནང་སྙིང་གཅིག་གདམ་"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:4
+msgid "Select A Core File"
+msgstr "ཡིག་སྣོད་ནང་སྙིང་གཅིག་གདམ་"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:5
+msgid "Select the executable that created the core file"
+msgstr "ཡིག་སྣོད་ནང་སྙིང་གསར་བསྐྲུན་འབད་ཡོད་པའི་་ལག་ལེན་འཐབ་བཏུབ་མི་ཅིག་སེལ་འཐུ་འབད་"
+
+#: ../src/persp/dbgperspective/glade/locatefiledialog.glade.h:1
+msgid "<b>Locate File</b>"
+msgstr "<bཡིག་སྣོད་ག་ཡོད་འཚོལ་</b>"
+
+#: ../src/persp/dbgperspective/glade/locatefiledialog.glade.h:2
+msgid "Select File Location"
+msgstr "ཡིག་སྣོད་ཀྱི་གནས་ཁོངས་སེལ་འཐུ་འབད་"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:1
+msgid "<b>Choose Source Files to Open</b>"
+msgstr "<b>ཁ་ཕྱེ་ནི་གི་དོན་ལུ་ཡིག་སྣོད་འབྱུང་ཁུངས་ཚུ་གདམ་ཁ་རྐྱབ་</b>"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:2
+msgid "Open Source Files"
+msgstr "ཡིག་སྣོད་འབྱུང་ཁུངས་ཚུ་ཁ་ཕྱེ་"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:3
+msgid "Select from _Filesystem"
+msgstr "ཡིག་སྣོད་རིམ་ལུགས་ཚུ་ལས་སེལ་འཐུ་འབད་(_F)"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:4
+msgid "Select from _Target Executable"
+msgstr "མིགས་གཏད་ལག་ལེན་འཐབ་བཏུབ་མི་ལས་ས་སེལ་འཐུ་འབད་"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:1
+msgid "<b>Editor Font</b>"
+msgstr "<b>ཞུན་དགཔ་ཡིག་གཟུགས་</b>"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:2
+msgid "<b>Line Numbers</b>"
+msgstr "<b>གྲལ་ཨང་ཚུ་</b>"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:3
+msgid "<b>Syntax Highlighting</b>"
+msgstr "<b>ཚིག་སྦྱོར་གཙོ་དམིགས་འབད་ནི་</b>"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:4
+msgid "Custom Font:"
+msgstr "སྲོལ་སྒྲིག་ཡིག་གཟུགས་:"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:5
+msgid "Display line numbers"
+msgstr "གྲལ་ཐིག་ཨང་ཚུ་བསྐྲམ་སྟོན་འབད་"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:6
+msgid "Editor"
+msgstr "ཞུན་དགཔ་"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:7
+msgid "Enable syntax highlighting"
+msgstr "ཚིག་སྦྱོར་གཙོ་དམིགས་འབད་ནི་ལྕོགས་ཅན་བཟོ་"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:8
+msgid "Preferences"
+msgstr "དགའ་གདམ་ཚུ་"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:9
+msgid "Source Directories"
+msgstr "འབྱུང་ཁུངས་སྣོད་ཐོ་ཚུ་"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:10
+msgid "Use system monospace font"
+msgstr "མོ་ནོ་སིཔེསི་རིམ་ལུགས་ཀྱི་ཡིག་གཟུགས་ལག་ལེན་འཐབ་"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:1
+msgid "<b>Choose a Process to Debug</b>"
+msgstr "<b>རྐྱེན་སེལ་འབད་ནི་གི་དོན་ལུ་ ལས་སྦྱོར་གཅི་ག་གདམ་ཁ་རྐྱབ་</b>"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:2
+msgid "Attach to a Running Program"
+msgstr "གཡོག་བཀོལ་བཞིན་པའི་ལས་རིམ་ཅིག་ལུ་མཉམ་སྒྲིག་འབད་"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:3
+msgid "_Filter list:"
+msgstr "མཚགས་མའི་ཐོ་ཡིག་: (_F)"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:1
+msgid "<b>Arguments:</b>"
+msgstr "<b>སྒྲུབ་རྟགས་ཚུ་:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:2
+msgid "<b>Environment Variables:</b>"
+msgstr "<b>མཐའ་འཁོར་གྱི་འགྱུར་ཅན་ཚུ་:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:3
+msgid "<b>Program:</b>"
+msgstr "<b>ལས་རིམ་:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:4
+msgid "<b>Working Directory:</b>"
+msgstr "<b>ལཱ་གཡོག་འབད་སའི་སྣོད་ཐོ་:</b>"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:5
+msgid "Choose a Program to Execute"
+msgstr "ལག་ལེན་འཐབ་ནི་གི་དོན་ལུ་ལས་རིམ་ཅིག་གདམ་ཁ་རྐྱབ་"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:6
+msgid "Choose a working directory"
+msgstr "ལཱ་གཡོག་འབད་སའི་སྣོད་ཐོ་གཅིག་གདམ་ཁ་རྐྱབ་"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:7
+msgid "Choose an executable"
+msgstr "ལག་ལེན་འཐབ་བཏུབ་མི་ཅིག་གདམ་ཁ་རྐྱབ་"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:8
+msgid "_Add"
+msgstr "ཁ་སྐོང་(_A)"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:9
+msgid "_Remove"
+msgstr "རྩ་བསྐྲད་གཏང་(_R)"
+
+#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:1
+msgid "<b>Choose a Session to Debug</b>"
+msgstr "<b>རྐྱན་སེལ་འབད་ནི་དོན་ལུ་ལཱ་ཡུན་ཅིག་གདམ་ཁ་རྐྱབ་</b>"
+
+#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:2
+msgid "Saved Sessions"
+msgstr "སྲུངས་ཡོད་པའི་ལཱ་ཡུན་ཚུ་"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2123
+msgid "Inspect a Variable"
+msgstr "འགྱུར་ཅན་ཞིབ་དཔྱད་འབད་"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:2
+msgid "_Inspect"
+msgstr "ཞིབ་དཔྱད་འབད་ནི་(_I)"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:3
+msgid "_Variable Name:"
+msgstr "འགྱུར་ཅན་གྱི་མིང་:(_V)"
+
+#: ../src/persp/dbgperspective/glade/chooseoverloadsdialog.glade.h:1
+msgid "choose between overloaded functions"
+msgstr "ལས་སྣ་མང་དྲགས་པའི་ལས་འགན་ཚུ་གི་བར་ན་གདམ་ཁ་རྐྱབ་"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:1
+msgid "<b>Executable file to load</b>"
+msgstr "<b>མངོན་གསལ་འབད་ནི་དོན་ལུ་ལག་ལེན་འཐབ་བཏུབ་པའི་ཡིག་སྣོད་</b>"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:2
+msgid "<b>Remote debugging server</b>"
+msgstr "<b>ཐག་རིང་རྐྱན་སེལ་འབད་བའི་སར་བར་</b>"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:3
+msgid "Address :"
+msgstr "ཁ་བྱང་:"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:4
+msgid "Choose a File"
+msgstr "ཡིག་སྣོད་གཅིག་གདམ་ཁ་རྐྱབ་"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:5
+msgid "Connect to Remote Target"
+msgstr "ཐག་རིང་དམིགས་གཏད་ལུ་མཐུད་"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:6
+msgid "Port :"
+msgstr "འདྲེན་ལམ་:"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:7
+msgid "Serial line connection"
+msgstr "གྲལ་ཐིག་ཨང་རིམ་མཐུད་ལམ་"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:8
+msgid "TCP/IP connection"
+msgstr "ཊི་སི་པི/ཨའི་པི མཐུད་ལམ་"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:1
+msgid "<b>Set a Breakpoint:</b>"
+msgstr "<b>བེརེཀ་པོཡིནཊི་ཅིག་གཞི་སྒྲིག་འབད་:</b>"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:2
+msgid "F_unction Name:"
+msgstr "ལས་འགན་གྱི་མིང་:(_F)"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:3
+msgid "Filename:"
+msgstr "ཡིག་སྣོད་ཀྱི་མིང་:"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:4
+msgid "Function:"
+msgstr "ལས་འགན་:"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:5
+msgid "Line:"
+msgstr "གྲལ་ཐིག་:"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:6
+msgid "Set Breakpoint"
+msgstr "བེརེཀ་པོ་ཡིནཊི་གཞི་སྒྲིག་འབད་"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:7
+msgid "_Source Location"
+msgstr "འབྱུང་ཁུངས་ཀྱི་གནས་ཁོངས་(_S)"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:108
+msgid "function name"
+msgstr "ལས་འགན་གྱི་མིང་"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
+msgid "function location"
+msgstr "ལས་འགན་གྱི་གནས་ཁོངས་"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:115
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:95
+msgid "ID"
+msgstr "ཨའི་ཌི་"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:116
+#: ../src/persp/dbgperspective/nmv-file-list.cc:106
+msgid "Filename"
+msgstr "ཡིག་སྣོད་ཀྱི་མིང་"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:117
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:384
+msgid "Line"
+msgstr "གྲལ་ཐིག་"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
+msgid "_Delete"
+msgstr "བཏོན་གཏང་(_D)"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:420
+msgid "Remove this breakpoint"
+msgstr "འ་ནི་བེརེཀ་པོ་ཡིནཊི་འདི་རྩ་བསྐྲད་གཏང་"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
+msgid "_Go to Source"
+msgstr "འབྱུང་ཁུངས་ལུ་འགྱོ་(_G)"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
+msgid "Find this breakpoint in the source editor"
+msgstr "འ་ནི་བེརེཀ་པོ་ཡིནཊི་འདི་འབྱུང་ཁུངས་ཞུན་དགཔ་ནང་འཚོལ་"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:123
+msgid "_Copy"
+msgstr "འདྲ་བཤུས་(_C)"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:124
+msgid "Copy the call stack to the clipboard"
+msgstr "འབོད་བརྡ་བརྩེགས་ཕུང་འདི་འཛིན་པང་འདི་ལུ་འདྲ་བཤུས་རྐྱབ་"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:383
+msgid "Frame"
+msgstr "གཞི་ཁྲམ་"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:385
+msgid "Function"
+msgstr "ལས་འགན་"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:386
+msgid "Arguments"
+msgstr "སྒྲུབ་རྟགས་ཚུ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:757
+#, c-format
+msgid "File %s has been modified. Do want to reload it ?"
+msgstr "ཡིག་སྣོད་%s འདི་ལེགས་བཅོས་གྲུབ་ཡོདཔ། འདི་ཡང་བསྐྱར་མངོན་གསལ་འབད་ནི་ཨིན་ན ?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1129
+#, c-format
+msgid "File path info is missing for breakpoint '%i'"
+msgstr " '%i' བེརེཀ་པོ་ཡིནཊི་གི་དོན་ལུ་ ཡིག་སྣོད་འགྲུལ་ལམ་བརྡ་དོན་འདི་བརླག་སྟོར་བཞུགས་པ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1540
+#, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "%s (path=\"%s\", pid=%i)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1553
+msgid "Connected to remote target !"
+msgstr "ཐ་རིང་དམིགས་གཏད་ལུ་མཐུད་ལམ་འབད་ཡོདཔ་ཡ!"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1683
+#, c-format
+msgid "Could not find file %s"
+msgstr "ཡིག་སྣོད་%s འདི་འཚོལ་མ་ཚུགས་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1696
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1754
+#, c-format
+msgid "File path info is missing for function '%s'"
+msgstr "ལསའགན་་'%s' གི་དོན་ལས་ཡིག་སྣོད་འགྲུལ་ལམ་བརྡ་དོན་འདི་བརླག་སྟོར་བཞུགས་པ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1718
+msgid "Program exited"
+msgstr "ལས་རིམ་ཕྱིར་ཐོན་ཡོདཔ་"
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1827
+#, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "དམིགས་གཏད་ཀྱིས་བརྡ་རྟགས ཅིག་ཐོབ་ཡོདཔ་: %s, %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1842
+#, c-format
+msgid "An error occured: %s"
+msgstr "འཛོལ་བ་ཅིག་ནམ་འབྱུང་ཡོདཔ་:%s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2005
+msgid "_Save Session to Disk"
+msgstr "ལཱ་ཡུན་འདི་ཌིཀསི་ལུ་སྲུངས་བཞག་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2006
+msgid "Save the current debugging session to disk"
+msgstr "ད་ལྟོའི་རྐྱེན་སེལ་བཞིན་པའི་ལཱ་ཡུན་འདི་ཌིཀསི་ལུ་སྲུངས་བཞག་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2017
+msgid "_Restart"
+msgstr "ལོག་འགོ་བཙུགས་ (_R)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2018
+msgid "Restart the target, killing this process and starting a new one"
+msgstr "དམིགས་གཏད་འདི་ ལས་སྦྱོར་འ་ནི་གསད་དེ གསརཔ་གཅིག་འགོ་བཙུགས་ཏེ་ ལོག་འགོ་བཙུགས་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2029
+msgid "_Detach from the Running Program..."
+msgstr "གཡོག་བཀོལ་ཡོད་བཞིན་པའི་ལས་རིམ་ལས་ཁ་འཕྱལ་ (_D)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2030
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr "གཡོག་བཀོལ་བཞིན་པའི་དམིགས་གཏད་འདི་མ་གསད་པ་སྦེ་ རྐྱེན་སེལ་འདི་མཐུད་ལམ་བཏོག་གཏང་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2040
+msgid "_Next"
+msgstr "གཞན་མི་(_N)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2041
+msgid "Execute next line stepping over the next function, if any"
+msgstr "ཤུལ་མམ་གྱི་ལས་འགན་གུར་ལས་གོམ་སྤོ་སྟེ་ཤུལ་མམ་གྱི་གྲལ་ཐིག་འདི་ལག་ལེན་འཐབ་བཏུབ་བཟོ་  གལ་སྲིད་གང་ཞིག་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2050
+msgid "_Step"
+msgstr "རིམ་པ་(_S)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2051
+msgid "Execute next line, stepping into the next function, if any"
+msgstr "ཤུལ་མམ་གྱི་ལས་འགན་གུར་གོམ་སྤོ་སྟེ་ ཤུལ་མམ་གྱི་གྲལ་ཐིག་འདི་ལག་ལེན་འཐབ་བཏུབ་བཟོ་  གལ་སྲིད་གང་ཞིག་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2060
+msgid "Step _Out"
+msgstr "གོམ་ཕྱིར་སྤོ་ (_O)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2061
+msgid "Finish the execution of the current function"
+msgstr "ད་ལྟོའི་ལས་འགན་གྱི་ལག་ལེན་འཐབ་ནི་འདི་མཇུག་བསྡུ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2070
+msgid "_Continue"
+msgstr "འཕྲོ་འཐུད་ (_C)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2071
+msgid "Continue program execution until the next breakpoint"
+msgstr "ཤུལ་མམ་གྱི་བེརེཀ་པོ་ཡིནཊི་ཚུན་ཚོད་ ལས་འགན་གྱི་ལག་ལེན་འཐབ་ནི་་འདི་འཕྲོ་མཐུད་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
+msgid "Run to Cursor"
+msgstr "འོད་རྟགས་ལུ་གཡོག་བཀོལ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2081
+msgid "Continue program execution until the currently selected line is reached"
+msgstr "ད་ལྟོ་སེལ་འཐུ་འབད་ཡོད་པའི་གྲལ་ཐིག་འདི་མ་ལྷོད་ཚུན་ཚོད་ ལས་འགན་གྱི་ལག་ལེན་འཐབ་ནི་འདི་འཕྲོ་མཐུད་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2091
+msgid "Toggle _Breakpoint At Cursor"
+msgstr "བེརེཀ་པོ་ཡིནཊི་ འོད་རྟགས་ལུ་སོར་སྟོན་འབད་(_B)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2092
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "ད་ལྟོའི་འོད་རྟགས་གནས་ཁོངས་ལུ་ བེརེཀ་པོ་ཡིནཊི་འདི་གཞི་སྒྲིག/སྒྲིག་བཤོལ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2101
+msgid "Enable/Disable Breakpoint"
+msgstr "བེརེཀ་པོ་ཡིནཊི་ ལྕོགས་ཅན་བཟོ་/ལྕོགས་མིན་བཟོ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2102
+msgid "Enable or disable the breakpoint that is set at the current cursor location"
+msgstr "ད་ལྟོའི་འོད་རྟགས་གནས་ཁོངས་ལུ་གཞི་སྒྲིག་འབད་ཡོད་པའི་བེརེཀ་པོ་ཡིནཊི་འདི་ལྕོགས་ཅན་ ཡང་ན་ ལྕོགས་མིན་བཟོ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2113
+msgid "Set Breakpoint..."
+msgstr "བེརེཀ་པོ་ཡིནཊི་གཞི་སྒྲིག་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
+msgid "Set a breakpoint at a function or line number"
+msgstr "ལས་འགན་གཅིག་ ཡང་ན་ གྲལ་ཐིག་ཨང་ལུ་བེརེཀ་པོ་ཡིནཊི་གཅིག་གཞི་སྒྲིག་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2124
+msgid "Inspect a global or local variable"
+msgstr "སྤྱི་ཁྱབ་གཅིག་ ཡང་ན་ ཉེ་གནས་འགྱུར་ཅན་ཞིབ་དཔྱད་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2135
+msgid "Stop"
+msgstr "བཀག་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2136
+msgid "Stop the Debugger"
+msgstr "རྐྱན་སེལ་འབད་མི་འདི་བཀག་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2147
+msgid "_View"
+msgstr "མཐོང་སྣང་(_V)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2156
+msgid "Show Commands"
+msgstr "བརྡ་བཀོད་་ཚུ་སྟོན་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2157
+msgid "Show the debugger commands tab"
+msgstr "རྐྱེན་སེལ་འབད་མི་གི་བརྡ་བཀོད་མཆོང་ལྡེ་འདི་སྟོན་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2165
+msgid "Show Errors"
+msgstr "འཛོལ་བ་ཚུ་སྟོན་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2166
+msgid "Show the errors tab"
+msgstr "འཛོལ་ཚུ་གི་མཆོང་ལྡེ་་འདི་སྟོན་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2174
+msgid "Show Output"
+msgstr "ཨའུཊི་པུཊི་ སྟོན་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2175
+msgid "Show the debugged target output tab"
+msgstr "རྐྱེན་སེལ་འབད་ཡོད་པའི་དམིགས་གཏད་ཨའུཊི་པུཊི་མཆོང་ལྡེ་འདི་སྟོན་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2183
+msgid "_Debug"
+msgstr "རྐྱན་སེལ་(_D)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2193
+msgid "_Open Source File ..."
+msgstr "འབྱུང་ཁུངས་ཀྱི་ཡིག་སྣོད་ཁ་ཕྱེ་(_O)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2194
+msgid "Open a source file for viewing"
+msgstr "བལྟ་ནིའི་དོན་ལུ་འབྱུང་ཁུངས་ཀྱི་ཡིག་སྣོད་གཅིག་ཁ་ཕྱེ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2202
+msgid "_Execute..."
+msgstr "ལག་ལེན་འཐབ་ནི་(_E)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2203
+msgid "Execute a program"
+msgstr "ལས་རིམ་གཅིག་ལག་ལེན་འཐབ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2212
+msgid "_Load Core File..."
+msgstr "ཡིག་སྣོད་ཀྱི་ནང་སྙིང་མངོན་གསལ་འབད་(_F)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2213
+msgid "Load a core file from disk"
+msgstr "ཌིཀསི་ལས་ཡིག་སྣོད་ཀྱི་ནང་སྙིང་གཅིག་མངོན་གསལ་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2222
+msgid "_Attach to Running Program..."
+msgstr "གཡོག་བཀོལ་ཡོད་བཞིན་པའི་ལས་ལིམ་ལུ་མཉམ་སྦགས་འབད་(_A)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2223
+msgid "Debug a program that's already running"
+msgstr "གཡོག་བཀོལ་ཡོད་བཞིན་པའི་ལས་འགན་འདི་རྐྱན་སེལ་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2232
+msgid "_Connect to remote target..."
+msgstr "ཐ་རིང་དམིགས་གཏད་ལུ་མཐུད་ལམ་བཟོ་(_C)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2233
+msgid "Connect to a debugging server to debug a remote target"
+msgstr "ཐ་རིང་དམིགས་གཏད་རྐྱན་སེལ་ནི་དོན་ལུ་རྐྱན་སེལ་བའི་སར་བར་ལུ་མཐུད་ལམ་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2242
+msgid "Resume Sa_ved Session..."
+msgstr "ལཱ་ཡུན་སྲུངས་བཞག་ཡོད་མི་འདི་བསྐྱར་ལོག་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2243
+msgid "Manage previously saved debugging sessions"
+msgstr "ཧེ་མ་ལས་སྲུངས་བཞག་འབད་ཡོད་མི་རྐྱེན་སེལ་འབད་བའི་ལཱ་ཡུན་ཚུ་འཛིན་སྐྱོང་འཐབ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2252
+msgid "_Preferences"
+msgstr "དགའ་གདམ་ཚུ་ (_P)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2253
+msgid "Edit the properties of the current session"
+msgstr "ད་ལྟོའི་ལཱ་ཡུན་གྱི་རྒྱུ་དངོས་ཚུ་ཞུན་དག་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2265
+msgid "_Reload Source File ..."
+msgstr "འབྱུང་ཁུངས་ཀྱི་ཡིག་སྣོད་ཡང་བསྐྱར་མངོན་གསལ་འབད་(_R)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2266
+msgid "Reloads the source file"
+msgstr "འབྱུང་ཁུངས་ཀྱི་ཡིག་སྣོད་འདི་ཡང་བསྐྱར་མངོན་གསལ་འབདཝ་ཨིན་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2274
+msgid "_Close"
+msgstr "ཁ་བསྡམས་(_C)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2275
+msgid "Close the opened file"
+msgstr "ཁ་ཕྱེ་ཡོད་པའི་ཡིག་སྣོད་འདི་ཁ་བསྡམས་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2283
+msgid "_Find"
+msgstr "འཚོལ་(_F)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2284
+msgid "Find a text string in file"
+msgstr "ཡིག་སྣོད་ནང་ཚིག་ཡིག་གི་ཡིག་རྒྱུན་གཅིག་འཚོལ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2630
+#, c-format
+msgid "Close %s"
+msgstr " %s  ཁ་བསྡམས་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3602
+msgid "Reached end of file"
+msgstr "ཡིག་སྣོད་ཀྱི་མཇུག་ལུ་ལྷོད་ཅི་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3605
+#, c-format
+msgid "Could not find string %s"
+msgstr "ཡིག་རྒྱུན་ %s འཚོལ་མ་ཚུགས་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3932
+msgid "You cannot attach to Nemiver itself"
+msgstr "ཁྱོད་ཀྱིས་ནི་མི་བར་དེ་ཉིད་ལུ་ར་མཉམ་སྦྲགས་མི་ཆོག་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3937
+msgid "You cannot attach to the underlying debugger engine"
+msgstr "གཤམ་འོག་གི་རྐྱེན་སེལ་འབད་མི་མ་འཕྲུལ་འདི་ལུ་ཁྱོད་ཀྱིས་མཉམ་སྦྲགས་འབད་མི་ཆོག་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4074
+msgid "Failed to stop the debugger"
+msgstr "རྐྱེན་སེལ་འབད་མི་འདི་བཀག་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4157
+#, c-format
+msgid "There is no file name info for symbol@addr: %s@%s"
+msgstr "@addr: %s@%s བརྡ་མཚོན་གྱི་དོན་ལུ་ ཡིག་སྣོད་བརྡ་དོན་གྱི་མིང་མིན་འདུག་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4347
+#, c-format
+msgid "Could not find file: %s\n"
+msgstr " ཡིག་སྣོད་ %s འཚོལ་མ་ཚུགས་\n"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4541
+#, c-format
+msgid "Invalid line number: %i"
+msgstr "ནུས་མེད་པའི་གྲལ་ཨང་: %i"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4824
+msgid "Commands"
+msgstr "བརྡ་བཀོད་ཚུ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4850
+msgid "Output"
+msgstr "ཨའུཊི་པུཊི་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4876
+msgid "Logs"
+msgstr "དྲན་དེབ་ཚུ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4901
+msgid "Call stack"
+msgstr "བོད་བརྡ་བརྩེགས་ཕུང་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4928
+msgid "Variables"
+msgstr "འགྱུར་ཅན་ཚུ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4955
+msgid "Target terminal"
+msgstr " དམིགས་གཏད་ཊར་མི་ནཱལ་"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4981
+msgid "Breakpoints"
+msgstr "བེརེཀ་པོ་ཡིནཊིསི་"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:124
+msgid "Expand _Selected"
+msgstr "སེལ་འཐུ་འབད་ཡོད་མི་ རྒྱ་འཕར་བཟོ་(_S)"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:127
+msgid "Expand _All"
+msgstr "ཆ་མཉམ་རྒྱ་འཕར་(_A)"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:132
+msgid "_Collapse"
+msgstr "ཧྲམ་ནི་(_C)"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:89
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:63
+msgid "Variable"
+msgstr "འགྱུར་ཅན་"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:98
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:103
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:68
+msgid "Value"
+msgstr "གནས་གོང་"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:106
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:76
+msgid "Type"
+msgstr "དབྱེ་བ་"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:126
+msgid "Local Variables"
+msgstr "ཉེ་གནས་ཀྱི་འགྱུར་ཅན་ཚུ་"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:135
+msgid "Function Arguments"
+msgstr "ལས་འགན་གྱི་སྒྲུབ་རྟགས་ཚུ་"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:316
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:169
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
+msgstr ""
+"འགྱུར་ཅན་དབྱེ་བ་འདི་: \n"
+" %s"
+
+#: ../src/persp/dbgperspective/nmv-locate-file-dialog.cc:64
+#, c-format
+msgid "Select Location For %s"
+msgstr "%s གི་དོན་ལུ་གནས་ཁོངས་སེལ་འཐུ་འབད་"
+
+#: ../src/persp/dbgperspective/nmv-locate-file-dialog.cc:72
+#, c-format
+msgid ""
+"Cannot find file '<b>%s</b>'.\n"
+"Please specify the location of this file:"
+msgstr ""
+" '<b>%s</b>'ཡིག་སྣོད་འདི་འཚོལ་མ་ཚུགས་། \n"
+"འ་ནི་ཡིག་སྣོད་ཀྱི་གནས་ཁོངས་འདི་གསལ་བཀོད་འབད་གནང་:"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:104
+msgid "Choose directory"
+msgstr "སྣོད་ཐོ་གདམ་ཁ་རྐྱབ་"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:164
+msgid "Source directories"
+msgstr "འབྱུང་ཁུངས་ཀྱི་སྣོད་ཐོ་ཚུ་"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:118
+msgid "User Name"
+msgstr "ལག་ལེན་པའི་མིང་"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:125
+msgid "Proc Args"
+msgstr "པི་ཨར་ཨོ་སི་ ཨེ་ཨར་ཇི་ཨེསི་"
+
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:100
+msgid "Name"
+msgstr "མིང་"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:96
+msgid "Session"
+msgstr "ལཱ་ཡུན་"
+
+#: ../src/uicommon/nmv-source-editor.cc:225
+#, c-format
+msgid "Line: %i, Column: %i, Lines: %i"
+msgstr "གྲལ་ཐིག་: %i, ཀེར་ཐིག་: %i, གྲལ་ཐིག་ཚུ་: %i"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:151
+msgid "Thread ID"
+msgstr "ཐེ་རིཌི་ ཨའི་ཌི་"
+
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:315
+#, c-format
+msgid "Could not find variable '%s'"
+msgstr "འགྱུར་ཅན་ '%s' འཚོལ་མ་ཚུགས་"
+
+#: ../src/workbench/nmv-workbench.cc:245
+msgid "Project Website"
+msgstr "ལས་འགུལ་གྱི་ཝེབ་ས་ཁོངས་"
+
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:265
+msgid "translator-credits"
+msgstr "སྐད་བསྒྱུར་པ-ངོ་བསྟོད་ཚུ་"
+
+#: ../src/workbench/nmv-workbench.cc:601
+msgid "_File"
+msgstr "ཡིག་སྣོད་་ (_F)"
+
+#: ../src/workbench/nmv-workbench.cc:611
+msgid "_Quit"
+msgstr "སྤང་ (_Q)"
+
+#: ../src/workbench/nmv-workbench.cc:612
+msgid "Quit the application"
+msgstr "གློག་རིམ་འདི་སྤང་"
+
+#: ../src/workbench/nmv-workbench.cc:621
+msgid "_Edit"
+msgstr "ཞུན་དག་ (_E)"
+
+#: ../src/workbench/nmv-workbench.cc:631
+msgid "_Help"
+msgstr "གྲོགས་རམ་ (_H)"
+
+#: ../src/workbench/nmv-workbench.cc:641
+msgid "_About"
+msgstr "སྐོར་ལས་ (_A)"
+
+#: ../src/workbench/nmv-workbench.cc:642
+msgid "Display information about this application"
+msgstr "གློག་རིམ་འ་ནི་གི་སྐོར་ལས་བརྡ་དོན་བཀྲམ་སྟོན་འབད་"
+
+#: ../src/workbench/nmv-workbench.cc:651
+msgid "_Contents"
+msgstr "ནང་དོན་ཚུ་(_C)"
+
+#: ../src/workbench/nmv-workbench.cc:652
+msgid "Display the user manual for this application"
+msgstr "གློག་རིམ་འདི་གི་དོན་ལུ་ལེག་ལེན་པའི་ལག་ཐོག་འདི་བཀྲམ་འབད་"
+
