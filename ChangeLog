@@ -1,5 +1,13 @@
 2007-06-15 Jonathon Jongsma <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: add an 'Address' field
+	to the breakpoints list so that if a breakpoint does not have any filename
+	information, there is still some unique identifiable information visible.
+	Also, use update_breakpoint() from append_breakpoint() to reduce code
+	duplication.
+
+2007-06-15 Jonathon Jongsma <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-call-stack.cc: if there is no filename
 	information for a particular stack frame, display the address instead of
 	attempting to show a filename and line.  Previously, when filename

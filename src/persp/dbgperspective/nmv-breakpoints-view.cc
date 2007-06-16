@@ -38,6 +38,7 @@ namespace nemiver {
 struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<int> id ;
     Gtk::TreeModelColumn<bool> enabled ;
+    Gtk::TreeModelColumn<Glib::ustring> address ;
     Gtk::TreeModelColumn<Glib::ustring> filename ;
     Gtk::TreeModelColumn<int> line ;
     Gtk::TreeModelColumn<IDebugger::BreakPoint> breakpoint ;
@@ -46,6 +47,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     {
         add (id) ;
         add (enabled) ;
+        add (address) ;
         add (filename) ;
         add (line) ;
         add (breakpoint) ;
@@ -118,6 +120,7 @@ public:
         //create the columns of the tree view
         tree_view->append_column_editable ("", get_bp_columns ().enabled) ;
         tree_view->append_column (_("ID"), get_bp_columns ().id) ;
+        tree_view->append_column (_("Address"), get_bp_columns ().address) ;
         tree_view->append_column (_("Filename"), get_bp_columns ().filename) ;
         tree_view->append_column (_("Line"), get_bp_columns ().line) ;
         Gtk::CellRendererToggle *enabled_toggle =
@@ -218,25 +221,18 @@ public:
     void update_breakpoint(Gtk::TreeModel::iterator& a_iter,
             const IDebugger::BreakPoint &a_breakpoint)
     {
-        // we should only be 'updating' a breakpoint in the list if they have
-        // the same ID
-        THROW_IF_FAIL ((*a_iter)[get_bp_columns ().id]
-                       == a_breakpoint.number ());
         (*a_iter)[get_bp_columns ().breakpoint] = a_breakpoint;
         (*a_iter)[get_bp_columns ().enabled] = a_breakpoint.enabled () ;
-        (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name () ;
-        (*a_iter)[get_bp_columns ().line] = a_breakpoint.line () ;
+        (*a_iter)[get_bp_columns ().address] = a_breakpoint.address () ;
+        (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
+        (*a_iter)[get_bp_columns ().line] = a_breakpoint.line ();
     }
 
     Gtk::TreeModel::iterator append_breakpoint
                                     (const IDebugger::BreakPoint &a_breakpoint)
     {
         Gtk::TreeModel::iterator tree_iter = list_store->append();
-        (*tree_iter)[get_bp_columns ().id] = a_breakpoint.number ();
-        (*tree_iter)[get_bp_columns ().breakpoint] = a_breakpoint;
-        (*tree_iter)[get_bp_columns ().enabled] = a_breakpoint.enabled ();
-        (*tree_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
-        (*tree_iter)[get_bp_columns ().line] = a_breakpoint.line ();
+        update_breakpoint (tree_iter, a_breakpoint);
 
         return tree_iter;
     }
