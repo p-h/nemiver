@@ -1695,7 +1695,7 @@ DBGPerspective::on_debugger_stopped_signal (const UString &a_reason,
         UString message;
         message.printf(_("File path info is missing for function '%s'"),
                        a_frame.function_name ().c_str ()) ;
-        display_warning (message);
+        LOG_ERROR (message);
     }
 
     if (m_priv->debugger_has_just_run) {
@@ -1753,14 +1753,14 @@ DBGPerspective::on_frame_selected_signal (int a_index,
             UString message;
             message.printf (_("File path info is missing for function '%s'"),
                     a_frame.function_name ().c_str ());
-            display_warning (message);
+            LOG_ERROR (message);
             return ;
             //TODO: we should disassemble the current frame and display it.
         }
     }
 
     if (a_frame.line () == 0) {
-        display_warning ("Line info is missing for function '"
+        LOG_ERROR ("Line info is missing for function '"
                          + a_frame.function_name () + "'") ;
         return ;
         //TODO: we should disassemble the current frame and display it.
@@ -4157,7 +4157,7 @@ DBGPerspective::append_breakpoint (int a_bp_num,
                     _("There is no file name info for symbol@addr: %s@%s"),
                     a_breakpoint.function ().c_str (),
                     a_breakpoint.address ().c_str ()) ;
-            ui_utils::display_error (message);
+            LOG_ERROR (message);
             return ;
         }
         else

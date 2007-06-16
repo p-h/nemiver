@@ -1,3 +1,9 @@
+2007-06-15 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: stop displaying dialogs
+	if a file can't be displayed in some circumstances.  Just log them as errors
+		to the terminal (closes bug 447890)
+
 2007-06-11 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/main.cc: add a '--last' command line option that lets you quickly
