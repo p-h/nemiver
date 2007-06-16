@@ -748,16 +748,32 @@ bool
 on_file_content_changed (const UString &a_path,
                          DBGPerspective *a_persp)
 {
+    // NOTE: do we need to protect access to this data structure with a mutex
+    // since this handler runs in the idle loop?
+    static std::list<UString> pending_notifications;
     LOG_DD ("file content changed") ;
 
     NEMIVER_TRY
     THROW_IF_FAIL (a_persp) ;
     if (!a_path.empty ()) {
-        UString msg ;
-        msg.printf (_("File %s has been modified. Do want to reload it ?"),
+        // only notify for this path if there is not already a notification
+        // pending
+        if (std::find (pending_notifications.begin (),
+                    pending_notifications.end (), a_path)
+                == pending_notifications.end ()) {
+            pending_notifications.push_back (a_path);
+            UString msg ;
+            msg.printf (_("File %s has been modified. Do want to reload it ?"),
                     a_path.c_str ());
-        if (ask_yes_no_question (msg) == Gtk::RESPONSE_YES) {
-            a_persp->reload_file (a_path) ;
+            if (ask_yes_no_question (msg) == Gtk::RESPONSE_YES) {
+                a_persp->reload_file (a_path) ;
+            }
+            std::list<UString>::iterator iter =
+                std::find (pending_notifications.begin (),
+                        pending_notifications.end (), a_path);
+            if (iter != pending_notifications.end ()) {
+                pending_notifications.erase (iter);
+            }
         }
     }
     NEMIVER_CATCH

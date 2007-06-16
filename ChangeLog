@@ -1,3 +1,10 @@
+2007-06-16 Jonathon Jongsma <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Don't pop up multiple
+	'reload' dialogs for the same file.  If a popup dialog has already been
+	displayed for that particular file, suppress further popups about that file
+	until the user has dismissed the first dialog.
+
 2007-06-15 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: add an 'Address' field
