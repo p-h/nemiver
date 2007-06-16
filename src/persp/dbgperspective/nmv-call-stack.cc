@@ -381,7 +381,7 @@ struct CallStack::Priv {
         THROW_IF_FAIL (tree_view) ;
         widget.reset (tree_view) ;
         tree_view->append_column (_("Frame"), columns ().frame_index) ;
-        tree_view->append_column (_("Line"), columns ().location) ;
+        tree_view->append_column (_("Location"), columns ().location) ;
         tree_view->append_column (_("Function"), columns ().function_name) ;
         tree_view->append_column (_("Arguments"), columns ().function_args) ;
         tree_view->set_headers_visible (true) ;
@@ -430,9 +430,15 @@ struct CallStack::Priv {
         for (unsigned int i = 0 ; i < a_frames.size () ; ++i) {
             store_iter = store->append () ;
             (*store_iter)[columns ().function_name] = a_frames[i].function_name ();
-            (*store_iter)[columns ().location] =
-                            a_frames[i].file_name () + ":"
-                            + UString::from_int (a_frames[i].line ()) ;
+            if (!a_frames[i].file_name ().empty ()) {
+                (*store_iter)[columns ().location] =
+                    a_frames[i].file_name () + ":"
+                    + UString::from_int (a_frames[i].line ()) ;
+            } else {
+                (*store_iter)[columns ().location] =
+                    a_frames[i].address ();
+            }
+
             (*store_iter)[columns ().frame_index] = i ;
             UString params_string = "(";
             map<int, list<IDebugger::VariableSafePtr> >::const_iterator iter ;
