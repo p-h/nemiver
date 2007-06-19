@@ -40,6 +40,9 @@ using gtksourceview::SourceMarker;
 using gtksourceview::SourceIter;
 using gtksourceview::SearchFlags;
 
+#define BREAKPOINT_TYPE_ENABLED     "breakpoint-enabled-type"
+#define BREAKPOINT_TYPE_DISABLED    "breakpoint-disabled-type"
+
 namespace nemiver {
 
 class SourceView : public gtksourceview::SourceView {
@@ -272,10 +275,10 @@ struct SourceEditor::Priv {
         status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
         init_signals () ;
         source_view->set_editable (false) ;
-        register_breakpoint_marker_type ("breakpoint-enabled-type",
+        register_breakpoint_marker_type (BREAKPOINT_TYPE_ENABLED,
                                          "icons/breakpoint-marker.png");
         register_breakpoint_marker_type
-                                ("breakpoint-disabled-type",
+                                (BREAKPOINT_TYPE_DISABLED,
                                  "icons/breakpoint-disabled-marker.png");
     }
 
@@ -422,9 +425,9 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 
     UString marker_type;
     if (enabled) {
-        marker_type = "breakpoint-enabled-type";
+        marker_type = BREAKPOINT_TYPE_ENABLED;
     } else {
-        marker_type = "breakpoint-disabled-type";
+        marker_type = BREAKPOINT_TYPE_DISABLED;
     }
 
     std::map<int,
