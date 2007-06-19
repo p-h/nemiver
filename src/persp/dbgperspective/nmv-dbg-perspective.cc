@@ -220,6 +220,7 @@ private:
 
     void on_insertion_changed_signal (const Gtk::TextBuffer::iterator& iter,
                                       SourceEditor *a_editor);
+    void update_toggle_menu_text (const UString& a_current_file, int a_current_line);
 
     void on_shutdown_signal () ;
 
@@ -1401,17 +1402,46 @@ DBGPerspective::on_insertion_changed_signal
 {
     NEMIVER_TRY
 
+    THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (a_editor) ;
+
+    UString path;
+    a_editor->get_path (path);
+    update_toggle_menu_text(path, iter.get_line () + 1); // add one since iter is 0-based, file is 1-based
+    NEMIVER_CATCH
+}
+
+void DBGPerspective::update_toggle_menu_text (const UString& a_current_file, int a_current_line)
+{
+    bool enabled;
+    int brk_num;
+    // check if there's a breakpoint set at this line and file
+    bool found_bkpt = get_breakpoint_number (a_current_file,
+            a_current_line,
+            brk_num,
+            enabled) ;
 
     Glib::RefPtr<Gtk::Action> toggle_enable_action =
          workbench ().get_ui_manager ()->get_action
         ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleEnableBreakMenuItem") ;
     THROW_IF_FAIL (toggle_enable_action);
+    Glib::RefPtr<Gtk::Action> toggle_break_action =
+         workbench ().get_ui_manager ()->get_action
+        ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleBreakMenuItem") ;
+    THROW_IF_FAIL (toggle_break_action);
 
-    toggle_enable_action->set_sensitive
-            (a_editor->is_visual_breakpoint_set_at_line (iter.get_line ()));
+    toggle_enable_action->set_sensitive (found_bkpt);
+    if (found_bkpt) {
+        toggle_break_action->property_label () = _("Remove _Breakpoint");
 
-    NEMIVER_CATCH
+        if (enabled) {
+            toggle_enable_action->property_label () = _("Disable Breakpoint");
+        } else {
+            toggle_enable_action->property_label () = _("Enable Breakpoint");
+        }
+    } else {
+        toggle_break_action->property_label () = _("Set _Breakpoint");
+    }
 }
 
 void
@@ -1668,6 +1698,11 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     }
     LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
+    SourceEditor* editor = get_current_source_editor ();
+    THROW_IF_FAIL (editor);
+    UString path;
+    editor->get_path (path);
+    update_toggle_menu_text (path, editor->current_line ());
     NEMIVER_CATCH
 }
 
@@ -1801,6 +1836,11 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
 
     NEMIVER_TRY
     delete_visual_breakpoint (a_break_number) ;
+    SourceEditor* editor = get_current_source_editor ();
+    THROW_IF_FAIL (editor);
+    UString path;
+    editor->get_path (path);
+    update_toggle_menu_text (path, editor->current_line ());
     NEMIVER_CATCH
 }
 
@@ -2104,7 +2144,7 @@ DBGPerspective::init_actions ()
         {
             "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            _("Toggle _Breakpoint At Cursor"),
+            "Toggle _Breakpoint", // don't translate, name will be overwritten based on context
             _("Set/Unset a breakpoint at the current cursor location"),
             sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
@@ -2114,7 +2154,7 @@ DBGPerspective::init_actions ()
         {
             "ToggleEnableBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            _("Enable/Disable Breakpoint"),
+            "Enable/Disable Breakpoint", // don't translate, name will be overwritten based on context
             _("Enable or disable the breakpoint that is set at the current cursor location"),
             sigc::mem_fun
                         (*this,
