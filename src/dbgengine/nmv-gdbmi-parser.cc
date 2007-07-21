@@ -66,6 +66,26 @@ using namespace nemiver::common ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+// prefixes of command output records.
+const char* PREFIX_DONE = "^done";
+const char* PREFIX_RUNNING = "^running";
+const char* PREFIX_EXIT = "^exit";
+const char* PREFIX_CONNECTED = "^connected";
+const char* PREFIX_ERROR = "^error";
+const char* PREFIX_BKPT = "bkpt={";
+const char* PREFIX_BREAKPOINT_TABLE = "BreakpointTable={";
+const char* PREFIX_THREAD_IDS = "thread-ids={";
+const char* PREFIX_NEW_THREAD_ID = "new-thread-id=\"";
+const char* PREFIX_FILES = "files=[";
+const char* PREFIX_STACK = "stack=[";
+const char* PREFIX_FRAME = "frame={";
+const char* PREFIX_DEPTH = "depth=\"";
+const char* PREFIX_STACK_ARGS = "stack-args=[";
+const char* PREFIX_LOCALS = "locals=[";
+const char* PREFIX_VALUE = "value=\"";
+const char* PREFIX_REGISTER_NAMES = "register-names=";
+const char* PREFIX_CHANGED_REGISTERS = "changed-registers=";
+
 bool parse_c_string_body (const UString &a_input,
                           UString::size_type a_from,
                           UString::size_type &a_to,
@@ -154,7 +174,7 @@ parse_breakpoint (const UString &a_input,
 
     Glib::ustring::size_type cur = a_from, end = a_input.size () ;
 
-    if (a_input.compare (cur, 6, "bkpt={")) {
+    if (a_input.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
@@ -247,7 +267,7 @@ parse_breakpoint_table (const UString &a_input,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
     UString::size_type cur=a_from, end=a_input.bytes () ;
 
-    if (a_input.compare (cur, 17, "BreakpointTable={")) {
+    if (a_input.compare (cur, strlen (PREFIX_BREAKPOINT_TABLE), PREFIX_BREAKPOINT_TABLE)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
@@ -272,11 +292,11 @@ parse_breakpoint_table (const UString &a_input,
     map<int, IDebugger::BreakPoint> breakpoint_table ;
     if (a_input.c_str ()[cur] == ']') {
         //there are zero breakpoints ...
-    } else if (!a_input.compare (cur, 6, "bkpt={")){
+    } else if (!a_input.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)){
         //there are some breakpoints
         IDebugger::BreakPoint breakpoint ;
         while (true) {
-            if (a_input.compare (cur, 6, "bkpt={")) {break;}
+            if (a_input.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {break;}
             if (!parse_breakpoint (a_input, cur, cur, breakpoint)) {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false ;
@@ -717,7 +737,7 @@ parse_frame (const UString &a_input,
     UString::size_type cur = a_from, end = a_input.size () ;
     CHECK_END (a_input, cur, end) ;
 
-    if (a_input.compare (a_from, 7, "frame={")) {
+    if (a_input.compare (a_from, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
@@ -883,7 +903,7 @@ parse_stack_arguments (const UString &a_input,
     UString::size_type cur = a_from, end = a_input.size () ;
     CHECK_END (a_input, cur, end) ;
 
-    if (a_input.compare (cur, 12, "stack-args=[")) {
+    if (a_input.compare (cur, strlen (PREFIX_STACK_ARGS), PREFIX_STACK_ARGS)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
@@ -1094,7 +1114,7 @@ parse_local_var_list (const UString &a_input,
     UString::size_type cur = a_from, end = a_input.size () ;
     CHECK_END (a_input, cur, end) ;
 
-    if (a_input.compare (cur, 8, "locals=[")) {
+    if (a_input.compare (cur, strlen (PREFIX_LOCALS), PREFIX_LOCALS)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
@@ -1210,7 +1230,7 @@ parse_variable_value (const UString &a_input,
     UString::size_type cur = a_from, end = a_input.size () ;
     CHECK_END (a_input, cur, end) ;
 
-    if (a_input.compare (cur, 7, "value=\"")) {
+    if (a_input.compare (cur, strlen (PREFIX_VALUE), PREFIX_VALUE)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
@@ -1535,7 +1555,7 @@ parse_threads_list (const UString &a_input,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
     UString::size_type cur = a_from, end = a_input.size () ;
 
-    if (a_input.compare (cur, 12, "thread-ids={")) {
+    if (a_input.compare (cur, strlen (PREFIX_THREAD_IDS), PREFIX_THREAD_IDS)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
@@ -1648,7 +1668,7 @@ parse_file_list (const UString &a_input,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
     UString::size_type cur = a_from, end = a_input.bytes () ;
 
-    if (a_input.compare (cur, 7, "files=[")) {
+    if (a_input.compare (cur, strlen (PREFIX_FILES), PREFIX_FILES)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
@@ -1724,12 +1744,12 @@ parse_register_names (const UString &a_input,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
     UString::size_type cur = a_from;
 
-    const char* prefix = "register-names=";
-    if (a_input.compare (cur, strlen (prefix), prefix)) {
+    if (a_input.compare (cur, strlen (PREFIX_REGISTER_NAMES),
+                PREFIX_REGISTER_NAMES)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
-    cur += strlen (prefix);
+    cur += strlen (PREFIX_REGISTER_NAMES);
 
     GDBMIListSafePtr reg_list;
     if (!parse_gdbmi_list (a_input, cur, cur, reg_list)) {
@@ -1773,12 +1793,12 @@ parse_changed_registers (const UString &a_input,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
     UString::size_type cur = a_from;
 
-    const char* prefix = "changed-registers=";
-    if (a_input.compare (cur, strlen (prefix), prefix)) {
+    if (a_input.compare (cur, strlen (PREFIX_CHANGED_REGISTERS),
+                PREFIX_CHANGED_REGISTERS)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
-    cur += strlen (prefix);
+    cur += strlen (PREFIX_CHANGED_REGISTERS);
 
     GDBMIListSafePtr reg_list;
     if (!parse_gdbmi_list (a_input, cur, cur, reg_list)) {
@@ -1831,7 +1851,8 @@ parse_new_thread_id (const UString &a_input,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
     UString::size_type cur = a_from, end = a_input.size () ;
 
-    if (a_input.compare (cur, 15, "new-thread-id=\"")) {
+    if (a_input.compare (cur, strlen (PREFIX_NEW_THREAD_ID),
+                PREFIX_NEW_THREAD_ID)) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
@@ -2346,7 +2367,7 @@ parse_stopped_async_output (const UString &a_input,
     bool got_frame (false) ;
     IDebugger::Frame frame ;
     while (true) {
-        if (!a_input.compare (cur, 7, "frame={")) {
+        if (!a_input.compare (cur, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
             if (!parse_frame (a_input, cur, cur, frame)) {
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false;
@@ -2485,7 +2506,7 @@ parse_result_record (const UString &a_input,
 
     UString name, value ;
     Output::ResultRecord result_record ;
-    if (!a_input.compare (cur, 5, "^done")) {
+    if (!a_input.compare (cur, strlen (PREFIX_DONE), PREFIX_DONE)) {
         cur += 5 ;
         result_record.kind (Output::ResultRecord::DONE) ;
 
@@ -2499,23 +2520,26 @@ fetch_gdbmi_result:
                 return false;
             }
 
-            if (!a_input.compare (cur, 6, "bkpt={")) {
+            if (!a_input.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
                 IDebugger::BreakPoint breakpoint ;
                 if (parse_breakpoint (a_input, cur, cur, breakpoint)) {
                     result_record.breakpoints ()[breakpoint.number ()] =
                     breakpoint ;
                 }
-            } else if (!a_input.compare (cur, 17, "BreakpointTable={")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_BREAKPOINT_TABLE),
+                        PREFIX_BREAKPOINT_TABLE)) {
                 map<int, IDebugger::BreakPoint> breaks ;
                 if (parse_breakpoint_table (a_input, cur, cur, breaks)) {
                     result_record.breakpoints () = breaks ;
                 }
-            } else if (!a_input.compare (cur, 12, "thread-ids={")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_THREAD_IDS),
+                        PREFIX_THREAD_IDS)) {
                 std::list<int> thread_ids ;
                 if (parse_threads_list (a_input, cur, cur, thread_ids)) {
                     result_record.thread_list (thread_ids) ;
                 }
-            } else if (!a_input.compare (cur, 15, "new-thread-id=\"")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_NEW_THREAD_ID),
+                        PREFIX_NEW_THREAD_ID)) {
                 IDebugger::Frame frame ;
                 int thread_id=0 ;
                 if (parse_new_thread_id (a_input, cur, cur,
@@ -2523,7 +2547,8 @@ fetch_gdbmi_result:
                     //finish this !
                     result_record.thread_id_selected_info (thread_id, frame) ;
                 }
-            } else if (!a_input.compare (cur, 7, "files=[")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_FILES),
+                        PREFIX_FILES)) {
                 vector<UString> files ;
                 if (!parse_file_list (a_input, cur, cur, files)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2533,7 +2558,8 @@ fetch_gdbmi_result:
                 LOG_D ("parsed a list of files: "
                        << (int) files.size (),
                        GDBMI_PARSING_DOMAIN) ;
-            } else if (!a_input.compare (cur, 7, "stack=[")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_STACK),
+                        PREFIX_STACK)) {
                 vector<IDebugger::Frame> call_stack ;
                 if (!parse_call_stack (a_input, cur, cur, call_stack)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2550,7 +2576,7 @@ fetch_gdbmi_result:
                     LOG_D ("function-name: " << frame_iter->function_name (),
                            GDBMI_PARSING_DOMAIN) ;
                 }
-            } else if (!a_input.compare (cur, 7, "frame={")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
                 IDebugger::Frame frame ;
                 if (!parse_frame (a_input, cur, cur, frame)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2559,12 +2585,13 @@ fetch_gdbmi_result:
                     result_record.current_frame_in_core_stack_trace (frame) ;
                     //current_frame_signal.emit (frame, "") ;
                 }
-            } else if (!a_input.compare (cur, 7, "depth=\"")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_DEPTH), PREFIX_DEPTH)) {
                 GDBMIResultSafePtr result ;
                 parse_gdbmi_result (a_input, cur, cur, result) ;
                 THROW_IF_FAIL (result) ;
                 LOG_D ("parsed result", GDBMI_PARSING_DOMAIN) ;
-            } else if (!a_input.compare (cur, 12, "stack-args=[")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_STACK_ARGS),
+                        PREFIX_STACK_ARGS)) {
                 map<int, list<IDebugger::VariableSafePtr> > frames_args ;
                 if (!parse_stack_arguments (a_input, cur, cur, frames_args)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2572,7 +2599,7 @@ fetch_gdbmi_result:
                     LOG_D ("parsed stack args", GDBMI_PARSING_DOMAIN) ;
                 }
                 result_record.frames_parameters (frames_args)  ;
-            } else if (!a_input.compare (cur, 8, "locals=[")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_LOCALS), PREFIX_LOCALS)) {
                 list<IDebugger::VariableSafePtr> vars ;
                 if (!parse_local_var_list (a_input, cur, cur, vars)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2580,7 +2607,8 @@ fetch_gdbmi_result:
                     LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN) ;
                     result_record.local_variables (vars) ;
                 }
-            } else if (!a_input.compare (cur, 7, "value=\"")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_VALUE),
+                        PREFIX_VALUE)) {
                 IDebugger::VariableSafePtr var ;
                 if (!parse_variable_value (a_input, cur, cur, var)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2589,7 +2617,8 @@ fetch_gdbmi_result:
                     THROW_IF_FAIL (var) ;
                     result_record.variable_value (var) ;
                 }
-            } else if (!a_input.compare (cur, 16, "register-names=[")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_REGISTER_NAMES),
+                        PREFIX_REGISTER_NAMES)) {
                 std::map<IDebugger::register_id_t, UString> regs;
                 if (!parse_register_names (a_input, cur, cur, regs)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2597,7 +2626,8 @@ fetch_gdbmi_result:
                     LOG_D ("parsed register names", GDBMI_PARSING_DOMAIN) ;
                     result_record.register_names (regs) ;
                 }
-            } else if (!a_input.compare (cur, 19, "changed-registers=[")) {
+            } else if (!a_input.compare (cur, strlen (PREFIX_CHANGED_REGISTERS),
+                        PREFIX_CHANGED_REGISTERS)) {
                 std::list<IDebugger::register_id_t> regs;
                 if (!parse_changed_registers (a_input, cur, cur, regs)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2624,19 +2654,20 @@ fetch_gdbmi_result:
             //'end of line' character.
             for (;cur < end && a_input[cur] != '\n';++cur) {}
         }
-    } else if (!a_input.compare (cur, 8, "^running")) {
+    } else if (!a_input.compare (cur, strlen (PREFIX_RUNNING), PREFIX_RUNNING)) {
         result_record.kind (Output::ResultRecord::RUNNING) ;
         cur += 8 ;
         for (;cur < end && a_input[cur] != '\n';++cur) {}
-    } else if (!a_input.compare (cur, 5, "^exit")) {
+    } else if (!a_input.compare (cur, strlen (PREFIX_EXIT), PREFIX_EXIT)) {
         result_record.kind (Output::ResultRecord::EXIT) ;
         cur += 5 ;
         for (;cur < end && a_input[cur] != '\n';++cur) {}
-    } else if (!a_input.compare (cur, 10, "^connected")) {
+    } else if (!a_input.compare (cur, strlen (PREFIX_CONNECTED),
+                PREFIX_CONNECTED)) {
         result_record.kind (Output::ResultRecord::CONNECTED) ;
         cur += 10 ;
         for (;cur < end && a_input[cur] != '\n';++cur) {}
-    } else if (!a_input.compare (cur, 6, "^error")) {
+    } else if (!a_input.compare (cur, strlen (PREFIX_ERROR), PREFIX_ERROR)) {
         result_record.kind (Output::ResultRecord::ERROR) ;
         cur += 6 ;
         CHECK_END (a_input, cur, end) ;

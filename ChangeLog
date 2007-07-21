@@ -1,5 +1,11 @@
 2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/dbgengine/nmv-gdbmi-parser.cc: cleanup patch to use some constant
+	strings instead of using string literals and magic numbers throughout the
+	code.
+
+2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-dbg-common.h: added storage and interfaces for accessing
 	the list of changed registers
 	* src/dbgengine/nmv-gdbmi-parser.cc,
