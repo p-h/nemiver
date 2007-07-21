@@ -1,3 +1,9 @@
+2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* configure.ac: a possible fix for boost unit test so that it will build on
+	Ubuntu feisty (e.g. boost 1.33.1).  Hopefully this doesn't break newer boost
+	versions.
+
 2007-06-16 Jonathon Jongsma <jjongsma@gnome.org>
 
 	* src/uicommon/nmv-source-editor.cc: use a #define instead of re-typing the
