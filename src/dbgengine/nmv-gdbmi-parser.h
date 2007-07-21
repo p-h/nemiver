@@ -560,6 +560,12 @@ bool parse_overloads_choice_prompt
                          UString::size_type a_from,
                          UString::size_type &a_to,
                          vector<IDebugger::OverloadsChoiceEntry> &a_prompts) ;
+
+bool parse_register_names (const UString &a_input,
+                           UString::size_type a_from,
+                           UString::size_type &a_to,
+                           std::map<IDebugger::register_id_t, UString> &a_registers);
+
 NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_GDBMI_PARSER_H
 

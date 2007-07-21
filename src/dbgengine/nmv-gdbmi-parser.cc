@@ -1715,6 +1715,55 @@ parse_file_list (const UString &a_input,
     return true;
 }
 
+bool
+parse_register_names (const UString &a_input,
+                      UString::size_type a_from,
+                      UString::size_type &a_to,
+                      std::map<IDebugger::register_id_t, UString> &a_registers)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+    UString::size_type cur = a_from;
+
+    const char* prefix = "register-names=";
+    if (a_input.compare (cur, strlen (prefix), prefix)) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    cur += strlen (prefix);
+
+    GDBMIListSafePtr reg_list;
+    if (!parse_gdbmi_list (a_input, cur, cur, reg_list)) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    if (cur != a_input.bytes ()) {
+        // unexpected data
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    std::map<IDebugger::register_id_t, UString> regs ;
+    if (reg_list->content_type () != GDBMIList::VALUE_TYPE) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false;
+    }
+    std::list<GDBMIValueSafePtr> value_list;
+    reg_list->get_value_content (value_list);
+    IDebugger::register_id_t id = 0;
+    for (std::list<GDBMIValueSafePtr>::const_iterator val_iter =
+            value_list.begin();
+            val_iter != value_list.end();
+            ++val_iter, ++id)
+    {
+        UString regname = (*val_iter)->get_string_content ();
+        regs[id] = regname;
+    }
+
+    a_registers = regs;
+    a_to = cur ;
+    return true;
+}
+
 /// parses the result of the gdbmi command
 /// "-thread-select"
 /// \param a_input the input string to parse
@@ -2491,6 +2540,14 @@ fetch_gdbmi_result:
                     LOG_D ("parsed var value", GDBMI_PARSING_DOMAIN) ;
                     THROW_IF_FAIL (var) ;
                     result_record.variable_value (var) ;
+                }
+            } else if (!a_input.compare (cur, 16, "register-names=[")) {
+                std::map<IDebugger::register_id_t, UString> regs;
+                if (!parse_register_names (a_input, cur, cur, regs)) {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                } else {
+                    LOG_D ("parsed register names", GDBMI_PARSING_DOMAIN) ;
+                    result_record.register_names (regs) ;
                 }
             } else {
                 GDBMIResultSafePtr result ;

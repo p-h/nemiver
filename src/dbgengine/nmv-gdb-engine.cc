@@ -321,6 +321,20 @@ public:
                             int &a_proc_pid,
                             UString &a_exe_path) ;
 
+    void list_register_names (const UString &a_cookie="");
+    sigc::signal<void,
+                 std::map<register_id_t, UString>, const UString& >&
+                     register_names_listed_signal () const;
+    void list_changed_registers (const UString &a_cookie="");
+    sigc::signal<void,
+                 std::list<register_id_t>, const UString& >&
+                     changed_registers_listed_signal () const;
+    void list_register_values (const UString &a_cookie="");
+    sigc::signal<void,
+                 std::map<register_id_t, UString>, const UString& >&
+                     register_values_listed_signal () const;
+    void list_register_values (std::list<register_id_t> a_registers,
+                               const UString &a_cookie="");
 };//end class GDBEngine
 
 //*************************
@@ -467,6 +481,15 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void> program_finished_signal ;
 
     mutable sigc::signal<void, IDebugger::State> state_changed_signal ;
+
+    mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
+        register_names_listed_signal;
+
+    mutable sigc::signal<void, std::list<register_id_t>, const UString& >
+        changed_registers_listed_signal;
+
+    mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
+        register_values_listed_signal;
 
     //***********************
     //</GDBEngine attributes>
@@ -1880,6 +1903,36 @@ struct OnSignalReceivedHandler : OutputHandler {
     }
 };//struct OnSignalReceivedHandler
 
+struct OnRegisterNamesListedHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnRegisterNamesListedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.output ().result_record ().has_register_names ())) {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        m_engine->register_names_listed_signal ().emit
+            (a_in.output ().result_record ().register_names (),
+             a_in.command ().cookie ()) ;
+        m_engine->set_state (IDebugger::READY) ;
+    }
+};//struct OnFramesListedHandler
+
 struct OnErrorHandler : OutputHandler {
 
     GDBEngine *m_engine ;
@@ -2158,6 +2211,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnFileListHandler (this))) ;
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnCurrentFrameHandler (this))) ;
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnRegisterNamesListedHandler (this))) ;
 }
 
 sigc::signal<void, Output&>&
@@ -3052,6 +3107,72 @@ GDBEngine::extract_proc_info (Output &a_output,
 
     return true ;
 }
+
+
+void
+GDBEngine::list_register_names (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    queue_command (Command ("list-register-names",
+                            "-data-list-register-names",
+                            a_cookie)) ;
+}
+
+sigc::signal<void, std::map<IDebugger::register_id_t, UString>, const UString& >&
+GDBEngine::register_names_listed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->register_names_listed_signal ;
+}
+
+void
+GDBEngine::list_changed_registers (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    queue_command (Command ("list-changed-registers",
+                            "-data-list-changed-registers",
+                            a_cookie)) ;
+}
+
+sigc::signal<void, std::list<IDebugger::register_id_t>, const UString& >&
+GDBEngine::changed_registers_listed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->changed_registers_listed_signal ;
+}
+
+void
+GDBEngine::list_register_values (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    queue_command (Command ("list-register-values",
+                            "-data-list-register-values x", // x = hex format
+                            a_cookie)) ;
+}
+
+sigc::signal<void, std::map<IDebugger::register_id_t, UString>, const UString& >&
+GDBEngine::register_values_listed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->register_values_listed_signal ;
+}
+
+void
+GDBEngine::list_register_values (std::list<IDebugger::register_id_t> a_registers,
+                           const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    UString regs_str;
+    for (std::list<register_id_t>::const_iterator iter = a_registers.begin ();
+            iter != a_registers.end (); ++ iter)
+    {
+        regs_str += UString::from_int (*iter) + " ";
+    }
+    queue_command (Command ("list-register-values",
+                            "-data-list-register-values x " + regs_str, // x = hex format
+                            a_cookie)) ;
+}
+
 
 //****************************
 //</GDBEngine methods>

@@ -53,6 +53,9 @@ static const char* gv_overloads_prompt1=
 "[3] Person::overload() at fooprog.cc:59"
 ;
 
+static const char* gv_register_names=
+"register-names=[\"eax\",\"ecx\",\"edx\",\"ebx\",\"esp\",\"ebp\",\"esi\",\"edi\",\"eip\",\"eflags\",\"cs\",\"ss\",\"ds\",\"es\",\"fs\",\"gs\",\"st0\",\"st1\",\"st2\",\"st3\",\"st4\",\"st5\",\"st6\",\"st7\",\"fctrl\",\"fstat\",\"ftag\",\"fiseg\",\"fioff\",\"foseg\",\"fooff\",\"fop\",\"xmm0\",\"xmm1\",\"xmm2\",\"xmm3\",\"xmm4\",\"xmm5\",\"xmm6\",\"xmm7\",\"mxcsr\",\"orig_eax\",\"mm0\",\"mm1\",\"mm2\",\"mm3\",\"mm4\",\"mm5\",\"mm6\",\"mm7\"]";
+
 void
 test_str0 ()
 {
@@ -230,6 +233,67 @@ test_overloads_prompt ()
                            "actually got " << prompts.size ()) ;
 }
 
+void
+test_register_names ()
+{
+    std::map<IDebugger::register_id_t, UString> regs;
+    UString::size_type cur = 0;
+
+    BOOST_REQUIRE (parse_register_names (gv_register_names,
+                cur, cur, regs)) ;
+    BOOST_REQUIRE_EQUAL (regs.size (), 50u);
+    BOOST_REQUIRE_EQUAL (regs[0], "eax");
+    BOOST_REQUIRE_EQUAL (regs[1], "ecx");
+    BOOST_REQUIRE_EQUAL (regs[2], "edx");
+    BOOST_REQUIRE_EQUAL (regs[3], "ebx");
+    BOOST_REQUIRE_EQUAL (regs[4], "esp");
+    BOOST_REQUIRE_EQUAL (regs[5], "ebp");
+    BOOST_REQUIRE_EQUAL (regs[6], "esi");
+    BOOST_REQUIRE_EQUAL (regs[7], "edi");
+    BOOST_REQUIRE_EQUAL (regs[8], "eip");
+    BOOST_REQUIRE_EQUAL (regs[9], "eflags");
+    BOOST_REQUIRE_EQUAL (regs[10], "cs");
+    BOOST_REQUIRE_EQUAL (regs[11], "ss");
+    BOOST_REQUIRE_EQUAL (regs[12], "ds");
+    BOOST_REQUIRE_EQUAL (regs[13], "es");
+    BOOST_REQUIRE_EQUAL (regs[14], "fs");
+    BOOST_REQUIRE_EQUAL (regs[15], "gs");
+    BOOST_REQUIRE_EQUAL (regs[16], "st0");
+    BOOST_REQUIRE_EQUAL (regs[17], "st1");
+    BOOST_REQUIRE_EQUAL (regs[18], "st2");
+    BOOST_REQUIRE_EQUAL (regs[19], "st3");
+    BOOST_REQUIRE_EQUAL (regs[20], "st4");
+    BOOST_REQUIRE_EQUAL (regs[21], "st5");
+    BOOST_REQUIRE_EQUAL (regs[22], "st6");
+    BOOST_REQUIRE_EQUAL (regs[23], "st7");
+    BOOST_REQUIRE_EQUAL (regs[24], "fctrl");
+    BOOST_REQUIRE_EQUAL (regs[25], "fstat");
+    BOOST_REQUIRE_EQUAL (regs[26], "ftag");
+    BOOST_REQUIRE_EQUAL (regs[27], "fiseg");
+    BOOST_REQUIRE_EQUAL (regs[28], "fioff");
+    BOOST_REQUIRE_EQUAL (regs[29], "foseg");
+    BOOST_REQUIRE_EQUAL (regs[30], "fooff");
+    BOOST_REQUIRE_EQUAL (regs[31], "fop");
+    BOOST_REQUIRE_EQUAL (regs[32], "xmm0");
+    BOOST_REQUIRE_EQUAL (regs[33], "xmm1");
+    BOOST_REQUIRE_EQUAL (regs[34], "xmm2");
+    BOOST_REQUIRE_EQUAL (regs[35], "xmm3");
+    BOOST_REQUIRE_EQUAL (regs[36], "xmm4");
+    BOOST_REQUIRE_EQUAL (regs[37], "xmm5");
+    BOOST_REQUIRE_EQUAL (regs[38], "xmm6");
+    BOOST_REQUIRE_EQUAL (regs[39], "xmm7");
+    BOOST_REQUIRE_EQUAL (regs[40], "mxcsr");
+    BOOST_REQUIRE_EQUAL (regs[41], "orig_eax");
+    BOOST_REQUIRE_EQUAL (regs[42], "mm0");
+    BOOST_REQUIRE_EQUAL (regs[43], "mm1");
+    BOOST_REQUIRE_EQUAL (regs[44], "mm2");
+    BOOST_REQUIRE_EQUAL (regs[45], "mm3");
+    BOOST_REQUIRE_EQUAL (regs[46], "mm4");
+    BOOST_REQUIRE_EQUAL (regs[47], "mm5");
+    BOOST_REQUIRE_EQUAL (regs[48], "mm6");
+    BOOST_REQUIRE_EQUAL (regs[49], "mm7");
+}
+
 using boost::unit_test::test_suite ;
 
 NEMIVER_API test_suite*
@@ -254,6 +318,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_var_with_member_variable)) ;
     suite->add (BOOST_TEST_CASE (&test_embedded_string)) ;
     suite->add (BOOST_TEST_CASE (&test_overloads_prompt)) ;
+    suite->add (BOOST_TEST_CASE (&test_register_names));
     return suite ;
 
     NEMIVER_CATCH_NOX

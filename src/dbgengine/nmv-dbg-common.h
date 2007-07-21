@@ -359,6 +359,10 @@ public:
         IDebugger::Frame m_current_frame_in_core_stack_trace ;
         bool m_has_current_frame_in_core_stack_trace ;
 
+        // register names
+        std::map<IDebugger::register_id_t, UString> m_register_names ;
+        bool m_has_register_names ;
+
     public:
         ResultRecord () {clear () ;}
 
@@ -386,6 +390,14 @@ public:
         {
             m_call_stack = a_in;
             has_call_stack (true) ;
+        }
+        bool has_register_names () const { return m_has_register_names; }
+        void has_register_names (bool a_flag) { m_has_register_names = a_flag; }
+        const std::map<IDebugger::register_id_t, UString>& register_names () const { return m_register_names; }
+        void register_names (const std::map<IDebugger::register_id_t, UString>& a_names)
+        {
+            m_register_names = a_names;
+            has_register_names (true);
         }
 
         const map<int, list<IDebugger::VariableSafePtr> >&
