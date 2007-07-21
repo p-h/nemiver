@@ -1,5 +1,12 @@
 2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/dbgengine/nmv-gdb-engine.cc: add the OnChangedRegistersListedHandler
+	as an output handler which was forgotten last time.
+	* src/dbgengine/nmv-gdbmi-parser.cc: Fix a parsing error in the register
+	listing functions
+
+2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-gdbmi-parser.cc: cleanup patch to use some constant
 	strings instead of using string literals and magic numbers throughout the
 	code.

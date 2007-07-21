@@ -1756,7 +1756,7 @@ parse_register_names (const UString &a_input,
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
-    if (cur != a_input.bytes ()) {
+    if (a_input.c_str ()[cur-1] != ']') {
         // unexpected data
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
@@ -1805,7 +1805,7 @@ parse_changed_registers (const UString &a_input,
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
-    if (cur != a_input.bytes ()) {
+    if (a_input.c_str ()[cur-1] != ']') {
         // unexpected data
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;

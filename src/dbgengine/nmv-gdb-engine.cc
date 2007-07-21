@@ -2243,6 +2243,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnCurrentFrameHandler (this))) ;
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnRegisterNamesListedHandler (this))) ;
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnChangedRegistersListedHandler (this))) ;
 }
 
 sigc::signal<void, Output&>&
