@@ -65,6 +65,7 @@
 #include "nmv-set-breakpoint-dialog.h"
 #include "nmv-choose-overloads-dialog.h"
 #include "nmv-remote-target-dialog.h"
+#include "nmv-registers-view.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -482,6 +483,10 @@ public:
 
     BreakpointsView& get_breakpoints_view () ;
 
+    Gtk::ScrolledWindow& get_registers_scrolled_win () ;
+
+    RegistersView& get_registers_view () ;
+
     ThreadList& get_thread_list () ;
 
     void set_show_command_view (bool) ;
@@ -497,6 +502,8 @@ public:
     void set_show_terminal_view (bool) ;
 
     void set_show_breakpoints_view (bool) ;
+
+    void set_show_registers_view (bool) ;
 
     void add_text_to_command_view (const UString &a_text,
                                    bool a_no_repeat=false) ;
@@ -625,6 +632,7 @@ struct DBGPerspective::Priv {
     bool variables_editor_view_is_visible ;
     bool terminal_view_is_visible ;
     bool breakpoints_view_is_visible ;
+    bool registers_view_is_visible ;
     Gtk::Notebook *sourceviews_notebook ;
     map<UString, int> path_2_pagenum_map ;
     map<UString, int> basename_2_pagenum_map ;
@@ -640,6 +648,8 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> breakpoints_scrolled_win ;
     SafePtr<BreakpointsView> breakpoints_view ;
     SafePtr<ThreadList> thread_list ;
+    SafePtr<Gtk::ScrolledWindow> registers_scrolled_win ;
+    SafePtr<RegistersView> registers_view ;
 
     int current_page_num ;
     IDebuggerSafePtr debugger ;
@@ -700,6 +710,7 @@ struct DBGPerspective::Priv {
         variables_editor_view_is_visible (false),
         terminal_view_is_visible (false),
         breakpoints_view_is_visible (false),
+        registers_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0),
@@ -738,7 +749,8 @@ enum ViewsIndex
     CALL_STACK_VIEW_INDEX,
     VARIABLES_VIEW_INDEX,
     TERMINAL_VIEW_INDEX,
-    BREAKPOINTS_VIEW_INDEX
+    BREAKPOINTS_VIEW_INDEX,
+    REGISTERS_VIEW_INDEX
 };
 
 #ifndef CHECK_P_INIT
@@ -2018,6 +2030,7 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_variables_editor_view (true) ;
     set_show_terminal_view (true) ;
     set_show_breakpoints_view (true) ;
+    set_show_registers_view (true) ;
     m_priv->statuses_notebook->set_current_page (0) ;
 }
 
@@ -2521,6 +2534,7 @@ DBGPerspective::init_body ()
     get_local_vars_inspector_scrolled_win ().add
                                     (get_local_vars_inspector ().widget ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
+    get_registers_scrolled_win ().add (get_registers_view ().widget());
 
     /*
     set_show_call_stack_view (true) ;
@@ -2635,6 +2649,7 @@ DBGPerspective::clear_status_notebook ()
     get_call_stack ().clear () ;
     get_local_vars_inspector ().re_init_widget () ;
     get_breakpoints_view ().clear () ;
+    get_registers_view ().clear () ;
 }
 
 void
@@ -4867,6 +4882,31 @@ DBGPerspective::get_breakpoints_view ()
     return *m_priv->breakpoints_view ;
 }
 
+Gtk::ScrolledWindow&
+DBGPerspective::get_registers_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->registers_scrolled_win) {
+        m_priv->registers_scrolled_win.reset (new Gtk::ScrolledWindow) ;
+        THROW_IF_FAIL (m_priv->registers_scrolled_win) ;
+        m_priv->registers_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                   Gtk::POLICY_AUTOMATIC) ;
+    }
+    THROW_IF_FAIL (m_priv->registers_scrolled_win) ;
+    return *m_priv->registers_scrolled_win ;
+}
+
+RegistersView&
+DBGPerspective::get_registers_view ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->registers_view) {
+        m_priv->registers_view.reset (new RegistersView (debugger ())) ;
+    }
+    THROW_IF_FAIL (m_priv->registers_view) ;
+    return *m_priv->registers_view ;
+}
+
 void
 DBGPerspective::set_show_command_view (bool a_show)
 {
@@ -5048,6 +5088,32 @@ DBGPerspective::set_show_breakpoints_view (bool a_show)
             m_priv->breakpoints_view_is_visible = false;
         }
         m_priv->breakpoints_view_is_visible = false;
+    }
+}
+
+void
+DBGPerspective::set_show_registers_view (bool a_show)
+{
+    if (a_show) {
+        if (!get_registers_scrolled_win ().get_parent ()
+            && m_priv->registers_view_is_visible == false) {
+            get_registers_scrolled_win ().show_all () ;
+            int page_num = m_priv->statuses_notebook->insert_page
+                                            (get_registers_scrolled_win (),
+                                             _("Registers"),
+                                             REGISTERS_VIEW_INDEX) ;
+            m_priv->registers_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page (page_num);
+        }
+    } else {
+        if (get_registers_scrolled_win ().get_parent ()
+            && m_priv->registers_view_is_visible) {
+            LOG_DD ("removing registers view") ;
+            m_priv->statuses_notebook->remove_page
+                                        (get_registers_scrolled_win ());
+            m_priv->registers_view_is_visible = false;
+        }
+        m_priv->registers_view_is_visible = false;
     }
 }
 

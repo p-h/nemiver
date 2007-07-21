@@ -1,5 +1,16 @@
 2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-registers-view.h,
+	src/persp/dbgperspective/nmv-registers-view.cc: add a RegistersView widget
+	for displaying the contents of registers in the status notebook.  Currently,
+	it doesn't show register values, but it does show whether the register has
+	changed since last time by adding a '*' to the Value column
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add the RegistersView
+	widget to the status notebook
+	* src/persp/dbgperspective/Makefile.am: Add the new files
+
+2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc: add the OnChangedRegistersListedHandler
 	as an output handler which was forgotten last time.
 	* src/dbgengine/nmv-gdbmi-parser.cc: Fix a parsing error in the register
