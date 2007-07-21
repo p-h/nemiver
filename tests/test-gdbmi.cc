@@ -56,6 +56,9 @@ static const char* gv_overloads_prompt1=
 static const char* gv_register_names=
 "register-names=[\"eax\",\"ecx\",\"edx\",\"ebx\",\"esp\",\"ebp\",\"esi\",\"edi\",\"eip\",\"eflags\",\"cs\",\"ss\",\"ds\",\"es\",\"fs\",\"gs\",\"st0\",\"st1\",\"st2\",\"st3\",\"st4\",\"st5\",\"st6\",\"st7\",\"fctrl\",\"fstat\",\"ftag\",\"fiseg\",\"fioff\",\"foseg\",\"fooff\",\"fop\",\"xmm0\",\"xmm1\",\"xmm2\",\"xmm3\",\"xmm4\",\"xmm5\",\"xmm6\",\"xmm7\",\"mxcsr\",\"orig_eax\",\"mm0\",\"mm1\",\"mm2\",\"mm3\",\"mm4\",\"mm5\",\"mm6\",\"mm7\"]";
 
+static const char* gv_changed_registers=
+"changed-registers=[\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"8\",\"9\",\"10\",\"11\",\"12\",\"13\",\"15\",\"24\",\"26\",\"40\",\"41\"]";
+
 void
 test_str0 ()
 {
@@ -294,6 +297,36 @@ test_register_names ()
     BOOST_REQUIRE_EQUAL (regs[49], "mm7");
 }
 
+void
+test_changed_registers ()
+{
+    std::list<IDebugger::register_id_t> regs;
+    UString::size_type cur = 0;
+
+    BOOST_REQUIRE (parse_changed_registers (gv_changed_registers,
+                cur, cur, regs)) ;
+    BOOST_REQUIRE_EQUAL (regs.size (), 18u);
+    std::list<IDebugger::register_id_t>::const_iterator reg_iter = regs.begin ();
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 0u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 1u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 2u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 3u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 4u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 5u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 6u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 8u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 9u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 10u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 11u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 12u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 13u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 15u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 24u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 26u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 40u);
+    BOOST_REQUIRE_EQUAL (*reg_iter++, 41u);
+}
+
 using boost::unit_test::test_suite ;
 
 NEMIVER_API test_suite*
@@ -319,6 +352,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_embedded_string)) ;
     suite->add (BOOST_TEST_CASE (&test_overloads_prompt)) ;
     suite->add (BOOST_TEST_CASE (&test_register_names));
+    suite->add (BOOST_TEST_CASE (&test_changed_registers));
     return suite ;
 
     NEMIVER_CATCH_NOX

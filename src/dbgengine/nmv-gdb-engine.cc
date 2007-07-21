@@ -1931,7 +1931,37 @@ struct OnRegisterNamesListedHandler : OutputHandler {
              a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
     }
-};//struct OnFramesListedHandler
+};//struct OnRegisterNamesListedHandler
+
+struct OnChangedRegistersListedHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnChangedRegistersListedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.output ().result_record ().has_changed_registers ())) {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        m_engine->changed_registers_listed_signal ().emit
+            (a_in.output ().result_record ().changed_registers (),
+             a_in.command ().cookie ()) ;
+        m_engine->set_state (IDebugger::READY) ;
+    }
+};//struct OnChangedRegistersListedHandler
 
 struct OnErrorHandler : OutputHandler {
 

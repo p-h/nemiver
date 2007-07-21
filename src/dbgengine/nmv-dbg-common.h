@@ -363,6 +363,10 @@ public:
         std::map<IDebugger::register_id_t, UString> m_register_names ;
         bool m_has_register_names ;
 
+        // changed registers
+        std::list<IDebugger::register_id_t> m_changed_registers ;
+        bool m_has_changed_registers ;
+
     public:
         ResultRecord () {clear () ;}
 
@@ -398,6 +402,15 @@ public:
         {
             m_register_names = a_names;
             has_register_names (true);
+        }
+
+        bool has_changed_registers () const { return m_has_changed_registers; }
+        void has_changed_registers (bool a_flag) { m_has_changed_registers = a_flag; }
+        const std::list<IDebugger::register_id_t>& changed_registers () const { return m_changed_registers; }
+        void changed_registers (const std::list<IDebugger::register_id_t>& a_regs)
+        {
+            m_changed_registers = a_regs;
+            has_changed_registers (true);
         }
 
         const map<int, list<IDebugger::VariableSafePtr> >&

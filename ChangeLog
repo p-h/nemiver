@@ -1,5 +1,15 @@
 2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/dbgengine/nmv-dbg-common.h: added storage and interfaces for accessing
+	the list of changed registers
+	* src/dbgengine/nmv-gdbmi-parser.cc,
+	src/dbgengine/nmv-gdbmi-parser.h: added parsing for the listing fo changed
+	registers
+	* src/dbgengine/nmv-gdb-engine.cc: add output handler for changed register
+	* tests/test-gdbmi.cc: added tests for changed register parsing
+
+2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-i-debugger.h: add some API for getting information about
 	the CPU registers
 	* src/dbgengine/nmv-dbg-common.h, src/dbgengine/nmv-gdb-engine.cc: add
