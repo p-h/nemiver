@@ -97,8 +97,8 @@ public:
         static bool first_run = true;
         if (first_run)
         {
-            debugger->list_register_names ();
             first_run = false;
+            debugger->list_register_names ();
         }
         else
         {
@@ -110,15 +110,18 @@ public:
                             (const map<IDebugger::register_id_t, UString> &a_regs,
                              const UString &a_cookie)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
         THROW_IF_FAIL (list_store);
         if (a_cookie.empty ()) {}
         list_store->clear ();
+        LOG_DD ("got num registers: " << (int)a_regs.size ());
         for (std::map<IDebugger::register_id_t, UString>::const_iterator reg_iter = a_regs.begin ();
                 reg_iter != a_regs.end (); ++reg_iter) {
             Gtk::TreeModel::iterator tree_iter = list_store->append ();
             (*tree_iter)[get_columns ().id] = reg_iter->first;
             (*tree_iter)[get_columns ().name] = reg_iter->second;
+            LOG_DD ("got register: " << reg_iter->second);
         }
         NEMIVER_CATCH
     }

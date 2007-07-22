@@ -545,6 +545,12 @@ public:
             m_file_list.clear () ;
             m_has_file_list = false ;
             m_has_current_frame_in_core_stack_trace = false ;
+            m_has_changed_registers = false;
+            m_changed_registers.clear ();
+            m_has_register_values = false;
+            m_register_values.clear ();
+            m_has_register_names = false;
+            m_register_names.clear ();
         }
     };//end class ResultRecord
 

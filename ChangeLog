@@ -1,5 +1,19 @@
 2007-07-22  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/dbgengine/nmv-dbg-common.h: fixed bug where some flags were not
+	initialized before use which was causing some seemingly random failures,
+	noticed first in the fact that the register names no longer were populated
+	in the register view because m_has_register_names apparently sometimes was
+	initialized to true so the handler would be called (and thus emit a signal
+	without any register names) for unrelated gdb output.
+	* src/dbgengine/nmv-gdb-engine.cc: switch the order of a couple things to
+	reduce race conditions.  At first I thought this was the problem but it
+	wasn't.  It doesn't hurt to leave it this way though.
+	* src/persp/dbgperspective/nmv-registers-view.cc: add some logging to aid in
+	debugging.
+
+2007-07-22  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-dbg-common.h: add register value interfaces
 	* src/dbgengine/nmv-gdb-engine.cc: add handler for register value commands
 	* src/dbgengine/nmv-gdbmi-parser.h, src/dbgengine/nmv-gdbmi-parser.cc: add
