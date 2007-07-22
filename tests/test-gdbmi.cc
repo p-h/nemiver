@@ -59,6 +59,9 @@ static const char* gv_register_names=
 static const char* gv_changed_registers=
 "changed-registers=[\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"8\",\"9\",\"10\",\"11\",\"12\",\"13\",\"15\",\"24\",\"26\",\"40\",\"41\"]";
 
+static const char* gv_register_values=
+"register-values=[{number=\"1\",value=\"0xbfd10a60\"},{number=\"2\",value=\"0x1\"},{number=\"3\",value=\"0xb6f03ff4\"},{number=\"4\",value=\"0xbfd10960\"},{number=\"5\",value=\"0xbfd10a48\"},{number=\"6\",value=\"0xb7ff6ce0\"},{number=\"7\",value=\"0x0\"},{number=\"8\",value=\"0x80bb710\"},{number=\"9\",value=\"0x200286\"},{number=\"10\",value=\"0x73\"},{number=\"36\",value=\"{v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 <repeats 16 times>}, v8_int16 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}\"}]";
+
 void
 test_str0 ()
 {
@@ -327,6 +330,50 @@ test_changed_registers ()
     BOOST_REQUIRE_EQUAL (*reg_iter++, 41u);
 }
 
+void
+test_register_values ()
+{
+    std::map<IDebugger::register_id_t, UString> reg_values;
+    UString::size_type cur = 0;
+
+    BOOST_REQUIRE (parse_register_values (gv_register_values,
+                cur, cur, reg_values)) ;
+    BOOST_REQUIRE_EQUAL (reg_values.size (), 11u);
+    std::map<IDebugger::register_id_t, UString>::const_iterator reg_iter = reg_values.begin ();
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 1u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0xbfd10a60");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 2u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0x1");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 3u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0xb6f03ff4");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 4u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0xbfd10960");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 5u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0xbfd10a48");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 6u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0xb7ff6ce0");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 7u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0x0");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 8u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0x80bb710");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 9u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0x200286");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 10u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0x73");
+    ++reg_iter;
+    BOOST_REQUIRE_EQUAL ((reg_iter)->first, 36u);
+    BOOST_REQUIRE_EQUAL ((reg_iter)->second, "{v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 <repeats 16 times>}, v8_int16 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}");
+}
+
 using boost::unit_test::test_suite ;
 
 NEMIVER_API test_suite*
@@ -353,6 +400,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_overloads_prompt)) ;
     suite->add (BOOST_TEST_CASE (&test_register_names));
     suite->add (BOOST_TEST_CASE (&test_changed_registers));
+    suite->add (BOOST_TEST_CASE (&test_register_values));
     return suite ;
 
     NEMIVER_CATCH_NOX

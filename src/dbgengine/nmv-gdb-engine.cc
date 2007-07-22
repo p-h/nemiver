@@ -1963,6 +1963,36 @@ struct OnChangedRegistersListedHandler : OutputHandler {
     }
 };//struct OnChangedRegistersListedHandler
 
+struct OnRegisterValuesListedHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnRegisterValuesListedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.output ().result_record ().has_register_values ())) {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        m_engine->register_values_listed_signal ().emit
+            (a_in.output ().result_record ().register_values (),
+             a_in.command ().cookie ()) ;
+        m_engine->set_state (IDebugger::READY) ;
+    }
+};//struct OnRegisterValuesListedHandler
+
 struct OnErrorHandler : OutputHandler {
 
     GDBEngine *m_engine ;
@@ -2245,6 +2275,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnRegisterNamesListedHandler (this))) ;
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnChangedRegistersListedHandler (this))) ;
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnRegisterValuesListedHandler (this))) ;
 }
 
 sigc::signal<void, Output&>&

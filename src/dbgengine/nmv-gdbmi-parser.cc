@@ -85,6 +85,7 @@ const char* PREFIX_LOCALS = "locals=[";
 const char* PREFIX_VALUE = "value=\"";
 const char* PREFIX_REGISTER_NAMES = "register-names=";
 const char* PREFIX_CHANGED_REGISTERS = "changed-registers=";
+const char* PREFIX_REGISTER_VALUES = "register-values=";
 
 bool parse_c_string_body (const UString &a_input,
                           UString::size_type a_from,
@@ -1832,6 +1833,90 @@ parse_changed_registers (const UString &a_input,
     return true;
 }
 
+bool
+parse_register_values (const UString &a_input,
+                       UString::size_type a_from,
+                       UString::size_type &a_to,
+                       std::map<IDebugger::register_id_t, UString> &a_values)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+    UString::size_type cur = a_from;
+
+    if (a_input.compare (cur, strlen (PREFIX_REGISTER_VALUES),
+                PREFIX_REGISTER_VALUES)) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    cur += strlen (PREFIX_REGISTER_VALUES);
+
+    GDBMIListSafePtr gdbmi_list;
+    if (!parse_gdbmi_list (a_input, cur, cur, gdbmi_list)) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    if (a_input.c_str ()[cur-1] != ']') {
+        // unexpected data
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    std::map<IDebugger::register_id_t, UString> vals ;
+    if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false;
+    }
+    std::list<GDBMIValueSafePtr> val_list;
+    gdbmi_list->get_value_content (val_list);
+    for (std::list<GDBMIValueSafePtr>::const_iterator val_iter =
+            val_list.begin();
+            val_iter != val_list.end();
+            ++val_iter)
+    {
+        UString value_str;
+
+        if ((*val_iter)->content_type () != GDBMIValue::TUPLE_TYPE)
+        {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
+        GDBMITupleSafePtr tuple = (*val_iter)->get_tuple_content ();
+        std::list<GDBMIResultSafePtr> result_list = tuple->content ();
+        if (result_list.size () != 2)
+        {
+            // each tuple should have a 'number' and 'value' field
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
+        std::list<GDBMIResultSafePtr>::const_iterator res_iter = result_list.begin ();
+        // get register number
+        GDBMIValueSafePtr reg_number_val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "number" || reg_number_val->content_type () != GDBMIValue::STRING_TYPE)
+        {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
+        IDebugger::register_id_t id = atoi (reg_number_val->get_string_content ().c_str ());
+
+        // get the new value of the register
+        ++res_iter;
+        GDBMIValueSafePtr reg_value_val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "value" || reg_value_val->content_type () != GDBMIValue::STRING_TYPE)
+        {
+            LOG_PARSING_ERROR (a_input, cur) ;
+            return false;
+        }
+        else
+        {
+            value_str = reg_value_val->get_string_content ();
+        }
+        vals[id] = value_str;
+    }
+
+    a_values = vals;
+    a_to = cur ;
+    return true;
+}
+
 /// parses the result of the gdbmi command
 /// "-thread-select"
 /// \param a_input the input string to parse
@@ -2634,6 +2719,15 @@ fetch_gdbmi_result:
                 } else {
                     LOG_D ("parsed changed register", GDBMI_PARSING_DOMAIN) ;
                     result_record.changed_registers (regs) ;
+                }
+            } else if (!a_input.compare (cur, strlen (PREFIX_REGISTER_VALUES),
+                        PREFIX_REGISTER_VALUES)) {
+                std::map<IDebugger::register_id_t, UString>  values;
+                if (!parse_register_values (a_input, cur, cur,  values)) {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                } else {
+                    LOG_D ("parsed changed register", GDBMI_PARSING_DOMAIN) ;
+                    result_record.register_values ( values) ;
                 }
             } else {
                 GDBMIResultSafePtr result ;

@@ -571,6 +571,11 @@ bool parse_changed_registers (const UString &a_input,
                               UString::size_type &a_to,
                               std::list<IDebugger::register_id_t> &a_registers);
 
+bool parse_register_values (const UString &a_input,
+                            UString::size_type a_from,
+                            UString::size_type &a_to,
+                            std::map<IDebugger::register_id_t, UString> &a_values);
+
 NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_GDBMI_PARSER_H
 

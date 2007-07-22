@@ -1,3 +1,11 @@
+2007-07-22  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-dbg-common.h: add register value interfaces
+	* src/dbgengine/nmv-gdb-engine.cc: add handler for register value commands
+	* src/dbgengine/nmv-gdbmi-parser.h, src/dbgengine/nmv-gdbmi-parser.cc: add
+	parsing for register values (parse_register_values)
+	* tests/test-gdbmi.cc: add test for parsing register values
+
 2007-07-20  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-registers-view.h,
