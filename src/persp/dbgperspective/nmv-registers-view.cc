@@ -70,6 +70,8 @@ public:
                 (*this, &Priv::on_debugger_registers_listed)) ;
         debugger->changed_registers_listed_signal ().connect (sigc::mem_fun
                 (*this, &Priv::on_debugger_changed_registers_listed)) ;
+        debugger->register_values_listed_signal ().connect (sigc::mem_fun
+                (*this, &Priv::on_debugger_register_values_listed)) ;
 
         debugger->stopped_signal ().connect (sigc::mem_fun (*this,
                     &Priv::on_debugger_stopped));
@@ -123,6 +125,7 @@ public:
             (*tree_iter)[get_columns ().name] = reg_iter->second;
             LOG_DD ("got register: " << reg_iter->second);
         }
+        debugger->list_register_values ();
         NEMIVER_CATCH
     }
 
@@ -133,17 +136,34 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
         if (a_cookie.empty()) {}
+        if (!a_regs.empty ()) {
+            debugger->list_register_values (a_regs);
+        }
+
+        NEMIVER_CATCH
+    }
+
+    void on_debugger_register_values_listed
+                            (const map<IDebugger::register_id_t, UString> &a_reg_values,
+                             const UString &a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+        if (a_cookie.empty()) {}
         for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
                 tree_iter != list_store->children ().end (); ++tree_iter) {
             IDebugger::register_id_t id = (*tree_iter)[get_columns ().id];
-            if (std::find (a_regs.begin (), a_regs.end (), id) != a_regs.end ())
+            std::map<IDebugger::register_id_t, UString>::const_iterator value_iter = a_reg_values.find (id);
+            if (value_iter != a_reg_values.end ())
             {
-                (*tree_iter)[get_columns ().value] = "*";
+                (*tree_iter)[get_columns ().value] = value_iter->second;
+                // FIXME: change field red to indicate that it was changed.
                 LOG_DD ("changed register: " << (int)id);
             }
             else
             {
-                (*tree_iter)[get_columns ().value] = "";
+                // FIXME: change field black to indicate that it hasn't changed
+                // since last time
             }
         }
         NEMIVER_CATCH

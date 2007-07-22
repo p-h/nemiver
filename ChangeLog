@@ -1,5 +1,10 @@
 2007-07-22  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-registers-view.cc: get and update register
+	values when they have changed and display them in the RegistersView
+
+2007-07-22  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-dbg-common.h: fixed bug where some flags were not
 	initialized before use which was causing some seemingly random failures,
 	noticed first in the fact that the register names no longer were populated
