@@ -1,3 +1,9 @@
+2007-07-23  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-registers-view.cc: change the register value
+	to 'red' when it has been changed since last time and otherwise revert to
+	the normal text color
+
 2007-07-22  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-registers-view.cc: get and update register

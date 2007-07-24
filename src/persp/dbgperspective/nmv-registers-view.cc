@@ -37,12 +37,14 @@ struct RegisterColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<IDebugger::register_id_t> id ;
     Gtk::TreeModelColumn<Glib::ustring> name ;
     Gtk::TreeModelColumn<Glib::ustring> value ;
+    Gtk::TreeModelColumn<Gdk::Color> fg_color;
 
     RegisterColumns ()
     {
         add (id) ;
         add (name) ;
         add (value) ;
+        add (fg_color);
     }
 };//end Cols
 
@@ -85,9 +87,13 @@ public:
         tree_view.reset (new Gtk::TreeView (list_store)) ;
 
         //create the columns of the tree view
-        tree_view->append_column_editable (_("ID"), get_columns ().id) ;
+        tree_view->append_column (_("ID"), get_columns ().id) ;
         tree_view->append_column (_("Name"), get_columns ().name) ;
         tree_view->append_column (_("Value"), get_columns ().value) ;
+        Gtk::TreeViewColumn * col = tree_view->get_column (2) ;
+        col->add_attribute (*col->get_first_cell_renderer (),
+                            "foreground-gdk",
+                            get_columns ().fg_color) ;
     }
 
     void on_debugger_stopped (const UString,
@@ -157,13 +163,13 @@ public:
             if (value_iter != a_reg_values.end ())
             {
                 (*tree_iter)[get_columns ().value] = value_iter->second;
-                // FIXME: change field red to indicate that it was changed.
+                (*tree_iter)[get_columns ().fg_color]  = Gdk::Color ("red");
                 LOG_DD ("changed register: " << (int)id);
             }
             else
             {
-                // FIXME: change field black to indicate that it hasn't changed
-                // since last time
+                (*tree_iter)[get_columns ().fg_color]  =
+                    tree_view->get_style ()->get_text (Gtk::STATE_NORMAL);
             }
         }
         NEMIVER_CATCH
