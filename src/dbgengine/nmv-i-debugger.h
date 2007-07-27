@@ -699,6 +699,18 @@ public:
                          std::map<register_id_t, UString>, const UString& >&
                              register_values_listed_signal () const=0;
 
+    virtual void set_register_value (const UString& a_reg_name,
+                                     const UString& a_value,
+                                     const UString& a_cookie="") = 0;
+
+    virtual sigc::signal<void,
+                         const UString&, // register name
+                         const UString&, // register value
+                         const UString&  // cookie
+                         >&
+                         register_value_changed_signal () const=0;
+
+
 };//end IDebugger
 
 NEMIVER_END_NAMESPACE (nemiver)

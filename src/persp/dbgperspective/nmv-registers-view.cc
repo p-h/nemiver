@@ -74,6 +74,8 @@ public:
                 (*this, &Priv::on_debugger_changed_registers_listed)) ;
         debugger->register_values_listed_signal ().connect (sigc::mem_fun
                 (*this, &Priv::on_debugger_register_values_listed)) ;
+        debugger->register_value_changed_signal ().connect (sigc::mem_fun
+                (*this, &Priv::on_debugger_register_value_changed)) ;
 
         debugger->stopped_signal ().connect (sigc::mem_fun (*this,
                     &Priv::on_debugger_stopped));
@@ -89,11 +91,16 @@ public:
         //create the columns of the tree view
         tree_view->append_column (_("ID"), get_columns ().id) ;
         tree_view->append_column (_("Name"), get_columns ().name) ;
-        tree_view->append_column (_("Value"), get_columns ().value) ;
+        tree_view->append_column_editable (_("Value"), get_columns ().value) ;
         Gtk::TreeViewColumn * col = tree_view->get_column (2) ;
         col->add_attribute (*col->get_first_cell_renderer (),
                             "foreground-gdk",
                             get_columns ().fg_color) ;
+        Gtk::CellRendererText* renderer = dynamic_cast<Gtk::CellRendererText*>
+            (col->get_first_cell_renderer ());
+        THROW_IF_FAIL (renderer);
+        renderer->signal_edited ().connect (sigc::mem_fun (this,
+                    &Priv::on_register_value_edited));
     }
 
     void on_debugger_stopped (const UString,
@@ -131,7 +138,7 @@ public:
             (*tree_iter)[get_columns ().name] = reg_iter->second;
             LOG_DD ("got register: " << reg_iter->second);
         }
-        debugger->list_register_values ();
+        debugger->list_register_values ("first-time");
         NEMIVER_CATCH
     }
 
@@ -155,7 +162,6 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
-        if (a_cookie.empty()) {}
         for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
                 tree_iter != list_store->children ().end (); ++tree_iter) {
             IDebugger::register_id_t id = (*tree_iter)[get_columns ().id];
@@ -163,16 +169,63 @@ public:
             if (value_iter != a_reg_values.end ())
             {
                 (*tree_iter)[get_columns ().value] = value_iter->second;
-                (*tree_iter)[get_columns ().fg_color]  = Gdk::Color ("red");
-                LOG_DD ("changed register: " << (int)id);
+                if (a_cookie != "first-time") {
+                    set_changed (tree_iter);
+                } else {
+                    set_changed (tree_iter, false);
+                }
             }
             else
             {
-                (*tree_iter)[get_columns ().fg_color]  =
-                    tree_view->get_style ()->get_text (Gtk::STATE_NORMAL);
+                set_changed (tree_iter, false);
             }
         }
         NEMIVER_CATCH
+    }
+
+    void on_register_value_edited (const Glib::ustring& a_path,
+                                   const Glib::ustring& a_new_val)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        Gtk::TreeModel::iterator tree_iter = list_store->get_iter (a_path);
+        Glib::ustring reg_name = (*tree_iter)[get_columns ().name];
+        LOG_DD ("setting register " << reg_name << " to " << a_new_val);
+        debugger->set_register_value (reg_name, a_new_val);
+    }
+
+    void on_debugger_register_value_changed (const Glib::ustring& a_register_name,
+                                    const Glib::ustring& a_new_value,
+                                    const Glib::ustring& a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        if (a_cookie.empty ()) {}
+        for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
+                tree_iter != list_store->children ().end (); ++tree_iter) {
+            if ((*tree_iter)[get_columns ().name] == a_register_name)
+            {
+                // no need to update if the value is the same as last time
+                if ((*tree_iter)[get_columns ().value] == a_new_value) {
+                    (*tree_iter)[get_columns ().value] = a_new_value;
+                    set_changed (tree_iter);
+                }
+                break;
+            }
+        }
+    }
+
+    // helper function which highlights a row in red or returns the text to
+    // normal color to indicate whether it has changed since last update
+    void set_changed (Gtk::TreeModel::iterator& iter, bool changed = true)
+    {
+        if (changed)
+        {
+            (*iter)[get_columns ().fg_color]  = Gdk::Color ("red");
+        }
+        else
+        {
+            (*iter)[get_columns ().fg_color] =
+                tree_view->get_style ()->get_text (Gtk::STATE_NORMAL);
+        }
     }
 
 };//end class RegistersView::Priv

@@ -1,3 +1,15 @@
+2007-07-24  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-i-debugger.h: add 'set register' API / signal
+	* src/dbgengine/nmv-gdb-engine.cc: Provide implementation of 'set register'
+	interfaces and signals
+	* src/dbgengine/nmv-gdbmi-parser.cc: Add FIXME to indicate that the result
+	from setting a register will actually be parsed expecting to find a variable
+	value.
+	* src/persp/dbgperspective/nmv-registers-view.cc: make the value of the
+	register editable and send the new value to gdb.  The user can now change
+	the values of registers, albeit in a rather primitive way.
+
 2007-07-23  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-registers-view.cc: change the register value

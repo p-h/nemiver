@@ -2694,6 +2694,12 @@ fetch_gdbmi_result:
                 }
             } else if (!a_input.compare (cur, strlen (PREFIX_VALUE),
                         PREFIX_VALUE)) {
+                // FIXME: this case will parse any response from
+                // -data-evaluate-expression, including the response from
+                // setting the value of a register or any other expression
+                // evaluation.  Currently all of these cases can be parsed as a
+                // variable, but there's no guarantee that this is the case.
+                // Perhaps this needs to be reworked somehow
                 IDebugger::VariableSafePtr var ;
                 if (!parse_variable_value (a_input, cur, cur, var)) {
                     LOG_PARSING_ERROR (a_input, cur) ;

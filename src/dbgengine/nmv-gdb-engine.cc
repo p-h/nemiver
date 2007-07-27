@@ -335,6 +335,18 @@ public:
                      register_values_listed_signal () const;
     void list_register_values (std::list<register_id_t> a_registers,
                                const UString &a_cookie="");
+
+    virtual void set_register_value (const UString& a_reg_name,
+                                     const UString& a_value,
+                                     const UString& a_cookie);
+
+    virtual sigc::signal<void,
+                         const UString&,
+                         const UString&,
+                         const UString&
+                         >&
+                         register_value_changed_signal () const;
+
 };//end class GDBEngine
 
 //*************************
@@ -490,6 +502,12 @@ struct GDBEngine::Priv {
 
     mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
         register_values_listed_signal;
+
+    mutable sigc::signal<void,
+                         const UString&,
+                         const UString&,
+                         const UString& >
+                         register_value_changed_signal;
 
     //***********************
     //</GDBEngine attributes>
@@ -1663,11 +1681,11 @@ struct OnLocalVariablesListedHandler : OutputHandler {
     }
 };//struct OnLocalVariablesListedHandler
 
-struct OnVariableValueHandler : OutputHandler {
+struct OnResultRecordHandler : OutputHandler {
 
     GDBEngine *m_engine ;
 
-    OnVariableValueHandler (GDBEngine *a_engine) :
+    OnResultRecordHandler (GDBEngine *a_engine) :
         m_engine (a_engine)
     {}
 
@@ -1676,7 +1694,8 @@ struct OnVariableValueHandler : OutputHandler {
         if ((a_in.command ().name () == "print-variable-value"
              || a_in.command ().name () == "get-variable-value"
              || a_in.command ().name () == "print-pointed-variable-value"
-             || a_in.command ().name () == "dereference-variable")
+             || a_in.command ().name () == "dereference-variable"
+             || a_in.command ().name () == "set-register-value")
             && a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
@@ -1756,12 +1775,21 @@ struct OnVariableValueHandler : OutputHandler {
             m_engine->variable_dereferenced_signal ().emit
                                                 (a_in.command ().variable (),
                                                  a_in.command ().cookie ()) ;
+        } else if (a_in.command ().name () == "set-register-value") {
+            IDebugger::VariableSafePtr var =
+                a_in.output ().result_record ().variable_value ();
+            THROW_IF_FAIL (var) ;
+            THROW_IF_FAIL (!a_in.command ().tag1().empty ()) ;
+            m_engine->register_value_changed_signal ().emit
+                                                (a_in.command ().tag1 (),
+                                                 var->value (),
+                                                 a_in.command ().cookie ()) ;
         } else {
             THROW ("unknown command : " + a_in.command ().name ()) ;
         }
         m_engine->set_state (IDebugger::READY) ;
     }
-};//struct OnVariableValueHandler
+};//struct OnResultRecordHandler
 
 struct OnVariableTypeHandler : OutputHandler {
     GDBEngine *m_engine ;
@@ -1992,6 +2020,38 @@ struct OnRegisterValuesListedHandler : OutputHandler {
         m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnRegisterValuesListedHandler
+
+struct OnSetRegisterValueHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnSetRegisterValueHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.command ().name () == "set-register-value")) {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        m_engine->register_value_changed_signal ().emit
+            (a_in.command ().tag1 (),
+             // FIXME: get register value here
+             UString(),
+             a_in.command ().cookie ()) ;
+        m_engine->set_state (IDebugger::READY) ;
+    }
+};//struct OnSetRegisterValueHandler
 
 struct OnErrorHandler : OutputHandler {
 
@@ -2256,7 +2316,7 @@ GDBEngine::init_output_handlers ()
     m_priv->output_handler_list.add
         (OutputHandlerSafePtr (new OnLocalVariablesListedHandler (this)));
     m_priv->output_handler_list.add
-            (OutputHandlerSafePtr (new OnVariableValueHandler (this))) ;
+            (OutputHandlerSafePtr (new OnResultRecordHandler (this))) ;
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnVariableTypeHandler (this))) ;
     m_priv->output_handler_list.add
@@ -3235,6 +3295,34 @@ GDBEngine::list_register_values (std::list<IDebugger::register_id_t> a_registers
     queue_command (Command ("list-register-values",
                             "-data-list-register-values x " + regs_str, // x = hex format
                             a_cookie)) ;
+}
+
+void
+GDBEngine::set_register_value (const UString& a_reg_name,
+                               const UString& a_value,
+                               const UString& a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    UString command_str;
+    command_str.printf ("-data-evaluate-expression $%s=%s",
+            a_reg_name.c_str (),
+            a_value.c_str ());
+    Command command ("set-register-value",
+                     command_str,
+                     a_cookie) ;
+    command.tag0 ("set-register-value") ;
+    command.tag1 (a_reg_name) ;
+    queue_command (command);
+}
+
+sigc::signal<void,
+    const UString&,
+    const UString&,
+    const UString& >&
+GDBEngine::register_value_changed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->register_value_changed_signal ;
 }
 
 
