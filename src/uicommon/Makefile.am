@@ -19,7 +19,7 @@ nmv-terminal.h \
 nmv-source-editor.cc \
 nmv-source-editor.h
 
-libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@
+libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@ -lutil
 libnemiveruicommon_la_CFLAGS= -fPIC -DPIC
 
 INCLUDES=@NEMIVERUICOMMON_CFLAGS@ \
