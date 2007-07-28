@@ -1,4 +1,5 @@
-lib_LTLIBRARIES=libnemivercommon.la
+nemivercommon_LTLIBRARIES=libnemivercommon.la
+nemivercommondir=$(libdir)/nemiver
 
 headers= \
 nmv-api-macros.h \
@@ -63,7 +64,8 @@ nmv-proc-mgr.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/common
-libnemivercommon_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -lutil
+libnemivercommon_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -lutil \
+		-avoid-version -rpath $(libdir)/nemiver
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libnemivercommon.pc
