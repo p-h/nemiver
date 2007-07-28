@@ -57,8 +57,6 @@ config_mutex ()
     return s_config_mutex ;
 }
 
-Config ConfManager::s_config ;
-
 
 Config::Config ()
 {
@@ -118,6 +116,8 @@ Config::set_property (const UString a_name, const UString a_value)
 Config&
 ConfManager::get_config ()
 {
+
+    static Config s_config ;
     return s_config ;
 }
 
@@ -125,7 +125,7 @@ void
 ConfManager::set_config (const Config &a_conf)
 {
     Glib::RecMutex::Lock lock (config_mutex ()) ;
-    s_config = a_conf ;
+    get_config () = a_conf ;
 }
 
 Config&
@@ -334,6 +334,13 @@ ConfManager::create_default_config_file (std::ostream &a_ostream)
 void
 ConfManager::init ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    static bool initialized=false ;
+
+    if (initialized)
+        return ;
+
     string configfile = getenv (string ("nemiverconfigfile")) ;
     if (configfile != "") {
         parse_config_file (configfile.c_str ()) ;
@@ -342,6 +349,8 @@ ConfManager::init ()
     } else {
         parse_user_config_file () ;
     }
+
+    initialized = true ;
 }
 
 }//end namespace common

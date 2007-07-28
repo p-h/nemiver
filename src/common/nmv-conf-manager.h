@@ -63,8 +63,6 @@ public:
 
 class NEMIVER_API ConfManager
 {
-    static Config s_config ;
-
     //forbid instantiation/copy/assignation
     ConfManager () ;
     ConfManager (const ConfManager &) ;

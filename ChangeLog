@@ -1,3 +1,9 @@
+2007-07-28 Dodji Seketeli <dodji@gnome.org>
+
+	* src/common/nmv-conf-manager.cc,h: don' t put the s_config member as
+	  global. Put static in a function to avoid global initialization
+	  sequence hazards.
+
 2007-07-24  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/dbgengine/nmv-i-debugger.h: add 'set register' API / signal
