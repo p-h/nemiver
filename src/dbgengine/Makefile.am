@@ -32,6 +32,8 @@ libgdbmiparser_la_SOURCES= \
 nmv-gdbmi-parser.cc \
 nmv-gdbmi-parser.h
 
+libgdbmiparser_la_CFLAGS=-fPIC -DPIC
+
 libcpptraitmod_la_SOURCES= \
 $(ilangtraitheaders) \
 nmv-cpp-trait.cc
@@ -40,6 +42,7 @@ libdbgcommon_la_SOURCES= \
 nmv-dbg-common.cc \
 nmv-dbg-common.h
 
+libdbgcommon_la_CFLAGS=-fPIC -DPIC
 
 publicheaders_DATA=$(dynmodheaders)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
