@@ -10,7 +10,9 @@ nmv-gconf-mgr.cc
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
-libgconfmgrmod_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ @GCONF_LIBS@ -module -avoid-version
+libgconfmgrmod_la_LDFLAGS=-module -avoid-version
+libgconfmgrmod_la_LIBADD=@NEMIVERCOMMON_LIBS@ @GCONF_LIBS@ \
+        $(top_builddir)/src/common/libnemivercommon.la
 
 config_DATA=gconfmgr.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@

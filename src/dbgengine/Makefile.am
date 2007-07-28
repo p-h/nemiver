@@ -48,13 +48,16 @@ publicheaders_DATA=$(dynmodheaders)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgdbmod_la_LDFLAGS=-module -avoid-version
-libgdbmod_la_LIBADD=libdbgcommon.la libgdbmiparser.la @NEMIVERCOMMON_LIBS@
+libgdbmod_la_LIBADD=libdbgcommon.la libgdbmiparser.la @NEMIVERCOMMON_LIBS@ \
+	$(top_builddir)/src/common/libnemivercommon.la
 
 libvarlistmod_la_LDFLAGS=-module -avoid-version
-libvarlistmod_la_LIBADD=@NEMIVERCOMMON_LIBS@
+libvarlistmod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \
+	$(top_builddir)/src/common/libnemivercommon.la
 
 libcpptraitmod_la_LDFLAGS=-module -avoid-version
-libcpptraitmod_la_LIBADD=@NEMIVERCOMMON_LIBS@
+libcpptraitmod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \
+	$(top_builddir)/src/common/libnemivercommon.la
 
 libgdbmiparser_la_LIBADD= \
 @NEMIVERCOMMON_LIBS@ \
