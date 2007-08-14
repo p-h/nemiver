@@ -469,7 +469,7 @@ msgstr "Tallenna nykyinen vianjäljitysistunto levylle"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2086
 msgid "_Restart"
-msgstr "Käynnistä_uudestaan"
+msgstr "Käynnistä _uudestaan"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2087
 msgid "Restart the target, killing this process and starting a new one"
@@ -501,7 +501,7 @@ msgstr "Suorite seuraava rivi siiryen funktioon, jos sellainen on"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2129
 msgid "Step _Out"
-msgstr "Astu _ulos"
+msgstr "Askel _ulos"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2130
 msgid "Finish the execution of the current function"
