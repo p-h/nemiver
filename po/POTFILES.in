@@ -24,6 +24,7 @@ src/persp/dbgperspective/nmv-local-vars-inspector.cc
 src/persp/dbgperspective/nmv-locate-file-dialog.cc
 src/persp/dbgperspective/nmv-preferences-dialog.cc
 src/persp/dbgperspective/nmv-proc-list-dialog.cc
+src/persp/dbgperspective/nmv-registers-view.cc
 src/persp/dbgperspective/nmv-run-program-dialog.cc
 src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
 src/uicommon/nmv-source-editor.cc
