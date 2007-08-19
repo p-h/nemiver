@@ -416,6 +416,8 @@ public:
 
     virtual ~IDebugger () {}
 
+    typedef unsigned int register_id_t;
+
     /// \name events you can connect to.
 
     /// @{
@@ -700,14 +702,17 @@ public:
 
     virtual void list_files (const UString &a_cookie="") = 0 ;
 
-    // register functions
-    typedef unsigned int register_id_t;
+
     virtual void list_register_names (const UString &a_cookie="") = 0;
+
     virtual void list_changed_registers (const UString &a_cookie="") = 0;
+
     virtual sigc::signal<void,
                          std::list<register_id_t>, const UString& >&
                              changed_registers_listed_signal () const=0;
+
     virtual void list_register_values (const UString &a_cookie="") = 0;
+
     virtual void list_register_values (std::list<register_id_t> a_registers,
                                        const UString &a_cookie="") = 0;
 

@@ -1,5 +1,9 @@
 2007-08-19 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-i-debugger.h: fix a compilation error I introduced.
+
+2007-08-19 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-i-debugger.h: cosmetic (but important) change: put
 	  the register related signal in the "signals" section of the IDebugger
 	  class declaration, otherwise this thing will be a growing mess.
