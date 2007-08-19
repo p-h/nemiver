@@ -1,5 +1,15 @@
 2007-08-19 Dodji Seketeli <dodji@gnome.org>
 
+	* configure.ac: make sure to fully expand $libdir in NEMIVER_LIBDIR.
+	  NEMIVER_LIBDIR is now $libdir, but fully expanded. It can now be used
+	  in dynmod confs file. This is way better since it dynmod loading still
+	  work even when configure was run with --libdir=/somewhere, which was
+	  not the case with the previous solution.
+	* src/*/*.conf.in: uses the new NEMIVER_LIBDIR instead of the former
+	  solution.
+
+2007-08-19 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-i-debugger.h: fix a compilation error I introduced.
 
 2007-08-19 Dodji Seketeli <dodji@gnome.org>

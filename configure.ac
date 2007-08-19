@@ -256,15 +256,25 @@ AC_SUBST(NEMIVER_CFLAGS)
 
 NEMIVER_INCLUDE_DIR=$includedir/nemiver
 
-has_lib_sixty_four=`echo $libdir | grep lib64 | wc -l`
-if test x$has_lib_sixty_four = x0 ; then
-NEMIVER_LIB_DIR_NAME=lib
-else
-NEMIVER_LIB_DIR_NAME=lib64
+#has_lib_sixty_four=`echo $libdir | grep lib64 | wc -l`
+#if test x$has_lib_sixty_four = x0 ; then
+#NEMIVER_LIB_DIR_NAME=lib
+#else
+#NEMIVER_LIB_DIR_NAME=lib64
+#fi
+
+#expand libdir
+if test x$prefix = xNONE ; then
+        prefix=$ac_default_prefix
 fi
+if test x$exec_prefix = xNONE ; then
+        exec_prefix=$prefix ;
+fi
+NEMIVER_LIBDIR=`eval echo $libdir`
 
 AC_SUBST(NEMIVER_INCLUDE_DIR)
 AC_SUBST(NEMIVER_LIB_DIR_NAME)
+AC_SUBST(NEMIVER_LIBDIR)
 
 
 if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes && test x$host_cpu != xx86_64 ; then

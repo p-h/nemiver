@@ -5,6 +5,6 @@
         <libraryname>nemiverdbdsqlite</libraryname>
     </module>
     <customsearchpaths>
-        <path>@prefix@/@NEMIVER_LIB_DIR_NAME@/nemiver/modules</path>
+        <path>@NEMIVER_LIBDIR@/nemiver/modules</path>
     </customsearchpaths>
 </moduleconfig>
