@@ -45,6 +45,8 @@ using namespace std ;
 using namespace nemiver::common ;
 
 static const UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain" ;
+static const UString DEFAULT_GDB_BINARY = "default-gdb-binary" ;
+static const UString CONF_KEY_GDB_BINARY = "/apps/nemiver/dbgperspective/gdb-binary" ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -171,6 +173,18 @@ public:
     sigc::signal<void>& program_finished_signal () const ;
 
     sigc::signal<void, IDebugger::State>& state_changed_signal () const;
+
+    sigc::signal<void, const UString&, const UString&, const UString& >&
+                                             register_value_changed_signal () const;
+
+    sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
+                                                 register_names_listed_signal () const;
+
+    sigc::signal<void, std::list<register_id_t>, const UString& >&
+                                             changed_registers_listed_signal () const;
+
+    sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
+                                                 register_values_listed_signal () const;
     //*************
     //</signals>
     //*************
@@ -185,7 +199,14 @@ public:
     //</signal handlers>
     //***************
 
+    //for internal use
     void init () ;
+
+    // to be called by client code
+    void do_init (IConfMgrSafePtr &a_conf_mgr) ;
+
+    IConfMgr& get_conf_mgr () ;
+
     map<UString, UString>& properties () ;
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &) ;
     void run_loop_iterations (int a_nb_iters) ;
@@ -195,7 +216,11 @@ public:
     void execute_command (const Command &a_command) ;
     bool queue_command (const Command &a_command) ;
     bool busy () const ;
-
+    void set_debugger_full_path (const UString &a_full_path) ;
+    const UString& get_debugger_full_path () const ;
+    void set_debugger_parameter (const UString &a_name,
+                                 const UString &a_value) ;
+    void set_solib_prefix_path (const UString &a_name) ;
     void load_program (const UString &a_prog_with_args,
                        const UString &a_working_dir) ;
 
@@ -322,17 +347,7 @@ public:
                             UString &a_exe_path) ;
 
     void list_register_names (const UString &a_cookie="");
-    sigc::signal<void,
-                 std::map<register_id_t, UString>, const UString& >&
-                     register_names_listed_signal () const;
-    void list_changed_registers (const UString &a_cookie="");
-    sigc::signal<void,
-                 std::list<register_id_t>, const UString& >&
-                     changed_registers_listed_signal () const;
-    void list_register_values (const UString &a_cookie="");
-    sigc::signal<void,
-                 std::map<register_id_t, UString>, const UString& >&
-                     register_values_listed_signal () const;
+
     void list_register_values (std::list<register_id_t> a_registers,
                                const UString &a_cookie="");
 
@@ -340,13 +355,9 @@ public:
                                      const UString& a_value,
                                      const UString& a_cookie);
 
-    virtual sigc::signal<void,
-                         const UString&,
-                         const UString&,
-                         const UString&
-                         >&
-                         register_value_changed_signal () const;
+    void list_changed_registers (const UString &a_cookie="");
 
+    void list_register_values (const UString &a_cookie="");
 };//end class GDBEngine
 
 //*************************
@@ -358,6 +369,7 @@ struct GDBEngine::Priv {
     //<GDBEngine attributes>
     //************************
     map<UString, UString> properties ;
+    IConfMgrSafePtr conf_mgr ;
     UString cwd ;
     vector<UString> argv ;
     vector<UString> source_search_dirs ;
@@ -388,6 +400,7 @@ struct GDBEngine::Priv {
     OutputHandlerList output_handler_list ;
     IDebugger::State state ;
     ILangTraitSafePtr lang_trait ;
+    UString debugger_full_path ;
     sigc::signal<void> gdb_died_signal;
     sigc::signal<void, const UString& > master_pty_signal;
     sigc::signal<void, const UString& > gdb_stdout_signal;
@@ -495,23 +508,32 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, IDebugger::State> state_changed_signal ;
 
     mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
-        register_names_listed_signal;
+                                                        register_names_listed_signal;
 
     mutable sigc::signal<void, std::list<register_id_t>, const UString& >
-        changed_registers_listed_signal;
+                                                    changed_registers_listed_signal;
 
     mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
-        register_values_listed_signal;
+                                                        register_values_listed_signal;
 
-    mutable sigc::signal<void,
-                         const UString&,
-                         const UString&,
-                         const UString& >
-                         register_value_changed_signal;
+    mutable sigc::signal<void, const UString&, const UString&, const UString& >
+                                                         register_value_changed_signal;
 
     //***********************
     //</GDBEngine attributes>
     //************************
+
+    const UString& get_debugger_full_path () const
+    {
+        THROW_IF_FAIL (conf_mgr) ;
+        conf_mgr->get_key_value (CONF_KEY_GDB_BINARY,
+                                 const_cast<Priv*> (this)->debugger_full_path) ;
+        if (debugger_full_path == "" || debugger_full_path == DEFAULT_GDB_BINARY) {
+            const_cast<Priv*> (this)->debugger_full_path = env::get_gdb_program () ;
+        }
+        LOG_DD ("debugger: '" << debugger_full_path << "'") ;
+        return debugger_full_path ;
+    }
 
     void set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &a_ctxt)
     {
@@ -796,7 +818,8 @@ struct GDBEngine::Priv {
             kill_gdb () ;
         }
         argv.clear () ;
-        argv.push_back (env::get_gdb_program ()) ;
+        THROW_IF_FAIL (get_debugger_full_path () != "") ;
+        argv.push_back (get_debugger_full_path ()) ;
         if (working_dir != "") {
             argv.push_back ("--cd=" + working_dir);
         }
@@ -2094,8 +2117,7 @@ struct OnErrorHandler : OutputHandler {
     //****************************
     //<GDBEngine methods>
     //****************************
-GDBEngine::GDBEngine (DynamicModule *a_dynmod) :
-    IDebugger (a_dynmod)
+GDBEngine::GDBEngine (DynamicModule *a_dynmod) : IDebugger (a_dynmod)
 {
     m_priv.reset (new Priv) ;
     init () ;
@@ -2599,6 +2621,22 @@ GDBEngine::init ()
     init_output_handlers () ;
 }
 
+void
+GDBEngine::do_init (IConfMgrSafePtr &a_conf_mgr)
+{
+    THROW_IF_FAIL (m_priv) ;
+
+    m_priv->conf_mgr = a_conf_mgr ;
+}
+
+IConfMgr&
+GDBEngine::get_conf_mgr ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->conf_mgr) ;
+    return *m_priv->conf_mgr ;
+}
+
 map<UString, UString>&
 GDBEngine::properties ()
 {
@@ -2654,6 +2692,30 @@ GDBEngine::busy () const
     return false ;
 }
 
+const UString&
+GDBEngine::get_debugger_full_path () const
+{
+    return m_priv->get_debugger_full_path () ;
+}
+
+void
+GDBEngine::set_debugger_parameter (const UString &a_name,
+                                   const UString &a_value)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    if (a_name == "")
+        return ;
+    UString param_str = a_name + " " + a_value ;
+    queue_command (Command ("set-debugger-parameter", "set " + param_str)) ;
+}
+
+void
+GDBEngine::set_solib_prefix_path (const UString &a_name)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    set_debugger_parameter ("solib-absolute-prefix", a_name) ;
+}
 
 void
 GDBEngine::do_continue (const UString &a_cookie)
@@ -3231,7 +3293,6 @@ GDBEngine::extract_proc_info (Output &a_output,
 
     return true ;
 }
-
 
 void
 GDBEngine::list_register_names (const UString &a_cookie)

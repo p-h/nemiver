@@ -100,6 +100,28 @@
 	<long>The location of the status pane</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/debugger-engine-dynmod</key>
+      <applyto>/apps/nemiver/dbgperspective/debugger-engine-dynmod</applyto>
+      <owner>nemiver</owner>
+      <type>string</type>
+      <default>gdbengine</default>
+      <locale name="C">
+	<short>The underlying debugger engine management module</short>
+	<long>The name of the debugger engine management module used</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/gdb-binary</key>
+      <applyto>/apps/nemiver/dbgperspective/gdb-binary</applyto>
+      <owner>nemiver</owner>
+      <type>string</type>
+      <default>default-gdb-binary</default>
+      <locale name="C">
+	<short>The underlying debugger engine</short>
+	<long>The name of the debugger engine management module used</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
 

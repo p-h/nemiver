@@ -1,3 +1,38 @@
+2007-08-18 Dodji Seketeli <dodji@gnome.org>
+
+	* src/common/nmv-env.cc,h: add a env::get_system_lib_dir() call.
+	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
+	  Add a IDebugger::do_init() to be called by client code to initialize
+	  the debugger. Client code can then pass an IConfMgr to the debugger so
+	  that it can later retrieve some configuration parameters.
+	  This is useful when we want for instance to choose a given gdb binary
+	  to use. When working with remote embedded targets, one must compile
+	  a cross-gdb and use that one. The user can then set the path to
+	  the gdb to use, and IDebugger can have a chance to know about that
+	  choice. Basically, the user can set the gconf key
+	  /apps/nemiver/dbgperspective/gdb-binary to set the path to gdb binary
+	  to be used by the gdb debugger backend.
+	  Added IDebugger::set_solib_prefix_path() to set the prefix from
+	  which the debugger is supposed to load the inferior shared object
+	  from. This is useful for debugging remote embedded targets, with gdb
+	  at least.
+	  Added IDebugger::get_debugger_full_path() to let client code
+	  know the full path to the debugger binary used by nemiver at some
+	  point.
+	* src/persp/dbgperspective/glade/remotetargetdialog.glade: add
+	  an entry to set the solib prefix path. This has been edited using
+	  glade-3 as it is the only one glade left on debian sid.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Use gconf key
+	  /apps/nemiver/dbgperspective/debugger-engine-dynmod to get the
+	  name of the of engine dynmod. So the name "gdbengine" is not hardcoded
+	  anymore. Also, take in account the solib prefix path when debugging
+	  a remote target.
+	* src/workbench/nmv-i-workbench.h,nmv-workbench.cc:
+	  IWorkbench::get_configuration_manager() now returns a IConfMgrSafePtr, no more
+	  a reference. That eases passing the IConfMgrPtr to object objects like
+	  the IDebugger.
+
+
 2007-07-28 Dodji Seketeli <dodji@gnome.org>
 
 	* src/common/nmv-conf-manager.cc,h: don' t put the s_config member as

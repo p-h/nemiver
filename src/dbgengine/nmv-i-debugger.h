@@ -33,6 +33,7 @@
 #include "common/nmv-ustring.h"
 #include "common/nmv-dynamic-module.h"
 #include "common/nmv-safe-ptr-utils.h"
+#include "nmv-i-conf-mgr.h"
 #include "nmv-i-lang-trait.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -554,6 +555,8 @@ public:
 
     /// @}
 
+    virtual void do_init (IConfMgrSafePtr &a_conf_mgr) = 0;
+
     virtual map<UString, UString>& properties () = 0;
 
     virtual void set_event_loop_context
@@ -562,6 +565,10 @@ public:
     virtual void run_loop_iterations (int a_nb_iters) = 0;
 
     virtual bool busy () const = 0;
+
+    virtual const UString& get_debugger_full_path () const  = 0 ;
+
+    virtual void set_solib_prefix_path (const UString &a_name) = 0 ;
 
     virtual void load_program (const UString &a_prog_with_args,
                                const UString &a_working_dir) = 0 ;

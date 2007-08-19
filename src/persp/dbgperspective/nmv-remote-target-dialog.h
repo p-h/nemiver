@@ -44,6 +44,9 @@ public:
     const UString& get_executable_path () const ;
     void set_executable_path (const UString &a_path) ;
 
+    const UString& get_solib_prefix_path () const ;
+    void set_solib_prefix_path (const UString &a_path) ;
+
     ConnectionType get_connection_type () ;
     void set_connection_type (ConnectionType a_type) ;
 

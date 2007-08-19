@@ -85,6 +85,15 @@ get_data_dir ()
     static UString s_data_dir (DATADIR);
     return s_data_dir;
 }
+const UString&
+get_system_lib_dir ()
+{
+#ifndef SYSTEM_LIBDIR
+#error The macro SYSTEM_LIBDIR must be set at compile time !
+#endif
+    static UString s_system_lib_dir (SYSTEM_LIBDIR) ;
+    return s_system_lib_dir ;
+}
 
 const UString&
 get_glade_files_dir ()

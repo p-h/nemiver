@@ -83,6 +83,7 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 
 INCLUDES=-I$(top_srcdir)/src \
+-I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \
 @NEMIVERCOMMON_CFLAGS@ -DBOOST_TEST_DYN_LINK
 

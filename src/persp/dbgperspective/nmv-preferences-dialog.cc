@@ -248,7 +248,9 @@ public:
 
     IConfMgr& conf_manager () const
     {
-        return workbench.get_configuration_manager () ;
+        IConfMgrSafePtr conf_mgr = workbench.get_configuration_manager () ;
+        THROW_IF_FAIL (conf_mgr) ;
+        return *conf_mgr ;
     }
 
     void update_source_dirs_key ()

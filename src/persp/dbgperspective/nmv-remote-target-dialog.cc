@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include <glib/gi18n.h>
+#include "common/nmv-env.h"
 #include "nmv-remote-target-dialog.h"
 #include "nmv-ui-utils.h"
 
@@ -36,6 +37,7 @@ struct RemoteTargetDialog::Priv {
     Gtk::Dialog &dialog ;
     Glib::RefPtr<Gnome::Glade::Xml> glade ;
     mutable UString executable_path ;
+    mutable UString solib_prefix_path ;
     mutable UString server_address ;
     mutable UString serial_port_name ;
     enum RemoteTargetDialog::ConnectionType connection_type ;
@@ -122,6 +124,13 @@ struct RemoteTargetDialog::Priv {
         chooser->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_selection_changed_signal)) ;
 
+        chooser = get_widget_from_glade<Gtk::FileChooser> (glade,
+                                                           "solibprefixchooserbutton") ;
+        chooser->set_show_hidden (true) ;
+        chooser->set_action (Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) ;
+
+        set_solib_prefix_path (common::env::get_system_lib_dir ()) ;
+
         Gtk::Entry* entry = get_widget_from_glade<Gtk::Entry> (glade, "addressentry") ;
         entry->signal_changed ().connect (sigc::mem_fun
                                     (*this, &Priv::on_selection_changed_signal)) ;
@@ -165,17 +174,38 @@ struct RemoteTargetDialog::Priv {
 
     const UString& get_executable_path () const
     {
-        Gtk::FileChooserButton *chooser = get_widget_from_glade<Gtk::FileChooserButton>(glade,
-                                                              "execfilechooserbutton");
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_glade<Gtk::FileChooserButton> (glade,
+                                                           "execfilechooserbutton");
         executable_path = chooser->get_filename () ;
         return executable_path ;
     }
 
     void set_executable_path (const UString &a_path)
     {
-        Gtk::FileChooserButton *chooser = get_widget_from_glade<Gtk::FileChooserButton>(glade,
-                                                              "execfilechooserbutton");
+        Gtk::FileChooserButton *chooser =
+                get_widget_from_glade<Gtk::FileChooserButton> (glade,
+                                                               "execfilechooserbutton");
         chooser->set_filename (a_path) ;
+        executable_path = a_path ;
+    }
+
+    const UString& get_solib_prefix_path () const
+    {
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_glade<Gtk::FileChooserButton> (glade,
+                                                           "solibprefixchooserbutton") ;
+        solib_prefix_path = chooser->get_filename () ;
+        return solib_prefix_path ;
+    }
+
+    void set_solib_prefix_path (const UString &a_path)
+    {
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_glade<Gtk::FileChooserButton> (glade,
+                                                           "solibprefixchooserbutton") ;
+        chooser->set_filename (a_path) ;
+        solib_prefix_path = a_path ;
     }
 
     void set_connection_type (RemoteTargetDialog::ConnectionType &a_type)
@@ -261,6 +291,20 @@ RemoteTargetDialog::set_executable_path (const UString &a_path)
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv->set_executable_path (a_path) ;
+}
+
+const UString&
+RemoteTargetDialog::get_solib_prefix_path () const
+{
+    THROW_IF_FAIL (m_priv) ;
+    return m_priv->get_solib_prefix_path () ;
+}
+
+void
+RemoteTargetDialog::set_solib_prefix_path (const UString &a_path)
+{
+    THROW_IF_FAIL (m_priv) ;
+    m_priv->set_solib_prefix_path (a_path);
 }
 
 RemoteTargetDialog::ConnectionType

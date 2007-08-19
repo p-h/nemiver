@@ -27,6 +27,7 @@
 
 #include "common/nmv-api-macros.h"
 #include "common/nmv-dynamic-module.h"
+#include "nmv-i-conf-mgr.h"
 
 //*******************
 //some Gtk forward decls
@@ -139,7 +140,7 @@ public:
     virtual IPerspective* get_perspective (const UString &a_name) = 0;
 
     /// \return the interface of the configuration manager.
-    virtual IConfMgr& get_configuration_manager () = 0 ;
+    virtual IConfMgrSafePtr get_configuration_manager () = 0 ;
     ///@}
 
     virtual Glib::RefPtr<Glib::MainContext> get_main_context () = 0 ;

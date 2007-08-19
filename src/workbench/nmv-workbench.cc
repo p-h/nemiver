@@ -1,3 +1,4 @@
+//Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -135,7 +136,7 @@ public:
     void set_title_extension (const UString &a_str) ;
     Glib::RefPtr<Gtk::UIManager>& get_ui_manager ()  ;
     IPerspective* get_perspective (const UString &a_name) ;
-    IConfMgr& get_configuration_manager ()  ;
+    IConfMgrSafePtr get_configuration_manager ()  ;
     Glib::RefPtr<Glib::MainContext> get_main_context ()  ;
     sigc::signal<void>& shutting_down_signal () ;
 };//end class Workbench
@@ -475,7 +476,7 @@ Workbench::get_perspective (const UString &a_name)
     return NULL;
 }
 
-IConfMgr&
+IConfMgrSafePtr
 Workbench::get_configuration_manager ()
 {
     THROW_IF_FAIL (m_priv) ;
@@ -495,7 +496,7 @@ Workbench::get_configuration_manager ()
                 "/desktop/gnome/interface/monospace_font_name") ;
     }
     THROW_IF_FAIL (m_priv->conf_mgr) ;
-    return *m_priv->conf_mgr ;
+    return m_priv->conf_mgr ;
 }
 
 Glib::RefPtr<Glib::MainContext>
@@ -540,20 +541,21 @@ void
 
 Workbench::init_window ()
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+   LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->root_window) ;
-    IConfMgr &conf_mgr = get_configuration_manager () ;
+    IConfMgrSafePtr conf_mgr = get_configuration_manager () ;
+    THROW_IF_FAIL (conf_mgr) ;
 
     int width=0, height=0, pos_x=0, pos_y=0 ;
     LOG_DD ("getting windows geometry from confmgr ...") ;
-    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
-    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_HEIGHT, height) ;
-    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_X, pos_x) ;
-    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
+    conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
+    conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_HEIGHT, height) ;
+    conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_X, pos_x) ;
+    conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
     bool maximized=false ;
-    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
+    conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
     LOG_DD ("got windows geometry from confmgr.") ;
 
     if (width) {
@@ -570,8 +572,8 @@ Workbench::init_window ()
 
     //set the minimum width/height of nemiver, just in case.
     width=700, height=500 ;
-    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH, width) ;
-    conf_mgr.get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT, height) ;
+    conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH, width) ;
+    conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT, height) ;
     m_priv->root_window->set_size_request (width, height) ;
     LOG_DD ("set windows min size to ("
             << (int) width
@@ -766,7 +768,8 @@ Workbench::save_window_geometry ()
 
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->root_window) ;
-    IConfMgr &conf_mgr = get_configuration_manager () ;
+    IConfMgrSafePtr conf_mgr = get_configuration_manager () ;
+    THROW_IF_FAIL (conf_mgr) ;
 
     int width=0, height=0, pos_x=0, pos_y=0 ;
     m_priv->root_window->get_size (width, height) ;
@@ -774,13 +777,13 @@ Workbench::save_window_geometry ()
     bool maximized = (m_priv->root_window->get_window()->get_state()
                       & Gdk::WINDOW_STATE_MAXIMIZED);
 
-    conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
+    conf_mgr->set_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
     if (!maximized) {
         LOG_DD ("storing windows geometry to confmgr...") ;
-        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
-        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_HEIGHT, height) ;
-        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_X, pos_x) ;
-        conf_mgr.set_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
+        conf_mgr->set_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
+        conf_mgr->set_key_value (CONF_KEY_NEMIVER_WINDOW_HEIGHT, height) ;
+        conf_mgr->set_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_X, pos_x) ;
+        conf_mgr->set_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
         LOG_DD ("windows geometry stored to confmgr") ;
     } else {
         LOG_DD ("windows was maximized, didn't store its geometry") ;

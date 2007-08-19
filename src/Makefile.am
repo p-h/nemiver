@@ -15,6 +15,7 @@ INCLUDES=\
 -DDATADIR=\""$(datadir)"\" \
 @NEMIVER_CFLAGS@ \
 -I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \
 -I$(top_srcdir)/src/uicommon \
 -I$(top_srcdir)/src/workbench \

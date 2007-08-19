@@ -46,6 +46,8 @@ NEMIVER_API const UString& get_system_config_file () ;
 
 NEMIVER_API const UString& get_data_dir () ;
 
+NEMIVER_API const UString& get_system_lib_dir () ;
+
 NEMIVER_API const UString& get_glade_files_dir () ;
 
 NEMIVER_API const UString& get_menu_files_dir () ;

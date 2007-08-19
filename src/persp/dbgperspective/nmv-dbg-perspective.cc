@@ -111,6 +111,8 @@ static const UString CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-height" ;
 static const UString CONF_KEY_STATUS_PANE_LOCATION=
                 "/apps/nemiver/dbgperspective/status-pane-location" ;
+static const UString CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
+                "/apps/nemiver/dbgperspective/debugger-engine-dynmod" ;
 
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
@@ -453,7 +455,7 @@ public:
 
     IDebuggerSafePtr& debugger () ;
 
-    IConfMgr& conf_mgr () ;
+    IConfMgr& get_conf_mgr () ;
 
     Gtk::TextView& get_command_view () ;
 
@@ -520,7 +522,7 @@ public:
     Gtk::Widget* get_contextual_menu () ;
     Gtk::Widget* get_call_stack_menu () ;
 
-    void init_conf_mgr () ;
+    void read_default_config () ;
 
     vector<UString>& get_source_dirs () ;
 
@@ -1464,7 +1466,7 @@ DBGPerspective::on_shutdown_signal ()
 
     // save the location of the status pane so that it'll open in the same place
     // next time.
-    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
+    IConfMgr &conf_mgr = get_conf_mgr () ;
     int pane_location = m_priv->body_main_paned->get_position();
     conf_mgr.set_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location) ;
 
@@ -1711,7 +1713,10 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     LOG_DD ("debugger engine set breakpoints") ;
     append_breakpoints (a_breaks) ;
     SourceEditor* editor = get_current_source_editor ();
-    THROW_IF_FAIL (editor);
+    if (!editor) {
+        LOG_ERROR ("no editor was found") ;
+        return ;
+    }
     UString path;
     editor->get_path (path);
     update_toggle_menu_text (path, editor->current_line ());
@@ -2484,8 +2489,9 @@ DBGPerspective::init_body ()
         (ui_utils::get_widget_from_glade<Gtk::Paned> (m_priv->body_glade,
                                                       "mainbodypaned")) ;
     // set the position of the status pane to the last saved position
-    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
-    int pane_location = -1; // don't specifically set a location if we can't read the last location from gconf
+    IConfMgr &conf_mgr = get_conf_mgr () ;
+    int pane_location = -1; // don't specifically set a location
+                            // if we can't read the last location from gconf
     conf_mgr.get_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location) ;
     if (pane_location > 0) {
         m_priv->body_main_paned->set_position (pane_location);
@@ -3038,7 +3044,7 @@ DBGPerspective::get_source_dirs ()
     THROW_IF_FAIL (m_priv) ;
 
     if (m_priv->source_dirs.empty ()) {
-        init_conf_mgr () ;
+        read_default_config () ;
     }
     return m_priv->source_dirs ;
 }
@@ -3130,10 +3136,10 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
     return true ;
 }
 void
-DBGPerspective::init_conf_mgr ()
+DBGPerspective::read_default_config ()
 {
     THROW_IF_FAIL (m_priv->workbench) ;
-    IConfMgr &conf_mgr = workbench ().get_configuration_manager () ;
+    IConfMgr &conf_mgr = get_conf_mgr () ;
     if (m_priv->source_dirs.empty ()) {
         UString dirs ;
         conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs) ;
@@ -3412,7 +3418,7 @@ DBGPerspective::do_init (IWorkbench *a_workbench)
     init_body () ;
     init_signals () ;
     init_debugger_signals () ;
-    init_conf_mgr () ;
+    read_default_config () ;
     session_manager ().load_sessions (session_manager ().default_transaction ());
     workbench ().shutting_down_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_shutdown_signal)) ;
@@ -4022,7 +4028,12 @@ DBGPerspective::connect_to_remote_target ()
     if (result != Gtk::RESPONSE_OK)
         return ;
 
-    debugger ()->load_program (dialog.get_executable_path (), ".") ;
+    UString path = dialog.get_executable_path () ;
+    LOG_DD ("executable path: '" <<  path << "'") ;
+    debugger ()->load_program (path , ".") ;
+    path = dialog.get_solib_prefix_path () ;
+    LOG_DD ("solib prefix path: '" <<  path << "'") ;
+    debugger ()->set_solib_prefix_path (path) ;
 
     if (dialog.get_connection_type () ==
             RemoteTargetDialog::TCP_CONNECTION_TYPE) {
@@ -4224,8 +4235,8 @@ DBGPerspective::append_breakpoint (int a_bp_num,
                 + file_name + "'") ;
         if (file_name == "") {
             UString message;
-            message.printf (
-                    _("There is no file name info for symbol@addr: %s@%s"),
+            message.printf
+                   (_("There is no file name info for symbol@addr: %s@%s"),
                     a_breakpoint.function ().c_str (),
                     a_breakpoint.address ().c_str ()) ;
             LOG_ERROR (message);
@@ -4700,8 +4711,19 @@ DBGPerspective::debugger ()
                             loader->get_dynamic_module_manager () ;
         THROW_IF_FAIL (module_manager) ;
 
+        UString debugger_dynmod_name ;
+        get_conf_mgr ().get_key_value (CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME,
+                                       debugger_dynmod_name) ;
+        LOG_DD ("got debugger_dynmod_name from confmgr: '"
+                << debugger_dynmod_name << "'");
+        if (debugger_dynmod_name == "") {
+            debugger_dynmod_name = "gdbengine" ;
+        }
+        LOG_DD ("using debugger_dynmod_name: '" << debugger_dynmod_name << "'") ;
         m_priv->debugger =
-            module_manager->load_iface <IDebugger> ("gdbengine", "IDebugger") ;
+            module_manager->load_iface <IDebugger> (debugger_dynmod_name, "IDebugger") ;
+        IConfMgrSafePtr conf_mgr = workbench ().get_configuration_manager () ;
+        m_priv->debugger->do_init (conf_mgr) ;
         m_priv->debugger->set_event_loop_context
                                     (Glib::MainContext::get_default ()) ;
     }
@@ -4710,9 +4732,11 @@ DBGPerspective::debugger ()
 }
 
 IConfMgr&
-DBGPerspective::conf_mgr ()
+DBGPerspective::get_conf_mgr ()
 {
-    return workbench ().get_configuration_manager () ;
+    IConfMgrSafePtr conf_mgr = workbench ().get_configuration_manager () ;
+    THROW_IF_FAIL (conf_mgr) ;
+    return *conf_mgr ;
 }
 
 Gtk::TextView&
