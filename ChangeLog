@@ -1,3 +1,9 @@
+2007-08-19 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-i-debugger.h: cosmetic (but important) change: put
+	  the register related signal in the "signals" section of the IDebugger
+	  class declaration, otherwise this thing will be a growing mess.
+
 2007-08-18 Dodji Seketeli <dodji@gnome.org>
 
 	* src/common/nmv-env.cc,h: add a env::get_system_lib_dir() call.

@@ -553,6 +553,17 @@ public:
 
     virtual sigc::signal<void, IDebugger::State>& state_changed_signal () const=0;
 
+    virtual sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
+                                                 register_names_listed_signal () const=0;
+
+    virtual sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
+                                                 register_values_listed_signal () const=0;
+    virtual sigc::signal<void,
+                         const UString& /*register name*/,
+                         const UString&/*register value*/,
+                         const UString& /*cookie*/>&
+                                                 register_value_changed_signal () const=0;
+
     /// @}
 
     virtual void do_init (IConfMgrSafePtr &a_conf_mgr) = 0;
@@ -692,9 +703,6 @@ public:
     // register functions
     typedef unsigned int register_id_t;
     virtual void list_register_names (const UString &a_cookie="") = 0;
-    virtual sigc::signal<void,
-                         std::map<register_id_t, UString>, const UString& >&
-                             register_names_listed_signal () const=0;
     virtual void list_changed_registers (const UString &a_cookie="") = 0;
     virtual sigc::signal<void,
                          std::list<register_id_t>, const UString& >&
@@ -702,20 +710,11 @@ public:
     virtual void list_register_values (const UString &a_cookie="") = 0;
     virtual void list_register_values (std::list<register_id_t> a_registers,
                                        const UString &a_cookie="") = 0;
-    virtual sigc::signal<void,
-                         std::map<register_id_t, UString>, const UString& >&
-                             register_values_listed_signal () const=0;
 
     virtual void set_register_value (const UString& a_reg_name,
                                      const UString& a_value,
                                      const UString& a_cookie="") = 0;
 
-    virtual sigc::signal<void,
-                         const UString&, // register name
-                         const UString&, // register value
-                         const UString&  // cookie
-                         >&
-                         register_value_changed_signal () const=0;
 
 
 };//end IDebugger
