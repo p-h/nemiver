@@ -1,3 +1,16 @@
+2007-09-07  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	patch by: A. Gordon <agordon88@gmail.com>
+	modified slightly to now add keybindings for the 'output' and 'errors' tabs
+	because they're not useful for users.  Also move the output and errors tab
+	index to the end so that the useful tabs are all in order even when the
+	debugging tabs are shown
+
+	* src/persp/dbgperspective/menus/menus.xml: add actions for switching
+	between the notebook tabs (e.g. variables, breakpoints, etc)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: hook up the actions to
+	switch between notebook tabs with alt-#
+
 2007-08-19 Dodji Seketeli <dodji@gnome.org>
 
 	* configure.ac: make sure to fully expand $libdir in NEMIVER_LIBDIR.

@@ -31,39 +31,50 @@
     <placeholder name="MenuBarAdditions">
         <menu action="EditMenuAction" name="EditMenu">
             <menuitem action="FindMenuItemAction"
-                      name="FindMenutItem"/>
+                name="FindMenutItem"/>
             <menuitem action="CurrentSessionPropertiesMenuItemAction"
-                      name="CurrentSessionPropertiesMenuItem"/>
+                name="CurrentSessionPropertiesMenuItem"/>
         </menu>
         <menu action="ViewMenuAction" name="ViewMenu">
+            <menuitem action="ActivateCallStackViewMenuAction"
+                name="ActivateCallStackViewMenuItem"/>
+            <menuitem action="ActivateVariablesViewMenuAction"
+                name="ActivateVariablesViewMenuItem"/>
+            <menuitem action="ActivateTargetTerminalViewMenuAction"
+                name="ActivateTargetTerminalViewMenuItem"/>
+            <menuitem action="ActivateBreakpointsViewMenuAction"
+                name="ActivateBreakpointsViewMenuItem"/>
+            <menuitem action="ActivateRegistersViewMenuAction"
+                name="ActivateRegistersViewMenuItem"/>
+            <separator/>
             <!--<menuitem action="ShowCommandsMenuAction"
-                      name="ShowCommandsMenuItem"/> -->
+                name="ShowCommandsMenuItem"/> -->
             <menuitem action="ShowErrorsMenuAction"
-                      name="ShowErrorsMenuItem"/>
+                name="ShowErrorsMenuItem"/>
             <menuitem action="ShowTargetOutputMenuAction"
-                      name="ShowTargetOutputMenuItem"/>
+                name="ShowTargetOutputMenuItem"/>
         </menu>
         <menu action="DebugMenuAction" name="DebugMenu">
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>
             <menuitem action="StopMenuItemAction" name="StopMenuItem"/>
             <menuitem action="ContinueMenuItemAction"
-                      name="ContinueMenuItem"/>
+                name="ContinueMenuItem"/>
             <menuitem action="ContinueUntilMenuItemAction"
-                      name="ContinueUntilMenuItem"/>
+                name="ContinueUntilMenuItem"/>
             <separator/>
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
             <separator/>
             <menuitem action="ToggleBreakPointMenuItemAction"
-                      name="ToggleBreakMenuItem"/>
+                name="ToggleBreakMenuItem"/>
             <menuitem action="ToggleEnableBreakPointMenuItemAction"
-                      name="ToggleEnableBreakMenuItem"/>
+                name="ToggleEnableBreakMenuItem"/>
             <menuitem action="SetBreakPointMenuItemAction"
-                      name="SetBreakMenuItem"/>
+                name="SetBreakMenuItem"/>
             <separator/>
             <menuitem action="InspectVariableMenuItemAction"
-                      name="InspectVariableMenuItem"/>
+                name="InspectVariableMenuItem"/>
         </menu>
     </placeholder>
   </menubar>

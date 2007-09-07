@@ -286,6 +286,15 @@ private:
                                     (const UString &a_var_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cooker) ;
+
+    void on_activate_call_stack_view () ;
+    void on_activate_variables_view () ;
+    void on_activate_output_view () ;
+    void on_activate_target_terminal_view () ;
+    void on_activate_breakpoints_view ();
+    void on_activate_logs_view ();
+    void on_activate_registers_view () ;
+    
     //************
     //</signal slots>
     //************
@@ -533,6 +542,8 @@ public:
 
     bool do_unmonitor_file (const UString &a_path) ;
 
+    void activate_status_view(Gtk::Widget& page);
+
     sigc::signal<void, bool>& show_command_view_signal () ;
     sigc::signal<void, bool>& show_target_output_view_signal () ;
     sigc::signal<void, bool>& show_log_view_signal () ;
@@ -746,13 +757,13 @@ struct DBGPerspective::Priv {
 enum ViewsIndex
 {
     COMMAND_VIEW_INDEX=0,
-    TARGET_OUTPUT_VIEW_INDEX,
-    ERROR_VIEW_INDEX,
     CALL_STACK_VIEW_INDEX,
     VARIABLES_VIEW_INDEX,
     TERMINAL_VIEW_INDEX,
     BREAKPOINTS_VIEW_INDEX,
-    REGISTERS_VIEW_INDEX
+    REGISTERS_VIEW_INDEX,
+    TARGET_OUTPUT_VIEW_INDEX,
+    ERROR_VIEW_INDEX
 };
 
 #ifndef CHECK_P_INIT
@@ -1965,6 +1976,83 @@ DBGPerspective::on_debugger_variable_value_signal
     NEMIVER_CATCH
 }
 
+void
+DBGPerspective::activate_status_view(Gtk::Widget& page)
+{
+    int pagenum;
+	
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    NEMIVER_TRY
+    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv->statuses_notebook) ;
+	
+    pagenum = m_priv->statuses_notebook->page_num(page);
+    if ( pagenum != -1 ) {
+	if (m_priv->statuses_notebook->get_current_page()!=pagenum)
+		m_priv->statuses_notebook->set_current_page (pagenum);
+	
+	page.grab_focus();
+    } else {
+	LOG_DD ("Invalid Pagenum") ;
+    }
+	
+	
+    NEMIVER_CATCH
+}
+
+void 
+DBGPerspective::on_activate_call_stack_view()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    activate_status_view(get_call_stack_scrolled_win());
+}
+
+void 
+DBGPerspective::on_activate_variables_view () 
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    activate_status_view(get_local_vars_inspector_scrolled_win());
+}
+
+void 
+DBGPerspective::on_activate_output_view () 
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    set_show_target_output_view(true);
+    activate_status_view(get_target_output_view_scrolled_win());
+}
+
+void 
+DBGPerspective::on_activate_target_terminal_view () 
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    activate_status_view(get_terminal_box());
+}
+
+void 
+DBGPerspective::on_activate_breakpoints_view ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    activate_status_view(get_breakpoints_scrolled_win());
+}
+
+void 
+DBGPerspective::on_activate_logs_view ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    set_show_log_view(true);
+    activate_status_view(get_log_view_scrolled_win());
+}
+
+void 
+DBGPerspective::on_activate_registers_view () 
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    activate_status_view(get_registers_scrolled_win());
+}
+
+
 //****************************
 //</slots>
 //***************************
@@ -2225,6 +2313,51 @@ DBGPerspective::init_actions ()
             ""
         },
         {
+            "ActivateCallStackViewMenuAction",
+            nil_stock_id,
+            _("Stack"),
+            _("Switch to Stack View"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_call_stack_view),
+            ActionEntry::DEFAULT,
+            "<alt>1"
+        },
+        {
+            "ActivateVariablesViewMenuAction",
+            nil_stock_id,
+            _("Variables"),
+            _("Switch to Variables View"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_variables_view),
+            ActionEntry::DEFAULT,
+            "<alt>2"
+        },
+        {
+            "ActivateTargetTerminalViewMenuAction",
+            nil_stock_id,
+            _("Target Terminal"),
+            _("Switch to Target Terminal View"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_target_terminal_view),
+            ActionEntry::DEFAULT,
+            "<alt>3"
+        },
+        {
+            "ActivateBreakpointsViewMenuAction",
+            nil_stock_id,
+            _("Breakpoints"),
+            _("Switch to Breakpoints  View"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_breakpoints_view),
+            ActionEntry::DEFAULT,
+            "<alt>4"
+        },
+        {
+            "ActivateRegistersViewMenuAction",
+            nil_stock_id,
+            _("Registers"),
+            _("Switch to Registers View"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_registers_view),
+            ActionEntry::DEFAULT,
+            "<alt>5"
+        },
+        {
             "ShowCommandsMenuAction",
             nil_stock_id,
             _("Show Commands"),
@@ -2259,8 +2392,7 @@ DBGPerspective::init_actions ()
             nil_slot,
             ActionEntry::DEFAULT,
             ""
-        }
-        ,
+        },
         {
             "OpenMenuItemAction",
             Gtk::Stock::OPEN,
