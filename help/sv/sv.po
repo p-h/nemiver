@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver doc\n"
-"POT-Creation-Date: 2007-05-31 03:38+0100\n"
-"PO-Revision-Date: 2007-05-31 14:42+0100\n"
+"POT-Creation-Date: 2007-06-10 04:14+0100\n"
+"PO-Revision-Date: 2007-09-09 21:35+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -35,7 +35,25 @@ msgstr "@@image: 'figures/load-core-dialog.png'; md5=7bba55bf735e2c83a240713346b
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:490(None)
+#: C/nemiver.xml:530(None)
+msgid "@@image: 'figures/variable-inspector.png'; md5=288952a65ba8c54d2003c38a6f1f0eb7"
+msgstr "@@image: 'figures/variable-inspector.png'; md5=288952a65ba8c54d2003c38a6f1f0eb7"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:590(None)
+msgid "@@image: 'figures/set-breakpoint-dialog.png'; md5=d67a22068597943204b452ad59a690ce"
+msgstr "@@image: 'figures/set-breakpoint-dialog.png'; md5=d67a22068597943204b452ad59a690ce"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:641(None)
+msgid "@@image: 'figures/open-files-target.png'; md5=372c30907bb4f1d25e7e966d85c42de2"
+msgstr "@@image: 'figures/open-files-target.png'; md5=372c30907bb4f1d25e7e966d85c42de2"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:704(None)
 msgid "@@image: 'figures/sessions-dialog.png'; md5=b3e9731d03539a638a366ca724463a03"
 msgstr "@@image: 'figures/sessions-dialog.png'; md5=b3e9731d03539a638a366ca724463a03"
 
@@ -74,7 +92,7 @@ msgstr "1.0"
 
 #: C/nemiver.xml:76(para)
 msgid "Initial version"
-msgstr ""
+msgstr "Initial version"
 
 #: C/nemiver.xml:80(releaseinfo)
 msgid "This manual describes version 0.3.0 of Nemiver."
@@ -122,7 +140,7 @@ msgstr ""
 
 #: C/nemiver.xml:123(title)
 msgid "The Nemiver window"
-msgstr ""
+msgstr "Nemiver-fönstret"
 
 #: C/nemiver.xml:124(para)
 msgid "When you start Nemiver, you will see a window that looks very much like the following:"
@@ -130,11 +148,11 @@ msgstr ""
 
 #: C/nemiver.xml:129(title)
 msgid "Nemiver Window"
-msgstr ""
+msgstr "Nemiver-fönstret"
 
 #: C/nemiver.xml:135(phrase)
 msgid "Shows Nemiver main window."
-msgstr ""
+msgstr "Visar huvudfönstret i Nemiver."
 
 #: C/nemiver.xml:140(para)
 msgid "The <application>Nemiver</application> window contains the following elements:"
@@ -142,7 +160,7 @@ msgstr ""
 
 #: C/nemiver.xml:145(term)
 msgid "Menubar"
-msgstr ""
+msgstr "Menyrad"
 
 #: C/nemiver.xml:147(para)
 msgid "The menus on the menubar contain all of the commands you need to use <application>Nemiver</application>."
@@ -150,7 +168,7 @@ msgstr ""
 
 #: C/nemiver.xml:153(term)
 msgid "Toolbar"
-msgstr ""
+msgstr "Verktygsrad"
 
 #: C/nemiver.xml:155(para)
 msgid "The toolbar contains the basic debugging actions that can be used to run or step through the program being debugged."
@@ -174,7 +192,7 @@ msgstr ""
 
 #: C/nemiver.xml:178(term)
 msgid "Call Stack"
-msgstr ""
+msgstr "Stackspårning"
 
 #: C/nemiver.xml:182(para)
 msgid "Displays the current state of the call stack of the program being debugged."
@@ -182,7 +200,7 @@ msgstr ""
 
 #: C/nemiver.xml:189(term)
 msgid "Variables"
-msgstr ""
+msgstr "Variabler"
 
 #: C/nemiver.xml:193(para)
 msgid "Displays a list of all local variables and function arguments, in addition to their values and types."
@@ -190,7 +208,7 @@ msgstr ""
 
 #: C/nemiver.xml:200(term)
 msgid "Target Terminal"
-msgstr ""
+msgstr "Målterminal"
 
 #: C/nemiver.xml:204(para)
 msgid "If the program being debugged prints any output to the terminal, that output will be displayed in this tab."
@@ -198,7 +216,7 @@ msgstr ""
 
 #: C/nemiver.xml:211(term)
 msgid "Breakpoints"
-msgstr ""
+msgstr "Brytpunkter"
 
 #: C/nemiver.xml:215(para)
 msgid "This tab displays a list of all breakpoints that have been set. You can view the source code of a particular breakpoint by double-clicking an item in the list or by right-clicking and selecting <menuchoice><guimenuitem>Go to Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints can be deleted, enabled, or disabled in this tab."
@@ -206,7 +224,7 @@ msgstr ""
 
 #: C/nemiver.xml:234(title)
 msgid "Getting Started"
-msgstr ""
+msgstr "Komma igång"
 
 #: C/nemiver.xml:235(para)
 msgid "This section explains how to start Nemiver and gives a basic overview of the application."
@@ -214,7 +232,7 @@ msgstr ""
 
 #: C/nemiver.xml:240(title)
 msgid "Starting Nemiver"
-msgstr ""
+msgstr "Starta Nemiver"
 
 #: C/nemiver.xml:241(para)
 msgid "You can start Nemiver in the following ways:"
@@ -222,11 +240,11 @@ msgstr "Du kan starta Nemiver på följande sätt:"
 
 #: C/nemiver.xml:246(term)
 msgid "<guimenu>Applications</guimenu> menu"
-msgstr ""
+msgstr "<guimenu>Program</guimenu>-menyn"
 
 #: C/nemiver.xml:248(para)
 msgid "Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver Debugger</guimenuitem></menuchoice>."
-msgstr ""
+msgstr "Välj <menuchoice><guisubmenu>Programmering</guisubmenu><guimenuitem>Felsökaren Nemiver</guimenuitem></menuchoice>."
 
 #: C/nemiver.xml:255(term)
 msgid "Command line"
@@ -238,7 +256,7 @@ msgstr ""
 
 #: C/nemiver.xml:262(title)
 msgid "Additional Command-line Options"
-msgstr ""
+msgstr "Ytterligare kommandoradsflaggor"
 
 #: C/nemiver.xml:263(para)
 msgid "You can find a list of options that can be passed to Nemiver on the command line by typing <command>nemiver --help-all</command>."
@@ -246,12 +264,12 @@ msgstr ""
 
 #: C/nemiver.xml:273(title)
 msgid "Debugging an Executable"
-msgstr ""
+msgstr "Felsök en körbar fil"
 
 #: C/nemiver.xml:276(title)
 #: C/nemiver.xml:346(title)
 #: C/nemiver.xml:394(title)
-#: C/nemiver.xml:476(title)
+#: C/nemiver.xml:690(title)
 msgid "Using the Workbench"
 msgstr ""
 
@@ -275,7 +293,7 @@ msgstr ""
 #: C/nemiver.xml:380(title)
 #: C/nemiver.xml:422(title)
 msgid "Using the Command Line"
-msgstr ""
+msgstr "Använda kommandoraden"
 
 #: C/nemiver.xml:310(para)
 msgid "To start an executable program to debug from the command line, simply specify the name of the executable. You can either give an absolute path to the executable, or if it is in the path, you can simply give the basename of the executable. For example, if <filename>/usr/bin</filename> is in your path, both of the following are valid:"
@@ -299,7 +317,7 @@ msgstr ""
 
 #: C/nemiver.xml:344(title)
 msgid "Attaching to a Running Program"
-msgstr ""
+msgstr "Fäst till ett körande program"
 
 #: C/nemiver.xml:347(para)
 msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Attach to Running Program... </guimenuitem></menuchoice>, which should display the following dialog:"
@@ -343,82 +361,213 @@ msgstr ""
 
 #: C/nemiver.xml:431(title)
 msgid "Using Nemiver"
-msgstr ""
+msgstr "Användning av Nemiver"
 
 #: C/nemiver.xml:433(title)
-msgid "Basic Debugging actions"
+msgid "Basic Debugging Actions"
 msgstr ""
 
 #: C/nemiver.xml:434(para)
-msgid "step in, step out, step over, etc."
+msgid "The basic debugging actions are available on the main toolbar, in the <menu>Debug</menu> menu, and as keyboard shortcuts. The most common actions are listed below:"
 msgstr ""
 
-#: C/nemiver.xml:439(title)
+#: C/nemiver.xml:440(term)
+msgid "Continue"
+msgstr "Fortsätt"
+
+#: C/nemiver.xml:442(para)
+msgid "Starts the program. The program will run until it hits a breakpoint or until the program ends, unless it is interrupted manually by the user by clicking <action>Stop</action>. This action can be activated from the keyboard with <keycap>F5</keycap>."
+msgstr ""
+
+#: C/nemiver.xml:451(term)
+msgid "Next"
+msgstr "Nästa"
+
+#: C/nemiver.xml:453(para)
+msgid "Executes the next statement, and stops when it reaches the next line in this file. Some debuggers may call this action \"Step Over\". This action can be activated from the keyboard with <keycap>F6</keycap>."
+msgstr ""
+
+#: C/nemiver.xml:461(term)
+msgid "Step"
+msgstr "Stega"
+
+#: C/nemiver.xml:463(para)
+msgid "Executes the next statement, stepping into the function if possible. Some debuggers may call this action \"Step In\". This action can be activated from the keyboard with <keycap>F7</keycap>."
+msgstr ""
+
+#: C/nemiver.xml:470(term)
+msgid "Step Out"
+msgstr "Stega ut"
+
+#: C/nemiver.xml:472(para)
+msgid "Finishes execution of the current function and stops when it returns to the calling function. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
+msgstr ""
+
+#: C/nemiver.xml:483(term)
+msgid "Restart"
+msgstr "Starta om"
+
+#: C/nemiver.xml:485(para)
+msgid "Reloads the current executable and starts execution from the beginning. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F5</keycap></keycombo>."
+msgstr ""
+
+#: C/nemiver.xml:495(term)
+msgid "Stop"
+msgstr "Stopp"
+
+#: C/nemiver.xml:497(para)
+msgid "Manually interrupt execution of the program. This action is only available when the debugger is running the executable (e.g. after a user has clicked <action>Continue</action>). This action can be activated from the keyboard with <keycap>F9</keycap>."
+msgstr ""
+
+#: C/nemiver.xml:506(para)
+msgid "By default, after loading an executable, Nemiver creates a breakpoint at <function>main()</function>, so when execution reaches <function>main()</function>, it will stop and wait for input. You can then step through the program and examine variables (see <xref linkend=\"nemiver-sect-inspecting-variables\"/>), or set breakpoints (see <xref linkend=\"nemiver-sect-breakpoints\"/>)."
+msgstr ""
+
+#: C/nemiver.xml:516(title)
 msgid "Inspecting variables"
 msgstr ""
 
-#: C/nemiver.xml:440(para)
-#: C/nemiver.xml:446(para)
-msgid "TODO"
+#: C/nemiver.xml:517(para)
+msgid "Nemiver displays a list of all local variables in the <interface>Variables</interface> tab of the <interface>Status Notebook</interface>. If you'd like to examine a different variable (or even an arbitrary expression), you can use the <interface>Variable Inspector</interface>. To bring up the <interface>Variable Inspector</interface>, select <menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</guimenuitem></menuchoice>. When the variable inspector comes up, you'll see a window that looks similar to the following:"
 msgstr ""
 
-#: C/nemiver.xml:445(title)
+#: C/nemiver.xml:532(phrase)
+msgid "Variable Inspector Dialog"
+msgstr ""
+
+#: C/nemiver.xml:536(para)
+msgid "You can type any variable name or a simple expression (such as <literal>pFoo-&gt;bar</literal>) into the input box, and if the variable is valid and in scope, it will be display details about that expression."
+msgstr ""
+
+#: C/nemiver.xml:541(para)
+msgid "Alternately, if you select the name of a variable in the <interface>source editor</interface>, and then launch the <interface>Variable Inspector</interface>, it will attempt to display information about the selected variable name."
+msgstr ""
+
+#: C/nemiver.xml:548(title)
+msgid "Keyboard Shortcut"
+msgstr "Tangentbordsgenvägar"
+
+#: C/nemiver.xml:549(para)
+msgid "You can also start the <interface>Variable Inspector</interface> by pressing <keycap>F12</keycap>."
+msgstr ""
+
+#: C/nemiver.xml:556(title)
 msgid "Setting Breakpoints"
+msgstr "Ställ in brytpunkter"
+
+#: C/nemiver.xml:557(para)
+msgid "There are several different ways to set breakpoints in Nemiver. Nemiver automatically sets a breakpoint at <function>main()</function> when you first begin debugging a new executable. If you want to set additional breakpoints you can do one of the following:"
 msgstr ""
 
-#: C/nemiver.xml:452(title)
+#: C/nemiver.xml:565(para)
+msgid "Click in the margin next to the line where you want the breakpoint to be set"
+msgstr ""
+
+#: C/nemiver.xml:569(para)
+msgid "Place your cursor on a line where you want the breakpoint to be set and set the breakpoint by either selecting <menuchoice><menu>Debug</menu><menuitem>Toggle Breakpoint at Cursor</menuitem></menuchoice>, or by pressing <keycap>F8</keycap>"
+msgstr ""
+
+#: C/nemiver.xml:577(para)
+msgid "Set a breakpoint at a specific function name or at a specific location in a file by selecting <menuchoice><menu>Debug</menu><menuitem>Set Breakpoint...</menuitem></menuchoice> or by pressing <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will bring up a dialog that looks like the following:"
+msgstr ""
+
+#: C/nemiver.xml:592(phrase)
+msgid "Set Breakpoint Dialog"
+msgstr ""
+
+#: C/nemiver.xml:596(para)
+msgid "You can specify a breakpoint at a particular location in a file, or by function name. If there are more than one function with the same name, Nemiver will display a list of all matching functions and ask you to pick the one you want."
+msgstr ""
+
+#: C/nemiver.xml:605(title)
+msgid "Disabled Breakpoints"
+msgstr ""
+
+#: C/nemiver.xml:606(para)
+msgid "Breakpoints can be either enabled or disabled. The debugger will stop execution whenever it reaches an enabled breakpoint but will not be affected by any breakpoints in the disabled state. This allows you to temporarily remove a breakpoint without actually deleting it."
+msgstr ""
+
+#: C/nemiver.xml:612(para)
+msgid "To disable or enable a breakpoint, click the checkbox next to the breakpoint number you want to enable or disable in the <interface>Breakpoints</interface> tab of the <interface>Status Notebook</interface>. Alternately, you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> to enable or disable a breakpoint that is set on the line that the cursor is currently on."
+msgstr ""
+
+#: C/nemiver.xml:625(title)
+msgid "Opening Source Files"
+msgstr "Öppna källkodsfiler"
+
+#: C/nemiver.xml:626(para)
+msgid "Sometimes you don't know exactly the function name or line number where you want a breakpoint to be set, so you must open a source file to figure it out. You could just open arbitrary files from the filesystem, but Nemiver can also provide a list of source files that were used to build the executable and allow you to select from this list. When you select <menuchoice><menu>File</menu><menuitem>Open Source File...</menuitem></menuchoice>, the following window should be displayed:"
+msgstr ""
+
+#: C/nemiver.xml:643(phrase)
+msgid "Shows dialog for opening source files"
+msgstr ""
+
+#: C/nemiver.xml:647(para)
+msgid "To select an arbitrary file from the filesystem, choose the <guilabel>Select from Filesystem</guilabel> option. To select from a list of files that produced the executable, choose <guilabel>Select from Target Executable</guilabel>."
+msgstr ""
+
+#: C/nemiver.xml:654(title)
+msgid "Determining Source Files for Dynamically Loaded Modules"
+msgstr ""
+
+#: C/nemiver.xml:655(para)
+msgid "If the target executable loads modules at runtime (e.g. using <function>dlopen()</function>), Nemiver will not be able to determine which files were used to build these modules until they are actually loaded."
+msgstr ""
+
+#: C/nemiver.xml:666(title)
 msgid "Debugging Sessions"
-msgstr ""
+msgstr "Felsökningssessioner"
 
-#: C/nemiver.xml:453(para)
+#: C/nemiver.xml:667(para)
 msgid "Nemiver can save your debugging sessions for you so that you can resume them at a later time. This includes saving information such as which executable is being debugged, what environment variables are set, what command-line options are passed to the executable, which files are open, and which breakpoints are set so that you can get back to where you left off last time as quickly as possible."
 msgstr ""
 
-#: C/nemiver.xml:462(title)
+#: C/nemiver.xml:676(title)
 msgid "Saving Sessions"
-msgstr ""
+msgstr "Spara sessioner"
 
-#: C/nemiver.xml:463(para)
+#: C/nemiver.xml:677(para)
 msgid "Nemiver will save your session automatically on exit, so you don't even have to worry about it. However, if you want to explicitly save the session before closing Nemiver, you can do so by selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</guimenuitem></menuchoice>."
 msgstr ""
 
-#: C/nemiver.xml:474(title)
+#: C/nemiver.xml:688(title)
 msgid "Resuming Saved Sessions"
 msgstr ""
 
-#: C/nemiver.xml:477(para)
+#: C/nemiver.xml:691(para)
 msgid "Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved Session...</guimenuitem></menuchoice> and select a session from the list."
 msgstr ""
 
-#: C/nemiver.xml:486(title)
+#: C/nemiver.xml:700(title)
 msgid "Session Dialog"
 msgstr ""
 
-#: C/nemiver.xml:492(phrase)
+#: C/nemiver.xml:706(phrase)
 msgid "Shows dialog for resuming a saved session"
 msgstr ""
 
-#: C/nemiver.xml:499(title)
+#: C/nemiver.xml:713(title)
 msgid "From the Command Line"
-msgstr ""
+msgstr "Från kommandoraden"
 
-#: C/nemiver.xml:500(para)
+#: C/nemiver.xml:714(para)
 msgid "If you know the session ID of the session you want to run, you can start that debugging session from the command line. For example, if you want to run session number 3, you can do so with the following command: <command>nemiver --executesession 3</command>."
 msgstr ""
 
-#: C/nemiver.xml:513(title)
+#: C/nemiver.xml:727(title)
 msgid "About Nemiver"
 msgstr "Om Nemiver"
 
-#: C/nemiver.xml:514(para)
+#: C/nemiver.xml:728(para)
 msgid "<application>Nemiver</application> was written by Dodji Seketeli and Jonathon Jongsma, with contributions from many others. To find more information about Nemiver, please visit the <ulink url=\"http://home.gna.org/nemiver/\" type=\"http\">Nemiver project website</ulink>."
 msgstr ""
 
-#: C/nemiver.xml:520(para)
+#: C/nemiver.xml:734(para)
 msgid "To report a bug or make a suggestion regarding this application or this manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
 msgstr ""
 
-#: C/nemiver.xml:527(para)
+#: C/nemiver.xml:741(para)
 msgid "This program is distributed under the terms of the GNU General Public license as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. A copy of this license can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or in the file COPYING included with the source code of this program."
 msgstr ""
 
