@@ -1,14 +1,14 @@
 # Catalan translation of the nemiver package.
 # Copyright (C) 2006 Dodji Seketeli & Jonathon Jongsma
 # This file is distributed under the same license as the nemiver package.
-# David Planella Molas <david.planella@googlemail.com>.
+# David Planella Molas <david.planella@googlemail.com>, 2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-27 01:25+0200\n"
-"PO-Revision-Date: 2007-08-27 01:26+0200\n"
+"POT-Creation-Date: 2007-09-25 21:42+0200\n"
+"PO-Revision-Date: 2007-09-25 18:55+0200\n"
 "Last-Translator: David Planella <david.planella@googlemail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,7 @@ msgstr "Registra la sortida del depurador"
 
 #: ../src/main.cc:179
 msgid " [<prog-to-debug> [prog-args]]"
-msgstr "[prog-a-depurar [args-del-prog]]]"
+msgstr "[<prog-a-depurar> [args-del-prog]]"
 
 #: ../src/main.cc:181 ../src/workbench/nmv-workbench.cc:234
 msgid "A C/C++ debugger for GNOME"
@@ -134,11 +134,11 @@ msgstr "<b>Ubicació del fitxer</b>"
 
 #: ../src/persp/dbgperspective/glade/locatefiledialog.glade.h:2
 msgid "Select File Location"
-msgstr "Selaccioneu la ubicació del fitxer"
+msgstr "Seleccioneu la ubicació del fitxer"
 
 #: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:1
 msgid "<b>Choose Source Files to Open</b>"
-msgstr "<b>Escolliu els fitxers de codi font per a obrir </b>"
+msgstr "<b>Escolliu els fitxers de codi font per a obrir</b>"
 
 #: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:2
 msgid "Open Source Files"
@@ -146,11 +146,11 @@ msgstr "Obertura de fitxers de codi font"
 
 #: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:3
 msgid "Select from _Filesystem"
-msgstr "Selecciona des del sistema de _fitxers"
+msgstr "Seleccioneu des del sistema de _fitxers"
 
 #: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:4
 msgid "Select from _Target Executable"
-msgstr "Selecciona des del fitxer executable de l'objec_tiu"
+msgstr "Seleccioneu des del fitxer executable de l'objec_tiu"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:1
 msgid "<b>Editor Font</b>"
@@ -226,7 +226,7 @@ msgstr "Escolliu un programa a executar"
 
 #: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:6
 msgid "Choose a working directory"
-msgstr "Escolliu un directori"
+msgstr "Escolliu un directori de treball"
 
 #: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:7
 msgid "Choose an executable"
@@ -249,7 +249,7 @@ msgid "Saved Sessions"
 msgstr "Sessions desades"
 
 #: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2197
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2285
 msgid "Inspect a Variable"
 msgstr "Inspecciona una variable"
 
@@ -406,359 +406,390 @@ msgstr "Funció"
 msgid "Arguments"
 msgstr "Arguments"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:781
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:792
 #, c-format
 msgid "File %s has been modified. Do want to reload it ?"
-msgstr "El fitxer %s ha estat modificat. El voleu tornar a carregar?"
+msgstr "S'ha modificat el fitxer %s. El voleu tornar a carregar?"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1160
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1171
 #, c-format
 msgid "File path info is missing for breakpoint '%i'"
 msgstr "Manca informació sobre el camí del fitxer per al punt de ruptura «%i»"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1449
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1460
 msgid "Remove _Breakpoint"
 msgstr "Suprimeix aquest punt de _ruptura"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1452
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1463
 msgid "Disable Breakpoint"
 msgstr "Inhabilita el punt de ruptura"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1454
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1465
 msgid "Enable Breakpoint"
 msgstr "Habilita el punt de ruptura"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1457
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1468
 msgid "Set _Breakpoint"
 msgstr "Estableix un punt de _ruptura"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1600
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1611
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (camí=«%s», pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1613
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1624
 msgid "Connected to remote target !"
 msgstr "S'ha establert la connexió amb l'objectiu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1751
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1762
 #, c-format
 msgid "Could not find file %s"
 msgstr "No s'ha trobat el fitxer %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1764
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1822
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1775
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1833
 #, c-format
 msgid "File path info is missing for function '%s'"
 msgstr "Manca informació sobre el camí del fitxer per a la funció «%s»"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1786
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1797
 msgid "Program exited"
 msgstr "El programa ha finalitzat"
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1900
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1911
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "L'objectiu ha rebut el senyal: %s, %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1915
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1926
 #, c-format
 msgid "An error occured: %s"
 msgstr "S'ha produït un error: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2079
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2167
 msgid "_Save Session to Disk"
 msgstr "_Desa la sessió"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2168
 msgid "Save the current debugging session to disk"
 msgstr "Desa la sessió de depuració actual al disc"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2091
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2179
 msgid "_Restart"
 msgstr "_Reinicia"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2092
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2180
 msgid "Restart the target, killing this process and starting a new one"
 msgstr "Reinicia l'objectiu matant aquest procés i iniciant-ne un de nou"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2103
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2191
 msgid "_Detach from the Running Program..."
 msgstr "_Separa't del programa en execució..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2104
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2192
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "Desconnecta el depurador de l'objectiu en execució sense matar-lo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2202
 msgid "_Next"
 msgstr "_Següent"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2115
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2203
 msgid "Execute next line stepping over the next function, if any"
 msgstr ""
 "Executa la línia següent. Si és una funció, s'executarà sense entrar-hi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2124
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2212
 msgid "_Step"
 msgstr "_Pas"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2125
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2213
 msgid "Execute next line, stepping into the next function, if any"
 msgstr ""
 "Executa la línia següent. Si és una funció, s'hi entrarà i s'executarà pas a "
 "pas"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2134
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2222
 msgid "Step _Out"
 msgstr "S_urt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2135
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2223
 msgid "Finish the execution of the current function"
 msgstr "Finalitza l'execució pas a pas de la funció actual"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2144
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2232
 msgid "_Continue"
 msgstr "_Continua"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2145
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2233
 msgid "Continue program execution until the next breakpoint"
-msgstr "Continua l'execució del programa fins el punt de ruptura següent"
+msgstr "Continua l'execució del programa fins al punt de ruptura següent"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2154
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2242
 msgid "Run to Cursor"
-msgstr "Executa fins el cursor"
+msgstr "Executa fins al cursor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2155
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2243
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 "Continua l'execució del programa fins que s'hagi arribat a la línia "
 "seleccionada actualment"
 
 #. don't translate, name will be overwritten based on context
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2166
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2254
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "Estableix/suprimeix un punt de ruptura a la posició actual del cursor"
 
 #. don't translate, name will be overwritten based on context
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2176
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2264
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
 "Habilita o inhabilita el punt de ruptura establert a la posició actual del "
 "cursor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2187
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2275
 msgid "Set Breakpoint..."
 msgstr "Estableix un punt de ruptura..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2188
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2276
 msgid "Set a breakpoint at a function or line number"
 msgstr "Estableix un punt de ruptura en una funció o número de línia"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2198
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2286
 msgid "Inspect a global or local variable"
 msgstr "Inspecciona una variable global o local"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2209
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2297
 msgid "Stop"
 msgstr "Atura"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2210
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2298
 msgid "Stop the Debugger"
 msgstr "Atura el depurador"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2221
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2309
 msgid "_View"
 msgstr "_Visualitza"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2230
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2318
+msgid "Stack"
+msgstr "Pila"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2319
+msgid "Switch to Stack View"
+msgstr "Canvia a la visualització de la pila"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2327
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5180
+msgid "Variables"
+msgstr "Variables"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2328
+msgid "Switch to Variables View"
+msgstr "Canvia a la visualització de les variables"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2336
+msgid "Target Terminal"
+msgstr "Terminal de l'objectiu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2337
+msgid "Switch to Target Terminal View"
+msgstr "Canvia a la visualització del terminal de l'objectiu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2345
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5233
+msgid "Breakpoints"
+msgstr "Punts de ruptura"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2346
+msgid "Switch to Breakpoints  View"
+msgstr "Canvia a la visualització dels punts de ruptura"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2354
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5259
+msgid "Registers"
+msgstr "Registres"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2355
+msgid "Switch to Registers View"
+msgstr "Canvia a la visualització dels registres"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2363
 msgid "Show Commands"
 msgstr "Mostra les ordres"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2231
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2364
 msgid "Show the debugger commands tab"
 msgstr "Mostra la pestanya de les ordres del depurador"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2239
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2372
 msgid "Show Errors"
 msgstr "Mostra els errors"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2240
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2373
 msgid "Show the errors tab"
 msgstr "Mostra la pestanya dels errors"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2381
 msgid "Show Output"
 msgstr "Mostra la sortida"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2249
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2382
 msgid "Show the debugged target output tab"
 msgstr "Mostra la pestanya de la sortida de l'objectiu en depuració"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2257
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2390
 msgid "_Debug"
 msgstr "_Depura"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2267
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2399
 msgid "_Open Source File ..."
 msgstr "_Obre un fitxer de codi font ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2268
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2400
 msgid "Open a source file for viewing"
 msgstr "Obre un fitxer de codi font per a visualitzar-lo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2276
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2408
 msgid "_Execute..."
 msgstr "_Executa..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2277
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2409
 msgid "Execute a program"
 msgstr "Executa un programa"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2286
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2418
 msgid "_Load Core File..."
 msgstr "_Carrega un fitxer de bolcat de memòria..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2287
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2419
 msgid "Load a core file from disk"
 msgstr "Carrega un fitxer de bolcat de memòria del disc"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2428
 msgid "_Attach to Running Program..."
 msgstr "_Acobla't a un programa en execució..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2297
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2429
 msgid "Debug a program that's already running"
 msgstr "Depura un programa que ja està executant-se"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2438
 msgid "_Connect to remote target..."
 msgstr "_Connecta't a un objectiu remot..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2307
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2439
 msgid "Connect to a debugging server to debug a remote target"
 msgstr ""
 "Estableix una connexió amb un servidor de depuració per a depurar un "
 "objectiu remot"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2316
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2448
 msgid "Resume Sa_ved Session..."
 msgstr "Reprèn una _sessió desada..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2317
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2449
 msgid "Manage previously saved debugging sessions"
 msgstr "Gestiona les sessions de depuració desades anteriorment"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2326
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2458
 msgid "_Preferences"
 msgstr "_Preferències"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2327
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2459
 msgid "Edit the properties of the current session"
 msgstr "Edita les propietats de la sessió actual"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2339
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2471
 msgid "_Reload Source File ..."
 msgstr "Torna a carregar el codi _font ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2340
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2472
 msgid "Reloads the source file"
 msgstr "Torna a carregar el fitxer de codi font"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2348
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2480
 msgid "_Close"
 msgstr "_Tanca"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2349
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2481
 msgid "Close the opened file"
 msgstr "Tanca el fitxer obert"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2357
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2489
 msgid "_Find"
 msgstr "_Cerca"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2358
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2490
 msgid "Find a text string in file"
 msgstr "Cerca una cadena de text en un fitxer"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2707
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2839
 #, c-format
 msgid "Close %s"
 msgstr "Tanca %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3679
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3811
 msgid "Reached end of file"
 msgstr "S'ha arribat al final del fitxer"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3682
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3814
 #, c-format
 msgid "Could not find string %s"
 msgstr "No s'ha trobat la cadena %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4009
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4141
 msgid "You cannot attach to Nemiver itself"
 msgstr "No us podeu acoblar al Nemiver mateix"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4014
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4146
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "No us podeu acoblar al motor de depuració base"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4156
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4288
 msgid "Failed to stop the debugger"
 msgstr "No s'ha pogut aturar el depurador"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4239
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4371
 #, c-format
 msgid "There is no file name info for symbol@addr: %s@%s"
 msgstr "No hi ha cap informació del nom de fitxer per a symbol@addr: %s@%s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4429
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4561
 #, c-format
 msgid "Could not find file: %s\n"
 msgstr "No s'ha trobat el fitxer: %s\n"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4623
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4755
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Número de línia no vàlid: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4944
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5076
 msgid "Commands"
 msgstr "Ordres"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4970
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5102
 msgid "Output"
 msgstr "Sortida"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4996
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5128
 msgid "Logs"
 msgstr "Registres"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5021
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5153
 msgid "Call stack"
 msgstr "Pila de crides"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5048
-msgid "Variables"
-msgstr "Variables"
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5075
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5207
 msgid "Target terminal"
 msgstr "Terminal objectiu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5101
-msgid "Breakpoints"
-msgstr "Punts de ruptura"
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5127
-msgid "Registers"
-msgstr "Registres"
-
 #: ../src/persp/dbgperspective/nmv-file-list.cc:124
 msgid "Expand _Selected"
-msgstr "Expandeix allò _seleccionat"
+msgstr "Expandeix la _selecció"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:127
 msgid "Expand _All"
@@ -816,7 +847,7 @@ msgid ""
 "Please specify the location of this file:"
 msgstr ""
 "No s'ha trobat el fitxer «<b>%s</b>».\n"
-"Hauríeu d'especificar la ubicació d'aquest fitxer:"
+"Especifiqueu-ne la ubicació:"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:104
 msgid "Choose directory"
