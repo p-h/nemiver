@@ -721,6 +721,22 @@ public:
                                      const UString& a_cookie="") = 0;
 
 
+    virtual void read_memory (const UString& a_start_addr, long a_num_bytes,
+            const UString& a_cookie) = 0;
+    virtual sigc::signal <void,
+                          const UString&, // start address
+                          std::vector<UString>, // values
+                          const UString&>&  // cookie
+                          read_memory_signal () const = 0;
+    /*
+    virtual void set_memory (const UString& a_start_addr,
+            const std::vector<UString>& a_bytes) = 0;
+    virtual sigc::signal <void,
+                          const Glib::ustring&, // start address
+                          std::vector<UString> >&   // values
+                              set_memory_signal () const = 0;
+                              */
+
 
 };//end IDebugger
 

@@ -86,6 +86,7 @@ const char* PREFIX_VALUE = "value=\"";
 const char* PREFIX_REGISTER_NAMES = "register-names=";
 const char* PREFIX_CHANGED_REGISTERS = "changed-registers=";
 const char* PREFIX_REGISTER_VALUES = "register-values=";
+const char* PREFIX_MEMORY_VALUES = "addr=";
 
 bool parse_c_string_body (const UString &a_input,
                           UString::size_type a_from,
@@ -189,11 +190,6 @@ parse_breakpoint (const UString &a_input,
     map<UString, UString> attrs ;
     bool is_ok = parse_attributes (a_input, cur, cur, attrs) ;
     if (!is_ok) {
-        LOG_PARSING_ERROR (a_input, cur) ;
-        return false;
-    }
-
-    if (a_input[cur++] != '}') {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
@@ -1917,6 +1913,132 @@ parse_register_values (const UString &a_input,
     return true;
 }
 
+bool
+parse_memory_values (const UString &a_input,
+                     UString::size_type a_from,
+                     UString::size_type &a_to,
+                     UString& a_start_addr,
+                     std::vector<UString> &a_values)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+    UString::size_type cur = a_from;
+
+    if (a_input.compare (cur, strlen (PREFIX_MEMORY_VALUES),
+                PREFIX_MEMORY_VALUES)) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    // skip to the actual list of memory values
+    const char* prefix_memory = "memory=";
+    cur = a_input.find (prefix_memory);
+    if (!cur) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false;
+    }
+    cur += strlen (prefix_memory);
+
+    GDBMIListSafePtr mem_gdbmi_list;
+    if (!parse_gdbmi_list (a_input, cur, cur, mem_gdbmi_list)) {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    if (a_input.c_str ()[cur-1] != ']') {
+        // unexpected data
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    if (mem_gdbmi_list->content_type () != GDBMIList::VALUE_TYPE)
+    {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+    std::list<GDBMIValueSafePtr> mem_value_list;
+    mem_gdbmi_list->get_value_content (mem_value_list);
+
+    // there should only be one 'row'
+    if (mem_value_list.size () != 1)
+    {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    std::list<GDBMIValueSafePtr>::const_iterator mem_tuple_iter = mem_value_list.begin ();
+    if ((*mem_tuple_iter)->content_type () != GDBMIValue::TUPLE_TYPE)
+    {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    const GDBMITupleSafePtr gdbmi_tuple = (*mem_tuple_iter)->get_tuple_content ();
+
+    std::list<GDBMIResultSafePtr> result_list;
+    result_list = gdbmi_tuple->content ();
+    if (result_list.size () < 2)
+    {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false ;
+    }
+
+    std::vector<UString> memory_values;
+    bool seen_addr = false, seen_data = false;
+    for (std::list<GDBMIResultSafePtr>::const_iterator result_iter =
+            result_list.begin();
+            result_iter != result_list.end();
+            ++result_iter)
+    {
+        if ((*result_iter)->variable () == "addr")
+        {
+            seen_addr = true;
+            if ((*result_iter)->value ()->content_type () != GDBMIValue::STRING_TYPE)
+            {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
+            a_start_addr = (*result_iter)->value ()->get_string_content ();
+        } else if ((*result_iter)->variable () == "data")
+        {
+            seen_data = true;
+            if ((*result_iter)->value ()->content_type () != GDBMIValue::LIST_TYPE)
+            {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
+            GDBMIListSafePtr gdbmi_list = (*result_iter)->value ()->get_list_content ();
+            if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE)
+            {
+                LOG_PARSING_ERROR (a_input, cur) ;
+                return false;
+            }
+            std::list<GDBMIValueSafePtr> gdbmi_values;
+            gdbmi_list->get_value_content (gdbmi_values);
+            for (std::list<GDBMIValueSafePtr>::const_iterator val_iter = gdbmi_values.begin ();
+                    val_iter != gdbmi_values.end (); ++val_iter)
+            {
+                if ((*val_iter)->content_type () != GDBMIValue::STRING_TYPE)
+                {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                    return false;
+                }
+                memory_values.push_back ((*val_iter)->get_string_content ());
+            }
+        }
+        // else ignore it
+    }
+
+    if (!seen_addr || !seen_data)
+    {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false;
+    }
+
+    a_values = memory_values;
+    a_to = cur ;
+    return true;
+}
+
 /// parses the result of the gdbmi command
 /// "-thread-select"
 /// \param a_input the input string to parse
@@ -2732,8 +2854,18 @@ fetch_gdbmi_result:
                 if (!parse_register_values (a_input, cur, cur,  values)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
                 } else {
-                    LOG_D ("parsed changed register", GDBMI_PARSING_DOMAIN) ;
+                    LOG_D ("parsed register values", GDBMI_PARSING_DOMAIN) ;
                     result_record.register_values ( values) ;
+                }
+            } else if (!a_input.compare (cur, strlen (PREFIX_MEMORY_VALUES),
+                        PREFIX_MEMORY_VALUES)) {
+                UString addr;
+                std::vector<UString>  values;
+                if (!parse_memory_values (a_input, cur, cur,  addr, values)) {
+                    LOG_PARSING_ERROR (a_input, cur) ;
+                } else {
+                    LOG_D ("parsed memory values", GDBMI_PARSING_DOMAIN) ;
+                    result_record.memory_values (addr, values) ;
                 }
             } else {
                 GDBMIResultSafePtr result ;

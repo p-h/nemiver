@@ -371,6 +371,12 @@ public:
         std::list<IDebugger::register_id_t> m_changed_registers ;
         bool m_has_changed_registers ;
 
+        // memory values
+        std::vector<UString> m_memory_values;
+        UString m_memory_address;
+        bool m_has_memory_values;
+
+
     public:
         ResultRecord () {clear () ;}
 
@@ -424,6 +430,17 @@ public:
         {
             m_register_values = a_regs;
             has_register_values (true);
+        }
+
+        bool has_memory_values () const { return m_has_memory_values; }
+        void has_memory_values (bool a_flag) { m_has_memory_values = a_flag; }
+        const std::vector<UString>& memory_values () const { return m_memory_values; }
+        UString memory_address () const { return m_memory_address; }
+        void memory_values (const UString& a_address, const std::vector<UString>& a_values)
+        {
+            m_memory_address = a_address;
+            m_memory_values = a_values;
+            has_memory_values (true);
         }
 
         const map<int, list<IDebugger::VariableSafePtr> >&

@@ -59,8 +59,11 @@ static const char* gv_register_names=
 static const char* gv_changed_registers=
 "changed-registers=[\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"8\",\"9\",\"10\",\"11\",\"12\",\"13\",\"15\",\"24\",\"26\",\"40\",\"41\"]";
 
-static const char* gv_register_values=
+static const char* gv_register_values =
 "register-values=[{number=\"1\",value=\"0xbfd10a60\"},{number=\"2\",value=\"0x1\"},{number=\"3\",value=\"0xb6f03ff4\"},{number=\"4\",value=\"0xbfd10960\"},{number=\"5\",value=\"0xbfd10a48\"},{number=\"6\",value=\"0xb7ff6ce0\"},{number=\"7\",value=\"0x0\"},{number=\"8\",value=\"0x80bb710\"},{number=\"9\",value=\"0x200286\"},{number=\"10\",value=\"0x73\"},{number=\"36\",value=\"{v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 <repeats 16 times>}, v8_int16 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}\"}]";
+
+static const char* gv_memory_values =
+"addr=\"0x000013a0\",nr-bytes=\"32\",total-bytes=\"32\",next-row=\"0x000013c0\",prev-row=\"0x0000139c\",next-page=\"0x000013c0\",prev-page=\"0x00001380\",memory=[{addr=\"0x000013a0\",data=[\"0x10\",\"0x11\",\"0x12\",\"0x13\"],ascii=\"xxxx\"}]";
 
 void
 test_str0 ()
@@ -374,6 +377,27 @@ test_register_values ()
     BOOST_REQUIRE_EQUAL ((reg_iter)->second, "{v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 <repeats 16 times>}, v8_int16 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}");
 }
 
+void
+test_memory_values ()
+{
+    std::vector<UString> mem_values;
+    UString start_addr;
+    UString::size_type cur = 0;
+
+    BOOST_REQUIRE (parse_memory_values (gv_memory_values,
+                cur, cur, start_addr, mem_values)) ;
+    BOOST_REQUIRE_EQUAL (start_addr, "0x000013a0");
+    BOOST_REQUIRE_EQUAL (mem_values.size (), 4u);
+    std::vector<UString>::const_iterator mem_iter = mem_values.begin ();
+    BOOST_REQUIRE_EQUAL (*mem_iter, "0x10");
+    ++mem_iter;
+    BOOST_REQUIRE_EQUAL (*mem_iter, "0x11");
+    ++mem_iter;
+    BOOST_REQUIRE_EQUAL (*mem_iter, "0x12");
+    ++mem_iter;
+    BOOST_REQUIRE_EQUAL (*mem_iter, "0x13");
+}
+
 using boost::unit_test::test_suite ;
 
 NEMIVER_API test_suite*
@@ -401,6 +425,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_register_names));
     suite->add (BOOST_TEST_CASE (&test_changed_registers));
     suite->add (BOOST_TEST_CASE (&test_register_values));
+    suite->add (BOOST_TEST_CASE (&test_memory_values));
     return suite ;
 
     NEMIVER_CATCH_NOX

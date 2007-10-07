@@ -185,6 +185,11 @@ public:
 
     sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
                                                  register_values_listed_signal () const;
+    sigc::signal <void, const UString&,   // start address
+                  std::vector<UString>, // values,
+                  const UString& >& // cookie
+                  read_memory_signal () const;
+
     //*************
     //</signals>
     //*************
@@ -351,13 +356,16 @@ public:
     void list_register_values (std::list<register_id_t> a_registers,
                                const UString &a_cookie="");
 
+    void list_register_values (const UString &a_cookie="");
+
+    void list_changed_registers (const UString &a_cookie="");
+
     virtual void set_register_value (const UString& a_reg_name,
                                      const UString& a_value,
                                      const UString& a_cookie);
 
-    void list_changed_registers (const UString &a_cookie="");
+    void read_memory (const UString& a_start_addr, long a_num_bytes, const UString& a_cookie);
 
-    void list_register_values (const UString &a_cookie="");
 };//end class GDBEngine
 
 //*************************
@@ -516,8 +524,16 @@ struct GDBEngine::Priv {
     mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
                                                         register_values_listed_signal;
 
-    mutable sigc::signal<void, const UString&, const UString&, const UString& >
-                                                         register_value_changed_signal;
+    mutable sigc::signal<void,
+                         const UString&,
+                         const UString&,
+                         const UString& >
+                         register_value_changed_signal;
+    mutable sigc::signal <void,
+                          const UString&, // start address
+                          std::vector<UString>, // values
+                          const UString& >  // cookie
+                          read_memory_signal;
 
     //***********************
     //</GDBEngine attributes>
@@ -2076,6 +2092,37 @@ struct OnSetRegisterValueHandler : OutputHandler {
     }
 };//struct OnSetRegisterValueHandler
 
+struct OnReadMemoryHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnReadMemoryHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.output ().result_record ().has_memory_values ())) {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        m_engine->read_memory_signal ().emit
+            (a_in.output ().result_record ().memory_address (),
+             a_in.output ().result_record ().memory_values (),
+             a_in.command ().cookie ()) ;
+        m_engine->set_state (IDebugger::READY) ;
+    }
+};//struct OnReadMemoryHandler
+
 struct OnErrorHandler : OutputHandler {
 
     GDBEngine *m_engine ;
@@ -2359,6 +2406,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnChangedRegistersListedHandler (this))) ;
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnRegisterValuesListedHandler (this))) ;
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnReadMemoryHandler (this))) ;
 }
 
 sigc::signal<void, Output&>&
@@ -3384,6 +3433,29 @@ GDBEngine::register_value_changed_signal () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->register_value_changed_signal ;
+}
+
+void
+GDBEngine::read_memory (const UString& a_start_addr, long a_num_bytes, const UString& a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    UString cmd;
+    cmd.printf ("-data-read-memory %s 1 1 %li",
+            a_start_addr.c_str (),
+            a_num_bytes);
+    queue_command (Command ("read-memory",
+                            cmd,
+                            a_cookie)) ;
+}
+
+sigc::signal <void,
+              const UString&, // start address
+              std::vector<UString>, // values
+              const UString& >& // cookie
+GDBEngine::read_memory_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->read_memory_signal ;
 }
 
 

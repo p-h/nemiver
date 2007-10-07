@@ -1,3 +1,12 @@
+2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-i-debugger.h: add interface for reading memory values
+	* src/dbgengine/nmv-dbg-common.h: add data storage for memory values
+	* src/dbgengine/nmv-gdb-engine.cc: add handling for reading memory values
+	* src/dbgengine/nmv-gdbmi-parser.h, src/dbgengine/nmv-gdbmi-parser.cc: add
+	parsing for memory value responses
+	* tests/test-gdbmi.cc: test parsing memory value results
+
 2007-09-07  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	patch by: A. Gordon <agordon88@gmail.com>
