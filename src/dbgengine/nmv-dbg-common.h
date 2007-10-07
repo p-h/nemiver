@@ -372,8 +372,8 @@ public:
         bool m_has_changed_registers ;
 
         // memory values
-        std::vector<UString> m_memory_values;
-        UString m_memory_address;
+        std::vector<uint8_t> m_memory_values;
+        size_t m_memory_address;
         bool m_has_memory_values;
 
 
@@ -434,9 +434,9 @@ public:
 
         bool has_memory_values () const { return m_has_memory_values; }
         void has_memory_values (bool a_flag) { m_has_memory_values = a_flag; }
-        const std::vector<UString>& memory_values () const { return m_memory_values; }
-        UString memory_address () const { return m_memory_address; }
-        void memory_values (const UString& a_address, const std::vector<UString>& a_values)
+        const std::vector<uint8_t>& memory_values () const { return m_memory_values; }
+        size_t memory_address () const { return m_memory_address; }
+        void memory_values (size_t a_address, const std::vector<uint8_t>& a_values)
         {
             m_memory_address = a_address;
             m_memory_values = a_values;

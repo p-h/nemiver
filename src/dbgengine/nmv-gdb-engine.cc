@@ -185,8 +185,9 @@ public:
 
     sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
                                                  register_values_listed_signal () const;
-    sigc::signal <void, const UString&,   // start address
-                  std::vector<UString>, // values,
+    sigc::signal <void,
+                  size_t,   // start address
+                  std::vector<uint8_t>, // values,
                   const UString& >& // cookie
                   read_memory_signal () const;
 
@@ -364,7 +365,8 @@ public:
                                      const UString& a_value,
                                      const UString& a_cookie);
 
-    void read_memory (const UString& a_start_addr, long a_num_bytes, const UString& a_cookie);
+
+    void read_memory (size_t a_start_addr, size_t a_num_bytes, const UString& a_cookie);
 
 };//end class GDBEngine
 
@@ -530,8 +532,8 @@ struct GDBEngine::Priv {
                          const UString& >
                          register_value_changed_signal;
     mutable sigc::signal <void,
-                          const UString&, // start address
-                          std::vector<UString>, // values
+                          size_t, // start address
+                          std::vector<uint8_t>, // values
                           const UString& >  // cookie
                           read_memory_signal;
 
@@ -3436,7 +3438,7 @@ GDBEngine::register_value_changed_signal () const
 }
 
 void
-GDBEngine::read_memory (const UString& a_start_addr, long a_num_bytes, const UString& a_cookie)
+GDBEngine::read_memory (size_t a_start_addr, size_t a_num_bytes, const UString& a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     UString cmd;
@@ -3448,8 +3450,8 @@ GDBEngine::read_memory (const UString& a_start_addr, long a_num_bytes, const USt
     // When we parse the output from the command, we assume that there's only a
     // single row of output -- if this ever changes, the parsing function will
     // need to be updated
-    cmd.printf ("-data-read-memory %s x 1 1 %li",
-            a_start_addr.c_str (),
+    cmd.printf ("-data-read-memory %zu x 1 1 %zu",
+            a_start_addr,
             a_num_bytes);
     queue_command (Command ("read-memory",
                             cmd,
@@ -3457,8 +3459,8 @@ GDBEngine::read_memory (const UString& a_start_addr, long a_num_bytes, const USt
 }
 
 sigc::signal <void,
-              const UString&, // start address
-              std::vector<UString>, // values
+              size_t, // start address
+              std::vector<uint8_t>, // values
               const UString& >& // cookie
 GDBEngine::read_memory_signal () const
 {

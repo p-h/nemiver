@@ -721,11 +721,11 @@ public:
                                      const UString& a_cookie="") = 0;
 
 
-    virtual void read_memory (const UString& a_start_addr, long a_num_bytes,
+    virtual void read_memory (size_t a_start_addr, size_t a_num_bytes,
             const UString& a_cookie="") = 0;
     virtual sigc::signal <void,
-                          const UString&, // start address
-                          std::vector<UString>, // values
+                          size_t, // start address
+                          std::vector<uint8_t>, // values
                           const UString&>&  // cookie
                           read_memory_signal () const = 0;
     /*

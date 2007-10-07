@@ -380,22 +380,22 @@ test_register_values ()
 void
 test_memory_values ()
 {
-    std::vector<UString> mem_values;
-    UString start_addr;
+    std::vector<uint8_t> mem_values;
+    size_t start_addr;
     UString::size_type cur = 0;
 
     BOOST_REQUIRE (parse_memory_values (gv_memory_values,
                 cur, cur, start_addr, mem_values)) ;
-    BOOST_REQUIRE_EQUAL (start_addr, "0x000013a0");
+    BOOST_REQUIRE_EQUAL (start_addr, 0x000013a0u);
     BOOST_REQUIRE_EQUAL (mem_values.size (), 4u);
-    std::vector<UString>::const_iterator mem_iter = mem_values.begin ();
-    BOOST_REQUIRE_EQUAL (*mem_iter, "0x10");
+    std::vector<uint8_t>::const_iterator mem_iter = mem_values.begin ();
+    BOOST_REQUIRE_EQUAL (*mem_iter, 0x10u);
     ++mem_iter;
-    BOOST_REQUIRE_EQUAL (*mem_iter, "0x11");
+    BOOST_REQUIRE_EQUAL (*mem_iter, 0x11u);
     ++mem_iter;
-    BOOST_REQUIRE_EQUAL (*mem_iter, "0x12");
+    BOOST_REQUIRE_EQUAL (*mem_iter, 0x12u);
     ++mem_iter;
-    BOOST_REQUIRE_EQUAL (*mem_iter, "0x13");
+    BOOST_REQUIRE_EQUAL (*mem_iter, 0x13u);
 }
 
 using boost::unit_test::test_suite ;

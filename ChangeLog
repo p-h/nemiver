@@ -1,5 +1,14 @@
 2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/dbgengine/nmv-i-debugger.h: update interface to use size_t and uint8_t
+	instead of strings for address and values
+	* src/dbgengine/nmv-dbg-common.h, src/dbgengine/nmv-gdb-engine.cc,
+	src/dbgengine/nmv-gdbmi-parser.cc, src/dbgengine/nmv-gdbmi-parser.h: update
+	to use new interface types
+	* tests/test-gdbmi.cc: update for API change
+
+2007-08-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/glade/memoryviewwidget.glade: don't activate
 	default in the memory view widget.  It was causing warnings on the command
 	line

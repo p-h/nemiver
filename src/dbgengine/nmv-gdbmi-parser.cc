@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <sstream>
 #include "nmv-gdbmi-parser.h"
 
 using nemiver::common::UString ;
@@ -1917,8 +1918,8 @@ bool
 parse_memory_values (const UString &a_input,
                      UString::size_type a_from,
                      UString::size_type &a_to,
-                     UString& a_start_addr,
-                     std::vector<UString> &a_values)
+                     size_t& a_start_addr,
+                     std::vector<uint8_t> &a_values)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
     UString::size_type cur = a_from;
@@ -1982,7 +1983,7 @@ parse_memory_values (const UString &a_input,
         return false ;
     }
 
-    std::vector<UString> memory_values;
+    std::vector<uint8_t> memory_values;
     bool seen_addr = false, seen_data = false;
     for (std::list<GDBMIResultSafePtr>::const_iterator result_iter =
             result_list.begin();
@@ -1997,7 +1998,8 @@ parse_memory_values (const UString &a_input,
                 LOG_PARSING_ERROR (a_input, cur) ;
                 return false;
             }
-            a_start_addr = (*result_iter)->value ()->get_string_content ();
+            std::istringstream istream((*result_iter)->value ()->get_string_content ());
+            istream >> std::hex >> a_start_addr;
         } else if ((*result_iter)->variable () == "data")
         {
             seen_data = true;
@@ -2022,7 +2024,12 @@ parse_memory_values (const UString &a_input,
                     LOG_PARSING_ERROR (a_input, cur) ;
                     return false;
                 }
-                memory_values.push_back ((*val_iter)->get_string_content ());
+                std::istringstream istream((*val_iter)->get_string_content ());
+                // if I use a uint8_t type here, it doesn't seem to work, so
+                // using a 16-bit value that will be cast down to 8 bits
+                uint16_t byte_val;
+                istream >> std::hex >> byte_val;
+                memory_values.push_back (byte_val);
             }
         }
         // else ignore it
@@ -2859,8 +2866,8 @@ fetch_gdbmi_result:
                 }
             } else if (!a_input.compare (cur, strlen (PREFIX_MEMORY_VALUES),
                         PREFIX_MEMORY_VALUES)) {
-                UString addr;
-                std::vector<UString>  values;
+                size_t addr;
+                std::vector<uint8_t>  values;
                 if (!parse_memory_values (a_input, cur, cur,  addr, values)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
                 } else {
