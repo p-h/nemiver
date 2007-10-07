@@ -252,6 +252,8 @@ RegistersView::widget () const
 void
 RegistersView::clear ()
 {
+    THROW_IF_FAIL (m_priv && m_priv->list_store) ;
+    m_priv->list_store->clear ();
 }
 
 }//end namespace nemiver
