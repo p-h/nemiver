@@ -295,6 +295,7 @@ private:
     void on_activate_breakpoints_view ();
     void on_activate_logs_view ();
     void on_activate_registers_view () ;
+    void on_default_config_read ();
     
     //************
     //</signal slots>
@@ -557,6 +558,7 @@ public:
     sigc::signal<void, bool>& debugger_ready_signal () ;
     sigc::signal<void>& debugger_not_started_signal () ;
     sigc::signal<void>& going_to_run_target_signal () ;
+    sigc::signal<void>& default_config_read_signal ();
 };//end class DBGPerspective
 
 struct RefGObject {
@@ -640,6 +642,7 @@ struct DBGPerspective::Priv {
     sigc::signal<void, bool> debugger_ready_signal;
     sigc::signal<void> debugger_not_started_signal ;
     sigc::signal<void> going_to_run_target_signal ;
+    sigc::signal<void> default_config_read_signal ;
     sigc::signal<void, bool> show_command_view_signal  ;
     sigc::signal<void, bool> show_target_output_view_signal  ;
     sigc::signal<void, bool> show_log_view_signal ;
@@ -749,6 +752,7 @@ struct DBGPerspective::Priv {
     void
     modify_source_editor_fonts (const UString &a_font_name)
     {
+        THROW_IF_FAIL (memory_view);
         Pango::FontDescription font_desc (a_font_name);
         map<int, SourceEditor*>::iterator it ;
         for (it = pagenum_2_source_editor_map.begin () ;
@@ -757,6 +761,17 @@ struct DBGPerspective::Priv {
             if (it->second) {
                 it->second->source_view ().modify_font (font_desc);
             }
+        }
+        memory_view->modify_font (font_desc);
+    }
+
+    Glib::ustring
+    get_source_font_name ()
+    {
+        if (use_system_font) {
+            return system_font_name;
+        } else {
+            return custom_font_name;
         }
     }
 
@@ -2061,6 +2076,14 @@ DBGPerspective::on_activate_registers_view ()
     activate_status_view(get_registers_scrolled_win());
 }
 
+void
+DBGPerspective::on_default_config_read ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    THROW_IF_FAIL (m_priv);
+    Pango::FontDescription font_desc(m_priv->get_source_font_name ());
+    get_memory_view ().modify_font (font_desc) ;
+}
 
 //****************************
 //</slots>
@@ -2733,6 +2756,9 @@ DBGPerspective::init_signals ()
 
     get_thread_list ().thread_selected_signal ().connect (sigc::mem_fun
         (*this, &DBGPerspective::on_thread_list_thread_selected_signal)) ;
+
+    default_config_read_signal ().connect (sigc::mem_fun (this,
+                &DBGPerspective::on_default_config_read));
 }
 
 void
@@ -3308,6 +3334,7 @@ DBGPerspective::read_default_config ()
                             m_priv->custom_font_name);
     conf_mgr.get_key_value (CONF_KEY_SYSTEM_FONT_NAME,
                             m_priv->system_font_name);
+    default_config_read_signal ().emit ();
 }
 
 int
@@ -3715,13 +3742,8 @@ DBGPerspective::open_file (const UString &a_path,
                          (*this, &DBGPerspective::on_insertion_changed_signal),
                       source_editor)) ;
 
-    if (m_priv->use_system_font) {
-        Pango::FontDescription font_desc(m_priv->system_font_name);
-        source_editor->source_view ().modify_font (font_desc) ;
-    } else {
-        Pango::FontDescription font_desc(m_priv->custom_font_name);
-        source_editor->source_view ().modify_font (font_desc) ;
-    }
+    Pango::FontDescription font_desc(m_priv->get_source_font_name ());
+    source_editor->source_view ().modify_font (font_desc) ;
     source_editor->set_path (a_path) ;
     source_editor->marker_region_got_clicked_signal ().connect
         (sigc::mem_fun
@@ -5080,7 +5102,6 @@ DBGPerspective::get_memory_view ()
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->memory_view) {
         m_priv->memory_view.reset (new MemoryView (debugger ())) ;
-        m_priv->memory_view->widget ();
     }
     THROW_IF_FAIL (m_priv->memory_view) ;
     return *m_priv->memory_view ;
@@ -5414,6 +5435,12 @@ sigc::signal<void>&
 DBGPerspective::going_to_run_target_signal ()
 {
     return m_priv->going_to_run_target_signal ;
+}
+
+sigc::signal<void>&
+DBGPerspective::default_config_read_signal ()
+{
+    return m_priv->default_config_read_signal ;
 }
 
 sigc::signal<void, bool>&
