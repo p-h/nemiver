@@ -1,5 +1,10 @@
 2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-memory-view.cc: coding standard cleanups (add
+	a_ to function arguments)
+
+2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-memory-view.cc: Improve the display of memory
 	by using builtin std::showbase, etc instead of doing my own formatting.
 	Also, don't display fill with zeros, just make sure that they're all the

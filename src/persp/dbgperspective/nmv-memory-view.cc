@@ -206,23 +206,23 @@ public:
         return addr;
     }
 
-    bool validate_address (size_t addr)
+    bool validate_address (size_t a_addr)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         // FIXME: implement validation
-        if (addr)
+        if (a_addr)
         {
             return true;
         }
         return false;
     }
 
-    void set_widgets_sensitive (bool enable = true)
+    void set_widgets_sensitive (bool a_enable = true)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_address_entry && m_jump_button);
-        m_address_entry->set_sensitive (enable);
-        m_jump_button->set_sensitive (enable);
+        m_address_entry->set_sensitive (a_enable);
+        m_jump_button->set_sensitive (a_enable);
     }
 
     void on_memory_read_response (size_t a_addr,
@@ -232,37 +232,41 @@ public:
         NEMIVER_TRY
         THROW_IF_FAIL (m_address_entry);
         ostringstream addr;
-        addr << "0x" << std::hex << a_addr;
+        addr << std::showbase << std::hex << a_addr;
         m_address_entry->set_text (addr.str ());
         set_data (a_addr, a_values);
         NEMIVER_CATCH
     }
 
-    void set_data (size_t start_addr, std::vector<uint8_t> data)
+    void set_data (size_t a_start_addr, std::vector<uint8_t> a_data)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_textbuffer);
         std::ostringstream ostream;
-        ostream << std::hex << start_addr << ":" << std::endl;
-        for (std::vector<uint8_t>::const_iterator it = data.begin ();
-                it != data.end (); ++it)
+        ostream << std::showbase << std::hex << a_start_addr << ":"
+            << std::noshowbase << std::endl;
+        for (std::vector<uint8_t>::const_iterator it = a_data.begin ();
+                it != a_data.end (); ++it)
         {
             switch (m_format_combo.get_format ())
             {
                 case OUTPUT_FORMAT_BINARY:
                     // thanks to Nicolai Josuttis for the tip:
                     // http://www.josuttis.com/libbook/cont/bitset2.cpp.html
-                    ostream << std::bitset<std::numeric_limits<uint8_t>::digits>(*it);
+                    ostream <<
+                        std::bitset<std::numeric_limits<uint8_t>::digits>(*it);
                     break;
                 case OUTPUT_FORMAT_DECIMAL:
                     ostream << std::setw(3) << std::dec << (int) *it;
                     break;
                 case OUTPUT_FORMAT_OCTAL:
-                    ostream << std::setw(4) << std::showbase << std::oct << (int) *it;
+                    ostream << std::setw(4) << std::showbase << std::oct
+                        << (int) *it;
                     break;
                 case OUTPUT_FORMAT_HEX:
                 default:
-                    ostream << std::setw(4) << std::showbase << std::hex << (int) *it;
+                    ostream << std::setw(4) << std::showbase << std::hex
+                        << (int) *it;
             }
             ostream << " ";
         }
