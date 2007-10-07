@@ -97,6 +97,7 @@ public:
     SafePtr<Gtk::Button> m_jump_button;
     SafePtr<Gtk::HBox> m_hbox;
     SafePtr<Gtk::VBox> m_container;
+    SafePtr<Gtk::Label> m_format_label;
     FormatComboBox m_format_combo;
     SafePtr<Gtk::ScrolledWindow> m_scrolledwindow;
     Glib::RefPtr<Gtk::TextBuffer> m_textbuffer;
@@ -110,17 +111,24 @@ public:
         m_jump_button (new Gtk::Button (_("Show"))),
         m_hbox (new Gtk::HBox ()),
         m_container (new Gtk::VBox ()),
+        m_format_label (new Gtk::Label (_("Format:"))),
         m_scrolledwindow (new Gtk::ScrolledWindow ()),
         m_textbuffer (Gtk::TextBuffer::create ()),
         m_textview (new Gtk::TextView (m_textbuffer)),
         m_debugger (a_debugger)
     {
         m_textview->set_wrap_mode (Gtk::WRAP_WORD);
+        m_textview->set_left_margin (6);
+        m_textview->set_right_margin (6);
         m_scrolledwindow->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         m_scrolledwindow->add (*m_textview);
+        m_scrolledwindow->set_shadow_type (Gtk::SHADOW_IN);
 
+        m_hbox->set_spacing (6);
+        m_hbox->set_border_width (3);
         m_hbox->pack_start (*m_address_label, Gtk::PACK_SHRINK);
         m_hbox->pack_start (*m_address_entry, Gtk::PACK_SHRINK);
+        m_hbox->pack_start (*m_format_label, Gtk::PACK_SHRINK);
         m_hbox->pack_start (m_format_combo, Gtk::PACK_SHRINK);
         m_hbox->pack_start (*m_jump_button, Gtk::PACK_SHRINK);
         m_container->pack_start (*m_hbox, Gtk::PACK_SHRINK);
