@@ -191,6 +191,18 @@ public:
         Glib::ustring reg_name = (*tree_iter)[get_columns ().name];
         LOG_DD ("setting register " << reg_name << " to " << a_new_val);
         debugger->set_register_value (reg_name, a_new_val);
+
+        // FIXME: this is an ugly hack to keep the treeview in sync with the
+        // current value of the register.  At present, we can't easily tell if
+        // setting of the register has failed. We don't want to just leave the
+        // user-entered value in the treeview or the user will falsely assume
+        // that she has successfully modified the register value even on
+        // failures.  So until we have proper error detection and can present a
+        // message to the user indicating that setting the register has failed,
+        // we must read back the register value immediately after setting it.
+        std::list<IDebugger::register_id_t> regs;
+        regs.push_back ((tree_iter->get_value (get_columns ().id)));
+        debugger->list_register_values (regs);
     }
 
     void on_debugger_register_value_changed (const Glib::ustring& a_register_name,

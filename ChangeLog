@@ -1,5 +1,13 @@
 2007-10-02  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-registers-view.cc: ugly hack to keep the
+	register values in the treeview in sync with the register values in gdb.
+	This is only necessary because we can't easily tie gdb error messages to
+	specific command requests at the moment.  We should work out a way to
+	present user-friendly error messages in cases like this.
+
+2007-10-02  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-registers-view.cc: clear the list of
 	registers when the target is detached
 
