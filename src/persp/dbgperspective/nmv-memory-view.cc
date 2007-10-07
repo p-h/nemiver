@@ -120,6 +120,7 @@ public:
         m_textview->set_wrap_mode (Gtk::WRAP_WORD);
         m_textview->set_left_margin (6);
         m_textview->set_right_margin (6);
+        m_textview->set_editable (false);
         m_scrolledwindow->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         m_scrolledwindow->add (*m_textview);
         m_scrolledwindow->set_shadow_type (Gtk::SHADOW_IN);

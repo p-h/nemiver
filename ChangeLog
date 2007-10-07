@@ -1,5 +1,10 @@
 2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-memory-view.cc: Memory TextView widget should
+	not be editable since there's no support for editing memory implemented yet
+
+2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-memory-view.cc: coding standard cleanups (add
 	a_ to function arguments)
 
