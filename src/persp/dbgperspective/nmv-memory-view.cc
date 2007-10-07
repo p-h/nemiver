@@ -244,7 +244,6 @@ public:
         THROW_IF_FAIL (m_textbuffer);
         std::ostringstream ostream;
         ostream << std::hex << start_addr << ":" << std::endl;
-        ostream << setfill ('0');
         for (std::vector<uint8_t>::const_iterator it = data.begin ();
                 it != data.end (); ++it)
         {
@@ -256,16 +255,14 @@ public:
                     ostream << std::bitset<std::numeric_limits<uint8_t>::digits>(*it);
                     break;
                 case OUTPUT_FORMAT_DECIMAL:
-                    ostream << std::dec << std::setw(3) << (int) *it;
+                    ostream << std::setw(3) << std::dec << (int) *it;
                     break;
                 case OUTPUT_FORMAT_OCTAL:
-                    ostream << "0" << std::oct << std::setw(3) << (int) *it;
+                    ostream << std::setw(4) << std::showbase << std::oct << (int) *it;
                     break;
                 case OUTPUT_FORMAT_HEX:
                 default:
-                    // not using showbase here because showbase doesn't display
-                    // 0x00, but only 0
-                    ostream << "0x" << std::hex << std::setw(2) << (int) *it;
+                    ostream << std::setw(4) << std::showbase << std::hex << (int) *it;
             }
             ostream << " ";
         }

@@ -1,5 +1,12 @@
 2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-memory-view.cc: Improve the display of memory
+	by using builtin std::showbase, etc instead of doing my own formatting.
+	Also, don't display fill with zeros, just make sure that they're all the
+	same width
+
+2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-memory-view.cc: a bunch of little UI
 	cleanups.  Give the text view a margin so that text doesn't go right up to
 	the border.  Also give a shadow border around the text view.  Add a 'Format'
