@@ -1,5 +1,11 @@
 2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/memoryviewwidget.glade: don't activate
+	default in the memory view widget.  It was causing warnings on the command
+	line
+
+2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/glade/memoryviewwidget.glade: UI definition for
 	Memory view widget
 	* src/persp/dbgperspective/glade/Makefile.am: add new file
@@ -14,14 +20,14 @@
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: integrate new Memory view
 	widget
 
-2007-08-04  Jonathon Jongsma  <jjongsma@gnome.org>
+2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.cc: Fix read_memory() function which was
 	missing the option specifying the format (hex)
 	* src/dbgengine/nmv-i-debugger.h: Add default value (empty string) for
 	cookie in read_memory()
 
-2007-08-04  Jonathon Jongsma  <jjongsma@gnome.org>
+2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/dbgengine/nmv-i-debugger.h: add interface for reading memory values
 	* src/dbgengine/nmv-dbg-common.h: add data storage for memory values
