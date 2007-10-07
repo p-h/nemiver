@@ -56,6 +56,8 @@ nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
 nmv-registers-view.cc \
 nmv-registers-view.h \
+nmv-memory-view.cc \
+nmv-memory-view.h \
 nmv-thread-list.h \
 nmv-thread-list.cc \
 nmv-file-list.cc \

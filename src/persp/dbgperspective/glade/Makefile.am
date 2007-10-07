@@ -11,7 +11,8 @@ findtextdialog.glade \
 openfiledialog.glade \
 setbreakpointdialog.glade \
 chooseoverloadsdialog.glade \
-remotetargetdialog.glade
+remotetargetdialog.glade \
+memoryviewwidget.glade
 
 gladedir = @NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)/glade
 glade_DATA = $(gladefiles)

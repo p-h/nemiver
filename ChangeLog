@@ -1,5 +1,21 @@
 2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/memoryviewwidget.glade: UI definition for
+	Memory view widget
+	* src/persp/dbgperspective/glade/Makefile.am: add new file
+	* src/persp/dbgperspective/nmv-memory-view.h,
+	src/persp/dbgperspective/nmv-memory-view.cc: Add a very rudimentary and
+	basic implementation of a memory viewer widget.  It currently just retrieves
+	a fixed number bytes from the starting address and puts it in a TextView.
+	When the debugger is stopped, it updates the values.  Eventually we'll
+	actually create a real memory viewer widget, but this provides some basic
+	functionality for now.
+	* src/persp/dbgperspective/Makefile.am: add new files
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: integrate new Memory view
+	widget
+
+2007-08-04  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc: Fix read_memory() function which was
 	missing the option specifying the format (hex)
 	* src/dbgengine/nmv-i-debugger.h: Add default value (empty string) for

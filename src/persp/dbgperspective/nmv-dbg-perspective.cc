@@ -66,6 +66,7 @@
 #include "nmv-choose-overloads-dialog.h"
 #include "nmv-remote-target-dialog.h"
 #include "nmv-registers-view.h"
+#include "nmv-memory-view.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -498,6 +499,8 @@ public:
 
     RegistersView& get_registers_view () ;
 
+    MemoryView& get_memory_view () ;
+
     ThreadList& get_thread_list () ;
 
     void set_show_command_view (bool) ;
@@ -515,6 +518,8 @@ public:
     void set_show_breakpoints_view (bool) ;
 
     void set_show_registers_view (bool) ;
+
+    void set_show_memory_view (bool) ;
 
     void add_text_to_command_view (const UString &a_text,
                                    bool a_no_repeat=false) ;
@@ -646,6 +651,7 @@ struct DBGPerspective::Priv {
     bool terminal_view_is_visible ;
     bool breakpoints_view_is_visible ;
     bool registers_view_is_visible ;
+    bool memory_view_is_visible ;
     Gtk::Notebook *sourceviews_notebook ;
     map<UString, int> path_2_pagenum_map ;
     map<UString, int> basename_2_pagenum_map ;
@@ -663,6 +669,7 @@ struct DBGPerspective::Priv {
     SafePtr<ThreadList> thread_list ;
     SafePtr<Gtk::ScrolledWindow> registers_scrolled_win ;
     SafePtr<RegistersView> registers_view ;
+    SafePtr<MemoryView> memory_view ;
 
     int current_page_num ;
     IDebuggerSafePtr debugger ;
@@ -724,6 +731,7 @@ struct DBGPerspective::Priv {
         terminal_view_is_visible (false),
         breakpoints_view_is_visible (false),
         registers_view_is_visible (false),
+        memory_view_is_visible (false),
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0),
@@ -762,6 +770,7 @@ enum ViewsIndex
     TERMINAL_VIEW_INDEX,
     BREAKPOINTS_VIEW_INDEX,
     REGISTERS_VIEW_INDEX,
+    MEMORY_VIEW_INDEX,
     TARGET_OUTPUT_VIEW_INDEX,
     ERROR_VIEW_INDEX
 };
@@ -2124,6 +2133,7 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_terminal_view (true) ;
     set_show_breakpoints_view (true) ;
     set_show_registers_view (true) ;
+    set_show_memory_view (true) ;
     m_priv->statuses_notebook->set_current_page (0) ;
 }
 
@@ -2788,6 +2798,7 @@ DBGPerspective::clear_status_notebook ()
     get_local_vars_inspector ().re_init_widget () ;
     get_breakpoints_view ().clear () ;
     get_registers_view ().clear () ;
+    get_memory_view ().clear () ;
 }
 
 void
@@ -5063,6 +5074,18 @@ DBGPerspective::get_registers_view ()
     return *m_priv->registers_view ;
 }
 
+MemoryView&
+DBGPerspective::get_memory_view ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->memory_view) {
+        m_priv->memory_view.reset (new MemoryView (plugin_path (), debugger ())) ;
+        m_priv->memory_view->widget ();
+    }
+    THROW_IF_FAIL (m_priv->memory_view) ;
+    return *m_priv->memory_view ;
+}
+
 void
 DBGPerspective::set_show_command_view (bool a_show)
 {
@@ -5270,6 +5293,32 @@ DBGPerspective::set_show_registers_view (bool a_show)
             m_priv->registers_view_is_visible = false;
         }
         m_priv->registers_view_is_visible = false;
+    }
+}
+
+void
+DBGPerspective::set_show_memory_view (bool a_show)
+{
+    if (a_show) {
+        if (!get_memory_view ().widget ().get_parent ()
+            && m_priv->memory_view_is_visible == false) {
+            get_memory_view ().widget ().show_all () ;
+            int page_num = m_priv->statuses_notebook->insert_page
+                                            (get_memory_view ().widget (),
+                                             _("Memory"),
+                                             MEMORY_VIEW_INDEX) ;
+            m_priv->memory_view_is_visible = true ;
+            m_priv->statuses_notebook->set_current_page (page_num);
+        }
+    } else {
+        if (get_memory_view ().widget ().get_parent ()
+            && m_priv->memory_view_is_visible) {
+            LOG_DD ("removing memory view") ;
+            m_priv->statuses_notebook->remove_page
+                                        (get_memory_view ().widget ());
+            m_priv->memory_view_is_visible = false;
+        }
+        m_priv->memory_view_is_visible = false;
     }
 }
 
