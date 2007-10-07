@@ -1,3 +1,9 @@
+2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-memory-view.cc: automatically re-read memory
+	when the format type is changed or when the address text entry is activated
+	(e.g. by pressing enter after typing an address)
+
 2007-10-04  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/Makefile.am,
