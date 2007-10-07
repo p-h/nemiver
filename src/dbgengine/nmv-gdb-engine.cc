@@ -3440,7 +3440,15 @@ GDBEngine::read_memory (const UString& a_start_addr, long a_num_bytes, const USt
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     UString cmd;
-    cmd.printf ("-data-read-memory %s 1 1 %li",
+    // format: -data-read-memory ADDR WORD_FORMAT WORD_SIZE NR_ROW NR_COLS
+    // We assume the following for now:
+    //  - output values in hex format (x)
+    //  - word size of 1 byte
+    //  - a single row of output
+    // When we parse the output from the command, we assume that there's only a
+    // single row of output -- if this ever changes, the parsing function will
+    // need to be updated
+    cmd.printf ("-data-read-memory %s x 1 1 %li",
             a_start_addr.c_str (),
             a_num_bytes);
     queue_command (Command ("read-memory",

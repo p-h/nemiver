@@ -1,5 +1,12 @@
 2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/dbgengine/nmv-gdb-engine.cc: Fix read_memory() function which was
+	missing the option specifying the format (hex)
+	* src/dbgengine/nmv-i-debugger.h: Add default value (empty string) for
+	cookie in read_memory()
+
+2007-08-04  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-i-debugger.h: add interface for reading memory values
 	* src/dbgengine/nmv-dbg-common.h: add data storage for memory values
 	* src/dbgengine/nmv-gdb-engine.cc: add handling for reading memory values

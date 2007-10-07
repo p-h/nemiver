@@ -722,7 +722,7 @@ public:
 
 
     virtual void read_memory (const UString& a_start_addr, long a_num_bytes,
-            const UString& a_cookie) = 0;
+            const UString& a_cookie="") = 0;
     virtual sigc::signal <void,
                           const UString&, // start address
                           std::vector<UString>, // values
