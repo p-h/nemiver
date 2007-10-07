@@ -25,6 +25,7 @@
 #define __NMV_MEMORY_VIEW_H__
 
 #include <gtkmm/widget.h>
+#include <pangomm/fontdescription.h>
 #include <libglademm.h>
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
@@ -48,6 +49,7 @@ class NEMIVER_API MemoryView : public nemiver::common::Object {
     virtual ~MemoryView ();
     Gtk::Widget& widget () const;
     void clear ();
+    void modify_font (const Pango::FontDescription& a_font_desc);
 };
 
 }   // namespace nemiver

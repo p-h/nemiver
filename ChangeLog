@@ -1,5 +1,14 @@
 2007-10-04  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/Makefile.am,
+	src/persp/dbgperspective/nmv-memory-editor.cc,h: remove MemoryEditor class
+	* src/persp/dbgperspective/nmv-memory-view.cc,h: move the MemoryEditor
+	functionality into MemoryView since it was really only a TextView and
+	TextBuffer.  Also improve the memory display slightly, and add an option for
+	displaying the memory values as decimal, hex, octal, or binary
+
+2007-10-04  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add
 	default_config_read_signal() so that we can detect when the initial
 	configuration values have been read so that we can set things based on these

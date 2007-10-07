@@ -58,8 +58,6 @@ nmv-registers-view.cc \
 nmv-registers-view.h \
 nmv-memory-view.cc \
 nmv-memory-view.h \
-nmv-memory-editor.cc \
-nmv-memory-editor.h \
 nmv-thread-list.h \
 nmv-thread-list.cc \
 nmv-file-list.cc \
