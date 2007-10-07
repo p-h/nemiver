@@ -102,8 +102,11 @@ public:
     SafePtr<Gtk::ScrolledWindow> m_scrolledwindow;
     Glib::RefPtr<Gtk::TextBuffer> m_textbuffer;
     SafePtr<Gtk::TextView> m_textview;
+    Glib::RefPtr<Gtk::TextBuffer::Tag> m_changed_tag;
     MemoryOutputFormat m_format;
     IDebuggerSafePtr m_debugger;
+    std::vector<uint8_t> m_cached_data;
+    size_t m_cached_address;
 
     Priv (IDebuggerSafePtr& a_debugger) :
         m_address_label (new Gtk::Label (_("Address:"))),
@@ -115,8 +118,13 @@ public:
         m_scrolledwindow (new Gtk::ScrolledWindow ()),
         m_textbuffer (Gtk::TextBuffer::create ()),
         m_textview (new Gtk::TextView (m_textbuffer)),
-        m_debugger (a_debugger)
+        m_changed_tag (Gtk::TextBuffer::Tag::create ("changed")),
+        m_debugger (a_debugger),
+        m_cached_address (0)
     {
+        m_changed_tag->property_foreground () = "Red";
+        m_textbuffer->get_tag_table ()->add (m_changed_tag);
+
         m_textview->set_wrap_mode (Gtk::WRAP_WORD);
         m_textview->set_left_margin (6);
         m_textview->set_right_margin (6);
@@ -243,12 +251,35 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_textbuffer);
-        std::ostringstream ostream;
-        ostream << std::showbase << std::hex << a_start_addr << ":"
+        m_textbuffer->erase (m_textbuffer->begin (), m_textbuffer->end ());
+        std::ostringstream addr_stream;
+        addr_stream << std::showbase << std::hex << a_start_addr << ":"
             << std::noshowbase << std::endl;
-        for (std::vector<uint8_t>::const_iterator it = a_data.begin ();
+        m_textbuffer->insert (m_textbuffer->end (), addr_stream.str ());
+
+        std::vector<uint8_t>::const_iterator it, old_it;
+        for (it = a_data.begin (), old_it = m_cached_data.begin ();
                 it != a_data.end (); ++it)
         {
+            bool changed = false;
+            Glib::RefPtr<Gtk::TextBuffer::Mark> changed_start, changed_end;
+            if (a_start_addr == m_cached_address)
+            {
+                // if the cached data is not the same size as the new data, only
+                // compare up to the last element we have cached
+                if (old_it != m_cached_data.end ())
+                {
+                    if (*it != *old_it)
+                    {
+                        changed = true;
+                        changed_start = m_textbuffer->create_mark (m_textbuffer->end ());
+                    }
+                    // increment for the next loop
+                    ++old_it;
+                }
+            }
+
+            std::ostringstream ostream;
             switch (m_format_combo.get_format ())
             {
                 case OUTPUT_FORMAT_BINARY:
@@ -269,10 +300,27 @@ public:
                     ostream << std::setw(4) << std::showbase << std::hex
                         << (int) *it;
             }
-            ostream << " ";
-        }
+            m_textbuffer->insert (m_textbuffer->end (), ostream.str ());
 
-        m_textbuffer->set_text (ostream.str());
+            if (changed)
+            {
+                changed_end = m_textbuffer->create_mark (m_textbuffer->end ());
+            }
+            if (changed_start && changed_end)
+            {
+                // display data that has changed since last time in red
+                m_textbuffer->apply_tag (m_changed_tag,
+                        m_textbuffer->get_iter_at_mark (changed_start),
+                        m_textbuffer->get_iter_at_mark (changed_end));
+            }
+
+            // add space between bytes
+            m_textbuffer->insert (m_textbuffer->end (), " ");
+
+        }
+        m_cached_data.clear ();
+        m_cached_data.assign (a_data.begin (), a_data.end ());
+        m_cached_address = a_start_addr;
     }
 
 };
