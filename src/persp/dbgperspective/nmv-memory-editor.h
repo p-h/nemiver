@@ -2,7 +2,8 @@
  *  PROJECT: Nemiver
  *
  *  AUTHOR: Jonathon Jongsma
- *  See COPYRIGHT file copyright information.
+ *
+ *  Copyright (c) 2007 Jonathon Jongsma
  *
  *  License:
  *    This program is free software; you can redistribute it and/or modify
@@ -21,34 +22,31 @@
  *    Boston, MA  02111-1307  USA
  *
  *******************************************************************************/
-#ifndef __NMV_MEMORY_VIEW_H__
-#define __NMV_MEMORY_VIEW_H__
+#ifndef __NMV_MEMORY_EDITOR_H__
+#define __NMV_MEMORY_EDITOR_H__
 
 #include <gtkmm/widget.h>
-#include <libglademm.h>
-#include "common/nmv-object.h"
-#include "common/nmv-safe-ptr-utils.h"
-#include "nmv-i-debugger.h"
+#include <sigc++/signal.h>
+#include <nemiver/common/nmv-safe-ptr-utils.h>
 
-using nemiver::common::SafePtr;
-using nemiver::common::UString;
+namespace nemiver
+{
+    class MemoryEditor
+    {
+        public:
+            MemoryEditor();
+            virtual ~MemoryEditor();
+            void set_data (size_t start_addr, std::vector<uint8_t> data);
+            void update_byte (size_t addr, uint8_t value);
+            void reset ();
+            sigc::signal<void, size_t, uint8_t>& signal_value_changed () const;
+            Gtk::Widget& widget ();
 
-namespace nemiver {
+        private:
+            struct Priv;
+            nemiver::common::SafePtr<Priv> m_priv;
 
-class NEMIVER_API MemoryView : public nemiver::common::Object {
-    // non-copyable
-    MemoryView (const MemoryView&);
-    MemoryView& operator= (const MemoryView&);
+    };
+}
 
-    struct Priv;
-    SafePtr<Priv> m_priv;
-
-    public:
-    MemoryView (IDebuggerSafePtr& a_debugger);
-    virtual ~MemoryView ();
-    Gtk::Widget& widget () const;
-    void clear ();
-};
-
-}   // namespace nemiver
-#endif // __NMV_MEMORY_VIEW_H__
+#endif // __NMV_MEMORY_EDITOR_H__

@@ -5079,7 +5079,7 @@ DBGPerspective::get_memory_view ()
 {
     THROW_IF_FAIL (m_priv) ;
     if (!m_priv->memory_view) {
-        m_priv->memory_view.reset (new MemoryView (plugin_path (), debugger ())) ;
+        m_priv->memory_view.reset (new MemoryView (debugger ())) ;
         m_priv->memory_view->widget ();
     }
     THROW_IF_FAIL (m_priv->memory_view) ;

@@ -21,54 +21,43 @@
  *    Boston, MA  02111-1307  USA
  *
  *******************************************************************************/
+#include <sstream>
 #include <gtkmm/textview.h>
 #include <gtkmm/entry.h>
+#include <gtkmm/label.h>
 #include <gtkmm/box.h>
+#include <glib/gi18n.h>
 #include "nmv-ui-utils.h"
 #include "nmv-memory-view.h"
+#include "nmv-memory-editor.h"
 #include "nmv-i-debugger.h"
 
 namespace nemiver {
 
 struct MemoryView::Priv {
 public:
-    Glib::RefPtr<Gnome::Glade::Xml> m_glade;
-    Gtk::TextView* m_textview;
-    Gtk::Entry* m_address_entry;
-    Gtk::Button* m_jump_button;
+    SafePtr<MemoryEditor> m_editor;
+    SafePtr<Gtk::Label> m_address_label;
+    SafePtr<Gtk::Entry> m_address_entry;
+    SafePtr<Gtk::Button> m_jump_button;
+    SafePtr<Gtk::HBox> m_hbox;
     SafePtr<Gtk::VBox> m_container;
     IDebuggerSafePtr m_debugger;
 
-    Priv (const UString& a_resource_root_path, IDebuggerSafePtr& a_debugger) :
+    Priv (IDebuggerSafePtr& a_debugger) :
+        m_editor (new MemoryEditor()),
+        m_address_label (new Gtk::Label(_("Address:"))),
+        m_address_entry (new Gtk::Entry()),
+        m_jump_button (new Gtk::Button(_("Show"))),
+        m_hbox (new Gtk::HBox()),
+        m_container (new Gtk::VBox()),
         m_debugger (a_debugger)
     {
-        std::vector<string> path_elems ;
-        path_elems.push_back (Glib::locale_from_utf8 (a_resource_root_path)) ;
-        path_elems.push_back ("glade");
-        path_elems.push_back ("memoryviewwidget.glade");
-        std::string glade_path = Glib::build_filename (path_elems) ;
-        if (!Glib::file_test (glade_path, Glib::FILE_TEST_IS_REGULAR)) {
-            THROW (UString ("could not find file ") + glade_path) ;
-        }
-        m_glade = Gnome::Glade::Xml::create (glade_path) ;
-        THROW_IF_FAIL (m_glade) ;
-        Gtk::Window* win =  ui_utils::get_widget_from_glade<Gtk::Window> (m_glade,
-                "unused_window") ;
-        THROW_IF_FAIL (win) ;
-        m_container.reset (ui_utils::get_widget_from_glade<Gtk::VBox> (m_glade,
-                "memoryviewwidget")) ;
-        THROW_IF_FAIL (m_container) ;
-        static_cast<Gtk::Container*>(win)->remove (static_cast<Gtk::Widget&>(*m_container));
-
-        m_textview = ui_utils::get_widget_from_glade<Gtk::TextView> (m_glade,
-                "memory_textview") ;
-        THROW_IF_FAIL (m_textview) ;
-        m_address_entry = ui_utils::get_widget_from_glade<Gtk::Entry> (m_glade,
-                "address_entry") ;
-        THROW_IF_FAIL (m_address_entry) ;
-        m_jump_button = ui_utils::get_widget_from_glade<Gtk::Button> (m_glade,
-                "jump_button") ;
-        THROW_IF_FAIL (m_jump_button) ;
+        m_hbox->pack_start (*m_address_label, Gtk::PACK_SHRINK);
+        m_hbox->pack_start (*m_address_entry, Gtk::PACK_SHRINK);
+        m_hbox->pack_start (*m_jump_button, Gtk::PACK_SHRINK);
+        m_container->pack_start (*m_hbox, Gtk::PACK_SHRINK);
+        m_container->pack_start (m_editor->widget ());
 
         connect_signals ();
     }
@@ -93,10 +82,10 @@ public:
         switch (a_state)
         {
             case IDebugger::READY:
-                set_widget_sensitive (true);
+                set_widgets_sensitive (true);
                 break;
             default:
-                set_widget_sensitive (false);
+                set_widgets_sensitive (false);
         }
         NEMIVER_CATCH
     }
@@ -108,7 +97,7 @@ public:
                               const UString& /*a_cookie*/)
     {
         NEMIVER_TRY
-        UString addr = m_address_entry->get_text ();
+        size_t addr = get_address ();
         if (validate_address (addr))
         {
             m_debugger->read_memory (addr, 100);
@@ -120,8 +109,9 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
-        THROW_IF_FAIL (m_address_entry && m_debugger);
-        UString addr = m_address_entry->get_text ();
+        THROW_IF_FAIL (m_debugger);
+        size_t addr = get_address ();
+        LOG_DD ("got address: " << UString::from_int(addr));
         if (validate_address (addr))
         {
             m_debugger->read_memory (addr, 100);
@@ -129,18 +119,27 @@ public:
         NEMIVER_CATCH
     }
 
-    bool validate_address (const UString& addr)
+    size_t get_address ()
+    {
+        THROW_IF_FAIL (m_address_entry);
+        std::istringstream istream (m_address_entry->get_text ());
+        size_t addr;
+        istream >> std::hex >> addr;
+        return addr;
+    }
+
+    bool validate_address (size_t addr)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         // FIXME: implement validation
-        if (!addr.empty ())
+        if (addr)
         {
             return true;
         }
         return false;
     }
 
-    void set_widget_sensitive (bool enable = true)
+    void set_widgets_sensitive (bool enable = true)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_address_entry && m_jump_button);
@@ -148,23 +147,22 @@ public:
         m_jump_button->set_sensitive (enable);
     }
 
-    void on_memory_read_response (const UString& a_addr,
-            std::vector<UString> a_values, const UString& a_cookie)
+    void on_memory_read_response (size_t a_addr,
+            std::vector<uint8_t> a_values, const UString& /*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
-        THROW_IF_FAIL (m_address_entry && m_textview);
-        if (a_cookie.empty ()) {}
-        m_address_entry->set_text (a_addr);
-        UString val_str = UString::join (a_values);
-        m_textview->get_buffer ()->set_text (val_str);
+        THROW_IF_FAIL (m_address_entry && m_editor);
+        ostringstream addr;
+        addr << "0x" << std::hex << a_addr;
+        m_address_entry->set_text (addr.str ());
+        m_editor->set_data (a_addr, a_values);
         NEMIVER_CATCH
     }
 };
 
-MemoryView::MemoryView (const UString& a_resource_root_path, IDebuggerSafePtr&
-        a_debugger) :
-    m_priv (new Priv(a_resource_root_path, a_debugger))
+MemoryView::MemoryView (IDebuggerSafePtr& a_debugger) :
+    m_priv (new Priv(a_debugger))
 {
 }
 
@@ -181,8 +179,8 @@ MemoryView::widget () const
 void
 MemoryView::clear ()
 {
-    THROW_IF_FAIL (m_priv && m_priv->m_textview);
-    m_priv->m_textview->get_buffer ()->set_text ("");
+    THROW_IF_FAIL (m_priv && m_priv->m_editor);
+    m_priv->m_editor->reset ();
 }
 
 } // namespace nemiver
