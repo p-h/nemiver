@@ -65,6 +65,9 @@ static const char* gv_register_values =
 static const char* gv_memory_values =
 "addr=\"0x000013a0\",nr-bytes=\"32\",total-bytes=\"32\",next-row=\"0x000013c0\",prev-row=\"0x0000139c\",next-page=\"0x000013c0\",prev-page=\"0x00001380\",memory=[{addr=\"0x000013a0\",data=[\"0x10\",\"0x11\",\"0x12\",\"0x13\"],ascii=\"xxxx\"}]";
 
+static const char* gv_breakpoint_table =
+"BreakpointTable={nr_rows=\"1\",nr_cols=\"6\",hdr=[{width=\"3\",alignment=\"-1\",col_name=\"number\",colhdr=\"Num\"},{width=\"14\",alignment=\"-1\",col_name=\"type\",colhdr=\"Type\"},{width=\"4\",alignment=\"-1\",col_name=\"disp\",colhdr=\"Disp\"},{width=\"3\",alignment=\"-1\",col_name=\"enabled\",colhdr=\"Enb\"},{width=\"10\",alignment=\"-1\",col_name=\"addr\",colhdr=\"Address\"},{width=\"40\",alignment=\"2\",col_name=\"what\",colhdr=\"What\"}],body=[bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x08081566\",func=\"main\",file=\"main.cc\",fullname=\"/home/jonathon/Projects/agave.git/src/main.cc\",line=\"70\",times=\"0\"}]}";
+
 void
 test_str0 ()
 {
@@ -398,6 +401,27 @@ test_memory_values ()
     BOOST_REQUIRE_EQUAL (*mem_iter, 0x13u);
 }
 
+void
+test_breakpoint_table ()
+{
+    std::map<int, IDebugger::BreakPoint> breakpoints;
+    UString::size_type cur = 0;
+
+    BOOST_REQUIRE (parse_breakpoint_table (gv_breakpoint_table,
+                cur, cur, breakpoints)) ;
+    BOOST_REQUIRE_EQUAL (breakpoints.size (), 1u);
+    std::map<int, IDebugger::BreakPoint>::const_iterator iter;
+    iter = breakpoints.find (1);
+    BOOST_REQUIRE (iter != breakpoints.end ());
+    BOOST_REQUIRE_EQUAL (iter->second.number (), 1);
+    BOOST_REQUIRE (iter->second.enabled ());
+    BOOST_REQUIRE_EQUAL (iter->second.address (), "0x08081566");
+    BOOST_REQUIRE_EQUAL (iter->second.function (), "main");
+    BOOST_REQUIRE_EQUAL (iter->second.file_name (), "main.cc");
+    BOOST_REQUIRE_EQUAL (iter->second.file_full_name (), "/home/jonathon/Projects/agave.git/src/main.cc");
+    BOOST_REQUIRE_EQUAL (iter->second.line (), 70);
+}
+
 using boost::unit_test::test_suite ;
 
 NEMIVER_API test_suite*
@@ -426,6 +450,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_changed_registers));
     suite->add (BOOST_TEST_CASE (&test_register_values));
     suite->add (BOOST_TEST_CASE (&test_memory_values));
+    suite->add (BOOST_TEST_CASE (&test_breakpoint_table));
     return suite ;
 
     NEMIVER_CATCH_NOX

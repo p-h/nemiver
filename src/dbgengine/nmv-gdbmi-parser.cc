@@ -194,6 +194,12 @@ parse_breakpoint (const UString &a_input,
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
+    if (a_input.c_str ()[cur] != '}') {
+        LOG_PARSING_ERROR (a_input, cur) ;
+        return false;
+    }
+    ++cur ;
+
 
     if (attrs["addr"] == "<PENDING>") {
         UString pending = attrs["pending"] ;
@@ -269,13 +275,13 @@ parse_breakpoint_table (const UString &a_input,
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
-    cur += 17 ;
+    cur += strlen (PREFIX_BREAKPOINT_TABLE) ;
     if (cur >= end) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
 
-    //skip table headers and got to table body.
+    //skip table headers and go to table body.
     cur = a_input.find ("body=[", 0)  ;
     if (!cur) {
         LOG_PARSING_ERROR (a_input, cur) ;

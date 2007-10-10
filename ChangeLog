@@ -1,3 +1,11 @@
+2007-10-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc: Fix for bug #465263 "Error Parsing
+	breakpoint table".  The parse_breakpoint() function was not advancing to the
+	closing '}' character of the breakpoint, and therefore was not able to parse
+	the list of breakpoints correctly.
+	* tests/test-gdbmi.cc: added a test for the failure reported in bug #465263
+
 2007-10-06  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-memory-view.cc: display data that has changed
