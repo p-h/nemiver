@@ -1,5 +1,15 @@
 2007-10-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Breakpoints were
+	appearing in the Breakpoint list multiple times because the ID was not being
+	set properly.  So when the 'breakpoints_set' signal was fired, we went
+	through the tree model to see if a breakpoint with that ID was found, none
+	were found, so all breakpoints were added even if they already existed in
+	the model.
+	Also added some logging to help uncover the issue.
+
+2007-10-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/dbgengine/nmv-gdbmi-parser.cc: Fix for bug #465263 "Error Parsing
 	breakpoint table".  The parse_breakpoint() function was not advancing to the
 	closing '}' character of the breakpoint, and therefore was not able to parse

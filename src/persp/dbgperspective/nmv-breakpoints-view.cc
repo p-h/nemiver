@@ -167,8 +167,10 @@ public:
                 Gtk::TreeModel::iterator tree_iter =
                     find_breakpoint_in_model(breakmap_iter->second);
                 if (tree_iter) {
+                    LOG_DD ("Updating breakpoint " << breakmap_iter->second.number ());
                     update_breakpoint(tree_iter, breakmap_iter->second);
                 } else {
+                    LOG_DD ("Adding breakpoint " << breakmap_iter->second.number ());
                     append_breakpoint(breakmap_iter->second);
                 }
             }
@@ -223,6 +225,7 @@ public:
     {
         (*a_iter)[get_bp_columns ().breakpoint] = a_breakpoint;
         (*a_iter)[get_bp_columns ().enabled] = a_breakpoint.enabled () ;
+        (*a_iter)[get_bp_columns ().id] = a_breakpoint.number () ;
         (*a_iter)[get_bp_columns ().address] = a_breakpoint.address () ;
         (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
         (*a_iter)[get_bp_columns ().line] = a_breakpoint.line ();
