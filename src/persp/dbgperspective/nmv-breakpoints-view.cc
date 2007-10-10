@@ -40,6 +40,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<bool> enabled ;
     Gtk::TreeModelColumn<Glib::ustring> address ;
     Gtk::TreeModelColumn<Glib::ustring> filename ;
+    Gtk::TreeModelColumn<Glib::ustring> function ;
     Gtk::TreeModelColumn<int> line ;
     Gtk::TreeModelColumn<IDebugger::BreakPoint> breakpoint ;
 
@@ -49,6 +50,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
         add (enabled) ;
         add (address) ;
         add (filename) ;
+        add (function) ;
         add (line) ;
         add (breakpoint) ;
     }
@@ -120,9 +122,10 @@ public:
         //create the columns of the tree view
         tree_view->append_column_editable ("", get_bp_columns ().enabled) ;
         tree_view->append_column (_("ID"), get_bp_columns ().id) ;
-        tree_view->append_column (_("Address"), get_bp_columns ().address) ;
         tree_view->append_column (_("Filename"), get_bp_columns ().filename) ;
         tree_view->append_column (_("Line"), get_bp_columns ().line) ;
+        tree_view->append_column (_("Function"), get_bp_columns ().function) ;
+        tree_view->append_column (_("Address"), get_bp_columns ().address) ;
         Gtk::CellRendererToggle *enabled_toggle =
             dynamic_cast<Gtk::CellRendererToggle*>
                                     (tree_view->get_column_cell_renderer(0));
@@ -226,6 +229,7 @@ public:
         (*a_iter)[get_bp_columns ().breakpoint] = a_breakpoint;
         (*a_iter)[get_bp_columns ().enabled] = a_breakpoint.enabled () ;
         (*a_iter)[get_bp_columns ().id] = a_breakpoint.number () ;
+        (*a_iter)[get_bp_columns ().function] = a_breakpoint.function ();
         (*a_iter)[get_bp_columns ().address] = a_breakpoint.address () ;
         (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
         (*a_iter)[get_bp_columns ().line] = a_breakpoint.line ();

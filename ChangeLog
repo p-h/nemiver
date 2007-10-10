@@ -1,5 +1,12 @@
 2007-10-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Add 'function' column to
+	the breakpoints list so that you can tell at a glance where the breakpoint
+	is by looking at the list.  Also re-arrange the columns to make the order a
+	bit more useful.
+
+2007-10-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Breakpoints were
 	appearing in the Breakpoint list multiple times because the ID was not being
 	set properly.  So when the 'breakpoints_set' signal was fired, we went
