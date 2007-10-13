@@ -295,8 +295,9 @@ private:
     void on_activate_breakpoints_view ();
     void on_activate_logs_view ();
     void on_activate_registers_view () ;
+    void on_activate_memory_view () ;
     void on_default_config_read ();
-    
+
     //************
     //</signal slots>
     //************
@@ -2069,11 +2070,18 @@ DBGPerspective::on_activate_logs_view ()
     activate_status_view(get_log_view_scrolled_win());
 }
 
-void 
-DBGPerspective::on_activate_registers_view () 
+void
+DBGPerspective::on_activate_registers_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     activate_status_view(get_registers_scrolled_win());
+}
+
+void
+DBGPerspective::on_activate_memory_view ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    activate_status_view(get_memory_view ().widget ());
 }
 
 void
@@ -2389,6 +2397,15 @@ DBGPerspective::init_actions ()
             sigc::mem_fun(*this, &DBGPerspective::on_activate_registers_view),
             ActionEntry::DEFAULT,
             "<alt>5"
+        },
+        {
+            "ActivateMemoryViewMenuAction",
+            nil_stock_id,
+            _("Memory"),
+            _("Switch to Memory View"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_memory_view),
+            ActionEntry::DEFAULT,
+            "<alt>6"
         },
         {
             "ShowCommandsMenuAction",
