@@ -12,4 +12,4 @@ DOC_FIGURES = \
 			  figures/variable-inspector.png \
 			  figures/set-breakpoint-dialog.png \
 			  figures/open-files-target.png
-DOC_LINGUAS = sv
+DOC_LINGUAS = oc sv
