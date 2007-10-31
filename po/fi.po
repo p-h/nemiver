@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-07 19:01+0300\n"
+"POT-Creation-Date: 2007-10-31 18:09+0300\n"
 "PO-Revision-Date: 2007-06-09 20:14+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -251,7 +251,7 @@ msgid "Saved Sessions"
 msgstr "Tallennetut istunnot"
 
 #: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2197
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2326
 msgid "Inspect a Variable"
 msgstr "Tutki muuttujaa"
 
@@ -350,39 +350,44 @@ msgid "Location"
 msgstr "Sijainti"
 
 #. create the columns of the tree view
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:122
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:124
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:92
 #: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:95
 msgid "ID"
 msgstr "Tunniste"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:123
-msgid "Address"
-msgstr "Osoite"
-
 #. create the columns of the tree view
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:124
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:125
 #: ../src/persp/dbgperspective/nmv-file-list.cc:106
 msgid "Filename"
 msgstr "Tiedostonimi"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:125
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:126
 msgid "Line"
 msgstr "Rivi"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:407
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:127
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:385
+msgid "Function"
+msgstr "Funktio"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:128
+msgid "Address"
+msgstr "Osoite"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:414
 msgid "_Delete"
 msgstr "_Poista"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:408
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:415
 msgid "Remove this breakpoint"
 msgstr "Poista tämä keskeytyspiste"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:416
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:423
 msgid "_Go to Source"
 msgstr "_Siirry lähdekoodiin"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:417
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:424
 msgid "Find this breakpoint in the source editor"
 msgstr "Etsi tämä keskeytyspiste lähdekoodin muokkaimeen"
 
@@ -398,356 +403,392 @@ msgstr "Kopioi kutsupino leikepöydälle"
 msgid "Frame"
 msgstr "Raami"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:385
-msgid "Function"
-msgstr "Funktio"
-
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:386
 msgid "Arguments"
 msgstr "Argumnentit"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:781
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:817
 #, c-format
 msgid "File %s has been modified. Do want to reload it ?"
 msgstr "Tiedostoa %s on muokattu. Haluatko ladata sen uudestaan?"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1160
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1196
 #, c-format
 msgid "File path info is missing for breakpoint '%i'"
 msgstr "Tiedostopolun tiedot puuttuvat keskeytyspisteeltä \"%i\""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1449
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1485
 msgid "Remove _Breakpoint"
 msgstr "Poista _keskeytyspiste"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1452
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1488
 msgid "Disable Breakpoint"
 msgstr "Poista keskeytyspiste käytöstä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1454
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1490
 msgid "Enable Breakpoint"
 msgstr "Ota keskeytyspiste käyttöön"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1457
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1493
 msgid "Set _Breakpoint"
 msgstr "Aseta _keskeytyspiste"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1600
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1636
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (polku=\"%s\", pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1613
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1649
 msgid "Connected to remote target !"
 msgstr "Yhteys etäkohteeseen on avattu!"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1751
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1787
 #, c-format
 msgid "Could not find file %s"
 msgstr "Tiedostoa %s ei löytynyt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1764
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1822
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1800
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1858
 #, c-format
 msgid "File path info is missing for function '%s'"
 msgstr "Tiedoston polkutiedot puuttuvat funktiolta \"%s\""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1786
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1822
 msgid "Program exited"
 msgstr "Ohjelma sulkeutui"
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1900
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1936
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "Kohde vastaanotti signaalin: %s, %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1915
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1951
 #, c-format
 msgid "An error occured: %s"
 msgstr "Tapahtui virhe: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2079
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2208
 msgid "_Save Session to Disk"
 msgstr "_Tallenna istunto levylle"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2209
 msgid "Save the current debugging session to disk"
 msgstr "Tallenna nykyinen vianjäljitysistunto levylle"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2091
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2220
 msgid "_Restart"
 msgstr "Käynnistä _uudestaan"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2092
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2221
 msgid "Restart the target, killing this process and starting a new one"
 msgstr ""
 "Käynnistä kohde uudestaan, tappaen tämän prosessin ja käynnistäen uuden"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2103
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2232
 msgid "_Detach from the Running Program..."
 msgstr "_Irrota suoritettavasta ohjelmasta..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2104
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2233
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "Irrota vianjäljitin suoritettavasta ohjelmasta lopettamatta sitä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2243
 msgid "_Next"
 msgstr "_Seuraava"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2115
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2244
 msgid "Execute next line stepping over the next function, if any"
 msgstr "Suorite seuraava rivi ohittaen seuraavan funktion, jos sellainen on"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2124
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2253
 msgid "_Step"
 msgstr "_Askella"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2125
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2254
 msgid "Execute next line, stepping into the next function, if any"
 msgstr "Suorite seuraava rivi siiryen funktioon, jos sellainen on"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2134
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2263
 msgid "Step _Out"
 msgstr "Askel _ulos"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2135
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2264
 msgid "Finish the execution of the current function"
 msgstr "Lopeta tämänhetkisen funktion suoritus"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2144
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2273
 msgid "_Continue"
 msgstr "_Jatka"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2145
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2274
 msgid "Continue program execution until the next breakpoint"
 msgstr "Jatka ohjelman suoritusta seuraavaan keskeytyspisteeseen"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2154
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2283
 msgid "Run to Cursor"
 msgstr "Suorita kursoriin"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2155
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2284
 msgid "Continue program execution until the currently selected line is reached"
 msgstr "Jatka ohjelman suoritusta, kunnes saavutaan valitulle riville"
 
 #. don't translate, name will be overwritten based on context
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2166
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2295
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "Aseta tai poista keskeytyspiste nykyiseen kohdistimen kohtaan"
 
 #. don't translate, name will be overwritten based on context
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2176
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2305
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
 "Ota käyttöön tai poista käytöstä kohdistimen kohtaan asetettu keskeytyspiste"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2187
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2316
 msgid "Set Breakpoint..."
 msgstr "Aseta keskeytyspiste..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2188
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2317
 msgid "Set a breakpoint at a function or line number"
 msgstr "Aseta keskeytyspiste funktioon tai rivinumeroon"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2198
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2327
 msgid "Inspect a global or local variable"
 msgstr "Tutki globaalia tai paikallista muuttujaa"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2209
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2338
 msgid "Stop"
 msgstr "Pysäytä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2210
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2339
 msgid "Stop the Debugger"
 msgstr "Pysäytä vianjäljitin"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2221
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2350
 msgid "_View"
 msgstr "_Näytä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2230
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2359
+msgid "Stack"
+msgstr "Pino"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2360
+msgid "Switch to Stack View"
+msgstr "Siirry pinonäkymään"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2368
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5241
+msgid "Variables"
+msgstr "Muuttujat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2369
+msgid "Switch to Variables View"
+msgstr "Siirry muuttujanäkymään"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2377
+msgid "Target Terminal"
+msgstr "Kohdepääte"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2378
+msgid "Switch to Target Terminal View"
+msgstr "Siirry kohdepäätenäkymään"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2386
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5294
+msgid "Breakpoints"
+msgstr "Keskeytyspisteet"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2387
+msgid "Switch to Breakpoints  View"
+msgstr "Siirry keskeytyspistenäkymään"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2395
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5320
+msgid "Registers"
+msgstr "Rekisterit"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2396
+msgid "Switch to Registers View"
+msgstr "Siirry rekisterinäkymään"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2404
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5346
+msgid "Memory"
+msgstr "Muisti"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2405
+msgid "Switch to Memory View"
+msgstr "Siirry muistinäkymään"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2413
 msgid "Show Commands"
 msgstr "Näytä komennot"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2231
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2414
 msgid "Show the debugger commands tab"
 msgstr "Näytä vianjäljittimen komentojen välilehti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2239
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2422
 msgid "Show Errors"
 msgstr "Näytä virheet"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2240
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2423
 msgid "Show the errors tab"
 msgstr "Näytä virhevälilehti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2431
 msgid "Show Output"
 msgstr "Näytä tuloste"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2249
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2432
 msgid "Show the debugged target output tab"
 msgstr "Näytä jäljitetyn kohteen tulostevälilehti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2257
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2440
 msgid "_Debug"
 msgstr "_Jäljitä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2267
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2449
 msgid "_Open Source File ..."
 msgstr "_Avaa lähdetiedosto..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2268
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2450
 msgid "Open a source file for viewing"
 msgstr "Avaa lähdekooditiedosto katseltavaksi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2276
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2458
 msgid "_Execute..."
 msgstr "_Suorita..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2277
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2459
 msgid "Execute a program"
 msgstr "Suorita ohjelma"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2286
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2468
 msgid "_Load Core File..."
 msgstr "_Lataa core-tiedosto..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2287
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2469
 msgid "Load a core file from disk"
 msgstr "Lataa core-tiedosto levyltä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2478
 msgid "_Attach to Running Program..."
 msgstr "_Liity suoritettavaan ohjelmaan..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2297
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2479
 msgid "Debug a program that's already running"
 msgstr "Jäljitä ohjelmaa, joka on jo käynnissä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2488
 msgid "_Connect to remote target..."
 msgstr "_Yhdistä etäkohteeseen..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2307
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2489
 msgid "Connect to a debugging server to debug a remote target"
 msgstr "Jäljitä etäkohteita yhdistämällä jäljityspalvelimeen"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2316
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2498
 msgid "Resume Sa_ved Session..."
 msgstr "Palauta _tallennettu istunto..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2317
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2499
 msgid "Manage previously saved debugging sessions"
 msgstr "Hallitse aiemmin tallennettuja vianjäljitysistuntoja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2326
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2508
 msgid "_Preferences"
 msgstr "_Asetukset"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2327
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2509
 msgid "Edit the properties of the current session"
 msgstr "Muokkaa nykyisen istunnon ominaisuuksia"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2339
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2521
 msgid "_Reload Source File ..."
 msgstr "_Lataa lähdetiedosto uudestaan..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2340
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2522
 msgid "Reloads the source file"
 msgstr "Lataa lähdekooditiedoston uudestaan"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2348
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2530
 msgid "_Close"
 msgstr "_Sulje"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2349
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2531
 msgid "Close the opened file"
 msgstr "Sulje avattu tiedosto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2357
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2539
 msgid "_Find"
 msgstr "_Etsi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2358
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2540
 msgid "Find a text string in file"
 msgstr "Etsi merkkijonoa tiedostosta"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2707
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2893
 #, c-format
 msgid "Close %s"
 msgstr "Sulje %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3679
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3861
 msgid "Reached end of file"
 msgstr "Saavutettiin tiedoston loppu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3682
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3864
 #, c-format
 msgid "Could not find string %s"
 msgstr "Merkkijonoa %s ei löytynyt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4009
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4191
 msgid "You cannot attach to Nemiver itself"
 msgstr "Et voi liittyä Nemiveriin itseensä"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4014
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4196
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Et voi liittyä käytössä olevaan vianjäljitysohjelmaan"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4156
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4338
 msgid "Failed to stop the debugger"
 msgstr "Vianjäljitintä ei voitu pysäyttää"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4239
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4421
 #, c-format
 msgid "There is no file name info for symbol@addr: %s@%s"
 msgstr "Tiedostonimen tiedostot puuttuvat symbolilta osoitteessa: %s@%s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4429
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4611
 #, c-format
 msgid "Could not find file: %s\n"
 msgstr "Tiedostoa ei löydy: %s\n"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4623
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4805
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Virheellinen rivinumero: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4944
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5137
 msgid "Commands"
 msgstr "Komennot"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4970
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5163
 msgid "Output"
 msgstr "Tuloste"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4996
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5189
 msgid "Logs"
 msgstr "Lokit"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5021
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5214
 msgid "Call stack"
 msgstr "Kutsupino"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5048
-msgid "Variables"
-msgstr "Muuttujat"
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5075
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5268
 msgid "Target terminal"
 msgstr "Kohdepääte"
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5101
-msgid "Breakpoints"
-msgstr "Keskeytyspisteet"
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5127
-msgid "Registers"
-msgstr "Rekisterit"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:124
 msgid "Expand _Selected"
