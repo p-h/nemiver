@@ -329,6 +329,7 @@ src/Makefile
   src/dbdimpl/sqlite/org.nemiver.db.sqlitedriver.conf
   src/dbgengine/Makefile
   src/dbgengine/gdbengine.conf
+  src/dbgengine/cpptrait.conf
   src/dbgengine/varlist.conf
   src/dbgengine/varwalker.conf
   src/dbgengine/varwalkerlist.conf
