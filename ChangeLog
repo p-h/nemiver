@@ -97,6 +97,12 @@
 2007-09-30 Dodji Seketeli <dodji@gnome.org>
 
 	* tests/Makefile.am:
+	* tests/test-global-variables.cc: added this to test global variables
+	  listing from IDebugger.
+
+2007-09-30 Dodji Seketeli <dodji@gnome.org>
+
+	* tests/Makefile.am:
 	* tests/test-var-walker.cc: added this to test IVarListWalker
 
 2007-09-30 Dodji Seketeli <dodji@gnome.org>
