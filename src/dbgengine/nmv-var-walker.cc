@@ -50,6 +50,13 @@ get_sequence ()
     return sequence ;
 }
 
+struct SafePtrCmp {
+    bool operator() (const IDebugger::VariableSafePtr l,
+                     const IDebugger::VariableSafePtr r)
+    {
+        return (l.get () < r.get ());
+    }
+};
 class VarWalker : public IVarWalker, public sigc::trackable {
 
     mutable sigc::signal<void,
@@ -62,7 +69,7 @@ class VarWalker : public IVarWalker, public sigc::trackable {
     mutable GDBEngineSafePtr m_debugger ;
     UString m_root_var_name ;
     list<sigc::connection> m_connections ;
-    map<IDebugger::Variable*, bool> m_vars_to_visit;
+    map<IDebugger::VariableSafePtr, bool, SafePtrCmp> m_vars_to_visit;
     UString m_cookie ;
     IDebugger::VariableSafePtr m_root_var ;
 
@@ -76,7 +83,7 @@ class VarWalker : public IVarWalker, public sigc::trackable {
     void on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
                                       const UString &a_cookie) ;
 
-    void get_type_of_all_members (const IDebugger::VariableSafePtr &a_from) ;
+    void get_type_of_all_members (const IDebugger::VariableSafePtr a_from) ;
 
 public:
 
@@ -168,7 +175,7 @@ VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
             << " parent: " << parent_name) ;
 
     visited_variable_node_signal ().emit (a_var) ;
-    m_vars_to_visit.erase (a_var.get ()) ;
+    m_vars_to_visit.erase (a_var) ;
     if (m_vars_to_visit.size () == 0) {
         visited_variable_signal ().emit (m_root_var) ;
         LOG_DD ("visited var: " << m_root_var->name ()
@@ -176,7 +183,7 @@ VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
     } else {
         LOG_DD ("m_vars_to_visit.size () = " << (int) m_vars_to_visit.size ()) ;
     }
-    map<IDebugger::Variable*, bool>::iterator it;
+    map<IDebugger::VariableSafePtr, bool>::iterator it;
     for (it = m_vars_to_visit.begin ();
          it != m_vars_to_visit.end ();
          ++it) {
@@ -187,7 +194,7 @@ VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
 }
 
 void
-VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr &a_from)
+VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr a_from)
 {
     RETURN_IF_FAIL (a_from) ;
 
@@ -210,7 +217,7 @@ VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr &a_from)
         LOG_DD ("variable name is weird, don't query for its type") ;
         LOG_DD ("member was: " << a_from->name ()) ;
     } else {
-        m_vars_to_visit[a_from.get ()] = true;
+        m_vars_to_visit[a_from] = true;
         m_debugger->get_variable_type (a_from, m_cookie) ;
     }
     list<IDebugger::VariableSafePtr>::const_iterator it;

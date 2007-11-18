@@ -1,5 +1,15 @@
 2007-11-18 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-var-walker.cc: fixed a nasty memory corruption bug.
+	  the map VarWalker::m_vars_to_visit was storing IDebugger::Variable*,
+	  not IDebugger::VariableSafePtr. So at some point, the pointer to
+	  variable were getting destroyed by the IDebugger internal somewhere.
+	  So back to storing IDebugger::VariableSafePtr. The map then needs the
+	  declaration of a comparison functor to be able to compare instance of
+	  IDebugger::VariableSafePtr properly. So one got added.
+
+2007-11-18 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-dbg-common.h:
 	  (Command::variable ()): Don't pass VariableSafePtr by reference
 	  otherwise we bypass its refcounting.
