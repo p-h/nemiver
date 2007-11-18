@@ -1,0 +1,16 @@
+Source: nemiver
+Section: gnome
+Priority: optional
+Vcs-Git: https://git.unstable.it/packages.git/
+Vcs-Browser: https://git.unstable.it/packages.git/?p=packages.git
+Maintainer: Luca Bruno <luca.br@uno.it>
+Uploaders: Andrea Corradi <lash@semailer.com>
+Build-Depends: debhelper (>= 5), autotools-dev
+Standards-Version: 3.7.2
+Homepage: http://home.gna.org/nemiver/
+
+Package: nemiver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Standalone graphical debugger for GNOME
+ <insert long description, indented with spaces>
