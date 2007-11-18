@@ -62,7 +62,7 @@ Parser::~Parser ()
 ///           id-expression
 /// TODO: handle id-expression
 bool
-Parser::parse_primary_expr (shared_ptr<PrimaryExpr> a_expr)
+Parser::parse_primary_expr (shared_ptr<PrimaryExpr> &a_expr)
 {
     Token token;
     if (!LEXER.peek_next_token (token)) {
@@ -121,13 +121,13 @@ Parser::parse_primary_expr (shared_ptr<PrimaryExpr> a_expr)
 /// namespace-alias:
 ///           identifier
 bool
-Parser::parse_class_or_namespace_name (string &str)
+Parser::parse_class_or_namespace_name (string &a_result)
 {
     Token token;
     if (!LEXER.peek_next_token (token)) {return false;}
 
     if (token.get_kind () == Token::IDENTIFIER) {
-        str = token.get_str_value ();
+        a_result = token.get_str_value ();
     } else {
         //TODO: handle the case of template-id
         return false;
@@ -178,10 +178,10 @@ bool
 Parser::parse_nested_name_specifier (string &a_specifier)
 {
     bool result=false;
-    LEXER.record_position ();
-
     string con_name, specifier, specifier2;
     Token token;
+
+    unsigned mark = LEXER.get_token_stream_mark ();
 
     if (!parse_class_or_namespace_name (con_name)) {goto error;}
     specifier += con_name;
@@ -202,10 +202,11 @@ Parser::parse_nested_name_specifier (string &a_specifier)
     }
     a_specifier = specifier;
     result=true;
+    
     goto out;
 
 error:
-    LEXER.restore_position ();
+    LEXER.rewind_to_mark (mark);
 out:
     return result;
 }
@@ -221,7 +222,7 @@ out:
 ///
 /// TODO: support template-id and conversion-function-id cases.
 bool
-Parser::parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> a_expr)
+Parser::parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> &a_expr)
 {
     Token token;
     if (!LEXER.peek_next_token (token)) {return false;}
@@ -260,7 +261,7 @@ Parser::parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> a_expr)
                 Token t;
                 if (LEXER.peek_nth_token (1, t)) {
                     LEXER.consume_next_token ();
-                    expr->set_token (UnqualifiedIDExpr::IDENTIFIER, t);
+                    expr->set_token (UnqualifiedIDExpr::DESTRUCTOR_ID, t);
                 } else {
                     //TODO: support template-id
                     return false;
@@ -287,11 +288,11 @@ Parser::parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> a_expr)
 ///   :: operator-function-id
 ///   :: template-id
 bool
-Parser::parse_qualified_id (shared_ptr<QualifiedIDExpr> a_expr)
+Parser::parse_qualified_id (shared_ptr<QualifiedIDExpr> &a_expr)
 {
     bool result=false;
 
-    LEXER.record_position ();
+    unsigned mark = LEXER.get_token_stream_mark ();
 
     Token token;
     string nested_name_specifier;
@@ -314,9 +315,7 @@ Parser::parse_qualified_id (shared_ptr<QualifiedIDExpr> a_expr)
         }
         expr->set_nested_name_specifier (nested_name_specifier);
         expr->set_kind (QualifiedIDExpr::NESTED_ID);
-        a_expr = expr;
-        result = true;
-        goto out;
+        goto okay;
     }
     if (token.get_kind () != Token::OPERATOR_SCOPE_RESOL) {
         goto error;
@@ -325,9 +324,7 @@ Parser::parse_qualified_id (shared_ptr<QualifiedIDExpr> a_expr)
 
     if (token.get_kind () == Token::IDENTIFIER) {
         expr->set_token (QualifiedIDExpr::IDENTIFIER_ID, token);
-        a_expr = expr;
-        result = true;
-        goto out;
+        goto okay;
     } else if (token.get_kind () == Token::KEYWORD
                && token.get_str_value () == "operator") {
         //operator-function-id:
@@ -336,15 +333,17 @@ Parser::parse_qualified_id (shared_ptr<QualifiedIDExpr> a_expr)
         if (!LEXER.consume_next_token (op_token)) {goto error;}
         if (op_token.is_operator ()) {goto error;}
         expr->set_token (QualifiedIDExpr::OP_FUNC_ID, op_token);
-        a_expr = expr;
-        result = true;
-        goto out;
+        goto okay;
     } else {
         //TODO: handle template-id case
     }
 
+okay:
+    a_expr=expr;
+    result = true;
+    goto out;
 error:
-    LEXER.restore_position ();
+    LEXER.rewind_to_mark (mark);
 out:
     return result;
 }
@@ -355,7 +354,7 @@ out:
 ///            unqualified-id
 ///            qualified-id
 bool
-Parser::parse_id_expr (shared_ptr<IDExpr> a_expr)
+Parser::parse_id_expr (shared_ptr<IDExpr> &a_expr)
 {
     bool result=false;
     Token token;
@@ -382,14 +381,14 @@ Parser::parse_id_expr (shared_ptr<IDExpr> a_expr)
         case Token::IDENTIFIER: {
             shared_ptr<UnqualifiedIDExpr> unq_expr;
             shared_ptr<QualifiedIDExpr> q_expr;
-            result = parse_unqualified_id (unq_expr);
-            if (result) {
+            if (parse_unqualified_id (unq_expr)) {
                 a_expr = unq_expr;
+                result = true;
             } else {
-                result = parse_qualified_id (q_expr);
-            }
-            if (result) {
-                a_expr = q_expr;
+                if (parse_qualified_id (q_expr)) {
+                    a_expr = q_expr;
+                    result = true;
+                }
             }
             return result;
         }
@@ -413,7 +412,7 @@ Parser::parse_elaborated_type_specifier (string &a_str)
     string str;
     Token token;
 
-    LEXER.record_position ();
+    unsigned mark = LEXER.get_token_stream_mark ();
 
     if (!LEXER.consume_next_token (token)) {goto error;}
 
@@ -488,7 +487,7 @@ okay:
     a_str = str;
     goto out;
 error:
-    LEXER.restore_position ();
+    LEXER.rewind_to_mark (mark);
 out:
     return result;
 
@@ -518,7 +517,7 @@ Parser::parse_simple_type_specifier (string &a_str)
     string result, str;
     Token token;
 
-    LEXER.record_position ();
+    unsigned mark = LEXER.get_token_stream_mark ();
 
     if (!LEXER.peek_next_token (token)) {goto error;}
 
@@ -561,7 +560,7 @@ okay:
     a_str = result;
     goto out;
 error:
-    LEXER.restore_position ();
+    LEXER.rewind_to_mark (mark);
 out:
     return status;
 }
@@ -576,27 +575,40 @@ out:
 ///            cv-qualifier
 /// TODO: handle class-specifier and enum specifier
 bool
-Parser::parse_type_specifier (string &a_result)
+Parser::parse_type_specifier (shared_ptr<TypeSpecifier> &a_result)
 {
-    string result, str;
+    string str;
+    shared_ptr<TypeSpecifier> result (new TypeSpecifier);
     Token token;
     bool is_ok=false;
 
-    LEXER.record_position ();
+    unsigned mark = LEXER.get_token_stream_mark ();
 
-    if (parse_simple_type_specifier (result)) {goto okay;}
-    if (parse_elaborated_type_specifier (result)) {goto okay;}
-    if (LEXER.consume_next_token (token)
-        && token.get_kind () == Token::KEYWORD
-        && (token.get_str_value () == "const"
-            || token.get_str_value () == "volatile")) {
-        LEXER.consume_next_token ();
-        result = token.get_str_value ();
+    if (parse_simple_type_specifier (str)) {
+        result->set_simple (str);
         goto okay;
+    }
+    if (parse_elaborated_type_specifier (str)) {
+        result->set_elaborated (str);
+        goto okay;
+    }
+    if (LEXER.consume_next_token (token)
+        && token.get_kind () == Token::KEYWORD) {
+        if (token.get_str_value () == "const") {
+            LEXER.consume_next_token ();
+            result->set_kind (TypeSpecifier::CONST);
+        } else if (token.get_str_value () == "volatile") {
+            LEXER.consume_next_token ();
+            result->set_kind (TypeSpecifier::VOLATILE);
+            goto okay;
+        } else {
+            goto error;
+        }
     }
     // TODO: handle class-specifier and enum specifier
 
-    LEXER.restore_position ();
+error:
+    LEXER.rewind_to_mark (mark);
     is_ok = false;
     goto out;
 okay:
@@ -604,6 +616,489 @@ okay:
     is_ok = true;
 out:
     return is_ok;
+}
+
+/// parse a type-id production
+///
+/// type-id:
+///         type-specifier-seq abstract-declarator(opt)
+///TODO: handle abstract-declarator
+bool
+Parser::parse_type_id (string &a_result)
+{
+    bool status=false;
+    string result, str;
+    shared_ptr<TypeSpecifier> type_spec;
+
+    unsigned mark = LEXER.get_token_stream_mark ();
+    if (!parse_type_specifier (type_spec)) {goto error;}
+    type_spec->to_string (result);
+    result += " ";
+
+    type_spec.reset ();
+    while (parse_type_specifier (type_spec)) {
+        type_spec->to_string (str);
+        result += str;
+        type_spec.reset ();
+    }
+    //TODO:handle abstract-declarator here.
+    goto okay;
+
+error:
+    LEXER.rewind_to_mark (mark);
+    status=false;
+    goto out;
+
+okay:
+    a_result = result;
+    status=true;
+    
+
+out:
+    return status;
+
+}
+
+/// parse a decl-specifier production
+///
+///decl-specifier:
+///            storage-class-specifier
+///            type-specifier
+///            function-specifier
+///            friend
+///            typedef
+///
+/// TODO: handle function-specifier
+bool
+Parser::parse_decl_specifier (shared_ptr<DeclSpecifier> &a_result)
+{
+    bool status=false;
+    Token token;
+    shared_ptr<TypeSpecifier> type_spec (new TypeSpecifier);
+    shared_ptr<DeclSpecifier> result (new DeclSpecifier);
+
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    if (!LEXER.peek_next_token (token)) {goto error;}
+
+    if (token.get_kind () == Token::KEYWORD) {
+        if (token.get_str_value () == "auto") {
+            result->set_kind (DeclSpecifier::AUTO);
+        } else if (token.get_str_value () == "register") {
+            result->set_kind (DeclSpecifier::REGISTER);
+        } else if (token.get_str_value () == "static") {
+            result->set_kind (DeclSpecifier::STATIC);
+        } else if (token.get_str_value () == "extern") {
+            result->set_kind (DeclSpecifier::EXTERN);
+        } else if (token.get_str_value () == "mutable") {
+            result->set_kind (DeclSpecifier::MUTABLE);
+        } else if (token.get_str_value () == "friend") {
+            result->set_kind (DeclSpecifier::FRIEND);
+        } else if (token.get_str_value () == "typedef") {
+            result->set_kind (DeclSpecifier::TYPEDEF);
+        }
+        LEXER.consume_next_token ();
+        goto okay;
+    }
+    if (parse_type_specifier (type_spec)) {
+        result->set_type_specifier (type_spec);
+        goto okay;
+    }
+    //TODO: handle function-specifier
+
+error:
+    status=false;
+    goto out;
+    LEXER.rewind_to_mark (mark);
+
+okay:
+    status = true;
+    a_result=result;
+
+out:
+    return status;
+}
+
+/// parse a decl-specifier-seq production.
+///
+/// decl-specifier-seq:
+///            decl-specifier-seq(opt) decl-specifier
+///
+/// [dcl.type]
+///
+/// As a general rule, at most one type-specifier is
+///  allowed in the complete decl-specifier-seq of a declaration.
+/// The only exceptions to this rule are the following:
+/// — const or volatile can be combined with any other type-specifier.
+///   However, redundant cv- qualifiers are prohibited except
+///   when introduced through the use of typedefs (7.1.3) or template type
+///   arguments (14.3), in which case the redundant cv-qualifiers are ignored.
+/// — signed or unsigned can be combined with char, long, short, or int.
+/// — short or long can be combined with int.
+/// — long can be combined with double.
+/// TODO: finish this.
+bool
+Parser::parse_decl_specifier_seq (list<shared_ptr<DeclSpecifier> > &a_result)
+{
+    string str;
+    list<shared_ptr<DeclSpecifier> > result;
+    shared_ptr<DeclSpecifier> decl, decl2;
+    bool is_ok=false, watch_nb_types=false;
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    unsigned mark2=0;
+    while (true ) {
+        mark2 = LEXER.get_token_stream_mark ();
+        if (!parse_decl_specifier (decl) || !decl) {
+            break;
+        }
+        //type specifier special cases
+        if (decl->get_type_specifier ()) {
+            //— const or volatile can be combined with any other type-specifier.
+            //  However, redundant cv- qualifiers are prohibited except
+            if (decl->get_type_specifier ()->is_cv_qualifier ()) {
+                if (!parse_decl_specifier (decl2)) {goto error;}
+                if (decl2->get_type_specifier ()) {
+                    if (decl2->get_type_specifier ()->is_cv_qualifier ()) {
+                        goto error;
+                    }
+                    watch_nb_types=true;
+                    result.push_back (decl);
+                    result.push_back (decl2);
+                }
+            } else if (decl->get_type_specifier ()->get_kind ()
+                       == TypeSpecifier::SIMPLE) {
+                //— signed or unsigned can be combined with char, long, short, or int.
+                //— short or long can be combined with int.
+                //— long can be combined with double.
+                //TODO: handle this
+                if (watch_nb_types) {
+                    LEXER.rewind_to_mark (mark2);
+                    break;
+                }
+                watch_nb_types=true;
+                result.push_back (decl);
+            } else {
+                if (watch_nb_types) {
+                    LEXER.rewind_to_mark (mark2);
+                    break;
+                }
+                watch_nb_types=true;
+                result.push_back (decl);
+            }
+        } else {
+            result.push_back (decl);
+        }
+    }
+    if (result.empty ())
+        goto error;
+
+    a_result = result;
+    is_ok=true;
+    goto out;
+error:
+    LEXER.rewind_to_mark (mark);
+    is_ok =false;
+out:
+    return is_ok;
+}
+
+///
+///
+/// declarator-id:
+///            id-expression
+///            ::(opt) nested-name-specifier(opt) type-name
+bool
+Parser::parse_declarator_id (string &a_result)
+{
+    bool status=false;
+    string result, str;
+    Token token;
+
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    shared_ptr<IDExpr> expr;
+    if (parse_id_expr (expr)) {
+        if (!expr) {
+            goto error;
+        }
+        expr->to_string (result);
+        goto okay;
+    }
+
+    if (!LEXER.consume_next_token (token)) {goto error;}
+    if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
+        result += "::";
+    }
+    if (parse_nested_name_specifier (str)) {
+        result += str + " ";
+    }
+    if (parse_type_name (str)) {
+        result += str;
+        goto okay;
+    }
+
+error:
+    LEXER.rewind_to_mark (mark);
+    status = false;
+    goto out;
+
+okay:
+    a_result = result;
+    status = true;
+    
+
+out:
+    return status;
+}
+
+/// parse a direct-declarator production.
+///
+///direct-declarator:
+///            declarator-id
+///            direct-declarator ( parameter-declaration-clause ) cv-qualifier-seq(opt)...
+///               exception-specification(opt)
+///            direct-declarator [ constant-expressionopt ]
+///            ( declarator )
+/// TODO: handle function style direct-declarator
+/// TODO: handle subscript style direct-declarator
+/// TODO: handle function pointer style direct declarator
+bool
+Parser::parse_direct_declarator (string &a_result)
+{
+    bool status=false;
+    string result;
+
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    if (!parse_declarator_id (result)) {goto error;}
+
+    //TODO: handle function style direct-declarator
+    // TODO: handle subscript style direct-declarator
+    // TODO: handle function pointer style direct declarator
+    goto okay;
+
+
+error:
+    LEXER.rewind_to_mark (mark);
+    status = false;
+    goto out;
+
+okay:
+    status = true;
+    a_result = result;
+    
+
+out:
+    return status;
+}
+
+bool
+Parser::parse_cv_qualifier (string &a_result)
+{
+    bool status=false;
+    string result;
+    Token token;
+
+    if (!LEXER.consume_next_token (token)) {goto error;}
+
+    if (token.get_kind () == Token::KEYWORD
+        && (token.get_str_value () == "const"
+            || token.get_str_value () == "volatile")) {
+        result += token.get_str_value ();
+        goto okay;
+    }
+
+error:
+    status = false;
+    goto out;
+
+okay:
+    status = true;
+    a_result = result;
+
+out:
+    return status;
+}
+
+bool
+Parser::parse_cv_qualifier_seq (string & a_result)
+
+{
+    bool status=false;
+    string result, str;
+
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    while (parse_cv_qualifier_seq (str)) {
+        result += str + " ";
+    }
+
+    if (result.empty ()) {goto error;}
+
+    goto okay;
+
+error:
+    LEXER.rewind_to_mark (mark);
+    status = false;
+    goto out;
+
+okay:
+    status = true;
+    a_result = result;
+
+out:
+    return status;
+}
+
+///
+///
+/// ptr-operator:
+///           * cv-qualifier-seq(opt)
+///           &
+///           ::(opt) nested-name-specifier * cv-qualifier-seq(opt)
+bool
+Parser::parse_ptr_operator (string &a_result)
+{
+    bool status=false;
+    string result, str;
+    Token token;
+
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+start:
+    if (!LEXER.consume_next_token (token)) {goto error;}
+    if (token.get_kind () == Token::OPERATOR_BIT_AND) {
+        result += "&";
+        goto okay;
+    } else if (token.get_kind () == Token::OPERATOR_MULT) {
+        result += "*";
+        if (!parse_cv_qualifier_seq (str)) {goto error;}
+        result += str;
+        goto okay;
+    } else if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
+        result += "::";
+    }
+    if (parse_nested_name_specifier (str)) {
+        goto start;
+    }
+    goto error;
+
+error:
+    status = false;
+    LEXER.rewind_to_mark (mark);
+    goto out;
+
+okay:
+    status = true;
+    a_result = result;
+
+out:
+    return status;
+}
+
+/// parse a declarator production.
+///
+/// declarator:
+///            direct-declarator
+///            ptr-operator declarator
+bool
+Parser::parse_declarator (string &a_result)
+{
+    if (parse_direct_declarator (a_result)) {
+        return true;
+    }
+    if (parse_ptr_operator (a_result)) {
+        return true;
+    }
+    return false;
+}
+
+/// parse an init-declarator production
+///
+/// init-declarator:
+///            declarator initializer(opt)
+///
+/// TODO: support initializer
+bool
+Parser::parse_init_declarator (string &a_result)
+{
+
+    if (parse_declarator (a_result)) {
+        return true;
+    }
+    return false;
+}
+
+/// parse an init-declarator-list production.
+///
+/// init-declarator-list:
+///           init-declarator
+///           init-declarator-list , init-declarator
+bool
+Parser::parse_init_declarator_list (string &a_result)
+{
+    bool status=false;
+    string result, str;
+    Token token;
+
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    if (parse_init_declarator (str)) {
+        result = str ;
+    } else {
+        goto error;
+    }
+
+loop:
+    if (LEXER.peek_next_token (token)
+        && token.get_kind () == Token::OPERATOR_SEQ_EVAL) {
+        if (parse_init_declarator (str)) {
+            result += ", " + str;
+        } else {
+            goto okay;
+        }
+    } else {
+        goto okay;
+    }
+    goto loop;
+
+error:
+    LEXER.rewind_to_mark (mark);
+    status = false;
+    goto out;
+
+okay:
+    status = true;
+    a_result = result;
+
+out:
+    return status;
+}
+
+/// parse a simple-declaration production
+///
+/// simple-declaration:
+///           decl-specifier-seq(opt) init-declarator-list(opt) ;
+///
+bool
+Parser::parse_simple_declaration (string &a_result)
+{
+    list<shared_ptr<DeclSpecifier> >  decls;
+    string result, str;
+
+    if (!parse_decl_specifier_seq (decls))
+        return true;
+    DeclSpecifier::list_to_string (decls, str);
+
+    result = str;
+
+    if (parse_init_declarator_list (str)) {
+        result += " " + str;
+    }
+
+    a_result = result;
+    return true;
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

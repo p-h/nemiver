@@ -48,16 +48,28 @@ class NEMIVER_API Parser {
 public:
     Parser (const string&);
     ~Parser ();
-    bool parse_primary_expr (shared_ptr<PrimaryExpr> expr);
+    bool parse_primary_expr (shared_ptr<PrimaryExpr> &expr);
     bool parse_class_or_namespace_name (string &str);
     bool parse_type_name (string &);
     bool parse_nested_name_specifier (string &str);
-    bool parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> a_expr);
-    bool parse_qualified_id (shared_ptr<QualifiedIDExpr> a_expr);
-    bool parse_id_expr (shared_ptr<IDExpr> a_expr);
+    bool parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> &a_expr);
+    bool parse_qualified_id (shared_ptr<QualifiedIDExpr> &a_expr);
+    bool parse_id_expr (shared_ptr<IDExpr> &a_expr);
     bool parse_elaborated_type_specifier (string &);
     bool parse_simple_type_specifier (string &);
-    bool parse_type_specifier (string &);
+    bool parse_type_specifier (shared_ptr<TypeSpecifier> &);
+    bool parse_type_id (string &);
+    bool parse_decl_specifier (shared_ptr<DeclSpecifier> &);
+    bool parse_decl_specifier_seq (list<shared_ptr<DeclSpecifier> > &);
+    bool parse_declarator_id (string &);
+    bool parse_direct_declarator (string &);
+    bool parse_cv_qualifier (string &);
+    bool parse_cv_qualifier_seq (string &);
+    bool parse_ptr_operator (string &);
+    bool parse_declarator (string &);
+    bool parse_init_declarator (string &);
+    bool parse_init_declarator_list (string &);
+    bool parse_simple_declaration (string &);
 };//end class Parser
 NEMIVER_END_NAMESPACE (nemiver)
 NEMIVER_END_NAMESPACE (cpp)

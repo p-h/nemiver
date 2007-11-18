@@ -91,8 +91,13 @@ private:
     bool scan_punctuator (Token &a_token);
     bool scan_next_token (Token &a_token) ;
     /// \@}
-public:
 
+    /// \name recording/restoring position in the  char input stream
+    void record_ci_position ();
+    void restore_ci_position ();
+    void pop_recorded_ci_position ();
+
+public:
     Lexer (const string &a_in) ;
     ~Lexer () ;
 
@@ -106,9 +111,8 @@ public:
     bool reached_eof () const;
     /// @}
 
-    /// \name recording/restoring position in the token/input stream
-    void record_position ();
-    void restore_position ();
+    unsigned get_token_stream_mark () const;
+    void rewind_to_mark (unsigned a_mark);
 };//end class Lexer
 
 NEMIVER_END_NAMESPACE (cpp)

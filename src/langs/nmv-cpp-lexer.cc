@@ -42,19 +42,23 @@ NEMIVER_BEGIN_NAMESPACE (cpp)
 //********************
 struct Lexer::Priv {
     string input ;
+    //points to the current character in the char stream
     string::size_type cursor ;
-    string::size_type recorded_position ;
+    deque<string::size_type> recorded_positions ;
     deque<Token> tokens_queue;
+    //points to the next token in the token stream;
+    deque<Token>::size_type token_cursor;
 
     Priv (const string &a_in) :
         input (a_in),
         cursor (0),
-        recorded_position (0)
+        token_cursor (0)
     {
     }
 
     Priv () :
-        cursor (0)
+        cursor (0),
+        token_cursor (0)
     {
     }
 };//end struct Lexer::Priv
@@ -190,7 +194,7 @@ bool
 Lexer::scan_decimal_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string result ;
     if (is_nonzero_digit (CUR_CHAR)) {
@@ -204,10 +208,11 @@ Lexer::scan_decimal_literal (string &a_result)
         CONSUME_CHAR;
     }
     a_result = result ;
+    pop_recorded_ci_position ();
     return true;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -215,7 +220,7 @@ bool
 Lexer::scan_octal_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS ;
-    record_position ();
+    record_ci_position ();
 
     string result ;
     if (CUR_CHAR != '0')
@@ -229,10 +234,11 @@ Lexer::scan_octal_literal (string &a_result)
         CONSUME_CHAR;
     }
     a_result = result ;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false;
 }
 
@@ -240,7 +246,7 @@ bool
 Lexer::scan_hexadecimal_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string result ;
     if (IN_BOUNDS (CUR+1)
@@ -256,10 +262,11 @@ Lexer::scan_hexadecimal_literal (string &a_result)
         goto error;
     }
     a_result = result ;
+    pop_recorded_ci_position ();
     return true;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -280,7 +287,7 @@ bool
 Lexer::scan_universal_character_name (int &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     if (!IN_BOUNDS (CUR+5) ||
         INPUT[CUR] != '\\' ||
@@ -291,10 +298,11 @@ Lexer::scan_universal_character_name (int &a_result)
     if (!scan_hexquad (a_result)) {
         goto error;
     }
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false;
 }
 
@@ -370,7 +378,7 @@ bool
 Lexer::scan_character_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string result;
     if (CUR_CHAR == 'L') {
@@ -390,10 +398,11 @@ Lexer::scan_character_literal (string &a_result)
         goto error;
     }
     a_result = result;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -401,7 +410,7 @@ bool
 Lexer::scan_digit_sequence (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string result ;
     while (CURSOR_IN_BOUNDS && is_digit (CUR_CHAR)) {
@@ -413,10 +422,11 @@ Lexer::scan_digit_sequence (string &a_result)
     }
 
     a_result = result ;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false;
 }
 
@@ -424,7 +434,7 @@ bool
 Lexer::scan_fractional_constant (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string left, right;
 
@@ -437,10 +447,11 @@ Lexer::scan_fractional_constant (string &a_result)
         goto error ;
     }
     a_result = left + "." + right ;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -448,7 +459,7 @@ bool
 Lexer::scan_exponent_part (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string result, sign ;
     if (CUR_CHAR != 'e' && CUR_CHAR != 'E') {
@@ -463,10 +474,11 @@ Lexer::scan_exponent_part (string &a_result)
         goto error ;
     }
     a_result = sign + result ;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -475,7 +487,7 @@ Lexer::scan_floating_literal (string &a_result,
                                  string &a_exponent)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string fract, exp;
 
@@ -499,10 +511,11 @@ Lexer::scan_floating_literal (string &a_result,
 
     a_result = fract;
     a_exponent = exp;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false;
 
 }
@@ -511,7 +524,7 @@ bool
 Lexer::scan_string_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string result ;
     if (CUR_CHAR == 'L') {
@@ -531,10 +544,11 @@ Lexer::scan_string_literal (string &a_result)
         goto error;
     }
     a_result = result ;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -568,7 +582,7 @@ bool
 Lexer::scan_integer_suffix (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    record_position ();
+    record_ci_position ();
 
     string result ;
     if (CUR_CHAR == 'u' or CUR_CHAR == 'U') {
@@ -592,10 +606,11 @@ Lexer::scan_integer_suffix (string &a_result)
         goto error;
     }
     a_result = result ;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false;
 }
 
@@ -637,7 +652,7 @@ bool
 Lexer::scan_simple_escape_sequence (int &a_result)
 {
     CHECK_CURSOR_BOUNDS;
-    record_position ();
+    record_ci_position ();
 
     if (CUR_CHAR != '\\')
         return false ;
@@ -682,10 +697,11 @@ Lexer::scan_simple_escape_sequence (int &a_result)
             goto error;
     }
     CONSUME_CHAR;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false;
 }
 
@@ -766,7 +782,8 @@ Lexer::scan_identifier (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
     string identifier;
-    record_position ();
+
+    record_ci_position ();
 
     if (!is_nondigit (CUR_CHAR)) {
         goto error;
@@ -781,10 +798,11 @@ Lexer::scan_identifier (Token &a_token)
         goto error;
     }
     a_token.set (Token::IDENTIFIER, identifier) ;
+    pop_recorded_ci_position ();
     return true ;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -902,7 +920,7 @@ bool
 Lexer::scan_operator (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
-    record_position ();
+    record_ci_position ();
 
     if (next_is ("new")) {
         MOVE_FORWARD (sizeof ("new"));
@@ -1095,10 +1113,11 @@ Lexer::scan_operator (Token &a_token)
     } else {
         goto error;
     }
+    pop_recorded_ci_position ();
     return true;
 
 error:
-    restore_position ();
+    restore_ci_position ();
     return false;
 }
 
@@ -1106,7 +1125,7 @@ bool
 Lexer::scan_punctuator (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
-    record_position ();
+    record_ci_position ();
 
     switch (CUR_CHAR) {
         case ':':
@@ -1145,9 +1164,10 @@ Lexer::scan_punctuator (Token &a_token)
             goto error;
     }
     CONSUME_CHAR;
+    pop_recorded_ci_position ();
     return true ;
 error:
-    restore_position ();
+    restore_ci_position ();
     return false ;
 }
 
@@ -1158,8 +1178,9 @@ bool
 Lexer::scan_next_token (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
-    record_position ();
     bool is_ok=false;
+
+    record_ci_position ();
 
     skip_blanks ();
 
@@ -1186,7 +1207,7 @@ Lexer::scan_next_token (Token &a_token)
         case ':':
             is_ok = scan_operator (a_token) ;
             if (is_ok) {
-                return true ;
+                goto okay;
             }
             break;
         default:
@@ -1205,7 +1226,7 @@ Lexer::scan_next_token (Token &a_token)
         case '?':
             is_ok = scan_punctuator (a_token);
             if (is_ok) {
-                return true;
+                goto okay;
             }
             break;
         default:
@@ -1232,25 +1253,29 @@ Lexer::scan_next_token (Token &a_token)
             break;
     }
     if (is_ok) {
-        return true;
+        goto okay;
     }
     //then try keywords
     if (is_nondigit (CUR_CHAR)) {
         is_ok = scan_keyword (a_token) ;
         if (is_ok) {
-            return true ;
+            goto okay;
         }
     }
     //then try identifiers
     if (is_nondigit (CUR_CHAR)) {
         is_ok = scan_identifier (a_token) ;
         if (is_ok) {
-            return true ;
+            goto okay;
         }
     }
 
-    restore_position ();
+    restore_ci_position ();
     return false;
+
+okay:
+    pop_recorded_ci_position ();
+    return true;
 }
 
 /// peek a token from the token queue
@@ -1258,7 +1283,7 @@ Lexer::scan_next_token (Token &a_token)
 bool
 Lexer::peek_next_token (Token &a_token)
 {
-    if (m_priv->tokens_queue.empty ()) {
+    if (m_priv->token_cursor >= m_priv->tokens_queue.size ()) {
         //token queue empty. Go scan the character input
         //to get one token and push it onto the token queue
         Token token;
@@ -1266,10 +1291,10 @@ Lexer::peek_next_token (Token &a_token)
             m_priv->tokens_queue.push_back (token);
         }
     }
-    if (m_priv->tokens_queue.empty ()) {
+    if (m_priv->token_cursor >= m_priv->tokens_queue.size ()) {
         return false;
     }
-    a_token = *m_priv->tokens_queue.begin ();
+    a_token = m_priv->tokens_queue[m_priv->token_cursor] ;
     return true;
 }
 
@@ -1283,12 +1308,13 @@ Lexer::peek_next_token (Token &a_token)
 bool
 Lexer::peek_nth_token (unsigned a_nth, Token &a_token)
 {
-    if (a_nth >= m_priv->tokens_queue.size ()) {
+    if (a_nth + m_priv->token_cursor >= m_priv->tokens_queue.size ()) {
         //we don't have enough tokens in the queue.
         //so go scan the input for tokens and push them
         //onto the queue
         Token token;
-        unsigned nb_tokens_2_scan = a_nth - m_priv->tokens_queue.size ();
+        unsigned nb_tokens_2_scan =
+            a_nth + m_priv->token_cursor - m_priv->tokens_queue.size ();
         while (nb_tokens_2_scan--) {
             if (!scan_next_token (token)) {
                 return false;
@@ -1296,7 +1322,7 @@ Lexer::peek_nth_token (unsigned a_nth, Token &a_token)
             m_priv->tokens_queue.push_back (token);
         }
     }
-    if (a_nth >= m_priv->tokens_queue.size ()) {
+    if (a_nth + m_priv->token_cursor >= m_priv->tokens_queue.size ()) {
         //we should never reach this condition.
         return false;
     }
@@ -1321,17 +1347,8 @@ Lexer::consume_next_token ()
 bool
 Lexer::consume_next_token (Token &a_token)
 {
-    if (m_priv->tokens_queue.empty ()) {
-        Token token;
-        if (!peek_next_token (token)) {
-            return false;
-        }
-    }
-    if (m_priv->tokens_queue.empty ()) {
-        return false;
-    }
-    a_token = *m_priv->tokens_queue.begin ();
-    m_priv->tokens_queue.pop_front ();
+    if (!peek_next_token (a_token)) {return false;}
+    ++m_priv->token_cursor ;
     return true;
 }
 
@@ -1343,16 +1360,39 @@ Lexer::reached_eof () const
 }
 
 void
-Lexer::record_position ()
+Lexer::record_ci_position ()
 {
-    m_priv->recorded_position = CUR;
+    m_priv->recorded_positions.push_front (CUR);
 }
 
 void
-Lexer::restore_position ()
+Lexer::restore_ci_position ()
 {
-    CUR = m_priv->recorded_position;
-    m_priv->tokens_queue.clear ();
+    if (m_priv->recorded_positions.empty ())
+        return;
+    CUR = m_priv->recorded_positions.front ();
+    m_priv->recorded_positions.pop_front ();
+    //m_priv->tokens_queue.clear ();
+}
+
+void
+Lexer::pop_recorded_ci_position ()
+{
+    if (m_priv->recorded_positions.empty ())
+        return;
+    m_priv->recorded_positions.pop_front ();
+}
+
+unsigned
+Lexer::get_token_stream_mark () const
+{
+    return m_priv->token_cursor;
+}
+
+void
+Lexer::rewind_to_mark (unsigned a_mark)
+{
+    m_priv->token_cursor = a_mark;
 }
 
 //********************

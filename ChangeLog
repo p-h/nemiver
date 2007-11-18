@@ -1,3 +1,18 @@
+2007-11-09 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-ast.cc,h: added this to contain the AST.
+	  Moved the public lexer data structures here as well.
+	* src/langs/nmv-cpp-lexer.cc,h: went forward. Now has a token stream
+	  which is separate fromt character input. Chars are read from char
+	  input are tokenized. Tokens are then added to the token stream.
+	  Clients of the lexer actually read tokens from the token stream.
+	  This helps rewinding in the token stream without having to mess with
+	  the char input stream.
+	* src/langs/nmv-cpp-parser.cc: first pre-pre alpha of parsing simple
+	  decls. Can only parse foo bar; for now though. Still need a lot of
+	  work. At least I am seeing the direction now.
+	* tests/test-cpp-parser.cc: added basic parser test.
+
 2007-10-28 Dodji Seketeli <dodji@gnome.org>
 
 	* src/langs/*: added an AST and a parser. the aim of the parser is to be
