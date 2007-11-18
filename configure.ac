@@ -330,7 +330,8 @@ src/Makefile
   src/dbgengine/Makefile
   src/dbgengine/gdbengine.conf
   src/dbgengine/varlist.conf
-  src/dbgengine/cpptrait.conf
+  src/dbgengine/varwalker.conf
+  src/dbgengine/varwalkerlist.conf
   src/confmgr/Makefile
   src/confmgr/gconfmgr.conf
   src/uicommon/Makefile

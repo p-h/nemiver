@@ -22,9 +22,14 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <list>
+#include <map>
 #include "nmv-i-var-walker.h"
 #include "nmv-gdb-engine.h"
+#include "common/nmv-sequence.h"
 
+using std::list ;
+using std::map ;
 using nemiver::common::DynamicModule ;
 using nemiver::common::DynamicModuleSafePtr ;
 using nemiver::common::DynModIface ;
@@ -36,17 +41,42 @@ typedef SafePtr<nemiver::GDBEngine, ObjectRef, ObjectUnref> GDBEngineSafePtr ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class VarWalker : public IVarWalker {
-    sigc::signal<void,
-                 const UString& /*cookie*/> m_error_signal ;
-    sigc::signal<void,
-                 VarFragment&> m_initialized_on_var_signal ;
-    sigc::signal<void,
-                 VarFragment&/*parent*/,
-                 VarFragment&/*child*/> m_visited_var_child_signal;
+const UString VAR_WALKER_COOKIE="var-walker-cookie" ;
 
-    GDBEngineSafePtr m_debugger ;
-    VarFragment m_var_fragment ;
+nemiver::common::Sequence&
+get_sequence ()
+{
+    static nemiver::common::Sequence sequence ;
+    return sequence ;
+}
+
+class VarWalker : public IVarWalker {
+
+    mutable sigc::signal<void,
+                 const IDebugger::VariableSafePtr&> m_visited_variable_node_signal;
+
+    mutable sigc::signal<void,
+                 const IDebugger::VariableSafePtr&>
+                                            m_visited_variable_signal ;
+
+    mutable GDBEngineSafePtr m_debugger ;
+    UString m_root_var_name ;
+    list<sigc::connection> m_connections ;
+    map<IDebugger::VariableSafePtr, bool> m_vars_to_visit;
+    UString m_cookie ;
+    IDebugger::VariableSafePtr m_root_var ;
+
+    void on_variable_value_signal (const UString &a_name,
+                                   const IDebugger::VariableSafePtr &a_var,
+                                   const UString &a_cookie) ;
+
+    void on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                       const UString &a_cookie) ;
+
+    void on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                      const UString &a_cookie) ;
+
+    void get_type_of_all_members (const IDebugger::VariableSafePtr &a_from) ;
 
 public:
 
@@ -58,61 +88,170 @@ public:
     //********************
     //<event getters>
     //********************
-    sigc::signal<void, const UString& /*cookie*/> error_signal () const;
-    sigc::signal<void, VarFragment&> initialized_on_var_signal () const;
-    sigc::signal<void, VarFragment&/*parent*/, VarFragment&/*child*/>
-                                                visited_var_child_signal () const;
+    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+                                        visited_variable_node_signal () const;
+    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+                                        visited_variable_signal () const;
     //********************
     //</event getters>
     //********************
 
-    void initialize (IDebuggerSafePtr &a_debugger,
-                     const UString &a_var_name,
-                     const UString &a_cookie="") ;
+    void connect (IDebuggerSafePtr &a_debugger, const UString &a_var_name) ;
 
-    void do_walk_var_children (const VarFragment &a_var,
-                               bool a_recurse=false,
-                               const UString &a_cookie="");
+    void connect (IDebuggerSafePtr &a_debugger, const IDebugger::VariableSafePtr &a_var) ;
+
+    void do_walk_variable (const UString &a_cookie="");
+
+    IDebugger::VariableSafePtr get_variable () const ;
+
+    IDebuggerSafePtr get_debugger () const  ;
 };//end class VarWalker
 
-sigc::signal<void, const UString& /*cookie*/>
-VarWalker::error_signal () const
+void
+VarWalker::on_variable_value_signal (const UString &a_name,
+                                     const IDebugger::VariableSafePtr &a_var,
+                                     const UString &a_cookie)
 {
-    return m_error_signal ;
-}
+    if (a_name == "") {}
+    if (a_cookie != m_cookie) {
+        return ;
+    }
 
-sigc::signal<void, VarFragment&>
-VarWalker::initialized_on_var_signal () const
-{
-    return m_initialized_on_var_signal ;
-}
+    NEMIVER_TRY
 
-sigc::signal<void, VarFragment&/*parent*/, VarFragment&/*child*/>
-VarWalker::visited_var_child_signal () const
-{
-    return m_visited_var_child_signal ;
+    //now query for the type
+    get_type_of_all_members (a_var) ;
+    m_root_var = a_var ;
+
+    NEMIVER_CATCH_NOX
 }
 
 void
-VarWalker::initialize (IDebuggerSafePtr &a_debugger,
-                       const UString &a_var_name,
-                       const UString &a_cookie)
+VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                         const UString &a_cookie)
 {
-    if (a_cookie == "") {}
+    if (a_cookie != m_cookie) {
+        return ;
+    }
 
+    NEMIVER_TRY
+
+    //now query for the type
+    get_type_of_all_members (a_var) ;
+
+    NEMIVER_CATCH_NOX
+}
+
+void
+VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
+                                        const UString &a_cookie)
+{
+    if (a_cookie != m_cookie) {
+        return ;
+    }
+
+    NEMIVER_TRY
+
+    visited_variable_node_signal ().emit (a_var) ;
+    m_vars_to_visit.erase (a_var) ;
+    if (m_vars_to_visit.size () == 0) {
+        visited_variable_signal ().emit (m_root_var) ;
+    }
+
+    NEMIVER_CATCH_NOX
+}
+
+void
+VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr &a_from)
+{
+    RETURN_IF_FAIL (a_from) ;
+
+    m_vars_to_visit[a_from] = true;
+    m_debugger->get_variable_type (a_from, m_cookie) ;
+    list<IDebugger::VariableSafePtr>::const_iterator it;
+    for (it = a_from->members ().begin ();
+         it != a_from->members ().end ();
+         ++it) {
+        get_type_of_all_members (*it) ;
+    }
+}
+
+sigc::signal<void, const IDebugger::VariableSafePtr&>&
+VarWalker::visited_variable_node_signal () const
+{
+    return m_visited_variable_node_signal ;
+}
+
+sigc::signal<void, const IDebugger::VariableSafePtr&>&
+VarWalker::visited_variable_signal () const
+{
+    return m_visited_variable_signal ;
+}
+
+void
+VarWalker::connect (IDebuggerSafePtr &a_debugger,
+                    const UString &a_var_name)
+{
     m_debugger = a_debugger.do_dynamic_cast<GDBEngine> ();
     THROW_IF_FAIL (m_debugger) ;
-    m_var_fragment.set_name (a_var_name) ;
+    m_root_var_name = a_var_name ;
+
+    list<sigc::connection>::iterator it;
+    for (it = m_connections.begin (); it != m_connections.end (); ++it) {
+        it->disconnect () ;
+    }
+    m_connections.push_back (m_debugger->variable_value_signal ().connect
+            (sigc::mem_fun (*this, &VarWalker::on_variable_value_signal))) ;
+    m_connections.push_back (m_debugger->variable_type_set_signal ().connect
+                    (sigc::mem_fun (*this, &VarWalker::on_variable_type_set_signal))) ;
 }
 
 void
-VarWalker::do_walk_var_children (const VarFragment &a_var,
-                                 bool a_recurse,
-                                 const UString &a_cookie)
+VarWalker::connect (IDebuggerSafePtr &a_debugger,
+                    const IDebugger::VariableSafePtr &a_var)
 {
-    if (a_cookie == "" || a_var.get_name () == "" || a_recurse) {}
+    m_debugger = a_debugger.do_dynamic_cast<GDBEngine> ();
+    THROW_IF_FAIL (m_debugger) ;
+    m_root_var = a_var ;
+
+    list<sigc::connection>::iterator it;
+    for (it = m_connections.begin (); it != m_connections.end (); ++it) {
+        it->disconnect () ;
+    }
+    m_connections.push_back (m_debugger->variable_value_set_signal ().connect
+            (sigc::mem_fun (*this, &VarWalker::on_variable_value_set_signal))) ;
+    m_connections.push_back (m_debugger->variable_type_set_signal ().connect
+                    (sigc::mem_fun (*this, &VarWalker::on_variable_type_set_signal))) ;
 }
 
+void
+VarWalker::do_walk_variable (const UString &a_cookie)
+{
+    if (a_cookie == "") {
+        m_cookie =
+            VAR_WALKER_COOKIE + "-" + UString::from_int
+                                        (get_sequence ().create_next_integer ());
+    } else {
+        m_cookie = a_cookie;
+    }
+
+    /*query the root fragment first*/
+    m_root_var.reset () ;
+    m_debugger->print_variable_value (m_root_var_name,
+                                      m_cookie) ;
+}
+
+IDebugger::VariableSafePtr
+VarWalker::get_variable () const
+{
+    return m_root_var ;
+}
+
+IDebuggerSafePtr
+VarWalker::get_debugger () const
+{
+    return m_debugger.do_dynamic_cast<IDebugger> () ;
+}
 
 //the dynmod used to instanciate the VarWalker service object
 //and return an interface on it.

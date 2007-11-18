@@ -50,6 +50,8 @@ nmv-variables-utils.cc \
 nmv-variables-utils.h \
 nmv-local-vars-inspector.cc \
 nmv-local-vars-inspector.h \
+nmv-local-vars-inspector2.cc \
+nmv-local-vars-inspector2.h \
 nmv-var-inspector.cc \
 nmv-var-inspector.h \
 nmv-breakpoints-view.cc \

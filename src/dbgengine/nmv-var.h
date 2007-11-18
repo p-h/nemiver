@@ -29,34 +29,6 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class NEMIVER_API VarFragment {
-
-    UString m_name ;
-    UString m_id ;
-
-public:
-
-    VarFragment ()
-    {
-    }
-
-    VarFragment (const UString &a_id, const UString &a_name) :
-        m_name (a_name), m_id (a_id)
-    {
-    }
-
-    const UString& get_id () const {return m_id;}
-    void set_id (const UString &a_id) {m_id = a_id;}
-
-    const UString& get_name () const {return m_name;}
-    void set_name (const UString &a_name) {m_name = a_name;}
-
-    bool operator= (const VarFragment &a_other)
-    {
-        return a_other.m_id == m_id ;
-    }
-};//end VarFragment
-
 class Var ;
 typedef SafePtr<Var, ObjectRef, ObjectUnref> VarSafePtr ;
 class Var : public Object {
@@ -73,8 +45,8 @@ class Var : public Object {
 public:
 
     Var (const UString &a_name,
-              const UString &a_value,
-              const UString &a_type) :
+         const UString &a_value,
+         const UString &a_type) :
         m_name (a_name),
         m_value (a_value),
         m_type (a_type),
@@ -146,6 +118,34 @@ public:
         a_str.chomp () ;
     }
 };//end class Var
+
+class NEMIVER_API VarFragment {
+
+    UString m_name ;
+    UString m_id ;
+
+public:
+
+    VarFragment ()
+    {
+    }
+
+    VarFragment (const UString &a_id, const UString &a_name) :
+        m_name (a_name), m_id (a_id)
+    {
+    }
+
+    const UString& get_id () const {return m_id;}
+    void set_id (const UString &a_id) {m_id = a_id;}
+
+    const UString& get_name () const {return m_name;}
+    void set_name (const UString &a_name) {m_name = a_name;}
+
+    bool operator= (const VarFragment &a_other)
+    {
+        return a_other.m_id == m_id ;
+    }
+};//end VarFragment
 
 NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_VAR_H__

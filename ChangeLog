@@ -95,6 +95,33 @@
 	* src/persp/dbgperspective/nmv-registers-view.cc: clear the list of
 	registers when the target is detached
 
+2007-09-21 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/Makefile.am, ./configure.ac: added varwalker.conf, varwalkerlist.conf
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  (GDBEngine::get_variable_value): use
+	  fully qualified variable name (fqvn)
+	  (GDBEngine::get_variable_type): ditto.
+	* src/dbgengine/nmv-i-var-walker-list.h, nmv-i-var-walker.h:
+	* src/dbgengine/nmv-var-walker-list.cc,nmv-var-walker.cc:
+	  added new iface IVarWalker and IVarWalkerList to walk a variable
+	  and a list of variables.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc,h: started to
+	  hack up a LocalVarsInspector2 to test IVarWalker and IVarWalkerList
+
+2007-09-07  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	patch by: A. Gordon <agordon88@gmail.com>
+	modified slightly to now add keybindings for the 'output' and 'errors' tabs
+	because they're not useful for users.  Also move the output and errors tab
+	index to the end so that the useful tabs are all in order even when the
+	debugging tabs are shown
+
+	* src/persp/dbgperspective/menus/menus.xml: add actions for switching
+	between the notebook tabs (e.g. variables, breakpoints, etc)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: hook up the actions to
+	switch between notebook tabs with alt-#
+
 2007-08-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/dbgengine/nmv-i-debugger.h: move the signals into the proper section
@@ -161,18 +188,6 @@
 	parsing for memory value responses
 	* tests/test-gdbmi.cc: test parsing memory value results
 
-2007-09-07  Jonathon Jongsma  <jjongsma@gnome.org>
-
-	patch by: A. Gordon <agordon88@gmail.com>
-	modified slightly to now add keybindings for the 'output' and 'errors' tabs
-	because they're not useful for users.  Also move the output and errors tab
-	index to the end so that the useful tabs are all in order even when the
-	debugging tabs are shown
-
-	* src/persp/dbgperspective/menus/menus.xml: add actions for switching
-	between the notebook tabs (e.g. variables, breakpoints, etc)
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc: hook up the actions to
-	switch between notebook tabs with alt-#
 
 2007-08-19 Dodji Seketeli <dodji@gnome.org>
 

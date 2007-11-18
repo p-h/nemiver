@@ -2830,8 +2830,11 @@ GDBEngine::get_variable_value (const VariableSafePtr &a_var,
     RETURN_IF_FAIL (a_var) ;
     RETURN_IF_FAIL (a_var->name ()) ;
 
+    UString qname ;
+    a_var->build_qname (qname) ;
+
     Command command ("get-variable-value",
-                     "-data-evaluate-expression " + a_var->name (),
+                     "-data-evaluate-expression " + qname,
                      a_cookie) ;
     command.variable (a_var) ;
 
@@ -2882,8 +2885,11 @@ GDBEngine::get_variable_type (const VariableSafePtr &a_var,
     THROW_IF_FAIL (a_var) ;
     THROW_IF_FAIL (a_var->name () != "") ;
 
+    UString qname ;
+    a_var->build_qname (qname) ;
+    LOG_DD ("variable qname: " << qname) ;
     Command command ("get-variable-type",
-                     "ptype " + a_var->name (),
+                     "ptype " + qname,
                      a_cookie) ;
     command.variable (a_var) ;
 

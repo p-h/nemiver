@@ -23,6 +23,8 @@
  *See COPYRIGHT file copyright information.
  */
 
+#define LOCAL_VARS_INSPECTOR2 1
+
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -52,7 +54,11 @@
 #include "nmv-ui-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
+#ifndef LOCAL_VARS_INSPECTOR2
 #include "nmv-local-vars-inspector.h"
+#else
+#include "nmv-local-vars-inspector2.h"
+#endif
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
 #include "nmv-open-file-dialog.h"
@@ -72,6 +78,7 @@ using namespace std ;
 using namespace nemiver::common ;
 using namespace nemiver::ui_utils;
 using namespace gtksourceview ;
+
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -485,7 +492,11 @@ public:
 
     Gtk::ScrolledWindow& get_call_stack_scrolled_win () ;
 
+#ifndef LOCAL_VARS_INSPECTOR2
     LocalVarsInspector& get_local_vars_inspector () ;
+#else
+    LocalVarsInspector2& get_local_vars_inspector () ;
+#endif
 
     Gtk::ScrolledWindow& get_local_vars_inspector_scrolled_win () ;
 
@@ -664,7 +675,11 @@ struct DBGPerspective::Priv {
     typedef map<UString, GnomeVFSMonitorHandle*> Path2MHandleMap ;
     Path2MHandleMap path_2_mhandle_map;
     Gtk::Notebook *statuses_notebook ;
+#ifndef LOCAL_VARS_INSPECTOR2
     SafePtr<LocalVarsInspector> variables_editor ;
+#else
+    SafePtr<LocalVarsInspector2> variables_editor ;
+#endif
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win ;
     SafePtr<Terminal> terminal ;
     SafePtr<Gtk::Box> terminal_box ;
@@ -4903,7 +4918,7 @@ DBGPerspective::debugger ()
         }
         LOG_DD ("using debugger_dynmod_name: '" << debugger_dynmod_name << "'") ;
         m_priv->debugger =
-            module_manager->load_iface <IDebugger> (debugger_dynmod_name, "IDebugger") ;
+            module_manager->load_iface<IDebugger> (debugger_dynmod_name, "IDebugger") ;
         IConfMgrSafePtr conf_mgr = workbench ().get_configuration_manager () ;
         m_priv->debugger->do_init (conf_mgr) ;
         m_priv->debugger->set_event_loop_context
@@ -5007,7 +5022,11 @@ DBGPerspective::get_call_stack_scrolled_win ()
     return *m_priv->call_stack_scrolled_win ;
 }
 
+#ifndef LOCAL_VARS_INSPECTOR2
 LocalVarsInspector&
+#else
+LocalVarsInspector2&
+#endif
 DBGPerspective::get_local_vars_inspector ()
 {
     THROW_IF_FAIL (m_priv) ;
@@ -5015,7 +5034,11 @@ DBGPerspective::get_local_vars_inspector ()
 
     if (!m_priv->variables_editor) {
         m_priv->variables_editor.reset
+#ifndef LOCAL_VARS_INSPECTOR2
             (new LocalVarsInspector (debugger (), *m_priv->workbench)) ;
+#else
+            (new LocalVarsInspector2 (debugger (), *m_priv->workbench)) ;
+#endif
     }
     THROW_IF_FAIL (m_priv->variables_editor) ;
     return *m_priv->variables_editor ;
