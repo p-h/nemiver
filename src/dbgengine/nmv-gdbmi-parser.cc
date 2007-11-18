@@ -2338,7 +2338,7 @@ parse_embedded_c_string_body (const UString &a_input,
     escaped_str += '"' ;
 
     //first walk the string, and unescape everything we find escaped
-    UString::value_type ch, prev_ch ;
+    UString::value_type ch=0, prev_ch=0 ;
     bool escaping = false, found_end=false ;
     for (; cur != end ; ++cur) {
         ch = a_input[cur] ;

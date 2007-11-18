@@ -210,7 +210,7 @@ public:
     {
         THROW_IF_FAIL (m_address_entry);
         std::istringstream istream (m_address_entry->get_text ());
-        size_t addr;
+        size_t addr=0;
         istream >> std::hex >> addr;
         return addr;
     }
@@ -235,7 +235,8 @@ public:
     }
 
     void on_memory_read_response (size_t a_addr,
-            std::vector<uint8_t> a_values, const UString& /*a_cookie*/)
+                                  std::vector<uint8_t> a_values,
+                                  const UString& /*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
@@ -259,7 +260,8 @@ public:
 
         std::vector<uint8_t>::const_iterator it, old_it;
         for (it = a_data.begin (), old_it = m_cached_data.begin ();
-                it != a_data.end (); ++it)
+             it != a_data.end ();
+             ++it)
         {
             bool changed = false;
             Glib::RefPtr<Gtk::TextBuffer::Mark> changed_start, changed_end;
@@ -272,7 +274,8 @@ public:
                     if (*it != *old_it)
                     {
                         changed = true;
-                        changed_start = m_textbuffer->create_mark (m_textbuffer->end ());
+                        changed_start =
+                            m_textbuffer->create_mark (m_textbuffer->end ());
                     }
                     // increment for the next loop
                     ++old_it;

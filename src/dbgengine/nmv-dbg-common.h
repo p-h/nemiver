@@ -574,6 +574,9 @@ public:
             m_register_values.clear ();
             m_has_register_names = false;
             m_register_names.clear ();
+            m_memory_values.clear ();
+            m_memory_address = 0;
+            m_has_memory_values = false;
         }
     };//end class ResultRecord
 

@@ -1,5 +1,15 @@
 2007-11-18 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-dbg-common.h: Don't forget to initialise the
+	  memory querying related variables that got added recently.
+	* src/dbgengine/nmv-gdbmi-parser.cc: 
+	  (parse_embedded_c_string_body): don't forget to initialise declared
+	  value.
+	* src/persp/dbgperspective/nmv-memory-view.cc: ditto. Also make sure
+	  lines are properly indented.
+
+2007-11-18 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.cc,h:
 	* src/langs/nmv-cpp-parser.cc,h: started to work toward parsing
 	  constant-expression. This implies parsing a bunch of different

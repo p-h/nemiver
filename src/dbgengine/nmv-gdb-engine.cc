@@ -1768,7 +1768,7 @@ struct OnVariableTypeHandler : OutputHandler {
                 THROW_IF_FAIL (var->name () != "") ;
                 var->type (type) ;
                 m_engine->variable_type_set_signal ().emit
-                                            (var, a_in.command ().cookie ()) ;
+                                        (var, a_in.command ().cookie ()) ;
             } else {
                 THROW ("should not be reached") ;
             }
