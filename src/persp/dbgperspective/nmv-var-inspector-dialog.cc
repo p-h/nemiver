@@ -23,10 +23,16 @@
  *See COPYRIGHT file copyright information.
  */
 
+#define VARS_INSPECTOR2 1
+
 #include <glib/gi18n.h>
 #include "common/nmv-exception.h"
 #include "nmv-var-inspector-dialog.h"
+#ifndef VARS_INSPECTOR2
 #include "nmv-var-inspector.h"
+#else
+#include "nmv-var-inspector2.h"
+#endif
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -35,17 +41,21 @@ class VarInspectorDialog::Priv {
     friend class VarInspectorDialog ;
     Gtk::Entry *var_name_entry ;
     Gtk::Button *inspect_button ;
+#ifndef VARS_INSPECTOR2
     SafePtr<VarInspector> var_inspector ;
+#else
+    SafePtr<VarInspector2> var_inspector ;
+#endif
     Gtk::Dialog &dialog ;
     Glib::RefPtr<Gnome::Glade::Xml> glade ;
-    IDebugger &debugger ;
+    IDebuggerSafePtr debugger ;
 
     Priv () ;
 public:
 
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
-          IDebugger &a_debugger) :
+          IDebuggerSafePtr a_debugger) :
         var_name_entry (0),
         inspect_button (0),
         dialog (a_dialog),
@@ -72,7 +82,11 @@ public:
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
                                                        "inspectorwidgetbox") ;
+#ifndef VARS_INSPECTOR2
         var_inspector.reset (new VarInspector (debugger)) ;
+#else
+        var_inspector.reset (new VarInspector2 (debugger)) ;
+#endif
         THROW_IF_FAIL (var_inspector) ;
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow) ;
         scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC) ;
@@ -149,7 +163,7 @@ public:
 };//end class VarInspectorDialog::Priv
 
 VarInspectorDialog::VarInspectorDialog (const UString &a_root_path,
-                                        IDebugger &a_debugger) :
+                                        IDebuggerSafePtr &a_debugger) :
     Dialog (a_root_path,
             "varinspectordialog.glade",
             "varinspectordialog")

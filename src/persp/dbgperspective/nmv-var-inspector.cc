@@ -43,7 +43,7 @@ class VarInspector::Priv : public sigc::trackable {
 
     bool requested_variable ;
     bool requested_type ;
-    IDebugger &debugger ;
+    IDebuggerSafePtr debugger ;
     IDebugger::VariableSafePtr variable ;
     typedef SafePtr<Gtk::TreeView, WidgetRef, WidgetUnref> TreeViewSafePtr ;
     TreeViewSafePtr tree_view ;
@@ -83,13 +83,13 @@ class VarInspector::Priv : public sigc::trackable {
     void connect_to_signals ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        debugger.variable_value_signal ().connect
+        debugger->variable_value_signal ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_debugger_variable_value_signal)) ;
-        debugger.variable_type_signal ().connect
+        debugger->variable_type_signal ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_variable_type_signal)) ;
-        debugger.pointed_variable_value_signal ().connect
+        debugger->pointed_variable_value_signal ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_pointed_variable_value_signal)) ;
 
@@ -121,14 +121,14 @@ class VarInspector::Priv : public sigc::trackable {
         Gtk::TreeModel::iterator parent_iter ;
         append_a_variable (a_variable, parent_iter,
                            tree_store, *tree_view,
-                           debugger, false, false,
+                           *debugger, false, false,
                            var_row_it) ;
 
         THROW_IF_FAIL (var_row_it) ;
         requested_type = true ;
         LOG_DD ("printing variable type for variable: "
                 << a_variable->name ()) ;
-        debugger.print_variable_type (a_variable->name (),
+        debugger->print_variable_type (a_variable->name (),
                                       VAR_INSPECTOR_COOKIE) ;
     }
 
@@ -189,7 +189,7 @@ class VarInspector::Priv : public sigc::trackable {
         THROW_IF_FAIL (variable) ;
         UString qname ;
         variable->build_qname (qname) ;
-        debugger.print_pointed_variable_value (qname, VAR_INSPECTOR_COOKIE) ;
+        debugger->print_pointed_variable_value (qname, VAR_INSPECTOR_COOKIE) ;
     }
 
 
@@ -322,10 +322,10 @@ class VarInspector::Priv : public sigc::trackable {
         THROW_IF_FAIL (row_it) ;
         Gtk::TreeModel::iterator result_row_it ;
         append_a_variable (a_var, row_it, tree_store, *tree_view,
-                           debugger, false, false, result_row_it) ;
+                           *debugger, false, false, result_row_it) ;
         LOG_DD ("printing variable type for variable: "
                 << a_var_name) ;
-        debugger.print_variable_type (a_var_name, VAR_INSPECTOR_COOKIE) ;
+        debugger->print_variable_type (a_var_name, VAR_INSPECTOR_COOKIE) ;
         NEMIVER_CATCH
     }
 
@@ -360,9 +360,9 @@ class VarInspector::Priv : public sigc::trackable {
 
 public:
 
-    Priv (IDebugger &a_debugger) :
-        requested_variable (false),
-        requested_type (false),
+    Priv (IDebuggerSafePtr &a_debugger) :
+          requested_variable (false),
+          requested_type (false),
         debugger (a_debugger)
     {
         build_widget () ;
@@ -371,7 +371,7 @@ public:
     }
 };//end class VarInspector::Priv
 
-VarInspector::VarInspector (IDebugger &a_debugger)
+VarInspector::VarInspector (IDebuggerSafePtr &a_debugger)
 {
     m_priv.reset (new Priv (a_debugger)) ;
 }
@@ -403,8 +403,8 @@ VarInspector::inspect_variable (const UString &a_variable_name)
     if (a_variable_name == "") {return;}
     THROW_IF_FAIL (m_priv) ;
     m_priv->requested_variable = true;
-    m_priv->debugger.print_variable_value (a_variable_name,
-                                           VAR_INSPECTOR_COOKIE);
+    m_priv->debugger->print_variable_value (a_variable_name,
+                                            VAR_INSPECTOR_COOKIE);
 }
 
 IDebugger::VariableSafePtr

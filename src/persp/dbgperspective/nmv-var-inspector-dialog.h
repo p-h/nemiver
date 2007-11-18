@@ -44,7 +44,7 @@ class VarInspectorDialog : public Dialog {
 
 public:
     VarInspectorDialog (const UString &a_resource_root_path,
-                        IDebugger &a_debugger) ;
+                        IDebuggerSafePtr &a_debugger) ;
     virtual ~VarInspectorDialog () ;
 
     UString variable_name () const ;

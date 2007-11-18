@@ -95,6 +95,35 @@
 	* src/persp/dbgperspective/nmv-registers-view.cc: clear the list of
 	registers when the target is detached
 
+2007-09-24 Dodji Seketeli <dodji@gnome.org>
+
+	* make VarInspector2 and LocalVarsInspector use IVarWalker. They now
+	  share code that is in nmv-variable-utils2.cc
+
+	* src/dbgengine/nmv-var-walker.cc: make VarWalker extend sigc::trackable
+	  so that it automatically disconnects from signals it connected to
+	  - e.g: IDebugger signals -  at destruction time. Otherwise, its signal
+	  handlers connected to IDebugger get called even after the walker instance is
+	  destroyed leading to crashes.
+	* a/src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	  remove code from here and put it into nmv-variables-utils2.cc instead.
+	  That allows code sharing with nmv-var-inspector2.cc.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: use either
+	  VarInspector of VarInspector2, based on the VARS_INSPECTOR2 macro.
+	* src/persp/dbgperspective/nmv-var-inspector.cc,h: Change the interface of
+	  VarInspector::VarInspector() to take an IDebuggerSafePtr& instead of an
+	  IDebugger&. This make VarInspector api be in par with VarInspector2.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc,
+	  nmv-var-inspector-dialog.cc,h: propagate the change in VarInspector
+	  iface to VarInspectorDialog and DBGPerspective types.
+	* src/persp/dbgperspective/nmv-var-inspector2.cc,h: added VarInspector2
+	  type. It uses IVarWalker. It works now. The only thing that is not yet
+	  implemented is variable dereferencing.
+	* src/persp/dbgperspective/nmv-variables-utils2.cc,h: add this utils
+	  to help add/update variables into a treeview that looks like a
+	  variable inspector. VarInspector2 and LocalVarsInspector use this
+	  utility function set.
+
 2007-09-23 Dodji Seketeli <dodji@gnome.org>
 
 	* configure.ac: oops, forgot to generate src/dbgengine/cpptrait.conf

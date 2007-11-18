@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_VAR_INSPECTOR_H__
-#define __NMV_VAR_INSPECTOR_H__
+#ifndef __NMV_VAR_INSPECTOR2_H__
+#define __NMV_VAR_INSPECTOR2_H__
 
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
@@ -39,24 +39,23 @@ namespace common {
     class UString ;
 }
 
-class VarInspector : public nemiver::common::Object {
-    VarInspector (const VarInspector &) ;
-    VarInspector& operator= (const VarInspector &) ;
-    VarInspector () ;
+class VarInspector2 : public nemiver::common::Object {
+    VarInspector2 (const VarInspector2 &) ;
+    VarInspector2& operator= (const VarInspector2 &) ;
+    VarInspector2 () ;
     class Priv ;
     SafePtr<Priv> m_priv ;
 
 public:
-    VarInspector (IDebuggerSafePtr &a_debugger) ;
-    virtual ~VarInspector () ;
+    VarInspector2 (IDebuggerSafePtr &a_debugger) ;
+    virtual ~VarInspector2 () ;
     Gtk::Widget& widget () const ;
     void set_variable (IDebugger::VariableSafePtr &a_variable) ;
     void inspect_variable (const UString &a_variable_name) ;
     IDebugger::VariableSafePtr get_variable () const ;
     void clear () ;
-};//end class VarInspector
+};//end class VarInspector2
 
 NEMIVER_END_NAMESPACE (nemiver)
-
 #endif //__NMV_VAR_INSPECTOR_H__
 

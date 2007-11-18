@@ -48,12 +48,16 @@ nmv-call-stack.cc \
 nmv-call-stack.h \
 nmv-variables-utils.cc \
 nmv-variables-utils.h \
+nmv-variables-utils2.cc \
+nmv-variables-utils2.h \
 nmv-local-vars-inspector.cc \
 nmv-local-vars-inspector.h \
 nmv-local-vars-inspector2.cc \
 nmv-local-vars-inspector2.h \
 nmv-var-inspector.cc \
 nmv-var-inspector.h \
+nmv-var-inspector2.cc \
+nmv-var-inspector2.h \
 nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
 nmv-registers-view.cc \

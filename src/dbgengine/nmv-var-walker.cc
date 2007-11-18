@@ -50,7 +50,7 @@ get_sequence ()
     return sequence ;
 }
 
-class VarWalker : public IVarWalker {
+class VarWalker : public IVarWalker, public sigc::trackable {
 
     mutable sigc::signal<void,
                  const IDebugger::VariableSafePtr&> m_visited_variable_node_signal;

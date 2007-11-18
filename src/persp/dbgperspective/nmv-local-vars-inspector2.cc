@@ -30,13 +30,13 @@
 #include <gtkmm/treerowreference.h>
 #include "common/nmv-exception.h"
 #include "nmv-local-vars-inspector2.h"
-#include "nmv-variables-utils.h"
+#include "nmv-variables-utils2.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 #include "nmv-i-var-walker-list.h"
 
 using namespace nemiver::common ;
-namespace vutil=nemiver::variables_utils ;
+namespace vutil=nemiver::variables_utils2 ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -129,8 +129,7 @@ public:
         //****************************************************
         Gtk::TreeModel::iterator it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
-        (*it)[vutil::get_variable_columns ().name] =
-                                                        _("Local Variables");
+        (*it)[vutil::get_variable_columns ().name] = _("Local Variables");
         local_variables_row_ref.reset
                     (new Gtk::TreeRowReference (tree_store,
                                                 tree_store->get_path (it))) ;
@@ -138,10 +137,9 @@ public:
 
         it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
-        (*it)[vutil::get_variable_columns ().name] =
-                                                        _("Function Arguments");
+        (*it)[vutil::get_variable_columns ().name] = _("Function Arguments");
         function_arguments_row_ref.reset
-            (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it))) ;
+            (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)));
         THROW_IF_FAIL (function_arguments_row_ref) ;
     }
 
@@ -218,57 +216,6 @@ public:
             */
     }
 
-    void update_a_variable_node (const IDebugger::VariableSafePtr &a_var,
-                                 Gtk::TreeModel::iterator &a_iter,
-                                 bool a_handle_highlight,
-                                 bool a_is_new_frame)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        if (a_var) {
-            LOG_DD ("going to really update variable '" << a_var->name () << "'") ;
-        } else {
-            LOG_DD ("eek, got null variable") ;
-            return ;
-        }
-        THROW_IF_FAIL (tree_view) ;
-
-        (*a_iter)[vutil::get_variable_columns ().variable] = a_var ;
-        UString var_name = a_var->name ();
-        var_name.chomp () ;
-        UString prev_var_name =
-                (Glib::ustring)(*a_iter)[vutil::get_variable_columns ().name] ;
-        LOG_DD ("Prev variable name: " << prev_var_name) ;
-        LOG_DD ("new variable name: " << var_name) ;
-        LOG_DD ("Didn't update variable name") ;
-        if (prev_var_name == "") {
-            (*a_iter)[vutil::get_variable_columns ().name] = var_name;
-        }
-        (*a_iter)[vutil::get_variable_columns ().is_highlighted]=false ;
-        bool do_highlight = false ;
-        if (a_handle_highlight && !a_is_new_frame) {
-            UString prev_value =
-                (UString) (*a_iter)[vutil::get_variable_columns ().value] ;
-            if (prev_value != a_var->value ()) {
-                do_highlight = true ;
-            }
-        }
-
-        if (do_highlight) {
-            LOG_DD ("do highlight variable") ;
-            (*a_iter)[vutil::get_variable_columns ().is_highlighted]=true;
-            (*a_iter)[vutil::get_variable_columns ().fg_color] =
-                                                            Gdk::Color ("red");
-        } else {
-            LOG_DD ("remove highlight from variable") ;
-            (*a_iter)[vutil::get_variable_columns ().is_highlighted]=false;
-            (*a_iter)[vutil::get_variable_columns ().fg_color]  =
-                tree_view->get_style ()->get_text (Gtk::STATE_NORMAL);
-        }
-
-        (*a_iter)[vutil::get_variable_columns ().value] = a_var->value () ;
-        vutil::set_a_variable_type_real (a_iter,  a_var->type ()) ;
-    }
-
     void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -321,9 +268,12 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
+        THROW_IF_FAIL (tree_view && tree_store) ;
+
         Gtk::TreeModel::iterator parent_row_it ;
         get_local_variables_row_iterator (parent_row_it) ;
-        append_a_variable (a_var, parent_row_it) ;
+        vutil::append_a_variable (a_var, *tree_view, tree_store, parent_row_it) ;
+        tree_view->expand_row (tree_store->get_path (parent_row_it), false) ;
 
     }
 
@@ -331,83 +281,36 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
+        THROW_IF_FAIL (tree_view && tree_store) ;
+
         Gtk::TreeModel::iterator parent_row_it ;
         get_function_arguments_row_iterator (parent_row_it) ;
-        append_a_variable (a_var, parent_row_it) ;
+        vutil::append_a_variable (a_var, *tree_view, tree_store, parent_row_it) ;
+        tree_view->expand_row (tree_store->get_path (parent_row_it), false) ;
     }
 
     void update_a_local_variable (const IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
+        THROW_IF_FAIL (tree_view) ;
+
         Gtk::TreeModel::iterator parent_row_it ;
         get_local_variables_row_iterator (parent_row_it) ;
-        update_a_variable (a_var, parent_row_it, true, false) ;
+        vutil::update_a_variable (a_var, *tree_view,
+                                  parent_row_it,
+                                  true, false);
     }
 
     void update_a_function_argument (const IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
+        THROW_IF_FAIL (tree_view) ;
         Gtk::TreeModel::iterator parent_row_it ;
         get_function_arguments_row_iterator (parent_row_it) ;
-        update_a_variable (a_var, parent_row_it, true, false) ;
-    }
-
-    void append_a_variable (const IDebugger::VariableSafePtr &a_var,
-                            Gtk::TreeModel::iterator &a_parent_row_it)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        THROW_IF_FAIL (tree_store) ;
-
-        Gtk::TreeModel::iterator row_it =
-            tree_store->append (a_parent_row_it->children ()) ;
-        update_a_variable_node (a_var, row_it, true, true) ;
-        list<IDebugger::VariableSafePtr>::const_iterator it;
-        for (it = a_var->members ().begin (); it != a_var->members ().end (); ++it) {
-            append_a_variable (*it, row_it) ;
-        }
-    }
-
-    void update_a_variable (const IDebugger::VariableSafePtr &a_var,
-                            Gtk::TreeModel::iterator &a_parent_row_it,
-                            bool a_handle_highlight,
-                            bool a_is_new_frame)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        THROW_IF_FAIL (tree_store && a_parent_row_it) ;
-
-        Gtk::TreeModel::iterator row_it ;
-        bool found=false;
-        for (row_it = a_parent_row_it->children ().begin ();
-             row_it != a_parent_row_it->children ().end ();
-             ++row_it) {
-            if (row_it->get_value (vutil::get_variable_columns ().variable) == a_var) {
-                found = true ;
-                break ;
-            }
-        }
-        if (!found) {
-            THROW ("could not find variable in inspector: " + a_var->name ()) ;
-        }
-        update_a_variable_real (a_var, row_it, a_handle_highlight, a_is_new_frame) ;
-    }
-
-    void update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
-                                 Gtk::TreeModel::iterator &a_row_it,
-                                 bool a_handle_highlight,
-                                 bool a_is_new_frame)
-    {
-        update_a_variable_node (a_var, a_row_it, a_handle_highlight, is_new_frame) ;
-        Gtk::TreeModel::iterator row_it;
-        list<IDebugger::VariableSafePtr>::const_iterator var_it;
-        Gtk::TreeModel::Children rows = a_row_it->children ();
-        //TODO: change this to handle dereferencing
-        for (row_it = rows.begin (), var_it = a_var->members ().begin ();
-             row_it != rows.end ();
-             ++row_it, ++var_it) {
-            update_a_variable_real (*var_it, row_it, a_handle_highlight, a_is_new_frame) ;
-        }
+        vutil::update_a_variable (a_var, *tree_view, parent_row_it,
+                                  true, false) ;
     }
 
     //****************************
@@ -534,7 +437,11 @@ public:
 
         THROW_IF_FAIL (a_walker->get_variable ()) ;
 
-        append_a_local_variable (a_walker->get_variable ()) ;
+        if (is_new_frame) {
+            append_a_function_argument (a_walker->get_variable ()) ;
+        } else {
+            update_a_function_argument (a_walker->get_variable ()) ;
+        }
 
         NEMIVER_CATCH
     }

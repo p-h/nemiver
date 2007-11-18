@@ -4889,7 +4889,7 @@ void
 DBGPerspective::inspect_variable (const UString &a_variable_name)
 {
     THROW_IF_FAIL (debugger ()) ;
-    VarInspectorDialog dialog (plugin_path (), *debugger ()) ;
+    VarInspectorDialog dialog (plugin_path (), debugger ()) ;
     if (a_variable_name != "") {
         dialog.inspect_variable (a_variable_name) ;
     }
