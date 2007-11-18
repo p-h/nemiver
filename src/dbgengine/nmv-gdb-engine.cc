@@ -166,6 +166,9 @@ public:
     mutable sigc::signal<void, const list<VariableSafePtr>&, const UString& >
                                     local_variables_listed_signal  ;
 
+    mutable sigc::signal<void, const list<VariableSafePtr>&, const UString& >
+                                    global_variables_listed_signal  ;
+
     mutable sigc::signal<void,
                          const UString&,
                          const IDebugger::VariableSafePtr&,
@@ -1424,6 +1427,139 @@ struct OnLocalVariablesListedHandler : OutputHandler {
     }
 };//struct OnLocalVariablesListedHandler
 
+struct OnGlobalVariablesListedHandler : OutputHandler {
+
+    GDBEngine *m_engine ;
+
+    OnGlobalVariablesListedHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.command ().name () == "list-global-variables") {
+            LOG_DD ("list-global-variables / -symbol-list-variables handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+    /*
+        parse the result of gdb's "info variables" command.
+
+        To understand what the heck is going on here, simply run "info variables"
+        inside a running gdb.
+
+        Each line of gdb's result is put inside an "OutOfBandRecord" object.
+        This function collects all the (non-empty) lines, and extract the global variables'
+        names and types.
+    */
+    void parse_info_variables_list (Output &a_output,
+                                    list<IDebugger::VariableSafePtr> &var_list)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
+        bool first_line = true ;
+        UString current_file;
+
+        if (a_output.has_out_of_band_record()) {
+            list<Output::OutOfBandRecord>::iterator it =
+                a_output.out_of_band_records().begin();
+            while (it != a_output.out_of_band_records().end() ) {
+                const Output::OutOfBandRecord &oobr = *it ;
+                if (oobr.has_stream_record()) {
+                    const Output::StreamRecord &sr = oobr.stream_record();
+
+                    string line (sr.debugger_console ().c_str ());
+                    //Empty lines, or lines with only "\n"
+                    if (line.length()<=1) {
+                        it++;
+                        continue ;
+                    }
+                    line.erase (line.length () - 1, 1); //chomp
+                    if (first_line) {
+                        if (line.compare (0,22,"All defined variables:")==0) {
+                            first_line=false;
+                            it++;
+                            continue ;
+                        } else {
+                            LOG_ERROR ("globals: First result line isn't "
+                                       "\"All Defined Variables:\". "
+                                       "bad GDB ? line follows:");
+                            LOG_ERROR ("globals: " << line ) ;
+                            break ;
+                        }
+                    }
+
+                    if ((line.compare (0,5,"File ") == 0) &&
+                        (line.at (line.length () - 1) == ':')) {
+                        //New file ?
+                        line.erase (0,5);
+                        line.erase (line.length()-1,1);
+                        current_file = line;
+                        LOG_DD ("globals: new file: " << current_file ) ;
+                    } else if (line.compare ("Non-debugging symbols:") == 0) {
+                        //We're not interested in non-debugging symbols, so we can stop now
+                        LOG_DD ("got Non-debugging symbols, stopping.");
+                        break ;
+                    } else if (line.at (line.length() - 1) == ';') {
+                        //Every global variable is expected to end with ';' character
+                        //in gdb's "info variables" command.
+                        line.erase (line.length () -1,1);
+
+                        vector<UString> parts = UString (line).split (" ");
+                        //The last part is the variable's name.
+                        //The one-before-last part is the variable's type.
+                        //Before that "const" and "static" may appear
+
+                        UString vname = parts.back ();
+                        parts.pop_back ();
+                        UString vtype = parts.back ();
+
+                        if (vname.at (0) == '*')
+                            vname.erase (0,1);
+
+                        LOG_DD ("globals: got variable: " <<
+                                " File: " << current_file <<
+                                " Name: " << vname <<
+                                " Type: " << vtype ) ;
+
+                        IDebugger::VariableSafePtr a_var;
+                        a_var = IDebugger::VariableSafePtr
+                                                (new IDebugger::Variable(vname)) ;
+                        var_list.push_back (a_var);
+                    } else {
+                        LOG_DD ("globals: don't know how to handle line '"
+                                << line << "'") ;
+                    }
+                } else {
+                    LOG_ERROR ("globals: OOB record doesn't have stream_record!!");
+                }
+                it++;
+            }
+        } else {
+                LOG_DD ("globals: no OOB records!!");
+                return ;
+        }
+        NEMIVER_CATCH_NOX
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        THROW_IF_FAIL (m_engine) ;
+
+        list<IDebugger::VariableSafePtr> var_list;
+        parse_info_variables_list(a_in.output(), var_list);
+            
+        m_engine->global_variables_listed_signal ().emit
+            (var_list, a_in.command ().cookie ()) ;
+                
+        m_engine->set_state (IDebugger::READY) ;
+    }
+};//struct OnGlobalVariablesListedHandler
+
 struct OnResultRecordHandler : OutputHandler {
 
     GDBEngine *m_engine ;
@@ -2090,6 +2226,8 @@ GDBEngine::init_output_handlers ()
     m_priv->output_handler_list.add
         (OutputHandlerSafePtr (new OnLocalVariablesListedHandler (this)));
     m_priv->output_handler_list.add
+        (OutputHandlerSafePtr (new OnGlobalVariablesListedHandler (this)));
+    m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnResultRecordHandler (this))) ;
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnVariableTypeHandler (this))) ;
@@ -2252,6 +2390,12 @@ sigc::signal<void, const list<IDebugger::VariableSafePtr>&, const UString& >&
 GDBEngine::local_variables_listed_signal () const
 {
     return m_priv->local_variables_listed_signal ;
+}
+
+sigc::signal<void, const list<IDebugger::VariableSafePtr>&, const UString& >&
+GDBEngine::global_variables_listed_signal () const
+{
+    return m_priv->global_variables_listed_signal ;
 }
 
 sigc::signal<void,
@@ -2810,6 +2954,16 @@ GDBEngine::list_local_variables (const UString &a_cookie)
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     Command command ("list-local-variables",
                      "-stack-list-locals 2",
+                     a_cookie) ;
+    queue_command (command) ;
+}
+
+void
+GDBEngine::list_global_variables (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    Command command ("list-global-variables",
+                     "info variables",
                      a_cookie) ;
     queue_command (command) ;
 }

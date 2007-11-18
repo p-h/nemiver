@@ -97,6 +97,12 @@
 
 2007-09-26 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdb-engine.cc,h,nmv-i-debugger.h:
+	  Add a ability for IDebugger to list global variables. This is a patch
+	  from A. Gordon <agordon88@gmail.com>.
+
+2007-09-26 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc: make sure the IConfMgr is loaded when
 	  it has not been specificaly passed by client code at init time.
 	  This should fix the regression test breakages triggered by conf_mgr

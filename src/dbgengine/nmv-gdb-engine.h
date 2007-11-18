@@ -118,6 +118,10 @@ public:
     sigc::signal<void, const list<VariableSafePtr>&, const UString&>&
                         local_variables_listed_signal () const ;
 
+    sigc::signal<void, const list<VariableSafePtr>&, const UString&>&
+                        global_variables_listed_signal () const ;
+
+
     sigc::signal<void,
                  const UString&,
                  const IDebugger::VariableSafePtr&,
@@ -299,6 +303,8 @@ public:
                                 const UString &a_cookie) ;
 
     void list_local_variables (const UString &a_cookie) ;
+
+    void list_global_variables ( const UString &a_cookie ) ;
 
     void evaluate_expression (const UString &a_expr,
                               const UString &a_cookie) ;
