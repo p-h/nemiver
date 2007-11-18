@@ -96,6 +96,17 @@
 	registers when the target is detached
 2007-09-30 Dodji Seketeli <dodji@gnome.org>
 
+	* tests/Makefile.am:
+	* tests/test-var-walker.cc: added this to test IVarListWalker
+
+2007-09-30 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-i-var-list-walker.h,nmv-var-list-walker.cc: added a signal
+	  IVarListWalker::variable_list_visited_signal() that is emitted when
+	  all variables of a given IVarListWalker have been visited.
+
+2007-09-30 Dodji Seketeli <dodji@gnome.org>
+
 	* fix bugs due to the renaming of IVarWalkerList into IVarListWalker
 
 	* src/dbgengine/varlistwalker.conf.in: make varlistwalker dynmod load

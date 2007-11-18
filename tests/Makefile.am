@@ -1,10 +1,12 @@
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
+#
 TESTS=\
 runtestgdbmi runtestunicode \
 runtestcpptrait runtestvarlist \
-runtestbreakpoint runtestderef \
-runtestlocalvarslist
+runtestvarwalker runtestbreakpoint \
+runtestderef runtestlocalvarslist
+
 else
 
 TESTS=
@@ -55,6 +57,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestvarlist_SOURCES=test-var-list.cc
 runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestvarwalker_SOURCES=test-var-walker.cc
+runtestvarwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestderef_SOURCES=test-deref.cc
