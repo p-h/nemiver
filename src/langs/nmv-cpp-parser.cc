@@ -205,21 +205,15 @@ Parser::parse_cast_expr (CastExprPtr &a_result)
 {
     bool status=false;
     CastExprPtr result;
+    Token token;
     unsigned mark=LEXER.get_token_stream_mark ();
 
-    UnaryExprPtr unary_expr;
-    if (parse_unary_expr (unary_expr)) {
-        result.reset (new UnaryCastExpr (unary_expr));
-        goto okay;
-    } else {
-        Token token;
-        if (!LEXER.peek_next_token (token)
-            || token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_OPEN) {
-            goto error;
-        }
+    if (!LEXER.peek_next_token (token)) {goto error;}
+    if (token.get_kind () == Token::PUNCTUATOR_PARENTHESIS_OPEN) {
+        if (!LEXER.consume_next_token ()) {goto error;}
         TypeIDPtr type_id;
         if (!parse_type_id (type_id)) {goto error;}
-        if (!LEXER.peek_next_token (token)
+        if (!LEXER.consume_next_token (token)
             || token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_CLOSE) {
             goto error;
         }
@@ -227,6 +221,12 @@ Parser::parse_cast_expr (CastExprPtr &a_result)
         if (!parse_cast_expr (right_expr)) {goto error;}
         result.reset (new CStyleCastExpr (type_id, right_expr));
         goto okay;
+    } else  {
+        UnaryExprPtr unary_expr;
+        if (parse_unary_expr (unary_expr)) {
+            result.reset (new UnaryCastExpr (unary_expr));
+            goto okay;
+        }
     }
 
 error:

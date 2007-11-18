@@ -7,11 +7,18 @@
 #include "common/nmv-exception.h"
 #include "langs/nmv-cpp-parser.h"
 
-const char *prog0 = "foo bar;" ;
-const char *prog1 = "foo *bar;" ;
-const char *prog2 = "const foo *bar;" ;
-const char *prog3 = "static const foo *bar;" ;
-const char *prog4 = "static const unsigned int foo;" ;
+const char *prog0 = "foo bar" ;
+const char *prog1 = "foo * bar" ;
+const char *prog2 = "const foo * bar" ;
+const char *prog3 = "static const foo * bar" ;
+const char *prog4 = "static const unsigned int foo" ;
+const char *prog5= "(int)5";
+const char *prog5_1= "5";
+const char *prog5_2= "foo.*bar";
+const char *prog5_3= "foo->*bar";
+const char *prog5_4= "foo*bar";
+const char *prog5_5= "foo/bar";
+const char *prog5_6= "foo%bar";
 
 using std::cout;
 using std::endl;
@@ -21,6 +28,9 @@ using nemiver::cpp::DeclSpecifier;
 using nemiver::cpp::DeclSpecifierPtr;
 using nemiver::cpp::InitDeclaratorPtr;
 using nemiver::cpp::InitDeclarator;
+using nemiver::cpp::CastExprPtr;
+using nemiver::cpp::CastExpr;
+using nemiver::cpp::PMExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -73,7 +83,9 @@ test_parser1 ()
         return;
     }
     simple_decl->to_string (str);
-    cout << "parsed: '" << str <<  "'." << endl;
+    if (prog1 != str) {
+        BOOST_FAIL ("parsed '" <<prog1 << "' into '" << str << "'");
+    }
 }
 
 void
@@ -91,7 +103,9 @@ test_parser2 ()
         return;
     }
     simple_decl->to_string (str);
-    cout << "parsed: '" << str <<  "'." << endl;
+    if (str != prog2) {
+        BOOST_FAIL ("parsed '" <<prog2 << "' into '" << str << "'");
+    }
 }
 
 void
@@ -109,7 +123,9 @@ test_parser3 ()
         return;
     }
     simple_decl->to_string (str);
-    cout << "parsed: '" << str <<  "'." << endl;
+    if (prog3 != str) {
+        BOOST_FAIL ("parsed '" <<prog3 << "' into '" << str << "'");
+    }
 }
 
 void
@@ -127,9 +143,35 @@ test_parser4 ()
         return;
     }
     DeclSpecifier::list_to_string (decls, str);
-    cout << "parsed: '" << str <<  "'." << endl;
+    if (str != "static const unsigned int") {
+        BOOST_FAIL ("parsed '" <<prog4 << "' into '" << str << "'");
+    }
 }
 
+void
+test_parser5 ()
+{
+    Parser parser (prog5);
+    CastExprPtr cast_expr;
+
+    if (!parser.parse_cast_expr (cast_expr) || !cast_expr) {
+        BOOST_FAIL ("failed to parse cast expresssion: " << prog5);
+    }
+    string str;
+    cast_expr->to_string (str);
+    if (str != prog5) {
+        BOOST_FAIL ("parsed " << prog5 << "and got: " << str);
+    }
+    Parser parser1 (prog5_1);
+    PMExprPtr pm_expr;
+    if (!parser1.parse_pm_expr (pm_expr) || !pm_expr) {
+        BOOST_FAIL ("failed to parse: " << prog5_1);
+    }
+    pm_expr->to_string (str);
+    if (str != prog5_1) {
+        BOOST_FAIL ("parsed '" <<prog5_1 << "' into '" << str << "'");
+    }
+}
 
 using boost::unit_test::test_suite ;
 
@@ -148,6 +190,7 @@ init_unit_test_suite (int argc, char** argv)
     suite->add (BOOST_TEST_CASE (&test_parser2)) ;
     suite->add (BOOST_TEST_CASE (&test_parser3)) ;
     suite->add (BOOST_TEST_CASE (&test_parser4)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser5)) ;
     return suite;
 
     NEMIVER_CATCH_NOX
