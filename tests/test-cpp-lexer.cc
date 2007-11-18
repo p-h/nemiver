@@ -6,24 +6,28 @@
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"
 #include "langs/nmv-cpp-lexer.h"
+#include "langs/nmv-cpp-lexer-utils.h"
 
 const char *prog = "if (foo ()) {printf (\"bar\");}" ;
 
 using nemiver::cpp::Lexer;
 using nemiver::cpp::Token;
 using nemiver::common::Initializer ;
+namespace cpp=nemiver::cpp;
 
 void test_lexer ()
 {
     Lexer lexer (prog) ;
     Token token ;
     int i=0;
+    std::cout << "going to tokenize string: \"" << prog << "\""<< std::endl ;
     while (lexer.get_next_token (token)) {
         ++i ;
-        BOOST_MESSAGE ("got token nb: " << i) ;
+        std::cout << "got token : " << i << ":" << token << std::endl ;
         token.clear () ;
     }
     BOOST_REQUIRE_MESSAGE (i == 12, "got " << i << " number of tokens");
+    std::cout << "tokenization done okay" << std::endl;
 }
 
 using boost::unit_test::test_suite ;
