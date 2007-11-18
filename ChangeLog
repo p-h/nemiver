@@ -96,6 +96,15 @@
 	registers when the target is detached
 2007-09-30 Dodji Seketeli <dodji@gnome.org>
 
+	* fix bugs due to the renaming of IVarWalkerList into IVarListWalker
+
+	* src/dbgengine/varlistwalker.conf.in: make varlistwalker dynmod load
+	  dso libvarlistwalkermod.so and not more libvarwalkerlistmod.so.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: load dynmod
+	  varlistwalker and not more varwalkerlist
+
+2007-09-30 Dodji Seketeli <dodji@gnome.org>
+
 	*  renamed IVarWalkerList into IVarListWalker
 
 2007-09-30 Dodji Seketeli <dodji@gnome.org>

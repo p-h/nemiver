@@ -1,7 +1,7 @@
 <moduleconfig>
     <module>
         <name>varwalkerlist</name>
-        <libraryname>varwalkerlistmod</libraryname>
+        <libraryname>varlistwalkermod</libraryname>
     </module>
     <customsearchpaths>
         <path>@NEMIVER_LIBDIR@/nemiver/modules</path>

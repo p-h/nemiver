@@ -228,7 +228,7 @@ public:
         DynamicModuleManager *module_manager = loader->get_dynamic_module_manager ();
         THROW_IF_FAIL (module_manager) ;
         IVarListWalkerSafePtr result =
-            module_manager->load_iface<IVarListWalker> ("varwalkerlist",
+            module_manager->load_iface<IVarListWalker> ("varlistwalker",
                                                         "IVarListWalker");
         THROW_IF_FAIL (result) ;
         result->initialize (debugger) ;
