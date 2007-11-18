@@ -1190,6 +1190,7 @@ Lexer::scan_operator (Token &a_token)
     } else if (CUR_CHAR == ':') {
         CONSUME_CHAR;
         if (CUR_CHAR == ':') {
+            CONSUME_CHAR;
             a_token.set (Token::OPERATOR_SCOPE_RESOL) ;
         } else {
             goto error;

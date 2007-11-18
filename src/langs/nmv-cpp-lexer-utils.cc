@@ -37,7 +37,7 @@ token_type_as_string (const Token &a_token, std::string &a_out)
             a_out = "UNDEFINED";
             break;
         case Token::IDENTIFIER:
-            a_out = "INDENTIFIER" ;
+            a_out = "IDENTIFIER" ;
             break;
         case Token::KEYWORD:
             a_out = "KEYWORD";
