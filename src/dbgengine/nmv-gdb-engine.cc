@@ -1469,7 +1469,8 @@ struct OnResultRecordHandler : OutputHandler {
                 a_in.output ().result_record ().variable_value
                         ()->set_dereferenced (var->get_dereferenced ()) ;
             }
-            var = a_in.output ().result_record ().variable_value () ;
+            THROW_IF_FAIL (a_in.output ().result_record ().variable_value ()) ;
+            var->set (*a_in.output ().result_record ().variable_value ()) ;
             m_engine->variable_value_set_signal ().emit
                                             (var, a_in.command ().cookie ()) ;
         } else if (a_in.command ().name () == "print-pointed-variable-value") {

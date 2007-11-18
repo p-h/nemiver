@@ -95,6 +95,25 @@
 	* src/persp/dbgperspective/nmv-registers-view.cc: clear the list of
 	registers when the target is detached
 
+2007-09-23 Dodji Seketeli <dodji@gnome.org>
+
+	* src/common/nmv-ustring.cc,h:
+	  (UString::get_number_of_words): added this new method
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  make sure IDebugger::variable_value_set_signal()
+	  reports the same IDebugger::VariableSafePtr that was set into
+	  IDebugger::get_variable_value().
+	* src/dbgengine/nmv-i-debugger.h:
+	  added IDebugger::Variable::is_copyable(),
+	  IDebugger::Variable::copy () and
+	  IDebugger::Variable::set().
+	* src/dbgengine/nmv-var-walker-list.cc:
+	  (VarWalkerList::append_variable): add some logging.
+	  in VarWalkerListDynMod: Fix iface creation bug
+	* src/dbgengine/nmv-var-walker.cc: heavily debug this to make it work
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: ditto.
+	  Variable dereferencing still does not work, though.
+
 2007-09-21 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/Makefile.am, ./configure.ac: added varwalker.conf, varwalkerlist.conf

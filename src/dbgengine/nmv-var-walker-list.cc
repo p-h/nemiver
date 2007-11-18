@@ -119,6 +119,9 @@ VarWalkerList::append_variable (const IDebugger::VariableSafePtr a_var)
          (sigc::mem_fun (*this, &VarWalkerList::on_visited_variable_signal),
           var_walker)) ;
     m_var_walkers.push_back (var_walker) ;
+    UString var_str ;
+    a_var->to_string (var_str, true) ;
+    LOG_DD ("appended variable: " << var_str) ;
 }
 
 void
@@ -165,7 +168,7 @@ struct VarWalkerListDynMod : public DynamicModule {
     bool lookup_interface (const std::string &a_iface_name,
                            DynModIfaceSafePtr &a_iface)
     {
-        if (a_iface_name == "IVarWalkerlist") {
+        if (a_iface_name == "IVarWalkerList") {
             a_iface.reset (new VarWalkerList (this)) ;
         } else {
             return false;

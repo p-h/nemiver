@@ -259,6 +259,29 @@ UString::get_number_of_lines () const
     return res ;
 }
 
+UString::size_type
+UString::get_number_of_words () const
+{
+    UString::size_type i=0, num_words=0 ;
+
+skip_blanks:
+    for (;i < raw ().size (); ++i) {
+        if (!isblank (raw ()[i]))
+            goto eat_word;
+    }
+    goto out ;
+
+eat_word:
+    num_words++;
+    for (; i < raw ().size (); ++i) {
+        if (isblank (raw ()[i]))
+            goto skip_blanks;
+    }
+
+out:
+    return num_words;
+}
+
 UString&
 UString::vprintf (const UString &a_format, va_list a_args)
 {

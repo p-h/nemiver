@@ -385,6 +385,63 @@ public:
             if (m_dereferenced) {return true;}
             return false ;
         }
+
+        bool is_copyable (const Variable &a_other) const
+        {
+            if (a_other.type () != type ()) {
+                //can't copy a variable of different type
+                return false ;
+            }
+            //both variables must have same members
+            if (members ().size () != a_other.members ().size ()) {
+                return false ;
+            }
+
+            list<VariableSafePtr>::const_iterator it1, it2;
+            //first make sure our members have the same types as their members
+            for (it1=members ().begin (), it2=a_other.members ().begin ();
+                 it1 != members ().end ();
+                 it1++, it2++) {
+                if (!*it1 || !*it2)
+                    return false ;
+                if (!(*it1)->is_copyable (**it2))
+                    return false ;
+            }
+            return true ;
+        }
+
+        bool copy (const Variable &a_other)
+        {
+            if (!is_copyable (a_other))
+                return false ;
+            m_name = a_other.m_name ;
+            m_value = a_other.m_value ;
+            list<VariableSafePtr>::iterator it1;
+            list<VariableSafePtr>::const_iterator it2;
+            for (it1=m_members.begin (), it2=a_other.m_members.begin ();
+                 it1 != m_members.end ();
+                 it1++, it2++) {
+                (*it1)->copy (**it2) ;
+            }
+            return true ;
+        }
+
+        void set (const Variable &a_other)
+        {
+            m_name = a_other.m_name ;
+            m_value = a_other.m_value ;
+            m_type = a_other.m_type ;
+            list<VariableSafePtr>::const_iterator it;
+            m_members.clear () ;
+            for (it = a_other.m_members.begin ();
+                 it != a_other.m_members.end ();
+                 ++it) {
+                VariableSafePtr var;
+                var.reset (new Variable ()) ;
+                var->set (**it) ;
+                append (var) ;
+            }
+        }
     };//end class Variable
 
     enum State {

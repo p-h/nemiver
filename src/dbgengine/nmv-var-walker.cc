@@ -62,7 +62,7 @@ class VarWalker : public IVarWalker {
     mutable GDBEngineSafePtr m_debugger ;
     UString m_root_var_name ;
     list<sigc::connection> m_connections ;
-    map<IDebugger::VariableSafePtr, bool> m_vars_to_visit;
+    map<IDebugger::Variable*, bool> m_vars_to_visit;
     UString m_cookie ;
     IDebugger::VariableSafePtr m_root_var ;
 
@@ -112,6 +112,8 @@ VarWalker::on_variable_value_signal (const UString &a_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cookie)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     if (a_name == "") {}
     if (a_cookie != m_cookie) {
         return ;
@@ -122,6 +124,7 @@ VarWalker::on_variable_value_signal (const UString &a_name,
     //now query for the type
     get_type_of_all_members (a_var) ;
     m_root_var = a_var ;
+    LOG_DD ("set m_root_var") ;
 
     NEMIVER_CATCH_NOX
 }
@@ -130,6 +133,8 @@ void
 VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
                                          const UString &a_cookie)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
     if (a_cookie != m_cookie) {
         return ;
     }
@@ -138,6 +143,11 @@ VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var
 
     //now query for the type
     get_type_of_all_members (a_var) ;
+
+    LOG_DD ("m_vars_to_visit.size () = " << (int)m_vars_to_visit.size ()) ;
+    UString var_str;
+    a_var->to_string (var_str, true) ;
+    LOG_DD ("got value for variable: " << var_str) ;
 
     NEMIVER_CATCH_NOX
 }
@@ -152,10 +162,32 @@ VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
 
     NEMIVER_TRY
 
+    THROW_IF_FAIL (a_var) ;
+
+    UString parent_name;
+    if (a_var->parent ()) {
+        parent_name = a_var->parent ()->name () ;
+    } else {
+        parent_name = "null";
+    }
+    LOG_DD ("var: " << a_var->name ()
+            << " type: " << a_var->type ()
+            << " parent: " << parent_name) ;
+
     visited_variable_node_signal ().emit (a_var) ;
-    m_vars_to_visit.erase (a_var) ;
+    m_vars_to_visit.erase (a_var.get ()) ;
     if (m_vars_to_visit.size () == 0) {
         visited_variable_signal ().emit (m_root_var) ;
+        LOG_DD ("visited var: " << m_root_var->name ()
+                << ", cur node: " << a_var->name ()) ;
+    } else {
+        LOG_DD ("m_vars_to_visit.size () = " << (int) m_vars_to_visit.size ()) ;
+    }
+    map<IDebugger::Variable*, bool>::iterator it;
+    for (it = m_vars_to_visit.begin ();
+         it != m_vars_to_visit.end ();
+         ++it) {
+        LOG_DD ("m_vars_to_visit[x] = " << it->first->name ()) ;
     }
 
     NEMIVER_CATCH_NOX
@@ -166,14 +198,35 @@ VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr &a_from)
 {
     RETURN_IF_FAIL (a_from) ;
 
-    m_vars_to_visit[a_from] = true;
-    m_debugger->get_variable_type (a_from, m_cookie) ;
+    LOG_DD ("member: " << a_from->name ()) ;
+    if (a_from->parent ()) {
+        LOG_DD ("parent: " << a_from->parent ()->name ()) ;
+    } else {
+        LOG_DD ("parent: null") ;
+    }
+
+    UString qname;
+    a_from->build_qname (qname) ;
+    qname.chomp () ;
+    if (qname[0] == '<' || a_from->name ()[0] == '<') {
+        //this is a hack to detect c++ templated unamed members
+        //usually, their name have the form "<blablah>"
+        LOG_DD ("templated unnamed member, don't query for its type") ;
+        LOG_DD ("member was: " << a_from->name ()) ;
+    } else if (qname.get_number_of_words () != 1) {
+        LOG_DD ("variable name is weird, don't query for its type") ;
+        LOG_DD ("member was: " << a_from->name ()) ;
+    } else {
+        m_vars_to_visit[a_from.get ()] = true;
+        m_debugger->get_variable_type (a_from, m_cookie) ;
+    }
     list<IDebugger::VariableSafePtr>::const_iterator it;
     for (it = a_from->members ().begin ();
          it != a_from->members ().end ();
          ++it) {
         get_type_of_all_members (*it) ;
     }
+    LOG_DD ("m_vars_to_visit.size () = " << (int)m_vars_to_visit.size ()) ;
 }
 
 sigc::signal<void, const IDebugger::VariableSafePtr&>&
@@ -235,10 +288,12 @@ VarWalker::do_walk_variable (const UString &a_cookie)
         m_cookie = a_cookie;
     }
 
-    /*query the root fragment first*/
-    m_root_var.reset () ;
-    m_debugger->print_variable_value (m_root_var_name,
-                                      m_cookie) ;
+    if (m_root_var_name != "") {
+        m_debugger->print_variable_value (m_root_var_name,
+                                          m_cookie) ;
+    } else if (m_root_var){
+        m_debugger->get_variable_value (m_root_var, m_cookie) ;
+    }
 }
 
 IDebugger::VariableSafePtr

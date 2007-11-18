@@ -36,7 +36,7 @@
 #include "nmv-i-var-walker-list.h"
 
 using namespace nemiver::common ;
-using namespace nemiver::variables_utils ;
+namespace vutil=nemiver::variables_utils ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -79,13 +79,11 @@ public:
 
     void build_tree_view ()
     {
-        using namespace variables_utils ;
-
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         if (tree_view) {return;}
         //create a default tree store and a tree view
         tree_store = Gtk::TreeStore::create
-            (variables_utils::get_variable_columns ()) ;
+            (vutil::get_variable_columns ()) ;
         tree_view.reset (new Gtk::TreeView (tree_store)) ;
         tree_view->set_headers_clickable (true) ;
         Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
@@ -94,24 +92,24 @@ public:
 
         //create the columns of the tree view
         tree_view->append_column (_("Variable"),
-                                 variables_utils::get_variable_columns ().name) ;
+                                 vutil::get_variable_columns ().name) ;
         Gtk::TreeViewColumn * col = tree_view->get_column (0) ;
         THROW_IF_FAIL (col) ;
         col->set_resizable (true) ;
         col->add_attribute (*col->get_first_cell_renderer (),
                             "foreground-gdk",
-                            variables_utils::VariableColumns::FG_COLOR_OFFSET) ;
+                            vutil::VariableColumns::FG_COLOR_OFFSET) ;
 
-        tree_view->append_column (_("Value"), get_variable_columns ().value) ;
+        tree_view->append_column (_("Value"), vutil::get_variable_columns ().value) ;
         col = tree_view->get_column (1) ;
         THROW_IF_FAIL (col) ;
         col->set_resizable (true) ;
         col->add_attribute (*col->get_first_cell_renderer (),
                             "foreground-gdk",
-                            variables_utils::VariableColumns::FG_COLOR_OFFSET) ;
+                            vutil::VariableColumns::FG_COLOR_OFFSET) ;
 
         tree_view->append_column (_("Type"),
-                                  get_variable_columns ().type_caption);
+                                  vutil::get_variable_columns ().type_caption);
         col = tree_view->get_column (2) ;
         THROW_IF_FAIL (col) ;
         col->set_resizable (true) ;
@@ -122,6 +120,8 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
         THROW_IF_FAIL (tree_store) ;
         tree_store->clear () ;
+        previous_function_name = "" ;
+        is_new_frame = true ;
 
         //****************************************************
         //add two rows: local variables and function arguments.
@@ -129,7 +129,7 @@ public:
         //****************************************************
         Gtk::TreeModel::iterator it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
-        (*it)[variables_utils::get_variable_columns ().name] =
+        (*it)[vutil::get_variable_columns ().name] =
                                                         _("Local Variables");
         local_variables_row_ref.reset
                     (new Gtk::TreeRowReference (tree_store,
@@ -138,7 +138,7 @@ public:
 
         it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
-        (*it)[variables_utils::get_variable_columns ().name] =
+        (*it)[vutil::get_variable_columns ().name] =
                                                         _("Function Arguments");
         function_arguments_row_ref.reset
             (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it))) ;
@@ -161,8 +161,11 @@ public:
     {
         if (!local_var_walker_list) {
             local_var_walker_list = create_variable_walker_list () ;
+            THROW_IF_FAIL (local_var_walker_list) ;
+            local_var_walker_list->variable_visited_signal ().connect
+                (sigc::mem_fun
+                 (*this, &LocalVarsInspector2::Priv::on_local_variable_visited_signal)) ;
         }
-        THROW_IF_FAIL (local_var_walker_list) ;
         return local_var_walker_list ;
     }
 
@@ -170,8 +173,11 @@ public:
     {
         if (!function_args_var_walker_list) {
             function_args_var_walker_list = create_variable_walker_list () ;
+            THROW_IF_FAIL (function_args_var_walker_list) ;
+            function_args_var_walker_list->variable_visited_signal ().connect
+                (sigc::mem_fun
+                 (*this, &LocalVarsInspector2::Priv::on_func_arg_visited_signal)) ;
         }
-        THROW_IF_FAIL (function_args_var_walker_list) ;
         return function_args_var_walker_list ;
     }
 
@@ -226,22 +232,22 @@ public:
         }
         THROW_IF_FAIL (tree_view) ;
 
-        (*a_iter)[get_variable_columns ().variable] = a_var ;
+        (*a_iter)[vutil::get_variable_columns ().variable] = a_var ;
         UString var_name = a_var->name ();
         var_name.chomp () ;
         UString prev_var_name =
-                (Glib::ustring)(*a_iter)[get_variable_columns ().name] ;
+                (Glib::ustring)(*a_iter)[vutil::get_variable_columns ().name] ;
         LOG_DD ("Prev variable name: " << prev_var_name) ;
         LOG_DD ("new variable name: " << var_name) ;
         LOG_DD ("Didn't update variable name") ;
         if (prev_var_name == "") {
-            (*a_iter)[get_variable_columns ().name] = var_name;
+            (*a_iter)[vutil::get_variable_columns ().name] = var_name;
         }
-        (*a_iter)[get_variable_columns ().is_highlighted]=false ;
+        (*a_iter)[vutil::get_variable_columns ().is_highlighted]=false ;
         bool do_highlight = false ;
         if (a_handle_highlight && !a_is_new_frame) {
             UString prev_value =
-                (UString) (*a_iter)[get_variable_columns ().value] ;
+                (UString) (*a_iter)[vutil::get_variable_columns ().value] ;
             if (prev_value != a_var->value ()) {
                 do_highlight = true ;
             }
@@ -249,25 +255,25 @@ public:
 
         if (do_highlight) {
             LOG_DD ("do highlight variable") ;
-            (*a_iter)[get_variable_columns ().is_highlighted]  = true;
-            (*a_iter)[get_variable_columns ().fg_color]  = Gdk::Color ("red");
+            (*a_iter)[vutil::get_variable_columns ().is_highlighted]=true;
+            (*a_iter)[vutil::get_variable_columns ().fg_color] =
+                                                            Gdk::Color ("red");
         } else {
             LOG_DD ("remove highlight from variable") ;
-            (*a_iter)[get_variable_columns ().is_highlighted]  = false ;
-            (*a_iter)[get_variable_columns ().fg_color]  =
+            (*a_iter)[vutil::get_variable_columns ().is_highlighted]=false;
+            (*a_iter)[vutil::get_variable_columns ().fg_color]  =
                 tree_view->get_style ()->get_text (Gtk::STATE_NORMAL);
         }
 
-        (*a_iter)[get_variable_columns ().value] = a_var->value () ;
-        (*a_iter)[get_variable_columns ().type] = a_var->type () ;
+        (*a_iter)[vutil::get_variable_columns ().value] = a_var->value () ;
+        vutil::set_a_variable_type_real (a_iter,  a_var->type ()) ;
     }
 
     void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-        THROW_IF_FAIL (tree_store) ;
-
+        clear_local_variables () ;
         std::list<IDebugger::VariableSafePtr>::const_iterator it ;
         for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
             THROW_IF_FAIL ((*it)->name () != "") ;
@@ -279,11 +285,35 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-        THROW_IF_FAIL (tree_store) ;
+        clear_function_arguments () ;
         std::list<IDebugger::VariableSafePtr>::const_iterator it ;
         for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
             THROW_IF_FAIL ((*it)->name () != "") ;
             append_a_function_argument (*it) ;
+        }
+    }
+
+    void clear_local_variables ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        THROW_IF_FAIL (tree_store) ;
+        Gtk::TreeModel::iterator row_it;
+        get_local_variables_row_iterator (row_it) ;
+        Gtk::TreeModel::Children rows = row_it->children ();
+        for (row_it = rows.begin (); row_it != rows.end (); ++row_it) {
+            tree_store->erase (row_it) ;
+        }
+    }
+
+    void clear_function_arguments ()
+    {
+        THROW_IF_FAIL (tree_store) ;
+        Gtk::TreeModel::iterator row_it;
+        get_function_arguments_row_iterator (row_it) ;
+        Gtk::TreeModel::Children rows = row_it->children ();
+        for (row_it = rows.begin (); row_it != rows.end (); ++row_it) {
+            tree_store->erase (*row_it) ;
         }
     }
 
@@ -300,12 +330,28 @@ public:
     void append_a_function_argument (const IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        THROW_IF_FAIL (function_arguments_row_ref) ;
-        THROW_IF_FAIL (tree_store) ;
+
+        Gtk::TreeModel::iterator parent_row_it ;
+        get_function_arguments_row_iterator (parent_row_it) ;
+        append_a_variable (a_var, parent_row_it) ;
+    }
+
+    void update_a_local_variable (const IDebugger::VariableSafePtr &a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         Gtk::TreeModel::iterator parent_row_it ;
         get_local_variables_row_iterator (parent_row_it) ;
-        append_a_variable (a_var, parent_row_it) ;
+        update_a_variable (a_var, parent_row_it, true, false) ;
+    }
+
+    void update_a_function_argument (const IDebugger::VariableSafePtr &a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        Gtk::TreeModel::iterator parent_row_it ;
+        get_function_arguments_row_iterator (parent_row_it) ;
+        update_a_variable (a_var, parent_row_it, true, false) ;
     }
 
     void append_a_variable (const IDebugger::VariableSafePtr &a_var,
@@ -316,10 +362,51 @@ public:
 
         Gtk::TreeModel::iterator row_it =
             tree_store->append (a_parent_row_it->children ()) ;
-        update_a_variable_node (a_var, row_it, false, false) ;
+        update_a_variable_node (a_var, row_it, true, true) ;
         list<IDebugger::VariableSafePtr>::const_iterator it;
         for (it = a_var->members ().begin (); it != a_var->members ().end (); ++it) {
             append_a_variable (*it, row_it) ;
+        }
+    }
+
+    void update_a_variable (const IDebugger::VariableSafePtr &a_var,
+                            Gtk::TreeModel::iterator &a_parent_row_it,
+                            bool a_handle_highlight,
+                            bool a_is_new_frame)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        THROW_IF_FAIL (tree_store && a_parent_row_it) ;
+
+        Gtk::TreeModel::iterator row_it ;
+        bool found=false;
+        for (row_it = a_parent_row_it->children ().begin ();
+             row_it != a_parent_row_it->children ().end ();
+             ++row_it) {
+            if (row_it->get_value (vutil::get_variable_columns ().variable) == a_var) {
+                found = true ;
+                break ;
+            }
+        }
+        if (!found) {
+            THROW ("could not find variable in inspector: " + a_var->name ()) ;
+        }
+        update_a_variable_real (a_var, row_it, a_handle_highlight, a_is_new_frame) ;
+    }
+
+    void update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
+                                 Gtk::TreeModel::iterator &a_row_it,
+                                 bool a_handle_highlight,
+                                 bool a_is_new_frame)
+    {
+        update_a_variable_node (a_var, a_row_it, a_handle_highlight, is_new_frame) ;
+        Gtk::TreeModel::iterator row_it;
+        list<IDebugger::VariableSafePtr>::const_iterator var_it;
+        Gtk::TreeModel::Children rows = a_row_it->children ();
+        //TODO: change this to handle dereferencing
+        for (row_it = rows.begin (), var_it = a_var->members ().begin ();
+             row_it != rows.end ();
+             ++row_it, ++var_it) {
+            update_a_variable_real (*var_it, row_it, a_handle_highlight, a_is_new_frame) ;
         }
     }
 
@@ -353,7 +440,6 @@ public:
             } else {
                 is_new_frame = true ;
             }
-            previous_function_name = a_frame.function_name () ;
             THROW_IF_FAIL (tree_store) ;
             if (is_new_frame) {
                 LOG_DD ("init tree view") ;
@@ -370,6 +456,7 @@ public:
                 //pointer (direct or indirect) members and update them.
                 //update_derefed_pointer_variables () ;
             }
+            previous_function_name = a_frame.function_name () ;
         }
 
         NEMIVER_CATCH
@@ -420,8 +507,29 @@ public:
     //</debugger signal handlers>
     //****************************
 
-    void on_variable_visited_signal (const IVarWalkerSafePtr &a_walker)
+    void on_local_variable_visited_signal (const IVarWalkerSafePtr &a_walker)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (a_walker->get_variable ()) ;
+
+        if (is_new_frame) {
+            LOG_DD ("going to append: " << a_walker->get_variable ()->name ()) ;
+            append_a_local_variable (a_walker->get_variable ()) ;
+        } else {
+            LOG_DD ("going to update: " << a_walker->get_variable ()->name ()) ;
+            update_a_local_variable (a_walker->get_variable ()) ;
+        }
+
+        NEMIVER_CATCH
+    }
+
+    void on_func_arg_visited_signal (const IVarWalkerSafePtr &a_walker)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         NEMIVER_TRY
 
         THROW_IF_FAIL (a_walker->get_variable ()) ;
