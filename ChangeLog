@@ -95,6 +95,13 @@
 	* src/persp/dbgperspective/nmv-registers-view.cc: clear the list of
 	registers when the target is detached
 
+2007-09-26 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc: make sure the IConfMgr is loaded when
+	  it has not been specificaly passed by client code at init time.
+	  This should fix the regression test breakages triggered by conf_mgr
+	  not being loaded by GDBEngine.
+
 2007-09-24 Dodji Seketeli <dodji@gnome.org>
 
 	* VarInspector: unfold the added variable row by default.
@@ -106,7 +113,6 @@
 	  add an overload of append_a_variable() that returns the row of the
 	  actually appended variable. The is useful for intance when the calling
 	  code wants to fold/unfold the added variable row for better legibility.
-
 
 2007-09-24 Dodji Seketeli <dodji@gnome.org>
 

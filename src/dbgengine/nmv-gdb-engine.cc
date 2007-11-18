@@ -53,12 +53,18 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 //<GDBEngine::Priv struct>
 //*************************
 
-struct GDBEngine::Priv {
+class GDBEngine::Priv {
+    Priv () {}
+    Priv (const Priv&) ;
+    Priv& operator= (const Priv&) ;
+
+public:
     //***********************
     //<GDBEngine attributes>
     //************************
+    DynamicModule *dynmod ;
     map<UString, UString> properties ;
-    IConfMgrSafePtr conf_mgr ;
+    mutable IConfMgrSafePtr conf_mgr ;
     UString cwd ;
     vector<UString> argv ;
     vector<UString> source_search_dirs ;
@@ -220,12 +226,28 @@ struct GDBEngine::Priv {
     //</GDBEngine attributes>
     //************************
 
+    IConfMgrSafePtr get_conf_mgr () const
+    {
+        if (!conf_mgr) {
+            THROW_IF_FAIL (dynmod) ;
+            DynamicModule::Loader *loader = dynmod->get_module_loader ();
+            THROW_IF_FAIL (loader) ;
+            DynamicModuleManager *module_manager =
+                                        loader->get_dynamic_module_manager ();
+            THROW_IF_FAIL (module_manager) ;
+            conf_mgr = module_manager->load_iface<IConfMgr> ("gconfmgr",
+                                                             "IConfMgr");
+        }
+        THROW_IF_FAIL (conf_mgr) ;
+        return conf_mgr ;
+    }
+
     const UString& get_debugger_full_path () const
     {
-        THROW_IF_FAIL (conf_mgr) ;
-        conf_mgr->get_key_value (CONF_KEY_GDB_BINARY,
+        get_conf_mgr ()->get_key_value (CONF_KEY_GDB_BINARY,
                                  const_cast<Priv*> (this)->debugger_full_path) ;
-        if (debugger_full_path == "" || debugger_full_path == DEFAULT_GDB_BINARY) {
+        if (debugger_full_path == "" ||
+            debugger_full_path == DEFAULT_GDB_BINARY) {
             const_cast<Priv*> (this)->debugger_full_path = env::get_gdb_program () ;
         }
         LOG_DD ("debugger: '" << debugger_full_path << "'") ;
@@ -337,8 +359,9 @@ struct GDBEngine::Priv {
         }
     }
 
-    Priv () :
-        cwd ("."), gdb_pid (0), target_pid (0),
+    Priv (DynamicModule *a_dynmod) :
+        dynmod (a_dynmod), cwd ("."),
+        gdb_pid (0), target_pid (0),
         gdb_stdout_fd (0), gdb_stderr_fd (0),
         master_pty_fd (0),
         line_busy (false),
@@ -1848,7 +1871,7 @@ struct OnErrorHandler : OutputHandler {
     //****************************
 GDBEngine::GDBEngine (DynamicModule *a_dynmod) : IDebugger (a_dynmod)
 {
-    m_priv.reset (new Priv) ;
+    m_priv.reset (new Priv (a_dynmod)) ;
     init () ;
 }
 
@@ -2375,8 +2398,8 @@ IConfMgr&
 GDBEngine::get_conf_mgr ()
 {
     THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->conf_mgr) ;
-    return *m_priv->conf_mgr ;
+
+    return *m_priv->get_conf_mgr () ;
 }
 
 map<UString, UString>&
