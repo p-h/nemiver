@@ -1,3 +1,13 @@
+2007-11-13 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-ast.cc,h,
+	  src/langs/nmv-cpp-parser.cc,h:
+	  do what it takes to make Parser::parse_simple_declaration() spit
+	  AST datastructures.
+	* tests/test-cpp-parser.cc: update this to reflect changes in
+	  Parser::parse_simple_declaration() api.
+
+
 2007-11-09 Dodji Seketeli <dodji@gnome.org>
 
 	* src/langs/nmv-cpp-ast.cc,h: added this to contain the AST.

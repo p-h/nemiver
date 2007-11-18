@@ -139,11 +139,190 @@ public:
     bool is_operator () const;
 };//end class Token
 
+class QName;
+typedef shared_ptr<QName> QNamePtr;
+/// \brief Qualified Name.
+///
+/// can contain the result of the parsing of
+/// a nested name specifier.
+class NEMIVER_API QName {
+
+public:
+    class ClassOrNSName {
+        string m_name;
+        bool m_prefixed_with_template;//true if is prefixed by the 'template' keyword.
+
+    public:
+        ClassOrNSName (const string &n, bool p=false) :
+            m_name (n),
+            m_prefixed_with_template (p)
+        {}
+        ClassOrNSName () :
+            m_prefixed_with_template (false)
+        {}
+        const string& get_name () const {return m_name;}
+        void set_name (const string &n) {m_name = n;}
+        bool is_prefixed_with_template () const {return m_prefixed_with_template;}
+        void set_is_prefixed_with_template (bool a) {m_prefixed_with_template=a;}
+    };//end ClassOrNSName
+
+private:
+    list<ClassOrNSName>m_names;
+
+public:
+    QName () {}
+    QName (const QName &a_other):
+        m_names (a_other.m_names)
+    {}
+
+    /// an empty name means the QName is: '::'
+    const list<ClassOrNSName>& get_names () const {return m_names;}
+    void append (const string &a_name, bool a_prefixed_with_template=false)
+    {
+        ClassOrNSName c (a_name, a_prefixed_with_template);
+        m_names.push_back (c);
+    }
+    void append (const QNamePtr &a_q, bool a_prefixed_with_template=false)
+    {
+        if (!a_q) {return;}
+        list<ClassOrNSName>::const_iterator it=a_q->get_names ().begin ();
+        ClassOrNSName n (it->get_name (), a_prefixed_with_template);
+        m_names.push_back (n);
+        for (; it != a_q->get_names ().end (); ++it) {
+            m_names.push_back (*it);
+        }
+    }
+    bool to_string (string &) const;
+};//end class QName
+
+class NEMIVER_API CVQualifier {
+    CVQualifier ();
+    CVQualifier (const CVQualifier&);
+    CVQualifier& operator= (const CVQualifier&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        CONST,
+        VOLATILE
+    };
+private:
+    Kind m_kind;
+
+public:
+    CVQualifier (Kind k) :
+        m_kind (k)
+    {}
+    virtual ~CVQualifier () {}
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind k) {m_kind=k;}
+    virtual bool to_string (string &) const=0;
+};
+typedef shared_ptr<CVQualifier> CVQualifierPtr;
+
+class NEMIVER_API ConstQualifier : public CVQualifier {
+    ConstQualifier (const ConstQualifier&);
+    ConstQualifier& operator= (const ConstQualifier&);
+public:
+    ConstQualifier () :
+        CVQualifier (CONST)
+    {}
+    ~ConstQualifier () {}
+    bool to_string (string &a_str) const {a_str="const";return true;}
+};
+typedef shared_ptr<ConstQualifier> ConstQualifierPtr;
+
+class NEMIVER_API VolatileQualifier : public CVQualifier {
+    VolatileQualifier (const VolatileQualifier &);
+    VolatileQualifier& operator= (const VolatileQualifier &);
+public:
+    VolatileQualifier ():
+        CVQualifier (VOLATILE)
+    {}
+    ~VolatileQualifier () {}
+    bool to_string (string &a_str) const {a_str="volatile";return true;}
+};
+typedef shared_ptr<VolatileQualifier> VolatileQualifierPtr;
+
+class NEMIVER_API PtrOperator {
+    PtrOperator (const PtrOperator&);
+    PtrOperator& operator= (const PtrOperator&);
+
+public:
+    class Elem {
+        Elem ();
+    public:
+        enum Kind {
+            UNDEFINED,
+            STAR,
+            AND,
+            CONST,
+            VOLATILE,
+        };
+    private:
+        Kind m_kind;
+
+    public:
+        Elem (Kind a_k) : m_kind (a_k)
+        {}
+        Kind get_kind () const {return m_kind;}
+        void set_kind (Kind a_kind) {m_kind=a_kind;}
+        virtual ~Elem () {}
+        virtual bool to_string (string &) const=0;
+    };
+    typedef shared_ptr<Elem> ElemPtr;
+    class StarElem : public Elem {
+    public:
+        StarElem () :
+            Elem (STAR)
+        {}
+        ~StarElem () {}
+        bool to_string (string &a_str) const {a_str="*";return true;}
+    };//end class StarElem
+    class AndElem : public Elem {
+    public:
+        AndElem () :
+           Elem (AND)
+        {}
+        ~AndElem () {}
+        bool to_string (string &a_str) const {a_str="&";return true;}
+    };//end class AndElem
+    class ConstElem : public Elem {
+    public:
+        ConstElem ():
+            Elem (CONST)
+        {}
+        bool to_string (string &a_str) const {a_str="const";return true;}
+    };//end class ConstElem
+    class VolatileElem : public Elem {
+    public:
+        VolatileElem () :
+            Elem (VOLATILE)
+        {}
+        bool to_string (string &a_str) const {a_str="volatile";return true;}
+    };//end class ConstElem
+
+private:
+    QNamePtr m_scope;
+    list<ElemPtr> m_elems;
+
+public:
+    PtrOperator () {}
+    ~PtrOperator () {}
+
+    void set_scope (QNamePtr a_scope) {m_scope = a_scope;}
+    const QNamePtr get_scope () const {return m_scope;}
+    const list<ElemPtr>& get_elems () const {return m_elems;}
+    void append (const ElemPtr &a_elem) {m_elems.push_back (a_elem);}
+    bool to_string (string &) const;
+};//end class PtrOperator
+typedef shared_ptr<PtrOperator> PtrOperatorPtr;
+
 /// \brief the base class of declarations
-class NEMIVER_API Decl {
-    Decl ();
-    Decl (const Decl&);
-    Decl& operator= (const Decl&);
+class NEMIVER_API Declaration {
+    Declaration ();
+    Declaration (const Declaration&);
+    Declaration& operator= (const Declaration&);
 
 public:
     enum Kind {
@@ -160,33 +339,153 @@ protected:
 public:
     Kind get_kind () const;
 
-    Decl (Kind a_kind);
+    Declaration (Kind a_kind);
 };//end class Declaration
 
 class DeclSpecifier;
 class InitDeclarator;
 typedef shared_ptr<DeclSpecifier> DeclSpecifierPtr;
 typedef shared_ptr<InitDeclarator> InitDeclaratorPtr;
-
 /// \brief a simple-declaration
-class NEMIVER_API SimpleDecl : public Decl {
-    SimpleDecl (const SimpleDecl&);
-    SimpleDecl& operator= (SimpleDecl&);
+class NEMIVER_API SimpleDeclaration : public Declaration {
+    SimpleDeclaration (const SimpleDeclaration&);
+    SimpleDeclaration& operator= (SimpleDeclaration&);
 
     list<DeclSpecifierPtr> m_decl_specs;
     list<InitDeclaratorPtr> m_init_decls;
 public:
 
-    SimpleDecl ();
-    ~SimpleDecl ();
-    void add_decl_specifier (DeclSpecifierPtr a_spec);
-    const list<DeclSpecifierPtr>& get_decl_specifiers () const;
+    SimpleDeclaration () :
+        Declaration (SIMPLE_DECLARATION)
+    {}
+    SimpleDeclaration (list<DeclSpecifierPtr> &a, list<InitDeclaratorPtr> &b) :
+        Declaration (SIMPLE_DECLARATION),
+        m_decl_specs (a),
+        m_init_decls (b)
+    {}
+    ~SimpleDeclaration () {}
+    void add_decl_specifier (DeclSpecifierPtr a_spec) {m_decl_specs.push_back (a_spec);}
+    const list<DeclSpecifierPtr>& get_decl_specifiers () const {return m_decl_specs;}
 
-    void add_init_declarator (InitDeclaratorPtr a_decl);
-    const list<InitDeclaratorPtr>& get_init_declarators () const;
-};//end SimpleDecl
+    void add_init_declarator (InitDeclaratorPtr a_decl) {m_init_decls.push_back (a_decl);}
+    const list<InitDeclaratorPtr>& get_init_declarators () const {return m_init_decls;}
+    bool to_string (string &) const;
+};//end SimpleDeclaration
+typedef shared_ptr<SimpleDeclaration> SimpleDeclarationPtr;
 
-class NEMIVER_API TypeSpecifier {
+
+class NEMIVER_API DeclSpecifier {
+    DeclSpecifier (const DeclSpecifier&);
+    DeclSpecifier& operator= (const DeclSpecifier&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        //storage class speficiers
+        AUTO,
+        REGISTER,
+        STATIC,
+        EXTERN,
+        MUTABLE,
+        //type specifier
+        TYPE,
+        //function specifiers
+        INLINE,
+        VIRTUAL,
+        EXPLICIT,
+        //friend specifier
+        FRIEND,
+        //typedef specifier
+        TYPEDEF
+    };
+
+private:
+    Kind m_kind ;
+
+    DeclSpecifier ();
+public:
+
+    DeclSpecifier (Kind k):
+        m_kind (k)
+    {
+    }
+
+    virtual ~DeclSpecifier ()
+    {
+    }
+
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind a_kind) {m_kind=a_kind;}
+
+    bool is_storage_class ()
+    {
+        return (m_kind == AUTO || m_kind == REGISTER
+                || m_kind == STATIC || m_kind == EXTERN
+                || m_kind == MUTABLE) ;
+    }
+    virtual bool to_string (string &a_str) const=0;
+    static bool list_to_string (list<DeclSpecifierPtr> &a_decls, string &a_str);
+};//end class DeclSpecifier
+
+class NEMIVER_API AutoSpecifier : public DeclSpecifier {
+    AutoSpecifier (const AutoSpecifier&);
+    AutoSpecifier& operator= (const AutoSpecifier&);
+public:
+    AutoSpecifier () :
+        DeclSpecifier (AUTO)
+    {}
+    ~AutoSpecifier () {}
+    bool to_string (string &a_str) const {a_str="auto";return true;}
+};//end class AutoSpecifier
+
+class NEMIVER_API RegisterSpecifier : public DeclSpecifier {
+    RegisterSpecifier (const RegisterSpecifier&);
+    RegisterSpecifier& operator= (const RegisterSpecifier&);
+public:
+    RegisterSpecifier () :
+        DeclSpecifier (REGISTER)
+    {}
+    ~RegisterSpecifier () {}
+    bool to_string (string &a_str) const {a_str="register";return true;}
+};
+typedef shared_ptr<RegisterSpecifier> RegisterSpecifierPtr;
+
+class NEMIVER_API StaticSpecifier : public DeclSpecifier {
+    StaticSpecifier (const StaticSpecifier&);
+    StaticSpecifier& operator= (const StaticSpecifier&);
+public:
+    StaticSpecifier () :
+        DeclSpecifier (STATIC)
+    {}
+    ~StaticSpecifier () {}
+    bool to_string (string &a_str) const {a_str="static";return true;}
+};
+typedef shared_ptr<StaticSpecifier> StaticSpecifierPtr;
+
+class NEMIVER_API ExternSpecifier : public DeclSpecifier {
+    ExternSpecifier (const ExternSpecifier&);
+    ExternSpecifier& operator= (const ExternSpecifier&);
+public:
+    ExternSpecifier () :
+        DeclSpecifier (EXTERN)
+    {}
+    ~ExternSpecifier () {}
+    bool to_string (string &a_str) const {a_str="extern";return true;}
+};
+
+
+class NEMIVER_API MutableSpecifier : public DeclSpecifier {
+    MutableSpecifier (const MutableSpecifier&);
+    MutableSpecifier& operator= (const MutableSpecifier&);
+public:
+    MutableSpecifier () :
+        DeclSpecifier (MUTABLE)
+    {}
+    ~MutableSpecifier () {}
+    bool to_string (string &a_str) const {a_str="mutable";return true;}
+};
+
+class NEMIVER_API TypeSpecifier : public DeclSpecifier {
     TypeSpecifier (const TypeSpecifier&);
     TypeSpecifier& operator= (const TypeSpecifier&);
 
@@ -209,6 +508,7 @@ private:
 public:
 
     TypeSpecifier ():
+        DeclSpecifier (TYPE),
         m_kind (UNDEFINED)
     {
     }
@@ -223,61 +523,68 @@ public:
     bool is_cv_qualifier () const {return (m_kind == CONST || m_kind == VOLATILE);}
     bool to_string (string &a_str) const;
 };
+typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
 
-class NEMIVER_API DeclSpecifier {
-    DeclSpecifier (const DeclSpecifier&);
-    DeclSpecifier& operator= (const DeclSpecifier&);
+class NEMIVER_API InlineSpecifier : public DeclSpecifier {
+    InlineSpecifier (const InlineSpecifier&);
+    InlineSpecifier& operator= (const InlineSpecifier&);
+public:
+    InlineSpecifier () :
+        DeclSpecifier (INLINE)
+    {}
+    ~InlineSpecifier () {}
+    bool to_string (string &a_str) const {a_str="inline";return true;}
+};
+typedef shared_ptr<InlineSpecifier> InlineSpecifierPtr;
+
+class NEMIVER_API VirtualSpecifier : public DeclSpecifier {
+    VirtualSpecifier (const VirtualSpecifier&);
+    VirtualSpecifier& operator= (const VirtualSpecifier&);
+public:
+    VirtualSpecifier () :
+        DeclSpecifier (VIRTUAL)
+    {}
+    ~VirtualSpecifier () {}
+    bool to_string (string &a_str) const {a_str="virtual";return true;}
+};
+typedef shared_ptr<VirtualSpecifier> VirtualSpecifierPtr;
+
+class NEMIVER_API ExplicitSpecifier : public DeclSpecifier {
+    ExplicitSpecifier (const ExplicitSpecifier&);
+    ExplicitSpecifier& operator= (const ExplicitSpecifier&);
+public:
+    ExplicitSpecifier () :
+        DeclSpecifier (EXPLICIT)
+    {}
+    ~ExplicitSpecifier () {}
+    bool to_string (string &a_str) const {a_str="explicit";return true;}
+};
+typedef shared_ptr<ExplicitSpecifier> ExplicitSpecifierPtr;
+
+class NEMIVER_API FriendSpecifier : public DeclSpecifier {
+    FriendSpecifier (const FriendSpecifier&);
+    FriendSpecifier& operator= (const FriendSpecifier&);
 
 public:
-    enum Kind {
-        UNDEFINED,
-        //storage-class-speficier
-        AUTO,
-        REGISTER,
-        STATIC,
-        EXTERN,
-        MUTABLE,
-        TYPE,
-        FUNCTION,
-        FRIEND,
-        TYPEDEF
-    };
+    FriendSpecifier () :
+        DeclSpecifier (FRIEND)
+    {}
+    ~FriendSpecifier () {}
+    bool to_string (string &a_str) const {a_str="friend";return true;}
+};
+typedef shared_ptr<FriendSpecifier> FriendSpecifierPtr;
 
-private:
-    Kind m_kind ;
-    shared_ptr<TypeSpecifier> m_type_specifier;
-
+class NEMIVER_API TypedefSpecifier : public DeclSpecifier {
+    TypedefSpecifier (const TypedefSpecifier&);
+    TypedefSpecifier& operator= (const TypedefSpecifier&);
 public:
-    DeclSpecifier ():
-        m_kind (UNDEFINED)
-    {
-    }
-
-    ~DeclSpecifier ()
-    {
-    }
-
-    Kind get_kind () const {return m_kind;}
-    void set_kind (Kind a_kind) {m_kind=a_kind;}
-    void set_type_specifier (const shared_ptr<TypeSpecifier> a_type_spec)
-    {
-        m_kind = TYPE;
-        m_type_specifier = a_type_spec;
-    }
-    shared_ptr<TypeSpecifier> get_type_specifier () const {return m_type_specifier;}
-
-    bool is_storage_class ()
-    {
-        return (m_kind == AUTO || m_kind == REGISTER
-                || m_kind == STATIC || m_kind == EXTERN
-                || m_kind == MUTABLE || m_kind == TYPE
-                || m_kind == FUNCTION || m_kind == FRIEND
-                || m_kind == TYPEDEF);
-    }
-    bool to_string (string &a_str) const ;
-    static bool list_to_string (list<shared_ptr<DeclSpecifier> > &a_decls,
-                                string &a_str);
-};//end class DeclSpecifier
+    TypedefSpecifier () :
+        DeclSpecifier (TYPEDEF)
+    {}
+    ~TypedefSpecifier () {}
+    bool to_string (string &a_str) const {a_str="typedef";return true;}
+};
+typedef shared_ptr<TypedefSpecifier> TypedefSpecifierPtr;
 
 class NEMIVER_API Expr {
     Expr (const Expr&);
@@ -328,16 +635,13 @@ public:
     IDExpr (Kind kind) :
         Expr (ID_EXPRESSION),
         m_kind (kind)
-
     {
     }
-
     virtual ~IDExpr ();
-
     virtual bool to_string (string &) const=0;
-
     Kind get_kind () const {return m_kind;}
 };//end class Expr
+typedef shared_ptr<IDExpr> IDExprPtr;
 
 class NEMIVER_API UnqualifiedIDExpr : public IDExpr {
     UnqualifiedIDExpr (const UnqualifiedIDExpr&);
@@ -355,7 +659,6 @@ public:
 
 private:
     Kind m_kind;
-    Token m_token;
 
 public:
     UnqualifiedIDExpr () :
@@ -372,53 +675,245 @@ public:
     }
     Kind get_kind () const {return m_kind;}
     void set_kind (Kind kind) {m_kind=kind;}
-    void set_token (Kind kind, Token token) {m_kind=kind, m_token=token;}
-    const Token& get_token () const {return m_token;}
-    ~UnqualifiedIDExpr () {}
-    bool to_string (string &) const;
+    virtual ~UnqualifiedIDExpr () {}
+    virtual bool to_string (string &) const=0;
 };//end class UnqualifiedIDExpr
+typedef shared_ptr<UnqualifiedIDExpr> UnqualifiedIDExprPtr;
 
+class UnqualifiedID : public UnqualifiedIDExpr {
+    string m_name;
+
+public:
+    UnqualifiedID ():
+        UnqualifiedIDExpr (UnqualifiedIDExpr::IDENTIFIER)
+    {}
+    UnqualifiedID (const string &a_s):
+        UnqualifiedIDExpr (UnqualifiedIDExpr::IDENTIFIER),
+        m_name (a_s)
+    {}
+    ~UnqualifiedID ()
+    {}
+    const string& get_name () const {return m_name;}
+    void set_name (const string &a_n) {m_name=a_n;}
+    bool to_string (string &a_s) const;
+};
+typedef shared_ptr<UnqualifiedID> UnqualifiedIDPtr;
+
+class UnqualifiedOpFuncID : public UnqualifiedIDExpr {
+    UnqualifiedOpFuncID (const UnqualifiedOpFuncID&);
+    UnqualifiedOpFuncID& operator= (const UnqualifiedOpFuncID&);
+    Token m_op_token;
+
+public:
+    UnqualifiedOpFuncID ():
+        UnqualifiedIDExpr (UnqualifiedIDExpr::OP_FUNC_ID)
+    {}
+    UnqualifiedOpFuncID (const Token a_t):
+        UnqualifiedIDExpr (UnqualifiedIDExpr::OP_FUNC_ID),
+        m_op_token (a_t)
+    {}
+    ~UnqualifiedOpFuncID ()
+    {}
+    void set_token (Token &a_t) {m_op_token = a_t;}
+    Token::Kind get_kind () const {return m_op_token.get_kind ();}
+    bool to_string (string &a_s) const;
+};
+typedef shared_ptr<UnqualifiedOpFuncID>  UnqualifiedOpFuncIDPtr;
+
+class DestructorID : public UnqualifiedIDExpr {
+    DestructorID (const DestructorID&);
+    DestructorID& operator= (const DestructorID&);
+    string m_name;
+
+public:
+    DestructorID ():
+        UnqualifiedIDExpr (UnqualifiedIDExpr::DESTRUCTOR_ID)
+    {}
+    DestructorID (const string &a_n) :
+        UnqualifiedIDExpr (UnqualifiedIDExpr::DESTRUCTOR_ID),
+        m_name (a_n)
+    {}
+    ~DestructorID ()
+    {}
+    void set_name (const string &a_n) {m_name=a_n;}
+    const string& get_name () const {return m_name;}
+    bool to_string (string &a_s) const;
+};
+
+class QualifiedIDExpr;
+typedef shared_ptr<QualifiedIDExpr> QualifiedIDExprPtr;
 class NEMIVER_API QualifiedIDExpr : public IDExpr {
     QualifiedIDExpr (const QualifiedIDExpr &);
     QualifiedIDExpr& operator= (const QualifiedIDExpr &);
 
+    QNamePtr m_scope;
+    UnqualifiedIDExprPtr m_id;
+
+public:
+    QualifiedIDExpr ():
+        IDExpr (QUALIFIED)
+    {}
+    QualifiedIDExpr (const QNamePtr a_scope, const UnqualifiedIDExprPtr a_id):
+        IDExpr (QUALIFIED),
+        m_scope (a_scope),
+        m_id (a_id)
+    {}
+    QualifiedIDExpr (const QName &a_scope, const UnqualifiedIDExprPtr a_id):
+        IDExpr (QUALIFIED),
+        m_scope (new QName (a_scope)),
+        m_id (a_id)
+    {}
+
+    const QNamePtr get_scope () {return m_scope;}
+    void set_scope (const QNamePtr a_scope) {m_scope=a_scope;}
+    const UnqualifiedIDExprPtr get_unqualified_id () const {return m_id;}
+    void set_unqualified_id (const UnqualifiedIDExprPtr a_id) {m_id = a_id;}
+    bool to_string (string &) const ;
+    //TODO: support template-id
+};//end QualifiedIDExpr
+
+
+/// \brief the declarator class
+/// the result of the direct-declarator production is stored
+/// in this type, as well as the declarator production.
+class NEMIVER_API Declarator {
+    Declarator ();
+    Declarator (const Declarator&);
+    Declarator& operator= (const Declarator&);
+
+    PtrOperatorPtr m_ptr;
+
 public:
     enum Kind {
         UNDEFINED,
-        IDENTIFIER_ID,
-        OP_FUNC_ID,
-        NESTED_ID,//TODO: support this
-        TEMPLATE_ID//TODO: support this
+        ID_DECLARATOR,
+        FUNCTION_DECLARATOR,
+        ARRAY_DECLARATOR,
+        FUNCTION_POINTER_DECLARATOR
     };
 
 private:
     Kind m_kind;
-    Token m_token;
-    string m_nested_name_specifier;
-    shared_ptr<UnqualifiedIDExpr> m_template;
 
 public:
-
-    QualifiedIDExpr () :
-        IDExpr (QUALIFIED),
-        m_kind (UNDEFINED)
+    Declarator (Kind k) :
+        m_kind (k)
     {}
-    QualifiedIDExpr (Kind kind) :
-        IDExpr (QUALIFIED),
-        m_kind (kind)
-    {}
-
-    void set_kind (Kind a_kind) {m_kind=a_kind;}
+    virtual ~Declarator () {}
     Kind get_kind () const {return m_kind;}
-    void set_token (Kind kind, const Token &token) {m_kind=kind, m_token=token;}
-    const Token& get_token () const {return m_token;}
-    void set_nested_name_specifier (const string &s) {m_nested_name_specifier=s;}
-    const string& get_nested_name_specifier () {return m_nested_name_specifier;}
-    void set_template (shared_ptr<UnqualifiedIDExpr> t) {m_template=t;}
-    shared_ptr<UnqualifiedIDExpr> get_template () {return m_template;}
-    bool to_string (string &) const ;
-    //TODO: support template-id
-};//end QualifiedIDExpr
+    void set_kind (Kind k) {m_kind=k;}
+    PtrOperatorPtr get_ptr_operator () const {return m_ptr;}
+    void set_ptr_operator (const PtrOperatorPtr a_ptr) {m_ptr=a_ptr;}
+    virtual bool to_string (string &) const=0;
+};//class Declarator
+typedef shared_ptr<Declarator> DeclaratorPtr;
+
+class NEMIVER_API IDDeclarator : public Declarator {
+    IDDeclarator (const IDDeclarator&);
+    IDDeclarator& operator= (const IDDeclarator&);
+
+    IDExprPtr m_id;
+
+public:
+    IDDeclarator () :
+        Declarator (Declarator::ID_DECLARATOR)
+    {}
+    IDDeclarator (const IDExprPtr a_id) :
+        Declarator (ID_DECLARATOR),
+        m_id (a_id)
+    {}
+    const IDExprPtr get_id () const {return m_id;}
+    bool to_string (string &a_str) const
+    {
+        if (!m_id) {return false;}
+        return m_id->to_string (a_str);
+    }
+};//class IDDeclarator
+typedef shared_ptr<IDDeclarator> IDDeclaratorPtr;
+
+class NEMIVER_API FuncDeclarator : public Declarator {
+    FuncDeclarator (const FuncDeclarator&);
+    FuncDeclarator& operator= (const FuncDeclarator&);
+
+    DeclaratorPtr m_declarator;
+    //TODO: put parameters here
+    list<CVQualifierPtr> m_cvs;
+    //TODO: put exception spec here
+public:
+    FuncDeclarator () :
+        Declarator (FUNCTION_DECLARATOR)
+    {}
+    ~FuncDeclarator () {}
+    void set_declarator (const DeclaratorPtr a_decl) {m_declarator = a_decl;}
+    DeclaratorPtr get_declarator () const {return m_declarator;}
+    void append_cv_qualifier (const CVQualifierPtr a_cv) {m_cvs.push_back (a_cv);}
+    const list<CVQualifierPtr>& get_cv_qualifiers () const {return m_cvs;}
+    bool to_string (string &a_str) {a_str="<FuncDecl not supported>";return true;}
+};//end FuncDeclarator
+typedef shared_ptr<FuncDeclarator> FuncDeclaratorPtr;
+
+class NEMIVER_API ArrayDeclarator : public Declarator {
+    ArrayDeclarator (const ArrayDeclarator&);
+    ArrayDeclarator& operator= (const ArrayDeclarator&);
+
+    DeclaratorPtr m_declarator;
+    //TODO: add constant expression here.
+
+public:
+    ArrayDeclarator () :
+        Declarator (Declarator::ARRAY_DECLARATOR)
+    {}
+    ~ArrayDeclarator () {}
+    void set_declarator (const DeclaratorPtr a_decl) {m_declarator=a_decl;}
+    const DeclaratorPtr get_declarator () const {return m_declarator;}
+    bool to_string (string &a_str) {a_str="<ArrayDecl not supported>";return true;}
+};//class ArrayDeclarator
+typedef shared_ptr<ArrayDeclarator> ArrayDeclaratorPtr;
+
+class NEMIVER_API FuncPointerDeclarator : public Declarator {
+    FuncPointerDeclarator (const FuncPointerDeclarator&);
+    FuncPointerDeclarator& operator= (const FuncPointerDeclarator&);
+
+    DeclaratorPtr m_declarator;
+
+public:
+    FuncPointerDeclarator () :
+        Declarator (Declarator::FUNCTION_POINTER_DECLARATOR)
+    {}
+    ~FuncPointerDeclarator () {}
+    void set_declarator (const DeclaratorPtr a_decl) {m_declarator=a_decl;}
+    const DeclaratorPtr get_declarator () const {return m_declarator;}
+    bool to_string (string &a_str)
+    {
+        if (!m_declarator) {return false;}
+        string str;
+        m_declarator->to_string (str);
+        a_str="(" + str + ")";
+        return true;
+    }
+};//class FuncPointerDeclarator
+
+class NEMIVER_API InitDeclarator {
+    InitDeclarator (const InitDeclarator&);
+    InitDeclarator& operator= (const InitDeclarator&);
+
+    DeclaratorPtr m_declarator;
+
+public:
+    InitDeclarator () {}
+    InitDeclarator (const DeclaratorPtr &d) :
+        m_declarator (d)
+    {}
+    ~InitDeclarator () {}
+    const DeclaratorPtr get_declarator () const {return m_declarator;}
+    void set_declarator (const DeclaratorPtr &a_decl) {m_declarator=a_decl;}
+    bool to_string (string &a_str) const
+    {
+        if (!get_declarator ()) {return false;}
+        return m_declarator->to_string (a_str);
+    }
+    static bool list_to_string (list<InitDeclaratorPtr> &, string &);
+};
 
 class NEMIVER_API PrimaryExpr : public Expr {
     PrimaryExpr (const PrimaryExpr&);

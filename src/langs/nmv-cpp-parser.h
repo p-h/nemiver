@@ -50,26 +50,26 @@ public:
     ~Parser ();
     bool parse_primary_expr (shared_ptr<PrimaryExpr> &expr);
     bool parse_class_or_namespace_name (string &str);
-    bool parse_type_name (string &);
-    bool parse_nested_name_specifier (string &str);
-    bool parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> &a_expr);
-    bool parse_qualified_id (shared_ptr<QualifiedIDExpr> &a_expr);
-    bool parse_id_expr (shared_ptr<IDExpr> &a_expr);
+    bool parse_type_name (UnqualifiedIDExprPtr &);
+    bool parse_nested_name_specifier (QNamePtr &a_result);
+    bool parse_unqualified_id (UnqualifiedIDExprPtr &a_expr);
+    bool parse_qualified_id (QualifiedIDExprPtr &a_expr);
+    bool parse_id_expr (IDExprPtr &a_expr);
     bool parse_elaborated_type_specifier (string &);
     bool parse_simple_type_specifier (string &);
     bool parse_type_specifier (shared_ptr<TypeSpecifier> &);
     bool parse_type_id (string &);
     bool parse_decl_specifier (shared_ptr<DeclSpecifier> &);
     bool parse_decl_specifier_seq (list<shared_ptr<DeclSpecifier> > &);
-    bool parse_declarator_id (string &);
-    bool parse_direct_declarator (string &);
-    bool parse_cv_qualifier (string &);
-    bool parse_cv_qualifier_seq (string &);
-    bool parse_ptr_operator (string &);
-    bool parse_declarator (string &);
-    bool parse_init_declarator (string &);
-    bool parse_init_declarator_list (string &);
-    bool parse_simple_declaration (string &);
+    bool parse_declarator_id (IDDeclaratorPtr &);
+    bool parse_direct_declarator (DeclaratorPtr &);
+    bool parse_cv_qualifier (CVQualifierPtr &);
+    bool parse_cv_qualifier_seq (list<CVQualifierPtr> &);
+    bool parse_ptr_operator (PtrOperatorPtr &);
+    bool parse_declarator (DeclaratorPtr &);
+    bool parse_init_declarator (InitDeclaratorPtr &);
+    bool parse_init_declarator_list (list<InitDeclaratorPtr> &);
+    bool parse_simple_declaration (SimpleDeclarationPtr &a_result);
 };//end class Parser
 NEMIVER_END_NAMESPACE (nemiver)
 NEMIVER_END_NAMESPACE (cpp)

@@ -9,7 +9,10 @@
 
 const char *prog = "foo bar;" ;
 
+using std::cout;
+using std::endl;
 using nemiver::cpp::Parser;
+using nemiver::cpp::SimpleDeclarationPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -18,10 +21,17 @@ test_parser ()
 {
     Parser parser (prog);
     string str;
-    if (!parser.parse_simple_declaration (str)) {
+    SimpleDeclarationPtr simple_decl;
+
+    if (!parser.parse_simple_declaration (simple_decl)) {
         BOOST_FAIL ("parsing failed");
     }
-    std::cout << "parsing went okay" << std::endl;
+    if (!simple_decl) {
+        cout << "got empty simple declaration" << endl;
+        return;
+    }
+    simple_decl->to_string (str);
+    cout << "parsed: '" << str <<  "'." << endl;
 }
 
 

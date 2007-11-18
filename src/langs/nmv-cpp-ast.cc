@@ -215,56 +215,81 @@ Token::is_operator () const
 // class </Token>
 //**************
 
-Decl::Decl (Decl::Kind a_kind) :
+Declaration::Declaration (Declaration::Kind a_kind) :
     m_kind (a_kind)
 {
 }
 
-Decl::Kind
-Decl::get_kind () const
+Declaration::Kind
+Declaration::get_kind () const
 {
     return m_kind;
 }
 
+bool
+QName::to_string (string &a_result) const
+{
+    list<ClassOrNSName>::const_iterator it=get_names ().begin ();
+    if (it->get_name ().empty ())
+        return false;
+    a_result += it->get_name ();
+    for (++it; it != get_names ().end (); ++it) {
+        a_result += "::";
+        if (it->is_prefixed_with_template ()) {
+            a_result += "template ";
+        }
+        a_result += it->get_name ();
+    }
+    return true;
+}
+
+bool
+PtrOperator::to_string (string &a_result) const
+{
+    if (m_elems.empty ()) {return false;}
+    string result, str;
+    list<PtrOperator::ElemPtr>::const_iterator it=m_elems.begin ();
+    if (!*it) {return false;}
+    (*it)->to_string (result);
+    for (++it; it != m_elems.end (); ++it) {
+        if (!*it) {continue;}
+        (*it)->to_string (str);
+        result += " " + str;
+    }
+    a_result = result;
+    return true;
+}
+
 void
-Decl::set_kind (Decl::Kind a_kind)
+Declaration::set_kind (Declaration::Kind a_kind)
 {
     m_kind = a_kind;
 }
 
-SimpleDecl::SimpleDecl () :
-    Decl (SIMPLE_DECLARATION)
+bool
+SimpleDeclaration::to_string (string &a_result) const
 {
-}
+    string str, result;
+    list<DeclSpecifierPtr>::const_iterator it=get_decl_specifiers ().begin ();
+    if (it == get_decl_specifiers ().end () || !(*it)) {return false;}
+    (*it)->to_string (result);
 
-SimpleDecl::~SimpleDecl ()
-{
+    for (++it; it != get_decl_specifiers ().end (); ++it) {
+        if (!*it) {continue;}
+        (*it)->to_string (str);
+        result += " " + str;
+    }
+    list<InitDeclaratorPtr>::const_iterator it2;
+    for (it2=get_init_declarators ().begin ();
+         it2 != get_init_declarators ().end ();
+         ++it2) {
+        if (!*it) {continue;}
+        (*it2)->to_string (str);
+        result += " " + str;
+    }
+    a_result = result;
+    return true;
 }
-
-void
-SimpleDecl::add_decl_specifier (DeclSpecifierPtr a_spec)
-{
-    m_decl_specs.push_back (a_spec);
-}
-
-const list<DeclSpecifierPtr>&
-SimpleDecl::get_decl_specifiers () const
-{
-    return m_decl_specs;
-}
-
-void
-SimpleDecl::add_init_declarator (InitDeclaratorPtr a_decl)
-{
-    m_init_decls.push_back (a_decl);
-}
-
-const list<InitDeclaratorPtr>&
-SimpleDecl::get_init_declarators () const
-{
-    return m_init_decls;
-}
-
 
 bool
 TypeSpecifier::to_string (string &a_str) const
@@ -299,50 +324,12 @@ TypeSpecifier::to_string (string &a_str) const
 }
 
 bool
-DeclSpecifier::to_string (string &a_str) const
-{
-    switch (get_kind ()) {
-        case DeclSpecifier::AUTO:
-            a_str = "auto";
-            break;
-        case DeclSpecifier::REGISTER:
-            a_str = "register";
-        case DeclSpecifier::STATIC:
-            a_str = "static";
-            break;
-        case DeclSpecifier::EXTERN:
-            a_str = "extern";
-            break;
-        case DeclSpecifier::MUTABLE:
-            a_str = "mutable";
-            break;
-        case DeclSpecifier::TYPE:
-            if (!get_type_specifier ()) {return false;}
-            get_type_specifier ()->to_string (a_str);
-            break;
-        case DeclSpecifier::FUNCTION:
-            a_str = "<TODO: handle this>";
-            break;
-        case DeclSpecifier::FRIEND:
-            a_str = "friend";
-            break;
-        case DeclSpecifier::TYPEDEF:
-            a_str = "typedef";
-            break;
-        default:
-            return false;
-            break;
-    }
-    return true;
-}
-
-bool
 DeclSpecifier::list_to_string (list<shared_ptr<DeclSpecifier> > &a_decls,
                                string &a_str)
 {
     list<shared_ptr<DeclSpecifier> >::const_iterator it;
-
     string str;
+
     for (it = a_decls.begin (); it != a_decls.end (); ++it) {
         (*it)->to_string (str);
         a_str += str + " ";
@@ -354,54 +341,198 @@ IDExpr::~IDExpr ()
 {
 }
 
+
 bool
-UnqualifiedIDExpr::to_string (string &a_result) const
+UnqualifiedID::to_string (string &a_result) const
 {
-    switch (get_kind () ) {
-        case UnqualifiedIDExpr::IDENTIFIER:
-            a_result = get_token ().get_str_value ();
+    a_result = m_name;
+    return true;
+}
+
+bool
+UnqualifiedOpFuncID::to_string (string &a_result) const
+{
+    switch (get_kind ()) {
+        case Token::OPERATOR_NEW:
+            a_result = "opreator new" ;
             break;
-        case UnqualifiedIDExpr::OP_FUNC_ID:
-            a_result = get_token ().get_str_value ();
+        case Token::OPERATOR_DELETE:
+            a_result = "opreator delete" ;
             break;
-        case UnqualifiedIDExpr::CONV_FUNC_ID:
-            return false;
+        case Token::OPERATOR_NEW_VECT:
+            a_result = "opreator new []" ;
             break;
-        case UnqualifiedIDExpr::DESTRUCTOR_ID:
-            {
-                string str (get_token ().get_str_value ());
-                a_result = "~" + str;
-            }
+        case Token::OPERATOR_DELETE_VECT:
+            a_result = "opreator delete" ;
             break;
-        case UnqualifiedIDExpr::TEMPLATE_ID:
-            return false;
+        case Token::OPERATOR_PLUS:
+            a_result = "opreator +" ;
+            break;
+        case Token::OPERATOR_MINUS:
+            a_result = "opreator -";
+            break;
+        case Token::OPERATOR_MULT:
+            a_result = "opreator *";
+            break;
+        case Token::OPERATOR_DIV:
+            a_result = "opreator /";
+            break;
+        case Token::OPERATOR_MOD:
+            a_result = "opreator %";
+            break;
+        case Token::OPERATOR_BIT_XOR:
+            a_result = "opreator ^";
+            break;
+        case Token::OPERATOR_BIT_AND:
+            a_result = "opreator &" ;
+            break;
+        case Token::OPERATOR_BIT_OR:
+            a_result = "opreator |";
+            break;
+        case Token::OPERATOR_BIT_COMPLEMENT:
+            a_result = "opreator ~";
+            break;
+        case Token::OPERATOR_NOT:
+            a_result = "opreator !";
+            break;
+        case Token::OPERATOR_ASSIGN:
+            a_result = "opreator =";
+            break;
+        case Token::OPERATOR_LT:
+            a_result = "opreator <";
+            break;
+        case Token::OPERATOR_GT:
+            a_result = "opreator >";
+            break;
+        case Token::OPERATOR_PLUS_EQ:
+            a_result = "opreator +=";
+            break;
+        case Token::OPERATOR_MINUS_EQ:
+            a_result = "opreator -=";
+            break;
+        case Token::OPERATOR_MULT_EQ:
+            a_result = "opreator *=";
+            break;
+        case Token::OPERATOR_DIV_EQ:
+            a_result = "opreator /+";
+            break;
+        case Token::OPERATOR_MOD_EQ:
+            a_result = "opreator %=";
+            break;
+        case Token::OPERATOR_BIT_XOR_EQ:
+            a_result = "opreator ^=";
+            break;
+        case Token::OPERATOR_BIT_AND_EQ:
+            a_result = "opreator &=";
+            break;
+        case Token::OPERATOR_BIT_OR_EQ:
+            a_result = "opreator |=";
+            break;
+        case Token::OPERATOR_BIT_LEFT_SHIFT:
+            a_result = "opreator <<";
+            break;
+        case Token::OPERATOR_BIT_RIGHT_SHIFT:
+            a_result = "opreator >>";
+            break;
+        case Token::OPERATOR_BIT_LEFT_SHIFT_EQ:
+            a_result = "opreator <<=";
+            break;
+        case Token::OPERATOR_BIT_RIGHT_SHIFT_EQ:
+            a_result = "opreator >>=";
+            break;
+        case Token::OPERATOR_EQUALS:
+            a_result = "opreator ==";
+            break;
+        case Token::OPERATOR_NOT_EQUAL:
+            a_result = "opreator !=";
+            break;
+        case Token::OPERATOR_LT_EQ:
+            a_result = "opreator <=";
+            break;
+        case Token::OPERATOR_GT_EQ:
+            a_result = "opreator >=";
+            break;
+        case Token::OPERATOR_AND:
+            a_result = "opreator &&";
+            break;
+        case Token::OPERATOR_OR:
+            a_result = "opreator ||";
+            break;
+        case Token::OPERATOR_PLUS_PLUS:
+            a_result = "opreator ++";
+            break;
+        case Token::OPERATOR_MINUS_MINUS:
+            a_result = "opreator --";
+            break;
+        case Token::OPERATOR_SEQ_EVAL:
+            a_result = "opreator ,";
+            break;
+        case Token::OPERATOR_MEMBER_POINTER:
+            a_result = "opreator ->*";
+            break;
+        case Token::OPERATOR_DEREF:
+            a_result = "opreator ->";
+            break;
+        case Token::OPERATOR_GROUP:
+            a_result = "opreator ()";
+            break;
+        case Token::OPERATOR_ARRAY_ACCESS:
+            a_result = "opreator []";
+            break;
+        case Token::OPERATOR_SCOPE_RESOL:
+            a_result = "opreator ::";
+            break;
+        case Token::OPERATOR_DOT:
+            a_result = "opreator .";
+            break;
+        case Token::OPERATOR_DOT_STAR:
+            a_result = "opreator .*";
+            break;
         default:
             return false;
+            break;
     }
+    return true;
+}
+
+bool
+DestructorID::to_string (string &a_result) const
+{
+    a_result = "~" + get_name ();
     return true;
 }
 
 bool
 QualifiedIDExpr::to_string (string &a_result) const
 {
-    switch (get_kind ()) {
-        case QualifiedIDExpr::IDENTIFIER_ID:
-            a_result = "::" + get_token ().get_str_value ();
-            break;
-        case QualifiedIDExpr::OP_FUNC_ID:
-            a_result = "::" + get_token ().get_str_value ();
-            break;
-        case QualifiedIDExpr::NESTED_ID:
-            a_result = "::<not supported>";
-            break;
-        case QualifiedIDExpr::TEMPLATE_ID:
-            a_result = "::<not supported>";
-            break;
-        default:
-            return false;
-            break;
+    string result;
+    if (get_unqualified_id () && get_unqualified_id ()->to_string (result)) {
+        result = "::" + result;
+    } else {
+        return false;
     }
+    a_result = result;
     return true;
 }
+
+bool
+InitDeclarator::list_to_string (list<InitDeclaratorPtr> &a_decls,
+                                string &a_str)
+{
+    string str, str2;
+    list<InitDeclaratorPtr>::const_iterator it=a_decls.begin ();
+    if (!(*it) || it == a_decls.end ()) {
+        return false;
+    }
+    (*it)->to_string (str2);
+    for (++it; it != a_decls.end (); ++it) {
+        if (!*it) {continue;}
+        (*it)->to_string (str);
+        str2 += " " + str;
+    }
+    a_str = str2;
+    return true;
+}
+
 NEMIVER_END_NAMESPACE (cpp)
 NEMIVER_END_NAMESPACE (nemiver)
