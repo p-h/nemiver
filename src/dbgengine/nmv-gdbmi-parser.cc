@@ -2468,7 +2468,7 @@ remove_stream_record_trailing_chars (UString &a_str)
     if (a_str[i] == 'n' && a_str[i-1] == '\\') {
         i = i-1 ;
         a_str.erase (i, 2) ;
-        a_str.append ("\n") ;
+        a_str.append (1, '\n') ;
     }
 }
 
