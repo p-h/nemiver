@@ -355,7 +355,7 @@ public:
             UString qname ;
             if (parent () == 0) {
                 a_qname = name ();
-                if (a_qname[0] == '*') {
+                if (a_qname.raw ()[0] == '*') {
                     a_qname.erase (0, 1) ;
                 }
             } else {

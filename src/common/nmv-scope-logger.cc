@@ -32,8 +32,11 @@
 #include "nmv-ustring.h"
 #include "nmv-scope-logger.h"
 
+
 namespace nemiver {
 namespace common {
+
+static const UString DELETE ("delete");
 
 struct ScopeLoggerPriv
 {
@@ -98,7 +101,9 @@ ScopeLogger::ScopeLogger (const char*a_scope_name,
 
 ScopeLogger::~ScopeLogger ()
 {
-    LOG_DD ("delete") ;
+    //commented this out for performance reasons.
+    //yeah, real reasons that got highlighted by profiling!
+    //LOG_DD (DELETE) ;
 }
 
 }//end namespace common

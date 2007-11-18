@@ -122,7 +122,7 @@ update_a_variable_node (const IDebugger::VariableSafePtr &a_var,
     LOG_DD ("Prev variable name: " << prev_var_name) ;
     LOG_DD ("new variable name: " << var_name) ;
     LOG_DD ("Didn't update variable name") ;
-    if (prev_var_name == "") {
+    if (prev_var_name.raw () == "") {
         (*a_iter)[get_variable_columns ().name] = var_name;
     }
     (*a_iter)[get_variable_columns ().is_highlighted]=false ;
@@ -172,7 +172,8 @@ update_a_variable (const IDebugger::VariableSafePtr &a_var,
                 continue ;
             }
             LOG_DD ("reading var: " << var->name ()) ;
-            if (var->name () == a_var->name () && var->type () == a_var->type ()) {
+            if (var->name ().raw () == a_var->name ().raw () &&
+                var->type ().raw () == a_var->type ().raw ()) {
                 found = true ;
                 break ;
             }

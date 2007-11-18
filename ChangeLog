@@ -97,6 +97,40 @@
 
 2007-09-26 Dodji Seketeli <dodji@gnome.org>
 
+	* this entry is about performance. It multiplies the speed by 14 on my
+	  box when trying to display the global variables of tests/.libs/fooprog
+	  This performance work has been directed by careful profiling.
+
+	* src/common/nmv-log-stream.cc:
+	  use __gnu_cxx::hash_map instead of std::map to store
+	  domain names. Profiling showed that this increases
+	  performance.
+	* src/common/nmv-scope-logger.cc:
+	  (ScopeLogger::~ScopeLogger): remove logging in here for performance
+	  reasons.
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  (parse_c_string): remove scoppe logging from this function that is
+	  called a lot.
+	  (parse_c_string_body): ditto.
+	  (parse_stream_record): don't access UString's chars sequentially. It'
+	  too slow.
+	  (parse_out_of_band_record): ditto.
+	  (parse_result_record): ditto.
+	  (parse_output_record): ditto.
+	* src/dbgengine/nmv-i-debugger.h: Don't access UString's chars
+	  sequentially. It's too slow.
+	* src/dbgengine/nmv-var-walker.cc:
+	  (VarWalker::on_variable_value_signal): don't test UString's equality.
+	   It's too slow.
+	  (VarWalker::on_variable_value_set_signal): ditto. Remove logging.
+	  (VarWalker::on_variable_type_set_signal): ditto.
+	  (VarWalker::get_type_of_all_members): accessing UString's chars
+	   sequentially is too slow.
+	* src/persp/dbgperspective/nmv-variables-utils2.cc: remove UStrings
+	  equality tests and UString subscripting.
+
+2007-09-26 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-local-vars-inspector.cc,
 	  src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
 	  Add a global variables section in the variable inspector widgets.

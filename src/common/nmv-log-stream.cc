@@ -29,7 +29,7 @@
  */
 #include <sys/time.h>
 #include <iostream>
-#include <map>
+#include <ext/hash_map>
 #include <list>
 #include <vector>
 #include <fstream>
@@ -42,10 +42,21 @@
 #include "nmv-date-utils.h"
 #include "nmv-safe-ptr-utils.h"
 
+using __gnu_cxx::hash_map ;
+using __gnu_cxx::hash ;
+
 namespace nemiver {
 namespace common {
 
 using namespace std ;
+
+struct Eqstr
+{
+    bool operator() (const char* s1, const char* s2) const
+    {
+        return strcmp (s1, s2) == 0;
+    }
+};
 
 static enum LogStream::StreamType s_stream_type = LogStream::COUT_STREAM ;
 static enum LogStream::LogLevel s_level_filter = LogStream::LOG_LEVEL_NORMAL ;
@@ -209,7 +220,7 @@ struct LogStream::Priv
     //Logging domains are just keywords associated to the messages that are
     //going to be logged. This helps in for filtering the messages that
     //are to be logged or not.
-    map<std::string, bool> allowed_domains ;
+    hash_map<const char*, bool, hash<const char*>, Eqstr > allowed_domains ;
 
     //the log level of this log stream
     enum LogStream::LogLevel level ;
@@ -252,7 +263,7 @@ struct LogStream::Priv
 
         //check domain
         if (allowed_domains.find ("all") == allowed_domains.end ()) {
-            if (allowed_domains.find (a_domain) == allowed_domains.end ()) {
+            if (allowed_domains.find (a_domain.c_str ()) == allowed_domains.end ()) {
                 return false ;
             }
         }
@@ -380,16 +391,16 @@ LogStream::enable_domain (const string &a_domain,
                           bool a_do_enable)
 {
     if (a_do_enable) {
-        m_priv->allowed_domains[a_domain] = true ;
+        m_priv->allowed_domains[a_domain.c_str ()] = true ;
     } else {
-        m_priv->allowed_domains.erase (a_domain) ;
+        m_priv->allowed_domains.erase (a_domain.c_str ()) ;
     }
 }
 
 bool
 LogStream::is_domain_enabled (const std::string &a_domain)
 {
-    if (m_priv->allowed_domains.find (a_domain)
+    if (m_priv->allowed_domains.find (a_domain.c_str ())
         != m_priv->allowed_domains.end ()) {
         return true ;
     }

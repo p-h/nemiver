@@ -112,10 +112,8 @@ VarWalker::on_variable_value_signal (const UString &a_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cookie)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-
-    if (a_name == "") {}
-    if (a_cookie != m_cookie) {
+    if (a_name.raw () == "") {}
+    if (a_cookie.raw () != m_cookie.raw ()) {
         return ;
     }
 
@@ -133,9 +131,7 @@ void
 VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
                                          const UString &a_cookie)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-
-    if (a_cookie != m_cookie) {
+    if (a_cookie.raw () != m_cookie.raw ()) {
         return ;
     }
 
@@ -146,9 +142,6 @@ VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var
 
     LOG_DD ("m_vars_to_visit.size () = " << (int)m_vars_to_visit.size ()) ;
     UString var_str;
-    a_var->to_string (var_str, true) ;
-    LOG_DD ("got value for variable: " << var_str) ;
-
     NEMIVER_CATCH_NOX
 }
 
@@ -156,7 +149,7 @@ void
 VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
                                         const UString &a_cookie)
 {
-    if (a_cookie != m_cookie) {
+    if (a_cookie.raw () != m_cookie.raw ()) {
         return ;
     }
 
@@ -208,7 +201,7 @@ VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr &a_from)
     UString qname;
     a_from->build_qname (qname) ;
     qname.chomp () ;
-    if (qname[0] == '<' || a_from->name ()[0] == '<') {
+    if (qname.raw ()[0] == '<' || a_from->name ().raw ()[0] == '<') {
         //this is a hack to detect c++ templated unamed members
         //usually, their name have the form "<blablah>"
         LOG_DD ("templated unnamed member, don't query for its type") ;
@@ -280,15 +273,15 @@ VarWalker::connect (IDebuggerSafePtr &a_debugger,
 void
 VarWalker::do_walk_variable (const UString &a_cookie)
 {
-    if (a_cookie == "") {
+    if (a_cookie.raw () == "") {
         m_cookie =
-            VAR_WALKER_COOKIE + "-" + UString::from_int
-                                        (get_sequence ().create_next_integer ());
+            UString::from_int (get_sequence ().create_next_integer ()) +
+            "-" + VAR_WALKER_COOKIE ;
     } else {
         m_cookie = a_cookie;
     }
 
-    if (m_root_var_name != "") {
+    if (m_root_var_name.raw () != "") {
         m_debugger->print_variable_value (m_root_var_name,
                                           m_cookie) ;
     } else if (m_root_var){

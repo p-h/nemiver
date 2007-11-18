@@ -2128,7 +2128,7 @@ parse_c_string (const UString &a_input,
                 UString::size_type &a_to,
                 UString &a_c_string)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+    //LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
 
     UString::size_type cur=a_from, end = a_input.bytes () ;
     CHECK_END (a_input, cur, end) ;
@@ -2241,7 +2241,7 @@ parse_c_string_body (const UString &a_input,
                      UString::size_type &a_to,
                      UString &a_string)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
+    //LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
 
     UString::size_type cur=a_from, end = a_input.bytes () ;
     CHECK_END (a_input, cur, end) ;
@@ -2478,7 +2478,7 @@ parse_stream_record (const UString &a_input,
                      UString::size_type &a_to,
                      Output::StreamRecord &a_record)
 {
-    UString::size_type cur=a_from, end = a_input.size () ;
+    UString::size_type cur=a_from, end = a_input.bytes () ;
 
     if (cur >= end) {
         LOG_PARSING_ERROR (a_input, cur) ;
@@ -2659,14 +2659,16 @@ parse_out_of_band_record (const UString &a_input,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
 
-    UString::size_type cur=a_from, end = a_input.size () ;
+    UString::size_type cur=a_from, end = a_input.bytes () ;
     if (cur >= end) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
 
     Output::OutOfBandRecord record ;
-    if (a_input[cur] == '~' || a_input[cur] == '@' || a_input[cur] == '&') {
+    if (a_input.raw ()[cur] == '~' ||
+        a_input.raw ()[cur] == '@' ||
+        a_input.raw ()[cur] == '&') {
         Output::StreamRecord stream_record ;
         if (!parse_stream_record (a_input, cur, cur, stream_record)) {
             LOG_PARSING_ERROR (a_input, cur) ;
@@ -2675,10 +2677,10 @@ parse_out_of_band_record (const UString &a_input,
         record.has_stream_record (true) ;
         record.stream_record (stream_record) ;
 
-        while (cur < end && isspace (a_input[cur])) {++cur;}
+        while (cur < end && isspace (a_input.raw ()[cur])) {++cur;}
     }
 
-    if (!a_input.compare (cur, 9,"*stopped,")) {
+    if (!a_input.raw ().compare (cur, 9,"*stopped,")) {
         map<UString, UString> attrs ;
         bool got_frame (false) ;
         IDebugger::Frame frame ;
@@ -2701,7 +2703,7 @@ parse_out_of_band_record (const UString &a_input,
         record.signal_meaning (attrs["signal-meaning"]) ;
     }
 
-    while (cur < end && isspace (a_input[cur])) {++cur;}
+    while (cur < end && isspace (a_input.raw ()[cur])) {++cur;}
     a_to = cur ;
     a_record = record ;
     return true ;
@@ -2718,7 +2720,7 @@ parse_result_record (const UString &a_input,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
 
-    UString::size_type cur=a_from, end=a_input.size () ;
+    UString::size_type cur=a_from, end=a_input.bytes () ;
     if (cur == end) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
@@ -2726,12 +2728,12 @@ parse_result_record (const UString &a_input,
 
     UString name, value ;
     Output::ResultRecord result_record ;
-    if (!a_input.compare (cur, strlen (PREFIX_DONE), PREFIX_DONE)) {
+    if (!a_input.raw ().compare (cur, strlen (PREFIX_DONE), PREFIX_DONE)) {
         cur += 5 ;
         result_record.kind (Output::ResultRecord::DONE) ;
 
 
-        if (cur < end && a_input[cur] == ',') {
+        if (cur < end && a_input.raw ()[cur] == ',') {
 
 fetch_gdbmi_result:
             cur++;
@@ -2740,7 +2742,7 @@ fetch_gdbmi_result:
                 return false;
             }
 
-            if (!a_input.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
+            if (!a_input.raw ().compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
                 IDebugger::BreakPoint breakpoint ;
                 if (parse_breakpoint (a_input, cur, cur, breakpoint)) {
                     result_record.breakpoints ()[breakpoint.number ()] =
@@ -2758,7 +2760,7 @@ fetch_gdbmi_result:
                 if (parse_threads_list (a_input, cur, cur, thread_ids)) {
                     result_record.thread_list (thread_ids) ;
                 }
-            } else if (!a_input.compare (cur, strlen (PREFIX_NEW_THREAD_ID),
+            } else if (!a_input.raw ().compare (cur, strlen (PREFIX_NEW_THREAD_ID),
                         PREFIX_NEW_THREAD_ID)) {
                 IDebugger::Frame frame ;
                 int thread_id=0 ;
@@ -2778,7 +2780,7 @@ fetch_gdbmi_result:
                 LOG_D ("parsed a list of files: "
                        << (int) files.size (),
                        GDBMI_PARSING_DOMAIN) ;
-            } else if (!a_input.compare (cur, strlen (PREFIX_STACK),
+            } else if (!a_input.raw ().compare (cur, strlen (PREFIX_STACK),
                         PREFIX_STACK)) {
                 vector<IDebugger::Frame> call_stack ;
                 if (!parse_call_stack (a_input, cur, cur, call_stack)) {
@@ -2796,7 +2798,9 @@ fetch_gdbmi_result:
                     LOG_D ("function-name: " << frame_iter->function_name (),
                            GDBMI_PARSING_DOMAIN) ;
                 }
-            } else if (!a_input.compare (cur, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
+            } else if (!a_input.raw ().compare (cur,
+                                                strlen (PREFIX_FRAME),
+                                                        PREFIX_FRAME)) {
                 IDebugger::Frame frame ;
                 if (!parse_frame (a_input, cur, cur, frame)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2805,12 +2809,14 @@ fetch_gdbmi_result:
                     result_record.current_frame_in_core_stack_trace (frame) ;
                     //current_frame_signal.emit (frame, "") ;
                 }
-            } else if (!a_input.compare (cur, strlen (PREFIX_DEPTH), PREFIX_DEPTH)) {
+            } else if (!a_input.raw ().compare (cur,
+                                                strlen (PREFIX_DEPTH),
+                                                        PREFIX_DEPTH)) {
                 GDBMIResultSafePtr result ;
                 parse_gdbmi_result (a_input, cur, cur, result) ;
                 THROW_IF_FAIL (result) ;
                 LOG_D ("parsed result", GDBMI_PARSING_DOMAIN) ;
-            } else if (!a_input.compare (cur, strlen (PREFIX_STACK_ARGS),
+            } else if (!a_input.raw ().compare (cur, strlen (PREFIX_STACK_ARGS),
                         PREFIX_STACK_ARGS)) {
                 map<int, list<IDebugger::VariableSafePtr> > frames_args ;
                 if (!parse_stack_arguments (a_input, cur, cur, frames_args)) {
@@ -2819,7 +2825,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed stack args", GDBMI_PARSING_DOMAIN) ;
                 }
                 result_record.frames_parameters (frames_args)  ;
-            } else if (!a_input.compare (cur, strlen (PREFIX_LOCALS), PREFIX_LOCALS)) {
+            } else if (!a_input.raw ().compare (cur,
+                                                strlen (PREFIX_LOCALS),
+                                                        PREFIX_LOCALS)) {
                 list<IDebugger::VariableSafePtr> vars ;
                 if (!parse_local_var_list (a_input, cur, cur, vars)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2827,9 +2835,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN) ;
                     result_record.local_variables (vars) ;
                 }
-            } else if (!a_input.compare (cur,
-                                         strlen (PREFIX_VALUE),
-                                         PREFIX_VALUE)) {
+            } else if (!a_input.raw ().compare (cur,
+                                                strlen (PREFIX_VALUE),
+                                                PREFIX_VALUE)) {
                 // FIXME: this case will parse any response from
                 // -data-evaluate-expression, including the response from
                 // setting the value of a register or any other expression
@@ -2844,8 +2852,9 @@ fetch_gdbmi_result:
                     THROW_IF_FAIL (var) ;
                     result_record.variable_value (var) ;
                 }
-            } else if (!a_input.compare (cur, strlen (PREFIX_REGISTER_NAMES),
-                                         PREFIX_REGISTER_NAMES)) {
+            } else if (!a_input.raw ().compare (cur,
+                                                strlen (PREFIX_REGISTER_NAMES),
+                                                PREFIX_REGISTER_NAMES)) {
                 std::map<IDebugger::register_id_t, UString> regs;
                 if (!parse_register_names (a_input, cur, cur, regs)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2853,8 +2862,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed register names", GDBMI_PARSING_DOMAIN) ;
                     result_record.register_names (regs) ;
                 }
-            } else if (!a_input.compare (cur, strlen (PREFIX_CHANGED_REGISTERS),
-                        PREFIX_CHANGED_REGISTERS)) {
+            } else if (!a_input.raw ().compare (cur,
+                                                strlen (PREFIX_CHANGED_REGISTERS),
+                                                PREFIX_CHANGED_REGISTERS)) {
                 std::list<IDebugger::register_id_t> regs;
                 if (!parse_changed_registers (a_input, cur, cur, regs)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2862,8 +2872,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed changed register", GDBMI_PARSING_DOMAIN) ;
                     result_record.changed_registers (regs) ;
                 }
-            } else if (!a_input.compare (cur, strlen (PREFIX_REGISTER_VALUES),
-                        PREFIX_REGISTER_VALUES)) {
+            } else if (!a_input.raw ().compare (cur,
+                                                strlen (PREFIX_REGISTER_VALUES),
+                                                PREFIX_REGISTER_VALUES)) {
                 std::map<IDebugger::register_id_t, UString>  values;
                 if (!parse_register_values (a_input, cur, cur,  values)) {
                     LOG_PARSING_ERROR (a_input, cur) ;
@@ -2892,32 +2903,39 @@ fetch_gdbmi_result:
                 }
             }
 
-            if (a_input[cur] == ',') {
+            if (a_input.raw ()[cur] == ',') {
                 goto fetch_gdbmi_result;
             }
 
             //skip the remaining things we couldn't parse, until the
             //'end of line' character.
-            for (;cur < end && a_input[cur] != '\n';++cur) {}
+            for (;cur < end && a_input.raw ()[cur] != '\n';++cur) {}
         }
-    } else if (!a_input.compare (cur, strlen (PREFIX_RUNNING), PREFIX_RUNNING)) {
+    } else if (!a_input.raw ().compare (cur,
+                                        strlen (PREFIX_RUNNING),
+                                        PREFIX_RUNNING)) {
         result_record.kind (Output::ResultRecord::RUNNING) ;
         cur += 8 ;
-        for (;cur < end && a_input[cur] != '\n';++cur) {}
-    } else if (!a_input.compare (cur, strlen (PREFIX_EXIT), PREFIX_EXIT)) {
+        for (;cur < end && a_input.raw ()[cur] != '\n';++cur) {}
+    } else if (!a_input.raw ().compare (cur,
+                                        strlen (PREFIX_EXIT),
+                                        PREFIX_EXIT)) {
         result_record.kind (Output::ResultRecord::EXIT) ;
         cur += 5 ;
-        for (;cur < end && a_input[cur] != '\n';++cur) {}
-    } else if (!a_input.compare (cur, strlen (PREFIX_CONNECTED),
-                PREFIX_CONNECTED)) {
+        for (;cur < end && a_input.raw ()[cur] != '\n';++cur) {}
+    } else if (!a_input.raw ().compare (cur,
+                                        strlen (PREFIX_CONNECTED),
+                                        PREFIX_CONNECTED)) {
         result_record.kind (Output::ResultRecord::CONNECTED) ;
         cur += 10 ;
-        for (;cur < end && a_input[cur] != '\n';++cur) {}
-    } else if (!a_input.compare (cur, strlen (PREFIX_ERROR), PREFIX_ERROR)) {
+        for (;cur < end && a_input.raw ()[cur] != '\n';++cur) {}
+    } else if (!a_input.raw ().compare (cur,
+                                        strlen (PREFIX_ERROR),
+                                        PREFIX_ERROR)) {
         result_record.kind (Output::ResultRecord::ERROR) ;
         cur += 6 ;
         CHECK_END (a_input, cur, end) ;
-        if (cur < end && a_input[cur] == ',') {++cur ;}
+        if (cur < end && a_input.raw ()[cur] == ',') {++cur ;}
         CHECK_END (a_input, cur, end) ;
         if (!parse_attribute (a_input, cur, cur, name, value)) {
             LOG_PARSING_ERROR (a_input, cur) ;
@@ -2930,13 +2948,13 @@ fetch_gdbmi_result:
         } else {
             LOG_ERROR ("weird, got error with no attribute. continuing.") ;
         }
-        for (;cur < end && a_input[cur] != '\n';++cur) {}
+        for (;cur < end && a_input.raw ()[cur] != '\n';++cur) {}
     } else {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false ;
     }
 
-    if (a_input[cur] != '\n') {
+    if (a_input.raw ()[cur] != '\n') {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }
@@ -2955,7 +2973,7 @@ parse_output_record (const UString &a_input,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN) ;
 
-    UString::size_type cur=a_from, end=a_input.size () ;
+    UString::size_type cur=a_from, end=a_input.bytes () ;
 
     if (cur >= end) {
         LOG_PARSING_ERROR (a_input, cur) ;
@@ -2965,12 +2983,12 @@ parse_output_record (const UString &a_input,
     Output output ;
 
 fetch_out_of_band_record:
-    if (a_input[cur] == '*'
-         || a_input[cur] == '~'
-         || a_input[cur] == '@'
-         || a_input[cur] == '&'
-         || a_input[cur] == '+'
-         || a_input[cur] == '=') {
+    if (a_input.raw () [cur] == '*'
+         || a_input.raw () [cur] == '~'
+         || a_input.raw ()[cur] == '@'
+         || a_input.raw ()[cur] == '&'
+         || a_input.raw ()[cur] == '+'
+         || a_input.raw ()[cur] == '=') {
         Output::OutOfBandRecord oo_record ;
         if (!parse_out_of_band_record (a_input, cur, cur, oo_record)) {
             LOG_PARSING_ERROR (a_input, cur) ;
@@ -2986,7 +3004,7 @@ fetch_out_of_band_record:
         return false;
     }
 
-    if (a_input[cur] == '^') {
+    if (a_input.raw ()[cur] == '^') {
         Output::ResultRecord result_record ;
         if (parse_result_record (a_input, cur, cur, result_record)) {
             output.has_result_record (true) ;
@@ -2998,9 +3016,9 @@ fetch_out_of_band_record:
         }
     }
 
-    while (cur < end && isspace (a_input[cur])) {++cur;}
+    while (cur < end && isspace (a_input.raw ()[cur])) {++cur;}
 
-    if (!a_input.compare (cur, 5, "(gdb)")) {
+    if (!a_input.raw ().compare (cur, 5, "(gdb)")) {
         cur += 5 ;
     }
 
@@ -3010,7 +3028,7 @@ fetch_out_of_band_record:
         return false ;
     }
 
-    while (cur < end && isspace (a_input[cur])) {++cur;}
+    while (cur < end && isspace (a_input.raw ()[cur])) {++cur;}
 
     a_output = output ;
     a_to = cur ;
