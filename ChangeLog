@@ -97,6 +97,11 @@
 
 2007-09-23 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/varwalker.conf.in: forgot to add this file
+	* src/dbgengine/varwalkerlist.conf.in: ditto
+
+2007-09-23 Dodji Seketeli <dodji@gnome.org>
+
 	* src/common/nmv-ustring.cc,h:
 	  (UString::get_number_of_words): added this new method
 	* src/dbgengine/nmv-gdb-engine.cc:
