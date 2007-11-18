@@ -219,6 +219,20 @@ append_a_variable (const IDebugger::VariableSafePtr &a_var,
                    Gtk::TreeModel::iterator &a_parent_row_it)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    Gtk::TreeModel::iterator row_it ;
+    append_a_variable (a_var, a_tree_view, a_tree_store,
+                       a_parent_row_it, row_it) ;
+}
+
+void
+append_a_variable (const IDebugger::VariableSafePtr &a_var,
+                   const Gtk::TreeView &a_tree_view,
+                   Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
+                   Gtk::TreeModel::iterator &a_parent_row_it,
+                   Gtk::TreeModel::iterator &a_result)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (a_tree_store) ;
 
     Gtk::TreeModel::iterator row_it ;
@@ -232,6 +246,7 @@ append_a_variable (const IDebugger::VariableSafePtr &a_var,
     for (it = a_var->members ().begin (); it != a_var->members ().end (); ++it) {
         append_a_variable (*it, a_tree_view, a_tree_store, row_it) ;
     }
+    a_result = row_it ;
 }
 
 

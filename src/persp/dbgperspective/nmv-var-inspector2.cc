@@ -121,14 +121,20 @@ class VarInspector2::Priv : public sigc::trackable {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
+        THROW_IF_FAIL (tree_view && tree_store) ;
         re_init_tree_view () ;
 
         Gtk::TreeModel::iterator parent_iter = tree_store->children ().begin ();
+        Gtk::TreeModel::iterator var_row ;
         vutil::append_a_variable (a_variable,
                                   *tree_view,
                                   tree_store,
-                                  parent_iter) ;
+                                  parent_iter,
+                                  var_row) ;
         LOG_DD ("set variable" << a_variable->name ()) ;
+        if (var_row) {
+            tree_view->expand_row (tree_store->get_path (var_row), false) ;
+        }
     }
 
     void show_variable_type_in_dialog ()

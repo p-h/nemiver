@@ -97,6 +97,19 @@
 
 2007-09-24 Dodji Seketeli <dodji@gnome.org>
 
+	* VarInspector: unfold the added variable row by default.
+
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	  (VarInspector2::Priv::set_variable): unfold the variable row so that
+	  the user does not have to do by hand all the time.
+	* src/persp/dbgperspective/nmv-variables-utils2.cc,h:
+	  add an overload of append_a_variable() that returns the row of the
+	  actually appended variable. The is useful for intance when the calling
+	  code wants to fold/unfold the added variable row for better legibility.
+
+
+2007-09-24 Dodji Seketeli <dodji@gnome.org>
+
 	* make VarInspector2 and LocalVarsInspector use IVarWalker. They now
 	  share code that is in nmv-variable-utils2.cc
 
