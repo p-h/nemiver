@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <map>
 #include "nmv-i-var-list-walker.h"
 
 using namespace nemiver::common ;
@@ -30,8 +31,13 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class VarListWalker : public IVarListWalker {
      mutable sigc::signal<void, const IVarWalkerSafePtr&> m_variable_visited_signal;
+     mutable sigc::signal<void> m_variable_list_visited_signal;
      list<IDebugger::VariableSafePtr> m_variables ;
      list<IVarWalkerSafePtr> m_var_walkers ;
+     typedef std::map<IVarWalker*, bool>  WalkersMap;
+     typedef std::deque<WalkersMap> WalkersQueue ;
+     WalkersQueue m_considered_walkers ;
+
      IDebuggerSafePtr m_debugger ;
 
      IVarWalkerSafePtr create_variable_walker (const IDebugger::VariableSafePtr &a_var) ;
@@ -49,6 +55,7 @@ public:
     //<event getters>
     //******************
     sigc::signal<void, const IVarWalkerSafePtr&>& variable_visited_signal () const ;
+    sigc::signal<void>& variable_list_visited_signal () const ;
     //******************
     //</event getters>
     //******************
@@ -71,6 +78,12 @@ VarListWalker::on_visited_variable_signal
     if (a_var) {}
     NEMIVER_TRY
     variable_visited_signal ().emit (a_walker) ;
+    WalkersMap &walkers_map = m_considered_walkers.front () ;
+    THROW_IF_FAIL (walkers_map.find (a_walker.get ()) != walkers_map.end ()) ;
+    walkers_map.erase (a_walker.get ()) ;
+    if (walkers_map.empty ()) {
+        variable_list_visited_signal ().emit () ;
+    }
     NEMIVER_CATCH_NOX
 }
 
@@ -97,6 +110,12 @@ sigc::signal<void, const IVarWalkerSafePtr&>&
 VarListWalker::variable_visited_signal () const
 {
     return m_variable_visited_signal ;
+}
+
+sigc::signal<void>&
+VarListWalker::variable_list_visited_signal () const
+{
+    return m_variable_list_visited_signal ;
 }
 
 void
@@ -127,6 +146,7 @@ VarListWalker::append_variable (const IDebugger::VariableSafePtr a_var)
 void
 VarListWalker::append_variables (const list<IDebugger::VariableSafePtr> a_vars)
 {
+
     list<IDebugger::VariableSafePtr>::const_iterator it;
     for (it = a_vars.begin (); it != a_vars.end (); ++it) {
         append_variable (*it) ;
@@ -143,8 +163,15 @@ VarListWalker::remove_variables ()
 void
 VarListWalker::do_walk_variables ()
 {
+    if (m_considered_walkers.empty ()) {
+        WalkersMap walkers ;
+        m_considered_walkers.push_back (walkers) ;
+    }
+    WalkersMap &walkers_map = m_considered_walkers.front () ;
+
     list<IVarWalkerSafePtr>::iterator it;
     for (it = m_var_walkers.begin (); it != m_var_walkers.end (); ++it) {
+        walkers_map[it->get ()] = true ;
         (*it)->do_walk_variable () ;
     }
 }
