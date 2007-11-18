@@ -1,5 +1,11 @@
 2007-11-18 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-dbg-common.h:
+	  (Command::variable ()): Don't pass VariableSafePtr by reference
+	  otherwise we bypass its refcounting.
+
+2007-11-18 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-dbg-common.h: Don't forget to initialise the
 	  memory querying related variables that got added recently.
 	* src/dbgengine/nmv-gdbmi-parser.cc: 

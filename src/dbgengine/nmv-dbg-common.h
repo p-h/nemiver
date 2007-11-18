@@ -81,7 +81,7 @@ public:
     const UString& tag1 () const {return m_tag1;}
     void tag1 (const UString &a_in) {m_tag1 = a_in;}
 
-    void variable (const IDebugger::VariableSafePtr &a_in) {m_var = a_in;}
+    void variable (const IDebugger::VariableSafePtr a_in) {m_var = a_in;}
     IDebugger::VariableSafePtr variable () const {return m_var;}
 
     /// @}
