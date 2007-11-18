@@ -1,5 +1,14 @@
 2007-11-18 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-ast.h: added DotStarPMExpr and ArrowStarPMExpr
+	  types.
+	* src/langs/nmv-cpp-parser.cc: make parsing of pm-expression be
+	  complete.
+	* tests/test-cpp-parser.cc: added basic non-regression tests for
+	  pm-expression and multiplicative-expression productions.
+
+2007-11-18 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-parser.cc:
 	  (Parser::parse_cast_expr): made cast-expression parsing work.
 	* tests/test-cpp-parser.cc: added basic test cases for cast-expression

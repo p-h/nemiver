@@ -1500,6 +1500,83 @@ public:
     void set_expr (const CastExprPtr e) {m_expr=e;}
 };//CastPMExpr
 
+class NEMIVER_API DotStarPMExpr : public PMExpr {
+    DotStarPMExpr (const DotStarPMExpr&);
+    DotStarPMExpr& operator= (const DotStarPMExpr&);
+    PMExprPtr m_lhs;
+    CastExprPtr m_rhs;
+
+public:
+    DotStarPMExpr () :
+        PMExpr (DOT_STAR_PM)
+    {}
+    DotStarPMExpr (PMExprPtr lhs, CastExprPtr rhs) :
+        PMExpr (DOT_STAR_PM),
+        m_lhs (lhs),
+        m_rhs (rhs)
+    {}
+    ~DotStarPMExpr () {}
+    const PMExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (PMExprPtr lhs) {m_lhs=lhs;}
+    const CastExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (CastExprPtr rhs) {m_rhs=rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+        }
+        if (m_rhs) {
+            string str2;
+            str += ".*";
+            m_rhs->to_string (str2);
+            str += str2;
+        }
+        a_str=str;
+        return true;
+    }
+};//DotStarPMExpr
+typedef shared_ptr<DotStarPMExpr> DotStarPMExprPtr;
+
+
+class NEMIVER_API ArrowStarPMExpr : public PMExpr {
+    ArrowStarPMExpr (const ArrowStarPMExpr&);
+    ArrowStarPMExpr& operator= (const ArrowStarPMExpr&);
+    PMExprPtr m_lhs;
+    CastExprPtr m_rhs;
+
+public:
+    ArrowStarPMExpr () :
+        PMExpr (ARROW_STAR_PM)
+    {}
+    ArrowStarPMExpr (PMExprPtr lhs, CastExprPtr rhs) :
+        PMExpr (ARROW_STAR_PM),
+        m_lhs (lhs),
+        m_rhs (rhs)
+    {}
+    ~ArrowStarPMExpr () {}
+    const PMExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (PMExprPtr lhs) {m_lhs=lhs;}
+    const CastExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (CastExprPtr rhs) {m_rhs=rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+        }
+        if (m_rhs) {
+            string str2;
+            str += "->*";
+            m_rhs->to_string (str2);
+            str += str2;
+        }
+        a_str=str;
+        return true;
+    }
+};//ArrowStarPMExpr
+typedef shared_ptr<ArrowStarPMExpr> ArrowStarPMExprPtr;
+
 class MultExpr;
 typedef shared_ptr<MultExpr> MultExprPtr;
 class NEMIVER_API MultExpr : public Expr {

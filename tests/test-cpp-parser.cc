@@ -31,6 +31,7 @@ using nemiver::cpp::InitDeclarator;
 using nemiver::cpp::CastExprPtr;
 using nemiver::cpp::CastExpr;
 using nemiver::cpp::PMExprPtr;
+using nemiver::cpp::MultExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -153,7 +154,6 @@ test_parser5 ()
 {
     Parser parser (prog5);
     CastExprPtr cast_expr;
-
     if (!parser.parse_cast_expr (cast_expr) || !cast_expr) {
         BOOST_FAIL ("failed to parse cast expresssion: " << prog5);
     }
@@ -162,6 +162,7 @@ test_parser5 ()
     if (str != prog5) {
         BOOST_FAIL ("parsed " << prog5 << "and got: " << str);
     }
+
     Parser parser1 (prog5_1);
     PMExprPtr pm_expr;
     if (!parser1.parse_pm_expr (pm_expr) || !pm_expr) {
@@ -170,6 +171,49 @@ test_parser5 ()
     pm_expr->to_string (str);
     if (str != prog5_1) {
         BOOST_FAIL ("parsed '" <<prog5_1 << "' into '" << str << "'");
+    }
+
+    Parser parser2 (prog5_2);
+    Parser parser3 (prog5_3);
+    if (!parser2.parse_pm_expr (pm_expr) || !pm_expr) {
+        BOOST_FAIL ("failed to parse: " << prog5_2);
+    }
+    pm_expr->to_string (str);
+    if (str != prog5_2) {
+        BOOST_FAIL ("parsed '" <<prog5_2 << "' into '" << str << "'");
+    }
+    if (!parser3.parse_pm_expr (pm_expr) || !pm_expr) {
+        BOOST_FAIL ("failed to parse: " << prog5_3);
+    }
+    pm_expr->to_string (str);
+    if (str != prog5_3) {
+        BOOST_FAIL ("parsed '" <<prog5_3 << "' into '" << str << "'");
+    }
+
+    Parser parser4 (prog5_4);
+    Parser parser5 (prog5_5);
+    Parser parser6 (prog5_6);
+    MultExprPtr mult_expr;
+    if (!parser4.parse_mult_expr (mult_expr) || !mult_expr) {
+        BOOST_FAIL ("failed to parse " << prog5_4);
+    }
+    mult_expr->to_string (str);
+    if (str != prog5_4) {
+        BOOST_FAIL ("parsed '" <<prog5_4 << "' into '" << str << "'");
+    }
+    if (!parser5.parse_mult_expr (mult_expr) || !mult_expr) {
+        BOOST_FAIL ("failed to parse " << prog5_5);
+    }
+    mult_expr->to_string (str);
+    if (str != prog5_5) {
+        BOOST_FAIL ("parsed '" <<prog5_5 << "' into '" << str << "'");
+    }
+    if (!parser6.parse_mult_expr (mult_expr) || !mult_expr) {
+        BOOST_FAIL ("failed to parse " << prog5_6);
+    }
+    mult_expr->to_string (str);
+    if (str != prog5_6) {
+        BOOST_FAIL ("parsed '" <<prog5_6 << "' into '" << str << "'");
     }
 }
 

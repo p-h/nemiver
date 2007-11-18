@@ -246,17 +246,47 @@ out:
 ///           cast-expression
 ///           pm-expression .* cast-expression
 ///           pm-expression ->* cast-expression
-/// TODO: only the first form is supported. Support the two laters.
 bool
 Parser::parse_pm_expr (PMExprPtr &a_result)
 {
-    CastExprPtr cast_expr;
+    bool status=false;
+    CastExprPtr cast_expr, rhs;
+    PMExprPtr lhs, result;
+    unsigned mark = LEXER.get_token_stream_mark ();
+    Token token;
 
-    if (parse_cast_expr (cast_expr)) {
-        a_result.reset (new CastPMExpr (cast_expr));
-        return true;
+    if (!parse_cast_expr (cast_expr)) {goto error;}
+    lhs.reset (new CastPMExpr (cast_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () == Token::OPERATOR_DOT_STAR
+            || token.get_kind () == Token::OPERATOR_ARROW_STAR) {
+            LEXER.consume_next_token ();
+        } else {
+            result = lhs;
+            goto okay;
+        }
+        if (!parse_cast_expr (rhs)) {goto error;}
+        if (token.get_kind () == Token::OPERATOR_DOT_STAR) {
+            lhs.reset (new DotStarPMExpr (lhs, rhs));
+        } else {
+            lhs.reset (new ArrowStarPMExpr (lhs, rhs));
+        }
     }
-    return false;
+
+error:
+    status = false;
+    LEXER.rewind_to_mark (mark);
+    goto out;
+okay:
+    status = true;
+    a_result = result;
+out:
+    return status;
 }
 
 /// parse a multiplicative-expression production
@@ -270,31 +300,34 @@ bool
 Parser::parse_mult_expr (MultExprPtr &a_result)
 {
     bool status=false;
-    MultExprPtr lhs;
-    PMExprPtr rhs;
-    MultExprPtr result;
-    Token token;
+    MultExprPtr lhs, result;
+    PMExprPtr pm_expr, rhs;
     Expr::Operator op=Expr::OP_UNDEFINED;
+    Token token;
     unsigned mark=LEXER.get_token_stream_mark ();
 
-    if (parse_pm_expr (rhs)) {
-        result.reset (new MultExpr (rhs));
-        goto okay;
-    }
-    if (!parse_mult_expr (lhs)) {goto error;}
-    if (!LEXER.consume_next_token (token)) {goto error;}
+    if (!parse_pm_expr (pm_expr)) {goto error;}
+    lhs.reset (new MultExpr (pm_expr));
 
-    if (token.get_kind () == Token::OPERATOR_MULT) {
-        op = Expr::MULT;
-    } else if (token.get_kind () == Token::OPERATOR_DIV) {
-        op = Expr::DIV;
-    } else if (token.get_kind () == Token::OPERATOR_MOD) {
-        op = Expr::MOD;
-    } else {
-        goto error;
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () == Token::OPERATOR_MULT) {
+            op = Expr::MULT;
+        } else if (token.get_kind () == Token::OPERATOR_DIV) {
+            op = Expr::DIV;
+        } else if (token.get_kind () == Token::OPERATOR_MOD) {
+            op = Expr::MOD;
+        } else {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_pm_expr (rhs)) {goto error;}
+        lhs.reset (new MultExpr (lhs, op, rhs));
     }
-    if (!parse_pm_expr (rhs)) {goto error;}
-    result.reset (new MultExpr (lhs, op, rhs));
 
 okay:
     status=true;
