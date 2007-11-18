@@ -1,4 +1,4 @@
-SUBDIRS=common dbdimpl dbgengine confmgr uicommon workbench persp
+SUBDIRS=common dbdimpl langs dbgengine confmgr uicommon workbench persp
 
 bin_PROGRAMS=nemiver
 nemiver_SOURCES=main.cc

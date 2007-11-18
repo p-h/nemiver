@@ -6,7 +6,7 @@ runtestgdbmi runtestunicode \
 runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
 runtestderef runtestlocalvarslist \
-runtestglobalvariables
+runtestglobalvariables runtestcpplexer
 
 else
 
@@ -74,6 +74,12 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestglobalvariables_SOURCES=test-global-variables.cc
 runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestcpplexer_SOURCES=test-cpp-lexer.cc
+runtestcpplexer_LDADD=@NEMIVERCOMMON_LIBS@ \
+@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
+$(top_builddir)/src/langs/libnemivercparser.la \
 $(top_builddir)/src/common/libnemivercommon.la
 
 docore_SOURCES=do-core.cc

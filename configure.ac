@@ -354,6 +354,7 @@ src/Makefile
   src/dbdimpl/Makefile
   src/dbdimpl/sqlite/Makefile
   src/dbdimpl/sqlite/org.nemiver.db.sqlitedriver.conf
+  src/langs/Makefile
   src/dbgengine/Makefile
   src/dbgengine/gdbengine.conf
   src/dbgengine/cpptrait.conf
