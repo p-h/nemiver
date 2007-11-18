@@ -333,6 +333,10 @@ public:
                             int &a_proc_pid,
                             UString &a_exe_path) ;
 
+    typedef std::map<UString, std::list<IDebugger::VariableSafePtr> > VarsPerFilesMap ;
+    bool extract_global_variable_list (Output &a_output,
+                                       VarsPerFilesMap &a_vars) ;
+
     void list_register_names (const UString &a_cookie="");
 
     void list_register_values (std::list<register_id_t> a_registers,

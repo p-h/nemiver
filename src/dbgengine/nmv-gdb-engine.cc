@@ -1551,11 +1551,16 @@ struct OnGlobalVariablesListedHandler : OutputHandler {
         THROW_IF_FAIL (m_engine) ;
 
         list<IDebugger::VariableSafePtr> var_list;
-        parse_info_variables_list(a_in.output(), var_list);
-            
+        GDBEngine::VarsPerFilesMap vars_per_files_map ;
+        if (!m_engine->extract_global_variable_list (a_in.output (),
+                                                     vars_per_files_map)) {
+            LOG_ERROR ("failed to extract global variable list") ;
+            return ;
+        }
+        parse_info_variables_list(a_in.output (), var_list);
+
         m_engine->global_variables_listed_signal ().emit
-            (var_list, a_in.command ().cookie ()) ;
-                
+                                    (var_list, a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
     }
 };//struct OnGlobalVariablesListedHandler
@@ -3216,6 +3221,127 @@ GDBEngine::extract_proc_info (Output &a_output,
     LOG_DD ("extracted exe path: '" << exe_path << "'") ;
     a_exe_path = exe_path ;
 
+    return true ;
+}
+
+bool
+GDBEngine::extract_global_variable_list (Output &a_output,
+                                         VarsPerFilesMap &a_vars)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    if (!a_output.has_out_of_band_record ()) {
+        LOG_ERROR ("output has no out of band record") ;
+        return false ;
+    }
+    IDebugger::VariableSafePtr var ;
+    VarsPerFilesMap result;
+    list<IDebugger::VariableSafePtr> var_list ;
+
+    //*************************************************
+    //search the out of band records that
+    //contain the debugger console
+    //stream record with the string:
+    //"File <file-name>:".
+    //That stream record is then followed by
+    //series of stream records containing the string:
+    //"<type of variable> <variable-name>;"
+    //*************************************************
+    UString str, file_name, var_name, var_type ;
+    bool found=false ;
+    unsigned cur=0, var_name_begin=0, var_name_end=0, var_type_end=0 ;
+    list<Output::OutOfBandRecord>::const_iterator oobr_it =
+                                    a_output.out_of_band_records ().begin ();
+fetch_file:
+    var_list.clear () ;
+    //we are looking for a string of the form "File <file-name>:\n"
+    for (; oobr_it != a_output.out_of_band_records ().end (); ++oobr_it) {
+        if (!oobr_it->has_stream_record ()) {continue;}
+
+        str = oobr_it->stream_record ().debugger_console () ;
+        if (str.raw ().compare (0, 5, "File ")) {continue;}
+
+        //we found the string "File <file-name>:\n"
+        found = true ;
+        break ;
+    }
+    if (!found)
+        goto out ;
+    cur = 5 ;
+    file_name = str.substr (5) ;
+    file_name.chomp () ;
+    file_name.erase (file_name.length ()-1, 1) ;
+    THROW_IF_FAIL (!file_name.empty ()) ;
+
+fetch_variable:
+    found = false ;
+    //we are looking for a string that end's up with a ";\n"
+    for (++oobr_it; oobr_it != a_output.out_of_band_records ().end (); ++oobr_it) {
+        if (!oobr_it->has_stream_record ()) {continue;}
+
+        str = oobr_it->stream_record ().debugger_console () ;
+        if (str.raw ()[str.raw ().length () - 2] != ';'
+            || str.raw ()[str.raw ().length () - 1] != '\n') {
+            continue;
+        }
+        found=true ;
+        break ;
+    }
+    if (!found)
+        goto out ;
+    str.chomp () ;
+    THROW_IF_FAIL (str.raw ()[str.raw ().length ()-1] == ';') ;
+    var_name_end = str.raw ().length () - 2 ;
+    //TODO: this is false. to properly extract the type and name part, one
+    //has to actually parse the line. Shit. We must find a declaration parser.
+    //find the first blank char or '*', starting from the end
+    //it'll be around the begining of the variable name
+    found=false ;
+    for (var_name_begin = var_name_end; var_name_begin > 0 ; --var_name_begin) {
+        if (!isblank (str.raw ()[var_name_begin])
+            && str.raw ()[var_name_begin] != '*') {continue;}
+        found = true ;
+        break ;
+    }
+    if (!found)
+        goto out ;
+    var_type_end = var_name_begin ;
+    ++var_name_begin ;
+    for (;var_type_end > 0; --var_type_end) {
+        if (isblank (str.raw ()[var_type_end])) {continue;}
+        break ;
+    }
+    var_name = str.raw ().substr (var_name_begin, var_name_end - var_name_begin + 1) ;
+    var_type = str.raw ().substr (0, var_type_end + 1) ;
+
+    var.reset (new IDebugger::Variable (var_name)) ;
+    var->type (var_type) ;
+    var_list.push_back (var) ;
+
+skip_oobr:
+    for (++oobr_it; oobr_it != a_output.out_of_band_records ().end (); ++oobr_it) {
+        if (!oobr_it->has_stream_record ()) {continue;}
+        break ;
+    }
+    if (oobr_it == a_output.out_of_band_records ().end ()) {
+        goto out ;
+    }
+
+    str = oobr_it->stream_record ().debugger_console () ;
+    if (!str.raw ().compare (0, 5, "File ")) {
+        result[file_name] = var_list;
+        goto fetch_file ;
+    } else if (str.raw ()[str.raw ().length () - 2] == ';') {
+        goto fetch_variable ;
+    } else {
+        goto skip_oobr ;
+    }
+
+out:
+    if (!found)
+        return false ;
+
+    a_vars = result ;
     return true ;
 }
 
