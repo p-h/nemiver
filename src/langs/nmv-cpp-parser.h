@@ -48,7 +48,12 @@ class NEMIVER_API Parser {
 public:
     Parser (const string&);
     ~Parser ();
-    bool parse_primary_expr (PrimaryExprPtr &expr);
+    bool parse_primary_expr (PrimaryExprPtr &);
+    bool parse_postfix_expr (PostfixExprPtr &);
+    bool parse_unary_expr (UnaryExprPtr &);
+    bool parse_cast_expr (CastExprPtr &);
+    bool parse_pm_expr (PMExprPtr &);
+    bool parse_mult_expr (MultExprPtr &);
     bool parse_class_or_namespace_name (string &str);
     bool parse_type_name (UnqualifiedIDExprPtr &);
     bool parse_nested_name_specifier (QNamePtr &a_result);
@@ -59,7 +64,7 @@ public:
     bool parse_simple_type_specifier (SimpleTypeSpecPtr &);
     bool parse_type_specifier (TypeSpecifierPtr &);
     bool parse_type_specifier_seq (list<TypeSpecifierPtr> &);
-    bool parse_type_id (string &);
+    bool parse_type_id (TypeIDPtr &);
     bool parse_decl_specifier (DeclSpecifierPtr &);
     bool parse_decl_specifier_seq (list<DeclSpecifierPtr> &);
     bool parse_declarator_id (IDDeclaratorPtr &);

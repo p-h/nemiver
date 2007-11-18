@@ -963,7 +963,7 @@ Lexer::scan_operator (Token &a_token)
             CONSUME_CHAR;
             if (CUR_CHAR == '*') {
                 CONSUME_CHAR;
-                a_token.set (Token::OPERATOR_MEMBER_POINTER);
+                a_token.set (Token::OPERATOR_ARROW_STAR);
             } else {
                 a_token.set (Token::OPERATOR_DEREF);
             }

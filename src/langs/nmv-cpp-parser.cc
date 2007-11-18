@@ -62,40 +62,274 @@ Parser::~Parser ()
 ///           id-expression
 /// TODO: handle id-expression
 bool
-Parser::parse_primary_expr (shared_ptr<PrimaryExpr> &a_expr)
+Parser::parse_primary_expr (PrimaryExprPtr &a_expr)
 {
+    bool status=false;
     Token token;
+    PrimaryExprPtr result;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
     if (!LEXER.peek_next_token (token)) {
         return false;
     }
-    shared_ptr<PrimaryExpr> pe (new PrimaryExpr);
     switch (token.get_kind ()) {
         case Token::KEYWORD:
             if (token.get_str_value () == "this") {
-                pe->set_kind (PrimaryExpr::THIS);
+                result.reset (new ThisPrimaryExpr);
+                LEXER.consume_next_token ();
             } else {
-                //TODO: handle id-expression
-                return false;
+                IDExprPtr expr;
+                if (!parse_id_expr (expr)) {goto error;}
+                result = expr;
+                goto okay;
             }
             break;
         case Token::PUNCTUATOR_PARENTHESIS_OPEN:
-            //TODO: support sub expr parsing.
-            return false;
+            {
+                //consume the open parenthesis
+                LEXER.consume_next_token ();
+                PrimaryExprPtr expr;
+                if (!parse_primary_expr (expr)) {goto error;}
+                result.reset (new ParenthesisPrimaryExpr (expr));
+                LEXER.consume_next_token (token);
+                if (token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_CLOSE) {
+                    goto error;
+                }
+                goto okay;
+            }
             break;
         default:
             if (token.is_literal ()) {
-                pe->set_token (PrimaryExpr::LITERAL, token);
+                result.reset (new LiteralPrimaryExpr (token));
+                LEXER.consume_next_token ();
+                goto okay;
             } else {
-                //TODO: handle id-expression
-                return false;
+                IDExprPtr expr;
+                if (!parse_id_expr (expr)) {goto error;}
+                result = expr;
+                goto okay;
             }
             break;
     }
-    if (pe->get_kind () == PrimaryExpr::UNDEFINED)
-        return false;
-    a_expr = pe;
-    LEXER.consume_next_token ();
-    return true;
+
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+    goto out;
+okay:
+    a_expr = result;
+    status=true;
+out:
+    return status;
+}
+
+/// parses a postfix-expression production:
+///  postfix-expression:
+///            primary-expression
+///            postfix-expression [ expression ]
+///            postfix-expression ( expression-list(opt) )
+///            simple-type-specifier ( expression-list(opt))
+///            typename ::(opt) nested-name-specifier identifier ( expression-list(opt) )
+///            typename ::(opt) nested-name-specifier template(opt) template-id ...
+///                ( expression-listopt )
+///            postfix-expression . template(opt) id-expression
+///            postfix-expression -> template(opt) id-expression
+///            postfix-expression . pseudo-destructor-name
+///            postfix-expression -> pseudo-destructor-name
+///            postfix-expression ++
+///            postfix-expression --
+///            dynamic_cast < type-id > ( expression )
+///            static_cast < type-id > ( expression )
+///            reinterpret_cast < type-id > ( expression )
+///            const_cast < type-id > ( expression )
+///            typeid ( expression )
+///            typeid ( type-id )
+///
+///TODO: this only parse the first two forms of the postfix-expression. So need
+//to fill the gap in here.
+bool
+Parser::parse_postfix_expr (PostfixExprPtr &a_result)
+{
+    bool status=false;
+    PostfixExprPtr result;
+    PostfixExprPtr pfe;
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    PrimaryExprPtr primary_expr;
+    if (parse_primary_expr (primary_expr)) {
+        result.reset (new PrimaryPFE (primary_expr));
+        goto okay;
+    }
+    if (parse_postfix_expr (pfe)) {
+        Token token;
+        if (LEXER.peek_next_token (token)
+            && token.get_kind () == Token::PUNCTUATOR_BRACKET_OPEN) {
+            LEXER.consume_next_token ();
+            //try to parse postfix-expression [ expression ]
+            //we don't have parse_expression() function ready yet, so try
+            //to parse primary-expression instead.
+            if (!parse_primary_expr (primary_expr)) {
+                goto error;
+            }
+            if (!LEXER.consume_next_token (token)
+                || token.get_kind () != Token::PUNCTUATOR_BRACKET_CLOSE) {
+                goto error;
+            }
+            result.reset (new ArrayPFE (pfe, primary_expr));
+            goto okay;
+        } else {
+            //TODO: handle other types of postfix-expression
+        }
+    }
+    //TODO: handle other types of postfix-expression
+
+error:
+    LEXER.rewind_to_mark (mark);
+    status=false;
+    goto out;
+okay:
+    a_result=result;
+    status = true;
+out:
+    return status;
+}
+
+
+/// parse a cast-expression production.
+///
+/// cast-expression:
+///            unary-expression
+///            ( type-id ) cast-expression
+bool
+Parser::parse_cast_expr (CastExprPtr &a_result)
+{
+    bool status=false;
+    CastExprPtr result;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    UnaryExprPtr unary_expr;
+    if (parse_unary_expr (unary_expr)) {
+        result.reset (new UnaryCastExpr (unary_expr));
+        goto okay;
+    } else {
+        Token token;
+        if (!LEXER.peek_next_token (token)
+            || token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_OPEN) {
+            goto error;
+        }
+        TypeIDPtr type_id;
+        if (!parse_type_id (type_id)) {goto error;}
+        if (!LEXER.peek_next_token (token)
+            || token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_CLOSE) {
+            goto error;
+        }
+        CastExprPtr right_expr;
+        if (!parse_cast_expr (right_expr)) {goto error;}
+        result.reset (new CStyleCastExpr (type_id, right_expr));
+        goto okay;
+    }
+
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+    goto out;
+okay:
+    status=true;
+    a_result=result;
+out:
+    return status;
+}
+
+/// parse a pm-expression production.
+///
+/// pm-expression:
+///           cast-expression
+///           pm-expression .* cast-expression
+///           pm-expression ->* cast-expression
+/// TODO: only the first form is supported. Support the two laters.
+bool
+Parser::parse_pm_expr (PMExprPtr &a_result)
+{
+    CastExprPtr cast_expr;
+
+    if (parse_cast_expr (cast_expr)) {
+        a_result.reset (new CastPMExpr (cast_expr));
+        return true;
+    }
+    return false;
+}
+
+/// parse a multiplicative-expression production
+///
+/// multiplicative-expression:
+///            pm-expression
+///            multiplicative-expression * pm-expression
+///            multiplicative-expression / pm-expression
+///            multiplicative-expression % pm-expression
+bool
+Parser::parse_mult_expr (MultExprPtr &a_result)
+{
+    bool status=false;
+    MultExprPtr lhs;
+    PMExprPtr rhs;
+    MultExprPtr result;
+    Token token;
+    Expr::Operator op=Expr::OP_UNDEFINED;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (parse_pm_expr (rhs)) {
+        result.reset (new MultExpr (rhs));
+        goto okay;
+    }
+    if (!parse_mult_expr (lhs)) {goto error;}
+    if (!LEXER.consume_next_token (token)) {goto error;}
+
+    if (token.get_kind () == Token::OPERATOR_MULT) {
+        op = Expr::MULT;
+    } else if (token.get_kind () == Token::OPERATOR_DIV) {
+        op = Expr::DIV;
+    } else if (token.get_kind () == Token::OPERATOR_MOD) {
+        op = Expr::MOD;
+    } else {
+        goto error;
+    }
+    if (!parse_pm_expr (rhs)) {goto error;}
+    result.reset (new MultExpr (lhs, op, rhs));
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parses a unary-expression production.
+///
+/// unary-expression:
+///          postfix-expression
+///           ++ cast-expression
+///           -- cast-expression
+///           unary-operator cast-expression
+///           sizeof unary-expression
+///           sizeof ( type-id )
+///           new-expression
+///           delete-expression
+///TODO: this only support the postfix-expression form parsing.
+///      need to support the other forms
+bool
+Parser::parse_unary_expr (UnaryExprPtr &a_result)
+{
+    PostfixExprPtr pfe;
+
+    if (parse_postfix_expr (pfe)) {
+        a_result.reset (new PFEUnaryExpr (pfe));
+        return true;
+    }
+    return false;
 }
 
 
@@ -221,12 +455,12 @@ out:
 ///
 /// TODO: support template-id and conversion-function-id cases.
 bool
-Parser::parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> &a_expr)
+Parser::parse_unqualified_id (UnqualifiedIDExprPtr &a_expr)
 {
     Token token;
     if (!LEXER.peek_next_token (token)) {return false;}
 
-    shared_ptr<UnqualifiedIDExpr> expr;
+    UnqualifiedIDExprPtr expr;
     switch (token.get_kind ()) {
         case Token::IDENTIFIER:
             expr.reset (new UnqualifiedID (token.get_str_value ()));
@@ -289,7 +523,7 @@ Parser::parse_unqualified_id (shared_ptr<UnqualifiedIDExpr> &a_expr)
 ///   :: operator-function-id
 ///   :: template-id
 bool
-Parser::parse_qualified_id (shared_ptr<QualifiedIDExpr> &a_expr)
+Parser::parse_qualified_id (QualifiedIDExprPtr &a_expr)
 {
     bool result=false, has_template=false;
     UnqualifiedIDExprPtr id;
@@ -298,7 +532,7 @@ Parser::parse_qualified_id (shared_ptr<QualifiedIDExpr> &a_expr)
     unsigned mark = LEXER.get_token_stream_mark ();
 
     if (!LEXER.consume_next_token (token)) {return false;}
-    shared_ptr<QualifiedIDExpr> expr;
+    QualifiedIDExprPtr expr;
 
     if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
         LEXER.consume_next_token ();
@@ -342,7 +576,7 @@ out:
 ///            unqualified-id
 ///            qualified-id
 bool
-Parser::parse_id_expr (shared_ptr<IDExpr> &a_expr)
+Parser::parse_id_expr (IDExprPtr &a_expr)
 {
     bool result=false;
     Token token;
@@ -351,7 +585,7 @@ Parser::parse_id_expr (shared_ptr<IDExpr> &a_expr)
     switch (token.get_kind ()) {
         case Token::KEYWORD:
         case Token::OPERATOR_BIT_COMPLEMENT: {
-            shared_ptr<UnqualifiedIDExpr> unq_expr;
+            UnqualifiedIDExprPtr unq_expr;
             result = parse_unqualified_id (unq_expr);
             if (result) {
                 a_expr = unq_expr;
@@ -359,7 +593,7 @@ Parser::parse_id_expr (shared_ptr<IDExpr> &a_expr)
             return result;
         }
         case Token::OPERATOR_SCOPE_RESOL: {
-            shared_ptr<QualifiedIDExpr> q_expr;
+            QualifiedIDExprPtr q_expr;
             result = parse_qualified_id (q_expr);
             if (result) {
                 a_expr = q_expr;
@@ -367,8 +601,8 @@ Parser::parse_id_expr (shared_ptr<IDExpr> &a_expr)
             return result;
         }
         case Token::IDENTIFIER: {
-            shared_ptr<UnqualifiedIDExpr> unq_expr;
-            shared_ptr<QualifiedIDExpr> q_expr;
+            UnqualifiedIDExprPtr unq_expr;
+            QualifiedIDExprPtr q_expr;
             if (parse_unqualified_id (unq_expr)) {
                 a_expr = unq_expr;
                 result = true;
@@ -654,13 +888,13 @@ Parser::parse_type_specifier_seq (list<TypeSpecifierPtr> &a_result)
 ///         type-specifier-seq abstract-declarator(opt)
 ///TODO: handle abstract-declarator
 bool
-Parser::parse_type_id (string &a_result)
+Parser::parse_type_id (TypeIDPtr &a_result)
 {
     list<TypeSpecifierPtr> type_specs;
 
     if (!parse_type_specifier_seq (type_specs)) {return false;}
+    a_result.reset (new TypeID (type_specs));
     //TODO:handle abstract-declarator here.
-    TypeSpecifier::list_to_string (type_specs, a_result);
     return true;
 }
 
@@ -675,7 +909,7 @@ Parser::parse_type_id (string &a_result)
 ///
 /// TODO: handle function-specifier
 bool
-Parser::parse_decl_specifier (shared_ptr<DeclSpecifier> &a_result)
+Parser::parse_decl_specifier (DeclSpecifierPtr &a_result)
 {
     bool status=false;
     Token token;

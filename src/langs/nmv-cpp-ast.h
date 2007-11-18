@@ -89,7 +89,7 @@ public:
         OPERATOR_PLUS_PLUS /*++*/,
         OPERATOR_MINUS_MINUS /*--*/,
         OPERATOR_SEQ_EVAL /*,*/,
-        OPERATOR_MEMBER_POINTER /*->**/,
+        OPERATOR_ARROW_STAR /*->**/,
         OPERATOR_DEREF /*->*/,
         OPERATOR_GROUP /*()*/,
         OPERATOR_ARRAY_ACCESS /*[]*/,
@@ -141,6 +141,14 @@ public:
 
 class QName;
 typedef shared_ptr<QName> QNamePtr;
+
+class IDExpr;
+typedef shared_ptr<IDExpr> IDExprPtr;
+
+class TypeSpecifier;
+typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
+
+
 /// \brief Qualified Name.
 ///
 /// can contain the result of the parsing of
@@ -243,6 +251,7 @@ public:
     bool to_string (string &a_str) const {a_str="volatile";return true;}
 };
 typedef shared_ptr<VolatileQualifier> VolatileQualifierPtr;
+
 
 class NEMIVER_API PtrOperator {
     PtrOperator (const PtrOperator&);
@@ -484,9 +493,6 @@ public:
     ~MutableSpecifier () {}
     bool to_string (string &a_str) const {a_str="mutable";return true;}
 };
-
-class TypeSpecifier;
-typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
 class NEMIVER_API TypeSpecifier : public DeclSpecifier {
     TypeSpecifier ();
     TypeSpecifier (const TypeSpecifier&);
@@ -520,7 +526,8 @@ public:
     bool is_cv_qualifier () const {return (m_kind == CONST || m_kind == VOLATILE);}
     virtual bool to_string (string &a_str) const=0;
     static bool list_to_string (const list<TypeSpecifierPtr> &, string &);
-};
+};//end class TypeSpecifier
+typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
 
 class NEMIVER_API SimpleTypeSpec : public TypeSpecifier {
     SimpleTypeSpec (const SimpleTypeSpec&);
@@ -846,11 +853,28 @@ class NEMIVER_API Expr {
 public:
     enum Kind {
         UNDEFINED=0,
-        ID_EXPRESSION,
         PRIMARY_EXPRESSION,
         CONDITIONAL_EXPRESSION,
         ASSIGNMENT_EXPRESION,
-        THROW_EXPRESSION
+        THROW_EXPRESSION,
+        UNARY_EXPRESSION,
+        CAST_EXPRESSION,
+        PM_EXPRESSION,
+        MULT_EXPR
+    };
+
+    enum Operator {
+        OP_UNDEFINED,
+        MULT,
+        DIV,
+        MOD,
+        PLUS,
+        MINUS,
+        LT,
+        GT,
+        LEFT_SHIFT,
+        RIGHT_SHIFT,
+        EQUAL
     };
 
 private:
@@ -861,14 +885,118 @@ public:
         m_kind (a_kind)
     {
     }
-    ~Expr () {}
+    virtual ~Expr () {}
     Kind get_kind () {return m_kind;}
+    virtual bool to_string (string &) const=0;
+    static const string& operator_to_string (Operator);
 };//end class Expr
+typedef shared_ptr<Expr> ExprPtr;
 
-class UnqualifiedIDExpr;
-class QualifiedIDExpr;
+class NEMIVER_API PrimaryExpr : public Expr {
+    PrimaryExpr (const PrimaryExpr&);
+    PrimaryExpr& operator= (const PrimaryExpr&);
 
-class NEMIVER_API IDExpr : public Expr {
+public:
+    enum Kind {
+        UNDEFINED,
+        LITERAL,
+        THIS,
+        PARENTHESIZED,
+        ID_EXPR,
+    };
+
+private:
+    Kind m_kind;
+    Token m_token;
+    shared_ptr<IDExpr> m_id_expr;
+    shared_ptr<Expr> m_parenthesized;
+
+public:
+    PrimaryExpr () :
+        Expr (PRIMARY_EXPRESSION), m_kind (UNDEFINED)
+    {}
+    PrimaryExpr (Kind k) :
+        Expr (PRIMARY_EXPRESSION),
+        m_kind (k)
+    {}
+    ~PrimaryExpr () {}
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind kind) {m_kind=kind;}
+    void set_token (Kind kind, const Token &token) {m_kind=kind, m_token=token;}
+    const Token& get_token () const {return m_token;}
+    void set_id_expr (shared_ptr<IDExpr> id_expr) {m_kind=ID_EXPR, m_id_expr=id_expr;}
+    const shared_ptr<IDExpr> get_id_expr () const {return m_id_expr;}
+    void set_parenthesized (shared_ptr<Expr> expr)
+    {
+        m_kind=PARENTHESIZED, m_parenthesized=expr;
+    }
+    const shared_ptr<Expr> get_parenthesized () const {return m_parenthesized;}
+};//end class PrimaryExpr
+typedef shared_ptr<PrimaryExpr> PrimaryExprPtr;
+
+class NEMIVER_API LiteralPrimaryExpr : public PrimaryExpr {
+    LiteralPrimaryExpr (const LiteralPrimaryExpr&);
+    LiteralPrimaryExpr& operator= (const LiteralPrimaryExpr&);
+
+    Token m_literal;
+
+public:
+    LiteralPrimaryExpr () :
+        PrimaryExpr (LITERAL)
+    {}
+    LiteralPrimaryExpr (const Token &t) :
+        PrimaryExpr (LITERAL),
+        m_literal (t)
+    {}
+    ~LiteralPrimaryExpr () {}
+    const Token& get_token () const {return m_literal;}
+    void set_token (Token &t) {m_literal=t;}
+    bool to_string (string &a_str) const {a_str=m_literal.get_str_value ();return true;}
+};//end class PrimaryExpr
+typedef shared_ptr<LiteralPrimaryExpr> LiteralPrimaryExprPtr;
+
+class NEMIVER_API ThisPrimaryExpr : public PrimaryExpr {
+    ThisPrimaryExpr (const ThisPrimaryExpr&);
+    ThisPrimaryExpr& operator= (const ThisPrimaryExpr&);
+
+public:
+    ThisPrimaryExpr () :
+        PrimaryExpr (THIS)
+    {}
+    ~ThisPrimaryExpr () {}
+    bool to_string (string &a_str) const {a_str="this"; return true;}
+};//end class ThisPrimaryExpr
+typedef shared_ptr<ThisPrimaryExpr> ThisPrimaryExprPtr;
+
+class NEMIVER_API ParenthesisPrimaryExpr : public PrimaryExpr {
+    ParenthesisPrimaryExpr (const ParenthesisPrimaryExpr&);
+    ParenthesisPrimaryExpr& operator= (const ParenthesisPrimaryExpr&);
+
+    ExprPtr m_expr;
+
+public:
+    ParenthesisPrimaryExpr () :
+        PrimaryExpr (PARENTHESIZED)
+    {}
+    ParenthesisPrimaryExpr (const ExprPtr e) :
+        PrimaryExpr (PARENTHESIZED),
+        m_expr (e)
+    {}
+    ~ParenthesisPrimaryExpr () {}
+    bool to_string (string &a_str) const
+    {
+        a_str="(";
+        if (m_expr) {
+            string str;
+            m_expr->to_string (str);
+            a_str += str;
+        }
+        a_str += ")";
+        return true;
+    }
+};//end ParenthesisPrimaryExpr
+
+class NEMIVER_API IDExpr : public PrimaryExpr {
     IDExpr (const IDExpr&);
     IDExpr& operator= (const IDExpr&);
     IDExpr ();
@@ -885,15 +1013,13 @@ private:
 
 public:
     IDExpr (Kind kind) :
-        Expr (ID_EXPRESSION),
+        PrimaryExpr (ID_EXPR),
         m_kind (kind)
     {
     }
-    virtual ~IDExpr ();
-    virtual bool to_string (string &) const=0;
+    ~IDExpr ();
     Kind get_kind () const {return m_kind;}
 };//end class Expr
-typedef shared_ptr<IDExpr> IDExprPtr;
 
 class NEMIVER_API UnqualifiedIDExpr : public IDExpr {
     UnqualifiedIDExpr (const UnqualifiedIDExpr&);
@@ -1024,6 +1150,403 @@ public:
     //TODO: support template-id
 };//end QualifiedIDExpr
 
+class NEMIVER_API TypeID {
+    TypeID (const TypeID&);
+    TypeID& operator= (const TypeID&);
+
+    list<TypeSpecifierPtr> m_type_specs;
+    //TODO: add abstract-declarator
+
+public:
+    TypeID () {}
+    TypeID (const list<TypeSpecifierPtr> &a_type_specs) :
+        m_type_specs (a_type_specs)
+    {}
+    ~TypeID () {}
+    const list<TypeSpecifierPtr>& get_type_specifiers () const {return m_type_specs;}
+    void set_type_specifiers (const list<TypeSpecifierPtr> &t) {m_type_specs=t;}
+    bool to_string (string &a_str) const
+    {
+        list<TypeSpecifierPtr>::const_iterator it;
+        for (it=m_type_specs.begin (); it != m_type_specs.end (); ++it) {
+            if (!*it) {continue;}
+            if (it == m_type_specs.begin ()) {
+                (*it)->to_string (a_str);
+            } else {
+                string str;
+                (*it)->to_string (str);
+                a_str += " " + str;
+            }
+        }
+        return true;
+    }
+};//end class TypeID
+typedef shared_ptr<TypeID> TypeIDPtr;
+
+/// contain the result of the parsing of an postfix-expression
+class NEMIVER_API PostfixExpr {
+    PostfixExpr ();
+    PostfixExpr (const PostfixExpr&);
+    PostfixExpr& operator= (const PostfixExpr&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        //primary-expression
+        PRIMARY,
+        //postfix-expression [ expression ]
+        ARRAY,
+        //postfix-expression ( expression-listopt )
+        //simple-type-specifier ( expression-listopt )
+        //typename ::(opt) nested-name-specifier identifier ( expression-listopt )
+        //typename ::(opt) nested-name-specifier template(opt) template-id ...
+        //(expression-listopt )
+        FUNC_CALL,
+        //postfix-expression . template(opt) id-expression
+        MEMBER,
+        // postfix-expression -> template(opt) id-expression
+        POINTER_MEMBER,
+        // postfix-expression . pseudo-destructor-name
+        SCOPED_DESTRUCTOR,
+        //postfix-expression -> pseudo-destructor-name
+        SCOPED_POINTER_DESTRUCTOR,
+        //postfix-expression ++
+        INCREMENT,
+        //postfix-expression --
+        DECREMENT,
+        //dynamic_cast < type-id > ( expression )
+        DYNAMIC_CAST,
+        //static_cast < type-id > ( expression )
+        STATIC_CAST,
+        //reinterpret_cast < type-id > ( expression )
+        REINTERPRET_CAST,
+        // const_cast < type-id > ( expression )
+        CONST_CAST,
+        //typeid ( expression )
+        //typeid ( type-id )
+        FUNC_STYLE_CAST
+    };
+private:
+    Kind m_kind;
+
+public:
+    PostfixExpr (Kind k) :
+        m_kind (k)
+    {}
+    virtual ~PostfixExpr () {}
+    Kind get_kind () const {return m_kind;}
+    virtual bool to_string (string &) const=0;
+};//end class PostfixExpr
+typedef shared_ptr<PostfixExpr> PostfixExprPtr;
+
+/// contains the result of the parsing of a postfix-expression of the form:
+/// primary-expression
+class NEMIVER_API PrimaryPFE : public PostfixExpr {
+    PrimaryPFE (const PrimaryPFE&);
+    PrimaryPFE& operator= (const PrimaryPFE&);
+
+    PrimaryExprPtr m_primary;
+
+public:
+    PrimaryPFE () :
+        PostfixExpr (PRIMARY)
+    {}
+    PrimaryPFE (const PrimaryExprPtr e) :
+        PostfixExpr (PRIMARY),
+        m_primary (e)
+    {}
+    ~PrimaryPFE () {}
+    const PrimaryExprPtr get_primary_expr () const {return m_primary;}
+    void set_primary_expr (const PrimaryExprPtr &e) {m_primary=e;}
+    bool to_string (string &a_str) const
+    {
+        if (m_primary) {
+            m_primary->to_string (a_str);
+        }
+        return true;
+    }
+};//end class PrimaryPFE
+typedef shared_ptr<PrimaryPFE> PrimaryPFEPtr;
+
+/// contains a postfix expr of the type:
+/// postfix-expression [ expression ]
+class NEMIVER_API ArrayPFE : public PostfixExpr {
+    ArrayPFE (const ArrayPFE &);
+    ArrayPFE& operator= (const ArrayPFE &);
+
+    PostfixExprPtr m_postfix_expr;
+    ExprPtr m_subscript_expr;
+public:
+    ArrayPFE () :
+        PostfixExpr (ARRAY)
+    {}
+    ArrayPFE (const PostfixExprPtr p,
+             const ExprPtr s) :
+        PostfixExpr (ARRAY),
+        m_postfix_expr (p),
+        m_subscript_expr (s)
+    {}
+    ~ArrayPFE () {}
+    const PostfixExprPtr get_postfix_expr () const {return  m_postfix_expr;}
+    void set_postfix_expr (const PostfixExprPtr e) {m_postfix_expr=e;}
+    const ExprPtr get_subscript_expr () const {return m_subscript_expr;}
+    void set_subscript_expr (const ExprPtr e) {m_subscript_expr=e;}
+    bool to_string (string &a_str) const
+    {
+        if (!m_postfix_expr) {return true;}
+        m_postfix_expr->to_string (a_str);
+        string str;
+        if (m_subscript_expr) {
+            m_subscript_expr->to_string (str);
+        }
+        a_str += "[" + str + "]" ;
+        return true;
+    }
+};//end class ArrayPFE
+typedef shared_ptr<ArrayPFE> ArrayPFEPtr;
+
+/// contains the result of an
+/// unary-expression production.
+class NEMIVER_API UnaryExpr : public Expr {
+    UnaryExpr ();
+    UnaryExpr (const UnaryExpr&);
+    UnaryExpr& operator= (const UnaryExpr&);
+public:
+    enum Kind {
+        UNDEFINED,
+        //postfix-expression
+        PFE
+    };
+private:
+    Kind m_kind;
+public:
+    UnaryExpr (Kind k) :
+        Expr (UNARY_EXPRESSION),
+        m_kind (k)
+    {}
+    ~UnaryExpr () {}
+    virtual bool to_string (string &) const=0;
+};//end class UnaryExpr
+typedef shared_ptr<UnaryExpr> UnaryExprPtr;
+
+/// contains the result of the parsing of a
+/// postfix-expression production
+class NEMIVER_API PFEUnaryExpr : public UnaryExpr {
+    PFEUnaryExpr (const PFEUnaryExpr &);
+    PFEUnaryExpr& operator= (const PFEUnaryExpr &);
+
+    PostfixExprPtr m_pfe;
+public:
+    PFEUnaryExpr () :
+        UnaryExpr (PFE)
+    {}
+    PFEUnaryExpr (PostfixExprPtr pfe) :
+        UnaryExpr (PFE),
+        m_pfe (pfe)
+    {}
+    ~PFEUnaryExpr () {}
+    const PostfixExprPtr get_postfix_expr () const {return m_pfe;}
+    void set_postfix_expr (const PostfixExprPtr pfe) {m_pfe=pfe;}
+    bool to_string (string &a_str) const
+    {
+        if (m_pfe) {
+            m_pfe->to_string (a_str);
+        }
+        return true;
+    }
+};//end class PFEUnaryExpr
+typedef shared_ptr<PFEUnaryExpr> PFEUnaryExprPtr;
+
+class NEMIVER_API CastExpr : public Expr {
+    CastExpr (const CastExpr &);
+    CastExpr& operator= (const CastExpr &);
+public:
+    enum Kind {
+        UNDEFINED,
+        UNARY,
+        C_STYLE
+    };
+private:
+    Kind m_kind;
+
+public:
+    CastExpr () :
+        Expr (CAST_EXPRESSION),
+        m_kind (UNDEFINED)
+    {}
+    CastExpr (Kind k) :
+        Expr (CAST_EXPRESSION),
+        m_kind (k)
+    {}
+    ~CastExpr () {}
+    virtual bool to_string (string &) const=0;
+};
+typedef shared_ptr<CastExpr> CastExprPtr;
+
+class NEMIVER_API UnaryCastExpr : public CastExpr {
+    UnaryCastExpr (const UnaryCastExpr&);
+    UnaryCastExpr& operator= (const UnaryCastExpr&);
+
+    UnaryExprPtr m_expr;
+
+public:
+    UnaryCastExpr () :
+        CastExpr (UNARY)
+    {}
+    UnaryCastExpr (const UnaryExprPtr e) :
+        CastExpr (UNARY),
+        m_expr (e)
+    {}
+    ~UnaryCastExpr () {}
+    bool to_string (string &a_str) const
+    {
+        if (m_expr) {
+            m_expr->to_string (a_str);
+        }
+        return true;
+    }
+};//end UnaryCastExpr
+typedef shared_ptr<UnaryCastExpr> UnaryCastExprPtr;
+
+class NEMIVER_API CStyleCastExpr : public CastExpr {
+    CStyleCastExpr (const CStyleCastExpr&);
+    CStyleCastExpr& operator= (const CStyleCastExpr&);
+
+    TypeIDPtr m_type_id;
+    CastExprPtr m_right_expr;
+
+public:
+    CStyleCastExpr () :
+        CastExpr (C_STYLE)
+    {}
+    CStyleCastExpr (const CastExprPtr e) :
+        CastExpr (C_STYLE),
+        m_right_expr (e)
+    {}
+    CStyleCastExpr (const TypeIDPtr t, CastExprPtr r) :
+        CastExpr (C_STYLE),
+        m_type_id (t),
+        m_right_expr (r)
+    {}
+    ~CStyleCastExpr () {}
+    const TypeIDPtr get_type_id () const {return m_type_id;}
+    void set_type_id (const TypeIDPtr t) {m_type_id=t;}
+    const CastExprPtr get_right_expr () const {return m_right_expr;}
+    void set_right_expr (const CastExprPtr r) {m_right_expr=r;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_type_id) {
+            m_type_id->to_string (str);
+            str = "(" + str + ")";
+        }
+        a_str = str;
+        if (m_right_expr) {
+            m_right_expr->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//CStyleCastExpr
+typedef shared_ptr<CStyleCastExpr> CStyleCastExprPtr;
+
+class NEMIVER_API PMExpr : public Expr {
+    PMExpr ();
+    PMExpr (const PMExpr&);
+    PMExpr& operator= (const PMExpr&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        CAST,
+        DOT_STAR_PM,
+        ARROW_STAR_PM
+    };
+private:
+    Kind m_kind;
+
+public:
+    PMExpr (Kind k) :
+        Expr (PM_EXPRESSION),
+        m_kind (k)
+    {}
+    ~PMExpr () {}
+};//PMExpr
+typedef shared_ptr<PMExpr> PMExprPtr;
+
+class NEMIVER_API CastPMExpr : public PMExpr {
+    CastPMExpr (const CastPMExpr &);
+    CastPMExpr& operator= (const CastPMExpr &);
+
+    CastExprPtr m_expr;
+
+public:
+    CastPMExpr () :
+        PMExpr (CAST)
+    {}
+    CastPMExpr (CastExprPtr e) :
+        PMExpr (CAST),
+        m_expr (e)
+    {}
+    ~CastPMExpr () {}
+    bool to_string (string &a_str) const
+    {
+        if (m_expr) {
+            m_expr->to_string (a_str);
+        }
+        return true;
+    }
+    const CastExprPtr get_expr () const {return m_expr;}
+    void set_expr (const CastExprPtr e) {m_expr=e;}
+};//CastPMExpr
+
+class MultExpr;
+typedef shared_ptr<MultExpr> MultExprPtr;
+class NEMIVER_API MultExpr : public Expr {
+    MultExpr (const MultExpr&);
+    MultExpr& operator= (const MultExpr&);
+
+    Operator m_op;
+    MultExprPtr m_lhs;
+    PMExprPtr m_rhs;
+public:
+    MultExpr () :
+        Expr (MULT_EXPR),
+        m_op (OP_UNDEFINED)
+    {}
+    MultExpr (PMExprPtr a_rhs) :
+        Expr (MULT_EXPR),
+        m_op (OP_UNDEFINED),
+        m_rhs (a_rhs)
+    {}
+    MultExpr (MultExprPtr a_lhs,
+              Operator a_op,
+              PMExprPtr a_rhs) :
+        Expr (MULT_EXPR),
+        m_op (a_op),
+        m_lhs (a_lhs),
+        m_rhs (a_rhs)
+    {}
+    ~MultExpr () {}
+    const MultExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const MultExprPtr l) {m_lhs=l;}
+    const PMExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const PMExprPtr r) {m_rhs=r;}
+    Operator get_operator () const {return m_op;}
+    void set_operator (Operator o) {m_op=o;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += operator_to_string (m_op);
+        }
+        a_str = str;
+        m_rhs->to_string (str);
+        a_str += str;
+        return true;
+    }
+};//end class MultExpr
 
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored
@@ -1150,6 +1673,7 @@ public:
     }
 };//class FuncPointerDeclarator
 
+
 class NEMIVER_API InitDeclarator {
     InitDeclarator (const InitDeclarator&);
     InitDeclarator& operator= (const InitDeclarator&);
@@ -1171,42 +1695,6 @@ public:
     }
     static bool list_to_string (const list<InitDeclaratorPtr> &, string &);
 };
-
-class NEMIVER_API PrimaryExpr : public Expr {
-    PrimaryExpr (const PrimaryExpr&);
-    PrimaryExpr& operator= (const PrimaryExpr&);
-
-public:
-    enum Kind {
-        UNDEFINED,
-        LITERAL,
-        THIS,
-        PARENTHESIZED,
-        ID_EXPR,
-    };
-
-private:
-    Kind m_kind;
-    Token m_token;
-    shared_ptr<IDExpr> m_id_expr;
-    shared_ptr<Expr> m_parenthesized;
-
-public:
-    PrimaryExpr () : Expr (PRIMARY_EXPRESSION), m_kind (UNDEFINED) {}
-    ~PrimaryExpr () {}
-    Kind get_kind () const {return m_kind;}
-    void set_kind (Kind kind) {m_kind=kind;}
-    void set_token (Kind kind, const Token &token) {m_kind=kind, m_token=token;}
-    const Token& get_token () const {return m_token;}
-    void set_id_expr (shared_ptr<IDExpr> id_expr) {m_kind=ID_EXPR, m_id_expr=id_expr;}
-    const shared_ptr<IDExpr> get_id_expr () const {return m_id_expr;}
-    void set_parenthesized (shared_ptr<Expr> expr)
-    {
-        m_kind=PARENTHESIZED, m_parenthesized=expr;
-    }
-    const shared_ptr<Expr> get_parenthesized () const {return m_parenthesized;}
-};//end class PrimaryExpr
-typedef shared_ptr<PrimaryExpr> PrimaryExprPtr;
 
 NEMIVER_END_NAMESPACE (cpp)
 NEMIVER_END_NAMESPACE (nemiver)

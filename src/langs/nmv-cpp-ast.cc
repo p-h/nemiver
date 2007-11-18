@@ -197,7 +197,7 @@ Token::is_operator () const
         case OPERATOR_PLUS_PLUS:
         case OPERATOR_MINUS_MINUS:
         case OPERATOR_SEQ_EVAL:
-        case OPERATOR_MEMBER_POINTER:
+        case OPERATOR_ARROW_STAR:
         case OPERATOR_DEREF:
         case OPERATOR_GROUP:
         case OPERATOR_ARRAY_ACCESS:
@@ -214,6 +214,48 @@ Token::is_operator () const
 //**************
 // class </Token>
 //**************
+
+
+const string&
+Expr::operator_to_string (Operator a_op)
+{
+    static const string OP_UNDEFINED ("<undefined>");
+    static const string OP_MULT ("*");
+    static const string OP_DIV ("/");
+    static const string OP_MOD ("%");
+    static const string OP_PLUS ("+");
+    static const string OP_MINUS ("-");
+    static const string OP_LT ("<");
+    static const string OP_GT (">");
+    static const string OP_LEFT_SHIFT ("<<");
+    static const string OP_RIGHT_SHIFT (">>");
+    static const string OP_EQUAL ("=");
+    switch (a_op) {
+        case Expr::OP_UNDEFINED:
+            return OP_UNDEFINED;
+        case MULT:
+            return OP_MULT;
+        case DIV:
+            return OP_DIV;
+        case MOD:
+            return OP_MOD;
+        case PLUS:
+            return OP_PLUS;
+        case MINUS:
+            return OP_MINUS;
+        case LT:
+            return OP_LT;
+        case GT:
+            return OP_GT;
+        case LEFT_SHIFT:
+            return OP_LEFT_SHIFT;
+        case RIGHT_SHIFT:
+            return OP_RIGHT_SHIFT;
+        case EQUAL:
+            return OP_EQUAL;
+    }
+    return OP_UNDEFINED;
+}
 
 Declaration::Declaration (Declaration::Kind a_kind) :
     m_kind (a_kind)
@@ -460,7 +502,7 @@ UnqualifiedOpFuncID::to_string (string &a_result) const
         case Token::OPERATOR_SEQ_EVAL:
             a_result = "opreator ,";
             break;
-        case Token::OPERATOR_MEMBER_POINTER:
+        case Token::OPERATOR_ARROW_STAR:
             a_result = "opreator ->*";
             break;
         case Token::OPERATOR_DEREF:

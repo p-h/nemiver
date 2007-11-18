@@ -171,8 +171,8 @@ token_type_as_string (const Token &a_token, std::string &a_out)
         case Token::OPERATOR_SEQ_EVAL:
             a_out="OPERATOR_SEQ_EVAL";
             break;
-        case Token::OPERATOR_MEMBER_POINTER:
-            a_out="OPERATOR_MEMBER_POINTER";
+        case Token::OPERATOR_ARROW_STAR:
+            a_out="OPERATOR_ARROR_STAR";
             break;
         case Token::OPERATOR_DEREF:
             a_out="OPERATOR_DEREF";
