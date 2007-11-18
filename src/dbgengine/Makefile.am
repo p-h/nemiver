@@ -4,6 +4,9 @@ gdbmoddir=@NEMIVER_MODULES_DIR@
 varlistmod_LTLIBRARIES=libvarlistmod.la
 varlistmoddir=@NEMIVER_MODULES_DIR@
 
+varwalkermod_LTLIBRARIES=libvarwalkermod.la
+varwalkermoddir=@NEMIVER_MODULES_DIR@
+
 cpptraitmod_LTLIBRARIES=libcpptraitmod.la
 cpptraitmoddir=@NEMIVER_MODULES_DIR@
 
@@ -18,7 +21,13 @@ nmv-i-var-list.h
 ilangtraitheaders= \
 nmv-i-lang-trait.h
 
-dynmodheaders = $(idebuggerheaders) $(ivarlistheaders) $(ilangtraitheaders)
+ivarwalkerheaders= nmv-i-var-walker.h nmv-var.h
+
+dynmodheaders = \
+$(idebuggerheaders) \
+$(ivarlistheaders) \
+$(ilangtraitheaders) \
+$(ivarwalkerheaders)
 
 libgdbmod_la_SOURCES= \
 $(idebuggerheaders)  \
@@ -27,6 +36,10 @@ nmv-gdb-engine.cc
 libvarlistmod_la_SOURCES= \
 $(ivarlistheaders) \
 nmv-var-list.cc
+
+libvarwalkermod_la_SOURCES= \
+$(ivarwalkerheaders) \
+nmv-var-walker.cc
 
 libgdbmiparser_la_SOURCES= \
 nmv-gdbmi-parser.cc \

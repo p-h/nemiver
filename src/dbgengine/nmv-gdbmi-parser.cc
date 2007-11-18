@@ -2827,8 +2827,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN) ;
                     result_record.local_variables (vars) ;
                 }
-            } else if (!a_input.compare (cur, strlen (PREFIX_VALUE),
-                        PREFIX_VALUE)) {
+            } else if (!a_input.compare (cur,
+                                         strlen (PREFIX_VALUE),
+                                         PREFIX_VALUE)) {
                 // FIXME: this case will parse any response from
                 // -data-evaluate-expression, including the response from
                 // setting the value of a register or any other expression
@@ -2844,7 +2845,7 @@ fetch_gdbmi_result:
                     result_record.variable_value (var) ;
                 }
             } else if (!a_input.compare (cur, strlen (PREFIX_REGISTER_NAMES),
-                        PREFIX_REGISTER_NAMES)) {
+                                         PREFIX_REGISTER_NAMES)) {
                 std::map<IDebugger::register_id_t, UString> regs;
                 if (!parse_register_names (a_input, cur, cur, regs)) {
                     LOG_PARSING_ERROR (a_input, cur) ;

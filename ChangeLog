@@ -193,6 +193,9 @@
 	* src/dbgengine/nmv-i-debugger.h: cosmetic (but important) change: put
 	  the register related signal in the "signals" section of the IDebugger
 	  class declaration, otherwise this thing will be a growing mess.
+	* src/dbgengine/nmv-i-var-walker.h,nmv-var-walker.cc,nmv-var.h: added these new
+	  files
+	* src/dbgengine/Makefile.am: setup a new varwalkermod dynmod.
 
 2007-08-18 Dodji Seketeli <dodji@gnome.org>
 
