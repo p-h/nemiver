@@ -1,5 +1,12 @@
 2007-11-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-ast.h,
+	  src/langs/nmv-cpp-parser.cc: debuggin parsing of:
+	  foo *bar, const foo *bar, static const foo*bar.
+	* tests/test-cpp-parser.cc: update regression test for that.
+
+2007-11-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.cc,h,
 	  src/langs/nmv-cpp-parser.cc,h:
 	  do what it takes to make Parser::parse_simple_declaration() spit

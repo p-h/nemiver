@@ -594,10 +594,9 @@ Parser::parse_type_specifier (shared_ptr<TypeSpecifier> &a_result)
     if (LEXER.consume_next_token (token)
         && token.get_kind () == Token::KEYWORD) {
         if (token.get_str_value () == "const") {
-            LEXER.consume_next_token ();
             result->set_kind (TypeSpecifier::CONST);
+            goto okay;
         } else if (token.get_str_value () == "volatile") {
-            LEXER.consume_next_token ();
             result->set_kind (TypeSpecifier::VOLATILE);
             goto okay;
         } else {
@@ -696,8 +695,15 @@ Parser::parse_decl_specifier (shared_ptr<DeclSpecifier> &a_result)
             result.reset (new FriendSpecifier);
         } else if (token.get_str_value () == "typedef") {
             result.reset (new TypedefSpecifier);
+        } else {
+            if (!parse_type_specifier (type_spec)) {
+                goto error;
+            }
+            result = type_spec;
+            goto okay;
         }
         LEXER.consume_next_token ();
+        if (!result) {goto error;}
         goto okay;
     }
     if (parse_type_specifier (type_spec)) {
@@ -926,19 +932,22 @@ out:
     return status;
 }
 
+/// parses the cv-qualifier-seq production
+///
+/// cv-qualifier-seq:
+///          cv-qualifier cv-qualifier-seq(opt)
+///
 bool
 Parser::parse_cv_qualifier_seq (list<CVQualifierPtr> &a_result)
 
 {
     bool status=false;
-    list<CVQualifierPtr> result,qualifiers;
+    list<CVQualifierPtr> result;
+    CVQualifierPtr qualifier;
     unsigned mark = LEXER.get_token_stream_mark ();
 
-    list<CVQualifierPtr>::const_iterator it;
-    while (parse_cv_qualifier_seq (qualifiers)) {
-        for (it=qualifiers.begin (); it != qualifiers.end (); ++it) {
-            result.push_back (*it);
-        }
+    while (parse_cv_qualifier (qualifier) && qualifier) {
+            result.push_back (qualifier);
     }
     if (result.empty ()) {goto error;}
     goto okay;

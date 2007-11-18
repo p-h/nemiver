@@ -7,7 +7,10 @@
 #include "common/nmv-exception.h"
 #include "langs/nmv-cpp-parser.h"
 
-const char *prog = "foo bar;" ;
+const char *prog0 = "foo bar;" ;
+const char *prog1 = "foo *bar;" ;
+const char *prog2 = "const foo *bar;" ;
+const char *prog3 = "static const foo *bar;" ;
 
 using std::cout;
 using std::endl;
@@ -17,9 +20,63 @@ using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
 void
-test_parser ()
+test_parser0 ()
 {
-    Parser parser (prog);
+    Parser parser (prog0);
+    string str;
+    SimpleDeclarationPtr simple_decl;
+
+    if (!parser.parse_simple_declaration (simple_decl)) {
+        BOOST_FAIL ("parsing failed");
+    }
+    if (!simple_decl) {
+        cout << "got empty simple declaration" << endl;
+        return;
+    }
+    simple_decl->to_string (str);
+    cout << "parsed: '" << str <<  "'." << endl;
+}
+
+void
+test_parser1 ()
+{
+    Parser parser (prog1);
+    string str;
+    SimpleDeclarationPtr simple_decl;
+
+    if (!parser.parse_simple_declaration (simple_decl)) {
+        BOOST_FAIL ("parsing failed");
+    }
+    if (!simple_decl) {
+        cout << "got empty simple declaration" << endl;
+        return;
+    }
+    simple_decl->to_string (str);
+    cout << "parsed: '" << str <<  "'." << endl;
+}
+
+void
+test_parser2 ()
+{
+    Parser parser (prog2);
+    string str;
+    SimpleDeclarationPtr simple_decl;
+
+    if (!parser.parse_simple_declaration (simple_decl)) {
+        BOOST_FAIL ("parsing failed");
+    }
+    if (!simple_decl) {
+        cout << "got empty simple declaration" << endl;
+        return;
+    }
+    simple_decl->to_string (str);
+    cout << "parsed: '" << str <<  "'." << endl;
+}
+
+void
+test_parser3 ()
+{
+    Parser parser (prog3);
     string str;
     SimpleDeclarationPtr simple_decl;
 
@@ -47,7 +104,10 @@ init_unit_test_suite (int argc, char** argv)
     Initializer::do_init () ;
 
     test_suite *suite = BOOST_TEST_SUITE ("c++ lexer tests") ;
-    suite->add (BOOST_TEST_CASE (&test_parser)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser0)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser1)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser2)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser3)) ;
     return suite;
 
     NEMIVER_CATCH_NOX

@@ -781,7 +781,6 @@ class NEMIVER_API Declarator {
     Declarator (const Declarator&);
     Declarator& operator= (const Declarator&);
 
-    PtrOperatorPtr m_ptr;
 
 public:
     enum Kind {
@@ -794,6 +793,7 @@ public:
 
 private:
     Kind m_kind;
+    PtrOperatorPtr m_ptr;
 
 public:
     Declarator (Kind k) :
@@ -826,7 +826,11 @@ public:
     bool to_string (string &a_str) const
     {
         if (!m_id) {return false;}
-        return m_id->to_string (a_str);
+        if (get_ptr_operator ()) {a_str = "*";}
+        string str;
+        m_id->to_string (str);
+        a_str += " " + str;
+        return true;
     }
 };//class IDDeclarator
 typedef shared_ptr<IDDeclarator> IDDeclaratorPtr;
@@ -886,9 +890,10 @@ public:
     bool to_string (string &a_str)
     {
         if (!m_declarator) {return false;}
+        if (get_ptr_operator ()) {a_str = "*";}
         string str;
         m_declarator->to_string (str);
-        a_str="(" + str + ")";
+        a_str += "(" + str + ")";
         return true;
     }
 };//class FuncPointerDeclarator
