@@ -23,7 +23,7 @@ test_lexer ()
     Token token ;
     int i=0;
     std::cout << "going to tokenize string: \"" << prog << "\""<< std::endl ;
-    while (lexer.get_next_token (token)) {
+    while (lexer.consume_next_token (token)) {
         ++i ;
         std::cout << "got token : " << i << ":" << token << std::endl ;
         token.clear () ;
@@ -39,7 +39,7 @@ test_lexer2 ()
     Token token ;
     int i=0;
     std::cout << "going to tokenize string: \"" << prog2 << "\""<< std::endl ;
-    while (lexer.get_next_token (token)) {
+    while (lexer.consume_next_token (token)) {
         ++i ;
         std::cout << "got token : " << i << ":" << token << std::endl ;
         token.clear () ;

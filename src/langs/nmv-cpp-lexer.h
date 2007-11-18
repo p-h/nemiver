@@ -1,3 +1,4 @@
+//Author: Dodji Seketeli <dodji@gnome.org>
 /*
  *This file is part of the Nemiver Project.
  *
@@ -25,112 +26,16 @@
 #define __NEMIVER_CPP_LEXER_H__
 
 #include <string>
+#include "nmv-cpp-ast.h"
 #include "common/nmv-namespace.h"
 #include "common/nmv-api-macros.h"
 
 using std::string ;
+using nemiver::cpp::Token;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (cpp)
 
-class NEMIVER_API Token {
-public:
-    enum Kind {
-        UNDEFINED=0,
-        IDENTIFIER,
-        KEYWORD,
-        INTEGER_LITERAL,
-        CHARACTER_LITERAL,
-        FLOATING_LITERAL,
-        STRING_LITERAL,
-        BOOLEAN_LITERAL,
-        OPERATOR_NEW /*new*/,
-        OPERATOR_DELETE /*delete*/,
-        OPERATOR_NEW_VECT /*new[]*/,
-        OPERATOR_DELETE_VECT /*delete[]*/,
-        OPERATOR_PLUS /*+*/,
-        OPERATOR_MINUS /*-*/,
-        OPERATOR_MULT /* * */,
-        OPERATOR_DIV /* / */,
-        OPERATOR_MOD /*%*/,
-        OPERATOR_BIT_XOR /*^*/,
-        OPERATOR_BIT_AND /*&*/,
-        OPERATOR_BIT_OR /*|*/,
-        OPERATOR_BIT_COMPLEMENT /*~*/,
-        OPERATOR_NOT /*!*/,
-        OPERATOR_ASSIGN /*=*/,
-        OPERATOR_LT /*<*/,
-        OPERATOR_GT /*<*/,
-        OPERATOR_PLUS_EQ /*+=*/,
-        OPERATOR_MINUS_EQ /*-=*/,
-        OPERATOR_MULT_EQ /**=*/,
-        OPERATOR_DIV_EQ /*/=*/,
-        OPERATOR_MOD_EQ /*%=*/,
-        OPERATOR_BIT_XOR_EQ /*^=*/,
-        OPERATOR_BIT_AND_EQ /*&=*/,
-        OPERATOR_BIT_OR_EQ /*|=*/,
-        OPERATOR_BIT_LEFT_SHIFT /*<<*/,
-        OPERATOR_BIT_RIGHT_SHIFT /*<<*/,
-        OPERATOR_BIT_LEFT_SHIFT_EQ /*<<=*/,
-        OPERATOR_BIT_RIGHT_SHIFT_EQ /*>>=*/,
-        OPERATOR_EQUALS /*==*/,
-        OPERATOR_NOT_EQUAL /*!=*/,
-        OPERATOR_LT_EQ /*=*/,
-        OPERATOR_GT_EQ /*=*/,
-        OPERATOR_AND /*&&*/,
-        OPERATOR_OR /*||*/,
-        OPERATOR_PLUS_PLUS /*++*/,
-        OPERATOR_MINUS_MINUS /*--*/,
-        OPERATOR_SEQ_EVAL /*,*/,
-        OPERATOR_MEMBER_POINTER /*->**/,
-        OPERATOR_DEREF /*->*/,
-        OPERATOR_GROUP /*()*/,
-        OPERATOR_ARRAY_ACCESS /*[]*/,
-        OPERATOR_SCOPE_RESOL /*::*/,
-        OPERATOR_DOT /*.*/,
-        OPERATOR_DOT_STAR /* .* */,
-        //punctuators
-        PUNCTUATOR_COLON /*:*/,
-        PUNCTUATOR_SEMI_COLON /*;*/,
-        PUNCTUATOR_CURLY_BRACKET_OPEN /*{*/,
-        PUNCTUATOR_CURLY_BRACKET_CLOSE /*}*/,
-        PUNCTUATOR_BRACKET_OPEN /*[*/,
-        PUNCTUATOR_BRACKET_CLOSE /*]*/,
-        PUNCTUATOR_PARENTHESIS_OPEN /*(*/,
-        PUNCTUATOR_PARENTHESIS_CLOSE /*(*/,
-        PUNCTUATOR_QUESTION_MARK /*?*/
-    };
-
-private:
-    Kind m_kind ;
-    string m_str_value ;
-    string m_str_value2 ;
-    int m_int_value ;
-
-public:
-    Token () ;
-    Token (Kind a_kind, const string& a_value) ;
-    Token (Kind a_kind,
-           const string& a_value,
-           const string& a_value2) ;
-    Token (Kind a_kind, int a_value) ;
-    Token (const Token &) ;
-    Token& operator= (const Token&) ;
-    ~Token () ;
-    const string& get_str_value () const;
-    const string& get_str_value2 () const;
-    int get_int_value () const;
-    Kind get_kind () const;
-    void set (Kind a_kind);
-    void set (Kind a_kind, const string &a_val);
-    void set (Kind a_kind,
-              const string &a_val,
-              const string &a_val2);
-    void set (Kind a_kind, int a_val);
-    void clear ();
-    bool is_literal () const;
-    bool is_operator () const;
-};//end class Token
 
 class NEMIVER_API Lexer {
     Lexer (const Lexer &) ;
@@ -176,21 +81,34 @@ private:
     bool scan_string_literal (string &a_result) ;
     bool scan_boolean_literal (bool &a_result) ;
     /// @}
+
+    /// \name scanning methods
+    /// \@{
+    bool scan_identifier (Token &a_token);
+    bool scan_keyword (Token &a_token);
+    bool scan_literal (Token &a_token);
+    bool scan_operator (Token &a_token);
+    bool scan_punctuator (Token &a_token);
+    bool scan_next_token (Token &a_token) ;
+    /// \@}
 public:
 
     Lexer (const string &a_in) ;
     ~Lexer () ;
 
-    /// \scanning methods
-    /// \@{
-    bool scan_identifier (Token &a_token) ;
-    bool scan_keyword (Token &a_token) ;
-    bool scan_literal (Token &a_token) ;
-    bool scan_operator (Token &a_token) ;
-    bool scan_punctuator (Token &a_token) ;
-    /// \@}
 
-    bool get_next_token (Token &a_token) ;
+    /// \name peeking/consuming tokens
+    /// @{
+    bool peek_next_token (Token &a_token);
+    bool peek_nth_token (unsigned nth, Token &a_token);
+    bool consume_next_token ();
+    bool consume_next_token (Token &a_token);
+    bool reached_eof () const;
+    /// @}
+
+    /// \name recording/restoring position in the token/input stream
+    void record_position ();
+    void restore_position ();
 };//end class Lexer
 
 NEMIVER_END_NAMESPACE (cpp)

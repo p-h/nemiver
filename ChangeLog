@@ -1,3 +1,9 @@
+2007-10-28 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/*: added an AST and a parser. the aim of the parser is to be
+	  able to parse a simple-declaration production. It's not done yet but
+	  the necessary productions are falling in place slowly.
+
 2007-10-12  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/menus/menus.xml:
@@ -94,6 +100,7 @@
 
 	* src/persp/dbgperspective/nmv-registers-view.cc: clear the list of
 	registers when the target is detached
+
 2007-09-30 Dodji Seketeli <dodji@gnome.org>
 
 	* tests/Makefile.am:

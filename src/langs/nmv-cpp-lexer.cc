@@ -1,3 +1,4 @@
+//Author: Dodji Seketeli <dodji@gnome.org>
 /*
  *This file is part of the Nemiver Project.
  *
@@ -21,7 +22,10 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <deque>
 #include "nmv-cpp-lexer.h"
+
+using std::deque;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (cpp)
@@ -29,113 +33,6 @@ NEMIVER_BEGIN_NAMESPACE (cpp)
 //********************
 //<class Token implem>
 //********************
-Token::Token () :
-    m_kind (UNDEFINED),
-    m_int_value (-1)
-{
-}
-
-Token::Token (Kind a_kind, const string& a_value) :
-    m_kind (a_kind), m_str_value (a_value), m_int_value (-1)
-{
-}
-
-Token::Token (Kind a_kind,
-              const string& a_value,
-              const string& a_value2) :
-    m_kind (a_kind),
-    m_str_value (a_value),
-    m_str_value2 (a_value2),
-    m_int_value (-1)
-{
-}
-
-Token::Token (Kind a_kind, int a_value) :
-    m_kind (a_kind), m_int_value (a_value)
-{
-}
-
-Token::Token (const Token &a_t)
-{
-    m_kind = a_t.get_kind () ;
-    m_str_value = a_t.get_str_value () ;
-    m_int_value = a_t.get_int_value () ;
-}
-
-Token::Token&
-Token::operator= (const Token &a_t)
-{
-    m_kind = a_t.get_kind () ;
-    m_str_value = a_t.get_str_value () ;
-    m_str_value2 = a_t.get_str_value2 () ;
-    m_int_value = a_t.get_int_value () ;
-    return *this ;
-}
-
-Token::~Token ()
-{
-}
-
-const string&
-Token::get_str_value () const
-{
-    return m_str_value ;
-}
-
-const string&
-Token::get_str_value2 () const
-{
-    return m_str_value2 ;
-}
-
-int
-Token::get_int_value () const
-{
-    return m_int_value ;
-}
-
-Token::Kind
-Token::get_kind () const
-{
-    return m_kind ;
-}
-
-void
-Token::set (Kind a_kind)
-{
-    m_kind = a_kind ;
-}
-
-void
-Token::set (Kind a_kind, const string &a_val)
-{
-    m_kind = a_kind ;
-    m_str_value = a_val ;
-}
-
-void
-Token::set (Kind a_kind, const string &a_val, const string &a_val2)
-{
-    m_kind = a_kind ;
-    m_str_value = a_val ;
-    m_str_value2 = a_val2 ;
-}
-
-void
-Token::set (Kind a_kind, int a_val)
-{
-    m_kind = a_kind ;
-    m_int_value = a_val ;
-}
-
-void
-Token::clear ()
-{
-    m_kind = Token::UNDEFINED;
-    m_str_value.clear ();
-    m_str_value2.clear ();
-    m_int_value=0;
-}
 //********************
 //</class Token implem>
 //********************
@@ -146,9 +43,13 @@ Token::clear ()
 struct Lexer::Priv {
     string input ;
     string::size_type cursor ;
+    string::size_type recorded_position ;
+    deque<Token> tokens_queue;
 
     Priv (const string &a_in) :
-        input (a_in), cursor (0)
+        input (a_in),
+        cursor (0),
+        recorded_position (0)
     {
     }
 
@@ -177,10 +78,6 @@ if (!IN_BOUNDS (CUR)) {return;}
 
 #define SCAN_KEYWORD(len,key) \
 ((!(INPUT.compare (CUR, len, key)) and (key_length=len)))
-
-#define RECORD_POSITION unsigned saved_cur=CUR
-
-#define RESTORE_POSITION CUR=saved_cur
 
 #define MOVE_FORWARD(nb) CUR += nb
 
@@ -293,7 +190,7 @@ bool
 Lexer::scan_decimal_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string result ;
     if (is_nonzero_digit (CUR_CHAR)) {
@@ -310,7 +207,7 @@ Lexer::scan_decimal_literal (string &a_result)
     return true;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
@@ -318,7 +215,7 @@ bool
 Lexer::scan_octal_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS ;
-    RECORD_POSITION;
+    record_position ();
 
     string result ;
     if (CUR_CHAR != '0')
@@ -335,7 +232,7 @@ Lexer::scan_octal_literal (string &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 }
 
@@ -343,7 +240,7 @@ bool
 Lexer::scan_hexadecimal_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string result ;
     if (IN_BOUNDS (CUR+1)
@@ -362,7 +259,7 @@ Lexer::scan_hexadecimal_literal (string &a_result)
     return true;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
@@ -383,7 +280,7 @@ bool
 Lexer::scan_universal_character_name (int &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     if (!IN_BOUNDS (CUR+5) ||
         INPUT[CUR] != '\\' ||
@@ -397,7 +294,7 @@ Lexer::scan_universal_character_name (int &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 }
 
@@ -473,7 +370,7 @@ bool
 Lexer::scan_character_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string result;
     if (CUR_CHAR == 'L') {
@@ -496,7 +393,7 @@ Lexer::scan_character_literal (string &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
@@ -504,7 +401,7 @@ bool
 Lexer::scan_digit_sequence (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string result ;
     while (CURSOR_IN_BOUNDS && is_digit (CUR_CHAR)) {
@@ -519,7 +416,7 @@ Lexer::scan_digit_sequence (string &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 }
 
@@ -527,7 +424,7 @@ bool
 Lexer::scan_fractional_constant (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string left, right;
 
@@ -543,7 +440,7 @@ Lexer::scan_fractional_constant (string &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
@@ -551,7 +448,7 @@ bool
 Lexer::scan_exponent_part (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string result, sign ;
     if (CUR_CHAR != 'e' && CUR_CHAR != 'E') {
@@ -569,7 +466,7 @@ Lexer::scan_exponent_part (string &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
@@ -578,7 +475,7 @@ Lexer::scan_floating_literal (string &a_result,
                                  string &a_exponent)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string fract, exp;
 
@@ -605,7 +502,7 @@ Lexer::scan_floating_literal (string &a_result,
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 
 }
@@ -614,7 +511,7 @@ bool
 Lexer::scan_string_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string result ;
     if (CUR_CHAR == 'L') {
@@ -637,7 +534,7 @@ Lexer::scan_string_literal (string &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
@@ -671,7 +568,7 @@ bool
 Lexer::scan_integer_suffix (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    RECORD_POSITION;
+    record_position ();
 
     string result ;
     if (CUR_CHAR == 'u' or CUR_CHAR == 'U') {
@@ -698,7 +595,7 @@ Lexer::scan_integer_suffix (string &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 }
 
@@ -740,7 +637,7 @@ bool
 Lexer::scan_simple_escape_sequence (int &a_result)
 {
     CHECK_CURSOR_BOUNDS;
-    RECORD_POSITION;
+    record_position ();
 
     if (CUR_CHAR != '\\')
         return false ;
@@ -788,7 +685,7 @@ Lexer::scan_simple_escape_sequence (int &a_result)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 }
 
@@ -869,7 +766,7 @@ Lexer::scan_identifier (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
     string identifier;
-    RECORD_POSITION;
+    record_position ();
 
     if (!is_nondigit (CUR_CHAR)) {
         goto error;
@@ -887,7 +784,7 @@ Lexer::scan_identifier (Token &a_token)
     return true ;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
@@ -1005,7 +902,7 @@ bool
 Lexer::scan_operator (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
-    RECORD_POSITION;
+    record_position ();
 
     if (next_is ("new")) {
         MOVE_FORWARD (sizeof ("new"));
@@ -1201,7 +1098,7 @@ Lexer::scan_operator (Token &a_token)
     return true;
 
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 }
 
@@ -1209,7 +1106,7 @@ bool
 Lexer::scan_punctuator (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
-    RECORD_POSITION;
+    record_position ();
 
     switch (CUR_CHAR) {
         case ':':
@@ -1250,15 +1147,18 @@ Lexer::scan_punctuator (Token &a_token)
     CONSUME_CHAR;
     return true ;
 error:
-    RESTORE_POSITION;
+    restore_position ();
     return false ;
 }
 
+/// scan the character input
+/// \param a_token the retrieved token
+/// \return true upon successful completion, false otherwise.
 bool
-Lexer::get_next_token (Token &a_token)
+Lexer::scan_next_token (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS;
-    RECORD_POSITION;
+    record_position ();
     bool is_ok=false;
 
     skip_blanks ();
@@ -1349,9 +1249,112 @@ Lexer::get_next_token (Token &a_token)
         }
     }
 
-    RESTORE_POSITION;
+    restore_position ();
     return false;
 }
+
+/// peek a token from the token queue
+/// \return true upon successful completion, false otherwise.
+bool
+Lexer::peek_next_token (Token &a_token)
+{
+    if (m_priv->tokens_queue.empty ()) {
+        //token queue empty. Go scan the character input
+        //to get one token and push it onto the token queue
+        Token token;
+        if (scan_next_token (token)) {
+            m_priv->tokens_queue.push_back (token);
+        }
+    }
+    if (m_priv->tokens_queue.empty ()) {
+        return false;
+    }
+    a_token = *m_priv->tokens_queue.begin ();
+    return true;
+}
+
+/// peek the nth token coming next, from the token queue.
+////
+/// \param a_nth the nth coming token. The first token to come has index 0.
+///  so Lexer::peek_nth_token (0, token) is equivalent to
+///  Lexer::peek_next_token ()
+/// \param a_token the resulting token.
+/// \return true upon successful completion, false otherwise.
+bool
+Lexer::peek_nth_token (unsigned a_nth, Token &a_token)
+{
+    if (a_nth >= m_priv->tokens_queue.size ()) {
+        //we don't have enough tokens in the queue.
+        //so go scan the input for tokens and push them
+        //onto the queue
+        Token token;
+        unsigned nb_tokens_2_scan = a_nth - m_priv->tokens_queue.size ();
+        while (nb_tokens_2_scan--) {
+            if (!scan_next_token (token)) {
+                return false;
+            }
+            m_priv->tokens_queue.push_back (token);
+        }
+    }
+    if (a_nth >= m_priv->tokens_queue.size ()) {
+        //we should never reach this condition.
+        return false;
+    }
+    a_token = m_priv->tokens_queue[a_nth];
+    return true;
+}
+
+/// Consume the first token present in the token queue.
+/// The token to be consumed can be retrieved using Lexer::peek_next_token().
+/// \return true upon successful completion, false otherwise.
+bool
+Lexer::consume_next_token ()
+{
+    Token token;
+    return consume_next_token (token);
+}
+
+/// Consume the first token present in the token queue.
+///
+/// \param a_token the consumed token.
+/// \return true upon successful completion, false otherwise.
+bool
+Lexer::consume_next_token (Token &a_token)
+{
+    if (m_priv->tokens_queue.empty ()) {
+        Token token;
+        if (!peek_next_token (token)) {
+            return false;
+        }
+    }
+    if (m_priv->tokens_queue.empty ()) {
+        return false;
+    }
+    a_token = *m_priv->tokens_queue.begin ();
+    m_priv->tokens_queue.pop_front ();
+    return true;
+}
+
+/// tests if the lexer has reached the end of character input stream
+bool
+Lexer::reached_eof () const
+{
+    return (CUR >= INPUT.size ());
+}
+
+void
+Lexer::record_position ()
+{
+    m_priv->recorded_position = CUR;
+}
+
+void
+Lexer::restore_position ()
+{
+    CUR = m_priv->recorded_position;
+    m_priv->tokens_queue.clear ();
+}
+
 //********************
 //</class Lexer implem>
 //********************
