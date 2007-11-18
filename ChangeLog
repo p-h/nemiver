@@ -97,8 +97,15 @@
 
 2007-09-26 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc,
+	  src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	  Add a global variables section in the variable inspector widgets.
+	  This is based on a patch from A. Gordon <agordon88@gmail.com>.
+
+2007-09-26 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc,h,nmv-i-debugger.h:
-	  Add a ability for IDebugger to list global variables. This is a patch
+	  Add ability for IDebugger to list global variables. This is a patch
 	  from A. Gordon <agordon88@gmail.com>.
 
 2007-09-26 Dodji Seketeli <dodji@gnome.org>

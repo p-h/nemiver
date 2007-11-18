@@ -45,8 +45,10 @@ public:
     SafePtr<Gtk::TreeView> tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeModel::iterator cur_selected_row ;
+    SafePtr<Gtk::TreeRowReference> global_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> function_arguments_row_ref ;
+    std::map<UString, IDebugger::VariableSafePtr> global_vars_to_set ;
     std::map<UString, IDebugger::VariableSafePtr> local_vars_to_set ;
     std::map<UString, IDebugger::VariableSafePtr> function_arguments_to_set ;
     SafePtr<Gtk::Menu> contextual_menu ;
@@ -136,6 +138,14 @@ public:
         function_arguments_row_ref.reset
             (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it))) ;
         THROW_IF_FAIL (function_arguments_row_ref) ;
+
+        it = tree_store->append () ;
+        THROW_IF_FAIL (it) ;
+        (*it)[variables_utils::get_variable_columns ().name] =
+                                                        _("Global Variables");
+        global_variables_row_ref.reset
+            (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it))) ;
+        THROW_IF_FAIL (global_variables_row_ref) ;
     }
 
     void get_function_arguments_row_iterator (Gtk::TreeModel::iterator &a_it)
@@ -148,6 +158,12 @@ public:
     {
         THROW_IF_FAIL (local_variables_row_ref) ;
         a_it = tree_store->get_iter (local_variables_row_ref->get_path ()) ;
+    }
+
+    void get_global_variables_row_iterator (Gtk::TreeModel::iterator &a_it)
+    {
+        THROW_IF_FAIL (global_variables_row_ref) ;
+        a_it = tree_store->get_iter (global_variables_row_ref->get_path ()) ;
     }
 
     bool set_a_variable_type (const UString &a_var_name,
@@ -164,6 +180,10 @@ public:
         Gtk::TreeModel::iterator root_it ;
         get_local_variables_row_iterator (root_it) ;
         bool ret = get_variable_iter_from_qname (a_var_name, root_it, row_it) ;
+        if (!ret) {
+            get_global_variables_row_iterator(root_it) ;
+            ret = get_variable_iter_from_qname (a_var_name, root_it, row_it) ;
+        }
         if (!ret) {
             get_function_arguments_row_iterator (root_it) ;
             ret = get_variable_iter_from_qname (a_var_name, root_it, row_it) ;
@@ -216,6 +236,20 @@ public:
         }
     }
 
+    void set_global_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        THROW_IF_FAIL (tree_store) ;
+        THROW_IF_FAIL (global_variables_row_ref) ;
+
+        std::list<IDebugger::VariableSafePtr>::const_iterator it ;
+        for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
+            THROW_IF_FAIL ((*it)->name () != "") ;
+            global_vars_to_set[(*it)->name ()] = *it ;
+            debugger->print_variable_value ((*it)->name ()) ;
+        }
+    }
+
     void set_function_arguments
                 (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
@@ -247,6 +281,11 @@ public:
         get_function_arguments_row_iterator (it) ;
         if (it) {
             LOG_DD ("scheduling function args derefed pointers updating") ;
+            update_derefed_pointer_variable_children (it) ;
+        }
+        get_global_variables_row_iterator (it) ;
+        if (it) {
+            LOG_DD ("scheduling global derefed pointers updating") ;
             update_derefed_pointer_variable_children (it) ;
         }
     }
@@ -346,6 +385,8 @@ public:
         THROW_IF_FAIL (debugger) ;
         debugger->local_variables_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
+        debugger->global_variables_listed_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_global_variables_listed_signal)) ;
         debugger->stopped_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_stopped_signal)) ;
         debugger->variable_value_signal ().connect
@@ -382,6 +423,21 @@ public:
         NEMIVER_TRY
 
         set_local_variables (a_vars) ;
+
+        NEMIVER_CATCH
+    }
+
+    void on_global_variables_listed_signal
+                                (const list<IDebugger::VariableSafePtr> &a_vars,
+                                 const UString &a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_cookie.empty ()) {}
+
+        NEMIVER_TRY
+
+        set_global_variables (a_vars) ;
 
         NEMIVER_CATCH
     }
@@ -443,6 +499,7 @@ public:
                 update_derefed_pointer_variables () ;
             }
             debugger->list_local_variables () ;
+            debugger->list_global_variables () ;
         }
 
         NEMIVER_CATCH
@@ -473,6 +530,13 @@ public:
         nil = local_vars_to_set.end () ;
         row_ref = local_variables_row_ref.get () ;
         map_ptr = &local_vars_to_set ;
+
+        if (it == nil) {
+                it = global_vars_to_set.find (a_var_name) ;
+                nil = global_vars_to_set.end () ;
+                row_ref = global_variables_row_ref.get () ;
+                map_ptr = &global_vars_to_set ;
+        }
 
         if (it == nil) {
             it = function_arguments_to_set.find (a_var_name) ;
@@ -614,6 +678,21 @@ public:
         } else {
             ret = get_variable_iter_from_qname (a_var_name, start_row_it, row_it);
         }
+
+        if (!ret) {
+            get_global_variables_row_iterator (start_row_it) ;
+            ret = get_variable_iter_from_qname ("*" + a_var_name,
+                                                start_row_it, row_it);
+            vars_to_set_map = &global_vars_to_set ;
+            if (ret) {
+                update_ptr_member = true ;
+            } else {
+                ret = get_variable_iter_from_qname (a_var_name,
+                                                    start_row_it,
+                                                    row_it);
+            }
+        }
+
         if (!ret) {
             get_function_arguments_row_iterator (start_row_it) ;
             ret = get_variable_iter_from_qname ("*" + a_var_name,

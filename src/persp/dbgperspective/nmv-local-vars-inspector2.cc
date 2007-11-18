@@ -47,11 +47,13 @@ public:
     IDebuggerSafePtr debugger ;
     IVarWalkerListSafePtr local_var_walker_list;
     IVarWalkerListSafePtr function_args_var_walker_list;
+    IVarWalkerListSafePtr global_variables_walker_list;
 
     IWorkbench &workbench ;
     SafePtr<Gtk::TreeView> tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeModel::iterator cur_selected_row ;
+    SafePtr<Gtk::TreeRowReference> global_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> function_arguments_row_ref ;
     std::map<UString, IDebugger::VariableSafePtr> local_vars_to_set ;
@@ -141,6 +143,13 @@ public:
         function_arguments_row_ref.reset
             (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)));
         THROW_IF_FAIL (function_arguments_row_ref) ;
+
+        it = tree_store->append () ;
+        THROW_IF_FAIL (it) ;
+        (*it)[vutil::get_variable_columns ().name] = _("Global Variables");
+        global_variables_row_ref.reset
+            (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)));
+        THROW_IF_FAIL (global_variables_row_ref) ;
     }
 
     void get_function_arguments_row_iterator (Gtk::TreeModel::iterator &a_it)
@@ -153,6 +162,12 @@ public:
     {
         THROW_IF_FAIL (local_variables_row_ref) ;
         a_it = tree_store->get_iter (local_variables_row_ref->get_path ()) ;
+    }
+
+    void get_global_variables_row_iterator (Gtk::TreeModel::iterator &a_it)
+    {
+        THROW_IF_FAIL (global_variables_row_ref) ;
+        a_it = tree_store->get_iter (global_variables_row_ref->get_path ()) ;
     }
 
     IVarWalkerListSafePtr get_local_vars_walker_list ()
@@ -177,6 +192,18 @@ public:
                  (*this, &LocalVarsInspector2::Priv::on_func_arg_visited_signal)) ;
         }
         return function_args_var_walker_list ;
+    }
+
+    IVarWalkerListSafePtr get_global_variables_walker_list ()
+    {
+        if (!global_variables_walker_list) {
+            global_variables_walker_list = create_variable_walker_list () ;
+            THROW_IF_FAIL (global_variables_walker_list) ;
+            global_variables_walker_list->variable_visited_signal ().connect
+                (sigc::mem_fun
+                 (*this, &LocalVarsInspector2::Priv::on_global_variable_visited_signal)) ;
+        }
+        return global_variables_walker_list ;
     }
 
     IVarWalkerListSafePtr create_variable_walker_list ()
@@ -206,6 +233,9 @@ public:
             (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
         debugger->frames_arguments_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_frames_params_listed_signal)) ;
+        debugger->global_variables_listed_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_global_variables_listed_signal)) ;
+
         /*
         debugger->variable_value_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_variable_value_signal)) ;
@@ -240,6 +270,18 @@ public:
         }
     }
 
+    void set_global_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        clear_global_variables () ;
+        std::list<IDebugger::VariableSafePtr>::const_iterator it ;
+        for (it = a_vars.begin () ; it != a_vars.end () ; ++it) {
+            THROW_IF_FAIL ((*it)->name () != "") ;
+            append_a_global_variable (*it) ;
+        }
+    }
+
     void clear_local_variables ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -258,6 +300,17 @@ public:
         THROW_IF_FAIL (tree_store) ;
         Gtk::TreeModel::iterator row_it;
         get_function_arguments_row_iterator (row_it) ;
+        Gtk::TreeModel::Children rows = row_it->children ();
+        for (row_it = rows.begin (); row_it != rows.end (); ++row_it) {
+            tree_store->erase (*row_it) ;
+        }
+    }
+
+    void clear_global_variables ()
+    {
+        THROW_IF_FAIL (tree_store) ;
+        Gtk::TreeModel::iterator row_it;
+        get_global_variables_row_iterator (row_it) ;
         Gtk::TreeModel::Children rows = row_it->children ();
         for (row_it = rows.begin (); row_it != rows.end (); ++row_it) {
             tree_store->erase (*row_it) ;
@@ -289,6 +342,18 @@ public:
         tree_view->expand_row (tree_store->get_path (parent_row_it), false) ;
     }
 
+    void append_a_global_variable (const IDebugger::VariableSafePtr &a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        THROW_IF_FAIL (tree_view && tree_store) ;
+
+        Gtk::TreeModel::iterator parent_row_it ;
+        get_global_variables_row_iterator (parent_row_it) ;
+        vutil::append_a_variable (a_var, *tree_view, tree_store, parent_row_it) ;
+        tree_view->expand_row (tree_store->get_path (parent_row_it), false) ;
+    }
+
     void update_a_local_variable (const IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -309,6 +374,17 @@ public:
         THROW_IF_FAIL (tree_view) ;
         Gtk::TreeModel::iterator parent_row_it ;
         get_function_arguments_row_iterator (parent_row_it) ;
+        vutil::update_a_variable (a_var, *tree_view, parent_row_it,
+                                  true, false) ;
+    }
+
+    void update_a_global_variable (const IDebugger::VariableSafePtr &a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        THROW_IF_FAIL (tree_view) ;
+        Gtk::TreeModel::iterator parent_row_it ;
+        get_global_variables_row_iterator (parent_row_it) ;
         vutil::update_a_variable (a_var, *tree_view, parent_row_it,
                                   true, false) ;
     }
@@ -348,6 +424,7 @@ public:
                 LOG_DD ("init tree view") ;
                 re_init_tree_view () ;
                 debugger->list_local_variables () ;
+                debugger->list_global_variables () ;
             } else {
                 IVarWalkerListSafePtr walker_list = get_local_vars_walker_list () ;
                 THROW_IF_FAIL (walker_list) ;
@@ -406,6 +483,27 @@ public:
 
         NEMIVER_CATCH
     }
+
+    void on_global_variables_listed_signal
+                                (const list<IDebugger::VariableSafePtr> &a_vars,
+                                 const UString &a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (a_cookie == "") {}
+
+        NEMIVER_TRY
+
+        IVarWalkerListSafePtr walker_list = get_global_variables_walker_list () ;
+        THROW_IF_FAIL (walker_list) ;
+
+        walker_list->remove_variables () ;
+        walker_list->append_variables (a_vars) ;
+        walker_list->do_walk_variables () ;
+
+        NEMIVER_CATCH
+    }
+
     //****************************
     //</debugger signal handlers>
     //****************************
@@ -441,6 +539,23 @@ public:
             append_a_function_argument (a_walker->get_variable ()) ;
         } else {
             update_a_function_argument (a_walker->get_variable ()) ;
+        }
+
+        NEMIVER_CATCH
+    }
+
+    void on_global_variable_visited_signal (const IVarWalkerSafePtr &a_walker)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (a_walker->get_variable ()) ;
+
+        if (is_new_frame) {
+            append_a_global_variable (a_walker->get_variable ()) ;
+        } else {
+            update_a_global_variable (a_walker->get_variable ()) ;
         }
 
         NEMIVER_CATCH
