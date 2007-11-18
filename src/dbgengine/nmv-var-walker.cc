@@ -23,11 +23,16 @@
  *See COPYRIGHT file copyright information.
  */
 #include "nmv-i-var-walker.h"
+#include "nmv-gdb-engine.h"
 
 using nemiver::common::DynamicModule ;
 using nemiver::common::DynamicModuleSafePtr ;
 using nemiver::common::DynModIface ;
 using nemiver::common::DynModIfaceSafePtr ;
+using nemiver::common::ObjectRef ;
+using nemiver::common::ObjectUnref ;
+
+typedef SafePtr<nemiver::GDBEngine, ObjectRef, ObjectUnref> GDBEngineSafePtr ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -40,7 +45,7 @@ class VarWalker : public IVarWalker {
                  VarFragment&/*parent*/,
                  VarFragment&/*child*/> m_visited_var_child_signal;
 
-    IDebuggerSafePtr m_debugger ;
+    GDBEngineSafePtr m_debugger ;
     VarFragment m_var_fragment ;
 
 public:
@@ -95,7 +100,8 @@ VarWalker::initialize (IDebuggerSafePtr &a_debugger,
 {
     if (a_cookie == "") {}
 
-    m_debugger = a_debugger ;
+    m_debugger = a_debugger.do_dynamic_cast<GDBEngine> ();
+    THROW_IF_FAIL (m_debugger) ;
     m_var_fragment.set_name (a_var_name) ;
 }
 

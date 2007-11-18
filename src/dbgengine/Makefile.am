@@ -10,7 +10,7 @@ varwalkermoddir=@NEMIVER_MODULES_DIR@
 cpptraitmod_LTLIBRARIES=libcpptraitmod.la
 cpptraitmoddir=@NEMIVER_MODULES_DIR@
 
-noinst_LTLIBRARIES=libgdbmiparser.la libdbgcommon.la
+noinst_LTLIBRARIES=libgdbmiparser.la libdbgcommon.la libgdbengine.la
 
 idebuggerheaders= \
 nmv-i-debugger.h
@@ -30,8 +30,7 @@ $(ilangtraitheaders) \
 $(ivarwalkerheaders)
 
 libgdbmod_la_SOURCES= \
-$(idebuggerheaders)  \
-nmv-gdb-engine.cc
+$(idebuggerheaders)
 
 libvarlistmod_la_SOURCES= \
 $(ivarlistheaders) \
@@ -57,12 +56,19 @@ nmv-dbg-common.h
 
 libdbgcommon_la_CFLAGS=-fPIC -DPIC
 
+libgdbengine_la_SOURCES= \
+nmv-gdb-engine.cc \
+nmv-gdb-engine.h
+
+libgdbengine_la_CFLAGS=-fPIC -DPIC
+
 publicheaders_DATA=$(dynmodheaders)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgdbmod_la_LDFLAGS=-module -avoid-version
-libgdbmod_la_LIBADD=libdbgcommon.la libgdbmiparser.la @NEMIVERCOMMON_LIBS@ \
-	$(top_builddir)/src/common/libnemivercommon.la
+libgdbmod_la_LIBADD=libdbgcommon.la libgdbmiparser.la libgdbengine.la \
+@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la
 
 libvarlistmod_la_LDFLAGS=-module -avoid-version
 libvarlistmod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \

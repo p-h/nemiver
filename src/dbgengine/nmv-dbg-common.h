@@ -416,7 +416,10 @@ public:
 
         bool has_changed_registers () const { return m_has_changed_registers; }
         void has_changed_registers (bool a_flag) { m_has_changed_registers = a_flag; }
-        const std::list<IDebugger::register_id_t>& changed_registers () const { return m_changed_registers; }
+        const std::list<IDebugger::register_id_t>& changed_registers () const
+        {
+            return m_changed_registers;
+        }
         void changed_registers (const std::list<IDebugger::register_id_t>& a_regs)
         {
             m_changed_registers = a_regs;
@@ -425,7 +428,10 @@ public:
 
         bool has_register_values () const { return m_has_register_values; }
         void has_register_values (bool a_flag) { m_has_register_values = a_flag; }
-        const std::map<IDebugger::register_id_t, UString>& register_values () const { return m_register_values; }
+        const std::map<IDebugger::register_id_t, UString>& register_values () const
+        {
+            return m_register_values;
+        }
         void register_values (const std::map<IDebugger::register_id_t, UString>& a_regs)
         {
             m_register_values = a_regs;

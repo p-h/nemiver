@@ -193,6 +193,18 @@
 	* src/dbgengine/nmv-i-debugger.h: cosmetic (but important) change: put
 	  the register related signal in the "signals" section of the IDebugger
 	  class declaration, otherwise this thing will be a growing mess.
+	* src/dbgengine/Makefile.am: put the gdbengine in a static library that
+	  can be linked against several dynmods.
+	* src/dbgengine/nmv-gdb-engine.cc: rip off declaration and put it in
+	  nmv-gdb-engine.h so that private bis of a given dynmod can benefit
+	  from GDB only "protected" features of GDBEngine. Protected features
+	  here means features that are not advertised in IDebugger because
+	  specific to GDB.
+	* src/dbgengine/nmv-var-walker.cc: use GDBEngine by including
+	  nmv-gdb-engine.h and casting the IDebugger it gots.
+
+2007-08-19 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-i-var-walker.h,nmv-var-walker.cc,nmv-var.h: added these new
 	  files
 	* src/dbgengine/Makefile.am: setup a new varwalkermod dynmod.
