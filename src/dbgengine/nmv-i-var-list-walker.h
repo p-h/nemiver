@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_VAR_WALKER_LIST_H__
-#define __NMV_I_VAR_WALKER_LIST_H__
+#ifndef __NMV_VAR_LIST_WALKER_H__
+#define __NMV_I_VAR_LIST_WALKER_H__
 
 #include "nmv-i-var-walker.h"
 
@@ -35,17 +35,17 @@ using nemiver::common::SafePtr ;
 using nemiver::common::DynModIface ;
 using nemiver::common::DynModIfaceSafePtr ;
 
-class IVarWalkerList;
-typedef SafePtr<IVarWalkerList, ObjectRef, ObjectUnref> IVarWalkerListSafePtr ;
+class IVarListWalker;
+typedef SafePtr<IVarListWalker, ObjectRef, ObjectUnref> IVarListWalkerSafePtr ;
 
-class NEMIVER_API IVarWalkerList : public DynModIface {
+class NEMIVER_API IVarListWalker : public DynModIface {
 
     //non copyable
-    IVarWalkerList () ;
-    IVarWalkerList (const IVarWalkerList&) ;
+    IVarListWalker () ;
+    IVarListWalker (const IVarListWalker&) ;
 
 protected:
-    IVarWalkerList (DynamicModule *a_dynmod) :
+    IVarListWalker (DynamicModule *a_dynmod) :
         DynModIface (a_dynmod)
     {
     }
@@ -68,9 +68,9 @@ public:
     virtual void remove_variables () = 0;
 
     virtual void do_walk_variables () = 0 ;
-};//end class IVarWalkerList
+};//end class IVarListWalker
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_I_VAR_WALKER_LIST_H__
+#endif //__NMV_I_VAR_LIST_WALKER_H__
 

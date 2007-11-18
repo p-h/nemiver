@@ -37,7 +37,7 @@
 #include "nmv-variables-utils2.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
-#include "nmv-i-var-walker-list.h"
+#include "nmv-i-var-list-walker.h"
 
 using namespace nemiver::common ;
 namespace vutil=nemiver::variables_utils2 ;
@@ -49,10 +49,10 @@ private:
     Priv ();
 public:
     IDebuggerSafePtr debugger ;
-    IVarWalkerListSafePtr local_var_walker_list;
-    IVarWalkerListSafePtr function_args_var_walker_list;
+    IVarListWalkerSafePtr local_var_list_walker;
+    IVarListWalkerSafePtr function_args_var_list_walker;
 #ifdef WITH_GLOBAL_VARIABLES
-    IVarWalkerListSafePtr global_variables_walker_list;
+    IVarListWalkerSafePtr global_variables_walker_list;
 #endif //WITH_GLOBAL_VARIABLES
 
     IWorkbench &workbench ;
@@ -182,32 +182,32 @@ public:
     }
 #endif //WITH_GLOBAL_VARIABLES
 
-    IVarWalkerListSafePtr get_local_vars_walker_list ()
+    IVarListWalkerSafePtr get_local_vars_walker_list ()
     {
-        if (!local_var_walker_list) {
-            local_var_walker_list = create_variable_walker_list () ;
-            THROW_IF_FAIL (local_var_walker_list) ;
-            local_var_walker_list->variable_visited_signal ().connect
+        if (!local_var_list_walker) {
+            local_var_list_walker = create_variable_walker_list () ;
+            THROW_IF_FAIL (local_var_list_walker) ;
+            local_var_list_walker->variable_visited_signal ().connect
                 (sigc::mem_fun
                  (*this, &LocalVarsInspector2::Priv::on_local_variable_visited_signal)) ;
         }
-        return local_var_walker_list ;
+        return local_var_list_walker ;
     }
 
-    IVarWalkerListSafePtr get_function_args_vars_walker_list ()
+    IVarListWalkerSafePtr get_function_args_vars_walker_list ()
     {
-        if (!function_args_var_walker_list) {
-            function_args_var_walker_list = create_variable_walker_list () ;
-            THROW_IF_FAIL (function_args_var_walker_list) ;
-            function_args_var_walker_list->variable_visited_signal ().connect
+        if (!function_args_var_list_walker) {
+            function_args_var_list_walker = create_variable_walker_list () ;
+            THROW_IF_FAIL (function_args_var_list_walker) ;
+            function_args_var_list_walker->variable_visited_signal ().connect
                 (sigc::mem_fun
                  (*this, &LocalVarsInspector2::Priv::on_func_arg_visited_signal)) ;
         }
-        return function_args_var_walker_list ;
+        return function_args_var_list_walker ;
     }
 
 #ifdef WITH_GLOBAL_VARIABLES
-    IVarWalkerListSafePtr get_global_variables_walker_list ()
+    IVarListWalkerSafePtr get_global_variables_walker_list ()
     {
         if (!global_variables_walker_list) {
             global_variables_walker_list = create_variable_walker_list () ;
@@ -220,16 +220,16 @@ public:
     }
 #endif //WITH_GLOBAL_VARIABLES
 
-    IVarWalkerListSafePtr create_variable_walker_list ()
+    IVarListWalkerSafePtr create_variable_walker_list ()
     {
         DynamicModule::Loader *loader =
             workbench.get_dynamic_module ().get_module_loader ();
         THROW_IF_FAIL (loader) ;
         DynamicModuleManager *module_manager = loader->get_dynamic_module_manager ();
         THROW_IF_FAIL (module_manager) ;
-        IVarWalkerListSafePtr result =
-            module_manager->load_iface<IVarWalkerList> ("varwalkerlist",
-                                                        "IVarWalkerList");
+        IVarListWalkerSafePtr result =
+            module_manager->load_iface<IVarListWalker> ("varwalkerlist",
+                                                        "IVarListWalker");
         THROW_IF_FAIL (result) ;
         result->initialize (debugger) ;
         return result ;
@@ -452,7 +452,7 @@ public:
                 debugger->list_global_variables () ;
 #endif //WITH_GLOBAL_VARIABLES
             } else {
-                IVarWalkerListSafePtr walker_list = get_local_vars_walker_list () ;
+                IVarListWalkerSafePtr walker_list = get_local_vars_walker_list () ;
                 THROW_IF_FAIL (walker_list) ;
                 walker_list->do_walk_variables () ;
                 walker_list = get_function_args_vars_walker_list () ;
@@ -478,7 +478,7 @@ public:
 
         NEMIVER_TRY
 
-        IVarWalkerListSafePtr walker_list = get_local_vars_walker_list () ;
+        IVarListWalkerSafePtr walker_list = get_local_vars_walker_list () ;
         THROW_IF_FAIL (walker_list) ;
         walker_list->remove_variables () ;
         walker_list->append_variables (a_vars) ;
@@ -496,7 +496,7 @@ public:
 
         NEMIVER_TRY
 
-        IVarWalkerListSafePtr walker_list = get_function_args_vars_walker_list () ;
+        IVarListWalkerSafePtr walker_list = get_function_args_vars_walker_list () ;
         THROW_IF_FAIL (walker_list) ;
 
         map<int, list<IDebugger::VariableSafePtr> >::const_iterator it ;
@@ -521,7 +521,7 @@ public:
 
         NEMIVER_TRY
 
-        IVarWalkerListSafePtr walker_list = get_global_variables_walker_list () ;
+        IVarListWalkerSafePtr walker_list = get_global_variables_walker_list () ;
         THROW_IF_FAIL (walker_list) ;
 
         walker_list->remove_variables () ;

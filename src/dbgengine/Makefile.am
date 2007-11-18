@@ -7,8 +7,8 @@ varlistmoddir=@NEMIVER_MODULES_DIR@
 varwalkermod_LTLIBRARIES=libvarwalkermod.la
 varwalkermoddir=@NEMIVER_MODULES_DIR@
 
-varwalkerlistmod_LTLIBRARIES=libvarwalkerlistmod.la
-varwalkerlistmoddir=@NEMIVER_MODULES_DIR@
+varlistwalkermod_LTLIBRARIES=libvarlistwalkermod.la
+varlistwalkermoddir=@NEMIVER_MODULES_DIR@
 
 cpptraitmod_LTLIBRARIES=libcpptraitmod.la
 cpptraitmoddir=@NEMIVER_MODULES_DIR@
@@ -26,13 +26,14 @@ nmv-i-lang-trait.h
 
 ivarwalkerheaders= nmv-i-var-walker.h nmv-var.h
 
-ivarwalkerlistheaders= nmv-i-var-walker-list.h
+ivarlistwalkerheaders= nmv-i-var-list-walker.h
 
 dynmodheaders = \
 $(idebuggerheaders) \
 $(ivarlistheaders) \
 $(ilangtraitheaders) \
-$(ivarwalkerheaders)
+$(ivarwalkerheaders) \
+$(ivarlistwalkerheaders)
 
 libgdbmod_la_SOURCES= \
 $(idebuggerheaders)
@@ -45,9 +46,9 @@ libvarwalkermod_la_SOURCES= \
 $(ivarwalkerheaders) \
 nmv-var-walker.cc
 
-libvarwalkerlistmod_la_SOURCES= \
-$(ivarwalkerlistheaders) \
-nmv-var-walker-list.cc
+libvarlistwalkermod_la_SOURCES= \
+$(ivarlistwalkerheaders) \
+nmv-var-list-walker.cc
 
 libgdbmiparser_la_SOURCES= \
 nmv-gdbmi-parser.cc \
@@ -87,11 +88,19 @@ libcpptraitmod_la_LDFLAGS=-module -avoid-version
 libcpptraitmod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \
 	$(top_builddir)/src/common/libnemivercommon.la
 
+libvarwalkermod_la_LDFLAGS=-module -avoid-version
+libvarwalkermod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \
+	$(top_builddir)/src/common/libnemivercommon.la
+
+libvarlistwalkermod_la_LDFLAGS=-module -avoid-version
+libvarlistwalkermod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \
+	$(top_builddir)/src/common/libnemivercommon.la
+
 libgdbmiparser_la_LIBADD= \
 @NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-config_DATA=gdbengine.conf varlist.conf varwalker.conf varwalkerlist.conf cpptrait.conf
+config_DATA=gdbengine.conf varlist.conf varwalker.conf varlistwalker.conf cpptrait.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
 INCLUDES=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
