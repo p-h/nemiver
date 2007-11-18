@@ -93,6 +93,12 @@
 /* Version number of package */
 #undef VERSION
 
+/* enable global variables widgets */
+#undef WITH_GLOBAL_VARIABLES
+
+/* enable variables walker interface */
+#undef WITH_VARIABLE_WALKER
+
 /* compile the workbench */
 #undef WITH_WORKBENCH
 

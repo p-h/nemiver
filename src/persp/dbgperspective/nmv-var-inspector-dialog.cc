@@ -23,12 +23,10 @@
  *See COPYRIGHT file copyright information.
  */
 
-#define VARS_INSPECTOR2 1
-
 #include <glib/gi18n.h>
 #include "common/nmv-exception.h"
 #include "nmv-var-inspector-dialog.h"
-#ifndef VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
 #include "nmv-var-inspector.h"
 #else
 #include "nmv-var-inspector2.h"
@@ -41,7 +39,7 @@ class VarInspectorDialog::Priv {
     friend class VarInspectorDialog ;
     Gtk::Entry *var_name_entry ;
     Gtk::Button *inspect_button ;
-#ifndef VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
     SafePtr<VarInspector> var_inspector ;
 #else
     SafePtr<VarInspector2> var_inspector ;
@@ -82,7 +80,7 @@ public:
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
                                                        "inspectorwidgetbox") ;
-#ifndef VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
         var_inspector.reset (new VarInspector (debugger)) ;
 #else
         var_inspector.reset (new VarInspector2 (debugger)) ;

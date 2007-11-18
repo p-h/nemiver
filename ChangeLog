@@ -94,6 +94,24 @@
 
 	* src/persp/dbgperspective/nmv-registers-view.cc: clear the list of
 	registers when the target is detached
+2007-09-30 Dodji Seketeli <dodji@gnome.org>
+
+	* config.h.in,configure.ac: add --enable-variable-walker and
+	  --enable-global-variables to enable/disable IVarWalker and global
+	  variables widgets.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: use the variable
+	  walker aware LocalVarInspector2 widget when WITH_VARIABLE_WALKER is
+	  defined.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: don't compile
+	  this when WITH_VARIABLE_WALKER is not defined. Also, don't show global
+	  variables stuff when WITH_GLOBAL_VARIABLES is not defined.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: use the
+	  IVarWalker aware VarInspector2 widget with WITH_VARIABLE_WALKER is
+	  defined.
+	* src/persp/dbgperspective/nmv-var-inspector2.cc: don't compile this
+	  when WITH_VARIABLE_WALKER is not defined.
+	* src/persp/dbgperspective/nmv-variables-utils2.cc: don't compile this
+	  when WITH_VARIABLE_WALKER is not defined.
 
 2007-09-26 Dodji Seketeli <dodji@gnome.org>
 

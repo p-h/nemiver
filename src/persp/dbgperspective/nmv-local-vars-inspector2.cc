@@ -22,6 +22,10 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
+
+#ifdef WITH_VARIABLE_WALKER
+
 #include <map>
 #include <list>
 #include <glib/gi18n.h>
@@ -47,13 +51,17 @@ public:
     IDebuggerSafePtr debugger ;
     IVarWalkerListSafePtr local_var_walker_list;
     IVarWalkerListSafePtr function_args_var_walker_list;
+#ifdef WITH_GLOBAL_VARIABLES
     IVarWalkerListSafePtr global_variables_walker_list;
+#endif //WITH_GLOBAL_VARIABLES
 
     IWorkbench &workbench ;
     SafePtr<Gtk::TreeView> tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeModel::iterator cur_selected_row ;
+#ifdef WITH_GLOBAL_VARIABLES
     SafePtr<Gtk::TreeRowReference> global_variables_row_ref ;
+#endif //WITH_GLOBAL_VARIABLES
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> function_arguments_row_ref ;
     std::map<UString, IDebugger::VariableSafePtr> local_vars_to_set ;
@@ -144,12 +152,14 @@ public:
             (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)));
         THROW_IF_FAIL (function_arguments_row_ref) ;
 
+#ifdef WITH_GLOBAL_VARIABLES
         it = tree_store->append () ;
         THROW_IF_FAIL (it) ;
         (*it)[vutil::get_variable_columns ().name] = _("Global Variables");
         global_variables_row_ref.reset
             (new Gtk::TreeRowReference (tree_store, tree_store->get_path (it)));
         THROW_IF_FAIL (global_variables_row_ref) ;
+#endif //WITH_GLOBAL_VARIABLES
     }
 
     void get_function_arguments_row_iterator (Gtk::TreeModel::iterator &a_it)
@@ -164,11 +174,13 @@ public:
         a_it = tree_store->get_iter (local_variables_row_ref->get_path ()) ;
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     void get_global_variables_row_iterator (Gtk::TreeModel::iterator &a_it)
     {
         THROW_IF_FAIL (global_variables_row_ref) ;
         a_it = tree_store->get_iter (global_variables_row_ref->get_path ()) ;
     }
+#endif //WITH_GLOBAL_VARIABLES
 
     IVarWalkerListSafePtr get_local_vars_walker_list ()
     {
@@ -194,6 +206,7 @@ public:
         return function_args_var_walker_list ;
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     IVarWalkerListSafePtr get_global_variables_walker_list ()
     {
         if (!global_variables_walker_list) {
@@ -205,6 +218,7 @@ public:
         }
         return global_variables_walker_list ;
     }
+#endif //WITH_GLOBAL_VARIABLES
 
     IVarWalkerListSafePtr create_variable_walker_list ()
     {
@@ -233,8 +247,10 @@ public:
             (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal)) ;
         debugger->frames_arguments_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_frames_params_listed_signal)) ;
+#ifdef WITH_GLOBAL_VARIABLES
         debugger->global_variables_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_global_variables_listed_signal)) ;
+#endif //WITH_GLOBAL_VARIABLES
 
         /*
         debugger->variable_value_signal ().connect
@@ -270,6 +286,7 @@ public:
         }
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     void set_global_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -281,6 +298,7 @@ public:
             append_a_global_variable (*it) ;
         }
     }
+#endif //WITH_GLOBAL_VARIABLES
 
     void clear_local_variables ()
     {
@@ -306,6 +324,7 @@ public:
         }
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     void clear_global_variables ()
     {
         THROW_IF_FAIL (tree_store) ;
@@ -316,6 +335,7 @@ public:
             tree_store->erase (*row_it) ;
         }
     }
+#endif //WITH_GLOBAL_VARIABLES
 
     void append_a_local_variable (const IDebugger::VariableSafePtr &a_var)
     {
@@ -342,6 +362,7 @@ public:
         tree_view->expand_row (tree_store->get_path (parent_row_it), false) ;
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     void append_a_global_variable (const IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -353,6 +374,7 @@ public:
         vutil::append_a_variable (a_var, *tree_view, tree_store, parent_row_it) ;
         tree_view->expand_row (tree_store->get_path (parent_row_it), false) ;
     }
+#endif //WITH_GLOBAL_VARIABLES
 
     void update_a_local_variable (const IDebugger::VariableSafePtr &a_var)
     {
@@ -378,6 +400,7 @@ public:
                                   true, false) ;
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     void update_a_global_variable (const IDebugger::VariableSafePtr &a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -388,6 +411,7 @@ public:
         vutil::update_a_variable (a_var, *tree_view, parent_row_it,
                                   true, false) ;
     }
+#endif //WITH_GLOBAL_VARIABLES
 
     //****************************
     //<debugger signal handlers>
@@ -424,7 +448,9 @@ public:
                 LOG_DD ("init tree view") ;
                 re_init_tree_view () ;
                 debugger->list_local_variables () ;
+#ifdef WITH_GLOBAL_VARIABLES
                 debugger->list_global_variables () ;
+#endif //WITH_GLOBAL_VARIABLES
             } else {
                 IVarWalkerListSafePtr walker_list = get_local_vars_walker_list () ;
                 THROW_IF_FAIL (walker_list) ;
@@ -484,6 +510,7 @@ public:
         NEMIVER_CATCH
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     void on_global_variables_listed_signal
                                 (const list<IDebugger::VariableSafePtr> &a_vars,
                                  const UString &a_cookie)
@@ -503,6 +530,7 @@ public:
 
         NEMIVER_CATCH
     }
+#endif //WITH_GLOBAL_VARIABLES
 
     //****************************
     //</debugger signal handlers>
@@ -544,6 +572,7 @@ public:
         NEMIVER_CATCH
     }
 
+#ifdef WITH_GLOBAL_VARIABLES
     void on_global_variable_visited_signal (const IVarWalkerSafePtr &a_walker)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -560,6 +589,7 @@ public:
 
         NEMIVER_CATCH
     }
+#endif //WITH_GLOBAL_VARIABLES
 };//end LocalVarInspector2::Priv
 
 LocalVarsInspector2::LocalVarsInspector2 (IDebuggerSafePtr &a_debugger,
@@ -602,3 +632,6 @@ LocalVarsInspector2::re_init_widget ()
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
+
+#endif //WITH_VARIABLE_WALKER
+

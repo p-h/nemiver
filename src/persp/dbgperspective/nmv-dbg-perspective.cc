@@ -23,8 +23,6 @@
  *See COPYRIGHT file copyright information.
  */
 
-#define LOCAL_VARS_INSPECTOR2 1
-
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -54,7 +52,7 @@
 #include "nmv-ui-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
-#ifndef LOCAL_VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
 #include "nmv-local-vars-inspector.h"
 #else
 #include "nmv-local-vars-inspector2.h"
@@ -492,7 +490,7 @@ public:
 
     Gtk::ScrolledWindow& get_call_stack_scrolled_win () ;
 
-#ifndef LOCAL_VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
     LocalVarsInspector& get_local_vars_inspector () ;
 #else
     LocalVarsInspector2& get_local_vars_inspector () ;
@@ -675,7 +673,7 @@ struct DBGPerspective::Priv {
     typedef map<UString, GnomeVFSMonitorHandle*> Path2MHandleMap ;
     Path2MHandleMap path_2_mhandle_map;
     Gtk::Notebook *statuses_notebook ;
-#ifndef LOCAL_VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
     SafePtr<LocalVarsInspector> variables_editor ;
 #else
     SafePtr<LocalVarsInspector2> variables_editor ;
@@ -5022,7 +5020,7 @@ DBGPerspective::get_call_stack_scrolled_win ()
     return *m_priv->call_stack_scrolled_win ;
 }
 
-#ifndef LOCAL_VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
 LocalVarsInspector&
 #else
 LocalVarsInspector2&
@@ -5034,7 +5032,7 @@ DBGPerspective::get_local_vars_inspector ()
 
     if (!m_priv->variables_editor) {
         m_priv->variables_editor.reset
-#ifndef LOCAL_VARS_INSPECTOR2
+#ifndef WITH_VARIABLE_WALKER
             (new LocalVarsInspector (debugger (), *m_priv->workbench)) ;
 #else
             (new LocalVarsInspector2 (debugger (), *m_priv->workbench)) ;
