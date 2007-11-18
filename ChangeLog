@@ -1,3 +1,18 @@
+2007-11-16 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-ast.cc,h: handle fine grained TypeSpecifier.
+	* src/lands/nmv-cpp-parser.h,cc: now decl-specifier-seq are properly
+	  typed and can be manipulated by client APIs.
+	  As a result, SimpleType are also now fully strongly typed, especially
+	  the different kinds of TypeSpecifier.
+	  Parser::parse_simple_type_specifier() returns a SimpleTypeSpecPtr
+	  instead of a string. Woo.
+	  It also supports more types of decl-specifier-seq. Still no
+	  struct/class, or template though.
+	* tests/test-cpp-parser.cc: updated this to be reflect the changes
+	  above. Now we are able to get the type or variable name parts of a
+	  declaration. We just need to be able to parse more declaration forms.
+
 2007-11-13 Dodji Seketeli <dodji@gnome.org>
 
 	* src/langs/nmv-cpp-ast.h,

@@ -394,77 +394,93 @@ Parser::parse_id_expr (shared_ptr<IDExpr> &a_expr)
 ///           typename ::(opt) nested-name-specifier identifier
 ///           typename ::(opt) nested-name-specifier template(opt) template-id
 bool
-Parser::parse_elaborated_type_specifier (string &a_str)
+Parser::parse_elaborated_type_specifier (ElaboratedTypeSpecPtr &a_result)
 {
-    bool result=false;
-    string str;
+    bool status=false;
+    ElaboratedTypeSpecPtr result;
     Token token;
-
+    list<ElaboratedTypeSpec::ElemPtr> elems;
+    ElaboratedTypeSpec::ElemPtr elem;
     unsigned mark = LEXER.get_token_stream_mark ();
 
     if (!LEXER.consume_next_token (token)) {goto error;}
 
-    if (token.get_kind () == Token::KEYWORD
-        && (token.get_str_value () == "class"
-            || token.get_str_value () == "struct"
-            || token.get_str_value () == "union")) {
-        str += token.get_str_value () + " ";
+    if (token.get_kind () == Token::KEYWORD) {
+        if (token.get_str_value () == "class") {
+            elem.reset (new ElaboratedTypeSpec::ClassElem);
+            elems.push_back (elem);
+        } else if (token.get_str_value () == "struct") {
+            elem.reset (new ElaboratedTypeSpec::StructElem);
+            elems.push_back (elem);
+        } else if (token.get_str_value () == "union") {
+            elem.reset (new ElaboratedTypeSpec::UnionElem);
+            elems.push_back (elem);
+        } else {
+            goto error;
+        }
         if (!LEXER.peek_next_token (token)) {goto error;}
         if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
-            str += "::";
+            //TODO: add empty scope here.
             if (!LEXER.consume_next_token ()) {goto error;}
         }
         QNamePtr scope;
-        if (parse_nested_name_specifier (scope) && scope) {
-            string s;
-            scope->to_string (s);
-            str += s + " ";
+        parse_nested_name_specifier (scope);
+        if (scope) {
+            elem.reset (new ElaboratedTypeSpec::ScopeElem (scope));
+            elems.push_back (elem);
         }
         if (!LEXER.consume_next_token (token)) {goto error;}
         if (token.get_kind () != Token::IDENTIFIER) {goto error;}
-        str += token.get_str_value ();
+        elem.reset (new ElaboratedTypeSpec::IdentifierElem (token.get_str_value ()));
+        elems.push_back (elem);
+        result.reset (new ElaboratedTypeSpec (elems));
         goto okay;
     } else if (token.get_kind () == Token::KEYWORD
                && token.get_str_value () == "enum") {
-        str += "enum " ;
+        elem.reset (new ElaboratedTypeSpec::EnumElem);
+        elems.push_back (elem);
         if (!LEXER.peek_next_token (token)) {goto error;}
         if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
-            str += "::";
+            //TODO: add empty scope here.
             LEXER.consume_next_token ();
         }
         QNamePtr scope;
         if (parse_nested_name_specifier (scope)) {
-            string s;
-            scope->to_string (s);
-            str += s;
+            elem.reset (new ElaboratedTypeSpec::ScopeElem (scope));
+            elems.push_back (elem);
         }
         if (!LEXER.consume_next_token (token)) {goto error;}
         if (token.get_kind () != Token::IDENTIFIER) {goto error;}
-        str += token.get_str_value () ;
+        elem.reset (new ElaboratedTypeSpec::IdentifierElem (token.get_str_value ()));
+        elems.push_back (elem);
+        result.reset (new ElaboratedTypeSpec (elems));
         goto okay;
     } else if (token.get_kind () == Token::KEYWORD
                && token.get_str_value () == "typename") {
-        str += "typename ";
+        elem.reset (new ElaboratedTypeSpec::TypenameElem);
+        elems.push_back (elem);
         if (!LEXER.peek_next_token (token)) {goto error;}
         if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
             LEXER.consume_next_token ();
-            str += "::";
+            //TODO: add empty scope here.
         }
         QNamePtr scope;
         if (!parse_nested_name_specifier (scope) || !scope) {goto error;}
-        string s;
-        scope->to_string (s);
-        str += s;
+        elem.reset (new ElaboratedTypeSpec::ScopeElem (scope));
+        elems.push_back (elem);
         if (!LEXER.peek_next_token (token)) {goto error;}
         if (token.get_kind () == Token::IDENTIFIER) {
             LEXER.consume_next_token ();
-            str += token.get_str_value ();
+            elem.reset (new ElaboratedTypeSpec::IdentifierElem (token.get_str_value ()));
+            elems.push_back (elem);
+            result.reset (new ElaboratedTypeSpec (elems));
             goto okay;
         }
         if (token.get_kind () == Token::KEYWORD
             && token.get_str_value () == "template"){
             LEXER.consume_next_token ();
-            str += "template ";
+            elem.reset (new ElaboratedTypeSpec::ScopeElem (scope));
+            elems.push_back (elem);
         }
         //TODO: handle template id
         //string template_id;
@@ -477,13 +493,13 @@ Parser::parse_elaborated_type_specifier (string &a_str)
     }
 
 okay:
-    result = true;
-    a_str = str;
+    status = true;
+    a_result = result;
     goto out;
 error:
     LEXER.rewind_to_mark (mark);
 out:
-    return result;
+    return status;
 
 }
 
@@ -505,12 +521,13 @@ out:
 ///             void
 /// TODO: support template-id part
 bool
-Parser::parse_simple_type_specifier (string &a_str)
+Parser::parse_simple_type_specifier (SimpleTypeSpecPtr &a_str)
 {
     bool status=false;
-    string result, str;
+    string str;
+    SimpleTypeSpecPtr result;
     Token token;
-    QNamePtr nested;
+    QNamePtr scope;
     UnqualifiedIDExprPtr type_name;
 
     unsigned mark = LEXER.get_token_stream_mark ();
@@ -530,19 +547,15 @@ Parser::parse_simple_type_specifier (string &a_str)
             || token.get_str_value () == "double"
             || token.get_str_value () == "void") {
         LEXER.consume_next_token ();
-        result = token.get_str_value ();
+        result.reset (new SimpleTypeSpec (scope, token.get_str_value ()));
         goto okay;
     }
 
     if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
         LEXER.consume_next_token ();
-        result += "::";
+        //TODO: add nil scope;
     }
-    if (parse_nested_name_specifier (nested) && nested) {
-        string s;
-        nested->to_string (s);
-        result += s;
-        str.clear ();
+    if (parse_nested_name_specifier (scope) && scope) {
         if (LEXER.peek_next_token (token)
             && token.get_kind () == Token::KEYWORD
             && token.get_str_value () == "template") {
@@ -552,7 +565,7 @@ Parser::parse_simple_type_specifier (string &a_str)
     }
     if (!parse_type_name (type_name) || !type_name) {goto error;}
     type_name->to_string (str);
-    result += str;
+    result.reset (new SimpleTypeSpec (scope, str));
 
 okay:
     status = true;
@@ -574,30 +587,31 @@ out:
 ///            cv-qualifier
 /// TODO: handle class-specifier and enum specifier
 bool
-Parser::parse_type_specifier (shared_ptr<TypeSpecifier> &a_result)
+Parser::parse_type_specifier (TypeSpecifierPtr &a_result)
 {
     string str;
-    shared_ptr<TypeSpecifier> result (new TypeSpecifier);
+    TypeSpecifierPtr result ;
+    SimpleTypeSpecPtr type_spec;
+    ElaboratedTypeSpecPtr type_spec2;
     Token token;
     bool is_ok=false;
-
     unsigned mark = LEXER.get_token_stream_mark ();
 
-    if (parse_simple_type_specifier (str)) {
-        result->set_simple (str);
+    if (parse_simple_type_specifier (type_spec)) {
+        result = type_spec;
         goto okay;
     }
-    if (parse_elaborated_type_specifier (str)) {
-        result->set_elaborated (str);
+    if (parse_elaborated_type_specifier (type_spec2)) {
+        result = type_spec2;
         goto okay;
     }
     if (LEXER.consume_next_token (token)
         && token.get_kind () == Token::KEYWORD) {
         if (token.get_str_value () == "const") {
-            result->set_kind (TypeSpecifier::CONST);
+            result.reset (new ConstTypeSpec);
             goto okay;
         } else if (token.get_str_value () == "volatile") {
-            result->set_kind (TypeSpecifier::VOLATILE);
+            result.reset (new VolatileTypeSpec);
             goto okay;
         } else {
             goto error;
@@ -616,6 +630,24 @@ out:
     return is_ok;
 }
 
+/// parse a type-specifier-seq production.
+///
+/// type-specifier-seq:
+///            type-specifier type-specifier-seq(opt)
+///
+bool
+Parser::parse_type_specifier_seq (list<TypeSpecifierPtr> &a_result)
+{
+    TypeSpecifierPtr type_spec;
+
+    if (!parse_type_specifier (type_spec)) {return false;}
+    a_result.push_back (type_spec);
+    while (parse_type_specifier (type_spec)) {
+        a_result.push_back (type_spec);
+    }
+    return true;
+}
+
 /// parse a type-id production
 ///
 /// type-id:
@@ -624,37 +656,12 @@ out:
 bool
 Parser::parse_type_id (string &a_result)
 {
-    bool status=false;
-    string result, str;
-    shared_ptr<TypeSpecifier> type_spec;
+    list<TypeSpecifierPtr> type_specs;
 
-    unsigned mark = LEXER.get_token_stream_mark ();
-    if (!parse_type_specifier (type_spec)) {goto error;}
-    type_spec->to_string (result);
-    result += " ";
-
-    type_spec.reset ();
-    while (parse_type_specifier (type_spec)) {
-        type_spec->to_string (str);
-        result += str;
-        type_spec.reset ();
-    }
+    if (!parse_type_specifier_seq (type_specs)) {return false;}
     //TODO:handle abstract-declarator here.
-    goto okay;
-
-error:
-    LEXER.rewind_to_mark (mark);
-    status=false;
-    goto out;
-
-okay:
-    a_result = result;
-    status=true;
-    
-
-out:
-    return status;
-
+    TypeSpecifier::list_to_string (type_specs, a_result);
+    return true;
 }
 
 /// parse a decl-specifier production
@@ -672,7 +679,7 @@ Parser::parse_decl_specifier (shared_ptr<DeclSpecifier> &a_result)
 {
     bool status=false;
     Token token;
-    TypeSpecifierPtr type_spec (new TypeSpecifier);
+    TypeSpecifierPtr type_spec;
     DeclSpecifierPtr result;
 
     unsigned mark = LEXER.get_token_stream_mark ();
@@ -749,51 +756,87 @@ Parser::parse_decl_specifier_seq (list<DeclSpecifierPtr> &a_result)
     string str;
     list<DeclSpecifierPtr> result;
     DeclSpecifierPtr decl, decl2;
-    bool is_ok=false, watch_nb_types=false;
+    bool is_ok=false;
     unsigned mark = LEXER.get_token_stream_mark ();
+    Token token;
+    int nb_type_specifiers=0;
+
+    //TODO:REMIND: make sure only one type-specifier is parsed at most, except
+    //for the special cases.
 
     unsigned mark2=0;
     while (true ) {
-        mark2 = LEXER.get_token_stream_mark ();
+        mark2=LEXER.get_token_stream_mark ();
         if (!parse_decl_specifier (decl) || !decl) {
             break;
         }
         //type specifier special cases
         if (decl->get_kind () == DeclSpecifier::TYPE) {
+            if (nb_type_specifiers) {
+                LEXER.rewind_to_mark (mark2);
+                break;
+            }
             TypeSpecifierPtr type_specifier =
                 std::tr1::static_pointer_cast<TypeSpecifier> (decl);
             //— const or volatile can be combined with any other type-specifier.
-            //  However, redundant cv- qualifiers are prohibited except
+            //  However, redundant cv-qualifiers are prohibited except
             if (type_specifier->is_cv_qualifier ()) {
-                if (!parse_decl_specifier (decl2)) {goto error;}
-                TypeSpecifierPtr type_specifier2 =
-                    std::tr1::static_pointer_cast<TypeSpecifier> (decl2);
-                if (type_specifier2) {
-                    if (type_specifier2->is_cv_qualifier ()) {
-                        goto error;
-                    }
-                    watch_nb_types=true;
-                    result.push_back (decl);
-                    result.push_back (decl2);
+                result.push_back (type_specifier);
+                if (!LEXER.peek_next_token (token)) {break;}
+                if (type_specifier->get_kind () == TypeSpecifier::CONST
+                    && token.get_kind () == Token::KEYWORD
+                    && token.get_str_value () == "const") {
+                    goto error;
+                } else if (type_specifier->get_kind () == TypeSpecifier::VOLATILE
+                           && token.get_kind () == Token::KEYWORD
+                           && token.get_str_value () == "volatile") {
+                    goto error;
                 }
             } else if (type_specifier->get_kind () == TypeSpecifier::SIMPLE) {
                 //— signed or unsigned can be combined with char, long, short, or int.
                 //— short or long can be combined with int.
                 //— long can be combined with double.
                 //TODO: handle this
-                if (watch_nb_types) {
-                    LEXER.rewind_to_mark (mark2);
-                    break;
+                SimpleTypeSpecPtr simple_type_spec =
+                    std::tr1::static_pointer_cast<SimpleTypeSpec> (type_specifier);
+
+                result.push_back (simple_type_spec);
+                if (simple_type_spec->get_name () == "signed"
+                    || simple_type_spec->get_name () == "unsigned") {
+                    if (!LEXER.peek_next_token (token)) {break;}
+                    if (token.get_kind () == Token::KEYWORD
+                        && (token.get_str_value () ==    "char"
+                            || token.get_str_value () == "long"
+                            || token.get_str_value () == "short"
+                            || token.get_str_value () == "int")) {
+                        if (!parse_decl_specifier (decl) || !decl) {goto error;}
+                        result.push_back (decl);
+                        nb_type_specifiers++;
+                        continue;
+                    }
+                } else if (simple_type_spec->get_name () == "short"
+                           || simple_type_spec->get_name () == "long") {
+                    if (!LEXER.peek_next_token (token)) {break;}
+                    if (token.get_kind () == Token::KEYWORD
+                        && (token.get_str_value () == "int")) {
+                        if (!parse_decl_specifier (decl) || !decl) {goto error;}
+                        result.push_back (decl);
+                        nb_type_specifiers++;
+                    } else if (simple_type_spec->get_name () == "long"
+                               && token.get_kind () == Token::KEYWORD
+                               && token.get_str_value () == "double") {
+                        if (!parse_decl_specifier (decl) || !decl) {goto error;}
+                        result.push_back (decl);
+                        nb_type_specifiers++;
+                    } else {
+                        nb_type_specifiers++;
+                    }
+                } else {
+                    nb_type_specifiers++;
                 }
-                watch_nb_types=true;
-                result.push_back (decl);
             } else {
-                if (watch_nb_types) {
-                    LEXER.rewind_to_mark (mark2);
-                    break;
-                }
-                watch_nb_types=true;
                 result.push_back (decl);
+                nb_type_specifiers++;
             }
         } else {
             result.push_back (decl);

@@ -292,39 +292,28 @@ SimpleDeclaration::to_string (string &a_result) const
 }
 
 bool
-TypeSpecifier::to_string (string &a_str) const
+TypeSpecifier::list_to_string (const list<TypeSpecifierPtr> &a_type_specs,
+                               string &a_str)
 {
-    switch (get_kind ()) {
-        case UNDEFINED:
-            break;
-        case SIMPLE:
-            a_str = get_simple ();
-            break;
-        case CLASS:
-            a_str = "class {...};";//TODO: handle this.
-            break;
-        case ENUM:
-            a_str = "enum {...};";//TODO: handle this.
-            break;
-        case ELABORATED:
-            a_str = get_elaborated ();
-            break;
-        case CONST:
-            a_str = "const";
-            break;
-        case VOLATILE:
-            a_str = "volatile";
-            break;
-        default:
-            a_str = "<unknown>";
-            return false;
-            break;
+    string str;
+    list<TypeSpecifierPtr>::const_iterator it;
+    for (it = a_type_specs.begin (); it != a_type_specs.end (); ++it) {
+        if (it == a_type_specs.begin ()) {
+            if (*it) {
+                (*it)->to_string (a_str);
+            } else {
+                continue;
+            }
+        } else {
+            (*it)->to_string (str);
+            a_str += " " + str;
+        }
     }
     return true;
 }
 
 bool
-DeclSpecifier::list_to_string (list<shared_ptr<DeclSpecifier> > &a_decls,
+DeclSpecifier::list_to_string (const list<DeclSpecifierPtr> &a_decls,
                                string &a_str)
 {
     list<shared_ptr<DeclSpecifier> >::const_iterator it;
@@ -332,7 +321,11 @@ DeclSpecifier::list_to_string (list<shared_ptr<DeclSpecifier> > &a_decls,
 
     for (it = a_decls.begin (); it != a_decls.end (); ++it) {
         (*it)->to_string (str);
-        a_str += str + " ";
+        if (it == a_decls.begin ()) {
+            a_str = str;
+        } else {
+            a_str += " " + str;
+        }
     }
     return true;
 }
@@ -516,7 +509,7 @@ QualifiedIDExpr::to_string (string &a_result) const
 }
 
 bool
-InitDeclarator::list_to_string (list<InitDeclaratorPtr> &a_decls,
+InitDeclarator::list_to_string (const list<InitDeclaratorPtr> &a_decls,
                                 string &a_str)
 {
     string str, str2;

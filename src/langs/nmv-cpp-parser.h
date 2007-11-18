@@ -48,19 +48,20 @@ class NEMIVER_API Parser {
 public:
     Parser (const string&);
     ~Parser ();
-    bool parse_primary_expr (shared_ptr<PrimaryExpr> &expr);
+    bool parse_primary_expr (PrimaryExprPtr &expr);
     bool parse_class_or_namespace_name (string &str);
     bool parse_type_name (UnqualifiedIDExprPtr &);
     bool parse_nested_name_specifier (QNamePtr &a_result);
     bool parse_unqualified_id (UnqualifiedIDExprPtr &a_expr);
     bool parse_qualified_id (QualifiedIDExprPtr &a_expr);
     bool parse_id_expr (IDExprPtr &a_expr);
-    bool parse_elaborated_type_specifier (string &);
-    bool parse_simple_type_specifier (string &);
-    bool parse_type_specifier (shared_ptr<TypeSpecifier> &);
+    bool parse_elaborated_type_specifier (ElaboratedTypeSpecPtr &);
+    bool parse_simple_type_specifier (SimpleTypeSpecPtr &);
+    bool parse_type_specifier (TypeSpecifierPtr &);
+    bool parse_type_specifier_seq (list<TypeSpecifierPtr> &);
     bool parse_type_id (string &);
-    bool parse_decl_specifier (shared_ptr<DeclSpecifier> &);
-    bool parse_decl_specifier_seq (list<shared_ptr<DeclSpecifier> > &);
+    bool parse_decl_specifier (DeclSpecifierPtr &);
+    bool parse_decl_specifier_seq (list<DeclSpecifierPtr> &);
     bool parse_declarator_id (IDDeclaratorPtr &);
     bool parse_direct_declarator (DeclaratorPtr &);
     bool parse_cv_qualifier (CVQualifierPtr &);
