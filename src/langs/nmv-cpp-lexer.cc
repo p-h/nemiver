@@ -959,7 +959,7 @@ Lexer::scan_operator (Token &a_token)
         } else if (CUR_CHAR == '-') {
             CONSUME_CHAR;
             a_token.set (Token::OPERATOR_MINUS_MINUS);
-        } else if ('>') {
+        } else if (CUR_CHAR == '>') {
             CONSUME_CHAR;
             if (CUR_CHAR == '*') {
                 CONSUME_CHAR;
