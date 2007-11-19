@@ -340,6 +340,55 @@ out:
     return status;
 }
 
+/// parses an additive-expression production
+///
+/// additive-expression:
+///            multiplicative-expression
+///            additive-expression + multiplicative-expression
+///            additive-expression - multiplicative-expression
+bool
+Parser::parse_add_expr (AddExprPtr &a_result)
+{
+    bool status=false;
+    AddExprPtr lhs, result;
+    MultExprPtr mult_expr, rhs;
+    Expr::Operator op=Expr::OP_UNDEFINED;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_mult_expr (mult_expr)) {goto error;}
+    lhs.reset (new AddExpr (mult_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () == Token::OPERATOR_PLUS) {
+            op = Expr::PLUS;
+        } else if (token.get_kind () == Token::OPERATOR_MINUS) {
+            op = Expr::MINUS;
+        } else {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_mult_expr (rhs)) {goto error;}
+        lhs.reset (new AddExpr (lhs, op, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+
 /// parses a unary-expression production.
 ///
 /// unary-expression:

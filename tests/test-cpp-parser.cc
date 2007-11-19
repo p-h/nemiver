@@ -19,6 +19,7 @@ const char *prog5_3= "foo->*bar";
 const char *prog5_4= "foo*bar";
 const char *prog5_5= "foo/bar";
 const char *prog5_6= "foo%bar";
+const char *prog5_7= "foo+bar-baz";
 
 using std::cout;
 using std::endl;
@@ -32,6 +33,7 @@ using nemiver::cpp::CastExprPtr;
 using nemiver::cpp::CastExpr;
 using nemiver::cpp::PMExprPtr;
 using nemiver::cpp::MultExprPtr;
+using nemiver::cpp::AddExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -214,6 +216,16 @@ test_parser5 ()
     mult_expr->to_string (str);
     if (str != prog5_6) {
         BOOST_FAIL ("parsed '" <<prog5_6 << "' into '" << str << "'");
+    }
+
+    Parser parser7 (prog5_7);
+    AddExprPtr add_expr;
+    if (!parser7.parse_add_expr (add_expr) || !add_expr) {
+        BOOST_FAIL ("failed to parse " << prog5_7);
+    }
+    add_expr->to_string (str);
+    if (str != prog5_7) {
+        BOOST_FAIL ("parsed '" <<prog5_7 << "' into '" << str << "'");
     }
 }
 
