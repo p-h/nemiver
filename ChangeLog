@@ -1,3 +1,16 @@
+2007-11-20 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-var-list-walker.cc: fix a crash due to
+	  WalkersMap not being a smart pointer and then not taking ref on
+	  assignation.
+	* src/dbgengine/nmv-var-walker.cc: clear some memory at some point here.
+	* src/persp/dbgperspective/nmv-variables-utils2.cc: fix a crasher here:
+	 (update_a_variable_real): do not overrun the container, damit.
+	 (update_a_variable): when looking up a node, don't check for var type
+	  name. Only check for var name. It appears that in some circumstances
+	  some vars are getting wrong types, so further lookup would fail if it
+	  it takes in account var type names.
+
 2007-11-18 Dodji Seketeli <dodji@gnome.org>
 
 	* src/langs/nmv-cpp-ast.h: added DotStarPMExpr and ArrowStarPMExpr

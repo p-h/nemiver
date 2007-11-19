@@ -29,12 +29,19 @@ using namespace nemiver::common ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class VarListWalker : public IVarListWalker {
+struct SafePtrCmp {
+    bool operator() (const IVarWalkerSafePtr l,
+                     const IVarWalkerSafePtr r)
+    {
+        return (l.get () < r.get ());
+    }
+};
+class VarListWalker : public IVarListWalker, public sigc::trackable {
      mutable sigc::signal<void, const IVarWalkerSafePtr&> m_variable_visited_signal;
      mutable sigc::signal<void> m_variable_list_visited_signal;
      list<IDebugger::VariableSafePtr> m_variables ;
      list<IVarWalkerSafePtr> m_var_walkers ;
-     typedef std::map<IVarWalker*, bool>  WalkersMap;
+     typedef std::map<IVarWalkerSafePtr, bool, SafePtrCmp>  WalkersMap;
      typedef std::deque<WalkersMap> WalkersQueue ;
      WalkersQueue m_considered_walkers ;
 
@@ -79,8 +86,8 @@ VarListWalker::on_visited_variable_signal
     NEMIVER_TRY
     variable_visited_signal ().emit (a_walker) ;
     WalkersMap &walkers_map = m_considered_walkers.front () ;
-    THROW_IF_FAIL (walkers_map.find (a_walker.get ()) != walkers_map.end ()) ;
-    walkers_map.erase (a_walker.get ()) ;
+    THROW_IF_FAIL (walkers_map.find (a_walker) != walkers_map.end ()) ;
+    walkers_map.erase (a_walker) ;
     if (walkers_map.empty ()) {
         variable_list_visited_signal ().emit () ;
     }
@@ -171,7 +178,7 @@ VarListWalker::do_walk_variables ()
 
     list<IVarWalkerSafePtr>::iterator it;
     for (it = m_var_walkers.begin (); it != m_var_walkers.end (); ++it) {
-        walkers_map[it->get ()] = true ;
+        walkers_map[*it] = true ;
         (*it)->do_walk_variable () ;
     }
 }

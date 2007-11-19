@@ -177,8 +177,8 @@ update_a_variable (const IDebugger::VariableSafePtr &a_var,
                 continue ;
             }
             LOG_DD ("reading var: " << var->name ()) ;
-            if (var->name ().raw () == a_var->name ().raw () &&
-                var->type ().raw () == a_var->type ().raw ()) {
+            if (var->name ().raw () == a_var->name ().raw () /*&&
+                var->type ().raw () == a_var->type ().raw ()*/) {
                 found = true ;
                 break ;
             }
@@ -208,9 +208,10 @@ update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
     Gtk::TreeModel::iterator row_it;
     list<IDebugger::VariableSafePtr>::const_iterator var_it;
     Gtk::TreeModel::Children rows = a_row_it->children ();
+    //THROW_IF_FAIL (rows.size () == a_var->members ().size ());
     //TODO: change this to handle dereferencing
     for (row_it = rows.begin (), var_it = a_var->members ().begin ();
-         row_it != rows.end ();
+         row_it != rows.end () && var_it != a_var->members ().end ();
          ++row_it, ++var_it) {
         update_a_variable_real (*var_it, a_tree_view,
                                 row_it, a_handle_highlight,

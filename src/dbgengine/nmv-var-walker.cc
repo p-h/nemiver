@@ -163,6 +163,7 @@ VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
     NEMIVER_TRY
 
     THROW_IF_FAIL (a_var) ;
+    THROW_IF_FAIL (!m_vars_to_visit.empty ());
 
     UString parent_name;
     if (a_var->parent ()) {
@@ -271,6 +272,7 @@ VarWalker::connect (IDebuggerSafePtr &a_debugger,
     for (it = m_connections.begin (); it != m_connections.end (); ++it) {
         it->disconnect () ;
     }
+    m_connections.clear ();
     m_connections.push_back (m_debugger->variable_value_set_signal ().connect
             (sigc::mem_fun (*this, &VarWalker::on_variable_value_set_signal))) ;
     m_connections.push_back (m_debugger->variable_type_set_signal ().connect
