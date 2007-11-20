@@ -1,20 +1,23 @@
+# translation of oc.po to Occitan
 # Occitan translation of nemiver documentation.
 # Copyright (C) 2007 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gnome-cd documentation package.
-# 
+#
 # Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay>.
 #
+# Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: nemiver doc\n"
+"Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-06-10 04:14+0100\n"
-"PO-Revision-Date: 2007-10-14 16:55+0200\n"
-"Last-Translator: Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay>\n"
-"Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
+"PO-Revision-Date: 2007-11-20 14:32+0100\n"
+"Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
+"Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -119,7 +122,7 @@ msgstr ""
 
 #: C/nemiver.xml:97(primary)
 msgid "Nemiver"
-msgstr ""
+msgstr "Nemiver"
 
 #: C/nemiver.xml:98(primary)
 msgid "debugger"
@@ -131,7 +134,7 @@ msgstr ""
 
 #: C/nemiver.xml:104(title)
 msgid "Introduction"
-msgstr ""
+msgstr "Introduccion"
 
 #: C/nemiver.xml:105(para)
 msgid "Nemiver is an ongoing effort to write a standalone graphical debugger that integrates well in the GNOME desktop environment. It currently features a backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
@@ -167,7 +170,7 @@ msgstr ""
 
 #: C/nemiver.xml:145(term)
 msgid "Menubar"
-msgstr ""
+msgstr "Barra de menuts"
 
 #: C/nemiver.xml:147(para)
 msgid "The menus on the menubar contain all of the commands you need to use <application>Nemiver</application>."
@@ -175,7 +178,7 @@ msgstr ""
 
 #: C/nemiver.xml:153(term)
 msgid "Toolbar"
-msgstr ""
+msgstr "Barra d'espleches"
 
 #: C/nemiver.xml:155(para)
 msgid "The toolbar contains the basic debugging actions that can be used to run or step through the program being debugged."
@@ -207,7 +210,7 @@ msgstr ""
 
 #: C/nemiver.xml:189(term)
 msgid "Variables"
-msgstr ""
+msgstr "Variables"
 
 #: C/nemiver.xml:193(para)
 msgid "Displays a list of all local variables and function arguments, in addition to their values and types."
@@ -231,7 +234,7 @@ msgstr ""
 
 #: C/nemiver.xml:234(title)
 msgid "Getting Started"
-msgstr ""
+msgstr "Per començar"
 
 #: C/nemiver.xml:235(para)
 msgid "This section explains how to start Nemiver and gives a basic overview of the application."
@@ -247,7 +250,7 @@ msgstr ""
 
 #: C/nemiver.xml:246(term)
 msgid "<guimenu>Applications</guimenu> menu"
-msgstr ""
+msgstr "Menut <guimenu>Applications</guimenu>"
 
 #: C/nemiver.xml:248(para)
 msgid "Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver Debugger</guimenuitem></menuchoice>."
@@ -255,7 +258,7 @@ msgstr ""
 
 #: C/nemiver.xml:255(term)
 msgid "Command line"
-msgstr ""
+msgstr "Linha de comanda"
 
 #: C/nemiver.xml:257(para)
 msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
@@ -380,7 +383,7 @@ msgstr ""
 
 #: C/nemiver.xml:440(term)
 msgid "Continue"
-msgstr ""
+msgstr "Contunhar"
 
 #: C/nemiver.xml:442(para)
 msgid "Starts the program. The program will run until it hits a breakpoint or until the program ends, unless it is interrupted manually by the user by clicking <action>Stop</action>. This action can be activated from the keyboard with <keycap>F5</keycap>."
@@ -388,7 +391,7 @@ msgstr ""
 
 #: C/nemiver.xml:451(term)
 msgid "Next"
-msgstr ""
+msgstr "Seguent"
 
 #: C/nemiver.xml:453(para)
 msgid "Executes the next statement, and stops when it reaches the next line in this file. Some debuggers may call this action \"Step Over\". This action can be activated from the keyboard with <keycap>F6</keycap>."
@@ -396,7 +399,7 @@ msgstr ""
 
 #: C/nemiver.xml:461(term)
 msgid "Step"
-msgstr ""
+msgstr "Pas"
 
 #: C/nemiver.xml:463(para)
 msgid "Executes the next statement, stepping into the function if possible. Some debuggers may call this action \"Step In\". This action can be activated from the keyboard with <keycap>F7</keycap>."
@@ -404,7 +407,7 @@ msgstr ""
 
 #: C/nemiver.xml:470(term)
 msgid "Step Out"
-msgstr ""
+msgstr "Sortir"
 
 #: C/nemiver.xml:472(para)
 msgid "Finishes execution of the current function and stops when it returns to the calling function. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
@@ -412,7 +415,7 @@ msgstr ""
 
 #: C/nemiver.xml:483(term)
 msgid "Restart"
-msgstr ""
+msgstr "Tornar lançar"
 
 #: C/nemiver.xml:485(para)
 msgid "Reloads the current executable and starts execution from the beginning. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F5</keycap></keycombo>."
@@ -420,7 +423,7 @@ msgstr ""
 
 #: C/nemiver.xml:495(term)
 msgid "Stop"
-msgstr ""
+msgstr "Arrestar"
 
 #: C/nemiver.xml:497(para)
 msgid "Manually interrupt execution of the program. This action is only available when the debugger is running the executable (e.g. after a user has clicked <action>Continue</action>). This action can be activated from the keyboard with <keycap>F9</keycap>."
@@ -581,5 +584,5 @@ msgstr ""
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2.
 #: C/nemiver.xml:0(None)
 msgid "translator-credits"
-msgstr ""
+msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org)"
 
