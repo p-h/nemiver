@@ -56,6 +56,7 @@ public:
     bool parse_mult_expr (MultExprPtr &);
     bool parse_add_expr (AddExprPtr &);
     bool parse_shift_expr (ShiftExprPtr &);
+    bool parse_rel_expr (RelExprPtr &);
     bool parse_class_or_namespace_name (string &str);
     bool parse_type_name (UnqualifiedIDExprPtr &);
     bool parse_nested_name_specifier (QNamePtr &a_result);

@@ -436,6 +436,60 @@ out:
     return status;
 }
 
+/// parse a relational-expression production
+///
+/// relational-expression:
+///            shift-expression
+///            relational-expression < shift-expression
+///            relational-expression > shift-expression
+///            relational-expression <= shift-expression
+///           relational-expression >= shift-expression
+bool
+Parser::parse_rel_expr (RelExprPtr &a_result)
+{
+    bool status=false;
+    RelExprPtr lhs, result;
+    ShiftExprPtr shift_expr, rhs;
+    Expr::Operator op=Expr::OP_UNDEFINED;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_shift_expr (shift_expr)) {goto error;}
+    lhs.reset (new RelExpr (shift_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () == Token::OPERATOR_LT) {
+            op = Expr::LT;
+        } else if (token.get_kind () == Token::OPERATOR_GT) {
+            op = Expr::GT;
+        } else if (token.get_kind () == Token::OPERATOR_LT_EQ) {
+            op = Expr::LT_OR_EQ;
+        } else if (token.get_kind () == Token::OPERATOR_GT_EQ) {
+            op = Expr::GT_OR_EQ;
+        } else {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_shift_expr (rhs)) {goto error;}
+        lhs.reset (new RelExpr (lhs, op, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
 /// parses a unary-expression production.
 ///
 /// unary-expression:

@@ -22,6 +22,11 @@ const char *prog5_6= "foo%bar";
 const char *prog5_7= "foo+bar-baz";
 const char *prog5_8= "foo<<bar";
 const char *prog5_9= "foo>>bar";
+const char *prog5_10= "foo<bar";
+const char *prog5_11= "foo>bar";
+const char *prog5_12= "foo>=bar";
+const char *prog5_13= "foo<=bar";
+const char *prog5_14= "1+3*5<=10-6+32-bar";
 
 using std::cout;
 using std::endl;
@@ -38,6 +43,7 @@ using nemiver::cpp::PMExprPtr;
 using nemiver::cpp::MultExprPtr;
 using nemiver::cpp::AddExprPtr;
 using nemiver::cpp::ShiftExprPtr;
+using nemiver::cpp::RelExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -79,7 +85,7 @@ void
 test_parser1 ()
 {
     Parser parser (prog1);
-    string str;
+    string str, prog_str;
     SimpleDeclarationPtr simple_decl;
 
     if (!parser.parse_simple_declaration (simple_decl)) {
@@ -158,12 +164,12 @@ test_parser4 ()
 void
 test_parser5 ()
 {
+    string str, prog_str;
     Parser parser (prog5);
     CastExprPtr cast_expr;
     if (!parser.parse_cast_expr (cast_expr) || !cast_expr) {
         BOOST_FAIL ("failed to parse cast expresssion: " << prog5);
     }
-    string str;
     cast_expr->to_string (str);
     if (str != prog5) {
         BOOST_FAIL ("parsed " << prog5 << "and got: " << str);
@@ -252,6 +258,64 @@ test_parser5 ()
     if (str != "bar") {
         BOOST_FAIL ("expecting lhs to be 'bar', found '" << str << "'");
     }
+    Parser parser9 (prog5_9);
+    if (!parser9.parse_shift_expr (shift_expr) || !shift_expr) {
+        BOOST_FAIL ("failed to parse " << prog5_9);
+    }
+    shift_expr->to_string (str);
+    if (str != prog5_9) {
+        BOOST_FAIL ("parsed '" <<prog5_9 << "' into '" << str << "'");
+    }
+    prog_str=prog5_10;
+    Parser parser10 (prog_str);
+    RelExprPtr rel_expr;
+    if (!parser10.parse_rel_expr (rel_expr) || !rel_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    rel_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+    prog_str=prog5_11;
+    Parser parser11 (prog_str);
+    if (!parser11.parse_rel_expr (rel_expr) || !rel_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    rel_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+    prog_str=prog5_12;
+    Parser parser12 (prog_str);
+    if (!parser12.parse_rel_expr (rel_expr) || !rel_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    rel_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+    prog_str=prog5_13;
+    Parser parser13 (prog_str);
+    if (!parser13.parse_rel_expr (rel_expr) || !rel_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    rel_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+    prog_str=prog5_14;
+    Parser parser14 (prog_str);
+    if (!parser14.parse_rel_expr (rel_expr) || !rel_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    rel_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+    rel_expr->get_lhs ()->to_string (str);
+    cout << "lhs: " << str << "\n";
+    rel_expr->get_rhs ()->to_string (str);
+    cout << "rhs: " << str << "\n";
 }
 
 using boost::unit_test::test_suite ;

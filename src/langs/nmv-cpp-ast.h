@@ -862,7 +862,8 @@ public:
         PM_EXPRESSION,
         MULT_EXPR,
         ADD_EXPR,
-        SHIFT_EXPR
+        SHIFT_EXPR,
+        RELATIONAL_EXPR
     };
 
     enum Operator {
@@ -874,9 +875,12 @@ public:
         MINUS,
         LT,
         GT,
+        LT_OR_EQ,
+        GT_OR_EQ,
         LEFT_SHIFT,
         RIGHT_SHIFT,
-        EQUAL
+        ASSIGN,
+        EQUALS
     };
 
 private:
@@ -1726,6 +1730,54 @@ public:
         return true;
     }
 };//end class ShiftExpr
+
+class RelExpr;
+typedef shared_ptr<RelExpr> RelExprPtr;
+class NEMIVER_API RelExpr : public Expr {
+    RelExpr (const RelExpr&);
+    RelExpr& operator= (const RelExpr&);
+    RelExprPtr m_lhs;
+    Operator m_op;
+    ShiftExprPtr m_rhs;
+
+public:
+    RelExpr () :
+        Expr (RELATIONAL_EXPR),
+        m_op (OP_UNDEFINED)
+    {}
+    RelExpr (ShiftExprPtr rhs) :
+        Expr (RELATIONAL_EXPR),
+        m_op (OP_UNDEFINED),
+        m_rhs (rhs)
+    {}
+    RelExpr (RelExprPtr lhs, Operator op, ShiftExprPtr rhs) :
+        Expr (RELATIONAL_EXPR),
+        m_lhs (lhs),
+        m_op (op),
+        m_rhs (rhs)
+    {}
+    ~RelExpr () {}
+    const RelExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (RelExprPtr lhs) {m_lhs = lhs;}
+    Operator get_operator () const {return m_op;}
+    void set_operator (Operator op) {m_op = op;}
+    const ShiftExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (ShiftExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += operator_to_string (m_op);
+        }
+        if (m_rhs) {
+            a_str = str;
+            m_rhs->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end class RelExpr
 
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored

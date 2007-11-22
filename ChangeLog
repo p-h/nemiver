@@ -1,3 +1,9 @@
+2007-11-22 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-ast.cc,h
+	* src/langs/nmv-cpp-parser.cc,h
+	* tests/test-cpp-parser.cc: added relational-expression parsing
+
 2007-11-21 Dodji Seketeli <dodji@gnome.org>
 
 	* src/langs/nmv-cpp-ast.h:

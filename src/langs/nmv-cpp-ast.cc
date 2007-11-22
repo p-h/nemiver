@@ -227,9 +227,12 @@ Expr::operator_to_string (Operator a_op)
     static const string OP_MINUS ("-");
     static const string OP_LT ("<");
     static const string OP_GT (">");
+    static const string OP_LT_OR_EQ ("<=");
+    static const string OP_GT_OR_EQ (">=");
     static const string OP_LEFT_SHIFT ("<<");
     static const string OP_RIGHT_SHIFT (">>");
-    static const string OP_EQUAL ("=");
+    static const string OP_ASSIGN ("=");
+    static const string OP_EQUALS ("==");
     switch (a_op) {
         case Expr::OP_UNDEFINED:
             return OP_UNDEFINED;
@@ -247,12 +250,18 @@ Expr::operator_to_string (Operator a_op)
             return OP_LT;
         case GT:
             return OP_GT;
+        case LT_OR_EQ:
+            return OP_LT_OR_EQ;
+        case GT_OR_EQ:
+            return OP_GT_OR_EQ;
         case LEFT_SHIFT:
             return OP_LEFT_SHIFT;
         case RIGHT_SHIFT:
             return OP_RIGHT_SHIFT;
-        case EQUAL:
-            return OP_EQUAL;
+        case EQUALS:
+            return OP_EQUALS;
+        case ASSIGN:
+            return OP_ASSIGN;
     }
     return OP_UNDEFINED;
 }
