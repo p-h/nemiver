@@ -20,6 +20,8 @@ const char *prog5_4= "foo*bar";
 const char *prog5_5= "foo/bar";
 const char *prog5_6= "foo%bar";
 const char *prog5_7= "foo+bar-baz";
+const char *prog5_8= "foo<<bar";
+const char *prog5_9= "foo>>bar";
 
 using std::cout;
 using std::endl;
@@ -29,11 +31,13 @@ using nemiver::cpp::DeclSpecifier;
 using nemiver::cpp::DeclSpecifierPtr;
 using nemiver::cpp::InitDeclaratorPtr;
 using nemiver::cpp::InitDeclarator;
+using nemiver::cpp::Expr;
 using nemiver::cpp::CastExprPtr;
 using nemiver::cpp::CastExpr;
 using nemiver::cpp::PMExprPtr;
 using nemiver::cpp::MultExprPtr;
 using nemiver::cpp::AddExprPtr;
+using nemiver::cpp::ShiftExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -226,6 +230,27 @@ test_parser5 ()
     add_expr->to_string (str);
     if (str != prog5_7) {
         BOOST_FAIL ("parsed '" <<prog5_7 << "' into '" << str << "'");
+    }
+
+    Parser parser8 (prog5_8);
+    ShiftExprPtr shift_expr;
+    if (!parser8.parse_shift_expr (shift_expr) || !shift_expr) {
+        BOOST_FAIL ("failed to parse " << prog5_8);
+    }
+    shift_expr->to_string (str);
+    if (str != prog5_8) {
+        BOOST_FAIL ("parsed '" <<prog5_8 << "' into '" << str << "'");
+    }
+    if (shift_expr->get_operator () != Expr::LEFT_SHIFT) {
+        BOOST_FAIL ("expected left operator, but failed");
+    }
+    shift_expr->get_lhs ()->to_string (str);
+    if (str != "foo") {
+        BOOST_FAIL ("expecting lhs to be 'foo', found '" << str << "'");
+    }
+    shift_expr->get_rhs ()->to_string (str);
+    if (str != "bar") {
+        BOOST_FAIL ("expecting lhs to be 'bar', found '" << str << "'");
     }
 }
 

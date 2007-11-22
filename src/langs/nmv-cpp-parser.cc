@@ -388,6 +388,53 @@ out:
     return status;
 }
 
+/// parse a shift-expression production
+///
+/// shift-expression:
+///            additive-expression
+///            shift-expression << additive-expression
+///            shift-expression >> additive-expression
+bool
+Parser::parse_shift_expr (ShiftExprPtr &a_result)
+{
+    bool status=false;
+    ShiftExprPtr lhs, result;
+    AddExprPtr add_expr, rhs;
+    Expr::Operator op=Expr::OP_UNDEFINED;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_add_expr (add_expr)) {goto error;}
+    lhs.reset (new ShiftExpr (add_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () == Token::OPERATOR_BIT_LEFT_SHIFT) {
+            op = Expr::LEFT_SHIFT;
+        } else if (token.get_kind () == Token::OPERATOR_BIT_RIGHT_SHIFT) {
+            op = Expr::RIGHT_SHIFT;
+        } else {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_add_expr (rhs)) {goto error;}
+        lhs.reset (new ShiftExpr (lhs, op, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
 
 /// parses a unary-expression production.
 ///
