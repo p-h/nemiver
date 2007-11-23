@@ -36,7 +36,7 @@ struct SafePtrCmp {
         return (l.get () < r.get ());
     }
 };
-class VarListWalker : public IVarListWalker, public sigc::trackable {
+class VarListWalker : public IVarListWalker {
      mutable sigc::signal<void, const IVarWalkerSafePtr&> m_variable_visited_signal;
      mutable sigc::signal<void> m_variable_list_visited_signal;
      list<IDebugger::VariableSafePtr> m_variables ;

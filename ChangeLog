@@ -1,5 +1,12 @@
 2007-11-22 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-var-list-walker.cc,
+	  src/dbgengine/nmv-var-walker.cc: don't make VarWalker and
+	  VarListWalker extend sigc::trackabale because they connect to each
+	  other and that causes crashes at their destruction time.
+
+2007-11-22 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.cc,h
 	* src/langs/nmv-cpp-parser.cc,h
 	* tests/test-cpp-parser.cc: added relational-expression parsing
