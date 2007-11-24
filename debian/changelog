@@ -1,6 +1,7 @@
 nemiver (0.4.0-1) unstable; urgency=low
-
-  * Patch from SVN to reflect a libgtop API change
+  
+  * Patch from SVN (r513) to fix a misnamed glade file
+  * Patch from SVN (r509) to reflect a libgtop API change
   * debian/copyright rewritten in a machine-interpretable format
   * Initial release (Closes: #392988)  
 
