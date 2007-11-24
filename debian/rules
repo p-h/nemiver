@@ -54,8 +54,8 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 	$(MAKE) DESTDIR=$(CURDIR)/debian/nemiver install
-
-
+	cp $(CURDIR)/debian/nemiver.xpm $(CURDIR)/debian/nemiver/usr/share/pixmaps/
+	
 binary-indep: build install
 
 binary-arch: build install

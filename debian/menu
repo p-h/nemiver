@@ -2,4 +2,5 @@
 	section="Applications/see-menu-manual"\
 	title="Nemiver"\
 	command="/usr/bin/nemiver"\
-	longtitle="Graphical debugger"
+	longtitle="Graphical debugger" \
+	icon="/usr/share/pixmaps/nemiver.xpm"
