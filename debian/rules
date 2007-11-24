@@ -22,14 +22,13 @@ endif
 
 config.status: patch
 	
-	       dh_testdir
-	       ./configure --host=$(DEB_HOST_GNU_TYPE) \
-	                   --build=$(DEB_BUILD_GNU_TYPE) \
-			   --prefix=/usr \
-			   --mandir=\$${prefix}/share/man \
-			   --infodir=\$${prefix}/share/info \
-			   CFLAGS="$(CFLAGS)" \
-			   LDFLAGS="-Wl,-z,defs"
+	dh_testdir
+	./configure --host=$(DEB_HOST_GNU_TYPE) \
+                   --build=$(DEB_BUILD_GNU_TYPE) \
+		   --prefix=/usr \
+		   --disable-scrollkeeper \
+		   --with-gconf-schema-file-dir=\$${prefix}/share/gconf/schemas \
+		   CFLAGS="$(CFLAGS)" 
 
 
 build: build-stamp
@@ -56,6 +55,7 @@ install: build
 	$(MAKE) DESTDIR=$(CURDIR)/debian/nemiver install
 	cp $(CURDIR)/debian/nemiver.xpm $(CURDIR)/debian/nemiver/usr/share/pixmaps/
 	
+
 binary-indep: build install
 
 binary-arch: build install
@@ -70,7 +70,7 @@ binary-arch: build install
 	dh_compress
 	dh_fixperms
 	dh_installdeb
-	dh_shlibdeps
+	dh_shlibdeps -- --ignore-missing-info
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
