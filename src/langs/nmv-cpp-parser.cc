@@ -490,6 +490,180 @@ out:
     return status;
 }
 
+/// parse an equality-expression
+///
+/// equality-expression:
+///            relational-expression
+///            equality-expression == relational-expression
+///            equality-expression != relational-expression
+bool
+Parser::parse_eq_expr (EqExprPtr &a_result)
+{
+    bool status=false;
+    EqExprPtr lhs, result;
+    RelExprPtr rel_expr, rhs;
+    Expr::Operator op=Expr::OP_UNDEFINED;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_rel_expr (rel_expr)) {goto error;}
+    lhs.reset (new EqExpr (rel_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () == Token::OPERATOR_EQUALS) {
+            op = Expr::EQUALS;
+        } else if (token.get_kind () == Token::OPERATOR_NOT_EQUAL) {
+            op = Expr::NOT_EQUALS;
+        } else {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_rel_expr (rhs)) {goto error;}
+        lhs.reset (new EqExpr (lhs, op, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse an and-expression
+///
+/// and-expression:
+///           equality-expression
+///           and-expression & equality-expression
+bool
+Parser::parse_and_expr (AndExprPtr &a_result)
+{
+    bool status=false;
+    AndExprPtr lhs, result;
+    EqExprPtr eq_expr, rhs;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_eq_expr (eq_expr)) {goto error;}
+    lhs.reset (new AndExpr (eq_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () != Token::OPERATOR_BIT_AND) {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_eq_expr (rhs)) {goto error;}
+        lhs.reset (new AndExpr (lhs, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse exclusive-op-expression production.
+///
+/// exclusive-or-expression:
+///            and-expression
+///            exclusive-or-expression ^ and-expression
+bool
+Parser::parse_xor_expr (XORExprPtr &a_result)
+{
+    bool status=false;
+    XORExprPtr lhs, result;
+    AndExprPtr and_expr, rhs;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_and_expr (and_expr)) {goto error;}
+    lhs.reset (new XORExpr (and_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () != Token::OPERATOR_BIT_XOR) {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_and_expr (rhs)) {goto error;}
+        lhs.reset (new XORExpr (lhs, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse an inclusive-or-expression
+///
+/// inclusive-or-expression:
+///            exclusive-or-expression
+///            inclusive-or-expression | exclusive-or-expression
+bool
+Parser::parse_or_expr (ORExprPtr &a_result)
+{
+    bool status=false;
+    ORExprPtr lhs, result;
+    XORExprPtr xor_expr, rhs;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_xor_expr (xor_expr)) {goto error;}
+    lhs.reset (new ORExpr (xor_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () != Token::OPERATOR_BIT_OR) {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_xor_expr (rhs)) {goto error;}
+        lhs.reset (new ORExpr (lhs, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
 /// parses a unary-expression production.
 ///
 /// unary-expression:

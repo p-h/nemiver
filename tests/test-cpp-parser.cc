@@ -27,6 +27,11 @@ const char *prog5_11= "foo>bar";
 const char *prog5_12= "foo>=bar";
 const char *prog5_13= "foo<=bar";
 const char *prog5_14= "1+3*5<=10-6+32-bar";
+const char *prog5_15= "foo==bar";
+const char *prog5_16= "foo<=bar";
+const char *prog5_17= "foo&bar";
+const char *prog5_18= "foo^bar";
+const char *prog5_19= "foo|bar";
 
 using std::cout;
 using std::endl;
@@ -44,6 +49,10 @@ using nemiver::cpp::MultExprPtr;
 using nemiver::cpp::AddExprPtr;
 using nemiver::cpp::ShiftExprPtr;
 using nemiver::cpp::RelExprPtr;
+using nemiver::cpp::EqExprPtr;
+using nemiver::cpp::AndExprPtr;
+using nemiver::cpp::XORExprPtr;
+using nemiver::cpp::ORExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -316,6 +325,60 @@ test_parser5 ()
     cout << "lhs: " << str << "\n";
     rel_expr->get_rhs ()->to_string (str);
     cout << "rhs: " << str << "\n";
+
+    prog_str=prog5_15;
+    Parser parser15 (prog_str);
+    EqExprPtr eq_expr;
+    if (!parser15.parse_eq_expr (eq_expr) || !eq_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    eq_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str=prog5_16;
+    Parser parser16 (prog_str);
+    if (!parser16.parse_eq_expr (eq_expr) || !eq_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    eq_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str=prog5_17;
+    Parser parser17 (prog_str);
+    AndExprPtr and_expr;
+    if (!parser17.parse_and_expr (and_expr) || !and_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    and_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str=prog5_18;
+    Parser parser18 (prog_str);
+    XORExprPtr xor_expr;
+    if (!parser18.parse_xor_expr (xor_expr) || !xor_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    xor_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str=prog5_19;
+    Parser parser19 (prog_str);
+    ORExprPtr or_expr;
+    if (!parser19.parse_or_expr (or_expr) || !or_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    or_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
 }
 
 using boost::unit_test::test_suite ;

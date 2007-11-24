@@ -863,7 +863,15 @@ public:
         MULT_EXPR,
         ADD_EXPR,
         SHIFT_EXPR,
-        RELATIONAL_EXPR
+        RELATIONAL_EXPR,
+        EQUALITY_EXPR,
+        AND_EXPR,
+        XOR_EXPR,
+        INCL_OR_EXPR,
+        LOGICAL_AND_EXPR,
+        LOGICAL_OR_EXPR,
+        COND_EXPR,
+        ASSIGNMENT_EXPR
     };
 
     enum Operator {
@@ -880,7 +888,9 @@ public:
         LEFT_SHIFT,
         RIGHT_SHIFT,
         ASSIGN,
-        EQUALS
+        EQUALS,
+        NOT_EQUALS,
+        BIT_AND
     };
 
 private:
@@ -1778,6 +1788,185 @@ public:
         return true;
     }
 };//end class RelExpr
+
+class EqExpr;
+typedef shared_ptr<EqExpr> EqExprPtr;
+/// contains an equality-expression
+class NEMIVER_API EqExpr : public Expr {
+    EqExpr (const EqExpr&);
+    EqExpr& operator= (const EqExpr&);
+    EqExprPtr m_lhs;
+    Operator m_op;
+    RelExprPtr m_rhs;
+
+public:
+    EqExpr () :
+        Expr (EQUALITY_EXPR),
+        m_op (OP_UNDEFINED)
+    {}
+    EqExpr (RelExprPtr rhs) :
+        Expr (EQUALITY_EXPR),
+        m_op (OP_UNDEFINED),
+        m_rhs (rhs)
+    {}
+    EqExpr (EqExprPtr lhs, Operator op, RelExprPtr rhs) :
+        Expr (EQUALITY_EXPR),
+        m_lhs (lhs),
+        m_op (op),
+        m_rhs (rhs)
+    {}
+    ~EqExpr () {}
+    const EqExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const EqExprPtr lhs) {m_lhs = lhs;}
+    Operator get_operator () const {return m_op;}
+    void set_operator (Operator op) {m_op = op;}
+    const RelExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const RelExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += operator_to_string (m_op);
+        }
+        if (m_rhs) {
+            a_str = str;
+            m_rhs->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end EqExprPtr
+
+class AndExpr;
+typedef shared_ptr<AndExpr> AndExprPtr;
+/// contains an and-expression
+class NEMIVER_API AndExpr : public Expr {
+    AndExpr (const AndExpr&);
+    AndExpr& operator= (const AndExpr&);
+    AndExprPtr m_lhs;
+    EqExprPtr m_rhs;
+
+public:
+    AndExpr () :
+        Expr (AND_EXPR)
+    {}
+    AndExpr (const EqExprPtr rhs) :
+        Expr (AND_EXPR),
+        m_rhs (rhs)
+    {}
+    AndExpr (const AndExprPtr lhs,
+             const EqExprPtr rhs) :
+        Expr (AND_EXPR),
+        m_lhs (lhs),
+        m_rhs (rhs)
+    {}
+    ~AndExpr () {}
+    const AndExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const AndExprPtr lhs) {m_lhs = lhs;}
+    const EqExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const EqExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += "&";
+        }
+        if (m_rhs) {
+            a_str = str;
+            m_rhs->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end class AndExpr
+
+class XORExpr;
+typedef shared_ptr<XORExpr> XORExprPtr;
+class NEMIVER_API XORExpr : public Expr {
+    XORExpr (const XORExpr&);
+    XORExpr& operator= (const XORExpr&);
+    XORExprPtr m_lhs;
+    AndExprPtr m_rhs;
+
+public:
+    XORExpr () :
+        Expr (XOR_EXPR)
+    {}
+    XORExpr (const AndExprPtr rhs) :
+        Expr (XOR_EXPR),
+        m_rhs (rhs)
+    {}
+    XORExpr (const XORExprPtr lhs,
+                const AndExprPtr rhs) :
+        Expr (XOR_EXPR),
+        m_lhs (lhs),
+        m_rhs (rhs)
+    {}
+    ~XORExpr () {}
+    const XORExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const XORExprPtr lhs) {m_lhs = lhs;}
+    const AndExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const AndExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += "^";
+        }
+        if (m_rhs) {
+            a_str = str;
+            m_rhs->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end class XORExpr
+
+class ORExpr;
+typedef shared_ptr<ORExpr> ORExprPtr;
+/// contains an inclusive-or-expression production
+class NEMIVER_API ORExpr : public Expr {
+    ORExpr (const ORExpr&);
+    ORExpr& operator= (const ORExpr&);
+    ORExprPtr m_lhs;
+    XORExprPtr m_rhs;
+
+public:
+    ORExpr ():
+        Expr (INCL_OR_EXPR)
+    {}
+    ORExpr (const XORExprPtr rhs):
+        Expr (INCL_OR_EXPR),
+        m_rhs (rhs)
+    {}
+    ORExpr (const ORExprPtr lhs, const XORExprPtr rhs):
+        Expr (INCL_OR_EXPR),
+        m_lhs (lhs),
+        m_rhs (rhs)
+    {}
+    ~ORExpr () {}
+    const ORExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const ORExprPtr lhs) {m_lhs = lhs;}
+    const XORExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const XORExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += "|";
+        }
+        if (m_rhs) {
+            a_str = str;
+            m_rhs->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end class ORExpr
 
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored

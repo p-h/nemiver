@@ -233,6 +233,8 @@ Expr::operator_to_string (Operator a_op)
     static const string OP_RIGHT_SHIFT (">>");
     static const string OP_ASSIGN ("=");
     static const string OP_EQUALS ("==");
+    static const string OP_NOT_EQUALS ("!=");
+    static const string OP_BIT_AND ("&");
     switch (a_op) {
         case Expr::OP_UNDEFINED:
             return OP_UNDEFINED;
@@ -260,8 +262,12 @@ Expr::operator_to_string (Operator a_op)
             return OP_RIGHT_SHIFT;
         case EQUALS:
             return OP_EQUALS;
+        case NOT_EQUALS:
+            return OP_NOT_EQUALS;
         case ASSIGN:
             return OP_ASSIGN;
+        case BIT_AND:
+            return OP_BIT_AND;
     }
     return OP_UNDEFINED;
 }
