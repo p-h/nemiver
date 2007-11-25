@@ -57,7 +57,7 @@ struct SafePtrCmp {
         return (l.get () < r.get ());
     }
 };
-class VarWalker : public IVarWalker {
+class VarWalker : public IVarWalker , public sigc::trackable {
 
     mutable sigc::signal<void,
                  const IDebugger::VariableSafePtr&> m_visited_variable_node_signal;
@@ -208,6 +208,7 @@ VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr a_from)
 
     UString qname;
     a_from->build_qname (qname) ;
+    LOG_DD ("qname: " << qname) ;
     qname.chomp () ;
     if (qname.raw ()[0] == '<' || a_from->name ().raw ()[0] == '<') {
         //this is a hack to detect c++ templated unamed members
@@ -217,9 +218,12 @@ VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr a_from)
     } else if (qname.get_number_of_words () != 1) {
         LOG_DD ("variable name is weird, don't query for its type") ;
         LOG_DD ("member was: " << a_from->name ()) ;
+        return;
     } else {
         m_vars_to_visit[a_from] = true;
         m_debugger->get_variable_type (a_from, m_cookie) ;
+        LOG_DD ("member : " << a_from->name () << "to added to m_vars_to_visit") ;
+        return;
     }
     list<IDebugger::VariableSafePtr>::const_iterator it;
     for (it = a_from->members ().begin ();

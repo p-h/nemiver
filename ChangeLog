@@ -1,8 +1,17 @@
 2007-11-25 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-var-walker.cc:
+	 Make VarWalker extend sigc::trackable to fix a random crash.
+	 (VarWalker::get_type_of_all_members): when a node has a name starting
+	 with '<', usually due to an unamed variable node, don't try to query
+	 the type of its children because gdb does recognize names starting with
+	 '<'. Damit.
+
+2007-11-25 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: when
 	  you double-click on a row in the local variables inspector, show the
-	  type of the variable. This was workin in the pre variable-walker
+	  type of the variable. This was working in the pre variable-walker
 	  local variables inspector tough.
 
 2007-11-25 Dodji Seketeli <dodji@gnome.org>
