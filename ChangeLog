@@ -1,5 +1,12 @@
 2007-11-25 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: when
+	  you double-click on a row in the local variables inspector, show the
+	  type of the variable. This was workin in the pre variable-walker
+	  local variables inspector tough.
+
+2007-11-25 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.h,
 	  src/langs/nmv-cpp-parser.cc,
 	  tests/test-cpp-parser.cc: support basic parsing of array declarations.

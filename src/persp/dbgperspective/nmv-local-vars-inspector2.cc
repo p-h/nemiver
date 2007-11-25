@@ -84,7 +84,7 @@ public:
         build_tree_view () ;
         re_init_tree_view () ;
         connect_to_debugger_signals () ;
-        //init_graphical_signals () ;
+        init_graphical_signals () ;
     }
 
     void build_tree_view ()
@@ -251,15 +251,19 @@ public:
         debugger->global_variables_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_global_variables_listed_signal)) ;
 #endif //WITH_GLOBAL_VARIABLES
+    }
 
-        /*
-        debugger->variable_value_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_variable_value_signal)) ;
-        debugger->variable_type_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_variable_type_signal)) ;
-        debugger->pointed_variable_value_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_pointed_variable_value_signal)) ;
-            */
+    void init_graphical_signals ()
+    {
+        THROW_IF_FAIL (tree_view) ;
+        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
+        THROW_IF_FAIL (selection) ;
+        selection->signal_changed ().connect
+            (sigc::mem_fun (*this, &Priv::on_tree_view_selection_changed_signal));
+        tree_view->signal_row_expanded ().connect
+            (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal)) ;
+        tree_view->signal_row_activated ().connect
+            (sigc::mem_fun (*this, &Priv::on_tree_view_row_activated_signal)) ;
     }
 
     void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
@@ -590,6 +594,52 @@ public:
         NEMIVER_CATCH
     }
 #endif //WITH_GLOBAL_VARIABLES
+    void on_tree_view_selection_changed_signal ()
+    {
+    }
+
+    void on_tree_view_row_expanded_signal (const Gtk::TreeModel::iterator &a_it,
+                                           const Gtk::TreeModel::Path &a_path)
+    {
+        if (a_it) {}
+        if (a_path.size ()) {}
+    }
+
+    void on_tree_view_row_activated_signal (const Gtk::TreeModel::Path &a_path,
+                                            Gtk::TreeViewColumn *a_col)
+    {
+        NEMIVER_TRY
+        THROW_IF_FAIL (tree_store) ;
+        Gtk::TreeModel::iterator it = tree_store->get_iter (a_path) ;
+        UString type =
+            (Glib::ustring) it->get_value (vutil::get_variable_columns ().type) ;
+        if (type == "") {return;}
+
+        if (a_col != tree_view->get_column (2)) {return;}
+        cur_selected_row = it ;
+        show_variable_type_in_dialog () ;
+        NEMIVER_CATCH
+    }
+
+    void show_variable_type_in_dialog ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+        if (!cur_selected_row) {return;}
+        UString type =
+            (Glib::ustring) (*cur_selected_row)[vutil::get_variable_columns ().type] ;
+        UString message ;
+        message.printf (_("Variable type is: \n %s"), type.c_str ()) ;
+
+        IDebugger::VariableSafePtr variable =
+            (IDebugger::VariableSafePtr)
+                cur_selected_row->get_value (vutil::get_variable_columns ().variable);
+        THROW_IF_FAIL (variable) ;
+        //message += "\nDumped for debug: \n" ;
+        //variable->to_string (message, false) ;
+        ui_utils::display_info (message) ;
+    }
+
 };//end LocalVarInspector2::Priv
 
 LocalVarsInspector2::LocalVarsInspector2 (IDebuggerSafePtr &a_debugger,
