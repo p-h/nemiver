@@ -1,10 +1,23 @@
+2007-11-25 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-parser.h,cc,
+	  src/langs/nmv-cpp-ast.h,cc,
+	  tests/test-cpp-parser.cc: parse the following productions:
+	  logical-and-expression, logical-or-expression, conditional-expression,
+	  assignment-expression and expression. Of course, there are quite some
+	  holes in the parsing, but the bulk of it is falling in place.
+	  Updated primary-expression parsing to make it parse
+	  "(expression)".
+	  Updated postfix-expression parsing a little bit to make it parse
+	  "postfix [expression]", especially the 'expression' part.
+	  Did quite some debugging.
+
 2007-11-24 Dodji Seketeli <dodji@gnome.org>
 
 	* langs/nmv-cpp-ast.cc,h,
 	  src/langs/nmv-cpp-parser.cc,h,
 	  tests/test-cpp-parser.cc: parse equality-expression, and-expression,
 	  exclusive-or-expression and inclusive-or-expression productions.
-
 
 2007-11-22 Dodji Seketeli <dodji@gnome.org>
 

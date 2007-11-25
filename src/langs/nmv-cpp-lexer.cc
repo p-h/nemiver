@@ -1134,6 +1134,7 @@ Lexer::scan_punctuator (Token &a_token)
                 goto error;
             } else {
                 a_token.set (Token::PUNCTUATOR_COLON);
+                goto okay;
             }
             break;
         case ';':
@@ -1164,6 +1165,7 @@ Lexer::scan_punctuator (Token &a_token)
             goto error;
     }
     CONSUME_CHAR;
+okay:
     pop_recorded_ci_position ();
     return true ;
 error:

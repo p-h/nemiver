@@ -12,26 +12,29 @@ const char *prog1 = "foo * bar" ;
 const char *prog2 = "const foo * bar" ;
 const char *prog3 = "static const foo * bar" ;
 const char *prog4 = "static const unsigned int foo" ;
-const char *prog5= "(int)5";
-const char *prog5_1= "5";
-const char *prog5_2= "foo.*bar";
-const char *prog5_3= "foo->*bar";
-const char *prog5_4= "foo*bar";
-const char *prog5_5= "foo/bar";
-const char *prog5_6= "foo%bar";
-const char *prog5_7= "foo+bar-baz";
-const char *prog5_8= "foo<<bar";
-const char *prog5_9= "foo>>bar";
-const char *prog5_10= "foo<bar";
-const char *prog5_11= "foo>bar";
-const char *prog5_12= "foo>=bar";
-const char *prog5_13= "foo<=bar";
-const char *prog5_14= "1+3*5<=10-6+32-bar";
-const char *prog5_15= "foo==bar";
-const char *prog5_16= "foo<=bar";
-const char *prog5_17= "foo&bar";
-const char *prog5_18= "foo^bar";
-const char *prog5_19= "foo|bar";
+const char *prog5 = "(int)5";
+const char *prog5_1 = "5";
+const char *prog5_2 = "foo.*bar";
+const char *prog5_3 = "foo->*bar";
+const char *prog5_4 = "foo*bar";
+const char *prog5_5 = "foo/bar";
+const char *prog5_6 = "foo%bar";
+const char *prog5_7 = "foo+bar-baz";
+const char *prog5_8 = "foo<<bar";
+const char *prog5_9 = "foo>>bar";
+const char *prog5_10 = "foo<bar";
+const char *prog5_11 = "foo>bar";
+const char *prog5_12 = "foo>=bar";
+const char *prog5_13 = "foo<=bar";
+const char *prog5_14 = "(1+3)*5<=(10-6+32)-bar";
+const char *prog5_15 = "foo==bar";
+const char *prog5_16 = "foo<=bar";
+const char *prog5_17 = "foo&bar";
+const char *prog5_18 = "foo^bar";
+const char *prog5_19 = "foo|bar";
+const char *prog5_20 = "foo&&bar";
+const char *prog5_21 = "foo||bar";
+const char *prog5_22 = "(foo<bar)?coin=pouf:paf=pim";
 
 using std::cout;
 using std::endl;
@@ -53,6 +56,9 @@ using nemiver::cpp::EqExprPtr;
 using nemiver::cpp::AndExprPtr;
 using nemiver::cpp::XORExprPtr;
 using nemiver::cpp::ORExprPtr;
+using nemiver::cpp::LogAndExprPtr;
+using nemiver::cpp::LogOrExprPtr;
+using nemiver::cpp::CondExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -376,6 +382,39 @@ test_parser5 ()
         BOOST_FAIL ("failed to parse " << prog_str);
     }
     or_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str=prog5_20;
+    Parser parser20 (prog_str);
+    LogAndExprPtr log_and_expr;
+    if (!parser20.parse_log_and_expr (log_and_expr) || !log_and_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    log_and_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str=prog5_21;
+    Parser parser21 (prog_str);
+    LogOrExprPtr log_or_expr;
+    if (!parser21.parse_log_or_expr (log_or_expr) || !log_or_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    log_or_expr->to_string (str);
+    if (str != prog_str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str=prog5_22;
+    Parser parser22 (prog_str);
+    CondExprPtr cond_expr;
+    if (!parser22.parse_cond_expr (cond_expr) || !cond_expr) {
+        BOOST_FAIL ("failed to parse " << prog_str);
+    }
+    cond_expr->to_string (str);
     if (str != prog_str) {
         BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
     }

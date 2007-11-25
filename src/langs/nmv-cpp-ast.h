@@ -70,12 +70,12 @@ public:
         OPERATOR_GT /*<*/,
         OPERATOR_PLUS_EQ /*+=*/,
         OPERATOR_MINUS_EQ /*-=*/,
-        OPERATOR_MULT_EQ /**=*/,
-        OPERATOR_DIV_EQ /*/=*/,
-        OPERATOR_MOD_EQ /*%=*/,
-        OPERATOR_BIT_XOR_EQ /*^=*/,
-        OPERATOR_BIT_AND_EQ /*&=*/,
-        OPERATOR_BIT_OR_EQ /*|=*/,
+        OPERATOR_MULT_EQ /* *= */,
+        OPERATOR_DIV_EQ /* /= */,
+        OPERATOR_MOD_EQ /* %= */,
+        OPERATOR_BIT_XOR_EQ /* ^= */,
+        OPERATOR_BIT_AND_EQ /* &= */,
+        OPERATOR_BIT_OR_EQ /* |= */,
         OPERATOR_BIT_LEFT_SHIFT /*<<*/,
         OPERATOR_BIT_RIGHT_SHIFT /*<<*/,
         OPERATOR_BIT_LEFT_SHIFT_EQ /*<<=*/,
@@ -845,10 +845,11 @@ public:
 };
 typedef shared_ptr<TypedefSpecifier> TypedefSpecifierPtr;
 
-class NEMIVER_API Expr {
-    Expr (const Expr&);
-    Expr& operator= (const Expr&);
-    Expr ();
+/// the base class of all expressions
+class NEMIVER_API ExprBase {
+    ExprBase (const ExprBase&);
+    ExprBase& operator= (const ExprBase&);
+    ExprBase ();
 
 public:
     enum Kind {
@@ -871,7 +872,8 @@ public:
         LOGICAL_AND_EXPR,
         LOGICAL_OR_EXPR,
         COND_EXPR,
-        ASSIGNMENT_EXPR
+        ASSIGNMENT_EXPR,
+        ASSIGNMENT_LIST
     };
 
     enum Operator {
@@ -888,27 +890,42 @@ public:
         LEFT_SHIFT,
         RIGHT_SHIFT,
         ASSIGN,
+        MULT_EQ,
+        DIV_EQ,
+        MOD_EQ,
+        PLUS_EQ,
+        MINUS_EQ,
+        RIGHT_SHIFT_EQ,
+        LEFT_SHIFT_EQ,
+        AND_EQ,
+        XOR_EQ,
+        OR_EQ,
         EQUALS,
         NOT_EQUALS,
-        BIT_AND
+        BIT_AND,
+        LOG_AND,
+        LOG_OR
     };
 
 private:
     Kind m_kind;
 
 public:
-    Expr (Kind a_kind) :
+    ExprBase (Kind a_kind) :
         m_kind (a_kind)
     {
     }
-    virtual ~Expr () {}
+    virtual ~ExprBase () {}
     Kind get_kind () {return m_kind;}
     virtual bool to_string (string &) const=0;
     static const string& operator_to_string (Operator);
-};//end class Expr
+};//end class ExprBase
+typedef shared_ptr<ExprBase> ExprBasePtr;
+
+class Expr;
 typedef shared_ptr<Expr> ExprPtr;
 
-class NEMIVER_API PrimaryExpr : public Expr {
+class NEMIVER_API PrimaryExpr : public ExprBase {
     PrimaryExpr (const PrimaryExpr&);
     PrimaryExpr& operator= (const PrimaryExpr&);
 
@@ -924,15 +941,15 @@ public:
 private:
     Kind m_kind;
     Token m_token;
-    shared_ptr<IDExpr> m_id_expr;
-    shared_ptr<Expr> m_parenthesized;
+    IDExprPtr m_id_expr;
+    ExprBasePtr m_parenthesized;
 
 public:
     PrimaryExpr () :
-        Expr (PRIMARY_EXPRESSION), m_kind (UNDEFINED)
+        ExprBase (PRIMARY_EXPRESSION), m_kind (UNDEFINED)
     {}
     PrimaryExpr (Kind k) :
-        Expr (PRIMARY_EXPRESSION),
+        ExprBase (PRIMARY_EXPRESSION),
         m_kind (k)
     {}
     ~PrimaryExpr () {}
@@ -940,13 +957,13 @@ public:
     void set_kind (Kind kind) {m_kind=kind;}
     void set_token (Kind kind, const Token &token) {m_kind=kind, m_token=token;}
     const Token& get_token () const {return m_token;}
-    void set_id_expr (shared_ptr<IDExpr> id_expr) {m_kind=ID_EXPR, m_id_expr=id_expr;}
-    const shared_ptr<IDExpr> get_id_expr () const {return m_id_expr;}
-    void set_parenthesized (shared_ptr<Expr> expr)
+    void set_id_expr (IDExprPtr id_expr) {m_kind=ID_EXPR, m_id_expr=id_expr;}
+    const IDExprPtr get_id_expr () const {return m_id_expr;}
+    void set_parenthesized (ExprBasePtr expr)
     {
         m_kind=PARENTHESIZED, m_parenthesized=expr;
     }
-    const shared_ptr<Expr> get_parenthesized () const {return m_parenthesized;}
+    const ExprBasePtr get_parenthesized () const {return m_parenthesized;}
 };//end class PrimaryExpr
 typedef shared_ptr<PrimaryExpr> PrimaryExprPtr;
 
@@ -1004,7 +1021,7 @@ public:
         a_str="(";
         if (m_expr) {
             string str;
-            m_expr->to_string (str);
+            ((ExprBase*)m_expr.get ())->to_string (str);
             a_str += str;
         }
         a_str += ")";
@@ -1035,7 +1052,7 @@ public:
     }
     ~IDExpr ();
     Kind get_kind () const {return m_kind;}
-};//end class Expr
+};//end class ExprBase
 
 class NEMIVER_API UnqualifiedIDExpr : public IDExpr {
     UnqualifiedIDExpr (const UnqualifiedIDExpr&);
@@ -1313,7 +1330,7 @@ public:
         m_postfix_expr->to_string (a_str);
         string str;
         if (m_subscript_expr) {
-            m_subscript_expr->to_string (str);
+            ((ExprBase*)m_subscript_expr.get ())->to_string (str);
         }
         a_str += "[" + str + "]" ;
         return true;
@@ -1323,7 +1340,7 @@ typedef shared_ptr<ArrayPFE> ArrayPFEPtr;
 
 /// contains the result of an
 /// unary-expression production.
-class NEMIVER_API UnaryExpr : public Expr {
+class NEMIVER_API UnaryExpr : public ExprBase {
     UnaryExpr ();
     UnaryExpr (const UnaryExpr&);
     UnaryExpr& operator= (const UnaryExpr&);
@@ -1337,7 +1354,7 @@ private:
     Kind m_kind;
 public:
     UnaryExpr (Kind k) :
-        Expr (UNARY_EXPRESSION),
+        ExprBase (UNARY_EXPRESSION),
         m_kind (k)
     {}
     ~UnaryExpr () {}
@@ -1373,7 +1390,7 @@ public:
 };//end class PFEUnaryExpr
 typedef shared_ptr<PFEUnaryExpr> PFEUnaryExprPtr;
 
-class NEMIVER_API CastExpr : public Expr {
+class NEMIVER_API CastExpr : public ExprBase {
     CastExpr (const CastExpr &);
     CastExpr& operator= (const CastExpr &);
 public:
@@ -1387,11 +1404,11 @@ private:
 
 public:
     CastExpr () :
-        Expr (CAST_EXPRESSION),
+        ExprBase (CAST_EXPRESSION),
         m_kind (UNDEFINED)
     {}
     CastExpr (Kind k) :
-        Expr (CAST_EXPRESSION),
+        ExprBase (CAST_EXPRESSION),
         m_kind (k)
     {}
     ~CastExpr () {}
@@ -1466,7 +1483,7 @@ public:
 };//CStyleCastExpr
 typedef shared_ptr<CStyleCastExpr> CStyleCastExprPtr;
 
-class NEMIVER_API PMExpr : public Expr {
+class NEMIVER_API PMExpr : public ExprBase {
     PMExpr ();
     PMExpr (const PMExpr&);
     PMExpr& operator= (const PMExpr&);
@@ -1483,7 +1500,7 @@ private:
 
 public:
     PMExpr (Kind k) :
-        Expr (PM_EXPRESSION),
+        ExprBase (PM_EXPRESSION),
         m_kind (k)
     {}
     ~PMExpr () {}
@@ -1595,7 +1612,7 @@ typedef shared_ptr<ArrowStarPMExpr> ArrowStarPMExprPtr;
 
 class MultExpr;
 typedef shared_ptr<MultExpr> MultExprPtr;
-class NEMIVER_API MultExpr : public Expr {
+class NEMIVER_API MultExpr : public ExprBase {
     MultExpr (const MultExpr&);
     MultExpr& operator= (const MultExpr&);
 
@@ -1604,18 +1621,18 @@ class NEMIVER_API MultExpr : public Expr {
     PMExprPtr m_rhs;
 public:
     MultExpr () :
-        Expr (MULT_EXPR),
+        ExprBase (MULT_EXPR),
         m_op (OP_UNDEFINED)
     {}
     MultExpr (PMExprPtr a_rhs) :
-        Expr (MULT_EXPR),
+        ExprBase (MULT_EXPR),
         m_op (OP_UNDEFINED),
         m_rhs (a_rhs)
     {}
     MultExpr (MultExprPtr a_lhs,
               Operator a_op,
               PMExprPtr a_rhs) :
-        Expr (MULT_EXPR),
+        ExprBase (MULT_EXPR),
         m_op (a_op),
         m_lhs (a_lhs),
         m_rhs (a_rhs)
@@ -1643,7 +1660,7 @@ public:
 
 class AddExpr;
 typedef shared_ptr<AddExpr> AddExprPtr;
-class NEMIVER_API AddExpr : public Expr {
+class NEMIVER_API AddExpr : public ExprBase {
     AddExpr (const AddExpr&);
     AddExpr& operator= (const AddExpr&);
     AddExprPtr m_lhs;
@@ -1652,18 +1669,18 @@ class NEMIVER_API AddExpr : public Expr {
 
 public:
     AddExpr () :
-        Expr (ADD_EXPR),
+        ExprBase (ADD_EXPR),
         m_op (OP_UNDEFINED)
     {}
     AddExpr (const MultExprPtr rhs) :
-        Expr (ADD_EXPR),
+        ExprBase (ADD_EXPR),
         m_op (OP_UNDEFINED),
         m_rhs (rhs)
     {}
     AddExpr (const AddExprPtr lhs,
              Operator op,
              const MultExprPtr rhs) :
-        Expr (ADD_EXPR),
+        ExprBase (ADD_EXPR),
         m_lhs (lhs),
         m_op (op),
         m_rhs (rhs)
@@ -1693,7 +1710,7 @@ public:
 
 class ShiftExpr;
 typedef shared_ptr<ShiftExpr> ShiftExprPtr;
-class NEMIVER_API ShiftExpr : public Expr {
+class NEMIVER_API ShiftExpr : public ExprBase {
     ShiftExpr (const ShiftExpr&);
     ShiftExpr& operator= (const ShiftExpr&);
     ShiftExprPtr m_lhs;
@@ -1702,18 +1719,18 @@ class NEMIVER_API ShiftExpr : public Expr {
 
 public:
     ShiftExpr () :
-        Expr  (SHIFT_EXPR),
+        ExprBase  (SHIFT_EXPR),
         m_op (OP_UNDEFINED)
     {}
     ShiftExpr (const AddExprPtr rhs) :
-        Expr  (SHIFT_EXPR),
+        ExprBase  (SHIFT_EXPR),
         m_op (OP_UNDEFINED),
         m_rhs (rhs)
     {}
     ShiftExpr (const ShiftExprPtr lhs,
                Operator op,
                const AddExprPtr rhs) :
-        Expr  (SHIFT_EXPR),
+        ExprBase  (SHIFT_EXPR),
         m_lhs (lhs),
         m_op (op),
         m_rhs (rhs)
@@ -1743,7 +1760,7 @@ public:
 
 class RelExpr;
 typedef shared_ptr<RelExpr> RelExprPtr;
-class NEMIVER_API RelExpr : public Expr {
+class NEMIVER_API RelExpr : public ExprBase {
     RelExpr (const RelExpr&);
     RelExpr& operator= (const RelExpr&);
     RelExprPtr m_lhs;
@@ -1752,16 +1769,16 @@ class NEMIVER_API RelExpr : public Expr {
 
 public:
     RelExpr () :
-        Expr (RELATIONAL_EXPR),
+        ExprBase (RELATIONAL_EXPR),
         m_op (OP_UNDEFINED)
     {}
     RelExpr (ShiftExprPtr rhs) :
-        Expr (RELATIONAL_EXPR),
+        ExprBase (RELATIONAL_EXPR),
         m_op (OP_UNDEFINED),
         m_rhs (rhs)
     {}
     RelExpr (RelExprPtr lhs, Operator op, ShiftExprPtr rhs) :
-        Expr (RELATIONAL_EXPR),
+        ExprBase (RELATIONAL_EXPR),
         m_lhs (lhs),
         m_op (op),
         m_rhs (rhs)
@@ -1792,7 +1809,7 @@ public:
 class EqExpr;
 typedef shared_ptr<EqExpr> EqExprPtr;
 /// contains an equality-expression
-class NEMIVER_API EqExpr : public Expr {
+class NEMIVER_API EqExpr : public ExprBase {
     EqExpr (const EqExpr&);
     EqExpr& operator= (const EqExpr&);
     EqExprPtr m_lhs;
@@ -1801,16 +1818,16 @@ class NEMIVER_API EqExpr : public Expr {
 
 public:
     EqExpr () :
-        Expr (EQUALITY_EXPR),
+        ExprBase (EQUALITY_EXPR),
         m_op (OP_UNDEFINED)
     {}
     EqExpr (RelExprPtr rhs) :
-        Expr (EQUALITY_EXPR),
+        ExprBase (EQUALITY_EXPR),
         m_op (OP_UNDEFINED),
         m_rhs (rhs)
     {}
     EqExpr (EqExprPtr lhs, Operator op, RelExprPtr rhs) :
-        Expr (EQUALITY_EXPR),
+        ExprBase (EQUALITY_EXPR),
         m_lhs (lhs),
         m_op (op),
         m_rhs (rhs)
@@ -1841,7 +1858,7 @@ public:
 class AndExpr;
 typedef shared_ptr<AndExpr> AndExprPtr;
 /// contains an and-expression
-class NEMIVER_API AndExpr : public Expr {
+class NEMIVER_API AndExpr : public ExprBase {
     AndExpr (const AndExpr&);
     AndExpr& operator= (const AndExpr&);
     AndExprPtr m_lhs;
@@ -1849,15 +1866,15 @@ class NEMIVER_API AndExpr : public Expr {
 
 public:
     AndExpr () :
-        Expr (AND_EXPR)
+        ExprBase (AND_EXPR)
     {}
     AndExpr (const EqExprPtr rhs) :
-        Expr (AND_EXPR),
+        ExprBase (AND_EXPR),
         m_rhs (rhs)
     {}
     AndExpr (const AndExprPtr lhs,
              const EqExprPtr rhs) :
-        Expr (AND_EXPR),
+        ExprBase (AND_EXPR),
         m_lhs (lhs),
         m_rhs (rhs)
     {}
@@ -1884,7 +1901,7 @@ public:
 
 class XORExpr;
 typedef shared_ptr<XORExpr> XORExprPtr;
-class NEMIVER_API XORExpr : public Expr {
+class NEMIVER_API XORExpr : public ExprBase {
     XORExpr (const XORExpr&);
     XORExpr& operator= (const XORExpr&);
     XORExprPtr m_lhs;
@@ -1892,15 +1909,15 @@ class NEMIVER_API XORExpr : public Expr {
 
 public:
     XORExpr () :
-        Expr (XOR_EXPR)
+        ExprBase (XOR_EXPR)
     {}
     XORExpr (const AndExprPtr rhs) :
-        Expr (XOR_EXPR),
+        ExprBase (XOR_EXPR),
         m_rhs (rhs)
     {}
     XORExpr (const XORExprPtr lhs,
                 const AndExprPtr rhs) :
-        Expr (XOR_EXPR),
+        ExprBase (XOR_EXPR),
         m_lhs (lhs),
         m_rhs (rhs)
     {}
@@ -1928,7 +1945,7 @@ public:
 class ORExpr;
 typedef shared_ptr<ORExpr> ORExprPtr;
 /// contains an inclusive-or-expression production
-class NEMIVER_API ORExpr : public Expr {
+class NEMIVER_API ORExpr : public ExprBase {
     ORExpr (const ORExpr&);
     ORExpr& operator= (const ORExpr&);
     ORExprPtr m_lhs;
@@ -1936,14 +1953,14 @@ class NEMIVER_API ORExpr : public Expr {
 
 public:
     ORExpr ():
-        Expr (INCL_OR_EXPR)
+        ExprBase (INCL_OR_EXPR)
     {}
     ORExpr (const XORExprPtr rhs):
-        Expr (INCL_OR_EXPR),
+        ExprBase (INCL_OR_EXPR),
         m_rhs (rhs)
     {}
     ORExpr (const ORExprPtr lhs, const XORExprPtr rhs):
-        Expr (INCL_OR_EXPR),
+        ExprBase (INCL_OR_EXPR),
         m_lhs (lhs),
         m_rhs (rhs)
     {}
@@ -1967,6 +1984,279 @@ public:
         return true;
     }
 };//end class ORExpr
+
+class LogAndExpr;
+typedef shared_ptr<LogAndExpr> LogAndExprPtr;
+/// contains a logical-and-expression production
+class NEMIVER_API LogAndExpr : public ExprBase {
+    LogAndExpr (const LogAndExpr&);
+    LogAndExpr& operator= (const LogAndExpr&);
+    LogAndExprPtr m_lhs;
+    ORExprPtr m_rhs;
+
+public:
+    LogAndExpr () :
+        ExprBase (LOGICAL_AND_EXPR)
+    {}
+    LogAndExpr (const ORExprPtr rhs) :
+        ExprBase (LOGICAL_AND_EXPR),
+        m_rhs (rhs)
+    {}
+    LogAndExpr (const LogAndExprPtr lhs, const ORExprPtr rhs) :
+        ExprBase (LOGICAL_AND_EXPR),
+        m_lhs (lhs),
+        m_rhs (rhs)
+    {}
+    ~LogAndExpr () {}
+    const LogAndExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const LogAndExprPtr lhs) {m_lhs = lhs;}
+    const ORExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const ORExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += "&&";
+        }
+        if (m_rhs) {
+            a_str = str;
+            m_rhs->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end class LogAndExpr
+
+class LogOrExpr;
+typedef shared_ptr<LogOrExpr> LogOrExprPtr;
+/// contains a logical-or-expression
+class NEMIVER_API LogOrExpr : public ExprBase {
+    LogOrExpr (const LogOrExpr&);
+    LogOrExpr& operator= (const LogOrExpr&);
+    LogOrExprPtr m_lhs;
+    LogAndExprPtr m_rhs;
+
+public:
+    LogOrExpr () :
+        ExprBase (LOGICAL_OR_EXPR)
+    {}
+    LogOrExpr (const LogAndExprPtr rhs) :
+        ExprBase (LOGICAL_OR_EXPR),
+        m_rhs (rhs)
+    {}
+    LogOrExpr (const LogOrExprPtr lhs, const LogAndExprPtr rhs) :
+        ExprBase (LOGICAL_OR_EXPR),
+        m_lhs (lhs),
+        m_rhs (rhs)
+    {}
+    ~LogOrExpr () {}
+    const LogOrExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const LogOrExprPtr lhs) {m_lhs = lhs;}
+    const LogAndExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const LogAndExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_lhs) {
+            m_lhs->to_string (str);
+            str += "||";
+        }
+        if (m_rhs) {
+            a_str = str;
+            m_rhs->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end class LogOrExpr
+
+class AssignExpr;
+typedef shared_ptr<AssignExpr> AssignExprPtr;
+
+class CondExpr;
+typedef shared_ptr<CondExpr> CondExprPtr;
+/// contains a conditional-expression
+class NEMIVER_API CondExpr : public ExprBase {
+    CondExpr (const CondExprPtr &);
+    CondExpr& operator= (const CondExprPtr &);
+    LogOrExprPtr m_cond;
+    ExprBasePtr m_then_branch;
+    AssignExprPtr m_else_branch;
+
+public:
+    CondExpr ():
+        ExprBase (COND_EXPR)
+    {}
+    CondExpr (LogOrExprPtr cond):
+        ExprBase (COND_EXPR),
+        m_cond (cond)
+    {}
+    CondExpr (LogOrExprPtr cond,
+              ExprBasePtr then_branch,
+              AssignExprPtr else_branch):
+        ExprBase (COND_EXPR),
+        m_cond (cond),
+        m_then_branch (then_branch),
+        m_else_branch (else_branch)
+    {}
+    ~CondExpr () {}
+    const LogOrExprPtr get_condition () const {return m_cond;}
+    void set_condition (const LogOrExprPtr cond) {m_cond = cond;}
+    const ExprBasePtr get_then_branch () const {return m_then_branch;}
+    void set_then_branch (const ExprBasePtr tb) {m_then_branch = tb;}
+    const AssignExprPtr get_else_branch () const {return m_else_branch;}
+    void set_else_branch (const AssignExprPtr eb) {m_else_branch = eb;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_cond) {
+            m_cond->to_string (a_str);
+        }
+        if (m_then_branch) {
+            a_str += "?";
+            m_then_branch->to_string (str);
+            a_str += str;
+        }
+        if (m_else_branch) {
+            a_str += ":";
+            ((ExprBase*)m_else_branch.get ())->to_string (str);
+            a_str += str;
+        }
+        return true;
+    }
+};//end class CondExpr
+
+/// contains an assignment-expression
+class NEMIVER_API AssignExpr : public ExprBase {
+    AssignExpr ();
+    AssignExpr (const AssignExpr&);
+    AssignExpr& operator= (const AssignExpr&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        CONDITIONAL,
+        FULL,
+        THROW_EXPRESSION
+    };
+
+private:
+    Kind m_kind;
+
+public:
+    AssignExpr (Kind kind) :
+        ExprBase (ASSIGNMENT_EXPR),
+        m_kind (kind)
+    {}
+    ~AssignExpr () {}
+};//end class AssignExpr
+
+class NEMIVER_API CondAssignExpr : public AssignExpr {
+    CondAssignExpr (const CondAssignExpr &);
+    CondAssignExpr& operator= (const CondAssignExpr &);
+    CondExprPtr m_cond;
+
+public:
+    CondAssignExpr () :
+        AssignExpr (AssignExpr::CONDITIONAL)
+    {}
+    CondAssignExpr (const CondExprPtr cond) :
+        AssignExpr (AssignExpr::CONDITIONAL),
+        m_cond (cond)
+    {}
+    ~CondAssignExpr () {}
+    const CondExprPtr get_condition () const {return m_cond;}
+    void set_condition (const CondExprPtr cond) {m_cond = cond;}
+    bool to_string (string &a_str) const
+    {
+        if (m_cond) {
+            m_cond->to_string (a_str);
+        } else {
+            return false;
+        }
+        return true;
+    }
+};//end class CondAssignExpr
+typedef shared_ptr<CondAssignExpr> CondAssignExprPtr;
+
+class NEMIVER_API FullAssignExpr : public AssignExpr {
+    FullAssignExpr (const FullAssignExpr&);
+    FullAssignExpr& operator= (const FullAssignExpr&);
+    LogOrExprPtr m_lhs;
+    Operator m_op;
+    AssignExprPtr m_rhs;
+
+public:
+    FullAssignExpr () :
+        AssignExpr (AssignExpr::FULL)
+    {}
+    FullAssignExpr (const LogOrExprPtr lhs,
+                    Operator op,
+                    const AssignExprPtr rhs) :
+        AssignExpr (AssignExpr::FULL),
+        m_lhs (lhs),
+        m_op (op),
+        m_rhs (rhs)
+    {}
+    ~FullAssignExpr () {}
+    const LogOrExprPtr get_lhs () const {return m_lhs;}
+    void set_lhs (const LogOrExprPtr lhs) {m_lhs = lhs;}
+    Operator get_operator () const {return m_op;}
+    void set_operator (Operator op) {m_op = op;}
+    AssignExprPtr get_rhs () const {return m_rhs;}
+    void set_rhs (const AssignExprPtr rhs) {m_rhs = rhs;}
+    bool to_string (string &a_str) const
+    {
+        string str, str2;
+        if (m_lhs) {
+            m_lhs->to_string (str2);
+            str += str2;
+        }
+        if (m_rhs) {
+            str += operator_to_string (m_op);
+            m_rhs->to_string (str2);
+            str += str2;
+        }
+        a_str = str;
+        return true;
+    }
+};
+
+
+class NEMIVER_API Expr : public ExprBase {
+    Expr (const Expr&);
+    Expr& operator= (const Expr&);
+    list<AssignExprPtr> m_assignments;
+
+public:
+    Expr () :
+        ExprBase (ASSIGNMENT_LIST)
+    {}
+    Expr (const list<AssignExprPtr> &a) :
+        ExprBase (ASSIGNMENT_LIST),
+        m_assignments (a)
+    {}
+    ~Expr () {}
+    const list<AssignExprPtr>& get_assignements () const {return m_assignments;}
+    void set_assignments (const list<AssignExprPtr> &l) {m_assignments = l;}
+    void append_assignment (const AssignExprPtr a) {m_assignments.push_back (a);}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        list<AssignExprPtr>::const_iterator it;
+        for (it = m_assignments.begin (); it != m_assignments.end (); ++it) {
+            if (!*it) {continue;}
+            (*it)->to_string (str);
+            if (it == m_assignments.begin ()) {
+                a_str = str;
+            } else {
+                a_str += ", " + str;
+            }
+        }
+        return true;
+    }
+};
 
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored

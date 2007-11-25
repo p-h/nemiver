@@ -217,7 +217,7 @@ Token::is_operator () const
 
 
 const string&
-Expr::operator_to_string (Operator a_op)
+ExprBase::operator_to_string (Operator a_op)
 {
     static const string OP_UNDEFINED ("<undefined>");
     static const string OP_MULT ("*");
@@ -235,8 +235,20 @@ Expr::operator_to_string (Operator a_op)
     static const string OP_EQUALS ("==");
     static const string OP_NOT_EQUALS ("!=");
     static const string OP_BIT_AND ("&");
+    static const string OP_LOG_AND ("&&");
+    static const string OP_LOG_OR ("||");
+    static const string OP_MULT_EQ ("*=");
+    static const string OP_DIV_EQ ("/=");
+    static const string OP_MOD_EQ ("%=");
+    static const string OP_PLUS_EQ ("+=");
+    static const string OP_MINUS_EQ ("-=");
+    static const string OP_RIGHT_SHIFT_EQ (">>=");
+    static const string OP_LEFT_SHIFT_EQ ("<<=");
+    static const string OP_AND_EQ ("&=");
+    static const string OP_XOR_EQ ("^=");
+    static const string OP_OR_EQ ("|=");
     switch (a_op) {
-        case Expr::OP_UNDEFINED:
+        case ExprBase::OP_UNDEFINED:
             return OP_UNDEFINED;
         case MULT:
             return OP_MULT;
@@ -268,6 +280,30 @@ Expr::operator_to_string (Operator a_op)
             return OP_ASSIGN;
         case BIT_AND:
             return OP_BIT_AND;
+        case LOG_AND:
+            return OP_LOG_AND;
+        case LOG_OR:
+            return OP_LOG_OR;
+        case MULT_EQ:
+            return OP_MULT_EQ;
+        case DIV_EQ:
+            return OP_DIV_EQ;
+        case MOD_EQ:
+            return OP_MOD_EQ;
+        case PLUS_EQ:
+            return OP_PLUS_EQ;
+        case MINUS_EQ:
+            return OP_MINUS_EQ;
+        case RIGHT_SHIFT_EQ:
+            return OP_RIGHT_SHIFT_EQ;
+        case LEFT_SHIFT_EQ:
+            return OP_LEFT_SHIFT_EQ;
+        case AND_EQ:
+            return OP_AND_EQ;
+        case XOR_EQ:
+            return OP_XOR_EQ;
+        case OR_EQ:
+            return OP_OR_EQ;
     }
     return OP_UNDEFINED;
 }

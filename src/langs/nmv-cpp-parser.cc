@@ -88,8 +88,8 @@ Parser::parse_primary_expr (PrimaryExprPtr &a_expr)
             {
                 //consume the open parenthesis
                 LEXER.consume_next_token ();
-                PrimaryExprPtr expr;
-                if (!parse_primary_expr (expr)) {goto error;}
+                ExprPtr expr;
+                if (!parse_expr (expr)) {goto error;}
                 result.reset (new ParenthesisPrimaryExpr (expr));
                 LEXER.consume_next_token (token);
                 if (token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_CLOSE) {
@@ -166,16 +166,15 @@ Parser::parse_postfix_expr (PostfixExprPtr &a_result)
             && token.get_kind () == Token::PUNCTUATOR_BRACKET_OPEN) {
             LEXER.consume_next_token ();
             //try to parse postfix-expression [ expression ]
-            //we don't have parse_expression() function ready yet, so try
-            //to parse primary-expression instead.
-            if (!parse_primary_expr (primary_expr)) {
+            ExprPtr expr;
+            if (!parse_expr (expr)) {
                 goto error;
             }
             if (!LEXER.consume_next_token (token)
                 || token.get_kind () != Token::PUNCTUATOR_BRACKET_CLOSE) {
                 goto error;
             }
-            result.reset (new ArrayPFE (pfe, primary_expr));
+            result.reset (new ArrayPFE (pfe, expr));
             goto okay;
         } else {
             //TODO: handle other types of postfix-expression
@@ -206,27 +205,33 @@ Parser::parse_cast_expr (CastExprPtr &a_result)
     bool status=false;
     CastExprPtr result;
     Token token;
+    UnaryExprPtr unary_expr;
     unsigned mark=LEXER.get_token_stream_mark ();
 
     if (!LEXER.peek_next_token (token)) {goto error;}
     if (token.get_kind () == Token::PUNCTUATOR_PARENTHESIS_OPEN) {
         if (!LEXER.consume_next_token ()) {goto error;}
         TypeIDPtr type_id;
-        if (!parse_type_id (type_id)) {goto error;}
-        if (!LEXER.consume_next_token (token)
-            || token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_CLOSE) {
-            goto error;
+        if (parse_type_id (type_id)) {
+            if (LEXER.consume_next_token (token)
+                && token.get_kind () == Token::PUNCTUATOR_PARENTHESIS_CLOSE) {
+                CastExprPtr right_expr;
+                if (parse_cast_expr (right_expr)) {
+                    result.reset (new CStyleCastExpr (type_id, right_expr));
+                    goto okay;
+                } else {
+                    LEXER.rewind_to_mark (mark);
+                }
+            } else {
+                LEXER.rewind_to_mark (mark);
+            }
+        } else {
+            LEXER.rewind_to_mark (mark);
         }
-        CastExprPtr right_expr;
-        if (!parse_cast_expr (right_expr)) {goto error;}
-        result.reset (new CStyleCastExpr (type_id, right_expr));
+    }
+    if (parse_unary_expr (unary_expr)) {
+        result.reset (new UnaryCastExpr (unary_expr));
         goto okay;
-    } else  {
-        UnaryExprPtr unary_expr;
-        if (parse_unary_expr (unary_expr)) {
-            result.reset (new UnaryCastExpr (unary_expr));
-            goto okay;
-        }
     }
 
 error:
@@ -302,7 +307,7 @@ Parser::parse_mult_expr (MultExprPtr &a_result)
     bool status=false;
     MultExprPtr lhs, result;
     PMExprPtr pm_expr, rhs;
-    Expr::Operator op=Expr::OP_UNDEFINED;
+    ExprBase::Operator op=ExprBase::OP_UNDEFINED;
     Token token;
     unsigned mark=LEXER.get_token_stream_mark ();
 
@@ -315,11 +320,11 @@ Parser::parse_mult_expr (MultExprPtr &a_result)
             goto okay;
         }
         if (token.get_kind () == Token::OPERATOR_MULT) {
-            op = Expr::MULT;
+            op = ExprBase::MULT;
         } else if (token.get_kind () == Token::OPERATOR_DIV) {
-            op = Expr::DIV;
+            op = ExprBase::DIV;
         } else if (token.get_kind () == Token::OPERATOR_MOD) {
-            op = Expr::MOD;
+            op = ExprBase::MOD;
         } else {
             result = lhs;
             goto okay;
@@ -352,7 +357,7 @@ Parser::parse_add_expr (AddExprPtr &a_result)
     bool status=false;
     AddExprPtr lhs, result;
     MultExprPtr mult_expr, rhs;
-    Expr::Operator op=Expr::OP_UNDEFINED;
+    ExprBase::Operator op=ExprBase::OP_UNDEFINED;
     Token token;
     unsigned mark=LEXER.get_token_stream_mark ();
 
@@ -365,9 +370,9 @@ Parser::parse_add_expr (AddExprPtr &a_result)
             goto okay;
         }
         if (token.get_kind () == Token::OPERATOR_PLUS) {
-            op = Expr::PLUS;
+            op = ExprBase::PLUS;
         } else if (token.get_kind () == Token::OPERATOR_MINUS) {
-            op = Expr::MINUS;
+            op = ExprBase::MINUS;
         } else {
             result = lhs;
             goto okay;
@@ -400,7 +405,7 @@ Parser::parse_shift_expr (ShiftExprPtr &a_result)
     bool status=false;
     ShiftExprPtr lhs, result;
     AddExprPtr add_expr, rhs;
-    Expr::Operator op=Expr::OP_UNDEFINED;
+    ExprBase::Operator op=ExprBase::OP_UNDEFINED;
     Token token;
     unsigned mark=LEXER.get_token_stream_mark ();
 
@@ -413,9 +418,9 @@ Parser::parse_shift_expr (ShiftExprPtr &a_result)
             goto okay;
         }
         if (token.get_kind () == Token::OPERATOR_BIT_LEFT_SHIFT) {
-            op = Expr::LEFT_SHIFT;
+            op = ExprBase::LEFT_SHIFT;
         } else if (token.get_kind () == Token::OPERATOR_BIT_RIGHT_SHIFT) {
-            op = Expr::RIGHT_SHIFT;
+            op = ExprBase::RIGHT_SHIFT;
         } else {
             result = lhs;
             goto okay;
@@ -450,7 +455,7 @@ Parser::parse_rel_expr (RelExprPtr &a_result)
     bool status=false;
     RelExprPtr lhs, result;
     ShiftExprPtr shift_expr, rhs;
-    Expr::Operator op=Expr::OP_UNDEFINED;
+    ExprBase::Operator op=ExprBase::OP_UNDEFINED;
     Token token;
     unsigned mark=LEXER.get_token_stream_mark ();
 
@@ -463,13 +468,13 @@ Parser::parse_rel_expr (RelExprPtr &a_result)
             goto okay;
         }
         if (token.get_kind () == Token::OPERATOR_LT) {
-            op = Expr::LT;
+            op = ExprBase::LT;
         } else if (token.get_kind () == Token::OPERATOR_GT) {
-            op = Expr::GT;
+            op = ExprBase::GT;
         } else if (token.get_kind () == Token::OPERATOR_LT_EQ) {
-            op = Expr::LT_OR_EQ;
+            op = ExprBase::LT_OR_EQ;
         } else if (token.get_kind () == Token::OPERATOR_GT_EQ) {
-            op = Expr::GT_OR_EQ;
+            op = ExprBase::GT_OR_EQ;
         } else {
             result = lhs;
             goto okay;
@@ -502,7 +507,7 @@ Parser::parse_eq_expr (EqExprPtr &a_result)
     bool status=false;
     EqExprPtr lhs, result;
     RelExprPtr rel_expr, rhs;
-    Expr::Operator op=Expr::OP_UNDEFINED;
+    ExprBase::Operator op=ExprBase::OP_UNDEFINED;
     Token token;
     unsigned mark=LEXER.get_token_stream_mark ();
 
@@ -515,9 +520,9 @@ Parser::parse_eq_expr (EqExprPtr &a_result)
             goto okay;
         }
         if (token.get_kind () == Token::OPERATOR_EQUALS) {
-            op = Expr::EQUALS;
+            op = ExprBase::EQUALS;
         } else if (token.get_kind () == Token::OPERATOR_NOT_EQUAL) {
-            op = Expr::NOT_EQUALS;
+            op = ExprBase::NOT_EQUALS;
         } else {
             result = lhs;
             goto okay;
@@ -651,6 +656,261 @@ Parser::parse_or_expr (ORExprPtr &a_result)
         LEXER.consume_next_token ();//consume the operator token
         if (!parse_xor_expr (rhs)) {goto error;}
         lhs.reset (new ORExpr (lhs, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse a logical-and-expression production
+///
+/// logical-and-expression:
+///            inclusive-or-expression
+///            logical-and-expression && inclusive-or-expression
+bool
+Parser::parse_log_and_expr (LogAndExprPtr &a_result)
+{
+    bool status=false;
+    LogAndExprPtr lhs, result;
+    ORExprPtr or_expr, rhs;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_or_expr (or_expr)) {goto error;}
+    lhs.reset (new LogAndExpr (or_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () != Token::OPERATOR_AND) {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_or_expr (rhs)) {goto error;}
+        lhs.reset (new LogAndExpr (lhs, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse a logical-or-expression
+///
+/// logical-or-expression:
+///            logical-and-expression
+///            logical-or-expression || logical-and-expression
+bool
+Parser::parse_log_or_expr (LogOrExprPtr &a_result)
+{
+    bool status=false;
+    LogOrExprPtr lhs, result;
+    LogAndExprPtr log_and_expr, rhs;
+    Token token;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_log_and_expr (log_and_expr)) {goto error;}
+    lhs.reset (new LogOrExpr (log_and_expr));
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {
+            result = lhs;
+            goto okay;
+        }
+        if (token.get_kind () != Token::OPERATOR_OR) {
+            result = lhs;
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the operator token
+        if (!parse_log_and_expr (rhs)) {goto error;}
+        lhs.reset (new LogOrExpr (lhs, rhs));
+    }
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse a conditional-expression
+///
+/// conditional-expression:
+///            logical-or-expression
+///            logical-or-expression ? expression : assignment-expression
+///
+bool
+Parser::parse_cond_expr (CondExprPtr &a_result)
+{
+    bool status=false;
+    Token token;
+    CondExprPtr result;
+    LogOrExprPtr cond;
+    ExprPtr then_branch;
+    AssignExprPtr else_branch;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_log_or_expr (cond)) {goto error;}
+    if (!LEXER.peek_next_token (token)
+        || token.get_kind () != Token::PUNCTUATOR_QUESTION_MARK) {
+        result.reset (new CondExpr (cond));
+        goto okay;
+    }
+    LEXER.consume_next_token ();//consume the '?'
+    if (!parse_expr (then_branch)) {goto error;}
+    if (!LEXER.consume_next_token (token)
+        || token.get_kind () != Token::PUNCTUATOR_COLON) {
+        goto error;
+    }
+    if (!parse_assign_expr (else_branch) || !else_branch) {goto error;}
+    result.reset (new CondExpr (cond, then_branch, else_branch));
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse an assignment-expression production
+///
+/// assignment-expression:
+///           conditional-expression
+///           logical-or-expression assignment-operator assignment-expression
+///           throw-expression
+/// TODO: parse the throw-expression form
+bool
+Parser::parse_assign_expr (AssignExprPtr &a_result)
+{
+    bool status=false;
+    Token token;
+    AssignExprPtr result, rhs;
+    CondExprPtr cond_expr;
+    LogOrExprPtr lhs;
+    ExprBase::Operator op=ExprBase::OP_UNDEFINED;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    //TODO: parse throw-expression here.
+    if (parse_log_or_expr (lhs) && lhs) {
+        if (LEXER.consume_next_token (token)) {
+            switch (token.get_kind ()) {
+                case Token::OPERATOR_ASSIGN:
+                    op = ExprBase::ASSIGN;
+                    break;
+                case Token::OPERATOR_MULT_EQ:
+                    op = ExprBase::MULT_EQ;
+                    break;
+                case Token::OPERATOR_DIV_EQ:
+                    op = ExprBase::DIV_EQ;
+                    break;
+                case Token::OPERATOR_MOD_EQ:
+                    op = ExprBase::MOD_EQ;
+                    break;
+                case Token::OPERATOR_PLUS_EQ:
+                    op = ExprBase::PLUS_EQ;
+                    break;
+                case Token::OPERATOR_MINUS_EQ:
+                    op = ExprBase::MINUS_EQ;
+                    break;
+                case Token::OPERATOR_BIT_RIGHT_SHIFT:
+                    op = ExprBase::RIGHT_SHIFT_EQ;
+                    break;
+                case Token::OPERATOR_BIT_LEFT_SHIFT:
+                    op = ExprBase::LEFT_SHIFT_EQ;
+                    break;
+                case Token::OPERATOR_BIT_AND_EQ:
+                    op = ExprBase::AND_EQ;
+                    break;
+                case Token::OPERATOR_BIT_XOR_EQ:
+                    op = ExprBase::XOR_EQ;
+                    break;
+                case Token::OPERATOR_BIT_OR_EQ:
+                    op = ExprBase::OR_EQ;
+                    break;
+                default:
+                    LEXER.rewind_to_mark (mark);
+                    goto condexpr;
+                    break;
+            }
+            if (parse_assign_expr (rhs)) {
+                result.reset (new FullAssignExpr (lhs, op, rhs));
+                goto okay;
+            } else {
+                LEXER.rewind_to_mark (mark);
+            }
+        } else {
+            LEXER.rewind_to_mark (mark);
+        }
+    }
+condexpr:
+    if (parse_cond_expr (cond_expr) && cond_expr) {
+        result.reset (new CondAssignExpr (cond_expr));
+        goto okay;
+    }
+    goto error;
+
+okay:
+    status=true;
+    a_result=result;
+    goto out;
+error:
+    status=false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
+}
+
+/// parse an expression production.
+///
+/// expression:
+///            assignment-expression
+///            expression , assignment-expression
+bool
+Parser::parse_expr (ExprPtr &a_result)
+{
+    bool status=false;
+    Token token;
+    list<AssignExprPtr> assignments;
+    ExprPtr result;
+    AssignExprPtr assign_expr;
+    unsigned mark=LEXER.get_token_stream_mark ();
+
+    if (!parse_assign_expr (assign_expr)) {goto error;}
+    assignments.push_back (assign_expr);
+
+    while (true) {
+        if (!LEXER.peek_next_token (token)
+            || token.get_kind () != Token::OPERATOR_SEQ_EVAL) {
+            result.reset (new Expr (assignments));
+            goto okay;
+        }
+        LEXER.consume_next_token ();//consume the ','
+        if (!parse_assign_expr (assign_expr)) {goto error;}
+        assignments.push_back (assign_expr);
     }
 
 okay:
