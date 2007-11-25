@@ -924,6 +924,22 @@ out:
     return status;
 }
 
+/// parse a constant-expression
+///
+///constant-expression:
+///           conditional-expression
+bool
+Parser::parse_const_expr (ConstExprPtr &a_result)
+{
+    CondExprPtr cond_expr;
+
+    if (parse_cond_expr (cond_expr)) {
+        a_result.reset (new ConstExpr (cond_expr));
+        return true;
+    }
+    return false;
+}
+
 /// parses a unary-expression production.
 ///
 /// unary-expression:

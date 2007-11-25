@@ -1,5 +1,12 @@
 2007-11-25 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-ast.h, src/langs/nmv-cpp-parser.h,cc:
+	  parse constant-expression
+	* tests/test-cpp-parser.cc: added a test case to parse expressions using
+	  the Parser::parse_expr() entry point.
+
+2007-11-25 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-parser.h,cc,
 	  src/langs/nmv-cpp-ast.h,cc,
 	  tests/test-cpp-parser.cc: parse the following productions:

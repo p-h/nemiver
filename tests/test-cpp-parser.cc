@@ -36,6 +36,34 @@ const char *prog5_20 = "foo&&bar";
 const char *prog5_21 = "foo||bar";
 const char *prog5_22 = "(foo<bar)?coin=pouf:paf=pim";
 
+const char *expressions[] =
+{
+    "(int)5",
+    "5",
+    "foo.*bar",
+    "foo->*bar",
+    "foo*bar",
+    "foo/bar",
+    "foo%bar",
+    "foo+bar-baz",
+    "foo<<bar",
+    "foo>>bar",
+    "foo<bar",
+    "foo>bar",
+    "foo>=bar",
+    "foo<=bar",
+    "(1+3)*5<=(10-6+32)-bar",
+    "foo==bar",
+    "foo<=bar",
+    "foo&bar",
+    "foo^bar",
+    "foo|bar",
+    "foo&&bar",
+    "foo||bar",
+    "(foo<bar)?coin=pouf:paf=pim",
+    0
+};
+
 using std::cout;
 using std::endl;
 using nemiver::cpp::Parser;
@@ -59,6 +87,7 @@ using nemiver::cpp::ORExprPtr;
 using nemiver::cpp::LogAndExprPtr;
 using nemiver::cpp::LogOrExprPtr;
 using nemiver::cpp::CondExprPtr;
+using nemiver::cpp::ExprPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -420,6 +449,29 @@ test_parser5 ()
     }
 }
 
+void
+test_parser6 ()
+{
+    string str;
+    for (int i = 0; expressions[i]; ++i) {
+        Parser parser (expressions[i]);
+        ExprPtr expr;
+        if (!parser.parse_expr (expr) || !expr) {
+            BOOST_FAIL ("failed to parse expr No " << i << ": " << expressions[i]);
+        }
+        expr->to_string (str);
+        if (str != expressions[i]) {
+            BOOST_FAIL ("parsed expr No "
+                        << i
+                        << ", '"
+                        << expressions[i]
+                        << "' into '"
+                        << str
+                        << "'");
+        }
+    }
+}
+
 using boost::unit_test::test_suite ;
 
 test_suite*
@@ -438,6 +490,7 @@ init_unit_test_suite (int argc, char** argv)
     suite->add (BOOST_TEST_CASE (&test_parser3)) ;
     suite->add (BOOST_TEST_CASE (&test_parser4)) ;
     suite->add (BOOST_TEST_CASE (&test_parser5)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser6)) ;
     return suite;
 
     NEMIVER_CATCH_NOX

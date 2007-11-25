@@ -2223,7 +2223,7 @@ public:
     }
 };
 
-
+/// contains an expression production
 class NEMIVER_API Expr : public ExprBase {
     Expr (const Expr&);
     Expr& operator= (const Expr&);
@@ -2257,6 +2257,34 @@ public:
         return true;
     }
 };
+
+/// contains a constant-expression production
+class NEMIVER_API ConstExpr : public ExprBase {
+    ConstExpr (const ConstExpr &);
+    ConstExpr& operator= (const ConstExpr &);
+    CondExprPtr m_cond;
+
+public:
+    ConstExpr () :
+        ExprBase (COND_EXPR)
+    {}
+    ConstExpr (const CondExprPtr cond) :
+        ExprBase (COND_EXPR),
+        m_cond (cond)
+    {}
+    ~ConstExpr () {}
+    const CondExprPtr get_condition () const {return m_cond;}
+    void set_condition (const CondExprPtr cond) {m_cond = cond;}
+    bool to_string (string &a_str) const
+    {
+        if (m_cond) {
+            m_cond->to_string (a_str);
+            return true;
+        }
+        return false;
+    }
+};//end class ConstExpr
+typedef shared_ptr<ConstExpr> ConstExprPtr;
 
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored
