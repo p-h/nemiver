@@ -77,6 +77,8 @@
             <separator/>
             <menuitem action="InspectVariableMenuItemAction"
                 name="InspectVariableMenuItem"/>
+            <menuitem action="RefreshLocalVariablesMenuItemAction"
+                name="RefreshLocalVariablesMenuItemAction"/>
         </menu>
     </placeholder>
   </menubar>

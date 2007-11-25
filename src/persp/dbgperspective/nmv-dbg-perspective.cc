@@ -190,6 +190,7 @@ private:
     void on_continue_action () ;
     void on_continue_until_action () ;
     void on_set_breakpoint_action () ;
+    void on_refresh_locals_action () ;
     void on_toggle_breakpoint_action () ;
     void on_toggle_breakpoint_enabled_action () ;
     void on_inspect_variable_action () ;
@@ -449,6 +450,7 @@ public:
     void toggle_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
     void set_breakpoint_dialog ();
+    void refresh_locals () ;
 
     void inspect_variable () ;
     void inspect_variable (const UString &a_variable_name) ;
@@ -1115,6 +1117,15 @@ DBGPerspective::on_set_breakpoint_action ()
 }
 
 void
+DBGPerspective::on_refresh_locals_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    NEMIVER_TRY
+    refresh_locals () ;
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::on_toggle_breakpoint_enabled_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -1470,11 +1481,14 @@ DBGPerspective::on_insertion_changed_signal
 
     UString path;
     a_editor->get_path (path);
-    update_toggle_menu_text(path, iter.get_line () + 1); // add one since iter is 0-based, file is 1-based
+    // add one since iter is 0-based, file is 1-based
+    update_toggle_menu_text(path, iter.get_line () + 1);
     NEMIVER_CATCH
 }
 
-void DBGPerspective::update_toggle_menu_text (const UString& a_current_file, int a_current_line)
+void
+DBGPerspective::update_toggle_menu_text (const UString& a_current_file,
+                                         int a_current_line)
 {
     bool enabled;
     int brk_num;
@@ -2304,7 +2318,8 @@ DBGPerspective::init_actions ()
         {
             "ToggleBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            "Toggle _Breakpoint", // don't translate, name will be overwritten based on context
+            //don't translate, name will be overwritten based on context
+            "Toggle _Breakpoint",
             _("Set/Unset a breakpoint at the current cursor location"),
             sigc::mem_fun (*this, &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
@@ -2314,7 +2329,8 @@ DBGPerspective::init_actions ()
         {
             "ToggleEnableBreakPointMenuItemAction",
             nemiver::STOCK_SET_BREAKPOINT,
-            "Enable/Disable Breakpoint", // don't translate, name will be overwritten based on context
+            //don't translate, name will be overwritten based on context
+            "Enable/Disable Breakpoint",
             _("Enable or disable the breakpoint that is set at the current cursor location"),
             sigc::mem_fun
                         (*this,
@@ -2341,6 +2357,16 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_inspect_variable_action),
             ActionEntry::DEFAULT,
             "F12"
+        },
+
+        {
+            "RefreshLocalVariablesMenuItemAction",
+            nil_stock_id,
+            _("Refresh locals"),
+            _("Refresh the list of variables local to the current function"),
+            sigc::mem_fun (*this, &DBGPerspective::on_refresh_locals_action),
+            ActionEntry::DEFAULT,
+            ""
         }
     };
 
@@ -3195,6 +3221,14 @@ DBGPerspective::get_contextual_menu ()
              "/ContextualMenu",
              "ReloadSourceMenutItem",
              "ReloadSourceMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false) ;
+
+        workbench ().get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "RefreshLocalVariablesMenuItem",
+             "RefreshLocalVariablesMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false) ;
 
@@ -4824,6 +4858,12 @@ DBGPerspective::set_breakpoint_dialog ()
         THROW_IF_FAIL (function != "") ;
         debugger ()->set_breakpoint (function);
     }
+}
+
+void
+DBGPerspective::refresh_locals ()
+{
+    get_local_vars_inspector ().show_local_variables_of_current_function () ;
 }
 
 void

@@ -1,5 +1,24 @@
 2007-11-25 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  when gdb enters a function:
+	  void foo ()
+	  {
+	      int i=0;
+	      if (!i) {
+		  string str;
+		  /*blah ..*/
+	      }
+	  }
+	  When we query gdb for the list of local variables of the function, it
+	  only reports i. Not str. str becomes visible only when we step into
+	  the scope of the "if" block, and we have no easy way to detect that
+	  we entered the scope.
+	  So I have added a "refresh locals" menu in the debugger to allow
+	  nemiver to query gdb on demand to refresh the list of local variables.
+
+2007-11-25 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-var-walker.cc:
 	 Make VarWalker extend sigc::trackable to fix a random crash.
 	 (VarWalker::get_type_of_all_members): when a node has a name starting
