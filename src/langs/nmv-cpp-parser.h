@@ -81,6 +81,7 @@ public:
     bool parse_decl_specifier (DeclSpecifierPtr &);
     bool parse_decl_specifier_seq (list<DeclSpecifierPtr> &);
     bool parse_declarator_id (IDDeclaratorPtr &);
+    bool parse_array_declarator (ArrayDeclaratorPtr &);
     bool parse_direct_declarator (DeclaratorPtr &);
     bool parse_cv_qualifier (CVQualifierPtr &);
     bool parse_cv_qualifier_seq (list<CVQualifierPtr> &);

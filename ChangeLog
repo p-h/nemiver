@@ -1,5 +1,11 @@
 2007-11-25 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-ast.h,
+	  src/langs/nmv-cpp-parser.cc,
+	  tests/test-cpp-parser.cc: support basic parsing of array declarations.
+
+2007-11-25 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.h, src/langs/nmv-cpp-parser.h,cc:
 	  parse constant-expression
 	* tests/test-cpp-parser.cc: added a test case to parse expressions using

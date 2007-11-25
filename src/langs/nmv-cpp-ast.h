@@ -2342,7 +2342,7 @@ public:
         if (get_ptr_operator ()) {a_str = "*";}
         string str;
         m_id->to_string (str);
-        a_str += " " + str;
+        a_str += str;
         return true;
     }
 };//class IDDeclarator
@@ -2374,16 +2374,42 @@ class NEMIVER_API ArrayDeclarator : public Declarator {
     ArrayDeclarator& operator= (const ArrayDeclarator&);
 
     DeclaratorPtr m_declarator;
-    //TODO: add constant expression here.
+    ConstExprPtr m_const_expr;
 
 public:
     ArrayDeclarator () :
         Declarator (Declarator::ARRAY_DECLARATOR)
     {}
+    ArrayDeclarator (const DeclaratorPtr decl) :
+        Declarator (Declarator::ARRAY_DECLARATOR),
+        m_declarator (decl)
+    {}
+    ArrayDeclarator (const DeclaratorPtr decl,
+                     const ConstExprPtr const_expr) :
+        Declarator (Declarator::ARRAY_DECLARATOR),
+        m_declarator (decl),
+        m_const_expr (const_expr)
+    {}
     ~ArrayDeclarator () {}
     void set_declarator (const DeclaratorPtr a_decl) {m_declarator=a_decl;}
     const DeclaratorPtr get_declarator () const {return m_declarator;}
-    bool to_string (string &a_str) {a_str="<ArrayDecl not supported>";return true;}
+    const ConstExprPtr get_constant_expression () const {return m_const_expr;}
+    void set_constant_expression (const ConstExprPtr expr) {m_const_expr = expr;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_declarator) {
+            m_declarator->to_string (str);
+            a_str = str;
+        }
+        a_str += '[';
+        if (m_const_expr) {
+            m_const_expr->to_string (str);
+            a_str += str;
+        }
+        a_str += ']';
+        return true;
+    }
 };//class ArrayDeclarator
 typedef shared_ptr<ArrayDeclarator> ArrayDeclaratorPtr;
 

@@ -9,6 +9,7 @@
 
 const char *prog0 = "foo bar" ;
 const char *prog1 = "foo * bar" ;
+const char *prog1_1 = "foo bar[10]" ;
 const char *prog2 = "const foo * bar" ;
 const char *prog3 = "static const foo * bar" ;
 const char *prog4 = "static const unsigned int foo" ;
@@ -128,8 +129,8 @@ test_parser0 ()
 void
 test_parser1 ()
 {
-    Parser parser (prog1);
-    string str, prog_str;
+    string str, prog_str=prog1;
+    Parser parser (prog_str);
     SimpleDeclarationPtr simple_decl;
 
     if (!parser.parse_simple_declaration (simple_decl)) {
@@ -140,8 +141,18 @@ test_parser1 ()
         return;
     }
     simple_decl->to_string (str);
-    if (prog1 != str) {
-        BOOST_FAIL ("parsed '" <<prog1 << "' into '" << str << "'");
+    if (prog_str != str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
+    }
+
+    prog_str = prog1_1;
+    Parser parser1 (prog_str);
+    if (!parser1.parse_simple_declaration (simple_decl)) {
+        BOOST_FAIL ("parsing failed");
+    }
+    simple_decl->to_string (str);
+    if (prog_str != str) {
+        BOOST_FAIL ("parsed '" <<prog_str << "' into '" << str << "'");
     }
 }
 

@@ -1762,12 +1762,9 @@ error:
     LEXER.rewind_to_mark (mark);
     status = false;
     goto out;
-
 okay:
     a_result = result;
     status = true;
-    
-
 out:
     return status;
 }
@@ -1789,15 +1786,39 @@ Parser::parse_direct_declarator (DeclaratorPtr &a_result)
     bool status=false;
     DeclaratorPtr result;
     IDDeclaratorPtr id;
+    Token token;
     unsigned mark = LEXER.get_token_stream_mark ();
 
-    if (!parse_declarator_id (id) || !id) {goto error;}
+    if (parse_declarator_id (id)) {
+        if (LEXER.peek_next_token (token)
+            && token.get_kind () == Token::PUNCTUATOR_BRACKET_OPEN) {
+            LEXER.consume_next_token ();
+            if (LEXER.peek_next_token (token)
+                && token.get_kind () == Token::PUNCTUATOR_BRACKET_CLOSE) {
+                LEXER.consume_next_token ();
+                result.reset (new ArrayDeclarator (id));
+                goto okay;
+            }
+            ConstExprPtr const_expr;
+            if (parse_const_expr (const_expr)) {
+                if (LEXER.consume_next_token (token)
+                    && token.get_kind () == Token::PUNCTUATOR_BRACKET_CLOSE) {
+                    result.reset (new ArrayDeclarator (id, const_expr));
+                    goto okay;
+                } else {
+                    goto error;
+                }
+            } else {
+                goto error;
+            }
+        }//TODO: handle other forms of direct-declarators
+        result = id;
+        goto okay;
+    }
 
     //TODO: handle function style direct-declarator
     //TODO: handle subscript style direct-declarator
     //TODO: handle function pointer style direct declarator
-    result = id;
-    goto okay;
 
 error:
     LEXER.rewind_to_mark (mark);
@@ -1957,7 +1978,7 @@ Parser::parse_declarator (DeclaratorPtr &a_result)
         return true;
     }
     if (parse_ptr_operator (ptr)) {
-        if (!parse_direct_declarator (a_result)) {
+        if (!parse_declarator (a_result)) {
             LEXER.rewind_to_mark (mark);
             return false;
         }
