@@ -670,6 +670,7 @@ LocalVarsInspector2::show_local_variables_of_current_function ()
 
     re_init_widget () ;
     m_priv->debugger->list_local_variables () ;
+    m_priv->debugger->list_frames_arguments () ;
 }
 
 void

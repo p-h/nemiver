@@ -1,5 +1,12 @@
 2007-11-26 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	  (LocalVarsInspector2::show_local_variables_of_current_function): list
+	  debugger frame arguments in here. I did this because otherwise
+	  the "refresh locals" contextual menu clears the function arguments.
+
+2007-11-26 Dodji Seketeli <dodji@gnome.org>
+
 	* tests/test-cpp-parser.cc: unfuck a little regression in the
 	  declarators serialisation.
 
