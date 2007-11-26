@@ -59,7 +59,9 @@ struct CallStackCols : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> location ;
     Gtk::TreeModelColumn<Glib::ustring> function_name ;
     Gtk::TreeModelColumn<Glib::ustring> function_args;
+    Gtk::TreeModelColumn<Glib::ustring> frame_index_caption;
     Gtk::TreeModelColumn<int> frame_index;
+    Gtk::TreeModelColumn<bool> is_expansion_row;
 
     enum Index {
         LOCATION=0,
@@ -72,7 +74,9 @@ struct CallStackCols : public Gtk::TreeModelColumnRecord {
         add (location) ;
         add (function_name) ;
         add (function_args) ;
+        add (frame_index_caption) ;
         add (frame_index) ;
+        add (is_expansion_row) ;
     }
 };//end cols
 
@@ -83,18 +87,23 @@ columns ()
     return s_cols ;
 }
 
+static const UString CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK =
+    "/apps/nemiver/dbgperspective/callstack-expansion-chunk";
+
 struct CallStack::Priv {
     IDebuggerSafePtr debugger ;
     IWorkbench& workbench;
     IPerspective& perspective;
     vector<IDebugger::Frame> frames ;
-    map<int, list<IDebugger::VariableSafePtr> > m_params;
+    map<int, list<IDebugger::VariableSafePtr> > params;
     Glib::RefPtr<Gtk::ListStore> store ;
     SafePtr<Gtk::TreeView> widget ;
     bool waiting_for_stack_args ;
     bool in_set_cur_frame_trans ;
     IDebugger::Frame cur_frame ;
-    int cur_frame_index ;
+    int cur_frame_index;
+    unsigned nb_frames_expansion_chunk;
+    unsigned max_frames_to_show;
     sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal ;
     sigc::connection on_selection_changed_connection ;
     Gtk::Widget *callstack_menu ;
@@ -107,10 +116,30 @@ struct CallStack::Priv {
         waiting_for_stack_args (false),
         in_set_cur_frame_trans (false),
         cur_frame_index (-1),
+        nb_frames_expansion_chunk (5),
+        max_frames_to_show (nb_frames_expansion_chunk),
         callstack_menu (0)
     {
         connect_debugger_signals () ;
         init_actions ();
+        init_conf ();
+    }
+
+    void init_conf ()
+    {
+        IConfMgrSafePtr conf_mgr = workbench.get_configuration_manager ();
+        if (!conf_mgr)
+            return;
+
+        int chunk = 0;
+        conf_mgr->get_key_value (CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK, chunk);
+        if (chunk) {
+            nb_frames_expansion_chunk = chunk;
+            max_frames_to_show = chunk;
+        }
+        conf_mgr->add_key_to_notify (CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK);
+        conf_mgr->value_changed_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_config_value_changed_signal));
     }
 
     void init_actions ()
@@ -273,15 +302,37 @@ struct CallStack::Priv {
 
         Gtk::TreeModel::iterator row_iter =
                 store->get_iter (selected_rows.front ()) ;
+
+
         cur_frame_index = (*row_iter)[columns ().frame_index] ;
         cur_frame = frames[cur_frame_index] ;
         THROW_IF_FAIL (cur_frame.level () >= 0) ;
         in_set_cur_frame_trans = true ;
+
+        //if the selected row is the "expand number of stack lines" row, trigger
+        //a redraw of the with more raws.
+        if ((*row_iter)[columns ().is_expansion_row]) {
+            max_frames_to_show += nb_frames_expansion_chunk;
+            set_frame_list (frames, params);
+            debugger->select_frame (cur_frame_index) ;
+            return;
+        }
+
         LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'") ;
         LOG_DD ("frame level: '" << (int) cur_frame.level () << "'") ;
         debugger->select_frame (cur_frame_index) ;
 
         NEMIVER_CATCH
+    }
+
+    void on_config_value_changed_signal (const UString &a_key,
+                                         IConfMgr::Value &a_val)
+    {
+        LOG_DD ("key " << a_key << " changed");
+        if (a_key == CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK) {
+            nb_frames_expansion_chunk = boost::get<int> (a_val);
+            max_frames_to_show = nb_frames_expansion_chunk;
+        }
     }
 
     void connect_debugger_signals ()
@@ -338,13 +389,14 @@ struct CallStack::Priv {
         map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
         // convert list of stack frames to a string (FIXME: maybe Frame should
         // just implement operator<< ?
-        for (frame_iter=frames.begin(), params_iter=m_params.begin();
-                frame_iter != frames.end(); ++frame_iter)
+        for (frame_iter= frames.begin(), params_iter = params.begin();
+             frame_iter != frames.end ();
+             ++frame_iter)
         {
             frame_stream << "#" << UString::from_int(i++) << "  " <<
                 frame_iter->function_name () << " (";
             // if the params map exists, add the function params to the stack trace
-            if (params_iter != m_params.end())
+            if (params_iter != params.end())
             {
                 for (list<IDebugger::VariableSafePtr>::const_iterator it =
                         params_iter->second.begin();
@@ -380,7 +432,7 @@ struct CallStack::Priv {
         Gtk::TreeView *tree_view = new Gtk::TreeView (store) ;
         THROW_IF_FAIL (tree_view) ;
         widget.reset (tree_view) ;
-        tree_view->append_column (_("Frame"), columns ().frame_index) ;
+        tree_view->append_column (_("Frame"), columns ().frame_index_caption) ;
         tree_view->append_column (_("Location"), columns ().location) ;
         tree_view->append_column (_("Function"), columns ().function_name) ;
         tree_view->append_column (_("Arguments"), columns ().function_args) ;
@@ -424,11 +476,14 @@ struct CallStack::Priv {
 
         // save the list of params around so that we can use it when converting
         // to a string later
-        m_params = a_params;
+        params = a_params;
 
         Gtk::TreeModel::iterator store_iter ;
-        for (unsigned int i = 0 ; i < a_frames.size () ; ++i) {
+        unsigned nb_frames = MIN (a_frames.size (), max_frames_to_show);
+        unsigned i = 0;
+        for (i = 0; i < nb_frames; ++i) {
             store_iter = store->append () ;
+            (*store_iter)[columns ().is_expansion_row] = false;
             (*store_iter)[columns ().function_name] = a_frames[i].function_name ();
             if (!a_frames[i].file_name ().empty ()) {
                 (*store_iter)[columns ().location] =
@@ -440,6 +495,7 @@ struct CallStack::Priv {
             }
 
             (*store_iter)[columns ().frame_index] = i ;
+            (*store_iter)[columns ().frame_index_caption] =  UString::from_int (i) ;
             UString params_string = "(";
             map<int, list<IDebugger::VariableSafePtr> >::const_iterator iter ;
             list<IDebugger::VariableSafePtr>::const_iterator params_iter ;
@@ -465,6 +521,18 @@ struct CallStack::Priv {
             params_string += ")" ;
             (*store_iter)[columns ().function_args] = params_string ;
         }
+        if (a_frames.size () && i < a_frames.size () - 1) {
+            store_iter = store->append () ;
+            UString msg;
+            msg.printf (_("(Click here to see the next %d rows of the %d "
+                          "call stack rows)"),
+                        nb_frames_expansion_chunk,
+                        frames.size ());
+            (*store_iter)[columns ().frame_index_caption] = "...";
+            (*store_iter)[columns ().location] = msg ;
+            (*store_iter)[columns ().is_expansion_row] = true;
+        }
+
         Gtk::TreeView *tree_view =
             dynamic_cast<Gtk::TreeView*> (widget.get ()) ;
         THROW_IF_FAIL (tree_view) ;

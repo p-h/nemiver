@@ -1,3 +1,17 @@
+2007-11-26 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-call-stack.cc: 
+	  Sometimes, when the callstack is huge, the CallStack widget gets stuck
+	  in trying to display all the rows of the call stack.
+	  Therefore, I have introduced a limit to the number of rows to display.
+	  The user can display more rows if she wants. She just has to click on
+	  the last row of the CallStack widget.
+	  By default, the widget displays 20 callstack rows at most. This value
+	  can be changed at runtime be modifying the value of the gconf key
+	  /apps/nemiver/dbgperspective/callstack-expansion-chunk.
+	  This entry should fix bug #442213.
+
+
 2007-11-25 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

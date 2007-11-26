@@ -122,6 +122,17 @@
 	<long>The name of the debugger engine management module used</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/callstack-expansion-chunk</key>
+      <applyto>/apps/nemiver/dbgperspective/callstack-expansion-chunk</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>20</default>
+      <locale name="C">
+	<short>The size of the call stack to display</short>
+	<long>Do not automatically display call stack wider than this value</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
 
