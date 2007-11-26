@@ -1,5 +1,5 @@
 ?package(nemiver):needs="X11"\
-	section="Applications/see-menu-manual"\
+	section="Applications/Programming"\
 	title="Nemiver"\
 	command="/usr/bin/nemiver"\
 	longtitle="Graphical debugger" \
