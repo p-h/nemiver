@@ -8,10 +8,10 @@
 #include "langs/nmv-cpp-parser.h"
 
 const char *prog0 = "foo bar" ;
-const char *prog1 = "foo * bar" ;
+const char *prog1 = "foo *bar" ;
 const char *prog1_1 = "foo bar[10]" ;
-const char *prog2 = "const foo * bar" ;
-const char *prog3 = "static const foo * bar" ;
+const char *prog2 = "const foo *bar" ;
+const char *prog3 = "static const foo *bar" ;
 const char *prog4 = "static const unsigned int foo" ;
 const char *prog5 = "(int)5";
 const char *prog5_1 = "5";

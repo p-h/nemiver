@@ -1,5 +1,10 @@
 2007-11-26 Dodji Seketeli <dodji@gnome.org>
 
+	* tests/test-cpp-parser.cc: unfuck a little regression in the
+	  declarators serialisation.
+
+2007-11-26 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-call-stack.cc: 
 	  Sometimes, when the callstack is huge, the CallStack widget gets stuck
 	  in trying to display all the rows of the call stack.
