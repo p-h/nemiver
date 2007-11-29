@@ -17,6 +17,14 @@ Homepage: http://home.gna.org/nemiver/
 
 Package: nemiver
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, gdb
 Description: Standalone graphical debugger for GNOME
- <insert long description, indented with spaces>
+ Nemiver is a project to write a standalone graphical debugger that 
+ integrates in the GNOME desktop. It features a backend which uses 
+ the well known GNU Debugger gdb to debug C/C++ programs.
+ .
+ Nemiver is built with a plugin system that can offer several different 
+ perspectives. Currently the only perspective provided is a debugging 
+ perspective, but it could be expanded with perspectives added for 
+ valgrind, or for profiling tools such as oprofile.
+
