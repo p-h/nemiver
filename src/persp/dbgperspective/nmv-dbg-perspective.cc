@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
 //Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
@@ -4836,8 +4837,10 @@ DBGPerspective::set_breakpoint_dialog ()
         return;
     }
 
-    if (dialog.mode () == SetBreakpointDialog::MODE_SOURCE_LOCATION) {
-
+    switch(dialog.mode ())
+    {
+    case SetBreakpointDialog::MODE_SOURCE_LOCATION:
+    {
         UString filename;
         filename = dialog.file_name () ;
         THROW_IF_FAIL (filename != "") ;
@@ -4852,11 +4855,25 @@ DBGPerspective::set_breakpoint_dialog ()
             msg.printf (_("Invalid line number: %i"), line);
             display_warning (msg);
         }
-
-    } else {
+        break;
+    }
+    case SetBreakpointDialog::MODE_FUNCTION_NAME:
+    {
         UString function = dialog.function ();
         THROW_IF_FAIL (function != "") ;
         debugger ()->set_breakpoint (function);
+        break;
+    }
+    case SetBreakpointDialog::MODE_EVENT:
+    {
+        UString event = dialog.event ();
+        THROW_IF_FAIL (event != "") ;
+        debugger ()->set_catch (event);
+        break;
+    }
+    default:
+        THROW_IF_FAIL (1);
+        break;
     }
 }
 

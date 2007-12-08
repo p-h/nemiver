@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
 // Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
@@ -2819,6 +2820,18 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
                             "-break-insert " + a_func_name,
                             a_cookie)) ;
 }
+
+void 
+GDBEngine::set_catch (const UString &a_event,
+					  const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    THROW_IF_FAIL (m_priv) ;
+    queue_command (Command ("catch",
+                            "catch " + a_event,
+                            a_cookie)) ;
+}
+
 
 void
 GDBEngine::enable_breakpoint (gint a_break_num,

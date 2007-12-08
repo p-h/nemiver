@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
 //Author: Jonathon Jongsma
 /*
  *This file is part of the Nemiver project
@@ -44,7 +45,8 @@ public:
     typedef enum
     {
         MODE_SOURCE_LOCATION,
-        MODE_FUNCTION_NAME
+        MODE_FUNCTION_NAME,
+        MODE_EVENT
     } Mode;
 
     SetBreakpointDialog (const UString &a_resource_root_path) ;
@@ -58,6 +60,9 @@ public:
 
     UString function () const ;
     void function (const UString &a_name) ;
+
+    UString event () const ;
+    void event (const UString &a_event) ;
 
     Mode mode () const;
     void mode (Mode);

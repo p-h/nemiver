@@ -1,3 +1,12 @@
+2007-12-08  Hubert Figuiere  <hub@figuiere.net>
+
+	* src/dbgengine/nmv-gdb-engine.{cc.h}, src/dbgengine/nmv-i-debugger.h,
+	src/persp/dbgperspective/nmv-dbg-perspective.cc, 
+	src/persp/dbgperspective/nmv-set-breakpoint-dialog.{cc,h},
+	src/persp/dbgperspective/glade/setbreakpointdialog.glade:
+	Allow setting breakpoints like you do with gdb command "catch".
+	Closes bug #499034.
+
 2007-11-26 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:

@@ -269,6 +269,9 @@ public:
     void set_breakpoint (const UString &a_func_name,
                          const UString &a_cookie)  ;
 
+    void set_catch (const UString &a_event,
+					const UString &a_cookie)  ;
+
     void enable_breakpoint (gint a_break_num,
                             const UString &a_cookie="");
 

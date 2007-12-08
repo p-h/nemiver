@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
 //Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
@@ -706,6 +707,8 @@ public:
                                  const UString &a_cookie="") = 0 ;
     virtual void set_breakpoint (const UString &a_func_name,
                                  const UString &a_cookie="") = 0 ;
+    virtual void set_catch (const UString &a_event,
+                            const UString &a_cookie="") = 0;
 
     virtual void list_breakpoints (const UString &a_cookie="") = 0 ;
 
