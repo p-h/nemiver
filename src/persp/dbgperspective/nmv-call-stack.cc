@@ -314,7 +314,6 @@ struct CallStack::Priv {
         if ((*row_iter)[columns ().is_expansion_row]) {
             max_frames_to_show += nb_frames_expansion_chunk;
             set_frame_list (frames, params);
-            debugger->select_frame (cur_frame_index) ;
             return;
         }
 

@@ -9,6 +9,13 @@
 
 2007-12-08 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-call-stack.cc: 
+	  Don't call debugger->select_frame() when the user tries to unfold
+	  more stack trace elements. Otherwise, IDebugger sends us the arguments
+	  of all the callstack functions again.
+
+2007-12-08 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.h,cc: add the necessary types to support
 	  template-id parsing.
 	* src/langs/nmv-cpp-parser.cc,h: support template-id parsing. I still
