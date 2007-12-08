@@ -253,17 +253,16 @@ public:
         NEMIVER_CATCH
     }
 
-    UString get_active_event() const
+    UString get_active_event () const
     {
         Gtk::TreeModel::iterator iter = combo_event->get_active () ;
         return (*iter)[combo_event_col_model.m_command];
     }
 
-    void set_active_event(const UString & v) const
+    void set_active_event (const UString &v) const
     {
-// TODO
-//		Gtk::TreeModel::iterator iter = m_priv->combo_event->get_active () ;
-//		return (*iter)[combo_event_col_model.m_command];
+        if (v.empty ()) {/*keep compiler happy*/}
+        //TODO
     }
 
     SetBreakpointDialog::Mode mode () const

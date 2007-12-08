@@ -1,3 +1,8 @@
+2007-12-08 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc: fix a
+	  compilation error here.
+
 2007-12-08  Hubert Figuiere  <hub@figuiere.net>
 
 	* src/dbgengine/nmv-gdb-engine.{cc.h}, src/dbgengine/nmv-i-debugger.h,
