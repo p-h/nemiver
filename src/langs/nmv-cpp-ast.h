@@ -139,6 +139,9 @@ public:
     bool is_operator () const;
 };//end class Token
 
+//***********************
+//forward declarations
+//***********************
 class QName;
 typedef shared_ptr<QName> QNamePtr;
 
@@ -148,6 +151,12 @@ typedef shared_ptr<IDExpr> IDExprPtr;
 class TypeSpecifier;
 typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
 
+
+class TemplateID;
+typedef shared_ptr<TemplateID> TemplateIDPtr;
+
+class UnqualifiedTemplateID;
+typedef shared_ptr<UnqualifiedTemplateID> UnqualifiedTemplateIDPtr;
 
 /// \brief Qualified Name.
 ///
@@ -1029,6 +1038,77 @@ public:
     }
 };//end ParenthesisPrimaryExpr
 
+/// base type of template-argument
+class NEMIVER_API TemplateArg {
+    TemplateArg ();
+    TemplateArg (const TemplateArg&);
+    TemplateArg& operator= (const TemplateArg&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        ASSIGNMENT_EXPR_ARG,
+        TYPE_ID_ARG,
+        ID_EXPR_ARG
+    };
+
+private:
+    Kind m_kind;
+
+public:
+    TemplateArg (Kind k) :
+        m_kind (k)
+    {}
+    ~TemplateArg () {}
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind k) {m_kind = k;}
+    virtual bool to_string (string &) const =0;
+};//end class TemplateArg
+
+typedef shared_ptr<TemplateArg> TemplateArgPtr;
+class NEMIVER_API TemplateID {
+    TemplateID (const TemplateID&);
+    TemplateID& operator= (const TemplateID&);
+    string m_name;
+    list<TemplateArgPtr> m_args;
+
+public:
+    TemplateID ()
+    {}
+    TemplateID (const string &name,
+                const list<TemplateArgPtr> &args) :
+        m_name (name),
+        m_args (args)
+    {}
+    ~TemplateID () {}
+    const string& get_name () const {return m_name;}
+    void set_name (const string &n) {m_name = n;}
+    const list<TemplateArgPtr>& get_arguments () const {return m_args;}
+    void set_arguments (const list<TemplateArgPtr> &args) {m_args = args;}
+    bool to_string (string &a_str)
+    {
+        if (m_name.empty ()) {
+            return false;
+        }
+        a_str = m_name + "<";
+        string str;
+        list<TemplateArgPtr>::const_iterator it;
+        for (it = m_args.begin (); it != m_args.end (); ++it) {
+            if (!*it) {continue;}
+            (*it)->to_string (str);
+            if (it != m_args.begin ()) {
+                a_str += ", ";
+            }
+            a_str += str;
+        }
+        if (a_str[a_str.size ()-1] == '>') {
+            a_str += ' ';
+        }
+        a_str += ">";
+        return true;
+    }
+};//end class TemplateID
+
 class NEMIVER_API IDExpr : public PrimaryExpr {
     IDExpr (const IDExpr&);
     IDExpr& operator= (const IDExpr&);
@@ -1065,7 +1145,7 @@ public:
         OP_FUNC_ID,
         CONV_FUNC_ID, //TODO:not supported yet
         DESTRUCTOR_ID,
-        TEMPLATE_ID //TODO: not supported yet
+        TEMPLATE_ID
     };
 
 private:
@@ -1131,10 +1211,10 @@ public:
 };
 typedef shared_ptr<UnqualifiedOpFuncID>  UnqualifiedOpFuncIDPtr;
 
-class DestructorID : public UnqualifiedIDExpr {
+class NEMIVER_API DestructorID : public UnqualifiedIDExpr {
     DestructorID (const DestructorID&);
     DestructorID& operator= (const DestructorID&);
-    string m_name;
+    UnqualifiedIDExprPtr m_name;
 
 public:
     DestructorID ():
@@ -1142,14 +1222,44 @@ public:
     {}
     DestructorID (const string &a_n) :
         UnqualifiedIDExpr (UnqualifiedIDExpr::DESTRUCTOR_ID),
+        m_name (new UnqualifiedID (a_n))
+    {}
+    DestructorID (const UnqualifiedIDExprPtr &a_n) :
+        UnqualifiedIDExpr (UnqualifiedIDExpr::DESTRUCTOR_ID),
         m_name (a_n)
     {}
     ~DestructorID ()
     {}
-    void set_name (const string &a_n) {m_name=a_n;}
-    const string& get_name () const {return m_name;}
+    void set_name (const UnqualifiedIDExprPtr &a_n) {m_name=a_n;}
+    const UnqualifiedIDExprPtr get_name () const {return m_name;}
     bool to_string (string &a_s) const;
 };
+
+class NEMIVER_API UnqualifiedTemplateID : public UnqualifiedIDExpr {
+    UnqualifiedTemplateID (const UnqualifiedTemplateID&);
+    UnqualifiedTemplateID& operator= (const UnqualifiedTemplateID&);
+    TemplateIDPtr m_id;
+
+public:
+    UnqualifiedTemplateID () :
+        UnqualifiedIDExpr (TEMPLATE_ID)
+    {}
+    UnqualifiedTemplateID (const TemplateIDPtr t) :
+        UnqualifiedIDExpr (TEMPLATE_ID),
+        m_id (t)
+    {}
+    ~UnqualifiedTemplateID () {}
+    const TemplateIDPtr get_template_id () const {return m_id;}
+    void set_template_id (const TemplateIDPtr t) {m_id = t;}
+    bool to_string (string &a_str) const
+    {
+        if (m_id) {
+            m_id->to_string (a_str);
+            return true;
+        }
+        return false;
+    }
+};//end class UnqualifiedTemplateID
 
 class QualifiedIDExpr;
 typedef shared_ptr<QualifiedIDExpr> QualifiedIDExprPtr;
@@ -2285,6 +2395,88 @@ public:
     }
 };//end class ConstExpr
 typedef shared_ptr<ConstExpr> ConstExprPtr;
+
+/// the assignment-expression form of template-argument
+class NEMIVER_API AssignExprTemplArg : public TemplateArg {
+    AssignExprTemplArg (const AssignExprTemplArg&);
+    AssignExprTemplArg& operator= (const AssignExprTemplArg&);
+    AssignExprPtr m_expr;
+
+public:
+    AssignExprTemplArg () :
+        TemplateArg (ASSIGNMENT_EXPR_ARG)
+    {}
+    AssignExprTemplArg (const AssignExprPtr e) :
+        TemplateArg (ASSIGNMENT_EXPR_ARG),
+        m_expr (e)
+    {}
+    ~AssignExprTemplArg () {}
+    const AssignExprPtr get_expression () const {return m_expr;}
+    void set_expression (const AssignExprPtr e) {m_expr = e;}
+    bool to_string (string &a_str) const
+    {
+        if (m_expr) {
+            m_expr->to_string (a_str);
+            return true;
+        }
+        return false;
+    }
+};//end class AssignExprTemplArg
+typedef shared_ptr<AssignExprTemplArg> AssignExprTemplArgPtr;
+
+class NEMIVER_API TypeIDTemplArg : public TemplateArg {
+    TypeIDTemplArg (const TypeIDTemplArg&);
+    TypeIDTemplArg& operator= (const TypeIDTemplArg&);
+    TypeIDPtr m_id;
+
+public:
+    TypeIDTemplArg () :
+        TemplateArg (TYPE_ID_ARG)
+    {}
+    TypeIDTemplArg (const TypeIDPtr id) :
+        TemplateArg (TYPE_ID_ARG),
+        m_id (id)
+    {}
+    ~TypeIDTemplArg () {}
+    const TypeIDPtr get_type_id () const {return m_id;}
+    void set_type_id (const TypeIDPtr id) {m_id = id;}
+    bool to_string (string &a_str) const
+    {
+        if (m_id) {
+            m_id->to_string (a_str);
+            return true;
+        }
+        return false;
+    }
+};//end class TypeIDTemplArg
+typedef shared_ptr<TypeIDTemplArg> TypeIDTemplArgPtr;
+
+class NEMIVER_API IDExprTemplArg : public TemplateArg {
+    IDExprTemplArg (const IDExprTemplArg&);
+    IDExprTemplArg& operator= (const IDExprTemplArg&);
+    IDExprPtr m_expr;
+
+public:
+    IDExprTemplArg () :
+        TemplateArg (ID_EXPR_ARG)
+    {}
+    IDExprTemplArg (const IDExprPtr id) :
+        TemplateArg (ID_EXPR_ARG),
+        m_expr (id)
+    {}
+    ~IDExprTemplArg () {}
+    const IDExprPtr get_id_expr () const {return m_expr;}
+    void set_id_expr (const IDExprPtr e) {m_expr = e;}
+    bool to_string (string &a_str) const
+    {
+        if (m_expr) {
+            m_expr->to_string (a_str);
+            return true;
+        }
+        return false;
+    }
+};//end class
+typedef shared_ptr<IDExprTemplArg> IDExprTemplArgPtr;
 
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored

@@ -36,6 +36,9 @@ const char *prog5_19 = "foo|bar";
 const char *prog5_20 = "foo&&bar";
 const char *prog5_21 = "foo||bar";
 const char *prog5_22 = "(foo<bar)?coin=pouf:paf=pim";
+const char *prog7_0 = "foo<t1, t2, t3>";
+const char *prog7_1 = "foo<(t1>t2)>";
+const char *prog7_2 = "Y<X<1> >";
 
 const char *expressions[] =
 {
@@ -68,6 +71,7 @@ const char *expressions[] =
 using std::cout;
 using std::endl;
 using nemiver::cpp::Parser;
+using nemiver::cpp::ParserPtr;
 using nemiver::cpp::SimpleDeclarationPtr;
 using nemiver::cpp::DeclSpecifier;
 using nemiver::cpp::DeclSpecifierPtr;
@@ -89,6 +93,7 @@ using nemiver::cpp::LogAndExprPtr;
 using nemiver::cpp::LogOrExprPtr;
 using nemiver::cpp::CondExprPtr;
 using nemiver::cpp::ExprPtr;
+using nemiver::cpp::TemplateIDPtr;
 using nemiver::common::Initializer ;
 namespace cpp=nemiver::cpp;
 
@@ -468,7 +473,8 @@ test_parser6 ()
         Parser parser (expressions[i]);
         ExprPtr expr;
         if (!parser.parse_expr (expr) || !expr) {
-            BOOST_FAIL ("failed to parse expr No " << i << ": " << expressions[i]);
+            BOOST_FAIL ("failed to parse expr No "
+                        << i << ": " << expressions[i]);
         }
         expr->to_string (str);
         if (str != expressions[i]) {
@@ -479,6 +485,37 @@ test_parser6 ()
                         << "' into '"
                         << str
                         << "'");
+        }
+    }
+}
+
+void
+test_parser7 ()
+{
+    string str;
+    TemplateIDPtr template_id;
+    vector<string> inputs;
+    vector<ParserPtr> parsers;
+
+    inputs.push_back (prog7_0);
+    ParserPtr parser0 (new Parser (prog7_0));
+    parsers.push_back (parser0);
+
+    inputs.push_back (prog7_1);
+    ParserPtr parser1 (new Parser (prog7_1));
+    parsers.push_back (parser1);
+
+    inputs.push_back (prog7_2);
+    ParserPtr parser2 (new Parser (prog7_2));
+    parsers.push_back (parser2);
+
+    for (unsigned i=0; i < parsers.size (); ++i) {
+        if (!parsers[i]->parse_template_id (template_id)) {
+            BOOST_FAIL ("failed to parse '" + inputs[i]);
+        }
+        template_id->to_string (str);
+        if (str != inputs[i]) {
+            BOOST_FAIL ("parsed expr '" + inputs[i] + "into '" + str + "'");
         }
     }
 }
@@ -502,6 +539,7 @@ init_unit_test_suite (int argc, char** argv)
     suite->add (BOOST_TEST_CASE (&test_parser4)) ;
     suite->add (BOOST_TEST_CASE (&test_parser5)) ;
     suite->add (BOOST_TEST_CASE (&test_parser6)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser7)) ;
     return suite;
 
     NEMIVER_CATCH_NOX

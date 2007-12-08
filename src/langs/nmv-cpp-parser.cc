@@ -31,14 +31,30 @@ NEMIVER_BEGIN_NAMESPACE (cpp)
 
 struct Parser::Priv {
     Lexer lexer;
+    //this indicates whether we are parsing
+    //template arguments.
+    //this is necessary because the c++ spec says at [14.2.3]:
+    //~=~
+    //After name lookup (3.4) finds that a name is a template-name, if this name
+    //is followed by a <, the < is always taken as the beginning of
+    //a template-argument-list and never as a name followed by the less-than
+    //operator. When parsing a template-id, the first non-nested > is taken
+    //as the end of the template.
+    //~=~
+    int parsing_template_argument;
+    int in_lt_nesting_context;
 
     Priv () :
-        lexer ("")
+        lexer (""),
+        parsing_template_argument (0),
+        in_lt_nesting_context (0)
     {
     }
 
     Priv (const string &a_in):
-        lexer (a_in)
+        lexer (a_in),
+        parsing_template_argument (0),
+        in_lt_nesting_context (0)
     {
     }
 };
@@ -60,7 +76,6 @@ Parser::~Parser ()
 ///           this
 ///           ( expression )
 ///           id-expression
-/// TODO: handle id-expression
 bool
 Parser::parse_primary_expr (PrimaryExprPtr &a_expr)
 {
@@ -88,13 +103,19 @@ Parser::parse_primary_expr (PrimaryExprPtr &a_expr)
             {
                 //consume the open parenthesis
                 LEXER.consume_next_token ();
+                ++m_priv->in_lt_nesting_context;
                 ExprPtr expr;
-                if (!parse_expr (expr)) {goto error;}
+                if (!parse_expr (expr)) {
+                    --m_priv->in_lt_nesting_context;
+                    goto error;
+                }
                 result.reset (new ParenthesisPrimaryExpr (expr));
                 LEXER.consume_next_token (token);
                 if (token.get_kind () != Token::PUNCTUATOR_PARENTHESIS_CLOSE) {
+                    --m_priv->in_lt_nesting_context;
                     goto error;
                 }
+                --m_priv->in_lt_nesting_context;
                 goto okay;
             }
             break;
@@ -470,10 +491,41 @@ Parser::parse_rel_expr (RelExprPtr &a_result)
         if (token.get_kind () == Token::OPERATOR_LT) {
             op = ExprBase::LT;
         } else if (token.get_kind () == Token::OPERATOR_GT) {
+            if (m_priv->parsing_template_argument)  {
+                if (!m_priv->in_lt_nesting_context) {
+                    //we did encounter a '>' while parsing a template argument
+                    //and without being inside parenthesis.
+                    //So we must consider that the '>' is the ending of the
+                    //template parameter list. That means we will consider that
+                    //parsing of this relational expression ends here and we
+                    //actually parsed the shift-expression form of it.
+                    //example:
+                    //X< 1>2 > x1; --> error;
+                    //X<(1>2)> x2; ---> okay.
+                    //
+                    result = lhs;
+                    goto okay;
+                }
+            }
             op = ExprBase::GT;
         } else if (token.get_kind () == Token::OPERATOR_LT_EQ) {
             op = ExprBase::LT_OR_EQ;
         } else if (token.get_kind () == Token::OPERATOR_GT_EQ) {
+            if (m_priv->parsing_template_argument)  {
+                if (!m_priv->in_lt_nesting_context) {
+                    //we did encounter a '>' while parsing a template argument
+                    //and without being inside an lt-nesting context.
+                    //So we must consider that the '>' is the ending of the
+                    //template parameter list. That means we will consider that
+                    //parsing of this relational expression ends here and we
+                    //actually parsed the shift-expression form of it.
+                    //example:
+                    //X< 1>2 > x1; --> error;
+                    //X<(1>2)> x2; ---> okay.
+                    result = lhs;
+                    goto okay;
+                }
+            }
             op = ExprBase::GT_OR_EQ;
         } else {
             result = lhs;
@@ -1003,6 +1055,44 @@ Parser::parse_class_or_namespace_name (string &a_result)
     return true;
 }
 
+/// parse template-id production
+///
+/// template-id:
+///           template-name < template-argument-listopt >
+bool
+Parser::parse_template_id (TemplateIDPtr &a_result)
+{
+    Token token;
+    TemplateIDPtr result;
+    string name;
+    list<TemplateArgPtr> args;
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    if (!LEXER.peek_next_token (token)
+        || token.get_kind () != Token::IDENTIFIER) {
+        goto error;
+    }
+    LEXER.consume_next_token ();
+    name = token.get_str_value ();
+    if (!LEXER.consume_next_token (token)
+        || token.get_kind () != Token::OPERATOR_LT) {
+        goto error;
+    }
+    if (!parse_template_argument_list (args)) {
+        goto error;
+    }
+    if (!LEXER.consume_next_token (token)
+        || token.get_kind () != Token::OPERATOR_GT) {
+        goto error;
+    }
+    a_result.reset (new TemplateID (name, args));
+    return true;
+
+error:
+    LEXER.rewind_to_mark (mark);
+    return false;
+}
+
 /// parse a type-name production.
 ///
 /// type-name:
@@ -1029,11 +1119,15 @@ Parser::parse_type_name (UnqualifiedIDExprPtr &a_result)
     if (!LEXER.peek_next_token (token)) {return false;}
 
     if (token.get_kind () == Token::IDENTIFIER) {
+        TemplateIDPtr template_id;
+        if (parse_template_id (template_id)) {
+            a_result.reset (new UnqualifiedTemplateID (template_id));
+            return true;
+        }
         if (!LEXER.consume_next_token ()) {return false;}
         a_result.reset (new UnqualifiedID (token.get_str_value ()));
         return true;
     }
-    //TODO: handle template-id
     return false;
 }
 
@@ -1086,33 +1180,40 @@ out:
 ///   ~class-name
 ///   template-id
 ///
-/// TODO: support template-id and conversion-function-id cases.
+/// TODO: support conversion-function-id cases.
 bool
-Parser::parse_unqualified_id (UnqualifiedIDExprPtr &a_expr)
+Parser::parse_unqualified_id (UnqualifiedIDExprPtr &a_result)
 {
+    bool status = false;
+    UnqualifiedIDExprPtr result;
+    unsigned mark = LEXER.get_token_stream_mark ();
     Token token;
-    if (!LEXER.peek_next_token (token)) {return false;}
+    if (!LEXER.peek_next_token (token)) {goto error;}
 
-    UnqualifiedIDExprPtr expr;
     switch (token.get_kind ()) {
-        case Token::IDENTIFIER:
-            expr.reset (new UnqualifiedID (token.get_str_value ()));
-            break;
+        case Token::IDENTIFIER: {
+            TemplateIDPtr template_id;
+            if (parse_template_id (template_id)) {
+                result.reset (new UnqualifiedTemplateID (template_id));
+                goto okay;
+            }
+            if (!LEXER.consume_next_token ()) {goto error;}
+            result.reset (new UnqualifiedID (token.get_str_value ()));
+            goto okay;
+        }
+            break;//this is useless, but I keep it.
         case Token::KEYWORD:
             //operator-function-id:
-            // 'operartor' operator
+            // 'operator' operator
+            if (!LEXER.consume_next_token ()) {goto error;}
             if (token.get_str_value () == "operator") {
-                //look forward the second token in the queue to see if it's an
-                //operator
-                Token op_token;
-                if (!LEXER.peek_nth_token (1, op_token)) {return false;}
-                if (!op_token.is_operator ()) {return false;}
-                //okay the second token to come is an operator so consume the
-                //first token and build the expression.
-                LEXER.consume_next_token ();
-                expr.reset (new UnqualifiedOpFuncID (op_token));
+                if (!LEXER.peek_next_token (token)) {goto error;}
+                if (!token.is_operator ()) {goto error;}
+                if (!LEXER.consume_next_token ()) {goto error;}
+                result.reset (new UnqualifiedOpFuncID (token));
+                goto okay;
             } else {
-                return false;
+                goto error;
             }
             break;
         case Token::OPERATOR_BIT_COMPLEMENT:
@@ -1121,31 +1222,31 @@ Parser::parse_unqualified_id (UnqualifiedIDExprPtr &a_expr)
                 // class-name:
                 //   identifier
                 //   template-id
-
-                //lookahead the second token in the stream to see if it's an
-                //identifier token
-                Token t;
-                if (LEXER.peek_nth_token (1, t) && t.get_kind () == Token::IDENTIFIER) {
-                    LEXER.consume_next_token ();
-                    expr.reset (new DestructorID (t.get_str_value ()));
+                if (!LEXER.consume_next_token ()) {goto error;}
+                UnqualifiedIDExprPtr class_name;
+                if (parse_type_name (class_name)) {
+                    result.reset (new DestructorID (class_name));
+                    goto okay;
                 } else {
-                    //TODO: support template-id
-                    return false;
+                    goto error;
                 }
             }
             break;
         default:
-            //TODO: support template-id and conversion-function-id
+            //TODO: support conversion-function-id
             break;
     }
-    if (!expr)
-        return false;
-    if (!LEXER.consume_next_token ()) {
-        //should never been reached.
-        return false;
-    }
-    a_expr = expr;
-    return true;
+    goto error;
+
+okay:
+    status = true;
+    a_result = result;
+    goto out;
+error:
+    LEXER.rewind_to_mark (mark);
+    status = false;
+out:
+    return status;
 }
 
 /// parse a qualified-id production.
@@ -1260,6 +1361,7 @@ Parser::parse_id_expr (IDExprPtr &a_expr)
 ///           enum ::(opt) nested-name-specifier(opt) identifier
 ///           typename ::(opt) nested-name-specifier identifier
 ///           typename ::(opt) nested-name-specifier template(opt) template-id
+/// TODO: handle the template-id form.
 bool
 Parser::parse_elaborated_type_specifier (ElaboratedTypeSpecPtr &a_result)
 {
@@ -1513,6 +1615,79 @@ Parser::parse_type_specifier_seq (list<TypeSpecifierPtr> &a_result)
         a_result.push_back (type_spec);
     }
     return true;
+}
+
+/// parse a template-argument production
+///
+/// template-argument:
+///           assignment-expression
+///           type-id
+///           id-expression
+bool
+Parser::parse_template_argument (TemplateArgPtr &a_result)
+{
+
+    bool is_okay = false;
+    m_priv->parsing_template_argument++;
+    AssignExprPtr assign_expr;
+    IDExprPtr id_expr;
+    TypeIDPtr type_id_expr;
+    if (parse_assign_expr (assign_expr)) {
+        a_result.reset (new AssignExprTemplArg (assign_expr));
+        is_okay = true;
+        goto out;
+    }
+    if (parse_type_id (type_id_expr)) {
+        a_result.reset (new TypeIDTemplArg (type_id_expr));
+        is_okay = true;
+        goto out;
+    }
+    if (parse_id_expr (id_expr)) {
+        a_result.reset (new IDExprTemplArg (id_expr));
+        is_okay = true;
+        goto out;
+    }
+
+out:
+    m_priv->parsing_template_argument--;
+    return is_okay;
+}
+
+/// parse a template-argument-list production
+///
+/// template-argument-list:
+///           template-argument
+///           template-argument-list , template-argument
+bool
+Parser::parse_template_argument_list (list<TemplateArgPtr> &a_result)
+{
+    Token token;
+    bool status = false;
+    TemplateArgPtr arg;
+    list<TemplateArgPtr> result;
+    unsigned mark = LEXER.get_token_stream_mark ();
+
+    if (parse_template_argument (arg)) {
+        result.push_back (arg);
+    } else {
+        goto error;
+    }
+    while (true) {
+        if (!LEXER.peek_next_token (token)) {break;}
+        if (token.get_kind () != Token::OPERATOR_SEQ_EVAL) {break;}
+        if (!LEXER.consume_next_token ()) {break;}
+        if (!parse_template_argument (arg)) {goto error;}
+        result.push_back (arg);
+    }
+
+    status = true;
+    a_result = result;
+    goto out;
+error:
+    status = false;
+    LEXER.rewind_to_mark (mark);
+out:
+    return status;
 }
 
 /// parse a type-id production

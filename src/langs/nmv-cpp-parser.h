@@ -77,6 +77,9 @@ public:
     bool parse_simple_type_specifier (SimpleTypeSpecPtr &);
     bool parse_type_specifier (TypeSpecifierPtr &);
     bool parse_type_specifier_seq (list<TypeSpecifierPtr> &);
+    bool parse_template_argument (TemplateArgPtr &);
+    bool parse_template_argument_list (list<TemplateArgPtr> &);
+    bool parse_template_id (TemplateIDPtr &);
     bool parse_type_id (TypeIDPtr &);
     bool parse_decl_specifier (DeclSpecifierPtr &);
     bool parse_decl_specifier_seq (list<DeclSpecifierPtr> &);
@@ -91,6 +94,7 @@ public:
     bool parse_init_declarator_list (list<InitDeclaratorPtr> &);
     bool parse_simple_declaration (SimpleDeclarationPtr &a_result);
 };//end class Parser
+typedef shared_ptr<Parser> ParserPtr;
 NEMIVER_END_NAMESPACE (nemiver)
 NEMIVER_END_NAMESPACE (cpp)
 #endif //__NMV_CPP_PARSER_H__

@@ -584,7 +584,11 @@ UnqualifiedOpFuncID::to_string (string &a_result) const
 bool
 DestructorID::to_string (string &a_result) const
 {
-    a_result = "~" + get_name ();
+    if (!get_name ())
+        return false;
+    string str;
+    get_name ()->to_string (str);
+    a_result = "~" + str;
     return true;
 }
 

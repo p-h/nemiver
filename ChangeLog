@@ -7,6 +7,14 @@
 	Allow setting breakpoints like you do with gdb command "catch".
 	Closes bug #499034.
 
+2007-12-08 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-ast.h,cc: add the necessary types to support
+	  template-id parsing.
+	* src/langs/nmv-cpp-parser.cc,h: support template-id parsing. I still
+	  need to make other production parsing functions use this one.
+	* tests/test-cpp-parser.cc: update regression tests.
+
 2007-11-26 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
