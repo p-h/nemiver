@@ -151,12 +151,16 @@ typedef shared_ptr<IDExpr> IDExprPtr;
 class TypeSpecifier;
 typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
 
-
 class TemplateID;
 typedef shared_ptr<TemplateID> TemplateIDPtr;
 
 class UnqualifiedTemplateID;
 typedef shared_ptr<UnqualifiedTemplateID> UnqualifiedTemplateIDPtr;
+
+class TypeID;
+typedef shared_ptr<TypeID> TypeIDPtr;
+
+bool to_string (const TypeIDPtr, string &);
 
 /// \brief Qualified Name.
 ///
@@ -390,469 +394,6 @@ public:
     bool to_string (string &) const;
 };//end SimpleDeclaration
 typedef shared_ptr<SimpleDeclaration> SimpleDeclarationPtr;
-
-
-class NEMIVER_API DeclSpecifier {
-    DeclSpecifier (const DeclSpecifier&);
-    DeclSpecifier& operator= (const DeclSpecifier&);
-
-public:
-    enum Kind {
-        UNDEFINED,
-        //storage class speficiers
-        AUTO,
-        REGISTER,
-        STATIC,
-        EXTERN,
-        MUTABLE,
-        //type specifier
-        TYPE,
-        //function specifiers
-        INLINE,
-        VIRTUAL,
-        EXPLICIT,
-        //friend specifier
-        FRIEND,
-        //typedef specifier
-        TYPEDEF
-    };
-
-private:
-    Kind m_kind ;
-
-    DeclSpecifier ();
-public:
-
-    DeclSpecifier (Kind k):
-        m_kind (k)
-    {
-    }
-
-    virtual ~DeclSpecifier ()
-    {
-    }
-
-    Kind get_kind () const {return m_kind;}
-    void set_kind (Kind a_kind) {m_kind=a_kind;}
-
-    bool is_storage_class ()
-    {
-        return (m_kind == AUTO || m_kind == REGISTER
-                || m_kind == STATIC || m_kind == EXTERN
-                || m_kind == MUTABLE) ;
-    }
-    virtual bool to_string (string &a_str) const=0;
-    static bool list_to_string (const list<DeclSpecifierPtr> &a_decls, string &a_str);
-};//end class DeclSpecifier
-
-class NEMIVER_API AutoSpecifier : public DeclSpecifier {
-    AutoSpecifier (const AutoSpecifier&);
-    AutoSpecifier& operator= (const AutoSpecifier&);
-public:
-    AutoSpecifier () :
-        DeclSpecifier (AUTO)
-    {}
-    ~AutoSpecifier () {}
-    bool to_string (string &a_str) const {a_str="auto";return true;}
-};//end class AutoSpecifier
-
-class NEMIVER_API RegisterSpecifier : public DeclSpecifier {
-    RegisterSpecifier (const RegisterSpecifier&);
-    RegisterSpecifier& operator= (const RegisterSpecifier&);
-public:
-    RegisterSpecifier () :
-        DeclSpecifier (REGISTER)
-    {}
-    ~RegisterSpecifier () {}
-    bool to_string (string &a_str) const {a_str="register";return true;}
-};
-typedef shared_ptr<RegisterSpecifier> RegisterSpecifierPtr;
-
-class NEMIVER_API StaticSpecifier : public DeclSpecifier {
-    StaticSpecifier (const StaticSpecifier&);
-    StaticSpecifier& operator= (const StaticSpecifier&);
-public:
-    StaticSpecifier () :
-        DeclSpecifier (STATIC)
-    {}
-    ~StaticSpecifier () {}
-    bool to_string (string &a_str) const {a_str="static";return true;}
-};
-typedef shared_ptr<StaticSpecifier> StaticSpecifierPtr;
-
-class NEMIVER_API ExternSpecifier : public DeclSpecifier {
-    ExternSpecifier (const ExternSpecifier&);
-    ExternSpecifier& operator= (const ExternSpecifier&);
-public:
-    ExternSpecifier () :
-        DeclSpecifier (EXTERN)
-    {}
-    ~ExternSpecifier () {}
-    bool to_string (string &a_str) const {a_str="extern";return true;}
-};
-
-
-class NEMIVER_API MutableSpecifier : public DeclSpecifier {
-    MutableSpecifier (const MutableSpecifier&);
-    MutableSpecifier& operator= (const MutableSpecifier&);
-public:
-    MutableSpecifier () :
-        DeclSpecifier (MUTABLE)
-    {}
-    ~MutableSpecifier () {}
-    bool to_string (string &a_str) const {a_str="mutable";return true;}
-};
-class NEMIVER_API TypeSpecifier : public DeclSpecifier {
-    TypeSpecifier ();
-    TypeSpecifier (const TypeSpecifier&);
-    TypeSpecifier& operator= (const TypeSpecifier&);
-
-public:
-    enum Kind {
-        UNDEFINED,
-        SIMPLE,
-        CLASS,
-        ENUM,
-        ELABORATED,
-        CONST,
-        VOLATILE
-    };
-
-private:
-    Kind m_kind;
-
-public:
-
-    TypeSpecifier (Kind k):
-        DeclSpecifier (TYPE),
-        m_kind (k)
-    {
-    }
-    virtual ~TypeSpecifier () {}
-
-    Kind get_kind () const {return m_kind;}
-    void set_kind (Kind a_kind) {m_kind = a_kind;}
-    bool is_cv_qualifier () const {return (m_kind == CONST || m_kind == VOLATILE);}
-    virtual bool to_string (string &a_str) const=0;
-    static bool list_to_string (const list<TypeSpecifierPtr> &, string &);
-};//end class TypeSpecifier
-typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
-
-class NEMIVER_API SimpleTypeSpec : public TypeSpecifier {
-    SimpleTypeSpec (const SimpleTypeSpec&);
-    SimpleTypeSpec& operator= (const SimpleTypeSpec&);
-
-    QNamePtr m_scope;
-    string m_name;
-
-public:
-    SimpleTypeSpec () :
-        TypeSpecifier (SIMPLE)
-    {}
-    ~SimpleTypeSpec () {}
-    SimpleTypeSpec (const QNamePtr &a_scope, const string &a_name) :
-        TypeSpecifier (SIMPLE),
-        m_scope (a_scope),
-        m_name (a_name)
-    {}
-    void set_scope (const QNamePtr &a_scope) {m_scope = a_scope;}
-    const QNamePtr get_scope () const {return m_scope;}
-    void set_name (const string &a_name) {m_name = a_name;}
-    const string& get_name () const {return m_name;}
-    bool to_string (string &a_str) const
-    {
-        string str;
-        if (m_scope) {
-            m_scope->to_string (str);
-        }
-        str += m_name;
-        a_str = str;
-        return true;
-    }
-};//end SimpleTypeSpec
-typedef shared_ptr<SimpleTypeSpec> SimpleTypeSpecPtr;
-
-class NEMIVER_API ClassTypeSpec : public TypeSpecifier {
-    ClassTypeSpec (const ClassTypeSpec&);
-    ClassTypeSpec& operator= (const ClassTypeSpec&);
-
-public:
-    ClassTypeSpec () :
-        TypeSpecifier (CLASS)
-    {}
-    ~ClassTypeSpec () {}
-    bool to_string (string &a_str) const {a_str="class";return true;}
-};//end ClassTypeSpec
-typedef shared_ptr<SimpleTypeSpec> SimpleTypeSpecPtr;
-
-class NEMIVER_API EnumTypeSpec : public TypeSpecifier {
-    EnumTypeSpec (const EnumTypeSpec&);
-    EnumTypeSpec& operator= (const EnumTypeSpec&);
-
-public:
-    EnumTypeSpec () :
-        TypeSpecifier (ENUM)
-    {}
-    ~EnumTypeSpec () {}
-    bool to_string (string &a_str) const {a_str="enum";return true;}
-};//end EnumTypeSpec
-typedef shared_ptr<EnumTypeSpec> EnumTypeSpecPtr;
-
-class NEMIVER_API ElaboratedTypeSpec : public TypeSpecifier {
-    ElaboratedTypeSpec (const ElaboratedTypeSpec&);
-    ElaboratedTypeSpec& operator= (const ElaboratedTypeSpec&);
-
-public:
-    class Elem {
-        Elem ();
-    public:
-        enum Kind {
-            UNDEFINED,
-            CLASS,
-            STRUCT,
-            UNION,
-            ENUM,
-            TYPENAME,
-            SCOPE,
-            IDENTIFIER,
-            TEMPLATE,
-            TEMPLATE_ID
-        };
-    private:
-        Kind m_kind;
-    public:
-        Elem (Kind k) :
-            m_kind (k)
-        {}
-        virtual ~Elem () {}
-        virtual bool to_string (string &) const=0;
-    };
-    typedef shared_ptr<Elem> ElemPtr;
-
-    class ClassElem : public Elem {
-    public:
-        ClassElem ():
-            Elem (CLASS)
-        {}
-        ~ClassElem () {}
-        bool to_string (string &a_str) const {a_str="class";return true;}
-    };
-    typedef shared_ptr<ClassElem> ClassElemPtr;
-
-    class StructElem : public Elem {
-    public:
-        StructElem () :
-            Elem (STRUCT)
-        {}
-        ~StructElem () {}
-        bool to_string (string &a_str) const {a_str="struct";return true;}
-    };
-    typedef shared_ptr<StructElem> StructElemPtr;
-
-    class UnionElem : public Elem {
-    public:
-        UnionElem ():
-            Elem (UNION)
-        {}
-        ~UnionElem () {}
-        bool to_string (string &a_str) const {a_str="union";return true;}
-    };
-    typedef shared_ptr<UnionElem> UnionElemPtr;
-
-    class EnumElem : public Elem {
-    public:
-        EnumElem ():
-            Elem (ENUM)
-        {}
-        ~EnumElem () {}
-        bool to_string (string &a_str) const {a_str="enum";return true;}
-    };
-    typedef shared_ptr<EnumElem> EnumElemPtr;
-
-    class TypenameElem : public Elem {
-    public:
-        TypenameElem () :
-            Elem (TYPENAME)
-        {}
-        ~TypenameElem () {}
-        bool to_string (string &a_str) const {a_str="typename";return true;}
-    };
-    typedef shared_ptr<TypenameElem> TypenameElemPtr;
-
-    class ScopeElem : public Elem {
-        QNamePtr m_scope;
-    public:
-        ScopeElem () :
-            Elem (SCOPE)
-        {}
-        ScopeElem (const QNamePtr s) :
-            Elem (SCOPE),
-            m_scope (s)
-        {}
-        ~ScopeElem () {}
-        void set_scope (const QNamePtr s) {m_scope=s;}
-        const QNamePtr& get_qname () const {return m_scope;}
-        bool to_string (string &a_str) const
-        {
-            if (m_scope) {
-                m_scope->to_string (a_str);
-            }
-            return true;
-        }
-    };
-    typedef shared_ptr<ScopeElem> ScopeElemPtr;
-
-    class IdentifierElem : public Elem {
-        string m_name;
-    public:
-        IdentifierElem ():
-            Elem (IDENTIFIER)
-        {}
-        IdentifierElem (const string &a_id):
-            Elem (IDENTIFIER),
-            m_name (a_id)
-        {}
-        ~IdentifierElem () {}
-        const string& get_name () const {return m_name;}
-        void set_name (const string &a_name) {m_name=a_name;}
-        bool to_string (string &a_str) const {a_str=m_name;return true;}
-    };
-    typedef shared_ptr<IdentifierElem> IdentifierElemPtr;
-
-    class TemplateElem : public Elem {
-    public:
-        TemplateElem ():
-            Elem (TEMPLATE)
-        {}
-        ~TemplateElem () {}
-        bool to_string (string &a_str) const {a_str="template";return true;}
-    };
-    typedef shared_ptr<TemplateElem> TemplateElemPtr;
-
-private:
-    list<ElemPtr> m_elems;
-
-public:
-    ElaboratedTypeSpec () :
-        TypeSpecifier (ELABORATED)
-    {}
-    ElaboratedTypeSpec (const list<ElaboratedTypeSpec::ElemPtr> &elems) :
-        TypeSpecifier (ELABORATED),
-        m_elems (elems)
-    {}
-    ~ElaboratedTypeSpec () {}
-    void append (const ElemPtr a_elem) {m_elems.push_back (a_elem);}
-    void append (const list<ElemPtr> &a_elems)
-    {
-        list<ElemPtr>::const_iterator it;
-        for (it=a_elems.begin (); it != a_elems.end (); ++it) {
-            m_elems.push_back (*it);
-        }
-    }
-    const list<ElemPtr>& get_elems () const {return m_elems;}
-    bool to_string (string &a_str) const
-    {
-        string str;
-        list<ElemPtr>::const_iterator it;
-        for (it = m_elems.begin (); it != m_elems.end (); ++it) {
-            if (it == m_elems.begin () && *it) {
-                (*it)->to_string (a_str);
-            } else if (*it) {
-                (*it)->to_string (str);
-                a_str += " " + str;
-            }
-        }
-        return true;
-    }
-};//end ElaboratedTypeSpec
-typedef shared_ptr<ElaboratedTypeSpec> ElaboratedTypeSpecPtr;
-
-class NEMIVER_API ConstTypeSpec : public TypeSpecifier {
-    ConstTypeSpec (const ConstTypeSpec&);
-    ConstTypeSpec& operator= (const ConstTypeSpec&);
-
-public:
-    ConstTypeSpec () :
-        TypeSpecifier (CONST)
-    {}
-    ~ConstTypeSpec () {}
-    bool to_string (string &a_str) const {a_str="const";return true;}
-};//end ConstTypeSpec
-typedef shared_ptr<ConstTypeSpec> ConstTypeSpecPtr;
-
-class NEMIVER_API VolatileTypeSpec : public TypeSpecifier {
-    VolatileTypeSpec (const VolatileTypeSpec&);
-    VolatileTypeSpec& operator= (const VolatileTypeSpec&);
-
-public:
-    VolatileTypeSpec () :
-        TypeSpecifier (VOLATILE)
-    {}
-    ~VolatileTypeSpec () {}
-    bool to_string (string &a_str) const {a_str="volatile";return true;}
-};//end VolatileTypeSpec
-typedef shared_ptr<VolatileTypeSpec> VolatileTypeSpecPtr;
-
-class NEMIVER_API InlineSpecifier : public DeclSpecifier {
-    InlineSpecifier (const InlineSpecifier&);
-    InlineSpecifier& operator= (const InlineSpecifier&);
-public:
-    InlineSpecifier () :
-        DeclSpecifier (INLINE)
-    {}
-    ~InlineSpecifier () {}
-    bool to_string (string &a_str) const {a_str="inline";return true;}
-};
-typedef shared_ptr<InlineSpecifier> InlineSpecifierPtr;
-
-class NEMIVER_API VirtualSpecifier : public DeclSpecifier {
-    VirtualSpecifier (const VirtualSpecifier&);
-    VirtualSpecifier& operator= (const VirtualSpecifier&);
-public:
-    VirtualSpecifier () :
-        DeclSpecifier (VIRTUAL)
-    {}
-    ~VirtualSpecifier () {}
-    bool to_string (string &a_str) const {a_str="virtual";return true;}
-};
-typedef shared_ptr<VirtualSpecifier> VirtualSpecifierPtr;
-
-class NEMIVER_API ExplicitSpecifier : public DeclSpecifier {
-    ExplicitSpecifier (const ExplicitSpecifier&);
-    ExplicitSpecifier& operator= (const ExplicitSpecifier&);
-public:
-    ExplicitSpecifier () :
-        DeclSpecifier (EXPLICIT)
-    {}
-    ~ExplicitSpecifier () {}
-    bool to_string (string &a_str) const {a_str="explicit";return true;}
-};
-typedef shared_ptr<ExplicitSpecifier> ExplicitSpecifierPtr;
-
-class NEMIVER_API FriendSpecifier : public DeclSpecifier {
-    FriendSpecifier (const FriendSpecifier&);
-    FriendSpecifier& operator= (const FriendSpecifier&);
-
-public:
-    FriendSpecifier () :
-        DeclSpecifier (FRIEND)
-    {}
-    ~FriendSpecifier () {}
-    bool to_string (string &a_str) const {a_str="friend";return true;}
-};
-typedef shared_ptr<FriendSpecifier> FriendSpecifierPtr;
-
-class NEMIVER_API TypedefSpecifier : public DeclSpecifier {
-    TypedefSpecifier (const TypedefSpecifier&);
-    TypedefSpecifier& operator= (const TypedefSpecifier&);
-public:
-    TypedefSpecifier () :
-        DeclSpecifier (TYPEDEF)
-    {}
-    ~TypedefSpecifier () {}
-    bool to_string (string &a_str) const {a_str="typedef";return true;}
-};
-typedef shared_ptr<TypedefSpecifier> TypedefSpecifierPtr;
 
 /// the base class of all expressions
 class NEMIVER_API ExprBase {
@@ -1293,38 +834,6 @@ public:
     //TODO: support template-id
 };//end QualifiedIDExpr
 
-class NEMIVER_API TypeID {
-    TypeID (const TypeID&);
-    TypeID& operator= (const TypeID&);
-
-    list<TypeSpecifierPtr> m_type_specs;
-    //TODO: add abstract-declarator
-
-public:
-    TypeID () {}
-    TypeID (const list<TypeSpecifierPtr> &a_type_specs) :
-        m_type_specs (a_type_specs)
-    {}
-    ~TypeID () {}
-    const list<TypeSpecifierPtr>& get_type_specifiers () const {return m_type_specs;}
-    void set_type_specifiers (const list<TypeSpecifierPtr> &t) {m_type_specs=t;}
-    bool to_string (string &a_str) const
-    {
-        list<TypeSpecifierPtr>::const_iterator it;
-        for (it=m_type_specs.begin (); it != m_type_specs.end (); ++it) {
-            if (!*it) {continue;}
-            if (it == m_type_specs.begin ()) {
-                (*it)->to_string (a_str);
-            } else {
-                string str;
-                (*it)->to_string (str);
-                a_str += " " + str;
-            }
-        }
-        return true;
-    }
-};//end class TypeID
-typedef shared_ptr<TypeID> TypeIDPtr;
 
 /// contain the result of the parsing of an postfix-expression
 class NEMIVER_API PostfixExpr {
@@ -1580,7 +1089,7 @@ public:
     {
         string str;
         if (m_type_id) {
-            m_type_id->to_string (str);
+            nemiver::cpp::to_string (m_type_id, str);
             str = "(" + str + ")";
         }
         a_str = str;
@@ -2443,7 +1952,7 @@ public:
     bool to_string (string &a_str) const
     {
         if (m_id) {
-            m_id->to_string (a_str);
+            nemiver::cpp::to_string (m_id, a_str);
             return true;
         }
         return false;
@@ -2477,6 +1986,517 @@ public:
     }
 };//end class
 typedef shared_ptr<IDExprTemplArg> IDExprTemplArgPtr;
+
+class NEMIVER_API DeclSpecifier {
+    DeclSpecifier (const DeclSpecifier&);
+    DeclSpecifier& operator= (const DeclSpecifier&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        //storage class speficiers
+        AUTO,
+        REGISTER,
+        STATIC,
+        EXTERN,
+        MUTABLE,
+        //type specifier
+        TYPE,
+        //function specifiers
+        INLINE,
+        VIRTUAL,
+        EXPLICIT,
+        //friend specifier
+        FRIEND,
+        //typedef specifier
+        TYPEDEF
+    };
+
+private:
+    Kind m_kind ;
+
+    DeclSpecifier ();
+public:
+
+    DeclSpecifier (Kind k):
+        m_kind (k)
+    {
+    }
+
+    virtual ~DeclSpecifier ()
+    {
+    }
+
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind a_kind) {m_kind=a_kind;}
+
+    bool is_storage_class ()
+    {
+        return (m_kind == AUTO || m_kind == REGISTER
+                || m_kind == STATIC || m_kind == EXTERN
+                || m_kind == MUTABLE) ;
+    }
+    virtual bool to_string (string &a_str) const=0;
+    static bool list_to_string (const list<DeclSpecifierPtr> &a_decls, string &a_str);
+};//end class DeclSpecifier
+
+class NEMIVER_API AutoSpecifier : public DeclSpecifier {
+    AutoSpecifier (const AutoSpecifier&);
+    AutoSpecifier& operator= (const AutoSpecifier&);
+public:
+    AutoSpecifier () :
+        DeclSpecifier (AUTO)
+    {}
+    ~AutoSpecifier () {}
+    bool to_string (string &a_str) const {a_str="auto";return true;}
+};//end class AutoSpecifier
+
+class NEMIVER_API RegisterSpecifier : public DeclSpecifier {
+    RegisterSpecifier (const RegisterSpecifier&);
+    RegisterSpecifier& operator= (const RegisterSpecifier&);
+public:
+    RegisterSpecifier () :
+        DeclSpecifier (REGISTER)
+    {}
+    ~RegisterSpecifier () {}
+    bool to_string (string &a_str) const {a_str="register";return true;}
+};
+typedef shared_ptr<RegisterSpecifier> RegisterSpecifierPtr;
+
+class NEMIVER_API StaticSpecifier : public DeclSpecifier {
+    StaticSpecifier (const StaticSpecifier&);
+    StaticSpecifier& operator= (const StaticSpecifier&);
+public:
+    StaticSpecifier () :
+        DeclSpecifier (STATIC)
+    {}
+    ~StaticSpecifier () {}
+    bool to_string (string &a_str) const {a_str="static";return true;}
+};
+typedef shared_ptr<StaticSpecifier> StaticSpecifierPtr;
+
+class NEMIVER_API ExternSpecifier : public DeclSpecifier {
+    ExternSpecifier (const ExternSpecifier&);
+    ExternSpecifier& operator= (const ExternSpecifier&);
+public:
+    ExternSpecifier () :
+        DeclSpecifier (EXTERN)
+    {}
+    ~ExternSpecifier () {}
+    bool to_string (string &a_str) const {a_str="extern";return true;}
+};
+
+
+class NEMIVER_API MutableSpecifier : public DeclSpecifier {
+    MutableSpecifier (const MutableSpecifier&);
+    MutableSpecifier& operator= (const MutableSpecifier&);
+public:
+    MutableSpecifier () :
+        DeclSpecifier (MUTABLE)
+    {}
+    ~MutableSpecifier () {}
+    bool to_string (string &a_str) const {a_str="mutable";return true;}
+};
+class NEMIVER_API TypeSpecifier : public DeclSpecifier {
+    TypeSpecifier ();
+    TypeSpecifier (const TypeSpecifier&);
+    TypeSpecifier& operator= (const TypeSpecifier&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        SIMPLE,
+        CLASS,
+        ENUM,
+        ELABORATED,
+        CONST,
+        VOLATILE
+    };
+
+private:
+    Kind m_kind;
+
+public:
+
+    TypeSpecifier (Kind k):
+        DeclSpecifier (TYPE),
+        m_kind (k)
+    {
+    }
+    virtual ~TypeSpecifier () {}
+
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind a_kind) {m_kind = a_kind;}
+    bool is_cv_qualifier () const {return (m_kind == CONST || m_kind == VOLATILE);}
+    virtual bool to_string (string &a_str) const=0;
+    static bool list_to_string (const list<TypeSpecifierPtr> &, string &);
+};//end class TypeSpecifier
+typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
+
+class NEMIVER_API SimpleTypeSpec : public TypeSpecifier {
+    SimpleTypeSpec (const SimpleTypeSpec&);
+    SimpleTypeSpec& operator= (const SimpleTypeSpec&);
+
+    QNamePtr m_scope;
+    UnqualifiedIDExprPtr m_name;
+
+public:
+    SimpleTypeSpec () :
+        TypeSpecifier (SIMPLE)
+    {}
+    SimpleTypeSpec (const QNamePtr a_scope, const string &a_name) :
+        TypeSpecifier (SIMPLE),
+        m_scope (a_scope),
+        m_name (new UnqualifiedID (a_name))
+    {}
+    SimpleTypeSpec (const QNamePtr a_scope, const UnqualifiedIDExprPtr a_name) :
+        TypeSpecifier (SIMPLE),
+        m_scope (a_scope),
+        m_name (a_name)
+    {}
+    ~SimpleTypeSpec () {}
+    void set_scope (const QNamePtr &a_scope) {m_scope = a_scope;}
+    const QNamePtr get_scope () const {return m_scope;}
+    void set_name (const UnqualifiedIDExprPtr a_name) {m_name = a_name;}
+    const UnqualifiedIDExprPtr get_name () const {return m_name;}
+    string get_name_as_string () const
+    {
+        string str;
+        if (!m_name)
+            return str;
+        m_name->to_string (str);
+        return str;
+    }
+    bool to_string (string &a_str) const
+    {
+        string str;
+        if (m_scope) {
+            m_scope->to_string (str);
+        }
+        if (m_name) {
+            string tmp;
+            m_name->to_string (tmp);
+            str += tmp;
+        }
+        a_str = str;
+        return true;
+    }
+};//end SimpleTypeSpec
+typedef shared_ptr<SimpleTypeSpec> SimpleTypeSpecPtr;
+
+class NEMIVER_API ClassTypeSpec : public TypeSpecifier {
+    ClassTypeSpec (const ClassTypeSpec&);
+    ClassTypeSpec& operator= (const ClassTypeSpec&);
+
+public:
+    ClassTypeSpec () :
+        TypeSpecifier (CLASS)
+    {}
+    ~ClassTypeSpec () {}
+    bool to_string (string &a_str) const {a_str="class";return true;}
+};//end ClassTypeSpec
+typedef shared_ptr<SimpleTypeSpec> SimpleTypeSpecPtr;
+
+class NEMIVER_API EnumTypeSpec : public TypeSpecifier {
+    EnumTypeSpec (const EnumTypeSpec&);
+    EnumTypeSpec& operator= (const EnumTypeSpec&);
+
+public:
+    EnumTypeSpec () :
+        TypeSpecifier (ENUM)
+    {}
+    ~EnumTypeSpec () {}
+    bool to_string (string &a_str) const {a_str="enum";return true;}
+};//end EnumTypeSpec
+typedef shared_ptr<EnumTypeSpec> EnumTypeSpecPtr;
+
+class NEMIVER_API ElaboratedTypeSpec : public TypeSpecifier {
+    ElaboratedTypeSpec (const ElaboratedTypeSpec&);
+    ElaboratedTypeSpec& operator= (const ElaboratedTypeSpec&);
+
+public:
+    class Elem {
+        Elem ();
+    public:
+        enum Kind {
+            UNDEFINED,
+            CLASS,
+            STRUCT,
+            UNION,
+            ENUM,
+            TYPENAME,
+            SCOPE,
+            IDENTIFIER,
+            TEMPLATE,
+            TEMPLATE_ID
+        };
+    private:
+        Kind m_kind;
+    public:
+        Elem (Kind k) :
+            m_kind (k)
+        {}
+        virtual ~Elem () {}
+        virtual bool to_string (string &) const=0;
+    };
+    typedef shared_ptr<Elem> ElemPtr;
+
+    class ClassElem : public Elem {
+    public:
+        ClassElem ():
+            Elem (CLASS)
+        {}
+        ~ClassElem () {}
+        bool to_string (string &a_str) const {a_str="class";return true;}
+    };
+    typedef shared_ptr<ClassElem> ClassElemPtr;
+
+    class StructElem : public Elem {
+    public:
+        StructElem () :
+            Elem (STRUCT)
+        {}
+        ~StructElem () {}
+        bool to_string (string &a_str) const {a_str="struct";return true;}
+    };
+    typedef shared_ptr<StructElem> StructElemPtr;
+
+    class UnionElem : public Elem {
+    public:
+        UnionElem ():
+            Elem (UNION)
+        {}
+        ~UnionElem () {}
+        bool to_string (string &a_str) const {a_str="union";return true;}
+    };
+    typedef shared_ptr<UnionElem> UnionElemPtr;
+
+    class EnumElem : public Elem {
+    public:
+        EnumElem ():
+            Elem (ENUM)
+        {}
+        ~EnumElem () {}
+        bool to_string (string &a_str) const {a_str="enum";return true;}
+    };
+    typedef shared_ptr<EnumElem> EnumElemPtr;
+
+    class TypenameElem : public Elem {
+    public:
+        TypenameElem () :
+            Elem (TYPENAME)
+        {}
+        ~TypenameElem () {}
+        bool to_string (string &a_str) const {a_str="typename";return true;}
+    };
+    typedef shared_ptr<TypenameElem> TypenameElemPtr;
+
+    class ScopeElem : public Elem {
+        QNamePtr m_scope;
+    public:
+        ScopeElem () :
+            Elem (SCOPE)
+        {}
+        ScopeElem (const QNamePtr s) :
+            Elem (SCOPE),
+            m_scope (s)
+        {}
+        ~ScopeElem () {}
+        void set_scope (const QNamePtr s) {m_scope=s;}
+        const QNamePtr& get_qname () const {return m_scope;}
+        bool to_string (string &a_str) const
+        {
+            if (m_scope) {
+                m_scope->to_string (a_str);
+            }
+            return true;
+        }
+    };
+    typedef shared_ptr<ScopeElem> ScopeElemPtr;
+
+    class IdentifierElem : public Elem {
+        string m_name;
+    public:
+        IdentifierElem ():
+            Elem (IDENTIFIER)
+        {}
+        IdentifierElem (const string &a_id):
+            Elem (IDENTIFIER),
+            m_name (a_id)
+        {}
+        ~IdentifierElem () {}
+        const string& get_name () const {return m_name;}
+        void set_name (const string &a_name) {m_name=a_name;}
+        bool to_string (string &a_str) const {a_str=m_name;return true;}
+    };
+    typedef shared_ptr<IdentifierElem> IdentifierElemPtr;
+
+    class TemplateElem : public Elem {
+    public:
+        TemplateElem ():
+            Elem (TEMPLATE)
+        {}
+        ~TemplateElem () {}
+        bool to_string (string &a_str) const {a_str="template";return true;}
+    };
+    typedef shared_ptr<TemplateElem> TemplateElemPtr;
+
+private:
+    list<ElemPtr> m_elems;
+
+public:
+    ElaboratedTypeSpec () :
+        TypeSpecifier (ELABORATED)
+    {}
+    ElaboratedTypeSpec (const list<ElaboratedTypeSpec::ElemPtr> &elems) :
+        TypeSpecifier (ELABORATED),
+        m_elems (elems)
+    {}
+    ~ElaboratedTypeSpec () {}
+    void append (const ElemPtr a_elem) {m_elems.push_back (a_elem);}
+    void append (const list<ElemPtr> &a_elems)
+    {
+        list<ElemPtr>::const_iterator it;
+        for (it=a_elems.begin (); it != a_elems.end (); ++it) {
+            m_elems.push_back (*it);
+        }
+    }
+    const list<ElemPtr>& get_elems () const {return m_elems;}
+    bool to_string (string &a_str) const
+    {
+        string str;
+        list<ElemPtr>::const_iterator it;
+        for (it = m_elems.begin (); it != m_elems.end (); ++it) {
+            if (it == m_elems.begin () && *it) {
+                (*it)->to_string (a_str);
+            } else if (*it) {
+                (*it)->to_string (str);
+                a_str += " " + str;
+            }
+        }
+        return true;
+    }
+};//end ElaboratedTypeSpec
+typedef shared_ptr<ElaboratedTypeSpec> ElaboratedTypeSpecPtr;
+
+class NEMIVER_API ConstTypeSpec : public TypeSpecifier {
+    ConstTypeSpec (const ConstTypeSpec&);
+    ConstTypeSpec& operator= (const ConstTypeSpec&);
+
+public:
+    ConstTypeSpec () :
+        TypeSpecifier (CONST)
+    {}
+    ~ConstTypeSpec () {}
+    bool to_string (string &a_str) const {a_str="const";return true;}
+};//end ConstTypeSpec
+typedef shared_ptr<ConstTypeSpec> ConstTypeSpecPtr;
+
+class NEMIVER_API VolatileTypeSpec : public TypeSpecifier {
+    VolatileTypeSpec (const VolatileTypeSpec&);
+    VolatileTypeSpec& operator= (const VolatileTypeSpec&);
+
+public:
+    VolatileTypeSpec () :
+        TypeSpecifier (VOLATILE)
+    {}
+    ~VolatileTypeSpec () {}
+    bool to_string (string &a_str) const {a_str="volatile";return true;}
+};//end VolatileTypeSpec
+typedef shared_ptr<VolatileTypeSpec> VolatileTypeSpecPtr;
+
+class NEMIVER_API InlineSpecifier : public DeclSpecifier {
+    InlineSpecifier (const InlineSpecifier&);
+    InlineSpecifier& operator= (const InlineSpecifier&);
+public:
+    InlineSpecifier () :
+        DeclSpecifier (INLINE)
+    {}
+    ~InlineSpecifier () {}
+    bool to_string (string &a_str) const {a_str="inline";return true;}
+};
+typedef shared_ptr<InlineSpecifier> InlineSpecifierPtr;
+
+class NEMIVER_API VirtualSpecifier : public DeclSpecifier {
+    VirtualSpecifier (const VirtualSpecifier&);
+    VirtualSpecifier& operator= (const VirtualSpecifier&);
+public:
+    VirtualSpecifier () :
+        DeclSpecifier (VIRTUAL)
+    {}
+    ~VirtualSpecifier () {}
+    bool to_string (string &a_str) const {a_str="virtual";return true;}
+};
+typedef shared_ptr<VirtualSpecifier> VirtualSpecifierPtr;
+
+class NEMIVER_API ExplicitSpecifier : public DeclSpecifier {
+    ExplicitSpecifier (const ExplicitSpecifier&);
+    ExplicitSpecifier& operator= (const ExplicitSpecifier&);
+public:
+    ExplicitSpecifier () :
+        DeclSpecifier (EXPLICIT)
+    {}
+    ~ExplicitSpecifier () {}
+    bool to_string (string &a_str) const {a_str="explicit";return true;}
+};
+typedef shared_ptr<ExplicitSpecifier> ExplicitSpecifierPtr;
+
+class NEMIVER_API FriendSpecifier : public DeclSpecifier {
+    FriendSpecifier (const FriendSpecifier&);
+    FriendSpecifier& operator= (const FriendSpecifier&);
+
+public:
+    FriendSpecifier () :
+        DeclSpecifier (FRIEND)
+    {}
+    ~FriendSpecifier () {}
+    bool to_string (string &a_str) const {a_str="friend";return true;}
+};
+typedef shared_ptr<FriendSpecifier> FriendSpecifierPtr;
+
+class NEMIVER_API TypedefSpecifier : public DeclSpecifier {
+    TypedefSpecifier (const TypedefSpecifier&);
+    TypedefSpecifier& operator= (const TypedefSpecifier&);
+public:
+    TypedefSpecifier () :
+        DeclSpecifier (TYPEDEF)
+    {}
+    ~TypedefSpecifier () {}
+    bool to_string (string &a_str) const {a_str="typedef";return true;}
+};
+typedef shared_ptr<TypedefSpecifier> TypedefSpecifierPtr;
+
+class NEMIVER_API TypeID {
+    TypeID (const TypeID&);
+    TypeID& operator= (const TypeID&);
+
+    list<TypeSpecifierPtr> m_type_specs;
+    //TODO: add abstract-declarator
+
+public:
+    TypeID () {}
+    TypeID (const list<TypeSpecifierPtr> &a_type_specs) :
+        m_type_specs (a_type_specs)
+    {}
+    ~TypeID () {}
+    const list<TypeSpecifierPtr>& get_type_specifiers () const {return m_type_specs;}
+    void set_type_specifiers (const list<TypeSpecifierPtr> &t) {m_type_specs=t;}
+    bool to_string (string &a_str) const
+    {
+        list<TypeSpecifierPtr>::const_iterator it;
+        for (it=m_type_specs.begin (); it != m_type_specs.end (); ++it) {
+            if (!*it) {continue;}
+            if (it == m_type_specs.begin ()) {
+                (*it)->to_string (a_str);
+            } else {
+                string str;
+                (*it)->to_string (str);
+                a_str += " " + str;
+            }
+        }
+        return true;
+    }
+};//end class TypeID
 
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored
@@ -2531,10 +2551,11 @@ public:
     bool to_string (string &a_str) const
     {
         if (!m_id) {return false;}
-        if (get_ptr_operator ()) {a_str = "*";}
-        string str;
-        m_id->to_string (str);
-        a_str += str;
+        string str, tmp;
+        if (get_ptr_operator ()) {str = "*";}
+        m_id->to_string (tmp);
+        str += tmp;
+        a_str = str;
         return true;
     }
 };//class IDDeclarator

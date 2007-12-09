@@ -1528,8 +1528,12 @@ Parser::parse_simple_type_specifier (SimpleTypeSpecPtr &a_str)
         if (LEXER.peek_next_token (token)
             && token.get_kind () == Token::KEYWORD
             && token.get_str_value () == "template") {
-            //TODO: handle template id
-            goto error;
+            if (!LEXER.consume_next_token ()) {goto error;}
+            TemplateIDPtr template_id;
+            if (!parse_template_id (template_id)) {goto error;}
+            UnqualifiedIDExprPtr id (new UnqualifiedTemplateID (template_id));
+            result.reset (new SimpleTypeSpec (scope,id));
+            goto okay;
         }
     }
     if (!parse_type_name (type_name) || !type_name) {goto error;}
@@ -1843,8 +1847,9 @@ Parser::parse_decl_specifier_seq (list<DeclSpecifierPtr> &a_result)
                     std::tr1::static_pointer_cast<SimpleTypeSpec> (type_specifier);
 
                 result.push_back (simple_type_spec);
-                if (simple_type_spec->get_name () == "signed"
-                    || simple_type_spec->get_name () == "unsigned") {
+                string type_name_str = simple_type_spec->get_name_as_string ();
+                if (type_name_str == "signed"
+                    || type_name_str == "unsigned") {
                     if (!LEXER.peek_next_token (token)) {break;}
                     if (token.get_kind () == Token::KEYWORD
                         && (token.get_str_value () ==    "char"
@@ -1856,15 +1861,15 @@ Parser::parse_decl_specifier_seq (list<DeclSpecifierPtr> &a_result)
                         nb_type_specifiers++;
                         continue;
                     }
-                } else if (simple_type_spec->get_name () == "short"
-                           || simple_type_spec->get_name () == "long") {
+                } else if (type_name_str == "short"
+                           || type_name_str == "long") {
                     if (!LEXER.peek_next_token (token)) {break;}
                     if (token.get_kind () == Token::KEYWORD
                         && (token.get_str_value () == "int")) {
                         if (!parse_decl_specifier (decl) || !decl) {goto error;}
                         result.push_back (decl);
                         nb_type_specifiers++;
-                    } else if (simple_type_spec->get_name () == "long"
+                    } else if (type_name_str == "long"
                                && token.get_kind () == Token::KEYWORD
                                && token.get_str_value () == "double") {
                         if (!parse_decl_specifier (decl) || !decl) {goto error;}

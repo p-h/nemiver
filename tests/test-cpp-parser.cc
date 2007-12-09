@@ -12,7 +12,9 @@ const char *prog1 = "foo *bar" ;
 const char *prog1_1 = "foo bar[10]" ;
 const char *prog2 = "const foo *bar" ;
 const char *prog3 = "static const foo *bar" ;
-const char *prog4 = "static const unsigned int foo" ;
+const char *prog3_1 = "static const bar<baz> maman" ;
+const char *prog4 = "static const unsigned int" ;
+const char *prog4_1 = "foo<bar>" ;
 const char *prog5 = "(int)5";
 const char *prog5_1 = "5";
 const char *prog5_2 = "foo.*bar";
@@ -184,40 +186,68 @@ test_parser2 ()
 void
 test_parser3 ()
 {
-    Parser parser (prog3);
-    string str;
     SimpleDeclarationPtr simple_decl;
+    vector<string> inputs;
+    vector<ParserPtr> parsers;
+    ParserPtr parser;
+    string prog_str, str;
+    
+    prog_str = prog3;
+    inputs.push_back (prog_str);
+    parser.reset (new Parser (prog_str));
+    parsers.push_back (parser);
 
-    if (!parser.parse_simple_declaration (simple_decl)) {
-        BOOST_FAIL ("parsing failed");
-    }
-    if (!simple_decl) {
-        cout << "got empty simple declaration" << endl;
-        return;
-    }
-    simple_decl->to_string (str);
-    if (prog3 != str) {
-        BOOST_FAIL ("parsed '" <<prog3 << "' into '" << str << "'");
+    prog_str = prog3_1;
+    inputs.push_back (prog_str);
+    parser.reset (new Parser (prog_str));
+    parsers.push_back (parser);
+
+    for (unsigned i=0; i < parsers.size (); i++) {
+        if (!parsers[i]->parse_simple_declaration (simple_decl)) {
+            BOOST_FAIL ("parsing of '" << inputs[i] << "' failed");
+        }
+        if (!simple_decl) {
+            cout << "got empty simple declaration" << endl;
+            return;
+        }
+        simple_decl->to_string (str);
+        if (inputs[i] != str) {
+            BOOST_FAIL ("parsed '" <<inputs[i] << "' into '" << str << "'");
+        }
     }
 }
 
 void
 test_parser4 ()
 {
-    Parser parser (prog4);
-    string str;
-    list<DeclSpecifierPtr>decls;
+    vector<string> inputs;
+    vector<ParserPtr> parsers;
+    ParserPtr parser;
+    string prog_str, str;
+    
+    prog_str = prog4;
+    inputs.push_back (prog_str);
+    parser.reset (new Parser (prog_str));
+    parsers.push_back (parser);
 
-    if (!parser.parse_decl_specifier_seq (decls)) {
-        BOOST_FAIL ("parsing failed");
-    }
-    if (decls.empty ()) {
-        cout << "got empty decl specifier sequence" << endl;
-        return;
-    }
-    DeclSpecifier::list_to_string (decls, str);
-    if (str != "static const unsigned int") {
-        BOOST_FAIL ("parsed '" <<prog4 << "' into '" << str << "'");
+    prog_str = prog4_1;
+    inputs.push_back (prog_str);
+    parser.reset (new Parser (prog_str));
+    parsers.push_back (parser);
+
+    list<DeclSpecifierPtr> decls;
+    for (unsigned i=0; i < parsers.size (); ++i) {
+        if (!parsers[i]->parse_decl_specifier_seq (decls)) {
+            BOOST_FAIL ("parsing of '" << inputs[i] << "' failed");
+        }
+        if (decls.empty ()) {
+            cout << "got empty decl specifier sequence" << endl;
+            return;
+        }
+        DeclSpecifier::list_to_string (decls, str);
+        if (str != inputs[i]) {
+            BOOST_FAIL ("parsed '" << inputs[i] << "' into '" << str << "'");
+        }
     }
 }
 
@@ -492,22 +522,26 @@ test_parser6 ()
 void
 test_parser7 ()
 {
-    string str;
+    string str, prog_str;
     TemplateIDPtr template_id;
+    ParserPtr parser;
     vector<string> inputs;
     vector<ParserPtr> parsers;
 
-    inputs.push_back (prog7_0);
-    ParserPtr parser0 (new Parser (prog7_0));
-    parsers.push_back (parser0);
+    prog_str = prog7_0;
+    inputs.push_back (prog_str);
+    parser.reset (new Parser (prog_str));
+    parsers.push_back (parser);
 
-    inputs.push_back (prog7_1);
-    ParserPtr parser1 (new Parser (prog7_1));
-    parsers.push_back (parser1);
+    prog_str = prog7_1;
+    inputs.push_back (prog_str);
+    parser.reset (new Parser (prog_str));
+    parsers.push_back (parser);
 
-    inputs.push_back (prog7_2);
-    ParserPtr parser2 (new Parser (prog7_2));
-    parsers.push_back (parser2);
+    prog_str = prog7_2;
+    inputs.push_back (prog_str);
+    parser.reset (new Parser (prog_str));
+    parsers.push_back (parser);
 
     for (unsigned i=0; i < parsers.size (); ++i) {
         if (!parsers[i]->parse_template_id (template_id)) {

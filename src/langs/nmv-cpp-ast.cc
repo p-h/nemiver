@@ -624,5 +624,14 @@ InitDeclarator::list_to_string (const list<InitDeclaratorPtr> &a_decls,
     return true;
 }
 
+bool
+to_string (const TypeIDPtr a_id, string &a_str)
+{
+    if (!a_id)
+        return false;
+    a_id->to_string (a_str);
+    return true;
+}
+
 NEMIVER_END_NAMESPACE (cpp)
 NEMIVER_END_NAMESPACE (nemiver)

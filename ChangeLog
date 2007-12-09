@@ -1,3 +1,11 @@
+2007-12-09 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-ast.cc,h,
+	  src/langs/nmv-cpp-parser.cc: added support of template-id in
+	  simple-type. Now we should be able to parse things like "foo<bar> baz;"
+	* tests/test-cpp-parser.cc b/tests/test-cpp-parser.cc: updated
+	  regression tests.
+
 2007-12-08 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc: fix a
