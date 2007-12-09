@@ -600,7 +600,7 @@ public:
     TemplateArg (Kind k) :
         m_kind (k)
     {}
-    ~TemplateArg () {}
+    virtual ~TemplateArg () {}
     Kind get_kind () const {return m_kind;}
     void set_kind (Kind k) {m_kind = k;}
     virtual bool to_string (string &) const =0;
@@ -621,12 +621,12 @@ public:
         m_name (name),
         m_args (args)
     {}
-    ~TemplateID () {}
+    virtual ~TemplateID () {}
     const string& get_name () const {return m_name;}
     void set_name (const string &n) {m_name = n;}
     const list<TemplateArgPtr>& get_arguments () const {return m_args;}
     void set_arguments (const list<TemplateArgPtr> &args) {m_args = args;}
-    bool to_string (string &a_str)
+    virtual bool to_string (string &a_str)
     {
         if (m_name.empty ()) {
             return false;

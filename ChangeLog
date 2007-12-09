@@ -1,5 +1,10 @@
 2007-12-09 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-ast.h: add virtual to TemplateArg and TemplateID destructor,
+	  otherwise this could lead to a potential leak later.
+
+2007-12-09 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.cc,h,
 	  src/langs/nmv-cpp-parser.cc: added support of template-id in
 	  simple-type. Now we should be able to parse things like "foo<bar> baz;"
