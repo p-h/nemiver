@@ -148,6 +148,12 @@ typedef shared_ptr<QName> QNamePtr;
 class IDExpr;
 typedef shared_ptr<IDExpr> IDExprPtr;
 
+class UnqualifiedIDExpr;
+typedef shared_ptr<UnqualifiedIDExpr> UnqualifiedIDExprPtr;
+
+class UnqualifiedID;
+typedef shared_ptr<UnqualifiedID> UnqualifiedIDPtr;
+
 class TypeSpecifier;
 typedef shared_ptr<TypeSpecifier> TypeSpecifierPtr;
 
@@ -161,6 +167,8 @@ class TypeID;
 typedef shared_ptr<TypeID> TypeIDPtr;
 
 bool to_string (const TypeIDPtr, string &);
+bool to_string (const UnqualifiedIDExprPtr, string &);
+UnqualifiedIDPtr create_unqualified_id (const string &);
 
 /// \brief Qualified Name.
 ///
@@ -170,19 +178,36 @@ class NEMIVER_API QName {
 
 public:
     class ClassOrNSName {
-        string m_name;
+        UnqualifiedIDExprPtr m_name;
         bool m_prefixed_with_template;//true if is prefixed by the 'template' keyword.
 
     public:
         ClassOrNSName (const string &n, bool p=false) :
-            m_name (n),
+            m_name (create_unqualified_id (n)),
             m_prefixed_with_template (p)
         {}
         ClassOrNSName () :
             m_prefixed_with_template (false)
         {}
-        const string& get_name () const {return m_name;}
-        void set_name (const string &n) {m_name = n;}
+        ClassOrNSName (const UnqualifiedIDExprPtr n, bool p=false) :
+            m_name (n),
+            m_prefixed_with_template (p)
+        {}
+        const UnqualifiedIDExprPtr get_name () const {return m_name;}
+        const string get_name_as_string () const
+        {
+            string str;
+            if (m_name) {
+                nemiver::cpp::to_string (m_name, str);
+            }
+            return str;
+        }
+        void set_name (const UnqualifiedIDExprPtr n) {m_name = n;}
+        void set_name (const string &a_n)
+        {
+            UnqualifiedIDExprPtr n (create_unqualified_id (a_n));
+            m_name = n;
+        }
         bool is_prefixed_with_template () const {return m_prefixed_with_template;}
         void set_is_prefixed_with_template (bool a) {m_prefixed_with_template=a;}
     };//end ClassOrNSName
@@ -203,14 +228,22 @@ public:
         ClassOrNSName c (a_name, a_prefixed_with_template);
         m_names.push_back (c);
     }
+    void append (const UnqualifiedIDExprPtr a_name, bool a_prefixed_with_template=false)
+    {
+        ClassOrNSName c (a_name, a_prefixed_with_template);
+        m_names.push_back (c);
+    }
     void append (const QNamePtr &a_q, bool a_prefixed_with_template=false)
     {
         if (!a_q) {return;}
         list<ClassOrNSName>::const_iterator it=a_q->get_names ().begin ();
-        ClassOrNSName n (it->get_name (), a_prefixed_with_template);
-        m_names.push_back (n);
-        for (; it != a_q->get_names ().end (); ++it) {
-            m_names.push_back (*it);
+        for (it=a_q->get_names ().begin (); it != a_q->get_names ().end (); ++it) {
+            if (it == a_q->get_names ().begin ()) {
+                ClassOrNSName n (it->get_name (), a_prefixed_with_template);
+                m_names.push_back (n);
+            } else {
+                m_names.push_back (*it);
+            }
         }
     }
     bool to_string (string &) const;
@@ -710,9 +743,8 @@ public:
     virtual ~UnqualifiedIDExpr () {}
     virtual bool to_string (string &) const=0;
 };//end class UnqualifiedIDExpr
-typedef shared_ptr<UnqualifiedIDExpr> UnqualifiedIDExprPtr;
 
-class UnqualifiedID : public UnqualifiedIDExpr {
+class NEMIVER_API UnqualifiedID : public UnqualifiedIDExpr {
     string m_name;
 
 public:
@@ -729,7 +761,6 @@ public:
     void set_name (const string &a_n) {m_name=a_n;}
     bool to_string (string &a_s) const;
 };
-typedef shared_ptr<UnqualifiedID> UnqualifiedIDPtr;
 
 class UnqualifiedOpFuncID : public UnqualifiedIDExpr {
     UnqualifiedOpFuncID (const UnqualifiedOpFuncID&);
@@ -826,7 +857,7 @@ public:
         m_id (a_id)
     {}
 
-    const QNamePtr get_scope () {return m_scope;}
+    const QNamePtr get_scope () const {return m_scope;}
     void set_scope (const QNamePtr a_scope) {m_scope=a_scope;}
     const UnqualifiedIDExprPtr get_unqualified_id () const {return m_id;}
     void set_unqualified_id (const UnqualifiedIDExprPtr a_id) {m_id = a_id;}

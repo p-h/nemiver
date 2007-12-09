@@ -886,6 +886,13 @@ Lexer::scan_keyword (Token &a_token)
         SCAN_KEYWORD (5, "while") or
         SCAN_KEYWORD (3, "xor") or
         SCAN_KEYWORD (6, "xor_eq")) {
+            if (IN_BOUNDS (CUR + key_length + 1)
+                && (is_nondigit (INPUT[CUR+key_length])
+                    || is_digit (INPUT[CUR+key_length]))) {
+                //keyword + char following the keyword
+                //could be an identifier
+                return false;
+            }
             string value = INPUT.substr (CUR, key_length) ;
             a_token.set (Token::KEYWORD, value) ;
             CUR += key_length ;

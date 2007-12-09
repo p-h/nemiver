@@ -323,16 +323,21 @@ bool
 QName::to_string (string &a_result) const
 {
     list<ClassOrNSName>::const_iterator it=get_names ().begin ();
-    if (it->get_name ().empty ())
+    if (!it->get_name ())
         return false;
-    a_result += it->get_name ();
-    for (++it; it != get_names ().end (); ++it) {
-        a_result += "::";
-        if (it->is_prefixed_with_template ()) {
-            a_result += "template ";
+    string result;
+    for (it=get_names ().begin (); it != get_names ().end (); ++it) {
+        if (it == get_names ().begin ()) {
+            result = it->get_name_as_string ();
+        } else {
+            result += "::";
+            if (it->is_prefixed_with_template ()) {
+                a_result += "template ";
+            }
+            result += it->get_name_as_string ();
         }
-        a_result += it->get_name ();
     }
+    a_result = result;
     return true;
 }
 
@@ -596,10 +601,13 @@ bool
 QualifiedIDExpr::to_string (string &a_result) const
 {
     string result;
-    if (get_unqualified_id () && get_unqualified_id ()->to_string (result)) {
-        result = "::" + result;
-    } else {
-        return false;
+    if (get_scope ()) {
+        get_scope ()->to_string (result);
+    }
+    if (get_unqualified_id ()) {
+        string tmp;
+        get_unqualified_id ()->to_string (tmp);
+        result += "::" + tmp;
     }
     a_result = result;
     return true;
@@ -630,6 +638,22 @@ to_string (const TypeIDPtr a_id, string &a_str)
     if (!a_id)
         return false;
     a_id->to_string (a_str);
+    return true;
+}
+
+UnqualifiedIDPtr
+create_unqualified_id (const string &a_str)
+{
+    UnqualifiedIDPtr result (new UnqualifiedID (a_str));
+    return result;
+}
+
+bool
+to_string (const UnqualifiedIDExprPtr a_expr, string &a_str)
+{
+    if (!a_expr)
+        return false;
+    a_expr->to_string (a_str);
     return true;
 }
 

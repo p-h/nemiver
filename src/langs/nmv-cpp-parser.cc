@@ -1040,18 +1040,22 @@ Parser::parse_unary_expr (UnaryExprPtr &a_result)
 /// namespace-alias:
 ///           identifier
 bool
-Parser::parse_class_or_namespace_name (string &a_result)
+Parser::parse_class_or_namespace_name (UnqualifiedIDExprPtr &a_result)
 {
     Token token;
     if (!LEXER.peek_next_token (token)) {return false;}
 
     if (token.get_kind () == Token::IDENTIFIER) {
-        a_result = token.get_str_value ();
+        TemplateIDPtr template_id;
+        if (parse_template_id (template_id)) {
+            a_result.reset (new UnqualifiedTemplateID (template_id));
+        } else {
+            a_result.reset (new UnqualifiedID (token.get_str_value ()));
+            LEXER.consume_next_token ();
+        }
     } else {
-        //TODO: handle the case of template-id
         return false;
     }
-    LEXER.consume_next_token ();
     return true;
 }
 
@@ -1140,24 +1144,28 @@ bool
 Parser::parse_nested_name_specifier (QNamePtr &a_result)
 {
     bool result=false;
-    string con_name, specifier, specifier2;
+    string specifier, specifier2;
     QNamePtr qname, qname2;
     Token token;
+    UnqualifiedIDExprPtr id;
     unsigned mark = LEXER.get_token_stream_mark ();
 
-    if (!parse_class_or_namespace_name (con_name)) {goto error;}
+    if (!parse_class_or_namespace_name (id)) {goto error;}
     qname.reset (new QName);
-    qname->append (con_name);
+    qname->append (id);
     if (!LEXER.consume_next_token (token)) {goto error;}
     if (token.get_kind () != Token::OPERATOR_SCOPE_RESOL) {goto error;}
     if (parse_nested_name_specifier (qname2)) {
         qname->append (qname2);
     } else {
-        if (LEXER.consume_next_token (token)
+        if (LEXER.peek_next_token (token)
             && token.get_kind () == Token::KEYWORD
             && token.get_str_value () == "template") {
+            if (!LEXER.consume_next_token (token)) {goto error;}
             if (parse_nested_name_specifier (qname2)) {
                 qname->append (qname2, true);
+            } else {
+                goto error;
             }
         }
     }
@@ -1213,7 +1221,8 @@ Parser::parse_unqualified_id (UnqualifiedIDExprPtr &a_result)
                 result.reset (new UnqualifiedOpFuncID (token));
                 goto okay;
             } else {
-                goto error;
+                result.reset (new UnqualifiedID (token.get_str_value ()));
+                goto okay;
             }
             break;
         case Token::OPERATOR_BIT_COMPLEMENT:
@@ -1265,7 +1274,7 @@ Parser::parse_qualified_id (QualifiedIDExprPtr &a_expr)
     QNamePtr scope;
     unsigned mark = LEXER.get_token_stream_mark ();
 
-    if (!LEXER.consume_next_token (token)) {return false;}
+    if (!LEXER.peek_next_token (token)) {return false;}
     QualifiedIDExprPtr expr;
 
     if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
@@ -1278,8 +1287,8 @@ Parser::parse_qualified_id (QualifiedIDExprPtr &a_expr)
             && token.get_str_value () == "template") {
             LEXER.consume_next_token ();
             has_template=true;
-            if (!parse_unqualified_id (id)) {goto error;}
         }
+        if (!parse_unqualified_id (id)) {goto error;}
         expr.reset (new QualifiedIDExpr (scope, id));
         goto okay;
     }
@@ -1312,7 +1321,7 @@ out:
 bool
 Parser::parse_id_expr (IDExprPtr &a_expr)
 {
-    bool result=false;
+    bool is_okay=false;
     Token token;
 
     if (!LEXER.peek_next_token (token)) {return false;}
@@ -1320,33 +1329,33 @@ Parser::parse_id_expr (IDExprPtr &a_expr)
         case Token::KEYWORD:
         case Token::OPERATOR_BIT_COMPLEMENT: {
             UnqualifiedIDExprPtr unq_expr;
-            result = parse_unqualified_id (unq_expr);
-            if (result) {
+            is_okay = parse_unqualified_id (unq_expr);
+            if (is_okay) {
                 a_expr = unq_expr;
             }
-            return result;
+            return is_okay;
         }
         case Token::OPERATOR_SCOPE_RESOL: {
             QualifiedIDExprPtr q_expr;
-            result = parse_qualified_id (q_expr);
-            if (result) {
+            is_okay = parse_qualified_id (q_expr);
+            if (is_okay) {
                 a_expr = q_expr;
             }
-            return result;
+            return is_okay;
         }
         case Token::IDENTIFIER: {
             UnqualifiedIDExprPtr unq_expr;
             QualifiedIDExprPtr q_expr;
-            if (parse_unqualified_id (unq_expr)) {
-                a_expr = unq_expr;
-                result = true;
+            if (parse_qualified_id (q_expr)) {
+                a_expr = q_expr;
+                is_okay = true;
             } else {
-                if (parse_qualified_id (q_expr)) {
-                    a_expr = q_expr;
-                    result = true;
+                if (parse_unqualified_id (unq_expr)) {
+                    a_expr = unq_expr;
+                    is_okay = true;
                 }
             }
-            return result;
+            return is_okay;
         }
         default:
             break;

@@ -67,7 +67,7 @@ public:
     bool parse_assign_expr (AssignExprPtr &);
     bool parse_expr (ExprPtr &) ;
     bool parse_const_expr (ConstExprPtr &);
-    bool parse_class_or_namespace_name (string &str);
+    bool parse_class_or_namespace_name (UnqualifiedIDExprPtr &a_name);
     bool parse_type_name (UnqualifiedIDExprPtr &);
     bool parse_nested_name_specifier (QNamePtr &a_result);
     bool parse_unqualified_id (UnqualifiedIDExprPtr &a_expr);

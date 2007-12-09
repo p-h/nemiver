@@ -1,5 +1,32 @@
 2007-12-09 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-ast.cc:
+	  (QName::to_string ()): fix a bug in here.
+	  (QualifiedIDExpr::to_string): ditto.
+	* src/langs/nmv-cpp-ast.h: Make QName (scope) support template-id, not
+	  only identifiers.
+	* src/langs/nmv-cpp-lexer.cc:
+	  (Lexer::scan_keyword()): bugfix: when a keyword is followed by characters that
+	  could make it an identifier, well, it's not a keyword.
+	* src/langs/nmv-cpp-parser.cc:
+	  (Parser::parse_class_or_namespace_name()): make this parse into an
+	   UnqualifiedIDExpr, not a bare string. Yeah, class or namespace names
+	   can be more complicated than simple identifiers.
+	  (Parser::parse_nested_name_specifier()): propagate the above change.
+	  (Parser::parse_unqualified_id): bugfix: a plain keyword can be an
+	  unqualified ID.
+	 (Parser::parse_qualified_id()): bugfix: don't consume tokens for real
+	  when doing tentative parsing.
+	  Also, make sure to always try to parse the remaining unqualified id
+	  part when we parsed a nested name specifier first.
+	 (Parser::parse_id_expr()): cleanup&fix: always try to parse the longest
+	  valid sequence.
+	* tests/test-cpp-parser.cc: heavy cleanup here. Put the parser inputs
+	  into arrays. Added more " real life" tests coming from the output of
+	  "info variable" on fooprog.
+
+2007-12-09 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.h: add virtual to TemplateArg and TemplateID destructor,
 	  otherwise this could lead to a potential leak later.
 
