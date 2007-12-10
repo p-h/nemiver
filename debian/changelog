@@ -1,5 +1,7 @@
 nemiver (0.4.0-1) unstable; urgency=low
-  
+ 
+  * Shipping libnemivercommon as a private lib (patch from SVN r539-542
+    by Josselin Mouette)
   * Patch from SVN (r513) to fix a misnamed glade file
   * Patch from SVN (r509) to reflect a libgtop API change
   * debian/copyright rewritten in a machine-interpretable format
