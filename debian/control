@@ -2,8 +2,8 @@ Source: nemiver
 Section: gnome
 Priority: optional
 Vcs-Git: https://git.unstable.it/packages.git/
-Vcs-Browser: https://git.unstable.it/packages.git/?p=packages.git
-Maintainer: Luca Bruno <luca.br@uno.it>
+Vcs-Browser: https://git.unstable.it/?p=packages.git;a=shortlog;h=nemiver
+Maintainer: Luca Bruno <lucab@debian.org>
 Uploaders: Andrea Corradi <lash@semailer.com>
 Build-Depends: debhelper (>= 5), quilt, gdb, libxml-parser-perl, \
 	       pkg-config (>= 0.9), gnome-doc-utils (>= 0.3.2),libboost-dev, \ 
@@ -12,7 +12,7 @@ Build-Depends: debhelper (>= 5), quilt, gdb, libxml-parser-perl, \
 	       libglibmm-2.4-dev (>= 2.8.2), libsqlite3-dev (>=3.0), \
 	       libvte-dev (>= 0.12), libgtkmm-2.4-dev (>= 2.6), \ 
 	       libglademm-2.4-dev (>= 2.6), libgtksourceviewmm-1.0-dev (>= 0.3)
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 Homepage: http://home.gna.org/nemiver/
 
 Package: nemiver

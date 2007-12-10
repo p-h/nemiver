@@ -7,5 +7,5 @@ nemiver (0.4.0-1) unstable; urgency=low
   * debian/copyright rewritten in a machine-interpretable format
   * Initial release (Closes: #392988)  
 
- -- Luca Bruno <luca.br@uno.it>  Sun, 18 Nov 2007 11:59:38 +0100
+ -- Luca Bruno <lucab@debian.org>  Sun, 18 Nov 2007 11:59:38 +0100
 
