@@ -26,7 +26,6 @@ config.status: patch
 	./configure --host=$(DEB_HOST_GNU_TYPE) \
                    --build=$(DEB_BUILD_GNU_TYPE) \
 		   --prefix=/usr \
-		   --disable-scrollkeeper \
 		   --with-gconf-schema-file-dir=\$${prefix}/share/gconf/schemas \
 		   CFLAGS="$(CFLAGS)" 
 
