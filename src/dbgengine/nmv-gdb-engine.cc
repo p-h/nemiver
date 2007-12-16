@@ -654,7 +654,6 @@ public:
             gsize nb_read (0), CHUNK_SIZE(512) ;
             char buf[CHUNK_SIZE+1] ;
             Glib::IOStatus status (Glib::IO_STATUS_NORMAL) ;
-            bool got_data (false) ;
             UString meaningful_buffer ;
             while (true) {
                 memset (buf, 0, CHUNK_SIZE + 1) ;
@@ -671,11 +670,7 @@ public:
                 }
                 nb_read = 0 ;
             }
-            LOG_DD ("gdb_stdout_buffer: <buf got_data="
-                    << (int)got_data
-                    << ">"
-                    << gdb_stdout_buffer
-                    << "</buf>") ;
+            LOG_DD ("gdb_stdout_buffer: <buf>" << gdb_stdout_buffer << "</buf>") ;
 
             UString::size_type i=0 ;
             while ((i = gdb_stdout_buffer.raw ().find ("(gdb)")) !=
@@ -692,7 +687,8 @@ public:
                 meaningful_buffer = gdb_stdout_buffer.substr (0, size) ;
                 meaningful_buffer.chomp () ;
                 meaningful_buffer += '\n' ;
-                LOG_DD ("emiting gdb_stdout_signal ()") ;
+                LOG_DD ("emiting gdb_stdout_signal () with '"
+                        << meaningful_buffer << "'") ;
                 gdb_stdout_signal.emit (meaningful_buffer) ;
                 gdb_stdout_buffer.erase (0, size) ;
                 while (!gdb_stdout_buffer.empty ()
@@ -700,10 +696,8 @@ public:
                     gdb_stdout_buffer.erase (0,1) ;
                 }
             }
-            if (gdb_stdout_buffer.raw ().find ("[0] cancel")
-                    != std::string::npos
-                && gdb_stdout_buffer.raw ().find ("> ")
-                    != std::string::npos) {
+            if (gdb_stdout_buffer.raw ().find ("[0] cancel") != std::string::npos
+                && gdb_stdout_buffer.raw ().find ("> ") != std::string::npos) {
                 //this is not a gdbmi ouptut, but rather a plain gdb
                 //command line. It is actually a prompt sent by gdb
                 //to let the user choose between a list of overloaded functions
@@ -2817,11 +2811,11 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("set-breakpoint",
-                            "-break-insert " + a_func_name,
+                            "break " + a_func_name,
                             a_cookie)) ;
 }
 
-void 
+void
 GDBEngine::set_catch (const UString &a_event,
 					  const UString &a_cookie)
 {
@@ -2891,7 +2885,7 @@ GDBEngine::delete_breakpoint (const UString &a_path,
 
 void
 GDBEngine::choose_function_overload (int a_overload_number,
-                                      const UString &a_cookie)
+                                     const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 

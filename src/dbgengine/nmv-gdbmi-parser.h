@@ -575,6 +575,7 @@ bool parse_register_values (const UString &a_input,
                             UString::size_type a_from,
                             UString::size_type &a_to,
                             std::map<IDebugger::register_id_t, UString> &a_values);
+
 bool parse_memory_values (const UString &a_input,
                           UString::size_type a_from,
                           UString::size_type &a_to,
