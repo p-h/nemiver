@@ -81,6 +81,8 @@ client_notify_func (GConfClient *a_client,
                     GConfValue *a_value,
                     GConfMgr *a_conf_mgr)
 {
+    NEMIVER_TRY
+
     THROW_IF_FAIL (a_client) ;
     THROW_IF_FAIL (a_key) ;
     THROW_IF_FAIL (a_value) ;
@@ -114,6 +116,8 @@ client_notify_func (GConfClient *a_client,
             return ;
     }
     a_conf_mgr->value_changed_signal ().emit (a_key, value) ;
+
+    NEMIVER_CATCH_NOX
 }
 
 void

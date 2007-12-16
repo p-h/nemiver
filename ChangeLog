@@ -1,5 +1,11 @@
 2007-12-16 Dodji Seketeli <dodji@gnome.org>
 
+	* src/confmgr/nmv-gconf-mgr.cc:
+	  (client_notify_func): catch exceptions that might been thrown.
+	  This fixes #503864
+
+2007-12-16 Dodji Seketeli <dodji@gnome.org>
+
 	* src/main.cc:
 	  fix bug "start nemiver with wrongs args throws error". (#503887)
 
