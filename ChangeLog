@@ -1,5 +1,10 @@
 2007-12-16 Dodji Seketeli <dodji@gnome.org>
 
+	* src/main.cc:
+	  fix bug "start nemiver with wrongs args throws error". (#503887)
+
+2007-12-16 Dodji Seketeli <dodji@gnome.org>
+
 	* src/workbench/nmv-workbench.cc:
 	  (Workbench::init_window ()): make sure the minimum geometry of
 	  the root window cannot be (0,0).

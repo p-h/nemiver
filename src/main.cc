@@ -357,6 +357,10 @@ main (int a_argc, char *a_argv[])
 
 
     if (a_argc > 1) {
+        if (a_argv[1][0] == '-') {
+            std::cerr << "unknown option " << a_argv[1] << "\n";
+            return 0;
+        }
         UString prog_args ;
         for (int i=1 ; i < a_argc ;++i) {
             prog_args +=  Glib::locale_to_utf8 (a_argv[i]) + " ";
