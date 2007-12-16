@@ -6,9 +6,10 @@ TESTS=\
 runtestgdbmi runtestunicode \
 runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
-runtestderef runtestlocalvarslist \
-runtestcpplexer \
+runtestoverloads runtestderef \
+runtestlocalvarslist runtestcpplexer \
 runtestcppparser
+
 
 else
 
@@ -37,6 +38,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestoverloads_SOURCES=test-overloads.cc
+runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestcore_SOURCES=test-core.cc

@@ -1,3 +1,12 @@
+2007-12-16 Dodji Seketeli <dodji@gnome.org>
+
+	*  test/Makefile.am, tests/test-overloads.cc: added
+	   This test to test a regression that happend in gdb 6.7.1
+	   handling of overload resolution when using the mi2 interpreter.
+	   Basically the format of the prompt returned to the client for
+	   overload resolution is broken by gdb.
+	   This test shows the problem.
+
 2007-12-09 Dodji Seketeli <dodji@gnome.org>
 
 	* src/langs/nmv-cpp-ast.cc:
