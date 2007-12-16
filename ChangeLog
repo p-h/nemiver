@@ -1,5 +1,11 @@
 2007-12-16 Dodji Seketeli <dodji@gnome.org>
 
+	* src/workbench/nmv-workbench.cc:
+	  (Workbench::init_window ()): make sure the minimum geometry of
+	  the root window cannot be (0,0).
+
+2007-12-16 Dodji Seketeli <dodji@gnome.org>
+
 	*  test/Makefile.am, tests/test-overloads.cc: added
 	   This test to test a regression that happend in gdb 6.7.1
 	   handling of overload resolution when using the mi2 interpreter.

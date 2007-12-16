@@ -571,9 +571,13 @@ Workbench::init_window ()
     }
 
     //set the minimum width/height of nemiver, just in case.
-    width=700, height=500 ;
+    width=0, height=0 ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH, width) ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT, height) ;
+    if (!width)
+        width = 700;
+    if (!height)
+        height = 500;
     m_priv->root_window->set_size_request (width, height) ;
     LOG_DD ("set windows min size to ("
             << (int) width
