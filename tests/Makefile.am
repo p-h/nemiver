@@ -1,14 +1,13 @@
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
 #
-#runtestglobalvariables
 TESTS=\
 runtestgdbmi runtestunicode \
 runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
 runtestoverloads runtestderef \
 runtestlocalvarslist runtestcpplexer \
-runtestcppparser
+runtestcppparser runtestglobalvariables
 
 
 else
@@ -79,9 +78,9 @@ runtestlocalvarslist_SOURCES=test-local-vars-list.cc
 runtestlocalvarslist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-#runtestglobalvariables_SOURCES=test-global-variables.cc
-#runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
-#$(top_builddir)/src/common/libnemivercommon.la
+runtestglobalvariables_SOURCES=test-global-variables.cc
+runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
 
 runtestcpplexer_SOURCES=test-cpp-lexer.cc
 runtestcpplexer_LDADD=@NEMIVERCOMMON_LIBS@ \

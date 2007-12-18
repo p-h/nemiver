@@ -1,5 +1,17 @@
 2007-12-18 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/Makefile.am,
+	  src/dbgengine/nmv-gdb-engine.cc:
+	  use the simple declaration parser to parse global variables.
+	  It is not perfect yet, but we are getting there.
+	* src/dbgengine/nmv-i-debugger.h:
+	  (IDebugger::Variable::type()): add a new overload that takes
+	   strings in parameter.
+	* tests/Makefile.am,tests/test-global-variables.cc: add this to
+	  test global variable listing.
+
+2007-12-18 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.cc,h,
 	  src/langs/nmv-cpp-parser.cc: debug declarator list parsing code.
 	  Make it work, basically.

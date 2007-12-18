@@ -40,9 +40,11 @@
 #include "common/nmv-sequence.h"
 #include "common/nmv-proc-utils.h"
 #include "nmv-gdb-engine.h"
+#include "langs/nmv-cpp-parser.h"
 
 using namespace std ;
 using namespace nemiver::common ;
+using namespace nemiver::cpp ;
 
 static const UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain" ;
 static const UString DEFAULT_GDB_BINARY = "default-gdb-binary" ;
@@ -1438,107 +1440,6 @@ struct OnGlobalVariablesListedHandler : OutputHandler {
         }
         return false ;
     }
-    /*
-        parse the result of gdb's "info variables" command.
-
-        To understand what the heck is going on here, simply run "info variables"
-        inside a running gdb.
-
-        Each line of gdb's result is put inside an "OutOfBandRecord" object.
-        This function collects all the (non-empty) lines, and extract the global variables'
-        names and types.
-    */
-    void parse_info_variables_list (Output &a_output,
-                                    list<IDebugger::VariableSafePtr> &var_list)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-
-        NEMIVER_TRY
-
-        bool first_line = true ;
-        UString current_file;
-
-        if (a_output.has_out_of_band_record()) {
-            list<Output::OutOfBandRecord>::iterator it =
-                a_output.out_of_band_records().begin();
-            while (it != a_output.out_of_band_records().end() ) {
-                const Output::OutOfBandRecord &oobr = *it ;
-                if (oobr.has_stream_record()) {
-                    const Output::StreamRecord &sr = oobr.stream_record();
-
-                    string line (sr.debugger_console ().c_str ());
-                    //Empty lines, or lines with only "\n"
-                    if (line.length()<=1) {
-                        it++;
-                        continue ;
-                    }
-                    line.erase (line.length () - 1, 1); //chomp
-                    if (first_line) {
-                        if (line.compare (0,22,"All defined variables:")==0) {
-                            first_line=false;
-                            it++;
-                            continue ;
-                        } else {
-                            LOG_ERROR ("globals: First result line isn't "
-                                       "\"All Defined Variables:\". "
-                                       "bad GDB ? line follows:");
-                            LOG_ERROR ("globals: " << line ) ;
-                            break ;
-                        }
-                    }
-
-                    if ((line.compare (0,5,"File ") == 0) &&
-                        (line.at (line.length () - 1) == ':')) {
-                        //New file ?
-                        line.erase (0,5);
-                        line.erase (line.length()-1,1);
-                        current_file = line;
-                        LOG_DD ("globals: new file: " << current_file ) ;
-                    } else if (line.compare ("Non-debugging symbols:") == 0) {
-                        //We're not interested in non-debugging symbols, so we can stop now
-                        LOG_DD ("got Non-debugging symbols, stopping.");
-                        break ;
-                    } else if (line.at (line.length() - 1) == ';') {
-                        //Every global variable is expected to end with ';' character
-                        //in gdb's "info variables" command.
-                        line.erase (line.length () -1,1);
-
-                        vector<UString> parts = UString (line).split (" ");
-                        //The last part is the variable's name.
-                        //The one-before-last part is the variable's type.
-                        //Before that "const" and "static" may appear
-
-                        UString vname = parts.back ();
-                        parts.pop_back ();
-                        UString vtype = parts.back ();
-
-                        if (vname.at (0) == '*')
-                            vname.erase (0,1);
-
-                        LOG_DD ("globals: got variable: " <<
-                                " File: " << current_file <<
-                                " Name: " << vname <<
-                                " Type: " << vtype ) ;
-
-                        IDebugger::VariableSafePtr a_var;
-                        a_var = IDebugger::VariableSafePtr
-                                                (new IDebugger::Variable(vname)) ;
-                        var_list.push_back (a_var);
-                    } else {
-                        LOG_DD ("globals: don't know how to handle line '"
-                                << line << "'") ;
-                    }
-                } else {
-                    LOG_ERROR ("globals: OOB record doesn't have stream_record!!");
-                }
-                it++;
-            }
-        } else {
-                LOG_DD ("globals: no OOB records!!");
-                return ;
-        }
-        NEMIVER_CATCH_NOX
-    }
 
     void do_handle (CommandAndOutput &a_in)
     {
@@ -1552,8 +1453,13 @@ struct OnGlobalVariablesListedHandler : OutputHandler {
             LOG_ERROR ("failed to extract global variable list") ;
             return ;
         }
-        parse_info_variables_list(a_in.output (), var_list);
-
+        list<IDebugger::VariableSafePtr>::const_iterator var_it;
+        GDBEngine::VarsPerFilesMap::const_iterator it;
+        for (it = vars_per_files_map.begin (); it != vars_per_files_map.end (); ++it) {
+            for (var_it = it->second.begin (); var_it != it->second.end (); ++var_it) {
+                var_list.push_back (*var_it);
+            }
+        }
         m_engine->global_variables_listed_signal ().emit
                                     (var_list, a_in.command ().cookie ()) ;
         m_engine->set_state (IDebugger::READY) ;
@@ -3254,9 +3160,12 @@ GDBEngine::extract_global_variable_list (Output &a_output,
     //series of stream records containing the string:
     //"<type of variable> <variable-name>;"
     //*************************************************
-    UString str, file_name, var_name, var_type ;
+    UString str, file_name;
+    string var_name, type_name ;
+    SimpleDeclarationPtr simple_decl;
+    ParserPtr parser;
     bool found=false ;
-    unsigned cur=0, var_name_begin=0, var_name_end=0, var_type_end=0 ;
+    unsigned cur=0;
     list<Output::OutOfBandRecord>::const_iterator oobr_it =
                                     a_output.out_of_band_records ().begin ();
 fetch_file:
@@ -3298,31 +3207,36 @@ fetch_variable:
         goto out ;
     str.chomp () ;
     THROW_IF_FAIL (str.raw ()[str.raw ().length ()-1] == ';') ;
-    var_name_end = str.raw ().length () - 2 ;
-    //TODO: this is false. to properly extract the type and name part, one
-    //has to actually parse the line. Shit. We must find a declaration parser.
-    //find the first blank char or '*', starting from the end
-    //it'll be around the begining of the variable name
-    found=false ;
-    for (var_name_begin = var_name_end; var_name_begin > 0 ; --var_name_begin) {
-        if (!isblank (str.raw ()[var_name_begin])
-            && str.raw ()[var_name_begin] != '*') {continue;}
-        found = true ;
-        break ;
+
+    //now we must must parse the line to extract its
+    //type and name parts.
+    LOG_DD ("going to parse variable decl: '" << str.raw () << "'");
+    parser.reset (new Parser (str.raw ()));
+    if (!parser->parse_simple_declaration (simple_decl)
+        || !simple_decl) {
+        LOG_ERROR ("declaration parsing failed");
     }
-    if (!found)
-        goto out ;
-    var_type_end = var_name_begin ;
-    ++var_name_begin ;
-    for (;var_type_end > 0; --var_type_end) {
-        if (isblank (str.raw ()[var_type_end])) {continue;}
-        break ;
-    }
-    var_name = str.raw ().substr (var_name_begin, var_name_end - var_name_begin + 1) ;
-    var_type = str.raw ().substr (0, var_type_end + 1) ;
+    //TODO: this is wrong. The type name is not the list of
+    //decl-specifiers I must write a helper that actually extracts the
+    //type name from the list of decl-specifier.
+    //For now, this is good enough as we mostly want to plug a full test
+    //chain to test the global variable parsing.
+    DeclSpecifier::list_to_string (simple_decl->get_decl_specifiers (),
+                                   type_name);
+    //TODO: this is wrong. the variable name is not the list of init-declarator.
+    //I must write a helper that actually extracts the variable name from
+    //the list of decl-specifiers.
+    //For now, this is good enough as we mostly want to plug a full test
+    //chain to test the global variable parsing.
+    InitDeclarator::list_to_string
+                (simple_decl->get_init_declarators (), var_name);
+
+    LOG_DD ("globals: got variable: " <<
+            " Name: " << var_name <<
+            " Type: " << type_name ) ;
 
     var.reset (new IDebugger::Variable (var_name)) ;
-    var->type (var_type) ;
+    var->type (type_name) ;
     var_list.push_back (var) ;
 
 skip_oobr:

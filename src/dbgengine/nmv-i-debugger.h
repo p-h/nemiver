@@ -314,6 +314,7 @@ public:
 
         const UString& type () const {return m_type;}
         void type (const UString &a_type) {m_type = a_type;}
+        void type (const string &a_type) {m_type = a_type;}
 
         Variable* parent () const {return m_parent ;}
         void parent (Variable *a_parent)

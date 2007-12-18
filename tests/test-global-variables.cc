@@ -95,7 +95,10 @@ on_global_variables_listed_signal (const std::list<IDebugger::VariableSafePtr> &
     MESSAGE ("got global variables") ;
     std::list<IDebugger::VariableSafePtr>::const_iterator it ;
     for (it = a_vars.begin (); it != a_vars.end (); ++it) {
-        cout << (*it)->name () << "\n";
+        cout << "==============================\n";
+        cout << "name: " << (*it)->name () << "\n";
+        cout << "type: " << (*it)->type () << "\n";
+        cout << "==============================\n";
     }
 
     a_debugger->do_continue () ;
