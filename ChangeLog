@@ -1,3 +1,9 @@
+2007-12-18 Dodji Seketeli <dodji@gnome.org>
+
+	* src/langs/nmv-cpp-ast.cc,h,
+	  src/langs/nmv-cpp-parser.cc: debug declarator list parsing code.
+	  Make it work, basically.
+
 2007-12-17 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.cc 

@@ -2029,7 +2029,7 @@ Parser::parse_cv_qualifier (CVQualifierPtr &a_result)
     Token token;
     CVQualifierPtr result;
 
-    if (!LEXER.consume_next_token (token)) {goto error;}
+    if (!LEXER.peek_next_token (token)) {goto error;}
 
     if (token.get_kind () == Token::KEYWORD) {
         if (token.get_str_value () == "const") {
@@ -2039,6 +2039,7 @@ Parser::parse_cv_qualifier (CVQualifierPtr &a_result)
         } else {
             goto error;
         }
+        if (!LEXER.consume_next_token ()) {goto error;}
         goto okay;
     }
 
@@ -2163,17 +2164,21 @@ Parser::parse_declarator (DeclaratorPtr &a_result)
     PtrOperatorPtr ptr;
     unsigned mark = LEXER.get_token_stream_mark ();
 
-    if (parse_direct_declarator (a_result)) {
+    if (parse_direct_declarator (result)) {
+        a_result.reset (new Declarator (result));
         return true;
     }
     if (parse_ptr_operator (ptr)) {
-        if (!parse_declarator (a_result)) {
+        DeclaratorPtr decl;
+        if (!parse_declarator (decl)) {
             LEXER.rewind_to_mark (mark);
             return false;
         }
-        a_result->set_ptr_operator (ptr);
+        result.reset (new Declarator (ptr, decl));
+        a_result = result;
         return true;
     }
+    LEXER.rewind_to_mark (mark);
     return false;
 }
 

@@ -346,13 +346,19 @@ PtrOperator::to_string (string &a_result) const
 {
     if (m_elems.empty ()) {return false;}
     string result, str;
+    list<PtrOperator::ElemPtr>::const_iterator prev_it;
     list<PtrOperator::ElemPtr>::const_iterator it=m_elems.begin ();
     if (!*it) {return false;}
     (*it)->to_string (result);
+    prev_it = it;
     for (++it; it != m_elems.end (); ++it) {
         if (!*it) {continue;}
         (*it)->to_string (str);
-        result += " " + str;
+        if ((*prev_it)->get_kind () != Elem::STAR) {
+            result += ' ';
+        }
+        result += str;
+        prev_it = it;
     }
     a_result = result;
     return true;
@@ -368,24 +374,11 @@ bool
 SimpleDeclaration::to_string (string &a_result) const
 {
     string str, result;
-    list<DeclSpecifierPtr>::const_iterator it=get_decl_specifiers ().begin ();
-    if (it == get_decl_specifiers ().end () || !(*it)) {return false;}
-    (*it)->to_string (result);
 
-    for (++it; it != get_decl_specifiers ().end (); ++it) {
-        if (!*it) {continue;}
-        (*it)->to_string (str);
-        result += " " + str;
-    }
-    list<InitDeclaratorPtr>::const_iterator it2;
-    for (it2=get_init_declarators ().begin ();
-         it2 != get_init_declarators ().end ();
-         ++it2) {
-        if (!*it) {continue;}
-        (*it2)->to_string (str);
-        result += " " + str;
-    }
-    a_result = result;
+    DeclSpecifier::list_to_string (get_decl_specifiers (), result);
+    InitDeclarator::list_to_string (get_init_declarators (), str);
+
+    a_result = result + ' ' + str;
     return true;
 }
 

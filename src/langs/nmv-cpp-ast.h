@@ -2203,6 +2203,7 @@ public:
         string str;
         if (m_scope) {
             m_scope->to_string (str);
+            str += "::";
         }
         if (m_name) {
             string tmp;
@@ -2529,6 +2530,8 @@ public:
     }
 };//end class TypeID
 
+class Declarator;
+typedef shared_ptr<Declarator> DeclaratorPtr;
 /// \brief the declarator class
 /// the result of the direct-declarator production is stored
 /// in this type, as well as the declarator production.
@@ -2536,7 +2539,6 @@ class NEMIVER_API Declarator {
     Declarator ();
     Declarator (const Declarator&);
     Declarator& operator= (const Declarator&);
-
 
 public:
     enum Kind {
@@ -2549,20 +2551,55 @@ public:
 
 private:
     Kind m_kind;
-    PtrOperatorPtr m_ptr;
+    PtrOperatorPtr m_ptr_node;
+    DeclaratorPtr m_decl_node;
 
 public:
+
     Declarator (Kind k) :
         m_kind (k)
     {}
+    Declarator (PtrOperatorPtr a_ptr_node,
+                DeclaratorPtr a_decl_node) :
+        m_kind (UNDEFINED),
+        m_ptr_node (a_ptr_node),
+        m_decl_node (a_decl_node)
+    {}
+    Declarator (DeclaratorPtr a_decl_node) :
+        m_kind (UNDEFINED),
+        m_decl_node (a_decl_node)
+    {}
     virtual ~Declarator () {}
+
     Kind get_kind () const {return m_kind;}
+
     void set_kind (Kind k) {m_kind=k;}
-    PtrOperatorPtr get_ptr_operator () const {return m_ptr;}
-    void set_ptr_operator (const PtrOperatorPtr a_ptr) {m_ptr=a_ptr;}
-    virtual bool to_string (string &) const=0;
+
+    PtrOperatorPtr get_ptr_op_node () const {return m_ptr_node;}
+
+    void set_ptr_op_node (const PtrOperatorPtr a_ptr) {m_ptr_node=a_ptr;}
+
+    DeclaratorPtr get_decl_node () const {return m_decl_node;}
+
+    void set_decl_node (const DeclaratorPtr a_decl) {m_decl_node = a_decl;}
+
+    virtual bool to_string (string &a_str) const
+    {
+        if (get_ptr_op_node ()) {
+            get_ptr_op_node ()->to_string (a_str);
+        }
+        if (get_decl_node ()) {
+            string str;
+            get_decl_node ()->to_string (str);
+            if (a_str.size ()
+                && (*a_str.rbegin () != '*' && *a_str.rbegin () != ' ')) {
+                a_str += ' ';
+            }
+            a_str += str;
+        }
+        return true;
+    }
 };//class Declarator
-typedef shared_ptr<Declarator> DeclaratorPtr;
 
 class NEMIVER_API IDDeclarator : public Declarator {
     IDDeclarator (const IDDeclarator&);
@@ -2583,7 +2620,10 @@ public:
     {
         if (!m_id) {return false;}
         string str, tmp;
-        if (get_ptr_operator ()) {str = "*";}
+        if (get_ptr_op_node ()) {
+            get_ptr_op_node ()->to_string (str);
+            str += " ";
+        }
         m_id->to_string (tmp);
         str += tmp;
         a_str = str;
@@ -2673,7 +2713,7 @@ public:
     bool to_string (string &a_str)
     {
         if (!m_declarator) {return false;}
-        if (get_ptr_operator ()) {a_str = "*";}
+        if (get_ptr_op_node ()) {a_str = "*";}
         string str;
         m_declarator->to_string (str);
         a_str += "(" + str + ")";

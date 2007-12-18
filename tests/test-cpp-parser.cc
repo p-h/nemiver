@@ -15,8 +15,8 @@ const char *prog2 = "const foo *bar" ;
 
 const char* test3_inputs[] = {
     "const char *std::__num_base::_S_atoms_in",
-    "const char * const * const std::locale::_S_categories",
-    "const std::locale::id * const *std::locale::_Impl::_S_facet_categories[0]",
+    "const char *const *const std::locale::_S_categories",
+    "const std::locale::id *const *std::locale::_Impl::_S_facet_categories[0]",
     "static const foo *bar",
     "static const bar<baz> maman",
     "const size_t std::allocator<wchar_t>::foo",
@@ -179,11 +179,10 @@ void
 test_parser3 ()
 {
     SimpleDeclarationPtr simple_decl;
-    vector<ParserPtr> parsers;
     ParserPtr parser;
     string str;
 
-    for (unsigned i=0; i < parsers.size (); i++) {
+    for (unsigned i=0; i < TAB_LEN (test3_inputs); i++) {
         parser.reset (new Parser (test3_inputs[i]));
         if (!parser->parse_simple_declaration (simple_decl)) {
             BOOST_FAIL ("parsing of '" << test3_inputs[i] << "' failed");
@@ -194,7 +193,9 @@ test_parser3 ()
         }
         simple_decl->to_string (str);
         if (test3_inputs[i] != str) {
-            BOOST_FAIL ("parsed '" << test3_inputs[i] << "' into '" << str << "'");
+            BOOST_FAIL ("parsed string No " << i << ": '"
+                        << test3_inputs[i]
+                        << "' into '" << str << "'");
         }
     }
 }
