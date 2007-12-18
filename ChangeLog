@@ -1,3 +1,9 @@
+2007-12-17 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc 
+	  (GDBEngine::set_breakpoint): implement this using -break-insert,
+	  otherwise we don't get breakpoint info correctly, in MI format.
+
 2007-12-16 Dodji Seketeli <dodji@gnome.org>
 
 	* src/confmgr/nmv-gconf-mgr.cc:

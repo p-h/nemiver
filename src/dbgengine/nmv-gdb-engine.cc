@@ -2811,7 +2811,7 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     THROW_IF_FAIL (m_priv) ;
     queue_command (Command ("set-breakpoint",
-                            "break " + a_func_name,
+                            "-break-insert " + a_func_name,
                             a_cookie)) ;
 }
 
