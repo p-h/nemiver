@@ -2789,6 +2789,9 @@ GDBEngine::set_catch (const UString &a_event,
     queue_command (Command ("catch",
                             "catch " + a_event,
                             a_cookie)) ;
+    // explicitly request the breakpoints to be listed otherwise the newly added
+    // catchpoint won't show up in the breakpoint list
+    list_breakpoints(a_cookie);
 }
 
 
