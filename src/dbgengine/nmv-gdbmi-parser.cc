@@ -1816,7 +1816,8 @@ parse_changed_registers (const UString &a_input,
     }
 
     std::list<IDebugger::register_id_t> regs ;
-    if (reg_list->content_type () != GDBMIList::VALUE_TYPE) {
+    if (!reg_list->empty () &&
+            reg_list->content_type () != GDBMIList::VALUE_TYPE) {
         LOG_PARSING_ERROR (a_input, cur) ;
         return false;
     }

@@ -1,5 +1,12 @@
 2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/dbgengine/nmv-gdbmi-parser.cc: Don't report a parsing error when the
+	'changed_registers' response is empty (indicating that no registers were
+	changed).  This seemed to happen regularly when a program reached the end of
+	execution. Fixed #502526
+
+2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the issue where the
 	close button's icon was clipped since the image didn't fit into the button
 	size we were requesting.  This required setting the Button's RcStyle
