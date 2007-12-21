@@ -65,14 +65,14 @@ public:
     void set_group_type (guint);
 
     void show_offsets (bool show=true);
-    void set_font (const Pango::FontMetrics&, const Pango::FontDescription&);
+    void set_font (const Pango::FontDescription& a_desc);
 
     void set_insert_mode (bool);
 
     void set_geometry (int cpl, int vis_lines);
     void get_geometry (int& cpl, int& vis_lines) const;
 
-    Pango::FontMetrics load_font (const UString& font_name); 
+    //Pango::FontMetrics load_font (const UString& font_name); 
 
     void copy_to_clipboard ();
     void cut_to_clipboard ();

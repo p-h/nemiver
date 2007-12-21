@@ -276,10 +276,10 @@ MemoryView::clear ()
 }
 
 void
-MemoryView::modify_font (const Pango::FontDescription& /*a_font_desc*/)
+MemoryView::modify_font (const Pango::FontDescription& a_font_desc)
 {
-    //THROW_IF_FAIL (m_priv && m_priv->m_editor);
-    //m_priv->m_textview->modify_font (a_font_desc);
+    THROW_IF_FAIL (m_priv && m_priv->m_editor);
+    m_priv->m_editor->set_font (a_font_desc);
 }
 
 } // namespace nemiver
