@@ -28,64 +28,52 @@
 #include <gtkmm/label.h>
 #include <gtkmm/box.h>
 #include <glib/gi18n.h>
-#include <gtkmm/textview.h>
 #include <gtkmm/scrolledwindow.h>
 #include "nmv-ui-utils.h"
 #include "nmv-memory-view.h"
 #include "nmv-i-debugger.h"
+#include "uicommon/nmv-hex-editor.h"
 
 namespace nemiver {
 
-enum MemoryOutputFormat
-{
-    OUTPUT_FORMAT_HEX,
-    OUTPUT_FORMAT_DECIMAL,
-    OUTPUT_FORMAT_OCTAL,
-    OUTPUT_FORMAT_BINARY
-};
-
-
-class FormatComboBox : public Gtk::ComboBox
+class GroupingComboBox : public Gtk::ComboBox
 {
     public:
-        FormatComboBox ()
+        GroupingComboBox ()
         {
             m_model = Gtk::ListStore::create (m_cols);
             THROW_IF_FAIL (m_model);
             Gtk::TreeModel::iterator iter = m_model->append ();
-            (*iter)[m_cols.name] = _("Hexadecimal");
-            (*iter)[m_cols.format] = OUTPUT_FORMAT_HEX;
+            (*iter)[m_cols.name] = _("Byte");
+            (*iter)[m_cols.group_type] = GROUP_BYTE;
             iter = m_model->append ();
-            (*iter)[m_cols.name] = _("Decimal");
-            (*iter)[m_cols.format] = OUTPUT_FORMAT_DECIMAL;
+            (*iter)[m_cols.name] = _("Word");
+            (*iter)[m_cols.group_type] = GROUP_WORD;
             iter = m_model->append ();
-            (*iter)[m_cols.name] = _("Octal");
-            (*iter)[m_cols.format] = OUTPUT_FORMAT_OCTAL;
-            iter = m_model->append ();
-            (*iter)[m_cols.name] = _("Binary");
-            (*iter)[m_cols.format] = OUTPUT_FORMAT_BINARY;
+            (*iter)[m_cols.name] = _("Long Word");
+            (*iter)[m_cols.group_type] = GROUP_LONG;
             set_model (m_model);
             pack_start (m_cols.name);
             set_active (0);
         }
 
-        MemoryOutputFormat get_format () const
+        guint get_group_type () const
         {
             Gtk::TreeModel::iterator iter = get_active ();
             if (iter)
             {
-                return (*iter)[m_cols.format];
+                return (*iter)[m_cols.group_type];
             }
-            else return OUTPUT_FORMAT_HEX;
+            else return GROUP_BYTE;
         }
 
     private:
         Glib::RefPtr<Gtk::ListStore> m_model;
-        struct FormatModelColumns : public Gtk::TreeModelColumnRecord
+        struct GroupModelColumns : public Gtk::TreeModelColumnRecord
         {
-            FormatModelColumns () {add (name); add (format);}
+            GroupModelColumns () {add (name); add (group_type);}
             Gtk::TreeModelColumn<Glib::ustring> name;
-            Gtk::TreeModelColumn<MemoryOutputFormat> format;
+            Gtk::TreeModelColumn<guint> group_type;
         } m_cols;
 
 };
@@ -97,16 +85,12 @@ public:
     SafePtr<Gtk::Button> m_jump_button;
     SafePtr<Gtk::HBox> m_hbox;
     SafePtr<Gtk::VBox> m_container;
-    SafePtr<Gtk::Label> m_format_label;
-    FormatComboBox m_format_combo;
+    SafePtr<Gtk::Label> m_group_label;
+    GroupingComboBox m_grouping_combo;
     SafePtr<Gtk::ScrolledWindow> m_scrolledwindow;
-    Glib::RefPtr<Gtk::TextBuffer> m_textbuffer;
-    SafePtr<Gtk::TextView> m_textview;
-    Glib::RefPtr<Gtk::TextBuffer::Tag> m_changed_tag;
-    MemoryOutputFormat m_format;
+    Hex::DocumentSafePtr m_document;
+    Hex::EditorSafePtr m_editor;
     IDebuggerSafePtr m_debugger;
-    std::vector<uint8_t> m_cached_data;
-    size_t m_cached_address;
 
     Priv (IDebuggerSafePtr& a_debugger) :
         m_address_label (new Gtk::Label (_("Address:"))),
@@ -114,36 +98,28 @@ public:
         m_jump_button (new Gtk::Button (_("Show"))),
         m_hbox (new Gtk::HBox ()),
         m_container (new Gtk::VBox ()),
-        m_format_label (new Gtk::Label (_("Format:"))),
+        m_group_label (new Gtk::Label (_("Group By:"))),
         m_scrolledwindow (new Gtk::ScrolledWindow ()),
-        m_textbuffer (Gtk::TextBuffer::create ()),
-        m_textview (new Gtk::TextView (m_textbuffer)),
-        m_changed_tag (Gtk::TextBuffer::Tag::create ("changed")),
-        m_debugger (a_debugger),
-        m_cached_address (0)
+        m_document (Hex::Document::create ()),
+        m_editor (Hex::Editor::create (m_document)),
+        m_debugger (a_debugger)
     {
-        m_changed_tag->property_foreground () = "Red";
-        m_textbuffer->get_tag_table ()->add (m_changed_tag);
-
-        m_textview->set_wrap_mode (Gtk::WRAP_WORD);
-        m_textview->set_left_margin (6);
-        m_textview->set_right_margin (6);
-        m_textview->set_editable (false);
-        m_scrolledwindow->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-        m_scrolledwindow->add (*m_textview);
+        m_editor->set_geometry (20 /*characters per line*/, 6 /*lines*/);
+        m_editor->show_offsets ();
+        m_scrolledwindow->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_NEVER);
+        m_scrolledwindow->add (m_editor->get_widget ());
         m_scrolledwindow->set_shadow_type (Gtk::SHADOW_IN);
 
         m_hbox->set_spacing (6);
         m_hbox->set_border_width (3);
         m_hbox->pack_start (*m_address_label, Gtk::PACK_SHRINK);
         m_hbox->pack_start (*m_address_entry, Gtk::PACK_SHRINK);
-        m_hbox->pack_start (*m_format_label, Gtk::PACK_SHRINK);
-        m_hbox->pack_start (m_format_combo, Gtk::PACK_SHRINK);
+        m_hbox->pack_start (*m_group_label, Gtk::PACK_SHRINK);
+        m_hbox->pack_start (m_grouping_combo, Gtk::PACK_SHRINK);
         m_hbox->pack_start (*m_jump_button, Gtk::PACK_SHRINK);
         m_container->pack_start (*m_hbox, Gtk::PACK_SHRINK);
         m_container->pack_start (*m_scrolledwindow);
 
-        m_format = OUTPUT_FORMAT_HEX;
         connect_signals ();
     }
 
@@ -159,8 +135,8 @@ public:
         THROW_IF_FAIL (m_jump_button);
         m_jump_button->signal_clicked ().connect (sigc::mem_fun (this,
                     &Priv::do_memory_read));
-        m_format_combo.signal_changed ().connect (sigc::mem_fun (this,
-                    &Priv::do_memory_read));
+        m_grouping_combo.signal_changed ().connect (sigc::mem_fun (this,
+                    &Priv::on_group_changed));
         THROW_IF_FAIL (m_address_entry);
         m_address_entry->signal_activate ().connect (sigc::mem_fun (this,
                     &Priv::do_memory_read));
@@ -187,11 +163,25 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
         THROW_IF_FAIL (m_debugger);
+        THROW_IF_FAIL (m_editor);
+        int editor_cpl, editor_lines;
+        m_editor->get_geometry (editor_cpl, editor_lines);
         size_t addr = get_address ();
         if (validate_address (addr))
         {
-            m_debugger->read_memory (addr, 200);
+            LOG_DD ("Fetching " << editor_cpl * editor_lines << " bytes");
+            // read as much memory as will fill the hex editor widget
+            m_debugger->read_memory (addr, editor_cpl * editor_lines);
         }
+        NEMIVER_CATCH
+    }
+
+    void on_group_changed ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+        THROW_IF_FAIL (m_editor);
+        m_editor->set_group_type (m_grouping_combo.get_group_type ());
         NEMIVER_CATCH
     }
 
@@ -248,82 +238,16 @@ public:
         NEMIVER_CATCH
     }
 
-    void set_data (size_t a_start_addr, std::vector<uint8_t> a_data)
+    void set_data (size_t /*a_start_addr*/, std::vector<uint8_t> a_data)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-        THROW_IF_FAIL (m_textbuffer);
-        m_textbuffer->erase (m_textbuffer->begin (), m_textbuffer->end ());
-        std::ostringstream addr_stream;
-        addr_stream << std::showbase << std::hex << a_start_addr << ":"
-            << std::noshowbase << std::endl;
-        m_textbuffer->insert (m_textbuffer->end (), addr_stream.str ());
+        THROW_IF_FAIL (m_document);
+        m_document->clear ();
+        m_document->set_data (0 /*offset*/,
+                              a_data.size (),
+                              0 /*rep_len*/,
+                              &a_data[0]);
 
-        std::vector<uint8_t>::const_iterator it, old_it;
-        for (it = a_data.begin (), old_it = m_cached_data.begin ();
-             it != a_data.end ();
-             ++it)
-        {
-            bool changed = false;
-            Glib::RefPtr<Gtk::TextBuffer::Mark> changed_start, changed_end;
-            if (a_start_addr == m_cached_address)
-            {
-                // if the cached data is not the same size as the new data, only
-                // compare up to the last element we have cached
-                if (old_it != m_cached_data.end ())
-                {
-                    if (*it != *old_it)
-                    {
-                        changed = true;
-                        changed_start =
-                            m_textbuffer->create_mark (m_textbuffer->end ());
-                    }
-                    // increment for the next loop
-                    ++old_it;
-                }
-            }
-
-            std::ostringstream ostream;
-            switch (m_format_combo.get_format ())
-            {
-                case OUTPUT_FORMAT_BINARY:
-                    // thanks to Nicolai Josuttis for the tip:
-                    // http://www.josuttis.com/libbook/cont/bitset2.cpp.html
-                    ostream <<
-                        std::bitset<std::numeric_limits<uint8_t>::digits>(*it);
-                    break;
-                case OUTPUT_FORMAT_DECIMAL:
-                    ostream << std::setw(3) << std::dec << (int) *it;
-                    break;
-                case OUTPUT_FORMAT_OCTAL:
-                    ostream << std::setw(4) << std::showbase << std::oct
-                        << (int) *it;
-                    break;
-                case OUTPUT_FORMAT_HEX:
-                default:
-                    ostream << std::setw(4) << std::showbase << std::hex
-                        << (int) *it;
-            }
-            m_textbuffer->insert (m_textbuffer->end (), ostream.str ());
-
-            if (changed)
-            {
-                changed_end = m_textbuffer->create_mark (m_textbuffer->end ());
-            }
-            if (changed_start && changed_end)
-            {
-                // display data that has changed since last time in red
-                m_textbuffer->apply_tag (m_changed_tag,
-                        m_textbuffer->get_iter_at_mark (changed_start),
-                        m_textbuffer->get_iter_at_mark (changed_end));
-            }
-
-            // add space between bytes
-            m_textbuffer->insert (m_textbuffer->end (), " ");
-
-        }
-        m_cached_data.clear ();
-        m_cached_data.assign (a_data.begin (), a_data.end ());
-        m_cached_address = a_start_addr;
     }
 
 };
@@ -346,16 +270,16 @@ MemoryView::widget () const
 void
 MemoryView::clear ()
 {
-    THROW_IF_FAIL (m_priv && m_priv->m_textbuffer && m_priv->m_address_entry);
-    m_priv->m_textbuffer->set_text ("");
+    THROW_IF_FAIL (m_priv && m_priv->m_document && m_priv->m_address_entry);
+    m_priv->m_document->set_data (0, 0, 0, 0, false);
     m_priv->m_address_entry->set_text ("");
 }
 
 void
-MemoryView::modify_font (const Pango::FontDescription& a_font_desc)
+MemoryView::modify_font (const Pango::FontDescription& /*a_font_desc*/)
 {
-    THROW_IF_FAIL (m_priv && m_priv->m_textview);
-    m_priv->m_textview->modify_font (a_font_desc);
+    //THROW_IF_FAIL (m_priv && m_priv->m_editor);
+    //m_priv->m_textview->modify_font (a_font_desc);
 }
 
 } // namespace nemiver

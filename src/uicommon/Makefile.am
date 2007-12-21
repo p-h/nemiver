@@ -17,7 +17,11 @@ nmv-popup-tip.h \
 nmv-terminal.cc \
 nmv-terminal.h \
 nmv-source-editor.cc \
-nmv-source-editor.h
+nmv-source-editor.h \
+nmv-hex-editor.h \
+nmv-hex-editor.cc \
+nmv-hex-document.h \
+nmv-hex-document.cc
 
 libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@ -lutil
 libnemiveruicommon_la_CFLAGS= -fPIC -DPIC

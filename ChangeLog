@@ -117,6 +117,24 @@
 	  need to make other production parsing functions use this one.
 	* tests/test-cpp-parser.cc: update regression tests.
 
+2007-11-29  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* configure.ac: added dependency on the gtkhex shared library from GHex for
+	the memory editor widget
+	* src/uicommon/nmv-hex-document.cc:
+	* src/uicommon/nmv-hex-document.h: quick c++ wrapper for the HexDocument
+	class from GHex
+	* src/uicommon/nmv-hex-editor.cc:
+	* src/uicommon/nmv-hex-editor.h: quick c++ wrapper for the GtkHex class
+	from GHex
+	* src/uicommon/Makefile.am: add new files
+	* src/persp/dbgperspective/nmv-memory-view.cc: use the Hex editor widget
+	from GHex instead of the simplistic TextView widget I had been using.  The
+	new widget still needs a lot of work (both the widget itself and the
+	integration of it).  It currently doesn't redraw itself properly so it
+	doesn't seem like it's working, but it actually is.  It also isn't usable
+	for editing memory yet, just viewing it.
+
 2007-11-26 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
