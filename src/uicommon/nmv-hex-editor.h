@@ -64,6 +64,7 @@ public:
 
     void set_group_type (guint);
 
+    void set_starting_offset (int a_starting_offset);
     void show_offsets (bool show=true);
     void set_font (const Pango::FontDescription& a_desc);
 

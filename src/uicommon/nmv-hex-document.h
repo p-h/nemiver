@@ -29,6 +29,8 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-ustring.h"
 #include <gtkhex/hex-document.h>
+#include <sigc++/signal.h>
+
 namespace Gtk {
     class Widget;
 }
@@ -66,8 +68,8 @@ public:
             guint offset, bool lower_nibble,
             bool insert, bool undoable);
     guchar get_byte(guint offset);
-    guchar *get_data(guint offset, guint len);
     */
+    guchar *get_data(guint offset, guint len);
     void delete_data(guint offset, guint len, bool undoable=false);
     void clear (bool undoable=false);
     /*
@@ -94,6 +96,8 @@ public:
     const GList *get_list(void);
     bool is_writable();
     */
+
+    sigc::signal<void, HexChangeData*>& signal_document_changed () const;
 };//end class Spinner
 
 NEMIVER_END_NAMESPACE (Hex)

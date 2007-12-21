@@ -29,6 +29,7 @@
 #include <signal.h>
 #include <pty.h>
 #include <termios.h>
+#include <sstream>
 #include <boost/variant.hpp>
 #include <algorithm>
 #include <memory>
@@ -227,6 +228,10 @@ public:
                           std::vector<uint8_t>, // values
                           const UString& >  // cookie
                           read_memory_signal;
+    mutable sigc::signal <void, size_t, // start address
+                          std::vector<uint8_t>,   // values
+                          const UString& >
+                              set_memory_signal;
 
     //***********************
     //</GDBEngine attributes>
@@ -1480,7 +1485,8 @@ struct OnResultRecordHandler : OutputHandler {
              || a_in.command ().name () == "get-variable-value"
              || a_in.command ().name () == "print-pointed-variable-value"
              || a_in.command ().name () == "dereference-variable"
-             || a_in.command ().name () == "set-register-value")
+             || a_in.command ().name () == "set-register-value"
+             || a_in.command ().name () == "set-memory")
             && a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
@@ -1562,6 +1568,15 @@ struct OnResultRecordHandler : OutputHandler {
                                                 (a_in.command ().variable (),
                                                  a_in.command ().cookie ()) ;
         } else if (a_in.command ().name () == "set-register-value") {
+            IDebugger::VariableSafePtr var =
+                a_in.output ().result_record ().variable_value ();
+            THROW_IF_FAIL (var) ;
+            THROW_IF_FAIL (!a_in.command ().tag1().empty ()) ;
+            m_engine->register_value_changed_signal ().emit
+                                                (a_in.command ().tag1 (),
+                                                 var->value (),
+                                                 a_in.command ().cookie ()) ;
+        } else if (a_in.command ().name () == "set-memory") {
             IDebugger::VariableSafePtr var =
                 a_in.output ().result_record ().variable_value ();
             THROW_IF_FAIL (var) ;
@@ -1870,6 +1885,41 @@ struct OnReadMemoryHandler : OutputHandler {
     }
 };//struct OnReadMemoryHandler
 
+struct OnSetMemoryHandler : OutputHandler
+{
+    GDBEngine *m_engine ;
+
+    OnSetMemoryHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE)
+            && (a_in.command ().name () == "set-memory")) {
+            LOG_DD ("handler selected") ;
+            return true ;
+        }
+        return false ;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        size_t addr = 0;
+        std::istringstream istream (a_in.command ().tag1 ());
+        istream >> std::hex >> addr;
+        m_engine->set_memory_signal ().emit
+            (addr,
+             std::vector<uint8_t>(), // FIXME: get memory value here
+             a_in.command ().cookie ()) ;
+        m_engine->set_state (IDebugger::READY) ;
+    }
+};//struct OnSetRegisterValueHandler
+
+
 struct OnErrorHandler : OutputHandler {
 
     GDBEngine *m_engine ;
@@ -2157,6 +2207,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnRegisterValuesListedHandler (this))) ;
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnReadMemoryHandler (this))) ;
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnSetMemoryHandler (this))) ;
 }
 
 sigc::signal<void, Output&>&
@@ -2357,6 +2409,13 @@ GDBEngine::read_memory_signal () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->read_memory_signal ;
+}
+
+sigc::signal <void, size_t, std::vector<uint8_t>, const UString& >&
+GDBEngine::set_memory_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->set_memory_signal ;
 }
 
 
@@ -3381,6 +3440,25 @@ GDBEngine::read_memory (size_t a_start_addr,
                             a_cookie)) ;
 }
 
+void
+GDBEngine::set_memory (size_t a_addr,
+                       const std::vector<uint8_t>& a_bytes,
+                       const UString& a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    for (std::vector<uint8_t>::const_iterator iter = a_bytes.begin ();
+            iter != a_bytes.end (); ++iter)
+    {
+        UString cmd_str;
+        cmd_str.printf ("-data-evaluate-expression \"*(unsigned char*)%zu = 0x%X\"",
+                a_addr++,
+                *iter);
+        Command command("set-memory", cmd_str, a_cookie);
+        command.tag0 ("set-memory") ;
+        command.tag1 (UString ().printf ("0x%X",a_addr)) ;
+        queue_command (command) ;
+    }
+}
 
 //****************************
 //</GDBEngine methods>

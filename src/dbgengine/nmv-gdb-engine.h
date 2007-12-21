@@ -170,6 +170,10 @@ public:
                                          register_values_listed_signal () const;
     sigc::signal <void, size_t, std::vector<uint8_t>, const UString& >&
                                         read_memory_signal () const;
+    sigc::signal <void, size_t, // start address
+                          std::vector<uint8_t>,   // values
+                          const UString& >&  // cookie
+                              set_memory_signal () const;
     //*************
     //</signals>
     //*************
@@ -355,7 +359,10 @@ public:
 
     void read_memory (size_t a_start_addr,
                       size_t a_num_bytes,
-                      const UString& a_cookie) ;
+                      const UString& a_cookie="") ;
+    void set_memory (size_t a_addr,
+                     const std::vector<uint8_t>& a_bytes,
+                     const UString& a_cookie="");
 };//end class GDBEngine
 
 NEMIVER_END_NAMESPACE (nemiver)

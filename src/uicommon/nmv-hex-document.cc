@@ -53,17 +53,38 @@ struct HexDocUnref {
 
 struct Document::Priv {
     SafePtr< ::HexDocument, HexDocRef, HexDocUnref> document ;
+    mutable sigc::signal<void, HexChangeData*> m_signal_document_changed;
 
     Priv (const std::string& filename) :
         document (HEX_DOCUMENT (hex_document_new_from_file (filename.c_str ())), true)
-    {}
+    {
+        connect_signals ();
+    }
 
     Priv () :
         document (HEX_DOCUMENT (hex_document_new ()), true)
-    {}
+    {
+        connect_signals ();
+    }
+
+    void connect_signals ()
+    {
+        g_signal_connect (G_OBJECT (document.get ()), "document_changed",
+                    G_CALLBACK (on_document_changed_proxy), this);
+    }
 
     ~Priv ()
     {}
+
+    static void on_document_changed_proxy (HexDocument* /*a_document*/,
+                                           HexChangeData* a_change_data,
+                                           gboolean /*a_push_undo*/,
+                                           Priv* priv)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        priv->m_signal_document_changed.emit (a_change_data);
+    }
+
 };//end struct Document::Priv
 
 Document::~Document ()
@@ -93,6 +114,13 @@ Document::set_data(guint offset,
 {
     THROW_IF_FAIL (m_priv && m_priv->document);
     hex_document_set_data(m_priv->document.get (), offset, len, rep_len, data, undoable);
+}
+
+guchar *
+Document::get_data(guint offset, guint len)
+{
+    THROW_IF_FAIL (m_priv && m_priv->document);
+    return hex_document_get_data(m_priv->document.get (), offset, len);
 }
 
 void
@@ -126,6 +154,13 @@ Document::create (const std::string& filename)
     DocumentSafePtr result (new Document (filename)) ;
     THROW_IF_FAIL (result) ;
     return result ;
+}
+
+sigc::signal<void, HexChangeData*>&
+Document::signal_document_changed () const
+{
+    THROW_IF_FAIL (m_priv) ;
+    return m_priv->m_signal_document_changed;
 }
 
 NEMIVER_END_NAMESPACE (Hex)

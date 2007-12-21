@@ -91,6 +91,7 @@ public:
     Hex::DocumentSafePtr m_document;
     Hex::EditorSafePtr m_editor;
     IDebuggerSafePtr m_debugger;
+    sigc::connection signal_document_changed_connection;
 
     Priv (IDebuggerSafePtr& a_debugger) :
         m_address_label (new Gtk::Label (_("Address:"))),
@@ -140,6 +141,10 @@ public:
         THROW_IF_FAIL (m_address_entry);
         m_address_entry->signal_activate ().connect (sigc::mem_fun (this,
                     &Priv::do_memory_read));
+        THROW_IF_FAIL (m_document);
+        signal_document_changed_connection =
+            m_document->signal_document_changed ().connect (sigc::mem_fun (this,
+                        &Priv::on_document_changed));
     }
 
     void on_debugger_state_changed (IDebugger::State a_state)
@@ -238,16 +243,33 @@ public:
         NEMIVER_CATCH
     }
 
-    void set_data (size_t /*a_start_addr*/, std::vector<uint8_t> a_data)
+    void set_data (size_t a_start_addr, std::vector<uint8_t> a_data)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_document);
+        // don't want to set memory in gdb in response to data read from gdb
+        signal_document_changed_connection.block ();
         m_document->clear ();
+        m_editor->set_starting_offset (a_start_addr);
         m_document->set_data (0 /*offset*/,
                               a_data.size (),
                               0 /*rep_len*/,
                               &a_data[0]);
+        signal_document_changed_connection.unblock ();
+    }
 
+    void on_document_changed (HexChangeData* a_change_data)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        size_t length = a_change_data->end - a_change_data->start + 1;
+        guchar* new_data = m_document->get_data (a_change_data->start, length);
+        if (new_data)
+        {
+            std::vector<uint8_t> data(new_data, new_data + length);
+            // set data in the debugger
+            m_debugger->set_memory(static_cast<size_t> (get_address () + a_change_data->start),
+                    data);
+        }
     }
 
 };

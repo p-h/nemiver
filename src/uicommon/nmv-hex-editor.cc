@@ -127,6 +127,13 @@ Editor::set_group_type (guint a_group_type)
 }
 
 void
+Editor::set_starting_offset (int a_starting_offset)
+{
+    THROW_IF_FAIL(m_priv && m_priv->hex);
+    gtk_hex_set_starting_offset(m_priv->hex.get (), a_starting_offset);
+}
+
+void
 Editor::show_offsets (bool show)
 {
     THROW_IF_FAIL(m_priv && m_priv->hex);

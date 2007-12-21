@@ -635,6 +635,11 @@ public:
                           std::vector<uint8_t>, // values
                           const UString&>&  // cookie
                           read_memory_signal () const = 0;
+    virtual sigc::signal <void,
+                          size_t, // start address
+                          std::vector<uint8_t>,   // values
+                          const UString& >&
+                              set_memory_signal () const = 0;
     /// @}
 
     virtual void do_init (IConfMgrSafePtr &a_conf_mgr) = 0;
@@ -789,14 +794,9 @@ public:
 
     virtual void read_memory (size_t a_start_addr, size_t a_num_bytes,
             const UString& a_cookie="") = 0;
-    /*
-    virtual void set_memory (const UString& a_start_addr,
-            const std::vector<UString>& a_bytes) = 0;
-    virtual sigc::signal <void,
-                          const Glib::ustring&, // start address
-                          std::vector<UString> >&   // values
-                              set_memory_signal () const = 0;
-                              */
+    virtual void set_memory (size_t a_addr,
+            const std::vector<uint8_t>& a_bytes,
+            const UString& a_cookie="") = 0;
 
 
 };//end IDebugger

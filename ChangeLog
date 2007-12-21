@@ -117,6 +117,22 @@
 	  need to make other production parsing functions use this one.
 	* tests/test-cpp-parser.cc: update regression tests.
 
+2007-12-02  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-i-debugger.h: add set_memory and set_memory_signal API
+	* src/dbgengine/nmv-gdb-engine.h, src/dbgengine/nmv-gdb-engine.cc: add
+	implementations of set_memory() for gdb.
+	* src/uicommon/nmv-hex-document.h, src/uicommon/nmv-hex-document.cc: wrap
+	the document_changed signal, and the get_data() function
+	* src/uicommon/nmv-hex-editor.h, src/uicommon/nmv-hex-editor.cc: wrap the
+	new set_starting_offset() value so that the address labels in the left-hand
+	column of the memory view show the proper addresses
+	* src/persp/dbgperspective/nmv-memory-view.cc: connect to the HexDocument's
+	document_changed signal and write the new memory values to the debugger.
+	Also, set the starting offset to the current memory address.  This is the
+	final piece needed to enable basic memory editing.  Note that it requires a
+	version of ghex that is not even in svn yet, however.
+
 2007-11-30  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/uicommon/nmv-hex-editor.cc:
