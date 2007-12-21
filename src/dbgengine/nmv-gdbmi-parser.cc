@@ -252,7 +252,13 @@ parse_breakpoint (const UString &a_input,
         a_bkpt.enabled (false) ;
     }
     a_bkpt.address (attrs["addr"]) ;
-    a_bkpt.function (attrs["func"]) ;
+    if (!attrs["func"].empty ()) {
+        a_bkpt.function (attrs["func"]) ;
+    } else if (!attrs["what"].empty ()) {
+        // catchpoints don't have a 'func' field, but they have a 'what' field
+        // that says something like "Exception throw"
+        a_bkpt.function (attrs["what"]) ;
+    }
     a_bkpt.file_name (attrs["file"]) ; //may be nil
     a_bkpt.file_full_name (attrs["fullname"]) ; //may be nil
     a_bkpt.line (atoi (attrs["line"].c_str ())) ; //may be nil
