@@ -2936,6 +2936,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     SafePtr<Gtk::Table> table (Gtk::manage (new Gtk::Table (1, 2))) ;
 
     Gtk::EventBox *event_box = Gtk::manage (new Gtk::EventBox) ;
+    event_box->set_visible_window (false);
     event_box->add (*label) ;
     table->attach (*event_box, 0, 1, 0, 1) ;
     table->attach (*close_button, 1, 2, 0, 1) ;
