@@ -2917,13 +2917,15 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
 
     SafePtr<SlotedButton> close_button (Gtk::manage (new SlotedButton ())) ;
     //okay, make the button as small as possible.
+    close_button->get_modifier_style ()->set_xthickness (0);
+    close_button->get_modifier_style ()->set_ythickness (0);
     int w=0, h=0 ;
     Gtk::IconSize::lookup (Gtk::ICON_SIZE_MENU, w, h) ;
     close_button->set_size_request (w+2, h+2) ;
 
     close_button->perspective = this ;
     close_button->set_relief (Gtk::RELIEF_NONE) ;
-    //close_button->set_focus_on_click (false) ;
+    close_button->set_focus_on_click (false) ;
     close_button->add (*cicon) ;
     close_button->file_path = a_path ;
     close_button->signal_clicked ().connect
@@ -2934,6 +2936,8 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->tooltips->set_tip (*close_button, message);
 
     SafePtr<Gtk::Table> table (Gtk::manage (new Gtk::Table (1, 2))) ;
+    // add a bit of space between the label and the close button
+    table->set_col_spacings (4);
 
     Gtk::EventBox *event_box = Gtk::manage (new Gtk::EventBox) ;
     event_box->set_visible_window (false);

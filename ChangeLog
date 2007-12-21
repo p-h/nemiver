@@ -1,3 +1,10 @@
+2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the issue where the
+	close button's icon was clipped since the image didn't fit into the button
+	size we were requesting.  This required setting the Button's RcStyle
+	xthickness and ythickness to 0 (idea stolen from gnome-terminal)
+
 2007-12-10  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the glitch in the
