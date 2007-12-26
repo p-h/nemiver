@@ -2575,11 +2575,11 @@ public:
 
     void set_kind (Kind k) {m_kind=k;}
 
-    PtrOperatorPtr get_ptr_op_node () const {return m_ptr_node;}
+    const PtrOperatorPtr& get_ptr_op_node () const {return m_ptr_node;}
 
     void set_ptr_op_node (const PtrOperatorPtr a_ptr) {m_ptr_node=a_ptr;}
 
-    DeclaratorPtr get_decl_node () const {return m_decl_node;}
+    const DeclaratorPtr& get_decl_node () const {return m_decl_node;}
 
     void set_decl_node (const DeclaratorPtr a_decl) {m_decl_node = a_decl;}
 

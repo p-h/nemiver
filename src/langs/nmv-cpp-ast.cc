@@ -612,7 +612,7 @@ InitDeclarator::list_to_string (const list<InitDeclaratorPtr> &a_decls,
 {
     string str, str2;
     list<InitDeclaratorPtr>::const_iterator it=a_decls.begin ();
-    if (!(*it) || it == a_decls.end ()) {
+    if (it == a_decls.end () || !(*it)) {
         return false;
     }
     (*it)->to_string (str2);

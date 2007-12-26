@@ -1,5 +1,10 @@
 2007-12-23 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-ast.cc: fix a potential memory bug.
+	* src/langs/nmv-cpp-ast.h:  fix some constness/reference usage.
+
+2007-12-23 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-i-var-list-walker.h,
 	  src/dbgengine/nmv-i-var-walker.h,
 	  src/dbgengine/nmv-var-list-walker.cc,
