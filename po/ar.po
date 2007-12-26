@@ -1,0 +1,1100 @@
+# Arabic translations for PACKAGE package.
+# Copyright (C) 2007 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-12-26 15:50+0000\n"
+"PO-Revision-Date: 2007-12-26 16:42+0100\n"
+"Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
+"Language-Team: Arabic <doc@arabeyes.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Arabic\n"
+
+#: ../glade/workbench.glade.h:1
+msgid "Nemiver"
+msgstr ""
+
+#: ../data/nemiver.desktop.in.h:1
+#, fuzzy
+msgid "C/C++ Debugger"
+msgstr "منقّح"
+
+#: ../data/nemiver.desktop.in.h:2
+#, fuzzy
+msgid "Debug Applications"
+msgstr "التطبيقات ال_حديثة:"
+
+#: ../data/nemiver.desktop.in.h:3
+msgid "Nemiver Debugger"
+msgstr ""
+
+#: ../src/main.cc:67
+msgid "Set the environment of the program to debug"
+msgstr ""
+
+#: ../src/main.cc:76
+#, fuzzy
+msgid "Attach to a process"
+msgstr "ربط بقائمة سابقة"
+
+#: ../src/main.cc:84
+msgid "List the saved debugging sessions"
+msgstr ""
+
+#: ../src/main.cc:92
+msgid "Erase the saved debugging sessions"
+msgstr ""
+
+#: ../src/main.cc:100
+msgid "Debug the program that was of session number N"
+msgstr ""
+
+#: ../src/main.cc:108
+#, fuzzy
+msgid "Execute the last session"
+msgstr "نهاية الجلسة الحالية"
+
+#: ../src/main.cc:116
+#, fuzzy
+msgid "Enable logging domains DOMAINS"
+msgstr "عطّل تسجيل الخروج"
+
+#: ../src/main.cc:124
+#, fuzzy
+msgid "Log the debugger output"
+msgstr "جهاز خرج الصوت"
+
+#: ../src/main.cc:179
+#, fuzzy
+msgid " [<prog-to-debug> [prog-args]]"
+msgstr "فشل فتح رسالة التنقيح: %s\n"
+
+#: ../src/main.cc:181
+#: ../src/workbench/nmv-workbench.cc:234
+#, fuzzy
+msgid "A C/C++ debugger for GNOME"
+msgstr "تفضيلات عين جنوم"
+
+#: ../src/persp/dbgperspective/glade/bodycontainer.glade.h:1
+msgid "bodycontainer"
+msgstr ""
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:1
+#, fuzzy
+msgid "<b>Cycling Options:</b>"
+msgstr "<b>خيارات العرض:</b>"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:2
+#, fuzzy
+msgid "<b>Match Options:</b>"
+msgstr "<b>خيارات العرض:</b>"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:3
+msgid "Find text"
+msgstr "بحث عن نص"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:4
+#, fuzzy
+msgid "Match _entire word only"
+msgstr "طابِق ك_امل الكلمة فقط"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:5
+msgid "Match c_ase"
+msgstr "ح_ساس لحالة الأحرف"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:6
+msgid "Search _backwards"
+msgstr "ابحث إلى ال_خلف"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:7
+msgid "_Search:"
+msgstr "ا_بحث:"
+
+#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:8
+msgid "_Wrap around"
+msgstr "_لف حول"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:1
+#, fuzzy
+msgid "<b>Core File:</b>"
+msgstr "الملف النواة من البرنامج"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:2
+#, fuzzy
+msgid "<b>Executable:</b>"
+msgstr "تنفيذي"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:3
+#, fuzzy
+msgid "Choose a Core File to Debug"
+msgstr "اختر ملف لإلحاقه بالأمر..."
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:4
+#, fuzzy
+msgid "Select A Core File"
+msgstr "انتقاء ملف صوت"
+
+#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:5
+msgid "Select the executable that created the core file"
+msgstr ""
+
+#: ../src/persp/dbgperspective/glade/locatefiledialog.glade.h:1
+#, fuzzy
+msgid "<b>Locate File</b>"
+msgstr "إنتقي ملف"
+
+#: ../src/persp/dbgperspective/glade/locatefiledialog.glade.h:2
+#, fuzzy
+msgid "Select File Location"
+msgstr "اختر اسم الموقع"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:1
+#, fuzzy
+msgid "<b>Choose Source Files to Open</b>"
+msgstr "ملفات السجلات التي ستفتح عند بدأ التشغيل"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:2
+msgid "Open Source Files"
+msgstr "ملفات المصادر المفتوحة"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:3
+#, fuzzy
+msgid "Select from _Filesystem"
+msgstr "انتقي مكانا من القائمة"
+
+#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:4
+#, fuzzy
+msgid "Select from _Target Executable"
+msgstr "اختر علاة موقع مهدوفة من القائمة."
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:1
+#, fuzzy
+msgid "<b>Editor Font</b>"
+msgstr "<b>خط المحرر:</b>"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:2
+#, fuzzy
+msgid "<b>Line Numbers</b>"
+msgstr "<b>أرقام السطور</b>"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:3
+#, fuzzy
+msgid "<b>Syntax Highlighting</b>"
+msgstr "أبرِز التراكيب"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:4
+#, fuzzy
+msgid "Custom Font:"
+msgstr "وجه خط خاص"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:5
+#, fuzzy
+msgid "Display line numbers"
+msgstr "اظهر أرقام السطور"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:6
+msgid "Editor"
+msgstr "محرّر"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:7
+#, fuzzy
+msgid "Enable syntax highlighting"
+msgstr "فعّل إبراز بنية الجملة"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:8
+#, fuzzy
+msgid "Preferences"
+msgstr "تفضيلات"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:9
+#, fuzzy
+msgid "Source Directories"
+msgstr "زر الدلائل"
+
+#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:10
+#, fuzzy
+msgid "Use system monospace font"
+msgstr "فيما إذا سيستعمل خط النظام"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:1
+#, fuzzy
+msgid "<b>Choose a Process to Debug</b>"
+msgstr "اختر خادم X للتشغيل"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:2
+#, fuzzy
+msgid "Attach to a Running Program"
+msgstr "المسار إلى البرنامج IPTables:"
+
+#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:3
+#, fuzzy
+msgid "_Filter list:"
+msgstr "مرشح قائمة الغرف:"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:1
+#, fuzzy
+msgid "<b>Arguments:</b>"
+msgstr "الم_عاملات:"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:2
+#, fuzzy
+msgid "<b>Environment Variables:</b>"
+msgstr "مُتغيّرات البيئة"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:3
+#, fuzzy
+msgid "<b>Program:</b>"
+msgstr "ال_برنامج:"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:4
+#, fuzzy
+msgid "<b>Working Directory:</b>"
+msgstr "دليل شبكة غير سليم: %s"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:5
+#, fuzzy
+msgid "Choose a Program to Execute"
+msgstr "فشل تنفيذ البرنامج المساعد (%s)"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:6
+#, fuzzy
+msgid "Choose a working directory"
+msgstr "دليل شبكة غير سليم: %s"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:7
+#, fuzzy
+msgid "Choose an executable"
+msgstr "ملف تشغيلي"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:8
+msgid "_Add"
+msgstr "أ_ضف"
+
+#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:9
+msgid "_Remove"
+msgstr "أ_زل"
+
+#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:1
+#, fuzzy
+msgid "<b>Choose a Session to Debug</b>"
+msgstr "اختر خادم X للتشغيل"
+
+#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:2
+#, fuzzy
+msgid "Saved Sessions"
+msgstr "احفظ الجلسات"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2356
+#, fuzzy
+msgid "Inspect a Variable"
+msgstr "عرض _متغيّر:"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:2
+msgid "_Inspect"
+msgstr "_فتّش"
+
+#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:3
+#, fuzzy
+msgid "_Variable Name:"
+msgstr "اسم الموصول"
+
+#: ../src/persp/dbgperspective/glade/chooseoverloadsdialog.glade.h:1
+#, fuzzy
+msgid "<b>Choose Overloaded Function</b>"
+msgstr "تفعيل مفاتيح الوضائف"
+
+#: ../src/persp/dbgperspective/glade/chooseoverloadsdialog.glade.h:2
+msgid "Multiple functions match the specified name. Please choose one from the list below."
+msgstr ""
+
+#: ../src/persp/dbgperspective/glade/chooseoverloadsdialog.glade.h:3
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:6
+msgid "Set Breakpoint"
+msgstr "ضع نقطة توقّف"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:1
+#, fuzzy
+msgid "<b>Executable file to load</b>"
+msgstr ""
+"لا يمكن تحميل الملف:\n"
+"%s"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:2
+#, fuzzy
+msgid "<b>Remote debugging server</b>"
+msgstr "خادمات صدفة \"shell\" بعيدة"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:3
+#, fuzzy
+msgid "<b>Shared libraries root</b>"
+msgstr "مكتبات أوبن‌أوفِس.أورج المُتشاركَة."
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:4
+msgid "Address :"
+msgstr "العنوان :"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:5
+msgid "Choose a File"
+msgstr "اختر ملفا"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:6
+#, fuzzy
+msgid "Connect to Remote Target"
+msgstr "الإتصال بخادم عن بعد"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:7
+#, fuzzy
+msgid "Port :"
+msgstr "الميناء:"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:8
+#, fuzzy
+msgid "Serial line connection"
+msgstr "IP خط متوال"
+
+#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:9
+#, fuzzy
+msgid "TCP/IP connection"
+msgstr "استخدم اتصال TCP"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:1
+#, fuzzy
+msgid "<b>Set a Breakpoint:</b>"
+msgstr "اضبط الحالة"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:2
+#, fuzzy
+msgid "F_unction Name:"
+msgstr "اسم الموصول"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:3
+#, fuzzy
+msgid "Filename:"
+msgstr "اسم الملف:"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:4
+#, fuzzy
+msgid "Function:"
+msgstr "دالة e^"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:5
+#, fuzzy
+msgid "Line:"
+msgstr "خط"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:7
+#, fuzzy
+msgid "_Event:"
+msgstr "حدث"
+
+#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:8
+#, fuzzy
+msgid "_Source Location"
+msgstr "افتح موقع %s"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:109
+#, fuzzy
+msgid "Function Name"
+msgstr "اسم الموصول"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:111
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:435
+#, fuzzy
+msgid "Location"
+msgstr "الموقع"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:124
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:92
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:95
+#, fuzzy
+msgid "ID"
+msgstr "الهوية"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:125
+#: ../src/persp/dbgperspective/nmv-file-list.cc:106
+#, fuzzy
+msgid "Filename"
+msgstr "اسم الملف"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:126
+#, fuzzy
+msgid "Line"
+msgstr "خط"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:127
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:436
+#, fuzzy
+msgid "Function"
+msgstr "الوظيفة"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:128
+#, fuzzy
+msgid "Address"
+msgstr "العنوان"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:414
+#, fuzzy
+msgid "_Delete"
+msgstr "إح_ذف"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:415
+#, fuzzy
+msgid "Remove this breakpoint"
+msgstr "إزالة هذا العمود"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:423
+#, fuzzy
+msgid "_Go to Source"
+msgstr "اذهب إلى الصفحة"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:424
+msgid "Find this breakpoint in the source editor"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:152
+#, fuzzy
+msgid "_Copy"
+msgstr "ا_نسخ"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:153
+#, fuzzy
+msgid "Copy the call stack to the clipboard"
+msgstr "نسخ النّص المنتقى للحافظة الوسيطة"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:434
+#, fuzzy
+msgid "Frame"
+msgstr "إطار"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:437
+#, fuzzy
+msgid "Arguments"
+msgstr "النّقاشات"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:526
+#, c-format
+msgid "(Click here to see the next %d rows of the %d call stack rows)"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:833
+#, c-format
+msgid "File %s has been modified. Do want to reload it ?"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1221
+#, c-format
+msgid "File path info is missing for breakpoint '%i'"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1513
+#, fuzzy
+msgid "Remove _Breakpoint"
+msgstr "إزالة المندوب %s؟"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1516
+#, fuzzy
+msgid "Disable Breakpoint"
+msgstr "عطّل التاريخ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1518
+#, fuzzy
+msgid "Enable Breakpoint"
+msgstr "مكّن ال_تّسجيل"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1521
+#, fuzzy
+msgid "Set _Breakpoint"
+msgstr "اضبط الحالة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1664
+#, fuzzy, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "م_لفّ PID:"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1677
+#, fuzzy
+msgid "Connected to remote target !"
+msgstr "%s لا يوجد بالموقع البعيد \n"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1815
+#, fuzzy, c-format
+msgid "Could not find file %s"
+msgstr "لا يمكن فتح الملف %s."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1828
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1886
+#, c-format
+msgid "File path info is missing for function '%s'"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1850
+#, fuzzy
+msgid "Program exited"
+msgstr "خروج من srcore"
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1964
+#, fuzzy, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "تلقيت اﻻشارة %d، سيغلق الحاسوب بسلامة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1979
+#, fuzzy, c-format
+msgid "An error occured: %s"
+msgstr "حدث خطأ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2236
+#, fuzzy
+msgid "_Save Session to Disk"
+msgstr "عطّل الحف_ظ للقرص"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2237
+#, fuzzy
+msgid "Save the current debugging session to disk"
+msgstr "تطبيق التغييرات على الجلسة الحالية قبل الغلق؟"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#, fuzzy
+msgid "_Restart"
+msgstr "إ_عادة تشغيل"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2249
+msgid "Restart the target, killing this process and starting a new one"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2260
+#, fuzzy
+msgid "_Detach from the Running Program..."
+msgstr "الملف النواة من البرنامج"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2261
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2271
+#, fuzzy
+msgid "_Next"
+msgstr "ال_تالي"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2272
+msgid "Execute next line stepping over the next function, if any"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2281
+#, fuzzy
+msgid "_Step"
+msgstr "خطوة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2282
+msgid "Execute next line, stepping into the next function, if any"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2291
+#, fuzzy
+msgid "Step _Out"
+msgstr "اخرج"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2292
+msgid "Finish the execution of the current function"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2301
+#, fuzzy
+msgid "_Continue"
+msgstr "_مواصلة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2302
+msgid "Continue program execution until the next breakpoint"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2311
+#, fuzzy
+msgid "Run to Cursor"
+msgstr ""
+"فشل تشغيل:\n"
+"%s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2312
+msgid "Continue program execution until the currently selected line is reached"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2324
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2335
+msgid "Enable or disable the breakpoint that is set at the current cursor location"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2346
+#, fuzzy
+msgid "Set Breakpoint..."
+msgstr "اضبط الحالة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2347
+msgid "Set a breakpoint at a function or line number"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2357
+msgid "Inspect a global or local variable"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2366
+#, fuzzy
+msgid "Refresh locals"
+msgstr "تحديث القائمة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2367
+msgid "Refresh the list of variables local to the current function"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2378
+msgid "Stop"
+msgstr "توقّف"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2379
+msgid "Stop the Debugger"
+msgstr "أوقِف المنقّح"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2390
+msgid "_View"
+msgstr "ا_عرض"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2399
+msgid "Stack"
+msgstr "كومة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2400
+msgid "Switch to Stack View"
+msgstr "أعِد الضبط لمشهد الكومة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2408
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5324
+msgid "Variables"
+msgstr "متغيرات"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2409
+msgid "Switch to Variables View"
+msgstr "أعِد الضبط لمشهد المتغيرات"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2417
+msgid "Target Terminal"
+msgstr "الشاشة الطرفيّة الهدف"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2418
+msgid "Switch to Target Terminal View"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2426
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5377
+msgid "Breakpoints"
+msgstr "نقاط توقّف"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2427
+msgid "Switch to Breakpoints  View"
+msgstr "أعِد الضبط لمشهد نقاط التوقّف"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2435
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5403
+msgid "Registers"
+msgstr "سجلات"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2436
+msgid "Switch to Registers View"
+msgstr "أعِد الضبط لمشهد السجلّات"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2444
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5429
+msgid "Memory"
+msgstr "ذاكرة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2445
+msgid "Switch to Memory View"
+msgstr "أعِد الضبط لمشهد الذّاكرة"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2453
+msgid "Show Commands"
+msgstr "أظهر الأوامر"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2454
+#, fuzzy
+msgid "Show the debugger commands tab"
+msgstr "اظهر شريط الألسنة دائما"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2462
+msgid "Show Errors"
+msgstr "أظهر الأخطاء"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2463
+#, fuzzy
+msgid "Show the errors tab"
+msgstr "اظهار أخطاء التشغيل"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2471
+#, fuzzy
+msgid "Show Output"
+msgstr "أظهر خرْجَج التنقيح"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2472
+msgid "Show the debugged target output tab"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2480
+msgid "_Debug"
+msgstr "ن_قّح"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2489
+#, fuzzy
+msgid "_Open Source File ..."
+msgstr "المصدر: ملف<br />"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2490
+#, fuzzy
+msgid "Open a source file for viewing"
+msgstr "تعذّر فتح الملف %s للكتابة\n"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2498
+msgid "_Execute..."
+msgstr "_نفّذ..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2499
+msgid "Execute a program"
+msgstr "نفّذ برنامجا"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2508
+#, fuzzy
+msgid "_Load Core File..."
+msgstr "&حمل من الملف"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2509
+#, fuzzy
+msgid "Load a core file from disk"
+msgstr "فشلت في تحميل قرص القائد من الملفّ.ف"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2518
+#, fuzzy
+msgid "_Attach to Running Program..."
+msgstr "المسار إلى البرنامج IPTables:"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2519
+msgid "Debug a program that's already running"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2528
+#, fuzzy
+msgid "_Connect to remote target..."
+msgstr "الإتصال بخادم عن بعد"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2529
+msgid "Connect to a debugging server to debug a remote target"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2538
+msgid "Resume Sa_ved Session..."
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2539
+msgid "Manage previously saved debugging sessions"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2548
+msgid "_Preferences"
+msgstr "ت_فضيلات"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2549
+#, fuzzy
+msgid "Edit the properties of the current session"
+msgstr "اضبط اسم الجلسة الحالية"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2561
+#, fuzzy
+msgid "_Reload Source File ..."
+msgstr "المصدر: ملف<br />"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2562
+#, fuzzy
+msgid "Reloads the source file"
+msgstr "المصدر: ملف<br />"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2570
+msgid "_Close"
+msgstr "أ_غلق"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2571
+#, fuzzy
+msgid "Close the opened file"
+msgstr "فتح ملف الرسائل %s\n"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2579
+msgid "_Find"
+msgstr "_إيجاد"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2580
+#, fuzzy
+msgid "Find a text string in file"
+msgstr "ملف النص الذي سيُضمن في التقرير"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2935
+#, c-format
+msgid "Close %s"
+msgstr "أغلق %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3914
+msgid "Reached end of file"
+msgstr "نهاية الملف"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3917
+#, fuzzy, c-format
+msgid "Could not find string %s"
+msgstr "تعذّر العثور على التّطبيق"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4244
+#, fuzzy
+msgid "You cannot attach to Nemiver itself"
+msgstr "لا يمكنك إرفاق الملف `{0}' بهِذه الرسالة."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4249
+msgid "You cannot attach to the underlying debugger engine"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4391
+#, fuzzy
+msgid "Failed to stop the debugger"
+msgstr "انقر لتوقيف بحث."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4474
+#, c-format
+msgid "There is no file name info for symbol@addr: %s@%s"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4664
+#, fuzzy, c-format
+msgid "Could not find file: %s\n"
+msgstr "لا يمكن فتح الملف %s."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4860
+#, fuzzy, c-format
+msgid "Invalid line number: %i"
+msgstr "رقم منفذ غير صحيح: %d."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5220
+msgid "Commands"
+msgstr "أوامر"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5246
+msgid "Output"
+msgstr "مخرج"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5272
+msgid "Logs"
+msgstr "سجلات"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5297
+#, fuzzy
+msgid "Call stack"
+msgstr "فيضان المكدّس"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5351
+#, fuzzy
+msgid "Target terminal"
+msgstr "خط الشاشة الطرفيّة"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:124
+msgid "Expand _Selected"
+msgstr "مدّد الم_نتقى"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:127
+msgid "Expand _All"
+msgstr "_مدّد الكل"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:132
+msgid "_Collapse"
+msgstr "ان_هيار"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:91
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector2.cc:104
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:63
+#: ../src/persp/dbgperspective/nmv-var-inspector2.cc:70
+msgid "Variable"
+msgstr "متغير"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:100
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector2.cc:113
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:94
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:103
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:68
+#: ../src/persp/dbgperspective/nmv-var-inspector2.cc:75
+msgid "Value"
+msgstr "قيمة"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:108
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector2.cc:121
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:76
+#: ../src/persp/dbgperspective/nmv-var-inspector2.cc:83
+msgid "Type"
+msgstr "نوع"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:128
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector2.cc:142
+msgid "Local Variables"
+msgstr "المتّغيرات المحلّية"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:137
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector2.cc:150
+msgid "Function Arguments"
+msgstr "معطيات وظيفة"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:145
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector2.cc:158
+msgid "Global Variables"
+msgstr "المتغيّرات العامّة"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:355
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector2.cc:632
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:169
+#: ../src/persp/dbgperspective/nmv-var-inspector2.cc:152
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
+msgstr ""
+"نوع المتغير:\n"
+" %s"
+
+#: ../src/persp/dbgperspective/nmv-locate-file-dialog.cc:64
+#, c-format
+msgid "Select Location For %s"
+msgstr "اختر موقعا لـ %s"
+
+#: ../src/persp/dbgperspective/nmv-locate-file-dialog.cc:72
+#, c-format
+msgid ""
+"Cannot find file '<b>%s</b>'.\n"
+"Please specify the location of this file:"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:47
+msgid "Byte"
+msgstr "بايت"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:50
+msgid "Word"
+msgstr "كلمة"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:53
+msgid "Long Word"
+msgstr "كلمة طويلة"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:97
+msgid "Address:"
+msgstr "العنوان:"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:99
+msgid "Show"
+msgstr "اعرض"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:102
+msgid "Group By:"
+msgstr "جمع حسب:"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:104
+msgid "Choose directory"
+msgstr "انتق الدليل"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:164
+msgid "Source directories"
+msgstr "دلائل المصدر"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:118
+msgid "User Name"
+msgstr "إسم المستخدم"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:125
+#, fuzzy
+msgid "Proc Args"
+msgstr "نظام ملفّات /proc غير موجود"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:93
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:100
+msgid "Name"
+msgstr "اسم"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:96
+msgid "Session"
+msgstr "جلسة"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:151
+#, fuzzy
+msgid "Thread ID"
+msgstr "هوية البوّاب:"
+
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:315
+#, fuzzy, c-format
+msgid "Could not find variable '%s'"
+msgstr "تعذّر العثور على التّطبيق"
+
+#: ../src/uicommon/nmv-source-editor.cc:228
+#, fuzzy, c-format
+msgid "Line: %i, Column: %i, Lines: %i"
+msgstr "السطر %d العامود %d: الصفة \"%s\" مفقودة"
+
+#: ../src/workbench/nmv-workbench.cc:246
+#, fuzzy
+msgid "Project Website"
+msgstr "موقع المشروع"
+
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:266
+msgid "translator-credits"
+msgstr ""
+"فريق عربآيز للترجمة http://www.arabeyes.org :\n"
+"جهاد عفيفي\t<djihed@gmail.com>"
+
+#: ../src/workbench/nmv-workbench.cc:607
+msgid "_File"
+msgstr "_ملف"
+
+#: ../src/workbench/nmv-workbench.cc:617
+msgid "_Quit"
+msgstr "أ_نه"
+
+#: ../src/workbench/nmv-workbench.cc:618
+msgid "Quit the application"
+msgstr "إنه التطبيق"
+
+#: ../src/workbench/nmv-workbench.cc:627
+msgid "_Edit"
+msgstr "_حرّر"
+
+#: ../src/workbench/nmv-workbench.cc:637
+msgid "_Help"
+msgstr "م_ساعدة"
+
+#: ../src/workbench/nmv-workbench.cc:647
+msgid "_About"
+msgstr "_حول"
+
+#: ../src/workbench/nmv-workbench.cc:648
+#, fuzzy
+msgid "Display information about this application"
+msgstr "اعرض معلومات نسخة جنوم هذه"
+
+#: ../src/workbench/nmv-workbench.cc:657
+msgid "_Contents"
+msgstr "الم_حتويات"
+
+#: ../src/workbench/nmv-workbench.cc:658
+#, fuzzy
+msgid "Display the user manual for this application"
+msgstr "الاسم الذي سيعرض للمستخدم لهذه العملية"
+
