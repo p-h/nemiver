@@ -616,30 +616,29 @@ public:
 
     virtual sigc::signal<void, IDebugger::State>& state_changed_signal () const=0;
 
-    virtual sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
+    virtual sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >&
                                                  register_names_listed_signal () const=0;
 
-    virtual sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
+    virtual sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >&
                                                  register_values_listed_signal () const=0;
     virtual sigc::signal<void,
-                         const UString& /*register name*/,
+                         const UString&/*register name*/,
                          const UString&/*register value*/,
-                         const UString& /*cookie*/>&
+                         const UString&/*cookie*/>&
                                                  register_value_changed_signal () const=0;
-    virtual sigc::signal<void,
-                         std::list<register_id_t>, const UString& >&
+    virtual sigc::signal<void, const std::list<register_id_t>&, const UString& >&
                              changed_registers_listed_signal () const=0;
 
     virtual sigc::signal <void,
-                          size_t, // start address
-                          std::vector<uint8_t>, // values
-                          const UString&>&  // cookie
-                          read_memory_signal () const = 0;
+                          size_t,/*start address*/
+                          const std::vector<uint8_t>&,/*values*/
+                          const UString&>&/*cookie*/
+                                          read_memory_signal () const = 0;
     virtual sigc::signal <void,
-                          size_t, // start address
-                          std::vector<uint8_t>,   // values
+                          size_t,/*start address*/
+                          const std::vector<uint8_t>&,/*values*/
                           const UString& >&
-                              set_memory_signal () const = 0;
+                                          set_memory_signal () const = 0;
     /// @}
 
     virtual void do_init (IConfMgrSafePtr &a_conf_mgr) = 0;

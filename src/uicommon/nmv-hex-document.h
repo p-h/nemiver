@@ -58,45 +58,14 @@ public:
     static DocumentSafePtr create () ;
     static DocumentSafePtr create (const std::string& filename) ;
     ::HexDocument* cobj();
-    void set_data(guint offset,
-            guint len, guint rep_len, guchar *data,
-            bool undoable=false);
-    /*
-    void set_byte(guchar val, guint offset,
-            bool insert, bool undoable);
-    void set_nibble(guchar val,
-            guint offset, bool lower_nibble,
-            bool insert, bool undoable);
-    guchar get_byte(guint offset);
-    */
-    guchar *get_data(guint offset, guint len);
-    void delete_data(guint offset, guint len, bool undoable=false);
+    void set_data (guint offset,
+                   guint len,
+                   guint rep_len,
+                   const guchar *data,
+                   bool undoable=false);
+    guchar *get_data (guint offset, guint len);
+    void delete_data (guint offset, guint len, bool undoable=false);
     void clear (bool undoable=false);
-    /*
-    gint read();
-    gint write();
-    gint write_to_file(FILE *file);
-    gint export_html(gchar *html_path, gchar *base_name,
-            guint start, guint end,
-            guint cpl, guint lpp, guint cpw);
-    bool has_changed();
-    void changed(gpointer change_data,
-            bool push_undo);
-    void set_max_undo(guint max_undo);
-    bool undo();
-    bool redo();
-    gint compare_data(guchar *s2,
-            gint pos, gint len);
-    gint find_forward(guint start,
-            guchar *what, gint len, guint *found);
-    gint find_backward(guint start,
-            guchar *what, gint len, guint *found);
-    void remove_view(GtkWidget *view);
-    GtkWidget *add_view();
-    const GList *get_list(void);
-    bool is_writable();
-    */
-
     sigc::signal<void, HexChangeData*>& signal_document_changed () const;
 };//end class Spinner
 

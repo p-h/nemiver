@@ -160,20 +160,18 @@ public:
     sigc::signal<void, const UString&, const UString&, const UString& >&
                                          register_value_changed_signal () const;
 
-    sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
+    sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >&
                                          register_names_listed_signal () const;
 
-    sigc::signal<void, std::list<register_id_t>, const UString& >&
+    sigc::signal<void, const std::list<register_id_t>&, const UString& >&
                                          changed_registers_listed_signal () const;
 
-    sigc::signal<void, std::map<register_id_t, UString>, const UString& >&
-                                         register_values_listed_signal () const;
-    sigc::signal <void, size_t, std::vector<uint8_t>, const UString& >&
-                                        read_memory_signal () const;
-    sigc::signal <void, size_t, // start address
-                          std::vector<uint8_t>,   // values
-                          const UString& >&  // cookie
-                              set_memory_signal () const;
+    sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >&
+                                                 register_values_listed_signal () const;
+    sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
+                                                    read_memory_signal () const;
+    sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
+                                                      set_memory_signal () const;
     //*************
     //</signals>
     //*************

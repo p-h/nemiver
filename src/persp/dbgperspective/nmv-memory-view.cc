@@ -230,7 +230,7 @@ public:
     }
 
     void on_memory_read_response (size_t a_addr,
-                                  std::vector<uint8_t> a_values,
+                                  const std::vector<uint8_t> &a_values,
                                   const UString& /*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -243,7 +243,7 @@ public:
         NEMIVER_CATCH
     }
 
-    void set_data (size_t a_start_addr, std::vector<uint8_t> a_data)
+    void set_data (size_t a_start_addr, const std::vector<uint8_t> &a_data)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_document);

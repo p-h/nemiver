@@ -1,3 +1,17 @@
+2007-12-26 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-i-debugger.h: in the registers and memory
+	  manipulation signals, use const references to pass parameters
+	  that are containers. Otherwise, they are passed by copy and that
+	  is bad.
+	* src/dbgengine/nmv-gdb-engine.h,cc: progragated this change
+	  over here.
+	* src/persp/dbgperspective/nmv-memory-view.cc: ditto. Constified
+	  the a_values parameter of MemoryView::Priv::on_memory_read_response() signal
+	  handler. Same to MemoryView::Priv::set_data().
+	* src/uicommon/nmv-hex-document.cc: constified the data parameter
+	  of the Document::set_data() method.
+
 2007-12-23 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.cc:

@@ -108,27 +108,31 @@ Document::Document (const std::string& filename)
 }
 
 void
-Document::set_data(guint offset,
-            guint len, guint rep_len, guchar *data,
-            bool undoable)
+Document::set_data (guint offset,
+                    guint len,
+                    guint rep_len,
+                    const guchar *data,
+                    bool undoable)
 {
     THROW_IF_FAIL (m_priv && m_priv->document);
-    hex_document_set_data(m_priv->document.get (), offset, len, rep_len, data, undoable);
+    hex_document_set_data (m_priv->document.get (),
+                           offset, len, rep_len,
+                           const_cast<guchar*> (data), undoable);
 }
 
 guchar *
-Document::get_data(guint offset, guint len)
+Document::get_data (guint offset, guint len)
 {
     THROW_IF_FAIL (m_priv && m_priv->document);
-    return hex_document_get_data(m_priv->document.get (), offset, len);
+    return hex_document_get_data (m_priv->document.get (), offset, len);
 }
 
 void
-Document::delete_data(guint offset, guint len, bool undoable)
+Document::delete_data (guint offset, guint len, bool undoable)
 {
 
     THROW_IF_FAIL (m_priv && m_priv->document);
-    hex_document_delete_data(m_priv->document.get (), offset, len, undoable);
+    hex_document_delete_data (m_priv->document.get (), offset, len, undoable);
 }
 
 void
@@ -136,7 +140,7 @@ Document::clear (bool undoable)
 {
     THROW_IF_FAIL (m_priv && m_priv->document);
     LOG_DD ("file size = " << (int) m_priv->document->file_size);
-    delete_data(0, m_priv->document->file_size, undoable);
+    delete_data (0, m_priv->document->file_size, undoable);
 }
 
 

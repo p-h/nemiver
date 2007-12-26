@@ -210,29 +210,21 @@ public:
 
     mutable sigc::signal<void, IDebugger::State> state_changed_signal ;
 
-    mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
+    mutable sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >
                                                         register_names_listed_signal;
 
-    mutable sigc::signal<void, std::list<register_id_t>, const UString& >
+    mutable sigc::signal<void, const std::list<register_id_t>&, const UString& >
                                                     changed_registers_listed_signal;
 
-    mutable sigc::signal<void, std::map<register_id_t, UString>, const UString& >
+    mutable sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >
                                                         register_values_listed_signal;
 
-    mutable sigc::signal<void,
-                         const UString&,
-                         const UString&,
-                         const UString& >
-                         register_value_changed_signal;
-    mutable sigc::signal <void,
-                          size_t, // start address
-                          std::vector<uint8_t>, // values
-                          const UString& >  // cookie
-                          read_memory_signal;
-    mutable sigc::signal <void, size_t, // start address
-                          std::vector<uint8_t>,   // values
-                          const UString& >
-                              set_memory_signal;
+    mutable sigc::signal<void, const UString&, const UString&, const UString&>
+                                                        register_value_changed_signal;
+    mutable sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString&>
+                                                                  read_memory_signal;
+    mutable sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >
+                                                                  set_memory_signal;
 
     //***********************
     //</GDBEngine attributes>
@@ -2295,17 +2287,13 @@ GDBEngine::breakpoints_set_signal () const
     return m_priv->breakpoints_set_signal ;
 }
 
-sigc::signal<void,
-             const vector<IDebugger::OverloadsChoiceEntry>&,
-             const UString&>&
+sigc::signal<void, const vector<IDebugger::OverloadsChoiceEntry>&, const UString&>&
 GDBEngine::got_overloads_choice_signal () const
 {
     return m_priv->got_overloads_choice_signal ;
 }
 
-sigc::signal<void, const UString&, bool,
-             const IDebugger::Frame&, int,
-             const UString&>&
+sigc::signal<void, const UString&, bool, const IDebugger::Frame&, int, const UString&>&
 GDBEngine::stopped_signal () const
 {
     return m_priv->stopped_signal ;
@@ -2330,7 +2318,7 @@ GDBEngine::thread_selected_signal () const
     return m_priv->thread_selected_signal ;
 }
 
-sigc::signal<void, const vector<IDebugger::Frame>&, const UString& >&
+sigc::signal<void, const vector<IDebugger::Frame>&, const UString&>&
 GDBEngine::frames_listed_signal () const
 {
     return m_priv->frames_listed_signal ;
@@ -2342,9 +2330,7 @@ GDBEngine::got_target_info_signal () const
     return m_priv->got_target_info_signal ;
 }
 
-sigc::signal<void,
-             const map< int, list<IDebugger::VariableSafePtr> >&,
-             const UString&>&
+sigc::signal<void, const map< int, list<IDebugger::VariableSafePtr> >&, const UString&>&
 GDBEngine::frames_arguments_listed_signal () const
 {
     return m_priv->frames_arguments_listed_signal ;
@@ -2368,28 +2354,19 @@ GDBEngine::global_variables_listed_signal () const
     return m_priv->global_variables_listed_signal ;
 }
 
-sigc::signal<void,
-             const UString&,
-             const IDebugger::VariableSafePtr&,
-             const UString&>&
+sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&, const UString&>&
 GDBEngine::variable_value_signal () const
 {
     return m_priv->variable_value_signal ;
 }
 
-sigc::signal<void,
-             const IDebugger::VariableSafePtr&,
-             const UString&>&
+sigc::signal<void, const IDebugger::VariableSafePtr&, const UString&>&
 GDBEngine::variable_value_set_signal () const
 {
     return m_priv->variable_value_set_signal ;
 }
 
-sigc::signal<void,
-            const
-            UString&,
-            const IDebugger::VariableSafePtr&,
-            const UString&>&
+sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&, const UString&>&
 GDBEngine::pointed_variable_value_signal () const
 {
     return m_priv->pointed_variable_value_signal ;
@@ -2413,23 +2390,47 @@ GDBEngine::variable_dereferenced_signal () const
     return m_priv->variable_dereferenced_signal ;
 }
 
-sigc::signal <void,
-             size_t/*start @*/,
-             std::vector<uint8_t>/*values*/,
-             const UString&/*cookie*/>&
+sigc::signal<void, const std::map<IDebugger::register_id_t, UString>&, const UString& >&
+GDBEngine::register_names_listed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->register_names_listed_signal ;
+}
+
+sigc::signal<void, const std::map<IDebugger::register_id_t, UString>&, const UString& >&
+GDBEngine::register_values_listed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->register_values_listed_signal ;
+}
+
+sigc::signal<void, const UString&, const UString&, const UString& >&
+GDBEngine::register_value_changed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->register_value_changed_signal ;
+}
+
+sigc::signal<void, const std::list<IDebugger::register_id_t>&, const UString& >&
+GDBEngine::changed_registers_listed_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->changed_registers_listed_signal ;
+}
+
+sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString&>&
 GDBEngine::read_memory_signal () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->read_memory_signal ;
 }
 
-sigc::signal <void, size_t, std::vector<uint8_t>, const UString& >&
+sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
 GDBEngine::set_memory_signal () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->set_memory_signal ;
 }
-
 
 sigc::signal<void>&
 GDBEngine::running_signal () const
@@ -3348,12 +3349,6 @@ GDBEngine::list_register_names (const UString &a_cookie)
                             a_cookie)) ;
 }
 
-sigc::signal<void, std::map<IDebugger::register_id_t, UString>, const UString& >&
-GDBEngine::register_names_listed_signal () const
-{
-    THROW_IF_FAIL (m_priv);
-    return m_priv->register_names_listed_signal ;
-}
 
 void
 GDBEngine::list_changed_registers (const UString &a_cookie)
@@ -3364,13 +3359,6 @@ GDBEngine::list_changed_registers (const UString &a_cookie)
                             a_cookie)) ;
 }
 
-sigc::signal<void, std::list<IDebugger::register_id_t>, const UString& >&
-GDBEngine::changed_registers_listed_signal () const
-{
-    THROW_IF_FAIL (m_priv);
-    return m_priv->changed_registers_listed_signal ;
-}
-
 void
 GDBEngine::list_register_values (const UString &a_cookie)
 {
@@ -3378,13 +3366,6 @@ GDBEngine::list_register_values (const UString &a_cookie)
     queue_command (Command ("list-register-values",
                             "-data-list-register-values x", // x = hex format
                             a_cookie)) ;
-}
-
-sigc::signal<void, std::map<IDebugger::register_id_t, UString>, const UString& >&
-GDBEngine::register_values_listed_signal () const
-{
-    THROW_IF_FAIL (m_priv);
-    return m_priv->register_values_listed_signal ;
 }
 
 void
@@ -3421,15 +3402,6 @@ GDBEngine::set_register_value (const UString& a_reg_name,
     queue_command (command);
 }
 
-sigc::signal<void,
-             const UString&,
-             const UString&,
-             const UString& >&
-GDBEngine::register_value_changed_signal () const
-{
-    THROW_IF_FAIL (m_priv);
-    return m_priv->register_value_changed_signal ;
-}
 
 void
 GDBEngine::read_memory (size_t a_start_addr,
