@@ -109,7 +109,7 @@ public:
 
     void do_walk_variable (const UString &a_cookie="");
 
-    IDebugger::VariableSafePtr get_variable () const ;
+    const IDebugger::VariableSafePtr& get_variable () const ;
 
     IDebuggerSafePtr get_debugger () const  ;
 };//end class VarWalker
@@ -302,7 +302,7 @@ VarWalker::do_walk_variable (const UString &a_cookie)
     }
 }
 
-IDebugger::VariableSafePtr
+const IDebugger::VariableSafePtr&
 VarWalker::get_variable () const
 {
     return m_root_var ;

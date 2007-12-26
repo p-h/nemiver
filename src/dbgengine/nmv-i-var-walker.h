@@ -83,7 +83,7 @@ public:
     /// gets the root variable this walker is connected to.
     /// this will return a non null variable if and only if
     /// the visited_root_variabls_signal() has been emited already.
-    virtual IDebugger::VariableSafePtr get_variable () const = 0 ;
+    virtual const IDebugger::VariableSafePtr& get_variable () const = 0 ;
 
     /// gets the debugger the walker is connected to
     virtual IDebuggerSafePtr get_debugger () const = 0 ;

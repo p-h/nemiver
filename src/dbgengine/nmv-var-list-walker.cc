@@ -37,7 +37,7 @@ struct SafePtrCmp {
     }
 };
 class VarListWalker : public IVarListWalker {
-     mutable sigc::signal<void, const IVarWalkerSafePtr&> m_variable_visited_signal;
+     mutable sigc::signal<void, const IVarWalkerSafePtr> m_variable_visited_signal;
      mutable sigc::signal<void> m_variable_list_visited_signal;
      list<IDebugger::VariableSafePtr> m_variables ;
      list<IVarWalkerSafePtr> m_var_walkers ;
@@ -49,8 +49,8 @@ class VarListWalker : public IVarListWalker {
 
      IVarWalkerSafePtr create_variable_walker (const IDebugger::VariableSafePtr &a_var) ;
 
-     void on_visited_variable_signal (const IDebugger::VariableSafePtr &a_var,
-                                      IVarWalkerSafePtr &a_walker) ;
+     void on_visited_variable_signal (const IDebugger::VariableSafePtr a_var,
+                                      IVarWalkerSafePtr a_walker) ;
 
 public:
 
@@ -61,7 +61,7 @@ public:
     //******************
     //<event getters>
     //******************
-    sigc::signal<void, const IVarWalkerSafePtr&>& variable_visited_signal () const ;
+    sigc::signal<void, const IVarWalkerSafePtr>& variable_visited_signal () const ;
     sigc::signal<void>& variable_list_visited_signal () const ;
     //******************
     //</event getters>
@@ -69,7 +69,7 @@ public:
     void initialize (IDebuggerSafePtr &a_debugger) ;
 
     void append_variable (const IDebugger::VariableSafePtr a_var) ;
-    void append_variables (const list<IDebugger::VariableSafePtr> a_vars) ;
+    void append_variables (const list<IDebugger::VariableSafePtr> &a_vars) ;
 
     void remove_variables ();
 
@@ -79,8 +79,8 @@ public:
 
 void
 VarListWalker::on_visited_variable_signal
-                                (const IDebugger::VariableSafePtr &a_var,
-                                 IVarWalkerSafePtr &a_walker)
+                                (const IDebugger::VariableSafePtr a_var,
+                                 IVarWalkerSafePtr a_walker)
 {
     if (a_var) {}
     NEMIVER_TRY
@@ -113,7 +113,7 @@ VarListWalker::create_variable_walker (const IDebugger::VariableSafePtr &a_var)
     return result ;
 }
 
-sigc::signal<void, const IVarWalkerSafePtr&>&
+sigc::signal<void, const IVarWalkerSafePtr>&
 VarListWalker::variable_visited_signal () const
 {
     return m_variable_visited_signal ;
@@ -151,7 +151,7 @@ VarListWalker::append_variable (const IDebugger::VariableSafePtr a_var)
 }
 
 void
-VarListWalker::append_variables (const list<IDebugger::VariableSafePtr> a_vars)
+VarListWalker::append_variables (const list<IDebugger::VariableSafePtr> &a_vars)
 {
 
     list<IDebugger::VariableSafePtr>::const_iterator it;

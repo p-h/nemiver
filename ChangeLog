@@ -1,5 +1,15 @@
 2007-12-23 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-i-var-list-walker.h,
+	  src/dbgengine/nmv-i-var-walker.h,
+	  src/dbgengine/nmv-var-list-walker.cc,
+	  src/dbgengine/nmv-var-walker.cc: remove some references from
+	  some parameters that should not have them. Add some to variables
+	  that should have them instead.
+
+
+2007-12-23 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/Makefile.am b/src/langs/Makefile.am,
 	  src/langs/nmv-cpp-ast-utils.cc,h: added goodies to be able to
 	  extract variable id out of a nemiver::cpp::Declarator.
