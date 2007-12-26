@@ -1,5 +1,11 @@
 2007-12-23 Dodji Seketeli <dodji@gnome.org>
 
+	* tests/test-cpp-parser.cc: added a regression test for
+	  nmv-cpp-ast-utils.h to basically retrieve variable names from
+	  Declarator datastructures.
+
+2007-12-23 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-parser.cc:
 	  (Parser::parse_decl_specifier_seq): parsing of decl-specifier-seq
 	  was broken for consructs like:  "static long unsigned int".

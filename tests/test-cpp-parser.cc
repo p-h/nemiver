@@ -6,6 +6,7 @@
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"
 #include "langs/nmv-cpp-parser.h"
+#include "langs/nmv-cpp-ast-utils.h"
 
 #define TAB_LEN(tab) (sizeof (tab)/sizeof (tab[0]))
 const char *prog0 = "foo bar" ;
@@ -61,6 +62,19 @@ const char* test6_inputs[] = {
     "foo<(t1>t2)>",
     "Y<X<1> >",
     "Y<X<t1>, X<t2> >"
+};
+
+struct test7_record {
+    const char *input;
+    const char* variable_name;
+};
+
+const test7_record test7_inputs[] = {
+    {"void *__dso_handle", "__dso_handle"},
+    {"const char *std::__num_base::_S_atoms_in", "std::__num_base::_S_atoms_in"},
+    {"const std::locale::id *const *std::locale::_Impl::_S_facet_categories[0]", "std::locale::_Impl::_S_facet_categories"},
+    {"const std::locale::id *std::locale::_Impl::_S_id_ctype[0]", "std::locale::_Impl::_S_id_ctype"},
+    {"const std::locale::id *std::locale::_Impl::_S_id_monetary[0]", "std::locale::_Impl::_S_id_monetary"},
 };
 
 using std::cout;
@@ -270,6 +284,37 @@ test_parser6 ()
     }
 }
 
+void
+test_parser7 ()
+{
+    SimpleDeclarationPtr simple_decl;
+    InitDeclaratorPtr init_decl;
+    ParserPtr parser;
+    string str;
+
+    for (unsigned i=0; i < TAB_LEN (test7_inputs); i++) {
+        parser.reset (new Parser (test7_inputs[i].input));
+        if (!parser->parse_simple_declaration (simple_decl)) {
+            BOOST_FAIL ("parsing of '" << test7_inputs[i].input << "' failed");
+        }
+        if (!simple_decl) {
+            cout << "got empty simple declaration" << endl;
+            return;
+        }
+        init_decl = *simple_decl->get_init_declarators ().begin ();
+        if (!get_declarator_id_as_string (init_decl, str)) {
+            BOOST_FAIL ("failed to get decl id of input: " << test7_inputs[i].input);
+        }
+        if (str != test7_inputs[i].variable_name) {
+            BOOST_FAIL ("for input " << test7_inputs[i].input
+                        << ", found variable name: "
+                        << str
+                        << "instead of "
+                        << test7_inputs[i].variable_name);
+        }
+    }
+}
+
 using boost::unit_test::test_suite ;
 
 test_suite*
@@ -289,6 +334,7 @@ init_unit_test_suite (int argc, char** argv)
     suite->add (BOOST_TEST_CASE (&test_parser4)) ;
     suite->add (BOOST_TEST_CASE (&test_parser5)) ;
     suite->add (BOOST_TEST_CASE (&test_parser6)) ;
+    suite->add (BOOST_TEST_CASE (&test_parser7)) ;
     return suite;
 
     NEMIVER_CATCH_NOX
