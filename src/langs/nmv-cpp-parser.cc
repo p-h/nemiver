@@ -1874,10 +1874,15 @@ Parser::parse_decl_specifier_seq (list<DeclSpecifierPtr> &a_result)
                            || type_name_str == "long") {
                     if (!LEXER.peek_next_token (token)) {break;}
                     if (token.get_kind () == Token::KEYWORD
-                        && (token.get_str_value () == "int")) {
+                        && (token.get_str_value () == "int"
+                            || token.get_str_value () == "unsigned"
+                            || token.get_str_value () == "signed")) {
                         if (!parse_decl_specifier (decl) || !decl) {goto error;}
                         result.push_back (decl);
-                        nb_type_specifiers++;
+                        if (token.get_str_value () != "unsigned"
+                            && token.get_str_value () != "signed") {
+                            nb_type_specifiers++;
+                        }
                     } else if (type_name_str == "long"
                                && token.get_kind () == Token::KEYWORD
                                && token.get_str_value () == "double") {

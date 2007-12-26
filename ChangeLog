@@ -1,5 +1,15 @@
 2007-12-23 Dodji Seketeli <dodji@gnome.org>
 
+	* src/langs/nmv-cpp-parser.cc:
+	  (Parser::parse_decl_specifier_seq): parsing of decl-specifier-seq
+	  was broken for consructs like:  "static long unsigned int".
+	  The broken part is due to "long" coming before the "unsigned",
+	  instead of after.
+	* tests/test-cpp-parser.cc: added a regression test case for the
+	  above fix.
+
+2007-12-23 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-ast.cc: fix a potential memory bug.
 	* src/langs/nmv-cpp-ast.h:  fix some constness/reference usage.
 

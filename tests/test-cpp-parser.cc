@@ -21,7 +21,8 @@ const char* test3_inputs[] = {
     "static const bar<baz> maman",
     "const size_t std::allocator<wchar_t>::foo",
     "const size_t std::basic_string<wchar_t, std::char_traits<wchar_t> >::foo",
-    "const size_t std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >::_Rep::_S_max_size"
+    "const size_t std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >::_Rep::_S_max_size",
+    "static long unsigned int __stl_prime_list[28]",
 };
 
 const char* test4_inputs[] = {
