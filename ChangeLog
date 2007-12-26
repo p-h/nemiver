@@ -1,35 +1,9 @@
-2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
+2007-12-23 Dodji Seketeli <dodji@gnome.org>
 
-	* src/dbgengine/nmv-gdbmi-parser.cc: give the exception catchpoints
-	meaningful names.  catchpoints don't have the same fields as regular
-	breakpoints.  They have a 'what' field instead of a 'func' field, so use the
-	'what' field if there is no 'func' field
+	* src/langs/Makefile.am b/src/langs/Makefile.am,
+	  src/langs/nmv-cpp-ast-utils.cc,h: added goodies to be able to
+	  extract variable id out of a nemiver::cpp::Declarator.
 
-2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
-
-	* src/dbgengine/nmv-gdb-engine.cc: explicitly list the breakpoints after
-	setting a catchpoint so that the new catchpoint will get added to the
-	breakpoint list immediately
-
-2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
-
-	* src/dbgengine/nmv-gdbmi-parser.cc: Don't report a parsing error when the
-	'changed_registers' response is empty (indicating that no registers were
-	changed).  This seemed to happen regularly when a program reached the end of
-	execution. Fixed #502526
-
-2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
-
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the issue where the
-	close button's icon was clipped since the image didn't fit into the button
-	size we were requesting.  This required setting the Button's RcStyle
-	xthickness and ythickness to 0 (idea stolen from gnome-terminal)
-
-2007-12-10  Jonathon Jongsma  <jjongsma@gnome.org>
-
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the glitch in the
-	source Notebook tabs that showed up in the new clearlooks theme that has
-	gradients on the tab.
 
 2007-12-18 Dodji Seketeli <dodji@gnome.org>
 
@@ -80,6 +54,39 @@
 	   Basically the format of the prompt returned to the client for
 	   overload resolution is broken by gdb.
 	   This test shows the problem.
+
+2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc: give the exception catchpoints
+	meaningful names.  catchpoints don't have the same fields as regular
+	breakpoints.  They have a 'what' field instead of a 'func' field, so use the
+	'what' field if there is no 'func' field
+
+2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc: explicitly list the breakpoints after
+	setting a catchpoint so that the new catchpoint will get added to the
+	breakpoint list immediately
+
+2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc: Don't report a parsing error when the
+	'changed_registers' response is empty (indicating that no registers were
+	changed).  This seemed to happen regularly when a program reached the end of
+	execution. Fixed #502526
+
+2007-12-11  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the issue where the
+	close button's icon was clipped since the image didn't fit into the button
+	size we were requesting.  This required setting the Button's RcStyle
+	xthickness and ythickness to 0 (idea stolen from gnome-terminal)
+
+2007-12-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the glitch in the
+	source Notebook tabs that showed up in the new clearlooks theme that has
+	gradients on the tab.
 
 2007-12-09 Dodji Seketeli <dodji@gnome.org>
 

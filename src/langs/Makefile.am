@@ -7,6 +7,8 @@ nmv-cpp-lexer-utils.cc \
 nmv-cpp-lexer-utils.h \
 nmv-cpp-ast.h \
 nmv-cpp-ast.cc \
+nmv-cpp-ast-utils.h \
+nmv-cpp-ast-utils.cc \
 nmv-cpp-parser.h \
 nmv-cpp-parser.cc
 
