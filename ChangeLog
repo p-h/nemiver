@@ -1,5 +1,22 @@
 2007-12-23 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  (GDBEngine::extract_global_variable_list): extract the variable
+	   name from the first init-declarator of the init-declarator list
+	   embedded in the simple-declaration that we parse from the GDB
+	   output. That variable name is then what set as the name of
+	   IDebugger::Variable that is sent back to the client code.
+	* tests/test-global-variables.cc: beefed up this regresssion test
+	  to make it stick the list of global variables we receive into an
+	  IVarListWalker and actually walk them. This pretty much tests
+	  what happens in nemiver when we list the global variables.
+	  On my box, this has a acceptable speed as it is takes less than
+	  1.5 seconds to list the globals of the fooprog program. This
+	  whole story started with around 7 minutes to do pretty much the
+	  same thing!
+
+2007-12-23 Dodji Seketeli <dodji@gnome.org>
+
 	* tests/test-cpp-parser.cc: added a regression test for
 	  nmv-cpp-ast-utils.h to basically retrieve variable names from
 	  Declarator datastructures.

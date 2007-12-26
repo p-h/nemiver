@@ -42,6 +42,7 @@
 #include "common/nmv-proc-utils.h"
 #include "nmv-gdb-engine.h"
 #include "langs/nmv-cpp-parser.h"
+#include "langs/nmv-cpp-ast-utils.h"
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -1458,11 +1459,22 @@ struct OnGlobalVariablesListedHandler : OutputHandler {
             LOG_ERROR ("failed to extract global variable list") ;
             return ;
         }
+
+        //now build a single list of global variables, out of 
+        //vars_per_files_map, and notify the client with it.
+
+        map<string, bool> recorded_var_names;
         list<IDebugger::VariableSafePtr>::const_iterator var_it;
         GDBEngine::VarsPerFilesMap::const_iterator it;
         for (it = vars_per_files_map.begin (); it != vars_per_files_map.end (); ++it) {
             for (var_it = it->second.begin (); var_it != it->second.end (); ++var_it) {
+                if (recorded_var_names.find ((*var_it)->name ().raw ())
+                    != recorded_var_names.end ()) {
+                    //make sure to avoid duplicated global variables names.
+                    continue;
+                }
                 var_list.push_back (*var_it);
+                recorded_var_names[(*var_it)->name ().raw ()] = true;
             }
         }
         m_engine->global_variables_listed_signal ().emit
@@ -3223,8 +3235,9 @@ GDBEngine::extract_global_variable_list (Output &a_output,
     //"<type of variable> <variable-name>;"
     //*************************************************
     UString str, file_name;
-    string var_name, type_name ;
+    string var_name, type_name, tmp_str;
     SimpleDeclarationPtr simple_decl;
+    InitDeclaratorPtr init_decl;
     ParserPtr parser;
     bool found=false ;
     unsigned cur=0;
@@ -3274,31 +3287,29 @@ fetch_variable:
     //type and name parts.
     LOG_DD ("going to parse variable decl: '" << str.raw () << "'");
     parser.reset (new Parser (str.raw ()));
+    simple_decl.reset ();
     if (!parser->parse_simple_declaration (simple_decl)
         || !simple_decl) {
         LOG_ERROR ("declaration parsing failed");
     }
-    //TODO: this is wrong. The type name is not the list of
-    //decl-specifiers I must write a helper that actually extracts the
-    //type name from the list of decl-specifier.
-    //For now, this is good enough as we mostly want to plug a full test
-    //chain to test the global variable parsing.
-    DeclSpecifier::list_to_string (simple_decl->get_decl_specifiers (),
-                                   type_name);
-    //TODO: this is wrong. the variable name is not the list of init-declarator.
-    //I must write a helper that actually extracts the variable name from
-    //the list of decl-specifiers.
-    //For now, this is good enough as we mostly want to plug a full test
-    //chain to test the global variable parsing.
-    InitDeclarator::list_to_string
-                (simple_decl->get_init_declarators (), var_name);
+    simple_decl->to_string (tmp_str);
+    LOG_DD ("parsed decl: '" << tmp_str << "'");
 
-    LOG_DD ("globals: got variable: " <<
-            " Name: " << var_name <<
-            " Type: " << type_name ) ;
+    if (!simple_decl->get_init_declarators ().empty ()) {
+        init_decl = *simple_decl->get_init_declarators ().begin ();
+        if (!get_declarator_id_as_string (init_decl, var_name)) {
+            LOG_ERROR ("could not get declarator id as string for parsed decl: "
+                       << tmp_str);
+            goto skip_oobr;
+        }
+    } else {
+        LOG_ERROR ("got empty init declarator list after parsing: '" << str
+                   << "' into: '" << tmp_str << "'");
+        goto skip_oobr;
+    }
+    LOG_DD ("globals: got variable: " << " Name: " << var_name ) ;
 
     var.reset (new IDebugger::Variable (var_name)) ;
-    var->type (type_name) ;
     var_list.push_back (var) ;
 
 skip_oobr:
