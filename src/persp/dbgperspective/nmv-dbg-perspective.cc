@@ -71,7 +71,10 @@
 #include "nmv-choose-overloads-dialog.h"
 #include "nmv-remote-target-dialog.h"
 #include "nmv-registers-view.h"
+
+#ifdef WITH_MEMORYVIEW
 #include "nmv-memory-view.h"
+#endif // WITH_MEMORYVIEW
 
 using namespace std ;
 using namespace nemiver::common ;
@@ -302,7 +305,9 @@ private:
     void on_activate_breakpoints_view ();
     void on_activate_logs_view ();
     void on_activate_registers_view () ;
+#ifdef WITH_MEMORYVIEW
     void on_activate_memory_view () ;
+#endif // WITH_MEMORYVIEW
     void on_default_config_read ();
 
     //************
@@ -513,7 +518,9 @@ public:
 
     RegistersView& get_registers_view () ;
 
+#ifdef WITH_MEMORYVIEW
     MemoryView& get_memory_view () ;
+#endif // WITH_MEMORYVIEW
 
     ThreadList& get_thread_list () ;
 
@@ -533,7 +540,9 @@ public:
 
     void set_show_registers_view (bool) ;
 
+#ifdef WITH_MEMORYVIEW
     void set_show_memory_view (bool) ;
+#endif // WITH_MEMORYVIEW
 
     void add_text_to_command_view (const UString &a_text,
                                    bool a_no_repeat=false) ;
@@ -667,7 +676,9 @@ struct DBGPerspective::Priv {
     bool terminal_view_is_visible ;
     bool breakpoints_view_is_visible ;
     bool registers_view_is_visible ;
+#ifdef WITH_MEMORYVIEW
     bool memory_view_is_visible ;
+#endif // WITH_MEMORYVIEW
     Gtk::Notebook *sourceviews_notebook ;
     map<UString, int> path_2_pagenum_map ;
     map<UString, int> basename_2_pagenum_map ;
@@ -689,7 +700,9 @@ struct DBGPerspective::Priv {
     SafePtr<ThreadList> thread_list ;
     SafePtr<Gtk::ScrolledWindow> registers_scrolled_win ;
     SafePtr<RegistersView> registers_view ;
+#ifdef WITH_MEMORYVIEW
     SafePtr<MemoryView> memory_view ;
+#endif // WITH_MEMORYVIEW
 
     int current_page_num ;
     IDebuggerSafePtr debugger ;
@@ -751,7 +764,9 @@ struct DBGPerspective::Priv {
         terminal_view_is_visible (false),
         breakpoints_view_is_visible (false),
         registers_view_is_visible (false),
+#ifdef WITH_MEMORYVIEW
         memory_view_is_visible (false),
+#endif // WITH_MEMORYVIEW
         sourceviews_notebook (NULL),
         statuses_notebook (NULL),
         current_page_num (0),
@@ -769,7 +784,6 @@ struct DBGPerspective::Priv {
     void
     modify_source_editor_fonts (const UString &a_font_name)
     {
-        THROW_IF_FAIL (memory_view);
         Pango::FontDescription font_desc (a_font_name);
         map<int, SourceEditor*>::iterator it ;
         for (it = pagenum_2_source_editor_map.begin () ;
@@ -779,7 +793,10 @@ struct DBGPerspective::Priv {
                 it->second->source_view ().modify_font (font_desc);
             }
         }
+#ifdef WITH_MEMORYVIEW
+        THROW_IF_FAIL (memory_view);
         memory_view->modify_font (font_desc);
+#endif // WITH_MEMORYVIEW
     }
 
     Glib::ustring
@@ -802,7 +819,9 @@ enum ViewsIndex
     TERMINAL_VIEW_INDEX,
     BREAKPOINTS_VIEW_INDEX,
     REGISTERS_VIEW_INDEX,
+#ifdef WITH_MEMORYVIEW
     MEMORY_VIEW_INDEX,
+#endif // WITH_MEMORYVIEW
     TARGET_OUTPUT_VIEW_INDEX,
     ERROR_VIEW_INDEX
 };
@@ -2105,12 +2124,14 @@ DBGPerspective::on_activate_registers_view ()
     activate_status_view(get_registers_scrolled_win());
 }
 
+#ifdef WITH_MEMORYVIEW
 void
 DBGPerspective::on_activate_memory_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     activate_status_view(get_memory_view ().widget ());
 }
+#endif // WITH_MEMORYVIEW
 
 void
 DBGPerspective::on_default_config_read ()
@@ -2118,7 +2139,9 @@ DBGPerspective::on_default_config_read ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
     Pango::FontDescription font_desc(m_priv->get_source_font_name ());
+#ifdef WITH_MEMORYVIEW
     get_memory_view ().modify_font (font_desc) ;
+#endif // WITH_MEMORYVIEW
 }
 
 //****************************
@@ -2192,7 +2215,9 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_terminal_view (true) ;
     set_show_breakpoints_view (true) ;
     set_show_registers_view (true) ;
+#ifdef WITH_MEMORYVIEW
     set_show_memory_view (true) ;
+#endif // WITH_MEMORYVIEW
     m_priv->statuses_notebook->set_current_page (0) ;
 }
 
@@ -2438,6 +2463,7 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<alt>5"
         },
+#ifdef WITH_MEMORYVIEW
         {
             "ActivateMemoryViewMenuAction",
             nil_stock_id,
@@ -2447,6 +2473,7 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<alt>6"
         },
+#endif // WITH_MEMORYVIEW
         {
             "ShowCommandsMenuAction",
             nil_stock_id,
@@ -2881,7 +2908,9 @@ DBGPerspective::clear_status_notebook ()
     get_local_vars_inspector ().re_init_widget () ;
     get_breakpoints_view ().clear () ;
     get_registers_view ().clear () ;
+#ifdef WITH_MEMORYVIEW
     get_memory_view ().clear () ;
+#endif // WITH_MEMORYVIEW
 }
 
 void
@@ -5196,6 +5225,7 @@ DBGPerspective::get_registers_view ()
     return *m_priv->registers_view ;
 }
 
+#ifdef WITH_MEMORYVIEW
 MemoryView&
 DBGPerspective::get_memory_view ()
 {
@@ -5206,6 +5236,7 @@ DBGPerspective::get_memory_view ()
     THROW_IF_FAIL (m_priv->memory_view) ;
     return *m_priv->memory_view ;
 }
+#endif // WITH_MEMORYVIEW
 
 void
 DBGPerspective::set_show_command_view (bool a_show)
@@ -5417,6 +5448,7 @@ DBGPerspective::set_show_registers_view (bool a_show)
     }
 }
 
+#ifdef WITH_MEMORYVIEW
 void
 DBGPerspective::set_show_memory_view (bool a_show)
 {
@@ -5442,6 +5474,7 @@ DBGPerspective::set_show_memory_view (bool a_show)
         m_priv->memory_view_is_visible = false;
     }
 }
+#endif // WITH_MEMORYVIEW
 
 
 struct ScrollTextViewToEndClosure {

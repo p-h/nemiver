@@ -96,6 +96,9 @@
 /* enable global variables widgets */
 #undef WITH_GLOBAL_VARIABLES
 
+/* compile the workbench */
+#undef WITH_MEMORYVIEW
+
 /* enable variables walker interface */
 #undef WITH_VARIABLE_WALKER
 

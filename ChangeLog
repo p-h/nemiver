@@ -1,3 +1,12 @@
+2008-01-02  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* configure.ac: add --disable-memoryview configure option, which is enabled
+	by default
+	* src/persp/dbgperspective/Makefile.am:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/uicommon/Makefile.am:
+	only build the memory view stuff if the configure option is enabled
+
 2007-12-26 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-i-debugger.h: in the registers and memory

@@ -42,7 +42,7 @@ LIBGTOP_VERSION=2.14
 LIBVTE_VERSION=0.12.0
 GCONF_VERSION=2.14.0
 CPPUNIT_VERSION=1.10.0
-GTKHEX_VERSION=1.0
+GTKHEX_VERSION=2.21.4
 
 dnl *********************
 dnl Checks for programs.
@@ -67,6 +67,7 @@ AC_SUBST(GDB_PROG)
 ENABLE_IDEBUGGER_ONLY=no
 ENABLE_DBGENGINE=yes
 ENABLE_WORKBENCH=yes
+ENABLE_MEMORYVIEW=yes
 
 dnl *************************************
 dnl Internationalization support
@@ -132,6 +133,19 @@ if test x$ENABLE_WORKBENCH = xyes ; then
 else
     ENABLE_WORKBENCH=no
 fi
+
+
+AC_ARG_ENABLE(memoryview,
+              AC_HELP_STRING([--enable-memoryview=yes|no],
+                            [enable the memory view hex editor (default is yes)]),
+              ENABLE_MEMORYVIEW=$enableval,
+              ENABLE_MEMORYVIEW=yes)
+if test x$ENABLE_MEMORYVIEW = xyes ; then
+    AC_DEFINE([WITH_MEMORYVIEW], 1, [compile the workbench])
+else
+    ENABLE_MEMORYVIEW=no
+fi
+AM_CONDITIONAL(BUILD_MEMORYVIEW, test x$ENABLE_MEMORYVIEW = xyes)
 
 
 ENABLE_DEBUG=yes
@@ -201,7 +215,6 @@ PKG_CHECK_MODULES(GCONF,[gconf-2.0 >= $GCONF_VERSION])
 PKG_CHECK_MODULES(LIBGLIBMM, [glibmm-2.4 >= $LIBGLIBMM_VERSION])
 PKG_CHECK_MODULES(SQLITE3, [sqlite3 >= $SQLITE3_VERSION])
 PKG_CHECK_MODULES(LIBVTE, [vte >= $LIBVTE_VERSION])
-PKG_CHECK_MODULES(GTKHEX, [gtkhex >= $GTKHEX_VERSION])
 
 if test x$ENABLE_AUTOTESTS = xyes ; then
     AX_BOOST_BASE([1.33.1])
@@ -222,6 +235,10 @@ if test x$ENABLE_WORKBENCH = xyes ; then
     PKG_CHECK_MODULES(LIBGTKMM, [gtkmm-2.4 >= $LIBGTKMM_VERSION])
     PKG_CHECK_MODULES(LIBGLADEMM, [libglademm-2.4 >= $LIBGLADEMM_VERSION])
     PKG_CHECK_MODULES(LIBGTKSOURCEVIEWMM, [libgtksourceviewmm-1.0 >= $LIBGTKSOURCEVIEWMM_VERSION])
+fi
+
+if test x$ENABLE_MEMORYVIEW = xyes ; then
+    PKG_CHECK_MODULES(GTKHEX, [gtkhex >= $GTKHEX_VERSION])
 fi
 
 dnl *******************
@@ -411,6 +428,7 @@ cat <<EOT
     Enable autotests                : ${ENABLE_AUTOTESTS}
     Enable verbose debug messages   : ${ENABLE_DEBUG}
     Enable workbench                : ${ENABLE_WORKBENCH}
+    Enable memory view              : ${ENABLE_MEMORYVIEW}
     Enable variable walker          : ${ENABLE_VARIABLE_WALKER}
     Enable gobal variables widget   : ${ENABLE_GLOBAL_VARIABLES}
     Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}

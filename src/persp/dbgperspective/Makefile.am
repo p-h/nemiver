@@ -62,8 +62,6 @@ nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
 nmv-registers-view.cc \
 nmv-registers-view.h \
-nmv-memory-view.cc \
-nmv-memory-view.h \
 nmv-thread-list.h \
 nmv-thread-list.cc \
 nmv-file-list.cc \
@@ -79,7 +77,15 @@ nmv-remote-target-dialog.h \
 nmv-dbg-perspective.cc \
 nmv-dbg-perspective.h
 
-libdbgperspectiveplugin_la_SOURCES=$(sources)
+if BUILD_MEMORYVIEW
+memoryview_sources = \
+					  nmv-memory-view.cc \
+					  nmv-memory-view.h
+else
+memoryview_sources =
+endif
+
+libdbgperspectiveplugin_la_SOURCES=$(sources) $(memoryview_sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version
 libdbgperspectiveplugin_la_LIBADD= \
 @NEMIVERDBGPERSP_LIBS@ \
