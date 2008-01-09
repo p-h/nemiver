@@ -26,7 +26,6 @@ config.status: patch
 	./configure --host=$(DEB_HOST_GNU_TYPE) \
                    --build=$(DEB_BUILD_GNU_TYPE) \
 		   --prefix=/usr \
-		   --disable-scrollkeeper \
 		   --with-gconf-schema-file-dir=\$${prefix}/share/gconf/schemas \
 		   CFLAGS="$(CFLAGS)" 
 
@@ -65,6 +64,7 @@ binary-arch: build install
 	dh_installdocs
 	dh_installmenu
 	dh_installman debian/nemiver.1
+	dh_scrollkeeper
 	dh_link
 	dh_strip
 	dh_compress

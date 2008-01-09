@@ -1,8 +1,9 @@
 nemiver (0.4.0-2) unstable; urgency=low
 
   * Added manpage for nemiver(1)
+  * Enable and register scrollkeeper entry (closes: #457522)
 
- -- Luca Bruno <<lucab@debian.org>>  Wed, 09 Jan 2008 13:59:21 +0100
+ -- Luca Bruno <lucab@debian.org>  Wed, 09 Jan 2008 13:59:21 +0100
 
 nemiver (0.4.0-1) unstable; urgency=low
  

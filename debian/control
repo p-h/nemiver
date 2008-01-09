@@ -11,7 +11,8 @@ Build-Depends: debhelper (>= 5), quilt, gdb, libxml-parser-perl, \
 	       libgnome2-dev (>= 2.0), libgtop2-dev (>= 2.14), \
 	       libglibmm-2.4-dev (>= 2.8.2), libsqlite3-dev (>=3.0), \
 	       libvte-dev (>= 0.12), libgtkmm-2.4-dev (>= 2.6), \ 
-	       libglademm-2.4-dev (>= 2.6), libgtksourceviewmm-1.0-dev (>= 0.3)
+	       libglademm-2.4-dev (>= 2.6), libgtksourceviewmm-1.0-dev (>= 0.3), \
+	       scrollkeeper
 Standards-Version: 3.7.3
 Homepage: http://home.gna.org/nemiver/
 
