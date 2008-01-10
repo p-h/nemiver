@@ -54,6 +54,8 @@ nmv-local-vars-inspector.cc \
 nmv-local-vars-inspector.h \
 nmv-local-vars-inspector2.cc \
 nmv-local-vars-inspector2.h \
+nmv-global-vars-inspector-dialog.cc \
+nmv-global-vars-inspector-dialog.h \
 nmv-var-inspector.cc \
 nmv-var-inspector.h \
 nmv-var-inspector2.cc \
@@ -75,7 +77,9 @@ nmv-choose-overloads-dialog.h \
 nmv-remote-target-dialog.cc \
 nmv-remote-target-dialog.h \
 nmv-dbg-perspective.cc \
-nmv-dbg-perspective.h
+nmv-dbg-perspective.h \
+nmv-vars-treeview.h \
+nmv-vars-treeview.cc
 
 if BUILD_MEMORYVIEW
 memoryview_sources = \

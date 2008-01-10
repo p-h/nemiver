@@ -58,6 +58,7 @@
 #else
 #include "nmv-local-vars-inspector2.h"
 #endif
+#include "nmv-global-vars-inspector-dialog.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
 #include "nmv-open-file-dialog.h"
@@ -308,6 +309,7 @@ private:
 #ifdef WITH_MEMORYVIEW
     void on_activate_memory_view () ;
 #endif // WITH_MEMORYVIEW
+    void on_activate_global_variables () ;
     void on_default_config_read ();
 
     //************
@@ -2134,6 +2136,14 @@ DBGPerspective::on_activate_memory_view ()
 #endif // WITH_MEMORYVIEW
 
 void
+DBGPerspective::on_activate_global_variables ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    GlobalVarsInspectorDialog dialog (plugin_path (), debugger (), workbench ()) ;
+    dialog.run () ;
+}
+
+void
 DBGPerspective::on_default_config_read ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2474,6 +2484,15 @@ DBGPerspective::init_actions ()
             "<alt>6"
         },
 #endif // WITH_MEMORYVIEW
+        {
+            "ActivateGlobalVariablesDialogMenuAction",
+            nil_stock_id,
+            _("Global Variables"),
+            _("Display Global variables"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_global_variables),
+            ActionEntry::DEFAULT,
+            "<control>G"
+        },
         {
             "ShowCommandsMenuAction",
             nil_stock_id,

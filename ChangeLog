@@ -1,5 +1,27 @@
 2008-01-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/Makefile.am: add new files
+	* src/persp/dbgperspective/glade/Makefile.am: add new file
+	* src/persp/dbgperspective/menus/menus.xml: add menu item to view the global
+	variables dialog
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add handling for global
+	variable view action
+	* src/persp/dbgperspective/glade/globalvarsinspector.glade:
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.h: add a global
+	variables display dialog
+	* src/persp/dbgperspective/nmv-variables-utils2.cc:
+	* src/persp/dbgperspective/nmv-variables-utils2.h: update the
+	append_a_variable() functions to take a const RefPtr&
+	* src/persp/dbgperspective/nmv-vars-treeview.cc:
+	* src/persp/dbgperspective/nmv-vars-treeview.h: abstract out the treeview
+	that displays variables so that we can use it in several different places
+	and reduce code duplication.  Right now it is only used in the global
+	variables widget, but the locals and variable inspector dialog may be
+	refactored to use it later
+
+2008-01-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* configure.ac: remove --enable-global-variables configure option
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: remove the global
 	variables listing from the local variables widget.  It will be added later

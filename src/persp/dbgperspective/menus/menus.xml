@@ -48,6 +48,8 @@
                 name="ActivateRegistersViewMenuItem"/>
             <menuitem action="ActivateMemoryViewMenuAction"
                 name="ActivateMemoryViewMenuItem"/>
+            <menuitem action="ActivateGlobalVariablesDialogMenuAction"
+                name="ActivateGlobalVariablesDialogMenuItem"/>
             <separator/>
             <!--<menuitem action="ShowCommandsMenuAction"
                 name="ShowCommandsMenuItem"/> -->

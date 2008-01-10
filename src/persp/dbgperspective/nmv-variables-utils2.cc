@@ -222,7 +222,7 @@ update_a_variable_real (const IDebugger::VariableSafePtr &a_var,
 void
 append_a_variable (const IDebugger::VariableSafePtr &a_var,
                    const Gtk::TreeView &a_tree_view,
-                   Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
+                   const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                    Gtk::TreeModel::iterator &a_parent_row_it)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -235,7 +235,7 @@ append_a_variable (const IDebugger::VariableSafePtr &a_var,
 void
 append_a_variable (const IDebugger::VariableSafePtr &a_var,
                    const Gtk::TreeView &a_tree_view,
-                   Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
+                   const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                    Gtk::TreeModel::iterator &a_parent_row_it,
                    Gtk::TreeModel::iterator &a_result)
 {
