@@ -1,3 +1,10 @@
+2008-01-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* configure.ac: remove --enable-global-variables configure option
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: remove the global
+	variables listing from the local variables widget.  It will be added later
+	as a modal dialog.
+
 2008-01-02  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* configure.ac: add --disable-memoryview configure option, which is enabled

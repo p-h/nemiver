@@ -182,20 +182,6 @@ else
     AC_MSG_NOTICE([disabled variable walker])
 fi
 
-ENABLE_GLOBAL_VARIABLES=no
-AC_ARG_ENABLE(global-variables,
-              AC_HELP_STRING([--enable-global-variables],
-                             [show global variables widget. default is disabled]),
-              ENABLE_GLOBAL_VARIABLES=$enableval,
-              ENABLE_GLOBAL_VARIABLES=no)
-
-if test x$ENABLE_GLOBAL_VARIABLES = xyes -a x$ENABLE_VARIABLE_WALKER = xyes; then
-    AC_DEFINE([WITH_GLOBAL_VARIABLES], 1, [enable global variables widgets])
-    AC_MSG_NOTICE([enabled global variables widgets])
-else
-    AC_MSG_NOTICE([disabled global variables widgets])
-fi
-
 dnl *******************************
 dnl checking for libraries we use
 dnl *******************************
@@ -430,7 +416,6 @@ cat <<EOT
     Enable workbench                : ${ENABLE_WORKBENCH}
     Enable memory view              : ${ENABLE_MEMORYVIEW}
     Enable variable walker          : ${ENABLE_VARIABLE_WALKER}
-    Enable gobal variables widget   : ${ENABLE_GLOBAL_VARIABLES}
     Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
     Maintainer mode                 : ${USER_MAINTAINER_MODE}
     CFLAGS                          : ${CFLAGS}
