@@ -29,7 +29,6 @@
 #include <map>
 #include <list>
 #include <glib/gi18n.h>
-#include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
 #include <gtkmm/treerowreference.h>
 #include "common/nmv-exception.h"
@@ -38,6 +37,7 @@
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 #include "nmv-i-var-list-walker.h"
+#include "nmv-vars-treeview.h"
 
 using namespace nemiver::common ;
 namespace vutil=nemiver::variables_utils2 ;
@@ -53,8 +53,8 @@ public:
     IVarListWalkerSafePtr function_args_var_list_walker;
 
     IWorkbench &workbench ;
-    SafePtr<Gtk::TreeView> tree_view ;
-    Glib::RefPtr<Gtk::TreeStore> tree_store ;
+    VarsTreeViewSafePtr tree_view ;
+    Glib::RefPtr<Gtk::TreeStore> tree_store;
     Gtk::TreeModel::iterator cur_selected_row ;
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> function_arguments_row_ref ;
@@ -68,6 +68,7 @@ public:
     Priv (IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench) :
         workbench (a_workbench),
+        tree_view (VarsTreeView::create ()),
         dereference_mi (0),
         is_new_frame (false)
     {
@@ -75,48 +76,12 @@ public:
 
         THROW_IF_FAIL (a_debugger) ;
         debugger = a_debugger ;
-        build_tree_view () ;
+        THROW_IF_FAIL (tree_view);
+        tree_store = tree_view->get_tree_store ();
+        THROW_IF_FAIL (tree_store) ;
         re_init_tree_view () ;
         connect_to_debugger_signals () ;
         init_graphical_signals () ;
-    }
-
-    void build_tree_view ()
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        if (tree_view) {return;}
-        //create a default tree store and a tree view
-        tree_store = Gtk::TreeStore::create
-            (vutil::get_variable_columns ()) ;
-        tree_view.reset (new Gtk::TreeView (tree_store)) ;
-        tree_view->set_headers_clickable (true) ;
-        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
-        THROW_IF_FAIL (sel) ;
-        sel->set_mode (Gtk::SELECTION_SINGLE) ;
-
-        //create the columns of the tree view
-        tree_view->append_column (_("Variable"),
-                                 vutil::get_variable_columns ().name) ;
-        Gtk::TreeViewColumn * col = tree_view->get_column (0) ;
-        THROW_IF_FAIL (col) ;
-        col->set_resizable (true) ;
-        col->add_attribute (*col->get_first_cell_renderer (),
-                            "foreground-gdk",
-                            vutil::VariableColumns::FG_COLOR_OFFSET) ;
-
-        tree_view->append_column (_("Value"), vutil::get_variable_columns ().value) ;
-        col = tree_view->get_column (1) ;
-        THROW_IF_FAIL (col) ;
-        col->set_resizable (true) ;
-        col->add_attribute (*col->get_first_cell_renderer (),
-                            "foreground-gdk",
-                            vutil::VariableColumns::FG_COLOR_OFFSET) ;
-
-        tree_view->append_column (_("Type"),
-                                  vutil::get_variable_columns ().type_caption);
-        col = tree_view->get_column (2) ;
-        THROW_IF_FAIL (col) ;
-        col->set_resizable (true) ;
     }
 
     void re_init_tree_view ()

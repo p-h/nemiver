@@ -27,13 +27,13 @@
 #ifdef WITH_VARIABLE_WALKER
 
 #include <glib/gi18n.h>
-#include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
 #include "common/nmv-exception.h"
 #include "nmv-var-inspector2.h"
 #include "nmv-variables-utils2.h"
 #include "nmv-i-var-walker.h"
 #include "nmv-ui-utils.h"
+#include "nmv-vars-treeview.h"
 
 namespace uutil = nemiver::ui_utils ;
 namespace vutil = nemiver::variables_utils2 ;
@@ -49,10 +49,7 @@ class VarInspector2::Priv : public sigc::trackable {
     bool requested_type ;
     IDebuggerSafePtr debugger ;
     IDebugger::VariableSafePtr variable ;
-    typedef SafePtr<Gtk::TreeView,
-                    uutil::WidgetRef,
-                    uutil::WidgetUnref> TreeViewSafePtr ;
-    TreeViewSafePtr tree_view ;
+    VarsTreeViewSafePtr tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeModel::iterator var_row_it ;
     Gtk::TreeModel::iterator cur_selected_row;
@@ -61,30 +58,10 @@ class VarInspector2::Priv : public sigc::trackable {
     void build_widget ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        tree_store = Gtk::TreeStore::create (vutil::get_variable_columns ()) ;
-        tree_view.reset (Gtk::manage (new Gtk::TreeView (tree_store)), true) ;
-        tree_view->set_headers_clickable (true) ;
-        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
-        THROW_IF_FAIL (sel) ;
-        sel->set_mode (Gtk::SELECTION_SINGLE) ;
-        tree_view->append_column (_("Variable"),
-                                  vutil::get_variable_columns ().name) ;
-        Gtk::TreeViewColumn * col = tree_view->get_column (0) ;
-        THROW_IF_FAIL (col) ;
-        col->set_resizable (true) ;
-        tree_view->append_column (_("Value"), vutil::get_variable_columns ().value) ;
-        col = tree_view->get_column (1) ;
-        THROW_IF_FAIL (col) ;
-        col->set_resizable (true) ;
-        col->add_attribute (*col->get_first_cell_renderer (),
-                            "foreground-gdk",
-                            vutil::VariableColumns::FG_COLOR_OFFSET) ;
-
-        tree_view->append_column (_("Type"),
-                                  vutil::get_variable_columns ().type_caption);
-        col = tree_view->get_column (2) ;
-        THROW_IF_FAIL (col) ;
-        col->set_resizable (true) ;
+        tree_view = VarsTreeView::create ();
+        THROW_IF_FAIL (tree_view);
+        tree_store = tree_view->get_tree_store ();
+        THROW_IF_FAIL (tree_store);
     }
 
     void connect_to_signals ()
