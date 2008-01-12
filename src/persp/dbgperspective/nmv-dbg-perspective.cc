@@ -2252,7 +2252,7 @@ DBGPerspective::init_icon_factory ()
     add_stock_icon (nemiver::CONTINUE, "icons", "continue.xpm") ;
     add_stock_icon (nemiver::STOP_DEBUGGER, "icons", "stop-debugger.xpm") ;
     add_stock_icon (nemiver::RUN_DEBUGGER, "icons", "run-debugger.xpm") ;
-    add_stock_icon (nemiver::LINE_POINTER, "icons", "line-pointer.xpm") ;
+    add_stock_icon (nemiver::LINE_POINTER, "icons", "line-pointer.png") ;
     add_stock_icon (nemiver::RUN_TO_CURSOR, "icons", "run-to-cursor.xpm") ;
     add_stock_icon (nemiver::STEP_INTO, "icons", "step-into.xpm") ;
     add_stock_icon (nemiver::STEP_OVER, "icons", "step-over.xpm") ;

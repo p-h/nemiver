@@ -6,7 +6,7 @@ breakpoint-disabled-marker.png \
 continue.xpm \
 stop-debugger.xpm \
 run-debugger.xpm \
-line-pointer.xpm \
+line-pointer.png \
 run-to-cursor.xpm \
 step-into.xpm \
 step-out.xpm \

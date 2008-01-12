@@ -1,3 +1,13 @@
+2008-01-12  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/icons/Makefile.am:
+	* src/persp/dbgperspective/icons/breakpoint-disabled-marker.png:
+	* src/persp/dbgperspective/icons/breakpoint-marker.png:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/uicommon/nmv-source-editor.cc:
+	use line marker and breakpoint icons from anjuta since they're nicer-looking
+	and tango-ish and GPLed
+
 2008-01-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:

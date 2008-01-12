@@ -321,8 +321,8 @@ SourceEditor::init ()
     //set line pointer pixbuf
     //****************************
     string path = "" ;
-    if (!m_priv->get_absolute_resource_path ("icons/line-pointer.xpm", path)) {
-        THROW ("could not get path to line-pointer.xpm") ;
+    if (!m_priv->get_absolute_resource_path ("icons/line-pointer.png", path)) {
+        THROW ("could not get path to line-pointer.png") ;
     }
     Glib::RefPtr<Gdk::Pixbuf> lp_pixbuf = Gdk::Pixbuf::create_from_file (path) ;
     source_view ().set_marker_pixbuf ("line-pointer-marker", lp_pixbuf) ;
