@@ -24,6 +24,7 @@
  *See COPYRIGHT file copyright information.
  */
 
+#include "config.h"
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -33,7 +34,11 @@
 #include <libgnomevfs/gnome-vfs-ops.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
 #include <gtksourceviewmm/init.h>
+#ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcelanguagemanager.h>
+#else
+#include <gtksourceviewmm/sourcelanguagesmanager.h>
+#endif  // WITH_SOURCEVIEWMM2
 #include <pangomm/fontdescription.h>
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
@@ -1643,7 +1648,11 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
              it != m_priv->pagenum_2_source_editor_map.end ();
              ++it) {
             if (it->second && it->second->source_view ().get_buffer ()) {
+#ifdef WITH_SOURCEVIEWMM2
                 it->second->source_view ().get_source_buffer ()->set_highlight_syntax
+#else
+                it->second->source_view ().get_source_buffer ()->set_highlight
+#endif  // WITH_SOURCEVIEWMM2
                                                 (boost::get<bool> (a_value)) ;
             }
         }
@@ -3771,10 +3780,37 @@ DBGPerspective::load_file (const UString &a_path,
     }
     LOG_DD ("file has mime type: " << mime_type) ;
 
+#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<SourceLanguageManager> lang_manager =
-                                    SourceLanguageManager::create () ;
-    Glib::RefPtr<SourceLanguage> lang =
-        lang_manager->get_language (mime_type) ;
+                                    SourceLanguageManager::get_default () ;
+#else
+    Glib::RefPtr<SourceLanguagesManager> lang_manager =
+                                    SourceLanguagesManager::create () ;
+#endif  // WITH_SOURCEVIEWMM2
+    Glib::RefPtr<SourceLanguage> lang;
+#ifdef WITH_SOURCEVIEWMM2
+    std::list<Glib::ustring> lang_ids = lang_manager->get_language_ids () ;
+    for (std::list<Glib::ustring>::const_iterator it = lang_ids.begin ();
+            it != lang_ids.end (); ++it) {
+        Glib::RefPtr<gtksourceview::SourceLanguage> candidate = 
+            lang_manager->get_language (*it);
+        std::list<Glib::ustring> mime_types = candidate->get_mime_types ();
+        for (std::list<Glib::ustring>::const_iterator mime_it = mime_types.begin ();
+                mime_it != mime_types.end (); ++mime_it) {
+            if (*mime_it == mime_type)
+            {
+                // one of the mime types associated with this language matches
+                // the mime type of our file, so use this language
+                lang = candidate;
+                break;  // no need to look at further mime types
+            }
+        }
+        // we found a matching language, so stop looking for other languages
+        if (lang) break;
+    }
+#else
+    lang = lang_manager->get_language_from_mime_type (mime_type) ;
+#endif  // WITH_SOURCEVIEWMM2
 
     Glib::RefPtr<SourceBuffer> source_buffer ;
     if (a_source_buffer) {
@@ -3801,7 +3837,11 @@ DBGPerspective::load_file (const UString &a_path,
     }
     file.close () ;
 
+#ifdef WITH_SOURCEVIEWMM2
     source_buffer->set_highlight_syntax (m_priv->enable_syntax_highlight) ;
+#else
+    source_buffer->set_highlight (m_priv->enable_syntax_highlight) ;
+#endif  // WITH_SOURCEVIEWMM2
 
     a_source_buffer = source_buffer ;
     NEMIVER_CATCH_AND_RETURN (false) ;
@@ -3873,10 +3913,17 @@ DBGPerspective::open_file (const UString &a_path,
         Gtk::TextIter cur_line_iter =
                 source_buffer->get_iter_at_line (a_current_line) ;
         if (cur_line_iter) {
+#ifdef WITH_SOURCEVIEWMM2
             Glib::RefPtr<SourceMark> where_marker =
                 source_buffer->create_mark (WHERE_MARK,
                                             WHERE_CATEGORY,
                                             cur_line_iter) ;
+#else
+            Glib::RefPtr<SourceMarker> where_marker =
+                source_buffer->create_marker (WHERE_MARK,
+                                            WHERE_CATEGORY,
+                                            cur_line_iter) ;
+#endif // WITH_SOURCEVIEWMM2
             THROW_IF_FAIL (where_marker) ;
         }
     }

@@ -1,3 +1,10 @@
+2008-01-13  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* configure.ac: add --enable-sourceviewmm2
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/uicommon/nmv-source-editor.cc: update these to gtksourceviewmm-2.0
+	API, with #ifdefs to allow using gtksourceviewmm-1.0 as well
+
 2008-01-12  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/icons/line-pointer.png: forgot to add this file

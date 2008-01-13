@@ -36,7 +36,9 @@ LIBXML2_VERSION=2.6.22
 AC_SUBST([LIBXML2_VERSION])
 LIBGTKMM_VERSION=2.6.0
 LIBGLADEMM_VERSION=2.6.0
-LIBGTKSOURCEVIEWMM_VERSION=1.9.4
+dnl default to using gtksourceview-1.0
+LIBGTKSOURCEVIEWMM_PKG=libgtksourceviewmm-1.0
+LIBGTKSOURCEVIEWMM_VERSION=0.3.0
 SQLITE3_VERSION=3.0
 LIBGTOP_VERSION=2.14
 LIBVTE_VERSION=0.12.0
@@ -68,6 +70,7 @@ ENABLE_IDEBUGGER_ONLY=no
 ENABLE_DBGENGINE=yes
 ENABLE_WORKBENCH=yes
 ENABLE_MEMORYVIEW=yes
+ENABLE_SOURCEVIEWMM2=no
 
 dnl *************************************
 dnl Internationalization support
@@ -141,9 +144,26 @@ AC_ARG_ENABLE(memoryview,
               ENABLE_MEMORYVIEW=$enableval,
               ENABLE_MEMORYVIEW=yes)
 if test x$ENABLE_MEMORYVIEW = xyes ; then
-    AC_DEFINE([WITH_MEMORYVIEW], 1, [compile the workbench])
+    AC_DEFINE([WITH_MEMORYVIEW], 1, [compile the the memory view widget])
 else
     ENABLE_MEMORYVIEW=no
+fi
+AM_CONDITIONAL(BUILD_MEMORYVIEW, test x$ENABLE_MEMORYVIEW = xyes)
+
+
+AC_ARG_ENABLE(sourceviewmm2,
+              AC_HELP_STRING([--enable-sourceviewmm2=yes|no],
+                            [enable the memory view hex editor (default is no)]),
+              ENABLE_SOURCEVIEWMM2=$enableval,
+              ENABLE_SOURCEVIEWMM2=yes)
+if test x$ENABLE_SOURCEVIEWMM2 = xyes ; then
+    AC_DEFINE([WITH_SOURCEVIEWMM2], 1, [build with gtksourceviewmm 2.x instead of 1.x])
+    LIBGTKSOURCEVIEWMM_VERSION=1.9.4
+    LIBGTKSOURCEVIEWMM_PKG=gtksourceviewmm-2.0
+else
+    ENABLE_SOURCEVIEWMM2=no
+    LIBGTKSOURCEVIEWMM_VERSION=0.3.0
+    LIBGTKSOURCEVIEWMM_PKG=libgtksourceviewmm-1.0
 fi
 AM_CONDITIONAL(BUILD_MEMORYVIEW, test x$ENABLE_MEMORYVIEW = xyes)
 
@@ -220,7 +240,7 @@ fi
 if test x$ENABLE_WORKBENCH = xyes ; then
     PKG_CHECK_MODULES(LIBGTKMM, [gtkmm-2.4 >= $LIBGTKMM_VERSION])
     PKG_CHECK_MODULES(LIBGLADEMM, [libglademm-2.4 >= $LIBGLADEMM_VERSION])
-    PKG_CHECK_MODULES(LIBGTKSOURCEVIEWMM, [gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM_VERSION])
+    PKG_CHECK_MODULES(LIBGTKSOURCEVIEWMM, [$LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION])
 fi
 
 if test x$ENABLE_MEMORYVIEW = xyes ; then

@@ -22,12 +22,17 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <map>
 #include <glib/gi18n.h>
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
+#ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcemark.h>
+#else
+#include <gtksourceviewmm/sourcemarker.h>
+#endif // WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourceiter.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
@@ -36,7 +41,11 @@
 
 using namespace std ;
 using namespace nemiver::common;
+#ifdef WITH_SOURCEVIEWMM2
 using gtksourceview::SourceMark;
+#else
+using gtksourceview::SourceMarker;
+#endif // WITH_SOURCEVIEWMM2
 using gtksourceview::SourceIter;
 using gtksourceview::SearchFlags;
 
@@ -135,7 +144,11 @@ public:
 
 struct SourceEditor::Priv {
     Sequence sequence ;
+#ifdef WITH_SOURCEVIEWMM2
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > markers ;
+#else
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> > markers ;
+#endif  // WITH_SOURCEVIEWMM2
     UString root_dir ;
     gint current_column ;
     gint current_line ;
@@ -269,8 +282,12 @@ struct SourceEditor::Priv {
 
         Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf =
                                 Gdk::Pixbuf::create_from_file (path) ;
+#ifdef WITH_SOURCEVIEWMM2
         source_view->set_mark_category_pixbuf (a_name, bm_pixbuf) ;
         source_view->set_mark_category_priority (a_name, 0);
+#else
+        source_view->set_marker_pixbuf (a_name, bm_pixbuf) ;
+#endif  // WITH_SOURCEVIEWMM2
     }
 
     void init ()
@@ -329,11 +346,15 @@ SourceEditor::init ()
         THROW ("could not get path to line-pointer.png") ;
     }
     Glib::RefPtr<Gdk::Pixbuf> lp_pixbuf = Gdk::Pixbuf::create_from_file (path) ;
+#ifdef WITH_SOURCEVIEWMM2
     source_view ().set_mark_category_pixbuf (WHERE_CATEGORY, lp_pixbuf) ;
     // show this on top
     source_view ().set_mark_category_priority (WHERE_CATEGORY, 100);
-
     source_view ().set_show_line_marks (true) ;
+#else
+    source_view ().set_marker_pixbuf (WHERE_CATEGORY, lp_pixbuf) ;
+    source_view ().set_show_line_markers (true) ;
+#endif  // WITH_SOURCEVIEWMM2
 }
 
 SourceEditor::SourceEditor ()
@@ -395,18 +416,33 @@ SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
             source_view ().get_source_buffer ()->get_iter_at_line (a_line - 1) ;
     THROW_IF_FAIL (line_iter) ;
 
+#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<Gtk::TextMark> where_marker =
         source_view ().get_source_buffer ()->get_mark (WHERE_MARK) ;
+#else
+    Glib::RefPtr<gtksourceview::SourceMarker> where_marker =
+        source_view ().get_source_buffer ()->get_marker (WHERE_MARK) ;
+#endif  // WITH_SOURCEVIEWMM2
     if (!where_marker) {
+#ifdef WITH_SOURCEVIEWMM2
         Glib::RefPtr<Gtk::TextMark> where_marker =
             source_view ().get_source_buffer ()->create_mark
+#else
+        Glib::RefPtr<gtksourceview::SourceMarker> where_marker =
+            source_view ().get_source_buffer ()->create_marker
+#endif  // WITH_SOURCEVIEWMM2
                                                         (WHERE_MARK,
                                                          WHERE_CATEGORY,
                                                          line_iter) ;
         THROW_IF_FAIL (where_marker) ;
     } else {
+#ifdef WITH_SOURCEVIEWMM2
         source_view ().get_source_buffer ()->move_mark (where_marker,
                                                         line_iter) ;
+#else
+        source_view ().get_source_buffer ()->move_marker (where_marker,
+                                                          line_iter) ;
+#endif  // WITH_SOURCEVIEWMM2
     }
     if (a_do_scroll) {
         scroll_to_line (a_line) ;
@@ -417,10 +453,19 @@ SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
 void
 SourceEditor::unset_where_marker ()
 {
+#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<Gtk::TextMark> where_marker =
         source_view ().get_source_buffer ()->get_mark (WHERE_MARK) ;
+#else
+    Glib::RefPtr<gtksourceview::SourceMarker> where_marker =
+        source_view ().get_source_buffer ()->get_marker (WHERE_MARK) ;
+#endif  // WITH_SOURCEVIEWMM2
     if (where_marker && !where_marker->get_deleted ()) {
+#ifdef WITH_SOURCEVIEWMM2
         source_view ().get_source_buffer ()->delete_mark (where_marker) ;
+#else
+        source_view ().get_source_buffer ()->delete_marker (where_marker) ;
+#endif  // WITH_SOURCEVIEWMM2
     }
 }
 
@@ -437,12 +482,20 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     }
 
     std::map<int,
+#ifdef WITH_SOURCEVIEWMM2
             Glib::RefPtr<gtksourceview::SourceMark> >::iterator mark_iter =
+#else
+            Glib::RefPtr<gtksourceview::SourceMarker> >::iterator mark_iter =
+#endif  // WITH_SOURCEVIEWMM2
                                             m_priv->markers.find (a_line);
     if (mark_iter !=  m_priv->markers.end ()) {
         if (!mark_iter->second->get_deleted ()) {
             LOG_DD ("deleting marker") ;
+#ifdef WITH_SOURCEVIEWMM2
             source_view ().get_source_buffer ()->delete_mark
+#else
+            source_view ().get_source_buffer ()->delete_marker
+#endif  // WITH_SOURCEVIEWMM2
                                                     (mark_iter->second);
         }
         m_priv->markers.erase (a_line);
@@ -454,8 +507,13 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     UString marker_name = UString::from_int (a_line);
 
     LOG_DD ("creating marker of type: " << marker_type) ;
+#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<gtksourceview::SourceMark> marker =
         source_view ().get_source_buffer ()->create_mark
+#else
+    Glib::RefPtr<gtksourceview::SourceMarker> marker =
+        source_view ().get_source_buffer ()->create_marker
+#endif  // WITH_SOURCEVIEWMM2
                                         (marker_name, marker_type, iter) ;
     m_priv->markers[a_line] = marker ;
 }
@@ -463,20 +521,32 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 void
 SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 {
+#ifdef WITH_SOURCEVIEWMM2
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter ;
+#else
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
+#endif  // WITH_SOURCEVIEWMM2
     iter = m_priv->markers.find (a_line) ;
     if (iter == m_priv->markers.end ()) {
         return ;
     }
     if (!iter->second->get_deleted ())
+#ifdef WITH_SOURCEVIEWMM2
         source_view ().get_source_buffer ()->delete_mark (iter->second) ;
+#else
+        source_view ().get_source_buffer ()->delete_marker (iter->second) ;
+#endif  // WITH_SOURCEVIEWMM2
     m_priv->markers.erase (iter) ;
 }
 
 bool
 SourceEditor::is_visual_breakpoint_set_at_line (int a_line) const
 {
+#ifdef WITH_SOURCEVIEWMM2
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter ;
+#else
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
+#endif  // WITH_SOURCEVIEWMM2
     iter = m_priv->markers.find (a_line) ;
     if (iter == m_priv->markers.end ()) {
         return false ;
