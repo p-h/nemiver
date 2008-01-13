@@ -33,11 +33,12 @@
 #include <libgnomevfs/gnome-vfs-ops.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
 #include <gtksourceviewmm/init.h>
-#include <gtksourceviewmm/sourcelanguagesmanager.h>
+#include <gtksourceviewmm/sourcelanguagemanager.h>
 #include <pangomm/fontdescription.h>
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
 #include <gdkmm/cursor.h>
+#include <gtk/gtkseparatortoolitem.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-env.h"
 #include "common/nmv-date-utils.h"
@@ -1642,7 +1643,7 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
              it != m_priv->pagenum_2_source_editor_map.end ();
              ++it) {
             if (it->second && it->second->source_view ().get_buffer ()) {
-                it->second->source_view ().get_source_buffer ()->set_highlight
+                it->second->source_view ().get_source_buffer ()->set_highlight_syntax
                                                 (boost::get<bool> (a_value)) ;
             }
         }
@@ -3770,10 +3771,10 @@ DBGPerspective::load_file (const UString &a_path,
     }
     LOG_DD ("file has mime type: " << mime_type) ;
 
-    Glib::RefPtr<SourceLanguagesManager> lang_manager =
-                                    SourceLanguagesManager::create () ;
+    Glib::RefPtr<SourceLanguageManager> lang_manager =
+                                    SourceLanguageManager::create () ;
     Glib::RefPtr<SourceLanguage> lang =
-        lang_manager->get_language_from_mime_type (mime_type) ;
+        lang_manager->get_language (mime_type) ;
 
     Glib::RefPtr<SourceBuffer> source_buffer ;
     if (a_source_buffer) {
@@ -3800,7 +3801,7 @@ DBGPerspective::load_file (const UString &a_path,
     }
     file.close () ;
 
-    source_buffer->set_highlight (m_priv->enable_syntax_highlight) ;
+    source_buffer->set_highlight_syntax (m_priv->enable_syntax_highlight) ;
 
     a_source_buffer = source_buffer ;
     NEMIVER_CATCH_AND_RETURN (false) ;
@@ -3872,10 +3873,10 @@ DBGPerspective::open_file (const UString &a_path,
         Gtk::TextIter cur_line_iter =
                 source_buffer->get_iter_at_line (a_current_line) ;
         if (cur_line_iter) {
-            Glib::RefPtr<SourceMarker> where_marker =
-                source_buffer->create_marker ("where-marker",
-                                              "line-pointer-marker",
-                                              cur_line_iter) ;
+            Glib::RefPtr<SourceMark> where_marker =
+                source_buffer->create_mark (WHERE_MARK,
+                                            WHERE_CATEGORY,
+                                            cur_line_iter) ;
             THROW_IF_FAIL (where_marker) ;
         }
     }

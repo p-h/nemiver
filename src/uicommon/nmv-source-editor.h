@@ -40,6 +40,13 @@ using std::list ;
 
 namespace nemiver {
 
+extern const char* BREAKPOINT_ENABLED_CATEGORY;
+extern const char* BREAKPOINT_DISABLED_CATEGORY;
+extern const char* WHERE_CATEGORY;
+
+extern const char* WHERE_MARK;
+
+
 class SourceEditor : public  VBox {
     //non copyable
     SourceEditor (const SourceEditor&) ;

@@ -93,9 +93,6 @@
 /* Version number of package */
 #undef VERSION
 
-/* enable global variables widgets */
-#undef WITH_GLOBAL_VARIABLES
-
 /* compile the workbench */
 #undef WITH_MEMORYVIEW
 

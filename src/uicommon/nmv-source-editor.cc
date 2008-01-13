@@ -27,7 +27,7 @@
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
-#include <gtksourceviewmm/sourcemarker.h>
+#include <gtksourceviewmm/sourcemark.h>
 #include <gtksourceviewmm/sourceiter.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
@@ -36,14 +36,17 @@
 
 using namespace std ;
 using namespace nemiver::common;
-using gtksourceview::SourceMarker;
+using gtksourceview::SourceMark;
 using gtksourceview::SourceIter;
 using gtksourceview::SearchFlags;
 
-#define BREAKPOINT_TYPE_ENABLED     "breakpoint-enabled-type"
-#define BREAKPOINT_TYPE_DISABLED    "breakpoint-disabled-type"
-
 namespace nemiver {
+
+const char* BREAKPOINT_ENABLED_CATEGORY = "breakpoint-enabled-category";
+const char* BREAKPOINT_DISABLED_CATEGORY = "breakpoint-disabled-category";
+const char* WHERE_CATEGORY = "line-pointer-category";
+
+const char* WHERE_MARK = "where-marker";
 
 class SourceView : public gtksourceview::SourceView {
 
@@ -132,7 +135,7 @@ public:
 
 struct SourceEditor::Priv {
     Sequence sequence ;
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> > markers ;
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > markers ;
     UString root_dir ;
     gint current_column ;
     gint current_line ;
@@ -266,7 +269,8 @@ struct SourceEditor::Priv {
 
         Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf =
                                 Gdk::Pixbuf::create_from_file (path) ;
-        source_view->set_marker_pixbuf (a_name, bm_pixbuf) ;
+        source_view->set_mark_category_pixbuf (a_name, bm_pixbuf) ;
+        source_view->set_mark_category_priority (a_name, 0);
     }
 
     void init ()
@@ -275,10 +279,10 @@ struct SourceEditor::Priv {
         status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
         init_signals () ;
         source_view->set_editable (false) ;
-        register_breakpoint_marker_type (BREAKPOINT_TYPE_ENABLED,
+        register_breakpoint_marker_type (BREAKPOINT_ENABLED_CATEGORY,
                                          "icons/breakpoint-marker.png");
         register_breakpoint_marker_type
-                                (BREAKPOINT_TYPE_DISABLED,
+                                (BREAKPOINT_DISABLED_CATEGORY,
                                  "icons/breakpoint-disabled-marker.png");
     }
 
@@ -325,9 +329,11 @@ SourceEditor::init ()
         THROW ("could not get path to line-pointer.png") ;
     }
     Glib::RefPtr<Gdk::Pixbuf> lp_pixbuf = Gdk::Pixbuf::create_from_file (path) ;
-    source_view ().set_marker_pixbuf ("line-pointer-marker", lp_pixbuf) ;
+    source_view ().set_mark_category_pixbuf (WHERE_CATEGORY, lp_pixbuf) ;
+    // show this on top
+    source_view ().set_mark_category_priority (WHERE_CATEGORY, 100);
 
-    source_view ().set_show_line_markers (true) ;
+    source_view ().set_show_line_marks (true) ;
 }
 
 SourceEditor::SourceEditor ()
@@ -389,18 +395,18 @@ SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
             source_view ().get_source_buffer ()->get_iter_at_line (a_line - 1) ;
     THROW_IF_FAIL (line_iter) ;
 
-    Glib::RefPtr<SourceMarker> where_marker =
-        source_view ().get_source_buffer ()->get_marker ("where-marker") ;
+    Glib::RefPtr<Gtk::TextMark> where_marker =
+        source_view ().get_source_buffer ()->get_mark (WHERE_MARK) ;
     if (!where_marker) {
-        Glib::RefPtr<SourceMarker> where_marker =
-            source_view ().get_source_buffer ()->create_marker
-                                                        ("where-marker",
-                                                         "line-pointer-marker",
+        Glib::RefPtr<Gtk::TextMark> where_marker =
+            source_view ().get_source_buffer ()->create_mark
+                                                        (WHERE_MARK,
+                                                         WHERE_CATEGORY,
                                                          line_iter) ;
         THROW_IF_FAIL (where_marker) ;
     } else {
-        source_view ().get_source_buffer ()->move_marker (where_marker,
-                                                          line_iter) ;
+        source_view ().get_source_buffer ()->move_mark (where_marker,
+                                                        line_iter) ;
     }
     if (a_do_scroll) {
         scroll_to_line (a_line) ;
@@ -411,10 +417,10 @@ SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
 void
 SourceEditor::unset_where_marker ()
 {
-    Glib::RefPtr<SourceMarker> where_marker =
-        source_view ().get_source_buffer ()->get_marker ("where-marker") ;
+    Glib::RefPtr<Gtk::TextMark> where_marker =
+        source_view ().get_source_buffer ()->get_mark (WHERE_MARK) ;
     if (where_marker && !where_marker->get_deleted ()) {
-        source_view ().get_source_buffer ()->delete_marker (where_marker) ;
+        source_view ().get_source_buffer ()->delete_mark (where_marker) ;
     }
 }
 
@@ -425,18 +431,18 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 
     UString marker_type;
     if (enabled) {
-        marker_type = BREAKPOINT_TYPE_ENABLED;
+        marker_type = BREAKPOINT_ENABLED_CATEGORY;
     } else {
-        marker_type = BREAKPOINT_TYPE_DISABLED;
+        marker_type = BREAKPOINT_DISABLED_CATEGORY;
     }
 
     std::map<int,
-            Glib::RefPtr<gtksourceview::SourceMarker> >::iterator mark_iter =
+            Glib::RefPtr<gtksourceview::SourceMark> >::iterator mark_iter =
                                             m_priv->markers.find (a_line);
     if (mark_iter !=  m_priv->markers.end ()) {
         if (!mark_iter->second->get_deleted ()) {
             LOG_DD ("deleting marker") ;
-            source_view ().get_source_buffer ()->delete_marker
+            source_view ().get_source_buffer ()->delete_mark
                                                     (mark_iter->second);
         }
         m_priv->markers.erase (a_line);
@@ -448,8 +454,8 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     UString marker_name = UString::from_int (a_line);
 
     LOG_DD ("creating marker of type: " << marker_type) ;
-    Glib::RefPtr<gtksourceview::SourceMarker> marker =
-        source_view ().get_source_buffer ()->create_marker
+    Glib::RefPtr<gtksourceview::SourceMark> marker =
+        source_view ().get_source_buffer ()->create_mark
                                         (marker_name, marker_type, iter) ;
     m_priv->markers[a_line] = marker ;
 }
@@ -457,20 +463,20 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 void
 SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 {
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter ;
     iter = m_priv->markers.find (a_line) ;
     if (iter == m_priv->markers.end ()) {
         return ;
     }
     if (!iter->second->get_deleted ())
-        source_view ().get_source_buffer ()->delete_marker (iter->second) ;
+        source_view ().get_source_buffer ()->delete_mark (iter->second) ;
     m_priv->markers.erase (iter) ;
 }
 
 bool
 SourceEditor::is_visual_breakpoint_set_at_line (int a_line) const
 {
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter ;
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter ;
     iter = m_priv->markers.find (a_line) ;
     if (iter == m_priv->markers.end ()) {
         return false ;
