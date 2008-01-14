@@ -87,7 +87,7 @@ public:
     //GtkHex_AutoHighlight *insert_autohighlight (const gchar *search, int len,
             //const gchar *colour);
     //void delete_autohighlight (GtkHex_AutoHighlight *ahl);
-    virtual Gtk::Widget& get_widget () const ;
+    virtual Gtk::Container& get_widget () const ;
 };//end class Editor
 
 NEMIVER_END_NAMESPACE (Hex)

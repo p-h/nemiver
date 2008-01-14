@@ -108,6 +108,7 @@ public:
         m_editor->set_geometry (20 /*characters per line*/, 6 /*lines*/);
         m_editor->show_offsets ();
         m_scrolledwindow->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_NEVER);
+        m_editor->get_widget ().set_border_width (0);
         m_scrolledwindow->add (m_editor->get_widget ());
         m_scrolledwindow->set_shadow_type (Gtk::SHADOW_IN);
 

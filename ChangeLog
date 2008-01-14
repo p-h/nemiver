@@ -1,5 +1,17 @@
 2008-01-13  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* configure.ac: removed accidentally duplicated variable
+	* src/uicommon/nmv-hex-editor.cc:
+	* src/uicommon/nmv-hex-editor.h: make get_widget() return a Gtk::Container&
+	so that we can use the Container functions such as set_border_width()
+	* src/persp/dbgperspective/nmv-memory-view.cc: set HexEditor widget's
+	border_width to 0 so that there is not a thick black border around the whole
+	hex editor widget.  There's still a black divider between the hex and the
+	ascii portions of the widget, however, and I can't figure out how to get
+	that to match the theme background color instead of black...
+
+2008-01-13  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* configure.ac: Improve configure script so that if --enable-memoryview is
 	not specified and gtkhex is not found, it will automatically disable the
 	memoryview widget (and vice versa, if it is found, automatically enable it).

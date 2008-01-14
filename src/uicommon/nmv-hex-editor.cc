@@ -23,7 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 
-#include <gtkmm/widget.h>
+#include <gtkmm/container.h>
 #include "common/nmv-exception.h"
 #include "nmv-hex-editor.h"
 #include <gtkhex/gtkhex.h>
@@ -56,14 +56,14 @@ struct GtkHexUnref {
 
 struct Editor::Priv {
     SafePtr<GtkHex, GtkHexRef, GtkHexUnref> hex ;
-    Gtk::Widget *widget ;
+    Gtk::Container *widget ;
 
     Priv (const DocumentSafePtr& a_doc) :
         hex (GTK_HEX (gtk_hex_new (a_doc->cobj())), true),
         widget (0)
     {
         THROW_IF_FAIL (GTK_IS_WIDGET (hex.get ())) ;
-        widget = Glib::wrap (GTK_WIDGET (hex.get ())) ;
+        widget = Glib::wrap (GTK_CONTAINER (hex.get ())) ;
         THROW_IF_FAIL (widget) ;
     }
 
@@ -229,7 +229,7 @@ void
 Editor::delete_autohighlight (GtkHex_AutoHighlight *ahl);
 */
 
-Gtk::Widget&
+Gtk::Container&
 Editor::get_widget () const
 {
     THROW_IF_FAIL (m_priv) ;
