@@ -53,11 +53,11 @@ install: build
 	dh_installdirs
 	$(MAKE) DESTDIR=$(CURDIR)/debian/nemiver install
 
-	cp $(CURDIR)/debian/nemiver.xpm $(CURDIR)/debian/nemiver/usr/share/pixmaps/
-	[ -f /usr/share/gnome/help/nemiver/C/legal.xml ] && \
-	[ ! -f /usr/share/gnome/help/nemiver/sv/legal.xml ] && \
-	ln -s 	/usr/share/gnome/help/nemiver/C/legal.xml \
-	    	/usr/share/gnome/help/nemiver/sv/legal.xml
+	cp $(CURDIR)/debian/nemiver.xpm $(DESTDIR)/usr/share/pixmaps/
+	[ -f $(DESTDIR)/usr/share/gnome/help/nemiver/C/legal.xml ] && \
+	[ ! -f $(DESTDIR)/usr/share/gnome/help/nemiver/sv/legal.xml ] && \
+	ln -s 	$(DESTDIR)/usr/share/gnome/help/nemiver/C/legal.xml \
+	    	$(DESTDIR)/usr/share/gnome/help/nemiver/sv/legal.xml
 
 
 binary-indep: build install
