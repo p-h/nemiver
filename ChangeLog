@@ -1,5 +1,13 @@
 2008-01-13  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* configure.ac: Improve configure script so that if --enable-memoryview is
+	not specified and gtkhex is not found, it will automatically disable the
+	memoryview widget (and vice versa, if it is found, automatically enable it).
+	Also automatically detect whether to build against gtksourceviewmm-1.0 or
+	gtksourceviewmm-2.0 if --enable-sourceviewmm2 is not explicitly specified.
+
+2008-01-13  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* configure.ac: add --enable-sourceviewmm2
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
 	* src/uicommon/nmv-source-editor.cc: update these to gtksourceviewmm-2.0

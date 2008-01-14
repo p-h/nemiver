@@ -36,9 +36,8 @@ LIBXML2_VERSION=2.6.22
 AC_SUBST([LIBXML2_VERSION])
 LIBGTKMM_VERSION=2.6.0
 LIBGLADEMM_VERSION=2.6.0
-dnl default to using gtksourceview-1.0
-LIBGTKSOURCEVIEWMM_PKG=libgtksourceviewmm-1.0
-LIBGTKSOURCEVIEWMM_VERSION=0.3.0
+LIBGTKSOURCEVIEWMM1_VERSION=0.3.0
+LIBGTKSOURCEVIEWMM2_VERSION=1.9.4
 SQLITE3_VERSION=3.0
 LIBGTOP_VERSION=2.14
 LIBVTE_VERSION=0.12.0
@@ -69,8 +68,6 @@ AC_SUBST(GDB_PROG)
 ENABLE_IDEBUGGER_ONLY=no
 ENABLE_DBGENGINE=yes
 ENABLE_WORKBENCH=yes
-ENABLE_MEMORYVIEW=yes
-ENABLE_SOURCEVIEWMM2=no
 
 dnl *************************************
 dnl Internationalization support
@@ -142,7 +139,7 @@ AC_ARG_ENABLE(memoryview,
               AC_HELP_STRING([--enable-memoryview=yes|no],
                             [enable the memory view hex editor (default is yes)]),
               ENABLE_MEMORYVIEW=$enableval,
-              ENABLE_MEMORYVIEW=yes)
+              [PKG_CHECK_EXISTS([gtkhex >= $GTKHEX_VERSION], [ENABLE_MEMORYVIEW=yes], [ENABLE_MEMORYVIEW=no])])
 if test x$ENABLE_MEMORYVIEW = xyes ; then
     AC_DEFINE([WITH_MEMORYVIEW], 1, [compile the the memory view widget])
 else
@@ -155,14 +152,14 @@ AC_ARG_ENABLE(sourceviewmm2,
               AC_HELP_STRING([--enable-sourceviewmm2=yes|no],
                             [enable the memory view hex editor (default is no)]),
               ENABLE_SOURCEVIEWMM2=$enableval,
-              ENABLE_SOURCEVIEWMM2=yes)
+              [PKG_CHECK_EXISTS([gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM2_VERSION], [ENABLE_SOURCEVIEWMM2=yes], [ENABLE_SOURCEVIEWMM2=no])])
 if test x$ENABLE_SOURCEVIEWMM2 = xyes ; then
     AC_DEFINE([WITH_SOURCEVIEWMM2], 1, [build with gtksourceviewmm 2.x instead of 1.x])
-    LIBGTKSOURCEVIEWMM_VERSION=1.9.4
+    LIBGTKSOURCEVIEWMM_VERSION=$LIBGTKSOURCEVIEWMM2_VERSION
     LIBGTKSOURCEVIEWMM_PKG=gtksourceviewmm-2.0
 else
     ENABLE_SOURCEVIEWMM2=no
-    LIBGTKSOURCEVIEWMM_VERSION=0.3.0
+    LIBGTKSOURCEVIEWMM_VERSION=$LIBGTKSOURCEVIEWMM1_VERSION
     LIBGTKSOURCEVIEWMM_PKG=libgtksourceviewmm-1.0
 fi
 AM_CONDITIONAL(BUILD_MEMORYVIEW, test x$ENABLE_MEMORYVIEW = xyes)
@@ -430,18 +427,22 @@ cat <<EOT
     Source code location            : ${srcdir}
     C Compiler                      : ${CC}
     C++ Compiler                    : ${CXX}
+
     NEMIVER_DEVEL env var           : ${NEMIVER_DEVEL}
-    Enable autotests                : ${ENABLE_AUTOTESTS}
-    Enable verbose debug messages   : ${ENABLE_DEBUG}
-    Enable workbench                : ${ENABLE_WORKBENCH}
-    Enable memory view              : ${ENABLE_MEMORYVIEW}
-    Enable variable walker          : ${ENABLE_VARIABLE_WALKER}
-    Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
-    Maintainer mode                 : ${USER_MAINTAINER_MODE}
     CFLAGS                          : ${CFLAGS}
     CXXFLAGS                        : ${CXXFLAGS}
     NEMIVER_LIBS                    : ${NEMIVER_LIBS}
     NEMIVER_CFLAGS                  : ${NEMIVER_CFLAGS}
+
+ OPTIONAL FEATURES:
+    Enable autotests                : ${ENABLE_AUTOTESTS}
+    Enable verbose debug messages   : ${ENABLE_DEBUG}
+    Enable workbench                : ${ENABLE_WORKBENCH}
+    Enable memory view              : ${ENABLE_MEMORYVIEW} (requires gtkhex > $GTKHEX_VERSION)
+    gtksourceviewmm version         : ${LIBGTKSOURCEVIEWMM_PKG}
+    Enable variable walker          : ${ENABLE_VARIABLE_WALKER}
+    Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
+    Maintainer mode                 : ${USER_MAINTAINER_MODE}
 
 Now, Type 'make' to compile Nemiver
 Once done, type 'make install' with sufficient privileges to install it to $prefix
