@@ -177,8 +177,10 @@ main (int a_argc, char *a_argv[])
     GOptionContextSafePtr context ;
     context.reset (g_option_context_new
         (_(" [<prog-to-debug> [prog-args]]")));
+#if GLIB_CHECK_VERSION (2, 12, 0)
     g_option_context_set_summary (context.get (),
-                                  _("A C/C++ debugger for GNOME")) ;
+            _("A C/C++ debugger for GNOME")) ;
+#endif
     g_option_context_set_help_enabled (context.get (), true) ;
     g_option_context_add_main_entries (context.get (),
                                        entries,

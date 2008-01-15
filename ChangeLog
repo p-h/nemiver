@@ -1,3 +1,9 @@
+2008-01-15  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/main.cc: don't use g_option_context_set_summary unless the glib
+	version is at least 2.12.  This is just a descriptive string, so it's not
+	worth bumping the minimum version in configure.ac just for this
+
 2008-01-13  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* configure.ac: removed accidentally duplicated variable
