@@ -53,11 +53,11 @@ install: build
 	dh_installdirs
 	$(MAKE) DESTDIR=$(CURDIR)/debian/nemiver install
 
-	cp $(CURDIR)/debian/nemiver.xpm $(DESTDIR)/usr/share/pixmaps/
-	[ -f $(DESTDIR)/usr/share/gnome/help/nemiver/C/legal.xml ] && \
-	[ ! -f $(DESTDIR)/usr/share/gnome/help/nemiver/sv/legal.xml ] && \
-	ln -s 	$(DESTDIR)/usr/share/gnome/help/nemiver/C/legal.xml \
-	    	$(DESTDIR)/usr/share/gnome/help/nemiver/sv/legal.xml
+	cp $(CURDIR)/debian/nemiver.xpm $(CURDIR)/debian/nemiver/usr/share/pixmaps/
+	[ -f $(CURDIR)/debian/nemiver/usr/share/gnome/help/nemiver/C/legal.xml ] && \
+	[ ! -f $(CURDIR)/debian/nemiver/usr/share/gnome/help/nemiver/sv/legal.xml ] && \
+	cd $(CURDIR)/debian/nemiver/usr/share/gnome/help/nemiver/C/ && \
+	cp -a legal.xml ../sv/legal.xml
 
 
 binary-indep: build install
@@ -70,6 +70,8 @@ binary-arch: build install
 	dh_installmenu
 	dh_installman debian/nemiver.1
 	dh_scrollkeeper
+	dh_gconf
+	dh_icons
 	dh_link
 	dh_strip
 	dh_compress
