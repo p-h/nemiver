@@ -2091,51 +2091,82 @@ void
 DBGPerspective::on_activate_call_stack_view()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    activate_status_view(get_call_stack_scrolled_win());
+
+    NEMIVER_TRY
+    activate_status_view (get_call_stack_scrolled_win());
+    NEMIVER_CATCH
 }
 
 void 
 DBGPerspective::on_activate_variables_view () 
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    activate_status_view(get_local_vars_inspector_scrolled_win());
+
+    NEMIVER_TRY
+    activate_status_view (get_local_vars_inspector_scrolled_win());
+    NEMIVER_CATCH
 }
 
 void 
 DBGPerspective::on_activate_output_view () 
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    set_show_target_output_view(true);
-    activate_status_view(get_target_output_view_scrolled_win());
+
+    NEMIVER_TRY
+
+    set_show_target_output_view (true);
+    activate_status_view (get_target_output_view_scrolled_win());
+
+    NEMIVER_CATCH
 }
 
 void 
-DBGPerspective::on_activate_target_terminal_view () 
+DBGPerspective::on_activate_target_terminal_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    activate_status_view(get_terminal_box());
+
+    NEMIVER_TRY
+
+    activate_status_view (get_terminal_box());
+
+    NEMIVER_CATCH
 }
 
 void 
 DBGPerspective::on_activate_breakpoints_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    activate_status_view(get_breakpoints_scrolled_win());
+
+    NEMIVER_TRY
+
+    activate_status_view (get_breakpoints_scrolled_win ());
+
+    NEMIVER_CATCH
 }
 
 void 
 DBGPerspective::on_activate_logs_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    set_show_log_view(true);
-    activate_status_view(get_log_view_scrolled_win());
+
+    NEMIVER_TRY
+
+    set_show_log_view (true);
+    activate_status_view (get_log_view_scrolled_win ());
+
+    NEMIVER_CATCH
 }
 
 void
 DBGPerspective::on_activate_registers_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    activate_status_view(get_registers_scrolled_win());
+
+    NEMIVER_TRY
+
+    activate_status_view (get_registers_scrolled_win ());
+
+    NEMIVER_CATCH
 }
 
 #ifdef WITH_MEMORYVIEW
@@ -2143,27 +2174,44 @@ void
 DBGPerspective::on_activate_memory_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    NEMIVER_TRY
+
     activate_status_view(get_memory_view ().widget ());
+
+    NEMIVER_CATCH
 }
-#endif // WITH_MEMORYVIEW
+#endif //WITH_MEMORYVIEW
 
 void
 DBGPerspective::on_activate_global_variables ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    GlobalVarsInspectorDialog dialog (plugin_path (), debugger (), workbench ()) ;
+
+    NEMIVER_TRY
+
+    GlobalVarsInspectorDialog dialog (plugin_path (),
+                                      debugger (),
+                                      workbench ()) ;
     dialog.run () ;
+
+    NEMIVER_CATCH
 }
 
 void
 DBGPerspective::on_default_config_read ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
     THROW_IF_FAIL (m_priv);
     Pango::FontDescription font_desc(m_priv->get_source_font_name ());
 #ifdef WITH_MEMORYVIEW
     get_memory_view ().modify_font (font_desc) ;
 #endif // WITH_MEMORYVIEW
+
+    NEMIVER_CATCH
 }
 
 //****************************
