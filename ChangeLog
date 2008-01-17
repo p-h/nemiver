@@ -35,6 +35,15 @@
 	Also automatically detect whether to build against gtksourceviewmm-1.0 or
 	gtksourceviewmm-2.0 if --enable-sourceviewmm2 is not explicitly specified.
 
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-vars-treeview.cc: don't use
+	  "namespace foo {" but rather NEMIVER_BEGIN_NAMESPACE(foo) otherwise
+	  the file gets overindented, especially for people using emacs.
+	  Also, replace "class Foo {" by "class NEMIVER_API Foo". This is
+	  very important because it gives us a change to use the gcc
+	  visibility feature when it gets un-broken.
+
 2008-01-13  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* configure.ac: add --enable-sourceviewmm2

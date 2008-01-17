@@ -32,26 +32,25 @@
 
 using nemiver::common::SafePtr;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+class VarsTreeView;
 
-    class VarsTreeView;
+typedef SafePtr<VarsTreeView,
+                nemiver::ui_utils::WidgetRef,
+                nemiver::ui_utils::WidgetUnref> VarsTreeViewSafePtr ;
 
-    typedef SafePtr<VarsTreeView,
-                    nemiver::ui_utils::WidgetRef,
-                    nemiver::ui_utils::WidgetUnref> VarsTreeViewSafePtr ;
+class NEMIVER_API VarsTreeView : public Gtk::TreeView
+{
+    public:
+        static VarsTreeViewSafePtr create () ;
+        Glib::RefPtr<Gtk::TreeStore>& get_tree_store ();
 
-    class VarsTreeView : public Gtk::TreeView
-    {
-        public:
-            static VarsTreeViewSafePtr create () ;
-            Glib::RefPtr<Gtk::TreeStore>& get_tree_store ();
+    protected:
+        VarsTreeView ();
+        VarsTreeView (Glib::RefPtr<Gtk::TreeStore>& model);
 
-        protected:
-            VarsTreeView ();
-            VarsTreeView (Glib::RefPtr<Gtk::TreeStore>& model);
-
-        private:
-            Glib::RefPtr<Gtk::TreeStore> m_tree_store;
-    };
-} // namespace nemiver
+    private:
+        Glib::RefPtr<Gtk::TreeStore> m_tree_store;
+};
+NEMIVER_END_NAMESPACE (nemiver)
 #endif // __NMV_VARS_TREEVIEW_H__

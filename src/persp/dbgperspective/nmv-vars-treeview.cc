@@ -29,7 +29,7 @@
 
 namespace vutil=nemiver::variables_utils2 ;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 VarsTreeViewSafePtr VarsTreeView::create ()
 {
@@ -75,4 +75,5 @@ Glib::RefPtr<Gtk::TreeStore>& VarsTreeView::get_tree_store ()
     return m_tree_store;
 }
 
-} // namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
+
