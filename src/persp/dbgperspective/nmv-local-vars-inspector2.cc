@@ -44,7 +44,7 @@ namespace vutil=nemiver::variables_utils2;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-struct LocalVarsInspector2::Priv {
+struct LocalVarsInspector2::Priv : public sigc::trackable {
 private:
     Priv ();
 public:
