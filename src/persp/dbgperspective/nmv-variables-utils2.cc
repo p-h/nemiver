@@ -123,6 +123,7 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
 
     (*a_iter)[get_variable_columns ().variable] = a_var;
     UString var_name = a_var->name_caption ();
+    if (var_name.empty ()) {var_name = a_var->name ();}
     var_name.chomp ();
     UString prev_var_name =
             (Glib::ustring)(*a_iter)[get_variable_columns ().name];
