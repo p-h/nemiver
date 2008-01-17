@@ -44,6 +44,11 @@
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/menus/Makefile.am:
+	  added src/persp/dbgperspective/menus/varinspectorpopup.xml
+
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-call-stack.cc: cleanup.
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
