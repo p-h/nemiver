@@ -1,3 +1,8 @@
+2008-01-17  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* help/Makefile.am: add legal.xml to DOC_INCLUDES instead of DOC_ENTITIES
+	so that it gets installed with translations, etc.  Fixes Bug #509371
+
 2008-01-15  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/main.cc: don't use g_option_context_set_summary unless the glib
