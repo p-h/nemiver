@@ -53,7 +53,8 @@ protected:
 public:
 
     GlobalVarsInspectorDialog (const UString &a_root_path,
-            IDebuggerSafePtr &a_dbg, IWorkbench &a_wb) ;
+                               IDebuggerSafePtr &a_dbg,
+                               IWorkbench &a_wb) ;
     virtual ~GlobalVarsInspectorDialog () ;
 };//end GlobalVarsInspectorDialog
 
