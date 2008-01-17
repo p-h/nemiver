@@ -425,6 +425,7 @@ public:
             if (!is_copyable (a_other))
                 return false;
             m_name = a_other.m_name;
+            m_name_caption = a_other.m_name_caption;
             m_value = a_other.m_value;
             list<VariableSafePtr>::iterator it1;
             list<VariableSafePtr>::const_iterator it2;
