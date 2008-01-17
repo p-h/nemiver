@@ -31,7 +31,8 @@ namespace vutil=nemiver::variables_utils2 ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-VarsTreeViewSafePtr VarsTreeView::create ()
+VarsTreeViewSafePtr
+VarsTreeView::create ()
 {
     Glib::RefPtr<Gtk::TreeStore> model =
         Gtk::TreeStore::create (vutil::get_variable_columns ());
@@ -47,30 +48,31 @@ VarsTreeView::VarsTreeView (Glib::RefPtr<Gtk::TreeStore>& model) :
     get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
     //create the columns of the tree view
     append_column (_("Variable"),
-            vutil::get_variable_columns ().name) ;
+                   vutil::get_variable_columns ().name) ;
     Gtk::TreeViewColumn * col = get_column (0) ;
     THROW_IF_FAIL (col) ;
     col->set_resizable (true) ;
     col->add_attribute (*col->get_first_cell_renderer (),
-            "foreground-gdk",
-            vutil::VariableColumns::FG_COLOR_OFFSET) ;
+                        "foreground-gdk",
+                        vutil::VariableColumns::FG_COLOR_OFFSET) ;
 
     append_column (_("Value"), vutil::get_variable_columns ().value) ;
     col = get_column (1) ;
     THROW_IF_FAIL (col) ;
     col->set_resizable (true) ;
     col->add_attribute (*col->get_first_cell_renderer (),
-            "foreground-gdk",
-            vutil::VariableColumns::FG_COLOR_OFFSET) ;
+                        "foreground-gdk",
+                        vutil::VariableColumns::FG_COLOR_OFFSET) ;
 
     append_column (_("Type"),
-            vutil::get_variable_columns ().type_caption);
+                   vutil::get_variable_columns ().type_caption);
     col = get_column (2) ;
     THROW_IF_FAIL (col) ;
     col->set_resizable (true) ;
 }
 
-Glib::RefPtr<Gtk::TreeStore>& VarsTreeView::get_tree_store ()
+Glib::RefPtr<Gtk::TreeStore>&
+VarsTreeView::get_tree_store ()
 {
     return m_tree_store;
 }
