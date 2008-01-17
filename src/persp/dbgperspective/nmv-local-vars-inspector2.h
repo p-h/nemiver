@@ -28,6 +28,7 @@
 #include <list>
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
+#include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
 
 namespace Gtk {
@@ -51,7 +52,9 @@ protected:
 
 public:
 
-    LocalVarsInspector2 (IDebuggerSafePtr &a_dbg, IWorkbench &a_wb) ;
+    LocalVarsInspector2 (IDebuggerSafePtr &a_dbg,
+                         IWorkbench &a_wb,
+                         IPerspective &a_perspective) ;
     virtual ~LocalVarsInspector2 () ;
     Gtk::Widget& widget () const ;
     void set_local_variables
