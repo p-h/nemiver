@@ -59,9 +59,9 @@ public:
     UString previous_function_name ;
 
     Priv (Gtk::Dialog &a_dialog,
-            const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
-            IDebuggerSafePtr &a_debugger,
-            IWorkbench &a_workbench) :
+          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          IDebuggerSafePtr &a_debugger,
+          IWorkbench &a_workbench) :
         dialog (a_dialog),
         glade (a_glade),
         workbench (a_workbench)
@@ -82,7 +82,7 @@ public:
     {
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
-                    "inspectorwidgetbox") ;
+                                                       "inspectorwidgetbox");
         THROW_IF_FAIL (box);
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow) ;
         THROW_IF_FAIL (scr);
@@ -122,8 +122,9 @@ public:
             global_variables_walker_list = create_variable_walker_list () ;
             THROW_IF_FAIL (global_variables_walker_list) ;
             global_variables_walker_list->variable_visited_signal ().connect
-                (sigc::mem_fun
-                 (*this, &GlobalVarsInspectorDialog::Priv::on_global_variable_visited_signal)) ;
+            (sigc::mem_fun
+             (*this,
+              &GlobalVarsInspectorDialog::Priv::on_global_variable_visited_signal)) ;
         }
         return global_variables_walker_list ;
     }
@@ -133,7 +134,8 @@ public:
         DynamicModule::Loader *loader =
             workbench.get_dynamic_module ().get_module_loader ();
         THROW_IF_FAIL (loader) ;
-        DynamicModuleManager *module_manager = loader->get_dynamic_module_manager ();
+        DynamicModuleManager *module_manager =
+                                    loader->get_dynamic_module_manager ();
         THROW_IF_FAIL (module_manager) ;
         IVarListWalkerSafePtr result =
             module_manager->load_iface<IVarListWalker> ("varlistwalker",
@@ -227,7 +229,8 @@ public:
 
         NEMIVER_TRY
 
-        IVarListWalkerSafePtr walker_list = get_global_variables_walker_list () ;
+        IVarListWalkerSafePtr walker_list =
+                                get_global_variables_walker_list () ;
         THROW_IF_FAIL (walker_list) ;
 
         walker_list->remove_variables () ;
@@ -258,26 +261,31 @@ public:
     {
     }
 
-    void on_tree_view_row_expanded_signal (const Gtk::TreeModel::iterator &a_it,
-                                           const Gtk::TreeModel::Path &a_path)
+    void on_tree_view_row_expanded_signal
+                                (const Gtk::TreeModel::iterator &a_it,
+                                 const Gtk::TreeModel::Path &a_path)
     {
         if (a_it) {}
         if (a_path.size ()) {}
     }
 
-    void on_tree_view_row_activated_signal (const Gtk::TreeModel::Path &a_path,
-                                            Gtk::TreeViewColumn *a_col)
+    void on_tree_view_row_activated_signal
+                                    (const Gtk::TreeModel::Path &a_path,
+                                     Gtk::TreeViewColumn *a_col)
     {
         NEMIVER_TRY
+
         THROW_IF_FAIL (tree_view && tree_store) ;
         Gtk::TreeModel::iterator it = tree_store->get_iter (a_path) ;
         UString type =
-            (Glib::ustring) it->get_value (vutil::get_variable_columns ().type) ;
+            (Glib::ustring) it->get_value
+                                (vutil::get_variable_columns ().type) ;
         if (type == "") {return;}
 
         if (a_col != tree_view->get_column (2)) {return;}
         cur_selected_row = it ;
         show_variable_type_in_dialog () ;
+
         NEMIVER_CATCH
     }
 
@@ -302,7 +310,8 @@ public:
 
 };//end GlobalVarsInspectorDialog::Priv
 
-GlobalVarsInspectorDialog::GlobalVarsInspectorDialog (const UString &a_root_path,
+GlobalVarsInspectorDialog::GlobalVarsInspectorDialog
+                                            (const UString &a_root_path,
         IDebuggerSafePtr &a_debugger, IWorkbench &a_workbench) :
     Dialog (a_root_path,
             "globalvarsinspector.glade",
