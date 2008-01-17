@@ -44,6 +44,10 @@
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-call-stack.cc: cleanup.
+
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc,h:
 	  Added variable dereferencing to the LocalVarsInspector2 widget.
 	  To use it, the user has to select a variable, right click and hit

@@ -109,7 +109,9 @@ struct CallStack::Priv {
     Gtk::Widget *callstack_menu ;
     Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
 
-    Priv (IDebuggerSafePtr a_dbg, IWorkbench& a_workbench, IPerspective& a_perspective) :
+    Priv (IDebuggerSafePtr a_dbg,
+          IWorkbench& a_workbench,
+          IPerspective& a_perspective) :
         debugger (a_dbg),
         workbench (a_workbench),
         perspective (a_perspective),
@@ -132,12 +134,14 @@ struct CallStack::Priv {
             return;
 
         int chunk = 0;
-        conf_mgr->get_key_value (CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK, chunk);
+        conf_mgr->get_key_value (CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK,
+                                 chunk);
         if (chunk) {
             nb_frames_expansion_chunk = chunk;
             max_frames_to_show = chunk;
         }
-        conf_mgr->add_key_to_notify (CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK);
+        conf_mgr->add_key_to_notify
+                            (CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK);
         conf_mgr->value_changed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_config_value_changed_signal));
     }
@@ -163,14 +167,17 @@ struct CallStack::Priv {
             Gtk::ActionGroup::create ("callstack-action-group") ;
         call_stack_action_group->set_sensitive (true) ;
         int num_actions =
-            sizeof (s_call_stack_action_entries)/sizeof (ui_utils::ActionEntry) ;
+            sizeof (s_call_stack_action_entries)
+                /
+            sizeof (ui_utils::ActionEntry) ;
 
         ui_utils::add_action_entries_to_action_group
             (s_call_stack_action_entries,
              num_actions,
              call_stack_action_group) ;
 
-        workbench.get_ui_manager ()->insert_action_group (call_stack_action_group);
+        workbench.get_ui_manager ()->insert_action_group
+                                                (call_stack_action_group);
     }
 
     Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
@@ -193,7 +200,7 @@ struct CallStack::Priv {
     {
         if (!callstack_menu) {
             callstack_menu = load_menu ("callstackpopup.xml",
-                    "/CallStackPopup");
+                                        "/CallStackPopup");
             THROW_IF_FAIL (callstack_menu);
         }
         return callstack_menu;
@@ -351,6 +358,7 @@ struct CallStack::Priv {
     void on_call_stack_button_press_signal (GdkEventButton *a_event)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
         NEMIVER_TRY
 
         // right-clicking should pop up a context menu
@@ -365,15 +373,20 @@ struct CallStack::Priv {
     {
         THROW_IF_FAIL (a_event);
         THROW_IF_FAIL (widget);
+
         Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_call_stack_menu ()) ;
         THROW_IF_FAIL (menu) ;
-        // only pop up a menu if a row exists at that position
+
+        //only pop up a menu if a row exists at that position
         Gtk::TreeModel::Path path;
-        Gtk::TreeViewColumn* p_column = NULL;
+        Gtk::TreeViewColumn* column=NULL;
         int cell_x=0, cell_y=0;
-        if (widget->get_path_at_pos(static_cast<int>(a_event->x),
-                    static_cast<int>(a_event->y), path, p_column, cell_x,
-                    cell_y)) {
+        if (widget->get_path_at_pos (static_cast<int> (a_event->x),
+                                     static_cast<int> (a_event->y),
+                                     path,
+                                     column,
+                                     cell_x,
+                                     cell_y)) {
             menu->popup (a_event->button, a_event->time) ;
         }
     }
@@ -552,8 +565,9 @@ struct CallStack::Priv {
     }
 };//end struct CallStack::Priv
 
-CallStack::CallStack (IDebuggerSafePtr &a_debugger, IWorkbench& a_workbench,
-        IPerspective& a_perspective)
+CallStack::CallStack (IDebuggerSafePtr &a_debugger,
+                      IWorkbench& a_workbench,
+                      IPerspective &a_perspective)
 {
     THROW_IF_FAIL (a_debugger) ;
     m_priv.reset (new Priv (a_debugger, a_workbench, a_perspective)) ;
