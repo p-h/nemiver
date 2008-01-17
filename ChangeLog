@@ -42,6 +42,15 @@
 	* src/uicommon/nmv-source-editor.cc: update these to gtksourceviewmm-2.0
 	API, with #ifdefs to allow using gtksourceviewmm-1.0 as well
 
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  When dereferencing a variable, use its fully qualified variable
+	  name. Also, set the name caption of the resulting dereferenced
+	  variable to the string "*<fully-qualified-name>".
+	  This commit is also polluted by me cleaning the source code,
+	  removing spaces before ";". Bad bad Dodji.
+
 2008-01-12  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/icons/line-pointer.png: forgot to add this file
