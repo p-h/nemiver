@@ -150,23 +150,28 @@ public:
 
         THROW_IF_FAIL (debugger) ;
         debugger->global_variables_listed_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_global_variables_listed_signal)) ;
+            (sigc::mem_fun (*this,
+                            &Priv::on_global_variables_listed_signal)) ;
     }
 
     void init_graphical_signals ()
     {
         THROW_IF_FAIL (tree_view) ;
-        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
+        Glib::RefPtr<Gtk::TreeSelection> selection =
+                                                tree_view->get_selection () ;
         THROW_IF_FAIL (selection) ;
         selection->signal_changed ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_selection_changed_signal));
+            (sigc::mem_fun (*this,
+                            &Priv::on_tree_view_selection_changed_signal));
         tree_view->signal_row_expanded ().connect
             (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal)) ;
         tree_view->signal_row_activated ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_row_activated_signal)) ;
+            (sigc::mem_fun (*this,
+                            &Priv::on_tree_view_row_activated_signal)) ;
     }
 
-    void set_global_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
+    void set_global_variables
+            (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -179,21 +184,27 @@ public:
         }
     }
 
-    void append_a_global_variable (const IDebugger::VariableSafePtr &a_var)
+    void append_a_global_variable (const IDebugger::VariableSafePtr a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
-        THROW_IF_FAIL (tree_view && tree_store) ;
+        THROW_IF_FAIL (tree_view && tree_store && a_var) ;
+
+        LOG_DD ("going to append variable '"
+                << a_var->name ()
+                << "'");
 
         Gtk::TreeModel::iterator iter;
-        vutil::append_a_variable (a_var, static_cast<Gtk::TreeView&>(*tree_view),
-                Glib::RefPtr<Gtk::TreeStore>::cast_static(tree_store),
-                iter /* no parent */,
-                iter /* result iter */) ;
+        typedef Glib::RefPtr<Gtk::TreeStore> TreeStoreRefPtr;
+        vutil::append_a_variable (a_var,
+                                  static_cast<Gtk::TreeView&> (*tree_view),
+                                  TreeStoreRefPtr::cast_static (tree_store),
+                                  iter /* no parent */,
+                                  iter /* result iter */) ;
         tree_view->expand_row (tree_store->get_path (iter), false) ;
     }
 
-    void update_a_global_variable (const IDebugger::VariableSafePtr &a_var)
+    void update_a_global_variable (const IDebugger::VariableSafePtr a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -207,8 +218,8 @@ public:
     //<debugger signal handlers>
     //****************************
     void on_global_variables_listed_signal
-                                (const list<IDebugger::VariableSafePtr> &a_vars,
-                                 const UString &a_cookie)
+                            (const list<IDebugger::VariableSafePtr> a_vars,
+                             const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 

@@ -1,6 +1,12 @@
 2008-01-17 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:
+	  smart pointers should not be passed by reference, unless they are
+	  out parameters.
+
+2008-01-17 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:
 	  make GlobalvarsInspectorDialog::Priv extend sigc::trackable to make
 	  it automagically disconnect from the any signal slot it might be
 	  connected to. This fixes a crash that was happening when running
