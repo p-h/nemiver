@@ -42,7 +42,7 @@ namespace vutil=nemiver::variables_utils2 ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-struct GlobalVarsInspectorDialog::Priv {
+struct GlobalVarsInspectorDialog::Priv : public sigc::trackable {
 private:
     Priv ();
 public:
