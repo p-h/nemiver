@@ -44,6 +44,13 @@
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-variables-utils2.cc,h:
+	  added find_a_variable(), to find a variable under a given
+	  node. Made update_variable() use it.
+	  Did a bit of cleanup.
+
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-i-var-walker.h,
 	  src/dbgengine/nmv-var-walker.cc: cleanup.
 
