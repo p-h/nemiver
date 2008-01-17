@@ -44,6 +44,11 @@
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  propagated the api change of LocalVarsInspector2
+
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/menus/Makefile.am:
 	  added src/persp/dbgperspective/menus/varinspectorpopup.xml
 

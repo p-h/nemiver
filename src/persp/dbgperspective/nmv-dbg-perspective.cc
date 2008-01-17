@@ -787,7 +787,9 @@ struct DBGPerspective::Priv {
         in_show_var_value_at_pos_transaction (false),
         var_popup_tip_x (0),
         var_popup_tip_y (0)
-    {}
+    {
+    }
+
 
     void
     modify_source_editor_fonts (const UString &a_font_name)
@@ -5193,7 +5195,9 @@ DBGPerspective::get_local_vars_inspector ()
 #ifndef WITH_VARIABLE_WALKER
             (new LocalVarsInspector (debugger (), *m_priv->workbench)) ;
 #else
-            (new LocalVarsInspector2 (debugger (), *m_priv->workbench)) ;
+            (new LocalVarsInspector2 (debugger (),
+                                      *m_priv->workbench,
+                                      *this)) ;
 #endif
     }
     THROW_IF_FAIL (m_priv->variables_editor) ;
