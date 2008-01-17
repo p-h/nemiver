@@ -44,6 +44,11 @@
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-i-var-walker.h,
+	  src/dbgengine/nmv-var-walker.cc: cleanup.
+
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-i-var-list-walker.h, nmv-var-list-walker.cc:
 	  Add IVarListwalker::do_walk_variable() to walk only one choosen
 	  variable amongst the list of variables that have been set.

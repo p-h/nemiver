@@ -31,9 +31,9 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::SafePtr ;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::SafePtr;
 
 class IVarWalker;
 typedef SafePtr<IVarWalker,ObjectRef, ObjectUnref> IVarWalkerSafePtr;
@@ -67,7 +67,7 @@ public:
     /// been visited.
     virtual sigc::signal<void,
                          const IDebugger::VariableSafePtr&>&
-                                            visited_variable_signal () const = 0;
+                                        visited_variable_signal () const = 0;
     ///@}
 
     /// connect the walker to a variable and to a debugger
@@ -83,10 +83,10 @@ public:
     /// gets the root variable this walker is connected to.
     /// this will return a non null variable if and only if
     /// the visited_root_variabls_signal() has been emited already.
-    virtual const IDebugger::VariableSafePtr& get_variable () const = 0 ;
+    virtual const IDebugger::VariableSafePtr& get_variable () const = 0;
 
     /// gets the debugger the walker is connected to
-    virtual IDebuggerSafePtr get_debugger () const = 0 ;
+    virtual IDebuggerSafePtr get_debugger () const = 0;
 };//end IVarWalker
 
 NEMIVER_END_NAMESPACE (nemiver)
