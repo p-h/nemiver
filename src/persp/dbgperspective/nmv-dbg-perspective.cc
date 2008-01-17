@@ -2224,7 +2224,8 @@ DBGPerspective::on_default_config_read ()
 
 
 string
-DBGPerspective::build_resource_path (const UString &a_dir, const UString &a_name)
+DBGPerspective::build_resource_path (const UString &a_dir,
+                                     const UString &a_name)
 {
     string relative_path =
         Glib::build_filename (Glib::filename_from_utf8 (a_dir),
@@ -2248,7 +2249,8 @@ DBGPerspective::add_stock_icon (const UString &a_stock_id,
 
     Gtk::StockID stock_id (a_stock_id) ;
     string icon_path = build_resource_path (a_icon_dir, a_icon_name) ;
-    Glib::RefPtr<Gdk::Pixbuf> pixbuf= Gdk::Pixbuf::create_from_file (icon_path) ;
+    Glib::RefPtr<Gdk::Pixbuf> pixbuf =
+                            Gdk::Pixbuf::create_from_file (icon_path) ;
     Gtk::IconSet icon_set (pixbuf) ;
     m_priv->icon_factory->add (stock_id, icon_set) ;
 }
