@@ -1458,8 +1458,12 @@ struct OnGlobalVariablesListedHandler : OutputHandler {
         map<string, bool> recorded_var_names;
         list<IDebugger::VariableSafePtr>::const_iterator var_it;
         GDBEngine::VarsPerFilesMap::const_iterator it;
-        for (it = vars_per_files_map.begin (); it != vars_per_files_map.end (); ++it) {
-            for (var_it = it->second.begin (); var_it != it->second.end (); ++var_it) {
+        for (it = vars_per_files_map.begin ();
+             it != vars_per_files_map.end ();
+             ++it) {
+            for (var_it = it->second.begin ();
+                 var_it != it->second.end ();
+                 ++var_it) {
                 if (recorded_var_names.find ((*var_it)->name ().raw ())
                     != recorded_var_names.end ()) {
                     //make sure to avoid duplicated global variables names.

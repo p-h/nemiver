@@ -1,8 +1,13 @@
+2008-01-17 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc, nmv-i-debugger.h:
+	  cosmetic code cleanup.
+
 2008-01-17  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* data/Makefile.am: install manpage
-	* data/nemiver.1: new man page from Luca Bruno <lucab@debian.org>.  Fixes
-	bug #510191
+	* data/nemiver.1: new man page from
+	  Luca Bruno <lucab@debian.org>.  Fixes bug #510191.
 
 2008-01-17  Jonathon Jongsma  <jjongsma@gnome.org>
 

@@ -308,7 +308,11 @@ public:
         }
 
         const UString& name () const {return m_name;}
-        void name (const UString &a_name) {m_name_caption = m_name = a_name;}
+        void name (const UString &a_name)
+        {
+            m_name_caption = a_name;
+            m_name = a_name;
+        }
 
         const UString& name_caption () const {return m_name_caption;}
         void name_caption (const UString &a_n) {m_name_caption = a_n;}
