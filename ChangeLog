@@ -1,5 +1,11 @@
 2008-01-17  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* data/Makefile.am: install manpage
+	* data/nemiver.1: new man page from Luca Bruno <lucab@debian.org>.  Fixes
+	bug #510191
+
+2008-01-17  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* help/Makefile.am: add legal.xml to DOC_INCLUDES instead of DOC_ENTITIES
 	so that it gets installed with translations, etc.  Fixes Bug #509371
 

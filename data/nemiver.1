@@ -1,0 +1,55 @@
+.TH nemiver 1 "06 January 2008"
+.SH NAME
+nemiver \- graphical debugger for GNOME
+.SH SYNOPSIS
+.B nemiver
+.RI [ options ] " [<prog-to-debug> [prog-args]]"
+.br
+.SH DESCRIPTION
+This manual page documents briefly the
+.B nemiver
+command.
+.PP
+\fBnemiver\fP is a standalone graphical debugger that integrates well in the GNOME desktop environment. 
+It currently features a backend which uses the well known GNU Debugger gdb to debug C/C++ programs.
+.SH OPTIONS
+These programs follow the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+A summary of options is included below.
+.TP
+.B \-?, \-\-help
+Show help options.
+.TP
+.B \-v, \-\-version
+Show version of program.
+.TP
+.BI "\-\-env="""\ var0=val0\ var1=val1\ var2=val2\ ... " ""
+Display the value of an expression.
+.TP
+.BI "\-\-attach=" "<pid|process_name>"
+Attach to a process.
+.TP
+.B \-\-listsessions
+List the saved debugging sessions.
+.TP
+.B \-\-purgesessions
+Erase the saved debugging sessions.
+.TP
+.BI "\-\-executesession=" "N"
+Debug the program that was of session number 
+.I N
+.TP
+.BI "\-\-log-domains=" "DOMAINS"
+Enable logging domains 
+.I DOMAINS
+.TP
+.B \-\-logdebuggeroutput
+Log the debugger output.
+.SH BUGS
+If you find a bug, please report it at http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver.
+.SH AUTHOR
+nemiver was written by Dodji Seketeli <dodji@gnome.org> and
+Jonathon Jongsma <jjongsma@gnome.org>.
+.PP
+This manual page was written by Luca Bruno <lucab@debian.org>,
+for the Debian project (but may be used by others).
