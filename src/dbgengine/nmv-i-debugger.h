@@ -39,21 +39,21 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-using nemiver::common::SafePtr ;
+using nemiver::common::SafePtr;
 using nemiver::common::DynamicModule;
 using nemiver::common::DynamicModuleSafePtr;
-using nemiver::common::DynModIface ;
+using nemiver::common::DynModIface;
 using nemiver::common::ObjectRef;
 using nemiver::common::ObjectUnref;
-using nemiver::common::UString ;
-using nemiver::common::Object ;
-using std::vector ;
-using std::string ;
-using std::map ;
+using nemiver::common::UString;
+using nemiver::common::Object;
+using std::vector;
+using std::string;
+using std::map;
 using std::list;
 
-class IDebugger ;
-typedef SafePtr<IDebugger, ObjectRef, ObjectUnref> IDebuggerSafePtr ;
+class IDebugger;
+typedef SafePtr<IDebugger, ObjectRef, ObjectUnref> IDebuggerSafePtr;
 
 /// \brief a debugger engine.
 ///
@@ -62,8 +62,8 @@ typedef SafePtr<IDebugger, ObjectRef, ObjectUnref> IDebuggerSafePtr ;
 ///Please, read GDB/MI interface documentation for more.
 class NEMIVER_API IDebugger : public DynModIface {
 
-    IDebugger (const IDebugger&) ;
-    IDebugger& operator= (const IDebugger&) ;
+    IDebugger (const IDebugger&);
+    IDebugger& operator= (const IDebugger&);
 
 protected:
 
@@ -77,13 +77,13 @@ public:
 
     /// \brief a breakpoint descriptor
     class BreakPoint {
-        int m_number ;
-        bool m_enabled ;
-        UString m_address ;
-        UString m_function ;
-        UString m_file_name ;
-        UString m_file_full_name ;
-        int m_line ;
+        int m_number;
+        bool m_enabled;
+        UString m_address;
+        UString m_function;
+        UString m_file_name;
+        UString m_file_full_name;
+        int m_line;
 
     public:
 
@@ -92,7 +92,7 @@ public:
         /// \name accessors
 
         /// @{
-        int number () const {return m_number ;}
+        int number () const {return m_number;}
         void number (int a_in) {m_number = a_in;}
 
         bool enabled () const {return m_enabled;}
@@ -116,22 +116,22 @@ public:
         bool is_pending ()
         {
             if (m_address == "<PENDING>") {
-                return true ;
+                return true;
             }
-            return false ;
+            return false;
         }
         /// @}
 
         /// \brief clear this instance of breakpoint
         void clear ()
         {
-            m_number = 0 ;
-            m_enabled = false ;
-            m_address = "" ;
-            m_function = "" ;
-            m_file_name = "" ;
-            m_file_full_name = "" ;
-            m_line = 0 ;
+            m_number = 0;
+            m_enabled = false;
+            m_address = "";
+            m_function = "";
+            m_file_name = "";
+            m_file_full_name = "";
+            m_line = 0;
         }
     };//end class BreakPoint
 
@@ -151,22 +151,22 @@ public:
         };
 
     private:
-        Kind m_kind ;
-        int m_index ;
-        UString m_function_name ;
-        UString m_file_name ;
-        int m_line_number ;
+        Kind m_kind;
+        int m_index;
+        UString m_function_name;
+        UString m_file_name;
+        int m_line_number;
 
         void init (Kind a_kind, int a_index,
                    const UString &a_function_name,
                    const UString &a_file_name,
                    int a_line_number)
         {
-            kind (a_kind) ;
-            index (a_index) ;
-            function_name (a_function_name) ;
-            file_name (a_file_name) ;
-            line_number (a_line_number) ;
+            kind (a_kind);
+            index (a_index);
+            function_name (a_function_name);
+            file_name (a_file_name);
+            line_number (a_line_number);
         }
 
     public:
@@ -177,19 +177,19 @@ public:
                               int a_line_number)
         {
             init (a_kind, a_index, a_function_name,
-                  a_file_name, a_line_number) ;
+                  a_file_name, a_line_number);
         }
 
         OverloadsChoiceEntry ()
         {
-            init (CANCEL, 0, "", "", 0) ;
+            init (CANCEL, 0, "", "", 0);
         }
 
         Kind kind () const {return m_kind;}
         void kind (Kind a_kind) {m_kind = a_kind;}
 
         int index () const {return m_index;}
-        void index (int a_index) {m_index = a_index ;}
+        void index (int a_index) {m_index = a_index;}
 
         const UString& function_name () const {return m_function_name;}
         void function_name (const UString& a_in) {m_function_name = a_in;}
@@ -198,22 +198,22 @@ public:
         void file_name (const UString &a_in) {m_file_name = a_in;}
 
         int line_number () const {return m_line_number;}
-        void line_number (int a_in) {m_line_number = a_in ;}
+        void line_number (int a_in) {m_line_number = a_in;}
     };//end class OverloadsChoiceEntry
 
     /// \brief a function frame as seen by the debugger.
     class Frame {
-        UString m_address ;
-        UString m_function_name ;
-        map<UString, UString> m_args ;
-        int m_level ;
+        UString m_address;
+        UString m_function_name;
+        map<UString, UString> m_args;
+        int m_level;
         //present if the target has debugging info
-        UString m_file_name ;
+        UString m_file_name;
         //present if the target has sufficient debugging info
-        UString m_file_full_name ;
-        int m_line ;
+        UString m_file_full_name;
+        int m_line;
         //present if the target doesn't have debugging info
-        UString m_library ;
+        UString m_library;
     public:
 
         Frame () {clear ();}
@@ -224,7 +224,7 @@ public:
         const UString& address () const {return m_address;}
         void address (const UString &a_in) {m_address = a_in;}
 
-        const UString& function_name () const {return m_function_name ;}
+        const UString& function_name () const {return m_function_name;}
         void function_name (const UString &a_in) {m_function_name = a_in;}
 
         const map<UString, UString>& args () const {return m_args;}
@@ -250,30 +250,31 @@ public:
         /// \brief clears the current instance
         void clear ()
         {
-            m_address = "" ;
-            m_function_name = "" ;
-            m_args.clear () ;
-            m_level = 0 ;
-            m_file_name = "" ;
-            m_file_full_name = "" ;
-            m_line = 0 ;
-            m_library.clear () ;
-            m_args.clear () ;
+            m_address = "";
+            m_function_name = "";
+            m_args.clear ();
+            m_level = 0;
+            m_file_name = "";
+            m_file_full_name = "";
+            m_line = 0;
+            m_library.clear ();
+            m_args.clear ();
         }
     };//end class Frame
 
-    class Variable ;
-    typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr ;
+    class Variable;
+    typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr;
     class Variable : public Object {
         list<VariableSafePtr> m_members;
-        UString m_name ;
-        UString m_value ;
-        UString m_type ;
-        Variable *m_parent ;
+        UString m_name;
+        UString m_name_caption;
+        UString m_value;
+        UString m_type;
+        Variable *m_parent;
         //if this variable is a pointer,
         //it can be dereferenced. The variable
         //it points to is stored in m_dereferenced
-        VariableSafePtr m_dereferenced ;
+        VariableSafePtr m_dereferenced;
 
     public:
 
@@ -303,11 +304,14 @@ public:
         {
             if (!a_var) {return;}
             m_members.push_back (a_var);
-            a_var->parent (this) ;
+            a_var->parent (this);
         }
 
         const UString& name () const {return m_name;}
-        void name (const UString &a_name) {m_name = a_name;}
+        void name (const UString &a_name) {m_name_caption = m_name = a_name;}
+
+        const UString& name_caption () const {return m_name_caption;}
+        void name_caption (const UString &a_n) {m_name_caption = a_n;}
 
         const UString& value () const {return m_value;}
         void value (const UString &a_value) {m_value = a_value;}
@@ -316,10 +320,10 @@ public:
         void type (const UString &a_type) {m_type = a_type;}
         void type (const string &a_type) {m_type = a_type;}
 
-        Variable* parent () const {return m_parent ;}
+        Variable* parent () const {return m_parent;}
         void parent (Variable *a_parent)
         {
-            m_parent = a_parent ;
+            m_parent = a_parent;
         }
 
         void to_string (UString &a_str,
@@ -328,75 +332,75 @@ public:
         {
             if (a_show_var_name) {
                 if (name () != "") {
-                    a_str += a_indent_str + name () ;
+                    a_str += a_indent_str + name ();
                 }
             }
             if (value () != "") {
                 if (a_show_var_name) {
-                    a_str += "=" ;
+                    a_str += "=";
                 }
-                a_str += value () ;
+                a_str += value ();
             }
             if (members ().empty ()) {
-                return ;
+                return;
             }
-            UString indent_str = a_indent_str + "  " ;
+            UString indent_str = a_indent_str + "  ";
             a_str += "\n" + a_indent_str + "{";
-            list<VariableSafePtr>::const_iterator it ;
-            for (it = members ().begin () ; it != members ().end () ; ++it) {
+            list<VariableSafePtr>::const_iterator it;
+            for (it = members ().begin (); it != members ().end (); ++it) {
                 if (!(*it)) {continue;}
-                a_str += "\n" ;
-                (*it)->to_string (a_str, true, indent_str) ;
+                a_str += "\n";
+                (*it)->to_string (a_str, true, indent_str);
             }
             a_str += "\n" + a_indent_str + "}";
-            a_str.chomp () ;
+            a_str.chomp ();
         }
 
         void build_qname (UString &a_qname) const
         {
-            UString qname ;
+            UString qname;
             if (parent () == 0) {
                 a_qname = name ();
                 if (a_qname.raw ()[0] == '*') {
-                    a_qname.erase (0, 1) ;
+                    a_qname.erase (0, 1);
                 }
             } else {
-                parent ()->build_qname (qname) ;
-                qname.chomp () ;
+                parent ()->build_qname (qname);
+                qname.chomp ();
                 if (parent ()->name ()[0] == '*') {
-                    qname += "->" + name () ;
+                    qname += "->" + name ();
                 } else {
-                    qname += "." + name () ;
+                    qname += "." + name ();
                 }
-                a_qname = qname ;
+                a_qname = qname;
             }
         }
 
         void set_dereferenced (VariableSafePtr a_derefed)
         {
-            m_dereferenced  = a_derefed ;
+            m_dereferenced  = a_derefed;
         }
 
         VariableSafePtr get_dereferenced ()
         {
-            return m_dereferenced ;
+            return m_dereferenced;
         }
 
         bool is_dereferenced ()
         {
             if (m_dereferenced) {return true;}
-            return false ;
+            return false;
         }
 
         bool is_copyable (const Variable &a_other) const
         {
             if (a_other.type () != type ()) {
                 //can't copy a variable of different type
-                return false ;
+                return false;
             }
             //both variables must have same members
             if (members ().size () != a_other.members ().size ()) {
-                return false ;
+                return false;
             }
 
             list<VariableSafePtr>::const_iterator it1, it2;
@@ -405,43 +409,43 @@ public:
                  it1 != members ().end ();
                  it1++, it2++) {
                 if (!*it1 || !*it2)
-                    return false ;
+                    return false;
                 if (!(*it1)->is_copyable (**it2))
-                    return false ;
+                    return false;
             }
-            return true ;
+            return true;
         }
 
         bool copy (const Variable &a_other)
         {
             if (!is_copyable (a_other))
-                return false ;
-            m_name = a_other.m_name ;
-            m_value = a_other.m_value ;
+                return false;
+            m_name = a_other.m_name;
+            m_value = a_other.m_value;
             list<VariableSafePtr>::iterator it1;
             list<VariableSafePtr>::const_iterator it2;
             for (it1=m_members.begin (), it2=a_other.m_members.begin ();
                  it1 != m_members.end ();
                  it1++, it2++) {
-                (*it1)->copy (**it2) ;
+                (*it1)->copy (**it2);
             }
-            return true ;
+            return true;
         }
 
         void set (const Variable &a_other)
         {
-            m_name = a_other.m_name ;
-            m_value = a_other.m_value ;
-            m_type = a_other.m_type ;
+            m_name = a_other.m_name;
+            m_value = a_other.m_value;
+            m_type = a_other.m_type;
             list<VariableSafePtr>::const_iterator it;
-            m_members.clear () ;
+            m_members.clear ();
             for (it = a_other.m_members.begin ();
                  it != a_other.m_members.end ();
                  ++it) {
                 VariableSafePtr var;
-                var.reset (new Variable ()) ;
-                var->set (**it) ;
-                append (var) ;
+                var.reset (new Variable ());
+                var->set (**it);
+                append (var);
             }
         }
     };//end class Variable
@@ -455,22 +459,22 @@ public:
 
     static UString state_to_string (State a_state)
     {
-        UString str ;
+        UString str;
         switch (a_state) {
             case NOT_STARTED:
-                str = "NO_STARTED" ;
+                str = "NO_STARTED";
                 break;
             case READY:
-                str = "READY" ;
+                str = "READY";
                 break;
             case RUNNING:
-                str = "RUNNING" ;
-                break ;
+                str = "RUNNING";
+                break;
             case PROGRAM_EXITED:
-                str = "PROGRAM_EXITED" ;
-                break ;
+                str = "PROGRAM_EXITED";
+                break;
         }
-        return str ;
+        return str;
     }
 
 
@@ -480,26 +484,26 @@ public:
 
     /// @{
 
-    virtual sigc::signal<void>& engine_died_signal () const = 0 ;
+    virtual sigc::signal<void>& engine_died_signal () const = 0;
 
     virtual sigc::signal<void>& program_finished_signal () const = 0;
 
     virtual sigc::signal<void, const UString&>&
-                                     console_message_signal () const = 0 ;
+                                     console_message_signal () const = 0;
 
     virtual sigc::signal<void, const UString&>&
-                                 target_output_message_signal () const = 0 ;
+                                 target_output_message_signal () const = 0;
 
-    virtual sigc::signal<void, const UString&>& log_message_signal () const=0 ;
+    virtual sigc::signal<void, const UString&>& log_message_signal () const=0;
 
     virtual sigc::signal<void,
                          const UString&/*command name*/,
                          const UString&/*command cookie*/>&
                                              command_done_signal () const=0;
 
-    virtual sigc::signal<void>& connected_to_server_signal () const=0 ;
+    virtual sigc::signal<void>& connected_to_server_signal () const=0;
 
-    virtual sigc::signal<void>& detached_from_target_signal () const=0 ;
+    virtual sigc::signal<void>& detached_from_target_signal () const=0;
 
     virtual sigc::signal<void,
                         const IDebugger::BreakPoint&,
@@ -585,16 +589,16 @@ public:
                          const UString&/*variable name*/,
                          const UString&/*type*/,
                          const UString&/*cookie*/>&
-                                        variable_type_signal () const = 0 ;
+                                        variable_type_signal () const = 0;
     virtual sigc::signal<void,
                          const VariableSafePtr&/*variable*/,
                          const UString&/*cookie*/>&
-                                    variable_type_set_signal () const=0 ;
+                                    variable_type_set_signal () const=0;
 
     virtual sigc::signal<void,
-                         const VariableSafePtr&/*the variable we derefed*/,
+                         const VariableSafePtr/*the variable we derefed*/,
                          const UString&/*cookie*/>
-                                      variable_dereferenced_signal () const =0;
+                                      variable_dereferenced_signal () const=0;
 
     virtual sigc::signal<void, const vector<UString>&, const UString&>&
                             files_listed_signal () const = 0;
@@ -602,9 +606,9 @@ public:
     virtual sigc::signal<void,
                          int/*pid*/,
                          const UString&/*target path*/>&
-                                            got_target_info_signal () const = 0 ;
+                                            got_target_info_signal () const=0;
 
-    virtual sigc::signal<void>& running_signal () const = 0;
+    virtual sigc::signal<void>& running_signal () const=0;
 
     virtual sigc::signal<void,
                          const UString&/*signal name*/,
@@ -646,18 +650,18 @@ public:
     virtual map<UString, UString>& properties () = 0;
 
     virtual void set_event_loop_context
-                        (const Glib::RefPtr<Glib::MainContext> &) = 0 ;
+                        (const Glib::RefPtr<Glib::MainContext> &) = 0;
 
     virtual void run_loop_iterations (int a_nb_iters) = 0;
 
     virtual bool busy () const = 0;
 
-    virtual const UString& get_debugger_full_path () const  = 0 ;
+    virtual const UString& get_debugger_full_path () const  = 0;
 
-    virtual void set_solib_prefix_path (const UString &a_name) = 0 ;
+    virtual void set_solib_prefix_path (const UString &a_name) = 0;
 
     virtual void load_program (const UString &a_prog_with_args,
-                               const UString &a_working_dir) = 0 ;
+                               const UString &a_working_dir) = 0;
 
     virtual void load_program
                 (const vector<UString> &a_argv,
@@ -680,23 +684,23 @@ public:
 
     virtual void add_env_variables (const map<UString, UString> &a_vars) = 0;
 
-    virtual map<UString, UString>& get_env_variables () = 0 ;
+    virtual map<UString, UString>& get_env_variables () = 0;
 
-    virtual const UString& get_target_path () = 0 ;
+    virtual const UString& get_target_path () = 0;
 
-    virtual void get_target_info (const UString &a_cookie="") = 0 ;
+    virtual void get_target_info (const UString &a_cookie="") = 0;
 
-    virtual ILangTraitSafePtr get_language_trait () = 0 ;
+    virtual ILangTraitSafePtr get_language_trait () = 0;
 
     virtual void do_continue (const UString &a_cookie="") = 0;
 
-    virtual void run (const UString &a_cookie="") = 0 ;
+    virtual void run (const UString &a_cookie="") = 0;
 
     virtual IDebugger::State get_state () const = 0;
 
-    virtual bool stop_target () = 0 ;
+    virtual bool stop_target () = 0;
 
-    virtual void exit_engine () = 0 ;
+    virtual void exit_engine () = 0;
 
     virtual void step_in (const UString &a_cookie="") = 0;
 
@@ -706,18 +710,18 @@ public:
 
     virtual void continue_to_position (const UString &a_path,
                                        gint a_line_num,
-                                       const UString &a_cookie="") = 0 ;
+                                       const UString &a_cookie="") = 0;
     virtual void set_breakpoint (const UString &a_path,
                                  gint a_line_num,
-                                 const UString &a_cookie="") = 0 ;
+                                 const UString &a_cookie="") = 0;
     virtual void set_breakpoint (const UString &a_func_name,
-                                 const UString &a_cookie="") = 0 ;
+                                 const UString &a_cookie="") = 0;
     virtual void set_catch (const UString &a_event,
                             const UString &a_cookie="") = 0;
 
-    virtual void list_breakpoints (const UString &a_cookie="") = 0 ;
+    virtual void list_breakpoints (const UString &a_cookie="") = 0;
 
-    virtual const map<int, BreakPoint>& get_cached_breakpoints () = 0 ;
+    virtual const map<int, BreakPoint>& get_cached_breakpoints () = 0;
 
     virtual void enable_breakpoint (gint a_break_num,
                                     const UString &a_cookie="") = 0;
@@ -730,15 +734,15 @@ public:
                                     const UString &a_cookie="") = 0;
 
     virtual void choose_function_overload (int a_overload_number,
-                                           const UString &a_cookie="") = 0 ;
+                                           const UString &a_cookie="") = 0;
 
     virtual void choose_function_overloads (const vector<int> &a_numbers,
-                                            const UString &a_cookie="") = 0 ;
+                                            const UString &a_cookie="") = 0;
 
     virtual void delete_breakpoint (gint a_break_num,
                                     const UString &a_cookie="") = 0;
 
-    virtual void list_threads (const UString &a_cookie="") = 0 ;
+    virtual void list_threads (const UString &a_cookie="") = 0;
 
     virtual void select_thread (unsigned int a_thread_id,
                                 const UString &a_cookie="") = 0;
@@ -766,7 +770,7 @@ public:
                                      const UString &a_cookie="")  = 0;
 
     virtual void print_pointed_variable_value (const UString &a_var_name,
-                                               const UString &a_cookie="") = 0;
+                                               const UString &a_cookie="")=0;
 
     virtual void print_variable_type (const UString &a_var_name,
                                       const UString &a_cookie="") = 0;
@@ -775,9 +779,9 @@ public:
                                     const UString &a_cookie="") = 0;
 
     virtual bool dereference_variable (const VariableSafePtr &a_var,
-                                       const UString &a_cookie="") = 0 ;
+                                       const UString &a_cookie="") = 0;
 
-    virtual void list_files (const UString &a_cookie="") = 0 ;
+    virtual void list_files (const UString &a_cookie="") = 0;
 
     // register functions
     virtual void list_register_names (const UString &a_cookie="") = 0;

@@ -53,8 +53,9 @@ public:
     IVarListWalkerSafePtr function_args_var_list_walker;
 
     IWorkbench &workbench ;
-    VarsTreeViewSafePtr tree_view ;
-    Glib::RefPtr<Gtk::TreeStore> tree_store;
+    IPerspective& perspective;
+    SafePtr<Gtk::TreeView> tree_view ;
+    Glib::RefPtr<Gtk::TreeStore> tree_store ;
     Gtk::TreeModel::iterator cur_selected_row ;
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref ;
     SafePtr<Gtk::TreeRowReference> function_arguments_row_ref ;
@@ -62,14 +63,18 @@ public:
     std::map<UString, IDebugger::VariableSafePtr> function_arguments_to_set ;
     SafePtr<Gtk::Menu> contextual_menu ;
     Gtk::MenuItem *dereference_mi ;
+    Gtk::Widget *context_menu;
     UString previous_function_name ;
     bool is_new_frame ;
 
     Priv (IDebuggerSafePtr &a_debugger,
-          IWorkbench &a_workbench) :
+          IWorkbench &a_workbench,
+          IPerspective& a_perspective) :
         workbench (a_workbench),
         tree_view (VarsTreeView::create ()),
+        perspective (a_perspective),
         dereference_mi (0),
+        context_menu (0),
         is_new_frame (false)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -184,14 +189,19 @@ public:
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
         THROW_IF_FAIL (selection) ;
         selection->signal_changed ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_selection_changed_signal));
+            (sigc::mem_fun (*this,
+                            &Priv::on_tree_view_selection_changed_signal));
         tree_view->signal_row_expanded ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal)) ;
+            (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal));
         tree_view->signal_row_activated ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_row_activated_signal)) ;
+            (sigc::mem_fun (*this,
+                            &Priv::on_tree_view_row_activated_signal));
+        tree_view->signal_button_press_event ().connect_notify
+            (sigc::mem_fun (this, &Priv::on_button_press_signal));
     }
 
-    void set_local_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
+    void set_local_variables
+                    (const std::list<IDebugger::VariableSafePtr> &a_vars)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -286,6 +296,42 @@ public:
         get_function_arguments_row_iterator (parent_row_it) ;
         vutil::update_a_variable (a_var, *tree_view, parent_row_it,
                                   true, false) ;
+    }
+
+    void popup_context_menu (GdkEventButton *a_event)
+    {
+        THROW_IF_FAIL (a_event);
+    }
+
+    Gtk::Widget* get_context_menu ()
+    {
+        if (!context_menu) {
+            //TODO: finish this: write the related menu xml file
+            //and write the load_menu function call.
+            //Look at nmv-call-stack.cc for inspiration.
+            context_menu = load_menu ("varinspectorpopup.xml",
+                                      "VarInspectorPopup");
+            THROW_IF_FAIL (context_menu);
+        }
+        return context_menu;
+    }
+
+    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
+    {
+        NEMIVER_TRY
+
+        string relative_path = Glib::build_filename ("menus", a_filename) ;
+        string absolute_path ;
+        THROW_IF_FAIL (perspective.build_absolute_resource_path
+                (Glib::locale_to_utf8 (relative_path),
+                 absolute_path)) ;
+
+        workbench.get_ui_manager ()->add_ui_from_file
+            (Glib::locale_to_utf8 (absolute_path)) ;
+
+        NEMIVER_CATCH
+
+        return workbench.get_ui_manager ()->get_widget (a_widget_name);
     }
 
     //****************************
@@ -449,6 +495,16 @@ public:
         NEMIVER_CATCH
     }
 
+    void on_button_press_signal (GdkEventButton *a_event)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+        if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3)) {
+            popup_context_menu (a_event) ;
+        }
+        NEMIVER_CATCH
+    }
+
     void show_variable_type_in_dialog ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -471,9 +527,10 @@ public:
 };//end LocalVarInspector2::Priv
 
 LocalVarsInspector2::LocalVarsInspector2 (IDebuggerSafePtr &a_debugger,
-                                          IWorkbench &a_workbench)
+                                          IWorkbench &a_workbench,
+                                          IPerspective &a_perspective)
 {
-    m_priv.reset (new Priv (a_debugger, a_workbench));
+    m_priv.reset (new Priv (a_debugger, a_workbench, a_perspective));
 }
 
 LocalVarsInspector2::~LocalVarsInspector2 ()
