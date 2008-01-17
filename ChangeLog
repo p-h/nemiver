@@ -37,6 +37,12 @@
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	  fix breakage I have introduced during merging svn with my latest
+	  variable derefing changes.
+
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-vars-treeview.cc: don't use
 	  "namespace foo {" but rather NEMIVER_BEGIN_NAMESPACE(foo) otherwise
 	  the file gets overindented, especially for people using emacs.

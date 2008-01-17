@@ -55,7 +55,7 @@ public:
 
     IWorkbench &workbench;
     IPerspective& perspective;
-    SafePtr<Gtk::TreeView> tree_view;
+    VarsTreeViewSafePtr tree_view ;
     Glib::RefPtr<Gtk::TreeStore> tree_store;
     Gtk::TreeModel::iterator cur_selected_row;
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref;
@@ -74,8 +74,8 @@ public:
           IWorkbench &a_workbench,
           IPerspective& a_perspective) :
         workbench (a_workbench),
-        tree_view (VarsTreeView::create ()),
         perspective (a_perspective),
+        tree_view (VarsTreeView::create ()),
         dereference_mi (0),
         context_menu (0),
         is_new_frame (false)
@@ -84,7 +84,9 @@ public:
 
         THROW_IF_FAIL (a_debugger);
         debugger = a_debugger;
-        build_tree_view ();
+        THROW_IF_FAIL (tree_view);
+        tree_store = tree_view->get_tree_store ();
+        THROW_IF_FAIL (tree_store) ;
         re_init_tree_view ();
         connect_to_debugger_signals ();
         init_graphical_signals ();
@@ -125,47 +127,6 @@ public:
                                                 (var_inspector_action_group);
     }
 
-    void build_tree_view ()
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-        if (tree_view) {return;}
-        //create a default tree store and a tree view
-        tree_store = Gtk::TreeStore::create
-            (vutil::get_variable_columns ());
-        tree_view.reset (new Gtk::TreeView (tree_store));
-        tree_view->set_headers_clickable (true);
-        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection ();
-        THROW_IF_FAIL (sel);
-        sel->set_mode (Gtk::SELECTION_SINGLE);
-
-        //create the columns of the tree view
-        tree_view->append_column (_("Variable"),
-                                 vutil::get_variable_columns ().name);
-        Gtk::TreeViewColumn * col = tree_view->get_column (0);
-        THROW_IF_FAIL (col);
-        col->set_resizable (true);
-        col->add_attribute (*col->get_first_cell_renderer (),
-                            "foreground-gdk",
-                            vutil::VariableColumns::FG_COLOR_OFFSET);
-
-        tree_view->append_column (_("Value"),
-                                  vutil::get_variable_columns ().value);
-        col = tree_view->get_column (1);
-        THROW_IF_FAIL (col);
-        col->set_resizable (true);
-        col->add_attribute (*col->get_first_cell_renderer (),
-                            "foreground-gdk",
-                            vutil::VariableColumns::FG_COLOR_OFFSET);
-
-        tree_view->append_column
-                        (_("Type"),
-                         vutil::get_variable_columns ().type_caption);
-        col = tree_view->get_column (2);
-        THROW_IF_FAIL (col);
-        col->set_resizable (true);
-    }
-
->>>>>>> early pointer dereferencing support in LocalVarInspector2:src/persp/dbgperspective/nmv-local-vars-inspector2.cc
     void re_init_tree_view ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
