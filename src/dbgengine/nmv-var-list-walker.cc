@@ -25,7 +25,7 @@
 #include <map>
 #include "nmv-i-var-list-walker.h"
 
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -39,18 +39,19 @@ struct SafePtrCmp {
 class VarListWalker : public IVarListWalker {
      mutable sigc::signal<void, const IVarWalkerSafePtr> m_variable_visited_signal;
      mutable sigc::signal<void> m_variable_list_visited_signal;
-     list<IDebugger::VariableSafePtr> m_variables ;
-     list<IVarWalkerSafePtr> m_var_walkers ;
+     list<IDebugger::VariableSafePtr> m_variables;
+     list<IVarWalkerSafePtr> m_var_walkers;
      typedef std::map<IVarWalkerSafePtr, bool, SafePtrCmp>  WalkersMap;
-     typedef std::deque<WalkersMap> WalkersQueue ;
-     WalkersQueue m_considered_walkers ;
+     typedef std::deque<WalkersMap> WalkersQueue;
+     WalkersQueue m_considered_walkers;
+     WalkersMap m_walkers_map;
+     IDebuggerSafePtr m_debugger;
 
-     IDebuggerSafePtr m_debugger ;
-
-     IVarWalkerSafePtr create_variable_walker (const IDebugger::VariableSafePtr &a_var) ;
+     IVarWalkerSafePtr create_variable_walker
+                                 (const IDebugger::VariableSafePtr &a_var);
 
      void on_visited_variable_signal (const IDebugger::VariableSafePtr a_var,
-                                      IVarWalkerSafePtr a_walker) ;
+                                      IVarWalkerSafePtr a_walker);
 
 public:
 
@@ -61,19 +62,23 @@ public:
     //******************
     //<event getters>
     //******************
-    sigc::signal<void, const IVarWalkerSafePtr>& variable_visited_signal () const ;
-    sigc::signal<void>& variable_list_visited_signal () const ;
+    sigc::signal<void, const IVarWalkerSafePtr>&
+                                    variable_visited_signal () const;
+    sigc::signal<void>& variable_list_visited_signal () const;
     //******************
     //</event getters>
     //******************
-    void initialize (IDebuggerSafePtr &a_debugger) ;
+    void initialize (IDebuggerSafePtr &a_debugger);
 
-    void append_variable (const IDebugger::VariableSafePtr a_var) ;
-    void append_variables (const list<IDebugger::VariableSafePtr> &a_vars) ;
+    void append_variable (const IDebugger::VariableSafePtr a_var);
+
+    void append_variables (const list<IDebugger::VariableSafePtr> a_vars);
 
     void remove_variables ();
 
-    void do_walk_variables () ;
+    bool do_walk_variable (const UString &a_var_qname);
+
+    void do_walk_variables ();
 
 };//end class VarListWalker
 
@@ -84,12 +89,11 @@ VarListWalker::on_visited_variable_signal
 {
     if (a_var) {}
     NEMIVER_TRY
-    variable_visited_signal ().emit (a_walker) ;
-    WalkersMap &walkers_map = m_considered_walkers.front () ;
-    THROW_IF_FAIL (walkers_map.find (a_walker) != walkers_map.end ()) ;
-    walkers_map.erase (a_walker) ;
-    if (walkers_map.empty ()) {
-        variable_list_visited_signal ().emit () ;
+    variable_visited_signal ().emit (a_walker);
+    THROW_IF_FAIL (m_walkers_map.find (a_walker) != m_walkers_map.end ());
+    m_walkers_map.erase (a_walker);
+    if (m_walkers_map.empty ()) {
+        variable_list_visited_signal ().emit ();
     }
     NEMIVER_CATCH_NOX
 }
@@ -99,87 +103,103 @@ VarListWalker::create_variable_walker (const IDebugger::VariableSafePtr &a_var)
 {
     IVarWalkerSafePtr result;
     if (!a_var) {
-        return result ;
+        return result;
     }
     DynamicModule::Loader *loader =
         get_dynamic_module ().get_module_loader ();
-    THROW_IF_FAIL (loader) ;
+    THROW_IF_FAIL (loader);
     DynamicModuleManager *module_manager = loader->get_dynamic_module_manager ();
-    THROW_IF_FAIL (module_manager) ;
+    THROW_IF_FAIL (module_manager);
     result = module_manager->load_iface<IVarWalker> ("varwalker",
                                                      "IVarWalker");
-    THROW_IF_FAIL (result) ;
-    result->connect (m_debugger, a_var) ;
-    return result ;
+    THROW_IF_FAIL (result);
+    result->connect (m_debugger, a_var);
+    return result;
 }
 
 sigc::signal<void, const IVarWalkerSafePtr>&
 VarListWalker::variable_visited_signal () const
 {
-    return m_variable_visited_signal ;
+    return m_variable_visited_signal;
 }
 
 sigc::signal<void>&
 VarListWalker::variable_list_visited_signal () const
 {
-    return m_variable_list_visited_signal ;
+    return m_variable_list_visited_signal;
 }
 
 void
 VarListWalker::initialize (IDebuggerSafePtr &a_debugger)
 {
-    THROW_IF_FAIL (a_debugger) ;
+    THROW_IF_FAIL (a_debugger);
 
-    m_debugger = a_debugger ;
+    m_debugger = a_debugger;
 }
 
 void
 VarListWalker::append_variable (const IDebugger::VariableSafePtr a_var)
 {
-    THROW_IF_FAIL (a_var) ;
-    m_variables.push_back (a_var) ;
-    IVarWalkerSafePtr var_walker = create_variable_walker (a_var) ;
-    THROW_IF_FAIL (var_walker) ;
+    THROW_IF_FAIL (a_var);
+    m_variables.push_back (a_var);
+    IVarWalkerSafePtr var_walker = create_variable_walker (a_var);
+    THROW_IF_FAIL (var_walker);
     var_walker->visited_variable_signal ().connect
         (sigc::bind
          (sigc::mem_fun (*this, &VarListWalker::on_visited_variable_signal),
-          var_walker)) ;
-    m_var_walkers.push_back (var_walker) ;
-    UString var_str ;
-    a_var->to_string (var_str, true) ;
-    LOG_DD ("appended variable: " << var_str) ;
+          var_walker));
+    m_var_walkers.push_back (var_walker);
+    UString var_str;
+    a_var->to_string (var_str, true);
+    LOG_DD ("appended variable: " << var_str);
 }
 
 void
-VarListWalker::append_variables (const list<IDebugger::VariableSafePtr> &a_vars)
+VarListWalker::append_variables
+                    (const list<IDebugger::VariableSafePtr> a_vars)
 {
 
     list<IDebugger::VariableSafePtr>::const_iterator it;
     for (it = a_vars.begin (); it != a_vars.end (); ++it) {
-        append_variable (*it) ;
+        append_variable (*it);
     }
 }
 
 void
 VarListWalker::remove_variables ()
 {
-    m_variables.clear () ;
-    m_var_walkers.clear () ;
+    m_variables.clear ();
+    m_var_walkers.clear ();
+}
+
+bool
+VarListWalker::do_walk_variable (const UString &a_var_qname)
+{
+    UString qname;
+    list<IVarWalkerSafePtr>::iterator it;
+    for (it = m_var_walkers.begin (); it != m_var_walkers.end (); ++it) {
+        if (!(*it) || !(*it)->get_variable ())
+            continue;
+        (*it)->get_variable ()->build_qname (qname);
+        if (qname == a_var_qname) {
+            LOG_DD ("found variable of qname " << qname << " to walk");
+            m_walkers_map[*it] = true;
+            (*it)->do_walk_variable ();
+            LOG_DD ("variable walking query sent");
+            return true;
+        }
+    }
+    LOG_ERROR ("did not find variable " << a_var_qname << " to walk");
+    return false;
 }
 
 void
 VarListWalker::do_walk_variables ()
 {
-    if (m_considered_walkers.empty ()) {
-        WalkersMap walkers ;
-        m_considered_walkers.push_back (walkers) ;
-    }
-    WalkersMap &walkers_map = m_considered_walkers.front () ;
-
     list<IVarWalkerSafePtr>::iterator it;
     for (it = m_var_walkers.begin (); it != m_var_walkers.end (); ++it) {
-        walkers_map[*it] = true ;
-        (*it)->do_walk_variable () ;
+        m_walkers_map[*it] = true;
+        (*it)->do_walk_variable ();
     }
 }
 
@@ -191,8 +211,8 @@ struct VarListWalkerDynMod : public DynamicModule {
         const static Info s_info ("VarListWalker",
                                   "The list of variable walkers dynmod. "
                                   "Implements the IVarListWalker interface",
-                                  "1.0") ;
-        a_info = s_info ;
+                                  "1.0");
+        a_info = s_info;
     }
 
     void do_init ()
@@ -203,11 +223,11 @@ struct VarListWalkerDynMod : public DynamicModule {
                            DynModIfaceSafePtr &a_iface)
     {
         if (a_iface_name == "IVarListWalker") {
-            a_iface.reset (new VarListWalker (this)) ;
+            a_iface.reset (new VarListWalker (this));
         } else {
             return false;
         }
-        return true ;
+        return true;
     }
 };//end class VarListWalkerDynMod
 
@@ -216,10 +236,11 @@ NEMIVER_END_NAMESPACE (nemiver)
 extern "C" {
 
 bool
-NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
+NEMIVER_API nemiver_common_create_dynamic_module_instance
+                                                    (void **a_new_instance)
 {
-    *a_new_instance = new nemiver::VarListWalkerDynMod () ;
-    return (*a_new_instance != 0) ;
+    *a_new_instance = new nemiver::VarListWalkerDynMod ();
+    return (*a_new_instance != 0);
 }
 
 }

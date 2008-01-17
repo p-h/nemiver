@@ -54,21 +54,24 @@ public:
 
     /// \name signals
     ///@{
-    virtual sigc::signal<void,
-                         const IVarWalkerSafePtr>& variable_visited_signal () const = 0;
-    virtual sigc::signal<void>& variable_list_visited_signal () const = 0;
+    virtual sigc::signal<void, const IVarWalkerSafePtr>&
+                                        variable_visited_signal () const=0;
+    virtual sigc::signal<void>& variable_list_visited_signal () const=0;
     ///@}
 
-    virtual void initialize (IDebuggerSafePtr &a_debugger) = 0 ;
+    virtual void initialize (IDebuggerSafePtr &a_debugger)=0 ;
 
-    virtual void append_variable (const IDebugger::VariableSafePtr a_var) = 0;
+    virtual void append_variable (const IDebugger::VariableSafePtr a_var)=0;
 
     virtual void append_variables
-                            (const list<IDebugger::VariableSafePtr> &a_vars) = 0;
+                        (const list<IDebugger::VariableSafePtr> a_vars)=0;
 
-    virtual void remove_variables () = 0;
+    virtual void remove_variables ()=0;
 
-    virtual void do_walk_variables () = 0 ;
+    virtual bool do_walk_variable (const UString &a_var_qname)=0;
+
+    virtual void do_walk_variables ()=0;
+
 };//end class IVarListWalker
 
 NEMIVER_END_NAMESPACE (nemiver)

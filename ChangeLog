@@ -44,6 +44,13 @@
 
 2008-01-13 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-i-var-list-walker.h, nmv-var-list-walker.cc:
+	  Add IVarListwalker::do_walk_variable() to walk only one choosen
+	  variable amongst the list of variables that have been set.
+	  Also did a bit of a code cleanup.
+
+2008-01-13 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc:
 	  When dereferencing a variable, use its fully qualified variable
 	  name. Also, set the name caption of the resulting dereferenced
