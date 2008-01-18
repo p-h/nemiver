@@ -525,17 +525,19 @@ Workbench::init_glade ()
     m_priv->glade = Gnome::Glade::Xml::create (file_path) ;
     THROW_IF_FAIL (m_priv->glade) ;
 
-    m_priv->root_window.reset
-           (ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade,
-                                                          "workbench"));
-    THROW_IF_FAIL (m_priv->root_window) ;
-    // get the title of the root window as specified in the glade file and save
-    // it so that later we can add state-specific extensions to this base title
-    // if needed
+    Gtk::Widget *w =
+        ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade,
+                                                      "workbench");
+    THROW_IF_FAIL (w);
+    m_priv->root_window.reset (dynamic_cast<Gtk::Window*>
+                                                (w->get_toplevel ()));
+    THROW_IF_FAIL (m_priv->root_window);
+    //get the title of the toplevel window as specified in the
+    //glade file and save
+    //it so that later we can add state-specific
+    //extensions to this base title
+    //if needed
     m_priv->base_title = m_priv->root_window->get_title ();
-
-   // m_priv->root_window->property_allow_shrink ().set_value (true) ;
-    m_priv->root_window->hide () ;
 }
 void
 

@@ -409,7 +409,6 @@ run_app:
 
     //intercept ctrl-c/SIGINT
     signal (SIGINT, sigint_handler) ;
-    s_workbench->get_root_window ().show_all () ;
     gtk_kit.run (s_workbench->get_root_window ()) ;
 
     NEMIVER_CATCH_NOX
