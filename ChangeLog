@@ -3,6 +3,20 @@
 	* autogen.sh: properly set the PKG_NAME variable. A courtesy of
 	  Christophe Fergeau <teuf@gnome.org>
 
+2008-01-22 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	  DBGPerspective::load_file(): if the encoding of the file
+	  is different from utf8, then assume its encoding is the one
+	  implied by the environment of the current user.
+	  So try to convert the file from that encoding into utf8.
+	  If the conversion fails - because the file encoding is actually
+	  different from the the one implied by the environment of the
+	  current user - then the loading of the file fails.
+	  At this point, we give the user a chance to load another file
+	  that might have the same content in a right encoding.
+	  This entry should fix bug #501444.
+
 2008-01-18 Dodji Seketeli <dodji@gnome.org>
 
 	* src/workbench/nmv-workbench.cc: 

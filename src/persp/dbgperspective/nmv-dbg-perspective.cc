@@ -819,6 +819,59 @@ struct DBGPerspective::Priv {
         }
     }
 
+    bool is_buffer_valid_utf8 (const char *a_buffer,
+                               unsigned a_len)
+    {
+        RETURN_VAL_IF_FAIL (a_buffer, false);
+        const char *end=0;
+        bool is_valid = g_utf8_validate (a_buffer, a_len, &end);
+        return is_valid;
+    }
+
+    //if source_buffer is not encoded in utf8, assume it is encoded
+    //in the current user locale.
+    //Try to convert it from user locale to utf8, and make sure the result
+    //is valid. if not, throw an exception due to the fact the file is
+    //encoded in an unknown encoding.
+    bool ensure_buffer_is_in_utf8 (const std::string &a_input,
+                                   UString &a_output,
+                                   std::string &a_current_charset)
+    {
+        NEMIVER_TRY
+
+        UString buf_content;
+        if (is_buffer_valid_utf8 (a_input.c_str (), a_input.size ())) {
+            a_output = a_input;
+            return true;
+        }
+        if (Glib::get_charset (a_current_charset)) {
+            //User's charset is utf8 but a_buffer is not encoded in utf8.
+            //So there is no way to convert the content of
+            //a_bufer into utf8 as we don't know the encoding of a_buffer
+            //to begin with.
+            return false;
+        }
+        LOG_DD ("user's charset: " << a_current_charset);
+        LOG_DD ("going to convert a_buffer from "
+                << a_current_charset
+                << " to utf8 ...");
+        UString utf8_content = Glib::locale_to_utf8 (a_input);
+        const char *end=0;
+        if (utf8_content.empty ()
+            || !g_utf8_validate (utf8_content.raw ().c_str (),
+                                 utf8_content.bytes (),
+                                 &end)) {
+            LOG_ERROR ("conversion from "
+                       << a_current_charset
+                       << " to utf8 failed");
+            return false;
+        }
+        a_output = utf8_content;
+
+        NEMIVER_CATCH_AND_RETURN (false)
+
+        return true;
+    }
 };//end struct DBGPerspective::Priv
 
 enum ViewsIndex
@@ -844,23 +897,23 @@ bool
 on_file_content_changed (const UString &a_path,
                          DBGPerspective *a_persp)
 {
-    // NOTE: do we need to protect access to this data structure with a mutex
-    // since this handler runs in the idle loop?
     static std::list<UString> pending_notifications;
     LOG_DD ("file content changed") ;
 
     NEMIVER_TRY
     THROW_IF_FAIL (a_persp) ;
     if (!a_path.empty ()) {
-        // only notify for this path if there is not already a notification
-        // pending
+        //only notify for this path if there is not already a notification
+        //pending
         if (std::find (pending_notifications.begin (),
-                    pending_notifications.end (), a_path)
-                == pending_notifications.end ()) {
+                       pending_notifications.end (),
+                       a_path)
+            == pending_notifications.end ()) {
             pending_notifications.push_back (a_path);
             UString msg ;
-            msg.printf (_("File %s has been modified. Do want to reload it ?"),
-                    a_path.c_str ());
+            msg.printf (_("File %s has been modified. "
+                          "Do want to reload it ?"),
+                        a_path.c_str ());
             if (ask_yes_no_question (msg) == Gtk::RESPONSE_YES) {
                 a_persp->reload_file (a_path) ;
             }
@@ -3879,15 +3932,32 @@ DBGPerspective::load_file (const UString &a_path,
     CharSafePtr buf (new gchar [buf_size + 1]) ;
     memset (buf.get (), 0, buf_size + 1) ;
 
+    unsigned nb_bytes=0;
+    std::string content;
     for (;;) {
         file.read (buf.get (), buf_size) ;
+        content.append (buf.get (), file.gcount ());
         THROW_IF_FAIL (file.good () || file.eof ()) ;
-        source_buffer->insert (source_buffer->end (),
-                               buf.get (),
-                               buf.get () + file.gcount ()) ;
+        nb_bytes += file.gcount ();
         if (file.gcount () != buf_size) {break;}
     }
     file.close () ;
+    UString utf8_content;
+    std::string cur_charset;
+    if (!m_priv->ensure_buffer_is_in_utf8 (content,
+                                           utf8_content,
+                                           cur_charset)) {
+        std::string path = Glib::filename_from_utf8 (a_path);
+        UString msg;
+        msg.printf (_("Could not load file %s because its encoding "
+                      "is different from %s"),
+                    path.c_str (),
+                    cur_charset.c_str ());
+        ui_utils::display_error (msg);
+        return false;
+    }
+    source_buffer->set_text (utf8_content);
+    LOG_DD ("file loaded. Read " << (int)nb_bytes << " bytes");
 
 #ifdef WITH_SOURCEVIEWMM2
     source_buffer->set_highlight_syntax (m_priv->enable_syntax_highlight) ;
@@ -3925,24 +3995,29 @@ bool
 DBGPerspective::open_file (const UString &a_path,
                            int a_current_line)
 {
-    if (a_path == "") {return false;}
+    RETURN_VAL_IF_FAIL (m_priv, false);
+    RETURN_VAL_IF_FAIL (!a_path.empty (), false);
+
     if (get_source_editor_from_path (a_path)) {return true ;}
 
     NEMIVER_TRY
 
-    ifstream file (Glib::filename_from_utf8 (a_path).c_str ()) ;
+    std::string path (Glib::filename_from_utf8 (a_path).c_str ());
+    ifstream file (path.c_str ());
     if (!file.good () && !file.eof ()) {
-        LOG_ERROR ("Could not open file " + a_path) ;
-        ui_utils::display_error ("Could not open file: " + a_path) ;
+        LOG_ERROR ("Could not open file " + path) ;
+        ui_utils::display_error ("Could not open file: " + path);
         return false ;
     }
 
     Glib::RefPtr<SourceBuffer> source_buffer ;
-    RETURN_VAL_IF_FAIL (load_file (a_path, source_buffer), false) ;
-    SourceEditor *source_editor (Gtk::manage
-                        (new SourceEditor (plugin_path (), source_buffer)));
+    RETURN_VAL_IF_FAIL (load_file (path, source_buffer), false);
+
+    SourceEditor *source_editor
+                            (Gtk::manage (new SourceEditor (plugin_path (),
+                                          source_buffer)));
     source_editor->source_view ().set_show_line_numbers
-                                                (m_priv->show_line_numbers) ;
+                                                (m_priv->show_line_numbers);
 
     // detect when the user clicks on the editor
     // so we can know when the cursor position changes
@@ -3950,8 +4025,9 @@ DBGPerspective::open_file (const UString &a_path,
     // for only certain lines
     source_editor->insertion_changed_signal ().connect
         (sigc::bind (sigc::mem_fun
-                         (*this, &DBGPerspective::on_insertion_changed_signal),
-                      source_editor)) ;
+                         (*this,
+                          &DBGPerspective::on_insertion_changed_signal),
+                          source_editor)) ;
 
     Pango::FontDescription font_desc(m_priv->get_source_font_name ());
     source_editor->source_view ().modify_font (font_desc) ;
@@ -4749,32 +4825,66 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
     SourceEditor *source_editor =
                         get_source_editor_from_path (a_file_name,
                                                      actual_file_name) ;
-    // first assume that it's a full pathname and just try to open it
+    //first assume that it's a full pathname and just try to open it
     if (!source_editor) {
         if (Glib::file_test (a_file_name, Glib::FILE_TEST_IS_REGULAR)) {
-            open_file (a_file_name) ;
+            if (!open_file (a_file_name)) {
+                UString msg;
+                msg.printf (_("Failed to open file %s. "
+                              "Would you like to open another file which "
+                              "would have the same content ?"),
+                            a_file_name.c_str ());
+                if (ui_utils::ask_yes_no_question (msg)
+                    == Gtk::RESPONSE_YES) {
+                    LocateFileDialog dialog (plugin_path (), a_file_name) ;
+                    dialog.file_location (m_priv->prog_cwd);
+                    int result = dialog.run () ;
+                    if (result == Gtk::RESPONSE_OK) {
+                        UString file_path = dialog.file_location ();
+                        THROW_IF_FAIL (Glib::file_test (file_path,
+                                            Glib::FILE_TEST_IS_REGULAR));
+                        UString parent_dir =
+                            Glib::path_get_dirname (dialog.file_location ());
+                        THROW_IF_FAIL (Glib::file_test
+                                                (parent_dir,
+                                                 Glib::FILE_TEST_IS_DIR));
+                        m_priv->search_paths.push_back (parent_dir);
+                        if (!open_file (file_path)) {
+                            return false;
+                        }
+                        source_editor =
+                            get_source_editor_from_path (file_path,
+                                                         actual_file_name);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
             source_editor = get_source_editor_from_path (a_file_name,
-                                                         actual_file_name) ;
+                                                         actual_file_name);
         }
     }
-    // if that didn't work, look for an opened source editor
-    // that matches the base name
+    //if that didn't work, look for an opened source editor
+    //that matches the base name
     if (!source_editor) {
         source_editor = get_source_editor_from_path (a_file_name,
                                                      actual_file_name,
                                                      true) ;
     }
-    // if that still didn't work, look for a file of that name in the search
-    // directories and then as a last resort ask the user to locate it manually
+    //if that still didn't work, look for a file of that name in the search
+    //directories and then as a last resort ask the user to locate it
+    //manually
     if (!source_editor) {
         UString file_path;
         if (!find_file_in_source_dirs (a_file_name, file_path)) {
             LOG_DD ("didn't find file either in opened files "
                     " or in source dirs:") ;
-            // Pop up a dialog asking user to select the specified file
+            //Pop up a dialog asking user to select the specified file
             LocateFileDialog dialog (plugin_path (), a_file_name) ;
-            // start looking in the working directory
-            dialog.file_location(m_priv->prog_cwd);
+            //start looking in the working directory
+            dialog.file_location (m_priv->prog_cwd);
             int result = dialog.run () ;
             if (result == Gtk::RESPONSE_OK) {
                 file_path = dialog.file_location () ;
@@ -4782,18 +4892,22 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                                 Glib::FILE_TEST_IS_REGULAR));
                 THROW_IF_FAIL (Glib::path_get_basename(a_file_name) ==
                         Glib::path_get_basename(file_path));
-                UString parent_dir = Glib::path_get_dirname
-                                                    (dialog.file_location ());
-                THROW_IF_FAIL (Glib::file_test (parent_dir,
-                                                Glib::FILE_TEST_IS_DIR));
+                UString parent_dir =
+                            Glib::path_get_dirname (dialog.file_location ());
+                THROW_IF_FAIL (Glib::file_test
+                                    (parent_dir, Glib::FILE_TEST_IS_DIR));
 
-                // Also add the parent directory to the list of paths to search
-                // for this session so you don't have to keep selecting files if
-                // they're all in the same directory.
-                // We can assume that the parent directory is not already in the
-                // list of source dirs (or else it would have been found and the
-                // user wouldn't have had to locate it manually) so just stack it
-                // on the end of the list
+                //Also add the parent directory to the list
+                //of paths to search for this session so
+                //you don't have to keep selecting files if
+                //they're all in the same directory.
+                //We can assume that the parent
+                //directory is not already in the
+                //list of source dirs
+                //(or else it would have been found and the
+                //user wouldn't have had to locate it manually)
+                //so just stack it
+                //on the end of the list
                 m_priv->search_paths.push_back (parent_dir);
             }
         }
@@ -4803,7 +4917,7 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                                      actual_file_name) ;
     }
 
-    // finally, if none of these things worked, display an error
+    //finally, if none of these things worked, display an error
     if (!source_editor) {
         LOG_ERROR ("Could not find source editor for file: '"
                 << a_file_name
