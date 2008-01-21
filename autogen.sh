@@ -1,6 +1,7 @@
 #!/bin/sh
 
 PROJECT=nemiver
+PKG_NAME=$PROJECT
 
 topsrcdir=`dirname $0`
 if test x$topsrcdir = x ; then

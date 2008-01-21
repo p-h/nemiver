@@ -1,3 +1,8 @@
+2008-01-21 Dodji Seketeli <dodji@gnome.org>
+
+	* autogen.sh: properly set the PKG_NAME variable. A courtesy of
+	  Christophe Fergeau <teuf@gnome.org>
+
 2008-01-18 Dodji Seketeli <dodji@gnome.org>
 
 	* src/workbench/nmv-workbench.cc: 
