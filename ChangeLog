@@ -31,6 +31,11 @@
 
 2008-01-19  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* configure.ac: bump the version to 0.4.1 so that we can distinguish this as
+	a development version different than the 0.4.0 tarball
+
+2008-01-19  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* data/Makefile.am: add the manpage to EXTRA_DIST instead of DISTCLEANFILES
 
 2008-01-17 Dodji Seketeli <dodji@gnome.org>
