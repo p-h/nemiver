@@ -8,6 +8,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 man_MANS = nemiver.1
 
 EXTRA_DIST= \
-$(desktop_in_files)
+$(desktop_in_files) \
+$(man_MANS)
 
-DISTCLEANFILES = $(desktop_DATA) $(man_MANS)
+DISTCLEANFILES = $(desktop_DATA)
