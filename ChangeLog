@@ -1,3 +1,9 @@
+2008-01-25 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc: 
+	  (parse_member_variable): don't treat } enclosed in single quotes
+	  like an ending }. This should fix bug #504473
+
 2008-01-21 Dodji Seketeli <dodji@gnome.org>
 
 	* autogen.sh: properly set the PKG_NAME variable. A courtesy of

@@ -1321,6 +1321,16 @@ parse_member_variable (const UString &a_input,
                     && a_input.c_str ()[cur] != '}') {
                     ++cur ;
                 } else {
+                    //if we found an '}' character, make sure
+                    //it is not enclosed in sigle quotes. If it is in
+                    //single quotes then ignore it.
+                    if (cur > 0
+                        && cur+1 < a_input.bytes ()
+                        && a_input.c_str ()[cur-1] == '\''
+                        && a_input.c_str ()[cur+1] == '\'') {
+                        ++cur;
+                        continue;
+                    }
                     break ;
                 }
             }
@@ -1394,8 +1404,18 @@ parse_member_variable (const UString &a_input,
                     ++cur ;
                     CHECK_END (a_input, cur, end) ;
                 } else {
-                    //getting out condition is either ", " or "}".
-                    //check out the the 'if' condition.
+                    //if we found an '}' character, make sure
+                    //it is not enclosed in sigle quotes. If it is in
+                    //single quotes then ignore it.
+                    if (cur > 0
+                        && cur+1 < a_input.bytes ()
+                        && a_input.c_str ()[cur-1] == '\''
+                        && a_input.c_str ()[cur+1] == '\'') {
+                        ++cur;
+                        continue;
+                    }
+                    //otherwise, getting out condition is either
+                    //", " or "}".  check out the the 'if' condition.
                     break ;
                 }
             }
