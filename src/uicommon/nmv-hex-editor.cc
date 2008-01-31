@@ -147,11 +147,13 @@ Editor::set_font (const Pango::FontDescription& a_desc)
     Glib::RefPtr<Pango::Context> context =
         Glib::wrap (gdk_pango_context_get ());
     Glib::RefPtr<Pango::Font> new_font = context->load_font (a_desc);
-    Pango::FontMetrics new_metrics = new_font->get_metrics ();
+    if (new_font) {
+        Pango::FontMetrics new_metrics = new_font->get_metrics ();
 
-    gtk_hex_set_font (m_priv->hex.get (),
-            const_cast<PangoFontMetrics*>(new_metrics.gobj ()),
-            const_cast<PangoFontDescription*>(a_desc.gobj ()));
+        gtk_hex_set_font (m_priv->hex.get (),
+                const_cast<PangoFontMetrics*>(new_metrics.gobj ()),
+                const_cast<PangoFontDescription*>(a_desc.gobj ()));
+    }
 }
 
 
