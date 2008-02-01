@@ -1,5 +1,10 @@
 2008-01-31  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: get the mimetype instead
+	of the content type to pass to the source editor
+
+2008-01-31  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	Initial port to giomm
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add alternative giomm

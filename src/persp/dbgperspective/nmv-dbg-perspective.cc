@@ -31,6 +31,7 @@
 
 #ifdef WITH_GIO
 #include <giomm/file.h>
+#include <giomm/contenttype.h>
 #else
 #include <fstream>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
@@ -3953,7 +3954,7 @@ DBGPerspective::load_file (const UString &a_path,
     UString mime_type;
 #ifdef WITH_GIO
     Glib::RefPtr<Gio::FileInfo> info = gio_file->query_info();
-    mime_type = info->get_content_type ();
+    mime_type = Gio::content_type_get_mime_type(info->get_content_type ());
 #else
     mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ()) ;
 #endif // WITH_GIO
