@@ -1,3 +1,15 @@
+2008-01-31  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	Add ability to build with giomm instead of gnome-vfs
+
+	* configure.ac: add --enable-gio argument, which will build with gio as the
+	vfs library instead of using gnome-vfs
+	* config.h.in: add WITH_GIO preprocessor symbol
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/workbench/nmv-workbench.cc: #ifdef out gnome-vfs-specific
+	functionality.  No replacement gio functionality is actually implemented
+	yet, only the infrastructure is set up
+
 2008-01-30  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/uicommon/nmv-hex-editor.cc: Fix crash in the memory view on startup

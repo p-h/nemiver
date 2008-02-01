@@ -93,6 +93,9 @@
 /* Version number of package */
 #undef VERSION
 
+/* build with gio instead of gnomevfs */
+#undef WITH_GIO
+
 /* compile the the memory view widget */
 #undef WITH_MEMORYVIEW
 

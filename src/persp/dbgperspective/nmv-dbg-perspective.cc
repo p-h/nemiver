@@ -29,16 +29,22 @@
 #include <iostream>
 #include <fstream>
 #include <glib/gi18n.h>
+
+#ifdef WITH_GIO
+#else
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #include <libgnomevfs/gnome-vfs-monitor.h>
 #include <libgnomevfs/gnome-vfs-ops.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
+#endif // WITH_GIO
+
 #include <gtksourceviewmm/init.h>
 #ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcelanguagemanager.h>
 #else
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #endif  // WITH_SOURCEVIEWMM2
+
 #include <pangomm/fontdescription.h>
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
@@ -59,11 +65,13 @@
 #include "nmv-ui-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
+
 #ifndef WITH_VARIABLE_WALKER
 #include "nmv-local-vars-inspector.h"
 #else
 #include "nmv-local-vars-inspector2.h"
 #endif
+
 #include "nmv-global-vars-inspector-dialog.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
@@ -623,12 +631,15 @@ struct UnrefGObjectNative {
     }
 };
 
+#ifdef WITH_GIO
+#else
 static
-void file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
+void gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
                       const gchar *a_monitor_uri,
                       const gchar *a_info_uri,
                       GnomeVFSMonitorEventType a_event_type,
                       DBGPerspective *a_persp) ;
+#endif // WITH_GIO
 
 struct DBGPerspective::Priv {
     bool initialized ;
@@ -692,8 +703,11 @@ struct DBGPerspective::Priv {
     map<UString, int> basename_2_pagenum_map ;
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_path_map ;
+#ifdef WITH_GIO
+#else
     typedef map<UString, GnomeVFSMonitorHandle*> Path2MHandleMap ;
     Path2MHandleMap path_2_mhandle_map;
+#endif // WITH_GIO
     Gtk::Notebook *statuses_notebook ;
 #ifndef WITH_VARIABLE_WALKER
     SafePtr<LocalVarsInspector> variables_editor ;
@@ -929,8 +943,10 @@ on_file_content_changed (const UString &a_path,
     return false ;
 }
 
+#ifdef WITH_GIO
+#else
 static void
-file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
+gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
                  const gchar *a_monitor_uri,
                  const gchar *a_info_uri,
                  GnomeVFSMonitorEventType a_event_type,
@@ -961,6 +977,7 @@ file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
     }
     NEMIVER_CATCH
 }
+#endif // WITH_GIO
 
 ostream&
 operator<< (ostream &a_out,
@@ -3496,6 +3513,8 @@ DBGPerspective::do_monitor_file (const UString &a_path)
 {
     THROW_IF_FAIL (m_priv) ;
 
+#ifdef WITH_GIO
+#else
     if (m_priv->path_2_mhandle_map.find (a_path) !=
         m_priv->path_2_mhandle_map.end ()) {
         return false ;
@@ -3505,7 +3524,7 @@ DBGPerspective::do_monitor_file (const UString &a_path)
     GnomeVFSResult result = gnome_vfs_monitor_add
                                     (&handle, uri.get (),
                                      GNOME_VFS_MONITOR_FILE,
-                                     (GnomeVFSMonitorCallback)file_monitor_cb,
+                                     (GnomeVFSMonitorCallback)gnome_vfs_file_monitor_cb,
                                      (gpointer)this) ;
     if (result != GNOME_VFS_OK) {
         LOG_ERROR ("failed to start monitoring file '" << a_path << "'") ;
@@ -3517,6 +3536,7 @@ DBGPerspective::do_monitor_file (const UString &a_path)
     }
     THROW_IF_FAIL (handle) ;
     m_priv->path_2_mhandle_map[a_path] = handle ;
+#endif // WITH_GIO
     LOG_DD ("Monitoring file '" << Glib::filename_from_utf8 (a_path)) ;
     return true ;
 }
@@ -3526,6 +3546,9 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
 {
     THROW_IF_FAIL (m_priv) ;
 
+#ifdef WITH_GIO
+    if (a_path.empty ()) {}
+#else
     map<UString, GnomeVFSMonitorHandle*>::iterator it =
                                     m_priv->path_2_mhandle_map.find (a_path);
     if (it == m_priv->path_2_mhandle_map.end ()) {
@@ -3535,8 +3558,10 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
         gnome_vfs_monitor_cancel (it->second) ;
     }
     m_priv->path_2_mhandle_map.erase (it) ;
+#endif // WITH_GIO
     return true ;
 }
+
 void
 DBGPerspective::read_default_config ()
 {
@@ -3879,7 +3904,11 @@ DBGPerspective::load_file (const UString &a_path,
     UString base_name = Glib::filename_to_utf8
         (Glib::path_get_basename (Glib::filename_from_utf8 (a_path))) ;
 
-    UString mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ()) ;
+    UString mime_type;
+#ifdef WITH_GIO
+#else
+    mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ()) ;
+#endif // WITH_GIO
     if (mime_type == "") {
         mime_type = "text/x-c++" ;
     }
