@@ -1,5 +1,12 @@
 2008-01-31  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	Initial port to giomm
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add alternative giomm
+	implementations for file loading, monitoring, and mime-type detection
+
+2008-01-31  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	Add ability to build with giomm instead of gnome-vfs
 
 	* configure.ac: add --enable-gio argument, which will build with gio as the

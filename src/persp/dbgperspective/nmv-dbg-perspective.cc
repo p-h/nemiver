@@ -27,11 +27,12 @@
 #include "config.h"
 #include <algorithm>
 #include <iostream>
-#include <fstream>
 #include <glib/gi18n.h>
 
 #ifdef WITH_GIO
+#include <giomm/file.h>
 #else
+#include <fstream>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #include <libgnomevfs/gnome-vfs-monitor.h>
 #include <libgnomevfs/gnome-vfs-ops.h>
@@ -632,6 +633,11 @@ struct UnrefGObjectNative {
 };
 
 #ifdef WITH_GIO
+static
+void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
+                          const Glib::RefPtr<Gio::File>& other_file,
+                          Gio::FileMonitorEvent event,
+                          DBGPerspective *a_persp) ;
 #else
 static
 void gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
@@ -704,10 +710,11 @@ struct DBGPerspective::Priv {
     map<int, SourceEditor*> pagenum_2_source_editor_map ;
     map<int, UString> pagenum_2_path_map ;
 #ifdef WITH_GIO
+    typedef map<UString, Glib::RefPtr<Gio::FileMonitor> > Path2MonitorMap ;
 #else
-    typedef map<UString, GnomeVFSMonitorHandle*> Path2MHandleMap ;
-    Path2MHandleMap path_2_mhandle_map;
+    typedef map<UString, GnomeVFSMonitorHandle*> Path2MonitorMap ;
 #endif // WITH_GIO
+    Path2MonitorMap path_2_monitor_map;
     Gtk::Notebook *statuses_notebook ;
 #ifndef WITH_VARIABLE_WALKER
     SafePtr<LocalVarsInspector> variables_editor ;
@@ -944,6 +951,26 @@ on_file_content_changed (const UString &a_path,
 }
 
 #ifdef WITH_GIO
+void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
+                          const Glib::RefPtr<Gio::File>& other_file,
+                          Gio::FileMonitorEvent event,
+                          DBGPerspective *a_persp)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+
+    RETURN_IF_FAIL (file) ;
+    if (other_file) {}
+
+    NEMIVER_TRY
+
+    if (event == Gio::FILE_MONITOR_EVENT_CHANGED) {
+        UString path = Glib::filename_to_utf8 (file->get_path ()) ;
+        Glib::signal_idle ().connect (sigc::bind
+                (&on_file_content_changed,
+                 path, a_persp)) ;
+    }
+    NEMIVER_CATCH
+}
 #else
 static void
 gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
@@ -3514,9 +3541,21 @@ DBGPerspective::do_monitor_file (const UString &a_path)
     THROW_IF_FAIL (m_priv) ;
 
 #ifdef WITH_GIO
+    if (m_priv->path_2_monitor_map.find (a_path) !=
+        m_priv->path_2_monitor_map.end ()) {
+        return false ;
+    }
+    Glib::RefPtr<Gio::FileMonitor> monitor;
+    Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (a_path);
+    THROW_IF_FAIL (file);
+    monitor = file->monitor_file ();
+    THROW_IF_FAIL (monitor);
+    monitor->signal_changed (). connect (sigc::bind (sigc::ptr_fun
+                (gio_file_monitor_cb), this));
+    m_priv->path_2_monitor_map[a_path] = monitor ;
 #else
-    if (m_priv->path_2_mhandle_map.find (a_path) !=
-        m_priv->path_2_mhandle_map.end ()) {
+    if (m_priv->path_2_monitor_map.find (a_path) !=
+        m_priv->path_2_monitor_map.end ()) {
         return false ;
     }
     GnomeVFSMonitorHandle *handle=0 ;
@@ -3535,7 +3574,7 @@ DBGPerspective::do_monitor_file (const UString &a_path)
         return false ;
     }
     THROW_IF_FAIL (handle) ;
-    m_priv->path_2_mhandle_map[a_path] = handle ;
+    m_priv->path_2_monitor_map[a_path] = handle ;
 #endif // WITH_GIO
     LOG_DD ("Monitoring file '" << Glib::filename_from_utf8 (a_path)) ;
     return true ;
@@ -3546,19 +3585,18 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
 {
     THROW_IF_FAIL (m_priv) ;
 
-#ifdef WITH_GIO
-    if (a_path.empty ()) {}
-#else
-    map<UString, GnomeVFSMonitorHandle*>::iterator it =
-                                    m_priv->path_2_mhandle_map.find (a_path);
-    if (it == m_priv->path_2_mhandle_map.end ()) {
+    Priv::Path2MonitorMap::iterator it = m_priv->path_2_monitor_map.find (a_path);
+    if (it == m_priv->path_2_monitor_map.end ()) {
         return false ;
     }
     if (it->second ) {
+#ifdef WITH_GIO
+        it->second->cancel () ;
+#else
         gnome_vfs_monitor_cancel (it->second) ;
-    }
-    m_priv->path_2_mhandle_map.erase (it) ;
 #endif // WITH_GIO
+    }
+    m_priv->path_2_monitor_map.erase (it) ;
     return true ;
 }
 
@@ -3894,18 +3932,28 @@ DBGPerspective::load_file (const UString &a_path,
 {
     NEMIVER_TRY
 
-    ifstream file (Glib::filename_from_utf8 (a_path).c_str ()) ;
-    if (!file.good () && !file.eof ()) {
-        LOG_ERROR ("Could not open file " + a_path) ;
-        ui_utils::display_error ("Could not open file: " + a_path) ;
+    std::string path = Glib::filename_from_utf8 (a_path);
+#ifdef WITH_GIO
+    Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
+    THROW_IF_FAIL (gio_file);
+    if (!gio_file->query_exists ())
+#else
+    ifstream file (path.c_str ()) ;
+    if (!file.good () && !file.eof ())
+#endif
+    {
+        LOG_ERROR ("Could not open file " + path) ;
+        ui_utils::display_error ("Could not open file: " + path) ;
         return false ;
     }
 
     UString base_name = Glib::filename_to_utf8
-        (Glib::path_get_basename (Glib::filename_from_utf8 (a_path))) ;
+        (Glib::path_get_basename (path)) ;
 
     UString mime_type;
 #ifdef WITH_GIO
+    Glib::RefPtr<Gio::FileInfo> info = gio_file->query_info();
+    mime_type = info->get_content_type ();
 #else
     mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ()) ;
 #endif // WITH_GIO
@@ -3963,6 +4011,18 @@ DBGPerspective::load_file (const UString &a_path,
 
     unsigned nb_bytes=0;
     std::string content;
+#ifdef WITH_GIO
+    Glib::RefPtr<Gio::FileInputStream> gio_stream = gio_file->read ();
+    THROW_IF_FAIL (gio_stream) ;
+    gssize bytes_read = 0;
+    for (;;) {
+        bytes_read = gio_stream->read (buf.get (), buf_size) ;
+        content.append (buf.get (), bytes_read);
+        nb_bytes += bytes_read;
+        if (bytes_read != buf_size) {break;}
+    }
+    gio_stream->close () ;
+#else
     for (;;) {
         file.read (buf.get (), buf_size) ;
         content.append (buf.get (), file.gcount ());
@@ -3971,12 +4031,12 @@ DBGPerspective::load_file (const UString &a_path,
         if (file.gcount () != buf_size) {break;}
     }
     file.close () ;
+#endif // WITH_GIO
     UString utf8_content;
     std::string cur_charset;
     if (!m_priv->ensure_buffer_is_in_utf8 (content,
                                            utf8_content,
                                            cur_charset)) {
-        std::string path = Glib::filename_from_utf8 (a_path);
         UString msg;
         msg.printf (_("Could not load file %s because its encoding "
                       "is different from %s"),
@@ -4031,16 +4091,10 @@ DBGPerspective::open_file (const UString &a_path,
 
     NEMIVER_TRY
 
-    std::string path (Glib::filename_from_utf8 (a_path).c_str ());
-    ifstream file (path.c_str ());
-    if (!file.good () && !file.eof ()) {
-        LOG_ERROR ("Could not open file " + path) ;
-        ui_utils::display_error ("Could not open file: " + path);
-        return false ;
-    }
-
     Glib::RefPtr<SourceBuffer> source_buffer ;
-    RETURN_VAL_IF_FAIL (load_file (path, source_buffer), false);
+    if (!load_file (a_path, source_buffer)) {
+        return false;
+    }
 
     SourceEditor *source_editor
                             (Gtk::manage (new SourceEditor (plugin_path (),
