@@ -37,24 +37,24 @@
 #include "nmv-dbg-perspective.h"
 #include "config.h"
 
-using namespace std ;
-using nemiver::common::DynamicModuleManager ;
-using nemiver::common::Initializer ;
-using nemiver::IWorkbench ;
-using nemiver::IWorkbenchSafePtr ;
-using nemiver::IDBGPerspective ;
-using nemiver::common::UString ;
-using nemiver::ISessMgr ;
+using namespace std;
+using nemiver::common::DynamicModuleManager;
+using nemiver::common::Initializer;
+using nemiver::IWorkbench;
+using nemiver::IWorkbenchSafePtr;
+using nemiver::IDBGPerspective;
+using nemiver::common::UString;
+using nemiver::ISessMgr;
 
-static const UString DBGPERSPECTIVE_PLUGIN_NAME="dbgperspective" ;
+static const UString DBGPERSPECTIVE_PLUGIN_NAME="dbgperspective";
 static gchar *gv_env_vars=0;
 static gchar *gv_process_to_attach_to=0;
-static bool gv_list_sessions=false ;
-static bool gv_purge_sessions=false ;
+static bool gv_list_sessions=false;
+static bool gv_purge_sessions=false;
 static int gv_execute_session=0;
-static bool gv_last_session=false ;
+static bool gv_last_session=false;
 static gchar *gv_log_domains=0;
-static bool gv_log_debugger_output=false ;
+static bool gv_log_debugger_output=false;
 
 static GOptionEntry entries[] =
 {
@@ -131,7 +131,7 @@ struct GOptionContextUnref {
     void operator () (GOptionContext *a_opt)
     {
         if (a_opt) {
-            g_option_context_free (a_opt) ;
+            g_option_context_free (a_opt);
         }
     }
 };//end struct GOptoinContextUnref
@@ -143,130 +143,103 @@ struct GOptionContextRef {
     }
 };//end struct GOptoinContextRef
 
-static IWorkbench *s_workbench=0 ;
+static IWorkbench *s_workbench=0;
 
 void
 sigint_handler (int a_signum)
 {
     if (a_signum != SIGINT) {
-        return ;
+        return;
     }
-    static bool s_got_down = false ;
+    static bool s_got_down = false;
     if (!s_got_down && s_workbench) {
-        s_workbench->shut_down () ;
-        s_workbench = 0 ;
-        s_got_down = true ;
+        s_workbench->shut_down ();
+        s_workbench = 0;
+        s_got_down = true;
     }
 }
 
-int
-main (int a_argc, char *a_argv[])
+void
+parse_command_line (int& a_argc, char** a_argv)
 {
-    bindtextdomain (GETTEXT_PACKAGE, NEMIVERLOCALEDIR) ;
-    bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8") ;
-    textdomain (GETTEXT_PACKAGE) ;
-    Initializer::do_init () ;
-    Gtk::Main gtk_kit (a_argc, a_argv);
-
-    //***************************
-    //parse command line options
-    //***************************
     typedef SafePtr<GOptionContext,
                     GOptionContextRef,
-                    GOptionContextUnref> GOptionContextSafePtr ;
-    GOptionContextSafePtr context ;
+                    GOptionContextUnref> GOptionContextSafePtr;
+    GOptionContextSafePtr context;
     context.reset (g_option_context_new
-        (_(" [<prog-to-debug> [prog-args]]")));
+                                (_(" [<prog-to-debug> [prog-args]]")));
 #if GLIB_CHECK_VERSION (2, 12, 0)
     g_option_context_set_summary (context.get (),
-            _("A C/C++ debugger for GNOME")) ;
+                                  _("A C/C++ debugger for GNOME"));
 #endif
-    g_option_context_set_help_enabled (context.get (), true) ;
+    g_option_context_set_help_enabled (context.get (), true);
     g_option_context_add_main_entries (context.get (),
                                        entries,
-                                       GETTEXT_PACKAGE) ;
-    //g_option_context_add_group (context.get (), gtk_get_option_group (true)) ;
-    g_option_context_set_ignore_unknown_options (context.get (), true) ;
-    g_option_context_parse (context.get (), &a_argc, &a_argv, 0) ;
+                                       GETTEXT_PACKAGE);
+    g_option_context_set_ignore_unknown_options (context.get (), true);
+    g_option_context_parse (context.get (), &a_argc, &a_argv, 0);
+}
 
-    // intialize gnome libraries
-    gnome_program_init (PACKAGE, PACKAGE_VERSION,
-                        LIBGNOME_MODULE, a_argc, a_argv,
-                        GNOME_PROGRAM_STANDARD_PROPERTIES, NULL);
-
-    NEMIVER_TRY
-
-    //**********************************
-    //load the workbench dynamic module
-    //**********************************
-    DynamicModuleManager module_manager ;
-
-    IWorkbenchSafePtr workbench =
-        module_manager.load_iface<IWorkbench> ("workbench", "IWorkbench");
-    s_workbench = workbench.get () ;
-    LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
-            "refcount-domain") ;
-    s_workbench->do_init (gtk_kit) ;
-    LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
-           "refcount-domain") ;
-
-    //********************************
-    //<process command line arguments>
-    //********************************
+bool
+process_command_line (int& a_argc, char** a_argv, int &a_return)
+{
     if (gv_log_debugger_output) {
-        LOG_STREAM.enable_domain ("gdbmi-output-domain") ;
+        LOG_STREAM.enable_domain ("gdbmi-output-domain");
     }
 
     if (gv_log_domains) {
-        UString log_domains (gv_log_domains) ;
-        vector<UString> domains = log_domains.split (" ") ;
-        for (vector<UString>::const_iterator iter = domains.begin () ;
+        UString log_domains (gv_log_domains);
+        vector<UString> domains = log_domains.split (" ");
+        for (vector<UString>::const_iterator iter = domains.begin ();
              iter != domains.end ();
              ++iter) {
-            LOG_STREAM.enable_domain (*iter) ;
+            LOG_STREAM.enable_domain (*iter);
         }
     }
 
     if (gv_process_to_attach_to) {
-        using nemiver::common::IProcMgrSafePtr ;
-        using nemiver::common::IProcMgr ;
+        using nemiver::common::IProcMgrSafePtr;
+        using nemiver::common::IProcMgr;
 
         IDBGPerspective *debug_persp =
                 dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                 (DBGPERSPECTIVE_PLUGIN_NAME));
         if (!debug_persp) {
-            cerr << "Could not get the debugging perspective" << endl ;
-            return -1 ;
+            cerr << "Could not get the debugging perspective" << endl;
+            a_return = -1;
+            return false;
         }
-        int pid = atoi (gv_process_to_attach_to) ;
+        int pid = atoi (gv_process_to_attach_to);
         if (!pid) {
-            IProcMgrSafePtr proc_mgr = IProcMgr::create () ;
+            IProcMgrSafePtr proc_mgr = IProcMgr::create ();
             if (!proc_mgr) {
-                cerr << "Could not create proc mgr" << endl ;
-                return -1 ;
+                cerr << "Could not create proc mgr" << endl;
+                a_return = -1;
+                return false;
             }
-            IProcMgr::Process process ;
+            IProcMgr::Process process;
             if (!proc_mgr->get_process_from_name (gv_process_to_attach_to,
-                        process,
-                        true)) {
+                                                  process, true)) {
                 cerr << "Could not find any process named '"
                 << gv_process_to_attach_to
                 << "'"
                 << endl
-                ;
-                return -1 ;
+               ;
+                a_return = -1;
+                return false;
             }
-            pid = process.pid () ;
+            pid = process.pid ();
         }
         if (!pid) {
             cerr << "Could not find any process '"
                  << gv_process_to_attach_to
                  << "'"
                  << endl
-                 ;
-            return -1 ;
+                ;
+            a_return = -1;
+            return false;
         } else {
-            debug_persp->attach_to_program (pid) ;
+            debug_persp->attach_to_program (pid);
         }
     }
 
@@ -275,10 +248,10 @@ main (int a_argc, char *a_argv[])
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                 (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
-            debug_persp->session_manager ().load_sessions () ;
-            list<ISessMgr::Session>::iterator session_iter ;
+            debug_persp->session_manager ().load_sessions ();
+            list<ISessMgr::Session>::iterator session_iter;
             list<ISessMgr::Session>& sessions =
-                            debug_persp->session_manager ().sessions () ;
+                            debug_persp->session_manager ().sessions ();
             for (session_iter = sessions.begin ();
                  session_iter != sessions.end ();
                  ++session_iter) {
@@ -286,41 +259,44 @@ main (int a_argc, char *a_argv[])
                      << " "
                      << session_iter->properties ()["sessionname"]
                      << "\n"
-                     ;
+                    ;
             }
-            return 0 ;
+            a_return = 0;
+            return false;
         } else {
-            cerr << "Could not find the debugger perpective plugin" ;
-            return -1 ;
+            cerr << "Could not find the debugger perpective plugin";
+            a_return = -1;
+            return false;
         }
     }
 
     if (gv_purge_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
-            debug_persp->session_manager ().delete_sessions () ;
+            debug_persp->session_manager ().delete_sessions ();
         }
-        return 0 ;
+        a_return = 0;
+        return false;
     }
 
     if (gv_execute_session) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
-            debug_persp->session_manager ().load_sessions () ;
-            list<ISessMgr::Session>::iterator session_iter ;
+            debug_persp->session_manager ().load_sessions ();
+            list<ISessMgr::Session>::iterator session_iter;
             list<ISessMgr::Session>& sessions =
-                            debug_persp->session_manager ().sessions () ;
-            bool found_session=false ;
+                            debug_persp->session_manager ().sessions ();
+            bool found_session=false;
             for (session_iter = sessions.begin ();
                  session_iter != sessions.end ();
                  ++session_iter) {
                 if (session_iter->session_id () == gv_execute_session) {
-                    debug_persp->execute_session (*session_iter) ;
-                    found_session = true ;
+                    debug_persp->execute_session (*session_iter);
+                    found_session = true;
                     break;
                 }
             }
@@ -329,91 +305,124 @@ main (int a_argc, char *a_argv[])
                 cerr << "Could not find session of number "
                      << gv_execute_session
                      << "\n";
-                return -1 ;
+                a_return = -1;
+                return false;
             }
-            goto run_app ;
+            return true;
         }
     }
 
-    // execute the last session if one exists
+    //execute the last session if one exists
     if (gv_last_session) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
-            debug_persp->session_manager ().load_sessions () ;
-            list<ISessMgr::Session>::reverse_iterator session_iter ;
+            debug_persp->session_manager ().load_sessions ();
+            list<ISessMgr::Session>::reverse_iterator session_iter;
             list<ISessMgr::Session>& sessions =
-                            debug_persp->session_manager ().sessions () ;
+                            debug_persp->session_manager ().sessions ();
             session_iter = sessions.rbegin ();
             if (session_iter != sessions.rend ()) {
-                debug_persp->execute_session (*session_iter) ;
+                debug_persp->execute_session (*session_iter);
             } else {
                 cerr << "Could not find any sessions"
                      << "\n";
-                return -1 ;
+                a_return = -1;
+                return false;
             }
-            goto run_app ;
+            return true;
         }
     }
-
 
     if (a_argc > 1) {
         if (a_argv[1][0] == '-') {
             std::cerr << "unknown option " << a_argv[1] << "\n";
-            return 0;
+            a_return = 0;
+            return false;
         }
-        UString prog_args ;
-        for (int i=1 ; i < a_argc ;++i) {
+        UString prog_args;
+        for (int i=1; i < a_argc;++i) {
             prog_args +=  Glib::locale_to_utf8 (a_argv[i]) + " ";
         }
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME)) ;
+                                                (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
             LOG_D ("going to debug program: '"
                    << prog_args << "'\n",
-                   NMV_DEFAULT_DOMAIN) ;
-            map<UString, UString> env ;
+                   NMV_DEFAULT_DOMAIN);
+            map<UString, UString> env;
             if (gv_env_vars) {
-                vector<UString> env_vars = UString (gv_env_vars).split (" ") ;
+                vector<UString> env_vars = UString (gv_env_vars).split (" ");
                 for (vector<UString>::const_iterator it = env_vars.begin ();
-                     it != env_vars.end () ;
+                     it != env_vars.end ();
                      ++it) {
-                    vector<UString> env_var = it->split ("=") ;
+                    vector<UString> env_var = it->split ("=");
                     if (env_var.size () != 2) {
-                        continue ;
+                        continue;
                     }
-                    UString name = env_var[0] ;
-                    name.chomp () ;
-                    UString value = env_var[1] ;
-                    value.chomp () ;
-                    LOG_DD ("got env var: " << name << "=" << value) ;
-                    env[name] = value ;
+                    UString name = env_var[0];
+                    name.chomp ();
+                    UString value = env_var[1];
+                    value.chomp ();
+                    LOG_DD ("got env var: " << name << "=" << value);
+                    env[name] = value;
                 }
             }
-            debug_persp->execute_program (prog_args, env) ;
+            debug_persp->execute_program (prog_args, env);
         } else {
-            cerr << "Could not find the debugger perspective plugin\n" ;
-            return -1 ;
+            cerr << "Could not find the debugger perspective plugin\n";
+            a_return = -1;
+            return false;
         }
-        goto run_app ;
-
     }
-    //********************************
-    //</process command line arguments>
-    //********************************
+    return true;
+}
 
+int
+main (int a_argc, char *a_argv[])
+{
+    bindtextdomain (GETTEXT_PACKAGE, NEMIVERLOCALEDIR);
+    bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+    textdomain (GETTEXT_PACKAGE);
+    Initializer::do_init ();
+    Gtk::Main gtk_kit (a_argc, a_argv);
 
-run_app:
+    //intialize gnome libraries
+    gnome_program_init (PACKAGE, PACKAGE_VERSION,
+                        LIBGNOME_MODULE, a_argc, a_argv,
+                        GNOME_PROGRAM_STANDARD_PROPERTIES, NULL);
+
+    parse_command_line (a_argc, a_argv);
+
+    NEMIVER_TRY
+
+    //**********************************
+    //load the workbench dynamic module
+    //**********************************
+    DynamicModuleManager module_manager;
+    IWorkbenchSafePtr workbench =
+        module_manager.load_iface<IWorkbench> ("workbench", "IWorkbench");
+    s_workbench = workbench.get ();
+    LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
+            "refcount-domain");
+    s_workbench->do_init (gtk_kit);
+    LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
+           "refcount-domain");
+
+    int retval;
+    if (process_command_line (a_argc, a_argv, retval) != true) {
+        return retval;
+    }
 
     //intercept ctrl-c/SIGINT
-    signal (SIGINT, sigint_handler) ;
-    gtk_kit.run (s_workbench->get_root_window ()) ;
+    signal (SIGINT, sigint_handler);
+    gtk_kit.run (s_workbench->get_root_window ());
 
     NEMIVER_CATCH_NOX
-    s_workbench = 0 ;
+    s_workbench = 0;
 
-    return 0 ;
+    return 0;
 }
 
