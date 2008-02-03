@@ -1061,7 +1061,7 @@ parse_stack_arguments (const UString &a_input,
                                     //embedded in parameter->value()
                                     //and set parameter->value() to nothing
                                     //This is shity performancewise
-                                    //(and his ugly) but that's the way
+                                    //(and is ugly) but that's the way
                                     //of gdbmi
                                     if (parse_member_variable
                                             (parameter->value (),
@@ -1444,7 +1444,7 @@ parse_member_variable (const UString &a_input,
         LOG_D ("cur char: " << (char) a_input.c_str()[cur],
                 GDBMI_PARSING_DOMAIN);
 
-        if (cur == end) {
+        if (cur == end || a_input.c_str ()[cur] == '"') {
             break;
         } else if (a_input.c_str ()[cur] == '}') {
             ++cur;

@@ -1,5 +1,14 @@
 2008-02-03 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  (parse_member_variable): when parsing a member variable,
+	  when the end of stream is encountered, consider that as
+	  if the member variable ends correctly ended with a '}'
+	  This should fix bug #436374 – Error output when debugging gtkmm
+	  example.
+
+2008-02-03 Dodji Seketeli <dodji@gnome.org>
+
 	* dbgengine/nmv-gdbmi-parser.cc: better compliance with project
 	  coding style. Mostly in memory and registers handling.
 
