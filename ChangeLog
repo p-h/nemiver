@@ -1,3 +1,8 @@
+2008-02-03 Dodji Seketeli <dodji@gnome.org>
+
+	* src/uicommon/nmv-hex-editor.cc: cleanup and better compliance
+	  with the project coding style.
+
 2008-02-02 Dodji Seketeli <dodji@gnome.org>
 
 	* src/main.cc: changed this for better legibility.

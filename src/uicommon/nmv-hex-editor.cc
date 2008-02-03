@@ -85,151 +85,64 @@ Editor::Editor (const DocumentSafePtr &a_document)
 EditorSafePtr
 Editor::create (const DocumentSafePtr &a_document)
 {
-    EditorSafePtr result (new Editor (a_document)) ;
-    THROW_IF_FAIL (result) ;
-    return result ;
+    EditorSafePtr result (new Editor (a_document));
+    THROW_IF_FAIL (result);
+    return result;
 }
-
-/*
-void
-Editor::set_cursor (int)
-{
-}
-
-void
-Editor::set_cursor_xy (int, int)
-{
-}
-
-void
-Editor::set_nibble (int)
-{
-}
-
-
-guint
-Editor::get_cursor ()
-{
-}
-
-guchar
-Editor::get_byte (guint)
-{
-}
-*/
 
 
 void
 Editor::set_group_type (guint a_group_type)
 {
-    THROW_IF_FAIL(m_priv && m_priv->hex);
-    gtk_hex_set_group_type(m_priv->hex.get (), a_group_type);
+    THROW_IF_FAIL (m_priv && m_priv->hex);
+    gtk_hex_set_group_type (m_priv->hex.get (), a_group_type);
 }
 
 void
 Editor::set_starting_offset (int a_starting_offset)
 {
-    THROW_IF_FAIL(m_priv && m_priv->hex);
-    gtk_hex_set_starting_offset(m_priv->hex.get (), a_starting_offset);
+    THROW_IF_FAIL (m_priv && m_priv->hex);
+    gtk_hex_set_starting_offset (m_priv->hex.get (), a_starting_offset);
 }
 
 void
 Editor::show_offsets (bool show)
 {
-    THROW_IF_FAIL(m_priv && m_priv->hex);
-    gtk_hex_show_offsets(m_priv->hex.get (), show);
+    THROW_IF_FAIL (m_priv && m_priv->hex);
+    gtk_hex_show_offsets (m_priv->hex.get (), show);
 }
 
 void
 Editor::set_font (const Pango::FontDescription& a_desc)
 {
-    THROW_IF_FAIL(m_priv && m_priv->hex);
+    THROW_IF_FAIL (m_priv && m_priv->hex);
     Glib::RefPtr<Pango::Context> context =
-        Glib::wrap (gdk_pango_context_get ());
+                                Glib::wrap (gdk_pango_context_get ());
     Glib::RefPtr<Pango::Font> new_font = context->load_font (a_desc);
     if (new_font) {
         Pango::FontMetrics new_metrics = new_font->get_metrics ();
-
         gtk_hex_set_font (m_priv->hex.get (),
-                const_cast<PangoFontMetrics*>(new_metrics.gobj ()),
-                const_cast<PangoFontDescription*>(a_desc.gobj ()));
+                          const_cast<PangoFontMetrics*>(new_metrics.gobj ()),
+                          const_cast<PangoFontDescription*>(a_desc.gobj ()));
     }
 }
-
-
-/*
-void
-Editor::set_insert_mode (bool)
-{
-}
-*/
 
 
 void
 Editor::set_geometry (int cpl, int vis_lines)
 {
-    THROW_IF_FAIL(m_priv && m_priv->hex);
-    gtk_hex_set_geometry(m_priv->hex.get (), cpl, vis_lines);
+    THROW_IF_FAIL (m_priv && m_priv->hex);
+    gtk_hex_set_geometry (m_priv->hex.get (), cpl, vis_lines);
 }
 
 void
 Editor::get_geometry (int& cpl, int& vis_lines) const
 {
-    THROW_IF_FAIL(m_priv && m_priv->hex);
+    THROW_IF_FAIL (m_priv && m_priv->hex);
     cpl = m_priv->hex.get ()->cpl;
     vis_lines = m_priv->hex.get ()->vis_lines;
 }
 
-/*
-Pango::FontMetrics
-Editor::load_font (const UString& font_name)
-{
-}
-
-
-void
-Editor::copy_to_clipboard ()
-{
-}
-
-void
-Editor::cut_to_clipboard ()
-{
-}
-
-void
-Editor::paste_from_clipboard ()
-{
-}
-
-
-void
-Editor::set_selection (int start, int end)
-{
-}
-
-bool
-Editor::get_selection (int& start, int& end)
-{
-}
-
-void
-Editor::clear_selection ()
-{
-}
-
-void
-Editor::delete_selection ()
-{
-}
-
-
-GtkHex_AutoHighlight*
-Editor::insert_autohighlight (const gchar *search, int len,
-        const gchar *colour);
-void
-Editor::delete_autohighlight (GtkHex_AutoHighlight *ahl);
-*/
 
 Gtk::Container&
 Editor::get_widget () const
