@@ -3287,7 +3287,9 @@ fetch_file:
 fetch_variable:
     found = false;
     //we are looking for a string that end's up with a ";\n"
-    for (++oobr_it; oobr_it != a_output.out_of_band_records ().end (); ++oobr_it) {
+    for (++oobr_it;
+         oobr_it != a_output.out_of_band_records ().end ();
+         ++oobr_it) {
         if (!oobr_it->has_stream_record ()) {continue;}
 
         str = oobr_it->stream_record ().debugger_console ();
@@ -3311,6 +3313,7 @@ fetch_variable:
     if (!parser->parse_simple_declaration (simple_decl)
         || !simple_decl) {
         LOG_ERROR ("declaration parsing failed");
+        goto skip_oobr;
     }
     simple_decl->to_string (tmp_str);
     LOG_DD ("parsed decl: '" << tmp_str << "'");
@@ -3318,7 +3321,8 @@ fetch_variable:
     if (!simple_decl->get_init_declarators ().empty ()) {
         init_decl = *simple_decl->get_init_declarators ().begin ();
         if (!get_declarator_id_as_string (init_decl, var_name)) {
-            LOG_ERROR ("could not get declarator id as string for parsed decl: "
+            LOG_ERROR ("could not get declarator id "
+                       "as string for parsed decl: "
                        << tmp_str);
             goto skip_oobr;
         }

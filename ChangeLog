@@ -1,5 +1,13 @@
 2008-02-03 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  (GDBEngine::extract_global_variable_list): make sure to
+	  skip the current out of band record when we fail in parsing
+	  the current global variable declaration. This should fix bug
+	  #508417 – crash on listing global variables.
+
+2008-02-03 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdbmi-parser.cc:
 	  (parse_member_variable): when parsing a member variable,
 	  when the end of stream is encountered, consider that as
