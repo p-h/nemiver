@@ -237,8 +237,6 @@ parse_breakpoint (const UString &a_input,
             || (iter = attrs.find ("disp"))    == null_iter
             || (iter = attrs.find ("enabled")) == null_iter
             || (iter = attrs.find ("addr"))    == null_iter
-            //|| (iter = attrs.find ("file"))== null_iter => may not be there
-            //|| (iter = attrs.find ("line"))== null_iter => ditto
             || (iter = attrs.find ("times"))   == null_iter
        ) {
         LOG_PARSING_ERROR (a_input, cur);
@@ -1436,9 +1434,8 @@ parse_member_variable (const UString &a_input,
 
         LOG_D ("cur char: " << (char) a_input.c_str()[cur],
                GDBMI_PARSING_DOMAIN);
-        LOG_D ("skipping ws ...",
-                GDBMI_PARSING_DOMAIN);
 
+end_of_block:
         SKIP_BLANK (a_input, cur, cur);
 
         LOG_D ("cur char: " << (char) a_input.c_str()[cur],
@@ -1455,6 +1452,28 @@ parse_member_variable (const UString &a_input,
             LOG_D ("got ',' , going to fetch name",
                    GDBMI_PARSING_DOMAIN);
             continue /*goto fetch name*/;
+        } else if (!a_input.raw ().compare (cur, 9, "<repeats ")) {
+            //TODO: we need to handle the <repeat N> format at some point.
+            //just skipping it for now.
+            bool skipped_repeat=false;
+            while (true) {
+                ++cur;
+                if (cur == end) {break;}
+                if (a_input.c_str ()[cur] == '>') {
+                    ++cur;
+                    skipped_repeat = true;
+                    break;
+                }
+            }
+            if (skipped_repeat) {
+                LOG_D ("skipped repeat construct", GDBMI_PARSING_DOMAIN);
+                goto end_of_block;
+                break;
+            } else {
+                LOG_ERROR ("failed to skip repeat construct");
+                LOG_PARSING_ERROR (a_input, cur);
+                return false;
+            }
         }
         LOG_PARSING_ERROR (a_input, cur);
         THROW ("should not be reached");

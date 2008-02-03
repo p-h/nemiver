@@ -1,5 +1,16 @@
 2008-02-03 Dodji Seketeli <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  (parse_member_variable): when we encounter a "<repeats N times>"
+	  construct right near the end of a block, parse it, but ignore it
+	  for now. I must find a way to make the gdbmi datastructures
+	  as well as the IDebugger::Variable datastructure reflect
+	  the repeat count somehow. This should fix a long standing bug
+	  where the presence of "<repeats N times>" at that place would
+	  make the parsing of member variable fail.
+
+2008-02-03 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc:
 	  (GDBEngine::extract_global_variable_list): make sure to
 	  skip the current out of band record when we fail in parsing
