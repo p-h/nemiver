@@ -1383,15 +1383,17 @@ parse_member_variable (const UString &a_input,
             value_start = cur;
             while (true) {
                 UString str;
-                if (a_input.c_str ()[cur] == '"' &&
-                    a_input.c_str()[cur -1] != '\\') {
+                if (a_input.c_str ()[cur] == '"'
+                    && a_input.c_str ()[cur -1] != '\\') {
                     if (!parse_c_string (a_input, cur, cur, str)) {
                         LOG_PARSING_ERROR (a_input, cur);
                         return false;
                     }
-                } else if (cur + 1 < end &&
-                           a_input.c_str ()[cur] == '\\' &&
-                           a_input.c_str ()[cur+1] == '"') {
+                } else if (cur+2 < end
+                           && a_input.c_str ()[cur] == '\\'
+                           && a_input.c_str ()[cur+1] == '"'
+                           && a_input.c_str ()[cur+2] != '\''
+                           && a_input.c_str ()[cur-1] != '\'') {
                     if (!parse_embedded_c_string (a_input, cur, cur, str)){
                         LOG_PARSING_ERROR (a_input, cur);
                         return false;
@@ -1474,6 +1476,10 @@ end_of_block:
                 LOG_PARSING_ERROR (a_input, cur);
                 return false;
             }
+        } else if (!a_input.raw ().compare (cur, 3, "...")) {
+            //hugh ? wtf does this '...' mean ? Anyway, skip it for now.
+            cur+= 3;
+            goto end_of_block;
         }
         LOG_PARSING_ERROR (a_input, cur);
         THROW ("should not be reached");

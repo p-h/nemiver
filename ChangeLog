@@ -1,3 +1,13 @@
+2008-02-07 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  (parse_member_variable): fix some nasty parsing errors due
+	  to GDB spitting non specified constructs again <grin/>.
+	* tests/test-gdbmi.cc: added the regression tests for these
+	  parsing bugs.
+	  This entry should hopefuly fix bug #514134 – gdbmi member
+	  variable parsing error.
+
 2008-02-03 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdbmi-parser.cc:
