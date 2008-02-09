@@ -1,3 +1,12 @@
+2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/icons/Makefile.am:
+	* src/persp/dbgperspective/icons/continue.xpm:
+	* src/persp/dbgperspective/icons/green.png:
+	* src/persp/dbgperspective/icons/run-debugger.xpm:
+	* src/persp/dbgperspective/icons/stop-debugger.xpm:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: remove obsolete icons
+
 2008-02-09 Dodji Seketeli <dodji@gnome.org>
 
 	* NEWS: updated for 0.5.0

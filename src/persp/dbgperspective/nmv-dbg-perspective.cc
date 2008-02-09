@@ -102,7 +102,6 @@ using namespace gtksourceview ;
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 const char *SET_BREAKPOINT    = "nmv-set-breakpoint" ;
-const char *STOP_DEBUGGER     = "nmv-stop-debugger" ;
 const char *LINE_POINTER      = "nmv-line-pointer" ;
 const char *RUN_TO_CURSOR     = "nmv-run-to-cursor" ;
 const char *STEP_INTO         = "nmv-step-into" ;
@@ -141,7 +140,6 @@ static const UString CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
 
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
-const Gtk::StockID STOCK_STOP_DEBUGGER (STOP_DEBUGGER) ;
 const Gtk::StockID STOCK_LINE_POINTER (LINE_POINTER) ;
 const Gtk::StockID STOCK_RUN_TO_CURSOR (RUN_TO_CURSOR) ;
 const Gtk::StockID STOCK_STEP_INTO (STEP_INTO) ;
@@ -2405,7 +2403,6 @@ void
 DBGPerspective::init_icon_factory ()
 {
     add_stock_icon (nemiver::SET_BREAKPOINT, "icons", "set-breakpoint.xpm") ;
-    add_stock_icon (nemiver::STOP_DEBUGGER, "icons", "stop-debugger.xpm") ;
     add_stock_icon (nemiver::LINE_POINTER, "icons", "line-pointer.png") ;
     add_stock_icon (nemiver::RUN_TO_CURSOR, "icons", "run-to-cursor.xpm") ;
     add_stock_icon (nemiver::STEP_INTO, "icons", "step-into.xpm") ;
