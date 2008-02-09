@@ -433,7 +433,7 @@ Template last modified Jan 30, 2002
       <title>Basic Debugging Actions</title>
       <para>
         The basic debugging actions are available on the main toolbar, in the
-        <menu>Debug</menu> menu, and as keyboard shortcuts.
+        <guimenu>Debug</guimenu> menu, and as keyboard shortcuts.
         The most common actions are listed below:
       </para>
       <variablelist>
@@ -568,16 +568,16 @@ Template last modified Jan 30, 2002
         <listitem>
           <para>Place your cursor on a line where you want the breakpoint to be set and set the breakpoint by either selecting 
             <menuchoice>
-              <menu>Debug</menu>
-              <menuitem>Toggle Breakpoint at Cursor</menuitem>
+              <guimenu>Debug</guimenu>
+              <guimenuitem>Toggle Breakpoint at Cursor</guimenuitem>
             </menuchoice>, or by pressing <keycap>F8</keycap>
           </para>
         </listitem>
         <listitem>
           <para>Set a breakpoint at a specific function name or at a specific location in a file by selecting 
             <menuchoice>
-              <menu>Debug</menu>
-              <menuitem>Set Breakpoint...</menuitem>
+              <guimenu>Debug</guimenu>
+              <guimenuitem>Set Breakpoint...</guimenuitem>
             </menuchoice> or by pressing 
             <keycombo>
               <keycap>Ctrl</keycap>
@@ -631,8 +631,8 @@ Template last modified Jan 30, 2002
           were used to build the executable and allow you to select from this
           list.  When you select 
           <menuchoice>
-            <menu>File</menu>
-            <menuitem>Open Source File...</menuitem>
+            <guimenu>File</guimenu>
+            <guimenuitem>Open Source File...</guimenuitem>
           </menuchoice>, the following window should be displayed:
         </para>
         <screenshot>
