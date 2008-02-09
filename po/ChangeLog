@@ -1,3 +1,11 @@
+2008-02-09 Dodji Seketeli <dodji@gnome.org>
+
+	* POTFILES.in: added files
+	  src/persp/dbgperspective/glade/globalvarsinspector.glade
+	  src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc
+	  src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	  src/persp/dbgperspective/nmv-vars-treeview.cc
+
 2008-02-08  Claude Paroz  <claude@2xlibre.net>
 
 	* fr.po: Updated French translation by Robert-André Mauchin.

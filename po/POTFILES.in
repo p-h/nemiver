@@ -16,6 +16,7 @@ src/persp/dbgperspective/glade/chooseoverloadsdialog.glade
 src/persp/dbgperspective/glade/remotetargetdialog.glade
 src/persp/dbgperspective/glade/setbreakpointdialog.glade
 src/persp/dbgperspective/nmv-choose-overloads-dialog.cc
+src/persp/dbgperspective/glade/globalvarsinspector.glade
 src/persp/dbgperspective/nmv-breakpoints-view.cc
 src/persp/dbgperspective/nmv-call-stack.cc
 src/persp/dbgperspective/nmv-dbg-perspective.cc
@@ -35,4 +36,8 @@ src/persp/dbgperspective/nmv-var-inspector2.cc
 src/persp/dbgperspective/nmv-var-inspector-dialog.cc
 src/uicommon/nmv-source-editor.cc
 src/workbench/nmv-workbench.cc
+src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc
+src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+src/persp/dbgperspective/nmv-vars-treeview.cc
+
 
