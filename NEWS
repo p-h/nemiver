@@ -6,8 +6,12 @@ New features
 
 [Jonathon Jongsma]
 
-    * new basic CPU register view widget
-    * new memory editing view widget
+    * support for CPU registers editing
+    * support for memory editing
+
+[A Gordon]
+
+   * preliminary work on the global variables listing support
 
 [Dodji Seketeli]
 
@@ -15,10 +19,6 @@ New features
       This still needs some UI love though.
     * support for listing the global variables of the inferior
     * support for refreshing the list of local variables "on demand"
-
-[A Gordon]
-
-   * preliminary work on the global variables listing support
 
 Fixes, cleanup and improvements
 -------------------------------
@@ -40,6 +40,7 @@ Fixes, cleanup and improvements
 [Baptiste Mille-Mathias]
 
     * HIG fixes
+    * #499263 – make check fail
 
 [Emre Turkay]
 
@@ -57,7 +58,6 @@ Fixes, cleanup and improvements
     * #504473 – Variable parsing failure on quoted '}' character
     * #436374 – Error output when debugging an gtkmm example
     * #514134 – gdbmi member variable parsing error
-
 
 
 0.4.0 Release
