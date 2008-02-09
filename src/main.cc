@@ -92,7 +92,7 @@ static GOptionEntry entries[] =
       _("Erase the saved debugging sessions"),
       NULL
     },
-    { "executesession",
+    { "session",
       0,
       0,
       G_OPTION_ARG_INT,
