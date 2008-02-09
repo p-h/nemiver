@@ -1,3 +1,65 @@
+0.5.0 Release
+=============
+
+New features
+------------
+
+[Jonathon Jongsma]
+
+    * new basic CPU register view widget
+    * new memory editing view widget
+
+[Dodji Seketeli]
+
+    * support for remote (cross) debugging.
+      This still needs some UI love though.
+    * support for listing the global variables of the inferior
+    * support for refreshing the list of local variables "on demand"
+
+[A Gordon]
+
+   * preliminary work on the global variables listing support
+
+Fixes, cleanup and improvements
+-------------------------------
+
+[Jonathon Jongsma]
+
+    * many UI improvements here and there
+    * better breakpoints management
+    * added the --last command line option to quickly reload
+      the last saved session
+    * show frame address when their line/filename info is not available
+    * switch to GtkSourceView2 (optional)
+    * switch to GIO (optional)
+    * #447890 – "File path info is missing for function foo" popup is too
+      intrusive
+    * #465263 – error parsing breakpoint table
+    * #502526 – gdbmi parsing error
+
+[Baptiste Mille-Mathias]
+
+    * HIG fixes
+
+[Emre Turkay]
+
+    * code cleanup of the main.cc file
+
+[Dodji Seketeli]
+
+    * switch to libboost 1.34
+    * better (more reliable, faster) local variables management
+    * speed optimisations
+    * numerous low level fixes and cleanups
+    * #442213 – Limit number of frames in the call stack
+    * #503887 – start nemiver with wrongs args throws error
+    * #502634 – problem with running nemiver under compiz
+    * #504473 – Variable parsing failure on quoted '}' character
+    * #436374 – Error output when debugging an gtkmm example
+    * #514134 – gdbmi member variable parsing error
+
+
+
 0.4.0 Release
 =============
 

@@ -7,6 +7,10 @@
 
 2008-02-09 Dodji Seketeli <dodji@gnome.org>
 
+	* NEWS: update to prepare the coming 0.5.0 release
+
+2008-02-09 Dodji Seketeli <dodji@gnome.org>
+
 	* configure.ac: bump version number to 0.5.0
 
 2008-02-07 Dodji Seketeli <dodji@gnome.org>
