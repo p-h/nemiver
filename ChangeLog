@@ -4,6 +4,12 @@
 
 2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Change the icons for the
+	'Restart' and 'Continue' actions to use stock GTK icons so that they fit the
+	tango style better
+
+2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	patch by: Baptiste Mille-Matthias <bmm80@free.fr>
 
 	* help/C/nemiver.xml: fix invalid docbook markup (change menu to guimenu).

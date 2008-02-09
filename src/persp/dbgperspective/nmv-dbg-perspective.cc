@@ -102,9 +102,7 @@ using namespace gtksourceview ;
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 const char *SET_BREAKPOINT    = "nmv-set-breakpoint" ;
-const char *CONTINUE          = "nmv-continue" ;
 const char *STOP_DEBUGGER     = "nmv-stop-debugger" ;
-const char *RUN_DEBUGGER      = "nmv-run-debugger" ;
 const char *LINE_POINTER      = "nmv-line-pointer" ;
 const char *RUN_TO_CURSOR     = "nmv-run-to-cursor" ;
 const char *STEP_INTO         = "nmv-step-into" ;
@@ -115,7 +113,7 @@ const char *SESSION_NAME = "sessionname" ;
 const char *PROGRAM_NAME= "programname" ;
 const char *PROGRAM_ARGS= "programarguments" ;
 const char *PROGRAM_CWD= "programcwd" ;
-const char * DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
+const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain" ;
 
 static const UString CONF_KEY_NEMIVER_SOURCE_DIRS =
@@ -143,9 +141,7 @@ static const UString CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
 
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT) ;
-const Gtk::StockID STOCK_CONTINUE (CONTINUE) ;
 const Gtk::StockID STOCK_STOP_DEBUGGER (STOP_DEBUGGER) ;
-const Gtk::StockID STOCK_RUN_DEBUGGER (RUN_DEBUGGER) ;
 const Gtk::StockID STOCK_LINE_POINTER (LINE_POINTER) ;
 const Gtk::StockID STOCK_RUN_TO_CURSOR (RUN_TO_CURSOR) ;
 const Gtk::StockID STOCK_STEP_INTO (STEP_INTO) ;
@@ -2409,9 +2405,7 @@ void
 DBGPerspective::init_icon_factory ()
 {
     add_stock_icon (nemiver::SET_BREAKPOINT, "icons", "set-breakpoint.xpm") ;
-    add_stock_icon (nemiver::CONTINUE, "icons", "continue.xpm") ;
     add_stock_icon (nemiver::STOP_DEBUGGER, "icons", "stop-debugger.xpm") ;
-    add_stock_icon (nemiver::RUN_DEBUGGER, "icons", "run-debugger.xpm") ;
     add_stock_icon (nemiver::LINE_POINTER, "icons", "line-pointer.png") ;
     add_stock_icon (nemiver::RUN_TO_CURSOR, "icons", "run-to-cursor.xpm") ;
     add_stock_icon (nemiver::STEP_INTO, "icons", "step-into.xpm") ;
@@ -2439,7 +2433,7 @@ DBGPerspective::init_actions ()
     static ui_utils::ActionEntry s_target_not_started_action_entries [] = {
         {
             "RunMenuItemAction",
-            nemiver::STOCK_RUN_DEBUGGER,
+            Gtk::Stock::GOTO_FIRST,
             _("_Restart"),
             _("Restart the target, killing this process and starting a new one"),
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
@@ -2492,7 +2486,7 @@ DBGPerspective::init_actions ()
         ,
         {
             "ContinueMenuItemAction",
-            nemiver::STOCK_CONTINUE,
+            Gtk::Stock::EXECUTE,
             _("_Continue"),
             _("Continue program execution until the next breakpoint"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
