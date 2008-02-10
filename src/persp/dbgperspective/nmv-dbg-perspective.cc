@@ -2442,8 +2442,8 @@ DBGPerspective::init_actions ()
     static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
         {
             "DetachFromProgramMenuItemAction",
-            nil_stock_id,
-            _("_Detach from the Running Program..."),
+            Gtk::Stock::DISCONNECT,
+            _("_Detach From the Running Program"),
             _("Disconnect the debugger from the running target "
               "without killing it"),
             sigc::mem_fun (*this,
@@ -2504,7 +2504,7 @@ DBGPerspective::init_actions ()
         ,
         {
             "ToggleBreakPointMenuItemAction",
-            nemiver::STOCK_SET_BREAKPOINT,
+            nil_stock_id,
             //don't translate, name will be overwritten based on context
             "Toggle _Breakpoint",
             _("Set/Unset a breakpoint at the current cursor location"),
@@ -2515,7 +2515,7 @@ DBGPerspective::init_actions ()
 
         {
             "ToggleEnableBreakPointMenuItemAction",
-            nemiver::STOCK_SET_BREAKPOINT,
+            nil_stock_id,
             //don't translate, name will be overwritten based on context
             "Enable/Disable Breakpoint",
             _("Enable or disable the breakpoint that is set at the current cursor location"),
@@ -2528,7 +2528,7 @@ DBGPerspective::init_actions ()
 
         {
             "SetBreakPointMenuItemAction",
-            nemiver::STOCK_SET_BREAKPOINT,
+            nil_stock_id,
             _("Set Breakpoint..."),
             _("Set a breakpoint at a function or line number"),
             sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
@@ -2638,8 +2638,8 @@ DBGPerspective::init_actions ()
         {
             "ActivateGlobalVariablesDialogMenuAction",
             nil_stock_id,
-            _("Global Variables"),
-            _("Display Global variables"),
+            _("Show Global Variables"),
+            _("Display all global variables"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_global_variables),
             ActionEntry::DEFAULT,
             "<control>G"
@@ -2691,8 +2691,8 @@ DBGPerspective::init_actions ()
         },
         {
             "ExecuteProgramMenuItemAction",
-            Gtk::Stock::EXECUTE,
-            _("_Execute..."),
+            nil_stock_id,
+            _("Load _Executable..."),
             _("Execute a program"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_execute_program_action),
@@ -2711,7 +2711,7 @@ DBGPerspective::init_actions ()
         },
         {
             "AttachToProgramMenuItemAction",
-            nil_stock_id,
+            Gtk::Stock::CONNECT,
             _("_Attach to Running Program..."),
             _("Debug a program that's already running"),
             sigc::mem_fun (*this,
@@ -2721,8 +2721,8 @@ DBGPerspective::init_actions ()
         },
         {
             "ConnectToRemoteTargetMenuItemAction",
-            nil_stock_id,
-            _("_Connect to remote target..."),
+            Gtk::Stock::NETWORK,
+            _("_Connect to Remote Target..."),
             _("Connect to a debugging server to debug a remote target"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_connect_to_remote_target_action),
@@ -2733,7 +2733,7 @@ DBGPerspective::init_actions ()
             "SavedSessionsMenuItemAction",
             nil_stock_id,
             _("Resume Sa_ved Session..."),
-            _("Manage previously saved debugging sessions"),
+            _("Open a previously saved debugging session"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_choose_a_saved_session_action),
             ActionEntry::DEFAULT,
@@ -2755,7 +2755,7 @@ DBGPerspective::init_actions ()
         {
             "ReloadSourceMenuItemAction",
             Gtk::Stock::REFRESH,
-            _("_Reload Source File ..."),
+            _("_Reload Source File"),
             _("Reloads the source file"),
             sigc::mem_fun (*this, &DBGPerspective::on_reload_action),
             ActionEntry::DEFAULT,
@@ -2764,7 +2764,7 @@ DBGPerspective::init_actions ()
         {
             "CloseMenuItemAction",
             Gtk::Stock::CLOSE,
-            _("_Close"),
+            _("_Close Source File"),
             _("Close the opened file"),
             sigc::mem_fun (*this, &DBGPerspective::on_close_action),
             ActionEntry::DEFAULT,
@@ -5635,7 +5635,7 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
             get_call_stack_scrolled_win ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_call_stack_scrolled_win (),
-                                             _("Call stack"),
+                                             _("Call Stack"),
                                              CALL_STACK_VIEW_INDEX) ;
             m_priv->call_stack_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page
@@ -5689,7 +5689,7 @@ DBGPerspective::set_show_terminal_view (bool a_show)
             get_terminal_box ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_terminal_box (),
-                                             _("Target terminal"),
+                                             _("Target Terminal"),
                                              TERMINAL_VIEW_INDEX) ;
             m_priv->terminal_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);

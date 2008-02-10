@@ -9,7 +9,6 @@
                       name="LoadCoreMenuItem"/>
             <menuitem action="ConnectToRemoteTargetMenuItemAction"
                       name="ConnectToRemoteTargetMenuItem"/>
-            <separator/>
             <menuitem action="AttachToProgramMenuItemAction"
                       name="AttachToProgramMenuItem"/>
             <menuitem action="DetachFromProgramMenuItemAction"
@@ -47,8 +46,6 @@
                 name="ActivateRegistersViewMenuItem"/>
             <menuitem action="ActivateMemoryViewMenuAction"
                 name="ActivateMemoryViewMenuItem"/>
-            <menuitem action="ActivateGlobalVariablesDialogMenuAction"
-                name="ActivateGlobalVariablesDialogMenuItem"/>
             <separator/>
             <!--<menuitem action="ShowCommandsMenuAction"
                 name="ShowCommandsMenuItem"/> -->
@@ -78,6 +75,8 @@
             <separator/>
             <menuitem action="InspectVariableMenuItemAction"
                 name="InspectVariableMenuItem"/>
+            <menuitem action="ActivateGlobalVariablesDialogMenuAction"
+                name="ActivateGlobalVariablesDialogMenuItem"/>
             <menuitem action="RefreshLocalVariablesMenuItemAction"
                 name="RefreshLocalVariablesMenuItemAction"/>
         </menu>

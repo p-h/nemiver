@@ -1,5 +1,12 @@
 2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/remotetargetdialog.glade:
+	* src/persp/dbgperspective/menus/menus.xml:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: lots of little UI
+	cleanups: capitalization, re-organized some menus, etc.
+
+2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/menus/menus.xml: re-order the 'File' menu items
 	slightly so that they're grouped a little better
 
