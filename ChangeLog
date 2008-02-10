@@ -1,5 +1,13 @@
 2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/uicommon/nmv-source-editor.cc: Remove the total number of lines from
+	the source editor status bar (bug #515454).  Also fixed a bug where the
+	column was never being updated so it always said 0.  Also added a little bit
+	of padding around the source editor status bar and protected a signal
+	handler with try / catch.
+
+2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* help/C/figures/attach-dialog.png:
 	* help/C/figures/connect-remote-dialog.png:
 	* help/C/figures/disabled-breakpoint.png:

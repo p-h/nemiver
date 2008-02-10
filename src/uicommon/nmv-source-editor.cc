@@ -37,6 +37,7 @@
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
 #include "common/nmv-ustring.h"
+#include "uicommon/nmv-ui-utils.h"
 #include "nmv-source-editor.h"
 
 using namespace std ;
@@ -198,6 +199,7 @@ struct SourceEditor::Priv {
                         (const Gtk::TextBuffer::iterator &a_iter,
                          const Glib::RefPtr<Gtk::TextBuffer::Mark > &a_mark)
     {
+        NEMIVER_TRY
         THROW_IF_FAIL (source_view) ;
 
         Glib::RefPtr<Gtk::TextBuffer::Mark> insert_mark =
@@ -205,6 +207,7 @@ struct SourceEditor::Priv {
         if (insert_mark == a_mark) {
             insertion_changed_signal.emit (a_iter) ;
         }
+        NEMIVER_CATCH
     }
 
     //**************
@@ -241,16 +244,14 @@ struct SourceEditor::Priv {
             line_count = source_view->get_buffer ()->get_line_count () ;
         }
         UString message;
-        message.printf (_("Line: %i, Column: %i, Lines: %i"),
-                        current_line, current_column, line_count) ;
+        message.printf (_("Line: %i, Column: %i"),
+                        current_line, current_column) ;
         line_col_label->set_text (message);
     }
 
     gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)
     {
-        if (a_iter) {}
-        //TODO: code this !
-        return 0 ;
+        return a_iter.get_line_offset () ;
     }
 
     bool get_absolute_resource_path (const UString &a_relative_path,
@@ -293,7 +294,7 @@ struct SourceEditor::Priv {
     void init ()
     {
         update_line_col_label () ;
-        status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK) ;
+        status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK, 6 /* padding */) ;
         init_signals () ;
         source_view->set_editable (false) ;
         register_breakpoint_marker_type (BREAKPOINT_ENABLED_CATEGORY,
