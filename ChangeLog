@@ -1,5 +1,9 @@
 2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* help/C/nemiver.xml: more minor manual updates.
+
+2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Move the 'Show Global
 	Variables' action into the 'Debugger ready' action group so that it is
 	disabled when there is no program being debugged (Bug #515541)
