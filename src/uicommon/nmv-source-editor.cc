@@ -251,7 +251,7 @@ struct SourceEditor::Priv {
 
     gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)
     {
-        return a_iter.get_line_offset () ;
+        return a_iter.get_line_offset () + 1;
     }
 
     bool get_absolute_resource_path (const UString &a_relative_path,
@@ -293,7 +293,6 @@ struct SourceEditor::Priv {
 
     void init ()
     {
-        update_line_col_label () ;
         status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK, 6 /* padding */) ;
         init_signals () ;
         source_view->set_editable (false) ;
@@ -302,6 +301,10 @@ struct SourceEditor::Priv {
         register_breakpoint_marker_type
                                 (BREAKPOINT_DISABLED_CATEGORY,
                                  "icons/breakpoint-disabled-marker.png");
+
+        // move cursor to the beginning of the file
+        Glib::RefPtr<Gtk::TextBuffer> source_buffer = source_view->get_buffer ();
+        source_buffer->place_cursor (source_buffer->begin ());
     }
 
     Priv () :
