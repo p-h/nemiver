@@ -1,5 +1,26 @@
 2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* help/C/figures/attach-dialog.png:
+	* help/C/figures/connect-remote-dialog.png:
+	* help/C/figures/disabled-breakpoint.png:
+	* help/C/figures/enabled-breakpoint.png:
+	* help/C/figures/execute-dialog.png:
+	* help/C/figures/global-variables-dialog.png:
+	* help/C/figures/load-core-dialog.png:
+	* help/C/figures/main-window.png:
+	* help/C/figures/memory-view.png:
+	* help/C/figures/open-files-filesystem.png:
+	* help/C/figures/open-files-target.png:
+	* help/C/figures/preferences-dialog.png:
+	* help/C/figures/registers-view.png:
+	* help/C/figures/sessions-dialog.png:
+	* help/C/figures/set-breakpoint-dialog.png:
+	* help/C/figures/variable-inspector.png:
+	* help/C/nemiver.xml:
+	* help/Makefile.am: update manual for 0.5.0 release
+
+2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/glade/loadcoredialog.glade: don't allow this to
 	be resizeable since it would just add a bunch of useless blank space if it
 	was resized.

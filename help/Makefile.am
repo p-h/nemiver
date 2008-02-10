@@ -11,5 +11,11 @@ DOC_FIGURES = \
 			  figures/sessions-dialog.png \
 			  figures/variable-inspector.png \
 			  figures/set-breakpoint-dialog.png \
-			  figures/open-files-target.png
+			  figures/open-files-target.png \
+			  figures/global-variables-dialog.png \
+			  figures/memory-view.png \
+			  figures/registers-view.png \
+			  figures/connect-remote-dialog.png \
+			  figures/enabled-breakpoint.png \
+			  figures/disabled-breakpoint.png
 DOC_LINGUAS = es oc sv

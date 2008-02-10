@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
 "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
-<!ENTITY appversion "0.3.0">
-<!ENTITY manrevision "1.0">
-<!ENTITY date "February 2007">
+<!ENTITY appversion "0.5.0">
+<!ENTITY manrevision "2.0">
+<!ENTITY date "February 2008">
 <!ENTITY app "Nemiver">
 <!ENTITY appcmd "nemiver">
 <!ENTITY website "http://home.gna.org/nemiver/">
@@ -24,7 +24,7 @@ Template last modified Jan 30, 2002
   <articleinfo>
     <title>&app; Manual</title>
     <copyright>
-      <year>2007</year>
+      <year>2008</year>
       <holder>Jonathon Jongsma</holder> </copyright>
 
     <!-- translators: uncomment this:
@@ -76,6 +76,13 @@ Template last modified Jan 30, 2002
           <para>Initial version</para>
         </revdescription>
       </revision>
+      <revision>
+        <revnumber>&manrevision;</revnumber>
+        <date>2008</date>
+        <revdescription>
+          <para>Updated for 0.5.0 Release</para>
+        </revdescription>
+      </revision>
     </revhistory>
     <releaseinfo> This manual describes version &appversion; of &app;.
     </releaseinfo>
@@ -101,7 +108,7 @@ Template last modified Jan 30, 2002
   <!-- ============= Document Body ============================= -->
   <!-- ============= Introduction ============================== -->
   <sect1 id="nemiver-sect-intro">
-    <title>Introduction</title>
+    <title>Overview</title>
     <para>
       &app; is an ongoing effort to write a standalone graphical debugger that
       integrates well in the GNOME desktop environment.  It currently features a
@@ -119,7 +126,46 @@ Template last modified Jan 30, 2002
     </sect2>
 
   </sect1>
-    <sect1 id="nemiver-sect-window">
+  <sect1 id="nemiver-sect-getting-started">
+    <title>Getting Started</title>
+    <para>
+      This section explains how to start &app; and gives a basic overview of the
+      application.
+    </para>
+    <sect2 id="nemiver-sect-starting">
+      <title>Starting &app;</title>
+      <para>
+        You can start &app; in the following ways:
+      </para>
+      <variablelist>
+        <varlistentry>
+          <term><guimenu>Applications</guimenu> menu</term>
+          <listitem>
+            <para>
+              Choose <menuchoice> <guisubmenu>Programming</guisubmenu>
+                <guimenuitem>Nemiver Debugger</guimenuitem> </menuchoice>.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Command line</term>
+          <listitem>
+            <para>
+              Type <command>&appcmd;</command>, then press
+              <keycap>Return</keycap>.
+            </para>
+            <tip>
+              <title>Additional Command-line Options</title>
+              <para>
+                You can find a list of options that can be passed to &app; on the
+                command line by typing <command>&appcmd; --help-all</command>.
+              </para>
+            </tip>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+    <sect2 id="nemiver-sect-window">
       <title>The &app; window</title>
       <para>
         When you start &app;, you will see a window that looks very much like
@@ -223,52 +269,37 @@ Template last modified Jan 30, 2002
                   </para>
                 </listitem>
               </varlistentry>
+              <varlistentry>
+                <term>
+                    Registers
+                </term>
+                <listitem>
+                  <para>
+                      This tab displays all of the CPU registers and their
+                      values.  For more information, see <xref
+                          linkend="nemiver-sect-registers"/>.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>
+                    Memory
+                </term>
+                <listitem>
+                  <para>
+                    This tab displays a view of the current state of a specific
+                    memory location.  For more information, see <xref
+                        linkend="nemiver-sect-memory"/>.
+                  </para>
+                </listitem>
+              </varlistentry>
             </variablelist>
           </listitem>
         </varlistentry>
       </variablelist>
-    </sect1>
-
-
-  <sect1 id="nemiver-sect-getting-started">
-    <title>Getting Started</title>
-    <para>
-      This section explains how to start &app; and gives a basic overview of the
-      application.
-    </para>
-    <sect2 id="nemiver-sect-starting">
-      <title>Starting &app;</title>
-      <para>
-        You can start &app; in the following ways:
-      </para>
-      <variablelist>
-        <varlistentry>
-          <term><guimenu>Applications</guimenu> menu</term>
-          <listitem>
-            <para>
-              Choose <menuchoice> <guisubmenu>Programming</guisubmenu>
-                <guimenuitem>Nemiver Debugger</guimenuitem> </menuchoice>.
-            </para>
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term>Command line</term>
-          <listitem>
-            <para>
-              Type <command>&appcmd;</command>, then press
-              <keycap>Return</keycap>.
-            </para>
-            <tip>
-              <title>Additional Command-line Options</title>
-              <para>
-                You can find a list of options that can be passed to &app; on the
-                command line by typing <command>&appcmd; --help-all</command>.
-              </para>
-            </tip>
-          </listitem>
-        </varlistentry>
-      </variablelist>
     </sect2>
+
+
     <sect2 id="nemiver-sect-starting-executable">
       <title>Debugging an Executable</title>
 
@@ -429,6 +460,9 @@ Template last modified Jan 30, 2002
 
   <sect1 id="nemiver-sect-using">
     <title>Using &app;</title>
+    <para>
+        This section describes how to use &app; to debug your application.
+    </para>
     <sect2 id="nemiver-sect-basic-debugging">
       <title>Basic Debugging Actions</title>
       <para>
@@ -513,7 +547,7 @@ Template last modified Jan 30, 2002
       </para>
     </sect2>
     <sect2 id="nemiver-sect-inspecting-variables">
-      <title>Inspecting variables</title>
+      <title>Inspecting Variables</title>
       <para>
         &app; displays a list of all local variables in the
         <interface>Variables</interface> tab of the
@@ -551,6 +585,33 @@ Template last modified Jan 30, 2002
           pressing <keycap>F12</keycap>.
         </para>
       </tip>
+      <para>
+          &app; will also let you display a list of all global variables in an application in a separate dialog.  To display the <interface>Global Variables</interface> dialog, select
+          <menuchoice>
+              <guimenu>Debug</guimenu>
+              <guimenuitem>Show Global Variables</guimenuitem>
+          </menuchoice>
+          or press
+          <keycombo>
+              <keycap>Ctrl</keycap>
+              <keycap>G</keycap>
+          </keycombo>.
+      </para>
+      <screenshot>
+          <mediaobject>
+              <imageobject>
+                  <imagedata fileref="figures/global-variables-dialog.png" format="PNG"/>
+              </imageobject>
+              <textobject> <phrase>Global Variables Dialog</phrase>
+              </textobject>
+          </mediaobject>
+      </screenshot>
+      <warning>
+          <para>
+              For some programs (especially C++ programs), listing all of the
+              global variables may take a very long time.
+          </para>
+      </warning>
     </sect2>
     <sect2 id="nemiver-sect-breakpoints">
       <title>Setting Breakpoints</title>
@@ -620,6 +681,31 @@ Template last modified Jan 30, 2002
           </keycombo> to enable or disable a breakpoint that is set on the
           line that the cursor is currently on.
         </para>
+        <para>
+            The following figures show the difference between enabled and
+            disabled breakpoints in the source editor.
+        </para>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figures/enabled-breakpoint.png" format="PNG"/>
+            </imageobject>
+            <textobject> <phrase>Illustration of an enabled breakpoint</phrase>
+            </textobject>
+            <caption>Enabled Breakpoint</caption>
+          </mediaobject>
+        </screenshot>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figures/disabled-breakpoint.png" format="PNG"/>
+            </imageobject>
+            <textobject>
+                <phrase>Illustration of a disabled breakpoint</phrase>
+            </textobject>
+            <caption>Disabled Breakpoint</caption>
+          </mediaobject>
+        </screenshot>
       </sect3>
       <sect3>
         <title>Opening Source Files</title>
@@ -661,9 +747,94 @@ Template last modified Jan 30, 2002
         </warning>
       </sect3>
     </sect2>
+    <sect2 id="nemiver-sect-advanced">
+        <title>Advanced Debugging</title>
+        <sect3 id="nemiver-sect-registers">
+            <title>Registers</title>
+            <para>
+                The register editing widget is located in the
+                <interface>Registers</interface> tab of the <interface>Status
+                    Notebook</interface>.  Alternately, you can press
+                <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> to
+                jump directly to the correct tab.
+            </para>
+            <screenshot>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="figures/registers-view.png" format="PNG"/>
+                    </imageobject>
+                    <textobject> <phrase>The Register Editing Widget</phrase>
+                    </textobject>
+                </mediaobject>
+            </screenshot>
+            <para>
+                This widget shows the current values of all of the CPU
+                registers.  You can edit the register values by clicking in the
+                <interface>Value</interface> column and entering a new value.
+                If the value for the register changed since the last time the
+                debugger stopped, it will be highlighted in red.
+            </para>
+        </sect3>
+        <sect3 id="nemiver-sect-memory">
+            <title>Memory</title>
+            <para>
+                The memory widget allows you to view a section of memory
+                directly.  This enables you to get a lower-level view of what's
+                happening while your program is running.
+            </para>
+            <screenshot>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="figures/memory-view.png" format="PNG"/>
+                    </imageobject>
+                    <textobject> <phrase>The Memory Editing Widget</phrase>
+                    </textobject>
+                </mediaobject>
+            </screenshot>
+            <para>
+                To display a segment of memory in the memory view widget, enter
+                a memory address in the <interface>Address</interface> field.
+                If the address is valid for the program being debugged, the
+                memory view will display the memory values starting at the
+                specified address.  Memory values can be displayed in byte
+                format, word format (2 bytes), or long word format (4 bytes) by
+                choosing an option from the <interface>Group By</interface>
+                drop-down menu.  The memory values will automatically be updated
+                as you step through the program.
+            </para>
+            <para>
+                In addition to viewing the memory values, you can also use the
+                memory widget to modify memory values.  You can edit either the
+                hex byte representation (the left-hand section of the memory
+                widget), or the ASCII representation (the right-hand section of
+                the memory widget).  All changes will be applied immediately.
+            </para>
+        </sect3>
+        <sect3 id="nemiver-sect-remote">
+            <title>Remote Debugging</title>
+            <para>
+                &app; allows you to connect to a remote debugging server.  To do
+                so, select
+                <menuchoice>
+                    <guimenu>File</guimenu>
+                    <guimenuitem>Connect to Remote Target...</guimenuitem>
+                </menuchoice>
+            </para>
+            <screenshot>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="figures/connect-remote-dialog.png" format="PNG"/>
+                    </imageobject>
+                    <textobject> <phrase>Remote Debugging Dialog</phrase>
+                    </textobject>
+                </mediaobject>
+            </screenshot>
+        </sect3>
+    </sect2>
   </sect1>
+
   <sect1 id="nemiver-sect-sessions">
-    <title>Debugging Sessions</title>
+    <title>Session Save and Restore</title>
     <para>
       &app; can save your debugging sessions for you so that you can resume
       them at a later time.  This includes saving information such as which
@@ -716,7 +887,7 @@ Template last modified Jan 30, 2002
           start that debugging session from the command line.  For example, if
           you want to run session number 3, you can do so with the following
           command:
-          <command>&appcmd; --executesession 3</command>.
+          <command>&appcmd; --session 3</command>.
         </para>
       </sect3>
     </sect2>
