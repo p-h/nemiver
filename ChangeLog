@@ -1,5 +1,11 @@
 2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Move the 'Show Global
+	Variables' action into the 'Debugger ready' action group so that it is
+	disabled when there is no program being debugged (Bug #515541)
+
+2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: define const strings for
 	the status notebook tab titles so that we can use the same variable in the
 	tab name and in the View menu (so the View menu and the tab title don't get

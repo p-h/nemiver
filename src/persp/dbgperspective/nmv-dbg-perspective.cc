@@ -2553,7 +2553,15 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "F12"
         },
-
+        {
+            "ActivateGlobalVariablesDialogMenuAction",
+            nil_stock_id,
+            _("Show Global Variables"),
+            _("Display all global variables"),
+            sigc::mem_fun(*this, &DBGPerspective::on_activate_global_variables),
+            ActionEntry::DEFAULT,
+            "<control>G"
+        },
         {
             "RefreshLocalVariablesMenuItemAction",
             nil_stock_id,
@@ -2643,15 +2651,6 @@ DBGPerspective::init_actions ()
             "<alt>6"
         },
 #endif // WITH_MEMORYVIEW
-        {
-            "ActivateGlobalVariablesDialogMenuAction",
-            nil_stock_id,
-            _("Show Global Variables"),
-            _("Display all global variables"),
-            sigc::mem_fun(*this, &DBGPerspective::on_activate_global_variables),
-            ActionEntry::DEFAULT,
-            "<control>G"
-        },
         {
             "ShowCommandsMenuAction",
             nil_stock_id,
