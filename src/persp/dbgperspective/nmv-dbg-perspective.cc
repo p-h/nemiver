@@ -2582,8 +2582,8 @@ DBGPerspective::init_actions ()
         {
             "ActivateCallStackViewMenuAction",
             nil_stock_id,
-            _("Stack"),
-            _("Switch to Stack View"),
+            _("Call Stack"),
+            _("Switch to Call Stack View"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_call_stack_view),
             ActionEntry::DEFAULT,
             "<alt>1"
