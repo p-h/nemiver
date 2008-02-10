@@ -1,3 +1,10 @@
+2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: define const strings for
+	the status notebook tab titles so that we can use the same variable in the
+	tab name and in the View menu (so the View menu and the tab title don't get
+	out of sync like they did below when 'Call Stack' was just 'Stack').
+
 2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/uicommon/nmv-source-editor.cc: initialize source buffer by placing

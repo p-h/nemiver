@@ -108,6 +108,14 @@ const char *STEP_INTO         = "nmv-step-into" ;
 const char *STEP_OVER         = "nmv-step-over" ;
 const char *STEP_OUT          = "nmv-step-out" ;
 
+// labels for widget tabs in the status notebook
+const char *CALL_STACK_TITLE        = _("Call Stack");
+const char *LOCAL_VARIABLES_TITLE   = _("Variables");
+const char *TARGET_TERMINAL_TITLE   = _("Target Terminal");
+const char *BREAKPOINTS_TITLE       = _("Breakpoints");
+const char *REGISTERS_VIEW_TITLE    = _("Registers");
+const char *MEMORY_VIEW_TITLE       = _("Memory");
+
 const char *SESSION_NAME = "sessionname" ;
 const char *PROGRAM_NAME= "programname" ;
 const char *PROGRAM_ARGS= "programarguments" ;
@@ -2582,7 +2590,7 @@ DBGPerspective::init_actions ()
         {
             "ActivateCallStackViewMenuAction",
             nil_stock_id,
-            _("Call Stack"),
+            CALL_STACK_TITLE,
             _("Switch to Call Stack View"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_call_stack_view),
             ActionEntry::DEFAULT,
@@ -2591,7 +2599,7 @@ DBGPerspective::init_actions ()
         {
             "ActivateVariablesViewMenuAction",
             nil_stock_id,
-            _("Variables"),
+            LOCAL_VARIABLES_TITLE,
             _("Switch to Variables View"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_variables_view),
             ActionEntry::DEFAULT,
@@ -2600,7 +2608,7 @@ DBGPerspective::init_actions ()
         {
             "ActivateTargetTerminalViewMenuAction",
             nil_stock_id,
-            _("Target Terminal"),
+            TARGET_TERMINAL_TITLE,
             _("Switch to Target Terminal View"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_target_terminal_view),
             ActionEntry::DEFAULT,
@@ -2609,8 +2617,8 @@ DBGPerspective::init_actions ()
         {
             "ActivateBreakpointsViewMenuAction",
             nil_stock_id,
-            _("Breakpoints"),
-            _("Switch to Breakpoints  View"),
+            BREAKPOINTS_TITLE,
+            _("Switch to Breakpoints View"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_breakpoints_view),
             ActionEntry::DEFAULT,
             "<alt>4"
@@ -2618,7 +2626,7 @@ DBGPerspective::init_actions ()
         {
             "ActivateRegistersViewMenuAction",
             nil_stock_id,
-            _("Registers"),
+            REGISTERS_VIEW_TITLE,
             _("Switch to Registers View"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_registers_view),
             ActionEntry::DEFAULT,
@@ -2628,7 +2636,7 @@ DBGPerspective::init_actions ()
         {
             "ActivateMemoryViewMenuAction",
             nil_stock_id,
-            _("Memory"),
+            MEMORY_VIEW_TITLE,
             _("Switch to Memory View"),
             sigc::mem_fun(*this, &DBGPerspective::on_activate_memory_view),
             ActionEntry::DEFAULT,
@@ -5635,7 +5643,7 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
             get_call_stack_scrolled_win ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_call_stack_scrolled_win (),
-                                             _("Call Stack"),
+                                             CALL_STACK_TITLE,
                                              CALL_STACK_VIEW_INDEX) ;
             m_priv->call_stack_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page
@@ -5662,7 +5670,7 @@ DBGPerspective::set_show_variables_editor_view (bool a_show)
             get_local_vars_inspector_scrolled_win ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_local_vars_inspector_scrolled_win (),
-                                             _("Variables"),
+                                             LOCAL_VARIABLES_TITLE,
                                              VARIABLES_VIEW_INDEX) ;
             m_priv->variables_editor_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page
@@ -5689,7 +5697,7 @@ DBGPerspective::set_show_terminal_view (bool a_show)
             get_terminal_box ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_terminal_box (),
-                                             _("Target Terminal"),
+                                             TARGET_TERMINAL_TITLE,
                                              TERMINAL_VIEW_INDEX) ;
             m_priv->terminal_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
@@ -5715,7 +5723,7 @@ DBGPerspective::set_show_breakpoints_view (bool a_show)
             get_breakpoints_scrolled_win ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_breakpoints_scrolled_win (),
-                                             _("Breakpoints"),
+                                             BREAKPOINTS_TITLE,
                                              BREAKPOINTS_VIEW_INDEX) ;
             m_priv->breakpoints_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
@@ -5741,7 +5749,7 @@ DBGPerspective::set_show_registers_view (bool a_show)
             get_registers_scrolled_win ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_registers_scrolled_win (),
-                                             _("Registers"),
+                                             REGISTERS_VIEW_TITLE,
                                              REGISTERS_VIEW_INDEX) ;
             m_priv->registers_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
@@ -5768,7 +5776,7 @@ DBGPerspective::set_show_memory_view (bool a_show)
             get_memory_view ().widget ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
                                             (get_memory_view ().widget (),
-                                             _("Memory"),
+                                             MEMORY_VIEW_TITLE,
                                              MEMORY_VIEW_INDEX) ;
             m_priv->memory_view_is_visible = true ;
             m_priv->statuses_notebook->set_current_page (page_num);
