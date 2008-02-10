@@ -1,5 +1,11 @@
 2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/glade/loadcoredialog.glade: don't allow this to
+	be resizeable since it would just add a bunch of useless blank space if it
+	was resized.
+
+2008-02-09  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: rename 'View->Stack' to
 	'View->Call Stack' to match the tab name in the status notebook.  Fixes bug
 	#515476
