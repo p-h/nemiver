@@ -1,5 +1,13 @@
 2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: disable setting a
+	breakpoint by clicking in the source view margin if the debugger is not
+	running (e.g. if a user just opened a source file directly and clicked in
+	teh margin).  Also disable querying variable value tooltips when the
+	debugger is not running (Bug #515287).
+
+2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* src/persp/dbgperspective/glade/proclistdialog.glade: add some spacing
 	between the label and the text entry box
 

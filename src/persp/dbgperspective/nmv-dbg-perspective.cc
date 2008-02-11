@@ -1513,11 +1513,13 @@ DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
 
-    SourceEditor *cur_editor = get_current_source_editor () ;
-    THROW_IF_FAIL (cur_editor) ;
-    UString path ;
-    cur_editor->get_path (path) ;
-    toggle_breakpoint (path, a_line + 1 ) ;
+    if (m_priv->debugger->get_state () != IDebugger::NOT_STARTED) {
+        SourceEditor *cur_editor = get_current_source_editor () ;
+        THROW_IF_FAIL (cur_editor) ;
+        UString path ;
+        cur_editor->get_path (path) ;
+        toggle_breakpoint (path, a_line + 1 ) ;
+    }
 
     NEMIVER_CATCH
 }
@@ -1567,7 +1569,9 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
            DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
     m_priv->mouse_in_source_editor_x = x ;
     m_priv->mouse_in_source_editor_y = y ;
-    restart_mouse_immobile_timer () ;
+    if (m_priv->debugger->get_state () != IDebugger::NOT_STARTED) {
+        restart_mouse_immobile_timer () ;
+    }
     NEMIVER_CATCH
     return false ;
 }
