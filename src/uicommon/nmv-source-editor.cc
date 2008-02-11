@@ -430,7 +430,7 @@ SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
     if (!where_marker) {
 #ifdef WITH_SOURCEVIEWMM2
         Glib::RefPtr<Gtk::TextMark> where_marker =
-            source_view ().get_source_buffer ()->create_mark
+            source_view ().get_source_buffer ()->create_source_mark
 #else
         Glib::RefPtr<gtksourceview::SourceMarker> where_marker =
             source_view ().get_source_buffer ()->create_marker
@@ -513,7 +513,7 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     LOG_DD ("creating marker of type: " << marker_type) ;
 #ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<gtksourceview::SourceMark> marker =
-        source_view ().get_source_buffer ()->create_mark
+        source_view ().get_source_buffer ()->create_source_mark
 #else
     Glib::RefPtr<gtksourceview::SourceMarker> marker =
         source_view ().get_source_buffer ()->create_marker

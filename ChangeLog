@@ -1,3 +1,9 @@
+2008-02-11  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/uicommon/nmv-source-editor.cc: update for gtksourceviewmm2 API changes
+	(create_mark() -> create_source_mark())
+
 2008-02-10  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: disable setting a

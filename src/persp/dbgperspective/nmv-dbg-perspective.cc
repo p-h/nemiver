@@ -4129,9 +4129,9 @@ DBGPerspective::open_file (const UString &a_path,
         if (cur_line_iter) {
 #ifdef WITH_SOURCEVIEWMM2
             Glib::RefPtr<SourceMark> where_marker =
-                source_buffer->create_mark (WHERE_MARK,
-                                            WHERE_CATEGORY,
-                                            cur_line_iter) ;
+                source_buffer->create_source_mark (WHERE_MARK,
+                                                   WHERE_CATEGORY,
+                                                   cur_line_iter) ;
 #else
             Glib::RefPtr<SourceMarker> where_marker =
                 source_buffer->create_marker (WHERE_MARK,
