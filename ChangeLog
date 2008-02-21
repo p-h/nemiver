@@ -1,3 +1,7 @@
+2008-02-20  Jonathon Jongsma  <jjongsma@gnome.org>
+	* debian/*: updated for new snapshot ubuntu build (based on the official
+	ubuntu packaging)
+
 2008-02-11  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

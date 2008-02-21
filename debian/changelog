@@ -1,8 +1,78 @@
-nemiver (0.2.0+svn20061213) unstable; urgency=low
+nemiver (0.4.9+svn20080217ubuntu1) gutsy; urgency=low
 
-  * SVN current
+  * Pre-release of 0.5.0
 
- -- Hubert Figuiere <hub@figuiere.net>  Wed, 13 Dec 2006 17:12:29 -0500
+ -- Jonathon Jongsma <jjongsma@gnome.org>  Sun, 17 Feb 2008 09:57:56 -0600
+
+nemiver (0.4.0+svn20071007ubuntu1) feisty; urgency=low
+
+  * Explicitly put in universe due to lack of overrides in ppa
+
+ -- Jonathon Jongsma <jjongsma@gnome.org>  Sun,  7 Oct 2007 13:07:49 -0500
+
+nemiver (0.4.0+svn20071007) feisty; urgency=low
+
+  * New snapshot
+    * Preliminary support for reading memory (no write support yet)
+    * improved register support
+
+ -- Jonathon Jongsma <jjongsma@gnome.org>  Sun,  7 Oct 2007 10:24:15 -0500
+
+nemiver (0.4.0-0ubuntu4) gutsy; urgency=low
+
+  * debian/rules: use /usr/share/cdbs/1/rules/simple-patchsys.mk.
+  * debian/patches/01-libgtop-API-change.patch: apply nemiver SVN r509. 
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Tue, 26 Jun 2007 07:03:41 +0200
+
+nemiver (0.4.0-0ubuntu3) gutsy; urgency=low
+
+  * Rebuild against glib, now that the fix is actually applied.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Mon, 25 Jun 2007 16:27:44 +0200
+
+nemiver (0.4.0-0ubuntu2) gutsy; urgency=low
+
+  * Rebuild for glib ABI change.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Mon, 25 Jun 2007 11:25:18 +0200
+
+nemiver (0.4.0-0ubuntu1) gutsy; urgency=low
+
+  * New upstream release:
+    - enable/disable breakpoints
+    - enable refresh of breakpoints view at will
+    - enable filtering of process list
+    - added a user manual
+    - set breakpoints by typing function name or file location
+    - added a font selection settings
+    - switch mouse pointer to busy cursor when gdb is running
+    - added a --env option as in nemiver --env "foo=bar foobar=baz" prog-to-debug
+    - handle methods overload choosing when setting freeform breakpoints.
+    - allow remote processes debugging using gdbserver.
+    - new nemiver icons set
+  * debian/control: 
+    - added  libgnome2-dev (>= 2.14), gnome-doc-utils (>= 0.3.2) to 
+      Build-Depends.
+    - dropped libnemivercommon* and nemiver-dev packages.
+  * debian/rules: --disable-scrollkeeper.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Mon, 04 Jun 2007 11:33:31 +0200
+
+nemiver (0.3.0-0ubuntu1) feisty; urgency=low
+
+  * New upstream release.
+  * debian/contol:
+    - bumped libgtksourceviewmm Build-Depends.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Mon, 22 Jan 2007 09:35:05 +0100
+
+nemiver (0.2.0-0ubuntu1) feisty; urgency=low
+
+  * New upstream release:
+    - lots and lots of good fixes.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Thu, 14 Dec 2006 10:21:13 +0100
 
 nemiver (0.1.0-0ubuntu2) feisty; urgency=low
 

@@ -1,12 +1,18 @@
 #!/usr/bin/make -f
-DEB_AUTO_CLEANUP_RCS            := yes
-
 include /usr/share/cdbs/1/class/gnome.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
 
-DEB_CONFIGURE_EXTRA_FLAGS	:= --with-gconf-schema-file-dir=/usr/share/gconf/schemas
+DEB_CONFIGURE_EXTRA_FLAGS	:= --with-gconf-schema-file-dir=/usr/share/gconf/schemas --disable-scrollkeeper --disable-autotests
 
-binary-post-install/nemiver::
-	-rm debian/tmp/usr/lib/nemiver/plugins/*.la
-	-rm debian/tmp/usr/lib/nemiver/plugins/*.a
-
+binary-install/nemiver::
+	rm -rf 	debian/nemiver/var 				\
+		debian/nemiver/usr/include 			\
+		debian/nemiver/usr/lib/pkgconfig/*.pc		\
+		debian/nemiver/usr/lib/lib*.la 			\
+		debian/nemiver/usr/lib/lib*.a			\
+		debian/nemiver/usr/lib/lib*.so			\
+		debian/nemiver/usr/lib/nemiver/modules/*.la	\
+		debian/nemiver/usr/lib/nemiver/modules/*.a	\
+		debian/nemiver/usr/lib/nemiver/plugins/*/*.la	\
+		debian/nemiver/usr/lib/nemiver/plugins/*/*.a
