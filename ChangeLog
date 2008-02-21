@@ -1,4 +1,16 @@
 2008-02-20  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(on_leave_notify_event_signal): protect signal handler with try/catch.
+	(restart_mouse_immobile_timer): use connect_seconds() instead of connect()
+	(stop_mouse_immobile_timer): explicitly hide() the popup tip when we stop
+	the timer due to a leave notify event.  This fixes a bug where if you had
+	hovered over a variable and a tooltip popped up and then you switched to a
+	different window with Alt+Tab, the tooltip stayed on top of the new window
+	and wouldn't disappear.
+
+2008-02-20  Jonathon Jongsma  <jjongsma@gnome.org>
+
 	* debian/*: updated for new snapshot ubuntu build (based on the official
 	ubuntu packaging)
 

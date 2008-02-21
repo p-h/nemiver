@@ -1579,9 +1579,11 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
 void
 DBGPerspective::on_leave_notify_event_signal (GdkEventCrossing *a_event)
 {
+    NEMIVER_TRY
     LOG_FUNCTION_SCOPE_NORMAL_D(DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
     if (a_event) {}
     stop_mouse_immobile_timer () ;
+    NEMIVER_CATCH
 }
 
 bool
@@ -3753,9 +3755,9 @@ DBGPerspective::restart_mouse_immobile_timer ()
     THROW_IF_FAIL (m_priv->workbench) ;
 
     m_priv->timeout_source_connection.disconnect () ;
-    m_priv->timeout_source_connection = Glib::signal_timeout ().connect
+    m_priv->timeout_source_connection = Glib::signal_timeout ().connect_seconds
         (sigc::mem_fun (*this, &DBGPerspective::on_mouse_immobile_timer_signal),
-         1000);
+         1);
     get_popup_tip ().hide () ;
 }
 
@@ -3763,7 +3765,9 @@ void
 DBGPerspective::stop_mouse_immobile_timer ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN) ;
+    THROW_IF_FAIL (m_priv) ;
     m_priv->timeout_source_connection.disconnect () ;
+    get_popup_tip ().hide () ;
 }
 
 PopupTip&
