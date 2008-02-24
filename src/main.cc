@@ -319,12 +319,25 @@ process_command_line (int& a_argc, char** a_argv, int &a_return)
                                                 (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions ();
-            list<ISessMgr::Session>::reverse_iterator session_iter;
             list<ISessMgr::Session>& sessions =
                             debug_persp->session_manager ().sessions ();
-            session_iter = sessions.rbegin ();
-            if (session_iter != sessions.rend ()) {
-                debug_persp->execute_session (*session_iter);
+            if (!sessions.empty ()) {
+                list<ISessMgr::Session>::iterator session_iter,
+                    latest_session_iter;
+                glong time_val = 0;
+                for (session_iter = sessions.begin ();
+                        session_iter != sessions.end ();
+                        ++session_iter) {
+                    std::map<UString, UString>::const_iterator map_iter = session_iter->properties ().find ("lastruntime");
+                    if (map_iter != session_iter->properties ().end ()) {
+                        glong new_time = atoi (map_iter->second.c_str ());
+                        if (new_time > time_val) {
+                            time_val = new_time;
+                            latest_session_iter = session_iter;
+                        }
+                    }
+                }
+                debug_persp->execute_session (*latest_session_iter);
             } else {
                 cerr << "Could not find any sessions"
                      << "\n";

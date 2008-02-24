@@ -120,6 +120,7 @@ const char *SESSION_NAME = "sessionname" ;
 const char *PROGRAM_NAME= "programname" ;
 const char *PROGRAM_ARGS= "programarguments" ;
 const char *PROGRAM_CWD= "programcwd" ;
+const char *LAST_RUN_TIME= "lastruntime" ;
 const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain" ;
 
@@ -3815,6 +3816,10 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 a_session.properties ().clear () ; a_session.properties ()[SESSION_NAME] = session_name ; a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path ;
     a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
+    GTimeVal timeval;
+    g_get_current_time (&timeval);
+    UString time;
+    a_session.properties ()[LAST_RUN_TIME] = time.printf ("%ld", timeval.tv_sec);
     a_session.env_variables () = m_priv->env_variables;
 
     a_session.opened_files ().clear () ;
