@@ -1,6 +1,7 @@
 nemiver (0.4.0-3) unstable; urgency=medium
 
-  * Remove spurious scroolkeeper database (closes: #469431)
+  * Removed spurious scroolkeeper database (closes: #469431)
+  * Bumped versioned build-dep on debhelper due to dh_icons
 
  -- Luca Bruno <lucab@debian.org>  Thu, 06 Mar 2008 15:44:12 +0100
 
