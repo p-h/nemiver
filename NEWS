@@ -36,6 +36,10 @@ Fixes, cleanup and improvements
       intrusive
     * #465263 – error parsing breakpoint table
     * #502526 – gdbmi parsing error
+    * #515454 - Remove total number of lines information
+    * #515541 - 'Debug -> Show Global Variables'  active even not debugging
+    * #515271 – position of the cursor is wrong just after opening a file
+    * #515287 - disable breakpoint setting when not debugging
 
 [Baptiste Mille-Mathias]
 

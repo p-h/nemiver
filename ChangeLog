@@ -1,5 +1,9 @@
 2008-03-23  Dodji Seketeli <dodji@gnome.org>
 
+	* NEWS: update this
+
+2008-03-23  Dodji Seketeli <dodji@gnome.org>
+
 	* configure.ac: bump versions of glibmm/gtkmm deps
 
 2008-02-23  Jonathon Jongsma  <jjongsma@gnome.org>
