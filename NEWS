@@ -43,7 +43,7 @@ Fixes, cleanup and improvements
 
 [Baptiste Mille-Mathias]
 
-    * HIG fixes
+    * many many HIG fixes and hassling ;-)
     * #499263 – make check fail
 
 [Emre Turkay]
@@ -63,6 +63,17 @@ Fixes, cleanup and improvements
     * #436374 – Error output when debugging an gtkmm example
     * #514134 – gdbmi member variable parsing error
 
+Translations
+-------------
+    * [ja] Takeshi AIHANA
+    * [sv] Daniel Nylander
+    * [dz] Pema Geyleg
+    * [ca] Jordi Mas, Josep Puigdemont i Casamajó, Gil Forcada
+    * [es] Jorge Gonzalez
+    * [fi] Ilkka Tuohela
+    * [fr] Claude Paroz
+    * [ar] Djihed Afifi
+    * [oc] Yannig Marchegay
 
 0.4.0 Release
 =============
