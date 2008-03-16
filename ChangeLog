@@ -1,3 +1,8 @@
+2008-03-23  Dodji Seketeli <dodji@gnome.org>
+
+	* data/nemiver.desktop.in: add SartupNotify to desktop file.
+	  Patch from Sven Arvidsson.
+
 ==================== 0.5.0 release ============
 
 2008-03-23  Dodji Seketeli <dodji@gnome.org>

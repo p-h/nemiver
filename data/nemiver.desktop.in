@@ -8,3 +8,4 @@ _Comment=Debug Applications
 Icon=nemiver
 Exec=nemiver
 Categories=GNOME;Application;Development;
+StartupNotify=true
