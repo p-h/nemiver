@@ -1,3 +1,11 @@
+nemiver (0.5.0-1) unstable; urgency=low
+
+  * New upstream release
+    + Added hex editor widget via libgtkhex
+  * Dropping patches and manpage accepted upstream
+
+ -- Luca Bruno <lucab@debian.org>  Sun, 16 Mar 2008 20:57:35 +0100
+
 nemiver (0.4.0-3) unstable; urgency=medium
 
   * Removed spurious scroolkeeper database (closes: #469431)
