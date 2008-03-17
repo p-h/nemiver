@@ -2,6 +2,14 @@
 
 	patch by: Peter Gordon <peter@thecodergeek.com>
 
+	* src/confmgr/nmv-gconf-mgr.cc:
+	* src/confmgr/nmv-i-conf-mgr.h: fix repeated use of the same argument name
+	in one function.
+
+2008-03-16  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	patch by: Peter Gordon <peter@thecodergeek.com>
+
 	* src/common/nmv-conf-manager.cc:
 	* src/common/nmv-date-utils.cc:
 	* src/common/nmv-log-stream.cc:

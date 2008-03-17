@@ -48,7 +48,7 @@ public:
     void add_key_to_notify (const UString &a_key);
 
     bool get_key_value (const UString &a_key, UString &a_value) ;
-    void set_key_value (const UString &a_key, const UString &a_key) ;
+    void set_key_value (const UString &a_key, const UString &a_value) ;
 
     bool get_key_value (const UString &a_key, bool &a_value) ;
     void set_key_value (const UString &a_key, bool a_value) ;
