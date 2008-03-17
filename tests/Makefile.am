@@ -7,7 +7,8 @@ runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
 runtestoverloads runtestderef \
 runtestlocalvarslist runtestcpplexer \
-runtestcppparser runtestglobalvariables
+runtestcppparser runtestglobalvariables \
+runtestlibtoolwrapperdetection
 
 
 else
@@ -90,6 +91,12 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestcppparser_SOURCES=test-cpp-parser.cc
 runtestcppparser_LDADD=@NEMIVERCOMMON_LIBS@ \
+@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
+$(top_builddir)/src/langs/libnemivercparser.la \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestlibtoolwrapperdetection_SOURCES=test-libtool-wrapper-detection.cc
+runtestlibtoolwrapperdetection_LDADD=@NEMIVERCOMMON_LIBS@ \
 @BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
 $(top_builddir)/src/langs/libnemivercparser.la \
 $(top_builddir)/src/common/libnemivercommon.la
