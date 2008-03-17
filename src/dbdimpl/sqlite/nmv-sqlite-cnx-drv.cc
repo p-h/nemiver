@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <cstring>
 #include "config.h"
 
 #include <sqlite3.h>

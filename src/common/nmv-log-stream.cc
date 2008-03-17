@@ -27,6 +27,7 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+#include <cstring>
 #include <sys/time.h>
 #include <iostream>
 #include <ext/hash_map>

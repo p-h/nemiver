@@ -27,6 +27,7 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+#include <cstring>
 #include "nmv-ustring.h"
 #include "nmv-date-utils.h"
 

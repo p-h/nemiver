@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <cstring>
 #include <deque>
 #include "nmv-cpp-lexer.h"
 

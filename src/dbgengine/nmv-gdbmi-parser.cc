@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <cstring>
 #include <sstream>
 #include "nmv-gdbmi-parser.h"
 

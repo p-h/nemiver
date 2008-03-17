@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <cstring>
 #include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>

@@ -1,3 +1,20 @@
+2008-03-16  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	patch by: Peter Gordon <peter@thecodergeek.com>
+
+	* src/common/nmv-conf-manager.cc:
+	* src/common/nmv-date-utils.cc:
+	* src/common/nmv-log-stream.cc:
+	* src/common/nmv-proc-utils.cc:
+	* src/common/nmv-ustring.cc:
+	* src/dbdimpl/sqlite/nmv-sqlite-cnx-drv.cc:
+	* src/dbdimpl/sqlite/nmv-sqlite-cnx-mgr-drv.cc:
+	* src/dbgengine/nmv-gdb-engine.cc:
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	* src/langs/nmv-cpp-lexer.cc:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix build for gcc 4.3
+	which streamlines a bunch of header includes
+
 2008-03-23  Dodji Seketeli <dodji@gnome.org>
 
 	* data/nemiver.desktop.in: add SartupNotify to desktop file.

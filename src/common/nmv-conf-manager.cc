@@ -24,6 +24,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <cstring>
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <fstream>

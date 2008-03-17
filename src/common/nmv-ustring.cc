@@ -27,6 +27,7 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+#include <cstring>
 #include <sstream>
 #include "nmv-ustring.h"
 #include "nmv-safe-ptr-utils.h"
