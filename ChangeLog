@@ -1,6 +1,13 @@
+2008-03-24  Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc: fix an annoying packet buffer
+	  management buffer that lead to some random errors when
+	  GDBEngine receives large gdb output in chunk.
+
 ================ 0.5.1 release ===================
 
-2008-03-17  Dodji Seketgeli <dodji@gnome.org>
+2008-03-17  Dodji Seketeli <dodji@gnome.org>
+
 	* src/common/nmv-proc-utils.cc,h:
 	  added  is_libtool_executable_wrapper () entry point to detect whever
 	  if a file is a litbool wrapper to an executable. If so, it returns
@@ -15,8 +22,8 @@
 	patch by: Peter Gordon <peter@thecodergeek.com>
 
 	* src/confmgr/nmv-gconf-mgr.cc:
-	* src/confmgr/nmv-i-conf-mgr.h: fix repeated use of the same argument name
-	in one function.
+	* src/confmgr/nmv-i-conf-mgr.h:
+	  fix repeated use of the same argument name in one function.
 	* src/dbgengine/nmv-gdbmi-parser.cc:
 	* src/langs/nmv-cpp-lexer.cc:
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix build for gcc 4.3
