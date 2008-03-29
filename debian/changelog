@@ -1,3 +1,11 @@
+nemiver (0.5.1-1) unstable; urgency=low
+
+  * New upstream release 
+    + fix build for gcc 4.3
+    + ability to inspect libtool wrapper scripts
+
+ -- Luca Bruno <lucab@debian.org>  Sat, 29 Mar 2008 09:58:33 +0100
+
 nemiver (0.5.0-1) unstable; urgency=low
 
   * New upstream release
