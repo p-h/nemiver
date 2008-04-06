@@ -1,3 +1,10 @@
+2008-04-06 Dodji Seketeli <dodji@gnome.org>
+
+	* tests/Makefile.am: don't run runtestoverloads automatically because
+	  gdb has broken it. Also, don't run runtestglobalvariables because
+	  the functionality is not mature yet. When the version of libstdc++
+	  changes the result of the test changes.
+
 2008-03-24  Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.cc: fix an annoying packet buffer
