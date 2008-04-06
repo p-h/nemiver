@@ -72,6 +72,8 @@ cat-announcement:
 	@echo "This release is available as a source package in tar.gz format"
 	@echo "and can be downloaded from: $(RELEASE_URL_BASE)"
 	@echo ""
+	@echo "The home page of the Nemiver project is at http://home.gna.org/nemiver"
+	@echo ""
 	@echo "What's Changed?"
 	@echo "==============="
 	@echo ""
