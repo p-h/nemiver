@@ -4,6 +4,10 @@
 
 2008-04-06 Dodji Seketeli <dodji@gnome.org>
 
+	* NEWS: updated.
+
+2008-04-06 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdbmi-parser.cc:
 	  (parse_breakpoint): fix PENDING breakpoint parsing. This was leading
 	  to a crash in cases where the breakpoint was being set using
