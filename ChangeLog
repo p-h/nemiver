@@ -1,5 +1,9 @@
 2008-04-06 Dodji Seketeli <dodji@gnome.org>
 
+	* NEWS, configure.ac: bump version number to 0.5.2
+
+2008-04-06 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
 	  (DBGPerspective::on_program_finished_signal): update the title of the
 	  workbench window when the inferior dies. This should fix bug
