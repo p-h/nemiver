@@ -1,5 +1,12 @@
 2008-04-06 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::on_program_finished_signal): update the title of the
+	  workbench window when the inferior dies. This should fix bug
+	  "526291 – Nemiver doesn't propose to stop the debugging application"
+
+2008-04-06 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdbmi-parser.cc:
 	  (parse_out_of_band_record): recognise lines starting with '='
 	  - i.e =thread-created,id=1\n - in gdbmi output records, parse them
