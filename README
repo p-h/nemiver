@@ -1,6 +1,6 @@
 About
 =====
-Nemiver is an project to write a standalone graphical debugger that integrates
+Nemiver is a project to write a standalone graphical debugger that integrates
 well in the GNOME desktop environment.
 It currently features a backend which uses the well known GNU Debugger gdb.
 
@@ -8,12 +8,15 @@ General
 =======
 - In addition to the toolbar buttons, you can toggle breakpoints simply by
   clicking in the margin on the line you want to break on.
-- hovering over a variable name for longer than 1 second should show its value
+- Hovering over a variable name for longer than 1 second should show its value
   as a tooltip window if the variable is in scope
+- attaching to a running process is as simple as typing
+    "nemiver --attach <the-name-of-your-program>"
+  You are not obliged to know the PID of the process beforehand.
 
 Sessions
 ========
-Nemiver uses an sqlite database to store basic information about a debugging
+Nemiver uses a sqlite database to store basic information about a debugging
 session so you can resume where you left off last time.  Whenever you start
 debugging, a new session is created for you automatically (unless you explicitly
 request to resume an existing session).  On exit, your session will
@@ -24,13 +27,14 @@ selecting File > Save Session to Disk.
 To resume a previously saved debugging session, you can either specify the
 session ID to the --executesession command line option or select File > Saved
 Sessions... > [select session] from the User interface.
+To resume the last saved debugging session you can just type "nemiver --last".
 
 Source Directories
 ==================
 Some versions of the GDB debugger don't provide full pathname information for
 breakpoints, etc.  In this case, you may need to specify which directories to
 search for source files.  These can be specified by manually adding source
-directories in the Preferences dialog.  In the future there will be a more
+directories in the Preferences dialog. In the future there will be a more
 explicit prompt asking the user to locate the requested file when nemiver can't
 determine the absolute path of a file on its own.
 
