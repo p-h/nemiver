@@ -1,3 +1,13 @@
+nemiver (0.5.2-1) unstable; urgency=low
+
+  * New upstream release
+    + fix an infinite loop on output parsing
+    + option to completely stop debugging
+    + brakpoints setting for not-yet-loaded shared libraries
+  * Now using libgtksourceviewmm 2.0 (closes: #474344)
+
+ -- Luca Bruno <lucab@debian.org>  Fri, 18 Apr 2008 20:51:47 +0200
+
 nemiver (0.5.1-1) unstable; urgency=low
 
   * New upstream release 
