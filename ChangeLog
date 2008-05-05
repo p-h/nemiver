@@ -1,5 +1,10 @@
 2008-05-05 Dodji Seketeli <dodji@gnome.org>
 
+	* src/common/nmv-ustring.cc: on FreeBSD, define strnlen().
+	  Patch from Romain Tartière <romain@blogreen.org>.
+
+2008-05-05 Dodji Seketeli <dodji@gnome.org>
+
 	* src/common/nmv-proc-utils.cc:
 	 Define __MAX_BAUD for FreeBSD.
 	 Include specific FreeBSD headers for process manipulation.
