@@ -1,3 +1,9 @@
+2008-05-05 Dodji Seketeli <dodji@gnome.org>
+
+	* src/common/nmv-log-stream-utils.h:
+	  For freebsd, make sure __ASSERT_FUNCTION is defined.
+	  Patch from Romain Tartière <romain@blogreen.org>.
+
 2008-05-04 Dodji Seketeli <dodji@gnome.org>
 
 	* data/nemiver.desktop.in: remove obsolete fields.
