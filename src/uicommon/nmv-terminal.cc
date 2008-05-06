@@ -23,9 +23,9 @@
  *See COPYRIGHT file copyright information.
  */
 #include "nmv-terminal.h"
-#if defined(_GNU_SOURCE)
+#if !defined(__FreeBSD__)
 # include <pty.h>
-#elif defined(__FreeBSD__)
+#else
 # include <sys/types.h>
 # include <sys/ioctl.h>
 # include <termios.h>
