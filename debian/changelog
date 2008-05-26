@@ -1,3 +1,10 @@
+nemiver (0.5.3-1) unstable; urgency=low
+
+  * New upstream version
+  * Dropping .desktop patch, accepted upstream
+
+ -- Luca Bruno <lucab@debian.org>  Mon, 26 May 2008 21:09:52 +0200
+
 nemiver (0.5.2-1) unstable; urgency=low
 
   * New upstream release
