@@ -520,6 +520,10 @@ public:
 
     Gtk::ScrolledWindow& get_call_stack_scrolled_win () ;
 
+    Gtk::ScrolledWindow& get_thread_list_scrolled_win () ;
+
+    Gtk::HPaned& get_call_stack_paned () ;
+
 #ifndef WITH_VARIABLE_WALKER
     LocalVarsInspector& get_local_vars_inspector () ;
 #else
@@ -671,6 +675,8 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> log_view_scrolled_win ;
     SafePtr<CallStack> call_stack ;
     SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win ;
+    SafePtr<Gtk::ScrolledWindow> thread_list_scrolled_win ;
+    SafePtr<Gtk::HPaned> call_stack_paned ;
 
     Glib::RefPtr<Gtk::ActionGroup> target_connected_action_group ;
     Glib::RefPtr<Gtk::ActionGroup> target_not_started_action_group ;
@@ -2218,35 +2224,35 @@ DBGPerspective::activate_status_view(Gtk::Widget& page)
     NEMIVER_CATCH
 }
 
-void 
-DBGPerspective::on_activate_call_stack_view()
+void
+DBGPerspective::on_activate_call_stack_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     NEMIVER_TRY
-    activate_status_view (get_call_stack_scrolled_win());
+    activate_status_view (get_call_stack_paned ());
     NEMIVER_CATCH
 }
 
 void 
-DBGPerspective::on_activate_variables_view () 
+DBGPerspective::on_activate_variables_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     NEMIVER_TRY
-    activate_status_view (get_local_vars_inspector_scrolled_win());
+    activate_status_view (get_local_vars_inspector_scrolled_win ());
     NEMIVER_CATCH
 }
 
 void 
-DBGPerspective::on_activate_output_view () 
+DBGPerspective::on_activate_output_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
     NEMIVER_TRY
 
     set_show_target_output_view (true);
-    activate_status_view (get_target_output_view_scrolled_win());
+    activate_status_view (get_target_output_view_scrolled_win ());
 
     NEMIVER_CATCH
 }
@@ -2258,7 +2264,7 @@ DBGPerspective::on_activate_target_terminal_view ()
 
     NEMIVER_TRY
 
-    activate_status_view (get_terminal_box());
+    activate_status_view (get_terminal_box ());
 
     NEMIVER_CATCH
 }
@@ -2989,20 +2995,14 @@ DBGPerspective::init_body ()
     get_log_view_scrolled_win ().add (*m_priv->log_view) ;
     m_priv->log_view->set_editable (false) ;
 
-    Gtk::HPaned *p = Gtk::manage (new Gtk::HPaned) ;
-    THROW_IF_FAIL (p) ;
-    p->add1 (get_thread_list ().widget ()) ;
-    p->add2 (get_call_stack ().widget ()) ;
-    get_call_stack_scrolled_win ().add (*p) ;
+    get_thread_list_scrolled_win ().add (get_thread_list ().widget ()) ;
+    get_call_stack_paned ().add1 (get_thread_list_scrolled_win ()) ;
+    get_call_stack_scrolled_win ().add (get_call_stack ().widget ()) ;
+    get_call_stack_paned ().add2 (get_call_stack_scrolled_win ()) ;
     get_local_vars_inspector_scrolled_win ().add
                                     (get_local_vars_inspector ().widget ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
     get_registers_scrolled_win ().add (get_registers_view ().widget());
-
-    /*
-    set_show_call_stack_view (true) ;
-    set_show_variables_editor_view (true) ;
-    */
 
     //unparent the body_main_paned, so that we can pack it
     //in the workbench later
@@ -5450,6 +5450,17 @@ DBGPerspective::get_call_stack ()
     return *m_priv->call_stack ;
 }
 
+Gtk::HPaned&
+DBGPerspective::get_call_stack_paned ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->call_stack_paned) {
+        m_priv->call_stack_paned.reset (new Gtk::HPaned ()) ;
+        THROW_IF_FAIL (m_priv->call_stack_paned) ;
+    }
+    return *m_priv->call_stack_paned ;
+}
+
 Gtk::ScrolledWindow&
 DBGPerspective::get_call_stack_scrolled_win ()
 {
@@ -5461,6 +5472,19 @@ DBGPerspective::get_call_stack_scrolled_win ()
         THROW_IF_FAIL (m_priv->call_stack_scrolled_win) ;
     }
     return *m_priv->call_stack_scrolled_win ;
+}
+
+Gtk::ScrolledWindow&
+DBGPerspective::get_thread_list_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv) ;
+    if (!m_priv->thread_list_scrolled_win) {
+        m_priv->thread_list_scrolled_win.reset (new Gtk::ScrolledWindow ()) ;
+        m_priv->thread_list_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                      Gtk::POLICY_AUTOMATIC) ;
+        THROW_IF_FAIL (m_priv->thread_list_scrolled_win) ;
+    }
+    return *m_priv->thread_list_scrolled_win ;
 }
 
 #ifndef WITH_VARIABLE_WALKER
@@ -5674,11 +5698,11 @@ void
 DBGPerspective::set_show_call_stack_view (bool a_show)
 {
     if (a_show) {
-        if (!get_call_stack_scrolled_win ().get_parent ()
+        if (!get_call_stack_paned ().get_parent ()
             && m_priv->call_stack_view_is_visible == false) {
-            get_call_stack_scrolled_win ().show_all () ;
+            get_call_stack_paned ().show_all () ;
             int page_num = m_priv->statuses_notebook->insert_page
-                                            (get_call_stack_scrolled_win (),
+                                            (get_call_stack_paned (),
                                              CALL_STACK_TITLE,
                                              CALL_STACK_VIEW_INDEX) ;
             m_priv->call_stack_view_is_visible = true ;
@@ -5686,11 +5710,11 @@ DBGPerspective::set_show_call_stack_view (bool a_show)
                                                 (page_num);
         }
     } else {
-        if (get_call_stack_scrolled_win ().get_parent ()
+        if (get_call_stack_paned ().get_parent ()
             && m_priv->call_stack_view_is_visible) {
             LOG_DD ("removing call stack view") ;
             m_priv->statuses_notebook->remove_page
-                                        (get_call_stack_scrolled_win ());
+                                        (get_call_stack_paned ());
             m_priv->call_stack_view_is_visible = false;
         }
         m_priv->call_stack_view_is_visible = false;

@@ -5,6 +5,11 @@
 	  addition to sending the command when the selection is changed.
 	  This should close bug #535359.
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: give the call stack
+	  and the thread list their own ScrolledWindow widgets so that
+	  scrolling the call stack widget doesn't also scroll the thread
+	  list widget off the top of the screen (fixes bug #535351)
+
 ================== 0.5.3 release point (done in 0.5 branch) =============
 
 2008-05-25 Dodji Seketeli <dodji@gnome.org>
