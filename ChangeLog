@@ -6,6 +6,13 @@
 
 2008-06-01 Dodji Seketeli <dodji@gnome.org>
 
+	* configure.ac: support the NEMIVER_ALLOW_WARNINGS env var to allow
+	  warnings in the build. This is a workaround the numerous warning we
+	  have with gcc 4.3. Some of these warnings are in gtkmm so we cannot
+	  fix them right away.
+
+2008-06-01 Dodji Seketeli <dodji@gnome.org>
+
 	* src/langs/nmv-cpp-parser.cc:
 	  (Parser::parse_simple_type_specifier): fix a gcc warning that
 	  could have lead to a bug.
