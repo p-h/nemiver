@@ -2234,6 +2234,8 @@ DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
 
     if (a_state == IDebugger::READY) {
         debugger_ready_signal ().emit (true) ;
+    } else {
+        debugger_ready_signal ().emit (false) ;
     }
 
     NEMIVER_CATCH
