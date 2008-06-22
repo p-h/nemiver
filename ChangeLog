@@ -1,5 +1,16 @@
 2008-06-22 Dodji Seketeli <dodji@gnome.org>
 
+	* src/uicommon/nmv-source-editor.cc: don't override
+	  on_key_press_even().
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::open_file()): we are not interested in key_press
+	  events.
+
+	  This entry should fix bug
+	  #515525 – Arrow keys don't work to navigate through source file
+
+2008-06-22 Dodji Seketeli <dodji@gnome.org>
+
 	* src/dbgengine/nmv-gdb-engine.cc,h,nmv-i-debugger.h:
 	  make IDebugger::set_breakpoint() take a condition in parameter.
 	  Add a breakpoint_number as a parameter of the

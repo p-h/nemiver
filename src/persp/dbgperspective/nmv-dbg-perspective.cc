@@ -4250,8 +4250,7 @@ DBGPerspective::open_file (const UString &a_path,
     append_source_editor (*source_editor, a_path) ;
 
     if (!source_editor->source_view ().has_no_window ()) {
-        source_editor->source_view ().add_events (Gdk::BUTTON3_MOTION_MASK
-                                                  |Gdk::KEY_PRESS_MASK) ;
+        source_editor->source_view ().add_events (Gdk::BUTTON3_MOTION_MASK) ;
         source_editor->source_view ().signal_button_press_event ().connect
             (sigc::mem_fun
              (*this,
@@ -5441,7 +5440,8 @@ DBGPerspective::debugger ()
         }
         LOG_DD ("using debugger_dynmod_name: '" << debugger_dynmod_name << "'") ;
         m_priv->debugger =
-            module_manager->load_iface<IDebugger> (debugger_dynmod_name, "IDebugger") ;
+            module_manager->load_iface<IDebugger> (debugger_dynmod_name,
+                                                   "IDebugger") ;
         IConfMgrSafePtr conf_mgr = workbench ().get_configuration_manager () ;
         m_priv->debugger->do_init (conf_mgr) ;
         m_priv->debugger->set_event_loop_context

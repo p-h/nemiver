@@ -85,8 +85,7 @@ public:
     void enable_events ()
     {
         add_events (Gdk::LEAVE_NOTIFY_MASK
-                    |Gdk::BUTTON_PRESS_MASK
-                    |Gdk::KEY_PRESS_MASK) ;
+                    |Gdk::BUTTON_PRESS_MASK) ;
     }
 
     void do_custom_button_press_event_handling (GdkEventButton *a_event)
@@ -128,12 +127,6 @@ public:
             do_custom_button_press_event_handling (a_event) ;
             return false ;
         }
-    }
-
-    bool on_key_press_event (GdkEventKey *a_event)
-    {
-        Gtk::Widget::on_key_press_event (a_event) ;
-        return false ;
     }
 
     sigc::signal<void, int>& marker_region_got_clicked_signal ()
