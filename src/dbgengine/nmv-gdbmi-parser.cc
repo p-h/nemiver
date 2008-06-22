@@ -285,6 +285,10 @@ parse_breakpoint (const UString &a_input,
     a_bkpt.file_name (attrs["file"]); //may be nil
     a_bkpt.file_full_name (attrs["fullname"]); //may be nil
     a_bkpt.line (atoi (attrs["line"].c_str ())); //may be nil
+    if ((iter = attrs.find ("cond")) != null_iter) {
+        a_bkpt.condition (iter->second);
+    }
+    a_bkpt.nb_times_hit (atoi (attrs["times"].c_str ()));
     //TODO: get the 'at' attribute that is present on targets that
     //are not compiled with -g.
     a_to = cur;

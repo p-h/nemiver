@@ -96,12 +96,11 @@ void
 on_stopped_signal (IDebugger::StopReason a_reason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
-                   int a_thread_id,
-                   const UString &a_cookie,
+                   int /*a_thread_id*/,
+                   int /*bp num*/,
+                   const UString &/*a_cookie*/,
                    IDebuggerSafePtr &a_debugger)
 {
-    if (a_has_frame || a_frame.level () || a_thread_id || a_cookie.empty ()) {}
-
     BOOST_REQUIRE (a_debugger) ;
 
     if (a_reason == IDebugger::EXITED_NORMALLY) {
@@ -114,7 +113,7 @@ on_stopped_signal (IDebugger::StopReason a_reason,
     }
     ++nb_stops;
 
-    if (a_frame.function_name () == "main" && nb_stops == 4) {
+    if (a_has_frame && a_frame.function_name () == "main" && nb_stops == 4) {
         a_debugger->print_variable_value ("foo_ptr") ;
         a_debugger->print_variable_value ("bar_ptr") ;
         a_debugger->print_variable_value ("baz_ptr") ;

@@ -146,7 +146,7 @@ public:
 
     mutable sigc::signal<void, IDebugger::StopReason,
                          bool, const IDebugger::Frame&,
-                         int, const UString&> stopped_signal;
+                         int, int, const UString&> stopped_signal;
 
     mutable sigc::signal<void,
                          const list<int>,
@@ -1077,15 +1077,18 @@ struct OnStoppedHandler: OutputHandler {
         if (a_in.has_command ()) {}
 
         int thread_id = m_out_of_band_record.thread_id ();
+        int breakpoint_number = -1;
+        IDebugger::StopReason reason = m_out_of_band_record.stop_reason ();
+        if (reason == IDebugger::BREAKPOINT_HIT)
+            breakpoint_number = m_out_of_band_record.breakpoint_number ();
 
         m_engine->stopped_signal ().emit
                     (m_out_of_band_record.stop_reason (),
                      m_out_of_band_record.has_frame (),
                      m_out_of_band_record.frame (),
-                     thread_id,
+                     thread_id, breakpoint_number,
                      a_in.command ().cookie ());
 
-        IDebugger::StopReason reason = m_out_of_band_record.stop_reason ();
 
         if (reason == IDebugger::EXITED_SIGNALLED
             || reason == IDebugger::EXITED_NORMALLY
@@ -2353,7 +2356,7 @@ GDBEngine::got_overloads_choice_signal () const
 
 sigc::signal<void, IDebugger::StopReason,
              bool, const IDebugger::Frame&,
-             int, const UString&>&
+             int, int, const UString&>&
 GDBEngine::stopped_signal () const
 {
     return m_priv->stopped_signal;
@@ -2559,9 +2562,12 @@ GDBEngine::on_stopped_signal (IDebugger::StopReason a_reason,
                               bool a_has_frame,
                               const IDebugger::Frame &a_frame,
                               int a_thread_id,
+                              int a_bkpt_num,
                               const UString &a_cookie)
 {
-    if (a_has_frame || a_frame.line () || a_thread_id || a_cookie.empty ()) {
+    if (a_has_frame || a_frame.line ()
+        || a_thread_id || a_cookie.empty ()
+        || a_bkpt_num) {
         //keep compiler happy
     }
 
@@ -2861,6 +2867,7 @@ GDBEngine::continue_to_position (const UString &a_path,
 void
 GDBEngine::set_breakpoint (const UString &a_path,
                            gint a_line_num,
+                           const UString &a_condition,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2871,11 +2878,37 @@ GDBEngine::set_breakpoint (const UString &a_path,
     //read http://sourceware.org/gdb/current/onlinedocs/gdb_6.html#SEC33
     //Also, we don't neet to explicitely 'set breakpoint pending' to have it
     //work. Even worse, setting it doesn't work.
-    queue_command (Command ("set-breakpoint", "break "
-                    + a_path
-                    + ":"
-                    + UString::from_int (a_line_num),
-                    a_cookie));
+    UString break_cmd ("break ");
+    if (!a_path.empty ()) {
+        break_cmd += a_path + ":";
+    }
+    break_cmd += UString::from_int (a_line_num);
+    if (!a_condition.empty ()) {
+        LOG_DD ("setting breakpoint with condition: " << a_condition);
+        break_cmd += " if " + a_condition;
+    } else {
+        LOG_DD ("setting breakpoint without condition");
+    }
+    queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
+    list_breakpoints (a_cookie);
+}
+
+void
+GDBEngine::set_breakpoint (const UString &a_func_name,
+                           const UString &a_condition,
+                           const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    THROW_IF_FAIL (m_priv);
+    UString break_cmd;
+    break_cmd += "break " + a_func_name;
+    if (!a_condition.empty ()) {
+        LOG_DD ("setting breakpoint with condition: " << a_condition);
+        break_cmd += " if " + a_condition;
+    } else {
+        LOG_DD ("setting breakpoint without condition");
+    }
+    queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
     list_breakpoints (a_cookie);
 }
 
@@ -2904,17 +2937,6 @@ GDBEngine::append_breakpoints_to_cache
     }
 }
 
-void
-GDBEngine::set_breakpoint (const UString &a_func_name,
-                           const UString &a_cookie)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("set-breakpoint",
-                            "break " + a_func_name,
-                            a_cookie));
-    list_breakpoints (a_cookie);
-}
 
 void
 GDBEngine::set_catch (const UString &a_event,

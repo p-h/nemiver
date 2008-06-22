@@ -195,6 +195,7 @@ public:
                               bool /*a_has_frame*/,
                               const IDebugger::Frame& /*a_frame*/,
                               int /*a_thread_id*/,
+                              int /*bp num*/,
                               const UString& /*a_cookie*/)
     {
         NEMIVER_TRY

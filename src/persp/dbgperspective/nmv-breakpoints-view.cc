@@ -42,6 +42,8 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> filename ;
     Gtk::TreeModelColumn<Glib::ustring> function ;
     Gtk::TreeModelColumn<int> line ;
+    Gtk::TreeModelColumn<Glib::ustring> condition;
+    Gtk::TreeModelColumn<int> hits;
     Gtk::TreeModelColumn<IDebugger::BreakPoint> breakpoint ;
 
     BPColumns ()
@@ -53,6 +55,8 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
         add (function) ;
         add (line) ;
         add (breakpoint) ;
+        add (condition);
+        add (hits);
     }
 };//end Cols
 
@@ -107,6 +111,8 @@ public:
                 (*this, &Priv::on_debugger_breakpoint_deleted_signal)) ;
         debugger->breakpoints_set_signal ().connect (sigc::mem_fun
                 (*this, &Priv::on_debugger_breakpoints_set_signal)) ;
+        debugger->stopped_signal ().connect (sigc::mem_fun
+                (*this, &Priv::on_debugger_stopped_signal));
         breakpoints_menu = load_menu ("breakpointspopup.xml",
                 "/BreakpointsPopup");
     }
@@ -126,6 +132,8 @@ public:
         tree_view->append_column (_("Line"), get_bp_columns ().line) ;
         tree_view->append_column (_("Function"), get_bp_columns ().function) ;
         tree_view->append_column (_("Address"), get_bp_columns ().address) ;
+        tree_view->append_column (_("Condition"), get_bp_columns ().condition);
+        tree_view->append_column (_("Hits"), get_bp_columns ().hits);
         Gtk::CellRendererToggle *enabled_toggle =
             dynamic_cast<Gtk::CellRendererToggle*>
                                     (tree_view->get_column_cell_renderer(0));
@@ -170,10 +178,12 @@ public:
                 Gtk::TreeModel::iterator tree_iter =
                     find_breakpoint_in_model(breakmap_iter->second);
                 if (tree_iter) {
-                    LOG_DD ("Updating breakpoint " << breakmap_iter->second.number ());
-                    update_breakpoint(tree_iter, breakmap_iter->second);
+                    LOG_DD ("Updating breakpoint "
+                            << breakmap_iter->second.number ());
+                    update_breakpoint (tree_iter, breakmap_iter->second);
                 } else {
-                    LOG_DD ("Adding breakpoint " << breakmap_iter->second.number ());
+                    LOG_DD ("Adding breakpoint "
+                            << breakmap_iter->second.number ());
                     append_breakpoint(breakmap_iter->second);
                 }
             }
@@ -233,6 +243,8 @@ public:
         (*a_iter)[get_bp_columns ().address] = a_breakpoint.address () ;
         (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
         (*a_iter)[get_bp_columns ().line] = a_breakpoint.line ();
+        (*a_iter)[get_bp_columns ().condition] = a_breakpoint.condition ();
+        (*a_iter)[get_bp_columns ().hits] = a_breakpoint.nb_times_hit ();
     }
 
     Gtk::TreeModel::iterator append_breakpoint
@@ -251,6 +263,21 @@ public:
         NEMIVER_TRY
         if (a_cookie.empty ()) {}
         set_breakpoints (a_breaks);
+        NEMIVER_CATCH
+    }
+
+    void on_debugger_stopped_signal (IDebugger::StopReason a_reason,
+                                     bool /*a_has_frame*/,
+                                     const IDebugger::Frame &/*a_frame*/,
+                                     int /*a_thread_id*/,
+                                     int /*a_bkpt_num*/,
+                                     const UString &/*a_cookie*/)
+    {
+        NEMIVER_TRY
+        if (a_reason == IDebugger::BREAKPOINT_HIT) {
+            LOG_DD ("listing breakpoints ...");
+            debugger->list_breakpoints ();
+        }
         NEMIVER_CATCH
     }
 

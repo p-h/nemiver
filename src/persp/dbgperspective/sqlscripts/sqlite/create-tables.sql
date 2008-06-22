@@ -1,6 +1,6 @@
 create table schemainfo (version text not null) ;
 
-insert into schemainfo (version) values ('1.2') ;
+insert into schemainfo (version) values ('1.3') ;
 
 create table sessions (id integer primary key) ;
 
@@ -19,7 +19,8 @@ create table breakpoints (id integer primary key,
                           filename text,
                           filefullname text,
                           linenumber integer,
-                          enabled integer) ;
+                          enabled integer,
+                          condition text) ;
 
 create table openedfiles (id integer primary key,
                           sessionid integer,

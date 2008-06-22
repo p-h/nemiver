@@ -33,53 +33,58 @@
 #include "common/nmv-transaction.h"
 #include "nmv-i-debugger.h"
 
-using namespace std ;
-using nemiver::common::Object ;
-using nemiver::common::UString ;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::SafePtr ;
-using nemiver::common::Transaction ;
+using namespace std;
+using nemiver::common::Object;
+using nemiver::common::UString;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::SafePtr;
+using nemiver::common::Transaction;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class ISessMgr ;
-typedef SafePtr<ISessMgr, ObjectRef, ObjectUnref> ISessMgrSafePtr  ;
+class ISessMgr;
+typedef SafePtr<ISessMgr, ObjectRef, ObjectUnref> ISessMgrSafePtr ;
 
 class NEMIVER_API ISessMgr : public Object {
     //non copyable
-    ISessMgr (const ISessMgr&) ;
-    ISessMgr& operator= (const ISessMgr&) ;
+    ISessMgr (const ISessMgr&);
+    ISessMgr& operator= (const ISessMgr&);
 
 protected:
     ISessMgr () {};
 
 public:
     class BreakPoint {
-        UString m_file_name ;
-        UString m_file_full_name ;
-        int m_line_number ;
-        bool m_enabled ;
+        UString m_file_name;
+        UString m_file_full_name;
+        int m_line_number;
+        bool m_enabled;
+        UString m_condition;
 
     public:
         BreakPoint (const UString &a_file_name,
                     const UString &a_file_full_name,
                     const UString &a_line_number,
-                    const UString &a_enabled) :
+                    const UString &a_enabled,
+                    const UString &a_condition) :
             m_file_name (a_file_name),
             m_file_full_name (a_file_full_name),
             m_line_number (atoi (a_line_number.c_str ())),
-            m_enabled (atoi (a_enabled.c_str ()))
+            m_enabled (atoi (a_enabled.c_str ())),
+            m_condition (a_condition)
         {}
 
         BreakPoint (const UString &a_file_name,
                     const UString &a_file_full_name,
                     int a_line_number,
-                    bool a_enabled) :
+                    bool a_enabled,
+                    const UString &a_condition) :
             m_file_name (a_file_name),
             m_file_full_name (a_file_full_name),
             m_line_number (a_line_number),
-            m_enabled (a_enabled)
+            m_enabled (a_enabled),
+            m_condition (a_condition)
         {}
 
         BreakPoint () :
@@ -96,16 +101,19 @@ public:
         void line_number (int a_in) {m_line_number = a_in;}
 
         bool enabled () const { return m_enabled; }
-        void enabled (bool a_in) { m_enabled = a_in; }
+        void enabled (bool a_in) { m_enabled = a_in;}
+
+        const UString& condition () const {return m_condition;}
+        void condition (const UString &a_cond) {m_condition = a_cond;}
     };
 
     class Session {
-        gint64 m_session_id ;
-        map<UString, UString> m_properties ;
-        map<UString, UString> m_env_variables ;
-        list<BreakPoint> m_breakpoints ;
-        list<UString> m_opened_files ;
-        list<UString> m_search_paths ;
+        gint64 m_session_id;
+        map<UString, UString> m_properties;
+        map<UString, UString> m_env_variables;
+        list<BreakPoint> m_breakpoints;
+        list<UString> m_opened_files;
+        list<UString> m_search_paths;
 
     public:
         Session () :
@@ -154,7 +162,7 @@ public:
 
     virtual void clear_session (gint64 a_id, Transaction &a_trans) = 0;
     virtual void clear_session (gint64 a_id) = 0;
-    static ISessMgrSafePtr create (const UString &a_root_dir) ;
+    static ISessMgrSafePtr create (const UString &a_root_dir);
 };//end class SessMgr
 
 NEMIVER_END_NAMESPACE (nemiver)

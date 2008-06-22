@@ -84,6 +84,8 @@ public:
         UString m_file_name;
         UString m_file_full_name;
         int m_line;
+        UString m_condition;
+        int m_nb_times_hit;
 
     public:
 
@@ -113,6 +115,14 @@ public:
         int line () const {return m_line;}
         void line (int a_in) {m_line = a_in;}
 
+        const UString& condition () const {return m_condition;}
+        void condition (const UString &a_cond) {m_condition = a_cond;}
+
+        bool has_condition () const {return !m_condition.empty ();}
+
+        int nb_times_hit () const {return m_nb_times_hit;}
+        void nb_times_hit (int a_nb) {m_nb_times_hit = a_nb;}
+
         bool is_pending ()
         {
             if (m_address == "<PENDING>") {
@@ -127,11 +137,13 @@ public:
         {
             m_number = 0;
             m_enabled = false;
-            m_address = "";
-            m_function = "";
-            m_file_name = "";
-            m_file_full_name = "";
+            m_address.clear ();
+            m_function.clear ();
+            m_file_name.clear ();
+            m_file_full_name.clear ();
             m_line = 0;
+            m_condition.clear ();
+            m_nb_times_hit = 0;
         }
     };//end class BreakPoint
 
@@ -551,6 +563,9 @@ public:
                          bool /*has frame*/,
                          const IDebugger::Frame&/*the frame*/,
                          int /*thread id*/,
+                         int /*breakpoint number,
+                               meaningfull only when
+                               reason == IDebugger::BREAKPOINT_HIT*/,
                          const UString& /*cookie*/>& stopped_signal () const=0;
 
     virtual sigc::signal<void,
@@ -737,8 +752,10 @@ public:
                                        const UString &a_cookie="") = 0;
     virtual void set_breakpoint (const UString &a_path,
                                  gint a_line_num,
+                                 const UString &a_condition="",
                                  const UString &a_cookie="") = 0;
     virtual void set_breakpoint (const UString &a_func_name,
+                                 const UString &a_condition="",
                                  const UString &a_cookie="") = 0;
     virtual void set_catch (const UString &a_event,
                             const UString &a_cookie="") = 0;

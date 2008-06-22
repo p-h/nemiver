@@ -39,7 +39,7 @@ using nemiver::common::ConnectionManager ;
 using nemiver::common::Transaction ;
 using nemiver::common::SQLStatement ;
 
-static const char *REQUIRED_DB_SCHEMA_VERSION = "1.2" ;
+static const char *REQUIRED_DB_SCHEMA_VERSION = "1.3" ;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -245,9 +245,11 @@ SessMgr::store_session (Session &a_session,
         query = "select max(id) from sessions" ;
         THROW_IF_FAIL2 (trans.get ().get_connection ().execute_statement (query),
                         "failed to execute query: '" + query + "'") ;
+        LOG_DD ("query: " << query);
         THROW_IF_FAIL (trans.get ().get_connection ().read_next_row ()) ;
         gint64 session_id=0 ;
-        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, session_id)) ;
+        THROW_IF_FAIL
+            (trans.get ().get_connection ().get_column_content (0, session_id)) ;
         THROW_IF_FAIL (session_id) ;
         a_session.session_id (session_id) ;
     }
@@ -265,8 +267,8 @@ SessMgr::store_session (Session &a_session,
                 + UString::from_int (a_session.session_id ()) + ", '"
                 + prop_iter->first + "', '"
                 + prop_iter->second
-                + "')"
-                ;
+                + "')";
+        LOG_DD ("query: " << query);
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
     }
 
@@ -283,8 +285,8 @@ SessMgr::store_session (Session &a_session,
                 + UString::from_int (a_session.session_id ()) + ", '"
                 + var_iter->first + "', '"
                 + var_iter->second
-                + "')"
-                ;
+                + "')";
+        LOG_DD ("query: " << query);
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
     }
 
@@ -297,14 +299,16 @@ SessMgr::store_session (Session &a_session,
     for (break_iter = a_session.breakpoints ().begin ();
          break_iter != a_session.breakpoints ().end ();
          ++break_iter) {
+        UString condition = break_iter->condition ();
+        condition.chomp ();
         query = "insert into breakpoints values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
                 + break_iter->file_name () + "', '"
                 + break_iter->file_full_name () + "', "
                 + UString::from_int (break_iter->line_number ()) + ", "
-                + UString::from_int (break_iter->enabled ())
-                + ")"
-                ;
+                + UString::from_int (break_iter->enabled ()) + ", "
+                + "'" + condition + "')";
+        LOG_DD ("query: " << query);
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     }
 
@@ -321,6 +325,7 @@ SessMgr::store_session (Session &a_session,
                 + UString::from_int (a_session.session_id ()) + ", '"
                 + *ofile_iter
                 + "')" ;
+        LOG_DD ("query: " << query);
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     }
 
@@ -337,6 +342,7 @@ SessMgr::store_session (Session &a_session,
                 + UString::from_int (a_session.session_id ()) + ", '"
                 + *path_iter
                 + "')" ;
+        LOG_DD ("query: " << query);
         THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     }
     trans.end () ;
@@ -378,32 +384,37 @@ SessMgr::load_session (Session &a_session,
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     while (trans.get ().get_connection ().read_next_row ()) {
         UString name, value ;
-        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, name)) ;
-        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (1, value)) ;
+        THROW_IF_FAIL
+            (trans.get ().get_connection ().get_column_content (0, name)) ;
+        THROW_IF_FAIL
+            (trans.get ().get_connection ().get_column_content (1, value)) ;
         session.properties ()[name] = value ;
     }
 
     //load the environment variables
-    query="select env_variables.name, env_variables.value "
-                  "from env_variables where env_variables.sessionid = "
+    query = "select env_variables.name, env_variables.value "
+            "from env_variables where env_variables.sessionid = "
                   + UString::from_int (a_session.session_id ());
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     while (trans.get ().get_connection ().read_next_row ()) {
         UString name, value ;
-        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (0, name)) ;
-        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content (1, value)) ;
+        THROW_IF_FAIL
+            (trans.get ().get_connection ().get_column_content (0, name)) ;
+        THROW_IF_FAIL
+            (trans.get ().get_connection ().get_column_content (1, value)) ;
         session.env_variables ()[name] = value ;
     }
 
     //load the breakpoints
     query = "select breakpoints.filename, breakpoints.filefullname, "
-            "breakpoints.linenumber, breakpoints.enabled from "
+            "breakpoints.linenumber, breakpoints.enabled, "
+            "breakpoints.condition from "
             "breakpoints where breakpoints.sessionid = "
             + UString::from_int (session.session_id ())
             ;
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query)) ;
     while (trans.get ().get_connection ().read_next_row ()) {
-        UString filename, filefullname, linenumber, enabled;
+        UString filename, filefullname, linenumber, enabled, condition;
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                                 (0, filename));
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
@@ -412,10 +423,14 @@ SessMgr::load_session (Session &a_session,
                                                                 (2, linenumber));
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                                 (3, enabled));
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                                (4, condition));
+        condition.chomp ();
         session.breakpoints ().push_back (SessMgr::BreakPoint (filename,
                                                                filefullname,
                                                                linenumber,
-                                                               enabled)) ;
+                                                               enabled,
+                                                               condition)) ;
     }
 
     //load the search paths

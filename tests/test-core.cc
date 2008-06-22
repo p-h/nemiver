@@ -30,10 +30,9 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
                    int a_thread_id,
-                   const UString &a_cookie)
+                   int /*bp num*/,
+                   const UString &/*a_cookie*/)
 {
-    if (a_cookie.empty ()) {}
-
     std::cout << "stopped, reason: " << (int)a_reason << " " ;
     if (a_has_frame) {
         std::cout << "in frame: " << a_frame.function_name () ;
@@ -124,23 +123,18 @@ main (int a_argc, char *a_argv[])
         debugger->program_finished_signal ().connect
             (sigc::ptr_fun (&on_program_finished_signal)) ;
 
-        debugger->stopped_signal ().connect
-            (sigc::ptr_fun (&on_stopped_signal)) ;
+        debugger->stopped_signal ().connect (&on_stopped_signal) ;
 
-        debugger->current_frame_signal ().connect
-            (sigc::ptr_fun (&on_current_frame_signal)) ;
+        debugger->current_frame_signal ().connect (&on_current_frame_signal) ;
 
-        debugger->frames_listed_signal ().connect
-            (sigc::ptr_fun (&on_frames_listed_signal)) ;
+        debugger->frames_listed_signal ().connect (&on_frames_listed_signal) ;
 
         debugger->frames_arguments_listed_signal ().connect
-            (sigc::ptr_fun (&on_frames_params_listed_signal)) ;
+            (&on_frames_params_listed_signal) ;
 
-        debugger->console_message_signal ().connect
-            (sigc::ptr_fun (&on_console_message_signal)) ;
+        debugger->console_message_signal ().connect (&on_console_message_signal);
 
-        debugger->log_message_signal ().connect
-            (sigc::ptr_fun (&on_error_message_signal)) ;
+        debugger->log_message_signal ().connect (&on_error_message_signal) ;
         //*********************************************
         //</connect to the events emited by the debugger>
         //*********************************************

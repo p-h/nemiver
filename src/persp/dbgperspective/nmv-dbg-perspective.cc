@@ -314,6 +314,7 @@ private:
                                      bool a_has_frame,
                                      const IDebugger::Frame &,
                                      int a_thread_id,
+                                     int,
                                      const UString&) ;
     void on_program_finished_signal () ;
     void on_frame_selected_signal (int, const IDebugger::Frame &);
@@ -470,8 +471,10 @@ public:
     void do_continue_until () ;
     void set_breakpoint () ;
     void set_breakpoint (const UString &a_file,
-                         int a_line) ;
-
+                         int a_line,
+                         const UString &a_cond) ;
+    void set_breakpoint (const UString &a_func_name,
+                         const UString &a_cond) ;
     void append_breakpoint (int a_bp_num,
                             const IDebugger::BreakPoint &a_breakpoint) ;
     void append_breakpoints
@@ -2032,12 +2035,10 @@ void
 DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
                                             bool a_has_frame,
                                             const IDebugger::Frame &a_frame,
-                                            int a_thread_id,
-                                            const UString &a_cookie)
+                                            int , int, const UString &)
 {
 
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    if (a_thread_id || a_cookie.empty ()) {}
 
     NEMIVER_TRY
 
@@ -3904,7 +3905,9 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     UString today ;
     dateutils::get_current_datetime (today) ;
     session_name += "-" + today ;
-a_session.properties ().clear () ; a_session.properties ()[SESSION_NAME] = session_name ; a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path ;
+    a_session.properties ().clear () ;
+    a_session.properties ()[SESSION_NAME] = session_name ;
+    a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path ;
     a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args ;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd ;
     GTimeVal timeval;
@@ -3927,11 +3930,12 @@ a_session.properties ().clear () ; a_session.properties ()[SESSION_NAME] = sessi
     for (break_iter = m_priv->breakpoints.begin ();
          break_iter != m_priv->breakpoints.end ();
          ++break_iter) {
-        a_session.breakpoints ().push_back
-            (ISessMgr::BreakPoint (break_iter->second.file_name (),
-                                   break_iter->second.file_full_name (),
-                                   break_iter->second.line (),
-                                   break_iter->second.enabled ())) ;
+        ISessMgr::BreakPoint bp (break_iter->second.file_name (),
+                                 break_iter->second.file_full_name (),
+                                 break_iter->second.line (),
+                                 break_iter->second.enabled (),
+                                 break_iter->second.condition ());
+        a_session.breakpoints ().push_back (bp);
     }
     THROW_IF_FAIL (session_manager_ptr ()) ;
 
@@ -4458,6 +4462,7 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
         breakpoint.file_name (it->file_name ()) ;
         breakpoint.file_full_name (it->file_full_name ()) ;
         breakpoint.enabled (it->enabled ()) ;
+        breakpoint.condition (it->condition ());
         breakpoints.push_back (breakpoint) ;
     }
 
@@ -4466,16 +4471,14 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
     m_priv->search_paths.clear();
     for (path_iter = m_priv->session.search_paths ().begin ();
             path_iter != m_priv->session.search_paths ().end ();
-            ++path_iter)
-    {
+            ++path_iter) {
         m_priv->search_paths.push_back (*path_iter);
     }
 
     // open the previously opened files
     for (path_iter = m_priv->session.opened_files ().begin ();
             path_iter != m_priv->session.opened_files ().end ();
-            ++path_iter)
-    {
+            ++path_iter) {
         open_file(*path_iter);
     }
 
@@ -4602,6 +4605,7 @@ DBGPerspective::execute_program (const UString &a_prog,
                 it->file_full_name () + "#" + UString::from_int(it->line ());
             dbg_engine->set_breakpoint (it->file_full_name (),
                                         it->line (),
+                                        it->condition (),
                                         cookie) ;
         }
     }
@@ -4855,15 +4859,33 @@ DBGPerspective::set_breakpoint ()
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
             ()->get_iter ().get_line () + 1;
-    set_breakpoint (path, current_line) ;
+    set_breakpoint (path, current_line, "") ;
 }
 
 void
 DBGPerspective::set_breakpoint (const UString &a_file_path,
-                                int a_line)
+                                int a_line,
+                                const UString &a_condition)
 {
-    LOG_DD ("set bkpoint request for " << a_file_path << ":" << a_line) ;
-    debugger ()->set_breakpoint (a_file_path, a_line) ;
+    LOG_DD ("set bkpoint request for " << a_file_path << ":" << a_line
+            << " condition: '" << a_condition << "'") ;
+        // only try to set the breakpoint if it's a reasonable value
+        if (a_line && a_line != INT_MAX && a_line != INT_MIN) {
+            debugger ()->set_breakpoint (a_file_path, a_line, a_condition) ;
+        } else {
+            LOG_ERROR ("invalid line number: " << a_line);
+            UString msg;
+            msg.printf (_("Invalid line number: %i"), a_line);
+            display_warning (msg);
+        }
+}
+
+void
+DBGPerspective::set_breakpoint (const UString &a_func_name,
+                                const UString &a_condition)
+{
+    LOG_DD ("set bkpoint request in func" << a_func_name) ;
+    debugger ()->set_breakpoint (a_func_name, a_condition) ;
 }
 
 void
@@ -5260,7 +5282,7 @@ DBGPerspective::toggle_breakpoint (const UString &a_file_path,
         delete_breakpoint (a_file_path, a_line_num) ;
     } else {
         LOG_DD ("breakpoint no set yet, set it!") ;
-        set_breakpoint (a_file_path, a_line_num) ;
+        set_breakpoint (a_file_path, a_line_num, "") ;
     }
 }
 
@@ -5291,43 +5313,35 @@ DBGPerspective::set_breakpoint_dialog ()
         return;
     }
 
-    switch(dialog.mode ())
-    {
-    case SetBreakpointDialog::MODE_SOURCE_LOCATION:
-    {
-        UString filename;
-        filename = dialog.file_name () ;
-        THROW_IF_FAIL (filename != "") ;
-        int line = dialog.line_number () ;
-        LOG_DD ("setting breakpoint in file " << filename << " at line " << line) ;
-
-        // only try to set the breakpoint if it's a reasonable value
-        if (line && line != INT_MAX && line != INT_MIN) {
-            set_breakpoint (filename, line) ;
-        } else {
-            UString msg;
-            msg.printf (_("Invalid line number: %i"), line);
-            display_warning (msg);
-        }
-        break;
-    }
-    case SetBreakpointDialog::MODE_FUNCTION_NAME:
-    {
-        UString function = dialog.function ();
-        THROW_IF_FAIL (function != "") ;
-        debugger ()->set_breakpoint (function);
-        break;
-    }
-    case SetBreakpointDialog::MODE_EVENT:
-    {
-        UString event = dialog.event ();
-        THROW_IF_FAIL (event != "") ;
-        debugger ()->set_catch (event);
-        break;
-    }
-    default:
-        THROW_IF_FAIL (1);
-        break;
+    switch(dialog.mode ()) {
+        case SetBreakpointDialog::MODE_SOURCE_LOCATION:
+            {
+                UString filename;
+                filename = dialog.file_name () ;
+                THROW_IF_FAIL (filename != "") ;
+                int line = dialog.line_number () ;
+                LOG_DD ("setting breakpoint in file "
+                        << filename << " at line " << line) ;
+                set_breakpoint (filename, line, dialog.condition ());
+                break;
+            }
+        case SetBreakpointDialog::MODE_FUNCTION_NAME:
+            {
+                UString function = dialog.function ();
+                THROW_IF_FAIL (function != "") ;
+                set_breakpoint (function, dialog.condition ());
+                break;
+            }
+        case SetBreakpointDialog::MODE_EVENT:
+            {
+                UString event = dialog.event ();
+                THROW_IF_FAIL (event != "");
+                debugger ()->set_catch (event);
+                break;
+            }
+        default:
+            THROW ("should not be reached");
+            break;
     }
 }
 

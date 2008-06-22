@@ -89,6 +89,7 @@ public:
                 bool,
                 const IDebugger::Frame&,
                 int,
+                int,
                 const UString& /*cookie*/>& stopped_signal () const ;
 
     sigc::signal<void,
@@ -186,6 +187,7 @@ public:
                             bool has_frame,
                             const IDebugger::Frame &a_frame,
                             int a_thread_id,
+                            int a_breakpoint_number,
                             const UString &a_cookie);
     void on_detached_from_target_signal ();
 
@@ -276,14 +278,16 @@ public:
 
     void set_breakpoint (const UString &a_path,
                          gint a_line_num,
+                         const UString &a_condition,
+                         const UString &a_cookie)  ;
+
+    void set_breakpoint (const UString &a_func_name,
+                         const UString &a_condition,
                          const UString &a_cookie)  ;
 
     void list_breakpoints (const UString &a_cookie) ;
 
     map<int, IDebugger::BreakPoint>& get_cached_breakpoints () ;
-
-    void set_breakpoint (const UString &a_func_name,
-                         const UString &a_cookie)  ;
 
     void set_catch (const UString &a_event,
 					const UString &a_cookie)  ;

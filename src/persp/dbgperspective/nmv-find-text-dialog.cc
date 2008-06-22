@@ -158,7 +158,8 @@ public:
         THROW_IF_FAIL (search_button) ;
         get_search_text_combo ()->get_entry ()->signal_activate ().connect
             (sigc::mem_fun (*this, &Priv::on_search_entry_activated_signal)) ;
-        dialog.signal_show ().connect (sigc::mem_fun (*this, &Priv::on_dialog_show));
+        dialog.signal_show ().connect (sigc::mem_fun
+                                            (*this, &Priv::on_dialog_show));
         search_button->signal_clicked ().connect (sigc::mem_fun
                                     (*this, &Priv::on_search_button_clicked)) ;
     }

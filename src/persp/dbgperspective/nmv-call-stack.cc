@@ -234,6 +234,7 @@ struct CallStack::Priv {
                                      bool a_has_frame,
                                      const IDebugger::Frame &a_frame,
                                      int a_thread_id,
+                                     int a_bp_num,
                                      const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
@@ -241,7 +242,8 @@ struct CallStack::Priv {
         NEMIVER_TRY
         LOG_DD ("stopped, reason: " << a_reason) ;
 
-        if (a_has_frame || a_frame.line () || a_thread_id || a_cookie.empty ()) {}
+        if (a_has_frame || a_frame.line () || a_thread_id
+            || a_bp_num || a_cookie.empty ()) {}
 
         if (a_reason == IDebugger::EXITED_SIGNALLED
             || a_reason == IDebugger::EXITED_NORMALLY

@@ -506,10 +506,12 @@ public:
                             bool a_has_frame,
                             const IDebugger::Frame &a_frame,
                             int a_thread_id,
+                            int a_bp_num,
                             const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-        if (a_frame.line () || a_thread_id || a_cookie.empty ()) {}
+        if (a_frame.line () || a_thread_id
+            || a_bp_num || a_cookie.empty ()) {}
 
         NEMIVER_TRY
 

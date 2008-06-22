@@ -52,7 +52,7 @@ public:
     Gtk::TreeModelColumn<Glib::ustring> m_label;
     Gtk::TreeModelColumn<UString> m_command;
 };
-    
+
 class SetBreakpointDialog::Priv {
 public:
     Gtk::ComboBox *combo_event ;
@@ -61,13 +61,15 @@ public:
     Gtk::Entry *entry_filename ;
     Gtk::Entry *entry_line;
     Gtk::Entry *entry_function;
+    Gtk::Entry *entry_condition;
     Gtk::RadioButton *radio_source_location;
     Gtk::RadioButton *radio_function_name;
     Gtk::RadioButton *radio_event;
     Gtk::Button *okbutton ;
 
 public:
-    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+    Priv (Gtk::Dialog &a_dialog,
+          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
         combo_event (0),
         entry_filename (0),
         entry_line (0),
@@ -77,63 +79,70 @@ public:
         radio_event (0),
         okbutton (0)
     {
+        a_dialog.set_default_response (Gtk::RESPONSE_OK);
 
         okbutton =
             ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
         THROW_IF_FAIL (okbutton) ;
         okbutton->set_sensitive (false) ;
-        
+
         combo_event =
             ui_utils::get_widget_from_glade<Gtk::ComboBox>
             (a_glade, "combo_event") ;
         combo_event_model = Gtk::TreeStore::create(combo_event_col_model);
         combo_event->set_model(combo_event_model);
         Gtk::TreeModel::Row row;
-        
+
         row = *(combo_event_model->append());
         row[combo_event_col_model.m_label] = _("Throw Exception");
         row[combo_event_col_model.m_command] = "throw";
         row = *(combo_event_model->append());
         row[combo_event_col_model.m_label] = _("Catch Exception");
         row[combo_event_col_model.m_command] = "catch";
-        
+
         combo_event->set_active (0);
 
         entry_filename =
             ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "entry_filename") ;
+                (a_glade, "filenameentry") ;
         entry_filename->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal)) ;
 
         entry_line =
             ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "entry_line") ;
+                (a_glade, "lineentry") ;
         entry_line->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal)) ;
         entry_line->set_activates_default () ;
 
         entry_function =
             ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "entry_function") ;
+                (a_glade, "functionentry") ;
         entry_function->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal)) ;
         entry_function->set_activates_default () ;
 
+        entry_condition = ui_utils::get_widget_from_glade<Gtk::Entry>
+                (a_glade, "conditionentry");
+        entry_condition->signal_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_text_changed_signal));
+        entry_condition->set_activates_default ();
+
         radio_source_location =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (a_glade, "radiobutton_source_location") ;
+                (a_glade, "sourcelocationradio") ;
         radio_source_location->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed)) ;
 
         radio_function_name =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (a_glade, "radiobutton_function_name") ;
+                (a_glade, "functionnameradio") ;
         radio_function_name->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed)) ;
 
-        radio_event = 
+        radio_event =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-            (a_glade, "radiobutton_event") ;
+            (a_glade, "eventradio") ;
         radio_event->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed)) ;
 
@@ -150,32 +159,31 @@ public:
     {
         THROW_IF_FAIL (entry_filename) ;
         THROW_IF_FAIL (entry_line) ;
-        
+
         SetBreakpointDialog::Mode a_mode = mode ();
-        
-        switch (a_mode)
-        {
-        case MODE_SOURCE_LOCATION:
-            // make sure there's something in both entries
-            if (!entry_filename->get_text ().empty () &&
-                !entry_line->get_text ().empty () &&
-                // make sure the line number field is a valid number
-                atoi(entry_line->get_text ().c_str ())) {
+
+        switch (a_mode) {
+            case MODE_SOURCE_LOCATION:
+                // make sure there's something in both entries
+                if (!entry_filename->get_text ().empty () &&
+                    !entry_line->get_text ().empty () &&
+                    // make sure the line number field is a valid number
+                    atoi(entry_line->get_text ().c_str ())) {
+                    okbutton->set_sensitive (true) ;
+                } else {
+                    okbutton->set_sensitive (false) ;
+                }
+                break;
+            case MODE_FUNCTION_NAME:
+                if (!entry_function->get_text ().empty ()) {
+                    okbutton->set_sensitive (true) ;
+                } else {
+                    okbutton->set_sensitive (false) ;
+                }
+                break;
+            default:
                 okbutton->set_sensitive (true) ;
-            } else {
-                okbutton->set_sensitive (false) ;
-            }
-            break;
-        case MODE_FUNCTION_NAME:
-            if (!entry_function->get_text ().empty ()) {
-                okbutton->set_sensitive (true) ;
-            } else {
-                okbutton->set_sensitive (false) ;
-            }
-            break;
-        default:
-            okbutton->set_sensitive (true) ;
-            break;
+                break;
         }
     }
 
@@ -196,15 +204,15 @@ public:
         THROW_IF_FAIL (entry_function) ;
 
         SetBreakpointDialog::Mode a_mode = mode ();
-        
+
         entry_function->set_sensitive (a_mode == MODE_FUNCTION_NAME);
         entry_filename->set_sensitive (a_mode == MODE_SOURCE_LOCATION);
         entry_line->set_sensitive (a_mode == MODE_SOURCE_LOCATION);
         combo_event->set_sensitive (a_mode == MODE_EVENT);
-        
-        switch( a_mode )
-        {
-        case MODE_SOURCE_LOCATION:
+        entry_condition->set_sensitive (a_mode != MODE_EVENT);
+
+        switch (a_mode) {
+            case MODE_SOURCE_LOCATION:
             LOG_DD ("Setting Sensitivity for SOURCE_LOCATION");
             break;
         case MODE_FUNCTION_NAME:
@@ -221,7 +229,6 @@ public:
     void mode (SetBreakpointDialog::Mode a_mode)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        NEMIVER_TRY
 
         THROW_IF_FAIL (radio_source_location) ;
         THROW_IF_FAIL (radio_function_name) ;
@@ -241,7 +248,7 @@ public:
             radio_function_name->set_active ();
             entry_function->grab_focus () ;
             break;
-		    case MODE_EVENT:
+        case MODE_EVENT:
             LOG_DD ("Changing Mode to EVENT");
             radio_event->set_active ();
             combo_event->grab_focus ();
@@ -249,8 +256,6 @@ public:
         default:
             THROW ("Should not be reached") ;
         }
-
-        NEMIVER_CATCH
     }
 
     UString get_active_event () const
@@ -259,21 +264,17 @@ public:
         return (*iter)[combo_event_col_model.m_command];
     }
 
-    void set_active_event (const UString &v) const
+    void set_active_event (const UString &) const
     {
-        if (v.empty ()) {/*keep compiler happy*/}
         //TODO
     }
 
     SetBreakpointDialog::Mode mode () const
     {
-        NEMIVER_TRY
-
         THROW_IF_FAIL (radio_source_location) ;
         THROW_IF_FAIL (radio_function_name) ;
 
-        NEMIVER_CATCH
-            
+
         if (radio_source_location->get_active ()) {
             return MODE_SOURCE_LOCATION;
         } else if (radio_event->get_active ()) {
@@ -288,7 +289,7 @@ public:
 SetBreakpointDialog::SetBreakpointDialog (const UString &a_root_path) :
     Dialog (a_root_path, "setbreakpointdialog.glade", "setbreakpointdialog")
 {
-    m_priv.reset (new Priv (glade ())) ;
+    m_priv.reset (new Priv (widget (), glade ()));
 }
 
 SetBreakpointDialog::~SetBreakpointDialog ()
@@ -298,103 +299,90 @@ SetBreakpointDialog::~SetBreakpointDialog ()
 UString
 SetBreakpointDialog::file_name () const
 {
-    NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->entry_filename) ;
 
-    NEMIVER_CATCH
     return m_priv->entry_filename->get_text () ;
 }
 
 void
 SetBreakpointDialog::file_name (const UString &a_name)
 {
-    NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->entry_filename) ;
     m_priv->entry_filename->set_text (a_name) ;
-
-    NEMIVER_CATCH
 }
 
 int
 SetBreakpointDialog::line_number () const
 {
-    NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->entry_line) ;
-
-    NEMIVER_CATCH
     return atoi (m_priv->entry_line->get_text ().c_str ()) ;
 }
 
 void
 SetBreakpointDialog::line_number (int a_line)
 {
-    NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->entry_line) ;
     m_priv->entry_line->set_text (UString::from_int(a_line)) ;
-
-    NEMIVER_CATCH
 }
 
 UString
 SetBreakpointDialog::function () const
 {
-    NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->entry_function) ;
 
-    NEMIVER_CATCH
     return m_priv->entry_function->get_text () ;
 }
 
 void
 SetBreakpointDialog::function (const UString &a_name)
 {
-    NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->entry_function) ;
     m_priv->entry_function->set_text (a_name) ;
-
-    NEMIVER_CATCH
 }
 
 UString
 SetBreakpointDialog::event () const
 {
-    NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->combo_event) ;
-    NEMIVER_CATCH
     return m_priv->get_active_event();
 }
 
 void SetBreakpointDialog::event (const UString &a_event) 
 {
-    NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
     THROW_IF_FAIL (m_priv->combo_event) ;
     m_priv->set_active_event (a_event);
 
-    NEMIVER_CATCH
+}
+
+UString
+SetBreakpointDialog::condition () const
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_condition);
+    return m_priv->entry_condition->get_text ();
+}
+
+void
+SetBreakpointDialog::condition (const UString &a_cond)
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_condition);
+    m_priv->entry_condition->set_text (a_cond);
 }
 
 
 SetBreakpointDialog::Mode
 SetBreakpointDialog::mode () const
 {
-    NEMIVER_TRY
     THROW_IF_FAIL (m_priv) ;
-    NEMIVER_CATCH
-
     return m_priv->mode ();
 }
 
@@ -402,12 +390,8 @@ SetBreakpointDialog::mode () const
 void
 SetBreakpointDialog::mode (Mode a_mode)
 {
-    NEMIVER_TRY
-
     THROW_IF_FAIL (m_priv) ;
     m_priv->mode (a_mode);
-
-    NEMIVER_CATCH
 }
 
 }//end namespace nemiver

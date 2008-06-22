@@ -64,6 +64,9 @@ public:
     UString event () const ;
     void event (const UString &a_event) ;
 
+    UString condition () const;
+    void condition (const UString &a_cond);
+
     Mode mode () const;
     void mode (Mode);
 

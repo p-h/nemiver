@@ -45,16 +45,12 @@ void
 on_stopped_signal (IDebugger::StopReason a_reason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
-                   int a_thread_id,
-                   const UString &a_cookie,
+                   int /*a_thread_id*/,
+                   int /*bp number*/,
+                   const UString &/*a_cookie*/,
                    IDebuggerSafePtr &a_debugger)
 {
     BOOST_REQUIRE (a_debugger) ;
-
-    if (a_has_frame || a_frame.level () || a_thread_id ||
-        a_cookie.empty () || a_debugger) {
-        /*keeps compiler happy*/
-    }
 
     if (a_reason == IDebugger::EXITED_NORMALLY) {
         MESSAGE ("program exited normally") ;

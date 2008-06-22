@@ -12,6 +12,7 @@ using namespace nemiver::common ;
 
 Glib::RefPtr<Glib::MainLoop> loop =
     Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+IDebuggerSafePtr debugger;
 
 static int nb_stops=0 ;
 static int nb_var_type_set=0 ;
@@ -21,14 +22,11 @@ void
 on_stopped_signal (IDebugger::StopReason a_reason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
-                   int a_thread_id,
-                   const UString &a_cookie,
-                   IDebuggerSafePtr &a_debugger,
-                   IVarListSafePtr &a_var_list)
+                   int /*a_thread_id*/,
+                   int /*a_bp_num*/,
+                   const UString &/*a_cookie*/,
+                   const IVarListSafePtr a_var_list)
 {
-    if (a_thread_id || a_cookie.empty ()) {}
-
-    BOOST_REQUIRE (a_debugger) ;
     BOOST_REQUIRE (a_var_list) ;
 
     MESSAGE ("stopped, reason: " << (int)a_reason) ;
@@ -67,13 +65,13 @@ on_stopped_signal (IDebugger::StopReason a_reason,
         MESSAGE ("in main:" << (int)a_frame.line ());
         ++nb_stops ;
         if (nb_stops == 1) {
-            a_debugger->list_local_variables () ;
+            debugger->list_local_variables () ;
         } else if (nb_stops == 4) {
             a_var_list->update_state () ;
-            a_debugger->do_continue () ;
+            debugger->do_continue () ;
             return ;
         }
-        a_debugger->step_over () ;
+        debugger->step_over () ;
     }
 
 }
@@ -137,7 +135,7 @@ test_main (int argc, char **argv)
     Initializer::do_init () ;
 
     //load the IDebugger interface
-    IDebuggerSafePtr debugger =
+    debugger =
         DynamicModuleManager::load_iface_with_default_manager<IDebugger>
                                                                 ("gdbengine",
                                                                  "IDebugger") ;
@@ -153,8 +151,7 @@ test_main (int argc, char **argv)
 
     //set debugger slots
     debugger->stopped_signal ().connect (sigc::bind (&on_stopped_signal,
-                                                     debugger,
-                                                     var_list)) ;
+                                                     var_list));
     debugger->local_variables_listed_signal ().connect (sigc::bind
                             (&on_local_variables_listed_signal, var_list)) ;
 

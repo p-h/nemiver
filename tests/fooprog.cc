@@ -73,6 +73,17 @@ func3 (Person &a_param)
     a_param.do_this () ;
 }
 
+static int i,j;
+void
+func4 (Person &a_person)
+{
+    i=0;
+    for (j=0; j < 1000; ++j) {
+        i = j;
+        a_person.overload (i);
+    }
+}
+
 int
 main (int a_argc, char *a_argv[])
 {
@@ -89,6 +100,8 @@ main (int a_argc, char *a_argv[])
     person.overload (0) ;
 
     func3 (person) ;
+
+    func4 (person);
 
     return 0 ;
 }

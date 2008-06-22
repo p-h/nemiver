@@ -26,8 +26,9 @@ void
 on_program_finished_signal ()
 {
     MESSAGE ("program finished") ;
-    BOOST_REQUIRE_MESSAGE (nb_bp == 3, "nb of breakpoint hits was: " << nb_bp) ;
-    BOOST_REQUIRE_MESSAGE (nb_stops > 3, "nb of stops was: " << nb_stops) ;
+    MESSAGE ("nb of breakpoint hit: " <<  (int)nb_bp);
+    BOOST_REQUIRE_MESSAGE (nb_bp == 5, "nb of breakpoint hits was: " << nb_bp) ;
+    BOOST_REQUIRE_MESSAGE (nb_stops > 5, "nb of stops was: " << nb_stops) ;
     loop->quit () ;
 }
 
@@ -69,17 +70,21 @@ on_got_proc_info_signal (int a_pid, const UString &a_exe_path)
               << "' of pid: '" << a_pid << "'") ;
 }
 
+//this breakpoint condition is good because it must be satisfied
+static const char *good_break_condition = "j == 900";
+//this breakpoint condition is good because it can't be satisfied
+static const char *bad_break_condition = "j == 1010";
+static bool cond_breakpoint_set = 0;
 void
 on_stopped_signal (IDebugger::StopReason a_reason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
                    int a_thread_id,
-                   const UString &a_cookie,
+                   int a_bp_num,
+                   const UString &/*a_cookie*/,
                    IDebuggerSafePtr &a_debugger)
 {
     BOOST_REQUIRE (a_debugger) ;
-
-    if (a_cookie.empty ()) {}
 
     ++nb_stops ;
 
@@ -103,6 +108,32 @@ on_stopped_signal (IDebugger::StopReason a_reason,
         } else if (a_frame.function_name () == "func2") {
             MESSAGE ("stepping from func2") ;
             a_debugger->step_over () ;
+        } else if (a_frame.function_name () == "func4") {
+            if (!cond_breakpoint_set) {
+                MESSAGE ("set conditional breakpoint with cond: "
+                         << good_break_condition
+                         << "; we expect this breakpoint to be hit");
+                a_debugger->set_breakpoint ("", 83, good_break_condition);
+                MESSAGE ("set conditional breakpoint with cond: "
+                         << bad_break_condition
+                         << "; this one should never be hit");
+                a_debugger->set_breakpoint ("", 83, bad_break_condition);
+                cond_breakpoint_set = true;
+            } else {
+                MESSAGE ("hit conditional breakpoint! bp number: "
+                         << a_bp_num);
+            }
+            map<int, IDebugger::BreakPoint>::const_iterator it;
+            map<int, IDebugger::BreakPoint>::const_iterator null_iter =
+                                    a_debugger->get_cached_breakpoints ().end ();
+
+            if ((it = a_debugger->get_cached_breakpoints ().find (a_bp_num))
+                 != null_iter
+                 && it->second.has_condition ()) {
+                MESSAGE ("hit conditional breakpoint. condition was: "
+                         << it->second.condition ());
+            }
+            a_debugger->do_continue ();
         } else {
             BOOST_FAIL ("Stopped, for an unknown reason") ;
         }
@@ -209,6 +240,7 @@ test_main (int argc, char *argv[])
         debugger->set_breakpoint ("main") ;
         debugger->set_breakpoint ("func1") ;
         debugger->set_breakpoint ("func2") ;
+        debugger->set_breakpoint ("func4") ;
         debugger->run () ;
         loop->run () ;
     } catch (Glib::Exception &e) {

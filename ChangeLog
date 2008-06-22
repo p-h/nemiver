@@ -1,3 +1,42 @@
+2008-06-22 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc,h,nmv-i-debugger.h:
+	  make IDebugger::set_breakpoint() take a condition in parameter.
+	  Add a breakpoint_number as a parameter of the
+	  IDebugger::stopped_signal() event. That bp_num parameter is valid
+	  when the stop_reason is IDebugger::BREAKPOINT_HIT. When the
+	  stop_reason is not IDebugger::BREAKPOINT_HIT, the breakpoint_number
+	  parameter is set to -1.
+	  Also, make sure IDebugger::BreakPoint now carries a condition
+	  string as well as a count of the number of time it got hit.
+	* src/persp/dbgperspective/*.cc: update the widgets that use IDebugger
+	  to reflect the change in the IDebugger API.
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	  (parse_breakpoint()): take breakpoint conditions and hit count int
+	  account.
+	* src/persp/dbgperspective/glade/setbreakpointdialog.glade,
+	  src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc,h:
+	  add a text entry field to enter a condition at breakpoint definition
+	  time, in the dialog used to set breakpoints.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: display conditions
+	  and hit count in the breakpoint view. Make sure those are updated
+	  whenever a new breakpoint is added or whenever we hit breakpoints.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: When applicable, make
+	  sure to properly take conditions in account when setting a breakpoint.
+	  Also, make sure to save breakpoint conditions into the session as
+	  well. Did a little bit of cleanup as well.
+	* src/persp/dbgperspective/nmv-sess-mgr.h,cc: 
+	  Make ISessMgr::Breakpoint carry breakpoint conditions now.
+	  Also, teach the ISessMgr about storing/loading breakpoint conditions
+	  in the DB. Set required DB schema to 1.3.
+	* src/persp/dbgperspective/sqlscripts/sqlite/create-tables.sql: change
+	  the schema to make breakpoint objects carry a condition now. Bumped
+	  the schema version to 1.3.
+	* tests/test-breakpoint.cc: add a regression test of IDebugger for
+	  conditional breakpoints.
+
+	  This entry adds support of conditional breakpoints.
+
 2008-06-21 Dodji Seketeli <dodji@gnome.org>
 
 	* configure.ac: bumped to 0.5.5

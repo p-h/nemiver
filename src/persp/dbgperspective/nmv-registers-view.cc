@@ -107,6 +107,7 @@ public:
                               bool,
                               const IDebugger::Frame &,
                               int,
+                              int,
                               const UString&)
     {
         if (a_reason == IDebugger::EXITED_SIGNALLED
