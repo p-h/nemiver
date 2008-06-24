@@ -1,3 +1,11 @@
+nemiver (0.5.4-1) unstable; urgency=low
+
+  * New upstream version
+    + code cleanup and compilation fixes
+    + better handling of variable 'this'
+
+ -- Luca Bruno <lucab@debian.org>  Tue, 24 Jun 2008 11:31:21 +0200
+
 nemiver (0.5.3-1) unstable; urgency=low
 
   * New upstream version
