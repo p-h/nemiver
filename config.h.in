@@ -102,9 +102,6 @@
 /* build with gtksourceviewmm 2.x instead of 1.x */
 #undef WITH_SOURCEVIEWMM2
 
-/* enable variables walker interface */
-#undef WITH_VARIABLE_WALKER
-
 /* compile the workbench */
 #undef WITH_WORKBENCH
 

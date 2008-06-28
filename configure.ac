@@ -210,18 +210,6 @@ AC_ARG_ENABLE(symsvis,
               ENABLE_GCC_SYMBOLS_VISIBILITY=$enableval,
               ENABLE_GCC_SYMBOLS_VISIBILITY=no)
 
-ENABLE_VARIABLE_WALKER=yes
-AC_ARG_ENABLE(variable-walker,
-              AC_HELP_STRING([--enable-variable-walker],
-                             [enable the variable walker interface. default is enabled]),
-              ENABLE_VARIABLE_WALKER=$enableval,
-              ENABLE_VARIABLE_WALKER=yes)
-if test x$ENABLE_VARIABLE_WALKER = xyes ; then
-    AC_DEFINE([WITH_VARIABLE_WALKER], 1, [enable variables walker interface])
-    AC_MSG_NOTICE([enabled variable walker])
-else
-    AC_MSG_NOTICE([disabled variable walker])
-fi
 
 dnl *******************************
 dnl checking for libraries we use
@@ -466,7 +454,6 @@ cat <<EOT
     Enable memory view              : ${ENABLE_MEMORYVIEW} (requires gtkhex > $GTKHEX_VERSION)
     gtksourceviewmm version         : ${LIBGTKSOURCEVIEWMM_PKG}
     VFS library                     : ${VFS_PKG}
-    Enable variable walker          : ${ENABLE_VARIABLE_WALKER}
     Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
     Maintainer mode                 : ${USER_MAINTAINER_MODE}
 

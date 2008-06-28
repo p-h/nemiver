@@ -24,8 +24,6 @@
  */
 #include "config.h"
 
-#ifdef WITH_VARIABLE_WALKER
-
 #include <map>
 #include <list>
 #include <glib/gi18n.h>
@@ -326,6 +324,4 @@ GlobalVarsInspectorDialog::~GlobalVarsInspectorDialog ()
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
-
-#endif //WITH_VARIABLE_WALKER
 

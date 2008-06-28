@@ -24,8 +24,6 @@
  */
 #include "config.h"
 
-#ifdef WITH_VARIABLE_WALKER
-
 #include <glib/gi18n.h>
 #include <gtkmm/treestore.h>
 #include "common/nmv-exception.h"
@@ -286,6 +284,4 @@ VarInspector2::clear ()
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
-
-#endif //WITH_VARIABLE_WALKER
 

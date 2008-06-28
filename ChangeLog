@@ -1,3 +1,19 @@
+2008-06-28 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/Makefile.am: Remove
+	  nmv-var-inspector.[h|cc], nmv-var-inspector.[cc|h],
+	  nmv-variables-utils.[cc|h] because their 'variable-walker'
+	  enabled counterpart are now solid enough to take over.
+	* src/persp/dbgperspective/*.cc,h: Ditto.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc,
+	  src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc,
+	  src/persp/dbgperspective/nmv-local-vars-inspector2.cc,
+	  src/persp/dbgperspective/nmv-var-inspector-dialog.cc,
+	  src/persp/dbgperspective/nmv-var-inspector2.cc,
+	  src/persp/dbgperspective/nmv-variables-utils2.cc: switch
+	  unconditionnaly to variable walker.
+	* configure.ac: Don't propse the --enable-variable-walker anymore.
+
 2008-06-22 Dodji Seketeli <dodji@gnome.org>
 
 	* src/uicommon/nmv-source-editor.cc: don't override

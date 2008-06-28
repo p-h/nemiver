@@ -26,11 +26,7 @@
 #include <glib/gi18n.h>
 #include "common/nmv-exception.h"
 #include "nmv-var-inspector-dialog.h"
-#ifndef WITH_VARIABLE_WALKER
-#include "nmv-var-inspector.h"
-#else
 #include "nmv-var-inspector2.h"
-#endif
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -39,11 +35,7 @@ class VarInspectorDialog::Priv {
     friend class VarInspectorDialog ;
     Gtk::Entry *var_name_entry ;
     Gtk::Button *inspect_button ;
-#ifndef WITH_VARIABLE_WALKER
-    SafePtr<VarInspector> var_inspector ;
-#else
     SafePtr<VarInspector2> var_inspector ;
-#endif
     Gtk::Dialog &dialog ;
     Glib::RefPtr<Gnome::Glade::Xml> glade ;
     IDebuggerSafePtr debugger ;
@@ -80,11 +72,7 @@ public:
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
                                                        "inspectorwidgetbox") ;
-#ifndef WITH_VARIABLE_WALKER
-        var_inspector.reset (new VarInspector (debugger)) ;
-#else
         var_inspector.reset (new VarInspector2 (debugger)) ;
-#endif
         THROW_IF_FAIL (var_inspector) ;
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow) ;
         scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC) ;

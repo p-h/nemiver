@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#ifdef WITH_VARIABLE_WALKER
-
 #include "nmv-variables-utils2.h"
 #include "common/nmv-exception.h"
 #include "nmv-ui-utils.h"
@@ -270,6 +268,4 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
 
 NEMIVER_END_NAMESPACE (variables_utils2)
 NEMIVER_END_NAMESPACE (nemiver)
-
-#endif //WITH_VARIABLE_WALKER
 
