@@ -60,7 +60,7 @@ const char* WHERE_MARK = "where-marker";
 
 class SourceView : public gtksourceview::SourceView {
 
-    sigc::signal<void, int> m_marker_region_got_clicked_signal ;
+    sigc::signal<void, int, bool> m_marker_region_got_clicked_signal ;
 
 public:
     SourceView (Glib::RefPtr<SourceBuffer> &a_buf) :
@@ -115,7 +115,8 @@ public:
         THROW_IF_FAIL (iter) ;
 
         LOG_DD ("got clicked on line: " << iter.get_line ()) ;
-        marker_region_got_clicked_signal ().emit (iter.get_line ()) ; ;
+        marker_region_got_clicked_signal ().emit (iter.get_line (),
+                                                  false/*no dialog requested*/);
     }
 
     bool on_button_press_event (GdkEventButton *a_event)
@@ -129,7 +130,7 @@ public:
         }
     }
 
-    sigc::signal<void, int>& marker_region_got_clicked_signal ()
+    sigc::signal<void, int, bool>& marker_region_got_clicked_signal ()
     {
         return m_marker_region_got_clicked_signal ;
     }
@@ -151,7 +152,7 @@ struct SourceEditor::Priv {
     Gtk::Label *line_col_label ;
     Gtk::Label *line_count;
     sigc::signal<void, gint, gint> signal_insertion_moved ;
-    sigc::signal<void, int> marker_region_got_clicked_signal ;
+    sigc::signal<void, int, bool> marker_region_got_clicked_signal ;
     sigc::signal<void, const Gtk::TextBuffer::iterator&>
                                                     insertion_changed_signal;
     UString path ;
@@ -159,9 +160,9 @@ struct SourceEditor::Priv {
     //**************
     //<signal slots>
     //**************
-    void on_marker_region_got_clicked (int a_line)
+    void on_marker_region_got_clicked (int a_line, bool a_dialog_requested)
     {
-        marker_region_got_clicked_signal.emit (a_line) ;
+        marker_region_got_clicked_signal.emit (a_line, a_dialog_requested) ;
     }
 
     void on_mark_set_signal (const Gtk::TextBuffer::iterator &a_iter,
@@ -772,7 +773,7 @@ SourceEditor::do_search (const UString &a_str,
     return false ;
 }
 
-sigc::signal<void, int>&
+sigc::signal<void, int, bool>&
 SourceEditor::marker_region_got_clicked_signal () const
 {
     return m_priv->marker_region_got_clicked_signal ;

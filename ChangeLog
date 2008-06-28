@@ -1,4 +1,14 @@
 2008-06-28 Dodji Seketeli <dodji@gnome.org>
+	* src/persp/dbgperspective/menus/menus.xml,
+	  src/persp/dbgperspective/nmv-dbg-perspective.cc: add a menu action
+	  "SetBreakPointUsingDialogMenuItemAction". When activated, sets
+	  launches the SetBreakpointDialog, pre-filled with the info about the
+	  current location. Hitting enter on the dialog sets the breakpoint at
+	  the current location. This action can be activated by the shortcut
+	  "<ctrl><shift>b". This entry should fix:
+	  #540653 – add a shorcut to set a conditional breakpoint.
+
+2008-06-28 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
 	  (DBGPerspective::Priv::ensure_buffer_is_in_utf8): make sure to try

@@ -93,9 +93,12 @@ public:
 
     /// \name signals
     /// @{
-    sigc::signal<void, int>& marker_region_got_clicked_signal () const ;
+    sigc::signal<void,
+                 int/*line clicked*/,
+                 bool/*dialog requested*/>&
+                                 marker_region_got_clicked_signal () const ;
     sigc::signal<void, const Gtk::TextBuffer::iterator&>&
-                                            insertion_changed_signal () const ;
+                                 insertion_changed_signal () const ;
     /// @}
 };//end class SourceEditor
 

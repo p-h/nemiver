@@ -224,6 +224,7 @@ private:
     void on_continue_action () ;
     void on_continue_until_action () ;
     void on_set_breakpoint_action () ;
+    void on_set_breakpoint_using_dialog_action ();
     void on_refresh_locals_action () ;
     void on_toggle_breakpoint_action () ;
     void on_toggle_breakpoint_enabled_action () ;
@@ -252,7 +253,8 @@ private:
                                      const Glib::ustring &a_text,
                                      int a_dont_know) ;
 
-    void on_source_view_markers_region_clicked_signal (int a_line) ;
+    void on_source_view_markers_region_clicked_signal (int a_line,
+                                                       bool a_dialog_requested) ;
 
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event) ;
 
@@ -465,6 +467,7 @@ public:
     void step_out () ;
     void do_continue () ;
     void do_continue_until () ;
+    void set_breakpoint_at_current_line_using_dialog ();
     void set_breakpoint () ;
     void set_breakpoint (const UString &a_file,
                          int a_line,
@@ -489,7 +492,11 @@ public:
                                     bool &a_enabled) ;
     void toggle_breakpoint (const UString &a_file_path,
                             int a_linenum) ;
-    void set_breakpoint_dialog ();
+    void set_breakpoint_using_dialog ();
+    void set_breakpoint_using_dialog (const UString &a_file_path,
+                                      const int a_line_num);
+    void set_breakpoint_using_dialog (const UString &a_function_name);
+    void set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog);
     void refresh_locals () ;
 
     void inspect_variable () ;
@@ -1308,7 +1315,17 @@ DBGPerspective::on_set_breakpoint_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
-    set_breakpoint_dialog () ;
+    set_breakpoint_using_dialog () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_set_breakpoint_using_dialog_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+    set_breakpoint_at_current_line_using_dialog ();
     NEMIVER_CATCH
 }
 
@@ -1586,7 +1603,9 @@ DBGPerspective::on_insert_in_command_view_signal
 }
 
 void
-DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
+DBGPerspective::on_source_view_markers_region_clicked_signal
+                                                        (int a_line,
+                                                         bool a_dialog_requested)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
@@ -1596,7 +1615,11 @@ DBGPerspective::on_source_view_markers_region_clicked_signal (int a_line)
         THROW_IF_FAIL (cur_editor) ;
         UString path ;
         cur_editor->get_path (path) ;
-        toggle_breakpoint (path, a_line + 1 ) ;
+        if (a_dialog_requested) {
+            set_breakpoint_using_dialog (path, a_line + 1);
+        } else {
+            toggle_breakpoint (path, a_line + 1 ) ;
+        }
     }
 
     NEMIVER_CATCH
@@ -2637,6 +2660,17 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
             ActionEntry::DEFAULT,
             "<control>B"
+        },
+
+        {
+            "SetBreakPointUsingDialogMenuItemAction",
+            nil_stock_id,
+            _("Set Breakpoint with dialog..."),
+            _("Set a breakpoint at the current line using a dialog"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_set_breakpoint_using_dialog_action),
+            ActionEntry::DEFAULT,
+            "<control><shift>B"
         },
 
         {
@@ -5284,7 +5318,7 @@ DBGPerspective::toggle_breakpoint ()
     source_editor->get_path (path) ;
     THROW_IF_FAIL (path != "") ;
 
-    gint current_line =
+    int current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
                 ()->get_iter ().get_line () + 1;
     if (current_line >= 0)
@@ -5292,46 +5326,102 @@ DBGPerspective::toggle_breakpoint ()
 }
 
 void
-DBGPerspective::set_breakpoint_dialog ()
+DBGPerspective::set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    switch (a_dialog.mode ()) {
+        case SetBreakpointDialog::MODE_SOURCE_LOCATION:
+            {
+                UString filename;
+                filename = a_dialog.file_name () ;
+                THROW_IF_FAIL (filename != "") ;
+                int line = a_dialog.line_number () ;
+                LOG_DD ("setting breakpoint in file "
+                        << filename << " at line " << line) ;
+                set_breakpoint (filename, line, a_dialog.condition ());
+                break;
+            }
+
+        case SetBreakpointDialog::MODE_FUNCTION_NAME:
+            {
+                UString function = a_dialog.function ();
+                THROW_IF_FAIL (function != "") ;
+                set_breakpoint (function, a_dialog.condition ());
+                break;
+            }
+
+        case SetBreakpointDialog::MODE_EVENT:
+            {
+                UString event = a_dialog.event ();
+                THROW_IF_FAIL (event != "");
+                debugger ()->set_catch (event);
+                break;
+            }
+
+        default:
+            THROW ("should not be reached");
+            break;
+    }
+}
+
+void
+DBGPerspective::set_breakpoint_at_current_line_using_dialog ()
+{
+    SourceEditor *source_editor = get_current_source_editor () ;
+    THROW_IF_FAIL (source_editor) ;
+    UString path ;
+    source_editor->get_path (path) ;
+    THROW_IF_FAIL (path != "") ;
+    int current_line =
+        source_editor->source_view ().get_source_buffer ()->get_insert
+                ()->get_iter ().get_line () + 1;
+    if (current_line >= 0)
+        set_breakpoint_using_dialog (path, current_line);
+}
+
+void
+DBGPerspective::set_breakpoint_using_dialog ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
     SetBreakpointDialog dialog (plugin_path ()) ;
 
     int result = dialog.run () ;
     if (result != Gtk::RESPONSE_OK) {
         return;
     }
+    set_breakpoint_from_dialog (dialog);
+}
 
-    switch(dialog.mode ()) {
-        case SetBreakpointDialog::MODE_SOURCE_LOCATION:
-            {
-                UString filename;
-                filename = dialog.file_name () ;
-                THROW_IF_FAIL (filename != "") ;
-                int line = dialog.line_number () ;
-                LOG_DD ("setting breakpoint in file "
-                        << filename << " at line " << line) ;
-                set_breakpoint (filename, line, dialog.condition ());
-                break;
-            }
-        case SetBreakpointDialog::MODE_FUNCTION_NAME:
-            {
-                UString function = dialog.function ();
-                THROW_IF_FAIL (function != "") ;
-                set_breakpoint (function, dialog.condition ());
-                break;
-            }
-        case SetBreakpointDialog::MODE_EVENT:
-            {
-                UString event = dialog.event ();
-                THROW_IF_FAIL (event != "");
-                debugger ()->set_catch (event);
-                break;
-            }
-        default:
-            THROW ("should not be reached");
-            break;
+void
+DBGPerspective::set_breakpoint_using_dialog (const UString &a_file_name,
+                                             const int a_line_num)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    THROW_IF_FAIL (!a_file_name.empty ());
+    THROW_IF_FAIL (a_line_num > 0);
+
+    SetBreakpointDialog dialog (plugin_path ()) ;
+    dialog.mode (SetBreakpointDialog::MODE_SOURCE_LOCATION);
+    dialog.file_name (a_file_name);
+    dialog.line_number (a_line_num);
+    int result = dialog.run () ;
+    if (result != Gtk::RESPONSE_OK) {
+        return;
     }
+    set_breakpoint_from_dialog (dialog);
+}
+
+void
+DBGPerspective::set_breakpoint_using_dialog (const UString &a_function_name)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    SetBreakpointDialog dialog (plugin_path ());
+    dialog.mode (SetBreakpointDialog::MODE_FUNCTION_NAME);
+    dialog.file_name (a_function_name);
+    int result = dialog.run ();
+    if (result != Gtk::RESPONSE_OK) {
+        return;
+    }
+    set_breakpoint_from_dialog (dialog);
 }
 
 void
