@@ -25,7 +25,7 @@
 
 #include <glib/gi18n.h>
 #include "nmv-vars-treeview.h"
-#include "nmv-variables-utils2.h"
+#include "nmv-variables-utils.h"
 
 namespace vutil=nemiver::variables_utils2 ;
 

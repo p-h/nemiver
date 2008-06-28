@@ -1,5 +1,10 @@
 2008-06-28 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/*.cc,h: renamed foo2.cc into foo.cc
+	  and foo2.h into foo.h.
+
+2008-06-28 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/Makefile.am: Remove
 	  nmv-var-inspector.[h|cc], nmv-var-inspector.[cc|h],
 	  nmv-variables-utils.[cc|h] because their 'variable-walker'

@@ -29,7 +29,7 @@
 #include <glib/gi18n.h>
 #include "common/nmv-exception.h"
 #include "nmv-global-vars-inspector-dialog.h"
-#include "nmv-variables-utils2.h"
+#include "nmv-variables-utils.h"
 #include "nmv-vars-treeview.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"

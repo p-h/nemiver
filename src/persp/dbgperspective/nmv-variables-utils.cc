@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "nmv-variables-utils2.h"
+#include "nmv-variables-utils.h"
 #include "common/nmv-exception.h"
 #include "nmv-ui-utils.h"
 

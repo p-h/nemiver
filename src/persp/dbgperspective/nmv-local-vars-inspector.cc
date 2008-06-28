@@ -30,8 +30,8 @@
 #include <gtkmm/treestore.h>
 #include <gtkmm/treerowreference.h>
 #include "common/nmv-exception.h"
-#include "nmv-local-vars-inspector2.h"
-#include "nmv-variables-utils2.h"
+#include "nmv-local-vars-inspector.h"
+#include "nmv-variables-utils.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 #include "nmv-i-var-list-walker.h"

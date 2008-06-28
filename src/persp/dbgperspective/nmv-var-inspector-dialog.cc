@@ -26,7 +26,7 @@
 #include <glib/gi18n.h>
 #include "common/nmv-exception.h"
 #include "nmv-var-inspector-dialog.h"
-#include "nmv-var-inspector2.h"
+#include "nmv-var-inspector.h"
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)

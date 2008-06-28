@@ -27,8 +27,8 @@
 #include <glib/gi18n.h>
 #include <gtkmm/treestore.h>
 #include "common/nmv-exception.h"
-#include "nmv-var-inspector2.h"
-#include "nmv-variables-utils2.h"
+#include "nmv-var-inspector.h"
+#include "nmv-variables-utils.h"
 #include "nmv-i-var-walker.h"
 #include "nmv-ui-utils.h"
 #include "nmv-vars-treeview.h"

@@ -69,7 +69,7 @@
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
 
-#include "nmv-local-vars-inspector2.h"
+#include "nmv-local-vars-inspector.h"
 
 #include "nmv-global-vars-inspector-dialog.h"
 #include "nmv-terminal.h"
