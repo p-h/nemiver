@@ -917,7 +917,9 @@ struct DBGPerspective::Priv {
                 converted = true;
                 break;
             }
-        } else {
+        }
+
+        if (!converted) {
             //fall back to trying the hardcoded list of supported encodings
             LOG_DD ("trying hardcoded encodings");
             for (unsigned int i=0; i < SIZE_OF_SUPPORTED_ENCODINGS; i++) {

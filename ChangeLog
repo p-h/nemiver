@@ -1,5 +1,12 @@
 2008-06-28 Dodji Seketeli <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::Priv::ensure_buffer_is_in_utf8): make sure to try
+	  hardcoded file encodings when the encodings listed in gconf are not
+	  enough.
+
+2008-06-28 Dodji Seketeli <dodji@gnome.org>
+
 	* src/persp/dbgperspective/*.cc,h: renamed foo2.cc into foo.cc
 	  and foo2.h into foo.h.
 
