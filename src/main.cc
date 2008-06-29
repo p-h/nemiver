@@ -54,6 +54,7 @@ static int gv_execute_session=0;
 static bool gv_last_session=false;
 static gchar *gv_log_domains=0;
 static bool gv_log_debugger_output=false;
+static bool gv_show_version=false;
 
 static GOptionEntry entries[] =
 {
@@ -121,6 +122,14 @@ static GOptionEntry entries[] =
       G_OPTION_ARG_NONE,
       &gv_log_debugger_output,
       _("Log the debugger output"),
+      NULL
+    },
+    { "version",
+      0,
+      0,
+      G_OPTION_ARG_NONE,
+      &gv_show_version,
+      _("Show the version number of nemiver"),
       NULL
     },
     {0,0,0,(GOptionArg)0,0,0,0}
@@ -212,10 +221,15 @@ parse_command_line (int& a_argc,
 }
 
 static bool
-process_command_line (int& a_argc, char** a_argv, int &a_return)
+process_command_line_non_gui (int&, char**, int &a_return)
 {
     if (gv_log_debugger_output) {
         LOG_STREAM.enable_domain ("gdbmi-output-domain");
+    }
+
+    if (gv_show_version) {
+        cout << PACKAGE_VERSION << endl;
+        return false;
     }
 
     if (gv_log_domains) {
@@ -227,6 +241,24 @@ process_command_line (int& a_argc, char** a_argv, int &a_return)
             LOG_STREAM.enable_domain (*iter);
         }
     }
+
+    if (gv_purge_sessions) {
+        IDBGPerspective *debug_persp =
+            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
+                                                (DBGPERSPECTIVE_PLUGIN_NAME));
+        if (debug_persp) {
+            debug_persp->session_manager ().delete_sessions ();
+        }
+        a_return = 0;
+        return false;
+    }
+    a_return = 0;
+    return true;
+}
+
+static bool
+process_command_line (int& a_argc, char** a_argv, int &a_return)
+{
 
     if (gv_process_to_attach_to) {
         using nemiver::common::IProcMgrSafePtr;
@@ -289,8 +321,7 @@ process_command_line (int& a_argc, char** a_argv, int &a_return)
                 cout << session_iter->session_id ()
                      << " "
                      << session_iter->properties ()["sessionname"]
-                     << "\n"
-                    ;
+                     << "\n";
             }
             a_return = 0;
             return false;
@@ -299,17 +330,6 @@ process_command_line (int& a_argc, char** a_argv, int &a_return)
             a_return = -1;
             return false;
         }
-    }
-
-    if (gv_purge_sessions) {
-        IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME));
-        if (debug_persp) {
-            debug_persp->session_manager ().delete_sessions ();
-        }
-        a_return = 0;
-        return false;
     }
 
     if (gv_execute_session) {
@@ -359,7 +379,8 @@ process_command_line (int& a_argc, char** a_argv, int &a_return)
                 for (session_iter = sessions.begin ();
                         session_iter != sessions.end ();
                         ++session_iter) {
-                    std::map<UString, UString>::const_iterator map_iter = session_iter->properties ().find ("lastruntime");
+                    std::map<UString, UString>::const_iterator map_iter =
+                                session_iter->properties ().find ("lastruntime");
                     if (map_iter != session_iter->properties ().end ()) {
                         glong new_time = atoi (map_iter->second.c_str ());
                         if (new_time > time_val) {
@@ -438,6 +459,11 @@ main (int a_argc, char *a_argv[])
 
     parse_command_line (a_argc, a_argv);
 
+    int retval;
+    if (process_command_line_non_gui (a_argc, a_argv, retval) != true) {
+        return -1;
+    }
+
 
     //**********************************
     //load the workbench dynamic module
@@ -452,9 +478,8 @@ main (int a_argc, char *a_argv[])
     LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
            "refcount-domain");
 
-    int retval;
     if (process_command_line (a_argc, a_argv, retval) != true) {
-        return retval;
+        return -1;
     }
 
     //intercept ctrl-c/SIGINT

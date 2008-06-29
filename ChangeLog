@@ -1,3 +1,8 @@
+2008-06-29 Dodji Seketeli <dodji@gnome.org>
+
+	* src/main.cc: add a --version command line switch. Also, don't start
+	  the GUI when not necessary.
+
 2008-06-28 Dodji Seketeli <dodji@gnome.org>
 	* src/persp/dbgperspective/menus/menus.xml,
 	  src/persp/dbgperspective/nmv-dbg-perspective.cc: add a menu action
