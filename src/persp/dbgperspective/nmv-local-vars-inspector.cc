@@ -406,15 +406,17 @@ public:
                                   true, false);
     }
 
-    void update_a_function_argument (const IDebugger::VariableSafePtr a_var)
+    /// \return true if the variable was found in the TreeModel, false
+    ///  otherwise. If the variable was found, the function updates it.
+    bool update_a_function_argument (const IDebugger::VariableSafePtr a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (tree_view);
 
         Gtk::TreeModel::iterator parent_row_it;
         get_function_arguments_row_iterator (parent_row_it);
-        vutil::update_a_variable (a_var, *tree_view, parent_row_it,
-                                  true, false);
+        return vutil::update_a_variable (a_var, *tree_view, parent_row_it,
+                                         true, false);
     }
 
     void update_a_derefed_variable (const IDebugger::VariableSafePtr a_var)
@@ -663,7 +665,9 @@ public:
                 append_a_function_argument (a_walker->get_variable ());
             } else {
                 LOG_DD ("updating an argument in substree");
-                update_a_function_argument (a_walker->get_variable ());
+                if (!update_a_function_argument (a_walker->get_variable ())) {
+                    append_a_function_argument (a_walker->get_variable ());
+                }
             }
         }
 

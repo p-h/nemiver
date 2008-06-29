@@ -1,3 +1,16 @@
+2008-06-29 Dodji Seketeli <dseketel@redhat.com>
+
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	  (LocalVarsInspector2::Priv::on_func_arg_visited_signal):
+	  when the function arguments treemodel is missing a variable, append
+	  it instead of trying to update it. This should fix some
+	  "Could not find variable in inspector:foo" that I have experienced
+	  while debugging WebKit.
+	* src/persp/dbgperspective/nmv-variables-utils.cc:
+	  (update_a_variable): make this return false when the variable is not
+	  found. That allows the caller to take appropriate action, instead of
+	  just throwing an exception.
+
 2008-06-29 Dodji Seketeli <dodji@gnome.org>
 
 	* src/main.cc: add a --version command line switch. Also, don't start

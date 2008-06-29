@@ -182,7 +182,7 @@ find_a_variable (const IDebugger::VariableSafePtr a_var,
     return false;
 }
 
-void
+bool
 update_a_variable (const IDebugger::VariableSafePtr a_var,
                    const Gtk::TreeView &a_tree_view,
                    Gtk::TreeModel::iterator &a_parent_row_it,
@@ -194,12 +194,14 @@ update_a_variable (const IDebugger::VariableSafePtr a_var,
 
     Gtk::TreeModel::iterator row_it;
     if (!find_a_variable (a_var, a_parent_row_it, row_it)) {
-        THROW ("could not find variable in inspector: "
-                + a_var->name ());
+        LOG_ERROR ("could not find variable in inspector: "
+                   + a_var->name ());
+        return false;
     }
     update_a_variable_real (a_var, a_tree_view,
                             row_it, a_handle_highlight,
                             a_is_new_frame);
+    return true;
 }
 
 static void
