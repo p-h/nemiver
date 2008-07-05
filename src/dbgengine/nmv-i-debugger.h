@@ -824,14 +824,11 @@ public:
 
     virtual void list_files (const UString &a_cookie="") = 0;
 
-    // register functions
     virtual void list_register_names (const UString &a_cookie="") = 0;
     virtual void list_changed_registers (const UString &a_cookie="") = 0;
     virtual void list_register_values (const UString &a_cookie="") = 0;
-
     virtual void list_register_values (std::list<register_id_t> a_registers,
                                        const UString &a_cookie="") = 0;
-
     virtual void set_register_value (const UString& a_reg_name,
                                      const UString& a_value,
                                      const UString& a_cookie="") = 0;

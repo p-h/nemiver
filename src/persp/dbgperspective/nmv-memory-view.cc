@@ -1,26 +1,27 @@
-/*******************************************************************************
- *  PROJECT: Nemiver
+//Author: Jonathon Jongsma
+/*
+ *This file is part of the Nemiver project
  *
- *  AUTHOR: Jonathon Jongsma
- *  See COPYRIGHT file copyright information.
+ *Nemiver is free software; you can redistribute
+ *it and/or modify it under the terms of
+ *the GNU General Public License as published by the
+ *Free Software Foundation; either version 2,
+ *or (at your option) any later version.
  *
- *  License:
- *    This program is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation; either version 2 of the License, or
- *    (at your option) any later version.
+ *Nemiver is distributed in the hope that it will
+ *be useful, but WITHOUT ANY WARRANTY;
+ *without even the implied warranty of
+ *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *See the GNU General Public License for more details.
  *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
+ *You should have received a copy of the
+ *GNU General Public License along with Nemiver;
+ *see the file COPYING.
+ *If not, write to the Free Software Foundation,
+ *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- *    You should have received a copy of the GNU General Public License
- *    along with this program; if not, write to the
- *    Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- *    Boston, MA  02111-1307  USA
- *
- *******************************************************************************/
+ *See COPYRIGHT file copyright information.
+ */
 #include <sstream>
 #include <bitset>
 #include <iomanip>
@@ -60,8 +61,7 @@ class GroupingComboBox : public Gtk::ComboBox
         guint get_group_type () const
         {
             Gtk::TreeModel::iterator iter = get_active ();
-            if (iter)
-            {
+            if (iter) {
                 return (*iter)[m_cols.group_type];
             }
             else return GROUP_BYTE;
@@ -153,8 +153,7 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
         THROW_IF_FAIL (m_address_entry);
-        switch (a_state)
-        {
+        switch (a_state) {
             case IDebugger::READY:
                 set_widgets_sensitive (true);
                 break;
@@ -173,8 +172,7 @@ public:
         int editor_cpl, editor_lines;
         m_editor->get_geometry (editor_cpl, editor_lines);
         size_t addr = get_address ();
-        if (validate_address (addr))
-        {
+        if (validate_address (addr)) {
             LOG_DD ("Fetching " << editor_cpl * editor_lines << " bytes");
             // read as much memory as will fill the hex editor widget
             m_debugger->read_memory (addr, editor_cpl * editor_lines);
@@ -223,8 +221,7 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         // FIXME: implement validation
-        if (a_addr)
-        {
+        if (a_addr) {
             return true;
         }
         return false;
@@ -273,12 +270,11 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         size_t length = a_change_data->end - a_change_data->start + 1;
         guchar* new_data = m_document->get_data (a_change_data->start, length);
-        if (new_data)
-        {
+        if (new_data) {
             std::vector<uint8_t> data(new_data, new_data + length);
             // set data in the debugger
-            m_debugger->set_memory(static_cast<size_t> (get_address () + a_change_data->start),
-                    data);
+            m_debugger->set_memory(static_cast<size_t>
+                                   (get_address () + a_change_data->start), data);
         }
     }
 
@@ -315,3 +311,4 @@ MemoryView::modify_font (const Pango::FontDescription& a_font_desc)
 }
 
 } // namespace nemiver
+

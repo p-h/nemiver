@@ -67,6 +67,10 @@ public:
     UString previous_function_name;
     Glib::RefPtr<Gtk::ActionGroup> var_inspector_action_group;
     bool is_new_frame;
+    bool is_up2date;
+    IDebugger::StopReason saved_reason;
+    bool saved_has_frame;
+    IDebugger::Frame saved_frame;
 
     Priv (IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench,
@@ -76,7 +80,10 @@ public:
         tree_view (VarsTreeView::create ()),
         dereference_mi (0),
         context_menu (0),
-        is_new_frame (false)
+        is_new_frame (false),
+        is_up2date (true),
+        saved_reason (IDebugger::UNDEFINED_REASON),
+        saved_has_frame (false)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -175,6 +182,15 @@ public:
         THROW_IF_FAIL (function_arguments_row_ref);
         a_it = tree_store->get_iter
                             (function_arguments_row_ref->get_path ());
+    }
+
+    bool should_process_now ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        THROW_IF_FAIL (tree_view);
+        bool is_visible = tree_view->is_drawable ();
+        LOG_DD ("is visible: " << is_visible);
+        return is_visible;
     }
 
     bool is_function_arguments_subtree_empty () const
@@ -283,6 +299,8 @@ public:
                             &Priv::on_tree_view_row_activated_signal));
         tree_view->signal_button_press_event ().connect_notify
             (sigc::mem_fun (this, &Priv::on_button_press_signal));
+        tree_view->signal_expose_event ().connect_notify
+            (sigc::mem_fun (this, &Priv::on_expose_event_signal));
     }
 
     void set_local_variables
@@ -359,7 +377,6 @@ public:
                                   tree_store,
                                   parent_row_it);
         tree_view->expand_row (tree_store->get_path (parent_row_it), false);
-
     }
 
     void append_a_function_argument (const IDebugger::VariableSafePtr a_var)
@@ -415,6 +432,7 @@ public:
 
         Gtk::TreeModel::iterator parent_row_it;
         get_function_arguments_row_iterator (parent_row_it);
+
         return vutil::update_a_variable (a_var, *tree_view, parent_row_it,
                                          true, false);
     }
@@ -499,19 +517,51 @@ public:
         debugger->dereference_variable (variable);
     }
 
+    void finish_handling_debugger_stopped_event
+                                    (IDebugger::StopReason /*a_reason*/,
+                                     bool /*a_has_frame*/,
+                                     const IDebugger::Frame &a_frame)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+            THROW_IF_FAIL (tree_store);
+            if (is_new_frame) {
+                LOG_DD ("init tree view");
+                re_init_tree_view ();
+                LOG_DD ("list local variables");
+                debugger->list_local_variables ();
+                LOG_DD ("list frames arguments");
+                debugger->list_frames_arguments ();
+            } else {
+                IVarListWalkerSafePtr walker_list =
+                                    get_local_vars_walker_list ();
+                THROW_IF_FAIL (walker_list);
+                walker_list->do_walk_variables ();
+                walker_list = get_function_args_vars_walker_list ();
+                THROW_IF_FAIL (walker_list);
+                walker_list->do_walk_variables ();
+                walker_list = get_derefed_variables_walker_list ();
+                THROW_IF_FAIL (walker_list);
+                walker_list->do_walk_variables ();
+            }
+            previous_function_name = a_frame.function_name ();
+
+        NEMIVER_CATCH
+    }
+
     //****************************
     //<debugger signal handlers>
     //****************************
     void on_stopped_signal (IDebugger::StopReason a_reason,
                             bool a_has_frame,
                             const IDebugger::Frame &a_frame,
-                            int a_thread_id,
-                            int a_bp_num,
-                            const UString &a_cookie)
+                            int /*a_thread_id*/,
+                            int /*a_bp_num*/,
+                            const UString &/*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-        if (a_frame.line () || a_thread_id
-            || a_bp_num || a_cookie.empty ()) {}
 
         NEMIVER_TRY
 
@@ -535,24 +585,17 @@ public:
             } else {
                 is_new_frame = true;
             }
-            THROW_IF_FAIL (tree_store);
-            if (is_new_frame) {
-                LOG_DD ("init tree view");
-                re_init_tree_view ();
-                debugger->list_local_variables ();
+
+            if (should_process_now ()) {
+                finish_handling_debugger_stopped_event (a_reason,
+                                                        a_has_frame,
+                                                        a_frame);
             } else {
-                IVarListWalkerSafePtr walker_list =
-                                    get_local_vars_walker_list ();
-                THROW_IF_FAIL (walker_list);
-                walker_list->do_walk_variables ();
-                walker_list = get_function_args_vars_walker_list ();
-                THROW_IF_FAIL (walker_list);
-                walker_list->do_walk_variables ();
-                walker_list = get_derefed_variables_walker_list ();
-                THROW_IF_FAIL (walker_list);
-                walker_list->do_walk_variables ();
+                saved_reason = a_reason;
+                saved_has_frame = a_has_frame;
+                saved_frame = a_frame;
+                is_up2date = false;
             }
-            previous_function_name = a_frame.function_name ();
         }
 
         NEMIVER_CATCH
@@ -592,7 +635,11 @@ public:
 
         map<int, list<IDebugger::VariableSafePtr> >::const_iterator it;
         it = a_frames_params.find (0);
-        if (it == a_frames_params.end ()) {return;}
+        if (it == a_frames_params.end ()) {
+            LOG_DD ("no frame params found");
+            return;
+        }
+        LOG_DD ("got: " << (int) it->second.size () << " function parameters");
 
         walker_list->remove_variables ();
         walker_list->append_variables (it->second);
@@ -756,13 +803,27 @@ public:
         NEMIVER_CATCH
     }
 
+    void on_expose_event_signal (GdkEventExpose *)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+        if (!is_up2date) {
+            finish_handling_debugger_stopped_event (saved_reason,
+                                                    saved_has_frame,
+                                                    saved_frame);
+            is_up2date = true;
+        }
+        NEMIVER_CATCH
+    }
+
     void show_variable_type_in_dialog ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         if (!cur_selected_row) {return;}
         UString type =
-            (Glib::ustring) (*cur_selected_row)[vutil::get_variable_columns ().type];
+            (Glib::ustring)
+                    (*cur_selected_row)[vutil::get_variable_columns ().type];
         UString message;
         message.printf (_("Variable type is: \n %s"), type.c_str ());
 

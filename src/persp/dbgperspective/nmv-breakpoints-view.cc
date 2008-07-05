@@ -78,6 +78,7 @@ public:
     IWorkbench& workbench;
     IPerspective& perspective;
     IDebuggerSafePtr& debugger;
+    bool is_up2date;
 
     Priv (IWorkbench& a_workbench,
           IPerspective& a_perspective,
@@ -85,25 +86,13 @@ public:
         breakpoints_menu(0),
         workbench(a_workbench),
         perspective(a_perspective),
-        debugger(a_debugger)
+        debugger(a_debugger),
+        is_up2date (true)
     {
         init_actions ();
         build_tree_view () ;
         void set_breakpoints
                 (const std::map<int, IDebugger::BreakPoint> &a_breakpoints);
-
-        // we must handle the button press event before the default button
-        // handler since there are cases when we need to prevent the default
-        // handler from running
-        tree_view->signal_button_press_event ().connect
-            (sigc::mem_fun (*this,
-                            &Priv::on_breakpoints_view_button_press_signal),
-             false /*connect before*/);
-        tree_view->get_selection ()->signal_changed ().connect (
-                sigc::mem_fun (*this, &Priv::on_treeview_selection_changed));
-
-        tree_view->signal_key_press_event ().connect (sigc::mem_fun (*this,
-                    &Priv::on_key_press_event));
 
         // update breakpoint list when debugger indicates that the list of
         // breakpoints has changed.
@@ -141,6 +130,30 @@ public:
             enabled_toggle->signal_toggled ().connect (sigc::mem_fun (*this,
                         &BreakpointsView::Priv::on_breakpoint_enable_toggled));
         }
+
+        // we must handle the button press event before the default button
+        // handler since there are cases when we need to prevent the default
+        // handler from running
+        tree_view->signal_button_press_event ().connect
+                (sigc::mem_fun
+                     (*this, &Priv::on_breakpoints_view_button_press_signal),
+                      false /*connect before*/);
+        tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
+                (*this, &Priv::on_treeview_selection_changed));
+
+        tree_view->signal_key_press_event ().connect (sigc::mem_fun
+              (*this, &Priv::on_key_press_event));
+        tree_view->signal_expose_event ().connect_notify (sigc::mem_fun
+               (*this, &Priv::on_expose_event));
+    }
+
+    bool should_process_now ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        THROW_IF_FAIL (tree_view);
+        bool is_visible = tree_view->is_drawable ();
+        LOG_DD ("is visible: " << is_visible);
+        return is_visible;
     }
 
     void on_breakpoint_enable_toggled (const Glib::ustring& path)
@@ -256,6 +269,12 @@ public:
         return tree_iter;
     }
 
+    void finish_handling_debugger_stopped_event ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        debugger->list_breakpoints ();
+    }
+
     void on_debugger_breakpoints_set_signal
                             (const map<int, IDebugger::BreakPoint> &a_breaks,
                              const UString &a_cookie)
@@ -275,8 +294,11 @@ public:
     {
         NEMIVER_TRY
         if (a_reason == IDebugger::BREAKPOINT_HIT) {
-            LOG_DD ("listing breakpoints ...");
-            debugger->list_breakpoints ();
+            if (should_process_now ()) {
+                finish_handling_debugger_stopped_event ();
+            } else {
+                is_up2date = false;
+            }
         }
         NEMIVER_CATCH
     }
@@ -303,35 +325,6 @@ public:
             list_store->erase (*it) ;
         }
         NEMIVER_CATCH
-    }
-
-    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
-    {
-        NEMIVER_TRY
-        string relative_path = Glib::build_filename ("menus", a_filename) ;
-        string absolute_path ;
-        THROW_IF_FAIL (perspective.build_absolute_resource_path
-                (Glib::locale_to_utf8 (relative_path), absolute_path)) ;
-
-        workbench.get_ui_manager ()->add_ui_from_file
-                                        (Glib::locale_to_utf8 (absolute_path)) ;
-        NEMIVER_CATCH
-        return workbench.get_ui_manager ()->get_widget (a_widget_name);
-    }
-
-    Gtk::Widget* get_breakpoints_menu ()
-    {
-        THROW_IF_FAIL (breakpoints_menu);
-        return breakpoints_menu;
-    }
-
-    void popup_breakpoints_view_menu (GdkEventButton *a_event)
-    {
-        THROW_IF_FAIL (a_event) ;
-        THROW_IF_FAIL (tree_view) ;
-        Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_breakpoints_menu ()) ;
-        THROW_IF_FAIL (menu) ;
-        menu->popup (a_event->button, a_event->time) ;
     }
 
     bool on_breakpoints_view_button_press_signal (GdkEventButton *a_event)
@@ -430,6 +423,46 @@ public:
                                 ((*tree_iter)[get_bp_columns ().id]);
             }
         }
+    }
+
+    void on_expose_event (GdkEventExpose *)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+        if (!is_up2date) {
+            finish_handling_debugger_stopped_event ();
+            is_up2date = true;
+        }
+        NEMIVER_CATCH
+    }
+
+    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
+    {
+        NEMIVER_TRY
+        string relative_path = Glib::build_filename ("menus", a_filename) ;
+        string absolute_path ;
+        THROW_IF_FAIL (perspective.build_absolute_resource_path
+                (Glib::locale_to_utf8 (relative_path), absolute_path)) ;
+
+        workbench.get_ui_manager ()->add_ui_from_file
+                                        (Glib::locale_to_utf8 (absolute_path)) ;
+        NEMIVER_CATCH
+        return workbench.get_ui_manager ()->get_widget (a_widget_name);
+    }
+
+    Gtk::Widget* get_breakpoints_menu ()
+    {
+        THROW_IF_FAIL (breakpoints_menu);
+        return breakpoints_menu;
+    }
+
+    void popup_breakpoints_view_menu (GdkEventButton *a_event)
+    {
+        THROW_IF_FAIL (a_event) ;
+        THROW_IF_FAIL (tree_view) ;
+        Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_breakpoints_menu ()) ;
+        THROW_IF_FAIL (menu) ;
+        menu->popup (a_event->button, a_event->time) ;
     }
 
     void init_actions()

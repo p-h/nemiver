@@ -108,6 +108,7 @@ struct CallStack::Priv {
     sigc::connection on_selection_changed_connection ;
     Gtk::Widget *callstack_menu ;
     Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
+    bool is_up2date;
 
     Priv (IDebuggerSafePtr a_dbg,
           IWorkbench& a_workbench,
@@ -120,7 +121,8 @@ struct CallStack::Priv {
         cur_frame_index (-1),
         nb_frames_expansion_chunk (5),
         max_frames_to_show (nb_frames_expansion_chunk),
-        callstack_menu (0)
+        callstack_menu (0),
+        is_up2date (true)
     {
         connect_debugger_signals () ;
         init_actions ();
@@ -180,6 +182,15 @@ struct CallStack::Priv {
                                                 (call_stack_action_group);
     }
 
+    bool should_process_now ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        THROW_IF_FAIL (widget);
+        bool is_visible = widget->is_drawable ();
+        LOG_DD ("is visible: " << is_visible);
+        return is_visible;
+    }
+
     Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
     {
         NEMIVER_TRY
@@ -230,20 +241,23 @@ struct CallStack::Priv {
         debugger->select_frame (cur_frame_index) ;
     }
 
+    void finish_handling_debugger_stopped_event ()
+    {
+        THROW_IF_FAIL (debugger) ;
+        debugger->list_frames () ;
+    }
+
     void on_debugger_stopped_signal (IDebugger::StopReason a_reason,
-                                     bool a_has_frame,
-                                     const IDebugger::Frame &a_frame,
-                                     int a_thread_id,
-                                     int a_bp_num,
-                                     const UString &a_cookie)
+                                     bool /*a_has_frame*/,
+                                     const IDebugger::Frame &/*a_frame*/,
+                                     int /*a_thread_id*/,
+                                     int /*a_bp_num*/,
+                                     const UString &/*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
         NEMIVER_TRY
         LOG_DD ("stopped, reason: " << a_reason) ;
-
-        if (a_has_frame || a_frame.line () || a_thread_id
-            || a_bp_num || a_cookie.empty ()) {}
 
         if (a_reason == IDebugger::EXITED_SIGNALLED
             || a_reason == IDebugger::EXITED_NORMALLY
@@ -251,8 +265,11 @@ struct CallStack::Priv {
             return ;
         }
 
-        THROW_IF_FAIL (debugger) ;
-        debugger->list_frames () ;
+        if (should_process_now ()) {
+            finish_handling_debugger_stopped_event ();
+        } else {
+            is_up2date = false;
+        }
 
         NEMIVER_CATCH
     }
@@ -351,6 +368,18 @@ struct CallStack::Priv {
         Gtk::TreeModel::iterator row_it = selection->get_selected ();
         update_selected_frame (row_it);
 
+        NEMIVER_CATCH
+    }
+
+    void on_expose_event_signal (GdkEventExpose *)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+        if (!is_up2date) {
+            finish_handling_debugger_stopped_event ();
+            is_up2date = true;
+        }
         NEMIVER_CATCH
     }
 
@@ -482,6 +511,11 @@ struct CallStack::Priv {
             (sigc::hide (sigc::hide
              (sigc::mem_fun (*this,
                              &CallStack::Priv::on_row_activated_signal))));
+
+        tree_view->signal_expose_event ().connect_notify
+            (sigc::mem_fun (this, &Priv::on_expose_event_signal));
+
+        tree_view->set_events (Gdk::EXPOSURE_MASK);
 
         Gtk::TreeViewColumn* column =
                             tree_view->get_column (CallStackCols::FUNCTION_NAME) ;

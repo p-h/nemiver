@@ -1,3 +1,20 @@
+2008-07-05 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	  Make this widget behave with lazyness. That is, when the debugger
+	  stops, the widget does not query the debugger engine for data if
+	  it's hidden. When the widget becomes visible though, it updates
+	  itself if necessary.
+	* src/persp/dbgperspective/nmv-call-stack.cc: Likewise.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc: Likewise.
+	* src/persp/dbgperspective/nmv-memory-view.cc: Likewise.
+	* src/persp/dbgperspective/nmv-registers-view.cc: Likewise.
+	* src/persp/dbgperspective/nmv-thread-list.cc: Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::init_perspective_menu_entries): make the terminal
+	  widget be the one visible by default, so that the other ones can be
+	  hidden by default and thus not query the debugger engine.
+
 2008-06-29 Dodji Seketeli <dseketel@redhat.com>
 
 	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:

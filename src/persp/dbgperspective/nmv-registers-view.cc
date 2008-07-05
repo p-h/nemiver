@@ -60,9 +60,11 @@ public:
     SafePtr<Gtk::TreeView> tree_view ;
     Glib::RefPtr<Gtk::ListStore> list_store ;
     IDebuggerSafePtr& debugger;
+    bool is_up2date;
 
     Priv (IDebuggerSafePtr& a_debugger) :
-        debugger(a_debugger)
+        debugger(a_debugger),
+        is_up2date (true)
     {
         build_tree_view () ;
 
@@ -99,8 +101,32 @@ public:
         Gtk::CellRendererText* renderer = dynamic_cast<Gtk::CellRendererText*>
             (col->get_first_cell_renderer ());
         THROW_IF_FAIL (renderer);
-        renderer->signal_edited ().connect (sigc::mem_fun (this,
-                    &Priv::on_register_value_edited));
+        renderer->signal_edited ().connect (sigc::mem_fun
+                    (*this, &Priv::on_register_value_edited));
+        tree_view->signal_expose_event ().connect_notify (sigc::mem_fun
+                    (*this, &Priv::on_expose_event_signal));
+    }
+
+    bool should_process_now ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        THROW_IF_FAIL (tree_view);
+        bool is_visible = tree_view->is_drawable ();
+        LOG_DD ("is visible: " << is_visible);
+        return is_visible;
+    }
+
+    void finish_handling_debugger_stopped_event ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        static bool first_run = true;
+        if (first_run) {
+            first_run = false;
+            debugger->list_register_names ();
+        }
+        else {
+            debugger->list_changed_registers ();
+        }
     }
 
     void on_debugger_stopped (IDebugger::StopReason a_reason,
@@ -110,19 +136,18 @@ public:
                               int,
                               const UString&)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         if (a_reason == IDebugger::EXITED_SIGNALLED
             || a_reason == IDebugger::EXITED_NORMALLY
             || a_reason == IDebugger::EXITED) {
             return ;
         }
-        static bool first_run = true;
-        if (first_run) {
-            first_run = false;
-            debugger->list_register_names ();
+        if (should_process_now ()) {
+            finish_handling_debugger_stopped_event ();
+        } else {
+            is_up2date = false;
         }
-        else {
-            debugger->list_changed_registers ();
-        }
+
     }
 
     void on_debugger_registers_listed
@@ -135,8 +160,8 @@ public:
         if (a_cookie.empty ()) {}
         list_store->clear ();
         LOG_DD ("got num registers: " << (int)a_regs.size ());
-        for (std::map<IDebugger::register_id_t, UString>::const_iterator reg_iter = a_regs.begin ();
-                reg_iter != a_regs.end (); ++reg_iter) {
+        std::map<IDebugger::register_id_t, UString>::const_iterator reg_iter;
+        for (reg_iter = a_regs.begin (); reg_iter != a_regs.end (); ++reg_iter) {
             Gtk::TreeModel::iterator tree_iter = list_store->append ();
             (*tree_iter)[get_columns ().id] = reg_iter->first;
             (*tree_iter)[get_columns ().name] = reg_iter->second;
@@ -161,26 +186,24 @@ public:
     }
 
     void on_debugger_register_values_listed
-                            (const map<IDebugger::register_id_t, UString> &a_reg_values,
-                             const UString &a_cookie)
+                    (const map<IDebugger::register_id_t, UString> &a_reg_values,
+                     const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
         for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
                 tree_iter != list_store->children ().end (); ++tree_iter) {
             IDebugger::register_id_t id = (*tree_iter)[get_columns ().id];
-            std::map<IDebugger::register_id_t, UString>::const_iterator value_iter = a_reg_values.find (id);
-            if (value_iter != a_reg_values.end ())
-            {
+            std::map<IDebugger::register_id_t, UString>::const_iterator value_iter
+                                                    = a_reg_values.find (id);
+            if (value_iter != a_reg_values.end ()) {
                 (*tree_iter)[get_columns ().value] = value_iter->second;
                 if (a_cookie != "first-time") {
                     set_changed (tree_iter);
                 } else {
                     set_changed (tree_iter, false);
                 }
-            }
-            else
-            {
+            } else {
                 set_changed (tree_iter, false);
             }
         }
@@ -209,16 +232,16 @@ public:
         debugger->list_register_values (regs);
     }
 
-    void on_debugger_register_value_changed (const Glib::ustring& a_register_name,
-                                    const Glib::ustring& a_new_value,
-                                    const Glib::ustring& a_cookie)
+    void on_debugger_register_value_changed (const Glib::ustring &a_register_name,
+                                             const Glib::ustring &a_new_value,
+                                             const Glib::ustring &/*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-        if (a_cookie.empty ()) {}
-        for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
-                tree_iter != list_store->children ().end (); ++tree_iter) {
-            if ((*tree_iter)[get_columns ().name] == a_register_name)
-            {
+        Gtk::TreeModel::iterator tree_iter;
+        for (tree_iter = list_store->children ().begin ();
+             tree_iter != list_store->children ().end ();
+             ++tree_iter) {
+            if ((*tree_iter)[get_columns ().name] == a_register_name) {
                 // no need to update if the value is the same as last time
                 if ((*tree_iter)[get_columns ().value] == a_new_value) {
                     (*tree_iter)[get_columns ().value] = a_new_value;
@@ -229,16 +252,25 @@ public:
         }
     }
 
+    void on_expose_event_signal (GdkEventExpose *)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+        if (!is_up2date) {
+            finish_handling_debugger_stopped_event ();
+            is_up2date = true;
+        }
+        NEMIVER_CATCH
+    }
+
     // helper function which highlights a row in red or returns the text to
     // normal color to indicate whether it has changed since last update
     void set_changed (Gtk::TreeModel::iterator& iter, bool changed = true)
     {
-        if (changed)
-        {
+        if (changed) {
             (*iter)[get_columns ().fg_color]  = Gdk::Color ("red");
-        }
-        else
-        {
+        } else {
             (*iter)[get_columns ().fg_color] =
                 tree_view->get_style ()->get_text (Gtk::STATE_NORMAL);
         }

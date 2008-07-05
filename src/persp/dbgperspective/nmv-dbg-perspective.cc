@@ -2500,9 +2500,9 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_command_view (false) ;
     set_show_target_output_view (false) ;
     set_show_log_view (false) ;
+    set_show_terminal_view (true) ;
     set_show_call_stack_view (true) ;
     set_show_variables_editor_view (true) ;
-    set_show_terminal_view (true) ;
     set_show_breakpoints_view (true) ;
     set_show_registers_view (true) ;
 #ifdef WITH_MEMORYVIEW
