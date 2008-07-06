@@ -85,6 +85,7 @@
 #include "nmv-choose-overloads-dialog.h"
 #include "nmv-remote-target-dialog.h"
 #include "nmv-registers-view.h"
+#include "nmv-call-function-dialog.h"
 
 #ifdef WITH_MEMORYVIEW
 #include "nmv-memory-view.h"
@@ -229,6 +230,7 @@ private:
     void on_toggle_breakpoint_action () ;
     void on_toggle_breakpoint_enabled_action () ;
     void on_inspect_variable_action () ;
+    void on_call_function_action () ;
     void on_show_commands_action () ;
     void on_show_errors_action () ;
     void on_show_target_output_action () ;
@@ -501,6 +503,8 @@ public:
 
     void inspect_variable () ;
     void inspect_variable (const UString &a_variable_name) ;
+    void call_function ();
+    void call_function (const UString &a_call_expr);
     void toggle_breakpoint () ;
     void toggle_breakpoint_enabled (const UString &a_file_path,
                                     int a_linenum) ;
@@ -1353,6 +1357,15 @@ DBGPerspective::on_inspect_variable_action ()
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
     NEMIVER_TRY
     inspect_variable () ;
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_call_function_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    NEMIVER_TRY
+    call_function ();
     NEMIVER_CATCH
 }
 
@@ -2585,8 +2598,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_next_action),
             ActionEntry::DEFAULT,
             "F6"
-        }
-        ,
+        },
         {
             "StepMenuItemAction",
             nemiver::STOCK_STEP_INTO,
@@ -2595,8 +2607,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
             ActionEntry::DEFAULT,
             "F7"
-        }
-        ,
+        },
         {
             "StepOutMenuItemAction",
             nemiver::STOCK_STEP_OUT,
@@ -2605,8 +2616,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
             ActionEntry::DEFAULT,
             "<shift>F7"
-        }
-        ,
+        },
         {
             "ContinueMenuItemAction",
             Gtk::Stock::EXECUTE,
@@ -2615,8 +2625,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
             ActionEntry::DEFAULT,
             "F5"
-        }
-        ,
+        },
         {
             "ContinueUntilMenuItemAction",
             nil_stock_id,
@@ -2626,8 +2635,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_continue_until_action),
             ActionEntry::DEFAULT,
             "F11"
-        }
-        ,
+        },
         {
             "ToggleBreakPointMenuItemAction",
             nil_stock_id,
@@ -2638,20 +2646,19 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "F8"
         },
-
         {
             "ToggleEnableBreakPointMenuItemAction",
             nil_stock_id,
             //don't translate, name will be overwritten based on context
             "Enable/Disable Breakpoint",
-            _("Enable or disable the breakpoint that is set at the current cursor location"),
+            _("Enable or disable the breakpoint that is set at "
+              "the current cursor location"),
             sigc::mem_fun
                         (*this,
                          &DBGPerspective::on_toggle_breakpoint_enabled_action),
             ActionEntry::DEFAULT,
             "<shift>F8"
         },
-
         {
             "SetBreakPointMenuItemAction",
             nil_stock_id,
@@ -2661,7 +2668,6 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control>B"
         },
-
         {
             "SetBreakPointUsingDialogMenuItemAction",
             nil_stock_id,
@@ -2672,7 +2678,6 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control><shift>B"
         },
-
         {
             "InspectVariableMenuItemAction",
             nil_stock_id,
@@ -2681,6 +2686,15 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this, &DBGPerspective::on_inspect_variable_action),
             ActionEntry::DEFAULT,
             "F12"
+        },
+        {
+            "CallFunctionMenuItemAction",
+            nil_stock_id,
+            _("Call a function"),
+            _("Call a function in the program being debugged"),
+            sigc::mem_fun (*this, &DBGPerspective::on_call_function_action),
+            ActionEntry::DEFAULT,
+            "<control>E"
         },
         {
             "ActivateGlobalVariablesDialogMenuAction",
@@ -2913,7 +2927,7 @@ DBGPerspective::init_actions ()
             _("Find a text string in file"),
             sigc::mem_fun (*this, &DBGPerspective::on_find_action),
             ActionEntry::DEFAULT,
-            "<Control>f"
+            "<Control>F"
         }
     };
 
@@ -5497,6 +5511,29 @@ DBGPerspective::inspect_variable (const UString &a_variable_name)
     }
     dialog.run () ;
 }
+
+void
+DBGPerspective::call_function ()
+{
+    CallFunctionDialog dialog (plugin_path ());
+
+    int result = dialog.run ();
+    if (result != Gtk::RESPONSE_OK)
+        return;
+    UString call_expr = dialog.call_expression ();
+    if (call_expr.empty ())
+        return;
+    call_function (call_expr);
+}
+
+void
+DBGPerspective::call_function (const UString &a_call_expr)
+{
+    THROW_IF_FAIL (debugger ()) ;
+
+    debugger ()->call_function (a_call_expr);
+}
+
 
 IDebuggerSafePtr&
 DBGPerspective::debugger ()

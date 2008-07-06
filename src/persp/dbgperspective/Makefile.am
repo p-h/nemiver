@@ -73,7 +73,9 @@ nmv-remote-target-dialog.h \
 nmv-dbg-perspective.cc \
 nmv-dbg-perspective.h \
 nmv-vars-treeview.h \
-nmv-vars-treeview.cc
+nmv-vars-treeview.cc \
+nmv-call-function-dialog.h \
+nmv-call-function-dialog.cc
 
 if BUILD_MEMORYVIEW
 memoryview_sources = \

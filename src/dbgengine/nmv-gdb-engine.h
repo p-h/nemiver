@@ -332,6 +332,9 @@ public:
     void evaluate_expression (const UString &a_expr,
                               const UString &a_cookie) ;
 
+    void call_function (const UString &a_call_expression,
+                        const UString &a_cookie="");
+
     void print_variable_value (const UString &a_var_name,
                               const UString &a_cookie) ;
 

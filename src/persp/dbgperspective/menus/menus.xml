@@ -77,6 +77,8 @@
             <separator/>
             <menuitem action="InspectVariableMenuItemAction"
                 name="InspectVariableMenuItem"/>
+            <menuitem action="CallFunctionMenuItemAction"
+                name="CallFunctionMenuItem"/>
             <menuitem action="ActivateGlobalVariablesDialogMenuAction"
                 name="ActivateGlobalVariablesDialogMenuItem"/>
             <menuitem action="RefreshLocalVariablesMenuItemAction"

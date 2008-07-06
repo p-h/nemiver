@@ -3120,6 +3120,19 @@ GDBEngine::evaluate_expression (const UString &a_expr,
 }
 
 void
+GDBEngine::call_function (const UString &a_expr,
+                          const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    if (a_expr.empty ()) {return;}
+
+    Command command ("call-function",
+                     "-data-evaluate-expression " + a_expr,
+                     a_cookie);
+    queue_command (command);
+}
+
+void
 GDBEngine::print_variable_value (const UString &a_var_name,
                                  const UString &a_cookie)
 {

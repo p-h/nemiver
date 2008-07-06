@@ -797,12 +797,15 @@ public:
                                         int a_high_frame=-1,
                                         const UString &a_cookie="") = 0;
 
-    virtual void list_local_variables (const UString &a_cookie="")  = 0;
+    virtual void list_local_variables (const UString &a_cookie="") = 0;
 
-    virtual void list_global_variables (const UString &a_cookie="")  = 0;
+    virtual void list_global_variables (const UString &a_cookie="") = 0;
 
     virtual void evaluate_expression (const UString &a_expr,
-                                      const UString &a_cookie="")  = 0;
+                                      const UString &a_cookie="") = 0;
+
+    virtual void call_function (const UString &a_call_expression,
+                                const UString &a_cookie="") = 0;
 
     virtual void print_variable_value (const UString &a_var_name,
                                        const UString &a_cookie="")  = 0;

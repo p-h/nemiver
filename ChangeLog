@@ -1,3 +1,17 @@
+2008-07-06 Dodji Seketeli <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.[cc|h],nmv-i-debugger.h:
+	  add a new IDebugger::call_function() entry point.
+	* src/persp/dbgperspective/menus/menus.xml:
+	* src/persp/dbgperspective/glade/callfunctiondialog.glade:
+	* src/persp/dbgperspective/nmv-call-function-dialog.h,cc: add
+	  a new dialog to let the user type the function call expression
+	  she want to see executed.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add a
+	  "call a function" action to let the user execute an arbitrary
+	  function that is present in the program being debugged.
+	  This should close bug #528033 – Being able to call functions.
+
 2008-07-05 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
