@@ -1,3 +1,8 @@
+2008-07-08  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+	* src/persp/dbgperspective/glade/callfunctiondialog.glade: Fix up the 'Call
+	Function' dialog and make it a little bit cleaner and more HIG-compliant
+
 2008-07-06 Dodji Seketeli <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.[cc|h],nmv-i-debugger.h:
