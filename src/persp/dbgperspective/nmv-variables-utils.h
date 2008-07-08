@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_VARIABLES_UTILS2_H__
-#define __NMV_VARIABLES_UTILS2_H__
+#ifndef __NMV_VARIABLES_UTILS_H__
+#define __NMV_VARIABLES_UTILS_H__
 
 #include <list>
 #include <gtkmm/treeview.h>
@@ -104,5 +104,5 @@ void append_a_variable (const IDebugger::VariableSafePtr a_var,
 NEMIVER_END_NAMESPACE (variables_utils2)
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_VARIABLES_UTILS2_H__
+#endif //__NMV_VARIABLES_UTILS_H__
 

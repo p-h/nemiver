@@ -42,7 +42,7 @@ namespace vutil=nemiver::variables_utils2;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-struct LocalVarsInspector2::Priv : public sigc::trackable {
+struct LocalVarsInspector::Priv : public sigc::trackable {
 private:
     Priv ();
 public:
@@ -221,7 +221,7 @@ public:
             local_var_list_walker->variable_visited_signal ().connect
             (sigc::mem_fun
              (*this,
-              &LocalVarsInspector2::Priv::on_local_variable_visited_signal));
+              &LocalVarsInspector::Priv::on_local_variable_visited_signal));
         }
         return local_var_list_walker;
     }
@@ -234,7 +234,7 @@ public:
             function_args_var_list_walker->variable_visited_signal ().connect
             (sigc::mem_fun
              (*this,
-              &LocalVarsInspector2::Priv::on_func_arg_visited_signal));
+              &LocalVarsInspector::Priv::on_func_arg_visited_signal));
         }
         return function_args_var_list_walker;
     }
@@ -247,7 +247,7 @@ public:
             derefed_variables_walker_list->variable_visited_signal ().connect
             (sigc::mem_fun
              (*this,
-              &LocalVarsInspector2::Priv::on_derefed_variable_visited_signal));
+              &LocalVarsInspector::Priv::on_derefed_variable_visited_signal));
         }
         return derefed_variables_walker_list;
     }
@@ -837,22 +837,22 @@ public:
         ui_utils::display_info (message);
     }
 
-};//end LocalVarInspector2::Priv
+};//end LocalVarsInspector::Priv
 
-LocalVarsInspector2::LocalVarsInspector2 (IDebuggerSafePtr &a_debugger,
+LocalVarsInspector::LocalVarsInspector (IDebuggerSafePtr &a_debugger,
                                           IWorkbench &a_workbench,
                                           IPerspective &a_perspective)
 {
     m_priv.reset (new Priv (a_debugger, a_workbench, a_perspective));
 }
 
-LocalVarsInspector2::~LocalVarsInspector2 ()
+LocalVarsInspector::~LocalVarsInspector ()
 {
     LOG_D ("deleted", "destructor-domain");
 }
 
 Gtk::Widget&
-LocalVarsInspector2::widget () const
+LocalVarsInspector::widget () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->tree_view);
@@ -860,7 +860,7 @@ LocalVarsInspector2::widget () const
 }
 
 void
-LocalVarsInspector2::show_local_variables_of_current_function ()
+LocalVarsInspector::show_local_variables_of_current_function ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
@@ -872,7 +872,7 @@ LocalVarsInspector2::show_local_variables_of_current_function ()
 }
 
 void
-LocalVarsInspector2::re_init_widget ()
+LocalVarsInspector::re_init_widget ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);

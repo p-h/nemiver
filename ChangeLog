@@ -1,7 +1,16 @@
+2008-07-08 Dodji Seketeli <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/persp/dbgperspective/nmv-local-vars-inspector.h,cc:
+	  Renamed LocalVarsInspector2 into LocalVarsInspector. This should
+	  definitely close bug
+	  524168 - make LocalVarInspector2 the default variable inspector.
+
 2008-07-08  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
-	* src/persp/dbgperspective/glade/callfunctiondialog.glade: Fix up the 'Call
-	Function' dialog and make it a little bit cleaner and more HIG-compliant
+	* src/persp/dbgperspective/glade/callfunctiondialog.glade: Fix up
+	  the 'Call Function' dialog and make it a little bit 
+	  cleaner and more HIG-compliant
 
 2008-07-06 Dodji Seketeli <dodji@gnome.org>
 

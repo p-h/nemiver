@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_LOCAL_VARS_INSPECTOR2_H__
-#define __NMV_LOCAL_VARS_INSPECTOR2_H__
+#ifndef __NMV_LOCAL_VARS_INSPECTOR_H__
+#define __NMV_LOCAL_VARS_INSPECTOR_H__
 
 #include <list>
 #include "common/nmv-object.h"
@@ -39,23 +39,23 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class IWorkbench ;
 
-class NEMIVER_API LocalVarsInspector2 : public nemiver::common::Object {
+class NEMIVER_API LocalVarsInspector : public nemiver::common::Object {
     //non copyable
-    LocalVarsInspector2 (const LocalVarsInspector2&) ;
-    LocalVarsInspector2& operator= (const LocalVarsInspector2&) ;
+    LocalVarsInspector (const LocalVarsInspector&) ;
+    LocalVarsInspector& operator= (const LocalVarsInspector&) ;
 
     struct Priv ;
     SafePtr<Priv> m_priv ;
 
 protected:
-    LocalVarsInspector2 () ;
+    LocalVarsInspector () ;
 
 public:
 
-    LocalVarsInspector2 (IDebuggerSafePtr &a_dbg,
+    LocalVarsInspector (IDebuggerSafePtr &a_dbg,
                          IWorkbench &a_wb,
                          IPerspective &a_perspective) ;
-    virtual ~LocalVarsInspector2 () ;
+    virtual ~LocalVarsInspector () ;
     Gtk::Widget& widget () const ;
     void set_local_variables
                     (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
@@ -64,6 +64,6 @@ public:
 };//end LocalVarsInspector
 
 NEMIVER_END_NAMESPACE (nemiver)
-#endif //__NMV_LOCAL_VARS_INSPECTOR2_H__
+#endif //__NMV_LOCAL_VARS_INSPECTOR_H__
 
 
