@@ -3,6 +3,7 @@ glade/workbench.glade
 data/nemiver.desktop.in
 src/main.cc
 src/persp/dbgperspective/glade/bodycontainer.glade
+src/persp/dbgperspective/glade/callfunctiondialog.glade
 src/persp/dbgperspective/glade/findtextdialog.glade
 src/persp/dbgperspective/glade/loadcoredialog.glade
 src/persp/dbgperspective/glade/locatefiledialog.glade
@@ -22,7 +23,6 @@ src/persp/dbgperspective/nmv-call-stack.cc
 src/persp/dbgperspective/nmv-dbg-perspective.cc
 src/persp/dbgperspective/nmv-file-list.cc
 src/persp/dbgperspective/nmv-local-vars-inspector.cc
-src/persp/dbgperspective/nmv-local-vars-inspector2.cc
 src/persp/dbgperspective/nmv-locate-file-dialog.cc
 src/persp/dbgperspective/nmv-memory-view.cc
 src/persp/dbgperspective/nmv-preferences-dialog.cc
@@ -32,7 +32,6 @@ src/persp/dbgperspective/nmv-run-program-dialog.cc
 src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
 src/persp/dbgperspective/nmv-thread-list.cc
 src/persp/dbgperspective/nmv-var-inspector.cc
-src/persp/dbgperspective/nmv-var-inspector2.cc
 src/persp/dbgperspective/nmv-var-inspector-dialog.cc
 src/uicommon/nmv-source-editor.cc
 src/workbench/nmv-workbench.cc
