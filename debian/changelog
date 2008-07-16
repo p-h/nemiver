@@ -1,22 +1,74 @@
-nemiver (0.4.9+svn20080217ubuntu1) gutsy; urgency=low
+nemiver (0.5.4+devel-0) unstable; urgency=low
 
-  * Pre-release of 0.5.0
+  * Upstream development package
 
- -- Jonathon Jongsma <jjongsma@gnome.org>  Sun, 17 Feb 2008 09:57:56 -0600
+ -- Luca Bruno <lucab@debian.org>  Wed, 16 Jul 2008 10:37:34 +0200
 
-nemiver (0.4.0+svn20071007ubuntu1) feisty; urgency=low
+nemiver (0.5.4-1) unstable; urgency=low
 
-  * Explicitly put in universe due to lack of overrides in ppa
+  * New upstream version
+    + code cleanup and compilation fixes
+    + better handling of variable 'this'
 
- -- Jonathon Jongsma <jjongsma@gnome.org>  Sun,  7 Oct 2007 13:07:49 -0500
+ -- Luca Bruno <lucab@debian.org>  Tue, 24 Jun 2008 11:31:21 +0200
 
-nemiver (0.4.0+svn20071007) feisty; urgency=low
+nemiver (0.5.3-1) unstable; urgency=low
 
-  * New snapshot
-    * Preliminary support for reading memory (no write support yet)
-    * improved register support
+  * New upstream version
+  * Dropping .desktop patch, accepted upstream
 
- -- Jonathon Jongsma <jjongsma@gnome.org>  Sun,  7 Oct 2007 10:24:15 -0500
+ -- Luca Bruno <lucab@debian.org>  Mon, 26 May 2008 21:09:52 +0200
+
+nemiver (0.5.2-1) unstable; urgency=low
+
+  * New upstream release
+    + fix an infinite loop on output parsing
+    + option to completely stop debugging
+    + brakpoints setting for not-yet-loaded shared libraries
+  * Now using libgtksourceviewmm 2.0 (closes: #474344)
+
+ -- Luca Bruno <lucab@debian.org>  Fri, 18 Apr 2008 20:51:47 +0200
+
+nemiver (0.5.1-1) unstable; urgency=low
+
+  * New upstream release 
+    + fix build for gcc 4.3
+    + ability to inspect libtool wrapper scripts
+
+ -- Luca Bruno <lucab@debian.org>  Sat, 29 Mar 2008 09:58:33 +0100
+
+nemiver (0.5.0-1) unstable; urgency=low
+
+  * New upstream release
+    + Added hex editor widget via libgtkhex
+  * Dropping patches and manpage accepted upstream
+
+ -- Luca Bruno <lucab@debian.org>  Sun, 16 Mar 2008 20:57:35 +0100
+
+nemiver (0.4.0-3) unstable; urgency=medium
+
+  * Removed spurious scroolkeeper database (closes: #469431)
+  * Bumped versioned build-dep on debhelper due to dh_icons
+
+ -- Luca Bruno <lucab@debian.org>  Thu, 06 Mar 2008 15:44:12 +0100
+
+nemiver (0.4.0-2) unstable; urgency=low
+
+  * Added manpage for nemiver(1)
+  * Enable and register scrollkeeper entry (closes: #457522)
+
+ -- Luca Bruno <lucab@debian.org>  Wed, 09 Jan 2008 13:59:21 +0100
+
+nemiver (0.4.0-1) unstable; urgency=low
+ 
+  * Shipping libnemivercommon as a private lib (patch from SVN r539-542
+    by Josselin Mouette)
+  * Patch from SVN (r513) to fix a misnamed glade file
+  * Patch from SVN (r509) to reflect a libgtop API change
+  * debian/copyright rewritten in a machine-interpretable format
+  * Initial release (Closes: #392988)  
+
+ -- Luca Bruno <lucab@debian.org>  Sun, 18 Nov 2007 11:59:38 +0100
 
 nemiver (0.4.0-0ubuntu4) gutsy; urgency=low
 

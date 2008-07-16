@@ -1,17 +1,32 @@
 Source: nemiver
-Section: universe/gnome
+Section: gnome
 Priority: optional
-Maintainer: Daniel Holbach <daniel.holbach@ubuntu.com>
-Build-Depends: cdbs, debhelper (>= 5), libglibmm-2.4-dev (>= 2.8.2), libgnomevfs2-dev (>= 2.14), libxml2-dev (>= 2.6.22), libgtkmm-2.4-dev (>= 2.6.0), libgtksourceviewmm-1.0-dev (>= 0.3.0), libsqlite3-dev (>= 3.0), libgtop2-dev (>= 2.14), libvte-dev (>= 0.12.0), libgconf2-dev (>= 2.14.0), intltool (>= 0.35), libboost-dev, libglademm-2.4-dev (>= 2.6.0), gdb, libgnome2-dev (>= 2.14), gnome-doc-utils (>= 0.3.2), libgtkhex0-dev (>= 2.21.4)
-Standards-Version: 3.7.2
+Vcs-Git: https://git.unstable.it/packages.git/
+Vcs-Browser: https://git.unstable.it/?p=packages.git;a=shortlog;h=nemiver
+Maintainer: Luca Bruno <lucab@debian.org>
+Uploaders: Andrea Corradi <lash@semailer.com>
+Build-Depends: debhelper (>= 5.0.51~), quilt, gdb, libxml-parser-perl, 
+	       pkg-config (>= 0.9), gnome-doc-utils (>= 0.3.2),libboost-dev, 
+	       libxml2-dev (>= 2.6.22), libglib2.0-dev (>= 2.8.5), 
+	       libgnome2-dev (>= 2.0), libgtop2-dev (>= 2.14), 
+	       libglibmm-2.4-dev (>= 2.8.2), libsqlite3-dev (>=3.0), 
+	       libvte-dev (>= 0.12), libgtkmm-2.4-dev (>= 2.6), 
+	       libglademm-2.4-dev (>= 2.6), 
+	       libgtksourceviewmm-2.0-dev (>= 1.9), scrollkeeper, 
+	       libgtkhex0-dev (>= 2.21.4)
+Standards-Version: 3.7.3
+Homepage: http://home.gna.org/nemiver/
 
 Package: nemiver
 Architecture: any
-Section: universe/gnome
 Depends: ${shlibs:Depends}, ${misc:Depends}, gdb
-Conflicts: nemiver-dev (<< 0.4.0), libnemivercommon0 (<< 0.4.0), libnemivercommon-dev (<< 0.4.0)
-Replaces: nemiver-dev (<< 0.4.0), libnemivercommon0 (<< 0.4.0), libnemivercommon-dev (<< 0.4.0)
-Description: graphical debugger for GNOME
- Nemiver is an project to write a standalone graphical debugger that 
- integrates well in the GNOME desktop.
- It uses the well known GNU Debugger gdb.
+Description: Standalone graphical debugger for GNOME
+ Nemiver is a project to write a standalone graphical debugger that 
+ integrates in the GNOME desktop. It features a backend which uses 
+ the well known GNU Debugger gdb to debug C/C++ programs.
+ .
+ Nemiver is built with a plugin system that can offer several different 
+ perspectives. Currently the only perspective provided is a debugging 
+ perspective, but it could be expanded with perspectives added for 
+ valgrind, or for profiling tools such as oprofile.
+

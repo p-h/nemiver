@@ -1,0 +1,2 @@
+version=3
+http://ftp.acc.umu.se/pub/GNOME/sources/nemiver/(.*)\.\d/nemiver-(.*)\.tar\.gz

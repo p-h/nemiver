@@ -1,0 +1,6 @@
+?package(nemiver):needs="X11"\
+	section="Applications/Programming"\
+	title="Nemiver"\
+	command="/usr/bin/nemiver"\
+	longtitle="Graphical debugger" \
+	icon="/usr/share/pixmaps/nemiver.xpm"
