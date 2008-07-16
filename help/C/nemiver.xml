@@ -707,7 +707,7 @@ Template last modified Jan 30, 2002
             <textobject>
               <phrase>Illustration of an enabled breakpoint</phrase>
             </textobject>
-            <caption>Enabled Breakpoint</caption>
+            <caption><para>Enabled Breakpoint</para></caption>
           </mediaobject>
         </screenshot>
         <screenshot>
@@ -718,7 +718,7 @@ Template last modified Jan 30, 2002
             <textobject>
               <phrase>Illustration of a disabled breakpoint</phrase>
             </textobject>
-            <caption>Disabled Breakpoint</caption>
+            <caption><para>Disabled Breakpoint</para></caption>
           </mediaobject>
         </screenshot>
       </sect3>

@@ -1,3 +1,7 @@
+2008-07-17  Luca Bruno <lucab@debian.org>
+
+	* C/nemiver.xml: fix docbook XML validation
+
 2008-01-21  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
 
         * es.po: Added Spanish translation.
