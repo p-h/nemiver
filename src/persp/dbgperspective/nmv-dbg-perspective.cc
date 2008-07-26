@@ -128,6 +128,8 @@ static const char* CONF_KEY_SHOW_DBG_ERROR_DIALOGS =
                 "/apps/nemiver/dbgperspective/show-dbg-error-dialogs";
 static const char* CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
                 "/apps/nemiver/dbgperspective/show-source-line-numbers" ;
+static const char* CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE =
+                "/apps/nemiver/dbgperspective/confirm-before-reload-source" ;
 static const char* CONF_KEY_HIGHLIGHT_SOURCE_CODE =
                 "/apps/nemiver/dbgperspective/highlight-source-code" ;
 static const char* CONF_KEY_SOURCE_FILE_ENCODING_LIST =
@@ -166,12 +168,42 @@ const char* SUPPORTED_ENCODINGS[] =
 #define SIZE_OF_SUPPORTED_ENCODINGS \
 sizeof (SUPPORTED_ENCODINGS)/sizeof (SUPPORTED_ENCODINGS[0])
 
+class DBGPerspective;
+
+#ifdef WITH_GIO
+static void
+gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
+                     const Glib::RefPtr<Gio::File>& other_file,
+                     Gio::FileMonitorEvent event,
+                     DBGPerspective *a_persp);
+#else
+static void
+gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
+                           const gchar *a_monitor_uri,
+                           const gchar *a_info_uri,
+                           GnomeVFSMonitorEventType a_event_type,
+                           DBGPerspective *a_persp);
+#endif
+
 class DBGPerspective : public IDBGPerspective, public sigc::trackable {
     //non copyable
     DBGPerspective (const IPerspective&) ;
     DBGPerspective& operator= (const IPerspective&) ;
     struct Priv ;
     SafePtr<Priv> m_priv ;
+
+#ifdef WITH_GIO
+    friend void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& a_f,
+                                     const Glib::RefPtr<Gio::File>& a_f2,
+                                     Gio::FileMonitorEvent event,
+                                     DBGPerspective *a_persp);
+#else
+    friend void gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
+                                           const gchar *a_monitor_uri,
+                                           const gchar *a_info_uri,
+                                           GnomeVFSMonitorEventType a_et,
+                                           DBGPerspective *a_persp);
+#endif
 
 private:
 
@@ -332,6 +364,8 @@ private:
                                     (const UString &a_var_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cooker) ;
+
+    bool on_file_content_changed (const UString &a_path);
 
     void on_activate_call_stack_view () ;
     void on_activate_variables_view () ;
@@ -771,6 +805,7 @@ struct DBGPerspective::Priv {
     bool show_dbg_errors ;
     bool use_system_font ;
     bool show_line_numbers ;
+    bool confirm_before_reload_source;
     bool enable_syntax_highlight ;
     UString custom_font_name ;
     UString system_font_name ;
@@ -828,6 +863,7 @@ struct DBGPerspective::Priv {
         show_dbg_errors (false),
         use_system_font (true),
         show_line_numbers (true),
+        confirm_before_reload_source (true),
         enable_syntax_highlight (true),
         mouse_in_source_editor_x (0),
         mouse_in_source_editor_y (0),
@@ -994,47 +1030,12 @@ enum ViewsIndex
 #define CHECK_P_INIT THROW_IF_FAIL(m_priv && m_priv->initialized) ;
 #endif
 
-bool
-on_file_content_changed (const UString &a_path,
-                         DBGPerspective *a_persp)
-{
-    static std::list<UString> pending_notifications;
-    LOG_DD ("file content changed") ;
-
-    NEMIVER_TRY
-    THROW_IF_FAIL (a_persp) ;
-    if (!a_path.empty ()) {
-        //only notify for this path if there is not already a notification
-        //pending
-        if (std::find (pending_notifications.begin (),
-                       pending_notifications.end (),
-                       a_path)
-            == pending_notifications.end ()) {
-            pending_notifications.push_back (a_path);
-            UString msg ;
-            msg.printf (_("File %s has been modified. "
-                          "Do want to reload it ?"),
-                        a_path.c_str ());
-            if (ask_yes_no_question (msg) == Gtk::RESPONSE_YES) {
-                a_persp->reload_file (a_path) ;
-            }
-            std::list<UString>::iterator iter =
-                std::find (pending_notifications.begin (),
-                        pending_notifications.end (), a_path);
-            if (iter != pending_notifications.end ()) {
-                pending_notifications.erase (iter);
-            }
-        }
-    }
-    NEMIVER_CATCH
-    return false ;
-}
-
 #ifdef WITH_GIO
-void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
-                          const Glib::RefPtr<Gio::File>& other_file,
-                          Gio::FileMonitorEvent event,
-                          DBGPerspective *a_persp)
+static void
+gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
+                     const Glib::RefPtr<Gio::File>& other_file,
+                     Gio::FileMonitorEvent event,
+                     DBGPerspective *a_persp)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -1045,19 +1046,20 @@ void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
 
     if (event == Gio::FILE_MONITOR_EVENT_CHANGED) {
         UString path = Glib::filename_to_utf8 (file->get_path ()) ;
-        Glib::signal_idle ().connect (sigc::bind
-                (&on_file_content_changed,
-                 path, a_persp)) ;
+        Glib::signal_idle ().connect
+            (sigc::bind
+             (sigc::mem_fun (*a_persp, &DBGPerspective::on_file_content_changed),
+              path)) ;
     }
     NEMIVER_CATCH
 }
 #else
 static void
 gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
-                 const gchar *a_monitor_uri,
-                 const gchar *a_info_uri,
-                 GnomeVFSMonitorEventType a_event_type,
-                 DBGPerspective *a_persp)
+                           const gchar *a_monitor_uri,
+                           const gchar *a_info_uri,
+                           GnomeVFSMonitorEventType a_event_type,
+                           DBGPerspective *a_persp)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD ;
 
@@ -1076,9 +1078,11 @@ gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
         if (gnome_vfs_uri_get_path (uri)) {
             UString path = Glib::filename_to_utf8
                                             (gnome_vfs_uri_get_path (uri)) ;
-            Glib::signal_idle ().connect (sigc::bind
-                                            (&on_file_content_changed,
-                                             path, a_persp)) ;
+            Glib::signal_idle ().connect
+                (sigc::bind
+                    (sigc::mem_fun (*a_persp,
+                                    &DBGPerspective::on_file_content_changed),
+                     path));
         }
         gnome_vfs_uri_unref (uri) ;
     }
@@ -1867,6 +1871,8 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
                     (boost::get<bool> (a_value)) ;
             }
         }
+    } else if (a_key == CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE) {
+        m_priv->confirm_before_reload_source = boost::get<bool> (a_value);
     } else if (a_key == CONF_KEY_HIGHLIGHT_SOURCE_CODE) {
         map<int, SourceEditor*>::iterator it ;
         for (it = m_priv->pagenum_2_source_editor_map.begin () ;
@@ -1874,7 +1880,8 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
              ++it) {
             if (it->second && it->second->source_view ().get_buffer ()) {
 #ifdef WITH_SOURCEVIEWMM2
-                it->second->source_view ().get_source_buffer ()->set_highlight_syntax
+                it->second->source_view ().get_source_buffer
+                                                ()->set_highlight_syntax
 #else
                 it->second->source_view ().get_source_buffer ()->set_highlight
 #endif  // WITH_SOURCEVIEWMM2
@@ -2291,6 +2298,57 @@ DBGPerspective::on_debugger_variable_value_signal
         m_priv->var_to_popup = "" ;
     }
     NEMIVER_CATCH
+}
+
+bool
+DBGPerspective::on_file_content_changed (const UString &a_path)
+{
+    static std::list<UString> pending_notifications;
+    LOG_DD ("file content changed") ;
+
+    NEMIVER_TRY
+    if (!a_path.empty ()) {
+        //only notify for this path if there is not already a notification
+        //pending
+        if (std::find (pending_notifications.begin (),
+                       pending_notifications.end (),
+                       a_path)
+            == pending_notifications.end ()) {
+            pending_notifications.push_back (a_path);
+            UString msg ;
+            msg.printf (_("File %s has been modified. "
+                          "Do want to reload it ?"),
+                        a_path.c_str ());
+            bool dont_ask_again = !m_priv->confirm_before_reload_source;
+            bool need_to_reload_file = false;
+            if (!dont_ask_again) {
+                if (ask_yes_no_question (msg,
+                                         true /*propose to not ask again*/,
+                                         dont_ask_again)
+                        == Gtk::RESPONSE_YES) {
+                    need_to_reload_file = true;
+                }
+            } else {
+                need_to_reload_file = true;
+            }
+            if (need_to_reload_file)
+                reload_file ();
+            LOG_DD ("don't ask again: " << (int) dont_ask_again);
+            if (m_priv->confirm_before_reload_source == dont_ask_again) {
+                get_conf_mgr ().set_key_value
+                                (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE,
+                                 !dont_ask_again);
+            }
+            std::list<UString>::iterator iter =
+                std::find (pending_notifications.begin (),
+                        pending_notifications.end (), a_path);
+            if (iter != pending_notifications.end ()) {
+                pending_notifications.erase (iter);
+            }
+        }
+    }
+    NEMIVER_CATCH
+    return false ;
 }
 
 void
@@ -3757,9 +3815,11 @@ DBGPerspective::read_default_config ()
                             &DBGPerspective::on_conf_key_changed_signal)) ;
     }
     conf_mgr.get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE,
-                               m_priv->enable_syntax_highlight) ;
+                            m_priv->enable_syntax_highlight) ;
     conf_mgr.get_key_value (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS,
-                               m_priv->show_line_numbers) ;
+                            m_priv->show_line_numbers) ;
+    conf_mgr.get_key_value (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE,
+                            m_priv->confirm_before_reload_source);
     conf_mgr.get_key_value (CONF_KEY_USE_SYSTEM_FONT,
                             m_priv->use_system_font);
     conf_mgr.get_key_value (CONF_KEY_CUSTOM_FONT_NAME,

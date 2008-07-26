@@ -35,6 +35,18 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/confirm-before-reload-source</key>
+      <applyto>/apps/nemiver/dbgperspective/confirm-before-reload-source</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+	<short>Ask the user before reloading a source file</short>
+	<long>When a source file needs to be reloaded, if this key is set
+        to yes, ask the user before reloading</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/highlight-source-code</key>
       <applyto>/apps/nemiver/dbgperspective/highlight-source-code</applyto>
       <owner>nemiver</owner>
