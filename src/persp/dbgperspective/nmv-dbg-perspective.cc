@@ -4672,12 +4672,25 @@ DBGPerspective::execute_program (const UString &a_prog,
             << IDebugger::state_to_string (dbg_engine->get_state ())
             << "'") ;
 
-    // first of all, make sure the program we want to debug exists.
-    if (!Glib::file_test (a_prog, Glib::FILE_TEST_IS_REGULAR)) {
-        UString msg;
-        msg.printf (_("Could not find file %s"), a_prog.c_str ());
-        ui_utils::display_error (msg);
-        return;
+    UString prog = a_prog;
+    // First of all, make sure the program we want to debug exists.
+    // Note that Nemiver can be invoked like 'nemiver fooprog'
+    // or 'nemiver /absolute/path/to/fooprog'.
+    // In the former form, nemiver will look for the program
+    // in the $PATH environment variable and use the resulting absolute
+    // path.
+    // In the later form, nemiver will just use the absolute path.
+    if (!Glib::file_test (prog, Glib::FILE_TEST_IS_REGULAR)) {
+        // We didn't find prog. If the path to prog is not absolute,
+        // look it up in the directories pointed to by the
+        // $PATH environment variable.
+        if (Glib::path_is_absolute (prog.raw ())
+            || !env::build_path_to_executable (prog, prog)) {
+            UString msg;
+            msg.printf (_("Could not find file %s"), prog.c_str ());
+            ui_utils::display_error (msg);
+            return;
+        }
     }
 
     // if the engine is running, stop it.
@@ -4687,12 +4700,12 @@ DBGPerspective::execute_program (const UString &a_prog,
     }
 
     // close old file that might be open
-    if (a_close_opened_files && a_prog != m_priv->prog_path && get_n_pages ()) {
+    if (a_close_opened_files && prog != m_priv->prog_path && get_n_pages ()) {
         close_opened_files () ;
     }
 
     vector<UString> args = a_args.split (" ") ;
-    args.insert (args.begin (), a_prog) ;
+    args.insert (args.begin (), prog) ;
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
 
     // delete old breakpoints, if any.
@@ -4739,7 +4752,7 @@ DBGPerspective::execute_program (const UString &a_prog,
 
     attached_to_target_signal ().emit (true) ;
 
-    m_priv->prog_path = a_prog ;
+    m_priv->prog_path = prog ;
     m_priv->prog_args = a_args ;
     m_priv->prog_cwd = a_cwd ;
     m_priv->env_variables = a_env ;

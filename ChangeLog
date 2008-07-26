@@ -1,3 +1,13 @@
+2008-07-27 Dodji Seketeli <dodji@gnome.org>
+
+	* src/common/nmv-env.cc,h:
+	  (build_path_to_executable): new helper to build an absolute path
+	   to an executable by searching in the $PATH env variable.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::execute_program): don't forget to lookup
+	  executables - that have relative paths - in directories pointed
+	  to by the $PATH environment variable. This should close #543797.
+
 2008-07-26 Dodji Seketeli <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

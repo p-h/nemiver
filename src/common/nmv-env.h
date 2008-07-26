@@ -1,7 +1,7 @@
 /* -*- Mode: C++; indent-tabs-mode:nil; c-basic-offset:4; -*- */
 
-/*Copyright (c) 2005-2006 Dodji Seketeli
- *
+// Author: Dodji Seketeli
+/*
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -77,6 +77,9 @@ NEMIVER_API UString build_path_to_menu_file (const UString &a_ui_file_name) ;
 NEMIVER_API UString build_path_to_image_file (const UString &a_image_file_name) ;
 
 NEMIVER_API UString build_path_to_help_file (const UString &a_file_name);
+
+NEMIVER_API bool build_path_to_executable (const UString &a_exe_name,
+                                           UString &a_exe_path);
 
 NEMIVER_END_NAMESPACE (env)
 NEMIVER_END_NAMESPACE (common)

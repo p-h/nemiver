@@ -358,6 +358,18 @@ c_locale:
     return result;
 }
 
+
+bool
+build_path_to_executable (const UString &a_exe_name,
+                          UString &a_path_to_exe)
+{
+    UString path = Glib::find_program_in_path (a_exe_name);
+    if (path.empty ())
+        return false;
+    a_path_to_exe = path;
+    return true;
+}
+
 NEMIVER_END_NAMESPACE (env)
 NEMIVER_END_NAMESPACE (common)
 NEMIVER_END_NAMESPACE (nemiver)
