@@ -1,3 +1,10 @@
+2008-07-26  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::execute_program): make sure the inferior binary
+	  exists before asking IDebugger to load it.
+	  This should fix #543797.
+
 2008-07-23  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas:

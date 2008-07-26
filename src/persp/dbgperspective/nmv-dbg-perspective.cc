@@ -4662,11 +4662,22 @@ DBGPerspective::execute_program (const UString &a_prog,
     LOG_DD ("debugger state: '"
             << IDebugger::state_to_string (dbg_engine->get_state ())
             << "'") ;
+
+    // first of all, make sure the program we want to debug exists.
+    if (!Glib::file_test (a_prog, Glib::FILE_TEST_IS_REGULAR)) {
+        UString msg;
+        msg.printf (_("Could not find file %s"), a_prog.c_str ());
+        ui_utils::display_error (msg);
+        return;
+    }
+
+    // if the engine is running, stop it.
     if (dbg_engine->get_state () == IDebugger::RUNNING) {
         dbg_engine->stop_target () ;
         LOG_DD ("stopped dbg_engine") ;
     }
 
+    // close old file that might be open
     if (a_close_opened_files && a_prog != m_priv->prog_path && get_n_pages ()) {
         close_opened_files () ;
     }
@@ -4675,6 +4686,7 @@ DBGPerspective::execute_program (const UString &a_prog,
     args.insert (args.begin (), a_prog) ;
     vector<UString> source_search_dirs = a_cwd.split (" ") ;
 
+    // delete old breakpoints, if any.
     map<int, IDebugger::BreakPoint>::const_iterator bp_it ;
     for (bp_it = m_priv->breakpoints.begin () ;
          bp_it != m_priv->breakpoints.end ();
@@ -4682,13 +4694,19 @@ DBGPerspective::execute_program (const UString &a_prog,
         dbg_engine->delete_breakpoint (bp_it->first) ;
     }
 
+    // clear data gathered by the old session
     clear_session_data () ;
+
     clear_status_notebook () ;
+
+    // now really load the inferior program (i.e: the one to be debugged)
     dbg_engine->load_program (args, a_cwd, source_search_dirs,
                               get_terminal ().slave_pts_name ()) ;
 
+    // set environment variables of the inferior
     dbg_engine->add_env_variables (a_env) ;
 
+    // set a breakpoint in 'main' by default.
     if (a_breaks.empty ()) {
         dbg_engine->set_breakpoint ("main") ;
     } else {
