@@ -130,6 +130,8 @@ static const char* CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
                 "/apps/nemiver/dbgperspective/show-source-line-numbers" ;
 static const char* CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE =
                 "/apps/nemiver/dbgperspective/confirm-before-reload-source" ;
+static const char* CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE =
+                "/apps/nemiver/dbgperspective/allow-auto-reload-source";
 static const char* CONF_KEY_HIGHLIGHT_SOURCE_CODE =
                 "/apps/nemiver/dbgperspective/highlight-source-code" ;
 static const char* CONF_KEY_SOURCE_FILE_ENCODING_LIST =
@@ -806,6 +808,7 @@ struct DBGPerspective::Priv {
     bool use_system_font ;
     bool show_line_numbers ;
     bool confirm_before_reload_source;
+    bool allow_auto_reload_source;
     bool enable_syntax_highlight ;
     UString custom_font_name ;
     UString system_font_name ;
@@ -864,6 +867,7 @@ struct DBGPerspective::Priv {
         use_system_font (true),
         show_line_numbers (true),
         confirm_before_reload_source (true),
+        allow_auto_reload_source (true),
         enable_syntax_highlight (true),
         mouse_in_source_editor_x (0),
         mouse_in_source_editor_y (0),
@@ -1873,6 +1877,8 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         }
     } else if (a_key == CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE) {
         m_priv->confirm_before_reload_source = boost::get<bool> (a_value);
+    } else if (a_key == CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE) {
+        m_priv->allow_auto_reload_source = boost::get<bool> (a_value);
     } else if (a_key == CONF_KEY_HIGHLIGHT_SOURCE_CODE) {
         map<int, SourceEditor*>::iterator it ;
         for (it = m_priv->pagenum_2_source_editor_map.begin () ;
@@ -2320,16 +2326,16 @@ DBGPerspective::on_file_content_changed (const UString &a_path)
                           "Do want to reload it ?"),
                         a_path.c_str ());
             bool dont_ask_again = !m_priv->confirm_before_reload_source;
-            bool need_to_reload_file = false;
+            bool need_to_reload_file = m_priv->allow_auto_reload_source;
             if (!dont_ask_again) {
                 if (ask_yes_no_question (msg,
                                          true /*propose to not ask again*/,
                                          dont_ask_again)
                         == Gtk::RESPONSE_YES) {
                     need_to_reload_file = true;
+                } else {
+                    need_to_reload_file = false;
                 }
-            } else {
-                need_to_reload_file = true;
             }
             if (need_to_reload_file)
                 reload_file ();
@@ -2338,6 +2344,9 @@ DBGPerspective::on_file_content_changed (const UString &a_path)
                 get_conf_mgr ().set_key_value
                                 (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE,
                                  !dont_ask_again);
+                get_conf_mgr ().set_key_value
+                                (CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE,
+                                 need_to_reload_file);
             }
             std::list<UString>::iterator iter =
                 std::find (pending_notifications.begin (),

@@ -47,6 +47,19 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/allow-auto-reload-source</key>
+      <applyto>/apps/nemiver/dbgperspective/allow-auto-reload-source</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+	<short>Do not automatically reload the source file</short>
+	<long>If the user choosed to never been asked about re-loading
+        source file and if this key is set to true, do re-load the source file
+        automatically.</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/highlight-source-code</key>
       <applyto>/apps/nemiver/dbgperspective/highlight-source-code</applyto>
       <owner>nemiver</owner>
