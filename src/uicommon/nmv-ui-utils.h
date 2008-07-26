@@ -130,7 +130,11 @@ NEMIVER_API int display_warning (const common::UString &a_message) ;
 
 NEMIVER_API int display_error (const common::UString &a_message) ;
 
-NEMIVER_API int ask_yes_no_question (const common::UString &a_message) ;
+NEMIVER_API int ask_yes_no_question (const common::UString &a_message);
+
+NEMIVER_API int ask_yes_no_question (const common::UString &a_message,
+                                     bool a_propose_dont_ask_question,
+                                     bool &a_dont_ask_this_again) ;
 
 NEMIVER_API int ask_yes_no_cancel_question (const common::UString &a_message) ;
 

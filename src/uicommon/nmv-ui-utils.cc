@@ -25,6 +25,7 @@
  */
 #include "common/nmv-exception.h"
 #include "nmv-ui-utils.h"
+#include <glib/gi18n.h>
 
 using namespace nemiver::common ;
 
@@ -53,6 +54,60 @@ add_action_entries_to_action_group (const ActionEntry a_tab[],
         }
     }
 }
+
+/// A message dialog that allows the user to chose to not
+/// be shown that dialog again
+class DontShowAgainMsgDialog : public Gtk::MessageDialog {
+
+    DontShowAgainMsgDialog (const DontShowAgainMsgDialog&);
+    DontShowAgainMsgDialog& operator= (const DontShowAgainMsgDialog&);
+
+    Gtk::CheckButton *m_check_button;
+public:
+    explicit DontShowAgainMsgDialog (const Glib::ustring &a_message,
+                                     bool a_propose_dont_ask_again = false,
+                                     bool a_use_markup = false,
+                                     Gtk::MessageType a_type = Gtk::MESSAGE_INFO,
+                                     Gtk::ButtonsType a_buttons = Gtk::BUTTONS_OK,
+                                     bool a_modal = false) :
+        Gtk::MessageDialog (a_message,
+                            a_use_markup,
+                            a_type,
+                            a_buttons,
+                            a_modal),
+        m_check_button (0)
+    {
+        if (a_propose_dont_ask_again)
+            pack_dont_ask_me_again_question ();
+    }
+
+    void pack_dont_ask_me_again_question ()
+    {
+        RETURN_IF_FAIL (!m_check_button);
+
+        m_check_button =
+            Gtk::manage (new Gtk::CheckButton (_("Do not ask me again")));
+        RETURN_IF_FAIL (m_check_button);
+
+        Gtk::Alignment *align =
+            Gtk::manage (new Gtk::Alignment);
+        RETURN_IF_FAIL (align);
+
+        align->add (*m_check_button);
+        RETURN_IF_FAIL (get_vbox ());
+
+        align->show_all ();
+        get_vbox ()->pack_end (*align, true, true, 6);
+    }
+
+    bool dont_ask_this_again () const
+    {
+        if (!m_check_button)
+            return false;
+        return m_check_button->get_active ();
+    }
+};//end class DontShowAgainMsgDialog
+
 int
 display_info (const UString &a_message)
 {
@@ -87,10 +142,23 @@ ask_yes_no_question (const UString &a_message)
 {
     Gtk::MessageDialog dialog (a_message, false,
                                Gtk::MESSAGE_QUESTION,
-                               Gtk::BUTTONS_YES_NO,
-                               true) ;
-    dialog.set_default_response (Gtk::RESPONSE_OK) ;
-    return dialog.run () ;
+                               Gtk::BUTTONS_YES_NO, true);
+    dialog.set_default_response (Gtk::RESPONSE_OK);
+    return dialog.run ();
+}
+
+int
+ask_yes_no_question (const UString &a_message,
+                     bool a_propose_dont_ask_again,
+                     bool &a_dont_ask_this_again)
+{
+    DontShowAgainMsgDialog dialog (a_message, a_propose_dont_ask_again,
+                                   false, Gtk::MESSAGE_QUESTION,
+                                   Gtk::BUTTONS_YES_NO, true);
+    dialog.set_default_response (Gtk::RESPONSE_OK);
+    int result = dialog.run ();
+    a_dont_ask_this_again = dialog.dont_ask_this_again ();
+    return result;
 }
 
 int
@@ -107,6 +175,7 @@ ask_yes_no_cancel_question (const common::UString &a_message)
     dialog.set_default_response (Gtk::RESPONSE_CANCEL) ;
     return dialog.run () ;
 }
+
 
 }//end namespace ui_utils
 }//end namespace nemiver

@@ -1,3 +1,11 @@
+2008-07-23  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/uicommon/nmv-ui-utils.cc,h: add a new entry point to display
+	"Yes/No/" question dialogs that have a "Do not ask me again" check
+	button. For now, only "Yes/No" dialogs have that feature because I
+	have not felt the need for other dialogs. The feature can easily be
+	added to the other dialogs as well.
+
 2008-07-20 Dodji Seketeli <dodji@gnome.org>
 
 	* autogen.sh: make sure we can launch autogen.sh from directories
