@@ -54,8 +54,8 @@
       <default>true</default>
       <locale name="C">
 	<short>Do not automatically reload the source file</short>
-	<long>If the user choosed to never been asked about re-loading
-        source file and if this key is set to true, do re-load the source file
+	<long>If the user chooses not to be asked about re-loading changed
+        source files and if this key is set to true, re-load the source file
         automatically.</long>
       </locale>
     </schema>

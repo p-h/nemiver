@@ -1,4 +1,4 @@
-//Author: Dodji Seketeli
+//Author: Dodji Seketeli, Jonathon Jongsma
 /*
  *This file is part of the Nemiver project
  *
@@ -29,6 +29,7 @@
 #include "nmv-ui-utils.h"
 #include "nmv-i-conf-mgr.h"
 #include "nmv-i-workbench.h"
+#include "nmv-conf-keys.h"
 
 using nemiver::common::DynamicModuleManager ;
 
@@ -67,6 +68,9 @@ public:
     Gtk::HBox *custom_font_box ;
     Gtk::CheckButton *show_lines_check_button ;
     Gtk::CheckButton *highlight_source_check_button ;
+    Gtk::RadioButton *always_reload_radio_button;
+    Gtk::RadioButton *never_reload_radio_button;
+    Gtk::RadioButton *confirm_reload_radio_button;
     Glib::RefPtr<Gnome::Glade::Xml> glade ;
 
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
@@ -79,6 +83,9 @@ public:
         custom_font_box (0),
         show_lines_check_button (0),
         highlight_source_check_button (0),
+        always_reload_radio_button (0),
+        never_reload_radio_button (0),
+        confirm_reload_radio_button (0),
         glade (a_glade)
     {
         init () ;
@@ -154,6 +161,11 @@ public:
         update_custom_font_key ();
     }
 
+    void on_reload_files_toggled_signal ()
+    {
+        update_reload_files_keys ();
+    }
+
     void init ()
     {
 
@@ -221,6 +233,30 @@ public:
             ui_utils::get_widget_from_glade<Gtk::HBox>
             (glade, "customfonthbox") ;
         THROW_IF_FAIL (custom_font_box) ;
+
+        always_reload_radio_button =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+            (glade, "reloadradiobutton") ;
+        THROW_IF_FAIL (always_reload_radio_button);
+        always_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_reload_files_toggled_signal)) ;
+
+        never_reload_radio_button =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+            (glade, "neverreloadradiobutton") ;
+        THROW_IF_FAIL (never_reload_radio_button);
+        never_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_reload_files_toggled_signal)) ;
+
+        confirm_reload_radio_button =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+            (glade, "confirmreloadradiobutton") ;
+        THROW_IF_FAIL (confirm_reload_radio_button);
+        confirm_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_reload_files_toggled_signal)) ;
     }
 
     void collect_source_dirs ()
@@ -267,8 +303,7 @@ public:
             }
         }
         conf_manager ().set_key_value
-            ("/apps/nemiver/dbgperspective/source-search-dirs",
-             source_dirs_str) ;
+            (CONF_KEY_NEMIVER_SOURCE_DIRS, source_dirs_str) ;
     }
 
     void update_show_source_line_numbers_key ()
@@ -276,8 +311,7 @@ public:
         THROW_IF_FAIL (show_lines_check_button) ;
         bool is_on = show_lines_check_button->get_active () ;
         conf_manager ().set_key_value
-                    ("/apps/nemiver/dbgperspective/show-source-line-numbers",
-                     is_on) ;
+                    (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS, is_on) ;
     }
 
     void update_highlight_source_keys ()
@@ -285,7 +319,7 @@ public:
         THROW_IF_FAIL (highlight_source_check_button) ;
         bool is_on = highlight_source_check_button->get_active () ;
         conf_manager ().set_key_value
-                    ("/apps/nemiver/dbgperspective/highlight-source-code",
+                    (CONF_KEY_HIGHLIGHT_SOURCE_CODE,
                      is_on) ;
     }
 
@@ -293,8 +327,7 @@ public:
     {
         UString paths_str ;
         if (!conf_manager ().get_key_value
-                        ("/apps/nemiver/dbgperspective/source-search-dirs",
-                         paths_str)) {
+                        (CONF_KEY_NEMIVER_SOURCE_DIRS, paths_str)) {
             return ;
         }
         if (paths_str == "") {return;}
@@ -307,8 +340,7 @@ public:
         THROW_IF_FAIL (system_font_check_button) ;
         bool is_on = system_font_check_button->get_active () ;
         conf_manager ().set_key_value
-                    ("/apps/nemiver/dbgperspective/use-system-font",
-                     is_on) ;
+                    (CONF_KEY_USE_SYSTEM_FONT, is_on) ;
     }
 
     void update_custom_font_key ()
@@ -316,8 +348,29 @@ public:
         THROW_IF_FAIL (custom_font_button) ;
         UString font_name = custom_font_button->get_font_name () ;
         conf_manager ().set_key_value
-                    ("/apps/nemiver/dbgperspective/custom-font-name",
-                     font_name) ;
+                    (CONF_KEY_CUSTOM_FONT_NAME, font_name) ;
+    }
+
+    void update_reload_files_keys ()
+    {
+        THROW_IF_FAIL (always_reload_radio_button);
+        THROW_IF_FAIL (never_reload_radio_button);
+        THROW_IF_FAIL (confirm_reload_radio_button);
+
+        if (always_reload_radio_button->get_active ()) {
+            conf_manager ().set_key_value
+                    (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE, false);
+            conf_manager ().set_key_value
+                    (CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE, true);
+        } else if (never_reload_radio_button->get_active ()) {
+            conf_manager ().set_key_value
+                    (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE, false);
+            conf_manager ().set_key_value
+                    (CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE, false);
+        } else {
+            conf_manager ().set_key_value
+                    (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE, true);
+        }
     }
 
     void update_widget_from_editor_keys ()
@@ -330,8 +383,7 @@ public:
 
         bool is_on=true;
         if (!conf_manager ().get_key_value
-                ("/apps/nemiver/dbgperspective/show-source-line-numbers",
-                 is_on)) {
+                (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS, is_on)) {
             LOG_ERROR ("failed to get gconf key") ;
         } else {
             show_lines_check_button->set_active (is_on) ;
@@ -339,8 +391,7 @@ public:
 
         is_on=true ;
         if (!conf_manager ().get_key_value
-                ("/apps/nemiver/dbgperspective/highlight-source-code",
-                 is_on)) {
+                (CONF_KEY_HIGHLIGHT_SOURCE_CODE, is_on)) {
             LOG_ERROR ("failed to get gconf key") ;
         } else {
             highlight_source_check_button->set_active (is_on) ;
@@ -348,7 +399,7 @@ public:
 
         is_on = true;
         if (!conf_manager ().get_key_value
-                ("/apps/nemiver/dbgperspective/use-system-font", is_on)) {
+                (CONF_KEY_USE_SYSTEM_FONT, is_on)) {
             LOG_ERROR ("failed to get gconf key") ;
         } else {
             system_font_check_button->set_active (is_on) ;
@@ -356,10 +407,27 @@ public:
         }
         UString font_name;
         if (!conf_manager ().get_key_value
-                ("/apps/nemiver/dbgperspective/custom-font-name", font_name)) {
+                (CONF_KEY_CUSTOM_FONT_NAME, font_name)) {
             LOG_ERROR ("failed to get gconf key") ;
         } else {
             custom_font_button->set_font_name (font_name);
+        }
+
+        bool confirm_reload = true, always_reload = false;
+        if (!conf_manager ().get_key_value
+                (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE, confirm_reload)) {
+            LOG_ERROR ("failed to get gconf key");
+        }
+        if (!conf_manager ().get_key_value
+                (CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE, always_reload)) {
+            LOG_ERROR ("failed to get gconf key");
+        }
+        if (confirm_reload) {
+            confirm_reload_radio_button->set_active ();
+        } else if (always_reload) {
+            always_reload_radio_button->set_active ();
+        } else {
+            never_reload_radio_button->set_active ();
         }
     }
 

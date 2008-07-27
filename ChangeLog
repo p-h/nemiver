@@ -1,3 +1,15 @@
+2008-07-26  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* src/persp/dbgperspective/glade/preferencesdialog.glade: add radio buttons
+	to control the behavior of reloading changed source files
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: made the CONF_KEY_
+	constants extern instead of static so they can be re-used in the prefs dialog
+	* src/persp/dbgperspective/nmv-conf-keys.h: declared the CONF_KEY_ macros here
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc: add support for
+	viewing and modifying the behavior of reloading changed source files
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas: reword
+	description and fix a couple typos
+
 2008-07-27 Dodji Seketeli <dodji@gnome.org>
 
 	* src/common/nmv-env.cc,h:

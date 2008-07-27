@@ -1,5 +1,5 @@
 // -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
-//Author: Dodji Seketeli
+//Author: Dodji Seketeli, Jonathon Jongsma
 /*
  *This file is part of the Nemiver project
  *
@@ -86,6 +86,7 @@
 #include "nmv-remote-target-dialog.h"
 #include "nmv-registers-view.h"
 #include "nmv-call-function-dialog.h"
+#include "nmv-conf-keys.h"
 
 #ifdef WITH_MEMORYVIEW
 #include "nmv-memory-view.h"
@@ -122,33 +123,33 @@ const char *LAST_RUN_TIME= "lastruntime" ;
 const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain" ;
 
-static const char* CONF_KEY_NEMIVER_SOURCE_DIRS =
+const char* CONF_KEY_NEMIVER_SOURCE_DIRS =
                 "/apps/nemiver/dbgperspective/source-search-dirs" ;
-static const char* CONF_KEY_SHOW_DBG_ERROR_DIALOGS =
+const char* CONF_KEY_SHOW_DBG_ERROR_DIALOGS =
                 "/apps/nemiver/dbgperspective/show-dbg-error-dialogs";
-static const char* CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
+const char* CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
                 "/apps/nemiver/dbgperspective/show-source-line-numbers" ;
-static const char* CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE =
+const char* CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE =
                 "/apps/nemiver/dbgperspective/confirm-before-reload-source" ;
-static const char* CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE =
+const char* CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE =
                 "/apps/nemiver/dbgperspective/allow-auto-reload-source";
-static const char* CONF_KEY_HIGHLIGHT_SOURCE_CODE =
+const char* CONF_KEY_HIGHLIGHT_SOURCE_CODE =
                 "/apps/nemiver/dbgperspective/highlight-source-code" ;
-static const char* CONF_KEY_SOURCE_FILE_ENCODING_LIST =
+const char* CONF_KEY_SOURCE_FILE_ENCODING_LIST =
                 "/apps/nemiver/dbgperspective/source-file-encoding-list" ;
-static const char* CONF_KEY_USE_SYSTEM_FONT =
+const char* CONF_KEY_USE_SYSTEM_FONT =
                 "/apps/nemiver/dbgperspective/use-system-font" ;
-static const char* CONF_KEY_CUSTOM_FONT_NAME=
+const char* CONF_KEY_CUSTOM_FONT_NAME=
                 "/apps/nemiver/dbgperspective/custom-font-name" ;
-static const char* CONF_KEY_SYSTEM_FONT_NAME=
+const char* CONF_KEY_SYSTEM_FONT_NAME=
                 "/desktop/gnome/interface/monospace_font_name" ;
-static const char* CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
+const char* CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-width" ;
-static const char* CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
+const char* CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-height" ;
-static const char* CONF_KEY_STATUS_PANE_LOCATION=
+const char* CONF_KEY_STATUS_PANE_LOCATION=
                 "/apps/nemiver/dbgperspective/status-pane-location" ;
-static const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
+const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
                 "/apps/nemiver/dbgperspective/debugger-engine-dynmod" ;
 
 
