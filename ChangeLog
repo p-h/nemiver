@@ -1,3 +1,8 @@
+2008-07-27  Dodji Seketeli  <dodji@gnome.org>
+
+	* autogen.sh: fix static boot_unit_test_framework detection on 64 bits
+	  systems. Man, boost build system sucks so bad.
+
 2008-07-26  Jonathon Jongsma  <jjongsma@gnome.org>
 
 	* src/persp/dbgperspective/glade/preferencesdialog.glade: add radio buttons

@@ -230,12 +230,21 @@ PKG_CHECK_MODULES(LIBGLIBMM, [glibmm-2.4 >= $LIBGLIBMM_VERSION])
 PKG_CHECK_MODULES(SQLITE3, [sqlite3 >= $SQLITE3_VERSION])
 PKG_CHECK_MODULES(LIBVTE, [vte >= $LIBVTE_VERSION])
 
+#######################################################
+#boost build system sucks no end.
+#it is damn hard to detect the version of boost
+#that is installed. All that because our friends of
+#the boost project don't want to integrate to autofoo.
+#So we resort to hugly hacks to detect the version of
+#boost that is installed.
+#######################################################
 if test x$ENABLE_AUTOTESTS = xyes ; then
     AX_BOOST_BASE([1.33.1])
     AX_BOOST_UNIT_TEST_FRAMEWORK
     AX_BOOST_TEST_EXEC_MONITOR
 
     unit_framework_lib_candidates="/usr/lib/libboost_unit_test_framework-st.a /usr/lib/libboost_unit_test_framework.a"
+    unit_framework_lib_candidates=$unit_framework_lib_candidates"/usr/lib64/libboost_unit_test_framework-st.a /usr/lib64/libboost_unit_test_framework.a"
     for i in $unit_framework_lib_candidates ; do
         if test -f $i ; then
             BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB=$i
