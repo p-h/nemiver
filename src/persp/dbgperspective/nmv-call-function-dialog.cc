@@ -42,13 +42,14 @@ struct CallFunctionDialog::Priv {
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
         ok_button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton");
+            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+                                                          "okbutton");
         THROW_IF_FAIL (ok_button);
         ok_button->set_sensitive (false);
 
         call_expr_entry =
-            ui_utils::get_widget_from_glade<Gtk::Entry> (a_glade,
-                                                         "callexpressionentry");
+            ui_utils::get_widget_from_glade<Gtk::Entry>
+                                            (a_glade, "callexpressionentry");
         THROW_IF_FAIL (call_expr_entry);
         call_expr_entry->signal_changed ().connect
             (sigc::mem_fun (*this, &Priv::on_call_expr_entry_changed_signal));

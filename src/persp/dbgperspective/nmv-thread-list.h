@@ -31,32 +31,32 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
 
-using nemiver::common::Object ;
-using nemiver::common::SafePtr ;
-using nemiver::IDebuggerSafePtr ;
+using nemiver::common::Object;
+using nemiver::common::SafePtr;
+using nemiver::IDebuggerSafePtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class NEMIVER_API ThreadList : public Object {
     //non copyable
-    ThreadList (const ThreadList &) ;
-    ThreadList& operator=  (const ThreadList &) ;
+    ThreadList (const ThreadList &);
+    ThreadList& operator=  (const ThreadList &);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 protected:
-    ThreadList () ;
+    ThreadList ();
 
 public:
 
-    ThreadList (IDebuggerSafePtr &) ;
-    virtual ~ThreadList () ;
-    const std::list<int>& thread_ids () const ;
-    int current_thread_id () const ;
-    Gtk::Widget& widget () const ;
-    void clear () ;
-    sigc::signal<void, int>& thread_selected_signal () const ;
+    ThreadList (IDebuggerSafePtr &);
+    virtual ~ThreadList ();
+    const std::list<int>& thread_ids () const;
+    int current_thread_id () const;
+    Gtk::Widget& widget () const;
+    void clear ();
+    sigc::signal<void, int>& thread_selected_signal () const;
 };//end class ThreadList
 
 NEMIVER_END_NAMESPACE (nemiver)

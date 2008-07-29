@@ -34,11 +34,11 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
-class UString ;
+class UString;
 }
 
-using nemiver::common::UString ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::SafePtr;
 
 class SavedSessionsDialog : public Dialog {
     class Priv;
@@ -46,8 +46,9 @@ class SavedSessionsDialog : public Dialog {
     SafePtr<SavedSessionsDialog::Priv> m_priv;
 
 public:
-    SavedSessionsDialog (const UString &a_root_path, ISessMgr *a_sesssion_manager) ;
-    virtual ~SavedSessionsDialog () ;
+    SavedSessionsDialog (const UString &a_root_path,
+                         ISessMgr *a_sesssion_manager);
+    virtual ~SavedSessionsDialog ();
 
     ISessMgr::Session session () const;
     void session (const ISessMgr::Session &a_session) const;

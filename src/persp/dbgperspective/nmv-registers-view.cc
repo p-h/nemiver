@@ -34,16 +34,16 @@
 namespace nemiver {
 
 struct RegisterColumns : public Gtk::TreeModelColumnRecord {
-    Gtk::TreeModelColumn<IDebugger::register_id_t> id ;
-    Gtk::TreeModelColumn<Glib::ustring> name ;
-    Gtk::TreeModelColumn<Glib::ustring> value ;
+    Gtk::TreeModelColumn<IDebugger::register_id_t> id;
+    Gtk::TreeModelColumn<Glib::ustring> name;
+    Gtk::TreeModelColumn<Glib::ustring> value;
     Gtk::TreeModelColumn<Gdk::Color> fg_color;
 
     RegisterColumns ()
     {
-        add (id) ;
-        add (name) ;
-        add (value) ;
+        add (id);
+        add (name);
+        add (value);
         add (fg_color);
     }
 };//end Cols
@@ -51,14 +51,14 @@ struct RegisterColumns : public Gtk::TreeModelColumnRecord {
 static RegisterColumns&
 get_columns ()
 {
-    static RegisterColumns s_cols ;
-    return s_cols ;
+    static RegisterColumns s_cols;
+    return s_cols;
 }
 
 struct RegistersView::Priv {
 public:
-    SafePtr<Gtk::TreeView> tree_view ;
-    Glib::RefPtr<Gtk::ListStore> list_store ;
+    SafePtr<Gtk::TreeView> tree_view;
+    Glib::RefPtr<Gtk::ListStore> list_store;
     IDebuggerSafePtr& debugger;
     bool is_up2date;
 
@@ -66,40 +66,45 @@ public:
         debugger(a_debugger),
         is_up2date (true)
     {
-        build_tree_view () ;
+        build_tree_view ();
 
         // update breakpoint list when debugger indicates that the list of
         // breakpoints has changed.
-        debugger->register_names_listed_signal ().connect (sigc::mem_fun
-                (*this, &Priv::on_debugger_registers_listed)) ;
-        debugger->changed_registers_listed_signal ().connect (sigc::mem_fun
-                (*this, &Priv::on_debugger_changed_registers_listed)) ;
-        debugger->register_values_listed_signal ().connect (sigc::mem_fun
-                (*this, &Priv::on_debugger_register_values_listed)) ;
-        debugger->register_value_changed_signal ().connect (sigc::mem_fun
-                (*this, &Priv::on_debugger_register_value_changed)) ;
-
-        debugger->stopped_signal ().connect (sigc::mem_fun
-                (*this, &Priv::on_debugger_stopped));
+        debugger->register_names_listed_signal ().connect
+            (sigc::mem_fun
+                    (*this, &Priv::on_debugger_registers_listed));
+        debugger->changed_registers_listed_signal ().connect
+            (sigc::mem_fun
+                    (*this, &Priv::on_debugger_changed_registers_listed));
+        debugger->register_values_listed_signal ().connect
+            (sigc::mem_fun
+                    (*this, &Priv::on_debugger_register_values_listed));
+        debugger->register_value_changed_signal ().connect
+            (sigc::mem_fun
+                    (*this, &Priv::on_debugger_register_value_changed));
+        debugger->stopped_signal ().connect
+            (sigc::mem_fun
+                    (*this, &Priv::on_debugger_stopped));
     }
 
     void build_tree_view ()
     {
         if (tree_view) {return;}
         //create a default tree store and a tree view
-        list_store = Gtk::ListStore::create (get_columns ()) ;
-        tree_view.reset (new Gtk::TreeView (list_store)) ;
+        list_store = Gtk::ListStore::create (get_columns ());
+        tree_view.reset (new Gtk::TreeView (list_store));
 
         //create the columns of the tree view
-        tree_view->append_column (_("ID"), get_columns ().id) ;
-        tree_view->append_column (_("Name"), get_columns ().name) ;
-        tree_view->append_column_editable (_("Value"), get_columns ().value) ;
-        Gtk::TreeViewColumn * col = tree_view->get_column (2) ;
+        tree_view->append_column (_("ID"), get_columns ().id);
+        tree_view->append_column (_("Name"), get_columns ().name);
+        tree_view->append_column_editable (_("Value"), get_columns ().value);
+        Gtk::TreeViewColumn * col = tree_view->get_column (2);
         col->add_attribute (*col->get_first_cell_renderer (),
                             "foreground-gdk",
-                            get_columns ().fg_color) ;
-        Gtk::CellRendererText* renderer = dynamic_cast<Gtk::CellRendererText*>
-            (col->get_first_cell_renderer ());
+                            get_columns ().fg_color);
+        Gtk::CellRendererText* renderer =
+                dynamic_cast<Gtk::CellRendererText*>
+                                        (col->get_first_cell_renderer ());
         THROW_IF_FAIL (renderer);
         renderer->signal_edited ().connect (sigc::mem_fun
                     (*this, &Priv::on_register_value_edited));
@@ -123,8 +128,7 @@ public:
         if (first_run) {
             first_run = false;
             debugger->list_register_names ();
-        }
-        else {
+        } else {
             debugger->list_changed_registers ();
         }
     }
@@ -140,7 +144,7 @@ public:
         if (a_reason == IDebugger::EXITED_SIGNALLED
             || a_reason == IDebugger::EXITED_NORMALLY
             || a_reason == IDebugger::EXITED) {
-            return ;
+            return;
         }
         if (should_process_now ()) {
             finish_handling_debugger_stopped_event ();
@@ -151,8 +155,8 @@ public:
     }
 
     void on_debugger_registers_listed
-                            (const map<IDebugger::register_id_t, UString> &a_regs,
-                             const UString &a_cookie)
+                    (const map<IDebugger::register_id_t, UString> &a_regs,
+                     const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
@@ -161,7 +165,9 @@ public:
         list_store->clear ();
         LOG_DD ("got num registers: " << (int)a_regs.size ());
         std::map<IDebugger::register_id_t, UString>::const_iterator reg_iter;
-        for (reg_iter = a_regs.begin (); reg_iter != a_regs.end (); ++reg_iter) {
+        for (reg_iter = a_regs.begin ();
+             reg_iter != a_regs.end ();
+             ++reg_iter) {
             Gtk::TreeModel::iterator tree_iter = list_store->append ();
             (*tree_iter)[get_columns ().id] = reg_iter->first;
             (*tree_iter)[get_columns ().name] = reg_iter->second;
@@ -186,16 +192,18 @@ public:
     }
 
     void on_debugger_register_values_listed
-                    (const map<IDebugger::register_id_t, UString> &a_reg_values,
-                     const UString &a_cookie)
+                (const map<IDebugger::register_id_t, UString> &a_reg_values,
+                 const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
-        for (Gtk::TreeModel::iterator tree_iter = list_store->children ().begin ();
-                tree_iter != list_store->children ().end (); ++tree_iter) {
+        Gtk::TreeModel::iterator tree_iter;
+        for (tree_iter = list_store->children ().begin ();
+             tree_iter != list_store->children ().end ();
+             ++tree_iter) {
             IDebugger::register_id_t id = (*tree_iter)[get_columns ().id];
-            std::map<IDebugger::register_id_t, UString>::const_iterator value_iter
-                                                    = a_reg_values.find (id);
+            std::map<IDebugger::register_id_t, UString>::const_iterator
+                                        value_iter = a_reg_values.find (id);
             if (value_iter != a_reg_values.end ()) {
                 (*tree_iter)[get_columns ().value] = value_iter->second;
                 if (a_cookie != "first-time") {
@@ -224,17 +232,19 @@ public:
         // setting of the register has failed. We don't want to just leave the
         // user-entered value in the treeview or the user will falsely assume
         // that she has successfully modified the register value even on
-        // failures.  So until we have proper error detection and can present a
-        // message to the user indicating that setting the register has failed,
+        // failures.  So until we have proper error detection and can present
+        // a message to the user indicating that setting the
+        // register has failed,
         // we must read back the register value immediately after setting it.
         std::list<IDebugger::register_id_t> regs;
         regs.push_back ((tree_iter->get_value (get_columns ().id)));
         debugger->list_register_values (regs);
     }
 
-    void on_debugger_register_value_changed (const Glib::ustring &a_register_name,
-                                             const Glib::ustring &a_new_value,
-                                             const Glib::ustring &/*a_cookie*/)
+    void on_debugger_register_value_changed
+                                    (const Glib::ustring &a_register_name,
+                                     const Glib::ustring &a_new_value,
+                                     const Glib::ustring &/*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         Gtk::TreeModel::iterator tree_iter;
@@ -285,22 +295,22 @@ RegistersView::RegistersView (IDebuggerSafePtr& a_debugger)
 
 RegistersView::~RegistersView ()
 {
-    LOG_D ("deleted", "destructor-domain") ;
+    LOG_D ("deleted", "destructor-domain");
 }
 
 Gtk::Widget&
 RegistersView::widget () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->tree_view) ;
-    THROW_IF_FAIL (m_priv->list_store) ;
-    return *m_priv->tree_view ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->tree_view);
+    THROW_IF_FAIL (m_priv->list_store);
+    return *m_priv->tree_view;
 }
 
 void
 RegistersView::clear ()
 {
-    THROW_IF_FAIL (m_priv && m_priv->list_store) ;
+    THROW_IF_FAIL (m_priv && m_priv->list_store);
     m_priv->list_store->clear ();
 }
 

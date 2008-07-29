@@ -1,3 +1,11 @@
+2008-07-30  Dodji Seketeli  <dodji@gnome.org>o
+
+	* src/uicommon/*, src/persp/dbgperspective/*:
+	  Did a big review of style issue in the UI related code.
+	  Now this part of the code base should comply more with
+	  the coding style of the project.
+	  I hate doing this.
+
 2008-07-28  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

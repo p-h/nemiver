@@ -44,7 +44,7 @@ using nemiver::common::Transaction;
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class ISessMgr;
-typedef SafePtr<ISessMgr, ObjectRef, ObjectUnref> ISessMgrSafePtr ;
+typedef SafePtr<ISessMgr, ObjectRef, ObjectUnref> ISessMgrSafePtr;
 
 class NEMIVER_API ISessMgr : public Object {
     //non copyable

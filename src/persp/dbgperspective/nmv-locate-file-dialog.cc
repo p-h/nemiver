@@ -35,15 +35,15 @@
 #include "nmv-ui-utils.h"
 #include "nmv-locate-file-dialog.h"
 
-using namespace std ;
-using namespace nemiver::common ;
+using namespace std;
+using namespace nemiver::common;
 
 namespace nemiver {
 class LocateFileDialog::Priv {
 public:
-    Gtk::FileChooserButton *fcbutton_location ;
+    Gtk::FileChooserButton *fcbutton_location;
     Gtk::Label *label_filename;
-    Gtk::Button *okbutton ;
+    Gtk::Button *okbutton;
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade, const UString& a_filename) :
         fcbutton_location (0),
         label_filename(0),
@@ -51,25 +51,29 @@ public:
     {
 
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
-        THROW_IF_FAIL (okbutton) ;
-        okbutton->set_sensitive (false) ;
+            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+                                                          "okbutton");
+        THROW_IF_FAIL (okbutton);
+        okbutton->set_sensitive (false);
 
         fcbutton_location =
             ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                (a_glade, "filechooserbutton_location") ;
+                (a_glade, "filechooserbutton_location");
         fcbutton_location->signal_selection_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_file_selection_changed_signal)) ;
+                (*this, &Priv::on_file_selection_changed_signal));
         UString chooser_title;
-        chooser_title.printf (_("Select Location For %s"), a_filename.c_str ());
+        chooser_title.printf (_("Select Location For %s"),
+                              a_filename.c_str ());
         fcbutton_location->set_title (chooser_title);
 
         label_filename =
-            ui_utils::get_widget_from_glade<Gtk::Label> (a_glade, "label_filename") ;
-        THROW_IF_FAIL (label_filename) ;
+            ui_utils::get_widget_from_glade<Gtk::Label> (a_glade,
+                                                         "label_filename");
+        THROW_IF_FAIL (label_filename);
         UString instructions;
         instructions.printf (
-                _("Cannot find file '<b>%s</b>'.\nPlease specify the location of this file:"),
+                _("Cannot find file '<b>%s</b>'.\nPlease specify "
+                  "the location of this file:"),
                 a_filename.c_str ());
         label_filename->set_text(instructions);
         label_filename->set_use_markup ();
@@ -79,22 +83,23 @@ public:
     {
         NEMIVER_TRY
 
-        THROW_IF_FAIL (fcbutton_location) ;
+        THROW_IF_FAIL (fcbutton_location);
 
         if (Glib::file_test (fcbutton_location->get_filename (),
                              Glib::FILE_TEST_IS_REGULAR)) {
-            okbutton->set_sensitive (true) ;
+            okbutton->set_sensitive (true);
         } else {
-            okbutton->set_sensitive (false) ;
+            okbutton->set_sensitive (false);
         }
         NEMIVER_CATCH
     }
 };//end class LocateFileDialog::Priv
 
-LocateFileDialog::LocateFileDialog (const UString &a_root_path, const UString &a_file) :
+LocateFileDialog::LocateFileDialog (const UString &a_root_path,
+                                    const UString &a_file) :
     Dialog (a_root_path, "locatefiledialog.glade", "locatefiledialog")
 {
-    m_priv.reset (new Priv (glade (), a_file)) ;
+    m_priv.reset (new Priv (glade (), a_file));
 }
 
 LocateFileDialog::~LocateFileDialog ()
@@ -105,11 +110,11 @@ UString
 LocateFileDialog::file_location () const
 {
     NEMIVER_TRY
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->fcbutton_location) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->fcbutton_location);
     NEMIVER_CATCH
 
-    return m_priv->fcbutton_location->get_filename () ;
+    return m_priv->fcbutton_location->get_filename ();
 }
 
 void
@@ -117,8 +122,8 @@ LocateFileDialog::file_location (const UString &a_location)
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv->fcbutton_location) ;
-    m_priv->fcbutton_location->set_filename (a_location) ;
+    THROW_IF_FAIL (m_priv->fcbutton_location);
+    m_priv->fcbutton_location->set_filename (a_location);
     NEMIVER_CATCH
 }
 

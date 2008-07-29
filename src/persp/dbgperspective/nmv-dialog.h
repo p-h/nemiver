@@ -29,52 +29,52 @@
 #include "common/nmv-object.h"
 
 namespace Gtk {
-    class Dialog ;
+    class Dialog;
 }
 
 namespace Gnome {
     namespace Glade {
-        class Xml ;
+        class Xml;
     }
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
-class UString ;
+class UString;
 }
 
-using nemiver::common::UString ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::SafePtr;
 
 class Dialog : public common::Object {
-    class Priv ;
-    friend class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    friend class Priv;
+    SafePtr<Priv> m_priv;
     //non copyable
-    Dialog (const Dialog&) ;
-    Dialog& operator= (const Dialog&) ;
+    Dialog (const Dialog&);
+    Dialog& operator= (const Dialog&);
 
-    Dialog () ;
+    Dialog ();
 
 protected:
     //the actual underlying Gtk::Dialog widget
-    Gtk::Dialog& widget () const ;
+    Gtk::Dialog& widget () const;
 
     //the actual glade object loaded by this dialog.
-    const Glib::RefPtr<Gnome::Glade::Xml> glade ()  const ;
+    const Glib::RefPtr<Gnome::Glade::Xml> glade ()  const;
 
 public:
 
     Dialog (const UString &a_resource_root_path,
             const UString &a_glade_filename,
-            const UString &a_widget_name) ;
+            const UString &a_widget_name);
 
-    virtual ~Dialog () ;
+    virtual ~Dialog ();
 
-    virtual gint run () ;
+    virtual gint run ();
 
-    virtual void hide () ;
+    virtual void hide ();
 
 };//end class nemiver
 

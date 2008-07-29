@@ -32,15 +32,15 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
-class UString ;
+class UString;
 }
 
-using nemiver::common::UString ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::SafePtr;
 
 class SetBreakpointDialog : public Dialog {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 public:
     typedef enum
     {
@@ -49,20 +49,20 @@ public:
         MODE_EVENT
     } Mode;
 
-    SetBreakpointDialog (const UString &a_resource_root_path) ;
-    virtual ~SetBreakpointDialog () ;
+    SetBreakpointDialog (const UString &a_resource_root_path);
+    virtual ~SetBreakpointDialog ();
 
-    UString file_name () const ;
-    void file_name (const UString &a_name) ;
+    UString file_name () const;
+    void file_name (const UString &a_name);
 
-    int line_number () const ;
-    void line_number (int) ;
+    int line_number () const;
+    void line_number (int);
 
-    UString function () const ;
-    void function (const UString &a_name) ;
+    UString function () const;
+    void function (const UString &a_name);
 
-    UString event () const ;
-    void event (const UString &a_event) ;
+    UString event () const;
+    void event (const UString &a_event);
 
     UString condition () const;
     void condition (const UString &a_cond);

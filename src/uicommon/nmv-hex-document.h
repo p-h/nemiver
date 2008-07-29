@@ -34,29 +34,30 @@
 namespace Gtk {
     class Widget;
 }
-using nemiver::common::Object ;
-using nemiver::common::SafePtr ;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::UString ;
+using nemiver::common::Object;
+using nemiver::common::SafePtr;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::UString;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (Hex)
-class Document ;
-typedef SafePtr<Document, ObjectRef, ObjectUnref> DocumentSafePtr ;
+
+class Document;
+typedef SafePtr<Document, ObjectRef, ObjectUnref> DocumentSafePtr;
 
 class Document : public Object {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 protected:
-    Document () ;
-    Document (const std::string& filename) ;
+    Document ();
+    Document (const std::string& filename);
 
 public:
-    virtual ~Document ()  ;
-    static DocumentSafePtr create () ;
-    static DocumentSafePtr create (const std::string& filename) ;
+    virtual ~Document () ;
+    static DocumentSafePtr create ();
+    static DocumentSafePtr create (const std::string& filename);
     ::HexDocument* cobj();
     void set_data (guint offset,
                    guint len,

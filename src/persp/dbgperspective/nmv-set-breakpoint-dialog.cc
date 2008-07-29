@@ -35,8 +35,8 @@
 #include "nmv-set-breakpoint-dialog.h"
 #include "nmv-ui-utils.h"
 
-using namespace std ;
-using namespace nemiver::common ;
+using namespace std;
+using namespace nemiver::common;
 
 namespace nemiver {
 
@@ -55,17 +55,17 @@ public:
 
 class SetBreakpointDialog::Priv {
 public:
-    Gtk::ComboBox *combo_event ;
+    Gtk::ComboBox *combo_event;
     EventComboModelColumns combo_event_col_model;
     Glib::RefPtr<Gtk::TreeStore> combo_event_model;
-    Gtk::Entry *entry_filename ;
+    Gtk::Entry *entry_filename;
     Gtk::Entry *entry_line;
     Gtk::Entry *entry_function;
     Gtk::Entry *entry_condition;
     Gtk::RadioButton *radio_source_location;
     Gtk::RadioButton *radio_function_name;
     Gtk::RadioButton *radio_event;
-    Gtk::Button *okbutton ;
+    Gtk::Button *okbutton;
 
 public:
     Priv (Gtk::Dialog &a_dialog,
@@ -82,13 +82,13 @@ public:
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
 
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
-        THROW_IF_FAIL (okbutton) ;
-        okbutton->set_sensitive (false) ;
+            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton");
+        THROW_IF_FAIL (okbutton);
+        okbutton->set_sensitive (false);
 
         combo_event =
             ui_utils::get_widget_from_glade<Gtk::ComboBox>
-            (a_glade, "combo_event") ;
+            (a_glade, "combo_event");
         combo_event_model = Gtk::TreeStore::create(combo_event_col_model);
         combo_event->set_model(combo_event_model);
         Gtk::TreeModel::Row row;
@@ -104,23 +104,23 @@ public:
 
         entry_filename =
             ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "filenameentry") ;
+                (a_glade, "filenameentry");
         entry_filename->signal_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_text_changed_signal)) ;
+                (*this, &Priv::on_text_changed_signal));
 
         entry_line =
             ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "lineentry") ;
+                (a_glade, "lineentry");
         entry_line->signal_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_text_changed_signal)) ;
-        entry_line->set_activates_default () ;
+                (*this, &Priv::on_text_changed_signal));
+        entry_line->set_activates_default ();
 
         entry_function =
             ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "functionentry") ;
+                (a_glade, "functionentry");
         entry_function->signal_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_text_changed_signal)) ;
-        entry_function->set_activates_default () ;
+                (*this, &Priv::on_text_changed_signal));
+        entry_function->set_activates_default ();
 
         entry_condition = ui_utils::get_widget_from_glade<Gtk::Entry>
                 (a_glade, "conditionentry");
@@ -130,35 +130,36 @@ public:
 
         radio_source_location =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (a_glade, "sourcelocationradio") ;
+                (a_glade, "sourcelocationradio");
         radio_source_location->signal_clicked ().connect (sigc::mem_fun
-                (*this, &Priv::on_radiobutton_changed)) ;
+                (*this, &Priv::on_radiobutton_changed));
 
         radio_function_name =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (a_glade, "functionnameradio") ;
+                (a_glade, "functionnameradio");
         radio_function_name->signal_clicked ().connect (sigc::mem_fun
-                (*this, &Priv::on_radiobutton_changed)) ;
+                (*this, &Priv::on_radiobutton_changed));
 
         radio_event =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-            (a_glade, "eventradio") ;
+            (a_glade, "eventradio");
         radio_event->signal_clicked ().connect (sigc::mem_fun
-                (*this, &Priv::on_radiobutton_changed)) ;
+                (*this, &Priv::on_radiobutton_changed));
 
         // set the 'function name' mode active by default
         mode (MODE_FUNCTION_NAME);
-        // hack to ensure that the correct text entry fields get insensitive at
-        // startup since if the glade file initializes MODE_FUNCTION_NAME to
-        // active, the 'changed' signal won't be emitted here (is there a better
-        // way to do this?)
+        // hack to ensure that the correct text entry fields
+        // get insensitive at startup since if the glade file
+        // initializes MODE_FUNCTION_NAME to
+        // active, the 'changed' signal won't be emitted here
+        // (is there a better way to do this?)
         on_radiobutton_changed ();
     }
 
     void update_ok_button_sensitivity ()
     {
-        THROW_IF_FAIL (entry_filename) ;
-        THROW_IF_FAIL (entry_line) ;
+        THROW_IF_FAIL (entry_filename);
+        THROW_IF_FAIL (entry_line);
 
         SetBreakpointDialog::Mode a_mode = mode ();
 
@@ -169,20 +170,20 @@ public:
                     !entry_line->get_text ().empty () &&
                     // make sure the line number field is a valid number
                     atoi(entry_line->get_text ().c_str ())) {
-                    okbutton->set_sensitive (true) ;
+                    okbutton->set_sensitive (true);
                 } else {
-                    okbutton->set_sensitive (false) ;
+                    okbutton->set_sensitive (false);
                 }
                 break;
             case MODE_FUNCTION_NAME:
                 if (!entry_function->get_text ().empty ()) {
-                    okbutton->set_sensitive (true) ;
+                    okbutton->set_sensitive (true);
                 } else {
-                    okbutton->set_sensitive (false) ;
+                    okbutton->set_sensitive (false);
                 }
                 break;
             default:
-                okbutton->set_sensitive (true) ;
+                okbutton->set_sensitive (true);
                 break;
         }
     }
@@ -196,12 +197,12 @@ public:
 
     void on_radiobutton_changed ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
 
-        THROW_IF_FAIL (entry_filename) ;
-        THROW_IF_FAIL (entry_line) ;
-        THROW_IF_FAIL (entry_function) ;
+        THROW_IF_FAIL (entry_filename);
+        THROW_IF_FAIL (entry_line);
+        THROW_IF_FAIL (entry_function);
 
         SetBreakpointDialog::Mode a_mode = mode ();
 
@@ -228,39 +229,38 @@ public:
 
     void mode (SetBreakpointDialog::Mode a_mode)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        THROW_IF_FAIL (radio_source_location) ;
-        THROW_IF_FAIL (radio_function_name) ;
-        THROW_IF_FAIL (entry_line) ;
-        THROW_IF_FAIL (entry_filename) ;
-        THROW_IF_FAIL (entry_function) ;
+        THROW_IF_FAIL (radio_source_location);
+        THROW_IF_FAIL (radio_function_name);
+        THROW_IF_FAIL (entry_line);
+        THROW_IF_FAIL (entry_filename);
+        THROW_IF_FAIL (entry_function);
 
-        switch (a_mode)
-        {
-        case MODE_SOURCE_LOCATION:
-            LOG_DD ("Changing Mode to SOURCE_LOCATION");
-            radio_source_location->set_active ();
-            entry_filename->grab_focus () ;
-            break;
-        case MODE_FUNCTION_NAME:
-            LOG_DD ("Changing Mode to FUNCTION_NAME");
-            radio_function_name->set_active ();
-            entry_function->grab_focus () ;
-            break;
-        case MODE_EVENT:
-            LOG_DD ("Changing Mode to EVENT");
-            radio_event->set_active ();
-            combo_event->grab_focus ();
-            break;
-        default:
-            THROW ("Should not be reached") ;
+        switch (a_mode) {
+            case MODE_SOURCE_LOCATION:
+                LOG_DD ("Changing Mode to SOURCE_LOCATION");
+                radio_source_location->set_active ();
+                entry_filename->grab_focus ();
+                break;
+            case MODE_FUNCTION_NAME:
+                LOG_DD ("Changing Mode to FUNCTION_NAME");
+                radio_function_name->set_active ();
+                entry_function->grab_focus ();
+                break;
+            case MODE_EVENT:
+                LOG_DD ("Changing Mode to EVENT");
+                radio_event->set_active ();
+                combo_event->grab_focus ();
+                break;
+            default:
+                THROW ("Should not be reached");
         }
     }
 
     UString get_active_event () const
     {
-        Gtk::TreeModel::iterator iter = combo_event->get_active () ;
+        Gtk::TreeModel::iterator iter = combo_event->get_active ();
         return (*iter)[combo_event_col_model.m_command];
     }
 
@@ -271,16 +271,15 @@ public:
 
     SetBreakpointDialog::Mode mode () const
     {
-        THROW_IF_FAIL (radio_source_location) ;
-        THROW_IF_FAIL (radio_function_name) ;
+        THROW_IF_FAIL (radio_source_location);
+        THROW_IF_FAIL (radio_function_name);
 
 
         if (radio_source_location->get_active ()) {
             return MODE_SOURCE_LOCATION;
         } else if (radio_event->get_active ()) {
             return MODE_EVENT;
-        }
-        else {
+        } else {
             return MODE_FUNCTION_NAME;
         }
     }
@@ -299,65 +298,65 @@ SetBreakpointDialog::~SetBreakpointDialog ()
 UString
 SetBreakpointDialog::file_name () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->entry_filename) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_filename);
 
-    return m_priv->entry_filename->get_text () ;
+    return m_priv->entry_filename->get_text ();
 }
 
 void
 SetBreakpointDialog::file_name (const UString &a_name)
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->entry_filename) ;
-    m_priv->entry_filename->set_text (a_name) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_filename);
+    m_priv->entry_filename->set_text (a_name);
 }
 
 int
 SetBreakpointDialog::line_number () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->entry_line) ;
-    return atoi (m_priv->entry_line->get_text ().c_str ()) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_line);
+    return atoi (m_priv->entry_line->get_text ().c_str ());
 }
 
 void
 SetBreakpointDialog::line_number (int a_line)
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->entry_line) ;
-    m_priv->entry_line->set_text (UString::from_int(a_line)) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_line);
+    m_priv->entry_line->set_text (UString::from_int(a_line));
 }
 
 UString
 SetBreakpointDialog::function () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->entry_function) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_function);
 
-    return m_priv->entry_function->get_text () ;
+    return m_priv->entry_function->get_text ();
 }
 
 void
 SetBreakpointDialog::function (const UString &a_name)
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->entry_function) ;
-    m_priv->entry_function->set_text (a_name) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_function);
+    m_priv->entry_function->set_text (a_name);
 }
 
 UString
 SetBreakpointDialog::event () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->combo_event) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->combo_event);
     return m_priv->get_active_event();
 }
 
 void SetBreakpointDialog::event (const UString &a_event) 
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->combo_event) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->combo_event);
     m_priv->set_active_event (a_event);
 
 }
@@ -382,7 +381,7 @@ SetBreakpointDialog::condition (const UString &a_cond)
 SetBreakpointDialog::Mode
 SetBreakpointDialog::mode () const
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     return m_priv->mode ();
 }
 
@@ -390,7 +389,7 @@ SetBreakpointDialog::mode () const
 void
 SetBreakpointDialog::mode (Mode a_mode)
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     m_priv->mode (a_mode);
 }
 

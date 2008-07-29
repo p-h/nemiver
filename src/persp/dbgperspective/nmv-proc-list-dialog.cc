@@ -32,16 +32,16 @@
 #include "nmv-proc-list-dialog.h"
 #include "nmv-ui-utils.h"
 
-using namespace std ;
-using namespace nemiver::common ;
+using namespace std;
+using namespace nemiver::common;
 
 namespace nemiver {
 
 struct ProcListCols : public Gtk::TreeModel::ColumnRecord {
-    Gtk::TreeModelColumn<IProcMgr::Process> process ;
-    Gtk::TreeModelColumn<unsigned int> pid ;
-    Gtk::TreeModelColumn<Glib::ustring> user_name ;
-    Gtk::TreeModelColumn<Glib::ustring> proc_args ;
+    Gtk::TreeModelColumn<IProcMgr::Process> process;
+    Gtk::TreeModelColumn<unsigned int> pid;
+    Gtk::TreeModelColumn<Glib::ustring> user_name;
+    Gtk::TreeModelColumn<Glib::ustring> proc_args;
 
     enum ColsOffset {
         PROCESS=0,
@@ -52,30 +52,30 @@ struct ProcListCols : public Gtk::TreeModel::ColumnRecord {
 
     ProcListCols ()
     {
-        add (process) ;
-        add (pid) ;
-        add (user_name) ;
-        add (proc_args) ;
+        add (process);
+        add (pid);
+        add (user_name);
+        add (proc_args);
     }
 };//end class Gtk::TreeModel
 
 static ProcListCols&
 columns ()
 {
-    static ProcListCols s_columns ;
-    return s_columns ;
+    static ProcListCols s_columns;
+    return s_columns;
 }
 
 class ProcListDialog::Priv {
 public:
-    IProcMgr &proc_mgr ;
-    Gtk::Button *okbutton ;
-    Gtk::TreeView *proclist_view ;
-    Gtk::Entry *entry_filter ;
-    Glib::RefPtr<Gtk::ListStore> proclist_store ;
-    Glib::RefPtr<Gtk::TreeModelFilter> filter_store ;
-    IProcMgr::Process selected_process ;
-    bool process_selected ;
+    IProcMgr &proc_mgr;
+    Gtk::Button *okbutton;
+    Gtk::TreeView *proclist_view;
+    Gtk::Entry *entry_filter;
+    Glib::RefPtr<Gtk::ListStore> proclist_store;
+    Glib::RefPtr<Gtk::TreeModelFilter> filter_store;
+    IProcMgr::Process selected_process;
+    bool process_selected;
 
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
           IProcMgr &a_proc_mgr) :
@@ -86,57 +86,59 @@ public:
         process_selected (false)
     {
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
-        THROW_IF_FAIL (okbutton) ;
-        okbutton->set_sensitive (false) ;
+            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+                                                          "okbutton");
+        THROW_IF_FAIL (okbutton);
+        okbutton->set_sensitive (false);
 
         entry_filter =
             ui_utils::get_widget_from_glade<Gtk::Entry> (a_glade,
                                                          "entry_filter");
-        THROW_IF_FAIL (entry_filter) ;
-        entry_filter->signal_changed ().connect (sigc::mem_fun(*this,
-                    &Priv::on_filter_entry_changed));
+        THROW_IF_FAIL (entry_filter);
+        entry_filter->signal_changed ().connect
+        (sigc::mem_fun(*this,
+                       &Priv::on_filter_entry_changed));
         proclist_view =
-            ui_utils::get_widget_from_glade<Gtk::TreeView> (a_glade,
-                                                            "proclisttreeview");
-        THROW_IF_FAIL (proclist_view) ;
-        proclist_store = Gtk::ListStore::create (columns ()) ;
+        ui_utils::get_widget_from_glade<Gtk::TreeView> (a_glade,
+                                                        "proclisttreeview");
+        THROW_IF_FAIL (proclist_view);
+        proclist_store = Gtk::ListStore::create (columns ());
         filter_store = Gtk::TreeModelFilter::create (proclist_store);
         filter_store->set_visible_func(sigc::mem_fun(*this,
                     &Priv::is_row_visible));
-        proclist_view->set_model (filter_store) ;
-        proclist_view->set_search_column (ProcListCols::PROC_ARGS) ;
-        proclist_view->set_enable_search (true) ;
+        proclist_view->set_model (filter_store);
+        proclist_view->set_search_column (ProcListCols::PROC_ARGS);
+        proclist_view->set_enable_search (true);
 
-        proclist_view->append_column ("PID", columns ().pid) ;
-        Gtk::TreeViewColumn *col = proclist_view->get_column (0) ;
-        THROW_IF_FAIL (col) ;
-        col->set_clickable (true) ;
-        col->set_resizable (true) ;
-        col->set_sort_column_id (columns ().pid) ;
+        proclist_view->append_column ("PID", columns ().pid);
+        Gtk::TreeViewColumn *col = proclist_view->get_column (0);
+        THROW_IF_FAIL (col);
+        col->set_clickable (true);
+        col->set_resizable (true);
+        col->set_sort_column_id (columns ().pid);
 
-        proclist_view->append_column (_("User Name"), columns ().user_name) ;
-        col = proclist_view->get_column (1) ;
-        THROW_IF_FAIL (col) ;
-        col->set_clickable (true) ;
-        col->set_resizable (true) ;
-        col->set_sort_column_id (columns ().user_name) ;
+        proclist_view->append_column (_("User Name"), columns ().user_name);
+        col = proclist_view->get_column (1);
+        THROW_IF_FAIL (col);
+        col->set_clickable (true);
+        col->set_resizable (true);
+        col->set_sort_column_id (columns ().user_name);
 
-        proclist_view->append_column (_("Proc Args"), columns ().proc_args) ;
-        col = proclist_view->get_column (2) ;
-        THROW_IF_FAIL (col) ;
-        col->set_clickable (true) ;
-        col->set_resizable (true) ;
-        col->set_sort_column_id (columns ().proc_args) ;
+        proclist_view->append_column (_("Proc Args"), columns ().proc_args);
+        col = proclist_view->get_column (2);
+        THROW_IF_FAIL (col);
+        col->set_clickable (true);
+        col->set_resizable (true);
+        col->set_sort_column_id (columns ().proc_args);
 
-        proclist_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
-        col = proclist_view->get_column (ProcListCols::PID) ;
+        proclist_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE);
+        col = proclist_view->get_column (ProcListCols::PID);
 
         proclist_view->get_selection ()->signal_changed ().connect
             (sigc::mem_fun (*this,
-                            &Priv::on_selection_changed_signal)) ;
+                            &Priv::on_selection_changed_signal));
         proclist_view->signal_row_activated ().connect (sigc::mem_fun
-                (*this, &Priv::on_row_activated_signal)) ;
+                (*this, &Priv::on_row_activated_signal));
     }
 
     void on_filter_entry_changed ()
@@ -173,25 +175,26 @@ public:
 
     void update_button_sensitivity()
     {
-        THROW_IF_FAIL (okbutton) ;
+        THROW_IF_FAIL (okbutton);
         vector<Gtk::TreeModel::Path> paths =
-            proclist_view->get_selection ()->get_selected_rows () ;
+            proclist_view->get_selection ()->get_selected_rows ();
 
         if (!paths.empty ()) {
 
-            Gtk::TreeModel::const_iterator row_it = filter_store->get_iter (paths[0]) ;
-            if (row_it != filter_store->children ().end () && is_row_visible(row_it)) {
-                selected_process = (*row_it)[columns ().process] ;
-                process_selected = true ;
-                okbutton->set_sensitive (true) ;
-
+            Gtk::TreeModel::const_iterator row_it =
+                                        filter_store->get_iter (paths[0]);
+            if (row_it != filter_store->children ().end ()
+                && is_row_visible(row_it)) {
+                selected_process = (*row_it)[columns ().process];
+                process_selected = true;
+                okbutton->set_sensitive (true);
                 return;
             }
         }
 
         selected_process = 0;
-        process_selected = false ;
-        okbutton->set_sensitive (false) ;
+        process_selected = false;
+        okbutton->set_sensitive (false);
     }
 
     void on_row_activated_signal (const Gtk::TreeModel::Path &a_path,
@@ -203,42 +206,43 @@ public:
 
         NEMIVER_TRY
 
-        THROW_IF_FAIL (okbutton) ;
+        THROW_IF_FAIL (okbutton);
 
-        Gtk::TreeModel::iterator row_it = filter_store->get_iter (a_path) ;
+        Gtk::TreeModel::iterator row_it = filter_store->get_iter (a_path);
         if (!row_it) {return;}
-        selected_process = (*row_it)[columns ().process] ;
-        process_selected = true ;
-        okbutton->clicked () ;
+        selected_process = (*row_it)[columns ().process];
+        process_selected = true;
+        okbutton->clicked ();
 
         NEMIVER_CATCH
     }
 
     void load_process_list ()
     {
-        process_selected = false ;
-        Gtk::TreeModel::iterator store_it ;
-        list<IProcMgr::Process> process_list = proc_mgr.get_all_process_list ();
+        process_selected = false;
+        Gtk::TreeModel::iterator store_it;
+        list<IProcMgr::Process> process_list =
+                            proc_mgr.get_all_process_list ();
         list<IProcMgr::Process>::iterator process_iter;
-        list<UString> args ;
-        list<UString>::iterator str_iter ;
-        UString args_str ;
-        proclist_store->clear () ;
-        for (process_iter = process_list.begin () ;
+        list<UString> args;
+        list<UString>::iterator str_iter;
+        UString args_str;
+        proclist_store->clear ();
+        for (process_iter = process_list.begin ();
                 process_iter != process_list.end ();
                 ++process_iter) {
-            args = process_iter->args () ;
+            args = process_iter->args ();
             if (args.empty ()) {continue;}
-            store_it = proclist_store->append () ;
-            (*store_it)[columns ().pid] = process_iter->pid () ;
-            (*store_it)[columns ().user_name] = process_iter->user_name () ;
-            args_str = "" ;
-            for (str_iter = args.begin () ;
-                    str_iter != args.end () ;
+            store_it = proclist_store->append ();
+            (*store_it)[columns ().pid] = process_iter->pid ();
+            (*store_it)[columns ().user_name] = process_iter->user_name ();
+            args_str = "";
+            for (str_iter = args.begin ();
+                    str_iter != args.end ();
                     ++str_iter) {
-                args_str += *str_iter + " " ;
+                args_str += *str_iter + " ";
             }
-            (*store_it)[columns ().proc_args] = args_str ;
+            (*store_it)[columns ().proc_args] = args_str;
             (*store_it)[columns ().process] = *process_iter;
         }
     }
@@ -250,12 +254,12 @@ ProcListDialog::ProcListDialog (const UString &a_root_path,
     Dialog(a_root_path, "proclistdialog.glade", "proclistdialog")
 {
     m_priv.reset (new Priv (glade (), a_proc_mgr));
-    widget ().hide () ;
+    widget ().hide ();
 }
 
 gint ProcListDialog::run ()
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     m_priv->load_process_list();
     return Dialog::run();
 }
@@ -267,16 +271,16 @@ ProcListDialog::~ProcListDialog ()
 bool
 ProcListDialog::has_selected_process ()
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     return m_priv->process_selected;
 }
 
 bool
 ProcListDialog::get_selected_process (IProcMgr::Process &a_proc)
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     if (!m_priv->process_selected) {return false;}
-    a_proc = m_priv->selected_process ;
+    a_proc = m_priv->selected_process;
     return true;
 }
 

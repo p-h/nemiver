@@ -35,8 +35,8 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class NEMIVER_API IDBGPerspective : public IPerspective {
     //non copyable
-    IDBGPerspective (const IPerspective&) ;
-    IDBGPerspective& operator= (const IPerspective&) ;
+    IDBGPerspective (const IPerspective&);
+    IDBGPerspective& operator= (const IPerspective&);
 
 public:
 
@@ -60,7 +60,7 @@ public:
     virtual void open_file () = 0;
 
     virtual bool open_file (const UString &a_uri,
-                            int current_line=-1)= 0 ;
+                            int current_line=-1)= 0;
 
     virtual void close_current_file () = 0;
 
@@ -114,12 +114,12 @@ public:
                                  const UString &a_condition="") = 0;
 
     virtual void append_breakpoints
-            (const map<int, IDebugger::BreakPoint> &a_breaks) = 0 ;
+            (const map<int, IDebugger::BreakPoint> &a_breaks) = 0;
 
     virtual bool get_breakpoint_number (const UString &a_file_name,
                                         int a_linenum,
                                         int &a_break_num,
-                                        bool &a_enabled) = 0 ;
+                                        bool &a_enabled) = 0;
 
     virtual bool delete_breakpoint () = 0;
 

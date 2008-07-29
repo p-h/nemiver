@@ -39,7 +39,7 @@ struct GObjectMMRef {
     void operator () (Glib::Object *a_obj)
     {
         if (a_obj) {
-            a_obj->reference () ;
+            a_obj->reference ();
         }
     }
 };//end GlibObjectRef
@@ -48,16 +48,16 @@ struct GObjectMMUnref {
     void operator () (Glib::Object *a_obj)
     {
         if (a_obj) {
-            a_obj->unreference () ;
+            a_obj->unreference ();
         }
     }
 };//end GlibObjectRef
 
-typedef SafePtr<Glib::Object, GObjectMMRef, GObjectMMUnref> GObjectMMSafePtr ;
+typedef SafePtr<Glib::Object, GObjectMMRef, GObjectMMUnref> GObjectMMSafePtr;
 
 struct CallStackCols : public Gtk::TreeModelColumnRecord {
-    Gtk::TreeModelColumn<Glib::ustring> location ;
-    Gtk::TreeModelColumn<Glib::ustring> function_name ;
+    Gtk::TreeModelColumn<Glib::ustring> location;
+    Gtk::TreeModelColumn<Glib::ustring> function_name;
     Gtk::TreeModelColumn<Glib::ustring> function_args;
     Gtk::TreeModelColumn<Glib::ustring> frame_index_caption;
     Gtk::TreeModelColumn<int> frame_index;
@@ -71,42 +71,42 @@ struct CallStackCols : public Gtk::TreeModelColumnRecord {
 
     CallStackCols ()
     {
-        add (location) ;
-        add (function_name) ;
-        add (function_args) ;
-        add (frame_index_caption) ;
-        add (frame_index) ;
-        add (is_expansion_row) ;
+        add (location);
+        add (function_name);
+        add (function_args);
+        add (frame_index_caption);
+        add (frame_index);
+        add (is_expansion_row);
     }
 };//end cols
 
 static CallStackCols&
 columns ()
 {
-    static CallStackCols s_cols ;
-    return s_cols ;
+    static CallStackCols s_cols;
+    return s_cols;
 }
 
 static const UString CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK =
     "/apps/nemiver/dbgperspective/callstack-expansion-chunk";
 
 struct CallStack::Priv {
-    IDebuggerSafePtr debugger ;
+    IDebuggerSafePtr debugger;
     IWorkbench& workbench;
     IPerspective& perspective;
-    vector<IDebugger::Frame> frames ;
+    vector<IDebugger::Frame> frames;
     map<int, list<IDebugger::VariableSafePtr> > params;
-    Glib::RefPtr<Gtk::ListStore> store ;
-    SafePtr<Gtk::TreeView> widget ;
-    bool waiting_for_stack_args ;
-    bool in_set_cur_frame_trans ;
-    IDebugger::Frame cur_frame ;
+    Glib::RefPtr<Gtk::ListStore> store;
+    SafePtr<Gtk::TreeView> widget;
+    bool waiting_for_stack_args;
+    bool in_set_cur_frame_trans;
+    IDebugger::Frame cur_frame;
     int cur_frame_index;
     unsigned nb_frames_expansion_chunk;
     unsigned max_frames_to_show;
-    sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal ;
-    sigc::connection on_selection_changed_connection ;
-    Gtk::Widget *callstack_menu ;
+    sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal;
+    sigc::connection on_selection_changed_connection;
+    Gtk::Widget *callstack_menu;
     Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
     bool is_up2date;
 
@@ -124,7 +124,7 @@ struct CallStack::Priv {
         callstack_menu (0),
         is_up2date (true)
     {
-        connect_debugger_signals () ;
+        connect_debugger_signals ();
         init_actions ();
         init_conf ();
     }
@@ -166,17 +166,17 @@ struct CallStack::Priv {
         };
 
         call_stack_action_group =
-            Gtk::ActionGroup::create ("callstack-action-group") ;
-        call_stack_action_group->set_sensitive (true) ;
+            Gtk::ActionGroup::create ("callstack-action-group");
+        call_stack_action_group->set_sensitive (true);
         int num_actions =
             sizeof (s_call_stack_action_entries)
                 /
-            sizeof (ui_utils::ActionEntry) ;
+            sizeof (ui_utils::ActionEntry);
 
         ui_utils::add_action_entries_to_action_group
             (s_call_stack_action_entries,
              num_actions,
-             call_stack_action_group) ;
+             call_stack_action_group);
 
         workbench.get_ui_manager ()->insert_action_group
                                                 (call_stack_action_group);
@@ -194,14 +194,14 @@ struct CallStack::Priv {
     Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
     {
         NEMIVER_TRY
-        string relative_path = Glib::build_filename ("menus", a_filename) ;
-        string absolute_path ;
+        string relative_path = Glib::build_filename ("menus", a_filename);
+        string absolute_path;
         THROW_IF_FAIL (perspective.build_absolute_resource_path
                 (Glib::locale_to_utf8 (relative_path),
-                 absolute_path)) ;
+                 absolute_path));
 
         workbench.get_ui_manager ()->add_ui_from_file
-            (Glib::locale_to_utf8 (absolute_path)) ;
+            (Glib::locale_to_utf8 (absolute_path));
 
         NEMIVER_CATCH
         return workbench.get_ui_manager ()->get_widget (a_widget_name);
@@ -223,10 +223,10 @@ struct CallStack::Priv {
 
         THROW_IF_FAIL (a_row_iter);
 
-        cur_frame_index = (*a_row_iter)[columns ().frame_index] ;
-        cur_frame = frames[cur_frame_index] ;
-        THROW_IF_FAIL (cur_frame.level () >= 0) ;
-        in_set_cur_frame_trans = true ;
+        cur_frame_index = (*a_row_iter)[columns ().frame_index];
+        cur_frame = frames[cur_frame_index];
+        THROW_IF_FAIL (cur_frame.level () >= 0);
+        in_set_cur_frame_trans = true;
 
         //if the selected row is the "expand number of stack lines" row, trigger
         //a redraw of the with more raws.
@@ -236,15 +236,15 @@ struct CallStack::Priv {
             return;
         }
 
-        LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'") ;
-        LOG_DD ("frame level: '" << (int) cur_frame.level () << "'") ;
-        debugger->select_frame (cur_frame_index) ;
+        LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'");
+        LOG_DD ("frame level: '" << (int) cur_frame.level () << "'");
+        debugger->select_frame (cur_frame_index);
     }
 
     void finish_handling_debugger_stopped_event ()
     {
-        THROW_IF_FAIL (debugger) ;
-        debugger->list_frames () ;
+        THROW_IF_FAIL (debugger);
+        debugger->list_frames ();
     }
 
     void on_debugger_stopped_signal (IDebugger::StopReason a_reason,
@@ -254,15 +254,15 @@ struct CallStack::Priv {
                                      int /*a_bp_num*/,
                                      const UString &/*a_cookie*/)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
-        LOG_DD ("stopped, reason: " << a_reason) ;
+        LOG_DD ("stopped, reason: " << a_reason);
 
         if (a_reason == IDebugger::EXITED_SIGNALLED
             || a_reason == IDebugger::EXITED_NORMALLY
             || a_reason == IDebugger::EXITED) {
-            return ;
+            return;
         }
 
         if (should_process_now ()) {
@@ -277,14 +277,14 @@ struct CallStack::Priv {
     void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack,
                                   const UString &a_cookie)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         if (a_cookie.empty ()) {}
 
         NEMIVER_TRY
 
-        THROW_IF_FAIL (debugger) ;
-        waiting_for_stack_args = true ;
+        THROW_IF_FAIL (debugger);
+        waiting_for_stack_args = true;
 
         //**************************************************************
         //set the frame list without frame parameters,
@@ -296,9 +296,9 @@ struct CallStack::Priv {
         //request to IDebugger fail (the one to get the parameters).
         //This way, we have at least the frame list withouht params.
         //**************************************************************
-        map<int, list<IDebugger::VariableSafePtr> > frames_params ;
-        set_frame_list (a_stack, frames_params) ;
-        debugger->list_frames_arguments () ;
+        map<int, list<IDebugger::VariableSafePtr> > frames_params;
+        set_frame_list (a_stack, frames_params);
+        debugger->list_frames_arguments ();
 
         NEMIVER_CATCH
     }
@@ -307,21 +307,21 @@ struct CallStack::Priv {
             (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params,
              const UString &a_cookie)
     {
-        LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN) ;
+        LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN);
         if (a_cookie.empty ()) {}
 
         if (waiting_for_stack_args) {
-            set_frame_list (frames, a_frames_params) ;
-            waiting_for_stack_args = false ;
+            set_frame_list (frames, a_frames_params);
+            waiting_for_stack_args = false;
         } else {
-            LOG_D ("not in the frame setting transaction", NMV_DEFAULT_DOMAIN) ;
+            LOG_D ("not in the frame setting transaction", NMV_DEFAULT_DOMAIN);
         }
     }
 
     void on_command_done_signal (const UString &a_command,
                                  const UString &a_cookie)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         if (a_cookie == "") {}
 
@@ -329,42 +329,42 @@ struct CallStack::Priv {
 
         if (in_set_cur_frame_trans
             && a_command == "select-frame") {
-            in_set_cur_frame_trans = false ;
-            frame_selected_signal.emit (cur_frame_index, cur_frame) ;
-            LOG_DD ("sent the frame selected signal") ;
+            in_set_cur_frame_trans = false;
+            frame_selected_signal.emit (cur_frame_index, cur_frame);
+            LOG_DD ("sent the frame selected signal");
         }
         NEMIVER_CATCH
     }
 
     void on_selection_changed_signal ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
 
         Gtk::TreeView *tree_view = dynamic_cast<Gtk::TreeView*> (widget.get ());
-        THROW_IF_FAIL (tree_view) ;
-        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
-        THROW_IF_FAIL (selection) ;
-        list<Gtk::TreePath> selected_rows = selection->get_selected_rows () ;
+        THROW_IF_FAIL (tree_view);
+        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
+        THROW_IF_FAIL (selection);
+        list<Gtk::TreePath> selected_rows = selection->get_selected_rows ();
         if (selected_rows.empty ()) {return;}
 
         Gtk::TreeModel::iterator row_iter =
-                store->get_iter (selected_rows.front ()) ;
+                store->get_iter (selected_rows.front ());
         update_selected_frame (row_iter);
         NEMIVER_CATCH
     }
 
     void on_row_activated_signal ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
 
         Gtk::TreeView *tree_view = dynamic_cast<Gtk::TreeView*> (widget.get ());
-        THROW_IF_FAIL (tree_view) ;
-        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
-        THROW_IF_FAIL (selection) ;
+        THROW_IF_FAIL (tree_view);
+        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
+        THROW_IF_FAIL (selection);
         Gtk::TreeModel::iterator row_it = selection->get_selected ();
         update_selected_frame (row_it);
 
@@ -395,27 +395,27 @@ struct CallStack::Priv {
 
     void connect_debugger_signals ()
     {
-        THROW_IF_FAIL (debugger) ;
+        THROW_IF_FAIL (debugger);
 
         debugger->stopped_signal ().connect (sigc::mem_fun
-                    (*this, &CallStack::Priv::on_debugger_stopped_signal)) ;
+                    (*this, &CallStack::Priv::on_debugger_stopped_signal));
         debugger->frames_listed_signal ().connect (sigc::mem_fun
-                    (*this, &CallStack::Priv::on_frames_listed_signal)) ;
+                    (*this, &CallStack::Priv::on_frames_listed_signal));
         debugger->frames_arguments_listed_signal ().connect (sigc::mem_fun
-                    (*this, &CallStack::Priv::on_frames_params_listed_signal)) ;
+                    (*this, &CallStack::Priv::on_frames_params_listed_signal));
         debugger->command_done_signal ().connect (sigc::mem_fun
-                    (*this, &CallStack::Priv::on_command_done_signal)) ;
+                    (*this, &CallStack::Priv::on_command_done_signal));
     }
 
     void on_call_stack_button_press_signal (GdkEventButton *a_event)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
 
         // right-clicking should pop up a context menu
         if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3)) {
-            popup_call_stack_menu (a_event) ;
+            popup_call_stack_menu (a_event);
         }
 
         NEMIVER_CATCH
@@ -426,8 +426,8 @@ struct CallStack::Priv {
         THROW_IF_FAIL (a_event);
         THROW_IF_FAIL (widget);
 
-        Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_call_stack_menu ()) ;
-        THROW_IF_FAIL (menu) ;
+        Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_call_stack_menu ());
+        THROW_IF_FAIL (menu);
 
         //only pop up a menu if a row exists at that position
         Gtk::TreeModel::Path path;
@@ -439,7 +439,7 @@ struct CallStack::Priv {
                                      column,
                                      cell_x,
                                      cell_y)) {
-            menu->popup (a_event->button, a_event->time) ;
+            menu->popup (a_event->button, a_event->time);
         }
     }
 
@@ -484,29 +484,29 @@ struct CallStack::Priv {
     Gtk::Widget* get_widget ()
     {
         if (!widget) {return 0;}
-        return widget.get () ;
+        return widget.get ();
     }
 
     void build_widget ()
     {
         if (widget) {
-            return ;
+            return;
         }
         store = Gtk::ListStore::create (columns ());
-        Gtk::TreeView *tree_view = new Gtk::TreeView (store) ;
-        THROW_IF_FAIL (tree_view) ;
-        widget.reset (tree_view) ;
-        tree_view->append_column (_("Frame"), columns ().frame_index_caption) ;
-        tree_view->append_column (_("Location"), columns ().location) ;
-        tree_view->append_column (_("Function"), columns ().function_name) ;
-        tree_view->append_column (_("Arguments"), columns ().function_args) ;
-        tree_view->set_headers_visible (true) ;
-        tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
+        Gtk::TreeView *tree_view = new Gtk::TreeView (store);
+        THROW_IF_FAIL (tree_view);
+        widget.reset (tree_view);
+        tree_view->append_column (_("Frame"), columns ().frame_index_caption);
+        tree_view->append_column (_("Location"), columns ().location);
+        tree_view->append_column (_("Function"), columns ().function_name);
+        tree_view->append_column (_("Arguments"), columns ().function_args);
+        tree_view->set_headers_visible (true);
+        tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE);
 
         on_selection_changed_connection =
             tree_view->get_selection ()->signal_changed ().connect
             (sigc::mem_fun (*this,
-                            &CallStack::Priv::on_selection_changed_signal)) ;
+                            &CallStack::Priv::on_selection_changed_signal));
         tree_view->signal_row_activated ().connect
             (sigc::hide (sigc::hide
              (sigc::mem_fun (*this,
@@ -518,19 +518,19 @@ struct CallStack::Priv {
         tree_view->set_events (Gdk::EXPOSURE_MASK);
 
         Gtk::TreeViewColumn* column =
-                            tree_view->get_column (CallStackCols::FUNCTION_NAME) ;
-        THROW_IF_FAIL (column) ;
-        column->set_clickable (false) ;
-        column->set_reorderable (false) ;
+                            tree_view->get_column (CallStackCols::FUNCTION_NAME);
+        THROW_IF_FAIL (column);
+        column->set_clickable (false);
+        column->set_reorderable (false);
 
-        THROW_IF_FAIL (column = tree_view->get_column (CallStackCols::LOCATION)) ;
-        column->set_clickable (false) ;
-        column->set_reorderable (false) ;
+        THROW_IF_FAIL (column = tree_view->get_column (CallStackCols::LOCATION));
+        column->set_clickable (false);
+        column->set_reorderable (false);
 
         THROW_IF_FAIL (column = tree_view->get_column
-                                                (CallStackCols::FUNCTION_ARGS)) ;
-        column->set_clickable (false) ;
-        column->set_reorderable (false) ;
+                                                (CallStackCols::FUNCTION_ARGS));
+        column->set_clickable (false);
+        column->set_reorderable (false);
 
         tree_view->signal_button_press_event ().connect_notify
             (sigc::mem_fun (*this,
@@ -542,87 +542,89 @@ struct CallStack::Priv {
                  const map<int, list<IDebugger::VariableSafePtr> >&a_params,
                  bool a_emit_signal=false)
     {
-        THROW_IF_FAIL (get_widget ()) ;
+        THROW_IF_FAIL (get_widget ());
 
-        clear_frame_list () ;
-        frames = a_frames ;
+        clear_frame_list ();
+        frames = a_frames;
 
         // save the list of params around so that we can use it when converting
         // to a string later
         params = a_params;
 
-        Gtk::TreeModel::iterator store_iter ;
+        Gtk::TreeModel::iterator store_iter;
         unsigned nb_frames = MIN (a_frames.size (), max_frames_to_show);
         unsigned i = 0;
         for (i = 0; i < nb_frames; ++i) {
-            store_iter = store->append () ;
+            store_iter = store->append ();
             (*store_iter)[columns ().is_expansion_row] = false;
-            (*store_iter)[columns ().function_name] = a_frames[i].function_name ();
+            (*store_iter)[columns ().function_name] =
+                                                a_frames[i].function_name ();
             if (!a_frames[i].file_name ().empty ()) {
                 (*store_iter)[columns ().location] =
                     a_frames[i].file_name () + ":"
-                    + UString::from_int (a_frames[i].line ()) ;
+                    + UString::from_int (a_frames[i].line ());
             } else {
                 (*store_iter)[columns ().location] =
                     a_frames[i].address ();
             }
 
-            (*store_iter)[columns ().frame_index] = i ;
-            (*store_iter)[columns ().frame_index_caption] =  UString::from_int (i) ;
+            (*store_iter)[columns ().frame_index] = i;
+            (*store_iter)[columns ().frame_index_caption] =
+                                                    UString::from_int (i);
             UString params_string = "(";
-            map<int, list<IDebugger::VariableSafePtr> >::const_iterator iter ;
-            list<IDebugger::VariableSafePtr>::const_iterator params_iter ;
-            iter = a_params.find (i) ;
+            map<int, list<IDebugger::VariableSafePtr> >::const_iterator iter;
+            list<IDebugger::VariableSafePtr>::const_iterator params_iter;
+            iter = a_params.find (i);
             if (iter != a_params.end ()) {
                 LOG_D ("for frame "
                        << (int) i
                        << " NB params: "
-                       << (int) iter->second.size (), NMV_DEFAULT_DOMAIN) ;
+                       << (int) iter->second.size (), NMV_DEFAULT_DOMAIN);
 
-                params_iter = iter->second.begin () ;
+                params_iter = iter->second.begin ();
                 if (params_iter != iter->second.end ()) {
                     if (*params_iter) {
-                        params_string += (*params_iter)->name () ;
+                        params_string += (*params_iter)->name ();
                     }
-                    ++params_iter ;
+                    ++params_iter;
                 }
-                for ( ; params_iter != iter->second.end (); ++params_iter) {
+                for (; params_iter != iter->second.end (); ++params_iter) {
                     if (!*params_iter) {continue;}
-                     params_string += ", " + (*params_iter)->name () ;
+                     params_string += ", " + (*params_iter)->name ();
                 }
             }
-            params_string += ")" ;
-            (*store_iter)[columns ().function_args] = params_string ;
+            params_string += ")";
+            (*store_iter)[columns ().function_args] = params_string;
         }
         if (a_frames.size () && i < a_frames.size () - 1) {
-            store_iter = store->append () ;
+            store_iter = store->append ();
             UString msg;
             msg.printf (_("(Click here to see the next %d rows of the %d "
                           "call stack rows)"),
                         nb_frames_expansion_chunk,
                         frames.size ());
             (*store_iter)[columns ().frame_index_caption] = "...";
-            (*store_iter)[columns ().location] = msg ;
+            (*store_iter)[columns ().location] = msg;
             (*store_iter)[columns ().is_expansion_row] = true;
         }
 
         Gtk::TreeView *tree_view =
-            dynamic_cast<Gtk::TreeView*> (widget.get ()) ;
-        THROW_IF_FAIL (tree_view) ;
+            dynamic_cast<Gtk::TreeView*> (widget.get ());
+        THROW_IF_FAIL (tree_view);
 
         if (!a_emit_signal) {
-            on_selection_changed_connection.block () ;
+            on_selection_changed_connection.block ();
         }
-        tree_view->get_selection ()->select (Gtk::TreePath ("0")) ;
+        tree_view->get_selection ()->select (Gtk::TreePath ("0"));
         if (!a_emit_signal) {
-            on_selection_changed_connection.unblock () ;
+            on_selection_changed_connection.unblock ();
         }
     }
 
     void clear_frame_list ()
     {
-        THROW_IF_FAIL (store) ;
-        store->clear () ;
+        THROW_IF_FAIL (store);
+        store->clear ();
     }
 };//end struct CallStack::Priv
 
@@ -630,70 +632,70 @@ CallStack::CallStack (IDebuggerSafePtr &a_debugger,
                       IWorkbench& a_workbench,
                       IPerspective &a_perspective)
 {
-    THROW_IF_FAIL (a_debugger) ;
-    m_priv.reset (new Priv (a_debugger, a_workbench, a_perspective)) ;
+    THROW_IF_FAIL (a_debugger);
+    m_priv.reset (new Priv (a_debugger, a_workbench, a_perspective));
 }
 
 CallStack::~CallStack ()
 {
-    LOG_D ("deleted", "destructor-domain") ;
+    LOG_D ("deleted", "destructor-domain");
 }
 
 bool
 CallStack::is_empty ()
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->frames.empty () ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->frames.empty ();
 }
 
 const vector<IDebugger::Frame>&
 CallStack::frames () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->frames ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->frames;
 }
 
 Gtk::Widget&
 CallStack::widget () const
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
 
     if (!m_priv->get_widget ()) {
-        m_priv->build_widget () ;
-        THROW_IF_FAIL (m_priv->widget) ;
+        m_priv->build_widget ();
+        THROW_IF_FAIL (m_priv->widget);
     }
-    return *m_priv->get_widget () ;
+    return *m_priv->get_widget ();
 }
 
 void
 CallStack::update_stack ()
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->debugger) ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->debugger);
 
-    m_priv->debugger->list_frames () ;
+    m_priv->debugger->list_frames ();
 }
 
 void
 CallStack::clear ()
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    THROW_IF_FAIL (m_priv) ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    THROW_IF_FAIL (m_priv);
 
     if (m_priv->store) {
-        m_priv->store->clear () ;
+        m_priv->store->clear ();
     }
-    m_priv->cur_frame_index = - 1 ;
-    m_priv->waiting_for_stack_args  = false ;
-    m_priv->in_set_cur_frame_trans = false ;
+    m_priv->cur_frame_index = - 1;
+    m_priv->waiting_for_stack_args  = false;
+    m_priv->in_set_cur_frame_trans = false;
 }
 
 sigc::signal<void, int, const IDebugger::Frame&>&
 CallStack::frame_selected_signal () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->frame_selected_signal ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->frame_selected_signal;
 }
 }//end namespace nemiver
 

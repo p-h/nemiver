@@ -32,7 +32,7 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 struct SearchTermCols : public Gtk::TreeModel::ColumnRecord {
-    Gtk::TreeModelColumn<Glib::ustring> term ;
+    Gtk::TreeModelColumn<Glib::ustring> term;
 
     SearchTermCols ()
     {
@@ -43,21 +43,21 @@ struct SearchTermCols : public Gtk::TreeModel::ColumnRecord {
 static SearchTermCols&
 columns ()
 {
-    static SearchTermCols s_columns ;
+    static SearchTermCols s_columns;
     return s_columns;
 }
 
-using namespace gtksourceview ;
+using namespace gtksourceview;
 
 class FindTextDialog::Priv {
-    friend class FindTextDialog ;
-    Gtk::Dialog &dialog ;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
+    friend class FindTextDialog;
+    Gtk::Dialog &dialog;
+    Glib::RefPtr<Gnome::Glade::Xml> glade;
     Glib::RefPtr<Gtk::ListStore> searchterm_store;
-    Gtk::TextIter match_start ;
-    Gtk::TextIter match_end ;
+    Gtk::TextIter match_start;
+    Gtk::TextIter match_end;
 
-    Priv () ;
+    Priv ();
 
 public:
 
@@ -66,7 +66,7 @@ public:
         dialog (a_dialog),
         glade (a_glade)
     {
-        a_dialog.set_default_response (Gtk::RESPONSE_OK) ;
+        a_dialog.set_default_response (Gtk::RESPONSE_OK);
         connect_dialog_signals ();
         searchterm_store = Gtk::ListStore::create (columns ());
         get_search_text_combo ()->set_model (searchterm_store);
@@ -76,7 +76,7 @@ public:
     void on_search_entry_activated_signal ()
     {
         NEMIVER_TRY
-        get_search_button ()->clicked () ;
+        get_search_button ()->clicked ();
         NEMIVER_CATCH
     }
 
@@ -88,8 +88,7 @@ public:
         get_search_text_combo ()->get_entry ()->grab_focus ();
         UString search_text =
             get_search_text_combo ()->get_entry ()->get_text ();
-        if (search_text.size ())
-        {
+        if (search_text.size ()) {
             get_search_text_combo ()->get_entry ()->select_region
                                                     (0, search_text.size ());
         }
@@ -100,68 +99,68 @@ public:
     {
         Gtk::Button *button =
             ui_utils::get_widget_from_glade<Gtk::Button> (glade,
-                                                          "closebutton1") ;
-        return button ;
+                                                          "closebutton1");
+        return button;
     }
 
     Gtk::Button* get_search_button ()
     {
         Gtk::Button *button =
             ui_utils::get_widget_from_glade<Gtk::Button> (glade,
-                                                          "searchbutton") ;
-        return button ;
+                                                          "searchbutton");
+        return button;
     }
 
     Gtk::ComboBoxEntry* get_search_text_combo () const
     {
         Gtk::ComboBoxEntry *combo =
             ui_utils::get_widget_from_glade<Gtk::ComboBoxEntry>
-                                                    (glade, "searchtextcombo") ;
-        return combo ;
+                                                (glade, "searchtextcombo");
+        return combo;
     }
 
     Gtk::CheckButton* get_match_case_check_button () const
     {
         Gtk::CheckButton *button =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                                (glade, "matchcasecheckbutton") ;
-        return button ;
+                                            (glade, "matchcasecheckbutton");
+        return button;
     }
 
     Gtk::CheckButton* get_match_entire_word_check_button () const
     {
         Gtk::CheckButton *button =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                        (glade, "matchentirewordcheckbutton") ;
-        return button ;
+                                    (glade, "matchentirewordcheckbutton");
+        return button;
     }
 
     Gtk::CheckButton* get_wrap_around_check_button () const
     {
         Gtk::CheckButton *button =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                        (glade, "wraparoundcheckbutton") ;
-        return button ;
+                                        (glade, "wraparoundcheckbutton");
+        return button;
     }
 
     Gtk::CheckButton* get_search_backwards_check_button () const
     {
         Gtk::CheckButton *button =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                        (glade, "searchbackwardscheckbutton") ;
-        return button ;
+                                    (glade, "searchbackwardscheckbutton");
+        return button;
     }
 
     void connect_dialog_signals ()
     {
-        Gtk::Button *search_button = get_search_button () ;
-        THROW_IF_FAIL (search_button) ;
+        Gtk::Button *search_button = get_search_button ();
+        THROW_IF_FAIL (search_button);
         get_search_text_combo ()->get_entry ()->signal_activate ().connect
-            (sigc::mem_fun (*this, &Priv::on_search_entry_activated_signal)) ;
+            (sigc::mem_fun (*this, &Priv::on_search_entry_activated_signal));
         dialog.signal_show ().connect (sigc::mem_fun
                                             (*this, &Priv::on_dialog_show));
         search_button->signal_clicked ().connect (sigc::mem_fun
-                                    (*this, &Priv::on_search_button_clicked)) ;
+                                (*this, &Priv::on_search_button_clicked));
     }
 
     //*******************
@@ -170,12 +169,14 @@ public:
     void on_search_button_clicked ()
     {
         NEMIVER_TRY
-        UString new_term = get_search_text_combo ()->get_entry ()->get_text ();
+        UString new_term =
+                    get_search_text_combo ()->get_entry ()->get_text ();
         bool found = false;
         // first check if this term is already in the list
-        Gtk::TreeModel::iterator tree_iter ;
+        Gtk::TreeModel::iterator tree_iter;
         for (tree_iter = searchterm_store->children ().begin ();
-             tree_iter != searchterm_store->children ().end (); ++tree_iter) {
+             tree_iter != searchterm_store->children ().end ();
+             ++tree_iter) {
             if (new_term == (*tree_iter)[columns ().term]) {
                 found = true;
                 break;
@@ -198,97 +199,97 @@ public:
 FindTextDialog::FindTextDialog (const UString &a_root_path) :
     Dialog (a_root_path, "findtextdialog.glade", "findtextdialog")
 {
-    m_priv.reset (new Priv (widget (), glade ())) ;
-    THROW_IF_FAIL (m_priv) ;
+    m_priv.reset (new Priv (widget (), glade ()));
+    THROW_IF_FAIL (m_priv);
 }
 
 FindTextDialog::~FindTextDialog ()
 {
-    LOG_D ("destroyed", "destructor-domain") ;
+    LOG_D ("destroyed", "destructor-domain");
 }
 
 Gtk::TextIter&
 FindTextDialog::get_search_match_start () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->match_start ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->match_start;
 }
 
 Gtk::TextIter&
 FindTextDialog::get_search_match_end () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->match_end ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->match_end;
 }
 
 void
 FindTextDialog::get_search_string (UString &a_search_str) const
 {
-    THROW_IF_FAIL (m_priv) ;
-    a_search_str = m_priv->get_search_text_combo ()->get_entry ()->get_text () ;
+    THROW_IF_FAIL (m_priv);
+    a_search_str = m_priv->get_search_text_combo ()->get_entry ()->get_text ();
 }
 
 void
 FindTextDialog::set_search_string (const UString &a_search_str)
 {
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->get_search_text_combo ()->get_entry ()->set_text (a_search_str) ;
+    THROW_IF_FAIL (m_priv);
+    m_priv->get_search_text_combo ()->get_entry ()->set_text (a_search_str);
 }
 
 bool
 FindTextDialog::get_match_case () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->get_match_case_check_button ()->get_active () ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->get_match_case_check_button ()->get_active ();
 }
 
 void
 FindTextDialog::set_match_case (bool a_flag)
 {
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->get_match_case_check_button ()->set_active (a_flag) ;
+    THROW_IF_FAIL (m_priv);
+    m_priv->get_match_case_check_button ()->set_active (a_flag);
 }
 
 bool
 FindTextDialog::get_match_entire_word () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->get_match_entire_word_check_button ()->get_active () ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->get_match_entire_word_check_button ()->get_active ();
 }
 
 void
 FindTextDialog::set_match_entire_word (bool a_flag)
 {
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->get_match_entire_word_check_button ()->set_active (a_flag) ;
+    THROW_IF_FAIL (m_priv);
+    m_priv->get_match_entire_word_check_button ()->set_active (a_flag);
 }
 
 bool
 FindTextDialog::get_wrap_around () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->get_wrap_around_check_button ()->get_active () ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->get_wrap_around_check_button ()->get_active ();
 }
 
 void
 FindTextDialog::set_wrap_around (bool a_flag)
 {
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->get_wrap_around_check_button ()->set_active (a_flag) ;
+    THROW_IF_FAIL (m_priv);
+    m_priv->get_wrap_around_check_button ()->set_active (a_flag);
 }
 
 bool
 FindTextDialog::get_search_backward () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->get_search_backwards_check_button ()->get_active () ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->get_search_backwards_check_button ()->get_active ();
 }
 
 void
 FindTextDialog::set_search_backward (bool a_flag)
 {
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->get_search_backwards_check_button ()->set_active (a_flag) ;
+    THROW_IF_FAIL (m_priv);
+    m_priv->get_search_backwards_check_button ()->set_active (a_flag);
 }
 
 

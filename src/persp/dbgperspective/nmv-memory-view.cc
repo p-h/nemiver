@@ -128,24 +128,24 @@ public:
     void connect_signals ()
     {
         THROW_IF_FAIL (m_debugger);
-        m_debugger->state_changed_signal ().connect (sigc::mem_fun (this,
-                    &Priv::on_debugger_state_changed));
+        m_debugger->state_changed_signal ().connect
+                    (sigc::mem_fun (this, &Priv::on_debugger_state_changed));
         m_debugger->stopped_signal ().connect (sigc::mem_fun
                 (this, &Priv::on_debugger_stopped));
-        m_debugger->read_memory_signal ().connect (sigc::mem_fun (this,
-                    &Priv::on_memory_read_response));
+        m_debugger->read_memory_signal ().connect
+                    (sigc::mem_fun (this, &Priv::on_memory_read_response));
         THROW_IF_FAIL (m_jump_button);
-        m_jump_button->signal_clicked ().connect (sigc::mem_fun (this,
-                    &Priv::do_memory_read));
-        m_grouping_combo.signal_changed ().connect (sigc::mem_fun (this,
-                    &Priv::on_group_changed));
+        m_jump_button->signal_clicked ().connect
+                        (sigc::mem_fun (this, &Priv::do_memory_read));
+        m_grouping_combo.signal_changed ().connect
+                            (sigc::mem_fun (this, &Priv::on_group_changed));
         THROW_IF_FAIL (m_address_entry);
-        m_address_entry->signal_activate ().connect (sigc::mem_fun (this,
-                    &Priv::do_memory_read));
+        m_address_entry->signal_activate ().connect
+                            (sigc::mem_fun (this, &Priv::do_memory_read));
         THROW_IF_FAIL (m_document);
         signal_document_changed_connection =
-            m_document->signal_document_changed ().connect (sigc::mem_fun (this,
-                        &Priv::on_document_changed));
+            m_document->signal_document_changed ().connect
+                        (sigc::mem_fun (this, &Priv::on_document_changed));
     }
 
     void on_debugger_state_changed (IDebugger::State a_state)
@@ -201,7 +201,7 @@ public:
         if (a_reason == IDebugger::EXITED_SIGNALLED
             || a_reason == IDebugger::EXITED_NORMALLY
             || a_reason == IDebugger::EXITED) {
-            return ;
+            return;
         }
         do_memory_read ();
 
@@ -269,12 +269,14 @@ public:
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         size_t length = a_change_data->end - a_change_data->start + 1;
-        guchar* new_data = m_document->get_data (a_change_data->start, length);
+        guchar* new_data =
+                m_document->get_data (a_change_data->start, length);
         if (new_data) {
             std::vector<uint8_t> data(new_data, new_data + length);
             // set data in the debugger
-            m_debugger->set_memory(static_cast<size_t>
-                                   (get_address () + a_change_data->start), data);
+            m_debugger->set_memory
+                (static_cast<size_t> (get_address () + a_change_data->start),
+                 data);
         }
     }
 

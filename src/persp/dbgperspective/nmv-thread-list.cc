@@ -165,7 +165,8 @@ struct ThreadList::Priv {
                                 tree_view->get_selection ()->get_selected ();
         if (!it) {return;}
 
-        int thread_id = (int) it->get_value (thread_list_columns ().thread_id);
+        int thread_id =
+                (int) it->get_value (thread_list_columns ().thread_id);
         if (thread_id <= 0) {return;}
 
         THROW_IF_FAIL (debugger);
@@ -208,10 +209,11 @@ struct ThreadList::Priv {
         THROW_IF_FAIL (debugger);
         THROW_IF_FAIL (tree_view && tree_view->get_selection ());
         tree_view_selection_changed_connection =
-            tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_tree_view_selection_changed_signal));
-        tree_view->signal_expose_event ().connect_notify (sigc::mem_fun
-                (*this, &Priv::on_expose_event_signal));
+            tree_view->get_selection ()->signal_changed ().connect
+                (sigc::mem_fun
+                    (*this, &Priv::on_tree_view_selection_changed_signal));
+        tree_view->signal_expose_event ().connect_notify
+                    (sigc::mem_fun (*this, &Priv::on_expose_event_signal));
     }
 
     void set_a_thread_id (int a_id)
@@ -239,12 +241,13 @@ struct ThreadList::Priv {
     {
         THROW_IF_FAIL (list_store);
 
-        Gtk::TreeModel::iterator it ;
+        Gtk::TreeModel::iterator it;
         for (it = list_store->children ().begin ();
              it != list_store->children ().end ();
              ++it) {
             LOG_DD ("testing list row");
-            if ((int)(*it)->get_value (thread_list_columns ().thread_id) == a_tid) {
+            if ((int)(*it)->get_value
+                    (thread_list_columns ().thread_id) == a_tid) {
                 if (!a_emit_signal) {
                     tree_view_selection_changed_connection.block (true);
                 }

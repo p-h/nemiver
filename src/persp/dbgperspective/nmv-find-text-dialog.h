@@ -29,40 +29,40 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class SourceEditor ;
-class FindTextDialog ;
-class ObjectRef ;
-class ObjectUnref ;
-template <class A, class B, class C> class SafePtr ;
+class SourceEditor;
+class FindTextDialog;
+class ObjectRef;
+class ObjectUnref;
+template <class A, class B, class C> class SafePtr;
 
-typedef SafePtr<FindTextDialog, ObjectRef, ObjectUnref>  FindTextDialogSafePtr ;
+typedef SafePtr<FindTextDialog, ObjectRef, ObjectUnref>  FindTextDialogSafePtr;
 
 class FindTextDialog : public Dialog {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
-    FindTextDialog (const UString &a_resource_root_path) ;
-    virtual ~FindTextDialog () ;
+    FindTextDialog (const UString &a_resource_root_path);
+    virtual ~FindTextDialog ();
 
-    Gtk::TextIter& get_search_match_start () const ;
-    Gtk::TextIter& get_search_match_end () const ;
+    Gtk::TextIter& get_search_match_start () const;
+    Gtk::TextIter& get_search_match_end () const;
 
-    void get_search_string (UString &a_search_str) const ;
-    void set_search_string (const UString &a_search_str) ;
+    void get_search_string (UString &a_search_str) const;
+    void set_search_string (const UString &a_search_str);
 
-    bool get_match_case () const ;
-    void set_match_case (bool a_flag) ;
+    bool get_match_case () const;
+    void set_match_case (bool a_flag);
 
-    bool get_match_entire_word () const ;
-    void set_match_entire_word (bool a_flag) ;
+    bool get_match_entire_word () const;
+    void set_match_entire_word (bool a_flag);
 
-    bool get_wrap_around () const ;
-    void set_wrap_around (bool a_flag) ;
+    bool get_wrap_around () const;
+    void set_wrap_around (bool a_flag);
 
-    bool get_search_backward () const ;
-    void set_search_backward (bool a_flag) ;
+    bool get_search_backward () const;
+    void set_search_backward (bool a_flag);
 };//end FindTextDialog
 
 NEMIVER_END_NAMESPACE (nemiver)

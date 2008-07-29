@@ -39,8 +39,8 @@
 #include "nmv-run-program-dialog.h"
 #include "nmv-ui-utils.h"
 
-using namespace std ;
-using namespace nemiver::common ;
+using namespace std;
+using namespace nemiver::common;
 
 namespace nemiver {
 
@@ -52,24 +52,24 @@ struct EnvVarModelColumns : public Gtk::TreeModel::ColumnRecord
     EnvVarModelColumns() { add (varname); add (value); }
 };
 
-struct RunProgramDialog::Priv
-{
+struct RunProgramDialog::Priv {
 private:
-    Priv () ;
+    Priv ();
 
 public:
-    Gtk::FileChooserButton *fcbutton  ;
-    Gtk::Button *okbutton ;
+    Gtk::FileChooserButton *fcbutton;
+    Gtk::Button *okbutton;
     Gtk::TreeView* treeview_environment;
     Gtk::Button* remove_button;
     Gtk::Button* add_button;
     EnvVarModelColumns env_columns;
     Glib::RefPtr<Gtk::ListStore> model;
-    Gtk::Dialog &dialog ;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
+    Gtk::Dialog &dialog;
+    Glib::RefPtr<Gnome::Glade::Xml> glade;
 
 
-    Priv (Gtk::Dialog &a_dialog, const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+    Priv (Gtk::Dialog &a_dialog,
+          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
         fcbutton (0),
         okbutton (0),
         treeview_environment (0),
@@ -79,20 +79,20 @@ public:
         dialog (a_dialog),
         glade (a_glade)
     {
-        init () ;
+        init ();
     }
 
     void init ()
     {
         okbutton =
             ui_utils::get_widget_from_glade<Gtk::Button>
-                (glade, "executebutton") ;
-        THROW_IF_FAIL (okbutton) ;
-        okbutton->set_sensitive (false) ;
+                (glade, "executebutton");
+        THROW_IF_FAIL (okbutton);
+        okbutton->set_sensitive (false);
 
         treeview_environment =
             ui_utils::get_widget_from_glade<Gtk::TreeView>
-                                                (glade, "treeview_environment");
+                                            (glade, "treeview_environment");
 
         treeview_environment->set_model (model);
 
@@ -105,19 +105,20 @@ public:
         add_button =
             ui_utils::get_widget_from_glade<Gtk::Button>
                                                     (glade, "button_add_var");
-        THROW_IF_FAIL (add_button) ;
+        THROW_IF_FAIL (add_button);
 
         add_button->signal_clicked().connect(sigc::mem_fun(*this,
                     &RunProgramDialog::Priv::on_add_new_variable));
 
         remove_button = ui_utils::get_widget_from_glade<Gtk::Button>
-                                                    (glade, "button_remove_var");
-        THROW_IF_FAIL (remove_button) ;
+                                                (glade, "button_remove_var");
+        THROW_IF_FAIL (remove_button);
         remove_button->signal_clicked().connect(sigc::mem_fun(*this,
                     &RunProgramDialog::Priv::on_remove_variable));
 
-        // we need to disable / enable sensitivity of the "Remove variable" button
-        // based on whether a variable is selected in the treeview.
+        // we need to disable / enable sensitivity of the
+        // "Remove variable" button based on whether a
+        // variable is selected in the treeview.
         treeview_environment->get_selection ()->signal_changed ().connect
             (sigc::mem_fun
                  (*this,
@@ -125,16 +126,16 @@ public:
 
         fcbutton =
             ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                                    (glade, "filechooserbutton") ;
-        THROW_IF_FAIL (fcbutton) ;
-        fcbutton->set_show_hidden (true) ;
+                                                (glade, "filechooserbutton");
+        THROW_IF_FAIL (fcbutton);
+        fcbutton->set_show_hidden (true);
         fcbutton->signal_selection_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_file_selection_changed)) ;
+                (*this, &Priv::on_file_selection_changed));
 
         // activate the default action (execute) when pressing enter in the
         // arguments text box
         ui_utils::get_widget_from_glade<Gtk::Entry>
-                            (glade, "argumentsentry")->set_activates_default () ;
+                        (glade, "argumentsentry")->set_activates_default ();
     }
 
     void on_add_new_variable ()
@@ -143,7 +144,8 @@ public:
         THROW_IF_FAIL(treeview_environment);
         Gtk::TreeModel::iterator treeiter = model->append ();
         Gtk::TreeModel::Path path = model->get_path (treeiter);
-        // activate the first cell of the newly added row so that the user can start
+        // activate the first cell of the newly
+        // added row so that the user can start
         // typing in the name and value of the variable
         treeview_environment->set_cursor (path,
                 *treeview_environment->get_column (0), true);
@@ -162,13 +164,10 @@ public:
 
     void on_variable_selection_changed ()
     {
-        THROW_IF_FAIL (remove_button) ;
-        if (treeview_environment->get_selection ()->count_selected_rows ())
-        {
+        THROW_IF_FAIL (remove_button);
+        if (treeview_environment->get_selection ()->count_selected_rows ()) {
             remove_button->set_sensitive();
-        }
-        else
-        {
+        } else {
             remove_button->set_sensitive(false);
         }
     }
@@ -184,11 +183,11 @@ public:
             if (Glib::file_test
                     (Glib::locale_from_utf8 (fcbutton->get_filename ()),
                                              Glib::FILE_TEST_IS_EXECUTABLE)) {
-                okbutton->set_sensitive (true) ;
+                okbutton->set_sensitive (true);
             }
         }
     }
-};
+};//end struct RunProgramDialog::Priv
 
 RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
     Dialog (a_root_path, "runprogramdialog.glade", "runprogramdialog")
@@ -196,12 +195,12 @@ RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
     m_priv.reset (new Priv (widget (), glade ()));
     THROW_IF_FAIL (m_priv);
 
-    working_directory (Glib::filename_to_utf8 (Glib::get_current_dir ())) ;
+    working_directory (Glib::filename_to_utf8 (Glib::get_current_dir ()));
 }
 
 RunProgramDialog::~RunProgramDialog ()
 {
-    LOG_D ("destroyed", "destructor-domain") ;
+    LOG_D ("destroyed", "destructor-domain");
 }
 
 UString
@@ -209,38 +208,40 @@ RunProgramDialog::program_name () const
 {
     Gtk::FileChooserButton *chooser =
         ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                        (glade (), "filechooserbutton") ;
-    return chooser->get_filename () ;
+                                        (glade (), "filechooserbutton");
+    return chooser->get_filename ();
 }
 
 void
 RunProgramDialog::program_name (const UString &a_name)
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
 
     Gtk::FileChooserButton *chooser =
         ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                    (glade (), "filechooserbutton") ;
-    THROW_IF_FAIL (chooser) ;
-    chooser->set_filename (a_name) ;
+                                    (glade (), "filechooserbutton");
+    THROW_IF_FAIL (chooser);
+    chooser->set_filename (a_name);
 }
 
 UString
 RunProgramDialog::arguments () const
 {
     Gtk::Entry *entry =
-        ui_utils::get_widget_from_glade<Gtk::Entry> (glade (), "argumentsentry");
-    THROW_IF_FAIL (entry) ;
-    return entry->get_text () ;
+        ui_utils::get_widget_from_glade<Gtk::Entry> (glade (),
+                                                     "argumentsentry");
+    THROW_IF_FAIL (entry);
+    return entry->get_text ();
 }
 
 void
 RunProgramDialog::arguments (const UString &a_args)
 {
     Gtk::Entry *entry =
-        ui_utils::get_widget_from_glade<Gtk::Entry> (glade (), "argumentsentry");
-    THROW_IF_FAIL (entry) ;
-    entry->set_text (a_args) ;
+        ui_utils::get_widget_from_glade<Gtk::Entry> (glade (),
+                                                     "argumentsentry");
+    THROW_IF_FAIL (entry);
+    entry->set_text (a_args);
 }
 
 UString
@@ -248,8 +249,8 @@ RunProgramDialog::working_directory () const
 {
     Gtk::FileChooserButton *chooser =
         ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                        (glade (), "filechooserbutton_workingdir");
-    return chooser->get_filename () ;
+                                (glade (), "filechooserbutton_workingdir");
+    return chooser->get_filename ();
 }
 
 void
@@ -259,9 +260,10 @@ RunProgramDialog::working_directory (const UString &a_dir)
         ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
             (glade (), "filechooserbutton_workingdir");
     if (a_dir == "" || a_dir == ".") {
-        chooser->set_filename (Glib::locale_to_utf8 (Glib::get_current_dir ()));
+        chooser->set_filename
+                    (Glib::locale_to_utf8 (Glib::get_current_dir ()));
     } else {
-        chooser->set_filename (a_dir) ;
+        chooser->set_filename (a_dir);
     }
 }
 
@@ -269,10 +271,11 @@ map<UString, UString>
 RunProgramDialog::environment_variables () const
 {
     THROW_IF_FAIL (m_priv);
-    THROW_IF_FAIL (m_priv->model) ;
+    THROW_IF_FAIL (m_priv->model);
     map<UString, UString> env_vars;
     for (Gtk::TreeModel::iterator iter = m_priv->model->children().begin ();
-            iter != m_priv->model->children().end(); ++iter) {
+         iter != m_priv->model->children().end();
+         ++iter) {
         // for some reason I have to explicitly convert from Glib::ustring to
         // UString here or it won't compile
         env_vars[UString((*iter)[m_priv->env_columns.varname])] =
@@ -284,8 +287,8 @@ RunProgramDialog::environment_variables () const
 void
 RunProgramDialog::environment_variables (const map<UString, UString> &vars)
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->model) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->model);
     // clear out the old data so we can set the new data
     m_priv->model->clear();
     for (map<UString, UString>::const_iterator iter = vars.begin();

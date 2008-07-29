@@ -33,29 +33,29 @@
 #include "nmv-ui-utils.h"
 #include "nmv-vars-treeview.h"
 
-namespace uutil = nemiver::ui_utils ;
-namespace vutil = nemiver::variables_utils2 ;
-namespace cmn = nemiver::common ;
+namespace uutil = nemiver::ui_utils;
+namespace vutil = nemiver::variables_utils2;
+namespace cmn = nemiver::common;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class VarInspector2::Priv : public sigc::trackable {
-    friend class VarInspector2 ;
-    Priv () ;
+    friend class VarInspector2;
+    Priv ();
 
-    bool requested_variable ;
-    bool requested_type ;
-    IDebuggerSafePtr debugger ;
-    IDebugger::VariableSafePtr variable ;
-    VarsTreeViewSafePtr tree_view ;
-    Glib::RefPtr<Gtk::TreeStore> tree_store ;
-    Gtk::TreeModel::iterator var_row_it ;
+    bool requested_variable;
+    bool requested_type;
+    IDebuggerSafePtr debugger;
+    IDebugger::VariableSafePtr variable;
+    VarsTreeViewSafePtr tree_view;
+    Glib::RefPtr<Gtk::TreeStore> tree_store;
+    Gtk::TreeModel::iterator var_row_it;
     Gtk::TreeModel::iterator cur_selected_row;
-    IVarWalkerSafePtr var_walker ;
+    IVarWalkerSafePtr var_walker;
 
     void build_widget ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         tree_view = VarsTreeView::create ();
         THROW_IF_FAIL (tree_view);
         tree_store = tree_view->get_tree_store ();
@@ -64,99 +64,91 @@ class VarInspector2::Priv : public sigc::trackable {
 
     void connect_to_signals ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection () ;
-        THROW_IF_FAIL (selection) ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        Glib::RefPtr<Gtk::TreeSelection> selection =
+                                        tree_view->get_selection ();
+        THROW_IF_FAIL (selection);
         selection->signal_changed ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_tree_view_selection_changed_signal));
         tree_view->signal_row_activated ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_row_activated_signal)) ;
-
-        /*
-        debugger.variable_value_signal ().connect
-            (sigc::mem_fun (*this,
-                            &Priv::on_debugger_variable_value_signal)) ;
-        debugger.variable_type_signal ().connect
-            (sigc::mem_fun (*this,
-                            &Priv::on_variable_type_signal)) ;
-        debugger.pointed_variable_value_signal ().connect
-            (sigc::mem_fun (*this,
-                            &Priv::on_pointed_variable_value_signal)) ;
-
-        tree_view->signal_row_expanded ().connect (sigc::mem_fun
-            (*this, &Priv::on_tree_view_row_expanded_signal)) ;
-        */
+            (sigc::mem_fun (*this, &Priv::on_tree_view_row_activated_signal));
     }
 
     void re_init_tree_view ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        THROW_IF_FAIL (tree_store) ;
-        tree_store->clear () ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        THROW_IF_FAIL (tree_store);
+        tree_store->clear ();
     }
 
     void set_variable (const IDebugger::VariableSafePtr &a_variable)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        THROW_IF_FAIL (tree_view && tree_store) ;
-        re_init_tree_view () ;
+        THROW_IF_FAIL (tree_view && tree_store);
+        re_init_tree_view ();
 
-        Gtk::TreeModel::iterator parent_iter = tree_store->children ().begin ();
-        Gtk::TreeModel::iterator var_row ;
+        Gtk::TreeModel::iterator parent_iter =
+                                    tree_store->children ().begin ();
+        Gtk::TreeModel::iterator var_row;
         vutil::append_a_variable (a_variable,
                                   *tree_view,
                                   tree_store,
                                   parent_iter,
-                                  var_row) ;
-        LOG_DD ("set variable" << a_variable->name ()) ;
+                                  var_row);
+        LOG_DD ("set variable" << a_variable->name ());
         if (var_row) {
-            tree_view->expand_row (tree_store->get_path (var_row), false) ;
+            tree_view->expand_row (tree_store->get_path (var_row), false);
         }
     }
 
     void show_variable_type_in_dialog ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         if (!cur_selected_row) {return;}
         UString type =
-            (Glib::ustring) (*cur_selected_row)[vutil::get_variable_columns ().type] ;
-        UString message ;
-        message.printf (_("Variable type is: \n %s"), type.c_str ()) ;
+        (Glib::ustring)
+                (*cur_selected_row)[vutil::get_variable_columns ().type];
+        UString message;
+        message.printf (_("Variable type is: \n %s"), type.c_str ());
 
         IDebugger::VariableSafePtr variable =
             (IDebugger::VariableSafePtr)
-                cur_selected_row->get_value (vutil::get_variable_columns ().variable);
-        THROW_IF_FAIL (variable) ;
-        //message += "\nDumped for debug: \n" ;
-        //variable->to_string (message, false) ;
-        ui_utils::display_info (message) ;
+                cur_selected_row->get_value
+                                (vutil::get_variable_columns ().variable);
+        THROW_IF_FAIL (variable);
+        // message += "\nDumped for debug: \n";
+        // variable->to_string (message, false);
+        ui_utils::display_info (message);
     }
 
     IVarWalkerSafePtr create_var_walker ()
     {
         cmn::DynamicModule::Loader *loader =
             debugger->get_dynamic_module ().get_module_loader ();
-        THROW_IF_FAIL (loader) ;
-        cmn::DynamicModuleManager *module_manager = loader->get_dynamic_module_manager ();
-        THROW_IF_FAIL (module_manager) ;
+        THROW_IF_FAIL (loader);
+        cmn::DynamicModuleManager *module_manager =
+                            loader->get_dynamic_module_manager ();
+        THROW_IF_FAIL (module_manager);
         IVarWalkerSafePtr result =
-            module_manager->load_iface<IVarWalker> ("varwalker", "IVarWalker");
-        THROW_IF_FAIL (result) ;
-        return result ;
+            module_manager->load_iface<IVarWalker> ("varwalker",
+                                                    "IVarWalker");
+        THROW_IF_FAIL (result);
+        return result;
     }
 
     IVarWalkerSafePtr get_var_walker ()
     {
         if (!var_walker) {
-            var_walker = create_var_walker () ;
-            THROW_IF_FAIL (var_walker) ;
+            var_walker = create_var_walker ();
+            THROW_IF_FAIL (var_walker);
             var_walker->visited_variable_signal ().connect
-                (sigc::mem_fun (this, &VarInspector2::Priv::on_visited_variable_signal)) ;
+                (sigc::mem_fun
+                 (this, &VarInspector2::Priv::on_visited_variable_signal));
         }
-        return var_walker ;
+        return var_walker;
     }
 
     // ******************
@@ -166,21 +158,21 @@ class VarInspector2::Priv : public sigc::trackable {
 
     void on_tree_view_selection_changed_signal ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
 
-        THROW_IF_FAIL (tree_view) ;
-        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
-        THROW_IF_FAIL (sel) ;
-        cur_selected_row = sel->get_selected () ;
+        THROW_IF_FAIL (tree_view);
+        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection ();
+        THROW_IF_FAIL (sel);
+        cur_selected_row = sel->get_selected ();
         if (!cur_selected_row) {return;}
         IDebugger::VariableSafePtr variable =
             (IDebugger::VariableSafePtr)cur_selected_row->get_value
-                                    (vutil::get_variable_columns ().variable) ;
+                                    (vutil::get_variable_columns ().variable);
         if (!variable) {return;}
-        UString qname ;
-        variable->build_qname (qname) ;
-        LOG_DD ("row of variable '" << qname << "'") ;
+        UString qname;
+        variable->build_qname (qname);
+        LOG_DD ("row of variable '" << qname << "'");
 
         NEMIVER_CATCH
     }
@@ -189,26 +181,26 @@ class VarInspector2::Priv : public sigc::trackable {
                                             Gtk::TreeViewColumn *a_col)
     {
         NEMIVER_TRY
-        THROW_IF_FAIL (tree_store) ;
-        Gtk::TreeModel::iterator it = tree_store->get_iter (a_path) ;
+        THROW_IF_FAIL (tree_store);
+        Gtk::TreeModel::iterator it = tree_store->get_iter (a_path);
         UString type =
             (Glib::ustring) it->get_value
-                            (vutil::get_variable_columns ().type) ;
+                            (vutil::get_variable_columns ().type);
         if (type == "") {return;}
 
         if (a_col != tree_view->get_column (2)) {return;}
-        cur_selected_row = it ;
-        show_variable_type_in_dialog () ;
+        cur_selected_row = it;
+        show_variable_type_in_dialog ();
         NEMIVER_CATCH
     }
 
     void on_visited_variable_signal (const IDebugger::VariableSafePtr &a_var)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
 
-        set_variable (a_var) ;
+        set_variable (a_var);
 
         NEMIVER_CATCH
     }
@@ -224,63 +216,63 @@ public:
           requested_type (false),
           debugger (a_debugger)
     {
-        build_widget () ;
-        re_init_tree_view () ;
-        connect_to_signals () ;
+        build_widget ();
+        re_init_tree_view ();
+        connect_to_signals ();
     }
 };//end class VarInspector2::Priv
 
 VarInspector2::VarInspector2 (IDebuggerSafePtr &a_debugger)
 {
-    m_priv.reset (new Priv (a_debugger)) ;
+    m_priv.reset (new Priv (a_debugger));
 }
 
 VarInspector2::~VarInspector2 ()
 {
-    LOG_D ("deleted", "destructor-domain") ;
+    LOG_D ("deleted", "destructor-domain");
 }
 
 Gtk::Widget&
 VarInspector2::widget () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->tree_view) ;
-    return *m_priv->tree_view ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->tree_view);
+    return *m_priv->tree_view;
 }
 
 void
 VarInspector2::set_variable (IDebugger::VariableSafePtr &a_variable)
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
 
-    m_priv->set_variable (a_variable) ;
+    m_priv->set_variable (a_variable);
 }
 
 void
 VarInspector2::inspect_variable (const UString &a_variable_name)
 {
     if (a_variable_name == "") {return;}
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     m_priv->requested_variable = true;
-    IVarWalkerSafePtr var_walker = m_priv->get_var_walker () ;
-    THROW_IF_FAIL (var_walker) ;
-    var_walker->connect (m_priv->debugger, a_variable_name) ;
-    var_walker->do_walk_variable () ;
+    IVarWalkerSafePtr var_walker = m_priv->get_var_walker ();
+    THROW_IF_FAIL (var_walker);
+    var_walker->connect (m_priv->debugger, a_variable_name);
+    var_walker->do_walk_variable ();
 }
 
 IDebugger::VariableSafePtr
 VarInspector2::get_variable () const
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
 
-    return m_priv->variable ;
+    return m_priv->variable;
 }
 
 void
 VarInspector2::clear ()
 {
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->re_init_tree_view () ;
+    THROW_IF_FAIL (m_priv);
+    m_priv->re_init_tree_view ();
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

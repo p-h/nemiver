@@ -47,38 +47,38 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
         FG_COLOR_OFFSET
     };
 
-    Gtk::TreeModelColumn<Glib::ustring> name ;
-    Gtk::TreeModelColumn<Glib::ustring> value ;
-    Gtk::TreeModelColumn<Glib::ustring> type ;
-    Gtk::TreeModelColumn<Glib::ustring> type_caption ;
-    Gtk::TreeModelColumn<IDebugger::VariableSafePtr> variable ;
+    Gtk::TreeModelColumn<Glib::ustring> name;
+    Gtk::TreeModelColumn<Glib::ustring> value;
+    Gtk::TreeModelColumn<Glib::ustring> type;
+    Gtk::TreeModelColumn<Glib::ustring> type_caption;
+    Gtk::TreeModelColumn<IDebugger::VariableSafePtr> variable;
     Gtk::TreeModelColumn<bool> is_highlighted;
     Gtk::TreeModelColumn<Gdk::Color> fg_color;
 
     VariableColumns ()
     {
-        add (name) ;
-        add (value) ;
-        add (type) ;
-        add (type_caption) ;
-        add (variable) ;
-        add (is_highlighted) ;
-        add (fg_color) ;
+        add (name);
+        add (value);
+        add (type);
+        add (type_caption);
+        add (variable);
+        add (is_highlighted);
+        add (fg_color);
     }
 };//end VariableColumns
 
-VariableColumns& get_variable_columns () ;
+VariableColumns& get_variable_columns ();
 
-bool is_type_a_pointer (const UString &a_type) ;
+bool is_type_a_pointer (const UString &a_type);
 
 void set_a_variable_node_type (Gtk::TreeModel::iterator &a_var_it,
-                               const UString &a_type) ;
+                               const UString &a_type);
 
 void update_a_variable_node (const IDebugger::VariableSafePtr a_var,
                              const Gtk::TreeView &a_tree_view,
                              Gtk::TreeModel::iterator &a_iter,
                              bool a_handle_highlight,
-                             bool a_is_new_frame) ;
+                             bool a_is_new_frame);
 
 bool find_a_variable (const IDebugger::VariableSafePtr a_var,
                       const Gtk::TreeModel::iterator &a_parent_row_it,
@@ -88,12 +88,12 @@ bool update_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         Gtk::TreeModel::iterator &a_parent_row_it,
                         bool a_handle_highlight,
-                        bool a_is_new_frame) ;
+                        bool a_is_new_frame);
 
 void append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
-                        Gtk::TreeModel::iterator &a_parent_row_it) ;
+                        Gtk::TreeModel::iterator &a_parent_row_it);
 
 void append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,

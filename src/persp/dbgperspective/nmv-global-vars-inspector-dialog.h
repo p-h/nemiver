@@ -32,30 +32,30 @@
 #include "nmv-i-debugger.h"
 
 namespace Gtk {
-    class Widget ;
+    class Widget;
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class IWorkbench ;
+class IWorkbench;
 
 class NEMIVER_API GlobalVarsInspectorDialog : public Dialog {
     //non copyable
-    GlobalVarsInspectorDialog (const GlobalVarsInspectorDialog&) ;
-    GlobalVarsInspectorDialog& operator= (const GlobalVarsInspectorDialog&) ;
+    GlobalVarsInspectorDialog (const GlobalVarsInspectorDialog&);
+    GlobalVarsInspectorDialog& operator= (const GlobalVarsInspectorDialog&);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 protected:
-    GlobalVarsInspectorDialog () ;
+    GlobalVarsInspectorDialog ();
 
 public:
 
     GlobalVarsInspectorDialog (const UString &a_root_path,
                                IDebuggerSafePtr &a_dbg,
-                               IWorkbench &a_wb) ;
-    virtual ~GlobalVarsInspectorDialog () ;
+                               IWorkbench &a_wb);
+    virtual ~GlobalVarsInspectorDialog ();
 };//end GlobalVarsInspectorDialog
 
 NEMIVER_END_NAMESPACE (nemiver)

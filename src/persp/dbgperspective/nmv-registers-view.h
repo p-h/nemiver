@@ -31,29 +31,29 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class IWorkbench;
 class IPerspective;
 
 class NEMIVER_API RegistersView : public nemiver::common::Object {
     //non copyable
-    RegistersView (const RegistersView&) ;
-    RegistersView& operator= (const RegistersView&) ;
+    RegistersView (const RegistersView&);
+    RegistersView& operator= (const RegistersView&);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
-    RegistersView (IDebuggerSafePtr& a_debugger) ;
-    virtual ~RegistersView () ;
-    Gtk::Widget& widget () const ;
+    RegistersView (IDebuggerSafePtr& a_debugger);
+    virtual ~RegistersView ();
+    Gtk::Widget& widget () const;
     void clear ();
 
 };//end RegistersView
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_REGISTERS_VIEW_H__
 

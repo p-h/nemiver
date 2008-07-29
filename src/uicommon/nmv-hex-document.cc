@@ -28,13 +28,14 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (Hex)
+
 struct HexDocRef {
     void operator () (::HexDocument *o)
     {
         if (o && G_IS_OBJECT (o)) {
-            g_object_ref (G_OBJECT (o)) ;
+            g_object_ref (G_OBJECT (o));
         } else {
-            LOG_ERROR ("bad HexDocument") ;
+            LOG_ERROR ("bad HexDocument");
         }
     }
 };
@@ -43,20 +44,22 @@ struct HexDocUnref {
     void operator () (::HexDocument *o)
     {
         if (o && G_IS_OBJECT (o)) {
-            g_object_unref (G_OBJECT (o)) ;
+            g_object_unref (G_OBJECT (o));
         } else {
-            LOG_ERROR ("bad HexDocument") ;
+            LOG_ERROR ("bad HexDocument");
         }
     }
 
 };
 
 struct Document::Priv {
-    SafePtr< ::HexDocument, HexDocRef, HexDocUnref> document ;
+    SafePtr<::HexDocument, HexDocRef, HexDocUnref> document;
     mutable sigc::signal<void, HexChangeData*> m_signal_document_changed;
 
     Priv (const std::string& filename) :
-        document (HEX_DOCUMENT (hex_document_new_from_file (filename.c_str ())), true)
+        document (HEX_DOCUMENT
+                      (hex_document_new_from_file (filename.c_str ())),
+                                                   true)
     {
         connect_signals ();
     }
@@ -69,8 +72,10 @@ struct Document::Priv {
 
     void connect_signals ()
     {
-        g_signal_connect (G_OBJECT (document.get ()), "document_changed",
-                    G_CALLBACK (on_document_changed_proxy), this);
+        g_signal_connect (G_OBJECT (document.get ()),
+                          "document_changed",
+                          G_CALLBACK (on_document_changed_proxy),
+                          this);
     }
 
     ~Priv ()
@@ -81,7 +86,7 @@ struct Document::Priv {
                                            gboolean /*a_push_undo*/,
                                            Priv* priv)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         priv->m_signal_document_changed.emit (a_change_data);
     }
 
@@ -93,12 +98,12 @@ Document::~Document ()
 
 Document::Document ()
 {
-    m_priv.reset (new Priv ()) ;
+    m_priv.reset (new Priv ());
 }
 
 Document::Document (const std::string& filename)
 {
-    m_priv.reset (new Priv (filename)) ;
+    m_priv.reset (new Priv (filename));
 }
 
 ::HexDocument* Document::cobj()
@@ -147,23 +152,23 @@ Document::clear (bool undoable)
 DocumentSafePtr
 Document::create ()
 {
-    DocumentSafePtr result (new Document ()) ;
-    THROW_IF_FAIL (result) ;
-    return result ;
+    DocumentSafePtr result (new Document ());
+    THROW_IF_FAIL (result);
+    return result;
 }
 
 DocumentSafePtr
 Document::create (const std::string& filename)
 {
-    DocumentSafePtr result (new Document (filename)) ;
-    THROW_IF_FAIL (result) ;
-    return result ;
+    DocumentSafePtr result (new Document (filename));
+    THROW_IF_FAIL (result);
+    return result;
 }
 
 sigc::signal<void, HexChangeData*>&
 Document::signal_document_changed () const
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     return m_priv->m_signal_document_changed;
 }
 

@@ -35,9 +35,9 @@ struct GtkHexRef {
     void operator () (GtkHex *o)
     {
         if (o && G_IS_OBJECT (o)) {
-            g_object_ref (G_OBJECT (o)) ;
+            g_object_ref (G_OBJECT (o));
         } else {
-            LOG_ERROR ("bad GtkHex") ;
+            LOG_ERROR ("bad GtkHex");
         }
     }
 };
@@ -46,30 +46,30 @@ struct GtkHexUnref {
     void operator () (GtkHex *o)
     {
         if (o && G_IS_OBJECT (o)) {
-            g_object_unref (G_OBJECT (o)) ;
+            g_object_unref (G_OBJECT (o));
         } else {
-            LOG_ERROR ("bad GtkHex") ;
+            LOG_ERROR ("bad GtkHex");
         }
     }
 
 };
 
 struct Editor::Priv {
-    SafePtr<GtkHex, GtkHexRef, GtkHexUnref> hex ;
-    Gtk::Container *widget ;
+    SafePtr<GtkHex, GtkHexRef, GtkHexUnref> hex;
+    Gtk::Container *widget;
 
     Priv (const DocumentSafePtr& a_doc) :
         hex (GTK_HEX (gtk_hex_new (a_doc->cobj())), true),
         widget (0)
     {
-        THROW_IF_FAIL (GTK_IS_WIDGET (hex.get ())) ;
-        widget = Glib::wrap (GTK_CONTAINER (hex.get ())) ;
-        THROW_IF_FAIL (widget) ;
+        THROW_IF_FAIL (GTK_IS_WIDGET (hex.get ()));
+        widget = Glib::wrap (GTK_CONTAINER (hex.get ()));
+        THROW_IF_FAIL (widget);
     }
 
     ~Priv ()
     {
-        widget = 0 ;
+        widget = 0;
     }
 };//end struct Editor::Priv
 
@@ -79,7 +79,7 @@ Editor::~Editor ()
 
 Editor::Editor (const DocumentSafePtr &a_document)
 {
-    m_priv.reset (new Priv (a_document)) ;
+    m_priv.reset (new Priv (a_document));
 }
 
 EditorSafePtr
@@ -147,9 +147,9 @@ Editor::get_geometry (int& cpl, int& vis_lines) const
 Gtk::Container&
 Editor::get_widget () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->widget) ;
-    return *m_priv->widget ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->widget);
+    return *m_priv->widget;
 }
 
 NEMIVER_END_NAMESPACE (Hex)

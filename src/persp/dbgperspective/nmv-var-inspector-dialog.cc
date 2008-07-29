@@ -32,15 +32,15 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class VarInspectorDialog::Priv {
-    friend class VarInspectorDialog ;
-    Gtk::Entry *var_name_entry ;
-    Gtk::Button *inspect_button ;
-    SafePtr<VarInspector2> var_inspector ;
-    Gtk::Dialog &dialog ;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
-    IDebuggerSafePtr debugger ;
+    friend class VarInspectorDialog;
+    Gtk::Entry *var_name_entry;
+    Gtk::Button *inspect_button;
+    SafePtr<VarInspector2> var_inspector;
+    Gtk::Dialog &dialog;
+    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    IDebuggerSafePtr debugger;
 
-    Priv () ;
+    Priv ();
 public:
 
     Priv (Gtk::Dialog &a_dialog,
@@ -52,45 +52,45 @@ public:
         glade (a_glade),
         debugger (a_debugger)
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
-        build_dialog () ;
-        connect_to_widget_signals () ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        build_dialog ();
+        connect_to_widget_signals ();
     }
 
     void build_dialog ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         var_name_entry =
             ui_utils::get_widget_from_glade<Gtk::Entry> (glade,
-                                                         "variablenameentry") ;
+                                                         "variablenameentry");
         inspect_button =
             ui_utils::get_widget_from_glade<Gtk::Button> (glade,
-                                                          "inspectbutton") ;
-        inspect_button->set_sensitive (false) ;
+                                                          "inspectbutton");
+        inspect_button->set_sensitive (false);
 
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
-                                                       "inspectorwidgetbox") ;
-        var_inspector.reset (new VarInspector2 (debugger)) ;
-        THROW_IF_FAIL (var_inspector) ;
-        Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow) ;
-        scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC) ;
+                                                       "inspectorwidgetbox");
+        var_inspector.reset (new VarInspector2 (debugger));
+        THROW_IF_FAIL (var_inspector);
+        Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
+        scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         scr->set_shadow_type (Gtk::SHADOW_IN);
-        scr->add (var_inspector->widget ()) ;
-        box->pack_start (*scr) ;
-        dialog.show_all () ;
+        scr->add (var_inspector->widget ());
+        box->pack_start (*scr);
+        dialog.show_all ();
     }
 
     void connect_to_widget_signals ()
     {
-        THROW_IF_FAIL (inspect_button) ;
+        THROW_IF_FAIL (inspect_button);
         inspect_button->signal_clicked ().connect (sigc::mem_fun
-                (*this, &Priv::on_inspect_button_clicked_signal)) ;
+                (*this, &Priv::on_inspect_button_clicked_signal));
         var_name_entry->signal_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_var_name_changed_signal)) ;
+                (*this, &Priv::on_var_name_changed_signal));
         var_name_entry->signal_activate ().connect (sigc::mem_fun
-                (*this, &Priv::on_var_name_activated_signal)) ;
+                (*this, &Priv::on_var_name_activated_signal));
     }
 
     //************************
@@ -100,44 +100,44 @@ public:
     {
         NEMIVER_TRY
 
-        THROW_IF_FAIL (var_name_entry) ;
-        THROW_IF_FAIL (var_inspector) ;
+        THROW_IF_FAIL (var_name_entry);
+        THROW_IF_FAIL (var_inspector);
 
-        UString var_name = var_name_entry->get_text () ;
+        UString var_name = var_name_entry->get_text ();
         if (var_name == "") {return;}
-        var_inspector->inspect_variable (var_name) ;
+        var_inspector->inspect_variable (var_name);
 
         NEMIVER_CATCH
     }
 
     void on_inspect_button_clicked_signal ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
 
-        THROW_IF_FAIL (var_name_entry) ;
-        THROW_IF_FAIL (var_inspector) ;
+        THROW_IF_FAIL (var_name_entry);
+        THROW_IF_FAIL (var_inspector);
 
-        UString variable_name = var_name_entry->get_text () ;
+        UString variable_name = var_name_entry->get_text ();
         if (variable_name == "") {return;}
-        var_inspector->inspect_variable (variable_name) ;
+        var_inspector->inspect_variable (variable_name);
 
         NEMIVER_CATCH
     }
 
     void on_var_name_changed_signal ()
     {
-        LOG_FUNCTION_SCOPE_NORMAL_DD ;
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
 
-        THROW_IF_FAIL (var_name_entry) ;
-        THROW_IF_FAIL (inspect_button) ;
+        THROW_IF_FAIL (var_name_entry);
+        THROW_IF_FAIL (inspect_button);
 
-        UString var_name = var_name_entry->get_text () ;
+        UString var_name = var_name_entry->get_text ();
         if (var_name == "") {
-            inspect_button->set_sensitive (false) ;
+            inspect_button->set_sensitive (false);
         } else {
-            inspect_button->set_sensitive (true) ;
+            inspect_button->set_sensitive (true);
         }
 
         NEMIVER_CATCH
@@ -154,43 +154,43 @@ VarInspectorDialog::VarInspectorDialog (const UString &a_root_path,
             "varinspectordialog.glade",
             "varinspectordialog")
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset
-        (new VarInspectorDialog::Priv (widget (), glade (), a_debugger)) ;
-    THROW_IF_FAIL (m_priv) ;
+        (new VarInspectorDialog::Priv (widget (), glade (), a_debugger));
+    THROW_IF_FAIL (m_priv);
 }
 
 VarInspectorDialog::~VarInspectorDialog ()
 {
-    LOG_D ("delete", "destructor-domain") ;
+    LOG_D ("delete", "destructor-domain");
 }
 
 UString
 VarInspectorDialog::variable_name () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->var_name_entry) ;
-    return m_priv->var_name_entry->get_text () ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->var_name_entry);
+    return m_priv->var_name_entry->get_text ();
 }
 
 void
 VarInspectorDialog::inspect_variable (const UString &a_var_name)
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->var_name_entry) ;
-    THROW_IF_FAIL (m_priv->var_inspector) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->var_name_entry);
+    THROW_IF_FAIL (m_priv->var_inspector);
 
     if (a_var_name != "") {
-        m_priv->var_name_entry->set_text (a_var_name) ;
-        m_priv->var_inspector->inspect_variable (a_var_name) ;
+        m_priv->var_name_entry->set_text (a_var_name);
+        m_priv->var_inspector->inspect_variable (a_var_name);
     }
 }
 
 const IDebugger::VariableSafePtr
 VarInspectorDialog::variable () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    return m_priv->var_inspector->get_variable () ;
+    THROW_IF_FAIL (m_priv);
+    return m_priv->var_inspector->get_variable ();
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

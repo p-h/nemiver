@@ -34,34 +34,38 @@
 namespace Gtk {
 class UIManager;
 }
-namespace nemiver {
+
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class IWorkbench;
 class IPerspective;
 
 class NEMIVER_API BreakpointsView : public nemiver::common::Object {
     //non copyable
-    BreakpointsView (const BreakpointsView&) ;
-    BreakpointsView& operator= (const BreakpointsView&) ;
+    BreakpointsView (const BreakpointsView&);
+    BreakpointsView& operator= (const BreakpointsView&);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
-    BreakpointsView (IWorkbench& a_workbench, IPerspective& a_perspective, IDebuggerSafePtr& a_debugger) ;
-    virtual ~BreakpointsView () ;
-    Gtk::Widget& widget () const ;
+    BreakpointsView (IWorkbench& a_workbench,
+                     IPerspective& a_perspective,
+                     IDebuggerSafePtr& a_debugger);
+    virtual ~BreakpointsView ();
+    Gtk::Widget& widget () const;
     void set_breakpoints
-                (const std::map<int, IDebugger::BreakPoint> &a_breakpoints) ;
-    void clear () ;
-    void re_init () ;
+                (const std::map<int, IDebugger::BreakPoint> &a_breakpoints);
+    void clear ();
+    void re_init ();
     sigc::signal<void,
-                 const IDebugger::BreakPoint&>& go_to_breakpoint_signal () const ;
+                 const IDebugger::BreakPoint&>&
+                 go_to_breakpoint_signal () const;
 
 };//end BreakpointsView
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_BREAKPOINTS_VIEW_H__
 

@@ -29,27 +29,27 @@
 #include "common/nmv-ustring.h"
 #include "nmv-dialog.h"
 
-using nemiver::common::UString ;
+using nemiver::common::UString;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class IWorkbench ;
+class IWorkbench;
 class PreferencesDialog : public Dialog {
 
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
-    PreferencesDialog () ;
+    PreferencesDialog ();
 
 public:
     PreferencesDialog (IWorkbench &a_workbench,
-                       const UString &a_root_path) ;
+                       const UString &a_root_path);
     PreferencesDialog (IWorkbench &a_workbench,
                        const UString &a_root_path,
-                       const std::vector<UString> &a_source_dirs) ;
-    virtual ~PreferencesDialog () ;
-    const std::vector<UString>& source_directories () const ;
-    void source_directories (const std::vector<UString> &a_dirs) ;
+                       const std::vector<UString> &a_source_dirs);
+    virtual ~PreferencesDialog ();
+    const std::vector<UString>& source_directories () const;
+    void source_directories (const std::vector<UString> &a_dirs);
 };//end class PreferencesDialog
 
 NEMIVER_END_NAMESPACE (nemiver)

@@ -30,30 +30,30 @@
 #include "nmv-i-debugger.h"
 
 namespace Gtk {
-    class Widget ;
+    class Widget;
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
-    class UString ;
+    class UString;
 }
 
 class VarInspector2 : public nemiver::common::Object {
-    VarInspector2 (const VarInspector2 &) ;
-    VarInspector2& operator= (const VarInspector2 &) ;
-    VarInspector2 () ;
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    VarInspector2 (const VarInspector2 &);
+    VarInspector2& operator= (const VarInspector2 &);
+    VarInspector2 ();
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 public:
-    VarInspector2 (IDebuggerSafePtr &a_debugger) ;
-    virtual ~VarInspector2 () ;
-    Gtk::Widget& widget () const ;
-    void set_variable (IDebugger::VariableSafePtr &a_variable) ;
-    void inspect_variable (const UString &a_variable_name) ;
-    IDebugger::VariableSafePtr get_variable () const ;
-    void clear () ;
+    VarInspector2 (IDebuggerSafePtr &a_debugger);
+    virtual ~VarInspector2 ();
+    Gtk::Widget& widget () const;
+    void set_variable (IDebugger::VariableSafePtr &a_variable);
+    void inspect_variable (const UString &a_variable_name);
+    IDebugger::VariableSafePtr get_variable () const;
+    void clear ();
 };//end class VarInspector2
 
 NEMIVER_END_NAMESPACE (nemiver)

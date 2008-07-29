@@ -131,7 +131,7 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     if (prev_var_name.raw () == "") {
         (*a_iter)[get_variable_columns ().name] = var_name;
     }
-    (*a_iter)[get_variable_columns ().is_highlighted]=false;
+    (*a_iter) [get_variable_columns ().is_highlighted] = false;
     bool do_highlight = false;
     if (a_handle_highlight && !a_is_new_frame) {
         UString prev_value =
@@ -261,7 +261,9 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
     }
     update_a_variable_node (a_var, a_tree_view, row_it, true, true);
     list<IDebugger::VariableSafePtr>::const_iterator it;
-    for (it = a_var->members ().begin (); it != a_var->members ().end (); ++it) {
+    for (it = a_var->members ().begin ();
+         it != a_var->members ().end ();
+         ++it) {
         append_a_variable (*it, a_tree_view, a_tree_store, row_it);
     }
     a_result = row_it;

@@ -35,15 +35,15 @@
 #include "nmv-load-core-dialog.h"
 #include "nmv-ui-utils.h"
 
-using namespace std ;
-using namespace nemiver::common ;
+using namespace std;
+using namespace nemiver::common;
 
 namespace nemiver {
 class LoadCoreDialog::Priv {
     public:
-    Gtk::FileChooserButton *fcbutton_core_file ;
+    Gtk::FileChooserButton *fcbutton_core_file;
     Gtk::FileChooserButton *fcbutton_executable;
-    Gtk::Button *okbutton ;
+    Gtk::Button *okbutton;
 
 public:
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
@@ -53,40 +53,42 @@ public:
     {
 
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton") ;
-        THROW_IF_FAIL (okbutton) ;
-        okbutton->set_sensitive (false) ;
+        ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton");
+        THROW_IF_FAIL (okbutton);
+        okbutton->set_sensitive (false);
 
         fcbutton_executable =
             ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                (a_glade, "filechooserbutton_executable") ;
-        fcbutton_executable->signal_selection_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_file_selection_changed_signal)) ;
+                (a_glade, "filechooserbutton_executable");
+        fcbutton_executable->signal_selection_changed ().connect
+            (sigc::mem_fun
+                (*this, &Priv::on_file_selection_changed_signal));
 
         fcbutton_core_file =
             ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                (a_glade, "filechooserbutton_corefile") ;
-        fcbutton_core_file->signal_selection_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_file_selection_changed_signal)) ;
+                (a_glade, "filechooserbutton_corefile");
+        fcbutton_core_file->signal_selection_changed ().connect
+            (sigc::mem_fun
+                (*this, &Priv::on_file_selection_changed_signal));
     }
 
     void on_file_selection_changed_signal ()
     {
         NEMIVER_TRY
 
-        THROW_IF_FAIL (fcbutton_executable) ;
-        THROW_IF_FAIL (fcbutton_core_file) ;
+        THROW_IF_FAIL (fcbutton_executable);
+        THROW_IF_FAIL (fcbutton_core_file);
 
         if (Glib::file_test (fcbutton_executable->get_filename (),
                              Glib::FILE_TEST_IS_EXECUTABLE)) {
             if (Glib::file_test (fcbutton_core_file->get_filename (),
                                  Glib::FILE_TEST_IS_REGULAR)) {
-                okbutton->set_sensitive (true) ;
+                okbutton->set_sensitive (true);
             } else {
-                okbutton->set_sensitive (false) ;
+                okbutton->set_sensitive (false);
             }
         } else {
-            okbutton->set_sensitive (false) ;
+            okbutton->set_sensitive (false);
         }
         NEMIVER_CATCH
     }
@@ -95,7 +97,7 @@ public:
 LoadCoreDialog::LoadCoreDialog (const UString &a_root_path) :
     Dialog (a_root_path, "loadcoredialog.glade", "loadcoredialog")
 {
-    m_priv.reset (new Priv (glade ())) ;
+    m_priv.reset (new Priv (glade ()));
 }
 
 LoadCoreDialog::~LoadCoreDialog ()
@@ -107,11 +109,11 @@ LoadCoreDialog::program_name () const
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->fcbutton_executable) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->fcbutton_executable);
 
     NEMIVER_CATCH
-    return m_priv->fcbutton_executable->get_filename () ;
+    return m_priv->fcbutton_executable->get_filename ();
 }
 
 void
@@ -119,9 +121,9 @@ LoadCoreDialog::program_name (const UString &a_name)
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->fcbutton_executable) ;
-    m_priv->fcbutton_executable->set_filename (a_name) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->fcbutton_executable);
+    m_priv->fcbutton_executable->set_filename (a_name);
 
     NEMIVER_CATCH
 }
@@ -131,11 +133,11 @@ LoadCoreDialog::core_file () const
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->fcbutton_core_file) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->fcbutton_core_file);
 
     NEMIVER_CATCH
-    return m_priv->fcbutton_core_file->get_filename () ;
+    return m_priv->fcbutton_core_file->get_filename ();
 }
 
 void
@@ -143,9 +145,9 @@ LoadCoreDialog::core_file (const UString &a_dir)
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->fcbutton_core_file) ;
-    m_priv->fcbutton_core_file->set_filename (a_dir) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->fcbutton_core_file);
+    m_priv->fcbutton_core_file->set_filename (a_dir);
 
     NEMIVER_CATCH
 }

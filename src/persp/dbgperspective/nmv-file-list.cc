@@ -34,20 +34,19 @@
 namespace nemiver {
 
 struct FileListColumns : public Gtk::TreeModel::ColumnRecord {
-    Gtk::TreeModelColumn<Glib::ustring> display_name ;
-    Gtk::TreeModelColumn<Glib::ustring> path ;
-    Gtk::TreeModelColumn<Gtk::StockID> stock_icon ;
+    Gtk::TreeModelColumn<Glib::ustring> display_name;
+    Gtk::TreeModelColumn<Glib::ustring> path;
+    Gtk::TreeModelColumn<Gtk::StockID> stock_icon;
 
     FileListColumns ()
     {
-        add (display_name) ;
-        add (path) ;
-        add (stock_icon) ;
+        add (display_name);
+        add (path);
+        add (stock_icon);
     }
 };//end Cols
 
-class FileListView : public Gtk::TreeView
-{
+class FileListView : public Gtk::TreeView {
 public:
     FileListView ();
     virtual ~FileListView ();
@@ -61,20 +60,21 @@ public:
     sigc::signal<void> files_selected_signal;
 
 protected:
+    typedef std::pair<UString, Gtk::TreeModel::iterator> StringTreeIterPair;
     struct ComparePathMap :
-        public std::binary_function<const std::pair<UString,
-                                                    Gtk::TreeModel::iterator>,
-                                    const UString,
-                                    bool> {
+        public std::binary_function<const StringTreeIterPair,
+                                    const UString, bool> {
         bool
-        operator()(const std::pair<UString, Gtk::TreeModel::iterator>& map,
-                        const UString& path_component)
+        operator() (const StringTreeIterPair &a_map,
+                    const UString &a_path_component)
         {
-            return path_component == map.first;
+            return a_path_component == a_map.first;
         }
-    };
+    };//end struct ComparePathMap
 
-    Gtk::TreeModel::iterator find_filename_recursive(const Gtk::TreeModel::iterator &a_iter, const UString &a_filename);
+    Gtk::TreeModel::iterator find_filename_recursive
+                                (const Gtk::TreeModel::iterator &a_iter,
+                                 const UString &a_filename);
 
     virtual void on_row_activated (const Gtk::TreeModel::Path& path,
                                    Gtk::TreeViewColumn* column);
@@ -99,16 +99,18 @@ FileListView::FileListView ()
     // create the tree model:
     m_tree_model = Gtk::TreeStore::create (m_columns);
     set_model (m_tree_model);
-    
+
     set_headers_visible (false);
-    
+
     // create the columns of the tree view
     Gtk::TreeViewColumn* view_column = new Gtk::TreeViewColumn (_("Filename"));
     Gtk::CellRendererPixbuf renderer_pixbuf;
     Gtk::CellRendererText renderer_text;
-    
+
     view_column->pack_start (renderer_pixbuf, false /* don't expand */);
-    view_column->add_attribute (renderer_pixbuf, "stock-id", m_columns.stock_icon);
+    view_column->add_attribute (renderer_pixbuf,
+                                "stock-id",
+                                m_columns.stock_icon);
     view_column->pack_start (renderer_text);
     view_column->add_attribute (renderer_text, "text", m_columns.display_name);
     append_column (*view_column);
@@ -117,7 +119,7 @@ FileListView::FileListView ()
     get_selection ()->set_mode (Gtk::SELECTION_MULTIPLE);
     get_selection ()->signal_changed ().connect (
         sigc::mem_fun (*this, &FileListView::on_file_list_selection_changed));
-    
+
     // fill popup menu:
     Gtk::Menu::MenuList& menu_list = m_menu_popup.items ();
 
@@ -126,12 +128,12 @@ FileListView::FileListView ()
 
     menu_list.push_back (Gtk::Menu_Helpers::MenuElem(_("Expand _All"),
       sigc::mem_fun (*this, &FileListView::on_menu_popup_expand_all_clicked)));
-    
+
     menu_list.push_back (Gtk::Menu_Helpers::SeparatorElem());
 
     menu_list.push_back (Gtk::Menu_Helpers::MenuElem(_("_Collapse"),
       sigc::mem_fun (*this, &FileListView::on_menu_popup_collapse_clicked)));
-    
+
     m_menu_popup.accelerate (*this);
 }
 
@@ -145,7 +147,7 @@ FileListView::set_files (const std::vector<UString> &a_files)
     // NOTE: This assumes a sorted file list.  If the file list is not
     // sorted, this function will not work as expected
 
-    THROW_IF_FAIL (m_tree_model) ;
+    THROW_IF_FAIL (m_tree_model);
     if (!(m_tree_model->children ().empty ())) {
         m_tree_model->clear();
     }
@@ -160,8 +162,7 @@ FileListView::set_files (const std::vector<UString> &a_files)
     std::vector<UString>::const_iterator file_iter;
     for (file_iter = a_files.begin ();
          file_iter != a_files.end ();
-         ++file_iter)
-    {
+         ++file_iter) {
         vector<UString> path_components;
         // only add absolute paths to the treeview
         if (Glib::path_is_absolute (*file_iter)) {
@@ -190,29 +191,35 @@ FileListView::set_files (const std::vector<UString> &a_files)
                     // add as children of the root level
                     tree_iter = m_tree_model->append ();
                 } else {
-                    // add as children of the last matched item in the folder map
+                    // add as children of the last matched item
+                    // in the folder map
                     tree_iter = m_tree_model->append (
                         folder_map.rbegin ()->second->children ());
                 }
                 // build the full path name up to this element
                 Glib::ustring path = "/" + // add back the root element
-                    Glib::build_filename (
-                        std::vector<UString>(path_components.begin(),
-                                             iter + 1)); // we want to include this iter element in the array, so + 1
+                    Glib::build_filename
+                            (std::vector<UString> (path_components.begin(),
+                                                   iter + 1));// we want
+                                                              // to include
+                                                              // this iter
+                                                              // element in
+                                                              // the array,
+                                                              // so + 1
                 (*tree_iter)[m_columns.path] = path;
                 Glib::ustring display_name =
-                    Glib::filename_display_name (Glib::locale_to_utf8 (*iter));
+                    Glib::filename_display_name
+                                            (Glib::locale_to_utf8 (*iter));
                 (*tree_iter)[m_columns.display_name] =
                     display_name.empty () ? "/" : display_name;
                 if (Glib::file_test(path, Glib::FILE_TEST_IS_REGULAR)) {
                     (*tree_iter)[m_columns.stock_icon] = Gtk::Stock::FILE;
+                } else if (Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
+                    (*tree_iter)[m_columns.stock_icon] =
+                                                        Gtk::Stock::DIRECTORY;
                 }
-                else if (Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
-                    (*tree_iter)[m_columns.stock_icon] = Gtk::Stock::DIRECTORY;
-                }
-
-                // store the element in the folder map for use next time
-                // around
+                // store the element in the folder
+                // map for use next time around
                 folder_map.push_back (folder_map_t(*iter, tree_iter));
             }
         }
@@ -227,8 +234,8 @@ FileListView::get_selected_filenames (list<UString> &a_filenames) const
     list<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
 
     for (list<Gtk::TreeModel::Path>::iterator path_iter = paths.begin ();
-         path_iter != paths.end (); ++path_iter)
-    {
+         path_iter != paths.end ();
+         ++path_iter) {
         Gtk::TreeModel::iterator tree_iter =
             (m_tree_model->get_iter(*path_iter));
         a_filenames.push_back (UString((*tree_iter)[m_columns.path]));
@@ -243,11 +250,11 @@ FileListView::on_row_activated (const Gtk::TreeModel::Path &a_path,
 
     if (!a_col) {return;}
     Gtk::TreeIter it = m_tree_model->get_iter (a_path);
-    
+
     if (!it) {return;}
     Glib::ustring path = (*it)[m_columns.path];
-    
-    file_activated_signal.emit (path) ;
+
+    file_activated_signal.emit (path);
 
     NEMIVER_CATCH
 }
@@ -258,10 +265,10 @@ FileListView::on_file_list_selection_changed ()
     NEMIVER_TRY
 
     if (!get_selection ()->count_selected_rows ()) {
-        return ;
+        return;
     }
-    
-    files_selected_signal.emit () ;
+
+    files_selected_signal.emit ();
 
     NEMIVER_CATCH
 }
@@ -347,12 +354,13 @@ FileListView::expand_selected (bool recursive, bool collapse_if_expanded)
 void
 FileListView::expand_to_filename (const UString &a_filename)
 {
-    for (Gtk::TreeModel::iterator tree_iter = m_tree_model->children ().begin ();
-            tree_iter != m_tree_model->children ().end (); ++tree_iter)
-    {
-        Gtk::TreeModel::iterator iter = find_filename_recursive (tree_iter, a_filename);
-        if (iter)
-        {
+    Gtk::TreeModel::iterator tree_iter;
+    for (tree_iter = m_tree_model->children ().begin ();
+         tree_iter != m_tree_model->children ().end ();
+         ++tree_iter) {
+        Gtk::TreeModel::iterator iter =
+                    find_filename_recursive (tree_iter, a_filename);
+        if (iter) {
             expand_to_path (Gtk::TreeModel::Path(iter));
             break;
         }
@@ -360,7 +368,8 @@ FileListView::expand_to_filename (const UString &a_filename)
 }
 
 Gtk::TreeModel::iterator
-FileListView::find_filename_recursive(const Gtk::TreeModel::iterator &a_iter, const UString &a_filename)
+FileListView::find_filename_recursive (const Gtk::TreeModel::iterator &a_iter,
+                                       const UString &a_filename)
 {
     Gtk::TreeModel::iterator tree_iter;
     // first check the iter we were passed
@@ -370,22 +379,23 @@ FileListView::find_filename_recursive(const Gtk::TreeModel::iterator &a_iter, co
     // then check all of its children
     if (!a_iter->children ().empty ()) {
         for (tree_iter = a_iter->children ().begin ();
-                tree_iter != a_iter->children ().end ();
-                ++tree_iter) {
-            Gtk::TreeModel::iterator child_iter = find_filename_recursive (tree_iter, a_filename);
+             tree_iter != a_iter->children ().end ();
+             ++tree_iter) {
+            Gtk::TreeModel::iterator child_iter =
+                        find_filename_recursive (tree_iter, a_filename);
             if (child_iter) {
                 return child_iter;
             }
             // else continue on to the next child
         }
     }
-    // if we get to this point without having found it, return an invalid iter 
+    // if we get to this point without having found it, return an invalid iter
     return Gtk::TreeModel::iterator();
 }
 
 struct FileList::Priv : public sigc::trackable {
 public:
-    SafePtr<FileListView> tree_view ;
+    SafePtr<FileListView> tree_view;
 
     Glib::RefPtr<Gtk::ActionGroup> file_list_action_group;
     IDebuggerSafePtr debugger;
@@ -395,7 +405,7 @@ public:
         debugger (a_debugger),
         start_path (a_starting_path)
     {
-        build_tree_view () ;
+        build_tree_view ();
         debugger->files_listed_signal ().connect(
             sigc::mem_fun(*this, &FileList::Priv::on_files_listed_signal));
     }
@@ -403,7 +413,7 @@ public:
     void build_tree_view ()
     {
         if (tree_view) {return;}
-        tree_view.reset (new FileListView ()) ;
+        tree_view.reset (new FileListView ());
     }
 
     void on_files_listed_signal (const vector<UString> &a_files,
@@ -413,11 +423,13 @@ public:
 
         if (a_cookie.empty ()) {}
 
-        THROW_IF_FAIL (tree_view) ;
+        THROW_IF_FAIL (tree_view);
 
-        tree_view->set_files (a_files) ;
-        // this signal should only be called once per dialog -- the first time
-        // it loads up the list of files from the debugger.  So it should be OK
+        tree_view->set_files (a_files);
+        // this signal should only be called once per dialog
+        // -- the first time
+        // it loads up the list of files from the debugger.
+        // So it should be OK
         // to expand to the 'starting path' in this handler
         tree_view->expand_to_filename (start_path);
 
@@ -426,45 +438,46 @@ public:
 
 };//end class FileList::Priv
 
-FileList::FileList (IDebuggerSafePtr &a_debugger, const UString &a_starting_path)
+FileList::FileList (IDebuggerSafePtr &a_debugger,
+                    const UString &a_starting_path)
 {
     m_priv.reset (new Priv (a_debugger, a_starting_path));
 }
 
 FileList::~FileList ()
 {
-    LOG_D ("deleted", "destructor-domain") ;
+    LOG_D ("deleted", "destructor-domain");
 }
 
 Gtk::Widget&
 FileList::widget () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->tree_view) ;
-    return *m_priv->tree_view ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->tree_view);
+    return *m_priv->tree_view;
 }
 
 void
 FileList::update_content ()
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->debugger) ;
-    m_priv->debugger->list_files () ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->debugger);
+    m_priv->debugger->list_files ();
 }
 
 sigc::signal<void, const UString&>&
 FileList::file_activated_signal () const
 {
     THROW_IF_FAIL(m_priv);
-    THROW_IF_FAIL (m_priv->tree_view) ;
+    THROW_IF_FAIL (m_priv->tree_view);
     return m_priv->tree_view->file_activated_signal;
 }
 
 sigc::signal<void>&
 FileList::files_selected_signal () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->tree_view) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->tree_view);
     return m_priv->tree_view->files_selected_signal;
 }
 

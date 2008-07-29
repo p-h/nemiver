@@ -27,9 +27,10 @@
 #include "nmv-dialog.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
+
 class RemoteTargetDialog : public Dialog {
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
@@ -38,26 +39,26 @@ public:
         SERIAL_CONNECTION_TYPE
     };
 
-    RemoteTargetDialog (const UString &a_root_path) ;
-    virtual ~RemoteTargetDialog () ;
+    RemoteTargetDialog (const UString &a_root_path);
+    virtual ~RemoteTargetDialog ();
 
-    const UString& get_executable_path () const ;
-    void set_executable_path (const UString &a_path) ;
+    const UString& get_executable_path () const;
+    void set_executable_path (const UString &a_path);
 
-    const UString& get_solib_prefix_path () const ;
-    void set_solib_prefix_path (const UString &a_path) ;
+    const UString& get_solib_prefix_path () const;
+    void set_solib_prefix_path (const UString &a_path);
 
-    ConnectionType get_connection_type () ;
-    void set_connection_type (ConnectionType a_type) ;
+    ConnectionType get_connection_type ();
+    void set_connection_type (ConnectionType a_type);
 
-    const UString& get_server_address () const ;
-    void set_server_address (const UString &a_address) ;
+    const UString& get_server_address () const;
+    void set_server_address (const UString &a_address);
 
-    int get_server_port () const ;
-    void set_server_port (int a_port) ;
+    int get_server_port () const;
+    void set_server_port (int a_port);
 
-    const UString& get_serial_port_name () const ;
-    void set_serial_port_name (const UString &a_serial) ;
+    const UString& get_serial_port_name () const;
+    void set_serial_port_name (const UString &a_serial);
 };//end RemoteTargetDialog
 
 NEMIVER_END_NAMESPACE (nemiver)

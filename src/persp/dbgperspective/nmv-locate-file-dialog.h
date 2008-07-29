@@ -31,22 +31,22 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
-class UString ;
+class UString;
 }
 
-using nemiver::common::UString ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::SafePtr;
 
 class LocateFileDialog : public Dialog {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 public:
     LocateFileDialog (const UString &a_resource_root_path,
-                      const UString &a_file) ;
-    virtual ~LocateFileDialog () ;
+                      const UString &a_file);
+    virtual ~LocateFileDialog ();
 
-    UString file_location () const ;
-    void file_location (const UString &a_location) ;
+    UString file_location () const;
+    void file_location (const UString &a_location);
 };//end class nemiver
 
 NEMIVER_END_NAMESPACE (nemiver)

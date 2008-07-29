@@ -29,27 +29,27 @@
 #include "nmv-i-debugger.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
-class IDebugger ;
+class IDebugger;
 
 class VarInspectorDialog : public Dialog {
     //non copyable
-    VarInspectorDialog (const VarInspectorDialog &) ;
-    VarInspectorDialog& operator= (const VarInspectorDialog &) ;
+    VarInspectorDialog (const VarInspectorDialog &);
+    VarInspectorDialog& operator= (const VarInspectorDialog &);
 
     //tell me why you would want to extend this.
-    VarInspectorDialog () ;
+    VarInspectorDialog ();
 
     class Priv;
     SafePtr<Priv> m_priv;
 
 public:
     VarInspectorDialog (const UString &a_resource_root_path,
-                        IDebuggerSafePtr &a_debugger) ;
-    virtual ~VarInspectorDialog () ;
+                        IDebuggerSafePtr &a_debugger);
+    virtual ~VarInspectorDialog ();
 
-    UString variable_name () const ;
-    void inspect_variable (const UString &a_variable_name) ;
-    const IDebugger::VariableSafePtr variable () const ;
+    UString variable_name () const;
+    void inspect_variable (const UString &a_variable_name);
+    const IDebugger::VariableSafePtr variable () const;
 };//end class VarInspectorDialog
 
 NEMIVER_END_NAMESPACE (nemiver)

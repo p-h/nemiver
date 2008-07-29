@@ -32,21 +32,21 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class ChooseOverloadsDialog : public Dialog {
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
     ChooseOverloadsDialog
                 (const UString &a_res_root_path,
                  const vector<IDebugger::OverloadsChoiceEntry> &a_entries);
-    virtual ~ChooseOverloadsDialog () ;
+    virtual ~ChooseOverloadsDialog ();
 
     void set_overloads_choice_entries
                         (const vector<IDebugger::OverloadsChoiceEntry> &a_in);
     const std::vector<IDebugger::OverloadsChoiceEntry>&
                                             overloaded_functions () const;
-    void overloaded_function (int a_in) const ;
-    void clear () ;
+    void overloaded_function (int a_in) const;
+    void clear ();
 
 };//end ChooserOverloadsDialog
 

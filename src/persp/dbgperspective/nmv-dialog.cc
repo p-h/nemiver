@@ -32,36 +32,36 @@
 #include "nmv-ui-utils.h"
 #include "nmv-dialog.h"
 
-using namespace std ;
-using namespace nemiver::common ;
+using namespace std;
+using namespace nemiver::common;
 
 namespace nemiver {
 class Dialog::Priv {
-    Priv () ;
+    Priv ();
 public:
 
-    SafePtr<Gtk::Dialog> dialog ;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
+    SafePtr<Gtk::Dialog> dialog;
+    Glib::RefPtr<Gnome::Glade::Xml> glade;
 
     Priv (const UString &a_resource_root_path,
           const UString &a_glade_filename,
           const UString &a_widget_name)
     {
-        vector<string> path_elems ;
-        path_elems.push_back (Glib::locale_from_utf8 (a_resource_root_path)) ;
+        vector<string> path_elems;
+        path_elems.push_back (Glib::locale_from_utf8 (a_resource_root_path));
         path_elems.push_back ("glade");
         path_elems.push_back (a_glade_filename);
-        string glade_path = Glib::build_filename (path_elems) ;
+        string glade_path = Glib::build_filename (path_elems);
         if (!Glib::file_test (glade_path, Glib::FILE_TEST_IS_REGULAR)) {
-            THROW (UString ("could not find file ") + glade_path) ;
+            THROW (UString ("could not find file ") + glade_path);
         }
-        glade = Gnome::Glade::Xml::create (glade_path) ;
-        THROW_IF_FAIL (glade) ;
+        glade = Gnome::Glade::Xml::create (glade_path);
+        THROW_IF_FAIL (glade);
         dialog.reset
             (ui_utils::get_widget_from_glade<Gtk::Dialog> (glade,
-                                                           a_widget_name)) ;
-        THROW_IF_FAIL (dialog) ;
-        dialog->hide () ;
+                                                           a_widget_name));
+        THROW_IF_FAIL (dialog);
+        dialog->hide ();
     }
 };//end struct Dialog::Priv
 
@@ -71,23 +71,23 @@ Dialog::Dialog (const UString &a_resource_root_path,
 {
     m_priv.reset (new Priv (a_resource_root_path,
                             a_glade_filename,
-                            a_widget_name)) ;
+                            a_widget_name));
 }
 
 Gtk::Dialog&
 Dialog::widget () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->dialog) ;
-    return *m_priv->dialog ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->dialog);
+    return *m_priv->dialog;
 }
 
 const Glib::RefPtr<Gnome::Glade::Xml>
 Dialog::glade () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->glade) ;
-    return m_priv->glade ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->glade);
+    return m_priv->glade;
 }
 
 Dialog::~Dialog ()
@@ -97,17 +97,17 @@ Dialog::~Dialog ()
 int
 Dialog::run ()
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->dialog) ;
-    return m_priv->dialog->run () ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->dialog);
+    return m_priv->dialog->run ();
 }
 
 void
 Dialog::hide ()
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->dialog) ;
-    return m_priv->dialog->hide () ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->dialog);
+    return m_priv->dialog->hide ();
 }
 
 }//end namespace nemiver

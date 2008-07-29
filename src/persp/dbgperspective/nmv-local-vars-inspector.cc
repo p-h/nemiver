@@ -53,7 +53,7 @@ public:
 
     IWorkbench &workbench;
     IPerspective& perspective;
-    VarsTreeViewSafePtr tree_view ;
+    VarsTreeViewSafePtr tree_view;
     Glib::RefPtr<Gtk::TreeStore> tree_store;
     Gtk::TreeModel::iterator cur_selected_row;
     SafePtr<Gtk::TreeRowReference> local_variables_row_ref;
@@ -91,7 +91,7 @@ public:
         debugger = a_debugger;
         THROW_IF_FAIL (tree_view);
         tree_store = tree_view->get_tree_store ();
-        THROW_IF_FAIL (tree_store) ;
+        THROW_IF_FAIL (tree_store);
         re_init_tree_view ();
         connect_to_debugger_signals ();
         init_graphical_signals ();
@@ -753,10 +753,10 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
 
-        THROW_IF_FAIL (tree_view) ;
-        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection () ;
-        THROW_IF_FAIL (sel) ;
-        cur_selected_row = sel->get_selected () ;
+        THROW_IF_FAIL (tree_view);
+        Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection ();
+        THROW_IF_FAIL (sel);
+        cur_selected_row = sel->get_selected ();
 
         NEMIVER_CATCH
     }

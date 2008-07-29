@@ -37,12 +37,12 @@ class VarsTreeView;
 
 typedef SafePtr<VarsTreeView,
                 nemiver::ui_utils::WidgetRef,
-                nemiver::ui_utils::WidgetUnref> VarsTreeViewSafePtr ;
+                nemiver::ui_utils::WidgetUnref> VarsTreeViewSafePtr;
 
 class NEMIVER_API VarsTreeView : public Gtk::TreeView
 {
     public:
-        static VarsTreeViewSafePtr create () ;
+        static VarsTreeViewSafePtr create ();
         Glib::RefPtr<Gtk::TreeStore>& get_tree_store ();
 
     protected:

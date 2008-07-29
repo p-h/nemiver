@@ -34,27 +34,28 @@
 namespace Gtk {
     class Widget;
 }
-using nemiver::common::Object ;
-using nemiver::common::SafePtr ;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::UString ;
+using nemiver::common::Object;
+using nemiver::common::SafePtr;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::UString;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (Hex)
-class Editor ;
-typedef SafePtr<Editor, ObjectRef, ObjectUnref> EditorSafePtr ;
+
+class Editor;
+typedef SafePtr<Editor, ObjectRef, ObjectUnref> EditorSafePtr;
 
 class Editor : public Object {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 protected:
-    Editor (const DocumentSafePtr &a_document) ;
+    Editor (const DocumentSafePtr &a_document);
 
 public:
-    virtual ~Editor ()  ;
-    static EditorSafePtr create (const DocumentSafePtr &a_document) ;
+    virtual ~Editor ();
+    static EditorSafePtr create (const DocumentSafePtr &a_document);
     void set_cursor (int);
     void set_cursor_xy (int, int);
     void set_nibble (int);
@@ -73,8 +74,6 @@ public:
     void set_geometry (int cpl, int vis_lines);
     void get_geometry (int& cpl, int& vis_lines) const;
 
-    //Pango::FontMetrics load_font (const UString& font_name); 
-
     void copy_to_clipboard ();
     void cut_to_clipboard ();
     void paste_from_clipboard ();
@@ -84,10 +83,7 @@ public:
     void clear_selection ();
     void delete_selection ();
 
-    //GtkHex_AutoHighlight *insert_autohighlight (const gchar *search, int len,
-            //const gchar *colour);
-    //void delete_autohighlight (GtkHex_AutoHighlight *ahl);
-    virtual Gtk::Container& get_widget () const ;
+    virtual Gtk::Container& get_widget () const;
 };//end class Editor
 
 NEMIVER_END_NAMESPACE (Hex)

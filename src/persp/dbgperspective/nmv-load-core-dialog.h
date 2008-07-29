@@ -31,24 +31,24 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
-class UString ;
+class UString;
 }
 
-using nemiver::common::UString ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::SafePtr;
 
 class LoadCoreDialog : public Dialog {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 public:
-    LoadCoreDialog (const UString &a_resource_root_path) ;
-    virtual ~LoadCoreDialog () ;
+    LoadCoreDialog (const UString &a_resource_root_path);
+    virtual ~LoadCoreDialog ();
 
-    UString program_name () const ;
-    void program_name (const UString &a_name) ;
+    UString program_name () const;
+    void program_name (const UString &a_name);
 
-    UString core_file () const ;
-    void core_file (const UString &) ;
+    UString core_file () const;
+    void core_file (const UString &);
 
 };//end class nemiver
 

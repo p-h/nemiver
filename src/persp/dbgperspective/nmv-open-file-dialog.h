@@ -32,21 +32,23 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 namespace common {
-class UString ;
+class UString;
 }
 
-using nemiver::common::UString ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::SafePtr;
 
 class OpenFileDialog : public Dialog {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 public:
-    OpenFileDialog (const UString &a_resource_root_path, IDebuggerSafePtr& a_debugger, const UString &a_working_dir) ;
-    virtual ~OpenFileDialog () ;
+    OpenFileDialog (const UString &a_resource_root_path,
+                    IDebuggerSafePtr& a_debugger,
+                    const UString &a_working_dir);
+    virtual ~OpenFileDialog ();
 
-    void get_filenames (list<UString> &a_filenames) const ;
+    void get_filenames (list<UString> &a_filenames) const;
 
 };//end class nemiver
 

@@ -30,26 +30,26 @@
 #include "nmv-dialog.h"
 
 namespace common {
-    class UString ;
+    class UString;
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-using nemiver::common::IProcMgr ;
+using nemiver::common::IProcMgr;
 
 class ProcListDialog : public Dialog {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
     ProcListDialog (const UString &a_root_path,
-                    IProcMgr &a_proc_mgr) ;
-    virtual ~ProcListDialog () ;
-    virtual gint run () ;
+                    IProcMgr &a_proc_mgr);
+    virtual ~ProcListDialog ();
+    virtual gint run ();
 
-    bool has_selected_process () ;
-    bool get_selected_process (IProcMgr::Process &a_proc/*out param*/) ;
+    bool has_selected_process ();
+    bool get_selected_process (IProcMgr::Process &a_proc/*out param*/);
 };//end class ProcListDialog
 NEMIVER_END_NAMESPACE (nemiver)
 

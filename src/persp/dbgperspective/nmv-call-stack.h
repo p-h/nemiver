@@ -32,10 +32,10 @@
 #include "common/nmv-object.h"
 #include "nmv-i-debugger.h"
 
-using namespace std ;
-using nemiver::common::SafePtr ;
-using nemiver::common::Object ;
-using nemiver::IDebugger ;
+using namespace std;
+using nemiver::common::SafePtr;
+using nemiver::common::Object;
+using nemiver::IDebugger;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -45,28 +45,28 @@ class IPerspective;
 class NEMIVER_API CallStack : public Object {
     //non copyable
 
-    CallStack (const CallStack &) ;
-    CallStack& operator= (const CallStack &) ;
+    CallStack (const CallStack &);
+    CallStack& operator= (const CallStack &);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 protected:
-    CallStack () ;
+    CallStack ();
 
 public:
 
     CallStack (IDebuggerSafePtr &a_debugger, IWorkbench& a_workbench,
             IPerspective& a_perspective);
-    virtual ~CallStack () ;
-    bool is_empty () ;
-    const vector<IDebugger::Frame>& frames () const ;
-    void update_stack () ;
-    void clear () ;
-    Gtk::Widget& widget () const ;
+    virtual ~CallStack ();
+    bool is_empty ();
+    const vector<IDebugger::Frame>& frames () const;
+    void update_stack ();
+    void clear ();
+    Gtk::Widget& widget () const;
     sigc::signal<void,
                  int,
-                 const IDebugger::Frame&>& frame_selected_signal () const ;
+                 const IDebugger::Frame&>& frame_selected_signal () const;
 };//end class CallStack
 
 NEMIVER_END_NAMESPACE (nemiver)

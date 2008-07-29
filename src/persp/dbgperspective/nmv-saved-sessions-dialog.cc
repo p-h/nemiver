@@ -35,8 +35,8 @@
 #include "nmv-saved-sessions-dialog.h"
 #include "nmv-ui-utils.h"
 
-using namespace std ;
-using namespace nemiver::common ;
+using namespace std;
+using namespace nemiver::common;
 
 namespace nemiver {
 
@@ -49,21 +49,21 @@ struct SessionModelColumns : public Gtk::TreeModel::ColumnRecord
     SessionModelColumns() { add (name); add (id); add (session); }
 };
 
-class SavedSessionsDialog::Priv
-{
+class SavedSessionsDialog::Priv {
 public:
     SafePtr<Gtk::TreeView> treeview_sessions;
     Gtk::Button *okbutton;
     SessionModelColumns session_columns;
     Glib::RefPtr<Gtk::ListStore> model;
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade ;
+    Glib::RefPtr<Gnome::Glade::Xml> glade;
 
 private:
-    Priv () ;
+    Priv ();
 
 public:
-    Priv (Gtk::Dialog &a_dialog, const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+    Priv (Gtk::Dialog &a_dialog,
+          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
         okbutton (0),
         model(Gtk::ListStore::create (session_columns)),
         dialog (a_dialog),
@@ -74,9 +74,10 @@ public:
     void init (ISessMgr *a_session_manager)
     {
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (glade, "okbutton1") ;
-        treeview_sessions.reset (ui_utils::get_widget_from_glade<Gtk::TreeView>
-                                                (glade, "treeview_sessions")) ;
+            ui_utils::get_widget_from_glade<Gtk::Button> (glade, "okbutton1");
+        treeview_sessions.reset
+            (ui_utils::get_widget_from_glade<Gtk::TreeView>
+                                            (glade, "treeview_sessions"));
         okbutton->set_sensitive (false);
         THROW_IF_FAIL (a_session_manager);
         list<ISessMgr::Session> sessions = a_session_manager->sessions ();
@@ -86,7 +87,8 @@ public:
         {
             Gtk::TreeModel::iterator treeiter = model->append ();
             (*treeiter)[session_columns.id] = iter->session_id ();
-            (*treeiter)[session_columns.name] = iter->properties ()["sessionname"];
+            (*treeiter)[session_columns.name] =
+                                        iter->properties ()["sessionname"];
             (*treeiter)[session_columns.session] = *iter;
         }
 
@@ -95,12 +97,15 @@ public:
         treeview_sessions->append_column (_("ID"), session_columns.id);
         treeview_sessions->append_column (_("Session"), session_columns.name);
 
-        // update the sensitivity of the OK button when the selection is changed
+        // update the sensitivity of the OK
+        // button when the selection is changed
         treeview_sessions->get_selection ()->signal_changed ().connect
-            (sigc::mem_fun(*this, &SavedSessionsDialog::Priv::on_selection_changed));
+            (sigc::mem_fun(*this,
+                           &SavedSessionsDialog::Priv::on_selection_changed));
 
-        treeview_sessions->signal_row_activated ().connect (
-                sigc::mem_fun(*this, &SavedSessionsDialog::Priv::on_row_activated));
+        treeview_sessions->signal_row_activated ().connect
+            (sigc::mem_fun(*this,
+                           &SavedSessionsDialog::Priv::on_row_activated));
     }
 
     void on_selection_changed ()
@@ -116,14 +121,14 @@ public:
         if (a_path.get_depth () || a_col) {}
         dialog.activate_default();
     }
-};
+}; //end struct SavedSessionsDialog::Priv
 
 SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
                                           ISessMgr *a_session_manager) :
     Dialog(a_root_path, "savedsessionsdialog.glade", "savedsessionsdialog")
 {
     m_priv.reset (new Priv (widget (), glade ()));
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
     m_priv->init (a_session_manager);
 }
 

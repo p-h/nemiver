@@ -31,9 +31,10 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
 
-namespace nemiver {
-using nemiver::common::SafePtr ;
-using nemiver::common::UString ;
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+
+using nemiver::common::SafePtr;
+using nemiver::common::UString;
 
 /// display the list of source files that got compiled
 /// to produce the executable being currently debugged.
@@ -43,26 +44,26 @@ using nemiver::common::UString ;
 ///file list.
 class NEMIVER_API FileList : public nemiver::common::Object {
     //non copyable
-    FileList (const FileList&) ;
-    FileList& operator= (const FileList&) ;
+    FileList (const FileList&);
+    FileList& operator= (const FileList&);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
-    FileList (IDebuggerSafePtr &a_debugger, const UString &a_starting_path) ;
-    virtual ~FileList () ;
-    Gtk::Widget& widget () const ;
-    sigc::signal<void, const UString&>& file_activated_signal () const ;
-    sigc::signal<void>& files_selected_signal () const ;
+    FileList (IDebuggerSafePtr &a_debugger, const UString &a_starting_path);
+    virtual ~FileList ();
+    Gtk::Widget& widget () const;
+    sigc::signal<void, const UString&>& file_activated_signal () const;
+    sigc::signal<void>& files_selected_signal () const;
     void get_filenames (list<UString> &a_filenames) const;
-    void update_content () ;
+    void update_content ();
     void expand_to_filename (const UString &a_filename);
 
 };//end FileList
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_FILE_LIST_H__
 

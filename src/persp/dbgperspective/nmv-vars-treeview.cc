@@ -27,7 +27,7 @@
 #include "nmv-vars-treeview.h"
 #include "nmv-variables-utils.h"
 
-namespace vutil=nemiver::variables_utils2 ;
+namespace vutil=nemiver::variables_utils2;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -44,31 +44,31 @@ VarsTreeView::VarsTreeView (Glib::RefPtr<Gtk::TreeStore>& model) :
     Gtk::TreeView (model),
     m_tree_store (model)
 {
-    set_headers_clickable (true) ;
-    get_selection ()->set_mode (Gtk::SELECTION_SINGLE) ;
+    set_headers_clickable (true);
+    get_selection ()->set_mode (Gtk::SELECTION_SINGLE);
     //create the columns of the tree view
     append_column (_("Variable"),
-                   vutil::get_variable_columns ().name) ;
-    Gtk::TreeViewColumn * col = get_column (0) ;
-    THROW_IF_FAIL (col) ;
-    col->set_resizable (true) ;
+                   vutil::get_variable_columns ().name);
+    Gtk::TreeViewColumn * col = get_column (0);
+    THROW_IF_FAIL (col);
+    col->set_resizable (true);
     col->add_attribute (*col->get_first_cell_renderer (),
                         "foreground-gdk",
-                        vutil::VariableColumns::FG_COLOR_OFFSET) ;
+                        vutil::VariableColumns::FG_COLOR_OFFSET);
 
-    append_column (_("Value"), vutil::get_variable_columns ().value) ;
-    col = get_column (1) ;
-    THROW_IF_FAIL (col) ;
-    col->set_resizable (true) ;
+    append_column (_("Value"), vutil::get_variable_columns ().value);
+    col = get_column (1);
+    THROW_IF_FAIL (col);
+    col->set_resizable (true);
     col->add_attribute (*col->get_first_cell_renderer (),
                         "foreground-gdk",
-                        vutil::VariableColumns::FG_COLOR_OFFSET) ;
+                        vutil::VariableColumns::FG_COLOR_OFFSET);
 
     append_column (_("Type"),
                    vutil::get_variable_columns ().type_caption);
-    col = get_column (2) ;
-    THROW_IF_FAIL (col) ;
-    col->set_resizable (true) ;
+    col = get_column (2);
+    THROW_IF_FAIL (col);
+    col->set_resizable (true);
 }
 
 Glib::RefPtr<Gtk::TreeStore>&

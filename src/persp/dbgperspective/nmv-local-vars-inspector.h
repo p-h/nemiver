@@ -32,35 +32,35 @@
 #include "nmv-i-debugger.h"
 
 namespace Gtk {
-    class Widget ;
+    class Widget;
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class IWorkbench ;
+class IWorkbench;
 
 class NEMIVER_API LocalVarsInspector : public nemiver::common::Object {
     //non copyable
-    LocalVarsInspector (const LocalVarsInspector&) ;
-    LocalVarsInspector& operator= (const LocalVarsInspector&) ;
+    LocalVarsInspector (const LocalVarsInspector&);
+    LocalVarsInspector& operator= (const LocalVarsInspector&);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 protected:
-    LocalVarsInspector () ;
+    LocalVarsInspector ();
 
 public:
 
     LocalVarsInspector (IDebuggerSafePtr &a_dbg,
                          IWorkbench &a_wb,
-                         IPerspective &a_perspective) ;
-    virtual ~LocalVarsInspector () ;
-    Gtk::Widget& widget () const ;
+                         IPerspective &a_perspective);
+    virtual ~LocalVarsInspector ();
+    Gtk::Widget& widget () const;
     void set_local_variables
-                    (const std::list<IDebugger::VariableSafePtr> &a_vars) ;
-    void show_local_variables_of_current_function () ;
-    void re_init_widget () ;
+                    (const std::list<IDebugger::VariableSafePtr> &a_vars);
+    void show_local_variables_of_current_function ();
+    void re_init_widget ();
 };//end LocalVarsInspector
 
 NEMIVER_END_NAMESPACE (nemiver)
