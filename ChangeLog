@@ -1,3 +1,9 @@
+2008-07-28  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  Properly rebuild Notebook pages access maps when a page is removed.
+	  This should fix #545211.
+
 2008-07-27  Dodji Seketeli  <dodji@gnome.org>
 
 	* autogen.sh: fix static boot_unit_test_framework detection on 64 bits

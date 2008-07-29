@@ -463,6 +463,8 @@ public:
 
     void close_opened_files () ;
 
+    void update_file_maps ();
+
     bool reload_file (const UString &a_file) ;
     bool reload_file () ;
 
@@ -1490,6 +1492,7 @@ DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num
 
     NEMIVER_TRY
     m_priv->current_page_num = a_page_num;
+    LOG_DD ("current_page_num: " << m_priv->current_page_num);
     NEMIVER_CATCH
 }
 
@@ -3383,18 +3386,30 @@ DBGPerspective::get_current_source_editor ()
 {
     THROW_IF_FAIL (m_priv) ;
 
-    if (!m_priv->sourceviews_notebook) {return NULL;}
+    if (!m_priv->sourceviews_notebook) {
+        LOG_ERROR ("NULL m_priv->sourceviews_notebook");
+        return NULL;
+    }
 
     if (m_priv->sourceviews_notebook
         && !m_priv->sourceviews_notebook->get_n_pages ()) {
+        LOG_ERROR ("Empty m_priv->sourceviews_notebook");
         return NULL ;
     }
+
+    LOG_DD ("current pagenum: "
+            << m_priv->current_page_num);
 
     map<int, SourceEditor*>::iterator iter, nil ;
     nil = m_priv->pagenum_2_source_editor_map.end () ;
 
-    iter = m_priv->pagenum_2_source_editor_map.find (m_priv->current_page_num) ;
-    if (iter == nil) {return NULL ;}
+    iter = m_priv->pagenum_2_source_editor_map.find
+                                                (m_priv->current_page_num) ;
+    if (iter == nil) {
+        LOG_ERROR ("Could not find page num: "
+                   << m_priv->current_page_num);
+        return NULL ;
+    }
 
     return iter->second ;
 }
@@ -4467,12 +4482,7 @@ DBGPerspective::close_file (const UString &a_path)
             << (int) (page_num)
             << ", path " << a_path) ;
     m_priv->sourceviews_notebook->remove_page (page_num) ;
-    m_priv->path_2_pagenum_map.erase (a_path) ;
-    std::string basename = Glib::path_get_basename
-                                            (Glib::filename_from_utf8 (a_path));
-    m_priv->basename_2_pagenum_map.erase (Glib::filename_from_utf8 (basename)) ;
-    m_priv->pagenum_2_source_editor_map.erase (page_num) ;
-    m_priv->pagenum_2_path_map.erase (page_num) ;
+    update_file_maps ();
 
     if (!get_n_pages ()) {
         m_priv->opened_file_action_group->set_sensitive (false) ;
@@ -4500,6 +4510,37 @@ DBGPerspective::close_opened_files ()
         LOG_DD ("closing page " << it->first) ;
         UString path = it->first ;
         close_file (path) ;
+    }
+}
+
+/// Walks the list of source files opened
+/// in the Notebook and rebuilds the different maps
+/// that we use to speed up access.
+/// This should be used when a notebook tab is closed.
+void
+DBGPerspective::update_file_maps ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    m_priv->path_2_pagenum_map.clear ();
+    m_priv->basename_2_pagenum_map.clear ();
+    m_priv->pagenum_2_source_editor_map.clear ();
+    m_priv->pagenum_2_path_map.clear ();
+
+    SourceEditor *se = NULL;
+    UString path, basename;
+    int nb_pages = m_priv->sourceviews_notebook->get_n_pages ();
+
+    for (int i = 0; i < nb_pages; ++i) {
+        se = dynamic_cast<SourceEditor*>
+            (m_priv->sourceviews_notebook->get_nth_page (i));
+        THROW_IF_FAIL (se);
+        se->get_path (path);
+        basename = Glib::path_get_basename (path.raw ());
+        m_priv->path_2_pagenum_map[path] = i;
+        m_priv->basename_2_pagenum_map[basename.raw ()] = i;
+        m_priv->pagenum_2_source_editor_map[i] = se;
+        m_priv->pagenum_2_path_map[i] = path;
     }
 }
 
