@@ -1,3 +1,8 @@
+2008-07-30  Dodji Seketeli  <dodji@gnome.org>
+
+	* NEWS: update for 0.6.0
+	* configure.ac: bump version number to 0.6.0
+
 2008-07-30  Dodji Seketeli  <dodji@gnome.org>o
 
 	* src/uicommon/*, src/persp/dbgperspective/*:

@@ -1,3 +1,44 @@
+0.6.0 Release
+==============
+
+New Features
+------------
+
+[Dodji Seketeli]
+
+    * conditional breakpoints
+    * arbitrary function calls
+
+Fixes
+-----
+
+[Dodji Seketeli]
+
+    * various code cleanups
+    * add --version command line switch
+    * support running autogen.sh from other directories dans srcdir
+    * #515525 - Arrow keys don't work to navigate through source file
+    * #396277 - implement lazy evaluation of status widgets
+    * #543798 - don't pop up 'reload file' dialog all the time
+    * #543797 - display a meaningful error when inferior is not found
+    * #545211 - Bad index management when closing a tab
+
+[Jonathon Jongsma]
+
+    * on going HIG compliance assurance
+    * add preferences for controlling behaviour or reloading source files
+
+[Luca Bruno]
+
+    * #540934 - documentation docbook XML compliance
+
+Translations
+------------
+
+    * [ja] Takeshi AIHANA
+    * [es] Jorge Gonzalez
+    * [nb] Kjartan Maraas
+
 0.5.3 Release
 
 Fixes
