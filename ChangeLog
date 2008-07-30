@@ -1,5 +1,10 @@
 2008-07-30  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/uicommon/nmv-hex-document.cc:
+	  Smallish build fix.
+
+2008-07-30  Dodji Seketeli  <dodji@gnome.org>
+
 	* NEWS: update for 0.6.0
 	* configure.ac: bump version number to 0.6.0
 

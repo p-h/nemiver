@@ -53,7 +53,7 @@ struct HexDocUnref {
 };
 
 struct Document::Priv {
-    SafePtr<::HexDocument, HexDocRef, HexDocUnref> document;
+    SafePtr< ::HexDocument, HexDocRef, HexDocUnref> document;
     mutable sigc::signal<void, HexChangeData*> m_signal_document_changed;
 
     Priv (const std::string& filename) :
