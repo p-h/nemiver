@@ -1,5 +1,10 @@
 2008-07-30  Dodji Seketeli  <dodji@gnome.org>
 
+	* tests/test-var-walker.cc b/tests/test-var-walker.cc: unfuck
+	  this test.
+
+2008-07-30  Dodji Seketeli  <dodji@gnome.org>
+
 	* configure.ac: bump to 0.6.1
 
 2008-07-30  Dodji Seketeli  <dodji@gnome.org>

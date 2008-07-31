@@ -218,7 +218,7 @@ test_main (int argc, char **argv)
     debugger->set_breakpoint ("func3") ;
 
     var_list_walker ()["main"] = create_var_list_walker (debugger) ;
-    expected_variables ()["main"] = " person" ;
+    expected_variables ()["main"] = " person a_argc a_argv" ;
     var_list_walker ()["func1"] = create_var_list_walker (debugger) ;
     expected_variables ()["func1"] = " i" ;
     var_list_walker ()["func2"] = create_var_list_walker (debugger) ;
@@ -246,6 +246,7 @@ test_main (int argc, char **argv)
     if (actual_variables ()["func1"] != expected_variables ()["func1"]) {
         string str ("func1 vars: ") ;
         str += actual_variables ()["func1"] ;
+        MESSAGE ("actual variables of");
         BOOST_FAIL (str.c_str ()) ;
     }
 
