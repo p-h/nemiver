@@ -1,5 +1,14 @@
 2008-07-30  Dodji Seketeli  <dodji@gnome.org>
 
+	* configure.ac: bump to 0.6.1
+
+2008-07-30  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/persp/dbgperspective/Makefile.am: add nmv-conf-key.h to the
+	  distribution.
+
+2008-07-30  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/uicommon/nmv-hex-document.cc:
 	  Smallish build fix.
 
