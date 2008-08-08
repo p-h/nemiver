@@ -4,7 +4,7 @@ Priority: optional
 Vcs-Git: https://git.unstable.it/packages.git/
 Vcs-Browser: https://git.unstable.it/?p=packages.git;a=shortlog;h=nemiver
 Maintainer: Luca Bruno <lucab@debian.org>
-Uploaders: Andrea Corradi <lash@semailer.com>
+Uploaders: Andrea Corradi <lash@unstable.it>
 Build-Depends: debhelper (>= 5.0.51~), quilt, gdb, libxml-parser-perl, 
 	       pkg-config (>= 0.9), gnome-doc-utils (>= 0.3.2),libboost-dev, 
 	       libxml2-dev (>= 2.6.22), libglib2.0-dev (>= 2.8.5), 

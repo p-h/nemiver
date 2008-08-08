@@ -5,6 +5,7 @@ nemiver (0.6.1-1) unstable; urgency=low
     + arbitrary function calls
     + better HIG compliance
   * Bumped Standards-Version to 3.8.0, added README.source for quilt
+  * Updated Andrea's mail address
 
  -- Luca Bruno <lucab@debian.org>  Sun, 03 Aug 2008 19:44:27 +0200
 
