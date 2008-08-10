@@ -160,7 +160,7 @@ AM_CONDITIONAL(BUILD_MEMORYVIEW, test x$ENABLE_MEMORYVIEW = xyes)
 
 AC_ARG_ENABLE(sourceviewmm2,
               AC_HELP_STRING([--enable-sourceviewmm2=yes|no],
-                            [enable the memory view hex editor (default is auto)]),
+                            [use gtksourceviewmm-2.0 (default is auto)]),
               ENABLE_SOURCEVIEWMM2=$enableval,
               [PKG_CHECK_EXISTS([gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM2_VERSION], [ENABLE_SOURCEVIEWMM2=yes], [ENABLE_SOURCEVIEWMM2=no])])
 if test x$ENABLE_SOURCEVIEWMM2 = xyes ; then

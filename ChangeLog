@@ -1,3 +1,8 @@
+2008-08-10  Dodji Seketeli  <dodji@gnome.org>
+
+	* configure.ac: Fix a help string typo.
+	Patch sent by Stephane Wirtel.
+
 2008-07-30  Dodji Seketeli  <dodji@gnome.org>
 
 	* NEWS: update this for 0.6.1
