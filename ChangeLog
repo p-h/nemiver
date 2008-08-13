@@ -1,3 +1,8 @@
+2008-08-13  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+	* configure.ac: fix the boost unit test static library detection (a space
+	was missing so two of the candidates got concatenated together)
+
 2008-08-10  Dodji Seketeli  <dodji@gnome.org>
 
 	* configure.ac: Fix a help string typo.
