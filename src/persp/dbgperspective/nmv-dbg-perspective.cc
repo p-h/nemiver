@@ -5595,12 +5595,40 @@ void
 DBGPerspective::set_breakpoint_using_dialog ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     SetBreakpointDialog dialog (plugin_path ());
 
+    // Checkout if the user did select a function number.
+    // If she did, pre-fill the breakpoint setting dialog with the
+    // function name so that if the user hits enter, a breakpoint is set
+    // to that function by default.
+
+    SourceEditor *source_editor = get_current_source_editor ();
+    THROW_IF_FAIL (source_editor);
+    Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+                        source_editor->source_view ().get_source_buffer ();
+    THROW_IF_FAIL (buffer);
+
+    UString function_name;
+    Gtk::TextIter start, end;
+    if (buffer->get_selection_bounds (start, end)) {
+        function_name = buffer->get_slice (start, end);
+    }
+    if (!function_name.empty ()) {
+        // really the default function name to break into, by default.
+        dialog.mode (SetBreakpointDialog::MODE_FUNCTION_NAME);
+        dialog.function (function_name);
+    }
+
+    // Phiew. Enough set up for now. Time to launch the dialog and get the
+    // ball rolling.
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
         return;
     }
+
+    // Get what the user set in the dialog and really ask the backend
+    // to set the breakpoint accordingly.
     set_breakpoint_from_dialog (dialog);
 }
 

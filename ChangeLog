@@ -38,6 +38,15 @@
 
 2008-08-10  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::set_breakpoint_using_dialog): If a function
+	  name is selected when the user hits <ctrl-b> to set a breakpoint,
+	  make sure the breakpoint is set to that function name by default.
+	  This should close:
+	  #547169 -  Set breakpoint to selected function name by default.
+
+2008-08-10  Dodji Seketeli  <dodji@gnome.org>
+
 	* configure.ac: Fix a help string typo.
 	Patch sent by Stephane Wirtel.
 
