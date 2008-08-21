@@ -82,7 +82,8 @@ public:
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
 
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton");
+            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+                                                          "okbutton");
         THROW_IF_FAIL (okbutton);
         okbutton->set_sensitive (false);
 
@@ -165,11 +166,10 @@ public:
 
         switch (a_mode) {
             case MODE_SOURCE_LOCATION:
-                // make sure there's something in both entries
-                if (!entry_filename->get_text ().empty () &&
-                    !entry_line->get_text ().empty () &&
-                    // make sure the line number field is a valid number
-                    atoi(entry_line->get_text ().c_str ())) {
+                // make sure there's something in the line number entry,
+                // at least, and that something is a valid number.
+                if (!entry_line->get_text ().empty ()
+                    && atoi (entry_line->get_text ().c_str ())) {
                     okbutton->set_sensitive (true);
                 } else {
                     okbutton->set_sensitive (false);

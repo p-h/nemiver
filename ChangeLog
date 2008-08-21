@@ -24,6 +24,20 @@
 
 2008-08-10  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:
+	  (SetBreakpointDialog::Priv::update_ok_button_sensitivity):
+	  In MODE_SOURCE_LOCATION mode, allow the OK button to be
+	  sensitive even when the user only typed in the line number.
+	  It should not be mandatory to type in the file name.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::set_breakpoint_from_dialog):
+	  If the user only typed the line number of the breakpoint to set,
+	  assume she wants to set the breakpoint in the current file.
+	  This should close:
+	  #545842 - Missing shortcut to set a breakpoint in current file.
+
+2008-08-10  Dodji Seketeli  <dodji@gnome.org>
+
 	* configure.ac: Fix a help string typo.
 	Patch sent by Stephane Wirtel.
 

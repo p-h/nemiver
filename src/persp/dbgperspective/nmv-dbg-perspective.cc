@@ -5536,7 +5536,17 @@ DBGPerspective::set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog)
             {
                 UString filename;
                 filename = a_dialog.file_name ();
-                THROW_IF_FAIL (filename != "");
+                if (filename.empty ()) {
+                    // if the user didn't set any filename, let's assume
+                    // she wants to set a breakpoint in the current file.
+                    SourceEditor *source_editor =
+                                        get_current_source_editor ();
+                    THROW_IF_FAIL (source_editor);
+                    source_editor->get_file_name (filename);
+                    THROW_IF_FAIL (!filename.empty ());
+                    LOG_DD ("setting filename to current file name: "
+                            << filename);
+                }
                 int line = a_dialog.line_number ();
                 LOG_DD ("setting breakpoint in file "
                         << filename << " at line " << line);
