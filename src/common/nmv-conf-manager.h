@@ -76,6 +76,10 @@ public:
 
     static Config& parse_user_config_file (bool a_create_if_not_exist=true) ;
 
+    static bool user_config_dir_exists ();
+
+    static const std::string& get_user_config_dir_path ();
+
     static void create_default_config_file (const UString a_path) ;
 
     static void create_default_config_file (std::ostream &a_ostream) ;

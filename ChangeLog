@@ -1,3 +1,22 @@
+2008-08-11  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/common/nmv-conf-manager.cc,h:
+	  (ConfManager::user_config_dir_exists()): New entry point.
+	  (ConfManager::get_user_config_dir_path()): Likewise.
+	* src/persp/dbgperspective/nmv-sess-mgr.cc:
+	  (struct SessMgr::Priv::get_db_file_path()): New entry point.
+	  (struct SessMgr::Priv::db_file_path_exists): Likewise.
+	  (struct SessMgr::Priv::create_db ): Do access the connection only
+	  using its accessor. It guarantees that the connection is
+	  instantiated when we need it.
+	  (struct SessMgr::Priv::drop_db): Likewise.
+	  (struct SessMgr::Priv::init_db): Don't try to drop the database
+	  tables if it is obvious that no database exists yet. Create
+	  the databases tables straight away instead.
+
+	  This entry should fix bug:
+	  #523377 - first-run prints sql-related errors to console.
+
 2008-08-13  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
 	* configure.ac: fix the boost unit test static library detection (a space

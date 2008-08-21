@@ -28,6 +28,7 @@
 #include "common/nmv-tools.h"
 #include "common/nmv-transaction.h"
 #include "common/nmv-sql-statement.h"
+#include "common/nmv-conf-manager.h"
 #include "nmv-ui-utils.h"
 #include "nmv-sess-mgr.h"
 
@@ -40,6 +41,7 @@ using nemiver::common::Transaction;
 using nemiver::common::SQLStatement;
 
 static const char *REQUIRED_DB_SCHEMA_VERSION = "1.3";
+static const char *DB_FILE_NAME = "nemivercommon.db";
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -89,7 +91,7 @@ struct SessMgr::Priv {
     ConnectionSafePtr connection ()
     {
         if (!conn) {
-            conn= ConnectionManager::create_db_connection ();
+            conn = ConnectionManager::create_db_connection ();
         }
         THROW_IF_FAIL (conn);
         return conn;
@@ -114,12 +116,34 @@ struct SessMgr::Priv {
         return Glib::locale_to_utf8 (path);
     }
 
+    const string& get_db_file_path () const
+    {
+        static string db_file_path;
+        if (db_file_path.empty ()) {
+            vector<string> path_elems;
+            path_elems.push_back (ConfManager::get_user_config_dir_path ());
+            path_elems.push_back (DB_FILE_NAME);
+            db_file_path = Glib::build_filename (path_elems);
+        }
+        LOG_DD ("db_file_path: " << db_file_path);
+        return db_file_path;
+    }
+
+    bool db_file_path_exists () const
+    {
+        if (Glib::file_test (get_db_file_path (), Glib::FILE_TEST_EXISTS)) {
+            LOG_DD ("could not find file: " << get_db_file_path ());
+            return true;
+        }
+        return false;
+    }
+
     bool create_db ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         UString path_to_script = path_to_create_tables_script ();
-        Transaction transaction (*conn);
+        Transaction transaction (*connection ());
         return tools::execute_sql_command_file
                                         (path_to_script,
                                          transaction,
@@ -131,7 +155,7 @@ struct SessMgr::Priv {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         UString path_to_script = path_to_drop_tables_script ();
-        Transaction transaction (*conn);
+        Transaction transaction (*connection ());
         return tools::execute_sql_command_file
                                         (path_to_script,
                                          transaction,
@@ -163,9 +187,14 @@ struct SessMgr::Priv {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
-        //if the db version is not what we expect, create
-        //a new db with the schema we expect.
-        if (!check_db_version ()) {
+
+        // If there is not db, create a new one with 
+        // the schema we expect.
+        if (!db_file_path_exists ()) {
+            THROW_IF_FAIL (create_db ());
+        } else if (!check_db_version ()) {
+            // If the db version is not what we expect, create
+            // a new db with the schema we expect.
             drop_db ();
             THROW_IF_FAIL (create_db ());
         }

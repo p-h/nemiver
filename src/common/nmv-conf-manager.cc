@@ -36,6 +36,10 @@
 #include "nmv-conf-manager.h"
 #include "nmv-env.h"
 
+static const char *NEMIVER_CONFIG_TOP_DIR_NAME = ".nemiver";
+static const char *NEMIVER_CONFIG_DIR_NAME = "config";
+static const char *NEMIVER_CONFIG_FILE_NAME = "nemiver.conf";
+
 using namespace std ;
 using namespace Glib ;
 
@@ -261,8 +265,8 @@ ConfManager::parse_user_config_file (bool a_create_if_not_exists)
     string home_dir = get_home_dir () ;
     vector<string> path_elems ;
     path_elems.push_back (home_dir) ;
-    path_elems.push_back (".nemiver") ;
-    path_elems.push_back ("config") ;
+    path_elems.push_back (NEMIVER_CONFIG_TOP_DIR_NAME) ;
+    path_elems.push_back (NEMIVER_CONFIG_DIR_NAME) ;
     string user_config_path = build_filename (path_elems) ;
 
     if (!file_test (user_config_path, FILE_TEST_IS_DIR))
@@ -270,7 +274,7 @@ ConfManager::parse_user_config_file (bool a_create_if_not_exists)
                        (user_config_path.c_str (), S_IRWXU) == 0) ;
 
     string user_config_file = build_filename
-                              (user_config_path, "nemiver.conf") ;
+                              (user_config_path, NEMIVER_CONFIG_FILE_NAME) ;
 
     if (!file_test (user_config_file, FILE_TEST_EXISTS)
         && a_create_if_not_exists) {
@@ -281,6 +285,28 @@ ConfManager::parse_user_config_file (bool a_create_if_not_exists)
     return get_config () ;
 }
 
+bool
+ConfManager::user_config_dir_exists ()
+{
+    if (file_test (get_user_config_dir_path (), FILE_TEST_EXISTS)) {
+        return true;
+    }
+    return false;
+}
+
+const string&
+ConfManager::get_user_config_dir_path ()
+{
+    static string user_config_dir;
+    if (user_config_dir.empty ()) {
+        vector<string> path_elems ;
+        path_elems.push_back (get_home_dir ()) ;
+        path_elems.push_back (NEMIVER_CONFIG_TOP_DIR_NAME) ;
+        user_config_dir = build_filename (path_elems) ;
+    }
+    LOG_DD ("user_config_dir: " << user_config_dir);
+    return user_config_dir;
+}
 
 void
 ConfManager::create_default_config_file (const UString a_path)
