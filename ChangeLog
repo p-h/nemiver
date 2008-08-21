@@ -1,3 +1,10 @@
+2008-08-17  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	  (LocalVarsInspector::Priv::append_a_derefed_variable):
+	  Select the de-referenced row.
+	  Should close #548118 - select new node on dereferencing.
+
 2008-08-11  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/common/nmv-conf-manager.cc,h:

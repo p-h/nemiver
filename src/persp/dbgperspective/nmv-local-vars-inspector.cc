@@ -39,6 +39,7 @@
 
 using namespace nemiver::common;
 namespace vutil=nemiver::variables_utils2;
+using Glib::RefPtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -404,10 +405,24 @@ public:
         Gtk::TreeModel::iterator parent_row_it;
         get_derefed_variables_row_iterator (parent_row_it);
         THROW_IF_FAIL (parent_row_it);
+        Gtk::TreeModel::iterator added_var_it;
         vutil::append_a_variable (a_var->get_dereferenced (),
                                   *tree_view,
                                   tree_store,
-                                  parent_row_it);
+                                  parent_row_it,
+                                  added_var_it);
+        THROW_IF_FAIL (added_var_it);
+
+        Gtk::TreeModel::Path path;
+        path = tree_store->get_path (added_var_it);
+        tree_view->expand_to_path (path);
+        tree_view->expand_row (path, false/*don't fully expand children*/);
+
+        RefPtr<Gtk::TreeSelection> tree_sel = tree_view->get_selection ();
+        THROW_IF_FAIL (tree_sel);
+
+        tree_sel->select (added_var_it);
+        tree_view->scroll_to_row (path);
     }
 
     void update_a_local_variable (const IDebugger::VariableSafePtr a_var)
