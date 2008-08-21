@@ -1,5 +1,14 @@
 2008-08-17  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::on_debugger_not_started_signal()):
+	  Don't disable the actions that are supposed to act on opened files.
+	  (DBGPerspective::on_attached_to_target_signal): Likewise.
+	  This should close
+	  #548121 - string search not available when program is not running
+
+2008-08-17  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
 	  (LocalVarsInspector::Priv::append_a_derefed_variable):
 	  Select the de-referenced row.

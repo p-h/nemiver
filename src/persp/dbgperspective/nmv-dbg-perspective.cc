@@ -1552,7 +1552,6 @@ DBGPerspective::on_debugger_not_started_signal ()
     m_priv->target_not_started_action_group->set_sensitive (false);
     m_priv->debugger_ready_action_group->set_sensitive (false);
     m_priv->debugger_busy_action_group->set_sensitive (false);
-    m_priv->opened_file_action_group->set_sensitive (false);
 
     if (get_n_pages ()) {
         close_opened_files ();
@@ -1587,7 +1586,6 @@ DBGPerspective::on_attached_to_target_signal (bool a_is_ready)
         m_priv->target_not_started_action_group->set_sensitive (false);
         m_priv->debugger_ready_action_group->set_sensitive (false);
         m_priv->debugger_busy_action_group->set_sensitive (false);
-        m_priv->opened_file_action_group->set_sensitive (false);
     }
 
     NEMIVER_CATCH
