@@ -32,7 +32,6 @@ config.status: patch
 		   --enable-variable-walker \
 		   --enable-global-variables \
 		   CFLAGS="$(CFLAGS)" 
-		   LDFLAGS="-Wl,-z,defs"
 
 build: build-stamp
 
