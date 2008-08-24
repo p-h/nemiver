@@ -1,3 +1,7 @@
+2008-08-23  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/uicommon/nmv-ui-utils.cc,h: Style fixes.
+
 2008-08-17  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

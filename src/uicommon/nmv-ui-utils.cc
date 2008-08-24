@@ -1,5 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode:nil; c-basic-offset:4; -*- */
 
+// Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver Project.
  *
@@ -27,7 +28,7 @@
 #include "nmv-ui-utils.h"
 #include <glib/gi18n.h>
 
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 namespace nemiver {
 namespace ui_utils {
@@ -37,20 +38,16 @@ add_action_entries_to_action_group (const ActionEntry a_tab[],
                                     int a_num_entries,
                                     Glib::RefPtr<Gtk::ActionGroup> &a_group)
 {
-    THROW_IF_FAIL (a_group) ;
+    THROW_IF_FAIL (a_group);
 
-    for (int i=0; i < a_num_entries ; ++i) {
-        Glib::RefPtr<Gtk::Action> action = a_tab[i].to_action () ;
-        if (a_tab[i].m_accel != "")
-        {
+    for (int i=0; i < a_num_entries; ++i) {
+        Glib::RefPtr<Gtk::Action> action = a_tab[i].to_action ();
+        if (a_tab[i].m_accel != "") {
             a_group->add (action,
-                    Gtk::AccelKey (a_tab[i].m_accel),
-                    a_tab[i].m_activate_slot) ;
-        }
-        else
-        {
-            a_group->add (action,
-                    a_tab[i].m_activate_slot) ;
+                          Gtk::AccelKey (a_tab[i].m_accel),
+                          a_tab[i].m_activate_slot);
+        } else {
+            a_group->add (action, a_tab[i].m_activate_slot);
         }
     }
 }
@@ -67,8 +64,10 @@ public:
     explicit DontShowAgainMsgDialog (const Glib::ustring &a_message,
                                      bool a_propose_dont_ask_again = false,
                                      bool a_use_markup = false,
-                                     Gtk::MessageType a_type = Gtk::MESSAGE_INFO,
-                                     Gtk::ButtonsType a_buttons = Gtk::BUTTONS_OK,
+                                     Gtk::MessageType a_type
+                                                         = Gtk::MESSAGE_INFO,
+                                     Gtk::ButtonsType a_buttons
+                                                         = Gtk::BUTTONS_OK,
                                      bool a_modal = false) :
         Gtk::MessageDialog (a_message,
                             a_use_markup,
@@ -112,9 +111,9 @@ int
 display_info (const UString &a_message)
 {
     Gtk::MessageDialog dialog (a_message, false, Gtk::MESSAGE_INFO,
-                                               Gtk::BUTTONS_OK, true) ;
-    dialog.set_default_response (Gtk::RESPONSE_OK) ;
-    return dialog.run () ;
+                                               Gtk::BUTTONS_OK, true);
+    dialog.set_default_response (Gtk::RESPONSE_OK);
+    return dialog.run ();
 }
 
 int
@@ -122,9 +121,9 @@ display_warning (const UString &a_message)
 {
     Gtk::MessageDialog dialog (a_message, false,
                                Gtk::MESSAGE_WARNING,
-                               Gtk::BUTTONS_OK, true) ;
-    dialog.set_default_response (Gtk::RESPONSE_OK) ;
-    return dialog.run () ;
+                               Gtk::BUTTONS_OK, true);
+    dialog.set_default_response (Gtk::RESPONSE_OK);
+    return dialog.run ();
 }
 
 int
@@ -132,9 +131,9 @@ display_error (const UString &a_message)
 {
     Gtk::MessageDialog dialog (a_message, false,
                                Gtk::MESSAGE_ERROR,
-                               Gtk::BUTTONS_OK, true) ;
-    dialog.set_default_response (Gtk::RESPONSE_OK) ;
-    return dialog.run () ;
+                               Gtk::BUTTONS_OK, true);
+    dialog.set_default_response (Gtk::RESPONSE_OK);
+    return dialog.run ();
 }
 
 int
@@ -167,13 +166,13 @@ ask_yes_no_cancel_question (const common::UString &a_message)
     Gtk::MessageDialog dialog (a_message, false,
                                Gtk::MESSAGE_QUESTION,
                                Gtk::BUTTONS_NONE,
-                               true) ;
+                               true);
 
-    dialog.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL) ;
-    dialog.add_button (Gtk::Stock::NO, Gtk::RESPONSE_NO) ;
-    dialog.add_button (Gtk::Stock::YES, Gtk::RESPONSE_YES) ;
-    dialog.set_default_response (Gtk::RESPONSE_CANCEL) ;
-    return dialog.run () ;
+    dialog.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button (Gtk::Stock::NO, Gtk::RESPONSE_NO);
+    dialog.add_button (Gtk::Stock::YES, Gtk::RESPONSE_YES);
+    dialog.set_default_response (Gtk::RESPONSE_CANCEL);
+    return dialog.run ();
 }
 
 
