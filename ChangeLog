@@ -1,3 +1,7 @@
+2008-08-24  Dodji Seketeli  <dodji@gnome.org>
+
+	* NEWS: updated for the upcoming 0.6.2 release.
+
 2008-08-23  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/uicommon/nmv-ui-utils.cc,h: Style fixes.

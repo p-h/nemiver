@@ -1,3 +1,31 @@
+0.6.2 Release
+==============
+
+Bug fixes
+---------
+
+    [Dodji Seketeli]
+
+    * #548121 - String search not available when program is not running
+    * #548118 - Select new node on dereferencing
+    * #523377 - first-run prints sql-related errors to console
+    * #545842 - Missing shortcut to set a breakpoint in current file
+    * #547169 - Set breakpoint to selected function name by default
+
+    [Jonathon Jongsma]
+
+    * fix boost unit test static library detection
+
+    [Stéphane Wirtel]
+
+    * fix a configure help string
+
+Translations
+------------
+
+    * [ar] Djihed Afifi
+
+
 0.6.1 Release
 ==============
 
