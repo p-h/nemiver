@@ -1,3 +1,10 @@
+2008-08-25  Robert-André Mauchin  <zebob.m@pengzone.org>
+
+	* debian/control:
+	* Makefile.am:
+	* NEWS:
+	* src/workbench/nmv-workbench.cc: fix project website.
+
 2008-08-24  Dodji Seketeli  <dodji@gnome.org>
 
 	* NEWS: updated for the upcoming 0.6.2 release.
