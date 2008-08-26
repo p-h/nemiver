@@ -20,10 +20,15 @@ Bug fixes
 
     * fix a configure help string
 
+    [Robert-André Mauchin]
+
+    * Update website references to point to the new location
+
 Translations
 ------------
 
     * [ar] Djihed Afifi
+    * [fr] Robert-André Mauchin
 
 
 0.6.1 Release
