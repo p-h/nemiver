@@ -115,10 +115,9 @@ public:
             (treeview_sessions->get_selection ()->count_selected_rows ());
     }
 
-    void on_row_activated (const Gtk::TreeModel::Path& a_path,
-                           Gtk::TreeViewColumn* a_col)
+    void on_row_activated (const Gtk::TreeModel::Path&,
+                           Gtk::TreeViewColumn*)
     {
-        if (a_path.get_depth () || a_col) {}
         dialog.activate_default();
     }
 }; //end struct SavedSessionsDialog::Priv

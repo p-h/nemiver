@@ -115,21 +115,21 @@ public:
         THROW_IF_FAIL (col);
         col->set_clickable (true);
         col->set_resizable (true);
-        col->set_sort_column_id (columns ().pid);
+        col->set_sort_column (columns ().pid);
 
         proclist_view->append_column (_("User Name"), columns ().user_name);
         col = proclist_view->get_column (1);
         THROW_IF_FAIL (col);
         col->set_clickable (true);
         col->set_resizable (true);
-        col->set_sort_column_id (columns ().user_name);
+        col->set_sort_column (columns ().user_name);
 
         proclist_view->append_column (_("Proc Args"), columns ().proc_args);
         col = proclist_view->get_column (2);
         THROW_IF_FAIL (col);
         col->set_clickable (true);
         col->set_resizable (true);
-        col->set_sort_column_id (columns ().proc_args);
+        col->set_sort_column (columns ().proc_args);
 
         proclist_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE);
         col = proclist_view->get_column (ProcListCols::PID);

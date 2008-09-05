@@ -213,7 +213,6 @@ private:
     struct SlotedButton : Gtk::Button {
         UString file_path;
         DBGPerspective *perspective;
-        SafePtr<Gtk::Tooltips> tooltips;
 
         SlotedButton () :
             Gtk::Button (),
@@ -3367,10 +3366,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->file_path = a_path;
     close_button->signal_clicked ().connect
             (sigc::mem_fun (*close_button, &SlotedButton::on_clicked));
-    close_button->tooltips.reset (new Gtk::Tooltips);
     UString message;
     message.printf (_("Close %s"), a_path.c_str ());
-    close_button->tooltips->set_tip (*close_button, message);
+    close_button->set_tooltip_text (message);
 
     SafePtr<Gtk::Table> table (Gtk::manage (new Gtk::Table (1, 2)));
     // add a bit of space between the label and the close button
@@ -3381,7 +3379,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     event_box->add (*label);
     table->attach (*event_box, 0, 1, 0, 1);
     table->attach (*close_button, 1, 2, 0, 1);
-    close_button->tooltips->set_tip (*event_box, a_path);
+    event_box->set_tooltip_text (a_path);
     table->show_all ();
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
                                                               *table,
