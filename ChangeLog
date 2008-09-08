@@ -1,3 +1,8 @@
+2008-09-07  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdb-engine.cc:
+	  (GDBEngine::load_program ()): Fix some style issues.
+
 2008-09-04  Saleem Abdulrasool  <compnerd@compnerd.org>
 
 	* configure.ac: require gtkmm 2.12

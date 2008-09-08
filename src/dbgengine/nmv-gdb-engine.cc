@@ -250,10 +250,11 @@ public:
     const UString& get_debugger_full_path () const
     {
         get_conf_mgr ()->get_key_value (CONF_KEY_GDB_BINARY,
-                                 const_cast<Priv*> (this)->debugger_full_path);
+                             const_cast<Priv*> (this)->debugger_full_path);
         if (debugger_full_path == "" ||
             debugger_full_path == DEFAULT_GDB_BINARY) {
-            const_cast<Priv*> (this)->debugger_full_path = env::get_gdb_program ();
+            const_cast<Priv*> (this)->debugger_full_path =
+                                                    env::get_gdb_program ();
         }
         LOG_DD ("debugger: '" << debugger_full_path << "'");
         return debugger_full_path;
@@ -2052,12 +2053,14 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         Command command;
 
         queue_command (Command ("set breakpoint pending on"));
-        //tell gdb not to pass the SIGINT signal to the target.
+
+        // tell gdb not to pass the SIGINT signal to the target.
         queue_command (Command ("handle SIGINT stop print nopass"));
-        //tell the linker to do all relocations at program load
-        //time so that some "step into" don't take for ever.
-        //On GDB, it seems that stepping into a function that is
-        //in a share lib takes stepping through GNU ld, so it can take time.
+
+        // tell the linker to do all relocations at program load
+        // time so that some "step into" don't take for ever.
+        // On GDB, it seems that stepping into a function that is
+        // in a share lib takes stepping through GNU ld, so it can take time.
         const char *nmv_ld_bind_now = g_getenv ("NMV_LD_BIND_NOW");
         if (nmv_ld_bind_now && atoi (nmv_ld_bind_now)) {
             LOG_DD ("setting LD_BIND_NOW=1");
