@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-10 00:11+0200\n"
-"PO-Revision-Date: 2008-09-05 17:40+0200\n"
+"POT-Creation-Date: 2008-09-15 16:14+0200\n"
+"PO-Revision-Date: 2008-09-10 19:33+0200\n"
 "Last-Translator: David Planella <david.planella@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -170,7 +170,7 @@ msgstr "<b>Tipus de lletra de l'editor</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:2
 msgid "<b>File Monitoring</b>"
-msgstr "<b>Vigilància dels fitxers</b>"
+msgstr "<b>Seguiment dels fitxers</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:3
 msgid "<b>Line Numbers</b>"
@@ -182,7 +182,7 @@ msgstr "<b>Realçament de la sintaxi</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:5
 msgid "Ask each time"
-msgstr "Demana-ho cada cop"
+msgstr "Demana-ho cada vegada"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:6
 msgid "Custom Font:"
@@ -422,7 +422,8 @@ msgstr "Adreça"
 msgid "Condition"
 msgstr "Condició"
 
-# Crec que es refereix a quantes vegades s'ha passat pel punt de ruptura, o bé a partir de quantes passades s'activarà el punt de ruptura (dpm)
+# Crec que es refereix a quantes vegades s'ha passat pel punt de ruptura, o bé
+# a partir de quantes passades s'activarà el punt de ruptura (dpm)
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:125
 msgid "Hits"
 msgstr "Vegades"
