@@ -1,3 +1,8 @@
+2008-09-16  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* LINGUAS: Added 'th'.
+	* th.po: Added Thai translation by Piya Wanishsujit.
+
 2008-09-15  Gil Forcada  <gforcada@gnome.org>
 
 	* ca.po: Minor fix to Catalan translation by David Planella.
