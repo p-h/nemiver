@@ -80,9 +80,4 @@ binary-arch: build install
 
 binary: binary-indep binary-arch
 
-get-orig-source:
-		 @@dh_testdir
-		 @@chmod a+x debian/get-orig-source.sh
-		 @@debian/get-orig-source.sh
-
-.PHONY: build clean binary-indep binary-arch binary install get-orig-source
+.PHONY: build clean binary-indep binary-arch binary install
