@@ -1,3 +1,15 @@
+2008-09-25  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::Priv::modify_source_editor_fonts):
+	  Don't use any PangoFontDescription with an empty font name.
+	  (DBGPerspective::on_conf_key_changed_signal): Don't set source
+	  editor font to a font with empty name.
+	  (DBGPerspective::open_file): Likewise.
+	  (DBGPerspective::on_default_config_read): Don't set the memory
+	  font to a font with empty name.
+	  This entry should fix bug #553780
+
 2008-09-07  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdb-engine.cc:

@@ -884,6 +884,10 @@ struct DBGPerspective::Priv {
     void
     modify_source_editor_fonts (const UString &a_font_name)
     {
+        if (a_font_name.empty ()) {
+            LOG_ERROR ("trying to set a font with empty name");
+            return;
+        }
         Pango::FontDescription font_desc (a_font_name);
         map<int, SourceEditor*>::iterator it;
         for (it = pagenum_2_source_editor_map.begin ();
@@ -1910,16 +1914,17 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         } else {
             font_name = m_priv->custom_font_name;
         }
-        m_priv->modify_source_editor_fonts (font_name);
+        if (!font_name.empty ())
+            m_priv->modify_source_editor_fonts (font_name);
     } else if (a_key == CONF_KEY_CUSTOM_FONT_NAME) {
         m_priv->custom_font_name = boost::get<UString> (a_value);
-        if (!m_priv->use_system_font) {
+        if (!m_priv->use_system_font && !m_priv->custom_font_name.empty ()) {
             m_priv->modify_source_editor_fonts (m_priv->custom_font_name);
         }
     } else if (a_key == CONF_KEY_SYSTEM_FONT_NAME) {
         // keep a cached copy of the system fixed-width font
         m_priv->system_font_name = boost::get<UString> (a_value);
-        if (m_priv->use_system_font) {
+        if (m_priv->use_system_font && !m_priv->system_font_name.empty ()) {
             m_priv->modify_source_editor_fonts (m_priv->system_font_name);
         }
     }
@@ -2507,11 +2512,12 @@ DBGPerspective::on_default_config_read ()
     NEMIVER_TRY
 
     THROW_IF_FAIL (m_priv);
-    Pango::FontDescription font_desc (m_priv->get_source_font_name ());
+    if (!m_priv->get_source_font_name ().empty ()) {
+        Pango::FontDescription font_desc (m_priv->get_source_font_name ());
 #ifdef WITH_MEMORYVIEW
-    get_memory_view ().modify_font (font_desc);
+        get_memory_view ().modify_font (font_desc);
 #endif // WITH_MEMORYVIEW
-
+    }
     NEMIVER_CATCH
 }
 
@@ -4378,8 +4384,10 @@ DBGPerspective::open_file (const UString &a_path,
                           &DBGPerspective::on_insertion_changed_signal),
                           source_editor));
 
-    Pango::FontDescription font_desc(m_priv->get_source_font_name ());
-    source_editor->source_view ().modify_font (font_desc);
+    if (!m_priv->get_source_font_name ().empty ()) {
+        Pango::FontDescription font_desc (m_priv->get_source_font_name ());
+        source_editor->source_view ().modify_font (font_desc);
+    }
     source_editor->set_path (a_path);
     source_editor->marker_region_got_clicked_signal ().connect
         (sigc::mem_fun
