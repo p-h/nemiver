@@ -24,7 +24,7 @@
  *See COPYRIGHT file copyright information.
  */
 
-#include <iostream>
+#include <iosfwd>
 #include "nmv-exception.h"
 #include "nmv-transaction.h"
 

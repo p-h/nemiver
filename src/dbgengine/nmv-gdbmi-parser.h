@@ -25,7 +25,7 @@
 #ifndef __NMV_GDBMI_PARSER_H
 #define __NMV_GDBMI_PARSER_H
 #include <boost/variant.hpp>
-#include <iostream>
+#include <iosfwd>
 #include "nmv-i-debugger.h"
 #include "nmv-dbg-common.h"
 

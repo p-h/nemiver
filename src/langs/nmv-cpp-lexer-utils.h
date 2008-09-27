@@ -24,8 +24,7 @@
 #ifndef __NEMIVER_CPP_LEXER_UTILS_H__
 #define __NEMIVER_CPP_LEXER_UTILS_H__
 
-#include <iostream>
-#include <iostream>
+#include <iosfwd>
 #include "nmv-cpp-lexer.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)

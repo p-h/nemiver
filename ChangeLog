@@ -1,3 +1,11 @@
+2008-09-27  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/common/nmv-tools.h,src/dbgengine/nmv-gdbmi-parser.h,
+	  src/langs/nmv-cpp-lexer-utils.h,
+	  src/persp/dbgperspective/nmv-sess-mgr.cc: Don't include <iostream>
+	  in headers. This can save up to 10% compile time on some machine.
+	  This patch is from "Benoît Dejean" <benoit@placenet.org>.
+
 2008-09-25  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
