@@ -472,6 +472,8 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
+    LOG_DD ("a_line: " << (int)a_line << "enabled: " << (int) enabled);
+
     UString marker_type;
     if (enabled) {
         marker_type = BREAKPOINT_ENABLED_CATEGORY;

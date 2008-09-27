@@ -1,5 +1,11 @@
 2008-09-27  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/uicommon/nmv-source-editor.cc: 
+	  (SourceEditor::set_visual_breakpoint_at_line): Add some traces for
+	  debug purposes.
+
+2008-09-27  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/common/nmv-log-stream.cc: Use std::tr1::unordered_map when
 	  available instead of deprecated __gnu features.
 	  This patch is from "Benoît Dejean" <benoit@placenet.org>.
