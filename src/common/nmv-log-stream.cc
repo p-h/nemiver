@@ -30,7 +30,6 @@
 #include <cstring>
 #include <sys/time.h>
 #include <iostream>
-#include <ext/hash_map>
 #include <list>
 #include <vector>
 #include <fstream>
@@ -43,8 +42,11 @@
 #include "nmv-date-utils.h"
 #include "nmv-safe-ptr-utils.h"
 
-using __gnu_cxx::hash_map ;
-using __gnu_cxx::hash ;
+#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
+#include <tr1/unordered_map>
+#else
+#include <ext/hash_map>
+#endif
 
 namespace nemiver {
 namespace common {
@@ -58,6 +60,16 @@ struct Eqstr
         return strcmp (s1, s2) == 0;
     }
 };
+
+#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
+struct DomainMap
+    : std::tr1::unordered_map<const char*, bool, std::tr1::hash<const char*>, Eqstr>
+{ };
+#else
+struct DomainMap
+    : __gnu_cxx::hash_map<const char*, bool, __gnu_cxx::hash<const char*>, Eqstr>
+{ };
+#endif
 
 static enum LogStream::StreamType s_stream_type = LogStream::COUT_STREAM ;
 static enum LogStream::LogLevel s_level_filter = LogStream::LOG_LEVEL_NORMAL ;
@@ -221,7 +233,7 @@ struct LogStream::Priv
     //Logging domains are just keywords associated to the messages that are
     //going to be logged. This helps in for filtering the messages that
     //are to be logged or not.
-    hash_map<const char*, bool, hash<const char*>, Eqstr > allowed_domains ;
+    DomainMap allowed_domains ;
 
     //the log level of this log stream
     enum LogStream::LogLevel level ;
