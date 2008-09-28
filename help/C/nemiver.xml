@@ -16,7 +16,7 @@ Template last modified Jan 30, 2002
 
 -->
 <!-- =============Document Header ============================= -->
-<?yelp:chunk-depth 2?>
+<?chunk-depth 2?>
 <article id="index" lang="en">
   <!-- please do not change the id; for translations, change lang to -->
   <!-- appropriate code -->

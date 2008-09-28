@@ -1,3 +1,8 @@
+2008-09-28  Dodji Seketeli  <dodji@gnome.org>
+
+	* help/C/nemiver.xml: Don't use ':' in PI nodes. It's not well formed
+	  XML.
+
 2008-09-27  Dodji Seketeli  <dodji@gnome.org>
 
 	* configure.ac: Updated to 0.6.3
