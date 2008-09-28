@@ -1,7 +1,12 @@
 dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
-AC_INIT(nemiver, 0.6.2)
+AC_INIT(nemiver,0.6.3)
+
+MAJOR_VERSION=0
+MINOR_VERSION=6
+MICRO_VERSION=3
+
 AC_PREREQ(2.59)
 AC_CONFIG_SRCDIR(README)
 AC_CONFIG_MACRO_DIR([m4])
@@ -10,9 +15,6 @@ AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AC_CONFIG_HEADER(config.h)
 
-MAJOR_VERSION=0
-MINOR_VERSION=6
-MICRO_VERSION=2
 
 NEMIVER_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION"
 AC_SUBST(NEMIVER_VERSION)

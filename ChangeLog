@@ -1,5 +1,10 @@
 2008-09-27  Dodji Seketeli  <dodji@gnome.org>
 
+	* configure.ac: Updated to 0.6.3
+	* NEWS: Updated for 0.6.3
+
+2008-09-27  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/uicommon/nmv-source-editor.cc: 
 	  (SourceEditor::set_visual_breakpoint_at_line): Add some traces for
 	  debug purposes.

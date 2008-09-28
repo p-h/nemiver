@@ -1,3 +1,21 @@
+0.6.3 Release
+==============
+
+Bug fixes
+----------
+
+    * various cleanups: move to new tooltip API, migrate from
+      deprecated TreePath APIs. [Saleem Abdulrasool]
+    * #553780 - Status notebook disapearing sometimes. [Dodji Seketeli]
+    * #553780 - Compilation speedups and remove __gnu::cxx deprecated
+      usage. [Benoit Dejean]
+
+Translations
+------------
+
+    * [th] Theppitak Karoonboonyanan
+    * [ca] Gil Forcada
+
 0.6.2 Release
 ==============
 
