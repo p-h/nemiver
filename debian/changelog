@@ -1,3 +1,11 @@
+nemiver (0.6.3-1) unstable; urgency=low
+
+  * New upstream release
+    + bugfix and translations update
+  * New upstream website, updating all references
+
+ -- Luca Bruno <lucab@debian.org>  Mon, 13 Oct 2008 19:21:28 +0200
+
 nemiver (0.6.2-1) unstable; urgency=low
 
   * New upstream version
