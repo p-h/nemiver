@@ -168,6 +168,8 @@ const char* SUPPORTED_ENCODINGS[] =
     "ISO-8859-15",
 };
 
+const char* I_DEBUGGER_COOKIE_EXECUTE_PROGRAM = "i-debugger-execute-program";
+
 #define SIZE_OF_SUPPORTED_ENCODINGS \
 sizeof (SUPPORTED_ENCODINGS)/sizeof (SUPPORTED_ENCODINGS[0])
 
@@ -2204,15 +2206,25 @@ DBGPerspective::on_frame_selected_signal (int a_index,
 
 void
 DBGPerspective::on_debugger_breakpoint_deleted_signal
-                                        (const IDebugger::BreakPoint &a_break,
+                                        (const IDebugger::BreakPoint &,
                                          int a_break_number,
                                          const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    if (a_break.number () || a_cookie.empty ()) {}
-
     NEMIVER_TRY
+
+    if (a_cookie == I_DEBUGGER_COOKIE_EXECUTE_PROGRAM) {
+        //We received this event because we were triggering the
+        //execution of a program, in DBGPerspective::execute_program().
+        //So as part of that function, we asked to clear all the opened files
+        //and to delete all the set breakpoints.
+        //This event is the result the request to delete all the
+        //breakpoints. The request was issued after the opened files got
+        //closed. So we won't be able to find the files to visualy delete the
+        //breakpoints from. So let's just pass.
+        return;
+    }
     delete_visual_breakpoint (a_break_number);
     SourceEditor* editor = get_current_source_editor ();
     THROW_IF_FAIL (editor);
@@ -4804,7 +4816,8 @@ DBGPerspective::execute_program
     for (bp_it = m_priv->breakpoints.begin ();
          bp_it != m_priv->breakpoints.end ();
          ++bp_it) {
-        dbg_engine->delete_breakpoint (bp_it->first);
+        dbg_engine->delete_breakpoint (bp_it->first,
+                                       I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
     }
 
     // clear data gathered by the old session

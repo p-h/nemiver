@@ -1,5 +1,13 @@
 2008-11-02  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::on_debugger_breakpoint_deleted_signal): If we
+	  received this signal as part of process of executing a program,
+	  do not bother.
+	  This entry should fix bug #555733.
+
+2008-11-02  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/common/nmv-log-stream.cc: Store the allowed domain names in
 	  instances of std::string instead of char*. This should help fix
 	  a buglet where LOG() did stop working.
