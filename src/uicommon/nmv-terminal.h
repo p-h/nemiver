@@ -36,8 +36,12 @@ using nemiver::common::Object ;
 using nemiver::common::SafePtr ;
 
 namespace Gtk {
-    class Widget;
+    class Widget ;
     class Adjustment ;
+}
+
+namespace Pango {
+    class FontDescription ;
 }
 
 NEMIVER_BEGIN_NAMESPACE(nemiver)
@@ -55,8 +59,9 @@ public:
     Terminal () ;
     ~Terminal () ;
     Gtk::Widget& widget () const ;
-    Gtk::Adjustment& adjustment () const;
+    Gtk::Adjustment& adjustment () const ;
     UString slave_pts_name () const ;
+    void modify_font (const Pango::FontDescription &font_desc) ;
 };//end class Terminal
 
 NEMIVER_END_NAMESPACE(nemiver)

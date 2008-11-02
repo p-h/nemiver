@@ -1,3 +1,14 @@
+2008-11-02  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  Make the terminal use the same font as the one specified on the
+	  preferences.
+	* src/uicommon/nmv-terminal.cc b/src/uicommon/nmv-terminal.cc,h: Allow
+	  the terminal to be set a new font.
+
+	  This entry is a patch from Christophe Fergeau <teuf@gnome.org>.
+	  It should close bug #555732.
+
 2008-10-04  Dodji Seketeli  <dodji@gnome.org>
 
 	* Makefile.am: Fixlets in the announcement text.

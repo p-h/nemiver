@@ -168,5 +168,12 @@ Terminal::slave_pts_name () const
     return result ;
 }
 
+void
+Terminal::modify_font (const Pango::FontDescription &font_desc)
+{
+    THROW_IF_FAIL (m_priv);
+    vte_terminal_set_font (m_priv->vte, font_desc.gobj());
+}
+
 NEMIVER_END_NAMESPACE(nemiver)
 

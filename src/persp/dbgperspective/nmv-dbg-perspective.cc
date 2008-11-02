@@ -897,6 +897,8 @@ struct DBGPerspective::Priv {
                 it->second->source_view ().modify_font (font_desc);
             }
         }
+       THROW_IF_FAIL (terminal);
+       terminal->modify_font (font_desc);
 #ifdef WITH_MEMORYVIEW
         THROW_IF_FAIL (memory_view);
         memory_view->modify_font (font_desc);
