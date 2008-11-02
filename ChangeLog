@@ -1,5 +1,11 @@
 2008-11-02  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/common/nmv-log-stream.cc: Store the allowed domain names in
+	  instances of std::string instead of char*. This should help fix
+	  a buglet where LOG() did stop working.
+
+2008-11-02  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
 	  Make the terminal use the same font as the one specified on the
 	  preferences.

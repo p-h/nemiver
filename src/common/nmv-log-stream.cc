@@ -53,22 +53,10 @@ namespace common {
 
 using namespace std ;
 
-struct Eqstr
-{
-    bool operator() (const char* s1, const char* s2) const
-    {
-        return strcmp (s1, s2) == 0;
-    }
-};
-
 #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
-struct DomainMap
-    : std::tr1::unordered_map<const char*, bool, std::tr1::hash<const char*>, Eqstr>
-{ };
+typedef std::tr1::unordered_map<std::string, bool> DomainMap;
 #else
-struct DomainMap
-    : __gnu_cxx::hash_map<const char*, bool, __gnu_cxx::hash<const char*>, Eqstr>
-{ };
+typedef __gnu_cxx::hash_map<std::string, bool> DomainMap;
 #endif
 
 static enum LogStream::StreamType s_stream_type = LogStream::COUT_STREAM ;
