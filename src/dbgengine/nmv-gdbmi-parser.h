@@ -380,6 +380,16 @@ bool parse_stopped_async_output (const UString &a_input,
                                  IDebugger::Frame &a_frame,
                                  map<UString, UString> &a_attrs);
 
+/// parse GDBMI async output that says that the inferior process
+/// is running.
+/// the string looks like:
+/// *running,thread-id="<thread-id>"
+/// Note that <thread-id> is either a number, or the string 'all'.
+bool parse_running_async_output (const UString &a_input,
+                                 UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 int &a_thread_id);
+
 bool parse_out_of_band_record (const UString &a_input,
                                UString::size_type a_from,
                                UString::size_type &a_to,

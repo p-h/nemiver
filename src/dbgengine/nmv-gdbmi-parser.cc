@@ -32,12 +32,21 @@ static const UString GDBMI_PARSING_DOMAIN = "gdbmi-parsing-domain";
 static const UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain";
 
 #define LOG_PARSING_ERROR(a_buf, a_from) \
-{ \
+do { \
 Glib::ustring str_01 (a_buf, (a_from), a_buf.size () - (a_from));\
 LOG_ERROR ("parsing failed for buf: >>>" \
              << a_buf << "<<<" \
              << " cur index was: " << (int)(a_from)); \
-}
+} while (0)
+
+#define LOG_PARSING_ERROR_MSG(a_buf, a_from, msg) \
+do { \
+Glib::ustring str_01 (a_buf, (a_from), a_buf.size () - (a_from));\
+LOG_ERROR ("parsing failed for buf: >>>" \
+             << a_buf << "<<<" \
+             << " cur index was: " << (int)(a_from) \
+             << ", reason: " << msg); \
+} while (0)
 
 #define CHECK_END(a_input, a_current, a_end) \
 if ((a_current) >= (a_end)) {\
@@ -89,6 +98,8 @@ const char* PREFIX_REGISTER_NAMES = "register-names=";
 const char* PREFIX_CHANGED_REGISTERS = "changed-registers=";
 const char* PREFIX_REGISTER_VALUES = "register-values=";
 const char* PREFIX_MEMORY_VALUES = "addr=";
+const char* PREFIX_RUNNING_ASYNC_OUTPUT = "*running,";
+const char* PREFIX_STOPPED_ASYNC_OUTPUT = "*stopped,";
 
 bool parse_c_string_body (const UString &a_input,
                           UString::size_type a_from,
@@ -2656,7 +2667,8 @@ parse_stopped_async_output (const UString &a_input,
 
     if (cur >= end) {return false;}
 
-    if (a_input.compare (cur, 9,"*stopped,")) {
+    if (a_input.raw ().compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+                                PREFIX_STOPPED_ASYNC_OUTPUT)) {
         LOG_PARSING_ERROR (a_input, cur);
         return false;
     }
@@ -2667,7 +2679,7 @@ parse_stopped_async_output (const UString &a_input,
     bool got_frame (false);
     IDebugger::Frame frame;
     while (true) {
-        if (!a_input.compare (cur, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
+        if (!a_input.raw ().compare (cur, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
             if (!parse_frame (a_input, cur, cur, frame)) {
                 LOG_PARSING_ERROR (a_input, cur);
                 return false;
@@ -2698,6 +2710,48 @@ parse_stopped_async_output (const UString &a_input,
     }
     a_to = cur;
     a_attrs = attrs;
+    return true;
+}
+
+/// parse GDBMI async output that says that the inferior process
+/// is running.
+/// the string looks like:
+/// *running,thread-id="<thread-id>"
+/// Note that <thread-id> is either a number, or the string 'all'.
+bool
+parse_running_async_output (const UString &a_input,
+                            UString::size_type a_from,
+                            UString::size_type &a_to,
+                            int &a_thread_id)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from, end=a_input.size ();
+
+    if (cur >= end) {return false;}
+
+    if (a_input.raw (). compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
+                                 PREFIX_RUNNING_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR_MSG (a_input, cur, "was expecting : '*running,'");
+        return false;
+    }
+    cur += 9; if (cur >= end) {return false;}
+
+    UString name, value;
+    if (!parse_attribute (a_input, cur, cur, name, value)) {
+        LOG_PARSING_ERROR_MSG (a_input, cur, "was expecting an attribute");
+        return false;
+    }
+    if (name != "thread-id") {
+        LOG_PARSING_ERROR_MSG (a_input, cur, "was expecting attribute 'thread-id'");
+        return false;
+    }
+    if (value == "all")
+        a_thread_id = -1;
+    else
+        a_thread_id = atoi (value.c_str ());
+
+    a_to = cur;
     return true;
 }
 
@@ -2769,12 +2823,15 @@ parse_out_of_band_record (const UString &a_input,
         ++cur;//consume the '\n' character
     }
 
-    if (!a_input.raw ().compare (cur, 9,"*stopped,")) {
+    if (!a_input.raw ().compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+                                 PREFIX_STOPPED_ASYNC_OUTPUT)) {
         map<UString, UString> attrs;
         bool got_frame (false);
         IDebugger::Frame frame;
         if (!parse_stopped_async_output (a_input, cur, cur,
                                          got_frame, frame, attrs)) {
+            LOG_PARSING_ERROR_MSG (a_input, cur,
+                                   "could not parse the expected stopped async output");
             return false;
         }
         record.is_stopped (true);
@@ -2790,7 +2847,22 @@ parse_out_of_band_record (const UString &a_input,
         record.thread_id (atoi (attrs["thread-id"].c_str ()));
         record.signal_type (attrs["signal-name"]);
         record.signal_meaning (attrs["signal-meaning"]);
+        goto end;
     }
+
+    if (!a_input.raw ().compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
+                                 PREFIX_RUNNING_ASYNC_OUTPUT)) {
+        int thread_id;
+        if (!parse_running_async_output (a_input, cur, cur, thread_id)) {
+            LOG_PARSING_ERROR_MSG (a_input, cur,
+                                   "could not parse the expected running async output");
+            return false;
+        }
+        record.thread_id (thread_id);
+        goto end;
+    }
+
+end:
 
     while (cur < end && isspace (a_input.raw ()[cur])) {++cur;}
     a_to = cur;

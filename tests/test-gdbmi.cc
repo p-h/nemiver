@@ -20,6 +20,11 @@ static const char* gv_stopped_async_output0 =
 static const char* gv_stopped_async_output1 =
 "*stopped,reason=\"breakpoint-hit\",bkptno=\"1\",thread-id=\"1\",frame={addr=\"0x08048d38\",func=\"main\",args=[],file=\"fooprog.cc\",fullname=\"/opt/dodji/git/nemiver.git/tests/fooprog.cc\",line=\"80\"}\n";
 
+static const char *gv_running_async_output0 =
+"*running,thread-id=\"all\"\n";
+
+static const char *gv_running_async_output1 =
+"*running,thread-id=\"1\"\n";
 
 static const char *gv_output_record0 =
 "&\"Failed to read a valid object file image from memory.\\n\"\n"
@@ -27,6 +32,14 @@ static const char *gv_output_record0 =
 "~\"[New Thread 0xb7892720 (LWP 20182)]\\n\"\n"
 "=thread-created,id=1\n"
 "*stopped,reason=\"breakpoint-hit\",bkptno=\"1\",thread-id=\"1\",frame={addr=\"0x08048d38\",func=\"main\",args=[],file=\"fooprog.cc\",fullname=\"/opt/dodji/git/nemiver.git/tests/fooprog.cc\",line=\"80\"}\n"
+"(gdb)";
+
+static const char *gv_output_record1 =
+"&\"Failed to read a valid object file image from memory.\\n\"\n"
+"~\"[Thread debugging using libthread_db enabled]\\n\"\n"
+"~\"[New Thread 0xb7892720 (LWP 20182)]\\n\"\n"
+"=thread-created,id=1\n"
+"*running,thread-id=\"1\"n"
 "(gdb)";
 
 //the partial result of a gdbmi command: -stack-list-argument 1 command
@@ -174,6 +187,25 @@ test_stoppped_async_output ()
 }
 
 void
+test_running_async_output ()
+{
+    bool is_ok=false;
+    UString::size_type to=0 ;
+    int thread_id=0;
+
+    is_ok = parse_running_async_output (gv_running_async_output0, 0, to,
+                                        thread_id) ;
+    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE (thread_id == -1) ;
+
+    to=0;
+    is_ok = parse_running_async_output (gv_running_async_output1, 0, to,
+                                        thread_id) ;
+    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE (thread_id == 1) ;
+}
+
+void
 test_output_record ()
 {
     bool is_ok=false;
@@ -181,6 +213,9 @@ test_output_record ()
     Output output;
 
     is_ok = parse_output_record (gv_output_record0, 0, to, output);
+    BOOST_REQUIRE (is_ok) ;
+
+    is_ok = parse_output_record (gv_output_record1, 0, to, output);
     BOOST_REQUIRE (is_ok) ;
 }
 
@@ -533,6 +568,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_str2)) ;
     suite->add (BOOST_TEST_CASE (&test_attr0)) ;
     suite->add (BOOST_TEST_CASE (&test_stoppped_async_output)) ;
+    suite->add (BOOST_TEST_CASE (&test_running_async_output)) ;
     suite->add (BOOST_TEST_CASE (&test_output_record)) ;
     suite->add (BOOST_TEST_CASE (&test_stack_arguments0)) ;
     suite->add (BOOST_TEST_CASE (&test_stack_arguments1)) ;

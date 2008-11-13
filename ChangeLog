@@ -1,3 +1,12 @@
+2008-11-11  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc,h (parse_running_async_output):
+	  New Entry point. Parses the new *running,thread-id="<thread-id>"
+	  out of band output record sent when the inferior is running.
+	  (parse_out_of_band_record): Use parse_running_async_output() here.
+	* tests/test-gdbmi.cc: Add new tests for the new support of running
+	  async output record. This should close bug #560377.
+
 2008-11-02  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
