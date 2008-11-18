@@ -1,3 +1,16 @@
+2008-11-12  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* src/common/nmv-proc-utils.cc:
+	* src/common/nmv-proc-utils.h: don't attempt to parse and return the real
+	path of the executable, just examine the file and see if it looks like a
+	libtool wrapper script
+	* src/dbgengine/nmv-gdb-engine.cc: handle libtool wrapper scripts properly
+	by executing gdb under `libtool --mode=execute` which will set the library
+	path, etc for us as well instead of just executing gdb on the translated
+	binary filename.  Also handle libtool wrappers when loading core files (bug
+	#554405)
+	* tests/test-libtool-wrapper-detection.cc: update test to match changed API
+
 2008-11-11  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdbmi-parser.cc,h (parse_running_async_output):

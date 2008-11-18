@@ -226,8 +226,7 @@ attach_channel_to_loop_context_as_source
 /// is set if and only the function returns true.
 /// \return true if a_path is a libtool wrapper script, false otherwise.
 bool
-is_libtool_executable_wrapper (const UString &a_path,
-                               UString &a_path_to_real_exec)
+is_libtool_executable_wrapper (const UString &a_path)
 {
     if (a_path.empty ()) {
         return false;
@@ -267,18 +266,6 @@ is_libtool_executable_wrapper (const UString &a_path,
         LOG_ERROR ("got wrong magic string: " << str);
         return false;
     }
-    str.clear ();
-    //now go get the path that comes next.
-    //that path is terminated normally by an '\n'
-    while (true) {
-        c = file.get ();
-        if (file.eof () || c == '\n')
-            break;
-        else if (!file.good ())
-            return false;
-        str += c;
-    }
-    a_path_to_real_exec = Glib::filename_to_utf8 (str);
     return true;
 }
 

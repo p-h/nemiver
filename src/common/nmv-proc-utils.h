@@ -44,8 +44,7 @@ void NEMIVER_API attach_channel_to_loop_context_as_source
                          const Glib::RefPtr<Glib::IOChannel> &a_chan,
                          const Glib::RefPtr<Glib::MainContext>&a_ctxt) ;
 
-bool NEMIVER_API is_libtool_executable_wrapper (const UString &a_path,
-                                                UString &a_path_to_real_exec);
+bool NEMIVER_API is_libtool_executable_wrapper (const UString &a_path);
 }//end namspace common
 }//end namespace nemiver
 #endif //__NMV_PROC_UTILS_H__

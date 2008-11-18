@@ -12,8 +12,7 @@ void
 test0 ()
 {
     UString real_path;
-    BOOST_REQUIRE (is_libtool_executable_wrapper ("./fooprog", real_path));
-    BOOST_REQUIRE (real_path == ".libs/fooprog");
+    BOOST_REQUIRE (is_libtool_executable_wrapper ("./fooprog"));
 }
 
 test_suite*

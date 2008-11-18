@@ -545,6 +545,25 @@ public:
             kill_gdb ();
         }
         argv.clear ();
+
+        UString prog_path;
+        if (a_prog != "") {
+            prog_path = a_prog;
+            if (!Glib::file_test (Glib::locale_from_utf8 (prog_path),
+                                  Glib::FILE_TEST_IS_REGULAR)) {
+                if (!find_prog_in_path (prog_path, prog_path)) {
+                    LOG_ERROR ("Could not find program '" << prog_path << "'");
+                    return false;
+                }
+            }
+        }
+        // if the executable program to be debugged is a libtool wrapper script,
+        // run the debugging session under libtool
+        if (is_libtool_executable_wrapper (prog_path)) {
+            argv.push_back ("libtool");
+            argv.push_back ("--mode=execute");
+        }
+
         THROW_IF_FAIL (get_debugger_full_path () != "");
         argv.push_back (get_debugger_full_path ());
         if (working_dir != "") {
@@ -558,17 +577,7 @@ public:
                 argv.push_back (*it);
             }
         }
-        if (a_prog != "") {
-            UString prog_path = a_prog;
-            if (!Glib::file_test (Glib::locale_from_utf8 (prog_path),
-                                  Glib::FILE_TEST_IS_REGULAR)) {
-                if (!find_prog_in_path (prog_path, prog_path)) {
-                    LOG_ERROR ("Could not find program '" << prog_path << "'");
-                    return false;
-                }
-            }
-            argv.push_back (prog_path);
-        }
+        argv.push_back (prog_path);
 
         source_search_dirs = a_source_search_dirs;
         return launch_gdb_real (argv);
@@ -609,6 +618,14 @@ public:
                                   const UString &a_core_path)
     {
         vector<UString> argv;
+
+        // if the executable program to be debugged is a libtool wrapper script,
+        // run the debugging session under libtool
+        if (is_libtool_executable_wrapper (a_prog_path)) {
+            argv.push_back ("libtool");
+            argv.push_back ("--mode=execute");
+        }
+
         argv.push_back (env::get_gdb_program ());
         argv.push_back ("--interpreter=mi2");
         argv.push_back (a_prog_path);
@@ -2030,20 +2047,6 @@ GDBEngine::load_program (const vector<UString> &a_argv,
     THROW_IF_FAIL (!a_argv.empty ());
     vector<UString> argv (a_argv);
 
-    //first, check if the the inferior is a libtool wrapper or not.
-    //if yes, bet the real path of the actual binary and use that instead
-    UString real_path;
-    if (is_libtool_executable_wrapper (argv[0], real_path)
-        && !real_path.empty ()) {
-        LOG_DD ("handling libtool wrapper script ...");
-        string tmp_str = Glib::filename_from_utf8 (real_path);
-        string dir_name = Glib::path_get_dirname
-                                    (Glib::filename_to_utf8 (argv[0]));
-        string path = Glib::build_filename (dir_name, tmp_str);
-        argv[0] = Glib::filename_to_utf8 (path);
-        LOG_DD ("got path to real binary from libtool wrapper: " << path);
-    }
-
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts;
         THROW_IF_FAIL (m_priv->launch_gdb_and_set_args
@@ -2096,8 +2099,6 @@ GDBEngine::load_core_file (const UString &a_prog_path,
     if (m_priv->is_gdb_running ()) {
         m_priv->kill_gdb ();
     }
-
-    vector<UString> src_dirs, gdb_opts;
     THROW_IF_FAIL (m_priv->launch_gdb_on_core_file (a_prog_path,
                                                     a_core_path));
 }
