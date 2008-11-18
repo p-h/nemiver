@@ -1,3 +1,10 @@
+2008-11-18  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* src/persp/dbgperspective/nmv-call-stack.cc: re-arrange the columns in the
+	call stack view.
+	was: Location, Function, Args
+	now: Function, Args, Location
+
 2008-11-12  Jonathon Jongsma  <jonathon@quotidian.org>
 
 	* src/common/nmv-proc-utils.cc:
