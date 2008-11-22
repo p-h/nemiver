@@ -221,7 +221,7 @@ parse_command_line (int& a_argc,
 }
 
 static bool
-process_command_line_non_gui (int&, char**, int &a_return)
+process_non_gui_command_line (int&, char**, int &a_return)
 {
     if (gv_log_debugger_output) {
         LOG_STREAM.enable_domain ("gdbmi-output-domain");
@@ -242,6 +242,13 @@ process_command_line_non_gui (int&, char**, int &a_return)
         }
     }
 
+    a_return = 0;
+    return true;
+}
+
+static bool
+process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
+{
     if (gv_purge_sessions) {
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
@@ -252,13 +259,6 @@ process_command_line_non_gui (int&, char**, int &a_return)
         a_return = 0;
         return false;
     }
-    a_return = 0;
-    return true;
-}
-
-static bool
-process_command_line (int& a_argc, char** a_argv, int &a_return)
-{
 
     if (gv_process_to_attach_to) {
         using nemiver::common::IProcMgrSafePtr;
@@ -460,25 +460,27 @@ main (int a_argc, char *a_argv[])
     parse_command_line (a_argc, a_argv);
 
     int retval;
-    if (process_command_line_non_gui (a_argc, a_argv, retval) != true) {
+    if (process_non_gui_command_line (a_argc, a_argv, retval) != true) {
         return -1;
     }
 
 
-    //**********************************
-    //load the workbench dynamic module
-    //**********************************
+    //********************************************
+    //load and init the workbench dynamic module
+    //********************************************
     DynamicModuleManager module_manager;
     IWorkbenchSafePtr workbench =
         module_manager.load_iface<IWorkbench> ("workbench", "IWorkbench");
     s_workbench = workbench.get ();
+    THROW_IF_FAIL (s_workbench);
     LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
-            "refcount-domain");
+           "refcount-domain");
+
     s_workbench->do_init (gtk_kit);
     LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
            "refcount-domain");
 
-    if (process_command_line (a_argc, a_argv, retval) != true) {
+    if (process_gui_command_line (a_argc, a_argv, retval) != true) {
         return -1;
     }
 

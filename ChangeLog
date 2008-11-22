@@ -1,3 +1,18 @@
+2008-11-18  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/main.cc (process_command_line_non_gui): Rename this function into ...
+	  (process_non_gui_command_line): This one.
+	  (process_command_line): Rename this function into ...
+	  (process_gui_command_line): This one. Also, move the handling
+	  of the session purging from process_non_gui_command_line
+	  to here as this requires the workbench, debugging perspective
+	  and so the GUI. Yes that sucks. The session handling
+	  code should be moved outside of the perspective, but that's another
+	  story. For now, all we know is that we need the workbench to be
+	  created, if we want to be able to purge the sessions.
+	  session purging. This entry should fix the crash reported at
+	  #561287.
+
 2008-11-18  Jonathon Jongsma  <jonathon@quotidian.org>
 
 	* src/persp/dbgperspective/nmv-call-stack.cc: re-arrange the columns in the
