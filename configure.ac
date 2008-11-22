@@ -1,11 +1,11 @@
 dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
-AC_INIT(nemiver,0.6.3)
+AC_INIT(nemiver,0.6.4)
 
 MAJOR_VERSION=0
 MINOR_VERSION=6
-MICRO_VERSION=3
+MICRO_VERSION=4
 
 AC_PREREQ(2.59)
 AC_CONFIG_SRCDIR(README)

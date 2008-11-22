@@ -1,3 +1,25 @@
+0.6.4 Release
+=============
+
+Bug fixes
+---------
+
+    [Dodji Seketeli]
+    * #555733 - "Assertion failed: editor" when trying to open a new binary
+    * #560377 - support new running async output record in GDB trunk
+    * #561287 - crash when doing nemiver --purgesessions
+
+    [Jonathon Jongsma]
+     * Re-arrange columns in call stack view
+
+    [Christophe Fergeau]
+    * #555732 - Use font specified in the preferences for the output terminal
+
+Translations
+------------
+
+    * [ja] Takeshi AIHANA
+
 0.6.3 Release
 ==============
 

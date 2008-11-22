@@ -1,3 +1,8 @@
+2008-11-22  Dodji Seketeli  <dodji@gnome.org>
+
+	* configure.ac: Bump version number to 0.6.4
+	* NEWS: Updated this for the upcoming 0.6.4 version.
+
 2008-11-18  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/main.cc (process_command_line_non_gui): Rename this function into ...
