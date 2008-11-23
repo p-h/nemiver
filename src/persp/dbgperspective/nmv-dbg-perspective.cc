@@ -5622,16 +5622,17 @@ DBGPerspective::set_breakpoint_using_dialog ()
     // function name so that if the user hits enter, a breakpoint is set
     // to that function by default.
 
-    SourceEditor *source_editor = get_current_source_editor ();
-    THROW_IF_FAIL (source_editor);
-    Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
-                        source_editor->source_view ().get_source_buffer ();
-    THROW_IF_FAIL (buffer);
-
     UString function_name;
-    Gtk::TextIter start, end;
-    if (buffer->get_selection_bounds (start, end)) {
-        function_name = buffer->get_slice (start, end);
+    SourceEditor *source_editor = get_current_source_editor ();
+    if (source_editor) {
+        Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+                            source_editor->source_view ().get_source_buffer ();
+        THROW_IF_FAIL (buffer);
+
+        Gtk::TextIter start, end;
+        if (buffer->get_selection_bounds (start, end)) {
+            function_name = buffer->get_slice (start, end);
+        }
     }
     if (!function_name.empty ()) {
         // really the default function name to break into, by default.
