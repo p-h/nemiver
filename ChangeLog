@@ -1,5 +1,9 @@
 2008-11-23  Dodji Seketeli  <dodji@gnome.org>
 
+	* NEWS: updated this.
+
+2008-11-23  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
 	  (DBGPerspective::set_breakpoint_using_dialog): Allow breakpoint
 	  setting even when we cannot get the current source editor.

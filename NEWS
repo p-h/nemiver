@@ -8,6 +8,7 @@ Bug fixes
     * #555733 - "Assertion failed: editor" when trying to open a new binary
     * #560377 - support new running async output record in GDB trunk
     * #561287 - crash when doing nemiver --purgesessions
+    * #562024 - cannot set breakpoint sometimes
 
     [Jonathon Jongsma]
      * Re-arrange columns in call stack view
