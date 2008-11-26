@@ -1,3 +1,10 @@
+2008-11-26  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* src/persp/dbgperspective/glade/varinspectordialog.glade: make the default
+	size of the variable inspector dialog taller so that I don't have to
+	constantly resize it when inspecting an object with more than 2 or 3 data
+	members
+
 ================== 0.6.4 released ==================
 
 2008-11-23  Dodji Seketeli  <dodji@gnome.org>
