@@ -1,3 +1,9 @@
+nemiver (0.6.4-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Luca Bruno <lucab@debian.org>  Fri, 28 Nov 2008 20:31:33 +0100
+
 nemiver (0.6.3-1) unstable; urgency=low
 
   * New upstream release
