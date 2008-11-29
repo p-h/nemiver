@@ -20,8 +20,7 @@ else
 endif
 
 
-config.status: patch
-	
+config.status: $(QUILT_STAMPFN)
 	dh_testdir
 	./configure --host=$(DEB_HOST_GNU_TYPE) \
                    --build=$(DEB_BUILD_GNU_TYPE) \
@@ -38,11 +37,9 @@ build: build-stamp
 build-stamp:  config.status
 	dh_testdir
 	$(MAKE)
-
 	touch $@
 
 clean: unpatch
-
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp 
