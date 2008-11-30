@@ -13,6 +13,21 @@
 
 2008-11-23  Dodji Seketeli  <dodji@gnome.org>
 
+	* src/dbgengine/nmv-gdbmi-parser.cc: 
+	  (GDBMIParser::parse_string): Allow strings that end by End Of Input.
+	  (GDBMIParser::parse_gdbmi_result): Allow singular RESULT constructs.
+	  a singular RESULT is a RESULT that doesn't have the canonical form:
+	  'VARIABLE = VALUE', but rather just 'VARIABLE', where variable is
+	  either a c_string or a string.
+	* src/dbgengine/nmv-gdbmi-parser.h:
+	  (GDBMIResult::is_singular):
+	  (GDBMIResult::set_is_singular): New entry points to flag the Result
+	  as singular or not.
+	* tests/test-gdbmi.cc (test_gdbmi_result): Add  singular RESULT
+	  related tests.
+
+2008-11-23  Dodji Seketeli  <dodji@gnome.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
 	  (DBGPerspective::set_breakpoint_using_dialog): Allow breakpoint
 	  setting even when we cannot get the current source editor.

@@ -150,20 +150,25 @@ class GDBMIResult : public Object {
 
     UString m_variable ;
     GDBMIValueSafePtr m_value ;
+    bool m_is_singular;
 
 public:
 
     GDBMIResult () {}
     GDBMIResult (const UString &a_variable,
-                 const GDBMIValueSafePtr &a_value) :
+                 const GDBMIValueSafePtr &a_value,
+                 bool is_singular=false) :
         m_variable (a_variable),
-        m_value (a_value)
+        m_value (a_value),
+        m_is_singular (is_singular)
     {}
     virtual ~GDBMIResult () {}
     const UString& variable () const {return m_variable;}
     void variable (const UString& a_in) {m_variable = a_in;}
     const GDBMIValueSafePtr& value () const {return m_value;}
     void value (const GDBMIValueSafePtr &a_in) {m_value = a_in;}
+    bool is_singular () const {return m_is_singular;}
+    void set_is_singular (bool a_singular) {m_is_singular = a_singular;}
 };//end class GDBMIResult
 
 /// A GDB/MI LIST. It can be a list of either GDB/MI Result or GDB/MI Value.

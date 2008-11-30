@@ -3625,8 +3625,9 @@ GDBMIParser::parse_string (UString::size_type a_from,
             || ch == '>'
             || ch == '<') {
             ++cur;
-            CHECK_END2 (cur);
-            continue;
+            if (!m_priv->index_passed_end (cur)) {
+                continue;
+            }
         }
         str_end = cur - 1;
         break;
@@ -3894,6 +3895,16 @@ GDBMIParser::parse_embedded_c_string (UString::size_type a_from,
     return true;
 }
 
+/// parse a GDB/MI RESULT data structure.
+/// A result basically has the form:
+/// VARIABLE=VALUE, where VALUE is either a CONST, a LIST, or a TUPLE.
+/// So that's what the MI spec says. In practise, GDB can send RESULT
+/// constructs that have the form VARIABLE. No =VALUE part there. So we
+/// ought to be able to parse that as well, in GDBMIParser::BROKEN_MODE
+//  parsing mode. Let's call that variant of RESULT a "SINGULAR RESULT".
+///
+/// Beware value is more complicated than what it looks like :-)
+/// Look at the GDB/MI spec for more.
 bool
 GDBMIParser::parse_gdbmi_result (UString::size_type a_from,
                                  UString::size_type &a_to,
@@ -3904,10 +3915,27 @@ GDBMIParser::parse_gdbmi_result (UString::size_type a_from,
     CHECK_END2 (cur);
 
     UString variable;
-    if (!parse_string (cur, cur, variable)) {
+    GDBMIValueSafePtr value;
+    bool is_singular = false;
+
+    if (get_mode () == BROKEN_MODE
+        && RAW_CHAR_AT (cur) == '"') {
+        if (!parse_c_string (cur, cur, variable)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+    } else if (!parse_string (cur, cur, variable)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
+
+    if (get_mode () == BROKEN_MODE
+        && (m_priv->index_passed_end (cur)
+            || RAW_CHAR_AT (cur) != '=')) {
+        is_singular = true;
+        goto end;
+    }
+
     CHECK_END2 (cur);
     SKIP_BLANK2 (cur);
     if (RAW_CHAR_AT (cur) != '=') {
@@ -3918,14 +3946,14 @@ GDBMIParser::parse_gdbmi_result (UString::size_type a_from,
     ++cur;
     CHECK_END2 (cur);
 
-    GDBMIValueSafePtr value;
     if (!parse_gdbmi_value (cur, cur, value)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
     THROW_IF_FAIL (value);
 
-    GDBMIResultSafePtr result (new GDBMIResult (variable, value));
+end:
+    GDBMIResultSafePtr result (new GDBMIResult (variable, value, is_singular));
     THROW_IF_FAIL (result);
     a_to = cur;
     a_value = result;

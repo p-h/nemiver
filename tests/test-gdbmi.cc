@@ -104,6 +104,8 @@ static const char* gv_memory_values =
 "addr=\"0x000013a0\",nr-bytes=\"32\",total-bytes=\"32\",next-row=\"0x000013c0\",prev-row=\"0x0000139c\",next-page=\"0x000013c0\",prev-page=\"0x00001380\",memory=[{addr=\"0x000013a0\",data=[\"0x10\",\"0x11\",\"0x12\",\"0x13\"],ascii=\"xxxx\"}]";
 
 static const char* gv_gdbmi_result0 = "variable=[\"foo\", \"bar\"]";
+static const char* gv_gdbmi_result1 = "variable";
+static const char* gv_gdbmi_result2 = "\"variable\"";
 
 static const char* gv_breakpoint_table0 =
 "BreakpointTable={nr_rows=\"1\",nr_cols=\"6\",hdr=[{width=\"3\",alignment=\"-1\",col_name=\"number\",colhdr=\"Num\"},{width=\"14\",alignment=\"-1\",col_name=\"type\",colhdr=\"Type\"},{width=\"4\",alignment=\"-1\",col_name=\"disp\",colhdr=\"Disp\"},{width=\"3\",alignment=\"-1\",col_name=\"enabled\",colhdr=\"Enb\"},{width=\"10\",alignment=\"-1\",col_name=\"addr\",colhdr=\"Address\"},{width=\"40\",alignment=\"2\",col_name=\"what\",colhdr=\"What\"}],body=[bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x08081566\",func=\"main\",file=\"main.cc\",fullname=\"/home/jonathon/Projects/agave.git/src/main.cc\",line=\"70\",times=\"0\"}]}";
@@ -115,6 +117,8 @@ static const char* gv_breakpoint_table1 =
 static const char* gv_breakpoint_table2 =
 "BreakpointTable={nr_rows=\"5\",nr_cols=\"6\",hdr=[{width=\"3\",alignment=\"-1\",col_name=\"number\",colhdr=\"Num\"},{width=\"14\",alignment=\"-1\",col_name=\"type\",colhdr=\"Type\"},{width=\"4\",alignment=\"-1\",col_name=\"disp\",colhdr=\"Disp\"},{width=\"3\",alignment=\"-1\",col_name=\"enabled\",colhdr=\"Enb\"},{width=\"10\",alignment=\"-1\",col_name=\"addr\",colhdr=\"Address\"},{width=\"40\",alignment=\"2\",col_name=\"what\",colhdr=\"What\"}],body=[bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x0806f8f8\",func=\"main\",file=\"main.cc\",fullname=\"/home/jonathon/Projects/agave.git/src/main.cc\",line=\"73\",times=\"1\"},bkpt={number=\"2\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"<PENDING>\",pending=\"gcs::MainWindow::MainWindow()\",times=\"0\"},bkpt={number=\"3\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x0805f91e\",func=\"gcs::MainWindow::Instance()\",file=\"gcs-mainwindow.cc\",fullname=\"/home/jonathon/Projects/agave.git/src/gcs-mainwindow.cc\",line=\"70\",times=\"1\"},bkpt={number=\"4\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x0805f91e\",func=\"gcs::MainWindow::Instance()\",file=\"gcs-mainwindow.cc\",fullname=\"/home/jonathon/Projects/agave.git/src/gcs-mainwindow.cc\",line=\"70\",times=\"1\"},bkpt={number=\"5\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x0805db44\",func=\"MainWindow\",file=\"gcs-mainwindow.cc\",fullname=\"/home/jonathon/Projects/agave.git/src/gcs-mainwindow.cc\",line=\"95\",times=\"0\"}]}";
 
+static const char* gv_breakpoint_table3 =
+"BreakpointTable={nr_rows=\"3\",nr_cols=\"6\",hdr=[{width=\"7\",alignment=\"-1\",col_name=\"number\",colhdr=\"Num\"},{width=\"14\",alignment=\"-1\",col_name=\"type\",colhdr=\"Type\"},{width=\"4\",alignment=\"-1\",col_name=\"disp\",colhdr=\"Disp\"},{width=\"3\",alignment=\"-1\",col_name=\"enabled\",colhdr=\"Enb\"},{width=\"18\",alignment=\"-1\",col_name=\"addr\",colhdr=\"Address\"},{width=\"40\",alignment=\"2\",col_name=\"what\",colhdr=\"What\"}],body=[bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x000000000044f7d0\",func=\"internal_error\",file=\"utils.c\",fullname=\"/home/dodji/devel/git/archer.git/gdb/utils.c\",line=\"964\",times=\"0\"},bkpt={number=\"2\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x000000000048ec10\",func=\"info_command\",file=\".././gdb/cli/cli-cmds.c\",fullname=\"/home/dodji/devel/git/archer.git/gdb/cli/cli-cmds.c\",line=\"198\",times=\"0\",script={\"silent\",\"return\"}},bkpt={number=\"3\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x0000000000446ec0\",func=\"main\",file=\"gdb.c\",fullname=\"/home/dodji/devel/git/archer.git/gdb/gdb.c\",line=\"26\",times=\"1\"}]}";
 
 void
 test_str0 ()
@@ -579,7 +583,24 @@ test_gdbmi_result ()
 
     GDBMIParser parser (gv_gdbmi_result0);
     bool is_ok = parser.parse_gdbmi_result (cur, cur, result);
-    BOOST_REQUIRE (is_ok && result);
+    BOOST_REQUIRE (is_ok && result && !result->is_singular ());
+
+    parser.push_input (gv_gdbmi_result1);
+    parser.set_mode (GDBMIParser::BROKEN_MODE);
+    cur = 0;
+    is_ok = parser.parse_gdbmi_result (cur, cur, result);
+    BOOST_REQUIRE (is_ok
+                   && result
+                   && result->is_singular ()
+                   && result->variable () == "variable");
+
+    parser.push_input (gv_gdbmi_result2);
+    cur = 0;
+    is_ok = parser.parse_gdbmi_result (cur, cur, result);
+    BOOST_REQUIRE (is_ok
+                   && result
+                   && result->is_singular ()
+                   && result->variable () == "variable");
 }
 
 void
@@ -609,6 +630,11 @@ test_breakpoint_table ()
 
     cur = 0, cur = 0, breakpoints.clear();
     parser.push_input (gv_breakpoint_table2);
+    BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
+
+    cur = 0, cur = 0, breakpoints.clear();
+    parser.push_input (gv_breakpoint_table3);
+    parser.set_mode (GDBMIParser::BROKEN_MODE);
     BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
 }
 
