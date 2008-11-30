@@ -13,6 +13,7 @@ static const char* gv_str1 = "\"/home/dodji/misc/no\\303\\253l-\\303\\251-\\303\
 static const char* gv_str2 = "\"No symbol \\\"events_ecal\\\" in current context.\\n\"" ;
 
 static const char* gv_attrs0 = "msg=\"No symbol \\\"g_return_if_fail\\\" in current context.\"" ;
+static const char* gv_attrs1 = "script=[\"silent\",\"return\"]" ;
 
 static const char* gv_stopped_async_output0 =
 "*stopped,reason=\"breakpoint-hit\",bkptno=\"1\",thread-id=\"1\",frame={addr=\"0x0804afb0\",func=\"main\",args=[{name=\"argc\",value=\"1\"},{name=\"argv\",value=\"0xbfc79ed4\"}],file=\"today-main.c\",fullname=\"/home/dodji/devel/gitstore/omoko.git/applications/openmoko-today/src/today-main.c\",line=\"285\"}\n" ;
@@ -102,6 +103,8 @@ static const char* gv_register_values =
 static const char* gv_memory_values =
 "addr=\"0x000013a0\",nr-bytes=\"32\",total-bytes=\"32\",next-row=\"0x000013c0\",prev-row=\"0x0000139c\",next-page=\"0x000013c0\",prev-page=\"0x00001380\",memory=[{addr=\"0x000013a0\",data=[\"0x10\",\"0x11\",\"0x12\",\"0x13\"],ascii=\"xxxx\"}]";
 
+static const char* gv_gdbmi_result0 = "variable=[\"foo\", \"bar\"]";
+
 static const char* gv_breakpoint_table0 =
 "BreakpointTable={nr_rows=\"1\",nr_cols=\"6\",hdr=[{width=\"3\",alignment=\"-1\",col_name=\"number\",colhdr=\"Num\"},{width=\"14\",alignment=\"-1\",col_name=\"type\",colhdr=\"Type\"},{width=\"4\",alignment=\"-1\",col_name=\"disp\",colhdr=\"Disp\"},{width=\"3\",alignment=\"-1\",col_name=\"enabled\",colhdr=\"Enb\"},{width=\"10\",alignment=\"-1\",col_name=\"addr\",colhdr=\"Address\"},{width=\"40\",alignment=\"2\",col_name=\"what\",colhdr=\"What\"}],body=[bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x08081566\",func=\"main\",file=\"main.cc\",fullname=\"/home/jonathon/Projects/agave.git/src/main.cc\",line=\"70\",times=\"0\"}]}";
 
@@ -120,7 +123,9 @@ test_str0 ()
 
     UString res ;
     UString::size_type to=0 ;
-    is_ok = parse_c_string (gv_str0, 0, to, res) ;
+
+    GDBMIParser parser (gv_str0);
+    is_ok = parser.parse_c_string (0, to, res);
     BOOST_REQUIRE (is_ok) ;
     BOOST_REQUIRE (res == "abracadabra") ;
 }
@@ -132,7 +137,10 @@ test_str1 ()
 
     UString res ;
     UString::size_type to=0 ;
-    is_ok = parse_c_string (gv_str1, 0, to, res) ;
+
+    GDBMIParser parser (gv_str1);
+    is_ok = parser.parse_c_string (0, to, res);
+
     BOOST_REQUIRE (is_ok) ;
     MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'") ;
     BOOST_REQUIRE_MESSAGE (res.size () == 32, "res size was: " << res.size ());
@@ -145,7 +153,10 @@ test_str2 ()
 
     UString res ;
     UString::size_type to=0 ;
-    is_ok = parse_c_string (gv_str2, 0, to, res) ;
+
+    GDBMIParser parser (gv_str2);
+    is_ok = parser.parse_c_string (0, to, res);
+
     BOOST_REQUIRE (is_ok) ;
     MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'") ;
     BOOST_REQUIRE_MESSAGE (res.size (), "res size was: " << res.size ());
@@ -158,10 +169,22 @@ test_attr0 ()
 
     UString name,value ;
     UString::size_type to=0 ;
-    is_ok = parse_attribute (gv_attrs0, 0, to, name, value) ;
+
+    GDBMIParser parser (gv_attrs0);
+
+    name.clear (), value.clear ();
+    is_ok = parser.parse_attribute (0, to, name, value) ;
     BOOST_REQUIRE (is_ok) ;
     BOOST_REQUIRE_MESSAGE (name == "msg", "got name: " << name) ;
     BOOST_REQUIRE_MESSAGE (value.size(), "got empty value") ;
+
+    name.clear (), value.clear ();
+    parser.push_input (gv_attrs1);
+    is_ok = parser.parse_attribute (0, to, name, value) ;
+    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE_MESSAGE (name == "script", "got name: " << name) ;
+    BOOST_REQUIRE_MESSAGE (value == "[silent,return]", "got empty value") ;
+
 }
 
 void
@@ -172,18 +195,21 @@ test_stoppped_async_output ()
     IDebugger::Frame frame ;
     map<UString, UString> attrs ;
 
-    is_ok = parse_stopped_async_output (gv_stopped_async_output0, 0, to,
-                                        got_frame, frame, attrs) ;
+    GDBMIParser parser (gv_stopped_async_output0);
+
+    is_ok = parser.parse_stopped_async_output (0, to,
+                                               got_frame,
+                                               frame, attrs);
     BOOST_REQUIRE (is_ok) ;
     BOOST_REQUIRE (got_frame) ;
     BOOST_REQUIRE (attrs.size ()) ;
 
     to=0;
-    is_ok = parse_stopped_async_output (gv_stopped_async_output1, 0, to,
-                                        got_frame, frame, attrs) ;
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE (got_frame) ;
-    BOOST_REQUIRE (attrs.size ()) ;
+    parser.push_input (gv_stopped_async_output1);
+    is_ok = parser.parse_stopped_async_output (0, to, got_frame, frame, attrs);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (got_frame);
+    BOOST_REQUIRE (attrs.size ());
 }
 
 void
@@ -193,16 +219,18 @@ test_running_async_output ()
     UString::size_type to=0 ;
     int thread_id=0;
 
-    is_ok = parse_running_async_output (gv_running_async_output0, 0, to,
-                                        thread_id) ;
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE (thread_id == -1) ;
+    GDBMIParser parser (gv_running_async_output0);
+
+    is_ok = parser.parse_running_async_output (0, to, thread_id);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (thread_id == -1);
+
+    parser.push_input (gv_running_async_output1);
 
     to=0;
-    is_ok = parse_running_async_output (gv_running_async_output1, 0, to,
-                                        thread_id) ;
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE (thread_id == 1) ;
+    is_ok = parser.parse_running_async_output (0, to, thread_id);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (thread_id == 1);
 }
 
 void
@@ -212,10 +240,12 @@ test_output_record ()
     UString::size_type to=0;
     Output output;
 
-    is_ok = parse_output_record (gv_output_record0, 0, to, output);
+    GDBMIParser parser (gv_output_record0);
+    is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok) ;
 
-    is_ok = parse_output_record (gv_output_record1, 0, to, output);
+    parser.push_input (gv_output_record1);
+    is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok) ;
 }
 
@@ -225,8 +255,9 @@ test_stack_arguments0 ()
     bool is_ok=false ;
     UString::size_type to ;
     map<int, list<IDebugger::VariableSafePtr> >params ;
-    is_ok = nemiver::parse_stack_arguments (gv_stack_arguments0,
-                                            0, to, params) ;
+
+    GDBMIParser parser (gv_stack_arguments0);
+    is_ok = parser.parse_stack_arguments (0, to, params) ;
     BOOST_REQUIRE (is_ok) ;
     BOOST_REQUIRE (params.size () == 2) ;
     map<int, list<IDebugger::VariableSafePtr> >::iterator param_iter ;
@@ -244,8 +275,9 @@ test_stack_arguments1 ()
     bool is_ok=false ;
     UString::size_type to ;
     map<int, list<IDebugger::VariableSafePtr> >params ;
-    is_ok = nemiver::parse_stack_arguments (gv_stack_arguments1,
-                                            0, to, params) ;
+
+    GDBMIParser parser (gv_stack_arguments1);
+    is_ok = parser.parse_stack_arguments (0, to, params) ;
     BOOST_REQUIRE (is_ok) ;
     BOOST_REQUIRE_MESSAGE (params.size () == 18, "got nb params "
                            << params.size ()) ;
@@ -264,7 +296,9 @@ test_local_vars ()
     bool is_ok=false ;
     UString::size_type to=0 ;
     list<IDebugger::VariableSafePtr> vars ;
-    is_ok = parse_local_var_list (gv_local_vars, 0, to, vars) ;
+
+    GDBMIParser parser (gv_local_vars);
+    is_ok = parser.parse_local_var_list (0, to, vars) ;
     BOOST_REQUIRE (is_ok) ;
     BOOST_REQUIRE (vars.size () == 1) ;
     IDebugger::VariableSafePtr var = *(vars.begin ()) ;
@@ -279,7 +313,9 @@ test_member_variable ()
     {
         UString::size_type to = 0;
         IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
-        BOOST_REQUIRE (parse_member_variable (gv_member_var, 0, to, var)) ;
+
+        GDBMIParser parser (gv_member_var);
+        BOOST_REQUIRE (parser.parse_member_variable (0, to, var)) ;
         BOOST_REQUIRE (var) ;
         BOOST_REQUIRE (!var->members ().empty ()) ;
     }
@@ -287,7 +323,9 @@ test_member_variable ()
     {
         UString::size_type to = 0;
         IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
-        BOOST_REQUIRE (parse_member_variable (gv_member_var2, 0, to, var)) ;
+
+        GDBMIParser parser (gv_member_var2);
+        BOOST_REQUIRE (parser.parse_member_variable (0, to, var)) ;
         BOOST_REQUIRE (var) ;
         BOOST_REQUIRE (!var->members ().empty ()) ;
     }
@@ -298,43 +336,51 @@ test_var_with_member_variable ()
 {
     UString::size_type to = 0;
     IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
-    BOOST_REQUIRE (parse_variable_value (gv_var_with_member, 0, to, var)) ;
+
+    GDBMIParser parser (gv_var_with_member);
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (!var->members ().empty ()) ;
 
     to = 0;
     var.reset (new IDebugger::Variable);
-    BOOST_REQUIRE (parse_variable_value (gv_var_with_member2, 0, to, var)) ;
+    parser.push_input (gv_var_with_member2);
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (!var->members ().empty ()) ;
 
     to = 0;
     var.reset (new IDebugger::Variable);
-    BOOST_REQUIRE (parse_variable_value (gv_var_with_member3, 0, to, var)) ;
+    parser.push_input (gv_var_with_member3);
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (!var->members ().empty ()) ;
 
     to = 0;
     var.reset (new IDebugger::Variable);
-    BOOST_REQUIRE (parse_variable_value (gv_var_with_member4, 0, to, var)) ;
+    parser.push_input (gv_var_with_member4);
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (!var->members ().empty ()) ;
 
     to = 0;
     var.reset (new IDebugger::Variable);
-    BOOST_REQUIRE (parse_variable_value (gv_var_with_member5, 0, to, var)) ;
+    parser.push_input (gv_var_with_member5);
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (!var->members ().empty ()) ;
 
     to = 0;
     var.reset (new IDebugger::Variable);
-    BOOST_REQUIRE (parse_variable_value (gv_var_with_member6, 0, to, var)) ;
+    parser.push_input (gv_var_with_member6);
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (!var->members ().empty ()) ;
 
     to = 0;
     var.reset (new IDebugger::Variable);
-    BOOST_REQUIRE (parse_variable_value (gv_var_with_member7, 0, to, var)) ;
+    parser.push_input (gv_var_with_member7);
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (!var->members ().empty ()) ;
 }
@@ -344,7 +390,8 @@ test_embedded_string ()
 {
     UString::size_type to = 0 ;
     UString str ;
-    BOOST_REQUIRE (parse_embedded_c_string (gv_emb_str, 0, to, str)) ;
+    GDBMIParser parser (gv_emb_str);
+    BOOST_REQUIRE (parser.parse_embedded_c_string (0, to, str)) ;
 }
 
 void
@@ -352,15 +399,16 @@ test_overloads_prompt ()
 {
     vector<IDebugger::OverloadsChoiceEntry> prompts ;
     UString::size_type cur = 0 ;
-    BOOST_REQUIRE (parse_overloads_choice_prompt (gv_overloads_prompt0,
-                                                  cur, cur, prompts)) ;
+
+    GDBMIParser parser (gv_overloads_prompt0);
+    BOOST_REQUIRE (parser.parse_overloads_choice_prompt (cur, cur, prompts)) ;
     BOOST_REQUIRE_MESSAGE (prompts.size () == 4,
                            "actually got " << prompts.size ()) ;
 
     cur=0 ;
     prompts.clear () ;
-    BOOST_REQUIRE (parse_overloads_choice_prompt (gv_overloads_prompt1,
-                                                  cur, cur, prompts)) ;
+    parser.push_input (gv_overloads_prompt1);
+    BOOST_REQUIRE (parser.parse_overloads_choice_prompt (cur, cur, prompts)) ;
     BOOST_REQUIRE_MESSAGE (prompts.size () == 4,
                            "actually got " << prompts.size ()) ;
 }
@@ -371,8 +419,9 @@ test_register_names ()
     std::map<IDebugger::register_id_t, UString> regs;
     UString::size_type cur = 0;
 
-    BOOST_REQUIRE (parse_register_names (gv_register_names,
-                cur, cur, regs)) ;
+    GDBMIParser parser (gv_register_names);
+
+    BOOST_REQUIRE (parser.parse_register_names (cur, cur, regs)) ;
     BOOST_REQUIRE_EQUAL (regs.size (), 50u);
     BOOST_REQUIRE_EQUAL (regs[0], "eax");
     BOOST_REQUIRE_EQUAL (regs[1], "ecx");
@@ -432,8 +481,8 @@ test_changed_registers ()
     std::list<IDebugger::register_id_t> regs;
     UString::size_type cur = 0;
 
-    BOOST_REQUIRE (parse_changed_registers (gv_changed_registers,
-                cur, cur, regs)) ;
+    GDBMIParser parser (gv_changed_registers);
+    BOOST_REQUIRE (parser.parse_changed_registers (cur, cur, regs)) ;
     BOOST_REQUIRE_EQUAL (regs.size (), 18u);
     std::list<IDebugger::register_id_t>::const_iterator reg_iter = regs.begin ();
     BOOST_REQUIRE_EQUAL (*reg_iter++, 0u);
@@ -462,10 +511,11 @@ test_register_values ()
     std::map<IDebugger::register_id_t, UString> reg_values;
     UString::size_type cur = 0;
 
-    BOOST_REQUIRE (parse_register_values (gv_register_values,
-                cur, cur, reg_values)) ;
+    GDBMIParser parser (gv_register_values);
+    BOOST_REQUIRE (parser.parse_register_values (cur, cur, reg_values));
     BOOST_REQUIRE_EQUAL (reg_values.size (), 11u);
-    std::map<IDebugger::register_id_t, UString>::const_iterator reg_iter = reg_values.begin ();
+    std::map<IDebugger::register_id_t, UString>::const_iterator
+                                                reg_iter = reg_values.begin ();
     BOOST_REQUIRE_EQUAL ((reg_iter)->first, 1u);
     BOOST_REQUIRE_EQUAL ((reg_iter)->second, "0xbfd10a60");
     ++reg_iter;
@@ -507,8 +557,8 @@ test_memory_values ()
     size_t start_addr;
     UString::size_type cur = 0;
 
-    BOOST_REQUIRE (parse_memory_values (gv_memory_values,
-                cur, cur, start_addr, mem_values)) ;
+    GDBMIParser parser (gv_memory_values);
+    BOOST_REQUIRE (parser.parse_memory_values (cur, cur, start_addr, mem_values));
     BOOST_REQUIRE_EQUAL (start_addr, 0x000013a0u);
     BOOST_REQUIRE_EQUAL (mem_values.size (), 4u);
     std::vector<uint8_t>::const_iterator mem_iter = mem_values.begin ();
@@ -522,13 +572,24 @@ test_memory_values ()
 }
 
 void
+test_gdbmi_result ()
+{
+    GDBMIResultSafePtr result;
+    UString::size_type cur = 0;
+
+    GDBMIParser parser (gv_gdbmi_result0);
+    bool is_ok = parser.parse_gdbmi_result (cur, cur, result);
+    BOOST_REQUIRE (is_ok && result);
+}
+
+void
 test_breakpoint_table ()
 {
     std::map<int, IDebugger::BreakPoint> breakpoints;
     UString::size_type cur = 0;
 
-    BOOST_REQUIRE (parse_breakpoint_table (gv_breakpoint_table0,
-                                           cur, cur, breakpoints)) ;
+    GDBMIParser parser (gv_breakpoint_table0);
+    BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints)) ;
     BOOST_REQUIRE_EQUAL (breakpoints.size (), 1u);
     std::map<int, IDebugger::BreakPoint>::const_iterator iter;
     iter = breakpoints.find (1);
@@ -543,12 +604,12 @@ test_breakpoint_table ()
     BOOST_REQUIRE_EQUAL (iter->second.line (), 70);
 
     cur = 0, cur = 0, breakpoints.clear();
-    BOOST_REQUIRE (parse_breakpoint_table (gv_breakpoint_table1,
-                                           cur, cur, breakpoints)) ;
+    parser.push_input (gv_breakpoint_table1);
+    BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
 
     cur = 0, cur = 0, breakpoints.clear();
-    BOOST_REQUIRE (parse_breakpoint_table (gv_breakpoint_table2,
-                                           cur, cur, breakpoints)) ;
+    parser.push_input (gv_breakpoint_table2);
+    BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
 }
 
 using boost::unit_test::test_suite ;
@@ -581,6 +642,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_changed_registers));
     suite->add (BOOST_TEST_CASE (&test_register_values));
     suite->add (BOOST_TEST_CASE (&test_memory_values));
+    suite->add (BOOST_TEST_CASE (&test_gdbmi_result));
     suite->add (BOOST_TEST_CASE (&test_breakpoint_table));
     return suite ;
 

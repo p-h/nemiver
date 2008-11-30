@@ -298,6 +298,13 @@ operator<< (std::ostream &a_out, const IDebugger::Variable &a_var) ;
 //</gdbmi datastructure streaming operators>
 //******************************************
 
+bool gdbmi_result_to_string (GDBMIResultSafePtr a_result, UString &a_string);
+
+bool gdbmi_list_to_string (GDBMIListSafePtr a_list, UString &a_string);
+
+bool gdbmi_value_to_string (GDBMIValueSafePtr a_value, UString &a_string);
+
+bool gdbmi_tuple_to_string (GDBMITupleSafePtr a_result, UString &a_string);
 
 //**************************
 //GDBMI parsing functions
@@ -546,6 +553,10 @@ bool parse_new_thread_id (const UString &a_input,
                           int &a_thread_id,
                           IDebugger::Frame &a_frame);
 
+bool parse_c_string_body (const UString &a_input,
+                          UString::size_type a_from,
+                          UString::size_type &a_to,
+                          UString &a_string);
 /// parses a string that has the form:
 /// \"blah\"
 bool parse_c_string (const UString &a_input,
@@ -593,6 +604,192 @@ bool parse_memory_values (const UString &a_input,
                           UString::size_type &a_to,
                           size_t& a_start_addr,
                           std::vector<uint8_t> &a_values);
+
+class GDBMIParser {
+    // non copyable
+    GDBMIParser (const GDBMIParser &);
+    GDBMIParser& operator= (const GDBMIParser &);
+    struct Priv;
+    SafePtr<Priv> m_priv;
+
+public:
+
+    /// Parsing mode.
+    enum Mode {
+        UNDEFINED_MODE=0,
+        // This one means we adhere to the strict MI syntax.
+        STRICT_MODE,
+        // This one means we try to accept the broken MI ouptut from GDB,
+        // even those that are not MI compliant. This is implies best effort strategy.
+        BROKEN_MODE,
+    };
+    explicit GDBMIParser (Mode a_mode = STRICT_MODE);
+    explicit GDBMIParser (const UString &a_input, Mode a_mode = STRICT_MODE);
+    virtual ~GDBMIParser ();
+
+    void push_input (const UString &a_input);
+    void pop_input ();
+    const UString& get_input () const;
+
+    void set_mode (Mode);
+    Mode get_mode () const;
+
+    //*********************
+    //<Parsing entry points.>
+    //*********************
+
+    bool parse_string (UString::size_type a_from,
+                       UString::size_type &a_to,
+                       UString &a_string);
+
+    bool parse_octal_escape (UString::size_type a_from,
+                             UString::size_type &a_to,
+                             unsigned char &a_byte_value);
+
+    bool parse_octal_escape_sequence (UString::size_type a_from,
+                                      UString::size_type &a_to,
+                                      UString &a_result);
+
+    bool parse_c_string_body (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              UString &a_string);
+
+    bool parse_c_string (UString::size_type a_from,
+                         UString::size_type &a_to,
+                         UString &a_c_string);
+
+    bool parse_embedded_c_string_body (UString::size_type a_from,
+                                       UString::size_type &a_to,
+                                       UString &a_string);
+
+    bool parse_embedded_c_string (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  UString &a_string) ;
+
+    bool parse_gdbmi_result (UString::size_type a_from,
+                             UString::size_type &a_to,
+                             GDBMIResultSafePtr &a_value);
+
+    bool parse_gdbmi_value (UString::size_type a_from,
+                            UString::size_type &a_to,
+                            GDBMIValueSafePtr &a_value) ;
+
+    bool parse_gdbmi_tuple (UString::size_type a_from,
+                            UString::size_type &a_to,
+                            GDBMITupleSafePtr &a_tuple);
+
+    bool parse_gdbmi_list (UString::size_type a_from,
+                           UString::size_type &a_to,
+                           GDBMIListSafePtr &a_list);
+
+    bool parse_stream_record (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              Output::StreamRecord &a_record);
+
+    bool parse_stopped_async_output (UString::size_type a_from,
+                                     UString::size_type &a_to,
+                                     bool &a_got_frame,
+                                     IDebugger::Frame &a_frame,
+                                     map<UString, UString> &a_attrs);
+
+    bool parse_running_async_output (UString::size_type a_from,
+                                     UString::size_type &a_to,
+                                     int &a_thread_id);
+
+    bool parse_attribute (UString::size_type a_from,
+                          UString::size_type &a_to,
+                          UString &a_name,
+                          UString &a_value);
+
+    bool parse_attributes (UString::size_type a_from,
+                           UString::size_type &a_to,
+                           map<UString, UString> &a_attrs);
+
+    bool parse_frame (UString::size_type a_from,
+                      UString::size_type &a_to,
+                      IDebugger::Frame &a_frame);
+
+    bool parse_out_of_band_record (UString::size_type a_from,
+                                   UString::size_type &a_to,
+                                   Output::OutOfBandRecord &a_record);
+
+    bool parse_breakpoint (Glib::ustring::size_type a_from,
+                           Glib::ustring::size_type &a_to,
+                           IDebugger::BreakPoint &a_bkpt);
+
+    bool parse_breakpoint_table (UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 map<int, IDebugger::BreakPoint> &a_breakpoints);
+
+    bool parse_threads_list (UString::size_type a_from,
+                             UString::size_type &a_to,
+                             std::list<int> &a_thread_ids);
+
+    bool parse_new_thread_id (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              int &a_thread_id,
+                              IDebugger::Frame &a_frame);
+
+    bool parse_file_list (UString::size_type a_from,
+                          UString::size_type &a_to,
+                          std::vector<UString> &a_files);
+
+    bool parse_call_stack (const UString::size_type a_from,
+                           UString::size_type &a_to,
+                           vector<IDebugger::Frame> &a_stack);
+
+    bool parse_stack_arguments (UString::size_type a_from,
+                                UString::size_type &a_to,
+                                map<int, list<IDebugger::VariableSafePtr> > &a_params);
+
+    bool parse_local_var_list (UString::size_type a_from,
+                               UString::size_type &a_to,
+                               list<IDebugger::VariableSafePtr> &a_vars);
+
+    bool parse_member_variable (const UString::size_type a_from,
+                                UString::size_type &a_to,
+                                IDebugger::VariableSafePtr &a_var,
+                                bool a_in_unnamed_var=false);
+
+    bool parse_variable_value (const UString::size_type a_from,
+                               UString::size_type &a_to,
+                               IDebugger::VariableSafePtr &a_var);
+
+    bool parse_overloads_choice_prompt
+                        (UString::size_type a_from,
+                         UString::size_type &a_to,
+                         vector<IDebugger::OverloadsChoiceEntry> &a_prompts);
+
+    bool parse_register_names (UString::size_type a_from,
+                               UString::size_type &a_to,
+                               std::map<IDebugger::register_id_t,
+                                        UString> &a_registers);
+
+    bool parse_changed_registers (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  std::list<IDebugger::register_id_t> &a_registers);
+
+    bool parse_register_values (UString::size_type a_from,
+                                UString::size_type &a_to,
+                                std::map<IDebugger::register_id_t, UString> &a_values);
+
+    bool parse_memory_values (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              size_t& a_start_addr,
+                              std::vector<uint8_t> &a_values);
+
+    bool parse_result_record (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              Output::ResultRecord &a_record);
+
+
+    bool parse_output_record (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              Output &a_output);
+    //*********************
+    //</Parsing entry points.>
+    //*********************
+};//end class GDBMIParser
 
 NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_GDBMI_PARSER_H

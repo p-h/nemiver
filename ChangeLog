@@ -18,6 +18,83 @@
 	  setting even when we cannot get the current source editor.
 	  This should fix "#562024 - cannot set breakpoint sometimes."
 
+2008-11-23  Dodji Seketeli  <dodji@gnome.org>
+
+	  * src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::GDBMIParser): Add
+	    a new parameter to constructors to set the parsing mode. By
+	    default, it's the strict mode.
+	    (GDBMIParser::parse_overloads_choice_prompt): New entry point.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::GDBEngine::Priv): Added
+	  an instance of GDBMIParser to the priv object of GDBEngine. Set it
+	  to the GDBMIParser::BROKEN_MODE parsing mode.
+	  (GDBEngine::Priv::on_gdb_stdout_signal): Switch to the new GDBMIParser to
+	  parse output records. Set it to the GDBMIParser::BROKEN_MODE parsing mode.
+	  (OnBreakPointHandler::extract_overloads_choice_prompt_values):
+	  Switch to the new GDBMIParser to parse overloads choice prompts.
+	  * tests/test-gdbmi.cc: Switch all the GDB/MI parsing tests to using the
+	  new GDBMIParser. Tests now run OK with the new parser.
+
+2008-11-23  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc (RAW_INPUT): New macro.
+	(GDBMIParser::push_input): Added ...
+	(GDBMIParser::pop_input): ... these interfaces to push/pop input
+	stream to the parser. Pushing a new input stream to the parser will
+	make him parse the from the new stream. Poping an input stream from
+	the parser will make it parse from the older input stream.
+	(GDBMIParser::parse_breakpoint, GDBMIParser::parse_breakpoint_table):
+	(GDBMIParser::parse_threads_list, GDBMIParser::parse_new_thread_id):
+	(GDBMIParser::parse_file_list, GDBMIParser::parse_call_stack):
+	(GDBMIParser::parse_local_var_list, GDBMIParser::parse_stack_arguments):
+	(GDBMIParser::parse_member_variable, GDBMIParser::parse_variable_value):
+	(GDBMIParser::parse_register_names, GDBMIParser::parse_changed_registers):
+	(GDBMIParser::parse_register_values, GDBMIParser::parse_memory_values):
+	New parser entry points.
+	* src/dbgengine/nmv-gdbmi-parser.h: New entry points of
+	GDBMIParser got added here.
+	* tests/test-gdbmi.cc: Started to test the new GDBMIParser type. Task
+	on going.
+
+2008-11-22  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.h: Started to create the new
+	GDBMIParser type. This is going to have as methods all the public
+	entry points - that were free functions - of the old parser.
+	src/dbgengine/nmv-gdbmi-parser.cc (LOG_PARSING_ERROR2, LOG_PARSING_ERROR_MSG2):
+	(CHECK_END2, SKIP_WS2, SKIP_BLANK2, RAW_CHAR_AT, UCHAR_AT): New
+	utility macros used by the new parser.
+	(GDBMIParser::Priv): New priv object of the parser.
+	(GDBMIParser::set_input, GDBMIParser::get_input, GDBMIParser::set_mode):
+	(GDBMIParser::get_mode, GDBMIParser::parse_string)
+	(GDBMIParser::parse_octal_escape, GDBMIParser::parse_octal_escape_sequence):
+	(GDBMIParser::parse_c_string_body, GDBMIParser::parse_c_string):
+	(GDBMIParser::parse_embedded_c_string_body):
+	(GDBMIParser::parse_embedded_c_string, GDBMIParser::parse_gdbmi_result):
+	(GDBMIParser::parse_gdbmi_value, GDBMIParser::parse_gdbmi_tuple):
+	(GDBMIParser::parse_gdbmi_list, GDBMIParser::parse_stream_record):
+	(GDBMIParser::parse_stopped_async_output):
+	(GDBMIParser::parse_running_async_output, GDBMIParser::parse_attribute):
+	(GDBMIParser::parse_attributes, GDBMIParser::parse_frame):
+	(GDBMIParser::parse_output_record, GDBMIParser::parse_out_of_band_record):
+	(GDBMIParser::parse_result_record): New parser entry points.
+
+2008-11-22  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc,h (parse_attribute):
+	  make sure attributes like foo = ["bar", "baz"] can now be parsed.
+	  This is the most generic form of attribute (or GDB/MI Result) that
+	  we can have.
+	  Added a bunch of function to serialize MI datatypes.
+	  (parse_gdbmi_list): allow the presence of space after ',' in MI LISTs.
+	  (gdbmi_tuple_to_string): New entry point.
+	  (gdbmi_result_to_string): Likewise.
+	  (gdbmi_list_to_string): Likewise.
+	  (gdbmi_value_to_string): Likewise.
+	  (operator<<): Use the new serialisation entry points.
+	* tests/test-gdbmi.cc (test_attr0):  Added a new test.
+	  (test_gdbmi_result): New test.
+
+	  This entry is a first step for fixing bug #560662.
 2008-11-22  Dodji Seketeli  <dodji@gnome.org>
 
 	* configure.ac: Bump version number to 0.6.4
@@ -44,6 +121,7 @@
 	call stack view.
 	was: Location, Function, Args
 	now: Function, Args, Location
+
 
 2008-11-12  Jonathon Jongsma  <jonathon@quotidian.org>
 

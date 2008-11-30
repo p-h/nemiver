@@ -102,6 +102,7 @@ public:
     IDebugger::State state;
     ILangTraitSafePtr lang_trait;
     UString debugger_full_path;
+    GDBMIParser gdbmi_parser;
     sigc::signal<void> gdb_died_signal;
     sigc::signal<void, const UString& > master_pty_signal;
     sigc::signal<void, const UString& > gdb_stdout_signal;
@@ -313,8 +314,9 @@ public:
         Output output (a_buf);
 
         UString::size_type from (0), to (0), end (a_buf.size ());
+        gdbmi_parser.push_input (a_buf);
         for (; from < end;) {
-            if (!parse_output_record (a_buf, from, to, output)) {
+            if (!gdbmi_parser.parse_output_record (from, to, output)) {
                 LOG_ERROR ("output record parsing failed: "
                         << a_buf.substr (from, end - from)
                         << "\npart of buf: " << a_buf
@@ -363,6 +365,7 @@ public:
                 }
             }
         }
+        gdbmi_parser.pop_input ();
     }
 
     Priv (DynamicModule *a_dynmod) :
@@ -373,7 +376,8 @@ public:
         is_attached (false),
         line_busy (false),
         error_buffer_status (DEFAULT),
-        state (IDebugger::NOT_STARTED)
+        state (IDebugger::NOT_STARTED),
+        gdbmi_parser (GDBMIParser::BROKEN_MODE)
     {
         gdb_stdout_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_gdb_stdout_signal));
@@ -960,7 +964,9 @@ struct OnBreakPointHandler: OutputHandler {
             }
         }
         LOG_DD ("going to parse overloads: >>>" << input << "<<<");
-        return parse_overloads_choice_prompt (input, cur, cur, a_prompts);
+        GDBMIParser gdbmi_parser (input, GDBMIParser::BROKEN_MODE);
+        gdbmi_parser.push_input (input);
+        return gdbmi_parser.parse_overloads_choice_prompt (cur, cur, a_prompts);
     }
 
     bool has_breakpoints_set (CommandAndOutput &a_in)

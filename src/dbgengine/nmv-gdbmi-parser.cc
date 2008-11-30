@@ -39,6 +39,14 @@ LOG_ERROR ("parsing failed for buf: >>>" \
              << " cur index was: " << (int)(a_from)); \
 } while (0)
 
+#define LOG_PARSING_ERROR2(a_from) \
+do { \
+Glib::ustring str_01 (m_priv->input, (a_from), m_priv->end - (a_from));\
+LOG_ERROR ("parsing failed for buf: >>>" \
+             << m_priv->input << "<<<" \
+             << " cur index was: " << (int)(a_from)); \
+} while (0)
+
 #define LOG_PARSING_ERROR_MSG(a_buf, a_from, msg) \
 do { \
 Glib::ustring str_01 (a_buf, (a_from), a_buf.size () - (a_from));\
@@ -48,9 +56,24 @@ LOG_ERROR ("parsing failed for buf: >>>" \
              << ", reason: " << msg); \
 } while (0)
 
+#define LOG_PARSING_ERROR_MSG2(a_from, msg) \
+do { \
+Glib::ustring str_01 (m_priv->input, (a_from), m_priv->end - (a_from));\
+LOG_ERROR ("parsing failed for buf: >>>" \
+             << m_priv->input << "<<<" \
+             << " cur index was: " << (int)(a_from) \
+             << ", reason: " << msg); \
+} while (0)
+
 #define CHECK_END(a_input, a_current, a_end) \
 if ((a_current) >= (a_end)) {\
 LOG_ERROR ("hit end index " << (int) a_end); \
+return false;\
+}
+
+#define CHECK_END2(a_current) \
+if ((a_current) >= (m_priv->end)) {\
+LOG_ERROR ("hit end index " << (int) m_priv->end); \
 return false;\
 }
 
@@ -66,11 +89,27 @@ while (a_from < a_input.bytes () && isspace (a_input.c_str ()[a_from])) { \
 } \
 a_to = a_from;
 
+#define SKIP_WS2(a_from) \
+while (!m_priv->index_passed_end (a_from)  && isspace (RAW_CHAR_AT (a_from))) { \
+    CHECK_END2 (a_from);++a_from; \
+}
+
 #define SKIP_BLANK(a_input, a_from, a_to) \
 while (a_from < a_input.bytes () && isblank (a_input.c_str ()[a_from])) { \
     CHECK_END (a_input, a_from, end);++a_from; \
 } \
 a_to = a_from;
+
+#define SKIP_BLANK2(a_from) \
+while (!m_priv->index_passed_end (a_from) && isblank (RAW_CHAR_AT (a_from))) { \
+    CHECK_END2 (a_from); ++a_from; \
+}
+
+#define RAW_CHAR_AT(cur) m_priv->raw_char_at (cur)
+
+#define UCHAR_AT(cur) m_priv->m_priv->input (cur)
+
+#define RAW_INPUT m_priv->input.raw ()
 
 using namespace std;
 using namespace nemiver::common;
@@ -121,15 +160,14 @@ parse_attribute (const UString &a_input,
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (a_input, cur, a_to, result)
         || !result
-        || !result->value ()
-        || result->value ()->content_type () != GDBMIValue::STRING_TYPE) {
+        || result->variable ().empty ()
+        || !result->value ()) {
         LOG_PARSING_ERROR (a_input, cur);
         return false;
     }
 
     a_name = result->variable ();
-    a_value = result->value ()->get_string_content ();
-    return true;
+    return gdbmi_value_to_string (result->value (), a_value);
 }
 
 /// \brief parses an attribute list
@@ -498,6 +536,7 @@ parse_gdbmi_list (const UString &a_input,
         for (;;) {
             if (a_input.c_str ()[cur] == ',') {
                 ++cur;
+                SKIP_BLANK (a_input, cur, cur);
                 CHECK_END (a_input, cur, end);
                 result.reset ();
                 if (parse_gdbmi_result (a_input, cur, cur, result)) {
@@ -515,6 +554,7 @@ parse_gdbmi_list (const UString &a_input,
         for (;;) {
             if (a_input.c_str ()[cur] == ',') {
                 ++cur;
+                SKIP_BLANK (a_input, cur, cur);
                 CHECK_END (a_input, cur, end);
                 value.reset ();
                 if (parse_gdbmi_value (a_input, cur, cur, value)) {
@@ -585,6 +625,135 @@ parse_gdbmi_result (const UString &a_input,
     return true;
 }
 
+bool
+gdbmi_tuple_to_string (GDBMITupleSafePtr a_result,
+                        UString &a_string)
+{
+
+    if (!a_result)
+        return false;
+
+    list<GDBMIResultSafePtr>::const_iterator it = a_result->content ().begin ();
+    UString str;
+    bool is_ok = true;
+    a_string = "{";
+
+    if (it == a_result->content ().end ())
+        goto end;
+
+    is_ok = gdbmi_result_to_string (*it, str);
+    if (!is_ok)
+        goto end;
+    a_string += str;
+    ++it;
+
+    for (; is_ok && it != a_result->content ().end (); ++it) {
+        is_ok = gdbmi_result_to_string (*it, str);
+        if (is_ok)
+            a_string += "," + str;
+    }
+
+end:
+    a_string += "}";
+    return is_ok;
+}
+
+bool
+gdbmi_result_to_string (GDBMIResultSafePtr a_result,
+                        UString &a_string)
+{
+    if (!a_result)
+        return false;
+
+    UString variable, value;
+    variable = a_result->variable ();
+
+    if (!gdbmi_value_to_string (a_result->value (), value))
+        return false;
+
+    a_string = variable + "=" + value;
+    return true;
+}
+
+bool
+gdbmi_list_to_string (GDBMIListSafePtr a_list,
+                      UString &a_string)
+{
+    if (!a_list)
+        return false;
+
+    bool is_ok = true;
+    UString str;
+    a_string = "[";
+    switch (a_list->content_type ()) {
+        case GDBMIList::RESULT_TYPE: {
+            list<GDBMIResultSafePtr> results;
+            a_list->get_result_content (results);
+            list<GDBMIResultSafePtr>::const_iterator result_it = results.begin ();
+            if (result_it == results.end ())
+                break;
+            if (!gdbmi_result_to_string (*result_it, str))
+                break;
+            a_string += str;
+            ++result_it;
+            for (; is_ok && result_it != results.end (); ++result_it) {
+                is_ok = gdbmi_result_to_string (*result_it, str);
+                if (is_ok)
+                    a_string += "," + str;
+            }
+        }
+            break;
+        case GDBMIList::VALUE_TYPE: {
+            list<GDBMIValueSafePtr> values;
+            a_list->get_value_content (values);
+            list<GDBMIValueSafePtr>::const_iterator value_it = values.begin ();
+            if (value_it == values.end ())
+                break;
+            if (!gdbmi_value_to_string (*value_it, str))
+                break;
+            a_string += str;
+            ++value_it;
+            for (; is_ok && value_it != values.end (); ++value_it) {
+                is_ok = gdbmi_value_to_string (*value_it, str);
+                if (is_ok)
+                    a_string += "," + str;
+            }
+        }
+            break;
+        case GDBMIList::UNDEFINED_TYPE:
+            a_string += "<undefined-gdbmi-list-type>";
+            break;
+    }
+    a_string += "]";
+    return is_ok;
+}
+
+bool
+gdbmi_value_to_string (GDBMIValueSafePtr a_value,
+                       UString &a_string)
+{
+    if (!a_value)
+        return false;
+
+    bool result = true;
+    switch (a_value->content_type ()) {
+        case GDBMIValue::EMPTY_TYPE:
+            a_string = "";
+            break;
+        case GDBMIValue::STRING_TYPE:
+            a_string = a_value->get_string_content ();
+            result = true;
+            break;
+        case GDBMIValue::LIST_TYPE:
+            result = gdbmi_list_to_string (a_value->get_list_content (), a_string);
+            break;
+        case GDBMIValue::TUPLE_TYPE:
+            result = gdbmi_tuple_to_string (a_value->get_tuple_content (), a_string);
+            break;
+    }
+    return result;
+}
+
 /// \brief parse a GDB/MI value.
 /// GDB/MI value type is defined as:
 /// VALUE ==> CONST | TUPLE | LIST
@@ -651,13 +820,12 @@ ostream&
 operator<< (ostream &a_out, const GDBMIResultSafePtr &a_result)
 {
     if (!a_result) {
-        a_out << "<result nilpointer/>";
-        return a_out;
+        a_out << "";
+    } else {
+        UString str;
+        gdbmi_result_to_string (a_result, str);
+        a_out << str;
     }
-    a_out << "<result variable='";
-    a_out << Glib::locale_from_utf8 (a_result->variable ()) << "'>";
-    a_out << a_result->value ();
-    a_out << "</result>";
     return a_out;
 }
 
@@ -667,13 +835,11 @@ operator<< (ostream &a_out, const GDBMITupleSafePtr &a_tuple)
     if (!a_tuple) {
         a_out << "<tuple nilpointer/>";
         return a_out;
+    } else {
+        UString str;
+        gdbmi_tuple_to_string (a_tuple, str);
+        a_out << str;
     }
-    list<GDBMIResultSafePtr>::const_iterator iter;
-    a_out << "<tuple>" ;
-    for (iter=a_tuple->content ().begin (); iter!=a_tuple->content ().end(); ++iter) {
-        a_out  << *iter;
-    }
-    a_out  << "</tuple>";
     return a_out;
 }
 
@@ -682,32 +848,10 @@ operator<< (ostream &a_out, const GDBMIListSafePtr a_list)
 {
     if (!a_list) {
         a_out << "<list nilpointer/>";
-        return a_out;
-    }
-    if (a_list->content_type () == GDBMIList::RESULT_TYPE) {
-        a_out << "<list type='result'>";
-        list<GDBMIResultSafePtr>::const_iterator iter;
-        list<GDBMIResultSafePtr> result_list;
-        a_list->get_result_content (result_list);
-        for (iter = result_list.begin ();
-             iter != result_list.end ();
-             ++iter) {
-            a_out << *iter;
-        }
-        a_out << "</list>";
-    } else if (a_list->content_type () == GDBMIList::VALUE_TYPE) {
-        a_out << "<list type='value'>";
-        list<GDBMIValueSafePtr>::const_iterator iter;
-        list<GDBMIValueSafePtr> value_list;
-        a_list->get_value_content (value_list);
-        for (iter = value_list.begin ();
-             iter != value_list.end ();
-             ++iter) {
-            a_out << *iter;
-        }
-        a_out << "</list>";
     } else {
-        THROW_IF_FAIL ("assert not reached");
+        UString str;
+        gdbmi_list_to_string (a_list, str);
+        a_out << str;
     }
     return a_out;
 }
@@ -717,27 +861,10 @@ operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val)
 {
     if (!a_val) {
         a_out << "<value nilpointer/>";
-        return a_out;
-    }
-
-    switch (a_val->content_type ()) {
-        case GDBMIValue::EMPTY_TYPE:
-            a_out << "<value type='empty'/>";
-            break;
-        case GDBMIValue::TUPLE_TYPE :
-            a_out << "<value type='tuple'>"
-                  << a_val->get_tuple_content ()
-                  << "</value>";
-            break;
-        case GDBMIValue::LIST_TYPE :
-            a_out << "<value type='list'>\n"
-                  << a_val->get_list_content ()<< "</value>";
-            break;
-        case GDBMIValue::STRING_TYPE:
-            a_out << "<value type='string'>"
-                  << Glib::locale_from_utf8 (a_val->get_string_content ())
-                  << "</value>";
-            break;
+    } else {
+        UString str;
+        gdbmi_value_to_string (a_val, str);
+        a_out << str;
     }
     return a_out;
 }
@@ -3365,6 +3492,2930 @@ parse_overloads_choice_prompt
     return true;
 }
 
+//******************************
+//<Parser methods>
+//******************************
+struct GDBMIParser::Priv {
+    UString input;
+    UString::size_type end;
+    Mode mode;
+    list<UString> input_stack;
+
+    Priv (Mode a_mode = GDBMIParser::STRICT_MODE):
+        end (0),
+        mode (a_mode)
+    {
+    }
+
+    Priv (const UString &a_input, Mode a_mode) :
+        end (0),
+        mode (a_mode)
+
+    {
+        push_input (a_input);
+    }
+
+    UString::value_type raw_char_at (UString::size_type at) const
+    {
+        return input.raw ()[at];
+    }
+
+    bool index_passed_end (UString::size_type a_index)
+    {
+        return a_index >= end;
+    }
+
+    void set_input (const UString &a_input)
+    {
+        input = a_input;
+        end = a_input.bytes ();
+    }
+
+    void clear_input ()
+    {
+        input.clear ();
+        end = 0;
+    }
+
+    void push_input (const UString &a_input)
+    {
+        input_stack.push_front (a_input);
+        set_input (a_input);
+    }
+
+    void pop_input ()
+    {
+        clear_input ();
+        input_stack.pop_front ();
+        if (!input_stack.empty ()) {
+            set_input (input_stack.front ());
+        }
+    }
+};//end class GDBMIParser;
+
+
+GDBMIParser::GDBMIParser (Mode a_mode)
+{
+    m_priv.reset (new Priv (a_mode));
+}
+
+GDBMIParser::GDBMIParser (const UString &a_input, Mode a_mode)
+{
+    m_priv.reset (new Priv (a_input, a_mode));
+}
+
+GDBMIParser::~GDBMIParser ()
+{
+}
+
+void
+GDBMIParser::push_input (const UString &a_input)
+{
+    m_priv->push_input (a_input);
+}
+
+void
+GDBMIParser::pop_input ()
+{
+    m_priv->pop_input ();
+}
+
+const UString&
+GDBMIParser::get_input () const
+{
+    return m_priv->input;
+}
+
+void
+GDBMIParser::set_mode (Mode a_mode)
+{
+    m_priv->mode = a_mode;
+}
+
+GDBMIParser::Mode
+GDBMIParser::get_mode () const
+{
+    return m_priv->mode;
+}
+
+bool
+GDBMIParser::parse_string (UString::size_type a_from,
+                           UString::size_type &a_to,
+                           UString &a_string)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur=a_from;
+    CHECK_END2 (cur);
+
+    UString::value_type ch = RAW_CHAR_AT (cur);
+    if (!is_string_start (ch)) {
+        LOG_PARSING_ERROR_MSG2 (cur,
+                                "string doesn't start with a string char");
+        return false;
+    }
+    UString::size_type str_start (cur), str_end (0);
+    ++cur;
+    CHECK_END2 (cur);
+
+    for (;;) {
+        ch = RAW_CHAR_AT (cur);
+        if (isalnum (ch)
+            || ch == '_'
+            || ch == '-'
+            || ch == '>'
+            || ch == '<') {
+            ++cur;
+            CHECK_END2 (cur);
+            continue;
+        }
+        str_end = cur - 1;
+        break;
+    }
+    Glib::ustring str (m_priv->input.raw ().c_str () + str_start,
+                       str_end - str_start + 1);
+    a_string = str;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_octal_escape (UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 unsigned char &a_byte_value)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur=a_from;
+
+    if (m_priv->index_passed_end (cur+3))
+        return false;
+
+    if (RAW_CHAR_AT (cur) != '\\'
+        || !isdigit (RAW_CHAR_AT (cur+1))
+        || !isdigit (RAW_CHAR_AT (cur+2))
+        || !isdigit (RAW_CHAR_AT (cur+3))) {
+        return false;
+    }
+
+    a_byte_value = (RAW_CHAR_AT (cur+1) - '0') * 64 +
+                   (RAW_CHAR_AT (cur+2) - '0') * 8 +
+                   (RAW_CHAR_AT (cur+3) - '0');
+
+    a_to = cur + 4;
+    return true;
+}
+
+bool
+GDBMIParser::parse_octal_escape_sequence (UString::size_type a_from,
+                                          UString::size_type &a_to,
+                                          UString &a_result)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur=a_from;
+
+    if (m_priv->index_passed_end (cur+3))
+        return false;
+
+    CHECK_END2 (cur);
+    CHECK_END2 (cur+1);
+
+    unsigned char b=0;
+    string raw;
+    while (RAW_CHAR_AT (cur) == '\\') {
+        if (parse_octal_escape (cur, cur, b)) {
+            raw += b;
+        } else {
+            break;
+        }
+    }
+    if (raw.empty ()) return false;
+    try {
+        a_result = Glib::locale_to_utf8 (raw);
+    } catch (...) {
+        a_result.assign (raw.size (), '?');
+    }
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_c_string_body (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  UString &a_string)
+{
+    UString::size_type cur=a_from;
+    CHECK_END2 (cur);
+
+    UString::value_type ch = RAW_CHAR_AT (cur), prev_ch;
+    if (ch == '"') {
+        a_string = "";
+        a_to = cur;
+        return true;
+    }
+
+    if (!isascii (ch) && ch != '\\') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    UString result;
+    if (ch != '\\') {
+        result += ch;
+        ++cur;
+    } else {
+        UString seq;
+        if (!m_priv->index_passed_end (cur+3)
+            && isdigit (RAW_CHAR_AT (cur +1))
+            && isdigit (RAW_CHAR_AT (cur +2))
+            && isdigit (RAW_CHAR_AT (cur +3))
+            && parse_octal_escape_sequence (cur, cur, seq)) {
+            result += seq;
+        } else {
+            result += ch;
+            ++cur;
+        }
+    }
+    CHECK_END2 (cur);
+
+    for (;;) {
+        prev_ch = ch;
+        ch = RAW_CHAR_AT (cur);
+        if (isascii (ch)) {
+            if (ch == '"' && prev_ch != '\\') {
+                break;
+            }
+            if (ch == '\\') {
+                UString seq;
+                if (!m_priv->index_passed_end (cur+3)
+                    && isdigit (RAW_CHAR_AT (cur +1))
+                    && isdigit (RAW_CHAR_AT (cur +2))
+                    && isdigit (RAW_CHAR_AT (cur +3))
+                    && parse_octal_escape_sequence (cur, cur, seq)) {
+                    ch = seq[seq.size ()-1];
+                    result += seq;
+                } else {
+                    result += ch;
+                    ++cur;
+                }
+            } else {
+                result += ch;
+                ++cur;
+            }
+            CHECK_END2 (cur);
+            continue;
+        }
+        break;
+    }
+
+    if (ch != '"') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    a_string = result;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_c_string (UString::size_type a_from,
+                             UString::size_type &a_to,
+                             UString &a_c_string)
+{
+    UString::size_type cur=a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_CHAR_AT (cur) != '"') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+    CHECK_END2 (cur);
+
+    UString str;
+    if (!parse_c_string_body (cur, cur, str)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (RAW_CHAR_AT (cur) != '"') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    ++cur;
+    a_c_string = str;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_embedded_c_string_body (UString::size_type a_from,
+                                           UString::size_type &a_to,
+                                           UString &a_string)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+    CHECK_END2 (cur);
+    CHECK_END2 (cur+1);
+
+    if (RAW_CHAR_AT (cur) != '\\' || RAW_CHAR_AT (cur+1) != '"') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += 2;
+    CHECK_END2 (cur);
+    UString escaped_str;
+    escaped_str += '"';
+
+    //first walk the string, and unescape everything we find escaped
+    UString::value_type ch=0, prev_ch=0;
+    bool escaping = false, found_end=false;
+    for (; !m_priv->index_passed_end (cur); ++cur) {
+        ch = RAW_CHAR_AT (cur);
+        if (ch == '\\') {
+            if (escaping) {
+                prev_ch = ch;
+                escaped_str += ch;
+                escaping = false;
+            } else {
+                escaping = true;
+            }
+        } else if (ch == '"') {
+            if (escaping) {
+                if (prev_ch != '\\') {
+                    //found the end of string
+                    found_end = true;
+                }
+                prev_ch = ch;
+                escaped_str += ch;
+                escaping = false;
+                if (found_end) {
+                    break;
+                }
+            } else {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+        } else {
+            escaped_str += ch;
+            prev_ch = ch;
+            escaping = false;
+        }
+    }
+    if (!found_end) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    //TODO:debug this.
+    a_string = escaped_str;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_embedded_c_string (UString::size_type a_from,
+                                      UString::size_type &a_to,
+                                      UString &a_string)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_CHAR_AT (cur) != '\\' || RAW_CHAR_AT (cur+1) != '"') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (!parse_embedded_c_string_body (cur, cur, a_string)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    a_to = ++cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_gdbmi_result (UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 GDBMIResultSafePtr &a_value)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    UString variable;
+    if (!parse_string (cur, cur, variable)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    CHECK_END2 (cur);
+    SKIP_BLANK2 (cur);
+    if (RAW_CHAR_AT (cur) != '=') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    LOG_D ("got gdbmi variable: " << variable, GDBMI_PARSING_DOMAIN);
+    ++cur;
+    CHECK_END2 (cur);
+
+    GDBMIValueSafePtr value;
+    if (!parse_gdbmi_value (cur, cur, value)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    THROW_IF_FAIL (value);
+
+    GDBMIResultSafePtr result (new GDBMIResult (variable, value));
+    THROW_IF_FAIL (result);
+    a_to = cur;
+    a_value = result;
+    return true;
+}
+
+bool
+GDBMIParser::parse_gdbmi_value (UString::size_type a_from,
+                                UString::size_type &a_to,
+                                GDBMIValueSafePtr &a_value)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    GDBMIValueSafePtr value;
+    if (RAW_CHAR_AT (cur) == '"') {
+        UString const_string;
+        if (parse_c_string (cur, cur, const_string)) {
+            value = GDBMIValueSafePtr (new GDBMIValue (const_string));
+            LOG_D ("got str gdbmi value: '"
+                    << const_string
+                    << "'",
+                   GDBMI_PARSING_DOMAIN);
+        }
+    } else if (RAW_CHAR_AT (cur) == '{') {
+        GDBMITupleSafePtr tuple;
+        if (parse_gdbmi_tuple (cur, cur, tuple)) {
+            if (!tuple) {
+                value = GDBMIValueSafePtr (new GDBMIValue ());
+            } else {
+                value = GDBMIValueSafePtr (new GDBMIValue (tuple));
+            }
+        }
+    } else if (RAW_CHAR_AT (cur) == '[') {
+        GDBMIListSafePtr list;
+        if (parse_gdbmi_list (cur, cur, list)) {
+            THROW_IF_FAIL (list);
+            value = GDBMIValueSafePtr (new GDBMIValue (list));
+        }
+    } else {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (!value) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    a_value = value;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_gdbmi_tuple (UString::size_type a_from,
+                                UString::size_type &a_to,
+                                GDBMITupleSafePtr &a_tuple)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_CHAR_AT (cur) != '{') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+    CHECK_END2 (cur);
+
+    if (RAW_CHAR_AT (cur) == '}') {
+        ++cur;
+        a_to = cur;
+        return true;
+    }
+
+    GDBMITupleSafePtr tuple;
+    GDBMIResultSafePtr result;
+
+    for (;;) {
+        if (parse_gdbmi_result (cur, cur, result)) {
+            THROW_IF_FAIL (result);
+            SKIP_BLANK2 (cur);
+            CHECK_END2 (cur);
+            if (!tuple) {
+                tuple = GDBMITupleSafePtr (new GDBMITuple);
+                THROW_IF_FAIL (tuple);
+            }
+            tuple->append (result);
+            if (RAW_CHAR_AT (cur) == ',') {
+                ++cur;
+                CHECK_END2 (cur);
+                SKIP_BLANK2 (cur);
+                continue;
+            }
+            if (RAW_CHAR_AT (cur) == '}') {
+                ++cur;
+            }
+        } else {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        LOG_D ("getting out at char '"
+               << (char)RAW_CHAR_AT (cur)
+               << "', at offset '"
+               << (int)cur
+               << "' for text >>>"
+               << m_priv->input.raw ()
+               << "<<<",
+               GDBMI_PARSING_DOMAIN);
+        break;
+    }
+
+    SKIP_BLANK2 (cur);
+    a_to = cur;
+    a_tuple = tuple;
+    return true;
+}
+
+bool
+GDBMIParser::parse_gdbmi_list (UString::size_type a_from,
+                               UString::size_type &a_to,
+                               GDBMIListSafePtr &a_list)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    GDBMIListSafePtr return_list;
+    if (RAW_CHAR_AT (cur) != '[') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    CHECK_END2 (cur + 1);
+    if (RAW_CHAR_AT (cur + 1) == ']') {
+        a_list = GDBMIListSafePtr (new GDBMIList);
+        cur += 2;
+        a_to = cur;
+        return true;
+    }
+
+    ++cur;
+    CHECK_END2 (cur);
+    SKIP_BLANK2 (cur);
+
+    GDBMIValueSafePtr value;
+    GDBMIResultSafePtr result;
+    if ((isalpha (RAW_CHAR_AT (cur)) || RAW_CHAR_AT (cur) == '_')
+         && parse_gdbmi_result (cur, cur, result)) {
+        CHECK_END2 (cur);
+        THROW_IF_FAIL (result);
+        return_list = GDBMIListSafePtr (new GDBMIList (result));
+        for (;;) {
+            if (RAW_CHAR_AT (cur) == ',') {
+                ++cur;
+                SKIP_BLANK2 (cur);
+                CHECK_END2 (cur);
+                result.reset ();
+                if (parse_gdbmi_result (cur, cur, result)) {
+                    THROW_IF_FAIL (result);
+                    return_list->append (result);
+                    continue;
+                }
+            }
+            break;
+        }
+    } else if (parse_gdbmi_value (cur, cur, value)) {
+        CHECK_END2 (cur);
+        THROW_IF_FAIL (value);
+        return_list = GDBMIListSafePtr (new GDBMIList (value));
+        for (;;) {
+            if (RAW_CHAR_AT (cur) == ',') {
+                ++cur;
+                SKIP_BLANK2 (cur);
+                CHECK_END2 (cur);
+                value.reset ();
+                if (parse_gdbmi_value (cur, cur, value)) {
+                    THROW_IF_FAIL (value);
+                    return_list->append (value);
+                    continue;
+                }
+            }
+            break;
+        }
+    } else {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (RAW_CHAR_AT (cur) != ']') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+
+    a_to = cur;
+    a_list = return_list;
+    return true;
+}
+
+bool
+GDBMIParser::parse_stream_record (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  Output::StreamRecord &a_record)
+{
+    UString::size_type cur=a_from;
+
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    UString console, target, log;
+    if (RAW_CHAR_AT (cur) == '~') {
+        //console stream output
+        ++cur;
+        if (m_priv->index_passed_end (cur)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        if (!parse_c_string (cur, cur, console)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        SKIP_WS2 (cur);
+        if (!m_priv->index_passed_end (cur + 1)
+            && RAW_CHAR_AT (cur) == '>'
+            && isspace (RAW_CHAR_AT (cur+1))) {
+            cur += 2;
+        }
+        SKIP_BLANK2 (cur);
+    } else if (RAW_CHAR_AT (cur) == '@') {
+        //target stream output
+        ++cur;
+        if (m_priv->index_passed_end (cur)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        if (!parse_c_string (cur, cur, target)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+    } else if (RAW_CHAR_AT (cur) == '&') {
+        //log stream output
+        ++cur;
+        if (m_priv->index_passed_end (cur)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        if (!parse_c_string (cur, cur, log)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+    } else {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    for (; !m_priv->index_passed_end (cur) && isspace (RAW_CHAR_AT (cur)); ++cur) {}
+
+    bool found (false);
+    if (!console.empty ()) {
+        found = true;
+        remove_stream_record_trailing_chars (console);
+        a_record.debugger_console (console);
+    }
+    if (!target.empty ()) {
+        found = true;
+        remove_stream_record_trailing_chars (target);
+        a_record.target_output (target);
+    }
+    if (!log.empty ()) {
+        found = true;
+        remove_stream_record_trailing_chars (log);
+        a_record.debugger_log (log);
+    }
+
+    if (!found) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
+                                         UString::size_type &a_to,
+                                         bool &a_got_frame,
+                                         IDebugger::Frame &a_frame,
+                                         map<UString, UString> &a_attrs)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+
+    if (m_priv->index_passed_end (cur)) {return false;}
+
+    if (m_priv->input.raw ().compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+                                      PREFIX_STOPPED_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += 9;
+    if (m_priv->index_passed_end (cur)) {return false;}
+
+    map<UString, UString> attrs;
+    UString name, value;
+    bool got_frame (false);
+    IDebugger::Frame frame;
+    while (true) {
+        if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
+            if (!parse_frame (cur, cur, frame)) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            got_frame = true;
+        } else {
+            if (!parse_attribute (cur, cur, name, value)) {break;}
+            attrs[name] = value;
+            name.clear (); value.clear ();
+        }
+
+        if (m_priv->index_passed_end (cur)) {break;}
+        if (RAW_CHAR_AT (cur) == ',') {++cur;}
+        if (m_priv->index_passed_end (cur)) {break;}
+    }
+
+    for (; !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n'; ++cur) {}
+
+    if (RAW_CHAR_AT (cur) != '\n') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+
+    a_got_frame = got_frame;
+    if (a_got_frame) {
+        a_frame = frame;
+    }
+    a_to = cur;
+    a_attrs = attrs;
+    return true;
+}
+
+bool
+GDBMIParser::parse_running_async_output (UString::size_type a_from,
+                                         UString::size_type &a_to,
+                                         int &a_thread_id)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+
+    if (m_priv->index_passed_end (cur)) {return false;}
+
+    if (m_priv->input.raw ().compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
+                                      PREFIX_RUNNING_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting : '*running,'");
+        return false;
+    }
+    cur += 9;
+    if (m_priv->index_passed_end (cur)) {return false;}
+
+    UString name, value;
+    if (!parse_attribute (cur, cur, name, value)) {
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting an attribute");
+        return false;
+    }
+    if (name != "thread-id") {
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting attribute 'thread-id'");
+        return false;
+    }
+    if (value == "all")
+        a_thread_id = -1;
+    else
+        a_thread_id = atoi (value.c_str ());
+
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_attribute (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              UString &a_name,
+                              UString &a_value)
+{
+    UString::size_type cur = a_from;
+
+    if (m_priv->index_passed_end (cur)
+        || !is_string_start (RAW_CHAR_AT (cur))) {return false;}
+
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, a_to, result)
+        || !result
+        || result->variable ().empty ()
+        || !result->value ()) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    a_name = result->variable ();
+    return gdbmi_value_to_string (result->value (), a_value);
+}
+
+bool
+GDBMIParser::parse_attributes (UString::size_type a_from,
+                               UString::size_type &a_to,
+                               map<UString, UString> &a_attrs)
+{
+    UString::size_type cur = a_from;
+
+    if (m_priv->index_passed_end (cur)) {return false;}
+
+    UString name, value;
+    map<UString, UString> attrs;
+
+    while (true) {
+        if (!parse_attribute (cur, cur, name, value)) {break;}
+        if (!name.empty () && !value.empty ()) {
+            attrs[name] = value;
+            name.clear (); value.clear ();
+        }
+
+        while (isspace (RAW_CHAR_AT (cur))) {++cur;}
+        if (m_priv->index_passed_end (cur) || RAW_CHAR_AT (cur) != ',') {break;}
+        if (m_priv->index_passed_end (++cur)) {break;}
+    }
+    a_attrs = attrs;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_frame (UString::size_type a_from,
+                          UString::size_type &a_to,
+                          IDebugger::Frame &a_frame)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (m_priv->input.compare (a_from, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, cur, result)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    THROW_IF_FAIL (result);
+
+    if (result->variable () != "frame") {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (!result->value ()
+        ||result->value ()->content_type ()
+                != GDBMIValue::TUPLE_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMITupleSafePtr result_value_tuple =
+                                result->value ()->get_tuple_content ();
+    if (!result_value_tuple) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    list<GDBMIResultSafePtr>::const_iterator res_it;
+    GDBMIResultSafePtr tmp_res;
+    IDebugger::Frame frame;
+    UString name, value;
+    for (res_it = result_value_tuple->content ().begin ();
+         res_it != result_value_tuple->content ().end ();
+         ++res_it) {
+        if (!(*res_it)) {continue;}
+        tmp_res = *res_it;
+        if (!tmp_res->value ()
+            ||tmp_res->value ()->content_type () != GDBMIValue::STRING_TYPE) {
+            continue;
+        }
+        name = tmp_res->variable ();
+        value = tmp_res->value ()->get_string_content ();
+        if (name == "level") {
+            frame.level (atoi (value.c_str ()));
+        } else if (name == "addr") {
+            frame.address (value);
+        } else if (name == "func") {
+            frame.function_name (value);
+        } else if (name == "file") {
+            frame.file_name (value);
+        } else if (name == "fullname") {
+            frame.file_full_name (value);
+        } else if (name == "line") {
+            frame.line (atoi (value.c_str ()));
+        }
+    }
+    a_frame = frame;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_output_record (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  Output &a_output)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    Output output;
+
+    while (RAW_CHAR_AT (cur) == '*'
+         || RAW_CHAR_AT (cur) == '~'
+         || RAW_CHAR_AT (cur) == '@'
+         || RAW_CHAR_AT (cur) == '&'
+         || RAW_CHAR_AT (cur) == '+'
+         || RAW_CHAR_AT (cur) == '=') {
+        Output::OutOfBandRecord oo_record;
+        if (!parse_out_of_band_record (cur, cur, oo_record)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        output.has_out_of_band_record (true);
+        output.out_of_band_records ().push_back (oo_record);
+    }
+
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (RAW_CHAR_AT (cur) == '^') {
+        Output::ResultRecord result_record;
+        if (parse_result_record (cur, cur, result_record)) {
+            output.has_result_record (true);
+            output.result_record (result_record);
+        }
+        if (m_priv->index_passed_end (cur)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+    }
+
+    while (!m_priv->index_passed_end (cur)
+           && isspace (RAW_CHAR_AT (cur))) {++cur;}
+
+    if (!m_priv->input.raw ().compare (cur, 5, "(gdb)")) {
+        cur += 5;
+    }
+
+    if (cur == a_from) {
+        //we didn't parse anything
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    while (m_priv->index_passed_end (cur)
+           && isspace (RAW_CHAR_AT (cur))) {++cur;}
+
+    a_output = output;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
+                                       UString::size_type &a_to,
+                                       Output::OutOfBandRecord &a_record)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    Output::OutOfBandRecord record;
+    if (RAW_CHAR_AT (cur) == '~' ||
+        RAW_CHAR_AT (cur) == '@' ||
+        RAW_CHAR_AT (cur) == '&') {
+        Output::StreamRecord stream_record;
+        if (!parse_stream_record (cur, cur, stream_record)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        record.has_stream_record (true);
+        record.stream_record (stream_record);
+
+        while (m_priv->index_passed_end (cur)
+               && isspace (RAW_CHAR_AT (cur))) {++cur;}
+    } else if (RAW_CHAR_AT (cur) == '=') {
+        //this is a notification sent by gdb. For now, the only one
+        //I have seen like this is of the form:
+        //'=thread-created,id=1',
+        //and the notification ends with a '\n' character.
+        //Of course it is not documented
+        //Let's ignore this by now
+        while (RAW_CHAR_AT (cur) != '\n') {++cur;}
+        ++cur;//consume the '\n' character
+    }
+
+    if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+                                       PREFIX_STOPPED_ASYNC_OUTPUT)) {
+        map<UString, UString> attrs;
+        bool got_frame (false);
+        IDebugger::Frame frame;
+        if (!parse_stopped_async_output (cur, cur, got_frame, frame, attrs)) {
+            LOG_PARSING_ERROR_MSG2 (cur,
+                                    "could not parse the expected "
+                                    "stopped async output");
+            return false;
+        }
+        record.is_stopped (true);
+        record.stop_reason (str_to_stopped_reason (attrs["reason"]));
+        if (got_frame) {
+            record.frame (frame);
+            record.has_frame (true);
+        }
+
+        if (attrs.find ("bkptno") != attrs.end ()) {
+            record.breakpoint_number (atoi (attrs["bkptno"].c_str ()));
+        }
+        record.thread_id (atoi (attrs["thread-id"].c_str ()));
+        record.signal_type (attrs["signal-name"]);
+        record.signal_meaning (attrs["signal-meaning"]);
+        goto end;
+    }
+
+    if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
+                                       PREFIX_RUNNING_ASYNC_OUTPUT)) {
+        int thread_id;
+        if (!parse_running_async_output (cur, cur, thread_id)) {
+            LOG_PARSING_ERROR_MSG2 (cur,
+                                    "could not parse the expected "
+                                    "running async output");
+            return false;
+        }
+        record.thread_id (thread_id);
+        goto end;
+    }
+
+end:
+
+    while (!m_priv->index_passed_end (cur)
+           && isspace (RAW_CHAR_AT (cur))) {++cur;}
+    a_to = cur;
+    a_record = record;
+    return true;
+}
+
+bool
+GDBMIParser::parse_result_record (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  Output::ResultRecord &a_record)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    UString name, value;
+    Output::ResultRecord result_record;
+    if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_DONE), PREFIX_DONE)) {
+        cur += 5;
+        result_record.kind (Output::ResultRecord::DONE);
+
+
+        if (!m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) == ',') {
+
+fetch_gdbmi_result:
+            cur++;
+            if (m_priv->index_passed_end (cur)) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+
+            if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_BKPT),
+                                                PREFIX_BKPT)) {
+                IDebugger::BreakPoint breakpoint;
+                if (parse_breakpoint (cur, cur, breakpoint)) {
+                    result_record.breakpoints ()[breakpoint.number ()] =
+                    breakpoint;
+                }
+            } else if (!m_priv->input.compare (cur,
+                                               strlen (PREFIX_BREAKPOINT_TABLE),
+                                               PREFIX_BREAKPOINT_TABLE)) {
+                map<int, IDebugger::BreakPoint> breaks;
+                if (parse_breakpoint_table (cur, cur, breaks)) {
+                    result_record.breakpoints () = breaks;
+                }
+            } else if (!m_priv->input.compare (cur, strlen (PREFIX_THREAD_IDS),
+                        PREFIX_THREAD_IDS)) {
+                std::list<int> thread_ids;
+                if (parse_threads_list (cur, cur, thread_ids)) {
+                    result_record.thread_list (thread_ids);
+                }
+            } else if (!m_priv->input.raw ().compare
+                                            (cur,
+                                             strlen (PREFIX_NEW_THREAD_ID),
+                                             PREFIX_NEW_THREAD_ID)) {
+                IDebugger::Frame frame;
+                int thread_id=0;
+                if (parse_new_thread_id (cur, cur, thread_id, frame)) {
+                    //finish this !
+                    result_record.thread_id_selected_info (thread_id, frame);
+                }
+            } else if (!m_priv->input.compare (cur, strlen (PREFIX_FILES),
+                        PREFIX_FILES)) {
+                vector<UString> files;
+                if (!parse_file_list (cur, cur, files)) {
+                    LOG_PARSING_ERROR2 (cur);
+                    return false;
+                }
+                result_record.file_list (files);
+                LOG_D ("parsed a list of files: "
+                       << (int) files.size (),
+                       GDBMI_PARSING_DOMAIN);
+            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_STACK),
+                                                      PREFIX_STACK)) {
+                vector<IDebugger::Frame> call_stack;
+                if (!parse_call_stack (cur, cur, call_stack)) {
+                    LOG_PARSING_ERROR2 (cur);
+                    return false;
+                }
+                result_record.call_stack (call_stack);
+                LOG_D ("parsed a call stack of depth: "
+                       << (int) call_stack.size (),
+                       GDBMI_PARSING_DOMAIN);
+                vector<IDebugger::Frame>::iterator frame_iter;
+                for (frame_iter = call_stack.begin ();
+                     frame_iter != call_stack.end ();
+                     ++frame_iter) {
+                    LOG_D ("function-name: " << frame_iter->function_name (),
+                           GDBMI_PARSING_DOMAIN);
+                }
+            } else if (!m_priv->input.raw ().compare (cur,
+                                                strlen (PREFIX_FRAME),
+                                                        PREFIX_FRAME)) {
+                IDebugger::Frame frame;
+                if (!parse_frame (cur, cur, frame)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
+                    result_record.current_frame_in_core_stack_trace (frame);
+                    //current_frame_signal.emit (frame, "");
+                }
+            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_DEPTH),
+                                                      PREFIX_DEPTH)) {
+                GDBMIResultSafePtr result;
+                parse_gdbmi_result (cur, cur, result);
+                THROW_IF_FAIL (result);
+                LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
+            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_STACK_ARGS),
+                                                      PREFIX_STACK_ARGS)) {
+                map<int, list<IDebugger::VariableSafePtr> > frames_args;
+                if (!parse_stack_arguments (cur, cur, frames_args)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed stack args", GDBMI_PARSING_DOMAIN);
+                }
+                result_record.frames_parameters (frames_args) ;
+            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_LOCALS),
+                                                      PREFIX_LOCALS)) {
+                list<IDebugger::VariableSafePtr> vars;
+                if (!parse_local_var_list (cur, cur, vars)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN);
+                    result_record.local_variables (vars);
+                }
+            } else if (!m_priv->input.raw ().compare (cur,
+                                                      strlen (PREFIX_VALUE),
+                                                      PREFIX_VALUE)) {
+                // FIXME: this case will parse any response from
+                // -data-evaluate-expression, including the response from
+                // setting the value of a register or any other expression
+                // evaluation.  Currently all of these cases can be parsed as a
+                // variable, but there's no guarantee that this is the case.
+                // Perhaps this needs to be reworked somehow
+                IDebugger::VariableSafePtr var;
+                if (!parse_variable_value (cur, cur, var)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed var value", GDBMI_PARSING_DOMAIN);
+                    THROW_IF_FAIL (var);
+                    result_record.variable_value (var);
+                }
+            } else if (!m_priv->input.raw ().compare (cur,
+                                                      strlen (PREFIX_REGISTER_NAMES),
+                                                      PREFIX_REGISTER_NAMES)) {
+                std::map<IDebugger::register_id_t, UString> regs;
+                if (!parse_register_names (cur, cur, regs)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed register names", GDBMI_PARSING_DOMAIN);
+                    result_record.register_names (regs);
+                }
+            } else if (!m_priv->input.raw ().compare (cur,
+                                                      strlen (PREFIX_CHANGED_REGISTERS),
+                                                      PREFIX_CHANGED_REGISTERS)) {
+                std::list<IDebugger::register_id_t> regs;
+                if (!parse_changed_registers (cur, cur, regs)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed changed register", GDBMI_PARSING_DOMAIN);
+                    result_record.changed_registers (regs);
+                }
+            } else if (!m_priv->input.raw ().compare (cur,
+                                                      strlen (PREFIX_REGISTER_VALUES),
+                                                      PREFIX_REGISTER_VALUES)) {
+                std::map<IDebugger::register_id_t, UString>  values;
+                if (!parse_register_values (cur, cur,  values)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed register values", GDBMI_PARSING_DOMAIN);
+                    result_record.register_values (values);
+                }
+            } else if (!m_priv->input.compare (cur, strlen (PREFIX_MEMORY_VALUES),
+                        PREFIX_MEMORY_VALUES)) {
+                size_t addr;
+                std::vector<uint8_t>  values;
+                if (!parse_memory_values (cur, cur, addr, values)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed memory values", GDBMI_PARSING_DOMAIN);
+                    result_record.memory_values (addr, values);
+                }
+            } else {
+                GDBMIResultSafePtr result;
+                if (!parse_gdbmi_result (cur, cur, result)
+                    || !result) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed unknown gdbmi result",
+                           GDBMI_PARSING_DOMAIN);
+                }
+            }
+
+            if (RAW_CHAR_AT (cur) == ',') {
+                goto fetch_gdbmi_result;
+            }
+
+            //skip the remaining things we couldn't parse, until the
+            //'end of line' character.
+            for (;
+                 !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
+                 ++cur) {}
+        }
+    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_RUNNING),
+                                              PREFIX_RUNNING)) {
+        result_record.kind (Output::ResultRecord::RUNNING);
+        cur += 8;
+        for (;
+             !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
+             ++cur) {}
+    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_EXIT),
+                                              PREFIX_EXIT)) {
+        result_record.kind (Output::ResultRecord::EXIT);
+        cur += 5;
+        for (;
+             !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
+             ++cur) {}
+    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_CONNECTED),
+                                              PREFIX_CONNECTED)) {
+        result_record.kind (Output::ResultRecord::CONNECTED);
+        cur += 10;
+        for (; !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';++cur) {}
+    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_ERROR),
+                                              PREFIX_ERROR)) {
+        result_record.kind (Output::ResultRecord::ERROR);
+        cur += 6;
+        CHECK_END2 (cur);
+        if (!m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) == ',') {++cur;}
+        CHECK_END2 (cur);
+        if (!parse_attribute (cur, cur, name, value)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        if (name != "") {
+            LOG_DD ("got error with attribute: '"
+                    << name << "':'" << value << "'");
+            result_record.attrs ()[name] = value;
+        } else {
+            LOG_ERROR ("weird, got error with no attribute. continuing.");
+        }
+        for (; !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';++cur) {}
+    } else {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (RAW_CHAR_AT (cur) != '\n') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    a_record = result_record;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
+                               Glib::ustring::size_type &a_to,
+                               IDebugger::BreakPoint &a_bkpt)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    Glib::ustring::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    cur += 6;
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    map<UString, UString> attrs;
+    bool is_ok = parse_attributes (cur, cur, attrs);
+    if (!is_ok) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (RAW_CHAR_AT (cur) != '}') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+
+    if (attrs["addr"] == "<PENDING>") {
+        UString pending = attrs["pending"];
+        if (pending == "") {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        LOG_D ("got pending breakpoint: '" << pending << "'",
+               GDBMI_OUTPUT_DOMAIN);
+        vector<UString> str_tab;
+        //pending contains either the name of the function the breakpoint
+        //has been set on, or the filename:linenumber location of the
+        //breakpoint.
+        //So either pending has the form:
+        //"ns::functionname" or it has the form "filename:linenumber"
+        bool breakpoint_on_function_name = false;
+        if (pending.raw ().find ("::") != std::string::npos) {
+            breakpoint_on_function_name = true;
+        }
+        if (!breakpoint_on_function_name) {
+            str_tab = pending.split (":");
+        } else {
+            str_tab.push_back (pending);
+        }
+        //from now on, if str_tab.size () == 2 then it contains
+        //the filename and line number of the breakpoint.
+        //if it str_tab.size () == 1 then it contains the function name
+        //the breakpoint was set on.
+        //Otherwise an error occured
+        if (str_tab.size () > 1) {
+            LOG_D ("filepath: '" << str_tab[0] << "'", GDBMI_OUTPUT_DOMAIN);
+            LOG_D ("linenum: '" << str_tab[1] << "'", GDBMI_OUTPUT_DOMAIN);
+        }
+        if (str_tab.size () == 2) {
+            string path = Glib::locale_from_utf8 (str_tab[0]);
+            if (Glib::path_is_absolute (path)) {
+                attrs["file"] = Glib::locale_to_utf8
+                                        (Glib::path_get_basename (path));
+                attrs["fullname"] = Glib::locale_to_utf8 (path);
+            } else {
+                attrs["file"] = Glib::locale_to_utf8 (path);;
+            }
+            attrs["line"] = str_tab[1];
+        } else if (str_tab.size () == 1) {
+            attrs["func"] = str_tab[0];
+        } else {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+    }
+
+    map<UString, UString>::iterator iter, null_iter = attrs.end ();
+    //we use to require that the "fullname" property be present as
+    //well, but it seems that a lot debug info set got shipped without
+    //that property. Client code should do what they can with the
+    //file property only.
+    if (   (iter = attrs.find ("number"))  == null_iter
+            || (iter = attrs.find ("type"))    == null_iter
+            || (iter = attrs.find ("disp"))    == null_iter
+            || (iter = attrs.find ("enabled")) == null_iter
+            || (iter = attrs.find ("addr"))    == null_iter
+            || (iter = attrs.find ("times"))   == null_iter
+       ) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    a_bkpt.number (atoi (attrs["number"].c_str ()));
+    if (attrs["enabled"] == "y") {
+        a_bkpt.enabled (true);
+    } else {
+        a_bkpt.enabled (false);
+    }
+    a_bkpt.address (attrs["addr"]);
+    if (!attrs["func"].empty ()) {
+        a_bkpt.function (attrs["func"]);
+    } else if (!attrs["what"].empty ()) {
+        // catchpoints don't have a 'func' field, but they have a 'what' field
+        // that says something like "Exception throw"
+        a_bkpt.function (attrs["what"]);
+    }
+    a_bkpt.file_name (attrs["file"]); //may be nil
+    a_bkpt.file_full_name (attrs["fullname"]); //may be nil
+    a_bkpt.line (atoi (attrs["line"].c_str ())); //may be nil
+    if ((iter = attrs.find ("cond")) != null_iter) {
+        a_bkpt.condition (iter->second);
+    }
+    a_bkpt.nb_times_hit (atoi (attrs["times"].c_str ()));
+    //TODO: get the 'at' attribute that is present on targets that
+    //are not compiled with -g.
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
+                                     UString::size_type &a_to,
+                                     map<int, IDebugger::BreakPoint> &a_breakpoints)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur=a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_BREAKPOINT_TABLE),
+                                      PREFIX_BREAKPOINT_TABLE)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += strlen (PREFIX_BREAKPOINT_TABLE);
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    //skip table headers and go to table body.
+    cur = RAW_INPUT.find ("body=[", 0) ;
+    if (!cur) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += 6;
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    map<int, IDebugger::BreakPoint> breakpoint_table;
+    if (RAW_CHAR_AT (cur) == ']') {
+        //there are zero breakpoints ...
+    } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_BKPT),
+                                              PREFIX_BKPT)) {
+        //there are some breakpoints
+        IDebugger::BreakPoint breakpoint;
+        while (true) {
+            if (RAW_INPUT.compare (cur, strlen (PREFIX_BKPT),
+                                              PREFIX_BKPT)) {
+                break;
+            }
+            if (!parse_breakpoint (cur, cur, breakpoint)) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            breakpoint_table[breakpoint.number ()] = breakpoint;
+            if (RAW_CHAR_AT (cur) == ',') {
+                ++cur;
+                if (m_priv->index_passed_end (cur)) {
+                    LOG_PARSING_ERROR2 (cur);
+                    return false;
+                }
+            }
+            breakpoint.clear ();
+        }
+        if (breakpoint_table.empty ()) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+    } else {
+        //weird things are happening, get out.
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (RAW_CHAR_AT (cur) != ']') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (RAW_CHAR_AT (cur) != '}') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+
+    a_to = cur;
+    a_breakpoints = breakpoint_table;
+    return true;
+}
+
+bool
+GDBMIParser::parse_threads_list (UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 std::list<int> &a_thread_ids)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_THREAD_IDS), PREFIX_THREAD_IDS)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIResultSafePtr gdbmi_result;
+    if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (RAW_CHAR_AT (cur) != ',') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+    CHECK_END2 (cur);
+
+    if (gdbmi_result->variable () != "thread-ids") {
+        LOG_ERROR ("expected gdbmi variable 'thread-ids', got: '"
+                   << gdbmi_result->variable () << "\'");
+        return false;
+    }
+    THROW_IF_FAIL (gdbmi_result->value ());
+    THROW_IF_FAIL ((gdbmi_result->value ()->content_type ()
+                       == GDBMIValue::TUPLE_TYPE)
+                   ||
+                   (gdbmi_result->value ()->content_type ()
+                        == GDBMIValue::EMPTY_TYPE));
+
+    GDBMITupleSafePtr gdbmi_tuple;
+    if (gdbmi_result->value ()->content_type ()
+         != GDBMIValue::EMPTY_TYPE) {
+        gdbmi_tuple = gdbmi_result->value ()->get_tuple_content ();
+        THROW_IF_FAIL (gdbmi_tuple);
+    }
+
+    list<GDBMIResultSafePtr> result_list;
+    if (gdbmi_tuple) {
+        result_list = gdbmi_tuple->content ();
+    }
+    list<GDBMIResultSafePtr>::const_iterator it;
+    int thread_id=0;
+    std::list<int> thread_ids;
+    for (it = result_list.begin (); it != result_list.end (); ++it) {
+        THROW_IF_FAIL (*it);
+        if ((*it)->variable () != "thread-id") {
+            LOG_ERROR ("expected a gdbmi value with variable name 'thread-id'"
+                       ". Got '" << (*it)->variable () << "'");
+            return false;
+        }
+        THROW_IF_FAIL ((*it)->value ()
+                       && ((*it)->value ()->content_type ()
+                           == GDBMIValue::STRING_TYPE));
+        thread_id = atoi ((*it)->value ()->get_string_content ().c_str ());
+        THROW_IF_FAIL (thread_id);
+        thread_ids.push_back (thread_id);
+    }
+
+    if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (gdbmi_result->variable () != "number-of-threads") {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    THROW_IF_FAIL (gdbmi_result->value ()
+                   && gdbmi_result->value ()->content_type ()
+                       == GDBMIValue::STRING_TYPE);
+    unsigned int num_threads =
+        atoi (gdbmi_result->value ()->get_string_content ().c_str ());
+
+    if (num_threads != thread_ids.size ()) {
+        LOG_ERROR ("num_threads: '"
+                   << (int) num_threads
+                   << "', thread_ids.size(): '"
+                   << (int) thread_ids.size ()
+                   << "'");
+        return false;
+    }
+
+    a_thread_ids = thread_ids;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_new_thread_id (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  int &a_thread_id,
+                                  IDebugger::Frame &a_frame)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_NEW_THREAD_ID),
+                           PREFIX_NEW_THREAD_ID)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    GDBMIResultSafePtr gdbmi_result;
+    if (!parse_gdbmi_result (cur, cur, gdbmi_result)
+        || !gdbmi_result) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (gdbmi_result->variable () != "new-thread-id") {
+        LOG_ERROR ("expected 'new-thread-id', got '"
+                   << gdbmi_result->variable () << "'");
+        return false;
+    }
+    THROW_IF_FAIL (gdbmi_result->value ());
+    THROW_IF_FAIL (gdbmi_result->value ()->content_type ()
+                   == GDBMIValue::STRING_TYPE);
+    CHECK_END2 (cur);
+
+    int thread_id =
+        atoi (gdbmi_result->value ()->get_string_content ().c_str ());
+    if (!thread_id) {
+        LOG_ERROR ("got null thread id");
+        return false;
+    }
+
+    SKIP_BLANK2 (cur);
+
+    if (RAW_CHAR_AT (cur) != ',') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+    CHECK_END2 (cur);
+
+    IDebugger::Frame frame;
+    if (!parse_frame (cur, cur, frame)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    a_to = cur;
+    a_thread_id = thread_id;
+    a_frame = frame;
+    return true;
+}
+
+bool
+GDBMIParser::parse_file_list (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              std::vector<UString> &a_files)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_FILES), PREFIX_FILES)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += 7;
+
+    std::vector<GDBMITupleSafePtr> tuples;
+    while (m_priv->index_passed_end (cur)) {
+        GDBMITupleSafePtr tuple;
+        if (!parse_gdbmi_tuple (cur, cur, tuple)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        tuples.push_back(tuple);
+        if (RAW_CHAR_AT (cur) == ',') {
+            ++cur;
+        } else if (RAW_CHAR_AT (cur) == ']') {
+            //at the end of the list, just get out
+            break;
+        } else {
+            //unexpected data
+            LOG_PARSING_ERROR2 (cur);
+        }
+    }
+
+    std::vector<UString> files;
+    vector<GDBMITupleSafePtr>::const_iterator file_iter;
+    for (file_iter = tuples.begin (); file_iter != tuples.end (); ++file_iter) {
+        UString filename;
+        list<GDBMIResultSafePtr>::const_iterator attr_it;
+        for (attr_it = (*file_iter)->content ().begin ();
+             attr_it != (*file_iter)->content ().end (); ++attr_it) {
+             THROW_IF_FAIL ((*attr_it)->value ()
+                           && ((*attr_it)->value ()->content_type ()
+                               == GDBMIValue::STRING_TYPE));
+            if ((*attr_it)->variable () == "file") {
+                //only use the 'file' attribute if the
+                //fullname isn't already set
+                //FIXME: do we even want to list these at all?
+                if (filename.empty ()) {
+                    filename = (*attr_it)->value ()->get_string_content ();
+                }
+            } else if ((*attr_it)->variable () == "fullname") {
+                //use the fullname attribute,
+                //overwriting the 'file' attribute
+                //if necessary
+                filename = (*attr_it)->value ()->get_string_content ();
+            } else {
+                LOG_ERROR ("expected a gdbmi value with "
+                            "variable name 'file' or 'fullname'"
+                            ". Got '" << (*attr_it)->variable () << "'");
+                return false;
+            }
+        }
+        THROW_IF_FAIL (!filename.empty());
+        files.push_back (filename);
+    }
+
+    std::sort(files.begin(), files.end(), QuickUStringLess());
+    std::vector<UString>::iterator last_unique =
+        std::unique (files.begin (), files.end ());
+    a_files = std::vector<UString>(files.begin (), last_unique);
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_call_stack (const UString::size_type a_from,
+                               UString::size_type &a_to,
+                               vector<IDebugger::Frame> &a_stack)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, cur, result)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    THROW_IF_FAIL (result);
+    CHECK_END2 (cur);
+
+    if (result->variable () != "stack") {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (!result->value ()
+        ||result->value ()->content_type ()
+                != GDBMIValue::LIST_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIListSafePtr result_value_list =
+        result->value ()->get_list_content ();
+    if (!result_value_list) {
+        a_to = cur;
+        a_stack.clear ();
+        return true;
+    }
+
+    if (result_value_list->content_type () != GDBMIList::RESULT_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    list<GDBMIResultSafePtr> result_list ;
+    result_value_list->get_result_content (result_list);
+
+    GDBMITupleSafePtr frame_tuple;
+    vector<IDebugger::Frame> stack;
+    list<GDBMIResultSafePtr>::const_iterator iter, frame_part_iter;
+    UString value;
+    for (iter = result_list.begin (); iter != result_list.end (); ++iter) {
+        if (!(*iter)) {continue;}
+        THROW_IF_FAIL ((*iter)->value ()
+                       && (*iter)->value ()->content_type ()
+                       == GDBMIValue::TUPLE_TYPE);
+
+        frame_tuple = (*iter)->value ()->get_tuple_content ();
+        THROW_IF_FAIL (frame_tuple);
+        IDebugger::Frame frame;
+        for (frame_part_iter = frame_tuple->content ().begin ();
+             frame_part_iter != frame_tuple->content ().end ();
+             ++frame_part_iter) {
+            THROW_IF_FAIL ((*frame_part_iter)->value ());
+            value = (*frame_part_iter)->value ()->get_string_content ();
+            if ((*frame_part_iter)->variable () == "addr") {
+                frame.address (value);
+            } else if ((*frame_part_iter)->variable () == "func") {
+                frame.function_name (value);
+            } else if ((*frame_part_iter)->variable () == "file") {
+                frame.file_name (value);
+            } else if ((*frame_part_iter)->variable () == "fullname") {
+                frame.file_full_name (value);
+            } else if ((*frame_part_iter)->variable () == "line") {
+                frame.line (atol (value.c_str ()));
+            }
+        }
+        THROW_IF_FAIL (frame.address () != "");
+        stack.push_back (frame);
+        frame.clear ();
+    }
+    a_stack = stack;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_local_var_list (UString::size_type a_from,
+                                   UString::size_type &a_to,
+                                   list<IDebugger::VariableSafePtr> &a_vars)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_LOCALS), PREFIX_LOCALS)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIResultSafePtr gdbmi_result;
+    if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    THROW_IF_FAIL (gdbmi_result
+                   && gdbmi_result->variable () == "locals");
+
+    if (!gdbmi_result->value ()
+        || gdbmi_result->value ()->content_type ()
+            != GDBMIValue::LIST_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIListSafePtr gdbmi_list =
+        gdbmi_result->value ()->get_list_content ();
+    if (!gdbmi_list
+        || gdbmi_list->content_type () == GDBMIList::UNDEFINED_TYPE) {
+        a_to = cur;
+        a_vars.clear ();
+        return true;
+    }
+    RETURN_VAL_IF_FAIL (gdbmi_list->content_type () == GDBMIList::VALUE_TYPE,
+                        false);
+
+    std::list<GDBMIValueSafePtr> gdbmi_value_list;
+    gdbmi_list->get_value_content (gdbmi_value_list);
+    RETURN_VAL_IF_FAIL (!gdbmi_value_list.empty (), false);
+
+    std::list<IDebugger::VariableSafePtr> variables;
+    std::list<GDBMIValueSafePtr>::const_iterator value_iter;
+    std::list<GDBMIResultSafePtr> tuple_content;
+    std::list<GDBMIResultSafePtr>::const_iterator tuple_iter;
+    for (value_iter = gdbmi_value_list.begin ();
+         value_iter != gdbmi_value_list.end ();
+         ++value_iter) {
+        if (!(*value_iter)) {continue;}
+        if ((*value_iter)->content_type () != GDBMIValue::TUPLE_TYPE) {
+            LOG_ERROR_D ("list of tuple should contain only tuples",
+                         GDBMI_PARSING_DOMAIN);
+            continue;
+        }
+        GDBMITupleSafePtr gdbmi_tuple = (*value_iter)->get_tuple_content ();
+        RETURN_VAL_IF_FAIL (gdbmi_tuple, false);
+        RETURN_VAL_IF_FAIL (!gdbmi_tuple->content ().empty (), false);
+
+        tuple_content.clear ();
+        tuple_content = gdbmi_tuple->content ();
+        RETURN_VAL_IF_FAIL (!tuple_content.empty (), false);
+        IDebugger::VariableSafePtr variable (new IDebugger::Variable);
+        for (tuple_iter = tuple_content.begin ();
+             tuple_iter != tuple_content.end ();
+             ++tuple_iter) {
+            if (!(*tuple_iter)) {
+                LOG_ERROR_D ("got and empty tuple member",
+                             GDBMI_PARSING_DOMAIN);
+                continue;
+            }
+
+            if (!(*tuple_iter)->value ()
+                ||(*tuple_iter)->value ()->content_type ()
+                    != GDBMIValue::STRING_TYPE) {
+                LOG_ERROR_D ("Got a tuple member which value is not a string",
+                             GDBMI_PARSING_DOMAIN);
+                continue;
+            }
+
+            UString variable_str = (*tuple_iter)->variable ();
+            UString value_str =
+                        (*tuple_iter)->value ()->get_string_content ();
+            value_str.chomp ();
+            if (variable_str == "name") {
+                variable->name (value_str);
+            } else if (variable_str == "type") {
+                variable->type (value_str);
+            } else if (variable_str == "value") {
+                variable->value (value_str);
+            } else {
+                LOG_ERROR_D ("got an unknown tuple member with name: '"
+                             << variable_str << "'",
+                             GDBMI_PARSING_DOMAIN)
+                continue;
+            }
+
+        }
+        variables.push_back (variable);
+    }
+
+    LOG_D ("got '" << (int)variables.size () << "' variables",
+           GDBMI_PARSING_DOMAIN);
+
+    a_vars = variables;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_stack_arguments (UString::size_type a_from,
+                                    UString::size_type &a_to,
+                                    map<int, list<IDebugger::VariableSafePtr> >
+                                                                            &a_params)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_STACK_ARGS),
+                           PREFIX_STACK_ARGS)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIResultSafePtr gdbmi_result;
+    if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    THROW_IF_FAIL (gdbmi_result
+                   && gdbmi_result->variable () == "stack-args");
+
+    if (!gdbmi_result->value ()
+        || gdbmi_result->value ()->content_type ()
+            != GDBMIValue::LIST_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIListSafePtr gdbmi_list =
+        gdbmi_result->value ()->get_list_content ();
+    if (!gdbmi_list) {
+        a_to = cur;
+        a_params.clear ();
+        return true;
+    }
+
+    if (gdbmi_list->content_type () != GDBMIList::RESULT_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    list<GDBMIResultSafePtr> frames_params_list;
+    gdbmi_list->get_result_content (frames_params_list);
+    LOG_D ("number of frames: " << (int) frames_params_list.size (),
+           GDBMI_PARSING_DOMAIN);
+
+    list<GDBMIResultSafePtr>::const_iterator frames_iter,
+                                        params_records_iter,
+                                        params_iter;
+    map<int, list<IDebugger::VariableSafePtr> > all_frames_args;
+    //walk through the list of frames
+    //each frame is a tuple of the form:
+    //{level="2", args=[list-of-arguments]}
+    for (frames_iter = frames_params_list.begin ();
+         frames_iter != frames_params_list.end ();
+         ++frames_iter) {
+        if (!(*frames_iter)) {
+            LOG_D ("Got a null frmae, skipping", GDBMI_PARSING_DOMAIN);
+            continue;
+        }
+        THROW_IF_FAIL ((*frames_iter)->variable () != "stack");
+        THROW_IF_FAIL ((*frames_iter)->value ()
+                        && (*frames_iter)->value ()->content_type ()
+                        == GDBMIValue::TUPLE_TYPE)
+
+        //params_record is a tuple that has the form:
+        //{level="2", args=[list-of-arguments]}
+        GDBMITupleSafePtr params_record;
+        params_record = (*frames_iter)->value ()->get_tuple_content ();
+        THROW_IF_FAIL (params_record);
+
+        //walk through the tuple {level="2", args=[list-of-arguments]}
+        int cur_frame_level=-1;
+        for (params_records_iter = params_record->content ().begin ();
+             params_records_iter != params_record->content ().end ();
+             ++params_records_iter) {
+            THROW_IF_FAIL ((*params_records_iter)->value ());
+
+            if ((*params_records_iter)->variable () == "level") {
+                THROW_IF_FAIL
+                ((*params_records_iter)->value ()
+                 && (*params_records_iter)->value ()->content_type ()
+                 == GDBMIValue::STRING_TYPE);
+                cur_frame_level = atoi
+                    ((*params_records_iter)->value
+                         ()->get_string_content ().c_str ());
+                LOG_D ("frame level '" << (int) cur_frame_level << "'",
+                       GDBMI_PARSING_DOMAIN);
+            } else if ((*params_records_iter)->variable () == "args") {
+                //this gdbmi result is of the form:
+                //args=[{name="foo0", value="bar0"},
+                //      {name="foo1", bar="bar1"}]
+
+                THROW_IF_FAIL
+                ((*params_records_iter)->value ()
+                 && (*params_records_iter)->value ()->get_list_content ());
+
+                GDBMIListSafePtr arg_list =
+                    (*params_records_iter)->value ()->get_list_content ();
+                list<GDBMIValueSafePtr>::const_iterator args_as_value_iter;
+                list<IDebugger::VariableSafePtr> cur_frame_args;
+                if (arg_list && !(arg_list->empty ())) {
+                    LOG_D ("arg list is *not* empty for frame level '"
+                           << (int)cur_frame_level,
+                           GDBMI_PARSING_DOMAIN);
+                    //walk each parameter.
+                    //Each parameter is a tuple (in a value)
+                    list<GDBMIValueSafePtr> arg_as_value_list;
+                    arg_list->get_value_content (arg_as_value_list);
+                    LOG_D ("arg list size: "
+                           << (int)arg_as_value_list.size (),
+                           GDBMI_PARSING_DOMAIN);
+                    for (args_as_value_iter=arg_as_value_list.begin();
+                         args_as_value_iter!=arg_as_value_list.end();
+                         ++args_as_value_iter) {
+                        if (!*args_as_value_iter) {
+                            LOG_D ("got NULL arg, skipping",
+                                   GDBMI_PARSING_DOMAIN);
+                            continue;
+                        }
+                        GDBMITupleSafePtr args =
+                            (*args_as_value_iter)->get_tuple_content ();
+                        list<GDBMIResultSafePtr>::const_iterator arg_iter;
+                        IDebugger::VariableSafePtr parameter
+                                                (new IDebugger::Variable);
+                        THROW_IF_FAIL (parameter);
+                        THROW_IF_FAIL (args);
+                        //walk the name and value of the parameter
+                        for (arg_iter = args->content ().begin ();
+                             arg_iter != args->content ().end ();
+                             ++arg_iter) {
+                            THROW_IF_FAIL (*arg_iter);
+                            if ((*arg_iter)->variable () == "name") {
+                                THROW_IF_FAIL ((*arg_iter)->value ());
+                                parameter->name
+                                ((*arg_iter)->value()->get_string_content ());
+                            } else if ((*arg_iter)->variable () == "value") {
+                                THROW_IF_FAIL ((*arg_iter)->value ());
+                                parameter->value
+                                    ((*arg_iter)->value
+                                                 ()->get_string_content());
+                                UString::size_type pos;
+                                pos = parameter->value ().find ("{");
+                                if (pos != Glib::ustring::npos) {
+                                    //in certain cases
+                                    //(gdbmi is not strict enough to be sure)
+                                    //having a '{' in the parameter value
+                                    //means the parameter has an anonymous
+                                    //member variable. So let's try to
+                                    //parse an anonymous member variable
+                                    //and in case of success,
+                                    //fill parameter->members()
+                                    //with the structured member
+                                    //embedded in parameter->value()
+                                    //and set parameter->value() to nothing
+                                    //This is shity performancewise
+                                    //(and is ugly) but that's the way
+                                    //of gdbmi
+                                    push_input (parameter->value ());
+                                    if (parse_member_variable (pos, pos,
+                                                               parameter,
+                                                               true)) {
+                                        parameter->value ("");
+                                    } else {
+                                        LOG_ERROR ("Oops, '{' was not for "
+                                                   "for an embedded variable");
+                                    }
+                                    pop_input ();
+                                }
+                            } else {
+                                THROW ("should not reach this line");
+                            }
+                        }
+                        LOG_D ("pushing arg '"
+                               <<parameter->name()
+                               <<"'='"<<parameter->value() <<"'"
+                               <<" for frame level='"
+                               <<(int)cur_frame_level
+                               <<"'",
+                               GDBMI_PARSING_DOMAIN);
+                        cur_frame_args.push_back (parameter);
+                    }
+                } else {
+                    LOG_D ("arg list is empty for frame level '"
+                           << (int)cur_frame_level,
+                           GDBMI_PARSING_DOMAIN);
+                }
+                THROW_IF_FAIL (cur_frame_level >= 0);
+                LOG_D ("cur_frame_level: '"
+                       << (int) cur_frame_level
+                       << "', NB Params: "
+                       << (int) cur_frame_args.size (),
+                       GDBMI_PARSING_DOMAIN);
+                all_frames_args[cur_frame_level] = cur_frame_args;
+            } else {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+        }
+
+    }
+
+    a_to = cur;
+    a_params = all_frames_args;
+    LOG_D ("number of frames parsed: " << (int)a_params.size (),
+           GDBMI_PARSING_DOMAIN);
+    return true;
+}
+
+bool
+GDBMIParser::parse_member_variable (const UString::size_type a_from,
+                                    UString::size_type &a_to,
+                                    IDebugger::VariableSafePtr &a_var,
+                                    bool a_in_unnamed_var)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    LOG_D ("in_unnamed_var = " <<(int)a_in_unnamed_var, GDBMI_PARSING_DOMAIN);
+    THROW_IF_FAIL (a_var);
+
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_CHAR_AT (cur) != '{') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    ++cur;
+    CHECK_END2 (cur);
+
+    UString name, value;
+    UString::size_type name_start=0, name_end=0, value_start=0, value_end=0;
+
+    while (true /*fetch name*/) {
+        name_start=0, name_end=0, value_start=0, value_end=0;
+        name = "#unnamed#" , value = "";
+
+        SKIP_BLANK2 (cur);
+        LOG_D ("fetching name ...", GDBMI_PARSING_DOMAIN);
+        //we should be at the begining of A = B. lets try to parse A
+        if (RAW_CHAR_AT (cur) != '{') {
+            SKIP_BLANK2 (cur);
+            name_start = cur;
+            while (true) {
+                if (!m_priv->index_passed_end (cur)
+                    && RAW_CHAR_AT (cur) != '='
+                    && RAW_CHAR_AT (cur) != '}') {
+                    ++cur;
+                } else {
+                    //if we found an '}' character, make sure
+                    //it is not enclosed in sigle quotes. If it is in
+                    //single quotes then ignore it.
+                    if (cur > 0
+                        && !m_priv->index_passed_end (cur+1)
+                        && RAW_CHAR_AT (cur-1) == '\''
+                        && RAW_CHAR_AT (cur+1) == '\'') {
+                        ++cur;
+                        continue;
+                    }
+                    break;
+                }
+            }
+            //we should be at the end of A (as in A = B)
+            name_end = cur - 1;
+            name.assign (RAW_INPUT, name_start, name_end - name_start + 1);
+            LOG_D ("got name '" << name << "'", GDBMI_PARSING_DOMAIN);
+        }
+
+        IDebugger::VariableSafePtr cur_var (new IDebugger::Variable);
+        name.chomp ();
+        cur_var->name (name);
+
+        if (RAW_CHAR_AT (cur) == '}') {
+            ++cur;
+            cur_var->value ("");
+            a_var->append (cur_var);
+            LOG_D ("reached '}' after '"
+                   << name << "'",
+                   GDBMI_PARSING_DOMAIN);
+            break;
+        }
+
+        SKIP_BLANK2 (cur);
+        if (RAW_CHAR_AT (cur) != '{') {
+            ++cur;
+            CHECK_END2 (cur);
+            SKIP_BLANK2 (cur);
+        }
+
+        //if we are at a '{', (like in A = {B}),
+        //the B is said to be a member variable of A
+        //you can also call it a member attribute of A
+        //In this case, let's try to parse {B}
+        if (RAW_CHAR_AT (cur) == '{') {
+            bool in_unnamed = true;
+            if (name == "#unnamed#") {
+                in_unnamed = false;
+            }
+            if (!parse_member_variable (cur, cur, cur_var, in_unnamed)) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+        } else {
+            //else, we are at a B, (like in A = B),
+            //so let's try to parse B
+            SKIP_BLANK2 (cur);
+            value_start = cur;
+            while (true) {
+                UString str;
+                if ( RAW_CHAR_AT (cur) == '"'
+                    && RAW_CHAR_AT (cur -1) != '\\') {
+                    if (!parse_c_string (cur, cur, str)) {
+                        LOG_PARSING_ERROR2 (cur);
+                        return false;
+                    }
+                } else if (!m_priv->index_passed_end (cur+2)
+                           && RAW_CHAR_AT (cur) == '\\'
+                           && RAW_CHAR_AT (cur+1) == '"'
+                           && RAW_CHAR_AT (cur+2) != '\''
+                           && RAW_CHAR_AT (cur-1) != '\'') {
+                    if (!parse_embedded_c_string (cur, cur, str)){
+                        LOG_PARSING_ERROR2 (cur);
+                        return false;
+                    }
+                } else if ((RAW_CHAR_AT (cur) != ','
+                               || ((!m_priv->index_passed_end (cur+1))
+                                   && RAW_CHAR_AT (cur+1) != ' '))
+                           && RAW_CHAR_AT (cur) != '}') {
+                    ++cur;
+                    CHECK_END2 (cur);
+                } else {
+                    //if we found an '}' character, make sure
+                    //it is not enclosed in sigle quotes. If it is in
+                    //single quotes then ignore it.
+                    if (cur > 0
+                        && !m_priv->index_passed_end (cur+1)
+                        && RAW_CHAR_AT (cur-1) == '\''
+                        && RAW_CHAR_AT (cur+1) == '\'') {
+                        ++cur;
+                        continue;
+                    }
+                    //otherwise, getting out condition is either
+                    //", " or "}".  check out the the 'if' condition.
+                    break;
+                }
+            }
+            if (cur != value_start) {
+                value_end = cur - 1;
+                value.assign (RAW_INPUT, value_start,
+                              value_end - value_start + 1);
+                LOG_D ("got value: '"
+                       << value << "'",
+                       GDBMI_PARSING_DOMAIN);
+            } else {
+                value = "";
+                LOG_D ("got empty value", GDBMI_PARSING_DOMAIN);
+            }
+            cur_var->value (value);
+        }
+        a_var->append (cur_var);
+
+        LOG_D ("cur char: " << (char) RAW_CHAR_AT (cur),
+               GDBMI_PARSING_DOMAIN);
+
+end_of_block:
+        SKIP_BLANK2 (cur);
+
+        LOG_D ("cur char: " << (char) RAW_CHAR_AT (cur),
+                GDBMI_PARSING_DOMAIN);
+
+        if (m_priv->index_passed_end (cur) || RAW_CHAR_AT (cur) == '"') {
+            break;
+        } else if (RAW_CHAR_AT (cur) == '}') {
+            ++cur;
+            break;
+        } else if (RAW_CHAR_AT (cur) == ',') {
+            ++cur;
+            CHECK_END2 (cur);
+            LOG_D ("got ',' , going to fetch name",
+                   GDBMI_PARSING_DOMAIN);
+            continue /*goto fetch name*/;
+        } else if (!RAW_INPUT.compare (cur, 9, "<repeats ")) {
+            //TODO: we need to handle the <repeat N> format at some point.
+            //just skipping it for now.
+            bool skipped_repeat=false;
+            while (true) {
+                ++cur;
+                if (m_priv->index_passed_end (cur)) {break;}
+                if (RAW_CHAR_AT (cur) == '>') {
+                    ++cur;
+                    skipped_repeat = true;
+                    break;
+                }
+            }
+            if (skipped_repeat) {
+                LOG_D ("skipped repeat construct", GDBMI_PARSING_DOMAIN);
+                goto end_of_block;
+                break;
+            } else {
+                LOG_ERROR ("failed to skip repeat construct");
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+        } else if (!RAW_INPUT.compare (cur, 3, "...")) {
+            //hugh ? wtf does this '...' mean ? Anyway, skip it for now.
+            cur+= 3;
+            goto end_of_block;
+        }
+        LOG_PARSING_ERROR2 (cur);
+        THROW ("should not be reached");
+    }//end while
+
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_variable_value (const UString::size_type a_from,
+                                   UString::size_type &a_to,
+                                   IDebugger::VariableSafePtr &a_var)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_VALUE), PREFIX_VALUE)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    cur += 6;
+    CHECK_END2 (cur);
+    CHECK_END2 (cur+1);
+
+    a_var = IDebugger::VariableSafePtr (new IDebugger::Variable);
+    if (RAW_CHAR_AT (cur+1) == '{') {
+        ++cur;
+        if (!parse_member_variable (cur, cur, a_var)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        SKIP_BLANK2 (cur);
+        if (RAW_CHAR_AT (cur) != '"') {
+            UString value ;
+            if (!parse_c_string_body (cur, m_priv->end, value)) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            value = a_var->value () + " " + value;
+            a_var->value (value);
+        }
+    } else {
+        UString value;
+        if (!parse_c_string (cur, cur, value)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        a_var->value (value);
+    }
+
+    ++cur;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_register_names (UString::size_type a_from,
+                                   UString::size_type &a_to,
+                                   std::map<IDebugger::register_id_t,
+                                   UString> &a_registers)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_REGISTER_NAMES),
+                           PREFIX_REGISTER_NAMES)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += strlen (PREFIX_REGISTER_NAMES);
+
+    GDBMIListSafePtr reg_list;
+    if (!parse_gdbmi_list (cur, cur, reg_list)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (RAW_CHAR_AT (cur-1) != ']') {
+        //unexpected data
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    std::map<IDebugger::register_id_t, UString> regs;
+    if (reg_list->content_type () != GDBMIList::VALUE_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    std::list<GDBMIValueSafePtr> value_list;
+    reg_list->get_value_content (value_list);
+    IDebugger::register_id_t id = 0;
+    std::list<GDBMIValueSafePtr>::const_iterator val_iter;
+    for (val_iter = value_list.begin();
+         val_iter != value_list.end();
+         ++val_iter, ++id) {
+        UString regname = (*val_iter)->get_string_content ();
+        regs[id] = regname;
+    }
+
+    a_registers = regs;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_changed_registers (UString::size_type a_from,
+                                      UString::size_type &a_to,
+                                      std::list<IDebugger::register_id_t> &a_registers)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_CHANGED_REGISTERS),
+                           PREFIX_CHANGED_REGISTERS)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += strlen (PREFIX_CHANGED_REGISTERS);
+
+    GDBMIListSafePtr reg_list;
+    if (!parse_gdbmi_list (cur, cur, reg_list)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (RAW_CHAR_AT (cur-1) != ']') {
+        // unexpected data
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    std::list<IDebugger::register_id_t> regs;
+    if (!reg_list->empty () &&
+            reg_list->content_type () != GDBMIList::VALUE_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    std::list<GDBMIValueSafePtr> value_list;
+    reg_list->get_value_content (value_list);
+    for (std::list<GDBMIValueSafePtr>::const_iterator val_iter =
+            value_list.begin ();
+            val_iter != value_list.end ();
+            ++val_iter) {
+        UString regname = (*val_iter)->get_string_content ();
+        regs.push_back (atoi (regname.c_str ()));
+    }
+
+    a_registers = regs;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_register_values (UString::size_type a_from,
+                                    UString::size_type &a_to,
+                                    std::map<IDebugger::register_id_t, UString>
+                                                                        &a_values)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_REGISTER_VALUES),
+                           PREFIX_REGISTER_VALUES)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += strlen (PREFIX_REGISTER_VALUES);
+
+    GDBMIListSafePtr gdbmi_list;
+    if (!parse_gdbmi_list (cur, cur, gdbmi_list)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (RAW_CHAR_AT (cur-1) != ']') {
+        // unexpected data
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    std::map<IDebugger::register_id_t, UString> vals;
+    if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    std::list<GDBMIValueSafePtr> val_list;
+    gdbmi_list->get_value_content (val_list);
+    std::list<GDBMIValueSafePtr>::const_iterator val_iter;
+    for (val_iter = val_list.begin ();
+         val_iter != val_list.end ();
+         ++val_iter) {
+        UString value_str;
+        if ((*val_iter)->content_type ()
+            != GDBMIValue::TUPLE_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        GDBMITupleSafePtr tuple = (*val_iter)->get_tuple_content ();
+        std::list<GDBMIResultSafePtr> result_list = tuple->content ();
+        if (result_list.size () != 2) {
+            // each tuple should have a 'number' and 'value' field
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        std::list<GDBMIResultSafePtr>::const_iterator res_iter =
+                                                result_list.begin ();
+        // get register number
+        GDBMIValueSafePtr reg_number_val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "number"
+            || reg_number_val->content_type () != GDBMIValue::STRING_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        IDebugger::register_id_t id =
+                atoi (reg_number_val->get_string_content ().c_str ());
+
+        // get the new value of the register
+        ++res_iter;
+        GDBMIValueSafePtr reg_value_val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "value"
+            || reg_value_val->content_type () != GDBMIValue::STRING_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        } else {
+            value_str = reg_value_val->get_string_content ();
+        }
+        vals[id] = value_str;
+    }
+
+    a_values = vals;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_memory_values (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  size_t& a_start_addr,
+                                  std::vector<uint8_t> &a_values)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_MEMORY_VALUES),
+                           PREFIX_MEMORY_VALUES)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    //skip to the actual list of memory values
+    const char* prefix_memory = "memory=";
+    cur = RAW_INPUT.find (prefix_memory);
+    if (!cur) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    cur += strlen (prefix_memory);
+
+    GDBMIListSafePtr mem_gdbmi_list;
+    if (!parse_gdbmi_list (cur, cur, mem_gdbmi_list)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (RAW_CHAR_AT (cur-1) != ']') {
+        //unexpected data
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (mem_gdbmi_list->content_type ()
+        != GDBMIList::VALUE_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    std::list<GDBMIValueSafePtr> mem_value_list;
+    mem_gdbmi_list->get_value_content (mem_value_list);
+
+    //there should only be one 'row'
+    if (mem_value_list.size () != 1) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    std::list<GDBMIValueSafePtr>::const_iterator mem_tuple_iter =
+                                                    mem_value_list.begin ();
+    if ((*mem_tuple_iter)->content_type ()
+        != GDBMIValue::TUPLE_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    const GDBMITupleSafePtr gdbmi_tuple =
+                            (*mem_tuple_iter)->get_tuple_content ();
+
+    std::list<GDBMIResultSafePtr> result_list;
+    result_list = gdbmi_tuple->content ();
+    if (result_list.size () < 2) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    std::vector<uint8_t> memory_values;
+    bool seen_addr = false, seen_data = false;
+    std::list<GDBMIResultSafePtr>::const_iterator result_iter;
+    for (result_iter = result_list.begin ();
+         result_iter != result_list.end ();
+         ++result_iter) {
+        if ((*result_iter)->variable () == "addr") {
+            seen_addr = true;
+            if ((*result_iter)->value ()->content_type ()
+                != GDBMIValue::STRING_TYPE) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            std::istringstream istream
+                            ((*result_iter)->value ()-> get_string_content ());
+            istream >> std::hex >> a_start_addr;
+        } else if ((*result_iter)->variable () == "data") {
+            seen_data = true;
+            if ((*result_iter)->value ()->content_type ()
+                != GDBMIValue::LIST_TYPE) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            GDBMIListSafePtr gdbmi_list =
+                            (*result_iter)->value ()->get_list_content ();
+            if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            std::list<GDBMIValueSafePtr> gdbmi_values;
+            gdbmi_list->get_value_content (gdbmi_values);
+            std::list<GDBMIValueSafePtr>::const_iterator val_iter;
+            for (val_iter = gdbmi_values.begin ();
+                 val_iter != gdbmi_values.end ();
+                 ++val_iter) {
+                if ((*val_iter)->content_type ()
+                    != GDBMIValue::STRING_TYPE) {
+                    LOG_PARSING_ERROR2 (cur);
+                    return false;
+                }
+                std::istringstream istream
+                                        ((*val_iter)->get_string_content ());
+                //if I use a uint8_t type here, it doesn't seem to work, so
+                //using a 16-bit value that will be cast down to 8 bits
+                uint16_t byte_val;
+                istream >> std::hex >> byte_val;
+                memory_values.push_back (byte_val);
+            }
+        }
+        //else ignore it
+    }
+
+    if (!seen_addr || !seen_data) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    a_values = memory_values;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_overloads_choice_prompt
+                        (UString::size_type a_from,
+                         UString::size_type &a_to,
+                         vector<IDebugger::OverloadsChoiceEntry> &a_prompts)
+{
+    UString::size_type cur=a_from;
+    gunichar c = 0;
+
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    if (RAW_CHAR_AT (cur) != '[') {
+        LOG_PARSING_ERROR2 (cur);
+    }
+    c = RAW_CHAR_AT (cur);
+
+    string index_str;
+    vector<IDebugger::OverloadsChoiceEntry> prompts;
+    while (c == '[') {
+        ++cur;
+        CHECK_END2 (cur);
+        index_str.clear ();
+        c = RAW_CHAR_AT (cur);
+        //look for the numerical index of the current prompt entry
+        for (;;) {
+            CHECK_END2 (cur);
+            c = RAW_CHAR_AT (cur);
+            if (isdigit (c)) {
+                index_str += RAW_CHAR_AT (cur);
+            } else if (c == ']') {
+                break;
+            } else {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            ++cur;
+            if (m_priv->index_passed_end (cur))
+                break;
+            c = RAW_CHAR_AT (cur);
+        }
+        //we should have the numerical index of the current prompt entry
+        //by now.
+        if (index_str.empty ()) {
+            LOG_ERROR ("Could not parse prompt index");
+            return false;
+        }
+        LOG_DD ("prompt index: " << index_str);
+        ++cur;
+        CHECK_END2 (cur);
+        SKIP_WS2 (cur);
+        c = RAW_CHAR_AT (cur);
+
+        //now parse the prompt value.
+        //it is either  "all", "cancel", or a function name/file location.
+        IDebugger::OverloadsChoiceEntry entry;
+        entry.index (atoi (index_str.c_str ()));
+        if (m_priv->end - cur >= 3
+            && !RAW_INPUT.compare (cur, 3, "all")) {
+            entry.kind (IDebugger::OverloadsChoiceEntry::ALL);
+            cur += 3;
+            SKIP_WS2 (cur);
+            c = RAW_CHAR_AT (cur);
+            LOG_DD ("pushing entry: " << (int) entry.index ()
+                    << ", all" );
+            prompts.push_back (entry);
+            if (!m_priv->index_passed_end (cur+1)
+                && c == '\\' && RAW_CHAR_AT (cur+1) == 'n') {
+                cur += 2;
+                c = RAW_CHAR_AT (cur);
+            }
+        } else if  (m_priv->end - cur >= 6
+                    && !RAW_INPUT.compare (cur, 6, "cancel")) {
+            entry.kind (IDebugger::OverloadsChoiceEntry::CANCEL);
+            cur += 6;
+            SKIP_WS2 (cur);
+            c = RAW_CHAR_AT (cur);
+            LOG_DD ("pushing entry: " << (int) entry.index ()
+                    << ", cancel");
+            prompts.push_back (entry);
+            if (!m_priv->index_passed_end (cur+1)
+                && c == '\\' && RAW_CHAR_AT (cur+1) == 'n') {
+                cur += 2;
+                c = RAW_CHAR_AT (cur);
+            }
+        } else {
+            //try to parse a breakpoint location
+            UString function_name, file_name, line_num;
+            UString::size_type b=0, e=0;
+            b = cur;
+            while (!m_priv->index_passed_end (cur)
+                   && RAW_INPUT.compare (cur, 4, " at ")) {
+                ++cur;
+            }
+            c = RAW_CHAR_AT (cur);
+            if (!m_priv->index_passed_end (cur)
+                && !RAW_INPUT.compare (cur, 4, " at ")) {
+                e = cur;
+            } else {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            function_name.assign (RAW_INPUT, b, e-b);
+
+            cur += 4;
+            SKIP_WS2 (cur);
+            c = RAW_CHAR_AT (cur);
+            b=cur; e=0;
+            while (c != ':') {
+                ++cur;
+                if (m_priv->index_passed_end (cur))
+                    break;
+                c = RAW_CHAR_AT (cur);
+            }
+            if (!m_priv->index_passed_end (cur) && c == ':') {
+                e = cur;
+            } else {
+                LOG_PARSING_ERROR2 (cur);
+                return false;
+            }
+            file_name.assign (RAW_INPUT, b, e-b);
+            ++cur;
+            SKIP_WS2 (cur);
+            c = RAW_CHAR_AT (cur);
+
+            while (isdigit (c)) {
+                line_num += c;
+                ++cur;
+                if (m_priv->index_passed_end (cur))
+                    break;
+                c = RAW_CHAR_AT (cur);
+            }
+            entry.kind (IDebugger::OverloadsChoiceEntry::LOCATION);
+            entry.function_name (function_name);
+            entry.file_name (file_name);
+            entry.line_number (atoi (line_num.c_str ()));
+            LOG_DD ("pushing entry: " << (int) entry.index ()
+                    << ", " << entry.function_name ());
+            prompts.push_back (entry);
+            if (m_priv->index_passed_end (cur)) {
+                LOG_DD ("reached end, getting out");
+                break;
+            }
+            SKIP_WS2 (cur);
+            c = RAW_CHAR_AT (cur);
+            if (!m_priv->index_passed_end (cur+1)
+                && c == '\\' && RAW_CHAR_AT (cur+1) == 'n') {
+                cur += 2;
+                c = RAW_CHAR_AT (cur);
+            }
+            SKIP_WS2 (cur);
+            c = RAW_CHAR_AT (cur);
+            if (m_priv->index_passed_end (cur))
+                break;
+        }
+    }//end while//parse a prompt entry
+    if (prompts.empty ())
+        return false;
+    a_prompts = prompts;
+    a_to = cur;
+    return true;
+}
+
+//******************************
+//</Parser methods>
+//******************************
 NEMIVER_END_NAMESPACE (nemiver)
 
 
