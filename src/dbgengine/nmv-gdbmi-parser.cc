@@ -4860,7 +4860,7 @@ fetch_gdbmi_result:
         return false;
     }
 
-    if (RAW_CHAR_AT (cur) != '\n') {
+    if (RAW_CHAR_AT (cur) != '\n' && !m_priv->index_passed_end (cur)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
@@ -5949,7 +5949,7 @@ GDBMIParser::parse_variable_value (const UString::size_type a_from,
         SKIP_BLANK2 (cur);
         if (RAW_CHAR_AT (cur) != '"') {
             UString value ;
-            if (!parse_c_string_body (cur, m_priv->end, value)) {
+            if (!parse_c_string_body (cur, cur, value)) {
                 LOG_PARSING_ERROR2 (cur);
                 return false;
             }

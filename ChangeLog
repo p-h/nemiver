@@ -1,3 +1,10 @@
+2008-12-11  Dodji Seketeli  <dodji@gnome.org>
+
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_result_record):
+	  Don't forget lines can end up abruptly.
+	* tests/test-gdbmi.cc: Added a new regression test for this bug.
+	This should close #564113.
+
 2008-11-26  Jonathon Jongsma  <jonathon@quotidian.org>
 
 	* src/persp/dbgperspective/glade/varinspectordialog.glade: make the default
