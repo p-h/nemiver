@@ -2670,7 +2670,7 @@ DBGPerspective::init_actions ()
     static ui_utils::ActionEntry s_target_not_started_action_entries [] = {
         {
             "RunMenuItemAction",
-            Gtk::Stock::GOTO_FIRST,
+            Gtk::Stock::REFRESH,
             _("_Restart"),
             _("Restart the target, killing this process "
               "and starting a new one"),

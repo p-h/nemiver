@@ -1,3 +1,8 @@
+2008-12-15  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: change the 'restart' icon
+	from Stock::GOTO_FIRST to Stock::REFRESH (Bug #526151)
+
 2008-12-11  Dodji Seketeli  <dodji@gnome.org>
 
 	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_result_record):
