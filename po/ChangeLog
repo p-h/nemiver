@@ -1,3 +1,10 @@
+2008-12-17  Leonardo Ferreira Fontenelle  <leonardof@gnome.org>
+
+	* LINGUAS: Added pt_BR.
+	* pt_BR.po: Added Brazilian Portuguese translation by Richardo Ichizo,
+	Enrico Nicoletto and Leonardo Ferreira Fontentelle. Thanks to Bruno
+	Boaventura for some clarifications.
+
 2008-09-19  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
 
 	* es.po: Updated Spanish translation 
