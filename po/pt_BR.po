@@ -4,22 +4,22 @@
 # Ricardo Ichizo <n1ghtcr4wler@gmail.com>, 2008.
 # Enrico Nicoletto <liverig@gmail.com>, 2008.
 # Leonardo Ferreira Fontenelle <leonardof@gnome.org>, 2008.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&amp;component=general\n"
 "POT-Creation-Date: 2008-12-16 04:30+0000\n"
-"PO-Revision-Date: 2008-11-14 17:34-0300\n"
+"PO-Revision-Date: 2008-12-17 23:41-0200\n"
 "Last-Translator: Leonardo Ferreira Fontenelle <leonardof@gnome.org>\n"
-"Language-Team: Brazilian Portuguese <gnome-l10n-br@listas.cipgsa.org.br>\n"
+"Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Generator: Virtaal 0.2\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: BRAZIL\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: ../glade/workbench.glade.h:1
 msgid "Nemiver"
@@ -91,11 +91,11 @@ msgstr "<b>Chamar uma função:</b>"
 
 #: ../src/persp/dbgperspective/glade/callfunctiondialog.glade.h:2
 msgid "Call Function"
-msgstr "Chamar Função"
+msgstr "Chamar função"
 
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:1
 msgid "<b>Cycling Options:</b>"
-msgstr "<b>Opções de Alternância:</b>"
+msgstr "<b>Opções de alternância:</b>"
 
 # Match aqui é o evento de um padrão pesquisado "casar" com o texto.
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:2
@@ -136,7 +136,7 @@ msgstr "<b>Executável:</b>"
 
 #: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:3
 msgid "Choose a Core File to Debug"
-msgstr "Escolha um arquivo core para depurar"
+msgstr "Escolher um arquivo core para depurar"
 
 #: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:4
 msgid "Select A Core File"
@@ -168,11 +168,11 @@ msgstr "Escolher do _sistema de arquivos"
 
 #: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:4
 msgid "Select from _Target Executable"
-msgstr "Selecionar do a_lvo executável"
+msgstr "Selecionar do _alvo executável"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:1
 msgid "<b>Editor Font</b>"
-msgstr "<b>Editor de fonte</b>"
+msgstr "<b>Fonte do editor</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:2
 msgid "<b>File Monitoring</b>"
@@ -188,7 +188,7 @@ msgstr "<b>Destaque de sintaxe</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:5
 msgid "Ask each time"
-msgstr "Perguntar cada vez"
+msgstr "Perguntar a cada vez"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:6
 msgid "Custom Font:"
@@ -196,11 +196,11 @@ msgstr "Fonte personalizada:"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:7
 msgid "Display line numbers"
-msgstr "Exibe o número das linhas"
+msgstr "Exibir o número das linhas"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:8
 msgid "Do not reload the file"
-msgstr "Não recarrega o arquivo"
+msgstr "Não recarregar o arquivo"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:9
 msgid "Editor"
@@ -208,7 +208,7 @@ msgstr "Editor"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:10
 msgid "Enable syntax highlighting"
-msgstr "Habilita o destaque de sintaxe"
+msgstr "Habilitar o destaque de sintaxe"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:11
 msgid "Preferences"
@@ -216,7 +216,7 @@ msgstr "Preferências"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:12
 msgid "Reload the file"
-msgstr "Recarrega o arquivo"
+msgstr "Recarregar o arquivo"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:13
 msgid "Source Directories"
@@ -225,7 +225,7 @@ msgstr "Diretórios de fonte"
 # monospace == fixed width
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:14
 msgid "Use system monospace font"
-msgstr "Usa a fonte de largura fixa do sistema"
+msgstr "Usar a fonte de largura fixa do sistema"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:15
 msgid "When a source file is changed:"
@@ -233,7 +233,7 @@ msgstr "Quando um arquivo fonte for alterado:"
 
 #: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:1
 msgid "<b>Choose a Process to Debug</b>"
-msgstr "<b>Escolher um processo para depurar</b>"
+msgstr "<b>Escolha um processo para depurar</b>"
 
 #: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:2
 msgid "Attach to a Running Program"
@@ -241,7 +241,7 @@ msgstr "Anexar a um programa em execução"
 
 #: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:3
 msgid "_Filter list:"
-msgstr "Lista de _filtragem:"
+msgstr "_Filtrar lista:"
 
 #: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:1
 msgid "<b>Arguments:</b>"
@@ -281,7 +281,7 @@ msgstr "_Remover"
 
 #: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:1
 msgid "<b>Choose a Session to Debug</b>"
-msgstr "<b>Escolher uma sessão para depurar</b>"
+msgstr "<b>Escolha uma sessão para depurar</b>"
 
 #: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:2
 msgid "Saved Sessions"
@@ -290,7 +290,7 @@ msgstr "Sessões salvas"
 #: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2777
 msgid "Inspect a Variable"
-msgstr "Inspeciona uma variável"
+msgstr "Inspecionar uma variável"
 
 #: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:2
 msgid "_Inspect"
@@ -331,7 +331,7 @@ msgstr "<b>Localização das bibliotecas compartilhadas</b>"
 
 #: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:4
 msgid "Address :"
-msgstr "Endereço :"
+msgstr "Endereço:"
 
 #: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:5
 msgid "Choose a File"
@@ -343,7 +343,7 @@ msgstr "Conectar ao alvo remoto"
 
 #: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:7
 msgid "Port :"
-msgstr "Porta :"
+msgstr "Porta:"
 
 #: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:8
 msgid "Serial Line Connection"
@@ -355,7 +355,7 @@ msgstr "Conexão TCP/IP"
 
 #: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:1
 msgid "<b>Set a Breakpoint:</b>"
-msgstr "<b>Definir um ponto de interrupção:</b>"
+msgstr "<b>Defina um ponto de interrupção:</b>"
 
 #: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:2
 msgid "Condition:"
@@ -363,11 +363,12 @@ msgstr "Condição:"
 
 #: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:3
 msgid "F_unction Name:"
-msgstr "Nome da f_unção:"
+msgstr "_Nome da função:"
 
+# Encurtei por uma questão de espaço.
 #: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:4
 msgid "Filename:"
-msgstr "Nome do arquivo:"
+msgstr "Arquivo:"
 
 #: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:5
 msgid "Function:"
@@ -383,7 +384,7 @@ msgstr "_Evento:"
 
 #: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:9
 msgid "_Source Location"
-msgstr "Localização da f_onte"
+msgstr "_Localização do fonte"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:109
 msgid "Function Name"
@@ -490,7 +491,7 @@ msgstr "Pontos de interrupção"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:115
 msgid "Registers"
-msgstr "Registradores"
+msgstr "Registros"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:116
 msgid "Memory"
@@ -593,7 +594,7 @@ msgstr "_Reiniciar"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2675
 msgid "Restart the target, killing this process and starting a new one"
-msgstr "Reiniciar o alvo, matando o processo e iniciando um novo"
+msgstr "Reinicia o alvo, matando o processo e iniciando um novo"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2687
 msgid "_Next"
@@ -605,7 +606,7 @@ msgstr "Executa a próxima linha sem entrar na próxima função, se houver"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2696
 msgid "_Step"
-msgstr "_Passo"
+msgstr "P_asso"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2697
 msgid "Execute next line, stepping into the next function, if any"
@@ -697,7 +698,7 @@ msgstr "Parar"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2819
 msgid "Stop the Debugger"
-msgstr "Pára o Depurador"
+msgstr "Pára o depurador"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2830
 msgid "_View"
@@ -781,7 +782,7 @@ msgstr "Carrega um arquivo core do disco"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2966
 msgid "_Attach to Running Program..."
-msgstr "_Anexar ao programa em execução..."
+msgstr "Ane_xar ao programa em execução..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2967
 msgid "Debug a program that's already running"
@@ -789,7 +790,7 @@ msgstr "Depura um programa que já está sendo executado"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2976
 msgid "_Connect to Remote Target..."
-msgstr "_Conectar ao alvo remoto..."
+msgstr "Co_nectar ao alvo remoto..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2977
 msgid "Connect to a debugging server to debug a remote target"
@@ -993,14 +994,15 @@ msgstr "Escolher diretório"
 msgid "Source directories"
 msgstr "Fontes de diretórios"
 
+# Encurtei por uma questão de espaço.
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:120
 msgid "User Name"
-msgstr "Nome de usuário"
+msgstr "Usuário"
 
-# Aparentemente o espaço disponível na interface gráfica de usuário é curto.
+# Essa é a maior coluna da tabela; por isso traduzi por extenso.
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:127
 msgid "Proc Args"
-msgstr "Args proc"
+msgstr "Argumentos do processo"
 
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:99
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:100
@@ -1018,9 +1020,10 @@ msgid "Session"
 msgstr "Sessão"
 
 # Não é thread de e-mail, mas sim de execução
+# Encurtei pelo tamanho da coluna
 #: ../src/persp/dbgperspective/nmv-thread-list.cc:185
 msgid "Thread ID"
-msgstr "ID da thread"
+msgstr "Thread"
 
 #: ../src/uicommon/nmv-source-editor.cc:241
 #, c-format
@@ -1039,8 +1042,8 @@ msgstr "Página do Projeto"
 #: ../src/workbench/nmv-workbench.cc:287
 msgid "translator-credits"
 msgstr ""
-"Ricardo Ichizo <n1ghtcr4wler@gmail.com>, 2008.\n"
-"Enrico Nicoletto <liverig@gmail.com>, 2008.\n"
+"Ricardo Ichizo <n1ghtcr4wler@gmail.com>\n"
+"Enrico Nicoletto <liverig@gmail.com>\n"
 "Leonardo Ferreira Fontenelle <leonardof@gnome.org>"
 
 #: ../src/workbench/nmv-workbench.cc:630
