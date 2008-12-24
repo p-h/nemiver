@@ -2877,6 +2877,16 @@ DBGPerspective::init_actions ()
             ""
         },
         {
+            "ActivateTargetTerminalViewMenuAction",
+            nil_stock_id,
+            TARGET_TERMINAL_TITLE,
+            _("Switch to Target Terminal View"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_activate_target_terminal_view),
+            ActionEntry::DEFAULT,
+            "<alt>1"
+        },
+        {
             "ActivateCallStackViewMenuAction",
             nil_stock_id,
             CALL_STACK_TITLE,
@@ -2884,7 +2894,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_call_stack_view),
             ActionEntry::DEFAULT,
-            "<alt>1"
+            "<alt>2"
         },
         {
             "ActivateVariablesViewMenuAction",
@@ -2893,16 +2903,6 @@ DBGPerspective::init_actions ()
             _("Switch to Variables View"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_variables_view),
-            ActionEntry::DEFAULT,
-            "<alt>2"
-        },
-        {
-            "ActivateTargetTerminalViewMenuAction",
-            nil_stock_id,
-            TARGET_TERMINAL_TITLE,
-            _("Switch to Target Terminal View"),
-            sigc::mem_fun (*this,
-                           &DBGPerspective::on_activate_target_terminal_view),
             ActionEntry::DEFAULT,
             "<alt>3"
         },
