@@ -44,6 +44,7 @@
 #include <gtksourceviewmm/init.h>
 #ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcelanguagemanager.h>
+#include <gtksourceviewmm/sourcestyleschememanager.h>
 #else
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #endif  // WITH_SOURCEVIEWMM2
@@ -819,6 +820,9 @@ struct DBGPerspective::Priv {
     bool enable_syntax_highlight;
     UString custom_font_name;
     UString system_font_name;
+#ifdef WITH_SOURCEVIEWMM2
+    Glib::RefPtr<gtksourceview::SourceStyleScheme> editor_style;
+#endif // WITH_SOURCEVIEWMM2
     sigc::connection timeout_source_connection;
     //**************************************
     //<detect mouse immobility > N seconds
@@ -885,6 +889,25 @@ struct DBGPerspective::Priv {
     }
 
 
+#ifdef WITH_SOURCEVIEWMM2
+    void
+    modify_source_editor_style (Glib::RefPtr<gtksourceview::SourceStyleScheme> a_style_scheme)
+    {
+        if (!a_style_scheme) {
+            LOG_ERROR ("Trying to set a style with null pointer");
+            return;
+        }
+        map<int, SourceEditor*>::iterator it;
+        for (it = pagenum_2_source_editor_map.begin ();
+                it != pagenum_2_source_editor_map.end ();
+                ++it) {
+            if (it->second) {
+                it->second->source_view ().get_source_buffer ()->set_style_scheme (a_style_scheme);
+            }
+        }
+    }
+#endif // WITH_SOURCEVIEWMM2
+
     void
     modify_source_editor_fonts (const UString &a_font_name)
     {
@@ -908,6 +931,14 @@ struct DBGPerspective::Priv {
         memory_view->modify_font (font_desc);
 #endif // WITH_MEMORYVIEW
     }
+
+#ifdef WITH_SOURCEVIEWMM2
+    Glib::RefPtr<gtksourceview::SourceStyleScheme>
+    get_editor_style ()
+    {
+        return editor_style;
+    }
+#endif // WITH_SOURCEVIEWMM2
 
     Glib::ustring
     get_source_font_name ()
@@ -1933,6 +1964,16 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         if (m_priv->use_system_font && !m_priv->system_font_name.empty ()) {
             m_priv->modify_source_editor_fonts (m_priv->system_font_name);
         }
+#ifdef WITH_SOURCEVIEWMM2
+    } else if (a_key == CONF_KEY_EDITOR_STYLE_SCHEME) {
+        UString style_id = boost::get<UString> (a_value);
+        if (!style_id.empty ()) {
+            m_priv->editor_style =
+                gtksourceview::SourceStyleSchemeManager::get_default
+                ()->get_scheme (style_id);
+            m_priv->modify_source_editor_style (m_priv->editor_style);
+        }
+#endif // WITH_SOURCEVIEWMM2
     }
     NEMIVER_CATCH
 }
@@ -3899,6 +3940,13 @@ DBGPerspective::read_default_config ()
                             m_priv->custom_font_name);
     conf_mgr.get_key_value (CONF_KEY_SYSTEM_FONT_NAME,
                             m_priv->system_font_name);
+#ifdef WITH_SOURCEVIEWMM2
+    UString style_id;
+    conf_mgr.get_key_value (CONF_KEY_EDITOR_STYLE_SCHEME, style_id);
+    m_priv->editor_style = gtksourceview::SourceStyleSchemeManager::get_default
+        ()->get_scheme (style_id);
+#endif // WITH_SOURCEVIEWMM2
+
     default_config_read_signal ().emit ();
 }
 
@@ -4404,6 +4452,12 @@ DBGPerspective::open_file (const UString &a_path,
         Pango::FontDescription font_desc (m_priv->get_source_font_name ());
         source_editor->source_view ().modify_font (font_desc);
     }
+#ifdef WITH_SOURCEVIEWMM2
+    if (m_priv->get_editor_style ()) {
+        source_editor->source_view ().get_source_buffer ()->set_style_scheme
+            (m_priv->get_editor_style ());
+    }
+#endif // WITH_SOURCEVIEWMM2
     source_editor->set_path (a_path);
     source_editor->marker_region_got_clicked_signal ().connect
         (sigc::mem_fun

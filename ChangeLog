@@ -1,5 +1,12 @@
 2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: hook up the sourceivew
+	theme preference to the editor.  So now when the preference is changed, the
+	opened source editor widgets will all be changed to the new scheme (as will
+	any newly-opened files)
+
+2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
+
 	* src/persp/dbgperspective/glade/preferencesdialog.glade:
 	* src/persp/dbgperspective/nmv-conf-keys.h:
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
