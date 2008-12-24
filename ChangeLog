@@ -1,5 +1,18 @@
 2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
 
+	* src/persp/dbgperspective/glade/varinspectordialog.glade:
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: remember the history
+	of the variables inspected in the variable inspector dialog so that you
+	don't have to re-type them if you want to go back to one that you viewed
+	earlier.  This isn't a perfect solution since the history is lost when the
+	dialog is closed.  I'm not sure if it would be better to somehow make the
+	history outlive the dialog or if we should jsut change the lifetime of the
+	dialog (so that we call show()/hide() rather than creating and destroying it
+	every time it's shown)
+	Bug #536259
+
+2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: hook up the sourceivew
 	theme preference to the editor.  So now when the preference is changed, the
 	opened source editor widgets will all be changed to the new scheme (as will
