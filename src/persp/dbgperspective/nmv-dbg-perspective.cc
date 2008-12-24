@@ -151,6 +151,8 @@ const char* CONF_KEY_STATUS_PANE_LOCATION=
                 "/apps/nemiver/dbgperspective/status-pane-location";
 const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
                 "/apps/nemiver/dbgperspective/debugger-engine-dynmod";
+const char* CONF_KEY_EDITOR_STYLE_SCHEME =
+                "/apps/nemiver/dbgperspective/editor-style-scheme";
 
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT);

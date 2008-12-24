@@ -1,3 +1,14 @@
+2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* src/persp/dbgperspective/glade/preferencesdialog.glade:
+	* src/persp/dbgperspective/nmv-conf-keys.h:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc:
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas: add a
+	preference to the preferences dialog to select a different style scheme for
+	the source editor widget.  This is not hooked up to actually change the
+	style in the application yet, but the preference exists.
+
 2008-12-15  Jonathon Jongsma  <jonathon@quotidian.org>
 
 	* src/common/nmv-proc-utils.cc: change is_libtool_executable_wrapper a bit

@@ -30,6 +30,7 @@
 #include "nmv-i-conf-mgr.h"
 #include "nmv-i-workbench.h"
 #include "nmv-conf-keys.h"
+#include <gtksourceviewmm/sourcestyleschememanager.h>
 
 using nemiver::common::DynamicModuleManager;
 
@@ -54,6 +55,14 @@ source_dirs_cols ()
 class PreferencesDialog::Priv {
     Priv ();
 
+     class StyleModelColumns : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        Gtk::TreeModelColumn<Glib::ustring>                scheme_id;
+        Gtk::TreeModelColumn<Glib::ustring>                name;
+        StyleModelColumns() { add(scheme_id); add(name); }
+    };
+
 public:
     IWorkbench &workbench;
     //source directories property widgets
@@ -65,6 +74,10 @@ public:
     //source editor properties widgets
     Gtk::CheckButton *system_font_check_button;
     Gtk::FontButton *custom_font_button;
+    Gtk::ComboBox *editor_style_combo;
+    Glib::RefPtr<Gtk::ListStore> m_editor_style_model;
+    StyleModelColumns m_style_columns;
+    Gtk::CellRendererText m_style_name_renderer;
     Gtk::HBox *custom_font_box;
     Gtk::CheckButton *show_lines_check_button;
     Gtk::CheckButton *highlight_source_check_button;
@@ -162,6 +175,11 @@ public:
         update_custom_font_key ();
     }
 
+    void on_editor_style_changed_signal ()
+    {
+        update_editor_style_key ();
+    }
+
     void on_reload_files_toggled_signal ()
     {
         update_reload_files_keys ();
@@ -241,6 +259,42 @@ public:
             ui_utils::get_widget_from_glade<Gtk::HBox>
             (glade, "customfonthbox");
         THROW_IF_FAIL (custom_font_box);
+
+        editor_style_combo =
+            ui_utils::get_widget_from_glade<Gtk::ComboBox>
+            (glade, "editorstylecombobox");
+        THROW_IF_FAIL (editor_style_combo);
+        m_editor_style_model = Gtk::ListStore::create(m_style_columns);
+#ifdef WITH_SOURCEVIEWMM2
+        Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> mgr =
+            gtksourceview::SourceStyleSchemeManager::get_default();
+        std::list<Glib::ustring> schemes = mgr->get_scheme_ids();
+        for (std::list<Glib::ustring>::const_iterator it = schemes.begin();
+             it != schemes.end(); ++it) {
+            Gtk::TreeModel::iterator treeiter = m_editor_style_model->append();
+            (*treeiter)[m_style_columns.scheme_id] = *it;
+            Glib::RefPtr<gtksourceview::SourceStyleScheme> scheme =
+                mgr->get_scheme(*it);
+            (*treeiter)[m_style_columns.name] = Glib::ustring::compose ("%1 - <span size=\"smaller\" font_style=\"italic\">%2</span>",
+                                                        scheme->get_name(),
+                                                        scheme->get_description());
+        }
+        editor_style_combo->set_model(m_editor_style_model);
+        editor_style_combo->pack_start(m_style_name_renderer);
+        editor_style_combo->add_attribute(m_style_name_renderer.property_markup(), m_style_columns.name);
+        m_style_name_renderer.property_ellipsize() = Pango::ELLIPSIZE_END;
+        editor_style_combo->signal_changed ().connect
+        (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_editor_style_changed_signal));
+#else
+        Gtk::TreeModel::iterator treeiter = m_editor_style_model->append();
+        (*treeiter)[m_style_columns.name] = Glib::ustring("Only available with gtksourceviewmm2");
+        editor_style_combo->set_model(m_editor_style_model);
+        editor_style_combo->pack_start(m_style_columns.name);
+        editor_style_combo->set_active(treeiter);
+        editor_style_combo->set_sensitive(false);
+#endif // WITH_SOURCEVIEWMM2
 
         always_reload_radio_button =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
@@ -360,6 +414,15 @@ public:
                     (CONF_KEY_CUSTOM_FONT_NAME, font_name);
     }
 
+    void update_editor_style_key ()
+    {
+        THROW_IF_FAIL (editor_style_combo);
+        Gtk::TreeModel::iterator treeiter = editor_style_combo->get_active();
+        UString scheme = treeiter->get_value(m_style_columns.scheme_id);
+        conf_manager ().set_key_value
+                    (CONF_KEY_EDITOR_STYLE_SCHEME, scheme);
+    }
+
     void update_reload_files_keys ()
     {
         THROW_IF_FAIL (always_reload_radio_button);
@@ -389,6 +452,7 @@ public:
         THROW_IF_FAIL (system_font_check_button);
         THROW_IF_FAIL (custom_font_button);
         THROW_IF_FAIL (custom_font_box);
+        THROW_IF_FAIL (editor_style_combo);
 
         bool is_on=true;
         if (!conf_manager ().get_key_value
@@ -420,6 +484,21 @@ public:
             LOG_ERROR ("failed to get gconf key");
         } else {
             custom_font_button->set_font_name (font_name);
+        }
+
+        UString style_scheme;
+        if (!conf_manager ().get_key_value
+                (CONF_KEY_EDITOR_STYLE_SCHEME, style_scheme)) {
+            LOG_ERROR ("failed to get gconf key");
+        } else {
+            Gtk::TreeModel::iterator treeiter;
+            for (treeiter = m_editor_style_model->children().begin();
+                 treeiter != m_editor_style_model->children().end();
+                 ++treeiter) {
+                if ((*treeiter)[m_style_columns.scheme_id] == style_scheme) {
+                    editor_style_combo->set_active(treeiter);
+                }
+            }
         }
 
         bool confirm_reload = true, always_reload = false;

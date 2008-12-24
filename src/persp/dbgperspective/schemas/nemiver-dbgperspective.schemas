@@ -93,6 +93,17 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/editor-style-scheme</key>
+      <applyto>/apps/nemiver/dbgperspective/editor-style-scheme</applyto>
+      <owner>nemiver</owner>
+      <type>string</type>
+      <default>classic</default>
+      <locale name="C">
+        <short>The style of the source editor</short>
+        <long>The name of the source editor color scheme</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/status-widget-minimum-width</key>
       <applyto>/apps/nemiver/dbgperspective/status-widget-minimum-width</applyto>
       <owner>nemiver</owner>
