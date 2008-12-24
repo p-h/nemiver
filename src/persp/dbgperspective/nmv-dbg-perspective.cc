@@ -55,6 +55,7 @@
 #include <gtkmm/separatortoolitem.h>
 #include <gdkmm/cursor.h>
 #include <gtk/gtkseparatortoolitem.h>
+#include <gtk/gtkversion.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-env.h"
 #include "common/nmv-date-utils.h"
@@ -375,6 +376,7 @@ private:
                                      const UString &a_cooker);
 
     bool on_file_content_changed (const UString &a_path);
+    void on_notebook_tabs_reordered(Gtk::Widget* a_page, guint a_page_num);
 
     void on_activate_call_stack_view ();
     void on_activate_variables_view ();
@@ -2436,6 +2438,17 @@ DBGPerspective::on_file_content_changed (const UString &a_path)
 }
 
 void
+DBGPerspective::on_notebook_tabs_reordered (Gtk::Widget* /*a_page*/,
+                                            guint a_page_num)
+{
+    NEMIVER_TRY
+    THROW_IF_FAIL (m_priv);
+    update_file_maps ();
+    m_priv->current_page_num = a_page_num;
+    NEMIVER_CATCH
+}
+
+void
 DBGPerspective::activate_status_view (Gtk::Widget &a_page)
 {
     int pagenum = 0;
@@ -3229,6 +3242,10 @@ DBGPerspective::init_body ()
     m_priv->sourceviews_notebook->remove_page ();
     m_priv->sourceviews_notebook->set_show_tabs ();
     m_priv->sourceviews_notebook->set_scrollable ();
+#if GTK_CHECK_VERSION (2, 10, 0)
+    m_priv->sourceviews_notebook->signal_page_reordered ().connect
+        (sigc::mem_fun (this, &DBGPerspective::on_notebook_tabs_reordered));
+#endif
 
     m_priv->statuses_notebook =
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
@@ -3451,6 +3468,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
                                                               *table,
                                                               -1);
+#if GTK_CHECK_VERSION (2, 10, 0)
+    m_priv->sourceviews_notebook->set_tab_reorderable (a_sv);
+#endif
     std::string base_name =
                 Glib::path_get_basename (Glib::filename_from_utf8 (a_path));
     THROW_IF_FAIL (base_name != "");
