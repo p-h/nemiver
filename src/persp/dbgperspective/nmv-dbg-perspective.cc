@@ -5791,15 +5791,16 @@ DBGPerspective::inspect_variable ()
 {
     THROW_IF_FAIL (m_priv);
 
+    UString variable_name;
     Gtk::TextIter start, end;
     SourceEditor *source_editor = get_current_source_editor ();
-    THROW_IF_FAIL (source_editor);
-    Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
-                        source_editor->source_view ().get_source_buffer ();
-    THROW_IF_FAIL (buffer);
-    UString variable_name;
-    if (buffer->get_selection_bounds (start, end)) {
-        variable_name= buffer->get_slice (start, end);
+    if (source_editor) {
+        Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+            source_editor->source_view ().get_source_buffer ();
+        THROW_IF_FAIL (buffer);
+        if (buffer->get_selection_bounds (start, end)) {
+            variable_name= buffer->get_slice (start, end);
+        }
     }
     inspect_variable (variable_name);
 }

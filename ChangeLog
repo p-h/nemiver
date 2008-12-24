@@ -1,5 +1,11 @@
 2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
 
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Don't fail an assertion
+	when trying to pop up the variable inspector dialog (F12) when there are no
+	source files open (Bug #564301)
+
+2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: fix the order of the
 	<alt>-N keyboard shortcuts to match the order of the tabs (Bug #553213)
 	* src/persp/dbgperspective/menus/menus.xml: re-order the UI menu as well
