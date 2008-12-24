@@ -42,9 +42,7 @@ gtkmmtest_CXXFLAGS= @LIBGTKMM_CFLAGS@
 gtkmmtest_LDADD= @LIBGTKMM_LIBS@
 
 fooprog_SOURCES=fooprog.cc
-
-fooprog_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+fooprog_LDADD=
 
 runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \

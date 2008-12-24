@@ -1,3 +1,8 @@
+2008-12-24  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* tests/Makefile.am: fooprog does not need to link against libnemivercommon,
+	etc.  It's just a plain-c++ test program
+
 2008-12-23  Jonathon Jongsma  <jonathon@quotidian.org>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Don't fail an assertion
