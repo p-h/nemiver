@@ -247,13 +247,25 @@ is_libtool_executable_wrapper (const UString &a_path)
     if (c != '#') {
         return false;
     }
-    //goto dash, skip the white space that comes after
-    while (file.good () && !file.eof () && c != '-') {c = file.get ();}
-    if (c != '-')
-        return false;
-    c = file.get ();
-    if (!isspace (c))
-        return false;
+    // We're looking for a line that looks like this:
+    // # runtestcore - temporary wrapper script for .libs/runtestcore
+    //
+    // so read until we get to a dash (-) character
+    for (;;) {
+        int prev = 0;
+        while (file.good () && !file.eof () && c != '-') {
+            prev = c;
+            c = file.get ();
+        }
+        if (c != '-')
+            return false;
+        int next = file.get ();
+        // keep looking if the dash is not surrounded by spaces because the
+        // dash might be part of the filename: '# foo-bar - temporary ...'
+        if (isspace (prev) && isspace(next))
+            break;
+        c = next;
+    }
     //now go get the string "temporary wrapper script for "
     string str;
     for (int i=0; i < 29/*length of the string we are looking for*/; ++i) {

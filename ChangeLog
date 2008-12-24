@@ -1,5 +1,17 @@
 2008-12-15  Jonathon Jongsma  <jonathon@quotidian.org>
 
+	* src/common/nmv-proc-utils.cc: change is_libtool_executable_wrapper a bit
+	so that it doesn't interpret dashes in the filename as the dash between the
+	filename and the libtool boilerplate.  This allows us to detect filenames
+	with dashes as libtool wrapper scripts (Bug #554405)
+	* tests/Makefile.am: dist the new test libtool wrapper
+	* tests/test-libtool-wrapper-detection.cc: add a test for a libtool wrapper
+	with a dash in the filename
+	* tests/libtool-wrapper-with-dashes: Added example libtool wrapper witha
+	dash in the filename that we can use in our unit test
+
+2008-12-15  Jonathon Jongsma  <jonathon@quotidian.org>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: change the 'restart' icon
 	from Stock::GOTO_FIRST to Stock::REFRESH (Bug #526151)
 

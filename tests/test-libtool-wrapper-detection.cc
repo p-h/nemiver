@@ -15,6 +15,13 @@ test0 ()
     BOOST_REQUIRE (is_libtool_executable_wrapper ("./fooprog"));
 }
 
+void
+test_filename_with_dashes()
+{
+    UString real_path;
+    BOOST_REQUIRE (is_libtool_executable_wrapper ("./libtool-wrapper-with-dashes"));
+}
+
 test_suite*
 init_unit_test_suite (int argc, char** argv)
 {
@@ -26,6 +33,7 @@ init_unit_test_suite (int argc, char** argv)
 
     test_suite *suite = BOOST_TEST_SUITE ("libtool wrapper detect tests") ;
     suite->add (BOOST_TEST_CASE (&test0)) ;
+    suite->add (BOOST_TEST_CASE (&test_filename_with_dashes)) ;
     return suite;
 
     NEMIVER_CATCH_NOX

@@ -140,3 +140,4 @@ INCLUDES=-I$(top_srcdir)/src \
 
 LDADD=$(top_builddir)/src/common/libnemivercommon.la
 
+EXTRA_DIST=libtool-wrapper-with-dashes
