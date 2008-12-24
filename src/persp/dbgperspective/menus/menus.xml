@@ -46,13 +46,15 @@
                 name="ActivateRegistersViewMenuItem"/>
             <menuitem action="ActivateMemoryViewMenuAction"
                 name="ActivateMemoryViewMenuItem"/>
+            <!--
             <separator/>
-            <!--<menuitem action="ShowCommandsMenuAction"
-                name="ShowCommandsMenuItem"/> -->
+            <menuitem action="ShowCommandsMenuAction"
+                name="ShowCommandsMenuItem"/>
             <menuitem action="ShowErrorsMenuAction"
                 name="ShowErrorsMenuItem"/>
             <menuitem action="ShowTargetOutputMenuAction"
                 name="ShowTargetOutputMenuItem"/>
+            -->
         </menu>
         <menu action="DebugMenuAction" name="DebugMenu">
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>

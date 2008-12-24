@@ -1,5 +1,11 @@
 2008-12-24  Jonathon Jongsma  <jonathon@quotidian.org>
 
+	* src/persp/dbgperspective/menus/menus.xml: remove the debugging options
+	"show errors" and "show output" from the 'View' menu since these are not
+	things that regular users will use and probably just confuse people.
+
+2008-12-24  Jonathon Jongsma  <jonathon@quotidian.org>
+
 	* tests/Makefile.am: fooprog does not need to link against libnemivercommon,
 	etc.  It's just a plain-c++ test program
 
