@@ -479,7 +479,7 @@ public:
         UString str;
         switch (a_state) {
             case NOT_STARTED:
-                str = "NO_STARTED";
+                str = "NOT_STARTED";
                 break;
             case READY:
                 str = "READY";

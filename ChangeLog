@@ -1,3 +1,9 @@
+2008-12-25  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* src/dbgengine/nmv-i-debugger.h:
+	(BreakPoint::state_to_string): fix a typo in the string representation of
+	NOT_STARTED
+
 2008-12-24  Jonathon Jongsma  <jonathon@quotidian.org>
 
 	* src/persp/dbgperspective/menus/menus.xml: remove the debugging options
