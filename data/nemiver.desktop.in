@@ -6,5 +6,5 @@ _GenericName=C/C++ Debugger
 _Comment=Debug Applications
 Icon=nemiver
 Exec=nemiver
-Categories=GNOME;Development;
+Categories=GNOME;Development;Debugger;
 StartupNotify=true
