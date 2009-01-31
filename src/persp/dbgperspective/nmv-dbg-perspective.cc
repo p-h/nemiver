@@ -3810,7 +3810,14 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
     string file_name = Glib::filename_from_utf8 (a_file_name),
                                                  path,
                                                  candidate;
-    // first look in the working directory
+    // first check if this is an absolute path
+    if (Glib::path_is_absolute (file_name)) {
+        if (Glib::file_test (file_name, Glib::FILE_TEST_IS_REGULAR)) {
+            a_file_path = Glib::filename_to_utf8 (file_name);
+            return true;
+        }
+    }
+    // then look in the working directory
     candidate = Glib::build_filename (m_priv->prog_cwd, file_name);
     if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
         a_file_path = Glib::filename_to_utf8 (candidate);

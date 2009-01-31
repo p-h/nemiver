@@ -1,3 +1,10 @@
+2009-02-01  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::find_file_in_source_dirs): Don't forget the case
+	when we are given an absolute path. This patch is from
+	"Romain Tatière" <romain@blogreen.org>.
+
 2009-01-31  Dodji Seketeli  <dodji@redhat.com>
 
 	* src/uicommon/nmv-terminal.[cc|h] (Terminal::feed): New entry point.
