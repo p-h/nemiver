@@ -1149,6 +1149,8 @@ struct OnFileListHandler : OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         THROW_IF_FAIL (m_engine);
+        LOG_DD ("num files parsed: "
+                << (int) a_in.output ().result_record ().file_list ().size ());
         m_engine->files_listed_signal ().emit
             (a_in.output ().result_record ().file_list (),
              a_in.command ().cookie ());

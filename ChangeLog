@@ -1,5 +1,15 @@
 2009-01-31  Dodji Seketeli  <dodji@redhat.com>
 
+	* src/dbgengine/nmv-gdb-engine.cc (OnFileListHandler::do_handle):
+	Add some logging.
+	* src/dbgengine/nmv-gdbmi-parser.cc (parse_result_record): Fix style.
+	(GDBMIParser::parse_file_list): Fix a fatal typo that was breaking
+	file list parsing. Fix style as well.
+	* tests/test-gdbmi.cc: Add regression test for the file list parsing.
+	This should close #567175.
+
+2009-01-31  Dodji Seketeli  <dodji@redhat.com>
+
 	* data/nemiver.desktop.in: Add debugger category. Patch from
 	"Vincent Untz" <vuntz@gnome.org>. Closes #568785.
 

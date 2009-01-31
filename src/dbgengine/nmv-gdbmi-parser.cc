@@ -3063,7 +3063,7 @@ fetch_gdbmi_result:
                     result_record.thread_id_selected_info (thread_id, frame);
                 }
             } else if (!a_input.compare (cur, strlen (PREFIX_FILES),
-                        PREFIX_FILES)) {
+                                         PREFIX_FILES)) {
                 vector<UString> files;
                 if (!parse_file_list (a_input, cur, cur, files)) {
                     LOG_PARSING_ERROR (a_input, cur);
@@ -5249,7 +5249,7 @@ GDBMIParser::parse_file_list (UString::size_type a_from,
     cur += 7;
 
     std::vector<GDBMITupleSafePtr> tuples;
-    while (m_priv->index_passed_end (cur)) {
+    while (!m_priv->index_passed_end (cur)) {
         GDBMITupleSafePtr tuple;
         if (!parse_gdbmi_tuple (cur, cur, tuple)) {
             LOG_PARSING_ERROR2 (cur);
@@ -5300,11 +5300,14 @@ GDBMIParser::parse_file_list (UString::size_type a_from,
         files.push_back (filename);
     }
 
-    std::sort(files.begin(), files.end(), QuickUStringLess());
+    std::sort (files.begin(), files.end(), QuickUStringLess());
     std::vector<UString>::iterator last_unique =
         std::unique (files.begin (), files.end ());
-    a_files = std::vector<UString>(files.begin (), last_unique);
+    a_files = std::vector<UString> (files.begin (), last_unique);
     a_to = cur;
+    LOG_D ("Number of resulting files: "
+           << (int) a_files.size (),
+           GDBMI_OUTPUT_DOMAIN);
     return true;
 }
 
