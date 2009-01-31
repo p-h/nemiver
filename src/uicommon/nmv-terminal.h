@@ -62,6 +62,7 @@ public:
     Gtk::Adjustment& adjustment () const ;
     UString slave_pts_name () const ;
     void modify_font (const Pango::FontDescription &font_desc) ;
+    void feed (const UString &a_text);
 };//end class Terminal
 
 NEMIVER_END_NAMESPACE(nemiver)

@@ -175,5 +175,14 @@ Terminal::modify_font (const Pango::FontDescription &font_desc)
     vte_terminal_set_font (m_priv->vte, font_desc.gobj());
 }
 
+void
+Terminal::feed (const UString &a_text)
+{
+    THROW_IF_FAIL (m_priv);
+    if (!a_text.empty ())
+        vte_terminal_feed (m_priv->vte, a_text.c_str (), a_text.size ());
+}
+
+
 NEMIVER_END_NAMESPACE(nemiver)
 

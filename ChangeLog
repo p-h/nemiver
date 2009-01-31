@@ -1,5 +1,13 @@
 2009-01-31  Dodji Seketeli  <dodji@redhat.com>
 
+	* src/uicommon/nmv-terminal.[cc|h] (Terminal::feed): New entry point.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::call_function): Add a message to the terminal
+	about the function we are calling.
+	This should close #570029.
+
+2009-01-31  Dodji Seketeli  <dodji@redhat.com>
+
 	* src/dbgengine/nmv-gdb-engine.cc (OnFileListHandler::do_handle):
 	Add some logging.
 	* src/dbgengine/nmv-gdbmi-parser.cc (parse_result_record): Fix style.

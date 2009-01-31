@@ -28,6 +28,7 @@
 #include "config.h"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <glib/gi18n.h>
 
 #ifdef WITH_GIO
@@ -5835,7 +5836,18 @@ DBGPerspective::call_function (const UString &a_call_expr)
 {
     THROW_IF_FAIL (debugger ());
 
-    debugger ()->call_function (a_call_expr);
+    if (!a_call_expr.empty ()) {
+        // Print a little message on the terminal
+        // saying that we are calling a_call_expr
+        std::stringstream s;
+        s << "\n<Nemiver call_function>"
+            << a_call_expr
+            << "</Nemiver>\n";
+        get_terminal ().feed (s.str ());
+
+        // Really hit the debugger now.
+        debugger ()->call_function (a_call_expr);
+    }
 }
 
 
