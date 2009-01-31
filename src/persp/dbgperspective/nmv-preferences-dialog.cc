@@ -30,7 +30,9 @@
 #include "nmv-i-conf-mgr.h"
 #include "nmv-i-workbench.h"
 #include "nmv-conf-keys.h"
+#ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcestyleschememanager.h>
+#endif
 
 using nemiver::common::DynamicModuleManager;
 
@@ -55,12 +57,11 @@ source_dirs_cols ()
 class PreferencesDialog::Priv {
     Priv ();
 
-     class StyleModelColumns : public Gtk::TreeModel::ColumnRecord
-    {
-    public:
-        Gtk::TreeModelColumn<Glib::ustring>                scheme_id;
-        Gtk::TreeModelColumn<Glib::ustring>                name;
-        StyleModelColumns() { add(scheme_id); add(name); }
+     class StyleModelColumns : public Gtk::TreeModel::ColumnRecord {
+     public:
+        Gtk::TreeModelColumn<Glib::ustring> scheme_id;
+        Gtk::TreeModelColumn<Glib::ustring> name;
+        StyleModelColumns () { add (scheme_id); add (name); }
     };
 
 public:
@@ -262,52 +263,58 @@ public:
 
         editor_style_combo =
             ui_utils::get_widget_from_glade<Gtk::ComboBox>
-            (glade, "editorstylecombobox");
+                                                        (glade,
+                                                         "editorstylecombobox");
         THROW_IF_FAIL (editor_style_combo);
-        m_editor_style_model = Gtk::ListStore::create(m_style_columns);
+        m_editor_style_model = Gtk::ListStore::create (m_style_columns);
 #ifdef WITH_SOURCEVIEWMM2
         Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> mgr =
-            gtksourceview::SourceStyleSchemeManager::get_default();
-        std::list<Glib::ustring> schemes = mgr->get_scheme_ids();
-        for (std::list<Glib::ustring>::const_iterator it = schemes.begin();
+            gtksourceview::SourceStyleSchemeManager::get_default ();
+        std::list<Glib::ustring> schemes = mgr->get_scheme_ids ();
+        for (std::list<Glib::ustring>::const_iterator it = schemes.begin ();
              it != schemes.end(); ++it) {
-            Gtk::TreeModel::iterator treeiter = m_editor_style_model->append();
+            Gtk::TreeModel::iterator treeiter = m_editor_style_model->append ();
             (*treeiter)[m_style_columns.scheme_id] = *it;
             Glib::RefPtr<gtksourceview::SourceStyleScheme> scheme =
-                mgr->get_scheme(*it);
-            (*treeiter)[m_style_columns.name] = Glib::ustring::compose ("%1 - <span size=\"smaller\" font_style=\"italic\">%2</span>",
-                                                        scheme->get_name(),
-                                                        scheme->get_description());
+                mgr->get_scheme (*it);
+            (*treeiter)[m_style_columns.name] =
+                Glib::ustring::compose ("%1 - <span size=\"smaller\" "
+                                        "font_style=\"italic\">%2</span>",
+                                        scheme->get_name(),
+                                        scheme->get_description ());
         }
-        editor_style_combo->set_model(m_editor_style_model);
-        editor_style_combo->pack_start(m_style_name_renderer);
-        editor_style_combo->add_attribute(m_style_name_renderer.property_markup(), m_style_columns.name);
-        m_style_name_renderer.property_ellipsize() = Pango::ELLIPSIZE_END;
-        editor_style_combo->signal_changed ().connect
-        (sigc::mem_fun
-            (*this,
-             &PreferencesDialog::Priv::on_editor_style_changed_signal));
+        editor_style_combo->set_model (m_editor_style_model);
+        editor_style_combo->pack_start (m_style_name_renderer);
+        editor_style_combo->add_attribute (m_style_name_renderer.property_markup(),
+                                           m_style_columns.name);
+        m_style_name_renderer.property_ellipsize () = Pango::ELLIPSIZE_END;
+        editor_style_combo->signal_changed ().connect (sigc::mem_fun
+                    (*this,
+                     &PreferencesDialog::Priv::on_editor_style_changed_signal));
 #else
-        Gtk::TreeModel::iterator treeiter = m_editor_style_model->append();
-        (*treeiter)[m_style_columns.name] = Glib::ustring("Only available with gtksourceviewmm2");
-        editor_style_combo->set_model(m_editor_style_model);
-        editor_style_combo->pack_start(m_style_columns.name);
-        editor_style_combo->set_active(treeiter);
-        editor_style_combo->set_sensitive(false);
+        Gtk::TreeModel::iterator treeiter = m_editor_style_model->append ();
+        (*treeiter)[m_style_columns.name] =
+                                Glib::ustring ("Only available "
+                                               "with gtksourceviewmm2");
+        editor_style_combo->set_model (m_editor_style_model);
+        editor_style_combo->pack_start (m_style_columns.name);
+        editor_style_combo->set_active (treeiter);
+        editor_style_combo->set_sensitive (false);
 #endif // WITH_SOURCEVIEWMM2
 
         always_reload_radio_button =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-            (glade, "reloadradiobutton");
+                                                        (glade,
+                                                         "reloadradiobutton");
         THROW_IF_FAIL (always_reload_radio_button);
-        always_reload_radio_button->signal_toggled ().connect
-        (sigc::mem_fun
-            (*this,
-             &PreferencesDialog::Priv::on_reload_files_toggled_signal));
+        always_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
+                    (*this,
+                     &PreferencesDialog::Priv::on_reload_files_toggled_signal));
 
         never_reload_radio_button =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
-            (glade, "neverreloadradiobutton");
+                                                (glade,
+                                                 "neverreloadradiobutton");
         THROW_IF_FAIL (never_reload_radio_button);
         never_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
             (*this,

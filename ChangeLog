@@ -1,3 +1,10 @@
+2009-01-31  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc:
+	Include gtksourceviewmm/sourcestyleschememanager.h only when compiling
+	with gtksourceviewmm2.
+	Also, fix function calling style to comply with Nemiver's coding style.
+
 2008-12-25  Jonathon Jongsma  <jonathon@quotidian.org>
 
 	* src/dbgengine/nmv-i-debugger.h:
