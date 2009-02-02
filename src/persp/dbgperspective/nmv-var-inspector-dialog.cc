@@ -118,7 +118,7 @@ public:
 
         THROW_IF_FAIL (var_name_entry);
 
-        UString var_name = var_name_entry->get_active_text ();
+        UString var_name = var_name_entry->get_entry ()->get_text ();
         if (var_name == "") {return;}
         inspect_variable (var_name);
 
@@ -159,7 +159,7 @@ public:
         THROW_IF_FAIL (var_name_entry);
         THROW_IF_FAIL (inspect_button);
 
-        UString var_name = var_name_entry->get_active_text ();
+        UString var_name = var_name_entry->get_entry ()->get_text ();
         if (var_name == "") {
             inspect_button->set_sensitive (false);
         } else {
@@ -170,7 +170,7 @@ public:
         // an item is selected from the combobox.  We don't want to inspect any
         // text that is typed into the entry, but we do want to inspect when
         // they choose an item from the dropdown list
-        if (var_name_entry->get_active()) {
+        if (var_name_entry->get_active ()) {
             inspect_variable(var_name);
         }
 
@@ -204,7 +204,7 @@ VarInspectorDialog::variable_name () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->var_name_entry);
-    return m_priv->var_name_entry->get_active_text ();
+    return m_priv->var_name_entry->get_entry ()->get_text ();
 }
 
 void

@@ -1,6 +1,17 @@
 2009-02-02  Dodji Seketeli  <dodji@redhat.com>
 
 	* src/persp/dbgperspective/nmv-call-function-dialog.cc:
+	(CallFunctionDialog::call_expression): Don't use
+	ComboBoxEntry::get_active_text because it's not
+	present in gtkmm 2.12.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc:
+	(VarInspectorDialog::Priv::do_inspect_variable): Likewise.
+	(VarInspectorDialog::Priv::on_var_name_changed_signal): Likewise.
+	(VarInspectorDialog::variable_name): Likewise.
+
+2009-02-02  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/persp/dbgperspective/nmv-call-function-dialog.cc:
 	  (CallFunctionDialog::Priv::Priv): Use and initialize a
 	  Gtk::ComboBoxEntry instead of a Gtk::Entry.
 	  Store the history in a Gtk::ListStore.

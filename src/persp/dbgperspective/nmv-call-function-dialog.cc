@@ -160,7 +160,7 @@ CallFunctionDialog::call_expression () const
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->call_expr_entry);
 
-    return m_priv->call_expr_entry->get_active_text ();
+    return m_priv->call_expr_entry->get_entry ()->get_text ();
 }
 
 void
