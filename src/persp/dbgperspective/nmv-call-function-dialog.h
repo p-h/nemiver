@@ -25,17 +25,14 @@
 #ifndef __NEMIVER_CALL_FUNCTION_DIALOG_H__
 #define __NEMIVER_CALL_FUNCTION_DIALOG_H__
 
+#include <list>
 #include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-ustring.h"
 #include "nmv-dialog.h"
 
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-namespace common {
-class UString;
-}
-
-using nemiver::common::UString;
 using nemiver::common::SafePtr;
 
 class CallFunctionDialog : public Dialog {
@@ -48,7 +45,10 @@ public:
     virtual ~CallFunctionDialog ();
 
     UString call_expression () const;
-    void call_expressoin (const UString &a_expr);
+    void call_expression (const UString &a_expr);
+    void set_history (const std::list<UString> &);
+    void get_history (std::list<UString> &) const;
+    void add_to_history (const UString &a_expr);
 
 };//end class CallFunctionDialog
 

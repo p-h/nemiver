@@ -849,6 +849,8 @@ struct DBGPerspective::Priv {
     //find text dialog
     FindTextDialogSafePtr find_text_dialog;
 
+    list<UString> call_expr_history;
+
 
     Priv () :
         initialized (false),
@@ -5827,14 +5829,26 @@ DBGPerspective::inspect_variable (const UString &a_variable_name)
 void
 DBGPerspective::call_function ()
 {
+    THROW_IF_FAIL (m_priv);
+
     CallFunctionDialog dialog (plugin_path ());
+
+    // Fill the dialog with the "function call" expression history.
+    if (!m_priv->call_expr_history.empty ())
+        dialog.set_history (m_priv->call_expr_history);
 
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK)
         return;
     UString call_expr = dialog.call_expression ();
+
     if (call_expr.empty ())
         return;
+
+    // Update our copy of call expression history.
+    m_priv->call_expr_history.push_front (call_expr);
+
+    // Really execute the function call expression now.
     call_function (call_expr);
 }
 

@@ -1,5 +1,26 @@
 2009-02-02  Dodji Seketeli  <dodji@redhat.com>
 
+	* src/persp/dbgperspective/nmv-call-function-dialog.cc:
+	  (CallFunctionDialog::Priv::Priv): Use and initialize a
+	  Gtk::ComboBoxEntry instead of a Gtk::Entry.
+	  Store the history in a Gtk::ListStore.
+	  (CallFunctionDialog::Priv::exists_in_history): New entry point.
+	  (CallFunctionDialog::Priv::clear_history): Likewise.
+	  (CallFunctionDialog::Priv::add_to_history): Likewise.
+	  (CallFunctionDialog::Priv::get_history): Likewise.
+	  (CallFunctionDialog::set_history): Likewise.
+	  (CallFunctionDialog::get_history): Likewise.
+	  (CallFunctionDialog::add_to_history): Likewise.
+	  (CallFunctionDialog::call_expression): Add the call expression
+	  To history.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::call_function): Feed the CallFunctionDialog
+	  instance with call expression history, and update our own copy
+	  of that history before destroying the dialog.
+	  This entry should close #568821.
+
+2009-02-02  Dodji Seketeli  <dodji@redhat.com>
+
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
 	  (DBGPerspective::call_function): Go to the begining of the line,
 	  on new lines.
