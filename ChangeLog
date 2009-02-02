@@ -1,3 +1,9 @@
+2009-02-02  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	  (DBGPerspective::call_function): Go to the begining of the line,
+	  on new lines.
+
 2009-02-01  Dodji Seketeli  <dodji@redhat.com>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

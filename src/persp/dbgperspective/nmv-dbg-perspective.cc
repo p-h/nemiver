@@ -5847,9 +5847,10 @@ DBGPerspective::call_function (const UString &a_call_expr)
         // Print a little message on the terminal
         // saying that we are calling a_call_expr
         std::stringstream s;
-        s << "\n<Nemiver call_function>"
+        s << "<Nemiver call_function>"
             << a_call_expr
-            << "</Nemiver>\n";
+            << "</Nemiver>"
+            << "\n\r";
         get_terminal ().feed (s.str ());
 
         // Really hit the debugger now.
