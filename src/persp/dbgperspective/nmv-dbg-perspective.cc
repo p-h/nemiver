@@ -850,6 +850,7 @@ struct DBGPerspective::Priv {
     FindTextDialogSafePtr find_text_dialog;
 
     list<UString> call_expr_history;
+    list<UString> var_inspector_dialog_history;
 
 
     Priv () :
@@ -5820,10 +5821,13 @@ DBGPerspective::inspect_variable (const UString &a_variable_name)
 {
     THROW_IF_FAIL (debugger ());
     VarInspectorDialog dialog (plugin_path (), debugger ());
+    dialog.set_history (m_priv->var_inspector_dialog_history);
     if (a_variable_name != "") {
         dialog.inspect_variable (a_variable_name);
     }
     dialog.run ();
+    m_priv->var_inspector_dialog_history.clear ();
+    dialog.get_history (m_priv->var_inspector_dialog_history);
 }
 
 void

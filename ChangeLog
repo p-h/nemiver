@@ -1,3 +1,23 @@
+2009-02-14  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::inspect_variable): Save the history of the variable
+	inspection dialog, and restaure it whenever a new dialog is
+	instantiated.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc:
+	(get_cols): New entry point to statically create the ListStore columns
+	only once. There is no need to instantiate those columns each time
+	a Dialog is instantiated.
+	(VarInspectorDialog::Priv::exists_in_history): New entry point.
+	(VarInspectorDialog::Priv::add_to_history): Likewise.
+	(VarInspectorDialog::Priv::inspect_variable): Reuse the new
+	VarInspectorDialog::Priv::add_to_history.
+	(VarInspectorDialog::set_history): New entry point.
+	(VarInspectorDialog::get_history): Likewise.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.h:
+	(VarInspectorDialog::set_history VarInspectorDialog::get_history):
+	Declare the new entry points.
+
 2009-02-13  Dodji Seketeli  <dodji@redhat.com>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

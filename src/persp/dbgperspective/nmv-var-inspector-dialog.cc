@@ -39,11 +39,17 @@ public:
     VariableHistoryStoreColumns() { add (varname); }
 };
 
+VariableHistoryStoreColumns&
+get_cols ()
+{
+    static VariableHistoryStoreColumns cols;
+    return cols;
+}
+
 class VarInspectorDialog::Priv {
     friend class VarInspectorDialog;
     Gtk::ComboBoxEntry *var_name_entry;
-    Glib::RefPtr<Gtk::ListStore> m_variable_history_store;
-    VariableHistoryStoreColumns m_variable_store_columns;
+    Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
     SafePtr<VarInspector2> var_inspector;
     Gtk::Dialog &dialog;
@@ -72,12 +78,12 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         var_name_entry =
-            ui_utils::get_widget_from_glade<Gtk::ComboBoxEntry> (glade,
-                                                         "variablenameentry");
-        m_variable_history_store =
-            Gtk::ListStore::create (m_variable_store_columns);
-        var_name_entry->set_model (m_variable_history_store);
-        var_name_entry->set_text_column (m_variable_store_columns.varname);
+            ui_utils::get_widget_from_glade<Gtk::ComboBoxEntry>
+                (glade, "variablenameentry");
+        m_variable_history =
+            Gtk::ListStore::create (get_cols ());
+        var_name_entry->set_model (m_variable_history);
+        var_name_entry->set_text_column (get_cols ().varname);
 
         inspect_button =
             ui_utils::get_widget_from_glade<Gtk::Button> (glade,
@@ -125,29 +131,57 @@ public:
         NEMIVER_CATCH
     }
 
-    void inspect_variable (const UString& a_varname)
+    void inspect_variable (const UString& a_expr)
     {
         THROW_IF_FAIL (var_inspector);
-        THROW_IF_FAIL (m_variable_history_store);
+        THROW_IF_FAIL (m_variable_history);
+        var_inspector->inspect_variable (a_expr);
+        add_to_history (a_expr,
+                        false /*append*/,
+                        false /*don't allow duplicates*/);
+    }
 
-        var_inspector->inspect_variable (a_varname);
+    bool exists_in_history (const UString &a_expr)
+    {
+        THROW_IF_FAIL (m_variable_history);
 
-        // now update the history in the entry combobox
-        bool found = false;
-        // first check if this variable is already in the history
-        Gtk::TreeModel::iterator tree_iter;
-        for (tree_iter = m_variable_history_store->children ().begin ();
-             tree_iter != m_variable_history_store->children ().end ();
-             ++tree_iter) {
-            if (a_varname == (*tree_iter)[m_variable_store_columns.varname]) {
-                found = true;
-                break;
+        Gtk::TreeModel::iterator it;
+        for (it = m_variable_history->children ().begin ();
+             it != m_variable_history->children ().end ();
+             ++it) {
+            if ((*it)[get_cols ().varname] == a_expr) {
+                return true;
             }
         }
-        if (!found) {
-            // if it's not already in the list, add it.
-            Gtk::TreeModel::iterator new_iter = m_variable_history_store->append ();
-            (*new_iter)[m_variable_store_columns.varname] = a_varname;
+        return false;
+    }
+
+    void add_to_history (const UString &a_expr,
+                         bool a_prepend = true,
+                         bool a_allow_dups = true)
+    {
+        if (a_expr.empty () // don't append empty exprs.
+            // don't append an expr if it exists already.
+            || (!a_allow_dups && exists_in_history (a_expr)))
+            return;
+        Gtk::TreeModel::iterator it;
+
+        if (a_prepend)
+            it = m_variable_history->insert
+                (m_variable_history->children ().begin ());
+        else
+            it = m_variable_history->append ();
+        (*it)[get_cols ().varname] = a_expr;
+    }
+
+    void get_history (std::list<UString> &a_hist) const
+    {
+        Gtk::TreeModel::iterator it;
+        for (it = m_variable_history->children ().begin ();
+             it != m_variable_history->children ().end ();
+             ++it) {
+            Glib::ustring elem = (*it)[get_cols ().varname];
+            a_hist.push_back (elem);
         }
     }
 
@@ -225,6 +259,24 @@ VarInspectorDialog::variable () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->var_inspector->get_variable ();
+}
+
+void
+VarInspectorDialog::set_history (const std::list<UString> &a_hist)
+{
+    THROW_IF_FAIL (m_priv);
+
+    list<UString>::const_iterator it;
+    for (it = a_hist.begin (); it != a_hist.end (); ++it) {
+        m_priv->add_to_history (*it, false /*append*/);
+    }
+}
+
+void
+VarInspectorDialog::get_history (std::list<UString> &a_hist) const
+{
+    THROW_IF_FAIL (m_priv);
+    m_priv->get_history (a_hist);
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

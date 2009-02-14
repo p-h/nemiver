@@ -50,6 +50,8 @@ public:
     UString variable_name () const;
     void inspect_variable (const UString &a_variable_name);
     const IDebugger::VariableSafePtr variable () const;
+    void set_history (const std::list<UString> &);
+    void get_history (std::list<UString> &) const;
 };//end class VarInspectorDialog
 
 NEMIVER_END_NAMESPACE (nemiver)
