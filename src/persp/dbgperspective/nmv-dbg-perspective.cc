@@ -5846,7 +5846,12 @@ DBGPerspective::call_function ()
         return;
 
     // Update our copy of call expression history.
-    m_priv->call_expr_history.push_front (call_expr);
+    list<UString>::iterator from = m_priv->call_expr_history.begin (),
+                            to = m_priv->call_expr_history.end (),
+                            nil = to;
+
+    if (std::find (from, to, call_expr) == nil)
+        m_priv->call_expr_history.push_front (call_expr);
 
     // Really execute the function call expression now.
     call_function (call_expr);

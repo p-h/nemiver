@@ -1,3 +1,9 @@
+2009-02-13  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::call_function): Avoid duplicates in call function
+	dialog history.
+
 2009-02-02  Dodji Seketeli  <dodji@redhat.com>
 
 	* src/persp/dbgperspective/nmv-call-function-dialog.cc:
