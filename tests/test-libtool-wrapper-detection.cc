@@ -12,7 +12,7 @@ void
 test0 ()
 {
     UString real_path;
-    BOOST_REQUIRE (is_libtool_executable_wrapper ("./fooprog"));
+    BOOST_REQUIRE (is_libtool_executable_wrapper ("./runtestcore"));
 }
 
 void

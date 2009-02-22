@@ -226,7 +226,7 @@ test_main (int argc, char **argv)
     //</connect to IDebugger events>
     //******************************
 
-    debugger->load_program (".libs/fooprog", ".") ;
+    debugger->load_program ("fooprog", ".") ;
     debugger->set_breakpoint ("main") ;
     debugger->run () ;
 

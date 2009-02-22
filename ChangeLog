@@ -1,5 +1,13 @@
 2009-02-21  Dodji Seketeli  <dodji@redhat.com>
 
+	* tests/test-breakpoint.cc, tests/test-global-variables.cc,
+	  tests/test-libtool-wrapper-detection.cc, tests/test-overloads.cc,
+	  tests/test-var-list.cc, tests/test-var-walker.cc: Don't refer to
+	  .libs/fooprog anymore, as test programs don't seem to be libtool
+	  shell wrapped anymore. Only the noinst programs are.
+
+2009-02-21  Dodji Seketeli  <dodji@redhat.com>
+
 	* src/dbgengine/nmv-i-debugger.h: Include <stdint.h> before using
 	uint8_t. This otherwise wouldn't compile with gcc 4.3.3
 

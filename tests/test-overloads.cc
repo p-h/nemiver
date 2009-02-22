@@ -146,7 +146,7 @@ test_main (int argc, char *argv[])
         //*****************************
 
         std::vector<UString> args, source_search_dir ;
-        args.push_back (".libs/fooprog") ;
+        args.push_back ("fooprog") ;
         source_search_dir.push_back (".") ;
 
         debugger->load_program (args, "", source_search_dir);
