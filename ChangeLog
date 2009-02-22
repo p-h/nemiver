@@ -1,3 +1,10 @@
+2009-02-22  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::Variable::build_qname): Be defensive to avoid crashing.
+	This might help for bug #571036 even though I haven't been able
+	to reproduce it.
+
 2009-02-21  Dodji Seketeli  <dodji@redhat.com>
 
 	* tests/test-breakpoint.cc, tests/test-global-variables.cc,

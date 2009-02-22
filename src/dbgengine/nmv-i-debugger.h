@@ -378,18 +378,20 @@ public:
             UString qname;
             if (parent () == 0) {
                 a_qname = name ();
-                if (a_qname.raw ()[0] == '*') {
+                if (!a_qname.raw ().empty () && a_qname.raw ()[0] == '*') {
                     a_qname.erase (0, 1);
                 }
-            } else {
+            } else if (parent ()) {
                 parent ()->build_qname (qname);
                 qname.chomp ();
-                if (parent ()->name ()[0] == '*') {
+                if (parent () && parent ()->name ()[0] == '*') {
                     qname += "->" + name ();
                 } else {
                     qname += "." + name ();
                 }
                 a_qname = qname;
+            } else {
+                THROW ("should not be reached");
             }
         }
 
