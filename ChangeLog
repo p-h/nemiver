@@ -1,3 +1,8 @@
+2009-02-21  Dodji Seketeli  <dodji@redhat.com>
+
+	* src/dbgengine/nmv-i-debugger.h: Include <stdint.h> before using
+	uint8_t. This otherwise wouldn't compile with gcc 4.3.3
+
 2009-02-14  Dodji Seketeli  <dodji@redhat.com>
 
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc:

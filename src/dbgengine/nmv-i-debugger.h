@@ -26,6 +26,7 @@
 #ifndef __NEMIVER_I_DEBUGGER_H__
 #define __NEMIVER_I_DEBUGGER_H__
 
+#include <stdint.h>
 #include <vector>
 #include <string>
 #include <map>
