@@ -38,8 +38,8 @@ $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libgdbmiparser.la
 
 gtkmmtest_SOURCES=gtkmm-test.cc
-gtkmmtest_CXXFLAGS= @LIBGTKMM_CFLAGS@
-gtkmmtest_LDADD= @LIBGTKMM_LIBS@
+gtkmmtest_CXXFLAGS= @NEMIVERUICOMMON_CFLAGS@
+gtkmmtest_LDADD= @NEMIVERUICOMMON_LIBS@
 
 fooprog_SOURCES=fooprog.cc
 fooprog_LDADD=

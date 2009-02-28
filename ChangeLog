@@ -1,3 +1,9 @@
+2009-02-28  Luca Bruno <lucab@debian.org>
+
+	* configure.ac: Shorten compilation lines by regrouping
+	PKG_CHECK_MODULES calls.
+	* tests/Makefile.am: Adjust this.
+
 2009-02-22  Dodji Seketeli  <dodji@redhat.com>
 
 	* src/dbgengine/nmv-i-debugger.h:
