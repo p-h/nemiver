@@ -1,0 +1,112 @@
+#!/usr/bin/ruby
+
+#To use this script, do: ./gitlog2gnucl > ChangeLog.generated
+#ChangeLog.generated will be your generated ChangeLog file.
+#
+class Entry
+  attr_reader :date, :author, :summary, :body
+  attr_writer :date, :author, :summary, :body
+
+  def initialize(date, author, summary, body)
+    @date = filter_date(date)
+    @author = author
+    @summary = summary
+    @body = body
+
+  end
+
+  def filter_date(date)
+    if date =~ /(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) (\+\d\d\d\d)/
+      return $1
+    end
+    return date
+  end
+
+  # Filters lines of body and summary
+  # Basically, don't keep lines with dates formated like:
+  # Lundi 2 Juillet 2007, Foo bar <foo@bar.org>
+  def keep_line(line)
+    if line =~ /svn path=(.*)?; revision=.*/
+      return false
+    end
+
+    #Filter out lines containing some date formated like: mardi 2 Mars 2006
+    if line =~ /\w+\s\d{1,2} .+? \d\d\d\d,/
+      return false
+    end
+    #Filter out lines containing data like
+    if line =~ /^\d\d\d\d-\d\d-\d\d [\w\s]+/
+      return false
+    end
+    return true
+  end
+
+  def to_s
+    s = "#{@date}  #{@author}\n\n"
+    if !summary.empty?
+      if  keep_line(summary)
+        s += "#{@summary}\n"
+      end
+    end
+    @body.each {|line|
+      if keep_line(line)
+	s += "\t#{line}\n"
+      end
+    }
+    return s
+  end
+end
+
+def process_git_log (log)
+
+  author = ""
+  date = ""
+  summary = ""
+  body = Array.new
+  msg_line_num = 0
+
+  entries = Array.new
+
+  log.each_line {|line|
+    if line =~ /^commit / #This is the start of an entry
+      if !author.empty? and !date.empty?
+	entries.push(Entry.new(date, author, summary, body))
+      end
+      author = ""
+      date = ""
+      summary = ""
+      body = Array.new
+      msg_line_num = 0
+      next;
+    else #We are in the middle of an entry
+      if line =~ /^Author: (.*)?$/
+	author = $1
+        author = author.strip
+      elsif line =~ /^Date: (.*)?$/
+	date = $1
+        date = date.strip
+	msg_line_num = 0
+      elsif line =~ /^.+?$/
+	msg_line_num += 1
+	line = line.strip
+	if line.length == 0
+	  next
+	end
+	if msg_line_num == 1 and line[0] == '*'
+	  summary = line;
+	else
+	  body.push(line)
+	end
+      end
+    end
+  }
+  if !author.empty? and !date.empty?
+    entries.push(Entry.new(date, author, summary, body))
+  end
+  return entries
+end
+
+gitlog = `git log --pretty=format:"commit %H%nAuthor: %an <%ae>%nDate: %ai%n%n    %s%n%n    %b"`
+entries = process_git_log(gitlog);
+entries.each {|entry| print(entry.to_s,"\n") }
+

@@ -1,3 +1,11 @@
+2009-03-01  Dodji Seketeli  <dodji@redhat.com>
+
+	* git-commit-messages.README: New file. Describes the git commit
+	message format from now on.
+	* gitlog2gnucl: Script to generate a GNU ChangeLog from the Nemiver
+	git logs.
+
+
 2009-02-28  Luca Bruno <lucab@debian.org>
 
 	* configure.ac: Shorten compilation lines by regrouping
