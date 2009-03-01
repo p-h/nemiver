@@ -45,7 +45,7 @@ class Entry
     s = "#{@date}  #{@author}\n\n"
     if !summary.empty?
       if  keep_line(summary)
-        s += "#{@summary}\n"
+        s += "\t#{@summary}\n"
       end
     end
     @body.each {|line|
@@ -68,21 +68,23 @@ def process_git_log (log)
   entries = Array.new
 
   log.each_line {|line|
-    if line =~ /^commit / #This is the start of an entry
-      if !author.empty? and !date.empty?
-	entries.push(Entry.new(date, author, summary, body))
-      end
+    if line =~ /^--START-ENTRY--/ #This is the start of an entry
       author = ""
       date = ""
       summary = ""
       body = Array.new
       msg_line_num = 0
-      next;
+      next
+    elsif line =~ /^--END-ENTRY--/
+      if !author.empty? and !date.empty?
+	entries.push(Entry.new(date, author, summary, body))
+      end
+      next
     else #We are in the middle of an entry
-      if line =~ /^Author: (.*)?$/
+      if line =~ /^Author:(.*)?$/
 	author = $1
         author = author.strip
-      elsif line =~ /^Date: (.*)?$/
+      elsif line =~ /^Date:(.*)?$/
 	date = $1
         date = date.strip
 	msg_line_num = 0
@@ -92,7 +94,7 @@ def process_git_log (log)
 	if line.length == 0
 	  next
 	end
-	if msg_line_num == 1 and line[0] == '*'
+	if msg_line_num == 1 and line[0] != '*'
 	  summary = line;
 	else
 	  body.push(line)
@@ -100,13 +102,10 @@ def process_git_log (log)
       end
     end
   }
-  if !author.empty? and !date.empty?
-    entries.push(Entry.new(date, author, summary, body))
-  end
   return entries
 end
 
-gitlog = `git log --pretty=format:"commit %H%nAuthor: %an <%ae>%nDate: %ai%n%n    %s%n%n    %b"`
+gitlog = `git log --pretty=format:"--START-ENTRY--%ncommit %H%nAuthor:%an <%ae>%nDate:%ai%n%s%n%b%n--END-ENTRY--"`
 entries = process_git_log(gitlog);
 entries.each {|entry| print(entry.to_s,"\n") }
 
