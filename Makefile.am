@@ -41,12 +41,20 @@ sig_file = $(tar_gz_file).sig
 $(sig_file): $(tar_gz_file)
 	gpg --output $@ --detach $^
 
+# update ChangeLog from git log
+update-changelog:
+	@./gitlog2gnucl > ChangeLog.updated
+	@size1=`stat -c%s ChangeLog`; size2=`stat -c%s ChangeLog.updated`; \
+	if test $(size2) -ge $(size1); then mv ChangeLog.updated ChangeLog; \
+	else echo "ChangeLog.updated is smaller than ChangeLog. Problem!!"\
+	; exit -1; fi
+
 RELEASED_BRANCH=master
 
 echo-released-branch:
 	echo "released-branch=$(RELEASED_BRANCH)"
 
-tag-release: dist tag-release-only
+tag-release: update-changelog dist tag-release-only
 tag-release-only:
 	git tag -m "$(PACKAGE_NAME) release $(VERSION)" \
 	"$(PACKAGE_NAME)-$(VERSION)" $(RELEASED_BRANCH)
