@@ -1,3 +1,59 @@
+0.6.5 Release
+=============
+
+Fixes
+-----
+
+Jonathon Jongsma :
+      Enlarge the default size of the variable inspector dialog
+      #526151 - Change the 'restart' icon
+      #554405 - Fix libtool wrapper detection for files with dashes
+      #530910 – View -> "Show Errors" and "Show Output" should not be displayed
+      #536259 - Remember history in var inspector dialog
+      #553213 – tabs are in different order to Alt-1,2,3,4,5
+      #564301 – Assertion when trying to open variable inspector
+      Add a preference for sourceview color theme
+      Hook up the color theme preference
+      Don't link fooprog test program against libnemivercommon, etc.
+
+Dodji Seketeli:
+      #560662 Refactor the parser and create GDBMParser
+      #560662 - Support singular RESULT parsing.
+      #564113 - GDB/MI parsing error
+      #567175 - Listing Source files from target executable is broken
+      #570029 – Print a message on the terminal when the user calls a function
+      #568821 - "Call function" dialog should remember history
+      #571036 - Random crash
+      #571099 - nemiver crashes on startup in GtkHex
+      Remove config.h.in from Source Control Manamagement.
+      Fix compilation breakage with gtksourceviewmm-1
+      Make Nemiver compile on gtkmm 2.12
+      Better pretty print when calling functions.
+      Avoid duplicates in call function dialog history.
+      Persist the Variable inspector dialog history
+      Fix compilation with gcc 4.3.3
+
+Vincent Untz:
+      #568785 - Add Debugger category to desktop file
+
+Romain Tartière:
+      #569168 – Cannot locate source with a full file name
+
+Luca Bruno:
+      #562925 - Shorten compilation lines
+
+Translations
+------------
+
+Daniel Nylander:
+      Updated Swedish translation
+
+Gil Forcada Codinachs:
+      Updated Catalan translation by David Planella
+
+Jorge Gonzalez Gonzalez:
+      Updated Spanish translation
+
 0.6.4 Release
 =============
 
