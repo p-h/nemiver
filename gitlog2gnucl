@@ -25,8 +25,7 @@
 
 
 class Entry
-  attr_reader :date, :author, :summary, :body
-  attr_writer :date, :author, :summary, :body
+  attr_accessor :date, :author, :summary, :body
 
   def initialize(date, author, summary, body)
     @date = filter_date(date)
