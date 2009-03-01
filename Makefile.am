@@ -27,14 +27,13 @@ doc:
 # Add the following lines to your ~/.ssh/config file if necessary so you don't
 # need to specify your username manually:
 #
-# Host *.gna.org
-# 	User your-gna-username
+# Host *.gnome.org
+# 	User your-gnome-username
 
 RELEASE_UPLOAD_HOST = master.gnome.org
 RELEASE_UPLOAD_BASE = /home/users/$(USER)
 RELEASE_URL_BASE = http://ftp.gnome.org/pub/GNOME/sources/nemiver/
-SVN_ROOT = svn+ssh://svn.gnome.org/svn/nemiver
-RELEASE_ANNOUNCE_LIST = nemiver-list@gna.org (cc gnome-announce-list@gnome.org)
+RELEASE_ANNOUNCE_LIST = nemiver-list@gnome.org (cc gnome-announce-list@gnome.org)
 tar_gz_file = $(PACKAGE)-$(VERSION).tar.gz
 sig_file = $(tar_gz_file).sig
 
@@ -42,15 +41,15 @@ sig_file = $(tar_gz_file).sig
 $(sig_file): $(tar_gz_file)
 	gpg --output $@ --detach $^
 
-RELEASED_BRANCH=trunk
+RELEASED_BRANCH=master
 
 echo-released-branch:
 	echo "released-branch=$(RELEASED_BRANCH)"
 
 tag-release: dist tag-release-only
 tag-release-only:
-	svn copy -m "$(PACKAGE_NAME) release $(VERSION)" \
-		$(SVN_ROOT)/$(RELEASED_BRANCH) $(SVN_ROOT)/tags/$(PACKAGE_NAME)-$(VERSION)
+	git tag -m "$(PACKAGE_NAME) release $(VERSION)" \
+	"$(PACKAGE_NAME)-$(VERSION)" $(RELEASED_BRANCH)
 
 release-upload: tag-release $(tar_gz_file) release-upload-only
 release-upload-only:
