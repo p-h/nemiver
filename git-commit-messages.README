@@ -3,10 +3,9 @@ Git commit messages format
 
 The first line of a git commit message should start at colonne 1, with no
 space. That line should be a short summary of the purpose of the commit.
-If the commit relates to a bug filed into bugzilla, the line should start with
-#<number-of-the-bug>, followed by a space, then by a dash (-), then by a
-space, and then by the short summary. The line in its entirety should not
-be longer than 80 characters.
+If the commit relates to a bug filed into bugzilla, the line should end with
+'(Closes: #<number-of-the-bug>)', without the quotes.
+The line in its entirety should not be longer than 80 characters.
 
 The next line should be an empty line, with no spaces.
 
@@ -22,7 +21,7 @@ Also note that right after the '*', there is a space.
 An exemple of commit message would be:
 
 ~=~
-#123456 - Shorten compilation lines
+Shorten compilation lines (Closes: #123456)
 
 	* configure.ac: Shorten compilation lines by regrouping
 	PKG_CHECK_MODULES calls.
