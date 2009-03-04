@@ -3437,12 +3437,12 @@ fetch_file:
     file_name.chomp ();
     file_name.erase (file_name.length ()-1, 1);
     THROW_IF_FAIL (!file_name.empty ());
+    ++oobr_it;
 
 fetch_variable:
     found = false;
     //we are looking for a string that end's up with a ";\n"
-    for (++oobr_it;
-         oobr_it != a_output.out_of_band_records ().end ();
+    for (; oobr_it != a_output.out_of_band_records ().end ();
          ++oobr_it) {
         if (!oobr_it->has_stream_record ()) {continue;}
 
