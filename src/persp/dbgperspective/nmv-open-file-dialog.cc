@@ -117,13 +117,13 @@ public:
             // remove existing children of vbox_file_list
             vbox_file_list->children ().clear();
             vbox_file_list->pack_start (scrolled_window);
-            scrolled_window.show_all ();
+            scrolled_window.show ();
         } else if (radio_button_chooser->get_active ()) {
             LOG_DD("file chooser is active");
             // remove existing children of vbox_file_list
             vbox_file_list->children ().clear();
             vbox_file_list->pack_start (file_chooser);
-            file_chooser.show_all ();
+            file_chooser.show ();
         }
         NEMIVER_CATCH
     }

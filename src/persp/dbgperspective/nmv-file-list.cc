@@ -395,6 +395,8 @@ FileListView::find_filename_recursive (const Gtk::TreeModel::iterator &a_iter,
 
 struct FileList::Priv : public sigc::trackable {
 public:
+    SafePtr<Gtk::VBox> vbox;
+    SafePtr<Gtk::Label> loading_label;
     SafePtr<FileListView> tree_view;
 
     Glib::RefPtr<Gtk::ActionGroup> file_list_action_group;
@@ -402,10 +404,15 @@ public:
     UString start_path;
 
     Priv (IDebuggerSafePtr &a_debugger, const UString &a_starting_path) :
+        vbox (new Gtk::VBox()),
+        loading_label (new Gtk::Label(_("Loading Files from target executable..."))),
         debugger (a_debugger),
         start_path (a_starting_path)
     {
         build_tree_view ();
+        vbox->pack_start (*loading_label, Gtk::PACK_SHRINK, 3 /*padding*/);
+        vbox->pack_start (*tree_view);
+        vbox->show ();
         debugger->files_listed_signal ().connect(
             sigc::mem_fun(*this, &FileList::Priv::on_files_listed_signal));
     }
@@ -414,6 +421,7 @@ public:
     {
         if (tree_view) {return;}
         tree_view.reset (new FileListView ());
+        tree_view->show ();
     }
 
     void on_files_listed_signal (const vector<UString> &a_files,
@@ -425,6 +433,7 @@ public:
 
         THROW_IF_FAIL (tree_view);
 
+        loading_label->hide ();
         tree_view->set_files (a_files);
         // this signal should only be called once per dialog
         // -- the first time
@@ -454,7 +463,7 @@ FileList::widget () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->tree_view);
-    return *m_priv->tree_view;
+    return *m_priv->vbox;
 }
 
 void
@@ -462,6 +471,8 @@ FileList::update_content ()
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->debugger);
+    // set some placeholder text to indicate that we're loading files
+    m_priv->loading_label->show ();
     m_priv->debugger->list_files ();
 }
 
