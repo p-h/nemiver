@@ -5815,6 +5815,7 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
             //so let's try to parse B
             SKIP_BLANK2 (cur);
             value_start = cur;
+            unsigned int brace_level = 0;
             while (true) {
                 UString str;
                 if ( RAW_CHAR_AT (cur) == '"'
@@ -5834,8 +5835,21 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
                     }
                 } else if ((RAW_CHAR_AT (cur) != ','
                                || ((!m_priv->index_passed_end (cur+1))
-                                   && RAW_CHAR_AT (cur+1) != ' '))
+                                   && RAW_CHAR_AT (cur+1) != ' ')
+                               // don't treat a comma inside braces as a
+                               // variable separator.  e.g the following output:
+                               // "0x40085e <my_func(void*, void*)>"
+                               || (brace_level > 0))
                            && RAW_CHAR_AT (cur) != '}') {
+                    if (RAW_CHAR_AT (cur) == '(' ||
+                        RAW_CHAR_AT (cur) == '[' ||
+                        RAW_CHAR_AT (cur) == '<') {
+                        ++brace_level;
+                    } else if (RAW_CHAR_AT (cur) == ')' ||
+                               RAW_CHAR_AT (cur) == ']' ||
+                               RAW_CHAR_AT (cur) == '>') {
+                        --brace_level;
+                    }
                     ++cur;
                     CHECK_END2 (cur);
                 } else {
