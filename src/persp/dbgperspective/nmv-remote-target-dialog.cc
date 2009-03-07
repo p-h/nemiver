@@ -141,8 +141,9 @@ struct RemoteTargetDialog::Priv {
         entry->signal_changed ().connect
                 (sigc::mem_fun (*this, &Priv::on_selection_changed_signal));
 
-        entry = get_widget_from_glade<Gtk::Entry> (glade, "serialentry");
-        entry->signal_changed ().connect (sigc::mem_fun
+        chooser = get_widget_from_glade<Gtk::FileChooserButton> (glade,
+                                                     "serialchooserbutton");
+        chooser->signal_selection_changed ().connect (sigc::mem_fun
                             (*this, &Priv::on_selection_changed_signal));
 
         Gtk::Button *button =
@@ -164,8 +165,9 @@ struct RemoteTargetDialog::Priv {
                 return false;
         } else if (connection_type ==
                     RemoteTargetDialog::SERIAL_CONNECTION_TYPE) {
-            entry = get_widget_from_glade<Gtk::Entry> (glade, "serialentry");
-            if (entry->get_text ().empty ())
+            chooser = get_widget_from_glade<Gtk::FileChooserButton> (glade,
+                                                     "serialchooserbutton");
+            if (chooser->get_filename ().empty ())
                 return false;
         }
         return true;
@@ -252,17 +254,17 @@ struct RemoteTargetDialog::Priv {
 
     const UString& get_serial_port_name () const
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry> (glade,
-                                                               "serialentry");
-        serial_port_name = entry->get_text ();
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_glade<Gtk::FileChooserButton> (glade, "serialchooserbutton");
+        serial_port_name = chooser->get_filename ();
         return serial_port_name;
     }
 
     void set_serial_port_name (const UString &a_name)
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry> (glade,
-                                                               "serialentry");
-        entry->set_text (a_name);
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_glade<Gtk::FileChooserButton> (glade, "serialchooserbutton");
+        chooser->select_filename (a_name);
     }
 
 };//end RemoteTargetDialog::Priv
