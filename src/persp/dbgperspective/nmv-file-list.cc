@@ -26,6 +26,7 @@
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
+#include <gtkmm/scrolledwindow.h>
 #include "common/nmv-exception.h"
 #include "nmv-file-list.h"
 #include "nmv-ui-utils.h"
@@ -396,7 +397,8 @@ FileListView::find_filename_recursive (const Gtk::TreeModel::iterator &a_iter,
 struct FileList::Priv : public sigc::trackable {
 public:
     SafePtr<Gtk::VBox> vbox;
-    SafePtr<Gtk::Label> loading_label;
+    SafePtr<Gtk::ScrolledWindow> scrolled_window;
+    SafePtr<Gtk::Label> loading_indicator;
     SafePtr<FileListView> tree_view;
 
     Glib::RefPtr<Gtk::ActionGroup> file_list_action_group;
@@ -405,13 +407,19 @@ public:
 
     Priv (IDebuggerSafePtr &a_debugger, const UString &a_starting_path) :
         vbox (new Gtk::VBox()),
-        loading_label (new Gtk::Label(_("Loading Files from target executable..."))),
+        scrolled_window (new Gtk::ScrolledWindow ()),
+        loading_indicator (new Gtk::Label (_("Loading Files from target executable..."))),
         debugger (a_debugger),
         start_path (a_starting_path)
     {
         build_tree_view ();
-        vbox->pack_start (*loading_label, Gtk::PACK_SHRINK, 3 /*padding*/);
-        vbox->pack_start (*tree_view);
+        vbox->pack_start (*loading_indicator, Gtk::PACK_SHRINK, 3 /*padding*/);
+        vbox->pack_start (*scrolled_window);
+        scrolled_window->set_policy (Gtk::POLICY_AUTOMATIC,
+                                     Gtk::POLICY_AUTOMATIC);
+        scrolled_window->set_shadow_type (Gtk::SHADOW_IN);
+        scrolled_window->add (*tree_view);
+        scrolled_window->show ();
         vbox->show ();
         debugger->files_listed_signal ().connect(
             sigc::mem_fun(*this, &FileList::Priv::on_files_listed_signal));
@@ -424,6 +432,16 @@ public:
         tree_view->show ();
     }
 
+    void show_loading_indicator ()
+    {
+        loading_indicator->show ();
+    }
+
+    void stop_loading_indicator ()
+    {
+        loading_indicator->hide ();
+    }
+
     void on_files_listed_signal (const vector<UString> &a_files,
                                  const UString &a_cookie)
     {
@@ -433,7 +451,7 @@ public:
 
         THROW_IF_FAIL (tree_view);
 
-        loading_label->hide ();
+        stop_loading_indicator ();
         tree_view->set_files (a_files);
         // this signal should only be called once per dialog
         // -- the first time
@@ -472,7 +490,7 @@ FileList::update_content ()
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->debugger);
     // set some placeholder text to indicate that we're loading files
-    m_priv->loading_label->show ();
+    m_priv->show_loading_indicator ();
     m_priv->debugger->list_files ();
 }
 

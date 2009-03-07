@@ -25,7 +25,6 @@
 
 #include <glib/gi18n.h>
 #include <libglademm.h>
-#include <gtkmm/scrolledwindow.h>
 #include <gtkmm/filechooserwidget.h>
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/button.h>
@@ -43,7 +42,6 @@ namespace nemiver {
 class OpenFileDialog::Priv {
     public:
     Gtk::VBox* vbox_file_list;
-    Gtk::ScrolledWindow scrolled_window;
     Gtk::RadioButton *radio_button_file_list, *radio_button_chooser;
     Gtk::FileChooserWidget file_chooser;
     FileList file_list;
@@ -96,11 +94,6 @@ public:
             (sigc::mem_fun (*this,
                             &Priv::on_chooser_selection_changed_signal));
 
-        scrolled_window.set_policy (Gtk::POLICY_AUTOMATIC,
-                                    Gtk::POLICY_AUTOMATIC);
-        scrolled_window.set_shadow_type (Gtk::SHADOW_IN);
-        scrolled_window.add(file_list.widget ());
-
         update_from_debugger_state ();
     }
 
@@ -116,8 +109,8 @@ public:
             LOG_DD("Target file list is active");
             // remove existing children of vbox_file_list
             vbox_file_list->children ().clear();
-            vbox_file_list->pack_start (scrolled_window);
-            scrolled_window.show ();
+            vbox_file_list->pack_start (file_list.widget ());
+            file_list.widget ().show ();
         } else if (radio_button_chooser->get_active ()) {
             LOG_DD("file chooser is active");
             // remove existing children of vbox_file_list
