@@ -74,6 +74,7 @@ public:
     Gtk::Entry *entry_filter;
     Glib::RefPtr<Gtk::ListStore> proclist_store;
     Glib::RefPtr<Gtk::TreeModelFilter> filter_store;
+    Glib::RefPtr<Gtk::TreeModelSort> sort_store;
     IProcMgr::Process selected_process;
     bool process_selected;
 
@@ -106,7 +107,8 @@ public:
         filter_store = Gtk::TreeModelFilter::create (proclist_store);
         filter_store->set_visible_func(sigc::mem_fun(*this,
                     &Priv::is_row_visible));
-        proclist_view->set_model (filter_store);
+        sort_store = Gtk::TreeModelSort::create (filter_store);
+        proclist_view->set_model (sort_store);
         proclist_view->set_search_column (ProcListCols::PROC_ARGS);
         proclist_view->set_enable_search (true);
 
@@ -182,8 +184,8 @@ public:
         if (!paths.empty ()) {
 
             Gtk::TreeModel::const_iterator row_it =
-                                        filter_store->get_iter (paths[0]);
-            if (row_it != filter_store->children ().end ()
+                                        sort_store->get_iter (paths[0]);
+            if (row_it != sort_store->children ().end ()
                 && is_row_visible(row_it)) {
                 selected_process = (*row_it)[columns ().process];
                 process_selected = true;
@@ -208,7 +210,7 @@ public:
 
         THROW_IF_FAIL (okbutton);
 
-        Gtk::TreeModel::iterator row_it = filter_store->get_iter (a_path);
+        Gtk::TreeModel::iterator row_it = sort_store->get_iter (a_path);
         if (!row_it) {return;}
         selected_process = (*row_it)[columns ().process];
         process_selected = true;
