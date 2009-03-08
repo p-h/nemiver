@@ -3440,6 +3440,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
 
     SafePtr<Gtk::Label> label (Gtk::manage
                             (new Gtk::Label (basename)));
+    label->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
+    label->set_max_width_chars (25);
+    label->set_justify (Gtk::JUSTIFY_LEFT);
     SafePtr<Gtk::Image> cicon (manage
                 (new Gtk::Image (Gtk::StockID (Gtk::Stock::CLOSE),
                                                Gtk::ICON_SIZE_MENU)));
@@ -3463,19 +3466,19 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     message.printf (_("Close %s"), a_path.c_str ());
     close_button->set_tooltip_text (message);
 
-    SafePtr<Gtk::Table> table (Gtk::manage (new Gtk::Table (1, 2)));
+    SafePtr<Gtk::HBox> hbox (Gtk::manage (new Gtk::HBox ()));
     // add a bit of space between the label and the close button
-    table->set_col_spacings (4);
+    hbox->set_spacing (4);
 
     Gtk::EventBox *event_box = Gtk::manage (new Gtk::EventBox);
     event_box->set_visible_window (false);
     event_box->add (*label);
-    table->attach (*event_box, 0, 1, 0, 1);
-    table->attach (*close_button, 1, 2, 0, 1);
+    hbox->pack_start (*event_box);
+    hbox->pack_start (*close_button, Gtk::PACK_SHRINK);
     event_box->set_tooltip_text (a_path);
-    table->show_all ();
+    hbox->show_all ();
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
-                                                              *table,
+                                                              *hbox,
                                                               -1);
 #if GTK_CHECK_VERSION (2, 10, 0)
     m_priv->sourceviews_notebook->set_tab_reorderable (a_sv);
@@ -3493,7 +3496,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
         LOG_ERROR ("Failed to start monitoring file: " << a_path);
     }
 
-    table.release ();
+    hbox.release ();
     close_button.release ();
     label.release ();
     cicon.release ();
