@@ -2655,6 +2655,15 @@ DBGPerspective::add_perspective_menu_entries ()
     m_priv->contextual_menu_merge_id =
         workbench ().get_ui_manager ()->add_ui_from_file
                                     (Glib::filename_to_utf8 (absolute_path));
+
+#ifdef WITH_MEMORYVIEW
+    // Add memory view menu item if we're compiling with memoryview support
+    relative_path = Glib::build_filename ("menus", "memoryview-menu.xml");
+    THROW_IF_FAIL (build_absolute_resource_path
+                    (Glib::filename_to_utf8 (relative_path), absolute_path));
+    workbench ().get_ui_manager ()->add_ui_from_file
+                                (Glib::filename_to_utf8 (absolute_path));
+#endif // WITH_MEMORYVIEW
 }
 
 void

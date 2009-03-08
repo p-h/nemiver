@@ -44,8 +44,6 @@
                 name="ActivateBreakpointsViewMenuItem"/>
             <menuitem action="ActivateRegistersViewMenuAction"
                 name="ActivateRegistersViewMenuItem"/>
-            <menuitem action="ActivateMemoryViewMenuAction"
-                name="ActivateMemoryViewMenuItem"/>
             <!--
             <separator/>
             <menuitem action="ShowCommandsMenuAction"

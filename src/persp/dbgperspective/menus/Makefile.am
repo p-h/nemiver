@@ -1,7 +1,7 @@
 PLUGIN_NAME=dbgperspective
 
 menusfiles = \
-menus.xml toolbar.xml \
+menus.xml memoryview-menu.xml toolbar.xml \
 contextualmenu.xml \
 breakpointspopup.xml \
 callstackpopup.xml \
