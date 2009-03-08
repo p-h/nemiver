@@ -362,7 +362,11 @@ FileListView::expand_to_filename (const UString &a_filename)
         Gtk::TreeModel::iterator iter =
                     find_filename_recursive (tree_iter, a_filename);
         if (iter) {
-            expand_to_path (Gtk::TreeModel::Path(iter));
+            Gtk::TreeModel::Path path(iter);
+            expand_to_path (path);
+            // Scroll to the directory that contains the file
+            path.up ();
+            scroll_to_row (path);
             break;
         }
     }
