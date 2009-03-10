@@ -3193,7 +3193,7 @@ GDBEngine::print_pointed_variable_value (const UString &a_var_name,
     }
 
     Command command ("print-pointed-variable-value",
-                     "-data-evaluate-expression '*" + a_var_name + "'",
+                     "-data-evaluate-expression *'" + a_var_name + "'",
                      a_cookie);
     command.tag0 ("print-pointed-variable-value");
     command.tag1 (a_var_name);
@@ -3265,7 +3265,7 @@ GDBEngine::dereference_variable (const VariableSafePtr &a_var,
     a_var->build_qname (var_qname);
     THROW_IF_FAIL (!var_qname.empty ());
     Command command ("dereference-variable",
-                     "-data-evaluate-expression '*" + var_qname + "'",
+                     "-data-evaluate-expression *'" + var_qname + "'",
                      a_cookie);
     command.variable (a_var);
 

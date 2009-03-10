@@ -18,7 +18,8 @@ static int nb_type_set = 0 ;
 
 void
 on_variable_derefed_signal (const IDebugger::VariableSafePtr &a_var,
-                            const UString &a_cookie)
+                            const UString &a_cookie,
+                            IDebuggerSafePtr a_debugger)
 {
     if (a_cookie.empty ()) {/*keep compiler happy*/}
     BOOST_REQUIRE (a_var) ;
@@ -42,6 +43,7 @@ on_variable_derefed_signal (const IDebugger::VariableSafePtr &a_var,
             (a_var->get_dereferenced ()->members ().size () == 2,
              "got: " << a_var->get_dereferenced ()->members ().size ()) ;
     }
+    a_debugger->step_over () ;
 }
 
 void
@@ -117,7 +119,6 @@ on_stopped_signal (IDebugger::StopReason a_reason,
         a_debugger->print_variable_value ("foo_ptr") ;
         a_debugger->print_variable_value ("bar_ptr") ;
         a_debugger->print_variable_value ("baz_ptr") ;
-        a_debugger->step_over () ;
     } else if (a_frame.function_name () == "main") {
         if (nb_stops < 8) {
             a_debugger->step_over () ;
@@ -153,7 +154,8 @@ test_main (int argc, char **argv)
                                     (&on_variable_type_set_signal, debugger)) ;
 
     debugger->variable_dereferenced_signal ().connect
-                                            (&on_variable_derefed_signal) ;
+                                    (sigc::bind (&on_variable_derefed_signal,
+                                                 debugger)) ;
 
 
     debugger->load_program (".libs/pointerderef", ".") ;
