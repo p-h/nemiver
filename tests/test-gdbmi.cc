@@ -420,9 +420,8 @@ test_var_with_comma ()
     UString::size_type to = 0;
     IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
 
-    GDBMIParser parser (gv_var_with_member);
+    GDBMIParser parser (gv_var_with_member8);
 
-    parser.push_input (gv_var_with_member8);
     BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
     BOOST_REQUIRE (var) ;
     BOOST_REQUIRE (1 == var->members ().size ()) ;

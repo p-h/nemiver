@@ -5841,13 +5841,9 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
                                // "0x40085e <my_func(void*, void*)>"
                                || (brace_level > 0))
                            && RAW_CHAR_AT (cur) != '}') {
-                    if (RAW_CHAR_AT (cur) == '(' ||
-                        RAW_CHAR_AT (cur) == '[' ||
-                        RAW_CHAR_AT (cur) == '<') {
+                    if (RAW_CHAR_AT (cur) == '<') {
                         ++brace_level;
-                    } else if (RAW_CHAR_AT (cur) == ')' ||
-                               RAW_CHAR_AT (cur) == ']' ||
-                               RAW_CHAR_AT (cur) == '>') {
+                    } else if (RAW_CHAR_AT (cur) == '>') {
                         --brace_level;
                     }
                     ++cur;
