@@ -1,5 +1,4 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
-/*this code was borrowed from the code of the epyphany browser.*/
 /*
  * Copyright © 2000 Eazel, Inc.
  * Copyright © 2004, 2006 Christian Persch
@@ -16,18 +15,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * Author: Andy Hertzfeld <andy@eazel.com>
  *
- * $Id: ephy-spinner.h,v 1.12 2006/10/17 20:32:46 chpe Exp $
  */
+
+/*#if !defined (__EPHY_EPIPHANY_H_INSIDE__) && !defined (EPIPHANY_COMPILATION)
+#error "Only <epiphany/epiphany.h> can be included directly."
+#endif
+*/
 
 #ifndef EPHY_SPINNER_H
 #define EPHY_SPINNER_H
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkenums.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
