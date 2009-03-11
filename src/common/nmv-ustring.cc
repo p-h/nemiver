@@ -245,7 +245,7 @@ UString::chomp ()
     Glib::ustring::size_type i = 0 ;
 
     //remove the ws from the beginning of the string.
-    while (!empty() && isspace (at (0))) {
+    while (!empty () && isspace (at (0))) {
         erase (0, 1) ;
     }
 
