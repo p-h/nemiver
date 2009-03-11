@@ -3139,7 +3139,7 @@ GDBEngine::call_function (const UString &a_expr,
     if (a_expr.empty ()) {return;}
 
     Command command ("call-function",
-                     "-data-evaluate-expression '" + a_expr + "'",
+                     "-data-evaluate-expression " + a_expr,
                      a_cookie);
     queue_command (command);
 }
