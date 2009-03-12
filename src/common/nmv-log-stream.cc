@@ -46,6 +46,16 @@
 #include <tr1/unordered_map>
 #else
 #include <ext/hash_map>
+
+namespace __gnu_cxx {
+    template<>
+    struct hash<std::string> {
+        size_t operator() (const std::string& s) const
+        {
+            return hash<const char*>() (s.c_str ());
+        }
+    };
+}
 #endif
 
 namespace nemiver {
