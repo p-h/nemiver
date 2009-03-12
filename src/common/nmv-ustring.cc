@@ -38,7 +38,7 @@ using namespace std ;
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__OpenBSD__)
 int
 strnlen (const gchar *string, gulong a_len)
 {
