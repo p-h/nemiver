@@ -201,7 +201,9 @@ public:
             return false ;
         }
         typedef SafePtr<T, ObjectRef, ObjectUnref> TSafePtr ;
-        TSafePtr res = iface.do_dynamic_cast<T> () ;
+        // Here, the 'template' keyword is useless, stricto sensu.
+        // But we need it to keep gcc 3.3.5 happy.
+        TSafePtr res = iface.template do_dynamic_cast<T> () ;
         if (!res) {
             return false ;
         }
@@ -334,7 +336,9 @@ DynamicModuleManager::load_iface (const UString &a_module_name,
     THROW_IF_FAIL (tmp_iface) ;
     LOG_REF_COUNT (module, a_module_name) ;
     TSafePtr result ;
-    result = tmp_iface.do_dynamic_cast<T> ();
+    // Here, the 'template' keyword is useless, stricto sensu.
+    // But we need it to keep gcc 3.3.5 happy.
+    result = tmp_iface.template do_dynamic_cast<T> ();
     LOG_REF_COUNT (module, a_module_name) ;
     if (!result) {
         THROW (UString ("interface named ")
