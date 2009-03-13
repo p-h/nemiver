@@ -27,7 +27,11 @@
 
 #include <string>
 #include <list>
+#if __GNUC__ >= 4
 #include <tr1/memory>
+#else
+#include <boost/tr1/memory.hpp>
+#endif
 #include "common/nmv-namespace.h"
 #include "common/nmv-api-macros.h"
 
