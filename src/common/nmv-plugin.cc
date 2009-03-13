@@ -48,7 +48,7 @@ Plugin::EntryPoint::Loader::Loader (const UString &a_plugin_path) :
 
     config_search_paths ().clear () ;
     if (!Glib::file_test (a_plugin_path, Glib::FILE_TEST_IS_DIR)) {
-        THROW () ;
+        THROW ("Couldn't find directory '" + a_plugin_path + "'") ;
     }
     config_search_paths ().push_back (a_plugin_path) ;
     m_priv->plugin_path = a_plugin_path ;
