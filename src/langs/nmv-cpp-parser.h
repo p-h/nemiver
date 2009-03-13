@@ -26,7 +26,6 @@
 #define __NMV_CPP_PARSER_H__
 
 #include <string>
-#include <tr1/memory>
 #include "nmv-cpp-ast.h"
 #include "common/nmv-namespace.h"
 #include "common/nmv-api-macros.h"
