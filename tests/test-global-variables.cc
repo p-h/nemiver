@@ -2,7 +2,6 @@
 #include <map>
 #include <string>
 #include <boost/test/minimal.hpp>
-#include <boost/test/test_tools.hpp>
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"

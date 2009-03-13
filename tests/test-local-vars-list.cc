@@ -1,6 +1,5 @@
 #include <iostream>
 #include <boost/test/minimal.hpp>
-#include <boost/test/test_tools.hpp>
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"
@@ -34,18 +33,14 @@ on_stopped_signal (IDebugger::StopReason a_reason,
     if (a_reason == IDebugger::EXITED_NORMALLY) {
         //okay, time to get out. Let's check if the overall test
         //went like we want
-        BOOST_REQUIRE_MESSAGE (nb_var_type_set == 3,
-                               "got nb_var_type_set: " << nb_var_type_set) ;
-        BOOST_REQUIRE_MESSAGE (nb_var_value_set == 3,
-                               "got nb_var_value_set: " << nb_var_value_set) ;
-        BOOST_REQUIRE_MESSAGE (a_var_list->get_raw_list ().size () == 3,
-                               "size:"
-                                << (int)a_var_list->get_raw_list ().size ()) ;
+        BOOST_REQUIRE (nb_var_type_set == 3) ;
+        BOOST_REQUIRE (nb_var_value_set == 3) ;
+        BOOST_REQUIRE (a_var_list->get_raw_list ().size () == 3) ;
         IDebugger::VariableSafePtr var ;
         BOOST_REQUIRE (a_var_list->find_variable ("foo_ptr", var)) ;
         BOOST_REQUIRE (var) ;
         BOOST_REQUIRE (var->name () != "") ;
-        BOOST_REQUIRE_MESSAGE (var->type () != "", "var: " << var->name ()) ;
+        BOOST_REQUIRE (var->type () != "") ;
 
         BOOST_REQUIRE (a_var_list->find_variable ("bar_ptr", var)) ;
         BOOST_REQUIRE (var) ;
@@ -106,7 +101,8 @@ on_var_type_set (const IDebugger::VariableSafePtr &a_var)
         MESSAGE ("variable type set: "
                  <<a_var->name () << ":" << a_var->type ()) ;
     } else {
-        BOOST_FAIL ("unexpected variable: " << a_var->name ()) ;
+        UString msg = "unexpected variable: " + a_var->name ();
+        BOOST_FAIL (msg.c_str ()) ;
     }
 }
 

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <boost/test/test_tools.hpp>
 #include <boost/test/minimal.hpp>
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
@@ -27,8 +26,8 @@ on_program_finished_signal ()
 {
     MESSAGE ("program finished") ;
     MESSAGE ("nb of breakpoint hit: " <<  (int)nb_bp);
-    BOOST_REQUIRE_MESSAGE (nb_bp == 5, "nb of breakpoint hits was: " << nb_bp) ;
-    BOOST_REQUIRE_MESSAGE (nb_stops > 5, "nb of stops was: " << nb_stops) ;
+    BOOST_REQUIRE(nb_bp == 5) ;
+    BOOST_REQUIRE(nb_stops > 5) ;
     loop->quit () ;
 }
 

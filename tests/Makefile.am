@@ -45,7 +45,7 @@ fooprog_SOURCES=fooprog.cc
 fooprog_LDADD=
 
 runtestbreakpoint_SOURCES=test-breakpoint.cc
-runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestoverloads_SOURCES=test-overloads.cc
@@ -80,15 +80,15 @@ runtestvarwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestderef_SOURCES=test-deref.cc
-runtestderef_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestderef_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestlocalvarslist_SOURCES=test-local-vars-list.cc
-runtestlocalvarslist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestlocalvarslist_LDADD=@NEMIVERCOMMON_LIBS@  \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestglobalvariables_SOURCES=test-global-variables.cc
-runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestcpplexer_SOURCES=test-cpp-lexer.cc

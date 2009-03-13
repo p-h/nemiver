@@ -1,6 +1,5 @@
 #include <iostream>
 #include <boost/test/minimal.hpp>
-#include <boost/test/test_tools.hpp>
 #include <glibmm.h>
 #include "nmv-i-debugger.h"
 #include "common/nmv-initializer.h"
@@ -31,17 +30,13 @@ on_variable_derefed_signal (const IDebugger::VariableSafePtr &a_var,
     ++nb_derefed ;
 
     if (a_var->name () == "foo_ptr") {
-        BOOST_REQUIRE_MESSAGE
-            (a_var->get_dereferenced ()->members ().size () == 1,
-             "got: " << a_var->get_dereferenced ()->members ().size ()) ;
+        BOOST_REQUIRE (a_var->get_dereferenced ()->members ().size () == 1) ;
     } else if (a_var->name () == "bar_ptr") {
-        BOOST_REQUIRE_MESSAGE
-            (a_var->get_dereferenced ()->members ().size () == 1,
-             "got: " << a_var->get_dereferenced ()->members ().size ()) ;
+        BOOST_REQUIRE
+            (a_var->get_dereferenced ()->members ().size () == 1) ;
     } else if (a_var->name () == "baz_ptr") {
-        BOOST_REQUIRE_MESSAGE
-            (a_var->get_dereferenced ()->members ().size () == 2,
-             "got: " << a_var->get_dereferenced ()->members ().size ()) ;
+        BOOST_REQUIRE
+            (a_var->get_dereferenced ()->members ().size () == 2) ;
     }
     a_debugger->step_over () ;
 }
@@ -63,7 +58,8 @@ on_variable_value_signal (const UString &a_var_name,
         a_var_name == "baz_ptr") {
         a_debugger->get_variable_type (a_var) ;
     } else {
-        BOOST_FAIL ("Got variable name: " << a_var_name) ;
+        UString msg = "Got variable name " + a_var_name;
+        BOOST_FAIL (msg.c_str ()) ;
     }
 }
 
@@ -91,7 +87,8 @@ on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
         BOOST_REQUIRE (lang_trait->is_type_a_pointer (a_var->type ())) ;
         a_debugger->dereference_variable (a_var) ;
     } else {
-        BOOST_FAIL ("Got variable name: " << a_var->name ()) ;
+        UString msg = "Got variable name: "+ a_var->name ();
+        BOOST_FAIL (msg.c_str ()) ;
     }
 }
 void
@@ -107,10 +104,8 @@ on_stopped_signal (IDebugger::StopReason a_reason,
 
     if (a_reason == IDebugger::EXITED_NORMALLY) {
         loop->quit ();
-        BOOST_REQUIRE_MESSAGE (nb_derefed == 3,
-                               "nb_derefed is " << nb_derefed) ;
-        BOOST_REQUIRE_MESSAGE (nb_type_set == 3,
-                               "nb_type_set is " << nb_type_set) ;
+        BOOST_REQUIRE (nb_derefed == 3) ;
+        BOOST_REQUIRE (nb_type_set == 3) ;
         return;
     }
     ++nb_stops;
