@@ -27,6 +27,8 @@
 #include "config.h"
 
 #include <sqlite3.h>
+// Needed for sleep()
+#include <unistd.h>
 #include "common/nmv-log-stream-utils.h"
 #include "common/nmv-exception.h"
 #include "common/nmv-buffer.h"
