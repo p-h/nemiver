@@ -33,6 +33,8 @@
 # include <sys/types.h>
 # include <sys/ioctl.h>
 # include <libutil.h>
+#elif defined(__OpenBSD__)
+#include <util.h>
 #endif
 #include <termios.h>
 #include <vector>
@@ -42,8 +44,8 @@
 #include "nmv-exception.h"
 #include "nmv-log-stream-utils.h"
 
-#if defined(__FreeBSD__) && !defined(__MAX_BAUD)
-# define __MAX_BAUD B38400
+#if (defined(__FreeBSD__) || defined(__OpenBSD__)) && !defined(__MAX_BAUD)
+#define __MAX_BAUD B38400
 #endif
 
 namespace nemiver {
