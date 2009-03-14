@@ -1,3 +1,12 @@
+nemiver (0.6.5-1) unstable; urgency=low
+
+  * New upstream release (LP: #327128)
+  * Use $(QUILT_STAMPFN) as patch target
+  * Added new intltool build-dep
+  * Bumped Standards-Version to 3.8.1 (no changes needed)
+
+ -- Luca Bruno <lucab@debian.org>  Fri, 13 Mar 2009 22:16:20 +0100
+
 nemiver (0.6.4-1) unstable; urgency=low
 
   * New upstream release
