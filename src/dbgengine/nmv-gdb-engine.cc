@@ -227,6 +227,14 @@ public:
                                                                   read_memory_signal;
     mutable sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >
                                                                   set_memory_signal;
+    mutable sigc::signal<void, const VariableSafePtr, const UString&>
+                                                        variable_created_signal;
+
+    mutable sigc::signal<void, const VariableSafePtr, const UString&>
+                                                        variable_deleted_signal;
+
+    mutable sigc::signal<void, const VariableSafePtr, const UString&>
+                                                        variable_unfolded_signal;
 
     //***********************
     //</GDBEngine attributes>
@@ -2012,6 +2020,144 @@ struct OnErrorHandler : OutputHandler {
     }
 };//struct OnErrorHandler
 
+struct OnCreateVariableHandler : public OutputHandler
+{
+    GDBEngine *m_engine;
+
+    OnCreateVariableHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {
+    }
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+            == Output::ResultRecord::DONE)
+            && (a_in.command ().name () == "create-variable")
+            && (a_in.output ().result_record ().has_variable ())) {
+            LOG_DD ("handler selected");
+            return true;
+        }
+        return false;
+    }
+
+    void do_handle (CommandAndOutput &a_in __attribute__ ((unused)))
+    {
+        // Set the name of the variable to the name that got stored
+        // in the tag0 member of the command.
+        a_in.output ().result_record ().variable ()->name
+                                                (a_in.command ().tag0 ());
+
+        // Call the slot associated to IDebugger::create_variable (), if
+        // any.
+        if (a_in.command ().has_slot ()) {
+            typedef sigc::slot<void, IDebugger::VariableSafePtr> SlotType;
+            SlotType slot = a_in.command ().get_slot<SlotType> ();
+            slot (a_in.output ().result_record ().variable ());
+        }
+        // Emit the general IDebugger::variable_create_signal () signal
+        m_engine->variable_created_signal ().emit
+                            (a_in.output ().result_record ().variable (),
+                             a_in.command ().cookie ());
+        if (m_engine->get_state () != IDebugger::PROGRAM_EXITED
+            || m_engine->get_state () != IDebugger::NOT_STARTED) {
+            m_engine->set_state (IDebugger::READY);
+        }
+    }
+};// end OnCreateVariableHandler
+
+struct OnDeleteVariableHandler : public OutputHandler {
+    GDBEngine *m_engine;
+
+    OnDeleteVariableHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {
+    }
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && (a_in.output ().result_record ().kind ()
+            == Output::ResultRecord::DONE)
+            && (a_in.command ().name () == "delete-variable")
+            && (a_in.output ().result_record ().number_of_variables_deleted ())) {
+            LOG_DD ("handler selected");
+            return true;
+        }
+        return false;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (a_in.command ().variable ());
+        THROW_IF_FAIL (m_engine);
+
+        // Call the slot associated to IDebugger::delete_variable (), if
+        // Any.
+        if (a_in.command ().has_slot ()) {
+            typedef sigc::slot<void, const IDebugger::VariableSafePtr> SlotType;
+            SlotType slot = a_in.command ().get_slot<SlotType> ();
+            slot (a_in.command ().variable ());
+        }
+        // Emit the general IDebugger::variable_deleted_signal ().
+        m_engine->variable_deleted_signal ().emit
+                (a_in.command ().variable (),
+                 a_in.command ().cookie ());
+    }
+}; // end OnDeleteVariableHandler
+
+struct OnUnfoldVariableHandler : public OutputHandler {
+    GDBEngine *m_engine;
+
+    OnUnfoldVariableHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {
+    }
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if ((a_in.output ().result_record ().kind ()
+             == Output::ResultRecord::DONE)
+            && a_in.output ().result_record ().has_variable_children ()
+            && a_in.command ().name () == "unfold-variable") {
+            LOG_DD ("handler selected");
+            return true;
+        }
+        return false;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        // *************************************************************
+        // append the unfolded variable children to the parent variable
+        // supplied by the client code.
+        // *************************************************************
+        IDebugger::VariableSafePtr parent_var = a_in.command ().variable ();
+        THROW_IF_FAIL (parent_var);
+        typedef vector<IDebugger::VariableSafePtr> Variables;
+        Variables children_vars =
+            a_in.output ().result_record ().variable_children ();
+        for (Variables::const_iterator it = children_vars.begin ();
+             it != children_vars.end ();
+             ++it) {
+            parent_var->append (*it);
+        }
+
+        // Call the slot associated to IDebugger::unfold_variable (), if
+        // any.
+        if (a_in.command ().has_slot ()) {
+            typedef sigc::slot<void, const IDebugger::VariableSafePtr> SlotType;
+            SlotType slot = a_in.command ().get_slot<SlotType> ();
+            slot (a_in.command ().variable ());
+        }
+
+        // Now tell the world we have an unfolded variable.
+        m_engine->variable_unfolded_signal ().emit
+                                    (parent_var, a_in.command ().cookie ());
+    }
+};// End struct OnUnfoldVariableHandler
+
 //****************************
 //</GDBengine output handlers
 //***************************
@@ -2286,6 +2432,12 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnReadMemoryHandler (this)));
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnSetMemoryHandler (this)));
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnCreateVariableHandler (this)));
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnDeleteVariableHandler (this)));
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnUnfoldVariableHandler (this)));
 }
 
 sigc::signal<void, Output&>&
@@ -2535,6 +2687,24 @@ sigc::signal<void, IDebugger::State>&
 GDBEngine::state_changed_signal () const
 {
     return m_priv->state_changed_signal;
+}
+
+sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
+GDBEngine::variable_created_signal () const
+{
+    return m_priv->variable_created_signal;
+}
+
+sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
+GDBEngine::variable_deleted_signal () const
+{
+    return m_priv->variable_deleted_signal;
+}
+
+sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
+GDBEngine::variable_unfolded_signal () const
+{
+    return m_priv->variable_unfolded_signal;
 }
 
 //******************
@@ -3613,14 +3783,132 @@ GDBEngine::set_memory (size_t a_addr,
             iter != a_bytes.end (); ++iter)
     {
         UString cmd_str;
-        cmd_str.printf ("-data-evaluate-expression \"*(unsigned char*)%zu = 0x%X\"",
+        cmd_str.printf ("-data-evaluate-expression "
+                        "\"*(unsigned char*)%zu = 0x%X\"",
                 a_addr++,
                 *iter);
-        Command command("set-memory", cmd_str, a_cookie);
+        Command command ("set-memory", cmd_str, a_cookie);
         command.tag0 ("set-memory");
         command.tag1 (UString ().printf ("0x%X",a_addr));
         queue_command (command);
     }
+}
+
+void
+GDBEngine::create_variable (const UString &a_name,
+                            const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (a_name.empty ()) {
+        LOG ("got empty name");
+        return;
+    }
+
+    Command command ("create-variable",
+                     "-var-create - * " + a_name,
+                     a_cookie);
+    command.tag0 (a_name);
+
+    queue_command (Command ("create-variable",
+                            "-var-create - * " + a_name,
+                            a_cookie));
+}
+
+void
+GDBEngine::create_variable (const UString &a_name ,
+                            const sigc::slot<void, const VariableSafePtr> &a_slot)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (a_name.empty ()) {
+        LOG ("got empty name");
+        return;
+    }
+
+    Command command ("create-variable",
+                     "-var-create - * " + a_name);
+    command.tag0 (a_name);
+    command.set_slot (a_slot);
+
+    queue_command (command);
+}
+
+void
+GDBEngine::delete_variable (const VariableSafePtr a_var,
+                            const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("delete-variable",
+                     "-var-delete " + a_var->internal_name (),
+                     a_cookie);
+    command.variable (a_var);
+    queue_command (command);
+}
+
+void
+GDBEngine::delete_variable (const VariableSafePtr a_var,
+                            const sigc::slot<void,const VariableSafePtr> &a_slot)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("delete-variable",
+                     "-var-delete " + a_var->internal_name ());
+    command.variable (a_var);
+    command.set_slot (a_slot);
+
+    queue_command (command);
+}
+
+void
+GDBEngine::unfold_variable (const VariableSafePtr a_var,
+                            const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    THROW_IF_FAIL (a_var);
+    if (a_var->internal_name ().empty ()) {
+        UString qname;
+        a_var->build_qualified_internal_name (qname);
+        a_var->internal_name (qname);
+    }
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("unfold-variable",
+                     "-var-list-children" + a_var->internal_name (),
+                     a_cookie);
+    command.variable (a_var);
+
+    queue_command (command);
+}
+
+void
+GDBEngine::unfold_variable (const VariableSafePtr a_var,
+                            const sigc::slot<void, const VariableSafePtr> &a_slot)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    THROW_IF_FAIL (a_var);
+    if (a_var->internal_name ().empty ()) {
+        UString qname;
+        a_var->build_qualified_internal_name (qname);
+        a_var->internal_name (qname);
+    }
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("unfold-variable",
+                     "-var-list-children " + a_var->internal_name ());
+    command.variable (a_var);
+    command.set_slot (a_slot);
+
+    queue_command (command);
 }
 
 //****************************

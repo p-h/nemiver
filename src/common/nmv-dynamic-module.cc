@@ -397,6 +397,7 @@ public:
 
 struct DynamicModule::Priv {
     UString real_library_path ;
+    UString name;
     DynamicModule::Loader *loader ;
 
     Priv () :
@@ -425,6 +426,20 @@ DynamicModule::set_real_library_path (const UString &a_path)
 {
     THROW_IF_FAIL (m_priv) ;
     m_priv->real_library_path = a_path ;
+}
+
+void
+DynamicModule::set_name (const UString &a_name)
+{
+    THROW_IF_FAIL (m_priv) ;
+    m_priv->name = a_name;
+}
+
+const UString&
+DynamicModule::get_name () const
+{
+    THROW_IF_FAIL (m_priv) ;
+    return m_priv->name;
 }
 
 void
@@ -488,6 +503,8 @@ DynamicModuleManager::load_module (const UString &a_name,
     LOG_REF_COUNT (module, a_name) ;
 
     module->set_module_loader (&a_loader) ;
+    module->set_name (a_name);
+    module->set_real_library_path (a_loader.module_library_path (a_name));
     a_loader.set_dynamic_module_manager (this) ;
     LOG_REF_COUNT (module, a_name) ;
 

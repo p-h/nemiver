@@ -6,7 +6,7 @@ if AUTOTESTS
 #runtestglobalvariables
 TESTS=\
 runtestgdbmi runtestunicode \
-runtestcpptrait runtestvarlist \
+runtestvars runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
 runtestderef \
 runtestlocalvarslist runtestcpplexer \
@@ -69,6 +69,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 runtestunicode_SOURCES=test-unicode.cc
 runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ \
 @BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestvars_SOURCES=test-vars.cc
+runtestvars_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 runtestvarlist_SOURCES=test-var-list.cc

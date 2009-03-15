@@ -783,6 +783,18 @@ public:
                               size_t& a_start_addr,
                               std::vector<uint8_t> &a_values);
 
+    bool parse_variable (UString::size_type a_from,
+                         UString::size_type &a_to,
+                         IDebugger::VariableSafePtr &a_var);
+
+    bool parse_variables_deleted (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  unsigned int &a_nb_vars_deleted);
+
+    bool parse_var_list_children (UString::size_type a_from,
+                                  UString::size_type &a_to,
+                                  vector<IDebugger::VariableSafePtr> &a_vars);
+
     bool parse_result_record (UString::size_type a_from,
                               UString::size_type &a_to,
                               Output::ResultRecord &a_record);
@@ -791,6 +803,7 @@ public:
     bool parse_output_record (UString::size_type a_from,
                               UString::size_type &a_to,
                               Output &a_output);
+
     //*********************
     //</Parsing entry points.>
     //*********************

@@ -173,6 +173,15 @@ public:
                                                     read_memory_signal () const;
     sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
                                                       set_memory_signal () const;
+
+    sigc::signal<void, const VariableSafePtr, const UString&>&
+                                                variable_created_signal () const;
+
+    sigc::signal<void, const VariableSafePtr, const UString&>&
+                                        variable_deleted_signal () const;
+
+    sigc::signal<void, const VariableSafePtr, const UString&>&
+                                                variable_unfolded_signal () const;
     //*************
     //</signals>
     //*************
@@ -290,7 +299,7 @@ public:
     map<int, IDebugger::BreakPoint>& get_cached_breakpoints () ;
 
     void set_catch (const UString &a_event,
-					const UString &a_cookie)  ;
+                    const UString &a_cookie)  ;
 
     void enable_breakpoint (gint a_break_num,
                             const UString &a_cookie="");
@@ -359,7 +368,8 @@ public:
                             int &a_proc_pid,
                             UString &a_exe_path) ;
 
-    typedef std::map<UString, std::list<IDebugger::VariableSafePtr> > VarsPerFilesMap ;
+    typedef std::map<UString, std::list<IDebugger::VariableSafePtr> >
+                                                                VarsPerFilesMap ;
     bool extract_global_variable_list (Output &a_output,
                                        VarsPerFilesMap &a_vars) ;
 
@@ -382,6 +392,22 @@ public:
     void set_memory (size_t a_addr,
                      const std::vector<uint8_t>& a_bytes,
                      const UString& a_cookie="");
+
+    void create_variable (const UString &a_name,
+                          const UString &a_cookie="");
+    void create_variable (const UString &a_name,
+                          const sigc::slot<void, const VariableSafePtr>&);
+
+    void delete_variable (const VariableSafePtr a_var,
+                          const UString &a_cookie);
+
+    void delete_variable (const VariableSafePtr a_var,
+                          const sigc::slot<void,const VariableSafePtr>&);
+
+    void unfold_variable (VariableSafePtr a_var,
+                          const UString &a_cookie);
+    void unfold_variable (VariableSafePtr a_var,
+                          const sigc::slot<void, const VariableSafePtr> &);
 };//end class GDBEngine
 
 NEMIVER_END_NAMESPACE (nemiver)

@@ -279,6 +279,7 @@ public:
     typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr;
     class Variable : public Object {
         list<VariableSafePtr> m_members;
+        UString m_internal_name;
         UString m_name;
         UString m_name_caption;
         UString m_value;
@@ -288,8 +289,22 @@ public:
         //it can be dereferenced. The variable
         //it points to is stored in m_dereferenced
         VariableSafePtr m_dereferenced;
+        unsigned int m_num_expected_children;
 
     public:
+        Variable (const UString &a_internal_name,
+                  const UString &a_name,
+                  const UString &a_value,
+                  const UString &a_type) :
+            m_internal_name (a_internal_name),
+            m_name (a_name),
+            m_value (a_value),
+            m_type (a_type),
+            m_parent (0),
+            m_num_expected_children (0)
+
+        {
+        }
 
         Variable (const UString &a_name,
                   const UString &a_value,
@@ -297,14 +312,16 @@ public:
             m_name (a_name),
             m_value (a_value),
             m_type (a_type),
-            m_parent (0)
+            m_parent (0),
+            m_num_expected_children (0)
 
         {
         }
 
         Variable (const UString &a_name) :
             m_name (a_name),
-            m_parent (0)
+            m_parent (0),
+            m_num_expected_children (0)
         {}
 
         Variable () :
@@ -319,6 +336,9 @@ public:
             m_members.push_back (a_var);
             a_var->parent (this);
         }
+
+        const UString& internal_name () const {return m_internal_name;}
+        void internal_name (const UString &a_in) {m_internal_name = a_in;}
 
         const UString& name () const {return m_name;}
         void name (const UString &a_name)
@@ -350,6 +370,10 @@ public:
             if (a_show_var_name) {
                 if (name () != "") {
                     a_str += a_indent_str + name ();
+                }
+
+                if (!internal_name ().empty ()) {
+                    a_str += "(" + internal_name () + ")";
                 }
             }
             if (value () != "") {
@@ -389,6 +413,21 @@ public:
                 } else {
                     qname += "." + name ();
                 }
+                a_qname = qname;
+            } else {
+                THROW ("should not be reached");
+            }
+        }
+
+        void build_qualified_internal_name (UString &a_qname) const
+        {
+            UString qname;
+            if (parent () == 0) {
+                a_qname = internal_name ();
+            } else if (parent ()) {
+                parent ()->build_qname (qname);
+                qname.chomp ();
+                qname += "." + name ();
                 a_qname = qname;
             } else {
                 THROW ("should not be reached");
@@ -467,6 +506,21 @@ public:
                 var->set (**it);
                 append (var);
             }
+        }
+
+        unsigned int num_expected_children () const
+        {
+            return m_num_expected_children;
+        }
+
+        void num_expected_children (unsigned int a_in)
+        {
+            m_num_expected_children = a_in;
+        }
+
+        bool has_expected_children () const
+        {
+            return m_num_expected_children != 0;
         }
     };//end class Variable
 
@@ -681,6 +735,15 @@ public:
                           const std::vector<uint8_t>&,/*values*/
                           const UString& >&
                                           set_memory_signal () const = 0;
+
+    virtual sigc::signal<void, const VariableSafePtr, const UString&>&
+                                        variable_created_signal () const = 0;
+
+    virtual sigc::signal<void, const VariableSafePtr, const UString&>&
+                                        variable_deleted_signal () const = 0;
+
+    virtual sigc::signal<void, const VariableSafePtr, const UString&>&
+                                        variable_unfolded_signal () const = 0;
     /// @}
 
     virtual void do_init (IConfMgrSafePtr &a_conf_mgr) = 0;
@@ -845,7 +908,20 @@ public:
             const std::vector<uint8_t>& a_bytes,
             const UString& a_cookie="") = 0;
 
-
+    virtual void create_variable (const UString &a_name,
+                                  const UString &a_cookie="") = 0;
+    virtual void create_variable (const UString &a_name,
+                                  const sigc::slot<void,
+                                                   const VariableSafePtr>&) = 0;
+    virtual void delete_variable (const VariableSafePtr a_var,
+                                  const UString &a_cookie="") = 0;
+    virtual void delete_variable (const VariableSafePtr a_var,
+                                  const sigc::slot<void,
+                                                   const VariableSafePtr>&) = 0;
+    virtual void unfold_variable (VariableSafePtr a_var,
+                                  const UString &a_cookie) = 0;
+    virtual void unfold_variable (VariableSafePtr a_var,
+                                  const sigc::slot<void, const VariableSafePtr> &) = 0;
 };//end IDebugger
 
 NEMIVER_END_NAMESPACE (nemiver)

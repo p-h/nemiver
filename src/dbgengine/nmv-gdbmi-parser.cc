@@ -111,6 +111,8 @@ while (!m_priv->index_passed_end (a_from) && isblank (RAW_CHAR_AT (a_from))) { \
 
 #define RAW_INPUT m_priv->input.raw ()
 
+#define END_OF_INPUT(cur) m_priv->index_passed_end (cur)
+
 using namespace std;
 using namespace nemiver::common;
 
@@ -139,6 +141,11 @@ const char* PREFIX_REGISTER_VALUES = "register-values=";
 const char* PREFIX_MEMORY_VALUES = "addr=";
 const char* PREFIX_RUNNING_ASYNC_OUTPUT = "*running,";
 const char* PREFIX_STOPPED_ASYNC_OUTPUT = "*stopped,";
+const char* PREFIX_NAME = "name=\"";
+const char* PREFIX_VARIABLE_DELETED = "ndeleted=\"";
+const char* NDELETED = "ndeleted";
+const char* PREFIX_NUMCHILD= "numchild=\"";
+const char* NUMCHILD= "numchild";
 
 bool parse_c_string_body (const UString &a_input,
                           UString::size_type a_from,
@@ -4721,7 +4728,8 @@ fetch_gdbmi_result:
                 parse_gdbmi_result (cur, cur, result);
                 THROW_IF_FAIL (result);
                 LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
-            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_STACK_ARGS),
+            } else if (!m_priv->input.raw ().compare (cur,
+                                                      strlen (PREFIX_STACK_ARGS),
                                                       PREFIX_STACK_ARGS)) {
                 map<int, list<IDebugger::VariableSafePtr> > frames_args;
                 if (!parse_stack_arguments (cur, cur, frames_args)) {
@@ -4795,6 +4803,39 @@ fetch_gdbmi_result:
                 } else {
                     LOG_D ("parsed memory values", GDBMI_PARSING_DOMAIN);
                     result_record.memory_values (addr, values);
+                }
+            } else if (!RAW_INPUT.compare (cur,
+                                           strlen (PREFIX_NAME),
+                                           PREFIX_NAME)) {
+                IDebugger::VariableSafePtr var;
+                if (!parse_variable (cur, cur, var)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    THROW_IF_FAIL (var);
+                    LOG_D ("parsed variable, name: "
+                           << var->name ()
+                           << "internal name: "
+                           << var->internal_name (),
+                           GDBMI_PARSING_DOMAIN);
+                    result_record.variable (var);
+                }
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_VARIABLE_DELETED),
+                                           PREFIX_VARIABLE_DELETED)) {
+                unsigned int nb_variables_deleted = 0;
+                if (parse_variables_deleted (cur, cur, nb_variables_deleted)
+                    && nb_variables_deleted) {
+                    result_record.number_of_variables_deleted
+                                                        (nb_variables_deleted);
+                } else {
+                    LOG_PARSING_ERROR2 (cur);
+                }
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_NUMCHILD),
+                                           PREFIX_NUMCHILD)) {
+                vector<IDebugger::VariableSafePtr> vars;
+                if (parse_var_list_children (cur, cur, vars)) {
+                    result_record.variable_children (vars);
+                } else {
+                    LOG_PARSING_ERROR2 (cur);
                 }
             } else {
                 GDBMIResultSafePtr result;
@@ -5998,6 +6039,215 @@ GDBMIParser::parse_variable_value (const UString::size_type a_from,
 }
 
 bool
+GDBMIParser::parse_variables_deleted (UString::size_type a_from,
+                                      UString::size_type &a_to,
+                                      unsigned int &a_nb_vars_deleted)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_VARIABLE_DELETED),
+                           PREFIX_VARIABLE_DELETED)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, cur, result) || !result) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (result->variable () != NDELETED) {
+        LOG_ERROR ("expected gdbmi variable " << NDELETED << ", got: "
+                   << result->variable () << "\'");
+        return false;
+    }
+    if (!result->value ()
+        || result->value ()->content_type () != GDBMIValue::STRING_TYPE) {
+        LOG_ERROR ("expected a string value for "
+                   "the GDBMI variable " << NDELETED);
+        return false;
+    }
+    UString val = result->value ()->get_string_content ();
+    a_nb_vars_deleted = val.empty () ? 0 : atoi (val.c_str ());
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_var_list_children
+                            (UString::size_type a_from,
+                             UString::size_type &a_to,
+                             std::vector<IDebugger::VariableSafePtr> &a_vars)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_NUMCHILD),
+                           PREFIX_NUMCHILD)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, cur, result) || !result) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (result->variable () != NUMCHILD) {
+        LOG_ERROR ("expected gdbmi variable " << NUMCHILD<< ", got: "
+                   << result->variable () << "\'");
+        return false;
+    }
+    if (!result->value ()
+        || result->value ()->content_type () != GDBMIValue::STRING_TYPE) {
+        LOG_ERROR ("expected a string value for "
+                   "the GDBMI variable " << NUMCHILD);
+        return false;
+    }
+    UString s = result->value ()->get_string_content ();
+    unsigned num_children = s.empty () ? 0 : atoi (s.c_str ());
+
+    if (!num_children) {
+        LOG_D ("Variable has zero children",
+               GDBMI_PARSING_DOMAIN);
+        a_to = cur;
+        return true;
+    }
+
+    SKIP_BLANK2 (cur);
+    if (RAW_CHAR_AT (cur) != ',') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    ++cur;
+    SKIP_BLANK2 (cur);
+    result.reset ();
+    if (!parse_gdbmi_result (cur, cur, result) || !result) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (result->variable () != "children") {
+        LOG_ERROR ("expected gdbmi variable " << "children" << ", got: "
+                   << result->variable () << "\'");
+        return false;
+    }
+    if (!result->value ()
+        || result->value ()->content_type () != GDBMIValue::LIST_TYPE) {
+        LOG_ERROR ("expected a LIST value for "
+                   "the GDBMI variable " << "children");
+        return false;
+    }
+    GDBMIListSafePtr children = result->value ()->get_list_content ();
+    THROW_IF_FAIL (children);
+
+    if (children->empty ()) {
+        a_to = cur;
+        return true;
+    }
+    if (children->content_type () != GDBMIList::RESULT_TYPE) {
+        LOG_ERROR ("Expected the elements of the 'children' LIST to be "
+                   "of kind RESULT");
+        return false;
+    }
+    list<GDBMIResultSafePtr> children_results;
+    children->get_result_content (children_results);
+
+    if (children_results.empty ()) {
+        a_to = cur;
+        return true;
+    }
+
+    // Walk the children variables, that are packed in the children_result
+    // list of RESULT. Each RESULT represents a variable, that is a child
+    // of a_var.
+    typedef list<GDBMIResultSafePtr>::const_iterator ResultsIter;
+    for (ResultsIter result_it = children_results.begin ();
+         result_it != children_results.end ();
+         ++result_it) {
+        if (!*result_it) {
+            LOG_ERROR ("Got NULL RESULT in the list of children variables.");
+            continue;
+        }
+        if ((*result_it)->variable () != "child") {
+            LOG_ERROR ("Expected the name of the child result to be 'child'."
+                       "Got " << (*result_it)->variable ());
+            return false;
+        }
+        if ((*result_it)->value ()->content_type () != GDBMIValue::TUPLE_TYPE) {
+            LOG_ERROR ("Values of the 'child' result must be a kind TYPE");
+            return false;
+        }
+        // The components of a given variable result_it are packed into
+        // the list of RESULT below.
+        list<GDBMIResultSafePtr> child_comps =
+                        (*result_it)->value ()->get_tuple_content ()->content ();
+
+        // Walk the list of the components of the current child of a_var.
+        // At this end of this walk, we will be able to build a child
+        // of a_var, instance of IDebugger::Variable.
+        UString s, v, name, internal_name, value, type;
+        unsigned int numchildren = 0;
+        for (ResultsIter it = child_comps.begin ();
+             it != child_comps.end ();
+             ++it) {
+            if (!(*it)) {
+                LOG_ERROR ("Got a NULL RESULT as a variable component");
+                continue;
+            }
+            v = (*it)->variable ();
+            s = (*it)->value ()->get_string_content ();
+            if (v == "name") {
+                if ((*it)->value ()->content_type ()
+                    != GDBMIValue::STRING_TYPE) {
+                    LOG_ERROR ("Variable internal name should "
+                               "have a string value");
+                    continue;
+                }
+                internal_name = s;
+            } else if (v == "exp") {
+                if ((*it)->value ()->content_type ()
+                    != GDBMIValue::STRING_TYPE) {
+                    LOG_ERROR ("Variable name should "
+                               "have a string value");
+                    continue;
+                }
+                name = s;
+            } else if (v == "value") {
+                value = s;
+            } else if (v == "type") {
+                if ((*it)->value ()->content_type ()
+                    != GDBMIValue::STRING_TYPE) {
+                    LOG_ERROR ("Variable type should "
+                               "have a string value");
+                    continue;
+                }
+                type = s;
+            } else if (v == "numchild") {
+                numchildren = atoi (s.c_str ());
+            }
+        }
+        if (!name.empty ()
+            && !internal_name.empty ()
+            /* We don't require type to be non empty
+             * because members might have empty types. For instance,
+             * GDB considers the 'public' or 'protected' keywords of a class
+             * to be a member without type.
+             * We don't require value to be non empty either, as
+             * members that have children won't have any value.  */) {
+            IDebugger::VariableSafePtr var
+                (new IDebugger::Variable (internal_name,
+                                          name, value, type));
+            var->num_expected_children (numchildren);
+            a_vars.push_back (var);
+        }
+    }
+    a_to = cur;
+    return true;
+}
+
+bool
 GDBMIParser::parse_register_names (UString::size_type a_from,
                                    UString::size_type &a_to,
                                    std::map<IDebugger::register_id_t,
@@ -6301,6 +6551,68 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
     a_values = memory_values;
     a_to = cur;
     return true;
+}
+
+bool
+GDBMIParser::parse_variable (UString::size_type a_from,
+                             UString::size_type &a_to,
+                             IDebugger::VariableSafePtr &a_var)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur=a_from;
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_NAME), PREFIX_NAME)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    IDebugger::VariableSafePtr var (new IDebugger::Variable);
+    // Okay, this is going to be a sequence of RESULT (name=value), where
+    // RESULTs are separated by a comma, e.g:
+    // name="var1", numchild="0", value="0",type="int"
+    GDBMIResultSafePtr result;
+    UString value;
+    bool got_variable = false;
+    SKIP_BLANK2 (cur);
+    while (!END_OF_INPUT (cur)
+           && RAW_CHAR_AT (cur) != '\n'
+           && parse_gdbmi_result (cur, cur, result)
+           && result) {
+        LOG_D ("result variable name: " << result->variable (),
+               GDBMI_PARSING_DOMAIN);
+        // the value of result must be a string
+        THROW_IF_FAIL (result->value ()
+                       && (result->value ()->content_type ()
+                           == GDBMIValue::STRING_TYPE));
+        value = result->value ()->get_string_content ();
+        if (result->variable () == "name") {
+            var->internal_name (value);
+            got_variable = true;
+        } else if (result->variable () == "value") {
+            var->value (value);
+        } else if (result->variable () == "numchild") {
+            int s = atoi (value.c_str ());
+            LOG_D ("num children: " << s, GDBMI_PARSING_DOMAIN);
+        } else if (result->variable () == "type") {
+            var->type (value);
+        } else {
+            LOG_D ("hugh? unknown result variable: " << result->variable (),
+                   GDBMI_PARSING_DOMAIN);
+        }
+        SKIP_BLANK2 (cur);
+        if (RAW_CHAR_AT (cur) == ',') {
+            cur++;
+        }
+        SKIP_BLANK2 (cur);
+    }
+
+    if (got_variable) {
+        a_to = cur;
+        a_var = var;
+        return true;
+    }
+    return false;
 }
 
 bool

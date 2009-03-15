@@ -152,6 +152,8 @@ private:
 
     void set_real_library_path (const UString &a_path) ;
 
+    void set_name (const UString &a_name) ;
+
     void set_module_loader (Loader *a_loader) ;
 
 
@@ -165,6 +167,9 @@ public:
     /// from.
     /// \return the path of the library the module has been instanciated from.
     const UString& get_real_library_path () const ;
+
+    /// \brief gets the (short) name of this dynmod
+    const UString& get_name () const;
 
     /// \brief destructor
     virtual ~DynamicModule () ;
@@ -388,6 +393,40 @@ DynamicModuleManager::load_iface_with_default_manager
                                              const UString &a_iface_name)
 {
     return get_default_manager ().load_iface<T> (a_mod_name, a_iface_name) ;
+}
+
+/// This is a shortcut method to load an interface
+/// using the same module_manager that was used to load
+/// a_iface.
+template<class T>
+SafePtr<T, ObjectRef, ObjectUnref>
+load_iface_using_context (DynModIface &a_iface,
+                          const UString &a_iface_name)
+{
+    DynamicModuleManager *manager =
+        a_iface.get_dynamic_module ().get_module_loader ()
+                                    ->get_dynamic_module_manager ();
+    THROW_IF_FAIL (manager);
+    SafePtr<T, ObjectRef, ObjectUnref> iface =
+        manager->load_iface<T> (a_iface.get_dynamic_module ().get_name (),
+                                a_iface_name);
+    THROW_IF_FAIL (iface);
+    return iface;
+}
+
+template<class T>
+SafePtr<T, ObjectRef, ObjectUnref>
+load_iface_using_context (DynamicModule &a_dynmod,
+                          const UString &a_iface_name)
+{
+    DynamicModuleManager *manager =
+        a_dynmod.get_module_loader () ->get_dynamic_module_manager ();
+
+    THROW_IF_FAIL (manager);
+    SafePtr<T, ObjectRef, ObjectUnref> iface =
+        manager->load_iface<T> (a_dynmod.get_name (), a_iface_name);
+    THROW_IF_FAIL (iface);
+    return iface;
 }
 
 NEMIVER_END_NAMESPACE (common)

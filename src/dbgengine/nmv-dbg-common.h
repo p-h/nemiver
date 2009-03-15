@@ -36,20 +36,27 @@ class Command {
     UString m_tag1 ;
     UString m_cookie ;
     IDebugger::VariableSafePtr m_var ;
+    sigc::slot_base m_slot;
 
 public:
 
-    Command ()  {clear ();}
+    Command ()  :
+        m_slot (0)
+    {
+        clear ();
+    }
 
     /// \param a_value a textual command to send to the debugger.
     Command (const UString &a_value) :
-        m_value (a_value)
+        m_value (a_value),
+        m_slot (0)
     {
     }
 
     Command (const UString &a_name, const UString &a_value) :
         m_name (a_name),
-        m_value (a_value)
+        m_value (a_value),
+        m_slot (0)
     {
     }
 
@@ -58,7 +65,8 @@ public:
              const UString &a_cookie) :
         m_name (a_name),
         m_value (a_value),
-        m_cookie (a_cookie)
+        m_cookie (a_cookie),
+        m_slot (0)
     {
     }
 
@@ -83,6 +91,23 @@ public:
 
     void variable (const IDebugger::VariableSafePtr a_in) {m_var = a_in;}
     IDebugger::VariableSafePtr variable () const {return m_var;}
+
+    bool has_slot () const
+    {
+        return m_slot;
+    }
+
+    template<class T>
+    void set_slot (T &a_slot)
+    {
+        m_slot = a_slot;
+    }
+
+    template<class T>
+    const T& get_slot () const
+    {
+        return reinterpret_cast<const T&> (m_slot);
+    }
 
     /// @}
 
@@ -361,9 +386,55 @@ public:
         size_t m_memory_address;
         bool m_has_memory_values;
 
+        // Variable Object
+        IDebugger::VariableSafePtr m_variable;
+        bool m_has_variable;
+
+        // Variable Object deletion information
+        int m_nb_variable_deleted;
+
+        // Children variables of a given variable.
+        vector<IDebugger::VariableSafePtr> m_variable_children;
+        bool m_has_variable_children;
 
     public:
         ResultRecord () {clear () ;}
+
+        /// blank out everything
+        void clear ()
+        {
+            m_kind = UNDEFINED ;
+            m_breakpoints.clear () ;
+            m_attrs.clear () ;
+            m_call_stack.clear () ;
+            m_has_call_stack = false ;
+            m_frames_parameters.clear () ;
+            m_has_frames_parameters = false ;
+            m_local_variables.clear () ;
+            m_has_local_variables = false ;
+            m_variable_value.reset () ;
+            m_has_variable_value = false ;
+            m_thread_list.clear () ;
+            m_has_thread_list = false ;
+            m_thread_id = 0;
+            m_frame_in_thread.clear () ;
+            m_thread_id_got_selected = false;
+            m_file_list.clear () ;
+            m_has_file_list = false ;
+            m_has_current_frame_in_core_stack_trace = false ;
+            m_has_changed_registers = false;
+            m_changed_registers.clear ();
+            m_has_register_values = false;
+            m_register_values.clear ();
+            m_has_register_names = false;
+            m_register_names.clear ();
+            m_memory_values.clear ();
+            m_memory_address = 0;
+            m_has_memory_values = false;
+            m_has_variable = false;
+            m_nb_variable_deleted = 0;
+            m_has_variable_children = false;
+        }
 
         /// \name accessors
 
@@ -530,39 +601,52 @@ public:
             m_has_current_frame_in_core_stack_trace = a_in ;
         }
 
+        bool has_variable () {return m_has_variable; }
+        void has_variable (bool a_in) {m_has_variable = a_in;}
+
+        IDebugger::VariableSafePtr variable () const
+        {
+            return m_variable;
+        }
+        void variable (const IDebugger::VariableSafePtr a_var)
+        {
+            m_variable = a_var;
+            has_variable (true);
+        }
+
+        int number_of_variables_deleted () const
+        {
+            return m_nb_variable_deleted;
+        }
+
+        void number_of_variables_deleted (int a_nb)
+        {
+            m_nb_variable_deleted = a_nb;
+        }
+
+        bool has_variable_children () const
+        {
+            return m_has_variable_children;
+        }
+        void has_variable_children (bool a_in)
+        {
+            m_has_variable_children = a_in;
+        }
+
+        const vector<IDebugger::VariableSafePtr>&
+        variable_children () const
+        {
+            return m_variable_children;
+        }
+        void
+        variable_children (const vector<IDebugger::VariableSafePtr> &a_vars)
+        {
+            m_variable_children = a_vars;
+            has_variable_children (true);
+        }
+
         /// @}
 
-        void clear ()
-        {
-            m_kind = UNDEFINED ;
-            m_breakpoints.clear () ;
-            m_attrs.clear () ;
-            m_call_stack.clear () ;
-            m_has_call_stack = false ;
-            m_frames_parameters.clear () ;
-            m_has_frames_parameters = false ;
-            m_local_variables.clear () ;
-            m_has_local_variables = false ;
-            m_variable_value.reset () ;
-            m_has_variable_value = false ;
-            m_thread_list.clear () ;
-            m_has_thread_list = false ;
-            m_thread_id = 0;
-            m_frame_in_thread.clear () ;
-            m_thread_id_got_selected = false;
-            m_file_list.clear () ;
-            m_has_file_list = false ;
-            m_has_current_frame_in_core_stack_trace = false ;
-            m_has_changed_registers = false;
-            m_changed_registers.clear ();
-            m_has_register_values = false;
-            m_register_values.clear ();
-            m_has_register_names = false;
-            m_register_names.clear ();
-            m_memory_values.clear ();
-            m_memory_address = 0;
-            m_has_memory_values = false;
-        }
     };//end class ResultRecord
 
 private:

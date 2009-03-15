@@ -48,6 +48,11 @@ static const char *gv_output_record2=
 "(gdb)";
 
 static const char *gv_output_record3="^done,thread-ids={thread-id=\"1\"},current-thread-id=\"1\",number-of-threads=\"1\"\n";
+static const char *gv_output_record4="^done,name=\"var1\",numchild=\"1\",value=\"{...}\",type=\"Person\"\n";
+
+static const char *gv_output_record5="^done,ndeleted=\"2\"\n";
+
+static const char *gv_output_record6="^done,numchild=\"3\",children=[child={name=\"var2.public.m_first_name\",exp=\"m_first_name\",numchild=\"2\",type=\"string\"},child={name=\"var2.public.m_family_name\",exp=\"m_family_name\",numchild=\"2\",type=\"string\"},child={name=\"var2.public.m_age\",exp=\"m_age\",numchild=\"0\",type=\"unsigned int\"}]\n";
 
 //the partial result of a gdbmi command: -stack-list-argument 1 command
 //this command is used to implement IDebugger::list_frames_arguments()
@@ -273,6 +278,51 @@ test_output_record ()
     parser.push_input (gv_output_record3);
     is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok) ;
+
+    // gv_output_record4 should result in a variable.
+    parser.push_input (gv_output_record4);
+    is_ok = parser.parse_output_record (0, to, output);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (output.has_result_record ());
+    BOOST_REQUIRE (output.result_record ().has_variable ());
+    BOOST_REQUIRE (output.result_record ().variable ());
+    BOOST_REQUIRE (output.result_record ().variable ()->name ().empty ());
+    BOOST_REQUIRE (output.result_record ().variable ()->internal_name ()
+                   == "var1");
+    BOOST_REQUIRE (output.result_record ().variable ()->type () == "Person");
+
+    // gv_output_record4 should result in 2 deleted variables.
+    parser.push_input (gv_output_record5);
+    is_ok = parser.parse_output_record (0, to, output);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (output.result_record ().number_of_variables_deleted () == 2);
+
+    // gv_output_record5 should result in 3 children variables.
+    parser.push_input (gv_output_record6);
+    is_ok = parser.parse_output_record (0, to, output);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (output.result_record ().has_variable_children ());
+    vector<IDebugger::VariableSafePtr> v =
+            output.result_record ().variable_children ();
+    BOOST_REQUIRE (v.size () == 3);
+
+    int i = 0;
+    BOOST_REQUIRE (v[i]
+                   && v[i]->name () == "m_first_name"
+                   && v[i]->type () == "string"
+                   && v[i]->internal_name () == "var2.public.m_first_name");
+
+    i = 1;
+    BOOST_REQUIRE (v[i]
+                   && v[i]->name () == "m_family_name"
+                   && v[i]->type () == "string"
+                   && v[i]->internal_name () == "var2.public.m_family_name");
+
+    i = 2;
+    BOOST_REQUIRE (v[i]
+                   && v[i]->name () == "m_age"
+                   && v[i]->type () == "unsigned int"
+                   && v[i]->internal_name () == "var2.public.m_age");
 }
 
 void
