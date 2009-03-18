@@ -5096,71 +5096,85 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
     }
 
     GDBMIResultSafePtr gdbmi_result;
-    if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
-        LOG_PARSING_ERROR2 (cur);
-        return false;
-    }
-    if (RAW_CHAR_AT (cur) != ',') {
-        LOG_PARSING_ERROR2 (cur);
-        return false;
-    }
-    ++cur;
-    CHECK_END2 (cur);
-
-    if (gdbmi_result->variable () != "thread-ids") {
-        LOG_ERROR ("expected gdbmi variable 'thread-ids', got: '"
-                   << gdbmi_result->variable () << "\'");
-        return false;
-    }
-    THROW_IF_FAIL (gdbmi_result->value ());
-    THROW_IF_FAIL ((gdbmi_result->value ()->content_type ()
-                       == GDBMIValue::TUPLE_TYPE)
-                   ||
-                   (gdbmi_result->value ()->content_type ()
-                        == GDBMIValue::EMPTY_TYPE));
-
-    GDBMITupleSafePtr gdbmi_tuple;
-    if (gdbmi_result->value ()->content_type ()
-         != GDBMIValue::EMPTY_TYPE) {
-        gdbmi_tuple = gdbmi_result->value ()->get_tuple_content ();
-        THROW_IF_FAIL (gdbmi_tuple);
-    }
-
-    list<GDBMIResultSafePtr> result_list;
-    if (gdbmi_tuple) {
-        result_list = gdbmi_tuple->content ();
-    }
-    list<GDBMIResultSafePtr>::const_iterator it;
-    int thread_id=0;
     std::list<int> thread_ids;
-    for (it = result_list.begin (); it != result_list.end (); ++it) {
-        THROW_IF_FAIL (*it);
-        if ((*it)->variable () != "thread-id") {
-            LOG_ERROR ("expected a gdbmi value with variable name 'thread-id'"
-                       ". Got '" << (*it)->variable () << "'");
+    unsigned int num_threads = 0, current_thread_id = 0;
+
+    // We loop, parsing GDB/MI RESULT constructs and ',' until we reach '\n'
+    while (true) {
+        if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
+            LOG_PARSING_ERROR2 (cur);
             return false;
         }
-        THROW_IF_FAIL ((*it)->value ()
-                       && ((*it)->value ()->content_type ()
-                           == GDBMIValue::STRING_TYPE));
-        thread_id = atoi ((*it)->value ()->get_string_content ().c_str ());
-        THROW_IF_FAIL (thread_id);
-        thread_ids.push_back (thread_id);
-    }
+        if (gdbmi_result->variable () == "thread-ids") {
+            // We've got a RESULT which variable is "thread-ids", we expect
+            // the value to be tuple of RESULTs of the form
+            // thread-id="<thread-id>"
+            THROW_IF_FAIL (gdbmi_result->value ());
+            THROW_IF_FAIL ((gdbmi_result->value ()->content_type ()
+                               == GDBMIValue::TUPLE_TYPE)
+                           ||
+                           (gdbmi_result->value ()->content_type ()
+                                == GDBMIValue::EMPTY_TYPE));
 
-    if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
-        LOG_PARSING_ERROR2 (cur);
-        return false;
+            GDBMITupleSafePtr gdbmi_tuple;
+            if (gdbmi_result->value ()->content_type ()
+                 != GDBMIValue::EMPTY_TYPE) {
+                gdbmi_tuple = gdbmi_result->value ()->get_tuple_content ();
+                THROW_IF_FAIL (gdbmi_tuple);
+            }
+
+            list<GDBMIResultSafePtr> result_list;
+            if (gdbmi_tuple) {
+                result_list = gdbmi_tuple->content ();
+            }
+            list<GDBMIResultSafePtr>::const_iterator it;
+            int thread_id=0;
+            for (it = result_list.begin (); it != result_list.end (); ++it) {
+                THROW_IF_FAIL (*it);
+                if ((*it)->variable () != "thread-id") {
+                    LOG_ERROR ("expected a gdbmi value with "
+                               "variable name 'thread-id'. "
+                               "Got '" << (*it)->variable () << "'");
+                    return false;
+                }
+                THROW_IF_FAIL ((*it)->value ()
+                               && ((*it)->value ()->content_type ()
+                                   == GDBMIValue::STRING_TYPE));
+                thread_id = atoi ((*it)->value ()->get_string_content ().c_str ());
+                THROW_IF_FAIL (thread_id);
+                thread_ids.push_back (thread_id);
+            }
+        } else if (gdbmi_result->variable () == "number-of-threads") {
+            // We've got a RESULT which variable is "number-of-threads",
+            // we expect the result to be a string which is the number of threads.
+            THROW_IF_FAIL (gdbmi_result->value ()
+                           && gdbmi_result->value ()->content_type ()
+                           == GDBMIValue::STRING_TYPE);
+            num_threads =
+                atoi (gdbmi_result->value ()->get_string_content ().c_str ());
+        } else if (gdbmi_result->variable () == "current-thread-id") {
+            // If we've got a RESULT which variable is "current-thread-id",
+            // expect the result to be a string which is the id of the current
+            // thread.
+            current_thread_id =
+                atoi (gdbmi_result->value ()->get_string_content ().c_str ());
+        } else {
+            // Let's consume the unknown RESULT which we might have gotten for
+            // now.
+            LOG_ERROR ("Got an unknown RESULT which variable is '"
+                       << gdbmi_result->variable ()
+                       << "'. Ignoring it thus.");
+        }
+        SKIP_BLANK2 (cur);
+        if (RAW_CHAR_AT (cur) == '\n') {
+            break;
+        }
+        if (RAW_CHAR_AT (cur) == ',') {
+            ++cur;
+            CHECK_END2 (cur);
+        }
+        SKIP_BLANK2 (cur);
     }
-    if (gdbmi_result->variable () != "number-of-threads") {
-        LOG_PARSING_ERROR2 (cur);
-        return false;
-    }
-    THROW_IF_FAIL (gdbmi_result->value ()
-                   && gdbmi_result->value ()->content_type ()
-                       == GDBMIValue::STRING_TYPE);
-    unsigned int num_threads =
-        atoi (gdbmi_result->value ()->get_string_content ().c_str ());
 
     if (num_threads != thread_ids.size ()) {
         LOG_ERROR ("num_threads: '"

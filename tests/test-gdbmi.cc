@@ -47,6 +47,7 @@ static const char *gv_output_record2=
 "^done,value=\"{tree (int, int, int, tree, tree)} 0x483c2f <build_template_parm_index>\"\n"
 "(gdb)";
 
+static const char *gv_output_record3="^done,thread-ids={thread-id=\"1\"},current-thread-id=\"1\",number-of-threads=\"1\"\n";
 
 //the partial result of a gdbmi command: -stack-list-argument 1 command
 //this command is used to implement IDebugger::list_frames_arguments()
@@ -266,6 +267,10 @@ test_output_record ()
     BOOST_REQUIRE (is_ok) ;
 
     parser.push_input (gv_output_record2);
+    is_ok = parser.parse_output_record (0, to, output);
+    BOOST_REQUIRE (is_ok) ;
+
+    parser.push_input (gv_output_record3);
     is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok) ;
 }
