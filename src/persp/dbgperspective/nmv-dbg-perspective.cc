@@ -4748,6 +4748,7 @@ DBGPerspective::session_manager ()
 void
 DBGPerspective::execute_session (ISessMgr::Session &a_session)
 {
+    save_current_session ();
     m_priv->session = a_session;
 
     if (a_session.properties ()[PROGRAM_CWD] != m_priv->prog_path
@@ -4988,6 +4989,7 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
                                    bool a_close_opened_files)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
+    save_current_session ();
 
     if (a_close_opened_files && get_n_pages ()) {
         close_opened_files ();
@@ -5042,6 +5044,7 @@ DBGPerspective::connect_to_remote_target (const UString &a_server_address,
     LOG_FUNCTION_SCOPE_NORMAL_DD
     THROW_IF_FAIL (debugger ());
 
+    save_current_session ();
     debugger ()->attach_to_remote_target (a_server_address, a_server_port);
 
 }
@@ -5050,8 +5053,9 @@ void
 DBGPerspective::connect_to_remote_target (const UString &a_serial_line)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
-
     THROW_IF_FAIL (debugger ());
+
+    save_current_session ();
     debugger ()->attach_to_remote_target (a_serial_line);
 }
 
@@ -5059,8 +5063,9 @@ void
 DBGPerspective::detach_from_program ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
-
     THROW_IF_FAIL (debugger ());
+
+    save_current_session ();
     debugger ()->detach_from_target ();
 }
 
