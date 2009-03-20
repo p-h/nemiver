@@ -4041,6 +4041,10 @@ void
 DBGPerspective::record_and_save_new_session ()
 {
     THROW_IF_FAIL (m_priv);
+    if (m_priv->prog_path.empty ()) {
+        // Don't save emtpy sessions.
+        return;
+    }
     ISessMgr::Session session;
     record_and_save_session (session);
 }
@@ -4156,6 +4160,10 @@ void
 DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 {
     THROW_IF_FAIL (m_priv);
+    if (m_priv->prog_path.empty ()) {
+        // Don't save empty sessions.
+        return;
+    }
     UString session_name = Glib::path_get_basename
         (Glib::filename_from_utf8 (m_priv->prog_path));
 
