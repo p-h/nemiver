@@ -144,8 +144,10 @@ const char* PREFIX_STOPPED_ASYNC_OUTPUT = "*stopped,";
 const char* PREFIX_NAME = "name=\"";
 const char* PREFIX_VARIABLE_DELETED = "ndeleted=\"";
 const char* NDELETED = "ndeleted";
-const char* PREFIX_NUMCHILD= "numchild=\"";
-const char* NUMCHILD= "numchild";
+const char* PREFIX_NUMCHILD = "numchild=\"";
+const char* NUMCHILD = "numchild";
+const char* PREFIX_VARIABLES_CHANGED_LIST = "changelist=[";
+const char* CHANGELIST = "changelist";
 
 bool parse_c_string_body (const UString &a_input,
                           UString::size_type a_from,
@@ -4837,6 +4839,15 @@ fetch_gdbmi_result:
                 } else {
                     LOG_PARSING_ERROR2 (cur);
                 }
+            } else if (!RAW_INPUT.compare (cur,
+                                           strlen (PREFIX_VARIABLES_CHANGED_LIST),
+                                           PREFIX_VARIABLES_CHANGED_LIST)) {
+                list<IDebugger::VariableSafePtr> vars;
+                if (parse_var_changed_list (cur, cur, vars)) {
+                    result_record.changed_var_list (vars);
+                } else {
+                    LOG_PARSING_ERROR2 (cur);
+                }
             } else {
                 GDBMIResultSafePtr result;
                 if (!parse_gdbmi_result (cur, cur, result)
@@ -6074,6 +6085,10 @@ GDBMIParser::parse_variables_deleted (UString::size_type a_from,
     return true;
 }
 
+// We want to parse something like:
+// 'numchild=N,children=[{name=NAME,numchild=N,type=TYPE}]'
+// It's actually two RESULTs, separated by a comma. The second
+// result is a LIST of TUPLEs. Each TUPLE represents a children variable.
 bool
 GDBMIParser::parse_var_list_children
                             (UString::size_type a_from,
@@ -6083,7 +6098,6 @@ GDBMIParser::parse_var_list_children
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
     CHECK_END2 (cur);
-
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_NUMCHILD),
                            PREFIX_NUMCHILD)) {
@@ -6240,6 +6254,109 @@ GDBMIParser::parse_var_list_children
                 (new IDebugger::Variable (internal_name,
                                           name, value, type));
             var->num_expected_children (numchildren);
+            a_vars.push_back (var);
+        }
+    }
+    a_to = cur;
+    return true;
+}
+
+// We want to parse something that likes:
+// 'changelist=[{name="var1",value="3",in_scope="true",type_changed="false"}]'
+// It's a RESULT, which value is a LIST of TUPLEs.
+// Each TUPLE represents a child variable.
+bool
+GDBMIParser::parse_var_changed_list (UString::size_type a_from,
+                                     UString::size_type &a_to,
+                                     list<IDebugger::VariableSafePtr> &a_vars)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_VARIABLES_CHANGED_LIST),
+                           PREFIX_VARIABLES_CHANGED_LIST)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, cur, result) || !result) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    // The name of RESULT must be CHANGELIST
+    if (result->variable () != CHANGELIST) {
+        LOG_ERROR ("expected gdbmi variable " << CHANGELIST << ", got: "
+                   << result->variable () << "\'");
+        return false;
+    }
+    // The value of the RESULT must be a LIST
+    if (!result->value ()
+        || result->value ()->content_type () != GDBMIValue::LIST_TYPE
+        || !result->value ()->get_list_content ()) {
+        LOG_ERROR ("expected a LIST value for the GDBMI variable "
+                   << CHANGELIST);
+        return false;
+    }
+
+    if (result->value ()->get_list_content ()->content_type ()
+            != GDBMIList::VALUE_TYPE) {
+        LOG_ERROR ("expected a TUPLE content in the LIST value of "
+                   << CHANGELIST);
+        return false;
+    }
+    list<GDBMIValueSafePtr> values;
+    result->value ()->get_list_content ()->get_value_content (values);
+    if (values.empty ()) {
+        LOG_ERROR ("expected a non empty TUPLE content in the LIST value of "
+                   << CHANGELIST);
+        return false;
+    }
+    for (list<GDBMIValueSafePtr>::const_iterator value_it = values.begin ();
+         value_it != values.end ();
+         ++value_it) {
+        if (!(*value_it)) {
+            continue;
+        }
+        if ((*value_it)->content_type () != GDBMIValue::TUPLE_TYPE
+            || !(*value_it)->get_tuple_content ()) {
+            LOG_ERROR ("expected a non empty TUPLE content in the LIST value of "
+                       << CHANGELIST);
+            return false;
+        }
+        // the components of a given child variable
+        list<GDBMIResultSafePtr> comps =
+                (*value_it)->get_tuple_content ()->content ();
+        UString n, v, internal_name, value;
+        bool in_scope = false, type_changed = false;
+        IDebugger::VariableSafePtr var;
+        // Walk the list of components of the child variable and really
+        // build the damn variable
+        for (list<GDBMIResultSafePtr>::const_iterator it = comps.begin ();
+             it != comps.end ();
+             ++it) {
+            if (!(*it)
+                || (*it)->value ()->content_type () != GDBMIValue::STRING_TYPE) {
+                continue;
+            }
+            n = (*it)->variable ();
+            v = (*it)->value ()->get_string_content ();
+            if (n == "name") {
+                internal_name = v;
+            } else if (n == "value") {
+                value = v;
+            } else if (n == "in_scope") {
+                in_scope = (v == "true");
+            } else if (n == "type_changed") {
+                type_changed = (v == "true");
+            }
+        }
+        if (!internal_name.empty ()) {
+            var = IDebugger::VariableSafePtr
+                    (new IDebugger::Variable (internal_name,
+                                              "" /* name */,
+                                              value,
+                                              "" /* type */));
             a_vars.push_back (var);
         }
     }

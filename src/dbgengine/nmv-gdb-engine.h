@@ -182,6 +182,16 @@ public:
 
     sigc::signal<void, const VariableSafePtr, const UString&>&
                                                 variable_unfolded_signal () const;
+
+    sigc::signal<void, const VariableSafePtr, const UString&>&
+                variable_expression_evaluated_signal () const;
+
+    sigc::signal<void, const list<VariableSafePtr>&, const UString&>&
+                changed_variables_signal () const;
+
+    sigc::signal<void, VariableSafePtr, const UString&>&
+                assigned_variable_signal () const;
+
     //*************
     //</signals>
     //*************
@@ -408,6 +418,28 @@ public:
                           const UString &a_cookie);
     void unfold_variable (VariableSafePtr a_var,
                           const sigc::slot<void, const VariableSafePtr> &);
+
+    void assign_variable (const VariableSafePtr a_var,
+                          const UString &a_expression,
+                          const UString &a_cookie);
+
+    void assign_variable
+                        (const VariableSafePtr a_var,
+                         const UString &a_expression,
+                         const sigc::slot<void, const VariableSafePtr>& a_slot);
+
+    void evaluate_variable_expr (const VariableSafePtr a_var,
+                                 const UString &a_cookie);
+    void evaluate_variable_expr
+            (const VariableSafePtr a_var,
+             const sigc::slot<void, const VariableSafePtr> &a_slot);
+
+    void list_changed_variables (VariableSafePtr a_root,
+                                 const UString &a_cookie);
+
+    void list_changed_variables
+                (VariableSafePtr a_root,
+                 const sigc::slot<void, const list<VariableSafePtr> > &a_slot);
 };//end class GDBEngine
 
 NEMIVER_END_NAMESPACE (nemiver)

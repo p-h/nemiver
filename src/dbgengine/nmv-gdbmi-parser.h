@@ -795,10 +795,13 @@ public:
                                   UString::size_type &a_to,
                                   vector<IDebugger::VariableSafePtr> &a_vars);
 
+    bool parse_var_changed_list (UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 list<IDebugger::VariableSafePtr> &a_vars);
+
     bool parse_result_record (UString::size_type a_from,
                               UString::size_type &a_to,
                               Output::ResultRecord &a_record);
-
 
     bool parse_output_record (UString::size_type a_from,
                               UString::size_type &a_to,

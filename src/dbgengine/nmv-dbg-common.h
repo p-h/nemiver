@@ -397,6 +397,11 @@ public:
         vector<IDebugger::VariableSafePtr> m_variable_children;
         bool m_has_variable_children;
 
+        // Updated sub variables (direct/indirect children)
+        // of a given variable
+        list<IDebugger::VariableSafePtr> m_changed_var_list;
+        bool m_has_changed_var_list;
+
     public:
         ResultRecord () {clear () ;}
 
@@ -434,6 +439,7 @@ public:
             m_has_variable = false;
             m_nb_variable_deleted = 0;
             m_has_variable_children = false;
+            m_has_changed_var_list = false;
         }
 
         /// \name accessors
@@ -643,6 +649,24 @@ public:
         {
             m_variable_children = a_vars;
             has_variable_children (true);
+        }
+
+        bool has_changed_var_list () const
+        {
+            return m_has_changed_var_list;
+        }
+        void has_changed_var_list (bool a_in)
+        {
+            m_has_changed_var_list = a_in;
+        }
+        const list<IDebugger::VariableSafePtr>& changed_var_list () const
+        {
+            return m_changed_var_list;
+        }
+        void changed_var_list (const list<IDebugger::VariableSafePtr> &a_in)
+        {
+            m_changed_var_list = a_in;
+            has_changed_var_list (true);
         }
 
         /// @}

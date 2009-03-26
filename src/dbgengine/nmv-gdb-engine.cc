@@ -236,6 +236,15 @@ public:
     mutable sigc::signal<void, const VariableSafePtr, const UString&>
                                                         variable_unfolded_signal;
 
+    mutable sigc::signal<void, const VariableSafePtr, const UString&>
+                                        variable_expression_evaluated_signal;
+
+    mutable sigc::signal<void, const list<VariableSafePtr>&, const UString&>
+                                                changed_variables_signal;
+
+    mutable sigc::signal<void, VariableSafePtr, const UString&>
+                                                assigned_variable_signal;
+
     //***********************
     //</GDBEngine attributes>
     //************************
@@ -1106,7 +1115,9 @@ struct OnStoppedHandler: OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         THROW_IF_FAIL (m_is_stopped && m_engine);
-        if (a_in.has_command ()) {}
+        LOG_DD ("stopped. Command name was: '"
+                << a_in.command ().name () << "' "
+                << "Cookie was '" << a_in.command ().cookie () << "'");
 
         int thread_id = m_out_of_band_record.thread_id ();
         int breakpoint_number = -1;
@@ -1533,6 +1544,8 @@ struct OnResultRecordHandler : OutputHandler {
         m_engine (a_engine)
     {}
 
+    // TODO: split this OutputHandler into several different handlers.
+    // Ideally there should be one handler per command sent to GDB.
     bool can_handle (CommandAndOutput &a_in)
     {
         if ((a_in.command ().name () == "print-variable-value"
@@ -1540,7 +1553,9 @@ struct OnResultRecordHandler : OutputHandler {
              || a_in.command ().name () == "print-pointed-variable-value"
              || a_in.command ().name () == "dereference-variable"
              || a_in.command ().name () == "set-register-value"
-             || a_in.command ().name () == "set-memory")
+             || a_in.command ().name () == "set-memory"
+             || a_in.command ().name () == "assign-variable"
+             || a_in.command ().name () == "evaluate-expression")
             && a_in.output ().has_result_record ()
             && (a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE)
@@ -1598,6 +1613,48 @@ struct OnResultRecordHandler : OutputHandler {
             var->set (*a_in.output ().result_record ().variable_value ());
             m_engine->variable_value_set_signal ().emit
                                             (var, a_in.command ().cookie ());
+        } else if (a_in.command ().name () == "assign-variable") {
+            THROW_IF_FAIL (a_in.command ().variable ());
+            THROW_IF_FAIL (a_in.output ().result_record ().variable_value ());
+
+            // Set the result we got from gdb into the variable
+            // handed to us by the client code.
+            a_in.command ().variable ()->value
+                (a_in.output ().result_record ().variable_value ()->value ());
+
+            // Call the slot associated to IDebugger::assign_variable(), if
+            // any.
+            if (a_in.command ().has_slot ()) {
+                typedef sigc::slot<void, const IDebugger::VariableSafePtr>
+                                                                    SlotType;
+                SlotType slot = a_in.command ().get_slot<SlotType> ();
+                slot (a_in.command ().variable ());
+            }
+
+            // Tell the world that the variable got assigned
+            m_engine->assigned_variable_signal ().emit
+                (a_in.command ().variable (), a_in.command ().cookie ());
+        } else if (a_in.command ().name () == "evaluate-expression") {
+            THROW_IF_FAIL (a_in.command ().variable ());
+            THROW_IF_FAIL (a_in.output ().result_record ().variable_value ());
+
+            // Set the result we got from gdb into the variable
+            // handed to us by the client code.
+            a_in.command ().variable ()->value
+                (a_in.output ().result_record ().variable_value ()->value ());
+
+            // Call the slot associated to
+            // IDebugger::evaluate_variable_expr(), if any.
+            if (a_in.command ().has_slot ()) {
+                typedef sigc::slot<void, const IDebugger::VariableSafePtr>
+                                                                    SlotType;
+                SlotType slot = a_in.command ().get_slot<SlotType> ();
+                slot (a_in.command ().variable ());
+            }
+
+            // Tell the world that the expression got evaluated
+            m_engine->variable_expression_evaluated_signal ().emit
+                (a_in.command ().variable (), a_in.command ().cookie ());
         } else if (a_in.command ().name () == "print-pointed-variable-value") {
             LOG_DD ("got print-pointed-variable-value");
             THROW_IF_FAIL (var_name != "");
@@ -2158,6 +2215,66 @@ struct OnUnfoldVariableHandler : public OutputHandler {
     }
 };// End struct OnUnfoldVariableHandler
 
+struct OnListChangedVariableHandler : public OutputHandler {
+    GDBEngine *m_engine;
+
+    OnListChangedVariableHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {
+    }
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().kind ()
+                == Output::ResultRecord::DONE
+            && a_in.output ().result_record ().has_changed_var_list ()
+            && a_in.command ().name () == "list-changed-variables") {
+            LOG_DD ("handler selected");
+            return true;
+        }
+        return false;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        THROW_IF_FAIL (a_in.command ().variable ());
+        THROW_IF_FAIL (a_in.output ().result_record ().has_changed_var_list ());
+
+        // We are going to build the list of descendants of
+        // a_in.command ().variable () that got returned as being
+        // changed.
+        list<IDebugger::VariableSafePtr> vars;
+        const list<IDebugger::VariableSafePtr> &changed_vars =
+                    a_in.output ().result_record ().changed_var_list ();
+        list<IDebugger::VariableSafePtr>::const_iterator it;
+        IDebugger::VariableSafePtr v;
+        for (it = changed_vars.begin (); it != changed_vars.end (); ++it) {
+            v = a_in.command ().variable ()->get_descendant
+                                                ((*it)->internal_name ());
+            // Okay, so v now contains the a descendant variable of
+            // a_in.command ().variable () which value got modified.
+            // Let's set the value of v to the new updated value.
+            v->value ((*it)->value ());
+            if (v) {
+                vars.push_back (v);
+            }
+        }
+        // Call the slot associated to
+        // IDebugger::list_changed_variables(), if any.
+        if (a_in.command ().has_slot ()) {
+            typedef sigc::slot<void,
+                               const list<IDebugger::VariableSafePtr>&>
+                                                                SlotType;
+            SlotType slot = a_in.command ().get_slot<SlotType> ();
+            slot (vars);
+        }
+        // Tell the world about the descendant variables that changed.
+        m_engine->changed_variables_signal ().emit
+                            (vars, a_in.command ().cookie ());
+    }
+};//end OnListChangedVariableHandler
+
 //****************************
 //</GDBengine output handlers
 //***************************
@@ -2438,6 +2555,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnDeleteVariableHandler (this)));
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnUnfoldVariableHandler (this)));
+    m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnListChangedVariableHandler (this)));
 }
 
 sigc::signal<void, Output&>&
@@ -2705,6 +2824,24 @@ sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
 GDBEngine::variable_unfolded_signal () const
 {
     return m_priv->variable_unfolded_signal;
+}
+
+sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
+GDBEngine::variable_expression_evaluated_signal () const
+{
+    return m_priv->variable_expression_evaluated_signal;
+}
+
+sigc::signal<void, const list<IDebugger::VariableSafePtr>&, const UString&>&
+GDBEngine::changed_variables_signal () const
+{
+    return m_priv->changed_variables_signal;
+}
+
+sigc::signal<void, IDebugger::VariableSafePtr, const UString&>&
+GDBEngine::assigned_variable_signal () const
+{
+    return m_priv->assigned_variable_signal;
 }
 
 //******************
@@ -3882,7 +4019,8 @@ GDBEngine::unfold_variable (const VariableSafePtr a_var,
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
     Command command ("unfold-variable",
-                     "-var-list-children" + a_var->internal_name (),
+                     "-var-list-children --all-values "
+                         + a_var->internal_name (),
                      a_cookie);
     command.variable (a_var);
 
@@ -3908,6 +4046,102 @@ GDBEngine::unfold_variable (const VariableSafePtr a_var,
     command.variable (a_var);
     command.set_slot (a_slot);
 
+    queue_command (command);
+}
+
+void
+GDBEngine::assign_variable (const VariableSafePtr a_var,
+                            const UString &a_expression,
+                            const UString &a_cookie)
+{
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+    THROW_IF_FAIL (!a_expression.empty ());
+
+    Command command ("assign-variable",
+                     "-var-assign "
+                      + a_var->internal_name () + " " + a_expression,
+                     a_cookie);
+    command.variable (a_var);
+    queue_command (command);
+
+}
+
+void
+GDBEngine::assign_variable
+                    (const VariableSafePtr a_var,
+                     const UString &a_expression,
+                     const sigc::slot<void, const VariableSafePtr>& a_slot)
+{
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+    THROW_IF_FAIL (!a_expression.empty ());
+
+    Command command ("assign-variable",
+                     "-var-assign "
+                         + a_var->internal_name () + " " + a_expression);
+    command.variable (a_var);
+    command.set_slot (a_slot);
+    queue_command (command);
+}
+
+void
+GDBEngine::evaluate_variable_expr (const VariableSafePtr a_var,
+                                   const UString &a_cookie)
+{
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("evaluate-expression",
+                     "-var-evaluate-expression " + a_var->internal_name (),
+                     a_cookie);
+    command.variable (a_var);
+    queue_command (command);
+}
+
+void
+GDBEngine::evaluate_variable_expr
+                        (const VariableSafePtr a_var,
+                         const sigc::slot<void, const VariableSafePtr> &a_slot)
+{
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("evaluate-expression",
+                     "-var-evaluate-expression " + a_var->internal_name ());
+    command.variable (a_var);
+    command.set_slot (a_slot);
+    queue_command (command);
+}
+
+void
+GDBEngine::list_changed_variables (VariableSafePtr a_var,
+                                   const UString &a_cookie)
+{
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("list-changed-variables",
+                     "-var-update --all-values "
+                         + a_var->internal_name (),
+                     a_cookie);
+    command.variable (a_var);
+    queue_command (command);
+}
+
+void
+GDBEngine::list_changed_variables
+                (VariableSafePtr a_var,
+                 const sigc::slot<void, const list<VariableSafePtr> > &a_slot)
+{
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    Command command ("list-changed-variables",
+                     "-var-update --all-values "
+                         + a_var->internal_name ());
+    command.variable (a_var);
+    command.set_slot (a_slot);
     queue_command (command);
 }
 

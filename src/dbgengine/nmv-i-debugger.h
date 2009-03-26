@@ -357,10 +357,39 @@ public:
         void type (const UString &a_type) {m_type = a_type;}
         void type (const string &a_type) {m_type = a_type;}
 
-        Variable* parent () const {return m_parent;}
+        /// Return true if this instance of Variable has a parent variable,
+        /// false otherwise.
+        bool has_parent () const
+        {
+            return m_parent != 0;
+        }
+
+        /// A getter of the parent Variable of the current instance.
+        const VariableSafePtr parent () const
+        {
+            VariableSafePtr parent (m_parent, true/*add a reference*/);
+            return parent;
+        }
+
+        /// Parent variable setter.
+        /// We don't increase the ref count of the
+        /// parent variable to avoid memory leaks due to refcounting cyles.
+        /// The parent already holds a reference on this instance of
+        /// Variable so we really should not hold a reference on it as
+        /// well.
         void parent (Variable *a_parent)
         {
             m_parent = a_parent;
+        }
+
+        /// \return the root parent of this variable.
+        /// Beware what is returned here is a bare pointer.
+        const VariableSafePtr root () const
+        {
+            if (!has_parent ()) {
+                return VariableSafePtr (this, true /*increase refcount*/);
+            }
+            return parent ()->root ();
         }
 
         void to_string (UString &a_str,
@@ -521,6 +550,31 @@ public:
         bool has_expected_children () const
         {
             return m_num_expected_children != 0;
+        }
+
+        /// Return the descendant of the current instance of Variable.
+        /// \param a_internal_path the internal fully qualified path of the
+        ///        descendant variable.
+        const VariableSafePtr get_descendant
+                                (const UString &a_internal_path) const
+        {
+            VariableSafePtr result;
+            if (internal_name () == a_internal_path) {
+                result.reset (this, true /*take refcount*/);
+                return result;
+            }
+            for (list<VariableSafePtr>::const_iterator it = m_members.begin ();
+                 it != m_members.end ();
+                 ++it) {
+                if (*it && (*it)->internal_name () == a_internal_path) {
+                    return *it;
+                }
+                result = (*it)->get_descendant (a_internal_path);
+                if (result) {
+                    return result;
+                }
+            }
+            return result;
         }
     };//end class Variable
 
@@ -744,6 +798,15 @@ public:
 
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
                                         variable_unfolded_signal () const = 0;
+
+    virtual sigc::signal<void, const VariableSafePtr, const UString&>&
+                variable_expression_evaluated_signal () const = 0;
+
+    virtual sigc::signal<void, const list<VariableSafePtr>&, const UString&>&
+                changed_variables_signal () const  = 0;
+
+    virtual sigc::signal<void, VariableSafePtr, const UString&>&
+                assigned_variable_signal () const = 0;
     /// @}
 
     virtual void do_init (IConfMgrSafePtr &a_conf_mgr) = 0;
@@ -920,8 +983,30 @@ public:
                                                    const VariableSafePtr>&) = 0;
     virtual void unfold_variable (VariableSafePtr a_var,
                                   const UString &a_cookie) = 0;
-    virtual void unfold_variable (VariableSafePtr a_var,
-                                  const sigc::slot<void, const VariableSafePtr> &) = 0;
+    virtual void unfold_variable
+                (VariableSafePtr a_var,
+                 const sigc::slot<void, const VariableSafePtr> &) = 0;
+
+    virtual void assign_variable (const VariableSafePtr a_var,
+                                  const UString &a_expression,
+                                  const UString &a_cookie) = 0;
+
+    virtual void assign_variable
+                    (const VariableSafePtr a_var,
+                     const UString &a_expression,
+                     const sigc::slot<void, const VariableSafePtr>& a_slot) = 0;
+
+    virtual void evaluate_variable_expr (const VariableSafePtr a_var,
+                                         const UString &a_cookie) = 0;
+    virtual void evaluate_variable_expr
+            (const VariableSafePtr a_var,
+             const sigc::slot<void, const VariableSafePtr> &a_slot)= 0;
+
+    virtual void list_changed_variables (VariableSafePtr a_root,
+                                         const UString &a_cookie) = 0;
+    virtual void list_changed_variables
+            (VariableSafePtr a_root,
+             const sigc::slot<void, const list<VariableSafePtr> > &a_slot) = 0;
 };//end IDebugger
 
 NEMIVER_END_NAMESPACE (nemiver)
