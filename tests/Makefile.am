@@ -124,8 +124,7 @@ runtesttypes_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 docore_SOURCES=do-core.cc
-docore_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+docore_LDADD=@NEMIVERCOMMON_LIBS@
 
 inout_SOURCES=inout.cc
 inout_LDADD=@NEMIVERCOMMON_LIBS@ \
