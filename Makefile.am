@@ -32,7 +32,7 @@ doc:
 
 RELEASE_UPLOAD_HOST = master.gnome.org
 RELEASE_UPLOAD_BASE = /home/users/$(USER)
-RELEASE_URL_BASE = http://ftp.gnome.org/pub/GNOME/sources/nemiver/
+RELEASE_URL_BASE = http://download.gnome.org/sources/nemiver
 RELEASE_ANNOUNCE_LIST = nemiver-list@gnome.org (cc gnome-announce-list@gnome.org)
 tar_gz_file = $(PACKAGE)-$(VERSION).tar.gz
 sig_file = $(tar_gz_file).sig
@@ -81,10 +81,10 @@ cat-announcement:
 	@echo ""
 	@echo "Where to get it?"
 	@echo "================"
-	@echo "This release is available as a source package in tar.gz format"
+	@echo "This release is available as a source package in tar.gz and tar.bz2 formats"
 	@echo "and can be downloaded from: $(RELEASE_URL_BASE)"
 	@echo ""
-	@echo "The home page of the Nemiver project is at http://projects.gnome.org/projects/nemiver"
+	@echo "The home page of the Nemiver project is at http://projects.gnome.org/nemiver"
 	@echo ""
 	@echo "What's Changed in this release?"
 	@echo "================================"
