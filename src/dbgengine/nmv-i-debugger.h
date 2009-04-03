@@ -715,32 +715,37 @@ public:
     virtual sigc::signal<void, const list<VariableSafePtr>&, const UString& >&
                             global_variables_listed_signal () const = 0;
 
+    /// Emitted as the result of the IDebugger::print_variable_value() call.
     virtual sigc::signal<void,
                          const UString&/*variable name*/,
-                         const VariableSafePtr&/*variable*/,
+                         const VariableSafePtr /*variable*/,
                          const UString& /*cookie*/>&
                                              variable_value_signal () const = 0;
+
+    /// Emitted as the result of the IDebugger::get_variable_value() call.
     virtual sigc::signal<void,
-                         const VariableSafePtr&/*variable*/,
+                         const VariableSafePtr /*variable*/,
                          const UString& /*cookie*/>&
                                      variable_value_set_signal () const = 0;
 
     virtual sigc::signal<void,
                          const UString&/*variable name*/,
-                         const VariableSafePtr&/*variable*/,
+                         const VariableSafePtr /*variable*/,
                          const UString& /*cookie*/>&
                                     pointed_variable_value_signal () const = 0;
 
+    /// Emitted as the result of the IDebugger::print_variable_type() call.
     virtual sigc::signal<void,
                          const UString&/*variable name*/,
                          const UString&/*type*/,
                          const UString&/*cookie*/>&
                                         variable_type_signal () const = 0;
     virtual sigc::signal<void,
-                         const VariableSafePtr&/*variable*/,
+                         const VariableSafePtr /*variable*/,
                          const UString&/*cookie*/>&
                                     variable_type_set_signal () const=0;
 
+    /// Emitted as a the result of the IDebugger::dereference_variable is call.
     virtual sigc::signal<void,
                          const VariableSafePtr/*the variable we derefed*/,
                          const UString&/*cookie*/>
