@@ -125,21 +125,21 @@ public:
 
     sigc::signal<void,
                  const UString&,
-                 const IDebugger::VariableSafePtr&,
+                 const IDebugger::VariableSafePtr,
                  const UString&>& variable_value_signal () const  ;
 
     sigc::signal<void,
-                 const VariableSafePtr&/*variable*/,
+                 const VariableSafePtr/*variable*/,
                  const UString& /*cookie*/>&
                                      variable_value_set_signal () const ;
 
-    sigc::signal<void, const UString&, const VariableSafePtr&, const UString&>&
+    sigc::signal<void, const UString&, const VariableSafePtr, const UString&>&
                                     pointed_variable_value_signal () const  ;
 
     sigc::signal<void, const UString&, const UString&, const UString&>&
                                         variable_type_signal () const ;
 
-    sigc::signal<void, const VariableSafePtr&, const UString&>&
+    sigc::signal<void, const VariableSafePtr, const UString&>&
                                     variable_type_set_signal () const ;
 
     sigc::signal<void, const VariableSafePtr, const UString&>

@@ -178,23 +178,23 @@ public:
 
     mutable sigc::signal<void,
                          const UString&,
-                         const IDebugger::VariableSafePtr&,
+                         const IDebugger::VariableSafePtr,
                          const UString&>             variable_value_signal;
 
     mutable sigc::signal<void,
-                         const VariableSafePtr&/*variable*/,
+                         const VariableSafePtr/*variable*/,
                          const UString& /*cookie*/>
                                      variable_value_set_signal;
 
     mutable sigc::signal<void,
                          const UString&,
-                         const VariableSafePtr&,
+                         const VariableSafePtr,
                          const UString&> pointed_variable_value_signal;
 
     mutable sigc::signal<void, const UString&, const UString&, const UString&>
                                                         variable_type_signal;
 
-    mutable sigc::signal<void, const VariableSafePtr&, const UString&>
+    mutable sigc::signal<void, const VariableSafePtr, const UString&>
                                                     variable_type_set_signal;
 
     mutable sigc::signal<void, const VariableSafePtr, const UString&>
@@ -2429,19 +2429,22 @@ GDBEngine::global_variables_listed_signal () const
     return m_priv->global_variables_listed_signal;
 }
 
-sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&, const UString&>&
+sigc::signal<void,
+             const UString&,
+             const IDebugger::VariableSafePtr,
+             const UString&>&
 GDBEngine::variable_value_signal () const
 {
     return m_priv->variable_value_signal;
 }
 
-sigc::signal<void, const IDebugger::VariableSafePtr&, const UString&>&
+sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
 GDBEngine::variable_value_set_signal () const
 {
     return m_priv->variable_value_set_signal;
 }
 
-sigc::signal<void, const UString&, const IDebugger::VariableSafePtr&, const UString&>&
+sigc::signal<void, const UString&, const IDebugger::VariableSafePtr, const UString&>&
 GDBEngine::pointed_variable_value_signal () const
 {
     return m_priv->pointed_variable_value_signal;
@@ -2453,7 +2456,7 @@ GDBEngine::variable_type_signal () const
     return m_priv->variable_type_signal;
 }
 
-sigc::signal<void, const IDebugger::VariableSafePtr&, const UString&>&
+sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
 GDBEngine::variable_type_set_signal () const
 {
     return m_priv->variable_type_set_signal;
