@@ -2,8 +2,6 @@
 =============
 
 Dodji Seketeli:
-      Don't quote '*' in -data-evaluate-expression arguments (Closes: #574212)
-      Don't quote args of -data-evaluate-expression in a call (Closes: #574913)
       Update ephy-spinner widget (Closes: #574915)
       Fix tests to work with Boost.Test 1.37
       Fix MI parsing error with Archer (Closes: #575660)
@@ -22,7 +20,6 @@ Jonathon Jongsma:
       Ellipsize filename in tab (Closes: #565645)
       Sort columns of process selection dialog displays warning (Closes: #534700)
       Improve global variable listing (Bug #573709)
-      Quote arguments to -data-evaluate-expression, ptype (bug #574212)
       Check for empty before isspace in UString::chomp() (Closes: #574214)
       Don't split member vars incorrectly if value has comma (Closes: #527947)
       Save session when switching debugging contexts (Fixes: #575912)
