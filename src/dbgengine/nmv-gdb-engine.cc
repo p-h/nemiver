@@ -3126,7 +3126,7 @@ GDBEngine::evaluate_expression (const UString &a_expr,
     if (a_expr == "") {return;}
 
     Command command ("evaluate-expression",
-                     "-data-evaluate-expression '" + a_expr + "'",
+                     "-data-evaluate-expression " + a_expr,
                      a_cookie);
     queue_command (command);
 }
@@ -3155,7 +3155,7 @@ GDBEngine::print_variable_value (const UString &a_var_name,
     }
 
     Command command ("print-variable-value",
-                     "-data-evaluate-expression '" + a_var_name + "'",
+                     "-data-evaluate-expression " + a_var_name,
                      a_cookie);
     command.tag0 ("print-variable-value");
     command.tag1 (a_var_name);
@@ -3175,7 +3175,7 @@ GDBEngine::get_variable_value (const VariableSafePtr &a_var,
     a_var->build_qname (qname);
 
     Command command ("get-variable-value",
-                     "-data-evaluate-expression '" + qname + "'",
+                     "-data-evaluate-expression " + qname,
                      a_cookie);
     command.variable (a_var);
 
@@ -3193,7 +3193,7 @@ GDBEngine::print_pointed_variable_value (const UString &a_var_name,
     }
 
     Command command ("print-pointed-variable-value",
-                     "-data-evaluate-expression *'" + a_var_name + "'",
+                     "-data-evaluate-expression *" + a_var_name,
                      a_cookie);
     command.tag0 ("print-pointed-variable-value");
     command.tag1 (a_var_name);
@@ -3209,7 +3209,7 @@ GDBEngine::print_variable_type (const UString &a_var_name,
     if (a_var_name == "") {return;}
 
     Command command ("print-variable-type",
-                     "ptype '" + a_var_name + "'",
+                     "ptype " + a_var_name,
                      a_cookie);
     command.tag0 ("print-variable-type");
     command.tag1 (a_var_name);
@@ -3230,7 +3230,7 @@ GDBEngine::get_variable_type (const VariableSafePtr &a_var,
     a_var->build_qname (qname);
     LOG_DD ("variable qname: " << qname);
     Command command ("get-variable-type",
-                     "ptype '" + qname + "'",
+                     "ptype " + qname,
                      a_cookie);
     command.variable (a_var);
 
@@ -3265,7 +3265,7 @@ GDBEngine::dereference_variable (const VariableSafePtr &a_var,
     a_var->build_qname (var_qname);
     THROW_IF_FAIL (!var_qname.empty ());
     Command command ("dereference-variable",
-                     "-data-evaluate-expression *'" + var_qname + "'",
+                     "-data-evaluate-expression *" + var_qname,
                      a_cookie);
     command.variable (a_var);
 
@@ -3568,7 +3568,7 @@ GDBEngine::set_register_value (const UString& a_reg_name,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     UString command_str;
-    command_str.printf ("-data-evaluate-expression '$%s=%s'",
+    command_str.printf ("-data-evaluate-expression $%s=%s",
             a_reg_name.c_str (),
             a_value.c_str ());
     Command command ("set-register-value",

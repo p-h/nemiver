@@ -12,7 +12,7 @@ runtestderef \
 runtestlocalvarslist runtestcpplexer \
 runtestcppparser  \
 runtestlibtoolwrapperdetection \
-runtestenv
+runtestenv runtesttypes
 
 
 else
@@ -111,6 +111,11 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestenv_SOURCES=test-env.cc
 runtestenv_LDADD=@NEMIVERCOMMON_LIBS@ \
+@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtesttypes_SOURCES=test-types.cc
+runtesttypes_LDADD=@NEMIVERCOMMON_LIBS@ \
 @BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
