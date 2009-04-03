@@ -1,6 +1,60 @@
+2009-04-03  Dodji Seketeli <dodji@redhat.com>
+
+	Update ChangeLog
+	* ChangeLog: Update.
+
+2009-04-03  Dodji Seketeli <dodji@redhat.com>
+
+	Update NEWS file
+	* NEWS: minor update
+
+2009-04-01  Dodji Seketeli <dodji@redhat.com>
+
+	Update release text
+	* Makefile.am: The release is also available in tar.bz2 format.
+	Update Nemiver project homepage and download links.
+
+2009-03-29  Dodji Seketeli <dodji@redhat.com>
+
+	Update NEWS file
+
+2009-03-29  Dodji Seketeli <dodji@redhat.com>
+
+	Update ChangeLog
+
 2009-03-29  Dodji Seketeli <dodji@redhat.com>
 
 	Bump version number to 0.6.6
+
+2009-03-29  dodjirpm <dodjirpm@virtrawhide.localdomain>
+
+	Don't link the 'docore' test with libnemivercommon.so
+	* tests/Makefile.am:
+	Don't link with libnemivercommon.so
+
+2009-04-03  Dodji Seketeli <dodji@redhat.com>
+
+	Some IDebugger/GDBEngine cleanup
+	* src/dbgengine/nmv-gdb-engine.[cc|h],
+	src/dbgengine/nmv-i-debugger.h: Added some comments. Don't pass
+	IDebugger::VariableSafePtr by reference as signal template parameters.
+	It just bypasses the reference counting. Also, a SafePtr is not bigger
+	than the underlying pointer, so the is no need to do that in that case.
+
+2009-04-03  Dodji Seketeli <dodji@redhat.com>
+
+	Don't quote arguments of ptype and -data-evaluate-expression
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::evaluate_expression,
+	GDBEngine::print_variable_value, GDBEngine::get_variable_value,
+	GDBEngine::print_pointed_variable_value, GDBEngine::print_variable_type,
+	GDBEngine::get_variable_type, GDBEngine::dereference_variable,
+	GDBEngine::set_register_value): Do not quote the arguments of
+	-data-evaluate-expression and ptype because that changes the type of
+	the expression. See comments at
+	http://bugzilla.gnome.org/show_bug.cgi?id=574212.
+	* tests/test-types.cc: New regression test file to make sure we don't
+	sure we don't regress again here.
+	* tests/Makefile.am: Integrate test-types.cc
 
 2009-03-20  Dodji Seketeli <dodji@redhat.com>
 
