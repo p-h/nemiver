@@ -51,7 +51,7 @@ class VarInspectorDialog::Priv {
     Gtk::ComboBoxEntry *var_name_entry;
     Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
-    SafePtr<VarInspector2> var_inspector;
+    SafePtr<VarInspector> var_inspector;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gnome::Glade::Xml> glade;
     IDebuggerSafePtr debugger;
@@ -93,7 +93,7 @@ public:
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
                                                        "inspectorwidgetbox");
-        var_inspector.reset (new VarInspector2 (debugger));
+        var_inspector.reset (new VarInspector (debugger));
         THROW_IF_FAIL (var_inspector);
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
         scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);

@@ -39,8 +39,8 @@ namespace cmn = nemiver::common;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class VarInspector2::Priv : public sigc::trackable {
-    friend class VarInspector2;
+class VarInspector::Priv : public sigc::trackable {
+    friend class VarInspector;
     Priv ();
 
     bool requested_variable;
@@ -146,7 +146,7 @@ class VarInspector2::Priv : public sigc::trackable {
             THROW_IF_FAIL (var_walker);
             var_walker->visited_variable_signal ().connect
                 (sigc::mem_fun
-                 (this, &VarInspector2::Priv::on_visited_variable_signal));
+                 (this, &VarInspector::Priv::on_visited_variable_signal));
         }
         return var_walker;
     }
@@ -220,20 +220,20 @@ public:
         re_init_tree_view ();
         connect_to_signals ();
     }
-};//end class VarInspector2::Priv
+};//end class VarInspector::Priv
 
-VarInspector2::VarInspector2 (IDebuggerSafePtr &a_debugger)
+VarInspector::VarInspector (IDebuggerSafePtr &a_debugger)
 {
     m_priv.reset (new Priv (a_debugger));
 }
 
-VarInspector2::~VarInspector2 ()
+VarInspector::~VarInspector ()
 {
     LOG_D ("deleted", "destructor-domain");
 }
 
 Gtk::Widget&
-VarInspector2::widget () const
+VarInspector::widget () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->tree_view);
@@ -241,7 +241,7 @@ VarInspector2::widget () const
 }
 
 void
-VarInspector2::set_variable (IDebugger::VariableSafePtr &a_variable)
+VarInspector::set_variable (IDebugger::VariableSafePtr &a_variable)
 {
     THROW_IF_FAIL (m_priv);
 
@@ -249,7 +249,7 @@ VarInspector2::set_variable (IDebugger::VariableSafePtr &a_variable)
 }
 
 void
-VarInspector2::inspect_variable (const UString &a_variable_name)
+VarInspector::inspect_variable (const UString &a_variable_name)
 {
     if (a_variable_name == "") {return;}
     THROW_IF_FAIL (m_priv);
@@ -261,7 +261,7 @@ VarInspector2::inspect_variable (const UString &a_variable_name)
 }
 
 IDebugger::VariableSafePtr
-VarInspector2::get_variable () const
+VarInspector::get_variable () const
 {
     THROW_IF_FAIL (m_priv);
 
@@ -269,7 +269,7 @@ VarInspector2::get_variable () const
 }
 
 void
-VarInspector2::clear ()
+VarInspector::clear ()
 {
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();
