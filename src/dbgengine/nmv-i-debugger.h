@@ -277,8 +277,9 @@ public:
 
     class Variable;
     typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr;
+    typedef list<VariableSafePtr> VariableList;
     class Variable : public Object {
-        list<VariableSafePtr> m_members;
+        VariableList m_members;
         UString m_internal_name;
         UString m_name;
         UString m_name_caption;
@@ -328,7 +329,7 @@ public:
             m_parent (0)
         {}
 
-        const list<VariableSafePtr>& members () const {return m_members;}
+        const VariableList& members () const {return m_members;}
 
         void append (const VariableSafePtr &a_var)
         {
@@ -416,7 +417,7 @@ public:
             }
             UString indent_str = a_indent_str + "  ";
             a_str += "\n" + a_indent_str + "{";
-            list<VariableSafePtr>::const_iterator it;
+            VariableList::const_iterator it;
             for (it = members ().begin (); it != members ().end (); ++it) {
                 if (!(*it)) {continue;}
                 a_str += "\n";
@@ -490,7 +491,7 @@ public:
                 return false;
             }
 
-            list<VariableSafePtr>::const_iterator it1, it2;
+            VariableList::const_iterator it1, it2;
             //first make sure our members have the same types as their members
             for (it1=members ().begin (), it2=a_other.members ().begin ();
                  it1 != members ().end ();
@@ -510,8 +511,8 @@ public:
             m_name = a_other.m_name;
             m_name_caption = a_other.m_name_caption;
             m_value = a_other.m_value;
-            list<VariableSafePtr>::iterator it1;
-            list<VariableSafePtr>::const_iterator it2;
+            VariableList::iterator it1;
+            VariableList::const_iterator it2;
             for (it1=m_members.begin (), it2=a_other.m_members.begin ();
                  it1 != m_members.end ();
                  it1++, it2++) {
@@ -525,7 +526,7 @@ public:
             m_name = a_other.m_name;
             m_value = a_other.m_value;
             m_type = a_other.m_type;
-            list<VariableSafePtr>::const_iterator it;
+            VariableList::const_iterator it;
             m_members.clear ();
             for (it = a_other.m_members.begin ();
                  it != a_other.m_members.end ();
@@ -563,7 +564,7 @@ public:
                 result.reset (this, true /*take refcount*/);
                 return result;
             }
-            for (list<VariableSafePtr>::const_iterator it = m_members.begin ();
+            for (VariableList::const_iterator it = m_members.begin ();
                  it != m_members.end ();
                  ++it) {
                 if (*it && (*it)->internal_name () == a_internal_path) {
@@ -709,10 +710,10 @@ public:
                                             current_frame_signal () const = 0;
 
 
-    virtual sigc::signal<void, const list<VariableSafePtr>&, const UString& >&
+    virtual sigc::signal<void, const VariableList&, const UString& >&
                             local_variables_listed_signal () const = 0;
 
-    virtual sigc::signal<void, const list<VariableSafePtr>&, const UString& >&
+    virtual sigc::signal<void, const VariableList&, const UString& >&
                             global_variables_listed_signal () const = 0;
 
     /// Emitted as the result of the IDebugger::print_variable_value() call.
@@ -807,7 +808,7 @@ public:
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
                 variable_expression_evaluated_signal () const = 0;
 
-    virtual sigc::signal<void, const list<VariableSafePtr>&, const UString&>&
+    virtual sigc::signal<void, const VariableList&, const UString&>&
                 changed_variables_signal () const  = 0;
 
     virtual sigc::signal<void, VariableSafePtr, const UString&>&
@@ -1011,7 +1012,7 @@ public:
                                          const UString &a_cookie) = 0;
     virtual void list_changed_variables
             (VariableSafePtr a_root,
-             const sigc::slot<void, const list<VariableSafePtr> > &a_slot) = 0;
+             const sigc::slot<void, const VariableList> &a_slot) = 0;
 };//end IDebugger
 
 NEMIVER_END_NAMESPACE (nemiver)
