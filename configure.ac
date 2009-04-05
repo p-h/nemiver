@@ -137,7 +137,7 @@ AM_CONDITIONAL(AUTOTESTS, test x$ENABLE_AUTOTESTS = xyes)
 
 AC_ARG_ENABLE(workbench,
               AC_HELP_STRING([--enable-workbench=yes|no],
-                            [enable the graphical gd++ workbench (default is yes)]),
+                            [enable the graphical dbg workbench (default is yes)]),
               ENABLE_WORKBENCH=$enableval,
               ENABLE_WORKBENCH=yes)
 if test x$ENABLE_WORKBENCH = xyes ; then
@@ -212,7 +212,15 @@ AC_ARG_ENABLE(symsvis,
               ENABLE_GCC_SYMBOLS_VISIBILITY=$enableval,
               ENABLE_GCC_SYMBOLS_VISIBILITY=no)
 
-
+ENABLE_VAROBJS=yes
+AC_ARG_ENABLE(varobjs,
+              AC_HELP_STRING([--enable-varobjs=yes|no],
+                             [enable variable objects support. default is yes]),
+              ENABLE_VAROBJS=$enableval,
+              ENABLE_VAROBJS=yes)
+if test x$ENABLE_VAROBJS = xyes; then
+    AC_DEFINE([WITH_VAROBJS], 1, [build with varable objects support])
+fi
 dnl *******************************
 dnl checking for libraries we use
 dnl *******************************
@@ -462,6 +470,7 @@ cat <<EOT
     Enable memory view              : ${ENABLE_MEMORYVIEW} (requires gtkhex > $GTKHEX_VERSION)
     gtksourceviewmm version         : ${LIBGTKSOURCEVIEWMM_PKG}
     VFS library                     : ${VFS_PKG}
+    varobjs                         : ${ENABLE_VAROBJS}
     Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
     Maintainer mode                 : ${USER_MAINTAINER_MODE}
 
