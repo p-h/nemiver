@@ -4045,7 +4045,7 @@ GDBEngine::unfold_variable (const VariableSafePtr a_var,
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
     Command command ("unfold-variable",
-                     "-var-list-children " + a_var->internal_name ());
+                     "-var-list-children --all-values " + a_var->internal_name ());
     command.variable (a_var);
     command.set_slot (a_slot);
 
