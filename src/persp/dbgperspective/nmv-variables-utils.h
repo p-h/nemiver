@@ -44,6 +44,7 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
         TYPE_CAPTION_OFFSET,
         VARIABLE_OFFSET,
         IS_HIGHLIGHTED_OFFSET,
+        NEEDS_UNFOLDING,
         FG_COLOR_OFFSET
     };
 
@@ -53,6 +54,7 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> type_caption;
     Gtk::TreeModelColumn<IDebugger::VariableSafePtr> variable;
     Gtk::TreeModelColumn<bool> is_highlighted;
+    Gtk::TreeModelColumn<bool> needs_unfolding;
     Gtk::TreeModelColumn<Gdk::Color> fg_color;
 
     VariableColumns ()
@@ -63,6 +65,7 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
         add (type_caption);
         add (variable);
         add (is_highlighted);
+        add (needs_unfolding);
         add (fg_color);
     }
 };//end VariableColumns
@@ -90,12 +93,12 @@ bool update_a_variable (const IDebugger::VariableSafePtr a_var,
                         bool a_handle_highlight,
                         bool a_is_new_frame);
 
-void append_a_variable (const IDebugger::VariableSafePtr a_var,
+bool append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                         Gtk::TreeModel::iterator &a_parent_row_it);
 
-void append_a_variable (const IDebugger::VariableSafePtr a_var,
+bool append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                         Gtk::TreeModel::iterator &a_parent_row_it,

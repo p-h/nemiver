@@ -54,6 +54,8 @@ nmv-global-vars-inspector-dialog.cc \
 nmv-global-vars-inspector-dialog.h \
 nmv-var-inspector.cc \
 nmv-var-inspector.h \
+nmv-var-inspector2.cc \
+nmv-var-inspector2.h \
 nmv-breakpoints-view.cc \
 nmv-breakpoints-view.h \
 nmv-registers-view.cc \

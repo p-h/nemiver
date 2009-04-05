@@ -280,6 +280,9 @@ public:
     typedef list<VariableSafePtr> VariableList;
     class Variable : public Object {
         VariableList m_members;
+        // If this variable was created with a backend counterpart
+        // (e.g: backend side variable objects in GDB), then this
+        // is the name of the backend side counterpart of this variable.
         UString m_internal_name;
         UString m_name;
         UString m_name_caption;
@@ -338,7 +341,17 @@ public:
             a_var->parent (this);
         }
 
+        /// If this variable was created with a backend counterpart
+        /// (e.g. backend side variable objects in GDB), then this
+        /// returns the name of the backend side counterpart of this variable.
+        /// \return the name of the backend side counterpart of this
+        /// variable. It can be an empty string if there is no backend side
+        /// counterpart variable object created for this object.
         const UString& internal_name () const {return m_internal_name;}
+
+        /// Set the name of the backend side counterpart object.
+        /// (e.g. variable object in GDB).
+        /// \param a_in the new name of backend side counterpart variable object.
         void internal_name (const UString &a_in) {m_internal_name = a_in;}
 
         const UString& name () const {return m_name;}
@@ -551,6 +564,13 @@ public:
         bool has_expected_children () const
         {
             return m_num_expected_children != 0;
+        }
+
+        /// \return true if the current variable needs to be unfolded
+        /// by a call to IDebugger::unfold_variable()
+        bool needs_unfolding () const
+        {
+            return (has_expected_children () && members ().empty ());
         }
 
         /// Return the descendant of the current instance of Variable.

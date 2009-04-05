@@ -27,7 +27,11 @@
 #include <gtkmm/liststore.h>
 #include "common/nmv-exception.h"
 #include "nmv-var-inspector-dialog.h"
+#ifdef WITH_VAROBJS
+#include "nmv-var-inspector2.h"
+#else
 #include "nmv-var-inspector.h"
+#endif //WITH_VAROBJS
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -51,7 +55,11 @@ class VarInspectorDialog::Priv {
     Gtk::ComboBoxEntry *var_name_entry;
     Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
+#ifdef WITH_VAROBJS
+    SafePtr<VarInspector2> var_inspector;
+#else
     SafePtr<VarInspector> var_inspector;
+#endif //WITH_VAROBJS
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gnome::Glade::Xml> glade;
     IDebuggerSafePtr debugger;
@@ -93,8 +101,13 @@ public:
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
                                                        "inspectorwidgetbox");
+#ifdef WITH_VAROBJS
+        var_inspector.reset (new VarInspector2 (debugger));
+#else
         var_inspector.reset (new VarInspector (debugger));
+#endif // WITH_VAROBJS
         THROW_IF_FAIL (var_inspector);
+
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
         scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         scr->set_shadow_type (Gtk::SHADOW_IN);

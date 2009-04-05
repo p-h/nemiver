@@ -230,7 +230,16 @@ update_a_variable_real (const IDebugger::VariableSafePtr a_var,
     }
 }
 
-void
+/// Append a variable to a variable tree view widget.
+///
+/// \param a_var the variable to add
+/// \param a_tree_view the variable tree view widget to consider
+/// \param a_tree_store the tree store of the variable tree view widget
+/// \param a_parent_row_it an iterator to the graphical parent node the
+/// the variable is to be added to. If the iterator is false, then the
+/// variable is added as the root node of the tree view widget.
+/// \return true if a_var was added, false otherwise.
+bool
 append_a_variable (const IDebugger::VariableSafePtr a_var,
                    const Gtk::TreeView &a_tree_view,
                    const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
@@ -239,11 +248,24 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     Gtk::TreeModel::iterator row_it;
-    append_a_variable (a_var, a_tree_view, a_tree_store,
-                       a_parent_row_it, row_it);
+    return append_a_variable (a_var, a_tree_view, a_tree_store,
+                              a_parent_row_it, row_it);
 }
 
-void
+/// Append a variable to a variable tree view widget.
+///
+/// \param a_var the variable to add. It can be zero. In that case,
+/// a dummy (empty) node is added as a graphical child of a_parent_row_it.
+/// \param a_tree_view the variable tree view widget to consider
+/// \param a_tree_store the tree store of the variable tree view widget
+/// \param a_parent_row_it an iterator to the graphical parent node the
+/// the variable is to be added to. If the iterator is false, then the
+/// variable is added as the root node of the tree view widget.
+/// \param result the resulting graphical node that was created an added
+/// to the variable tree view widget. This parameter is set if and only if
+/// the function returned true.
+/// \return true if a_var was added, false otherwise.
+bool
 append_a_variable (const IDebugger::VariableSafePtr a_var,
                    const Gtk::TreeView &a_tree_view,
                    const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
@@ -257,16 +279,43 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
     if (!a_parent_row_it) {
         row_it = a_tree_store->append ();
     } else {
+        if (a_parent_row_it->children ()
+            && a_var
+            && (*a_parent_row_it)[get_variable_columns ().needs_unfolding]){
+            // So a_parent_row_it might have dummy empty nodes as children.
+            // Remove those, so that that we can properly add a_var as a
+            // child node of a_parent_row_it. Then, don't forget to
+            // set get_variable_columns ().needs_unfolding to false.
+            Gtk::TreeModel::Children::const_iterator it;
+            for (it = a_parent_row_it->children ().begin ();
+                 it != a_parent_row_it->children ().end ();) {
+                it = a_tree_store->erase (it);
+            }
+            (*a_parent_row_it)[get_variable_columns ().needs_unfolding]
+                                                                        = false;
+        }
         row_it = a_tree_store->append (a_parent_row_it->children ());
+    }
+    if (!a_var) {
+        return false;
     }
     update_a_variable_node (a_var, a_tree_view, row_it, true, true);
     list<IDebugger::VariableSafePtr>::const_iterator it;
-    for (it = a_var->members ().begin ();
-         it != a_var->members ().end ();
-         ++it) {
-        append_a_variable (*it, a_tree_view, a_tree_store, row_it);
+    if (a_var->needs_unfolding ()) {
+        // Mark *row_it as needing unfolding, and add an empty
+        // child node to it
+        (*row_it)[get_variable_columns ().needs_unfolding] = true;
+        IDebugger::VariableSafePtr empty_var;
+        append_a_variable (empty_var, a_tree_view, a_tree_store, row_it);
+    } else {
+        for (it = a_var->members ().begin ();
+             it != a_var->members ().end ();
+             ++it) {
+            append_a_variable (*it, a_tree_view, a_tree_store, row_it);
+        }
     }
     a_result = row_it;
+    return true;
 }
 
 
