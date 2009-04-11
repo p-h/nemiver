@@ -50,7 +50,7 @@ public:
     UString (const char *a_cstr, long a_len=-1) ;
     UString (const unsigned char *a_cstr, long a_len=-1) ;
     UString (const Glib::ustring &an_other_string) ;
-    UString (const string &an_other_string) ;
+    explicit UString (const string &an_other_string) ;
     UString (UString const &an_other_string) ;
     virtual ~UString () ;
     UString& set (const gchar* a_buf, gulong a_len) ;

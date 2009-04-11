@@ -235,7 +235,8 @@ Workbench::on_contents_menu_item_action ()
     THROW_IF_FAIL (!path_to_help.empty ());
     UString cmd_line ("yelp " + path_to_help);
     LOG_DD ("going to spawn: " << cmd_line);
-    bool is_ok = g_spawn_command_line_async (cmd_line.c_str (), NULL);
+    bool is_ok = g_spawn_command_line_async (Glib::locale_from_utf8
+                                             (cmd_line).c_str (), NULL);
     if (!is_ok) {
         LOG_ERROR ("failed to spawn " << is_ok);
     }

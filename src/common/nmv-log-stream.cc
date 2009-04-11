@@ -124,7 +124,7 @@ public:
         return *this ;
     }
 
-    LogSink& operator<< (const UString &a_string)
+    LogSink& operator<< (const Glib::ustring &a_string)
     {
         if (!m_out) throw runtime_error ("underlying ostream not initialized") ;
         Glib::Mutex::Lock lock (m_ostream_mutex) ;
@@ -510,14 +510,26 @@ LogStream::pop_domain ()
 }
 
 LogStream&
-LogStream::write (const UString &a_msg, const string &a_domain)
+LogStream::write (const Glib::ustring &a_msg, const string &a_domain)
 {
     return write (a_msg.c_str (), a_msg.bytes (), a_domain) ;
 }
 
 
 LogStream&
-LogStream::operator<< (const UString &a_string)
+LogStream::operator<< (const char* a_c_string)
+{
+    return write (a_c_string, -1, m_priv->default_domains.front ()) ;
+}
+
+LogStream&
+LogStream::operator<< (const std::string &a_string)
+{
+    return write (a_string.c_str (), -1, m_priv->default_domains.front ()) ;
+}
+
+LogStream&
+LogStream::operator<< (const Glib::ustring &a_string)
 {
     return write (a_string, m_priv->default_domains.front ()) ;
 }
