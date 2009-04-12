@@ -398,7 +398,6 @@ public:
         }
 
         /// \return the root parent of this variable.
-        /// Beware what is returned here is a bare pointer.
         const VariableSafePtr root () const
         {
             if (!has_parent ()) {
