@@ -890,6 +890,8 @@ public:
 
     virtual IDebugger::State get_state () const = 0;
 
+    virtual int get_current_frame_level () const = 0;
+
     virtual bool stop_target () = 0;
 
     virtual void exit_engine () = 0;

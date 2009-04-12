@@ -100,6 +100,7 @@ public:
 
     OutputHandlerList output_handler_list;
     IDebugger::State state;
+    int cur_frame_level;
     ILangTraitSafePtr lang_trait;
     UString debugger_full_path;
     GDBMIParser gdbmi_parser;
@@ -394,6 +395,7 @@ public:
         line_busy (false),
         error_buffer_status (DEFAULT),
         state (IDebugger::NOT_STARTED),
+        cur_frame_level (0),
         gdbmi_parser (GDBMIParser::BROKEN_MODE)
     {
         gdb_stdout_signal.connect (sigc::mem_fun
@@ -1125,6 +1127,10 @@ struct OnStoppedHandler: OutputHandler {
         if (reason == IDebugger::BREAKPOINT_HIT)
             breakpoint_number = m_out_of_band_record.breakpoint_number ();
 
+        if (m_out_of_band_record.has_frame ()) {
+            m_engine->set_current_frame_level
+                    (m_out_of_band_record.frame ().level ());
+        }
         m_engine->stopped_signal ().emit
                     (m_out_of_band_record.stop_reason (),
                      m_out_of_band_record.has_frame (),
@@ -1260,6 +1266,9 @@ struct OnCommandDoneHandler : OutputHandler {
                                                a_in.command ().cookie ());
         if (a_in.command ().name () == "attach-to-program") {
             m_engine->set_attached_to_target (true);
+        }
+        if (a_in.command ().name () == "select-frame") {
+            m_engine->set_current_frame_level (a_in.command ().tag2 ());
         }
         //TODO: this is not necessarily true. Before setting the state
         //to ready here, one must now which command exactly was fired so
@@ -2496,6 +2505,25 @@ GDBEngine::get_state () const
     return m_priv->state;
 }
 
+int
+GDBEngine::get_current_frame_level () const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    THROW_IF_FAIL (m_priv);
+
+    LOG_DD ("state: " << m_priv->cur_frame_level);
+    return m_priv->cur_frame_level;
+}
+
+void
+GDBEngine::set_current_frame_level (int a_level)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    THROW_IF_FAIL (m_priv);
+
+    m_priv->cur_frame_level = a_level;
+}
+
 void
 GDBEngine::init_output_handlers ()
 {
@@ -3382,10 +3410,13 @@ GDBEngine::select_frame (int a_frame_id,
                          const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    queue_command (Command ("select-frame",
-                            "-stack-select-frame "
-                                    + UString::from_int (a_frame_id),
-                            a_cookie));
+    Command command ("select-frame",
+                     "-stack-select-frame "
+                        + UString::from_int (a_frame_id),
+                     a_cookie);
+    command.tag2 (a_frame_id);
+    queue_command (command);
+
 }
 
 void
