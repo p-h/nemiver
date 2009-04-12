@@ -329,7 +329,8 @@ public:
         {}
 
         Variable () :
-            m_parent (0)
+            m_parent (0),
+            m_num_expected_children (0)
         {}
 
         const VariableList& members () const {return m_members;}
