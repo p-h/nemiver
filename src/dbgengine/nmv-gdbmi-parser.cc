@@ -6717,6 +6717,7 @@ GDBMIParser::parse_variable (UString::size_type a_from,
             var->value (value);
         } else if (result->variable () == "numchild") {
             int s = atoi (value.c_str ());
+            var->num_expected_children (s);
             LOG_D ("num children: " << s, GDBMI_PARSING_DOMAIN);
         } else if (result->variable () == "type") {
             var->type (value);
