@@ -50,6 +50,8 @@ nmv-variables-utils.cc \
 nmv-variables-utils.h \
 nmv-local-vars-inspector.cc \
 nmv-local-vars-inspector.h \
+nmv-local-vars-inspector2.cc \
+nmv-local-vars-inspector2.h \
 nmv-global-vars-inspector-dialog.cc \
 nmv-global-vars-inspector-dialog.h \
 nmv-var-inspector.cc \

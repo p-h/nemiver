@@ -71,9 +71,11 @@
 #include "nmv-ui-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
-
+#ifdef WITH_VAROBJS
+#include "nmv-local-vars-inspector2.h"
+#else
 #include "nmv-local-vars-inspector.h"
-
+#endif
 #include "nmv-global-vars-inspector-dialog.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
@@ -593,8 +595,11 @@ public:
     Gtk::ScrolledWindow& get_thread_list_scrolled_win ();
 
     Gtk::HPaned& get_call_stack_paned ();
-
+#ifdef WITH_VAROBJS
+    LocalVarsInspector2& get_local_vars_inspector ();
+#else
     LocalVarsInspector& get_local_vars_inspector ();
+#endif
 
     Gtk::ScrolledWindow& get_local_vars_inspector_scrolled_win ();
 
@@ -793,7 +798,11 @@ struct DBGPerspective::Priv {
 #endif // WITH_GIO
     Path2MonitorMap path_2_monitor_map;
     Gtk::Notebook *statuses_notebook;
+#ifdef WITH_VAROBJS
+    SafePtr<LocalVarsInspector2> variables_editor;
+#else
     SafePtr<LocalVarsInspector> variables_editor;
+#endif
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win;
     SafePtr<Terminal> terminal;
     SafePtr<Gtk::Box> terminal_box;
@@ -6080,7 +6089,11 @@ DBGPerspective::get_thread_list_scrolled_win ()
     return *m_priv->thread_list_scrolled_win;
 }
 
+#ifdef WITH_VAROBJS
+LocalVarsInspector2&
+#else
 LocalVarsInspector&
+#endif
 DBGPerspective::get_local_vars_inspector ()
 {
     THROW_IF_FAIL (m_priv);
@@ -6088,7 +6101,11 @@ DBGPerspective::get_local_vars_inspector ()
 
     if (!m_priv->variables_editor) {
         m_priv->variables_editor.reset
+#ifdef WITH_VAROBJS
+            (new LocalVarsInspector2 (debugger (),
+#else
             (new LocalVarsInspector (debugger (),
+#endif
                                      *m_priv->workbench,
                                      *this));
     }
