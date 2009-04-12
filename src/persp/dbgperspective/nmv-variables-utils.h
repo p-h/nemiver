@@ -83,6 +83,11 @@ void update_a_variable_node (const IDebugger::VariableSafePtr a_var,
                              bool a_handle_highlight,
                              bool a_is_new_frame);
 
+void update_unfolded_variable (const IDebugger::VariableSafePtr a_var,
+                               const Gtk::TreeView &a_tree_view,
+                               const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
+                               Gtk::TreeModel::iterator a_var_it);
+
 bool find_a_variable (const IDebugger::VariableSafePtr a_var,
                       const Gtk::TreeModel::iterator &a_parent_row_it,
                       Gtk::TreeModel::iterator &a_out_row_it);

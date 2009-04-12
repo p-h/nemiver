@@ -156,6 +156,39 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     set_a_variable_node_type (a_iter,  a_var->type ());
 }
 
+
+/// Update a graphical variable to make it show the new graphical children
+/// nodes representing the new children of a variable.
+/// \a_var the variable that got unfolded
+/// \a_tree_view the tree view in which a_var is represented
+/// \a_tree_store the tree store in which a_var is represented
+/// \a_var_it the graphical node of the variable that got unfolded.
+/// So what happened is that a_var got unfolded.
+/// a_var is bound to the graphical node pointed to by a_var_it.
+/// This function then updates a_var_it to make it show new graphical
+/// nodes representing the new children of a_variable.
+void
+update_unfolded_variable (const IDebugger::VariableSafePtr a_var,
+                          const Gtk::TreeView &a_tree_view,
+                          const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
+                          Gtk::TreeModel::iterator a_var_it)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    Gtk::TreeModel::iterator result_var_row_it;
+    IDebugger::VariableList::const_iterator var_it;
+    IDebugger::VariableList::const_iterator member_it;
+    for (member_it = a_var->members ().begin ();
+         member_it != a_var->members ().end ();
+         ++member_it) {
+        append_a_variable (*member_it,
+                           a_tree_view,
+                           a_tree_store,
+                           a_var_it,
+                           result_var_row_it);
+    }
+}
+
 bool
 find_a_variable (const IDebugger::VariableSafePtr a_var,
                  const Gtk::TreeModel::iterator &a_parent_row_it,
