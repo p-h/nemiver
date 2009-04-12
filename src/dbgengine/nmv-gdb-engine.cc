@@ -2108,7 +2108,7 @@ struct OnCreateVariableHandler : public OutputHandler
         return false;
     }
 
-    void do_handle (CommandAndOutput &a_in __attribute__ ((unused)))
+    void do_handle (CommandAndOutput &a_in)
     {
         // Set the name of the variable to the name that got stored
         // in the tag0 member of the command.
