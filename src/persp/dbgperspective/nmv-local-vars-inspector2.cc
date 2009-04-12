@@ -58,9 +58,6 @@ public:
     SafePtr<Gtk::TreeRowReference> function_arguments_row_ref;
     IDebugger::VariableList local_vars;
     IDebugger::VariableList function_arguments;
-    SafePtr<Gtk::Menu> contextual_menu;
-    Gtk::MenuItem *dereference_mi;
-    Gtk::Widget *context_menu;
     UString previous_function_name;
     Glib::RefPtr<Gtk::ActionGroup> var_inspector_action_group;
     bool is_new_frame;
@@ -75,8 +72,6 @@ public:
         workbench (a_workbench),
         perspective (a_perspective),
         tree_view (VarsTreeView::create ()),
-        dereference_mi (0),
-        context_menu (0),
         is_new_frame (false),
         is_up2date (true),
         saved_reason (IDebugger::UNDEFINED_REASON),
@@ -92,42 +87,6 @@ public:
         re_init_tree_view ();
         connect_to_debugger_signals ();
         init_graphical_signals ();
-        init_actions ();
-    }
-
-    void
-    init_actions ()
-    {
-        Gtk::StockID nil_stock_id ("");
-        static ui_utils::ActionEntry var_inspector_action_entries [] = {
-            {
-                "DereferencePointerMenuItemAction",
-                nil_stock_id,
-                _("Dereference the pointer"),
-                _("Dereference the selected pointer variable"),
-                sigc::mem_fun
-                    (*this,
-                     &Priv::dereference_pointer_action),
-                ui_utils::ActionEntry::DEFAULT,
-                ""
-            }
-        };
-
-        var_inspector_action_group =
-            Gtk::ActionGroup::create ("var-inspector-action-group");
-        var_inspector_action_group->set_sensitive (true);
-        int num_actions =
-            sizeof (var_inspector_action_entries)
-                /
-            sizeof (ui_utils::ActionEntry);
-
-        ui_utils::add_action_entries_to_action_group
-            (var_inspector_action_entries,
-             num_actions,
-             var_inspector_action_group);
-
-        workbench.get_ui_manager ()->insert_action_group
-                                                (var_inspector_action_group);
     }
 
     void
@@ -143,9 +102,7 @@ public:
         is_new_frame = true;
 
         //****************************************************
-        //add four rows: local variables, function arguments,
-        //dereferenced variables and global variables.
-        //Store row refs off both rows
+        //add two rows: local variables and function arguments,
         //****************************************************
         Gtk::TreeModel::iterator it = tree_store->append ();
         THROW_IF_FAIL (it);
@@ -377,78 +334,6 @@ public:
                                              false);
         }
         return false;
-    }
-
-    void
-    popup_context_menu (GdkEventButton *a_event)
-    {
-        THROW_IF_FAIL (a_event);
-        THROW_IF_FAIL (tree_view);
-
-        Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_context_menu ());
-        THROW_IF_FAIL (menu);
-
-        //only pop up a menu if a row exists at that position
-        Gtk::TreeModel::Path path;
-        Gtk::TreeViewColumn* column=NULL;
-        int cell_x=0, cell_y=0;
-        if (tree_view->get_path_at_pos (static_cast<int> (a_event->x),
-                                        static_cast<int> (a_event->y),
-                                        path,
-                                        column,
-                                        cell_x,
-                                        cell_y)) {
-            menu->popup (a_event->button, a_event->time);
-        }
-    }
-
-    Gtk::Widget*
-    get_context_menu ()
-    {
-        if (!context_menu) {
-            context_menu = load_menu ("varinspectorpopup.xml",
-                                      "/VarInspectorPopup");
-            THROW_IF_FAIL (context_menu);
-        }
-
-            return context_menu;
-    }
-
-    Gtk::Widget*
-    load_menu (UString a_filename, UString a_widget_name)
-    {
-        NEMIVER_TRY
-
-        string relative_path = Glib::build_filename ("menus", a_filename);
-        string absolute_path;
-        THROW_IF_FAIL (perspective.build_absolute_resource_path
-                (Glib::locale_to_utf8 (relative_path),
-                 absolute_path));
-
-        workbench.get_ui_manager ()->add_ui_from_file
-            (Glib::locale_to_utf8 (absolute_path));
-
-        NEMIVER_CATCH
-
-        return workbench.get_ui_manager ()->get_widget (a_widget_name);
-    }
-
-    void
-    dereference_pointer_action ()
-    {
-        if (!cur_selected_row) {
-            LOG_ERROR ("no row was selected");
-            return;
-        }
-        THROW_IF_FAIL (debugger);
-        IDebugger::VariableSafePtr variable =
-            (IDebugger::VariableSafePtr) cur_selected_row->get_value
-                                (vutil::get_variable_columns ().variable);
-        if (!variable) {
-            LOG_ERROR ("got null variable from selected row!");
-            return;
-        }
-        debugger->dereference_variable (variable);
     }
 
     void
@@ -808,7 +693,7 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
         if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3)) {
-            popup_context_menu (a_event);
+            /* do nothing for now*/
         }
         NEMIVER_CATCH
     }
