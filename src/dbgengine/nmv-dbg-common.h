@@ -30,17 +30,19 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 /// \brief A container of the textual command sent to the debugger
 class Command {
+    UString m_cookie ;
     UString m_name ;
     UString m_value ;
     UString m_tag0 ;
     UString m_tag1 ;
-    UString m_cookie ;
+    int m_tag2;
     IDebugger::VariableSafePtr m_var ;
     sigc::slot_base m_slot;
 
 public:
 
     Command ()  :
+        m_tag2 (0),
         m_slot (0)
     {
         clear ();
@@ -49,6 +51,7 @@ public:
     /// \param a_value a textual command to send to the debugger.
     Command (const UString &a_value) :
         m_value (a_value),
+        m_tag2 (0),
         m_slot (0)
     {
     }
@@ -56,6 +59,7 @@ public:
     Command (const UString &a_name, const UString &a_value) :
         m_name (a_name),
         m_value (a_value),
+        m_tag2 (0),
         m_slot (0)
     {
     }
@@ -63,9 +67,10 @@ public:
     Command (const UString &a_name,
              const UString &a_value,
              const UString &a_cookie) :
+        m_cookie (a_cookie),
         m_name (a_name),
         m_value (a_value),
-        m_cookie (a_cookie),
+        m_tag2 (0),
         m_slot (0)
     {
     }
@@ -88,6 +93,9 @@ public:
 
     const UString& tag1 () const {return m_tag1;}
     void tag1 (const UString &a_in) {m_tag1 = a_in;}
+
+    int tag2 () const {return m_tag2;}
+    void tag2 (int a_in) {m_tag2 = a_in;}
 
     void variable (const IDebugger::VariableSafePtr a_in) {m_var = a_in;}
     IDebugger::VariableSafePtr variable () const {return m_var;}
