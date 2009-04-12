@@ -97,9 +97,8 @@ UString::UString (const Glib::ustring &an_other_string) :
 {}
 
 UString::UString (const string &an_other_string) :
-    Glib::ustring (Glib::locale_to_utf8 (an_other_string.c_str ()))
-{
-}
+    Glib::ustring (an_other_string)
+{}
 
 UString::~UString ()
 {}

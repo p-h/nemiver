@@ -524,7 +524,8 @@ public:
     {
         const char *tmp = g_getenv ("PATH");
         if (!tmp) {return false;}
-        vector<UString> path_dirs = UString (tmp).split (":");
+        vector<UString> path_dirs =
+            UString (Glib::filename_to_utf8 (tmp)).split (":");
         path_dirs.insert (path_dirs.begin (), ("."));
         vector<UString>::const_iterator it;
         string file_path;
@@ -3487,6 +3488,7 @@ fetch_variable:
     }
     LOG_DD ("globals: got variable name: " << var_name );
 
+    // TODO: What encoding is var_name?
     var.reset (new IDebugger::Variable (UString (var_name)));
     var_list.push_back (var);
 

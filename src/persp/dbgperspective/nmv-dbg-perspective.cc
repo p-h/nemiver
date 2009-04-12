@@ -980,7 +980,7 @@ struct DBGPerspective::Priv {
 
         UString buf_content;
         if (is_buffer_valid_utf8 (a_input.c_str (), a_input.size ())) {
-            a_output = UString(a_input.c_str ());
+            a_output = UString(a_input);
             return true;
         }
         UString utf8_content;
