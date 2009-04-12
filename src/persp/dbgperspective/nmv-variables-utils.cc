@@ -170,12 +170,14 @@ find_a_variable (const IDebugger::VariableSafePtr a_var,
          ++row_it) {
         var = row_it->get_value (get_variable_columns ().variable);
         if (!var) {
-            LOG_ERROR ("hit a null variable");
+            LOG_DD ("hit a null variable");
             continue;
         }
         LOG_DD ("reading var: " << var->name ());
         if (var->name ().raw () == a_var->name ().raw ()) {
             a_out_row_it = row_it;
+            return true;
+        } else if (find_a_variable (a_var, row_it, a_out_row_it)) {
             return true;
         }
     }
