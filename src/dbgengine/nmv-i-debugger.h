@@ -1034,7 +1034,7 @@ public:
                                          const UString &a_cookie) = 0;
     virtual void list_changed_variables
             (VariableSafePtr a_root,
-             const sigc::slot<void, const VariableList> &a_slot) = 0;
+             const sigc::slot<void, const VariableList&> &a_slot) = 0;
 };//end IDebugger
 
 NEMIVER_END_NAMESPACE (nemiver)

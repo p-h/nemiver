@@ -443,7 +443,7 @@ public:
 
     void list_changed_variables
                 (VariableSafePtr a_root,
-                 const sigc::slot<void, const list<VariableSafePtr> > &a_slot);
+                 const sigc::slot<void, const list<VariableSafePtr>& > &a_slot);
 };//end class GDBEngine
 
 NEMIVER_END_NAMESPACE (nemiver)

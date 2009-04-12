@@ -4166,7 +4166,7 @@ GDBEngine::list_changed_variables (VariableSafePtr a_var,
 void
 GDBEngine::list_changed_variables
                 (VariableSafePtr a_var,
-                 const sigc::slot<void, const list<VariableSafePtr> > &a_slot)
+                 const sigc::slot<void, const list<VariableSafePtr>& > &a_slot)
 {
     THROW_IF_FAIL (a_var);
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
