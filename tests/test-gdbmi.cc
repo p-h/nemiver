@@ -56,6 +56,9 @@ static const char *gv_output_record6="^done,numchild=\"3\",children=[child={name
 
 static const char *gv_output_record7="^done,changelist=[{name=\"var1.public.m_first_name.public.npos\",value=\"1\",in_scope=\"true\",type_changed=\"false\"}]\n";
 
+static const char *gv_output_record8="^done,changelist=[]\n";
+
+
 //the partial result of a gdbmi command: -stack-list-argument 1 command
 //this command is used to implement IDebugger::list_frames_arguments()
 static const char* gv_stack_arguments0 =
@@ -327,6 +330,11 @@ test_output_record ()
                    && v[i]->internal_name () == "var2.public.m_age");
     // gv_output_record7 should result in 1 variable.
     parser.push_input (gv_output_record7);
+    is_ok = parser.parse_output_record (0, to, output);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (output.result_record ().has_changed_var_list ());
+    // gv_output_record8 should result in 0 variable.
+    parser.push_input (gv_output_record8);
     is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok);
     BOOST_REQUIRE (output.result_record ().has_changed_var_list ());

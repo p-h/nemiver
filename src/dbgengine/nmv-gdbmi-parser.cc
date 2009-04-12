@@ -6299,6 +6299,13 @@ GDBMIParser::parse_var_changed_list (UString::size_type a_from,
         return false;
     }
 
+    // Have we got an empty list ?
+    if (result->value ()->get_list_content ()->empty ()) {
+        a_vars.clear ();
+        a_to = cur;
+        return true;
+    }
+
     if (result->value ()->get_list_content ()->content_type ()
             != GDBMIList::VALUE_TYPE) {
         LOG_ERROR ("expected a TUPLE content in the LIST value of "
