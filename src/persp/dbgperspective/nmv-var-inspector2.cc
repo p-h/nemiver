@@ -33,6 +33,8 @@
 #include "nmv-ui-utils.h"
 #include "nmv-vars-treeview.h"
 
+#ifdef WITH_VAROBJS
+
 namespace uutil = nemiver::ui_utils;
 namespace vutil = nemiver::variables_utils2;
 namespace cmn = nemiver::common;
@@ -129,26 +131,6 @@ class VarInspector2::Priv : public sigc::trackable {
             tree_view->expand_row (tree_store->get_path (var_row), false);
         }
         variable = a_variable;
-    }
-
-    void
-    update_unfolded_variable (const IDebugger::VariableSafePtr a_variable,
-                              Gtk::TreeModel::iterator &a_var_it)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-        Gtk::TreeModel::iterator result_var_row_it;
-        IDebugger::VariableList::const_iterator var_it;
-        IDebugger::VariableList::const_iterator member_it;
-        for (member_it = a_variable->members ().begin ();
-             member_it != a_variable->members ().end ();
-             ++member_it) {
-            vutil::append_a_variable (*member_it,
-                                      *tree_view,
-                                      tree_store,
-                                      a_var_it,
-                                      result_var_row_it);
-        }
     }
 
     void
@@ -277,7 +259,7 @@ class VarInspector2::Priv : public sigc::trackable {
         NEMIVER_TRY
 
         Gtk::TreeModel::iterator var_it = tree_store->get_iter (a_var_node);
-        update_unfolded_variable (a_var, var_it);
+        vutil::update_unfolded_variable (a_var, *tree_view, tree_store, var_it);
         tree_view->expand_row (a_var_node, false);
 
         NEMIVER_CATCH
@@ -360,4 +342,6 @@ VarInspector2::clear ()
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
+
+#endif //WITH_VAROBJS
 
