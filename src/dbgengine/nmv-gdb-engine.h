@@ -264,6 +264,10 @@ public:
 
     IDebugger::State get_state () const ;
 
+    int get_current_frame_level () const;
+
+    void set_current_frame_level (int);
+
     void step_in (const UString &a_cookie) ;
 
     void step_out (const UString &a_cookie) ;
