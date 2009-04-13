@@ -26,6 +26,10 @@
 #include <cstring>
 
 #include "config.h"
+// For OpenBSD
+#include <sys/types.h>
+// For OpenBSD
+#include <unistd.h>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
