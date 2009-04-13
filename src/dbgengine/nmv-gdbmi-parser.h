@@ -40,6 +40,8 @@ typedef SafePtr<GDBMITuple, ObjectRef, ObjectUnref> GDBMITupleSafePtr ;
 typedef SafePtr<GDBMIValue, ObjectRef, ObjectUnref> GDBMIValueSafePtr;
 typedef SafePtr<GDBMIList, ObjectRef, ObjectUnref> GDBMIListSafePtr ;
 
+/// This type abstracts a GDB/MI TUPLE.
+/// TUPLE ==>   "{}" | "{" RESULT ( "," RESULT )* "}"
 class GDBMITuple : public Object {
     GDBMITuple (const GDBMITuple&) ;
     GDBMITuple& operator= (const GDBMITuple&) ;
@@ -48,15 +50,16 @@ class GDBMITuple : public Object {
 
 public:
 
+    // Please do not define the methods of this class inline here.
+    // Rather, define them in nmv-gdbmi-parser.cc, otherwise, this file
+    // will not compile on OpenBSD (gcc 3.3.5). Please read the comment before
+    // the definition of GDBMITuple methods in that file.
     GDBMITuple () {}
     virtual ~GDBMITuple () {}
-    const list<GDBMIResultSafePtr>& content () const {return m_content;}
-    void content (const list<GDBMIResultSafePtr> &a_in) {m_content = a_in;}
-    void append (const GDBMIResultSafePtr &a_result)
-    {
-        m_content.push_back (a_result);
-    }
-    void clear () {m_content.clear ();}
+    const list<GDBMIResultSafePtr>& content () const;
+    void content (const list<GDBMIResultSafePtr> &a_in);
+    void append (const GDBMIResultSafePtr &a_result);
+    void clear ();
 };//end class GDBMITuple
 
 /// A GDB/MI Value.
