@@ -193,7 +193,7 @@ on_stopped_signal (IDebugger::StopReason /*a_reason*/,
                    const IDebugger::Frame &a_frame,
                    int,
                    int,
-                   const UString &a_cookie,
+                   const UString &/*a_cookie*/,
                    IDebuggerSafePtr &a_debugger)
 {
     static int nb_stops = 0;
