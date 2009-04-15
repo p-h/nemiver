@@ -3488,8 +3488,7 @@ fetch_variable:
     }
     LOG_DD ("globals: got variable name: " << var_name );
 
-    // TODO: What encoding is var_name?
-    var.reset (new IDebugger::Variable (UString (var_name)));
+    var.reset (new IDebugger::Variable (var_name));
     var_list.push_back (var);
 
 skip_oobr:
