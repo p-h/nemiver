@@ -313,7 +313,8 @@ public:
         if (get_local_variables_row_iterator (parent_row_it)) {
             vutil::update_a_variable (a_var, *tree_view,
                                       parent_row_it,
-                                      true, false);
+                                      true /* handle highlight */,
+                                      false /* is not a new frame */);
         }
     }
 
@@ -330,8 +331,8 @@ public:
             return vutil::update_a_variable (a_var,
                                              *tree_view,
                                              parent_row_it,
-                                             true,
-                                             false);
+                                             true /* handle highlight */,
+                                             false /* is not a new frame */);
         }
         return false;
     }
