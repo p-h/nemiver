@@ -342,6 +342,74 @@ public:
 
         const VariableList& members () const {return m_members;}
 
+        /// Returns the Nth member variable, if any.
+        /// Please note that this function has O(n) complexity. So use it with
+        /// care.
+        /// \param a_index, the index of the member variable to return,
+        ///        starting from zero.
+        /// \param a_var the output parameter. Is set if and only if the
+        ///         the function returned true.
+        /// \return true if there was a variable at the specified index,
+        ///  false otherwise.
+        bool get_member_at (int a_index,
+                            VariableSafePtr &a_var) const
+        {
+            int i = 0;
+            for (VariableList::const_iterator it = members ().begin ();
+                 it != m_members.end ();
+                 ++it, ++i) {
+                if (i == a_index) {
+                    a_var = *it;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// \return the sibbling index of the variable node.
+        /// If first sibbling at a given level has index 0.
+        int sibling_index () const
+        {
+            if (!parent ())
+                return 0;
+            VariableList::const_iterator it;
+            int i = 0;
+            for (it = parent ()->members ().begin ();
+                 it != parent ()->members ().end ();
+                 ++it, ++i) {
+                if (*it == this)
+                    return i;
+            }
+            THROW ("fatal: should not be reached");
+        }
+
+        /// Tests value equality between two variables.
+        /// Two variables are considered equal by value if their
+        /// respective memebers have the same values and same type.
+        /// \param a_other the other variable to test against
+        /// \return true if a_other equals the current instance
+        ///         by value.
+        bool equals_by_value (const Variable &a_other) const
+        {
+            if (name () != a_other.name ()
+                || type () != a_other.type ())
+                return false;
+            if (members ().empty () != a_other.members ().empty ())
+                return false;
+            VariableList::const_iterator it0, it1;
+            for (it0 = members ().begin (), it1 = a_other.members ().begin ();
+                 it0 != members ().end ();
+                 ++it0, ++it1) {
+                if (it1 == a_other.members ().end ())
+                    return false;
+                if (!(*it0)->equals_by_value (**it1))
+                    return false;
+            }
+            if (it1 != a_other.members ().end ())
+                return false;
+            return true;
+        }
+
         void append (const VariableSafePtr &a_var)
         {
             if (!a_var) {return;}
