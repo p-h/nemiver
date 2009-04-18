@@ -92,6 +92,13 @@ bool find_a_variable (const IDebugger::VariableSafePtr a_var,
                       const Gtk::TreeModel::iterator &a_parent_row_it,
                       Gtk::TreeModel::iterator &a_out_row_it);
 
+bool variables_match (const IDebugger::VariableSafePtr &a_var,
+                      const Gtk::TreeModel::iterator a_row_it);
+
+bool find_a_variable_descendent (const IDebugger::VariableSafePtr a_var,
+                                 const Gtk::TreeModel::iterator &a_parent_row_it,
+                                 Gtk::TreeModel::iterator &a_out_row_it);
+
 bool update_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         Gtk::TreeModel::iterator &a_parent_row_it,

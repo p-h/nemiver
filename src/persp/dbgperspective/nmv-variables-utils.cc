@@ -189,12 +189,27 @@ update_unfolded_variable (const IDebugger::VariableSafePtr a_var,
     }
 }
 
+/// Finds a variable in the tree view of variables.
+/// All the members of the variable are considered
+/// during the search.
+/// \param a_var the variable to find in the tree view
+/// \param a_parent_row_it the graphical row where to start
+//   the search from. This function actually starts looking
+//   at the chilren rows of this parent row.
+/// \param a_out_row_it the row of the search. This is set
+/// if and only if the function returns true.
+/// \return true upon successful completion, false otherwise.
 bool
 find_a_variable (const IDebugger::VariableSafePtr a_var,
                  const Gtk::TreeModel::iterator &a_parent_row_it,
                  Gtk::TreeModel::iterator &a_out_row_it)
 {
-    RETURN_VAL_IF_FAIL (a_var && a_parent_row_it, false);
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (!a_var) {
+        LOG_DD ("got null var, returning false");
+        return false;
+    }
 
     Gtk::TreeModel::iterator row_it;
     IDebugger::VariableSafePtr var;
@@ -202,19 +217,147 @@ find_a_variable (const IDebugger::VariableSafePtr a_var,
          row_it != a_parent_row_it->children ().end ();
          ++row_it) {
         var = row_it->get_value (get_variable_columns ().variable);
-        if (!var) {
-            LOG_DD ("hit a null variable");
-            continue;
-        }
-        LOG_DD ("reading var: " << var->name ());
-        if (var->name ().raw () == a_var->name ().raw ()) {
+        if (variables_match (a_var, row_it)) {
             a_out_row_it = row_it;
-            return true;
-        } else if (find_a_variable (a_var, row_it, a_out_row_it)) {
+            LOG_DD ("found variable");
             return true;
         }
     }
+    LOG_DD ("didn't find variable " << a_var->name ());
     return false;
+}
+
+/// Generates a path that addresses a variable descendant
+/// from its root ancestor.
+/// \param a_var the variable descendent to address
+/// \param the resulting path. It's actually a list of index.
+/// Each index is the sibling index of a given level.
+/// e.g. consider the path  [0 1 4].
+/// It means a_var is the 5th sibbling child of the 2st sibling child
+/// of the 1nd sibling child of the root ancestor variable.
+/// \return true if a path was generated, false otherwise.
+static bool
+generate_path_to_descendent (IDebugger::VariableSafePtr a_var,
+                             list<int> &a_path)
+{
+    if (!a_var)
+        return false;
+    a_path.push_front (a_var->sibling_index ());
+    if (a_var->parent ())
+        return generate_path_to_descendent (a_var->parent (), a_path);
+    return true;
+}
+
+/// Walk a "path to descendent" as the one returned by
+/// generate_path_to_descendent.
+/// The result of the walk is to find the descendent variable member
+/// addressed by the path.
+/// \param a_from the graphical row
+///  (containing the root variable ancestor) to walk from.
+/// \param a_path_start an iterator that points to the beginning of the
+///  path
+/// \param a_path_end an iterator that points to the end of the path
+/// \param a_to the resulting row, if any. This points to the variable
+///  addressed by the path. This parameter is set if and only if the
+///  function returned true.
+/// \return true upon succesful completion, false otherwise.
+static bool
+walk_path_from_row (const Gtk::TreeModel::iterator &a_from,
+                    const list<int>::const_iterator &a_path_start,
+                    const list<int>::const_iterator &a_path_end,
+                    Gtk::TreeModel::iterator &a_to)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (a_path_start == a_path_end) {
+        if (a_from->parent ()) {
+            a_to = a_from->parent ();
+            return true;
+        }
+        return false;
+    }
+
+    Gtk::TreeModel::iterator row = a_from;
+    for (int steps = 0;
+         steps  < *a_path_start && row;
+         ++steps, ++row) {
+        // stepping at the current level;
+    }
+
+    if (!row)
+        // we reached the end of the current level. That means the path
+        // was not well suited for this variable tree view. Bail out.
+        return false;
+
+    // Dive down one level.
+    list<int>::const_iterator from = a_path_start;
+    from++;
+    return walk_path_from_row (row->children ().begin (),
+                               from, a_path_end, a_to);
+}
+
+/// Find a member variable that is a descendent of a root ancestor variable
+/// contained in a tree view. This function must actually find the row of the
+/// root ancestor variable in the tree view, and then find the row of
+/// the descendent.
+/// \param a_descendent the descendent to search for.
+/// \param a_parent_row the graphical row from where to start the search.
+/// \param a_out_row the result of the find, if any. This is set if and
+/// only if the function returns true.
+/// \return true upon successful completion, false otherwise.
+bool
+find_a_variable_descendent (const IDebugger::VariableSafePtr a_descendent,
+                            const Gtk::TreeModel::iterator &a_parent_row,
+                            Gtk::TreeModel::iterator &a_out_row)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (!a_descendent) {
+        LOG_DD ("got null variable, returning false");
+        return false;
+    }
+
+    // first, find the root variable the descendant belongs to.
+    IDebugger::VariableSafePtr root_var = a_descendent->root ();
+    THROW_IF_FAIL (root_var);
+    Gtk::TreeModel::iterator root_var_row;
+    if (!find_a_variable (root_var, a_parent_row, root_var_row)) {
+        LOG_DD ("didn't find root variable " << root_var->name ());
+        return false;
+    }
+
+    // Now that we have the row of the root variable, look for the
+    // row of the descendent there.
+    // For that, let's get the path to that damn descendent first.
+    list<int> path;
+    generate_path_to_descendent (a_descendent, path);
+
+    // let's walk the path from the root variable down to the descendent
+    // now.
+    if (!walk_path_from_row (root_var_row, path.begin (),
+                             path.end (), a_out_row)) {
+        THROW ("fatal: should not be reached");
+    }
+    return true;
+}
+
+/// Tests if a variable matches the variable present on
+/// a tree view node.
+/// \param a_var the variable to consider
+/// \param a_row_it the tree view to test against.
+/// \return true if the a_row_it contains a variable that is
+/// "value-equal" to a_var.
+bool
+variables_match (const IDebugger::VariableSafePtr &a_var,
+                 const Gtk::TreeModel::iterator a_row_it)
+{
+    IDebugger::VariableSafePtr var =
+        a_row_it->get_value (get_variable_columns ().variable);
+    if (a_var == var)
+        return true;
+    if (!var || !a_var)
+        return false;
+    return var->equals_by_value (*a_var);
 }
 
 bool
@@ -228,11 +371,16 @@ update_a_variable (const IDebugger::VariableSafePtr a_var,
     THROW_IF_FAIL (a_parent_row_it);
 
     Gtk::TreeModel::iterator row_it;
-    if (!find_a_variable (a_var, a_parent_row_it, row_it)) {
+    bool found_variable = find_a_variable_descendent (a_var,
+                                                      a_parent_row_it,
+                                                      row_it);
+
+    if (!found_variable) {
         LOG_ERROR ("could not find variable in inspector: "
                    + a_var->name ());
         return false;
     }
+
     update_a_variable_real (a_var, a_tree_view,
                             row_it, a_handle_highlight,
                             a_is_new_frame);
