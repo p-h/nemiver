@@ -106,7 +106,6 @@ Braces
       }
 
    3. If/else statements — as above, but if there is an else clause, the close brace should go on the same line as the else.
-      Also, even one-line if or else clauses should get braces.
 
       Right:
 
