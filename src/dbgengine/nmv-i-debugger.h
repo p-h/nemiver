@@ -279,6 +279,13 @@ public:
     typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr;
     typedef list<VariableSafePtr> VariableList;
     class Variable : public Object {
+        // non copyable.
+        Variable (const Variable &);
+        Variable& operator= (const Variable &);
+
+        bool operator == (Variable &a_other) const;
+        bool operator == (Variable &a_other);
+
         VariableList m_members;
         // If this variable was created with a backend counterpart
         // (e.g: backend side variable objects in GDB), then this
