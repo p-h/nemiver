@@ -142,6 +142,11 @@ public:
         return m_pointer == a_safe_ptr.m_pointer ;
     }
 
+    bool operator== (const PointerType *a_ptr) const
+    {
+        return m_pointer == a_ptr ;
+    }
+
     bool operator! () const
     {
         if (m_pointer)

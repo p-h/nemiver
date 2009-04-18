@@ -443,7 +443,7 @@ public:
         void build_qname (UString &a_qname) const
         {
             UString qname;
-            if (parent () == 0) {
+            if (!parent ()) {
                 a_qname = name ();
                 if (!a_qname.raw ().empty () && a_qname.raw ()[0] == '*') {
                     a_qname.erase (0, 1);
@@ -465,7 +465,7 @@ public:
         void build_qualified_internal_name (UString &a_qname) const
         {
             UString qname;
-            if (parent () == 0) {
+            if (!parent ()) {
                 a_qname = internal_name ();
             } else if (parent ()) {
                 parent ()->build_qname (qname);
