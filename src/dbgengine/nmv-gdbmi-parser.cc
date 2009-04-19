@@ -5378,7 +5378,6 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
         return false;
     }
     THROW_IF_FAIL (result);
-    CHECK_END2 (cur);
 
     if (result->variable () != "stack") {
         LOG_PARSING_ERROR2 (cur);
@@ -5435,6 +5434,8 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
                 frame.file_full_name (value);
             } else if ((*frame_part_iter)->variable () == "line") {
                 frame.line (atol (value.c_str ()));
+            } else if ((*frame_part_iter)->variable () == "level") {
+                frame.level (atol (value.c_str ()));
             }
         }
         THROW_IF_FAIL (frame.address () != "");
