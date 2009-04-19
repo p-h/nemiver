@@ -1617,6 +1617,9 @@ DBGPerspective::on_going_to_run_target_signal ()
     clear_session_data ();
     get_local_vars_inspector ().re_init_widget ();
     get_breakpoints_view ().re_init ();
+    get_call_stack ().clear ();
+    get_memory_view ().clear ();
+    get_registers_view ().clear ();
     NEMIVER_CATCH
 }
 

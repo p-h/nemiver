@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include <sstream>
+#include <algorithm>
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
 #include <glib/gi18n.h>
@@ -87,27 +88,34 @@ columns ()
     return s_cols;
 }
 
-static const UString CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK =
+static const char* CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK =
     "/apps/nemiver/dbgperspective/callstack-expansion-chunk";
+static const char* COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS =
+    "cookie-call-stack-in-frame-paging-trans";
 
+typedef vector<IDebugger::Frame> FrameArray;
+typedef map<int, list<IDebugger::VariableSafePtr> > FrameArgsMap;
+typedef map<int, IDebugger::Frame> LevelFrameMap;
 struct CallStack::Priv {
     IDebuggerSafePtr debugger;
     IWorkbench& workbench;
     IPerspective& perspective;
-    vector<IDebugger::Frame> frames;
-    map<int, list<IDebugger::VariableSafePtr> > params;
+    FrameArray frames;
+    FrameArgsMap params;
+    LevelFrameMap level_frame_map;
     Glib::RefPtr<Gtk::ListStore> store;
     SafePtr<Gtk::TreeView> widget;
-    bool waiting_for_stack_args;
-    bool in_set_cur_frame_trans;
     IDebugger::Frame cur_frame;
-    int cur_frame_index;
-    unsigned nb_frames_expansion_chunk;
-    unsigned max_frames_to_show;
     sigc::signal<void, int, const IDebugger::Frame&> frame_selected_signal;
     sigc::connection on_selection_changed_connection;
     Gtk::Widget *callstack_menu;
     Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
+    int cur_frame_index;
+    unsigned nb_frames_expansion_chunk;
+    int frame_low;
+    int frame_high;
+    bool waiting_for_stack_args;
+    bool in_set_cur_frame_trans;
     bool is_up2date;
 
     Priv (IDebuggerSafePtr a_dbg,
@@ -116,12 +124,13 @@ struct CallStack::Priv {
         debugger (a_dbg),
         workbench (a_workbench),
         perspective (a_perspective),
+        callstack_menu (0),
+        cur_frame_index (-1),
+        nb_frames_expansion_chunk (25),
+        frame_low (0),
+        frame_high (nb_frames_expansion_chunk),
         waiting_for_stack_args (false),
         in_set_cur_frame_trans (false),
-        cur_frame_index (-1),
-        nb_frames_expansion_chunk (5),
-        max_frames_to_show (nb_frames_expansion_chunk),
-        callstack_menu (0),
         is_up2date (true)
     {
         connect_debugger_signals ();
@@ -140,7 +149,6 @@ struct CallStack::Priv {
                                  chunk);
         if (chunk) {
             nb_frames_expansion_chunk = chunk;
-            max_frames_to_show = chunk;
         }
         conf_mgr->add_key_to_notify
                             (CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK);
@@ -217,24 +225,29 @@ struct CallStack::Priv {
         return callstack_menu;
     }
 
+    /// If the selected frame is the "expand to see more frames" raw,
+    /// ask the debugger engine for more frames.
+    /// Otherwise, just set the "current frame" variable.
     void update_selected_frame (Gtk::TreeModel::iterator &a_row_iter)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         THROW_IF_FAIL (a_row_iter);
 
+        // if the selected row is the "expand number of stack lines" row, trigger
+        // a redraw of the call stack with more raws.
+        if ((*a_row_iter)[columns ().is_expansion_row]) {
+            frame_low = frame_high + 1;
+            frame_high += nb_frames_expansion_chunk;
+            debugger->list_frames (frame_low, frame_high,
+                                   COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS);
+            return;
+        }
+
         cur_frame_index = (*a_row_iter)[columns ().frame_index];
         cur_frame = frames[cur_frame_index];
         THROW_IF_FAIL (cur_frame.level () >= 0);
         in_set_cur_frame_trans = true;
-
-        //if the selected row is the "expand number of stack lines" row, trigger
-        //a redraw of the with more raws.
-        if ((*a_row_iter)[columns ().is_expansion_row]) {
-            max_frames_to_show += nb_frames_expansion_chunk;
-            set_frame_list (frames, params);
-            return;
-        }
 
         LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'");
         LOG_DD ("frame level: '" << (int) cur_frame.level () << "'");
@@ -244,7 +257,7 @@ struct CallStack::Priv {
     void finish_handling_debugger_stopped_event ()
     {
         THROW_IF_FAIL (debugger);
-        debugger->list_frames ();
+        debugger->list_frames (frame_low, frame_high);
     }
 
     void on_debugger_stopped_signal (IDebugger::StopReason a_reason,
@@ -279,39 +292,43 @@ struct CallStack::Priv {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        if (a_cookie.empty ()) {}
-
         NEMIVER_TRY
 
         THROW_IF_FAIL (debugger);
         waiting_for_stack_args = true;
 
-        //**************************************************************
-        //set the frame list without frame parameters,
-        //then, request IDebugger for frame parameters.
-        //When the frame params arrives, we will set the
-        //the frame list again, that time with the parameters.
-        //Okay, this forces us to set the frame list twice,
-        //but it is more robust because sometimes, the second
-        //request to IDebugger fail (the one to get the parameters).
-        //This way, we have at least the frame list withouht params.
-        //**************************************************************
-        map<int, list<IDebugger::VariableSafePtr> > frames_params;
-        set_frame_list (a_stack, frames_params);
-        debugger->list_frames_arguments ();
+        FrameArgsMap frames_args;
+        if (a_cookie.raw () != COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS) {
+            // Set the frame list without frame arguments,
+            // then, request IDebugger for frame arguments.
+            // When the arguments arrive, we will update the call stack
+            // with those.
+            set_frame_list (a_stack, frames_args);
+        } else {
+            // We are a mode where the user asked to see more stack frames.
+            // This is named frame paging. In this case, just append the
+            // frames to the current ones. Again, the frames will be
+            // appended without arguments. We'll request the arguments
+            // right after this.
+            append_frames_to_tree_view (a_stack, frames_args);
+        }
+        // Okay so now, ask for frame arguments matching the frames we just
+        // received.
+        debugger->list_frames_arguments (a_stack[0].level (),
+                                         a_stack[a_stack.size () - 1].level ());
 
         NEMIVER_CATCH
     }
 
     void on_frames_params_listed_signal
-            (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params,
+            (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_args,
              const UString &a_cookie)
     {
-        LOG_D ("frames params listed", NMV_DEFAULT_DOMAIN);
+        LOG_DD ("frames params listed");
         if (a_cookie.empty ()) {}
 
         if (waiting_for_stack_args) {
-            set_frame_list (frames, a_frames_params);
+            update_frames_arguments (a_frames_args);
             waiting_for_stack_args = false;
         } else {
             LOG_D ("not in the frame setting transaction", NMV_DEFAULT_DOMAIN);
@@ -386,15 +403,18 @@ struct CallStack::Priv {
     void on_config_value_changed_signal (const UString &a_key,
                                          IConfMgr::Value &a_val)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         LOG_DD ("key " << a_key << " changed");
         if (a_key == CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK) {
             nb_frames_expansion_chunk = boost::get<int> (a_val);
-            max_frames_to_show = nb_frames_expansion_chunk;
         }
     }
 
     void connect_debugger_signals ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         THROW_IF_FAIL (debugger);
 
         debugger->stopped_signal ().connect (sigc::mem_fun
@@ -423,6 +443,8 @@ struct CallStack::Priv {
 
     void popup_call_stack_menu (GdkEventButton *a_event)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         THROW_IF_FAIL (a_event);
         THROW_IF_FAIL (widget);
 
@@ -445,38 +467,34 @@ struct CallStack::Priv {
 
     void on_call_stack_copy_to_clipboard_action ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         NEMIVER_TRY
 
         int i = 0;
         std::ostringstream frame_stream;
         vector<IDebugger::Frame>::const_iterator frame_iter;
         map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
+        UString args_string;
         // convert list of stack frames to a string (FIXME: maybe Frame should
         // just implement operator<< ?
-        for (frame_iter= frames.begin(), params_iter = params.begin();
+        for (frame_iter = frames.begin (), params_iter = params.begin ();
              frame_iter != frames.end ();
-             ++frame_iter)
-        {
-            frame_stream << "#" << UString::from_int(i++) << "  " <<
-                frame_iter->function_name () << " (";
-            // if the params map exists, add the function params to the stack trace
-            if (params_iter != params.end())
-            {
-                for (list<IDebugger::VariableSafePtr>::const_iterator it =
-                        params_iter->second.begin();
-                        it != params_iter->second.end(); ++it)
-                {
-                    if (it != params_iter->second.begin())
-                        frame_stream << ", ";
-                    frame_stream << (*it)->name() << "=" << (*it)->value();
-                }
-                // advance to the list of params for the next stack frame
-                ++params_iter;
-            }
-            frame_stream << ") at " << frame_iter->file_name () << ":"
+             ++frame_iter, ++params_iter) {
+            frame_stream << "#" << UString::from_int (i++) << "  " <<
+                frame_iter->function_name ();
+
+            // if the params map exists, add the
+            // function params to the stack trace
+            args_string = "()";
+            if (params_iter != params.end ())
+                format_args_string (params_iter->second, args_string);
+            frame_stream << args_string.raw ();
+
+            frame_stream << " at " << frame_iter->file_name () << ":"
                 << UString::from_int(frame_iter->line ()) << std::endl;
         }
-        Gtk::Clipboard::get ()->set_text (frame_stream.str());
+        Gtk::Clipboard::get ()->set_text (frame_stream.str ());
 
         NEMIVER_CATCH
     }
@@ -489,6 +507,8 @@ struct CallStack::Priv {
 
     void build_widget ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         if (widget) {
             return;
         }
@@ -537,24 +557,91 @@ struct CallStack::Priv {
                             &Priv::on_call_stack_button_press_signal));
     }
 
-    void set_frame_list
-                (const vector<IDebugger::Frame> &a_frames,
-                 const map<int, list<IDebugger::VariableSafePtr> >&a_params,
-                 bool a_emit_signal=false)
+    void store_frames_in_cache (const FrameArray &a_frames,
+                                const FrameArgsMap &a_frames_args)
     {
-        THROW_IF_FAIL (get_widget ());
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        clear_frame_list ();
-        frames = a_frames;
+        if (a_frames.empty ())
+            return;
+        append_frames_to_cache (a_frames, a_frames_args);
+    }
 
-        // save the list of params around so that we can use it when converting
-        // to a string later
-        params = a_params;
+    void append_frames_to_cache (const FrameArray &a_frames,
+                                 const FrameArgsMap &a_frames_args)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+        int dest_start_index = a_frames[0].level (),
+            dest_end_index = a_frames.size () + dest_start_index - 1;
+        unsigned level = 0;
+        FrameArray::const_iterator f;
+
+        frames.reserve (dest_end_index + 1);
+        for (f = a_frames.begin (); f != a_frames.end (); ++f) {
+            level = f->level ();
+            if (level >= frames.size ())
+                frames.push_back (*f);
+            else
+                frames[level] = *f;
+        }
+        append_frame_args_to_cache (a_frames_args);
+    }
+
+    void append_frame_args_to_cache (const FrameArgsMap &a_frames_args)
+    {
+        FrameArgsMap::const_iterator fa;
+        for (fa = a_frames_args.begin ();
+             fa != a_frames_args.end ();
+             ++fa) {
+            params[fa->first] = fa->second;
+        }
+    }
+
+    void format_args_string (const list<IDebugger::VariableSafePtr> &a_args,
+                             UString &a_string)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        UString arg_string = "(";
+        list<IDebugger::VariableSafePtr>::const_iterator arg_it = a_args.begin ();
+        if (arg_it != a_args.end () && *arg_it) {
+            arg_string += (*arg_it)->name () + " = " + (*arg_it)->value ();
+            ++arg_it;
+        }
+        for (; arg_it != a_args.end (); ++arg_it) {
+            if (!*arg_it)
+                continue;
+            arg_string += ", " + (*arg_it)->name ()
+                          + " = " + (*arg_it)->value ();
+        }
+        arg_string += ")";
+        a_string = arg_string;
+    }
+
+    void append_frames_to_tree_view (const FrameArray &a_frames,
+                                     const FrameArgsMap &a_args)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        // Erase the expansion row, if it exists.
+        if (store && !store->children ().empty ()) {
+            LOG_DD ("does expansion row exists ?");
+            Gtk::TreeRow last_row =
+                store->children ()[store->children ().size () - 1];
+            if (last_row[columns ().is_expansion_row]) {
+                LOG_DD ("erasing expansion node");
+                store->erase (last_row);
+            } else {
+                LOG_DD ("not an expansion node");
+            }
+        }
+        // really append the frames to the tree view now
         Gtk::TreeModel::iterator store_iter;
-        unsigned nb_frames = MIN (a_frames.size (), max_frames_to_show);
-        unsigned i = 0;
-        for (i = 0; i < nb_frames; ++i) {
+        unsigned nb_frames = a_frames.size ();
+        for (unsigned i = 0; i < nb_frames; ++i) {
+            level_frame_map[a_frames[i].level ()] = a_frames[i];
+            frames.push_back (a_frames[i]);
             store_iter = store->append ();
             (*store_iter)[columns ().is_expansion_row] = false;
             (*store_iter)[columns ().function_name] =
@@ -568,45 +655,43 @@ struct CallStack::Priv {
                     a_frames[i].address ();
             }
 
-            (*store_iter)[columns ().frame_index] = i;
+            (*store_iter)[columns ().frame_index] = a_frames[i].level ();
             (*store_iter)[columns ().frame_index_caption] =
-                                                    UString::from_int (i);
-            UString params_string = "(";
-            map<int, list<IDebugger::VariableSafePtr> >::const_iterator iter;
-            list<IDebugger::VariableSafePtr>::const_iterator params_iter;
-            iter = a_params.find (i);
-            if (iter != a_params.end ()) {
-                LOG_D ("for frame "
-                       << (int) i
-                       << " NB params: "
-                       << (int) iter->second.size (), NMV_DEFAULT_DOMAIN);
-
-                params_iter = iter->second.begin ();
-                if (params_iter != iter->second.end ()) {
-                    if (*params_iter) {
-                        params_string += (*params_iter)->name ();
-                    }
-                    ++params_iter;
-                }
-                for (; params_iter != iter->second.end (); ++params_iter) {
-                    if (!*params_iter) {continue;}
-                     params_string += ", " + (*params_iter)->name ();
-                }
+                UString::from_int (a_frames[i].level ());
+            FrameArgsMap::const_iterator fa_it;
+            UString arg_string;
+            fa_it = a_args.find (a_frames[i].level ());
+            if (fa_it != a_args.end ()) {
+                format_args_string (fa_it->second, arg_string);
+                params[a_frames[i].level ()] = fa_it->second;
+            } else {
+                arg_string = "()";
             }
-            params_string += ")";
-            (*store_iter)[columns ().function_args] = params_string;
+            (*store_iter)[columns ().function_args] = arg_string;
         }
-        if (a_frames.size () && i < a_frames.size () - 1) {
+        if (a_frames.size () >= nb_frames_expansion_chunk) {
             store_iter = store->append ();
             UString msg;
-            msg.printf (_("(Click here to see the next %d rows of the %d "
-                          "call stack rows)"),
-                        nb_frames_expansion_chunk,
-                        frames.size ());
+            msg.printf (_("(Click here to see the next %d rows of the "
+                          "call stack)"),
+                        nb_frames_expansion_chunk);
             (*store_iter)[columns ().frame_index_caption] = "...";
             (*store_iter)[columns ().location] = msg;
             (*store_iter)[columns ().is_expansion_row] = true;
         }
+        store_frames_in_cache (a_frames, a_args);
+    }
+
+    void set_frame_list
+                (const FrameArray &a_frames,
+                 const FrameArgsMap &a_params,
+                 bool a_emit_signal=false)
+    {
+        THROW_IF_FAIL (get_widget ());
+
+        clear_frame_list ();
+
+        append_frames_to_tree_view (a_frames, a_params);
 
         Gtk::TreeView *tree_view =
             dynamic_cast<Gtk::TreeView*> (widget.get ());
@@ -621,10 +706,65 @@ struct CallStack::Priv {
         }
     }
 
-    void clear_frame_list ()
+    void update_frames_arguments (FrameArgsMap a_args)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        UString args_string;
+        FrameArgsMap::const_iterator arg_it;
+        LevelFrameMap::iterator lf_it;
+        int level = 0;
+        bool is_expansion_row = false;
+
+        for (Gtk::TreeModel::iterator row = store->children ().begin ();
+             row != store->children ().end ();
+             ++row) {
+            is_expansion_row = (*row)[columns ().is_expansion_row];
+            if (is_expansion_row)
+                continue;
+            level = (*row)[columns ().frame_index];
+            LOG_DD ("considering frame level " << level << " ...");
+            if ((lf_it = level_frame_map.find (level))
+                == level_frame_map.end ()) {
+                LOG_ERROR ("Error: no frame found for level "
+                           << arg_it->first);
+                THROW ("Constraint error in CallStack widget");
+            }
+            if ((arg_it = a_args.find (level)) == a_args.end ()) {
+                LOG_DD ("sorry, no arguments for this frame");
+                continue;
+            }
+            format_args_string (arg_it->second, args_string);
+            (*row)[columns ().function_args] = args_string;
+            LOG_DD ("yesss, frame arguments are: " << args_string);
+        }
+        append_frame_args_to_cache (a_args);
+    }
+
+    /// Visually clear the frame list.
+    /// \param a_reset_frame_window if true, reset the frame window range
+    ///  to [0 - defaultmax]
+    void clear_frame_list (bool a_reset_frame_window = false)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (a_reset_frame_window) {
+            frame_low = 0;
+            frame_high = nb_frames_expansion_chunk;
+        }
+
         THROW_IF_FAIL (store);
         store->clear ();
+        frames.clear ();
+        params.clear ();
+        level_frame_map.clear ();
+
+    }
+
+    void update_call_stack ()
+    {
+        THROW_IF_FAIL (debugger);
+        debugger->list_frames (0, frame_high);
     }
 };//end struct CallStack::Priv
 
@@ -672,9 +812,8 @@ CallStack::update_stack ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
-    THROW_IF_FAIL (m_priv->debugger);
 
-    m_priv->debugger->list_frames ();
+    m_priv->update_call_stack ();
 }
 
 void
@@ -683,12 +822,7 @@ CallStack::clear ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
 
-    if (m_priv->store) {
-        m_priv->store->clear ();
-    }
-    m_priv->cur_frame_index = - 1;
-    m_priv->waiting_for_stack_args  = false;
-    m_priv->in_set_cur_frame_trans = false;
+    m_priv->clear_frame_list (true /* reset frame window */ );
 }
 
 sigc::signal<void, int, const IDebugger::Frame&>&

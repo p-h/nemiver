@@ -29,7 +29,7 @@ docore inout \
 pointerderef \
 fooprog \
 templatedvar \
-gtkmmtest
+gtkmmtest dostackoverflow
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
 runtestgdbmi_LDADD= @NEMIVERCOMMON_LIBS@ \
@@ -134,6 +134,8 @@ templatedvar_SOURCES=templated-var.cc
 templatedvar_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
+dostackoverflow_SOURCES=do-stack-overflow.cc
+dostackoverflow_LDADD=@NEMIVERCOMMON_LIBS@
 
 INCLUDES=-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/confmgr \
