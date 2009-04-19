@@ -4654,14 +4654,14 @@ DBGPerspective::close_file (const UString &a_path)
             << (int) (page_num)
             << ", path " << a_path);
     m_priv->sourceviews_notebook->remove_page (page_num);
-    update_file_maps ();
+    if (!do_unmonitor_file (a_path)) {
+        LOG_ERROR ("failed to unmonitor file " << a_path);
+    }
 
     if (!get_n_pages ()) {
         m_priv->opened_file_action_group->set_sensitive (false);
     }
-    if (!do_unmonitor_file (a_path)) {
-        LOG_ERROR ("failed to unmonitor file " << a_path);
-    }
+    update_file_maps ();
 }
 
 void
