@@ -319,7 +319,9 @@ public:
     void select_frame (int a_frame_id,
                        const UString &a_cookie) ;
 
-    void list_frames (const UString &a_cookie) ;
+    void list_frames (int a_low_frame,
+                      int a_high_frame,
+                      const UString &a_cookie);
 
     void list_frames_arguments (int a_low_frame,
                                 int a_high_frame,
