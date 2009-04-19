@@ -4584,7 +4584,11 @@ DBGPerspective::close_current_file ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     if (!get_n_pages ()) {return;}
 
-    close_file (m_priv->pagenum_2_path_map[m_priv->current_page_num]);
+    // We need to copy the path and pass it to close_file() because if we pass
+    // it the reference to the map value, we will get corruption because
+    // close_file() modifies the map
+    UString path = m_priv->pagenum_2_path_map[m_priv->current_page_num];
+    close_file (path);
 }
 
 void
