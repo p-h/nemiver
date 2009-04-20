@@ -1009,9 +1009,9 @@ struct DBGPerspective::Priv {
                     LOG_DD ("trying to convert buffer from encoding "
                              << it->c_str ()
                              << " to UTF-8");
-                    utf8_content = Glib::convert (a_input,
-                                                  "UTF-8",
-                                                  it->c_str ());
+                    utf8_content =
+                        Glib::convert (a_input, "UTF-8",
+                                       it->c_str ());
                 } catch (Glib::Exception &e) {
                     LOG_DD ("tentative encoding conversion failed!");
                     continue;
@@ -1029,9 +1029,10 @@ struct DBGPerspective::Priv {
             LOG_DD ("trying hardcoded encodings");
             for (unsigned int i=0; i < SIZE_OF_SUPPORTED_ENCODINGS; i++) {
                 try {
-                    utf8_content = Glib::convert (a_input,
-                                                  "UTF-8",
-                                                  SUPPORTED_ENCODINGS[i]);
+                    utf8_content =
+                        Glib::convert (a_input,
+                                       "UTF-8",
+                                       SUPPORTED_ENCODINGS[i]);
                 } catch (Glib::Exception &e) {
                     continue;
                 } catch (...) {
@@ -4168,8 +4169,9 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
         // Don't save empty sessions.
         return;
     }
-    UString session_name = Glib::path_get_basename
-        (Glib::filename_from_utf8 (m_priv->prog_path));
+    UString session_name =
+        Glib::filename_to_utf8 (Glib::path_get_basename
+                                (Glib::filename_from_utf8 (m_priv->prog_path)));
 
     if (session_name == "") {return;}
 
@@ -4329,12 +4331,11 @@ DBGPerspective::load_file (const UString &a_path,
     if (!file.good () && !file.eof ()) {
 #endif
         LOG_ERROR ("Could not open file " + path);
-        ui_utils::display_error ("Could not open file: " + path);
+        ui_utils::display_error ("Could not open file: " + Glib::filename_to_utf8 (path));
         return false;
     }
 
-    UString base_name = Glib::filename_to_utf8
-        (Glib::path_get_basename (path));
+    UString base_name = Glib::filename_to_utf8 (Glib::path_get_basename (path));
 
     UString mime_type;
 #ifdef WITH_GIO
@@ -4708,9 +4709,10 @@ DBGPerspective::update_file_maps ()
             (m_priv->sourceviews_notebook->get_nth_page (i));
         THROW_IF_FAIL (se);
         se->get_path (path);
-        basename = Glib::path_get_basename (path.raw ());
+        basename = Glib::filename_to_utf8 (Glib::path_get_basename
+                                           (Glib::filename_from_utf8 (path)));
         m_priv->path_2_pagenum_map[path] = i;
-        m_priv->basename_2_pagenum_map[basename.raw ()] = i;
+        m_priv->basename_2_pagenum_map[basename] = i;
         m_priv->pagenum_2_source_editor_map[i] = se;
         m_priv->pagenum_2_path_map[i] = path;
     }
@@ -4897,11 +4899,12 @@ DBGPerspective::execute_program
     // in the $PATH environment variable and use the resulting absolute
     // path.
     // In the later form, nemiver will just use the absolute path.
-    if (!Glib::file_test (prog, Glib::FILE_TEST_IS_REGULAR)) {
+    if (!Glib::file_test (Glib::filename_from_utf8 (prog),
+                          Glib::FILE_TEST_IS_REGULAR)) {
         // We didn't find prog. If the path to prog is not absolute,
         // look it up in the directories pointed to by the
         // $PATH environment variable.
-        if (Glib::path_is_absolute (prog.raw ())
+        if (Glib::path_is_absolute (Glib::filename_from_utf8 (prog))
             || !env::build_path_to_executable (prog, prog)) {
             UString msg;
             msg.printf (_("Could not find file %s"), prog.c_str ());
@@ -5414,11 +5417,11 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                         UString file_path = dialog.file_location ();
                         THROW_IF_FAIL (Glib::file_test (file_path,
                                             Glib::FILE_TEST_IS_REGULAR));
-                        UString parent_dir =
-                            Glib::path_get_dirname (dialog.file_location ());
-                        THROW_IF_FAIL (Glib::file_test
-                                                (parent_dir,
-                                                 Glib::FILE_TEST_IS_DIR));
+                        std::string raw_dir = Glib::path_get_dirname
+                            (dialog.file_location ());
+                        UString parent_dir = Glib::filename_to_utf8 (raw_dir);
+                        THROW_IF_FAIL (Glib::file_test (raw_dir,
+                                                        Glib::FILE_TEST_IS_DIR));
                         m_priv->search_paths.push_back (parent_dir);
                         if (!open_file (file_path)) {
                             return false;
@@ -5463,8 +5466,8 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                                 Glib::FILE_TEST_IS_REGULAR));
                 THROW_IF_FAIL (Glib::path_get_basename(a_file_name) ==
                         Glib::path_get_basename(file_path));
-                UString parent_dir =
-                            Glib::path_get_dirname (dialog.file_location ());
+                UString parent_dir = Glib::filename_to_utf8
+                    (Glib::path_get_dirname (dialog.file_location ()));
                 THROW_IF_FAIL (Glib::file_test
                                     (parent_dir, Glib::FILE_TEST_IS_DIR));
 
@@ -5924,7 +5927,7 @@ DBGPerspective::call_function (const UString &a_call_expr)
         // saying that we are calling a_call_expr
         std::stringstream s;
         s << "<Nemiver call_function>"
-            << a_call_expr
+            << a_call_expr.raw ()
             << "</Nemiver>"
             << "\n\r";
         get_terminal ().feed (s.str ());

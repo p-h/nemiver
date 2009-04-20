@@ -291,16 +291,16 @@ build_path_to_help_file (const UString &a_file_name)
     //So the goal of this function is to go look in that directory
     //to see if a_file_name exists there. If so, return the path to it.
     //Otherwise, return an empty string.
-    UString result;
+    std::string result;
     UString prefix (get_install_prefix ());
-    vector<string> path_elems;
-    path_elems.push_back (prefix.c_str ());
+    vector<std::string> path_elems;
+    path_elems.push_back (Glib::filename_from_utf8 (prefix));
     path_elems.push_back ("share");
     path_elems.push_back ("gnome");
     path_elems.push_back ("help");
     path_elems.push_back ("nemiver");
 
-    string help_dir = Glib::build_filename (path_elems);
+    std::string help_dir = Glib::build_filename (path_elems);
 
     if (!Glib::file_test (help_dir, Glib::FILE_TEST_IS_DIR)) {
         LOG_ERROR ("help dir " << help_dir << " does not exist");
@@ -310,7 +310,7 @@ build_path_to_help_file (const UString &a_file_name)
     locale loc ("");
     UString loc_name (loc.name ());
     LOG_DD ("locale name: " << loc_name);
-    string lang_dir = Glib::build_filename (help_dir, loc_name.c_str ());
+    std::string lang_dir = Glib::build_filename (help_dir, loc_name.raw ());
     if (!Glib::file_test (lang_dir, Glib::FILE_TEST_IS_DIR)) {
         LOG_DD ("lang dir '" << lang_dir << "' does not exist");
         //let's try now to extract the <language>_<territory> part of the
@@ -322,7 +322,7 @@ build_path_to_help_file (const UString &a_file_name)
             goto locale_language;
         }
         loc_name = tmp[0];
-        lang_dir = Glib::build_filename (help_dir, loc_name.c_str ());
+        lang_dir = Glib::build_filename (help_dir, loc_name.raw ());
         LOG_DD ("trying locale name: " << lang_dir);
         if (!Glib::file_test (lang_dir, Glib::FILE_TEST_IS_DIR)) {
             LOG_DD ("lang dir '" << lang_dir << "' does not exist");
@@ -334,18 +334,18 @@ locale_language:
                 goto c_locale;
             }
             loc_name = tmp[0];
-            lang_dir = Glib::build_filename (help_dir, loc_name.c_str ());
+            lang_dir = Glib::build_filename (help_dir, loc_name.raw ());
             LOG_DD ("trying locale name: " << lang_dir);
             if (!Glib::file_test (lang_dir, Glib::FILE_TEST_IS_DIR)) {
                 LOG_DD ("lang dir '" << lang_dir << "' does not exist");
                 //okay so let's fall back to the C locale then.
 c_locale:
                 loc_name = "C";
-                lang_dir = Glib::build_filename (help_dir, loc_name.c_str ());
+                lang_dir = Glib::build_filename (help_dir, loc_name.raw ());
                 LOG_DD ("trying locale name: " << lang_dir);
                 if (!Glib::file_test (lang_dir, Glib::FILE_TEST_IS_DIR)) {
                     LOG_ERROR ("could not find a proper help dir");
-                    return result;
+                    return UString ();
                 }
             }
         }
@@ -355,7 +355,7 @@ c_locale:
         LOG_ERROR ("file " << result << " does not exist!");
         result.clear ();
     }
-    return result;
+    return Glib::filename_to_utf8 (result);
 }
 
 
@@ -363,10 +363,10 @@ bool
 build_path_to_executable (const UString &a_exe_name,
                           UString &a_path_to_exe)
 {
-    UString path = Glib::find_program_in_path (a_exe_name);
+    std::string path = Glib::find_program_in_path (a_exe_name);
     if (path.empty ())
         return false;
-    a_path_to_exe = path;
+    a_path_to_exe = Glib::filename_to_utf8 (path);
     return true;
 }
 

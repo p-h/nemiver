@@ -4098,7 +4098,7 @@ GDBMIParser::parse_gdbmi_tuple (UString::size_type a_from,
                << "', at offset '"
                << (int)cur
                << "' for text >>>"
-               << m_priv->input.raw ()
+               << m_priv->input
                << "<<<",
                GDBMI_PARSING_DOMAIN);
         break;

@@ -33,7 +33,6 @@
 #include "nmv-i-debugger.h"
 
 using nemiver::common::SafePtr;
-using nemiver::common::UString;
 
 namespace nemiver {
 

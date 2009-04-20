@@ -524,16 +524,17 @@ public:
     {
         const char *tmp = g_getenv ("PATH");
         if (!tmp) {return false;}
-        vector<UString> path_dirs = UString (tmp).split (":");
+        vector<UString> path_dirs =
+            UString (Glib::filename_to_utf8 (tmp)).split (":");
         path_dirs.insert (path_dirs.begin (), ("."));
         vector<UString>::const_iterator it;
         string file_path;
         for (it = path_dirs.begin (); it != path_dirs.end (); ++it) {
-            file_path = Glib::build_filename (Glib::locale_from_utf8 (*it),
-                                              Glib::locale_from_utf8 (a_prog));
+            file_path = Glib::build_filename (Glib::filename_from_utf8 (*it),
+                                              Glib::filename_from_utf8 (a_prog));
             if (Glib::file_test (file_path,
                                  Glib::FILE_TEST_IS_REGULAR)) {
-                a_prog_path = Glib::locale_to_utf8 (file_path);
+                a_prog_path = Glib::filename_to_utf8 (file_path);
                 return true;
             }
         }
@@ -553,7 +554,7 @@ public:
         UString prog_path;
         if (a_prog != "") {
             prog_path = a_prog;
-            if (!Glib::file_test (Glib::locale_from_utf8 (prog_path),
+            if (!Glib::file_test (Glib::filename_from_utf8 (prog_path),
                                   Glib::FILE_TEST_IS_REGULAR)) {
                 if (!find_prog_in_path (prog_path, prog_path)) {
                     LOG_ERROR ("Could not find program '" << prog_path << "'");
@@ -3412,7 +3413,7 @@ GDBEngine::extract_global_variable_list (Output &a_output,
     //"<type of variable> <variable-name>;"
     //*************************************************
     UString str, file_name;
-    string var_name, type_name, tmp_str;
+    string var_name, tmp_str;
     SimpleDeclarationPtr simple_decl;
     InitDeclaratorPtr init_decl;
     ParserPtr parser;

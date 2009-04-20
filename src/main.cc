@@ -419,7 +419,8 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                    NMV_DEFAULT_DOMAIN);
             map<UString, UString> env;
             if (gv_env_vars) {
-                vector<UString> env_vars = UString (gv_env_vars).split (" ");
+                vector<UString> env_vars =
+                    UString (Glib::locale_to_utf8 (gv_env_vars)).split (" ");
                 for (vector<UString>::const_iterator it = env_vars.begin ();
                      it != env_vars.end ();
                      ++it) {
