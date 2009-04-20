@@ -1,3 +1,32 @@
+0.6.6 Release
+=============
+
+Dodji Seketeli:
+      Update ephy-spinner widget (Closes: #574915)
+      Fix tests to work with Boost.Test 1.37
+      Fix MI parsing error with Archer (Closes: #575660)
+
+Hans Vercammen:
+      Fix build with gcc 4.1.2 (Closes: #572704)
+
+Jonathon Jongsma:
+      Update all of the screenshots for the manual
+      Change serial input to a FileChooserButton (Closes: #436057)
+      Enable re-ordering of source file tabs (Closes: #545246)
+      Make the 'View > Memory' conditionally used (Closes: #564832)
+      Give indication of activity in the 'open file' dialog (Closes #564294)
+      Fix File list so keyboard navigation scrolls list again (Closes: #564294)
+      Scroll 'File Open' list to starting source file (Closes: #525512)
+      Ellipsize filename in tab (Closes: #565645)
+      Sort columns of process selection dialog displays warning (Closes: #534700)
+      Improve global variable listing (Bug #573709)
+      Check for empty before isspace in UString::chomp() (Closes: #574214)
+      Don't split member vars incorrectly if value has comma (Closes: #527947)
+      Save session when switching debugging contexts (Fixes: #575912)
+
+Landry Breuil:
+      Many build fixes for OpenBSD
+
 0.6.5 Release
 =============
 

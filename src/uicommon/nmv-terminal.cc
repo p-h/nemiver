@@ -23,14 +23,19 @@
  *See COPYRIGHT file copyright information.
  */
 #include "nmv-terminal.h"
-#if !defined(__FreeBSD__)
+#if !(defined(__FreeBSD__) || defined(__OpenBSD__))
 # include <pty.h>
 #else
 # include <sys/types.h>
 # include <sys/ioctl.h>
 # include <termios.h>
+#if defined(__FreeBSD__)
 # include <libutil.h>
+#else
+# include <util.h>
 #endif
+#endif
+#include <unistd.h>
 #include <iostream>
 #include <gtkmm/bin.h>
 #include <gtkmm/main.h>

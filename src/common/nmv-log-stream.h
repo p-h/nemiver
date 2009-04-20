@@ -171,7 +171,7 @@ public:
     /// \brief log a message to the stream
     /// \param a_msg the message to log
     /// \param a_domain the domain to log against
-    LogStream& write (const UString &a_msg,
+    LogStream& write (const Glib::ustring &a_msg,
                       const string &a_domain=NMV_GENERAL_DOMAIN) ;
 
     LogStream& write (int a_msg,
@@ -195,7 +195,15 @@ public:
 
     /// \brief log zero teriminated strings
     /// \param a_string the string to log
-    LogStream& operator<< (const UString &a_string) ;
+    LogStream& operator<< (const char* a_c_string);
+
+    /// \brief log a string
+    /// \param a_string the string to log
+    LogStream& operator<< (const std::string &a_string);
+
+    /// \brief log a UTF-8 string
+    /// \param a_string the string to log
+    LogStream& operator<< (const Glib::ustring &a_string) ;
 
     /// \brief log an integer
     /// \param an_int the integer to log

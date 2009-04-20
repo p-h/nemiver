@@ -114,7 +114,7 @@ LocateFileDialog::file_location () const
     THROW_IF_FAIL (m_priv->fcbutton_location);
     NEMIVER_CATCH
 
-    return m_priv->fcbutton_location->get_filename ();
+    return Glib::filename_to_utf8 (m_priv->fcbutton_location->get_filename ());
 }
 
 void

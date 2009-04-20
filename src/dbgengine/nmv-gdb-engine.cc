@@ -54,6 +54,22 @@ static const UString CONF_KEY_GDB_BINARY = "/apps/nemiver/dbgperspective/gdb-bin
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+// Helper function to handle escaping the arguments 
+static UString
+quote_args (const vector<UString> &a_prog_args)
+{
+    UString args;
+    if (!a_prog_args.empty ()) {
+        for (vector<UString>::size_type i=1;
+             i < a_prog_args.size ();
+             ++i) {
+            args += Glib::shell_quote (a_prog_args[i].raw ()) + " ";
+        }
+    }
+    return args;
+}
+
+
 //*************************
 //<GDBEngine::Priv struct>
 //*************************
@@ -543,16 +559,17 @@ public:
     {
         const char *tmp = g_getenv ("PATH");
         if (!tmp) {return false;}
-        vector<UString> path_dirs = UString (tmp).split (":");
+        vector<UString> path_dirs =
+            UString (Glib::filename_to_utf8 (tmp)).split (":");
         path_dirs.insert (path_dirs.begin (), ("."));
         vector<UString>::const_iterator it;
         string file_path;
         for (it = path_dirs.begin (); it != path_dirs.end (); ++it) {
-            file_path = Glib::build_filename (Glib::locale_from_utf8 (*it),
-                                              Glib::locale_from_utf8 (a_prog));
+            file_path = Glib::build_filename (Glib::filename_from_utf8 (*it),
+                                              Glib::filename_from_utf8 (a_prog));
             if (Glib::file_test (file_path,
                                  Glib::FILE_TEST_IS_REGULAR)) {
-                a_prog_path = Glib::locale_to_utf8 (file_path);
+                a_prog_path = Glib::filename_to_utf8 (file_path);
                 return true;
             }
         }
@@ -572,7 +589,7 @@ public:
         UString prog_path;
         if (a_prog != "") {
             prog_path = a_prog;
-            if (!Glib::file_test (Glib::locale_from_utf8 (prog_path),
+            if (!Glib::file_test (Glib::filename_from_utf8 (prog_path),
                                   Glib::FILE_TEST_IS_REGULAR)) {
                 if (!find_prog_in_path (prog_path, prog_path)) {
                     LOG_ERROR ("Could not find program '" << prog_path << "'");
@@ -621,19 +638,11 @@ public:
                 << "\ngdboptions:" << UString::join (a_gdb_options));
 
         if (!result) {return false;}
-
-        if (!a_prog_args.empty ()) {
-            UString args;
-            for (vector<UString>::size_type i=1;
-                 i < a_prog_args.size ();
-                 ++i) {
-                args += a_prog_args[i] + " ";
-            }
-
-            if (args != "") {
-                return issue_command (Command ("set args " + args));
-            }
+        UString args = quote_args (a_prog_args);
+        if (!args.empty ()) {
+            return issue_command (Command ("set args " + args));
         }
+
         return true;
     }
 
@@ -2352,18 +2361,15 @@ GDBEngine::load_program (const vector<UString> &a_argv,
             LOG_DD ("not setting LD_BIND_NOW environment variable ");
         }
     } else {
-        UString args;
-        UString::size_type len (argv.size ());
-        for (UString::size_type i = 1; i < len; ++i) {
-            args += " " + argv[i];
-        }
-
         Command command ("load-program",
                          UString ("-file-exec-and-symbols ") + argv[0]);
         queue_command (command);
 
-        command.value ("set args " + args);
-        queue_command (command);
+        UString args = quote_args (argv);
+        if (!args.empty ()) {
+            command.value ("set args " + args);
+            queue_command (command);
+        }
     }
     if (!a_tty_path.empty ()) {
         queue_command (Command ("set inferior-tty " + a_tty_path));
@@ -3750,7 +3756,7 @@ GDBEngine::extract_global_variable_list (Output &a_output,
     //"<type of variable> <variable-name>;"
     //*************************************************
     UString str, file_name;
-    string var_name, type_name, tmp_str;
+    string var_name, tmp_str;
     SimpleDeclarationPtr simple_decl;
     InitDeclaratorPtr init_decl;
     ParserPtr parser;

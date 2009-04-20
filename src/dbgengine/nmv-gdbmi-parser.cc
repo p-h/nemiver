@@ -118,6 +118,44 @@ using namespace nemiver::common;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+// *******************************
+// <Definitions of GDBMITuple>
+// *******************************
+// Okay, we put the definitions of the GDBMITuple here
+// (instead of having them in nmv-gdbmi-parser.h alongside the other GDBMI
+// types) because otherwise, it won't build on OpenBSD, as nemiver is being
+// built with gcc 3.3.5 on that system for now.
+// So please, do not change this unless you are *SURE* it won't break on
+// OpenBSD at least.
+
+const list<GDBMIResultSafePtr>&
+GDBMITuple::content () const
+{
+    return m_content;
+}
+
+void
+GDBMITuple::content (const list<GDBMIResultSafePtr> &a_in)
+{
+    m_content = a_in;
+}
+
+void
+GDBMITuple::append (const GDBMIResultSafePtr &a_result)
+{
+    m_content.push_back (a_result);
+}
+
+void
+GDBMITuple::clear ()
+{
+    m_content.clear ();
+}
+
+// *******************************
+// </Definitions of GDBMITuple>
+// *******************************
+
 // prefixes of command output records.
 const char* PREFIX_DONE = "^done";
 const char* PREFIX_RUNNING = "^running";
@@ -4069,7 +4107,7 @@ GDBMIParser::parse_gdbmi_tuple (UString::size_type a_from,
                << "', at offset '"
                << (int)cur
                << "' for text >>>"
-               << m_priv->input.raw ()
+               << m_priv->input
                << "<<<",
                GDBMI_PARSING_DOMAIN);
         break;
