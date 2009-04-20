@@ -1006,8 +1006,8 @@ struct DBGPerspective::Priv {
                              << it->c_str ()
                              << " to UTF-8");
                     utf8_content =
-                        UString (Glib::convert (a_input, "UTF-8",
-                                                it->c_str ()));
+                        Glib::convert (a_input, "UTF-8",
+                                       it->c_str ());
                 } catch (Glib::Exception &e) {
                     LOG_DD ("tentative encoding conversion failed!");
                     continue;
@@ -1026,9 +1026,9 @@ struct DBGPerspective::Priv {
             for (unsigned int i=0; i < SIZE_OF_SUPPORTED_ENCODINGS; i++) {
                 try {
                     utf8_content =
-                        UString (Glib::convert (a_input,
-                                                "UTF-8",
-                                                SUPPORTED_ENCODINGS[i]));
+                        Glib::convert (a_input,
+                                       "UTF-8",
+                                       SUPPORTED_ENCODINGS[i]);
                 } catch (Glib::Exception &e) {
                     continue;
                 } catch (...) {
@@ -5922,7 +5922,7 @@ DBGPerspective::call_function (const UString &a_call_expr)
             << a_call_expr.raw ()
             << "</Nemiver>"
             << "\n\r";
-        get_terminal ().feed (UString (s.str ()));
+        get_terminal ().feed (s.str ());
 
         // Really hit the debugger now.
         debugger ()->call_function (a_call_expr);
