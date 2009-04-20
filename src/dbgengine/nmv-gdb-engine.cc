@@ -63,7 +63,8 @@ quote_args (const vector<UString> &a_prog_args)
         for (vector<UString>::size_type i=1;
              i < a_prog_args.size ();
              ++i) {
-            args += Glib::shell_quote (a_prog_args[i].raw ()) + " ";
+            if (!a_prog_args[i].empty ())
+                args += Glib::shell_quote (a_prog_args[i].raw ()) + " ";
         }
     }
     return args;
