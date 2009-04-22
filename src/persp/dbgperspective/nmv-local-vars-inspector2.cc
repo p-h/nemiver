@@ -354,7 +354,7 @@ public:
                 LOG_DD ("list local variables");
                 debugger->list_local_variables ();
                 LOG_DD ("list frames arguments");
-                debugger->list_frames_arguments ();
+                debugger->list_frames_arguments (0, 0);
             } else {
                 LOG_DD ("update local variables and function arguments");
                 update_local_variables ();
@@ -743,7 +743,7 @@ LocalVarsInspector2::show_local_variables_of_current_function ()
 
     re_init_widget ();
     m_priv->debugger->list_local_variables ();
-    m_priv->debugger->list_frames_arguments ();
+    m_priv->debugger->list_frames_arguments (0, 0);
 }
 
 void
