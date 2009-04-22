@@ -1,0 +1,39 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:gnome="http://api.gnome.org/doap-extensions#"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <!--
+  This is a DOAP template file.  It contains Pulse's best guesses at
+  some basic content.  You should verify the information in this file
+  and modify anything that isn't right.  Add the corrected file to your
+  source code repository to help tools better understand your project.
+  -->
+
+  <name xml:lang="en">Empathy Instant Messenger</name>
+  <shortdesc xml:lang="en">A Graphical C/C++ Debugger</shortdesc>
+  <!--
+  <homepage rdf:resource="http://projects.gnome.org/nemiver" />
+  -->
+  <!--
+  <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/nemiver-list" />
+  -->
+  <download-page rdf:resource="http://download.gnome.org/sources/nemiver/" />
+  <bug-database rdf:resource="http://bugzilla.gnome.org/browse.cgi?product=nemiver" />
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Dodji Seketeli</foaf:name>
+      <foaf:mbox rdf:resource="dodji@seketeli.org" />
+      <gnome:userid>dodji</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Jonathon Jongsma</foaf:name>
+      <foaf:mbox rdf:resource="jonathon@quotidian.org" />
+      <gnome:userid>jjongsma</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+</Project>
