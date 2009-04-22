@@ -1023,7 +1023,9 @@ public:
     virtual void select_frame (int a_frame_id,
                                const UString &a_cookie="") = 0;
 
-    virtual void list_frames (const UString &a_cookie="") = 0;
+    virtual void list_frames (int a_low_frame=-1,
+                              int a_high_frame=-1,
+                              const UString &a_cookie="") = 0;
 
     virtual void list_frames_arguments (int a_low_frame=-1,
                                         int a_high_frame=-1,

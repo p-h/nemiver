@@ -1626,6 +1626,9 @@ DBGPerspective::on_going_to_run_target_signal ()
     clear_session_data ();
     get_local_vars_inspector ().re_init_widget ();
     get_breakpoints_view ().re_init ();
+    get_call_stack ().clear ();
+    get_memory_view ().clear ();
+    get_registers_view ().clear ();
     NEMIVER_CATCH
 }
 
@@ -4928,7 +4931,7 @@ DBGPerspective::execute_program
         LOG_DD ("stopped dbg_engine");
     }
 
-    // close old file that might be open
+    // close old files that might be open
     if (a_close_opened_files
         && (prog != m_priv->prog_path)
         && get_n_pages ()) {
@@ -4939,17 +4942,29 @@ DBGPerspective::execute_program
     args.insert (args.begin (), prog);
     vector<UString> source_search_dirs = a_cwd.split (" ");
 
+    // Detect if we are debugging a new program or not.
+    // For instance, if we are debugging the same program as in
+    // the previous run, but with different arguments, we consider
+    // that we are not debugging a new program.
+    // In that case, we might want to keep things like breakpoints etc,
+    // around.
+    bool is_new_program = (prog != m_priv->prog_path);
+
     // delete old breakpoints, if any.
-    map<int, IDebugger::BreakPoint>::const_iterator bp_it;
-    for (bp_it = m_priv->breakpoints.begin ();
-         bp_it != m_priv->breakpoints.end ();
-         ++bp_it) {
-        dbg_engine->delete_breakpoint (bp_it->first,
-                                       I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
+    if (is_new_program) {
+        map<int, IDebugger::BreakPoint>::const_iterator bp_it;
+        for (bp_it = m_priv->breakpoints.begin ();
+             bp_it != m_priv->breakpoints.end ();
+             ++bp_it) {
+            dbg_engine->delete_breakpoint (bp_it->first,
+                                           I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
+        }
     }
 
+    // If we are debugging a new program,
     // clear data gathered by the old session
-    clear_session_data ();
+    if (is_new_program)
+        clear_session_data ();
 
     clear_status_notebook ();
 
@@ -4960,22 +4975,27 @@ DBGPerspective::execute_program
     // set environment variables of the inferior
     dbg_engine->add_env_variables (a_env);
 
+    // If this is a new program we are debugging,
     // set a breakpoint in 'main' by default.
-    if (a_breaks.empty ()) {
-        dbg_engine->set_breakpoint ("main");
-    } else {
-        vector<IDebugger::BreakPoint>::const_iterator it;
-        for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
-            // if the breakpoint was marked as 'disabled' in the session DB, we
-            // have set the breakpoint and immediately disable it.  We need to
-            // pass along some additional information in the 'cookie' to
-            // determine which breakpoint needs to be disabling after it is set.
-            UString cookie = it->enabled() ? "" : "initially-disabled#" +
-                it->file_full_name () + "#" + UString::from_int(it->line ());
-            dbg_engine->set_breakpoint (it->file_full_name (),
-                                        it->line (),
-                                        it->condition (),
-                                        cookie);
+    if (is_new_program) {
+        if (a_breaks.empty ()) {
+            dbg_engine->set_breakpoint ("main");
+        } else {
+            vector<IDebugger::BreakPoint>::const_iterator it;
+            for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
+                // if the breakpoint was marked as 'disabled'
+                // in the session DB, we
+                // have set the breakpoint and immediately disable it.
+                // We need to pass along some additional information
+                // in the 'cookie' to determine which breakpoint
+                // needs to be disabling after it is set.
+                UString cookie = it->enabled() ? "" : "initially-disabled#" +
+                    it->file_full_name () + "#" + UString::from_int(it->line ());
+                dbg_engine->set_breakpoint (it->file_full_name (),
+                                            it->line (),
+                                            it->condition (),
+                                            cookie);
+            }
         }
     }
 

@@ -63,7 +63,8 @@ quote_args (const vector<UString> &a_prog_args)
         for (vector<UString>::size_type i=1;
              i < a_prog_args.size ();
              ++i) {
-            args += Glib::shell_quote (a_prog_args[i].raw ()) + " ";
+            if (!a_prog_args[i].empty ())
+                args += Glib::shell_quote (a_prog_args[i].raw ()) + " ";
         }
     }
     return args;
@@ -3403,13 +3404,34 @@ GDBEngine::delete_breakpoint (gint a_break_num,
 }
 
 void
-GDBEngine::list_frames (const UString &a_cookie)
+GDBEngine::list_frames (int a_low_frame,
+                        int a_high_frame,
+                        const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+    string low, high, stack_window, cmd_str;
+
+    if (a_low_frame >= 0)
+        low = UString::from_int (a_low_frame).raw ();
+    if (a_high_frame >= 0)
+        high = UString::from_int (a_high_frame).raw ();
+
+    if (!low.empty () && !high.empty ())
+        stack_window = low + " " + high;
+
+    cmd_str = (stack_window.empty ())
+              ? "-stack-list-frames"
+              : "-stack-list-frames " + stack_window;
+
     queue_command (Command ("list-frames",
-                            "-stack-list-frames",
+                            cmd_str,
                             a_cookie));
 }
+
+void
+GDBEngine::list_frames (int a_min_frame_index,
+                        int a_max_frame_index,
+                        const UString &a_cookie="");
 
 void
 GDBEngine::select_frame (int a_frame_id,

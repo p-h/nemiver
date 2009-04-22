@@ -59,8 +59,11 @@ static const char *gv_output_record7="^done,changelist=[{name=\"var1.public.m_fi
 static const char *gv_output_record8="^done,changelist=[]\n";
 
 
-//the partial result of a gdbmi command: -stack-list-argument 1 command
-//this command is used to implement IDebugger::list_frames_arguments()
+static const char *gv_stack0 =
+"stack=[frame={level=\"0\",addr=\"0x000000330f832f05\",func=\"raise\",file=\"../nptl/sysdeps/unix/sysv/linux/raise.c\",fullname=\"/usr/src/debug/glibc-20081113T2206/nptl/sysdeps/unix/sysv/linux/raise.c\",line=\"64\"},frame={level=\"1\",addr=\"0x000000330f834a73\",func=\"abort\",file=\"abort.c\",fullname=\"/usr/src/debug/glibc-20081113T2206/stdlib/abort.c\",line=\"88\"},frame={level=\"2\",addr=\"0x0000000000400872\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"7\"},frame={level=\"3\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"4\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"5\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"6\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"7\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"8\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"9\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"10\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"11\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"12\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"13\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"14\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"15\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"16\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"17\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"18\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"19\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"20\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"21\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"22\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"23\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"24\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"25\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"}]";
+
+// the partial result of a gdbmi command: -stack-list-argument 1 command
+// this command is used to implement IDebugger::list_frames_arguments()
 static const char* gv_stack_arguments0 =
 "stack-args=[frame={level=\"0\",args=[{name=\"a_param\",value=\"(Person &) @0xbf88fad4: {m_first_name = {static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x804b144 \\\"Ali\\\"}}, m_family_name = {static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x804b12c \\\"BABA\\\"}}, m_age = 15}\"}]},frame={level=\"1\",args=[]}]" ;
 
@@ -338,6 +341,25 @@ test_output_record ()
     is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok);
     BOOST_REQUIRE (output.result_record ().has_changed_var_list ());
+}
+
+void
+test_stack0 ()
+{
+    UString::size_type to = 0;
+    GDBMIParser parser (gv_stack0);
+    vector<IDebugger::Frame> call_stack;
+    bool is_ok = parser.parse_call_stack (0, to, call_stack);
+    BOOST_REQUIRE (is_ok);
+    for (unsigned i = 0; i < call_stack.size (); ++i) {
+        BOOST_REQUIRE (call_stack[i].level () >= 0
+                       && call_stack[i].level () == (int) i);
+        BOOST_REQUIRE (!call_stack[i].function_name ().empty ());
+        BOOST_REQUIRE (!call_stack[i].address ().empty ());
+        BOOST_REQUIRE (!call_stack[i].file_name ().empty ());
+        BOOST_REQUIRE (!call_stack[i].file_full_name ().empty ());
+        BOOST_REQUIRE (call_stack[i].line ());
+    }
 }
 
 void
@@ -788,6 +810,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_stoppped_async_output)) ;
     suite->add (BOOST_TEST_CASE (&test_running_async_output)) ;
     suite->add (BOOST_TEST_CASE (&test_output_record)) ;
+    suite->add (BOOST_TEST_CASE (&test_stack0)) ;
     suite->add (BOOST_TEST_CASE (&test_stack_arguments0)) ;
     suite->add (BOOST_TEST_CASE (&test_stack_arguments1)) ;
     suite->add (BOOST_TEST_CASE (&test_local_vars)) ;
