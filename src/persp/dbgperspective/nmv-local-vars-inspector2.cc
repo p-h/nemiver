@@ -65,6 +65,13 @@ public:
     IDebugger::StopReason saved_reason;
     bool saved_has_frame;
     IDebugger::Frame saved_frame;
+    // The list of variables that changed at the previous stop
+    // Those were probably highlighted in red.
+    // We need to keep track of them
+    // to make them look black again.
+    //
+    IDebugger::VariableList local_vars_changed_at_prev_stop;
+    IDebugger::VariableList func_args_changed_at_prev_stop;
 
     Priv (IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench,
@@ -247,6 +254,7 @@ public:
         }
         delete_vars_backend_peers (local_vars);
         local_vars.clear ();
+        local_vars_changed_at_prev_stop.clear ();
     }
 
     void
@@ -264,6 +272,7 @@ public:
         }
         delete_vars_backend_peers (function_arguments);
         function_arguments.clear ();
+        func_args_changed_at_prev_stop.clear ();
     }
 
     void
@@ -388,25 +397,56 @@ public:
     void
     update_local_variables ()
     {
+        IDebugger::VariableList::const_iterator var_it;
+        if (!is_new_frame) {
+            // During the previous local variables update, some
+            // variables whose value change were highlited.
+            // At this point in time, we need to un-highlight them back
+            // in case their value haven't change during this
+            // update.
+            for (var_it = local_vars_changed_at_prev_stop.begin ();
+                 var_it != local_vars_changed_at_prev_stop.end ();
+                 ++var_it) {
+                update_a_local_variable (*var_it);
+            }
+            local_vars_changed_at_prev_stop.clear ();
+        }
         for (IDebugger::VariableList::const_iterator it = local_vars.begin ();
              it != local_vars.end ();
              ++it) {
             debugger->list_changed_variables
-            (*it,
-            sigc::mem_fun (*this, &Priv::on_local_variable_updated_signal));
+                    (*it,
+                     sigc::mem_fun (*this,
+                                    &Priv::on_local_variable_updated_signal));
         }
+
     }
 
     void
     update_function_arguments ()
     {
+        IDebugger::VariableList::const_iterator var_it;
+        if (!is_new_frame) {
+            // During the previous function argument update, some
+            // arguments whose value change were highlighted.
+            // At this point in time, we need to un-highlight them back
+            // in case their value haven't change during this
+            // update.
+            for (var_it = func_args_changed_at_prev_stop.begin ();
+                 var_it != func_args_changed_at_prev_stop.end ();
+                 ++var_it) {
+                update_a_function_argument (*var_it);
+            }
+            func_args_changed_at_prev_stop.clear ();
+        }
         for (IDebugger::VariableList::const_iterator it =
                                             function_arguments.begin ();
              it != function_arguments.end ();
              ++it) {
             debugger->list_changed_variables
-            (*it,
-            sigc::mem_fun (*this, &Priv::on_function_args_updated_signal));
+                    (*it,
+                     sigc::mem_fun (*this,
+                                    &Priv::on_function_args_updated_signal));
         }
     }
 
@@ -526,6 +566,7 @@ public:
              it != a_vars.end ();
              ++it) {
             update_a_local_variable (*it);
+            local_vars_changed_at_prev_stop.push_back (*it);
         }
 
         NEMIVER_CATCH
@@ -602,6 +643,7 @@ public:
              it != a_vars.end ();
              ++it) {
             update_a_function_argument (*it);
+            func_args_changed_at_prev_stop.push_back (*it);
         }
 
         NEMIVER_CATCH
