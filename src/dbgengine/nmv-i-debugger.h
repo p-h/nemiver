@@ -1076,21 +1076,29 @@ public:
             const std::vector<uint8_t>& a_bytes,
             const UString& a_cookie="") = 0;
 
+    typedef sigc::slot<void, const VariableSafePtr> ConstVariableSlot;
+    typedef sigc::slot<void, const VariableList> ConstVariableListSlot;
+
     virtual void create_variable (const UString &a_name,
                                   const UString &a_cookie="") = 0;
+
     virtual void create_variable (const UString &a_name,
-                                  const sigc::slot<void,
-                                                   const VariableSafePtr>&) = 0;
+                                  const ConstVariableSlot &a_slot,
+                                  const UString &a_cookie="") = 0;
+
     virtual void delete_variable (const VariableSafePtr a_var,
                                   const UString &a_cookie="") = 0;
+
     virtual void delete_variable (const VariableSafePtr a_var,
-                                  const sigc::slot<void,
-                                                   const VariableSafePtr>&) = 0;
+                                  const ConstVariableSlot&,
+                                  const UString &a_cookie="") = 0;
+
     virtual void unfold_variable (VariableSafePtr a_var,
                                   const UString &a_cookie) = 0;
     virtual void unfold_variable
                 (VariableSafePtr a_var,
-                 const sigc::slot<void, const VariableSafePtr> &) = 0;
+                 const ConstVariableSlot&,
+                 const UString &a_cookie="") = 0;
 
     virtual void assign_variable (const VariableSafePtr a_var,
                                   const UString &a_expression,
@@ -1099,19 +1107,22 @@ public:
     virtual void assign_variable
                     (const VariableSafePtr a_var,
                      const UString &a_expression,
-                     const sigc::slot<void, const VariableSafePtr>& a_slot) = 0;
+                     const ConstVariableSlot &a_slot,
+                     const UString &a_cookie="") = 0;
 
     virtual void evaluate_variable_expr (const VariableSafePtr a_var,
                                          const UString &a_cookie) = 0;
     virtual void evaluate_variable_expr
             (const VariableSafePtr a_var,
-             const sigc::slot<void, const VariableSafePtr> &a_slot)= 0;
+             const ConstVariableSlot &a_slot,
+             const UString &a_cookie="")= 0;
 
     virtual void list_changed_variables (VariableSafePtr a_root,
                                          const UString &a_cookie) = 0;
     virtual void list_changed_variables
             (VariableSafePtr a_root,
-             const sigc::slot<void, const VariableList&> &a_slot) = 0;
+             const ConstVariableListSlot &a_slot,
+             const UString &a_cookie="") = 0;
 };//end IDebugger
 
 NEMIVER_END_NAMESPACE (nemiver)

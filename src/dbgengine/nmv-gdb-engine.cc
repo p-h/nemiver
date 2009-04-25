@@ -3994,7 +3994,28 @@ GDBEngine::set_memory (size_t a_addr,
 }
 
 void
+null_const_variable_slot (const IDebugger::VariableSafePtr &)
+{
+}
+
+void
+null_const_variable_list_slot (const IDebugger::VariableList &)
+{
+}
+
+void
 GDBEngine::create_variable (const UString &a_name,
+                            const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    create_variable (a_name,
+                     &null_const_variable_slot,
+                     a_cookie);
+}
+
+void
+GDBEngine::create_variable (const UString &a_name ,
+                            const ConstVariableSlot &a_slot,
                             const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -4008,33 +4029,23 @@ GDBEngine::create_variable (const UString &a_name,
                      "-var-create - * " + a_name,
                      a_cookie);
     command.tag0 (a_name);
-
-    queue_command (Command ("create-variable",
-                            "-var-create - * " + a_name,
-                            a_cookie));
-}
-
-void
-GDBEngine::create_variable (const UString &a_name ,
-                            const sigc::slot<void, const VariableSafePtr> &a_slot)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    if (a_name.empty ()) {
-        LOG ("got empty name");
-        return;
-    }
-
-    Command command ("create-variable",
-                     "-var-create - * " + a_name);
-    command.tag0 (a_name);
     command.set_slot (a_slot);
-
     queue_command (command);
 }
 
 void
 GDBEngine::delete_variable (const VariableSafePtr a_var,
+                            const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    delete_variable (a_var,
+                     &null_const_variable_slot,
+                     a_cookie);
+}
+
+void
+GDBEngine::delete_variable (const VariableSafePtr a_var,
+                            const ConstVariableSlot &a_slot,
                             const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -4046,28 +4057,23 @@ GDBEngine::delete_variable (const VariableSafePtr a_var,
                      "-var-delete " + a_var->internal_name (),
                      a_cookie);
     command.variable (a_var);
-    queue_command (command);
-}
-
-void
-GDBEngine::delete_variable (const VariableSafePtr a_var,
-                            const sigc::slot<void,const VariableSafePtr> &a_slot)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    THROW_IF_FAIL (a_var);
-    THROW_IF_FAIL (!a_var->internal_name ().empty ());
-
-    Command command ("delete-variable",
-                     "-var-delete " + a_var->internal_name ());
-    command.variable (a_var);
     command.set_slot (a_slot);
-
     queue_command (command);
 }
 
 void
 GDBEngine::unfold_variable (const VariableSafePtr a_var,
+                            const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    unfold_variable (a_var,
+                     &null_const_variable_slot,
+                     a_cookie);
+}
+
+void
+GDBEngine::unfold_variable (const VariableSafePtr a_var,
+                            const ConstVariableSlot &a_slot,
                             const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -4081,33 +4087,10 @@ GDBEngine::unfold_variable (const VariableSafePtr a_var,
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
     Command command ("unfold-variable",
-                     "-var-list-children --all-values "
-                         + a_var->internal_name (),
+                     "-var-list-children --all-values " + a_var->internal_name (),
                      a_cookie);
     command.variable (a_var);
-
-    queue_command (command);
-}
-
-void
-GDBEngine::unfold_variable (const VariableSafePtr a_var,
-                            const sigc::slot<void, const VariableSafePtr> &a_slot)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    THROW_IF_FAIL (a_var);
-    if (a_var->internal_name ().empty ()) {
-        UString qname;
-        a_var->build_qualified_internal_name (qname);
-        a_var->internal_name (qname);
-    }
-    THROW_IF_FAIL (!a_var->internal_name ().empty ());
-
-    Command command ("unfold-variable",
-                     "-var-list-children --all-values " + a_var->internal_name ());
-    command.variable (a_var);
     command.set_slot (a_slot);
-
     queue_command (command);
 }
 
@@ -4116,24 +4099,19 @@ GDBEngine::assign_variable (const VariableSafePtr a_var,
                             const UString &a_expression,
                             const UString &a_cookie)
 {
-    THROW_IF_FAIL (a_var);
-    THROW_IF_FAIL (!a_var->internal_name ().empty ());
-    THROW_IF_FAIL (!a_expression.empty ());
-
-    Command command ("assign-variable",
-                     "-var-assign "
-                      + a_var->internal_name () + " " + a_expression,
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    assign_variable (a_var,
+                     a_expression,
+                     &null_const_variable_slot,
                      a_cookie);
-    command.variable (a_var);
-    queue_command (command);
-
 }
 
 void
 GDBEngine::assign_variable
                     (const VariableSafePtr a_var,
                      const UString &a_expression,
-                     const sigc::slot<void, const VariableSafePtr>& a_slot)
+                     const ConstVariableSlot &a_slot,
+                     const UString &a_cookie)
 {
     THROW_IF_FAIL (a_var);
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
@@ -4141,7 +4119,8 @@ GDBEngine::assign_variable
 
     Command command ("assign-variable",
                      "-var-assign "
-                         + a_var->internal_name () + " " + a_expression);
+                         + a_var->internal_name () + " " + a_expression,
+                     a_cookie);
     command.variable (a_var);
     command.set_slot (a_slot);
     queue_command (command);
@@ -4151,26 +4130,27 @@ void
 GDBEngine::evaluate_variable_expr (const VariableSafePtr a_var,
                                    const UString &a_cookie)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    evaluate_variable_expr (a_var,
+                            &null_const_variable_slot,
+                            a_cookie);
+}
+
+void
+GDBEngine::evaluate_variable_expr
+                        (const VariableSafePtr a_var,
+                         const ConstVariableSlot &a_slot,
+                         const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     THROW_IF_FAIL (a_var);
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
     Command command ("evaluate-expression",
                      "-var-evaluate-expression " + a_var->internal_name (),
                      a_cookie);
-    command.variable (a_var);
-    queue_command (command);
-}
-
-void
-GDBEngine::evaluate_variable_expr
-                        (const VariableSafePtr a_var,
-                         const sigc::slot<void, const VariableSafePtr> &a_slot)
-{
-    THROW_IF_FAIL (a_var);
-    THROW_IF_FAIL (!a_var->internal_name ().empty ());
-
-    Command command ("evaluate-expression",
-                     "-var-evaluate-expression " + a_var->internal_name ());
     command.variable (a_var);
     command.set_slot (a_slot);
     queue_command (command);
@@ -4180,6 +4160,21 @@ void
 GDBEngine::list_changed_variables (VariableSafePtr a_var,
                                    const UString &a_cookie)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    list_changed_variables (a_var,
+                            &null_const_variable_list_slot,
+                            a_cookie);
+}
+
+void
+GDBEngine::list_changed_variables
+                (VariableSafePtr a_var,
+                 const ConstVariableListSlot &a_slot,
+                 const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     THROW_IF_FAIL (a_var);
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
@@ -4187,21 +4182,6 @@ GDBEngine::list_changed_variables (VariableSafePtr a_var,
                      "-var-update --all-values "
                          + a_var->internal_name (),
                      a_cookie);
-    command.variable (a_var);
-    queue_command (command);
-}
-
-void
-GDBEngine::list_changed_variables
-                (VariableSafePtr a_var,
-                 const sigc::slot<void, const list<VariableSafePtr>& > &a_slot)
-{
-    THROW_IF_FAIL (a_var);
-    THROW_IF_FAIL (!a_var->internal_name ().empty ());
-
-    Command command ("list-changed-variables",
-                     "-var-update --all-values "
-                         + a_var->internal_name ());
     command.variable (a_var);
     command.set_slot (a_slot);
     queue_command (command);

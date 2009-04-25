@@ -389,41 +389,44 @@ public:
     bool extract_global_variable_list (Output &a_output,
                                        VarsPerFilesMap &a_vars) ;
 
-    void list_register_names (const UString &a_cookie="");
+    void list_register_names (const UString &a_cookie);
 
     void list_register_values (std::list<register_id_t> a_registers,
-                               const UString &a_cookie="");
+                               const UString &a_cookie);
 
     virtual void set_register_value (const UString& a_reg_name,
                                      const UString& a_value,
                                      const UString& a_cookie);
 
-    void list_changed_registers (const UString &a_cookie="");
+    void list_changed_registers (const UString &a_cookie);
 
-    void list_register_values (const UString &a_cookie="");
+    void list_register_values (const UString &a_cookie);
 
     void read_memory (size_t a_start_addr,
                       size_t a_num_bytes,
-                      const UString& a_cookie="") ;
+                      const UString& a_cookie) ;
     void set_memory (size_t a_addr,
                      const std::vector<uint8_t>& a_bytes,
-                     const UString& a_cookie="");
+                     const UString& a_cookie);
 
     void create_variable (const UString &a_name,
                           const UString &a_cookie="");
     void create_variable (const UString &a_name,
-                          const sigc::slot<void, const VariableSafePtr>&);
+                          const ConstVariableSlot &a_s,
+                          const UString &a_cookie="");
 
     void delete_variable (const VariableSafePtr a_var,
                           const UString &a_cookie);
 
     void delete_variable (const VariableSafePtr a_var,
-                          const sigc::slot<void,const VariableSafePtr>&);
+                          const ConstVariableSlot &a_s,
+                          const UString &a_cookie);
 
     void unfold_variable (VariableSafePtr a_var,
                           const UString &a_cookie);
     void unfold_variable (VariableSafePtr a_var,
-                          const sigc::slot<void, const VariableSafePtr> &);
+                          const ConstVariableSlot &a_s,
+                          const UString &a_cookie);
 
     void assign_variable (const VariableSafePtr a_var,
                           const UString &a_expression,
@@ -432,20 +435,23 @@ public:
     void assign_variable
                         (const VariableSafePtr a_var,
                          const UString &a_expression,
-                         const sigc::slot<void, const VariableSafePtr>& a_slot);
+                         const ConstVariableSlot &a_slot,
+                         const UString &a_cookie);
 
     void evaluate_variable_expr (const VariableSafePtr a_var,
                                  const UString &a_cookie);
     void evaluate_variable_expr
             (const VariableSafePtr a_var,
-             const sigc::slot<void, const VariableSafePtr> &a_slot);
+             const ConstVariableSlot &a_slot,
+             const UString &a_cookie);
 
     void list_changed_variables (VariableSafePtr a_root,
                                  const UString &a_cookie);
 
     void list_changed_variables
                 (VariableSafePtr a_root,
-                 const sigc::slot<void, const list<VariableSafePtr>& > &a_slot);
+                 const ConstVariableListSlot &a_slot,
+                 const UString &a_cookie);
 };//end class GDBEngine
 
 NEMIVER_END_NAMESPACE (nemiver)
