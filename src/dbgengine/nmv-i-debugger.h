@@ -959,6 +959,8 @@ public:
 
     virtual ILangTraitSafePtr get_language_trait () = 0;
 
+    virtual bool is_variable_editable (const VariableSafePtr a_var) const = 0;
+
     virtual void do_continue (const UString &a_cookie="") = 0;
 
     virtual void run (const UString &a_cookie="") = 0;

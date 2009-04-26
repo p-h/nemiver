@@ -42,6 +42,11 @@ typedef SafePtr<VarsTreeView,
 class NEMIVER_API VarsTreeView : public Gtk::TreeView
 {
     public:
+        enum ColumIndex {
+            VARIABLE_NAME_COLUMN_INDEX = 0,
+            VARIABLE_VALUE_COLUMN_INDEX,
+            VARIABLE_TYPE_COLUMN_INDEX
+        };
         static VarsTreeViewSafePtr create ();
         Glib::RefPtr<Gtk::TreeStore>& get_tree_store ();
 

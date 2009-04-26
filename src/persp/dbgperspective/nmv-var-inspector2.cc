@@ -81,6 +81,15 @@ class VarInspector2::Priv : public sigc::trackable {
 
         tree_view->signal_row_expanded ().connect
             (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal));
+
+        Gtk::CellRenderer *r = tree_view->get_column_cell_renderer
+            (VarsTreeView::VARIABLE_VALUE_COLUMN_INDEX);
+        THROW_IF_FAIL (r);
+
+        Gtk::CellRendererText *t =
+            dynamic_cast<Gtk::CellRendererText*> (r);
+        t->signal_edited ().connect (sigc::mem_fun
+                                     (*this, &Priv::on_cell_edited_signal));
     }
 
     void
@@ -181,10 +190,21 @@ class VarInspector2::Priv : public sigc::trackable {
         THROW_IF_FAIL (sel);
         cur_selected_row = sel->get_selected ();
         if (!cur_selected_row) {return;}
-        IDebugger::VariableSafePtr variable =
+        IDebugger::VariableSafePtr var =
             (IDebugger::VariableSafePtr)cur_selected_row->get_value
                                     (vutil::get_variable_columns ().variable);
-        if (!variable) {return;}
+        if (!var)
+            return;
+
+        variable = var;
+
+        // If the variable should be editable, set the cell of the variable value
+        // editable.
+        cur_selected_row->set_value
+                    (vutil::get_variable_columns ().variable_value_editable,
+                     debugger->is_variable_editable (variable));
+
+        // Dump some log about the variable that got selected.
         UString qname;
         variable->build_qname (qname);
         LOG_DD ("row of variable '" << qname << "'");
@@ -239,6 +259,28 @@ class VarInspector2::Priv : public sigc::trackable {
     }
 
     void
+    on_cell_edited_signal (const Glib::ustring &a_path,
+                           const Glib::ustring &a_text)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        Gtk::TreeModel::iterator row = tree_store->get_iter (a_path);
+        IDebugger::VariableSafePtr var =
+            (*row)[vutil::get_variable_columns ().variable];
+        THROW_IF_FAIL (var);
+
+        debugger->assign_variable
+            (var, a_text,
+             sigc::bind (sigc::mem_fun
+                                 (*this, &Priv::on_variable_assigned_signal),
+                         a_path));
+
+        NEMIVER_CATCH
+    }
+
+    void
     on_variable_created_signal (const IDebugger::VariableSafePtr a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -261,6 +303,24 @@ class VarInspector2::Priv : public sigc::trackable {
         Gtk::TreeModel::iterator var_it = tree_store->get_iter (a_var_node);
         vutil::update_unfolded_variable (a_var, *tree_view, tree_store, var_it);
         tree_view->expand_row (a_var_node, false);
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_variable_assigned_signal (const IDebugger::VariableSafePtr a_var,
+                                 const UString &a_var_path)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        Gtk::TreeModel::iterator var_row
+                                = tree_store->get_iter (a_var_path);
+        THROW_IF_FAIL (var_row);
+        THROW_IF_FAIL (tree_view);
+        vutil::update_a_variable_node (a_var, *tree_view,
+                                       var_row, false, false);
 
         NEMIVER_CATCH
     }

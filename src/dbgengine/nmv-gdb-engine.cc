@@ -3134,6 +3134,27 @@ GDBEngine::get_language_trait ()
     return m_priv->lang_trait;
 }
 
+/// Dectect if the variable should be editable or not.
+/// For now, only scalar variable are said to be editable.
+/// An aggregate (array or structure) is not editable yet, as
+/// we need lots of hacks to detect for instance if an array is a string,
+/// for instance.
+/// \param a_var the variable to consider.
+/// \return true if the variable is editable, false otherwise.
+bool
+GDBEngine::is_variable_editable (const VariableSafePtr a_var) const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    // TODO: make this depend on the current language trait, maybe ?
+    // Also, be less strict and allow editing of certain aggregate
+    // variables.
+    if (!a_var)
+        return false;
+    if (a_var->members ().empty () && !a_var->has_expected_children ())
+        return true;
+    return false;
+}
+
 bool
 GDBEngine::stop_target ()
 {

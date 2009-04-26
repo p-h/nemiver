@@ -45,7 +45,8 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
         VARIABLE_OFFSET,
         IS_HIGHLIGHTED_OFFSET,
         NEEDS_UNFOLDING,
-        FG_COLOR_OFFSET
+        FG_COLOR_OFFSET,
+        VARIABLE_VALUE_EDITABLE_OFFSET
     };
 
     Gtk::TreeModelColumn<Glib::ustring> name;
@@ -56,6 +57,7 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<bool> is_highlighted;
     Gtk::TreeModelColumn<bool> needs_unfolding;
     Gtk::TreeModelColumn<Gdk::Color> fg_color;
+    Gtk::TreeModelColumn<bool> variable_value_editable;
 
     VariableColumns ()
     {
@@ -67,6 +69,7 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
         add (is_highlighted);
         add (needs_unfolding);
         add (fg_color);
+        add (variable_value_editable);
     }
 };//end VariableColumns
 
