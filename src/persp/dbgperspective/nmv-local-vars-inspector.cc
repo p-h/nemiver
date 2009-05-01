@@ -534,34 +534,40 @@ public:
 
     void finish_handling_debugger_stopped_event
                                     (IDebugger::StopReason /*a_reason*/,
-                                     bool /*a_has_frame*/,
+                                     bool a_has_frame,
                                      const IDebugger::Frame &a_frame)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
 
-            THROW_IF_FAIL (tree_store);
-            if (is_new_frame) {
-                LOG_DD ("init tree view");
-                re_init_tree_view ();
-                LOG_DD ("list local variables");
-                debugger->list_local_variables ();
-                LOG_DD ("list frames arguments");
-                debugger->list_frames_arguments (0, 0);
-            } else {
-                IVarListWalkerSafePtr walker_list =
-                                    get_local_vars_walker_list ();
-                THROW_IF_FAIL (walker_list);
-                walker_list->do_walk_variables ();
-                walker_list = get_function_args_vars_walker_list ();
-                THROW_IF_FAIL (walker_list);
-                walker_list->do_walk_variables ();
-                walker_list = get_derefed_variables_walker_list ();
-                THROW_IF_FAIL (walker_list);
-                walker_list->do_walk_variables ();
-            }
-            previous_function_name = a_frame.function_name ();
+        if (!a_has_frame)
+            return;
+
+        saved_frame = a_frame;
+
+        THROW_IF_FAIL (tree_store);
+        if (is_new_frame) {
+            LOG_DD ("init tree view");
+            re_init_tree_view ();
+            LOG_DD ("list local variables");
+            debugger->list_local_variables ();
+            LOG_DD ("list frames arguments");
+            debugger->list_frames_arguments (a_frame.level (),
+                                             a_frame.level ());
+        } else {
+            IVarListWalkerSafePtr walker_list =
+                                get_local_vars_walker_list ();
+            THROW_IF_FAIL (walker_list);
+            walker_list->do_walk_variables ();
+            walker_list = get_function_args_vars_walker_list ();
+            THROW_IF_FAIL (walker_list);
+            walker_list->do_walk_variables ();
+            walker_list = get_derefed_variables_walker_list ();
+            THROW_IF_FAIL (walker_list);
+            walker_list->do_walk_variables ();
+        }
+        previous_function_name = a_frame.function_name ();
 
         NEMIVER_CATCH
     }
@@ -649,7 +655,7 @@ public:
         THROW_IF_FAIL (walker_list);
 
         map<int, list<IDebugger::VariableSafePtr> >::const_iterator it;
-        it = a_frames_params.find (0);
+        it = a_frames_params.find (saved_frame.level ());
         if (it == a_frames_params.end ()) {
             LOG_DD ("no frame params found");
             return;
@@ -875,15 +881,20 @@ LocalVarsInspector::widget () const
 }
 
 void
-LocalVarsInspector::show_local_variables_of_current_function ()
+LocalVarsInspector::show_local_variables_of_current_function
+                                                (const IDebugger::Frame &a_frame)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->debugger);
 
+    m_priv->saved_frame = a_frame;
+
     re_init_widget ();
     m_priv->debugger->list_local_variables ();
-    m_priv->debugger->list_frames_arguments (0, 0);
+    int frame_level = m_priv->debugger->get_current_frame_level ();
+    LOG_DD ("current frame level: " <<  (int)frame_level);
+    m_priv->debugger->list_frames_arguments (frame_level, frame_level);
 }
 
 void
