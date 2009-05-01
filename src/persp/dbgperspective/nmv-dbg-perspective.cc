@@ -1541,8 +1541,10 @@ DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
 
     NEMIVER_TRY
 
-    get_call_stack ().update_stack ();
-    get_local_vars_inspector ().show_local_variables_of_current_function ();
+    THROW_IF_FAIL (m_priv);
+
+    get_local_vars_inspector ().show_local_variables_of_current_function
+                                                        (m_priv->current_frame);
 
     NEMIVER_CATCH
 }
@@ -2242,6 +2244,7 @@ DBGPerspective::on_frame_selected_signal (int a_index,
     if (a_index) {}
     NEMIVER_TRY
 
+    m_priv->current_frame = a_frame;
     UString file_path = a_frame.file_full_name ();
 
     if (file_path == "") {
@@ -2263,7 +2266,8 @@ DBGPerspective::on_frame_selected_signal (int a_index,
         //TODO: we should disassemble the current frame and display it.
     }
 
-    get_local_vars_inspector ().show_local_variables_of_current_function ();
+    get_local_vars_inspector ().show_local_variables_of_current_function
+                                                                    (a_frame);
     set_where (file_path, a_frame.line ());
 
     NEMIVER_CATCH
@@ -5840,7 +5844,10 @@ DBGPerspective::set_breakpoint_using_dialog (const UString &a_function_name)
 void
 DBGPerspective::refresh_locals ()
 {
-    get_local_vars_inspector ().show_local_variables_of_current_function ();
+
+    THROW_IF_FAIL (m_priv);
+    get_local_vars_inspector ().show_local_variables_of_current_function
+                                                        (m_priv->current_frame);
 }
 
 void

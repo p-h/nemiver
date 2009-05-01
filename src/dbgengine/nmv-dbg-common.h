@@ -32,7 +32,7 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 class Command {
     UString m_cookie ;
     UString m_name ;
-    UString m_value ;
+    UString m_value;
     UString m_tag0 ;
     UString m_tag1 ;
     int m_tag2;

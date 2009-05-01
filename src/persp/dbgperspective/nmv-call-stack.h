@@ -61,6 +61,7 @@ public:
     virtual ~CallStack ();
     bool is_empty ();
     const vector<IDebugger::Frame>& frames () const;
+    IDebugger::Frame& current_frame () const;
     void update_stack ();
     void clear ();
     Gtk::Widget& widget () const;

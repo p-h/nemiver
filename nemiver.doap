@@ -5,7 +5,7 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">Nemiver Debugger</name>
-  <shortdesc xml:lang="en">A Graphical C/C++ Debugger</shortdesc>
+  <shortdesc xml:lang="en">Graphical C/C++ Debugger</shortdesc>
   <homepage rdf:resource="http://projects.gnome.org/nemiver" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/nemiver-list" />
   <download-page rdf:resource="http://download.gnome.org/sources/nemiver/" />

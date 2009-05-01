@@ -1272,14 +1272,15 @@ struct OnCommandDoneHandler : OutputHandler {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        m_engine->command_done_signal ().emit (a_in.command ().name (),
-                                               a_in.command ().cookie ());
         if (a_in.command ().name () == "attach-to-program") {
             m_engine->set_attached_to_target (true);
         }
         if (a_in.command ().name () == "select-frame") {
             m_engine->set_current_frame_level (a_in.command ().tag2 ());
         }
+
+        m_engine->command_done_signal ().emit (a_in.command ().name (),
+                                               a_in.command ().cookie ());
         //TODO: this is not necessarily true. Before setting the state
         //to ready here, one must now which command exactly was fired so
         //that gdb returned the "DONE" status for it.
@@ -2528,6 +2529,7 @@ GDBEngine::set_current_frame_level (int a_level)
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
 
+    LOG_DD ("cur frame level: " << (int) a_level);
     m_priv->cur_frame_level = a_level;
 }
 
