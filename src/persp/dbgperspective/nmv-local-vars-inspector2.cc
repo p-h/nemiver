@@ -349,27 +349,34 @@ public:
     void
     finish_handling_debugger_stopped_event
                                     (IDebugger::StopReason /*a_reason*/,
-                                     bool /*a_has_frame*/,
+                                     bool a_has_frame,
                                      const IDebugger::Frame &a_frame)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY
 
-            THROW_IF_FAIL (tree_store);
-            if (is_new_frame) {
-                LOG_DD ("init tree view");
-                re_init_tree_view ();
-                LOG_DD ("list local variables");
-                debugger->list_local_variables ();
-                LOG_DD ("list frames arguments");
-                debugger->list_frames_arguments (0, 0);
-            } else {
-                LOG_DD ("update local variables and function arguments");
-                update_local_variables ();
-                update_function_arguments ();
-            }
-            previous_function_name = a_frame.function_name ();
+        THROW_IF_FAIL (tree_store);
+
+        if (!a_has_frame)
+            return;
+
+        saved_frame = a_frame;
+
+        if (is_new_frame) {
+            LOG_DD ("init tree view");
+            re_init_tree_view ();
+            LOG_DD ("list local variables");
+            debugger->list_local_variables ();
+            LOG_DD ("list frames arguments");
+            debugger->list_frames_arguments (a_frame.level (),
+                                             a_frame.level ());
+        } else {
+            LOG_DD ("update local variables and function arguments");
+            update_local_variables ();
+            update_function_arguments ();
+        }
+        previous_function_name = a_frame.function_name ();
 
         NEMIVER_CATCH
     }
@@ -777,15 +784,20 @@ LocalVarsInspector2::widget () const
 }
 
 void
-LocalVarsInspector2::show_local_variables_of_current_function ()
+LocalVarsInspector2::show_local_variables_of_current_function
+                                            (const IDebugger::Frame &a_frame)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->debugger);
 
+    m_priv->saved_frame = a_frame;
+
     re_init_widget ();
     m_priv->debugger->list_local_variables ();
-    m_priv->debugger->list_frames_arguments (0, 0);
+    int frame_level = m_priv->debugger->get_current_frame_level ();
+    LOG_DD ("current frame level: " <<  (int)frame_level);
+    m_priv->debugger->list_frames_arguments (frame_level, frame_level);
 }
 
 void

@@ -61,7 +61,8 @@ public:
     Gtk::Widget& widget () const;
     void set_local_variables
                     (const std::list<IDebugger::VariableSafePtr> &a_vars);
-    void show_local_variables_of_current_function ();
+    void show_local_variables_of_current_function
+                                        (const IDebugger::Frame &a_frame);
     void re_init_widget ();
 };//end LocalVarsInspector2
 
