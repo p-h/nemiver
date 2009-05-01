@@ -795,6 +795,13 @@ CallStack::frames () const
     return m_priv->frames;
 }
 
+IDebugger::Frame&
+CallStack::current_frame () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->cur_frame;
+}
+
 Gtk::Widget&
 CallStack::widget () const
 {
