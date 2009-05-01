@@ -1620,7 +1620,9 @@ DBGPerspective::on_going_to_run_target_signal ()
     get_local_vars_inspector ().re_init_widget ();
     get_breakpoints_view ().re_init ();
     get_call_stack ().clear ();
+#ifdef WITH_MEMORYVIEW
     get_memory_view ().clear ();
+#endif
     get_registers_view ().clear ();
     NEMIVER_CATCH
 }
