@@ -1,9 +1,9 @@
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
 
-
 #runtestoverloads
 #runtestglobalvariables
+
 TESTS=\
 runtestgdbmi runtestunicode \
 runtestcpptrait runtestvarlist \
@@ -48,9 +48,9 @@ runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-runtestoverloads_SOURCES=test-overloads.cc
-runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
-$(top_builddir)/src/common/libnemivercommon.la
+#runtestoverloads_SOURCES=test-overloads.cc
+#runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+#$(top_builddir)/src/common/libnemivercommon.la
 
 runtestcore_SOURCES=test-core.cc
 runtestcore_LDADD=@NEMIVERCOMMON_LIBS@ \
@@ -87,9 +87,9 @@ runtestlocalvarslist_SOURCES=test-local-vars-list.cc
 runtestlocalvarslist_LDADD=@NEMIVERCOMMON_LIBS@  \
 $(top_builddir)/src/common/libnemivercommon.la
 
-runtestglobalvariables_SOURCES=test-global-variables.cc
-runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+#runtestglobalvariables_SOURCES=test-global-variables.cc
+#runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ \
+#$(top_builddir)/src/common/libnemivercommon.la
 
 runtestcpplexer_SOURCES=test-cpp-lexer.cc
 runtestcpplexer_LDADD=@NEMIVERCOMMON_LIBS@ \
