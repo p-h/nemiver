@@ -1,5 +1,15 @@
 2009-05-02  Dodji Seketeli <dodji@redhat.com>
 
+	Update NEWS file
+	* NEWS: Mention significant changes since 0.6.6
+
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
+	Update ChangeLog
+	* ChangeLog: automatically regenerate
+
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
 	Remove reference to non-generated tests
 	* tests/Makefile.am: Remove references to runtestoverloads and
 	runtestglobalvariables to make automake happy.
