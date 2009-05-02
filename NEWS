@@ -1,3 +1,28 @@
+0.6.7 Release
+==============
+
+Claude Paroz:
+      Updated French translation
+
+Dodji Seketeli:
+      Don't clear session when restarting with different args (Closes: 568822)
+      GDB/MI parsing fixes
+      Debugger API improvements
+      Implement call stack paging (Closes: #544116)
+      Kill automake warnings when building tests
+
+Hubert Figuiere:
+      Header inclusion cleanup (Closes: #581047)
+      Fix compilation breakage when builing without gtkhex
+
+Jonathon Jongsma:
+      Performance improvements
+      Fix critical warnings when closing a file (Closes: #578736)
+      Quote arguments passed to gdb (Closes: #575889)
+
+Landry Breuil:
+      On going OpenBSD build fixes
+
 0.6.6 Release
 =============
 
