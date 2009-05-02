@@ -1,3 +1,296 @@
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
+	Remove reference to non-generated tests
+	* tests/Makefile.am: Remove references to runtestoverloads and
+	runtestglobalvariables to make automake happy.
+
+2009-05-01 17:49:36 -0400  Hubert Figuiere <hub@figuiere.net>
+
+	Fix a breakage if built without gtkhex
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_going_to_run_target_signal):
+	get_memory_view is only if memoryview is compiled.
+
+2009-05-01 17:47:53 -0400  Hubert Figuiere <hub@figuiere.net>
+
+	Only include <gtk/gtk.h> (Closes: #581047)
+	* src/uicommon/ephy-spinner-tool-item.h: only include gtk/gtk.h
+	See http://live.gnome.org/GnomeGoals/CleanupGTKIncludes
+
+2009-05-01 13:38:57 -0400  Hubert Figuiere <hub@figuiere.net>
+
+	Fix a typo
+	* git-commit-messages.README: fix a typo
+
+2009-05-01  Dodji Seketeli <dodji@redhat.com>
+
+	Properly list arguments of the selected frame, not of the top most only
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc,h:
+	(LocalVarsInspector::Priv::finish_handling_debugger_stopped_event):
+	Remember the current frame. List the frame arguments of the current
+	frame, not of the frame which index is 0.
+	(LocalVarsInspector::Priv::on_frames_params_listed_signal):
+	Look for the arguments of the previously saved frame, not just for
+	the frame at level 0.
+	(LocalVarsInspector::show_local_variables_of_current_function):
+	Make this accept a frame in parameter. This is the frame
+	the function needs to fetch the arguments for. It's not clean to do
+	this but we have no easy way to fetch the arguments of the "current"
+	function, unfortunately.
+
+2009-05-01  Dodji Seketeli <dodji@redhat.com>
+
+	Add CallStack::current_frame entry point
+	* src/persp/dbgperspective/nmv-call-stack.h,cc:
+	(CallStack::current_frame): New entry point.
+
+2009-05-01  Dodji Seketeli <dodji@redhat.com>
+
+	Set IDebugger state before firing IDebugger::command_done_signal
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(OnCommandDoneHandler::do_handle): Set internal state about current
+	frame level and "being attached to target" before firing out the
+	IDebugger::command_done_signal(). This ensures that IDebugger
+	is in a consistent state when client code is notified.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Add new IDebugger::get_current_frame_level abstract API and implementation
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::get_current_frame_level): New abstract interface.
+	* src/dbgengine/nmv-gdb-engine.h:
+	(GDBEngine::get_current_frame_level,
+	GDBEngine::set_current_frame_level): New concrete interfaces.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(OnStoppedHander::do_handle): Save the current frame level if we
+	have the information.
+	(OnCommandDoneHandler::do_handle): Once the 'select-frame'
+	command was successfully done, save the requested frame level as
+	the current frame level.
+	(GDBEngine::select_frame): Embed the requested frame level in the
+	Command as tag2.
+	(GDBEngine::get_current_frame_level): New implementation.
+	(GDBEngine::set_current_frame_level): Likewise.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Add a new integer tag to the Command type
+	* src/dbgengine/nmv-dbg-common.h:
+	(Command::tag2): new accessors.
+
+2009-04-24  Olav Vitters <olav@bkor.dhs.org>
+
+	doap: fix short description
+
+2009-04-22 00:16:01 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Clean up doap file
+	* nemiver.doap: Fix name, remove comments
+
+2009-04-22  Dodji Seketeli <dodji@redhat.com>
+
+	DOAP file addition
+	* nemiver.doap: New file.
+
+2009-04-19  Dodji Seketeli <dodji@redhat.com>
+
+	Implement call stack paging (Closes: #544116)
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	(CallStack::Priv::store_frames_in_cache): New entry point.
+	(CallStack::Priv::append_frames_to_cache): Likewise.
+	(CallStack::Priv::append_frame_args_to_cache): Likewise.
+	(CallStack::Priv::format_args_string): Likewise.
+	(CallStack::Priv::append_frames_to_tree_view): Likewise.
+	(CallStack::Priv::update_frames_arguments): Likewise.
+	(CallStack::Priv::update_call_stack): Likewise.
+	(CallStack::Priv::update_selected_frame): Erasing the special
+	"expand number of stack lines" row must be done immediately.
+	(CallStack::Priv::finish_handling_debugger_stopped_event): Don't
+	query the entirety of the call stack, rather, just range we need.
+	(CallStack::Priv::on_frames_listed_signal): When in "frame paging"
+	mode (that is, when the user asked for more frames), just append
+	the received frames to the existing ones. Otherwise, clear the
+	existing ones and set those we've just received.
+	Also, don't query the entirety of the stack frame arguments. Just
+	query the arguments of the frames we are interested in.
+	(CallStack::Priv::on_frames_params_listed_signal): Don't reset
+	the entire frame set. Just update the frames to add the arguments
+	we received.
+	(CallStack::Priv::on_config_value_changed_signal): We don't page
+	the frames rendering anymore.
+	(CallStack::Priv::on_call_stack_copy_to_clipboard_action): Clean
+	this up. Reuse the new format_args_string() function to format
+	function arguments.
+	(CallStack::Priv::set_frame_list): Use the new
+	append_frame_frames_to_tree_view.
+	(CallStack::Priv::clear_frame_list): Properly clear frame and
+	arguments cache. Restore the frame window range if need be.
+	(CallStack::update_stack): Use the new
+	CallStack::Priv::update_call_stack. This prevents from querying the
+	whole stack set.
+	(CallStack::clear): Use CallStack::Priv::clear_frame_list.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	(LocalVarsInspector::Priv::finish_handling_debugger_stopped_event):
+	Only query the arguments of the current frame.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::on_going_to_run_target_signal): Don't forget
+	to clear call stack, memory view and register view widgets.
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas:
+	Set the default frame range size to 25.
+	* tests/do-stack-overflow.cc: New test.
+	* tests/Makefile.am: Add do-stack-overflow.cc to the build system.
+
+2009-04-19  Dodji Seketeli <dodji@redhat.com>
+
+	Allow IDebugger::list_frame to ask for a range of frames
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::list_frame): Add new
+	two new parameters to allow asking for a range of frames,
+	and not necessarily for all of them.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::list_frames): Adjust
+	signature.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::list_frames): Adjust
+	signature and pass on the right arguments to -stack-list-frames to
+	for a frame window.
+
+2009-04-19  Dodji Seketeli <dodji@redhat.com>
+
+	Properly set frame level during call stack parsing
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_call_stack):
+	Properly set IDebugger::Frame::level during the parsing.
+	Also, don't cry when we reach "end of input" right after the
+	parsing.
+	* tests/test-gdbmi.cc (test_stack0): New test case for stack parsing.
+	(init_unit_test_suite): Hook the new test case here.
+
+2009-04-20  Dodji Seketeli <dodji@redhat.com>
+
+	Don't clear the session when restarting with different args (Closes: 568822)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::execute_program): Do not clear breakpoints and other
+	session info when the same program is re-launched.
+
+2009-04-20  Dodji Seketeli <dodji@redhat.com>
+
+	Don't quote empty arguments passed to the inferior
+	* src/dbgengine/nmv-gdb-engine.cc (quote_args): Don't quote empty
+	arguments. Otherwise, that can really change the behaviour of the
+	inferior that would now see one more argument on its command line.
+
+2009-04-19 22:46:17 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Quote arguments passed to gdb (Closes: #575889)
+	* src/dbgengine/nmv-gdb-engine.cc: add a helper function that will
+	properly shell-quote the arguments passed to gdb so that things
+	won't get expanded twice (e.g. by the shell when invoking nemiver
+	on the command line and then again when executing the program)
+
+2009-04-19 21:42:49 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Merge branch 'ustring-cleanup'
+
+2009-04-19 21:39:15 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Remove some more explicit UString constructors
+	* src/dbgengine/nmv-i-debugger.h:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	The UString(std::string) constructor is not explicit any more so we don't
+	need to explicitly 'cast' things anymore
+
+2009-04-19 16:32:02 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Cleanup from last commit to make close_file() less fragile
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: move the
+	update_file_maps() call to the end of the function so that we're not
+	susceptible to memory corruption no matter what string we pass to
+	this function, even though we've avoided the immediate problem by
+	copying the string before passing it to this function
+
+2009-04-19 14:57:28 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Fix critical warnings when closing a file (Closes: #578736)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: copy the path string out
+	before passing it to close_file() because we will get memory corruption if
+	we pass a reference to the std::map value, since close_file() modifies the
+	map.
+
+2009-04-16  Claude Paroz <claude@2xlibre.net>
+
+	Updated French translation
+
+2009-04-14 22:17:48 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Fix string cleanup per Dodji's review
+	* src/common/nmv-ustring.h: There's not really any reason to make the
+	std::string constructor explicit anymore since it doesn't do locale
+	conversion anymore.
+	* src/dbgengine/nmv-gdb-engine.cc: use implicit conversion
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: remove TODO, style fix
+
+2009-04-13  Landry Breuil <landry@fr.homeunix.org>
+
+	Fixup includes for OpenBSD in nmv-dbg-perspective.cc
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: include
+	sys/types and unistd.h for OpenBSD.
+
+2009-04-13  Landry Breuil <landry@fr.homeunix.org>
+
+	Fixup nmv-terminal.cc for OpenBSD
+	* src/uicommon/nmv-terminal.cc: include utils.h, pty.h and unistd.h
+	for OpenBSD.
+
+2009-04-13  Landry Breuil <landry@fr.homeunix.org>
+
+	Don't define GDBMITuple methods inline
+	* src/dbgengine/nmv-gdbmi-parser.h: Move the definition of
+	GDBMITuple from here ...
+	* src/dbgengine/nmv-gdbmi-parser.cc: ... to here.
+	We do this because otherwise gcc 3.3.5 won't compile this on
+	OpenBSD.
+
+2009-04-11 21:56:20 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Don't automatically convert locale in UString constructor
+	* src/common/nmv-ustring.cc: remove the automatic locale
+	conversion from the UString(std::string) constructor.  This can be handy,
+	but tends to introduce issues when you're not really careful.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	* src/main.cc:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/persp/dbgperspective/nmv-memory-view.h: go through and make sure we're
+	not depending on the old constructor locale conversion behavior anywhere,
+	and fix a few other locale-related issues
+
+2009-04-10 22:17:25 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Start of Big overhaul of string / locale handling
+	* src/common/nmv-ustring.h: make the UString(std::string) constructor
+	explicit because we were getting a lot of unwanted implicit
+	conversions.  This was compounded by the fact that this constructor
+	actually does a locale conversion. So the combination of unwanted
+	implicit conversions and charset conversion killed our gdbmi parsing
+	performance in some areas.
+	* src/common/nmv-log-stream.cc:
+	* src/common/nmv-log-stream.h: Add some overloaded operator<< for char*
+	and std::string so that when we log C strings or std::strings, they
+	don't need to be converted to UStrings first.  Also, change the
+	operator<<(UString) to operator<<(Glib::ustring) because otherwise
+	attempting to log a Glib::ustring resulted in ambiguity and logging a
+	UString as a Glib::ustring should be just fine
+	* src/common/nmv-env.cc:
+	* src/dbgengine/nmv-gdb-engine.cc:
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	* src/dbgengine/nmv-i-debugger.h:
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	* src/persp/dbgperspective/nmv-locate-file-dialog.cc:
+	* src/workbench/nmv-workbench.cc: fixed up all of the implicit
+	conversions from std::string to UString that were exposed when making
+	the constructor explicit
+
+2009-04-04  Dodji Seketeli <dodji@redhat.com>
+
+	Bumped version number to 0.6.7 for development
+	* configure.ac: bumped version number to 0.6.7
+
 2009-04-03  Dodji Seketeli <dodji@redhat.com>
 
 	Update ChangeLog
