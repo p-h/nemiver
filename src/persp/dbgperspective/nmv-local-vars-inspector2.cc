@@ -209,6 +209,15 @@ public:
             (sigc::mem_fun (this, &Priv::on_button_press_signal));
         tree_view->signal_expose_event ().connect_notify
             (sigc::mem_fun (this, &Priv::on_expose_event_signal));
+
+        Gtk::CellRenderer *r = tree_view->get_column_cell_renderer
+            (VarsTreeView::VARIABLE_VALUE_COLUMN_INDEX);
+        THROW_IF_FAIL (r);
+
+        Gtk::CellRendererText *t =
+            dynamic_cast<Gtk::CellRendererText*> (r);
+        t->signal_edited ().connect (sigc::mem_fun
+                                     (*this, &Priv::on_cell_edited_signal));
     }
 
     void
@@ -687,6 +696,22 @@ public:
         Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection ();
         THROW_IF_FAIL (sel);
         cur_selected_row = sel->get_selected ();
+        if (!cur_selected_row)
+            return;
+
+        IDebugger::VariableSafePtr var =
+         (*cur_selected_row)[vutil::get_variable_columns ().variable];
+        if (!var)
+            return;
+
+        cur_selected_row->set_value
+                    (vutil::get_variable_columns ().variable_value_editable,
+                     debugger->is_variable_editable (var));
+
+        // Dump some log about the variable that got selected.
+        UString qname;
+        var->build_qname (qname);
+        LOG_DD ("row of variable '" << qname << "'");
 
         NEMIVER_CATCH
     }
@@ -759,6 +784,46 @@ public:
                                                     saved_frame);
             is_up2date = true;
         }
+        NEMIVER_CATCH
+    }
+
+    void
+    on_cell_edited_signal (const Glib::ustring &a_path,
+                           const Glib::ustring &a_text)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        Gtk::TreeModel::iterator row = tree_store->get_iter (a_path);
+        IDebugger::VariableSafePtr var =
+            (*row)[vutil::get_variable_columns ().variable];
+        THROW_IF_FAIL (var);
+
+        debugger->assign_variable
+            (var, a_text,
+             sigc::bind (sigc::mem_fun
+                                 (*this, &Priv::on_variable_assigned_signal),
+                         a_path));
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_variable_assigned_signal (const IDebugger::VariableSafePtr a_var,
+                                 const UString &a_var_path)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        Gtk::TreeModel::iterator var_row
+                                = tree_store->get_iter (a_var_path);
+        THROW_IF_FAIL (var_row);
+        THROW_IF_FAIL (tree_view);
+        vutil::update_a_variable_node (a_var, *tree_view,
+                                       var_row, false, false);
+
         NEMIVER_CATCH
     }
 };//end LocalVarsInspector2::Priv
