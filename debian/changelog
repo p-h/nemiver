@@ -1,3 +1,9 @@
+nemiver (0.6.7-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Luca Bruno <lucab@debian.org>  Tue, 05 May 2009 22:14:08 +0200
+
 nemiver (0.6.6-1) unstable; urgency=low
 
   * New upstream version
