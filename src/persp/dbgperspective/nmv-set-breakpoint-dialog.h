@@ -38,16 +38,18 @@ class UString;
 using nemiver::common::UString;
 using nemiver::common::SafePtr;
 
-class SetBreakpointDialog : public Dialog {
+class SetBreakpointDialog : public Dialog
+{
     class Priv;
     SafePtr<Priv> m_priv;
+
 public:
-    typedef enum
+    enum Mode
     {
         MODE_SOURCE_LOCATION,
         MODE_FUNCTION_NAME,
         MODE_EVENT
-    } Mode;
+    };
 
     SetBreakpointDialog (const UString &a_resource_root_path);
     virtual ~SetBreakpointDialog ();

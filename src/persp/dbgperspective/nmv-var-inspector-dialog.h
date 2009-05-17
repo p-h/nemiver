@@ -29,7 +29,6 @@
 #include "nmv-i-debugger.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
-class IDebugger;
 
 class VarInspectorDialog : public Dialog {
     //non copyable

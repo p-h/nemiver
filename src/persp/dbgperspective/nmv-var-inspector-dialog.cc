@@ -218,7 +218,7 @@ public:
         // text that is typed into the entry, but we do want to inspect when
         // they choose an item from the dropdown list
         if (var_name_entry->get_active ()) {
-            inspect_variable(var_name);
+            inspect_variable (var_name);
         }
 
         NEMIVER_CATCH
