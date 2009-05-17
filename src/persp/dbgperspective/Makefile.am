@@ -70,6 +70,8 @@ nmv-open-file-dialog.cc \
 nmv-open-file-dialog.h \
 nmv-set-breakpoint-dialog.cc \
 nmv-set-breakpoint-dialog.h \
+nmv-watchpoint-dialog.h \
+nmv-watchpoint-dialog.cc \
 nmv-choose-overloads-dialog.cc \
 nmv-choose-overloads-dialog.h \
 nmv-remote-target-dialog.cc \

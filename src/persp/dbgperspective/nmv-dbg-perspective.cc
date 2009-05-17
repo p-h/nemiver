@@ -101,6 +101,10 @@
 #include "nmv-memory-view.h"
 #endif // WITH_MEMORYVIEW
 
+#ifdef WITH_VAROBJS
+#include "nmv-watchpoint-dialog.h"
+#endif //WITH_VAROBJS
+
 using namespace std;
 using namespace nemiver::common;
 using namespace nemiver::ui_utils;
@@ -273,6 +277,7 @@ private:
     void on_continue_until_action ();
     void on_set_breakpoint_action ();
     void on_set_breakpoint_using_dialog_action ();
+    void on_set_watchpoint_using_dialog_action ();
     void on_refresh_locals_action ();
     void on_toggle_breakpoint_action ();
     void on_toggle_breakpoint_enabled_action ();
@@ -552,6 +557,7 @@ public:
                                       const int a_line_num);
     void set_breakpoint_using_dialog (const UString &a_function_name);
     void set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog);
+    void set_watchpoint_using_dialog ();
     void refresh_locals ();
 
     void inspect_variable ();
@@ -1404,6 +1410,18 @@ DBGPerspective::on_set_breakpoint_using_dialog_action ()
 
     NEMIVER_TRY
     set_breakpoint_at_current_line_using_dialog ();
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_set_watchpoint_using_dialog_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    set_watchpoint_using_dialog ();
+
     NEMIVER_CATCH
 }
 
@@ -2862,6 +2880,17 @@ DBGPerspective::init_actions ()
                  &DBGPerspective::on_set_breakpoint_using_dialog_action),
             ActionEntry::DEFAULT,
             "<control><shift>B"
+        },
+        {
+            "SetWatchPointUsingDialogMenuItemAction",
+            nil_stock_id,
+            _("Set Watchpoint with dialog..."),
+            _("Set a watchpoint using a dialog"),
+            sigc::mem_fun
+                (*this,
+                 &DBGPerspective::on_set_watchpoint_using_dialog_action),
+            ActionEntry::DEFAULT,
+            "<control>T"
         },
         {
             "InspectVariableMenuItemAction",
@@ -5330,7 +5359,13 @@ DBGPerspective::append_breakpoints
 
     map<int, IDebugger::BreakPoint>::const_iterator iter;
     for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter) {
-        append_breakpoint (iter->first, iter->second);
+        // If the breakpoint is a standard one (e.g. not a watchpoint), add
+        // its visual representation.
+        // We don't have any visual representation for watchpoints yet.
+        if (iter->second.type ()
+            == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE) {
+            append_breakpoint (iter->first, iter->second);
+        }
     }
 }
 
@@ -5841,6 +5876,27 @@ DBGPerspective::set_breakpoint_using_dialog (const UString &a_function_name)
         return;
     }
     set_breakpoint_from_dialog (dialog);
+}
+
+void
+DBGPerspective::set_watchpoint_using_dialog ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    WatchpointDialog dialog (plugin_path (), debugger ());
+    int result = dialog.run ();
+    if (result != Gtk::RESPONSE_OK) {
+        return;
+    }
+
+    UString expression = dialog.expression ();
+    if (expression.empty ())
+        return;
+
+    WatchpointDialog::Mode mode = dialog.mode ();
+    debugger ()->set_watchpoint (expression,
+                                 mode & WatchpointDialog::WRITE_MODE,
+                                 mode & WatchpointDialog::READ_MODE);
 }
 
 void

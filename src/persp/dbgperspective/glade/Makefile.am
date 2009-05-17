@@ -13,7 +13,8 @@ setbreakpointdialog.glade \
 chooseoverloadsdialog.glade \
 remotetargetdialog.glade \
 globalvarsinspector.glade \
-callfunctiondialog.glade
+callfunctiondialog.glade \
+watchpointdialog.glade
 
 gladedir = @NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)/glade
 glade_DATA = $(gladefiles)

@@ -74,6 +74,8 @@
                 name="SetBreakMenuItem"/>
             <menuitem action="SetBreakPointUsingDialogMenuItemAction"
                 name="SetBreakUsingDialogMenuItem"/>
+            <menuitem action="SetWatchPointUsingDialogMenuItemAction"
+                name="SetWatchUsingDialogMenuItem"/>
             <separator/>
             <menuitem action="InspectVariableMenuItemAction"
                 name="InspectVariableMenuItem"/>

@@ -1,0 +1,308 @@
+/*
+ *This file is part of the Nemiver project
+ *
+ *Nemiver is free software; you can redistribute
+ *it and/or modify it under the terms of
+ *the GNU General Public License as published by the
+ *Free Software Foundation; either version 2,
+ *or (at your option) any later version.
+ *
+ *Nemiver is distributed in the hope that it will
+ *be useful, but WITHOUT ANY WARRANTY;
+ *without even the implied warranty of
+ *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *See the GNU General Public License for more details.
+ *
+ *You should have received a copy of the
+ *GNU General Public License along with Nemiver;
+ *see the file COPYING.
+ *If not, write to the Free Software Foundation,
+ *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ *See COPYRIGHT file copyright information.
+ */
+#include <glib/gi18n.h>
+#include "nmv-watchpoint-dialog.h"
+#ifdef WITH_VAROBJS
+#include <libglademm.h>
+#include <gtkmm/dialog.h>
+#include "common/nmv-exception.h"
+#include "common/nmv-env.h"
+#include "common/nmv-ustring.h"
+#include "nmv-ui-utils.h"
+#include "nmv-var-inspector2.h"
+
+NEMIVER_BEGIN_NAMESPACE (nemiver)
+
+struct WatchpointDialog::Priv {
+
+    Gtk::Dialog &dialog;
+    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Gtk::Entry *expression_entry;
+    Gtk::Button *inspect_button;
+    Gtk::CheckButton *read_check_button;
+    Gtk::CheckButton *write_check_button;
+    Gtk::Button *ok_button;
+    Gtk::Button *cancel_button;
+    SafePtr<VarInspector2> var_inspector;
+    IDebuggerSafePtr debugger;
+
+    Priv (Gtk::Dialog &a_dialog,
+          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          IDebuggerSafePtr a_debugger) :
+        dialog (a_dialog),
+        glade (a_glade),
+        expression_entry (0),
+        inspect_button (0),
+        read_check_button (0),
+        write_check_button (0),
+        debugger (a_debugger)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        build_dialog ();
+        connect_to_widget_signals ();
+        connect_to_debugger_signals ();
+    }
+
+    void
+    build_dialog ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        dialog.set_default_response (Gtk::RESPONSE_OK);
+
+        expression_entry =
+            ui_utils::get_widget_from_glade<Gtk::Entry>
+                                            (glade, "expressionentry");
+        THROW_IF_FAIL (expression_entry);
+        expression_entry->set_activates_default ();
+
+        inspect_button =
+           ui_utils::get_widget_from_glade<Gtk::Button> (glade, "inspectbutton");
+        THROW_IF_FAIL (inspect_button);
+        inspect_button->set_sensitive (false);
+
+        read_check_button =
+            ui_utils::get_widget_from_glade<Gtk::CheckButton>
+                                            (glade, "readcheckbutton");
+        THROW_IF_FAIL (read_check_button);
+
+        write_check_button =
+            ui_utils::get_widget_from_glade<Gtk::CheckButton>
+                                            (glade, "writecheckbutton");
+        THROW_IF_FAIL (write_check_button);
+
+        ok_button =
+            ui_utils::get_widget_from_glade<Gtk::Button>
+                                            (glade, "okbutton");
+        THROW_IF_FAIL (ok_button);
+        ok_button->set_sensitive (false);
+
+        cancel_button =
+            ui_utils::get_widget_from_glade<Gtk::Button>
+                                            (glade, "cancelbutton");
+        THROW_IF_FAIL (cancel_button);
+        cancel_button->set_sensitive (true);
+
+        Gtk::Box *box =
+            ui_utils::get_widget_from_glade<Gtk::Box> (glade,
+                                                       "varinspectorbox");
+        THROW_IF_FAIL (box);
+
+        var_inspector.reset (new VarInspector2 (debugger));
+        THROW_IF_FAIL (var_inspector);
+
+        Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
+        scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+        scr->set_shadow_type (Gtk::SHADOW_IN);
+        scr->add (var_inspector->widget ());
+
+        box->pack_start (*scr, true, true);
+
+        ensure_either_read_or_write_mode ();
+        dialog.show_all ();
+    }
+
+    void
+    connect_to_widget_signals ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        THROW_IF_FAIL (inspect_button);
+        THROW_IF_FAIL (expression_entry);
+
+        inspect_button->signal_clicked ().connect (sigc::mem_fun
+               (*this, &Priv::on_inspect_button_clicked));
+        expression_entry->signal_changed ().connect (sigc::mem_fun
+               (*this, &Priv::on_expression_entry_changed_signal));
+    }
+
+    void
+    connect_to_debugger_signals ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+    }
+
+    void
+    ensure_either_read_or_write_mode ()
+    {
+        THROW_IF_FAIL (read_check_button);
+        THROW_IF_FAIL (write_check_button);
+
+        if (!read_check_button->get_active ()
+            && !read_check_button->get_active ())
+            write_check_button->set_active (true);
+    }
+
+    void
+    on_inspect_button_clicked ()
+    {
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (expression_entry);
+        THROW_IF_FAIL (var_inspector);
+
+        UString expression = expression_entry->get_text ();
+        if (expression == "")
+            return;
+        var_inspector->inspect_variable (expression);
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_expression_entry_changed_signal ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (expression_entry);
+        THROW_IF_FAIL (inspect_button);
+
+        UString expression = expression_entry->get_text ();
+        if (expression == "") {
+            inspect_button->set_sensitive (false);
+            ok_button->set_sensitive (false);
+        } else {
+            inspect_button->set_sensitive (true);
+            ok_button->set_sensitive (true);
+        }
+
+        NEMIVER_CATCH
+    }
+
+}; // end struct WatchpointDialog
+
+WatchpointDialog::WatchpointDialog (const UString &a_root_path,
+                                    IDebuggerSafePtr a_debugger) :
+    Dialog (a_root_path,
+            "watchpointdialog.glade",
+            "watchpointdialog")
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    m_priv.reset (new WatchpointDialog::Priv (widget (),
+                                              glade (),
+                                              a_debugger));
+}
+
+WatchpointDialog::~WatchpointDialog ()
+{
+}
+
+const UString
+WatchpointDialog::expression () const
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->expression_entry);
+    return m_priv->expression_entry->get_text ();
+}
+
+void
+WatchpointDialog::expression (const UString &a_text)
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->expression_entry);
+    return m_priv->expression_entry->set_text (a_text);
+}
+
+WatchpointDialog::Mode
+WatchpointDialog::mode () const
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->read_check_button);
+    THROW_IF_FAIL (m_priv->write_check_button);
+
+    Mode mode = UNDEFINED_MODE;
+
+    if (m_priv->write_check_button->get_active ())
+        mode |= WRITE_MODE;
+
+    if (m_priv->read_check_button->get_active ())
+        mode |= READ_MODE;
+
+    return mode;
+}
+
+void
+WatchpointDialog::mode (Mode a_mode)
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->read_check_button);
+    THROW_IF_FAIL (m_priv->write_check_button);
+
+    if ((a_mode & WRITE_MODE) == WRITE_MODE)
+        m_priv->write_check_button->set_active (true);
+    else
+        m_priv->write_check_button->set_active (false);
+
+    if ((a_mode & READ_MODE) == READ_MODE)
+        m_priv->read_check_button->set_active (true);
+    else
+        m_priv->read_check_button->set_active (false);
+
+    m_priv->ensure_either_read_or_write_mode ();
+}
+
+WatchpointDialog::Mode
+operator| (WatchpointDialog::Mode a_l,
+           WatchpointDialog::Mode a_r)
+{
+    return (a_l |= a_r);
+}
+
+WatchpointDialog::Mode
+operator& (WatchpointDialog::Mode a_l,
+           WatchpointDialog::Mode a_r)
+{
+    return (a_l &= a_r);
+}
+
+WatchpointDialog::Mode
+operator~ (WatchpointDialog::Mode a_m)
+{
+    return static_cast<WatchpointDialog::Mode> (~a_m);
+}
+
+WatchpointDialog::Mode&
+operator|= (WatchpointDialog::Mode &a_l,
+            WatchpointDialog::Mode a_r)
+{
+    a_l = static_cast<WatchpointDialog::Mode>
+        (static_cast<unsigned> (a_l) | static_cast<unsigned> (a_r));
+    return a_l;
+}
+
+WatchpointDialog::Mode&
+operator&= (WatchpointDialog::Mode &a_l,
+            WatchpointDialog::Mode a_r)
+{
+    a_l = static_cast<WatchpointDialog::Mode>
+            (static_cast<unsigned> (a_l) & static_cast<unsigned> (a_r));
+    return a_l;
+}
+
+#endif // WITH_VAROBJS
+NEMIVER_END_NAMESPACE (nemiver)
+
