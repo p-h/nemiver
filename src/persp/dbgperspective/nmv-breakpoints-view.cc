@@ -43,6 +43,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> function;
     Gtk::TreeModelColumn<int> line;
     Gtk::TreeModelColumn<Glib::ustring> condition;
+    Gtk::TreeModelColumn<Glib::ustring> type;
     Gtk::TreeModelColumn<int> hits;
     Gtk::TreeModelColumn<IDebugger::BreakPoint> breakpoint;
 
@@ -56,6 +57,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
         add (line);
         add (breakpoint);
         add (condition);
+        add (type);
         add (hits);
     }
 };//end Cols
@@ -122,6 +124,7 @@ public:
         tree_view->append_column (_("Function"), get_bp_columns ().function);
         tree_view->append_column (_("Address"), get_bp_columns ().address);
         tree_view->append_column (_("Condition"), get_bp_columns ().condition);
+        tree_view->append_column (_("Type"), get_bp_columns ().type);
         tree_view->append_column (_("Hits"), get_bp_columns ().hits);
         Gtk::CellRendererToggle *enabled_toggle =
             dynamic_cast<Gtk::CellRendererToggle*>
@@ -260,6 +263,16 @@ public:
         (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
         (*a_iter)[get_bp_columns ().line] = a_breakpoint.line ();
         (*a_iter)[get_bp_columns ().condition] = a_breakpoint.condition ();
+        switch (a_breakpoint.type ()) {
+            case IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE:
+                (*a_iter)[get_bp_columns ().type] = _("breakpoint");
+                break;
+            case IDebugger::BreakPoint::WATCHPOINT_TYPE:
+                (*a_iter)[get_bp_columns ().type] = _("watchtpoint");
+                break;
+            default:
+                (*a_iter)[get_bp_columns ().type] = _("unknown");
+        }
         (*a_iter)[get_bp_columns ().hits] = a_breakpoint.nb_times_hit ();
     }
 
@@ -292,17 +305,29 @@ public:
                                      bool /*a_has_frame*/,
                                      const IDebugger::Frame &/*a_frame*/,
                                      int /*a_thread_id*/,
-                                     int /*a_bkpt_num*/,
+                                     int a_bkpt_num,
                                      const UString &/*a_cookie*/)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         NEMIVER_TRY
-        if (a_reason == IDebugger::BREAKPOINT_HIT) {
+
+        LOG_DD ("a_reason: " << a_reason << " bkpt num: " << a_bkpt_num);
+
+        if (a_reason == IDebugger::BREAKPOINT_HIT
+            || a_reason == IDebugger::WATCHPOINT_TRIGGER
+            || a_reason == IDebugger::READ_WATCHPOINT_TRIGGER
+            || a_reason == IDebugger::ACCESS_WATCHPOINT_TRIGGER) {
             if (should_process_now ()) {
                 finish_handling_debugger_stopped_event ();
             } else {
                 is_up2date = false;
             }
+        } else if (a_reason == IDebugger::WATCHPOINT_SCOPE) {
+            LOG_DD ("erase watchpoint num: " << (int) a_bkpt_num);
+            erase_breakpoint (a_bkpt_num);
         }
+
         NEMIVER_CATCH
     }
 
@@ -444,6 +469,15 @@ public:
         NEMIVER_CATCH
     }
 
+    bool on_key_press_event (GdkEventKey* event)
+    {
+        if (event && event->keyval == GDK_Delete)
+        {
+            on_breakpoint_delete_action ();
+        }
+        return false;
+    }
+
     Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
     {
         NEMIVER_TRY
@@ -519,13 +553,24 @@ public:
         debugger->list_breakpoints ();
     }
 
-    bool on_key_press_event (GdkEventKey* event)
+    void erase_breakpoint (int a_bp_num)
     {
-        if (event && event->keyval == GDK_Delete)
-        {
-            on_breakpoint_delete_action ();
+
+        LOG_DD ("asked to erase bp num:" << (int) a_bp_num);
+
+        Gtk::TreeModel::iterator iter;
+        for (iter = list_store->children ().begin ();
+             iter != list_store->children ().end ();
+             ++iter) {
+            if ((*iter)[get_bp_columns ().id] == a_bp_num) {
+                break;
+            }
         }
-        return false;
+
+        if (iter != list_store->children ().end ()) {
+            LOG_DD ("erased bp");
+            list_store->erase (iter);
+        }
     }
 
 };//end class BreakpointsView::Priv
