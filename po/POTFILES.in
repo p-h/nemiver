@@ -18,6 +18,7 @@ src/persp/dbgperspective/glade/remotetargetdialog.glade
 src/persp/dbgperspective/glade/setbreakpointdialog.glade
 src/persp/dbgperspective/nmv-choose-overloads-dialog.cc
 src/persp/dbgperspective/glade/globalvarsinspector.glade
+src/persp/dbgperspective/glade/watchpointdialog.glade
 src/persp/dbgperspective/nmv-breakpoints-view.cc
 src/persp/dbgperspective/nmv-call-stack.cc
 src/persp/dbgperspective/nmv-dbg-perspective.cc
