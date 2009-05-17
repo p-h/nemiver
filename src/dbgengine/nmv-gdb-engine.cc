@@ -1134,7 +1134,8 @@ struct OnStoppedHandler: OutputHandler {
         int thread_id = m_out_of_band_record.thread_id ();
         int breakpoint_number = -1;
         IDebugger::StopReason reason = m_out_of_band_record.stop_reason ();
-        if (reason == IDebugger::BREAKPOINT_HIT)
+        if (reason == IDebugger::BREAKPOINT_HIT
+            || reason == IDebugger::WATCHPOINT_SCOPE)
             breakpoint_number = m_out_of_band_record.breakpoint_number ();
 
         if (m_out_of_band_record.has_frame ()) {
@@ -3270,6 +3271,30 @@ GDBEngine::set_breakpoint (const UString &a_path,
         LOG_DD ("setting breakpoint without condition");
     }
     queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
+    list_breakpoints (a_cookie);
+}
+
+void
+GDBEngine::set_watchpoint (const UString &a_expression,
+                           bool a_write, bool a_read,
+                           const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (a_expression.empty ())
+        return;
+
+    string cmd_str = "-break-watch";
+
+    if (a_write && a_read)
+        cmd_str += " -a";
+    else if (a_read == true)
+        cmd_str += " -r";
+
+    cmd_str += " " + a_expression;
+
+    Command command ("set-watchpoint", cmd_str, a_cookie);
+    queue_command (command);
     list_breakpoints (a_cookie);
 }
 

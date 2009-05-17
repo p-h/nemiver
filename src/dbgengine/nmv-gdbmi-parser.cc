@@ -1231,20 +1231,30 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
     if (m_priv->index_passed_end (cur)) {return false;}
 
     map<UString, UString> attrs;
-    UString name, value;
+    UString name;
+    GDBMIResultSafePtr result;
     bool got_frame (false);
     IDebugger::Frame frame;
     while (true) {
-        if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
+        if (!m_priv->input.raw ().compare (cur,
+                                           strlen (PREFIX_FRAME),
+                                           PREFIX_FRAME)) {
             if (!parse_frame (cur, cur, frame)) {
                 LOG_PARSING_ERROR2 (cur);
                 return false;
             }
             got_frame = true;
         } else {
-            if (!parse_attribute (cur, cur, name, value)) {break;}
-            attrs[name] = value;
-            name.clear (); value.clear ();
+            if (!parse_attribute (cur, cur, name, result)) {break;}
+            if (result
+                && result->value ()
+                && result->value ()->content_type ()
+                      == GDBMIValue::STRING_TYPE) {
+                attrs[name] = result->value ()->get_string_content ();
+                LOG_D ("got " << name << ":" << attrs[name],
+                       GDBMI_PARSING_DOMAIN);
+            }
+            name.clear (); result.reset ();
         }
 
         if (m_priv->index_passed_end (cur)) {break;}
@@ -1252,7 +1262,12 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
         if (m_priv->index_passed_end (cur)) {break;}
     }
 
-    for (; !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n'; ++cur) {}
+    for (;
+         !m_priv->index_passed_end (cur)
+         && RAW_CHAR_AT (cur) != '\n';
+         ++cur)
+    {
+    }
 
     if (RAW_CHAR_AT (cur) != '\n') {
         LOG_PARSING_ERROR2 (cur);
@@ -1310,7 +1325,7 @@ bool
 GDBMIParser::parse_attribute (UString::size_type a_from,
                               UString::size_type &a_to,
                               UString &a_name,
-                              UString &a_value)
+                              GDBMIResultSafePtr &a_value)
 {
     UString::size_type cur = a_from;
 
@@ -1327,7 +1342,23 @@ GDBMIParser::parse_attribute (UString::size_type a_from,
     }
 
     a_name = result->variable ();
-    return gdbmi_value_to_string (result->value (), a_value);
+    a_value = result;
+    return true;
+}
+
+bool
+GDBMIParser::parse_attribute (UString::size_type a_from,
+                              UString::size_type &a_to,
+                              UString &a_name,
+                              UString &a_value)
+{
+
+    GDBMIResultSafePtr result;
+    bool is_ok = parse_attribute (a_from, a_to, a_name, result);
+    if (!is_ok)
+        return false;
+    gdbmi_value_to_string (result->value (), a_value);
+    return true;
 }
 
 bool
@@ -1558,6 +1589,10 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
 
         if (attrs.find ("bkptno") != attrs.end ()) {
             record.breakpoint_number (atoi (attrs["bkptno"].c_str ()));
+        }
+        if (attrs.find ("wpnum") != attrs.end ()) {
+            record.breakpoint_number (atoi (attrs["wpnum"].c_str ()));
+            LOG_D ("wpnum:" << attrs["wpnum"], GDBMI_PARSING_DOMAIN);
         }
         record.thread_id (atoi (attrs["thread-id"].c_str ()));
         record.signal_type (attrs["signal-name"]);
@@ -1991,10 +2026,14 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
     a_bkpt.address (attrs["addr"]);
     if (!attrs["func"].empty ()) {
         a_bkpt.function (attrs["func"]);
-    } else if (!attrs["what"].empty ()) {
-        // catchpoints don't have a 'func' field, but they have a 'what' field
-        // that says something like "Exception throw"
-        a_bkpt.function (attrs["what"]);
+    }
+    if (!attrs["what"].empty ()) {
+        // catchpoints or watchpoints
+        // don't have a 'func' field, but they have a 'what' field
+        // that describes the expression that was being watched.
+        // something like "Exception throw" for catchpoint, or "varname"
+        // for a watchpoint.
+        a_bkpt.expression (attrs["what"]);
     }
     a_bkpt.file_name (attrs["file"]); //may be nil
     a_bkpt.file_full_name (attrs["fullname"]); //may be nil
@@ -2003,6 +2042,13 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
         a_bkpt.condition (iter->second);
     }
     a_bkpt.nb_times_hit (atoi (attrs["times"].c_str ()));
+
+    string type = attrs["type"];
+    if (type.find ("breakpoint") != type.npos)
+        a_bkpt.type (IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE);
+    else if (type.find ("watchpoint") != type.npos)
+        a_bkpt.type (IDebugger::BreakPoint::WATCHPOINT_TYPE);
+
     //TODO: get the 'at' attribute that is present on targets that
     //are not compiled with -g.
     a_to = cur;

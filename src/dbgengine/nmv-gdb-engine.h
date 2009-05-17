@@ -310,6 +310,10 @@ public:
                          const UString &a_condition,
                          const UString &a_cookie)  ;
 
+    void set_watchpoint (const UString &a_expression,
+                         bool a_write, bool a_read,
+                         const UString &a_cookie);
+
     void list_breakpoints (const UString &a_cookie) ;
 
     map<int, IDebugger::BreakPoint>& get_cached_breakpoints () ;

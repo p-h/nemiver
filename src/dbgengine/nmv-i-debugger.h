@@ -78,18 +78,28 @@ public:
 
     /// \brief a breakpoint descriptor
     class BreakPoint {
+    public:
+
+        enum Type {
+            UNDEFINED_TYPE = 0,
+            STANDARD_BREAKPOINT_TYPE,
+            WATCHPOINT_TYPE
+        };
+
+    private:
         int m_number;
         bool m_enabled;
         UString m_address;
         UString m_function;
+        UString m_expression;
         UString m_file_name;
         UString m_file_full_name;
-        int m_line;
         UString m_condition;
+        Type m_type;
+        int m_line;
         int m_nb_times_hit;
 
     public:
-
         BreakPoint () {clear ();}
 
         /// \name accessors
@@ -106,6 +116,9 @@ public:
 
         const UString& function () const {return m_function;}
         void function (const UString &a_in) {m_function = a_in;}
+
+        const UString& expression () const {return m_expression;}
+        void expression (const UString &a_expr) {m_expression = a_expr;}
 
         const UString& file_name () const {return m_file_name;}
         void file_name (const UString &a_in) {m_file_name = a_in;}
@@ -131,6 +144,10 @@ public:
             }
             return false;
         }
+
+        Type type () const {return m_type;}
+        void type (Type a_type) {m_type = a_type;}
+
         /// @}
 
         /// \brief clear this instance of breakpoint
@@ -991,6 +1008,12 @@ public:
     virtual void set_breakpoint (const UString &a_func_name,
                                  const UString &a_condition="",
                                  const UString &a_cookie="") = 0;
+
+    virtual void set_watchpoint (const UString &a_expression,
+                                 bool a_write = true,
+                                 bool a_read = false,
+                                 const UString &a_cookie = "") = 0;
+
     virtual void set_catch (const UString &a_event,
                             const UString &a_cookie="") = 0;
 
