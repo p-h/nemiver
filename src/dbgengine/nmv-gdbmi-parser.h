@@ -318,301 +318,6 @@ bool gdbmi_tuple_to_string (GDBMITupleSafePtr a_result, UString &a_string);
 //GDBMI parsing functions
 //**************************
 
-/// parse a GDB/MI Result data structure.
-/// A result basically has the form:
-/// variable=value.
-/// Beware value is more complicated than what it looks like :-)
-/// Look at the GDB/MI spec for more.
-bool parse_gdbmi_result (const UString &a_input,
-                         UString::size_type a_from,
-                         UString::size_type &a_to,
-                         GDBMIResultSafePtr &a_value) ;
-
-/// parse a GDB/MI Tuple is a actualy a set of name=value constructs,
-/// where 'value' can be quite complicated.
-/// Look at the GDB/MI output syntax for more.
-bool parse_gdbmi_tuple (const UString &a_input,
-                        UString::size_type a_from,
-                        UString::size_type &a_to,
-                        GDBMITupleSafePtr &a_tuple) ;
-
-/// Parse a GDB/MI LIST. A list is either a list of GDB/MI Results
-/// or a list of GDB/MI Values.
-/// Look at the GDB/MI output syntax documentation for more.
-bool parse_gdbmi_list (const UString &a_input,
-                       UString::size_type a_from,
-                       UString::size_type &a_to,
-                       GDBMIListSafePtr &a_list) ;
-
-/// parse a GDB/MI Result data structure.
-/// A result basically has the form:
-/// variable=value.
-/// Beware value is more complicated than what it looks like :-)
-/// Look at the GDB/MI spec for more.
-bool parse_gdbmi_result (const UString &a_input,
-                         UString::size_type a_from,
-                         UString::size_type &a_to,
-                         GDBMIResultSafePtr &a_value) ;
-
-/// \brief parse a GDB/MI value.
-/// GDB/MI value type is defined as:
-/// VALUE ==> CONST | TUPLE | LIST
-/// CONSTis a string, basically. Look at parse_string() for more.
-/// TUPLE is a GDB/MI tuple. Look at parse_tuple() for more.
-/// LIST is a GDB/MI list. It is either  a list of GDB/MI Result or
-/// a list of GDB/MI value. Yeah, that can be recursive ...
-/// To parse a GDB/MI list, we use parse_list() defined above.
-/// You can look at the GDB/MI output syntax for more.
-/// \param a_input the input string to parse
-/// \param a_from where to start parsing from
-/// \param a_to (out parameter) a pointer to the current char,
-/// after the parsing.
-//// \param a_value the result of the parsing.
-bool parse_gdbmi_value (const UString &a_input,
-                        UString::size_type a_from,
-                        UString::size_type &a_to,
-                        GDBMIValueSafePtr &a_value) ;
-
-/// parse a GDB/MI output record
-bool parse_output_record (const UString &a_input,
-                          UString::size_type a_from,
-                          UString::size_type &a_to,
-                          Output &a_output) ;
-
-bool parse_stream_record (const UString &a_input,
-                          UString::size_type a_from,
-                          UString::size_type &a_to,
-                          Output::StreamRecord &a_record) ;
-
-/// parse GDBMI async output that says that the debugger has
-/// stopped.
-/// the string looks like:
-/// *stopped,reason="foo",var0="foo0",var1="foo1",frame={<a-frame>}
-bool parse_stopped_async_output (const UString &a_input,
-                                 UString::size_type a_from,
-                                 UString::size_type &a_to,
-                                 bool &a_got_frame,
-                                 IDebugger::Frame &a_frame,
-                                 map<UString, UString> &a_attrs);
-
-/// parse GDBMI async output that says that the inferior process
-/// is running.
-/// the string looks like:
-/// *running,thread-id="<thread-id>"
-/// Note that <thread-id> is either a number, or the string 'all'.
-bool parse_running_async_output (const UString &a_input,
-                                 UString::size_type a_from,
-                                 UString::size_type &a_to,
-                                 int &a_thread_id);
-
-bool parse_out_of_band_record (const UString &a_input,
-                               UString::size_type a_from,
-                               UString::size_type &a_to,
-                               Output::OutOfBandRecord &a_record);
-
-/// parse a GDB/MI output record
-bool parse_output_record (const UString &a_input,
-                          UString::size_type a_from,
-                          UString::size_type &a_to,
-                          Output &a_output);
-
-bool parse_attribute (const UString &a_input,
-                      UString::size_type a_from,
-                      UString::size_type &a_to,
-                      UString &a_name,
-                      UString &a_value) ;
-
-/// \brief parses an attribute list
-///
-/// An attribute list has the form:
-/// attr0="val0",attr1="bal1",attr2="val2"
-bool parse_attributes (const UString &a_input,
-                       UString::size_type a_from,
-                       UString::size_type &a_to,
-                       map<UString, UString> &a_attrs);
-
-/// \brief parses a breakpoint definition as returned by gdb.
-///
-///breakpoint definition string looks like this:
-///bkpt={number="3",type="breakpoint",disp="keep",enabled="y",
-///addr="0x0804860e",func="func2()",file="fooprog.cc",line="13",times="0"}
-///
-///\param a_input the input string to parse.
-///\param a_from where to start the parsing from
-///\param a_to out parameter. A past the end iterator that
-/// point the the end of the parsed text. This is set if and only
-/// if the function completes successfuly
-/// \param a_output the output datatructure filled upon parsing.
-/// \return true in case of successful parsing, false otherwise.
-bool parse_breakpoint (const UString &a_input,
-                       Glib::ustring::size_type a_from,
-                       Glib::ustring::size_type &a_to,
-                       IDebugger::BreakPoint &a_bkpt) ;
-
-bool parse_breakpoint_table (const UString &a_input,
-                             UString::size_type a_from,
-                             UString::size_type &a_to,
-                             map<int, IDebugger::BreakPoint> &a_breakpoints) ;
-
-/// \brief parses a function frame
-///
-/// function frames have the form:
-/// frame={addr="0x080485fa",func="func1",args=[{name="foo", value="bar"}],
-/// file="fooprog.cc",fullname="/foo/fooprog.cc",line="6"}
-///
-/// \param a_input the input string to parse
-/// \param a_from where to parse from.
-/// \param a_to out parameter. Where the parser went after the parsing.
-/// \param a_frame the parsed frame. It is set if and only if the function
-///  returns true.
-/// \return true upon successful parsing, false otherwise.
-bool parse_frame (const UString &a_input,
-                  UString::size_type a_from,
-                  UString::size_type &a_to,
-                  IDebugger::Frame &a_frame) ;
-
-/// parse a callstack as returned by the gdb/mi command:
-/// -stack-list-frames
-bool parse_call_stack (const UString &a_input,
-                       const UString::size_type a_from,
-                       UString::size_type &a_to,
-                       vector<IDebugger::Frame> &a_stack) ;
-
-/// Parse the arguments of the call stack.
-/// The call stack arguments is the result of the
-/// GDB/MI command -stack-list-arguments 1.
-/// It is basically the arguments of the functions of the call stack.
-/// See the GDB/MI documentation for more.
-bool parse_stack_arguments
-                    (const UString &a_input,
-                     UString::size_type a_from,
-                     UString::size_type &a_to,
-                     map<int, list<IDebugger::VariableSafePtr> > &a_params) ;
-
-/// parse a list of local variables as returned by
-/// the GDBMI command -stack-list-locals 2
-bool parse_local_var_list
-                    (const UString &a_input,
-                     UString::size_type a_from,
-                     UString::size_type &a_to,
-                     list<IDebugger::VariableSafePtr> &a_vars) ;
-
-/// parse the result of -data-evaluate-expression <var-name>
-/// the result is a gdbmi result of the form:
-/// value={attrname0=val0, attrname1=val1,...} where val0 and val1
-/// can be simili tuples representing complex types as well.
-bool parse_variable_value (const UString &a_input,
-                           const UString::size_type a_from,
-                           UString::size_type &a_to,
-                           IDebugger::VariableSafePtr &a_var) ;
-
-
-bool parse_member_variable (const UString &a_input,
-                            const UString::size_type a_from,
-                            UString::size_type &a_to,
-                            IDebugger::VariableSafePtr &a_var,
-                            bool a_in_unnamed_var=false) ;
-
-/// \brief parse function arguments list
-///
-/// function args list have the form:
-/// args=[{name="name0",value="0"},{name="name1",value="1"}]
-///
-/// This function parses only started from (including) the first '{'
-/// \param a_input the input string to parse
-/// \param a_from where to parse from.
-/// \param out parameter. End of the parsed string.
-/// This is a past the end  offset.
-/// \param a_args the map of the parsed attributes.
-/// This is set if and
-/// only if the function returned true.
-/// \return true upon successful parsing, false otherwise.
-bool parse_function_args (const UString &a_input,
-                          UString::size_type a_from,
-                          UString::size_type &a_to,
-                          map<UString, UString> a_args) ;
-
-/// parses the result of the gdbmi command
-/// "-thread-list-ids".
-bool parse_threads_list (const UString &a_input,
-                         UString::size_type a_from,
-                         UString::size_type &a_to,
-                         std::list<int> &a_thread_ids) ;
-
-/// parses the result of the gdbmi command
-/// "-file-list-exec-source-files".
-bool parse_file_list (const UString &a_input,
-                      UString::size_type a_from,
-                      UString::size_type &a_to,
-                      std::vector<UString> &a_files) ;
-
-/// parses the result of the gdbmi command
-/// "-thread-select"
-/// \param a_input the input string to parse
-/// \param a_from the offset from where to start the parsing
-/// \param a_to. out parameter. The next offset after the end of what
-/// got parsed.
-/// \param a_thread_id out parameter. The id of the selected thread.
-/// \param a_frame out parameter. The current frame in the selected thread.
-/// \param a_level out parameter. the level
-bool parse_new_thread_id (const UString &a_input,
-                          UString::size_type a_from,
-                          UString::size_type &a_to,
-                          int &a_thread_id,
-                          IDebugger::Frame &a_frame);
-
-bool parse_c_string_body (const UString &a_input,
-                          UString::size_type a_from,
-                          UString::size_type &a_to,
-                          UString &a_string);
-/// parses a string that has the form:
-/// \"blah\"
-bool parse_c_string (const UString &a_input,
-                     UString::size_type a_from,
-                     UString::size_type &a_to,
-                     UString &a_c_string);
-
-
-/// parses a string that has the form:
-/// blah
-bool parse_string (const UString &a_input,
-                   UString::size_type a_from,
-                   UString::size_type &a_to,
-                   UString &a_string);
-
-bool parse_embedded_c_string (const UString &a_input,
-                              UString::size_type a_from,
-                              UString::size_type &a_to,
-                              UString &a_string) ;
-
-
-bool parse_overloads_choice_prompt
-                        (const UString &a_input,
-                         UString::size_type a_from,
-                         UString::size_type &a_to,
-                         vector<IDebugger::OverloadsChoiceEntry> &a_prompts) ;
-
-bool parse_register_names (const UString &a_input,
-                           UString::size_type a_from,
-                           UString::size_type &a_to,
-                           std::map<IDebugger::register_id_t, UString> &a_registers);
-
-bool parse_changed_registers (const UString &a_input,
-                              UString::size_type a_from,
-                              UString::size_type &a_to,
-                              std::list<IDebugger::register_id_t> &a_registers);
-
-bool parse_register_values (const UString &a_input,
-                            UString::size_type a_from,
-                            UString::size_type &a_to,
-                            std::map<IDebugger::register_id_t, UString> &a_values);
-
-bool parse_memory_values (const UString &a_input,
-                          UString::size_type a_from,
-                          UString::size_type &a_to,
-                          size_t& a_start_addr,
-                          std::vector<uint8_t> &a_values);
-
 class GDBMIParser {
     // non copyable
     GDBMIParser (const GDBMIParser &);
@@ -646,6 +351,8 @@ public:
     //<Parsing entry points.>
     //*********************
 
+    /// parses a string that has the form:
+    /// blah
     bool parse_string (UString::size_type a_from,
                        UString::size_type &a_to,
                        UString &a_string);
@@ -662,6 +369,8 @@ public:
                               UString::size_type &a_to,
                               UString &a_string);
 
+    /// parses a string that has the form:
+    /// \"blah\"
     bool parse_c_string (UString::size_type a_from,
                          UString::size_type &a_to,
                          UString &a_c_string);
@@ -674,18 +383,43 @@ public:
                                   UString::size_type &a_to,
                                   UString &a_string) ;
 
+    /// parse a GDB/MI Result data structure.
+    /// A result basically has the form:
+    /// variable=value.
+    /// Beware value is more complicated than what it looks like :-)
+    /// Look at the GDB/MI spec for more.
     bool parse_gdbmi_result (UString::size_type a_from,
                              UString::size_type &a_to,
                              GDBMIResultSafePtr &a_value);
 
+    /// \brief parse a GDB/MI value.
+    /// GDB/MI value type is defined as:
+    /// VALUE ==> CONST | TUPLE | LIST
+    /// CONSTis a string, basically. Look at parse_string() for more.
+    /// TUPLE is a GDB/MI tuple. Look at parse_tuple() for more.
+    /// LIST is a GDB/MI list. It is either  a list of GDB/MI Result or
+    /// a list of GDB/MI value. Yeah, that can be recursive ...
+    /// To parse a GDB/MI list, we use parse_list() defined above.
+    /// You can look at the GDB/MI output syntax for more.
+    /// \param a_input the input string to parse
+    /// \param a_from where to start parsing from
+    /// \param a_to (out parameter) a pointer to the current char,
+    /// after the parsing.
+    //// \param a_value the result of the parsing.
     bool parse_gdbmi_value (UString::size_type a_from,
                             UString::size_type &a_to,
                             GDBMIValueSafePtr &a_value) ;
 
+    /// parse a GDB/MI Tuple is a actualy a set of name=value constructs,
+    /// where 'value' can be quite complicated.
+    /// Look at the GDB/MI output syntax for more.
     bool parse_gdbmi_tuple (UString::size_type a_from,
                             UString::size_type &a_to,
                             GDBMITupleSafePtr &a_tuple);
 
+    /// Parse a GDB/MI LIST. A list is either a list of GDB/MI Results
+    /// or a list of GDB/MI Values.
+    /// Look at the GDB/MI output syntax documentation for more.
     bool parse_gdbmi_list (UString::size_type a_from,
                            UString::size_type &a_to,
                            GDBMIListSafePtr &a_list);
@@ -694,12 +428,21 @@ public:
                               UString::size_type &a_to,
                               Output::StreamRecord &a_record);
 
+    /// parse GDBMI async output that says that the debugger has
+    /// stopped.
+    /// the string looks like:
+    /// *stopped,reason="foo",var0="foo0",var1="foo1",frame={<a-frame>}
     bool parse_stopped_async_output (UString::size_type a_from,
                                      UString::size_type &a_to,
                                      bool &a_got_frame,
                                      IDebugger::Frame &a_frame,
                                      map<UString, UString> &a_attrs);
 
+    /// parse GDBMI async output that says that the inferior process
+    /// is running.
+    /// the string looks like:
+    /// *running,thread-id="<thread-id>"
+    /// Note that <thread-id> is either a number, or the string 'all'.
     bool parse_running_async_output (UString::size_type a_from,
                                      UString::size_type &a_to,
                                      int &a_thread_id);
@@ -709,10 +452,31 @@ public:
                           UString &a_name,
                           UString &a_value);
 
+    bool parse_attribute (UString::size_type a_from,
+                          UString::size_type &a_to,
+                          UString &a_name,
+                          GDBMIResultSafePtr &a_value);
+
+    /// \brief parses an attribute list
+    ///
+    /// An attribute list has the form:
+    /// attr0="val0",attr1="bal1",attr2="val2"
     bool parse_attributes (UString::size_type a_from,
                            UString::size_type &a_to,
                            map<UString, UString> &a_attrs);
 
+    /// \brief parses a function frame
+    ///
+    /// function frames have the form:
+    /// frame={addr="0x080485fa",func="func1",args=[{name="foo", value="bar"}],
+    /// file="fooprog.cc",fullname="/foo/fooprog.cc",line="6"}
+    ///
+    /// \param a_input the input string to parse
+    /// \param a_from where to parse from.
+    /// \param a_to out parameter. Where the parser went after the parsing.
+    /// \param a_frame the parsed frame. It is set if and only if the function
+    ///  returns true.
+    /// \return true upon successful parsing, false otherwise.
     bool parse_frame (UString::size_type a_from,
                       UString::size_type &a_to,
                       IDebugger::Frame &a_frame);
@@ -721,6 +485,19 @@ public:
                                    UString::size_type &a_to,
                                    Output::OutOfBandRecord &a_record);
 
+    /// \brief parses a breakpoint definition as returned by gdb.
+    ///
+    ///breakpoint definition string looks like this:
+    ///bkpt={number="3",type="breakpoint",disp="keep",enabled="y",
+    ///addr="0x0804860e",func="func2()",file="fooprog.cc",line="13",times="0"}
+    ///
+    ///\param a_input the input string to parse.
+    ///\param a_from where to start the parsing from
+    ///\param a_to out parameter. A past the end iterator that
+    /// point the the end of the parsed text. This is set if and only
+    /// if the function completes successfuly
+    /// \param a_output the output datatructure filled upon parsing.
+    /// \return true in case of successful parsing, false otherwise.
     bool parse_breakpoint (Glib::ustring::size_type a_from,
                            Glib::ustring::size_type &a_to,
                            IDebugger::BreakPoint &a_bkpt);
@@ -729,27 +506,49 @@ public:
                                  UString::size_type &a_to,
                                  map<int, IDebugger::BreakPoint> &a_breakpoints);
 
+    /// parses the result of the gdbmi command
+    /// "-thread-list-ids".
     bool parse_threads_list (UString::size_type a_from,
                              UString::size_type &a_to,
                              std::list<int> &a_thread_ids);
 
+    /// parses the result of the gdbmi command
+    /// "-thread-select"
+    /// \param a_input the input string to parse
+    /// \param a_from the offset from where to start the parsing
+    /// \param a_to. out parameter. The next offset after the end of what
+    /// got parsed.
+    /// \param a_thread_id out parameter. The id of the selected thread.
+    /// \param a_frame out parameter. The current frame in the selected thread.
+    /// \param a_level out parameter. the level
     bool parse_new_thread_id (UString::size_type a_from,
                               UString::size_type &a_to,
                               int &a_thread_id,
                               IDebugger::Frame &a_frame);
 
+    /// parses the result of the gdbmi command
+    /// "-file-list-exec-source-files".
     bool parse_file_list (UString::size_type a_from,
                           UString::size_type &a_to,
                           std::vector<UString> &a_files);
 
+    /// parse a callstack as returned by the gdb/mi command:
+    /// -stack-list-frames
     bool parse_call_stack (const UString::size_type a_from,
                            UString::size_type &a_to,
                            vector<IDebugger::Frame> &a_stack);
 
+    /// Parse the arguments of the call stack.
+    /// The call stack arguments is the result of the
+    /// GDB/MI command -stack-list-arguments 1.
+    /// It is basically the arguments of the functions of the call stack.
+    /// See the GDB/MI documentation for more.
     bool parse_stack_arguments (UString::size_type a_from,
                                 UString::size_type &a_to,
                                 map<int, list<IDebugger::VariableSafePtr> > &a_params);
 
+    /// parse a list of local variables as returned by
+    /// the GDBMI command -stack-list-locals 2
     bool parse_local_var_list (UString::size_type a_from,
                                UString::size_type &a_to,
                                list<IDebugger::VariableSafePtr> &a_vars);
@@ -759,6 +558,10 @@ public:
                                 IDebugger::VariableSafePtr &a_var,
                                 bool a_in_unnamed_var=false);
 
+    /// parse the result of -data-evaluate-expression <var-name>
+    /// the result is a gdbmi result of the form:
+    /// value={attrname0=val0, attrname1=val1,...} where val0 and val1
+    /// can be simili tuples representing complex types as well.
     bool parse_variable_value (const UString::size_type a_from,
                                UString::size_type &a_to,
                                IDebugger::VariableSafePtr &a_var);
@@ -806,6 +609,7 @@ public:
                               UString::size_type &a_to,
                               Output::ResultRecord &a_record);
 
+    /// parse a GDB/MI output record
     bool parse_output_record (UString::size_type a_from,
                               UString::size_type &a_to,
                               Output &a_output);
