@@ -52,8 +52,10 @@ public:
     VarInspector2 (IDebuggerSafePtr a_debugger);
     virtual ~VarInspector2 ();
     Gtk::Widget& widget () const;
-    void set_variable (IDebugger::VariableSafePtr a_variable);
-    void inspect_variable (const UString &a_variable_name);
+    void set_variable (IDebugger::VariableSafePtr a_variable,
+                       bool a_expand = false);
+    void inspect_variable (const UString &a_variable_name,
+                           bool a_expand = false);
     IDebugger::VariableSafePtr get_variable () const;
     void clear ();
 };//end class VarInspector2

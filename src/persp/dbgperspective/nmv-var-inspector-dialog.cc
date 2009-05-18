@@ -139,16 +139,17 @@ public:
 
         UString var_name = var_name_entry->get_entry ()->get_text ();
         if (var_name == "") {return;}
-        inspect_variable (var_name);
+        inspect_variable (var_name, true);
 
         NEMIVER_CATCH
     }
 
-    void inspect_variable (const UString& a_expr)
+    void inspect_variable (const UString& a_expr,
+                           bool a_expand)
     {
         THROW_IF_FAIL (var_inspector);
         THROW_IF_FAIL (m_variable_history);
-        var_inspector->inspect_variable (a_expr);
+        var_inspector->inspect_variable (a_expr, a_expand);
         add_to_history (a_expr,
                         false /*append*/,
                         false /*don't allow duplicates*/);
@@ -218,7 +219,7 @@ public:
         // text that is typed into the entry, but we do want to inspect when
         // they choose an item from the dropdown list
         if (var_name_entry->get_active ()) {
-            inspect_variable (var_name);
+            inspect_variable (var_name, true);
         }
 
         NEMIVER_CATCH
@@ -263,7 +264,7 @@ VarInspectorDialog::inspect_variable (const UString &a_var_name)
 
     if (a_var_name != "") {
         m_priv->var_name_entry->get_entry ()->set_text (a_var_name);
-        m_priv->inspect_variable (a_var_name);
+        m_priv->inspect_variable (a_var_name, true);
     }
 }
 

@@ -47,6 +47,7 @@ class VarInspector2::Priv : public sigc::trackable {
 
     bool requested_variable;
     bool requested_type;
+    bool expand_variable;
     IDebuggerSafePtr debugger;
     // Variable that is being inspected
     // at a given point in time
@@ -115,7 +116,8 @@ class VarInspector2::Priv : public sigc::trackable {
     }
 
     void
-    set_variable (const IDebugger::VariableSafePtr a_variable)
+    set_variable (const IDebugger::VariableSafePtr a_variable,
+                  bool a_expand)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -132,13 +134,13 @@ class VarInspector2::Priv : public sigc::trackable {
                                   parent_iter,
                                   var_row);
         LOG_DD ("set variable" << a_variable->name ());
-        // Don't expand the row if the variable needs unfolding.
-        // It means its children nodes (members) are not known yet, and
-        // will be queried when the user wants to expand it himself.
-        if (var_row
-            && !(*var_row)[vutil::get_variable_columns ().needs_unfolding]) {
+
+        // If the variable has children, unfold it so that we can see them.
+        if (a_expand
+            && var_row
+            && (a_variable->members ().size ()
+                || a_variable->needs_unfolding ()))
             tree_view->expand_row (tree_store->get_path (var_row), false);
-        }
         variable = a_variable;
     }
 
@@ -165,10 +167,12 @@ class VarInspector2::Priv : public sigc::trackable {
     }
 
     void
-    create_variable (const UString &a_name)
+    create_variable (const UString &a_name,
+                     bool a_expand)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+        expand_variable = a_expand;
         debugger->create_variable
             (a_name, sigc::mem_fun
                     (this, &VarInspector2::Priv::on_variable_created_signal));
@@ -287,7 +291,7 @@ class VarInspector2::Priv : public sigc::trackable {
 
         NEMIVER_TRY
 
-        set_variable (a_var);
+        set_variable (a_var, expand_variable);
 
         NEMIVER_CATCH
     }
@@ -334,6 +338,7 @@ public:
     Priv (IDebuggerSafePtr a_debugger) :
           requested_variable (false),
           requested_type (false),
+          expand_variable (false),
           debugger (a_debugger)
     {
         build_widget ();
@@ -366,15 +371,17 @@ VarInspector2::widget () const
 }
 
 void
-VarInspector2::set_variable (IDebugger::VariableSafePtr a_variable)
+VarInspector2::set_variable (IDebugger::VariableSafePtr a_variable,
+                             bool a_expand)
 {
     THROW_IF_FAIL (m_priv);
 
-    m_priv->set_variable (a_variable);
+    m_priv->set_variable (a_variable, a_expand);
 }
 
 void
-VarInspector2::inspect_variable (const UString &a_variable_name)
+VarInspector2::inspect_variable (const UString &a_variable_name,
+                                 bool a_expand)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -382,7 +389,7 @@ VarInspector2::inspect_variable (const UString &a_variable_name)
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();
     m_priv->delete_variable_if_needed ();
-    m_priv->create_variable (a_variable_name);
+    m_priv->create_variable (a_variable_name, a_expand);
 }
 
 IDebugger::VariableSafePtr
