@@ -3,6 +3,7 @@
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
 #include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-exception.h"
 #include "nmv-i-debugger.h"
 
 using namespace nemiver;
@@ -187,70 +188,64 @@ test_main (int argc, char *argv[])
 {
     if (argc || argv) {/*keep compiler happy*/}
 
-    try {
-        Initializer::do_init () ;
+    NEMIVER_TRY
 
-        THROW_IF_FAIL (loop) ;
+    Initializer::do_init () ;
 
-        DynamicModuleManager module_manager ;
-        IDebuggerSafePtr debugger =
-                module_manager.load_iface<IDebugger> ("gdbengine", "IDebugger");
+    THROW_IF_FAIL (loop) ;
 
-        debugger->set_event_loop_context (loop->get_context ()) ;
+    DynamicModuleManager module_manager ;
+    IDebuggerSafePtr debugger =
+            module_manager.load_iface<IDebugger> ("gdbengine", "IDebugger");
 
-        //*****************************
-        //<connect to IDebugger events>
-        //*****************************
-        debugger->engine_died_signal ().connect (&on_engine_died_signal) ;
+    debugger->set_event_loop_context (loop->get_context ()) ;
 
-        debugger->program_finished_signal ().connect
-                                                (&on_program_finished_signal) ;
+    //*****************************
+    //<connect to IDebugger events>
+    //*****************************
+    debugger->engine_died_signal ().connect (&on_engine_died_signal) ;
 
-        debugger->command_done_signal ().connect (&on_command_done_signal) ;
+    debugger->program_finished_signal ().connect
+                                            (&on_program_finished_signal) ;
 
-        debugger->breakpoints_set_signal ().connect
-                                                (&on_breakpoints_set_signal) ;
+    debugger->command_done_signal ().connect (&on_command_done_signal) ;
 
-        debugger->running_signal ().connect (&on_running_signal);
+    debugger->breakpoints_set_signal ().connect
+                                            (&on_breakpoints_set_signal) ;
 
-        debugger->got_target_info_signal ().connect (&on_got_proc_info_signal) ;
+    debugger->running_signal ().connect (&on_running_signal);
 
-        debugger->stopped_signal ().connect
-                                (sigc::bind (&on_stopped_signal, debugger)) ;
+    debugger->got_target_info_signal ().connect (&on_got_proc_info_signal) ;
 
-        debugger->variable_type_signal ().connect
-                                                (&on_variable_type_signal) ;
+    debugger->stopped_signal ().connect
+                            (sigc::bind (&on_stopped_signal, debugger)) ;
 
-        debugger->threads_listed_signal ().connect
-                                            (&on_threads_listed_signal) ;
+    debugger->variable_type_signal ().connect
+                                            (&on_variable_type_signal) ;
 
-        debugger->thread_selected_signal ().connect
-                                            (&on_thread_selected_signal) ;
+    debugger->threads_listed_signal ().connect
+                                        (&on_threads_listed_signal) ;
 
-        //*****************************
-        //</connect to IDebugger events>
-        //*****************************
+    debugger->thread_selected_signal ().connect
+                                        (&on_thread_selected_signal) ;
 
-        std::vector<UString> args, source_search_dir ;
-        args.push_back ("fooprog") ;
-        source_search_dir.push_back (".") ;
+    //*****************************
+    //</connect to IDebugger events>
+    //*****************************
 
-        debugger->load_program (args, "", source_search_dir);
-        debugger->set_breakpoint ("main") ;
-        debugger->set_breakpoint ("func1") ;
-        debugger->set_breakpoint ("func2") ;
-        debugger->set_breakpoint ("func4") ;
-        debugger->run () ;
-        loop->run () ;
-    } catch (Glib::Exception &e) {
-        LOG_ERROR ("got error: " << e.what () << "\n") ;
-        return -1 ;
-    } catch (exception &e) {
-        LOG_ERROR ("got error: " << e.what () << "\n") ;
-        return -1 ;
-    } catch (...) {
-        LOG_ERROR ("got an unknown error\n") ;
-        return -1 ;
-    }
+    std::vector<UString> args, source_search_dir ;
+    args.push_back ("fooprog") ;
+    source_search_dir.push_back (".") ;
+
+    debugger->load_program (args, "", source_search_dir);
+    debugger->set_breakpoint ("main") ;
+    debugger->set_breakpoint ("func1") ;
+    debugger->set_breakpoint ("func2") ;
+    debugger->set_breakpoint ("func4") ;
+    debugger->run () ;
+    loop->run () ;
+
+    NEMIVER_CATCH_NOX
+
     return 0 ;
 }
