@@ -207,7 +207,7 @@ fi
 
 ENABLE_GCC_SYMBOLS_VISIBILITY=no
 AC_ARG_ENABLE(symsvis,
-              AC_HELP_STRING([--enable-symvis=yes|no],
+              AC_HELP_STRING([--enable-symsvis=yes|no],
                              [use the gcc symbols visibility feature. >=n gcc4.  default is no)]),
               ENABLE_GCC_SYMBOLS_VISIBILITY=$enableval,
               ENABLE_GCC_SYMBOLS_VISIBILITY=no)
