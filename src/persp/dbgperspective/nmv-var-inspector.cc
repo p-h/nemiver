@@ -45,6 +45,7 @@ class VarInspector::Priv : public sigc::trackable {
 
     bool requested_variable;
     bool requested_type;
+    bool expand_variable;
     IDebuggerSafePtr debugger;
     IDebugger::VariableSafePtr variable;
     VarsTreeViewSafePtr tree_view;
@@ -82,7 +83,8 @@ class VarInspector::Priv : public sigc::trackable {
         tree_store->clear ();
     }
 
-    void set_variable (const IDebugger::VariableSafePtr &a_variable)
+    void set_variable (const IDebugger::VariableSafePtr &a_variable,
+                       bool a_expand)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -98,7 +100,7 @@ class VarInspector::Priv : public sigc::trackable {
                                   parent_iter,
                                   var_row);
         LOG_DD ("set variable" << a_variable->name ());
-        if (var_row) {
+        if (a_expand && var_row) {
             tree_view->expand_row (tree_store->get_path (var_row), false);
         }
     }
@@ -200,7 +202,7 @@ class VarInspector::Priv : public sigc::trackable {
 
         NEMIVER_TRY
 
-        set_variable (a_var);
+        set_variable (a_var, expand_variable);
 
         NEMIVER_CATCH
     }
@@ -214,6 +216,7 @@ public:
     Priv (IDebuggerSafePtr &a_debugger) :
           requested_variable (false),
           requested_type (false),
+          expand_variable (false),
           debugger (a_debugger)
     {
         build_widget ();
@@ -241,19 +244,22 @@ VarInspector::widget () const
 }
 
 void
-VarInspector::set_variable (IDebugger::VariableSafePtr &a_variable)
+VarInspector::set_variable (IDebugger::VariableSafePtr &a_variable,
+                            bool a_expand)
 {
     THROW_IF_FAIL (m_priv);
 
-    m_priv->set_variable (a_variable);
+    m_priv->set_variable (a_variable, a_expand);
 }
 
 void
-VarInspector::inspect_variable (const UString &a_variable_name)
+VarInspector::inspect_variable (const UString &a_variable_name,
+                                bool a_expand)
 {
     if (a_variable_name == "") {return;}
     THROW_IF_FAIL (m_priv);
     m_priv->requested_variable = true;
+    m_priv->expand_variable = a_expand;
     IVarWalkerSafePtr var_walker = m_priv->get_var_walker ();
     THROW_IF_FAIL (var_walker);
     var_walker->connect (m_priv->debugger, a_variable_name);

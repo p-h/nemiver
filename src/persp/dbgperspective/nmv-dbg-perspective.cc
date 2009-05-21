@@ -277,7 +277,9 @@ private:
     void on_continue_until_action ();
     void on_set_breakpoint_action ();
     void on_set_breakpoint_using_dialog_action ();
+#ifdef WITH_VAROBJS
     void on_set_watchpoint_using_dialog_action ();
+#endif
     void on_refresh_locals_action ();
     void on_toggle_breakpoint_action ();
     void on_toggle_breakpoint_enabled_action ();
@@ -557,7 +559,9 @@ public:
                                       const int a_line_num);
     void set_breakpoint_using_dialog (const UString &a_function_name);
     void set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog);
+#ifdef WITH_VAROBJS
     void set_watchpoint_using_dialog ();
+#endif
     void refresh_locals ();
 
     void inspect_variable ();
@@ -1413,6 +1417,7 @@ DBGPerspective::on_set_breakpoint_using_dialog_action ()
     NEMIVER_CATCH
 }
 
+#ifdef WITH_VAROBJS
 void
 DBGPerspective::on_set_watchpoint_using_dialog_action ()
 {
@@ -1424,6 +1429,7 @@ DBGPerspective::on_set_watchpoint_using_dialog_action ()
 
     NEMIVER_CATCH
 }
+#endif
 
 void
 DBGPerspective::on_refresh_locals_action ()
@@ -2881,6 +2887,7 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control><shift>B"
         },
+#ifdef WITH_VAROBJS
         {
             "SetWatchPointUsingDialogMenuItemAction",
             nil_stock_id,
@@ -2892,6 +2899,7 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control>T"
         },
+#endif
         {
             "InspectVariableMenuItemAction",
             nil_stock_id,
@@ -5878,6 +5886,7 @@ DBGPerspective::set_breakpoint_using_dialog (const UString &a_function_name)
     set_breakpoint_from_dialog (dialog);
 }
 
+#ifdef WITH_VAROBJS
 void
 DBGPerspective::set_watchpoint_using_dialog ()
 {
@@ -5898,6 +5907,7 @@ DBGPerspective::set_watchpoint_using_dialog ()
                                  mode & WatchpointDialog::WRITE_MODE,
                                  mode & WatchpointDialog::READ_MODE);
 }
+#endif
 
 void
 DBGPerspective::refresh_locals ()
