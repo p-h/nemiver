@@ -221,6 +221,9 @@ AC_ARG_ENABLE(varobjs,
 if test x$ENABLE_VAROBJS = xyes; then
     AC_DEFINE([WITH_VAROBJS], 1, [build with varable objects support])
 fi
+
+AM_CONDITIONAL(VAROBJS, test x$ENABLE_VAROBJS = xyes)
+
 dnl *******************************
 dnl checking for libraries we use
 dnl *******************************

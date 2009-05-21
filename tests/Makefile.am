@@ -1,3 +1,9 @@
+if VAROBJS
+    WATCHPOINT_TEST=runtestwatchpoint
+else
+    WATCHPOINT_TEST=
+endif
+
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
 
@@ -8,7 +14,7 @@ TESTS=\
 runtestgdbmi runtestunicode \
 runtestvars runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
-runtestwatchpoint runtestderef \
+$(WATCHPOINT_TEST) runtestderef \
 runtestlocalvarslist runtestcpplexer \
 runtestcppparser  \
 runtestlibtoolwrapperdetection \
@@ -48,9 +54,11 @@ runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
+if VAROBJS
 runtestwatchpoint_SOURCES=test-watchpoint.cc
 runtestwatchpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
+endif
 
 #runtestoverloads_SOURCES=test-overloads.cc
 #runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
