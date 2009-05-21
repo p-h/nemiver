@@ -303,6 +303,6 @@ operator&= (WatchpointDialog::Mode &a_l,
     return a_l;
 }
 
-#endif // WITH_VAROBJS
 NEMIVER_END_NAMESPACE (nemiver)
+#endif // WITH_VAROBJS
 
