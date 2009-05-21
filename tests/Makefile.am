@@ -8,7 +8,7 @@ TESTS=\
 runtestgdbmi runtestunicode \
 runtestvars runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
-runtestderef \
+runtestwatchpoint runtestderef \
 runtestlocalvarslist runtestcpplexer \
 runtestcppparser  \
 runtestlibtoolwrapperdetection \
@@ -46,6 +46,10 @@ fooprog_LDADD=
 
 runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestwatchpoint_SOURCES=test-watchpoint.cc
+runtestwatchpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 #runtestoverloads_SOURCES=test-overloads.cc
