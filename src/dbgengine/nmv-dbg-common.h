@@ -483,15 +483,23 @@ public:
         }
         bool has_register_names () const { return m_has_register_names; }
         void has_register_names (bool a_flag) { m_has_register_names = a_flag; }
-        const std::map<IDebugger::register_id_t, UString>& register_names () const { return m_register_names; }
-        void register_names (const std::map<IDebugger::register_id_t, UString>& a_names)
+        const std::map<IDebugger::register_id_t, UString>& register_names () const
+        {
+            return m_register_names;
+        }
+
+        void register_names
+            (const std::map<IDebugger::register_id_t, UString>& a_names)
         {
             m_register_names = a_names;
             has_register_names (true);
         }
 
         bool has_changed_registers () const { return m_has_changed_registers; }
-        void has_changed_registers (bool a_flag) { m_has_changed_registers = a_flag; }
+        void has_changed_registers (bool a_flag)
+        {
+            m_has_changed_registers = a_flag;
+        }
         const std::list<IDebugger::register_id_t>& changed_registers () const
         {
             return m_changed_registers;
@@ -508,7 +516,8 @@ public:
         {
             return m_register_values;
         }
-        void register_values (const std::map<IDebugger::register_id_t, UString>& a_regs)
+        void register_values
+            (const std::map<IDebugger::register_id_t, UString>& a_regs)
         {
             m_register_values = a_regs;
             has_register_values (true);
@@ -516,7 +525,10 @@ public:
 
         bool has_memory_values () const { return m_has_memory_values; }
         void has_memory_values (bool a_flag) { m_has_memory_values = a_flag; }
-        const std::vector<uint8_t>& memory_values () const { return m_memory_values; }
+        const std::vector<uint8_t>& memory_values () const
+        {
+            return m_memory_values;
+        }
         size_t memory_address () const { return m_memory_address; }
         void memory_values (size_t a_address, const std::vector<uint8_t>& a_values)
         {
