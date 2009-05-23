@@ -1,5 +1,6 @@
 if VAROBJS
     WATCHPOINT_TEST=runtestwatchpoint
+    VAR_PATH_EXPR_TEST=runtestvarpathexpr
 else
     WATCHPOINT_TEST=
 endif
@@ -16,7 +17,7 @@ runtestvars runtestcpptrait runtestvarlist \
 runtestvarwalker runtestbreakpoint \
 $(WATCHPOINT_TEST) runtestderef \
 runtestlocalvarslist runtestcpplexer \
-runtestcppparser  \
+runtestcppparser $(VAR_PATH_EXPR_TEST) \
 runtestlibtoolwrapperdetection \
 runtestenv runtesttypes
 
@@ -57,6 +58,10 @@ $(top_builddir)/src/common/libnemivercommon.la
 if VAROBJS
 runtestwatchpoint_SOURCES=test-watchpoint.cc
 runtestwatchpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestvarpathexpr_SOURCES=test-var-path-expr.cc
+runtestvarpathexpr_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 endif
 

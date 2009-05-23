@@ -318,6 +318,11 @@ public:
         //it points to is stored in m_dereferenced
         VariableSafePtr m_dereferenced;
         unsigned int m_num_expected_children;
+        // The expression with which this variable
+        // Can be referenced in the debugger.
+        // If empty, it can be set by calling
+        // IDebugger::query_variable_path_expr()
+        UString m_path_expression;
 
     public:
         Variable (const UString &a_internal_name,
@@ -688,6 +693,15 @@ public:
                 }
             }
             return result;
+        }
+
+        const UString& path_expression () const
+        {
+            return m_path_expression;
+        }
+        void path_expression (const UString &a_expr)
+        {
+            m_path_expression = a_expr;
         }
     };//end class Variable
 
@@ -1103,31 +1117,32 @@ public:
 
     typedef sigc::slot<void, const VariableSafePtr> ConstVariableSlot;
     typedef sigc::slot<void, const VariableList> ConstVariableListSlot;
+    typedef sigc::slot<void, const UString&> ConstUStringSlot;
 
     virtual void create_variable (const UString &a_name,
-                                  const UString &a_cookie="") = 0;
+                                  const UString &a_cookie = "") = 0;
 
     virtual void create_variable (const UString &a_name,
                                   const ConstVariableSlot &a_slot,
-                                  const UString &a_cookie="") = 0;
+                                  const UString &a_cookie = "") = 0;
 
     virtual void delete_variable (const VariableSafePtr a_var,
-                                  const UString &a_cookie="") = 0;
+                                  const UString &a_cookie = "") = 0;
 
     virtual void delete_variable (const VariableSafePtr a_var,
                                   const ConstVariableSlot&,
-                                  const UString &a_cookie="") = 0;
+                                  const UString &a_cookie = "") = 0;
 
     virtual void unfold_variable (VariableSafePtr a_var,
-                                  const UString &a_cookie) = 0;
+                                  const UString &a_cookie = "") = 0;
     virtual void unfold_variable
                 (VariableSafePtr a_var,
                  const ConstVariableSlot&,
-                 const UString &a_cookie="") = 0;
+                 const UString &a_cookie = "") = 0;
 
     virtual void assign_variable (const VariableSafePtr a_var,
                                   const UString &a_expression,
-                                  const UString &a_cookie) = 0;
+                                  const UString &a_cookie = "") = 0;
 
     virtual void assign_variable
                     (const VariableSafePtr a_var,
@@ -1136,18 +1151,25 @@ public:
                      const UString &a_cookie="") = 0;
 
     virtual void evaluate_variable_expr (const VariableSafePtr a_var,
-                                         const UString &a_cookie) = 0;
+                                         const UString &a_cookie = "") = 0;
     virtual void evaluate_variable_expr
             (const VariableSafePtr a_var,
              const ConstVariableSlot &a_slot,
-             const UString &a_cookie="")= 0;
+             const UString &a_cookie = "")= 0;
 
     virtual void list_changed_variables (VariableSafePtr a_root,
-                                         const UString &a_cookie) = 0;
+                                         const UString &a_cookie = "") = 0;
     virtual void list_changed_variables
             (VariableSafePtr a_root,
              const ConstVariableListSlot &a_slot,
              const UString &a_cookie="") = 0;
+
+    virtual void query_variable_path_expr (const VariableSafePtr a_var,
+                                           const UString &a_cookie = "") = 0;
+    virtual void query_variable_path_expr (const VariableSafePtr a_var,
+                                           const ConstVariableSlot &a_slot,
+                                           const UString &a_cookie = "") = 0;
+
 };//end IDebugger
 
 NEMIVER_END_NAMESPACE (nemiver)

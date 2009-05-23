@@ -1282,6 +1282,21 @@ struct OnCommandDoneHandler : OutputHandler {
 
         m_engine->command_done_signal ().emit (a_in.command ().name (),
                                                a_in.command ().cookie ());
+
+        if (a_in.command ().name () == "query-variable-path-expr"
+            && a_in.command ().variable ()
+            && a_in.output ().result_record ().has_path_expression ()) {
+            a_in.command ().variable ()->path_expression
+                        (a_in.output ().result_record ().path_expression ());
+            // Call the slot associated to
+            // IDebugger::query_varaible_path_expr
+            if (a_in.command ().has_slot ()) {
+                typedef sigc::slot<void, const IDebugger::VariableSafePtr>
+                                                                    SlotType;
+                SlotType slot = a_in.command ().get_slot<SlotType> ();
+                slot (a_in.command ().variable ());
+            }
+        }
         //TODO: this is not necessarily true. Before setting the state
         //to ready here, one must now which command exactly was fired so
         //that gdb returned the "DONE" status for it.
@@ -4052,6 +4067,11 @@ null_const_variable_list_slot (const IDebugger::VariableList &)
 }
 
 void
+null_const_ustring_slot (const UString &)
+{
+}
+
+void
 GDBEngine::create_variable (const UString &a_name,
                             const UString &a_cookie)
 {
@@ -4230,6 +4250,35 @@ GDBEngine::list_changed_variables
                      "-var-update --all-values "
                          + a_var->internal_name (),
                      a_cookie);
+    command.variable (a_var);
+    command.set_slot (a_slot);
+    queue_command (command);
+}
+
+void
+GDBEngine::query_variable_path_expr (const VariableSafePtr a_var,
+                                     const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    query_variable_path_expr (a_var, &null_const_variable_slot, a_cookie);
+}
+
+void
+GDBEngine::query_variable_path_expr (const VariableSafePtr a_var,
+                                     const ConstVariableSlot &a_slot,
+                                     const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    THROW_IF_FAIL (a_var);
+    THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    UString cmd_str = "-var-info-path-expression ";
+    cmd_str += a_var->internal_name ();
+
+    Command command ("query-variable-path-expr",
+                     cmd_str, a_cookie);
     command.variable (a_var);
     command.set_slot (a_slot);
     queue_command (command);
