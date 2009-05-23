@@ -410,6 +410,10 @@ public:
         list<IDebugger::VariableSafePtr> m_changed_var_list;
         bool m_has_changed_var_list;
 
+        // The path expression of a variable object.
+        UString m_path_expression;
+        bool m_has_path_expression;
+
     public:
         ResultRecord () {clear () ;}
 
@@ -448,6 +452,8 @@ public:
             m_nb_variable_deleted = 0;
             m_has_variable_children = false;
             m_has_changed_var_list = false;
+            m_path_expression.clear ();
+            m_has_path_expression = false;
         }
 
         /// \name accessors
@@ -675,6 +681,26 @@ public:
         {
             m_changed_var_list = a_in;
             has_changed_var_list (true);
+        }
+
+        const UString& path_expression () const
+        {
+            return m_path_expression;
+        }
+        void path_expression (const UString &a_str)
+        {
+            m_path_expression = a_str;
+            if (!a_str.empty ())
+                has_path_expression (true);
+        }
+
+        bool has_path_expression () const
+        {
+            return m_has_path_expression;
+        }
+        void has_path_expression (bool a)
+        {
+            m_has_path_expression = a;
         }
 
         /// @}

@@ -605,6 +605,10 @@ public:
                                  UString::size_type &a_to,
                                  list<IDebugger::VariableSafePtr> &a_vars);
 
+    bool parse_var_path_expression (UString::size_type a_from,
+                                    UString::size_type &a_to,
+                                    UString &a_expression);
+
     bool parse_result_record (UString::size_type a_from,
                               UString::size_type &a_to,
                               Output::ResultRecord &a_record);

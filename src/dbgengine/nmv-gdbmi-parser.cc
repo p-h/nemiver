@@ -186,6 +186,8 @@ const char* PREFIX_NUMCHILD = "numchild=\"";
 const char* NUMCHILD = "numchild";
 const char* PREFIX_VARIABLES_CHANGED_LIST = "changelist=[";
 const char* CHANGELIST = "changelist";
+const char* PREFIX_PATH_EXPR = "path_expr=";
+const char* PATH_EXPR = "path_expr";
 
 static bool
 is_string_start (gunichar a_c)
@@ -1845,6 +1847,15 @@ fetch_gdbmi_result:
                 } else {
                     LOG_PARSING_ERROR2 (cur);
                 }
+            } else if (!RAW_INPUT.compare (cur,
+                                           strlen (PREFIX_PATH_EXPR),
+                                           PREFIX_PATH_EXPR)) {
+                UString var_expr;
+                if (parse_var_path_expression (cur, cur, var_expr)) {
+                    result_record.path_expression (var_expr);
+                } else {
+                    LOG_PARSING_ERROR2 (cur);
+                }
             } else {
                 GDBMIResultSafePtr result;
                 if (!parse_gdbmi_result (cur, cur, result)
@@ -1884,7 +1895,11 @@ fetch_gdbmi_result:
                                               PREFIX_CONNECTED)) {
         result_record.kind (Output::ResultRecord::CONNECTED);
         cur += 10;
-        for (; !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';++cur) {}
+        for (;
+             !m_priv->index_passed_end (cur)
+             && RAW_CHAR_AT (cur) != '\n';
+             ++cur) {
+        }
     } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_ERROR),
                                               PREFIX_ERROR)) {
         result_record.kind (Output::ResultRecord::ERROR);
@@ -1903,7 +1918,11 @@ fetch_gdbmi_result:
         } else {
             LOG_ERROR ("weird, got error with no attribute. continuing.");
         }
-        for (; !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';++cur) {}
+        for (;
+             !m_priv->index_passed_end (cur)
+             && RAW_CHAR_AT (cur) != '\n';
+             ++cur) {
+        }
     } else {
         LOG_PARSING_ERROR2 (cur);
         return false;
@@ -3376,6 +3395,49 @@ GDBMIParser::parse_var_changed_list (UString::size_type a_from,
             a_vars.push_back (var);
         }
     }
+    a_to = cur;
+    return true;
+}
+
+/// Parse the result of -var-info-path-expression.
+/// It's basically a RESULT of the form:
+/// path_expr="((Base)c).m_size)"
+bool
+GDBMIParser::parse_var_path_expression (UString::size_type a_from,
+                                        UString::size_type &a_to,
+                                        UString &a_expression)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_PATH_EXPR),
+                           PREFIX_PATH_EXPR)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, cur, result) || !result) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    // The name of RESULT must be PATH_EXPR
+    if (result->variable () != PATH_EXPR) {
+        LOG_ERROR ("expected gdbmi variable " << PATH_EXPR<< ", got: "
+                   << result->variable () << "\'");
+        return false;
+    }
+    // The value of the RESULT must be a STRING
+    if (!result->value ()
+        || result->value ()->content_type () != GDBMIValue::STRING_TYPE
+        || result->value ()->get_string_content ().empty ()) {
+        LOG_ERROR ("expected a STRING value for the GDBMI variable "
+                   << PATH_EXPR);
+        return false;
+    }
+
+    a_expression = result->value ()->get_string_content ();
     a_to = cur;
     return true;
 }
