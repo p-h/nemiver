@@ -45,6 +45,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> condition;
     Gtk::TreeModelColumn<Glib::ustring> type;
     Gtk::TreeModelColumn<int> hits;
+    Gtk::TreeModelColumn<Glib::ustring> expression;
     Gtk::TreeModelColumn<IDebugger::BreakPoint> breakpoint;
 
     BPColumns ()
@@ -59,6 +60,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
         add (condition);
         add (type);
         add (hits);
+        add (expression);
     }
 };//end Cols
 
@@ -126,6 +128,7 @@ public:
         tree_view->append_column (_("Condition"), get_bp_columns ().condition);
         tree_view->append_column (_("Type"), get_bp_columns ().type);
         tree_view->append_column (_("Hits"), get_bp_columns ().hits);
+        tree_view->append_column (_("Expression"), get_bp_columns ().expression);
         Gtk::CellRendererToggle *enabled_toggle =
             dynamic_cast<Gtk::CellRendererToggle*>
                                     (tree_view->get_column_cell_renderer(0));
@@ -263,6 +266,7 @@ public:
         (*a_iter)[get_bp_columns ().filename] = a_breakpoint.file_name ();
         (*a_iter)[get_bp_columns ().line] = a_breakpoint.line ();
         (*a_iter)[get_bp_columns ().condition] = a_breakpoint.condition ();
+        (*a_iter)[get_bp_columns ().expression] = a_breakpoint.expression ();
         switch (a_breakpoint.type ()) {
             case IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE:
                 (*a_iter)[get_bp_columns ().type] = _("breakpoint");
