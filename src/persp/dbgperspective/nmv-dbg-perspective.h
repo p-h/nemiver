@@ -55,6 +55,8 @@ public:
 
     virtual Gtk::Widget* get_body () = 0;
 
+    virtual IWorkbench& get_workbench () = 0;
+
     virtual void edit_workbench_menu () = 0;
 
     virtual void open_file () = 0;

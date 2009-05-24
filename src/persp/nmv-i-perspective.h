@@ -86,6 +86,9 @@ public:
     /// \returns the body of the perspective.
     virtual Gtk::Widget* get_body () = 0 ;
 
+    /// \returns the workbench associated to this perspective
+    virtual IWorkbench& get_workbench () = 0;
+
     /// This method is only called once, during the
     /// perspective's initialisation time,
     /// by the workbench.

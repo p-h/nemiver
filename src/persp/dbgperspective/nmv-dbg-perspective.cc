@@ -462,6 +462,8 @@ public:
 
     Gtk::Widget* get_body () ;
 
+    IWorkbench& get_workbench ();
+
     void edit_workbench_menu ();
 
     void open_file ();
@@ -4359,6 +4361,13 @@ DBGPerspective::get_body ()
 {
     CHECK_P_INIT;
     return m_priv->body_main_paned.get ();
+}
+
+IWorkbench&
+DBGPerspective::get_workbench ()
+{
+    CHECK_P_INIT;
+    return workbench ();
 }
 
 void
