@@ -50,7 +50,7 @@ private:
 public:
     IDebuggerSafePtr debugger;
     IWorkbench &workbench;
-    IPerspective& perspective;
+    IPerspective &perspective;
     VarsTreeViewSafePtr tree_view;
     Glib::RefPtr<Gtk::TreeStore> tree_store;
     Gtk::TreeModel::iterator cur_selected_row;
@@ -59,7 +59,7 @@ public:
     IDebugger::VariableList local_vars;
     IDebugger::VariableList function_arguments;
     UString previous_function_name;
-    Glib::RefPtr<Gtk::ActionGroup> var_inspector_action_group;
+    Glib::RefPtr<Gtk::ActionGroup> local_vars_inspector_action_group;
     bool is_new_frame;
     bool is_up2date;
     IDebugger::StopReason saved_reason;
@@ -72,6 +72,7 @@ public:
     //
     IDebugger::VariableList local_vars_changed_at_prev_stop;
     IDebugger::VariableList func_args_changed_at_prev_stop;
+    Gtk::Widget* local_vars_inspector_menu;
 
     Priv (IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench,
@@ -82,7 +83,8 @@ public:
         is_new_frame (false),
         is_up2date (true),
         saved_reason (IDebugger::UNDEFINED_REASON),
-        saved_has_frame (false)
+        saved_has_frame (false),
+        local_vars_inspector_menu (0)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -94,6 +96,7 @@ public:
         re_init_tree_view ();
         connect_to_debugger_signals ();
         init_graphical_signals ();
+        init_actions ();
     }
 
     void
@@ -218,6 +221,52 @@ public:
             dynamic_cast<Gtk::CellRendererText*> (r);
         t->signal_edited ().connect (sigc::mem_fun
                                      (*this, &Priv::on_cell_edited_signal));
+    }
+
+    void
+    init_actions ()
+    {
+        static ui_utils::ActionEntry s_local_vars_inspector_action_entries [] = {
+            {
+                "CopyLocalVariablePathMenuItemAction",
+                Gtk::Stock::COPY,
+                _("_Copy variable name"),
+                _("Copy the variable path expression to the clipboard"),
+                sigc::mem_fun
+                    (*this,
+                     &Priv::on_variable_path_expr_copy_to_clipboard_action),
+                ui_utils::ActionEntry::DEFAULT,
+                ""
+            },
+            {
+                "CreateWatchpointMenuItemAction",
+                Gtk::Stock::COPY,
+                _("Create watchpoint"),
+                _("Create a watchpoint that triggers when the value "
+                  "of the expression changes"),
+                sigc::mem_fun
+                    (*this,
+                     &Priv::on_create_watchpoint_action),
+                ui_utils::ActionEntry::DEFAULT,
+                ""
+            }
+        };
+
+        local_vars_inspector_action_group =
+            Gtk::ActionGroup::create ("local-vars-inspector-action-group");
+        local_vars_inspector_action_group->set_sensitive (true);
+        int num_actions =
+            sizeof (s_local_vars_inspector_action_entries)
+                /
+            sizeof (ui_utils::ActionEntry);
+
+        ui_utils::add_action_entries_to_action_group
+            (s_local_vars_inspector_action_entries,
+             num_actions,
+             local_vars_inspector_action_group);
+
+        workbench.get_ui_manager ()->insert_action_group
+                                            (local_vars_inspector_action_group);
     }
 
     void
@@ -479,6 +528,43 @@ public:
         }
     }
 
+    Gtk::Widget*
+    get_local_vars_inspector_menu ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (!local_vars_inspector_menu) {
+            local_vars_inspector_menu =
+                perspective.load_menu ("localvarsinspectorpopup.xml",
+                                       "/LocalVarsInspectorPopup");
+            THROW_IF_FAIL (local_vars_inspector_menu);
+        }
+        return local_vars_inspector_menu;
+    }
+
+    void
+    popup_local_vars_inspector_menu (GdkEventButton *a_event)
+    {
+        Gtk::Menu *menu =
+            dynamic_cast<Gtk::Menu*> (get_local_vars_inspector_menu ());
+        THROW_IF_FAIL (menu);
+
+        // only pop up a menu if a row exists at that position
+        Gtk::TreeModel::Path path;
+        Gtk::TreeViewColumn* column = 0;
+        int cell_x = 0, cell_y = 0;
+        THROW_IF_FAIL (tree_view);
+        THROW_IF_FAIL (a_event);
+        if (tree_view->get_path_at_pos (static_cast<int> (a_event->x),
+                                        static_cast<int> (a_event->y),
+                                        path,
+                                        column,
+                                        cell_x,
+                                        cell_y)) {
+            menu->popup (a_event->button, a_event->time);
+        }
+    }
+
     //****************************
     //<debugger signal handlers>
     //****************************
@@ -682,6 +768,27 @@ public:
         NEMIVER_CATCH
     }
 
+    void
+    on_variable_path_expression_signal (const IDebugger::VariableSafePtr a_var)
+    {
+        NEMIVER_TRY
+
+        Gtk::Clipboard::get ()->set_text (a_var->path_expression ());
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_variable_path_expression_signal_set_wpt
+                                        (const IDebugger::VariableSafePtr a_var)
+    {
+        NEMIVER_TRY
+
+        debugger->set_watchpoint (a_var->path_expression ());
+
+        NEMIVER_CATCH
+    }
+
     //****************************
     //</debugger signal handlers>
     //****************************
@@ -766,10 +873,14 @@ public:
     on_button_press_signal (GdkEventButton *a_event)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         NEMIVER_TRY
+
+        // right-clicking should pop up a context menu
         if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3)) {
-            /* do nothing for now*/
+            popup_local_vars_inspector_menu (a_event);
         }
+
         NEMIVER_CATCH
     }
 
@@ -823,6 +934,45 @@ public:
         THROW_IF_FAIL (tree_view);
         vutil::update_a_variable_node (a_var, *tree_view,
                                        var_row, false, false);
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_variable_path_expr_copy_to_clipboard_action ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (cur_selected_row);
+
+        IDebugger::VariableSafePtr variable =
+            cur_selected_row->get_value
+                (vutil::get_variable_columns ().variable);
+        THROW_IF_FAIL (variable);
+
+        debugger->query_variable_path_expr
+            (variable,
+             sigc::mem_fun (*this, &Priv::on_variable_path_expression_signal));
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_create_watchpoint_action ()
+    {
+        NEMIVER_TRY
+
+        IDebugger::VariableSafePtr variable =
+            cur_selected_row->get_value
+                (vutil::get_variable_columns ().variable);
+        THROW_IF_FAIL (variable);
+
+        debugger->query_variable_path_expr
+            (variable,
+             sigc::mem_fun
+                 (*this, &Priv::on_variable_path_expression_signal_set_wpt));
 
         NEMIVER_CATCH
     }
