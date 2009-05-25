@@ -26,6 +26,7 @@
 #define __NMV_VAR_INSPECTOR_DIALOG_H__
 
 #include "nmv-dialog.h"
+#include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -43,7 +44,8 @@ class VarInspectorDialog : public Dialog {
 
 public:
     VarInspectorDialog (const UString &a_resource_root_path,
-                        IDebuggerSafePtr &a_debugger);
+                        IDebuggerSafePtr &a_debugger,
+                        IPerspective &a_perspective);
     virtual ~VarInspectorDialog ();
 
     UString variable_name () const;

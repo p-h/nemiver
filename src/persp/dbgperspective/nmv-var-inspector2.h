@@ -28,6 +28,7 @@
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
+#include "nmv-i-perspective.h"
 
 #ifdef WITH_VAROBJS
 
@@ -49,7 +50,8 @@ class VarInspector2 : public nemiver::common::Object {
     SafePtr<Priv> m_priv;
 
 public:
-    VarInspector2 (IDebuggerSafePtr a_debugger);
+    VarInspector2 (IDebuggerSafePtr a_debugger,
+                   IPerspective &a_perspective);
     virtual ~VarInspector2 ();
     Gtk::Widget& widget () const;
     void set_variable (IDebugger::VariableSafePtr a_variable,

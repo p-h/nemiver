@@ -63,18 +63,21 @@ class VarInspectorDialog::Priv {
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gnome::Glade::Xml> glade;
     IDebuggerSafePtr debugger;
+    IPerspective &perspective;
 
     Priv ();
 public:
 
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
-          IDebuggerSafePtr a_debugger) :
+          IDebuggerSafePtr a_debugger,
+          IPerspective &a_perspective) :
         var_name_entry (0),
         inspect_button (0),
         dialog (a_dialog),
         glade (a_glade),
-        debugger (a_debugger)
+        debugger (a_debugger),
+        perspective (a_perspective)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         build_dialog ();
@@ -102,7 +105,7 @@ public:
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
                                                        "inspectorwidgetbox");
 #ifdef WITH_VAROBJS
-        var_inspector.reset (new VarInspector2 (debugger));
+        var_inspector.reset (new VarInspector2 (debugger, perspective));
 #else
         var_inspector.reset (new VarInspector (debugger));
 #endif // WITH_VAROBJS
@@ -128,9 +131,6 @@ public:
                 (*this, &Priv::do_inspect_variable));
     }
 
-    //************************
-    //<signal handlers>
-    //*************************
     void do_inspect_variable ()
     {
         NEMIVER_TRY
@@ -199,6 +199,10 @@ public:
         }
     }
 
+    //************************
+    //<signal handlers>
+    //*************************
+
     void on_var_name_changed_signal ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -231,14 +235,17 @@ public:
 };//end class VarInspectorDialog::Priv
 
 VarInspectorDialog::VarInspectorDialog (const UString &a_root_path,
-                                        IDebuggerSafePtr &a_debugger) :
+                                        IDebuggerSafePtr &a_debugger,
+                                        IPerspective &a_perspective) :
     Dialog (a_root_path,
             "varinspectordialog.glade",
             "varinspectordialog")
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset
-        (new VarInspectorDialog::Priv (widget (), glade (), a_debugger));
+        (new VarInspectorDialog::Priv (widget (),
+                                       glade (), a_debugger,
+                                       a_perspective));
     THROW_IF_FAIL (m_priv);
 }
 

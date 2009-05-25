@@ -46,17 +46,20 @@ struct WatchpointDialog::Priv {
     Gtk::Button *cancel_button;
     SafePtr<VarInspector2> var_inspector;
     IDebuggerSafePtr debugger;
+    IPerspective &perspective;
 
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
-          IDebuggerSafePtr a_debugger) :
+          IDebuggerSafePtr a_debugger,
+          IPerspective &a_perspective) :
         dialog (a_dialog),
         glade (a_glade),
         expression_entry (0),
         inspect_button (0),
         read_check_button (0),
         write_check_button (0),
-        debugger (a_debugger)
+        debugger (a_debugger),
+        perspective (a_perspective)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -110,7 +113,7 @@ struct WatchpointDialog::Priv {
                                                        "varinspectorbox");
         THROW_IF_FAIL (box);
 
-        var_inspector.reset (new VarInspector2 (debugger));
+        var_inspector.reset (new VarInspector2 (debugger, perspective));
         THROW_IF_FAIL (var_inspector);
 
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
@@ -196,7 +199,8 @@ struct WatchpointDialog::Priv {
 }; // end struct WatchpointDialog
 
 WatchpointDialog::WatchpointDialog (const UString &a_root_path,
-                                    IDebuggerSafePtr a_debugger) :
+                                    IDebuggerSafePtr a_debugger,
+                                    IPerspective &a_perspective) :
     Dialog (a_root_path,
             "watchpointdialog.glade",
             "watchpointdialog")
@@ -204,7 +208,8 @@ WatchpointDialog::WatchpointDialog (const UString &a_root_path,
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset (new WatchpointDialog::Priv (widget (),
                                               glade (),
-                                              a_debugger));
+                                              a_debugger,
+                                              a_perspective));
 }
 
 WatchpointDialog::~WatchpointDialog ()

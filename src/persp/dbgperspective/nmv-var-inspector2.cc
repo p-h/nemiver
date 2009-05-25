@@ -52,10 +52,13 @@ class VarInspector2::Priv : public sigc::trackable {
     // Variable that is being inspected
     // at a given point in time
     IDebugger::VariableSafePtr variable;
+    IPerspective &perspective;
     VarsTreeViewSafePtr tree_view;
     Glib::RefPtr<Gtk::TreeStore> tree_store;
     Gtk::TreeModel::iterator var_row_it;
     Gtk::TreeModel::iterator cur_selected_row;
+    Glib::RefPtr<Gtk::ActionGroup> var_inspector_action_group;
+    Gtk::Widget *var_inspector_menu;
 
     void
     build_widget ()
@@ -65,6 +68,7 @@ class VarInspector2::Priv : public sigc::trackable {
         THROW_IF_FAIL (tree_view);
         tree_store = tree_view->get_tree_store ();
         THROW_IF_FAIL (tree_store);
+        init_actions ();
     }
 
     void
@@ -83,6 +87,9 @@ class VarInspector2::Priv : public sigc::trackable {
         tree_view->signal_row_expanded ().connect
             (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal));
 
+        tree_view->signal_button_press_event ().connect_notify
+            (sigc::mem_fun (this, &Priv::on_button_press_signal));
+
         Gtk::CellRenderer *r = tree_view->get_column_cell_renderer
             (VarsTreeView::VARIABLE_VALUE_COLUMN_INDEX);
         THROW_IF_FAIL (r);
@@ -99,6 +106,39 @@ class VarInspector2::Priv : public sigc::trackable {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (tree_store);
         tree_store->clear ();
+    }
+
+    void init_actions ()
+    {
+        static ui_utils::ActionEntry s_var_inspector_action_entries [] = {
+            {
+                "CopyVariablePathMenuItemAction",
+                Gtk::Stock::COPY,
+                _("_Copy variable name"),
+                _("Copy the variable path expression to the clipboard"),
+                sigc::mem_fun
+                    (*this,
+                     &Priv::on_variable_path_expr_copy_to_clipboard_action),
+                ui_utils::ActionEntry::DEFAULT,
+                ""
+            }
+        };
+
+        var_inspector_action_group =
+            Gtk::ActionGroup::create ("var-inspector-action-group");
+        var_inspector_action_group->set_sensitive (true);
+        int num_actions =
+            sizeof (s_var_inspector_action_entries)
+                /
+            sizeof (ui_utils::ActionEntry);
+
+        ui_utils::add_action_entries_to_action_group
+            (s_var_inspector_action_entries,
+             num_actions,
+             var_inspector_action_group);
+
+        perspective.get_workbench ().get_ui_manager ()->insert_action_group
+                                            (var_inspector_action_group);
     }
 
     // If the variable we are inspected was created
@@ -176,6 +216,40 @@ class VarInspector2::Priv : public sigc::trackable {
         debugger->create_variable
             (a_name, sigc::mem_fun
                     (this, &VarInspector2::Priv::on_variable_created_signal));
+    }
+
+    Gtk::Widget* get_var_inspector_menu ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (!var_inspector_menu) {
+            var_inspector_menu =
+                perspective.load_menu ("varinspectorpopup.xml",
+                                       "/VarInspectorPopup");
+            THROW_IF_FAIL (var_inspector_menu);
+        }
+        return var_inspector_menu;
+    }
+    void popup_var_inspector_menu (GdkEventButton *a_event)
+    {
+        Gtk::Menu *menu =
+            dynamic_cast<Gtk::Menu*> (get_var_inspector_menu ());
+        THROW_IF_FAIL (menu);
+
+        // only pop up a menu if a row exists at that position
+        Gtk::TreeModel::Path path;
+        Gtk::TreeViewColumn* column = 0;
+        int cell_x = 0, cell_y = 0;
+        THROW_IF_FAIL (tree_view);
+        THROW_IF_FAIL (a_event);
+        if (tree_view->get_path_at_pos (static_cast<int> (a_event->x),
+                                        static_cast<int> (a_event->y),
+                                        path,
+                                        column,
+                                        cell_x,
+                                        cell_y)) {
+            menu->popup (a_event->button, a_event->time);
+        }
     }
 
     // ******************
@@ -284,6 +358,20 @@ class VarInspector2::Priv : public sigc::trackable {
         NEMIVER_CATCH
     }
 
+    void on_button_press_signal (GdkEventButton *a_event)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        // right-clicking should pop up a context menu
+        if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3)) {
+            popup_var_inspector_menu (a_event);
+        }
+
+        NEMIVER_CATCH
+    }
+
     void
     on_variable_created_signal (const IDebugger::VariableSafePtr a_var)
     {
@@ -329,17 +417,49 @@ class VarInspector2::Priv : public sigc::trackable {
         NEMIVER_CATCH
     }
 
+    void on_variable_path_expr_copy_to_clipboard_action ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (cur_selected_row);
+
+        IDebugger::VariableSafePtr variable =
+            cur_selected_row->get_value
+                (vutil::get_variable_columns ().variable);
+        THROW_IF_FAIL (variable);
+
+        debugger->query_variable_path_expr
+            (variable,
+             sigc::mem_fun (*this, &Priv::on_variable_path_expression_signal));
+
+        NEMIVER_CATCH
+    }
+
+    void on_variable_path_expression_signal
+                                    (const IDebugger::VariableSafePtr a_var)
+    {
+        NEMIVER_TRY
+
+        Gtk::Clipboard::get ()->set_text (a_var->path_expression ());
+
+        NEMIVER_CATCH
+    }
     // ******************
     // </signal handlers>
     // ******************
 
 public:
 
-    Priv (IDebuggerSafePtr a_debugger) :
+    Priv (IDebuggerSafePtr a_debugger,
+          IPerspective &a_perspective) :
           requested_variable (false),
           requested_type (false),
           expand_variable (false),
-          debugger (a_debugger)
+          debugger (a_debugger),
+          perspective (a_perspective),
+          var_inspector_menu (0)
     {
         build_widget ();
         re_init_tree_view ();
@@ -352,9 +472,10 @@ public:
     }
 };//end class VarInspector2::Priv
 
-VarInspector2::VarInspector2 (IDebuggerSafePtr a_debugger)
+VarInspector2::VarInspector2 (IDebuggerSafePtr a_debugger,
+                              IPerspective &a_perspective)
 {
-    m_priv.reset (new Priv (a_debugger));
+    m_priv.reset (new Priv (a_debugger, a_perspective));
 }
 
 VarInspector2::~VarInspector2 ()

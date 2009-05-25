@@ -29,6 +29,7 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-dialog.h"
 #include "nmv-i-debugger.h"
+#include "nmv-i-perspective.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -59,7 +60,8 @@ public:
     };
 
     WatchpointDialog (const UString &a_resource_root_path,
-                      IDebuggerSafePtr a_debugger);
+                      IDebuggerSafePtr a_debugger,
+                      IPerspective &a_perspective);
     virtual ~WatchpointDialog ();
 
     const UString expression () const;
