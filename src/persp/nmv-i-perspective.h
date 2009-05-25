@@ -113,6 +113,14 @@ public:
     /// \param a_uri the uri that identifies the file to close
     virtual void close_file (const UString &a_uri) = 0;
 
+    /// \brief load a menu file
+    /// \param a_filename the file name of the menu file.
+    ///  It's relative to the "menus" subdirectory of the perspective
+    ///  \param a_widget_name the name of the widget to return as the root
+    ///  of the menu.
+    virtual Gtk::Widget* load_menu (const UString &a_filename,
+                                    const UString &a_widget_name) = 0;
+
     /// \name signals
 
     /// @{

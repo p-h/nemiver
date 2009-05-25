@@ -68,6 +68,9 @@ public:
 
     virtual void close_file (const UString &a_uri) = 0;
 
+    virtual Gtk::Widget* load_menu (const UString &a_filename,
+                                    const UString &a_widget_name) = 0;
+
     virtual void close_opened_files () = 0;
 
     virtual ISessMgr& session_manager () = 0;

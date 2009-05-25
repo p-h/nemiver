@@ -484,6 +484,8 @@ public:
 
     void close_file (const UString &a_path);
 
+    Gtk::Widget* load_menu (const UString &a_filename,
+                            const UString &a_widget_name);
     void close_opened_files ();
 
     void update_file_maps ();
@@ -668,7 +670,6 @@ public:
 
     void unset_where ();
 
-    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name);
     Gtk::Widget* get_contextual_menu ();
     Gtk::Widget* get_call_stack_menu ();
 
@@ -3857,23 +3858,6 @@ DBGPerspective::get_contextual_menu ()
     return m_priv->contextual_menu;
 }
 
-Gtk::Widget*
-DBGPerspective::load_menu (UString a_filename, UString a_widget_name)
-{
-    THROW_IF_FAIL (m_priv);
-    NEMIVER_TRY
-    string relative_path = Glib::build_filename ("menus", a_filename);
-    string absolute_path;
-    THROW_IF_FAIL (build_absolute_resource_path
-            (Glib::filename_to_utf8 (relative_path), absolute_path));
-
-    workbench ().get_ui_manager ()->add_ui_from_file
-                                    (Glib::filename_to_utf8 (absolute_path));
-
-    NEMIVER_CATCH
-    return workbench ().get_ui_manager ()->get_widget (a_widget_name);
-}
-
 ThreadList&
 DBGPerspective::get_thread_list ()
 {
@@ -4727,6 +4711,26 @@ DBGPerspective::close_file (const UString &a_path)
         m_priv->opened_file_action_group->set_sensitive (false);
     }
     update_file_maps ();
+}
+
+Gtk::Widget*
+DBGPerspective::load_menu (const UString &a_filename,
+                           const UString &a_widget_name)
+{
+    NEMIVER_TRY
+
+    string relative_path = Glib::build_filename ("menus", a_filename);
+    string absolute_path;
+    THROW_IF_FAIL (build_absolute_resource_path
+                        (Glib::filename_to_utf8 (relative_path),
+                         absolute_path));
+
+    workbench ().get_ui_manager ()->add_ui_from_file
+        (Glib::filename_to_utf8 (absolute_path));
+
+    NEMIVER_CATCH
+
+    return workbench ().get_ui_manager ()->get_widget (a_widget_name);
 }
 
 void

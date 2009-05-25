@@ -199,27 +199,11 @@ struct CallStack::Priv {
         return is_visible;
     }
 
-    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
-    {
-        NEMIVER_TRY
-        string relative_path = Glib::build_filename ("menus", a_filename);
-        string absolute_path;
-        THROW_IF_FAIL (perspective.build_absolute_resource_path
-                (Glib::locale_to_utf8 (relative_path),
-                 absolute_path));
-
-        workbench.get_ui_manager ()->add_ui_from_file
-            (Glib::locale_to_utf8 (absolute_path));
-
-        NEMIVER_CATCH
-        return workbench.get_ui_manager ()->get_widget (a_widget_name);
-    }
-
     Gtk::Widget* get_call_stack_menu ()
     {
         if (!callstack_menu) {
-            callstack_menu = load_menu ("callstackpopup.xml",
-                                        "/CallStackPopup");
+            callstack_menu = perspective.load_menu ("callstackpopup.xml",
+                                                    "/CallStackPopup");
             THROW_IF_FAIL (callstack_menu);
         }
         return callstack_menu;
