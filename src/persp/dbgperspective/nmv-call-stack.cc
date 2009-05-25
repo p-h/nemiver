@@ -435,10 +435,10 @@ struct CallStack::Priv {
         Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_call_stack_menu ());
         THROW_IF_FAIL (menu);
 
-        //only pop up a menu if a row exists at that position
+        // only pop up a menu if a row exists at that position
         Gtk::TreeModel::Path path;
-        Gtk::TreeViewColumn* column=NULL;
-        int cell_x=0, cell_y=0;
+        Gtk::TreeViewColumn* column = 0;
+        int cell_x = 0, cell_y = 0;
         if (widget->get_path_at_pos (static_cast<int> (a_event->x),
                                      static_cast<int> (a_event->y),
                                      path,
