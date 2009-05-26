@@ -489,7 +489,7 @@ public:
     Gtk::Widget* get_context_menu ()
     {
         if (!context_menu) {
-            context_menu = load_menu ("varinspectorpopup.xml",
+            context_menu = load_menu ("localvarsinspectorpopup.todelete.xml",
                                       "/VarInspectorPopup");
             THROW_IF_FAIL (context_menu);
         }
