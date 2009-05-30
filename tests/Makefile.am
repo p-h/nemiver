@@ -1,6 +1,7 @@
 if VAROBJS
     WATCHPOINT_TEST=runtestwatchpoint
     VAR_PATH_EXPR_TEST=runtestvarpathexpr
+    VAROBJ_WALKER_TEST=runtestvarobjwalker
 else
     WATCHPOINT_TEST=
 endif
@@ -14,13 +15,12 @@ if AUTOTESTS
 TESTS=\
 runtestgdbmi runtestunicode \
 runtestvars runtestcpptrait runtestvarlist \
-runtestvarwalker runtestbreakpoint \
+runtestvarwalker $(VAROBJ_WALKER_TEST) runtestbreakpoint \
 $(WATCHPOINT_TEST) runtestderef \
 runtestlocalvarslist runtestcpplexer \
 runtestcppparser $(VAR_PATH_EXPR_TEST) \
 runtestlibtoolwrapperdetection \
 runtestenv runtesttypes
-
 
 else
 
@@ -63,6 +63,11 @@ $(top_builddir)/src/common/libnemivercommon.la
 runtestvarpathexpr_SOURCES=test-var-path-expr.cc
 runtestvarpathexpr_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
+
+runtestvarobjwalker_SOURCES=test-varobj-walker.cc
+runtestvarobjwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
 endif
 
 #runtestoverloads_SOURCES=test-overloads.cc
@@ -81,7 +86,6 @@ runtestcpptrait_SOURCES=test-cpptrait.cc
 runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ \
 @BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
-
 
 runtestunicode_SOURCES=test-unicode.cc
 runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ \

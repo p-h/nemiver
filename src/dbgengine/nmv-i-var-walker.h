@@ -60,30 +60,30 @@ public:
     /// emitted each time one of the members node of a variable is
     /// visited.
     virtual sigc::signal<void,
-                         const IDebugger::VariableSafePtr&>&
-                                                visited_variable_node_signal () const = 0;
+                         const IDebugger::VariableSafePtr>
+                                    visited_variable_node_signal () const = 0;
     /// emitted when the root variable (the one the walker has been connected
     /// has been totally visited. That means when all its members nodes have
     /// been visited.
     virtual sigc::signal<void,
-                         const IDebugger::VariableSafePtr&>&
+                         const IDebugger::VariableSafePtr>
                                         visited_variable_signal () const = 0;
     ///@}
 
     /// connect the walker to a variable and to a debugger
     /// that will be use to walk that variable
-    virtual void connect (IDebuggerSafePtr &a_debugger,
+    virtual void connect (IDebuggerSafePtr a_debugger,
                           const UString &a_var_name) = 0;
 
-    virtual void connect (IDebuggerSafePtr &a_debugger,
-                          const IDebugger::VariableSafePtr &a_var) = 0;
+    virtual void connect (IDebuggerSafePtr a_debugger,
+                          const IDebugger::VariableSafePtr a_var) = 0;
 
-    virtual void do_walk_variable (const UString &a_cookie="") = 0;
+    virtual void do_walk_variable (const UString &a_cookie = "") = 0;
 
     /// gets the root variable this walker is connected to.
     /// this will return a non null variable if and only if
     /// the visited_root_variabls_signal() has been emited already.
-    virtual const IDebugger::VariableSafePtr& get_variable () const = 0;
+    virtual const IDebugger::VariableSafePtr get_variable () const = 0;
 
     /// gets the debugger the walker is connected to
     virtual IDebuggerSafePtr get_debugger () const = 0;

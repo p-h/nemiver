@@ -3,6 +3,8 @@
     <popup name="VarInspectorPopup">
         <menuitem action="CopyVariablePathMenuItemAction"
             name="CopyVariablePathMenuItem" />
+        <menuitem action="CopyVariableValueMenuItemAction"
+            name="CopyVariableValueMenuItem" />
     </popup>
 </ui>
 

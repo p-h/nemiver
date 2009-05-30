@@ -2145,10 +2145,12 @@ struct OnCreateVariableHandler : public OutputHandler
         // Call the slot associated to IDebugger::create_variable (), if
         // any.
         if (a_in.command ().has_slot ()) {
+            LOG_DD ("calling IDebugger::create_variable slot");
             typedef sigc::slot<void, IDebugger::VariableSafePtr> SlotType;
             SlotType slot = a_in.command ().get_slot<SlotType> ();
             slot (a_in.output ().result_record ().variable ());
         }
+        LOG_DD ("emit IDebugger::variable_create_signal");
         // Emit the general IDebugger::variable_create_signal () signal
         m_engine->variable_created_signal ().emit
                             (a_in.output ().result_record ().variable (),

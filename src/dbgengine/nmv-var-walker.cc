@@ -57,13 +57,14 @@ struct SafePtrCmp {
         return (l.get () < r.get ());
     }
 };
+
 class VarWalker : public IVarWalker , public sigc::trackable {
 
     mutable sigc::signal<void,
-                 const IDebugger::VariableSafePtr&> m_visited_variable_node_signal;
+                 const IDebugger::VariableSafePtr> m_visited_variable_node_signal;
 
     mutable sigc::signal<void,
-                 const IDebugger::VariableSafePtr&>
+                         const IDebugger::VariableSafePtr>
                                             m_visited_variable_signal;
 
     mutable GDBEngineSafePtr m_debugger;
@@ -74,13 +75,13 @@ class VarWalker : public IVarWalker , public sigc::trackable {
     IDebugger::VariableSafePtr m_root_var;
 
     void on_variable_value_signal (const UString &a_name,
-                                   const IDebugger::VariableSafePtr &a_var,
+                                   const IDebugger::VariableSafePtr a_var,
                                    const UString &a_cookie);
 
-    void on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
+    void on_variable_value_set_signal (const IDebugger::VariableSafePtr a_var,
                                        const UString &a_cookie);
 
-    void on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
+    void on_variable_type_set_signal (const IDebugger::VariableSafePtr a_var,
                                       const UString &a_cookie);
 
     void get_type_of_all_members (const IDebugger::VariableSafePtr a_from);
@@ -95,28 +96,29 @@ public:
     //********************
     //<event getters>
     //********************
-    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+    sigc::signal<void, const IDebugger::VariableSafePtr>
                                         visited_variable_node_signal () const;
-    sigc::signal<void, const IDebugger::VariableSafePtr&>&
+    sigc::signal<void, const IDebugger::VariableSafePtr>
                                         visited_variable_signal () const;
     //********************
     //</event getters>
     //********************
 
-    void connect (IDebuggerSafePtr &a_debugger, const UString &a_var_name);
+    void connect (IDebuggerSafePtr a_debugger, const UString &a_var_name);
 
-    void connect (IDebuggerSafePtr &a_debugger, const IDebugger::VariableSafePtr &a_var);
+    void connect (IDebuggerSafePtr a_debugger,
+                  const IDebugger::VariableSafePtr a_var);
 
     void do_walk_variable (const UString &a_cookie="");
 
-    const IDebugger::VariableSafePtr& get_variable () const;
+    const IDebugger::VariableSafePtr get_variable () const;
 
     IDebuggerSafePtr get_debugger () const ;
 };//end class VarWalker
 
 void
 VarWalker::on_variable_value_signal (const UString &a_name,
-                                     const IDebugger::VariableSafePtr &a_var,
+                                     const IDebugger::VariableSafePtr a_var,
                                      const UString &a_cookie)
 {
     if (a_name.raw () == "") {}
@@ -135,7 +137,7 @@ VarWalker::on_variable_value_signal (const UString &a_name,
 }
 
 void
-VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var,
+VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr a_var,
                                          const UString &a_cookie)
 {
     if (a_cookie.raw () != m_cookie.raw ()) {
@@ -153,7 +155,7 @@ VarWalker::on_variable_value_set_signal (const IDebugger::VariableSafePtr &a_var
 }
 
 void
-VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
+VarWalker::on_variable_type_set_signal (const IDebugger::VariableSafePtr a_var,
                                         const UString &a_cookie)
 {
     if (a_cookie.raw () != m_cookie.raw ()) {
@@ -234,20 +236,20 @@ VarWalker::get_type_of_all_members (const IDebugger::VariableSafePtr a_from)
     LOG_DD ("m_vars_to_visit.size () = " << (int)m_vars_to_visit.size ());
 }
 
-sigc::signal<void, const IDebugger::VariableSafePtr&>&
+sigc::signal<void, const IDebugger::VariableSafePtr>
 VarWalker::visited_variable_node_signal () const
 {
     return m_visited_variable_node_signal;
 }
 
-sigc::signal<void, const IDebugger::VariableSafePtr&>&
+sigc::signal<void, const IDebugger::VariableSafePtr>
 VarWalker::visited_variable_signal () const
 {
     return m_visited_variable_signal;
 }
 
 void
-VarWalker::connect (IDebuggerSafePtr &a_debugger,
+VarWalker::connect (IDebuggerSafePtr a_debugger,
                     const UString &a_var_name)
 {
     m_debugger = a_debugger.do_dynamic_cast<GDBEngine> ();
@@ -265,8 +267,8 @@ VarWalker::connect (IDebuggerSafePtr &a_debugger,
 }
 
 void
-VarWalker::connect (IDebuggerSafePtr &a_debugger,
-                    const IDebugger::VariableSafePtr &a_var)
+VarWalker::connect (IDebuggerSafePtr a_debugger,
+                    const IDebugger::VariableSafePtr a_var)
 {
     m_debugger = a_debugger.do_dynamic_cast<GDBEngine> ();
     THROW_IF_FAIL (m_debugger);
@@ -304,7 +306,7 @@ VarWalker::do_walk_variable (const UString &a_cookie)
     }
 }
 
-const IDebugger::VariableSafePtr&
+const IDebugger::VariableSafePtr
 VarWalker::get_variable () const
 {
     return m_root_var;
