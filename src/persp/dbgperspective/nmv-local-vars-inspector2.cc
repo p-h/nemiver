@@ -226,7 +226,7 @@ public:
     void
     init_actions ()
     {
-        static ui_utils::ActionEntry s_local_vars_inspector_action_entries [] = {
+        ui_utils::ActionEntry s_local_vars_inspector_action_entries [] = {
             {
                 "CopyLocalVariablePathMenuItemAction",
                 Gtk::Stock::COPY,

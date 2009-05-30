@@ -2763,7 +2763,7 @@ DBGPerspective::init_actions ()
 {
     Gtk::StockID nil_stock_id ("");
     sigc::slot<void> nil_slot;
-    static ui_utils::ActionEntry s_target_connected_action_entries [] = {
+    ui_utils::ActionEntry s_target_connected_action_entries [] = {
         {
             "SaveSessionMenuItemAction",
             Gtk::Stock::SAVE,
@@ -4717,26 +4717,31 @@ Gtk::Widget*
 DBGPerspective::load_menu (const UString &a_filename,
                            const UString &a_widget_name)
 {
-    NEMIVER_TRY
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    string relative_path = Glib::build_filename ("menus", a_filename);
-    string absolute_path;
-    THROW_IF_FAIL (build_absolute_resource_path
-                        (Glib::filename_to_utf8 (relative_path),
-                         absolute_path));
+    Gtk::Widget *result =
+        workbench ().get_ui_manager ()->get_widget (a_widget_name);
 
-    workbench ().get_ui_manager ()->add_ui_from_file
-        (Glib::filename_to_utf8 (absolute_path));
+    if (!result) {
+        string relative_path = Glib::build_filename ("menus", a_filename);
+        string absolute_path;
+        THROW_IF_FAIL (build_absolute_resource_path
+                            (Glib::filename_to_utf8 (relative_path),
+                             absolute_path));
+        workbench ().get_ui_manager ()->add_ui_from_file
+            (Glib::filename_to_utf8 (absolute_path));
 
-    NEMIVER_CATCH
+        result = workbench ().get_ui_manager ()->get_widget (a_widget_name);
+    }
 
-    return workbench ().get_ui_manager ()->get_widget (a_widget_name);
+    return result;
 }
 
 void
 DBGPerspective::close_opened_files ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     if (!get_n_pages ()) {return;}
 
     map<UString, int>::iterator it;
