@@ -30,6 +30,7 @@
 #ifndef __NEMIVER_EXCEPTION_H__
 #define __NEMIVER_EXCEPTION_H__
 
+#include <cstdlib>
 #include <stdexcept>
 #include "nmv-ustring.h"
 #include "nmv-log-stream-utils.h"
@@ -49,23 +50,35 @@ public:
     const char* what () const throw ();
 };//class Exception
 
+#define _THROW(EXPR) \
+if (std::getenv ("nmv_abort_on_throw")) \
+    abort (); \
+else \
+    throw (EXPR);
+
+#define _THROW_EMPTY \
+if (std::getenv ("nmv_abort_on_throw")) \
+    abort (); \
+else \
+    throw;
+
 #define THROW_IF_FAIL(a_cond) \
 if (!(a_cond)) { \
 LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception\n" ) ;\
-throw nemiver::common::Exception \
-    (nemiver::common::UString ("Assertion failed: ") + #a_cond)  ;\
+_THROW (nemiver::common::Exception \
+    (nemiver::common::UString ("Assertion failed: ") + #a_cond))  ;\
 }
 
 #define THROW_IF_FAIL2(a_cond, a_reason) \
 if (!(a_cond)) { \
 LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << a_reason <<"\n");\
-throw nemiver::common::Exception (a_reason)  ;\
+_THROW (nemiver::common::Exception (a_reason))  ;\
 }
 
 #define THROW_IF_FAIL3(a_cond, type, a_reason) \
 if (!(a_cond)) { \
 LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << #type << \
-<< ":  " << a_reason << "\n" ) ; throw type (a_reason)  ;\
+<< ":  " << a_reason << "\n" ) ; _THROW (type (a_reason))  ;\
 }
 
 #define ABORT_IF_FAIL(a_cond, a_reason) \
@@ -75,15 +88,15 @@ LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << a_r
 
 #define THROW(a_reason) \
 LOG_EXCEPTION ("raised exception: "<< (nemiver::common::UString (a_reason)) << "\n"); \
-throw nemiver::common::Exception (nemiver::common::UString (a_reason))  ;
+_THROW (nemiver::common::Exception (nemiver::common::UString (a_reason)))  ;
 
 #define THROW_EMPTY \
 LOG_EXCEPTION ("raised empty exception " << endl) ; \
-throw ;
+_THROW_EMPTY
 
 #define THROW_EXCEPTION(type, message) \
 LOG_EXCEPTION ("raised " << #type << ": "<< message<< "\n") ; \
-throw type (message) ;
+_THROW (type (message)) ;
 
 #define TRACE_EXCEPTION(exception) \
 LOG_EXCEPTION ("catched exception: " << exception.what () << "\n")
