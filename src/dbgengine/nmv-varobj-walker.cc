@@ -71,8 +71,7 @@ public:
 
     ~VarobjWalker ()
     {
-        if (m_variable && m_debugger)
-            m_debugger->delete_variable (m_variable);
+        delete_varobj_if_necessary ();
     }
 
     sigc::signal<void,
@@ -93,6 +92,8 @@ public:
     const IDebugger::VariableSafePtr get_variable () const;
 
     IDebuggerSafePtr get_debugger () const;
+
+    void delete_varobj_if_necessary ();
 
     void do_walk_variable_real (const IDebugger::VariableSafePtr);
 
@@ -124,6 +125,8 @@ VarobjWalker::connect (IDebuggerSafePtr a_debugger,
     THROW_IF_FAIL (a_debugger);
     THROW_IF_FAIL (!a_var_name.empty ());
 
+    delete_varobj_if_necessary ();
+
     m_debugger = a_debugger;
     m_var_name = a_var_name;
     m_debugger->create_variable
@@ -142,6 +145,8 @@ VarobjWalker::connect (IDebuggerSafePtr a_debugger,
     THROW_IF_FAIL (a_var);
     // The variable must be backed by variable objects.
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
+
+    delete_varobj_if_necessary ();
 
     m_debugger = a_debugger;
     m_variable = a_var;
@@ -179,6 +184,20 @@ VarobjWalker::get_debugger () const
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     return m_debugger;
+}
+
+void
+VarobjWalker::delete_varobj_if_necessary ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (!m_var_name.empty ()
+        && m_variable
+        && m_debugger
+        && m_debugger->is_attached_to_target ()) {
+        m_debugger->delete_variable (m_variable);
+    }
+
 }
 
 void

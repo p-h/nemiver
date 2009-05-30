@@ -2477,7 +2477,7 @@ GDBEngine::is_attached_to_target () const
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
     LOG_DD ("is_attached: " << (int)m_priv->is_attached);
-    return m_priv->is_attached;
+    return m_priv->is_gdb_running () && m_priv->is_attached;
 }
 
 void
