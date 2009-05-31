@@ -34,6 +34,7 @@
 #include "nmv-variables-utils.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
+#include "nmv-i-var-walker.h"
 #include "nmv-vars-treeview.h"
 
 #ifdef WITH_VAROBJS
@@ -73,6 +74,9 @@ public:
     IDebugger::VariableList local_vars_changed_at_prev_stop;
     IDebugger::VariableList func_args_changed_at_prev_stop;
     Gtk::Widget* local_vars_inspector_menu;
+    IVarWalkerSafePtr varobj_walker;
+    DynamicModuleManager *module_manager;
+    Glib::RefPtr<Gtk::UIManager> ui_manager;
 
     Priv (IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench,
@@ -84,7 +88,9 @@ public:
         is_up2date (true),
         saved_reason (IDebugger::UNDEFINED_REASON),
         saved_has_frame (false),
-        local_vars_inspector_menu (0)
+        local_vars_inspector_menu (0),
+        varobj_walker (0),
+        module_manager (0)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -239,6 +245,17 @@ public:
                 ""
             },
             {
+                "CopyVariableValueMenuItemAction",
+                Gtk::Stock::COPY,
+                _("_Copy variable value"),
+                _("Copy the variable value to the clipboard"),
+                sigc::mem_fun
+                    (*this,
+                     &Priv::on_variable_value_copy_to_clipboard_action),
+                ui_utils::ActionEntry::DEFAULT,
+                ""
+            },
+            {
                 "CreateWatchpointMenuItemAction",
                 Gtk::Stock::COPY,
                 _("Create watchpoint"),
@@ -249,7 +266,7 @@ public:
                      &Priv::on_create_watchpoint_action),
                 ui_utils::ActionEntry::DEFAULT,
                 ""
-            }
+            },
         };
 
         local_vars_inspector_action_group =
@@ -265,8 +282,8 @@ public:
              num_actions,
              local_vars_inspector_action_group);
 
-        workbench.get_ui_manager ()->insert_action_group
-                                            (local_vars_inspector_action_group);
+        get_ui_manager ()->insert_action_group
+                                        (local_vars_inspector_action_group);
     }
 
     void
@@ -528,15 +545,32 @@ public:
         }
     }
 
+    Glib::RefPtr<Gtk::UIManager>
+    get_ui_manager ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (!ui_manager) {
+            ui_manager = Gtk::UIManager::create ();
+        }
+        return ui_manager;
+    }
+
     Gtk::Widget*
     get_local_vars_inspector_menu ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         if (!local_vars_inspector_menu) {
+            string relative_path =
+                Glib::build_filename ("menus", "localvarsinspectorpopup.xml");
+            string absolute_path;
+            THROW_IF_FAIL (perspective.build_absolute_resource_path
+                                                (relative_path, absolute_path));
+            get_ui_manager ()->add_ui_from_file (absolute_path);
+            get_ui_manager ()->ensure_update ();
             local_vars_inspector_menu =
-                perspective.load_menu ("localvarsinspectorpopup.xml",
-                                       "/LocalVarsInspectorPopup");
+                get_ui_manager ()->get_widget ("/LocalVarsInspectorPopup");
             THROW_IF_FAIL (local_vars_inspector_menu);
         }
         return local_vars_inspector_menu;
@@ -563,6 +597,103 @@ public:
                                         cell_y)) {
             menu->popup (a_event->button, a_event->time);
         }
+    }
+
+    void
+    gen_white_spaces (int a_nb_ws,
+                      std::string &a_ws_str)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        for (int i = 0; i < a_nb_ws; i++) {
+            a_ws_str += ' ';
+        }
+
+    }
+
+    void
+    dump_variable_value (IDebugger::VariableSafePtr a_var,
+                         int a_indent_num,
+                         std::ostringstream &a_os,
+                         bool a_print_var_name = false)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        THROW_IF_FAIL (a_var);
+
+        std::string ws_string;
+
+        if (a_indent_num)
+            gen_white_spaces (a_indent_num, ws_string);
+
+        if (a_print_var_name)
+            a_os << ws_string << a_var->name ();
+
+        if (!a_var->members ().empty ()) {
+            a_os << "\n"  << ws_string << "{\n";
+            IDebugger::VariableList::const_iterator it;
+            for (it = a_var->members ().begin ();
+                 it != a_var->members ().end ();
+                 ++it) {
+                dump_variable_value (*it, a_indent_num + 2, a_os, true);
+            }
+            a_os << "\n" << ws_string <<  "}\n";
+        } else {
+            a_os << ws_string;
+            if (a_print_var_name)
+                a_os << " = ";
+            a_os << a_var->value ();
+        }
+    }
+
+    void
+    dump_variable_value (IDebugger::VariableSafePtr a_var,
+                         int a_indent_num,
+                         std::string &a_out_str)
+    {
+        std::ostringstream os;
+        dump_variable_value (a_var, a_indent_num, os);
+        a_out_str = os.str ();
+    }
+
+
+    DynamicModuleManager*
+    get_module_manager ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (!module_manager) {
+            DynamicModule::Loader *loader =
+                perspective.get_workbench ().get_dynamic_module
+                                                    ().get_module_loader ();
+            THROW_IF_FAIL (loader);
+            module_manager = loader->get_dynamic_module_manager ();
+            THROW_IF_FAIL (module_manager);
+        }
+        return module_manager;
+    }
+
+    IVarWalkerSafePtr
+    create_varobj_walker ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        IVarWalkerSafePtr result  =
+            get_module_manager ()->load_iface_with_default_manager<IVarWalker>
+                                            ("varobjwalker", "IVarWalker");
+        result->visited_variable_signal ().connect
+            (sigc::mem_fun (*this, &Priv::on_visited_variable_signal));
+        return result;
+    }
+
+    IVarWalkerSafePtr
+    get_varobj_walker ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (!varobj_walker)
+            varobj_walker = create_varobj_walker ();
+        return varobj_walker;
     }
 
     //****************************
@@ -789,6 +920,22 @@ public:
         NEMIVER_CATCH
     }
 
+    void
+    on_visited_variable_signal (const IDebugger::VariableSafePtr a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        std::string str;
+        dump_variable_value (a_var, 0, str);
+
+        if (!str.empty ())
+            Gtk::Clipboard::get ()->set_text (str);
+
+        NEMIVER_CATCH
+    }
+
     //****************************
     //</debugger signal handlers>
     //****************************
@@ -955,6 +1102,27 @@ public:
         debugger->query_variable_path_expr
             (variable,
              sigc::mem_fun (*this, &Priv::on_variable_path_expression_signal));
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_variable_value_copy_to_clipboard_action ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (cur_selected_row);
+
+        IDebugger::VariableSafePtr variable =
+            cur_selected_row->get_value
+                (vutil::get_variable_columns ().variable);
+        THROW_IF_FAIL (variable);
+
+        IVarWalkerSafePtr walker = get_varobj_walker ();
+        walker->connect (debugger, variable);
+        walker->do_walk_variable ();
 
         NEMIVER_CATCH
     }

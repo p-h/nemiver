@@ -3,6 +3,8 @@
     <popup name="LocalVarsInspectorPopup">
         <menuitem action="CopyLocalVariablePathMenuItemAction"
             name="CopyLocalVariablePathMenuItem" />
+        <menuitem action="CopyVariableValueMenuItemAction"
+            name="CopyVariableValueMenuItem" />
         <menuitem action="CreateWatchpointMenuItemAction"
             name="CreateWatchpointMenuItem" />
     </popup>
