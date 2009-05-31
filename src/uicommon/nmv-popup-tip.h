@@ -48,6 +48,7 @@ public:
     virtual ~PopupTip ();
     void text (const UString &) ;
     UString text () const ;
+    void add_child (Gtk::Widget &a_widget);
     void set_show_position (int a_x, int a_y) ;
     void show () ;
     void show_all () ;

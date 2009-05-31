@@ -77,6 +77,7 @@
 #include "nmv-spinner-tool-item.h"
 #ifdef WITH_VAROBJS
 #include "nmv-local-vars-inspector2.h"
+#include "nmv-var-inspector2.h"
 #else
 #include "nmv-local-vars-inspector.h"
 #endif
@@ -387,6 +388,12 @@ private:
                                     (const UString &a_var_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cooker);
+#ifdef WITH_VAROBJS
+
+    void on_variable_created_for_tooltip_signal
+                                    (const IDebugger::VariableSafePtr);
+
+#endif // WITH_VAROBJS
 
     bool on_file_content_changed (const UString &a_path);
     void on_notebook_tabs_reordered(Gtk::Widget* a_page, guint a_page_num);
@@ -443,9 +450,15 @@ private:
     void try_to_request_show_variable_value_at_position (int a_x, int a_y);
     void show_underline_tip_at_position (int a_x, int a_y,
                                          const UString &a_text);
+#ifdef WITH_VAROBJS
+    void show_underline_tip_at_position (int a_x, int a_y,
+                                         IDebugger::VariableSafePtr a_var);
+#endif // WITH_VAROBJS
+
     void restart_mouse_immobile_timer ();
     void stop_mouse_immobile_timer ();
     PopupTip& get_popup_tip ();
+    void hide_popup_tip ();
     FindTextDialog& get_find_text_dialog ();
 
 public:
@@ -866,6 +879,9 @@ struct DBGPerspective::Priv {
     //<variable value popup tip related data>
     //****************************************
     SafePtr<PopupTip> popup_tip;
+#ifdef WITH_VAROBJS
+    SafePtr<VarInspector2> popup_var_inspector;
+#endif
     bool in_show_var_value_at_pos_transaction;
     UString var_to_popup;
     int var_popup_tip_x;
@@ -1755,7 +1771,7 @@ DBGPerspective::on_button_pressed_in_source_view_signal
     NEMIVER_TRY
 
     if (get_popup_tip ().is_visible ()) {
-        get_popup_tip ().hide ();
+        hide_popup_tip ();
     }
 
     if (a_event->type != GDK_BUTTON_PRESS) {
@@ -2432,6 +2448,26 @@ DBGPerspective::on_debugger_variable_value_signal
     }
     NEMIVER_CATCH
 }
+
+#ifdef WITH_VAROBJS
+void
+DBGPerspective::on_variable_created_for_tooltip_signal
+                                (const IDebugger::VariableSafePtr a_var)
+{
+    NEMIVER_TRY
+
+    if (m_priv->in_show_var_value_at_pos_transaction
+        && m_priv->var_to_popup == a_var->name ()) {
+        show_underline_tip_at_position (m_priv->var_popup_tip_x,
+                                        m_priv->var_popup_tip_y,
+                                        a_var);
+        m_priv->in_show_var_value_at_pos_transaction = false;
+        m_priv->var_to_popup = "";
+    }
+
+    NEMIVER_CATCH
+}
+#endif // WITH_VAROBJS
 
 bool
 DBGPerspective::on_file_content_changed (const UString &a_path)
@@ -4131,12 +4167,19 @@ DBGPerspective::try_to_request_show_variable_value_at_position (int a_x,
     int abs_x=0, abs_y=0;
     gdk_window->get_origin (abs_x, abs_y);
     abs_x += a_x;
-    abs_y += a_y + start_rect.get_height () / 2;
+    abs_y += a_y /*+ start_rect.get_height () / 2*/;
     m_priv->in_show_var_value_at_pos_transaction = true;
     m_priv->var_popup_tip_x = abs_x;
     m_priv->var_popup_tip_y = abs_y;
     m_priv->var_to_popup = var_name;
+#ifdef WITH_VAROBJS
+    debugger ()->create_variable
+        (var_name,
+         sigc::mem_fun (*this,
+                        &DBGPerspective::on_variable_created_for_tooltip_signal));
+#else
     debugger ()->print_variable_value (var_name);
+#endif
 }
 
 void
@@ -4152,6 +4195,19 @@ DBGPerspective::show_underline_tip_at_position (int a_x,
     get_popup_tip ().show_at_position (a_x, a_y);
 }
 
+#ifdef WITH_VAROBJS
+void
+DBGPerspective::show_underline_tip_at_position
+                                        (int a_x, int a_y,
+                                         const IDebugger::VariableSafePtr a_var)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+    m_priv->popup_var_inspector->set_variable (a_var,
+                                               true /* expand variable */);
+    get_popup_tip ().show_at_position (a_x, a_y);
+}
+#endif // WITH_VAROBJS
+
 void
 DBGPerspective::restart_mouse_immobile_timer ()
 {
@@ -4166,7 +4222,7 @@ DBGPerspective::restart_mouse_immobile_timer ()
             (sigc::mem_fun
                  (*this, &DBGPerspective::on_mouse_immobile_timer_signal),
              1);
-    get_popup_tip ().hide ();
+    hide_popup_tip ();
 }
 
 void
@@ -4175,7 +4231,7 @@ DBGPerspective::stop_mouse_immobile_timer ()
     LOG_FUNCTION_SCOPE_NORMAL_D (DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN);
     THROW_IF_FAIL (m_priv);
     m_priv->timeout_source_connection.disconnect ();
-    get_popup_tip ().hide ();
+    hide_popup_tip ();
 }
 
 PopupTip&
@@ -4185,9 +4241,37 @@ DBGPerspective::get_popup_tip ()
 
     if (!m_priv->popup_tip) {
         m_priv->popup_tip.reset (new PopupTip);
+#ifdef WITH_VAROBJS
+        m_priv->popup_var_inspector.reset
+                                (new VarInspector2 (debugger (), *this));
+        m_priv->popup_tip->add_child (m_priv->popup_var_inspector->widget ());
+#endif
     }
     THROW_IF_FAIL (m_priv->popup_tip);
     return *m_priv->popup_tip;
+}
+
+/// If the pointer is outside of the popup window,
+/// of the variable popup tip, then hide it.
+void
+DBGPerspective::hide_popup_tip ()
+{
+    if (get_popup_tip ().get_window ()) {
+        int x = 0, y = 0;
+        GdkModifierType state = (GdkModifierType) 0;
+        gdk_window_get_pointer (get_popup_tip ().get_window ()->gobj (),
+                                &x, &y, &state);
+        Gdk::Rectangle alloc = get_popup_tip ().get_allocation ();
+        if (x < 0
+            || y < 0
+            || x > alloc.get_width ()
+            || y > alloc.get_height ()) {
+            LOG_DD ("(x,y): (" << (int)x << "," << (int)y << "), "
+                    << "(w,h): ("
+                    << alloc.get_width () << "," << alloc.get_height () << ")");
+            get_popup_tip ().hide ();
+        }
+    }
 }
 
 FindTextDialog&
