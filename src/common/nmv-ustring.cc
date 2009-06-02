@@ -201,12 +201,38 @@ UString::split (const UString &a_delim) const
         for (gchar **cur = splited ; cur && *cur; ++cur) {
             result.push_back (UString (*cur)) ;
         }
-    } catch (...) {}
+    } catch (...) {
+    }
 
     if (splited) {
         g_strfreev (splited) ;
     }
     return result ;
+}
+
+vector<UString>
+UString::split_set (const UString &a_delim_set) const
+{
+    vector<UString> result ;
+    if (size () == Glib::ustring::size_type (0)) {return result;}
+
+    gint len = bytes () + 1 ;
+    CharSafePtr buf (new gchar[len]);
+    memset (buf.get (), 0, len);
+    memcpy (buf.get (), c_str (), bytes ());
+
+    gchar **splited = g_strsplit_set (buf.get (), a_delim_set.c_str (), -1);
+    try {
+        for (gchar **cur = splited ; cur && *cur; ++cur) {
+            result.push_back (UString (*cur));
+        }
+    } catch (...) {
+    }
+
+    if (splited) {
+        g_strfreev (splited);
+    }
+    return result;
 }
 
 UString

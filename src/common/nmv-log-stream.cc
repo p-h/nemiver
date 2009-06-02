@@ -299,7 +299,7 @@ struct LogStream::Priv
         }
         if (!str) {return;}
         UString domains_str = Glib::locale_to_utf8 (str) ;
-        enabled_domains_from_env = domains_str.split (" ") ;
+        enabled_domains_from_env = domains_str.split_set (" ,") ;
     }
 }
 ;//end LogStream::Priv

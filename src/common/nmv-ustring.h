@@ -63,6 +63,7 @@ public:
     UString& operator= (UString const &a_cstr) ;
     bool operator! () const ;
     vector<UString> split (const UString &a_delim) const ;
+    vector<UString> split_set (const UString &a_delim_set) const ;
     static UString join (const vector<UString> &a_elements,
                          const UString &a_delim=" ") ;
     static UString join (vector<UString>::const_iterator &a_from,
