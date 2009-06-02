@@ -106,6 +106,7 @@ public:
                                                        "inspectorwidgetbox");
 #ifdef WITH_VAROBJS
         var_inspector.reset (new VarInspector2 (debugger, perspective));
+        var_inspector->enable_contextual_menu (true);
 #else
         var_inspector.reset (new VarInspector (debugger));
 #endif // WITH_VAROBJS

@@ -59,6 +59,8 @@ public:
     void inspect_variable (const UString &a_variable_name,
                            bool a_expand = false);
     IDebugger::VariableSafePtr get_variable () const;
+    void enable_contextual_menu (bool a_flag);
+    bool is_contextual_menu_enabled () const;
     void clear ();
 };//end class VarInspector2
 

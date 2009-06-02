@@ -54,6 +54,7 @@ class VarInspector2::Priv : public sigc::trackable {
     bool requested_variable;
     bool requested_type;
     bool expand_variable;
+    bool enable_contextual_menu;
     IDebuggerSafePtr debugger;
     // Variable that is being inspected
     // at a given point in time
@@ -458,7 +459,9 @@ class VarInspector2::Priv : public sigc::trackable {
         NEMIVER_TRY
 
         // right-clicking should pop up a context menu
-        if ((a_event->type == GDK_BUTTON_PRESS) && (a_event->button == 3)) {
+        if (a_event->type == GDK_BUTTON_PRESS
+            && a_event->button == 3
+            && enable_contextual_menu) {
             popup_var_inspector_menu (a_event);
         }
 
@@ -570,6 +573,7 @@ public:
           requested_variable (false),
           requested_type (false),
           expand_variable (false),
+          enable_contextual_menu (false),
           debugger (a_debugger),
           perspective (a_perspective),
           var_inspector_menu (0),
@@ -633,6 +637,20 @@ VarInspector2::get_variable () const
     THROW_IF_FAIL (m_priv);
 
     return m_priv->variable;
+}
+
+void
+VarInspector2::enable_contextual_menu (bool a_flag)
+{
+    THROW_IF_FAIL (m_priv);
+    m_priv->enable_contextual_menu = a_flag;
+}
+
+bool
+VarInspector2::is_contextual_menu_enabled () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->enable_contextual_menu;
 }
 
 void
