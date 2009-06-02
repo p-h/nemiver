@@ -2,6 +2,7 @@
 #include <boost/test/minimal.hpp>
 #include <glibmm.h>
 #include "nmv-i-debugger.h"
+#include "nmv-i-lang-trait.h"
 #include "common/nmv-initializer.h"
 
 using namespace nemiver ;
@@ -81,10 +82,10 @@ on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
     if (a_var->name () == "foo_ptr" ||
         a_var->name () == "bar_ptr" ||
         a_var->name () == "baz_ptr") {
-        ILangTraitSafePtr lang_trait = a_debugger->get_language_trait () ;
-        BOOST_REQUIRE (lang_trait->get_name () == "cpptrait") ;
-        BOOST_REQUIRE (lang_trait->has_pointers ()) ;
-        BOOST_REQUIRE (lang_trait->is_type_a_pointer (a_var->type ())) ;
+        ILangTrait &lang_trait = a_debugger->get_language_trait () ;
+        BOOST_REQUIRE (lang_trait.get_name () == "cpptrait") ;
+        BOOST_REQUIRE (lang_trait.has_pointers ()) ;
+        BOOST_REQUIRE (lang_trait.is_type_a_pointer (a_var->type ())) ;
         a_debugger->dereference_variable (a_var) ;
     } else {
         UString msg = "Got variable name: "+ a_var->name ();

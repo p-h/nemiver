@@ -46,6 +46,7 @@ public:
     const UString& get_name () const ;
     bool has_pointers () const ;
     bool is_type_a_pointer (const UString &a_type) const ;
+    bool is_variable_compound (const IDebugger::VariableSafePtr a_var) const ;
 };//end class CPPTrait
 
 CPPTrait::CPPTrait (DynamicModule *a_dynmod):
@@ -92,6 +93,16 @@ CPPTrait::is_type_a_pointer (const UString &a_type) const
     }
     LOG_DD ("type is not a pointer") ;
     return false ;
+}
+
+bool
+CPPTrait::is_variable_compound (const IDebugger::VariableSafePtr a_var) const
+{
+    if (a_var
+        && (a_var->value () == "{...}"
+            || a_var->value ().empty ()))
+        return true;
+    return false;
 }
 
 class CPPTraitModule : public DynamicModule {

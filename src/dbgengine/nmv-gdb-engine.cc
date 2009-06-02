@@ -43,6 +43,7 @@
 #include "nmv-gdb-engine.h"
 #include "langs/nmv-cpp-parser.h"
 #include "langs/nmv-cpp-ast-utils.h"
+#include "nmv-i-lang-trait.h"
 
 using namespace std;
 using namespace nemiver::common;
@@ -3143,7 +3144,7 @@ GDBEngine::create_language_trait ()
     return trait;
 }
 
-ILangTraitSafePtr
+ILangTrait&
 GDBEngine::get_language_trait ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -3151,7 +3152,8 @@ GDBEngine::get_language_trait ()
     if (!m_priv->lang_trait) {
         m_priv->lang_trait = create_language_trait ();
     }
-    return m_priv->lang_trait;
+    THROW_IF_FAIL (m_priv->lang_trait);
+    return *m_priv->lang_trait;
 }
 
 /// Dectect if the variable should be editable or not.
@@ -3679,16 +3681,15 @@ GDBEngine::dereference_variable (const VariableSafePtr &a_var,
     THROW_IF_FAIL (a_var);
     THROW_IF_FAIL (!a_var->name ().empty ());
 
-    ILangTraitSafePtr lang_trait = get_language_trait ();
-    THROW_IF_FAIL (lang_trait);
+    ILangTrait &lang_trait = get_language_trait ();
 
-    if (!lang_trait->has_pointers ()) {
+    if (!lang_trait.has_pointers ()) {
         LOG_ERROR ("current language does not support pointers");
         return false;
     }
 
     if (!a_var->type ().empty () &&
-        !lang_trait->is_type_a_pointer (a_var->type ())) {
+        !lang_trait.is_type_a_pointer (a_var->type ())) {
         LOG_ERROR ("The variable you want to dereference is not a pointer:"
                    "name: " << a_var->name ()
                    << ":type: " << a_var->type ());

@@ -48,18 +48,15 @@ void test_debugger ()
         DynamicModuleManager::load_iface_with_default_manager<IDebugger>
             ("gdbengine", "IDebugger") ;
     BOOST_REQUIRE (debugger) ;
-    ILangTraitSafePtr trait = debugger->get_language_trait () ;
-    BOOST_REQUIRE (trait) ;
-    BOOST_REQUIRE (trait->get_name () == "cpptrait") ;
+    ILangTrait &trait = debugger->get_language_trait () ;
+    BOOST_REQUIRE (trait.get_name () == "cpptrait") ;
 }
 
 using boost::unit_test::test_suite ;
 
 NEMIVER_API test_suite*
-init_unit_test_suite (int argc, char **argv)
+init_unit_test_suite (int, char **)
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     Initializer::do_init () ;

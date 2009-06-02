@@ -36,7 +36,6 @@
 #include "common/nmv-dynamic-module.h"
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-conf-mgr.h"
-#include "nmv-i-lang-trait.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -53,6 +52,7 @@ using std::string;
 using std::map;
 using std::list;
 
+class ILangTrait;
 class IDebugger;
 typedef SafePtr<IDebugger, ObjectRef, ObjectUnref> IDebuggerSafePtr;
 
@@ -988,7 +988,7 @@ public:
 
     virtual void get_target_info (const UString &a_cookie="") = 0;
 
-    virtual ILangTraitSafePtr get_language_trait () = 0;
+    virtual ILangTrait& get_language_trait () = 0;
 
     virtual bool is_variable_editable (const VariableSafePtr a_var) const = 0;
 

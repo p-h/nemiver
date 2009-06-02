@@ -27,6 +27,7 @@
 
 #include "nmv-dbg-common.h"
 #include "nmv-gdbmi-parser.h"
+#include "nmv-i-lang-trait.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -279,7 +280,7 @@ public:
 
     ILangTraitSafePtr create_language_trait () ;
 
-    ILangTraitSafePtr get_language_trait () ;
+    ILangTrait& get_language_trait () ;
 
     bool is_variable_editable (const VariableSafePtr) const;
 

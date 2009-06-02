@@ -27,6 +27,7 @@
 
 #include "common/nmv-ustring.h"
 #include "common/nmv-dynamic-module.h"
+#include "nmv-i-debugger.h"
 
 using nemiver::common::UString ;
 using nemiver::common::DynModIface ;
@@ -64,6 +65,8 @@ public:
     /// \name language features
     /// @{
     virtual bool is_type_a_pointer (const UString &a_type) const = 0 ;
+    virtual bool is_variable_compound
+                        (const nemiver::IDebugger::VariableSafePtr) const = 0;
     /// @}
 };//end class ILangTrait
 
