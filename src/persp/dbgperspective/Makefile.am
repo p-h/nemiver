@@ -97,7 +97,8 @@ libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version -Wl,--as-needed
 libdbgperspectiveplugin_la_LIBADD= \
 @NEMIVERDBGPERSP_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
-$(top_builddir)/src/uicommon/libnemiveruicommon.la
+$(top_builddir)/src/uicommon/libnemiveruicommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 INCLUDES=@NEMIVERDBGPERSP_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src \

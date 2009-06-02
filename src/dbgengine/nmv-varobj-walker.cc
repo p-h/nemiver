@@ -27,6 +27,7 @@
 #include "nmv-i-var-walker.h"
 #include "nmv-gdb-engine.h"
 #include "common/nmv-sequence.h"
+#include "nmv-i-lang-trait.h"
 
 using std::list;
 using std::map;
@@ -41,8 +42,7 @@ typedef SafePtr<nemiver::GDBEngine, ObjectRef, ObjectUnref> GDBEngineSafePtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-const UString VAR_WALKER_COOKIE="var-walker-cookie";
-
+static const unsigned MAX_DEPTH = 256;
 
 class VarobjWalker : public IVarWalker, public sigc::trackable
 {
@@ -59,13 +59,17 @@ class VarobjWalker : public IVarWalker, public sigc::trackable
     // The count of on going variable unfolding
     int m_variable_unfolds;
 
+    unsigned m_max_depth;
+
     VarobjWalker (); // Don't call this constructor.
 
 public:
+
     VarobjWalker (DynamicModule *a_dynmod) :
         IVarWalker (a_dynmod),
         m_do_walk (false),
-        m_variable_unfolds (0)
+        m_variable_unfolds (0),
+        m_max_depth (MAX_DEPTH)
     {
     }
 
@@ -93,11 +97,17 @@ public:
 
     IDebuggerSafePtr get_debugger () const;
 
+    void set_maximum_member_depth (unsigned a_max_depth);
+
+    unsigned get_maximum_member_depth () const;
+
     void delete_varobj_if_necessary ();
 
-    void do_walk_variable_real (const IDebugger::VariableSafePtr);
+    void do_walk_variable_real (const IDebugger::VariableSafePtr,
+                                unsigned a_max_depth);
 
-    void on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var);
+    void on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var,
+                                      unsigned max_depth);
 
     void on_variable_created_signal (const IDebugger::VariableSafePtr a_var);
 }; // end class VarobjWalker.
@@ -166,7 +176,7 @@ VarobjWalker::do_walk_variable (const UString &)
             THROW ("expecting a non null m_variable!");
         }
     }
-    do_walk_variable_real (m_variable);
+    do_walk_variable_real (m_variable, m_max_depth);
 
 }
 
@@ -187,6 +197,22 @@ VarobjWalker::get_debugger () const
 }
 
 void
+VarobjWalker::set_maximum_member_depth (unsigned a_max_depth)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    m_max_depth = a_max_depth;
+}
+
+unsigned
+VarobjWalker::get_maximum_member_depth () const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    return m_max_depth;
+}
+
+void
 VarobjWalker::delete_varobj_if_necessary ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -201,18 +227,28 @@ VarobjWalker::delete_varobj_if_necessary ()
 }
 
 void
-VarobjWalker::do_walk_variable_real (const IDebugger::VariableSafePtr a_var)
+VarobjWalker::do_walk_variable_real (const IDebugger::VariableSafePtr a_var,
+                                     unsigned a_max_depth)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     THROW_IF_FAIL (a_var);
 
-    if (a_var->needs_unfolding ()) {
+    LOG_DD ("internal var name: " << a_var->internal_name ()
+            << "depth: " << (int) a_max_depth);
+
+    if (a_max_depth == 0)
+        return;
+
+    if (a_var->needs_unfolding ()
+        && m_debugger->get_language_trait ().is_variable_compound (a_var)) {
         LOG_DD ("needs unfolding");
         m_variable_unfolds++;
         m_debugger->unfold_variable
-            (a_var, sigc::mem_fun (*this,
-                                   &VarobjWalker::on_variable_unfolded_signal));
+            (a_var,
+             sigc::bind (sigc::mem_fun (*this,
+                                   &VarobjWalker::on_variable_unfolded_signal),
+                         a_max_depth - 1));
     } else if (!a_var->members ().empty ()) {
         LOG_DD ("children need visiting");
         visited_variable_node_signal ().emit (a_var);
@@ -220,20 +256,21 @@ VarobjWalker::do_walk_variable_real (const IDebugger::VariableSafePtr a_var)
         for (it = a_var->members ().begin ();
              it != a_var->members ().end ();
              ++ it) {
-            do_walk_variable_real (*it);
+            do_walk_variable_real (*it, a_max_depth - 1);
         }
     } else {
         LOG_DD ("else finished ?. m_variable_unfolds: "
                 << (int) m_variable_unfolds);
         visited_variable_node_signal ().emit (a_var);
         if (m_variable_unfolds == 0)
-            visited_variable_signal ().emit (a_var);
+            visited_variable_signal ().emit (m_variable);
     }
 
 }
 
 void
-VarobjWalker::on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var)
+VarobjWalker::on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var,
+                                           unsigned a_max_depth)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -241,7 +278,7 @@ VarobjWalker::on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_va
 
     m_variable_unfolds--;
     visited_variable_node_signal ().emit (a_var);
-    do_walk_variable_real (a_var);
+    do_walk_variable_real (a_var, a_max_depth);
     if (m_variable_unfolds == 0) {
         THROW_IF_FAIL (m_variable);
         visited_variable_signal ().emit (m_variable);

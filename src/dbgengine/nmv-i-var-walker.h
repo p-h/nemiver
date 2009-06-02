@@ -87,7 +87,12 @@ public:
 
     /// gets the debugger the walker is connected to
     virtual IDebuggerSafePtr get_debugger () const = 0;
-};//end IVarWalker
+
+    /// accessor of the maximum depth of variable members to explore.
+    /// this can prevent inifite recursions.
+    virtual void set_maximum_member_depth (unsigned a_max_depth) = 0;
+    virtual unsigned get_maximum_member_depth () const = 0;
+}; // end IVarWalker
 
 NEMIVER_END_NAMESPACE (nemiver)
 

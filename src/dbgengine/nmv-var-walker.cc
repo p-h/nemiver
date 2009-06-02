@@ -114,6 +114,10 @@ public:
     const IDebugger::VariableSafePtr get_variable () const;
 
     IDebuggerSafePtr get_debugger () const ;
+
+    void set_maximum_member_depth (unsigned a_max_depth);
+
+    unsigned get_maximum_member_depth () const;
 };//end class VarWalker
 
 void
@@ -316,6 +320,17 @@ IDebuggerSafePtr
 VarWalker::get_debugger () const
 {
     return m_debugger.do_dynamic_cast<IDebugger> ();
+}
+
+void
+VarWalker::set_maximum_member_depth (unsigned)
+{
+}
+
+unsigned
+VarWalker::get_maximum_member_depth () const
+{
+    return 0;
 }
 
 //the dynmod used to instanciate the VarWalker service object
