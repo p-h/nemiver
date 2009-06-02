@@ -71,6 +71,13 @@ public:
                             (sigc::mem_fun (*this,
                                             &Priv::on_expose_event_signal));
 
+        window.add_events (Gdk::LEAVE_NOTIFY_MASK
+                           | Gdk::FOCUS_CHANGE_MASK);
+        window.signal_leave_notify_event ().connect
+            (sigc::mem_fun (*this, &Priv::on_leave_notify_event));
+        window.signal_focus_out_event ().connect
+            (sigc::mem_fun (*this, &Priv::on_signal_focus_out_event));
+
         window.ensure_style ();
     }
 
@@ -103,12 +110,43 @@ public:
         NEMIVER_CATCH
         return false;
     }
+
+    bool
+    on_leave_notify_event (GdkEventCrossing *a_event)
+    {
+        NEMIVER_TRY
+
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (a_event
+            && a_event->type == GDK_LEAVE_NOTIFY
+            && a_event->detail != GDK_NOTIFY_INFERIOR)
+            window.hide ();
+
+        NEMIVER_CATCH
+
+        return false;
+    }
+
+    bool
+    on_signal_focus_out_event (GdkEventFocus *)
+    {
+        NEMIVER_TRY
+
+        window.hide ();
+
+        NEMIVER_CATCH
+
+        return false;
+    }
+
 };//end PopupTip
 
 PopupTip::PopupTip (const UString &a_text) :
     Gtk::Window (Gtk::WINDOW_POPUP)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+    set_type_hint (Gdk::WINDOW_TYPE_HINT_POPUP_MENU );
     m_priv.reset (new PopupTip::Priv (*this));
     if (!a_text.empty ())
         text (a_text);
