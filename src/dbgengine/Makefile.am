@@ -19,6 +19,7 @@ cpptraitmoddir=@NEMIVER_MODULES_DIR@
 noinst_LTLIBRARIES=\
 libgdbmiparser.la \
 libdbgcommon.la \
+libdebuggerutils.la \
 libgdbengine.la
 
 idebuggerheaders= \
@@ -75,6 +76,12 @@ nmv-dbg-common.cc \
 nmv-dbg-common.h
 
 libdbgcommon_la_CFLAGS=-fPIC -DPIC
+
+libdebuggerutils_la_SOURCES= \
+nmv-debugger-utils.h \
+nmv-debugger-utils.cc
+
+libdebuggerutils_la_CFLAGS=-fPIC -DPIC
 
 libgdbengine_la_SOURCES= \
 nmv-gdb-engine.cc \
