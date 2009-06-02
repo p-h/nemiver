@@ -36,11 +36,13 @@
 #include "nmv-i-workbench.h"
 #include "nmv-i-var-walker.h"
 #include "nmv-vars-treeview.h"
+#include "nmv-debugger-utils.h"
 
 #ifdef WITH_VAROBJS
 
 using namespace nemiver::common;
 namespace vutil=nemiver::variables_utils2;
+namespace dutil=nemiver::debugger_utils;
 using Glib::RefPtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -599,64 +601,6 @@ public:
         }
     }
 
-    void
-    gen_white_spaces (int a_nb_ws,
-                      std::string &a_ws_str)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-        for (int i = 0; i < a_nb_ws; i++) {
-            a_ws_str += ' ';
-        }
-
-    }
-
-    void
-    dump_variable_value (IDebugger::VariableSafePtr a_var,
-                         int a_indent_num,
-                         std::ostringstream &a_os,
-                         bool a_print_var_name = false)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-        THROW_IF_FAIL (a_var);
-
-        std::string ws_string;
-
-        if (a_indent_num)
-            gen_white_spaces (a_indent_num, ws_string);
-
-        if (a_print_var_name)
-            a_os << ws_string << a_var->name ();
-
-        if (!a_var->members ().empty ()) {
-            a_os << "\n"  << ws_string << "{\n";
-            IDebugger::VariableList::const_iterator it;
-            for (it = a_var->members ().begin ();
-                 it != a_var->members ().end ();
-                 ++it) {
-                dump_variable_value (*it, a_indent_num + 2, a_os, true);
-            }
-            a_os << "\n" << ws_string <<  "}\n";
-        } else {
-            a_os << ws_string;
-            if (a_print_var_name)
-                a_os << " = ";
-            a_os << a_var->value ();
-        }
-    }
-
-    void
-    dump_variable_value (IDebugger::VariableSafePtr a_var,
-                         int a_indent_num,
-                         std::string &a_out_str)
-    {
-        std::ostringstream os;
-        dump_variable_value (a_var, a_indent_num, os);
-        a_out_str = os.str ();
-    }
-
-
     DynamicModuleManager*
     get_module_manager ()
     {
@@ -928,7 +872,7 @@ public:
         NEMIVER_TRY
 
         std::string str;
-        dump_variable_value (a_var, 0, str);
+        dutil::dump_variable_value (a_var, 0, str);
 
         if (!str.empty ())
             Gtk::Clipboard::get ()->set_text (str);
