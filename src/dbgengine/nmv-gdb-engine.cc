@@ -3172,7 +3172,9 @@ GDBEngine::is_variable_editable (const VariableSafePtr a_var) const
     // variables.
     if (!a_var)
         return false;
-    if (a_var->members ().empty () && !a_var->has_expected_children ())
+    if (!a_var->value ().empty ()
+        && !const_cast<GDBEngine*>
+                (this)->get_language_trait ().is_variable_compound (a_var))
         return true;
     return false;
 }
