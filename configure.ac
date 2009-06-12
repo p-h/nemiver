@@ -398,6 +398,10 @@ dnl don't try to install gconf schemas during distcheck
 DISTCHECK_CONFIGURE_FLAGS="--disable-schemas-install"
 AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
 
+dnl If we are running automake >= 1.11, we can have nicer
+dnl compilation output.
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+
 AC_PROG_MAKE_SET
 
 AC_CONFIG_FILES([Makefile
