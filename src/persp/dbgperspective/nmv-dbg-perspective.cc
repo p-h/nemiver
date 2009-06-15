@@ -392,6 +392,8 @@ private:
 
     void on_variable_created_for_tooltip_signal
                                     (const IDebugger::VariableSafePtr);
+    void on_popup_var_insp_size_request (Gtk::Requisition*, Gtk::Widget *);
+    void on_popup_tip_hide ();
 
 #endif // WITH_VAROBJS
 
@@ -454,6 +456,7 @@ private:
     void show_underline_tip_at_position (int a_x, int a_y,
                                          IDebugger::VariableSafePtr a_var);
     VarInspector2& get_popup_var_inspector ();
+    void pack_popup_var_inspector_in_new_scr_win (Gtk::ScrolledWindow *);
 #endif // WITH_VAROBJS
 
     void restart_mouse_immobile_timer ();
@@ -2463,6 +2466,92 @@ DBGPerspective::on_variable_created_for_tooltip_signal
 
     NEMIVER_CATCH
 }
+
+/// This signal slot is called when the popup var inspector widget
+/// (inserted in a ScrolledWindow) requests a certain size. It then instructs the
+/// container (the said ScrolledWindo) itself to be of the same size as the
+/// popup var inspector widget, so that the user doesn't have to scroll.
+/// This has a limit though. When we reach a screen border, we don't want
+/// the container to grow pass the border. At that point, the user will
+/// have to scroll.
+void
+DBGPerspective::on_popup_var_insp_size_request (Gtk::Requisition *a_req,
+                                                Gtk::Widget *a_container)
+{
+    NEMIVER_TRY
+
+    LOG_DD ("req(w,h): (" << a_req->width << "," << a_req->height << ")");
+
+    THROW_IF_FAIL (a_container);
+
+    // These are going to be the actual width and height allocated for
+    // the container. These will be clipped later down this function, if
+    // necessary.
+    int width = a_req->width, height = a_req->height;
+
+    if (a_container->get_window () && a_container->get_screen ()) {
+        // The position of the top left corner of the container,
+        // in root window coordinates.
+        int cont_orig_x = 0, cont_orig_y = 0;
+
+        const double C = 0.95;
+        // The maximum screen width/height that we set ourselves to use
+        int max_screen_width = a_container->get_screen ()->get_width () * C;
+        int max_screen_height = a_container->get_screen ()->get_height () * C;
+        LOG_DD ("scr (w,h): (" << a_container->get_screen ()->get_width ()
+                               << ","
+                               << a_container->get_screen ()->get_height ()
+                               << ")");
+
+        LOG_DD ("max screen(w,h): (" << max_screen_width
+                                     << ","
+                                     << max_screen_height
+                                     << ")");
+
+        Gdk::Rectangle cont_alloc;
+        cont_alloc = a_container->get_allocation ();
+        a_container->get_window ()->get_origin (cont_orig_x, cont_orig_y);
+        cont_alloc.set_x (cont_orig_x);
+        cont_alloc.set_y (cont_orig_y);
+        // Now cont_alloc represents the screen space used by the
+        // container, in root window coordinates.
+
+        // If the width of the container is too big so that it overflows
+        // the max usable width, clip it.
+        if (cont_alloc.get_x () + cont_alloc.get_width () >= max_screen_width) {
+            if (max_screen_width <=  cont_alloc.get_x ())
+                max_screen_width = a_container->get_screen ()->get_width ();
+
+            width = max_screen_width - cont_alloc.get_x ();
+        }
+
+        // Likewise, if the height of the container is too big so that
+        // it overflows the max usable height, clip it.
+        if (cont_alloc.get_y () + cont_alloc.get_height ()
+            >= max_screen_height) {
+
+            if (max_screen_height <= cont_alloc.get_y ())
+                max_screen_height = a_container->get_screen ()->get_height ();
+
+            height = max_screen_height - cont_alloc.get_y ();
+        }
+    }
+
+    a_container->set_size_request (width, height);
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_popup_tip_hide ()
+{
+    NEMIVER_TRY
+
+    m_priv->popup_tip.reset ();
+    m_priv->popup_var_inspector.reset ();
+
+    NEMIVER_CATCH
+}
 #endif // WITH_VAROBJS
 
 bool
@@ -4212,9 +4301,26 @@ DBGPerspective::get_popup_var_inspector ()
         m_priv->popup_var_inspector.reset
                     (new VarInspector2 (debugger (),
                                         *const_cast<DBGPerspective*> (this)));
-
     THROW_IF_FAIL (m_priv->popup_var_inspector);
     return *m_priv->popup_var_inspector;
+}
+
+void
+DBGPerspective::pack_popup_var_inspector_in_new_scr_win
+                                                (Gtk::ScrolledWindow *a_win)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    // Sneak into the size allocation process of the popup var inspector
+    // and the scrolled window to try and set the size of the later to
+    // a sensible value. Otherwise, the scrolled window will have a default
+    // size that is going to be almost always too small. Blah.
+    get_popup_var_inspector ().widget ().signal_size_request ().connect
+        (sigc::bind
+         (sigc::mem_fun (*this,
+                         &DBGPerspective::on_popup_var_insp_size_request),
+          a_win));
+    a_win->add (get_popup_var_inspector ().widget ());
 }
 
 #endif // WITH_VAROBJS
@@ -4251,7 +4357,12 @@ DBGPerspective::get_popup_tip ()
     if (!m_priv->popup_tip) {
         m_priv->popup_tip.reset (new PopupTip);
 #ifdef WITH_VAROBJS
-        m_priv->popup_tip->add_child (get_popup_var_inspector ().widget ());
+        Gtk::ScrolledWindow *w = Gtk::manage (new Gtk::ScrolledWindow ());
+        w->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+        pack_popup_var_inspector_in_new_scr_win (w);
+        m_priv->popup_tip->set_child (*w);
+        m_priv->popup_tip->signal_hide ().connect (sigc::mem_fun
+                   (*this, &DBGPerspective::on_popup_tip_hide));
 #endif
     }
     THROW_IF_FAIL (m_priv->popup_tip);

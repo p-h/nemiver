@@ -38,7 +38,6 @@ public:
     Gtk::Window &window;
     Gtk::Notebook *notebook;
     Gtk::Label  *label;
-    sigc::connection expose_event_connection;
     int show_position_x;
     int show_position_y;
     int label_index;
@@ -55,7 +54,7 @@ public:
         window.hide ();
         // Un-comment this to get tooltip specific colors for the window
         // window.set_name ("gtk-tooltips");
-        window.set_resizable (false);
+        window.set_resizable (true);
         window.set_app_paintable (true);
         window.set_border_width (4);
         notebook = Gtk::manage (new Gtk::Notebook);
@@ -67,10 +66,6 @@ public:
         label->set_alignment (0.5, 0.5);
         label->show ();
         label_index = notebook->append_page (*label);
-        expose_event_connection = window.signal_expose_event ().connect
-                            (sigc::mem_fun (*this,
-                                            &Priv::on_expose_event_signal));
-
         window.add_events (Gdk::LEAVE_NOTIFY_MASK
                            | Gdk::FOCUS_CHANGE_MASK);
         window.signal_leave_notify_event ().connect
@@ -79,36 +74,6 @@ public:
             (sigc::mem_fun (*this, &Priv::on_signal_focus_out_event));
 
         window.ensure_style ();
-    }
-
-    void paint_window ()
-    {
-        Gtk::Requisition req = window.size_request ();
-        Gdk::Rectangle zero_rect;
-        THROW_IF_FAIL (window.get_style ());
-        window.get_style ()->paint_flat_box (window.get_window (),
-                                             Gtk::STATE_NORMAL,
-                                             Gtk::SHADOW_OUT,
-                                             zero_rect,
-                                             window,
-                                             "tooltip",
-                                             0,
-                                             0,
-                                             req.width,
-                                             req.height);
-    }
-
-    bool
-    on_expose_event_signal (GdkEventExpose *a_event)
-    {
-        NEMIVER_TRY
-        if (a_event) {}
-
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-        paint_window ();
-
-        NEMIVER_CATCH
-        return false;
     }
 
     bool
@@ -184,7 +149,7 @@ PopupTip::text () const
 }
 
 void
-PopupTip::add_child (Gtk::Widget &a_widget)
+PopupTip::set_child (Gtk::Widget &a_widget)
 {
     THROW_IF_FAIL (m_priv);
     if (m_priv->custom_widget_index >= 0) {
