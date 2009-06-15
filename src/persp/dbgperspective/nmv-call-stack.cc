@@ -110,7 +110,7 @@ struct CallStack::Priv {
     sigc::connection on_selection_changed_connection;
     Gtk::Widget *callstack_menu;
     Glib::RefPtr<Gtk::ActionGroup> call_stack_action_group;
-    int cur_frame_index;
+    unsigned cur_frame_index;
     unsigned nb_frames_expansion_chunk;
     int frame_low;
     int frame_high;
@@ -229,6 +229,7 @@ struct CallStack::Priv {
         }
 
         cur_frame_index = (*a_row_iter)[columns ().frame_index];
+        THROW_IF_FAIL (cur_frame_index < frames.size ());
         cur_frame = frames[cur_frame_index];
         THROW_IF_FAIL (cur_frame.level () >= 0);
         in_set_cur_frame_trans = true;
@@ -555,6 +556,8 @@ struct CallStack::Priv {
                                  const FrameArgsMap &a_frames_args)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        THROW_IF_FAIL (!a_frames.empty ());
 
         int dest_start_index = a_frames[0].level (),
             dest_end_index = a_frames.size () + dest_start_index - 1;

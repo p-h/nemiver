@@ -246,7 +246,10 @@ public:
         UString m_library;
     public:
 
-        Frame () {clear ();}
+        Frame () :
+            m_level (0),
+            m_line (0)
+        {}
 
         /// \name accessors
 
