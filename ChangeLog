@@ -1,3 +1,608 @@
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Update NEW file
+	* NEWS: update for 0.7.0 release
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Try harder to hide the popup tip when necessary
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_motion_notify_event_signal): If the variable
+	popup tip is visible and the mouse if out of it, hide the said popup tip.
+	(DBGPerspective::hide_popup_tip_if_mouse_is_outside): New function.
+
+2009-07-01  David Planella <david.planella@gmail.com>
+
+	Updated Catalan translation
+
+2009-06-15  Dodji Seketeli <dodji@redhat.com>
+
+	Keep popup tip under control (Closes: #585657)
+	*src/uicommon/nmv-popup-tip.cc: (PopupTip::Priv::Priv):
+	No need to paint the popup tip window on expose event.
+	Allow the popup tip window to be resized.
+	(PopupTip::Priv::paint_window,
+	PopupTip::Priv::on_expose_event_signal): Removed.
+	(PopupTip::add_child): Rename this into PopupTip::set_child.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::on_popup_var_insp_size_request,
+	DBGPerspective::on_popup_tip_hide,
+	DBGPerspective::pack_popup_var_inspector_in_new_scr_win): New
+	functions.
+	(DBGPerspective::get_popup_tip): Put the variable inspector inside
+	scrolled window and pack the scrolled window inside the popup tip.
+	Force the scrolled window to be wide enough so that we can see the
+	var inspector members without having to scroll too much. Though,
+	make sure scroll window doesn't overflow the borders of the screen.
+	Destroy the popup tip when it goes hidden, otherwise, subsequent
+	uses of it on variables with difference size can exhibit some space
+	allocation issues. For instance, when used later on a smaller
+	variable, too much extra space is allocated to the popup tip.
+
+2009-06-15  Dodji Seketeli <dodji@redhat.com>
+
+	Don't overrun frames vector (Closes: #585516)
+	* src/dbgengine/nmv-i-debugger.h: Properly initialise
+	IDebugger::Frame
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::update_selected_frame): Do not overrun
+	frames vector.
+
+2009-06-12  Javier Jardon <javierjc1982@gmail.com>
+
+	Use AM_SILENT_RULES for nicer compilation output
+	* configure.ac: Use AM_SILENT_RULES when present.
+
+2009-06-05  Dodji Seketeli <dodji@redhat.com>
+
+	Allow pointer variable values to be editable
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::is_variable_editable):
+	Allow pointer variable values to be editable.
+
+2009-06-02  Dodji Seketeli <dodji@redhat.com>
+
+	Don't enable contextual menu in popup tip
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc:
+	(VarInspectorDialog::Priv::build_dialog): Enable contextual the menu.
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	(VarInspector2::enable_contextual_menu,
+	VarInspector2::is_contextual_menu_enabled): New methods.
+	(VarInspector2::Priv::Priv): By default, disalow contextual menu.
+	(VarInspector2::Priv::on_button_press_signal): Show the contextual
+	menu only if we are allowed to.
+
+2009-06-02  Dodji Seketeli <dodji@redhat.com>
+
+	Factorize variable printing
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::gen_white_spaces,
+	LocalVarsInspector2::Priv::dump_variable_value): Remove these.
+	(LocalVarsInspector2::Priv::on_visited_variable_signal): Use
+	nemiver::debugger_utils::dump_variable_value instead of our
+	previous own stuff.
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	(VarInspector2::Priv::gen_white_spaces,
+	VarInspector2::Priv::dump_variable_value): Remove these.
+	(VarInspector2::Priv::on_visited_variable_signal): Use
+	nemiver::debugger_utils::dump_variable_value instead of our
+	previous own stuff.
+
+2009-06-02  Dodji Seketeli <dodji@redhat.com>
+
+	Don't loop forever on cycles (Closes: #584464)
+	* src/dbgengine/nmv-i-var-walker.h:
+	(IVarWalker::set_maximum_member_depth,
+	IVarWalker::get_maximum_member_depth): New abstract
+	ifaces.
+	* src/dbgengine/nmv-var-walker.cc (VarWalker::set_maximum_member_depth,
+	VarWalker::get_maximum_member_depth): New concrete implementations.
+	* src/dbgengine/nmv-varobj-walker.cc (VarobjWalker::set_maximum_member_depth,
+	VarobjWalker::get_maximum_member_depth): Likewise.
+	(VarobjWalker::on_variable_unfolded_signal: Add a max depth guard to avoid
+	looping forever on some huge datastructures.
+	(VarobjWalker::do_walk_variable_real): Likewise. Don't
+	dereference pointers, otherwise we might cycle forever on
+	datastructures that have cycles. Make sure to pass the right
+	variable to the visited_variable_signal.
+
+2009-06-02  Dodji Seketeli <dodji@redhat.com>
+
+	Allow compound variable detection
+	* src/dbgengine/nmv-i-lang-trait.h (ILangTrait::is_variable_compound):
+	New abstract interface.
+	* src/dbgengine/nmv-cpp-trait.cc:
+	(CPPTrait::is_variable_compound): New iface implementation.
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::get_language_trait): Return a reference, not a pointer.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::get_language_trait,
+	GDBEngine::dereference_variable): Adjust.
+	* tests/test-cpptrait.cc (test_debugger): Adjust use of
+	IDebugger::get_language_trait.
+	* tests/test-deref.cc (on_variable_type_set_signal): Likewise.
+
+2009-06-02  Dodji Seketeli <dodji@redhat.com>
+
+	Add debugger utilities to dump variable values
+	* src/dbgengine/nmv-debugger-utils.cc,h:
+	(gen_white_spaces, dump_variable_value): New functions.
+	* src/dbgengine/Makefile.am: Add nmv-debugger-utils.cc,h to the build
+	system. It's build into a static library, libdebuggerutils.la.
+
+2009-06-02  Dodji Seketeli <dodji@redhat.com>
+
+	Hide var tooltip appropriatly (Closes: #545596)
+	* src/uicommon/nmv-popup-tip.cc:
+	(PopupTip::Priv::Priv): Hide the popup tip window whenever
+	mouse or keyboard focus leaves said window.
+	(PopupTip::Priv::on_leave_notify_event,
+	PopupTip::Priv::on_signal_focus_out_event): New methods.
+	(PopupTip::PopupTip): Gently ask window managers to treat the
+	popup tip as a popup menu.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::show_underline_tip_at_position,
+	DBGPerspective::get_popup_tip): Make sure
+	the var inspector is created before accessing it.
+	(DBGPerspective::restart_mouse_immobile_timer,
+	DBGPerspective::stop_mouse_immobile_timer): This the wrong level
+	to try to hide the popup tip.
+	(DBGPerspective::get_popup_var_inspector): New method.
+	(DBGPerspective::hide_popup_tip): Removed this.
+
+2009-06-02  Dodji Seketeli <dodji@redhat.com>
+
+	Allow the ',' separator in NMV_LOG_DOMAINS env var
+	* src/common/nmv-log-stream.cc:
+	(LogStream::Priv::load_enabled_domains_from_env): Allow
+	use of ',' and space as separators in the content of the
+	nmv_log_domains environment variable.
+	* src/common/nmv-ustring.cc,h:
+	(UString::split_set): New method.
+
+2009-05-31  Dodji Seketeli <dodji@redhat.com>
+
+	Variable popup now uses a VarInspector2
+	* src/uicommon/nmv-popup-tip.cc:
+	(PopupTip::Priv::Priv): Set a notebook in the popuptip window.
+	The notebook contains a label for when the tip has to display text, and a
+	custom widget for when the tip has to display a custom widget.
+	Don't use the (ugly) gtk tooltip style.
+	(PopupTip:PopupTip): Don't set any text by defauilt.
+	(PopupTip::text): To show text, just display the notebook tab that
+	contains the text label.
+	(PopupTip::add_child): New method to set a custom widget.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::on_variable_created_for_tooltip_signal,
+	DBGPerspective::hide_popup_tip): New
+	methods.
+	(DBGPerspective::try_to_request_show_variable_value_at_position):
+	Show the popup tip exactly at the position of the cursor.
+	If varobjs support is on, create a variable object backed variable,
+	hand it to a VarInspector2 and pack the inspector into a popup tip.
+	(DBGPerspective::restart_mouse_immobile_timer,
+	DBGPerspective::on_button_pressed_in_source_view_signal,
+	DBGPerspective::stop_mouse_immobile_timer): Only hide the popup
+	tip when the mouse moves out of it.
+
+2009-05-31  Dodji Seketeli <dodji@redhat.com>
+
+	Contextual menu item to copy local variable value
+	* src/persp/dbgperspective/menus/localvarsinspectorpopup.xml:
+	Add a menu item to copy variable values to clipboard.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarInspector2::Priv::init_actions): Add menu actions
+	to copy variable values to clipboard. Use a local UIManager, not
+	the one of the debugging perspective.
+	(LocalVarInspector2::Priv::get_local_vars_inspector_menu):
+	Use the local UIManager to build the menu, not the load_menu
+	method of the debugging perspective.
+	(LocalVarInspector2::Priv::get_ui_manager,
+	(LocalVarInspector2::Priv::gen_white_spaces,
+	LocalVarInspector2::Priv::dump_variable_value,
+	LocalVarInspector2::Priv::get_module_manager,
+	LocalVarInspector2::Priv::create_varobj_walker,
+	LocalVarInspector2::Priv::get_varobj_walker,
+	LocalVarInspector2::Priv::on_visited_variable_signal,
+	LocalVarInspector2::Priv::on_variable_value_copy_to_clipboard_action,
+	LocalVarInspector2::Priv::): New methods.
+
+2009-05-30  Dodji Seketeli <dodji@redhat.com>
+
+	Don't delete varobjs if not attached to target
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::is_attached_to_target): If the debugger is not running,
+	then its not attached to the target.
+	* src/dbgengine/nmv-varobj-walker.cc:
+	(VarobjWalker::delete_varobj_if_necessary): New method.
+	(VarobjWalker::~VarobjWalker): Don't delete the variable object if
+	the debugger is not attached to the target.
+
+2009-05-30  Dodji Seketeli <dodji@redhat.com>
+
+	New nmv_abort_on_throw environment variable
+	* src/common/nmv-exception.h:
+	When nmv_abort_on_throw is set, abort on throw.
+	This is useful to debug some nasty issues.
+
+2009-05-30  Dodji Seketeli <dodji@redhat.com>
+
+	Support copying variable value to the clipboard
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	(VarsInspector2::Priv::init_actions): Don't make the array of
+	ActionEntry be static. It triggers side effects when the
+	LocalVarInspector2 is instantiated (and the menu used) more
+	than once.
+	Use a UIManager local to this class, not the one of the
+	debugging perspective. Add a new menu entry to copy the value of a
+	variable. This uses a varobj powered variable walker for cases
+	where the variable is a compound variable and thus must be unfolded
+	so that its member needs to be retrieved from the debugger.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::init_actions): Don't make the array of ActionEntry
+	be static.
+	(DBGPerspective::load_menu): Allow this to be called twice with the
+	same menu file.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::init_actions): Don't make the array of
+	ActionEntry be static.
+
+2009-05-30  Dodji Seketeli <dodji@redhat.com>
+
+	New varobj aware variable walker
+	* configure.ac: Generate src/dbgengine/varobjwalker.conf from
+	src/dbgengine/varobjwalker.conf.in
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(OnCreateVariableHandler::can_handle): Add more logging.
+	* src/dbgengine/nmv-i-var-walker.h: Cleanup the IVarWalker iface.
+	Remove some needless references from the APIs.
+	* src/dbgengine/nmv-var-walker.cc: Adjust API implementations.
+	* src/dbgengine/nmv-varobj-walker.cc: New implementation of
+	the IVarWalker interface. This one walks a variable that is backed
+	by GDB/MI a Variable Object and recursively unfolds it.
+	* src/dbgengine/Makefile.am: Add nmv-varobj-walker.cc to the build
+	system.
+	* src/dbgengine/varobjwalker.conf.in: The conf file of the
+	new varobjwalker DynMod.
+	* tests/test-varobj-walker.cc: New test for the varobj-walker.
+	* tests/Makefile.am: Add the new test-varobj-walker.cc to the build
+	system.
+
+2009-05-26  Dodji Seketeli <dodji@redhat.com>
+
+	Unbreak pointer dereferencing with --disable-varobjs
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	(get_context_menu): Load the menu file from
+	localvarsinspectorpopup.todelete.xml.
+
+2009-05-26  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
+
+2009-05-25  Dodji Seketeli <dodji@redhat.com>
+
+	New menu to set a watchpoint on a local variable
+	* src/persp/dbgperspective/menus/localvarsinspectorpopup.todelete.xml:
+	This menu file is now the one used by the now-ancient LocalVarsInspector
+	widget. When that widget is removed, this file oughts to be removed
+	as well.
+	* src/persp/dbgperspective/menus/localvarsinspectorpopup.xml: New
+	menu file. Used by LocalVarsInspector2.
+	* src/persp/dbgperspective/menus/Makefile.am:
+	Added localvarsinspectorpopup.todelete.xml and
+	localvarsinspectorpopup.xml menu files to the build system.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::init_actions,
+	(LocalVarsInspector2::Priv::get_local_vars_inspector_menu,
+	LocalVarsInspector2::Priv::popup_local_vars_inspector_menu,
+	LocalVarsInspector2::Priv::on_variable_path_expression_signal,:
+	LocalVarsInspector2::Priv::on_variable_path_expression_signal_set_wpt,
+	LocalVarsInspector2::Priv::on_variable_path_expr_copy_to_clipboard_action,
+	LocalVarsInspector2::Priv::on_create_watchpoint_action):
+	New methods.
+	(LocalVarsInspector2::Priv::on_button_press_signal): Popup the
+	context menu when the user right clicks on a variable node.
+
+2009-05-25  Dodji Seketeli <dodji@redhat.com>
+
+	VarInspector2 got a new "copy-varable-path" menu
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	(VarInspector2::Priv::Priv): A reference to IPerspective is now
+	stored into the inspector. It must be passed at construction time.
+	(VarInspector2::Priv::init_actions): New method that setups menu
+	actions so that we can have a menu proposing to copy the path
+	expression of variable node to the gtk clipboard. As we have access
+	to the perspective, we can access the ui_manager through the
+	workbench, yay.
+	(VarInspector2::Priv::build_widget):
+	Call VarInspector2::Priv::init_actions.
+	(VarInspector2::Priv::connect_to_signals): Setup the
+	on_button_press_signal slot for when we right click on a variable
+	node.
+	(VarInspector2::Priv::get_var_inspector_menu): New method. Load the
+	contextual menu from its varinspectorpopup.xml menu file.
+	(VarInspector2::Priv::popup_var_inspector_menu): New method. Pops
+	the menu up.
+	(VarInspector2::Priv::on_button_press_signal): New slot. Popups the
+	new contextual menu.
+	(VarInspector2::Priv::on_variable_path_expr_copy_to_clipboard_action):
+	New method.
+	(VarInspector2::Priv::on_variable_path_expression_signal): New
+	method.
+	(VarInspector2::VarInspector2): The constructor now takes a
+	reference to IPerspective.
+	* src/persp/dbgperspective/nmv-var-inspector2.h:
+	(VarInspector2::VarInspector2): Likewise.
+	* src/persp/dbgperspective/menus/varinspectorpopup.xml:
+	This menu file is now used by VarInspector2.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc,h:
+	Pass a reference of the perspective to the dialog. That reference
+	is then passed to the VarInspector2 widget.
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::inspect_variable): Adjust to pass a
+	reference of the perspective to the var inspector dialog.
+	(DBGPerspective::set_watchpoint_using_dialog): Likewise for the
+	watchpoint dialog.
+
+2009-05-25  Dodji Seketeli <dodji@redhat.com>
+
+	Cosmetic cleanups in CallStack
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	(CallStack::Priv::popup_call_stack_menu): Cosmetic cleanups.
+
+2009-05-25  Dodji Seketeli <dodji@redhat.com>
+
+	Move CallStack::Priv::load_menu to IPerspective.
+	* src/persp/nmv-i-perspective.h: (IPerspectrive::load_menu): New
+	New entry point.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc,h:
+	(DBGPerspective::load_menu): New entry point.
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	(CallStack::Priv::load_menu): Remove this.
+	CallStack::Priv::(get_call_stack_menu): Rather use the
+	new IPerspective::load_menu method.
+
+2009-05-24  Dodji Seketeli <dodji@redhat.com>
+
+	Allow getting the workbench from a perspective
+	* src/persp/nmv-i-perspective.h (IDebugger::get_workbench):
+	New abstract interface.
+	* src/persp/dbgperspective/nmv-dbg-perspective.h:
+	(DBGPerspective::get_workbench): Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::get_workbench): New implementation.
+
+2009-05-24  Dodji Seketeli <dodji@redhat.com>
+
+	Show watchpoint expressions in breakpoint views
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	(struct BPColumns::expression): New member.
+	(BPColumns::BPColums): Add the new BPColumns::expression member.
+	(BreakpointsView::Priv::build_tree_view): Create a column for
+	expressions.
+	(BreakpointsView::Priv::update_breakpoint): Update expression
+	column.
+
+2009-05-24  Dodji Seketeli <dodji@redhat.com>
+
+	Shorten too long lines
+	* src/dbgengine/nmv-dbg-common.h: Split lines longer than 80
+	characters.
+
+2009-05-23  Dodji Seketeli <dodji@redhat.com>
+
+	New IDebugger::query_variable_path_expr.
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::Variable::path_expression): New accessor for the
+	path expression of a variable.
+	(IDebugger::query_variable_path_expr): Declare new abstract interface entry
+	point.
+	(GDBEngine::query_variable_path_expr): Declare new concrete
+	interface entry point.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::query_variable_path_expr): New implementation of
+	IDebugger::query_variable_path_expr. Sends
+	-var-info-path-expression to GDB.
+	(OnCommandDoneHandler::do_handle): Notify client code whenever
+	we receive the reply of -var-info-path-expression.
+	* tests/test-var-path-expr.cc: New test.
+	* tests/Makefile.am: Add the new test to the build system.
+
+2009-05-23  Dodji Seketeli <dodji@redhat.com>
+
+	Parse the result of -var-info-path-expression
+	* src/dbgengine/nmv-dbg-common.h:
+	(Output::ResultRecord::m_path_expression,
+	Output::ResultRecord::m_has_path_expression): New members.
+	(Output::ResultRecord::clear): Clear the new members we just added.
+	(Output::ResultRecord::path_expression,
+	Output::ResultRecord::has_path_expression): New accessor for the new
+	members.
+	* src/dbgengine/nmv-gdbmi-parser.h:
+	(GDBMIParser::parse_var_path_expression): Declare ...
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	(GDBMIParser::parse_var_path_expression): ... function.
+	(GDBMIParser::parse_result_record): Wire the parsing of variable
+	path expression here, in ^DONE records.
+
+2009-05-21  Dodji Seketeli <dodji@redhat.com>
+
+	Fix typo in configure.ac
+	* configure.ac: The help message should say
+	--enable-symsvis, not --enable-symvis.
+
+2009-05-21  Dodji Seketeli <dodji@redhat.com>
+
+	Conditionally compile test-watchpoint.cc
+	* configure.ac: Define the automake VAROBJS variable that is
+	defined when varobjs support is enabled.
+	* tests/Makefile.am: Only compile the watchpoint test if varobjs
+	are supported.
+
+2009-05-21  Dodji Seketeli <dodji@redhat.com>
+
+	Cleanup test-breakpoint.cc
+	* tests/test-breakpoint.cc: Use the usual exception macros.
+
+2009-05-21  Dodji Seketeli <dodji@redhat.com>
+
+	Unbreak the build
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.cc: Properly nest
+	ifdefs.
+
+2009-05-21  Dodji Seketeli <dodji@redhat.com>
+
+	Add regression test for watchpoints
+	* tests/test-watchpoint.cc: New test.
+	* tests/Makefile.am: Integrate the new test to the build system.
+
+2009-05-21  Dodji Seketeli <dodji@redhat.com>
+
+	Unbreak the build with --disable-varobjs
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Protect use of
+	features depending on varobjs support with #ifdef WITH_VAROBJS.
+	* src/persp/dbgperspective/nmv-var-inspector.cc:
+	(VarInspector::Priv::set_variable): Add a new boolean parameter to control
+	the expansion of the added variable.
+	(VarInspector::set_variable): Likewise.
+	(VarInspector::inspect_variable): Likewise.
+
+2009-05-18  Dodji Seketeli <dodji@redhat.com>
+
+	Allow VarInspector2 to expand the variable it appended
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	(VarInspector2::Priv::set_variable): Add a new param to expand the
+	variable to its first level if it has children.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: Expand
+	variable shown in the inspector.
+
+2009-05-17  Dodji Seketeli <dodji@redhat.com>
+
+	Add watchpointdialog.glade to po/POTFILES.in
+	* po/POTFILES.in: Add src/persp/dbgperspective/glade/watchpointdialog.glade
+	to the list of files to consider for i18n.
+
+2009-05-17  Dodji Seketeli <dodji@redhat.com>
+
+	Various cleanups.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.h: Cosmetic
+	cleanup.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.h: Don't
+	forward declare IDebugger.
+
+2009-05-17  Dodji Seketeli <dodji@redhat.com>
+
+	Update the breakpoint view to show watchpoints
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	(BreakpointsView::Priv::build_tree_view): Add a new 'Type' column
+	to discriminate standard breakpoints from watchpoints.
+	(BreakpointsView::Priv::on_debugger_stopped_signal): Consider watchpoints
+	alongside standard breakpoints.
+	When we stop because a watchpoint got out of scope, erase the
+	watchpoint graphical representation from the view.
+	(BreakpointsView::Priv::erase_breakpoint): New entry point.
+
+2009-05-17  Dodji Seketeli <dodji@redhat.com>
+
+	Initial backend support for setting watchpoints
+	* src/dbgengine/nmv-i-debugger.h (class IDebugger::BreakPoint):
+	New IDebugge::BreakPoint::Type enum to discriminate different types
+	of breakpoints e.g. watchpoint and standard breakpoints.
+	(IDebugger::BreakPoint::expression): New accessors for the
+	expression that triggered the watchpoint.
+	(IDebugger::BreakPoint::type): New accessors for the type of
+	Breakpoint.
+	(IDebugger::set_watchpoint): Declare new abstract entry point.
+	* src/dbgengine/nmv-gdb-engine.h (DGBEngine::set_watchpoint):
+	Declare new concrete entry point.
+	* src/dbgengine/nmv-gdb-engine.cc (OnStoppedHandler::do_handle):
+	Consider IDebugger::WATCHPOINT_SCOPE types of breakpoints when
+	notifying the user.
+	(GDBEngine::set_watchpoint): New implementation of
+	IDebugger::set_watchpoint.
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_attribute):
+	Add a new overload that represents an attribute using the
+	GDBMIResult type. Make the old overload use this new one.
+	(GDBMIParser::parse_stopped_async_output): use the
+	new GDBMIParser::parse_attribute overload. Do some style cleanup.
+	(GDBMIParser::parse_out_of_band_record): Recognize the wpnum
+	attribute that is present when the inferior stopped because a
+	watchpoint triggered.
+	Use the IDebugger::BreakPoint::expression accessor to store the
+	expression that triggered the watchpoint.
+	Set the new IDebugger::BreakPoint::type property so that we can
+	tell the difference between a standard breakpoint and a watchpoint.
+
+2009-05-17  Dodji Seketeli <dodji@redhat.com>
+
+	Remove dead code from gdbmi parser
+	* src/dbgengine/nmv-gdbmi-parser.cc: Remove functions that were
+	later re-implemented as methods the GDBMIParser class.
+	* src/dbgengine/nmv-gdbmi-parser.h: Likewise. Transfert the
+	comments from the removed free form functions to their method
+	peers.
+
+2009-05-17  Dodji Seketeli <dodji@redhat.com>
+
+	Initial support to set watchpoints
+	* src/persp/dbgperspective/glade/watchpointdialog.glade: New glade
+	file.
+	* src/persp/dbgperspective/glade/Makefile.am: Add the glade file to
+	the build system.
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.h: Declare ...
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.cc ... the new
+	type WatchpointDialog.
+	* src/persp/dbgperspective/Makefile.am: Add the new files to the
+	build system.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Bring up the
+	the new watchpoint dialog when the user hits <control>-T.
+	* src/persp/dbgperspective/menus/menus.xml: Add a new menu item for
+	setting watchpoints.
+
+2009-05-03  Dodji Seketeli <dodji@redhat.com>
+
+	Support variable value editing in LocalVarsInspector2 (Closes: #581169)
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::init_graphical_signals): Install the
+	Priv::on_cell_edited_signal slot.
+	(LocalVarsInspector2::Priv::on_tree_view_selection_changed_signal):
+	If the selected variable is editable, then make the cell editable.
+	(LocalVarsInspector2::Priv::on_cell_edited_signal): New slot.
+	Assign the variable according to what the user typed.
+	(LocalVarsInspector2::Priv::on_variable_assigned_signal): New slot.
+	Graphically update the variable value upon assignment.
+
+2009-05-03  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
+
+2009-05-03  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	Updated Japanese translation
+
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
+
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
+	Update release message
+	* Makefile.am: Update release blurb.
+
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
+	Bump to 0.7.0
+	* configure.ac: Update to 0.7.0 for development.
+
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
+	Update ChangeLog
+	* ChangeLog: Automatically update.
+
+2009-05-02  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
+
 2009-05-02  Dodji Seketeli <dodji@redhat.com>
 
 	Update NEWS file
@@ -31,6 +636,23 @@
 
 	Fix a typo
 	* git-commit-messages.README: fix a typo
+
+2009-05-01  Dodji Seketeli <dodji@redhat.com>
+
+	Make LocalVarsInspector2 properly show selected frame's arguments
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::finish_handling_debugger_stopped_event):
+	Remember the current frame. List the frame arguments of the current
+	frame, not of the frame which index is 0.
+	(LocalVarsInspector2::show_local_variables_of_current_function):
+	Make this accept a frame in parameter. This is the frame
+	the function needs to fetch the arguments for. It's not clean to do
+	this but we have no easy way to fetch the arguments of the "current"
+	function, unfortunately.
+
+2009-05-01  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
 
 2009-05-01  Dodji Seketeli <dodji@redhat.com>
 
@@ -88,9 +710,114 @@
 	* src/dbgengine/nmv-dbg-common.h:
 	(Command::tag2): new accessors.
 
+2009-04-26  Dodji Seketeli <dodji@redhat.com>
+
+	Preliminary support of variable editing in VarInspector2
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::is_variable_editable):
+	New entry point abstract entry point declaration.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::is_variable_editable):
+	New concrete entry point declaration ...
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::is_variable_editable):
+	... Defined here.
+	* src/persp/dbgperspective/nmv-variables-utils.h:
+	(struct VariableColumns): Add a new hidden column at offset
+	VARIABLE_VALUE_EDITABLE_OFFSET to hold the variable_value_editable flag
+	about the editability of a variable.
+	* src/persp/dbgperspective/nmv-vars-treeview.h:
+	(VarsTreeView::ColumnIndex): New enum to hold the indexes the
+	columns of the VarsTreeView.
+	* src/persp/dbgperspective/nmv-vars-treeview.cc:
+	(VarsTreeView::VarsTreeView): Connect the "editable" attribute
+	of the cell renderer of the variable value with the new hidden flag
+	of VariableColumns at VARIABLE_VALUE_EDITABLE_OFFSET offset.
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	(VarInspector2::Priv::connect_to_signals): Connect
+	VarInspector2::Priv::on_cell_edited_signal to the
+	signal_edited of the text cell renderer of the variable values.
+	(VarInspector2::Priv::on_cell_edited_signal): New signal handler.
+	When the value of a given variable is edited, assign the variable
+	to the new value.
+	(VarInspector2::Priv::on_tree_view_selection_changed_signal):
+	When a variable is selected, detected if the variable is editable
+	or not, and set the editability property of the variable's value
+	cell accordingly.
+	(VarInspector2::Priv::on_variable_assigned_signal): New signal
+	handler called when a variable gets assigned. Just update the
+	variable node that got modified.
+
+2009-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Factorize the implementation of varobjs related entry points
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::create_variable): Modify signature so that we can
+	share the implementation between the two overloads.
+	(IDebugger::delete_variable): Likewise.
+	(IDebugger::unfold_variable): Likewise.
+	(IDebugger::assign_variable): Likewise.
+	(IDebugger::evaluate_variable_expr): Likewise.
+	* src/dbgengine/nmv-gdb-engine.h:
+	(GDBEngine::create_variable): Adjust.
+	(GDBEngine::delete_variable): Likewise.
+	(GDBEngine::unfold_variable): Likewise.
+	(GDBEngine::assign_variable): Likewise.
+	(GDBEngine::evaluate_variable_expr): Likewise.
+	(GDBEngine::list_changed_variables): Likewise.
+	(GDBEngine::list_register_names): Remove default variable value
+	from the function declaration.
+	(GDBEngine::list_register_values): Likewise.
+	(GDBEngine::list_changed_registers): Likewise.
+	(GDBEngine::set_memory): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(null_const_variable_slot, null_const_variable_list_slot): New
+	functions.
+	(GDBEngine::create_variable): Factorize the implementation
+	between the two overloads.
+	(GDBEngine::delete_variable): Likewise.
+	(GDBEngine::unfold_variable): Likewise.
+	(GDBEngine::assign_variable): Likewise.
+	(evaluate_variable_expr): Likewise.
+	(GDBEngine::list_changed_variables): Likewise.
+
+2009-04-24  Dodji Seketeli <dodji@redhat.com>
+
+	Properly un-highlight highlighted variables when stepping in a function
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::clear_local_variables): Clear
+	the list of local vars to un-highlight.
+	(LocalVarsInspector2::Priv::clear_function_arguments): Clear the
+	the list of function arguments un-highlight.
+	(LocalVarsInspector2::Priv::update_local_variables): When stepping
+	in a function, make sure the variable that were highlighted during the
+	previous step are properly un-highlighted during the current step.
+	(LocalVarsInspector2::Priv::update_function_arguments): Likewise
+	for function arguments.
+	(LocalVarsInspector2::Priv::on_local_variable_updated_signal): When
+	local a variable is updated (and highlihted) stash it on a shelf to
+	un-highlight it during the coming step.
+	(LocalVarsInspector2::Priv::on_function_args_updated_signal):
+	Likewise for function arguments.
+
 2009-04-24  Olav Vitters <olav@bkor.dhs.org>
 
 	doap: fix short description
+
+2009-04-23  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
+
+2009-04-22  Dodji Seketeli <dodji@redhat.com>
+
+	Don't list all frame arguments from LocalVarsInspector2
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::finish_handling_debugger_stopped_event):
+	Don't list all the frame arguments when we just want the arguments
+	of the last one.
+	(LocalVarsInspector2::show_local_variables_of_current_function):
+	Likewise.
+
+2009-04-22  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
 
 2009-04-22 00:16:01 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
 
@@ -186,6 +913,10 @@
 	arguments. Otherwise, that can really change the behaviour of the
 	inferior that would now see one more argument on its command line.
 
+2009-04-20  Dodji Seketeli <dodji@redhat.com>
+
+	Merge branch 'master' into varobjs-support
+
 2009-04-19 22:46:17 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
 
 	Quote arguments passed to gdb (Closes: #575889)
@@ -223,9 +954,72 @@
 	we pass a reference to the std::map value, since close_file() modifies the
 	map.
 
+2009-04-18  Dodji Seketeli <dodji@redhat.com>
+
+	Add some comments to variable utils calls.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc:
+	(LocalVarsInspector2::Priv::update_a_local_variable): Add some
+	comments to the call to variable_utils::update_a_variable.
+	* (LocalVarsInspector2::Priv::update_a_local_variable): Likewise.
+
+2009-04-18  Dodji Seketeli <dodji@redhat.com>
+
+	Beef up variables utils for variable search/updates
+	* src/persp/dbgperspective/nmv-variables-utils.h:
+	(variables_match, find_a_variable_descendent): Declare new entry
+	points.
+	* src/persp/dbgperspective/nmv-variables-utils.cc:
+	(generate_path_to_descendent): New internal function.
+	(walk_path_from_row): Likewise.
+	(find_a_variable_descendent): New function.
+	(variables_match): New function.
+	(find_a_variable): During the search, consider all the members
+	of the variable we are looking for. Use the new variables_match
+	function for that. Add a comment to this function.
+	(update_a_variable): Make sure we try to update the proper
+	descendent variable member of the proper root variable.
+	Use the new find_a_variable_descendent function for that.
+	The name of this function might be misleading now. Changing that
+	belongs to another commit I guess.
+
+2009-04-18  Dodji Seketeli <dodji@redhat.com>
+
+	Add more searching capabilities to IDebugger::Variable
+	*  src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::Variable::get_member_at) : New entry point.
+	(IDebugger::Variable::sibling_index): Likewise.
+	(IDebugger::Variable::equals_by_value): Likewise.
+
+2009-04-18  Dodji Seketeli <dodji@redhat.com>
+
+	Make IDebugger::Variable non-copyable
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::Variable): declare the proper constructors and
+	operators of the class private.
+
+2009-04-18  Dodji Seketeli <dodji@redhat.com>
+
+	Add == operator for pointers to SafePtr
+	* src/common/nmv-safe-ptr.h: Add equality operator against
+	pointers.
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::Variable::build_qname): Adjust. Don't use equality
+	operator to test pointer nullity, rather use the bool () operator.
+
+2009-04-18  Dodji Seketeli <dodji@redhat.com>
+
+	Allow one one-line if clauses without braces
+	* coding-style.txt: Allow one one-line if clauses without braces.
+
 2009-04-16  Claude Paroz <claude@2xlibre.net>
 
 	Updated French translation
+
+2009-04-14 22:52:41 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
+
+	Fix unused variable warning
+	* tests/test-vars.cc: comment out a_cookie variable name to avoid a compiler
+	warning
 
 2009-04-14 22:17:48 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
 
@@ -256,6 +1050,146 @@
 	* src/dbgengine/nmv-gdbmi-parser.cc: ... to here.
 	We do this because otherwise gcc 3.3.5 won't compile this on
 	OpenBSD.
+
+2009-04-13  Dodji Seketeli <dodji@redhat.com>
+
+	Mark new files for translation
+	* po/POTFILES.in: Added nmv-local-vars-inspector2.cc and
+	nmv-var-inspector2.cc.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Remove variable dereferencing code from LocalVarsInspector2
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: Remove all
+	the cruft related to variable dereferencing as it's now useless.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Use the variable object powered LocalVarsInspector2 in the debug perspective
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: When
+	WITH_VAROBJS is defined, use LocalVarsInspector2, otherwise, use
+	LocalVarsInspector.
+	This entry adds variable objects support for local variables to the debug
+	perspective.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	New LocalVarsInspector2 type using variable objects
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.[cc|h] New
+	file. Okay does the same as (as been ported from)
+	nmv-local-vars-inspector.cc, but it uses the new variable objects
+	supported features of IDebugger. It's a bit smaller than it's
+	predecessor. As a bonus point, it handles pointer dereferencing
+	seemlessly. No need to do fancy stuff like "dereference pointer"
+	now. Variable updating when stepping in the same function also
+	seems to work better. For aggregate variables, querying is done
+	lazily. It's when the user expands a variable node row that the
+	children members of the row are queried from the backend. In
+	theory, this should make the whole UI snappier when inspecting
+	variables. However, each time we don't need variables, we now need
+	to ask the backend to delete the "remote" variable object. This
+	adds some more communication between the front end and backend, as
+	far as variables lifetime is concerned.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Make VarInspector use the factorized update_unfolded_variable
+	* src/persp/dbgperspective/nmv-var-inspector2.cc:
+	(VarInspector2::Priv::on_variable_unfolded_signal): Use the
+	new nemiver::variables_utils::update_unfolded_variable instead of
+	our own update_unfolded_variable.
+	(VarInspector2::Priv::update_unfolded_variable): Remove this.
+	Make sure to compile this, only with WITH_VAROBJS is defined.
+	* src/persp/dbgperspective/nmv-var-inspector2.h:
+	Make sure to compile this, only with WITH_VAROBJS is defined.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Factorize the support for updating unfolded variables
+	* src/persp/dbgperspective/nmv-variables-utils.[h|cc]:
+	(update_unfolded_variable): New function.
+	This function can update the graphical node of a variable that got
+	recently unfolded i.e., that recently gained member variables.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Make graphical variable finding be recursive
+	* src/persp/dbgperspective/nmv-variables-utils.cc:
+	(find_a_variable): Make the find be recursive, depth first.
+	This way, this function can now find variable members as well.
+	At the same time, don't error when we find an empty variable.
+	Empty (dummy) variables can now exist in the tree. They exist when
+	the parent variable node needs to be unfolded, but hasn't been
+	unfolded yet. In that case, the parent node has a dummy (empty)
+	variable that is there just so that an expander appears on the
+	parent node, inviting the user to unfold it. Then, the UI can catch
+	the node expansion event and sneak in the proper children node.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Cleanup the comment on IDebugger::root()
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::root): Update the comment.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Properly initialize Variable::m_num_expected_children
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::Variable::Variable): Don't forget to initialize
+	m_num_expected_children.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Pass data to IDebugger::list_changed_variables by reference
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::list_changed_variables):
+	Pass the list of variables (in the slot) by reference.
+	* src/dbgengine/nmv-gdb-engine.[h|cc]:
+	GDBEngine::list_changed_variables): Likewise.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Remove useless attribute (cleanup)
+	* src/dbgengine/nmv-gdb-engine.cc:
+	* (OnCreateVariableHandler::do_handle): Remove the "unused" attribute.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Add new IDebugger::get_current_frame_level abstract API and implementation
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::get_current_frame_level): New abstract interface.
+	* src/dbgengine/nmv-gdb-engine.h:
+	(GDBEngine::get_current_frame_level,
+	GDBEngine::set_current_frame_level): New concrete interfaces.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(OnStoppedHander::do_handle): Save the current frame level if we
+	have the information.
+	(OnCommandDoneHandler::do_handle): Once the 'select-frame'
+	command was successfully done, save the requested frame level as
+	the current frame level.
+	(GDBEngine::select_frame): Embed the requested frame level in the
+	Command as tag2.
+	(GDBEngine::get_current_frame_level): New implementation.
+	(GDBEngine::set_current_frame_level): Likewise.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Add a new integer tag to the Command type
+	* src/dbgengine/nmv-dbg-common.h:
+	(Command::tag2): new accessors.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Populate Variable::num_expected_children at Variable parsing time
+	* GDBMIParser::parse_variable: Don't forget to set
+	IDebugger::Variable::num_expected_children, so that
+	IDebugger::Variable::needs_unfolding() later works correctly.
+
+2009-04-12  Dodji Seketeli <dodji@redhat.com>
+
+	Properly parse empty result set of -var-update
+	* GDBMIParser::parse_var_changed_list: Don't error when we get
+	an empty set of changed variables.
+	* tests/test-gdbmi.cc: New test for this case.
 
 2009-04-11 21:56:20 -0500  Jonathon Jongsma <jonathon.jongsma@collabora.co.uk>
 
@@ -295,6 +1229,89 @@
 	* src/workbench/nmv-workbench.cc: fixed up all of the implicit
 	conversions from std::string to UString that were exposed when making
 	the constructor explicit
+
+2009-04-05  Dodji Seketeli <dodji@redhat.com>
+
+	Make the variable inspector dialog support variable objects
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::Variable::need_unfolding): New entry point.
+	(IDebugger::Variable::*): Add some comments here and there.
+	* src/persp/dbgperspective/nmv-variables-utils.cc (append_a_variable):
+	When adding a variable that needs unfolding later, add a dummy child
+	node to it, so that the user can see a tree row expander and click on it
+	to unfold the variable. Later, when adding variable members to that
+	variable that needs unfolding, delete the dummy node and add the
+	proper children nodes.
+	* src/persp/dbgperspective/nmv-var-inspector2.[cc|]: Added
+	the VarInspector2 type that uses the variable objects backend to
+	inspect variables.
+	* src/persp/dbgperspective/Makefile.am: Add nmv-var-inspector2.[cc|h]
+	to the build system.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: Use
+	VarInspector2 when configured with --enable-varobjs.
+
+2009-04-05  Dodji Seketeli <dodji@redhat.com>
+
+	Rename list<VariableSafePtr> into VariableList
+	* src/dbgengine/nmv-i-debugger.h:
+	Rename list<VariableSafePtr> into VariableList for convenience and
+	compacity. Adjust the rest of the file accordingly.
+
+2009-04-05  Dodji Seketeli <dodji@redhat.com>
+
+	Variables should have their values upon unfolding
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::unfold_variable):
+	Tell GDB to give us the value of the variable it unfolds.
+
+2009-04-05  Dodji Seketeli <dodji@redhat.com>
+
+	Add a --enable-varobjs configure switch
+	* configure.ac: Create --enable-varobjs configure switch. When
+	switched on, the WITH_VAROBJS C macros is defined and usable in the
+	source code to detect if the package has been configured with
+	--enable-varobjs switch.
+
+2009-04-04  Dodji Seketeli <dodji@redhat.com>
+
+	Rename VarInspector2 into VarInspector
+	* src/persp/dbgperspective/nmv-var-inspector.[cc|h]: Rename
+	VarInspector2 into VarInspector.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: Adjust.
+
+2009-04-04  Dodji Seketeli <dodji@redhat.com>
+
+	Bumped version number to 0.6.7 for development
+	* configure.ac: bumped version number to 0.6.7
+
+2009-03-29  dodjirpm <dodjirpm@virtrawhide.localdomain>
+
+	Don't link the 'docore' test with libnemivercommon.so
+	* tests/Makefile.am:
+	Don't link with libnemivercommon.so
+
+2009-04-03  Dodji Seketeli <dodji@redhat.com>
+
+	Some IDebugger/GDBEngine cleanup
+	* src/dbgengine/nmv-gdb-engine.[cc|h],
+	src/dbgengine/nmv-i-debugger.h: Added some comments. Don't pass
+	IDebugger::VariableSafePtr by reference as signal template parameters.
+	It just bypasses the reference counting. Also, a SafePtr is not bigger
+	than the underlying pointer, so the is no need to do that in that case.
+
+2009-04-03  Dodji Seketeli <dodji@redhat.com>
+
+	Don't quote arguments of ptype and -data-evaluate-expression
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::evaluate_expression,
+	GDBEngine::print_variable_value, GDBEngine::get_variable_value,
+	GDBEngine::print_pointed_variable_value, GDBEngine::print_variable_type,
+	GDBEngine::get_variable_type, GDBEngine::dereference_variable,
+	GDBEngine::set_register_value): Do not quote the arguments of
+	-data-evaluate-expression and ptype because that changes the type of
+	the expression. See comments at
+	http://bugzilla.gnome.org/show_bug.cgi?id=574212.
+	* tests/test-types.cc: New regression test file to make sure we don't
+	sure we don't regress again here.
+	* tests/Makefile.am: Integrate test-types.cc
 
 2009-04-04  Dodji Seketeli <dodji@redhat.com>
 
@@ -358,6 +1375,123 @@
 	* tests/test-types.cc: New regression test file to make sure we don't
 	sure we don't regress again here.
 	* tests/Makefile.am: Integrate test-types.cc
+
+2009-03-26  Dodji Seketeli <dodji@redhat.com>
+
+	Add support to list/assign/evaluate/query variable objects
+	* src/dbgengine/nmv-dbg-common.h:
+	(Output::ResultRecord::has_changed_var_list,
+	Output::ResultRecord::changed_var_list): New entry points.
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::Variable::parent):  Make this return a proper SafePtr
+	instead of a bare pointer.
+	(IDebugger::Variable::has_parent,
+	IDebugger::Variable::root,
+	IDebugger::Variable::get_descendant,
+	IDebugger::variable_expression_evaluated_signal,
+	IDebugger::changed_variable_signals,
+	IDebugger::assigned_variable_signal,
+	IDebugger::assign_variable,
+	IDebugger::evaluate_variable_expr,
+	IDebugger::list_changed_variables): New entry points.
+	* src/dbgengine/nmv-gdb-engine.h:
+	(GDBEngine::variable_expression_evaluated_signal,
+	GDBEngine::changed_variables_signal,
+	GDBEngine::assigned_variable_signal): Declare new signal getters.
+	(GDBEngine::assign_variable, GDBEngine::assign_variable,
+	GDBEngine::list_changed_variables): Declare new entry points.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(OnStoppedHandler::do_handle): Add more logging.
+	(OnResultRecordHandler::can_handle,
+	OnResultRecordHandler::do_handle): Handle replies of assign-variable
+	and evaluate-expression commands.
+	(OnListChangedVariableHandler): New output handler for the
+	list-changed-variables command.
+	(GDBEngine::init_output_handlers): Setup the
+	new OnListChangedVariableHandler.
+	(GDBEngine::variable_expression_evaluated_signal,
+	GDBEngine::changed_variables_signal,
+	GDBEngine::assigned_variable_signal): Define new signal getters.
+	(GDBEngine::unfold_variable): Send the proper command to GDB to make
+	it list all the values of each variable node.
+	(GDBEngine::assign_variable,
+	GDBEngine::evaluate_variable_expr,
+	GDBEngine::list_changed_variables): Define new entry points.
+	* src/dbgengine/nmv-gdbmi-parser.h :
+	(GDBMIParser::parse_var_changed_list): Declare new entry point.
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	(GDBMIParser::parse_var_list_children): Add a comment to describe the
+	function.
+	(GDBMIParser::parse_var_changed_list): Define new entry point to parse
+	the result of GDBEngine::list_changed_variables.
+	(GDBMIParser::parse_result_record): Use the new
+	GDBMIParser::parse_var_changed_list to parse the result record of the
+	call GDBEngine::list_changed_variables.
+	* tests/test-gdbmi.cc: Add tests for parsing the result of
+	IDebugger::list_changed_list.
+	* tests/test-vars.cc: Updated this varobjs test to be able to assign
+	values to a variable, list/update changed children of a given variable
+	object, get the value of a variable object.
+	This entry adds Basically adds support to assign a value to a variable
+	object, list/update changed children of a given variable object and
+	get the value of a variable object.
+
+2009-03-15  Dodji Seketeli <dodji@redhat.com>
+
+	Initial backend support for GDB Variable Objects
+	* nmv-dynamic-module.[cc|h] (DynamicModule::set_name,
+	DynamicModule::get_name, load_iface_using_context, ): New entry
+	points.
+	* src/dbgengine/nmv-dbg-common.h (Command::has_slot, Command::set_slot,
+	Command::get_slot, Command::number_of_variables_deleted,
+	ResultRecord::has_variable_children,
+	ResultRecord::has_variable_children): New entry points.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Variable::internal_name): New
+	entry point to adapt the current variable type to gdb variable
+	objects.
+	(IDebugger::Variable::to_string): Print the internal name of the
+	variable as well as its name.
+	(IDebugger::variable_created_signal,
+	IDebugger::variable_deleted_signal,
+	IDebugger::variable_unfolded_signal,
+	IDebugger::build_qualified_internal_name,
+	IDebugger::Variable::num_expected_children,
+	IDebugger::Variable::has_expected_children,
+	IDebugger::create_variable,
+	IDebugger::delete_variable,
+	IDebugger::unfold_variable): New interfaces entry points.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::variable_created_signal,
+	GDBEngine::variable_deleted_signal,
+	GDBEngine::variable_unfolded_signal, GDBEngine::create_variable,
+	GDBEngine::delete_variable, GDBEngine::unfold_variable): Declare the
+	implementation of the new interface entry points.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::variable_created_signal,
+	GDBEngine::variable_deleted_signal, GDBEngine::variable_unfolded_signal,
+	GDBEngine::variable_unfolded_signal, GDBEngine::create_variable,
+	GDBEngine::delete_variable, GDBEngine::unfold_variable): Implement the
+	new interface entry points.
+	(OnCreateVariableHandler, OnDeleteVariableHandler,
+	OnUnfoldVariableHandler): New output handlers to act upon the result of
+	GDBEngine::create_variable, GDBEngine::delete_engine and
+	GDBEngine::unfold_variable
+	(GDBEngine::init_output_handlers): Register the new output handlers.
+	* src/dbgengine/nmv-gdbmi-parser.[cc,h] (GDBMIParser::parse_variable,
+	GDBMIParser::parse_variables_deleted): New entry points to parse the
+	GDB/MI result of variable object creation and deletion.
+	(GDBMIParser::parse_var_list_children): New entry point to parse MI
+	result of -var-list-children.
+	(GDBMIParser::parse_result_record): Use GDBMIParser::parse_variable and
+	GDBMIParser::parse_variables_delete, and
+	GDBMIParser::parse_var_list_children to parse the output
+	records of -var-list-create, -var-list-delete and -var-list-children.
+	* tests/test-vars.cc: New test case to test (in live)
+	IDebugger::create_variable, IDebugger::delete_variable,
+	IDebugger::unfold_variable.
+	* tests/Makefile.am: Add new test-vars.c to the build system.
+	* tests/fooprog.cc: Adjust this test case.
+	* tests/test-gdbmi.cc: Add test cases for parsing the result
+	of IDebugger::create_variable, IDebugger::delete_variable,
+	IDebugger::unfold_variable.
 
 2009-03-20  Dodji Seketeli <dodji@redhat.com>
 
@@ -1344,8 +2478,7 @@
 
 2008-07-08  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Fix up the 'Call Function' dialog and make it a little bit cleaner and more
-	HIG-compliant
+	Fix up the 'Call Function' dialog and make it a little bit cleaner and more HIG-compliant
 
 2008-07-06  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -1737,11 +2870,7 @@
 
 2008-04-06  Dodji Seketeli <dodji@src.gnome.org>
 
-	Fix "526291 – Nemiver doesn't propose to stop the debugging application"
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
-	(DBGPerspective::on_program_finished_signal): update the title of the
-	workbench window when the inferior dies. This should fix bug
-	"526291 – Nemiver doesn't propose to stop the debugging application"
+	Fix "526291 – Nemiver doesn't propose to stop the debugging application" 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 	  (DBGPerspective::on_program_finished_signal): update the title of the 	  workbench window when the inferior dies. This should fix bug 	  "526291 – Nemiver doesn't propose to stop the debugging application"
 
 2008-04-06  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -2055,20 +3184,11 @@
 
 2008-02-01  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Initial port to giomm
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add alternative giomm
-	implementations for file loading, monitoring, and mime-type detection
+	Initial port to giomm 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add alternative giomm 	implementations for file loading, monitoring, and mime-type detection
 
 2008-02-01  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add ability to build with giomm instead of gnome-vfs
-	* configure.ac: add --enable-gio argument, which will build with gio as the
-	vfs library instead of using gnome-vfs
-	* config.h.in: add WITH_GIO preprocessor symbol
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
-	* src/workbench/nmv-workbench.cc: #ifdef out gnome-vfs-specific
-	functionality.  No replacement gio functionality is actually implemented
-	yet, only the infrastructure is set up
+	Add ability to build with giomm instead of gnome-vfs 	* configure.ac: add --enable-gio argument, which will build with gio as the 	vfs library instead of using gnome-vfs 	* config.h.in: add WITH_GIO preprocessor symbol 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: 	* src/workbench/nmv-workbench.cc: #ifdef out gnome-vfs-specific 	functionality.  No replacement gio functionality is actually implemented 	yet, only the infrastructure is set up
 
 2008-01-31  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3160,39 +4280,19 @@
 
 2007-10-13  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add keyboard shortcut for switching to the memory view tab
-	* src/persp/dbgperspective/menus/menus.xml:
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Add a hotkey and menu
-	item for switching to the new Memory view window, just like you can switch
-	between the other status notebook tabs with Alt+N.  The memory view is Alt+6
+	Add keyboard shortcut for switching to the memory view tab 	* src/persp/dbgperspective/menus/menus.xml: 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Add a hotkey and menu 	item for switching to the new Memory view window, just like you can switch 	between the other status notebook tabs with Alt+N.  The memory view is Alt+6
 
 2007-10-10  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add 'function' column to the Breakpoints list
-	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Add 'function' column to
-	the breakpoints list so that you can tell at a glance where the breakpoint
-	is by looking at the list.  Also re-arrange the columns to make the order a
-	bit more useful.
+	Add 'function' column to the Breakpoints list 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Add 'function' column to 	the breakpoints list so that you can tell at a glance where the breakpoint 	is by looking at the list.  Also re-arrange the columns to make the order a 	bit more useful.
 
 2007-10-10  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Fix Breakpoint duplication issue in the Breakpoints list
-	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Breakpoints were
-	appearing in the Breakpoint list multiple times because the ID was not being
-	set properly.  So when the 'breakpoints_set' signal was fired, we went
-	through the tree model to see if a breakpoint with that ID was found, none
-	were found, so all breakpoints were added even if they already existed in
-	the model.
-	Also added some logging to help uncover the issue.
+	Fix Breakpoint duplication issue in the Breakpoints list 	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Breakpoints were 	appearing in the Breakpoint list multiple times because the ID was not being 	set properly.  So when the 'breakpoints_set' signal was fired, we went 	through the tree model to see if a breakpoint with that ID was found, none 	were found, so all breakpoints were added even if they already existed in 	the model. 	Also added some logging to help uncover the issue.
 
 2007-10-10  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Potential Fix for bug 465263, failing to parse breakpoint table
-	* src/dbgengine/nmv-gdbmi-parser.cc: Fix for bug #465263 "Error Parsing
-	breakpoint table".  The parse_breakpoint() function was not advancing to the
-	closing '}' character of the breakpoint, and therefore was not able to parse
-	the list of breakpoints correctly.
-	* tests/test-gdbmi.cc: added a test for the failure reported in bug #465263
+	Potential Fix for bug 465263, failing to parse breakpoint table 	* src/dbgengine/nmv-gdbmi-parser.cc: Fix for bug #465263 "Error Parsing 	breakpoint table".  The parse_breakpoint() function was not advancing to the 	closing '}' character of the breakpoint, and therefore was not able to parse 	the list of breakpoints correctly. 	* tests/test-gdbmi.cc: added a test for the failure reported in bug #465263
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3200,9 +4300,7 @@
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	MemoryView: make TextView not editable
-	* src/persp/dbgperspective/nmv-memory-view.cc: Memory TextView widget should
-	not be editable since there's no support for editing memory implemented yet
+	MemoryView: make TextView not editable * src/persp/dbgperspective/nmv-memory-view.cc: Memory TextView widget should   not be editable since there's no support for editing memory implemented yet
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3210,26 +4308,15 @@
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	MemoryView: Minor improvements  to the display of memory values
-	* src/persp/dbgperspective/nmv-memory-view.cc: Improve the display of memory
-	by using builtin std::showbase, etc instead of doing my own formatting.  Also,
-	don't display fill with zeros, just make sure that they're all the same width
+	MemoryView: Minor improvements  to the display of memory values * src/persp/dbgperspective/nmv-memory-view.cc: Improve the display of memory   by using builtin std::showbase, etc instead of doing my own formatting.  Also,   don't display fill with zeros, just make sure that they're all the same width
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	MemoryView: UI Cleanup
-	* src/persp/dbgperspective/nmv-memory-view.cc: a bunch of little UI cleanups.
-	Give the text view a margin so that text doesn't go right up to the border.
-	Also give a shadow border around the text view.  Add a 'Format' label to the
-	format selector and add some border and spacing between the widgets in the
-	header of the MemoryView notebook.
+	MemoryView: UI Cleanup * src/persp/dbgperspective/nmv-memory-view.cc: a bunch of little UI cleanups. Give the text view a margin so that text doesn't go right up to the border. Also give a shadow border around the text view.  Add a 'Format' label to the format selector and add some border and spacing between the widgets in the header of the MemoryView notebook.
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	MemoryView: Re-read memory on changes
-	* src/persp/dbgperspective/nmv-memory-view.cc: automatically re-read memory
-	when the format type is changed or when the address text entry is activated
-	(e.g. by pressing enter after typing an address)
+	MemoryView: Re-read memory on changes * src/persp/dbgperspective/nmv-memory-view.cc: automatically re-read memory when the format type is changed or when the address text entry is activated (e.g. by pressing enter after typing an address)
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3240,17 +4327,11 @@
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	DBGPerspective: add default_config_read_signal()
-	This signal is so that we can detect when the initial configuration values have
-	been read so that we can set things based on these (such as the default font for
-	the memory view widget, etc).
+	DBGPerspective: add default_config_read_signal() This signal is so that we can detect when the initial configuration values have been read so that we can set things based on these (such as the default font for the memory view widget, etc).
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	RegistersView: ugly hack to keep the register values in the treeview in sync with the register values in gdb.
-	This is only necessary because we can't easily tie gdb error messages to
-	specific command requests at the moment.  We should work out a way to present
-	user-friendly error messages in cases like this.
+	RegistersView: ugly hack to keep the register values in the treeview in sync with the register values in gdb. This is only necessary because we can't easily tie gdb error messages to specific command requests at the moment.  We should work out a way to present user-friendly error messages in cases like this.
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3452,23 +4533,11 @@
 
 2007-07-27  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add ability to edit register values
-	* src/dbgengine/nmv-i-debugger.h: add 'set register' API / signal
-	* src/dbgengine/nmv-gdb-engine.cc: Provide implementation of 'set register'
-	interfaces and signals
-	* src/dbgengine/nmv-gdbmi-parser.cc: Add FIXME to indicate that the result
-	from setting a register will actually be parsed expecting to find a variable
-	value.
-	* src/persp/dbgperspective/nmv-registers-view.cc: make the value of the
-	register editable and send the new value to gdb.  The user can now change
-	the values of registers, albeit in a rather primitive way.
+	Add ability to edit register values 	* src/dbgengine/nmv-i-debugger.h: add 'set register' API / signal 	* src/dbgengine/nmv-gdb-engine.cc: Provide implementation of 'set register' 	interfaces and signals 	* src/dbgengine/nmv-gdbmi-parser.cc: Add FIXME to indicate that the result 	from setting a register will actually be parsed expecting to find a variable 	value. 	* src/persp/dbgperspective/nmv-registers-view.cc: make the value of the 	register editable and send the new value to gdb.  The user can now change 	the values of registers, albeit in a rather primitive way.
 
 2007-07-24  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Change register value to red when it is updated
-	* src/persp/dbgperspective/nmv-registers-view.cc: change the register value
-	to 'red' when it has been changed since last time and otherwise revert to
-	the normal text color
+	Change register value to red when it is updated 	* src/persp/dbgperspective/nmv-registers-view.cc: change the register value 	to 'red' when it has been changed since last time and otherwise revert to 	the normal text color
 
 2007-07-22  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3476,63 +4545,27 @@
 
 2007-07-22  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Fix bug in listing registers caused by uninitialized data members
-	* src/dbgengine/nmv-dbg-common.h: fixed bug where some flags were not
-	initialized before use which was causing some seemingly random failures,
-	noticed first in the fact that the register names no longer were populated
-	in the register view because m_has_register_names apparently sometimes was
-	initialized to true so the handler would be called (and thus emit a signal
-	without any register names) for unrelated gdb output.
-	* src/dbgengine/nmv-gdb-engine.cc: switch the order of a couple things to
-	reduce race conditions.  At first I thought this was the problem but it
-	wasn't.  It doesn't hurt to leave it this way though.
-	* src/persp/dbgperspective/nmv-registers-view.cc: add some logging to aid in
-	debugging.
+	Fix bug in listing registers caused by uninitialized data members 	* src/dbgengine/nmv-dbg-common.h: fixed bug where some flags were not 	initialized before use which was causing some seemingly random failures, 	noticed first in the fact that the register names no longer were populated 	in the register view because m_has_register_names apparently sometimes was 	initialized to true so the handler would be called (and thus emit a signal 	without any register names) for unrelated gdb output. 	* src/dbgengine/nmv-gdb-engine.cc: switch the order of a couple things to 	reduce race conditions.  At first I thought this was the problem but it 	wasn't.  It doesn't hurt to leave it this way though. 	* src/persp/dbgperspective/nmv-registers-view.cc: add some logging to aid in 	debugging.
 
 2007-07-22  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Implement getting register values for the GDB backend
-	* src/dbgengine/nmv-dbg-common.h: add register value interfaces
-	* src/dbgengine/nmv-gdb-engine.cc: add handler for register value commands
-	* src/dbgengine/nmv-gdbmi-parser.h, src/dbgengine/nmv-gdbmi-parser.cc: add
-	parsing for register values (parse_register_values)
-	* tests/test-gdbmi.cc: add test for parsing register values
+	Implement getting register values for the GDB backend 	* src/dbgengine/nmv-dbg-common.h: add register value interfaces 	* src/dbgengine/nmv-gdb-engine.cc: add handler for register value commands 	* src/dbgengine/nmv-gdbmi-parser.h, src/dbgengine/nmv-gdbmi-parser.cc: add 	parsing for register values (parse_register_values) 	* tests/test-gdbmi.cc: add test for parsing register values
 
 2007-07-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add RegistersView Widget
-	* src/persp/dbgperspective/nmv-registers-view.h,
-	src/persp/dbgperspective/nmv-registers-view.cc: add a RegistersView widget
-	for displaying the contents of registers in the status notebook.  Currently,
-	it doesn't show register values, but it does show whether the register has
-	changed since last time by adding a '*' to the Value column
-	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add the RegistersView
-	widget to the status notebook
-	* src/persp/dbgperspective/Makefile.am: Add the new files
+	Add RegistersView Widget 	* src/persp/dbgperspective/nmv-registers-view.h, 	src/persp/dbgperspective/nmv-registers-view.cc: add a RegistersView widget 	for displaying the contents of registers in the status notebook.  Currently, 	it doesn't show register values, but it does show whether the register has 	changed since last time by adding a '*' to the Value column 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: add the RegistersView 	widget to the status notebook 	* src/persp/dbgperspective/Makefile.am: Add the new files
 
 2007-07-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Fix some register listing parsing errors
-	* src/dbgengine/nmv-gdb-engine.cc: add the OnChangedRegistersListedHandler
-	as an output handler which was forgotten last time.
-	* src/dbgengine/nmv-gdbmi-parser.cc: Fix a parsing error in the register
-	listing functions
+	Fix some register listing parsing errors 	* src/dbgengine/nmv-gdb-engine.cc: add the OnChangedRegistersListedHandler 	as an output handler which was forgotten last time. 	* src/dbgengine/nmv-gdbmi-parser.cc: Fix a parsing error in the register 	listing functions
 
 2007-07-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	GDBMI: cleanup patch to use some constant strings instead of string literals
-	and magic numbers throughout the code.
+	GDBMI: cleanup patch to use some constant strings instead of string literals and magic numbers throughout the code.
 
 2007-07-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add support for list_changed_registers()
-	* src/dbgengine/nmv-dbg-common.h: added storage and interfaces for accessing
-	the list of changed registers
-	* src/dbgengine/nmv-gdbmi-parser.cc,
-	src/dbgengine/nmv-gdbmi-parser.h: added parsing for the listing fo changed
-	registers
-	* src/dbgengine/nmv-gdb-engine.cc: add output handler for changed register
-	* tests/test-gdbmi.cc: added tests for changed register parsing
+	Add support for list_changed_registers() 	* src/dbgengine/nmv-dbg-common.h: added storage and interfaces for accessing 	the list of changed registers 	* src/dbgengine/nmv-gdbmi-parser.cc, 	src/dbgengine/nmv-gdbmi-parser.h: added parsing for the listing fo changed 	registers 	* src/dbgengine/nmv-gdb-engine.cc: add output handler for changed register 	* tests/test-gdbmi.cc: added tests for changed register parsing
 
 2007-07-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3565,15 +4598,7 @@
 
 2007-06-19  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	The 'toggle breakpoint' and 'enable/disable breakpoint' actions are now updated
-	to display context-sensitive text for the menu items.  In other words, if the
-	cursor is on a line with an enabled breakpoint, the actions will be called
-	'Remove breakpoint' and 'Disable breakpoint', on a line without a breakpoint,
-	the actions will be called 'Set breakpoint' and the enable/disable action will
-	be insensitive.
-	In order to get this right, I had to update the text of the toggle actions
-	whenever there were any changes to the breakpoints in addition to whenever the
-	cursor insertion point changed.
+	The 'toggle breakpoint' and 'enable/disable breakpoint' actions are now updated to display context-sensitive text for the menu items.  In other words, if the cursor is on a line with an enabled breakpoint, the actions will be called 'Remove breakpoint' and 'Disable breakpoint', on a line without a breakpoint, the actions will be called 'Set breakpoint' and the enable/disable action will be insensitive. In order to get this right, I had to update the text of the toggle actions whenever there were any changes to the breakpoints in addition to whenever the cursor insertion point changed.
 
 2007-06-19  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3581,76 +4606,46 @@
 
 2007-06-16  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Don't pop up multiple 'reload' dialogs for the same file.
-	If a popup dialog has already been displayed for that particular file, suppress
-	further popups about that file until the user has dismissed the first dialog.
+	Don't pop up multiple 'reload' dialogs for the same file. If a popup dialog has already been displayed for that particular file, suppress further popups about that file until the user has dismissed the first dialog.
 
 2007-06-16  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add an 'Address' field to the breakpoints list
-	Add an 'Address' field to the breakpoints list so that if a breakpoint does not
-	have any filename information, there is still some unique identifiable
-	information visible.  Also, use update_breakpoint() from append_breakpoint() to
-	reduce code duplication.
+	Add an 'Address' field to the breakpoints list Add an 'Address' field to the breakpoints list so that if a breakpoint does not have any filename information, there is still some unique identifiable information visible.  Also, use update_breakpoint() from append_breakpoint() to reduce code duplication.
 
 2007-06-16  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	For stack frames without file information, display the address instead of
-	attempting to show a filename and line.  Previously, when filename information
-	was missing, the 'Location' field looked like ':0'
+	For stack frames without file information, display the address instead of attempting to show a filename and line.  Previously, when filename information was missing, the 'Location' field looked like ':0'
 
 2007-06-16  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	stop displaying dialogs if a file can't be displayed in some circumstances.
-	Just log them as errors to the terminal (closes bug 447890)
+	stop displaying dialogs if a file can't be displayed in some circumstances. Just log them as errors to the terminal (closes bug 447890)
 
 2007-06-14  Pema Geyleg <pgeyleg@src.gnome.org>
 
 
 2007-06-12  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add a '--last' command line option that lets you quickly launch the last session
-	without having to specify it explicitly
+	Add a '--last' command line option that lets you quickly launch the last session without having to specify it explicitly
 
 2007-06-12  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Allow users to remove the selected breakpoints by typing the 'delete' key
-	in the breakpoints list tab. fixes bug #446584
+	Allow users to remove the selected breakpoints by typing the 'delete' key in the breakpoints list tab. fixes bug #446584
 
 2007-06-10  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Load the breakpoints popup menu in the constructor instead of in get_breakpoints_menu()
-	This is needed because we update the sensitivity of the menu actions when the
-	treeview selection changes, and this can happen before we've ever popped up the
-	menu, which results in error logs printed to the terminal.  In the process, I
-	also reduced some code duplication in on_treeview_selection_changed()
+	Load the breakpoints popup menu in the constructor instead of in get_breakpoints_menu() This is needed because we update the sensitivity of the menu actions when the treeview selection changes, and this can happen before we've ever popped up the menu, which results in error logs printed to the terminal.  In the process, I also reduced some code duplication in on_treeview_selection_changed()
 
 2007-06-09  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Finish up minimal version of the user manual
-	* help/C/nemiver.xml: Added some basic content for all of the user manual
-	sections that were blank or marked TODO.  There's not a lot useful here, but
-	it's at least minimally complete now.
-	* help/Makefile.am: add new screenshots
-	* help/C/figures/open-files-target.png
-	help/C/figures/set-breakpoint-dialog.png
-	help/C/figures/variable-inspector.png: new screenshots for user manual
+	Finish up minimal version of the user manual 	* help/C/nemiver.xml: Added some basic content for all of the user manual 	sections that were blank or marked TODO.  There's not a lot useful here, but 	it's at least minimally complete now. 	* help/Makefile.am: add new screenshots 	* help/C/figures/open-files-target.png 	help/C/figures/set-breakpoint-dialog.png 	help/C/figures/variable-inspector.png: new screenshots for user manual
 
 2007-06-09  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Critical fix to find the 'set breakpoint' dialog glade file
-	Some time ago, setbreakpoint.glade was renamed to setbreakpointdialog.glade, but
-	apparently we've still been trying to load the widget from setbreakpoint.glade.
-	So in 0.4.0, the new set a breakpoint on a function name feature would not have
-	worked at all.  We didn't notice because we probably both had the old glade file
-	installed in /usr/local, so it was just loading the old file.
-	Also, made the set breakpoint dialog a little bit wider by default.
+	Critical fix to find the 'set breakpoint' dialog glade file Some time ago, setbreakpoint.glade was renamed to setbreakpointdialog.glade, but apparently we've still been trying to load the widget from setbreakpoint.glade. So in 0.4.0, the new set a breakpoint on a function name feature would not have worked at all.  We didn't notice because we probably both had the old glade file installed in /usr/local, so it was just loading the old file. Also, made the set breakpoint dialog a little bit wider by default.
 
 2007-06-09  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Cleanup of the 'Choose Overloaded Function' dialog so that it's a bit cleaner
-	Provide a bit of explanation of what is going on, and add a bit of spacing per
-	the HIG, rename treeview column headers
+	Cleanup of the 'Choose Overloaded Function' dialog so that it's a bit cleaner Provide a bit of explanation of what is going on, and add a bit of spacing per the HIG, rename treeview column headers
 
 2007-06-07  Daniel Nylander <dnylande@src.gnome.org>
 
@@ -3671,11 +4666,7 @@
 
 2007-06-03  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	configure.ac: add the ability to disable building of automated tests even when
-	the NEMIVER_DEVEL environment variable is set.  Hopefully this won't be
-	necessary for much longer, but currently the tests don't build for me with boost
-	1.33.x.  I should really look into why it doesn't build, but this lets me build
-	nemiver in the meantime
+	configure.ac: add the ability to disable building of automated tests even when the NEMIVER_DEVEL environment variable is set.  Hopefully this won't be necessary for much longer, but currently the tests don't build for me with boost 1.33.x.  I should really look into why it doesn't build, but this lets me build nemiver in the meantime
 
 2007-06-03  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -3924,9 +4915,7 @@
 
 2007-04-29  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Use the 'text' color from the theme, not the 'fg' color.
-	In some themes these colors apparently are different and the text can become
-	difficult to read.
+	Use the 'text' color from the theme, not the 'fg' color. In some themes these colors apparently are different and the text can become difficult to read.
 
 2007-04-29  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -3934,9 +4923,7 @@
 
 2007-04-26  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Don't specify the 'open' stock icon for the Open files dialog so that it uses
-	the nemiver application icon instead.  Otherwise it's not obvious which
-	application the dialog belongs to if you just look at the taskbar.
+	Don't specify the 'open' stock icon for the Open files dialog so that it uses the nemiver application icon instead.  Otherwise it's not obvious which application the dialog belongs to if you just look at the taskbar.
 
 2007-04-26  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -4208,16 +5195,11 @@
 
 2007-04-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	SetBreakpointDialog: Add ability to set a breakpoint by function name
-	in addition to source file and line number.  There seems to be some errors in
-	the gdbmi parsing that cause failures when trying to set breakpoints on certain
-	function names.  This requires more digging.
+	SetBreakpointDialog: Add ability to set a breakpoint by function name in addition to source file and line number.  There seems to be some errors in the gdbmi parsing that cause failures when trying to set breakpoints on certain function names.  This requires more digging.
 
 2007-04-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Set breakpoint dialog: Add a little bit of error-handling for unreasonable line numbers
-	(i.e. don't try to set a breakpoint if the atoi call has been clamped to INT_MIN
-	or INT_MAX or if it couldn't find an integer value and returned 0.
+	Set breakpoint dialog: Add a little bit of error-handling for unreasonable line numbers (i.e. don't try to set a breakpoint if the atoi call has been clamped to INT_MIN or INT_MAX or if it couldn't find an integer value and returned 0.
 
 2007-04-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -4686,9 +5668,7 @@
 
 2007-02-16  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Change a bunch of logging statements to use LOG_FUNCTION_SCOPE_NORMAL_DD instead
-	of just LOG_FUNCTION_SCOPE so that it doesn't log to the terminal by default
-	even with no logging enabled
+	Change a bunch of logging statements to use LOG_FUNCTION_SCOPE_NORMAL_DD instead of just LOG_FUNCTION_SCOPE so that it doesn't log to the terminal by default even with no logging enabled
 
 2007-02-14  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -7068,8 +8048,7 @@
 
 2006-10-20  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	removed the copy-to-clipboard item from the TODO list since it's basically done
-	now
+	removed the copy-to-clipboard item from the TODO list since it's basically done now
 
 2006-10-20  Jonathon Jongsma <jonathon.jongsma@gmail.com>
 
@@ -7123,8 +8102,7 @@
 
 2006-10-17  Jonathon Jongsma <jjongsma@src.gnome.org>
 
-	Add two items to todo list: "watch" widget and make variables change color when
-	their values change
+	Add two items to todo list: "watch" widget and make variables change color when their values change
 
 2006-10-17  Dodji Seketeli <dodji@src.gnome.org>
 
