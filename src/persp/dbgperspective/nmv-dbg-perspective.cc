@@ -462,6 +462,7 @@ private:
     void restart_mouse_immobile_timer ();
     void stop_mouse_immobile_timer ();
     PopupTip& get_popup_tip ();
+    void hide_popup_tip_if_mouse_is_outside (int x, int y);
     FindTextDialog& get_find_text_dialog ();
 
 public:
@@ -1792,16 +1793,19 @@ bool
 DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D(DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN);
+
     NEMIVER_TRY
-    int x=0, y=0;
-    GdkModifierType state=(GdkModifierType)0;
+
+    // Mouse pointer coordinates relative to the source editor window
+    int x = 0, y = 0;
+    GdkModifierType state = (GdkModifierType) 0;
 
     if (a_event->is_hint) {
         gdk_window_get_pointer (a_event->window, &x, &y, &state);
     } else {
         x = (int) a_event->x;
         y = (int) a_event->y;
-        state = (GdkModifierType)a_event->state;
+        state = (GdkModifierType) a_event->state;
     }
 
     LOG_D ("(x,y) => (" << (int)x << ", " << (int)y << ")",
@@ -1811,7 +1815,20 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
     if (m_priv->debugger->get_state () != IDebugger::NOT_STARTED) {
         restart_mouse_immobile_timer ();
     }
+
+    // If the popup tip is visible and if the mouse pointer
+    // is outside of its window, hide said popup tip.
+    if (m_priv->popup_tip
+        && m_priv->popup_tip->get_display ()) {
+            // Mouse pointer coordinates relative to the root window
+            int x = 0, y = 0;
+            Gdk::ModifierType modifier;
+            m_priv->popup_tip->get_display ()->get_pointer (x, y, modifier);
+            hide_popup_tip_if_mouse_is_outside (x, y);
+    }
+
     NEMIVER_CATCH
+
     return false;
 }
 
@@ -4367,6 +4384,43 @@ DBGPerspective::get_popup_tip ()
     }
     THROW_IF_FAIL (m_priv->popup_tip);
     return *m_priv->popup_tip;
+}
+
+/// Hide the variable popup tip if the mouse pointer is outside of the window
+/// of said variable popup tip. Do nothing otherwise.
+/// \param x the abscissa of the mouse pointer relative to the root window
+/// \param y the ordinate of the mouse pointer relative to the root window
+void
+DBGPerspective::hide_popup_tip_if_mouse_is_outside (int x, int y)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (!m_priv->popup_tip || !m_priv->popup_tip->get_window ())
+        return;
+
+    int popup_orig_x = 0, popup_orig_y = 0;
+    m_priv->popup_tip->get_window ()->get_origin (popup_orig_x,
+                                                  popup_orig_y);
+    int popup_border = m_priv->popup_tip->get_border_width ();
+    Gdk::Rectangle alloc =
+        m_priv->popup_tip->get_allocation ();
+    alloc.set_x (popup_orig_x);
+    alloc.set_y (popup_orig_y);
+
+    LOG_DD ("mouse (x,y): (" << x << "," << y << ")");
+    LOG_DD ("alloc (x,y,w,h): ("
+            << alloc.get_x ()      << ","
+            << alloc.get_y ()      << ","
+            << alloc.get_width ()  << ","
+            << alloc.get_height () << ")");
+    if (x > alloc.get_x () + alloc.get_width () + popup_border
+        || x + popup_border + 2 < alloc.get_x ()
+        || y > alloc.get_y () + alloc.get_height () + popup_border
+        || y + popup_border + 2 < alloc.get_y ()) {
+        LOG_DD ("hidding popup tip");
+        m_priv->popup_tip->hide ();
+    }
+
 }
 
 FindTextDialog&
