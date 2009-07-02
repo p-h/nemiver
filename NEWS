@@ -1,3 +1,32 @@
+0.7.0 Release
+=============
+
+David Planella:
+      Updated Catalan translation
+
+Dodji Seketeli:
+      Support GDB Variable Objects (Closes: #573678)
+      Properly show reference variable (Closes: #585466)
+      Make pointer dereferencing more intuitive (Closes: #530902)
+      Support variable value editing in variable inspector (Closes: #581169)
+      Add watchpoint support (Closes: #386450)
+      Support copying variables to the clipboard (Closes: #547329)
+      Hide var tooltip appropriatly (Closes: #545596)
+      Don't overrun frames vector (Closes: #585516)
+      Keep popup tip under control (Closes: #585657)
+      Awesome up variable popup tip
+      New nmv_abort_on_throw environment variable
+      Allow the ',' separator in NMV_LOG_DOMAINS env var
+
+Javier Jardon:
+      Use AM_SILENT_RULES for nicer compilation output
+
+Jonathon Jongsma:
+      Fix unused variable warning
+
+Takeshi AIHANA:
+      Updated Japanese translation
+
 0.6.7 Release
 ==============
 
