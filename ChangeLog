@@ -1,7 +1,31 @@
 2009-07-02  Dodji Seketeli <dodji@redhat.com>
 
+	Automatically update ChangeLog
+	* ChangeLog: update automatically
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
 	Update NEW file
 	* NEWS: update for 0.7.0 release
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Ignore unknown RESULT in -var-list-children output
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_var_list_children):
+	When parsing the result of -var-list-children,
+	ignore the MI RESULTs that we don't know about. This fixes
+	a parsing error we have when parsing the result of
+	-var-list-children with pretty printers enabled. It triggers
+	the presence of a 'displayhint' MI RESULT. We know ignore it.
+	* tests/test-gdbmi.cc (test_var_list_children): New test.
+	* tests/test-vars.cc (on_changed_variables_listed_signal):
+	Make this more robust wrt libstdc++ versions.
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Add GDBMIParser::parse_gdbmi_string_result
+	* src/dbgengine/nmv-gdbmi-parser.cc,h (GDBMIParser::parse_gdbmi_string_result):
+	New entry point.
 
 2009-07-02  Dodji Seketeli <dodji@redhat.com>
 
