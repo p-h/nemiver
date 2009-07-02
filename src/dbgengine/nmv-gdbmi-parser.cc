@@ -1127,6 +1127,36 @@ GDBMIParser::parse_gdbmi_list (UString::size_type a_from,
 }
 
 bool
+GDBMIParser::parse_gdbmi_string_result (UString::size_type a_from,
+                                        UString::size_type &a_to,
+                                        UString &a_variable,
+                                        UString &a_value)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+    CHECK_END2 (cur);
+
+    GDBMIResultSafePtr result;
+    if (!parse_gdbmi_result (cur, cur, result) || !result) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    // The value of the RESULT must be a STRING
+    if (!result->value ()
+        || result->value ()->content_type () != GDBMIValue::STRING_TYPE
+        || result->value ()->get_string_content ().empty ()) {
+        LOG_ERROR ("expected a STRING value for the GDBMI variable");
+        return false;
+    }
+
+    a_variable = result->variable ();
+    a_value = result->value ()->get_string_content ();
+    a_to = cur;
+    return true;
+}
+
+bool
 GDBMIParser::parse_stream_record (UString::size_type a_from,
                                   UString::size_type &a_to,
                                   Output::StreamRecord &a_record)

@@ -424,6 +424,13 @@ public:
                            UString::size_type &a_to,
                            GDBMIListSafePtr &a_list);
 
+    /// Parses a GDB/MI RESULT result=value where value is a string.
+    /// This is a quick helper that uses parse_gdbmi_result.
+    bool parse_gdbmi_string_result (UString::size_type a_from,
+                                    UString::size_type &a_to,
+                                    UString &a_variable,
+                                    UString &a_value);
+
     bool parse_stream_record (UString::size_type a_from,
                               UString::size_type &a_to,
                               Output::StreamRecord &a_record);
