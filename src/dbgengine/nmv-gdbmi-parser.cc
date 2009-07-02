@@ -3194,12 +3194,24 @@ GDBMIParser::parse_var_list_children
         return false;
     }
     ++cur;
-    SKIP_BLANK2 (cur);
-    result.reset ();
-    if (!parse_gdbmi_result (cur, cur, result) || !result) {
-        LOG_PARSING_ERROR2 (cur);
-        return false;
+
+    // Go look for the "children" RESULT, and ignore the other ones
+    // we might encounter.
+    for (;;) {
+        SKIP_BLANK2 (cur);
+        if (RAW_CHAR_AT (cur) == ',') {
+            ++cur;
+            SKIP_BLANK2 (cur);
+        }
+        result.reset ();
+        if (!parse_gdbmi_result (cur, cur, result) || !result) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        if (result->variable () == "children")
+            break;
     }
+
     if (result->variable () != "children") {
         LOG_ERROR ("expected gdbmi variable " << "children" << ", got: "
                    << result->variable () << "\'");

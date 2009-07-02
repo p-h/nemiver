@@ -152,8 +152,11 @@ on_changed_variables_listed_signal
 {
     IDebugger::VariableSafePtr root = a_vars.front ()->root ();
     THROW_IF_FAIL (root);
+    MESSAGE ("nb_elems: " << (int) a_vars.size ());
     int nb_elems = a_vars.size ();
-    BOOST_REQUIRE (nb_elems == 3);
+    // We can't know for sure how many elemens got changed, as that
+    // depend on the version of stl we are testing against.
+    BOOST_REQUIRE (nb_elems >= 3);
     MESSAGE ("The changed members are: ");
     for (list<IDebugger::VariableSafePtr>::const_iterator it = a_vars.begin ();
          it != a_vars.end ();
@@ -226,7 +229,7 @@ on_stopped_signal (IDebugger::StopReason /*a_reason*/,
         MESSAGE ("Requested creation of variable 'person'");
     } else if (nb_stops == 6) {
         // We passed the point where we changed the value of the members
-        // of the 'person' variale, in fooprog.
+        // of the 'person' variable, in fooprog.
         // let's now ask the debugger to tell us which descendant variable
         // was changed exactly.
         a_debugger->list_changed_variables

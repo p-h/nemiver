@@ -27,6 +27,8 @@ static const char *gv_running_async_output0 =
 static const char *gv_running_async_output1 =
 "*running,thread-id=\"1\"\n";
 
+static const char *gv_var_list_children0="numchild=\"2\",displayhint=\"string\",children=[child={name=\"var1.public.m_first_name.public\",exp=\"public\",numchild=\"1\",value=\"\",thread-id=\"1\"},child={name=\"var1.public.m_first_name.private\",exp=\"private\",numchild=\"1\",value=\"\",thread-id=\"1\"}]";
+
 static const char *gv_output_record0 =
 "&\"Failed to read a valid object file image from memory.\\n\"\n"
 "~\"[Thread debugging using libthread_db enabled]\\n\"\n"
@@ -262,6 +264,20 @@ test_running_async_output ()
     is_ok = parser.parse_running_async_output (0, to, thread_id);
     BOOST_REQUIRE (is_ok);
     BOOST_REQUIRE (thread_id == 1);
+}
+
+void
+test_var_list_children ()
+{
+
+    GDBMIParser parser (gv_var_list_children0);
+
+    bool is_ok=false;
+    UString::size_type to=0 ;
+    std::vector<IDebugger::VariableSafePtr> vars;
+    is_ok = parser.parse_var_list_children (0, to, vars);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (vars.size () == 2);
 }
 
 void
@@ -809,6 +825,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_attr0)) ;
     suite->add (BOOST_TEST_CASE (&test_stoppped_async_output)) ;
     suite->add (BOOST_TEST_CASE (&test_running_async_output)) ;
+    suite->add (BOOST_TEST_CASE (&test_var_list_children)) ;
     suite->add (BOOST_TEST_CASE (&test_output_record)) ;
     suite->add (BOOST_TEST_CASE (&test_stack0)) ;
     suite->add (BOOST_TEST_CASE (&test_stack_arguments0)) ;
