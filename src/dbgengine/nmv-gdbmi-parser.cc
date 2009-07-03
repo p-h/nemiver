@@ -24,6 +24,7 @@
  */
 #include <cstring>
 #include <sstream>
+#include "common/nmv-str-utils.h"
 #include "nmv-gdbmi-parser.h"
 
 using nemiver::common::UString;
@@ -2087,6 +2088,20 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
     a_bkpt.file_name (attrs["file"]); //may be nil
     a_bkpt.file_full_name (attrs["fullname"]); //may be nil
     a_bkpt.line (atoi (attrs["line"].c_str ())); //may be nil
+    if (a_bkpt.file_full_name ().empty ()
+        && a_bkpt.file_name ().empty ()
+        && (iter = attrs.find ("original-location")) != null_iter) {
+        UString location = iter->second;
+        UString file_path;
+        unsigned line_num = 0;
+        str_utils::extract_path_and_line_num_from_location (location,
+                                                            file_path,
+                                                            line_num);
+        if (!file_path.empty ())
+            a_bkpt.file_full_name (file_path);
+        if (line_num)
+            a_bkpt.line (line_num);
+    }
     if ((iter = attrs.find ("cond")) != null_iter) {
         a_bkpt.condition (iter->second);
     }

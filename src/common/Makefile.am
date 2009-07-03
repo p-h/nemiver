@@ -5,6 +5,7 @@ headers= \
 nmv-api-macros.h \
 nmv-namespace.h \
 nmv-ustring.h \
+nmv-str-utils.h \
 nmv-libxml-utils.h \
 nmv-safe-ptr-utils.h \
 nmv-object.h \
@@ -38,6 +39,7 @@ nmv-proc-mgr.h
 
 libnemivercommon_la_SOURCES= $(headers) \
 nmv-ustring.cc \
+nmv-str-utils.cc \
 nmv-object.cc \
 nmv-libxml-utils.cc \
 nmv-log-stream.cc \
