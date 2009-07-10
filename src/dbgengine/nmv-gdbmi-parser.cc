@@ -2097,10 +2097,13 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
         str_utils::extract_path_and_line_num_from_location (location,
                                                             file_path,
                                                             line_num);
-        if (!file_path.empty ())
+        // Line number must be present otherwise, that means
+        // what was encoded in the "original-location" RESULT wasn't
+        // "filepath:line-number"
+        if (!file_path.empty () && line_num) {
             a_bkpt.file_full_name (file_path);
-        if (line_num)
             a_bkpt.line (line_num);
+        }
     }
     if ((iter = attrs.find ("cond")) != null_iter) {
         a_bkpt.condition (iter->second);
