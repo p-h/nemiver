@@ -373,6 +373,7 @@ private:
                                      int,
                                      const UString&);
     void on_program_finished_signal ();
+    void on_engine_died_signal ();
     void on_frame_selected_signal (int, const IDebugger::Frame &);
 
     void on_debugger_running_signal ();
@@ -516,6 +517,8 @@ public:
 
     void execute_program ();
 
+    void execute_last_program_in_memory ();
+
     void execute_program (const UString &a_prog_and_args,
                           const map<UString, UString> &a_env,
                           const UString &a_cwd=".",
@@ -526,7 +529,8 @@ public:
                           const map<UString, UString> &a_env,
                           const UString &a_cwd,
                           const vector<IDebugger::BreakPoint> &a_breaks,
-                          bool a_close_opened_files=false);
+                          bool a_check_is_new_program = true,
+                          bool a_close_opened_files = false);
 
     void attach_to_program ();
     void attach_to_program (unsigned int a_pid,
@@ -765,6 +769,9 @@ struct DBGPerspective::Priv {
     bool initialized;
     bool reused_session;
     bool debugger_has_just_run;
+    // A Flag to know if the debugging
+    // engine died or not.
+    bool debugger_engine_alive;
     UString prog_path;
     UString prog_args;
     UString prog_cwd;
@@ -905,6 +912,7 @@ struct DBGPerspective::Priv {
         initialized (false),
         reused_session (false),
         debugger_has_just_run (false),
+        debugger_engine_alive (false),
         menubar_merge_id (0),
         toolbar_merge_id (0),
         contextual_menu_merge_id(0),
@@ -2297,12 +2305,30 @@ DBGPerspective::on_program_finished_signal ()
 }
 
 void
-DBGPerspective::on_frame_selected_signal (int a_index,
+DBGPerspective::on_engine_died_signal ()
+{
+    NEMIVER_TRY
+
+    m_priv->debugger_engine_alive = false;
+
+    m_priv->target_not_started_action_group->set_sensitive (true);
+    m_priv->debugger_ready_action_group->set_sensitive (false);
+    m_priv->debugger_busy_action_group->set_sensitive (false);
+    m_priv->target_connected_action_group->set_sensitive (false);
+
+    ui_utils::display_info (_("The underlying debugger engine process died."));
+
+    NEMIVER_CATCH
+
+}
+
+void
+DBGPerspective::on_frame_selected_signal (int /* a_index */,
                                           const IDebugger::Frame &a_frame)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    if (a_index) {}
+
     NEMIVER_TRY
 
     m_priv->current_frame = a_frame;
@@ -3546,6 +3572,8 @@ DBGPerspective::init_signals ()
                 &DBGPerspective::on_default_config_read));
 }
 
+/// Connect slots (callbacks) to the signals emitted by the
+/// IDebugger interface whenever something worthwhile happens.
 void
 DBGPerspective::init_debugger_signals ()
 {
@@ -3555,6 +3583,7 @@ DBGPerspective::init_debugger_signals ()
 
     debugger ()->detached_from_target_signal ().connect (sigc::mem_fun
         (*this, &DBGPerspective::on_debugger_detached_from_target_signal));
+
     debugger ()->console_message_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_console_message_signal));
 
@@ -3581,6 +3610,9 @@ DBGPerspective::init_debugger_signals ()
 
     debugger ()->program_finished_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_program_finished_signal));
+
+    debugger ()->engine_died_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_engine_died_signal));
 
     debugger ()->running_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_running_signal));
@@ -5149,8 +5181,33 @@ DBGPerspective::execute_program ()
     map<UString, UString> env = dialog.environment_variables();
 
     vector<IDebugger::BreakPoint> breaks;
-    execute_program (prog, args, env, cwd, breaks, true);
+    execute_program (prog, args, env, cwd, breaks, true, true);
     m_priv->reused_session = false;
+}
+
+/// Re starts the last program that was being previously debugged.
+/// If the underlying debugger engine died, this function will restart it,
+/// reload the program that was being debugged,
+/// and set all the breakpoints that were set previously.
+/// This is useful when e.g. the debugger engine died and we want to
+/// restart it and restart the program that was being debugged.
+void
+DBGPerspective::execute_last_program_in_memory ()
+{
+    if (!m_priv->prog_path.empty ()) {
+        vector<IDebugger::BreakPoint> breakpoints;
+        map<int, IDebugger::BreakPoint>::const_iterator it;
+        for (it = m_priv->breakpoints.begin ();
+             it != m_priv->breakpoints.end ();
+             ++it) {
+            breakpoints.push_back (it->second);
+        }
+        execute_program (m_priv->prog_path, m_priv->prog_args,
+                         m_priv->env_variables, m_priv->prog_cwd,
+                         breakpoints,
+                         false,
+                         false /* don't close opened files */);
+    }
 }
 
 void
@@ -5173,10 +5230,27 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
     vector<IDebugger::BreakPoint> breaks;
 
     execute_program (prog_name, args, a_env, cwd,
-                     breaks, a_close_opened_files);
+                     breaks, true, a_close_opened_files);
     m_priv->reused_session = false;
 }
 
+/// Loads and executes a program (called an inferior) under the debugger.
+/// This function can also set breakpoints before running the inferior.
+///
+/// \param a_prog the path to the program to debug
+/// \param a_args the arguments of the program to debug
+/// \param a_env  the environment variables to set prior
+///               to running the inferior. Those environment variables
+///               will be accessible to the inferior.
+/// \param a_cwd the working directory in which to run the inferior
+/// \param a_breaks the breakpoints to set prior to running the inferior.
+/// \param a_close_opened_files if true, close the files that have been
+///        opened in the debugging perspective.
+/// \param a_check_is_new_program if true, be kind if the program to run
+///        has be run previously. Be kind means things like do not re do
+///        things that have been done already, e.g. re set breakpoints etc.
+///        Otherwise, just ignore the fact that the program might have been
+///        run previously and just redo all the necessary things.
 void
 DBGPerspective::execute_program
                         (const UString &a_prog,
@@ -5184,6 +5258,7 @@ DBGPerspective::execute_program
                          const map<UString, UString> &a_env,
                          const UString &a_cwd,
                          const vector<IDebugger::BreakPoint> &a_breaks,
+                         bool a_check_is_new_program,
                          bool a_close_opened_files)
 {
     NEMIVER_TRY
@@ -5242,7 +5317,9 @@ DBGPerspective::execute_program
     // that we are not debugging a new program.
     // In that case, we might want to keep things like breakpoints etc,
     // around.
-    bool is_new_program = (prog != m_priv->prog_path);
+    bool is_new_program = (a_check_is_new_program) ?
+                                (prog != m_priv->prog_path)
+                                : true;
 
     // delete old breakpoints, if any.
     if (is_new_program) {
@@ -5250,8 +5327,9 @@ DBGPerspective::execute_program
         for (bp_it = m_priv->breakpoints.begin ();
              bp_it != m_priv->breakpoints.end ();
              ++bp_it) {
-            dbg_engine->delete_breakpoint (bp_it->first,
-                                           I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
+            if (m_priv->debugger_engine_alive)
+                dbg_engine->delete_breakpoint (bp_it->first,
+                                               I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
         }
     }
 
@@ -5265,6 +5343,8 @@ DBGPerspective::execute_program
     // now really load the inferior program (i.e: the one to be debugged)
     dbg_engine->load_program (args, a_cwd, source_search_dirs,
                               get_terminal ().slave_pts_name ());
+
+    m_priv->debugger_engine_alive = true;
 
     // set environment variables of the inferior
     dbg_engine->add_env_variables (a_env);
@@ -5293,6 +5373,7 @@ DBGPerspective::execute_program
         }
     }
 
+    going_to_run_target_signal ().emit ();
     dbg_engine->run ();
     m_priv->debugger_has_just_run = true;
 
@@ -5443,10 +5524,26 @@ DBGPerspective::edit_preferences ()
     dialog.run ();
 }
 
+/// Run the program being debugged (a.k.a. the inferior) from the start.
+/// If the program was running already, restart it.
+/// If the underlying debugging engine died, restart it, and re run the
+/// the inferior.
 void
 DBGPerspective::run ()
 {
     THROW_IF_FAIL (m_priv);
+    if (!m_priv->debugger_engine_alive) {
+        LOG_DD ("debugger engine not alive. "
+                "Checking if it should be restarted ...");
+        if (!m_priv->prog_path.empty ()) {
+            LOG_DD ("Yes, it seems we were running a program before. "
+                    "Will try to restart it");
+            execute_last_program_in_memory ();
+        } else {
+            LOG_DD ("Hmmh, it looks like no program was previously running");
+        }
+        return;
+    }
     going_to_run_target_signal ().emit ();
     debugger ()->run ();
     m_priv->debugger_has_just_run = true;
