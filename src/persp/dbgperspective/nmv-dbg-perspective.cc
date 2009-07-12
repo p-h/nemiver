@@ -75,12 +75,8 @@
 #include "nmv-ui-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
-#ifdef WITH_VAROBJS
 #include "nmv-local-vars-inspector2.h"
 #include "nmv-var-inspector2.h"
-#else
-#include "nmv-local-vars-inspector.h"
-#endif
 #include "nmv-global-vars-inspector-dialog.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
@@ -102,9 +98,7 @@
 #include "nmv-memory-view.h"
 #endif // WITH_MEMORYVIEW
 
-#ifdef WITH_VAROBJS
 #include "nmv-watchpoint-dialog.h"
-#endif //WITH_VAROBJS
 
 using namespace std;
 using namespace nemiver::common;
@@ -278,9 +272,7 @@ private:
     void on_continue_until_action ();
     void on_set_breakpoint_action ();
     void on_set_breakpoint_using_dialog_action ();
-#ifdef WITH_VAROBJS
     void on_set_watchpoint_using_dialog_action ();
-#endif
     void on_refresh_locals_action ();
     void on_toggle_breakpoint_action ();
     void on_toggle_breakpoint_enabled_action ();
@@ -389,14 +381,11 @@ private:
                                     (const UString &a_var_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cooker);
-#ifdef WITH_VAROBJS
 
     void on_variable_created_for_tooltip_signal
                                     (const IDebugger::VariableSafePtr);
     void on_popup_var_insp_size_request (Gtk::Requisition*, Gtk::Widget *);
     void on_popup_tip_hide ();
-
-#endif // WITH_VAROBJS
 
     bool on_file_content_changed (const UString &a_path);
     void on_notebook_tabs_reordered(Gtk::Widget* a_page, guint a_page_num);
@@ -453,13 +442,10 @@ private:
     void try_to_request_show_variable_value_at_position (int a_x, int a_y);
     void show_underline_tip_at_position (int a_x, int a_y,
                                          const UString &a_text);
-#ifdef WITH_VAROBJS
     void show_underline_tip_at_position (int a_x, int a_y,
                                          IDebugger::VariableSafePtr a_var);
     VarInspector2& get_popup_var_inspector ();
     void pack_popup_var_inspector_in_new_scr_win (Gtk::ScrolledWindow *);
-#endif // WITH_VAROBJS
-
     void restart_mouse_immobile_timer ();
     void stop_mouse_immobile_timer ();
     PopupTip& get_popup_tip ();
@@ -584,9 +570,7 @@ public:
                                       const int a_line_num);
     void set_breakpoint_using_dialog (const UString &a_function_name);
     void set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog);
-#ifdef WITH_VAROBJS
     void set_watchpoint_using_dialog ();
-#endif
     void refresh_locals ();
 
     void inspect_variable ();
@@ -634,11 +618,8 @@ public:
     Gtk::ScrolledWindow& get_thread_list_scrolled_win ();
 
     Gtk::HPaned& get_call_stack_paned ();
-#ifdef WITH_VAROBJS
+
     LocalVarsInspector2& get_local_vars_inspector ();
-#else
-    LocalVarsInspector& get_local_vars_inspector ();
-#endif
 
     Gtk::ScrolledWindow& get_local_vars_inspector_scrolled_win ();
 
@@ -839,11 +820,7 @@ struct DBGPerspective::Priv {
 #endif // WITH_GIO
     Path2MonitorMap path_2_monitor_map;
     Gtk::Notebook *statuses_notebook;
-#ifdef WITH_VAROBJS
     SafePtr<LocalVarsInspector2> variables_editor;
-#else
-    SafePtr<LocalVarsInspector> variables_editor;
-#endif
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win;
     SafePtr<Terminal> terminal;
     SafePtr<Gtk::Box> terminal_box;
@@ -890,9 +867,7 @@ struct DBGPerspective::Priv {
     //<variable value popup tip related data>
     //****************************************
     SafePtr<PopupTip> popup_tip;
-#ifdef WITH_VAROBJS
     SafePtr<VarInspector2> popup_var_inspector;
-#endif
     bool in_show_var_value_at_pos_transaction;
     UString var_to_popup;
     int var_popup_tip_x;
@@ -1448,7 +1423,6 @@ DBGPerspective::on_set_breakpoint_using_dialog_action ()
     NEMIVER_CATCH
 }
 
-#ifdef WITH_VAROBJS
 void
 DBGPerspective::on_set_watchpoint_using_dialog_action ()
 {
@@ -1460,7 +1434,6 @@ DBGPerspective::on_set_watchpoint_using_dialog_action ()
 
     NEMIVER_CATCH
 }
-#endif
 
 void
 DBGPerspective::on_refresh_locals_action ()
@@ -2491,7 +2464,6 @@ DBGPerspective::on_debugger_variable_value_signal
     NEMIVER_CATCH
 }
 
-#ifdef WITH_VAROBJS
 void
 DBGPerspective::on_variable_created_for_tooltip_signal
                                 (const IDebugger::VariableSafePtr a_var)
@@ -2595,7 +2567,6 @@ DBGPerspective::on_popup_tip_hide ()
 
     NEMIVER_CATCH
 }
-#endif // WITH_VAROBJS
 
 bool
 DBGPerspective::on_file_content_changed (const UString &a_path)
@@ -3054,7 +3025,6 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control><shift>B"
         },
-#ifdef WITH_VAROBJS
         {
             "SetWatchPointUsingDialogMenuItemAction",
             nil_stock_id,
@@ -3066,7 +3036,6 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control>T"
         },
-#endif
         {
             "InspectVariableMenuItemAction",
             nil_stock_id,
@@ -4306,14 +4275,10 @@ DBGPerspective::try_to_request_show_variable_value_at_position (int a_x,
     m_priv->var_popup_tip_x = abs_x;
     m_priv->var_popup_tip_y = abs_y;
     m_priv->var_to_popup = var_name;
-#ifdef WITH_VAROBJS
     debugger ()->create_variable
         (var_name,
          sigc::mem_fun (*this,
                         &DBGPerspective::on_variable_created_for_tooltip_signal));
-#else
-    debugger ()->print_variable_value (var_name);
-#endif
 }
 
 void
@@ -4329,7 +4294,6 @@ DBGPerspective::show_underline_tip_at_position (int a_x,
     get_popup_tip ().show_at_position (a_x, a_y);
 }
 
-#ifdef WITH_VAROBJS
 void
 DBGPerspective::show_underline_tip_at_position
                                         (int a_x, int a_y,
@@ -4372,8 +4336,6 @@ DBGPerspective::pack_popup_var_inspector_in_new_scr_win
     a_win->add (get_popup_var_inspector ().widget ());
 }
 
-#endif // WITH_VAROBJS
-
 void
 DBGPerspective::restart_mouse_immobile_timer ()
 {
@@ -4405,14 +4367,12 @@ DBGPerspective::get_popup_tip ()
 
     if (!m_priv->popup_tip) {
         m_priv->popup_tip.reset (new PopupTip);
-#ifdef WITH_VAROBJS
         Gtk::ScrolledWindow *w = Gtk::manage (new Gtk::ScrolledWindow ());
         w->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         pack_popup_var_inspector_in_new_scr_win (w);
         m_priv->popup_tip->set_child (*w);
         m_priv->popup_tip->signal_hide ().connect (sigc::mem_fun
                    (*this, &DBGPerspective::on_popup_tip_hide));
-#endif
     }
     THROW_IF_FAIL (m_priv->popup_tip);
     return *m_priv->popup_tip;
@@ -6234,7 +6194,6 @@ DBGPerspective::set_breakpoint_using_dialog (const UString &a_function_name)
     set_breakpoint_from_dialog (dialog);
 }
 
-#ifdef WITH_VAROBJS
 void
 DBGPerspective::set_watchpoint_using_dialog ()
 {
@@ -6255,7 +6214,6 @@ DBGPerspective::set_watchpoint_using_dialog ()
                                  mode & WatchpointDialog::WRITE_MODE,
                                  mode & WatchpointDialog::READ_MODE);
 }
-#endif
 
 void
 DBGPerspective::refresh_locals ()
@@ -6545,11 +6503,7 @@ DBGPerspective::get_thread_list_scrolled_win ()
     return *m_priv->thread_list_scrolled_win;
 }
 
-#ifdef WITH_VAROBJS
 LocalVarsInspector2&
-#else
-LocalVarsInspector&
-#endif
 DBGPerspective::get_local_vars_inspector ()
 {
     THROW_IF_FAIL (m_priv);
@@ -6557,11 +6511,7 @@ DBGPerspective::get_local_vars_inspector ()
 
     if (!m_priv->variables_editor) {
         m_priv->variables_editor.reset
-#ifdef WITH_VAROBJS
             (new LocalVarsInspector2 (debugger (),
-#else
-            (new LocalVarsInspector (debugger (),
-#endif
                                      *m_priv->workbench,
                                      *this));
     }

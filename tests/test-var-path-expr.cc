@@ -9,8 +9,6 @@
 using namespace nemiver;
 using namespace nemiver::common ;
 
-#ifdef WITH_VAROBJS
-
 Glib::RefPtr<Glib::MainLoop> loop =
     Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
 
@@ -153,6 +151,4 @@ test_main (int argc, char *argv[])
 
     return 0 ;
 }
-
-#endif // WITH_VAROBJS
 

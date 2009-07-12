@@ -1,11 +1,3 @@
-if VAROBJS
-    WATCHPOINT_TEST=runtestwatchpoint
-    VAR_PATH_EXPR_TEST=runtestvarpathexpr
-    VAROBJ_WALKER_TEST=runtestvarobjwalker
-else
-    WATCHPOINT_TEST=
-endif
-
 if AUTOTESTS
 # 'make check' automatically runs programs listed in the TESTS variable
 
@@ -15,10 +7,10 @@ if AUTOTESTS
 TESTS=\
 runtestgdbmi runtestunicode \
 runtestvars runtestcpptrait runtestvarlist \
-runtestvarwalker $(VAROBJ_WALKER_TEST) runtestbreakpoint \
-$(WATCHPOINT_TEST) runtestderef \
+runtestvarwalker runtestvarobjwalker runtestbreakpoint \
+runtestwatchpoint runtestderef \
 runtestlocalvarslist runtestcpplexer \
-runtestcppparser $(VAR_PATH_EXPR_TEST) \
+runtestcppparser runtestvarpathexpr \
 runtestlibtoolwrapperdetection \
 runtestenv runtesttypes
 
@@ -55,7 +47,6 @@ runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
-if VAROBJS
 runtestwatchpoint_SOURCES=test-watchpoint.cc
 runtestwatchpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la
@@ -67,8 +58,6 @@ $(top_builddir)/src/common/libnemivercommon.la
 runtestvarobjwalker_SOURCES=test-varobj-walker.cc
 runtestvarobjwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
-
-endif
 
 #runtestoverloads_SOURCES=test-overloads.cc
 #runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \

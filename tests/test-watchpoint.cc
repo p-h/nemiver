@@ -5,8 +5,6 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
 
-#ifdef WITH_VAROBJS
-
 using namespace nemiver;
 using namespace nemiver::common ;
 
@@ -119,6 +117,4 @@ test_main (int, char **)
     BOOST_REQUIRE (nb_watchpoint_out_of_scope == 1);
     return 0;
 }
-
-#endif //WITH_VAROBJS
 

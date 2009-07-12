@@ -31,8 +31,6 @@
 #include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
 
-#ifdef WITH_VAROBJS
-
 namespace Gtk {
     class Widget;
 }
@@ -68,7 +66,6 @@ public:
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //WITH_VAROBJS
 #endif //__NMV_LOCAL_VARS_INSPECTOR_H__
 
 

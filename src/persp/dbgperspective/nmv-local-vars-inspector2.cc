@@ -38,8 +38,6 @@
 #include "nmv-vars-treeview.h"
 #include "nmv-debugger-utils.h"
 
-#ifdef WITH_VAROBJS
-
 using namespace nemiver::common;
 namespace vutil=nemiver::variables_utils2;
 namespace dutil=nemiver::debugger_utils;
@@ -1138,4 +1136,3 @@ LocalVarsInspector2::re_init_widget ()
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //WITH_VAROBJS

@@ -23,7 +23,6 @@
  */
 #include <glib/gi18n.h>
 #include "nmv-watchpoint-dialog.h"
-#ifdef WITH_VAROBJS
 #include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include "common/nmv-exception.h"
@@ -309,5 +308,4 @@ operator&= (WatchpointDialog::Mode &a_l,
 }
 
 NEMIVER_END_NAMESPACE (nemiver)
-#endif // WITH_VAROBJS
 
