@@ -31,10 +31,10 @@ src/persp/dbgperspective/nmv-registers-view.cc
 src/persp/dbgperspective/nmv-run-program-dialog.cc
 src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
 src/persp/dbgperspective/nmv-thread-list.cc
-src/persp/dbgperspective/nmv-var-inspector2.cc
+src/persp/dbgperspective/nmv-var-inspector.cc
 src/persp/dbgperspective/nmv-var-inspector-dialog.cc
-src/persp/dbgperspective/nmv-local-vars-inspector2.cc
-src/persp/dbgperspective/nmv-var-inspector2.cc
+src/persp/dbgperspective/nmv-local-vars-inspector.cc
+src/persp/dbgperspective/nmv-var-inspector.cc
 src/uicommon/nmv-source-editor.cc
 src/uicommon/nmv-ui-utils.cc
 src/workbench/nmv-workbench.cc

@@ -29,7 +29,7 @@
 #include "common/nmv-env.h"
 #include "common/nmv-ustring.h"
 #include "nmv-ui-utils.h"
-#include "nmv-var-inspector2.h"
+#include "nmv-var-inspector.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -43,7 +43,7 @@ struct WatchpointDialog::Priv {
     Gtk::CheckButton *write_check_button;
     Gtk::Button *ok_button;
     Gtk::Button *cancel_button;
-    SafePtr<VarInspector2> var_inspector;
+    SafePtr<VarInspector> var_inspector;
     IDebuggerSafePtr debugger;
     IPerspective &perspective;
 
@@ -112,7 +112,7 @@ struct WatchpointDialog::Priv {
                                                        "varinspectorbox");
         THROW_IF_FAIL (box);
 
-        var_inspector.reset (new VarInspector2 (debugger, perspective));
+        var_inspector.reset (new VarInspector (debugger, perspective));
         THROW_IF_FAIL (var_inspector);
 
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);

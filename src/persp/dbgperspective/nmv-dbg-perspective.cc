@@ -75,8 +75,8 @@
 #include "nmv-ui-utils.h"
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
-#include "nmv-local-vars-inspector2.h"
-#include "nmv-var-inspector2.h"
+#include "nmv-local-vars-inspector.h"
+#include "nmv-var-inspector.h"
 #include "nmv-global-vars-inspector-dialog.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
@@ -444,7 +444,7 @@ private:
                                          const UString &a_text);
     void show_underline_tip_at_position (int a_x, int a_y,
                                          IDebugger::VariableSafePtr a_var);
-    VarInspector2& get_popup_var_inspector ();
+    VarInspector& get_popup_var_inspector ();
     void pack_popup_var_inspector_in_new_scr_win (Gtk::ScrolledWindow *);
     void restart_mouse_immobile_timer ();
     void stop_mouse_immobile_timer ();
@@ -619,7 +619,7 @@ public:
 
     Gtk::HPaned& get_call_stack_paned ();
 
-    LocalVarsInspector2& get_local_vars_inspector ();
+    LocalVarsInspector& get_local_vars_inspector ();
 
     Gtk::ScrolledWindow& get_local_vars_inspector_scrolled_win ();
 
@@ -820,7 +820,7 @@ struct DBGPerspective::Priv {
 #endif // WITH_GIO
     Path2MonitorMap path_2_monitor_map;
     Gtk::Notebook *statuses_notebook;
-    SafePtr<LocalVarsInspector2> variables_editor;
+    SafePtr<LocalVarsInspector> variables_editor;
     SafePtr<Gtk::ScrolledWindow> variables_editor_scrolled_win;
     SafePtr<Terminal> terminal;
     SafePtr<Gtk::Box> terminal_box;
@@ -867,7 +867,7 @@ struct DBGPerspective::Priv {
     //<variable value popup tip related data>
     //****************************************
     SafePtr<PopupTip> popup_tip;
-    SafePtr<VarInspector2> popup_var_inspector;
+    SafePtr<VarInspector> popup_var_inspector;
     bool in_show_var_value_at_pos_transaction;
     UString var_to_popup;
     int var_popup_tip_x;
@@ -4305,15 +4305,15 @@ DBGPerspective::show_underline_tip_at_position
     get_popup_tip ().show_at_position (a_x, a_y);
 }
 
-VarInspector2&
+VarInspector&
 DBGPerspective::get_popup_var_inspector ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
     if (!m_priv->popup_var_inspector)
         m_priv->popup_var_inspector.reset
-                    (new VarInspector2 (debugger (),
-                                        *const_cast<DBGPerspective*> (this)));
+                    (new VarInspector (debugger (),
+                                       *const_cast<DBGPerspective*> (this)));
     THROW_IF_FAIL (m_priv->popup_var_inspector);
     return *m_priv->popup_var_inspector;
 }
@@ -6503,7 +6503,7 @@ DBGPerspective::get_thread_list_scrolled_win ()
     return *m_priv->thread_list_scrolled_win;
 }
 
-LocalVarsInspector2&
+LocalVarsInspector&
 DBGPerspective::get_local_vars_inspector ()
 {
     THROW_IF_FAIL (m_priv);
@@ -6511,7 +6511,7 @@ DBGPerspective::get_local_vars_inspector ()
 
     if (!m_priv->variables_editor) {
         m_priv->variables_editor.reset
-            (new LocalVarsInspector2 (debugger (),
+            (new LocalVarsInspector (debugger (),
                                      *m_priv->workbench,
                                      *this));
     }

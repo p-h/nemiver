@@ -22,14 +22,13 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_LOCAL_VARS_INSPECTOR_H__
-#define __NMV_LOCAL_VARS_INSPECTOR_H__
+#ifndef __NMV_VAR_INSPECTOR2_H__
+#define __NMV_VAR_INSPECTOR2_H__
 
-#include <list>
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
-#include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
+#include "nmv-i-perspective.h"
 
 namespace Gtk {
     class Widget;
@@ -37,35 +36,33 @@ namespace Gtk {
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class IWorkbench;
+namespace common {
+    class UString;
+}
 
-class NEMIVER_API LocalVarsInspector2 : public nemiver::common::Object {
-    //non copyable
-    LocalVarsInspector2 (const LocalVarsInspector2&);
-    LocalVarsInspector2& operator= (const LocalVarsInspector2&);
-
-    struct Priv;
+class VarInspector : public nemiver::common::Object {
+    VarInspector (const VarInspector &);
+    VarInspector& operator= (const VarInspector &);
+    VarInspector ();
+    class Priv;
     SafePtr<Priv> m_priv;
 
-protected:
-    LocalVarsInspector2 ();
-
 public:
-
-    LocalVarsInspector2 (IDebuggerSafePtr &a_dbg,
-                         IWorkbench &a_wb,
-                         IPerspective &a_perspective);
-    virtual ~LocalVarsInspector2 ();
+    VarInspector (IDebuggerSafePtr a_debugger,
+                   IPerspective &a_perspective);
+    virtual ~VarInspector ();
     Gtk::Widget& widget () const;
-    void set_local_variables
-                    (const std::list<IDebugger::VariableSafePtr> &a_vars);
-    void show_local_variables_of_current_function
-                                        (const IDebugger::Frame &a_frame);
-    void re_init_widget ();
-};//end LocalVarsInspector2
+    void set_variable (IDebugger::VariableSafePtr a_variable,
+                       bool a_expand = false);
+    void inspect_variable (const UString &a_variable_name,
+                           bool a_expand = false);
+    IDebugger::VariableSafePtr get_variable () const;
+    void enable_contextual_menu (bool a_flag);
+    bool is_contextual_menu_enabled () const;
+    void clear ();
+};//end class VarInspector
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_LOCAL_VARS_INSPECTOR_H__
-
+#endif //__NMV_VAR_INSPECTOR2_H__
 

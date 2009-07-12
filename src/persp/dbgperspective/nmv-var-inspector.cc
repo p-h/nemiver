@@ -29,7 +29,7 @@
 #include <gtkmm/treestore.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-dynamic-module.h"
-#include "nmv-var-inspector2.h"
+#include "nmv-var-inspector.h"
 #include "nmv-variables-utils.h"
 #include "nmv-i-var-walker.h"
 #include "nmv-ui-utils.h"
@@ -45,8 +45,8 @@ using cmn::DynamicModuleManager;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class VarInspector2::Priv : public sigc::trackable {
-    friend class VarInspector2;
+class VarInspector::Priv : public sigc::trackable {
+    friend class VarInspector;
     Priv ();
 
     bool requested_variable;
@@ -233,7 +233,7 @@ class VarInspector2::Priv : public sigc::trackable {
         expand_variable = a_expand;
         debugger->create_variable
             (a_name, sigc::mem_fun
-                    (this, &VarInspector2::Priv::on_variable_created_signal));
+                    (this, &VarInspector::Priv::on_variable_created_signal));
     }
 
     Glib::RefPtr<Gtk::UIManager> get_ui_manager ()
@@ -586,21 +586,21 @@ public:
     {
         delete_variable_if_needed ();
     }
-};//end class VarInspector2::Priv
+};//end class VarInspector::Priv
 
-VarInspector2::VarInspector2 (IDebuggerSafePtr a_debugger,
+VarInspector::VarInspector (IDebuggerSafePtr a_debugger,
                               IPerspective &a_perspective)
 {
     m_priv.reset (new Priv (a_debugger, a_perspective));
 }
 
-VarInspector2::~VarInspector2 ()
+VarInspector::~VarInspector ()
 {
     LOG_D ("deleted", "destructor-domain");
 }
 
 Gtk::Widget&
-VarInspector2::widget () const
+VarInspector::widget () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->tree_view);
@@ -608,7 +608,7 @@ VarInspector2::widget () const
 }
 
 void
-VarInspector2::set_variable (IDebugger::VariableSafePtr a_variable,
+VarInspector::set_variable (IDebugger::VariableSafePtr a_variable,
                              bool a_expand)
 {
     THROW_IF_FAIL (m_priv);
@@ -617,7 +617,7 @@ VarInspector2::set_variable (IDebugger::VariableSafePtr a_variable,
 }
 
 void
-VarInspector2::inspect_variable (const UString &a_variable_name,
+VarInspector::inspect_variable (const UString &a_variable_name,
                                  bool a_expand)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -630,7 +630,7 @@ VarInspector2::inspect_variable (const UString &a_variable_name,
 }
 
 IDebugger::VariableSafePtr
-VarInspector2::get_variable () const
+VarInspector::get_variable () const
 {
     THROW_IF_FAIL (m_priv);
 
@@ -638,21 +638,21 @@ VarInspector2::get_variable () const
 }
 
 void
-VarInspector2::enable_contextual_menu (bool a_flag)
+VarInspector::enable_contextual_menu (bool a_flag)
 {
     THROW_IF_FAIL (m_priv);
     m_priv->enable_contextual_menu = a_flag;
 }
 
 bool
-VarInspector2::is_contextual_menu_enabled () const
+VarInspector::is_contextual_menu_enabled () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->enable_contextual_menu;
 }
 
 void
-VarInspector2::clear ()
+VarInspector::clear ()
 {
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();

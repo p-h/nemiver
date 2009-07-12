@@ -27,7 +27,7 @@
 #include <gtkmm/liststore.h>
 #include "common/nmv-exception.h"
 #include "nmv-var-inspector-dialog.h"
-#include "nmv-var-inspector2.h"
+#include "nmv-var-inspector.h"
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -51,7 +51,7 @@ class VarInspectorDialog::Priv {
     Gtk::ComboBoxEntry *var_name_entry;
     Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
-    SafePtr<VarInspector2> var_inspector;
+    SafePtr<VarInspector> var_inspector;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gnome::Glade::Xml> glade;
     IDebuggerSafePtr debugger;
@@ -96,7 +96,7 @@ public:
         Gtk::Box *box =
             ui_utils::get_widget_from_glade<Gtk::Box> (glade,
                                                        "inspectorwidgetbox");
-        var_inspector.reset (new VarInspector2 (debugger, perspective));
+        var_inspector.reset (new VarInspector (debugger, perspective));
         var_inspector->enable_contextual_menu (true);
         THROW_IF_FAIL (var_inspector);
 
