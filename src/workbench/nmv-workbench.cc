@@ -513,9 +513,13 @@ Workbench::get_configuration_manager ()
 
         m_priv->conf_mgr = dynmod_manager->load_iface <IConfMgr> ("gconfmgr",
                                                                   "IConfMgr") ;
+        NEMIVER_TRY
+
         m_priv->conf_mgr->set_key_dir_to_notify ("/apps/nemiver") ;
         m_priv->conf_mgr->add_key_to_notify (
                 "/desktop/gnome/interface/monospace_font_name") ;
+
+        NEMIVER_CATCH
     }
     THROW_IF_FAIL (m_priv->conf_mgr) ;
     return m_priv->conf_mgr ;
@@ -572,15 +576,19 @@ Workbench::init_window ()
     IConfMgrSafePtr conf_mgr = get_configuration_manager () ;
     THROW_IF_FAIL (conf_mgr) ;
 
-    int width=0, height=0, pos_x=0, pos_y=0 ;
+    int width=700, height=500, pos_x=0, pos_y=0 ;
+    bool maximized=false ;
+
     LOG_DD ("getting windows geometry from confmgr ...") ;
+
+    NEMIVER_TRY
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_HEIGHT, height) ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_X, pos_x) ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
-    bool maximized=false ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
     LOG_DD ("got windows geometry from confmgr.") ;
+    NEMIVER_CATCH
 
     if (width) {
         LOG_DD ("restoring windows geometry from confmgr ...") ;
@@ -596,12 +604,17 @@ Workbench::init_window ()
 
     //set the minimum width/height of nemiver, just in case.
     width=0, height=0 ;
+
+    NEMIVER_TRY
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH, width) ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT, height) ;
+    NEMIVER_CATCH
+
     if (!width)
         width = 700;
     if (!height)
         height = 500;
+
     m_priv->root_window->set_size_request (width, height) ;
     LOG_DD ("set windows min size to ("
             << (int) width
@@ -805,7 +818,9 @@ Workbench::save_window_geometry ()
     bool maximized = (m_priv->root_window->get_window()->get_state()
                       & Gdk::WINDOW_STATE_MAXIMIZED);
 
+    NEMIVER_TRY
     conf_mgr->set_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
+
     if (!maximized) {
         LOG_DD ("storing windows geometry to confmgr...") ;
         conf_mgr->set_key_value (CONF_KEY_NEMIVER_WINDOW_WIDTH, width) ;
@@ -816,6 +831,7 @@ Workbench::save_window_geometry ()
     } else {
         LOG_DD ("windows was maximized, didn't store its geometry") ;
     }
+    NEMIVER_CATCH_NOX
 }
 
 void

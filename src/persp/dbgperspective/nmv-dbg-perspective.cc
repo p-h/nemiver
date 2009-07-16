@@ -1022,9 +1022,14 @@ struct DBGPerspective::Priv {
         IConfMgrSafePtr conf_mgr = workbench->get_configuration_manager ();
         THROW_IF_FAIL (conf_mgr);
         std::list<UString> supported_encodings;
-        if (conf_mgr->get_key_value (CONF_KEY_SOURCE_FILE_ENCODING_LIST,
-                                     supported_encodings)
-            && !supported_encodings.empty ()) {
+        bool have_gconf_values = false;
+
+        NEMIVER_TRY
+        have_gconf_values =
+            conf_mgr->get_key_value (CONF_KEY_SOURCE_FILE_ENCODING_LIST,
+                                     supported_encodings);
+        NEMIVER_CATCH_NOX
+        if (have_gconf_values && !supported_encodings.empty ()) {
             LOG_DD ("trying encodings coming from gconf");
             std::list<UString>::const_iterator it;
             for (it = supported_encodings.begin ();
@@ -1908,7 +1913,10 @@ DBGPerspective::on_shutdown_signal ()
     // next time.
     IConfMgr &conf_mgr = get_conf_mgr ();
     int pane_location = m_priv->body_main_paned->get_position();
+
+    NEMIVER_TRY
     conf_mgr.set_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location);
+    NEMIVER_CATCH
 
     if (m_priv->prog_path == "") {
         return;
@@ -2603,12 +2611,14 @@ DBGPerspective::on_file_content_changed (const UString &a_path)
                 reload_file ();
             LOG_DD ("don't ask again: " << (int) dont_ask_again);
             if (m_priv->confirm_before_reload_source == dont_ask_again) {
+                NEMIVER_TRY
                 get_conf_mgr ().set_key_value
                                 (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE,
                                  !dont_ask_again);
                 get_conf_mgr ().set_key_value
                                 (CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE,
                                  need_to_reload_file);
+                NEMIVER_CATCH_NOX
             }
             std::list<UString>::iterator iter =
                 std::find (pending_notifications.begin (),
@@ -3436,7 +3446,10 @@ DBGPerspective::init_body ()
     IConfMgr &conf_mgr = get_conf_mgr ();
     int pane_location = -1; // don't specifically set a location
                             // if we can't read the last location from gconf
+    NEMIVER_TRY
     conf_mgr.get_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location);
+    NEMIVER_CATCH_NOX
+
     if (pane_location > 0) {
         m_priv->body_main_paned->set_position (pane_location);
     }
@@ -3456,8 +3469,12 @@ DBGPerspective::init_body ()
         ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
                                                         "statusesnotebook");
     int width=100, height=70;
+
+    NEMIVER_TRY
     conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH, width);
     conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT, height);
+    NEMIVER_CATCH_NOX
+
     LOG_DD ("setting status widget min size: width: "
             << width
             << ", height: "
@@ -4143,19 +4160,28 @@ DBGPerspective::read_default_config ()
     IConfMgr &conf_mgr = get_conf_mgr ();
     if (m_priv->source_dirs.empty ()) {
         UString dirs;
-        conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs);
-        LOG_DD ("got source dirs '" << dirs << "' from conf mgr");
-        m_priv->source_dirs = dirs.split (":");
-        LOG_DD ("that makes '" <<(int)m_priv->source_dirs.size()
-                << "' dir paths");
 
+        NEMIVER_TRY
+        conf_mgr.get_key_value (CONF_KEY_NEMIVER_SOURCE_DIRS, dirs);
+        NEMIVER_CATCH_NOX
+
+        LOG_DD ("got source dirs '" << dirs << "' from conf mgr");
+        if (!dirs.empty ()) {
+            m_priv->source_dirs = dirs.split (":");
+            LOG_DD ("that makes '" <<(int)m_priv->source_dirs.size()
+                    << "' dir paths");
+        }
+
+        NEMIVER_TRY
         conf_mgr.get_key_value (CONF_KEY_SHOW_DBG_ERROR_DIALOGS,
                                 m_priv->show_dbg_errors);
+        NEMIVER_CATCH_NOX
 
         conf_mgr.value_changed_signal ().connect
             (sigc::mem_fun (*this,
                             &DBGPerspective::on_conf_key_changed_signal));
     }
+    NEMIVER_TRY
     conf_mgr.get_key_value (CONF_KEY_HIGHLIGHT_SOURCE_CODE,
                             m_priv->enable_syntax_highlight);
     conf_mgr.get_key_value (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS,
@@ -4168,9 +4194,15 @@ DBGPerspective::read_default_config ()
                             m_priv->custom_font_name);
     conf_mgr.get_key_value (CONF_KEY_SYSTEM_FONT_NAME,
                             m_priv->system_font_name);
+    NEMIVER_CATCH_NOX
+
 #ifdef WITH_SOURCEVIEWMM2
-    UString style_id;
+    UString style_id ("classic");
+
+    NEMIVER_TRY
     conf_mgr.get_key_value (CONF_KEY_EDITOR_STYLE_SCHEME, style_id);
+    NEMIVER_CATCH_NOX
+
     m_priv->editor_style = gtksourceview::SourceStyleSchemeManager::get_default
         ()->get_scheme (style_id);
 #endif // WITH_SOURCEVIEWMM2
@@ -6363,8 +6395,12 @@ DBGPerspective::debugger ()
         THROW_IF_FAIL (module_manager);
 
         UString debugger_dynmod_name;
+
+        NEMIVER_TRY
         get_conf_mgr ().get_key_value (CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME,
                                        debugger_dynmod_name);
+        NEMIVER_CATCH_NOX
+
         LOG_DD ("got debugger_dynmod_name from confmgr: '"
                 << debugger_dynmod_name << "'");
         if (debugger_dynmod_name == "") {

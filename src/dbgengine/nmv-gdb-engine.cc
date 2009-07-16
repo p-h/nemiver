@@ -286,8 +286,12 @@ public:
 
     const UString& get_debugger_full_path () const
     {
+        NEMIVER_TRY
         get_conf_mgr ()->get_key_value (CONF_KEY_GDB_BINARY,
-                             const_cast<Priv*> (this)->debugger_full_path);
+                                        const_cast<Priv*>
+                                                (this)->debugger_full_path);
+        NEMIVER_CATCH_NOX
+
         if (debugger_full_path == "" ||
             debugger_full_path == DEFAULT_GDB_BINARY) {
             const_cast<Priv*> (this)->debugger_full_path =
