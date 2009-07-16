@@ -229,14 +229,15 @@ GConfMgr::get_key_value (const UString &a_key, bool &a_value)
     THROW_IF_FAIL (m_gconf_client);
 
     GError *err=NULL;
-    a_value = gconf_client_get_bool (m_gconf_client,
-                                     a_key.c_str (),
-                                     &err);
+    bool value = gconf_client_get_bool (m_gconf_client,
+                                        a_key.c_str (),
+                                        &err);
     GErrorSafePtr error (err);
     if (error) {
         LOG_ERROR (error->message);
         return false;
     }
+    a_value = value;
     return true;
 }
 
@@ -262,14 +263,15 @@ GConfMgr::get_key_value (const UString &a_key, int &a_value)
     THROW_IF_FAIL (m_gconf_client);
 
     GError *err=NULL;
-    a_value = gconf_client_get_int (m_gconf_client,
-                                    a_key.c_str (),
-                                    &err);
+    int value = gconf_client_get_int (m_gconf_client,
+                                      a_key.c_str (),
+                                      &err);
     GErrorSafePtr error (err);
     if (error) {
         LOG_ERROR (error->message);
         return false;
     }
+    a_value = value;
     return true;
 }
 
@@ -295,14 +297,15 @@ GConfMgr::get_key_value (const UString &a_key, double &a_value)
     THROW_IF_FAIL (m_gconf_client);
 
     GError *err=NULL;
-    a_value = gconf_client_get_float (m_gconf_client,
-                                      a_key.c_str (),
-                                      &err);
+    double value = gconf_client_get_float (m_gconf_client,
+                                           a_key.c_str (),
+                                           &err);
     GErrorSafePtr error (err);
     if (error) {
         LOG_ERROR (error->message);
         return false;
     }
+    a_value = value;
     return true;
 }
 
