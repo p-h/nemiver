@@ -22,13 +22,9 @@ endif
 
 noinst_PROGRAMS= \
 $(TESTS) \
-runtestcore \
-runteststdout \
-docore inout \
-pointerderef \
-fooprog \
-templatedvar \
-gtkmmtest dostackoverflow
+runtestcore  runteststdout  docore inout \
+pointerderef fooprog templatedvar \
+gtkmmtest dostackoverflow bigvar
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
 runtestgdbmi_LDADD= @NEMIVERCOMMON_LIBS@ \
@@ -150,6 +146,9 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 dostackoverflow_SOURCES=do-stack-overflow.cc
 dostackoverflow_LDADD=@NEMIVERCOMMON_LIBS@
+
+bigvar_SOURCES=big-var.c
+bigvar_LDADD=@NEMIVERCOMMON_LIBS@
 
 INCLUDES=-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/confmgr \

@@ -432,6 +432,10 @@ private:
     SourceEditor* get_source_editor_from_path (const UString &a_path,
                                                UString &a_actual_file_path,
                                                bool a_basename_only=false);
+
+    bool source_view_to_root_window_coordinates (int x, int y,
+                                                 int &root_x,
+                                                 int &root_y);
     IWorkbench& workbench () const;
     void bring_source_as_current (const UString &a_path);
     int get_n_pages ();
@@ -2508,57 +2512,42 @@ DBGPerspective::on_popup_var_insp_size_request (Gtk::Requisition *a_req,
     THROW_IF_FAIL (a_container);
 
     // These are going to be the actual width and height allocated for
-    // the container. These will be clipped later down this function, if
-    // necessary.
+    // the container. These will be clipped (in height only, for now) later down
+    // this function, if necessary.
     int width = a_req->width, height = a_req->height;
+    int mouse_x = 0, mouse_y = 0;
 
-    if (a_container->get_window () && a_container->get_screen ()) {
-        // The position of the top left corner of the container,
-        // in root window coordinates.
-        int cont_orig_x = 0, cont_orig_y = 0;
+    if (!source_view_to_root_window_coordinates
+                                    (m_priv->mouse_in_source_editor_x,
+                                     m_priv->mouse_in_source_editor_y,
+                                     mouse_x, mouse_y))
+        return;
 
-        const double C = 0.95;
-        // The maximum screen width/height that we set ourselves to use
-        int max_screen_width = a_container->get_screen ()->get_width () * C;
-        int max_screen_height = a_container->get_screen ()->get_height () * C;
-        LOG_DD ("scr (w,h): (" << a_container->get_screen ()->get_width ()
-                               << ","
-                               << a_container->get_screen ()->get_height ()
-                               << ")");
+    const double C = 0.90;
 
-        LOG_DD ("max screen(w,h): (" << max_screen_width
-                                     << ","
-                                     << max_screen_height
-                                     << ")");
+    // The maximum screen width/height that we set ourselves to use
+    int max_screen_width = a_container->get_screen ()->get_width () * C;
+    int max_screen_height = a_container->get_screen ()->get_height () * C;
+    LOG_DD ("scr (w,h): (" << a_container->get_screen ()->get_width ()
+                           << ","
+                           << a_container->get_screen ()->get_height ()
+                           << ")");
 
-        Gdk::Rectangle cont_alloc;
-        cont_alloc = a_container->get_allocation ();
-        a_container->get_window ()->get_origin (cont_orig_x, cont_orig_y);
-        cont_alloc.set_x (cont_orig_x);
-        cont_alloc.set_y (cont_orig_y);
-        // Now cont_alloc represents the screen space used by the
-        // container, in root window coordinates.
+    LOG_DD ("max screen(w,h): (" << max_screen_width
+                                 << ","
+                                 << max_screen_height
+                                 << ")");
 
-        // If the width of the container is too big so that it overflows
-        // the max usable width, clip it.
-        if (cont_alloc.get_x () + cont_alloc.get_width () >= max_screen_width) {
-            if (max_screen_width <=  cont_alloc.get_x ())
-                max_screen_width = a_container->get_screen ()->get_width ();
-
-            width = max_screen_width - cont_alloc.get_x ();
-        }
-
-        // Likewise, if the height of the container is too big so that
-        // it overflows the max usable height, clip it.
-        if (cont_alloc.get_y () + cont_alloc.get_height ()
-            >= max_screen_height) {
-
-            if (max_screen_height <= cont_alloc.get_y ())
-                max_screen_height = a_container->get_screen ()->get_height ();
-
-            height = max_screen_height - cont_alloc.get_y ();
-        }
+    // if the height of the container is too big so that
+    // it overflows the max usable height, clip it.
+    if (mouse_y + height >= max_screen_height) {
+        if (max_screen_height <= mouse_y)
+            max_screen_height = a_container->get_screen ()->get_height ();
+        height = max_screen_height - mouse_y;
     }
+
+    // If at some point, we remark that width might be too big as well,
+    // we might clip width too. Though it seems unlikely for now.
 
     a_container->set_size_request (width, height);
 
@@ -3786,6 +3775,38 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
                                         a_basename_only);
 }
 
+/// Converts coordinates expressed in source view coordinates system into
+/// coordinates expressed in the root window coordinate system.
+/// \param a_x abscissa in source view coordinate system
+/// \param a_y ordinate in source view coordinate system
+/// \param a_root_x converted abscissa expressed in root window coordinate
+///        system
+/// \param a_root_y converted ordinate expressed in root window coordinate
+///         system
+/// \return true upon successful completion, false otherwise.
+bool
+DBGPerspective::source_view_to_root_window_coordinates (int a_x, int a_y,
+                                                        int &a_root_x,
+                                                        int &a_root_y)
+{
+    SourceEditor *editor = get_current_source_editor ();
+
+    if (!editor)
+        return false;
+
+    Glib::RefPtr<Gdk::Window> gdk_window =
+        ((Gtk::Widget&)editor->source_view ()).get_window ();
+
+    THROW_IF_FAIL (gdk_window);
+
+    int abs_x=0, abs_y=0;
+    gdk_window->get_origin (abs_x, abs_y);
+    a_root_x = a_x + abs_x;
+    a_root_y = a_y + abs_y;
+
+    return true;
+}
+
 SourceEditor*
 DBGPerspective::get_source_editor_from_path (const UString &a_path,
                                              UString &a_actual_file_path,
@@ -4278,6 +4299,13 @@ DBGPerspective::get_process_manager ()
 }
 
 
+/// Get the "word" located around position (a_x,a_y), consider it as a
+/// variable name, request the debugging engine for the content of that
+/// variable and display that variable in a popup tip.
+/// If the debugger engine doesn't respond, that certainly means the word
+/// was not a variable name.
+/// \param a_x the abscissa of the position to consider
+/// \param a_y the ordinate of the position to consider
 void
 DBGPerspective::try_to_request_show_variable_value_at_position (int a_x,
                                                                 int a_y)
@@ -4296,13 +4324,10 @@ DBGPerspective::try_to_request_show_variable_value_at_position (int a_x,
     }
 
     if (var_name == "") {return;}
-    Glib::RefPtr<Gdk::Window> gdk_window =
-                        ((Gtk::Widget&)editor->source_view ()).get_window ();
-    THROW_IF_FAIL (gdk_window);
+
     int abs_x=0, abs_y=0;
-    gdk_window->get_origin (abs_x, abs_y);
-    abs_x += a_x;
-    abs_y += a_y + start_rect.get_height () / 2;
+    if (!source_view_to_root_window_coordinates (a_x, a_y, abs_x, abs_y))
+        return;
     m_priv->in_show_var_value_at_pos_transaction = true;
     m_priv->var_popup_tip_x = abs_x;
     m_priv->var_popup_tip_y = abs_y;
@@ -4313,6 +4338,10 @@ DBGPerspective::try_to_request_show_variable_value_at_position (int a_x,
                         &DBGPerspective::on_variable_created_for_tooltip_signal));
 }
 
+/// Popup a tip at a given position, showing some text content.
+/// \param a_x the absissa to consider
+/// \param a_y the ordinate to consider
+/// \param a_text the text to show
 void
 DBGPerspective::show_underline_tip_at_position (int a_x,
                                                 int a_y,
@@ -4326,15 +4355,19 @@ DBGPerspective::show_underline_tip_at_position (int a_x,
     get_popup_tip ().show_at_position (a_x, a_y);
 }
 
+/// Popup a tip at a given position, showing some the content of a variable.
+/// \param a_x the absissa to consider
+/// \param a_y the ordinate to consider
+/// \param a_text the text to show
 void
 DBGPerspective::show_underline_tip_at_position
                                         (int a_x, int a_y,
                                          const IDebugger::VariableSafePtr a_var)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
+    get_popup_tip ().show_at_position (a_x, a_y);
     get_popup_var_inspector ().set_variable (a_var,
                                              true /* expand variable */);
-    get_popup_tip ().show_at_position (a_x, a_y);
 }
 
 VarInspector&
@@ -4392,6 +4425,9 @@ DBGPerspective::stop_mouse_immobile_timer ()
     m_priv->timeout_source_connection.disconnect ();
 }
 
+/// Get the Popup tip object. Create it, if necessary. Reuse it when
+/// possible.
+/// \return the popup tip.
 PopupTip&
 DBGPerspective::get_popup_tip ()
 {
@@ -4401,8 +4437,8 @@ DBGPerspective::get_popup_tip ()
         m_priv->popup_tip.reset (new PopupTip);
         Gtk::ScrolledWindow *w = Gtk::manage (new Gtk::ScrolledWindow ());
         w->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-        pack_popup_var_inspector_in_new_scr_win (w);
         m_priv->popup_tip->set_child (*w);
+        pack_popup_var_inspector_in_new_scr_win (w);
         m_priv->popup_tip->signal_hide ().connect (sigc::mem_fun
                    (*this, &DBGPerspective::on_popup_tip_hide));
     }
