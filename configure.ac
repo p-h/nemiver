@@ -355,14 +355,19 @@ dnl ***************************
 dnl Set Dodji devel environment.
 dnl ***************************
 if test  "x$NEMIVER_DEVEL" = "xon" ; then
-    CFLAGS=$DODJI_FLAGS
-    CXXFLAGS="-Wall -g -Wextra -Wno-deprecated -fuse-cxa-atexit $REQUIRED_FLAGS"
+    DODJI_CFLAGS="-Wall -g -Wextra -Wno-deprecated $REQUIRED_FLAGS"
     if test x$NEMIVER_ALLOW_WARNINGS != xon ; then
-        CXXFLAGS="$CXXFLAGS -Werror"
+        DODJI_CFLAGS="$DODJI_CFLAGS -Werror"
     fi
+    DODJI_CXXFLAGS="$DODJI_CFLAGS -fuse-cxa-atexit"
     ENABLE_DEBUG=yes
+    CXXFLAGS="$DODJI_CXXFLAGS"
+    CFLAGS="$DODJI_CFLAGS"
 else
-    CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit $REQUIRED_FLAGS"
+    DODJI_CFLAGS="$REQUIRED_FLAGS"
+    DODJI_CXXFLAGS="$DODJI_CFAGS -fuse-cxa-atexit"
+    CFLAGS="$CFLAGS $DODJI_CFLAGS"
+    CXXFLAGS="$CXXFLAGS $DODJI_CXXFLAGS"
 fi
 
 if test x$ENABLE_DEBUG != x ; then
