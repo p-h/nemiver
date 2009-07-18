@@ -6496,7 +6496,8 @@ DBGPerspective::get_call_stack ()
 {
     THROW_IF_FAIL (m_priv);
     if (!m_priv->call_stack) {
-        m_priv->call_stack.reset (new CallStack (debugger (), workbench (), *this));
+        m_priv->call_stack.reset (new CallStack (debugger (),
+                                                 workbench (), *this));
         THROW_IF_FAIL (m_priv);
     }
     return *m_priv->call_stack;
@@ -6604,7 +6605,7 @@ DBGPerspective::get_breakpoints_scrolled_win ()
         m_priv->breakpoints_scrolled_win.reset (new Gtk::ScrolledWindow);
         THROW_IF_FAIL (m_priv->breakpoints_scrolled_win);
         m_priv->breakpoints_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
-                                                   Gtk::POLICY_AUTOMATIC);
+                                                      Gtk::POLICY_AUTOMATIC);
     }
     THROW_IF_FAIL (m_priv->breakpoints_scrolled_win);
     return *m_priv->breakpoints_scrolled_win;
@@ -6630,7 +6631,7 @@ DBGPerspective::get_registers_scrolled_win ()
         m_priv->registers_scrolled_win.reset (new Gtk::ScrolledWindow);
         THROW_IF_FAIL (m_priv->registers_scrolled_win);
         m_priv->registers_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
-                                                   Gtk::POLICY_AUTOMATIC);
+                                                    Gtk::POLICY_AUTOMATIC);
     }
     THROW_IF_FAIL (m_priv->registers_scrolled_win);
     return *m_priv->registers_scrolled_win;
