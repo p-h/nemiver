@@ -1,3 +1,12 @@
+nemiver (0.7.0-1) unstable; urgency=low
+
+  * New upstream version
+    + Now using GDB Variable Objects (via GDB/MI)
+  * dh_scroolkeeper is deprecated now, removed
+  * Updated Standards-Version to 3.8.2
+
+ -- Luca Bruno <lucab@debian.org>  Fri, 24 Jul 2009 16:24:32 +0200
+
 nemiver (0.6.7-1) unstable; urgency=low
 
   * New upstream version
