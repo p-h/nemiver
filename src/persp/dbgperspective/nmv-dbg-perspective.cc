@@ -2919,7 +2919,8 @@ DBGPerspective::init_actions ()
             _("Save the current debugging session to disk"),
             sigc::mem_fun (*this, &DBGPerspective::on_save_session_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "DetachFromProgramMenuItemAction",
@@ -2930,7 +2931,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_detach_from_program_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
     };
 
@@ -2943,7 +2945,8 @@ DBGPerspective::init_actions ()
               "and starting a new one"),
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
-            "<shift>F5"
+            "<shift>F5",
+            true
         }
     };
 
@@ -2955,7 +2958,8 @@ DBGPerspective::init_actions ()
             _("Execute next line stepping over the next function, if any"),
             sigc::mem_fun (*this, &DBGPerspective::on_next_action),
             ActionEntry::DEFAULT,
-            "F6"
+            "F6",
+            false
         },
         {
             "StepMenuItemAction",
@@ -2964,7 +2968,8 @@ DBGPerspective::init_actions ()
             _("Execute next line, stepping into the next function, if any"),
             sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
             ActionEntry::DEFAULT,
-            "F7"
+            "F7",
+            false
         },
         {
             "StepOutMenuItemAction",
@@ -2973,7 +2978,8 @@ DBGPerspective::init_actions ()
             _("Finish the execution of the current function"),
             sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
             ActionEntry::DEFAULT,
-            "<shift>F7"
+            "<shift>F7",
+            false
         },
         {
             "ContinueMenuItemAction",
@@ -2982,7 +2988,8 @@ DBGPerspective::init_actions ()
             _("Continue program execution until the next breakpoint"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
             ActionEntry::DEFAULT,
-            "F5"
+            "F5",
+            true
         },
         {
             "ContinueUntilMenuItemAction",
@@ -2992,7 +2999,8 @@ DBGPerspective::init_actions ()
               "line is reached"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_until_action),
             ActionEntry::DEFAULT,
-            "F11"
+            "F11",
+            false
         },
         {
             "ToggleBreakPointMenuItemAction",
@@ -3003,7 +3011,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
-            "F8"
+            "F8",
+            false
         },
         {
             "ToggleEnableBreakPointMenuItemAction",
@@ -3016,7 +3025,8 @@ DBGPerspective::init_actions ()
                     (*this,
                      &DBGPerspective::on_toggle_breakpoint_enabled_action),
             ActionEntry::DEFAULT,
-            "<shift>F8"
+            "<shift>F8",
+            false
         },
         {
             "SetBreakPointMenuItemAction",
@@ -3025,7 +3035,8 @@ DBGPerspective::init_actions ()
             _("Set a breakpoint at a function or line number"),
             sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
             ActionEntry::DEFAULT,
-            "<control>B"
+            "<control>B",
+            false
         },
         {
             "SetBreakPointUsingDialogMenuItemAction",
@@ -3036,7 +3047,8 @@ DBGPerspective::init_actions ()
                 (*this,
                  &DBGPerspective::on_set_breakpoint_using_dialog_action),
             ActionEntry::DEFAULT,
-            "<control><shift>B"
+            "<control><shift>B",
+            false
         },
         {
             "SetWatchPointUsingDialogMenuItemAction",
@@ -3047,7 +3059,8 @@ DBGPerspective::init_actions ()
                 (*this,
                  &DBGPerspective::on_set_watchpoint_using_dialog_action),
             ActionEntry::DEFAULT,
-            "<control>T"
+            "<control>T",
+            false
         },
         {
             "InspectVariableMenuItemAction",
@@ -3057,7 +3070,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_inspect_variable_action),
             ActionEntry::DEFAULT,
-            "F12"
+            "F12",
+            false
         },
         {
             "CallFunctionMenuItemAction",
@@ -3066,7 +3080,8 @@ DBGPerspective::init_actions ()
             _("Call a function in the program being debugged"),
             sigc::mem_fun (*this, &DBGPerspective::on_call_function_action),
             ActionEntry::DEFAULT,
-            "<control>E"
+            "<control>E",
+            false
         },
         {
             "ActivateGlobalVariablesDialogMenuAction",
@@ -3076,7 +3091,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun(*this,
                           &DBGPerspective::on_activate_global_variables),
             ActionEntry::DEFAULT,
-            "<control>G"
+            "<control>G",
+            false
         },
         {
             "RefreshLocalVariablesMenuItemAction",
@@ -3085,7 +3101,8 @@ DBGPerspective::init_actions ()
             _("Refresh the list of variables local to the current function"),
             sigc::mem_fun (*this, &DBGPerspective::on_refresh_locals_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         }
     };
 
@@ -3097,7 +3114,8 @@ DBGPerspective::init_actions ()
             _("Stop the Debugger"),
             sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
             ActionEntry::DEFAULT,
-            "F9"
+            "F9",
+            true
         }
     };
 
@@ -3109,7 +3127,8 @@ DBGPerspective::init_actions ()
             "",
             nil_slot,
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "ActivateTargetTerminalViewMenuAction",
@@ -3119,7 +3138,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_target_terminal_view),
             ActionEntry::DEFAULT,
-            "<alt>1"
+            "<alt>1",
+            false
         },
         {
             "ActivateCallStackViewMenuAction",
@@ -3129,7 +3149,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_call_stack_view),
             ActionEntry::DEFAULT,
-            "<alt>2"
+            "<alt>2",
+            false
         },
         {
             "ActivateVariablesViewMenuAction",
@@ -3139,7 +3160,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_variables_view),
             ActionEntry::DEFAULT,
-            "<alt>3"
+            "<alt>3",
+            false
         },
         {
             "ActivateBreakpointsViewMenuAction",
@@ -3149,7 +3171,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_breakpoints_view),
             ActionEntry::DEFAULT,
-            "<alt>4"
+            "<alt>4",
+            false
         },
         {
             "ActivateRegistersViewMenuAction",
@@ -3159,7 +3182,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_registers_view),
             ActionEntry::DEFAULT,
-            "<alt>5"
+            "<alt>5",
+            false
         },
 #ifdef WITH_MEMORYVIEW
         {
@@ -3169,7 +3193,8 @@ DBGPerspective::init_actions ()
             _("Switch to Memory View"),
             sigc::mem_fun (*this, &DBGPerspective::on_activate_memory_view),
             ActionEntry::DEFAULT,
-            "<alt>6"
+            "<alt>6",
+            false
         },
 #endif // WITH_MEMORYVIEW
         {
@@ -3179,7 +3204,8 @@ DBGPerspective::init_actions ()
             _("Show the debugger commands tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_commands_action),
             ActionEntry::TOGGLE,
-            ""
+            "",
+            false
         },
         {
             "ShowErrorsMenuAction",
@@ -3188,7 +3214,8 @@ DBGPerspective::init_actions ()
             _("Show the errors tab"),
             sigc::mem_fun (*this, &DBGPerspective::on_show_errors_action),
             ActionEntry::TOGGLE,
-            ""
+            "",
+            false
         },
         {
             "ShowTargetOutputMenuAction",
@@ -3198,7 +3225,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_show_target_output_action),
             ActionEntry::TOGGLE,
-            ""
+            "",
+            false
         },
         {
             "DebugMenuAction",
@@ -3207,7 +3235,8 @@ DBGPerspective::init_actions ()
             "",
             nil_slot,
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "OpenMenuItemAction",
@@ -3216,7 +3245,8 @@ DBGPerspective::init_actions ()
             _("Open a source file for viewing"),
             sigc::mem_fun (*this, &DBGPerspective::on_open_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "ExecuteProgramMenuItemAction",
@@ -3226,7 +3256,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_execute_program_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "LoadCoreMenuItemAction",
@@ -3236,7 +3267,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_load_core_file_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "AttachToProgramMenuItemAction",
@@ -3246,7 +3278,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_attach_to_program_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "ConnectToRemoteTargetMenuItemAction",
@@ -3257,7 +3290,8 @@ DBGPerspective::init_actions ()
                     (*this,
                      &DBGPerspective::on_connect_to_remote_target_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "SavedSessionsMenuItemAction",
@@ -3267,7 +3301,8 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_choose_a_saved_session_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "CurrentSessionPropertiesMenuItemAction",
@@ -3278,7 +3313,8 @@ DBGPerspective::init_actions ()
                     (*this,
                      &DBGPerspective::on_current_session_properties_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         }
     };
 
@@ -3290,7 +3326,8 @@ DBGPerspective::init_actions ()
             _("Reloads the source file"),
             sigc::mem_fun (*this, &DBGPerspective::on_reload_action),
             ActionEntry::DEFAULT,
-            "<control>R"
+            "<control>R",
+            false
         },
         {
             "CloseMenuItemAction",
@@ -3299,7 +3336,8 @@ DBGPerspective::init_actions ()
             _("Close the opened file"),
             sigc::mem_fun (*this, &DBGPerspective::on_close_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         },
         {
             "FindMenuItemAction",
@@ -3308,7 +3346,8 @@ DBGPerspective::init_actions ()
             _("Find a text string in file"),
             sigc::mem_fun (*this, &DBGPerspective::on_find_action),
             ActionEntry::DEFAULT,
-            "<Control>F"
+            "<Control>F",
+            false
         }
     };
 

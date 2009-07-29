@@ -645,7 +645,8 @@ Workbench::init_actions ()
             "",
             nil_slot,
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         }
         ,
         {
@@ -655,7 +656,8 @@ Workbench::init_actions ()
             _("Quit the application"),
             sigc::mem_fun (*this, &Workbench::on_quit_menu_item_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         }
         ,
         {
@@ -665,7 +667,8 @@ Workbench::init_actions ()
             "",
             nil_slot,
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         }
         ,
         {
@@ -675,7 +678,8 @@ Workbench::init_actions ()
             "",
             nil_slot,
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         }
         ,
         {
@@ -685,7 +689,8 @@ Workbench::init_actions ()
             _("Display information about this application"),
             sigc::mem_fun (*this, &Workbench::on_about_menu_item_action),
             ActionEntry::DEFAULT,
-            ""
+            "",
+            false
         }
         ,
         {
@@ -695,7 +700,8 @@ Workbench::init_actions ()
             _("Display the user manual for this application"),
             sigc::mem_fun (*this, &Workbench::on_contents_menu_item_action),
             ActionEntry::DEFAULT,
-            "F1"
+            "F1",
+            false
         }
     };
 

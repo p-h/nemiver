@@ -87,6 +87,7 @@ public:
     sigc::slot<void> m_activate_slot;
     Type m_type;
     common::UString m_accel;
+    bool m_is_important;
 
     Glib::RefPtr<Gtk::Action> to_action () const
     {
@@ -118,9 +119,11 @@ public:
             default:
                 THROW ("should never reach this point");
         }
+
+        if (result)
+            result->set_is_important (m_is_important);
         return result;
     }
-
 };//end class ActionEntry
 
 NEMIVER_API void add_action_entries_to_action_group
