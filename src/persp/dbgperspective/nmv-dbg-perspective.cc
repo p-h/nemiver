@@ -2512,8 +2512,8 @@ DBGPerspective::on_popup_var_insp_size_request (Gtk::Requisition *a_req,
     THROW_IF_FAIL (a_container);
 
     // These are going to be the actual width and height allocated for
-    // the container. These will be clipped (in height only, for now) later down
-    // this function, if necessary.
+    // the container. These will be clipped (in height only, for now)
+    // later down this function, if necessary.
     int width = a_req->width, height = a_req->height;
     int mouse_x = 0, mouse_y = 0;
 
@@ -2540,15 +2540,29 @@ DBGPerspective::on_popup_var_insp_size_request (Gtk::Requisition *a_req,
 
     // if the height of the container is too big so that
     // it overflows the max usable height, clip it.
+    bool clipped = false;
     if (mouse_y + height >= max_screen_height) {
         if (max_screen_height <= mouse_y)
             max_screen_height = a_container->get_screen ()->get_height ();
         height = max_screen_height - mouse_y;
+        clipped = true;
+        LOG_DD ("clipped height to: " << height);
     }
-
-    // If at some point, we remark that width might be too big as well,
+    // If at some point, if we remark that width might be too big as well,
     // we might clip width too. Though it seems unlikely for now.
 
+    if (!clipped) {
+        // Hack: we need to add some padding to take in account the extra
+        // things add by a_contained besides the content carried by
+        // the popup tip. This extra content includes things like the
+        // scrollbars etc ...
+        const int x_pad = 17, y_pad = 17;
+        width += x_pad;
+        height += y_pad;
+    }
+
+    LOG_DD ("setting scrolled window to size: ("
+            << width << "," << height << ")");
     a_container->set_size_request (width, height);
 
     NEMIVER_CATCH
