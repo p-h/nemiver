@@ -27,7 +27,7 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gtk/gtk.h>
 
-#define LOG
+#define LOG(...)
 
 /* Spinner cache implementation */
 
@@ -107,7 +107,8 @@ ephy_spinner_cache_get_type (void)
 			NULL,
 			sizeof (EphySpinnerCache),
 			0,
-			(GInstanceInitFunc) ephy_spinner_cache_init
+			(GInstanceInitFunc) ephy_spinner_cache_init,
+			NULL,
 		};
 
 		type = g_type_register_static (G_TYPE_OBJECT,
@@ -379,7 +380,7 @@ ephy_spinner_cache_get_images (EphySpinnerCache *cache,
 
 	LOG ("Getting animation images for screen %p at size %d", screen, icon_size);
 
-	g_return_val_if_fail (icon_size >= 0 && icon_size < LAST_ICON_SIZE, NULL);
+	g_return_val_if_fail (icon_size < LAST_ICON_SIZE, NULL);
 
 	/* Backward compat: "invalid" meant "native" size which doesn't exist anymore */
 	if (icon_size == GTK_ICON_SIZE_INVALID)
@@ -523,7 +524,8 @@ ephy_spinner_get_type (void)
 			NULL, /* class_data */
 			sizeof (EphySpinner),
 			0, /* n_preallocs */
-			(GInstanceInitFunc) ephy_spinner_init
+			(GInstanceInitFunc) ephy_spinner_init,
+			NULL
 		};
 
 		type = g_type_register_static (GTK_TYPE_WIDGET,
@@ -569,7 +571,7 @@ ephy_spinner_unload_images (EphySpinner *spinner)
 }
 
 static void
-icon_theme_changed_cb (GtkIconTheme *icon_theme,
+icon_theme_changed_cb (GtkIconTheme *icon_theme __attribute__ ((unused)),
 		       EphySpinner *spinner)
 {
 	ephy_spinner_unload_images (spinner);
@@ -624,8 +626,7 @@ ephy_spinner_expose (GtkWidget *widget,
 	/* Otherwise |images| will be NULL anyway */
 	g_assert (images->n_animation_pixbufs > 0);
 		
-	g_assert (details->current_image >= 0 &&
-		  details->current_image < images->n_animation_pixbufs);
+	g_assert (details->current_image < images->n_animation_pixbufs);
 
 	pixbuf = images->animation_pixbufs[details->current_image];
 

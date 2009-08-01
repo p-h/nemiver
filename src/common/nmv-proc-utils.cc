@@ -96,13 +96,15 @@ launch_program (const std::vector<UString> &a_args,
         //wire stderr to stderr_pipes[WRITE_PIPE] pipe
         //******************************************
         close (2) ;
-        dup (stderr_pipes[WRITE_PIPE]) ;
+        int res = dup (stderr_pipes[WRITE_PIPE]);
+        RETURN_VAL_IF_FAIL (res > 0, false);
 
         //*******************************************
         //wire stdout to stdout_pipes[WRITE_PIPE] pipe
         //******************************************
         close (1) ;
-        dup (stdout_pipes[WRITE_PIPE]) ;
+        res = dup (stdout_pipes[WRITE_PIPE]) ;
+        RETURN_VAL_IF_FAIL (res > 0, false);
 
         //*****************************
         //close the unnecessary pipes
