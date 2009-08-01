@@ -521,7 +521,8 @@ public:
                 _("Remove this breakpoint"),
                 sigc::mem_fun (*this, &Priv::on_breakpoint_delete_action),
                 ui_utils::ActionEntry::DEFAULT,
-                ""
+                "",
+                false
             },
             {
                 "GoToSourceBreakpointMenuItemAction",
@@ -531,7 +532,8 @@ public:
                 sigc::mem_fun (*this,
                         &Priv::on_breakpoint_go_to_source_action),
                 ui_utils::ActionEntry::DEFAULT,
-                ""
+                "",
+                false
             }
         };
 

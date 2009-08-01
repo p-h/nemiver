@@ -169,7 +169,8 @@ struct CallStack::Priv {
                     (*this,
                      &Priv::on_call_stack_copy_to_clipboard_action),
                 ui_utils::ActionEntry::DEFAULT,
-                ""
+                "",
+                false
             }
         };
 

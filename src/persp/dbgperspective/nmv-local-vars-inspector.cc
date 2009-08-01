@@ -242,7 +242,8 @@ public:
                     (*this,
                      &Priv::on_variable_path_expr_copy_to_clipboard_action),
                 ui_utils::ActionEntry::DEFAULT,
-                ""
+                "",
+                false
             },
             {
                 "CopyVariableValueMenuItemAction",
@@ -253,7 +254,8 @@ public:
                     (*this,
                      &Priv::on_variable_value_copy_to_clipboard_action),
                 ui_utils::ActionEntry::DEFAULT,
-                ""
+                "",
+                false
             },
             {
                 "CreateWatchpointMenuItemAction",
@@ -265,7 +267,8 @@ public:
                     (*this,
                      &Priv::on_create_watchpoint_action),
                 ui_utils::ActionEntry::DEFAULT,
-                ""
+                "",
+                false
             },
         };
 
