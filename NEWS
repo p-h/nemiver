@@ -1,3 +1,23 @@
+0.7.1 Release
+=============
+
+Dodji Seketeli
+      Support multiple address breakpoints (Closes: #587697)
+      Support original-location in breakpoints (Closes: #588256)
+      Support restarting when GDB dies (Closes: #588313)
+      Don't fall appart when gconfd is down
+      Keep default conf values when gconf is down
+      Fix variable popup tip size issues
+      Var popup tip shouldn't be too small by default
+      Support "text besides icons" visual setting
+
+Mario Blättermann
+      Updated German translation
+      Added German doc translation
+
+Takeshi AIHANA
+      Updated Japanese translation.
+
 0.7.0 Release
 =============
 
