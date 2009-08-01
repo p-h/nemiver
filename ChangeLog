@@ -1,3 +1,245 @@
+2009-08-01  Dodji Seketeli <dodji@redhat.com>
+
+	Automatic ChangeLog update for 0.7.1
+	* ChangeLog: Update for 0.7.1
+
+2009-08-01  Dodji Seketeli <dodji@redhat.com>
+
+	Update NEWS for 0.7.1
+	* NEWS: Update.
+
+2009-08-01  Dodji Seketeli <dodji@redhat.com>
+
+	Don't set important Actions on older GTK+s
+	* src/uicommon/nmv-ui-utils.h (ActionEntry::to_action):
+	Gtk::Action::set_is_important didn't exist before GTK+ 2.16.
+	So don't call it for older versions.
+
+2009-08-01  Dodji Seketeli <dodji@redhat.com>
+
+	Kill build warnings
+	* src/uicommon/ephy-spinner.c (ephy_spinner_cache_get_type,
+	ephy_spinner_get_type):
+	Adjust to new layout of GTypeInfo.
+	(ephy_spinner_cache_get_images): Unsigned is always >=0.
+	(icon_theme_changed_cb): Make gcc quietly accept the unused
+	parameter.
+	* src/common/nmv-proc-utils.cc (launch_program): Check the return
+	value of dup.
+
+2009-08-01  Dodji Seketeli <dodji@redhat.com>
+
+	Adjsut to new ActionEntry layout
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	(BreakpointsView::Priv::init_actions): Adjust to the new
+	ActionEntry layout that now has an ActionEntry::is_important
+	member.
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	(CallStack::Priv::init_actions): Likewise.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	(LocalVarsInspector::Priv::init_actions): Likewise.
+	* src/persp/dbgperspective/nmv-var-inspector.cc:
+	(VarInspector::Priv::init_actions): Likewise.
+
+2009-07-29  Dodji Seketeli <dodji@redhat.com>
+
+	Support "text besides icons" visual setting
+	* src/uicommon/nmv-ui-utils.h:
+	(ActionEntry): add an "is_important" boolean.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::init_actions): Set "run" and and "continue"
+	actions as being "important".
+	* src/workbench/nmv-workbench.cc:
+	(Workbench::init_actions): Adjust.
+
+2009-07-29  Dodji Seketeli <dodji@redhat.com>
+
+	Var popup tip shouldn't be too small by default
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::on_popup_var_insp_size_request): Don't make the
+	variable popup tip be too small for simple scalar types, otherwise
+	users are obliged to scroll to see the value for those simple
+	cases.
+
+2009-07-18  Dodji Seketeli <dodji@redhat.com>
+
+	Prevent var popup tip from overflowing (again)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::source_view_to_root_window_coordinates): New function.
+	(DBGPerspective::on_popup_var_insp_size_request): Another shot at
+	trying to clip the size of the scrolled window of the popup tip to
+	prevent it from overflowing past the limits of the screen.
+	This time, consider the position of the mouse of as being the top
+	of the popup tip. Previously, we were trying to get the extents of
+	the X window associated to the popup tip. The prolem with that
+	approach is that when the widget is not yet mapped, we can't do the
+	clipping computation. In those situations, the popup tip would
+	overflow. The benefit of the new approach is that we can always get
+	the position of the pointer.
+	Also, do not bother trying to clip the popup tip widget's width.
+	Only the height has proven being worthwile.
+	(DBGPerspective::try_to_request_show_variable_value_at_position):
+	Factor out the transformation from source view coordinate system to
+	root window coordinate system. As a result, use
+	DBGPerspective::source_view_to_root_window_coordinates.
+	* tests/Makefile.am: Add new big-var.c to build system.
+	* tests/big-var.c: New program helpful to test popup tip
+	overflowing cases.
+
+2009-07-18  Dodji Seketeli <dodji@redhat.com>
+
+	Minor style cleanups
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::get_call_stack, DBGPerspective::get_breakpoints_scrolled_win):
+	Minor style cleanups.
+
+2009-07-18  Dodji Seketeli <dodji@redhat.com>
+
+	Support compiling C programs
+	* configure.ac: support compiling C programs with $CC.
+
+2009-07-16  Dodji Seketeli <dodji@redhat.com>
+
+	Keep default conf values when gconf is down
+	* src/confmgr/nmv-gconf-mgr.cc (GConfMgr::get_key_value<overloads>):
+	Do not set the out parameter when gconf is down.
+
+2009-07-16  Dodji Seketeli <dodji@redhat.com>
+
+	Don't fall appart when gconfd is down
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::Priv::get_debugger_full_path): Catch exceptions raised
+	when accessing the configuration bus.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::Priv::ensure_buffer_is_in_utf8,
+	DBGPerspective::on_shutdown_signal,
+	DBGPerspective::on_file_content_changed, DBGPerspective::init_body,
+	DBGPerspective::read_default_config,
+	DBGPerspective::debugger): Likewise.
+	* src/workbench/nmv-workbench.cc:
+	(Workbench::get_configuration_manager,
+	Workbench::init_window,Workbench::save_window_geometry): Likewise.
+
+2009-07-12  Mario Blättermann <mariobl@gnome.org>
+
+	Added de to DOC_LINGUAS
+
+2009-07-12  Mario Blättermann <mariobl@gnome.org>
+
+	Added German doc translation
+
+2009-07-12  Mario Blättermann <mariobl@gnome.org>
+
+	Updated German translation
+
+2009-07-12  Dodji Seketeli <dodji@redhat.com>
+
+	Renamed variable handling types
+	* src/persp/dbgperspective/nmv-local-vars-inspector.[cc|h]:
+	Renamed nmv-local-vars-inspector2.[cc|h] into this.
+	Renamed LocalVarsInspector2 into LocalVarsInspector as well.
+	* src/persp/dbgperspective/nmv-var-inspector.[cc|h]: Renamed
+	nmv-var-inspector2.[cc|h] into this. Renamed VarInspector2 into
+	VarInspector.
+	* po/POTFILES.in: Adjust.
+	* src/persp/dbgperspective/Makefile.am: Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Likewise.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.cc: Likewise.
+
+2009-07-12  Dodji Seketeli <dodji@redhat.com>
+
+	Unconditionally switch to variable objects
+	* configure.ac: Remove the handling of --with-varobjs from
+	configure.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.[cc|h]: Remove.
+	* src/persp/dbgperspective/nmv-var-inspector.[cc|h]: Remove.
+	* src/persp/dbgperspective/Makefile.am: Removed
+	nmv-local-vars-inspector.[cc|h], nmv-var-inspector.[cc|h].
+	* po/POTFILES.in: Remove nmv-local-vars-inspector.cc.
+	Add nmv-var-inspector2.cc.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc (lots):
+	Remove WITH_VAROBJS macro. Unconditionally use
+	LocalVarsInspector2 instead of LocalVarsInspector.
+	(DBGPerspective::try_to_request_show_variable_value_at_position):
+	Unconditionally create variable object.
+	* src/persp/dbgperspective/nmv-local-vars-inspector2.[cc|h]:
+	Remove use of the conditional macro WITH_VAROBJS.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: Remove
+	use of the conditional macro WITH_VAROBJS. Unconditionally use
+	VarInspector2 instead of VarInspector.
+	* src/persp/dbgperspective/nmv-var-inspector2.[cc|h]: Remove
+	conditional macro WITH_VAROBJS.
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.cc: Likewise.
+	* tests/Makefile.am: Likewise.
+	* tests/test-var-path-expr.cc: Likewise.
+	* tests/test-watchpoint.cc: Likewise.
+
+2009-07-11  Dodji Seketeli <dodji@redhat.com>
+
+	Support restarting when gdb dies (Closes: #588313)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::on_engine_died_signal): New function.
+	(DBGPerspective::init_debugger_signals): Connect to the
+	IDebugger::engine_died_signal. When it fires, update the
+	state of the perspective and display a message to the user
+	saying GDB died.
+	(DBGPerspective::execute_last_program_in_memory): New function.
+	(DBGPerspective::execute_program): Sometimes it's necessary to
+	just re-set the breakpoints. For instance, when GDB just died.
+	Also, in the inferior starting process, do not try to delete
+	breakpoints if GDB is dead.
+	(DBGPerspective::run): When GDB died, make sure to restart it
+	before trying to restart the inferior.
+
+2009-07-10  Dodji Seketeli <dodji@redhat.com>
+
+	Beware original-location in bpts (Closes: #588256)
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_breakpoint):
+	When "original-location" RESULT value has a string that does not
+	of the form <file-path>:<line-num>, consider that it carries
+	neither a file-path nor a line number.
+	* tests/test-gdbmi.cc (test_breakpoint): update test.
+
+2009-07-03  Dodji Seketeli <dodji@redhat.com>
+
+	Support multiple address bpts (Closes: #587697)
+	* src/common/Makefile.am: Add nmv-str-utils.[cc|h] to the build
+	system
+	* src/common/nmv-str-utils.h (extract_path_and_line_num_from_location):
+	Declare ...
+	* src/common/nmv-str-utils.cc (extract_path_and_line_num_from_location):
+	... New entry point.
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_breakpoint):
+	When we got an empty file name, check if we have a RESULT which
+	name is "original-location". If we do, extract the file name and
+	line number from that RESULT and stick those into the breakpoint.
+	* tests/test-gdbmi.cc b/tests/test-gdbmi.cc: New test.
+
+2009-07-03  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	Updated Japanese translation.
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Bump to 0.7.1
+	* configure.ac: Update to 0.7.1
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Updated ChangeLog
+	* ChangeLog: Automatic update
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Update ChangeLog
+	* ChangeLog: Automatic ChangeLog
+
+2009-07-02  Dodji Seketeli <dodji@redhat.com>
+
+	Update ChangeLog
+	* ChangeLog: Automatic update.
+
 2009-07-02  Dodji Seketeli <dodji@redhat.com>
 
 	Automatically update ChangeLog
