@@ -3300,6 +3300,61 @@ GDBEngine::set_breakpoint (const UString &a_path,
 }
 
 void
+GDBEngine::enable_breakpoint (gint a_break_num,
+                              const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    queue_command (Command ("enable-breakpoint",
+                            "-break-enable "
+                             + UString::from_int (a_break_num),
+                            a_cookie));
+    list_breakpoints (a_cookie);
+}
+
+void
+GDBEngine::disable_breakpoint (gint a_break_num,
+                               const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    queue_command (Command ("disable-breakpoint",
+                            "-break-disable "
+                                + UString::from_int (a_break_num),
+                            a_cookie));
+    list_breakpoints (a_cookie);
+}
+
+void
+GDBEngine::set_breakpoint_ignore_count (gint a_break_num,
+                                        gint a_ignore_count,
+                                        const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    RETURN_IF_FAIL (a_break_num >= 0 && a_ignore_count >= 0);
+
+    Command command ("set-breakpoint-ignore-count",
+                     "ignore " + UString::from_int (a_break_num)
+                     + " " + UString::from_int (a_ignore_count),
+                     a_cookie);
+    queue_command (command);
+    list_breakpoints (a_cookie);
+}
+
+void
+GDBEngine::delete_breakpoint (const UString &a_path,
+                              gint a_line_num,
+                              const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    queue_command (Command ("delete-breakpoint",
+                            "-break-delete "
+                            + a_path
+                            + ":"
+                            + UString::from_int (a_line_num),
+                            a_cookie));
+}
+
+void
 GDBEngine::set_watchpoint (const UString &a_expression,
                            bool a_write, bool a_read,
                            const UString &a_cookie)
@@ -3383,27 +3438,6 @@ GDBEngine::set_catch (const UString &a_event,
 }
 
 
-void
-GDBEngine::enable_breakpoint (gint a_break_num,
-                              const UString &a_cookie)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-    queue_command (Command ("enable-breakpoint",
-                            "-break-enable " + UString::from_int (a_break_num),
-                            a_cookie));
-    list_breakpoints(a_cookie);
-}
-
-void
-GDBEngine::disable_breakpoint (gint a_break_num,
-                               const UString &a_cookie)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-    queue_command (Command ("disable-breakpoint",
-                            "-break-disable " + UString::from_int (a_break_num),
-                            a_cookie));
-    list_breakpoints(a_cookie);
-}
 
 void
 GDBEngine::list_threads (const UString &a_cookie)
@@ -3425,19 +3459,6 @@ GDBEngine::select_thread (unsigned int a_thread_id,
                             a_cookie));
 }
 
-void
-GDBEngine::delete_breakpoint (const UString &a_path,
-                              gint a_line_num,
-                              const UString &a_cookie)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-    queue_command (Command ("delete-breakpoint",
-                            "-break-delete "
-                            + a_path
-                            + ":"
-                            + UString::from_int (a_line_num),
-                            a_cookie));
-}
 
 void
 GDBEngine::choose_function_overload (int a_overload_number,

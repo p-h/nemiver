@@ -1685,7 +1685,7 @@ fetch_gdbmi_result:
             }
 
             if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_BKPT),
-                                                PREFIX_BKPT)) {
+                                                            PREFIX_BKPT)) {
                 IDebugger::BreakPoint breakpoint;
                 if (parse_breakpoint (cur, cur, breakpoint)) {
                     result_record.breakpoints ()[breakpoint.number ()] =
@@ -1744,15 +1744,14 @@ fetch_gdbmi_result:
                            GDBMI_PARSING_DOMAIN);
                 }
             } else if (!m_priv->input.raw ().compare (cur,
-                                                strlen (PREFIX_FRAME),
-                                                        PREFIX_FRAME)) {
+                                                      strlen (PREFIX_FRAME),
+                                                              PREFIX_FRAME)) {
                 IDebugger::Frame frame;
                 if (!parse_frame (cur, cur, frame)) {
                     LOG_PARSING_ERROR2 (cur);
                 } else {
                     LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
                     result_record.current_frame_in_core_stack_trace (frame);
-                    //current_frame_signal.emit (frame, "");
                 }
             } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_DEPTH),
                                                       PREFIX_DEPTH)) {
@@ -2109,6 +2108,9 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
         a_bkpt.condition (iter->second);
     }
     a_bkpt.nb_times_hit (atoi (attrs["times"].c_str ()));
+    if ((iter = attrs.find ("ignore")) != null_iter) {
+        a_bkpt.ignore_count (atoi (iter->second.c_str ()));
+    }
 
     string type = attrs["type"];
     if (type.find ("breakpoint") != type.npos)

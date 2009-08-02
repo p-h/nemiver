@@ -76,7 +76,7 @@ public:
                                     got_overloads_choice_signal () const;
 
     sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>&
-                                            breakpoint_deleted_signal () const ;
+                                        breakpoint_deleted_signal () const ;
 
     sigc::signal<void, const IDebugger::BreakPoint&, int>&
                                         breakpoint_disabled_signal () const ;
@@ -311,6 +311,20 @@ public:
                          const UString &a_condition,
                          const UString &a_cookie)  ;
 
+    void enable_breakpoint (gint a_break_num,
+                            const UString &a_cookie="");
+
+    void disable_breakpoint (gint a_break_num,
+                             const UString &a_cookie="");
+
+    void set_breakpoint_ignore_count (gint a_break_num,
+                                      gint a_ignore_count,
+                                      const UString &a_cookie = "");
+
+    void delete_breakpoint (const UString &a_path,
+                            gint a_line_num,
+                            const UString &a_cookie) ;
+
     void set_watchpoint (const UString &a_expression,
                          bool a_write, bool a_read,
                          const UString &a_cookie);
@@ -322,15 +336,6 @@ public:
     void set_catch (const UString &a_event,
                     const UString &a_cookie)  ;
 
-    void enable_breakpoint (gint a_break_num,
-                            const UString &a_cookie="");
-
-    void disable_breakpoint (gint a_break_num,
-                             const UString &a_cookie="");
-
-    void delete_breakpoint (const UString &a_path,
-                            gint a_line_num,
-                            const UString &a_cookie) ;
 
     void choose_function_overload (int a_overload_number,
                                    const UString &a_cookie) ;

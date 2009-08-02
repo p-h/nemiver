@@ -98,6 +98,7 @@ public:
         Type m_type;
         int m_line;
         int m_nb_times_hit;
+        int m_ignore_count;
 
     public:
         BreakPoint () {clear ();}
@@ -137,6 +138,9 @@ public:
         int nb_times_hit () const {return m_nb_times_hit;}
         void nb_times_hit (int a_nb) {m_nb_times_hit = a_nb;}
 
+        int ignore_count () const {return m_ignore_count;}
+        void ignore_count (int a) {m_ignore_count = a;}
+
         bool is_pending ()
         {
             if (m_address == "<PENDING>") {
@@ -162,6 +166,7 @@ public:
             m_line = 0;
             m_condition.clear ();
             m_nb_times_hit = 0;
+            m_ignore_count = 0;
         }
     };//end class BreakPoint
 
@@ -1026,6 +1031,21 @@ public:
                                  const UString &a_condition="",
                                  const UString &a_cookie="") = 0;
 
+    virtual void enable_breakpoint (gint a_break_num,
+                                    const UString &a_cookie="") = 0;
+
+    virtual void disable_breakpoint (gint a_break_num,
+                                     const UString &a_cookie="") = 0;
+
+    virtual void set_breakpoint_ignore_count
+                                        (gint a_break_num,
+                                         gint a_ignore_count,
+                                         const UString &a_cookie = "") = 0;
+
+    virtual void delete_breakpoint (const UString &a_path,
+                                    gint a_line_num,
+                                    const UString &a_cookie="") = 0;
+
     virtual void set_watchpoint (const UString &a_expression,
                                  bool a_write = true,
                                  bool a_read = false,
@@ -1037,16 +1057,6 @@ public:
     virtual void list_breakpoints (const UString &a_cookie="") = 0;
 
     virtual const map<int, BreakPoint>& get_cached_breakpoints () = 0;
-
-    virtual void enable_breakpoint (gint a_break_num,
-                                    const UString &a_cookie="") = 0;
-
-    virtual void disable_breakpoint (gint a_break_num,
-                                     const UString &a_cookie="") = 0;
-
-    virtual void delete_breakpoint (const UString &a_path,
-                                    gint a_line_num,
-                                    const UString &a_cookie="") = 0;
 
     virtual void choose_function_overload (int a_overload_number,
                                            const UString &a_cookie="") = 0;
