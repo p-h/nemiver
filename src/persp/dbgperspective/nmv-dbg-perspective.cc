@@ -1920,7 +1920,7 @@ DBGPerspective::on_shutdown_signal ()
 
     NEMIVER_TRY
     conf_mgr.set_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location);
-    NEMIVER_CATCH
+    NEMIVER_CATCH_NOX
 
     if (m_priv->prog_path == "") {
         return;

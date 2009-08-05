@@ -519,7 +519,7 @@ Workbench::get_configuration_manager ()
         m_priv->conf_mgr->add_key_to_notify (
                 "/desktop/gnome/interface/monospace_font_name") ;
 
-        NEMIVER_CATCH
+        NEMIVER_CATCH_NOX
     }
     THROW_IF_FAIL (m_priv->conf_mgr) ;
     return m_priv->conf_mgr ;
@@ -588,7 +588,7 @@ Workbench::init_window ()
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_POSITION_Y, pos_y) ;
     conf_mgr->get_key_value (CONF_KEY_NEMIVER_WINDOW_MAXIMIZED, maximized) ;
     LOG_DD ("got windows geometry from confmgr.") ;
-    NEMIVER_CATCH
+    NEMIVER_CATCH_NOX
 
     if (width) {
         LOG_DD ("restoring windows geometry from confmgr ...") ;
