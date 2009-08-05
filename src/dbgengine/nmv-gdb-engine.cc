@@ -4124,7 +4124,9 @@ GDBEngine::create_variable (const UString &a_name ,
     }
 
     Command command ("create-variable",
-                     "-var-create - * " + a_name,
+                     "-var-create - "
+                     + UString::from_int (get_current_frame_level ())
+                     + " " + a_name,
                      a_cookie);
     command.tag0 (a_name);
     command.set_slot (a_slot);
