@@ -821,7 +821,7 @@ public:
 
     virtual sigc::signal<void,
                          int/*thread id*/,
-                         const IDebugger::Frame&/*frame in thread*/,
+                         const IDebugger::Frame *const/*frame in thread*/,
                          const UString& /*cookie*/> &
                                              thread_selected_signal () const=0;
 

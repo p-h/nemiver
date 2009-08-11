@@ -167,14 +167,18 @@ on_threads_listed_signal (const std::list<int> &a_thread_ids,
 
 void
 on_thread_selected_signal (int a_thread_id,
-                           const IDebugger::Frame &a_frame,
+                           const IDebugger::Frame * const a_frame,
                            const UString &a_cookie)
 {
     if (a_cookie.empty ()) {}
 
     MESSAGE ("thread selected: '" << a_thread_id)  ;
-    MESSAGE ("frame in thread : '" << a_frame.level ())  ;
-    MESSAGE ("frame.function: '" << a_frame.function_name ()) ;
+    if (a_frame) {
+        MESSAGE ("frame in thread : '" << a_frame->level ())  ;
+        MESSAGE ("frame.function: '" << a_frame->function_name ()) ;
+    } else {
+        MESSAGE ("no frame provided");
+    }
 }
 
 void

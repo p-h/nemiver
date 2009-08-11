@@ -125,13 +125,12 @@ struct ThreadList::Priv {
         NEMIVER_CATCH
     }
 
-    void on_debugger_thread_selected_signal (int a_tid,
-                                             const IDebugger::Frame &a_frame,
-                                             const UString &a_cookie)
+    void on_debugger_thread_selected_signal
+                            (int a_tid,
+                             const IDebugger::Frame * const,
+                             const UString &/*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-        if (a_frame.level () || a_cookie.empty ()) {}
 
         NEMIVER_TRY
 

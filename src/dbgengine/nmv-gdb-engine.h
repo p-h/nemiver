@@ -102,7 +102,7 @@ public:
 
     sigc::signal<void,
                  int,
-                 const Frame&,
+                 const Frame* const,
                  const UString&>& thread_selected_signal () const  ;
 
     sigc::signal<void,

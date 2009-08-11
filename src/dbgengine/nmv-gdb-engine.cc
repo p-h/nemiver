@@ -176,8 +176,10 @@ public:
                          const vector<UString>&,
                          const UString& > files_listed_signal;
 
-    mutable sigc::signal<void, int, const Frame&, const UString&>
-                                                        thread_selected_signal;
+    mutable sigc::signal<void,
+                         int,
+                         const Frame * const,
+                         const UString&> thread_selected_signal;
 
     mutable sigc::signal<void, const vector<IDebugger::Frame>&, const UString&>
                                                     frames_listed_signal;
@@ -1229,9 +1231,13 @@ struct OnThreadListHandler : OutputHandler {
 
 struct OnThreadSelectedHandler : OutputHandler {
     GDBEngine *m_engine;
+    long thread_id;
+    bool has_frame;
 
     OnThreadSelectedHandler (GDBEngine *a_engine) :
-        m_engine (a_engine)
+        m_engine (a_engine),
+        thread_id (0),
+        has_frame (false)
     {}
 
     bool can_handle (CommandAndOutput &a_in)
@@ -1249,9 +1255,12 @@ struct OnThreadSelectedHandler : OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         THROW_IF_FAIL (m_engine);
+
         m_engine->thread_selected_signal ().emit
-            (a_in.output ().result_record ().thread_id (),
-             a_in.output ().result_record ().frame_in_thread (),
+            (thread_id,
+             has_frame
+                ? &a_in.output ().result_record ().frame_in_thread ()
+                : 0,
              a_in.command ().cookie ());
     }
 };//end OnThreadSelectedHandler
@@ -2718,7 +2727,7 @@ GDBEngine::files_listed_signal () const
     return m_priv->files_listed_signal;
 }
 
-sigc::signal<void, int, const IDebugger::Frame&, const UString&>&
+sigc::signal<void, int, const IDebugger::Frame* const, const UString&>&
 GDBEngine::thread_selected_signal () const
 {
     return m_priv->thread_selected_signal;
