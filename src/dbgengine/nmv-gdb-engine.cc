@@ -728,7 +728,9 @@ public:
                 }
                 nb_read = 0;
             }
-            LOG_DD ("gdb_stdout_buffer: <buf>" << gdb_stdout_buffer << "</buf>");
+            LOG_DD ("gdb_stdout_buffer: <buf>"
+                    << gdb_stdout_buffer
+                    << "</buf>");
 
             UString::size_type i=0;
             while ((i = gdb_stdout_buffer.raw ().find ("\n(gdb)")) !=
@@ -754,11 +756,14 @@ public:
                     gdb_stdout_buffer.erase (0,1);
                 }
             }
-            if (gdb_stdout_buffer.raw ().find ("[0] cancel") != std::string::npos
-                && gdb_stdout_buffer.raw ().find ("> ") != std::string::npos) {
-                //this is not a gdbmi ouptut, but rather a plain gdb
-                //command line. It is actually a prompt sent by gdb
-                //to let the user choose between a list of overloaded functions
+            if (gdb_stdout_buffer.raw ().find ("[0] cancel")
+                    != std::string::npos
+                && gdb_stdout_buffer.raw ().find ("> ")
+                    != std::string::npos) {
+                // this is not a gdbmi ouptut, but rather a plain gdb
+                // command line. It is actually a prompt sent by gdb
+                // to let the user choose between a list of
+                // overloaded functions
                 LOG_DD ("emitting gdb_stdout_signal.emit()");
                 gdb_stdout_signal.emit (gdb_stdout_buffer);
                 gdb_stdout_buffer.clear ();
@@ -865,7 +870,7 @@ public:
 //***************************
 
 
-struct OnStreamRecordHandler: OutputHandler{
+struct OnStreamRecordHandler: OutputHandler {
     GDBEngine *m_engine;
 
     OnStreamRecordHandler (GDBEngine *a_engine) :
@@ -918,7 +923,6 @@ struct OnStreamRecordHandler: OutputHandler{
         if (!debugger_log.empty ()) {
             m_engine->log_message_signal ().emit (debugger_log);
         }
-
     }
 };//end struct OnStreamRecordHandler
 
@@ -1149,6 +1153,7 @@ struct OnStoppedHandler: OutputHandler {
             m_engine->set_current_frame_level
                     (m_out_of_band_record.frame ().level ());
         }
+
         m_engine->stopped_signal ().emit
                     (m_out_of_band_record.stop_reason (),
                      m_out_of_band_record.has_frame (),
@@ -2350,7 +2355,7 @@ GDBEngine::load_program (const UString &a_prog_with_args,
                          const UString &a_working_dir)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
 
     vector<UString> args = a_prog_with_args.split (" ");
     vector<UString> search_paths;
@@ -2366,7 +2371,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
                          const UString &a_tty_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     THROW_IF_FAIL (!a_argv.empty ());
     vector<UString> argv (a_argv);
 
@@ -2415,7 +2420,7 @@ GDBEngine::load_core_file (const UString &a_prog_path,
                            const UString &a_core_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     if (m_priv->is_gdb_running ()) {
         m_priv->kill_gdb ();
     }
@@ -2428,7 +2433,7 @@ GDBEngine::attach_to_target (unsigned int a_pid,
                              const UString &a_tty_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     vector<UString> args, source_search_dirs;
 
     if (!m_priv->is_gdb_running ()) {
@@ -2481,7 +2486,7 @@ void
 GDBEngine::detach_from_target (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     queue_command (Command ("detach-from-target", "-target-detach", a_cookie));
 }
 
@@ -2489,7 +2494,7 @@ bool
 GDBEngine::is_attached_to_target () const
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     LOG_DD ("is_attached: " << (int)m_priv->is_attached);
     return m_priv->is_gdb_running () && m_priv->is_attached;
 }
@@ -2498,7 +2503,7 @@ void
 GDBEngine::set_attached_to_target (bool a_is_attached)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     m_priv->is_attached = a_is_attached;
 }
 
@@ -2506,7 +2511,7 @@ void
 GDBEngine::add_env_variables (const map<UString, UString> &a_vars)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     THROW_IF_FAIL (m_priv->is_gdb_running ());
 
     m_priv->env_variables = a_vars;
@@ -2523,7 +2528,7 @@ map<UString, UString>&
 GDBEngine::get_env_variables ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->env_variables;
 }
 
@@ -2531,7 +2536,7 @@ const UString&
 GDBEngine::get_target_path ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->exe_path;
 }
 
@@ -2539,7 +2544,7 @@ IDebugger::State
 GDBEngine::get_state () const
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
 
     LOG_DD ("state: " << m_priv->state);
     return m_priv->state;
@@ -2549,9 +2554,9 @@ int
 GDBEngine::get_current_frame_level () const
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
 
-    LOG_DD ("state: " << m_priv->cur_frame_level);
+
+    LOG_DD ("frame level: " << m_priv->cur_frame_level);
     return m_priv->cur_frame_level;
 }
 
@@ -2811,42 +2816,42 @@ GDBEngine::variable_dereferenced_signal () const
 sigc::signal<void, const std::map<IDebugger::register_id_t, UString>&, const UString& >&
 GDBEngine::register_names_listed_signal () const
 {
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->register_names_listed_signal;
 }
 
 sigc::signal<void, const std::map<IDebugger::register_id_t, UString>&, const UString& >&
 GDBEngine::register_values_listed_signal () const
 {
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->register_values_listed_signal;
 }
 
 sigc::signal<void, const UString&, const UString&, const UString& >&
 GDBEngine::register_value_changed_signal () const
 {
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->register_value_changed_signal;
 }
 
 sigc::signal<void, const std::list<IDebugger::register_id_t>&, const UString& >&
 GDBEngine::changed_registers_listed_signal () const
 {
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->changed_registers_listed_signal;
 }
 
 sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString&>&
 GDBEngine::read_memory_signal () const
 {
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->read_memory_signal;
 }
 
 sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
 GDBEngine::set_memory_signal () const
 {
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->set_memory_signal;
 }
 
@@ -2930,7 +2935,7 @@ GDBEngine::on_debugger_stdout_signal (CommandAndOutput &a_cao)
 
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv);
+
     m_priv->output_handler_list.submit_command_and_output (a_cao);
 
     NEMIVER_CATCH_NOX
@@ -2969,7 +2974,7 @@ GDBEngine::on_stopped_signal (IDebugger::StopReason a_reason,
         || a_reason == IDebugger::EXITED) {
         return;
     }
-    THROW_IF_FAIL (m_priv);
+
     m_priv->is_attached = true;
 
     NEMIVER_CATCH_NOX
@@ -2980,7 +2985,7 @@ GDBEngine::on_detached_from_target_signal ()
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv);
+
     m_priv->is_attached = false;
 
     NEMIVER_CATCH_NOX
@@ -2991,7 +2996,7 @@ GDBEngine::on_program_finished_signal ()
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv);
+
     m_priv->is_attached = false;
 
     NEMIVER_CATCH_NOX
@@ -3020,7 +3025,7 @@ GDBEngine::init ()
 void
 GDBEngine::do_init (IConfMgrSafePtr &a_conf_mgr)
 {
-    THROW_IF_FAIL (m_priv);
+
 
     m_priv->conf_mgr = a_conf_mgr;
 }
@@ -3028,7 +3033,7 @@ GDBEngine::do_init (IConfMgrSafePtr &a_conf_mgr)
 IConfMgr&
 GDBEngine::get_conf_mgr ()
 {
-    THROW_IF_FAIL (m_priv);
+
 
     return *m_priv->get_conf_mgr ();
 }
@@ -3048,14 +3053,14 @@ GDBEngine::set_event_loop_context (const Glib::RefPtr<Glib::MainContext> &a_ctxt
 void
 GDBEngine::run_loop_iterations (int a_nb_iters)
 {
-    THROW_IF_FAIL (m_priv);
+
     m_priv->run_loop_iterations_real (a_nb_iters);
 }
 
 void
 GDBEngine::set_state (IDebugger::State a_state)
 {
-    THROW_IF_FAIL (m_priv);
+
     m_priv->set_state (a_state);
 }
 
@@ -3117,23 +3122,27 @@ void
 GDBEngine::do_continue (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("do-continue", "-exec-continue", a_cookie));
+
+    Command command ("do-continue",
+                     "-exec-continue ",
+                     a_cookie);
+    queue_command (command);
 }
 
 void
 GDBEngine::run (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("run", "-exec-run", a_cookie));
+    Command command ("run",
+                     "-exec-run",
+                     a_cookie);
+    queue_command (command);
 }
 
 void
 GDBEngine::get_target_info (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
     queue_command (Command ("get-target-info", "info proc", a_cookie));
 }
 
@@ -3141,12 +3150,12 @@ ILangTraitSafePtr
 GDBEngine::create_language_trait ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
 
     //TODO: detect the actual language of the target being
     //debugged and create a matching language trait on the fly for it.
     //For now, let's say we just debug only c++
-    DynamicModule::Loader* loader = get_dynamic_module ().get_module_loader ();
+    DynamicModule::Loader* loader =
+        get_dynamic_module ().get_module_loader ();
     THROW_IF_FAIL (loader);
     DynamicModuleManager *mgr = loader->get_dynamic_module_manager ();
     THROW_IF_FAIL (mgr);
@@ -3161,7 +3170,7 @@ ILangTrait&
 GDBEngine::get_language_trait ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     if (!m_priv->lang_trait) {
         m_priv->lang_trait = create_language_trait ();
     }
@@ -3196,7 +3205,7 @@ bool
 GDBEngine::stop_target ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     if (!m_priv->is_gdb_running ()) {
         LOG_ERROR_D ("GDB is not running", NMV_DEFAULT_DOMAIN);
         return false;
@@ -3214,7 +3223,7 @@ void
 GDBEngine::exit_engine ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
 
     //**************************************************
     //don't queue the command, send it the gdb directly,
@@ -3235,34 +3244,44 @@ void
 GDBEngine::step_in (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("step-in", "-exec-step", a_cookie));
+
+    Command command ("step-in",
+                     "-exec-step",
+                     a_cookie);
+    queue_command (command);
 }
 
 void
 GDBEngine::step_out (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("step-out", "-exec-finish", a_cookie));
+
+    Command command ("step-out",
+                     "-exec-finish",
+                     a_cookie);
+    queue_command (Command ());
 }
 
 void
 GDBEngine::step_over (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("step-over", "-exec-next", a_cookie));
+
+    Command command ("step-over",
+                     "-exec-next ",
+                     a_cookie);
+    queue_command (command);
 }
 
 void
 GDBEngine::step_instruction (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("step-instruction",
-                            "-exec-next-instruction",
-                            a_cookie));
+
+    Command command ("step-instruction",
+                     "-exec-next-instruction",
+                     a_cookie);
+    queue_command (command);
 }
 
 void
@@ -3271,8 +3290,9 @@ GDBEngine::continue_to_position (const UString &a_path,
                                  const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
-    queue_command (Command ("continue-to-position", "-exec-until "
+
+    queue_command (Command ("continue-to-position",
+                            "-exec-until "
                             + a_path
                             + ":"
                             + UString::from_int (a_line_num),
@@ -3286,7 +3306,7 @@ GDBEngine::set_breakpoint (const UString &a_path,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     //here, don't use the gdb/mi format, because only the cmd line
     //format supports the 'set breakpoint pending' option that lets
     //gdb set pending breakpoint when a breakpoint location doesn't exist.
@@ -3325,9 +3345,10 @@ GDBEngine::disable_breakpoint (gint a_break_num,
                                const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+    UString cur_frame;
     queue_command (Command ("disable-breakpoint",
                             "-break-disable "
-                                + UString::from_int (a_break_num),
+                            + UString::from_int (a_break_num),
                             a_cookie));
     list_breakpoints (a_cookie);
 }
@@ -3393,7 +3414,7 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     UString break_cmd;
     break_cmd += "break " + a_func_name;
     if (!a_condition.empty ()) {
@@ -3410,14 +3431,14 @@ void
 GDBEngine::list_breakpoints (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     queue_command (Command ("list-breakpoint", "-break-list", a_cookie));
 }
 
 map<int, IDebugger::BreakPoint>&
 GDBEngine::get_cached_breakpoints ()
 {
-    THROW_IF_FAIL (m_priv);
+
     return m_priv->cached_breakpoints;
 }
 
@@ -3437,7 +3458,7 @@ GDBEngine::set_catch (const UString &a_event,
 					  const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     queue_command (Command ("catch",
                             "catch " + a_event,
                             a_cookie));
@@ -3452,7 +3473,7 @@ void
 GDBEngine::list_threads (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     queue_command (Command ("list-threads", "-thread-list-ids", a_cookie));
 }
 
@@ -3512,23 +3533,8 @@ GDBEngine::list_frames (int a_low_frame,
                         const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    string low, high, stack_window, cmd_str;
 
-    if (a_low_frame >= 0)
-        low = UString::from_int (a_low_frame).raw ();
-    if (a_high_frame >= 0)
-        high = UString::from_int (a_high_frame).raw ();
-
-    if (!low.empty () && !high.empty ())
-        stack_window = low + " " + high;
-
-    cmd_str = (stack_window.empty ())
-              ? "-stack-list-frames"
-              : "-stack-list-frames " + stack_window;
-
-    queue_command (Command ("list-frames",
-                            cmd_str,
-                            a_cookie));
+    m_priv->list_frames (a_low_frame, a_high_frame, a_cookie);
 }
 
 void
@@ -3762,7 +3768,6 @@ GDBEngine::extract_proc_info (Output &a_output,
                               UString &a_exe_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
 
     if (!a_output.has_out_of_band_record ()) {
         LOG_ERROR_D ("output has no out of band record", NMV_DEFAULT_DOMAIN);
@@ -3779,7 +3784,9 @@ GDBEngine::extract_proc_info (Output &a_output,
     UString::size_type process_index=0, exe_index=0, index=0;
     list<Output::OutOfBandRecord>::const_iterator record_iter =
                                     a_output.out_of_band_records ().begin ();
-    for (; record_iter != a_output.out_of_band_records ().end (); ++record_iter) {
+    for (;
+         record_iter != a_output.out_of_band_records ().end ();
+         ++record_iter) {
         if (!record_iter->has_stream_record ()) {continue;}
 
         record = record_iter->stream_record ().debugger_console ();
@@ -3992,8 +3999,9 @@ void
 GDBEngine::list_register_names (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     queue_command (Command ("list-register-names",
-                            "-data-list-register-names",
+                            "-data-list-register-names ",
                             a_cookie));
 }
 
@@ -4011,24 +4019,30 @@ void
 GDBEngine::list_register_values (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     queue_command (Command ("list-register-values",
-                            "-data-list-register-values x", // x = hex format
+                            "-data-list-register-values "
+                            " x " /*x=hex format*/ ,
                             a_cookie));
 }
 
 void
-GDBEngine::list_register_values (std::list<IDebugger::register_id_t> a_registers,
-                           const UString &a_cookie)
+GDBEngine::list_register_values
+                    (std::list<IDebugger::register_id_t> a_registers,
+                     const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     UString regs_str;
-    for (std::list<register_id_t>::const_iterator iter = a_registers.begin ();
-            iter != a_registers.end (); ++ iter)
-    {
+    std::list<register_id_t>::const_iterator iter;
+    for (iter = a_registers.begin ();
+         iter != a_registers.end ();
+         ++ iter) {
         regs_str += UString::from_int (*iter) + " ";
     }
+
     queue_command (Command ("list-register-values",
-                            "-data-list-register-values x " + regs_str, // x = hex format
+                            "-data-list-register-values "
+                            " x " + regs_str,
                             a_cookie));
 }
 
@@ -4039,9 +4053,9 @@ GDBEngine::set_register_value (const UString& a_reg_name,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     UString command_str;
-    command_str.printf ("-data-evaluate-expression $%s=%s",
-            a_reg_name.c_str (),
-            a_value.c_str ());
+
+    command_str = "-data-evaluate-expression "
+                  " $" + a_reg_name + "=" + a_value;
     Command command ("set-register-value",
                      command_str,
                      a_cookie);
@@ -4063,12 +4077,13 @@ GDBEngine::read_memory (size_t a_start_addr,
     //  - output values in hex format (x)
     //  - word size of 1 byte
     //  - a single row of output
-    // When we parse the output from the command, we assume that there's only a
-    // single row of output -- if this ever changes, the parsing function will
-    // need to be updated
+    // When we parse the output from the command,
+    // we assume that there's only a
+    // single row of output -- if this ever changes,
+    // the parsing function will need to be updated
     cmd.printf ("-data-read-memory %zu x 1 1 %zu",
-            a_start_addr,
-            a_num_bytes);
+                a_start_addr,
+                a_num_bytes);
     queue_command (Command ("read-memory",
                             cmd,
                             a_cookie));
@@ -4132,10 +4147,14 @@ GDBEngine::create_variable (const UString &a_name ,
         return;
     }
 
+    UString cur_frame;
+    get_mi_thread_and_frame_location (cur_frame);
+
     Command command ("create-variable",
-                     "-var-create - "
-                     + UString::from_int (get_current_frame_level ())
-                     + " " + a_name,
+                     "-var-create " + cur_frame
+                     + " - " // automagic varobj name
+                       " * " // current frame @
+                     + a_name,
                      a_cookie);
     command.tag0 (a_name);
     command.set_slot (a_slot);
@@ -4196,7 +4215,9 @@ GDBEngine::unfold_variable (const VariableSafePtr a_var,
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
     Command command ("unfold-variable",
-                     "-var-list-children --all-values " + a_var->internal_name (),
+                     "-var-list-children "
+                     " --all-values "
+                     + a_var->internal_name (),
                      a_cookie);
     command.variable (a_var);
     command.set_slot (a_slot);
@@ -4228,7 +4249,8 @@ GDBEngine::assign_variable
 
     Command command ("assign-variable",
                      "-var-assign "
-                         + a_var->internal_name () + " " + a_expression,
+                     + a_var->internal_name ()
+                     + " " + a_expression,
                      a_cookie);
     command.variable (a_var);
     command.set_slot (a_slot);
@@ -4258,7 +4280,8 @@ GDBEngine::evaluate_variable_expr
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
     Command command ("evaluate-expression",
-                     "-var-evaluate-expression " + a_var->internal_name (),
+                     "-var-evaluate-expression "
+                     + a_var->internal_name (),
                      a_cookie);
     command.variable (a_var);
     command.set_slot (a_slot);
@@ -4288,8 +4311,9 @@ GDBEngine::list_changed_variables
     THROW_IF_FAIL (!a_var->internal_name ().empty ());
 
     Command command ("list-changed-variables",
-                     "-var-update --all-values "
-                         + a_var->internal_name (),
+                     "-var-update "
+                     " --all-values "
+                     + a_var->internal_name (),
                      a_cookie);
     command.variable (a_var);
     command.set_slot (a_slot);
