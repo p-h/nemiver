@@ -1072,6 +1072,8 @@ public:
     virtual void select_thread (unsigned int a_thread_id,
                                 const UString &a_cookie="") = 0;
 
+    virtual unsigned int get_current_thread () const = 0;
+
     virtual void select_frame (int a_frame_id,
                                const UString &a_cookie="") = 0;
 

@@ -290,6 +290,14 @@ public:
 
     void set_current_frame_level (int);
 
+    const UString& get_current_frame_address () const;
+
+    void set_current_frame_address (const UString &a_address);
+
+    void get_mi_thread_location (UString &a_str) const;
+
+    void get_mi_thread_and_frame_location (UString &a_str) const;
+
     void step_in (const UString &a_cookie) ;
 
     void step_out (const UString &a_cookie) ;
@@ -347,6 +355,8 @@ public:
 
     void select_thread (unsigned int a_thread_id,
                         const UString &a_cookie) ;
+
+    unsigned int get_current_thread () const;
 
     void delete_breakpoint (gint a_break_num,
                             const UString &a_cookie) ;

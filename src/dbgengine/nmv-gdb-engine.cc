@@ -119,6 +119,8 @@ public:
     OutputHandlerList output_handler_list;
     IDebugger::State state;
     int cur_frame_level;
+    int cur_thread_num;
+    UString cur_frame_address;
     ILangTraitSafePtr lang_trait;
     UString debugger_full_path;
     GDBMIParser gdbmi_parser;
@@ -420,6 +422,7 @@ public:
         error_buffer_status (DEFAULT),
         state (IDebugger::NOT_STARTED),
         cur_frame_level (0),
+        cur_thread_num (1),
         gdbmi_parser (GDBMIParser::BROKEN_MODE)
     {
         gdb_stdout_signal.connect (sigc::mem_fun
@@ -431,6 +434,16 @@ public:
 
         state_changed_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_state_changed_signal));
+
+        thread_selected_signal.connect (sigc::mem_fun
+               (*this, &Priv::on_thread_selected_signal));
+
+        stopped_signal.connect (sigc::mem_fun
+               (*this, &Priv::on_stopped_signal));
+
+        frames_listed_signal.connect (sigc::mem_fun
+               (*this, &Priv::on_frames_listed_signal));
+
     }
 
     void free_resources ()
@@ -700,6 +713,43 @@ public:
         return false;
     }
 
+    bool queue_command (const Command &a_command)
+    {
+        bool result (false);
+        THROW_IF_FAIL (is_gdb_running ());
+        LOG_DD ("queuing command: '" << a_command.value () << "'");
+        queued_commands.push_back (a_command);
+        if (!line_busy && started_commands.empty ()) {
+            result = issue_command (*queued_commands.begin (), true);
+            queued_commands.erase (queued_commands.begin ());
+        }
+        return result;
+    }
+
+    void list_frames (int a_low_frame,
+                      int a_high_frame,
+                      const UString &a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        string low, high, stack_window, cmd_str;
+
+        if (a_low_frame >= 0)
+            low = UString::from_int (a_low_frame).raw ();
+        if (a_high_frame >= 0)
+            high = UString::from_int (a_high_frame).raw ();
+
+        if (!low.empty () && !high.empty ())
+            stack_window = low + " " + high;
+
+        cmd_str = (stack_window.empty ())
+                  ? "-stack-list-frames"
+                  : "-stack-list-frames " + stack_window;
+
+        queue_command (Command ("list-frames",
+                                cmd_str,
+                                a_cookie));
+    }
+
 
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
     {
@@ -840,6 +890,49 @@ public:
     void on_state_changed_signal (IDebugger::State a_state)
     {
         state = a_state;
+    }
+
+    void on_thread_selected_signal (unsigned a_thread_id,
+                                    const IDebugger::Frame * const a_frame,
+                                    const UString &/*a_cookie*/)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+
+        cur_thread_num = a_thread_id;
+        if (a_frame)
+            cur_frame_level = a_frame->level ();
+
+        NEMIVER_CATCH_NOX
+    }
+
+    void on_stopped_signal (IDebugger::StopReason,
+                            bool a_has_frame,
+                            const IDebugger::Frame &,
+                            int,
+                            int,
+                            const UString &a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+
+        if (a_has_frame)
+            // List frames so that we can get the @ of the current frame.
+            list_frames (0, 0, a_cookie);
+
+        NEMIVER_CATCH_NOX
+    }
+
+    void on_frames_listed_signal (const vector<IDebugger::Frame> &a_frames,
+                                  const UString &)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        NEMIVER_TRY
+
+        if (!a_frames.empty () && a_frames[0].level () == 0)
+            cur_frame_address = a_frames[0].address ();
+
+        NEMIVER_CATCH_NOX
     }
 
     bool breakpoint_has_failed (const CommandAndOutput &a_in)
@@ -1250,7 +1343,22 @@ struct OnThreadSelectedHandler : OutputHandler {
         THROW_IF_FAIL (m_engine);
         if (a_in.output ().has_result_record ()
             && a_in.output ().result_record ().thread_id_got_selected ()) {
+            thread_id = a_in.output ().result_record ().thread_id ();
             return true;
+        }
+        if (a_in.output ().has_out_of_band_record ()) {
+            list<Output::OutOfBandRecord>::const_iterator it;
+            for (it = a_in.output ().out_of_band_records ().begin ();
+                 it != a_in.output ().out_of_band_records ().end ();
+                 ++it) {
+                if (it->thread_id ()) {
+                    thread_id = it->thread_id ();
+                    return false; // GDB is broken currently
+                                  // for this. So return false
+                                  // for now. We'll be able to return
+                                  // true later.;
+                }
+            }
         }
         return false;
     }
@@ -1400,6 +1508,13 @@ struct OnFramesListedHandler : OutputHandler {
     void do_handle (CommandAndOutput &a_in)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (!a_in.output ().result_record ().call_stack ().empty ()
+            && a_in.output ().result_record ().call_stack ()[0].level ()
+                == 0)
+            m_engine->set_current_frame_address
+            (a_in.output ().result_record ().call_stack ()[0].address ());
+
         m_engine->frames_listed_signal ().emit
             (a_in.output ().result_record ().call_stack (),
              a_in.command ().cookie ());
@@ -2564,10 +2679,50 @@ void
 GDBEngine::set_current_frame_level (int a_level)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
 
     LOG_DD ("cur frame level: " << (int) a_level);
     m_priv->cur_frame_level = a_level;
+}
+
+const UString&
+GDBEngine::get_current_frame_address () const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+
+    return m_priv->cur_frame_address;
+}
+
+void
+GDBEngine::set_current_frame_address (const UString &a_address)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+
+    m_priv->cur_frame_address = a_address;
+}
+
+void
+GDBEngine::get_mi_thread_and_frame_location (UString &a_str) const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    UString frame_level =
+        "--frame " + UString::from_int (get_current_frame_level ());
+
+    a_str = "--thread " + UString::from_int (get_current_thread ())
+            + " " + frame_level;
+
+    LOG_DD ("a_str: " << a_str);
+}
+
+void
+GDBEngine::get_mi_thread_location (UString &a_str) const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    a_str = "--thread " + UString::from_int (get_current_thread ());
+    LOG_DD ("a_str: " << a_str);
 }
 
 void
@@ -3075,16 +3230,7 @@ GDBEngine::execute_command (const Command &a_command)
 bool
 GDBEngine::queue_command (const Command &a_command)
 {
-    bool result (false);
-    THROW_IF_FAIL (m_priv && m_priv->is_gdb_running ());
-    LOG_DD ("queuing command: '" << a_command.value () << "'");
-    m_priv->queued_commands.push_back (a_command);
-    if (!m_priv->line_busy && m_priv->started_commands.empty ()) {
-        result = m_priv->issue_command (*m_priv->queued_commands.begin (),
-                                        true);
-        m_priv->queued_commands.erase (m_priv->queued_commands.begin ());
-    }
-    return result;
+    return m_priv->queue_command (a_command);
 }
 
 bool
@@ -3482,11 +3628,20 @@ GDBEngine::select_thread (unsigned int a_thread_id,
                           const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    THROW_IF_FAIL (m_priv);
+
     THROW_IF_FAIL (a_thread_id);
     queue_command (Command ("select-thread", "-thread-select "
                             + UString::from_int (a_thread_id),
                             a_cookie));
+}
+
+unsigned int
+GDBEngine::get_current_thread () const
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+
+    return m_priv->cur_thread_num;
 }
 
 
