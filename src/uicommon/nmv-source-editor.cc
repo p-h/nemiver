@@ -408,6 +408,8 @@ SourceEditor::current_column (gint &a_col)
 void
 SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
 {
+    LOG_DD ("a_line: " << a_line);
+
     THROW_IF_FAIL (a_line >= 0) ;
 
     Gtk::TextIter line_iter =
@@ -503,6 +505,7 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     // marker doesn't yet exist, so create one of the correct type
     Gtk::TextIter iter =
         source_view ().get_source_buffer ()->get_iter_at_line (a_line) ;
+    LOG_DD ("a_line: " << a_line);
     THROW_IF_FAIL (iter) ;
     UString marker_name = UString::from_int (a_line);
 
