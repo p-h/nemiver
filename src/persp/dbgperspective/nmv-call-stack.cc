@@ -460,9 +460,11 @@ struct CallStack::Priv {
         int i = 0;
         std::ostringstream frame_stream;
         vector<IDebugger::Frame>::const_iterator frame_iter;
-        map<int, list<IDebugger::VariableSafePtr> >::const_iterator params_iter;
+        map<int, list<IDebugger::VariableSafePtr> >::const_iterator
+                                                                params_iter;
         UString args_string;
-        // convert list of stack frames to a string (FIXME: maybe Frame should
+        // convert list of stack frames to a string
+        // FIXME: maybe Frame should
         // just implement operator<< ?
         for (frame_iter = frames.begin (), params_iter = params.begin ();
              frame_iter != frames.end ();
@@ -521,20 +523,21 @@ struct CallStack::Priv {
         tree_view->signal_expose_event ().connect_notify
             (sigc::mem_fun (this, &Priv::on_expose_event_signal));
 
-        tree_view->set_events (Gdk::EXPOSURE_MASK);
+        tree_view->add_events (Gdk::EXPOSURE_MASK);
 
         Gtk::TreeViewColumn* column =
-                            tree_view->get_column (CallStackCols::FUNCTION_NAME);
+                    tree_view->get_column (CallStackCols::FUNCTION_NAME);
         THROW_IF_FAIL (column);
         column->set_clickable (false);
         column->set_reorderable (false);
 
-        THROW_IF_FAIL (column = tree_view->get_column (CallStackCols::LOCATION));
+        THROW_IF_FAIL (column = tree_view->get_column
+                                       (CallStackCols::LOCATION));
         column->set_clickable (false);
         column->set_reorderable (false);
 
         THROW_IF_FAIL (column = tree_view->get_column
-                                                (CallStackCols::FUNCTION_ARGS));
+                                            (CallStackCols::FUNCTION_ARGS));
         column->set_clickable (false);
         column->set_reorderable (false);
 
