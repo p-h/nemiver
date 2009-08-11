@@ -454,6 +454,14 @@ public:
                                      UString::size_type &a_to,
                                      int &a_thread_id);
 
+    /// parse GBBMI async output that says which thread was selected in
+    /// in the inferior
+    /// the string looks like:
+    /// =thread-selected,thread-id="<thread-id"
+    bool parse_thread_selected_async_output (UString::size_type a_from,
+                                             UString::size_type &a_to,
+                                             int &a_thread_id);
+
     bool parse_attribute (UString::size_type a_from,
                           UString::size_type &a_to,
                           UString &a_name,

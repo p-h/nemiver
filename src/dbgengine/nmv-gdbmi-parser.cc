@@ -180,6 +180,7 @@ const char* PREFIX_REGISTER_VALUES = "register-values=";
 const char* PREFIX_MEMORY_VALUES = "addr=";
 const char* PREFIX_RUNNING_ASYNC_OUTPUT = "*running,";
 const char* PREFIX_STOPPED_ASYNC_OUTPUT = "*stopped,";
+const char* PREFIX_THREAD_SELECTED_ASYNC_OUTPUT = "=thread-selected,";
 const char* PREFIX_NAME = "name=\"";
 const char* PREFIX_VARIABLE_DELETED = "ndeleted=\"";
 const char* NDELETED = "ndeleted";
@@ -1255,7 +1256,8 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
 
     if (m_priv->index_passed_end (cur)) {return false;}
 
-    if (m_priv->input.raw ().compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+    if (m_priv->input.raw ().compare (cur,
+                                      strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
                                       PREFIX_STOPPED_ASYNC_OUTPUT)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
@@ -1324,11 +1326,12 @@ GDBMIParser::parse_running_async_output (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
 
-    UString::size_type cur=a_from;
+    UString::size_type cur=a_from,
+                       prefix_len = strlen (PREFIX_RUNNING_ASYNC_OUTPUT);
 
     if (m_priv->index_passed_end (cur)) {return false;}
 
-    if (m_priv->input.raw ().compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
+    if (m_priv->input.raw ().compare (cur, prefix_len,
                                       PREFIX_RUNNING_ASYNC_OUTPUT)) {
         LOG_PARSING_ERROR_MSG2 (cur, "was expecting : '*running,'");
         return false;
@@ -1350,6 +1353,47 @@ GDBMIParser::parse_running_async_output (UString::size_type a_from,
     else
         a_thread_id = atoi (value.c_str ());
 
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::parse_thread_selected_async_output (UString::size_type a_from,
+                                                 UString::size_type &a_to,
+                                                 int &a_thread_id)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    UString::size_type cur = a_from,
+                       prefix_len =
+                           strlen (PREFIX_THREAD_SELECTED_ASYNC_OUTPUT);
+
+    if (m_priv->index_passed_end (cur)) {return false;}
+
+    if (m_priv->input.raw ().compare (cur, prefix_len,
+                                      PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting : '=thread-selected,'");
+        return false;
+    }
+    cur += prefix_len;
+    if (m_priv->index_passed_end (cur)) {return false;}
+
+    UString name, value;
+    if (!parse_attribute (cur, cur, name, value)) {
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting an attribute");
+        return false;
+    }
+    if (name != "id" && name != "thread-id") {
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting attribute 'thread-id' or 'id'");
+        return false;
+    }
+    unsigned thread_id = atoi (value.c_str ());
+    if (!thread_id) {
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting a non null thread-id");
+        return false;
+    }
+
+    a_thread_id = thread_id;
     a_to = cur;
     return true;
 }
@@ -1591,18 +1635,10 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
 
         while (m_priv->index_passed_end (cur)
                && isspace (RAW_CHAR_AT (cur))) {++cur;}
-    } else if (RAW_CHAR_AT (cur) == '=') {
-        //this is a notification sent by gdb. For now, the only one
-        //I have seen like this is of the form:
-        //'=thread-created,id=1',
-        //and the notification ends with a '\n' character.
-        //Of course it is not documented
-        //Let's ignore this by now
-        while (RAW_CHAR_AT (cur) != '\n') {++cur;}
-        ++cur;//consume the '\n' character
     }
 
-    if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+    if (!m_priv->input.raw ().compare (cur,
+                                       strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
                                        PREFIX_STOPPED_ASYNC_OUTPUT)) {
         map<UString, UString> attrs;
         bool got_frame (false);
@@ -1633,7 +1669,8 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
         goto end;
     }
 
-    if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
+    if (!m_priv->input.raw ().compare (cur,
+                                       strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
                                        PREFIX_RUNNING_ASYNC_OUTPUT)) {
         int thread_id;
         if (!parse_running_async_output (cur, cur, thread_id)) {
@@ -1644,6 +1681,33 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
         }
         record.thread_id (thread_id);
         goto end;
+    }
+
+    if (!m_priv->input.raw ().compare
+                            (cur,
+                             strlen (PREFIX_THREAD_SELECTED_ASYNC_OUTPUT),
+                                     PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
+        int thread_id;
+        if (!parse_thread_selected_async_output (cur, cur, thread_id)) {
+            LOG_PARSING_ERROR_MSG2 (cur,
+                                    "could not parse the expected "
+                                    "running async output");
+            return false;
+        }
+        record.thread_id (thread_id);
+        goto end;
+    }
+
+    if (RAW_CHAR_AT (cur) == '=' || RAW_CHAR_AT (cur) == '*') {
+       //this is an unknown async notification sent by gdb.
+       //For now, the only one
+       //I have seen like this is of the form:
+       //'=thread-created,id=1',
+       //and the notification ends with a '\n' character.
+       //Of course it is not documented
+       //Let's ignore this by now
+       while (RAW_CHAR_AT (cur) != '\n') {++cur;}
+       ++cur;//consume the '\n' character
     }
 
 end:

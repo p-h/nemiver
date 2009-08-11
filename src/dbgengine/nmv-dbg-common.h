@@ -312,7 +312,7 @@ public:
             m_has_frame = false ;
             m_frame.clear () ;
             m_breakpoint_number = 0 ;
-            m_thread_id = 0 ;
+            m_thread_id = -1;
             m_signal_type.clear () ;
         }
     };//end class OutOfBandRecord
