@@ -238,10 +238,8 @@ test_main (int argc, char *argv[])
     //*****************************
 
     std::vector<UString> args, source_search_dir ;
-    args.push_back ("fooprog") ;
     source_search_dir.push_back (".") ;
-
-    debugger->load_program (args, "", source_search_dir);
+    debugger->load_program ("fooprog", args, ".", source_search_dir);
     debugger->set_breakpoint ("main") ;
     debugger->set_breakpoint ("func1") ;
     debugger->set_breakpoint ("func2") ;

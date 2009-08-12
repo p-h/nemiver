@@ -964,11 +964,13 @@ public:
 
     virtual void set_solib_prefix_path (const UString &a_name) = 0;
 
-    virtual void load_program (const UString &a_prog_with_args,
+    virtual void load_program (const UString &a_prog,
+                               const vector<UString> &a_args,
                                const UString &a_working_dir) = 0;
 
     virtual void load_program
-                (const vector<UString> &a_argv,
+                (const UString &a_prog,
+                 const vector<UString> &a_argv,
                  const UString &working_dir,
                  const vector<UString> &a_source_search_dirs,
                  const UString &a_tty_path="") = 0;

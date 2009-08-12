@@ -406,17 +406,15 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
             a_return = 0;
             return false;
         }
-        UString prog_args;
-        for (int i=1; i < a_argc;++i) {
-            prog_args +=  Glib::locale_to_utf8 (a_argv[i]) + " ";
+        vector<UString> prog_args;
+        UString prog_path = a_argv[1];
+        for (int i=2; i < a_argc; ++i) {
+            prog_args.push_back (Glib::locale_to_utf8 (a_argv[i]));
         }
         IDBGPerspective *debug_persp =
             dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
                                                 (DBGPERSPECTIVE_PLUGIN_NAME));
         if (debug_persp) {
-            LOG_D ("going to debug program: '"
-                   << prog_args << "'\n",
-                   NMV_DEFAULT_DOMAIN);
             map<UString, UString> env;
             if (gv_env_vars) {
                 vector<UString> env_vars =
@@ -436,7 +434,9 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                     env[name] = value;
                 }
             }
-            debug_persp->execute_program (prog_args, env);
+            debug_persp->execute_program (prog_path,
+                                          prog_args,
+                                          env);
         } else {
             cerr << "Could not find the debugger perspective plugin\n";
             a_return = -1;

@@ -159,7 +159,8 @@ test_main (int argc, char **argv)
     //load .libs/pointerderef program, list its local variables
     //add them to the list, step a bit, update the varlist state at
     //each step, check the state has been updated.
-    debugger->load_program (".libs/pointerderef", ".") ;
+    vector<UString> args;
+    debugger->load_program (".libs/pointerderef", args, ".") ;
     debugger->set_breakpoint ("main") ;
     debugger->run () ;
 

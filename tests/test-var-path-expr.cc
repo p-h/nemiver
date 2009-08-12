@@ -139,10 +139,8 @@ test_main (int argc, char *argv[])
                                                      debugger));
 
     std::vector<UString> args, source_search_dir ;
-    args.push_back ("fooprog") ;
     source_search_dir.push_back (".") ;
-
-    debugger->load_program (args, "", source_search_dir);
+    debugger->load_program ("fooprog", args, ".", source_search_dir);
     debugger->set_breakpoint ("main") ;
     debugger->run () ;
     loop->run () ;

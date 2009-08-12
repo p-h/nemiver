@@ -97,10 +97,9 @@ test_main (int, char **)
     debugger->variable_value_signal ().connect (&on_variable_value_signal);
 
     std::vector<UString> args, source_search_dir ;
-    args.push_back ("fooprog") ;
     source_search_dir.push_back (".") ;
 
-    debugger->load_program (args, "", source_search_dir);
+    debugger->load_program ("fooprog", args, ".", source_search_dir);
     debugger->set_breakpoint ("func1") ;
     debugger->run () ;
     loop->run () ;

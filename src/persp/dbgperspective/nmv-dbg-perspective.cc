@@ -170,7 +170,7 @@ const Gtk::StockID STOCK_STEP_INTO (STEP_INTO);
 const Gtk::StockID STOCK_STEP_OVER (STEP_OVER);
 const Gtk::StockID STOCK_STEP_OUT (STEP_OUT);
 
-const char* SUPPORTED_ENCODINGS[] =
+const char *SUPPORTED_ENCODINGS[] =
 {
     "UTF-8",
     "ISO-8859",
@@ -178,7 +178,9 @@ const char* SUPPORTED_ENCODINGS[] =
     "ISO-8859-15",
 };
 
-const char* I_DEBUGGER_COOKIE_EXECUTE_PROGRAM = "i-debugger-execute-program";
+const char *I_DEBUGGER_COOKIE_EXECUTE_PROGRAM = "i-debugger-execute-program";
+
+const char *PROG_ARG_SEPARATOR = "#DUMMY-SEP007#";
 
 #define SIZE_OF_SUPPORTED_ENCODINGS \
 sizeof (SUPPORTED_ENCODINGS)/sizeof (SUPPORTED_ENCODINGS[0])
@@ -509,13 +511,14 @@ public:
 
     void execute_last_program_in_memory ();
 
-    void execute_program (const UString &a_prog_and_args,
+    void execute_program (const UString &a_prog,
+                          const vector<UString> &a_args,
                           const map<UString, UString> &a_env,
-                          const UString &a_cwd=".",
-                          bool a_close_opened_files=false);
+                          const UString &a_cwd,
+                          bool a_close_opened_files);
 
     void execute_program (const UString &a_prog,
-                          const UString &a_args,
+                          const vector<UString> &a_args,
                           const map<UString, UString> &a_env,
                           const UString &a_cwd,
                           const vector<IDebugger::BreakPoint> &a_breaks,
@@ -758,7 +761,7 @@ struct DBGPerspective::Priv {
     // engine died or not.
     bool debugger_engine_alive;
     UString prog_path;
-    UString prog_args;
+    vector<UString> prog_args;
     UString prog_cwd;
     map<UString, UString> env_variables;
     list<UString> search_paths;
@@ -4571,10 +4574,12 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     UString today;
     dateutils::get_current_datetime (today);
     session_name += "-" + today;
+    UString prog_args = UString::join (m_priv->prog_args,
+                                       PROG_ARG_SEPARATOR);
     a_session.properties ().clear ();
     a_session.properties ()[SESSION_NAME] = session_name;
     a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path;
-    a_session.properties ()[PROGRAM_ARGS] = m_priv->prog_args;
+    a_session.properties ()[PROGRAM_ARGS] = prog_args;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd;
     GTimeVal timeval;
     g_get_current_time (&timeval);
@@ -5224,8 +5229,11 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
         open_file(*path_iter);
     }
 
+    vector<UString> args =
+        a_session.properties ()[PROGRAM_ARGS].split (PROG_ARG_SEPARATOR);
+
     execute_program (a_session.properties ()[PROGRAM_NAME],
-                     a_session.properties ()[PROGRAM_ARGS],
+                     args,
                      a_session.env_variables (),
                      a_session.properties ()[PROGRAM_CWD],
                      breakpoints);
@@ -5241,7 +5249,8 @@ DBGPerspective::execute_program ()
     if (debugger ()->get_target_path () != "") {
         dialog.program_name (debugger ()->get_target_path ());
     }
-    dialog.arguments (m_priv->prog_args);
+    dialog.arguments (UString::join (m_priv->prog_args,
+                                     " "));
     if (m_priv->prog_cwd == "") {
         m_priv->prog_cwd = Glib::filename_to_utf8 (Glib::get_current_dir ());
     }
@@ -5253,10 +5262,11 @@ DBGPerspective::execute_program ()
         return;
     }
 
-    UString prog, args, cwd;
+    vector<UString> args;
+    UString prog, cwd;
     prog = dialog.program_name ();
     THROW_IF_FAIL (prog != "");
-    args = dialog.arguments ();
+    args = dialog.arguments ().split (" ");
     cwd = dialog.working_directory ();
     THROW_IF_FAIL (cwd != "");
     map<UString, UString> env = dialog.environment_variables();
@@ -5292,27 +5302,16 @@ DBGPerspective::execute_last_program_in_memory ()
 }
 
 void
-DBGPerspective::execute_program (const UString &a_prog_and_args,
+DBGPerspective::execute_program (const UString &a_prog,
+                                 const vector<UString> &a_args,
                                  const map<UString, UString> &a_env,
                                  const UString &a_cwd,
                                  bool a_close_opened_files)
 {
-    UString cwd;
-    if (a_cwd == "." || a_cwd == "") {
-        cwd = Glib::filename_to_utf8 (Glib::get_current_dir ());
-    } else {
-        cwd = a_cwd;
-    }
-    vector<UString> argv = a_prog_and_args.split (" ");
-    vector<UString>::const_iterator iter = argv.begin ();
-    vector<UString>::const_iterator end_iter = argv.end ();
-    ++iter;
-    UString prog_name=argv[0], args = UString::join (iter, end_iter);
-    vector<IDebugger::BreakPoint> breaks;
-
-    execute_program (prog_name, args, a_env, cwd,
-                     breaks, true, a_close_opened_files);
-    m_priv->reused_session = false;
+    vector<IDebugger::BreakPoint> bps;
+    execute_program (a_prog, a_args, a_env,
+                     a_cwd, bps, true,
+                     a_close_opened_files);
 }
 
 /// Loads and executes a program (called an inferior) under the debugger.
@@ -5335,7 +5334,7 @@ DBGPerspective::execute_program (const UString &a_prog_and_args,
 void
 DBGPerspective::execute_program
                         (const UString &a_prog,
-                         const UString &a_args,
+                         const vector<UString> &a_args,
                          const map<UString, UString> &a_env,
                          const UString &a_cwd,
                          const vector<IDebugger::BreakPoint> &a_breaks,
@@ -5388,8 +5387,6 @@ DBGPerspective::execute_program
         close_opened_files ();
     }
 
-    vector<UString> args = a_args.split (" ");
-    args.insert (args.begin (), prog);
     vector<UString> source_search_dirs = a_cwd.split (" ");
 
     // Detect if we are debugging a new program or not.
@@ -5409,8 +5406,9 @@ DBGPerspective::execute_program
              bp_it != m_priv->breakpoints.end ();
              ++bp_it) {
             if (m_priv->debugger_engine_alive)
-                dbg_engine->delete_breakpoint (bp_it->first,
-                                               I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
+                dbg_engine->delete_breakpoint
+                                (bp_it->first,
+                                 I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
         }
     }
 
@@ -5422,7 +5420,7 @@ DBGPerspective::execute_program
     clear_status_notebook ();
 
     // now really load the inferior program (i.e: the one to be debugged)
-    dbg_engine->load_program (args, a_cwd, source_search_dirs,
+    dbg_engine->load_program (prog, a_args, a_cwd, source_search_dirs,
                               get_terminal ().slave_pts_name ());
 
     m_priv->debugger_engine_alive = true;
@@ -5444,8 +5442,13 @@ DBGPerspective::execute_program
                 // We need to pass along some additional information
                 // in the 'cookie' to determine which breakpoint
                 // needs to be disabling after it is set.
-                UString cookie = it->enabled() ? "" : "initially-disabled#" +
-                    it->file_full_name () + "#" + UString::from_int(it->line ());
+                UString cookie =
+                    it->enabled()
+                    ? ""
+                    : "initially-disabled#"
+                       + it->file_full_name ()
+                       + "#"
+                       + UString::from_int(it->line ());
                 dbg_engine->set_breakpoint (it->file_full_name (),
                                             it->line (),
                                             it->condition (),
@@ -5526,7 +5529,8 @@ DBGPerspective::connect_to_remote_target ()
 
     UString path = dialog.get_executable_path ();
     LOG_DD ("executable path: '" <<  path << "'");
-    debugger ()->load_program (path , ".");
+    vector<UString> args;
+    debugger ()->load_program (path , args, ".");
     path = dialog.get_solib_prefix_path ();
     LOG_DD ("solib prefix path: '" <<  path << "'");
     debugger ()->set_solib_prefix_path (path);

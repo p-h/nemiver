@@ -154,7 +154,8 @@ test_main (int argc, char **argv)
                                                  debugger)) ;
 
 
-    debugger->load_program (".libs/pointerderef", ".") ;
+    vector<UString> args;
+    debugger->load_program (".libs/pointerderef", args, ".") ;
     debugger->set_breakpoint ("main") ;
     debugger->run () ;
 

@@ -170,7 +170,8 @@ test_main (int, char **)
     //</connect to IDebugger events>
     //******************************
 
-    debugger->load_program ("fooprog", ".");
+    vector<UString> args;
+    debugger->load_program ("fooprog", args, ".");
     debugger->set_breakpoint ("main");
 
     debugger->run ();

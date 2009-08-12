@@ -238,10 +238,13 @@ public:
     void set_debugger_parameter (const UString &a_name,
                                  const UString &a_value) ;
     void set_solib_prefix_path (const UString &a_name) ;
-    void load_program (const UString &a_prog_with_args,
+
+    void load_program (const UString &a_prog,
+                       const vector<UString> &a_args,
                        const UString &a_working_dir) ;
 
-    void load_program (const vector<UString> &a_argv,
+    void load_program (const UString &a_prog,
+                       const vector<UString> &a_argv,
                        const UString &working_dir,
                        const vector<UString> &a_source_search_dirs,
                        const UString &a_tty_path) ;

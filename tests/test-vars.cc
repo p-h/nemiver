@@ -273,7 +273,8 @@ test_main (int argc __attribute__((unused)),
     //*******************************
     //</connect to IDebugger events>
     //******************************
-    debugger->load_program ("fooprog", ".");
+    vector<UString> args;
+    debugger->load_program ("fooprog", args, ".");
     debugger->set_breakpoint ("main");
     debugger->set_breakpoint ("func4");
     // Set a breakpoint right after the person variable members get

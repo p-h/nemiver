@@ -61,7 +61,7 @@ quote_args (const vector<UString> &a_prog_args)
 {
     UString args;
     if (!a_prog_args.empty ()) {
-        for (vector<UString>::size_type i=1;
+        for (vector<UString>::size_type i = 0;
              i < a_prog_args.size ();
              ++i) {
             if (!a_prog_args[i].empty ())
@@ -599,8 +599,8 @@ public:
 
     bool launch_gdb (const UString &working_dir,
                      const vector<UString> &a_source_search_dirs,
-                     const vector<UString> &a_gdb_options,
-                     const UString a_prog="")
+                     const UString &a_prog,
+                     const vector<UString> &a_gdb_options)
     {
         if (is_gdb_running ()) {
             kill_gdb ();
@@ -618,7 +618,8 @@ public:
                 }
             }
         }
-        // if the executable program to be debugged is a libtool wrapper script,
+        // if the executable program to be debugged is a
+        // libtool wrapper script,
         // run the debugging session under libtool
         if (is_libtool_executable_wrapper (prog_path)) {
             argv.push_back ("libtool");
@@ -645,18 +646,21 @@ public:
     }
 
     bool launch_gdb_and_set_args (const UString &working_dir,
-                                  const vector<UString> &a_source_search_dirs,
+                                  const vector<UString> &a_src_search_dirs,
+                                  const UString &a_prog,
                                   const vector<UString> &a_prog_args,
                                   const vector<UString> a_gdb_options)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         bool result (false);
-        result = launch_gdb (working_dir, a_source_search_dirs,
-                             a_gdb_options, a_prog_args[0]);
+        result = launch_gdb (working_dir, a_src_search_dirs,
+                             a_prog, a_gdb_options);
+
         LOG_DD ("workingdir:" << working_dir
-                << "\nsearchpath:" << UString::join (a_source_search_dirs)
-                << "\nprogargs:" << UString::join (a_prog_args)
-                << "\ngdboptions:" << UString::join (a_gdb_options));
+                << "\nsearchpath: " << UString::join (a_src_search_dirs)
+                << "\nprog: " << a_prog
+                << "\nprogargs: " << UString::join (a_prog_args, " ")
+                << "\ngdboptions: " << UString::join (a_gdb_options));
 
         if (!result) {return false;}
         UString args = quote_args (a_prog_args);
@@ -2466,35 +2470,34 @@ GDBEngine::~GDBEngine ()
 }
 
 void
-GDBEngine::load_program (const UString &a_prog_with_args,
+GDBEngine::load_program (const UString &a_prog,
+                         const vector<UString> &a_args,
                          const UString &a_working_dir)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-
-    vector<UString> args = a_prog_with_args.split (" ");
     vector<UString> search_paths;
     UString tty_path;
-
-    load_program (args, a_working_dir, search_paths, tty_path);
+    load_program (a_prog, a_args, a_working_dir, search_paths, tty_path);
 }
 
 void
-GDBEngine::load_program (const vector<UString> &a_argv,
+GDBEngine::load_program (const UString &a_prog,
+                         const vector<UString> &a_argv,
                          const UString &working_dir,
                          const vector<UString> &a_source_search_dirs,
                          const UString &a_tty_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    THROW_IF_FAIL (!a_argv.empty ());
+    THROW_IF_FAIL (!a_prog.empty ());
     vector<UString> argv (a_argv);
 
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts;
         THROW_IF_FAIL (m_priv->launch_gdb_and_set_args
                                     (working_dir, a_source_search_dirs, 
-                                     argv, gdb_opts));
+                                     a_prog, a_argv, gdb_opts));
 
         Command command;
 
@@ -2516,7 +2519,7 @@ GDBEngine::load_program (const vector<UString> &a_argv,
         }
     } else {
         Command command ("load-program",
-                         UString ("-file-exec-and-symbols ") + argv[0]);
+                         UString ("-file-exec-and-symbols ") + a_prog);
         queue_command (command);
 
         UString args = quote_args (argv);
@@ -2553,7 +2556,10 @@ GDBEngine::attach_to_target (unsigned int a_pid,
 
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts;
-        THROW_IF_FAIL (m_priv->launch_gdb ("", source_search_dirs, gdb_opts));
+        THROW_IF_FAIL (m_priv->launch_gdb ("" /* no cwd */,
+                                           source_search_dirs,
+                                           "" /* no inferior*/,
+                                           gdb_opts));
 
         Command command;
         command.value ("set breakpoint pending auto");
@@ -3405,7 +3411,7 @@ GDBEngine::step_out (const UString &a_cookie)
     Command command ("step-out",
                      "-exec-finish",
                      a_cookie);
-    queue_command (Command ());
+    queue_command (command);
 }
 
 void

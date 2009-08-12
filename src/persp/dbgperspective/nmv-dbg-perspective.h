@@ -79,16 +79,18 @@ public:
 
     virtual void execute_program () = 0;
 
-    virtual void execute_program (const UString &a_prog_and_args,
-                                  const map<UString, UString> &a_env,
-                                  const UString &a_cwd = ".",
-                                  bool a_close_opened_files = false) = 0;
+    virtual void execute_program (const UString &a_prog,
+                          const vector<UString> &a_args,
+                          const map<UString, UString> &a_env,
+                          const UString &a_cwd = ".",
+                          bool a_close_opened_files = false) = 0;
 
     virtual void execute_program (const UString &a_prog,
-                                  const UString &a_args,
+                                  const vector<UString> &a_args,
                                   const map<UString, UString> &a_env,
                                   const UString &a_cwd,
-                                  const vector<IDebugger::BreakPoint> &a_breaks,
+                                  const vector<IDebugger::BreakPoint>
+                                                                  &a_breaks,
                                   bool a_check_is_new_program = true,
                                   bool a_close_opened_files = false) = 0;
 
