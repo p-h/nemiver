@@ -1,5 +1,10 @@
 2009-09-12  Dodji Seketeli <dodji@redhat.com>
 
+	Update ChangeLog
+	* ChangeLog: Automatic update.
+
+2009-09-12  Dodji Seketeli <dodji@redhat.com>
+
 	Update NEWS
 	* NEWS: Update for 0.7.2
 
