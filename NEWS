@@ -1,3 +1,18 @@
+0.7.2 Release
+=============
+
+Dodji Seketeli
+      Support breakpoint ignore counts (Closes: #588251)
+      Display no msg dialog when gconf is down
+      Create varobjs for a given frame (Closes: #590833)
+      Don't ignore "thread-selected" async records
+      Change IDebugger::thread_selected_signal signature
+      Update state when thread id changes.
+      Don't clobber cmdline arguments (Close: #591327)
+
+Jonh Wendell (1):
+      Updated Brazilian Portuguese translation
+
 0.7.1 Release
 =============
 
