@@ -1,3 +1,189 @@
+2009-09-12  Dodji Seketeli <dodji@redhat.com>
+
+	Update NEWS
+	* NEWS: Update for 0.7.2
+
+2009-08-26 11:50:22 -0300  Jonh Wendell <jwendell@gnome.org>
+
+	Updated Brazilian Portuguese translation
+
+2009-08-12  Dodji Seketeli <dodji@redhat.com>
+
+	Don't clobber cmdline arguments (Close: #591327)
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::load_program): Inferior arguments are now passed
+	as a vector of strings.
+	* src/dbgengine/nmv-gdb-engine.h:
+	(GDBEngine::load_program): Adjust.
+	src/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::load_program): Adjust.
+	(quote_args): Quote all args starting from index 0.
+	(GDBEngine::Priv::launch_gdb): Swap the order of the
+	two last parameters.
+	(GDBEngine::Priv::launch_gdb_and_set_args): The prog path
+	and the args are now passed in two distinct variables.
+	Args are still in vector of strings.
+	(GDBEngine::step_out): Really pass the command to GDB.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::execute_program): Prog path and args are now
+	distinct. Args are passed as a vector of strings.
+	(DBGPerspective::record_and_save_session): Command line arguments
+	are now separated by a special separator at serialization time.
+	(DBGPerspective::execute_session): Consider the new special command
+	line arguments separator when de-serializing the command line
+	arguments.
+	(DBGPerspective::execute_program,
+	DBGPerspective::connect_to_remote_target): Adjust
+	* src/main.cc (process_gui_command_line,
+	process_gui_command_line): Adjust.
+	* tests/test-breakpoint.cc (test_main): Likewise.
+	* tests/test-deref.cc (test_main): Likewise.
+	* tests/test-local-vars-list.cc (test_main): Likewise.
+	* tests/test-types.cc (test_main): Likewise.
+	* tests/test-var-list.cc (test_main): Likewise.
+	* tests/test-var-path-expr.cc (test_main): Likewise.
+	* tests/test-var-walker.cc (test_main): Likewise.
+	* tests/test-varobj-walker.cc (test_main): Likewise.
+	* tests/test-vars.cc (test_main): Likewise.
+	* tests/test-watchpoint.cc (test_main): Likewise.
+
+2009-08-11  Dodji Seketeli <dodji@redhat.com>
+
+	Various cleanups
+	* src/persp/dbgperspective/nmv-call-stack.cc: Cosmetic cleanups.
+
+2009-08-11  Dodji Seketeli <dodji@redhat.com>
+
+	Add more logs
+	* src/uicommon/nmv-source-editor.cc:
+	(SourceEditor::move_where_marker_to_line,
+	SourceEditor::set_visual_breakpoint_at_line): Add more logs.
+
+2009-08-11  Dodji Seketeli <dodji@redhat.com>
+
+	Update state when thread id changes.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::Priv::cur_thread_num,
+	GDBEngine::Priv::cur_frame_address): New attributes.
+	(GDBEngine::Priv::Priv): On thread stop, record the current frame
+	address. Do the same on thread selection, and when threads are
+	listed.
+	(GDBEngine::Priv::queue_command,
+	GDBEngine::Priv::list_frames): Move the code of
+	GDBEngine::queue_command and GDBEngine::list_frames here.
+	(GDBEngine::Priv::on_thread_selected_signal,
+	GDBEngine::Priv::on_stopped_signal,
+	GDBEngine::Priv::on_frames_listed_signal): New event handlers.
+	(OnThreadSelectedHandler::can_handle): Be ready to better detect
+	When a thread is selected.
+	(OnFramesListedHandler::do_handle): Record frame address here.
+	FIXME: this is redundant with what's done in
+	on_frames_listed_signal.
+	(GDBEngine::get_current_frame_address,
+	GDBEngine::get_mi_thread_and_frame_location,
+	GDBEngine::get_mi_thread_location,
+	GDBEngine::get_current_thread): New entry points.
+	(GDBEngine::queue_command,
+	GDBEngine::list_frames): Tunnel these to
+	GDBEngine::Priv::queue_command and GDBEngine::Priv::list_frames.
+	Also did various cosmetic cleanups.
+	* src/dbgengine/nmv-gdb-engine.h:
+	(GDBEngine::get_current_frame_address,
+	GDBEngine::set_current_frame_address,
+	GDBEngine::get_mi_thread_location,
+	GDBEngine::get_current_thread): Declare these.
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::get_current_thread): New entry point.
+
+2009-08-11  Dodji Seketeli <dodji@redhat.com>
+
+	Various cosmetic cleanups
+	* src/dbgengine/nmv-gdb-engine.cc: Usual style cleanups.
+
+2009-08-11  Dodji Seketeli <dodji@redhat.com>
+
+	Change IDebugger::thread_selected_signal signature
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::thread_selected_signal): Change signature.
+	The frame is now a pointer.
+	* src/dbgengine/nmv-gdb-engine.h: Adjust.
+	* src/dbgengine/nmv-gdb-engine.cc: Likewise.
+	* src/persp/dbgperspective/nmv-thread-list.cc: Likewise.
+
+2009-08-11  Dodji Seketeli <dodji@redhat.com>
+
+	Don't ignore "thread-selected" async records
+	* src/dbgengine/nmv-gdbmi-parser.h:
+	(GDBMI::parse_thread_selected_async_output): Declare New entry point.
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	(GDBMI::parse_thread_selected_async_output): Implement it.
+	(GDBMIParser::parse_out_of_band_record): Support parsing
+	thread-selected asynchronous record. Various cleanups.
+	* src/dbgengine/nmv-dbg-common.h:
+	(OutOfBandRecord::clear): Set default thread id value to -1.
+
+2009-08-05  Dodji Seketeli <dodji@redhat.com>
+
+	Create varobjs for a given frame (Closes: #590833)
+	* (GDBEngine::create_variable): Let the -var-create
+	command always specify the frame number, instead of the "*"
+	that says "current frame". This is better because we don't always
+	know what the current frame is for GDB. This was creating subtle
+	bugs where Nemiver could not create varobjs for some variables.
+
+2009-08-05  Dodji Seketeli <dodji@redhat.com>
+
+	Display no msg dialog when gconf is down
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::on_shutdown_signal): Let error messages
+	go to the terminal only.
+	* src/workbench/nmv-workbench.cc:
+	(Workbench::get_configuration_manager, Workbench::init_window):
+	Likewise.
+
+2009-08-02  Dodji Seketeli <dodji@redhat.com>
+
+	Support breakpoint ignore counts (Closes: #588251)
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::BreakPoint::ignore_count): New accessor.
+	(IDebugger::set_breakpoint_ignore_count): New entry point.
+	(IDebugger::enable_breakpoint, IDebugger::disable_breakpoint,
+	IDebugger::delete_breakpoint): Move all the breakpoint related
+	functions to group them together.
+	* src/dbgengine/nmv-gdb-engine.h:
+	(GDBEngine::set_breakpoint_ignore_count): New entry point.
+	(GDBEngine::enable_breakpoint, GDBEngine::disable_breakpoint,
+	GDBEngine::delete_breakpoint): Move these functions around to group
+	them together.
+	* src/dbgengine/nmv-gdb-engine.cc:
+	(GDBEngine::enable_breakpoint, GDBEngine::disable_breakpoint,
+	GDBEngine::delete_breakpoint): Move these functions around to group
+	them together.
+	(GDBEngine::set_breakpoint_ignore_count): Implement this new entry
+	point.
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	(GDBMIParser::parse_result_record): Style cleanup.
+	(GDBMIParser::parse_breakpoint): Take the ignore count into account.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	(BPColumns): add ignore_count and is_standard fields.
+	(get_bp_cols): Renamed get_pb_columns into this.
+	(BreakpointsView::Priv::build_tree_view): Adjust.
+	Append an editable "ignore count" column. If the breakpoint is not
+	standard (e.g. if it's a watchpoint), do not let its "ignore count"
+	column  be editable. When the user edits the ignore count, call the
+	debugger engine to really set the ignore count.
+	(BreakpointsView::Priv::update_breakpoint): Update the ignore_count
+	and is_standard columns.
+	(BreakpointsView::Priv::on_breakpoint_ignore_count_edited): New
+	function.
+	(BreakpointsView::Priv::on_breakpoint_enable_toggled):Moved all the
+	signal handlers around to group them together.
+
+2009-08-03  Dodji Seketeli <dodji@redhat.com>
+
+	Bump version 0.7.2
+	* configure.ac: Bump to 0.7.2
+
 2009-08-01  Dodji Seketeli <dodji@redhat.com>
 
 	Automatic ChangeLog update for 0.7.1
