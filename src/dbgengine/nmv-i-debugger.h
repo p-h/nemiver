@@ -1026,13 +1026,17 @@ public:
     virtual void continue_to_position (const UString &a_path,
                                        gint a_line_num,
                                        const UString &a_cookie="") = 0;
+
     virtual void set_breakpoint (const UString &a_path,
                                  gint a_line_num,
-                                 const UString &a_condition="",
-                                 const UString &a_cookie="") = 0;
+                                 const UString &a_condition= "",
+                                 unsigned a_ignore_count = 0,
+                                 const UString &a_cookie = "") = 0;
+
     virtual void set_breakpoint (const UString &a_func_name,
-                                 const UString &a_condition="",
-                                 const UString &a_cookie="") = 0;
+                                 const UString &a_condition = "",
+                                 unsigned a_ignore_count = 0,
+                                 const UString &a_cookie = "") = 0;
 
     virtual void enable_breakpoint (gint a_break_num,
                                     const UString &a_cookie="") = 0;

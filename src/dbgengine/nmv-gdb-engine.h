@@ -316,10 +316,12 @@ public:
     void set_breakpoint (const UString &a_path,
                          gint a_line_num,
                          const UString &a_condition,
+                         unsigned a_ignore_count,
                          const UString &a_cookie)  ;
 
     void set_breakpoint (const UString &a_func_name,
                          const UString &a_condition,
+                         unsigned a_ignore_count,
                          const UString &a_cookie)  ;
 
     void enable_breakpoint (gint a_break_num,

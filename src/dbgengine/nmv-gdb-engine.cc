@@ -3455,27 +3455,27 @@ void
 GDBEngine::set_breakpoint (const UString &a_path,
                            gint a_line_num,
                            const UString &a_condition,
+                           unsigned a_ignore_count,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    //here, don't use the gdb/mi format, because only the cmd line
-    //format supports the 'set breakpoint pending' option that lets
-    //gdb set pending breakpoint when a breakpoint location doesn't exist.
-    //read http://sourceware.org/gdb/current/onlinedocs/gdb_6.html#SEC33
-    //Also, we don't neet to explicitely 'set breakpoint pending' to have it
-    //work. Even worse, setting it doesn't work.
-    UString break_cmd ("break ");
-    if (!a_path.empty ()) {
-        break_cmd += a_path + ":";
-    }
-    break_cmd += UString::from_int (a_line_num);
+    THROW_IF_FAIL (!a_path.empty ());
+
+    UString break_cmd ("-break-insert -f ");
     if (!a_condition.empty ()) {
         LOG_DD ("setting breakpoint with condition: " << a_condition);
-        break_cmd += " if " + a_condition;
+        break_cmd += " -c \"" + a_condition + "\"";
     } else {
         LOG_DD ("setting breakpoint without condition");
     }
+
+    break_cmd += " -i " + UString::from_int (a_ignore_count);
+
+    if (!a_path.empty ()) {
+        break_cmd += " " + a_path + ":";
+    }
+    break_cmd += UString::from_int (a_line_num);
     queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
     list_breakpoints (a_cookie);
 }
@@ -3579,18 +3579,22 @@ GDBEngine::set_watchpoint (const UString &a_expression,
 void
 GDBEngine::set_breakpoint (const UString &a_func_name,
                            const UString &a_condition,
+                           unsigned a_ignore_count,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     UString break_cmd;
-    break_cmd += "break " + a_func_name;
+    break_cmd += "-break-insert -f ";
     if (!a_condition.empty ()) {
         LOG_DD ("setting breakpoint with condition: " << a_condition);
-        break_cmd += " if " + a_condition;
+        break_cmd += " -c \"" + a_condition + "\"";
     } else {
         LOG_DD ("setting breakpoint without condition");
     }
+    break_cmd += " -i " + UString::from_int (a_ignore_count);
+    break_cmd +=  " " + a_func_name;
+
     queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
     list_breakpoints (a_cookie);
 }
