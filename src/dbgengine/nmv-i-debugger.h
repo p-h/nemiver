@@ -99,6 +99,8 @@ public:
         int m_line;
         int m_nb_times_hit;
         int m_ignore_count;
+        bool m_is_read_watchpoint;
+        bool m_is_write_watchpoint;
 
     public:
         BreakPoint () {clear ();}
@@ -141,6 +143,12 @@ public:
         int ignore_count () const {return m_ignore_count;}
         void ignore_count (int a) {m_ignore_count = a;}
 
+        bool is_read_watchpoint () const {return m_is_read_watchpoint;}
+        void is_read_watchpoint (bool f) {m_is_read_watchpoint = f;}
+
+        bool is_write_watchpoint () const {return m_is_write_watchpoint;}
+        void is_write_watchpoint (bool f) {m_is_write_watchpoint = f;}
+
         bool is_pending ()
         {
             if (m_address == "<PENDING>") {
@@ -168,6 +176,8 @@ public:
             m_condition.clear ();
             m_nb_times_hit = 0;
             m_ignore_count = 0;
+            m_is_read_watchpoint = false;
+            m_is_write_watchpoint = false;
         }
     };//end class BreakPoint
 

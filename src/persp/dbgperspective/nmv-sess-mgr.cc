@@ -43,7 +43,7 @@ using nemiver::common::ConnectionManager;
 using nemiver::common::Transaction;
 using nemiver::common::SQLStatement;
 
-static const char *REQUIRED_DB_SCHEMA_VERSION = "1.3";
+static const char *REQUIRED_DB_SCHEMA_VERSION = "1.4";
 static const char *DB_FILE_NAME = "nemivercommon.db";
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -262,15 +262,15 @@ SessMgr::store_session (Session &a_session,
 {
     THROW_IF_FAIL (m_priv);
 
-    //The next line starts a transaction.
-    //If we get off from this function without reaching
-    //the trans.end() call, every db request we made gets rolled back.
+    // The next line starts a transaction.
+    // If we get off from this function without reaching
+    // the trans.end() call, every db request we made gets rolled back.
     TransactionAutoHelper trans (a_trans);
 
     UString query;
     if (!a_session.session_id ()) {
-        //insert the session id in the sessions table, and get the session id
-        //we just inerted
+        // insert the session id in the sessions table, and get the session id
+        // we just inerted
         query = "insert into sessions values(NULL)";
         THROW_IF_FAIL2
             (trans.get ().get_connection ().execute_statement (query),
@@ -289,7 +289,7 @@ SessMgr::store_session (Session &a_session,
         a_session.session_id (session_id);
     }
 
-    //store the properties
+    // store the properties
     query = "delete from attributes where sessionid = "
             + UString::from_int (a_session.session_id ());
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
@@ -308,7 +308,7 @@ SessMgr::store_session (Session &a_session,
                 (trans.get ().get_connection ().execute_statement (query));
     }
 
-    //store the environment variables
+    // store the environment variables
     query = "delete from env_variables where sessionid = "
             + UString::from_int (a_session.session_id ());
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
@@ -327,7 +327,7 @@ SessMgr::store_session (Session &a_session,
                 (trans.get ().get_connection ().execute_statement (query));
     }
 
-    //store the breakpoints
+    // store the breakpoints
     query = "delete from breakpoints where sessionid = "
             + UString::from_int (a_session.session_id ());
     THROW_IF_FAIL
@@ -345,13 +345,38 @@ SessMgr::store_session (Session &a_session,
                 + break_iter->file_full_name () + "', "
                 + UString::from_int (break_iter->line_number ()) + ", "
                 + UString::from_int (break_iter->enabled ()) + ", "
-                + "'" + condition + "')";
+                + "'" + condition + "'" + ", "
+                + UString::from_int (break_iter->ignore_count ())
+                + ")";
         LOG_DD ("query: " << query);
         THROW_IF_FAIL
                 (trans.get ().get_connection ().execute_statement (query));
     }
 
-    //store the opened files
+    // store the watchpoints
+    query = "delete from watchpoints where sessionid = "
+            + UString::from_int (a_session.session_id ());
+    THROW_IF_FAIL
+            (trans.get ().get_connection ().execute_statement (query));
+
+    list<SessMgr::WatchPoint>::const_iterator watch_iter;
+    for (watch_iter = a_session.watchpoints ().begin ();
+         watch_iter != a_session.watchpoints ().end ();
+         ++watch_iter) {
+        UString expression = watch_iter->expression ();
+        expression.chomp ();
+        query = "insert into watchpoints values(NULL, "
+                + UString::from_int (a_session.session_id ()) + ", '"
+                + expression + "', "
+                + UString::from_int (watch_iter->is_read ()) + ", "
+                + UString::from_int (watch_iter->is_write ())
+                + ")";
+        LOG_DD ("query: " << query);
+        THROW_IF_FAIL
+                (trans.get ().get_connection ().execute_statement (query));
+    }
+
+    // store the opened files
     query = "delete from openedfiles where sessionid = "
             + UString::from_int (a_session.session_id ());
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
@@ -369,7 +394,7 @@ SessMgr::store_session (Session &a_session,
                 (trans.get ().get_connection ().execute_statement (query));
     }
 
-    //store the search paths
+    // store the search paths
     query = "delete from searchpaths where sessionid = "
             + UString::from_int (a_session.session_id ());
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
@@ -413,15 +438,16 @@ SessMgr::load_session (Session &a_session,
     Session session;
     session.session_id (a_session.session_id ());
 
-    //The next line starts a transaction.
-    //If we get off from this function without reaching
-    //the trans.end() call, every db request we made gets rolled back.
+    // The next line starts a transaction.
+    // If we get off from this function without reaching
+    // the trans.end() call, every db request we made gets rolled back.
     TransactionAutoHelper trans (a_trans);
 
-    //load the attributes
+    // load the attributes
     UString query="select attributes.name, attributes.value "
                   "from attributes where attributes.sessionid = "
                   + UString::from_int (a_session.session_id ());
+    LOG_DD ("query: " << query);
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
     while (trans.get ().get_connection ().read_next_row ()) {
         UString name, value;
@@ -432,10 +458,11 @@ SessMgr::load_session (Session &a_session,
         session.properties ()[name] = value;
     }
 
-    //load the environment variables
+    // load the environment variables
     query = "select env_variables.name, env_variables.value "
             "from env_variables where env_variables.sessionid = "
                   + UString::from_int (a_session.session_id ());
+    LOG_DD ("query: " << query);
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
     while (trans.get ().get_connection ().read_next_row ()) {
         UString name, value;
@@ -446,15 +473,17 @@ SessMgr::load_session (Session &a_session,
         session.env_variables ()[name] = value;
     }
 
-    //load the breakpoints
+    // load the breakpoints
     query = "select breakpoints.filename, breakpoints.filefullname, "
             "breakpoints.linenumber, breakpoints.enabled, "
-            "breakpoints.condition from "
+            "breakpoints.condition, breakpoints.ignorecount from "
             "breakpoints where breakpoints.sessionid = "
             + UString::from_int (session.session_id ());
+    LOG_DD ("query: " << query);
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
     while (trans.get ().get_connection ().read_next_row ()) {
-        UString filename, filefullname, linenumber, enabled, condition;
+        UString filename, filefullname, linenumber,
+                enabled, condition, ignorecount;
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                             (0, filename));
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
@@ -466,14 +495,42 @@ SessMgr::load_session (Session &a_session,
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                             (4, condition));
         condition.chomp ();
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                            (5, ignorecount));
+        LOG_DD ("filename, filefullname, linenumber, enabled, "
+                "condition, ignorecount:\n"
+                << filename << "," << filefullname << ","
+                << linenumber << "," << enabled << ","
+                << condition<< "," << ignorecount);
         session.breakpoints ().push_back (SessMgr::BreakPoint (filename,
                                                                filefullname,
                                                                linenumber,
                                                                enabled,
-                                                               condition));
+                                                               condition,
+                                                               ignorecount));
     }
 
-    //load the search paths
+    // load the watchpoints
+    query = "select watchpoints.expression, watchpoints.iswrite, "
+            "watchpoints.isread from watchpoints where watchpoints.sessionid = "
+            + UString::from_int (session.session_id ());
+    LOG_DD ("query: " << query);
+    THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
+    while (trans.get ().get_connection ().read_next_row ()) {
+        UString expression;
+        gint64 is_write = false, is_read = false;
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                            (0, expression));
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                        (1, is_write));
+        THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                            (2, is_read));
+        session.watchpoints ().push_back (SessMgr::WatchPoint (expression,
+                                                               is_write,
+                                                               is_read));
+    }
+
+    // load the search paths
     query = "select searchpaths.path from "
             "searchpaths where searchpaths.sessionid = "
             + UString::from_int (session.session_id ());
@@ -485,7 +542,7 @@ SessMgr::load_session (Session &a_session,
         session.search_paths ().push_back (path);
     }
 
-    //load the opened files
+    // load the opened files
     query = "select openedfiles.filename from openedfiles where "
             "openedfiles.sessionid = "
             + UString::from_int (session.session_id ());

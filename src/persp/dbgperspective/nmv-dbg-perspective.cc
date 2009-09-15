@@ -4597,18 +4597,33 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
         a_session.opened_files ().push_back (path_iter->first);
     }
 
+    // Record regular breakpoints and watchpoints in the session
     a_session.breakpoints ().clear ();
+    a_session.watchpoints ().clear ();
     map<int, IDebugger::BreakPoint>::const_iterator break_iter;
     for (break_iter = m_priv->breakpoints.begin ();
          break_iter != m_priv->breakpoints.end ();
          ++break_iter) {
-        ISessMgr::BreakPoint bp (break_iter->second.file_name (),
-                                 break_iter->second.file_full_name (),
-                                 break_iter->second.line (),
-                                 break_iter->second.enabled (),
-                                 break_iter->second.condition ());
-        a_session.breakpoints ().push_back (bp);
+        if (break_iter->second.type ()
+            == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE) {
+            ISessMgr::BreakPoint bp (break_iter->second.file_name (),
+                                     break_iter->second.file_full_name (),
+                                     break_iter->second.line (),
+                                     break_iter->second.enabled (),
+                                     break_iter->second.condition (),
+                                     break_iter->second.ignore_count ());
+            a_session.breakpoints ().push_back (bp);
+            LOG_DD ("Regular breakpoint scheduled to be stored");
+        } else if (break_iter->second.type ()
+                   == IDebugger::BreakPoint::WATCHPOINT_TYPE) {
+            ISessMgr::WatchPoint wp (break_iter->second.expression (),
+                                     break_iter->second.is_write_watchpoint (),
+                                     break_iter->second.is_read_watchpoint ());
+            a_session.watchpoints ().push_back (wp);
+            LOG_DD ("Watchpoint scheduled to be stored");
+        }
     }
+
     THROW_IF_FAIL (session_manager_ptr ());
 
     a_session.search_paths ().clear ();
@@ -5200,8 +5215,8 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
 
     IDebugger::BreakPoint breakpoint;
     vector<IDebugger::BreakPoint> breakpoints;
-    list<ISessMgr::BreakPoint>::const_iterator it;
-    for (it = m_priv->session.breakpoints ().begin ();
+    for (list<ISessMgr::BreakPoint>::const_iterator it =
+             m_priv->session.breakpoints ().begin ();
          it != m_priv->session.breakpoints ().end ();
          ++it) {
         breakpoint.clear ();
@@ -5210,6 +5225,19 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
         breakpoint.file_full_name (it->file_full_name ());
         breakpoint.enabled (it->enabled ());
         breakpoint.condition (it->condition ());
+        breakpoint.ignore_count (it->ignore_count ());
+        breakpoints.push_back (breakpoint);
+    }
+
+    for (list<ISessMgr::WatchPoint>::const_iterator it =
+           m_priv->session.watchpoints ().begin ();
+         it != m_priv->session.watchpoints ().end ();
+         ++it) {
+        breakpoint.clear ();
+        breakpoint.type (IDebugger::BreakPoint::WATCHPOINT_TYPE);
+        breakpoint.expression (it->expression ());
+        breakpoint.is_read_watchpoint (it->is_read ());
+        breakpoint.is_write_watchpoint (it->is_write ());
         breakpoints.push_back (breakpoint);
     }
 
@@ -5341,6 +5369,8 @@ DBGPerspective::execute_program
                          bool a_check_is_new_program,
                          bool a_close_opened_files)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
     NEMIVER_TRY
 
     THROW_IF_FAIL (m_priv);
@@ -5398,6 +5428,7 @@ DBGPerspective::execute_program
     bool is_new_program = (a_check_is_new_program) ?
                                 (prog != m_priv->prog_path)
                                 : true;
+    LOG_DD ("is new prog: " << is_new_program);
 
     // delete old breakpoints, if any.
     if (is_new_program) {
@@ -5419,6 +5450,7 @@ DBGPerspective::execute_program
 
     clear_status_notebook ();
 
+    LOG_DD ("load program");
     // now really load the inferior program (i.e: the one to be debugged)
     dbg_engine->load_program (prog, a_args, a_cwd, source_search_dirs,
                               get_terminal ().slave_pts_name ());
@@ -5443,16 +5475,23 @@ DBGPerspective::execute_program
                 // in the 'cookie' to determine which breakpoint
                 // needs to be disabling after it is set.
                 UString cookie =
-                    it->enabled()
+                    it->enabled ()
                     ? ""
                     : "initially-disabled#"
                        + it->file_full_name ()
                        + "#"
                        + UString::from_int(it->line ());
-                dbg_engine->set_breakpoint (it->file_full_name (),
-                                            it->line (),
-                                            it->condition (),
-                                            cookie);
+                if (it->type ()
+                    == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE)
+                    dbg_engine->set_breakpoint (it->file_full_name (),
+                                                it->line (),
+                                                it->condition (),
+                                                it->ignore_count (),
+                                                cookie);
+                else if (it->type () == IDebugger::BreakPoint::WATCHPOINT_TYPE)
+                    dbg_engine->set_watchpoint (it->expression (),
+                                                it->is_write_watchpoint (),
+                                                it->is_read_watchpoint ());
             }
         }
     }
@@ -5763,10 +5802,13 @@ DBGPerspective::append_breakpoint (int a_bp_num,
 {
     UString file_path;
     file_path = a_breakpoint.file_full_name ();
-    //if the file full path info is not present,
-    //1/ lookup in the files opened in the perspective already.
-    //2/ lookup in the list of source directories
-    if (file_path == "") {
+    IDebugger::BreakPoint::Type type = a_breakpoint.type ();
+
+    // If the file full path info is not present,
+    // 1/ lookup in the files opened in the perspective already.
+    // 2/ lookup in the list of source directories
+    if (type == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE
+        && file_path == "") {
         UString file_name = a_breakpoint.file_name ();
         LOG_DD ("no full path info present for file '"
                 + file_name + "'");
@@ -5788,8 +5830,12 @@ DBGPerspective::append_breakpoint (int a_bp_num,
             << a_breakpoint.line () - 1);
     m_priv->breakpoints[a_bp_num] = a_breakpoint;
     m_priv->breakpoints[a_bp_num].file_full_name (file_path);
-    append_visual_breakpoint (file_path, a_breakpoint.line () - 1,
-                              a_breakpoint.enabled ());
+    // Append the visual representation of the breakpoint if it's a standard
+    // breakpoint, i.e. not a watchpoint. We don't have any visual
+    // representation of watchpoints yet.
+    if (type == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE)
+        append_visual_breakpoint (file_path, a_breakpoint.line () - 1,
+                                  a_breakpoint.enabled ());
 }
 
 void
@@ -5799,15 +5845,8 @@ DBGPerspective::append_breakpoints
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     map<int, IDebugger::BreakPoint>::const_iterator iter;
-    for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter) {
-        // If the breakpoint is a standard one (e.g. not a watchpoint), add
-        // its visual representation.
-        // We don't have any visual representation for watchpoints yet.
-        if (iter->second.type ()
-            == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE) {
-            append_breakpoint (iter->first, iter->second);
-        }
-    }
+    for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter)
+        append_breakpoint (iter->first, iter->second);
 }
 
 bool
