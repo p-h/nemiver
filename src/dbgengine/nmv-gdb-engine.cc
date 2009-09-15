@@ -3515,7 +3515,7 @@ GDBEngine::set_breakpoint_ignore_count (gint a_break_num,
     RETURN_IF_FAIL (a_break_num >= 0 && a_ignore_count >= 0);
 
     Command command ("set-breakpoint-ignore-count",
-                     "ignore " + UString::from_int (a_break_num)
+                     "-break-after " + UString::from_int (a_break_num)
                      + " " + UString::from_int (a_ignore_count),
                      a_cookie);
     queue_command (command);

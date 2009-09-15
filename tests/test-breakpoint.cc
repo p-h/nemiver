@@ -113,11 +113,13 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                 MESSAGE ("set conditional breakpoint with cond: "
                          << good_break_condition
                          << "; we expect this breakpoint to be hit");
-                a_debugger->set_breakpoint ("", 83, good_break_condition);
+                a_debugger->set_breakpoint ("fooprog.cc", 83,
+                                            good_break_condition);
                 MESSAGE ("set conditional breakpoint with cond: "
                          << bad_break_condition
                          << "; this one should never be hit");
-                a_debugger->set_breakpoint ("", 83, bad_break_condition);
+                a_debugger->set_breakpoint ("fooprog.cc", 83,
+                                            bad_break_condition);
                 cond_breakpoint_set = true;
             } else {
                 MESSAGE ("hit conditional breakpoint! bp number: "
