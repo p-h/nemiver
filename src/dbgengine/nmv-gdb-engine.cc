@@ -3523,6 +3523,22 @@ GDBEngine::set_breakpoint_ignore_count (gint a_break_num,
 }
 
 void
+GDBEngine::set_breakpoint_condition (gint a_break_num,
+                                     const UString &a_condition,
+                                     const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    RETURN_IF_FAIL (a_break_num >= 0);
+
+    Command command ("set-breakpoint-condition",
+                     "-break-condition " + UString::from_int (a_break_num)
+                     + " " + a_condition, a_cookie);
+    queue_command (command);
+    list_breakpoints (a_cookie);
+}
+
+void
 GDBEngine::delete_breakpoint (const UString &a_path,
                               gint a_line_num,
                               const UString &a_cookie)

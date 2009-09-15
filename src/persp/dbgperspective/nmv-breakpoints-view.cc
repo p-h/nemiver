@@ -129,7 +129,8 @@ public:
         tree_view->append_column (_("Line"), get_bp_cols ().line);
         tree_view->append_column (_("Function"), get_bp_cols ().function);
         tree_view->append_column (_("Address"), get_bp_cols ().address);
-        tree_view->append_column (_("Condition"), get_bp_cols ().condition);
+        tree_view->append_column_editable (_("Condition"),
+                                           get_bp_cols ().condition);
         tree_view->append_column (_("Type"), get_bp_cols ().type);
         tree_view->append_column (_("Hits"), get_bp_cols ().hits);
         tree_view->append_column (_("Expression"),
@@ -154,10 +155,16 @@ public:
             (sigc::mem_fun
              (*this,
               &BreakpointsView::Priv::on_breakpoint_ignore_count_edited));
-        Gtk::TreeViewColumn *c = tree_view->get_column (10);
+
+        /*Gtk::TreeViewColumn *c = tree_view->get_column (10);
         THROW_IF_FAIL (c);
         c->add_attribute (r->property_editable (),
-                          get_bp_cols ().is_standard);
+                          get_bp_cols ().is_standard);*/
+
+        r = dynamic_cast<Gtk::CellRendererText*>
+                (tree_view->get_column_cell_renderer (6));
+        r->signal_edited ().connect (sigc::mem_fun
+             (*this, &BreakpointsView::Priv::on_breakpoint_condition_edited));
 
         // we must handle the button press event before the default button
         // handler since there are cases when we need to prevent the default
@@ -634,6 +641,26 @@ public:
             debugger->set_breakpoint_ignore_count ((*it)[get_bp_cols ().id],
                                                    count);
         }
+        NEMIVER_CATCH
+    }
+
+    void on_breakpoint_condition_edited (const Glib::ustring &a_path,
+                                         const Glib::ustring &a_text)
+    {
+        NEMIVER_TRY
+
+        Gtk::TreeModel::iterator it = tree_view->get_model ()->get_iter (a_path);
+
+        bool is_standard_bp =
+            (((IDebugger::BreakPoint)(*it)[get_bp_cols ().breakpoint]).type ()
+             == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE)
+            ? true
+            : false;
+
+        if (is_standard_bp)
+            debugger->set_breakpoint_condition ((*it)[get_bp_cols ().id],
+                                                a_text);
+
         NEMIVER_CATCH
     }
 

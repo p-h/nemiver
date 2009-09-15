@@ -157,6 +157,7 @@ public:
         /// \brief clear this instance of breakpoint
         void clear ()
         {
+            m_type = STANDARD_BREAKPOINT_TYPE;
             m_number = 0;
             m_enabled = false;
             m_address.clear ();
@@ -1043,6 +1044,10 @@ public:
                                         (gint a_break_num,
                                          gint a_ignore_count,
                                          const UString &a_cookie = "") = 0;
+
+    virtual void set_breakpoint_condition (gint a_break_num,
+                                           const UString &a_condition,
+                                           const UString &a_cookie = "") = 0;
 
     virtual void delete_breakpoint (const UString &a_path,
                                     gint a_line_num,
