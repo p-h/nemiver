@@ -74,18 +74,27 @@ public:
     Gtk::Entry *entry_filter;
     Glib::RefPtr<Gtk::ListStore> proclist_store;
     Glib::RefPtr<Gtk::TreeModelFilter> filter_store;
+    // This is available only after the user did asked for
+    // filtering the content of the tree model.
+    int nb_filtered_results;
+    // Ditto
+    Gtk::TreeModel::Path last_filtered_row;
     Glib::RefPtr<Gtk::TreeModelSort> sort_store;
     IProcMgr::Process selected_process;
     bool process_selected;
 
-    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+    Priv (Gtk::Dialog &a_dialog,
+          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
           IProcMgr &a_proc_mgr) :
         proc_mgr (a_proc_mgr),
         okbutton (0),
         proclist_view (0),
         entry_filter (0),
+        nb_filtered_results (0),
         process_selected (false)
     {
+        a_dialog.set_default_response (Gtk::RESPONSE_OK);
+
         okbutton =
             ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
                                                           "okbutton");
@@ -99,14 +108,16 @@ public:
         entry_filter->signal_changed ().connect
         (sigc::mem_fun(*this,
                        &Priv::on_filter_entry_changed));
+        entry_filter->set_activates_default ();
+
         proclist_view =
         ui_utils::get_widget_from_glade<Gtk::TreeView> (a_glade,
                                                         "proclisttreeview");
         THROW_IF_FAIL (proclist_view);
         proclist_store = Gtk::ListStore::create (columns ());
         filter_store = Gtk::TreeModelFilter::create (proclist_store);
-        filter_store->set_visible_func(sigc::mem_fun(*this,
-                    &Priv::is_row_visible));
+        filter_store->set_visible_func (sigc::mem_fun
+                                        (*this, &Priv::is_row_visible));
         sort_store = Gtk::TreeModelSort::create (filter_store);
         proclist_view->set_model (sort_store);
         proclist_view->set_search_column (ProcListCols::PROC_ARGS);
@@ -147,23 +158,32 @@ public:
     {
         NEMIVER_TRY
 
+        nb_filtered_results = 0;
         filter_store->refilter ();
+        if (nb_filtered_results == 1) {
+            LOG_DD ("A unique row resulted from filtering. Select it!");
+            proclist_view->get_selection ()->select
+                (proclist_view->get_model ()->get_iter ("0"));
+        }
         update_button_sensitivity ();
-
         NEMIVER_CATCH
     }
 
-    bool is_row_visible (const Gtk::TreeModel::const_iterator& iter)
+    bool is_row_visible (const Gtk::TreeModel::const_iterator &iter)
     {
         UString filter_term = entry_filter->get_text ();
         UString proc = iter->get_value (columns ().proc_args);
         UString user_name = iter->get_value (columns ().user_name);
-        UString pid = UString::from_int(iter->get_value (columns ().pid));
-        //show the row if the search term matches any of the columns
-        return
-            proc.find(filter_term) != UString::npos ||
-            user_name.find(filter_term) != UString::npos ||
-            pid.find(filter_term) != UString::npos;
+        UString pid = UString::from_int (iter->get_value (columns ().pid));
+
+        // show the row if the search term matches any of the columns
+        bool result = proc.find (filter_term) != UString::npos
+                      || user_name.find (filter_term) != UString::npos
+                      || pid.find (filter_term) != UString::npos;
+        if (result) {
+            ++nb_filtered_results;
+        }
+        return result;
     }
 
     void on_selection_changed_signal ()
@@ -231,8 +251,8 @@ public:
         UString args_str;
         proclist_store->clear ();
         for (process_iter = process_list.begin ();
-                process_iter != process_list.end ();
-                ++process_iter) {
+             process_iter != process_list.end ();
+             ++process_iter) {
             args = process_iter->args ();
             if (args.empty ()) {continue;}
             store_it = proclist_store->append ();
@@ -240,8 +260,8 @@ public:
             (*store_it)[columns ().user_name] = process_iter->user_name ();
             args_str = "";
             for (str_iter = args.begin ();
-                    str_iter != args.end ();
-                    ++str_iter) {
+                 str_iter != args.end ();
+                 ++str_iter) {
                 args_str += *str_iter + " ";
             }
             (*store_it)[columns ().proc_args] = args_str;
@@ -255,7 +275,7 @@ ProcListDialog::ProcListDialog (const UString &a_root_path,
                                 IProcMgr &a_proc_mgr) :
     Dialog(a_root_path, "proclistdialog.glade", "proclistdialog")
 {
-    m_priv.reset (new Priv (glade (), a_proc_mgr));
+    m_priv.reset (new Priv (widget (), glade (), a_proc_mgr));
     widget ().hide ();
 }
 
