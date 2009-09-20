@@ -235,21 +235,39 @@ public:
 
     mutable sigc::signal<void, IDebugger::State> state_changed_signal;
 
-    mutable sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >
-                                                        register_names_listed_signal;
+    mutable sigc::signal<void,
+                         const std::map<register_id_t,
+                         UString>&, const UString& >
+                                                register_names_listed_signal;
 
-    mutable sigc::signal<void, const std::list<register_id_t>&, const UString& >
-                                                    changed_registers_listed_signal;
+    mutable sigc::signal<void,
+                        const std::list<register_id_t>&,
+                        const UString& >
+                                     changed_registers_listed_signal;
 
-    mutable sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >
-                                                        register_values_listed_signal;
+    mutable sigc::signal<void,
+                         const std::map<register_id_t, UString>&,
+                         const UString& >
+                                    register_values_listed_signal;
 
-    mutable sigc::signal<void, const UString&, const UString&, const UString&>
-                                                        register_value_changed_signal;
-    mutable sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString&>
-                                                                  read_memory_signal;
-    mutable sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >
-                                                                  set_memory_signal;
+    mutable sigc::signal<void,
+                         const UString&,
+                         const UString&,
+                         const UString&>
+                                   register_value_changed_signal;
+
+    mutable sigc::signal <void,
+                          size_t,
+                          const std::vector<uint8_t>&,
+                          const UString&>
+                                  read_memory_signal;
+
+    mutable sigc::signal <void,
+                          size_t,
+                          const std::vector<uint8_t>&,
+                          const UString& >
+                                set_memory_signal;
+
     mutable sigc::signal<void, const VariableSafePtr, const UString&>
                                                         variable_created_signal;
 
@@ -691,7 +709,7 @@ public:
     }
 
     bool issue_command (const Command &a_command,
-                        bool a_do_record=true)
+                        bool a_do_record = true)
     {
         if (!master_pty_channel) {
             return false;
@@ -786,7 +804,7 @@ public:
                     << gdb_stdout_buffer
                     << "</buf>");
 
-            UString::size_type i=0;
+            UString::size_type i = 0;
             while ((i = gdb_stdout_buffer.raw ().find ("\n(gdb)")) !=
                     std::string::npos) {
                 i += 6;/*is the offset in the buffer of the end of
@@ -1026,7 +1044,7 @@ struct OnStreamRecordHandler: OutputHandler {
 struct OnDetachHandler : OutputHandler {
     GDBEngine * m_engine;
 
-    OnDetachHandler (GDBEngine *a_engine=0) :
+    OnDetachHandler (GDBEngine *a_engine = 0) :
         m_engine (a_engine)
     {
     }
@@ -1058,7 +1076,7 @@ struct OnBreakPointHandler: OutputHandler {
     GDBEngine * m_engine;
     vector<UString>m_prompt_choices;
 
-    OnBreakPointHandler (GDBEngine *a_engine=0) :
+    OnBreakPointHandler (GDBEngine *a_engine = 0) :
         m_engine (a_engine)
     {
     }
@@ -1087,7 +1105,7 @@ struct OnBreakPointHandler: OutputHandler {
                          vector<IDebugger::OverloadsChoiceEntry> &a_prompts)
     {
         UString input;
-        UString::size_type cur=0;
+        UString::size_type cur = 0;
         vector<IDebugger::OverloadsChoiceEntry> prompts;
         list<Output::OutOfBandRecord>::const_iterator it;
         for (it = a_in.output ().out_of_band_records ().begin ();
@@ -1152,12 +1170,12 @@ struct OnBreakPointHandler: OutputHandler {
             return;
         }
 
-        bool has_breaks=false;
+        bool has_breaks = false;
         //if breakpoint where set, put them in cache !
         if (has_breakpoints_set (a_in)) {
             m_engine->append_breakpoints_to_cache
             (a_in.output ().result_record ().breakpoints ());
-            has_breaks=true;
+            has_breaks = true;
         }
 
         if (a_in.output ().has_result_record ()
@@ -1610,7 +1628,7 @@ struct OnInfoProcHandler : OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_engine);
 
-        int pid=0; UString exe_path;
+        int pid = 0; UString exe_path;
         if (!m_engine->extract_proc_info (a_in.output (), pid, exe_path)) {
             LOG_ERROR ("failed to extract proc info");
             return;
@@ -3691,7 +3709,7 @@ GDBEngine::choose_function_overloads (const vector<int> &a_nums,
 
     if (a_cookie.empty ()) {}
 
-    for (unsigned int i=0; i < a_nums.size (); ++i) {
+    for (unsigned int i = 0; i < a_nums.size (); ++i) {
         str += UString::from_int (a_nums[i]) + " ";
     }
     if (!str.empty ())
@@ -3721,7 +3739,7 @@ GDBEngine::list_frames (int a_low_frame,
 void
 GDBEngine::list_frames (int a_min_frame_index,
                         int a_max_frame_index,
-                        const UString &a_cookie="");
+                        const UString &a_cookie = "");
 
 void
 GDBEngine::select_frame (int a_frame_id,
@@ -3878,7 +3896,7 @@ GDBEngine::print_variable_type (const UString &a_var_name,
 
 void
 GDBEngine::get_variable_type (const VariableSafePtr &a_var,
-                              const UString &a_cookie="")
+                              const UString &a_cookie = "")
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -3962,7 +3980,7 @@ GDBEngine::extract_proc_info (Output &a_output,
     //and the one that contains the string 'exe = <exepath>'
     //********************************************
     UString record, process_record, exe_record;
-    UString::size_type process_index=0, exe_index=0, index=0;
+    UString::size_type process_index = 0, exe_index = 0, index = 0;
     list<Output::OutOfBandRecord>::const_iterator record_iter =
                                     a_output.out_of_band_records ().begin ();
     for (;
@@ -4072,8 +4090,8 @@ GDBEngine::extract_global_variable_list (Output &a_output,
     SimpleDeclarationPtr simple_decl;
     InitDeclaratorPtr init_decl;
     ParserPtr parser;
-    bool found=false;
-    unsigned cur=0;
+    bool found = false;
+    unsigned cur = 0;
     list<Output::OutOfBandRecord>::const_iterator oobr_it =
                                     a_output.out_of_band_records ().begin ();
 fetch_file:
@@ -4110,7 +4128,7 @@ fetch_variable:
             || str.raw ()[str.raw ().length () - 1] != '\n') {
             continue;
         }
-        found=true;
+        found = true;
         break;
     }
     if (!found)

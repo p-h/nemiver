@@ -903,7 +903,7 @@ public:
     virtual sigc::signal<void,
                          int/*pid*/,
                          const UString&/*target path*/>&
-                                            got_target_info_signal () const=0;
+                                            got_target_info_signal () const = 0;
 
     virtual sigc::signal<void>& running_signal () const=0;
 
@@ -915,46 +915,55 @@ public:
     virtual sigc::signal<void, const UString&/*error message*/>&
                                                     error_signal () const = 0;
 
-    virtual sigc::signal<void, IDebugger::State>& state_changed_signal () const=0;
+    virtual sigc::signal<void, IDebugger::State>&
+                                        state_changed_signal () const = 0;
 
-    virtual sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >&
-                                                 register_names_listed_signal () const=0;
+    virtual sigc::signal<void,
+                         const std::map<register_id_t, UString>&,
+                         const UString& >&
+                                 register_names_listed_signal () const = 0;
 
-    virtual sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >&
-                                                 register_values_listed_signal () const=0;
+    virtual sigc::signal<void,
+                         const std::map<register_id_t, UString>&,
+                         const UString& >&
+                                   register_values_listed_signal () const = 0;
+
     virtual sigc::signal<void,
                          const UString&/*register name*/,
                          const UString&/*register value*/,
                          const UString&/*cookie*/>&
-                                                 register_value_changed_signal () const=0;
-    virtual sigc::signal<void, const std::list<register_id_t>&, const UString& >&
-                             changed_registers_listed_signal () const=0;
+                                  register_value_changed_signal () const = 0;
+
+    virtual sigc::signal<void,
+                         const std::list<register_id_t>&,
+                         const UString& >&
+                                   changed_registers_listed_signal () const = 0;
 
     virtual sigc::signal <void,
                           size_t,/*start address*/
                           const std::vector<uint8_t>&,/*values*/
                           const UString&>&/*cookie*/
-                                          read_memory_signal () const = 0;
+                                 read_memory_signal () const = 0;
     virtual sigc::signal <void,
                           size_t,/*start address*/
                           const std::vector<uint8_t>&,/*values*/
                           const UString& >&
-                                          set_memory_signal () const = 0;
+                                 set_memory_signal () const = 0;
 
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
-                                        variable_created_signal () const = 0;
+                                 variable_created_signal () const = 0;
 
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
-                                        variable_deleted_signal () const = 0;
+                                 variable_deleted_signal () const = 0;
 
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
-                                        variable_unfolded_signal () const = 0;
+                                 variable_unfolded_signal () const = 0;
 
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
-                variable_expression_evaluated_signal () const = 0;
+                                 variable_expression_evaluated_signal () const = 0;
 
     virtual sigc::signal<void, const VariableList&, const UString&>&
-                changed_variables_signal () const  = 0;
+                                changed_variables_signal () const  = 0;
 
     virtual sigc::signal<void, VariableSafePtr, const UString&>&
                 assigned_variable_signal () const = 0;

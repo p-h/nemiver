@@ -169,7 +169,7 @@ public:
                                          changed_registers_listed_signal () const;
 
     sigc::signal<void, const std::map<register_id_t, UString>&, const UString& >&
-                                                 register_values_listed_signal () const;
+                                        register_values_listed_signal () const;
     sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
                                                     read_memory_signal () const;
     sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
