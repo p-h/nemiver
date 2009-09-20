@@ -268,6 +268,11 @@ public:
                           const UString& >
                                 set_memory_signal;
 
+    mutable sigc::signal<void,
+                 IDebugger::DisassembleInfo&,
+                 const std::list<IDebugger::AsmInstr>&,
+                 const UString& /*cookie*/> instructions_disassembled_signal;
+
     mutable sigc::signal<void, const VariableSafePtr, const UString&>
                                                         variable_created_signal;
 
@@ -2285,6 +2290,56 @@ struct OnErrorHandler : OutputHandler {
     }
 };//struct OnErrorHandler
 
+struct OnDisassembleHandler : OutputHandler {
+
+    GDBEngine *m_engine;
+
+    OnDisassembleHandler (GDBEngine *a_engine) :
+        m_engine (a_engine)
+    {}
+
+    bool can_handle (CommandAndOutput &a_in)
+    {
+        if (!a_in.command ().name ().raw ().compare (0,
+                                                     strlen ("disassemble"),
+                                                     "disassemble")
+            && a_in.output ().has_result_record ()
+            && a_in.output ().result_record ().has_asm_instruction_list ()) {
+            LOG_DD ("handler selected");
+            return true;
+        }
+        return false;
+    }
+
+    void do_handle (CommandAndOutput &a_in)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        THROW_IF_FAIL (m_engine);
+
+        const std::list<IDebugger::AsmInstr>& instrs =
+            a_in.output ().result_record ().asm_instruction_list ();
+        IDebugger::DisassembleInfo info;
+
+        if (a_in.command ().name () == "disassemble-line-range-in-file") {
+            info.file_name (a_in.command ().tag0 ());
+        }
+        if (!instrs.empty ()) {
+            std::list<IDebugger::AsmInstr>::const_iterator it =
+                                                            instrs.begin ();
+            info.start_address (it->address ());
+            it = instrs.end ();
+            it--;
+            info.end_address (it->address ());
+        }
+        m_engine->instructions_disassembled_signal ().emit
+                               (info, instrs, a_in.command ().cookie ());
+
+        m_engine->set_state (IDebugger::READY);
+    }
+};//struct OnDisassembleHandler
+
+
 struct OnCreateVariableHandler : public OutputHandler
 {
     GDBEngine *m_engine;
@@ -2803,6 +2858,8 @@ GDBEngine::init_output_handlers ()
             (OutputHandlerSafePtr (new OnSignalReceivedHandler (this)));
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnErrorHandler (this)));
+     m_priv->output_handler_list.add
+            (OutputHandlerSafePtr (new OnDisassembleHandler (this)));
     m_priv->output_handler_list.add
             (OutputHandlerSafePtr (new OnThreadListHandler (this)));
     m_priv->output_handler_list.add
@@ -3076,6 +3133,16 @@ GDBEngine::program_finished_signal () const
 {
     return m_priv->program_finished_signal;
 }
+
+sigc::signal<void,
+             IDebugger::DisassembleInfo&,
+             const std::list<IDebugger::AsmInstr>&,
+             const UString& /*cookie*/>&
+GDBEngine::instructions_disassembled_signal () const
+ {
+    THROW_IF_FAIL (m_priv);
+    return m_priv->instructions_disassembled_signal;
+ }
 
 sigc::signal<void, IDebugger::State>&
 GDBEngine::state_changed_signal () const
@@ -4324,6 +4391,73 @@ GDBEngine::set_memory (size_t a_addr,
         command.tag1 (UString ().printf ("0x%X",a_addr));
         queue_command (command);
     }
+}
+
+void
+GDBEngine::disassemble (size_t a_start_addr,
+                        size_t a_end_addr,
+                        bool a_start_addr_relative_to_pc,
+                        bool a_end_addr_relative_to_pc,
+                        const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    UString cmd_str;
+
+    // <build the command string>
+    cmd_str = "-data-disassemble";
+    if (a_start_addr_relative_to_pc) {
+        cmd_str += " -s \"$pc";
+        if (a_start_addr) {
+            cmd_str += " + " + UString::from_int (a_start_addr);
+        }
+        cmd_str += "\"";
+    } else {
+        cmd_str += " -s " + UString::from_int (a_start_addr);
+    }
+
+    if (a_end_addr_relative_to_pc) {
+        cmd_str += " -e \"$pc";
+        if (a_end_addr) {
+            cmd_str += " + " + UString::from_int (a_end_addr);
+        }
+        cmd_str += "\"";
+    } else {
+        cmd_str += " e " + UString::from_int (a_end_addr);
+    }
+    cmd_str += " -- 0";
+
+    // </build the command string>
+
+    LOG_DD ("cmd_str: " << cmd_str);
+
+    Command command ("disassemble-address-range", cmd_str, a_cookie);
+    queue_command (command);
+}
+
+void
+GDBEngine::disassemble (const UString &a_file_name,
+                        int a_line_num,
+                        int a_nb_disassembled_lines,
+                        const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    UString cmd_str = "-data-disassemble";
+
+    cmd_str += " -f " + a_file_name + " -l "
+               + UString::from_int (a_line_num);
+    if (a_nb_disassembled_lines) {
+        cmd_str += " -n " + UString::from_int (a_nb_disassembled_lines);
+    }
+    cmd_str += " -- 0";
+
+    LOG_DD ("cmd_str: " << cmd_str);
+
+    Command command ("disassemble-line-range-in-file", cmd_str, a_cookie);
+    command.tag0 (a_file_name);
+    command.tag1 (UString::from_int (a_line_num));
+    queue_command (command);
 }
 
 void

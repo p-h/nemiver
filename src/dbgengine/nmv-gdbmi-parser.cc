@@ -190,6 +190,20 @@ const char* PREFIX_VARIABLES_CHANGED_LIST = "changelist=[";
 const char* CHANGELIST = "changelist";
 const char* PREFIX_PATH_EXPR = "path_expr=";
 const char* PATH_EXPR = "path_expr";
+static const char* PREFIX_ASM_INSTRUCTIONS= "asm_insns=";
+
+std::ostream&
+operator<< (std::ostream &a_out, const IDebugger::AsmInstr &a_instr)
+{
+    a_out << "<asm-instr>\n"
+          << " <addr>" <<  a_instr.address () << "</addr>\n"
+          << " <function-name>" << a_instr.function () << "</function-name>\n"
+          << " <offset>" << a_instr.offset () << "</offset>\n"
+          << " <instr>" << a_instr.instruction () << "</instr>\n"
+          << "</asm-instr>\n";
+    return a_out;
+}
+
 
 static bool
 is_string_start (gunichar a_c)
@@ -1938,6 +1952,17 @@ fetch_gdbmi_result:
                 } else {
                     LOG_D ("parsed memory values", GDBMI_PARSING_DOMAIN);
                     result_record.memory_values (addr, values);
+                }
+            } else if (!RAW_INPUT.compare (cur,
+                                           strlen (PREFIX_ASM_INSTRUCTIONS),
+                                           PREFIX_ASM_INSTRUCTIONS)) {
+                std::list<IDebugger::AsmInstr> asm_instr_list;
+                if (!parse_asm_instruction_list (cur, cur,
+                                                 asm_instr_list)) {
+                    LOG_PARSING_ERROR2 (cur);
+                } else {
+                    LOG_D ("parsed asm instruction list", GDBMI_PARSING_DOMAIN);
+                    result_record.asm_instruction_list (asm_instr_list);
                 }
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_NAME),
@@ -3953,6 +3978,122 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
 }
 
 bool
+GDBMIParser::parse_asm_instruction_list
+                                (UString::size_type a_from,
+                                 UString::size_type &a_to,
+                                 std::list<IDebugger::AsmInstr> &a_asm_instrs)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+#define ERROR_OUT \
+do { \
+a_asm_instrs.clear (); \
+return false; \
+} while (false)
+
+    if (RAW_INPUT.compare (cur,
+                           strlen (PREFIX_ASM_INSTRUCTIONS),
+                           PREFIX_ASM_INSTRUCTIONS)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    cur += strlen (PREFIX_ASM_INSTRUCTIONS);
+    if (RAW_CHAR_AT (cur) != '[') {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    // A GDB/MI list of asm instruction descriptors
+    GDBMIListSafePtr gdbmi_list;
+    if (!parse_gdbmi_list (cur, cur, gdbmi_list)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+    std::list<GDBMIValueSafePtr> vals;
+    gdbmi_list->get_value_content (vals);
+    std::list<GDBMIValueSafePtr>::const_iterator val_iter;
+    string addr, func_name, instr;
+    int offset = 0;
+    IDebugger::AsmInstr asm_instr;
+    // Loop over the tuples contained in gdbmi_list.
+    // Each tuple represents an asm instruction descriptor that has four
+    // fields: 1/the address of the instruction, 2/ name of the function
+    // the instruction is located in, 3/the offset of the instruction
+    // inside the function, 4/a string representing the asm intruction.
+    for (val_iter = vals.begin (); val_iter != vals.end (); ++val_iter) {
+        if ((*val_iter)->content_type () != GDBMIValue::TUPLE_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            ERROR_OUT;
+        }
+        GDBMITupleSafePtr tuple = (*val_iter)->get_tuple_content ();
+        THROW_IF_FAIL (tuple);
+        std::list<GDBMIResultSafePtr> result_list = tuple->content ();
+        if (result_list.size () != 4) {
+            // each tuple should have 'address', 'func-name"', 'offset',
+            // and 'inst' fields.
+            LOG_PARSING_ERROR2 (cur);
+            ERROR_OUT;
+        }
+        std::list<GDBMIResultSafePtr>::const_iterator res_iter =
+                                                        result_list.begin ();
+        // get address field
+        GDBMIValueSafePtr val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "address"
+            || val->content_type () != GDBMIValue::STRING_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            ERROR_OUT;
+        }
+        addr = val->get_string_content ();
+        LOG_DD ("addr: " << addr);
+
+        // get func-name field
+        ++res_iter;
+        val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "func-name"
+            || val->content_type () != GDBMIValue::STRING_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            ERROR_OUT;
+        }
+        func_name = val->get_string_content ();
+        LOG_DD ("func-name: " << func_name);
+
+        // get offset field
+        ++res_iter;
+        val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "offset"
+            || val->content_type () != GDBMIValue::STRING_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            ERROR_OUT;
+        }
+        offset = atoi (val->get_string_content ().c_str ());
+        LOG_DD ("offset: " << (int) offset);
+
+        // get instr field
+        ++res_iter;
+        val = (*res_iter)->value ();
+        if ((*res_iter)->variable () != "inst"
+            || val->content_type () != GDBMIValue::STRING_TYPE) {
+            LOG_PARSING_ERROR2 (cur);
+            ERROR_OUT;
+        }
+        instr = val->get_string_content ();
+        LOG_DD ("instr: " << instr);
+        asm_instr = IDebugger::AsmInstr (UString::hexa_to_int (addr),
+                                         func_name, offset, instr);
+        a_asm_instrs.push_back (asm_instr);
+    }
+    a_to = cur;
+    return true;
+}
+
+
+bool
 GDBMIParser::parse_variable (UString::size_type a_from,
                              UString::size_type &a_to,
                              IDebugger::VariableSafePtr &a_var)
@@ -4031,6 +4172,7 @@ GDBMIParser::parse_overloads_choice_prompt
 
     if (RAW_CHAR_AT (cur) != '[') {
         LOG_PARSING_ERROR2 (cur);
+        return false;
     }
     c = RAW_CHAR_AT (cur);
 

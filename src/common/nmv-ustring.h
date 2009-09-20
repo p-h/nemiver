@@ -55,6 +55,7 @@ public:
     virtual ~UString ();
     UString& set (const gchar* a_buf, gulong a_len);
     static UString from_int (long long an_int);
+    static size_t hexa_to_int (const string &a_hexa_str);
     bool is_integer () const;
     UString& append_int (long long an_int);
     UString& assign_int (long long);

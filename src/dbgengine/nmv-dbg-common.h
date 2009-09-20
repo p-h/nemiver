@@ -36,6 +36,8 @@ class Command {
     UString m_tag0;
     UString m_tag1;
     int m_tag2;
+    UString m_tag3;
+    UString m_tag4;
     IDebugger::VariableSafePtr m_var;
     sigc::slot_base m_slot;
 
@@ -97,6 +99,12 @@ public:
     int tag2 () const {return m_tag2;}
     void tag2 (int a_in) {m_tag2 = a_in;}
 
+    const UString& tag3 () const {return m_tag3;}
+    void tag3 (const UString &a_in) {m_tag3 = a_in;}
+
+    const UString& tag4 () const {return m_tag4;}
+    void tag4 (const UString &a_in) {m_tag4 = a_in;}
+
     void variable (const IDebugger::VariableSafePtr a_in) {m_var = a_in;}
     IDebugger::VariableSafePtr variable () const {return m_var;}
 
@@ -125,6 +133,9 @@ public:
         m_value.clear ();
         m_tag0.clear ();
         m_tag1.clear ();
+        m_tag2 = 0;
+        m_tag3.clear ();
+        m_tag4.clear ();
     }
 
 };//end class Command
@@ -394,6 +405,10 @@ public:
         size_t m_memory_address;
         bool m_has_memory_values;
 
+        // asm instruction list
+        std::list<IDebugger::AsmInstr> m_asm_instrs;
+        bool m_has_asm_instrs;
+
         // Variable Object
         IDebugger::VariableSafePtr m_variable;
         bool m_has_variable;
@@ -448,6 +463,8 @@ public:
             m_memory_values.clear ();
             m_memory_address = 0;
             m_has_memory_values = false;
+            m_asm_instrs.clear ();
+            m_has_asm_instrs = false;
             m_has_variable = false;
             m_nb_variable_deleted = 0;
             m_has_variable_children = false;
@@ -535,6 +552,20 @@ public:
             m_memory_address = a_address;
             m_memory_values = a_values;
             has_memory_values (true);
+        }
+
+        bool has_asm_instruction_list () const {return m_has_asm_instrs;}
+        void has_asm_instruction_list (bool a) {m_has_asm_instrs = a;}
+
+        const std::list<IDebugger::AsmInstr>& asm_instruction_list () const
+        {
+            return m_asm_instrs;
+        }
+        void asm_instruction_list
+                            (const std::list<IDebugger::AsmInstr> &a_asms)
+        {
+            m_asm_instrs = a_asms;
+            m_has_asm_instrs = true;
         }
 
         const map<int, list<IDebugger::VariableSafePtr> >&

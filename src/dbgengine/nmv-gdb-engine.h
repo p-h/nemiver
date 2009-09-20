@@ -174,6 +174,11 @@ public:
                                                     read_memory_signal () const;
     sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
                                                       set_memory_signal () const;
+    sigc::signal<void,
+                 IDebugger::DisassembleInfo&,
+                 const std::list<IDebugger::AsmInstr>&,
+                 const UString& /*cookie*/>&
+                             instructions_disassembled_signal () const;
 
     sigc::signal<void, const VariableSafePtr, const UString&>&
                                                 variable_created_signal () const;
@@ -441,6 +446,16 @@ public:
     void set_memory (size_t a_addr,
                      const std::vector<uint8_t>& a_bytes,
                      const UString& a_cookie);
+
+    void disassemble (size_t a_start_addr,
+                      size_t a_end_addr,
+                      bool a_start_addr_relative_to_pc,
+                      bool a_end_addr_relative_to_pc,
+                      const UString &a_cookie);
+    void disassemble (const UString &a_file_name,
+                      int a_line_num,
+                      int a_nb_disassembled_lines,
+                      const UString &a_cookie);
 
     void create_variable (const UString &a_name,
                           const UString &a_cookie="");

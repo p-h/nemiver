@@ -767,6 +767,83 @@ public:
         SIGNAL_RECEIVED
     };//end enum StopReason
 
+    /// Assembly instruction type
+    /// It carries the address of the instruction,
+    /// the function the instruction is from, offset of the instruction
+    /// starting from the beginning of the function, and the instruction
+    /// itself, represented by a string.
+    class AsmInstr {
+        size_t m_address;
+        string m_func;
+        int m_offset;
+        string m_instr;
+
+    public:
+        explicit AsmInstr ():
+            m_address (0),
+            m_offset (0)
+        {
+        }
+
+        AsmInstr (size_t a_address,
+                  string &a_func,
+                  int a_offset,
+                  string &a_instr):
+            m_address (a_address),
+            m_func (a_func),
+            m_offset (a_offset),
+            m_instr (a_instr)
+        {
+        }
+
+        virtual ~AsmInstr ()
+        {
+        }
+
+        size_t address () const {return m_address;}
+        void address (size_t a) {m_address = a;}
+
+        const string& function () const {return m_func;}
+        void function (const string &a_str) {m_func = a_str;}
+
+        int offset () const {return m_offset;}
+        void offset (int a_o) {m_offset = a_o;}
+
+        const string& instruction () const {return m_instr;}
+        void instruction (const string &a_instr) {m_instr = a_instr;}
+    };//end class AsmInstr
+
+    class DisassembleInfo {
+        // no need of copy constructor yet,
+        // as we don't have any pointer member.
+        UString m_function_name;
+        UString m_file_name;
+        size_t m_start_address;
+        size_t m_end_address;
+
+    public:
+        DisassembleInfo () :
+            m_start_address (0),
+            m_end_address (0)
+        {
+        }
+        ~DisassembleInfo ()
+        {
+        }
+
+        const UString& function_name () const {return m_function_name;}
+        void function_name (const UString &a_name) {m_function_name = a_name;}
+
+        const UString& file_name () const {return m_file_name;}
+        void file_name (const UString &a_name) {m_file_name = a_name;}
+
+        size_t start_address () const {return m_start_address;}
+        void start_address (size_t a) {m_start_address = a;}
+
+        size_t end_address () const {return m_end_address;}
+        void end_address (size_t a) {m_end_address = a;}
+    };// end class DisassembleInfo
+
     virtual ~IDebugger () {}
 
     /// \name events you can connect to.
@@ -949,6 +1026,16 @@ public:
                           const std::vector<uint8_t>&,/*values*/
                           const UString& >&
                                  set_memory_signal () const = 0;
+
+    // TODO: export informations about what file is being disassembled,
+    // what function, which line (if possible) etc.
+    // So that the code receiving the signal can adjust accordingly,
+    // without having to fidle with
+    virtual sigc::signal<void,
+                         IDebugger::DisassembleInfo&,
+                         const std::list<IDebugger::AsmInstr>&,
+                         const UString& /*cookie*/>&
+                             instructions_disassembled_signal () const = 0;
 
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
                                  variable_created_signal () const = 0;
@@ -1161,6 +1248,17 @@ public:
     virtual void set_memory (size_t a_addr,
             const std::vector<uint8_t>& a_bytes,
             const UString& a_cookie="") = 0;
+
+    virtual void disassemble (size_t a_start_addr,
+                              size_t a_end_addr,
+                              bool a_start_addr_relative_to_pc = false,
+                              bool a_end_addr_relative_to_pc = false,
+                              const UString &a_cookie = "") = 0;
+
+    virtual void disassemble (const UString &a_file_name,
+                              int a_line_num,
+                              int a_nb_disassembled_lines,
+                              const UString &a_cookie = "") = 0;
 
     typedef sigc::slot<void, const VariableSafePtr> ConstVariableSlot;
     typedef sigc::slot<void, const VariableList> ConstVariableListSlot;

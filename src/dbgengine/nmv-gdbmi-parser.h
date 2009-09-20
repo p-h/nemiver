@@ -302,6 +302,10 @@ operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val);
 std::ostream&
 operator<< (std::ostream &a_out, const IDebugger::Variable &a_var);
 
+std::ostream&
+operator<< (std::ostream &a_out, const IDebugger::AsmInstr &a_inst);
+
+
 //******************************************
 //</gdbmi datastructure streaming operators>
 //******************************************
@@ -603,6 +607,12 @@ public:
                               UString::size_type &a_to,
                               size_t& a_start_addr,
                               std::vector<uint8_t> &a_values);
+
+    /// parse an asm instruction description as returned
+    /// by GDB/MI
+    bool parse_asm_instruction_list (UString::size_type a_from,
+                                     UString::size_type &a_to,
+                                     std::list<IDebugger::AsmInstr> &a_asm);
 
     bool parse_variable (UString::size_type a_from,
                          UString::size_type &a_to,

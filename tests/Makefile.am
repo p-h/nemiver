@@ -12,7 +12,7 @@ runtestwatchpoint runtestderef \
 runtestlocalvarslist runtestcpplexer \
 runtestcppparser runtestvarpathexpr \
 runtestlibtoolwrapperdetection \
-runtestenv runtesttypes
+runtestenv runtesttypes runtestdisassemble
 
 else
 
@@ -127,6 +127,11 @@ $(top_builddir)/src/common/libnemivercommon.la
 runtesttypes_SOURCES=test-types.cc
 runtesttypes_LDADD=@NEMIVERCOMMON_LIBS@ \
 @BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la
+
+runtestdisassemble_SOURCES=test-disassemble.cc
+runtestdisassemble_LDADD=@NEMIVERCOMMON_LIBS@ \
+@BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 docore_SOURCES=do-core.cc
