@@ -33,21 +33,21 @@
 //some Gtk forward decls
 //******************
 namespace Gtk {
-    class Widget ;
-    class Notebook ;
-    class Window ;
-    class ActionGroup ;
-    class UIManager ;
-    class Main ;
+    class Widget;
+    class Notebook;
+    class Window;
+    class ActionGroup;
+    class UIManager;
+    class Main;
 }//end namespace Gtk
 
 namespace Glib {
-    class MainContext ;
+    class MainContext;
 }
 
 namespace nemiver {
 namespace common {
-    class UString ;
+    class UString;
 }
 }
 
@@ -56,19 +56,19 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 //*******************
 //some forward decls
 //******************
-class IPerspective ;
-class IConfMgr ;
-using nemiver::common::SafePtr ;
+class IPerspective;
+class IConfMgr;
+using nemiver::common::SafePtr;
 using nemiver::common::DynamicModule;
 using nemiver::common::DynamicModuleSafePtr;
 using nemiver::common::DynModIface;
 using nemiver::common::DynModIfaceSafePtr;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::UString ;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::UString;
 
-class IWorkbench ;
-typedef SafePtr<IWorkbench, ObjectRef, ObjectUnref> IWorkbenchSafePtr ;
+class IWorkbench;
+typedef SafePtr<IWorkbench, ObjectRef, ObjectUnref> IWorkbenchSafePtr;
 
 /// \brief the interface of the Workbench.
 /// The workbench is what you see graphically when you use
@@ -93,8 +93,8 @@ typedef SafePtr<IWorkbench, ObjectRef, ObjectUnref> IWorkbenchSafePtr ;
 class NEMIVER_API IWorkbench : public DynModIface {
 
     //non copyable
-    IWorkbench (const IWorkbench&) ;
-    IWorkbench& operator= (const IWorkbench&) ;
+    IWorkbench (const IWorkbench&);
+    IWorkbench& operator= (const IWorkbench&);
 
 protected:
     // must be created by the dynamic modules factory
@@ -110,7 +110,7 @@ public:
     /// \param a_main the main loop created by the application.
     virtual void do_init (Gtk::Main &a_main) = 0;
 
-    virtual void shut_down () = 0 ;
+    virtual void shut_down () = 0;
 
     /// \brief signal
 
@@ -120,36 +120,36 @@ public:
     /// @{
 
     /// \return the action group that is always activated
-    virtual Glib::RefPtr<Gtk::ActionGroup> get_default_action_group () = 0 ;
+    virtual Glib::RefPtr<Gtk::ActionGroup> get_default_action_group () = 0;
 
-    virtual Gtk::Widget& get_menubar () = 0 ;
+    virtual Gtk::Widget& get_menubar () = 0;
 
     /// \returns gets the container of the toolbars.
-    virtual Gtk::Notebook& get_toolbar_container () = 0 ;
+    virtual Gtk::Notebook& get_toolbar_container () = 0;
 
     /// \return the Workbench root window
-    virtual Gtk::Window& get_root_window () = 0 ;
+    virtual Gtk::Window& get_root_window () = 0;
 
     /// Set state-related information to be appended to the window title
-    virtual void set_title_extension (const UString &a_str) = 0 ;
+    virtual void set_title_extension (const UString &a_str) = 0;
 
     /// \return the Gtk::UIManager of the workbench
-    virtual Glib::RefPtr<Gtk::UIManager>& get_ui_manager () = 0 ;
+    virtual Glib::RefPtr<Gtk::UIManager>& get_ui_manager () = 0;
 
     /// \return the perspective that which name matches a_name
     virtual IPerspective* get_perspective (const UString &a_name) = 0;
 
     /// \return the interface of the configuration manager.
-    virtual IConfMgrSafePtr get_configuration_manager () = 0 ;
+    virtual IConfMgrSafePtr get_configuration_manager () = 0;
     ///@}
 
-    virtual Glib::RefPtr<Glib::MainContext> get_main_context () = 0 ;
+    virtual Glib::RefPtr<Glib::MainContext> get_main_context () = 0;
     /// \name signals
 
     /// @{
 
     /// \brief emitted just before the workbench shuts down
-    virtual sigc::signal<void>& shutting_down_signal () = 0 ;
+    virtual sigc::signal<void>& shutting_down_signal () = 0;
 
     /// @}
 };//end class IWorkbench

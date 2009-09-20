@@ -33,7 +33,7 @@
 namespace nemiver {
 
 namespace common {
-    class UString ;
+    class UString;
 }
 
 namespace common {
@@ -47,8 +47,8 @@ class NEMIVER_API ConnectionManager
 {
 
     //forbid instanciation
-    ConnectionManager () ;
-    ~ConnectionManager () ;
+    ConnectionManager ();
+    ~ConnectionManager ();
 
 public:
 
@@ -64,18 +64,18 @@ public:
     static void create_db_connection (const common::UString &a_connection_string,
                                       const common::UString &a_user,
                                       const common::UString &a_pass,
-                                      Connection &a_connection) ;
+                                      Connection &a_connection);
 
     /// \brief create a connection to the default database.
     /// The default database is the one configured by the user
     /// by filling the file nemiver.conf.
     /// \return a smart pointer to a useable db connection. Throws
     /// an Exception if it fails.
-    static ConnectionSafePtr create_db_connection () ;
+    static ConnectionSafePtr create_db_connection ();
 
     /// \brief get the type of database we are using.
     /// \return a null terminated string that may be "mysql", "sqlite" etc ...
-    static const char* get_db_type () ;
+    static const char* get_db_type ();
 
 protected:
 

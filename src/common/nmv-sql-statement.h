@@ -31,12 +31,12 @@
 
 #include "nmv-ustring.h"
 
-using namespace std ;
+using namespace std;
 namespace nemiver {
 
 namespace common {
-class UString ;
-class LogStream ;
+class UString;
+class LogStream;
 }
 
 namespace common
@@ -44,9 +44,9 @@ namespace common
 
 class Column
 {
-    common::UString m_name ;
-    common::UString m_value ;
-    bool m_auto_increment ;
+    common::UString m_name;
+    common::UString m_value;
+    bool m_auto_increment;
 
 public:
 
@@ -68,7 +68,7 @@ public:
 
     const common::UString& get_name ()
     {
-        return m_name ;
+        return m_name;
     }
     void set_name (const common::UString &a_name)
     {
@@ -76,11 +76,11 @@ public:
     }
     const common::UString& get_value ()
     {
-        return m_value ;
+        return m_value;
     }
     void set_value (const common::UString &a_value)
     {
-        m_value = a_value ;
+        m_value = a_value;
     }
     void set_auto_increment (bool a_auto)
     {
@@ -89,38 +89,38 @@ public:
     bool get_auto_increment ()
     {
         return m_auto_increment;
-    } ;
+    };
 };
 
-typedef vector<Column> ColumnList ;
-struct SQLStatementPriv ;
+typedef vector<Column> ColumnList;
+struct SQLStatementPriv;
 
 class NEMIVER_API SQLStatement
 {
-    friend class Connection ;
-    friend struct SQLStatementPriv ;
+    friend class Connection;
+    friend struct SQLStatementPriv;
 
-    SQLStatementPriv *m_priv ;
+    SQLStatementPriv *m_priv;
 
 public:
 
-    SQLStatement (const common::UString &a_sql_string="") ;
+    SQLStatement (const common::UString &a_sql_string="");
 
-    SQLStatement (const SQLStatement &) ;
+    SQLStatement (const SQLStatement &);
 
-    SQLStatement& operator= (const SQLStatement &) ;
+    SQLStatement& operator= (const SQLStatement &);
 
-    virtual ~SQLStatement () ;
-    virtual const common::UString& to_string () const ;
+    virtual ~SQLStatement ();
+    virtual const common::UString& to_string () const;
 
-    static common::UString escape_string (const common::UString &a_sql_string) ;
+    static common::UString escape_string (const common::UString &a_sql_string);
 
-    operator const char* () const ;
-    friend common::LogStream& operator<< (common::LogStream&, const SQLStatement&) ;
+    operator const char* () const;
+    friend common::LogStream& operator<< (common::LogStream&, const SQLStatement&);
 };//end LogStream
 
 NEMIVER_API common::LogStream & operator<< (common::LogStream &,
-                                         const SQLStatement &) ;
+                                         const SQLStatement &);
 
 }//end namespace common
 }//end namespace nemiver

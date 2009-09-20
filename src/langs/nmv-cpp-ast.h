@@ -113,21 +113,21 @@ public:
     };
 
 private:
-    Kind m_kind ;
-    string m_str_value ;
-    string m_str_value2 ;
-    int m_int_value ;
+    Kind m_kind;
+    string m_str_value;
+    string m_str_value2;
+    int m_int_value;
 
 public:
-    Token () ;
-    Token (Kind a_kind, const string& a_value) ;
+    Token ();
+    Token (Kind a_kind, const string& a_value);
     Token (Kind a_kind,
            const string& a_value,
-           const string& a_value2) ;
-    Token (Kind a_kind, int a_value) ;
-    Token (const Token &) ;
-    Token& operator= (const Token&) ;
-    ~Token () ;
+           const string& a_value2);
+    Token (Kind a_kind, int a_value);
+    Token (const Token &);
+    Token& operator= (const Token&);
+    ~Token ();
     const string& get_str_value () const;
     const string& get_str_value2 () const;
     int get_int_value () const;
@@ -865,7 +865,7 @@ public:
     void set_scope (const QNamePtr a_scope) {m_scope=a_scope;}
     const UnqualifiedIDExprPtr get_unqualified_id () const {return m_id;}
     void set_unqualified_id (const UnqualifiedIDExprPtr a_id) {m_id = a_id;}
-    bool to_string (string &) const ;
+    bool to_string (string &) const;
     //TODO: support template-id
 };//end QualifiedIDExpr
 
@@ -986,7 +986,7 @@ public:
         if (m_subscript_expr) {
             ((ExprBase*)m_subscript_expr.get ())->to_string (str);
         }
-        a_str += "[" + str + "]" ;
+        a_str += "[" + str + "]";
         return true;
     }
 };//end class ArrayPFE
@@ -2048,7 +2048,7 @@ public:
     };
 
 private:
-    Kind m_kind ;
+    Kind m_kind;
 
     DeclSpecifier ();
 public:
@@ -2069,7 +2069,7 @@ public:
     {
         return (m_kind == AUTO || m_kind == REGISTER
                 || m_kind == STATIC || m_kind == EXTERN
-                || m_kind == MUTABLE) ;
+                || m_kind == MUTABLE);
     }
     virtual bool to_string (string &a_str) const=0;
     static bool list_to_string (const list<DeclSpecifierPtr> &a_decls, string &a_str);

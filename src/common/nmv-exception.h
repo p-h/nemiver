@@ -41,11 +41,11 @@ namespace common {
 class NEMIVER_EXCEPTION_API Exception: public std::runtime_error
 {
 public:
-    Exception (const char* a_reason) ;
-    Exception (const UString &a_reason) ;
-    Exception (const Exception &a_other) ;
-    Exception (const std::exception &) ;
-    Exception& operator= (const Exception &a_other) ;
+    Exception (const char* a_reason);
+    Exception (const UString &a_reason);
+    Exception (const Exception &a_other);
+    Exception (const std::exception &);
+    Exception& operator= (const Exception &a_other);
     virtual ~Exception () throw ();
     const char* what () const throw ();
 };//class Exception
@@ -64,21 +64,21 @@ else \
 
 #define THROW_IF_FAIL(a_cond) \
 if (!(a_cond)) { \
-LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception\n" ) ;\
+LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception\n" );\
 _THROW (nemiver::common::Exception \
-    (nemiver::common::UString ("Assertion failed: ") + #a_cond))  ;\
+    (nemiver::common::UString ("Assertion failed: ") + #a_cond)) ;\
 }
 
 #define THROW_IF_FAIL2(a_cond, a_reason) \
 if (!(a_cond)) { \
 LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << a_reason <<"\n");\
-_THROW (nemiver::common::Exception (a_reason))  ;\
+_THROW (nemiver::common::Exception (a_reason)) ;\
 }
 
 #define THROW_IF_FAIL3(a_cond, type, a_reason) \
 if (!(a_cond)) { \
 LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << #type << \
-<< ":  " << a_reason << "\n" ) ; _THROW (type (a_reason))  ;\
+<< ":  " << a_reason << "\n" ); _THROW (type (a_reason))  ;\
 }
 
 #define ABORT_IF_FAIL(a_cond, a_reason) \
@@ -88,15 +88,15 @@ LOG_EXCEPTION ("condition (" << #a_cond << ") failed; raising exception " << a_r
 
 #define THROW(a_reason) \
 LOG_EXCEPTION ("raised exception: "<< (nemiver::common::UString (a_reason)) << "\n"); \
-_THROW (nemiver::common::Exception (nemiver::common::UString (a_reason)))  ;
+_THROW (nemiver::common::Exception (nemiver::common::UString (a_reason))) ;
 
 #define THROW_EMPTY \
-LOG_EXCEPTION ("raised empty exception " << endl) ; \
+LOG_EXCEPTION ("raised empty exception " << endl); \
 _THROW_EMPTY
 
 #define THROW_EXCEPTION(type, message) \
-LOG_EXCEPTION ("raised " << #type << ": "<< message<< "\n") ; \
-_THROW (type (message)) ;
+LOG_EXCEPTION ("raised " << #type << ": "<< message<< "\n"); \
+_THROW (type (message));
 
 #define TRACE_EXCEPTION(exception) \
 LOG_EXCEPTION ("catched exception: " << exception.what () << "\n")
@@ -106,14 +106,14 @@ LOG_EXCEPTION ("catched and rethrowing exception: " << exception.what() << "\n")
 
 #define RETURN_VAL_IF_FAIL(expression, value) \
 if (!(expression)) { \
-LOG_ERROR ("assertion " << #expression << " failed. Returning " << #value << "\n") ; \
-return value ; \
+LOG_ERROR ("assertion " << #expression << " failed. Returning " << #value << "\n"); \
+return value; \
 }
 
 #define RETURN_IF_FAIL(expression) \
 if (!(expression)) { \
-LOG_ERROR ("assertion " << #expression << " failed. Returning.\n") ; \
-return ; \
+LOG_ERROR ("assertion " << #expression << " failed. Returning.\n"); \
+return; \
 }
 
 #ifndef NEMIVER_TRY
@@ -123,25 +123,25 @@ return ; \
 #ifndef NEMIVER_CATCH_NOX
 #define NEMIVER_CATCH_NOX \
 } catch (Glib::Exception &e) { \
-    LOG_ERROR (e.what ()) ; \
+    LOG_ERROR (e.what ()); \
 } catch (std::exception &e) { \
-    LOG_ERROR (e.what ()) ; \
+    LOG_ERROR (e.what ()); \
 } catch (...) { \
-    LOG_ERROR ("An unknown error occured") ; \
+    LOG_ERROR ("An unknown error occured"); \
 }
 #endif
 
 #ifndef NEMIVER_CATCH_AND_RETURN_NOX
 #define NEMIVER_CATCH_AND_RETURN_NOX(a_value) \
 } catch (Glib::Exception &e) { \
-    LOG_ERROR (e.what ()) ; \
-    return a_value ; \
+    LOG_ERROR (e.what ()); \
+    return a_value; \
 } catch (std::exception &e) { \
-    LOG_ERROR (e.what ()) ; \
-    return a_value ; \
+    LOG_ERROR (e.what ()); \
+    return a_value; \
 } catch (...) { \
-    LOG_ERROR ("An unknown error occured") ; \
-    return a_value ; \
+    LOG_ERROR ("An unknown error occured"); \
+    return a_value; \
 }
 #endif
 

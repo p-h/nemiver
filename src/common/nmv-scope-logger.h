@@ -37,25 +37,25 @@
 namespace nemiver {
 namespace common {
 
-struct ScopeLoggerPriv ;
+struct ScopeLoggerPriv;
 class NEMIVER_API ScopeLogger
 {
-    friend struct ScopeLoggerPriv ;
+    friend struct ScopeLoggerPriv;
 
-    SafePtr<ScopeLoggerPriv> m_priv ;
+    SafePtr<ScopeLoggerPriv> m_priv;
     //forbid copy/assignation
-    ScopeLogger (ScopeLogger const &) ;
-    ScopeLogger& operator= (ScopeLogger const &) ;
-    ScopeLogger () ;
+    ScopeLogger (ScopeLogger const &);
+    ScopeLogger& operator= (ScopeLogger const &);
+    ScopeLogger ();
 
 public:
 
     ScopeLogger (const char*a_scope_name,
                  enum LogStream::LogLevel a_level=LogStream::LOG_LEVEL_NORMAL,
                  const UString &a_log_domain=NMV_GENERAL_DOMAIN,
-                 bool a_use_default_log_stream=true) ;
+                 bool a_use_default_log_stream=true);
 
-    virtual ~ScopeLogger () ;
+    virtual ~ScopeLogger ();
 
 };//class ScopeLogger
 

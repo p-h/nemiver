@@ -37,40 +37,40 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
 
-struct ObjectPriv ;
-class UString ;
+struct ObjectPriv;
+class UString;
 
 class NEMIVER_API Object {
-    friend struct ObjectPriv ;
+    friend struct ObjectPriv;
 
 protected:
-    SafePtr<ObjectPriv> m_priv ;
+    SafePtr<ObjectPriv> m_priv;
 
 public:
 
-    Object () ;
+    Object ();
 
-    Object (Object const &) ;
+    Object (Object const &);
 
-    Object& operator= (Object const&) ;
+    Object& operator= (Object const&);
 
-    virtual ~Object () ;
+    virtual ~Object ();
 
-    void ref () ;
+    void ref ();
 
-    void unref () ;
+    void unref ();
 
-    void enable_refcount (bool a_enabled=true) ;
+    void enable_refcount (bool a_enabled=true);
 
-    bool is_refcount_enabled () const ;
+    bool is_refcount_enabled () const;
 
-    long get_refcount () const ;
+    long get_refcount () const;
 
     void attach_object (const UString &a_key,
-                        const Object *a_object) ;
+                        const Object *a_object);
 
     bool get_attached_object (const UString &a_key,
-                              const Object *&a_object) ;
+                              const Object *&a_object);
 
 };//end class Object
 

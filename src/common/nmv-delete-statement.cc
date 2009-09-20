@@ -27,16 +27,16 @@
 #include "nmv-exception.h"
 #include "nmv-delete-statement.h"
 
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 namespace nemiver {
 namespace common {
 
 struct DeleteStatementPriv
 {
-    UString table_name ;
-    ColumnList where_cols ;
-    UString string_repr ;
+    UString table_name;
+    ColumnList where_cols;
+    UString string_repr;
 
     DeleteStatementPriv (const UString &a_table_name,
                          ColumnList &a_where_cols):
@@ -51,48 +51,48 @@ struct DeleteStatementPriv
 DeleteStatement::DeleteStatement (const UString &a_table_name,
                                   ColumnList &a_where_columns)
 {
-    m_priv = new DeleteStatementPriv (a_table_name, a_where_columns) ;
+    m_priv = new DeleteStatementPriv (a_table_name, a_where_columns);
 }
 
 DeleteStatement::~DeleteStatement ()
 {
     if (m_priv) {
-        delete m_priv ;
-        m_priv = NULL ;
+        delete m_priv;
+        m_priv = NULL;
     }
 }
 
 const UString&
 DeleteStatement::to_string () const
 {
-    THROW_IF_FAIL (m_priv) ;
+    THROW_IF_FAIL (m_priv);
 
     RETURN_VAL_IF_FAIL (m_priv->table_name != "",
-                        m_priv->string_repr) ;
+                        m_priv->string_repr);
 
-    UString str, where_list ;
+    UString str, where_list;
     if (m_priv->string_repr == "") {
         for (ColumnList::iterator it = m_priv->where_cols.begin ();
                 it != m_priv->where_cols.end ();
                 ++it) {
             if (where_list.size ()) {
-                where_list += ", " ;
+                where_list += ", ";
             }
-            where_list += it->get_name () + "='" + it->get_value () + "'" ;
+            where_list += it->get_name () + "='" + it->get_value () + "'";
         }
-        str = "delete from " + m_priv->table_name ;
+        str = "delete from " + m_priv->table_name;
         if (where_list != "") {
-            str += " where " + where_list ;
+            str += " where " + where_list;
         }
-        m_priv->string_repr  = str ;
+        m_priv->string_repr  = str;
     }
-    return m_priv->string_repr ;
+    return m_priv->string_repr;
 }
 
 const ColumnList&
 DeleteStatement::get_where_columns () const
 {
-    return m_priv->where_cols ;
+    return m_priv->where_cols;
 }
 
 }//end namespace common

@@ -30,9 +30,9 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (cpp)
 
-bool token_type_as_string (const Token&, std::string&) ;
-bool token_as_string (const Token&, std::string&) ;
-std::ostream& operator<< (std::ostream &, const Token&) ;
+bool token_type_as_string (const Token&, std::string&);
+bool token_as_string (const Token&, std::string&);
+std::ostream& operator<< (std::ostream &, const Token&);
 
 
 NEMIVER_END_NAMESPACE (cpp)

@@ -37,8 +37,8 @@ namespace common {
 
 class IInputStream : public Object {
     //forbid copy
-    IInputStream (const IInputStream &) ;
-    IInputStream& operator= (const IInputStream &) ;
+    IInputStream (const IInputStream &);
+    IInputStream& operator= (const IInputStream &);
 
 public:
     enum Status {

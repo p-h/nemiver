@@ -31,7 +31,7 @@
 #ifndef __NEMIVER_TOOLS_H__
 #define __NEMIVER_TOOLS_H__
 
-using namespace std ;
+using namespace std;
 
 namespace nemiver {
 namespace common {
@@ -40,7 +40,7 @@ namespace tools {
 bool NEMIVER_API execute_sql_command_file (const common::UString &a_sql_cmd_file,
                                            Transaction &a_trans,
                                            ostream &a_ostream,
-                                           bool stop_at_first_error=false) ;
+                                           bool stop_at_first_error=false);
 
 bool NEMIVER_API execute_sql_commands_from_istream (istream &a_istream,
                                                     Transaction &a_trans,
@@ -49,7 +49,7 @@ bool NEMIVER_API execute_sql_commands_from_istream (istream &a_istream,
 
 bool NEMIVER_API execute_one_statement (const common::UString &a_sql_string,
                                         Transaction &a_trans,
-                                        ostream &a_ostream) ;
+                                        ostream &a_ostream);
 }//end namespace tools
 }//end namespace common 
 }//end namespace verissimus

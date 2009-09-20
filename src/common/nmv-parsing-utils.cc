@@ -30,7 +30,7 @@
 #include "nmv-ustring.h"
 #include "nmv-parsing-utils.h"
 
-using namespace std ;
+using namespace std;
 
 namespace nemiver {
 namespace common {
@@ -40,9 +40,9 @@ bool
 is_digit (gunichar a_char)
 {
     if (a_char >= '0' && a_char <= '9') {
-        return true ;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 bool
@@ -52,7 +52,7 @@ is_alphabet_char (gunichar a_char)
             || (a_char >= 'A' && a_char <= 'Z')) {
         return true;
     }
-    return false ;
+    return false;
 }
 
 bool
@@ -64,7 +64,7 @@ is_alnum (gunichar a_char)
             || a_char == '-') {
         return true;
     }
-    return false ;
+    return false;
 }
 
 bool
@@ -77,77 +77,77 @@ is_host_name_char (gunichar a_char)
             || a_char == '-') {
         return true;
     }
-    return false ;
+    return false;
 }
 
 bool
 remove_white_spaces_at_begining (const UString &a_str, UString &a_res)
 {
     if (a_str == "")
-        return false ;
+        return false;
 
-    a_res = "" ;
-    UString::const_iterator it = a_str.begin () ;
+    a_res = "";
+    UString::const_iterator it = a_str.begin ();
     for (;;) {
         if (isspace (*it)) {
-            ++it ;
+            ++it;
         } else if (it == a_str.end ()) {
-            return true ;
+            return true;
         } else {
-            break ;
+            break;
         }
     }
     if (it == a_str.end ())
-        return true ;
+        return true;
     for (;;) {
-        a_res += *it ;
-        ++it ;
+        a_res += *it;
+        ++it;
         if (it == a_str.end ())
-            return true ;
+            return true;
     }
-    return true ;
+    return true;
 }
 
 bool
 remove_white_spaces_at_end (const UString &a_str, UString &a_res)
 {
     if (a_str == "") {
-        return false ;
+        return false;
     }
-    a_res = "" ;
+    a_res = "";
     unsigned int i = a_str.size () - 1;
     if (i==0)
-        return false ;
+        return false;
 
     while (isspace (a_str[i])) {
-        --i ;
+        --i;
         if (i==0)
-            return true ;
+            return true;
     }
 
     if (i==0)
-        return true ;
+        return true;
 
     for (;;) {
-        a_res.insert (a_res.begin(), a_str[i]) ;
-        ;
+        a_res.insert (a_res.begin(), a_str[i]);
+       ;
         if (i == 0)
-            return true ;
-        --i ;
+            return true;
+        --i;
     }
-    return true ;
+    return true;
 }
 
 bool
 is_white_string (const UString &a_str)
 {
-    for (UString::const_iterator it=a_str.begin () ;
-            it != a_str.end () ;
+    for (UString::const_iterator it=a_str.begin ();
+            it != a_str.end ();
             ++it) {
         if (!isspace (*it))
-            return false ;
+            return false;
     }
-    return true ;
+    return true;
 }
 
 Glib::Date::Month
@@ -188,77 +188,77 @@ month_to_int (Glib::Date::Month a_month)
 {
     switch (a_month) {
         case Glib::Date::JANUARY:
-            return 1 ;
+            return 1;
         case Glib::Date::FEBRUARY:
-            return 2 ;
+            return 2;
         case Glib::Date::MARCH:
-            return 3 ;
+            return 3;
         case Glib::Date::APRIL:
-            return 4 ;
+            return 4;
         case Glib::Date::MAY:
-            return 5 ;
+            return 5;
         case Glib::Date::JUNE:
-            return 6 ;
+            return 6;
         case Glib::Date::JULY:
-            return 7 ;
+            return 7;
         case Glib::Date::AUGUST:
-            return 8 ;
+            return 8;
         case Glib::Date::SEPTEMBER:
-            return 9 ;
+            return 9;
         case Glib::Date::OCTOBER:
-            return 10 ;
+            return 10;
         case Glib::Date::NOVEMBER:
-            return 11 ;
+            return 11;
         case Glib::Date::DECEMBER:
-            return 12 ;
+            return 12;
         default:
             THROW ("unawaited month value: "
-                   + UString::from_int (a_month)) ;
+                   + UString::from_int (a_month));
     }
-    THROW ("we shouldn't reach this point.") ;
+    THROW ("we shouldn't reach this point.");
     return -1;
 }
 
 UString
 date_to_string (const Glib::Date &a_date)
 {
-    UString result (UString::from_int (a_date.get_year ())) ;
-    result += '-' ;
-    UString month (UString::from_int (month_to_int (a_date.get_month ()))) ;
+    UString result (UString::from_int (a_date.get_year ()));
+    result += '-';
+    UString month (UString::from_int (month_to_int (a_date.get_month ())));
     if (month.size () == 1) {
-        month.insert (month.begin (), '0') ;
+        month.insert (month.begin (), '0');
     }
-    result += month + '-' ;
-    UString day (UString::from_int (a_date.get_day ())) ;
+    result += month + '-';
+    UString day (UString::from_int (a_date.get_day ()));
     if (day.size () == 1) {
-        day.insert (day.begin () , '0') ;
+        day.insert (day.begin () , '0');
     }
-    result += day ;
-    return result ;
+    result += day;
+    return result;
 }
 
 bool
 string_to_date (const UString &a_str, Glib::Date &a_date)
 {
-    UString::size_type cur (0), start (0), end (0) ;
-    vector<int> date_parts ;
+    UString::size_type cur (0), start (0), end (0);
+    vector<int> date_parts;
 
-    start = cur ;
+    start = cur;
     for (;;) {
-        if (date_parts.size () == 3) break ;
+        if (date_parts.size () == 3) break;
         if (a_str[cur] == '-' || a_str[cur] == ' ' || cur >= a_str.size ()) {
-            end = cur ;
+            end = cur;
             date_parts.push_back
-                (atoi (a_str.substr (start, end - start).c_str ())) ;
-            start = cur + 1 ;
+                (atoi (a_str.substr (start, end - start).c_str ()));
+            start = cur + 1;
         }
-        cur++ ;
+        cur++;
     }
-    if (date_parts.size () != 3) return false ;
-    a_date.set_year (date_parts[0]) ;
-    a_date.set_month (month_from_int (date_parts[1])) ;
-    a_date.set_day (date_parts[2]) ;
-    return true ;
+    if (date_parts.size () != 3) return false;
+    a_date.set_year (date_parts[0]);
+    a_date.set_month (month_from_int (date_parts[1]));
+    a_date.set_day (date_parts[2]);
+    return true;
 }
 
 

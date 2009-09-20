@@ -30,7 +30,7 @@
 #include "common/nmv-namespace.h"
 #include "common/nmv-api-macros.h"
 
-using std::string ;
+using std::string;
 using nemiver::cpp::Token;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -38,10 +38,10 @@ NEMIVER_BEGIN_NAMESPACE (cpp)
 
 
 class NEMIVER_API Lexer {
-    Lexer (const Lexer &) ;
-    Lexer& operator=(const Lexer&) ;
+    Lexer (const Lexer &);
+    Lexer& operator=(const Lexer&);
     struct Priv;
-    Priv *m_priv ;
+    Priv *m_priv;
 
 private:
     /// \name token scanning helpers
@@ -53,33 +53,33 @@ private:
     bool is_digit (const char a_in) const;
     bool is_nonzero_digit (const char a_in) const;
     bool is_octal_digit (const char a_in) const;
-    bool is_hexadecimal_digit (const char) const ;
+    bool is_hexadecimal_digit (const char) const;
     int  hexadigit_to_decimal (const char) const;
 
-    bool scan_decimal_literal (string &a_result) ;
-    bool scan_octal_literal (string &a_result) ;
-    bool scan_hexadecimal_literal (string &a_result) ;
-    bool scan_hexquad (string &a_result) ;
-    bool scan_integer_suffix (string &a_result) ;
-    bool scan_integer_literal (string &a_result) ;
-    bool scan_simple_escape_sequence (int &a_result) ;
-    bool scan_octal_escape_sequence (int &a_result) ;
-    bool scan_hexadecimal_escape_sequence (int &a_result) ;
-    bool scan_escape_sequence (int &a_result) ;
-    bool scan_hexquad (int &a_result) ;
-    bool scan_universal_character_name (int &a_result) ;
-    bool scan_c_char (int &a_result) ;
-    bool scan_c_char_sequence (string &a_result) ;
-    bool scan_s_char (int &a_result) ;
-    bool scan_s_char_sequence (string &a_result) ;
-    bool scan_character_literal (string &a_result) ;
-    bool scan_digit_sequence (string &a_result) ;
-    bool scan_fractional_constant (string &a_result) ;
-    bool scan_exponent_part (string &a_result) ;
+    bool scan_decimal_literal (string &a_result);
+    bool scan_octal_literal (string &a_result);
+    bool scan_hexadecimal_literal (string &a_result);
+    bool scan_hexquad (string &a_result);
+    bool scan_integer_suffix (string &a_result);
+    bool scan_integer_literal (string &a_result);
+    bool scan_simple_escape_sequence (int &a_result);
+    bool scan_octal_escape_sequence (int &a_result);
+    bool scan_hexadecimal_escape_sequence (int &a_result);
+    bool scan_escape_sequence (int &a_result);
+    bool scan_hexquad (int &a_result);
+    bool scan_universal_character_name (int &a_result);
+    bool scan_c_char (int &a_result);
+    bool scan_c_char_sequence (string &a_result);
+    bool scan_s_char (int &a_result);
+    bool scan_s_char_sequence (string &a_result);
+    bool scan_character_literal (string &a_result);
+    bool scan_digit_sequence (string &a_result);
+    bool scan_fractional_constant (string &a_result);
+    bool scan_exponent_part (string &a_result);
     bool scan_floating_literal (string &a_result,
-                                string &a_exponent) ;
-    bool scan_string_literal (string &a_result) ;
-    bool scan_boolean_literal (bool &a_result) ;
+                                string &a_exponent);
+    bool scan_string_literal (string &a_result);
+    bool scan_boolean_literal (bool &a_result);
     /// @}
 
     /// \name scanning methods
@@ -89,7 +89,7 @@ private:
     bool scan_literal (Token &a_token);
     bool scan_operator (Token &a_token);
     bool scan_punctuator (Token &a_token);
-    bool scan_next_token (Token &a_token) ;
+    bool scan_next_token (Token &a_token);
     /// \@}
 
     /// \name recording/restoring position in the  char input stream
@@ -98,8 +98,8 @@ private:
     void pop_recorded_ci_position ();
 
 public:
-    Lexer (const string &a_in) ;
-    ~Lexer () ;
+    Lexer (const string &a_in);
+    ~Lexer ();
 
 
     /// \name peeking/consuming tokens

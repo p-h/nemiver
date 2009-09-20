@@ -1832,7 +1832,7 @@ fetch_gdbmi_result:
                 } else {
                     LOG_D ("parsed stack args", GDBMI_PARSING_DOMAIN);
                 }
-                result_record.frames_parameters (frames_args) ;
+                result_record.frames_parameters (frames_args);
             } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_LOCALS),
                                                       PREFIX_LOCALS)) {
                 list<IDebugger::VariableSafePtr> vars;
@@ -2208,7 +2208,7 @@ GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
     }
 
     //skip table headers and go to table body.
-    cur = RAW_INPUT.find ("body=[", 0) ;
+    cur = RAW_INPUT.find ("body=[", 0);
     if (!cur) {
         LOG_PARSING_ERROR2 (cur);
         return false;
@@ -2558,7 +2558,7 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
-    list<GDBMIResultSafePtr> result_list ;
+    list<GDBMIResultSafePtr> result_list;
     result_value_list->get_result_content (result_list);
 
     GDBMITupleSafePtr frame_tuple;
@@ -3169,7 +3169,7 @@ GDBMIParser::parse_variable_value (const UString::size_type a_from,
         }
         SKIP_BLANK2 (cur);
         if (RAW_CHAR_AT (cur) != '"') {
-            UString value ;
+            UString value;
             if (!parse_c_string_body (cur, cur, value)) {
                 LOG_PARSING_ERROR2 (cur);
                 return false;

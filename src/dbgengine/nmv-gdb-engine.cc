@@ -129,11 +129,11 @@ public:
     sigc::signal<void, const UString& > gdb_stdout_signal;
     sigc::signal<void, const UString& > gdb_stderr_signal;
 
-    mutable sigc::signal<void, Output&> pty_signal ;
+    mutable sigc::signal<void, Output&> pty_signal;
 
-    mutable sigc::signal<void, CommandAndOutput&> stdout_signal ;
+    mutable sigc::signal<void, CommandAndOutput&> stdout_signal;
 
-    mutable sigc::signal<void, Output&> stderr_signal ;
+    mutable sigc::signal<void, Output&> stderr_signal;
 
     mutable sigc::signal<void, const UString&> console_message_signal;
     mutable sigc::signal<void, const UString&> target_output_message_signal;
@@ -194,10 +194,10 @@ public:
                                                         current_frame_signal;
 
     mutable sigc::signal<void, const list<VariableSafePtr>&, const UString& >
-                                    local_variables_listed_signal ;
+                                    local_variables_listed_signal;
 
     mutable sigc::signal<void, const list<VariableSafePtr>&, const UString& >
-                                    global_variables_listed_signal ;
+                                    global_variables_listed_signal;
 
     mutable sigc::signal<void,
                          const UString&,
@@ -1854,7 +1854,7 @@ struct OnResultRecordHandler : OutputHandler {
             //set the name caption of the resulting variable.
             UString name_caption;
             a_in.command ().variable ()->build_qname (name_caption);
-            name_caption = "*" + name_caption ;
+            name_caption = "*" + name_caption;
             derefed->name_caption (name_caption);
 
             //now associate the resulting variable or the dereferencing to

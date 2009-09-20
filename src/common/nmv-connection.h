@@ -33,8 +33,8 @@
 namespace nemiver {
 
 namespace common {
-class UString ;
-class Buffer ;
+class UString;
+class Buffer;
 }
 
 namespace common {
@@ -43,57 +43,57 @@ class SQLStatement;
 
 namespace common {
 
-class ResultSetDataReader ;
-struct ConnectionPriv ;
+class ResultSetDataReader;
+struct ConnectionPriv;
 
 class NEMIVER_API Connection : public common::Object
 {
 
-    friend struct ConnectionPriv ;
-    friend class ConnectionManager ;
-    ConnectionPriv *m_priv ;
+    friend struct ConnectionPriv;
+    friend class ConnectionManager;
+    ConnectionPriv *m_priv;
 
-    void set_connection_driver (const common::IConnectionDriverSafePtr &a_driver) ;
-    void initialize () ;
-    void deinitialize () ;
+    void set_connection_driver (const common::IConnectionDriverSafePtr &a_driver);
+    void initialize ();
+    void deinitialize ();
 
 public:
-    Connection () ;
+    Connection ();
 
-    Connection (const Connection &a_con) ;
+    Connection (const Connection &a_con);
 
-    Connection& operator= (const Connection &a_con) ;
+    Connection& operator= (const Connection &a_con);
 
-    bool is_initialized () const ;
+    bool is_initialized () const;
 
-    virtual ~Connection () ;
+    virtual ~Connection ();
 
-    const char* get_last_error () const ;
+    const char* get_last_error () const;
 
-    bool start_transaction () ;
+    bool start_transaction ();
 
-    bool commit_transaction () ;
+    bool commit_transaction ();
 
-    bool rollback_transaction () ;
+    bool rollback_transaction ();
 
-    bool execute_statement (const common::SQLStatement &a_statement) ;
+    bool execute_statement (const common::SQLStatement &a_statement);
 
-    bool should_have_data () const ;
+    bool should_have_data () const;
 
-    bool read_next_row () ;
+    bool read_next_row ();
 
-    unsigned long get_number_of_columns () ;
+    unsigned long get_number_of_columns ();
 
     bool get_column_type (unsigned long a_offset,
-                          enum common::ColumnType &) ;
+                          enum common::ColumnType &);
 
-    bool get_column_name (unsigned long a_offset, common::Buffer &a_name) ;
+    bool get_column_name (unsigned long a_offset, common::Buffer &a_name);
 
     bool get_column_content (unsigned long a_offset,
-                             common::Buffer &a_field_content) ;
+                             common::Buffer &a_field_content);
 
     bool get_column_content (gulong a_offset,
-                             gint64 &a_column_content) ;
+                             gint64 &a_column_content);
 
     bool get_column_content (gulong a_offset,
                              double& a_column_content);
@@ -101,12 +101,12 @@ public:
     bool get_column_content (gulong a_offset,
                              common::UString& a_column_content);
 
-    void close () ;
+    void close ();
 };//end Connection
 
 typedef common::SafePtr<Connection,
                         common::ObjectRef,
-                        common::ObjectUnref> ConnectionSafePtr ;
+                        common::ObjectUnref> ConnectionSafePtr;
 
 }//end namespace common
 }//end nemiver

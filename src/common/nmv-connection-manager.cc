@@ -37,7 +37,7 @@
 #include "nmv-conf-manager.h"
 #include "nmv-dynamic-module.h"
 
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 namespace nemiver {
 
@@ -45,21 +45,21 @@ namespace common {
 
 struct DBDriverDesc
 {
-    const common::UString driver_name ;
+    const common::UString driver_name;
     const common::UString module_name;
 };
 
 static bool parse_connection_string (const common::UString &a_str,
-                                     common::DBDesc &a_desc) ;
-static void load_db_driver_module (const common::DBDesc &a_desc) ;
+                                     common::DBDesc &a_desc);
+static void load_db_driver_module (const common::DBDesc &a_desc);
 static common::IConnectionManagerDriverSafePtr get_connection_manager_driver
-                                                    (const common::DBDesc &) ;
+                                                    (const common::DBDesc &);
 static common::UString get_driver_module_name
-    (const common::UString &a_driver_type) ;
+    (const common::UString &a_driver_type);
 
-static common::IConnectionManagerDriverSafePtr s_cnx_mgr_drv ;
+static common::IConnectionManagerDriverSafePtr s_cnx_mgr_drv;
 
-static common::UString s_db_type_loaded ;
+static common::UString s_db_type_loaded;
 
 static DBDriverDesc s_supported_drivers [] = {
             {"mysql", "org.nemiver.db.mysqldriver"},
@@ -70,12 +70,12 @@ static common::UString
 get_driver_module_name (const common::UString &a_driver_name)
 {
     if (a_driver_name == "")
-        return "" ;
-    for (unsigned int i=0 ;
+        return "";
+    for (unsigned int i=0;
          i < sizeof (s_supported_drivers)/sizeof (DBDriverDesc);
          ++i) {
         if (a_driver_name == s_supported_drivers[i].driver_name) {
-            return s_supported_drivers[i].module_name ;
+            return s_supported_drivers[i].module_name;
         }
     }
     return "";
@@ -84,8 +84,8 @@ get_driver_module_name (const common::UString &a_driver_name)
 static common::DynamicModuleManager&
 get_module_manager ()
 {
-    static DynamicModuleManager s_manager ;
-    return s_manager ;
+    static DynamicModuleManager s_manager;
+    return s_manager;
 }
 
 /// \brief parse a connection string.
@@ -108,9 +108,9 @@ parse_connection_string (const common::UString &a_str,
 {
 #define CHECK_INDEX(i) if ((i) >= a_str.size ()) {return false;}
 
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    common::UString::size_type i = 5 ;
-    common::UString dbtypename, host, port, dbschemaname ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    common::UString::size_type i = 5;
+    common::UString dbtypename, host, port, dbschemaname;
 
     //must start with 'vdbc:'
     if (a_str.compare (0, 5, "vdbc:")) {
@@ -118,113 +118,113 @@ parse_connection_string (const common::UString &a_str,
     }
 
     //parse dbtypename
-    bool parsed_dbtypename (false) ;
+    bool parsed_dbtypename (false);
     if (!common::parsing_utils::is_alphabet_char (a_str[i])) {
         return false;
     }
-    dbtypename += a_str[i++] ;
+    dbtypename += a_str[i++];
     for (; i < a_str.size (); ++i) {
         if (a_str[i] == ':') {
-            parsed_dbtypename = true ;
-            ++i ;
-            CHECK_INDEX (i) ;
-            break ;
+            parsed_dbtypename = true;
+            ++i;
+            CHECK_INDEX (i);
+            break;
         }
         if (common::parsing_utils::is_alnum (a_str[i]) || a_str[i] == '.') {
-            dbtypename += a_str[i] ;
+            dbtypename += a_str[i];
         }
     }
     if (!parsed_dbtypename) {
-        return false ;
+        return false;
     }
 
     //now we must have "//"
-    CHECK_INDEX (i) ;
-    CHECK_INDEX (i + 1) ;
+    CHECK_INDEX (i);
+    CHECK_INDEX (i + 1);
     if (!(a_str[i] == '/' && a_str[i + 1] == '/')) {
         return false;
     }
-    i += 2 ;
+    i += 2;
 
-    CHECK_INDEX (i) ;
+    CHECK_INDEX (i);
 
     //now parse [HOST[:PORT]]
     if (a_str[i] == '/') {
-        goto parse_schemaname ;
+        goto parse_schemaname;
     }
     if (common::parsing_utils::is_host_name_char (a_str[i])) {
         bool parsed_host (false);
-        host += a_str[i] ;
-        ++i ;
-        CHECK_INDEX (i) ;
+        host += a_str[i];
+        ++i;
+        CHECK_INDEX (i);
         //parse HOST
-        for (; i < a_str.size () ; ++i) {
+        for (; i < a_str.size (); ++i) {
             if (a_str[i] == ':') {
-                ++i ;
-                CHECK_INDEX (i) ;
-                parsed_host = true ;
-                goto parse_port ;
-            } ;
+                ++i;
+                CHECK_INDEX (i);
+                parsed_host = true;
+                goto parse_port;
+            };
             if (a_str[i] == '/') {
-                ++i ;
-                CHECK_INDEX (i) ;
-                parsed_host= true ;
-                goto parse_schemaname ;
+                ++i;
+                CHECK_INDEX (i);
+                parsed_host= true;
+                goto parse_schemaname;
             }
             if (common::parsing_utils::is_host_name_char (a_str[i])) {
-                host += a_str[i] ;
+                host += a_str[i];
             } else {
-                return false ;
+                return false;
             }
         }
 
 parse_port:
-        bool parsed_port (false) ;
-        for (; i < a_str.size () ; ++i) {
+        bool parsed_port (false);
+        for (; i < a_str.size (); ++i) {
             if (a_str[i] == '/') {
                 parsed_port = true;
-                ++i ;
-                CHECK_INDEX (i) ;
-                goto parse_schemaname ;
+                ++i;
+                CHECK_INDEX (i);
+                goto parse_schemaname;
             }
             if (common::parsing_utils::is_digit (a_str[i])) {
-                port += a_str[i] ;
+                port += a_str[i];
             } else {
-                return false ;
+                return false;
             }
         }
         if (!parsed_port) {
-            return false ;
+            return false;
         }
     }
 
 parse_schemaname:
-    for (; i < a_str.size () ; ++i) {
+    for (; i < a_str.size (); ++i) {
         if (common::parsing_utils::is_alnum (a_str[i])
             || a_str[i] == '_'
             || a_str[i] == '-'
             || a_str[i] == '.'
             || a_str[i] == '/') {
-            dbschemaname += a_str[i] ;
+            dbschemaname += a_str[i];
         } else {
-            return false ;
+            return false;
         }
     }
-    a_desc.set_type (dbtypename) ;
-    a_desc.set_host (host) ;
-    a_desc.set_port (atoi (port.c_str ())) ;
-    a_desc.set_name (dbschemaname) ;
-    return true ;
+    a_desc.set_type (dbtypename);
+    a_desc.set_host (host);
+    a_desc.set_port (atoi (port.c_str ()));
+    a_desc.set_name (dbschemaname);
+    return true;
 }
 
 
 static void
 load_db_driver_module (const common::DBDesc &a_desc)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    common::UString driver_module_name = get_driver_module_name (a_desc.type ()) ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    common::UString driver_module_name = get_driver_module_name (a_desc.type ());
     if (driver_module_name == "") {
-        THROW (UString ("database '") + a_desc.type () + "' is not supported") ;
+        THROW (UString ("database '") + a_desc.type () + "' is not supported");
     }
 
     s_cnx_mgr_drv =
@@ -232,33 +232,33 @@ load_db_driver_module (const common::DBDesc &a_desc)
                                             (driver_module_name,
                                              "IConnectionManagerDriver");
     LOG_D ("cnx mgr refcount: " << (int) s_cnx_mgr_drv->get_refcount (),
-           "refcount-domain") ;
+           "refcount-domain");
 
     if (!s_cnx_mgr_drv) {
         THROW (UString ("db driver module ")
                 + driver_module_name
                 + "does not implement the interface "
-                "nemiver::common::IConnectinManagerDriver") ;
+                "nemiver::common::IConnectinManagerDriver");
     }
-    s_db_type_loaded = a_desc.type () ;
+    s_db_type_loaded = a_desc.type ();
 }
 
 static common::IConnectionManagerDriverSafePtr
 get_connection_manager_driver (const common::DBDesc &a_db_desc)
 {
     if (!s_cnx_mgr_drv) {
-        load_db_driver_module (a_db_desc) ;
+        load_db_driver_module (a_db_desc);
         if (!s_cnx_mgr_drv) {
             THROW ("could not load the driver for database: "
-                    + a_db_desc.type ()) ;
+                    + a_db_desc.type ());
         }
         if (s_db_type_loaded != a_db_desc.type ()) {
             THROW ("Loaded database driver mismatches with resqueted database. "
                    "Loaded: " + s_db_type_loaded +
-                   "; requested: " + a_db_desc.name ()) ;
+                   "; requested: " + a_db_desc.name ());
         }
     }
-    return s_cnx_mgr_drv ;
+    return s_cnx_mgr_drv;
 }
 
 void
@@ -267,24 +267,24 @@ ConnectionManager::create_db_connection (const common::UString &a_con_str,
                                          const common::UString &a_pass,
                                          Connection &a_connection)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
     if (a_con_str == "") {
-        THROW ("got connection string") ;
+        THROW ("got connection string");
     }
 
-    common::DBDesc db_desc ;
+    common::DBDesc db_desc;
     if (!parse_connection_string (a_con_str, db_desc)) {
-        THROW ("failed to parse connection string: " + a_con_str) ;
+        THROW ("failed to parse connection string: " + a_con_str);
     }
 
     common::IConnectionManagerDriverSafePtr driver =
-        get_connection_manager_driver (db_desc) ;
-    THROW_IF_FAIL (driver) ;
+        get_connection_manager_driver (db_desc);
+    THROW_IF_FAIL (driver);
 
     common::IConnectionDriverSafePtr cnx_driver_iface =
-        driver->connect_to_db (db_desc, a_user, a_pass) ;
-    a_connection.set_connection_driver (cnx_driver_iface) ;
-    a_connection.initialize () ;
+        driver->connect_to_db (db_desc, a_user, a_pass);
+    a_connection.set_connection_driver (cnx_driver_iface);
+    a_connection.initialize ();
 }
 
 ConnectionSafePtr
@@ -293,37 +293,37 @@ ConnectionManager::create_db_connection ()
     common::UString connection_string, user, pass;
 
     common::ConfManager::get_config ().get_property ("database.connection",
-            connection_string) ;
-    common::ConfManager::get_config ().get_property ("database.username", user) ;
-    common::ConfManager::get_config ().get_property ("database.password", pass) ;
+            connection_string);
+    common::ConfManager::get_config ().get_property ("database.username", user);
+    common::ConfManager::get_config ().get_property ("database.password", pass);
 
     if (connection_string == "") {
         THROW ("Got connection string='';"
-               " Conf manager is probably not initialized") ;
+               " Conf manager is probably not initialized");
     }
 
-    common::DBDesc db_desc ;
+    common::DBDesc db_desc;
     if (!parse_connection_string (connection_string, db_desc)) {
-        THROW ("failed to parse connection string: " + connection_string) ;
+        THROW ("failed to parse connection string: " + connection_string);
     }
     common::IConnectionManagerDriverSafePtr driver =
-        get_connection_manager_driver (db_desc) ;
-    THROW_IF_FAIL (driver) ;
+        get_connection_manager_driver (db_desc);
+    THROW_IF_FAIL (driver);
 
     common::IConnectionDriverSafePtr cnx_driver_iface =
-        driver->connect_to_db (db_desc, user, pass) ;
+        driver->connect_to_db (db_desc, user, pass);
 
-    ConnectionSafePtr connection (new Connection ()) ;
-    connection->set_connection_driver (cnx_driver_iface) ;
-    connection->initialize () ;
+    ConnectionSafePtr connection (new Connection ());
+    connection->set_connection_driver (cnx_driver_iface);
+    connection->initialize ();
 
-    return connection ;
+    return connection;
 }
 
 const char*
 ConnectionManager::get_db_type ()
 {
-    return s_db_type_loaded.c_str () ;
+    return s_db_type_loaded.c_str ();
 }
 
 }//end namespace common nemiver

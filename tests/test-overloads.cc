@@ -7,25 +7,25 @@
 #include "nmv-i-debugger.h"
 
 using namespace nemiver;
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 Glib::RefPtr<Glib::MainLoop> loop =
-    Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+    Glib::MainLoop::create (Glib::MainContext::get_default ());
 
 static bool broke_in_overload=false;
 
 void
 on_engine_died_signal ()
 {
-    MESSAGE ("engine died") ;
-    loop->quit () ;
+    MESSAGE ("engine died");
+    loop->quit ();
 }
 
 void
 on_program_finished_signal ()
 {
-    MESSAGE ("program finished") ;
-    loop->quit () ;
+    MESSAGE ("program finished");
+    loop->quit ();
     if (!broke_in_overload) {
         BOOST_FAIL ("did not break in the overload");
     }
@@ -35,7 +35,7 @@ void
 on_command_done_signal (const UString &a_command,
                         const UString &a_cookie)
 {
-    MESSAGE ("command done: '" << a_command << "', cookie: '" << a_cookie) ;
+    MESSAGE ("command done: '" << a_command << "', cookie: '" << a_cookie);
 }
 
 void
@@ -55,7 +55,7 @@ on_breakpoints_set_signal (const std::map<int, IDebugger::BreakPoint> &a_breaks,
 void
 on_running_signal ()
 {
-    MESSAGE ("debugger running ...") ;
+    MESSAGE ("debugger running ...");
 }
 
 
@@ -67,14 +67,14 @@ on_stopped_signal (const UString &a_reason,
                    const UString &a_cookie,
                    IDebuggerSafePtr &a_debugger)
 {
-    BOOST_REQUIRE (a_debugger) ;
+    BOOST_REQUIRE (a_debugger);
     if (a_thread_id || a_cookie.empty ()) {/*keep compiler happy*/}
     MESSAGE ("debugger stopped. reason == " << a_reason);
 
     if (a_reason == "breakpoint-hit") {
         if (a_has_frame ) {
             if (a_frame.function_name () == "func1") {
-                a_debugger->set_breakpoint ("Person::overload") ;
+                a_debugger->set_breakpoint ("Person::overload");
             }  else if (a_frame.function_name ().find ("Person::overload")
                         != UString::npos) {
                 broke_in_overload = true;
@@ -110,33 +110,33 @@ test_main (int argc, char *argv[])
     if (argc || argv) {/*keep compiler happy*/}
 
     try {
-        Initializer::do_init () ;
+        Initializer::do_init ();
 
-        THROW_IF_FAIL (loop) ;
+        THROW_IF_FAIL (loop);
 
-        DynamicModuleManager module_manager ;
+        DynamicModuleManager module_manager;
         IDebuggerSafePtr debugger =
                 module_manager.load_iface<IDebugger> ("gdbengine", "IDebugger");
 
-        debugger->set_event_loop_context (loop->get_context ()) ;
+        debugger->set_event_loop_context (loop->get_context ());
 
         //*****************************
         //<connect to IDebugger events>
         //*****************************
-        debugger->engine_died_signal ().connect (&on_engine_died_signal) ;
+        debugger->engine_died_signal ().connect (&on_engine_died_signal);
 
         debugger->program_finished_signal ().connect
-                                                (&on_program_finished_signal) ;
+                                                (&on_program_finished_signal);
 
-        debugger->command_done_signal ().connect (&on_command_done_signal) ;
+        debugger->command_done_signal ().connect (&on_command_done_signal);
 
         debugger->breakpoints_set_signal ().connect
-                                                (&on_breakpoints_set_signal) ;
+                                                (&on_breakpoints_set_signal);
 
         debugger->running_signal ().connect (&on_running_signal);
 
         debugger->stopped_signal ().connect
-                                (sigc::bind (&on_stopped_signal, debugger)) ;
+                                (sigc::bind (&on_stopped_signal, debugger));
 
         debugger->got_overloads_choice_signal ().connect
             (sigc::bind (&on_got_overloads_choice_signal, debugger));
@@ -145,23 +145,23 @@ test_main (int argc, char *argv[])
         //</connect to IDebugger events>
         //*****************************
 
-        std::vector<UString> args, source_search_dir ;
-        args.push_back ("fooprog") ;
-        source_search_dir.push_back (".") ;
+        std::vector<UString> args, source_search_dir;
+        args.push_back ("fooprog");
+        source_search_dir.push_back (".");
 
         debugger->load_program (args, "", source_search_dir);
-        debugger->set_breakpoint ("func1") ;
-        debugger->run () ;
-        loop->run () ;
+        debugger->set_breakpoint ("func1");
+        debugger->run ();
+        loop->run ();
     } catch (Glib::Exception &e) {
-        LOG_ERROR ("got error: " << e.what () << "\n") ;
-        return -1 ;
+        LOG_ERROR ("got error: " << e.what () << "\n");
+        return -1;
     } catch (exception &e) {
-        LOG_ERROR ("got error: " << e.what () << "\n") ;
-        return -1 ;
+        LOG_ERROR ("got error: " << e.what () << "\n");
+        return -1;
     } catch (...) {
-        LOG_ERROR ("got an unknown error\n") ;
-        return -1 ;
+        LOG_ERROR ("got an unknown error\n");
+        return -1;
     }
     return 0;
 }

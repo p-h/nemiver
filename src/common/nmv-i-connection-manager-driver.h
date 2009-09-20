@@ -34,54 +34,54 @@
 namespace nemiver {
 namespace common {
 
-class IConnectionManagerDriver ;
+class IConnectionManagerDriver;
 
 class DBDesc {
-    common::UString m_type ;
-    common::UString m_host ;
-    unsigned long m_port ;
-    common::UString m_name ;
+    common::UString m_type;
+    common::UString m_host;
+    unsigned long m_port;
+    common::UString m_name;
 
 public:
     DBDesc ()
     {}
     DBDesc (const common::UString &a_host,
             const unsigned long &a_port,
-            const common::UString &a_db_name) ;
+            const common::UString &a_db_name);
 
     const common::UString host () const
     {
         return m_host;
-    } ;
+    };
     unsigned long port () const
     {
         return m_port;
-    } ;
+    };
     const common::UString name () const
     {
         return m_name;
-    } ;
+    };
     const common::UString type () const
     {
         return m_type;
-    } ;
+    };
 
     void set_host (const common::UString &a_host)
     {
         m_host = a_host;
-    } ;
+    };
     void set_port (const unsigned long &a_port)
     {
         m_port = a_port;
-    } ;
+    };
     void set_name (const common::UString &a_name)
     {
         m_name = a_name;
-    } ;
+    };
     void set_type (const common::UString &a_type)
     {
         m_type = a_type;
-    } ;
+    };
 };//end class DBDesc
 
 class NEMIVER_PURE_IFACE IConnectionManagerDriver :
@@ -101,7 +101,7 @@ public:
 
 typedef common::SafePtr<IConnectionManagerDriver,
                         common::ObjectRef,
-                        common::ObjectUnref> IConnectionManagerDriverSafePtr ;
+                        common::ObjectUnref> IConnectionManagerDriverSafePtr;
 };//end namespace common
 };//end namespace nemiver
 #endif //__NEMIVER_I_CONNECTION_MANAGER_DRIVER_H__

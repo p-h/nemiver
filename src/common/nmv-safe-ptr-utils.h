@@ -48,7 +48,7 @@ struct ObjectRef {
     operator () (nemiver::common::Object* a_ptr)
     {
         if (a_ptr)
-            a_ptr->ref () ;
+            a_ptr->ref ();
     }
 };//end ObjectRef
 
@@ -71,10 +71,10 @@ struct GCharUnref {
     operator () (gchar* a_ptr)
     {
         if (a_ptr) {
-            g_free (a_ptr) ;
-            return true ;
+            g_free (a_ptr);
+            return true;
         }
-        return true ;
+        return true;
     }
 };
 
@@ -85,7 +85,7 @@ struct CharsRef {
 struct DelCharsUnref {
     void operator () (gchar *a_tab)
     {
-        delete [] a_tab ;
+        delete [] a_tab;
     }
 };//end struct CharTabUnref
 
@@ -95,14 +95,14 @@ struct UnicharsRef {
 struct DelUnicharsUnref {
     void operator () (gunichar *a_tab)
     {
-        delete [] a_tab ;
+        delete [] a_tab;
     }
 };
 
-typedef SafePtr <gchar, CharsRef, GCharUnref> GCharSafePtr ;
-typedef SafePtr <Object, ObjectRef, ObjectUnref> ObjectSafePtr ;
-typedef SafePtr <gchar, CharsRef, DelCharsUnref> CharSafePtr ;
-typedef SafePtr <gunichar, UnicharsRef, DelUnicharsUnref> UnicharSafePtr ;
+typedef SafePtr <gchar, CharsRef, GCharUnref> GCharSafePtr;
+typedef SafePtr <Object, ObjectRef, ObjectUnref> ObjectSafePtr;
+typedef SafePtr <gchar, CharsRef, DelCharsUnref> CharSafePtr;
+typedef SafePtr <gunichar, UnicharsRef, DelUnicharsUnref> UnicharSafePtr;
 
 NEMIVER_END_NAMESPACE(common)
 NEMIVER_END_NAMESPACE(nemiver)

@@ -27,32 +27,32 @@
 
 #include "nmv-i-lang-trait.h"
 
-using nemiver::common::UString ;
-using nemiver::common::DynModIfaceSafePtr ;
+using nemiver::common::UString;
+using nemiver::common::DynModIfaceSafePtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class CPPTrait : public ILangTrait {
     //non copyable
-    CPPTrait (const CPPTrait &) ;
-    CPPTrait& operator= (const CPPTrait &) ;
+    CPPTrait (const CPPTrait &);
+    CPPTrait& operator= (const CPPTrait &);
 
-    UString m_name ;
+    UString m_name;
 
 public:
 
-    CPPTrait (DynamicModule *a_dynmod) ;
-    ~CPPTrait () ;
-    const UString& get_name () const ;
-    bool has_pointers () const ;
-    bool is_type_a_pointer (const UString &a_type) const ;
-    bool is_variable_compound (const IDebugger::VariableSafePtr a_var) const ;
+    CPPTrait (DynamicModule *a_dynmod);
+    ~CPPTrait ();
+    const UString& get_name () const;
+    bool has_pointers () const;
+    bool is_type_a_pointer (const UString &a_type) const;
+    bool is_variable_compound (const IDebugger::VariableSafePtr a_var) const;
 };//end class CPPTrait
 
 CPPTrait::CPPTrait (DynamicModule *a_dynmod):
     ILangTrait (a_dynmod)
 {
-    m_name = "cpptrait" ;
+    m_name = "cpptrait";
 }
 
 CPPTrait::~CPPTrait ()
@@ -62,7 +62,7 @@ CPPTrait::~CPPTrait ()
 const UString&
 CPPTrait::get_name () const
 {
-    return m_name ;
+    return m_name;
 }
 
 bool
@@ -73,26 +73,26 @@ CPPTrait::has_pointers () const
 bool
 CPPTrait::is_type_a_pointer (const UString &a_type) const
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    LOG_DD ("type: '" << a_type << "'") ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    LOG_DD ("type: '" << a_type << "'");
 
     UString type (a_type);
-    type.chomp () ;
+    type.chomp ();
     if (type[type.size () - 1] == '*') {
-        LOG_DD ("type is a pointer") ;
-        return true ;
+        LOG_DD ("type is a pointer");
+        return true;
     }
     if (type.size () < 8) {
-        LOG_DD ("type is not a pointer") ;
-        return false ;
+        LOG_DD ("type is not a pointer");
+        return false;
     }
-    UString::size_type i = type.size () - 7 ;
+    UString::size_type i = type.size () - 7;
     if (!a_type.compare (i, 7, "* const")) {
-        LOG_DD ("type is a pointer") ;
-        return true ;
+        LOG_DD ("type is a pointer");
+        return true;
     }
-    LOG_DD ("type is not a pointer") ;
-    return false ;
+    LOG_DD ("type is not a pointer");
+    return false;
 }
 
 bool
@@ -113,8 +113,8 @@ public:
         const static Info s_info ("cpptraitmodule",
                                   "The C++ languaqe trait. "
                                   "Implements the ILangTrait interface",
-                                  "1.0") ;
-        a_info = s_info ;
+                                  "1.0");
+        a_info = s_info;
     }
 
     void do_init ()
@@ -125,11 +125,11 @@ public:
                            DynModIfaceSafePtr &a_iface)
     {
         if (a_iface_name == "ILangTrait") {
-            a_iface.reset (new CPPTrait (this)) ;
+            a_iface.reset (new CPPTrait (this));
         } else {
-            return false ;
+            return false;
         }
-        return true ;
+        return true;
     }
 };//end CPPTraitModule
 
@@ -140,8 +140,8 @@ extern "C" {
 bool
 NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
-    *a_new_instance = new nemiver::CPPTraitModule () ;
-    return (*a_new_instance != 0) ;
+    *a_new_instance = new nemiver::CPPTraitModule ();
+    return (*a_new_instance != 0);
 }
 }//end extern C
 

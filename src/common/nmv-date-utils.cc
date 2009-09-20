@@ -38,29 +38,29 @@ namespace dateutils {
 time_t
 get_current_datetime ()
 {
-    struct timeval tv ;
-    memset (&tv, 0, sizeof (tv)) ;
-    gettimeofday (&tv, NULL) ;
-    return tv.tv_sec ;
+    struct timeval tv;
+    memset (&tv, 0, sizeof (tv));
+    gettimeofday (&tv, NULL);
+    return tv.tv_sec;
 }
 
 void
 get_current_datetime (struct tm &a_tm)
 {
-    time_t now = get_current_datetime () ;
-    gmtime_r (&now, &a_tm) ;
+    time_t now = get_current_datetime ();
+    gmtime_r (&now, &a_tm);
 }
 
 void
 get_current_datetime (UString &a_datetime)
 {
-    struct tm now ;
-    memset (&now, 0, sizeof (now)) ;
+    struct tm now;
+    memset (&now, 0, sizeof (now));
 
-    get_current_datetime (now) ;
-    char now_str[21] = {0} ;
-    strftime (now_str, 20, "%Y-%m-%d %H:%M:%S", &now) ;
-    a_datetime = now_str ;
+    get_current_datetime (now);
+    char now_str[21] = {0};
+    strftime (now_str, 20, "%Y-%m-%d %H:%M:%S", &now);
+    a_datetime = now_str;
 }
 
 }//end namespace dateutils

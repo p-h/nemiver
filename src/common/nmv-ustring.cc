@@ -33,7 +33,7 @@
 #include "nmv-safe-ptr-utils.h"
 #include "nmv-log-stream-utils.h"
 
-using namespace std ;
+using namespace std;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
@@ -53,11 +53,11 @@ strnlen (const gchar *string, gulong a_len)
 UString
 UString::from_int (long long an_int)
 {
-    UString str ;
-    ostringstream os ;
-    os << an_int ;
-    str = os.str ().c_str () ;
-    return str ;
+    UString str;
+    ostringstream os;
+    os << an_int;
+    str = os.str ().c_str ();
+    return str;
 }
 
 UString::UString ()
@@ -67,25 +67,25 @@ UString::UString ()
 UString::UString (const char *a_cstr, long a_len)
 {
     if (!a_cstr) {
-        Glib::ustring::operator= ("") ;
+        Glib::ustring::operator= ("");
     } else {
         if (a_len < 0)
-            Glib::ustring::operator= (a_cstr) ;
+            Glib::ustring::operator= (a_cstr);
         else
-            Glib::ustring::assign (a_cstr, a_len) ;
+            Glib::ustring::assign (a_cstr, a_len);
     }
 }
 
 UString::UString (const unsigned char *a_cstr, long a_len)
 {
-    const char* cstr = reinterpret_cast<const char*> (a_cstr) ;
+    const char* cstr = reinterpret_cast<const char*> (a_cstr);
     if (!cstr) {
-        Glib::ustring::operator= ("") ;
+        Glib::ustring::operator= ("");
     } else {
         if (a_len < 0)
-            Glib::ustring::operator= (cstr) ;
+            Glib::ustring::operator= (cstr);
         else
-            Glib::ustring::assign (cstr, a_len) ;
+            Glib::ustring::assign (cstr, a_len);
     }
 }
 
@@ -107,73 +107,73 @@ UString&
 UString::set (const gchar* a_buf, gulong a_len)
 {
     if (!a_buf) {
-        return *this ;
+        return *this;
     }
     //truncate the length of string if it contains
     //zeros, otherwise, Glib::ustring throws an exception.
-    gulong length_to_first_zero = strnlen (a_buf, a_len) ;
-    gulong len = a_len ;
+    gulong length_to_first_zero = strnlen (a_buf, a_len);
+    gulong len = a_len;
     if (length_to_first_zero != a_len) {
-        len = length_to_first_zero ;
+        len = length_to_first_zero;
     }
-    Glib::ustring::assign (a_buf, len) ;
-    return *this ;
+    Glib::ustring::assign (a_buf, len);
+    return *this;
 }
 
 bool
 UString::is_integer () const
 {
-    UString::value_type c (0) ;
+    UString::value_type c (0);
     if (*this == "")
-        return false ;
+        return false;
 
-    for (UString::size_type i = 0; i < size () ; ++i) {
-        c = (*this)[i] ;
+    for (UString::size_type i = 0; i < size (); ++i) {
+        c = (*this)[i];
         if (c < '0' && c > '9') {
-            return false ;
+            return false;
         }
     }
-    return true ;
+    return true;
 }
 
 UString&
 UString::append_int (long long an_int)
 {
-    this->operator+= (from_int (an_int)) ;
-    return *this ;
+    this->operator+= (from_int (an_int));
+    return *this;
 }
 
 UString&
 UString::assign_int (long long an_int)
 {
-    this->operator= (from_int (an_int)) ;
-    return *this ;
+    this->operator= (from_int (an_int));
+    return *this;
 }
 
 UString&
 UString::operator= (const char *a_cstr)
 {
     if (!a_cstr) {
-        Glib::ustring::operator= ("") ;
+        Glib::ustring::operator= ("");
     } else {
-        Glib::ustring::operator= (a_cstr) ;
+        Glib::ustring::operator= (a_cstr);
     }
-    return *this ;
+    return *this;
 }
 
 UString&
 UString::operator= (const unsigned char *a_cstr)
 {
-    return operator= (reinterpret_cast<const char*> (a_cstr)) ;
+    return operator= (reinterpret_cast<const char*> (a_cstr));
 }
 
 UString&
 UString::operator= (UString const &a_cstr)
 {
     if (this == &a_cstr)
-        return *this ;
-    Glib::ustring::operator= (a_cstr) ;
-    return *this ;
+        return *this;
+    Glib::ustring::operator= (a_cstr);
+    return *this;
 }
 
 bool
@@ -188,42 +188,42 @@ UString::operator! () const
 vector<UString>
 UString::split (const UString &a_delim) const
 {
-    vector<UString> result ;
+    vector<UString> result;
     if (size () == Glib::ustring::size_type (0)) {return result;}
 
-    gint len = bytes () + 1 ;
-    CharSafePtr buf (new gchar[len]) ;
-    memset (buf.get (), 0, len) ;
-    memcpy (buf.get (), c_str (), bytes ()) ;
+    gint len = bytes () + 1;
+    CharSafePtr buf (new gchar[len]);
+    memset (buf.get (), 0, len);
+    memcpy (buf.get (), c_str (), bytes ());
 
-    gchar **splited = g_strsplit (buf.get (), a_delim.c_str (), -1) ;
+    gchar **splited = g_strsplit (buf.get (), a_delim.c_str (), -1);
     try {
-        for (gchar **cur = splited ; cur && *cur; ++cur) {
-            result.push_back (UString (*cur)) ;
+        for (gchar **cur = splited; cur && *cur; ++cur) {
+            result.push_back (UString (*cur));
         }
     } catch (...) {
     }
 
     if (splited) {
-        g_strfreev (splited) ;
+        g_strfreev (splited);
     }
-    return result ;
+    return result;
 }
 
 vector<UString>
 UString::split_set (const UString &a_delim_set) const
 {
-    vector<UString> result ;
+    vector<UString> result;
     if (size () == Glib::ustring::size_type (0)) {return result;}
 
-    gint len = bytes () + 1 ;
+    gint len = bytes () + 1;
     CharSafePtr buf (new gchar[len]);
     memset (buf.get (), 0, len);
     memcpy (buf.get (), c_str (), bytes ());
 
     gchar **splited = g_strsplit_set (buf.get (), a_delim_set.c_str (), -1);
     try {
-        for (gchar **cur = splited ; cur && *cur; ++cur) {
+        for (gchar **cur = splited; cur && *cur; ++cur) {
             result.push_back (UString (*cur));
         }
     } catch (...) {
@@ -240,11 +240,11 @@ UString::join (const vector<UString> &a_elements,
                const UString &a_delim)
 {
     if (!a_elements.size ()) {
-        return UString ("") ;
+        return UString ("");
     }
-    vector<UString>::const_iterator from = a_elements.begin () ;
-    vector<UString>::const_iterator to = a_elements.end () ;
-    return join (from, to, a_delim) ;
+    vector<UString>::const_iterator from = a_elements.begin ();
+    vector<UString>::const_iterator to = a_elements.end ();
+    return join (from, to, a_delim);
 }
 
 UString
@@ -254,12 +254,12 @@ UString::join (vector<UString>::const_iterator &a_from,
 {
     if (a_from == a_to) {return UString ("");}
 
-    vector<UString>::const_iterator iter = a_from ;
-    UString result = *iter ;
-    for (; ++iter != a_to ; ) {
-        result += a_delim + *iter ;
+    vector<UString>::const_iterator iter = a_from;
+    UString result = *iter;
+    for (; ++iter != a_to; ) {
+        result += a_delim + *iter;
     }
-    return result ;
+    return result;
 }
 
 void
@@ -267,20 +267,20 @@ UString::chomp ()
 {
     if (!size ()) {return;}
 
-    Glib::ustring::size_type i = 0 ;
+    Glib::ustring::size_type i = 0;
 
     //remove the ws from the beginning of the string.
     while (!empty () && isspace (at (0))) {
-        erase (0, 1) ;
+        erase (0, 1);
     }
 
     //remove the ws from the end of the string.
-    i = size () ;
+    i = size ();
     if (!i) {return;}
-    --i ;
+    --i;
     while (i > 0 && isspace (at (i))) {
-        erase (i, 1) ;
-        i = size () ;
+        erase (i, 1);
+        i = size ();
         if (!i) {return;}
         --i;
     }
@@ -290,24 +290,24 @@ UString::chomp ()
 UString::size_type
 UString::get_number_of_lines () const
 {
-    UString::size_type res = 0 ;
-    for (UString::const_iterator it = begin () ; it != end () ; ++it) {
+    UString::size_type res = 0;
+    for (UString::const_iterator it = begin (); it != end () ; ++it) {
         if (*it == '\n') {++res;}
     }
-    return res ;
+    return res;
 }
 
 UString::size_type
 UString::get_number_of_words () const
 {
-    UString::size_type i=0, num_words=0 ;
+    UString::size_type i=0, num_words=0;
 
 skip_blanks:
     for (;i < raw ().size (); ++i) {
         if (!isblank (raw ()[i]))
             goto eat_word;
     }
-    goto out ;
+    goto out;
 
 eat_word:
     num_words++;
@@ -323,9 +323,9 @@ out:
 UString&
 UString::vprintf (const UString &a_format, va_list a_args)
 {
-    GCharSafePtr str (g_strdup_vprintf (a_format.c_str (), a_args)) ;
-    assign (str.get ()) ;
-    return *this ;
+    GCharSafePtr str (g_strdup_vprintf (a_format.c_str (), a_args));
+    assign (str.get ());
+    return *this;
 }
 
 UString&
@@ -335,7 +335,7 @@ UString::printf (const UString &a_format, ...)
     va_start (args, a_format);
     this->vprintf (a_format, args);
     va_end (args);
-    return *this ;
+    return *this;
 }
 
 WString::~WString ()
@@ -353,9 +353,9 @@ WString::WString (const super_type &a_str) : super_type (a_str)
 WString::WString (const char* a_str, unsigned int a_len)
 {
     if (!a_str) {
-        assign ("") ;
+        assign ("");
     } else {
-        assign (a_str, a_len) ;
+        assign (a_str, a_len);
     }
 }
 
@@ -406,57 +406,57 @@ WString&
 WString::assign (const char *a_str, long a_len)
 {
     if (!a_str) {
-        static gunichar s_empty_str[]={0} ;
-        super_type::assign (s_empty_str) ;
+        static gunichar s_empty_str[]={0};
+        super_type::assign (s_empty_str);
     } else {
         if (a_len <0) {
-            a_len = strlen (a_str) ;
+            a_len = strlen (a_str);
         }
         if (a_len) {
             if ((long)capacity () < a_len) {resize (a_len);}
-            for (long i=0; i < a_len ; ++i) {
-                at (i) = a_str[i] ;
+            for (long i=0; i < a_len; ++i) {
+                at (i) = a_str[i];
             }
         }
     }
-    return *this ;
+    return *this;
 }
 
 WString&
 WString::assign (const WString &a_str)
 {
-    super_type::assign (a_str) ;
-    return *this ;
+    super_type::assign (a_str);
+    return *this;
 }
 
 WString&
 WString::assign (const WString &a_str, size_type a_position,
                  super_type::size_type a_n)
 {
-    super_type::assign ((super_type)a_str, a_position, a_n) ;
-    return *this ;
+    super_type::assign ((super_type)a_str, a_position, a_n);
+    return *this;
 }
 
 WString&
 WString::assign (const gunichar *a_str,
                  super_type::size_type a_n)
 {
-    super_type::assign (a_str, a_n) ;
-    return *this ;
+    super_type::assign (a_str, a_n);
+    return *this;
 }
 
 WString&
 WString::assign (const gunichar *a_str)
 {
-    super_type::assign (a_str) ;
-    return *this ;
+    super_type::assign (a_str);
+    return *this;
 }
 
 WString&
 WString::assign (super_type::size_type a_n, gunichar a_c)
 {
-    super_type::assign (a_n, a_c) ;
-    return *this ;
+    super_type::assign (a_n, a_c);
+    return *this;
 }
 
 struct GErrorRef {
@@ -469,7 +469,7 @@ struct GErrorUnref {
     void operator () (GError *a_err)
     {
         if (a_err) {
-            g_error_free (a_err) ;
+            g_error_free (a_err);
         }
     }
 };
@@ -478,55 +478,55 @@ bool
 wstring_to_ustring (const WString &a_wstr,
                     UString &a_ustr)
 {
-    glong wstr_len=0, utf8_bytes_len=0 ;
-    GCharSafePtr utf8_buf ;
-    GError *err=0 ;
+    glong wstr_len=0, utf8_bytes_len=0;
+    GCharSafePtr utf8_buf;
+    GError *err=0;
     utf8_buf.reset (g_ucs4_to_utf8 (a_wstr.c_str (),
                                     a_wstr.size (), &wstr_len,
-                                    &utf8_bytes_len, &err)) ;
+                                    &utf8_bytes_len, &err));
     SafePtr<GError, GErrorRef, GErrorUnref> error;
-    error.reset (err) ;
+    error.reset (err);
     if (error) {
-        LOG_ERROR ("got error conversion error: '" << error->message << "'") ;
-        return false ;
+        LOG_ERROR ("got error conversion error: '" << error->message << "'");
+        return false;
     }
 
     if (!utf8_bytes_len && a_wstr.size ()) {
-        LOG_ERROR ("Conversion from ucs4 str to utf8 str failed.") ;
+        LOG_ERROR ("Conversion from ucs4 str to utf8 str failed.");
         return false;
     }
-    a_ustr.assign (utf8_buf.get (), wstr_len) ;
-    return true ;
+    a_ustr.assign (utf8_buf.get (), wstr_len);
+    return true;
 }
 
 bool
 ustring_to_wstring (const UString &a_ustr,
                     WString &a_wstr)
 {
-    glong wstr_len=0, utf8_bytes_len=0 ;
-    SafePtr<gunichar, DefaultRef, FreeUnref> wbuf ;
-    GError *err=0 ;
+    glong wstr_len=0, utf8_bytes_len=0;
+    SafePtr<gunichar, DefaultRef, FreeUnref> wbuf;
+    GError *err=0;
     wbuf.reset (g_utf8_to_ucs4 (a_ustr.c_str (),
                                 a_ustr.bytes (),
                                 &utf8_bytes_len,
                                 &wstr_len,
-                                &err)) ;
+                                &err));
     SafePtr<GError, GErrorRef, GErrorUnref> error;
-    error.reset (err) ;
+    error.reset (err);
     if (error) {
-        LOG_ERROR ("got error conversion error: '" << error->message << "'") ;
-        return false ;
+        LOG_ERROR ("got error conversion error: '" << error->message << "'");
+        return false;
     }
     if (!wstr_len && a_ustr.bytes ()) {
-        LOG_ERROR ("Conversion from utf8 str to ucs4 str failed") ;
-        return false ;
+        LOG_ERROR ("Conversion from utf8 str to ucs4 str failed");
+        return false;
     }
 
     if ((gulong)wstr_len != a_ustr.size ()) {
-        LOG_ERROR ("Conversion from utf8 str to ucs4 str failed") ;
+        LOG_ERROR ("Conversion from utf8 str to ucs4 str failed");
     }
-    a_wstr.assign (wbuf.get (), wstr_len) ;
-    return true ;
+    a_wstr.assign (wbuf.get (), wstr_len);
+    return true;
 }
 NEMIVER_END_NAMESPACE (nemiver)
 NEMIVER_END_NAMESPACE (common)

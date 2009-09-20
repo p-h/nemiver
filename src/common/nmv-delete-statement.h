@@ -31,26 +31,26 @@
 namespace nemiver {
 namespace common {
 
-struct DeleteStatementPriv ;
+struct DeleteStatementPriv;
 class NEMIVER_API DeleteStatement : public SQLStatement
 {
-    friend struct DeleteStatementPriv ;
+    friend struct DeleteStatementPriv;
 
-    DeleteStatementPriv *m_priv ;
+    DeleteStatementPriv *m_priv;
     //forbid copy/assignation
-    DeleteStatement (const DeleteStatement &) ;
-    DeleteStatement& operator= (const DeleteStatement &) ;
+    DeleteStatement (const DeleteStatement &);
+    DeleteStatement& operator= (const DeleteStatement &);
 
 public:
 
     DeleteStatement (const common::UString &a_table_name,
-                     ColumnList &a_where_columns) ;
+                     ColumnList &a_where_columns);
 
-    ~DeleteStatement () ;
+    ~DeleteStatement ();
 
-    const common::UString& to_string () const ;
+    const common::UString& to_string () const;
 
-    const ColumnList& get_where_columns () const ;
+    const ColumnList& get_where_columns () const;
 };//end class DeleteStatement
 
 }//end namespace common

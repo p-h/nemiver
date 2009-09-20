@@ -36,13 +36,13 @@ bool NEMIVER_API launch_program (const std::vector<UString> &a_args,
                                  int &a_pid,
                                  int &a_master_pty_fd,
                                  int &a_stdout_fd,
-                                 int &a_stderr_fd) ;
+                                 int &a_stderr_fd);
 
 void NEMIVER_API attach_channel_to_loop_context_as_source
                         (Glib::IOCondition a_cond,
                          const sigc::slot<bool, Glib::IOCondition> &a_slot,
                          const Glib::RefPtr<Glib::IOChannel> &a_chan,
-                         const Glib::RefPtr<Glib::MainContext>&a_ctxt) ;
+                         const Glib::RefPtr<Glib::MainContext>&a_ctxt);
 
 bool NEMIVER_API is_libtool_executable_wrapper (const UString &a_path);
 }//end namspace common

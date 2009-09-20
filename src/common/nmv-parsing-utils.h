@@ -32,30 +32,30 @@
 namespace nemiver {
 namespace common {
 
-class UString ;
+class UString;
 namespace parsing_utils
 {
 
-NEMIVER_API bool is_digit (gunichar a_char) ;
-NEMIVER_API bool is_alphabet_char (gunichar a_char) ;
-NEMIVER_API bool is_alnum (gunichar a_char) ;
-NEMIVER_API bool is_host_name_char (gunichar a_char) ;
+NEMIVER_API bool is_digit (gunichar a_char);
+NEMIVER_API bool is_alphabet_char (gunichar a_char);
+NEMIVER_API bool is_alnum (gunichar a_char);
+NEMIVER_API bool is_host_name_char (gunichar a_char);
 
 NEMIVER_API bool remove_white_spaces_at_begining (const UString &a_str,
-                                                  UString &a_res) ;
+                                                  UString &a_res);
 
 NEMIVER_API bool remove_white_spaces_at_end (const UString &a_str,
-                                             UString &a_res) ;
+                                             UString &a_res);
 
-NEMIVER_API bool is_white_string (const UString &a_str) ;
+NEMIVER_API bool is_white_string (const UString &a_str);
 
-NEMIVER_API UString date_to_string (const Glib::Date &a_date) ;
+NEMIVER_API UString date_to_string (const Glib::Date &a_date);
 
-NEMIVER_API int month_to_int (Glib::Date::Month a_month) ;
+NEMIVER_API int month_to_int (Glib::Date::Month a_month);
 
-NEMIVER_API Glib::Date::Month month_from_int (int a_in) ;
+NEMIVER_API Glib::Date::Month month_from_int (int a_in);
 
-NEMIVER_API bool string_to_date (const UString &a_str, Glib::Date &a_date) ;
+NEMIVER_API bool string_to_date (const UString &a_str, Glib::Date &a_date);
 
 }//end namespace parsing_utils
 }//end namespace common

@@ -48,7 +48,7 @@ struct FreeUnref
     operator () (const void* a_ptr)
     {
         if (a_ptr)
-            free (const_cast<void *> (a_ptr)) ;
+            free (const_cast<void *> (a_ptr));
     }
 }
 ;//end struct DefaultUnreference
@@ -60,7 +60,7 @@ struct DeleteFunctor
     operator () (const PointerType* a_ptr)
     {
         if (a_ptr)
-            delete (a_ptr) ;
+            delete (a_ptr);
     }
 };
 
@@ -71,7 +71,7 @@ template<class PointerType,
 class SafePtr
 {
 protected:
-    mutable PointerType *m_pointer ;
+    mutable PointerType *m_pointer;
 
 
 public:
@@ -79,7 +79,7 @@ public:
         m_pointer (const_cast<PointerType*> (a_pointer))
     {
         if (a_do_ref) {
-            reference () ;
+            reference ();
         }
     }
 
@@ -92,13 +92,13 @@ public:
                            UnreferenceFunctor> &a_safe_ptr) :
         m_pointer (a_safe_ptr.m_pointer)
     {
-        reference () ;
+        reference ();
     }
 
     ~SafePtr ()
     {
-        unreference () ;
-        m_pointer = NULL ;
+        unreference ();
+        m_pointer = NULL;
     }
 
     SafePtr<PointerType, ReferenceFunctor, UnreferenceFunctor>&
@@ -108,30 +108,30 @@ public:
     {
         SafePtr<PointerType,
         ReferenceFunctor,
-        UnreferenceFunctor> temp (a_safe_ptr) ;
-        swap (temp) ;
-        return *this ;
+        UnreferenceFunctor> temp (a_safe_ptr);
+        swap (temp);
+        return *this;
     }
 
     /*
     SafePtr<PointerType, ReferenceFunctor, UnreferenceFunctor>&
     operator= (const PointerType *a_pointer)
     {
-        reset (a_pointer) ;
-        return *this ;
+        reset (a_pointer);
+        return *this;
     }
     */
 
     PointerType&
     operator* () const
     {
-        return  *(m_pointer) ;
+        return  *(m_pointer);
     }
 
     PointerType*
     operator-> () const
     {
-        return m_pointer ;
+        return m_pointer;
     }
 
 
@@ -139,32 +139,32 @@ public:
                      ReferenceFunctor,
                      UnreferenceFunctor> &a_safe_ptr) const
     {
-        return m_pointer == a_safe_ptr.m_pointer ;
+        return m_pointer == a_safe_ptr.m_pointer;
     }
 
     bool operator== (const PointerType *a_ptr) const
     {
-        return m_pointer == a_ptr ;
+        return m_pointer == a_ptr;
     }
 
     bool operator! () const
     {
         if (m_pointer)
-            return false ;
-        return true ;
+            return false;
+        return true;
     }
 
     operator bool () const
     {
         if (!m_pointer)
-            return false ;
-        return true ;
+            return false;
+        return true;
     }
 
 
     bool operator!= (const PointerType *a_pointer)
     {
-        return !this->operator== (a_pointer) ;
+        return !this->operator== (a_pointer);
     }
 
     bool operator!= (const SafePtr<PointerType,
@@ -177,17 +177,17 @@ public:
     void
     reset ()
     {
-        reset (0) ;
+        reset (0);
     }
 
     void
     reset (const PointerType *a_pointer, bool a_do_ref=false)
     {
         if (a_pointer != m_pointer) {
-            unreference () ;
-            m_pointer = const_cast<PointerType*> (a_pointer) ;
+            unreference ();
+            m_pointer = const_cast<PointerType*> (a_pointer);
             if (a_do_ref) {
-                reference () ;
+                reference ();
             }
         }
     }
@@ -195,7 +195,7 @@ public:
     PointerType*
     get () const
     {
-        return m_pointer ;
+        return m_pointer;
     }
 
     PointerType*
@@ -203,28 +203,28 @@ public:
     {
         const_cast<SafePtr<PointerType,
                            ReferenceFunctor,
-                           UnreferenceFunctor>* > (this)->reference () ;
-        return m_pointer ;
+                           UnreferenceFunctor>* > (this)->reference ();
+        return m_pointer;
     }
 
     template <class T>
     SafePtr<T, ReferenceFunctor, UnreferenceFunctor>
     do_dynamic_cast ()
     {
-        T *pointer = dynamic_cast<T*> (m_pointer) ;
-        SafePtr<T, ReferenceFunctor, UnreferenceFunctor> result (pointer) ;
+        T *pointer = dynamic_cast<T*> (m_pointer);
+        SafePtr<T, ReferenceFunctor, UnreferenceFunctor> result (pointer);
         if (result) {
-            result.reference () ;
+            result.reference ();
         }
-        return result ;
+        return result;
     }
 
     PointerType*
     release ()
     {
         PointerType* pointer = m_pointer;
-        m_pointer = NULL ;
-        return  pointer ;
+        m_pointer = NULL;
+        return  pointer;
     }
 
 
@@ -233,16 +233,16 @@ public:
           ReferenceFunctor,
           UnreferenceFunctor> &a_safe_ptr)
     {
-        PointerType *const tmp(m_pointer) ;
-        m_pointer = a_safe_ptr.m_pointer ;
-        a_safe_ptr.m_pointer = tmp ;
+        PointerType *const tmp(m_pointer);
+        m_pointer = a_safe_ptr.m_pointer;
+        a_safe_ptr.m_pointer = tmp;
     }
 
     void
     reference ()
     {
         if (m_pointer) {
-            ReferenceFunctor do_ref ;
+            ReferenceFunctor do_ref;
             do_ref (m_pointer);
         }
     }
@@ -251,8 +251,8 @@ public:
     unreference ()
     {
         if (m_pointer) {
-            UnreferenceFunctor do_unref ;
-            do_unref (m_pointer) ;
+            UnreferenceFunctor do_unref;
+            do_unref (m_pointer);
         }
     }
 };//end class SafePtr

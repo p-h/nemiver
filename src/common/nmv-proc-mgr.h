@@ -33,23 +33,23 @@
 #include "nmv-ustring.h"
 #include "nmv-safe-ptr-utils.h"
 
-using std::list ;
-using nemiver::common::UString ;
-using nemiver::common::Object ;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::SafePtr ;
+using std::list;
+using nemiver::common::UString;
+using nemiver::common::Object;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::SafePtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
 
-class IProcMgr ;
-typedef SafePtr<IProcMgr, ObjectRef, ObjectUnref> IProcMgrSafePtr ;
+class IProcMgr;
+typedef SafePtr<IProcMgr, ObjectRef, ObjectUnref> IProcMgrSafePtr;
 
 class NEMIVER_API IProcMgr : public Object {
     //non copyable
-    IProcMgr (const IProcMgr &) ;
-    IProcMgr& operator= (const IProcMgr &) ;
+    IProcMgr (const IProcMgr &);
+    IProcMgr& operator= (const IProcMgr &);
 
 protected:
     IProcMgr () {}
@@ -57,12 +57,12 @@ protected:
 public:
 
     class Process {
-        unsigned int m_pid ;
-        unsigned int m_ppid ;
-        unsigned int m_uid ;
-        unsigned int m_euid ;
-        UString m_user_name ;
-        list<UString> m_args ;
+        unsigned int m_pid;
+        unsigned int m_ppid;
+        unsigned int m_uid;
+        unsigned int m_euid;
+        UString m_user_name;
+        list<UString> m_args;
 
     public:
 
@@ -113,14 +113,14 @@ public:
                 && ppid () == an_other.ppid ()
                 && uid () == an_other.uid ()
                 && euid () == an_other.euid ()) {
-                return true ;
+                return true;
             }
-            return false ;
+            return false;
         }
     };//end class Process
 
     virtual ~IProcMgr () {}
-    static IProcMgrSafePtr create () ;
+    static IProcMgrSafePtr create ();
     virtual const list<Process>& get_all_process_list () const = 0;
     virtual bool get_process_from_pid (pid_t a_pid,
                                        Process &a_process) const = 0;

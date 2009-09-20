@@ -40,11 +40,11 @@ static const UString DELETE ("delete");
 
 struct ScopeLoggerPriv
 {
-    Glib::Timer timer ;
-    LogStream *out ;
-    bool can_free ;
-    UString name ;
-    UString domain ;
+    Glib::Timer timer;
+    LogStream *out;
+    bool can_free;
+    UString name;
+    UString domain;
 
     ScopeLoggerPriv (const char*a_scope_name,
                      enum LogStream::LogLevel a_level,
@@ -54,38 +54,38 @@ struct ScopeLoggerPriv
     {
         if (!a_use_default_log_stream) {
             out = new LogStream (a_level);
-            can_free = true ;
+            can_free = true;
         } else {
-            out = &(LogStream::default_log_stream ()) ;
-            can_free = false ;
+            out = &(LogStream::default_log_stream ());
+            can_free = false;
         }
-        name = a_scope_name ;
-        domain = a_log_domain ;
+        name = a_scope_name;
+        domain = a_log_domain;
 
-        out->push_domain (a_log_domain) ;
-        *out  << "|{|" << name << ":{" << common::endl ;
-        out->pop_domain () ;
+        out->push_domain (a_log_domain);
+        *out  << "|{|" << name << ":{" << common::endl;
+        out->pop_domain ();
 
-        timer.start () ;
-        out = out ;
+        timer.start ();
+        out = out;
     }
 
     ~ScopeLoggerPriv ()
     {
-        timer.stop () ;
+        timer.stop ();
 
         if (!out) {return;}
 
-        out->push_domain (domain) ;
+        out->push_domain (domain);
         *out << "|}|" << name <<":}elapsed: "
-             << timer.elapsed () << "secs" << common::endl ;
-        out->pop_domain () ;
+             << timer.elapsed () << "secs" << common::endl;
+        out->pop_domain ();
         if (can_free) {
             if (out) {
-                delete out ;
+                delete out;
             }
         }
-        out = NULL ;
+        out = NULL;
     }
 };
 
@@ -103,7 +103,7 @@ ScopeLogger::~ScopeLogger ()
 {
     //commented this out for performance reasons.
     //yeah, real reasons that got highlighted by profiling!
-    //LOG_DD (DELETE) ;
+    //LOG_DD (DELETE);
 }
 
 }//end namespace common

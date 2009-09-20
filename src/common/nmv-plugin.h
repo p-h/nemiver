@@ -38,58 +38,58 @@
 #include "nmv-safe-ptr-utils.h"
 #include "nmv-dynamic-module.h"
 
-using namespace std ;
+using namespace std;
 
 namespace nemiver {
 namespace common {
 
-class PluginManager ;
-typedef SafePtr<PluginManager, ObjectRef, ObjectUnref> PluginManagerSafePtr ;
+class PluginManager;
+typedef SafePtr<PluginManager, ObjectRef, ObjectUnref> PluginManagerSafePtr;
 
-class Plugin ;
-typedef SafePtr<Plugin, ObjectRef, ObjectUnref> PluginSafePtr ;
+class Plugin;
+typedef SafePtr<Plugin, ObjectRef, ObjectUnref> PluginSafePtr;
 
 class NEMIVER_API Plugin : public Object {
 
 public:
 
     class Descriptor;
-    typedef SafePtr<Descriptor, ObjectRef, ObjectUnref> DescriptorSafePtr ;
+    typedef SafePtr<Descriptor, ObjectRef, ObjectUnref> DescriptorSafePtr;
 
-    class EntryPoint ;
+    class EntryPoint;
     typedef SafePtr<EntryPoint, ObjectRef, ObjectUnref> EntryPointSafePtr;
 
 private:
 
-    friend class PluginManager ;
+    friend class PluginManager;
 
-    struct Priv ;
+    struct Priv;
     SafePtr<Priv> m_priv;
 
     //non copyable
-    Plugin (const Plugin &) ;
-    Plugin& operator= (const Plugin &) ;
+    Plugin (const Plugin &);
+    Plugin& operator= (const Plugin &);
     //forbid default constructor
-    Plugin () ;
+    Plugin ();
 
 private:
     Plugin (DescriptorSafePtr &a_descriptor,
-            DynamicModuleManager &a_bootstrap_module_manager) ;
+            DynamicModuleManager &a_bootstrap_module_manager);
 
-    void load_entry_point () ;
+    void load_entry_point ();
 
 public:
 
     class Descriptor : public Object {
-        bool m_auto_activate ;
-        bool m_can_deactivate ;
-        UString m_name ;
-        UString m_version ;
-        UString m_plugin_path ;
-        UString m_entry_point_module_name ;
-        UString m_entry_point_interface_name ;
+        bool m_auto_activate;
+        bool m_can_deactivate;
+        UString m_name;
+        UString m_version;
+        UString m_plugin_path;
+        UString m_entry_point_module_name;
+        UString m_entry_point_interface_name;
         //map of deps, made of plugin/versions
-        std::map<UString, UString> m_dependencies ;
+        std::map<UString, UString> m_dependencies;
 
     public:
 
@@ -145,37 +145,37 @@ public:
 public:
 
     class NEMIVER_API EntryPoint : public DynModIface {
-        friend class Plugin ;
+        friend class Plugin;
     public:
-        class Loader ;
-        typedef SafePtr<Loader, ObjectRef, ObjectUnref> LoaderSafePtr ;
+        class Loader;
+        typedef SafePtr<Loader, ObjectRef, ObjectUnref> LoaderSafePtr;
 
     private:
-        friend class PluginManager ;
-        class Priv ;
-        SafePtr<Priv> m_priv ;
+        friend class PluginManager;
+        class Priv;
+        SafePtr<Priv> m_priv;
 
         //non copyable
-        EntryPoint (const EntryPoint &) ;
-        EntryPoint& operator= (const EntryPoint &) ;
-        EntryPoint () ;
+        EntryPoint (const EntryPoint &);
+        EntryPoint& operator= (const EntryPoint &);
+        EntryPoint ();
 
 
     protected:
 
-        Plugin::EntryPoint::LoaderSafePtr plugin_entry_point_loader () ;
-        void plugin_entry_point_loader (Plugin::EntryPoint::LoaderSafePtr &) ;
+        Plugin::EntryPoint::LoaderSafePtr plugin_entry_point_loader ();
+        void plugin_entry_point_loader (Plugin::EntryPoint::LoaderSafePtr &);
 
         //must be created by a factory
-        EntryPoint (DynamicModuleSafePtr &a_module) ;
-        EntryPoint (DynamicModule *a_module) ;
+        EntryPoint (DynamicModuleSafePtr &a_module);
+        EntryPoint (DynamicModule *a_module);
         virtual void activate (bool a_activate,
-                               ObjectSafePtr &a_activation_context) ;
-        virtual bool is_activated () ;
+                               ObjectSafePtr &a_activation_context);
+        virtual bool is_activated ();
 
-        const UString& plugin_path () ;
+        const UString& plugin_path ();
 
-        void descriptor (DescriptorSafePtr &a_desc) ;
+        void descriptor (DescriptorSafePtr &a_desc);
 
     public:
 
@@ -183,62 +183,62 @@ public:
                                            std::string &a_absolute_path);
 
         class NEMIVER_API Loader : public DynamicModule::Loader {
-            struct Priv ;
-            SafePtr<Priv> m_priv ;
+            struct Priv;
+            SafePtr<Priv> m_priv;
 
-            Loader () ;
+            Loader ();
         public:
-            Loader (const UString &a_plugin_path) ;
-            virtual ~Loader () ;
-            const UString& plugin_path () ;
+            Loader (const UString &a_plugin_path);
+            virtual ~Loader ();
+            const UString& plugin_path ();
         };//end Loader
 
-        virtual ~EntryPoint () ;
-        DescriptorSafePtr descriptor () ;
+        virtual ~EntryPoint ();
+        DescriptorSafePtr descriptor ();
     };//end class EntryPoint
 
-    virtual ~Plugin () ;
-    DescriptorSafePtr descriptor () ;
-    void descriptor (const DescriptorSafePtr &a_desc) ;
-    EntryPoint& entry_point () ;
-    EntryPointSafePtr entry_point_ptr () ;
-    void activate (bool a_activate, ObjectSafePtr &a_activation_context) ;
-    bool is_activated () ;
+    virtual ~Plugin ();
+    DescriptorSafePtr descriptor ();
+    void descriptor (const DescriptorSafePtr &a_desc);
+    EntryPoint& entry_point ();
+    EntryPointSafePtr entry_point_ptr ();
+    void activate (bool a_activate, ObjectSafePtr &a_activation_context);
+    bool is_activated ();
 };//end class Plugin
 
 class NEMIVER_API PluginManager : public Object {
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
-    UString find_plugin_path_from_name (const UString &a_name) ;
+    UString find_plugin_path_from_name (const UString &a_name);
     bool parse_descriptor (const UString &a_path,
-                           Plugin::DescriptorSafePtr &a_out) ;
-    static const UString& descriptor_name () ;
+                           Plugin::DescriptorSafePtr &a_out);
+    static const UString& descriptor_name ();
     bool load_descriptor_from_plugin_path (const UString &a_plugin_path,
-                                           Plugin::DescriptorSafePtr &a_out) ;
+                                           Plugin::DescriptorSafePtr &a_out);
     bool load_descriptor_from_plugin_name (const UString &a_name,
-                                           Plugin::DescriptorSafePtr &a_out) ;
+                                           Plugin::DescriptorSafePtr &a_out);
     bool load_dependant_descriptors
                             (const Plugin::Descriptor &a_desc,
-                             std::vector<Plugin::DescriptorSafePtr> &a_descs) ;
+                             std::vector<Plugin::DescriptorSafePtr> &a_descs);
     bool load_dependant_descriptors_recursive
                             (const Plugin::Descriptor &a_desc,
-                             std::vector<Plugin::DescriptorSafePtr> &) ;
+                             std::vector<Plugin::DescriptorSafePtr> &);
 public:
 
-    PluginManager (DynamicModuleManager &a_module_manager) ;
+    PluginManager (DynamicModuleManager &a_module_manager);
 
-    virtual ~PluginManager () ;
+    virtual ~PluginManager ();
     PluginSafePtr load_plugin_from_path
                                     (const UString &a_plugin_path,
-                                     std::vector<PluginSafePtr> &a_deps) ;
+                                     std::vector<PluginSafePtr> &a_deps);
     PluginSafePtr load_plugin_from_name (const UString &a_name,
-                                         std::vector<PluginSafePtr> &a_deps) ;
-    bool load_plugins () ;
-    std::vector<UString>& plugins_search_path () ;
-    void entry_point_loader (Plugin::EntryPoint::LoaderSafePtr &a_loader) ;
-    Plugin::EntryPoint::LoaderSafePtr entry_point_loader () ;
-    std::map<UString, PluginSafePtr>& plugins_map () ;
+                                         std::vector<PluginSafePtr> &a_deps);
+    bool load_plugins ();
+    std::vector<UString>& plugins_search_path ();
+    void entry_point_loader (Plugin::EntryPoint::LoaderSafePtr &a_loader);
+    Plugin::EntryPoint::LoaderSafePtr entry_point_loader ();
+    std::map<UString, PluginSafePtr>& plugins_map ();
 };//end class PluginManager
 
 }//end namespace common

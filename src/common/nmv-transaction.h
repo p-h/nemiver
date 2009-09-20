@@ -37,7 +37,7 @@
 namespace nemiver {
 namespace common {
 
-struct TransactionPriv ;
+struct TransactionPriv;
 
 /// \brief the application level persistence transaction class.
 /// abstracts a transaction several persistent objects can be part of.
@@ -48,28 +48,28 @@ struct TransactionPriv ;
 /// Read docs/nmv-persistence.txt to learn more.
 class NEMIVER_API Transaction: public common::Object
 {
-    friend struct TransactionPriv ;
-    TransactionPriv *m_priv ;
-    Transaction () ;
+    friend struct TransactionPriv;
+    TransactionPriv *m_priv;
+    Transaction ();
 
 public:
 
-    Transaction (Connection &a_con) ;
-    Transaction (const Transaction &) ;
-    Transaction& operator= (const Transaction &) ;
-    virtual ~Transaction () ;
-    Connection& get_connection () ;
-    bool begin (const common::UString &a_subtransaction_name="") ;
-    bool commit (const common::UString &a_subtransaction_name="") ;
-    bool is_commited () ;
-    bool rollback () ;
-    long long get_id () ;
-    Glib::Mutex& get_mutex () const ;
+    Transaction (Connection &a_con);
+    Transaction (const Transaction &);
+    Transaction& operator= (const Transaction &);
+    virtual ~Transaction ();
+    Connection& get_connection ();
+    bool begin (const common::UString &a_subtransaction_name="");
+    bool commit (const common::UString &a_subtransaction_name="");
+    bool is_commited ();
+    bool rollback ();
+    long long get_id ();
+    Glib::Mutex& get_mutex () const;
 };//end class Transaction
 
 typedef common::SafePtr<Transaction,
                         common::ObjectRef,
-                        common::ObjectUnref> TransactionSafePtr ;
+                        common::ObjectUnref> TransactionSafePtr;
 
 //this class starts a transaction
 //upon instanciation, and reverts
@@ -80,9 +80,9 @@ typedef common::SafePtr<Transaction,
 //based transaction code.
 struct TransactionAutoHelper
 {
-    Transaction &m_trans ;
-    bool m_is_started ;
-    bool m_ignore ;
+    Transaction &m_trans;
+    bool m_is_started;
+    bool m_ignore;
 
     TransactionAutoHelper (common::Transaction &a_trans,
                            const common::UString &a_name ="generic-transaction",
@@ -91,24 +91,24 @@ struct TransactionAutoHelper
             m_ignore (a_ignore)
     {
         if (m_ignore) {
-            return ;
+            return;
         }
-        THROW_IF_FAIL (m_trans.begin (a_name)) ;
+        THROW_IF_FAIL (m_trans.begin (a_name));
         m_is_started = true;
     }
 
     void end (const common::UString& a_name="generic-transaction")
     {
         if (m_ignore) {
-            return ;
+            return;
         }
-        THROW_IF_FAIL (m_trans.commit (a_name)) ;
-        m_is_started = false ;
+        THROW_IF_FAIL (m_trans.commit (a_name));
+        m_is_started = false;
     }
 
     operator common::Transaction& ()
     {
-        return m_trans ;
+        return m_trans;
     }
 
     common::Transaction& get ()
@@ -119,11 +119,11 @@ struct TransactionAutoHelper
     ~TransactionAutoHelper ()
     {
         if (m_ignore) {
-            return ;
+            return;
         }
         if (m_is_started) {
-            THROW_IF_FAIL (m_trans.rollback ()) ;
-            m_is_started = false ;
+            THROW_IF_FAIL (m_trans.rollback ());
+            m_is_started = false;
         }
     }
 };//end TransactionAutoHelper

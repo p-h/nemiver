@@ -32,15 +32,15 @@
 #include "nmv-object.h"
 #include "nmv-ustring.h"
 
-using namespace std ;
+using namespace std;
 
 namespace nemiver {
 namespace common {
 
 struct ObjectPriv {
-    long refcount ;
-    bool refcount_enabled ;
-    map<UString, const Object*> objects_map ;
+    long refcount;
+    bool refcount_enabled;
+    map<UString, const Object*> objects_map;
 
     ObjectPriv () :
         refcount (1),
@@ -56,16 +56,16 @@ Object::Object ():
 Object::Object (Object const &a_object):
         m_priv (new ObjectPriv ())
 {
-    *m_priv = *a_object.m_priv ;
+    *m_priv = *a_object.m_priv;
 }
 
 Object::Object&
 Object::operator= (Object const &a_object)
 {
     if (this == &a_object)
-        return *this ;
-    *m_priv = *a_object.m_priv ;
-    return *this ;
+        return *this;
+    *m_priv = *a_object.m_priv;
+    return *this;
 }
 
 Object::~Object ()
@@ -75,21 +75,21 @@ Object::~Object ()
 void
 Object::ref ()
 {
-    if (!is_refcount_enabled ()) {return ;}
-    m_priv->refcount ++ ;
+    if (!is_refcount_enabled ()) {return;}
+    m_priv->refcount ++;
 }
 
 void
 Object::unref ()
 {
-    if (!is_refcount_enabled ()) {return ;}
+    if (!is_refcount_enabled ()) {return;}
     if (m_priv && m_priv->refcount) {
-        m_priv->refcount -- ;
+        m_priv->refcount --;
     }
 
     if (m_priv && m_priv->refcount <= 0) {
-        m_priv.reset () ;
-        delete this ;
+        m_priv.reset ();
+        delete this;
     }
 }
 
@@ -104,24 +104,24 @@ Object::enable_refcount (bool a_enabled)
 bool
 Object::is_refcount_enabled () const
 {
-    bool res (true) ;
+    bool res (true);
     if (m_priv) {
-        res = m_priv->refcount_enabled ;
+        res = m_priv->refcount_enabled;
     }
-    return res ;
+    return res;
 }
 
 long
 Object::get_refcount () const
 {
-    return m_priv->refcount ;
+    return m_priv->refcount;
 }
 
 void
 Object::attach_object (const UString &a_key,
                        const Object *a_object)
 {
-    m_priv->objects_map[a_key] = a_object ;
+    m_priv->objects_map[a_key] = a_object;
 }
 
 bool
@@ -129,12 +129,12 @@ Object::get_attached_object (const UString &a_key,
                              const Object *&a_object)
 {
     map<UString, const Object*>::const_iterator it =
-                                    m_priv->objects_map.find (a_key) ;
+                                    m_priv->objects_map.find (a_key);
     if (it == m_priv->objects_map.end ()) {
-        return false ;
+        return false;
     }
-    a_object = it->second ;
-    return true ;
+    a_object = it->second;
+    return true;
 }
 
 }//end namespace common

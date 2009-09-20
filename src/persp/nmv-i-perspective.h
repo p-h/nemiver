@@ -33,17 +33,17 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-using nemiver::common::Plugin ;
-using std::list ;
-using nemiver::common::UString ;
+using nemiver::common::Plugin;
+using std::list;
+using nemiver::common::UString;
 using nemiver::common::ObjectRef;
 using nemiver::common::ObjectUnref;
 using nemiver::common::SafePtr;
-using nemiver::IWorkbenchSafePtr ;
+using nemiver::IWorkbenchSafePtr;
 
-class IPerspective ;
+class IPerspective;
 
-typedef SafePtr<IPerspective, ObjectRef, ObjectUnref> IPerspectiveSafePtr ;
+typedef SafePtr<IPerspective, ObjectRef, ObjectUnref> IPerspectiveSafePtr;
 
 /// an abstraction of a consistent user interface dedicated
 /// at doing a certain task. Nemiver is a collection of perspectives
@@ -53,9 +53,9 @@ typedef SafePtr<IPerspective, ObjectRef, ObjectUnref> IPerspectiveSafePtr ;
 /// all the perspective it finds, at launch time.
 class NEMIVER_API IPerspective : public Plugin::EntryPoint {
     //non copyable
-    IPerspective (const IPerspective&) ;
-    IPerspective& operator= (const IPerspective&) ;
-    IPerspective () ;
+    IPerspective (const IPerspective&);
+    IPerspective& operator= (const IPerspective&);
+    IPerspective ();
 
 protected:
     IPerspective (DynamicModule *a_dynmod) :
@@ -81,10 +81,10 @@ public:
     /// \params a_tbs the list of toolbars. The implementation of this method
     /// must fill this parameter with the list of toolbars it wants the workbench
     /// to display when this perspective becomes active.
-    virtual void get_toolbars (list<Gtk::Widget*> &a_tbs) = 0 ;
+    virtual void get_toolbars (list<Gtk::Widget*> &a_tbs) = 0;
 
     /// \returns the body of the perspective.
-    virtual Gtk::Widget* get_body () = 0 ;
+    virtual Gtk::Widget* get_body () = 0;
 
     /// \returns the workbench associated to this perspective
     virtual IWorkbench& get_workbench () = 0;
@@ -104,7 +104,7 @@ public:
     ///
     /// Let the user choose the set of files to open
     /// via a file chooser dialog and open them.
-    virtual void open_file () = 0 ;
+    virtual void open_file () = 0;
 
     /// \brief close the currently selected file
     virtual void close_current_file () = 0;

@@ -36,7 +36,7 @@
 #include "nmv-i-var-list-walker.h"
 
 using namespace nemiver::common;
-namespace vutil=nemiver::variables_utils2;
+namespace vutil = nemiver::variables_utils2;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

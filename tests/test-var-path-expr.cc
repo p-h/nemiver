@@ -7,23 +7,23 @@
 #include "nmv-i-debugger.h"
 
 using namespace nemiver;
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 Glib::RefPtr<Glib::MainLoop> loop =
-    Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+    Glib::MainLoop::create (Glib::MainContext::get_default ());
 
 static void
 on_engine_died_signal ()
 {
-    MESSAGE ("engine died") ;
-    loop->quit () ;
+    MESSAGE ("engine died");
+    loop->quit ();
 }
 
 static void
 on_program_finished_signal ()
 {
-    MESSAGE ("program finished") ;
-    loop->quit () ;
+    MESSAGE ("program finished");
+    loop->quit ();
 }
 
 static void
@@ -32,9 +32,9 @@ on_breakpoints_set_signal (const std::map<int, IDebugger::BreakPoint> &a_breaks,
 {
     if (a_cookie.empty ()) {}
 
-    MESSAGE ("breakpoints set:") ;
-    std::map<int, IDebugger::BreakPoint>::const_iterator it ;
-    for (it = a_breaks.begin () ; it != a_breaks.end () ; ++it) {
+    MESSAGE ("breakpoints set:");
+    std::map<int, IDebugger::BreakPoint>::const_iterator it;
+    for (it = a_breaks.begin (); it != a_breaks.end () ; ++it) {
         MESSAGE ("<break><num>" << it->first <<"</num><line>"
                  << it->second.file_name () << ":" << it->second.line ()
                  << "</line></break>");
@@ -114,39 +114,39 @@ test_main (int argc, char *argv[])
 
     NEMIVER_TRY
 
-    Initializer::do_init () ;
+    Initializer::do_init ();
 
-    THROW_IF_FAIL (loop) ;
+    THROW_IF_FAIL (loop);
 
-    DynamicModuleManager module_manager ;
+    DynamicModuleManager module_manager;
     IDebuggerSafePtr debugger =
             module_manager.load_iface<IDebugger> ("gdbengine", "IDebugger");
 
-    debugger->set_event_loop_context (loop->get_context ()) ;
+    debugger->set_event_loop_context (loop->get_context ());
 
     //*****************************
     //<connect to IDebugger events>
     //*****************************
-    debugger->engine_died_signal ().connect (&on_engine_died_signal) ;
+    debugger->engine_died_signal ().connect (&on_engine_died_signal);
 
     debugger->program_finished_signal ().connect
-                                            (&on_program_finished_signal) ;
+                                            (&on_program_finished_signal);
 
     debugger->breakpoints_set_signal ().connect
-                                            (&on_breakpoints_set_signal) ;
+                                            (&on_breakpoints_set_signal);
 
     debugger->stopped_signal ().connect (sigc::bind (&on_stopped_signal,
                                                      debugger));
 
-    std::vector<UString> args, source_search_dir ;
-    source_search_dir.push_back (".") ;
+    std::vector<UString> args, source_search_dir;
+    source_search_dir.push_back (".");
     debugger->load_program ("fooprog", args, ".", source_search_dir);
-    debugger->set_breakpoint ("main") ;
-    debugger->run () ;
-    loop->run () ;
+    debugger->set_breakpoint ("main");
+    debugger->run ();
+    loop->run ();
 
     NEMIVER_CATCH_NOX
 
-    return 0 ;
+    return 0;
 }
 

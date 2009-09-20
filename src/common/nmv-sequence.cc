@@ -31,8 +31,8 @@ namespace nemiver {
 namespace common {
 
 struct Sequence::Priv {
-    Glib::Mutex integer_seq_mutex ;
-    long long integer_seq ;
+    Glib::Mutex integer_seq_mutex;
+    long long integer_seq;
 
     Priv () :
         integer_seq (0)
@@ -46,27 +46,27 @@ Sequence::Sequence () :
 
 Sequence::~Sequence ()
 {
-    LOG_D ("delete", "destructor-domain") ;
+    LOG_D ("delete", "destructor-domain");
 }
 
 long long
 Sequence::create_next_integer ()
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD ;
-    Glib::Mutex::Lock (m_priv->integer_seq_mutex) ;
-    long long new_val = ++m_priv->integer_seq ;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    Glib::Mutex::Lock (m_priv->integer_seq_mutex);
+    long long new_val = ++m_priv->integer_seq;
     if (new_val < m_priv->integer_seq) {
         THROW_EXCEPTION (Sequence::OverflowException,
-                         "Integer sequence overflow") ;
+                         "Integer sequence overflow");
     }
-    m_priv->integer_seq = new_val ;
-    return m_priv->integer_seq ;
+    m_priv->integer_seq = new_val;
+    return m_priv->integer_seq;
 }
 
 long long
 Sequence::get_current_integer () const
 {
-    return m_priv->integer_seq ;
+    return m_priv->integer_seq;
 }
 
 }//end namespace common

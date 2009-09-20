@@ -39,54 +39,54 @@ reader_io_read_callback (ReaderIOContext *a_read_context,
                          char * a_buf,
                          int a_len)
 {
-    THROW_IF_FAIL (a_read_context) ;
-    int len = a_len ;
-    int result (-1) ;
-    IInputStream::Status status = a_read_context->m_istream.read (a_buf, len) ;
+    THROW_IF_FAIL (a_read_context);
+    int len = a_len;
+    int result (-1);
+    IInputStream::Status status = a_read_context->m_istream.read (a_buf, len);
     switch (status) {
     case IInputStream::OK:
-        result = len ;
+        result = len;
         break;
     case IInputStream::EOF_ERROR:
-        result = 0 ;
-        break ;
+        result = 0;
+        break;
     case IInputStream::NOT_OPEN_ERROR:
     case IInputStream::ERROR:
     default:
-        result = -1 ;
+        result = -1;
     }
-    return result ;
+    return result;
 }
 
 int
 reader_io_close_callback (ReaderIOContext *a_read_context)
 {
     if (a_read_context) {}
-    return 0 ;
+    return 0;
 }
 
 bool
 goto_next_element_node (XMLTextReaderSafePtr &a_reader)
 {
-    int result = xmlTextReaderRead (a_reader.get ()) ;
+    int result = xmlTextReaderRead (a_reader.get ());
     if (result == 0) {
-        return false ;
+        return false;
     } else if (result < 0) {
-        THROW ("parsing error") ;
+        THROW ("parsing error");
     }
     xmlReaderTypes node_type =
-        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader.get ())) ;
+        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader.get ()));
     while (node_type != XML_READER_TYPE_ELEMENT) {
-        result = xmlTextReaderRead (a_reader.get ()) ;
+        result = xmlTextReaderRead (a_reader.get ());
         if (result == 0) {
-            return false ;
+            return false;
         } else if (result < 0) {
-            THROW ("parsing error") ;
+            THROW ("parsing error");
         }
         node_type = static_cast<xmlReaderTypes>
-                    (xmlTextReaderNodeType (a_reader.get ())) ;
+                    (xmlTextReaderNodeType (a_reader.get ()));
     }
-    return true ;
+    return true;
 }
 
 bool
@@ -94,14 +94,14 @@ goto_next_element_node_and_check (XMLTextReaderSafePtr &a_reader,
                                   const char* a_element_name)
 {
     if (!goto_next_element_node (a_reader)) {
-        return false ;
+        return false;
     }
     UString name = reinterpret_cast<const char*>
-                        (xmlTextReaderConstName (a_reader.get ())) ;
+                        (xmlTextReaderConstName (a_reader.get ()));
     if (name != a_element_name) {
-        return false ;
+        return false;
     }
-    return true ;
+    return true;
 }
 
 
@@ -109,90 +109,90 @@ bool
 search_next_element_node (XMLTextReaderSafePtr &a_reader,
                           const char* a_element_name)
 {
-    THROW_IF_FAIL (a_element_name) ;
+    THROW_IF_FAIL (a_element_name);
 
     bool result (false);
-    int status (0) ;
-    xmlReaderTypes node_type ;
+    int status (0);
+    xmlReaderTypes node_type;
     for (;;) {
-        status = xmlTextReaderRead (a_reader.get ()) ;
+        status = xmlTextReaderRead (a_reader.get ());
         if (status == 0) {
-            return false ;
+            return false;
         } else if (result < 0) {
-            THROW ("parsing error") ;
+            THROW ("parsing error");
         }
         node_type = static_cast<xmlReaderTypes>
-                    (xmlTextReaderNodeType (a_reader.get ())) ;
+                    (xmlTextReaderNodeType (a_reader.get ()));
         UString name =
             reinterpret_cast<const char*>
                 (XMLCharSafePtr (xmlTextReaderLocalName (a_reader.get ())).get ());
         if (node_type == XML_READER_TYPE_ELEMENT
             && name == a_element_name) {
-            result=true ;
-            break ;
+            result=true;
+            break;
         }
     }
-    return result ;
+    return result;
 }
 
 bool
 goto_next_text_node (XMLTextReaderSafePtr &a_reader)
 {
-    int result = xmlTextReaderRead (a_reader.get ()) ;
+    int result = xmlTextReaderRead (a_reader.get ());
     if (result == 0) {
-        return false ;
+        return false;
     } else if (result < 0) {
-        THROW ("parsing error") ;
+        THROW ("parsing error");
     }
     xmlReaderTypes node_type =
-        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader.get ())) ;
+        static_cast<xmlReaderTypes> (xmlTextReaderNodeType (a_reader.get ()));
     while (node_type != XML_READER_TYPE_TEXT) {
-        result = xmlTextReaderRead (a_reader.get ()) ;
+        result = xmlTextReaderRead (a_reader.get ());
         if (result == 0) {
-            return false ;
+            return false;
         } else if (result < 0) {
-            THROW ("parsing error") ;
+            THROW ("parsing error");
         }
         node_type = static_cast<xmlReaderTypes>
-                    (xmlTextReaderNodeType (a_reader.get ())) ;
+                    (xmlTextReaderNodeType (a_reader.get ()));
     }
-    return true ;
+    return true;
 }
 
 bool
 read_next_and_check_node (XMLTextReaderSafePtr &a_reader,
                           xmlReaderTypes a_node_type_to_be)
 {
-    int result = xmlTextReaderRead (a_reader.get ()) ;
+    int result = xmlTextReaderRead (a_reader.get ());
     if (result == 0) {
-        return false ;
+        return false;
     } else if (result < 0) {
-        THROW ("parsing error") ;
+        THROW ("parsing error");
     }
     xmlReaderTypes node_type =
         static_cast<xmlReaderTypes>
         (xmlTextReaderNodeType (a_reader.get ()));
     if (node_type == a_node_type_to_be) {
-        return true ;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 bool
 is_empty_element (XMLTextReaderSafePtr &a_reader)
 {
-    THROW_IF_FAIL (a_reader) ;
-    int status = xmlTextReaderIsEmptyElement (a_reader.get ()) ;
+    THROW_IF_FAIL (a_reader);
+    int status = xmlTextReaderIsEmptyElement (a_reader.get ());
     if (status == 1) {
-        return true ;
+        return true;
     } else if (status == 0) {
-        return false ;
+        return false;
     } else if (status < 0) {
         THROW ("an error occured while calling "
-               "xmlTextReaderIsEmptyElement()") ;
+               "xmlTextReaderIsEmptyElement()");
     } else {
         THROW ("unknown return value for "
-               "xmlTextReaderIsEmptyElement()") ;
+               "xmlTextReaderIsEmptyElement()");
     }
 }
 

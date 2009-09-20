@@ -9,20 +9,20 @@ using namespace nemiver;
 using namespace nemiver::common;
 
 Glib::RefPtr<Glib::MainLoop> loop =
-    Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+    Glib::MainLoop::create (Glib::MainContext::get_default ());
 
 void
 on_engine_died_signal ()
 {
-    MESSAGE ("engine died") ;
-    loop->quit () ;
+    MESSAGE ("engine died");
+    loop->quit ();
 }
 
 void
 on_program_finished_signal ()
 {
-    MESSAGE ("program finished") ;
-    loop->quit () ;
+    MESSAGE ("program finished");
+    loop->quit ();
 }
 
 void
@@ -77,32 +77,32 @@ test_main (int, char **)
     Initializer::do_init();
     THROW_IF_FAIL (loop);
 
-    DynamicModuleManager module_manager ;
+    DynamicModuleManager module_manager;
     IDebuggerSafePtr debugger =
             module_manager.load_iface<IDebugger> ("gdbengine", "IDebugger");
 
-    debugger->set_event_loop_context (loop->get_context ()) ;
+    debugger->set_event_loop_context (loop->get_context ());
 
-    debugger->engine_died_signal ().connect (&on_engine_died_signal) ;
+    debugger->engine_died_signal ().connect (&on_engine_died_signal);
 
     debugger->program_finished_signal ().connect
-                                            (&on_program_finished_signal) ;
+                                            (&on_program_finished_signal);
 
     debugger->stopped_signal ().connect
-                            (sigc::bind (&on_stopped_signal, debugger)) ;
+                            (sigc::bind (&on_stopped_signal, debugger));
 
     debugger->variable_type_signal ().connect
-                                            (&on_variable_type_signal) ;
+                                            (&on_variable_type_signal);
 
     debugger->variable_value_signal ().connect (&on_variable_value_signal);
 
-    std::vector<UString> args, source_search_dir ;
-    source_search_dir.push_back (".") ;
+    std::vector<UString> args, source_search_dir;
+    source_search_dir.push_back (".");
 
     debugger->load_program ("fooprog", args, ".", source_search_dir);
-    debugger->set_breakpoint ("func1") ;
-    debugger->run () ;
-    loop->run () ;
+    debugger->set_breakpoint ("func1");
+    debugger->run ();
+    loop->run ();
 
     NEMIVER_CATCH_NOX
     return 0;

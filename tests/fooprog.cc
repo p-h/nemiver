@@ -4,23 +4,23 @@
 void
 func1 ()
 {
-    int i = 0 ;
-    ++i ;
+    int i = 0;
+    ++i;
 }
 
 void
 func2 (int a_a, int a_b)
 {
-    int j = a_a ;
-    ++j ;
-    j = j + a_b ;
+    int j = a_a;
+    ++j;
+    j = j + a_b;
 }
 
 
 struct Person {
     std::string m_first_name;
     std::string m_family_name;
-    unsigned m_age ;
+    unsigned m_age;
 
     Person () :
         m_age (0)
@@ -31,9 +31,9 @@ struct Person {
                const std::string &a_family_name,
                unsigned a_age)
     {
-        m_first_name = a_first_name ;
-        m_family_name = a_family_name ;
-        m_age = a_age ;
+        m_first_name = a_first_name;
+        m_family_name = a_family_name;
+        m_age = a_age;
     }
 
     const std::string& get_first_name () const {return m_first_name;}
@@ -48,29 +48,29 @@ struct Person {
     void do_this ()
     {
         std::string foo = "something";
-        foo += " good" ;
-        std::string bar = " can" ;
+        foo += " good";
+        std::string bar = " can";
 
-        foo += bar ;
+        foo += bar;
     }
 
     void overload ()
     {
-        int i = 0 ;
-        ++i ;
+        int i = 0;
+        ++i;
     }
 
     void overload (int i)
     {
-        ++i ;
-        i= 0 ;
+        ++i;
+        i= 0;
     }
 };//class Person
 
 void
 func3 (Person &a_param)
 {
-    a_param.do_this () ;
+    a_param.do_this ();
 }
 
 static int i,j;
@@ -88,21 +88,21 @@ int
 main (int a_argc __attribute__((unused)),
       char *a_argv[] __attribute__((unused)))
 {
-    Person person ("Bob", "Barton", 15) ;
-    func1 () ;
+    Person person ("Bob", "Barton", 15);
+    func1 ();
 
-    func2 (1, 2) ;
+    func2 (1, 2);
 
-    person.set_first_name ("Ali") ;
-    person.set_family_name ("BABA") ;
-    person.do_this () ;
-    person.overload () ;
-    person.overload (0) ;
+    person.set_first_name ("Ali");
+    person.set_family_name ("BABA");
+    person.do_this ();
+    person.overload ();
+    person.overload (0);
 
-    func3 (person) ;
+    func3 (person);
 
     func4 (person);
 
-    return 0 ;
+    return 0;
 }
 

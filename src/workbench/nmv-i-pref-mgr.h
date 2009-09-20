@@ -30,9 +30,9 @@
 #include "common/nmv-dynamic-module.h"
 #include "common/nmv-ustring.h"
 
-using namespace std ;
-using nemiver::common::UString ;
-using boost::variant ;
+using namespace std;
+using nemiver::common::UString;
+using boost::variant;
 
 namespace nemiver {
 
@@ -41,8 +41,8 @@ namespace nemiver {
 class NEMIVER_API IPrefMgr : public DynamicModule {
 
     //non copyable
-    IPrefMgr (const IPrefMgr&) ;
-    IPrefMgr& operator= (const IPrefMgr&) ;
+    IPrefMgr (const IPrefMgr&);
+    IPrefMgr& operator= (const IPrefMgr&);
 
 protected:
     //must be created by the dynamic module factory
@@ -50,8 +50,8 @@ protected:
 
 public:
     class Pref {
-        UString m_name ;
-        boost::variant<gint32, UString> m_value ;
+        UString m_name;
+        boost::variant<gint32, UString> m_value;
 
     public:
         enum Type {

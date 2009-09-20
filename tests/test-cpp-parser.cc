@@ -9,10 +9,10 @@
 #include "langs/nmv-cpp-ast-utils.h"
 
 #define TAB_LEN(tab) (sizeof (tab)/sizeof (tab[0]))
-const char *prog0 = "foo bar" ;
-const char *prog1 = "foo *bar" ;
-const char *prog1_1 = "foo bar[10]" ;
-const char *prog2 = "const foo *bar" ;
+const char *prog0 = "foo bar";
+const char *prog1 = "foo *bar";
+const char *prog1_1 = "foo bar[10]";
+const char *prog2 = "const foo *bar";
 
 const char* test3_inputs[] = {
     "const char *std::__num_base::_S_atoms_in",
@@ -103,7 +103,7 @@ using nemiver::cpp::LogOrExprPtr;
 using nemiver::cpp::CondExprPtr;
 using nemiver::cpp::ExprPtr;
 using nemiver::cpp::TemplateIDPtr;
-using nemiver::common::Initializer ;
+using nemiver::common::Initializer;
 namespace cpp=nemiver::cpp;
 
 void
@@ -315,7 +315,7 @@ test_parser7 ()
     }
 }
 
-using boost::unit_test::test_suite ;
+using boost::unit_test::test_suite;
 
 test_suite*
 init_unit_test_suite (int argc, char** argv)
@@ -324,17 +324,17 @@ init_unit_test_suite (int argc, char** argv)
 
     NEMIVER_TRY
 
-    Initializer::do_init () ;
+    Initializer::do_init ();
 
-    test_suite *suite = BOOST_TEST_SUITE ("c++ lexer tests") ;
-    suite->add (BOOST_TEST_CASE (&test_parser0)) ;
-    suite->add (BOOST_TEST_CASE (&test_parser1)) ;
-    suite->add (BOOST_TEST_CASE (&test_parser2)) ;
-    suite->add (BOOST_TEST_CASE (&test_parser3)) ;
-    suite->add (BOOST_TEST_CASE (&test_parser4)) ;
-    suite->add (BOOST_TEST_CASE (&test_parser5)) ;
-    suite->add (BOOST_TEST_CASE (&test_parser6)) ;
-    suite->add (BOOST_TEST_CASE (&test_parser7)) ;
+    test_suite *suite = BOOST_TEST_SUITE ("c++ lexer tests");
+    suite->add (BOOST_TEST_CASE (&test_parser0));
+    suite->add (BOOST_TEST_CASE (&test_parser1));
+    suite->add (BOOST_TEST_CASE (&test_parser2));
+    suite->add (BOOST_TEST_CASE (&test_parser3));
+    suite->add (BOOST_TEST_CASE (&test_parser4));
+    suite->add (BOOST_TEST_CASE (&test_parser5));
+    suite->add (BOOST_TEST_CASE (&test_parser6));
+    suite->add (BOOST_TEST_CASE (&test_parser7));
     return suite;
 
     NEMIVER_CATCH_NOX

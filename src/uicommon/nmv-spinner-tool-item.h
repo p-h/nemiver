@@ -29,32 +29,32 @@
 #include "common/nmv-safe-ptr-utils.h"
 
 namespace Gtk {
-    class ToolItem ;
+    class ToolItem;
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-using nemiver::common::SafePtr ;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::Object ;
+using nemiver::common::SafePtr;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::Object;
 
-class SpinnerToolItem ;
-typedef SafePtr<SpinnerToolItem, ObjectRef, ObjectUnref> SpinnerToolItemSafePtr ;
+class SpinnerToolItem;
+typedef SafePtr<SpinnerToolItem, ObjectRef, ObjectUnref> SpinnerToolItemSafePtr;
 
 class SpinnerToolItem : public Object {
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
-    SpinnerToolItem () ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
+    SpinnerToolItem ();
 
 public:
-    virtual ~SpinnerToolItem ()  ;
-    static SpinnerToolItemSafePtr create () ;
-    void start () ;
-    bool is_started () const ;
-    void stop () ;
-    void toggle_state () ;
-    Gtk::ToolItem& get_widget () const ;
+    virtual ~SpinnerToolItem () ;
+    static SpinnerToolItemSafePtr create ();
+    void start ();
+    bool is_started () const;
+    void stop ();
+    void toggle_state ();
+    Gtk::ToolItem& get_widget () const;
 };//end class SpinnerToolItem
 
 NEMIVER_END_NAMESPACE (nemiver)

@@ -7,18 +7,18 @@
 #include "common/nmv-exception.h"
 #include "nmv-i-var-list-walker.h"
 
-using namespace nemiver ;
-using namespace nemiver::common ;
+using namespace nemiver;
+using namespace nemiver::common;
 
-typedef std::list<IDebugger::VariableSafePtr> DebuggerVariableList ;
-typedef std::map<std::string, IVarListWalkerSafePtr> VarListWalkerMap ;
-typedef std::map<std::string, string> StringMap ;
-typedef std::map<UString, UString> UStringMap ;
+typedef std::list<IDebugger::VariableSafePtr> DebuggerVariableList;
+typedef std::map<std::string, IVarListWalkerSafePtr> VarListWalkerMap;
+typedef std::map<std::string, string> StringMap;
+typedef std::map<UString, UString> UStringMap;
 
 Glib::RefPtr<Glib::MainLoop> s_loop =
-    Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+    Glib::MainLoop::create (Glib::MainContext::get_default ());
 
-static IDebugger::Frame s_current_frame ;
+static IDebugger::Frame s_current_frame;
 static int s_nb_listed_vars;
 static int s_nb_visited_vars;
 static UString s_last_listed_var;
@@ -33,7 +33,7 @@ on_command_done_signal (const UString &a_name,
 {
     if (a_cookie.empty ()) {
     }
-    MESSAGE ("command " << a_name << " done") ;
+    MESSAGE ("command " << a_name << " done");
 }
 
 void
@@ -59,7 +59,7 @@ on_stopped_signal (const UString &a_reason,
                    const UString &a_cookie,
                    IDebuggerSafePtr &a_debugger)
 {
-    BOOST_REQUIRE (a_debugger) ;
+    BOOST_REQUIRE (a_debugger);
 
     if (a_reason.empty () || a_has_frame || a_frame.level () || a_thread_id ||
         a_cookie.empty () || a_debugger) {
@@ -67,23 +67,23 @@ on_stopped_signal (const UString &a_reason,
     }
 
     if (a_reason == "exited-normally") {
-        MESSAGE ("program exited normally") ;
-        s_loop->quit () ;
-        return ;
+        MESSAGE ("program exited normally");
+        s_loop->quit ();
+        return;
     }
 
     if (!a_has_frame) {
-        MESSAGE ("stopped, but not in a frame, reason: " << a_reason) ;
-        return ;
+        MESSAGE ("stopped, but not in a frame, reason: " << a_reason);
+        return;
     }
 
-    s_current_frame = a_frame ;
+    s_current_frame = a_frame;
 
     MESSAGE ("stopped in function: '"
              << a_frame.function_name ()
-             << "()'") ;
+             << "()'");
 
-    a_debugger->list_global_variables () ;
+    a_debugger->list_global_variables ();
 }
 
 void
@@ -123,7 +123,7 @@ on_variable_list_visited_signal (IDebuggerSafePtr a_debugger)
 
     THROW_IF_FAIL (a_debugger);
     cout << "finished visiting variables list\n";
-    a_debugger->do_continue () ;
+    a_debugger->do_continue ();
 
     NEMIVER_CATCH_NOX
 }
@@ -131,18 +131,18 @@ on_variable_list_visited_signal (IDebuggerSafePtr a_debugger)
 IVarListWalkerSafePtr
 create_var_list_walker (IDebuggerSafePtr a_debugger)
 {
-    THROW_IF_FAIL (a_debugger) ;
+    THROW_IF_FAIL (a_debugger);
 
     IVarListWalkerSafePtr result  =
         DynamicModuleManager::load_iface_with_default_manager<IVarListWalker>
                                                                 ("varlistwalker",
-                                                                 "IVarListWalker") ;
-    result->initialize (a_debugger) ;
+                                                                 "IVarListWalker");
+    result->initialize (a_debugger);
     result->variable_visited_signal ().connect
-        (sigc::bind (&on_variable_visited_signal, a_debugger)) ;
+        (sigc::bind (&on_variable_visited_signal, a_debugger));
     result->variable_list_visited_signal ().connect
-        (sigc::bind (&on_variable_list_visited_signal, a_debugger)) ;
-    return result ;
+        (sigc::bind (&on_variable_list_visited_signal, a_debugger));
+    return result;
 }
 
 IVarListWalkerSafePtr
@@ -169,11 +169,11 @@ on_global_variables_listed_signal (const std::list<IDebugger::VariableSafePtr> &
 
     if (a_vars.size () == 0) {
          cout << "got zero global variables\n";
-        return ;
+        return;
     }
-    cout << "got global variables\n" ;
+    cout << "got global variables\n";
     IVarListWalkerSafePtr walker = get_var_list_walker (a_debugger);
-    std::list<IDebugger::VariableSafePtr>::const_iterator it ;
+    std::list<IDebugger::VariableSafePtr>::const_iterator it;
     for (it = a_vars.begin (); it != a_vars.end (); ++it) {
         cout << "------------------------------\n";
         cout << "listed-var-name: " << (*it)->name () << "\n";
@@ -199,40 +199,40 @@ test_main (int argc, char **argv)
 
     NEMIVER_TRY
 
-    Initializer::do_init () ;
+    Initializer::do_init ();
 
 
     //load the IDebugger interface
     IDebuggerSafePtr debugger =
         DynamicModuleManager::load_iface_with_default_manager<IDebugger>
                                                                 ("gdbengine",
-                                                                 "IDebugger") ;
+                                                                 "IDebugger");
     //setup the debugger with the glib mainloop
-    debugger->set_event_loop_context (Glib::MainContext::get_default ()) ;
+    debugger->set_event_loop_context (Glib::MainContext::get_default ());
 
     //*******************************
     //<connect to IDebugger events>
     //******************************
-    debugger->command_done_signal ().connect (&on_command_done_signal) ;
-    debugger->engine_died_signal ().connect (&on_engine_died_signal) ;
+    debugger->command_done_signal ().connect (&on_command_done_signal);
+    debugger->engine_died_signal ().connect (&on_engine_died_signal);
     debugger->program_finished_signal ().connect (&on_program_finished_signal);
-    debugger->running_signal ().connect (&on_running_signal) ;
+    debugger->running_signal ().connect (&on_running_signal);
     debugger->stopped_signal ().connect (sigc::bind (&on_stopped_signal,
-                                                     debugger)) ;
+                                                     debugger));
     debugger->global_variables_listed_signal ().connect
-                            (sigc::bind (&on_global_variables_listed_signal, debugger)) ;
+                            (sigc::bind (&on_global_variables_listed_signal, debugger));
     //*******************************
     //</connect to IDebugger events>
     //******************************
 
-    debugger->load_program ("fooprog", ".") ;
-    debugger->set_breakpoint ("main") ;
-    debugger->run () ;
+    debugger->load_program ("fooprog", ".");
+    debugger->set_breakpoint ("main");
+    debugger->run ();
 
     //********************
     //run the event loop.
     //********************
-    s_loop->run () ;
+    s_loop->run ();
 
     cout << "variables listed: " << s_nb_listed_vars << "\n";
     cout << "variables visited: " << s_nb_visited_vars << "\n";
@@ -255,7 +255,7 @@ test_main (int argc, char **argv)
 
     NEMIVER_CATCH_AND_RETURN_NOX (-1)
 
-    return 0 ;
+    return 0;
 }
 
 

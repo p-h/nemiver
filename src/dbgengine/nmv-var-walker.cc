@@ -113,7 +113,7 @@ public:
 
     const IDebugger::VariableSafePtr get_variable () const;
 
-    IDebuggerSafePtr get_debugger () const ;
+    IDebuggerSafePtr get_debugger () const;
 
     void set_maximum_member_depth (unsigned a_max_depth);
 

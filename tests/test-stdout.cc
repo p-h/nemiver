@@ -6,12 +6,12 @@
 int
 main ()
 {
-    nemiver::common::Initializer::do_init () ;
+    nemiver::common::Initializer::do_init ();
 
     int i=10000;
     while (--i) {
-        LOG ("line number '" << (int) i << "'") ;
+        LOG ("line number '" << (int) i << "'");
     }
-    return 0 ;
+    return 0;
 }
 

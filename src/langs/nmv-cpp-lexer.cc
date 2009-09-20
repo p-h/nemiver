@@ -42,10 +42,10 @@ NEMIVER_BEGIN_NAMESPACE (cpp)
 //<class Lexer implem>
 //********************
 struct Lexer::Priv {
-    string input ;
+    string input;
     //points to the current character in the char stream
-    string::size_type cursor ;
-    deque<string::size_type> recorded_positions ;
+    string::size_type cursor;
+    deque<string::size_type> recorded_positions;
     deque<Token> tokens_queue;
     //points to the next token in the token stream;
     deque<Token>::size_type token_cursor;
@@ -94,14 +94,14 @@ if (!IN_BOUNDS (CUR)) {return;}
 
 Lexer::Lexer (const string &a_in)
 {
-    m_priv = new Lexer::Priv (a_in) ;
+    m_priv = new Lexer::Priv (a_in);
 }
 
 Lexer::~Lexer ()
 {
     if (m_priv) {
-        delete m_priv ;
-        m_priv = NULL ;
+        delete m_priv;
+        m_priv = NULL;
     }
 }
 
@@ -111,15 +111,15 @@ Lexer::next_is (const char *a_char_seq) const
     CHECK_CURSOR_BOUNDS
 
     if (!a_char_seq)
-        return false ;
+        return false;
 
-    int len = strlen (a_char_seq) ;
+    int len = strlen (a_char_seq);
     if (!len)
-        return false ;
+        return false;
     if (IN_BOUNDS (CUR + len - 1) && !INPUT.compare (CUR, len, a_char_seq)) {
-        return true ;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 void
@@ -128,7 +128,7 @@ Lexer::skip_blanks ()
     CHECK_CURSOR_BOUNDS2;
 
     while (CURSOR_IN_BOUNDS && isblank (CUR_CHAR)) {
-        MOVE_FORWARD (1) ;
+        MOVE_FORWARD (1);
     }
 }
 
@@ -138,33 +138,33 @@ Lexer::is_nondigit (const char a_in) const
     if (a_in == '_' ||
         (a_in >= 'A' && a_in <= 'Z') ||
         (a_in >= 'a' && a_in <= 'z')) {
-        return true ;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 bool
 Lexer::is_digit (const char a_in) const
 {
     if (a_in >= '0' and a_in <= '9')
-        return true ;
-    return false ;
+        return true;
+    return false;
 }
 
 bool
 Lexer::is_nonzero_digit (const char a_in) const
 {
     if (a_in >= '1' and a_in <= '9')
-        return true ;
-    return false ;
+        return true;
+    return false;
 }
 
 bool
 Lexer::is_octal_digit (const char a_in) const
 {
     if (a_in >= '0' && a_in <= '7')
-        return true ;
-    return false ;
+        return true;
+    return false;
 }
 
 bool
@@ -173,22 +173,22 @@ Lexer::is_hexadecimal_digit (const char a_in) const
     if (is_digit (a_in) ||
         (a_in >= 'a' && a_in <= 'f') ||
         (a_in >= 'A' && a_in <= 'F')) {
-        return true ;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 int
 Lexer::hexadigit_to_decimal (const char a_hexa) const
 {
     if (a_hexa >= '0' && a_hexa <= '9') {
-        return a_hexa - '0' ;
+        return a_hexa - '0';
     } else if (a_hexa >= 'a' && a_hexa <= 'f') {
-        return 10 + a_hexa - 'a' ;
+        return 10 + a_hexa - 'a';
     } else if (a_hexa >= 'A' && a_hexa <= 'F') {
-        return 10 + a_hexa - 'A' ;
+        return 10 + a_hexa - 'A';
     }
-    return -1 ;
+    return -1;
 }
 
 bool
@@ -197,7 +197,7 @@ Lexer::scan_decimal_literal (string &a_result)
     CHECK_CURSOR_BOUNDS
     record_ci_position ();
 
-    string result ;
+    string result;
     if (is_nonzero_digit (CUR_CHAR)) {
         result += CUR_CHAR;
         CONSUME_CHAR;
@@ -205,38 +205,38 @@ Lexer::scan_decimal_literal (string &a_result)
         goto error;
     }
     while (CURSOR_IN_BOUNDS && is_digit (CUR_CHAR)) {
-        result += CUR_CHAR ;
+        result += CUR_CHAR;
         CONSUME_CHAR;
     }
-    a_result = result ;
+    a_result = result;
     pop_recorded_ci_position ();
     return true;
 
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 bool
 Lexer::scan_octal_literal (string &a_result)
 {
-    CHECK_CURSOR_BOUNDS ;
+    CHECK_CURSOR_BOUNDS;
     record_ci_position ();
 
-    string result ;
+    string result;
     if (CUR_CHAR != '0')
         goto error;
 
-    result += CUR_CHAR ;
+    result += CUR_CHAR;
     CONSUME_CHAR;
 
     while (CURSOR_IN_BOUNDS && is_octal_digit (CUR_CHAR)) {
         result += CUR_CHAR;
         CONSUME_CHAR;
     }
-    a_result = result ;
+    a_result = result;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
@@ -249,26 +249,26 @@ Lexer::scan_hexadecimal_literal (string &a_result)
     CHECK_CURSOR_BOUNDS
     record_ci_position ();
 
-    string result ;
+    string result;
     if (IN_BOUNDS (CUR+1)
         && INPUT[CUR] == '0'
         && (INPUT[CUR+1] == 'x' || INPUT[CUR+1] == 'X')) {
         MOVE_FORWARD_AND_CHECK (2);
     }
     while (CURSOR_IN_BOUNDS && is_hexadecimal_digit (CUR_CHAR)) {
-        result +=  CUR_CHAR ;
+        result +=  CUR_CHAR;
         CONSUME_CHAR;
     }
     if (result.empty ()) {
         goto error;
     }
-    a_result = result ;
+    a_result = result;
     pop_recorded_ci_position ();
     return true;
 
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 bool
@@ -279,9 +279,9 @@ Lexer::scan_escape_sequence (int &a_result)
     if (scan_simple_escape_sequence (a_result) ||
         scan_octal_escape_sequence (a_result)  ||
         scan_hexadecimal_escape_sequence (a_result)) {
-        return true ;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 bool
@@ -293,14 +293,14 @@ Lexer::scan_universal_character_name (int &a_result)
     if (!IN_BOUNDS (CUR+5) ||
         INPUT[CUR] != '\\' ||
         (INPUT[CUR+1] != 'U' && INPUT[CUR+1] != 'u')) {
-        return false ;
+        return false;
     }
-    MOVE_FORWARD_AND_CHECK (2) ;
+    MOVE_FORWARD_AND_CHECK (2);
     if (!scan_hexquad (a_result)) {
         goto error;
     }
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
@@ -313,32 +313,32 @@ Lexer::scan_c_char (int &a_result)
     CHECK_CURSOR_BOUNDS
 
     if (CUR_CHAR != '\\' && CUR_CHAR != '\'' && CUR_CHAR != '\n') {
-        a_result = CUR_CHAR ;
+        a_result = CUR_CHAR;
         CONSUME_CHAR;
-        return true ;
+        return true;
     } else {
         if (scan_escape_sequence (a_result) ||
             scan_universal_character_name (a_result)) {
-            return true ;
+            return true;
         }
     }
-    return false ;
+    return false;
 }
 
 bool
 Lexer::scan_c_char_sequence (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    int c=0 ;
+    int c=0;
 
     if (!scan_c_char (c)) {
-        return false ;
+        return false;
     }
-    a_result = c ;
+    a_result = c;
     while (CURSOR_IN_BOUNDS && scan_c_char (c)) {
-        a_result += c ;
+        a_result += c;
     }
-    return true ;
+    return true;
 }
 
 bool
@@ -347,32 +347,32 @@ Lexer::scan_s_char (int &a_result)
     CHECK_CURSOR_BOUNDS
 
     if (CUR_CHAR != '\\' && CUR_CHAR != '"' && CUR_CHAR != '\n') {
-        a_result = CUR_CHAR ;
+        a_result = CUR_CHAR;
         CONSUME_CHAR;
-        return true ;
+        return true;
     } else {
         if (scan_escape_sequence (a_result) ||
             scan_universal_character_name (a_result)) {
-            return true ;
+            return true;
         }
     }
-    return false ;
+    return false;
 }
 
 bool
 Lexer::scan_s_char_sequence (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
-    int c=0 ;
+    int c=0;
 
     if (!scan_s_char (c)) {
-        return false ;
+        return false;
     }
-    a_result = c ;
+    a_result = c;
     while (CURSOR_IN_BOUNDS && scan_s_char (c)) {
-        a_result += c ;
+        a_result += c;
     }
-    return true ;
+    return true;
 }
 
 bool
@@ -400,11 +400,11 @@ Lexer::scan_character_literal (string &a_result)
     }
     a_result = result;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 bool
@@ -413,18 +413,18 @@ Lexer::scan_digit_sequence (string &a_result)
     CHECK_CURSOR_BOUNDS
     record_ci_position ();
 
-    string result ;
+    string result;
     while (CURSOR_IN_BOUNDS && is_digit (CUR_CHAR)) {
-        result += CUR_CHAR ;
+        result += CUR_CHAR;
         CONSUME_CHAR;
     }
     if (result.empty ()) {
         goto error;
     }
 
-    a_result = result ;
+    a_result = result;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
@@ -439,21 +439,21 @@ Lexer::scan_fractional_constant (string &a_result)
 
     string left, right;
 
-    scan_digit_sequence (left) ;
+    scan_digit_sequence (left);
     if (CUR_CHAR != '.') {
-        goto error ;
+        goto error;
     }
     CONSUME_CHAR_AND_CHECK;
     if (!scan_digit_sequence (right) && left.empty ()) {
-        goto error ;
+        goto error;
     }
-    a_result = left + "." + right ;
+    a_result = left + "." + right;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 bool
@@ -462,25 +462,25 @@ Lexer::scan_exponent_part (string &a_result)
     CHECK_CURSOR_BOUNDS
     record_ci_position ();
 
-    string result, sign ;
+    string result, sign;
     if (CUR_CHAR != 'e' && CUR_CHAR != 'E') {
-        goto error ;
+        goto error;
     }
     CONSUME_CHAR_AND_CHECK;
     if (INPUT[CUR] == '-' || INPUT[CUR] == '+') {
-        sign = INPUT[CUR] ;
+        sign = INPUT[CUR];
         CONSUME_CHAR_AND_CHECK;
     }
     if (!scan_digit_sequence (result)) {
-        goto error ;
+        goto error;
     }
-    a_result = sign + result ;
+    a_result = sign + result;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 bool
@@ -493,7 +493,7 @@ Lexer::scan_floating_literal (string &a_result,
     string fract, exp;
 
     if (scan_fractional_constant (fract)) {
-        scan_exponent_part (exp) ;
+        scan_exponent_part (exp);
         if (CUR_CHAR == 'f' || CUR_CHAR == 'F'
             || CUR_CHAR == 'L' || CUR_CHAR == 'l') {
             CONSUME_CHAR_AND_CHECK;
@@ -513,7 +513,7 @@ Lexer::scan_floating_literal (string &a_result,
     a_result = fract;
     a_exponent = exp;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
@@ -527,7 +527,7 @@ Lexer::scan_string_literal (string &a_result)
     CHECK_CURSOR_BOUNDS
     record_ci_position ();
 
-    string result ;
+    string result;
     if (CUR_CHAR == 'L') {
         CONSUME_CHAR_AND_CHECK;
     }
@@ -537,20 +537,20 @@ Lexer::scan_string_literal (string &a_result)
         goto error;
     }
     if (!scan_s_char_sequence (result)) {
-        goto error ;
+        goto error;
     }
     if (CUR_CHAR == '"') {
         CONSUME_CHAR;
     } else {
         goto error;
     }
-    a_result = result ;
+    a_result = result;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 bool
@@ -565,18 +565,18 @@ Lexer::scan_boolean_literal (bool &a_result)
         && INPUT[CUR+3] == 's'
         && INPUT[CUR+4] == 'e') {
         MOVE_FORWARD (4);
-        a_result = false ;
-        return true ;
+        a_result = false;
+        return true;
     } else if (IN_BOUNDS (CUR+3)
                && INPUT[CUR] == 't'
                && INPUT[CUR+1] == 'r'
                && INPUT[CUR+2] == 'u'
                && INPUT[CUR+3] == 'e') {
         MOVE_FORWARD (3);
-        a_result = true ;
-        return true ;
+        a_result = true;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 bool
@@ -585,7 +585,7 @@ Lexer::scan_integer_suffix (string &a_result)
     CHECK_CURSOR_BOUNDS
     record_ci_position ();
 
-    string result ;
+    string result;
     if (CUR_CHAR == 'u' or CUR_CHAR == 'U') {
         result += CUR_CHAR;
         CONSUME_CHAR_AND_CHECK;
@@ -597,7 +597,7 @@ Lexer::scan_integer_suffix (string &a_result)
         result += CUR_CHAR;
         CONSUME_CHAR_AND_CHECK;
         if (CUR_CHAR == 'u' or CUR_CHAR == 'U') {
-            result += CUR_CHAR ;
+            result += CUR_CHAR;
             CONSUME_CHAR;
         }
     } else {
@@ -606,9 +606,9 @@ Lexer::scan_integer_suffix (string &a_result)
     if (result.empty ()) {
         goto error;
     }
-    a_result = result ;
+    a_result = result;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
@@ -620,33 +620,33 @@ Lexer::scan_integer_literal (string &a_result)
 {
     CHECK_CURSOR_BOUNDS
 
-    string literal, tmp ;
+    string literal, tmp;
     if (is_nonzero_digit (CUR_CHAR)) {
         if (!scan_decimal_literal (literal)) {
-            return false ;
+            return false;
         }
         if (CUR_CHAR == 'l' or
             CUR_CHAR == 'L' or
             CUR_CHAR == 'u' or
             CUR_CHAR == 'U') {
             if (scan_integer_suffix (tmp)) {
-                literal += tmp ;
+                literal += tmp;
             }
         }
     } else if (IN_BOUNDS (CUR+1) and CUR_CHAR == '0' and
                (INPUT[CUR+1] == 'x' or INPUT[CUR+1] == 'X')) {
         if (!scan_hexadecimal_literal (literal)) {
-            return false ;
+            return false;
         }
     } else if (CUR_CHAR == '0') {
         if (!scan_octal_literal (literal)) {
-            return false ;
+            return false;
         }
     } else {
-        return false ;
+        return false;
     }
-    a_result = literal ;
-    return true ;
+    a_result = literal;
+    return true;
 }
 
 bool
@@ -656,50 +656,50 @@ Lexer::scan_simple_escape_sequence (int &a_result)
     record_ci_position ();
 
     if (CUR_CHAR != '\\')
-        return false ;
+        return false;
 
     CONSUME_CHAR_AND_CHECK;
 
     switch (CUR_CHAR) {
         case '\'':
-            a_result = '\\' ;
-            break ;
+            a_result = '\\';
+            break;
         case '"' :
-            a_result = '"' ;
-            break ;
+            a_result = '"';
+            break;
         case '?':
-            a_result = '?' ;
-            break ;
+            a_result = '?';
+            break;
         case '\\':
-            a_result = '\\' ;
-            break ;
+            a_result = '\\';
+            break;
         case 'a' :
             a_result = '\a';
-            break ;
+            break;
         case 'b' :
             a_result = '\b';
-            break ;
+            break;
         case 'f' :
             a_result = '\f';
-            break ;
+            break;
         case 'n' :
             a_result = '\n';
-            break ;
+            break;
         case 'r' :
-            a_result = '\r' ;
-            break ;
+            a_result = '\r';
+            break;
         case 't' :
-            a_result = '\t' ;
-            break ;
+            a_result = '\t';
+            break;
         case 'v':
-            a_result = '\v' ;
-            break ;
+            a_result = '\v';
+            break;
         default:
             goto error;
     }
     CONSUME_CHAR;
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
@@ -709,73 +709,73 @@ error:
 bool
 Lexer::scan_octal_escape_sequence (int &a_result)
 {
-    CHECK_CURSOR_BOUNDS ;
+    CHECK_CURSOR_BOUNDS;
     unsigned cur=CUR;
-    int result=0 ;
+    int result=0;
 
     if (!IN_BOUNDS (cur+1) || INPUT[cur] != '\\' || !is_octal_digit (INPUT[cur+1])) {
-        return false ;
+        return false;
     }
-    ++cur ;
-    result = INPUT[CUR] - '0' ;
-    ++cur ;
+    ++cur;
+    result = INPUT[CUR] - '0';
+    ++cur;
     if (IN_BOUNDS (cur) && is_octal_digit (INPUT[cur])) {
-        result = 8*result + (INPUT[cur] - '0') ;
+        result = 8*result + (INPUT[cur] - '0');
 
-        ++cur ;
+        ++cur;
         if (IN_BOUNDS (cur) && is_octal_digit (INPUT[cur])) {
-            result = 8*result + (INPUT[cur] - '0') ;
-            ++cur ;
+            result = 8*result + (INPUT[cur] - '0');
+            ++cur;
         }
     }
 
-    CUR = cur ;
-    a_result = result ;
-    return true ;
+    CUR = cur;
+    a_result = result;
+    return true;
 }
 
 bool
 Lexer::scan_hexadecimal_escape_sequence (int &a_result)
 {
-    CHECK_CURSOR_BOUNDS ;
+    CHECK_CURSOR_BOUNDS;
     unsigned cur=CUR;
 
     if (!IN_BOUNDS (cur+1) || INPUT[cur] != '\\' ||
         !is_hexadecimal_digit (INPUT[cur+1])) {
-        return false ;
+        return false;
     }
-    ++cur ;
-    a_result = INPUT[cur] ;
-    ++cur ;
+    ++cur;
+    a_result = INPUT[cur];
+    ++cur;
     while (IN_BOUNDS (cur) && is_hexadecimal_digit (INPUT[cur])) {
-        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur]) ;
-        ++cur ;
+        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur]);
+        ++cur;
     }
-    CUR = cur ;
-    return true ;
+    CUR = cur;
+    return true;
 }
 
 bool
 Lexer::scan_hexquad (int &a_result)
 {
-    CHECK_CURSOR_BOUNDS ;
+    CHECK_CURSOR_BOUNDS;
     unsigned cur=CUR;
 
     if (!IN_BOUNDS (cur+3)) {
-        return false ;
+        return false;
     }
     if (is_hexadecimal_digit (cur) &&
         is_hexadecimal_digit (cur+1) &&
         is_hexadecimal_digit (cur+2) &&
         is_hexadecimal_digit (cur+3)) {
-        a_result = INPUT[cur] ;
-        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur+1]) ;
-        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur+2]) ;
-        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur+3]) ;
-        CUR = cur+4 ;
-        return true ;
+        a_result = INPUT[cur];
+        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur+1]);
+        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur+2]);
+        a_result = 16*a_result + hexadigit_to_decimal (INPUT[cur+3]);
+        CUR = cur+4;
+        return true;
     }
-    return false ;
+    return false;
 }
 
 bool
@@ -792,26 +792,26 @@ Lexer::scan_identifier (Token &a_token)
     identifier += CUR_CHAR;
     CONSUME_CHAR;
     while (CURSOR_IN_BOUNDS && (is_nondigit (CUR_CHAR) || is_digit (CUR_CHAR))) {
-        identifier += CUR_CHAR ;
+        identifier += CUR_CHAR;
         CONSUME_CHAR;
     }
     if (identifier.empty ()) {
         goto error;
     }
-    a_token.set (Token::IDENTIFIER, identifier) ;
+    a_token.set (Token::IDENTIFIER, identifier);
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 bool
 Lexer::scan_keyword (Token &a_token)
 {
     CHECK_CURSOR_BOUNDS
-    int key_length=0 ;
+    int key_length=0;
 
     if (SCAN_KEYWORD (3, "and") or
         SCAN_KEYWORD (6, "and_eq") or
@@ -894,12 +894,12 @@ Lexer::scan_keyword (Token &a_token)
                 //could be an identifier
                 return false;
             }
-            string value = INPUT.substr (CUR, key_length) ;
-            a_token.set (Token::KEYWORD, value) ;
-            CUR += key_length ;
-            return true ;
+            string value = INPUT.substr (CUR, key_length);
+            a_token.set (Token::KEYWORD, value);
+            CUR += key_length;
+            return true;
     }
-    return false ;
+    return false;
 }
 
 bool
@@ -909,19 +909,19 @@ Lexer::scan_literal (Token &a_token)
     string lit1, lit2;
     bool lit3=0;
     if (scan_character_literal (lit1)) {
-        a_token.set (Token::CHARACTER_LITERAL, lit1) ;
+        a_token.set (Token::CHARACTER_LITERAL, lit1);
     } else if (scan_integer_literal (lit1)) {
-        a_token.set (Token::INTEGER_LITERAL, lit1) ;
+        a_token.set (Token::INTEGER_LITERAL, lit1);
     } else if (scan_floating_literal (lit1, lit2)) {
-        a_token.set (Token::FLOATING_LITERAL, lit1, lit2) ;
+        a_token.set (Token::FLOATING_LITERAL, lit1, lit2);
     } else if (scan_string_literal (lit1)) {
-        a_token.set (Token::STRING_LITERAL, lit1) ;
+        a_token.set (Token::STRING_LITERAL, lit1);
     } else if (scan_boolean_literal (lit3)) {
-        a_token.set (Token::BOOLEAN_LITERAL, lit3) ;
+        a_token.set (Token::BOOLEAN_LITERAL, lit3);
     } else {
-        return false ;
+        return false;
     }
-    return true ;
+    return true;
 }
 
 bool
@@ -937,7 +937,7 @@ Lexer::scan_operator (Token &a_token)
             MOVE_FORWARD (sizeof ("[]"));
             a_token.set (Token::OPERATOR_NEW_VECT);
         } else {
-            a_token.set (Token::OPERATOR_NEW) ;
+            a_token.set (Token::OPERATOR_NEW);
         }
     } else if (next_is ("delete")) {
         MOVE_FORWARD (sizeof ("delete"));
@@ -982,9 +982,9 @@ Lexer::scan_operator (Token &a_token)
         CONSUME_CHAR;
         if (CUR_CHAR == '=') {
             CONSUME_CHAR;
-            a_token.set (Token::OPERATOR_MULT_EQ) ;
+            a_token.set (Token::OPERATOR_MULT_EQ);
         } else {
-            a_token.set (Token::OPERATOR_MULT) ;
+            a_token.set (Token::OPERATOR_MULT);
         }
     } else if (CUR_CHAR ==  '/') {
         CONSUME_CHAR;
@@ -992,7 +992,7 @@ Lexer::scan_operator (Token &a_token)
             CONSUME_CHAR;
             a_token.set (Token::OPERATOR_DIV_EQ);
         } else {
-            a_token.set (Token::OPERATOR_DIV) ;
+            a_token.set (Token::OPERATOR_DIV);
         }
     } else if (CUR_CHAR == '%') {
         CONSUME_CHAR;
@@ -1114,7 +1114,7 @@ Lexer::scan_operator (Token &a_token)
         CONSUME_CHAR;
         if (CUR_CHAR == ':') {
             CONSUME_CHAR;
-            a_token.set (Token::OPERATOR_SCOPE_RESOL) ;
+            a_token.set (Token::OPERATOR_SCOPE_RESOL);
         } else {
             goto error;
         }
@@ -1147,19 +1147,19 @@ Lexer::scan_punctuator (Token &a_token)
             break;
         case ';':
             a_token.set (Token::PUNCTUATOR_SEMI_COLON);
-            break ;
+            break;
         case '{':
             a_token.set (Token::PUNCTUATOR_CURLY_BRACKET_OPEN);
             break;
         case '}':
             a_token.set (Token::PUNCTUATOR_CURLY_BRACKET_CLOSE);
-            break ;
+            break;
         case '[':
             a_token.set (Token::PUNCTUATOR_BRACKET_OPEN);
-            break ;
+            break;
         case ']':
             a_token.set (Token::PUNCTUATOR_BRACKET_CLOSE);
-            break ;
+            break;
         case '(':
             a_token.set (Token::PUNCTUATOR_PARENTHESIS_OPEN);
             break;
@@ -1175,10 +1175,10 @@ Lexer::scan_punctuator (Token &a_token)
     CONSUME_CHAR;
 okay:
     pop_recorded_ci_position ();
-    return true ;
+    return true;
 error:
     restore_ci_position ();
-    return false ;
+    return false;
 }
 
 /// scan the character input
@@ -1215,7 +1215,7 @@ Lexer::scan_next_token (Token &a_token)
         case '[':
         case '.':
         case ':':
-            is_ok = scan_operator (a_token) ;
+            is_ok = scan_operator (a_token);
             if (is_ok) {
                 goto okay;
             }
@@ -1267,14 +1267,14 @@ Lexer::scan_next_token (Token &a_token)
     }
     //then try keywords
     if (is_nondigit (CUR_CHAR)) {
-        is_ok = scan_keyword (a_token) ;
+        is_ok = scan_keyword (a_token);
         if (is_ok) {
             goto okay;
         }
     }
     //then try identifiers
     if (is_nondigit (CUR_CHAR)) {
-        is_ok = scan_identifier (a_token) ;
+        is_ok = scan_identifier (a_token);
         if (is_ok) {
             goto okay;
         }
@@ -1304,7 +1304,7 @@ Lexer::peek_next_token (Token &a_token)
     if (m_priv->token_cursor >= m_priv->tokens_queue.size ()) {
         return false;
     }
-    a_token = m_priv->tokens_queue[m_priv->token_cursor] ;
+    a_token = m_priv->tokens_queue[m_priv->token_cursor];
     return true;
 }
 
@@ -1358,7 +1358,7 @@ bool
 Lexer::consume_next_token (Token &a_token)
 {
     if (!peek_next_token (a_token)) {return false;}
-    ++m_priv->token_cursor ;
+    ++m_priv->token_cursor;
     return true;
 }
 

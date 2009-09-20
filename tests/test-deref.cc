@@ -5,16 +5,16 @@
 #include "nmv-i-lang-trait.h"
 #include "common/nmv-initializer.h"
 
-using namespace nemiver ;
-using namespace nemiver::common ;
-using namespace sigc ;
+using namespace nemiver;
+using namespace nemiver::common;
+using namespace sigc;
 
 static Glib::RefPtr<Glib::MainLoop> loop =
-    Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+    Glib::MainLoop::create (Glib::MainContext::get_default ());
 
-static int nb_stops = 0 ;
-static int nb_derefed = 0 ;
-static int nb_type_set = 0 ;
+static int nb_stops = 0;
+static int nb_derefed = 0;
+static int nb_type_set = 0;
 
 void
 on_variable_derefed_signal (const IDebugger::VariableSafePtr &a_var,
@@ -22,24 +22,24 @@ on_variable_derefed_signal (const IDebugger::VariableSafePtr &a_var,
                             IDebuggerSafePtr a_debugger)
 {
     if (a_cookie.empty ()) {/*keep compiler happy*/}
-    BOOST_REQUIRE (a_var) ;
+    BOOST_REQUIRE (a_var);
 
-    BOOST_REQUIRE (a_var->is_dereferenced ()) ;
+    BOOST_REQUIRE (a_var->is_dereferenced ());
     MESSAGE ("derefed '" << a_var->name () << "', got '"
              << a_var->get_dereferenced ()->name ()
-             << "'") ;
-    ++nb_derefed ;
+             << "'");
+    ++nb_derefed;
 
     if (a_var->name () == "foo_ptr") {
-        BOOST_REQUIRE (a_var->get_dereferenced ()->members ().size () == 1) ;
+        BOOST_REQUIRE (a_var->get_dereferenced ()->members ().size () == 1);
     } else if (a_var->name () == "bar_ptr") {
         BOOST_REQUIRE
-            (a_var->get_dereferenced ()->members ().size () == 1) ;
+            (a_var->get_dereferenced ()->members ().size () == 1);
     } else if (a_var->name () == "baz_ptr") {
         BOOST_REQUIRE
-            (a_var->get_dereferenced ()->members ().size () == 2) ;
+            (a_var->get_dereferenced ()->members ().size () == 2);
     }
-    a_debugger->step_over () ;
+    a_debugger->step_over ();
 }
 
 void
@@ -49,18 +49,18 @@ on_variable_value_signal (const UString &a_var_name,
                           const IDebuggerSafePtr &a_debugger)
 {
     if (a_cookie.empty () || a_var_name.empty ()) {/*keep compiler happy*/}
-    BOOST_REQUIRE (a_debugger && a_var) ;
-    BOOST_REQUIRE (a_var->name () == a_var_name) ;
+    BOOST_REQUIRE (a_debugger && a_var);
+    BOOST_REQUIRE (a_var->name () == a_var_name);
 
-    MESSAGE ("got variable '" << a_var->name () << "'") ;
+    MESSAGE ("got variable '" << a_var->name () << "'");
 
     if (a_var_name == "foo_ptr" ||
         a_var_name == "bar_ptr" ||
         a_var_name == "baz_ptr") {
-        a_debugger->get_variable_type (a_var) ;
+        a_debugger->get_variable_type (a_var);
     } else {
         UString msg = "Got variable name " + a_var_name;
-        BOOST_FAIL (msg.c_str ()) ;
+        BOOST_FAIL (msg.c_str ());
     }
 }
 
@@ -71,25 +71,25 @@ on_variable_type_set_signal (const IDebugger::VariableSafePtr &a_var,
 {
     if (!a_cookie.empty ()) {}
 
-    BOOST_REQUIRE (a_var) ;
-    BOOST_REQUIRE (a_debugger) ;
+    BOOST_REQUIRE (a_var);
+    BOOST_REQUIRE (a_debugger);
 
-    ++nb_type_set ;
+    ++nb_type_set;
 
     MESSAGE ("got type of var set '" << a_var->name () << "':'"
-             << a_var->type () << ":") ;
+             << a_var->type () << ":");
 
     if (a_var->name () == "foo_ptr" ||
         a_var->name () == "bar_ptr" ||
         a_var->name () == "baz_ptr") {
-        ILangTrait &lang_trait = a_debugger->get_language_trait () ;
-        BOOST_REQUIRE (lang_trait.get_name () == "cpptrait") ;
-        BOOST_REQUIRE (lang_trait.has_pointers ()) ;
-        BOOST_REQUIRE (lang_trait.is_type_a_pointer (a_var->type ())) ;
-        a_debugger->dereference_variable (a_var) ;
+        ILangTrait &lang_trait = a_debugger->get_language_trait ();
+        BOOST_REQUIRE (lang_trait.get_name () == "cpptrait");
+        BOOST_REQUIRE (lang_trait.has_pointers ());
+        BOOST_REQUIRE (lang_trait.is_type_a_pointer (a_var->type ()));
+        a_debugger->dereference_variable (a_var);
     } else {
         UString msg = "Got variable name: "+ a_var->name ();
-        BOOST_FAIL (msg.c_str ()) ;
+        BOOST_FAIL (msg.c_str ());
     }
 }
 void
@@ -101,25 +101,25 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                    const UString &/*a_cookie*/,
                    IDebuggerSafePtr &a_debugger)
 {
-    BOOST_REQUIRE (a_debugger) ;
+    BOOST_REQUIRE (a_debugger);
 
     if (a_reason == IDebugger::EXITED_NORMALLY) {
         loop->quit ();
-        BOOST_REQUIRE (nb_derefed == 3) ;
-        BOOST_REQUIRE (nb_type_set == 3) ;
+        BOOST_REQUIRE (nb_derefed == 3);
+        BOOST_REQUIRE (nb_type_set == 3);
         return;
     }
     ++nb_stops;
 
     if (a_has_frame && a_frame.function_name () == "main" && nb_stops == 4) {
-        a_debugger->print_variable_value ("foo_ptr") ;
-        a_debugger->print_variable_value ("bar_ptr") ;
-        a_debugger->print_variable_value ("baz_ptr") ;
+        a_debugger->print_variable_value ("foo_ptr");
+        a_debugger->print_variable_value ("bar_ptr");
+        a_debugger->print_variable_value ("baz_ptr");
     } else if (a_frame.function_name () == "main") {
         if (nb_stops < 8) {
-            a_debugger->step_over () ;
+            a_debugger->step_over ();
         } else {
-            a_debugger->do_continue () ;
+            a_debugger->do_continue ();
         }
     }
 }
@@ -131,35 +131,35 @@ test_main (int argc, char **argv)
 
     NEMIVER_TRY
 
-    Initializer::do_init () ;
-    BOOST_REQUIRE (loop) ;
+    Initializer::do_init ();
+    BOOST_REQUIRE (loop);
 
     IDebuggerSafePtr debugger =
         DynamicModuleManager::load_iface_with_default_manager<IDebugger>
                                                                 ("gdbengine",
-                                                                 "IDebugger") ;
+                                                                 "IDebugger");
     //setup the debugger with the glib mainloop
-    debugger->set_event_loop_context (Glib::MainContext::get_default ()) ;
+    debugger->set_event_loop_context (Glib::MainContext::get_default ());
 
     debugger->stopped_signal ().connect (sigc::bind
-                                            (&on_stopped_signal, debugger)) ;
+                                            (&on_stopped_signal, debugger));
     debugger->variable_value_signal ().connect (sigc::bind
-                                        (&on_variable_value_signal, debugger)) ;
+                                        (&on_variable_value_signal, debugger));
 
     debugger->variable_type_set_signal ().connect (sigc::bind
-                                    (&on_variable_type_set_signal, debugger)) ;
+                                    (&on_variable_type_set_signal, debugger));
 
     debugger->variable_dereferenced_signal ().connect
                                     (sigc::bind (&on_variable_derefed_signal,
-                                                 debugger)) ;
+                                                 debugger));
 
 
     vector<UString> args;
-    debugger->load_program (".libs/pointerderef", args, ".") ;
-    debugger->set_breakpoint ("main") ;
-    debugger->run () ;
+    debugger->load_program (".libs/pointerderef", args, ".");
+    debugger->set_breakpoint ("main");
+    debugger->run ();
 
-    loop->run () ;
+    loop->run ();
     NEMIVER_CATCH_AND_RETURN_NOX(-1)
-    return 0 ;
+    return 0;
 }

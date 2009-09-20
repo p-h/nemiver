@@ -27,7 +27,7 @@
 #include "nmv-vars-treeview.h"
 #include "nmv-variables-utils.h"
 
-namespace vutil=nemiver::variables_utils2;
+namespace vutil = nemiver::variables_utils2;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

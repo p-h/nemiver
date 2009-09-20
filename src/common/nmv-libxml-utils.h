@@ -54,9 +54,9 @@ struct XMLTextReaderUnref {
     operator () (xmlTextReader* a_ptr)
     {
         if (a_ptr) {
-            xmlFreeTextReader (a_ptr) ;
+            xmlFreeTextReader (a_ptr);
         }
-        return true ;
+        return true;
     }
 
 };//end XMLReaderRef
@@ -71,9 +71,9 @@ struct XMLXPathContextUnref {
     operator () (xmlXPathContext *a_ptr)
     {
         if (a_ptr) {
-            xmlXPathFreeContext (a_ptr) ;
+            xmlXPathFreeContext (a_ptr);
         }
-        return true ;
+        return true;
     }
 };//end XPathContextRef
 
@@ -87,9 +87,9 @@ struct XMLXPathObjectUnref {
     operator () (xmlXPathObject *a_ptr)
     {
         if (a_ptr) {
-            xmlXPathFreeObject (a_ptr) ;
+            xmlXPathFreeObject (a_ptr);
         }
-        return true ;
+        return true;
     }
 };//end XMLXPathObjectRef
 
@@ -103,29 +103,29 @@ struct XMLCharUnref {
     operator () (xmlChar *a_ptr)
     {
         if (a_ptr) {
-            xmlFree (a_ptr) ;
+            xmlFree (a_ptr);
         }
-        return true ;
+        return true;
     }
 };//end XMLCharRef
 
 typedef SafePtr <xmlTextReader, XMLTextReaderRef, XMLTextReaderUnref>
-XMLTextReaderSafePtr ;
+XMLTextReaderSafePtr;
 
 typedef SafePtr<xmlXPathContext, XMLXPathContextRef,
-XMLXPathContextUnref> XMLXPathContextSafePtr ;
+XMLXPathContextUnref> XMLXPathContextSafePtr;
 
 typedef SafePtr<xmlXPathObject, XMLXPathObjectRef, XMLXPathObjectUnref>
-XMLXPathObjectSafePtr ;
+XMLXPathObjectSafePtr;
 
-typedef SafePtr<xmlChar, XMLCharRef, XMLCharUnref> XMLCharSafePtr ;
+typedef SafePtr<xmlChar, XMLCharRef, XMLCharUnref> XMLCharSafePtr;
 
 //****************************************************
 //helpers to use xmlTextReader with our own IO system
 //*****************************************************
 
 struct ReaderIOContext {
-    IInputStream &m_istream ;
+    IInputStream &m_istream;
 
     ReaderIOContext (IInputStream &a_istream):
             m_istream (a_istream)
@@ -134,24 +134,24 @@ struct ReaderIOContext {
 
 int NEMIVER_API reader_io_read_callback (ReaderIOContext *a_read_context,
                                      char * a_buf,
-                                     int a_len) ;
+                                     int a_len);
 
-int NEMIVER_API reader_io_close_callback (ReaderIOContext *a_read_context) ;
+int NEMIVER_API reader_io_close_callback (ReaderIOContext *a_read_context);
 
-bool NEMIVER_API goto_next_element_node (XMLTextReaderSafePtr &a_reader) ;
+bool NEMIVER_API goto_next_element_node (XMLTextReaderSafePtr &a_reader);
 
 bool NEMIVER_API goto_next_element_node_and_check (XMLTextReaderSafePtr &a_reader,
-                                               const char* a_element_name) ;
+                                               const char* a_element_name);
 
 bool NEMIVER_API search_next_element_node (XMLTextReaderSafePtr &a_reader,
-                                       const char *a_element_name) ;
+                                       const char *a_element_name);
 
-bool NEMIVER_API goto_next_text_node (XMLTextReaderSafePtr &a_reader) ;
+bool NEMIVER_API goto_next_text_node (XMLTextReaderSafePtr &a_reader);
 
 bool NEMIVER_API read_next_and_check_node (XMLTextReaderSafePtr &a_reader,
-                                   xmlReaderTypes a_node_type_to_be) ;
+                                   xmlReaderTypes a_node_type_to_be);
 
-bool NEMIVER_API is_empty_element (XMLTextReaderSafePtr &a_reader) ;
+bool NEMIVER_API is_empty_element (XMLTextReaderSafePtr &a_reader);
 
 }//end namespace libxmlutils
 }//end namespace common

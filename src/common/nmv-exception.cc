@@ -29,7 +29,7 @@
  */
 
 #include "nmv-exception.h"
-using namespace std ;
+using namespace std;
 
 namespace nemiver {
 namespace common {
@@ -53,8 +53,8 @@ Exception::operator= (const Exception &a_other)
     if (this == &a_other) {
         return *this;
     }
-    runtime_error::operator= (a_other) ;
-    return *this ;
+    runtime_error::operator= (a_other);
+    return *this;
 }
 
 Exception::~Exception () throw ()
@@ -63,7 +63,7 @@ Exception::~Exception () throw ()
 const char*
 Exception::what () const throw ()
 {
-    return runtime_error::what () ;
+    return runtime_error::what ();
 }
 
 }//end namespace common

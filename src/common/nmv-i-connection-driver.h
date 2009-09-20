@@ -33,8 +33,8 @@
 namespace nemiver {
 
 namespace common {
-class Buffer ;
-class UString ;
+class Buffer;
+class UString;
 }
 
 namespace common {
@@ -50,7 +50,7 @@ enum ColumnType {
     COLUMN_TYPE_UNKNOWN=1<<30// should be last
 };
 
-class SQLStatement ;
+class SQLStatement;
 class NEMIVER_API IConnectionDriver : public common::Object {
 
 public:
@@ -62,11 +62,11 @@ public:
 
     virtual const char* get_last_error () const = 0;
 
-    virtual bool start_transaction () = 0 ;
+    virtual bool start_transaction () = 0;
 
-    virtual bool commit_transaction () = 0 ;
+    virtual bool commit_transaction () = 0;
 
-    virtual bool rollback_transaction () = 0 ;
+    virtual bool rollback_transaction () = 0;
 
     virtual bool execute_statement
     (const SQLStatement &a_statement) = 0;
@@ -98,7 +98,7 @@ public:
 
 typedef common::SafePtr<IConnectionDriver,
                         common::ObjectRef,
-                        common::ObjectUnref> IConnectionDriverSafePtr ;
+                        common::ObjectUnref> IConnectionDriverSafePtr;
 }//end common
 }//end nemiver
 

@@ -31,60 +31,60 @@
 namespace nemiver {
 
 namespace common {
-class SQLStatement ;
+class SQLStatement;
 }
 
 namespace common {
 namespace sqlite {
 
 class SqliteCnxDrv: public common::IConnectionDriver {
-    struct Priv ;
-    friend class SqliteCnxMgrDrv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    friend class SqliteCnxMgrDrv;
+    SafePtr<Priv> m_priv;
 
     //forbid copy
-    SqliteCnxDrv (const SqliteCnxDrv &) ;
-    SqliteCnxDrv& operator= (const SqliteCnxDrv &) ;
+    SqliteCnxDrv (const SqliteCnxDrv &);
+    SqliteCnxDrv& operator= (const SqliteCnxDrv &);
 
-    SqliteCnxDrv (sqlite3 *a_sqlite_handle) ;
-    virtual ~SqliteCnxDrv () ;
+    SqliteCnxDrv (sqlite3 *a_sqlite_handle);
+    virtual ~SqliteCnxDrv ();
 
 public:
 
-    const char* get_last_error () const ;
+    const char* get_last_error () const;
 
-    bool start_transaction () ;
+    bool start_transaction ();
 
-    bool commit_transaction () ;
+    bool commit_transaction ();
 
-    bool rollback_transaction () ;
+    bool rollback_transaction ();
 
-    bool execute_statement (const common::SQLStatement &a_statement) ;
+    bool execute_statement (const common::SQLStatement &a_statement);
 
-    bool should_have_data () const ;
+    bool should_have_data () const;
 
-    bool read_next_row () ;
+    bool read_next_row ();
 
-    unsigned int get_number_of_columns () const ;
+    unsigned int get_number_of_columns () const;
 
     bool get_column_type (unsigned long a_offset,
-                          enum common::ColumnType &a_type) const ;
+                          enum common::ColumnType &a_type) const;
 
-    bool get_column_name (unsigned long a_offset, common::Buffer &a_name) const ;
+    bool get_column_name (unsigned long a_offset, common::Buffer &a_name) const;
 
     bool get_column_content (unsigned long a_offset,
-                             common::Buffer &a_column_content) const ;
+                             common::Buffer &a_column_content) const;
 
     bool get_column_content (gulong a_offset,
-                             gint64 &a_column_content) const ;
+                             gint64 &a_column_content) const;
 
     bool get_column_content (gulong a_offset,
-                             double& a_column_content) const ;
+                             double& a_column_content) const;
 
     bool get_column_content (gulong a_offset,
-                             common::UString& a_column_content) const ;
+                             common::UString& a_column_content) const;
 
-    void close () ;
+    void close ();
 };//end IConnectionDriver
 
 }//end namespace sqlite

@@ -38,43 +38,43 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
 NEMIVER_BEGIN_NAMESPACE (env)
 
-void do_init () ;
+void do_init ();
 
-NEMIVER_API const UString& get_system_config_dir () ;
+NEMIVER_API const UString& get_system_config_dir ();
 
-NEMIVER_API const UString& get_system_config_file () ;
+NEMIVER_API const UString& get_system_config_file ();
 
-NEMIVER_API const UString& get_data_dir () ;
+NEMIVER_API const UString& get_data_dir ();
 
-NEMIVER_API const UString& get_system_lib_dir () ;
+NEMIVER_API const UString& get_system_lib_dir ();
 
-NEMIVER_API const UString& get_glade_files_dir () ;
+NEMIVER_API const UString& get_glade_files_dir ();
 
-NEMIVER_API const UString& get_menu_files_dir () ;
+NEMIVER_API const UString& get_menu_files_dir ();
 
-NEMIVER_API const UString& get_image_files_dir () ;
+NEMIVER_API const UString& get_image_files_dir ();
 
-NEMIVER_API const UString& get_install_prefix () ;
+NEMIVER_API const UString& get_install_prefix ();
 
-NEMIVER_API const UString& get_system_modules_config_file () ;
+NEMIVER_API const UString& get_system_modules_config_file ();
 
-NEMIVER_API const UString& get_system_modules_dir () ;
+NEMIVER_API const UString& get_system_modules_dir ();
 
-NEMIVER_API const UString& get_system_modules_config_file () ;
+NEMIVER_API const UString& get_system_modules_config_file ();
 
-NEMIVER_API const UString& get_system_plugins_dir () ;
+NEMIVER_API const UString& get_system_plugins_dir ();
 
-NEMIVER_API const UString& get_user_db_dir () ;
+NEMIVER_API const UString& get_user_db_dir ();
 
-NEMIVER_API const UString& get_gdb_program () ;
+NEMIVER_API const UString& get_gdb_program ();
 
-NEMIVER_API bool create_user_db_dir () ;
+NEMIVER_API bool create_user_db_dir ();
 
-NEMIVER_API UString build_path_to_glade_file (const UString &a_glade_file_name) ;
+NEMIVER_API UString build_path_to_glade_file (const UString &a_glade_file_name);
 
-NEMIVER_API UString build_path_to_menu_file (const UString &a_ui_file_name) ;
+NEMIVER_API UString build_path_to_menu_file (const UString &a_ui_file_name);
 
-NEMIVER_API UString build_path_to_image_file (const UString &a_image_file_name) ;
+NEMIVER_API UString build_path_to_image_file (const UString &a_image_file_name);
 
 NEMIVER_API UString build_path_to_help_file (const UString &a_file_name);
 

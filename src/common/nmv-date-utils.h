@@ -36,14 +36,14 @@
 namespace nemiver {
 namespace common {
 
-class UString ;
+class UString;
 
 namespace dateutils
 {
 
-time_t NEMIVER_API get_current_datetime () ;
-void NEMIVER_API get_current_datetime (struct tm &a_tm) ;
-void NEMIVER_API get_current_datetime (UString &a_datetime) ;
+time_t NEMIVER_API get_current_datetime ();
+void NEMIVER_API get_current_datetime (struct tm &a_tm);
+void NEMIVER_API get_current_datetime (UString &a_datetime);
 
 }//end namespace dateutils
 }//end namespace common

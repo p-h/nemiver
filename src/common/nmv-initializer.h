@@ -29,15 +29,15 @@
 namespace nemiver {
 namespace common {
 class NEMIVER_API Initializer {
-    Initializer () ;
+    Initializer ();
     //non copyable
-    Initializer (const Initializer &) ;
-    ~Initializer () ;
-    Initializer& operator= (const Initializer &) ;
+    Initializer (const Initializer &);
+    ~Initializer ();
+    Initializer& operator= (const Initializer &);
 
 public:
 
-    static void do_init () ;
+    static void do_init ();
 
 };//end class Initializer
 }//end namespace common

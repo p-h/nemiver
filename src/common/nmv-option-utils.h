@@ -27,17 +27,17 @@
 #include <glibmm.h>
 #include "nmv-ustring.h"
 
-using nemiver::common::UString ;
+using nemiver::common::UString;
 
 namespace nemiver {
 namespace options_utils {
 
 class OptionDesc {
-    UString m_long_name ;
-    gchar m_short_name ;
-    UString m_description ;
-    UString m_arg_description ;
-    enum Glib::OptionEntry::Flags m_flags ;
+    UString m_long_name;
+    gchar m_short_name;
+    UString m_description;
+    UString m_arg_description;
+    enum Glib::OptionEntry::Flags m_flags;
 
 public:
     OptionDesc () :
@@ -74,11 +74,11 @@ public:
 }; //end class OptionDesc
 
 void option_desc_to_option (OptionDesc &a_desc,
-                            Glib::OptionEntry &a_option) ;
+                            Glib::OptionEntry &a_option);
 
 void append_options_to_group (OptionDesc *a_descs,
                               int a_number_of_options,
-                              Glib::OptionGroup &a_group) ;
+                              Glib::OptionGroup &a_group);
 }//end namespace nemiver
 }//end namespace options_utils
 

@@ -59,19 +59,19 @@ Token::Token (Kind a_kind, int a_value) :
 
 Token::Token (const Token &a_t)
 {
-    m_kind = a_t.get_kind () ;
-    m_str_value = a_t.get_str_value () ;
-    m_int_value = a_t.get_int_value () ;
+    m_kind = a_t.get_kind ();
+    m_str_value = a_t.get_str_value ();
+    m_int_value = a_t.get_int_value ();
 }
 
 Token::Token&
 Token::operator= (const Token &a_t)
 {
-    m_kind = a_t.get_kind () ;
-    m_str_value = a_t.get_str_value () ;
-    m_str_value2 = a_t.get_str_value2 () ;
-    m_int_value = a_t.get_int_value () ;
-    return *this ;
+    m_kind = a_t.get_kind ();
+    m_str_value = a_t.get_str_value ();
+    m_str_value2 = a_t.get_str_value2 ();
+    m_int_value = a_t.get_int_value ();
+    return *this;
 }
 
 Token::~Token ()
@@ -81,53 +81,53 @@ Token::~Token ()
 const string&
 Token::get_str_value () const
 {
-    return m_str_value ;
+    return m_str_value;
 }
 
 const string&
 Token::get_str_value2 () const
 {
-    return m_str_value2 ;
+    return m_str_value2;
 }
 
 int
 Token::get_int_value () const
 {
-    return m_int_value ;
+    return m_int_value;
 }
 
 Token::Kind
 Token::get_kind () const
 {
-    return m_kind ;
+    return m_kind;
 }
 
 void
 Token::set (Kind a_kind)
 {
-    m_kind = a_kind ;
+    m_kind = a_kind;
 }
 
 void
 Token::set (Kind a_kind, const string &a_val)
 {
-    m_kind = a_kind ;
-    m_str_value = a_val ;
+    m_kind = a_kind;
+    m_str_value = a_val;
 }
 
 void
 Token::set (Kind a_kind, const string &a_val, const string &a_val2)
 {
-    m_kind = a_kind ;
-    m_str_value = a_val ;
-    m_str_value2 = a_val2 ;
+    m_kind = a_kind;
+    m_str_value = a_val;
+    m_str_value2 = a_val2;
 }
 
 void
 Token::set (Kind a_kind, int a_val)
 {
-    m_kind = a_kind ;
-    m_int_value = a_val ;
+    m_kind = a_kind;
+    m_int_value = a_val;
 }
 
 void
@@ -438,19 +438,19 @@ UnqualifiedOpFuncID::to_string (string &a_result) const
 {
     switch (get_kind ()) {
         case Token::OPERATOR_NEW:
-            a_result = "opreator new" ;
+            a_result = "opreator new";
             break;
         case Token::OPERATOR_DELETE:
-            a_result = "opreator delete" ;
+            a_result = "opreator delete";
             break;
         case Token::OPERATOR_NEW_VECT:
-            a_result = "opreator new []" ;
+            a_result = "opreator new []";
             break;
         case Token::OPERATOR_DELETE_VECT:
-            a_result = "opreator delete" ;
+            a_result = "opreator delete";
             break;
         case Token::OPERATOR_PLUS:
-            a_result = "opreator +" ;
+            a_result = "opreator +";
             break;
         case Token::OPERATOR_MINUS:
             a_result = "opreator -";
@@ -468,7 +468,7 @@ UnqualifiedOpFuncID::to_string (string &a_result) const
             a_result = "opreator ^";
             break;
         case Token::OPERATOR_BIT_AND:
-            a_result = "opreator &" ;
+            a_result = "opreator &";
             break;
         case Token::OPERATOR_BIT_OR:
             a_result = "opreator |";

@@ -29,20 +29,20 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::SafePtr ;
-using nemiver::common::DynModIface ;
-using nemiver::common::DynModIfaceSafePtr ;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::SafePtr;
+using nemiver::common::DynModIface;
+using nemiver::common::DynModIfaceSafePtr;
 
 class IVarListWalker;
-typedef SafePtr<IVarListWalker, ObjectRef, ObjectUnref> IVarListWalkerSafePtr ;
+typedef SafePtr<IVarListWalker, ObjectRef, ObjectUnref> IVarListWalkerSafePtr;
 
 class NEMIVER_API IVarListWalker : public DynModIface {
 
     //non copyable
-    IVarListWalker () ;
-    IVarListWalker (const IVarListWalker&) ;
+    IVarListWalker ();
+    IVarListWalker (const IVarListWalker&);
 
 protected:
     IVarListWalker (DynamicModule *a_dynmod) :
@@ -59,7 +59,7 @@ public:
     virtual sigc::signal<void>& variable_list_visited_signal () const=0;
     ///@}
 
-    virtual void initialize (IDebuggerSafePtr &a_debugger)=0 ;
+    virtual void initialize (IDebuggerSafePtr &a_debugger)=0;
 
     virtual void append_variable (const IDebugger::VariableSafePtr a_var)=0;
 

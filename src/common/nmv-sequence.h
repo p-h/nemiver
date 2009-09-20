@@ -36,19 +36,19 @@ namespace nemiver {
 namespace common {
 
 class NEMIVER_API Sequence : public Object {
-    struct Priv ;
-    friend struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    friend struct Priv;
+    SafePtr<Priv> m_priv;
 
     //non copyable
-    Sequence (const Sequence &) ;
-    Sequence& operator= (const Sequence &) ;
+    Sequence (const Sequence &);
+    Sequence& operator= (const Sequence &);
 
 public:
 
     class NEMIVER_EXCEPTION_API OverflowException :
                                     public nemiver::common::Exception {
-        OverflowException () ;
+        OverflowException ();
 
     public:
         OverflowException (const UString &a_message) :
@@ -57,10 +57,10 @@ public:
         virtual ~OverflowException () throw () {};
     };//end class OverflowException
 
-    Sequence () ;
-    virtual ~Sequence () ;
-    long long create_next_integer () ;//throws OverflowException
-    long long get_current_integer () const ;
+    Sequence ();
+    virtual ~Sequence ();
+    long long create_next_integer ();//throws OverflowException
+    long long get_current_integer () const;
 };//end class Sequence
 
 }//end namespace common

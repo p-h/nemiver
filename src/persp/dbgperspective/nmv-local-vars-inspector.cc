@@ -39,8 +39,8 @@
 #include "nmv-debugger-utils.h"
 
 using namespace nemiver::common;
-namespace vutil=nemiver::variables_utils2;
-namespace dutil=nemiver::debugger_utils;
+namespace vutil = nemiver::variables_utils2;
+namespace dutil = nemiver::debugger_utils;
 using Glib::RefPtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)

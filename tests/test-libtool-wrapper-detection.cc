@@ -6,7 +6,7 @@
 #include "common/nmv-proc-utils.h"
 
 using namespace nemiver::common;
-using boost::unit_test::test_suite ;
+using boost::unit_test::test_suite;
 
 void
 test0 ()
@@ -29,11 +29,11 @@ init_unit_test_suite (int argc, char** argv)
 
     NEMIVER_TRY
 
-    Initializer::do_init () ;
+    Initializer::do_init ();
 
-    test_suite *suite = BOOST_TEST_SUITE ("libtool wrapper detect tests") ;
-    suite->add (BOOST_TEST_CASE (&test0)) ;
-    suite->add (BOOST_TEST_CASE (&test_filename_with_dashes)) ;
+    test_suite *suite = BOOST_TEST_SUITE ("libtool wrapper detect tests");
+    suite->add (BOOST_TEST_CASE (&test0));
+    suite->add (BOOST_TEST_CASE (&test_filename_with_dashes));
     return suite;
 
     NEMIVER_CATCH_NOX

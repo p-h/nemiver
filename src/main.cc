@@ -287,7 +287,7 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                 << gv_process_to_attach_to
                 << "'"
                 << endl
-               ;
+              ;
                 a_return = -1;
                 return false;
             }
@@ -298,7 +298,7 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                  << gv_process_to_attach_to
                  << "'"
                  << endl
-                ;
+               ;
             a_return = -1;
             return false;
         } else {

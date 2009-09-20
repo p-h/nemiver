@@ -33,25 +33,25 @@ namespace nemiver {
 namespace common {
 namespace sqlite {
 
-struct SqliteCnxMgrDrvPriv ;
+struct SqliteCnxMgrDrvPriv;
 class SqliteCnxMgrDrv : public common::IConnectionManagerDriver {
-    friend struct SqliteCnxMgrDrvPriv ;
-    friend class SqliteCnxMgrModule ;
-    struct SqliteCnxMgrDrvPriv *m_priv ;
+    friend struct SqliteCnxMgrDrvPriv;
+    friend class SqliteCnxMgrModule;
+    struct SqliteCnxMgrDrvPriv *m_priv;
 
     //forbid copy
-    SqliteCnxMgrDrv (const SqliteCnxMgrDrv&) ;
-    SqliteCnxMgrDrv& operator= (const SqliteCnxMgrDrv&) ;
+    SqliteCnxMgrDrv (const SqliteCnxMgrDrv&);
+    SqliteCnxMgrDrv& operator= (const SqliteCnxMgrDrv&);
 
-    SqliteCnxMgrDrv (DynamicModule *a_dynmod) ;
-    virtual ~SqliteCnxMgrDrv () ;
+    SqliteCnxMgrDrv (DynamicModule *a_dynmod);
+    virtual ~SqliteCnxMgrDrv ();
 
 public:
 
     common::IConnectionDriverSafePtr connect_to_db
                                     (const common::DBDesc &a_desc,
                                      const common::UString &a_user,
-                                     const common::UString &a_pass) ;
+                                     const common::UString &a_pass);
 };//end SqliteCnxMgrDrv
 
 }//end namespace sqlite

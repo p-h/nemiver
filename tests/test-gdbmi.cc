@@ -5,18 +5,18 @@
 #include "common/nmv-exception.h"
 #include "common/nmv-initializer.h"
 
-using namespace std ;
-using namespace nemiver ;
+using namespace std;
+using namespace nemiver;
 
-static const char* gv_str0 = "\"abracadabra\"" ;
-static const char* gv_str1 = "\"/home/dodji/misc/no\\303\\253l-\\303\\251-\\303\\240/test.c\"" ;
-static const char* gv_str2 = "\"No symbol \\\"events_ecal\\\" in current context.\\n\"" ;
+static const char* gv_str0 = "\"abracadabra\"";
+static const char* gv_str1 = "\"/home/dodji/misc/no\\303\\253l-\\303\\251-\\303\\240/test.c\"";
+static const char* gv_str2 = "\"No symbol \\\"events_ecal\\\" in current context.\\n\"";
 
-static const char* gv_attrs0 = "msg=\"No symbol \\\"g_return_if_fail\\\" in current context.\"" ;
-static const char* gv_attrs1 = "script=[\"silent\",\"return\"]" ;
+static const char* gv_attrs0 = "msg=\"No symbol \\\"g_return_if_fail\\\" in current context.\"";
+static const char* gv_attrs1 = "script=[\"silent\",\"return\"]";
 
 static const char* gv_stopped_async_output0 =
-"*stopped,reason=\"breakpoint-hit\",bkptno=\"1\",thread-id=\"1\",frame={addr=\"0x0804afb0\",func=\"main\",args=[{name=\"argc\",value=\"1\"},{name=\"argv\",value=\"0xbfc79ed4\"}],file=\"today-main.c\",fullname=\"/home/dodji/devel/gitstore/omoko.git/applications/openmoko-today/src/today-main.c\",line=\"285\"}\n" ;
+"*stopped,reason=\"breakpoint-hit\",bkptno=\"1\",thread-id=\"1\",frame={addr=\"0x0804afb0\",func=\"main\",args=[{name=\"argc\",value=\"1\"},{name=\"argv\",value=\"0xbfc79ed4\"}],file=\"today-main.c\",fullname=\"/home/dodji/devel/gitstore/omoko.git/applications/openmoko-today/src/today-main.c\",line=\"285\"}\n";
 
 static const char* gv_stopped_async_output1 =
 "*stopped,reason=\"breakpoint-hit\",bkptno=\"1\",thread-id=\"1\",frame={addr=\"0x08048d38\",func=\"main\",args=[],file=\"fooprog.cc\",fullname=\"/opt/dodji/git/nemiver.git/tests/fooprog.cc\",line=\"80\"}\n";
@@ -67,7 +67,7 @@ static const char *gv_stack0 =
 // the partial result of a gdbmi command: -stack-list-argument 1 command
 // this command is used to implement IDebugger::list_frames_arguments()
 static const char* gv_stack_arguments0 =
-"stack-args=[frame={level=\"0\",args=[{name=\"a_param\",value=\"(Person &) @0xbf88fad4: {m_first_name = {static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x804b144 \\\"Ali\\\"}}, m_family_name = {static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x804b12c \\\"BABA\\\"}}, m_age = 15}\"}]},frame={level=\"1\",args=[]}]" ;
+"stack-args=[frame={level=\"0\",args=[{name=\"a_param\",value=\"(Person &) @0xbf88fad4: {m_first_name = {static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x804b144 \\\"Ali\\\"}}, m_family_name = {static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x804b12c \\\"BABA\\\"}}, m_age = 15}\"}]},frame={level=\"1\",args=[]}]";
 
 static const char* gv_local_vars =
 "locals=[{name=\"person\",type=\"Person\"}]";
@@ -77,12 +77,12 @@ static const char* gv_emb_str =
 
 ;
 static const char* gv_member_var = 
-"{static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x8048ce1 \"\\311\\303\\220U\\211\\345S\\203\\354\\024\\213E\\b\\211\\004$\\350\\202\\373\\377\\377\\213E\\b\\203\\300\\004\\211\\004$\\350t\\373\\377\\377\\213U\\b\\213E\\f\\211D$\\004\\211\\024$\\350\\002\\373\\377\\377\\213U\\b\\203\\302\\004\\213E\\020\\211D$\\004\\211\\024$\\350\\355\\372\\377\\377\\213U\\b\\213E\\024\\211B\\b\\3538\\211E\\370\\213]\\370\\213E\\b\\203\\300\\004\\211\\004$\\350\\276\\372\\377\\377\\211]\\370\\353\\003\\211E\\370\\213]\\370\\213E\\b\\211\\004$\\350\\250\\372\\377\\377\\211]\\370\\213E\\370\\211\\004$\\350\\032\\373\\377\\377\\203\\304\\024[]\\303U\\211\\345S\\203\\354$\\215E\\372\\211\\004$\\350\\\"\\373\\377\\377\\215E\\372\\211D$\\b\\307D$\\004\\370\\217\\004\\b\\215E\\364\\211\\004$\\350\\230\\372\\377\\377\\215E\\372\\211\\004$\\350}\\372\"...}}" ;
+"{static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x8048ce1 \"\\311\\303\\220U\\211\\345S\\203\\354\\024\\213E\\b\\211\\004$\\350\\202\\373\\377\\377\\213E\\b\\203\\300\\004\\211\\004$\\350t\\373\\377\\377\\213U\\b\\213E\\f\\211D$\\004\\211\\024$\\350\\002\\373\\377\\377\\213U\\b\\203\\302\\004\\213E\\020\\211D$\\004\\211\\024$\\350\\355\\372\\377\\377\\213U\\b\\213E\\024\\211B\\b\\3538\\211E\\370\\213]\\370\\213E\\b\\203\\300\\004\\211\\004$\\350\\276\\372\\377\\377\\211]\\370\\353\\003\\211E\\370\\213]\\370\\213E\\b\\211\\004$\\350\\250\\372\\377\\377\\211]\\370\\213E\\370\\211\\004$\\350\\032\\373\\377\\377\\203\\304\\024[]\\303U\\211\\345S\\203\\354$\\215E\\372\\211\\004$\\350\\\"\\373\\377\\377\\215E\\372\\211D$\\b\\307D$\\004\\370\\217\\004\\b\\215E\\364\\211\\004$\\350\\230\\372\\377\\377\\215E\\372\\211\\004$\\350}\\372\"...}}";
 
-static const char* gv_member_var2 = "{<com::sun::star::uno::BaseReference> = {_pInterface = 0x86a4834}, <No data fields>}" ;
+static const char* gv_member_var2 = "{<com::sun::star::uno::BaseReference> = {_pInterface = 0x86a4834}, <No data fields>}";
 
 
-static const char* gv_var_with_member = "value=\"{static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x8048ce1 \"\\311\\303\\220U\\211\\345S\\203\\354\\024\\213E\\b\\211\\004$\\350\\202\\373\\377\\377\\213E\\b\\203\\300\\004\\211\\004$\\350t\\373\\377\\377\\213U\\b\\213E\\f\\211D$\\004\\211\\024$\\350\\002\\373\\377\\377\\213U\\b\\203\\302\\004\\213E\\020\\211D$\\004\\211\\024$\\350\\355\\372\\377\\377\\213U\\b\\213E\\024\\211B\\b\\3538\\211E\\370\\213]\\370\\213E\\b\\203\\300\\004\\211\\004$\\350\\276\\372\\377\\377\\211]\\370\\353\\003\\211E\\370\\213]\\370\\213E\\b\\211\\004$\\350\\250\\372\\377\\377\\211]\\370\\213E\\370\\211\\004$\\350\\032\\373\\377\\377\\203\\304\\024[]\\303U\\211\\345S\\203\\354$\\215E\\372\\211\\004$\\350\\\"\\373\\377\\377\\215E\\372\\211D$\\b\\307D$\\004\\370\\217\\004\\b\\215E\\364\\211\\004$\\350\\230\\372\\377\\377\\215E\\372\\211\\004$\\350}\\372\"...}}\"" ;
+static const char* gv_var_with_member = "value=\"{static npos = 4294967295, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x8048ce1 \"\\311\\303\\220U\\211\\345S\\203\\354\\024\\213E\\b\\211\\004$\\350\\202\\373\\377\\377\\213E\\b\\203\\300\\004\\211\\004$\\350t\\373\\377\\377\\213U\\b\\213E\\f\\211D$\\004\\211\\024$\\350\\002\\373\\377\\377\\213U\\b\\203\\302\\004\\213E\\020\\211D$\\004\\211\\024$\\350\\355\\372\\377\\377\\213U\\b\\213E\\024\\211B\\b\\3538\\211E\\370\\213]\\370\\213E\\b\\203\\300\\004\\211\\004$\\350\\276\\372\\377\\377\\211]\\370\\353\\003\\211E\\370\\213]\\370\\213E\\b\\211\\004$\\350\\250\\372\\377\\377\\211]\\370\\213E\\370\\211\\004$\\350\\032\\373\\377\\377\\203\\304\\024[]\\303U\\211\\345S\\203\\354$\\215E\\372\\211\\004$\\350\\\"\\373\\377\\377\\215E\\372\\211D$\\b\\307D$\\004\\370\\217\\004\\b\\215E\\364\\211\\004$\\350\\230\\372\\377\\377\\215E\\372\\211\\004$\\350}\\372\"...}}\"";
 
 static const char *gv_var_with_member2 = "value=\"{filePos = 393216, ptr = 0xbf83c3f4 \\\"q\\\\354p1i\\\\233w\\\\310\\\\270R\\\\376\\\\325-\\\\266\\\\235$Qy\\\\212\\\\371\\\\373;|\\\\271\\\\031\\\\311\\\\355\\\\223]K\\\\031x4\\\\374\\\\217z\\\\272\\\\366t\\\\037\\\\2237'\\\\324S\\\\354\\\\321\\\\306\\\\020\\\\233\\\\202>y\\\\024\\\\365\\\\250\\\\\\\"\\\\271\\\\275(D\\\\267\\\\022\\\\205\\\\330B\\\\200\\\\371\\\\371k/\\\\252S\\\\204[\\\\265\\\\373\\\\036\\\\025\\\\fC\\\\251Y\\\\312\\\\333\\\\225\\\\231\\\\247$\\\\024-\\\\273\\\\035KsZV\\\\217r\\\\320I\\\\031gb\\\\347\\\\0371\\\\347\\\\374\\\\361I\\\\323\\\\204\\\\254\\\\337A\\\\271\\\\250\\\\302O\\\\271c)\\\\004\\\\211\\\\r\\\\303\\\\252\\\\273\\\\377\\\", limit = 0xbf85c3f4 \\\"\\\\310\\\\243\\\\020\\\\b\\\\330\\\\274\\\\021\\\\b\\\\f9\\\\020\\\\b\\\\f9\\\\020\\\\b\\\\344\\\\274\\\\022\\\\b\\\\377\\\\355\\\", len = 131072, data = {113 'q', 236 '\\\\354', 112 'p', 49 '1', 105 'i', 155 '\\\\233', 119 'w', 200 '\\\\310', 184 '\\\\270', 82 'R', 254 '\\\\376', 213 '\\\\325', 45 '-', 182 '\\\\266', 157 '\\\\235', 36 '$', 81 'Q', 121 'y', 138 '\\\\212', 249 '\\\\371', 251 '\\\\373', 59 ';', 124 '|', 185 '\\\\271', 25 '\\\\031', 201 '\\\\311', 237 '\\\\355', 147 '\\\\223', 93 ']', 75 'K', 25 '\\\\031', 120 'x', 52 '4', 252 '\\\\374', 143 '\\\\217', 122 'z', 186 '\\\\272', 246 '\\\\366', 116 't', 31 '\\\\037', 147 '\\\\223', 55 '7', 39 '\\\\'', 212 '\\\\324', 83 'S', 236 '\\\\354', 209 '\\\\321', 198 '\\\\306', 16 '\\\\020', 155 '\\\\233', 130 '\\\\202', 62 '>', 121 'y', 20 '\\\\024', 245 '\\\\365', 168 '\\\\250', 34 '\\\"', 185 '\\\\271', 189 '\\\\275', 40 '(', 68 'D', 183 '\\\\267', 18 '\\\\022', 133 '\\\\205', 216 '\\\\330', 66 'B', 128 '\\\\200', 249 '\\\\371', 249 '\\\\371', 107 'k', 47 '/', 170 '\\\\252', 83 'S', 132 '\\\\204', 91 '[', 181 '\\\\265', 251 '\\\\373', 30 '\\\\036', 21 '\\\\025', 12 '\\\\f', 67 'C', 169 '\\\\251', 89 'Y', 202 '\\\\312', 219 '\\\\333', 149 '\\\\225', 153 '\\\\231', 167 '\\\\247', 36 '$', 20 '\\\\024', 45 '-', 187 '\\\\273', 29 '\\\\035', 75 'K', 115 's', 90 'Z', 86 'V', 143 '\\\\217', 114 'r', 208 '\\\\320', 73 'I', 25 '\\\\031', 103 'g', 98 'b', 231 '\\\\347', 31 '\\\\037', 49 '1', 231 '\\\\347', 252 '\\\\374', 241 '\\\\361', 73 'I', 211 '\\\\323', 132 '\\\\204', 172 '\\\\254', 223 '\\\\337', 65 'A', 185 '\\\\271', 168 '\\\\250', 194 '\\\\302', 79 'O', 185 '\\\\271', 99 'c', 41 ')', 4 '\\\\004', 137 '\\\\211', 13 '\\\\r', 195 '\\\\303', 170 '\\\\252', 187 '\\\\273', 255 '\\\\377', 0 '\\\\0', 171 '\\\\253', 76 'L', 245 '\\\\365', 197 '\\\\305', 75 'K', 102 'f', 52 '4', 219 '\\\\333', 125 '}', 70 'F', 1 '\\\\001', 168 '\\\\250', 151 '\\\\227', 88 'X', 94 '^', 64 '@', 120 'x', 78 'N', 74 'J', 247 '\\\\367', 192 '\\\\300', 239 '\\\\357', 87 'W', 90 'Z', 85 'U', 35 '#', 23 '\\\\027', 202 '\\\\312', 190 '\\\\276', 37 '%', 160 '\\\\240', 158 '\\\\236', 95 '_', 81 'Q', 197 '\\\\305', 74 'J', 221 '\\\\335', 207 '\\\\317', 219 '\\\\333', 191 '\\\\277', 216 '\\\\330', 145 '\\\\221', 188 '\\\\274', 59 ';', 15 '\\\\017', 193 '\\\\301', 223 '\\\\337', 22 '\\\\026', 92 '\\\\\\\\', 248 '\\\\370', 83 'S', 69 'E', 254 '\\\\376', 215 '\\\\327', 191 '\\\\277', 215 '\\\\327', 53 '5', 47 '/', 179 '\\\\263', 177 '\\\\261', 212 '\\\\324', 192 '\\\\300', 138 '\\\\212', 37 '%', 85 'U', 81 'Q', 176 '\\\\260', 243 '\\\\363', 193 '\\\\301'...}}\"";
 static const char *gv_var_with_member3 = "value=\"{<Gtk::Window> = {<Gtk::Bin> = {<Gtk::Container> = {<Gtk::Widget> = {<Gtk::Object> = {<Glib::Object> = {<Glib::ObjectBase> = {<sigc::trackable> = {callback_list_ = 0xb73e1ff4}, _vptr.ObjectBase = 0xb73e1ff4, gobject_ = 0x8051643, custom_type_name_ = 0x8050ef0 \\\"U\\\\211\\\\345WVS\\\\350O\\\", cpp_destruction_in_progress_ = 200}, _vptr.Object = 0xb73e1ff4, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, referenced_ = 67, gobject_disposed_ = 22}, <Atk::Implementor> = {<Glib::Interface> = {_vptr.Interface = 0x8050ef0}, static implementor_class_ = {<Glib::Interface_Class> = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, <No data fields>}}, static widget_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static container_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static bin_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static window_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, accel_group_ = {pCppObject_ = 0xbfd83fc8}}, m_VBox = {<Gtk::Box> = {<Gtk::Container> = {<Gtk::Widget> = {<Gtk::Object> = {<Glib::Object> = {<Glib::ObjectBase> = <invalid address>, _vptr.Object = 0xb7390906, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, referenced_ = 67, gobject_disposed_ = 22}, <Atk::Implementor> = {<Glib::Interface> = {_vptr.Interface = 0x805164b}, static implementor_class_ = {<Glib::Interface_Class> = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, <No data fields>}}, static widget_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static container_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static box_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, children_proxy_ = {<Glib::HelperList<Gtk::Box_Helpers::Child,const Gtk::Box_Helpers::Element,Glib::List_Iterator<Gtk::Box_Helpers::Child> >> = {_vptr.HelperList = 0xbfd83fff, gparent_ = 0xb73e1f00}, <No data fields>}}, static vbox_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, m_MyWidget = {<Gtk::Widget> = {<Gtk::Object> = {<Glib::Object> = {<Glib::ObjectBase> = <invalid address>, _vptr.Object = 0xb71aaf55, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, referenced_ = 172, gobject_disposed_ = 54}, <Atk::Implementor> = {<Glib::Interface> = {_vptr.Interface = 0x8056200}, static implementor_class_ = {<Glib::Interface_Class> = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, <No data fields>}}, static widget_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, m_refGdkWindow = {pCppObject_ = 0xb7b3ed64}, m_scale = -1209413632}, m_ButtonBox = {<Gtk::ButtonBox> = {<Gtk::Box> = {<Gtk::Container> = {<Gtk::Widget> = {<Gtk::Object> = {<Glib::Object> = {<Glib::ObjectBase> = <invalid address>, _vptr.Object = 0xb71ab0d0, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static object_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, referenced_ = 20, gobject_disposed_ = 65}, <Atk::Implementor> = {<Glib::Interface> = {_vptr.Interface = 0xb7fdace0}, static implementor_class_ = {<Glib::Interface_Class> = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, <No data fields>}}, static widget_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static container_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static box_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}, children_proxy_ = {<Glib::HelperList<Gtk::Box_Helpers::Child,const Gtk::Box_Helpers::Element,Glib::List_Iterator<Gtk::Box_Helpers::Child> >> = {_vptr.HelperList = 0xbfd84028, gparent_ = 0x804da59}, <No data fields>}}, static buttonbox_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, static hbuttonbox_class_ = {<Glib::Class> = {gtype_ = 0, class_init_func_ = 0}, <No data fields>}}, m_Button_Quit = {<Gtk::Bin> = {<Gtk::Container> = {<Gtk::Widget> = {<Gtk::Object> = {<Glib::Object> = {<error reading variable>}\"";
@@ -101,7 +101,7 @@ static const char *gv_var_with_member8 = "value=\"{member = 0x40085e <my_func(vo
 static const char *gv_var_with_comma = "value=\"0x40085e <my_func(void*, void*)>\"";
 
 static const char* gv_stack_arguments1 =
-"stack-args=[frame={level=\"0\",args=[{name=\"a_comp\",value=\"(icalcomponent *) 0x80596f8\"},{name=\"a_entry\",value=\"(MokoJEntry **) 0xbfe02178\"}]},frame={level=\"1\",args=[{name=\"a_view\",value=\"(ECalView *) 0x804ba60\"},{name=\"a_entries\",value=\"(GList *) 0x8054930\"},{name=\"a_journal\",value=\"(MokoJournal *) 0x8050580\"}]},frame={level=\"2\",args=[{name=\"closure\",value=\"(GClosure *) 0x805a010\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe023cc\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe022dc\"},{name=\"marshal_data\",value=\"(gpointer) 0xb7f9a146\"}]},frame={level=\"3\",args=[{name=\"closure\",value=\"(GClosure *) 0x805a010\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe023cc\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe022dc\"}]},frame={level=\"4\",args=[{name=\"node\",value=\"(SignalNode *) 0x80599c8\"},{name=\"detail\",value=\"0\"},{name=\"instance\",value=\"(gpointer) 0x804ba60\"},{name=\"emission_return\",value=\"(GValue *) 0x0\"},{name=\"instance_and_params\",value=\"(const GValue *) 0xbfe023cc\"}]},frame={level=\"5\",args=[{name=\"instance\",value=\"(gpointer) 0x804ba60\"},{name=\"signal_id\",value=\"18\"},{name=\"detail\",value=\"0\"},{name=\"var_args\",value=\"0xbfe02610 \\\"\\\\300\\\\365\\\\004\\\\b\\\\020,\\\\340\\\\277\\\\370\\\\024[\\\\001\\\\360\\\\226i\\\\267\\\\320`\\\\234\\\\267\\\\200\\\\237\\\\005\\\\bX&\\\\340\\\\277\\\\333cg\\\\267\\\\200{\\\\005\\\\b0I\\\\005\\\\b`\\\\272\\\\004\\\\b\\\\002\\\"\"}]},frame={level=\"6\",args=[{name=\"instance\",value=\"(gpointer) 0x804ba60\"},{name=\"signal_id\",value=\"18\"},{name=\"detail\",value=\"0\"}]},frame={level=\"7\",args=[{name=\"listener\",value=\"(ECalViewListener *) 0x8057b80\"},{name=\"objects\",value=\"(GList *) 0x8054930\"},{name=\"data\",value=\"(gpointer) 0x804ba60\"}]},frame={level=\"8\",args=[{name=\"closure\",value=\"(GClosure *) 0x8059f80\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe0286c\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe0277c\"},{name=\"marshal_data\",value=\"(gpointer) 0xb79c60d0\"}]},frame={level=\"9\",args=[{name=\"closure\",value=\"(GClosure *) 0x8059f80\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe0286c\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe0277c\"}]},frame={level=\"10\",args=[{name=\"node\",value=\"(SignalNode *) 0x8057a08\"},{name=\"detail\",value=\"0\"},{name=\"instance\",value=\"(gpointer) 0x8057b80\"},{name=\"emission_return\",value=\"(GValue *) 0x0\"},{name=\"instance_and_params\",value=\"(const GValue *) 0xbfe0286c\"}]},frame={level=\"11\",args=[{name=\"instance\",value=\"(gpointer) 0x8057b80\"},{name=\"signal_id\",value=\"12\"},{name=\"detail\",value=\"0\"},{name=\"var_args\",value=\"0xbfe02ab0 \\\"\\\\314,\\\\340\\\\277\\\\300m\\\\006\\\\b\\\\233d\\\\234\\\\267\\\\020\\\\347\\\\240\\\\267\\\\220d\\\\234\\\\267\\\\230m\\\\006\\\\b\\\\370*\\\\340\\\\277\\\\317i\\\\234\\\\267\\\\200{\\\\005\\\\b@n\\\\006\\\\b\\\\200*\\\\005\\\\b\\\"\"}]},frame={level=\"12\",args=[{name=\"instance\",value=\"(gpointer) 0x8057b80\"},{name=\"signal_id\",value=\"12\"},{name=\"detail\",value=\"0\"}]},frame={level=\"13\",args=[{name=\"ql\",value=\"(ECalViewListener *) 0x8057b80\"},{name=\"objects\",value=\"(char **) 0x8066e40\"},{name=\"context\",value=\"(DBusGMethodInvocation *) 0x8052a80\"}]},frame={level=\"14\",args=[{name=\"closure\",value=\"(GClosure *) 0xbfe02d1c\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"3\"},{name=\"param_values\",value=\"(const GValue *) 0x8066d98\"},{name=\"invocation_hint\",value=\"(gpointer) 0x0\"},{name=\"marshal_data\",value=\"(gpointer) 0xb79c6490\"}]},frame={level=\"15\",args=[]},frame={level=\"16\",args=[]},frame={level=\"17\",args=[]}]" ;
+"stack-args=[frame={level=\"0\",args=[{name=\"a_comp\",value=\"(icalcomponent *) 0x80596f8\"},{name=\"a_entry\",value=\"(MokoJEntry **) 0xbfe02178\"}]},frame={level=\"1\",args=[{name=\"a_view\",value=\"(ECalView *) 0x804ba60\"},{name=\"a_entries\",value=\"(GList *) 0x8054930\"},{name=\"a_journal\",value=\"(MokoJournal *) 0x8050580\"}]},frame={level=\"2\",args=[{name=\"closure\",value=\"(GClosure *) 0x805a010\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe023cc\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe022dc\"},{name=\"marshal_data\",value=\"(gpointer) 0xb7f9a146\"}]},frame={level=\"3\",args=[{name=\"closure\",value=\"(GClosure *) 0x805a010\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe023cc\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe022dc\"}]},frame={level=\"4\",args=[{name=\"node\",value=\"(SignalNode *) 0x80599c8\"},{name=\"detail\",value=\"0\"},{name=\"instance\",value=\"(gpointer) 0x804ba60\"},{name=\"emission_return\",value=\"(GValue *) 0x0\"},{name=\"instance_and_params\",value=\"(const GValue *) 0xbfe023cc\"}]},frame={level=\"5\",args=[{name=\"instance\",value=\"(gpointer) 0x804ba60\"},{name=\"signal_id\",value=\"18\"},{name=\"detail\",value=\"0\"},{name=\"var_args\",value=\"0xbfe02610 \\\"\\\\300\\\\365\\\\004\\\\b\\\\020,\\\\340\\\\277\\\\370\\\\024[\\\\001\\\\360\\\\226i\\\\267\\\\320`\\\\234\\\\267\\\\200\\\\237\\\\005\\\\bX&\\\\340\\\\277\\\\333cg\\\\267\\\\200{\\\\005\\\\b0I\\\\005\\\\b`\\\\272\\\\004\\\\b\\\\002\\\"\"}]},frame={level=\"6\",args=[{name=\"instance\",value=\"(gpointer) 0x804ba60\"},{name=\"signal_id\",value=\"18\"},{name=\"detail\",value=\"0\"}]},frame={level=\"7\",args=[{name=\"listener\",value=\"(ECalViewListener *) 0x8057b80\"},{name=\"objects\",value=\"(GList *) 0x8054930\"},{name=\"data\",value=\"(gpointer) 0x804ba60\"}]},frame={level=\"8\",args=[{name=\"closure\",value=\"(GClosure *) 0x8059f80\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe0286c\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe0277c\"},{name=\"marshal_data\",value=\"(gpointer) 0xb79c60d0\"}]},frame={level=\"9\",args=[{name=\"closure\",value=\"(GClosure *) 0x8059f80\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"2\"},{name=\"param_values\",value=\"(const GValue *) 0xbfe0286c\"},{name=\"invocation_hint\",value=\"(gpointer) 0xbfe0277c\"}]},frame={level=\"10\",args=[{name=\"node\",value=\"(SignalNode *) 0x8057a08\"},{name=\"detail\",value=\"0\"},{name=\"instance\",value=\"(gpointer) 0x8057b80\"},{name=\"emission_return\",value=\"(GValue *) 0x0\"},{name=\"instance_and_params\",value=\"(const GValue *) 0xbfe0286c\"}]},frame={level=\"11\",args=[{name=\"instance\",value=\"(gpointer) 0x8057b80\"},{name=\"signal_id\",value=\"12\"},{name=\"detail\",value=\"0\"},{name=\"var_args\",value=\"0xbfe02ab0 \\\"\\\\314,\\\\340\\\\277\\\\300m\\\\006\\\\b\\\\233d\\\\234\\\\267\\\\020\\\\347\\\\240\\\\267\\\\220d\\\\234\\\\267\\\\230m\\\\006\\\\b\\\\370*\\\\340\\\\277\\\\317i\\\\234\\\\267\\\\200{\\\\005\\\\b@n\\\\006\\\\b\\\\200*\\\\005\\\\b\\\"\"}]},frame={level=\"12\",args=[{name=\"instance\",value=\"(gpointer) 0x8057b80\"},{name=\"signal_id\",value=\"12\"},{name=\"detail\",value=\"0\"}]},frame={level=\"13\",args=[{name=\"ql\",value=\"(ECalViewListener *) 0x8057b80\"},{name=\"objects\",value=\"(char **) 0x8066e40\"},{name=\"context\",value=\"(DBusGMethodInvocation *) 0x8052a80\"}]},frame={level=\"14\",args=[{name=\"closure\",value=\"(GClosure *) 0xbfe02d1c\"},{name=\"return_value\",value=\"(GValue *) 0x0\"},{name=\"n_param_values\",value=\"3\"},{name=\"param_values\",value=\"(const GValue *) 0x8066d98\"},{name=\"invocation_hint\",value=\"(gpointer) 0x0\"},{name=\"marshal_data\",value=\"(gpointer) 0xb79c6490\"}]},frame={level=\"15\",args=[]},frame={level=\"16\",args=[]},frame={level=\"17\",args=[]}]";
 
 
 static const char*  gv_overloads_prompt0=
@@ -158,90 +158,90 @@ static const char* gv_file_list1 =
 void
 test_str0 ()
 {
-    bool is_ok =false ;
+    bool is_ok =false;
 
-    UString res ;
-    UString::size_type to=0 ;
+    UString res;
+    UString::size_type to=0;
 
     GDBMIParser parser (gv_str0);
     is_ok = parser.parse_c_string (0, to, res);
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE (res == "abracadabra") ;
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (res == "abracadabra");
 }
 
 void
 test_str1 ()
 {
-    bool is_ok =false ;
+    bool is_ok =false;
 
-    UString res ;
-    UString::size_type to=0 ;
+    UString res;
+    UString::size_type to=0;
 
     GDBMIParser parser (gv_str1);
     is_ok = parser.parse_c_string (0, to, res);
 
-    BOOST_REQUIRE (is_ok) ;
-    MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'") ;
+    BOOST_REQUIRE (is_ok);
+    MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'");
     BOOST_REQUIRE_MESSAGE (res.size () == 32, "res size was: " << res.size ());
 }
 
 void
 test_str2 ()
 {
-    bool is_ok =false ;
+    bool is_ok =false;
 
-    UString res ;
-    UString::size_type to=0 ;
+    UString res;
+    UString::size_type to=0;
 
     GDBMIParser parser (gv_str2);
     is_ok = parser.parse_c_string (0, to, res);
 
-    BOOST_REQUIRE (is_ok) ;
-    MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'") ;
+    BOOST_REQUIRE (is_ok);
+    MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'");
     BOOST_REQUIRE_MESSAGE (res.size (), "res size was: " << res.size ());
 }
 
 void
 test_attr0 ()
 {
-    bool is_ok =false ;
+    bool is_ok =false;
 
-    UString name,value ;
-    UString::size_type to=0 ;
+    UString name,value;
+    UString::size_type to=0;
 
     GDBMIParser parser (gv_attrs0);
 
     name.clear (), value.clear ();
-    is_ok = parser.parse_attribute (0, to, name, value) ;
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE_MESSAGE (name == "msg", "got name: " << name) ;
-    BOOST_REQUIRE_MESSAGE (value.size(), "got empty value") ;
+    is_ok = parser.parse_attribute (0, to, name, value);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE_MESSAGE (name == "msg", "got name: " << name);
+    BOOST_REQUIRE_MESSAGE (value.size(), "got empty value");
 
     name.clear (), value.clear ();
     parser.push_input (gv_attrs1);
-    is_ok = parser.parse_attribute (0, to, name, value) ;
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE_MESSAGE (name == "script", "got name: " << name) ;
-    BOOST_REQUIRE_MESSAGE (value == "[silent,return]", "got empty value") ;
+    is_ok = parser.parse_attribute (0, to, name, value);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE_MESSAGE (name == "script", "got name: " << name);
+    BOOST_REQUIRE_MESSAGE (value == "[silent,return]", "got empty value");
 
 }
 
 void
 test_stoppped_async_output ()
 {
-    bool is_ok=false, got_frame=false ;
-    UString::size_type to=0 ;
-    IDebugger::Frame frame ;
-    map<UString, UString> attrs ;
+    bool is_ok=false, got_frame=false;
+    UString::size_type to=0;
+    IDebugger::Frame frame;
+    map<UString, UString> attrs;
 
     GDBMIParser parser (gv_stopped_async_output0);
 
     is_ok = parser.parse_stopped_async_output (0, to,
                                                got_frame,
                                                frame, attrs);
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE (got_frame) ;
-    BOOST_REQUIRE (attrs.size ()) ;
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (got_frame);
+    BOOST_REQUIRE (attrs.size ());
 
     to=0;
     parser.push_input (gv_stopped_async_output1);
@@ -255,7 +255,7 @@ void
 test_running_async_output ()
 {
     bool is_ok=false;
-    UString::size_type to=0 ;
+    UString::size_type to=0;
     int thread_id=0;
 
     GDBMIParser parser (gv_running_async_output0);
@@ -279,7 +279,7 @@ test_var_list_children ()
     GDBMIParser parser (gv_var_list_children0);
 
     bool is_ok=false;
-    UString::size_type to=0 ;
+    UString::size_type to=0;
     std::vector<IDebugger::VariableSafePtr> vars;
     is_ok = parser.parse_var_list_children (0, to, vars);
     BOOST_REQUIRE (is_ok);
@@ -295,19 +295,19 @@ test_output_record ()
 
     GDBMIParser parser (gv_output_record0);
     is_ok = parser.parse_output_record (0, to, output);
-    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE (is_ok);
 
     parser.push_input (gv_output_record1);
     is_ok = parser.parse_output_record (0, to, output);
-    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE (is_ok);
 
     parser.push_input (gv_output_record2);
     is_ok = parser.parse_output_record (0, to, output);
-    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE (is_ok);
 
     parser.push_input (gv_output_record3);
     is_ok = parser.parse_output_record (0, to, output);
-    BOOST_REQUIRE (is_ok) ;
+    BOOST_REQUIRE (is_ok);
 
     // gv_output_record4 should result in a variable.
     parser.push_input (gv_output_record4);
@@ -387,59 +387,59 @@ test_stack0 ()
 void
 test_stack_arguments0 ()
 {
-    bool is_ok=false ;
-    UString::size_type to ;
-    map<int, list<IDebugger::VariableSafePtr> >params ;
+    bool is_ok=false;
+    UString::size_type to;
+    map<int, list<IDebugger::VariableSafePtr> >params;
 
     GDBMIParser parser (gv_stack_arguments0);
-    is_ok = parser.parse_stack_arguments (0, to, params) ;
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE (params.size () == 2) ;
-    map<int, list<IDebugger::VariableSafePtr> >::iterator param_iter ;
-    param_iter = params.find (0) ;
-    BOOST_REQUIRE (param_iter != params.end ()) ;
-    IDebugger::VariableSafePtr variable = *(param_iter->second.begin ()) ;
-    BOOST_REQUIRE (variable) ;
-    BOOST_REQUIRE (variable->name () == "a_param") ;
-    BOOST_REQUIRE (!variable->members ().empty ()) ;
+    is_ok = parser.parse_stack_arguments (0, to, params);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (params.size () == 2);
+    map<int, list<IDebugger::VariableSafePtr> >::iterator param_iter;
+    param_iter = params.find (0);
+    BOOST_REQUIRE (param_iter != params.end ());
+    IDebugger::VariableSafePtr variable = *(param_iter->second.begin ());
+    BOOST_REQUIRE (variable);
+    BOOST_REQUIRE (variable->name () == "a_param");
+    BOOST_REQUIRE (!variable->members ().empty ());
 }
 
 void
 test_stack_arguments1 ()
 {
-    bool is_ok=false ;
-    UString::size_type to ;
-    map<int, list<IDebugger::VariableSafePtr> >params ;
+    bool is_ok=false;
+    UString::size_type to;
+    map<int, list<IDebugger::VariableSafePtr> >params;
 
     GDBMIParser parser (gv_stack_arguments1);
-    is_ok = parser.parse_stack_arguments (0, to, params) ;
-    BOOST_REQUIRE (is_ok) ;
+    is_ok = parser.parse_stack_arguments (0, to, params);
+    BOOST_REQUIRE (is_ok);
     BOOST_REQUIRE_MESSAGE (params.size () == 18, "got nb params "
-                           << params.size ()) ;
-    map<int, list<IDebugger::VariableSafePtr> >::iterator param_iter ;
-    param_iter = params.find (0) ;
-    BOOST_REQUIRE (param_iter != params.end ()) ;
-    IDebugger::VariableSafePtr variable = *(param_iter->second.begin ()) ;
-    BOOST_REQUIRE (variable) ;
-    BOOST_REQUIRE (variable->name () == "a_comp") ;
-    BOOST_REQUIRE (variable->members ().empty ()) ;
+                           << params.size ());
+    map<int, list<IDebugger::VariableSafePtr> >::iterator param_iter;
+    param_iter = params.find (0);
+    BOOST_REQUIRE (param_iter != params.end ());
+    IDebugger::VariableSafePtr variable = *(param_iter->second.begin ());
+    BOOST_REQUIRE (variable);
+    BOOST_REQUIRE (variable->name () == "a_comp");
+    BOOST_REQUIRE (variable->members ().empty ());
 }
 
 void
 test_local_vars ()
 {
-    bool is_ok=false ;
-    UString::size_type to=0 ;
-    list<IDebugger::VariableSafePtr> vars ;
+    bool is_ok=false;
+    UString::size_type to=0;
+    list<IDebugger::VariableSafePtr> vars;
 
     GDBMIParser parser (gv_local_vars);
-    is_ok = parser.parse_local_var_list (0, to, vars) ;
-    BOOST_REQUIRE (is_ok) ;
-    BOOST_REQUIRE (vars.size () == 1) ;
-    IDebugger::VariableSafePtr var = *(vars.begin ()) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (var->name () == "person") ;
-    BOOST_REQUIRE (var->type () == "Person") ;
+    is_ok = parser.parse_local_var_list (0, to, vars);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (vars.size () == 1);
+    IDebugger::VariableSafePtr var = *(vars.begin ());
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (var->name () == "person");
+    BOOST_REQUIRE (var->type () == "Person");
 }
 
 void
@@ -447,22 +447,22 @@ test_member_variable ()
 {
     {
         UString::size_type to = 0;
-        IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
+        IDebugger::VariableSafePtr var (new IDebugger::Variable);
 
         GDBMIParser parser (gv_member_var);
-        BOOST_REQUIRE (parser.parse_member_variable (0, to, var)) ;
-        BOOST_REQUIRE (var) ;
-        BOOST_REQUIRE (!var->members ().empty ()) ;
+        BOOST_REQUIRE (parser.parse_member_variable (0, to, var));
+        BOOST_REQUIRE (var);
+        BOOST_REQUIRE (!var->members ().empty ());
     }
 
     {
         UString::size_type to = 0;
-        IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
+        IDebugger::VariableSafePtr var (new IDebugger::Variable);
 
         GDBMIParser parser (gv_member_var2);
-        BOOST_REQUIRE (parser.parse_member_variable (0, to, var)) ;
-        BOOST_REQUIRE (var) ;
-        BOOST_REQUIRE (!var->members ().empty ()) ;
+        BOOST_REQUIRE (parser.parse_member_variable (0, to, var));
+        BOOST_REQUIRE (var);
+        BOOST_REQUIRE (!var->members ().empty ());
     }
 }
 
@@ -470,54 +470,54 @@ void
 test_var_with_member_variable ()
 {
     UString::size_type to = 0;
-    IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
+    IDebugger::VariableSafePtr var (new IDebugger::Variable);
 
     GDBMIParser parser (gv_var_with_member);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (!var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (!var->members ().empty ());
 
     to = 0;
     var.reset (new IDebugger::Variable);
     parser.push_input (gv_var_with_member2);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (!var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (!var->members ().empty ());
 
     to = 0;
     var.reset (new IDebugger::Variable);
     parser.push_input (gv_var_with_member3);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (!var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (!var->members ().empty ());
 
     to = 0;
     var.reset (new IDebugger::Variable);
     parser.push_input (gv_var_with_member4);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (!var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (!var->members ().empty ());
 
     to = 0;
     var.reset (new IDebugger::Variable);
     parser.push_input (gv_var_with_member5);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (!var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (!var->members ().empty ());
 
     to = 0;
     var.reset (new IDebugger::Variable);
     parser.push_input (gv_var_with_member6);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (!var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (!var->members ().empty ());
 
     to = 0;
     var.reset (new IDebugger::Variable);
     parser.push_input (gv_var_with_member7);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (!var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (!var->members ().empty ());
 }
 
 void
@@ -532,50 +532,50 @@ test_var_with_comma ()
     // {A = 0x1234 <void foo(int, int)>} is a single member variable
 
     UString::size_type to = 0;
-    IDebugger::VariableSafePtr var (new IDebugger::Variable) ;
+    IDebugger::VariableSafePtr var (new IDebugger::Variable);
 
     GDBMIParser parser (gv_var_with_member8);
 
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (1 == var->members ().size ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (1 == var->members ().size ());
     BOOST_REQUIRE_EQUAL("0x40085e <my_func(void*, void*)>", (*var->members ().begin ())->value ());
 
     to = 0;
     var.reset (new IDebugger::Variable);
     parser.push_input (gv_var_with_comma);
-    BOOST_REQUIRE (parser.parse_variable_value (0, to, var)) ;
-    BOOST_REQUIRE (var) ;
-    BOOST_REQUIRE (var->members ().empty ()) ;
+    BOOST_REQUIRE (parser.parse_variable_value (0, to, var));
+    BOOST_REQUIRE (var);
+    BOOST_REQUIRE (var->members ().empty ());
     BOOST_REQUIRE_EQUAL("0x40085e <my_func(void*, void*)>", var->value ());
 }
 
 void
 test_embedded_string ()
 {
-    UString::size_type to = 0 ;
-    UString str ;
+    UString::size_type to = 0;
+    UString str;
     GDBMIParser parser (gv_emb_str);
-    BOOST_REQUIRE (parser.parse_embedded_c_string (0, to, str)) ;
+    BOOST_REQUIRE (parser.parse_embedded_c_string (0, to, str));
 }
 
 void
 test_overloads_prompt ()
 {
-    vector<IDebugger::OverloadsChoiceEntry> prompts ;
-    UString::size_type cur = 0 ;
+    vector<IDebugger::OverloadsChoiceEntry> prompts;
+    UString::size_type cur = 0;
 
     GDBMIParser parser (gv_overloads_prompt0);
-    BOOST_REQUIRE (parser.parse_overloads_choice_prompt (cur, cur, prompts)) ;
+    BOOST_REQUIRE (parser.parse_overloads_choice_prompt (cur, cur, prompts));
     BOOST_REQUIRE_MESSAGE (prompts.size () == 4,
-                           "actually got " << prompts.size ()) ;
+                           "actually got " << prompts.size ());
 
-    cur=0 ;
-    prompts.clear () ;
+    cur=0;
+    prompts.clear ();
     parser.push_input (gv_overloads_prompt1);
-    BOOST_REQUIRE (parser.parse_overloads_choice_prompt (cur, cur, prompts)) ;
+    BOOST_REQUIRE (parser.parse_overloads_choice_prompt (cur, cur, prompts));
     BOOST_REQUIRE_MESSAGE (prompts.size () == 4,
-                           "actually got " << prompts.size ()) ;
+                           "actually got " << prompts.size ());
 }
 
 void
@@ -586,7 +586,7 @@ test_register_names ()
 
     GDBMIParser parser (gv_register_names);
 
-    BOOST_REQUIRE (parser.parse_register_names (cur, cur, regs)) ;
+    BOOST_REQUIRE (parser.parse_register_names (cur, cur, regs));
     BOOST_REQUIRE_EQUAL (regs.size (), 50u);
     BOOST_REQUIRE_EQUAL (regs[0], "eax");
     BOOST_REQUIRE_EQUAL (regs[1], "ecx");
@@ -647,7 +647,7 @@ test_changed_registers ()
     UString::size_type cur = 0;
 
     GDBMIParser parser (gv_changed_registers);
-    BOOST_REQUIRE (parser.parse_changed_registers (cur, cur, regs)) ;
+    BOOST_REQUIRE (parser.parse_changed_registers (cur, cur, regs));
     BOOST_REQUIRE_EQUAL (regs.size (), 18u);
     std::list<IDebugger::register_id_t>::const_iterator reg_iter = regs.begin ();
     BOOST_REQUIRE_EQUAL (*reg_iter++, 0u);
@@ -771,7 +771,7 @@ test_breakpoint_table ()
     UString::size_type cur = 0;
 
     GDBMIParser parser (gv_breakpoint_table0);
-    BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints)) ;
+    BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
     BOOST_REQUIRE_EQUAL (breakpoints.size (), 1u);
     std::map<int, IDebugger::BreakPoint>::const_iterator iter;
     iter = breakpoints.find (1);
@@ -833,7 +833,7 @@ test_file_list ()
     BOOST_REQUIRE (num_files == 126);
 }
 
-using boost::unit_test::test_suite ;
+using boost::unit_test::test_suite;
 
 NEMIVER_API test_suite*
 init_unit_test_suite (int argc, char **argv)
@@ -842,26 +842,26 @@ init_unit_test_suite (int argc, char **argv)
 
     NEMIVER_TRY
 
-    nemiver::common::Initializer::do_init () ;
+    nemiver::common::Initializer::do_init ();
 
-    test_suite *suite = BOOST_TEST_SUITE ("GDBMI tests") ;
-    suite->add (BOOST_TEST_CASE (&test_str0)) ;
-    suite->add (BOOST_TEST_CASE (&test_str1)) ;
-    suite->add (BOOST_TEST_CASE (&test_str2)) ;
-    suite->add (BOOST_TEST_CASE (&test_attr0)) ;
-    suite->add (BOOST_TEST_CASE (&test_stoppped_async_output)) ;
-    suite->add (BOOST_TEST_CASE (&test_running_async_output)) ;
-    suite->add (BOOST_TEST_CASE (&test_var_list_children)) ;
-    suite->add (BOOST_TEST_CASE (&test_output_record)) ;
-    suite->add (BOOST_TEST_CASE (&test_stack0)) ;
-    suite->add (BOOST_TEST_CASE (&test_stack_arguments0)) ;
-    suite->add (BOOST_TEST_CASE (&test_stack_arguments1)) ;
-    suite->add (BOOST_TEST_CASE (&test_local_vars)) ;
-    suite->add (BOOST_TEST_CASE (&test_member_variable)) ;
-    suite->add (BOOST_TEST_CASE (&test_var_with_member_variable)) ;
-    suite->add (BOOST_TEST_CASE (&test_var_with_comma)) ;
-    suite->add (BOOST_TEST_CASE (&test_embedded_string)) ;
-    suite->add (BOOST_TEST_CASE (&test_overloads_prompt)) ;
+    test_suite *suite = BOOST_TEST_SUITE ("GDBMI tests");
+    suite->add (BOOST_TEST_CASE (&test_str0));
+    suite->add (BOOST_TEST_CASE (&test_str1));
+    suite->add (BOOST_TEST_CASE (&test_str2));
+    suite->add (BOOST_TEST_CASE (&test_attr0));
+    suite->add (BOOST_TEST_CASE (&test_stoppped_async_output));
+    suite->add (BOOST_TEST_CASE (&test_running_async_output));
+    suite->add (BOOST_TEST_CASE (&test_var_list_children));
+    suite->add (BOOST_TEST_CASE (&test_output_record));
+    suite->add (BOOST_TEST_CASE (&test_stack0));
+    suite->add (BOOST_TEST_CASE (&test_stack_arguments0));
+    suite->add (BOOST_TEST_CASE (&test_stack_arguments1));
+    suite->add (BOOST_TEST_CASE (&test_local_vars));
+    suite->add (BOOST_TEST_CASE (&test_member_variable));
+    suite->add (BOOST_TEST_CASE (&test_var_with_member_variable));
+    suite->add (BOOST_TEST_CASE (&test_var_with_comma));
+    suite->add (BOOST_TEST_CASE (&test_embedded_string));
+    suite->add (BOOST_TEST_CASE (&test_overloads_prompt));
     suite->add (BOOST_TEST_CASE (&test_register_names));
     suite->add (BOOST_TEST_CASE (&test_changed_registers));
     suite->add (BOOST_TEST_CASE (&test_register_values));
@@ -870,10 +870,10 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_breakpoint_table));
     suite->add (BOOST_TEST_CASE (&test_breakpoint));
     suite->add (BOOST_TEST_CASE (&test_file_list));
-    return suite ;
+    return suite;
 
     NEMIVER_CATCH_NOX
 
-    return 0 ;
+    return 0;
 }
 

@@ -33,30 +33,30 @@
 namespace nemiver {
 namespace common {
 
-class ConfManager ;
-class Config ;
-class UString ;
-struct ConfigPriv ;
+class ConfManager;
+class Config;
+class UString;
+struct ConfigPriv;
 
-typedef SafePtr<Config, ObjectRef, ObjectUnref> ConfigSafePtr ;
+typedef SafePtr<Config, ObjectRef, ObjectUnref> ConfigSafePtr;
 
 class NEMIVER_API Config : public Object
 {
 
-    friend class ConfManager ;
-    friend class ConfigPriv ;
+    friend class ConfManager;
+    friend class ConfigPriv;
 
-    ConfigPriv *m_priv ;
+    ConfigPriv *m_priv;
 
-    Config () ;
-    Config (const Config &) ;
-    Config& operator= (const Config &) ;
-    virtual ~Config () ;
+    Config ();
+    Config (const Config &);
+    Config& operator= (const Config &);
+    virtual ~Config ();
 
 public:
 
-    bool get_property (const UString &a_name, UString &a_value) ;
-    void set_property (const UString a_name, const UString a_value) ;
+    bool get_property (const UString &a_name, UString &a_value);
+    void set_property (const UString a_name, const UString a_value);
 
 }
 ;//end class Config
@@ -64,29 +64,29 @@ public:
 class NEMIVER_API ConfManager
 {
     //forbid instantiation/copy/assignation
-    ConfManager () ;
-    ConfManager (const ConfManager &) ;
-    ConfManager& operator= (const ConfManager &) ;
+    ConfManager ();
+    ConfManager (const ConfManager &);
+    ConfManager& operator= (const ConfManager &);
 
-    static void set_config (const Config &a_conf) ;
+    static void set_config (const Config &a_conf);
 
 public:
 
-    static Config& parse_config_file (const UString &a_path) ;
+    static Config& parse_config_file (const UString &a_path);
 
-    static Config& parse_user_config_file (bool a_create_if_not_exist=true) ;
+    static Config& parse_user_config_file (bool a_create_if_not_exist=true);
 
     static bool user_config_dir_exists ();
 
     static const std::string& get_user_config_dir_path ();
 
-    static void create_default_config_file (const UString a_path) ;
+    static void create_default_config_file (const UString a_path);
 
-    static void create_default_config_file (std::ostream &a_ostream) ;
+    static void create_default_config_file (std::ostream &a_ostream);
 
-    static void init () ;
+    static void init ();
 
-    static Config& get_config () ;
+    static Config& get_config ();
 };//end class ConfManager
 
 }//end namespace common

@@ -55,7 +55,7 @@ protected:
     Document (const std::string& filename);
 
 public:
-    virtual ~Document () ;
+    virtual ~Document ();
     static DocumentSafePtr create ();
     static DocumentSafePtr create (const std::string& filename);
     ::HexDocument* cobj();

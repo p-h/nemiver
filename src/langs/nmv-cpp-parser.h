@@ -64,7 +64,7 @@ public:
     bool parse_log_or_expr (LogOrExprPtr &);
     bool parse_cond_expr (CondExprPtr &);
     bool parse_assign_expr (AssignExprPtr &);
-    bool parse_expr (ExprPtr &) ;
+    bool parse_expr (ExprPtr &);
     bool parse_const_expr (ConstExprPtr &);
     bool parse_class_or_namespace_name (UnqualifiedIDExprPtr &a_name);
     bool parse_type_name (UnqualifiedIDExprPtr &);

@@ -37,7 +37,7 @@
 #include "nmv-ustring.h"
 #include "nmv-dynamic-module.h"
 
-using namespace std ;
+using namespace std;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
@@ -49,7 +49,7 @@ class Initializer
 public:
     Initializer ()
     {
-        Glib::thread_init () ;
+        Glib::thread_init ();
     }
 
     ~Initializer ()
@@ -60,20 +60,20 @@ public:
 void
 do_init ()
 {
-    static Initializer init ;
+    static Initializer init;
 }
 
 const UString&
 get_system_config_file ()
 {
-    static UString path ;
+    static UString path;
     if (path.size () == 0) {
-        vector<string> path_elements ;
-        path_elements.push_back (get_system_config_dir ()) ;
-        path_elements.push_back ("nemiver.conf") ;
-        path = Glib::build_filename (path_elements).c_str () ;
+        vector<string> path_elements;
+        path_elements.push_back (get_system_config_dir ());
+        path_elements.push_back ("nemiver.conf");
+        path = Glib::build_filename (path_elements).c_str ();
     }
-    return path ;
+    return path;
 }
 
 const UString&
@@ -91,19 +91,19 @@ get_system_lib_dir ()
 #ifndef SYSTEM_LIBDIR
 #error The macro SYSTEM_LIBDIR must be set at compile time !
 #endif
-    static UString s_system_lib_dir (SYSTEM_LIBDIR) ;
-    return s_system_lib_dir ;
+    static UString s_system_lib_dir (SYSTEM_LIBDIR);
+    return s_system_lib_dir;
 }
 
 const UString&
 get_glade_files_dir ()
 {
-    static UString s_glade_files_dir ;
+    static UString s_glade_files_dir;
     if (s_glade_files_dir == "") {
-        vector<string> path_elems ;
+        vector<string> path_elems;
         path_elems.push_back (get_data_dir ());
-        path_elems.push_back ("nemiver") ;
-        path_elems.push_back ("glade") ;
+        path_elems.push_back ("nemiver");
+        path_elems.push_back ("glade");
         s_glade_files_dir = Glib::build_filename (path_elems).c_str ();
     }
     return s_glade_files_dir;
@@ -112,12 +112,12 @@ get_glade_files_dir ()
 const UString&
 get_menu_files_dir ()
 {
-    static UString s_menu_files_dir ;
+    static UString s_menu_files_dir;
     if (s_menu_files_dir == "") {
-        vector<string> path_elems ;
+        vector<string> path_elems;
         path_elems.push_back (get_data_dir ());
-        path_elems.push_back ("nemiver") ;
-        path_elems.push_back ("menus") ;
+        path_elems.push_back ("nemiver");
+        path_elems.push_back ("menus");
         s_menu_files_dir = Glib::build_filename (path_elems).c_str ();
     }
     return s_menu_files_dir;
@@ -126,12 +126,12 @@ get_menu_files_dir ()
 const UString&
 get_image_files_dir ()
 {
-    static UString s_menu_files_dir ;
+    static UString s_menu_files_dir;
     if (s_menu_files_dir == "") {
-        vector<string> path_elems ;
+        vector<string> path_elems;
         path_elems.push_back (get_data_dir ());
-        path_elems.push_back ("nemiver") ;
-        path_elems.push_back ("images") ;
+        path_elems.push_back ("nemiver");
+        path_elems.push_back ("images");
         s_menu_files_dir = Glib::build_filename (path_elems).c_str ();
     }
     return s_menu_files_dir;
@@ -147,8 +147,8 @@ get_install_prefix ()
     //maybe we'll need to change the way we compute
     //this to allow the choice of install prefix
     //at install time.
-    static UString s_path (NEMIVER_INSTALL_PREFIX) ;
-    return s_path ;
+    static UString s_path (NEMIVER_INSTALL_PREFIX);
+    return s_path;
 }
 
 const UString&
@@ -158,8 +158,8 @@ get_system_config_dir ()
 #error The macro NEMIVER_SYSTEM_CONFIG_DIR must be set at compile time !
 #endif
     //this macro must be computed at compile time.
-    static UString s_path (NEMIVER_SYSTEM_CONFIG_DIR) ;
-    return s_path ;
+    static UString s_path (NEMIVER_SYSTEM_CONFIG_DIR);
+    return s_path;
 }
 
 const UString&
@@ -169,21 +169,21 @@ get_system_modules_dir ()
 #error The macro NEMIVER_MODULES_DIR must be set at compile time !
 #endif
     //this macro must be set at compile time.
-    static UString s_path (NEMIVER_MODULES_DIR) ;
-    return s_path ;
+    static UString s_path (NEMIVER_MODULES_DIR);
+    return s_path;
 }
 
 const UString&
 get_system_modules_config_file ()
 {
-    static UString path ;
+    static UString path;
     if (path.size () == 0) {
-        vector<string> path_elements ;
-        path_elements.push_back (get_system_config_dir ()) ;
-        path_elements.push_back ("nemivermodules.conf") ;
-        path = Glib::build_filename (path_elements).c_str () ;
+        vector<string> path_elements;
+        path_elements.push_back (get_system_config_dir ());
+        path_elements.push_back ("nemivermodules.conf");
+        path = Glib::build_filename (path_elements).c_str ();
     }
-    return path ;
+    return path;
 }
 
 const UString&
@@ -195,21 +195,21 @@ get_system_plugins_dir ()
 #endif
 
     static UString s_path (NEMIVER_PLUGINS_DIR);
-    return s_path ;
+    return s_path;
 }
 
 const UString&
 get_user_db_dir ()
 {
-    static UString s_path ;
+    static UString s_path;
     if (s_path.size () == 0) {
-        vector<string> path_elements ;
-        string home = Glib::get_home_dir () ;
-        path_elements.push_back (home) ;
-        path_elements.push_back (".nemiver") ;
+        vector<string> path_elements;
+        string home = Glib::get_home_dir ();
+        path_elements.push_back (home);
+        path_elements.push_back (".nemiver");
         s_path = Glib::build_filename (path_elements).c_str ();
     }
-    return s_path ;
+    return s_path;
 }
 
 const UString&
@@ -221,62 +221,62 @@ get_gdb_program ()
 #endif
 
     static const UString s_gdb_prog (GDB_PROG);
-    return s_gdb_prog ;
+    return s_gdb_prog;
 }
 
 bool
 create_user_db_dir ()
 {
     gint error =
-        g_mkdir_with_parents (get_user_db_dir ().c_str (), S_IRWXU) ;
+        g_mkdir_with_parents (get_user_db_dir ().c_str (), S_IRWXU);
     if (!error)
-        return true ;
-    return false ;
+        return true;
+    return false;
 }
 
 UString
 build_path_to_glade_file (const UString &a_glade_file_name)
 {
-    UString dir (get_glade_files_dir ()) ;
-    vector<string> path_elems ;
-    path_elems.push_back (dir.c_str ()) ;
-    path_elems.push_back (a_glade_file_name) ;
-    UString path_to_glade = Glib::build_filename (path_elems).c_str () ;
+    UString dir (get_glade_files_dir ());
+    vector<string> path_elems;
+    path_elems.push_back (dir.c_str ());
+    path_elems.push_back (a_glade_file_name);
+    UString path_to_glade = Glib::build_filename (path_elems).c_str ();
     if (!Glib::file_test (path_to_glade.c_str (),
                          Glib::FILE_TEST_IS_REGULAR)) {
-        THROW ("couldn't find file " + path_to_glade) ;
+        THROW ("couldn't find file " + path_to_glade);
     }
-    return path_to_glade ;
+    return path_to_glade;
 }
 
 UString
 build_path_to_menu_file (const UString &a_menu_file_name)
 {
-    UString dir (get_menu_files_dir ()), path_to_menu_file ;
-    vector<string> path_elems ;
-    path_elems.push_back (dir.c_str ()) ;
-    path_elems.push_back (a_menu_file_name) ;
-    path_to_menu_file = Glib::build_filename (path_elems).c_str () ;
+    UString dir (get_menu_files_dir ()), path_to_menu_file;
+    vector<string> path_elems;
+    path_elems.push_back (dir.c_str ());
+    path_elems.push_back (a_menu_file_name);
+    path_to_menu_file = Glib::build_filename (path_elems).c_str ();
     if (!Glib::file_test (path_to_menu_file.c_str (),
                           Glib::FILE_TEST_IS_REGULAR)) {
-        THROW ("couldn't find file " + path_to_menu_file) ;
+        THROW ("couldn't find file " + path_to_menu_file);
     }
-    return path_to_menu_file ;
+    return path_to_menu_file;
 }
 
 UString
 build_path_to_image_file (const UString &a_image_file_name)
 {
-    UString dir (get_image_files_dir ()) ;
-    vector<string> path_elems ;
-    path_elems.push_back (dir.c_str ()) ;
-    path_elems.push_back (a_image_file_name) ;
-    UString result = Glib::build_filename (path_elems).c_str () ;
+    UString dir (get_image_files_dir ());
+    vector<string> path_elems;
+    path_elems.push_back (dir.c_str ());
+    path_elems.push_back (a_image_file_name);
+    UString result = Glib::build_filename (path_elems).c_str ();
     if (!Glib::file_test (result.c_str (),
                           Glib::FILE_TEST_IS_REGULAR)) {
-        THROW ("couldn't find file " + result) ;
+        THROW ("couldn't find file " + result);
     }
-    return result ;
+    return result;
 }
 
 UString

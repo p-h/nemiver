@@ -7,11 +7,11 @@
 #include "common/nmv-exception.h"
 #include "nmv-i-var-list-walker.h"
 
-using namespace nemiver ;
-using namespace nemiver::common ;
+using namespace nemiver;
+using namespace nemiver::common;
 
 Glib::RefPtr<Glib::MainLoop> s_loop =
-    Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+    Glib::MainLoop::create (Glib::MainContext::get_default ());
 static int nb_vars_created;
 static int nb_vars_created2;
 static int nb_vars_deleted;

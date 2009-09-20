@@ -32,21 +32,21 @@ namespace common {
 
 Initializer::Initializer ()
 {
-    setlocale (LC_ALL, "") ;
+    setlocale (LC_ALL, "");
     Glib::init ();
-    Glib::thread_init () ;
-    ConfManager::init () ;
+    Glib::thread_init ();
+    ConfManager::init ();
 }
 
 Initializer::~Initializer ()
 {
-    xmlCleanupParser () ;
+    xmlCleanupParser ();
 }
 
 void
 Initializer::do_init ()
 {
-    static Initializer s_init ;
+    static Initializer s_init;
 }
 
 }//end namespace common

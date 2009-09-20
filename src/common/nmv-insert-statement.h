@@ -31,29 +31,29 @@
 namespace nemiver {
 namespace common {
 
-struct InsertStatementPriv ;
+struct InsertStatementPriv;
 class NEMIVER_API InsertStatement : public SQLStatement
 {
     friend struct InsertStatementPriv;
-    InsertStatementPriv *m_priv ;
+    InsertStatementPriv *m_priv;
 
     //forbid copy
-    InsertStatement (const InsertStatement &) ;
-    InsertStatement& operator= (const InsertStatement &) ;
+    InsertStatement (const InsertStatement &);
+    InsertStatement& operator= (const InsertStatement &);
 
 public:
 
     InsertStatement (const common::UString &a_table_name,
-                     ColumnList &a_columns) ;
-    ~InsertStatement () ;
+                     ColumnList &a_columns);
+    ~InsertStatement ();
 
-    const common::UString& to_string () const ;
+    const common::UString& to_string () const;
 
-    const ColumnList& get_columns () const ;
+    const ColumnList& get_columns () const;
 
-    const common::UString& get_table_name () const ;
+    const common::UString& get_table_name () const;
 
-    void set (const common::UString &a_table_name, ColumnList &a_columns) ;
+    void set (const common::UString &a_table_name, ColumnList &a_columns);
 };//end InsertStatement
 
 }// end namespace common

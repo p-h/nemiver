@@ -33,7 +33,7 @@
 #include "nmv-sqlite-cnx-drv.h"
 #include "nmv-sqlite-cnx-mgr-drv.h"
 
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
@@ -45,20 +45,20 @@ struct SqliteCnxMgrDrvPriv {
 SqliteCnxMgrDrv::SqliteCnxMgrDrv (DynamicModule *a_dynmod) :
     IConnectionManagerDriver (a_dynmod)
 {
-    m_priv = new SqliteCnxMgrDrvPriv () ;
+    m_priv = new SqliteCnxMgrDrvPriv ();
 
     //this is a singleton.
-    enable_refcount (false) ;
+    enable_refcount (false);
 }
 
 SqliteCnxMgrDrv::~SqliteCnxMgrDrv ()
 {
     if (!m_priv) {
-        return ;
+        return;
     }
 
-    delete m_priv ;
-    m_priv = NULL ;
+    delete m_priv;
+    m_priv = NULL;
 }
 
 
@@ -74,36 +74,36 @@ SqliteCnxMgrDrv::connect_to_db (const DBDesc &a_db_desc,
 
     //HACK. As we are using sqlite, make sure to use a db file
     //that is in $HOME/.nemiver/db/sqlite
-    UString db_name (a_db_desc.name ()) ;
+    UString db_name (a_db_desc.name ());
     if (!Glib::path_is_absolute (db_name)) {
         if (!Glib::file_test (env::get_user_db_dir (),
                               Glib::FILE_TEST_IS_DIR)) {
-            env::create_user_db_dir () ;
+            env::create_user_db_dir ();
         }
         db_name = Glib::build_filename (env::get_user_db_dir (),
-                                        db_name).c_str () ;
+                                        db_name).c_str ();
     }
 
-    int result = sqlite3_open (db_name.c_str (), &sqlite) ;
+    int result = sqlite3_open (db_name.c_str (), &sqlite);
     if (result != SQLITE_OK) {
         THROW ("could not connect to sqlite database: "
-               + UString (sqlite3_errmsg(sqlite))) ;
+               + UString (sqlite3_errmsg(sqlite)));
         sqlite3_close (sqlite);
         exit(1);
     }
     common::IConnectionDriverSafePtr connection_driver
-                                            (new SqliteCnxDrv (sqlite)) ;
-    return connection_driver ;
+                                            (new SqliteCnxDrv (sqlite));
+    return connection_driver;
 }
 
 class SqliteCnxMgrModule : public DynamicModule {
     void get_info (Info &a_info) const
     {
-        a_info.module_name = "org.nemiver.db.sqlitedriver.default" ;
+        a_info.module_name = "org.nemiver.db.sqlitedriver.default";
         a_info.module_description = "The nemiver database driver for sqlite."
                                     " Implements the IConnectionManagerDriver "
-                                    "iface" ;
-        a_info.module_version = "0.0.1" ;
+                                    "iface";
+        a_info.module_version = "0.0.1";
     }
 
     void do_init ()
@@ -114,13 +114,13 @@ class SqliteCnxMgrModule : public DynamicModule {
                            DynModIfaceSafePtr &a_iface)
     {
         if (a_iface_name == "IConnectionManagerDriver") {
-            static SqliteCnxMgrDrv s_driver (this) ;
-            s_driver.enable_refcount (false) ;
-            a_iface.reset (&s_driver, true) ;
+            static SqliteCnxMgrDrv s_driver (this);
+            s_driver.enable_refcount (false);
+            a_iface.reset (&s_driver, true);
         } else {
-            return false ;
+            return false;
         }
-        return true ;
+        return true;
     }
 };//end class SqliteCnxMgrModule
 
@@ -134,22 +134,22 @@ bool
 NEMIVER_API
 nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
-    RETURN_VAL_IF_FAIL (a_new_instance, false) ;
+    RETURN_VAL_IF_FAIL (a_new_instance, false);
 
     try {
         nemiver::common::sqlite::SqliteCnxMgrModule *module =
-            new nemiver::common::sqlite::SqliteCnxMgrModule ;
-        *a_new_instance = module ;
+            new nemiver::common::sqlite::SqliteCnxMgrModule;
+        *a_new_instance = module;
     } catch (std::exception &e) {
-        TRACE_EXCEPTION (e) ;
-        return false ;
+        TRACE_EXCEPTION (e);
+        return false;
     } catch (Glib::Exception &e) {
-        TRACE_EXCEPTION (e) ;
-        return false ;
+        TRACE_EXCEPTION (e);
+        return false;
     } catch (...) {
-        LOG ("Got an unknown exception") ;
-        return false ;
+        LOG ("Got an unknown exception");
+        return false;
     }
-    return true ;
+    return true;
 }
 }//end extern C

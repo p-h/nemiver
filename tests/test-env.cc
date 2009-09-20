@@ -28,10 +28,10 @@ init_unit_test_suite (int argc, char** argv)
 
     NEMIVER_TRY
 
-    Initializer::do_init () ;
+    Initializer::do_init ();
 
-    test_suite *suite = BOOST_TEST_SUITE ("nemiver env tests") ;
-    suite->add (BOOST_TEST_CASE (&test_build_path_to_help_file)) ;
+    test_suite *suite = BOOST_TEST_SUITE ("nemiver env tests");
+    suite->add (BOOST_TEST_CASE (&test_build_path_to_help_file));
     return suite;
 
     NEMIVER_CATCH_NOX

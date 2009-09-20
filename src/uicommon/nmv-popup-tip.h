@@ -30,29 +30,29 @@
 #include "common/nmv-ustring.h"
 #include "common/nmv-safe-ptr-utils.h"
 
-using nemiver::common::UString ;
+using nemiver::common::UString;
 using nemiver::common::SafePtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class PopupTip : public Gtk::Window {
     //non copyable
-    PopupTip (const PopupTip&) ;
-    PopupTip& operator= (const PopupTip&) ;
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    PopupTip (const PopupTip&);
+    PopupTip& operator= (const PopupTip&);
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
-    PopupTip (const UString &a_text="") ;
+    PopupTip (const UString &a_text="");
     virtual ~PopupTip ();
-    void text (const UString &) ;
-    UString text () const ;
+    void text (const UString &);
+    UString text () const;
     void set_child (Gtk::Widget &a_widget);
-    void set_show_position (int a_x, int a_y) ;
-    void show () ;
-    void show_all () ;
-    void show_at_position (int a_x, int a_y) ;
+    void set_show_position (int a_x, int a_y);
+    void show ();
+    void show_all ();
+    void show_at_position (int a_x, int a_y);
 };//end class PopupTip
 
 NEMIVER_END_NAMESPACE (nemiver)

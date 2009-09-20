@@ -28,12 +28,12 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 struct OutputHandlerList::Priv {
-    list<OutputHandlerSafePtr> output_handlers ;
+    list<OutputHandlerSafePtr> output_handlers;
 };//end OutputHandlerList
 
 OutputHandlerList::OutputHandlerList ()
 {
-    m_priv.reset (new OutputHandlerList::Priv) ;
+    m_priv.reset (new OutputHandlerList::Priv);
 }
 
 OutputHandlerList::~OutputHandlerList ()
@@ -43,20 +43,20 @@ OutputHandlerList::~OutputHandlerList ()
 void
 OutputHandlerList::add (const OutputHandlerSafePtr &a_handler)
 {
-    THROW_IF_FAIL (m_priv) ;
-    m_priv->output_handlers.push_back (a_handler) ;
+    THROW_IF_FAIL (m_priv);
+    m_priv->output_handlers.push_back (a_handler);
 }
 
 void
 OutputHandlerList::submit_command_and_output (CommandAndOutput &a_cao)
 {
-    list<OutputHandlerSafePtr>::iterator iter ;
-    for (iter = m_priv->output_handlers.begin () ;
+    list<OutputHandlerSafePtr>::iterator iter;
+    for (iter = m_priv->output_handlers.begin ();
             iter != m_priv->output_handlers.end ();
             ++iter)
     {
         if ((*iter)->can_handle (a_cao)) {
-            (*iter)->do_handle (a_cao) ;
+            (*iter)->do_handle (a_cao);
         }
     }
 }

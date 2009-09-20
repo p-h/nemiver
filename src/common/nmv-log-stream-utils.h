@@ -83,7 +83,7 @@ LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << message << nemiver::comm
 
 #ifndef LOG_D
 #define LOG_D(message, domain) \
-LOG_STREAM.push_domain (domain) ; LOG (message) ; LOG_STREAM.pop_domain ();
+LOG_STREAM.push_domain (domain); LOG (message) ; LOG_STREAM.pop_domain ();
 #endif
 
 #ifndef LOG_DD
@@ -102,7 +102,7 @@ LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_EXCEPTION << HERE << message << 
 
 #ifndef LOG_ERROR_D
 #define LOG_ERROR_D(message, domain) \
-LOG_STREAM.push_domain (domain) ; LOG_ERROR (message) ; LOG_STREAM.pop_domain() ;
+LOG_STREAM.push_domain (domain); LOG_ERROR (message) ; LOG_STREAM.pop_domain() ;
 #endif
 
 #ifndef LOG_ERROR_DD
@@ -116,34 +116,34 @@ LOG_STREAM << LOG_LEVEL_VERBOSE___ << LOG_MARKER_INFO << HERE << message << nemi
 
 #ifndef LOG_VERBOSE_D
 #define LOG_VERBOSE_D(message) \
-LOG_STREAM.push_domain (domain) ; LOG_VERBOSE(message) ;LOG_STREAM.pop_domain();
+LOG_STREAM.push_domain (domain); LOG_VERBOSE(message) ;LOG_STREAM.pop_domain();
 #endif
 
 #ifndef LOG_SCOPE_VERBOSE
 #define LOG_SCOPE_VERBOSE(scopename) \
-nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE) ;
+nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE);
 #endif
 
 #ifndef LOG_SCOPE
 #define LOG_SCOPE(scopename) \
-nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL) ;
+nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL);
 #endif
 
 #ifndef LOG_SCOPE_D
 #define LOG_SCOPE_D(scopename, domain) \
 nemiver::common::ScopeLogger scope_logger \
-        (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE, domain) ;
+        (scopename, nemiver::common::LogStream::LOG_LEVEL_VERBOSE, domain);
 #endif
 
 #ifndef LOG_SCOPE_NORMAL
 #define LOG_SCOPE_NORMAL(scopename) \
-nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL) ;
+nemiver::common::ScopeLogger scope_logger (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL);
 #endif
 
 #ifndef LOG_SCOPE_NORMAL_D
 #define LOG_SCOPE_NORMAL_D(scopename, domain) \
 nemiver::common::ScopeLogger scope_logger \
-    (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL, domain) ;
+    (scopename, nemiver::common::LogStream::LOG_LEVEL_NORMAL, domain);
 #endif
 
 #ifndef LOG_FUNCTION_SCOPE
@@ -177,7 +177,7 @@ LOG_D ("object '" \
        << a_name \
        << "' refcount: " \
        << (int) a_object_ptr->get_refcount (), \
-       "refcount-domain") ;
+       "refcount-domain");
 #endif //LOG_REF_COUNT
 
 #endif // NMV_LOG_STREAM_UTILS_H__

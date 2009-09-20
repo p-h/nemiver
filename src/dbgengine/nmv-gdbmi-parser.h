@@ -31,22 +31,22 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class GDBMITuple ;
-class GDBMIResult ;
-class GDBMIValue ;
-class GDBMIList ;
-typedef SafePtr<GDBMIResult, ObjectRef, ObjectUnref> GDBMIResultSafePtr ;
-typedef SafePtr<GDBMITuple, ObjectRef, ObjectUnref> GDBMITupleSafePtr ;
+class GDBMITuple;
+class GDBMIResult;
+class GDBMIValue;
+class GDBMIList;
+typedef SafePtr<GDBMIResult, ObjectRef, ObjectUnref> GDBMIResultSafePtr;
+typedef SafePtr<GDBMITuple, ObjectRef, ObjectUnref> GDBMITupleSafePtr;
 typedef SafePtr<GDBMIValue, ObjectRef, ObjectUnref> GDBMIValueSafePtr;
-typedef SafePtr<GDBMIList, ObjectRef, ObjectUnref> GDBMIListSafePtr ;
+typedef SafePtr<GDBMIList, ObjectRef, ObjectUnref> GDBMIListSafePtr;
 
 /// This type abstracts a GDB/MI TUPLE.
 /// TUPLE ==>   "{}" | "{" RESULT ( "," RESULT )* "}"
 class GDBMITuple : public Object {
-    GDBMITuple (const GDBMITuple&) ;
-    GDBMITuple& operator= (const GDBMITuple&) ;
+    GDBMITuple (const GDBMITuple&);
+    GDBMITuple& operator= (const GDBMITuple&);
 
-    list<GDBMIResultSafePtr> m_content ;
+    list<GDBMIResultSafePtr> m_content;
 
 public:
 
@@ -69,14 +69,14 @@ public:
 /// LIST is a GDBMIList class.
 /// please, read the GDB/MI output syntax documentation for more.
 class GDBMIValue : public Object {
-    GDBMIValue (const GDBMIValue&) ;
-    GDBMIValue& operator= (const GDBMIValue&) ;
+    GDBMIValue (const GDBMIValue&);
+    GDBMIValue& operator= (const GDBMIValue&);
     typedef boost::variant<bool,
                            UString,
                            GDBMIListSafePtr,
-                           GDBMITupleSafePtr> ContentType ;
-    ContentType m_content ;
-    friend class GDBMIResult ;
+                           GDBMITupleSafePtr> ContentType;
+    ContentType m_content;
+    friend class GDBMIResult;
 
 
 public:
@@ -89,48 +89,48 @@ public:
 
     GDBMIValue () {m_content = false;}
 
-    GDBMIValue (const UString &a_str) {m_content = a_str ;}
+    GDBMIValue (const UString &a_str) {m_content = a_str;}
 
     GDBMIValue (const GDBMIListSafePtr &a_list)
     {
-        m_content = a_list ;
+        m_content = a_list;
     }
 
     GDBMIValue (const GDBMITupleSafePtr &a_tuple)
     {
-        m_content = a_tuple ;
+        m_content = a_tuple;
     }
 
     Type content_type () const {return (Type) m_content.which ();}
 
     const UString& get_string_content ()
     {
-        THROW_IF_FAIL (content_type () == STRING_TYPE) ;
-        return boost::get<UString> (m_content) ;
+        THROW_IF_FAIL (content_type () == STRING_TYPE);
+        return boost::get<UString> (m_content);
     }
 
     const GDBMIListSafePtr get_list_content () const
     {
-        THROW_IF_FAIL (content_type () == LIST_TYPE) ;
-        return boost::get<GDBMIListSafePtr> (m_content) ;
+        THROW_IF_FAIL (content_type () == LIST_TYPE);
+        return boost::get<GDBMIListSafePtr> (m_content);
     }
     GDBMIListSafePtr get_list_content ()
     {
-        THROW_IF_FAIL (content_type () == LIST_TYPE) ;
-        return boost::get<GDBMIListSafePtr> (m_content) ;
+        THROW_IF_FAIL (content_type () == LIST_TYPE);
+        return boost::get<GDBMIListSafePtr> (m_content);
     }
 
     const GDBMITupleSafePtr get_tuple_content () const
     {
-        THROW_IF_FAIL (content_type () == TUPLE_TYPE) ;
-        THROW_IF_FAIL (boost::get<GDBMITupleSafePtr> (&m_content)) ;
-        return boost::get<GDBMITupleSafePtr> (m_content) ;
+        THROW_IF_FAIL (content_type () == TUPLE_TYPE);
+        THROW_IF_FAIL (boost::get<GDBMITupleSafePtr> (&m_content));
+        return boost::get<GDBMITupleSafePtr> (m_content);
     }
     GDBMITupleSafePtr get_tuple_content ()
     {
-        THROW_IF_FAIL (content_type () == TUPLE_TYPE) ;
-        THROW_IF_FAIL (boost::get<GDBMITupleSafePtr> (&m_content)) ;
-        return boost::get<GDBMITupleSafePtr> (m_content) ;
+        THROW_IF_FAIL (content_type () == TUPLE_TYPE);
+        THROW_IF_FAIL (boost::get<GDBMITupleSafePtr> (&m_content));
+        return boost::get<GDBMITupleSafePtr> (m_content);
     }
 
 
@@ -148,11 +148,11 @@ public:
 /// It syntax looks like VARIABLE=VALUE,
 /// where VALUE is a complex type.
 class GDBMIResult : public Object {
-    GDBMIResult (const GDBMIResult&) ;
-    GDBMIResult& operator= (const GDBMIResult&) ;
+    GDBMIResult (const GDBMIResult&);
+    GDBMIResult& operator= (const GDBMIResult&);
 
-    UString m_variable ;
-    GDBMIValueSafePtr m_value ;
+    UString m_variable;
+    GDBMIValueSafePtr m_value;
     bool m_is_singular;
 
 public:
@@ -176,12 +176,12 @@ public:
 
 /// A GDB/MI LIST. It can be a list of either GDB/MI Result or GDB/MI Value.
 class GDBMIList : public Object {
-    GDBMIList (const GDBMIList &) ;
-    GDBMIList& operator= (const GDBMIList &) ;
+    GDBMIList (const GDBMIList &);
+    GDBMIList& operator= (const GDBMIList &);
 
-    //boost::variant<list<GDBMIResultSafePtr>, list<GDBMIValueSafePtr> > m_content ;
-    list<boost::variant<GDBMIResultSafePtr, GDBMIValueSafePtr> >  m_content ;
-    bool m_empty ;
+    //boost::variant<list<GDBMIResultSafePtr>, list<GDBMIValueSafePtr> > m_content;
+    list<boost::variant<GDBMIResultSafePtr, GDBMIValueSafePtr> >  m_content;
+    bool m_empty;
 
 public:
     enum ContentType {
@@ -197,46 +197,46 @@ public:
     GDBMIList (const GDBMITupleSafePtr &a_tuple) :
         m_empty (false)
     {
-        GDBMIValueSafePtr value (new GDBMIValue (a_tuple)) ;
-        //list<GDBMIValueSafePtr> value_list ; value_list.push_back (value) ;
-        //list<GDBMIValueSafePtr> value_list ; value_list.push_back (value) ;
-        //m_content = value_list ;
-        m_content.push_back (value) ;
+        GDBMIValueSafePtr value (new GDBMIValue (a_tuple));
+        //list<GDBMIValueSafePtr> value_list; value_list.push_back (value) ;
+        //list<GDBMIValueSafePtr> value_list; value_list.push_back (value) ;
+        //m_content = value_list;
+        m_content.push_back (value);
     }
 
     GDBMIList (const UString &a_str) :
         m_empty (false)
     {
-        GDBMIValueSafePtr value (new GDBMIValue (a_str)) ;
-        //list<GDBMIValueSafePtr> list ;
-        //list.push_back (value) ;
-        //m_content = list ;
-        m_content.push_back (value) ;
+        GDBMIValueSafePtr value (new GDBMIValue (a_str));
+        //list<GDBMIValueSafePtr> list;
+        //list.push_back (value);
+        //m_content = list;
+        m_content.push_back (value);
     }
 
     GDBMIList (const GDBMIResultSafePtr &a_result) :
         m_empty (false)
     {
-        //list<GDBMIResultSafePtr> list ;
-        //list.push_back (a_result) ;
-        //m_content = list ;
-        m_content.push_back (a_result) ;
+        //list<GDBMIResultSafePtr> list;
+        //list.push_back (a_result);
+        //m_content = list;
+        m_content.push_back (a_result);
     }
 
     GDBMIList (const GDBMIValueSafePtr &a_value) :
         m_empty (false)
     {
-        //list<GDBMIValueSafePtr> list ;
-        //list.push_back (a_value) ;
-        //m_content = list ;
-        m_content.push_back (a_value) ;
+        //list<GDBMIValueSafePtr> list;
+        //list.push_back (a_value);
+        //m_content = list;
+        m_content.push_back (a_value);
     }
 
     virtual ~GDBMIList () {}
     ContentType content_type () const
     {
         if (m_content.empty ()) {
-            return UNDEFINED_TYPE ;
+            return UNDEFINED_TYPE;
         }
         return (ContentType) m_content.front ().which ();
     }
@@ -245,40 +245,40 @@ public:
 
     void append (const GDBMIResultSafePtr &a_result)
     {
-        THROW_IF_FAIL (a_result) ;
+        THROW_IF_FAIL (a_result);
         if (!m_content.empty ()) {
-            THROW_IF_FAIL (m_content.front ().which () == RESULT_TYPE) ;
+            THROW_IF_FAIL (m_content.front ().which () == RESULT_TYPE);
         }
-        m_content.push_back (a_result) ;
-        m_empty = false ;
+        m_content.push_back (a_result);
+        m_empty = false;
     }
     void append (const GDBMIValueSafePtr &a_value)
     {
-        THROW_IF_FAIL (a_value) ;
+        THROW_IF_FAIL (a_value);
         if (!m_content.empty ()) {
-            THROW_IF_FAIL (m_content.front ().which () == VALUE_TYPE) ;
+            THROW_IF_FAIL (m_content.front ().which () == VALUE_TYPE);
         }
-        m_content.push_back (a_value) ;
-        m_empty = false ;
+        m_content.push_back (a_value);
+        m_empty = false;
     }
 
     void get_result_content (list<GDBMIResultSafePtr> &a_list) const
     {
         if (empty ()) {return;}
-        THROW_IF_FAIL (content_type () == RESULT_TYPE) ;
+        THROW_IF_FAIL (content_type () == RESULT_TYPE);
         list<boost::variant<GDBMIResultSafePtr,GDBMIValueSafePtr> >::const_iterator it;
-        for (it= m_content.begin () ; it!= m_content.end () ; ++it) {
-            a_list.push_back (boost::get<GDBMIResultSafePtr> (*it)) ;
+        for (it= m_content.begin (); it!= m_content.end () ; ++it) {
+            a_list.push_back (boost::get<GDBMIResultSafePtr> (*it));
         }
     }
 
     void get_value_content (list<GDBMIValueSafePtr> &a_list) const
     {
         if (empty ()) {return;}
-        THROW_IF_FAIL (content_type () == VALUE_TYPE) ;
+        THROW_IF_FAIL (content_type () == VALUE_TYPE);
         list<boost::variant<GDBMIResultSafePtr,GDBMIValueSafePtr> >::const_iterator it;
-        for (it= m_content.begin () ; it!= m_content.end () ; ++it) {
-            a_list.push_back (boost::get<GDBMIValueSafePtr> (*it)) ;
+        for (it= m_content.begin (); it!= m_content.end () ; ++it) {
+            a_list.push_back (boost::get<GDBMIValueSafePtr> (*it));
         }
     }
 };//end class GDBMIList
@@ -287,20 +287,20 @@ public:
 //<gdbmi datastructure streaming operators>
 //******************************************
 
-ostream& operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val) ;
+ostream& operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val);
 
-ostream& operator<< (ostream &a_out, const GDBMIResultSafePtr &a_result) ;
+ostream& operator<< (ostream &a_out, const GDBMIResultSafePtr &a_result);
 
-ostream& operator<< (ostream &a_out, const GDBMITupleSafePtr &a_tuple) ;
-
-ostream&
-operator<< (ostream &a_out, const GDBMIListSafePtr a_list) ;
+ostream& operator<< (ostream &a_out, const GDBMITupleSafePtr &a_tuple);
 
 ostream&
-operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val) ;
+operator<< (ostream &a_out, const GDBMIListSafePtr a_list);
+
+ostream&
+operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val);
 
 std::ostream&
-operator<< (std::ostream &a_out, const IDebugger::Variable &a_var) ;
+operator<< (std::ostream &a_out, const IDebugger::Variable &a_var);
 
 //******************************************
 //</gdbmi datastructure streaming operators>
@@ -381,7 +381,7 @@ public:
 
     bool parse_embedded_c_string (UString::size_type a_from,
                                   UString::size_type &a_to,
-                                  UString &a_string) ;
+                                  UString &a_string);
 
     /// parse a GDB/MI Result data structure.
     /// A result basically has the form:
@@ -408,7 +408,7 @@ public:
     //// \param a_value the result of the parsing.
     bool parse_gdbmi_value (UString::size_type a_from,
                             UString::size_type &a_to,
-                            GDBMIValueSafePtr &a_value) ;
+                            GDBMIValueSafePtr &a_value);
 
     /// parse a GDB/MI Tuple is a actualy a set of name=value constructs,
     /// where 'value' can be quite complicated.

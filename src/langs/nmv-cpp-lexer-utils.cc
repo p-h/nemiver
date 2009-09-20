@@ -37,13 +37,13 @@ token_type_as_string (const Token &a_token, std::string &a_out)
             a_out = "UNDEFINED";
             break;
         case Token::IDENTIFIER:
-            a_out = "IDENTIFIER" ;
+            a_out = "IDENTIFIER";
             break;
         case Token::KEYWORD:
             a_out = "KEYWORD";
             break;
         case Token::INTEGER_LITERAL:
-            a_out = "INTEGER_LITERAL" ;
+            a_out = "INTEGER_LITERAL";
             break;
         case Token::CHARACTER_LITERAL:
             a_out = "CHARACTER_LITERAL";
@@ -58,7 +58,7 @@ token_type_as_string (const Token &a_token, std::string &a_out)
             a_out = "BOOLEAN_LITERAL";
             break;
         case Token::OPERATOR_NEW:
-            a_out = "OPERATOR_NEW" ;
+            a_out = "OPERATOR_NEW";
             break;
         case Token::OPERATOR_DELETE:
             a_out = "OPERATOR_DELETE";
@@ -223,13 +223,13 @@ token_type_as_string (const Token &a_token, std::string &a_out)
             a_out="UNKNOWN_TOKEN";
             return false;
     }
-    return true ;
+    return true;
 }
 
 bool
 token_as_string (const Token &a_token, std::string &a_out)
 {
-    token_type_as_string (a_token, a_out) ;
+    token_type_as_string (a_token, a_out);
     switch (a_token.get_kind ()) {
         case Token::IDENTIFIER:
         case Token::KEYWORD:
@@ -239,7 +239,7 @@ token_as_string (const Token &a_token, std::string &a_out)
             a_out += ":" + a_token.get_str_value ();
             break;
         case Token::BOOLEAN_LITERAL:
-            a_out += ":" + UString::from_int (a_token.get_int_value ()).raw () ;
+            a_out += ":" + UString::from_int (a_token.get_int_value ()).raw ();
             break;
         default:
             break;
@@ -251,7 +251,7 @@ std::ostream&
 operator<< (std::ostream &a_out, const Token &a_token)
 {
     std::string str;
-    token_as_string (a_token, str) ;
+    token_as_string (a_token, str);
     a_out << str;
     return a_out;
 }

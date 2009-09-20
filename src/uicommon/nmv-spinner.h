@@ -31,32 +31,32 @@
 namespace Gtk {
     class Widget;
 }
-using nemiver::common::Object ;
-using nemiver::common::SafePtr ;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::UString ;
+using nemiver::common::Object;
+using nemiver::common::SafePtr;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::UString;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
-class Spinner ;
-typedef SafePtr<Spinner, ObjectRef, ObjectUnref> SpinnerSafePtr ;
+class Spinner;
+typedef SafePtr<Spinner, ObjectRef, ObjectUnref> SpinnerSafePtr;
 
 class Spinner : public Object {
-    class Priv ;
-    SafePtr<Priv> m_priv ;
+    class Priv;
+    SafePtr<Priv> m_priv;
 
 protected:
-    Spinner () ;
-    Spinner (const UString &a_root_path) ;
+    Spinner ();
+    Spinner (const UString &a_root_path);
 
 public:
-    virtual ~Spinner ()  ;
-    static SpinnerSafePtr create () ;
-    virtual void start () ;
-    virtual bool is_started () const ;
-    virtual void stop () ;
-    virtual void toggle_state () ;
-    virtual Gtk::Widget& get_widget () const ;
+    virtual ~Spinner () ;
+    static SpinnerSafePtr create ();
+    virtual void start ();
+    virtual bool is_started () const;
+    virtual void stop ();
+    virtual void toggle_state ();
+    virtual Gtk::Widget& get_widget () const;
 };//end class Spinner
 
 NEMIVER_END_NAMESPACE (nemiver)

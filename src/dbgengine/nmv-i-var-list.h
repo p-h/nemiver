@@ -31,18 +31,18 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::SafePtr ;
-using nemiver::common::DynModIface ;
-using nemiver::common::DynModIfaceSafePtr ;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::SafePtr;
+using nemiver::common::DynModIface;
+using nemiver::common::DynModIfaceSafePtr;
 
-typedef std::list<IDebugger::VariableSafePtr> DebuggerVariableList ;
-class IVarList ;
-typedef SafePtr<IVarList, ObjectRef, ObjectUnref> IVarListSafePtr ;
+typedef std::list<IDebugger::VariableSafePtr> DebuggerVariableList;
+class IVarList;
+typedef SafePtr<IVarList, ObjectRef, ObjectUnref> IVarListSafePtr;
 class NEMIVER_API IVarList : public DynModIface {
-    IVarList () ;
-    IVarList (const IVarList &) ;
+    IVarList ();
+    IVarList (const IVarList &);
 
 protected:
     IVarList (DynamicModule *a_dynmod) :
@@ -73,7 +73,7 @@ public:
     //// the variables.
     virtual void initialize (IDebuggerSafePtr &a_debugger) = 0;
 
-    virtual IDebugger& get_debugger () const = 0 ;
+    virtual IDebugger& get_debugger () const = 0;
 
     /// \return the raw list of variables maintained internally.
     virtual const DebuggerVariableList& get_raw_list() const = 0;
@@ -85,7 +85,7 @@ public:
     ///  the variable. This will trigger an invocation of the IDebugger
     ///  interface.
     virtual void append_variable (const IDebugger::VariableSafePtr &a_var,
-                                  bool a_update_type=true) = 0 ;
+                                  bool a_update_type=true) = 0;
 
     /// \brief append a set list of variables to the list
     ///
@@ -94,22 +94,22 @@ public:
     ///  the variable. This will trigger an invocation of the IDebugger
     ///  interface.
     virtual void append_variables (const DebuggerVariableList& a_vars,
-                                   bool a_update_type=true) = 0 ;
+                                   bool a_update_type=true) = 0;
 
     /// \brief remove a variable from the list
     ///
     /// \param a_var the variable to remove from the list
     /// \return true if the variable has been found and removed
-    virtual bool remove_variable (const IDebugger::VariableSafePtr &a_var) = 0 ;
+    virtual bool remove_variable (const IDebugger::VariableSafePtr &a_var) = 0;
 
     /// \brief remove a variable from the list
     ///
     /// \param a_var_name the name of the variable to remove
     /// \return true if the variable has been found and removed
-    virtual bool remove_variable (const UString &a_var_name) = 0 ;
+    virtual bool remove_variable (const UString &a_var_name) = 0;
 
     /// \brief remove all variables from the list
-    virtual void remove_variables () = 0 ;
+    virtual void remove_variables () = 0;
 
     /// \brief lookup a variable from its name
     ///
@@ -133,7 +133,7 @@ public:
     ///
     /// issue many calls to the underlying IDebugger interface to query
     /// the new values of variables contained in the list
-    virtual void update_state () = 0 ;
+    virtual void update_state () = 0;
 };//end class IVarList
 
 NEMIVER_END_NAMESPACE (nemiver)

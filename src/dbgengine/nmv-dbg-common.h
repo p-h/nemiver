@@ -30,13 +30,13 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 /// \brief A container of the textual command sent to the debugger
 class Command {
-    UString m_cookie ;
-    UString m_name ;
+    UString m_cookie;
+    UString m_name;
     UString m_value;
-    UString m_tag0 ;
-    UString m_tag1 ;
+    UString m_tag0;
+    UString m_tag1;
     int m_tag2;
-    IDebugger::VariableSafePtr m_var ;
+    IDebugger::VariableSafePtr m_var;
     sigc::slot_base m_slot;
 
 public:
@@ -121,7 +121,7 @@ public:
 
     void clear ()
     {
-        m_name.clear () ;
+        m_name.clear ();
         m_value.clear ();
         m_tag0.clear ();
         m_tag1.clear ();
@@ -144,9 +144,9 @@ public:
     ///debugger console (to be displayed by the CLI),
     ///or the target output stream or the debugger log stream.
     class StreamRecord {
-        UString m_debugger_console ;
-        UString m_target_output ;
-        UString m_debugger_log ;
+        UString m_debugger_console;
+        UString m_target_output;
+        UString m_debugger_log;
 
     public:
 
@@ -178,9 +178,9 @@ public:
 
         void clear ()
         {
-            m_debugger_console = "" ;
-            m_target_output = "" ;
-            m_debugger_log = "" ;
+            m_debugger_console = "";
+            m_target_output = "";
+            m_debugger_log = "";
         }
     };//end class StreamRecord
 
@@ -197,15 +197,15 @@ public:
 
     private:
         bool m_has_stream_record;
-        StreamRecord m_stream_record ;
-        bool m_is_stopped ;
-        IDebugger::StopReason m_stop_reason ;
-        bool m_has_frame ;
-        IDebugger::Frame m_frame ;
-        long m_breakpoint_number ;
-        long m_thread_id ;
-        UString m_signal_type ;
-        UString m_signal_meaning ;
+        StreamRecord m_stream_record;
+        bool m_is_stopped;
+        IDebugger::StopReason m_stop_reason;
+        bool m_has_frame;
+        IDebugger::Frame m_frame;
+        long m_breakpoint_number;
+        long m_thread_id;
+        UString m_signal_type;
+        UString m_signal_meaning;
 
     public:
 
@@ -213,50 +213,50 @@ public:
 
         UString stop_reason_to_string (IDebugger::StopReason a_reason) const
         {
-            UString result ("undefined") ;
+            UString result ("undefined");
 
             switch (a_reason) {
                 case IDebugger::UNDEFINED_REASON:
-                    return "undefined" ;
-                    break ;
+                    return "undefined";
+                    break;
                 case IDebugger::BREAKPOINT_HIT:
-                    return "breakpoint-hit" ;
-                    break ;
+                    return "breakpoint-hit";
+                    break;
                 case IDebugger::WATCHPOINT_TRIGGER:
-                    return "watchpoint-trigger" ;
-                    break ;
+                    return "watchpoint-trigger";
+                    break;
                 case IDebugger::READ_WATCHPOINT_TRIGGER:
-                    return "read-watchpoint-trigger" ;
-                    break ;
+                    return "read-watchpoint-trigger";
+                    break;
                 case IDebugger::ACCESS_WATCHPOINT_TRIGGER:
-                    return "access-watchpoint-trigger" ;
-                    break ;
+                    return "access-watchpoint-trigger";
+                    break;
                 case IDebugger::FUNCTION_FINISHED:
-                    return "function-finished" ;
-                    break ;
+                    return "function-finished";
+                    break;
                 case IDebugger::LOCATION_REACHED:
-                    return "location-reached" ;
-                    break ;
+                    return "location-reached";
+                    break;
                 case IDebugger::WATCHPOINT_SCOPE:
-                    return "watchpoint-scope" ;
-                    break ;
+                    return "watchpoint-scope";
+                    break;
                 case IDebugger::END_STEPPING_RANGE:
-                    return "end-stepping-range" ;
-                    break ;
+                    return "end-stepping-range";
+                    break;
                 case IDebugger::EXITED_SIGNALLED:
-                    return "exited-signaled" ;
-                    break ;
+                    return "exited-signaled";
+                    break;
                 case IDebugger::EXITED:
-                    return "exited" ;
-                    break ;
+                    return "exited";
+                    break;
                 case IDebugger::EXITED_NORMALLY:
-                    return "exited-normally" ;
-                    break ;
+                    return "exited-normally";
+                    break;
                 case IDebugger::SIGNAL_RECEIVED:
-                    return "signal-received" ;
-                    break ;
+                    return "signal-received";
+                    break;
             }
-            return result ;
+            return result;
         }
 
         /// \accessors
@@ -273,10 +273,10 @@ public:
         bool is_stopped () const {return m_is_stopped;}
         void is_stopped (bool a_in) {m_is_stopped = a_in;}
 
-        IDebugger::StopReason stop_reason () const {return m_stop_reason ;}
+        IDebugger::StopReason stop_reason () const {return m_stop_reason;}
         UString stop_reason_as_str () const
         {
-            return stop_reason_to_string (m_stop_reason) ;
+            return stop_reason_to_string (m_stop_reason);
         }
         void stop_reason (IDebugger::StopReason a_in) {m_stop_reason = a_in;}
 
@@ -287,7 +287,7 @@ public:
         IDebugger::Frame& frame () {return m_frame;}
         void frame (const IDebugger::Frame &a_in) {m_frame = a_in;}
 
-        long breakpoint_number () const {return m_breakpoint_number ;}
+        long breakpoint_number () const {return m_breakpoint_number;}
         void breakpoint_number (long a_in) {m_breakpoint_number = a_in;}
 
         long thread_id () const {return m_thread_id;}
@@ -305,15 +305,15 @@ public:
 
         void clear ()
         {
-            m_has_stream_record = false ;
-            m_stream_record.clear () ;
-            m_is_stopped = false ;
-            m_stop_reason = IDebugger::UNDEFINED_REASON ;
-            m_has_frame = false ;
-            m_frame.clear () ;
-            m_breakpoint_number = 0 ;
+            m_has_stream_record = false;
+            m_stream_record.clear ();
+            m_is_stopped = false;
+            m_stop_reason = IDebugger::UNDEFINED_REASON;
+            m_has_frame = false;
+            m_frame.clear ();
+            m_breakpoint_number = 0;
             m_thread_id = -1;
-            m_signal_type.clear () ;
+            m_signal_type.clear ();
         }
     };//end class OutOfBandRecord
 
@@ -339,55 +339,55 @@ public:
         };//end enum Kind
 
     private:
-        Kind m_kind ;
-        map<int, IDebugger::BreakPoint> m_breakpoints ;
-        map<UString, UString> m_attrs ;
+        Kind m_kind;
+        map<int, IDebugger::BreakPoint> m_breakpoints;
+        map<UString, UString> m_attrs;
 
         //call stack listed members
-        vector<IDebugger::Frame> m_call_stack ;
-        bool m_has_call_stack ;
+        vector<IDebugger::Frame> m_call_stack;
+        bool m_has_call_stack;
 
         //frame parameters listed members
-        map<int, list<IDebugger::VariableSafePtr> > m_frames_parameters ;
+        map<int, list<IDebugger::VariableSafePtr> > m_frames_parameters;
         bool m_has_frames_parameters;
 
         //local variable listed members
-        list<IDebugger::VariableSafePtr> m_local_variables ;
-        bool m_has_local_variables ;
+        list<IDebugger::VariableSafePtr> m_local_variables;
+        bool m_has_local_variables;
 
         //variable value evaluated members
-        IDebugger::VariableSafePtr m_variable_value ;
-        bool m_has_variable_value ;
+        IDebugger::VariableSafePtr m_variable_value;
+        bool m_has_variable_value;
 
         //threads listed members
-        std::list<int> m_thread_list ;
-        bool m_has_thread_list ;
+        std::list<int> m_thread_list;
+        bool m_has_thread_list;
 
         //files listed members
-        std::vector<UString> m_file_list ;
-        bool m_has_file_list ;
+        std::vector<UString> m_file_list;
+        bool m_has_file_list;
 
         //new thread id selected members
-        int m_thread_id ;
-        IDebugger::Frame m_frame_in_thread ;
-        bool m_thread_id_got_selected ;
+        int m_thread_id;
+        IDebugger::Frame m_frame_in_thread;
+        bool m_thread_id_got_selected;
         //TODO: finish (re)initialisation of thread id selected members
 
         //current frame, in the context of a core file stack trace.
-        IDebugger::Frame m_current_frame_in_core_stack_trace ;
-        bool m_has_current_frame_in_core_stack_trace ;
+        IDebugger::Frame m_current_frame_in_core_stack_trace;
+        bool m_has_current_frame_in_core_stack_trace;
 
         // register names
-        std::map<IDebugger::register_id_t, UString> m_register_names ;
-        bool m_has_register_names ;
+        std::map<IDebugger::register_id_t, UString> m_register_names;
+        bool m_has_register_names;
 
         // register values
-        std::map<IDebugger::register_id_t, UString> m_register_values ;
-        bool m_has_register_values ;
+        std::map<IDebugger::register_id_t, UString> m_register_values;
+        bool m_has_register_values;
 
         // changed registers
-        std::list<IDebugger::register_id_t> m_changed_registers ;
-        bool m_has_changed_registers ;
+        std::list<IDebugger::register_id_t> m_changed_registers;
+        bool m_has_changed_registers;
 
         // memory values
         std::vector<uint8_t> m_memory_values;
@@ -415,30 +415,30 @@ public:
         bool m_has_path_expression;
 
     public:
-        ResultRecord () {clear () ;}
+        ResultRecord () {clear ();}
 
         /// blank out everything
         void clear ()
         {
-            m_kind = UNDEFINED ;
-            m_breakpoints.clear () ;
-            m_attrs.clear () ;
-            m_call_stack.clear () ;
-            m_has_call_stack = false ;
-            m_frames_parameters.clear () ;
-            m_has_frames_parameters = false ;
-            m_local_variables.clear () ;
-            m_has_local_variables = false ;
-            m_variable_value.reset () ;
-            m_has_variable_value = false ;
-            m_thread_list.clear () ;
-            m_has_thread_list = false ;
+            m_kind = UNDEFINED;
+            m_breakpoints.clear ();
+            m_attrs.clear ();
+            m_call_stack.clear ();
+            m_has_call_stack = false;
+            m_frames_parameters.clear ();
+            m_has_frames_parameters = false;
+            m_local_variables.clear ();
+            m_has_local_variables = false;
+            m_variable_value.reset ();
+            m_has_variable_value = false;
+            m_thread_list.clear ();
+            m_has_thread_list = false;
             m_thread_id = 0;
-            m_frame_in_thread.clear () ;
+            m_frame_in_thread.clear ();
             m_thread_id_got_selected = false;
-            m_file_list.clear () ;
-            m_has_file_list = false ;
-            m_has_current_frame_in_core_stack_trace = false ;
+            m_file_list.clear ();
+            m_has_file_list = false;
+            m_has_current_frame_in_core_stack_trace = false;
             m_has_changed_registers = false;
             m_changed_registers.clear ();
             m_has_register_values = false;
@@ -479,7 +479,7 @@ public:
         void call_stack (const vector<IDebugger::Frame> &a_in)
         {
             m_call_stack = a_in;
-            has_call_stack (true) ;
+            has_call_stack (true);
         }
         bool has_register_names () const { return m_has_register_names; }
         void has_register_names (bool a_flag) { m_has_register_names = a_flag; }
@@ -540,13 +540,13 @@ public:
         const map<int, list<IDebugger::VariableSafePtr> >&
                                                     frames_parameters () const
         {
-            return m_frames_parameters ;
+            return m_frames_parameters;
         }
         void frames_parameters
                     (const map<int, list<IDebugger::VariableSafePtr> > &a_in)
         {
-            m_frames_parameters = a_in ;
-            has_frames_parameters (true) ;
+            m_frames_parameters = a_in;
+            has_frames_parameters (true);
         }
 
         bool has_frames_parameters () const {return m_has_frames_parameters;}
@@ -554,12 +554,12 @@ public:
 
         const list<IDebugger::VariableSafePtr>& local_variables () const
         {
-            return m_local_variables ;
+            return m_local_variables;
         }
         void local_variables (const list<IDebugger::VariableSafePtr> &a_in)
         {
-            m_local_variables = a_in ;
-            has_local_variables (true) ;
+            m_local_variables = a_in;
+            has_local_variables (true);
         }
 
         bool has_local_variables () const {return m_has_local_variables;}
@@ -567,12 +567,12 @@ public:
 
         const IDebugger::VariableSafePtr& variable_value () const
         {
-            return m_variable_value ;
+            return m_variable_value;
         }
         void variable_value (const IDebugger::VariableSafePtr &a_in)
         {
-            m_variable_value = a_in ;
-            has_variable_value (true) ;
+            m_variable_value = a_in;
+            has_variable_value (true);
         }
 
         bool has_variable_value () const {return m_has_variable_value;}
@@ -585,7 +585,7 @@ public:
         void thread_list (const std::list<int> &a_in)
         {
             m_thread_list = a_in;
-            has_thread_list (true) ;
+            has_thread_list (true);
         }
 
         bool thread_id_got_selected () const {return m_thread_id_got_selected;}
@@ -599,9 +599,9 @@ public:
         void thread_id_selected_info (int a_thread_id,
                                       const IDebugger::Frame &a_frame_in_thread)
         {
-            m_thread_id = a_thread_id ;
-            m_frame_in_thread = a_frame_in_thread ;
-            thread_id_got_selected (true) ;
+            m_thread_id = a_thread_id;
+            m_frame_in_thread = a_frame_in_thread;
+            thread_id_got_selected (true);
         }
 
         bool has_file_list () const {return m_has_file_list;}
@@ -611,26 +611,26 @@ public:
         void file_list (const std::vector<UString> &a_in)
         {
             m_file_list = a_in;
-            has_file_list (true) ;
+            has_file_list (true);
         }
 
         const IDebugger::Frame& current_frame_in_core_stack_trace ()
         {
-            return m_current_frame_in_core_stack_trace ;
+            return m_current_frame_in_core_stack_trace;
         }
         void current_frame_in_core_stack_trace (const IDebugger::Frame& a_in)
         {
-            m_current_frame_in_core_stack_trace = a_in ;
-            has_current_frame_in_core_stack_trace (true) ;
+            m_current_frame_in_core_stack_trace = a_in;
+            has_current_frame_in_core_stack_trace (true);
         }
 
         bool has_current_frame_in_core_stack_trace ()
         {
-            return m_has_current_frame_in_core_stack_trace ;
+            return m_has_current_frame_in_core_stack_trace;
         }
         void has_current_frame_in_core_stack_trace (bool a_in)
         {
-            m_has_current_frame_in_core_stack_trace = a_in ;
+            m_has_current_frame_in_core_stack_trace = a_in;
         }
 
         bool has_variable () {return m_has_variable; }
@@ -720,12 +720,12 @@ public:
     };//end class ResultRecord
 
 private:
-    UString m_value ;
-    bool m_parsing_succeeded ;
-    bool m_has_out_of_band_record ;
-    list<OutOfBandRecord> m_out_of_band_records ;
-    bool m_has_result_record ;
-    ResultRecord m_result_record ;
+    UString m_value;
+    bool m_parsing_succeeded;
+    bool m_has_out_of_band_record;
+    list<OutOfBandRecord> m_out_of_band_records;
+    bool m_has_result_record;
+    ResultRecord m_result_record;
 
 public:
 
@@ -765,21 +765,21 @@ public:
 
     void clear ()
     {
-        m_value = "" ;
-        m_parsing_succeeded = false ;
-        m_has_out_of_band_record = false ;
-        m_out_of_band_records.clear () ;
-        m_has_result_record = false ;
-        m_result_record.clear () ;
+        m_value = "";
+        m_parsing_succeeded = false;
+        m_has_out_of_band_record = false;
+        m_out_of_band_records.clear ();
+        m_has_result_record = false;
+        m_result_record.clear ();
     }
 };//end class Output
 
 /// A container of the Command sent to the debugger
 /// and the output it sent back.
 class CommandAndOutput {
-    bool m_has_command ;
-    Command m_command ;
-    Output m_output ;
+    bool m_has_command;
+    Command m_command;
+    Output m_output;
 
 public:
 
@@ -799,7 +799,7 @@ public:
 
     /// @{
 
-    bool has_command () const {return m_has_command ;}
+    bool has_command () const {return m_has_command;}
     void has_command (bool a_in) {m_has_command = a_in;}
 
     const Command& command () const {return m_command;}
@@ -835,7 +835,7 @@ struct OutputHandler : Object {
     //how to handle a given debugger output
     virtual void do_handle (CommandAndOutput &) {}
 };//end struct OutputHandler
-typedef SafePtr<OutputHandler, ObjectRef, ObjectUnref> OutputHandlerSafePtr ;
+typedef SafePtr<OutputHandler, ObjectRef, ObjectUnref> OutputHandlerSafePtr;
 
 /// A list of OutputHandlers
 /// Instances of CommandAndOutput can be submitted
@@ -848,18 +848,18 @@ typedef SafePtr<OutputHandler, ObjectRef, ObjectUnref> OutputHandlerSafePtr ;
 /// This is the mechanism that must be used to send signals about the state
 /// of implementations of IDebugger.
 class OutputHandlerList : Object {
-    struct Priv ;
+    struct Priv;
     SafePtr<Priv> m_priv;
 
     //non copyable
-    OutputHandlerList (const OutputHandlerList&) ;
-    OutputHandlerList& operator= (const OutputHandlerList&) ;
+    OutputHandlerList (const OutputHandlerList&);
+    OutputHandlerList& operator= (const OutputHandlerList&);
 
 public:
-    OutputHandlerList () ;
-    ~OutputHandlerList () ;
-    void add (const OutputHandlerSafePtr &a_handler) ;
-    void submit_command_and_output (CommandAndOutput &a_cao) ;
+    OutputHandlerList ();
+    ~OutputHandlerList ();
+    void add (const OutputHandlerSafePtr &a_handler);
+    void submit_command_and_output (CommandAndOutput &a_cao);
 };//end class OutputHandlerList
 
 

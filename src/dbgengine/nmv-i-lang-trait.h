@@ -29,22 +29,22 @@
 #include "common/nmv-dynamic-module.h"
 #include "nmv-i-debugger.h"
 
-using nemiver::common::UString ;
-using nemiver::common::DynModIface ;
-using nemiver::common::DynamicModule ;
-using nemiver::common::SafePtr ;
-using nemiver::common::ObjectRef ;
-using nemiver::common::ObjectUnref ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::DynModIface;
+using nemiver::common::DynamicModule;
+using nemiver::common::SafePtr;
+using nemiver::common::ObjectRef;
+using nemiver::common::ObjectUnref;
+using nemiver::common::SafePtr;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class ILangTrait ;
-typedef SafePtr<ILangTrait, ObjectRef, ObjectUnref> ILangTraitSafePtr ;
+class ILangTrait;
+typedef SafePtr<ILangTrait, ObjectRef, ObjectUnref> ILangTraitSafePtr;
 class NEMIVER_API ILangTrait : public DynModIface {
     //non copyable
-    ILangTrait (const ILangTrait &) ;
-    ILangTrait& operator= (const ILangTrait &) ;
+    ILangTrait (const ILangTrait &);
+    ILangTrait& operator= (const ILangTrait &);
 
 protected:
     ILangTrait (DynamicModule *a_dynmod) : DynModIface (a_dynmod)
@@ -55,16 +55,16 @@ public:
 
     virtual ~ILangTrait () {}
 
-    virtual const UString& get_name () const = 0 ;
+    virtual const UString& get_name () const = 0;
 
     /// \name language features tests
     /// @{
-    virtual bool has_pointers () const = 0 ;
+    virtual bool has_pointers () const = 0;
     /// @}
 
     /// \name language features
     /// @{
-    virtual bool is_type_a_pointer (const UString &a_type) const = 0 ;
+    virtual bool is_type_a_pointer (const UString &a_type) const = 0;
     virtual bool is_variable_compound
                         (const nemiver::IDebugger::VariableSafePtr) const = 0;
     /// @}

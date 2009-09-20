@@ -14,11 +14,11 @@ class plot
       LINE,
       POINT,
       BAR
-    } plot_type ;
+    } plot_type;
     typedef map<Tx, Ty> dataset_t;
 
     private:
-    plot_type m_type ;
+    plot_type m_type;
     vector<dataset_t> m_datasets;
 
     public:
@@ -36,24 +36,24 @@ operator<< (std::ostream &a_out, const plot<int, int> &a_plot)
 {
     switch (a_plot.type ()) {
         case plot<int, int>::LINE :
-            a_out << "plot::LINE" ;
+            a_out << "plot::LINE";
             break;
         case plot<int, int>::POINT :
-            a_out << "plot::POINT" ;
-            break ;
+            a_out << "plot::POINT";
+            break;
         case plot<int, int>::BAR :
-            a_out << "plot::BAR" ;
-            break ;
+            a_out << "plot::BAR";
+            break;
     }
-    return a_out ;
+    return a_out;
 }
 
 int
 main ()
 {
-    plot<int, int> p ;
-    p.type (plot<int, int>::BAR) ;
-    std::cout << p << std::endl ;
+    plot<int, int> p;
+    p.type (plot<int, int>::BAR);
+    std::cout << p << std::endl;
     map<int, int> set1;
     set1[0] = 0;
     set1[1] = 1;
@@ -62,6 +62,6 @@ main ()
     set1[4] = 4;
     set1[5] = 5;
     p.add_dataset(set1);
-    return 0 ;
+    return 0;
 }
 

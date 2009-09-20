@@ -1572,7 +1572,7 @@ bool
 Parser::parse_type_specifier (TypeSpecifierPtr &a_result)
 {
     string str;
-    TypeSpecifierPtr result ;
+    TypeSpecifierPtr result;
     SimpleTypeSpecPtr type_spec;
     ElaboratedTypeSpecPtr type_spec2;
     Token token;
@@ -1945,7 +1945,7 @@ Parser::parse_declarator_id (IDDeclaratorPtr &a_result)
     if (token.get_kind () == Token::OPERATOR_SCOPE_RESOL) {
         LEXER.consume_next_token ();
     }
-    parse_nested_name_specifier (scope) ;
+    parse_nested_name_specifier (scope);
     if (parse_type_name (type_name)) {
         IDExprPtr id_expr (new QualifiedIDExpr (scope, type_name));
         result.reset (new IDDeclarator (id_expr));
@@ -2255,7 +2255,7 @@ out:
 /// parse a simple-declaration production
 ///
 /// simple-declaration:
-///           decl-specifier-seq(opt) init-declarator-list(opt) ;
+///           decl-specifier-seq(opt) init-declarator-list(opt);
 ///
 bool
 Parser::parse_simple_declaration (SimpleDeclarationPtr &a_result)
@@ -2265,7 +2265,7 @@ Parser::parse_simple_declaration (SimpleDeclarationPtr &a_result)
 
     if (!parse_decl_specifier_seq (decl_specs))
         return true;
-    parse_init_declarator_list (init_decls) ;
+    parse_init_declarator_list (init_decls);
     a_result.reset (new SimpleDeclaration (decl_specs, init_decls));
     return true;
 }

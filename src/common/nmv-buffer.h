@@ -32,8 +32,8 @@ namespace nemiver {
 namespace common {
 
 class NEMIVER_API Buffer {
-    char * m_data ;
-    unsigned long m_len ;
+    char * m_data;
+    unsigned long m_len;
 
 public:
 
@@ -42,8 +42,8 @@ public:
 
     Buffer (const char *a_buf, unsigned long a_len)
     {
-        m_data = const_cast<char*>(a_buf) ;
-        m_len = a_len ;
+        m_data = const_cast<char*>(a_buf);
+        m_len = a_len;
     }
 
     Buffer (const Buffer &a_buf) : m_data (a_buf.m_data), m_len (a_buf.m_len)
@@ -53,20 +53,20 @@ public:
         (const char* a_buf, unsigned long a_len)
     {
         m_data = const_cast<char*> (a_buf);
-        m_len = a_len ;
+        m_len = a_len;
     }
 
     Buffer& operator= (Buffer &a_buf)
     {
         if (this == &a_buf)
-            return *this ;
-        m_data = a_buf.m_data ;
-        m_len = a_buf.m_len ;
+            return *this;
+        m_data = a_buf.m_data;
+        m_len = a_buf.m_len;
     }
 
     const char* get_data () const
     {
-        return m_data ;
+        return m_data;
     }
 
     unsigned long get_len () const

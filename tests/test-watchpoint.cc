@@ -6,7 +6,7 @@
 #include "nmv-i-debugger.h"
 
 using namespace nemiver;
-using namespace nemiver::common ;
+using namespace nemiver::common;
 
 Glib::RefPtr<Glib::MainLoop> loop =
     Glib::MainLoop::create (Glib::MainContext::get_default ());
@@ -18,7 +18,7 @@ void
 on_engine_died_signal ()
 {
     MESSAGE ("engine died");
-    loop->quit () ;
+    loop->quit ();
 }
 
 void
@@ -36,7 +36,7 @@ on_breakpoints_set_signal (const std::map<int, IDebugger::BreakPoint> &a_breaks,
 
     MESSAGE ("breakpoints set:");
     std::map<int, IDebugger::BreakPoint>::const_iterator it;
-    for (it = a_breaks.begin () ; it != a_breaks.end () ; ++it) {
+    for (it = a_breaks.begin (); it != a_breaks.end () ; ++it) {
         MESSAGE ("<break><num>" << it->first <<"</num><line>"
                  << it->second.file_name () << ":" << it->second.line ()
                  << "</line></break>");
@@ -107,7 +107,7 @@ test_main (int, char **)
     debugger->set_breakpoint ("func1");
     debugger->run ();
 
-    loop->run () ;
+    loop->run ();
 
     NEMIVER_CATCH_NOX
 

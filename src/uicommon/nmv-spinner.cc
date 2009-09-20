@@ -33,9 +33,9 @@ struct ESpinnerRef {
     void operator () (EphySpinner *o)
     {
         if (o && G_IS_OBJECT (o)) {
-            g_object_ref (G_OBJECT (o)) ;
+            g_object_ref (G_OBJECT (o));
         } else {
-            LOG_ERROR ("bad ephy spinner") ;
+            LOG_ERROR ("bad ephy spinner");
         }
     }
 };
@@ -44,33 +44,33 @@ struct ESpinnerUnref {
     void operator () (EphySpinner *o)
     {
         if (o && G_IS_OBJECT (o)) {
-            g_object_unref (G_OBJECT (o)) ;
+            g_object_unref (G_OBJECT (o));
         } else {
-            LOG_ERROR ("bad ephy spinner") ;
+            LOG_ERROR ("bad ephy spinner");
         }
     }
 
 };
 
 struct Spinner::Priv {
-    SafePtr<EphySpinner, ESpinnerRef, ESpinnerUnref> spinner ;
-    bool is_started ;
-    Gtk::Widget *widget ;
+    SafePtr<EphySpinner, ESpinnerRef, ESpinnerUnref> spinner;
+    bool is_started;
+    Gtk::Widget *widget;
 
     Priv () :
         spinner (EPHY_SPINNER (ephy_spinner_new ()), true),
         is_started (false),
         widget (0)
     {
-        THROW_IF_FAIL (GTK_IS_WIDGET (spinner.get ())) ;
-        widget = Glib::wrap (GTK_WIDGET (spinner.get ())) ;
-        THROW_IF_FAIL (widget) ;
+        THROW_IF_FAIL (GTK_IS_WIDGET (spinner.get ()));
+        widget = Glib::wrap (GTK_WIDGET (spinner.get ()));
+        THROW_IF_FAIL (widget);
     }
 
     ~Priv ()
     {
-        widget = 0 ;
-        is_started = false ;
+        widget = 0;
+        is_started = false;
     }
 };//end struct Spinner::Priv
 
@@ -80,62 +80,62 @@ Spinner::~Spinner ()
 
 Spinner::Spinner ()
 {
-    m_priv.reset (new Priv) ;
+    m_priv.reset (new Priv);
 }
 
 SpinnerSafePtr
 Spinner::create ()
 {
-    SpinnerSafePtr result (new Spinner) ;
-    THROW_IF_FAIL (result) ;
-    return result ;
+    SpinnerSafePtr result (new Spinner);
+    THROW_IF_FAIL (result);
+    return result;
 }
 
 void
 Spinner::start ()
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->spinner) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->spinner);
 
-    ephy_spinner_start (m_priv->spinner.get ()) ;
-    m_priv->is_started = true ;
+    ephy_spinner_start (m_priv->spinner.get ());
+    m_priv->is_started = true;
 }
 
 bool
 Spinner::is_started () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->spinner) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->spinner);
 
-    return m_priv->is_started  ;
+    return m_priv->is_started ;
 }
 
 void
 Spinner::stop ()
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->spinner) ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->spinner);
 
-    ephy_spinner_stop (m_priv->spinner.get ()) ;
-    m_priv->is_started = false ;
+    ephy_spinner_stop (m_priv->spinner.get ());
+    m_priv->is_started = false;
 }
 
 void
 Spinner::toggle_state ()
 {
     if (is_started ()) {
-        stop () ;
+        stop ();
     } else {
-        start () ;
+        start ();
     }
 }
 
 Gtk::Widget&
 Spinner::get_widget () const
 {
-    THROW_IF_FAIL (m_priv) ;
-    THROW_IF_FAIL (m_priv->widget) ;
-    return *m_priv->widget ;
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->widget);
+    return *m_priv->widget;
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

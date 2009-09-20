@@ -468,9 +468,9 @@ public:
 
     const UString& get_perspective_identifier ();
 
-    void get_toolbars (list<Gtk::Widget*> &a_tbs) ;
+    void get_toolbars (list<Gtk::Widget*> &a_tbs);
 
-    Gtk::Widget* get_body () ;
+    Gtk::Widget* get_body ();
 
     IWorkbench& get_workbench ();
 
@@ -801,8 +801,8 @@ struct DBGPerspective::Priv {
     sigc::signal<void> debugger_not_started_signal;
     sigc::signal<void> going_to_run_target_signal;
     sigc::signal<void> default_config_read_signal;
-    sigc::signal<void, bool> show_command_view_signal ;
-    sigc::signal<void, bool> show_target_output_view_signal ;
+    sigc::signal<void, bool> show_command_view_signal;
+    sigc::signal<void, bool> show_target_output_view_signal;
     sigc::signal<void, bool> show_log_view_signal;
     bool command_view_is_visible;
     bool target_output_view_is_visible;

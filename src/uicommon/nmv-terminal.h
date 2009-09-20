@@ -31,37 +31,37 @@
 #include "common/nmv-ustring.h"
 #include "common/nmv-object.h"
 
-using nemiver::common::UString ;
-using nemiver::common::Object ;
-using nemiver::common::SafePtr ;
+using nemiver::common::UString;
+using nemiver::common::Object;
+using nemiver::common::SafePtr;
 
 namespace Gtk {
-    class Widget ;
-    class Adjustment ;
+    class Widget;
+    class Adjustment;
 }
 
 namespace Pango {
-    class FontDescription ;
+    class FontDescription;
 }
 
 NEMIVER_BEGIN_NAMESPACE(nemiver)
 
 class Terminal : public Object {
     //non copyable
-    Terminal (const Terminal &) ;
-    Terminal& operator= (const Terminal &) ;
+    Terminal (const Terminal &);
+    Terminal& operator= (const Terminal &);
 
-    struct Priv ;
-    SafePtr<Priv> m_priv ;
+    struct Priv;
+    SafePtr<Priv> m_priv;
 
 public:
 
-    Terminal () ;
-    ~Terminal () ;
-    Gtk::Widget& widget () const ;
-    Gtk::Adjustment& adjustment () const ;
-    UString slave_pts_name () const ;
-    void modify_font (const Pango::FontDescription &font_desc) ;
+    Terminal ();
+    ~Terminal ();
+    Gtk::Widget& widget () const;
+    Gtk::Adjustment& adjustment () const;
+    UString slave_pts_name () const;
+    void modify_font (const Pango::FontDescription &font_desc);
     void feed (const UString &a_text);
 };//end class Terminal
 

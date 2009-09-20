@@ -29,18 +29,18 @@
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class Var ;
-typedef SafePtr<Var, ObjectRef, ObjectUnref> VarSafePtr ;
+class Var;
+typedef SafePtr<Var, ObjectRef, ObjectUnref> VarSafePtr;
 class Var : public Object {
     list<VarSafePtr> m_members;
-    UString m_name ;
-    UString m_value ;
-    UString m_type ;
-    Var *m_parent ;
+    UString m_name;
+    UString m_value;
+    UString m_type;
+    Var *m_parent;
     //if this variable is a pointer,
     //it can be dereferenced. The variable
     //it points to is stored in m_dereferenced
-    VarSafePtr m_dereferenced ;
+    VarSafePtr m_dereferenced;
 
 public:
 
@@ -70,7 +70,7 @@ public:
     {
         if (!a_var) {return;}
         m_members.push_back (a_var);
-        a_var->parent (this) ;
+        a_var->parent (this);
     }
 
     const UString& name () const {return m_name;}
@@ -82,10 +82,10 @@ public:
     const UString& type () const {return m_type;}
     void type (const UString &a_type) {m_type = a_type;}
 
-    Var* parent () const {return m_parent ;}
+    Var* parent () const {return m_parent;}
     void parent (Var *a_parent)
     {
-        m_parent = a_parent ;
+        m_parent = a_parent;
     }
 
     void to_string (UString &a_str,
@@ -94,35 +94,35 @@ public:
     {
         if (a_show_var_name) {
             if (name () != "") {
-                a_str += a_indent_str + name () ;
+                a_str += a_indent_str + name ();
             }
         }
         if (value () != "") {
             if (a_show_var_name) {
-                a_str += "=" ;
+                a_str += "=";
             }
-            a_str += value () ;
+            a_str += value ();
         }
         if (members ().empty ()) {
-            return ;
+            return;
         }
-        UString indent_str = a_indent_str + "  " ;
+        UString indent_str = a_indent_str + "  ";
         a_str += "\n" + a_indent_str + "{";
-        list<VarSafePtr>::const_iterator it ;
-        for (it = members ().begin () ; it != members ().end () ; ++it) {
+        list<VarSafePtr>::const_iterator it;
+        for (it = members ().begin (); it != members ().end () ; ++it) {
             if (!(*it)) {continue;}
-            a_str += "\n" ;
-            (*it)->to_string (a_str, true, indent_str) ;
+            a_str += "\n";
+            (*it)->to_string (a_str, true, indent_str);
         }
         a_str += "\n" + a_indent_str + "}";
-        a_str.chomp () ;
+        a_str.chomp ();
     }
 };//end class Var
 
 class NEMIVER_API VarFragment {
 
-    UString m_name ;
-    UString m_id ;
+    UString m_name;
+    UString m_id;
 
 public:
 
@@ -143,7 +143,7 @@ public:
 
     bool operator= (const VarFragment &a_other)
     {
-        return a_other.m_id == m_id ;
+        return a_other.m_id == m_id;
     }
 };//end VarFragment
 
