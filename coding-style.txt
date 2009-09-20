@@ -1,18 +1,24 @@
-These coding styles are derived from the GNOME coding styles and have been adapted to better fit with C++.
-So, please read the http://developer.gnome.org/doc/guides/programming-guidelines/code-style.html as an introduction.
+These coding styles are derived from the GNOME coding styles and have been
+adapted to better fit with C++.
+So, please read
+http://developer.gnome.org/doc/guides/programming-guidelines/code-style.html
+as an introduction.
 
 Be consistent
 
-    As a rule of thumb, please try to use the style that was there before you, otherwise the code will be non consistent.
+    As a rule of thumb, please try to use the style that was there before you,
+    otherwise the code will be non consistent.
 
 Lines and functions length
 
-    1. Don't write lines that are too long.
-        Lots of people out there divide their screen in 2 vertical rectangles, each vertical rectangle
-        being itself divided in two horizontal rectangles. So don't think everybody looks at only one file at a time, full screen.
-        I won't say that each line should be 80 characters, so please, follow the "Be consitent" rule stated above.
-        Do not make your lines longer than the code the lines already written in other parts of the code.
-    2. The same thing applies to functions length. Again, be consistent with the other parts of the code.
+    1. Lines should be 80 characters long, at most.
+        Lots of people out there divide their screen in 2 vertical rectangles,
+        each vertical rectangle being itself divided in two horizontal rectangles.
+        So don't assume everybody looks at only one file at a time, full screen.
+        Or don't assume everybody has huge screens.
+        Generally speaking, be consitent. Do not make your lines longer than the
+        lines already written in other parts of the code.
+    2. Similar things applies to functions length. Be consistent with the other parts of the code.
     3. No function should contain more than 4 levels of indentation.
 
 Indenting
@@ -24,12 +30,18 @@ Indenting
 
 Naming conventions
 
-    1. function names are lowercase with underscores to separate words, like this : do_something_good () .
-    2. Macros and constants are uppercase, with underscore to separate words like: DO_SOMETHING () for a macro or NUMBER_OF_CHARS for a constant.
-    3. user defined types (classes, struct, enum names) are mixed upper and lowercase, like class ConfManager ;
-    4. don't pollute the global namespace. Every symbol should at least be in the 'nemiver' namespace (or in namespaces that are themselves in the nemiver namespace).
-    5. To help our fellow emacs users, don't use the keyword 'namespace' to define namespace, like "namespace foo { //blah}", otherwise, emacs indents
-       //blah.  Use the macro NEMIVER_BEGIN_NAMESPACE (foo) and NEMIVER_END_NAMESPACE (foo), instead. This helps emacs not to endent the content of the namespace.
+    1. function names are lowercase with underscores to separate words,
+       like this : do_something_good () .
+    2. Macros and constants are uppercase, with underscore to separate
+       words like: DO_SOMETHING () for a macro or NUMBER_OF_CHARS for a constant.
+    3. user defined types (classes, struct, enum names) are mixed upper and lowercase,
+       like class ConfManager ;
+    4. don't pollute the global namespace. Every symbol should at least be in the 'nemiver' namespace
+       (or in namespaces that are themselves in the nemiver namespace).
+    5. To help our fellow emacs users, don't use the keyword 'namespace'
+       to define namespace, like "namespace foo { //blah}", otherwise, emacs indents
+       //blah.  Use the macro NEMIVER_BEGIN_NAMESPACE (foo) and NEMIVER_END_NAMESPACE (foo), instead.
+       This helps emacs not to endent the content of the namespace.
     6. Generaly, C++ data mambers should be prefixed by m_. 
 
 Functions
@@ -68,7 +80,9 @@ Functions
 
 Braces
 
-   1. Function definitions — open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:
+   1. Function definitions — open and close braces should be on lines by
+      themselves. Do not put the open brace on the same line as the function
+      signature. For example:
 
       Right:
 
@@ -91,7 +105,8 @@ Braces
           // do stuff
       }
 
-   2. Other braces, including for, while, do, switch statements and class definitions — the open brace should go on the same line as the as the control structure.
+   2. Other braces, including for, while, do, switch statements and class
+      definitions — the open brace should go on the same line as the as the control structure.
       Right:
 
       for (int i = 0; i < 10; i++) {
@@ -105,12 +120,13 @@ Braces
           // do stuff
       }
 
-   3. If/else statements — as above, but if there is an else clause, the close brace should go on the same line as the else.
+   3. If/else statements — as above, but if there is an else clause,
+      the close brace should go on the same line as the else.
 
       Right:
 
       if (time_to_go_buy_something) {
-          go_buy(&something);
+          go_buy (&something);
       } else if (time_to_go_home) {
           // comment on else case
           gone = true;
@@ -120,7 +136,7 @@ Braces
 
       if (time_to_go_buy_something)
       {
-          go_buy(&something);
+          go_buy (&something);
       // comment on else case
       } else if (timeToGoHome)
           gone = true;
@@ -135,8 +151,10 @@ Braces
 
 Parentheses
 
-   1. Function declarations and calls — use one space between the name and the open parenthese, no space inside the parentheses, nor before commas
-      that separate arguments. Do use a single space after commas that separate arguments.
+   1. Function declarations and calls — use one space between the name and
+      the open parenthese, no space inside the parentheses, nor before commas
+      that separate arguments. Do use a single space after commas that
+      separate arguments.
 
       Right:
 
@@ -151,14 +169,17 @@ Parentheses
       int my_function ( int arg1 , float arg2 );
 
 
-   2. Control structures, such as if, while, do and switch — use a single space before the open paren, but no spaces inside the parentheses.
+   2. Control structures, such as if, while, do and switch — use a single
+      space before the open paren, but no spaces inside the parentheses.
 
 
 Null, false
 
    1. The null pointer value should be written as 0.
-   2. True and false values of type bool, or just generic true/false values, should be written as true and false.
-   3. Tests for null pointers, false values and 0 values should all be done directly, not through an inequality or equality comparison.
+   2. True and false values of type bool, or just generic true/false values,
+      should be written as true and false.
+   3. Tests for null pointers, false values and 0 values should all be done directly,
+      not through an inequality or equality comparison.
 
       Right:
 
@@ -216,16 +237,18 @@ Null, false
 
 Generic stuff
 
-        1. variables that of builtin types must always be initialized at declaration time.
+    1. variables of builtin types must always be initialized at
+       declaration time.
 
-            Right:
+        Right:
 
-            int foo=0 ;
+        int foo = 0 ;
 
-            Wrong:
+        Wrong:
 
-            int foo ;
+        int foo ;
 
-        2. always provide default constructors for user defined types (classes). If you don't want
-           to be used with the default constructor, declare the default constructor private.
+    2. always provide default constructors for user defined types (classes).
+       If you don't want to be used with the default constructor, declare
+       the default constructor private.
 
