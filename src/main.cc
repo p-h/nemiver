@@ -204,7 +204,7 @@ init_option_context ()
     g_option_context_add_main_entries (context.get (),
                                        entries,
                                        GETTEXT_PACKAGE);
-    g_option_context_set_ignore_unknown_options (context.get (), true);
+    g_option_context_set_ignore_unknown_options (context.get (), false);
     GOptionGroupSafePtr gtk_option_group (gtk_get_option_group (FALSE));
     THROW_IF_FAIL (gtk_option_group);
     g_option_context_add_group (context.get (), gtk_option_group.release ());
@@ -217,11 +217,39 @@ parse_command_line (int& a_argc,
 {
     GOptionContextSafePtr context (init_option_context ());
     THROW_IF_FAIL (context);
-    g_option_context_parse (context.get (), &a_argc, &a_argv, 0);
+
+    // Split the command like in two parts. One part is made of the options
+    // for Nemiver itself, and the other part is the options relevant to
+    // the inferior.
+    int i;
+    std::vector<UString> args;
+    for (i = 1; i < a_argc; ++i)
+        if (a_argv[i][0] != '-')
+            break;
+
+    // Now parse only the part of the command line that is related
+    // to Nemiver and not to the inferior.
+    // Once parsed, make a_argv and a_argv contain the command line
+    // of the inferior.
+    char **nmv_argv, **inf_argv;
+    int nmv_argc = a_argc;
+    int inf_argc = 0;
+
+    if (i < a_argc) {
+        nmv_argc = i;
+        inf_argc = a_argc - i;
+    }
+    nmv_argv = a_argv;
+    inf_argv = a_argv + i;
+    g_option_context_parse (context.get (), &nmv_argc, &nmv_argv, 0);
+    if (a_argv != inf_argv) {
+        memmove (a_argv, inf_argv, inf_argc * sizeof (char*));
+        a_argc = inf_argc;
+    }
 }
 
 static bool
-process_non_gui_command_line (int&, char**, int &a_return)
+process_non_gui_options ()
 {
     if (gv_log_debugger_output) {
         LOG_STREAM.enable_domain ("gdbmi-output-domain");
@@ -241,13 +269,11 @@ process_non_gui_command_line (int&, char**, int &a_return)
             LOG_STREAM.enable_domain (*iter);
         }
     }
-
-    a_return = 0;
     return true;
 }
 
 static bool
-process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
+process_gui_options (int& a_argc, char** a_argv)
 {
     if (gv_purge_sessions) {
         IDBGPerspective *debug_persp =
@@ -256,7 +282,6 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
         if (debug_persp) {
             debug_persp->session_manager ().delete_sessions ();
         }
-        a_return = 0;
         return false;
     }
 
@@ -269,7 +294,6 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                                                 (DBGPERSPECTIVE_PLUGIN_NAME));
         if (!debug_persp) {
             cerr << "Could not get the debugging perspective" << endl;
-            a_return = -1;
             return false;
         }
         int pid = atoi (gv_process_to_attach_to);
@@ -277,7 +301,6 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
             IProcMgrSafePtr proc_mgr = IProcMgr::create ();
             if (!proc_mgr) {
                 cerr << "Could not create proc mgr" << endl;
-                a_return = -1;
                 return false;
             }
             IProcMgr::Process process;
@@ -286,9 +309,7 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                 cerr << "Could not find any process named '"
                 << gv_process_to_attach_to
                 << "'"
-                << endl
-              ;
-                a_return = -1;
+                << endl;
                 return false;
             }
             pid = process.pid ();
@@ -297,9 +318,7 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
             cerr << "Could not find any process '"
                  << gv_process_to_attach_to
                  << "'"
-                 << endl
-               ;
-            a_return = -1;
+                 << endl;
             return false;
         } else {
             debug_persp->attach_to_program (pid);
@@ -323,11 +342,9 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                      << session_iter->properties ()["sessionname"]
                      << "\n";
             }
-            a_return = 0;
             return false;
         } else {
             cerr << "Could not find the debugger perpective plugin";
-            a_return = -1;
             return false;
         }
     }
@@ -356,7 +373,6 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
                 cerr << "Could not find session of number "
                      << gv_execute_session
                      << "\n";
-                a_return = -1;
                 return false;
             }
             return true;
@@ -393,55 +409,46 @@ process_gui_command_line (int& a_argc, char** a_argv, int &a_return)
             } else {
                 cerr << "Could not find any sessions"
                      << "\n";
-                a_return = -1;
                 return false;
             }
             return true;
         }
     }
 
-    if (a_argc > 1) {
-        if (a_argv[1][0] == '-') {
-            std::cerr << "unknown option " << a_argv[1] << "\n";
-            a_return = 0;
-            return false;
-        }
-        vector<UString> prog_args;
-        UString prog_path = a_argv[1];
-        for (int i=2; i < a_argc; ++i) {
-            prog_args.push_back (Glib::locale_to_utf8 (a_argv[i]));
-        }
-        IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME));
-        if (debug_persp) {
-            map<UString, UString> env;
-            if (gv_env_vars) {
-                vector<UString> env_vars =
-                    UString (Glib::locale_to_utf8 (gv_env_vars)).split (" ");
-                for (vector<UString>::const_iterator it = env_vars.begin ();
-                     it != env_vars.end ();
-                     ++it) {
-                    vector<UString> env_var = it->split ("=");
-                    if (env_var.size () != 2) {
-                        continue;
-                    }
-                    UString name = env_var[0];
-                    name.chomp ();
-                    UString value = env_var[1];
-                    value.chomp ();
-                    LOG_DD ("got env var: " << name << "=" << value);
-                    env[name] = value;
+    vector<UString> prog_args;
+    UString prog_path = a_argv[0];
+    for (int i = 1; i < a_argc; ++i) {
+        prog_args.push_back (Glib::locale_to_utf8 (a_argv[i]));
+    }
+    IDBGPerspective *debug_persp =
+        dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
+                                            (DBGPERSPECTIVE_PLUGIN_NAME));
+    if (debug_persp) {
+        map<UString, UString> env;
+        if (gv_env_vars) {
+            vector<UString> env_vars =
+                UString (Glib::locale_to_utf8 (gv_env_vars)).split (" ");
+            for (vector<UString>::const_iterator it = env_vars.begin ();
+                 it != env_vars.end ();
+                 ++it) {
+                vector<UString> env_var = it->split ("=");
+                if (env_var.size () != 2) {
+                    continue;
                 }
+                UString name = env_var[0];
+                name.chomp ();
+                UString value = env_var[1];
+                value.chomp ();
+                LOG_DD ("got env var: " << name << "=" << value);
+                env[name] = value;
             }
-            debug_persp->execute_program (prog_path,
-                                          prog_args,
-                                          env);
-        } else {
-            cerr << "Could not find the debugger perspective plugin\n";
-            a_return = -1;
-            return false;
         }
+        debug_persp->execute_program (prog_path,
+                                      prog_args,
+                                      env);
+    } else {
+        cerr << "Could not find the debugger perspective plugin\n";
+        return false;
     }
     return true;
 }
@@ -460,8 +467,7 @@ main (int a_argc, char *a_argv[])
 
     parse_command_line (a_argc, a_argv);
 
-    int retval;
-    if (process_non_gui_command_line (a_argc, a_argv, retval) != true) {
+    if (process_non_gui_options () != true) {
         return -1;
     }
 
@@ -481,7 +487,7 @@ main (int a_argc, char *a_argv[])
     LOG_D ("workbench refcount: " <<  (int) s_workbench->get_refcount (),
            "refcount-domain");
 
-    if (process_gui_command_line (a_argc, a_argv, retval) != true) {
+    if (process_gui_options (a_argc, a_argv) != true) {
         return -1;
     }
 
