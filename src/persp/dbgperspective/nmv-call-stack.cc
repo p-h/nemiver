@@ -251,7 +251,7 @@ struct CallStack::Priv {
                                      const IDebugger::Frame &/*a_frame*/,
                                      int /*a_thread_id*/,
                                      int /*a_bp_num*/,
-                                     const UString &/*a_cookie*/)
+                                     const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -262,6 +262,13 @@ struct CallStack::Priv {
             || a_reason == IDebugger::EXITED_NORMALLY
             || a_reason == IDebugger::EXITED) {
             return;
+        }
+
+        if (a_cookie != COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS) {
+            // Restore the frame window, in case the user changed it by
+            // requesting more call stack frames.
+            frame_low = 0;
+            frame_high = nb_frames_expansion_chunk;
         }
 
         if (should_process_now ()) {
@@ -617,7 +624,7 @@ struct CallStack::Priv {
 
         // Erase the expansion row, if it exists.
         if (store && !store->children ().empty ()) {
-            LOG_DD ("does expansion row exists ?");
+            LOG_DD ("does expansion row exist ?");
             Gtk::TreeRow last_row =
                 store->children ()[store->children ().size () - 1];
             if (last_row[columns ().is_expansion_row]) {
