@@ -24,7 +24,7 @@ noinst_PROGRAMS= \
 $(TESTS) \
 runtestcore  runteststdout  docore inout \
 pointerderef fooprog templatedvar \
-gtkmmtest dostackoverflow bigvar
+gtkmmtest dostackoverflow bigvar threads
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
 runtestgdbmi_LDADD= @NEMIVERCOMMON_LIBS@ \
@@ -149,6 +149,9 @@ dostackoverflow_LDADD=@NEMIVERCOMMON_LIBS@
 
 bigvar_SOURCES=big-var.c
 bigvar_LDADD=@NEMIVERCOMMON_LIBS@
+
+threads_SOURCES=threads.c
+threads_LDADD=@NEMIVERCOMMON_LIBS@
 
 INCLUDES=-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/confmgr \

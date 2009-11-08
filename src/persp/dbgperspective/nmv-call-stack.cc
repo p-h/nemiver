@@ -240,10 +240,26 @@ struct CallStack::Priv {
         debugger->select_frame (cur_frame_index);
     }
 
-    void finish_handling_debugger_stopped_event ()
+    void finish_update_handling ()
     {
         THROW_IF_FAIL (debugger);
         debugger->list_frames (frame_low, frame_high);
+    }
+
+    void handle_update (const UString &a_cookie)
+    {
+        if (a_cookie != COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS) {
+            // Restore the frame window, in case the user changed it by
+            // requesting more call stack frames.
+            frame_low = 0;
+            frame_high = nb_frames_expansion_chunk;
+        }
+
+        if (should_process_now ()) {
+            finish_update_handling ();
+        } else {
+            is_up2date = false;
+        }
     }
 
     void on_debugger_stopped_signal (IDebugger::StopReason a_reason,
@@ -264,20 +280,17 @@ struct CallStack::Priv {
             return;
         }
 
-        if (a_cookie != COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS) {
-            // Restore the frame window, in case the user changed it by
-            // requesting more call stack frames.
-            frame_low = 0;
-            frame_high = nb_frames_expansion_chunk;
-        }
-
-        if (should_process_now ()) {
-            finish_handling_debugger_stopped_event ();
-        } else {
-            is_up2date = false;
-        }
+        handle_update (a_cookie);
 
         NEMIVER_CATCH
+    }
+
+    void on_thread_selected_signal (int /*a_thread_id*/,
+                                    const IDebugger::Frame* const /*a_frame*/,
+                                    const UString& a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        handle_update (a_cookie);
     }
 
     void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack,
@@ -387,7 +400,7 @@ struct CallStack::Priv {
 
         NEMIVER_TRY
         if (!is_up2date) {
-            finish_handling_debugger_stopped_event ();
+            finish_update_handling ();
             is_up2date = true;
         }
         NEMIVER_CATCH
@@ -412,6 +425,8 @@ struct CallStack::Priv {
 
         debugger->stopped_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_debugger_stopped_signal));
+        debugger->thread_selected_signal ().connect (sigc::mem_fun
+                     (*this, &CallStack::Priv::on_thread_selected_signal));
         debugger->frames_listed_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_frames_listed_signal));
         debugger->frames_arguments_listed_signal ().connect (sigc::mem_fun
