@@ -150,7 +150,7 @@ dostackoverflow_LDADD=@NEMIVERCOMMON_LIBS@
 bigvar_SOURCES=big-var.c
 bigvar_LDADD=@NEMIVERCOMMON_LIBS@
 
-threads_SOURCES=threads.c
+threads_SOURCES=threads.cc
 threads_LDADD=@NEMIVERCOMMON_LIBS@
 
 INCLUDES=-I$(top_srcdir)/src \
