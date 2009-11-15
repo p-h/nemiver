@@ -36,7 +36,8 @@ static void update_a_variable_real (const IDebugger::VariableSafePtr a_var,
                                     const Gtk::TreeView &a_tree_view,
                                     Gtk::TreeModel::iterator &a_row_it,
                                     bool a_handle_highlight,
-                                    bool a_is_new_frame);
+                                    bool a_is_new_frame,
+                                    bool a_update_members);
 
 VariableColumns&
 get_variable_columns ()
@@ -102,6 +103,20 @@ set_a_variable_node_type (Gtk::TreeModel::iterator &a_var_it,
     variable->type (a_type);
 }
 
+// Graphically update the value representation of a variable.
+// This updates things like the variable name, value and color (in case we
+// have to highlight the variable because it value changed in the current
+// function).
+// \param a_var the symbolic representation of the variable
+// \param a_tree_view the widget containing the graphical representation of
+// a_var.
+// \param a_iter the iterator pointing to the graphical node representing
+// a_var.
+// \param a_handle_highlight whether to highlight the variable in case its
+// new value is different from the previous one.
+// \param a_is_new_frame if true, the variable will not be highlighted.
+// otherwise, highligthing will be considered if the new variable value is
+// different from the previous one.
 void
 update_a_variable_node (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
@@ -360,12 +375,25 @@ variables_match (const IDebugger::VariableSafePtr &a_var,
     return var->equals_by_value (*a_var);
 }
 
+// Update the graphical representation of variable a_var.
+// \param a_var is the symbolic representation of the variable.
+// \param a_tree_view the widget containing the grahical representation of
+// a_var.
+// \param a_parent_row_it an iterator to a graphical ancestor of the
+// graphical representation of a_var.
+// \param a_handle_highlight whether to handle highlighting of the variable
+// or not.
+// \param a_is_new_frame must be set to true if we just entered the frame
+// containing the a_var, false otherwise.
+// \param a_update_members whether to recursively update the graphical
+// representations of the members a_var.
 bool
 update_a_variable (const IDebugger::VariableSafePtr a_var,
                    const Gtk::TreeView &a_tree_view,
                    Gtk::TreeModel::iterator &a_parent_row_it,
                    bool a_handle_highlight,
-                   bool a_is_new_frame)
+                   bool a_is_new_frame,
+                   bool a_update_members)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (a_parent_row_it);
@@ -383,16 +411,30 @@ update_a_variable (const IDebugger::VariableSafePtr a_var,
 
     update_a_variable_real (a_var, a_tree_view,
                             row_it, a_handle_highlight,
-                            a_is_new_frame);
+                            a_is_new_frame, a_update_members);
     return true;
 }
 
+// Subroutine of update_a_variable. See that function comments to learn
+// more.
+// \param a_var the symbolic representation of the variable we are interested in.
+// \param a_tree_view the widget containing the graphical representation of
+// a_var.
+// \param a_row_it an iterator pointing to the graphical representation of
+// a_var
+// \param a_handle_highlight whether to highlight the node pointed to by
+// a_row_it or not.
+// \param a_is_new_frame whether if we just entered the function frame
+// containing a_var or not.
+// \param a_update_members whether the function should recursively update
+// the graphical representation of the members of a_var.
 static void
 update_a_variable_real (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         Gtk::TreeModel::iterator &a_row_it,
                         bool a_handle_highlight,
-                        bool a_is_new_frame)
+                        bool a_is_new_frame,
+                        bool a_update_members)
 {
     update_a_variable_node (a_var,
                             a_tree_view,
@@ -402,14 +444,15 @@ update_a_variable_real (const IDebugger::VariableSafePtr a_var,
     Gtk::TreeModel::iterator row_it;
     list<IDebugger::VariableSafePtr>::const_iterator var_it;
     Gtk::TreeModel::Children rows = a_row_it->children ();
-    //THROW_IF_FAIL (rows.size () == a_var->members ().size ());
-    //TODO: change this to handle dereferencing
-    for (row_it = rows.begin (), var_it = a_var->members ().begin ();
-         row_it != rows.end () && var_it != a_var->members ().end ();
-         ++row_it, ++var_it) {
-        update_a_variable_real (*var_it, a_tree_view,
-                                row_it, a_handle_highlight,
-                                a_is_new_frame);
+    if (a_update_members) {
+        for (row_it = rows.begin (), var_it = a_var->members ().begin ();
+             row_it != rows.end () && var_it != a_var->members ().end ();
+             ++row_it, ++var_it) {
+            update_a_variable_real (*var_it, a_tree_view,
+                                    row_it, a_handle_highlight,
+                                    a_is_new_frame,
+                                    true /* update members */);
+        }
     }
 }
 

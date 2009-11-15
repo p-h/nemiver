@@ -390,7 +390,8 @@ public:
     }
 
     void
-    update_a_local_variable (const IDebugger::VariableSafePtr a_var)
+    update_a_local_variable (const IDebugger::VariableSafePtr a_var,
+                             bool a_update_members = true)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -401,7 +402,8 @@ public:
             vutil::update_a_variable (a_var, *tree_view,
                                       parent_row_it,
                                       true /* handle highlight */,
-                                      false /* is not a new frame */);
+                                      false /* is not a new frame */,
+                                      a_update_members);
         }
     }
 
@@ -743,7 +745,16 @@ public:
         for (IDebugger::VariableList::const_iterator it = a_vars.begin ();
              it != a_vars.end ();
              ++it) {
-            update_a_local_variable (*it);
+            // Update the local variable pointed to by it.
+            // Note that we shall not recursively update the members of the
+            // the *it variable (in case it has members variables itself)
+            // because each member variable that needs updating is passed as
+            // part of a_vars - and as a result will be updated
+            // separately by a call to update_a_local_variable.
+            // At least that's the current behaviour with the "GDB/MI
+            // Variable Objects" based backend we are using.
+            update_a_local_variable (*it,
+                                     false /* do not update members */);
             local_vars_changed_at_prev_stop.push_back (*it);
         }
 

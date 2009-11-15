@@ -106,7 +106,8 @@ bool update_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         Gtk::TreeModel::iterator &a_parent_row_it,
                         bool a_handle_highlight,
-                        bool a_is_new_frame);
+                        bool a_is_new_frame,
+                        bool a_update_members = false);
 
 bool append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
