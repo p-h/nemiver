@@ -1,3 +1,29 @@
+0.7.3 Release
+=============
+
+Claude Paroz
+      Updated French translation
+
+Dodji Seketeli
+      Support editing breakpoint condition
+      Support ignore count at breakpoint setting time
+      Update breakpoint saving into session (Closes: #595083)
+      Preselect process to attach to (Closes: #595667)
+      Fix command line parsing (Closes: #591327)
+      Restore call stack initial window (Closes: #599768)
+      Update call stack on thread selection (Closes: #601199)
+      Do not update variables twice (closes: #601819)
+      Use -break-after to set ignore count
+
+Hans Vercammen
+      Small typo causing test build failure
+
+Mario Blättermann
+      Updated German translation
+
+Takeshi AIHANA
+      2009-10-17 Updated Japanese translation.
+
 0.7.2 Release
 =============
 
