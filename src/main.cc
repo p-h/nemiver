@@ -76,7 +76,7 @@ static GOptionEntry entries[] =
       _("Attach to a process"),
       "<pid|process name>"
     },
-    { "listsessions",
+    { "list-sessions",
       0,
       0,
       G_OPTION_ARG_NONE,
@@ -84,7 +84,7 @@ static GOptionEntry entries[] =
       _("List the saved debugging sessions"),
       NULL
     },
-    { "purgesessions",
+    { "purge-sessions",
       0,
       0,
       G_OPTION_ARG_NONE,
@@ -116,7 +116,7 @@ static GOptionEntry entries[] =
       _("Enable logging domains DOMAINS"),
       "DOMAINS"
     },
-    { "logdebuggeroutput",
+    { "log-debugger-output",
       0,
       0,
       G_OPTION_ARG_NONE,
