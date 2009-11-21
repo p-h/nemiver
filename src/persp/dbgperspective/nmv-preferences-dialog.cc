@@ -81,6 +81,7 @@ public:
     Gtk::CellRendererText m_style_name_renderer;
     Gtk::HBox *custom_font_box;
     Gtk::CheckButton *show_lines_check_button;
+    Gtk::CheckButton *launch_terminal_check_button;
     Gtk::CheckButton *highlight_source_check_button;
     Gtk::RadioButton *always_reload_radio_button;
     Gtk::RadioButton *never_reload_radio_button;
@@ -96,6 +97,7 @@ public:
         custom_font_button (0),
         custom_font_box (0),
         show_lines_check_button (0),
+        launch_terminal_check_button (0),
         highlight_source_check_button (0),
         always_reload_radio_button (0),
         never_reload_radio_button (0),
@@ -157,6 +159,11 @@ public:
     void on_show_lines_toggled_signal ()
     {
         update_show_source_line_numbers_key ();
+    }
+
+    void on_launch_terminal_toggled_signal ()
+    {
+        update_use_launch_terminal_key ();
     }
 
     void on_highlight_source_toggled_signal ()
@@ -228,6 +235,15 @@ public:
         (sigc::mem_fun
             (*this,
              &PreferencesDialog::Priv::on_show_lines_toggled_signal));
+
+        launch_terminal_check_button  =
+            ui_utils::get_widget_from_glade<Gtk::CheckButton>
+                                            (glade, "launchterminalcheckbutton");
+        THROW_IF_FAIL (launch_terminal_check_button);
+        launch_terminal_check_button->signal_toggled ().connect
+        (sigc::mem_fun
+            (*this,
+             &PreferencesDialog::Priv::on_launch_terminal_toggled_signal));
 
         highlight_source_check_button  =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
@@ -384,6 +400,14 @@ public:
                     (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS, is_on);
     }
 
+    void update_use_launch_terminal_key ()
+    {
+        THROW_IF_FAIL (launch_terminal_check_button);
+        bool is_on = launch_terminal_check_button->get_active ();
+        conf_manager ().set_key_value
+                    (CONF_KEY_USE_LAUNCH_TERMINAL, is_on);
+    }
+
     void update_highlight_source_keys ()
     {
         THROW_IF_FAIL (highlight_source_check_button);
@@ -455,13 +479,14 @@ public:
     void update_widget_from_editor_keys ()
     {
         THROW_IF_FAIL (show_lines_check_button);
+        THROW_IF_FAIL (launch_terminal_check_button);
         THROW_IF_FAIL (highlight_source_check_button);
         THROW_IF_FAIL (system_font_check_button);
         THROW_IF_FAIL (custom_font_button);
         THROW_IF_FAIL (custom_font_box);
         THROW_IF_FAIL (editor_style_combo);
 
-        bool is_on=true;
+        bool is_on = true;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS, is_on)) {
             LOG_ERROR ("failed to get gconf key");
@@ -469,7 +494,15 @@ public:
             show_lines_check_button->set_active (is_on);
         }
 
-        is_on=true;
+        is_on = false;
+        if (!conf_manager ().get_key_value
+                (CONF_KEY_USE_LAUNCH_TERMINAL, is_on)) {
+            LOG_ERROR ("failed to get gconf key");
+        } else {
+            launch_terminal_check_button->set_active (is_on);
+        }
+
+        is_on = true;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_HIGHLIGHT_SOURCE_CODE, is_on)) {
             LOG_ERROR ("failed to get gconf key");

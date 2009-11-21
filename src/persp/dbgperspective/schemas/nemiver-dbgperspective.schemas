@@ -93,6 +93,18 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/use-launch-terminal</key>
+      <applyto>/apps/nemiver/dbgperspective/use-launch-terminal</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Whether to use the terminal we were launched from</short>
+        <long>Whether to use the terminal we were launched from as
+        the debuggee's terminal, or to use our own embedded terminal.</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/editor-style-scheme</key>
       <applyto>/apps/nemiver/dbgperspective/editor-style-scheme</applyto>
       <owner>nemiver</owner>

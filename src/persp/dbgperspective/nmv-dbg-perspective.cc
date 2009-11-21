@@ -151,6 +151,8 @@ const char* CONF_KEY_CUSTOM_FONT_NAME=
                 "/apps/nemiver/dbgperspective/custom-font-name";
 const char* CONF_KEY_SYSTEM_FONT_NAME=
                 "/desktop/gnome/interface/monospace_font_name";
+const char* CONF_KEY_USE_LAUNCH_TERMINAL =
+                "/apps/nemiver/dbgperspective/use-launch-terminal";
 const char* CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
                 "/apps/nemiver/dbgperspective/status-widget-minimum-width";
 const char* CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
@@ -634,6 +636,8 @@ public:
 
     Gtk::Box& get_terminal_box ();
 
+    UString get_terminal_name ();
+
     Gtk::ScrolledWindow& get_breakpoints_scrolled_win ();
 
     BreakpointsView& get_breakpoints_view ();
@@ -680,6 +684,11 @@ public:
     void unset_where ();
 
     Gtk::Widget* get_contextual_menu ();
+
+    bool uses_launch_terminal () const;
+
+    void uses_launch_terminal (bool a_flag);
+
     Gtk::Widget* get_call_stack_menu ();
 
     void read_default_config ();
@@ -857,6 +866,7 @@ struct DBGPerspective::Priv {
     bool enable_syntax_highlight;
     UString custom_font_name;
     UString system_font_name;
+    bool use_launch_terminal;
 #ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<gtksourceview::SourceStyleScheme> editor_style;
 #endif // WITH_SOURCEVIEWMM2
@@ -922,6 +932,7 @@ struct DBGPerspective::Priv {
         confirm_before_reload_source (true),
         allow_auto_reload_source (true),
         enable_syntax_highlight (true),
+        use_launch_terminal (false),
         mouse_in_source_editor_x (0),
         mouse_in_source_editor_y (0),
         in_show_var_value_at_pos_transaction (false),
@@ -2045,6 +2056,11 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         m_priv->system_font_name = boost::get<UString> (a_value);
         if (m_priv->use_system_font && !m_priv->system_font_name.empty ()) {
             m_priv->modify_source_editor_fonts (m_priv->system_font_name);
+        }
+    } else if (a_key == CONF_KEY_USE_LAUNCH_TERMINAL) {
+        m_priv->use_launch_terminal = boost::get<bool> (a_value);
+        if (m_priv->debugger_engine_alive) {
+            debugger ()->set_tty_path (get_terminal_name ());
         }
 #ifdef WITH_SOURCEVIEWMM2
     } else if (a_key == CONF_KEY_EDITOR_STYLE_SCHEME) {
@@ -4091,6 +4107,21 @@ DBGPerspective::get_contextual_menu ()
     return m_priv->contextual_menu;
 }
 
+bool
+DBGPerspective::uses_launch_terminal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->use_launch_terminal;
+}
+
+void
+DBGPerspective::uses_launch_terminal (bool a_flag)
+{
+    THROW_IF_FAIL (m_priv);
+    m_priv->use_launch_terminal = a_flag;
+}
+
+
 ThreadList&
 DBGPerspective::get_thread_list ()
 {
@@ -4271,6 +4302,8 @@ DBGPerspective::read_default_config ()
                             m_priv->custom_font_name);
     conf_mgr.get_key_value (CONF_KEY_SYSTEM_FONT_NAME,
                             m_priv->system_font_name);
+    conf_mgr.get_key_value (CONF_KEY_USE_LAUNCH_TERMINAL,
+                            m_priv->use_launch_terminal);
     NEMIVER_CATCH_NOX
 
 #ifdef WITH_SOURCEVIEWMM2
@@ -5453,7 +5486,7 @@ DBGPerspective::execute_program
     LOG_DD ("load program");
     // now really load the inferior program (i.e: the one to be debugged)
     dbg_engine->load_program (prog, a_args, a_cwd, source_search_dirs,
-                              get_terminal ().slave_pts_name ());
+                              get_terminal_name ());
 
     m_priv->debugger_engine_alive = true;
 
@@ -5548,7 +5581,7 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
         return;
     }
     if (!debugger ()->attach_to_target (a_pid,
-                                        get_terminal ().slave_pts_name ())) {
+                                        get_terminal_name ())) {
         ui_utils::display_warning (_("You cannot attach to the "
                                    "underlying debugger engine"));
     }
@@ -6727,6 +6760,16 @@ DBGPerspective::get_terminal_box ()
     }
     THROW_IF_FAIL (m_priv->terminal_box);
     return *m_priv->terminal_box;
+}
+
+UString
+DBGPerspective::get_terminal_name ()
+{
+    if (uses_launch_terminal () && isatty (0)) {
+        return ttyname (0);
+    } else {
+        return get_terminal ().slave_pts_name ();
+    }
 }
 
 Gtk::ScrolledWindow&

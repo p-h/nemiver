@@ -265,6 +265,8 @@ public:
 
     void set_attached_to_target (bool a_is_attached);
 
+    void set_tty_path (const UString &a_tty_path);
+
     void add_env_variables (const map<UString, UString> &a_vars);
 
     map<UString, UString>& get_env_variables () ;

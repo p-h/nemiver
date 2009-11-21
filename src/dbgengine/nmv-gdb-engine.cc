@@ -772,6 +772,12 @@ public:
                                 a_cookie));
     }
 
+    void set_tty_path (const UString &a_tty_path)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        if (!a_tty_path.empty ())
+            queue_command (Command ("set inferior-tty " + a_tty_path));
+    }
 
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
     {
@@ -2546,9 +2552,7 @@ GDBEngine::load_program (const UString &a_prog,
             queue_command (command);
         }
     }
-    if (!a_tty_path.empty ()) {
-        queue_command (Command ("set inferior-tty " + a_tty_path));
-    }
+    set_tty_path (a_tty_path);
 }
 
 void
@@ -2600,9 +2604,7 @@ GDBEngine::attach_to_target (unsigned int a_pid,
     queue_command (Command ("attach-to-program",
                             "attach " + UString::from_int (a_pid)));
     queue_command (Command ("info proc"));
-    if (a_tty_path != "") {
-        queue_command (Command ("tty " + a_tty_path));
-    }
+    set_tty_path (a_tty_path);
     return true;
 }
 
@@ -2644,6 +2646,13 @@ GDBEngine::set_attached_to_target (bool a_is_attached)
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     m_priv->is_attached = a_is_attached;
+}
+
+void
+GDBEngine::set_tty_path (const UString &a_tty_path)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    m_priv->set_tty_path (a_tty_path);
 }
 
 void

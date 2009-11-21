@@ -160,6 +160,10 @@ public:
 
     virtual Gtk::Widget* get_contextual_menu () = 0;
 
+    virtual bool uses_launch_terminal () const = 0;
+
+    virtual void uses_launch_terminal (bool a_flag) = 0;
+
     virtual sigc::signal<void, bool>& activated_signal () = 0;
 
     virtual sigc::signal<void, bool>& debugger_ready_signal () = 0;

@@ -38,6 +38,7 @@ extern const char* CONF_KEY_SOURCE_FILE_ENCODING_LIST;
 extern const char* CONF_KEY_USE_SYSTEM_FONT;
 extern const char* CONF_KEY_CUSTOM_FONT_NAME;
 extern const char* CONF_KEY_SYSTEM_FONT_NAME;
+extern const char* CONF_KEY_USE_LAUNCH_TERMINAL;
 extern const char* CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH;
 extern const char* CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT;
 extern const char* CONF_KEY_STATUS_PANE_LOCATION;

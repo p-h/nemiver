@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include <signal.h>
+#include <unistd.h>
 #include <iostream>
 #include <gtkmm/window.h>
 #include <libglademm.h>
@@ -55,6 +56,7 @@ static bool gv_last_session=false;
 static gchar *gv_log_domains=0;
 static bool gv_log_debugger_output=false;
 static bool gv_show_version=false;
+static bool gv_use_launch_terminal=false;
 
 static GOptionEntry entries[] =
 {
@@ -122,6 +124,14 @@ static GOptionEntry entries[] =
       G_OPTION_ARG_NONE,
       &gv_log_debugger_output,
       _("Log the debugger output"),
+      NULL
+    },
+    { "use-launch-terminal",
+      0,
+      0,
+      G_OPTION_ARG_NONE,
+      &gv_use_launch_terminal,
+      _("Use this terminal as the debugee's terminal"),
       NULL
     },
     { "version",
@@ -330,6 +340,7 @@ process_gui_options (int& a_argc, char** a_argv)
                  << endl;
             return false;
         } else {
+            debug_persp->uses_launch_terminal (gv_use_launch_terminal);
             debug_persp->attach_to_program (pid);
         }
     }
@@ -368,6 +379,7 @@ process_gui_options (int& a_argc, char** a_argv)
             list<ISessMgr::Session>& sessions =
                             debug_persp->session_manager ().sessions ();
             bool found_session=false;
+            debug_persp->uses_launch_terminal (gv_use_launch_terminal);
             for (session_iter = sessions.begin ();
                  session_iter != sessions.end ();
                  ++session_iter) {
@@ -398,6 +410,7 @@ process_gui_options (int& a_argc, char** a_argv)
             list<ISessMgr::Session>& sessions =
                             debug_persp->session_manager ().sessions ();
             if (!sessions.empty ()) {
+                debug_persp->uses_launch_terminal (gv_use_launch_terminal);
                 list<ISessMgr::Session>::iterator session_iter,
                     latest_session_iter;
                 glong time_val = 0;
@@ -457,10 +470,12 @@ process_gui_options (int& a_argc, char** a_argv)
                 env[name] = value;
             }
         }
-        if (!prog_path.empty ())
+        if (!prog_path.empty ()) {
+            debug_persp->uses_launch_terminal (gv_use_launch_terminal);
             debug_persp->execute_program (prog_path,
                                           prog_args,
                                           env);
+        }
     } else {
         cerr << "Could not find the debugger perspective plugin\n";
         return false;
@@ -486,7 +501,6 @@ main (int a_argc, char *a_argv[])
         return -1;
     }
 
-
     //********************************************
     //load and init the workbench dynamic module
     //********************************************
@@ -508,6 +522,32 @@ main (int a_argc, char *a_argv[])
 
     //intercept ctrl-c/SIGINT
     signal (SIGINT, sigint_handler);
+
+    if (gv_use_launch_terminal) {
+        // So the user wants the inferior to use the terminal Nemiver was
+        // launched from, for input/output.
+        //
+        // Letting the inferior use the terminal from which Nemiver was
+        // launched from implies calling the "set inferior-tty" GDB command,
+        // when we are using the GDB backend.
+        // That command is implemented using the TIOCSCTTY ioctl. It sets the
+        // terminal as the controlling terminal of the inferior process. But that
+        // ioctl requires (among other things) that the terminal shall _not_ be
+        // the controlling terminal of any other process in another process
+        // session already. Otherwise, GDB spits the error:
+        // "GDB: Failed to set controlling terminal: operation not
+        // permitted"
+        // The problem is, Nemiver itself uses that terminal as a
+        // controlling terminal. So Nemiver itself must relinquish its
+        // controlling terminal to avoid letting the ioctl fail.
+        // We do so by calling the setsid function below.
+        // The problem is that setsid will fail with EPERM if Nemiver is
+        // started as a process group leader already.
+        // Trying ioctl (tty_fd, TIOCNOTTY, 0) does not seem to properly
+        // disconnect Nemiver from its terminal either. Sigh.
+        setsid ();
+    }
+
     gtk_kit.run (s_workbench->get_root_window ());
 
     NEMIVER_CATCH_NOX

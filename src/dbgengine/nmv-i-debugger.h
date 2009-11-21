@@ -1010,6 +1010,8 @@ public:
 
     virtual bool is_attached_to_target () const =0;
 
+    virtual void set_tty_path (const UString &a_tty_path) = 0;
+
     virtual void add_env_variables (const map<UString, UString> &a_vars) = 0;
 
     virtual map<UString, UString>& get_env_variables () = 0;
