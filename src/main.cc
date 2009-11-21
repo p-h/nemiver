@@ -211,12 +211,21 @@ init_option_context ()
     return context.release ();
 }
 
+// Parse the command line and edits it
+// to make it contain the command line of the inferior program.
 static void
 parse_command_line (int& a_argc,
                     char** a_argv)
 {
     GOptionContextSafePtr context (init_option_context ());
     THROW_IF_FAIL (context);
+
+    if (a_argc == 1) {
+        // We have no inferior program so edit the command like accordingly.
+        a_argc = 0;
+        a_argv[0] = 0;
+        return;
+    }
 
     // Split the command like in two parts. One part is made of the options
     // for Nemiver itself, and the other part is the options relevant to
@@ -416,7 +425,12 @@ process_gui_options (int& a_argc, char** a_argv)
     }
 
     vector<UString> prog_args;
-    UString prog_path = a_argv[0];
+    UString prog_path;
+    // Here, a_argc is the argument count of the inferior program.
+    // It's zero if there is there is no inferior program.
+    // Otherwise it equals the number of arguments to the inferior program + 1
+    if (a_argc > 0)
+        prog_path = a_argv[0];
     for (int i = 1; i < a_argc; ++i) {
         prog_args.push_back (Glib::locale_to_utf8 (a_argv[i]));
     }
@@ -443,9 +457,10 @@ process_gui_options (int& a_argc, char** a_argv)
                 env[name] = value;
             }
         }
-        debug_persp->execute_program (prog_path,
-                                      prog_args,
-                                      env);
+        if (!prog_path.empty ())
+            debug_persp->execute_program (prog_path,
+                                          prog_args,
+                                          env);
     } else {
         cerr << "Could not find the debugger perspective plugin\n";
         return false;
