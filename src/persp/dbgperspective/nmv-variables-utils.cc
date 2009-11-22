@@ -35,6 +35,7 @@ NEMIVER_BEGIN_NAMESPACE (variables_utils2)
 static void update_a_variable_real (const IDebugger::VariableSafePtr a_var,
                                     const Gtk::TreeView &a_tree_view,
                                     Gtk::TreeModel::iterator &a_row_it,
+                                    bool a_truncate_type,
                                     bool a_handle_highlight,
                                     bool a_is_new_frame,
                                     bool a_update_members);
@@ -71,9 +72,19 @@ is_type_a_pointer (const UString &a_type)
     return false;
 }
 
+/// Populate the type information of the graphical node representing
+/// a variable.
+/// \param a_var_it the iterator to the graphical node representing the
+/// variable we want to set the type for
+/// \param a_type the type string to set
+/// \param a_truncate when true, if the type exceeds a certain length,
+/// truncate it. Do not truncate the variable otherwise. In any case, in
+/// presence of a multi-line type string the type is _always_ truncated to the
+/// first line.
 void
 set_a_variable_node_type (Gtk::TreeModel::iterator &a_var_it,
-                          const UString &a_type)
+                          const UString &a_type,
+                          bool a_truncate)
 {
     THROW_IF_FAIL (a_var_it);
     a_var_it->set_value (get_variable_columns ().type,
@@ -83,10 +94,11 @@ set_a_variable_node_type (Gtk::TreeModel::iterator &a_var_it,
     if (nb_lines) {--nb_lines;}
 
     UString::size_type truncation_index = 0;
-    static const UString::size_type MAX_TYPE_STRING_LENGTH = 15;
+    static const UString::size_type MAX_TYPE_STRING_LENGTH = 50;
     if (nb_lines) {
         truncation_index = a_type.find ('\n');
-    } else if (a_type.size () > MAX_TYPE_STRING_LENGTH) {
+    } else if (a_truncate
+               && (a_type.size () > MAX_TYPE_STRING_LENGTH)) {
         truncation_index = MAX_TYPE_STRING_LENGTH;
     }
     if (truncation_index) {
@@ -121,6 +133,7 @@ void
 update_a_variable_node (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         Gtk::TreeModel::iterator &a_iter,
+                        bool a_truncate_type,
                         bool a_handle_highlight,
                         bool a_is_new_frame)
 {
@@ -168,7 +181,7 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     }
 
     (*a_iter)[get_variable_columns ().value] = a_var->value ();
-    set_a_variable_node_type (a_iter,  a_var->type ());
+    set_a_variable_node_type (a_iter,  a_var->type (), a_truncate_type);
 }
 
 
@@ -186,7 +199,8 @@ void
 update_unfolded_variable (const IDebugger::VariableSafePtr a_var,
                           const Gtk::TreeView &a_tree_view,
                           const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
-                          Gtk::TreeModel::iterator a_var_it)
+                          Gtk::TreeModel::iterator a_var_it,
+                          bool a_truncate_type)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -200,7 +214,8 @@ update_unfolded_variable (const IDebugger::VariableSafePtr a_var,
                            a_tree_view,
                            a_tree_store,
                            a_var_it,
-                           result_var_row_it);
+                           result_var_row_it,
+                           a_truncate_type);
     }
 }
 
@@ -391,6 +406,7 @@ bool
 update_a_variable (const IDebugger::VariableSafePtr a_var,
                    const Gtk::TreeView &a_tree_view,
                    Gtk::TreeModel::iterator &a_parent_row_it,
+                   bool a_truncate_type,
                    bool a_handle_highlight,
                    bool a_is_new_frame,
                    bool a_update_members)
@@ -410,7 +426,7 @@ update_a_variable (const IDebugger::VariableSafePtr a_var,
     }
 
     update_a_variable_real (a_var, a_tree_view,
-                            row_it, a_handle_highlight,
+                            row_it, a_truncate_type, a_handle_highlight,
                             a_is_new_frame, a_update_members);
     return true;
 }
@@ -432,6 +448,7 @@ static void
 update_a_variable_real (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         Gtk::TreeModel::iterator &a_row_it,
+                        bool a_truncate_type,
                         bool a_handle_highlight,
                         bool a_is_new_frame,
                         bool a_update_members)
@@ -439,6 +456,7 @@ update_a_variable_real (const IDebugger::VariableSafePtr a_var,
     update_a_variable_node (a_var,
                             a_tree_view,
                             a_row_it,
+                            a_truncate_type,
                             a_handle_highlight,
                             a_is_new_frame);
     Gtk::TreeModel::iterator row_it;
@@ -449,7 +467,8 @@ update_a_variable_real (const IDebugger::VariableSafePtr a_var,
              row_it != rows.end () && var_it != a_var->members ().end ();
              ++row_it, ++var_it) {
             update_a_variable_real (*var_it, a_tree_view,
-                                    row_it, a_handle_highlight,
+                                    row_it, a_truncate_type,
+                                    a_handle_highlight,
                                     a_is_new_frame,
                                     true /* update members */);
         }
@@ -469,13 +488,14 @@ bool
 append_a_variable (const IDebugger::VariableSafePtr a_var,
                    const Gtk::TreeView &a_tree_view,
                    const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
-                   Gtk::TreeModel::iterator &a_parent_row_it)
+                   Gtk::TreeModel::iterator &a_parent_row_it,
+                   bool a_truncate_type)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     Gtk::TreeModel::iterator row_it;
     return append_a_variable (a_var, a_tree_view, a_tree_store,
-                              a_parent_row_it, row_it);
+                              a_parent_row_it, row_it, a_truncate_type);
 }
 
 /// Append a variable to a variable tree view widget.
@@ -496,7 +516,8 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
                    const Gtk::TreeView &a_tree_view,
                    const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                    Gtk::TreeModel::iterator &a_parent_row_it,
-                   Gtk::TreeModel::iterator &a_result)
+                   Gtk::TreeModel::iterator &a_result,
+                   bool a_truncate_type)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (a_tree_store);
@@ -525,19 +546,24 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
     if (!a_var) {
         return false;
     }
-    update_a_variable_node (a_var, a_tree_view, row_it, true, true);
+    update_a_variable_node (a_var, a_tree_view, row_it,
+                            a_truncate_type, true, true);
     list<IDebugger::VariableSafePtr>::const_iterator it;
     if (a_var->needs_unfolding ()) {
         // Mark *row_it as needing unfolding, and add an empty
         // child node to it
         (*row_it)[get_variable_columns ().needs_unfolding] = true;
         IDebugger::VariableSafePtr empty_var;
-        append_a_variable (empty_var, a_tree_view, a_tree_store, row_it);
+        append_a_variable (empty_var, a_tree_view,
+                           a_tree_store, row_it,
+                           a_truncate_type);
     } else {
         for (it = a_var->members ().begin ();
              it != a_var->members ().end ();
              ++it) {
-            append_a_variable (*it, a_tree_view, a_tree_store, row_it);
+            append_a_variable (*it, a_tree_view,
+                               a_tree_store, row_it,
+                               a_truncate_type);
         }
     }
     a_result = row_it;

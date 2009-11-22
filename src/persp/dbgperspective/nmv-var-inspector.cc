@@ -192,7 +192,8 @@ class VarInspector::Priv : public sigc::trackable {
                                   *tree_view,
                                   tree_store,
                                   parent_iter,
-                                  var_row);
+                                  var_row,
+                                  true /* Do truncate type */);
         LOG_DD ("set variable" << a_variable->name ());
 
         // If the variable has children, unfold it so that we can see them.
@@ -489,7 +490,10 @@ class VarInspector::Priv : public sigc::trackable {
         NEMIVER_TRY
 
         Gtk::TreeModel::iterator var_it = tree_store->get_iter (a_var_node);
-        vutil::update_unfolded_variable (a_var, *tree_view, tree_store, var_it);
+        vutil::update_unfolded_variable (a_var, *tree_view,
+                                         tree_store,
+                                         var_it,
+                                         true /* Do truncate type */);
         tree_view->expand_row (a_var_node, false);
 
         NEMIVER_CATCH
@@ -508,7 +512,10 @@ class VarInspector::Priv : public sigc::trackable {
         THROW_IF_FAIL (var_row);
         THROW_IF_FAIL (tree_view);
         vutil::update_a_variable_node (a_var, *tree_view,
-                                       var_row, false, false);
+                                       var_row,
+                                       true /* do truncate types */,
+                                       false /* don't handle highlight ... */ ,
+                                       false /* ... really */);
 
         NEMIVER_CATCH
     }

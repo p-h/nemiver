@@ -200,7 +200,8 @@ public:
                                   static_cast<Gtk::TreeView&> (*tree_view),
                                   TreeStoreRefPtr::cast_static (tree_store),
                                   iter /* no parent */,
-                                  iter /* result iter */);
+                                  iter /* result iter */,
+                                  false /* do not truncate type */);
         tree_view->expand_row (tree_store->get_path (iter), false);
     }
 
@@ -211,7 +212,9 @@ public:
         THROW_IF_FAIL (tree_view);
         Gtk::TreeModel::iterator parent_row_it;
         vutil::update_a_variable (a_var, *tree_view, parent_row_it,
-                                  true, false);
+                                  false /* Do not truncate type */ ,
+                                  true /* Handle highlight */ ,
+                                  false /* The frame is not new */ );
     }
 
     //****************************

@@ -78,18 +78,21 @@ VariableColumns& get_variable_columns ();
 bool is_type_a_pointer (const UString &a_type);
 
 void set_a_variable_node_type (Gtk::TreeModel::iterator &a_var_it,
-                               const UString &a_type);
+                               const UString &a_type,
+                               bool a_truncate);
 
 void update_a_variable_node (const IDebugger::VariableSafePtr a_var,
                              const Gtk::TreeView &a_tree_view,
                              Gtk::TreeModel::iterator &a_iter,
+                             bool a_truncate_type,
                              bool a_handle_highlight,
                              bool a_is_new_frame);
 
 void update_unfolded_variable (const IDebugger::VariableSafePtr a_var,
                                const Gtk::TreeView &a_tree_view,
                                const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
-                               Gtk::TreeModel::iterator a_var_it);
+                               Gtk::TreeModel::iterator a_var_it,
+                               bool a_truncate_type);
 
 bool find_a_variable (const IDebugger::VariableSafePtr a_var,
                       const Gtk::TreeModel::iterator &a_parent_row_it,
@@ -105,6 +108,7 @@ bool find_a_variable_descendent (const IDebugger::VariableSafePtr a_var,
 bool update_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         Gtk::TreeModel::iterator &a_parent_row_it,
+                        bool a_truncate_type,
                         bool a_handle_highlight,
                         bool a_is_new_frame,
                         bool a_update_members = false);
@@ -112,13 +116,15 @@ bool update_a_variable (const IDebugger::VariableSafePtr a_var,
 bool append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
-                        Gtk::TreeModel::iterator &a_parent_row_it);
+                        Gtk::TreeModel::iterator &a_parent_row_it,
+                        bool a_truncate_type);
 
 bool append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                         Gtk::TreeModel::iterator &a_parent_row_it,
-                        Gtk::TreeModel::iterator &a_result);
+                        Gtk::TreeModel::iterator &a_result,
+                        bool a_truncate_type);
 
 NEMIVER_END_NAMESPACE (variables_utils2)
 NEMIVER_END_NAMESPACE (nemiver)

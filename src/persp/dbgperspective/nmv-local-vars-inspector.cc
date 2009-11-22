@@ -365,7 +365,8 @@ public:
             vutil::append_a_variable (a_var,
                                       *tree_view,
                                       tree_store,
-                                      parent_row_it);
+                                      parent_row_it,
+                                      false /* do not truncate types */);
             tree_view->expand_row (tree_store->get_path (parent_row_it), false);
             local_vars.push_back (a_var);
         }
@@ -383,7 +384,8 @@ public:
             vutil::append_a_variable (a_var,
                                       *tree_view,
                                       tree_store,
-                                      parent_row_it);
+                                      parent_row_it,
+                                      false /* do not truncate type */);
             tree_view->expand_row (tree_store->get_path (parent_row_it), false);
             function_arguments.push_back (a_var);
         }
@@ -401,6 +403,7 @@ public:
         if (get_local_variables_row_iterator (parent_row_it)) {
             vutil::update_a_variable (a_var, *tree_view,
                                       parent_row_it,
+                                      false /* do not truncate type */,
                                       true /* handle highlight */,
                                       false /* is not a new frame */,
                                       a_update_members);
@@ -420,6 +423,7 @@ public:
             return vutil::update_a_variable (a_var,
                                              *tree_view,
                                              parent_row_it,
+                                             false /* do not truncate type */,
                                              true /* handle highlight */,
                                              false /* is not a new frame */);
         }
@@ -850,7 +854,8 @@ public:
         vutil::update_unfolded_variable (a_var,
                                          *tree_view,
                                          tree_store,
-                                         var_it);
+                                         var_it,
+                                         false /* do not truncate type */);
         tree_view->expand_row (a_var_node, false);
         NEMIVER_CATCH
     }
@@ -1036,7 +1041,10 @@ public:
         THROW_IF_FAIL (var_row);
         THROW_IF_FAIL (tree_view);
         vutil::update_a_variable_node (a_var, *tree_view,
-                                       var_row, false, false);
+                                       var_row,
+                                       false /* do not truncate type */,
+                                       false /* do not highlight variable */,
+                                       false /* frame ain't new */);
 
         NEMIVER_CATCH
     }
