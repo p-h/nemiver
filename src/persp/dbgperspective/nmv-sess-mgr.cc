@@ -300,8 +300,8 @@ SessMgr::store_session (Session &a_session,
          ++prop_iter) {
         query = "insert into attributes values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + prop_iter->first + "', '"
-                + prop_iter->second
+                + SQLStatement::escape_string (prop_iter->first) + "', '"
+                + SQLStatement::escape_string (prop_iter->second)
                 + "')";
         LOG_DD ("query: " << query);
         THROW_IF_FAIL
@@ -319,8 +319,8 @@ SessMgr::store_session (Session &a_session,
          ++var_iter) {
         query = "insert into env_variables values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + var_iter->first + "', '"
-                + var_iter->second
+                + SQLStatement::escape_string (var_iter->first) + "', '"
+                + SQLStatement::escape_string (var_iter->second)
                 + "')";
         LOG_DD ("query: " << query);
         THROW_IF_FAIL
@@ -341,11 +341,13 @@ SessMgr::store_session (Session &a_session,
         condition.chomp ();
         query = "insert into breakpoints values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + break_iter->file_name () + "', '"
-                + break_iter->file_full_name () + "', "
+                + SQLStatement::escape_string
+                    (break_iter->file_name ()) + "', '"
+                + SQLStatement::escape_string
+                    (break_iter->file_full_name ()) + "', "
                 + UString::from_int (break_iter->line_number ()) + ", "
                 + UString::from_int (break_iter->enabled ()) + ", "
-                + "'" + condition + "'" + ", "
+                + "'" + SQLStatement::escape_string (condition) + "'" + ", "
                 + UString::from_int (break_iter->ignore_count ())
                 + ")";
         LOG_DD ("query: " << query);
@@ -367,7 +369,7 @@ SessMgr::store_session (Session &a_session,
         expression.chomp ();
         query = "insert into watchpoints values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + expression + "', "
+                + SQLStatement::escape_string (expression) + "', "
                 + UString::from_int (watch_iter->is_read ()) + ", "
                 + UString::from_int (watch_iter->is_write ())
                 + ")";
@@ -387,7 +389,7 @@ SessMgr::store_session (Session &a_session,
          ++ofile_iter) {
         query = "insert into openedfiles values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + *ofile_iter
+                + SQLStatement::escape_string (*ofile_iter)
                 + "')";
         LOG_DD ("query: " << query);
         THROW_IF_FAIL
@@ -405,7 +407,7 @@ SessMgr::store_session (Session &a_session,
          ++path_iter) {
         query = "insert into searchpaths values(NULL, "
                 + UString::from_int (a_session.session_id ()) + ", '"
-                + *path_iter
+                + SQLStatement::escape_string (*path_iter)
                 + "')";
         LOG_DD ("query: " << query);
         THROW_IF_FAIL

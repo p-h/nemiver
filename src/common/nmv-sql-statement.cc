@@ -45,16 +45,39 @@ SQLStatement::to_string () const
     return m_priv->sql_string;
 }
 
+/// Escape a string by making sure all the lone '\'' in the string are
+/// escaped properly by a string "''".
+/// If given a string that is already escaped, this function should do the
+/// right thing.
+/// \param a_sql_string the string to escape
+/// \return the escaped string.
 common::UString
 SQLStatement::escape_string (const common::UString &a_sql_string)
 {
     UString out_string;
-    unsigned int i (0);
-    for (i = 0; i != a_sql_string.length () ; ++i ) {
-        out_string.append (1,a_sql_string[i]);
-        if (a_sql_string[i] == '\'') {
-            out_string.append (1,a_sql_string[i]);
+    unsigned i = 0;
+    char c;
+    while (i < a_sql_string.raw ().length ()) {
+        c = a_sql_string.raw ()[i];
+        if (c == '\'') {
+            if (i + 1 < a_sql_string.raw ().length ()
+                && a_sql_string.raw ()[i + 1] == '\'') {
+                // This character '\'' precedes another '\'' character.
+                // It means the next '\'' is escaped. We don't need to
+                // escape anything, just insert the string "''".
+                i += 2;
+            } else {
+                // This '\'' character is not followed by a '\''. So we
+                // must escape this by "''". Yes in sql, a '\'' is escaped
+                // by the string "''".
+                ++i;
+            }
+            out_string.append ("''");
+            continue;
+        } else {
+            out_string.append (1, c);
         }
+        ++i;
     }
     return out_string;
 }
