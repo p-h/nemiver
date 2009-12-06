@@ -6,6 +6,7 @@ Claude Paroz
 
 Dodji Seketeli
       Support editing breakpoint condition
+      Use -break-after to set ignore count
       Support ignore count at breakpoint setting time
       Update breakpoint saving into session (Closes: #595083)
       Preselect process to attach to (Closes: #595667)
@@ -13,7 +14,10 @@ Dodji Seketeli
       Restore call stack initial window (Closes: #599768)
       Update call stack on thread selection (Closes: #601199)
       Do not update variables twice (closes: #601819)
-      Use -break-after to set ignore count
+      Properly handle empty command line
+      Cleanup long command line switches
+      Escape strings saved in sessions (Closes: #579569)
+      Handle ":" in pending bp attrs (Closes: #603627)
 
 Hans Vercammen
       Small typo causing test build failure
@@ -23,6 +27,10 @@ Mario Blättermann
 
 Takeshi AIHANA
       2009-10-17 Updated Japanese translation.
+
+Tom Hughes
+      Let inferior use launch terminal (Closes: #602072)
+      Do not blindly truncate types (Closes: #602074)
 
 0.7.2 Release
 =============
