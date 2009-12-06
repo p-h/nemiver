@@ -2073,25 +2073,63 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
         LOG_D ("got pending breakpoint: '" << pending << "'",
                GDBMI_OUTPUT_DOMAIN);
         vector<UString> str_tab;
-        //pending contains either the name of the function the breakpoint
-        //has been set on, or the filename:linenumber location of the
-        //breakpoint.
-        //So either pending has the form:
-        //"ns::functionname" or it has the form "filename:linenumber"
-        bool breakpoint_on_function_name = false;
-        if (pending.raw ().find ("::") != std::string::npos) {
-            breakpoint_on_function_name = true;
-        }
-        if (!breakpoint_on_function_name) {
-            str_tab = pending.split (":");
-        } else {
+        // pending contains either the name of the function the breakpoint
+        // has been set on, or the filename:linenumber location of the
+        // breakpoint.
+        // So if the pending string has the form
+        // "path_to_filename:linenumber", with linenumber being an actual
+        // number and being at the end of the string, then we know it's not
+        // a function name.
+        // Bear in mind that ':' can also be part of the path name. So we
+        // really need to detect if the last ':' is the separator betwen
+        // path and line number.
+        std::string::size_type colon_pos;
+        if ((colon_pos = pending.raw ().find_last_of (":"))
+            == std::string::npos) {
             str_tab.push_back (pending);
+        } else {
+            // Is what comes after the comma a legit number?
+            bool is_number = true;
+            std::string::size_type str_len = colon_pos;
+
+            if (colon_pos + 1 >= pending.raw ().length ())
+                is_number = false;
+            // Loop to make sure the thing after the ':' is an actual
+            // number.
+            std::string::size_type i;
+            for (i = colon_pos + 1;
+                 i < pending.raw ().length ();
+                 ++i) {
+                if (!isdigit (pending.raw ()[i])) {
+                    is_number = false;
+                    break;
+                }
+            }
+            bool number_is_at_end_of_pending = (i >= pending.raw ().length ());
+
+            if (is_number && number_is_at_end_of_pending) {
+                string file_name, line_num;
+
+                for (string::size_type i = 0; i < str_len; ++i)
+                    file_name.push_back (pending.raw ()[i]);
+
+                for (string::size_type i = colon_pos + 1;
+                     i < pending.raw ().length ();
+                     ++i)
+                    line_num.push_back (pending.raw ()[i]);
+
+                str_tab.push_back (file_name);
+                str_tab.push_back (line_num);
+            } else {
+                str_tab.push_back (pending);
+            }
         }
-        //from now on, if str_tab.size () == 2 then it contains
-        //the filename and line number of the breakpoint.
-        //if it str_tab.size () == 1 then it contains the function name
-        //the breakpoint was set on.
-        //Otherwise an error occured
+
+        // from now on, if str_tab.size () == 2 then it contains
+        // the filename and line number of the breakpoint.
+        // if it str_tab.size () == 1 then it contains the function name
+        // the breakpoint was set on.
+        // Otherwise an error occured
         if (str_tab.size () > 1) {
             LOG_D ("filepath: '" << str_tab[0] << "'", GDBMI_OUTPUT_DOMAIN);
             LOG_D ("linenum: '" << str_tab[1] << "'", GDBMI_OUTPUT_DOMAIN);
@@ -2115,10 +2153,10 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
     }
 
     map<UString, UString>::iterator iter, null_iter = attrs.end ();
-    //we use to require that the "fullname" property be present as
-    //well, but it seems that a lot debug info set got shipped without
-    //that property. Client code should do what they can with the
-    //file property only.
+    // we use to require that the "fullname" property be present as
+    // well, but it seems that a lot debug info set got shipped without
+    // that property. Client code should do what they can with the
+    // file property only.
     if (   (iter = attrs.find ("number"))  == null_iter
             || (iter = attrs.find ("type"))    == null_iter
             || (iter = attrs.find ("disp"))    == null_iter
