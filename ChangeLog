@@ -1,5 +1,10 @@
 2009-12-07  Dodji Seketeli <dodji@redhat.com>
 
+	Automatically regenerate ChangeLog for 0.7.3
+	* ChangeLog: Regenerate.
+
+2009-12-07  Dodji Seketeli <dodji@redhat.com>
+
 	Update configure status message
 	* configure.ac: use AC_MSG_NOTICE to display configure status
 	message. That makes it be logged in config.log, at least.

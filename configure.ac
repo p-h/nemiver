@@ -1,7 +1,7 @@
 dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
-AC_INIT(nemiver,0.7.3)
+AC_INIT(nemiver,0.7.4)
 
 MAJOR_VERSION=0
 MINOR_VERSION=7
