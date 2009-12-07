@@ -1,3 +1,335 @@
+2009-12-07  Dodji Seketeli <dodji@redhat.com>
+
+	Update configure status message
+	* configure.ac: use AC_MSG_NOTICE to display configure status
+	message. That makes it be logged in config.log, at least.
+
+2009-12-06  Dodji Seketeli <dodji@redhat.com>
+
+	Updated NEW file for 0.7.3
+
+2009-11-15  Dodji Seketeli <dodji@redhat.com>
+
+	Update NEW file
+	* NEWS: update for 0.7.3
+
+2009-12-06  Dodji Seketeli <dodji@redhat.com>
+
+	Handle ":" in pending bp attrs (Closes: #602074)
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_breakpoint):
+	Handle ':' appearing in the middle of the content of the 'pending'
+	attribute of breakpoint objects. This is tricky since normally, ':'
+	appearing at the end of the string delimits the file path and the
+	line number when the breakpoint has been set to a linux - as opposed
+	to a breakpoint set on a function.
+	* tests/test-gdbmi.cc (test_breakpoint_table, test_breakpoint): Add
+	new test cases.
+
+2009-11-22  Tom Hughes <tom@compton.nu>
+
+	Let inferior use launch terminal (Closes: #602072)
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::set_tty_path): Declare
+	new interface entry point.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::set_tty_path): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::Priv::set_tty_path): New
+	method.
+	(GDBEngine::load_program, GDBEngine::attach_to_target,): Use it.
+	(GDBEngine::set_tty_path): Implementation of the new
+	IDebugger::set_tty_path interface. Uses GDBEngine::Priv::set_tty_path.
+	* src/main.cc (static GOptionEntry entries): Add a new entry for a new
+	--use-launch-terminal command line option.
+	(process_gui_options): Let the debug perspective be aware when the
+	user wants the inferior to use the terminal from which Nemiver was
+	launched.
+	(main): Try to release the current controlling terminal when we want the
+	inferior to use it.
+	* src/persp/dbgperspective/nmv-conf-keys.h
+	(CONF_KEY_USE_LAUNCH_TERMINAL): Declare constant for the 'use launch
+	terminal' conf key.
+	* src/persp/dbgperspective/nmv-dbg-perspective.h:
+	(IDBGPerspective::uses_launch_terminal): Declare new accessors.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(CONF_KEY_USE_LAUNCH_TERMINAL): Define conf key constant.
+	(DBGPerspective::get_terminal_name,
+	DBGPerspective::uses_launch_terminal): New accessors.
+	(DBGPerspective::on_conf_key_changed_signal,
+	DBGPerspective::read_default_config): Handle
+	CONF_KEY_USE_LAUNCH_TERMINAL key.
+	(DBGPerspective::execute_program, DBGPerspective::attach_to_program):
+	Use the terminal path the user wants, not necessarily the one of the
+	graphical terminal embedded in the GUI.
+	* src/persp/dbgperspective/glade/preferencesdialog.glade: Add a UI to
+	set the "use launch terminal" key.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc:
+	(PreferencesDialog::Priv::on_launch_terminal_toggled_signal,
+	PreferencesDialog::Priv::update_use_launch_terminal_key): New
+	methods.
+	(PreferencesDialog::Priv::init): When the 'use launch terminal'
+	check button is checked, set the 'use launch terminal' conf key
+	accordingly.
+	(PreferencesDialog::Priv::update_widget_from_editor_keys):
+	Populate the 'use launch terminal' check button state according to the
+	'use launch terminal' conf key. Set it to false by default.
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas:
+	(apps/nemiver/dbgperspective/use-launch-terminal): New key. Set to
+	false by defaulf.
+
+2009-11-22  Dodji Seketeli <dodji@redhat.com>
+
+	Do not blindly truncate types (Closes: #602074)
+	* src/persp/dbgperspective/nmv-variables-utils.cc:
+	(set_a_variable_node_type): Add a flag to indicate whether the type
+	should be truncated or not. Truncate multi-line types to the first
+	line in all cases. Set the truncation limit to 50 instead of 15
+	characters.
+	(update_a_variable_real, update_a_variable_node,
+	update_unfolded_variable, update_a_variable,
+	update_a_variable_real, append_a_variable): Add a flag to indicate
+	whether the type should be truncated or not. Eventually Pass it down to
+	set_a_variable_node_type.
+	* src/persp/dbgperspective/nmv-variables-utils.h:
+	(set_a_variable_node_type, update_a_variable_node,
+	update_unfolded_variable, update_a_variable, append_a_variable):
+	Update these declarations to add a flag indicating whether the type
+	should be truncated or not.
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:
+	(GlobalVarsInspectorDialog::Priv::update_a_global_variable,
+	GlobalVarsInspectorDialog::Priv::append_a_global_variable):
+	Do not truncate the type in the global variables inspector dialog.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	(LocalVarsInspector::Priv::append_a_local_variable,
+	LocalVarsInspector::Priv::append_a_function_argument,
+	LocalVarsInspector::Priv::update_a_function_argument,
+	LocalVarsInspector::Priv::update_a_local_variable,
+	LocalVarsInspector::Priv::on_variable_unfolded_signal,
+	LocalVarsInspector::Priv::on_variable_assigned_signal):
+	Do not truncate the type in the local variables inspector widget.
+	* src/persp/dbgperspective/nmv-var-inspector.cc:
+	(VarInspector::Priv::set_variable,
+	VarInspector::Priv::on_variable_unfolded_signal,
+	VarInspector::Priv::on_variable_assigned_signal):
+	Do truncate the type in this variable widget used in the popup variable
+	inspector and variable inspector (modal) dialog.
+
+2009-11-22  Dodji Seketeli <dodji@redhat.com>
+
+	Escape strings saved in sessions (Closes: #579569)
+	* src/common/nmv-sql-statement.cc (SQLStatement::escape_string):
+	Overhaul.
+	* src/persp/dbgperspective/nmv-sess-mgr.cc (SessMgr::store_session):
+	Use SQLStatement::escape_string to escape sub-strings to build sql
+	requests.
+
+2009-11-22  Dodji Seketeli <dodji@redhat.com>
+
+	Cleanup long cmdline switches
+	* src/main.cc (static GOptionEntry entries): changed --listsessions
+	into --list-sessions, --purgesessions into --purge-sessions and
+	--logdebuggeroutput into --log-debugger-output.
+
+2009-11-21  Dodji Seketeli <dodji@redhat.com>
+
+	Properly handle empty cmd line
+	* src/main.cc (parse_command_line): Make it clear that this edits
+	the command line and lets it become the command like of the
+	inferior. So handle the case where there is no inferior on the
+	command line, i.e. when nemiver is launched with no argument.
+	(process_gui_options): Do not try to debug an inferior when there
+	is none.
+
+2009-11-15  Dodji Seketeli <dodji@redhat.com>
+
+	Do not update variables twice (closes: #601819)
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc:
+	(LocalVarsInspector::Priv::update_a_local_variable): Add a new flag
+	to control whether we want to recursively update members variables
+	or not. By default, we just update the members variables
+	recursively, though.
+	(LocalVarsInspector::Priv::on_local_variable_updated_signal):
+	When using GDB/MI Variable objects backend, we receive one
+	notification per variable which value has changed. So when updating the
+	graphical representation of an IDebugger::Variable, we shall not
+	recursively update the members of the variable. Otherwise we update
+	some variable nodes several times hence loosing the information
+	necessary to highlighting these variable nodes.
+	* src/persp/dbgperspective/nmv-variables-utils.cc ():
+	(update_a_variable_real): Add a flag to recursively update (or not)
+	the members of the variable. Add comments.
+	(update_a_variable): Likewise. Pass the flag to update_a_variable_real.
+	Add comments.
+	(update_a_variable_node): Add comments.
+	* src/persp/dbgperspective/nmv-variables-utils.h:
+	(update_a_variable): Add a flag to recursively update (or not)
+	the members of the variable.
+
+2009-11-13  Hans Vercammen <hveso3@gmail.com>
+
+	Small typo causing test build failure
+	* tests/Makefile.am: Compile threads.cc, not threads.c
+
+2009-11-08  Dodji Seketeli <dodji@redhat.com>
+
+	Update call stack on thread sel (Closes: #601199)
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	(CallStack::Priv::handle_update): Break out from
+	CallStack::Priv::on_debugger_stopped_signal.
+	(CallStack::Priv::on_thread_selected_signal): New signal handler.
+	Use the new CallStack::Priv::handle_update.
+	(CallStack::Priv::connect_debugger_signals): Update the call
+	stack when a new thread is selected.
+	(CallStack::Priv::on_debugger_stopped_signal): Use the new
+	CallStack::Priv::handle_update.
+	(finish_update_handling): Renamed finish_handling_debugger_stopped_event
+	into this.
+	(CallStack::Priv::on_expose_event_signal): Adjust.
+	* tests/threads.cc: New test.
+	* tests/Makefile.am: Add new test to build system.
+
+2009-10-27  Dodji Seketeli <dodji@redhat.com>
+
+	Restore call stack initial window (Closes: #599768)
+	* src/persp/dbgperspective/nmv-call-stack.cc:
+	(CallStack::Priv::on_debugger_stopped_signal): Restore the initial
+	call stack window when we are not in a frame paging transaction.
+	(struct CallStack::Priv::append_frames_to_tree_view): Fix typo.
+
+2009-10-17  Mario Blättermann <mariobl@gnome.org>
+
+	Updated German translation
+
+2009-10-17  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+
+2009-10-15  Dodji Seketeli <dodji@redhat.com>
+
+	Fix command line parsing (Closes: #591327)
+	* src/main.cc (init_option_context): Flag unknown options as
+	parsing errors.
+	(parse_command_line): Split the command line in two parts. One
+	is made of options for Nemiver itself. The other one is made of the
+	options for the inferior program. Then make the glib option parser
+	parse only the first part.
+	(process_non_gui_command_line): No need to pass any argument to this
+	function. Remove them.
+	(process_non_gui_options): Renamed process_non_gui_command_line into this.
+	(process_gui_command_line): The last argument to this function is
+	useless.  Remove it. The command line passed to this function is
+	now the command line containing the invocation of the inferior only.
+	Adjust accordingly.
+	(process_gui_options): Renamed process_gui_command_line into this.
+	(main): Adjust.
+
+2009-10-08  Claude Paroz <claude@2xlibre.net>
+
+	Updated French translation
+
+2009-09-20  Dodji Seketeli <dodji@redhat.com>
+
+	Style cleanup
+	* src/dbgengine/nmv-gdb-engine.cc,h: Trim lines to 80 chars.
+	'=' operator should be surrounded by space.
+	* src/dbgengine/nmv-i-debugger.h: Likewise.
+
+2009-09-20  Dodji Seketeli <dodji@redhat.com>
+
+	Update Coding style
+	* coding-style.txt: Shorten lines to < 80 characters and cleanup.
+
+2009-09-20  Dodji Seketeli <dodji@redhat.com>
+
+	Big style cleanup
+	* lots-of-files: Remove space before ";". There should always be
+	space around operator '='.
+
+2009-09-19  Dodji Seketeli <dodji@redhat.com>
+
+	Preselect process to attach to (Closes: #595667)
+	* src/persp/dbgperspective/nmv-proc-list-dialog.cc:
+	(ProcListDialog::Priv::Priv): Set the OK button as the default widget
+	for the dialog. Make pressing enter in the filter entry activate the
+	default widget of the dialog.
+	(ProcListDialog::Priv::on_filter_entry_changed): If the filtered
+	result set amounts to only one row, select that row.
+	(ProcListDialog::Priv::is_row_visible): Count the number row that is
+	going to be part of the filtered result set.
+
+2009-09-15  Dodji Seketeli <dodji@redhat.com>
+
+	Update BP saving into session (Closes: #595083)
+	* src/dbgengine/nmv-i-debugger.h:
+	(IDebugger::BreakPoint::is_read_watchpoint,
+	IDebugger::BreakPoint::is_write_watchpoint): New entry points.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::record_and_save_session): Save breakpoint ignore
+	count in the session.Schedule watchpoints to be recorded in the session.
+	(DBGPerspective::execute_session): Load the watchpoints and set
+	them.
+	(DBGPerspective::append_breakpoints): Do not discriminate the type of
+	breakpoint to add to the perspective at this point.
+	(DBGPerspective::append_breakpoint): Watchpoints being special type of
+	breakpoints, they should be added to the list of breakpoints as well.
+	Though, only standard types of breakpoints should be visually added to
+	the source editor.
+	(DBGPerspective::execute_program): Set breakpoints ignore counts on
+	breakpoints.
+	* src/persp/dbgperspective/nmv-sess-mgr.h:
+	(ISessMgr::BreakPoint::ignore_count): New method.
+	(ISessMgr::WatchPoint): New type.
+	(ISessMgr::Session::watchpoints): New method.
+	* src/persp/dbgperspective/nmv-sess-mgr.cc:
+	(SessMgr::store_session): Save breakpoint ignore count and
+	watchpoints in the session DB.
+	(SessMgr::load_session): Load breakpoints ignore count and
+	watchpoints from the session DB.
+	* src/persp/dbgperspective/sqlscripts/sqlite/create-tables.sql:
+	Bumped schema version number to 1.4. Add new watchpoints table, add
+	ignorecount column to the breakpoints table.
+	* src/persp/dbgperspective/sqlscripts/sqlite/drop-tables.sql: Add
+	watchpoints table to the list of tables to drop.
+
+2009-09-15  Dodji Seketeli <dodji@redhat.com>
+
+	Support ignore count at breakpoint setting time
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::set_breakpoint): Add a
+	parameter to set ignore count.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::set_breakpoint):
+	Adjust.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::set_breakpoint): Use
+	-break-insert now that it can fully replace the "break" cli command.
+	Let this function specify the ignore count as well.
+
+2009-09-15  Dodji Seketeli <dodji@redhat.com>
+
+	Use -break-after to set ignore count
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::set_breakpoint_ignore_count):
+	Use the kosher -break-after MI command instead of the "ignore" gdb cli command.
+
+2009-09-15  Dodji Seketeli <dodji@redhat.com>
+
+	Support editing breakpoint condition
+	* src/dbgengine/nmv-i-debugger.h (BreakPoint::clear): Set
+	BreakPoint::type to its proper default value.
+	(IDebugger::set_breakpoint_condition): Declare new entry point.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::set_breakpoint_condition):
+	Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::set_breakpoint_condition):
+	Define new entry point.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc:
+	(BreakpointsView::Priv::build_tree_view): Make the cell of the
+	breakpoint condition editable and update the breakpoint condition
+	when the value changes.
+	(BreakpointsView::Priv::on_breakpoint_condition_edited): New method.
+
+2009-09-13  Dodji Seketeli <dodji@redhat.com>
+
+	Bump version to 0.7.3
+	* configure.ac: Bump version number to 0.7.3
+
+2009-09-12  Dodji Seketeli <dodji@redhat.com>
+
+	Update ChangeLog
+	* ChangeLog: Updated
+
 2009-09-12  Dodji Seketeli <dodji@redhat.com>
 
 	Update ChangeLog
