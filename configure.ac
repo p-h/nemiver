@@ -445,8 +445,7 @@ help/Makefile])
 
 AC_OUTPUT()
 
-cat <<EOT
-
+AC_MSG_NOTICE([
 =================================================================
          Nemiver: $MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
 =================================================================
@@ -479,6 +478,6 @@ Once done, type 'make install' with sufficient privileges to install it to $pref
 
 I hope you will enjoy it.
 
---Dodji
-EOT
+        --Dodji
+])
 
