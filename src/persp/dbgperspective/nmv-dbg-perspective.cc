@@ -6069,9 +6069,11 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
             }
         }
 
-        open_file (file_path);
-        source_editor = get_source_editor_from_path (file_path,
-                                                     actual_file_name);
+        if (!file_path.empty ()) {
+            open_file (file_path);
+            source_editor = get_source_editor_from_path (file_path,
+                                                         actual_file_name);
+        }
     }
 
     //finally, if none of these things worked, display an error
@@ -6079,9 +6081,6 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
         LOG_ERROR ("Could not find source editor for file: '"
                 << a_file_name
                 << "'");
-        UString message;
-        message.printf (_("Could not find file: %s\n"), a_file_name.c_str ());
-        ui_utils::display_error (message);
         return false;
     } else {
         LOG_DD ("setting actual visual bp in the source editor");

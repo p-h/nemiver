@@ -3504,7 +3504,6 @@ GDBEngine::set_breakpoint (const UString &a_path,
     }
     break_cmd += UString::from_int (a_line_num);
     queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
-    list_breakpoints (a_cookie);
 }
 
 void
@@ -3623,7 +3622,6 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
     break_cmd +=  " " + a_func_name;
 
     queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
-    list_breakpoints (a_cookie);
 }
 
 void
