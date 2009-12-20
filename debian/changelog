@@ -1,3 +1,10 @@
+nemiver (0.7.3-1) unstable; urgency=low
+
+  * New upstream version
+    + Support editing breakpoint condition
+
+ -- Luca Bruno <lucab@debian.org>  Sun, 20 Dec 2009 16:16:47 +0100
+
 nemiver (0.7.2-1) unstable; urgency=low
 
   * New upstream version
