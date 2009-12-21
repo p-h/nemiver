@@ -145,24 +145,83 @@ struct SourceEditor::Priv {
     std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> > markers;
 #endif  // WITH_SOURCEVIEWMM2
     UString root_dir;
-    gint current_column;
-    gint current_line;
     nemiver::SourceView *source_view;
     Gtk::HBox *status_box;
-    Gtk::Label *line_col_label;
-    Gtk::Label *line_count;
-    sigc::signal<void, gint, gint> signal_insertion_moved;
-    sigc::signal<void, int, bool> marker_region_got_clicked_signal;
+
+    struct NonCompositeBufContext {
+        Glib::RefPtr<SourceBuffer> buffer;
+        int current_column;
+        int current_line;
+        Gtk::Label *line_col_label;
+        sigc::signal<void, gint, gint> signal_insertion_moved;
+        sigc::signal<void, int, bool> marker_region_got_clicked_signal;
+        UString path;
+
+        NonCompositeBufContext (int a_cur_col, int a_cur_line,
+                                Gtk::Label *a_line_col_label) :
+            current_column (a_cur_col),
+            current_line (a_cur_line),
+            line_col_label (a_line_col_label)
+        {
+        }
+    } non_comp_ctxt;
+
+    struct CompositeBufContext {
+        Glib::RefPtr<SourceBuffer> buffer;
+    } comp_ctxt;
+
     sigc::signal<void, const Gtk::TextBuffer::iterator&>
                                                     insertion_changed_signal;
-    UString path;
+
+
+    template<typename LocusType>
+    void register_composite_source_buffer
+                    (Glib::RefPtr<SourceBuffer> &a_buf,
+                     std::unary_function<int, LocusType> a_line_to_locus_func,
+                     std::unary_function<LocusType, int> a_locus_to_line_func)
+    {
+        comp_ctxt.buffer = a_buf;
+    }
+
+    void register_non_composite_source_buffer
+                                    (Glib::RefPtr<SourceBuffer> &a_buf)
+    {
+        non_comp_ctxt.buffer = a_buf;
+    }
+
+    bool switch_to_composite_source_buffer ()
+    {
+        RETURN_VAL_IF_FAIL (source_view, false);
+
+        if (comp_ctxt.buffer
+            && (source_view->get_source_buffer ()
+                != comp_ctxt.buffer)) {
+            source_view->set_source_buffer (comp_ctxt.buffer);
+            return true;
+        }
+        return false;
+    }
+
+    bool switch_to_non_composite_source_buffer ()
+    {
+        RETURN_VAL_IF_FAIL (source_view, false);
+
+        if (comp_ctxt.buffer
+            && (source_view->get_source_buffer ()
+                != non_comp_ctxt.buffer)) {
+            source_view->set_source_buffer (non_comp_ctxt.buffer);
+            return true;
+        }
+        return false;
+    }
 
     //**************
     //<signal slots>
     //**************
     void on_marker_region_got_clicked (int a_line, bool a_dialog_requested)
     {
-        marker_region_got_clicked_signal.emit (a_line, a_dialog_requested);
+        non_comp_ctxt.marker_region_got_clicked_signal.emit
+                                                (a_line, a_dialog_requested);
     }
 
     void on_mark_set_signal (const Gtk::TextBuffer::iterator &a_iter,
@@ -184,8 +243,8 @@ struct SourceEditor::Priv {
     void on_signal_insertion_moved (gint a_line, gint a_col)
     {
         if (a_line || a_col) {}
-        current_line = a_line;
-        current_column = a_col;
+        non_comp_ctxt.current_line = a_line;
+        non_comp_ctxt.current_column = a_col;
         update_line_col_label ();
     }
 
@@ -217,7 +276,7 @@ struct SourceEditor::Priv {
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_mark_set_signal));
         source_view->get_buffer ()->signal_insert ().connect
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_signal_insert));
-        signal_insertion_moved.connect
+        non_comp_ctxt.signal_insertion_moved.connect
             (sigc::mem_fun (*this,
                             &SourceEditor::Priv::on_signal_insertion_moved));
         source_view->get_buffer ()->signal_mark_set ().connect
@@ -226,9 +285,11 @@ struct SourceEditor::Priv {
 
     void update_line_col_info_from_iter (const Gtk::TextBuffer::iterator &a_iter)
     {
-        current_line = a_iter.get_line () + 1;
-        current_column = get_column_from_iter (a_iter);
-        signal_insertion_moved.emit  (current_line, current_column);
+        non_comp_ctxt.current_line = a_iter.get_line () + 1;
+        non_comp_ctxt.current_column = get_column_from_iter (a_iter);
+        non_comp_ctxt.signal_insertion_moved.emit
+                                    (non_comp_ctxt.current_line,
+                                     non_comp_ctxt.current_column);
     }
 
     void update_line_col_label ()
@@ -239,8 +300,9 @@ struct SourceEditor::Priv {
         }
         UString message;
         message.printf (_("Line: %i, Column: %i"),
-                        current_line, current_column);
-        line_col_label->set_text (message);
+                        non_comp_ctxt.current_line,
+                        non_comp_ctxt.current_column);
+        non_comp_ctxt.line_col_label->set_text (message);
     }
 
     gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)
@@ -287,7 +349,8 @@ struct SourceEditor::Priv {
 
     void init ()
     {
-        status_box->pack_end (*line_col_label, Gtk::PACK_SHRINK, 6 /* padding */);
+        status_box->pack_end (*non_comp_ctxt.line_col_label,
+                              Gtk::PACK_SHRINK, 6 /* padding */);
         init_signals ();
         source_view->set_editable (false);
         register_breakpoint_marker_type (BREAKPOINT_ENABLED_CATEGORY,
@@ -302,11 +365,9 @@ struct SourceEditor::Priv {
     }
 
     Priv () :
-        current_column (-1),
-        current_line (-1),
         source_view (Gtk::manage (new SourceView)),
-        status_box (Gtk::manage (new Gtk::HBox )),
-        line_col_label (Gtk::manage (new Gtk::Label ()))
+        status_box (Gtk::manage (new Gtk::HBox)),
+        non_comp_ctxt (-1, -1, Gtk::manage (new Gtk::Label))
 
     {
         init ();
@@ -315,11 +376,9 @@ struct SourceEditor::Priv {
     Priv (const UString &a_root_dir,
           Glib::RefPtr<SourceBuffer> &a_buf) :
         root_dir (a_root_dir),
-        current_column (-1),
-        current_line (-1),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
-        line_col_label (Gtk::manage (new Gtk::Label ()))
+        non_comp_ctxt (-1, -1, Gtk::manage (new Gtk::Label))
     {
         init ();
     }
@@ -383,26 +442,26 @@ SourceEditor::source_view () const
 gint
 SourceEditor::current_line () const
 {
-    return m_priv->current_line;
+    return m_priv->non_comp_ctxt.current_line;
 }
 
 void
 SourceEditor::current_line (gint &a_line)
 {
-    m_priv->current_line = a_line;
+    m_priv->non_comp_ctxt.current_line = a_line;
 }
 
 gint
 SourceEditor::current_column () const
 {
-    return m_priv->current_column;
+    return m_priv->non_comp_ctxt.current_column;
 }
 
 void
 SourceEditor::current_column (gint &a_col)
 {
     LOG_DD ("current colnum " << (int) a_col);
-    m_priv->current_column = a_col;
+    m_priv->non_comp_ctxt.current_column = a_col;
 }
 
 void
@@ -609,20 +668,20 @@ SourceEditor::scroll_to_iter (Gtk::TextIter &a_iter)
 void
 SourceEditor::set_path (const UString &a_path)
 {
-    m_priv->path = a_path;
+    m_priv->non_comp_ctxt.path = a_path;
 }
 
 void
 SourceEditor::get_path (UString &a_path) const
 {
-    a_path = m_priv->path;
+    a_path = m_priv->non_comp_ctxt.path;
 }
 
 void
 SourceEditor::get_file_name (UString &a_file_name)
 {
     string path;
-    path = Glib::locale_from_utf8 (m_priv->path);
+    path = Glib::locale_from_utf8 (m_priv->non_comp_ctxt.path);
     path = Glib::path_get_basename (path);
     a_file_name = Glib::locale_to_utf8 (path);
 }
@@ -778,10 +837,82 @@ SourceEditor::do_search (const UString &a_str,
     return false;
 }
 
+/// Registers a composite source buffer
+/// \param a_buf the composite source buffer
+/// \param a_line_to_locus_func a unary function that converts a line
+///        number into a meaningful location for this source buffer.
+/// \param a_locus_to_line_func a unary function that converst a
+///        meaningful location into a line buffer.
+template<typename LocusType>
+void
+SourceEditor::register_composite_source_buffer
+                    (Glib::RefPtr<SourceBuffer> &a_buf,
+                     std::unary_function<int, LocusType> a_line_to_locus_func,
+                     std::unary_function<LocusType, int> a_locus_to_line_func)
+{
+    m_priv->register_composite_source_buffer (a_buf, a_line_to_locus_func,
+                                              a_locus_to_line_func);
+}
+
+/// Registers a normal (non-composite) source buffer.
+/// \param a_buf the source buffer to register.
+void
+SourceEditor::register_non_composite_source_buffer
+                                    (Glib::RefPtr<SourceBuffer> &a_buf)
+{
+    m_priv->register_non_composite_source_buffer (a_buf);
+}
+
+/// Get the composite source buffer that was registered, or a NULL
+/// pointer if no one was registered before.
+/// \return a smart pointer to the source buffer.
+Glib::RefPtr<SourceBuffer>
+SourceEditor::get_composite_source_buffer () const
+{
+    return m_priv->comp_ctxt.buffer;
+}
+
+/// Get the non-composite source buffer that was registered, or a NULL
+/// pointer if no one was registered before.
+/// \return a smart pointer to the source buffer.
+Glib::RefPtr<SourceBuffer>
+SourceEditor::get_non_composite_source_buffer () const
+{
+    return m_priv->non_comp_ctxt.buffer;
+}
+
+/// Switch the editor to the composite source buffer that was
+/// registered. This function has no effect if no composite buffer was
+/// registered.
+/// \return true if the switch was done, false otherwise.
+bool
+SourceEditor::switch_to_composite_source_buffer ()
+{
+    return m_priv->switch_to_composite_source_buffer ();
+}
+
+/// Switch the editor to the non-composite source buffer that was
+/// registered. This function has no effect if no non-composite source
+/// buffer was registered.
+/// \return true if the switch was done, false otherwise.
+bool
+SourceEditor::switch_to_non_composite_source_buffer ()
+{
+    RETURN_VAL_IF_FAIL (m_priv && m_priv->source_view, false);
+
+    if (m_priv->comp_ctxt.buffer
+        && (m_priv->source_view->get_source_buffer ()
+            != m_priv->non_comp_ctxt.buffer)) {
+        m_priv->source_view->set_source_buffer (m_priv->non_comp_ctxt.buffer);
+        return true;
+    }
+    return false;
+}
+
 sigc::signal<void, int, bool>&
 SourceEditor::marker_region_got_clicked_signal () const
 {
-    return m_priv->marker_region_got_clicked_signal;
+    return m_priv->non_comp_ctxt.marker_region_got_clicked_signal;
 }
 
 sigc::signal<void, const Gtk::TextBuffer::iterator&>&

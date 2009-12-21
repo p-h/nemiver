@@ -26,6 +26,7 @@
 #define __NEMIVER_SOURCE_EDITOR_H__
 
 #include <list>
+#include <functional>
 #include <gtkmm/box.h>
 #include <gtksourceviewmm/sourceview.h>
 #include "common/nmv-safe-ptr-utils.h"
@@ -90,6 +91,39 @@ public:
                     bool a_match_entire_word=false,
                     bool a_search_backwards=false,
                     bool a_clear_selection=false);
+
+    /// \name Composite Source buffer handling.
+    /// @{
+
+    /// A composite buffer is a buffer which content doesn't come
+    /// directly from a file. It as been composed in memory. We use
+    /// composite buffers to represent the assembly view of a text file
+    /// being debugged.
+    /// Unlike non-composite buffers, meaningful locations inside the buffer
+    /// are not necessarily line numbers. They can be something else.
+    /// In the case of assembly view, a meaningful location is the address
+    /// of a machine instruction. So there somehow must be a kind of mapping
+    /// between the location used for the composite buffer and the actual
+    /// line number, because the underlying SourceBuffer implementation
+    /// relies on line numbers anyhow.
+
+    template<typename LocusType>
+    void register_composite_source_buffer
+                    (Glib::RefPtr<SourceBuffer> &a_buf,
+                     std::unary_function<int, LocusType> a_line_to_locus_func,
+                     std::unary_function<LocusType, int> a_locus_to_line_func);
+
+    void register_non_composite_source_buffer
+                                    (Glib::RefPtr<SourceBuffer> &a_buf);
+
+    Glib::RefPtr<SourceBuffer> get_composite_source_buffer () const;
+
+    Glib::RefPtr<SourceBuffer> get_non_composite_source_buffer () const;
+
+    bool switch_to_composite_source_buffer ();
+
+    bool switch_to_non_composite_source_buffer ();
+    /// @}
 
     /// \name signals
     /// @{
