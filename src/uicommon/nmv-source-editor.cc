@@ -137,6 +137,30 @@ public:
 
 };//end class Sourceview
 
+struct Line2AddrFunc : std::binary_function<Glib::RefPtr<SourceBuffer>,
+                                            int,
+                                            Address>
+{
+    int m_line;
+    Line2AddrFunc () :
+        m_line (-1)
+    {
+    }
+    Address operator () (Glib::RefPtr<SourceBuffer> a_buf, int a_line);
+};
+
+struct Addr2LineFunc : public std::binary_function<Glib::RefPtr<SourceBuffer>,
+                                                   const Address&, int>
+{
+    int m_line;
+    Addr2LineFunc () :
+        m_line (-1)
+    {
+    }
+    int operator () (Glib::RefPtr<SourceBuffer> a_buf, const Address &addr);
+};
+
+
 struct SourceEditor::Priv {
     Sequence sequence;
 #ifdef WITH_SOURCEVIEWMM2
@@ -146,39 +170,60 @@ struct SourceEditor::Priv {
 #endif  // WITH_SOURCEVIEWMM2
     UString root_dir;
     nemiver::SourceView *source_view;
+    Gtk::Label *line_col_label;
     Gtk::HBox *status_box;
 
     struct NonCompositeBufContext {
         Glib::RefPtr<SourceBuffer> buffer;
         int current_column;
         int current_line;
-        Gtk::Label *line_col_label;
         sigc::signal<void, gint, gint> signal_insertion_moved;
         sigc::signal<void, int, bool> marker_region_got_clicked_signal;
         UString path;
 
-        NonCompositeBufContext (int a_cur_col, int a_cur_line,
-                                Gtk::Label *a_line_col_label) :
+        NonCompositeBufContext (Glib::RefPtr<SourceBuffer> a_buf,
+                                int a_cur_col, int a_cur_line) :
+            buffer (a_buf),
             current_column (a_cur_col),
-            current_line (a_cur_line),
-            line_col_label (a_line_col_label)
+            current_line (a_cur_line)
+        {
+        }
+
+        NonCompositeBufContext (int a_cur_col, int a_cur_line) :
+            current_column (a_cur_col),
+            current_line (a_cur_line)
+        {
+        }
+
+        NonCompositeBufContext () :
+            current_column (-1),
+            current_line (-1)
         {
         }
     } non_comp_ctxt;
 
     struct CompositeBufContext {
         Glib::RefPtr<SourceBuffer> buffer;
+        Line2AddrFunc line_to_locus_func;
+        Addr2LineFunc locus_to_line_func;
+
+        CompositeBufContext ()
+        {
+        }
+
+        CompositeBufContext
+                    (Glib::RefPtr<SourceBuffer> a_buf) :
+            buffer (a_buf)
+        {
+        }
     } comp_ctxt;
 
     sigc::signal<void, const Gtk::TextBuffer::iterator&>
                                                     insertion_changed_signal;
 
 
-    template<typename LocusType>
     void register_composite_source_buffer
-                    (Glib::RefPtr<SourceBuffer> &a_buf,
-                     std::unary_function<int, LocusType> a_line_to_locus_func,
-                     std::unary_function<LocusType, int> a_locus_to_line_func)
+                    (Glib::RefPtr<SourceBuffer> &a_buf)
     {
         comp_ctxt.buffer = a_buf;
     }
@@ -302,7 +347,7 @@ struct SourceEditor::Priv {
         message.printf (_("Line: %i, Column: %i"),
                         non_comp_ctxt.current_line,
                         non_comp_ctxt.current_column);
-        non_comp_ctxt.line_col_label->set_text (message);
+        line_col_label->set_text (message);
     }
 
     gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)
@@ -349,7 +394,7 @@ struct SourceEditor::Priv {
 
     void init ()
     {
-        status_box->pack_end (*non_comp_ctxt.line_col_label,
+        status_box->pack_end (*line_col_label,
                               Gtk::PACK_SHRINK, 6 /* padding */);
         init_signals ();
         source_view->set_editable (false);
@@ -366,19 +411,37 @@ struct SourceEditor::Priv {
 
     Priv () :
         source_view (Gtk::manage (new SourceView)),
+        line_col_label (Gtk::manage (new Gtk::Label)),
         status_box (Gtk::manage (new Gtk::HBox)),
-        non_comp_ctxt (-1, -1, Gtk::manage (new Gtk::Label))
+        non_comp_ctxt (-1, -1)
 
     {
         init ();
     }
 
-    Priv (const UString &a_root_dir,
-          Glib::RefPtr<SourceBuffer> &a_buf) :
+    explicit Priv (const UString &a_root_dir,
+                   Glib::RefPtr<SourceBuffer> &a_buf,
+                   bool a_composite) :
+        root_dir (a_root_dir),
+        source_view (Gtk::manage (new SourceView (a_buf))),
+        line_col_label (Gtk::manage (new Gtk::Label)),
+        status_box (Gtk::manage (new Gtk::HBox)),
+        non_comp_ctxt (a_buf, -1, -1)
+    {
+        if (a_composite) {
+            comp_ctxt.buffer = a_buf;
+        } else {
+            non_comp_ctxt.buffer = a_buf;
+        }
+        init ();
+    }
+
+    explicit Priv (const UString &a_root_dir,
+                   Glib::RefPtr<SourceBuffer> &a_buf) :
         root_dir (a_root_dir),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
-        non_comp_ctxt (-1, -1, Gtk::manage (new Gtk::Label))
+        comp_ctxt (a_buf)
     {
         init ();
     }
@@ -421,9 +484,10 @@ SourceEditor::SourceEditor ()
 }
 
 SourceEditor::SourceEditor (const UString &a_root_dir,
-                            Glib::RefPtr<SourceBuffer> &a_buf)
+                            Glib::RefPtr<SourceBuffer> &a_buf,
+                            bool a_composite)
 {
-    m_priv.reset (new Priv (a_root_dir, a_buf));
+    m_priv.reset (new Priv (a_root_dir, a_buf, a_composite));
     init ();
 }
 
@@ -843,15 +907,11 @@ SourceEditor::do_search (const UString &a_str,
 ///        number into a meaningful location for this source buffer.
 /// \param a_locus_to_line_func a unary function that converst a
 ///        meaningful location into a line buffer.
-template<typename LocusType>
 void
 SourceEditor::register_composite_source_buffer
-                    (Glib::RefPtr<SourceBuffer> &a_buf,
-                     std::unary_function<int, LocusType> a_line_to_locus_func,
-                     std::unary_function<LocusType, int> a_locus_to_line_func)
+                    (Glib::RefPtr<SourceBuffer> &a_buf)
 {
-    m_priv->register_composite_source_buffer (a_buf, a_line_to_locus_func,
-                                              a_locus_to_line_func);
+    m_priv->register_composite_source_buffer (a_buf);
 }
 
 /// Registers a normal (non-composite) source buffer.
@@ -909,6 +969,24 @@ SourceEditor::switch_to_non_composite_source_buffer ()
     return false;
 }
 
+bool
+SourceEditor::composite_buf_loc_to_line (const Address &a_addr, int &a_line)
+{
+    Glib::RefPtr<SourceBuffer> buf = get_composite_source_buffer ();
+    RETURN_VAL_IF_FAIL (buf, false);
+    a_line = m_priv->comp_ctxt.locus_to_line_func (buf, a_addr);
+    return true;
+}
+
+bool
+SourceEditor::composite_buf_line_to_loc (int a_line, Address &a_address)
+{
+    Glib::RefPtr<SourceBuffer> buf = get_composite_source_buffer ();
+    RETURN_VAL_IF_FAIL (buf, false);
+    a_address = m_priv->comp_ctxt.line_to_locus_func (buf, a_line);
+    return true;
+}
+
 sigc::signal<void, int, bool>&
 SourceEditor::marker_region_got_clicked_signal () const
 {
@@ -919,6 +997,57 @@ sigc::signal<void, const Gtk::TextBuffer::iterator&>&
 SourceEditor::insertion_changed_signal () const
 {
     return m_priv->insertion_changed_signal;
+}
+
+Address
+Line2AddrFunc::operator () (Glib::RefPtr<SourceBuffer> a_buf,
+                            int a_line)
+{
+    THROW_IF_FAIL (a_buf);
+
+    std::string addr;
+    m_line = a_line;
+    Gtk::TextBuffer::iterator it = a_buf->get_iter_at_line (m_line);
+    while (true) {
+        gunichar c = *it;
+        if (isspace (c) || it.is_end ())
+            break;
+        addr += c;
+        ++it;
+    }
+    Address result = addr;
+    return result;
+}
+
+int
+Addr2LineFunc::operator () (Glib::RefPtr<SourceBuffer> a_buf,
+                            const Address &an_addr)
+{
+    THROW_IF_FAIL (a_buf);
+
+    int wrap = 0;
+
+    if (m_line < 0)
+        m_line = 0;
+    else
+        wrap = 1;
+
+    Gtk::TextBuffer::iterator it = a_buf->get_iter_at_line (m_line);
+    const std::string &addr = an_addr;
+
+    do {
+        bool match = true;
+        for (std::string::size_type i = 0; i < addr.size (); ++i, ++it) {
+            if (it.get_char () != (gunichar) addr[i]) {
+                match = false;
+                break;
+            }
+        }
+        if (match)
+            return it.get_line ();
+    } while (wrap--);
+
+    return -1;
 }
 
 }//end namespace nemiver

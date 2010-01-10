@@ -31,12 +31,14 @@
 #include <gtksourceviewmm/sourceview.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-ustring.h"
+#include "common/nmv-address.h"
 
 using gtksourceview::SourceView;
 using gtksourceview::SourceBuffer;
 using Gtk::VBox;
 using nemiver::common::SafePtr;
 using nemiver::common::UString;
+using nemiver::common::Address;
 using std::list;
 
 namespace nemiver {
@@ -60,8 +62,9 @@ class SourceEditor : public  VBox {
 
 public:
 
-    SourceEditor (const UString &a_root_dir,
-                  Glib::RefPtr<SourceBuffer> &a_buf);
+    explicit SourceEditor (const UString &a_root_dir,
+                           Glib::RefPtr<SourceBuffer> &a_buf,
+                           bool a_composite = false);
     virtual ~SourceEditor ();
     SourceView& source_view () const;
     gint current_line () const;
@@ -107,11 +110,8 @@ public:
     /// line number, because the underlying SourceBuffer implementation
     /// relies on line numbers anyhow.
 
-    template<typename LocusType>
     void register_composite_source_buffer
-                    (Glib::RefPtr<SourceBuffer> &a_buf,
-                     std::unary_function<int, LocusType> a_line_to_locus_func,
-                     std::unary_function<LocusType, int> a_locus_to_line_func);
+                        (Glib::RefPtr<SourceBuffer> &a_buf);
 
     void register_non_composite_source_buffer
                                     (Glib::RefPtr<SourceBuffer> &a_buf);
@@ -123,6 +123,10 @@ public:
     bool switch_to_composite_source_buffer ();
 
     bool switch_to_non_composite_source_buffer ();
+
+    bool composite_buf_loc_to_line (const Address &, int &);
+
+    bool composite_buf_line_to_loc (int, Address &);
     /// @}
 
     /// \name signals
