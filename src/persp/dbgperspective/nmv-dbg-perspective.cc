@@ -63,6 +63,7 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-env.h"
 #include "common/nmv-date-utils.h"
+#include "common/nmv-str-utils.h"
 #include "nmv-sess-mgr.h"
 #include "nmv-dbg-perspective.h"
 #include "nmv-source-editor.h"
@@ -479,7 +480,20 @@ public:
 
     void edit_workbench_menu ();
 
+    SourceEditor* create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
+                                        bool a_disassembly_view,
+                                        const UString &a_path,
+                                        int a_current_line,
+                                        const UString &a_current_address);
+
     void open_file ();
+
+    bool get_file_mime_type (const UString &a_path,
+                             UString &a_mime_type);
+
+    bool setup_buffer_mime_and_lang
+                            (Glib::RefPtr<SourceBuffer> &a_buf,
+                             const std::string &a_mime_type = "text/x-c++");
 
     bool load_file (const UString &a_file,
                     Glib::RefPtr<SourceBuffer> &a_source_buffer);
@@ -499,6 +513,16 @@ public:
 
     Gtk::Widget* load_menu (const UString &a_filename,
                             const UString &a_widget_name);
+
+    const UString& get_disassembly_title ();
+
+    bool load_disassembly (const IDebugger::DisassembleInfo &a_info,
+                           const std::list<IDebugger::AsmInstr> &a_asm,
+                           Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
+
+    bool open_disassembly (const IDebugger::DisassembleInfo &a_info,
+                           const std::list<IDebugger::AsmInstr> &a_asm);
+
     void close_opened_files ();
 
     void update_file_maps ();
@@ -3832,8 +3856,25 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     label.release ();
     cicon.release ();
 
-    if (get_num_notebook_pages () == 1)
-        update_src_dependant_bp_actions_sensitiveness ();
+    if (!a_sv.source_view ().has_no_window ()) {
+        a_sv.source_view ().add_events (Gdk::BUTTON3_MOTION_MASK);
+        a_sv.source_view ().signal_button_press_event ().connect
+            (sigc::mem_fun
+             (*this,
+              &DBGPerspective::on_button_pressed_in_source_view_signal));
+
+        a_sv.source_view ().signal_motion_notify_event ().connect
+            (sigc::mem_fun
+             (*this,
+              &DBGPerspective::on_motion_notify_event_signal));
+
+        a_sv.source_view ().signal_leave_notify_event
+                    ().connect_notify (sigc::mem_fun
+                           (*this,
+                            &DBGPerspective::on_leave_notify_event_signal));
+    }
+
+    m_priv->opened_file_action_group->set_sensitive (true);
 }
 
 SourceEditor*
@@ -4819,26 +4860,19 @@ DBGPerspective::edit_workbench_menu ()
 }
 
 bool
-DBGPerspective::load_file (const UString &a_path,
-                           Glib::RefPtr<SourceBuffer> &a_source_buffer)
+DBGPerspective::get_file_mime_type (const UString &a_path,
+                                    UString &a_mime_type)
 {
     NEMIVER_TRY
 
     std::string path = Glib::filename_from_utf8 (a_path);
+
 #ifdef WITH_GIO
     Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
     THROW_IF_FAIL (gio_file);
-    if (!gio_file->query_exists ()) {
 #else
-    ifstream file (path.c_str ());
-    if (!file.good () && !file.eof ()) {
-#endif
-        LOG_ERROR ("Could not open file " + path);
-        ui_utils::display_error ("Could not open file: " + Glib::filename_to_utf8 (path));
-        return false;
-    }
-
     UString base_name = Glib::filename_to_utf8 (Glib::path_get_basename (path));
+#endif
 
     UString mime_type;
 #ifdef WITH_GIO
@@ -4846,11 +4880,23 @@ DBGPerspective::load_file (const UString &a_path,
     mime_type = Gio::content_type_get_mime_type(info->get_content_type ());
 #else
     mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ());
-#endif // WITH_GIO
+#endif
+
     if (mime_type == "") {
         mime_type = "text/x-c++";
     }
     LOG_DD ("file has mime type: " << mime_type);
+    a_mime_type = mime_type;
+    return true;
+
+    NEMIVER_CATCH_AND_RETURN (false)
+}
+
+bool
+DBGPerspective::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
+                                            const std::string &a_mime_type)
+{
+    NEMIVER_TRY
 
 #ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<SourceLanguageManager> lang_manager =
@@ -4872,7 +4918,7 @@ DBGPerspective::load_file (const UString &a_path,
         for (mime_it = mime_types.begin ();
              mime_it != mime_types.end ();
              ++mime_it) {
-            if (*mime_it == mime_type) {
+            if (*mime_it == a_mime_type) {
                 // one of the mime types associated with this language matches
                 // the mime type of our file, so use this language
                 lang = candidate;
@@ -4886,16 +4932,50 @@ DBGPerspective::load_file (const UString &a_path,
     lang = lang_manager->get_language_from_mime_type (mime_type);
 #endif  // WITH_SOURCEVIEWMM2
 
-    Glib::RefPtr<SourceBuffer> source_buffer;
-    if (a_source_buffer) {
-        source_buffer = a_source_buffer;
-        source_buffer->set_language (lang);
-        source_buffer->erase (source_buffer->begin (),
-                              source_buffer->end ());
-    } else {
-        source_buffer = SourceBuffer::create (lang);
+    if (!a_buf)
+        a_buf = SourceBuffer::create (lang);
+    else {
+        a_buf->set_language (lang);
+        a_buf->erase (a_buf->begin (), a_buf->end ());
     }
-    THROW_IF_FAIL (source_buffer);
+    THROW_IF_FAIL (a_buf);
+    return true;
+
+    NEMIVER_CATCH_AND_RETURN (false);
+}
+
+bool
+DBGPerspective::load_file (const UString &a_path,
+                           Glib::RefPtr<SourceBuffer> &a_source_buffer)
+{
+    NEMIVER_TRY
+
+    std::string path = Glib::filename_from_utf8 (a_path);
+#ifdef WITH_GIO
+    Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
+    THROW_IF_FAIL (gio_file);
+    if (!gio_file->query_exists ()) {
+#else
+    ifstream file (path.c_str ());
+    if (!file.good () && !file.eof ()) {
+#endif
+        LOG_ERROR ("Could not open file " + path);
+        ui_utils::display_error ("Could not open file: "
+                                 + Glib::filename_to_utf8 (path));
+        return false;
+    }
+
+    UString mime_type;
+    if (!get_file_mime_type (path, mime_type)) {
+        LOG_ERROR ("Could not get mime type for " + path);
+        return false;
+    }
+
+    if (!setup_buffer_mime_and_lang (a_source_buffer, mime_type)) {
+        LOG_ERROR ("Could not setup source buffer mime type or language");
+        return false;
+    }
+    THROW_IF_FAIL (a_source_buffer);
 
     gint buf_size = 10 * 1024;
     CharSafePtr buf (new gchar [buf_size + 1]);
@@ -4938,19 +5018,100 @@ DBGPerspective::load_file (const UString &a_path,
         ui_utils::display_error (msg);
         return false;
     }
-    source_buffer->set_text (utf8_content);
+    a_source_buffer->set_text (utf8_content);
     LOG_DD ("file loaded. Read " << (int)nb_bytes << " bytes");
 
 #ifdef WITH_SOURCEVIEWMM2
-    source_buffer->set_highlight_syntax (m_priv->enable_syntax_highlight);
+    a_source_buffer->set_highlight_syntax (m_priv->enable_syntax_highlight);
 #else
-    source_buffer->set_highlight (m_priv->enable_syntax_highlight);
+    a_source_buffer->set_highlight (m_priv->enable_syntax_highlight);
 #endif  // WITH_SOURCEVIEWMM2
 
-    a_source_buffer = source_buffer;
     NEMIVER_CATCH_AND_RETURN (false);
 
     return true;
+}
+
+SourceEditor*
+DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
+                                      bool a_disassembly_view,
+                                      const UString &a_path,
+                                      int a_current_line,
+                                      const UString &a_current_address)
+{
+    NEMIVER_TRY
+
+    SourceEditor *source_editor;
+    Gtk::TextIter cur_line_iter;
+    int current_line =  -1;
+
+    if (a_disassembly_view) {
+        source_editor = Gtk::manage (new SourceEditor (plugin_path (),
+                                                       a_source_buf,
+                                                       true));
+        if (!a_current_address.empty ()) {
+            source_editor->composite_buf_loc_to_line (a_current_address.raw (),
+                                                      current_line);
+        }
+    } else {
+        source_editor = Gtk::manage (new SourceEditor (plugin_path (),
+                                                       a_source_buf,
+                                                       false));
+        source_editor->source_view ().set_show_line_numbers
+                                                (m_priv->show_line_numbers);
+        current_line = a_current_line;
+    }
+
+    if (current_line > 0) {
+        Gtk::TextIter cur_line_iter =
+                a_source_buf->get_iter_at_line (current_line);
+        if (cur_line_iter) {
+#ifdef WITH_SOURCEVIEWMM2
+            Glib::RefPtr<SourceMark> where_marker =
+                a_source_buf->create_source_mark (WHERE_MARK,
+                                                  WHERE_CATEGORY,
+                                                  cur_line_iter);
+#else
+            Glib::RefPtr<SourceMarker> where_marker =
+                source_buffer->create_marker (WHERE_MARK,
+                                              WHERE_CATEGORY,
+                                              cur_line_iter);
+#endif // WITH_SOURCEVIEWMM2
+            THROW_IF_FAIL (where_marker);
+        }
+    }
+
+    // detect when the user clicks on the editor
+    // so we can know when the cursor position changes
+    // and we can enable / disable actions that are valid
+    // for only certain lines
+    source_editor->insertion_changed_signal ().connect
+        (sigc::bind (sigc::mem_fun
+                         (*this,
+                          &DBGPerspective::on_insertion_changed_signal),
+                          source_editor));
+
+    if (!m_priv->get_source_font_name ().empty ()) {
+        Pango::FontDescription font_desc (m_priv->get_source_font_name ());
+        source_editor->source_view ().modify_font (font_desc);
+    }
+#ifdef WITH_SOURCEVIEWMM2
+    if (m_priv->get_editor_style ()) {
+        source_editor->source_view ().get_source_buffer ()->set_style_scheme
+            (m_priv->get_editor_style ());
+    }
+#endif // WITH_SOURCEVIEWMM2
+    source_editor->set_path (a_path);
+    source_editor->marker_region_got_clicked_signal ().connect
+        (sigc::mem_fun
+             (*this,
+              &DBGPerspective::on_source_view_markers_region_clicked_signal));
+
+    m_priv->opened_file_action_group->set_sensitive (true);
+
+    return source_editor;
+
+    NEMIVER_CATCH_AND_RETURN (0)
 }
 
 void
@@ -4991,78 +5152,16 @@ DBGPerspective::open_file (const UString &a_path,
         return false;
     }
 
-    SourceEditor *source_editor
-                            (Gtk::manage (new SourceEditor (plugin_path (),
-                                          source_buffer)));
-    source_editor->source_view ().set_show_line_numbers
-                                                (m_priv->show_line_numbers);
+    SourceEditor *source_editor =
+        create_source_editor (source_buffer,
+                              /*a_disassembly_view=*/false,
+                              a_path,
+                              a_current_line,
+                              /*a_current_address=*/"");
 
-    // detect when the user clicks on the editor
-    // so we can know when the cursor position changes
-    // and we can enable / disable actions that are valid
-    // for only certain lines
-    source_editor->insertion_changed_signal ().connect
-        (sigc::bind (sigc::mem_fun
-                         (*this,
-                          &DBGPerspective::on_insertion_changed_signal),
-                          source_editor));
-
-    if (!m_priv->get_source_font_name ().empty ()) {
-        Pango::FontDescription font_desc (m_priv->get_source_font_name ());
-        source_editor->source_view ().modify_font (font_desc);
-    }
-#ifdef WITH_SOURCEVIEWMM2
-    if (m_priv->get_editor_style ()) {
-        source_editor->source_view ().get_source_buffer ()->set_style_scheme
-            (m_priv->get_editor_style ());
-    }
-#endif // WITH_SOURCEVIEWMM2
-    source_editor->set_path (a_path);
-    source_editor->marker_region_got_clicked_signal ().connect
-        (sigc::mem_fun
-             (*this,
-              &DBGPerspective::on_source_view_markers_region_clicked_signal));
-
-    if (a_current_line > 0) {
-        Gtk::TextIter cur_line_iter =
-                source_buffer->get_iter_at_line (a_current_line);
-        if (cur_line_iter) {
-#ifdef WITH_SOURCEVIEWMM2
-            Glib::RefPtr<SourceMark> where_marker =
-                source_buffer->create_source_mark (WHERE_MARK,
-                                                   WHERE_CATEGORY,
-                                                   cur_line_iter);
-#else
-            Glib::RefPtr<SourceMarker> where_marker =
-                source_buffer->create_marker (WHERE_MARK,
-                                              WHERE_CATEGORY,
-                                              cur_line_iter);
-#endif // WITH_SOURCEVIEWMM2
-            THROW_IF_FAIL (where_marker);
-        }
-    }
+    THROW_IF_FAIL (source_editor);
     source_editor->show_all ();
     append_source_editor (*source_editor, a_path);
-
-    if (!source_editor->source_view ().has_no_window ()) {
-        source_editor->source_view ().add_events (Gdk::BUTTON3_MOTION_MASK);
-        source_editor->source_view ().signal_button_press_event ().connect
-            (sigc::mem_fun
-             (*this,
-              &DBGPerspective::on_button_pressed_in_source_view_signal));
-
-        source_editor->source_view ().signal_motion_notify_event ().connect
-            (sigc::mem_fun
-             (*this,
-              &DBGPerspective::on_motion_notify_event_signal));
-
-        source_editor->source_view ().signal_leave_notify_event
-                    ().connect_notify (sigc::mem_fun
-                           (*this,
-                            &DBGPerspective::on_leave_notify_event_signal));
-    }
-
-    m_priv->opened_file_action_group->set_sensitive (true);
 
     NEMIVER_CATCH_AND_RETURN (false)
     return true;
@@ -5131,6 +5230,81 @@ DBGPerspective::close_file (const UString &a_path)
         update_src_dependant_bp_actions_sensitiveness ();
     }
     update_file_maps ();
+}
+
+const UString&
+DBGPerspective::get_disassembly_title ()
+{
+    static UString disass_title;
+    if (disass_title.empty ()) {
+        disass_title = str_utils::printf ("<%s>", "Disassembly");
+    }
+    return disass_title;
+}
+
+bool
+DBGPerspective::load_disassembly (const IDebugger::DisassembleInfo &/*a_info*/,
+                                  const std::list<IDebugger::AsmInstr> &a_asm,
+                                  Glib::RefPtr<SourceBuffer> &a_source_buffer)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    std::string mime_type = "text/x-asm";
+    if (!setup_buffer_mime_and_lang (a_source_buffer, mime_type)) {
+        LOG_ERROR ("Could not setup source buffer mime type of language");
+        return false;
+    }
+    THROW_IF_FAIL (a_source_buffer);
+
+    std::list<IDebugger::AsmInstr>::const_iterator it;
+    for (it = a_asm.begin (); it != a_asm.end (); ++it) {
+        ostringstream os;
+        a_source_buffer->insert (a_source_buffer->end (),
+                                 it->address ());
+        a_source_buffer->insert (a_source_buffer->end (),
+                                 "  ");
+        os << "<" << it->function ();
+        if (!it->offset ().empty () && it->offset () != "0")
+            os << "+" << it->offset ();
+        os << ">:  ";
+        os << it->instruction ();
+        os << std::endl;
+        a_source_buffer->insert (a_source_buffer->end (),
+                                 os.str ());
+    }
+
+    return true;
+    NEMIVER_CATCH_AND_RETURN (false)
+}
+
+bool
+DBGPerspective::open_disassembly (const IDebugger::DisassembleInfo &a_info,
+                                  const std::list<IDebugger::AsmInstr> &a_asm)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    Glib::RefPtr<SourceBuffer> source_buffer;
+    if (!load_disassembly (a_info, a_asm, source_buffer)) {
+        return false;
+    }
+
+    SourceEditor *source_editor =
+        create_source_editor (source_buffer,
+                              /*a_disassembly_view=*/true,
+                              get_disassembly_title (),
+                              -1,
+                              /*a_current_address=*/"");
+    THROW_IF_FAIL (source_editor);
+    source_editor->show_all ();
+    append_source_editor (*source_editor, get_disassembly_title ());
+
+    NEMIVER_CATCH_AND_RETURN (false);
+
+    return true;
 }
 
 Gtk::Widget*

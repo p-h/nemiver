@@ -31,6 +31,10 @@
 #include "nmv-sess-mgr.h"
 #include <sigc++/trackable.h>
 
+namespace gtksourceview {
+    class SourceBuffer;
+}
+
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class NEMIVER_API IDBGPerspective : public IPerspective {
@@ -67,6 +71,11 @@ public:
     virtual void close_current_file () = 0;
 
     virtual void close_file (const UString &a_uri) = 0;
+
+    virtual bool load_disassembly
+                        (const IDebugger::DisassembleInfo &a_info,
+                         const std::list<IDebugger::AsmInstr> &a_asm,
+                         Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf) = 0;
 
     virtual Gtk::Widget* load_menu (const UString &a_filename,
                                     const UString &a_widget_name) = 0;
