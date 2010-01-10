@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <boost/test/test_tools.hpp>
 #include <boost/test/minimal.hpp>
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
@@ -42,11 +41,8 @@ Glib::RefPtr<Glib::MainLoop> loop =
 IDebuggerSafePtr debugger;
 
 static const char *PROG_TO_DEBUG = "./fooprog";
-static const char *DISASSEMBLE_COOKIE_1 =
-                                "disassemble-20-instructions-after-pc";
-static const char *DISASSEMBLE_COOKIE_2 = "disassemble-20-lines-in-main";
-static bool seen_disassemble_cookie_1;
-static bool seen_disassemble_cookie_2;
+static char counter1 = 0;
+static char counter2 = 0;
 
 void
 on_engine_died_signal ()
@@ -60,13 +56,50 @@ on_program_finished_signal ()
 {
     MESSAGE ("program finished");
     loop->quit ();
-    BOOST_REQUIRE_MESSAGE (seen_disassemble_cookie_1,
-                           "seen_disassemble_cookie_1"
-                           << seen_disassemble_cookie_1);
-    BOOST_REQUIRE_MESSAGE (seen_disassemble_cookie_2,
-                           "seen_disassemble_cookie_2"
-                           << seen_disassemble_cookie_2);
+    BOOST_REQUIRE (counter1 == 2);
+    BOOST_REQUIRE (counter2 == 3);
 }
+
+typedef list<IDebugger::AsmInstr> AsmInstrs;
+
+void
+on_instructions_disassembled_signal0 (const IDebugger::DisassembleInfo &a_info,
+                                      const AsmInstrs &a_instrs,
+                                      const UString &/*a_cookie*/);
+void
+on_instructions_disassembled_signal1 (const IDebugger::DisassembleInfo &,
+                                      const AsmInstrs &a_instrs);
+
+void
+on_instructions_disassembled_signal0 (const IDebugger::DisassembleInfo &a_info,
+                                      const AsmInstrs &a_instrs,
+                                      const UString &/*a_cookie*/)
+{
+    on_instructions_disassembled_signal1 (a_info, a_instrs);
+    ++counter1;
+}
+
+void
+on_instructions_disassembled_signal1 (const IDebugger::DisassembleInfo &,
+                                      const AsmInstrs &a_instrs)
+{
+    cout << "<AssemblyInstructionList nb='" << a_instrs.size ()
+         << "'>" << endl;
+    for (AsmInstrs::const_iterator it = a_instrs.begin ();
+         it != a_instrs.end ();
+         ++it) {
+        cout << " <instruction>" << endl;
+        cout << "  @" << setbase (16) << it->address ()
+             << setbase (10) << endl;
+        cout << "  func: " << it->function () << endl;
+        cout << "  offset: " << it->offset () << endl;
+        cout << "  instr: " << it->instruction () << endl;
+        cout << " </instruction>\n";
+    }
+    cout << "</AssemblyInstructionList>" << endl;
+    ++counter2;
+}
+
 
 void
 on_stopped_signal (IDebugger::StopReason a_reason,
@@ -88,38 +121,10 @@ on_stopped_signal (IDebugger::StopReason a_reason,
 
     BOOST_REQUIRE (debugger);
 
-    debugger->disassemble (0, 20, true, true, DISASSEMBLE_COOKIE_1);
-    debugger->disassemble (a_frame.file_name (), a_frame.line (),
-                           20, DISASSEMBLE_COOKIE_2);
+    debugger->disassemble (0, true, 20, true);
+    debugger->disassemble_lines (a_frame.file_name (), a_frame.line (),
+                                 20, &on_instructions_disassembled_signal1);
     debugger->do_continue ();
-}
-
-typedef list<IDebugger::AsmInstr> AsmInstrs;
-
-void
-on_instructions_disassembled_signal (IDebugger::DisassembleInfo &/*a_info*/,
-                                     const AsmInstrs &a_instrs,
-                                     const UString &a_cookie)
-{
-    if (a_cookie == DISASSEMBLE_COOKIE_1)
-        seen_disassemble_cookie_1 = true;
-    if (a_cookie == DISASSEMBLE_COOKIE_2)
-        seen_disassemble_cookie_2 = true;
-
-    cout << "<AssemblyInstructionList nb='" << a_instrs.size ()
-         << "'>" << endl;
-    for (AsmInstrs::const_iterator it = a_instrs.begin ();
-         it != a_instrs.end ();
-         ++it) {
-        cout << " <instruction>" << endl;
-        cout << "  @" << setbase (16) << it->address ()
-             << setbase (10) << endl;
-        cout << "  func: " << it->function () << endl;
-        cout << "  offset: " << it->offset () << endl;
-        cout << "  instr: " << it->instruction () << endl;
-        cout << " </instruction>\n";
-    }
-    cout << "</AssemblyInstructionList>" << endl;
 }
 
 NEMIVER_API int
@@ -146,7 +151,7 @@ test_main (int, char**)
                                     (&on_program_finished_signal);
     debugger->stopped_signal ().connect (&on_stopped_signal);
     debugger->instructions_disassembled_signal ().connect
-                                    (&on_instructions_disassembled_signal);
+                                    (&on_instructions_disassembled_signal0);
 
     //*****************************
     //</connect to IDebugger events>

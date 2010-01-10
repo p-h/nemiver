@@ -131,7 +131,6 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestdisassemble_SOURCES=test-disassemble.cc
 runtestdisassemble_LDADD=@NEMIVERCOMMON_LIBS@ \
-@BOOST_TEST_EXEC_MONITOR_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la
 
 docore_SOURCES=do-core.cc

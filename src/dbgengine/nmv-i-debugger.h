@@ -773,21 +773,19 @@ public:
     /// starting from the beginning of the function, and the instruction
     /// itself, represented by a string.
     class AsmInstr {
-        size_t m_address;
+        string m_address;
         string m_func;
-        int m_offset;
+        string m_offset;
         string m_instr;
 
     public:
-        explicit AsmInstr ():
-            m_address (0),
-            m_offset (0)
+        explicit AsmInstr ()
         {
         }
 
-        AsmInstr (size_t a_address,
+        AsmInstr (string &a_address,
                   string &a_func,
-                  int a_offset,
+                  string &a_offset,
                   string &a_instr):
             m_address (a_address),
             m_func (a_func),
@@ -800,14 +798,14 @@ public:
         {
         }
 
-        size_t address () const {return m_address;}
-        void address (size_t a) {m_address = a;}
+        const string& address () const {return m_address;}
+        void address (string &a) {m_address = a;}
 
         const string& function () const {return m_func;}
         void function (const string &a_str) {m_func = a_str;}
 
-        int offset () const {return m_offset;}
-        void offset (int a_o) {m_offset = a_o;}
+        const string& offset () const {return m_offset;}
+        void offset (string &a_o) {m_offset = a_o;}
 
         const string& instruction () const {return m_instr;}
         void instruction (const string &a_instr) {m_instr = a_instr;}
@@ -818,13 +816,11 @@ public:
         // as we don't have any pointer member.
         UString m_function_name;
         UString m_file_name;
-        size_t m_start_address;
-        size_t m_end_address;
+        std::string m_start_address;
+        std::string m_end_address;
 
     public:
-        DisassembleInfo () :
-            m_start_address (0),
-            m_end_address (0)
+        DisassembleInfo ()
         {
         }
         ~DisassembleInfo ()
@@ -837,11 +833,11 @@ public:
         const UString& file_name () const {return m_file_name;}
         void file_name (const UString &a_name) {m_file_name = a_name;}
 
-        size_t start_address () const {return m_start_address;}
-        void start_address (size_t a) {m_start_address = a;}
+        const std::string& start_address () const {return m_start_address;}
+        void start_address (const std::string &a) {m_start_address = a;}
 
-        size_t end_address () const {return m_end_address;}
-        void end_address (size_t a) {m_end_address = a;}
+        const std::string& end_address () const {return m_end_address;}
+        void end_address (const std::string &a) {m_end_address = a;}
     };// end class DisassembleInfo
 
     virtual ~IDebugger () {}
@@ -1248,16 +1244,33 @@ public:
             const std::vector<uint8_t>& a_bytes,
             const UString& a_cookie="") = 0;
 
+    typedef sigc::slot<void,
+                       const IDebugger::DisassembleInfo&,
+                       const std::list<IDebugger::AsmInstr>& > DisassSlot;
+
     virtual void disassemble (size_t a_start_addr,
+                              bool a_start_addr_relative_to_pc,
                               size_t a_end_addr,
-                              bool a_start_addr_relative_to_pc = false,
-                              bool a_end_addr_relative_to_pc = false,
+                              bool a_end_addr_relative_to_pc,
                               const UString &a_cookie = "") = 0;
 
-    virtual void disassemble (const UString &a_file_name,
-                              int a_line_num,
-                              int a_nb_disassembled_lines,
+    virtual void disassemble (size_t a_start_addr,
+                              bool a_start_addr_relative_to_pc,
+                              size_t a_end_addr,
+                              bool a_end_addr_relative_to_pc,
+                              const DisassSlot &a_slot,
                               const UString &a_cookie = "") = 0;
+
+    virtual void disassemble_lines (const UString &a_file_name,
+                                    int a_line_num,
+                                    int a_nb_disassembled_lines,
+                                    const UString &a_cookie = "") = 0;
+
+    virtual void disassemble_lines (const UString &a_file_name,
+                                    int a_line_num,
+                                    int a_nb_disassembled_lines,
+                                    const DisassSlot &a_slot,
+                                    const UString &a_cookie = "") = 0;
 
     typedef sigc::slot<void, const VariableSafePtr> ConstVariableSlot;
     typedef sigc::slot<void, const VariableList> ConstVariableListSlot;

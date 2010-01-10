@@ -448,17 +448,32 @@ public:
                      const UString& a_cookie);
 
     void disassemble (size_t a_start_addr,
-                      size_t a_end_addr,
                       bool a_start_addr_relative_to_pc,
+                      size_t a_end_addr,
                       bool a_end_addr_relative_to_pc,
                       const UString &a_cookie);
-    void disassemble (const UString &a_file_name,
-                      int a_line_num,
-                      int a_nb_disassembled_lines,
+
+    void disassemble (size_t a_start_addr,
+                      bool a_start_addr_relative_to_pc,
+                      size_t a_end_addr,
+                      bool a_end_addr_relative_to_pc,
+                      const DisassSlot &a_slot,
                       const UString &a_cookie);
+
+    void disassemble_lines (const UString &a_file_name,
+                            int a_line_num,
+                            int a_nb_disassembled_lines,
+                            const UString &a_cookie);
+
+    void disassemble_lines (const UString &a_file_name,
+                            int a_line_num,
+                            int a_nb_disassembled_lines,
+                            const DisassSlot &a_slot,
+                            const UString &a_cookie);
 
     void create_variable (const UString &a_name,
                           const UString &a_cookie="");
+
     void create_variable (const UString &a_name,
                           const ConstVariableSlot &a_s,
                           const UString &a_cookie="");

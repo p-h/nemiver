@@ -2332,6 +2332,12 @@ struct OnDisassembleHandler : OutputHandler {
             it--;
             info.end_address (it->address ());
         }
+        // Call the slot associated to IDebugger::disassemble, if any.
+        if (a_in.command ().has_slot ()) {
+            IDebugger::DisassSlot slot =
+                a_in.command ().get_slot<IDebugger::DisassSlot> ();
+            slot (info, instrs);
+        }
         m_engine->instructions_disassembled_signal ().emit
                                (info, instrs, a_in.command ().cookie ());
 
@@ -4394,10 +4400,29 @@ GDBEngine::set_memory (size_t a_addr,
 }
 
 void
+null_disass_slot (const IDebugger::DisassembleInfo &,
+                  const std::list<IDebugger::AsmInstr> &)
+{
+}
+
+void
 GDBEngine::disassemble (size_t a_start_addr,
-                        size_t a_end_addr,
                         bool a_start_addr_relative_to_pc,
+                        size_t a_end_addr,
                         bool a_end_addr_relative_to_pc,
+                        const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    disassemble (a_start_addr, a_start_addr_relative_to_pc, a_end_addr,
+                 a_end_addr_relative_to_pc, &null_disass_slot, a_cookie);
+}
+
+void
+GDBEngine::disassemble (size_t a_start_addr,
+                        bool a_start_addr_relative_to_pc,
+                        size_t a_end_addr,
+                        bool a_end_addr_relative_to_pc,
+                        const DisassSlot &a_slot,
                         const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -4432,14 +4457,27 @@ GDBEngine::disassemble (size_t a_start_addr,
     LOG_DD ("cmd_str: " << cmd_str);
 
     Command command ("disassemble-address-range", cmd_str, a_cookie);
+    command.set_slot (a_slot);
     queue_command (command);
 }
 
 void
-GDBEngine::disassemble (const UString &a_file_name,
-                        int a_line_num,
-                        int a_nb_disassembled_lines,
-                        const UString &a_cookie)
+GDBEngine::disassemble_lines (const UString &a_file_name,
+                              int a_line_num,
+                              int a_nb_disassembled_lines,
+                              const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    disassemble_lines (a_file_name, a_line_num, a_nb_disassembled_lines,
+                       &null_disass_slot, a_cookie);
+}
+
+void
+GDBEngine::disassemble_lines (const UString &a_file_name,
+                              int a_line_num,
+                              int a_nb_disassembled_lines,
+                              const DisassSlot &a_slot,
+                              const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -4457,6 +4495,7 @@ GDBEngine::disassemble (const UString &a_file_name,
     Command command ("disassemble-line-range-in-file", cmd_str, a_cookie);
     command.tag0 (a_file_name);
     command.tag1 (UString::from_int (a_line_num));
+    command.set_slot (a_slot);
     queue_command (command);
 }
 

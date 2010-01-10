@@ -4018,8 +4018,7 @@ return false; \
     std::list<GDBMIValueSafePtr> vals;
     gdbmi_list->get_value_content (vals);
     std::list<GDBMIValueSafePtr>::const_iterator val_iter;
-    string addr, func_name, instr;
-    int offset = 0;
+    string addr, func_name, instr, offset;
     IDebugger::AsmInstr asm_instr;
     // Loop over the tuples contained in gdbmi_list.
     // Each tuple represents an asm instruction descriptor that has four
@@ -4049,7 +4048,7 @@ return false; \
             LOG_PARSING_ERROR2 (cur);
             ERROR_OUT;
         }
-        addr = val->get_string_content ();
+        addr = val->get_string_content ().raw ();
         LOG_DD ("addr: " << addr);
 
         // get func-name field
@@ -4071,8 +4070,8 @@ return false; \
             LOG_PARSING_ERROR2 (cur);
             ERROR_OUT;
         }
-        offset = atoi (val->get_string_content ().c_str ());
-        LOG_DD ("offset: " << (int) offset);
+        offset = val->get_string_content ().raw ();
+        LOG_DD ("offset: " << offset);
 
         // get instr field
         ++res_iter;
@@ -4084,8 +4083,7 @@ return false; \
         }
         instr = val->get_string_content ();
         LOG_DD ("instr: " << instr);
-        asm_instr = IDebugger::AsmInstr (UString::hexa_to_int (addr),
-                                         func_name, offset, instr);
+        asm_instr = IDebugger::AsmInstr (addr, func_name, offset, instr);
         a_asm_instrs.push_back (asm_instr);
     }
     a_to = cur;
