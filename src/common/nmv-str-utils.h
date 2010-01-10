@@ -36,6 +36,25 @@ extract_path_and_line_num_from_location (const UString &a_location,
                                          UString &a_file_path,
                                          unsigned &a_line_num);
 
+size_t hexa_to_int (const string &a_hexa_str);
+std::string int_to_string (size_t an_int);
+vector<UString> split (const UString &a_string, const UString &a_delim);
+vector<UString> split_set (const UString &a_string, const UString &a_delim_set);
+UString join (const vector<UString> &a_elements,
+              const UString &a_delim=" ");
+UString join (vector<UString>::const_iterator &a_from,
+              vector<UString>::const_iterator &a_to,
+              const UString &a_delim=" ");
+void chomp (UString &a_string);
+
+UString::size_type get_number_of_lines (const UString &a_string);
+
+UString::size_type get_number_of_words (const UString &a_string);
+
+UString printf (const UString &a_format, ...);
+
+UString vprintf (const UString &a_format, va_list a_args);
+
 NEMIVER_END_NAMESPACE (str_utils)
 NEMIVER_END_NAMESPACE (nemiver)
 
