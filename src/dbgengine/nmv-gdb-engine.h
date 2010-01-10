@@ -175,7 +175,7 @@ public:
     sigc::signal <void, size_t, const std::vector<uint8_t>&, const UString& >&
                                                       set_memory_signal () const;
     sigc::signal<void,
-                 IDebugger::DisassembleInfo&,
+                 const IDebugger::DisassembleInfo&,
                  const std::list<IDebugger::AsmInstr>&,
                  const UString& /*cookie*/>&
                              instructions_disassembled_signal () const;

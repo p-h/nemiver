@@ -269,7 +269,7 @@ public:
                                 set_memory_signal;
 
     mutable sigc::signal<void,
-                 IDebugger::DisassembleInfo&,
+                 const IDebugger::DisassembleInfo&,
                  const std::list<IDebugger::AsmInstr>&,
                  const UString& /*cookie*/> instructions_disassembled_signal;
 
@@ -3135,7 +3135,7 @@ GDBEngine::program_finished_signal () const
 }
 
 sigc::signal<void,
-             IDebugger::DisassembleInfo&,
+             const IDebugger::DisassembleInfo&,
              const std::list<IDebugger::AsmInstr>&,
              const UString& /*cookie*/>&
 GDBEngine::instructions_disassembled_signal () const

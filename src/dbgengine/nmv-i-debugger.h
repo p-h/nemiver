@@ -1029,10 +1029,9 @@ public:
 
     // TODO: export informations about what file is being disassembled,
     // what function, which line (if possible) etc.
-    // So that the code receiving the signal can adjust accordingly,
-    // without having to fidle with
+    // So that the code receiving the signal can adjust accordingly
     virtual sigc::signal<void,
-                         IDebugger::DisassembleInfo&,
+                         const IDebugger::DisassembleInfo&,
                          const std::list<IDebugger::AsmInstr>&,
                          const UString& /*cookie*/>&
                              instructions_disassembled_signal () const = 0;
