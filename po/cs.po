@@ -1,14 +1,15 @@
 # Czech translation for nemiver.
 # Copyright (C) 2009 the author(s) of nemiver.
 # This file is distributed under the same license as the nemiver package.
-# Marek Černocký <marek@manet.cz>, 2009.
+# Marek Černocký <marek@manet.cz>, 2009, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-11 23:49+0100\n"
-"PO-Revision-Date: 2010-01-11 17:09+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&component=general\n"
+"POT-Creation-Date: 2010-01-11 22:52+0000\n"
+"PO-Revision-Date: 2010-01-12 00:34+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -68,7 +69,7 @@ msgstr "Evidovat výstup ladicího programu"
 
 #: ../src/main.cc:134
 msgid "Use this terminal as the debugee's terminal"
-msgstr ""
+msgstr "Použít tento terminál pro výstup ladění"
 
 #: ../src/main.cc:142
 msgid "Show the version number of nemiver"
@@ -187,9 +188,8 @@ msgid "<b>Syntax Highlighting</b>"
 msgstr "<b>Zvýrazňování syntaxe</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:5
-#, fuzzy
 msgid "<b>Terminal</b>"
-msgstr "<b>Soubor s obrazem paměti:</b>"
+msgstr "<b>Terminál</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:6
 msgid "<b>Visual Style</b>"
@@ -233,7 +233,7 @@ msgstr "Složky se zdrojovými kódy"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:16
 msgid "Use launch terminal"
-msgstr ""
+msgstr "Použít spouštěcí terminál"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:17
 msgid "Use system monospace font"
@@ -1182,3 +1182,4 @@ msgstr "Proměnná"
 
 #~ msgid "Could not find file: %s\n"
 #~ msgstr "Nelze najít soubor: %s\n"
+
