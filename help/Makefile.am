@@ -18,4 +18,4 @@ DOC_FIGURES = \
 			  figures/connect-remote-dialog.png \
 			  figures/enabled-breakpoint.png \
 			  figures/disabled-breakpoint.png
-DOC_LINGUAS = de es oc sv
+DOC_LINGUAS = cs de es oc sv
