@@ -293,6 +293,8 @@ NEMIVERUICOMMON_LIBS="$NEMIVERUICOMMON_LIBS $CPPUNIT_LIBS"
 AC_SUBST(NEMIVERUICOMMON_LIBS)
 AC_SUBST(NEMIVERUICOMMON_CFLAGS)
 
+PKG_CHECK_EXISTS([gtkmm-2.4 >= 2.16], [AC_DEFINE([HAVE_GTKMM_2_16], [1], [gtkmm is at least 2.16])])
+
 dnl library dependencies for the nemiver workbench module
 dnl dependencies list already declared above
 

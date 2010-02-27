@@ -28,7 +28,7 @@
 #ifndef __NEMIVER_UI_UTILS_H__
 #define __NEMIVER_UI_UTILS_H__
 
-#include <gtk/gtk.h>
+#include "config.h"
 #include <gtkmm.h>
 #include <libglademm.h>
 #include "common/nmv-env.h"
@@ -120,7 +120,7 @@ public:
             default:
                 THROW ("should never reach this point");
         }
-#if (GTK_MAJOR_VERSION >= 2 && GTK_MINOR_VERSION >= 16)
+#ifdef HAVE_GTKMM_2_16
         if (result)
             result->set_is_important (m_is_important);
 #endif
