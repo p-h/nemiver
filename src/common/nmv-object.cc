@@ -59,7 +59,7 @@ Object::Object (Object const &a_object):
     *m_priv = *a_object.m_priv;
 }
 
-Object::Object&
+Object&
 Object::operator= (Object const &a_object)
 {
     if (this == &a_object)
