@@ -2559,25 +2559,24 @@ DBGPerspective::on_popup_var_insp_size_request (Gtk::Requisition *a_req,
 
     // if the height of the container is too big so that
     // it overflows the max usable height, clip it.
-    bool clipped = false;
+    bool vclipped = false;
     if (mouse_y + height >= max_screen_height) {
         if (max_screen_height <= mouse_y)
             max_screen_height = a_container->get_screen ()->get_height ();
         height = max_screen_height - mouse_y;
-        clipped = true;
+        vclipped = true;
         LOG_DD ("clipped height to: " << height);
     }
     // If at some point, if we remark that width might be too big as well,
     // we might clip width too. Though it seems unlikely for now.
 
-    if (!clipped) {
-        // Hack: we need to add some padding to take in account the extra
-        // things add by a_contained besides the content carried by
-        // the popup tip. This extra content includes things like the
-        // scrollbars etc ...
-        const int x_pad = 17, y_pad = 17;
+    if (vclipped) {
+        // Hack: in case of a vertically clipped popup window we need
+        // to add some padding to take into account the extra space needed
+        // for the vertical scrollbar (based on the assumption that no
+        // horizontal clipping is implemented)
+        const int x_pad = 17;
         width += x_pad;
-        height += y_pad;
     }
 
     LOG_DD ("setting scrolled window to size: ("
@@ -4525,7 +4524,7 @@ DBGPerspective::get_popup_tip ()
     if (!m_priv->popup_tip) {
         m_priv->popup_tip.reset (new PopupTip);
         Gtk::ScrolledWindow *w = Gtk::manage (new Gtk::ScrolledWindow ());
-        w->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+        w->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
         m_priv->popup_tip->set_child (*w);
         pack_popup_var_inspector_in_new_scr_win (w);
         m_priv->popup_tip->signal_hide ().connect (sigc::mem_fun
