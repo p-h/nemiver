@@ -64,7 +64,7 @@ Token::Token (const Token &a_t)
     m_int_value = a_t.get_int_value ();
 }
 
-Token::Token&
+Token&
 Token::operator= (const Token &a_t)
 {
     m_kind = a_t.get_kind ();
