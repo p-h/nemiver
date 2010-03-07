@@ -85,6 +85,12 @@
                 name="ActivateGlobalVariablesDialogMenuItem"/>
             <menuitem action="RefreshLocalVariablesMenuItemAction"
                 name="RefreshLocalVariablesMenuItemAction"/>
+            <menuitem action="DisAsmMenuItemAction"
+                name="DisAsmMenuItemAction"/>
+            <menuitem action="SwitchToAsmMenuItemAction"
+                name="SwitchToAsmMenuItemAction"/>
+            <menuitem action="SwitchToSourceMenuItemAction"
+                name="SwitchToSourceMenuItemAction"/>
         </menu>
     </placeholder>
   </menubar>

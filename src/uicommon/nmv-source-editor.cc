@@ -173,7 +173,7 @@ struct SourceEditor::Priv {
     Gtk::Label *line_col_label;
     Gtk::HBox *status_box;
 
-    struct NonCompositeBufContext {
+    struct NonAssemblyBufContext {
         Glib::RefPtr<SourceBuffer> buffer;
         int current_column;
         int current_line;
@@ -181,7 +181,7 @@ struct SourceEditor::Priv {
         sigc::signal<void, int, bool> marker_region_got_clicked_signal;
         UString path;
 
-        NonCompositeBufContext (Glib::RefPtr<SourceBuffer> a_buf,
+        NonAssemblyBufContext (Glib::RefPtr<SourceBuffer> a_buf,
                                 int a_cur_col, int a_cur_line) :
             buffer (a_buf),
             current_column (a_cur_col),
@@ -189,72 +189,72 @@ struct SourceEditor::Priv {
         {
         }
 
-        NonCompositeBufContext (int a_cur_col, int a_cur_line) :
+        NonAssemblyBufContext (int a_cur_col, int a_cur_line) :
             current_column (a_cur_col),
             current_line (a_cur_line)
         {
         }
 
-        NonCompositeBufContext () :
+        NonAssemblyBufContext () :
             current_column (-1),
             current_line (-1)
         {
         }
-    } non_comp_ctxt;
+    } non_asm_ctxt;
 
-    struct CompositeBufContext {
+    struct AssemblyBufContext {
         Glib::RefPtr<SourceBuffer> buffer;
         Line2AddrFunc line_to_locus_func;
         Addr2LineFunc locus_to_line_func;
 
-        CompositeBufContext ()
+        AssemblyBufContext ()
         {
         }
 
-        CompositeBufContext
+        AssemblyBufContext
                     (Glib::RefPtr<SourceBuffer> a_buf) :
             buffer (a_buf)
         {
         }
-    } comp_ctxt;
+    } asm_ctxt;
 
     sigc::signal<void, const Gtk::TextBuffer::iterator&>
                                                     insertion_changed_signal;
 
 
-    void register_composite_source_buffer
+    void register_assembly_source_buffer
                     (Glib::RefPtr<SourceBuffer> &a_buf)
     {
-        comp_ctxt.buffer = a_buf;
+        asm_ctxt.buffer = a_buf;
     }
 
-    void register_non_composite_source_buffer
+    void register_non_assembly_source_buffer
                                     (Glib::RefPtr<SourceBuffer> &a_buf)
     {
-        non_comp_ctxt.buffer = a_buf;
+        non_asm_ctxt.buffer = a_buf;
     }
 
-    bool switch_to_composite_source_buffer ()
+    bool switch_to_assembly_source_buffer ()
     {
         RETURN_VAL_IF_FAIL (source_view, false);
 
-        if (comp_ctxt.buffer
+        if (asm_ctxt.buffer
             && (source_view->get_source_buffer ()
-                != comp_ctxt.buffer)) {
-            source_view->set_source_buffer (comp_ctxt.buffer);
+                != asm_ctxt.buffer)) {
+            source_view->set_source_buffer (asm_ctxt.buffer);
             return true;
         }
         return false;
     }
 
-    bool switch_to_non_composite_source_buffer ()
+    bool switch_to_non_assembly_source_buffer ()
     {
         RETURN_VAL_IF_FAIL (source_view, false);
 
-        if (comp_ctxt.buffer
+        if (asm_ctxt.buffer
             && (source_view->get_source_buffer ()
-                != non_comp_ctxt.buffer)) {
-            source_view->set_source_buffer (non_comp_ctxt.buffer);
+                != non_asm_ctxt.buffer)) {
+            source_view->set_source_buffer (non_asm_ctxt.buffer);
             return true;
         }
         return false;
@@ -265,7 +265,7 @@ struct SourceEditor::Priv {
     //**************
     void on_marker_region_got_clicked (int a_line, bool a_dialog_requested)
     {
-        non_comp_ctxt.marker_region_got_clicked_signal.emit
+        non_asm_ctxt.marker_region_got_clicked_signal.emit
                                                 (a_line, a_dialog_requested);
     }
 
@@ -288,8 +288,8 @@ struct SourceEditor::Priv {
     void on_signal_insertion_moved (gint a_line, gint a_col)
     {
         if (a_line || a_col) {}
-        non_comp_ctxt.current_line = a_line;
-        non_comp_ctxt.current_column = a_col;
+        non_asm_ctxt.current_line = a_line;
+        non_asm_ctxt.current_column = a_col;
         update_line_col_label ();
     }
 
@@ -321,7 +321,7 @@ struct SourceEditor::Priv {
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_mark_set_signal));
         source_view->get_buffer ()->signal_insert ().connect
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_signal_insert));
-        non_comp_ctxt.signal_insertion_moved.connect
+        non_asm_ctxt.signal_insertion_moved.connect
             (sigc::mem_fun (*this,
                             &SourceEditor::Priv::on_signal_insertion_moved));
         source_view->get_buffer ()->signal_mark_set ().connect
@@ -330,11 +330,11 @@ struct SourceEditor::Priv {
 
     void update_line_col_info_from_iter (const Gtk::TextBuffer::iterator &a_iter)
     {
-        non_comp_ctxt.current_line = a_iter.get_line () + 1;
-        non_comp_ctxt.current_column = get_column_from_iter (a_iter);
-        non_comp_ctxt.signal_insertion_moved.emit
-                                    (non_comp_ctxt.current_line,
-                                     non_comp_ctxt.current_column);
+        non_asm_ctxt.current_line = a_iter.get_line () + 1;
+        non_asm_ctxt.current_column = get_column_from_iter (a_iter);
+        non_asm_ctxt.signal_insertion_moved.emit
+                                    (non_asm_ctxt.current_line,
+                                     non_asm_ctxt.current_column);
     }
 
     void update_line_col_label ()
@@ -345,8 +345,8 @@ struct SourceEditor::Priv {
         }
         UString message;
         message.printf (_("Line: %i, Column: %i"),
-                        non_comp_ctxt.current_line,
-                        non_comp_ctxt.current_column);
+                        non_asm_ctxt.current_line,
+                        non_asm_ctxt.current_column);
         line_col_label->set_text (message);
     }
 
@@ -413,7 +413,7 @@ struct SourceEditor::Priv {
         source_view (Gtk::manage (new SourceView)),
         line_col_label (Gtk::manage (new Gtk::Label)),
         status_box (Gtk::manage (new Gtk::HBox)),
-        non_comp_ctxt (-1, -1)
+        non_asm_ctxt (-1, -1)
 
     {
         init ();
@@ -421,17 +421,17 @@ struct SourceEditor::Priv {
 
     explicit Priv (const UString &a_root_dir,
                    Glib::RefPtr<SourceBuffer> &a_buf,
-                   bool a_composite) :
+                   bool a_assembly) :
         root_dir (a_root_dir),
         source_view (Gtk::manage (new SourceView (a_buf))),
         line_col_label (Gtk::manage (new Gtk::Label)),
         status_box (Gtk::manage (new Gtk::HBox)),
-        non_comp_ctxt (a_buf, -1, -1)
+        non_asm_ctxt (a_buf, -1, -1)
     {
-        if (a_composite) {
-            comp_ctxt.buffer = a_buf;
+        if (a_assembly) {
+            asm_ctxt.buffer = a_buf;
         } else {
-            non_comp_ctxt.buffer = a_buf;
+            non_asm_ctxt.buffer = a_buf;
         }
         init ();
     }
@@ -441,7 +441,7 @@ struct SourceEditor::Priv {
         root_dir (a_root_dir),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
-        comp_ctxt (a_buf)
+        asm_ctxt (a_buf)
     {
         init ();
     }
@@ -485,9 +485,9 @@ SourceEditor::SourceEditor ()
 
 SourceEditor::SourceEditor (const UString &a_root_dir,
                             Glib::RefPtr<SourceBuffer> &a_buf,
-                            bool a_composite)
+                            bool a_assembly)
 {
-    m_priv.reset (new Priv (a_root_dir, a_buf, a_composite));
+    m_priv.reset (new Priv (a_root_dir, a_buf, a_assembly));
     init ();
 }
 
@@ -506,26 +506,26 @@ SourceEditor::source_view () const
 gint
 SourceEditor::current_line () const
 {
-    return m_priv->non_comp_ctxt.current_line;
+    return m_priv->non_asm_ctxt.current_line;
 }
 
 void
 SourceEditor::current_line (gint &a_line)
 {
-    m_priv->non_comp_ctxt.current_line = a_line;
+    m_priv->non_asm_ctxt.current_line = a_line;
 }
 
 gint
 SourceEditor::current_column () const
 {
-    return m_priv->non_comp_ctxt.current_column;
+    return m_priv->non_asm_ctxt.current_column;
 }
 
 void
 SourceEditor::current_column (gint &a_col)
 {
     LOG_DD ("current colnum " << (int) a_col);
-    m_priv->non_comp_ctxt.current_column = a_col;
+    m_priv->non_asm_ctxt.current_column = a_col;
 }
 
 void
@@ -665,6 +665,30 @@ SourceEditor::remove_visual_breakpoint_from_line (int a_line)
     m_priv->markers.erase (iter);
 }
 
+void
+SourceEditor::clear_decorations ()
+{
+#ifdef WITH_SOURCEVIEWMM2
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator it;
+#else
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator it;
+#endif  // WITH_SOURCEVIEWMM2
+
+    // Clear breakpoint markers
+    for (it = m_priv->markers.begin (); it != m_priv->markers.end (); ++it) {
+        if (!it->second->get_deleted ()) {
+#ifdef WITH_SOURCEVIEWMM2
+            source_view ().get_source_buffer ()->delete_mark (it->second);
+#else
+            source_view ().get_source_buffer ()->delete_marker (it->second);
+#endif  // WITH_SOURCEVIEWMM2
+            m_priv->markers.erase (it);
+        }
+    }
+
+    unset_where_marker ();
+}
+
 bool
 SourceEditor::is_visual_breakpoint_set_at_line (int a_line) const
 {
@@ -732,20 +756,20 @@ SourceEditor::scroll_to_iter (Gtk::TextIter &a_iter)
 void
 SourceEditor::set_path (const UString &a_path)
 {
-    m_priv->non_comp_ctxt.path = a_path;
+    m_priv->non_asm_ctxt.path = a_path;
 }
 
 void
 SourceEditor::get_path (UString &a_path) const
 {
-    a_path = m_priv->non_comp_ctxt.path;
+    a_path = m_priv->non_asm_ctxt.path;
 }
 
 void
 SourceEditor::get_file_name (UString &a_file_name)
 {
     string path;
-    path = Glib::locale_from_utf8 (m_priv->non_comp_ctxt.path);
+    path = Glib::locale_from_utf8 (m_priv->non_asm_ctxt.path);
     path = Glib::path_get_basename (path);
     a_file_name = Glib::locale_to_utf8 (path);
 }
@@ -901,96 +925,96 @@ SourceEditor::do_search (const UString &a_str,
     return false;
 }
 
-/// Registers a composite source buffer
-/// \param a_buf the composite source buffer
+/// Registers a assembly source buffer
+/// \param a_buf the assembly source buffer
 /// \param a_line_to_locus_func a unary function that converts a line
 ///        number into a meaningful location for this source buffer.
 /// \param a_locus_to_line_func a unary function that converst a
 ///        meaningful location into a line buffer.
 void
-SourceEditor::register_composite_source_buffer
+SourceEditor::register_assembly_source_buffer
                     (Glib::RefPtr<SourceBuffer> &a_buf)
 {
-    m_priv->register_composite_source_buffer (a_buf);
+    m_priv->register_assembly_source_buffer (a_buf);
 }
 
-/// Registers a normal (non-composite) source buffer.
+/// Registers a normal (non-assembly) source buffer.
 /// \param a_buf the source buffer to register.
 void
-SourceEditor::register_non_composite_source_buffer
+SourceEditor::register_non_assembly_source_buffer
                                     (Glib::RefPtr<SourceBuffer> &a_buf)
 {
-    m_priv->register_non_composite_source_buffer (a_buf);
+    m_priv->register_non_assembly_source_buffer (a_buf);
 }
 
-/// Get the composite source buffer that was registered, or a NULL
+/// Get the assembly source buffer that was registered, or a NULL
 /// pointer if no one was registered before.
 /// \return a smart pointer to the source buffer.
 Glib::RefPtr<SourceBuffer>
-SourceEditor::get_composite_source_buffer () const
+SourceEditor::get_assembly_source_buffer () const
 {
-    return m_priv->comp_ctxt.buffer;
+    return m_priv->asm_ctxt.buffer;
 }
 
-/// Get the non-composite source buffer that was registered, or a NULL
+/// Get the non-assembly source buffer that was registered, or a NULL
 /// pointer if no one was registered before.
 /// \return a smart pointer to the source buffer.
 Glib::RefPtr<SourceBuffer>
-SourceEditor::get_non_composite_source_buffer () const
+SourceEditor::get_non_assembly_source_buffer () const
 {
-    return m_priv->non_comp_ctxt.buffer;
+    return m_priv->non_asm_ctxt.buffer;
 }
 
-/// Switch the editor to the composite source buffer that was
-/// registered. This function has no effect if no composite buffer was
+/// Switch the editor to the assembly source buffer that was
+/// registered. This function has no effect if no assembly buffer was
 /// registered.
 /// \return true if the switch was done, false otherwise.
 bool
-SourceEditor::switch_to_composite_source_buffer ()
+SourceEditor::switch_to_assembly_source_buffer ()
 {
-    return m_priv->switch_to_composite_source_buffer ();
+    return m_priv->switch_to_assembly_source_buffer ();
 }
 
-/// Switch the editor to the non-composite source buffer that was
-/// registered. This function has no effect if no non-composite source
+/// Switch the editor to the non-assembly source buffer that was
+/// registered. This function has no effect if no non-assembly source
 /// buffer was registered.
 /// \return true if the switch was done, false otherwise.
 bool
-SourceEditor::switch_to_non_composite_source_buffer ()
+SourceEditor::switch_to_non_assembly_source_buffer ()
 {
     RETURN_VAL_IF_FAIL (m_priv && m_priv->source_view, false);
 
-    if (m_priv->comp_ctxt.buffer
+    if (m_priv->asm_ctxt.buffer
         && (m_priv->source_view->get_source_buffer ()
-            != m_priv->non_comp_ctxt.buffer)) {
-        m_priv->source_view->set_source_buffer (m_priv->non_comp_ctxt.buffer);
+            != m_priv->non_asm_ctxt.buffer)) {
+        m_priv->source_view->set_source_buffer (m_priv->non_asm_ctxt.buffer);
         return true;
     }
     return false;
 }
 
 bool
-SourceEditor::composite_buf_loc_to_line (const Address &a_addr, int &a_line)
+SourceEditor::assembly_buf_loc_to_line (const Address &a_addr, int &a_line)
 {
-    Glib::RefPtr<SourceBuffer> buf = get_composite_source_buffer ();
+    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
     RETURN_VAL_IF_FAIL (buf, false);
-    a_line = m_priv->comp_ctxt.locus_to_line_func (buf, a_addr);
+    a_line = m_priv->asm_ctxt.locus_to_line_func (buf, a_addr);
     return true;
 }
 
 bool
-SourceEditor::composite_buf_line_to_loc (int a_line, Address &a_address)
+SourceEditor::assembly_buf_line_to_loc (int a_line, Address &a_address)
 {
-    Glib::RefPtr<SourceBuffer> buf = get_composite_source_buffer ();
+    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
     RETURN_VAL_IF_FAIL (buf, false);
-    a_address = m_priv->comp_ctxt.line_to_locus_func (buf, a_line);
+    a_address = m_priv->asm_ctxt.line_to_locus_func (buf, a_line);
     return true;
 }
 
 sigc::signal<void, int, bool>&
 SourceEditor::marker_region_got_clicked_signal () const
 {
-    return m_priv->non_comp_ctxt.marker_region_got_clicked_signal;
+    return m_priv->non_asm_ctxt.marker_region_got_clicked_signal;
 }
 
 sigc::signal<void, const Gtk::TextBuffer::iterator&>&

@@ -132,6 +132,8 @@ const char *LAST_RUN_TIME= "lastruntime";
 const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain";
 
+static const int NUM_INSTR_TO_DISASSEMBLE = 20;
+
 const char* CONF_KEY_NEMIVER_SOURCE_DIRS =
                 "/apps/nemiver/dbgperspective/source-search-dirs";
 const char* CONF_KEY_SHOW_DBG_ERROR_DIALOGS =
@@ -279,6 +281,8 @@ private:
     void on_set_breakpoint_using_dialog_action ();
     void on_set_watchpoint_using_dialog_action ();
     void on_refresh_locals_action ();
+    void on_disassemble_action (bool a_show_asm_in_new_tab);
+    void on_switch_to_disassembly_action ();
     void on_toggle_breakpoint_action ();
     void on_toggle_breakpoint_enabled_action ();
     void on_inspect_variable_action ();
@@ -321,6 +325,7 @@ private:
 
     void on_insertion_changed_signal (const Gtk::TextBuffer::iterator& iter,
                                       SourceEditor *a_editor);
+
     void update_toggle_menu_text (const UString& a_current_file,
                                   int a_current_line);
 
@@ -340,7 +345,7 @@ private:
     void on_debugger_detached_from_target_signal ();
 
     void on_debugger_got_target_info_signal (int a_pid,
-                                           const UString &a_exe_path);
+                                             const UString &a_exe_path);
 
     void on_debugger_console_message_signal (const UString &a_msg);
 
@@ -387,6 +392,10 @@ private:
                                     (const UString &a_var_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cooker);
+    void on_debugger_disassembled_signal
+                            (const IDebugger::DisassembleInfo &a_info,
+                             const std::list<IDebugger::AsmInstr> &a_instrs,
+                             bool a_show_asm_in_new_tab = true);
 
     void on_variable_created_for_tooltip_signal
                                     (const IDebugger::VariableSafePtr);
@@ -523,6 +532,11 @@ public:
     bool open_disassembly (const IDebugger::DisassembleInfo &a_info,
                            const std::list<IDebugger::AsmInstr> &a_asm);
 
+    void switch_to_disassembly (const IDebugger::DisassembleInfo &a_info,
+                                const std::list<IDebugger::AsmInstr> &a_asm);
+
+    void switch_to_source_code ();
+
     void close_opened_files ();
 
     void update_file_maps ();
@@ -606,6 +620,7 @@ public:
     void set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog);
     void set_watchpoint_using_dialog ();
     void refresh_locals ();
+    void disassemble (bool a_show_asm_in_new_tab);
 
     void inspect_variable ();
     void inspect_variable (const UString &a_variable_name);
@@ -615,7 +630,15 @@ public:
     void toggle_breakpoint_enabled (const UString &a_file_path,
                                     int a_linenum);
     void toggle_breakpoint_enabled ();
+
     void update_src_dependant_bp_actions_sensitiveness ();
+
+    bool find_absolute_path (const UString& a_file_path,
+                             UString& a_absolute_path);
+    bool find_absolute_path_or_ask_user (const UString& a_file_path,
+                                         UString& a_absolute_path);
+    bool ask_user_to_select_file (const UString &a_file_name,
+                                  UString& a_selected_file_path);
     bool append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum,
                                    UString &a_actual_file_name,
@@ -628,6 +651,7 @@ public:
     void choose_function_overload
                 (const vector<IDebugger::OverloadsChoiceEntry> &a_entries);
 
+    void remove_visual_decorations_from_text (const UString &a_file_path);
     bool apply_decorations_to_text (const UString &a_file_path);
 
     IDebuggerSafePtr& debugger ();
@@ -1492,6 +1516,23 @@ DBGPerspective::on_refresh_locals_action ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     NEMIVER_TRY
     refresh_locals ();
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_disassemble_action (bool a_show_asm_in_new_tab)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    NEMIVER_TRY
+    disassemble (a_show_asm_in_new_tab);
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_switch_to_disassembly_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    NEMIVER_TRY
     NEMIVER_CATCH
 }
 
@@ -2572,6 +2613,20 @@ DBGPerspective::on_debugger_variable_value_signal
 }
 
 void
+DBGPerspective::on_debugger_disassembled_signal
+                            (const IDebugger::DisassembleInfo &a_info,
+                             const std::list<IDebugger::AsmInstr> &a_instrs,
+                             bool a_show_asm_in_new_tab)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (a_show_asm_in_new_tab)
+        open_disassembly (a_info, a_instrs);
+    else
+        switch_to_disassembly (a_info, a_instrs);
+}
+
+void
 DBGPerspective::on_variable_created_for_tooltip_signal
                                 (const IDebugger::VariableSafePtr a_var)
 {
@@ -3197,7 +3252,43 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "",
             false
-        }
+        },
+        {
+            "DisAsmMenuItemAction",
+            nil_stock_id,
+            _("Show assembly"),
+            _("Show the assembly code of the source code being "
+              "currently debugged, in another tab"),
+            sigc::bind (sigc::mem_fun
+                            (*this, &DBGPerspective::on_disassemble_action),
+                        /*show_asm_in_new_tab=*/true),
+            ActionEntry::DEFAULT,
+            "",
+            false
+        },
+        {
+            "SwitchToAsmMenuItemAction",
+            nil_stock_id,
+            _("Switch to assembly"),
+            _("Show the assembly code of the source code being "
+              "currently debugged"),
+            sigc::bind (sigc::mem_fun
+                            (*this, &DBGPerspective::on_disassemble_action),
+                        /*show_asm_in_new_tab=*/false),
+            ActionEntry::DEFAULT,
+            "",
+            false
+        },
+        {
+            "SwitchToSourceMenuItemAction",
+            nil_stock_id,
+            _("Switch to source"),
+            _("Show the source code being currently debugged"),
+            sigc::mem_fun (*this, &DBGPerspective::switch_to_source_code),
+            ActionEntry::DEFAULT,
+            "",
+            false
+        },
     };
 
     static ui_utils::ActionEntry s_debugger_busy_action_entries [] = {
@@ -3779,6 +3870,39 @@ DBGPerspective::clear_session_data ()
     m_priv->source_dirs.clear ();
 }
 
+bool
+DBGPerspective::find_absolute_path (const UString& a_file_path,
+                                    UString &a_absolute_path)
+{
+    // First, assume it's a full path name already.
+    if (Glib::file_test (a_file_path, Glib::FILE_TEST_IS_REGULAR)) {
+        a_absolute_path = a_file_path;
+        return true;
+    }
+    // If that didn't work, look for a file of that name in the search
+    // directories.
+    if (find_file_in_source_dirs (a_file_path, a_absolute_path)) {
+        return true;
+    }
+    return false;
+}
+
+bool
+DBGPerspective::find_absolute_path_or_ask_user (const UString& a_file_path,
+                                                UString& a_absolute_path)
+{
+    if (!find_absolute_path (a_file_path, a_absolute_path)) {
+        if (ask_user_to_select_file (a_file_path, a_absolute_path)) {
+            UString parent_dir = Glib::filename_to_utf8
+                                    (Glib::path_get_dirname (a_absolute_path));
+            m_priv->search_paths.push_back (parent_dir);
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
 void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                       const UString &a_path)
@@ -3874,7 +3998,10 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
                             &DBGPerspective::on_leave_notify_event_signal));
     }
 
-    m_priv->opened_file_action_group->set_sensitive (true);
+    if (get_num_notebook_pages () == 1) {
+        m_priv->opened_file_action_group->set_sensitive (true);
+        update_src_dependant_bp_actions_sensitiveness ();
+    }
 }
 
 SourceEditor*
@@ -4892,6 +5019,9 @@ DBGPerspective::get_file_mime_type (const UString &a_path,
     NEMIVER_CATCH_AND_RETURN (false)
 }
 
+// Make sure the source buffer a_buf is properly setup to have the mime
+// type a_mime_type. If a_buf is null, a new one is created.
+// Returns true upon successful completion, false otherwise.
 bool
 DBGPerspective::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
                                             const std::string &a_mime_type)
@@ -5050,7 +5180,7 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
                                                        a_source_buf,
                                                        true));
         if (!a_current_address.empty ()) {
-            source_editor->composite_buf_loc_to_line (a_current_address.raw (),
+            source_editor->assembly_buf_loc_to_line (a_current_address.raw (),
                                                       current_line);
         }
     } else {
@@ -5141,7 +5271,8 @@ DBGPerspective::open_file (const UString &a_path,
                            int a_current_line)
 {
     RETURN_VAL_IF_FAIL (m_priv, false);
-    RETURN_VAL_IF_FAIL (!a_path.empty (), false);
+    if (a_path.empty ())
+        return false;
 
     if (get_source_editor_from_path (a_path)) {return true;}
 
@@ -5279,6 +5410,11 @@ DBGPerspective::load_disassembly (const IDebugger::DisassembleInfo &/*a_info*/,
     NEMIVER_CATCH_AND_RETURN (false)
 }
 
+// If new disassembly dedicated tab was already present in the perspective,
+// create  a new one, otherwise, reuse the one that was already present.
+// Then load the assembly insns a_asm  described by a_info into the
+// source buffer of the disassembly tab.
+// Return true upon successful completion, false otherwise.
 bool
 DBGPerspective::open_disassembly (const IDebugger::DisassembleInfo &a_info,
                                   const std::list<IDebugger::AsmInstr> &a_asm)
@@ -5288,23 +5424,106 @@ DBGPerspective::open_disassembly (const IDebugger::DisassembleInfo &a_info,
     NEMIVER_TRY
 
     Glib::RefPtr<SourceBuffer> source_buffer;
+
+    SourceEditor *source_editor =
+        get_source_editor_from_path (get_disassembly_title ());
+
+    if (source_editor) {
+        source_buffer = source_editor->source_view ().get_source_buffer ();
+        source_buffer->erase (source_buffer->begin (), source_buffer->end ());
+    }
     if (!load_disassembly (a_info, a_asm, source_buffer)) {
         return false;
     }
-
-    SourceEditor *source_editor =
-        create_source_editor (source_buffer,
-                              /*a_disassembly_view=*/true,
-                              get_disassembly_title (),
-                              -1,
-                              /*a_current_address=*/"");
-    THROW_IF_FAIL (source_editor);
-    source_editor->show_all ();
-    append_source_editor (*source_editor, get_disassembly_title ());
+    if (!source_editor) {
+        source_editor =
+            create_source_editor (source_buffer,
+                                  /*a_disassembly_view=*/true,
+                                  get_disassembly_title (),
+                                  -1,
+                                  /*a_current_address=*/"");
+        THROW_IF_FAIL (source_editor);
+        source_editor->show_all ();
+        append_source_editor (*source_editor, get_disassembly_title ());
+    }
 
     NEMIVER_CATCH_AND_RETURN (false);
 
     return true;
+}
+
+// Get the source editor of the source file being currently debugged,
+// switch it into the disassembly mode and load the asm insns
+// represented by a_info and a_asm into its source buffer.
+// \param a_info descriptor of the assembly instructions
+// \param a_asm a list of asm instructions.
+void
+DBGPerspective::switch_to_disassembly
+                    (const IDebugger::DisassembleInfo &a_info,
+                     const std::list<IDebugger::AsmInstr> &a_asm)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    SourceEditor *source_editor = get_current_source_editor ();
+    if (source_editor == 0)
+        return;
+
+    Glib::RefPtr<SourceBuffer> asm_buf;
+    if ((asm_buf = source_editor->get_assembly_source_buffer ()) == 0) {
+        setup_buffer_mime_and_lang (asm_buf, "test/x-asm");
+        source_editor->register_assembly_source_buffer (asm_buf);
+        asm_buf = source_editor->get_assembly_source_buffer ();
+        RETURN_IF_FAIL (asm_buf);
+    }
+    if (!load_disassembly (a_info, a_asm, asm_buf)) {
+        LOG_ERROR ("failed to load asm");
+        return;
+    }
+    if (!source_editor->switch_to_assembly_source_buffer ()) {
+        LOG_ERROR ("Could not switch the current view to asm");
+    }
+}
+
+// Get the source editor of the source file being currently debugged,
+// switch it into the source code mode. If necessary, (re) load the
+// source code.
+void
+DBGPerspective::switch_to_source_code ()
+{
+    SourceEditor *source_editor = get_current_source_editor ();
+    if (source_editor == 0)
+        return;
+    Glib::RefPtr<SourceBuffer> source_buf;
+    UString source_path;
+    if ((source_buf = source_editor->get_non_assembly_source_buffer ()) == 0) {
+        // Woops!
+        // We don't have any source code buffer. Let's try hard to get
+        // the source code corresponding to the current frame. For that,
+        // we'll hope to have proper debug info for the binary being
+        // debugged, and the source code available on disk.
+        if (m_priv->current_frame.address ().empty ()) {
+            LOG_DD ("No current instruction pointer");
+            return;
+        }
+        if (m_priv->current_frame.file_name ().empty ()) {
+            LOG_DD ("No file name information for current frame");
+            return;
+        }
+        UString absolute_path, mime_type;
+        if (!find_absolute_path_or_ask_user (m_priv->current_frame.file_name (),
+                                             absolute_path)) {
+            LOG_DD ("Could not find file: "
+                    << m_priv->current_frame.file_name ());
+            return;
+        }
+        get_file_mime_type (absolute_path, mime_type);
+        setup_buffer_mime_and_lang (source_buf, mime_type);
+        load_file (absolute_path, source_buf);
+        source_editor->register_non_assembly_source_buffer (source_buf);
+    }
+    source_editor->switch_to_non_assembly_source_buffer ();
+    source_editor->get_path (source_path);
+    apply_decorations_to_text (source_path);
 }
 
 Gtk::Widget*
@@ -6155,10 +6374,42 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                      actual_file_path, enabled);
 }
 
+// Popup a dialog asking the user to select the file a_file_name.
+// \param a_file_name the name of the file we want the user to select.
+// \param a_selected_file_path the path to the file the user actually
+// selected.
+// \return true if the user really selected the file we wanted, false
+// otherwise.
+bool
+DBGPerspective::ask_user_to_select_file (const UString &a_file_name,
+                                         UString &a_selected_file_path)
+{
+    LocateFileDialog dialog (plugin_path (), a_file_name);
+    // start looking in the working directory
+    dialog.file_location (m_priv->prog_cwd);
+    int result = dialog.run ();
+    if (result == Gtk::RESPONSE_OK) {
+        UString file_path = dialog.file_location ();
+        if (!Glib::file_test (file_path, Glib::FILE_TEST_IS_REGULAR)
+            || (Glib::path_get_basename (a_file_name)
+                != Glib::path_get_basename (file_path)))
+            return false;
+        UString parent_dir =
+            Glib::filename_to_utf8 (Glib::path_get_dirname
+                                                (dialog.file_location ()));
+        if (!Glib::file_test (parent_dir, Glib::FILE_TEST_IS_DIR))
+            return false;
+
+        a_selected_file_path = file_path;
+        return true;
+    }
+    return false;
+}
+
 bool
 DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
                                           int a_linenum,
-                                          UString &a_actual_file_name,
+                                          UString &a_actual_file_path,
                                           bool enabled)
 {
     if (a_file_name.empty()) {
@@ -6173,105 +6424,32 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
 
     if (a_linenum < 0) {a_linenum = 0;}
 
-    UString actual_file_name;
+    UString actual_file_path;
     SourceEditor *source_editor =
                         get_source_editor_from_path (a_file_name,
-                                                     actual_file_name);
-    //first assume that it's a full pathname and just try to open it
-    if (!source_editor) {
-        if (Glib::file_test (a_file_name, Glib::FILE_TEST_IS_REGULAR)) {
-            if (!open_file (a_file_name)) {
-                UString msg;
-                msg.printf (_("Failed to open file %s. "
-                              "Would you like to open another file which "
-                              "would have the same content ?"),
-                            a_file_name.c_str ());
-                if (ui_utils::ask_yes_no_question (msg)
-                    == Gtk::RESPONSE_YES) {
-                    LocateFileDialog dialog (plugin_path (), a_file_name);
-                    dialog.file_location (m_priv->prog_cwd);
-                    int result = dialog.run ();
-                    if (result == Gtk::RESPONSE_OK) {
-                        UString file_path = dialog.file_location ();
-                        THROW_IF_FAIL (Glib::file_test (file_path,
-                                            Glib::FILE_TEST_IS_REGULAR));
-                        std::string raw_dir = Glib::path_get_dirname
-                            (dialog.file_location ());
-                        UString parent_dir = Glib::filename_to_utf8 (raw_dir);
-                        THROW_IF_FAIL (Glib::file_test (raw_dir,
-                                                        Glib::FILE_TEST_IS_DIR));
-                        m_priv->search_paths.push_back (parent_dir);
-                        if (!open_file (file_path)) {
-                            return false;
-                        }
-                        source_editor =
-                            get_source_editor_from_path (file_path,
-                                                         actual_file_name);
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
-            source_editor = get_source_editor_from_path (a_file_name,
-                                                         actual_file_name);
-        }
-    }
-    //if that didn't work, look for an opened source editor
-    //that matches the base name
-    if (!source_editor) {
-        source_editor = get_source_editor_from_path (a_file_name,
-                                                     actual_file_name,
-                                                     true);
-    }
-    //if that still didn't work, look for a file of that name in the search
-    //directories and then as a last resort ask the user to locate it
-    //manually
-    if (!source_editor) {
-        UString file_path;
-        if (!find_file_in_source_dirs (a_file_name, file_path)) {
-            LOG_DD ("didn't find file either in opened files "
-                    " or in source dirs:");
-            //Pop up a dialog asking user to select the specified file
-            LocateFileDialog dialog (plugin_path (), a_file_name);
-            //start looking in the working directory
-            dialog.file_location (m_priv->prog_cwd);
-            int result = dialog.run ();
-            if (result == Gtk::RESPONSE_OK) {
-                file_path = dialog.file_location ();
-                THROW_IF_FAIL (Glib::file_test (file_path,
-                                                Glib::FILE_TEST_IS_REGULAR));
-                THROW_IF_FAIL (Glib::path_get_basename(a_file_name) ==
-                        Glib::path_get_basename(file_path));
-                UString parent_dir = Glib::filename_to_utf8
-                    (Glib::path_get_dirname (dialog.file_location ()));
-                THROW_IF_FAIL (Glib::file_test
-                                    (parent_dir, Glib::FILE_TEST_IS_DIR));
-
-                //Also add the parent directory to the list
-                //of paths to search for this session so
-                //you don't have to keep selecting files if
-                //they're all in the same directory.
-                //We can assume that the parent
-                //directory is not already in the
-                //list of source dirs
-                //(or else it would have been found and the
-                //user wouldn't have had to locate it manually)
-                //so just stack it
-                //on the end of the list
+                                                     actual_file_path);
+    if (source_editor == 0) {
+        if (!find_absolute_path (a_file_name, actual_file_path)) {
+            if (ask_user_to_select_file (a_file_name, actual_file_path)) {
+                UString parent_dir =
+                    Glib::filename_to_utf8
+                        (Glib::path_get_dirname (actual_file_path));
                 m_priv->search_paths.push_back (parent_dir);
             }
         }
-
-        if (!file_path.empty ()) {
-            open_file (file_path);
-            source_editor = get_source_editor_from_path (file_path,
-                                                         actual_file_name);
-        }
+        open_file (actual_file_path);
+        source_editor = get_source_editor_from_path (a_file_name,
+                                                      actual_file_path);
+    }
+    // if that didn't work, look for an opened source editor
+    // that matches the base name
+    if (source_editor == 0) {
+        source_editor = get_source_editor_from_path (a_file_name,
+                                                     actual_file_path,
+                                                     /*basename_only=*/true);
     }
 
-    //finally, if none of these things worked, display an error
+    // finally, if none of these things worked, display an error
     if (!source_editor) {
         LOG_ERROR ("Could not find source editor for file: '"
                 << a_file_name
@@ -6282,7 +6460,7 @@ DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
         source_editor->set_visual_breakpoint_at_line (a_linenum, enabled);
     }
 
-    a_actual_file_name = actual_file_name;
+    a_actual_file_path = actual_file_path;
     return true;
 }
 
@@ -6347,6 +6525,16 @@ DBGPerspective::choose_function_overload
     }
     if (!nums.empty ())
         debugger ()->choose_function_overloads (nums);
+}
+
+void
+DBGPerspective::remove_visual_decorations_from_text
+                                            (const UString &a_file_path)
+{
+    SourceEditor *editor = get_source_editor_from_path (a_file_path);
+    if (editor == 0)
+        return;
+    editor->clear_decorations ();
 }
 
 bool
@@ -6613,6 +6801,42 @@ DBGPerspective::refresh_locals ()
     THROW_IF_FAIL (m_priv);
     get_local_vars_inspector ().show_local_variables_of_current_function
                                                         (m_priv->current_frame);
+}
+
+void
+DBGPerspective::disassemble (bool a_show_asm_in_new_tab)
+{
+    THROW_IF_FAIL (m_priv);
+
+    // If we don't have the current instruction pointer (IP), there is
+    // nothing we can do.
+    if (!debugger ()->is_attached_to_target ()
+        || m_priv->current_frame.address ().empty ()) {
+        LOG_DD ("No current instruction pointer");
+        return;
+    }
+
+    sigc::slot<void,
+               const IDebugger::DisassembleInfo,
+               const std::list<IDebugger::AsmInstr>& > s;
+    if (a_show_asm_in_new_tab)
+        s = sigc::bind (sigc::mem_fun (this,
+                           &DBGPerspective::on_debugger_disassembled_signal),
+                        true);
+
+    else
+        s = sigc::bind
+                (sigc::mem_fun
+                     (this,
+                      &DBGPerspective::on_debugger_disassembled_signal),
+                 false);
+
+    debugger ()->disassemble
+                (0 /* Start @ to disassemble */,
+                 true /* Start @ is relative to current IP */,
+                 NUM_INSTR_TO_DISASSEMBLE * sizeof (void *),
+                 true /* End @ is relative to current IP */,
+                 s);
 }
 
 void

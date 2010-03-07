@@ -75,6 +75,7 @@ public:
     void unset_where_marker ();
     void set_visual_breakpoint_at_line (int a_line, bool enabled=true);
     void remove_visual_breakpoint_from_line (int a_line);
+    void clear_decorations ();
     bool is_visual_breakpoint_set_at_line (int a_line) const;
     void scroll_to_line (int a_line);
     void scroll_to_iter (Gtk::TextIter &a_iter);
@@ -98,35 +99,35 @@ public:
     /// \name Composite Source buffer handling.
     /// @{
 
-    /// A composite buffer is a buffer which content doesn't come
+    /// A assembly buffer is a buffer which content doesn't come
     /// directly from a file. It as been composed in memory. We use
-    /// composite buffers to represent the assembly view of a text file
+    /// assemyb buffers to represent the assembly view of a text file
     /// being debugged.
-    /// Unlike non-composite buffers, meaningful locations inside the buffer
-    /// are not necessarily line numbers. They can be something else.
-    /// In the case of assembly view, a meaningful location is the address
+    /// Unlike non-assembly buffers, meaningful locations inside the buffer
+    /// are not necessarily line numbers.
+    /// In an assembly view, a meaningful location is the address
     /// of a machine instruction. So there somehow must be a kind of mapping
-    /// between the location used for the composite buffer and the actual
+    /// between the location used for the assembly buffer and the actual
     /// line number, because the underlying SourceBuffer implementation
     /// relies on line numbers anyhow.
 
-    void register_composite_source_buffer
+    void register_assembly_source_buffer
                         (Glib::RefPtr<SourceBuffer> &a_buf);
 
-    void register_non_composite_source_buffer
+    void register_non_assembly_source_buffer
                                     (Glib::RefPtr<SourceBuffer> &a_buf);
 
-    Glib::RefPtr<SourceBuffer> get_composite_source_buffer () const;
+    Glib::RefPtr<SourceBuffer> get_assembly_source_buffer () const;
 
-    Glib::RefPtr<SourceBuffer> get_non_composite_source_buffer () const;
+    Glib::RefPtr<SourceBuffer> get_non_assembly_source_buffer () const;
 
-    bool switch_to_composite_source_buffer ();
+    bool switch_to_assembly_source_buffer ();
 
-    bool switch_to_non_composite_source_buffer ();
+    bool switch_to_non_assembly_source_buffer ();
 
-    bool composite_buf_loc_to_line (const Address &, int &);
+    bool assembly_buf_loc_to_line (const Address &, int &);
 
-    bool composite_buf_line_to_loc (int, Address &);
+    bool assembly_buf_line_to_loc (int, Address &);
     /// @}
 
     /// \name signals
