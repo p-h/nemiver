@@ -47,7 +47,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<int> hits;
     Gtk::TreeModelColumn<Glib::ustring> expression;
     Gtk::TreeModelColumn<int> ignore_count;
-    Gtk::TreeModelColumn<IDebugger::BreakPoint> breakpoint;
+    Gtk::TreeModelColumn<IDebugger::Breakpoint> breakpoint;
     Gtk::TreeModelColumn<bool> is_standard;
 
     BPColumns ()
@@ -81,7 +81,7 @@ public:
     Glib::RefPtr<Gtk::ListStore> list_store;
     Gtk::Widget *breakpoints_menu;
     sigc::signal<void,
-                 const IDebugger::BreakPoint&> go_to_breakpoint_signal;
+                 const IDebugger::Breakpoint&> go_to_breakpoint_signal;
     Glib::RefPtr<Gtk::ActionGroup> breakpoints_action_group;
     IWorkbench& workbench;
     IPerspective& perspective;
@@ -100,7 +100,7 @@ public:
         init_actions ();
         build_tree_view ();
         void set_breakpoints
-                (const std::map<int, IDebugger::BreakPoint> &a_breakpoints);
+                (const std::map<int, IDebugger::Breakpoint> &a_breakpoints);
 
         // update breakpoint list when debugger indicates that the list of
         // breakpoints has changed.
@@ -192,7 +192,7 @@ public:
     }
 
     void set_breakpoints
-        (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
+        (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
     {
         if (a_breakpoints.empty ()) {
             return;
@@ -204,7 +204,7 @@ public:
             add_breakpoints (a_breakpoints);
         } else {
             //find breakpoints that need adding or updating
-            std::map<int, IDebugger::BreakPoint>::const_iterator breakmap_iter;
+            std::map<int, IDebugger::Breakpoint>::const_iterator breakmap_iter;
             for (breakmap_iter = a_breakpoints.begin ();
                  breakmap_iter != a_breakpoints.end ();
                  ++breakmap_iter) {
@@ -224,11 +224,11 @@ public:
     }
 
     void add_breakpoints
-                (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
+                (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
     {
         THROW_IF_FAIL (list_store);
 
-        std::map<int, IDebugger::BreakPoint>::const_iterator break_iter;
+        std::map<int, IDebugger::Breakpoint>::const_iterator break_iter;
         for (break_iter = a_breakpoints.begin ();
                 break_iter != a_breakpoints.end ();
                 ++break_iter) {
@@ -237,10 +237,10 @@ public:
     }
 
     bool breakpoint_list_has_id
-        (const std::map<int, IDebugger::BreakPoint> &a_breakpoints,
+        (const std::map<int, IDebugger::Breakpoint> &a_breakpoints,
          int a_id)
     {
-        std::map<int, IDebugger::BreakPoint>::const_iterator breakmap_iter;
+        std::map<int, IDebugger::Breakpoint>::const_iterator breakmap_iter;
         for (breakmap_iter = a_breakpoints.begin ();
                 breakmap_iter != a_breakpoints.end (); ++ breakmap_iter) {
             if (a_id == breakmap_iter->second.number ()) {
@@ -251,7 +251,7 @@ public:
     }
 
     Gtk::TreeModel::iterator find_breakpoint_in_model
-                                (const IDebugger::BreakPoint &a_breakpoint)
+                                (const IDebugger::Breakpoint &a_breakpoint)
     {
         THROW_IF_FAIL (list_store);
 
@@ -268,7 +268,7 @@ public:
     }
 
     void update_breakpoint (Gtk::TreeModel::iterator& a_iter,
-                            const IDebugger::BreakPoint &a_breakpoint)
+                            const IDebugger::Breakpoint &a_breakpoint)
     {
         (*a_iter)[get_bp_cols ().breakpoint] = a_breakpoint;
         (*a_iter)[get_bp_cols ().enabled] = a_breakpoint.enabled ();
@@ -284,11 +284,11 @@ public:
 
         (*a_iter)[get_bp_cols ().is_standard] = false;
         switch (a_breakpoint.type ()) {
-            case IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE:
+            case IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE:
                 (*a_iter)[get_bp_cols ().type] = _("breakpoint");
                 (*a_iter)[get_bp_cols ().is_standard] = true;
                 break;
-            case IDebugger::BreakPoint::WATCHPOINT_TYPE:
+            case IDebugger::Breakpoint::WATCHPOINT_TYPE:
                 (*a_iter)[get_bp_cols ().type] = _("watchtpoint");
                 break;
             default:
@@ -298,7 +298,7 @@ public:
     }
 
     Gtk::TreeModel::iterator append_breakpoint
-                                    (const IDebugger::BreakPoint &a_breakpoint)
+                                    (const IDebugger::Breakpoint &a_breakpoint)
     {
         Gtk::TreeModel::iterator tree_iter = list_store->append();
         update_breakpoint (tree_iter, a_breakpoint);
@@ -410,7 +410,7 @@ public:
     }
 
     void on_debugger_breakpoints_set_signal
-                            (const map<int, IDebugger::BreakPoint> &a_breaks,
+                            (const map<int, IDebugger::Breakpoint> &a_breaks,
                              const UString &a_cookie)
     {
         NEMIVER_TRY
@@ -450,7 +450,7 @@ public:
     }
 
     void on_debugger_breakpoint_deleted_signal
-            (const IDebugger::BreakPoint &a_break, int a_break_number,
+            (const IDebugger::Breakpoint &a_break, int a_break_number,
              const UString &a_cookie)
     {
         if (a_break.number () || a_cookie.empty()) {}
@@ -628,8 +628,8 @@ public:
 
         bool is_standard_bp = false; //true if this is e.g. no watchpoint.
         if (it
-            && (((IDebugger::BreakPoint)(*it)[get_bp_cols ().breakpoint])).
-                type () == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE) {
+            && (((IDebugger::Breakpoint)(*it)[get_bp_cols ().breakpoint])).
+                type () == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE) {
             is_standard_bp = true;
             LOG_DD ("breakpoint is standard");
         } else {
@@ -652,8 +652,8 @@ public:
         Gtk::TreeModel::iterator it = tree_view->get_model ()->get_iter (a_path);
 
         bool is_standard_bp =
-            (((IDebugger::BreakPoint)(*it)[get_bp_cols ().breakpoint]).type ()
-             == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE)
+            (((IDebugger::Breakpoint)(*it)[get_bp_cols ().breakpoint]).type ()
+             == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
             ? true
             : false;
 
@@ -689,7 +689,7 @@ BreakpointsView::widget () const
 
 void
 BreakpointsView::set_breakpoints
-                (const std::map<int, IDebugger::BreakPoint> &a_breakpoints)
+                (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
 {
     THROW_IF_FAIL (m_priv);
     m_priv->set_breakpoints (a_breakpoints);
@@ -712,7 +712,7 @@ BreakpointsView::re_init ()
     m_priv->re_init ();
 }
 
-sigc::signal<void, const IDebugger::BreakPoint&>&
+sigc::signal<void, const IDebugger::Breakpoint&>&
 BreakpointsView::go_to_breakpoint_signal () const
 {
     THROW_IF_FAIL(m_priv);

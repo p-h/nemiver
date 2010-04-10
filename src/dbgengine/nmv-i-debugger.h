@@ -77,7 +77,7 @@ public:
     typedef unsigned int register_id_t;
 
     /// \brief a breakpoint descriptor
-    class BreakPoint {
+    class Breakpoint {
     public:
 
         enum Type {
@@ -103,7 +103,7 @@ public:
         bool m_is_write_watchpoint;
 
     public:
-        BreakPoint () {clear ();}
+        Breakpoint () {clear ();}
 
         /// \name accessors
 
@@ -179,7 +179,7 @@ public:
             m_is_read_watchpoint = false;
             m_is_write_watchpoint = false;
         }
-    };//end class BreakPoint
+    };//end class Breakpoint
 
     /// \brief an entry of a choice list
     /// to choose between a list of overloaded
@@ -868,7 +868,7 @@ public:
     virtual sigc::signal<void>& detached_from_target_signal () const=0;
 
     virtual sigc::signal<void,
-                        const IDebugger::BreakPoint&,
+                        const IDebugger::Breakpoint&,
                         int /*breakpoint command*/,
                         const UString & /*cookie*/>&
                                      breakpoint_deleted_signal () const=0;
@@ -879,7 +879,7 @@ public:
     /// IDebugger does not cache the list of breakpoints. This must
     /// be fixed at some point.
     virtual sigc::signal<void,
-                         const map<int, IDebugger::BreakPoint>&,
+                         const map<int, IDebugger::Breakpoint>&,
                          const UString& /*cookie*/>&
                                          breakpoints_set_signal () const=0;
 
@@ -1170,7 +1170,7 @@ public:
 
     virtual void list_breakpoints (const UString &a_cookie="") = 0;
 
-    virtual const map<int, BreakPoint>& get_cached_breakpoints () = 0;
+    virtual const map<int, Breakpoint>& get_cached_breakpoints () = 0;
 
     virtual void choose_function_overload (int a_overload_number,
                                            const UString &a_cookie="") = 0;

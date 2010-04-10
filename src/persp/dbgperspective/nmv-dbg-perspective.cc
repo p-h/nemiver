@@ -292,9 +292,9 @@ private:
     void on_show_target_output_action ();
     void on_find_text_response_signal (int);
     void on_breakpoint_delete_action
-                                (const IDebugger::BreakPoint& a_breakpoint);
+                                (const IDebugger::Breakpoint& a_breakpoint);
     void on_breakpoint_go_to_source_action
-                                (const IDebugger::BreakPoint& a_breakpoint);
+                                (const IDebugger::Breakpoint& a_breakpoint);
     void on_thread_list_thread_selected_signal (int a_tid);
 
     void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num);
@@ -357,11 +357,11 @@ private:
                                           const UString &a_cookie);
 
     void on_debugger_breakpoints_set_signal
-                                (const map<int, IDebugger::BreakPoint> &,
+                                (const map<int, IDebugger::Breakpoint> &,
                                  const UString &a_cookie);
 
     void on_debugger_breakpoint_deleted_signal
-                                        (const IDebugger::BreakPoint&,
+                                        (const IDebugger::Breakpoint&,
                                          int,
                                          const UString &a_cookie);
 
@@ -562,7 +562,7 @@ public:
                           const vector<UString> &a_args,
                           const map<UString, UString> &a_env,
                           const UString &a_cwd,
-                          const vector<IDebugger::BreakPoint> &a_breaks,
+                          const vector<IDebugger::Breakpoint> &a_breaks,
                           bool a_check_is_new_program = true,
                           bool a_close_opened_files = false);
 
@@ -596,9 +596,9 @@ public:
     void set_breakpoint (const UString &a_func_name,
                          const UString &a_cond);
     void append_breakpoint (int a_bp_num,
-                            const IDebugger::BreakPoint &a_breakpoint);
+                            const IDebugger::Breakpoint &a_breakpoint);
     void append_breakpoints
-                    (const map<int, IDebugger::BreakPoint> &a_breaks);
+                    (const map<int, IDebugger::Breakpoint> &a_breaks);
 
     bool get_breakpoint_number (const UString &a_file_name,
                                 int a_linenum,
@@ -904,7 +904,7 @@ struct DBGPerspective::Priv {
     int current_page_num;
     IDebuggerSafePtr debugger;
     IDebugger::Frame current_frame;
-    map<int, IDebugger::BreakPoint> breakpoints;
+    map<int, IDebugger::Breakpoint> breakpoints;
     ISessMgrSafePtr session_manager;
     ISessMgr::Session session;
     IProcMgrSafePtr process_manager;
@@ -1661,7 +1661,7 @@ DBGPerspective::on_find_text_response_signal (int a_response)
 
 void
 DBGPerspective::on_breakpoint_delete_action
-                                    (const IDebugger::BreakPoint& a_breakpoint)
+                                    (const IDebugger::Breakpoint& a_breakpoint)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     NEMIVER_TRY
@@ -1671,7 +1671,7 @@ DBGPerspective::on_breakpoint_delete_action
 
 void
 DBGPerspective::on_breakpoint_go_to_source_action
-                                (const IDebugger::BreakPoint& a_breakpoint)
+                                (const IDebugger::Breakpoint& a_breakpoint)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     // FIXME: this should put the same effort into
@@ -2299,7 +2299,7 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
 
 void
 DBGPerspective::on_debugger_breakpoints_set_signal
-                            (const map<int, IDebugger::BreakPoint> &a_breaks,
+                            (const map<int, IDebugger::Breakpoint> &a_breaks,
                              const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2319,7 +2319,7 @@ DBGPerspective::on_debugger_breakpoints_set_signal
         int line = atoi
                 (a_cookie.substr (start_of_line,
                                   a_cookie.size () - start_of_line).c_str ());
-        map<int, IDebugger::BreakPoint>::const_iterator break_iter;
+        map<int, IDebugger::Breakpoint>::const_iterator break_iter;
         for (break_iter = a_breaks.begin ();
              break_iter != a_breaks.end ();
              ++break_iter) {
@@ -2484,7 +2484,7 @@ DBGPerspective::on_frame_selected_signal (int /* a_index */,
 
 void
 DBGPerspective::on_debugger_breakpoint_deleted_signal
-                                        (const IDebugger::BreakPoint &,
+                                        (const IDebugger::Breakpoint &,
                                          int a_break_number,
                                          const UString &a_cookie)
 {
@@ -3152,7 +3152,7 @@ DBGPerspective::init_actions ()
             false
         },
         {
-            "ToggleBreakPointMenuItemAction",
+            "ToggleBreakpointMenuItemAction",
             nil_stock_id,
             //don't translate, name will be overwritten based on context
             "Toggle _Breakpoint",
@@ -3164,7 +3164,7 @@ DBGPerspective::init_actions ()
             false
         },
         {
-            "ToggleEnableBreakPointMenuItemAction",
+            "ToggleEnableBreakpointMenuItemAction",
             nil_stock_id,
             //don't translate, name will be overwritten based on context
             "Enable/Disable Breakpoint",
@@ -3178,7 +3178,7 @@ DBGPerspective::init_actions ()
             false
         },
         {
-            "SetBreakPointMenuItemAction",
+            "SetBreakpointMenuItemAction",
             nil_stock_id,
             _("Set Breakpoint..."),
             _("Set a breakpoint at a function or line number"),
@@ -3188,7 +3188,7 @@ DBGPerspective::init_actions ()
             false
         },
         {
-            "SetBreakPointUsingDialogMenuItemAction",
+            "SetBreakpointUsingDialogMenuItemAction",
             nil_stock_id,
             _("Set Breakpoint with dialog..."),
             _("Set a breakpoint at the current line using a dialog"),
@@ -4222,16 +4222,16 @@ DBGPerspective::get_contextual_menu ()
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
-             "ToggleBreakPointMenuItem",
-             "ToggleBreakPointMenuItemAction",
+             "ToggleBreakpointMenuItem",
+             "ToggleBreakpointMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false);
 
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
-             "ToggleEnableBreakPointMenuItem",
-             "ToggleEnableBreakPointMenuItemAction",
+             "ToggleEnableBreakpointMenuItem",
+             "ToggleEnableBreakpointMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false);
 
@@ -4857,13 +4857,13 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     // Record regular breakpoints and watchpoints in the session
     a_session.breakpoints ().clear ();
     a_session.watchpoints ().clear ();
-    map<int, IDebugger::BreakPoint>::const_iterator break_iter;
+    map<int, IDebugger::Breakpoint>::const_iterator break_iter;
     for (break_iter = m_priv->breakpoints.begin ();
          break_iter != m_priv->breakpoints.end ();
          ++break_iter) {
         if (break_iter->second.type ()
-            == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE) {
-            ISessMgr::BreakPoint bp (break_iter->second.file_name (),
+            == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE) {
+            ISessMgr::Breakpoint bp (break_iter->second.file_name (),
                                      break_iter->second.file_full_name (),
                                      break_iter->second.line (),
                                      break_iter->second.enabled (),
@@ -4872,7 +4872,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
             a_session.breakpoints ().push_back (bp);
             LOG_DD ("Regular breakpoint scheduled to be stored");
         } else if (break_iter->second.type ()
-                   == IDebugger::BreakPoint::WATCHPOINT_TYPE) {
+                   == IDebugger::Breakpoint::WATCHPOINT_TYPE) {
             ISessMgr::WatchPoint wp (break_iter->second.expression (),
                                      break_iter->second.is_write_watchpoint (),
                                      break_iter->second.is_read_watchpoint ());
@@ -5660,9 +5660,9 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
         close_opened_files ();
     }
 
-    IDebugger::BreakPoint breakpoint;
-    vector<IDebugger::BreakPoint> breakpoints;
-    for (list<ISessMgr::BreakPoint>::const_iterator it =
+    IDebugger::Breakpoint breakpoint;
+    vector<IDebugger::Breakpoint> breakpoints;
+    for (list<ISessMgr::Breakpoint>::const_iterator it =
              m_priv->session.breakpoints ().begin ();
          it != m_priv->session.breakpoints ().end ();
          ++it) {
@@ -5681,7 +5681,7 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
          it != m_priv->session.watchpoints ().end ();
          ++it) {
         breakpoint.clear ();
-        breakpoint.type (IDebugger::BreakPoint::WATCHPOINT_TYPE);
+        breakpoint.type (IDebugger::Breakpoint::WATCHPOINT_TYPE);
         breakpoint.expression (it->expression ());
         breakpoint.is_read_watchpoint (it->is_read ());
         breakpoint.is_write_watchpoint (it->is_write ());
@@ -5746,7 +5746,7 @@ DBGPerspective::execute_program ()
     THROW_IF_FAIL (cwd != "");
     map<UString, UString> env = dialog.environment_variables();
 
-    vector<IDebugger::BreakPoint> breaks;
+    vector<IDebugger::Breakpoint> breaks;
     execute_program (prog, args, env, cwd, breaks, true, true);
     m_priv->reused_session = false;
 }
@@ -5761,8 +5761,8 @@ void
 DBGPerspective::execute_last_program_in_memory ()
 {
     if (!m_priv->prog_path.empty ()) {
-        vector<IDebugger::BreakPoint> breakpoints;
-        map<int, IDebugger::BreakPoint>::const_iterator it;
+        vector<IDebugger::Breakpoint> breakpoints;
+        map<int, IDebugger::Breakpoint>::const_iterator it;
         for (it = m_priv->breakpoints.begin ();
              it != m_priv->breakpoints.end ();
              ++it) {
@@ -5783,7 +5783,7 @@ DBGPerspective::execute_program (const UString &a_prog,
                                  const UString &a_cwd,
                                  bool a_close_opened_files)
 {
-    vector<IDebugger::BreakPoint> bps;
+    vector<IDebugger::Breakpoint> bps;
     execute_program (a_prog, a_args, a_env,
                      a_cwd, bps, true,
                      a_close_opened_files);
@@ -5812,7 +5812,7 @@ DBGPerspective::execute_program
                          const vector<UString> &a_args,
                          const map<UString, UString> &a_env,
                          const UString &a_cwd,
-                         const vector<IDebugger::BreakPoint> &a_breaks,
+                         const vector<IDebugger::Breakpoint> &a_breaks,
                          bool a_check_is_new_program,
                          bool a_close_opened_files)
 {
@@ -5879,7 +5879,7 @@ DBGPerspective::execute_program
 
     // delete old breakpoints, if any.
     if (is_new_program) {
-        map<int, IDebugger::BreakPoint>::const_iterator bp_it;
+        map<int, IDebugger::Breakpoint>::const_iterator bp_it;
         for (bp_it = m_priv->breakpoints.begin ();
              bp_it != m_priv->breakpoints.end ();
              ++bp_it) {
@@ -5913,7 +5913,7 @@ DBGPerspective::execute_program
         if (a_breaks.empty ()) {
             dbg_engine->set_breakpoint ("main");
         } else {
-            vector<IDebugger::BreakPoint>::const_iterator it;
+            vector<IDebugger::Breakpoint>::const_iterator it;
             for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
                 // if the breakpoint was marked as 'disabled'
                 // in the session DB, we
@@ -5929,13 +5929,13 @@ DBGPerspective::execute_program
                        + "#"
                        + UString::from_int(it->line ());
                 if (it->type ()
-                    == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE)
+                    == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
                     dbg_engine->set_breakpoint (it->file_full_name (),
                                                 it->line (),
                                                 it->condition (),
                                                 it->ignore_count (),
                                                 cookie);
-                else if (it->type () == IDebugger::BreakPoint::WATCHPOINT_TYPE)
+                else if (it->type () == IDebugger::Breakpoint::WATCHPOINT_TYPE)
                     dbg_engine->set_watchpoint (it->expression (),
                                                 it->is_write_watchpoint (),
                                                 it->is_read_watchpoint ());
@@ -6244,54 +6244,85 @@ DBGPerspective::set_breakpoint (const UString &a_func_name,
 }
 
 void
-DBGPerspective::append_breakpoint (int a_bp_num,
-                                   const IDebugger::BreakPoint &a_breakpoint)
+DBGPerspective::set_breakpoint (const Address &a_address)
 {
+    debugger ()->set_breakpoint (a_address);
+}
+
+void
+DBGPerspective::append_breakpoint (int a_bp_num,
+                                   const IDebugger::Breakpoint &a_breakpoint)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     UString file_path;
     file_path = a_breakpoint.file_full_name ();
-    IDebugger::BreakPoint::Type type = a_breakpoint.type ();
+    IDebugger::Breakpoint::Type type = a_breakpoint.type ();
+    SourceEditor *editor = 0;
 
-    // If the file full path info is not present,
-    // 1/ lookup in the files opened in the perspective already.
-    // 2/ lookup in the list of source directories
-    if (type == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE
-        && file_path == "") {
-        UString file_name = a_breakpoint.file_name ();
-        LOG_DD ("no full path info present for file '"
-                + file_name + "'");
-        if (file_name == "") {
-            UString message;
-            message.printf
-                   (_("There is no file name info for symbol@addr: %s@%s"),
-                    a_breakpoint.function ().c_str (),
-                    a_breakpoint.address ().c_str ());
-            LOG_ERROR (message);
-            return;
-        }
-        else
-        {
-            file_path = file_name;
-        }
+    if (type == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE
+        && file_path.empty ()) {
+        file_path = a_breakpoint.file_name ();
     }
-    LOG_DD ("record breakpoint " << file_path << ":"
-            << a_breakpoint.line () - 1);
+
     m_priv->breakpoints[a_bp_num] = a_breakpoint;
     m_priv->breakpoints[a_bp_num].file_full_name (file_path);
-    // Append the visual representation of the breakpoint if it's a standard
-    // breakpoint, i.e. not a watchpoint. We don't have any visual
-    // representation of watchpoints yet.
-    if (type == IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE)
-        append_visual_breakpoint (file_path, a_breakpoint.line () - 1,
-                                  a_breakpoint.enabled ());
+
+    // We don't know how to graphically represent non-standard
+    // breakpoints (e.g watchpoints) at this moment.
+    if (type != IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
+        return;
+
+    editor = get_or_append_source_editor_from_path (file_path);
+
+    if (editor) {
+        // We could find an editor for the file of the breakpoint.
+        // Set the visual breakpoint at the breakpoint source line.
+        SourceEditor::BufferType type = editor->get_buffer_type ();
+        switch (type) {
+            case SourceEditor::BUFFER_TYPE_SOURCE:
+                append_visual_breakpoint (editor, a_breakpoint.line (),
+                                          a_breakpoint.enabled ());
+                break;
+            case SourceEditor::BUFFER_TYPE_ASSEMBLY:
+                append_visual_breakpoint (editor, a_breakpoint.address (),
+                                          a_breakpoint.enabled ());
+                break;
+            case SourceEditor::BUFFER_TYPE_UNDEFINED:
+                break;
+        }
+    } else {
+        // We not could find an editor for the file of the breakpoint.
+        // Ask the backend for asm instructions and set the visual breakpoint
+        // at the breakpoint address.
+        Glib::RefPtr<SourceBuffer> buf;
+        editor = get_source_editor_from_path (get_asm_title ());
+        if (editor == 0) {
+            editor = create_source_editor (buf,
+                                           /*asm_view=*/true,
+                                           get_asm_title (),
+                                           /*current_line=*/-1,
+                                           /*current_address=*/"");
+            append_source_editor (*editor, "");
+        }
+        THROW_IF_FAIL (editor);
+        Address addr (a_breakpoint.address ());
+        IDebugger::DisassSlot set_bp =
+            sigc::bind (sigc::mem_fun (this,
+                                       &DBGPerspective::on_debugger_asm_signal3),
+                        editor,
+                        a_breakpoint);
+        disassemble_around_address_and_do (addr, set_bp);
+    }
 }
 
 void
 DBGPerspective::append_breakpoints
-                        (const map<int, IDebugger::BreakPoint> &a_breaks)
+                        (const map<int, IDebugger::Breakpoint> &a_breaks)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    map<int, IDebugger::BreakPoint>::const_iterator iter;
+    map<int, IDebugger::Breakpoint>::const_iterator iter;
     for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter)
         append_breakpoint (iter->first, iter->second);
 }
@@ -6306,7 +6337,7 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
 
     LOG_DD ("searching for breakpoint " << breakpoint << ": ");
 
-    map<int, IDebugger::BreakPoint>::const_iterator iter;
+    map<int, IDebugger::Breakpoint>::const_iterator iter;
     for (iter = m_priv->breakpoints.begin ();
          iter != m_priv->breakpoints.end ();
          ++iter) {
@@ -6355,7 +6386,7 @@ DBGPerspective::delete_breakpoint ()
 bool
 DBGPerspective::delete_breakpoint (int a_breakpoint_num)
 {
-    map<int, IDebugger::BreakPoint>::iterator iter =
+    map<int, IDebugger::Breakpoint>::iterator iter =
         m_priv->breakpoints.find (a_breakpoint_num);
     if (iter == m_priv->breakpoints.end ()) {
         LOG_ERROR ("breakpoint " << (int) a_breakpoint_num << " not found");
@@ -6479,7 +6510,7 @@ DBGPerspective::delete_visual_breakpoint (const UString &a_file_name,
 void
 DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
 {
-    map<int, IDebugger::BreakPoint>::iterator iter =
+    map<int, IDebugger::Breakpoint>::iterator iter =
         m_priv->breakpoints.find (a_breakpoint_num);
     if (iter == m_priv->breakpoints.end ()) {
         LOG_ERROR ("breakpoint " << (int) a_breakpoint_num << " not found");

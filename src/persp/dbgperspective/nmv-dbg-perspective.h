@@ -98,7 +98,7 @@ public:
                                   const vector<UString> &a_args,
                                   const map<UString, UString> &a_env,
                                   const UString &a_cwd,
-                                  const vector<IDebugger::BreakPoint>
+                                  const vector<IDebugger::Breakpoint>
                                                                   &a_breaks,
                                   bool a_check_is_new_program = true,
                                   bool a_close_opened_files = false) = 0;
@@ -131,7 +131,7 @@ public:
                                  const UString &a_condition="") = 0;
 
     virtual void append_breakpoints
-            (const map<int, IDebugger::BreakPoint> &a_breaks) = 0;
+            (const map<int, IDebugger::Breakpoint> &a_breaks) = 0;
 
     virtual bool get_breakpoint_number (const UString &a_file_name,
                                         int a_linenum,

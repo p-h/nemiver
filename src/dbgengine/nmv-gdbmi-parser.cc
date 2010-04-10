@@ -1804,7 +1804,7 @@ fetch_gdbmi_result:
 
             if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_BKPT),
                                                             PREFIX_BKPT)) {
-                IDebugger::BreakPoint breakpoint;
+                IDebugger::Breakpoint breakpoint;
                 if (parse_breakpoint (cur, cur, breakpoint)) {
                     result_record.breakpoints ()[breakpoint.number ()] =
                     breakpoint;
@@ -1812,7 +1812,7 @@ fetch_gdbmi_result:
             } else if (!m_priv->input.compare (cur,
                                                strlen (PREFIX_BREAKPOINT_TABLE),
                                                PREFIX_BREAKPOINT_TABLE)) {
-                map<int, IDebugger::BreakPoint> breaks;
+                map<int, IDebugger::Breakpoint> breaks;
                 if (parse_breakpoint_table (cur, cur, breaks)) {
                     result_record.breakpoints () = breaks;
                 }
@@ -2100,7 +2100,7 @@ fetch_gdbmi_result:
 bool
 GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
                                Glib::ustring::size_type &a_to,
-                               IDebugger::BreakPoint &a_bkpt)
+                               IDebugger::Breakpoint &a_bkpt)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
 
@@ -2234,9 +2234,9 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
 
     string type = attrs["type"];
     if (type.find ("breakpoint") != type.npos)
-        a_bkpt.type (IDebugger::BreakPoint::STANDARD_BREAKPOINT_TYPE);
+        a_bkpt.type (IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE);
     else if (type.find ("watchpoint") != type.npos)
-        a_bkpt.type (IDebugger::BreakPoint::WATCHPOINT_TYPE);
+        a_bkpt.type (IDebugger::Breakpoint::WATCHPOINT_TYPE);
 
     //TODO: get the 'at' attribute that is present on targets that
     //are not compiled with -g.
@@ -2247,7 +2247,7 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
 bool
 GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
                                      UString::size_type &a_to,
-                                     map<int, IDebugger::BreakPoint> &a_breakpoints)
+                                     map<int, IDebugger::Breakpoint> &a_breakpoints)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur=a_from;
@@ -2275,13 +2275,13 @@ GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
         return false;
     }
 
-    map<int, IDebugger::BreakPoint> breakpoint_table;
+    map<int, IDebugger::Breakpoint> breakpoint_table;
     if (RAW_CHAR_AT (cur) == ']') {
         //there are zero breakpoints ...
     } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_BKPT),
                                               PREFIX_BKPT)) {
         //there are some breakpoints
-        IDebugger::BreakPoint breakpoint;
+        IDebugger::Breakpoint breakpoint;
         while (true) {
             if (RAW_INPUT.compare (cur, strlen (PREFIX_BKPT),
                                               PREFIX_BKPT)) {

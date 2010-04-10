@@ -351,7 +351,7 @@ public:
 
     private:
         Kind m_kind;
-        map<int, IDebugger::BreakPoint> m_breakpoints;
+        map<int, IDebugger::Breakpoint> m_breakpoints;
         map<UString, UString> m_attrs;
 
         //call stack listed members
@@ -479,11 +479,11 @@ public:
         Kind kind () const {return m_kind;}
         void kind (Kind a_in) {m_kind = a_in;}
 
-        const map<int, IDebugger::BreakPoint>& breakpoints () const
+        const map<int, IDebugger::Breakpoint>& breakpoints () const
         {
             return m_breakpoints;
         }
-        map<int, IDebugger::BreakPoint>& breakpoints () {return m_breakpoints;}
+        map<int, IDebugger::Breakpoint>& breakpoints () {return m_breakpoints;}
 
         map<UString, UString>& attrs () {return m_attrs;}
         const map<UString, UString>& attrs () const {return m_attrs;}

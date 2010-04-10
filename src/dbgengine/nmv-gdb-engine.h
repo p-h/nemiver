@@ -69,19 +69,19 @@ public:
 
     sigc::signal<void>& detached_from_target_signal () const;
 
-    sigc::signal<void, const map<int, IDebugger::BreakPoint>&, const UString&>&
+    sigc::signal<void, const map<int, IDebugger::Breakpoint>&, const UString&>&
                                             breakpoints_set_signal () const;
 
     sigc::signal<void, const vector<OverloadsChoiceEntry>&, const UString&>&
                                     got_overloads_choice_signal () const;
 
-    sigc::signal<void, const IDebugger::BreakPoint&, int, const UString&>&
+    sigc::signal<void, const IDebugger::Breakpoint&, int, const UString&>&
                                         breakpoint_deleted_signal () const;
 
-    sigc::signal<void, const IDebugger::BreakPoint&, int>&
+    sigc::signal<void, const IDebugger::Breakpoint&, int>&
                                         breakpoint_disabled_signal () const;
 
-    sigc::signal<void, const IDebugger::BreakPoint&, int>&
+    sigc::signal<void, const IDebugger::Breakpoint&, int>&
                                         breakpoint_enabled_signal () const;
 
 
@@ -280,7 +280,7 @@ public:
 
     void init_output_handlers ();
 
-    void append_breakpoints_to_cache (const map<int, IDebugger::BreakPoint>&);
+    void append_breakpoints_to_cache (const map<int, IDebugger::Breakpoint>&);
 
     void do_continue (const UString &a_cookie);
 
@@ -355,7 +355,7 @@ public:
 
     void list_breakpoints (const UString &a_cookie);
 
-    map<int, IDebugger::BreakPoint>& get_cached_breakpoints ();
+    map<int, IDebugger::Breakpoint>& get_cached_breakpoints ();
 
     void set_catch (const UString &a_event,
                     const UString &a_cookie) ;

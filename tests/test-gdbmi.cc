@@ -783,13 +783,13 @@ test_gdbmi_result ()
 void
 test_breakpoint_table ()
 {
-    std::map<int, IDebugger::BreakPoint> breakpoints;
+    std::map<int, IDebugger::Breakpoint> breakpoints;
     UString::size_type cur = 0;
 
     GDBMIParser parser (gv_breakpoint_table0);
     BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
     BOOST_REQUIRE_EQUAL (breakpoints.size (), 1u);
-    std::map<int, IDebugger::BreakPoint>::const_iterator iter;
+    std::map<int, IDebugger::Breakpoint>::const_iterator iter;
     iter = breakpoints.find (1);
     BOOST_REQUIRE (iter != breakpoints.end ());
     BOOST_REQUIRE_EQUAL (iter->second.number (), 1);
@@ -831,7 +831,7 @@ test_breakpoint_table ()
 void
 test_breakpoint ()
 {
-    IDebugger::BreakPoint breakpoint;
+    IDebugger::Breakpoint breakpoint;
 
     GDBMIParser parser (gv_breakpoint0);
     UString::size_type cur = 0;

@@ -55,7 +55,7 @@ protected:
     ISessMgr () {};
 
 public:
-    class BreakPoint {
+    class Breakpoint {
         UString m_file_name;
         UString m_file_full_name;
         int m_line_number;
@@ -64,7 +64,7 @@ public:
         int m_ignore_count;
 
     public:
-        BreakPoint (const UString &a_file_name,
+        Breakpoint (const UString &a_file_name,
                     const UString &a_file_full_name,
                     const UString &a_line_number,
                     const UString &a_enabled,
@@ -78,7 +78,7 @@ public:
             m_ignore_count (atoi (a_ignore_count.c_str ()))
         {}
 
-        BreakPoint (const UString &a_file_name,
+        Breakpoint (const UString &a_file_name,
                     const UString &a_file_full_name,
                     int a_line_number,
                     bool a_enabled,
@@ -92,7 +92,7 @@ public:
             m_ignore_count (a_ignore_count)
         {}
 
-        BreakPoint () :
+        Breakpoint () :
             m_line_number (0),
             m_ignore_count (0)
         {}
@@ -154,7 +154,7 @@ public:
         gint64 m_session_id;
         map<UString, UString> m_properties;
         map<UString, UString> m_env_variables;
-        list<BreakPoint> m_breakpoints;
+        list<Breakpoint> m_breakpoints;
         list<WatchPoint> m_watchpoints;
         list<UString> m_opened_files;
         list<UString> m_search_paths;
@@ -180,8 +180,8 @@ public:
         }
         map<UString, UString>& env_variables () {return m_env_variables;}
 
-        list<BreakPoint>& breakpoints () {return m_breakpoints;}
-        const list<BreakPoint>& breakpoints () const { return m_breakpoints;}
+        list<Breakpoint>& breakpoints () {return m_breakpoints;}
+        const list<Breakpoint>& breakpoints () const { return m_breakpoints;}
 
         list<WatchPoint>& watchpoints () {return m_watchpoints;}
         const list<WatchPoint>& watchpoints () const {return m_watchpoints;}

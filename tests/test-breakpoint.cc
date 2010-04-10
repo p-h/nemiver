@@ -43,13 +43,13 @@ on_command_done_signal (const UString &a_command,
 }
 
 void
-on_breakpoints_set_signal (const std::map<int, IDebugger::BreakPoint> &a_breaks,
+on_breakpoints_set_signal (const std::map<int, IDebugger::Breakpoint> &a_breaks,
                            const UString &a_cookie)
 {
     if (a_cookie.empty ()) {}
 
     MESSAGE ("breakpoints set:");
-    std::map<int, IDebugger::BreakPoint>::const_iterator it;
+    std::map<int, IDebugger::Breakpoint>::const_iterator it;
     for (it = a_breaks.begin (); it != a_breaks.end () ; ++it) {
         MESSAGE ("<break><num>" << it->first <<"</num><line>"
                  << it->second.file_name () << ":" << it->second.line ()
@@ -125,8 +125,8 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                 MESSAGE ("hit conditional breakpoint! bp number: "
                          << a_bp_num);
             }
-            map<int, IDebugger::BreakPoint>::const_iterator it;
-            map<int, IDebugger::BreakPoint>::const_iterator null_iter =
+            map<int, IDebugger::Breakpoint>::const_iterator it;
+            map<int, IDebugger::Breakpoint>::const_iterator null_iter =
                                     a_debugger->get_cached_breakpoints ().end ();
 
             if ((it = a_debugger->get_cached_breakpoints ().find (a_bp_num))

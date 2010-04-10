@@ -519,11 +519,11 @@ public:
     /// \return true in case of successful parsing, false otherwise.
     bool parse_breakpoint (Glib::ustring::size_type a_from,
                            Glib::ustring::size_type &a_to,
-                           IDebugger::BreakPoint &a_bkpt);
+                           IDebugger::Breakpoint &a_bkpt);
 
     bool parse_breakpoint_table (UString::size_type a_from,
                                  UString::size_type &a_to,
-                                 map<int, IDebugger::BreakPoint> &a_breakpoints);
+                                 map<int, IDebugger::Breakpoint> &a_breakpoints);
 
     /// parses the result of the gdbmi command
     /// "-thread-list-ids".

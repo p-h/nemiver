@@ -66,13 +66,13 @@
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
             <separator/>
-            <menuitem action="ToggleBreakPointMenuItemAction"
+            <menuitem action="ToggleBreakpointMenuItemAction"
                 name="ToggleBreakMenuItem"/>
-            <menuitem action="ToggleEnableBreakPointMenuItemAction"
+            <menuitem action="ToggleEnableBreakpointMenuItemAction"
                 name="ToggleEnableBreakMenuItem"/>
-            <menuitem action="SetBreakPointMenuItemAction"
+            <menuitem action="SetBreakpointMenuItemAction"
                 name="SetBreakMenuItem"/>
-            <menuitem action="SetBreakPointUsingDialogMenuItemAction"
+            <menuitem action="SetBreakpointUsingDialogMenuItemAction"
                 name="SetBreakUsingDialogMenuItem"/>
             <menuitem action="SetWatchPointUsingDialogMenuItemAction"
                 name="SetWatchUsingDialogMenuItem"/>

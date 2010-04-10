@@ -333,7 +333,7 @@ SessMgr::store_session (Session &a_session,
     THROW_IF_FAIL
             (trans.get ().get_connection ().execute_statement (query));
 
-    list<SessMgr::BreakPoint>::const_iterator break_iter;
+    list<SessMgr::Breakpoint>::const_iterator break_iter;
     for (break_iter = a_session.breakpoints ().begin ();
          break_iter != a_session.breakpoints ().end ();
          ++break_iter) {
@@ -504,7 +504,7 @@ SessMgr::load_session (Session &a_session,
                 << filename << "," << filefullname << ","
                 << linenumber << "," << enabled << ","
                 << condition<< "," << ignorecount);
-        session.breakpoints ().push_back (SessMgr::BreakPoint (filename,
+        session.breakpoints ().push_back (SessMgr::Breakpoint (filename,
                                                                filefullname,
                                                                linenumber,
                                                                enabled,
