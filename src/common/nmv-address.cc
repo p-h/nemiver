@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 #include "nmv-address.h"
+#include "nmv-str-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
@@ -34,6 +35,18 @@ Address::Address ()
 Address::Address (const std::string &a) :
     m_addr (a)
 {
+    str_utils::chomp (m_addr);
+}
+
+Address::Address (const Address &a_other) :
+    m_addr (a_other.m_addr)
+{
+}
+
+bool
+Address::empty () const
+{
+    return m_addr.empty ();
 }
 
 Address::operator const std::string& () const
@@ -41,7 +54,15 @@ Address::operator const std::string& () const
     return m_addr;
 }
 
-int
+Address::operator size_t () const
+{
+    if (m_addr.empty ())
+        return 0;
+    return str_utils::hexa_to_int (m_addr);
+}
+
+
+size_t
 Address::size () const
 {
     if (m_addr.empty ())
@@ -52,11 +73,44 @@ Address::size () const
     return m_addr.size () - suffix_len;
 }
 
+size_t
+Address::string_size () const
+{
+    return m_addr.size ();
+}
+
 Address&
 Address::operator= (const std::string &a_addr)
 {
     m_addr = a_addr;
+    str_utils::chomp (m_addr);
     return *this;
+}
+
+const char&
+Address::operator[] (size_t a_index) const
+{
+    return m_addr[a_index];
+}
+
+void
+Address::clear ()
+{
+    m_addr.clear ();
+}
+
+bool
+operator== (const Address &a_address,
+            const std::string &a_addr)
+{
+    return a_address.m_addr == a_addr;
+}
+
+bool
+operator== (const Address &a_address,
+            size_t a_addr)
+{
+    return (size_t) a_address == a_addr;
 }
 
 NEMIVER_END_NAMESPACE (common)

@@ -34,13 +34,21 @@ NEMIVER_BEGIN_NAMESPACE (common)
 class NEMIVER_API Address
 {
     std::string m_addr;
+
 public:
     Address ();
     Address (const std::string &a_addr);
     Address (const Address &);
+    bool empty () const;
     operator const std::string& () const;
-    int size () const;
+    operator size_t () const;
+    size_t size () const;
+    size_t string_size () const;
     Address& operator= (const std::string &);
+    friend bool operator== (const Address&, const std::string &);
+    friend bool operator== (const Address&, size_t);
+    const char& operator[] (size_t) const;
+    void clear ();
 };// end class Address
 
 NEMIVER_END_NAMESPACE (common)
