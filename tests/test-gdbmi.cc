@@ -150,6 +150,9 @@ static const char* gv_breakpoint_table3 =
 static const char* gv_breakpoint_table4 =
 "BreakpointTable={nr_rows=\"2\",nr_cols=\"6\",hdr=[{width=\"7\",alignment=\"-1\",col_name=\"number\",colhdr=\"Num\"},{width=\"14\",alignment=\"-1\",col_name=\"type\",colhdr=\"Type\"},{width=\"4\",alignment=\"-1\",col_name=\"disp\",colhdr=\"Disp\"},{width=\"3\",alignment=\"-1\",col_name=\"enabled\",colhdr=\"Enb\"},{width=\"18\",alignment=\"-1\",col_name=\"addr\",colhdr=\"Address\"},{width=\"40\",alignment=\"2\",col_name=\"what\",colhdr=\"What\"}],body=[bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x000000000040aca0\",func=\"main\",file=\"main.cpp\",fullname=\"/home/philip/nemiver:temp/main.cpp\",line=\"77\",times=\"1\",original-location=\"main\"},bkpt={number=\"2\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"<PENDING>\",pending=\"/home/philip/nemiver:temp/main.cpp:78\",times=\"0\",original-location=\"/home/philip/nemiver:temp/main.cpp:78\"}]}";
 
+static const char* gv_breakpoint_table5 =
+"BreakpointTable={nr_rows=\"2\",nr_cols=\"6\",hdr=[{width=\"7\",alignment=\"-1\",col_name=\"number\",colhdr=\"Num\"},{width=\"14\",alignment=\"-1\",col_name=\"type\",colhdr=\"Type\"},{width=\"4\",alignment=\"-1\",col_name=\"disp\",colhdr=\"Disp\"},{width=\"3\",alignment=\"-1\",col_name=\"enabled\",colhdr=\"Enb\"},{width=\"18\",alignment=\"-1\",col_name=\"addr\",colhdr=\"Address\"},{width=\"40\",alignment=\"2\",col_name=\"what\",colhdr=\"What\"}],body=[bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x000000000040cb85\",func=\"main(int, char**)\",file=\"main.cc\",fullname=\"/home/dodji/devel/git/nemiver-branches.git/asm-support/src/main.cc\",line=\"489\",times=\"1\",original-location=\"main\"},bkpt={number=\"3\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"<PENDING>\",file=\"nmv-dbg-perspective.cc\",line=\"4143\",times=\"0\",original-location=\"/home/dodji/devel/git/nemiver-branches.git/asm-support/src/persp/dbgperspective/nmv-dbg-perspective.cc:4143\"}]}";
+
 static const char* gv_breakpoint0 =
 "bkpt={number=\"2\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"<MULTIPLE>\",times=\"0\",original-location=\"/home/dodji/devel/srcs/test.cc:36\"}";
 
@@ -818,6 +821,11 @@ test_breakpoint_table ()
     BOOST_REQUIRE_EQUAL (breakpoints[2].file_full_name (),
                          "/home/philip/nemiver:temp/main.cpp");
     BOOST_REQUIRE_EQUAL (breakpoints[2].line (), 78);
+
+    cur = 0, cur = 0, breakpoints.clear ();
+    parser.push_input (gv_breakpoint_table5);
+    parser.set_mode (GDBMIParser::BROKEN_MODE);
+    BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
 }
 
 void

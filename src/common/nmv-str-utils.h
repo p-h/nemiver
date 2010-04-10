@@ -32,10 +32,9 @@ NEMIVER_BEGIN_NAMESPACE (str_utils)
 using nemiver::common::UString;
 
 bool
-extract_path_and_line_num_from_location (const UString &a_location,
-                                         UString &a_file_path,
-                                         unsigned &a_line_num);
-
+extract_path_and_line_num_from_location (const std::string &a_location,
+                                         std::string &a_file_path,
+                                         std::string &a_line_num);
 size_t hexa_to_int (const string &a_hexa_str);
 std::string int_to_string (size_t an_int);
 vector<UString> split (const UString &a_string, const UString &a_delim);
@@ -45,7 +44,32 @@ UString join (const vector<UString> &a_elements,
 UString join (vector<UString>::const_iterator &a_from,
               vector<UString>::const_iterator &a_to,
               const UString &a_delim=" ");
-void chomp (UString &a_string);
+
+template<typename S>
+void
+chomp (S &a_string)
+{
+    if (!a_string.size ()) {return;}
+
+    Glib::ustring::size_type i = 0;
+
+    // remove the ws from the beginning of the string.
+    while (!a_string.empty () && isspace (a_string.at (0))) {
+        a_string.erase (0, 1);
+    }
+
+    // remove the ws from the end of the string.
+    i = a_string.size ();
+    if (!i) {return;}
+    --i;
+    while (i > 0 && isspace (a_string.at (i))) {
+        a_string.erase (i, 1);
+        i = a_string.size ();
+        if (!i) {return;}
+        --i;
+    }
+    if (i == 0 && isspace (a_string.at (i))) {a_string.erase (0, 1);}
+}
 
 UString::size_type get_number_of_lines (const UString &a_string);
 

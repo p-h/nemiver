@@ -2129,15 +2129,14 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
     }
     ++cur;
 
-    if (attrs["addr"] == "<PENDING>") {
-        UString pending = attrs["pending"];
-        if (pending == "") {
-            LOG_PARSING_ERROR2 (cur);
-            return false;
-        }
+    UString pending = attrs["pending"];
+    if (pending.empty ())
+        pending = attrs["original-location"];
+    if (!pending.empty ()) {
         LOG_D ("got pending breakpoint: '" << pending << "'",
                GDBMI_OUTPUT_DOMAIN);
-        vector<UString> str_tab;
+        bool is_file_location = false;
+        string filename, line_num;
         // pending contains either the name of the function the breakpoint
         // has been set on, or the filename:linenumber location of the
         // breakpoint.
@@ -2148,59 +2147,15 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
         // Bear in mind that ':' can also be part of the path name. So we
         // really need to detect if the last ':' is the separator betwen
         // path and line number.
-        std::string::size_type colon_pos;
-        if ((colon_pos = pending.raw ().find_last_of (":"))
-            == std::string::npos) {
-            str_tab.push_back (pending);
-        } else {
-            // Is what comes after the comma a legit number?
-            bool is_number = true;
-            std::string::size_type str_len = colon_pos;
+        is_file_location =
+            str_utils::extract_path_and_line_num_from_location (pending.raw (),
+                                                                filename,
+                                                                line_num);
 
-            if (colon_pos + 1 >= pending.raw ().length ())
-                is_number = false;
-            // Loop to make sure the thing after the ':' is an actual
-            // number.
-            std::string::size_type i;
-            for (i = colon_pos + 1;
-                 i < pending.raw ().length ();
-                 ++i) {
-                if (!isdigit (pending.raw ()[i])) {
-                    is_number = false;
-                    break;
-                }
-            }
-            bool number_is_at_end_of_pending = (i >= pending.raw ().length ());
-
-            if (is_number && number_is_at_end_of_pending) {
-                string file_name, line_num;
-
-                for (string::size_type i = 0; i < str_len; ++i)
-                    file_name.push_back (pending.raw ()[i]);
-
-                for (string::size_type i = colon_pos + 1;
-                     i < pending.raw ().length ();
-                     ++i)
-                    line_num.push_back (pending.raw ()[i]);
-
-                str_tab.push_back (file_name);
-                str_tab.push_back (line_num);
-            } else {
-                str_tab.push_back (pending);
-            }
-        }
-
-        // from now on, if str_tab.size () == 2 then it contains
-        // the filename and line number of the breakpoint.
-        // if it str_tab.size () == 1 then it contains the function name
-        // the breakpoint was set on.
-        // Otherwise an error occured
-        if (str_tab.size () > 1) {
-            LOG_D ("filepath: '" << str_tab[0] << "'", GDBMI_OUTPUT_DOMAIN);
-            LOG_D ("linenum: '" << str_tab[1] << "'", GDBMI_OUTPUT_DOMAIN);
-        }
-        if (str_tab.size () == 2) {
-            string path = Glib::locale_from_utf8 (str_tab[0]);
+        if (is_file_location) {
+            LOG_D ("filepath: '" << filename << "'", GDBMI_OUTPUT_DOMAIN);
+            LOG_D ("linenum: '" << line_num << "'", GDBMI_OUTPUT_DOMAIN);
+            string path = Glib::locale_from_utf8 (filename);
             if (Glib::path_is_absolute (path)) {
                 attrs["file"] = Glib::locale_to_utf8
                                         (Glib::path_get_basename (path));
@@ -2208,12 +2163,9 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
             } else {
                 attrs["file"] = Glib::locale_to_utf8 (path);;
             }
-            attrs["line"] = str_tab[1];
-        } else if (str_tab.size () == 1) {
-            attrs["func"] = str_tab[0];
+            attrs["line"] = line_num;
         } else {
-            LOG_PARSING_ERROR2 (cur);
-            return false;
+            attrs["func"] = pending;
         }
     }
 
@@ -2258,14 +2210,15 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
         && a_bkpt.file_name ().empty ()
         && (iter = attrs.find ("original-location")) != null_iter) {
         UString location = iter->second;
-        UString file_path;
-        unsigned line_num = 0;
+        string file_path;
+        string line_num_str;
         str_utils::extract_path_and_line_num_from_location (location,
                                                             file_path,
-                                                            line_num);
+                                                            line_num_str);
         // Line number must be present otherwise, that means
         // what was encoded in the "original-location" RESULT wasn't
         // "filepath:line-number"
+        unsigned line_num = atoi (line_num_str.c_str ());
         if (!file_path.empty () && line_num) {
             a_bkpt.file_full_name (file_path);
             a_bkpt.line (line_num);
