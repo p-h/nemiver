@@ -3964,6 +3964,14 @@ return false; \
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
+    // If gdbmi_list is empty, gdbmi_list->content_type will yield
+    // GDBMIList::UNDEFINED_TYPE, so lets test it now and return early
+    // if necessary.
+    if (gdbmi_list->empty ()) {
+        a_to = cur;
+        a_asm_instrs.clear ();
+        return true;
+    }
     if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
         LOG_PARSING_ERROR2 (cur);
         return false;
