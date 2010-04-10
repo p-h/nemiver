@@ -4448,7 +4448,7 @@ GDBEngine::disassemble (size_t a_start_addr,
         }
         cmd_str += "\"";
     } else {
-        cmd_str += " e " + UString::from_int (a_end_addr);
+        cmd_str += " -e " + UString::from_int (a_end_addr);
     }
     cmd_str += " -- 0";
 
