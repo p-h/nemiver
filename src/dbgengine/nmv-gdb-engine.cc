@@ -120,7 +120,7 @@ public:
     IDebugger::State state;
     int cur_frame_level;
     int cur_thread_num;
-    UString cur_frame_address;
+    Address cur_frame_address;
     ILangTraitSafePtr lang_trait;
     UString debugger_full_path;
     GDBMIParser gdbmi_parser;
@@ -2789,7 +2789,7 @@ GDBEngine::set_current_frame_level (int a_level)
     m_priv->cur_frame_level = a_level;
 }
 
-const UString&
+const Address&
 GDBEngine::get_current_frame_address () const
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2799,7 +2799,7 @@ GDBEngine::get_current_frame_address () const
 }
 
 void
-GDBEngine::set_current_frame_address (const UString &a_address)
+GDBEngine::set_current_frame_address (const Address &a_address)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -3586,6 +3586,31 @@ GDBEngine::set_breakpoint (const UString &a_path,
         break_cmd += " " + a_path + ":";
     }
     break_cmd += UString::from_int (a_line_num);
+    queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
+}
+
+
+void
+GDBEngine::set_breakpoint (const Address &a_address,
+                           const UString &a_condition,
+                           unsigned a_ignore_count,
+                           const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    THROW_IF_FAIL (!a_address.empty ());
+
+    UString break_cmd ("-break-insert -f ");
+    if (!a_condition.empty ()) {
+        LOG_DD ("setting breakpoint with condition: " << a_condition);
+        break_cmd += " -c \"" + a_condition + "\"";
+    } else {
+        LOG_DD ("setting breakpoint without condition");
+    }
+
+    break_cmd += " -i " + UString::from_int (a_ignore_count);
+    break_cmd += " *" + (const string&) a_address;
+
     queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
 }
 

@@ -300,9 +300,9 @@ public:
 
     void set_current_frame_level (int);
 
-    const UString& get_current_frame_address () const;
+    const Address & get_current_frame_address () const;
 
-    void set_current_frame_address (const UString &a_address);
+    void set_current_frame_address (const Address &a_address);
 
     void get_mi_thread_location (UString &a_str) const;
 
@@ -329,7 +329,12 @@ public:
     void set_breakpoint (const UString &a_func_name,
                          const UString &a_condition,
                          unsigned a_ignore_count,
-                         const UString &a_cookie) ;
+                         const UString &a_cookie);
+
+    void set_breakpoint (const Address &a_address,
+                         const UString &a_condition,
+                         unsigned a_ignore_count,
+                         const UString &a_cookie);
 
     void enable_breakpoint (gint a_break_num,
                             const UString &a_cookie="");

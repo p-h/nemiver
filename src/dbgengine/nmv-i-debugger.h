@@ -35,6 +35,7 @@
 #include "common/nmv-ustring.h"
 #include "common/nmv-dynamic-module.h"
 #include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-address.h"
 #include "nmv-i-conf-mgr.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -47,6 +48,7 @@ using nemiver::common::ObjectRef;
 using nemiver::common::ObjectUnref;
 using nemiver::common::UString;
 using nemiver::common::Object;
+using nemiver::common::Address;
 using std::vector;
 using std::string;
 using std::map;
@@ -89,12 +91,12 @@ public:
     private:
         int m_number;
         bool m_enabled;
-        UString m_address;
-        UString m_function;
-        UString m_expression;
+        string m_address;
+        string m_function;
+        string m_expression;
         UString m_file_name;
         UString m_file_full_name;
-        UString m_condition;
+        string m_condition;
         Type m_type;
         int m_line;
         int m_nb_times_hit;
@@ -114,14 +116,14 @@ public:
         bool enabled () const {return m_enabled;}
         void enabled (bool a_in) {m_enabled = a_in;}
 
-        const UString& address () const {return m_address;}
-        void address (const UString &a_in) {m_address = a_in;}
+        const string& address () const {return m_address;}
+        void address (const string &a_in) {m_address = a_in;}
 
-        const UString& function () const {return m_function;}
-        void function (const UString &a_in) {m_function = a_in;}
+        const string& function () const {return m_function;}
+        void function (const string &a_in) {m_function = a_in;}
 
-        const UString& expression () const {return m_expression;}
-        void expression (const UString &a_expr) {m_expression = a_expr;}
+        const string& expression () const {return m_expression;}
+        void expression (const string &a_expr) {m_expression = a_expr;}
 
         const UString& file_name () const {return m_file_name;}
         void file_name (const UString &a_in) {m_file_name = a_in;}
@@ -132,8 +134,8 @@ public:
         int line () const {return m_line;}
         void line (int a_in) {m_line = a_in;}
 
-        const UString& condition () const {return m_condition;}
-        void condition (const UString &a_cond) {m_condition = a_cond;}
+        const string& condition () const {return m_condition;}
+        void condition (const string &a_cond) {m_condition = a_cond;}
 
         bool has_condition () const {return !m_condition.empty ();}
 
@@ -249,9 +251,9 @@ public:
 
     /// \brief a function frame as seen by the debugger.
     class Frame {
-        UString m_address;
-        UString m_function_name;
-        map<UString, UString> m_args;
+        Address m_address;
+        string m_function_name;
+        map<string, string> m_args;
         int m_level;
         //present if the target has debugging info
         UString m_file_name;
@@ -259,7 +261,7 @@ public:
         UString m_file_full_name;
         int m_line;
         //present if the target doesn't have debugging info
-        UString m_library;
+        string m_library;
     public:
 
         Frame () :
@@ -270,14 +272,18 @@ public:
         /// \name accessors
 
         /// @{
-        const UString& address () const {return m_address;}
-        void address (const UString &a_in) {m_address = a_in;}
+        const Address& address () const {return m_address;}
+        void address (const Address &a_in) {m_address = a_in;}
+        bool has_empty_address () const
+        {
+            return static_cast<std::string> (m_address).empty ();
+        }
 
-        const UString& function_name () const {return m_function_name;}
-        void function_name (const UString &a_in) {m_function_name = a_in;}
+        const string& function_name () const {return m_function_name;}
+        void function_name (const string &a_in) {m_function_name = a_in;}
 
-        const map<UString, UString>& args () const {return m_args;}
-        map<UString, UString>& args () {return m_args;}
+        const map<string, string>& args () const {return m_args;}
+        map<string, string>& args () {return m_args;}
 
         int level () const {return m_level;}
         void level (int a_level) {m_level = a_level;}
@@ -291,8 +297,8 @@ public:
         int line () const {return m_line;}
         void line (int a_in) {m_line = a_in;}
 
-        const UString& library () const {return m_library;}
-        void library (const UString &a_library) {m_library = a_library;}
+        const string& library () const {return m_library;}
+        void library (const string &a_library) {m_library = a_library;}
 
         /// @}
 
@@ -1137,6 +1143,11 @@ public:
                                  const UString &a_cookie = "") = 0;
 
     virtual void set_breakpoint (const UString &a_func_name,
+                                 const UString &a_condition = "",
+                                 unsigned a_ignore_count = 0,
+                                 const UString &a_cookie = "") = 0;
+
+    virtual void set_breakpoint (const Address &a_address,
                                  const UString &a_condition = "",
                                  unsigned a_ignore_count = 0,
                                  const UString &a_cookie = "") = 0;

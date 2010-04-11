@@ -37,7 +37,7 @@ using namespace nemiver::common;
 using namespace std;
 
 Glib::RefPtr<Glib::MainLoop> loop =
-    Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
+   Glib::MainLoop::create (Glib::MainContext::get_default ()) ;
 IDebuggerSafePtr debugger;
 
 static const char *PROG_TO_DEBUG = "./fooprog";
@@ -114,7 +114,7 @@ on_stopped_signal (IDebugger::StopReason a_reason,
         return;
     BOOST_REQUIRE (a_has_frame);
 
-    MESSAGE ("current frame: '" << a_frame.function_name ().raw () << "'");
+    MESSAGE ("current frame: '" << a_frame.function_name () << "'");
 
     if (a_frame.function_name () != "main")
         return;
@@ -176,10 +176,7 @@ test_main (int, char**)
 
     NEMIVER_CATCH_AND_RETURN_NOX (-1);
 
-    debugger.reset ();
-    loop.reset ();
-
-    return 0;
+    _exit (0);
 }
 
 

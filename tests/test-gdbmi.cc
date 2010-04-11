@@ -393,7 +393,7 @@ test_stack0 ()
         BOOST_REQUIRE (call_stack[i].level () >= 0
                        && call_stack[i].level () == (int) i);
         BOOST_REQUIRE (!call_stack[i].function_name ().empty ());
-        BOOST_REQUIRE (!call_stack[i].address ().empty ());
+        BOOST_REQUIRE (!call_stack[i].has_empty_address ());
         BOOST_REQUIRE (!call_stack[i].file_name ().empty ());
         BOOST_REQUIRE (!call_stack[i].file_full_name ().empty ());
         BOOST_REQUIRE (call_stack[i].line ());

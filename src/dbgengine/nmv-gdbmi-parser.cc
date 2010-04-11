@@ -1537,9 +1537,9 @@ GDBMIParser::parse_frame (UString::size_type a_from,
         if (name == "level") {
             frame.level (atoi (value.c_str ()));
         } else if (name == "addr") {
-            frame.address (value);
+            frame.address (value.raw ());
         } else if (name == "func") {
-            frame.function_name (value);
+            frame.function_name (value.raw ());
         } else if (name == "file") {
             frame.file_name (value);
         } else if (name == "fullname") {
@@ -2636,9 +2636,9 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
             THROW_IF_FAIL ((*frame_part_iter)->value ());
             value = (*frame_part_iter)->value ()->get_string_content ();
             if ((*frame_part_iter)->variable () == "addr") {
-                frame.address (value);
+                frame.address (value.raw ());
             } else if ((*frame_part_iter)->variable () == "func") {
-                frame.function_name (value);
+                frame.function_name (value.raw ());
             } else if ((*frame_part_iter)->variable () == "file") {
                 frame.file_name (value);
             } else if ((*frame_part_iter)->variable () == "fullname") {
@@ -2649,7 +2649,7 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
                 frame.level (atol (value.c_str ()));
             }
         }
-        THROW_IF_FAIL (frame.address () != "");
+        THROW_IF_FAIL (frame.has_empty_address () != true);
         stack.push_back (frame);
         frame.clear ();
     }

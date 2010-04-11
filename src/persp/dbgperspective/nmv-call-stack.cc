@@ -665,7 +665,7 @@ struct CallStack::Priv {
                     + UString::from_int (a_frames[i].line ());
             } else {
                 (*store_iter)[columns ().location] =
-                    a_frames[i].address ();
+                    static_cast<std::string> (a_frames[i].address ());
             }
 
             (*store_iter)[columns ().frame_index] = a_frames[i].level ();

@@ -37,6 +37,7 @@ namespace gtksourceview {
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+class SourceEditor;
 class NEMIVER_API IDBGPerspective : public IPerspective {
     //non copyable
     IDBGPerspective (const IPerspective&);
@@ -72,10 +73,9 @@ public:
 
     virtual void close_file (const UString &a_uri) = 0;
 
-    virtual bool load_disassembly
-                        (const IDebugger::DisassembleInfo &a_info,
-                         const std::list<IDebugger::AsmInstr> &a_asm,
-                         Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf) = 0;
+    virtual bool load_asm (const IDebugger::DisassembleInfo &a_info,
+                           const std::list<IDebugger::AsmInstr> &a_asm,
+                           Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf) = 0;
 
     virtual Gtk::Widget* load_menu (const UString &a_filename,
                                     const UString &a_widget_name) = 0;
@@ -145,15 +145,6 @@ public:
     virtual bool delete_breakpoint (const UString &a_file_uri,
                                     int a_linenum) = 0;
 
-    virtual bool append_visual_breakpoint (const UString &a_file_name,
-                                           int a_linenum,
-                                           bool enabled=true) = 0;
-
-    virtual void delete_visual_breakpoint (const UString &a_file_name,
-                                           int a_linenum) = 0;
-
-    virtual void delete_visual_breakpoint (int a_breaknum) = 0;
-
     virtual IDebuggerSafePtr& debugger () = 0;
 
     virtual void add_text_to_command_view (const UString &a_text,
@@ -163,7 +154,7 @@ public:
 
     virtual void add_text_to_log_view (const UString &a_text) = 0;
 
-    virtual void set_where (const UString &a_uri,
+    virtual bool set_where (const UString &a_uri,
                             int line,
                             bool a_do_scroll=true) = 0;
 

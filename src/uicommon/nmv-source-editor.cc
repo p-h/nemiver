@@ -28,11 +28,7 @@
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
-#ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcemark.h>
-#else
-#include <gtksourceviewmm/sourcemarker.h>
-#endif // WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourceiter.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
@@ -42,15 +38,12 @@
 
 using namespace std;
 using namespace nemiver::common;
-#ifdef WITH_SOURCEVIEWMM2
 using gtksourceview::SourceMark;
-#else
-using gtksourceview::SourceMarker;
-#endif // WITH_SOURCEVIEWMM2
 using gtksourceview::SourceIter;
 using gtksourceview::SearchFlags;
 
-namespace nemiver {
+namespace nemiver
+{
 
 const char* BREAKPOINT_ENABLED_CATEGORY = "breakpoint-enabled-category";
 const char* BREAKPOINT_DISABLED_CATEGORY = "breakpoint-disabled-category";
@@ -58,7 +51,8 @@ const char* WHERE_CATEGORY = "line-pointer-category";
 
 const char* WHERE_MARK = "where-marker";
 
-class SourceView : public gtksourceview::SourceView {
+class SourceView : public gtksourceview::SourceView
+{
 
     sigc::signal<void, int, bool> m_marker_region_got_clicked_signal;
 
@@ -115,7 +109,7 @@ public:
         THROW_IF_FAIL (iter);
 
         LOG_DD ("got clicked on line: " << iter.get_line ());
-        marker_region_got_clicked_signal ().emit (iter.get_line (),
+        marker_region_got_clicked_signal ().emit (iter.get_line () + 1,
                                                   false/*no dialog requested*/);
     }
 
@@ -137,49 +131,22 @@ public:
 
 };//end class Sourceview
 
-struct Line2AddrFunc : std::binary_function<Glib::RefPtr<SourceBuffer>,
-                                            int,
-                                            Address>
-{
-    int m_line;
-    Line2AddrFunc () :
-        m_line (-1)
-    {
-    }
-    Address operator () (Glib::RefPtr<SourceBuffer> a_buf, int a_line);
-};
-
-struct Addr2LineFunc : public std::binary_function<Glib::RefPtr<SourceBuffer>,
-                                                   const Address&, int>
-{
-    int m_line;
-    Addr2LineFunc () :
-        m_line (-1)
-    {
-    }
-    int operator () (Glib::RefPtr<SourceBuffer> a_buf, const Address &addr);
-};
-
-
 struct SourceEditor::Priv {
     Sequence sequence;
-#ifdef WITH_SOURCEVIEWMM2
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > markers;
-#else
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> > markers;
-#endif  // WITH_SOURCEVIEWMM2
     UString root_dir;
     nemiver::SourceView *source_view;
     Gtk::Label *line_col_label;
     Gtk::HBox *status_box;
+    enum SourceEditor::BufferType buffer_type;
+    UString path;
 
     struct NonAssemblyBufContext {
         Glib::RefPtr<SourceBuffer> buffer;
+        std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > markers;
         int current_column;
         int current_line;
-        sigc::signal<void, gint, gint> signal_insertion_moved;
+        sigc::signal<void, int, int> signal_insertion_moved;
         sigc::signal<void, int, bool> marker_region_got_clicked_signal;
-        UString path;
 
         NonAssemblyBufContext (Glib::RefPtr<SourceBuffer> a_buf,
                                 int a_cur_col, int a_cur_line) :
@@ -204,16 +171,22 @@ struct SourceEditor::Priv {
 
     struct AssemblyBufContext {
         Glib::RefPtr<SourceBuffer> buffer;
-        Line2AddrFunc line_to_locus_func;
-        Addr2LineFunc locus_to_line_func;
+        std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > markers;
+        int current_line;
+        int current_column;
+        Address current_address;
 
-        AssemblyBufContext ()
+        AssemblyBufContext () :
+            current_line (-1),
+            current_column (-1)
         {
         }
 
         AssemblyBufContext
                     (Glib::RefPtr<SourceBuffer> a_buf) :
-            buffer (a_buf)
+            buffer (a_buf),
+            current_line (-1),
+            current_column (-1)
         {
         }
     } asm_ctxt;
@@ -222,80 +195,190 @@ struct SourceEditor::Priv {
                                                     insertion_changed_signal;
 
 
-    void register_assembly_source_buffer
-                    (Glib::RefPtr<SourceBuffer> &a_buf)
+    void
+    register_assembly_source_buffer (Glib::RefPtr<SourceBuffer> &a_buf)
     {
         asm_ctxt.buffer = a_buf;
+        source_view->set_source_buffer (a_buf);
     }
 
-    void register_non_assembly_source_buffer
-                                    (Glib::RefPtr<SourceBuffer> &a_buf)
+    void
+    register_non_assembly_source_buffer (Glib::RefPtr<SourceBuffer> &a_buf)
     {
         non_asm_ctxt.buffer = a_buf;
+        source_view->set_source_buffer (a_buf);
     }
 
-    bool switch_to_assembly_source_buffer ()
+    bool
+    switch_to_assembly_source_buffer ()
     {
         RETURN_VAL_IF_FAIL (source_view, false);
 
-        if (asm_ctxt.buffer
-            && (source_view->get_source_buffer ()
-                != asm_ctxt.buffer)) {
-            source_view->set_source_buffer (asm_ctxt.buffer);
+        if (asm_ctxt.buffer) {
+            if (source_view->get_source_buffer ()
+                != asm_ctxt.buffer)
+                source_view->set_source_buffer (asm_ctxt.buffer);
             return true;
         }
         return false;
     }
 
-    bool switch_to_non_assembly_source_buffer ()
+    bool
+    switch_to_non_assembly_source_buffer ()
     {
         RETURN_VAL_IF_FAIL (source_view, false);
 
-        if (asm_ctxt.buffer
-            && (source_view->get_source_buffer ()
-                != non_asm_ctxt.buffer)) {
-            source_view->set_source_buffer (non_asm_ctxt.buffer);
+        if (asm_ctxt.buffer) {
+            if (source_view->get_source_buffer ()
+                != non_asm_ctxt.buffer) {
+                source_view->set_source_buffer (non_asm_ctxt.buffer);
+                // Reset the "current line" that was selected previously.
+                non_asm_ctxt.current_line = -1;
+            }
             return true;
         }
         return false;
+    }
+
+    SourceEditor::BufferType
+    get_buffer_type () const
+    {
+        Glib::RefPtr<SourceBuffer> buf = source_view->get_source_buffer ();
+        if (buf == non_asm_ctxt.buffer)
+            return BUFFER_TYPE_SOURCE;
+        else if (buf == asm_ctxt.buffer)
+            return BUFFER_TYPE_ASSEMBLY;
+        else
+            return BUFFER_TYPE_UNDEFINED;
+    }
+
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >*
+    get_markers ()
+    {
+        SourceEditor::BufferType t = get_buffer_type ();
+        switch (t) {
+            case SourceEditor::BUFFER_TYPE_SOURCE:
+                return &non_asm_ctxt.markers;
+            case SourceEditor::BUFFER_TYPE_ASSEMBLY:
+                return &asm_ctxt.markers;
+            case SourceEditor::BUFFER_TYPE_UNDEFINED:
+                return 0;
+        }
+        return 0;
+    }
+
+    bool
+    address_2_line (Glib::RefPtr<SourceBuffer> a_buf,
+                    const Address an_addr,
+                    int &a_line) const
+    {
+        Address prev_address;
+        return address_2_line (a_buf, an_addr, a_line, prev_address);
+    }
+
+    bool
+    address_2_line (Glib::RefPtr<SourceBuffer> a_buf,
+                    const Address an_addr,
+                    int &a_line,
+                    Address &a_prev_addr) const
+    {
+        if (!a_buf)
+            return false;
+
+        Gtk::TextBuffer::iterator it = a_buf->begin ();
+        size_t  i;
+        std::string addr, prev_addr;
+        while (!it.is_end ()) {
+            // We must always be at the beginning of a line here.
+            THROW_IF_FAIL (it.starts_line ());
+            prev_addr = addr;
+            addr.clear ();
+            for (i = 0;
+                 !isspace (it.get_char ()) && it.ends_line () != true
+                 && i < an_addr.string_size ();
+                 ++it, ++i) {
+                addr += it.get_char ();
+            }
+            bool match = (addr == static_cast<std::string> (an_addr));
+            if (match) {
+                a_line = it.get_line () + 1;
+                a_prev_addr = prev_addr;
+                return true;
+            } else {
+                // Go to next line.
+                it.forward_line ();
+            }
+        }
+        return false;
+    }
+
+    bool
+    line_2_address (Glib::RefPtr<SourceBuffer> a_buf,
+                    int a_line,
+                    Address &an_address) const
+    {
+        if (!a_buf)
+            return false;
+
+        std::string addr;
+        for (Gtk::TextBuffer::iterator it = a_buf->get_iter_at_line (a_line - 1);
+             !it.ends_line ();
+             ++it) {
+            char c = (char) it.get_char ();
+            if (isspace (c))
+                break;
+            addr += c;
+        }
+        if (addr.empty ())
+            return false;
+
+        an_address = addr;
+        return true;
     }
 
     //**************
     //<signal slots>
     //**************
-    void on_marker_region_got_clicked (int a_line, bool a_dialog_requested)
+    void
+    on_marker_region_got_clicked (int a_line, bool a_dialog_requested)
     {
         non_asm_ctxt.marker_region_got_clicked_signal.emit
-                                                (a_line, a_dialog_requested);
+                                            (a_line, a_dialog_requested);
     }
 
-    void on_mark_set_signal (const Gtk::TextBuffer::iterator &a_iter,
-                             const Glib::RefPtr<Gtk::TextBuffer::Mark> &a_mark)
+    void
+    on_mark_set_signal (const Gtk::TextBuffer::iterator &a_iter,
+                        const Glib::RefPtr<Gtk::TextBuffer::Mark> &a_mark)
     {
         if (a_mark->get_name () == "insert") {
             update_line_col_info_from_iter (a_iter);
         }
     }
 
-    void on_signal_insert (const Gtk::TextBuffer::iterator &a_iter,
-                           const Glib::ustring &a_text,
-                           int a_unknown)
+    void
+    on_signal_insert (const Gtk::TextBuffer::iterator &a_iter,
+                      const Glib::ustring &a_text,
+                      int a_unknown)
     {
         if (a_text == "" || a_unknown) {}
         update_line_col_info_from_iter (a_iter);
     }
 
-    void on_signal_insertion_moved (gint a_line, gint a_col)
+    void
+    on_signal_insertion_moved (int a_line, int a_col)
     {
-        if (a_line || a_col) {}
+        NEMIVER_TRY
+
         non_asm_ctxt.current_line = a_line;
         non_asm_ctxt.current_column = a_col;
         update_line_col_label ();
+
+        NEMIVER_CATCH
     }
 
-    void on_signal_mark_set
-                        (const Gtk::TextBuffer::iterator &a_iter,
-                         const Glib::RefPtr<Gtk::TextBuffer::Mark > &a_mark)
+    void
+    on_signal_mark_set (const Gtk::TextBuffer::iterator &a_iter,
+                        const Glib::RefPtr<Gtk::TextBuffer::Mark > &a_mark)
     {
         NEMIVER_TRY
         THROW_IF_FAIL (source_view);
@@ -312,7 +395,8 @@ struct SourceEditor::Priv {
     //</signal slots>
     //**************
 
-    void init_signals ()
+    void
+    init_signals ()
     {
         source_view->marker_region_got_clicked_signal ().connect
             (sigc::mem_fun (*this,
@@ -328,18 +412,30 @@ struct SourceEditor::Priv {
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_signal_mark_set));
     }
 
-    void update_line_col_info_from_iter (const Gtk::TextBuffer::iterator &a_iter)
+    void
+    update_line_col_info_from_iter (const Gtk::TextBuffer::iterator &a_iter)
     {
-        non_asm_ctxt.current_line = a_iter.get_line () + 1;
-        non_asm_ctxt.current_column = get_column_from_iter (a_iter);
-        non_asm_ctxt.signal_insertion_moved.emit
-                                    (non_asm_ctxt.current_line,
-                                     non_asm_ctxt.current_column);
+        SourceEditor::BufferType t = get_buffer_type ();
+        if (t == SourceEditor::BUFFER_TYPE_SOURCE) {
+            non_asm_ctxt.current_line = a_iter.get_line () + 1;
+            non_asm_ctxt.current_column = get_column_from_iter (a_iter);
+            non_asm_ctxt.signal_insertion_moved.emit
+                                        (non_asm_ctxt.current_line,
+                                         non_asm_ctxt.current_column);
+        } else if (t == SourceEditor::BUFFER_TYPE_ASSEMBLY) {
+            asm_ctxt.current_line = a_iter.get_line () + 1;
+            asm_ctxt.current_column = get_column_from_iter (a_iter);
+            line_2_address (asm_ctxt.buffer,
+                            asm_ctxt.current_line,
+                            asm_ctxt.current_address);
+        }
+
     }
 
-    void update_line_col_label ()
+    void
+    update_line_col_label ()
     {
-        gint line_count = 0;
+        int line_count = 0;
         if (source_view && source_view->get_buffer ()) {
             line_count = source_view->get_buffer ()->get_line_count ();
         }
@@ -350,12 +446,14 @@ struct SourceEditor::Priv {
         line_col_label->set_text (message);
     }
 
-    gint get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)
+    int
+    get_column_from_iter (const Gtk::TextBuffer::iterator &a_iter)
     {
         return a_iter.get_line_offset () + 1;
     }
 
-    bool get_absolute_resource_path (const UString &a_relative_path,
+    bool
+    get_absolute_resource_path (const UString &a_relative_path,
                                      string &a_absolute_path)
     {
         bool result (false);
@@ -373,7 +471,8 @@ struct SourceEditor::Priv {
         return result;
     }
 
-    void register_breakpoint_marker_type (const UString &a_name,
+    void
+    register_breakpoint_marker_type (const UString &a_name,
                                           const UString &a_image)
     {
         string path;
@@ -384,15 +483,12 @@ struct SourceEditor::Priv {
 
         Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf =
                                 Gdk::Pixbuf::create_from_file (path);
-#ifdef WITH_SOURCEVIEWMM2
         source_view->set_mark_category_pixbuf (a_name, bm_pixbuf);
         source_view->set_mark_category_priority (a_name, 0);
-#else
-        source_view->set_marker_pixbuf (a_name, bm_pixbuf);
-#endif  // WITH_SOURCEVIEWMM2
     }
 
-    void init ()
+    void
+    init ()
     {
         status_box->pack_end (*line_col_label,
                               Gtk::PACK_SHRINK, 6 /* padding */);
@@ -426,7 +522,7 @@ struct SourceEditor::Priv {
         source_view (Gtk::manage (new SourceView (a_buf))),
         line_col_label (Gtk::manage (new Gtk::Label)),
         status_box (Gtk::manage (new Gtk::HBox)),
-        non_asm_ctxt (a_buf, -1, -1)
+        non_asm_ctxt (-1, -1)
     {
         if (a_assembly) {
             asm_ctxt.buffer = a_buf;
@@ -441,7 +537,7 @@ struct SourceEditor::Priv {
         root_dir (a_root_dir),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
-        asm_ctxt (a_buf)
+        non_asm_ctxt (a_buf, -1, -1)
     {
         init ();
     }
@@ -466,15 +562,10 @@ SourceEditor::init ()
         THROW ("could not get path to line-pointer.png");
     }
     Glib::RefPtr<Gdk::Pixbuf> lp_pixbuf = Gdk::Pixbuf::create_from_file (path);
-#ifdef WITH_SOURCEVIEWMM2
     source_view ().set_mark_category_pixbuf (WHERE_CATEGORY, lp_pixbuf);
     // show this on top
     source_view ().set_mark_category_priority (WHERE_CATEGORY, 100);
     source_view ().set_show_line_marks (true);
-#else
-    source_view ().set_marker_pixbuf (WHERE_CATEGORY, lp_pixbuf);
-    source_view ().set_show_line_markers (true);
-#endif  // WITH_SOURCEVIEWMM2
 }
 
 SourceEditor::SourceEditor ()
@@ -503,32 +594,42 @@ SourceEditor::source_view () const
     return *m_priv->source_view;
 }
 
-gint
+int
 SourceEditor::current_line () const
 {
-    return m_priv->non_asm_ctxt.current_line;
+    BufferType type = get_buffer_type ();
+    if (type == BUFFER_TYPE_SOURCE)
+        return m_priv->non_asm_ctxt.current_line;
+    else if (type == BUFFER_TYPE_ASSEMBLY)
+        return m_priv->asm_ctxt.current_line;
+    else
+        return -1;
 }
 
 void
-SourceEditor::current_line (gint &a_line)
+SourceEditor::current_line (int a_line)
 {
-    m_priv->non_asm_ctxt.current_line = a_line;
+    BufferType type = get_buffer_type ();
+    if (type == BUFFER_TYPE_SOURCE)
+        m_priv->non_asm_ctxt.current_line = a_line;
+    else if (type == BUFFER_TYPE_ASSEMBLY)
+        m_priv->asm_ctxt.current_line = a_line;
 }
 
-gint
+int
 SourceEditor::current_column () const
 {
     return m_priv->non_asm_ctxt.current_column;
 }
 
 void
-SourceEditor::current_column (gint &a_col)
+SourceEditor::current_column (int &a_col)
 {
     LOG_DD ("current colnum " << (int) a_col);
     m_priv->non_asm_ctxt.current_column = a_col;
 }
 
-void
+bool
 SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
 {
     LOG_DD ("a_line: " << a_line);
@@ -539,65 +640,49 @@ SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
             source_view ().get_source_buffer ()->get_iter_at_line (a_line - 1);
     THROW_IF_FAIL (line_iter);
 
-#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<Gtk::TextMark> where_marker =
         source_view ().get_source_buffer ()->get_mark (WHERE_MARK);
-#else
-    Glib::RefPtr<gtksourceview::SourceMarker> where_marker =
-        source_view ().get_source_buffer ()->get_marker (WHERE_MARK);
-#endif  // WITH_SOURCEVIEWMM2
     if (!where_marker) {
-#ifdef WITH_SOURCEVIEWMM2
         Glib::RefPtr<Gtk::TextMark> where_marker =
             source_view ().get_source_buffer ()->create_source_mark
-#else
-        Glib::RefPtr<gtksourceview::SourceMarker> where_marker =
-            source_view ().get_source_buffer ()->create_marker
-#endif  // WITH_SOURCEVIEWMM2
                                                         (WHERE_MARK,
                                                          WHERE_CATEGORY,
                                                          line_iter);
         THROW_IF_FAIL (where_marker);
     } else {
-#ifdef WITH_SOURCEVIEWMM2
         source_view ().get_source_buffer ()->move_mark (where_marker,
                                                         line_iter);
-#else
-        source_view ().get_source_buffer ()->move_marker (where_marker,
-                                                          line_iter);
-#endif  // WITH_SOURCEVIEWMM2
     }
     if (a_do_scroll) {
         scroll_to_line (a_line);
     }
-
+    return true;
 }
 
 void
 SourceEditor::unset_where_marker ()
 {
-#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<Gtk::TextMark> where_marker =
         source_view ().get_source_buffer ()->get_mark (WHERE_MARK);
-#else
-    Glib::RefPtr<gtksourceview::SourceMarker> where_marker =
-        source_view ().get_source_buffer ()->get_marker (WHERE_MARK);
-#endif  // WITH_SOURCEVIEWMM2
     if (where_marker && !where_marker->get_deleted ()) {
-#ifdef WITH_SOURCEVIEWMM2
         source_view ().get_source_buffer ()->delete_mark (where_marker);
-#else
-        source_view ().get_source_buffer ()->delete_marker (where_marker);
-#endif  // WITH_SOURCEVIEWMM2
     }
 }
 
-void
+bool
 SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
+
     LOG_DD ("a_line: " << (int)a_line << "enabled: " << (int) enabled);
+
+    // GTK+ Considers that line numbers (in Gtk::TextBuffer) start at 0,
+    // where as in Nemiver (mostly due to GDB), we consider that they
+    // starts at 1. So adjust a_line accordingly.
+    if (a_line <= 0)
+        return false;
+    --a_line;
 
     UString marker_type;
     if (enabled) {
@@ -607,82 +692,65 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     }
 
     std::map<int,
-#ifdef WITH_SOURCEVIEWMM2
-            Glib::RefPtr<gtksourceview::SourceMark> >::iterator mark_iter =
-#else
-            Glib::RefPtr<gtksourceview::SourceMarker> >::iterator mark_iter =
-#endif  // WITH_SOURCEVIEWMM2
-                                            m_priv->markers.find (a_line);
-    if (mark_iter !=  m_priv->markers.end ()) {
+            Glib::RefPtr<gtksourceview::SourceMark> > *markers;
+    if ((markers = m_priv->get_markers ()) == 0)
+        return false;
+
+
+    Glib::RefPtr<SourceBuffer> buf = source_view ().get_source_buffer ();
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator mark_iter;
+    mark_iter = markers->find (a_line);
+    if (mark_iter !=  markers->end ()) {
         if (!mark_iter->second->get_deleted ()) {
             LOG_DD ("deleting marker");
-#ifdef WITH_SOURCEVIEWMM2
-            source_view ().get_source_buffer ()->delete_mark
-#else
-            source_view ().get_source_buffer ()->delete_marker
-#endif  // WITH_SOURCEVIEWMM2
-                                                    (mark_iter->second);
+            buf->delete_mark (mark_iter->second);
+            markers->erase (a_line);
         }
-        m_priv->markers.erase (a_line);
     }
     // marker doesn't yet exist, so create one of the correct type
-    Gtk::TextIter iter =
-        source_view ().get_source_buffer ()->get_iter_at_line (a_line);
+    Gtk::TextIter iter = buf->get_iter_at_line (a_line);
     LOG_DD ("a_line: " << a_line);
     THROW_IF_FAIL (iter);
     UString marker_name = UString::from_int (a_line);
 
     LOG_DD ("creating marker of type: " << marker_type);
-#ifdef WITH_SOURCEVIEWMM2
-    Glib::RefPtr<gtksourceview::SourceMark> marker =
-        source_view ().get_source_buffer ()->create_source_mark
-#else
-    Glib::RefPtr<gtksourceview::SourceMarker> marker =
-        source_view ().get_source_buffer ()->create_marker
-#endif  // WITH_SOURCEVIEWMM2
-                                        (marker_name, marker_type, iter);
-    m_priv->markers[a_line] = marker;
+    Glib::RefPtr<gtksourceview::SourceMark> marker;
+    marker = buf->create_source_mark (marker_name, marker_type, iter);
+    (*markers)[a_line] = marker;
+    return true;
 }
 
 void
 SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 {
-#ifdef WITH_SOURCEVIEWMM2
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > *markers;
+
+    if ((markers = m_priv->get_markers ()) == 0)
+        return;
+
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter;
-#else
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter;
-#endif  // WITH_SOURCEVIEWMM2
-    iter = m_priv->markers.find (a_line);
-    if (iter == m_priv->markers.end ()) {
+    iter = markers->find (a_line);
+    if (iter == markers->end ()) {
         return;
     }
     if (!iter->second->get_deleted ())
-#ifdef WITH_SOURCEVIEWMM2
         source_view ().get_source_buffer ()->delete_mark (iter->second);
-#else
-        source_view ().get_source_buffer ()->delete_marker (iter->second);
-#endif  // WITH_SOURCEVIEWMM2
-    m_priv->markers.erase (iter);
+    markers->erase (iter);
 }
 
 void
 SourceEditor::clear_decorations ()
 {
-#ifdef WITH_SOURCEVIEWMM2
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > *markers;
+    if ((markers = m_priv->get_markers ()) == 0)
+        return;
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator it;
-#else
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator it;
-#endif  // WITH_SOURCEVIEWMM2
 
     // Clear breakpoint markers
-    for (it = m_priv->markers.begin (); it != m_priv->markers.end (); ++it) {
+    for (it = markers->begin (); it != markers->end (); ++it) {
         if (!it->second->get_deleted ()) {
-#ifdef WITH_SOURCEVIEWMM2
             source_view ().get_source_buffer ()->delete_mark (it->second);
-#else
-            source_view ().get_source_buffer ()->delete_marker (it->second);
-#endif  // WITH_SOURCEVIEWMM2
-            m_priv->markers.erase (it);
+            markers->erase (it);
         }
     }
 
@@ -692,13 +760,12 @@ SourceEditor::clear_decorations ()
 bool
 SourceEditor::is_visual_breakpoint_set_at_line (int a_line) const
 {
-#ifdef WITH_SOURCEVIEWMM2
+    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > *markers;
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter;
-#else
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMarker> >::iterator iter;
-#endif  // WITH_SOURCEVIEWMM2
-    iter = m_priv->markers.find (a_line);
-    if (iter == m_priv->markers.end ()) {
+    if ((markers = m_priv->get_markers ()) == 0)
+        return false;
+    iter = markers->find (a_line);
+    if (iter == markers->end ()) {
         return false;
     }
     return true;
@@ -722,14 +789,15 @@ struct ScrollToLine {
     bool do_scroll ()
     {
         if (!m_source_view) {return false;}
-        Gtk::TextIter iter = m_source_view->get_buffer ()->get_iter_at_line (m_line);
+        Gtk::TextIter iter =
+            m_source_view->get_buffer ()->get_iter_at_line (m_line);
         if (!iter) {return false;}
         m_source_view->scroll_to (iter, 0.1);
         return false;
     }
 };
 
-void
+bool
 SourceEditor::scroll_to_line (int a_line)
 {
     static ScrollToLine s_scroll_functor;
@@ -737,6 +805,7 @@ SourceEditor::scroll_to_line (int a_line)
     s_scroll_functor.m_source_view = m_priv->source_view;
     Glib::signal_idle ().connect (sigc::mem_fun (s_scroll_functor,
                                                  &ScrollToLine::do_scroll));
+    return true;
 }
 
 void
@@ -756,20 +825,26 @@ SourceEditor::scroll_to_iter (Gtk::TextIter &a_iter)
 void
 SourceEditor::set_path (const UString &a_path)
 {
-    m_priv->non_asm_ctxt.path = a_path;
+    m_priv->path = a_path;
 }
 
 void
 SourceEditor::get_path (UString &a_path) const
 {
-    a_path = m_priv->non_asm_ctxt.path;
+    a_path = m_priv->path;
+}
+
+const UString&
+SourceEditor::get_path () const
+{
+    return m_priv->path;
 }
 
 void
 SourceEditor::get_file_name (UString &a_file_name)
 {
     string path;
-    path = Glib::locale_from_utf8 (m_priv->non_asm_ctxt.path);
+    path = Glib::locale_from_utf8 (get_path ());
     path = Glib::path_get_basename (path);
     a_file_name = Glib::locale_to_utf8 (path);
 }
@@ -927,15 +1002,17 @@ SourceEditor::do_search (const UString &a_str,
 
 /// Registers a assembly source buffer
 /// \param a_buf the assembly source buffer
-/// \param a_line_to_locus_func a unary function that converts a line
-///        number into a meaningful location for this source buffer.
-/// \param a_locus_to_line_func a unary function that converst a
-///        meaningful location into a line buffer.
 void
 SourceEditor::register_assembly_source_buffer
                     (Glib::RefPtr<SourceBuffer> &a_buf)
 {
     m_priv->register_assembly_source_buffer (a_buf);
+}
+
+SourceEditor::BufferType
+SourceEditor::get_buffer_type () const
+{
+    return m_priv->get_buffer_type ();
 }
 
 /// Registers a normal (non-assembly) source buffer.
@@ -954,6 +1031,26 @@ Glib::RefPtr<SourceBuffer>
 SourceEditor::get_assembly_source_buffer () const
 {
     return m_priv->asm_ctxt.buffer;
+}
+
+bool
+SourceEditor::set_visual_breakpoint_at_address (const Address &a_address,
+                                                bool a_enabled)
+{
+    int line = -1;
+    if (!assembly_buf_addr_to_line (a_address, line))
+        return false;
+    return set_visual_breakpoint_at_line (line, a_enabled);
+
+}
+
+bool
+SourceEditor::scroll_to_address (const Address &a_address)
+{
+    int line = -1;
+    if (!assembly_buf_addr_to_line (a_address, line))
+        return false;
+    return scroll_to_line (line);
 }
 
 /// Get the non-assembly source buffer that was registered, or a NULL
@@ -994,21 +1091,101 @@ SourceEditor::switch_to_non_assembly_source_buffer ()
 }
 
 bool
-SourceEditor::assembly_buf_loc_to_line (const Address &a_addr, int &a_line)
+SourceEditor::assembly_buf_addr_to_line (const Address &a_addr, int &a_line) const
 {
     Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
     RETURN_VAL_IF_FAIL (buf, false);
-    a_line = m_priv->asm_ctxt.locus_to_line_func (buf, a_addr);
+    return m_priv->address_2_line (buf, a_addr, a_line);
+}
+
+bool
+SourceEditor::assembly_buf_addr_to_line_previous (const Address &a_addr,
+                                                  int &a_prev_line) const
+{
+    Address prev_addr;
+    return assembly_buf_addr_to_line_previous (a_addr, a_prev_line, prev_addr);
+}
+
+bool
+SourceEditor::assembly_buf_addr_to_line_previous (const Address &a_addr,
+                                                  int &a_prev_line,
+                                                  Address &a_prev_address) const
+{
+    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
+    RETURN_VAL_IF_FAIL (buf, false);
+    int line = 0;
+    bool ok = m_priv->address_2_line (buf, a_addr,
+                                      line,
+                                      a_prev_address);
+    if (ok) {
+        THROW_IF_FAIL (line > 0);
+        a_prev_line = line - 1;
+    }
+    return ok;
+}
+
+bool
+SourceEditor::assembly_buf_line_to_addr (int a_line, Address &a_address) const
+{
+    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
+    RETURN_VAL_IF_FAIL (buf, false);
+    return m_priv->line_2_address (buf, a_line, a_address);
+}
+
+bool
+SourceEditor::get_assembly_address_range (Range &a) const
+{
+    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
+    if (!buf)
+        return false;
+    Address addr;
+    if (!m_priv->line_2_address (buf, 1, addr))
+        return false;
+    Range range;
+    range.min (addr);
+    if (!m_priv->line_2_address (buf, buf->get_line_count (), addr))
+        return false;
+    range.max (addr);
+    a = range;
     return true;
 }
 
 bool
-SourceEditor::assembly_buf_line_to_loc (int a_line, Address &a_address)
+SourceEditor::move_where_marker_to_address (const Address &a_address,
+                                            bool a_do_scroll)
 {
-    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
-    RETURN_VAL_IF_FAIL (buf, false);
-    a_address = m_priv->asm_ctxt.line_to_locus_func (buf, a_line);
+    int line = -1;
+    if (!assembly_buf_addr_to_line (a_address, line)) {
+        return false;
+    }
+    return move_where_marker_to_line (line, a_do_scroll);
+}
+
+bool
+SourceEditor::place_cursor_at_line (size_t a_line)
+{
+    if (a_line == 0)
+        return false;
+    --a_line;
+    Gtk::TextBuffer::iterator iter =
+        source_view ().get_buffer ()->get_iter_at_line (a_line);
+    if (!iter) {
+        return false;
+    }
+    source_view().get_buffer ()->place_cursor (iter);
     return true;
+}
+
+bool
+SourceEditor::place_cursor_at_address (const Address &a_address)
+{
+    if (get_buffer_type () != BUFFER_TYPE_ASSEMBLY)
+        return false;
+    int line = -1;
+    if (!assembly_buf_addr_to_line (a_address, line))
+        return false;
+    return place_cursor_at_line (line);
+
 }
 
 sigc::signal<void, int, bool>&
@@ -1021,57 +1198,6 @@ sigc::signal<void, const Gtk::TextBuffer::iterator&>&
 SourceEditor::insertion_changed_signal () const
 {
     return m_priv->insertion_changed_signal;
-}
-
-Address
-Line2AddrFunc::operator () (Glib::RefPtr<SourceBuffer> a_buf,
-                            int a_line)
-{
-    THROW_IF_FAIL (a_buf);
-
-    std::string addr;
-    m_line = a_line;
-    Gtk::TextBuffer::iterator it = a_buf->get_iter_at_line (m_line);
-    while (true) {
-        gunichar c = *it;
-        if (isspace (c) || it.is_end ())
-            break;
-        addr += c;
-        ++it;
-    }
-    Address result = addr;
-    return result;
-}
-
-int
-Addr2LineFunc::operator () (Glib::RefPtr<SourceBuffer> a_buf,
-                            const Address &an_addr)
-{
-    THROW_IF_FAIL (a_buf);
-
-    int wrap = 0;
-
-    if (m_line < 0)
-        m_line = 0;
-    else
-        wrap = 1;
-
-    Gtk::TextBuffer::iterator it = a_buf->get_iter_at_line (m_line);
-    const std::string &addr = an_addr;
-
-    do {
-        bool match = true;
-        for (std::string::size_type i = 0; i < addr.size (); ++i, ++it) {
-            if (it.get_char () != (gunichar) addr[i]) {
-                match = false;
-                break;
-            }
-        }
-        if (match)
-            return it.get_line ();
-    } while (wrap--);
-
-    return -1;
 }
 
 }//end namespace nemiver

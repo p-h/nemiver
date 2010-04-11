@@ -64,6 +64,7 @@
 #include "common/nmv-env.h"
 #include "common/nmv-date-utils.h"
 #include "common/nmv-str-utils.h"
+#include "common/nmv-address.h"
 #include "nmv-sess-mgr.h"
 #include "nmv-dbg-perspective.h"
 #include "nmv-source-editor.h"
@@ -282,7 +283,7 @@ private:
     void on_set_watchpoint_using_dialog_action ();
     void on_refresh_locals_action ();
     void on_disassemble_action (bool a_show_asm_in_new_tab);
-    void on_switch_to_disassembly_action ();
+    void on_switch_to_asm_action ();
     void on_toggle_breakpoint_action ();
     void on_toggle_breakpoint_enabled_action ();
     void on_inspect_variable_action ();
@@ -312,8 +313,9 @@ private:
                                      const Glib::ustring &a_text,
                                      int a_dont_know);
 
-    void on_source_view_markers_region_clicked_signal
-                                        (int a_line, bool a_dialog_requested);
+    void on_sv_markers_region_clicked_signal
+                                        (int a_line, bool a_dialog_requested,
+                                         SourceEditor *a_editor);
 
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event);
 
@@ -392,10 +394,27 @@ private:
                                     (const UString &a_var_name,
                                      const IDebugger::VariableSafePtr &a_var,
                                      const UString &a_cooker);
-    void on_debugger_disassembled_signal
+
+    void on_debugger_asm_signal1
                             (const IDebugger::DisassembleInfo &a_info,
                              const std::list<IDebugger::AsmInstr> &a_instrs,
                              bool a_show_asm_in_new_tab = true);
+
+    void on_debugger_asm_signal2
+                            (const IDebugger::DisassembleInfo &info,
+                             const std::list<IDebugger::AsmInstr> &instrs,
+                             SourceEditor *editor);
+
+    void on_debugger_asm_signal3
+                            (const IDebugger::DisassembleInfo &info,
+                             const std::list<IDebugger::AsmInstr> &instrs,
+                             SourceEditor *editor,
+                             const IDebugger::Breakpoint &a_bp);
+
+    void on_debugger_asm_signal4
+                            (const IDebugger::DisassembleInfo &info,
+                             const std::list<IDebugger::AsmInstr> &instrs,
+                             const Address &address);
 
     void on_variable_created_for_tooltip_signal
                                     (const IDebugger::VariableSafePtr);
@@ -442,18 +461,21 @@ private:
     SourceEditor* get_current_source_editor ();
     ISessMgr* session_manager_ptr ();
     UString get_current_file_path ();
-    SourceEditor* get_source_editor_from_path (const UString &a_path,
-                                               bool a_basename_only=false);
+    SourceEditor* get_source_editor_from_path (const UString& a_path,
+                                               bool a_basename_only = false);
     SourceEditor* get_source_editor_from_path (const UString &a_path,
                                                UString &a_actual_file_path,
                                                bool a_basename_only=false);
+
+    SourceEditor* get_or_append_source_editor_from_path (const UString &a_path);
 
     bool source_view_to_root_window_coordinates (int x, int y,
                                                  int &root_x,
                                                  int &root_y);
     IWorkbench& workbench () const;
-    void bring_source_as_current (const UString &a_path);
     int get_num_notebook_pages ();
+    SourceEditor* bring_source_as_current (const UString &a_path);
+    void bring_source_as_current (SourceEditor *a_editor);
     void popup_source_view_contextual_menu (GdkEventButton *a_event);
     void record_and_save_new_session ();
     void record_and_save_session (ISessMgr::Session &a_session);
@@ -490,7 +512,7 @@ public:
     void edit_workbench_menu ();
 
     SourceEditor* create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
-                                        bool a_disassembly_view,
+                                        bool a_asm_view,
                                         const UString &a_path,
                                         int a_current_line,
                                         const UString &a_current_address);
@@ -507,12 +529,13 @@ public:
     bool load_file (const UString &a_file,
                     Glib::RefPtr<SourceBuffer> &a_source_buffer);
 
-    bool open_file (const UString &a_path,
-                    int current_line=-1);
+    bool open_file (const UString &a_path, int current_line=-1);
 
-    bool open_file (const UString &a_path,
-                    int current_line,
-                    bool a_reload_visual_breakpoint);
+    SourceEditor* open_file_real (const UString &a_path, int current_line=-1);
+
+    SourceEditor* open_file_real (const UString &a_path,
+                                  int current_line,
+                                  bool a_reload_visual_breakpoint);
 
     void close_current_file ();
 
@@ -523,17 +546,30 @@ public:
     Gtk::Widget* load_menu (const UString &a_filename,
                             const UString &a_widget_name);
 
-    const UString& get_disassembly_title ();
+    const UString& get_asm_title ();
 
-    bool load_disassembly (const IDebugger::DisassembleInfo &a_info,
-                           const std::list<IDebugger::AsmInstr> &a_asm,
-                           Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
+    bool load_asm (const IDebugger::DisassembleInfo &a_info,
+                   const std::list<IDebugger::AsmInstr> &a_asm,
+                   Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
 
-    bool open_disassembly (const IDebugger::DisassembleInfo &a_info,
-                           const std::list<IDebugger::AsmInstr> &a_asm);
+    bool add_asm (const IDebugger::DisassembleInfo &a_info,
+                  const std::list<IDebugger::AsmInstr> &a_asm,
+                  Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf,
+                  bool a_append = true);
 
-    void switch_to_disassembly (const IDebugger::DisassembleInfo &a_info,
-                                const std::list<IDebugger::AsmInstr> &a_asm);
+    SourceEditor* open_asm (const IDebugger::DisassembleInfo &a_info,
+                            const std::list<IDebugger::AsmInstr> &a_asm,
+                            bool set_where = false);
+
+    void switch_to_asm (const IDebugger::DisassembleInfo &a_info,
+                        const std::list<IDebugger::AsmInstr> &a_asm);
+
+    void switch_to_asm (const IDebugger::DisassembleInfo &a_info,
+                        const std::list<IDebugger::AsmInstr> &a_asm,
+                        SourceEditor *a_editor);
+
+    void pump_asm_including_address (SourceEditor *a_editor,
+                                     const Address a_address);
 
     void switch_to_source_code ();
 
@@ -595,6 +631,7 @@ public:
                          const UString &a_cond);
     void set_breakpoint (const UString &a_func_name,
                          const UString &a_cond);
+    void set_breakpoint (const Address &a_address);
     void append_breakpoint (int a_bp_num,
                             const IDebugger::Breakpoint &a_breakpoint);
     void append_breakpoints
@@ -604,23 +641,36 @@ public:
                                 int a_linenum,
                                 int &a_break_num,
                                 bool &a_enabled);
+    bool get_breakpoint_number (const Address &a_address,
+                                int &a_break_num);
     bool delete_breakpoint ();
     bool delete_breakpoint (int a_breakpoint_num);
     bool delete_breakpoint (const UString &a_file_path,
                             int a_linenum);
+    bool delete_breakpoint (const Address &a_address);
     bool is_breakpoint_set_at_line (const UString &a_file_path,
                                     int a_linenum,
                                     bool &a_enabled);
+    bool is_breakpoint_set_at_address (const Address &);
     void toggle_breakpoint (const UString &a_file_path,
                             int a_linenum);
+    void toggle_breakpoint (const Address &a_address);
     void set_breakpoint_using_dialog ();
     void set_breakpoint_using_dialog (const UString &a_file_path,
                                       const int a_line_num);
     void set_breakpoint_using_dialog (const UString &a_function_name);
     void set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog);
     void set_watchpoint_using_dialog ();
+    bool breakpoint_and_frame_have_same_file (const IDebugger::Breakpoint&,
+                                              const IDebugger::Frame&) const;
+
+    bool get_frame_breakpoints_address_range (const IDebugger::Frame&,
+                                              Range &) const;
     void refresh_locals ();
     void disassemble (bool a_show_asm_in_new_tab);
+    void disassemble_and_do (IDebugger::DisassSlot &a_what_to_do);
+    void disassemble_around_address_and_do (const Address &adress,
+                                            IDebugger::DisassSlot &what_to_do);
 
     void inspect_variable ();
     void inspect_variable (const UString &a_variable_name);
@@ -639,20 +689,25 @@ public:
                                          UString& a_absolute_path);
     bool ask_user_to_select_file (const UString &a_file_name,
                                   UString& a_selected_file_path);
-    bool append_visual_breakpoint (const UString &a_file_name,
-                                   int a_linenum,
-                                   UString &a_actual_file_name,
-                                   bool enabled=true);
-    bool append_visual_breakpoint (const UString &a_file_name,
-                                   int a_linenum,
-                                   bool enabled=true);
+    bool append_visual_breakpoint (SourceEditor *editor,
+                                   int linenum,
+                                   bool enabled = true);
+    bool append_visual_breakpoint (SourceEditor *editor,
+                                   const Address &address,
+                                   bool enabled = true);
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum);
     void delete_visual_breakpoint (int a_breaknum);
     void choose_function_overload
                 (const vector<IDebugger::OverloadsChoiceEntry> &a_entries);
 
     void remove_visual_decorations_from_text (const UString &a_file_path);
-    bool apply_decorations_to_text (const UString &a_file_path);
+    bool apply_decorations (const UString &file_path);
+    bool apply_decorations (SourceEditor *editor,
+                            bool scroll_to_where_marker = false);
+    bool apply_decorations_to_source (SourceEditor *a_editor,
+                                      bool scroll_to_where_marker = false);
+    bool apply_decorations_to_asm (SourceEditor *a_editor,
+                                   bool scroll_to_where_marker = false);
 
     IDebuggerSafePtr& debugger ();
 
@@ -723,13 +778,25 @@ public:
 #endif // WITH_MEMORYVIEW
 
     void add_text_to_command_view (const UString &a_text,
-                                   bool a_no_repeat=false);
+                                   bool a_no_repeat = false);
 
     void add_text_to_target_output_view (const UString &a_text);
 
     void add_text_to_log_view (const UString &a_text);
 
-    void set_where (const UString &a_path, int line, bool a_do_scroll=true);
+    bool set_where (const UString &a_path,
+                    const IDebugger::Frame &a_frame,
+                    bool a_do_scroll = true,
+                    bool a_try_hard = false);
+    bool set_where (const UString &a_path, int a_line,
+                    bool a_do_scroll = true);
+    bool set_where (SourceEditor *a_editor,
+                    int a_line,
+                    bool a_do_scroll);
+    bool set_where (SourceEditor *a_editor,
+                    const Address &a_address,
+                    bool a_do_scroll = true,
+                    bool a_try_hard = false);
 
     void unset_where ();
 
@@ -1529,7 +1596,7 @@ DBGPerspective::on_disassemble_action (bool a_show_asm_in_new_tab)
 }
 
 void
-DBGPerspective::on_switch_to_disassembly_action ()
+DBGPerspective::on_switch_to_asm_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     NEMIVER_TRY
@@ -1674,28 +1741,39 @@ DBGPerspective::on_breakpoint_go_to_source_action
                                 (const IDebugger::Breakpoint& a_breakpoint)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    // FIXME: this should put the same effort into
-    // finding the source file that
-    // append_visual_breakpoint() does.
-    // Maybe this should be abstracted out somehow
+
     NEMIVER_TRY
+
     UString file_path = a_breakpoint.file_full_name ();
-    if (file_path == "") {
+    if (file_path.empty ())
         file_path = a_breakpoint.file_name ();
-        if (!find_file_in_source_dirs (file_path, file_path)) {
-            UString message;
-            message.printf (_("File path info is missing "
-                             "for breakpoint '%i'"), a_breakpoint.number ());
-            display_warning (message);
-            return;
+
+    SourceEditor *source_editor =
+        get_or_append_source_editor_from_path (file_path);
+    bring_source_as_current (source_editor);
+
+    if (source_editor) {
+        SourceEditor::BufferType type = source_editor->get_buffer_type ();
+        switch (type) {
+            case SourceEditor::BUFFER_TYPE_SOURCE:
+                source_editor->scroll_to_line (a_breakpoint.line ());
+                break;
+            case SourceEditor::BUFFER_TYPE_ASSEMBLY:
+                source_editor->scroll_to_address (a_breakpoint.address ());
+                break;
+            case SourceEditor::BUFFER_TYPE_UNDEFINED:
+                break;
         }
+    } else {
+        IDebugger::DisassSlot scroll_to_address;
+        scroll_to_address =
+            sigc::bind (sigc::mem_fun
+                            (this,
+                             &DBGPerspective::on_debugger_asm_signal4),
+                        a_breakpoint.address ());
+        disassemble_around_address_and_do (a_breakpoint.address (),
+                                           scroll_to_address);
     }
-
-    bring_source_as_current (file_path);
-    SourceEditor *source_editor = get_source_editor_from_path (file_path);
-    THROW_IF_FAIL (source_editor);
-    source_editor->scroll_to_line (a_breakpoint.line ());
-
     NEMIVER_CATCH
 }
 
@@ -1864,22 +1942,39 @@ DBGPerspective::on_insert_in_command_view_signal
 }
 
 void
-DBGPerspective::on_source_view_markers_region_clicked_signal
-                                                (int a_line,
-                                                 bool a_dialog_requested)
+DBGPerspective::on_sv_markers_region_clicked_signal (int a_line,
+                                                     bool a_dialog_requested,
+                                                     SourceEditor *a_editor)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     NEMIVER_TRY
 
-    if (m_priv->debugger->get_state () != IDebugger::NOT_STARTED) {
-        SourceEditor *cur_editor = get_current_source_editor ();
-        THROW_IF_FAIL (cur_editor);
-        UString path;
-        cur_editor->get_path (path);
-        if (a_dialog_requested) {
-            set_breakpoint_using_dialog (path, a_line + 1);
-        } else {
-            toggle_breakpoint (path, a_line + 1 );
+    if (m_priv->debugger->get_state () == IDebugger::NOT_STARTED
+        || a_editor == 0)
+        return;
+
+    UString path;
+    a_editor->get_path (path);
+
+    if (a_dialog_requested) {
+        // FIXME: Handle assembly view mode.
+        set_breakpoint_using_dialog (path, a_line);
+    } else {
+        SourceEditor::BufferType type = a_editor->get_buffer_type ();
+        switch (type) {
+            case SourceEditor::BUFFER_TYPE_SOURCE:
+                toggle_breakpoint (path, a_line);
+                break;
+            case SourceEditor::BUFFER_TYPE_ASSEMBLY: {
+                Address address;
+                if (!a_editor->assembly_buf_line_to_addr (a_line, address))
+                    return;
+                toggle_breakpoint (address);
+            }
+                break;
+            case SourceEditor::BUFFER_TYPE_UNDEFINED:
+                break;
         }
     }
 
@@ -2343,7 +2438,6 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     NEMIVER_CATCH
 }
 
-
 void
 DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
                                             bool a_has_frame,
@@ -2360,30 +2454,30 @@ DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
     THROW_IF_FAIL (m_priv);
 
     update_src_dependant_bp_actions_sensitiveness ();
+    m_priv->current_frame = a_frame;
 
+    bool where_set = false;
     UString file_path (a_frame.file_full_name ());
-    if (a_has_frame
-        && a_frame.file_full_name () == ""
-        && a_frame.file_name () != "") {
+
+    if (a_has_frame && file_path.empty ()
+        && !a_frame.file_name ().empty ()) {
         file_path = a_frame.file_name ();
         if (!find_file_in_source_dirs (file_path, file_path)) {
             UString message;
             message.printf(_("Could not find file %s"), file_path.c_str ());
             display_error (message);
-            return;
         }
     }
-    if (a_has_frame && file_path != "") {
-        m_priv->current_frame = a_frame;
+    if (a_has_frame && !file_path.empty ()) {
         m_priv->current_frame.file_name (file_path);
-        set_where (file_path, a_frame.line ());
-    } else if (a_has_frame &&
-               a_frame.file_full_name () == ""
-               && a_frame.file_name () == "") {
-        UString message;
-        message.printf(_("File path info is missing for function '%s'"),
-                       a_frame.function_name ().c_str ());
-        LOG_ERROR (message);
+        where_set = set_where (file_path, a_frame,
+                               /*do_scroll=*/true,
+                               /*try_hard=*/true);
+    }
+
+    if (!where_set) {
+        SourceEditor *e = bring_source_as_current (file_path);
+        disassemble (e ? false : true);
     }
 
     if (m_priv->debugger_has_just_run) {
@@ -2476,7 +2570,7 @@ DBGPerspective::on_frame_selected_signal (int /* a_index */,
 
     get_local_vars_inspector ().show_local_variables_of_current_function
                                                                     (a_frame);
-    set_where (file_path, a_frame.line ());
+    set_where (file_path, a_frame);
 
     NEMIVER_CATCH
 }
@@ -2613,17 +2707,72 @@ DBGPerspective::on_debugger_variable_value_signal
 }
 
 void
-DBGPerspective::on_debugger_disassembled_signal
+DBGPerspective::on_debugger_asm_signal1
                             (const IDebugger::DisassembleInfo &a_info,
                              const std::list<IDebugger::AsmInstr> &a_instrs,
                              bool a_show_asm_in_new_tab)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    if (a_show_asm_in_new_tab)
-        open_disassembly (a_info, a_instrs);
-    else
-        switch_to_disassembly (a_info, a_instrs);
+    NEMIVER_TRY
+
+    if (a_show_asm_in_new_tab) {
+        open_asm (a_info, a_instrs, /*set_where=*/true);
+    } else {
+        switch_to_asm (a_info, a_instrs);
+    }
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_asm_signal2
+                        (const IDebugger::DisassembleInfo &a_info,
+                         const std::list<IDebugger::AsmInstr> &a_instrs,
+                         SourceEditor *a_editor)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    switch_to_asm (a_info, a_instrs, a_editor);
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_asm_signal3
+                        (const IDebugger::DisassembleInfo &a_info,
+                         const std::list<IDebugger::AsmInstr> &a_instrs,
+                         SourceEditor *a_editor,
+                         const IDebugger::Breakpoint &a_bp)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    switch_to_asm (a_info, a_instrs, a_editor);
+    append_visual_breakpoint (a_editor, a_bp.address (), a_bp.line ());
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_asm_signal4
+                        (const IDebugger::DisassembleInfo &a_info,
+                         const std::list<IDebugger::AsmInstr> &a_instrs,
+                         const Address &a_address)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    SourceEditor* editor = open_asm (a_info, a_instrs, /*set_where=*/false);
+    THROW_IF_FAIL (editor);
+    bring_source_as_current (editor);
+    editor->scroll_to_address (a_address);
+
+    NEMIVER_CATCH
 }
 
 void
@@ -3884,6 +4033,13 @@ DBGPerspective::find_absolute_path (const UString& a_file_path,
     if (find_file_in_source_dirs (a_file_path, a_absolute_path)) {
         return true;
     }
+    // Then look for a file of that basename in the search directories.
+    std::string basename =
+            Glib::path_get_basename (Glib::filename_from_utf8 (a_file_path));
+    if (basename != a_file_path
+        && find_file_in_source_dirs (basename, a_absolute_path)) {
+        return true;
+    }
     return false;
 }
 
@@ -3907,15 +4063,20 @@ void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                       const UString &a_path)
 {
-    if (a_path == "") {return;}
+    UString path = a_path;
+    if (path.empty ()) {
+        path = a_sv.get_path ();
+        if (path.empty ())
+            return;
+    }
 
-    if (m_priv->path_2_pagenum_map.find (a_path)
+    if (m_priv->path_2_pagenum_map.find (path)
         != m_priv->path_2_pagenum_map.end ()) {
-        THROW (UString ("File of '") + a_path + "' is already loaded");
+        THROW (UString ("File of '") + path + "' is already loaded");
     }
 
     UString basename = Glib::filename_to_utf8
-        (Glib::path_get_basename (Glib::filename_from_utf8 (a_path)));
+        (Glib::path_get_basename (Glib::filename_from_utf8 (path)));
 
     SafePtr<Gtk::Label> label (Gtk::manage
                             (new Gtk::Label (basename)));
@@ -3942,7 +4103,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button->signal_clicked ().connect
             (sigc::mem_fun (*close_button, &SlotedButton::on_clicked));
     UString message;
-    message.printf (_("Close %s"), a_path.c_str ());
+    message.printf (_("Close %s"), path.c_str ());
     close_button->set_tooltip_text (message);
 
     SafePtr<Gtk::HBox> hbox (Gtk::manage (new Gtk::HBox ()));
@@ -3963,16 +4124,16 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     m_priv->sourceviews_notebook->set_tab_reorderable (a_sv);
 #endif
     std::string base_name =
-                Glib::path_get_basename (Glib::filename_from_utf8 (a_path));
+                Glib::path_get_basename (Glib::filename_from_utf8 (path));
     THROW_IF_FAIL (base_name != "");
     m_priv->basename_2_pagenum_map[Glib::filename_to_utf8 (base_name)] =
                                                                     page_num;
     m_priv->path_2_pagenum_map[a_path] = page_num;
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
-    m_priv->pagenum_2_path_map[page_num] = a_path;
+    m_priv->pagenum_2_path_map[page_num] = path;
 
-    if (!do_monitor_file (a_path)) {
-        LOG_ERROR ("Failed to start monitoring file: " << a_path);
+    if (!do_monitor_file (path)) {
+        LOG_ERROR ("Failed to start monitoring file: " << path);
     }
 
     hbox.release ();
@@ -4016,7 +4177,24 @@ DBGPerspective::get_current_source_editor ()
 
     if (m_priv->sourceviews_notebook
         && !m_priv->sourceviews_notebook->get_n_pages ()) {
-        return NULL;
+        // The source notebook is empty. If the current frame
+        // has file info, load the file, bring it to the front,
+        // apply decorations to it and return its editor.
+        if (m_priv->current_frame.has_empty_address ())
+            return NULL;
+        UString path = m_priv->current_frame.file_full_name ();
+        if (path.empty ())
+            path = m_priv->current_frame.file_name ();
+        if (path.empty ()) {
+            return 0;
+        }
+        if (!find_absolute_path_or_ask_user (path, path))
+            return 0;
+        SourceEditor *editor = open_file_real (path);
+        apply_decorations (editor,
+                           /*scroll_to_where_marker=*/true);
+        bring_source_as_current (editor);
+        return editor;
     }
 
     LOG_DD ("current pagenum: "
@@ -4066,6 +4244,42 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
     return get_source_editor_from_path (a_path,
                                         actual_file_path,
                                         a_basename_only);
+}
+
+bool
+DBGPerspective::breakpoint_and_frame_have_same_file
+                                    (const IDebugger::Breakpoint &a_bp,
+                                     const IDebugger::Frame &a_frame) const
+{
+    if ((a_frame.file_full_name () == a_bp.file_full_name ()
+         && !a_frame.file_full_name ().empty ())
+        || (a_frame.file_name () == a_bp.file_name ()
+            && !a_frame.file_name ().empty ()))
+        return true;
+    return false;
+
+}
+
+bool
+DBGPerspective::get_frame_breakpoints_address_range
+                                        (const IDebugger::Frame &a_frame,
+                                         Range &a_range) const
+{
+
+    Range range = a_range;
+    bool result = false;
+    map<int, IDebugger::Breakpoint>::const_iterator it;
+    for (it = m_priv->breakpoints.begin ();
+         it != m_priv->breakpoints.end ();
+         ++it) {
+        if (breakpoint_and_frame_have_same_file (it->second, a_frame)) {
+            range.extend (str_utils::hexa_to_int (it->second.address ()));
+            result = true;
+        }
+    }
+    if (result)
+        a_range = range;
+    return result;
 }
 
 /// Converts coordinates expressed in source view coordinates system into
@@ -4136,6 +4350,25 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
     return result;
 }
 
+SourceEditor*
+DBGPerspective::get_or_append_source_editor_from_path (const UString &a_path)
+{
+    UString actual_file_path;
+
+    if (a_path.empty ())
+        return 0;
+
+    SourceEditor *source_editor =
+                    get_source_editor_from_path (a_path, actual_file_path);
+    if (source_editor == 0) {
+        if (!find_absolute_path_or_ask_user (a_path, actual_file_path)) {
+            return 0;
+        }
+        source_editor = open_file_real (actual_file_path);
+    }
+    return source_editor;
+}
+
 IWorkbench&
 DBGPerspective::workbench () const
 {
@@ -4145,48 +4378,151 @@ DBGPerspective::workbench () const
     return *m_priv->workbench;
 }
 
-void
+SourceEditor*
 DBGPerspective::bring_source_as_current (const UString &a_path)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     LOG_DD ("file path: '" << a_path << "'");
 
+    if (a_path.empty ())
+        return 0;
+
     SourceEditor *source_editor = get_source_editor_from_path (a_path);
     if (!source_editor) {
-        open_file (a_path, -1, true);
+        source_editor = open_file_real (a_path, -1, true);
+        THROW_IF_FAIL (source_editor);
     }
-    if (!source_editor) {
-        source_editor = get_source_editor_from_path (a_path, true);
-    }
-    source_editor = get_source_editor_from_path (a_path);
-    THROW_IF_FAIL (source_editor);
+    bring_source_as_current (source_editor);
+    return source_editor;
+}
+
+void
+DBGPerspective::bring_source_as_current (SourceEditor *a_editor)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (a_editor == 0)
+        return;
+
+    UString path = a_editor->get_path ();
     map<UString, int>::iterator iter =
-        m_priv->path_2_pagenum_map.find (a_path);
+        m_priv->path_2_pagenum_map.find (path);
     THROW_IF_FAIL (iter != m_priv->path_2_pagenum_map.end ());
     m_priv->sourceviews_notebook->set_current_page (iter->second);
 }
 
-void
+// Set the graphical "where pointer" to either the source (or assembly)
+// location corresponding to a_frame.
+// \param a_path the path (uri) of the current source file.
+// \a_frame the frame to consider
+// \a_do_scroll if true, the source/asm editor is scrolled to the
+// location of the newly set where pointer.
+// \return true upon successful completion, false otherwise.
+bool
+DBGPerspective::set_where (const UString &a_path,
+                           const IDebugger::Frame &a_frame,
+                           bool a_do_scroll,
+                           bool a_try_hard)
+{
+    SourceEditor *source_editor = bring_source_as_current (a_path);
+    if (!source_editor)
+        return false;
+
+    SourceEditor::BufferType type = source_editor->get_buffer_type ();
+    switch (type) {
+        case SourceEditor::BUFFER_TYPE_SOURCE:
+            return set_where (source_editor, a_frame.line (), a_do_scroll);
+        case SourceEditor::BUFFER_TYPE_ASSEMBLY:
+            return set_where (source_editor, a_frame.address (),
+                              a_do_scroll, a_try_hard);
+        case SourceEditor::BUFFER_TYPE_UNDEFINED:
+            break;
+    }
+    return false;
+}
+
+// Set the graphical "where pointer" to the source line a_line.
+// \param a_path the path (uri) of the current source file.
+// \a_line the line number (starting from 1) to which the "where pointer"
+// is to be set.
+// \a_do_scroll if true, the source editor is scrolled to the
+// location of the newly set where pointer.
+// \return true upon successful completion, false otherwise.
+bool
 DBGPerspective::set_where (const UString &a_path,
                            int a_line,
                            bool a_do_scroll)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    bring_source_as_current (a_path);
-    SourceEditor *source_editor = get_source_editor_from_path (a_path);
-    if (!source_editor) {
-        source_editor = get_source_editor_from_path (a_path, true);
-    }
-    THROW_IF_FAIL (source_editor);
-    source_editor->move_where_marker_to_line (a_line, a_do_scroll);
+    SourceEditor *source_editor = bring_source_as_current (a_path);
+    return set_where (source_editor, a_line, a_do_scroll);
+}
+
+// Set the graphical "where pointer" to the source line a_line.
+// \param a_editor the source editor that contains the source to
+// consider.
+// \a_line the line number (starting from 1) to which the "where pointer"
+// is to be set.
+// \a_do_scroll if true, the source editor is scrolled to the
+// location of the newly set where pointer.
+// \return true upon successful completion, false otherwise.
+bool
+DBGPerspective::set_where (SourceEditor *a_editor,
+                           int a_line,
+                           bool a_do_scroll)
+{
+    if (!a_editor)
+        return false;
+
+    THROW_IF_FAIL (a_editor->get_buffer_type ()
+                   == SourceEditor::BUFFER_TYPE_SOURCE);
+
+    a_editor->move_where_marker_to_line (a_line, a_do_scroll);
     Gtk::TextBuffer::iterator iter =
-        source_editor->source_view ()
-                .get_buffer ()->get_iter_at_line (a_line-1);
+        a_editor->source_view ().get_buffer ()->get_iter_at_line (a_line - 1);
     if (!iter) {
-        return;
+        return false;
     }
-    source_editor->source_view().get_buffer ()->place_cursor (iter);
+    a_editor->source_view().get_buffer ()->place_cursor (iter);
+    return true;
+}
+
+// Set the graphical "where pointer" to the assembly address a_address.
+// \param a_editor the source editor that contains the source to
+// consider.
+// \a_address the assembly address to which the "where pointer"
+// is to be set.
+// \a_do_scroll if true, the source editor is scrolled to the
+// location of the newly set where pointer.
+// \return true upon successful completion, false otherwise.
+bool
+DBGPerspective::set_where (SourceEditor *a_editor,
+                           const Address &a_address,
+                           bool a_do_scroll,
+                           bool a_try_hard)
+{
+    if (!a_editor)
+        return false;
+
+    THROW_IF_FAIL (a_editor->get_buffer_type ()
+                   == SourceEditor::BUFFER_TYPE_ASSEMBLY);
+
+    // The IP points to the *next* instruction to execute. What we want
+    // is the current instruction executed. So lets get the line of the
+    // address that comes right before a_address.
+    if (!a_editor->move_where_marker_to_address (a_address, a_do_scroll)) {
+        if (a_try_hard) {
+            pump_asm_including_address (a_editor, a_address);
+            return true;
+        } else {
+            LOG_ERROR ("Fail to get line for address: "
+                       << static_cast<string> (a_address));
+            return false;
+        }
+    }
+    a_editor->place_cursor_at_address (a_address);
+    return true;
 }
 
 void
@@ -5164,7 +5500,7 @@ DBGPerspective::load_file (const UString &a_path,
 
 SourceEditor*
 DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
-                                      bool a_disassembly_view,
+                                      bool a_asm_view,
                                       const UString &a_path,
                                       int a_current_line,
                                       const UString &a_current_address)
@@ -5175,13 +5511,13 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
     Gtk::TextIter cur_line_iter;
     int current_line =  -1;
 
-    if (a_disassembly_view) {
+    if (a_asm_view) {
         source_editor = Gtk::manage (new SourceEditor (plugin_path (),
                                                        a_source_buf,
                                                        true));
         if (!a_current_address.empty ()) {
-            source_editor->assembly_buf_loc_to_line (a_current_address.raw (),
-                                                      current_line);
+            source_editor->assembly_buf_addr_to_line
+                                    (a_current_address.raw (), current_line);
         }
     } else {
         source_editor = Gtk::manage (new SourceEditor (plugin_path (),
@@ -5233,9 +5569,10 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
 #endif // WITH_SOURCEVIEWMM2
     source_editor->set_path (a_path);
     source_editor->marker_region_got_clicked_signal ().connect
-        (sigc::mem_fun
-             (*this,
-              &DBGPerspective::on_source_view_markers_region_clicked_signal));
+    (sigc::bind
+        (sigc::mem_fun (*this,
+                        &DBGPerspective::on_sv_markers_region_clicked_signal),
+         source_editor));
 
     m_priv->opened_file_action_group->set_sensitive (true);
 
@@ -5261,55 +5598,62 @@ DBGPerspective::open_file ()
     dialog.get_filenames (paths);
     list<UString>::const_iterator iter;
     for (iter = paths.begin (); iter != paths.end (); ++iter) {
-        open_file (*iter, -1, true);
+        open_file_real (*iter, -1, true);
     }
     bring_source_as_current (*(paths.begin()));
 }
 
 bool
-DBGPerspective::open_file (const UString &a_path,
-                           int a_current_line)
+DBGPerspective::open_file (const UString &a_path, int current_line)
+{
+    return open_file_real (a_path, current_line) ? true: false;
+}
+
+SourceEditor*
+DBGPerspective::open_file_real (const UString &a_path,
+                                int a_current_line)
 {
     RETURN_VAL_IF_FAIL (m_priv, false);
     if (a_path.empty ())
         return false;
 
-    if (get_source_editor_from_path (a_path)) {return true;}
+    SourceEditor *source_editor = 0;
+    if ((source_editor = get_source_editor_from_path (a_path)))
+        return source_editor;
 
     NEMIVER_TRY
 
     Glib::RefPtr<SourceBuffer> source_buffer;
     if (!load_file (a_path, source_buffer)) {
-        return false;
+        return 0;
     }
 
-    SourceEditor *source_editor =
-        create_source_editor (source_buffer,
-                              /*a_disassembly_view=*/false,
-                              a_path,
-                              a_current_line,
-                              /*a_current_address=*/"");
+    source_editor = create_source_editor (source_buffer,
+                                          /*a_asm_view=*/false,
+                                          a_path,
+                                          a_current_line,
+                                          /*a_current_address=*/"");
 
     THROW_IF_FAIL (source_editor);
     source_editor->show_all ();
     append_source_editor (*source_editor, a_path);
 
-    NEMIVER_CATCH_AND_RETURN (false)
-    return true;
+    NEMIVER_CATCH_AND_RETURN (0)
+    return source_editor;
 }
 
-bool
-DBGPerspective::open_file (const UString &a_path,
-                           int current_line,
-                           bool a_reload_visual_breakpoint)
+SourceEditor*
+DBGPerspective::open_file_real (const UString &a_path,
+                                int current_line,
+                                bool a_reload_visual_breakpoint)
 {
     THROW_IF_FAIL (m_priv);
 
-    bool res = open_file (a_path, current_line);
-    if (res && a_reload_visual_breakpoint) {
-        apply_decorations_to_text (a_path);
+    SourceEditor *editor = open_file_real (a_path, current_line);
+    if (editor && a_reload_visual_breakpoint) {
+        apply_decorations (editor);
     }
-    return res;
+    return editor;
 }
 
 void
@@ -5364,7 +5708,7 @@ DBGPerspective::close_file (const UString &a_path)
 }
 
 const UString&
-DBGPerspective::get_disassembly_title ()
+DBGPerspective::get_asm_title ()
 {
     static UString disass_title;
     if (disass_title.empty ()) {
@@ -5374,9 +5718,9 @@ DBGPerspective::get_disassembly_title ()
 }
 
 bool
-DBGPerspective::load_disassembly (const IDebugger::DisassembleInfo &/*a_info*/,
-                                  const std::list<IDebugger::AsmInstr> &a_asm,
-                                  Glib::RefPtr<SourceBuffer> &a_source_buffer)
+DBGPerspective::load_asm (const IDebugger::DisassembleInfo &a_info,
+                          const std::list<IDebugger::AsmInstr> &a_asm,
+                          Glib::RefPtr<SourceBuffer> &a_source_buffer)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -5389,99 +5733,187 @@ DBGPerspective::load_disassembly (const IDebugger::DisassembleInfo &/*a_info*/,
     }
     THROW_IF_FAIL (a_source_buffer);
 
-    std::list<IDebugger::AsmInstr>::const_iterator it;
-    for (it = a_asm.begin (); it != a_asm.end (); ++it) {
-        ostringstream os;
-        a_source_buffer->insert (a_source_buffer->end (),
-                                 it->address ());
-        a_source_buffer->insert (a_source_buffer->end (),
-                                 "  ");
-        os << "<" << it->function ();
-        if (!it->offset ().empty () && it->offset () != "0")
-            os << "+" << it->offset ();
-        os << ">:  ";
-        os << it->instruction ();
-        os << std::endl;
-        a_source_buffer->insert (a_source_buffer->end (),
-                                 os.str ());
-    }
+    add_asm (a_info, a_asm, a_source_buffer, /*append=*/ true);
 
-    return true;
     NEMIVER_CATCH_AND_RETURN (false)
+    return true;
 }
 
-// If new disassembly dedicated tab was already present in the perspective,
-// create  a new one, otherwise, reuse the one that was already present.
-// Then load the assembly insns a_asm  described by a_info into the
-// source buffer of the disassembly tab.
-// Return true upon successful completion, false otherwise.
+static void
+write_asm_instr (std::ostringstream &a_os,
+                 const IDebugger::AsmInstr &a_instr)
+{
+    a_os << a_instr.address ();
+    a_os << "  ";
+    a_os << "<" << a_instr.function ();
+    if (!a_instr.offset ().empty () && a_instr.offset () != "0")
+        a_os << "+" << a_instr.offset ();
+    a_os << ">:  ";
+    a_os << a_instr.instruction ();
+}
+
 bool
-DBGPerspective::open_disassembly (const IDebugger::DisassembleInfo &a_info,
-                                  const std::list<IDebugger::AsmInstr> &a_asm)
+DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
+                         const std::list<IDebugger::AsmInstr> &a_asm,
+                         Glib::RefPtr<SourceBuffer> &a_buf,
+                         bool a_append)
+{
+    if (!a_buf)
+        return false;
+
+    std::list<IDebugger::AsmInstr>::const_iterator it = a_asm.begin ();
+    if (it == a_asm.end ())
+        return true;
+
+    // Write the first asm instruction into a string stream.
+    std::ostringstream first_os, endl_os;
+    write_asm_instr (first_os, *it);
+    endl_os << std::endl;
+
+    // Figure out where to insert the asm instrs, depending on a_append
+    // (either prepend or append it)
+    // Also, if a_buf is not empty and we are going to append asm
+    // instrs, make sure to add an "end line" before appending our asm
+    // instrs.
+    Gtk::TextBuffer::iterator insert_it;
+    if (a_append) {
+        insert_it = a_buf->end ();
+        if (a_buf->get_char_count () != 0)
+            insert_it = a_buf->insert (insert_it, endl_os.str ());
+    } else {
+        insert_it = a_buf->begin ();
+    }
+    // Really insert the the first asm instrs.
+    insert_it = a_buf->insert (insert_it, first_os.str ());
+
+    // Append the remaing asm instrs. Make sure to add an "end of line"
+    // before each asm instr.
+    for (++it; it != a_asm.end (); ++it) {
+        ostringstream os;
+        write_asm_instr (os, *it);
+        insert_it = a_buf->insert (insert_it, endl_os.str ());
+        insert_it = a_buf->insert (insert_it, os.str ());
+    }
+    return true;
+}
+
+// If no asm dedicated tab was already present in the perspective,
+// create  a new one, otherwise reuse the one that was already present.
+// Then load the assembly insns a_asm  described by a_info into the
+// source buffer of the asm tab.
+// Return true upon successful completion, false otherwise.
+SourceEditor*
+DBGPerspective::open_asm (const IDebugger::DisassembleInfo &a_info,
+                          const std::list<IDebugger::AsmInstr> &a_asm,
+                          bool a_set_where)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+    SourceEditor *source_editor = 0;
     NEMIVER_TRY
 
     Glib::RefPtr<SourceBuffer> source_buffer;
 
-    SourceEditor *source_editor =
-        get_source_editor_from_path (get_disassembly_title ());
+    source_editor = get_source_editor_from_path (get_asm_title ());
 
     if (source_editor) {
         source_buffer = source_editor->source_view ().get_source_buffer ();
         source_buffer->erase (source_buffer->begin (), source_buffer->end ());
     }
-    if (!load_disassembly (a_info, a_asm, source_buffer)) {
-        return false;
+    if (load_asm (a_info, a_asm, source_buffer) == 0) {
+        return 0;
     }
     if (!source_editor) {
         source_editor =
             create_source_editor (source_buffer,
-                                  /*a_disassembly_view=*/true,
-                                  get_disassembly_title (),
-                                  -1,
+                                  /*a_asm_view=*/true,
+                                  get_asm_title (),
+                                  /*curren_line=*/-1,
                                   /*a_current_address=*/"");
         THROW_IF_FAIL (source_editor);
         source_editor->show_all ();
-        append_source_editor (*source_editor, get_disassembly_title ());
+        append_source_editor (*source_editor, get_asm_title ());
     }
 
-    NEMIVER_CATCH_AND_RETURN (false);
+    NEMIVER_CATCH_AND_RETURN (0);
 
-    return true;
+    if (source_editor && a_set_where) {
+        bring_source_as_current (source_editor);
+        if (!m_priv->current_frame.has_empty_address ())
+            set_where (source_editor, m_priv->current_frame.address (),
+                       /*do_scroll=*/true, /*try_hard=*/true);
+    }
+
+    return source_editor;
 }
 
 // Get the source editor of the source file being currently debugged,
-// switch it into the disassembly mode and load the asm insns
+// switch it into the asm mode and load the asm insns
 // represented by a_info and a_asm into its source buffer.
 // \param a_info descriptor of the assembly instructions
 // \param a_asm a list of asm instructions.
 void
-DBGPerspective::switch_to_disassembly
-                    (const IDebugger::DisassembleInfo &a_info,
-                     const std::list<IDebugger::AsmInstr> &a_asm)
+DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
+                               const std::list<IDebugger::AsmInstr> &a_asm)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     SourceEditor *source_editor = get_current_source_editor ();
-    if (source_editor == 0)
+    switch_to_asm (a_info, a_asm, source_editor);
+}
+
+// Switch a_source_editor into the asm mode and load the asm insns
+// represented by a_info and a_asm into its source buffer.
+// \param a_info descriptor of the assembly instructions
+// \param a_asm a list of asm instructions.
+void
+DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
+                               const std::list<IDebugger::AsmInstr> &a_asm,
+                               SourceEditor *a_source_editor)
+{
+    if (!a_source_editor)
         return;
 
+    a_source_editor->clear_decorations ();
+
     Glib::RefPtr<SourceBuffer> asm_buf;
-    if ((asm_buf = source_editor->get_assembly_source_buffer ()) == 0) {
+    if ((asm_buf = a_source_editor->get_assembly_source_buffer ()) == 0) {
         setup_buffer_mime_and_lang (asm_buf, "test/x-asm");
-        source_editor->register_assembly_source_buffer (asm_buf);
-        asm_buf = source_editor->get_assembly_source_buffer ();
+        a_source_editor->register_assembly_source_buffer (asm_buf);
+        asm_buf = a_source_editor->get_assembly_source_buffer ();
         RETURN_IF_FAIL (asm_buf);
     }
-    if (!load_disassembly (a_info, a_asm, asm_buf)) {
+    if (!load_asm (a_info, a_asm, asm_buf)) {
         LOG_ERROR ("failed to load asm");
         return;
     }
-    if (!source_editor->switch_to_assembly_source_buffer ()) {
+    if (!a_source_editor->switch_to_assembly_source_buffer ()) {
         LOG_ERROR ("Could not switch the current view to asm");
+        return;
     }
+    a_source_editor->current_line (-1);
+    apply_decorations (a_source_editor,
+                       /*scroll_to_where_marker=*/true);
+}
+
+void
+DBGPerspective::pump_asm_including_address (SourceEditor *a_editor,
+                                            const Address a_address)
+{
+    Range r;
+
+    if (!a_editor
+        || !a_editor->get_assembly_address_range (r)
+        || r.contains (a_address))
+        return;
+
+    r.extend (a_address);
+    IDebugger::DisassSlot slot =
+        sigc::bind (sigc::mem_fun (this,
+                                   &DBGPerspective::on_debugger_asm_signal2),
+                    a_editor);
+
+    disassemble_and_do (slot);
 }
 
 // Get the source editor of the source file being currently debugged,
@@ -5493,6 +5925,9 @@ DBGPerspective::switch_to_source_code ()
     SourceEditor *source_editor = get_current_source_editor ();
     if (source_editor == 0)
         return;
+
+    source_editor->clear_decorations ();
+
     Glib::RefPtr<SourceBuffer> source_buf;
     UString source_path;
     if ((source_buf = source_editor->get_non_assembly_source_buffer ()) == 0) {
@@ -5501,7 +5936,7 @@ DBGPerspective::switch_to_source_code ()
         // the source code corresponding to the current frame. For that,
         // we'll hope to have proper debug info for the binary being
         // debugged, and the source code available on disk.
-        if (m_priv->current_frame.address ().empty ()) {
+        if (m_priv->current_frame.has_empty_address ()) {
             LOG_DD ("No current instruction pointer");
             return;
         }
@@ -5522,8 +5957,8 @@ DBGPerspective::switch_to_source_code ()
         source_editor->register_non_assembly_source_buffer (source_buf);
     }
     source_editor->switch_to_non_assembly_source_buffer ();
-    source_editor->get_path (source_path);
-    apply_decorations_to_text (source_path);
+    apply_decorations (source_editor,
+                       /*scroll_to_where_marker=*/true);
 }
 
 Gtk::Widget*
@@ -5619,10 +6054,10 @@ DBGPerspective::reload_file (const UString &a_path)
     int current_column = editor->current_column ();
     if (!load_file (a_path, buffer))
         return false;
-    editor->source_view ().set_source_buffer (buffer);
+    editor->register_non_assembly_source_buffer (buffer);
     editor->current_line (current_line);
     editor->current_column (current_column);
-    apply_decorations_to_text (a_path);
+    apply_decorations (a_path);
     return true;
 }
 
@@ -6362,6 +6797,22 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
 }
 
 bool
+DBGPerspective::get_breakpoint_number (const Address &a_address,
+                                       int &a_break_num)
+{
+    map<int, IDebugger::Breakpoint>::const_iterator iter;
+    for (iter = m_priv->breakpoints.begin ();
+         iter != m_priv->breakpoints.end ();
+         ++iter) {
+        if (a_address == iter->second.address ()) {
+            a_break_num = iter->second.number ();
+            return true;
+        }
+    }
+    return false;
+}
+
+bool
 DBGPerspective::delete_breakpoint ()
 {
     SourceEditor *source_editor = get_current_source_editor ();
@@ -6394,15 +6845,6 @@ DBGPerspective::delete_breakpoint (int a_breakpoint_num)
     }
     debugger ()->delete_breakpoint (a_breakpoint_num);
     return true;
-}
-
-bool
-DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
-                                          int a_linenum, bool enabled)
-{
-    UString actual_file_path;
-    return append_visual_breakpoint (a_file_name, a_linenum,
-                                     actual_file_path, enabled);
 }
 
 // Popup a dialog asking the user to select the file a_file_name.
@@ -6438,61 +6880,27 @@ DBGPerspective::ask_user_to_select_file (const UString &a_file_name,
 }
 
 bool
-DBGPerspective::append_visual_breakpoint (const UString &a_file_name,
+DBGPerspective::append_visual_breakpoint (SourceEditor *a_editor,
                                           int a_linenum,
-                                          UString &a_actual_file_path,
-                                          bool enabled)
+                                          bool a_enabled)
 {
-    if (a_file_name.empty()) {
-        LOG_ERROR_DD ("a_file_name is empty");
-        return false;
-    }
-    THROW_IF_FAIL(m_priv);
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
-    LOG_DD ("a_file_name: " << a_file_name);
-    LOG_DD ("a_linenum: " << (int)a_linenum);
-
-    if (a_linenum < 0) {a_linenum = 0;}
-
-    UString actual_file_path;
-    SourceEditor *source_editor =
-                        get_source_editor_from_path (a_file_name,
-                                                     actual_file_path);
-    if (source_editor == 0) {
-        if (!find_absolute_path (a_file_name, actual_file_path)) {
-            if (ask_user_to_select_file (a_file_name, actual_file_path)) {
-                UString parent_dir =
-                    Glib::filename_to_utf8
-                        (Glib::path_get_dirname (actual_file_path));
-                m_priv->search_paths.push_back (parent_dir);
-            }
-        }
-        open_file (actual_file_path);
-        source_editor = get_source_editor_from_path (a_file_name,
-                                                      actual_file_path);
-    }
-    // if that didn't work, look for an opened source editor
-    // that matches the base name
-    if (source_editor == 0) {
-        source_editor = get_source_editor_from_path (a_file_name,
-                                                     actual_file_path,
-                                                     /*basename_only=*/true);
-    }
-
-    // finally, if none of these things worked, display an error
-    if (!source_editor) {
-        LOG_ERROR ("Could not find source editor for file: '"
-                << a_file_name
-                << "'");
+    if (a_editor == 0)
         return false;
-    } else {
-        LOG_DD ("setting actual visual bp in the source editor");
-        source_editor->set_visual_breakpoint_at_line (a_linenum, enabled);
-    }
+    return a_editor->set_visual_breakpoint_at_line (a_linenum, a_enabled);
+}
 
-    a_actual_file_path = actual_file_path;
-    return true;
+bool
+DBGPerspective::append_visual_breakpoint (SourceEditor *a_editor,
+                                          const Address &a_address,
+                                          bool a_enabled)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD
+
+    if (a_editor == 0)
+        return false;
+    return a_editor->set_visual_breakpoint_at_address (a_address, a_enabled);
 }
 
 void
@@ -6569,39 +6977,122 @@ DBGPerspective::remove_visual_decorations_from_text
 }
 
 bool
-DBGPerspective::apply_decorations_to_text (const UString &a_file_path)
+DBGPerspective::apply_decorations (const UString &a_file_path)
 {
     SourceEditor *editor = get_source_editor_from_path (a_file_path);
     RETURN_VAL_IF_FAIL (editor, false);
 
-    map<int, IDebugger::BreakPoint>::const_iterator it;
+    return apply_decorations (editor);
+}
+
+bool
+DBGPerspective::apply_decorations (SourceEditor *a_editor,
+                                   bool a_scroll_to_where_marker)
+{
+    bool result = false;
+    if (a_editor == 0)
+        return result;
+
+    SourceEditor::BufferType type = a_editor->get_buffer_type ();
+    switch (type) {
+        case SourceEditor::BUFFER_TYPE_SOURCE:
+            result = apply_decorations_to_source (a_editor,
+                                                  a_scroll_to_where_marker);
+            break;
+        case SourceEditor::BUFFER_TYPE_ASSEMBLY:
+            result = apply_decorations_to_asm (a_editor,
+                                               a_scroll_to_where_marker);
+            break;
+        case SourceEditor::BUFFER_TYPE_UNDEFINED:
+            break;
+    }
+    return result;
+}
+
+bool
+DBGPerspective::apply_decorations_to_source (SourceEditor *a_editor,
+                                             bool a_scroll_to_where_marker)
+{
+    if (a_editor == 0)
+        return false;
+
+    THROW_IF_FAIL (a_editor->get_buffer_type ()
+                   == SourceEditor::BUFFER_TYPE_SOURCE);
+
+    map<int, IDebugger::Breakpoint>::const_iterator it;
     for (it = m_priv->breakpoints.begin ();
          it != m_priv->breakpoints.end ();
          ++it) {
-        if (a_file_path == it->second.file_full_name ()) {
-            append_visual_breakpoint (a_file_path, it->second.line () - 1);
+        if (a_editor->get_path () == it->second.file_full_name ()) {
+            append_visual_breakpoint (a_editor,
+                                      it->second.line (),
+                                      it->second.enabled ());
         }
     }
-    //scroll to the line that was precedently selected
-    //or to the one pointed to by the current line marker
-    bool scroll_to_where_marker = false;
-    int cur_line = editor->current_line ();
-    if (cur_line > 0) {
+
+    // If we don't want to scroll to the "where marker",
+    // the scroll to the line that was precedently selected
+    int cur_line;
+    if (!a_scroll_to_where_marker
+        && (cur_line = a_editor->current_line ()) > 0) {
         LOG_DD ("scroll to cur_line: " << (int)cur_line);
         Gtk::TextBuffer::iterator iter =
-        editor->source_view().get_buffer ()->get_iter_at_line (cur_line);
+        a_editor->source_view ().get_buffer ()->get_iter_at_line (cur_line);
         if (iter)
-            editor->source_view ().get_buffer ()->place_cursor (iter);
-        editor->scroll_to_line (cur_line);
-        scroll_to_where_marker=false;
-    } else {
-        scroll_to_where_marker=true;
+            a_editor->source_view ().get_buffer ()->place_cursor (iter);
+        a_editor->scroll_to_line (cur_line);
     }
-    if (m_priv->current_frame.file_name () == a_file_path) {
-        set_where (m_priv->current_frame.file_name (),
+
+    if (m_priv->current_frame.file_name () == a_editor->get_path ())
+        set_where (a_editor,
                    m_priv->current_frame.line (),
-                   scroll_to_where_marker);
+                   /*a_scroll_to_where_marker=*/true);
+    return true;
+}
+
+bool
+DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
+                                          bool a_scroll_to_where_marker)
+{
+    if (a_editor == 0)
+        return false;
+
+    THROW_IF_FAIL (a_editor->get_buffer_type ()
+                   == SourceEditor::BUFFER_TYPE_ASSEMBLY);
+
+    map<int, IDebugger::Breakpoint>::const_iterator it;
+    for (it = m_priv->breakpoints.begin ();
+         it != m_priv->breakpoints.end ();
+         ++it) {
+        if (a_editor->get_path () == it->second.file_full_name ()) {
+            Address addr = it->second.address ();
+            if (!append_visual_breakpoint (a_editor, addr,
+                                           it->second.enabled ())) {
+                LOG_ERROR ("Could'nt find line for address: "
+                           << static_cast<string> (addr)
+                           << " for file: "
+                           << a_editor->get_path ());
+            }
+        }
     }
+    // If we don't want to scroll to the "where marker", then scroll to
+    // the line that was precedently selected
+    int cur_line;
+    if (!a_scroll_to_where_marker
+        && (cur_line = a_editor->current_line ()) > 0) {
+        LOG_DD ("scroll to cur_line: " << cur_line);
+        Gtk::TextBuffer::iterator iter =
+        a_editor->source_view ().get_buffer ()->get_iter_at_line (cur_line);
+        if (iter)
+            a_editor->source_view ().get_buffer ()->place_cursor (iter);
+        a_editor->scroll_to_line (cur_line);
+    }
+
+    if (m_priv->current_frame.file_name () == a_editor->get_path ())
+        set_where (a_editor,
+                   m_priv->current_frame.address (),
+                   a_scroll_to_where_marker,
+                   /*try_hard=*/true);
     return true;
 }
 
@@ -6609,15 +7100,27 @@ bool
 DBGPerspective::delete_breakpoint (const UString &a_file_name,
                                    int a_line_num)
 {
-    int breakpoint_number=0;
-    bool enabled=false;
+    int breakpoint_number = 0;
+    bool enabled = false;
     if (!get_breakpoint_number (a_file_name, a_line_num,
-                                breakpoint_number, enabled)) {
+                                breakpoint_number, enabled))
         return false;
-    }
-    if (breakpoint_number < 1) {return false;}
+
+    if (breakpoint_number < 1)
+        return false;
 
     return delete_breakpoint (breakpoint_number);
+}
+
+bool
+DBGPerspective::delete_breakpoint (const Address &a_address)
+{
+    int bp_num = 0;
+    if (!get_breakpoint_number (a_address, bp_num))
+        return false;
+    if (bp_num < 1)
+        return false;
+    return delete_breakpoint (bp_num);
 }
 
 bool
@@ -6625,11 +7128,19 @@ DBGPerspective::is_breakpoint_set_at_line (const UString &a_file_path,
                                            int a_line_num,
                                            bool &a_enabled)
 {
-    int break_num=0;
+    int break_num = 0;
     if (get_breakpoint_number (a_file_path, a_line_num,
-                               break_num, a_enabled)) {
+                               break_num, a_enabled))
         return true;
-    }
+    return false;
+}
+
+bool
+DBGPerspective::is_breakpoint_set_at_address (const Address &a_address)
+{
+    int break_num = 0;
+    if (get_breakpoint_number (a_address, break_num))
+        return true;
     return false;
 }
 
@@ -6647,6 +7158,16 @@ DBGPerspective::toggle_breakpoint (const UString &a_file_path,
     } else {
         LOG_DD ("breakpoint no set yet, set it!");
         set_breakpoint (a_file_path, a_line_num, "");
+    }
+}
+
+void
+DBGPerspective::toggle_breakpoint (const Address &a_address)
+{
+    if (is_breakpoint_set_at_address (a_address)) {
+        delete_breakpoint (a_address);
+    } else {
+        set_breakpoint (a_address);
     }
 }
 
@@ -6839,36 +7360,74 @@ DBGPerspective::disassemble (bool a_show_asm_in_new_tab)
 {
     THROW_IF_FAIL (m_priv);
 
+    IDebugger::DisassSlot slot;
+
+    if (a_show_asm_in_new_tab)
+        slot =
+            sigc::bind (sigc::mem_fun (this,
+                                       &DBGPerspective::on_debugger_asm_signal1),
+                        true);
+    else
+        slot =
+            sigc::bind (sigc::mem_fun (this,
+                                       &DBGPerspective::on_debugger_asm_signal1),
+                        false);
+
+    disassemble_and_do (slot);
+}
+
+void
+DBGPerspective::disassemble_and_do (IDebugger::DisassSlot &a_what_to_do)
+{
     // If we don't have the current instruction pointer (IP), there is
     // nothing we can do.
     if (!debugger ()->is_attached_to_target ()
-        || m_priv->current_frame.address ().empty ()) {
+        || m_priv->current_frame.has_empty_address ()) {
         LOG_DD ("No current instruction pointer");
         return;
     }
 
-    sigc::slot<void,
-               const IDebugger::DisassembleInfo,
-               const std::list<IDebugger::AsmInstr>& > s;
-    if (a_show_asm_in_new_tab)
-        s = sigc::bind (sigc::mem_fun (this,
-                           &DBGPerspective::on_debugger_disassembled_signal),
-                        true);
+    Range addr_range (m_priv->current_frame.address (),
+                      m_priv->current_frame.address ());
+    get_frame_breakpoints_address_range (m_priv->current_frame, addr_range);
 
-    else
-        s = sigc::bind
-                (sigc::mem_fun
-                     (this,
-                      &DBGPerspective::on_debugger_disassembled_signal),
-                 false);
+    THROW_IF_FAIL (addr_range.min () != 0
+                   && addr_range.max () != 0);
 
-    debugger ()->disassemble
-                (0 /* Start @ to disassemble */,
-                 true /* Start @ is relative to current IP */,
-                 NUM_INSTR_TO_DISASSEMBLE * sizeof (void *),
-                 true /* End @ is relative to current IP */,
-                 s);
+    debugger ()->disassemble (/*start_addr=*/addr_range.min (),
+                              /*start_addr_relative_to_pc=*/false,
+                              /*end_addr=*/addr_range.max () + 20,
+                              /*end_addr_relative_to_pc=*/false,
+                              a_what_to_do);
 }
+
+void
+DBGPerspective::disassemble_around_address_and_do
+                                (const Address &a_address,
+                                 IDebugger::DisassSlot &a_what_to_do)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (!debugger ()->is_attached_to_target ()
+        || a_address.empty ()) {
+        LOG_DD ("No current instruction pointer");
+        return;
+    }
+
+    if (a_address.empty ())
+        return;
+
+    Range addr_range (a_address, a_address);
+    THROW_IF_FAIL (addr_range.min () != 0
+                   && addr_range.max () != 0);
+
+    debugger ()->disassemble (/*start_addr=*/addr_range.min (),
+                              /*start_addr_relative_to_pc=*/false,
+                              /*end_addr=*/addr_range.max () + 20,
+                              /*end_addr_relative_to_pc=*/false,
+                              a_what_to_do);
+}
+
 
 void
 DBGPerspective::toggle_breakpoint_enabled ()
