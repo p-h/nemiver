@@ -14,14 +14,14 @@
   <maintainer>
     <foaf:Person>
       <foaf:name>Dodji Seketeli</foaf:name>
-      <foaf:mbox rdf:resource="dodji@seketeli.org" />
+      <foaf:mbox rdf:resource="mailto:dodji@seketeli.org" />
       <gnome:userid>dodji</gnome:userid>
     </foaf:Person>
   </maintainer>
   <maintainer>
     <foaf:Person>
       <foaf:name>Jonathon Jongsma</foaf:name>
-      <foaf:mbox rdf:resource="jonathon@quotidian.org" />
+      <foaf:mbox rdf:resource="mailto:jonathon@quotidian.org" />
       <gnome:userid>jjongsma</gnome:userid>
     </foaf:Person>
   </maintainer>
