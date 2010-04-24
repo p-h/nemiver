@@ -100,6 +100,36 @@ int_to_string (size_t an_int)
     return str;
 }
 
+bool
+string_is_number (const string &a_str)
+{
+    for (unsigned i = 0; i < a_str.size (); ++i)
+        if (!isdigit (a_str[i]))
+            return false;
+
+    return true;
+}
+
+bool
+string_is_hexa_number (const string &a_str)
+{
+
+    if (a_str.empty ())
+        return false;
+
+    unsigned i = 0;
+    if (a_str.size () > 2
+        && a_str[0] == '0'
+        && (a_str[1] == 'x' || a_str[1] == 'X'))
+        i = 2;
+
+    for (; i < a_str.size (); ++i)
+        if (!isxdigit (a_str[i]))
+            return false;
+
+    return true;
+}
+
 std::vector<UString>
 split (const UString &a_string, const UString &a_delim)
 {

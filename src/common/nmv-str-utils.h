@@ -37,6 +37,8 @@ extract_path_and_line_num_from_location (const std::string &a_location,
                                          std::string &a_line_num);
 size_t hexa_to_int (const string &a_hexa_str);
 std::string int_to_string (size_t an_int);
+bool string_is_number (const string&);
+bool string_is_hexa_number (const string &a_str);
 vector<UString> split (const UString &a_string, const UString &a_delim);
 vector<UString> split_set (const UString &a_string, const UString &a_delim_set);
 UString join (const vector<UString> &a_elements,
