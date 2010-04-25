@@ -632,6 +632,8 @@ SourceEditor::current_column (int &a_col)
 bool
 SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     LOG_DD ("a_line: " << a_line);
 
     THROW_IF_FAIL (a_line >= 0);

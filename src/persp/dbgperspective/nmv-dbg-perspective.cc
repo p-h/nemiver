@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <glib/gi18n.h>
 
@@ -39,7 +40,6 @@
 #include <giomm/file.h>
 #include <giomm/contenttype.h>
 #else
-#include <fstream>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #include <libgnomevfs/gnome-vfs-monitor.h>
 #include <libgnomevfs/gnome-vfs-ops.h>
@@ -567,6 +567,13 @@ public:
     bool load_asm (const IDebugger::DisassembleInfo &a_info,
                    const std::list<IDebugger::Asm> &a_asm,
                    Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
+
+    bool read_file_line (const UString&, int, string&);
+    void write_asm_instr (std::ostringstream&,
+                          const IDebugger::AsmInstr&);
+
+    void write_asm_instr (std::ostringstream&,
+                          const IDebugger::Asm&);
 
     bool add_asm (const IDebugger::DisassembleInfo &a_info,
                   const std::list<IDebugger::Asm> &a_asm,
@@ -2466,7 +2473,7 @@ DBGPerspective::on_debugger_breakpoints_set_signal
 
 void
 DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
-                                            bool a_has_frame,
+                                            bool /*a_has_frame*/,
                                             const IDebugger::Frame &a_frame,
                                             int , int, const UString &)
 {
@@ -2482,25 +2489,12 @@ DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
     update_src_dependant_bp_actions_sensitiveness ();
     m_priv->current_frame = a_frame;
 
-    bool where_set = false;
-    UString file_path (a_frame.file_full_name ());
-
-    if (a_has_frame && file_path.empty ()
-        && !a_frame.file_name ().empty ()) {
+    UString file_path = a_frame.file_full_name ();
+    if (file_path.empty ())
         file_path = a_frame.file_name ();
-        if (!find_file_in_source_dirs (file_path, file_path)) {
-            UString message;
-            message.printf(_("Could not find file %s"), file_path.c_str ());
-            display_error (message);
-        }
-    }
-    if (a_has_frame && !file_path.empty ()) {
-        m_priv->current_frame.file_name (file_path);
-        where_set = set_where (file_path, a_frame,
-                               /*do_scroll=*/true,
-                               /*try_hard=*/true);
-    }
-
+    bool where_set = set_where (file_path, a_frame,
+                                /*do_scroll=*/true,
+                                /*try_hard=*/true);
     if (!where_set) {
         SourceEditor *e = bring_source_as_current (file_path);
         disassemble (e ? false : true);
@@ -4529,6 +4523,8 @@ DBGPerspective::set_where (SourceEditor *a_editor,
                            bool a_do_scroll,
                            bool a_try_hard)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     if (!a_editor)
         return false;
 
@@ -5771,9 +5767,63 @@ DBGPerspective::load_asm (const IDebugger::DisassembleInfo &a_info,
     return true;
 }
 
-static void
-write_asm_instr (std::ostringstream &a_os,
-                 const IDebugger::AsmInstr &a_instr)
+bool
+DBGPerspective::read_file_line (const UString &a_file_path,
+                                int a_line_number,
+                                string &a_line)
+{
+    if (a_file_path.empty ())
+        return false;
+
+
+    UString path;
+    if (!find_absolute_path_or_ask_user (a_file_path, path))
+        return false;
+    bool found_line = false;
+    int line_num = 1;
+    char c = 0;
+
+    NEMIVER_TRY
+
+    std::ifstream file (path.c_str ());
+
+    if (!file.good ()) {
+        LOG_ERROR ("Could not open file " + path);
+        return false;
+    }
+
+    while (true) {
+        if (line_num == a_line_number) {
+            found_line = true;
+            break;
+        }
+        file.get (c);
+        if (!file.good ())
+            break;
+        if (c == '\n')
+            ++line_num;
+    }
+    if (found_line) {
+        a_line.clear ();
+        while (true) {
+            file.get (c);
+            if (!file.good ())
+                break;
+            if (c == '\n')
+                break;
+            a_line += c;
+        }
+    }
+    file.close ();
+
+    NEMIVER_CATCH
+
+    return found_line;
+}
+
+void
+DBGPerspective::write_asm_instr (std::ostringstream &a_os,
+                                 const IDebugger::AsmInstr &a_instr)
 {
     a_os << a_instr.address ();
     a_os << "  ";
@@ -5784,9 +5834,9 @@ write_asm_instr (std::ostringstream &a_os,
     a_os << a_instr.instruction ();
 }
 
-static void
-write_asm_instr (std::ostringstream &a_os,
-                 const IDebugger::Asm &a_asm)
+void
+DBGPerspective::write_asm_instr (std::ostringstream &a_os,
+                                 const IDebugger::Asm &a_asm)
 {
     switch (a_asm.which ()) {
         case IDebugger::Asm::TYPE_PURE:
@@ -5794,12 +5844,21 @@ write_asm_instr (std::ostringstream &a_os,
             break;
         case IDebugger::Asm::TYPE_MIXED: {
             const IDebugger::MixedAsmInstr &instr = a_asm.mixed_instr ();
-
-            a_os << "<src file=\""
-                     << instr.file_path ()
-                     << "\" line=\""
-                     << instr.line_number ()
-                     << "\"/>\n";
+            string line;
+            if (read_file_line (instr.file_path (),
+                                instr.line_number (),
+                                line)) {
+                if (!line.empty ()) {
+                    a_os << line; // line does not end with a '\n' char.
+                    a_os << '\n';
+                }
+            } else {
+                a_os << "<src file=\""
+                         << instr.file_path ()
+                         << "\" line=\""
+                         << instr.line_number ()
+                         << "\"/>\n";
+            }
 
             list<IDebugger::AsmInstr>::const_iterator it =
                                                     instr.instrs ().begin ();
@@ -5857,7 +5916,7 @@ DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
     // Really insert the the first asm instrs.
     insert_it = a_buf->insert (insert_it, first_os.str ());
 
-    // Append the remaing asm instrs. Make sure to add an "end of line"
+    // Append the remaining asm instrs. Make sure to add an "end of line"
     // before each asm instr.
     for (++it; it != a_asm.end (); ++it) {
         ostringstream os;
@@ -5971,6 +6030,8 @@ void
 DBGPerspective::pump_asm_including_address (SourceEditor *a_editor,
                                             const Address a_address)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     Range r;
 
     if (!a_editor
@@ -7450,6 +7511,8 @@ DBGPerspective::disassemble (bool a_show_asm_in_new_tab)
 void
 DBGPerspective::disassemble_and_do (IDebugger::DisassSlot &a_what_to_do)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     // If we don't have the current instruction pointer (IP), there is
     // nothing we can do.
     if (!debugger ()->is_attached_to_target ()
