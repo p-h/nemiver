@@ -95,12 +95,11 @@
 #include "nmv-registers-view.h"
 #include "nmv-call-function-dialog.h"
 #include "nmv-conf-keys.h"
-
 #ifdef WITH_MEMORYVIEW
 #include "nmv-memory-view.h"
 #endif // WITH_MEMORYVIEW
-
 #include "nmv-watchpoint-dialog.h"
+#include "nmv-asm-utils.h"
 
 using namespace std;
 using namespace nemiver::common;
@@ -132,6 +131,7 @@ const char *PROGRAM_CWD= "programcwd";
 const char *LAST_RUN_TIME= "lastruntime";
 const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain";
+const char *DBG_PERSPECTIVE_ASM_DOMAIN = "dbg-perspective-asm-domain";
 
 static const int NUM_INSTR_TO_DISASSEMBLE = 20;
 
@@ -167,7 +167,10 @@ const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
                 "/apps/nemiver/dbgperspective/debugger-engine-dynmod";
 const char* CONF_KEY_EDITOR_STYLE_SCHEME =
                 "/apps/nemiver/dbgperspective/editor-style-scheme";
-
+const char* CONF_KEY_ASM_STYLE_PURE =
+                "/apps/nemiver/dbgperspective/asm-style-pure";
+const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS =
+                "/apps/nemiver/dbgperspective/default-num-asm-instrs";
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT);
 const Gtk::StockID STOCK_LINE_POINTER (LINE_POINTER);
@@ -207,6 +210,19 @@ gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
                            GnomeVFSMonitorEventType a_event_type,
                            DBGPerspective *a_persp);
 #endif
+
+static void
+log_asm_insns (std::list<IDebugger::Asm> a_asm)
+{
+    typedef std::list<IDebugger::Asm> Asms;
+    Asms::const_iterator it = a_asm.begin ();
+    if (it != a_asm.end ()) {
+        LOG_D (*it, DBG_PERSPECTIVE_ASM_DOMAIN);
+    }
+    for (++it; it != a_asm.end (); ++it) {
+        LOG_D ("\n" << *it, DBG_PERSPECTIVE_ASM_DOMAIN);
+    }
+}
 
 class DBGPerspective : public IDBGPerspective, public sigc::trackable {
     //non copyable
@@ -397,23 +413,23 @@ private:
 
     void on_debugger_asm_signal1
                             (const IDebugger::DisassembleInfo &a_info,
-                             const std::list<IDebugger::AsmInstr> &a_instrs,
+                             const std::list<IDebugger::Asm> &a_instrs,
                              bool a_show_asm_in_new_tab = true);
 
     void on_debugger_asm_signal2
                             (const IDebugger::DisassembleInfo &info,
-                             const std::list<IDebugger::AsmInstr> &instrs,
+                             const std::list<IDebugger::Asm> &instrs,
                              SourceEditor *editor);
 
     void on_debugger_asm_signal3
                             (const IDebugger::DisassembleInfo &info,
-                             const std::list<IDebugger::AsmInstr> &instrs,
+                             const std::list<IDebugger::Asm> &instrs,
                              SourceEditor *editor,
                              const IDebugger::Breakpoint &a_bp);
 
     void on_debugger_asm_signal4
                             (const IDebugger::DisassembleInfo &info,
-                             const std::list<IDebugger::AsmInstr> &instrs,
+                             const std::list<IDebugger::Asm> &instrs,
                              const Address &address);
 
     void on_variable_created_for_tooltip_signal
@@ -549,23 +565,23 @@ public:
     const UString& get_asm_title ();
 
     bool load_asm (const IDebugger::DisassembleInfo &a_info,
-                   const std::list<IDebugger::AsmInstr> &a_asm,
+                   const std::list<IDebugger::Asm> &a_asm,
                    Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
 
     bool add_asm (const IDebugger::DisassembleInfo &a_info,
-                  const std::list<IDebugger::AsmInstr> &a_asm,
+                  const std::list<IDebugger::Asm> &a_asm,
                   Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf,
                   bool a_append = true);
 
     SourceEditor* open_asm (const IDebugger::DisassembleInfo &a_info,
-                            const std::list<IDebugger::AsmInstr> &a_asm,
+                            const std::list<IDebugger::Asm> &a_asm,
                             bool set_where = false);
 
     void switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                        const std::list<IDebugger::AsmInstr> &a_asm);
+                        const std::list<IDebugger::Asm> &a_asm);
 
     void switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                        const std::list<IDebugger::AsmInstr> &a_asm,
+                        const std::list<IDebugger::Asm> &a_asm,
                         SourceEditor *a_editor);
 
     void pump_asm_including_address (SourceEditor *a_editor,
@@ -986,6 +1002,8 @@ struct DBGPerspective::Priv {
     UString custom_font_name;
     UString system_font_name;
     bool use_launch_terminal;
+    int num_instr_to_disassemble;
+    bool asm_style_pure;
 #ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<gtksourceview::SourceStyleScheme> editor_style;
 #endif // WITH_SOURCEVIEWMM2
@@ -1052,6 +1070,8 @@ struct DBGPerspective::Priv {
         allow_auto_reload_source (true),
         enable_syntax_highlight (true),
         use_launch_terminal (false),
+        num_instr_to_disassemble (num_instr_to_disassemble),
+        asm_style_pure (true),
         mouse_in_source_editor_x (0),
         mouse_in_source_editor_y (0),
         in_show_var_value_at_pos_transaction (false),
@@ -1759,7 +1779,8 @@ DBGPerspective::on_breakpoint_go_to_source_action
                 source_editor->scroll_to_line (a_breakpoint.line ());
                 break;
             case SourceEditor::BUFFER_TYPE_ASSEMBLY:
-                source_editor->scroll_to_address (a_breakpoint.address ());
+                source_editor->scroll_to_address
+                                        (a_breakpoint.address ());
                 break;
             case SourceEditor::BUFFER_TYPE_UNDEFINED:
                 break;
@@ -2281,7 +2302,12 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
                 ()->get_scheme (style_id);
             m_priv->modify_source_editor_style (m_priv->editor_style);
         }
+    }
 #endif // WITH_SOURCEVIEWMM2
+    else if (a_key == CONF_KEY_DEFAULT_NUM_ASM_INSTRS) {
+        m_priv->num_instr_to_disassemble = boost::get<int> (a_value);
+    } else if (a_key == CONF_KEY_ASM_STYLE_PURE) {
+        m_priv->asm_style_pure = boost::get<bool> (a_value);
     }
     NEMIVER_CATCH
 }
@@ -2709,7 +2735,7 @@ DBGPerspective::on_debugger_variable_value_signal
 void
 DBGPerspective::on_debugger_asm_signal1
                             (const IDebugger::DisassembleInfo &a_info,
-                             const std::list<IDebugger::AsmInstr> &a_instrs,
+                             const std::list<IDebugger::Asm> &a_instrs,
                              bool a_show_asm_in_new_tab)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2728,7 +2754,7 @@ DBGPerspective::on_debugger_asm_signal1
 void
 DBGPerspective::on_debugger_asm_signal2
                         (const IDebugger::DisassembleInfo &a_info,
-                         const std::list<IDebugger::AsmInstr> &a_instrs,
+                         const std::list<IDebugger::Asm> &a_instrs,
                          SourceEditor *a_editor)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2743,7 +2769,7 @@ DBGPerspective::on_debugger_asm_signal2
 void
 DBGPerspective::on_debugger_asm_signal3
                         (const IDebugger::DisassembleInfo &a_info,
-                         const std::list<IDebugger::AsmInstr> &a_instrs,
+                         const std::list<IDebugger::Asm> &a_instrs,
                          SourceEditor *a_editor,
                          const IDebugger::Breakpoint &a_bp)
 {
@@ -2760,7 +2786,7 @@ DBGPerspective::on_debugger_asm_signal3
 void
 DBGPerspective::on_debugger_asm_signal4
                         (const IDebugger::DisassembleInfo &a_info,
-                         const std::list<IDebugger::AsmInstr> &a_instrs,
+                         const std::list<IDebugger::Asm> &a_instrs,
                          const Address &a_address)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -4132,9 +4158,10 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     m_priv->pagenum_2_source_editor_map[page_num] = &a_sv;
     m_priv->pagenum_2_path_map[page_num] = path;
 
-    if (!do_monitor_file (path)) {
-        LOG_ERROR ("Failed to start monitoring file: " << path);
-    }
+    if (a_sv.get_buffer_type () == SourceEditor::BUFFER_TYPE_SOURCE)
+        if (!do_monitor_file (path)) {
+            LOG_ERROR ("Failed to start monitoring file: " << path);
+        }
 
     hbox.release ();
     close_button.release ();
@@ -4861,6 +4888,10 @@ DBGPerspective::read_default_config ()
                             m_priv->system_font_name);
     conf_mgr.get_key_value (CONF_KEY_USE_LAUNCH_TERMINAL,
                             m_priv->use_launch_terminal);
+    conf_mgr.get_key_value (CONF_KEY_DEFAULT_NUM_ASM_INSTRS,
+                            m_priv->num_instr_to_disassemble);
+    conf_mgr.get_key_value (CONF_KEY_ASM_STYLE_PURE,
+                            m_priv->asm_style_pure);
     NEMIVER_CATCH_NOX
 
 #ifdef WITH_SOURCEVIEWMM2
@@ -5720,7 +5751,7 @@ DBGPerspective::get_asm_title ()
 
 bool
 DBGPerspective::load_asm (const IDebugger::DisassembleInfo &a_info,
-                          const std::list<IDebugger::AsmInstr> &a_asm,
+                          const std::list<IDebugger::Asm> &a_asm,
                           Glib::RefPtr<SourceBuffer> &a_source_buffer)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -5753,16 +5784,54 @@ write_asm_instr (std::ostringstream &a_os,
     a_os << a_instr.instruction ();
 }
 
+static void
+write_asm_instr (std::ostringstream &a_os,
+                 const IDebugger::Asm &a_asm)
+{
+    switch (a_asm.which ()) {
+        case IDebugger::Asm::TYPE_PURE:
+            write_asm_instr (a_os, a_asm.instr ());
+            break;
+        case IDebugger::Asm::TYPE_MIXED: {
+            const IDebugger::MixedAsmInstr &instr = a_asm.mixed_instr ();
+
+            a_os << "<src file=\""
+                     << instr.file_path ()
+                     << "\" line=\""
+                     << instr.line_number ()
+                     << "\"/>\n";
+
+            list<IDebugger::AsmInstr>::const_iterator it =
+                                                    instr.instrs ().begin ();
+            if (it != instr.instrs ().end ()) {
+                write_asm_instr (a_os, *it);
+                ++it;
+            }
+            for (; it != instr.instrs ().end (); ++it) {
+                a_os << "\n";
+                write_asm_instr (a_os, *it);
+            }
+        }
+            break;
+        default:
+            break;
+    }
+}
+
 bool
 DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
-                         const std::list<IDebugger::AsmInstr> &a_asm,
+                         const std::list<IDebugger::Asm> &a_asm,
                          Glib::RefPtr<SourceBuffer> &a_buf,
                          bool a_append)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     if (!a_buf)
         return false;
 
-    std::list<IDebugger::AsmInstr>::const_iterator it = a_asm.begin ();
+    log_asm_insns (a_asm);
+
+    std::list<IDebugger::Asm>::const_iterator it = a_asm.begin ();
     if (it == a_asm.end ())
         return true;
 
@@ -5779,8 +5848,9 @@ DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
     Gtk::TextBuffer::iterator insert_it;
     if (a_append) {
         insert_it = a_buf->end ();
-        if (a_buf->get_char_count () != 0)
+        if (a_buf->get_char_count () != 0) {
             insert_it = a_buf->insert (insert_it, endl_os.str ());
+        }
     } else {
         insert_it = a_buf->begin ();
     }
@@ -5805,7 +5875,7 @@ DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
 // Return true upon successful completion, false otherwise.
 SourceEditor*
 DBGPerspective::open_asm (const IDebugger::DisassembleInfo &a_info,
-                          const std::list<IDebugger::AsmInstr> &a_asm,
+                          const std::list<IDebugger::Asm> &a_asm,
                           bool a_set_where)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -5855,7 +5925,7 @@ DBGPerspective::open_asm (const IDebugger::DisassembleInfo &a_info,
 // \param a_asm a list of asm instructions.
 void
 DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                               const std::list<IDebugger::AsmInstr> &a_asm)
+                               const std::list<IDebugger::Asm> &a_asm)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -5869,7 +5939,7 @@ DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
 // \param a_asm a list of asm instructions.
 void
 DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                               const std::list<IDebugger::AsmInstr> &a_asm,
+                               const std::list<IDebugger::Asm> &a_asm,
                                SourceEditor *a_source_editor)
 {
     if (!a_source_editor)
@@ -7392,14 +7462,24 @@ DBGPerspective::disassemble_and_do (IDebugger::DisassSlot &a_what_to_do)
                       m_priv->current_frame.address ());
     get_frame_breakpoints_address_range (m_priv->current_frame, addr_range);
 
+    // Increase the address range of instruction to disassemble by a
+    // number N that is equal to m_priv->num_instr_to_disassemble.
+    // 17 is the max size (in bytes) of an instruction on intel
+    // archictecture. So let's say N instructions on IA is at
+    // maximum N x 17.
+    // FIXME: find a way to make this more cross arch.
+    addr_range.max (addr_range.max ()
+                    + m_priv->num_instr_to_disassemble * 17);
+
     THROW_IF_FAIL (addr_range.min () != 0
                    && addr_range.max () != 0);
 
     debugger ()->disassemble (/*start_addr=*/addr_range.min (),
                               /*start_addr_relative_to_pc=*/false,
-                              /*end_addr=*/addr_range.max () + 20,
+                              /*end_addr=*/addr_range.max (),
                               /*end_addr_relative_to_pc=*/false,
-                              a_what_to_do);
+                              a_what_to_do,
+                              m_priv->asm_style_pure);
 }
 
 void
@@ -7421,12 +7501,21 @@ DBGPerspective::disassemble_around_address_and_do
     Range addr_range (a_address, a_address);
     THROW_IF_FAIL (addr_range.min () != 0
                    && addr_range.max () != 0);
+    // Increase the address range of instruction to disassemble by a
+    // number N that is equal to m_priv->num_instr_to_disassemble.
+    // 17 is the max size (in bytes) of an instruction on intel
+    // archictecture. So let's say N instructions on IA is at
+    // maximum N x 17.
+    // FIXME: find a way to make this more cross arch.
+    addr_range.max (addr_range.max ()
+                    + m_priv->num_instr_to_disassemble * 17);
 
     debugger ()->disassemble (/*start_addr=*/addr_range.min (),
                               /*start_addr_relative_to_pc=*/false,
-                              /*end_addr=*/addr_range.max () + 20,
+                              /*end_addr=*/addr_range.max (),
                               /*end_addr_relative_to_pc=*/false,
-                              a_what_to_do);
+                              a_what_to_do,
+                              m_priv->asm_style_pure);
 }
 
 

@@ -25,6 +25,7 @@
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
+#include "common/nmv-env.h"
 #include "nmv-preferences-dialog.h"
 #include "nmv-ui-utils.h"
 #include "nmv-i-conf-mgr.h"
@@ -35,7 +36,7 @@
 #endif
 
 using nemiver::common::DynamicModuleManager;
-
+static const std::string DEFAULT_GDB_BINARY = "default-gdb-binary";
 NEMIVER_BEGIN_NAMESPACE(nemiver)
 
 struct SourceDirsCols : public Gtk::TreeModelColumnRecord {
@@ -86,6 +87,10 @@ public:
     Gtk::RadioButton *always_reload_radio_button;
     Gtk::RadioButton *never_reload_radio_button;
     Gtk::RadioButton *confirm_reload_radio_button;
+    Gtk::RadioButton *pure_asm_radio_button;
+    Gtk::RadioButton *mixed_asm_radio_button;
+    Gtk::SpinButton  *default_num_asm_instrs_spin_button;
+    Gtk::FileChooserButton *gdb_binary_path_chooser_button;
     Glib::RefPtr<Gnome::Glade::Xml> glade;
 
     Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
@@ -102,6 +107,10 @@ public:
         always_reload_radio_button (0),
         never_reload_radio_button (0),
         confirm_reload_radio_button (0),
+        pure_asm_radio_button (0),
+        mixed_asm_radio_button (0),
+        default_num_asm_instrs_spin_button (0),
+        gdb_binary_path_chooser_button (0),
         glade (a_glade)
     {
         init ();
@@ -193,8 +202,27 @@ public:
         update_reload_files_keys ();
     }
 
+    void on_asm_style_toggled_signal ()
+    {
+        update_asm_style_keys ();
+    }
+
+    void on_num_asms_value_changed_signal ()
+    {
+        update_default_num_asm_instrs_key ();
+    }
+
+    void on_gdb_binary_file_set_signal ()
+    {
+        update_gdb_binary_key ();
+    }
+
     void init ()
     {
+
+        // ********************************************
+        // Handle the sources directory preferences tab
+        // ********************************************
 
         list_store = Gtk::ListStore::create (source_dirs_cols ());
         tree_view =
@@ -226,6 +254,10 @@ public:
         (sigc::mem_fun
             (this, &PreferencesDialog::Priv::on_remove_dir_button_clicked));
         remove_dir_button->set_sensitive (false);
+
+        // *************************************
+        // Handle the "Editor" preference tab
+        // *************************************
 
         show_lines_check_button  =
             ui_utils::get_widget_from_glade<Gtk::CheckButton>
@@ -283,7 +315,7 @@ public:
                                                          "editorstylecombobox");
         THROW_IF_FAIL (editor_style_combo);
         m_editor_style_model = Gtk::ListStore::create (m_style_columns);
-#ifdef WITH_SOURCEVIEWMM2
+
         Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> mgr =
             gtksourceview::SourceStyleSchemeManager::get_default ();
         std::list<Glib::ustring> schemes = mgr->get_scheme_ids ();
@@ -307,16 +339,6 @@ public:
         editor_style_combo->signal_changed ().connect (sigc::mem_fun
                     (*this,
                      &PreferencesDialog::Priv::on_editor_style_changed_signal));
-#else
-        Gtk::TreeModel::iterator treeiter = m_editor_style_model->append ();
-        (*treeiter)[m_style_columns.name] =
-                                Glib::ustring ("Only available "
-                                               "with gtksourceviewmm2");
-        editor_style_combo->set_model (m_editor_style_model);
-        editor_style_combo->pack_start (m_style_columns.name);
-        editor_style_combo->set_active (treeiter);
-        editor_style_combo->set_sensitive (false);
-#endif // WITH_SOURCEVIEWMM2
 
         always_reload_radio_button =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
@@ -343,6 +365,47 @@ public:
         confirm_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
             (*this,
              &PreferencesDialog::Priv::on_reload_files_toggled_signal));
+
+        // *************************************
+        // Handle the "Debugger" preferences tab
+        // *************************************
+
+        pure_asm_radio_button =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+                (glade, "pureasmradio");
+        THROW_IF_FAIL (pure_asm_radio_button);
+        pure_asm_radio_button->signal_toggled ().connect
+            (sigc::mem_fun
+                 (*this,
+                  &PreferencesDialog::Priv::on_asm_style_toggled_signal));
+
+        mixed_asm_radio_button =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+                (glade, "mixedasmradio");
+        THROW_IF_FAIL (mixed_asm_radio_button);
+        mixed_asm_radio_button->signal_toggled ().connect
+            (sigc::mem_fun
+                 (*this,
+                  &PreferencesDialog::Priv::on_asm_style_toggled_signal));
+
+        default_num_asm_instrs_spin_button =
+            ui_utils::get_widget_from_glade<Gtk::SpinButton>
+                (glade, "defaultnumasmspin");
+        THROW_IF_FAIL (default_num_asm_instrs_spin_button);
+        default_num_asm_instrs_spin_button->signal_value_changed ().connect
+            (sigc::mem_fun
+                 (*this,
+                  &PreferencesDialog::Priv::on_num_asms_value_changed_signal));
+
+        gdb_binary_path_chooser_button =
+        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
+                (glade, "pathtogdbfilechooser");
+        THROW_IF_FAIL (gdb_binary_path_chooser_button);
+        gdb_binary_path_chooser_button->signal_file_set ().connect
+            (sigc::mem_fun
+                 (*this,
+                  &PreferencesDialog::Priv::on_gdb_binary_file_set_signal));
+
     }
 
     void collect_source_dirs ()
@@ -476,6 +539,38 @@ public:
         }
     }
 
+    void update_asm_style_keys ()
+    {
+        THROW_IF_FAIL (pure_asm_radio_button);
+        THROW_IF_FAIL (mixed_asm_radio_button);
+
+        if (pure_asm_radio_button->get_active ()) {
+            conf_manager ().set_key_value (CONF_KEY_ASM_STYLE_PURE, true);
+        } else if (mixed_asm_radio_button->get_active ()) {
+            conf_manager ().set_key_value (CONF_KEY_ASM_STYLE_PURE, false);
+        }
+    }
+
+    void update_default_num_asm_instrs_key ()
+    {
+        THROW_IF_FAIL (default_num_asm_instrs_spin_button);
+        int num = default_num_asm_instrs_spin_button->get_value_as_int ();
+        conf_manager ().set_key_value (CONF_KEY_DEFAULT_NUM_ASM_INSTRS,
+                                       num);
+    }
+
+    void update_gdb_binary_key ()
+    {
+        THROW_IF_FAIL (gdb_binary_path_chooser_button);
+        UString path = gdb_binary_path_chooser_button->get_filename ();
+        if (path.empty ())
+            return;
+        if (path == DEFAULT_GDB_BINARY)
+            path = common::env::get_gdb_program ();
+        conf_manager ().set_key_value (CONF_KEY_GDB_BINARY,
+                                       Glib::filename_from_utf8 (path));
+    }
+
     void update_widget_from_editor_keys ()
     {
         THROW_IF_FAIL (show_lines_check_button);
@@ -559,10 +654,45 @@ public:
         }
     }
 
+    void update_widget_from_debugger_keys ()
+    {
+        THROW_IF_FAIL (pure_asm_radio_button);
+        THROW_IF_FAIL (mixed_asm_radio_button);
+        THROW_IF_FAIL (default_num_asm_instrs_spin_button);
+        THROW_IF_FAIL (gdb_binary_path_chooser_button);
+
+        bool pure_asm = false;
+        if (!conf_manager ().get_key_value (CONF_KEY_ASM_STYLE_PURE,
+                                            pure_asm)) {
+            LOG_ERROR ("failed to get gconf key " << CONF_KEY_ASM_STYLE_PURE);
+        }
+        if (pure_asm)
+            pure_asm_radio_button->set_active ();
+        else
+            mixed_asm_radio_button->set_active ();
+
+        int num_asms = 25;
+        if (!conf_manager ().get_key_value (CONF_KEY_DEFAULT_NUM_ASM_INSTRS,
+                                            num_asms)) {
+            LOG_ERROR ("failed to get gconf key "
+                       << CONF_KEY_DEFAULT_NUM_ASM_INSTRS);
+        }
+        default_num_asm_instrs_spin_button->set_value (num_asms);
+
+        UString gdb_binary = common::env::get_gdb_program ();
+        if (!conf_manager ().get_key_value (CONF_KEY_GDB_BINARY, gdb_binary)) {
+            LOG_ERROR ("failed to get gconf key" << CONF_KEY_GDB_BINARY);
+        }
+        gdb_binary_path_chooser_button->set_filename
+            (Glib::filename_to_utf8 (gdb_binary));
+
+    }
+
     void update_widget_from_conf ()
     {
         update_widget_from_source_dirs_key ();
         update_widget_from_editor_keys ();
+        update_widget_from_debugger_keys ();
     }
 };//end PreferencesDialog
 

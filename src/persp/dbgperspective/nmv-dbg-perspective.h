@@ -74,7 +74,7 @@ public:
     virtual void close_file (const UString &a_uri) = 0;
 
     virtual bool load_asm (const IDebugger::DisassembleInfo &a_info,
-                           const std::list<IDebugger::AsmInstr> &a_asm,
+                           const std::list<IDebugger::Asm> &a_asm,
                            Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf) = 0;
 
     virtual Gtk::Widget* load_menu (const UString &a_filename,

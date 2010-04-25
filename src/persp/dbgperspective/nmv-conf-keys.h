@@ -44,7 +44,9 @@ extern const char* CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT;
 extern const char* CONF_KEY_STATUS_PANE_LOCATION;
 extern const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME;
 extern const char* CONF_KEY_EDITOR_STYLE_SCHEME;
-
+extern const char* CONF_KEY_ASM_STYLE_PURE;
+extern const char* CONF_KEY_GDB_BINARY;
+extern const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS;
 NEMIVER_END_NAMESPACE (nemiver)
 
 #endif // __NMV_CONF_KEYS_H__

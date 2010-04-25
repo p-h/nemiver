@@ -171,6 +171,29 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/asm-style-pure</key>
+      <applyto>/apps/nemiver/dbgperspective/asm-style-pure</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+	<short>Show the assembly in pure form</short>
+	<long>If set to yes, pure assembly code is shown when switching
+to assembly view. Otherwise, source code mixed with assembly code is shown.</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/default-num-asm-instrs</key>
+      <applyto>/apps/nemiver/dbgperspective/default-num-asm-instrs</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>25</default>
+      <locale name="C">
+	<short>The number of assembly instructions to show by default</short>
+	<long>The number of instructions that are disassembled by default</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/callstack-expansion-chunk</key>
       <applyto>/apps/nemiver/dbgperspective/callstack-expansion-chunk</applyto>
       <owner>nemiver</owner>
