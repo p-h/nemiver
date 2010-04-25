@@ -30,6 +30,7 @@
 #include "common/nmv-initializer.h"
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
+#include "nmv-asm-utils.h"
 #include "nmv-dbg-common.h"
 
 using namespace nemiver;
@@ -60,7 +61,7 @@ on_program_finished_signal ()
     BOOST_REQUIRE (counter2 == 3);
 }
 
-typedef list<IDebugger::AsmInstr> AsmInstrs;
+typedef list<IDebugger::Asm> AsmInstrs;
 
 void
 on_instructions_disassembled_signal0 (const IDebugger::DisassembleInfo &a_info,
@@ -89,11 +90,11 @@ on_instructions_disassembled_signal1 (const IDebugger::DisassembleInfo &,
          it != a_instrs.end ();
          ++it) {
         cout << " <instruction>" << endl;
-        cout << "  @" << setbase (16) << it->address ()
+        cout << "  @" << setbase (16) << it->instr ().address ()
              << setbase (10) << endl;
-        cout << "  func: " << it->function () << endl;
-        cout << "  offset: " << it->offset () << endl;
-        cout << "  instr: " << it->instruction () << endl;
+        cout << "  func: " << it->instr ().function () << endl;
+        cout << "  offset: " << it->instr ().offset () << endl;
+        cout << "  instr: " << it->instr ().instruction () << endl;
         cout << " </instruction>\n";
     }
     cout << "</AssemblyInstructionList>" << endl;
@@ -123,7 +124,8 @@ on_stopped_signal (IDebugger::StopReason a_reason,
 
     debugger->disassemble (0, true, 20, true);
     debugger->disassemble_lines (a_frame.file_name (), a_frame.line (),
-                                 20, &on_instructions_disassembled_signal1);
+                                 20, &on_instructions_disassembled_signal1,
+                                 true);
     debugger->do_continue ();
 }
 
