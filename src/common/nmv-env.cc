@@ -39,7 +39,11 @@
 
 using namespace std;
 
+
 NEMIVER_BEGIN_NAMESPACE (nemiver)
+
+const char *CONF_KEY_GDB_BINARY = "/apps/nemiver/dbgperspective/gdb-binary";
+
 NEMIVER_BEGIN_NAMESPACE (common)
 NEMIVER_BEGIN_NAMESPACE (env)
 

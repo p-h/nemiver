@@ -1944,13 +1944,13 @@ fetch_gdbmi_result:
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_ASM_INSTRUCTIONS),
                                            PREFIX_ASM_INSTRUCTIONS)) {
-                std::list<IDebugger::AsmInstr> asm_instr_list;
+                std::list<IDebugger::Asm> asm_instrs;
                 if (!parse_asm_instruction_list (cur, cur,
-                                                 asm_instr_list)) {
+                                                 asm_instrs)) {
                     LOG_PARSING_ERROR2 (cur);
                 } else {
                     LOG_D ("parsed asm instruction list", GDBMI_PARSING_DOMAIN);
-                    result_record.asm_instruction_list (asm_instr_list);
+                    result_record.asm_instruction_list (asm_instrs);
                 }
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_NAME),
@@ -3922,16 +3922,10 @@ bool
 GDBMIParser::parse_asm_instruction_list
                                 (UString::size_type a_from,
                                  UString::size_type &a_to,
-                                 std::list<IDebugger::AsmInstr> &a_asm_instrs)
+                                 std::list<IDebugger::Asm> &a_instrs)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-
-#define ERROR_OUT \
-do { \
-a_asm_instrs.clear (); \
-return false; \
-} while (false)
 
     if (RAW_INPUT.compare (cur,
                            strlen (PREFIX_ASM_INSTRUCTIONS),
@@ -3946,56 +3940,106 @@ return false; \
         return false;
     }
 
-    // A GDB/MI list of asm instruction descriptors
+    // A GDB/MI LIST of asm instruction descriptors
+    //
+    // Each insn descriptor is either a TUPLE or a RESULT:
+    // When it's a TUPLE, it represents a  pure asm insn
+    // that looks like:
+    // {address="0x000107bc",func-name="main",offset="0",
+    //  inst="save  %sp, -112, %sp"}
+    // When it's a RESULT, it represents a mixed source/asm insn that
+    // looks like:
+    // src_and_asm_line=
+    //  {
+    //    line="31",file="basics.c",
+    //    line_asm_insn=[{address="0x000107bc",func-name="main",offset="0",
+    //                    inst="save  %sp, -112, %sp"}]
+    //  }
     GDBMIListSafePtr gdbmi_list;
+
+    // OK, now parse the LIST.
     if (!parse_gdbmi_list (cur, cur, gdbmi_list)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
+
     // If gdbmi_list is empty, gdbmi_list->content_type will yield
     // GDBMIList::UNDEFINED_TYPE, so lets test it now and return early
     // if necessary.
     if (gdbmi_list->empty ()) {
         a_to = cur;
-        a_asm_instrs.clear ();
+        a_instrs.clear ();
         return true;
     }
-    if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
+    // So the content of the list gdbmi_list is either a list of TUPLES,
+    // or a list of result, like described earlier. Figure out which is
+    // which and parse the damn thing accordingly.
+    if (gdbmi_list->content_type () == GDBMIList::VALUE_TYPE) {
+        list<IDebugger::AsmInstr> instrs;
+        if (!analyse_pure_asm_instrs (gdbmi_list, instrs, cur)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        list<IDebugger::AsmInstr>::const_iterator it;
+        for (it = instrs.begin (); it != instrs.end (); ++it) {
+            a_instrs.push_back (*it);
+        }
+    } else if (gdbmi_list->content_type () == GDBMIList::RESULT_TYPE) {
+        list<IDebugger::MixedAsmInstr> instrs;
+        if (!analyse_mixed_asm_instrs (gdbmi_list, instrs, cur)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        list<IDebugger::MixedAsmInstr>::const_iterator it;
+        for (it = instrs.begin (); it != instrs.end (); ++it) {
+            a_instrs.push_back (*it);
+        }
+    } else {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
-    std::list<GDBMIValueSafePtr> vals;
-    gdbmi_list->get_value_content (vals);
-    std::list<GDBMIValueSafePtr>::const_iterator val_iter;
+    a_to = cur;
+    return true;
+}
+
+bool
+GDBMIParser::analyse_pure_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
+                                      list<IDebugger::AsmInstr> &a_instrs,
+                                      string::size_type a_cur)
+{
+    list<GDBMIValueSafePtr> vals;
+    a_gdbmi_list->get_value_content (vals);
+    list<GDBMIValueSafePtr>::const_iterator val_iter;
     string addr, func_name, instr, offset;
     IDebugger::AsmInstr asm_instr;
-    // Loop over the tuples contained in gdbmi_list.
-    // Each tuple represents an asm instruction descriptor that has four
-    // fields: 1/the address of the instruction, 2/ name of the function
-    // the instruction is located in, 3/the offset of the instruction
-    // inside the function, 4/a string representing the asm intruction.
+    // Loop over the tuples contained in a_gdbmi_list.
+    // Each tuple represents an asm instruction descriptor that has at
+    // least four fields:
+    // 1/ the address of the instruction,
+    // 2/ name of the function the instruction is located in,
+    // 3/ the offset of the instruction inside the function,
+    // 4/ a string representing the asm intruction.
     for (val_iter = vals.begin (); val_iter != vals.end (); ++val_iter) {
         if ((*val_iter)->content_type () != GDBMIValue::TUPLE_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
-            ERROR_OUT;
+            return false;;
         }
         GDBMITupleSafePtr tuple = (*val_iter)->get_tuple_content ();
         THROW_IF_FAIL (tuple);
         std::list<GDBMIResultSafePtr> result_list = tuple->content ();
-        if (result_list.size () != 4) {
+        if (result_list.size () < 4) {
             // each tuple should have 'address', 'func-name"', 'offset',
             // and 'inst' fields.
-            LOG_PARSING_ERROR2 (cur);
-            ERROR_OUT;
+            LOG_PARSING_ERROR2 (a_cur);
+            return false;;
         }
-        std::list<GDBMIResultSafePtr>::const_iterator res_iter =
-                                                        result_list.begin ();
+        list<GDBMIResultSafePtr>::const_iterator res_iter =
+                                                    result_list.begin ();
         // get address field
         GDBMIValueSafePtr val = (*res_iter)->value ();
         if ((*res_iter)->variable () != "address"
             || val->content_type () != GDBMIValue::STRING_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
-            ERROR_OUT;
+            LOG_PARSING_ERROR2 (a_cur);
+            return false;;
         }
         addr = val->get_string_content ().raw ();
         LOG_DD ("addr: " << addr);
@@ -4005,8 +4049,8 @@ return false; \
         val = (*res_iter)->value ();
         if ((*res_iter)->variable () != "func-name"
             || val->content_type () != GDBMIValue::STRING_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
-            ERROR_OUT;
+            LOG_PARSING_ERROR2 (a_cur);
+            return false;;
         }
         func_name = val->get_string_content ();
         LOG_DD ("func-name: " << func_name);
@@ -4016,8 +4060,8 @@ return false; \
         val = (*res_iter)->value ();
         if ((*res_iter)->variable () != "offset"
             || val->content_type () != GDBMIValue::STRING_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
-            ERROR_OUT;
+            LOG_PARSING_ERROR2 (a_cur);
+            return false;;
         }
         offset = val->get_string_content ().raw ();
         LOG_DD ("offset: " << offset);
@@ -4027,18 +4071,116 @@ return false; \
         val = (*res_iter)->value ();
         if ((*res_iter)->variable () != "inst"
             || val->content_type () != GDBMIValue::STRING_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
-            ERROR_OUT;
+            LOG_PARSING_ERROR2 (a_cur);
+            return false;;
         }
         instr = val->get_string_content ();
         LOG_DD ("instr: " << instr);
         asm_instr = IDebugger::AsmInstr (addr, func_name, offset, instr);
-        a_asm_instrs.push_back (asm_instr);
+        a_instrs.push_back (asm_instr);
     }
-    a_to = cur;
     return true;
 }
 
+bool
+GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
+                                       list<IDebugger::MixedAsmInstr> &a_instrs,
+                                       string::size_type a_cur)
+{
+
+    if (a_gdbmi_list->content_type () != GDBMIList::RESULT_TYPE)
+        return false;
+
+    list<GDBMIResultSafePtr> outer_results, inner_results;
+    a_gdbmi_list->get_result_content (outer_results);
+    list<GDBMIResultSafePtr>::const_iterator outer_it, inner_it;
+    // Loop over the results tuples contained in a_gdbmi_list. There are
+    // at least 3 results in the list:
+    // 1/ line=<source-line-number>
+    // 2/ file=<source-file-path>
+    // 3/ line_asm_insn=[<tuples>], where <tuples> are tuples that can
+    // be analysed by analyse_pure_asm_instrs.
+
+    for (outer_it = outer_results.begin ();
+         outer_it != outer_results.end ();
+         ++outer_it) {
+        if ((*outer_it)->variable () != "src_and_asm_line") {
+                stringstream s;
+                s << "got result named " << (*outer_it)->variable ()
+                  << " instead of src_and_asm_line";
+                LOG_PARSING_ERROR_MSG2 (a_cur, s.str ());
+                return false;
+        }
+        if ((*outer_it)->value ()->content_type ()
+            != GDBMIValue::TUPLE_TYPE) {
+            stringstream s;
+            s << "got value of type " << (*outer_it)->value ()->content_type ()
+              << " instead of TUPLE_TYPE (3)";
+            LOG_PARSING_ERROR_MSG2 (a_cur, s.str ());
+            return false;
+        }
+        inner_results = (*outer_it)->value ()->get_tuple_content ()->content ();
+
+        for (inner_it = inner_results.begin ();
+             inner_it != inner_results.end ();
+             ++inner_it) {
+            if ((*inner_it)->variable () != "line") {
+                stringstream s;
+                s << "got result named " << (*inner_it)->variable ()
+                  << " instead of line";
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            if ((*inner_it)->value ()->content_type ()
+                != GDBMIValue::STRING_TYPE) {
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            string line_str =
+                (*inner_it)->value ()->get_string_content ().raw ();
+            if (!str_utils::string_is_number (line_str)) {
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            IDebugger::MixedAsmInstr instr;
+            instr.line_number (atoi (line_str.c_str ()));
+
+            ++inner_it;
+            if ((*inner_it)->variable () != "file") {
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            if ((*inner_it)->value ()->content_type ()
+                != GDBMIValue::STRING_TYPE) {
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            instr.file_path
+                ((*inner_it)->value ()->get_string_content ());
+
+            ++inner_it;
+            if ((*inner_it)->variable ()
+                != "line_asm_insn") {
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            if ((*inner_it)->value ()->content_type ()
+                != GDBMIValue::LIST_TYPE) {
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            list<IDebugger::AsmInstr> &instrs = instr.instrs ();
+            if (!analyse_pure_asm_instrs
+                    ((*inner_it)->value ()->get_list_content (),
+                     instrs, a_cur)) {
+                LOG_PARSING_ERROR2 (a_cur);
+                return false;
+            }
+            a_instrs.push_back (instr);
+        }
+    }
+    return true;
+}
 
 bool
 GDBMIParser::parse_variable (UString::size_type a_from,

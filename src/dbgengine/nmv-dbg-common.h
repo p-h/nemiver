@@ -406,7 +406,7 @@ public:
         bool m_has_memory_values;
 
         // asm instruction list
-        std::list<IDebugger::AsmInstr> m_asm_instrs;
+        std::list<IDebugger::Asm> m_asm_instrs;
         bool m_has_asm_instrs;
 
         // Variable Object
@@ -557,12 +557,12 @@ public:
         bool has_asm_instruction_list () const {return m_has_asm_instrs;}
         void has_asm_instruction_list (bool a) {m_has_asm_instrs = a;}
 
-        const std::list<IDebugger::AsmInstr>& asm_instruction_list () const
+        const std::list<IDebugger::Asm>& asm_instruction_list () const
         {
             return m_asm_instrs;
         }
         void asm_instruction_list
-                            (const std::list<IDebugger::AsmInstr> &a_asms)
+                            (const std::list<IDebugger::Asm> &a_asms)
         {
             m_asm_instrs = a_asms;
             m_has_asm_instrs = true;

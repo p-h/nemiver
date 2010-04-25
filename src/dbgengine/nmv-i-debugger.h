@@ -789,10 +789,10 @@ public:
         {
         }
 
-        AsmInstr (string &a_address,
-                  string &a_func,
-                  string &a_offset,
-                  string &a_instr):
+        AsmInstr (const string &a_address,
+                  const string &a_func,
+                  const string &a_offset,
+                  const string &a_instr):
             m_address (a_address),
             m_func (a_func),
             m_offset (a_offset),
@@ -817,13 +817,103 @@ public:
         void instruction (const string &a_instr) {m_instr = a_instr;}
     };//end class AsmInstr
 
+    class MixedAsmInstr {
+        // No need of copy constructor or assignment operator yet.
+        UString m_file_path;
+        int m_line_number;
+        list<AsmInstr> m_instrs;
+
+    public:
+
+        MixedAsmInstr () :
+            m_line_number (-1)
+        {
+        }
+
+        MixedAsmInstr (const UString &a_path,
+                       int a_line_num) :
+            m_file_path (a_path),
+            m_line_number (a_line_num)
+        {
+        }
+
+        MixedAsmInstr (const UString &a_path,
+                       int a_line_num,
+                       list<AsmInstr> &a_instrs) :
+            m_file_path (a_path),
+            m_line_number (a_line_num),
+            m_instrs (a_instrs)
+        {
+        }
+
+        const UString& file_path () const {return m_file_path;}
+        void file_path (const UString &a) {m_file_path = a;}
+
+        int line_number () const {return m_line_number;}
+        void line_number (int a) {m_line_number = a;}
+
+        const list<AsmInstr>& instrs () const {return m_instrs;}
+        list<AsmInstr>& instrs () {return m_instrs;}
+        void instrs (const list<AsmInstr> &a) {m_instrs = a;}
+    };
+
+    // Okay, so the result of a call to IDebugger::disassemble returns a
+    // list of Asm. An Asm is a variant type that is either an AsmInstr
+    // (a pure asm instruction) or a mixed asm/source that is basically
+    // a source code locus associated to the list of AsmInstr it
+    // generated. Asm::which will return an ASM_TYPE_PURE if it's an
+    // AsmInstr or ASM_TYPE_MIXED if it's an MixedAsmInstr.
+    class Asm {
+        boost::variant<AsmInstr, MixedAsmInstr> m_asm;
+
+    public:
+        enum Type {
+            TYPE_PURE = 0,
+            TYPE_MIXED
+        };
+
+        Asm (const AsmInstr &a) :
+            m_asm (a)
+        {
+        }
+
+        Asm (const MixedAsmInstr &a) :
+            m_asm (a)
+        {
+        }
+
+        Type which () const
+        {
+            return static_cast<Type> (m_asm.which ());
+        }
+
+        const AsmInstr& instr () const
+        {
+            switch (which ()) {
+                case TYPE_PURE:
+                    return boost::get<AsmInstr> (m_asm);
+                case TYPE_MIXED:
+                    return boost::get<MixedAsmInstr> (m_asm).instrs ().front ();
+                default:
+                    break;
+            }
+            THROW ("reached unreachable");
+        }
+
+        const MixedAsmInstr& mixed_instr () const
+        {
+            THROW_IF_FAIL (which () == TYPE_MIXED);
+            return boost::get<MixedAsmInstr> (m_asm);
+        }
+    };
+
     class DisassembleInfo {
         // no need of copy constructor yet,
         // as we don't have any pointer member.
         UString m_function_name;
         UString m_file_name;
-        std::string m_start_address;
-        std::string m_end_address;
+        string m_start_address;
+        string m_end_address;
 
     public:
         DisassembleInfo ()
@@ -1034,7 +1124,7 @@ public:
     // So that the code receiving the signal can adjust accordingly
     virtual sigc::signal<void,
                          const IDebugger::DisassembleInfo&,
-                         const std::list<IDebugger::AsmInstr>&,
+                         const std::list<IDebugger::Asm>&,
                          const UString& /*cookie*/>&
                              instructions_disassembled_signal () const = 0;
 
@@ -1257,12 +1347,13 @@ public:
 
     typedef sigc::slot<void,
                        const IDebugger::DisassembleInfo&,
-                       const std::list<IDebugger::AsmInstr>& > DisassSlot;
+                       const std::list<IDebugger::Asm>& > DisassSlot;
 
     virtual void disassemble (size_t a_start_addr,
                               bool a_start_addr_relative_to_pc,
                               size_t a_end_addr,
                               bool a_end_addr_relative_to_pc,
+                              bool a_pure_asm = true,
                               const UString &a_cookie = "") = 0;
 
     virtual void disassemble (size_t a_start_addr,
@@ -1270,17 +1361,20 @@ public:
                               size_t a_end_addr,
                               bool a_end_addr_relative_to_pc,
                               const DisassSlot &a_slot,
+                              bool a_pure_asm = true,
                               const UString &a_cookie = "") = 0;
 
     virtual void disassemble_lines (const UString &a_file_name,
                                     int a_line_num,
                                     int a_nb_disassembled_lines,
+                                    bool a_pure_asm = true,
                                     const UString &a_cookie = "") = 0;
 
     virtual void disassemble_lines (const UString &a_file_name,
                                     int a_line_num,
                                     int a_nb_disassembled_lines,
                                     const DisassSlot &a_slot,
+                                    bool a_pure_asm = true,
                                     const UString &a_cookie = "") = 0;
 
     typedef sigc::slot<void, const VariableSafePtr> ConstVariableSlot;

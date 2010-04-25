@@ -179,7 +179,6 @@ class GDBMIList : public Object {
     GDBMIList (const GDBMIList &);
     GDBMIList& operator= (const GDBMIList &);
 
-    //boost::variant<list<GDBMIResultSafePtr>, list<GDBMIValueSafePtr> > m_content;
     list<boost::variant<GDBMIResultSafePtr, GDBMIValueSafePtr> >  m_content;
     bool m_empty;
 
@@ -325,6 +324,13 @@ class GDBMIParser {
     struct Priv;
     SafePtr<Priv> m_priv;
 
+    bool analyse_pure_asm_instrs (GDBMIListSafePtr,
+                                    list<IDebugger::AsmInstr>&,
+                                    string::size_type a_cur);
+
+    bool analyse_mixed_asm_instrs (GDBMIListSafePtr,
+                                      list<IDebugger::MixedAsmInstr>&,
+                                      string::size_type a_cur);
 public:
 
     /// Parsing mode.
@@ -560,7 +566,8 @@ public:
     /// See the GDB/MI documentation for more.
     bool parse_stack_arguments (UString::size_type a_from,
                                 UString::size_type &a_to,
-                                map<int, list<IDebugger::VariableSafePtr> > &a_params);
+                                map<int,
+                                    list<IDebugger::VariableSafePtr> > &a_parms);
 
     /// parse a list of local variables as returned by
     /// the GDBMI command -stack-list-locals 2
@@ -593,11 +600,12 @@ public:
 
     bool parse_changed_registers (UString::size_type a_from,
                                   UString::size_type &a_to,
-                                  std::list<IDebugger::register_id_t> &a_registers);
+                                  std::list<IDebugger::register_id_t> &a_regs);
 
     bool parse_register_values (UString::size_type a_from,
                                 UString::size_type &a_to,
-                                std::map<IDebugger::register_id_t, UString> &a_values);
+                                std::map<IDebugger::register_id_t,
+                                         UString> &a_values);
 
     bool parse_memory_values (UString::size_type a_from,
                               UString::size_type &a_to,
@@ -608,7 +616,7 @@ public:
     /// by GDB/MI
     bool parse_asm_instruction_list (UString::size_type a_from,
                                      UString::size_type &a_to,
-                                     std::list<IDebugger::AsmInstr> &a_asm);
+                                     std::list<IDebugger::Asm> &a_asm);
 
     bool parse_variable (UString::size_type a_from,
                          UString::size_type &a_to,

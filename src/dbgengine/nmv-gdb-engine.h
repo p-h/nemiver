@@ -176,7 +176,7 @@ public:
                                                       set_memory_signal () const;
     sigc::signal<void,
                  const IDebugger::DisassembleInfo&,
-                 const std::list<IDebugger::AsmInstr>&,
+                 const std::list<IDebugger::Asm>&,
                  const UString& /*cookie*/>&
                              instructions_disassembled_signal () const;
 
@@ -456,6 +456,7 @@ public:
                       bool a_start_addr_relative_to_pc,
                       size_t a_end_addr,
                       bool a_end_addr_relative_to_pc,
+                      bool a_pure_asm,
                       const UString &a_cookie);
 
     void disassemble (size_t a_start_addr,
@@ -463,17 +464,20 @@ public:
                       size_t a_end_addr,
                       bool a_end_addr_relative_to_pc,
                       const DisassSlot &a_slot,
+                      bool a_pure_asm,
                       const UString &a_cookie);
 
     void disassemble_lines (const UString &a_file_name,
                             int a_line_num,
                             int a_nb_disassembled_lines,
+                            bool a_pure_asm,
                             const UString &a_cookie);
 
     void disassemble_lines (const UString &a_file_name,
                             int a_line_num,
                             int a_nb_disassembled_lines,
                             const DisassSlot &a_slot,
+                            bool a_pure_asm,
                             const UString &a_cookie);
 
     void create_variable (const UString &a_name,
