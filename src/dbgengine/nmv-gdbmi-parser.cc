@@ -1525,7 +1525,7 @@ GDBMIParser::parse_frame (UString::size_type a_from,
         if (name == "level") {
             frame.level (atoi (value.c_str ()));
         } else if (name == "addr") {
-            frame.address (value.raw ());
+            frame.address () = value.raw ();
         } else if (name == "func") {
             frame.function_name (value.raw ());
         } else if (name == "file") {
@@ -2179,7 +2179,8 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
     } else {
         a_bkpt.enabled (false);
     }
-    a_bkpt.address (attrs["addr"]);
+    if (str_utils::string_is_hexa_number (attrs["addr"]))
+        a_bkpt.address () = attrs["addr"];
     if (!attrs["func"].empty ()) {
         a_bkpt.function (attrs["func"]);
     }
@@ -2624,7 +2625,7 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
             THROW_IF_FAIL ((*frame_part_iter)->value ());
             value = (*frame_part_iter)->value ()->get_string_content ();
             if ((*frame_part_iter)->variable () == "addr") {
-                frame.address (value.raw ());
+                frame.address () = value.raw ();
             } else if ((*frame_part_iter)->variable () == "func") {
                 frame.function_name (value.raw ());
             } else if ((*frame_part_iter)->variable () == "file") {

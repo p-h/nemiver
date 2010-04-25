@@ -4273,7 +4273,7 @@ DBGPerspective::get_frame_breakpoints_address_range
          it != m_priv->breakpoints.end ();
          ++it) {
         if (breakpoint_and_frame_have_same_file (it->second, a_frame)) {
-            range.extend (str_utils::hexa_to_int (it->second.address ()));
+            range.extend (it->second.address ());
             result = true;
         }
     }
@@ -4517,7 +4517,7 @@ DBGPerspective::set_where (SourceEditor *a_editor,
             return true;
         } else {
             LOG_ERROR ("Fail to get line for address: "
-                       << static_cast<string> (a_address));
+                       << a_address.to_string ());
             return false;
         }
     }
@@ -5517,7 +5517,8 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
                                                        true));
         if (!a_current_address.empty ()) {
             source_editor->assembly_buf_addr_to_line
-                                    (a_current_address.raw (), current_line);
+                                (Address (a_current_address.raw ()),
+                                 current_line);
         }
     } else {
         source_editor = Gtk::manage (new SourceEditor (plugin_path (),
@@ -7069,7 +7070,7 @@ DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
             if (!append_visual_breakpoint (a_editor, addr,
                                            it->second.enabled ())) {
                 LOG_ERROR ("Could'nt find line for address: "
-                           << static_cast<string> (addr)
+                           << addr.to_string ()
                            << " for file: "
                            << a_editor->get_path ());
             }

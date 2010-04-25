@@ -91,7 +91,7 @@ public:
     private:
         int m_number;
         bool m_enabled;
-        string m_address;
+        Address m_address;
         string m_function;
         string m_expression;
         UString m_file_name;
@@ -116,7 +116,8 @@ public:
         bool enabled () const {return m_enabled;}
         void enabled (bool a_in) {m_enabled = a_in;}
 
-        const string& address () const {return m_address;}
+        const Address& address () const {return m_address;}
+        Address& address () {return m_address;}
         void address (const string &a_in) {m_address = a_in;}
 
         const string& function () const {return m_function;}
@@ -273,10 +274,11 @@ public:
 
         /// @{
         const Address& address () const {return m_address;}
+        Address& address () {return m_address;}
         void address (const Address &a_in) {m_address = a_in;}
         bool has_empty_address () const
         {
-            return static_cast<std::string> (m_address).empty ();
+            return m_address.to_string ().empty ();
         }
 
         const string& function_name () const {return m_function_name;}

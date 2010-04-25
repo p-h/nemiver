@@ -49,7 +49,8 @@ Address::empty () const
     return m_addr.empty ();
 }
 
-Address::operator const std::string& () const
+const std::string&
+Address::to_string () const
 {
     return m_addr;
 }

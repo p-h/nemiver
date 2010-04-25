@@ -299,7 +299,7 @@ struct SourceEditor::Priv {
                  ++it, ++i) {
                 addr += it.get_char ();
             }
-            bool match = (addr == static_cast<std::string> (an_addr));
+            bool match = (addr == an_addr.to_string ());
             if (match) {
                 a_line = it.get_line () + 1;
                 a_prev_addr = prev_addr;

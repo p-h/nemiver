@@ -37,10 +37,10 @@ class NEMIVER_API Address
 
 public:
     Address ();
-    Address (const std::string &a_addr);
+    explicit Address (const std::string &a_addr);
     Address (const Address &);
     bool empty () const;
-    operator const std::string& () const;
+    const std::string& to_string () const;
     operator size_t () const;
     size_t size () const;
     size_t string_size () const;
@@ -50,6 +50,14 @@ public:
     const char& operator[] (size_t) const;
     void clear ();
 };// end class Address
+
+template<class Stream>
+Stream&
+operator<< (Stream &a_os, const Address &a)
+{
+    a_os << a.to_string ();
+    return a_os;
+}
 
 NEMIVER_END_NAMESPACE (common)
 NEMIVER_END_NAMESPACE (nemiver)
