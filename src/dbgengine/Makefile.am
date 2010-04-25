@@ -23,7 +23,7 @@ libdebuggerutils.la \
 libgdbengine.la
 
 idebuggerheaders= \
-nmv-i-debugger.h
+nmv-i-debugger.h nmv-asm-utils.h
 
 ivarlistheaders= \
 nmv-i-var-list.h

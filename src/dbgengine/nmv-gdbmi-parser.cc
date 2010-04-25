@@ -26,6 +26,7 @@
 #include <sstream>
 #include "common/nmv-str-utils.h"
 #include "nmv-gdbmi-parser.h"
+#include "nmv-asm-utils.h"
 
 using nemiver::common::UString;
 
@@ -191,19 +192,6 @@ const char* CHANGELIST = "changelist";
 const char* PREFIX_PATH_EXPR = "path_expr=";
 const char* PATH_EXPR = "path_expr";
 static const char* PREFIX_ASM_INSTRUCTIONS= "asm_insns=";
-
-std::ostream&
-operator<< (std::ostream &a_out, const IDebugger::AsmInstr &a_instr)
-{
-    a_out << "<asm-instr>\n"
-          << " <addr>" <<  a_instr.address () << "</addr>\n"
-          << " <function-name>" << a_instr.function () << "</function-name>\n"
-          << " <offset>" << a_instr.offset () << "</offset>\n"
-          << " <instr>" << a_instr.instruction () << "</instr>\n"
-          << "</asm-instr>\n";
-    return a_out;
-}
-
 
 static bool
 is_string_start (gunichar a_c)

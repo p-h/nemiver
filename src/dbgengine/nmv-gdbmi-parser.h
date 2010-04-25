@@ -302,10 +302,6 @@ operator<< (ostream &a_out, const GDBMIValueSafePtr &a_val);
 std::ostream&
 operator<< (std::ostream &a_out, const IDebugger::Variable &a_var);
 
-std::ostream&
-operator<< (std::ostream &a_out, const IDebugger::AsmInstr &a_inst);
-
-
 //******************************************
 //</gdbmi datastructure streaming operators>
 //******************************************
