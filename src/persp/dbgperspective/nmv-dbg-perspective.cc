@@ -6375,20 +6375,12 @@ DBGPerspective::execute_program ()
 void
 DBGPerspective::execute_last_program_in_memory ()
 {
-    if (!m_priv->prog_path.empty ()) {
-        vector<IDebugger::Breakpoint> breakpoints;
-        map<int, IDebugger::Breakpoint>::const_iterator it;
-        for (it = m_priv->breakpoints.begin ();
-             it != m_priv->breakpoints.end ();
-             ++it) {
-            breakpoints.push_back (it->second);
-        }
-        execute_program (m_priv->prog_path, m_priv->prog_args,
-                         m_priv->env_variables, m_priv->prog_cwd,
-                         breakpoints,
-                         false,
-                         false /* don't close opened files */);
-    }
+    vector<IDebugger::Breakpoint> bps;
+    execute_program (m_priv->prog_path, m_priv->prog_args,
+                     m_priv->env_variables, m_priv->prog_cwd,
+                     bps,
+                     true /* be aware we are restarting the same inferior*/,
+                     false /* don't close opened files */);
 }
 
 void
