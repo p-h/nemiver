@@ -6484,8 +6484,8 @@ DBGPerspective::execute_program
                                 : true;
     LOG_DD ("is new prog: " << is_new_program);
 
-    // delete old breakpoints, if any.
     if (is_new_program) {
+        // delete old breakpoints, if any.
         map<int, IDebugger::Breakpoint>::const_iterator bp_it;
         for (bp_it = m_priv->breakpoints.begin ();
              bp_it != m_priv->breakpoints.end ();
@@ -6495,16 +6495,16 @@ DBGPerspective::execute_program
                                 (bp_it->first,
                                  I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
         }
-    }
 
-    // If we are debugging a new program,
-    // clear data gathered by the old session
-    if (is_new_program)
+        // If we are debugging a new program,
+        // clear data gathered by the old session
         clear_session_data ();
+    }
 
     clear_status_notebook ();
 
     LOG_DD ("load program");
+
     // now really load the inferior program (i.e: the one to be debugged)
     dbg_engine->load_program (prog, a_args, a_cwd, source_search_dirs,
                               get_terminal_name ());
