@@ -65,6 +65,9 @@
             <menuitem action="NextMenuItemAction" name="NextMenuItem"/>
             <menuitem action="StepMenuItemAction" name="StepMenuItem"/>
             <menuitem action="StepOutMenuItemAction" name="StepOutMenuItem"/>
+            <menuitem action="StepInAsmMenuItemAction" name="StepInAsmMenuItem"/>
+            <menuitem action="StepOverAsmMenuItemAction"
+                      name="StepOverAsmMenuItem"/>
             <separator/>
             <menuitem action="ToggleBreakpointMenuItemAction"
                 name="ToggleBreakMenuItem"/>

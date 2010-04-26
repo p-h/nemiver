@@ -3536,12 +3536,23 @@ GDBEngine::step_over (const UString &a_cookie)
 }
 
 void
-GDBEngine::step_instruction (const UString &a_cookie)
+GDBEngine::step_over_asm (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    Command command ("step-instruction",
+    Command command ("step-over-asm",
                      "-exec-next-instruction",
+                     a_cookie);
+    queue_command (command);
+}
+
+void
+GDBEngine::step_in_asm (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    Command command ("step-in-asm",
+                     "-exec-step-instruction",
                      a_cookie);
     queue_command (command);
 }

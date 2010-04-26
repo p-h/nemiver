@@ -292,6 +292,8 @@ private:
     void on_next_action ();
     void on_step_into_action ();
     void on_step_out_action ();
+    void on_step_in_asm_action ();
+    void on_step_over_asm_action ();
     void on_continue_action ();
     void on_continue_until_action ();
     void on_set_breakpoint_action ();
@@ -474,7 +476,7 @@ private:
     void clear_session_data ();
     void append_source_editor (SourceEditor &a_sv,
                                const UString &a_path);
-    SourceEditor* get_current_source_editor ();
+    SourceEditor* get_current_source_editor (bool a_load_if_nil = true);
     ISessMgr* session_manager_ptr ();
     UString get_current_file_path ();
     SourceEditor* get_source_editor_from_path (const UString& a_path,
@@ -645,6 +647,8 @@ public:
     void step_over ();
     void step_into ();
     void step_out ();
+    void step_in_asm ();
+    void step_over_asm ();
     void do_continue ();
     void do_continue_until ();
     void set_breakpoint_at_current_line_using_dialog ();
@@ -1539,9 +1543,34 @@ void
 DBGPerspective::on_step_out_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     NEMIVER_TRY
 
     step_out ();
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_step_in_asm_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    step_in_asm ();
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_step_over_asm_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    step_over_asm ();
 
     NEMIVER_CATCH
 }
@@ -2418,8 +2447,7 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
 
     NEMIVER_TRY
     if (a_command == "attach-to-program") {
-        //attached_to_target_signal ().emit (true);
-        debugger ()->step_instruction ();
+        debugger ()->step_over_asm ();
         debugger ()->get_target_info ();
     }
     NEMIVER_CATCH
@@ -3300,6 +3328,26 @@ DBGPerspective::init_actions ()
             false
         },
         {
+            "StepInAsmMenuItemAction",
+            nil_stock_id,
+            _("Step Into asm"),
+            _("Step into the next assembly instruction"),
+            sigc::mem_fun (*this, &DBGPerspective::on_step_in_asm_action),
+            ActionEntry::DEFAULT,
+            "<control>I",
+            false
+        },
+        {
+            "StepOverAsmMenuItemAction",
+            nil_stock_id,
+            _("Step Over asm"),
+            _("Step over the next assembly instruction"),
+            sigc::mem_fun (*this, &DBGPerspective::on_step_over_asm_action),
+            ActionEntry::DEFAULT,
+            "<control>N",
+            false
+        },
+        {
             "ContinueMenuItemAction",
             Gtk::Stock::EXECUTE,
             _("_Continue"),
@@ -3445,7 +3493,7 @@ DBGPerspective::init_actions ()
                             (*this, &DBGPerspective::on_disassemble_action),
                         /*show_asm_in_new_tab=*/false),
             ActionEntry::DEFAULT,
-            "",
+            "<control>A",
             false
         },
         {
@@ -3455,7 +3503,7 @@ DBGPerspective::init_actions ()
             _("Show the source code being currently debugged"),
             sigc::mem_fun (*this, &DBGPerspective::switch_to_source_code),
             ActionEntry::DEFAULT,
-            "",
+            "<control><shift>A",
             false
         },
     };
@@ -4187,7 +4235,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
 }
 
 SourceEditor*
-DBGPerspective::get_current_source_editor ()
+DBGPerspective::get_current_source_editor (bool a_load_if_nil)
 {
     THROW_IF_FAIL (m_priv);
 
@@ -4196,7 +4244,8 @@ DBGPerspective::get_current_source_editor ()
         return NULL;
     }
 
-    if (m_priv->sourceviews_notebook
+    if (a_load_if_nil
+        && m_priv->sourceviews_notebook
         && !m_priv->sourceviews_notebook->get_n_pages ()) {
         // The source notebook is empty. If the current frame
         // has file info, load the file, bring it to the front,
@@ -4357,15 +4406,14 @@ DBGPerspective::get_source_editor_from_path (const UString &a_path,
         iter = m_priv->basename_2_pagenum_map.find
                                         (Glib::filename_to_utf8 (basename));
         nil = m_priv->basename_2_pagenum_map.end ();
-        result = m_priv->pagenum_2_source_editor_map[iter->second];
     } else {
         iter = m_priv->path_2_pagenum_map.find (a_path);
         nil = m_priv->path_2_pagenum_map.end ();
-        result = m_priv->pagenum_2_source_editor_map[iter->second];
     }
     if (iter == nil) {
         return 0;
     }
+    result = m_priv->pagenum_2_source_editor_map[iter->second];
     THROW_IF_FAIL (result);
     result->get_path (a_actual_file_path);
     return result;
@@ -6748,6 +6796,18 @@ DBGPerspective::step_out ()
 }
 
 void
+DBGPerspective::step_in_asm ()
+{
+    debugger ()->step_in_asm ();
+}
+
+void
+DBGPerspective::step_over_asm ()
+{
+    debugger ()->step_over_asm ();
+}
+
+void
 DBGPerspective::do_continue ()
 {
     debugger ()->do_continue ();
@@ -7175,7 +7235,7 @@ DBGPerspective::apply_decorations_to_source (SourceEditor *a_editor,
         a_editor->scroll_to_line (cur_line);
     }
 
-    if (m_priv->current_frame.file_name () == a_editor->get_path ())
+    if (get_current_source_editor (false) == a_editor)
         set_where (a_editor,
                    m_priv->current_frame.line (),
                    /*a_scroll_to_where_marker=*/true);
@@ -7220,7 +7280,7 @@ DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
         a_editor->scroll_to_line (cur_line);
     }
 
-    if (m_priv->current_frame.file_name () == a_editor->get_path ())
+    if (get_current_source_editor () == a_editor)
         set_where (a_editor,
                    m_priv->current_frame.address (),
                    a_scroll_to_where_marker,

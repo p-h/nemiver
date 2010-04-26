@@ -308,13 +308,15 @@ public:
 
     void get_mi_thread_and_frame_location (UString &a_str) const;
 
+    void step_over (const UString &a_cookie);
+
     void step_in (const UString &a_cookie);
 
     void step_out (const UString &a_cookie);
 
-    void step_instruction (const UString &a_cookie);
+    void step_over_asm (const UString &a_cookie);
 
-    void step_over (const UString &a_cookie);
+    void step_in_asm (const UString &a_cookie);
 
     void continue_to_position (const UString &a_path,
                                gint a_line_num,

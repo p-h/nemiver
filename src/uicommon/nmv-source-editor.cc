@@ -336,6 +336,41 @@ struct SourceEditor::Priv {
         return true;
     }
 
+    bool get_first_asm_address (Address &a_address) const
+    {
+        if (!asm_ctxt.buffer)
+            return false;
+
+        // Get the address of the first line that has an address on it.
+        // The assembly buf can contain lines that are not pure asm
+        // instruction, e.g. for cases where it contains mixed
+        // source/asm instrs.
+        int nb_lines = asm_ctxt.buffer->get_line_count ();
+        for (int i = 1; i <= nb_lines; ++i)
+            if (line_2_address (asm_ctxt.buffer, i, a_address))
+                return true;
+
+        return false;
+    }
+
+    bool get_last_asm_address (Address &a_address) const
+    {
+        if (!asm_ctxt.buffer)
+            return false;
+
+        // Get the address of the first line -- starting from the end of
+        // buf -- that has an address on it.
+        // The assembly buf can contain lines that are not pure asm
+        // instruction, e.g. for cases where it contains mixed
+        // source/asm instrs.
+        int nb_lines = asm_ctxt.buffer->get_line_count ();
+        for (int i = nb_lines; i >= 1; --i)
+            if (line_2_address (asm_ctxt.buffer, i, a_address))
+                return true;
+
+        return false;
+    }
+
     //**************
     //<signal slots>
     //**************
@@ -1137,15 +1172,12 @@ SourceEditor::assembly_buf_line_to_addr (int a_line, Address &a_address) const
 bool
 SourceEditor::get_assembly_address_range (Range &a) const
 {
-    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
-    if (!buf)
-        return false;
     Address addr;
-    if (!m_priv->line_2_address (buf, 1, addr))
+    if (!m_priv->get_first_asm_address (addr))
         return false;
     Range range;
     range.min (addr);
-    if (!m_priv->line_2_address (buf, buf->get_line_count (), addr))
+    if (!m_priv->get_last_asm_address (addr))
         return false;
     range.max (addr);
     a = range;

@@ -58,6 +58,7 @@ typedef SafePtr<Glib::Object, GObjectMMRef, GObjectMMUnref> GObjectMMSafePtr;
 
 struct CallStackCols : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> location;
+    Gtk::TreeModelColumn<Glib::ustring> address;
     Gtk::TreeModelColumn<Glib::ustring> function_name;
     Gtk::TreeModelColumn<Glib::ustring> function_args;
     Gtk::TreeModelColumn<Glib::ustring> frame_index_caption;
@@ -66,6 +67,7 @@ struct CallStackCols : public Gtk::TreeModelColumnRecord {
 
     enum Index {
         LOCATION=0,
+        ADDRESS,
         FUNCTION_NAME,
         FUNCTION_ARGS
     };
@@ -73,6 +75,7 @@ struct CallStackCols : public Gtk::TreeModelColumnRecord {
     CallStackCols ()
     {
         add (location);
+        add (address);
         add (function_name);
         add (function_args);
         add (frame_index_caption);
@@ -530,6 +533,7 @@ struct CallStack::Priv {
         tree_view->append_column (_("Function"), columns ().function_name);
         tree_view->append_column (_("Arguments"), columns ().function_args);
         tree_view->append_column (_("Location"), columns ().location);
+        tree_view->append_column (_("Address"), columns ().address);
         tree_view->set_headers_visible (true);
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE);
 
@@ -663,11 +667,9 @@ struct CallStack::Priv {
                 (*store_iter)[columns ().location] =
                     a_frames[i].file_name () + ":"
                     + UString::from_int (a_frames[i].line ());
-            } else {
-                (*store_iter)[columns ().location] =
-                    a_frames[i].address ().to_string ();
             }
-
+            (*store_iter)[columns ().address] =
+                                        a_frames[i].address ().to_string ();
             (*store_iter)[columns ().frame_index] = a_frames[i].level ();
             (*store_iter)[columns ().frame_index_caption] =
                 UString::from_int (a_frames[i].level ());
