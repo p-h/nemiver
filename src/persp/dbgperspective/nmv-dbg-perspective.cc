@@ -442,7 +442,7 @@ private:
                                                  int &root_y);
     IWorkbench& workbench () const;
     void bring_source_as_current (const UString &a_path);
-    int get_n_pages ();
+    int get_num_notebook_pages ();
     void popup_source_view_contextual_menu (GdkEventButton *a_event);
     void record_and_save_new_session ();
     void record_and_save_session (ISessMgr::Session &a_session);
@@ -590,6 +590,7 @@ public:
     void toggle_breakpoint_enabled (const UString &a_file_path,
                                     int a_linenum);
     void toggle_breakpoint_enabled ();
+    void update_src_dependant_bp_actions_sensitiveness ();
     bool append_visual_breakpoint (const UString &a_file_name,
                                    int a_linenum,
                                    UString &a_actual_file_name,
@@ -1666,7 +1667,7 @@ DBGPerspective::on_debugger_not_started_signal ()
     m_priv->debugger_ready_action_group->set_sensitive (false);
     m_priv->debugger_busy_action_group->set_sensitive (false);
 
-    if (get_n_pages ()) {
+    if (get_num_notebook_pages ()) {
         close_opened_files ();
     }
 }
@@ -2243,6 +2244,8 @@ DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
     LOG_DD ("stopped, reason: " << (int)a_reason);
 
     THROW_IF_FAIL (m_priv);
+
+    update_src_dependant_bp_actions_sensitiveness ();
 
     UString file_path (a_frame.file_full_name ());
     if (a_has_frame
@@ -3779,6 +3782,9 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     close_button.release ();
     label.release ();
     cicon.release ();
+
+    if (get_num_notebook_pages () == 1)
+        update_src_dependant_bp_actions_sensitiveness ();
 }
 
 SourceEditor*
@@ -4320,7 +4326,7 @@ DBGPerspective::read_default_config ()
 }
 
 int
-DBGPerspective::get_n_pages ()
+DBGPerspective::get_num_notebook_pages ()
 {
     THROW_IF_FAIL (m_priv && m_priv->sourceviews_notebook);
 
@@ -5029,7 +5035,7 @@ void
 DBGPerspective::close_current_file ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    if (!get_n_pages ()) {return;}
+    if (!get_num_notebook_pages ()) {return;}
 
     // We need to copy the path and pass it to close_file() because if we pass
     // it the reference to the map value, we will get corruption because
@@ -5105,8 +5111,9 @@ DBGPerspective::close_file (const UString &a_path)
         LOG_ERROR ("failed to unmonitor file " << a_path);
     }
 
-    if (!get_n_pages ()) {
+    if (!get_num_notebook_pages ()) {
         m_priv->opened_file_action_group->set_sensitive (false);
+        update_src_dependant_bp_actions_sensitiveness ();
     }
     update_file_maps ();
 }
@@ -5140,7 +5147,7 @@ DBGPerspective::close_opened_files ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    if (!get_n_pages ()) {return;}
+    if (!get_num_notebook_pages ()) {return;}
 
     map<UString, int>::iterator it;
     //loop until all the files are closed or until
@@ -5241,7 +5248,7 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
     m_priv->session = a_session;
 
     if (a_session.properties ()[PROGRAM_CWD] != m_priv->prog_path
-        && get_n_pages ()) {
+        && get_num_notebook_pages ()) {
         close_opened_files ();
     }
 
@@ -5445,7 +5452,7 @@ DBGPerspective::execute_program
     // close old files that might be open
     if (a_close_opened_files
         && (prog != m_priv->prog_path)
-        && get_n_pages ()) {
+        && get_num_notebook_pages ()) {
         close_opened_files ();
     }
 
@@ -5569,7 +5576,7 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
     LOG_FUNCTION_SCOPE_NORMAL_DD
     save_current_session ();
 
-    if (a_close_opened_files && get_n_pages ()) {
+    if (a_close_opened_files && get_num_notebook_pages ()) {
         close_opened_files ();
     }
 
@@ -5730,7 +5737,7 @@ DBGPerspective::load_core_file (const UString &a_prog_path,
 {
     THROW_IF_FAIL (m_priv);
 
-    if (a_prog_path != m_priv->prog_path && get_n_pages ()) {
+    if (a_prog_path != m_priv->prog_path && get_num_notebook_pages ()) {
         close_opened_files ();
     }
 
@@ -6456,6 +6463,36 @@ DBGPerspective::toggle_breakpoint_enabled (const UString &a_file_path,
     } else {
         LOG_DD ("breakpoint no set");
     }
+}
+
+void
+DBGPerspective::update_src_dependant_bp_actions_sensitiveness ()
+{
+    Glib::RefPtr<Gtk::Action> toggle_break_action =
+         workbench ().get_ui_manager ()->get_action
+        ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleBreakMenuItem");
+    THROW_IF_FAIL (toggle_break_action);
+
+    Glib::RefPtr<Gtk::Action> toggle_enable_action =
+         workbench ().get_ui_manager ()->get_action
+        ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleEnableBreakMenuItem");
+    THROW_IF_FAIL (toggle_enable_action);
+
+    Glib::RefPtr<Gtk::Action> bp_at_cur_line_with_dialog_action =
+         workbench ().get_ui_manager ()->get_action
+        ("/MenuBar/MenuBarAdditions/DebugMenu/SetBreakUsingDialogMenuItem");
+    THROW_IF_FAIL (bp_at_cur_line_with_dialog_action);
+
+    if (get_num_notebook_pages () == 0) {
+        toggle_break_action->set_sensitive (false);
+        toggle_enable_action->set_sensitive (false);
+        bp_at_cur_line_with_dialog_action->set_sensitive (false);
+    } else {
+        toggle_break_action->set_sensitive (true);
+        toggle_enable_action->set_sensitive (true);
+        bp_at_cur_line_with_dialog_action->set_sensitive (true);
+    }
+
 }
 
 void
