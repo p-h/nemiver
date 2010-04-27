@@ -24,6 +24,7 @@
  */
 #include "nmv-address.h"
 #include "nmv-str-utils.h"
+#include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
@@ -32,10 +33,16 @@ Address::Address ()
 {
 }
 
-Address::Address (const std::string &a) :
-    m_addr (a)
+Address::Address (const std::string &a)
 {
-    str_utils::chomp (m_addr);
+    string str = a;
+    str_utils::chomp (str);
+    if (!str.empty () && !str_utils::string_is_number (str)) {
+        stringstream msg;
+        msg << "Invalid address format: " << str;
+        THROW (msg.str ());
+    }
+    m_addr = str;
 }
 
 Address::Address (const Address &a_other) :
@@ -83,8 +90,15 @@ Address::string_size () const
 Address&
 Address::operator= (const std::string &a_addr)
 {
-    m_addr = a_addr;
-    str_utils::chomp (m_addr);
+    string addr = a_addr;
+    str_utils::chomp (addr);
+    if (!addr.empty ()
+        && !str_utils::string_is_number (addr)) {
+        stringstream msg;
+        msg << "Bad address format: " << addr;
+        THROW (msg.str ());
+    }
+    m_addr = addr;
     return *this;
 }
 
