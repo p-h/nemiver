@@ -1452,10 +1452,19 @@ struct OnCommandDoneHandler : OutputHandler {
                 slot (a_in.command ().variable ());
             }
         }
-        //TODO: this is not necessarily true. Before setting the state
-        //to ready here, one must now which command exactly was fired so
-        //that gdb returned the "DONE" status for it.
-        if (a_in.command ().name () != "detach-from-target") {
+
+        // So, if we are still attached to the target and we receive
+        // a "DONE" response from GDB, it means we are READY.
+        // But if we are not attached -- which can mean that the
+        // inferior just completed its execution or we did attached to
+        // an already inferior and we detached from it -- then we should
+        // not pretend we are in the READY state.
+        // Even if we are attached and this GDB response comes right
+        // after we sent the "detach-from-target" command, the
+        // OnDetachHandler output handler should have already taken care
+        // of updating our state, so let that state alone.
+        if (m_engine->is_attached_to_target ()
+            && (a_in.command ().name () != "detach-from-target")) {
             m_engine->set_state (IDebugger::READY);
         }
     }
