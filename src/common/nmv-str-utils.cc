@@ -103,6 +103,13 @@ int_to_string (size_t an_int)
 bool
 string_is_number (const string &a_str)
 {
+    return (string_is_hexa_number (a_str)
+            || string_is_decimal_number (a_str));
+}
+
+bool
+string_is_decimal_number (const string &a_str)
+{
     for (unsigned i = 0; i < a_str.size (); ++i)
         if (!isdigit (a_str[i]))
             return false;

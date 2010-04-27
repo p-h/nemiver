@@ -4143,7 +4143,7 @@ GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
             if ((*inner_it)->variable () == "line"
                 && inner_result_type == GDBMIValue::STRING_TYPE) {
                 string line_str = val->get_string_content ().raw ();
-                if (!str_utils::string_is_number (line_str)) {
+                if (!str_utils::string_is_decimal_number (line_str)) {
                     stringstream s;
                     s << "The value of the 'line' RESULT should be "
                          "a number. Instead it was: "
