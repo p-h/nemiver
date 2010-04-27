@@ -917,6 +917,27 @@
 			  <property name="column_spacing">6</property>
 
 			  <child>
+			    <widget class="GtkSpinButton" id="defaultnumasmspin">
+			      <property name="visible">True</property>
+			      <property name="can_focus">True</property>
+			      <property name="climb_rate">1</property>
+			      <property name="digits">0</property>
+			      <property name="numeric">True</property>
+			      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
+			      <property name="snap_to_ticks">False</property>
+			      <property name="wrap">False</property>
+			      <property name="adjustment">25 1 2500 1 0 0</property>
+			    </widget>
+			    <packing>
+			      <property name="left_attach">1</property>
+			      <property name="right_attach">2</property>
+			      <property name="top_attach">0</property>
+			      <property name="bottom_attach">1</property>
+			      <property name="y_options"></property>
+			    </packing>
+			  </child>
+
+			  <child>
 			    <widget class="GtkLabel" id="label14">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Number of instructions to disassemble by default</property>
@@ -933,28 +954,6 @@
 			      <property name="width_chars">-1</property>
 			      <property name="single_line_mode">False</property>
 			      <property name="angle">0</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">0</property>
-			      <property name="bottom_attach">1</property>
-			      <property name="x_options">fill</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkSpinButton" id="defaultnumasmspin">
-			      <property name="visible">True</property>
-			      <property name="can_focus">True</property>
-			      <property name="climb_rate">1</property>
-			      <property name="digits">0</property>
-			      <property name="numeric">True</property>
-			      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
-			      <property name="snap_to_ticks">False</property>
-			      <property name="wrap">False</property>
-			      <property name="adjustment">25 1 2500 1 0 0</property>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">0</property>
@@ -1025,8 +1024,8 @@
 			  <property name="n_rows">1</property>
 			  <property name="n_columns">2</property>
 			  <property name="homogeneous">False</property>
-			  <property name="row_spacing">0</property>
-			  <property name="column_spacing">0</property>
+			  <property name="row_spacing">6</property>
+			  <property name="column_spacing">6</property>
 
 			  <child>
 			    <widget class="GtkFileChooserButton" id="pathtogdbfilechooser">
@@ -1039,12 +1038,11 @@
 			      <property name="width_chars">-1</property>
 			    </widget>
 			    <packing>
-			      <property name="left_attach">0</property>
-			      <property name="right_attach">1</property>
+			      <property name="left_attach">1</property>
+			      <property name="right_attach">2</property>
 			      <property name="top_attach">0</property>
 			      <property name="bottom_attach">1</property>
-			      <property name="x_options"></property>
-			      <property name="y_options"></property>
+			      <property name="y_options">fill</property>
 			    </packing>
 			  </child>
 
@@ -1067,8 +1065,8 @@
 			      <property name="angle">0</property>
 			    </widget>
 			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
+			      <property name="left_attach">0</property>
+			      <property name="right_attach">1</property>
 			      <property name="top_attach">0</property>
 			      <property name="bottom_attach">1</property>
 			      <property name="x_options">fill</property>
