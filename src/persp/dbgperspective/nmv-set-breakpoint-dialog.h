@@ -27,6 +27,7 @@
 #define __NEMIVER_SET_BREAKPOINT_DIALOG_H__
 
 #include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-address.h"
 #include "nmv-dialog.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -37,6 +38,7 @@ class UString;
 
 using nemiver::common::UString;
 using nemiver::common::SafePtr;
+using nemiver::common::Address;
 
 class SetBreakpointDialog : public Dialog
 {
@@ -48,6 +50,7 @@ public:
     {
         MODE_SOURCE_LOCATION,
         MODE_FUNCTION_NAME,
+        MODE_BINARY_ADDRESS,
         MODE_EVENT
     };
 
@@ -62,6 +65,9 @@ public:
 
     UString function () const;
     void function (const UString &a_name);
+
+    Address address () const;
+    void address (const Address &);
 
     UString event () const;
     void event (const UString &a_event);

@@ -31,14 +31,14 @@
 #include <gtkmm/dialog.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-env.h"
-#include "common/nmv-ustring.h"
+#include "common/nmv-str-utils.h"
 #include "nmv-set-breakpoint-dialog.h"
 #include "nmv-ui-utils.h"
 
 using namespace std;
 using namespace nemiver::common;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class EventComboModelColumns
     : public Gtk::TreeModel::ColumnRecord
@@ -61,9 +61,11 @@ public:
     Gtk::Entry *entry_filename;
     Gtk::Entry *entry_line;
     Gtk::Entry *entry_function;
+    Gtk::Entry *entry_address;
     Gtk::Entry *entry_condition;
     Gtk::RadioButton *radio_source_location;
     Gtk::RadioButton *radio_function_name;
+    Gtk::RadioButton *radio_binary_location;
     Gtk::RadioButton *radio_event;
     Gtk::Button *okbutton;
 
@@ -74,8 +76,10 @@ public:
         entry_filename (0),
         entry_line (0),
         entry_function (0),
+        entry_address (0),
         radio_source_location (0),
         radio_function_name (0),
+        radio_binary_location (0),
         radio_event (0),
         okbutton (0)
     {
@@ -123,6 +127,13 @@ public:
                 (*this, &Priv::on_text_changed_signal));
         entry_function->set_activates_default ();
 
+        entry_address =
+            ui_utils::get_widget_from_glade<Gtk::Entry>
+                (a_glade, "addressentry");
+        entry_address->signal_changed ().connect (sigc::mem_fun
+              (*this, &Priv::on_text_changed_signal));
+        entry_address->set_activates_default ();
+
         entry_condition = ui_utils::get_widget_from_glade<Gtk::Entry>
                 (a_glade, "conditionentry");
         entry_condition->signal_changed ().connect (sigc::mem_fun
@@ -140,6 +151,12 @@ public:
                 (a_glade, "functionnameradio");
         radio_function_name->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed));
+
+        radio_binary_location =
+            ui_utils::get_widget_from_glade<Gtk::RadioButton>
+                (a_glade, "binarylocationradio");
+        radio_binary_location->signal_clicked ().connect (sigc::mem_fun
+              (*this, &Priv::on_radiobutton_changed));
 
         radio_event =
             ui_utils::get_widget_from_glade<Gtk::RadioButton>
@@ -182,6 +199,15 @@ public:
                     okbutton->set_sensitive (false);
                 }
                 break;
+            case MODE_BINARY_ADDRESS: {
+                bool address_is_valid = false;
+                UString address = entry_address->get_text ();
+                // Validate the address
+                if (str_utils::string_is_number (address))
+                    address_is_valid = true;
+                okbutton->set_sensitive (address_is_valid);
+            }
+                break;
             default:
                 okbutton->set_sensitive (true);
                 break;
@@ -203,26 +229,16 @@ public:
         THROW_IF_FAIL (entry_filename);
         THROW_IF_FAIL (entry_line);
         THROW_IF_FAIL (entry_function);
+        THROW_IF_FAIL (entry_address);
 
         SetBreakpointDialog::Mode a_mode = mode ();
 
         entry_function->set_sensitive (a_mode == MODE_FUNCTION_NAME);
         entry_filename->set_sensitive (a_mode == MODE_SOURCE_LOCATION);
         entry_line->set_sensitive (a_mode == MODE_SOURCE_LOCATION);
+        entry_address->set_sensitive (a_mode == MODE_BINARY_ADDRESS);
         combo_event->set_sensitive (a_mode == MODE_EVENT);
         entry_condition->set_sensitive (a_mode != MODE_EVENT);
-
-        switch (a_mode) {
-            case MODE_SOURCE_LOCATION:
-            LOG_DD ("Setting Sensitivity for SOURCE_LOCATION");
-            break;
-        case MODE_FUNCTION_NAME:
-            LOG_DD ("Setting Sensitivity for FUNCTION_NAME");
-            break;
-        case MODE_EVENT:
-            LOG_DD ("Setting Sensitivity for EVENT");
-            break;
-        }
         update_ok_button_sensitivity ();
         NEMIVER_CATCH
     }
@@ -236,6 +252,7 @@ public:
         THROW_IF_FAIL (entry_line);
         THROW_IF_FAIL (entry_filename);
         THROW_IF_FAIL (entry_function);
+        THROW_IF_FAIL (entry_address);
 
         switch (a_mode) {
             case MODE_SOURCE_LOCATION:
@@ -247,6 +264,11 @@ public:
                 LOG_DD ("Changing Mode to FUNCTION_NAME");
                 radio_function_name->set_active ();
                 entry_function->grab_focus ();
+                break;
+            case MODE_BINARY_ADDRESS:
+                LOG_DD ("Changing Mode to BINARY_ADDRESS");
+                radio_binary_location->set_active ();
+                entry_address->grab_focus ();
                 break;
             case MODE_EVENT:
                 LOG_DD ("Changing Mode to EVENT");
@@ -279,8 +301,12 @@ public:
             return MODE_SOURCE_LOCATION;
         } else if (radio_event->get_active ()) {
             return MODE_EVENT;
-        } else {
+        } else if (radio_function_name->get_active ()) {
             return MODE_FUNCTION_NAME;
+        } else if (radio_binary_location->get_active ()) {
+            return MODE_BINARY_ADDRESS;
+        } else {
+            THROW ("Unreachable code reached");
         }
     }
 };//end class SetBreakpointDialog::Priv
@@ -345,6 +371,28 @@ SetBreakpointDialog::function (const UString &a_name)
     m_priv->entry_function->set_text (a_name);
 }
 
+Address
+SetBreakpointDialog::address () const
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_address);
+
+    Address address;
+
+    UString str = m_priv->entry_address->get_text ();
+    if (str_utils::string_is_number (str))
+        address = str;
+    return address;
+}
+
+void
+SetBreakpointDialog::address (const Address &a)
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->entry_address);
+    m_priv->entry_address->set_text (a.to_string ());
+}
+
 UString
 SetBreakpointDialog::event () const
 {
@@ -393,5 +441,4 @@ SetBreakpointDialog::mode (Mode a_mode)
     m_priv->mode (a_mode);
 }
 
-}//end namespace nemiver
-
+NEMIVER_END_NAMESPACE (nemiver);

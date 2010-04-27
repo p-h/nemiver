@@ -7401,7 +7401,19 @@ DBGPerspective::set_breakpoint_from_dialog (SetBreakpointDialog &a_dialog)
             {
                 UString function = a_dialog.function ();
                 THROW_IF_FAIL (function != "");
+                LOG_DD ("setting breakpoint at function: " << function);
                 set_breakpoint (function, a_dialog.condition ());
+                break;
+            }
+
+        case SetBreakpointDialog::MODE_BINARY_ADDRESS:
+            {
+                Address address = a_dialog.address ();
+                if (!address.empty ()) {
+                    LOG_DD ("setting breakpoint at address: "
+                            << address);
+                    set_breakpoint (address);
+                }
                 break;
             }
 
@@ -7464,7 +7476,7 @@ DBGPerspective::set_breakpoint_using_dialog ()
         dialog.function (function_name);
     }
 
-    // Phiew. Enough set up for now. Time to launch the dialog and get the
+    // Pheew. Enough set up for now. Time to launch the dialog and get the
     // ball rolling.
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
