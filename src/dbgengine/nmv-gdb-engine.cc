@@ -2327,10 +2327,12 @@ struct OnDisassembleHandler : OutputHandler {
         }
         if (!instrs.empty ()) {
             std::list<IDebugger::Asm>::const_iterator it = instrs.begin ();
-            info.start_address ((*it).instr ().address ());
-            it = instrs.end ();
-            it--;
-            info.end_address ((*it).instr ().address ());
+            if (!it->empty ()) {
+                info.start_address ((*it).instr ().address ());
+                it = instrs.end ();
+                it--;
+                info.end_address ((*it).instr ().address ());
+            }
         }
         // Call the slot associated to IDebugger::disassemble, if any.
         if (a_in.command ().has_slot ()) {

@@ -889,13 +889,40 @@ public:
             return static_cast<Type> (m_asm.which ());
         }
 
+        bool empty () const
+        {
+            switch (which ()) {
+                case TYPE_PURE:
+                    break;
+                case TYPE_MIXED: {
+                    const MixedAsmInstr &mixed =
+                        boost::get<MixedAsmInstr> (m_asm);
+                    return mixed.instrs ().empty ();
+                }
+                default:
+                    THROW ("unknown asm type");
+            }
+            return false;
+        }
+
         const AsmInstr& instr () const
         {
             switch (which ()) {
                 case TYPE_PURE:
                     return boost::get<AsmInstr> (m_asm);
-                case TYPE_MIXED:
-                    return boost::get<MixedAsmInstr> (m_asm).instrs ().front ();
+                case TYPE_MIXED: {
+                    const MixedAsmInstr &mixed =
+                        boost::get<MixedAsmInstr> (m_asm);
+                    if (mixed.instrs ().empty ()) {
+                        stringstream msg;
+                        msg << "mixed asm has empty instrs at "
+                            << mixed.file_path ()
+                            << ":"
+                            << mixed.line_number ();
+                        THROW (msg.str ());
+                    }
+                    return mixed.instrs ().front ();
+                }
                 default:
                     break;
             }
