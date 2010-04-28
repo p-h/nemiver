@@ -274,7 +274,10 @@ public:
         (*a_iter)[get_bp_cols ().enabled] = a_breakpoint.enabled ();
         (*a_iter)[get_bp_cols ().id] = a_breakpoint.number ();
         (*a_iter)[get_bp_cols ().function] = a_breakpoint.function ();
-        (*a_iter)[get_bp_cols ().address] = a_breakpoint.address ().to_string ();
+        (*a_iter)[get_bp_cols ().address] =
+                                (a_breakpoint.address ().empty ())
+                                ? "<PENDING>"
+                                : a_breakpoint.address ().to_string ();
         (*a_iter)[get_bp_cols ().filename] = a_breakpoint.file_name ();
         (*a_iter)[get_bp_cols ().line] = a_breakpoint.line ();
         (*a_iter)[get_bp_cols ().condition] = a_breakpoint.condition ();
