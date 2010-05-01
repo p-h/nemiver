@@ -3799,7 +3799,6 @@ DBGPerspective::get_current_source_editor ()
 
     if (m_priv->sourceviews_notebook
         && !m_priv->sourceviews_notebook->get_n_pages ()) {
-        LOG_ERROR ("Empty m_priv->sourceviews_notebook");
         return NULL;
     }
 
