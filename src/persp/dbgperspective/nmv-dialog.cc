@@ -103,11 +103,27 @@ Dialog::run ()
 }
 
 void
+Dialog::show ()
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->dialog);
+    return m_priv->dialog->show ();
+}
+
+void
 Dialog::hide ()
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->dialog);
     return m_priv->dialog->hide ();
+}
+
+Glib::SignalProxy1<void, int>
+Dialog::signal_response ()
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->dialog);
+    return m_priv->dialog->signal_response ();
 }
 
 }//end namespace nemiver

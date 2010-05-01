@@ -56,6 +56,7 @@ class FindTextDialog::Priv {
     Glib::RefPtr<Gtk::ListStore> searchterm_store;
     Gtk::TextIter match_start;
     Gtk::TextIter match_end;
+    bool clear_selection_before_search;
 
     Priv ();
 
@@ -64,7 +65,8 @@ public:
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
         dialog (a_dialog),
-        glade (a_glade)
+        glade (a_glade),
+        clear_selection_before_search (false)
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
         connect_dialog_signals ();
@@ -292,6 +294,19 @@ FindTextDialog::set_search_backward (bool a_flag)
     m_priv->get_search_backwards_check_button ()->set_active (a_flag);
 }
 
+bool
+FindTextDialog::clear_selection_before_search () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->clear_selection_before_search;
+}
+
+void
+FindTextDialog::clear_selection_before_search (bool a)
+{
+    THROW_IF_FAIL (m_priv);
+    m_priv->clear_selection_before_search = a;
+}
 
 NEMIVER_END_NAMESPACE (nemiver)
 

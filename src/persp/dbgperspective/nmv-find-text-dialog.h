@@ -63,6 +63,9 @@ public:
 
     bool get_search_backward () const;
     void set_search_backward (bool a_flag);
+
+    bool clear_selection_before_search () const;
+    void clear_selection_before_search (bool);
 };//end FindTextDialog
 
 NEMIVER_END_NAMESPACE (nemiver)

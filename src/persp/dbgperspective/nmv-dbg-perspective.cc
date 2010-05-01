@@ -285,6 +285,7 @@ private:
     void on_show_commands_action ();
     void on_show_errors_action ();
     void on_show_target_output_action ();
+    void on_find_text_response_signal (int);
     void on_breakpoint_delete_action
                                 (const IDebugger::BreakPoint& a_breakpoint);
     void on_breakpoint_go_to_source_action
@@ -1532,6 +1533,7 @@ void
 DBGPerspective::on_show_target_output_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     NEMIVER_TRY
 
     Glib::RefPtr<Gtk::ToggleAction> action =
@@ -1541,6 +1543,51 @@ DBGPerspective::on_show_target_output_action ()
     THROW_IF_FAIL (action);
 
     set_show_target_output_view (action->get_active ());
+
+    NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_find_text_response_signal (int a_response)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    if (a_response != Gtk::RESPONSE_OK) {
+        get_find_text_dialog ().hide ();
+        return;
+    }
+
+    SourceEditor * editor = get_current_source_editor ();
+    if (editor == 0)
+        return;
+
+    UString search_str;
+    FindTextDialog& find_text_dialog  = get_find_text_dialog ();
+    find_text_dialog.get_search_string (search_str);
+    if (search_str == "")
+        return;
+
+    Gtk::TextIter start, end;
+    if (!editor->do_search (search_str, start, end,
+                            find_text_dialog.get_match_case (),
+                            find_text_dialog.get_match_entire_word (),
+                            find_text_dialog.get_search_backward (),
+                            find_text_dialog.clear_selection_before_search ())) {
+        UString message;
+        if (find_text_dialog.get_wrap_around ()) {
+            message = _("Reached end of file");
+            find_text_dialog.clear_selection_before_search (true);
+        } else {
+            message.printf (_("Could not find string %s"),
+                            search_str.c_str ());
+            find_text_dialog.clear_selection_before_search (false);
+        }
+        ui_utils::display_info (message);
+    } else {
+        find_text_dialog.clear_selection_before_search (false);
+    }
 
     NEMIVER_CATCH
 }
@@ -4582,6 +4629,9 @@ DBGPerspective::get_find_text_dialog ()
     THROW_IF_FAIL (m_priv);
     if (!m_priv->find_text_dialog) {
         m_priv->find_text_dialog.reset (new FindTextDialog (plugin_path ()));
+        m_priv->find_text_dialog->signal_response ().connect
+            (sigc::mem_fun (*this,
+                            &DBGPerspective::on_find_text_response_signal));
     }
     THROW_IF_FAIL (m_priv->find_text_dialog);
 
@@ -5048,43 +5098,7 @@ DBGPerspective::find_in_current_file ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    SourceEditor *editor = get_current_source_editor ();
-    THROW_IF_FAIL (editor);
-
-    FindTextDialog& find_text_dialog  = get_find_text_dialog ();
-
-    bool clear_selection=false;
-    for (;;) {
-        int result = find_text_dialog.run ();
-        if (result != Gtk::RESPONSE_OK) {
-            break;
-        }
-
-        UString search_str;
-        find_text_dialog.get_search_string (search_str);
-        if (search_str == "") {break;}
-
-        Gtk::TextIter start, end;
-        if (!editor->do_search (search_str, start, end,
-                                find_text_dialog.get_match_case (),
-                                find_text_dialog.get_match_entire_word (),
-                                find_text_dialog.get_search_backward (),
-                                clear_selection)) {
-            UString message;
-            if (find_text_dialog.get_wrap_around ()) {
-                message = _("Reached end of file");
-                clear_selection = true;
-            } else {
-                message.printf (_("Could not find string %s"),
-                                search_str.c_str ());
-                clear_selection = false;
-            }
-            ui_utils::display_info (message);
-        } else {
-            clear_selection = false;
-        }
-    }
-    find_text_dialog.hide ();
+    get_find_text_dialog ().show ();
 }
 
 void

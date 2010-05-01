@@ -74,7 +74,11 @@ public:
 
     virtual gint run ();
 
+    virtual void show ();
+
     virtual void hide ();
+
+    Glib::SignalProxy1<void, int> signal_response ();
 
 };//end class nemiver
 
