@@ -571,10 +571,10 @@ public:
                    Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
 
     bool read_file_line (const UString&, int, string&);
-    void write_asm_instr (std::ostringstream&,
+    bool write_asm_instr (std::ostringstream&,
                           const IDebugger::AsmInstr&);
 
-    void write_asm_instr (std::ostringstream&,
+    bool write_asm_instr (std::ostringstream&,
                           const IDebugger::Asm&);
 
     bool add_asm (const IDebugger::DisassembleInfo &a_info,
@@ -5823,7 +5823,6 @@ DBGPerspective::read_file_line (const UString &a_file_path,
     if (a_file_path.empty ())
         return false;
 
-
     UString path;
     if (!find_absolute_path_or_ask_user (a_file_path, path))
         return false;
@@ -5869,7 +5868,7 @@ DBGPerspective::read_file_line (const UString &a_file_path,
     return found_line;
 }
 
-void
+bool
 DBGPerspective::write_asm_instr (std::ostringstream &a_os,
                                  const IDebugger::AsmInstr &a_instr)
 {
@@ -5880,49 +5879,70 @@ DBGPerspective::write_asm_instr (std::ostringstream &a_os,
         a_os << "+" << a_instr.offset ();
     a_os << ">:  ";
     a_os << a_instr.instruction ();
+
+    return true;
 }
 
-void
+bool
 DBGPerspective::write_asm_instr (std::ostringstream &a_os,
                                  const IDebugger::Asm &a_asm)
 {
+    bool written = false;
+
     switch (a_asm.which ()) {
         case IDebugger::Asm::TYPE_PURE:
             write_asm_instr (a_os, a_asm.instr ());
+            written = true;
             break;
         case IDebugger::Asm::TYPE_MIXED: {
             const IDebugger::MixedAsmInstr &instr = a_asm.mixed_instr ();
+            // Ignore requests for line 0. Line 0 cannot exist as lines
+            // should be starting at 1., some
+            // versions of GDB seem to be referencing it for a reason.
+            if (instr.line_number () == 0) {
+                LOG_DD ("Skipping asm instr at line 0");
+                return false;
+            }
             string line;
             if (read_file_line (instr.file_path (),
                                 instr.line_number (),
                                 line)) {
-                if (!line.empty ()) {
+                if (line.empty ())
+                    a_os << "\n";
+                else {
                     a_os << line; // line does not end with a '\n' char.
-                    a_os << '\n';
+                    written = true;
                 }
             } else {
                 a_os << "<src file=\""
                          << instr.file_path ()
                          << "\" line=\""
                          << instr.line_number ()
-                         << "\"/>\n";
+                         << "\"/>";
+                written = true;
             }
 
-            list<IDebugger::AsmInstr>::const_iterator it =
-                                                    instr.instrs ().begin ();
-            if (it != instr.instrs ().end ()) {
-                write_asm_instr (a_os, *it);
-                ++it;
-            }
-            for (; it != instr.instrs ().end (); ++it) {
-                a_os << "\n";
-                write_asm_instr (a_os, *it);
+            if (!instr.instrs ().empty ()) {
+                list<IDebugger::AsmInstr>::const_iterator it =
+                                                instr.instrs ().begin ();
+                if (it != instr.instrs ().end ()) {
+                    if (written)
+                        a_os << "\n";
+                    written = write_asm_instr (a_os, *it);
+                    ++it;
+                }
+                for (; it != instr.instrs ().end (); ++it) {
+                    if (written)
+                        a_os << "\n";
+                    written = write_asm_instr (a_os, *it);
+                }
             }
         }
             break;
         default:
             break;
     }
+    return written;
 }
 
 bool
@@ -5944,7 +5964,7 @@ DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
 
     // Write the first asm instruction into a string stream.
     std::ostringstream first_os, endl_os;
-    write_asm_instr (first_os, *it);
+    bool first_written = write_asm_instr (first_os, *it);
     endl_os << std::endl;
 
     // Figure out where to insert the asm instrs, depending on a_append
@@ -5962,14 +5982,20 @@ DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
         insert_it = a_buf->begin ();
     }
     // Really insert the the first asm instrs.
-    insert_it = a_buf->insert (insert_it, first_os.str ());
+    if (first_written)
+        insert_it = a_buf->insert (insert_it, first_os.str ());
 
     // Append the remaining asm instrs. Make sure to add an "end of line"
     // before each asm instr.
+    bool prev_written = true;
     for (++it; it != a_asm.end (); ++it) {
+        // If the first item was empty, do not insert "\n" on the first
+        // iteration.
+        if (first_written && prev_written)
+            insert_it = a_buf->insert (insert_it, endl_os.str ());
+        first_written = true;
         ostringstream os;
-        write_asm_instr (os, *it);
-        insert_it = a_buf->insert (insert_it, endl_os.str ());
+        prev_written = write_asm_instr (os, *it);
         insert_it = a_buf->insert (insert_it, os.str ());
     }
     return true;

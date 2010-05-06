@@ -32,7 +32,7 @@
 #include <gtksourceviewmm/sourceiter.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
-#include "common/nmv-ustring.h"
+#include "common/nmv-str-utils.h"
 #include "uicommon/nmv-ui-utils.h"
 #include "nmv-source-editor.h"
 
@@ -329,7 +329,7 @@ struct SourceEditor::Priv {
                 break;
             addr += c;
         }
-        if (addr.empty ())
+        if (!str_utils::string_is_number (addr))
             return false;
 
         an_address = addr;
