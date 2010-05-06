@@ -225,7 +225,7 @@ public:
     void init ();
 
     // to be called by client code
-    void do_init (IConfMgrSafePtr &a_conf_mgr);
+    void do_init (IConfMgrSafePtr a_conf_mgr);
 
     IConfMgr& get_conf_mgr ();
 

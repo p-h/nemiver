@@ -89,6 +89,8 @@ public:
     Gtk::RadioButton *confirm_reload_radio_button;
     Gtk::RadioButton *pure_asm_radio_button;
     Gtk::RadioButton *mixed_asm_radio_button;
+    Gtk::RadioButton *follow_parent_radio_button;
+    Gtk::RadioButton *follow_child_radio_button;
     Gtk::SpinButton  *default_num_asm_instrs_spin_button;
     Gtk::FileChooserButton *gdb_binary_path_chooser_button;
     Glib::RefPtr<Gnome::Glade::Xml> glade;
@@ -109,6 +111,8 @@ public:
         confirm_reload_radio_button (0),
         pure_asm_radio_button (0),
         mixed_asm_radio_button (0),
+        follow_parent_radio_button (0),
+        follow_child_radio_button (0),
         default_num_asm_instrs_spin_button (0),
         gdb_binary_path_chooser_button (0),
         glade (a_glade)
@@ -215,6 +219,11 @@ public:
     void on_gdb_binary_file_set_signal ()
     {
         update_gdb_binary_key ();
+    }
+
+    void on_follow_fork_mode_toggle_signal ()
+    {
+        update_follow_fork_mode_key ();
     }
 
     void init ()
@@ -406,6 +415,23 @@ public:
                  (*this,
                   &PreferencesDialog::Priv::on_gdb_binary_file_set_signal));
 
+        follow_parent_radio_button =
+        ui_utils::get_widget_from_glade<Gtk::RadioButton> (glade,
+                                                           "followparentradio");
+        THROW_IF_FAIL (follow_parent_radio_button);
+        follow_parent_radio_button->signal_toggled ().connect
+            (sigc::mem_fun
+                 (*this,
+                  &PreferencesDialog::Priv::on_follow_fork_mode_toggle_signal));
+
+        follow_child_radio_button =
+        ui_utils::get_widget_from_glade<Gtk::RadioButton> (glade,
+                                                           "followchildradio");
+        THROW_IF_FAIL (follow_child_radio_button);
+        follow_child_radio_button->signal_toggled ().connect
+            (sigc::mem_fun
+                 (*this,
+                  &PreferencesDialog::Priv::on_follow_fork_mode_toggle_signal));
     }
 
     void collect_source_dirs ()
@@ -571,6 +597,20 @@ public:
                                        Glib::filename_from_utf8 (path));
     }
 
+    void update_follow_fork_mode_key ()
+    {
+        THROW_IF_FAIL (follow_parent_radio_button);
+        THROW_IF_FAIL (follow_child_radio_button);
+
+        UString mode = "parent";
+        if (follow_parent_radio_button->get_active ())
+            /*mode = "parent"*/;
+        else if (follow_child_radio_button->get_active ())
+            mode = "child";
+
+        conf_manager ().set_key_value (CONF_KEY_FOLLOW_FORK_MODE, mode);
+    }
+
     void update_widget_from_editor_keys ()
     {
         THROW_IF_FAIL (show_lines_check_button);
@@ -681,11 +721,22 @@ public:
 
         UString gdb_binary = common::env::get_gdb_program ();
         if (!conf_manager ().get_key_value (CONF_KEY_GDB_BINARY, gdb_binary)) {
-            LOG_ERROR ("failed to get gconf key" << CONF_KEY_GDB_BINARY);
+            LOG_ERROR ("failed to get gconf key " << CONF_KEY_GDB_BINARY);
         }
         gdb_binary_path_chooser_button->set_filename
             (Glib::filename_to_utf8 (gdb_binary));
 
+        UString follow_fork_mode = "parent";
+        if (!conf_manager ().get_key_value (CONF_KEY_FOLLOW_FORK_MODE,
+                                           follow_fork_mode)) {
+            LOG_ERROR ("failed to get gconf key "
+                       << CONF_KEY_FOLLOW_FORK_MODE);
+        }
+        if (follow_fork_mode == "parent") {
+            follow_parent_radio_button->set_active (true);
+        } else if (follow_fork_mode == "child") {
+            follow_child_radio_button->set_active (true);
+        }
     }
 
     void update_widget_from_conf ()

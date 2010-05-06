@@ -1176,7 +1176,7 @@ public:
                 assigned_variable_signal () const = 0;
     /// @}
 
-    virtual void do_init (IConfMgrSafePtr &a_conf_mgr) = 0;
+    virtual void do_init (IConfMgrSafePtr a_conf_mgr) = 0;
 
     virtual map<UString, UString>& properties () = 0;
 

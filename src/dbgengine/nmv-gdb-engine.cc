@@ -55,6 +55,7 @@ static const UString DEFAULT_GDB_BINARY = "default-gdb-binary";
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 extern const char* CONF_KEY_GDB_BINARY;
+extern const char* CONF_KEY_FOLLOW_FORK_MODE;
 
 // Helper function to handle escaping the arguments 
 static UString
@@ -124,6 +125,7 @@ public:
     Address cur_frame_address;
     ILangTraitSafePtr lang_trait;
     UString debugger_full_path;
+    UString follow_fork_mode;
     GDBMIParser gdbmi_parser;
     sigc::signal<void> gdb_died_signal;
     sigc::signal<void, const UString& > master_pty_signal;
@@ -298,16 +300,6 @@ public:
 
     IConfMgrSafePtr get_conf_mgr () const
     {
-        if (!conf_mgr) {
-            THROW_IF_FAIL (dynmod);
-            DynamicModule::Loader *loader = dynmod->get_module_loader ();
-            THROW_IF_FAIL (loader);
-            DynamicModuleManager *module_manager =
-                                        loader->get_dynamic_module_manager ();
-            THROW_IF_FAIL (module_manager);
-            conf_mgr = module_manager->load_iface<IConfMgr> ("gconfmgr",
-                                                             "IConfMgr");
-        }
         THROW_IF_FAIL (conf_mgr);
         return conf_mgr;
     }
@@ -451,6 +443,7 @@ public:
         state (IDebugger::NOT_STARTED),
         cur_frame_level (0),
         cur_thread_num (1),
+        follow_fork_mode ("parent"),
         gdbmi_parser (GDBMIParser::BROKEN_MODE)
     {
         gdb_stdout_signal.connect (sigc::mem_fun
@@ -471,7 +464,6 @@ public:
 
         frames_listed_signal.connect (sigc::mem_fun
                (*this, &Priv::on_frames_listed_signal));
-
     }
 
     void free_resources ()
@@ -695,6 +687,7 @@ public:
         if (!args.empty ()) {
             return issue_command (Command ("set args " + args));
         }
+        set_debugger_parameter ("follow-fork-mode", follow_fork_mode);
 
         return true;
     }
@@ -756,6 +749,23 @@ public:
             queued_commands.erase (queued_commands.begin ());
         }
         return result;
+    }
+
+    void set_debugger_parameter (const UString &a_name,
+                                 const UString &a_value)
+    {
+
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+        if (a_name == "")
+            return;
+        UString param_str = a_name + " " + a_value;
+        queue_command (Command ("set-debugger-parameter", "set " + param_str));
+    }
+
+    void read_default_config ()
+    {
+        get_conf_mgr ()->get_key_value (CONF_KEY_FOLLOW_FORK_MODE,
+                                        follow_fork_mode);
     }
 
     void list_frames (int a_low_frame,
@@ -969,6 +979,19 @@ public:
 
         if (!a_frames.empty () && a_frames[0].level () == 0)
             cur_frame_address = a_frames[0].address ();
+
+        NEMIVER_CATCH_NOX
+    }
+
+    void on_conf_key_changed_signal (const UString &a_key,
+                                     IConfMgr::Value &a_value)
+    {
+        NEMIVER_TRY
+
+        if (a_key == CONF_KEY_FOLLOW_FORK_MODE) {
+            follow_fork_mode = boost::get<UString> (a_value).raw ();
+            set_debugger_parameter ("follow-fork-mode", follow_fork_mode);
+        }
 
         NEMIVER_CATCH_NOX
     }
@@ -3295,12 +3318,18 @@ GDBEngine::init ()
     init_output_handlers ();
 }
 
+// Put here the initialization that must happen once our call call us
+// For initialization, i.e, after we are sure we have stuff like conf
+// manager ready, etc ...
 void
-GDBEngine::do_init (IConfMgrSafePtr &a_conf_mgr)
+GDBEngine::do_init (IConfMgrSafePtr a_conf_mgr)
 {
-
-
     m_priv->conf_mgr = a_conf_mgr;
+
+    m_priv->read_default_config ();
+
+    m_priv->get_conf_mgr ()->value_changed_signal ().connect (sigc::mem_fun
+        (*m_priv, &Priv::on_conf_key_changed_signal));
 }
 
 IConfMgr&
@@ -3368,10 +3397,7 @@ GDBEngine::set_debugger_parameter (const UString &a_name,
                                    const UString &a_value)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    if (a_name == "")
-        return;
-    UString param_str = a_name + " " + a_value;
-    queue_command (Command ("set-debugger-parameter", "set " + param_str));
+    m_priv->set_debugger_parameter (a_name, a_value);
 }
 
 void

@@ -47,6 +47,8 @@ extern const char* CONF_KEY_EDITOR_STYLE_SCHEME;
 extern const char* CONF_KEY_ASM_STYLE_PURE;
 extern const char* CONF_KEY_GDB_BINARY;
 extern const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS;
+extern const char* CONF_KEY_FOLLOW_FORK_MODE;
+
 NEMIVER_END_NAMESPACE (nemiver)
 
 #endif // __NMV_CONF_KEYS_H__
