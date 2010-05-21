@@ -1,8 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-_Name=Nemiver Debugger
+_Name=Nemiver
 _GenericName=C/C++ Debugger
+_X-GNOME-FullName=Nemiver C/C++ Debugger
 _Comment=Debug Applications
 Icon=nemiver
 Exec=nemiver
