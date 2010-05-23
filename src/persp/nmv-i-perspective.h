@@ -121,6 +121,17 @@ public:
     virtual Gtk::Widget* load_menu (const UString &a_filename,
                                     const UString &a_widget_name) = 0;
 
+    /// \brief Should return true to allow shutdown.
+    /// This Method will be called for each perspective before 
+    /// workbench initiates a shutdown (). This is a chance given to
+    /// the perspective to veto the shutdown (). Each perspective has
+    /// to implement this function wherein it can decide for itself
+    /// whether it wants to veto the shutdown or not. Returning 'true'
+    /// from here means that the perspective is ok with the shutdown
+    /// returning 'false' vetoes the shutdown and nemiver does not go
+    /// down.
+    virtual bool agree_to_shutdown () = 0;
+
     /// \name signals
 
     /// @{

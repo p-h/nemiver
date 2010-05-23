@@ -167,6 +167,8 @@ public:
     virtual sigc::signal<void, bool>& activated_signal () = 0;
 
     virtual sigc::signal<void, bool>& debugger_ready_signal () = 0;
+
+    virtual bool agree_to_shutdown () = 0;
 };//end class IDBGPerspective
 
 NEMIVER_END_NAMESPACE (nemiver)

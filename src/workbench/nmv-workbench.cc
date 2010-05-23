@@ -132,6 +132,7 @@ private:
         WorkbenchStaticInit::do_init ();
     }
     bool on_delete_event (GdkEventAny* event);
+    bool query_for_shutdown ();
 
 public:
     Workbench (DynamicModule *a_dynmod);
@@ -189,6 +190,22 @@ struct Workbench::Priv {
 //****************
 //private methods
 //****************
+bool
+Workbench::query_for_shutdown ()
+{
+    bool retval = true;
+    list<IPerspectiveSafePtr>::const_iterator iter;
+    for (iter = m_priv->perspectives.begin ();
+         iter != m_priv->perspectives.end ();
+         ++iter) {
+         if ((*iter)->agree_to_shutdown () == false) {
+             retval = false;
+             break;
+         }
+    }
+    return retval;
+}
+
 
 //*********************
 //signal slots methods
@@ -197,6 +214,7 @@ bool
 Workbench::on_delete_event (GdkEventAny* a_event)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+    bool retval = true;
 
     NEMIVER_TRY
     // use event so that compilation doesn't fail with -Werror :(
@@ -204,11 +222,15 @@ Workbench::on_delete_event (GdkEventAny* a_event)
 
     // clicking the window manager's X and shutting down the with Quit menu item
     // should do the same thing
-    on_quit_menu_item_action ();
+    if (query_for_shutdown () == true) {
+        shut_down ();
+        retval = false;
+    }
+
     NEMIVER_CATCH
 
-    //keep propagating
-    return false;
+    //Will propagate if retval = false, else not
+    return retval;
 }
 
 void
@@ -218,7 +240,9 @@ Workbench::on_quit_menu_item_action ()
 
     NEMIVER_TRY
 
-    shut_down ();
+    if (query_for_shutdown () == true) {
+        shut_down ();
+    }
 
     NEMIVER_CATCH
 }

@@ -705,6 +705,8 @@ public:
     bool do_unmonitor_file (const UString &a_path);
 
     void activate_status_view(Gtk::Widget& page);
+ 
+    bool agree_to_shutdown ();
 
     sigc::signal<void, bool>& show_command_view_signal ();
     sigc::signal<void, bool>& show_target_output_view_signal ();
@@ -7237,6 +7239,25 @@ sigc::signal<void, bool>&
 DBGPerspective::show_log_view_signal ()
 {
     return m_priv->show_log_view_signal;
+}
+
+bool
+DBGPerspective::agree_to_shutdown ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    if (debugger ()->is_attached_to_target ()) {
+	UString message;
+        message.printf (_("There is a program being currently debugged. "
+                          "Do you really want to exit from the debugger?"));
+        if (nemiver::ui_utils::ask_yes_no_question (message) ==
+            Gtk::RESPONSE_YES) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
 }
 
 class DBGPerspectiveModule : DynamicModule {
