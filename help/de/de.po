@@ -1,13 +1,13 @@
 # German translation of nemiver.
 # Copyright (C) 2009 nemiver's COPYRIGHT HOLDER
 # This file is distributed under the same license as the nemiver package.
-# Mario Blättermann <mariobl@gnome.org>, 2009.
+# Mario Blättermann <mariobl@gnome.org>, 2009, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"POT-Creation-Date: 2009-07-12 11:46+0000\n"
-"PO-Revision-Date: 2009-07-12 14:54+0100\n"
+"POT-Creation-Date: 2009-07-12 12:59+0000\n"
+"PO-Revision-Date: 2010-06-15 19:36+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -476,12 +476,13 @@ msgstr ""
 
 #: C/nemiver.xml:230(term)
 msgid "Call Stack"
-msgstr ""
+msgstr "Aufruf-Stack"
 
 #: C/nemiver.xml:234(para)
 msgid ""
 "Displays the current state of the call stack of the program being debugged."
 msgstr ""
+"Zeigt den aktuellen Status des Aufruf-Stacks im zu debuggenden Programm an."
 
 #: C/nemiver.xml:241(term)
 msgid "Variables"
@@ -504,6 +505,8 @@ msgid ""
 "If the program being debugged prints any output to the terminal, it will be "
 "displayed in this tab."
 msgstr ""
+"Falls das zu debuggende Programm irgendetwas im Terminal ausgibt, dann wird "
+"die Ausgabe in diesem Reiter angezeigt."
 
 #: C/nemiver.xml:263(term)
 msgid "Breakpoints"
@@ -518,6 +521,14 @@ msgid ""
 "be deleted, enabled, or disabled in this tab. For more information about "
 "breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
 msgstr ""
+"Dieser Reiter zeigt eine Liste aller gesetzten Haltepunkte an. Sie können den "
+"Quellcode eines bestimmten Haltepunkts betrachten, indem Sie auf den "
+"Listeneintrag doppelklicken. Wahlweise können Sie mit der rechten Maustaste "
+"auf einen der Einträge klicken und <menuchoice><guimenuitem>Gehe zu "
+"Quelldatei</guimenuitem></menuchoice> im Kontextmenü wählen. Außerdem können "
+"in diesem Reiter Haltepunkte gelöscht, aktiviert oder deaktiviert werden. "
+"Weitere Informationen über Haltepunkte finden Sie in <xref linkend=\"nemiver-"
+"sect-breakpoints\"/>."
 
 #: C/nemiver.xml:280(term) C/nemiver.xml:766(title)
 msgid "Registers"
@@ -612,6 +623,12 @@ msgid ""
 "executable. For example, if <filename>/usr/bin</filename> is in your path, "
 "both of the following are valid:"
 msgstr ""
+"Um ein zu debuggendes ausführbares Programm in der Befehlszeile zu starten, "
+"geben Sie einfach dessen Namen an. Sie können einen absoluten Pfad angeben, "
+"oder falls es sich bereits in Ihrer Pfad-Variable befindet, geben Sie den "
+"Basisnamen der ausführbaren Datei an. Wenn sich beispielsweise <filename>/usr/"
+"bin</filename> in Ihrem Pfad befindet, dann sind beide der folgenden Aufrufe "
+"gültig:"
 
 #: C/nemiver.xml:357(command)
 msgid "nemiver /usr/bin/progname"
@@ -646,6 +663,9 @@ msgid ""
 "Attach to Running Program... </guimenuitem></menuchoice>, which should "
 "display the following dialog:"
 msgstr ""
+"Wählen Sie <menuchoice><guimenu>Datei</guimenu><guimenuitem>An laufendes "
+"Programm anhängen</guimenuitem></menuchoice>, wodurch der folgende Dialog "
+"angezeigt wird:"
 
 #: C/nemiver.xml:390(title)
 msgid "Attach Dialog"
@@ -715,6 +735,9 @@ msgid ""
 "To connect to a remote debugging server, select <menuchoice><guimenu>File</"
 "guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
 msgstr ""
+"Um eine Verbindung zu einem entfernten Debugging-Server herzustellen, wählen "
+"Sie <menuchoice><guimenu>Datei</guimenu><guimenuitem>Zum entfernten Ziel "
+"verbinden</guimenuitem></menuchoice>"
 
 #: C/nemiver.xml:474(phrase)
 msgid "Remote Debugging Dialog"
@@ -725,6 +748,9 @@ msgid ""
 "Select the executable to load and the location where any shared libraries are "
 "located, and then fill in the details about connecting to the remote server."
 msgstr ""
+"Wählen Sie das zu ladende ausführbare Programm und den Ort der gemeinsamen "
+"Bibliotheken und geben Sie die Details zur Verbindung mit dem entfernten "
+"Server ein."
 
 #: C/nemiver.xml:486(para)
 msgid ""
@@ -769,10 +795,14 @@ msgid ""
 "<action>Stop</action>. This action can be activated from the keyboard with "
 "<keycap>F5</keycap>."
 msgstr ""
+"Startet das Programm. Das Programm wird bis zum nächsten Haltepunkt oder bis "
+"zum Programmende ausgeführt, es sei denn, es wird manuell vom Benutzer durch "
+"Anklicken von <action>Stop</action> unterbrochen. Diese Aktion kann auf der "
+"Tastatur mit <keycap>F5</keycap> aktiviert werden."
 
 #: C/nemiver.xml:520(term)
 msgid "Next"
-msgstr ""
+msgstr "Weiter"
 
 #: C/nemiver.xml:522(para)
 msgid ""
@@ -780,10 +810,13 @@ msgid ""
 "file. Some debuggers may call this action \"Step Over\". This action can be "
 "activated from the keyboard with <keycap>F6</keycap>."
 msgstr ""
+"Führt die nächste Anweisung aus und stoppt, wenn die nächste Zeile in dieser "
+"Datei erreicht ist. Einige Debugger nennen diese Aktion »Step Over«. Diese "
+"Aktion kann auf der Tastatur mit <keycap>F6</keycap> aktiviert werden."
 
 #: C/nemiver.xml:531(term)
 msgid "Step"
-msgstr ""
+msgstr "Einzelschritt"
 
 #: C/nemiver.xml:533(para)
 msgid ""
@@ -791,10 +824,13 @@ msgid ""
 "debuggers may call this action \"Step In\". This action can be activated from "
 "the keyboard with <keycap>F7</keycap>."
 msgstr ""
+"Führt die nächste Anweisung aus und springt in die Funktion, wenn möglich. "
+"Einige Debugger nennen diese Anweisung »Step in«. Diese Aktion kann auf der "
+"Tastatur mit <keycap>F7</keycap> aktiviert werden."
 
 #: C/nemiver.xml:541(term)
 msgid "Step Out"
-msgstr ""
+msgstr "Herausspringen"
 
 #: C/nemiver.xml:543(para)
 msgid ""
@@ -802,10 +838,14 @@ msgid ""
 "calling function. This action can be activated from the keyboard with "
 "<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
 msgstr ""
+"Beendet die Ausführung der aktuellen Funktion und stoppt, wenn es zur "
+"aufgerufenen Fenktion zurückkehrt. Diese Aktion kann auf der Tastatur mit "
+"<keycombo><keycap>Umschalttaste</keycap><keycap>F7</keycap></keycombo> "
+"aktiviert werden."
 
 #: C/nemiver.xml:552(term)
 msgid "Restart"
-msgstr ""
+msgstr "Neustart"
 
 #: C/nemiver.xml:554(para)
 msgid ""
@@ -813,10 +853,14 @@ msgid ""
 "action can be activated from the keyboard with <keycombo><keycap>Shift</"
 "keycap><keycap>F5</keycap></keycombo>."
 msgstr ""
+"Lädt die aktuelle Ausführung neu und beginnt die Ausführung wieder am "
+"Ausgangspunkt. Diese Aktion kann auf der Tastatur mit "
+"<keycombo><keycap>Umschalttaste</keycap><keycap>F5</keycap></keycombo> "
+"aktiviert werden."
 
 #: C/nemiver.xml:562(term)
 msgid "Stop"
-msgstr ""
+msgstr "Anhalten"
 
 #: C/nemiver.xml:564(para)
 msgid ""
@@ -825,6 +869,10 @@ msgid ""
 "<action>Continue</action>). This action can be activated from the keyboard "
 "with <keycap>F9</keycap>."
 msgstr ""
+"Unterbricht die Ausführung des Programms manuell. Diese Aktion ist nur "
+"verfügbar, wenn der Debugger gerade ausführt, beispielsweise wenn der "
+"Benutzer <action>Fortsetzen</action> angeklickt hat. Diese Aktion kann auf "
+"der Tastatur mit <keycap>F9</keycap> aktiviert werden."
 
 #: C/nemiver.xml:573(para)
 msgid ""
@@ -835,10 +883,17 @@ msgid ""
 "variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-"
 "sect-breakpoints\"/>)."
 msgstr ""
+"Standardmäßig erzeugt Nemiver einen Haltepunkt bei <function>main()</"
+"function> nach dem Laden eines ausführbaren Programms. Sobald die Ausführung "
+"<function>main()</function> erreicht hat, wird die Ausführung angehalten und "
+"wartet auf eine Eingabe. Sie können durch das Programm springen, Variablen "
+"prüfen (siehe <xref linkend=\"nemiver-sect-inspecting-variables\"/>), oder "
+"zusätzliche Haltepunkte hinzufügen (siehe <xref linkend=\"nemiver-sect-"
+"breakpoints\"/>)."
 
 #: C/nemiver.xml:582(title)
 msgid "Inspecting Variables"
-msgstr ""
+msgstr "Untersuchen von Variablen"
 
 #: C/nemiver.xml:583(para)
 msgid ""
@@ -851,10 +906,18 @@ msgid ""
 "variable inspector comes up, you'll see a window that looks similar to the "
 "following:"
 msgstr ""
+"Nemiver zeigt eine Liste aller lokalen Variablen im <interface>Variablen</"
+"interface>-Reiter der <interface>Status-Reitermappe</interface> an. Falls Sie "
+"eine bestimmte Variable (oder auch einen bestimmten Ausdruck) untersuchen "
+"wollen, können Sie die <interface>Variablen-Untersuchung</interface> "
+"verwenden. Um die <interface>Variablen-Untersuchung</interface> zu öffnen, "
+"wählen Sie <menuchoice><guimenu>Debug</guimenu><guimenuitem>Eine Variable "
+"untersuchen</guimenuitem></menuchoice>. Wenn die Variablen-Untersuchung "
+"geöffnet ist, dann wird folgendes Fenster angezeigt:"
 
 #: C/nemiver.xml:596(phrase)
 msgid "Variable Inspector Dialog"
-msgstr ""
+msgstr "Dialog zum Untersuchen von Variablen"
 
 #: C/nemiver.xml:600(para)
 msgid ""
@@ -862,6 +925,10 @@ msgid ""
 "&gt;bar</literal>) into the input box, and if the variable is valid and in "
 "scope, it will be display details about that expression."
 msgstr ""
+"Sie können in das Eingabefeld einen beliebigen Variablennamen (wie "
+"<literal>pFoo-&gt;bar</literal>) eingeben. Wenn die Variable gültig ist und "
+"im aktuellen Bereich liegt, werden Einzelheiten über diesen Ausdruck "
+"angezeigt."
 
 #: C/nemiver.xml:605(para)
 msgid ""
@@ -870,6 +937,10 @@ msgid ""
 "interface>, it will attempt to display information about the selected "
 "variable name."
 msgstr ""
+"Alternativ können Sie den Variablennamen im <interface>Quelleditor</"
+"interface> markieren und dann die <interface>Variablen-Untersuchung</"
+"interface> aufrufen. Es wird dann versucht, Informationen über den markierten "
+"Variablennamen anzuzeigen."
 
 #: C/nemiver.xml:612(title)
 msgid "Keyboard Shortcut"
@@ -880,6 +951,8 @@ msgid ""
 "You can also start the <interface>Variable Inspector</interface> by pressing "
 "<keycap>F12</keycap>."
 msgstr ""
+"Sie können die <interface>Variablen-Untersuchung</interface> auch auf der "
+"Tastatur mit <keycap>F12</keycap> aufrufen."
 
 #: C/nemiver.xml:618(para)
 msgid ""
@@ -913,11 +986,16 @@ msgid ""
 "begin debugging a new executable. If you want to set additional breakpoints "
 "you can do one of the following:"
 msgstr ""
+"Es gibt verschiedene Wege, in Nemiver Haltepunkte zu setzen. Nemiver setzt "
+"eine Haltepunkt automatisch bei <function>main()</function>, wenn Sie mit dem "
+"Debuggen eines ausfphrbaren Programms neu beginnen. Um zusätzliche "
+"Haltepunkte zu setzen, können Sie folgendermaßen vorgehen:"
 
 #: C/nemiver.xml:651(para)
 msgid ""
 "Click in the margin next to the line where you want the breakpoint to be set"
 msgstr ""
+"Klicken Sie auf den Rand neben der Zeile, wo Sie den Haltepunkt setzen wollen."
 
 #: C/nemiver.xml:655(para)
 msgid ""
@@ -1112,6 +1190,10 @@ msgid ""
 "closing Nemiver, you can do so by selecting <menuchoice><guimenu>File</"
 "guimenu><guimenuitem>Save Session To Disk</guimenuitem></menuchoice>."
 msgstr ""
+"Nemiver speichert Ihre Sitzung automatisch beim Beenden, so dass Sie darüber "
+"nicht nachdenken müssen. Wenn Sie jedoch die Sitzung explizit speichern "
+"wollen, bevor Sie Nemiver schließen, wählen Sie <menuchoice><guimenu>Datei</"
+"guimenu><guimenuitem>Sitzung auf Platte speichern</guimenuitem></menuchoice>."
 
 #: C/nemiver.xml:850(title)
 msgid "Resuming Saved Sessions"
@@ -1122,6 +1204,9 @@ msgid ""
 "Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved Session..."
 "</guimenuitem></menuchoice> and select a session from the list."
 msgstr ""
+"Wählen Sie <menuchoice><guimenu>Datei</guimenu><guimenuitem>Gespeicherte "
+"Sitzung wiederherstellen</guimenuitem></menuchoice> und wählen Sie eine "
+"Sitzung in der Liste aus."
 
 #: C/nemiver.xml:859(title)
 msgid "Session Dialog"
@@ -1189,4 +1274,4 @@ msgstr ""
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2.
 #: C/nemiver.xml:0(None)
 msgid "translator-credits"
-msgstr "Mario Blättermann <mariobl@gnome.org>, 2009"
+msgstr "Mario Blättermann <mariobl@gnome.org>, 2009, 2010"
