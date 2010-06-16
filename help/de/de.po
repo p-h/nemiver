@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "POT-Creation-Date: 2009-07-12 12:59+0000\n"
-"PO-Revision-Date: 2010-06-15 19:36+0100\n"
+"PO-Revision-Date: 2010-06-16 22:36+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -125,28 +125,28 @@ msgstr ""
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:180(None)
 msgid "@@image: 'figures/main-window.png'; md5=216a6e17325ddd6a4e96037d05a39734"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:329(None)
 msgid ""
 "@@image: 'figures/execute-dialog.png'; md5=450a45378b4021176c8f093be2dedc97"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:394(None)
 msgid ""
 "@@image: 'figures/attach-dialog.png'; md5=9940de171b58f92ea810dc4478364976"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:440(None)
 msgid ""
 "@@image: 'figures/load-core-dialog.png'; md5=2a3dd09883a026826d0a7036991720a4"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -154,7 +154,7 @@ msgstr ""
 msgid ""
 "@@image: 'figures/connect-remote-dialog.png'; "
 "md5=0f47f358e68947aaf1330fb1c1013f72"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -162,7 +162,7 @@ msgstr ""
 msgid ""
 "@@image: 'figures/variable-inspector.png'; "
 "md5=676c2a7985aa4e41f5a77a85bcfd8a27"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -170,7 +170,7 @@ msgstr ""
 msgid ""
 "@@image: 'figures/global-variables-dialog.png'; "
 "md5=b3224457732491046fbcea9491df2383"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -178,7 +178,7 @@ msgstr ""
 msgid ""
 "@@image: 'figures/set-breakpoint-dialog.png'; "
 "md5=86618670e2f62026adeb38ae033ec38d"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -186,7 +186,7 @@ msgstr ""
 msgid ""
 "@@image: 'figures/enabled-breakpoint.png'; "
 "md5=a51237a0756cdb7a754b24b211e40bbb"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -194,34 +194,34 @@ msgstr ""
 msgid ""
 "@@image: 'figures/disabled-breakpoint.png'; "
 "md5=b703d696cec0c49810de7f2a85f0ddba"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:739(None)
 msgid ""
 "@@image: 'figures/open-files-target.png'; md5=715003a703fc7cc112bea9e58a25f627"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:777(None)
 msgid ""
 "@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:802(None)
 msgid "@@image: 'figures/memory-view.png'; md5=b2a94da383551b3eaae64ddb93a7128f"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:863(None)
 msgid ""
 "@@image: 'figures/sessions-dialog.png'; md5=d07fd79198e666ca9b21fee3bbb30db4"
-msgstr ""
+msgstr "translated"
 
 #: C/nemiver.xml:24(title)
 msgid "Nemiver Manual"
@@ -697,6 +697,12 @@ msgid ""
 "<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
 "command>."
 msgstr ""
+"Um aus einer Befehlszeile an ein laufendes Programm anzuhängen, verwenden Sie "
+"die Option <option>--attach</option>. Diese Option akzeptiert entweder eine "
+"Prozesskennung oder einen Prozessnamen. Um beispielsweise den laufenden "
+"Prozess <command>foo</command> mit der Prozessnummer 1121 zu debuggen, geben "
+"Sie entweder <command>nemiver --attach foo</command> oder <command>nemiver --"
+"attach 1121</command> ein."
 
 #: C/nemiver.xml:423(title)
 msgid "Loading a Core File"
@@ -708,6 +714,9 @@ msgid ""
 "Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
 "which will let you load a core file:"
 msgstr ""
+"Wählen Sie <menuchoice><guimenu>Datei</guimenu><guimenuitem>Core-Datei laden</"
+"guimenuitem></menuchoice>, um folgenden Dialog zu öffnen, in welchem Sie eine "
+"Core-Datei laden können:"
 
 #: C/nemiver.xml:436(title)
 msgid "Load Core File Dialog"
@@ -962,6 +971,11 @@ msgid ""
 "guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
 "press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
 msgstr ""
+"Nemiver zeigt Ihnen auch eine Liste der globalen Variablen einer Anwendung in "
+"einem separaten Dialog an. Um den Dialog <interface>Globale Variable</"
+"interface> anzuzeigen, wählen Sie <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Globale Variablen anzeigen</guimenuitem></menuchoice> "
+"oder drücken Sie <keycombo><keycap>Strg</keycap><keycap>G</keycap></keycombo>."
 
 #: C/nemiver.xml:630(phrase)
 msgid "Global Variables Dialog"
@@ -1004,6 +1018,10 @@ msgid ""
 "guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
 "or by pressing <keycap>F8</keycap>"
 msgstr ""
+"Platzieren Sie den Cursor auf einer Zeile, in der Sie einen Haltepunkt "
+"hinzufügen wollen. Wählen Sie <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Haltepunkt am Cursor setzen/entfernen</guimenuitem></"
+"menuchoice>, oder drücken Sie <keycap>F8</keycap>"
 
 #: C/nemiver.xml:660(para)
 msgid ""
@@ -1013,6 +1031,12 @@ msgid ""
 "<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will bring "
 "up a dialog that looks like the following:"
 msgstr ""
+"Setzen Sie einen Haltepunkt an einem specifischen Funktionsnamen oder an "
+"einem specifischen Ort in einer Datei. Wählen Sie hierzu "
+"<menuchoice><guimenu>Debug</guimenu><guimenuitem>Haltepunkt setzen</"
+"guimenuitem></menuchoice> oder drücken Sie <keycombo><keycap>Strg</"
+"keycap><keycap>B</keycap></keycombo>. Daraufhin wird folgender Dialog "
+"angezeigt:"
 
 #: C/nemiver.xml:670(phrase)
 msgid "Set Breakpoint Dialog"
@@ -1025,6 +1049,10 @@ msgid ""
 "Nemiver will display a list of all matching functions and ask you to pick the "
 "one you want."
 msgstr ""
+"Sie können einen Haltepunkt an einem bestimmten Ort einer Datei oder anhand "
+"eines Funktionsnamens setzen. Wenn es mehrere Funktionen gleichen Namens "
+"gibt, zeigt Nemiver eine Liste aller passenden Funktionen an und bittet Sie "
+"um die Auswahl der gewünschten Funktion."
 
 #: C/nemiver.xml:683(title)
 msgid "Disabled Breakpoints"
@@ -1037,6 +1065,11 @@ msgid ""
 "by any breakpoints in the disabled state. This allows you to temporarily "
 "remove a breakpoint without actually deleting it."
 msgstr ""
+"Haltepunkte können aktiviert oder deaktiviert werden. Der Debugger hält die "
+"Ausführung an, sobald ein aktivierter Haltepunkt erreicht ist und kein "
+"deaktivierter Haltepunkt diesen beeinflusst. Dadurch wird Ihnen ermöglicht, "
+"vorübergehend einen Haltepunkt zu deaktivieren, ohne ihn gleich löschen zu "
+"müssen."
 
 #: C/nemiver.xml:690(para)
 msgid ""
@@ -1047,6 +1080,12 @@ msgid ""
 "to enable or disable a breakpoint that is set on the line that the cursor is "
 "currently on."
 msgstr ""
+"Um einen Haltepunkt zu aktivieren oder zu deaktivieren, klicken Sie in das "
+"Ankreuzfeld neben der Nummer des gewünschten Haltepunkts im Reiter "
+"<interface>Haltepunkte</interface> der <interface>Status-Reitermappe</"
+"interface>. Alternativ drücken Sie <keycombo><keycap>Umschalttaste</"
+"keycap><keycap>F8</keycap></keycombo>, um den Haltepunkt in der Zeile zu "
+"aktivieren oder zu daktivieren, in der sich der Cursor befindet."
 
 #: C/nemiver.xml:698(para)
 msgid ""
@@ -1086,6 +1125,14 @@ msgid ""
 "<menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</"
 "guimenuitem></menuchoice>, the following window should be displayed:"
 msgstr ""
+"Gelegentlich kennen Sie den exakten Funktionsnamen oder die Zeilennummer "
+"nicht, wo Sie einen Haltepunkt setzen wollen. Um dies herauszufinden, müssen "
+"Sie eine Quelldatei öffnen. Sie können hierzu einfach bestimmte Dateien im "
+"System öffnen, aber Nemiver stellt Ihnen auch eine Liste der Quelldateien "
+"bereit, aus denen die ausführbare Datei erstellt wurde. Sie können aus dieser "
+"Liste eine Datei wählen. Wählen Sie <menuchoice><guimenu>Datei</"
+"guimenu><guimenuitem>Quelldatei öffnen</guimenuitem></menuchoice>, woraufhin "
+"folgendes Fenster angezeigt wird:"
 
 #: C/nemiver.xml:742(phrase)
 msgid "Shows dialog for opening source files"
@@ -1098,6 +1145,10 @@ msgid ""
 "produced the executable, choose <guilabel>Select from Target Executable</"
 "guilabel>."
 msgstr ""
+"Um eine bestimmte Datei im Dateisystem zu öffnen, wählen Sie die Option "
+"<guilabel>Im Dateisystem auswählen</guilabel>. Um aus einer Liste von Dateien "
+"zu wählen, aus denen die ausführbare Datei erstellt wurde, wählen Sie "
+"<guilabel>Aus ausführbarem Ziel wählen</guilabel>."
 
 #: C/nemiver.xml:753(title)
 msgid "Determining Source Files for Dynamically Loaded Modules"
@@ -1109,6 +1160,9 @@ msgid ""
 "()</function>), Nemiver will not be able to determine which files were used "
 "to build these modules until they are actually loaded."
 msgstr ""
+"Falls das ausführbare Ziel Module zur Laufzeit lädt (z.B. mit der Funktion "
+"<function>dlopen()</function>), wird Nemiver vor dem Laden dieser Module "
+"nicht in der Lage sein zu bestimmen, welche Dateien verwendet wurden."
 
 #: C/nemiver.xml:764(title)
 msgid "Advanced Debugging"
@@ -1121,10 +1175,14 @@ msgid ""
 "you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> to "
 "jump directly to the correct tab."
 msgstr ""
+"Die Bearbeitung von Registern ist im Reiter <interface>Register</interface> "
+"der <interface>Status-Reitermappe</interface> möglich. Alternativ drücken Sie "
+"<keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo>, um direkt zu "
+"diesem Reiter zu springen."
 
 #: C/nemiver.xml:780(phrase)
 msgid "The Register Editing Widget"
-msgstr ""
+msgstr "Bearbeiten von Registern"
 
 #: C/nemiver.xml:784(para)
 msgid ""
@@ -1133,6 +1191,11 @@ msgid ""
 "column and entering a new value. If the value for the register changed since "
 "the last time the debugger stopped, it will be highlighted in red."
 msgstr ""
+"Hier werden die aktuellen Wert aller Register des Prozessors angezeigt. "
+"Klicken Sie zum Bearbeiten der Registerwerte auf die Spalte <interface>Wert</"
+"interface> und geben Sie einen neuen Wert ein. Falls sich der Registerwert "
+"seit dem letzten Anhalten des Debuggers geändert hat, wird er in roter Farbe "
+"hervorgehoben."
 
 #: C/nemiver.xml:794(para)
 msgid ""
@@ -1140,10 +1203,13 @@ msgid ""
 "enables you to get a lower-level view of what's happening while your program "
 "is running."
 msgstr ""
+"Die Speicherbearbeitung ermöglicht Ihnen die direkte Auswahl eines "
+"Speichersegments. Dadurch erhalten Sie einen detaillierteren Blick auf die "
+"Vorgänge während der Ausführung Ihres Programms."
 
 #: C/nemiver.xml:805(phrase)
 msgid "The Memory Editing Widget"
-msgstr ""
+msgstr "Speicherbearbeitung"
 
 #: C/nemiver.xml:809(para)
 msgid ""
@@ -1155,6 +1221,14 @@ msgid ""
 "an option from the <interface>Group By</interface> drop-down menu. The memory "
 "values will automatically be updated as you step through the program."
 msgstr ""
+"Um ein Speichersegment anzuzeigen, geben Sie eine Speicheradresse im Feld "
+"<interface>Adresse</interface> ein. Falls die Adresse für das zu debuggende "
+"Programm gültig ist, dann werden die Speicherwerte beginnend bei der "
+"angegebenen Adresse angezeigt. Speicherwerte können Im Byte-Format, im Wort-"
+"Format (2 Byte) oder im langen Wort-Format (4 Byte) angezeigt werden. Wählen "
+"Sie hierzu die entsprechende Option in der Auswahlliste <interface>Gruppieren "
+"nach</interface>. Die Speicherwerte werden beim Springen durch das Programm "
+"automatisch aktualisiert."
 
 #: C/nemiver.xml:820(para)
 msgid ""
@@ -1164,6 +1238,10 @@ msgid ""
 "right-hand section of the memory widget). All changes will be applied "
 "immediately."
 msgstr ""
+"Neben dem reinen Betrachten der Speicherwerte können Sie auch Speicherwerte "
+"verändern. Sie können entweder die hexadezimale Byte-Darstellung bearbeiten "
+"(im linken Bereich) oder die ASCII-Darstellung (im rechten Bereich). Alle "
+"Änderungen werden unmittelbar angewendet."
 
 #: C/nemiver.xml:831(title)
 msgid "Session Save and Restore"
@@ -1178,6 +1256,11 @@ msgid ""
 "set so that you can get back to where you left off last time as quickly as "
 "possible."
 msgstr ""
+"Nemiver kann Ihre Debugging-Sitzungen speichern, so dass Sie diese später "
+"wiederaufnehmen können. Hierbei werden Informationen wie das zu debuggende "
+"Programm, die Umgebungsvariablen. die übergebenen Befehlszeilenoptionen, die "
+"geöffneten Dateien und die Haltepunkte gespeichert. Auf diese Weise können "
+"Sie jederzeit wieder dahin zurückkehren, wo Sie Nemiver beendet haben."
 
 #: C/nemiver.xml:841(title)
 msgid "Saving Sessions"
@@ -1227,6 +1310,10 @@ msgid ""
 "session number 3, you can do so with the following command: <command>nemiver "
 "--session 3</command>."
 msgstr ""
+"Falls Ihnen die Sitzungskennung der auszuführenden Sitzung bekannt ist, "
+"können Sie die Debugging-Sitzung aus der Befehlszeile starten. Wenn Sie "
+"beispielsweise die Sitzung mit der Nummer 3 starten wollen, rufen Sie "
+"folgenden Befehl auf: <command>nemiver --session 3</command>."
 
 #: C/nemiver.xml:886(title)
 msgid "About Nemiver"
