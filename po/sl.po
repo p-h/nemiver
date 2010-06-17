@@ -1,16 +1,16 @@
-# Slovenian translation of Nemiver package
+# Slovenian translations for nemiver.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the Nemiver package.
+# This file is distributed under the same license as the nemiver package.
 #
-# Andrej Žnidaršič <andrej.znidarsic@gmail.com>.
+# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Nemiver\n"
+"Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&component=general\n"
 "POT-Creation-Date: 2010-05-25 17:05+0000\n"
-"PO-Revision-Date: 2010-05-28 19:49+0100\n"
-"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
+"PO-Revision-Date: 2010-06-17 10:12+0100\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,7 +31,7 @@ msgstr "Razhroščevalnik C/C++"
 
 #: ../data/nemiver.desktop.in.h:2
 msgid "Debug Applications"
-msgstr "Programi razhroščevanja"
+msgstr "Programi za razhroščevanje"
 
 #: ../data/nemiver.desktop.in.h:4
 msgid "Nemiver C/C++ Debugger"
@@ -43,7 +43,7 @@ msgstr "Nastavi okolje programa za razhroščevanje"
 
 #: ../src/main.cc:78
 msgid "Attach to a process"
-msgstr "Pripni k procesu"
+msgstr "Pripni k opravilu"
 
 #: ../src/main.cc:86
 msgid "List the saved debugging sessions"
@@ -75,7 +75,7 @@ msgstr "Uporabi ta terminal kot terminal razhroščevalnika"
 
 #: ../src/main.cc:142
 msgid "Show the version number of nemiver"
-msgstr "Pokaži številko različice programa"
+msgstr "Pokaži različico programa"
 
 #: ../src/main.cc:208
 msgid " [<prog-to-debug> [prog-args]]"
@@ -108,27 +108,27 @@ msgstr "<b>Možnosti skladanja:</b>"
 
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:3
 msgid "Find text"
-msgstr "Poišči besedilo"
+msgstr "Najdi besedilo"
 
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:4
 msgid "Match _entire word only"
-msgstr "Skladanje samo _celih besed"
+msgstr "Poišči le _cele besede"
 
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:5
 msgid "Match c_ase"
-msgstr "Občutljivost na _velikost črk"
+msgstr "Upoštevaj _velikost črk"
 
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:6
 msgid "Search _backwards"
-msgstr "Išči _nazaj"
+msgstr "Poišči _nazaj"
 
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:7
 msgid "_Search:"
-msgstr "_Išči:"
+msgstr "_Poišči:"
 
 #: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:8
 msgid "_Wrap around"
-msgstr "_Oblij okoli"
+msgstr "_Prelomi vrstice"
 
 #: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:1
 msgid "<b>Core File:</b>"
@@ -212,7 +212,7 @@ msgstr "Prikaži številke vrstic"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:10
 msgid "Do not reload the file"
-msgstr "Ne nalagaj ponovno datoteke"
+msgstr "Ne naloži ponovno datoteke"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:11
 msgid "Editor"
@@ -338,7 +338,7 @@ msgstr "<b>Strežnik oddaljenega razhroščevanja</b>"
 
 #: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:3
 msgid "<b>Shared Libraries Location</b>"
-msgstr "<b>Mesto souporabljenih knjižnic</b>"
+msgstr "<b>Mesto souporabe knjižnic</b>"
 
 #: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:4
 msgid "Address :"
@@ -423,11 +423,11 @@ msgstr "izraz:"
 
 #: ../src/persp/dbgperspective/glade/watchpointdialog.glade.h:4
 msgid "gtk-cancel"
-msgstr "gtk-prekliči"
+msgstr "gtk-cancel"
 
 #: ../src/persp/dbgperspective/glade/watchpointdialog.glade.h:5
 msgid "gtk-ok"
-msgstr "gtk-v redu"
+msgstr "gtk-ok"
 
 #: ../src/persp/dbgperspective/glade/watchpointdialog.glade.h:6
 msgid "read"
@@ -522,7 +522,7 @@ msgstr "_Kopiraj"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:167
 msgid "Copy the call stack to the clipboard"
-msgstr "Kopiraj sklad klicev na odložišče"
+msgstr "Kopiraj sklad klicev v odložišče"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:529
 msgid "Frame"
@@ -535,7 +535,7 @@ msgstr "Argumenti"
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:688
 #, c-format
 msgid "(Click here to see the next %d rows of the call stack)"
-msgstr "(Kliknite sem za ogled naslednjih %d vrstic sklada klicev)"
+msgstr "(Kliknite za ogled naslednjih %d vrstic sklada klicev)"
 
 #. labels for widget tabs in the status notebook
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
@@ -565,7 +565,7 @@ msgstr "Pomnilnik"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1099
 #, c-format
 msgid "File %s has an encoding that is not listed in the value of gconf key %s. Please add the encoding of that file to the values of the gconf key, and resume debugging"
-msgstr "Datoteka %s ima kodiranje, ki ni navedeno v vrednosti gconf ključa %s. Dodajte kodiranje te datoteke vrednostim ključa gconf in nadaljujte razhroščevanje"
+msgstr "Datoteka %s ima kodiranje, ki ni navedeno v vrednosti gconf ključa %s. Dodajte kodiranje te datoteke vrednostim ključa gconf in nadaljujte z razhroščevanjem."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1582
 msgid "Reached end of file"
@@ -620,11 +620,11 @@ msgstr "Manjkajo podatki poti datoteke za funkcijo '%s'"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2341
 msgid "Program exited"
-msgstr "Program je končal"
+msgstr "Program je končan"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2375
 msgid "The underlying debugger engine process died."
-msgstr "Spodaj ležeči proces motorja razhroščevalnika je umrl."
+msgstr "Spodnji programnik razhroščevalnika je nepričakovano končan."
 
 #. translators: first %s is the signal name, second one is the reason
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2486
@@ -664,7 +664,7 @@ msgstr "_Ponovno zaženi"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3014
 msgid "Restart the target, killing this process and starting a new one"
-msgstr "Ponoven zagon cilja, uniči ta proces in začne novega"
+msgstr "Ponoven zagon cilja, uniči to opravilo in začne novega"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3027
 msgid "_Next"
@@ -708,11 +708,11 @@ msgstr "Nadaljuj izvajanje programa, dokler ni dosežena izbrana vrstica"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3080
 msgid "Set/Unset a breakpoint at the current cursor location"
-msgstr "Nastavi/Odnastavi prekinitveno točko na trenutni legi kazalca"
+msgstr "Nastavi/Odstrani nastavitev prekinitvene točke na trenutnem mestu kazalnika"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3092
 msgid "Enable or disable the breakpoint that is set at the current cursor location"
-msgstr "Omogoči ali onemogoči prekinitveno točko, ki je nastavljena na lego trenutnega kazalca"
+msgstr "Omogoči ali onemogoči prekinitveno točko, ki je nastavljena na mesto trenutnega kazalnika"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3104
 msgid "Set Breakpoint..."
@@ -828,7 +828,7 @@ msgstr "Pokaži zavihek odvoda tarče razhroščevanja"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3304
 msgid "_Debug"
-msgstr "Raz_hrošči"
+msgstr "Raz_hroščevanje"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3314
 msgid "_Open Source File ..."
@@ -908,7 +908,7 @@ msgstr "_Poišči"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3416
 msgid "Find a text string in file"
-msgstr "Najde besedilni niz v datoteki"
+msgstr "Najdi besedilni niz v datoteki"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3797
 #, c-format
@@ -962,7 +962,7 @@ msgstr "Dnevniki"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:7250
 #, c-format
 msgid "There is a program being currently debugged. Do you really want to exit from the debugger?"
-msgstr "Trenutno se program razhroščuje. Ali ste prepričani, da želite končati razhroščevalnik?"
+msgstr "Trenutno poteka razhroščevanje programa. Ali ste prepričani, da želite razhroščevalnik končati?"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:127
 msgid "Expand _Selected"
@@ -1169,4 +1169,3 @@ msgstr "Spremenljivka"
 
 #~ msgid "Could not find file: %s\n"
 #~ msgstr "Datoteke ni mogoče najti: %s\n"
-
