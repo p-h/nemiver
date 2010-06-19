@@ -411,12 +411,14 @@ public:
             stdout_signal.emit (command_and_output);
             from = to;
             while (from < end && isspace (a_buf.raw ()[from])) {++from;}
-            if (output.has_result_record ()/*gdb acknowledged previous cmd*/) {
+            if (output.has_result_record ()/*gdb acknowledged previous
+                                             cmd*/
+                || !output.parsing_succeeded ()) {
                 LOG_DD ("here");
                 if (!started_commands.empty ()) {
                     started_commands.erase (started_commands.begin ());
                     LOG_DD ("clearing the line");
-                    //we can send another cmd down the wire
+                    // we can send another cmd down the wire
                     line_busy = false;
                 }
                 if (!line_busy
@@ -1940,10 +1942,11 @@ struct OnVariableTypeHandler : OutputHandler {
             for (it = a_in.output ().out_of_band_records ().begin ();
                  it != a_in.output ().out_of_band_records ().end ();
                  ++it) {
-                LOG_DD ("checking debugger log: "
-                        << it->stream_record ().debugger_log ());
+                
+                LOG_DD ("checking debugger console: "
+                        << it->stream_record ().debugger_console ());
                 if (it->has_stream_record ()
-                    && !it->stream_record ().debugger_log ().compare
+                    && !it->stream_record ().debugger_console ().compare
                                                             (0, 6, "ptype ")) {
 
                     LOG_DD ("handler selected");
@@ -1963,10 +1966,10 @@ struct OnVariableTypeHandler : OutputHandler {
         list<Output::OutOfBandRecord>::const_iterator it;
         it = a_in.output ().out_of_band_records ().begin ();
         THROW_IF_FAIL2 (it->has_stream_record ()
-                        && !it->stream_record ().debugger_log ().compare
+                        && !it->stream_record ().debugger_console ().compare
                                                (0, 6, "ptype "),
                         "stream_record: " +
-                        it->stream_record ().debugger_log ());
+                        it->stream_record ().debugger_console ());
         ++it;
         if (!it->has_stream_record ()
             || it->stream_record ().debugger_console ().compare
