@@ -1556,11 +1556,11 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
     Output output;
 
     while (RAW_CHAR_AT (cur) == '*'
-         || RAW_CHAR_AT (cur) == '~'
-         || RAW_CHAR_AT (cur) == '@'
-         || RAW_CHAR_AT (cur) == '&'
-         || RAW_CHAR_AT (cur) == '+'
-         || RAW_CHAR_AT (cur) == '=') {
+           || RAW_CHAR_AT (cur) == '~'
+           || RAW_CHAR_AT (cur) == '@'
+           || RAW_CHAR_AT (cur) == '&'
+           || RAW_CHAR_AT (cur) == '+'
+           || RAW_CHAR_AT (cur) == '=') {
         Output::OutOfBandRecord oo_record;
         if (!parse_out_of_band_record (cur, cur, oo_record)) {
             LOG_PARSING_ERROR2 (cur);
