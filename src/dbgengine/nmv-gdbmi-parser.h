@@ -633,6 +633,9 @@ public:
                               UString::size_type &a_to,
                               Output &a_output);
 
+    bool skip_output_record (UString::size_type a_from,
+			     UString::size_type &a_to);
+
     //*********************
     //</Parsing entry points.>
     //*********************

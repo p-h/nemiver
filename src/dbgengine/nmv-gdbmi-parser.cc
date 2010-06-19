@@ -1608,6 +1608,46 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
     return true;
 }
 
+/// Skip everything from the current output report until the next
+/// "(gdb)" marker, meaning the start of the next output record.
+/// \param a_from the index where to start skipping from
+/// \param a_to output parameter. If the function returns true this
+/// parameter is set to the index of the character that comes right
+/// after the "(gdb)" mark. Otherwise, it's set right after the end of
+/// the stream.
+/// \return true if "(gdb)" was found, false if we reached end of
+/// stream before.
+bool
+GDBMIParser::skip_output_record (UString::size_type a_from,
+				 UString::size_type &a_to)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+    UString::size_type cur = a_from;
+
+    if (m_priv->index_passed_end (cur)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    bool found = false;
+    while (!found) {
+        if (m_priv->index_passed_end (cur + 5)) {
+            while (!m_priv->index_passed_end (cur))
+                ++cur;
+            break;
+        }
+        if (RAW_CHAR_AT (cur) == '('
+            && RAW_CHAR_AT (cur + 1) == 'g'
+            && RAW_CHAR_AT (cur + 2) == 'd'
+            && RAW_CHAR_AT (cur + 3) == 'b'
+            && RAW_CHAR_AT (cur + 4) == ')')
+            found = true;
+        cur += 5;
+    }
+    a_to = cur;
+    return found;
+}
+
 bool
 GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
                                        UString::size_type &a_to,

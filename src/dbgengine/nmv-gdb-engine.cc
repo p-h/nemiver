@@ -385,16 +385,18 @@ public:
                         << "\nfrom: " << (int) from
                         << "\nto: " << (int) to << "\n"
                         << "\nstrlen: " << (int) a_buf.size ());
-                break;
+                gdbmi_parser.skip_output_record (from, to);
+                output.parsing_succeeded (false);
+            } else {
+                output.parsing_succeeded (true);
             }
 
-            //parsing GDB/MI output succeeded.
-            //Check if the output contains the result to a command issued by
-            //the user. If yes, build the CommandAndResult, update the
-            //command queue and notify the user that the command it issued
-            //has a result.
-            //
-            output.parsing_succeeded (true);
+
+            // Check if the output contains the result to a command issued by
+            // the user. If yes, build the CommandAndResult, update the
+            // command queue and notify the user that the command it issued
+            // has a result.
+
             UString output_value;
             output_value.assign (a_buf, from, to - from +1);
             output.raw_value (output_value);
