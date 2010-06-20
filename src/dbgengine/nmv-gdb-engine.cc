@@ -1948,9 +1948,10 @@ struct OnVariableTypeHandler : OutputHandler {
                 LOG_DD ("checking debugger console: "
                         << it->stream_record ().debugger_console ());
                 if (it->has_stream_record ()
-                    && !it->stream_record ().debugger_console ().compare
-                                                            (0, 6, "ptype ")) {
-
+                    && (!it->stream_record ().debugger_console ().compare
+                        (0, 6, "ptype ")
+                        || !it->stream_record () .debugger_log ().compare
+                        (0, 6, "ptype "))) {
                     LOG_DD ("handler selected");
                     return true;
                 }
@@ -1967,11 +1968,6 @@ struct OnVariableTypeHandler : OutputHandler {
         UString type;
         list<Output::OutOfBandRecord>::const_iterator it;
         it = a_in.output ().out_of_band_records ().begin ();
-        THROW_IF_FAIL2 (it->has_stream_record ()
-                        && !it->stream_record ().debugger_console ().compare
-                                               (0, 6, "ptype "),
-                        "stream_record: " +
-                        it->stream_record ().debugger_console ());
         ++it;
         if (!it->has_stream_record ()
             || it->stream_record ().debugger_console ().compare
