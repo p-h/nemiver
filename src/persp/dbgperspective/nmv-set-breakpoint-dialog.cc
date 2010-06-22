@@ -101,9 +101,22 @@ public:
         row = *(combo_event_model->append());
         row[combo_event_col_model.m_label] = _("Throw Exception");
         row[combo_event_col_model.m_command] = "throw";
+
         row = *(combo_event_model->append());
         row[combo_event_col_model.m_label] = _("Catch Exception");
         row[combo_event_col_model.m_command] = "catch";
+
+        row = *(combo_event_model->append());
+        row[combo_event_col_model.m_label] = _("fork system call");
+        row[combo_event_col_model.m_command] = "fork";
+        
+        row = *(combo_event_model->append());
+        row[combo_event_col_model.m_label] = _("vfork system call");
+        row[combo_event_col_model.m_command] = "vfork";
+
+        row = *(combo_event_model->append());
+        row[combo_event_col_model.m_label] = _("exec system call");
+        row[combo_event_col_model.m_command] = "exec";
 
         combo_event->set_active (0);
 

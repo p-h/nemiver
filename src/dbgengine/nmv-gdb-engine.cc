@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
 // Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
@@ -3799,7 +3798,7 @@ GDBEngine::append_breakpoints_to_cache
 
 void
 GDBEngine::set_catch (const UString &a_event,
-					  const UString &a_cookie)
+		      const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 

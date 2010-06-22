@@ -2166,7 +2166,9 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
             || (iter = attrs.find ("type"))    == null_iter
             || (iter = attrs.find ("disp"))    == null_iter
             || (iter = attrs.find ("enabled")) == null_iter
-            || (iter = attrs.find ("addr"))    == null_iter
+	   // Non regular breakpoints like those set to catch fork
+	   // events can have an empty address when set.
+	   // || (iter = attrs.find ("addr"))    == null_iter
             || (iter = attrs.find ("times"))   == null_iter
        ) {
         LOG_PARSING_ERROR2 (cur);

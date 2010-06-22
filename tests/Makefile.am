@@ -24,7 +24,8 @@ noinst_PROGRAMS= \
 $(TESTS) \
 runtestcore  runteststdout  docore inout \
 pointerderef fooprog templatedvar \
-gtkmmtest dostackoverflow bigvar threads
+gtkmmtest dostackoverflow bigvar threads \
+forkparent forkchild
 
 runtestgdbmi_SOURCES=test-gdbmi.cc
 runtestgdbmi_LDADD= @NEMIVERCOMMON_LIBS@ \
@@ -38,6 +39,12 @@ gtkmmtest_LDADD= @NEMIVERUICOMMON_LIBS@
 
 fooprog_SOURCES=fooprog.cc
 fooprog_LDADD=
+
+forkparent_SOURCES=fork-parent.cc
+forkparent_LDADD=
+
+forkchild_SOURCES=fork-child.cc
+forkchild_LDADD=
 
 runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
