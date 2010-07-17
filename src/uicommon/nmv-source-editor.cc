@@ -1131,7 +1131,6 @@ bool
 SourceEditor::assembly_buf_addr_to_line (const Address &a_addr, int &a_line) const
 {
     Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
-    RETURN_VAL_IF_FAIL (buf, false);
     return m_priv->address_2_line (buf, a_addr, a_line);
 }
 
@@ -1149,7 +1148,6 @@ SourceEditor::assembly_buf_addr_to_line_previous (const Address &a_addr,
                                                   Address &a_prev_address) const
 {
     Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
-    RETURN_VAL_IF_FAIL (buf, false);
     int line = 0;
     bool ok = m_priv->address_2_line (buf, a_addr,
                                       line,
@@ -1165,7 +1163,6 @@ bool
 SourceEditor::assembly_buf_line_to_addr (int a_line, Address &a_address) const
 {
     Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
-    RETURN_VAL_IF_FAIL (buf, false);
     return m_priv->line_2_address (buf, a_line, a_address);
 }
 
