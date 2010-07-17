@@ -6550,23 +6550,22 @@ DBGPerspective::execute_program
     // that we are not debugging a new program.
     // In that case, we might want to keep things like breakpoints etc,
     // around.
-    bool is_new_program = (a_check_is_new_program) ?
-                                (prog != m_priv->prog_path)
-                                : true;
+    bool is_new_program = (a_check_is_new_program)
+        ? (prog != m_priv->prog_path)
+        : true;
     LOG_DD ("is new prog: " << is_new_program);
 
-    if (is_new_program) {
-        // delete old breakpoints, if any.
-        map<int, IDebugger::Breakpoint>::const_iterator bp_it;
-        for (bp_it = m_priv->breakpoints.begin ();
-             bp_it != m_priv->breakpoints.end ();
-             ++bp_it) {
-            if (m_priv->debugger_engine_alive)
-                dbg_engine->delete_breakpoint
-                                (bp_it->first,
-                                 I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
-        }
+    // delete old breakpoints, if any.
+    map<int, IDebugger::Breakpoint>::const_iterator bp_it;
+    for (bp_it = m_priv->breakpoints.begin ();
+         bp_it != m_priv->breakpoints.end ();
+         ++bp_it) {
+        if (m_priv->debugger_engine_alive)
+            dbg_engine->delete_breakpoint (bp_it->first,
+                                           I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
+    }
 
+    if (is_new_program) {
         // If we are debugging a new program,
         // clear data gathered by the old session
         clear_session_data ();
@@ -6585,39 +6584,51 @@ DBGPerspective::execute_program
     // set environment variables of the inferior
     dbg_engine->add_env_variables (a_env);
 
+// If the breakpoint was marked as 'disabled' in the session DB, we
+// have to set it and immediately disable it.  We need to pass along
+// some additional information in the 'cookie' to determine which
+// breakpoint needs to be disabling after it is set.
+// This macro helps us to do that.
+#define SET_BREAKPOINT(BP) __extension__                                \
+        ({                                                              \
+            UString file_name = (BP).file_full_name ().empty ()         \
+                ? (BP).file_name ()                                     \
+                : (BP).file_full_name ();                               \
+            UString cookie = (BP).enabled ()                            \
+                ? ""                                                    \
+                : "initially-disabled#" + file_name                     \
+                + "#" + UString::from_int ((BP).line ());               \
+            if ((BP).type ()                                            \
+                == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE      \
+                && !file_name.empty ())                                 \
+                dbg_engine->set_breakpoint (file_name,                  \
+                                            (BP).line (),               \
+                                            (BP).condition (),          \
+                                            (BP).ignore_count (),       \
+                                            cookie);                    \
+            else if ((BP).type ()                                       \
+                     == IDebugger::Breakpoint::WATCHPOINT_TYPE)         \
+                dbg_engine->set_watchpoint ((BP).expression (),         \
+                                            (BP).is_write_watchpoint (), \
+                                            (BP).is_read_watchpoint ()); \
+        })
+
     // If this is a new program we are debugging,
     // set a breakpoint in 'main' by default.
-    if (is_new_program) {
-        if (a_breaks.empty ()) {
-            dbg_engine->set_breakpoint ("main");
-        } else {
-            vector<IDebugger::Breakpoint>::const_iterator it;
-            for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
-                // if the breakpoint was marked as 'disabled'
-                // in the session DB, we
-                // have set the breakpoint and immediately disable it.
-                // We need to pass along some additional information
-                // in the 'cookie' to determine which breakpoint
-                // needs to be disabling after it is set.
-                UString cookie =
-                    it->enabled ()
-                    ? ""
-                    : "initially-disabled#"
-                       + it->file_full_name ()
-                       + "#"
-                       + UString::from_int(it->line ());
-                if (it->type ()
-                    == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
-                    dbg_engine->set_breakpoint (it->file_full_name (),
-                                                it->line (),
-                                                it->condition (),
-                                                it->ignore_count (),
-                                                cookie);
-                else if (it->type () == IDebugger::Breakpoint::WATCHPOINT_TYPE)
-                    dbg_engine->set_watchpoint (it->expression (),
-                                                it->is_write_watchpoint (),
-                                                it->is_read_watchpoint ());
+    if (a_breaks.empty ()) {
+        if (!is_new_program) {
+            map<int, IDebugger::Breakpoint>::const_iterator it;
+            for (it = m_priv->breakpoints.begin ();
+                 it != m_priv->breakpoints.end ();
+                 ++it) {
+                SET_BREAKPOINT (it->second);
             }
+        }
+        dbg_engine->set_breakpoint ("main");
+    } else {
+        vector<IDebugger::Breakpoint>::const_iterator it;
+        for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
+            SET_BREAKPOINT (*it);
         }
     }
 
@@ -6781,21 +6792,17 @@ void
 DBGPerspective::run ()
 {
     THROW_IF_FAIL (m_priv);
-    if (!m_priv->debugger_engine_alive) {
-        LOG_DD ("debugger engine not alive. "
-                "Checking if it should be restarted ...");
-        if (!m_priv->prog_path.empty ()) {
-            LOG_DD ("Yes, it seems we were running a program before. "
-                    "Will try to restart it");
-            execute_last_program_in_memory ();
-        } else {
-            LOG_DD ("Hmmh, it looks like no program was previously running");
-        }
-        return;
+
+    LOG_DD ("debugger engine not alive. "
+            "Checking if it should be restarted ...");
+
+    if (!m_priv->prog_path.empty ()) {
+        LOG_DD ("Yes, it seems we were running a program before. "
+                "Will try to restart it");
+        execute_last_program_in_memory ();
+    } else {
+        LOG_ERROR ("No program got previously loaded");
     }
-    going_to_run_target_signal ().emit ();
-    debugger ()->run ();
-    m_priv->debugger_has_just_run = true;
 }
 
 void
