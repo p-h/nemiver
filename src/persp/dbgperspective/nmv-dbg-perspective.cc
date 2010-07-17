@@ -486,7 +486,7 @@ private:
                                                bool a_basename_only=false);
 
     SourceEditor* get_or_append_source_editor_from_path (const UString &a_path);
-
+    SourceEditor* get_or_append_asm_source_editor ();
     bool source_view_to_root_window_coordinates (int x, int y,
                                                  int &root_x,
                                                  int &root_y);
@@ -541,8 +541,10 @@ public:
                              UString &a_mime_type);
 
     bool setup_buffer_mime_and_lang
-                            (Glib::RefPtr<SourceBuffer> &a_buf,
-                             const std::string &a_mime_type = "text/x-c++");
+                         (Glib::RefPtr<SourceBuffer> &a_buf,
+                          const std::string &a_mime_type = "text/x-c++") const;
+
+    Glib::RefPtr<SourceBuffer> create_source_buffer () const;
 
     bool load_file (const UString &a_file,
                     Glib::RefPtr<SourceBuffer> &a_source_buffer);
@@ -811,15 +813,17 @@ public:
 
     void add_text_to_log_view (const UString &a_text);
 
-    bool set_where (const UString &a_path,
-                    const IDebugger::Frame &a_frame,
+    bool set_where (const IDebugger::Frame &a_frame,
                     bool a_do_scroll = true,
                     bool a_try_hard = false);
+
     bool set_where (const UString &a_path, int a_line,
                     bool a_do_scroll = true);
+
     bool set_where (SourceEditor *a_editor,
                     int a_line,
                     bool a_do_scroll);
+
     bool set_where (SourceEditor *a_editor,
                     const Address &a_address,
                     bool a_do_scroll = true,
@@ -2517,16 +2521,7 @@ DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
     update_src_dependant_bp_actions_sensitiveness ();
     m_priv->current_frame = a_frame;
 
-    UString file_path = a_frame.file_full_name ();
-    if (file_path.empty ())
-        file_path = a_frame.file_name ();
-    bool where_set = set_where (file_path, a_frame,
-                                /*do_scroll=*/true,
-                                /*try_hard=*/true);
-    if (!where_set) {
-        SourceEditor *e = bring_source_as_current (file_path);
-        disassemble (e ? false : true);
-    }
+    set_where (a_frame, /*do_scroll=*/true, /*try_hard=*/true);
 
     if (m_priv->debugger_has_just_run) {
         debugger ()->get_target_info ();
@@ -2618,7 +2613,7 @@ DBGPerspective::on_frame_selected_signal (int /* a_index */,
 
     get_local_vars_inspector ().show_local_variables_of_current_function
                                                                     (a_frame);
-    set_where (file_path, a_frame);
+    set_where (a_frame, /*a_do_scroll=*/true, /*a_try_hard=*/true);
 
     NEMIVER_CATCH
 }
@@ -4438,6 +4433,31 @@ DBGPerspective::get_or_append_source_editor_from_path (const UString &a_path)
     return source_editor;
 }
 
+/// Try to get the "global" asm source editor. If not yet created,
+/// create it.
+/// \return the global asm source editor.
+SourceEditor*
+DBGPerspective::get_or_append_asm_source_editor ()
+{
+    UString path;
+    SourceEditor *source_editor =
+        get_source_editor_from_path (get_asm_title (), path);
+    if (source_editor == 0) {
+        Glib::RefPtr<SourceBuffer> source_buffer = create_source_buffer ();
+        source_editor =
+            create_source_editor (source_buffer,
+                                  /*a_asm_view=*/true,
+                                  get_asm_title (),
+                                  /*curren_line=*/-1,
+                                  /*a_current_address=*/"");
+        THROW_IF_FAIL (source_editor);
+        source_editor->show_all ();
+        append_source_editor (*source_editor, get_asm_title ());
+    }
+    THROW_IF_FAIL (source_editor);
+    return source_editor;
+}
+
 IWorkbench&
 DBGPerspective::workbench () const
 {
@@ -4482,27 +4502,32 @@ DBGPerspective::bring_source_as_current (SourceEditor *a_editor)
 
 // Set the graphical "where pointer" to either the source (or assembly)
 // location corresponding to a_frame.
-// \param a_path the path (uri) of the current source file.
 // \a_frame the frame to consider
 // \a_do_scroll if true, the source/asm editor is scrolled to the
 // location of the newly set where pointer.
 // \return true upon successful completion, false otherwise.
 bool
-DBGPerspective::set_where (const UString &a_path,
-                           const IDebugger::Frame &a_frame,
-                           bool a_do_scroll,
-                           bool a_try_hard)
+DBGPerspective::set_where (const IDebugger::Frame &a_frame,
+                           bool a_do_scroll, bool a_try_hard)
 {
-    SourceEditor *source_editor = bring_source_as_current (a_path);
-    if (!source_editor)
-        return false;
+    UString file_path = a_frame.file_full_name ();
+    if (file_path.empty ())
+        file_path = a_frame.file_name ();
 
-    SourceEditor::BufferType type = source_editor->get_buffer_type ();
+    SourceEditor *editor = 0;
+    if (!file_path.empty ())
+        editor = get_or_append_source_editor_from_path (file_path);
+    if (!editor)
+        editor = get_or_append_asm_source_editor ();
+
+    RETURN_VAL_IF_FAIL (editor, false);
+
+    SourceEditor::BufferType type = editor->get_buffer_type ();
     switch (type) {
         case SourceEditor::BUFFER_TYPE_SOURCE:
-            return set_where (source_editor, a_frame.line (), a_do_scroll);
+            return set_where (editor, a_frame.line (), a_do_scroll);
         case SourceEditor::BUFFER_TYPE_ASSEMBLY:
-            return set_where (source_editor, a_frame.address (),
+            return set_where (editor, a_frame.address (),
                               a_do_scroll, a_try_hard);
         case SourceEditor::BUFFER_TYPE_UNDEFINED:
             break;
@@ -4541,11 +4566,15 @@ DBGPerspective::set_where (SourceEditor *a_editor,
                            int a_line,
                            bool a_do_scroll)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     if (!a_editor)
         return false;
 
     THROW_IF_FAIL (a_editor->get_buffer_type ()
                    == SourceEditor::BUFFER_TYPE_SOURCE);
+
+    bring_source_as_current (a_editor);
 
     a_editor->move_where_marker_to_line (a_line, a_do_scroll);
     Gtk::TextBuffer::iterator iter =
@@ -4578,6 +4607,8 @@ DBGPerspective::set_where (SourceEditor *a_editor,
 
     THROW_IF_FAIL (a_editor->get_buffer_type ()
                    == SourceEditor::BUFFER_TYPE_ASSEMBLY);
+
+    bring_source_as_current (a_editor);
 
     // The IP points to the *next* instruction to execute. What we want
     // is the current instruction executed. So lets get the line of the
@@ -5435,7 +5466,7 @@ DBGPerspective::get_file_mime_type (const UString &a_path,
 // Returns true upon successful completion, false otherwise.
 bool
 DBGPerspective::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
-                                            const std::string &a_mime_type)
+                                            const std::string &a_mime_type) const
 {
     NEMIVER_TRY
 
@@ -5483,6 +5514,17 @@ DBGPerspective::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
     return true;
 
     NEMIVER_CATCH_AND_RETURN (false);
+}
+
+/// Create a source buffer properly set up to contain/highlight c++
+/// code.
+/// \return the created buffer or nil if something bad happened.
+Glib::RefPtr<SourceBuffer>
+DBGPerspective::create_source_buffer () const
+{
+    Glib::RefPtr<SourceBuffer> result;
+    setup_buffer_mime_and_lang (result);
+    return result;
 }
 
 bool
@@ -6024,25 +6066,17 @@ DBGPerspective::open_asm (const IDebugger::DisassembleInfo &a_info,
         source_buffer = source_editor->source_view ().get_source_buffer ();
         source_buffer->erase (source_buffer->begin (), source_buffer->end ());
     }
-    if (load_asm (a_info, a_asm, source_buffer) == 0) {
+
+    if (load_asm (a_info, a_asm, source_buffer) == 0)
         return 0;
-    }
-    if (!source_editor) {
+
+    if (!source_editor)
         source_editor =
-            create_source_editor (source_buffer,
-                                  /*a_asm_view=*/true,
-                                  get_asm_title (),
-                                  /*curren_line=*/-1,
-                                  /*a_current_address=*/"");
-        THROW_IF_FAIL (source_editor);
-        source_editor->show_all ();
-        append_source_editor (*source_editor, get_asm_title ());
-    }
+            get_or_append_asm_source_editor ();
 
     NEMIVER_CATCH_AND_RETURN (0);
 
     if (source_editor && a_set_where) {
-        bring_source_as_current (source_editor);
         if (!m_priv->current_frame.has_empty_address ())
             set_where (source_editor, m_priv->current_frame.address (),
                        /*do_scroll=*/true, /*try_hard=*/true);
