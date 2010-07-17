@@ -599,7 +599,8 @@ public:
                         SourceEditor *a_editor);
 
     void pump_asm_including_address (SourceEditor *a_editor,
-                                     const Address a_address);
+                                     const Address a_address,
+                                     bool a_tight = false);
 
     void switch_to_source_code ();
 
@@ -700,7 +701,8 @@ public:
                                               Range &) const;
     void refresh_locals ();
     void disassemble (bool a_show_asm_in_new_tab);
-    void disassemble_and_do (IDebugger::DisassSlot &a_what_to_do);
+    void disassemble_and_do (IDebugger::DisassSlot &a_what_to_do,
+                             bool a_tight = false);
     void disassemble_around_address_and_do (const Address &adress,
                                             IDebugger::DisassSlot &what_to_do);
 
@@ -6147,15 +6149,20 @@ DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
 
 void
 DBGPerspective::pump_asm_including_address (SourceEditor *a_editor,
-                                            const Address a_address)
+                                            const Address a_address,
+                                            bool a_tight)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     Range r;
 
-    if (!a_editor
-        || !a_editor->get_assembly_address_range (r)
-        || r.contains (a_address))
+    if (!a_editor) {
+        LOG_ERROR ("Got nil editor");
+        return;
+    }
+    a_editor->get_assembly_address_range (r);
+    
+    if (r.contains (a_address))
         return;
 
     r.extend (a_address);
@@ -6164,7 +6171,7 @@ DBGPerspective::pump_asm_including_address (SourceEditor *a_editor,
                                    &DBGPerspective::on_debugger_asm_signal2),
                     a_editor);
 
-    disassemble_and_do (slot);
+    disassemble_and_do (slot, a_tight);
 }
 
 // Get the source editor of the source file being currently debugged,
@@ -7651,7 +7658,8 @@ DBGPerspective::disassemble (bool a_show_asm_in_new_tab)
 }
 
 void
-DBGPerspective::disassemble_and_do (IDebugger::DisassSlot &a_what_to_do)
+DBGPerspective::disassemble_and_do (IDebugger::DisassSlot &a_what_to_do,
+                                    bool a_tight)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -7673,8 +7681,11 @@ DBGPerspective::disassemble_and_do (IDebugger::DisassSlot &a_what_to_do)
     // archictecture. So let's say N instructions on IA is at
     // maximum N x 17.
     // FIXME: find a way to make this more cross arch.
-    addr_range.max (addr_range.max ()
-                    + m_priv->num_instr_to_disassemble * 17);
+    size_t max = (a_tight)
+        ? addr_range.max () + 17
+        : addr_range.max () + m_priv->num_instr_to_disassemble * 17;
+
+    addr_range.max (max);
 
     THROW_IF_FAIL (addr_range.min () != 0
                    && addr_range.max () != 0);
