@@ -1081,7 +1081,7 @@ struct DBGPerspective::Priv {
         allow_auto_reload_source (true),
         enable_syntax_highlight (true),
         use_launch_terminal (false),
-        num_instr_to_disassemble (num_instr_to_disassemble),
+        num_instr_to_disassemble (NUM_INSTR_TO_DISASSEMBLE),
         asm_style_pure (true),
         mouse_in_source_editor_x (0),
         mouse_in_source_editor_y (0),
