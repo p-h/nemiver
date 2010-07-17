@@ -2625,6 +2625,14 @@ GDBEngine::load_program (const UString &a_prog,
         // tell gdb not to pass the SIGINT signal to the target.
         queue_command (Command ("handle SIGINT stop print nopass"));
 
+	// Tell gdb not to pass the SIGHUP signal to the target.  This
+	// is useful when the debugger follows a child during a
+	// fork. In that case, a SIGHUP is sent to the debugger if it
+	// has some controlling term attached to the target.. Make
+	// sure the signal is not not passed to the target and the
+	// debugger doesn't stop upon that signal.
+	queue_command (Command ("handle SIGHUP nostop print nopass"));
+
         // tell the linker to do all relocations at program load
         // time so that some "step into" don't take for ever.
         // On GDB, it seems that stepping into a function that is
