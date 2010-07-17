@@ -43,9 +43,9 @@ public:
     }
 
     size_t min () const {return m_min;}
-    void min (int a) {m_min = a;}
+    void min (size_t a) {m_min = a;}
     size_t max () const {return m_max;}
-    void max (int a) {m_max = a;}
+    void max (size_t a) {m_max = a;}
     bool contains (size_t a_value) const
     {
         return (a_value >= m_min && a_value <= m_max);
