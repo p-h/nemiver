@@ -132,6 +132,7 @@ const char *LAST_RUN_TIME= "lastruntime";
 const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain";
 const char *DBG_PERSPECTIVE_ASM_DOMAIN = "dbg-perspective-asm-domain";
+const char *DISASSEMBLY_TITLE = "<Disassembly>";
 
 static const int NUM_INSTR_TO_DISASSEMBLE = 20;
 
@@ -566,7 +567,9 @@ public:
     Gtk::Widget* load_menu (const UString &a_filename,
                             const UString &a_widget_name);
 
-    const UString& get_asm_title ();
+    const char* get_asm_title ();
+
+    bool is_asm_title (const UString &);
 
     bool load_asm (const IDebugger::DisassembleInfo &a_info,
                    const std::list<IDebugger::Asm> &a_asm,
@@ -4904,12 +4907,18 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
 {
     THROW_IF_FAIL (m_priv);
 
+    // Disassembly result is composite content that doesn't come from
+    // any on-disk file. It's thus not monitored.
+    if (is_asm_title (a_path))
+        return true;
+
     Priv::Path2MonitorMap::iterator it =
                             m_priv->path_2_monitor_map.find (a_path);
+
     if (it == m_priv->path_2_monitor_map.end ()) {
         return false;
     }
-    if (it->second ) {
+    if (it->second) {
 #ifdef WITH_GIO
         it->second->cancel ();
 #else
@@ -5825,14 +5834,16 @@ DBGPerspective::close_file (const UString &a_path)
     update_file_maps ();
 }
 
-const UString&
+const char*
 DBGPerspective::get_asm_title ()
 {
-    static UString disass_title;
-    if (disass_title.empty ()) {
-        disass_title = str_utils::printf ("<%s>", "Disassembly");
-    }
-    return disass_title;
+    return DISASSEMBLY_TITLE;
+}
+
+bool
+DBGPerspective::is_asm_title (const UString &a_path)
+{
+    return (a_path.raw () == DISASSEMBLY_TITLE);
 }
 
 bool
