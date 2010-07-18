@@ -18,7 +18,8 @@ main ()
     } else {
         // we are in the child
         std::cout << "I was forked by my parent. About to exec now" << std::endl;
-        execve ("./forkchild", NULL, NULL);
+	char *const argv[] = {NULL};
+        execv ("./forkchild", argv);
     }
     return 0;
 }
