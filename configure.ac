@@ -169,6 +169,10 @@ if test x$ENABLE_SOURCEVIEWMM2 = xyes ; then
     AC_DEFINE([WITH_SOURCEVIEWMM2], 1, [build with gtksourceviewmm 2.x instead of 1.x])
     LIBGTKSOURCEVIEWMM_VERSION=$LIBGTKSOURCEVIEWMM2_VERSION
     LIBGTKSOURCEVIEWMM_PKG=gtksourceviewmm-2.0
+    PKG_CHECK_EXISTS([gtksourceviewmm-2.0 >= 2.10], [ENABLE_SOURCEVIEW_2_10=yes], [ENABLE_SOURCEVIEW_2_10=no])
+    if test x$ENABLE_SOURCEVIEW_2_10 = xyes; then
+       AC_DEFINE(WITH_SOURCEVIEW_2_10, 1, [build with gtksourceview higher than 2.10])
+    fi
 else
     ENABLE_SOURCEVIEWMM2=no
     LIBGTKSOURCEVIEWMM_VERSION=$LIBGTKSOURCEVIEWMM1_VERSION

@@ -51,10 +51,24 @@ const char* WHERE_CATEGORY = "line-pointer-category";
 
 const char* WHERE_MARK = "where-marker";
 
+#ifdef WITH_SOURCEVIEW_2_10
+void
+on_line_mark_activated_signal (GtkSourceView *a_view,
+                               GtkTextIter *a_iter,
+                               GdkEvent *a_event,
+                               gpointer a_pointer);
+#endif
+
 class SourceView : public gtksourceview::SourceView
 {
 
     sigc::signal<void, int, bool> m_marker_region_got_clicked_signal;
+#ifdef WITH_SOURCEVIEW_2_10
+    friend void on_line_mark_activated_signal (GtkSourceView *a_view,
+                                               GtkTextIter *a_iter,
+                                               GdkEvent *a_event,
+                                               gpointer a_pointer);
+#endif
 
 public:
     SourceView (Glib::RefPtr<SourceBuffer> &a_buf) :
@@ -62,6 +76,12 @@ public:
     {
         init_font ();
         enable_events ();
+#ifdef WITH_SOURCEVIEW_2_10
+        g_signal_connect (gobj (),
+                          "line-mark-activated",
+                          G_CALLBACK (&on_line_mark_activated_signal),
+                          this);
+#endif
     }
 
     SourceView () :
@@ -82,15 +102,18 @@ public:
                     |Gdk::BUTTON_PRESS_MASK);
     }
 
+#if (WITH_SOURCEVIEWMM2 && !WITH_SOURCEVIEW_2_10)
     void do_custom_button_press_event_handling (GdkEventButton *a_event)
     {
         THROW_IF_FAIL (a_event);
 
-        if (a_event->type == GDK_BUTTON_PRESS && a_event->button != 1) {
+        if (a_event->type == GDK_BUTTON_PRESS
+            && a_event->button != 1) {
+            // We are only intersted in the left button press here
             return;
         }
         Glib::RefPtr<Gdk::Window> markers_window =
-                                        get_window (Gtk::TEXT_WINDOW_LEFT);
+            get_window (Gtk::TEXT_WINDOW_LEFT);
         THROW_IF_FAIL (markers_window);
 
         if (markers_window.operator->()->gobj () != a_event->window) {
@@ -112,14 +135,20 @@ public:
         marker_region_got_clicked_signal ().emit (iter.get_line () + 1,
                                                   false/*no dialog requested*/);
     }
+#endif
+
 
     bool on_button_press_event (GdkEventButton *a_event)
     {
-        if (a_event->type == GDK_BUTTON_PRESS && a_event->button == 3) {
+        if (a_event->type == GDK_BUTTON_PRESS
+            && a_event->button == 3) {
+            // The right button has been pressed. Get out.
             return false;
         } else {
             Gtk::Widget::on_button_press_event (a_event);
+#if (WITH_SOURCEVIEWMM2 && !WITH_SOURCEVIEW_2_10)            
             do_custom_button_press_event_handling (a_event);
+#endif
             return false;
         }
     }
@@ -130,6 +159,25 @@ public:
     }
 
 };//end class Sourceview
+
+#if WITH_SOURCEVIEW_2_10
+void
+on_line_mark_activated_signal (GtkSourceView *a_view,
+                               GtkTextIter *a_iter,
+                               GdkEvent *a_event,
+                               gpointer a_pointer)
+{
+    RETURN_IF_FAIL (a_view && a_iter && a_event && a_pointer);
+
+    SourceView *sv = static_cast<SourceView*> (a_pointer);
+
+    if (a_event->type == GDK_BUTTON_PRESS
+        && ((GdkEventButton*)a_event)->button == 1)
+        sv->marker_region_got_clicked_signal ().emit
+            (gtk_text_iter_get_line (a_iter) + 1,
+             false/*No dialog requested*/);
+}
+#endif
 
 struct SourceEditor::Priv {
     Sequence sequence;
