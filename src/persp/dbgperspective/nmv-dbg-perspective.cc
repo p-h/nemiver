@@ -720,7 +720,8 @@ public:
     bool find_absolute_path (const UString& a_file_path,
                              UString& a_absolute_path);
     bool find_absolute_path_or_ask_user (const UString& a_file_path,
-                                         UString& a_absolute_path);
+                                         UString& a_absolute_path,
+                                         bool a_ignore_if_not_found = true);
     bool ask_user_to_select_file (const UString &a_file_name,
                                   UString& a_selected_file_path);
     bool append_visual_breakpoint (SourceEditor *editor,
@@ -929,6 +930,7 @@ struct DBGPerspective::Priv {
     UString prog_cwd;
     map<UString, UString> env_variables;
     list<UString> search_paths;
+    map<UString, bool> paths_to_ignore;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade;
     SafePtr<Gtk::Window> body_window;
     SafePtr<Gtk::TextView> command_view;
@@ -4111,16 +4113,37 @@ DBGPerspective::find_absolute_path (const UString& a_file_path,
     return false;
 }
 
+/// Lookup a file path and return true if found. If the path is not
+/// absolute, look it up in the various directories we know about
+/// then return the absolute location at which it we found it.
+/// \param a_file_path the file path to look up.
+/// \param a_absolute_path the returned absolute location at which the
+/// file got found, iff the function returned true.
+/// \param a_ignore_if_not_found if true and if the file wasn't found
+/// *after* we asked the user [e.g because the user clicked 'cancel'
+/// in the dialog asking her to locate the file] subsequent calls to
+/// this function will not ask the user to locate the file again.
+/// \return true upon successful completion, false otherwise.
 bool
 DBGPerspective::find_absolute_path_or_ask_user (const UString& a_file_path,
-                                                UString& a_absolute_path)
+                                                UString& a_absolute_path,
+                                                bool a_ignore_if_not_found)
 {
     if (!find_absolute_path (a_file_path, a_absolute_path)) {
+        if (m_priv->paths_to_ignore.find (a_file_path)
+            != m_priv->paths_to_ignore.end ())
+            // We didn't find a_file_path but as we were previously
+            // requested to *not* ask the user to locate it, just
+            // pretend we didn't find the file.
+            return false;
         if (ask_user_to_select_file (a_file_path, a_absolute_path)) {
             UString parent_dir = Glib::filename_to_utf8
                                     (Glib::path_get_dirname (a_absolute_path));
             m_priv->search_paths.push_back (parent_dir);
         } else {
+            if (a_ignore_if_not_found)
+                // Don't ask the user to locate a_file_path next time.
+                m_priv->paths_to_ignore[a_file_path] = true;
             return false;
         }
     }
@@ -5889,12 +5912,7 @@ DBGPerspective::read_file_line (const UString &a_file_path,
         return false;
 
     UString path;
-    if (!find_absolute_path (a_file_path, path))
-        //Normally, there should be a sophisticated way to give the
-        //user a chance to let the tool figure out where the file
-        //a_file_path is, without becoming tedious if this function is
-        //called multiple times on a file that is not found. For now,
-        //let's just keep it stupid simple.
+    if (!find_absolute_path_or_ask_user (a_file_path, path))
         return false;
     bool found_line = false;
     int line_num = 1;
