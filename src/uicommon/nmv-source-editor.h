@@ -137,10 +137,6 @@ public:
     bool switch_to_non_assembly_source_buffer ();
 
     bool assembly_buf_addr_to_line (const Address&, int&) const;
-    bool assembly_buf_addr_to_line_previous (const Address&, int&) const;
-    bool assembly_buf_addr_to_line_previous (const Address&,
-                                             int&,
-                                             Address&) const;
     bool assembly_buf_line_to_addr (int, Address &) const;
     bool get_assembly_address_range (common::Range &a) const;
     bool move_where_marker_to_address (const Address &address,

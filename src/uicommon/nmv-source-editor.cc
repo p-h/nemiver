@@ -317,29 +317,18 @@ struct SourceEditor::Priv {
 
     bool
     address_2_line (Glib::RefPtr<SourceBuffer> a_buf,
-                    const Address an_addr,
-                    int &a_line) const
-    {
-        Address prev_address;
-        return address_2_line (a_buf, an_addr, a_line, prev_address);
-    }
-
-    bool
-    address_2_line (Glib::RefPtr<SourceBuffer> a_buf,
-                    const Address an_addr,
-                    int &a_line,
-                    Address &a_prev_addr) const
+		    const Address an_addr,
+		    int &a_line) const
     {
         if (!a_buf)
             return false;
 
         Gtk::TextBuffer::iterator it = a_buf->begin ();
         size_t  i;
-        std::string addr, prev_addr;
+        std::string addr;
         while (!it.is_end ()) {
             // We must always be at the beginning of a line here.
             THROW_IF_FAIL (it.starts_line ());
-            prev_addr = addr;
             addr.clear ();
             for (i = 0;
                  !isspace (it.get_char ()) && it.ends_line () != true
@@ -350,7 +339,6 @@ struct SourceEditor::Priv {
             bool match = (addr == an_addr.to_string ());
             if (match) {
                 a_line = it.get_line () + 1;
-                a_prev_addr = prev_addr;
                 return true;
             } else {
                 // Go to next line.
@@ -1180,31 +1168,6 @@ SourceEditor::assembly_buf_addr_to_line (const Address &a_addr, int &a_line) con
 {
     Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
     return m_priv->address_2_line (buf, a_addr, a_line);
-}
-
-bool
-SourceEditor::assembly_buf_addr_to_line_previous (const Address &a_addr,
-                                                  int &a_prev_line) const
-{
-    Address prev_addr;
-    return assembly_buf_addr_to_line_previous (a_addr, a_prev_line, prev_addr);
-}
-
-bool
-SourceEditor::assembly_buf_addr_to_line_previous (const Address &a_addr,
-                                                  int &a_prev_line,
-                                                  Address &a_prev_address) const
-{
-    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
-    int line = 0;
-    bool ok = m_priv->address_2_line (buf, a_addr,
-                                      line,
-                                      a_prev_address);
-    if (ok) {
-        THROW_IF_FAIL (line > 0);
-        a_prev_line = line - 1;
-    }
-    return ok;
 }
 
 bool
