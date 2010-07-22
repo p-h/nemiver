@@ -5870,6 +5870,16 @@ DBGPerspective::load_asm (const IDebugger::DisassembleInfo &a_info,
     return true;
 }
 
+/// Given a file path P and a line number N , reads the line N from P
+/// and return it iff the function returns true. This is useful
+/// e.g. when forging a mixed source/assembly source view, and we want
+/// to display a source line N from a file P.
+///
+/// \param a_file_path the file path to consider
+/// \param a_line_number the line number to consider
+/// \param a_line the string containing the resulting line read, if
+/// and only if the function returned true.
+/// \return true upon successful completion, false otherwise.
 bool
 DBGPerspective::read_file_line (const UString &a_file_path,
                                 int a_line_number,
@@ -5879,7 +5889,12 @@ DBGPerspective::read_file_line (const UString &a_file_path,
         return false;
 
     UString path;
-    if (!find_absolute_path_or_ask_user (a_file_path, path))
+    if (!find_absolute_path (a_file_path, path))
+        //Normally, there should be a sophisticated way to give the
+        //user a chance to let the tool figure out where the file
+        //a_file_path is, without becoming tedious if this function is
+        //called multiple times on a file that is not found. For now,
+        //let's just keep it stupid simple.
         return false;
     bool found_line = false;
     int line_num = 1;
