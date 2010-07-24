@@ -184,7 +184,7 @@ msgstr "<b>Pisava urejevalnika</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:3
 msgid "<b>File Monitoring</b>"
-msgstr "<b>Nadziranje datotek</b>"
+msgstr "<b>Nadzor datotek</b>"
 
 #: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:4
 msgid "<b>GDB binary</b>"
@@ -501,6 +501,7 @@ msgstr "pisanje"
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:127
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:98
+
 #: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:97
 msgid "ID"
 msgstr "ID"
