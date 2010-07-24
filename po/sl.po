@@ -67,7 +67,7 @@ msgstr "Omogoči beleženje dnevnika domen"
 
 #: ../src/main.cc:126
 msgid "Log the debugger output"
-msgstr "Beleženje odvoda razhroščevalnika"
+msgstr "Beleženje dnevnika odvoda razhroščevalnika"
 
 #: ../src/main.cc:134
 msgid "Use this terminal as the debugee's terminal"
