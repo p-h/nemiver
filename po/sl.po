@@ -1181,7 +1181,7 @@ msgstr "Ustvarjanje nadzorne točke, ki se sproži ob spremembi vrednosti izraza
 #: ../src/uicommon/nmv-source-editor.cc:514
 #, c-format
 msgid "Line: %i, Column: %i"
-msgstr "Vrstica %i, stolpec: %i"
+msgstr "Vrstica: %i, stolpec: %i"
 
 #: ../src/uicommon/nmv-ui-utils.cc:88
 msgid "Do not ask me again"
@@ -1256,17 +1256,3 @@ msgstr "sistemski klic exec"
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
 msgid "Variable"
 msgstr "Spremenljivka"
-
-#~ msgid "File path info is missing for breakpoint '%i'"
-#~ msgstr "Manjkajo podatki poti datoteke za prekinitveno točko '%i'"
-#~ msgid "There is no file name info for symbol@addr: %s@%s"
-#~ msgstr "Ni podrobnosti imena datoteke za simbol@naslov: %s@%s"
-#~ msgid ""
-#~ "Failed to open file %s. Would you like to open another file which would "
-#~ "have the same content ?"
-#~ msgstr ""
-#~ "Odpiranje datoteke %s je spodletelo. Ali želite odpreti drugo datoteko, "
-#~ "ki bi imela enako vsebino?"
-#~ msgid "Could not find file: %s\n"
-#~ msgstr "Datoteke ni mogoče najti: %s\n"
-
