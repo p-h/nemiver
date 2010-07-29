@@ -6663,8 +6663,9 @@ DBGPerspective::execute_program
                  ++it) {
                 SET_BREAKPOINT (it->second);
             }
+        } else {
+            dbg_engine->set_breakpoint ("main");
         }
-        dbg_engine->set_breakpoint ("main");
     } else {
         vector<IDebugger::Breakpoint>::const_iterator it;
         for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
