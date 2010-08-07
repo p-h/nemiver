@@ -793,22 +793,30 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     return true;
 }
 
-void
+/// Remove the marker that represent a breakpoint
+/// \param a_line the line to remove the breakpoint marker from.
+/// Note that a_line starts at 1. Gtk assumes that line numbers start
+/// at 0 but in Nemiver we assume -- by convention -- that they start
+/// at 1 mostly to comply with GDB.
+/// \return true upon successful completion, false otherwise.
+bool
 SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 {
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > *markers;
 
-    if ((markers = m_priv->get_markers ()) == 0)
-        return;
+    if ((markers = m_priv->get_markers ()) == 0 || a_line < 1)
+        return false;
 
+    --a_line;
     std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter;
     iter = markers->find (a_line);
     if (iter == markers->end ()) {
-        return;
+        return false;
     }
     if (!iter->second->get_deleted ())
         source_view ().get_source_buffer ()->delete_mark (iter->second);
     markers->erase (iter);
+    return true;
 }
 
 void
@@ -1115,6 +1123,20 @@ SourceEditor::set_visual_breakpoint_at_address (const Address &a_address,
         return false;
     return set_visual_breakpoint_at_line (line, a_enabled);
 
+}
+
+/// Remove the marker that represents a breakpoint at a given machine
+/// address.
+/// \param a_address the address from which to remove the breakpoint
+/// marker.
+/// \return true upon successful completion, false otherwise.
+bool
+SourceEditor::remove_visual_breakpoint_from_address (const Address &a_address)
+{
+    int line = -1;
+    if (!assembly_buf_addr_to_line (a_address, line))
+        return false;
+    return remove_visual_breakpoint_from_line (line);
 }
 
 bool

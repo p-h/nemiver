@@ -7244,8 +7244,20 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
                                      true);
     }
     THROW_IF_FAIL (source_editor);
-    source_editor->remove_visual_breakpoint_from_line
-                                                (iter->second.line ()-1);
+    switch (source_editor->get_buffer_type ()) {
+    case SourceEditor::BUFFER_TYPE_ASSEMBLY:
+        source_editor->remove_visual_breakpoint_from_address
+            (iter->second.address ());
+        break;
+    case SourceEditor::BUFFER_TYPE_SOURCE:
+        source_editor->remove_visual_breakpoint_from_line
+            (iter->second.line ());
+        break;
+    case SourceEditor::BUFFER_TYPE_UNDEFINED:
+        THROW ("should not be reached");
+        break;
+    }
+
     m_priv->breakpoints.erase (iter);
     LOG_DD ("erased breakpoint number " << (int) a_breakpoint_num);
 }

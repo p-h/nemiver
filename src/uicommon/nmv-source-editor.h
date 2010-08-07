@@ -82,7 +82,7 @@ public:
     bool move_where_marker_to_line (int a_line, bool a_do_scroll = true);
     void unset_where_marker ();
     bool set_visual_breakpoint_at_line (int a_line, bool enabled = true);
-    void remove_visual_breakpoint_from_line (int a_line);
+    bool remove_visual_breakpoint_from_line (int a_line);
     void clear_decorations ();
     bool is_visual_breakpoint_set_at_line (int a_line) const;
     bool scroll_to_line (int a_line);
@@ -145,6 +145,7 @@ public:
     bool place_cursor_at_address (const Address &);
     bool set_visual_breakpoint_at_address (const Address &a_address,
                                            bool enabled = true);
+    bool remove_visual_breakpoint_from_address (const Address &);
     bool scroll_to_address (const Address &a_address);
 
     /// @}
