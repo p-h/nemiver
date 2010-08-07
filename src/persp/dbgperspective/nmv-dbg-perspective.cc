@@ -4855,6 +4855,14 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
         a_file_path = Glib::filename_to_utf8 (candidate);
         return true;
     }
+    // then look in the directory of the binary
+    candidate =
+        Glib::build_filename (Glib::path_get_dirname (m_priv->prog_path),
+                              file_name);
+    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+        a_file_path = Glib::filename_to_utf8 (candidate);
+        return true;
+    }
     // then look in the session-specific search paths
     list<UString>::const_iterator session_iter;
     for (session_iter = m_priv->search_paths.begin ();
