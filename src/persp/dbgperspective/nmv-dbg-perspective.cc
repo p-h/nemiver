@@ -7079,6 +7079,8 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
                                        int &a_break_num,
                                        bool &a_enabled)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     UString breakpoint = a_file_name + ":" + UString::from_int (a_line_num);
 
     LOG_DD ("searching for breakpoint " << breakpoint << ": ");
@@ -7487,6 +7489,7 @@ DBGPerspective::toggle_breakpoint (const UString &a_file_path,
 void
 DBGPerspective::toggle_breakpoint (const Address &a_address)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
     if (is_breakpoint_set_at_address (a_address)) {
         delete_breakpoint (a_address);
     } else {
