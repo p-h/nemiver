@@ -695,7 +695,7 @@ GDBMIParser::parse_c_string_body (UString::size_type a_from,
         return false;
     }
 
-    UString result;
+    std::string result;
     if (ch != '\\') {
         result += ch;
         ++cur;
@@ -740,8 +740,12 @@ GDBMIParser::parse_c_string_body (UString::size_type a_from,
             }
             CHECK_END2 (cur);
             continue;
-        }
-        break;
+        } else {
+	  result += ch;
+	  ++cur;
+	  if (m_priv->index_passed_end (cur))
+	    break;
+	}
     }
 
     if (ch != '"') {

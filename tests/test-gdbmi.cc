@@ -13,7 +13,7 @@ using namespace nemiver;
 static const char* gv_str0 = "\"abracadabra\"";
 static const char* gv_str1 = "\"/home/dodji/misc/no\\303\\253l-\\303\\251-\\303\\240/test.c\"";
 static const char* gv_str2 = "\"No symbol \\\"events_ecal\\\" in current context.\\n\"";
-
+static const char* gv_str3 = "\"Reading symbols from /home/dodji/devel/tests/éçà/test...\"";
 static const char* gv_attrs0 = "msg=\"No symbol \\\"g_return_if_fail\\\" in current context.\"";
 static const char* gv_attrs1 = "script=[\"silent\",\"return\"]";
 
@@ -219,6 +219,22 @@ test_str2 ()
     UString::size_type to=0;
 
     GDBMIParser parser (gv_str2);
+    is_ok = parser.parse_c_string (0, to, res);
+
+    BOOST_REQUIRE (is_ok);
+    MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'");
+    BOOST_REQUIRE_MESSAGE (res.size (), "res size was: " << res.size ());
+}
+
+void
+test_str3 ()
+{
+    bool is_ok =false;
+
+    UString res;
+    UString::size_type to=0;
+
+    GDBMIParser parser (gv_str3);
     is_ok = parser.parse_c_string (0, to, res);
 
     BOOST_REQUIRE (is_ok);
@@ -945,6 +961,7 @@ init_unit_test_suite (int argc, char **argv)
     suite->add (BOOST_TEST_CASE (&test_str0));
     suite->add (BOOST_TEST_CASE (&test_str1));
     suite->add (BOOST_TEST_CASE (&test_str2));
+    suite->add (BOOST_TEST_CASE (&test_str3));
     suite->add (BOOST_TEST_CASE (&test_attr0));
     suite->add (BOOST_TEST_CASE (&test_stoppped_async_output));
     suite->add (BOOST_TEST_CASE (&test_running_async_output));
