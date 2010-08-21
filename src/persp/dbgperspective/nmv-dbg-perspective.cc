@@ -2159,7 +2159,7 @@ DBGPerspective::on_insertion_changed_signal
     UString path;
     a_editor->get_path (path);
     // add one since iter is 0-based, file is 1-based
-    update_toggle_menu_text(path, iter.get_line () + 1);
+    update_toggle_menu_text (path, iter.get_line () + 1);
     NEMIVER_CATCH
 }
 
@@ -3373,8 +3373,14 @@ DBGPerspective::init_actions ()
         {
             "ToggleBreakpointMenuItemAction",
             nil_stock_id,
-            //don't translate, name will be overwritten based on context
-            "Toggle _Breakpoint",
+            // Depending on the context we will want this string to be
+            // either "Set Breakpoint", or "Remove Breakpoint". Hence
+            // this string is updated by
+            // DBGPerspective::update_toggle_menu_text when needed. So
+            // this initial value is going to be displayed only when
+            // Nemiver is launched with no executable on the command
+            // line.
+            _("Toggle _Breakpoint"),
             _("Set/Unset a breakpoint at the current cursor location"),
             sigc::mem_fun (*this,
                            &DBGPerspective::on_toggle_breakpoint_action),
@@ -3385,8 +3391,14 @@ DBGPerspective::init_actions ()
         {
             "ToggleEnableBreakpointMenuItemAction",
             nil_stock_id,
-            //don't translate, name will be overwritten based on context
-            "Enable/Disable Breakpoint",
+            // Depending on the context we will want this string to be
+            // either "Enable Breakpoint", or "Disable
+            // Breakpoint". Hence this string is updated by
+            // DBGPerspective::update_toggle_menu_text when needed. So
+            // this initial value is going to be displayed only when
+            // Nemiver is launched with no executable on the command
+            // line.
+            _("Enable/Disable Breakpoint"),
             _("Enable or disable the breakpoint that is set at "
               "the current cursor location"),
             sigc::mem_fun
