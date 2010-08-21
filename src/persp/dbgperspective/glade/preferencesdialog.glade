@@ -1030,7 +1030,7 @@
 			  <child>
 			    <widget class="GtkFileChooserButton" id="pathtogdbfilechooser">
 			      <property name="visible">True</property>
-			      <property name="title" translatable="yes">Sélectionner un fichier</property>
+			      <property name="title" translatable="yes">Choose a file</property>
 			      <property name="action">GTK_FILE_CHOOSER_ACTION_OPEN</property>
 			      <property name="local_only">True</property>
 			      <property name="show_hidden">False</property>
