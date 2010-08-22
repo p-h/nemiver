@@ -6,6 +6,7 @@ nmv-api-macros.h \
 nmv-namespace.h \
 nmv-ustring.h \
 nmv-address.h \
+nmv-asm-instr.h \
 nmv-range.h \
 nmv-str-utils.h \
 nmv-libxml-utils.h \
