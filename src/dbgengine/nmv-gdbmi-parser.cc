@@ -1948,7 +1948,7 @@ fetch_gdbmi_result:
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_ASM_INSTRUCTIONS),
                                            PREFIX_ASM_INSTRUCTIONS)) {
-                std::list<IDebugger::Asm> asm_instrs;
+                std::list<common::Asm> asm_instrs;
                 if (!parse_asm_instruction_list (cur, cur,
                                                  asm_instrs)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -3929,7 +3929,7 @@ bool
 GDBMIParser::parse_asm_instruction_list
                                 (UString::size_type a_from,
                                  UString::size_type &a_to,
-                                 std::list<IDebugger::Asm> &a_instrs)
+                                 std::list<common::Asm> &a_instrs)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
@@ -3982,22 +3982,22 @@ GDBMIParser::parse_asm_instruction_list
     // or a list of result, like described earlier. Figure out which is
     // which and parse the damn thing accordingly.
     if (gdbmi_list->content_type () == GDBMIList::VALUE_TYPE) {
-        list<IDebugger::AsmInstr> instrs;
+        list<common::AsmInstr> instrs;
         if (!analyse_pure_asm_instrs (gdbmi_list, instrs, cur)) {
             LOG_PARSING_ERROR2 (cur);
             return false;
         }
-        list<IDebugger::AsmInstr>::const_iterator it;
+        list<common::AsmInstr>::const_iterator it;
         for (it = instrs.begin (); it != instrs.end (); ++it) {
             a_instrs.push_back (*it);
         }
     } else if (gdbmi_list->content_type () == GDBMIList::RESULT_TYPE) {
-        list<IDebugger::MixedAsmInstr> instrs;
+        list<common::MixedAsmInstr> instrs;
         if (!analyse_mixed_asm_instrs (gdbmi_list, instrs, cur)) {
             LOG_PARSING_ERROR2 (cur);
             return false;
         }
-        list<IDebugger::MixedAsmInstr>::const_iterator it;
+        list<common::MixedAsmInstr>::const_iterator it;
         for (it = instrs.begin (); it != instrs.end (); ++it) {
             a_instrs.push_back (*it);
         }
@@ -4026,13 +4026,13 @@ GDBMIParser::parse_asm_instruction_list
 //
 bool
 GDBMIParser::analyse_pure_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
-                                      list<IDebugger::AsmInstr> &a_instrs,
+                                      list<common::AsmInstr> &a_instrs,
                                       string::size_type /*a_cur*/)
 {
     list<GDBMIValueSafePtr> vals;
     a_gdbmi_list->get_value_content (vals);
     list<GDBMIValueSafePtr>::const_iterator val_iter;
-    IDebugger::AsmInstr asm_instr;
+    common::AsmInstr asm_instr;
     // Loop over the tuples contained in a_gdbmi_list.
     // Each tuple represents an asm instruction descriptor that can have
     // up to four fields:
@@ -4080,7 +4080,7 @@ GDBMIParser::analyse_pure_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
                 LOG_DD ("instr: " << instr);
             }
         }
-        asm_instr = IDebugger::AsmInstr (addr, func_name, offset, instr);
+        asm_instr = common::AsmInstr (addr, func_name, offset, instr);
         a_instrs.push_back (asm_instr);
     }
     return true;
@@ -4097,11 +4097,11 @@ GDBMIParser::analyse_pure_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
 //    line_asm_insn=[{address="0x000107bc",func-name="main",offset="0",
 //                    inst="save  %sp, -112, %sp"}]
 //  }
-//  Return a list of IDebugger::MixedAsmInstr representing the list of
+//  Return a list of common::MixedAsmInstr representing the list of
 //  RESULT above.
 bool
 GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
-                                       list<IDebugger::MixedAsmInstr> &a_instrs,
+                                       list<common::MixedAsmInstr> &a_instrs,
                                        string::size_type a_cur)
 {
 
@@ -4140,7 +4140,7 @@ GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
 
         const list<GDBMIResultSafePtr> &inner_results =
                 (*outer_it)->value ()->get_tuple_content ()->content ();
-        IDebugger::MixedAsmInstr instr;
+        common::MixedAsmInstr instr;
         for (inner_it = inner_results.begin ();
              inner_it != inner_results.end ();
              ++inner_it) {
@@ -4163,7 +4163,7 @@ GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
                 instr.file_path (val->get_string_content ());
             } else if ((*inner_it)->variable () == "line_asm_insn"
                        && inner_result_type == GDBMIValue::LIST_TYPE) {
-                list<IDebugger::AsmInstr> &instrs = instr.instrs ();
+                list<common::AsmInstr> &instrs = instr.instrs ();
                 if (!analyse_pure_asm_instrs (val->get_list_content (),
                                               instrs, a_cur)) {
                     stringstream s;

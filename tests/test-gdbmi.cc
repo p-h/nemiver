@@ -884,7 +884,7 @@ test_breakpoint ()
 void
 test_disassemble ()
 {
-    typedef list<IDebugger::Asm> AsmInstrList;
+    typedef list<common::Asm> AsmInstrList;
     AsmInstrList instrs;
     UString::size_type cur = 0;
     GDBMIParser parser (gv_disassemble0);

@@ -32,7 +32,7 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 template<class Stream>
 Stream&
-operator<< (Stream &a_out, const IDebugger::AsmInstr &a_instr)
+operator<< (Stream &a_out, const common::AsmInstr &a_instr)
 {
     a_out << "<asm-instr>\n"
           << " <addr>" <<  a_instr.address () << "</addr>\n"
@@ -45,13 +45,13 @@ operator<< (Stream &a_out, const IDebugger::AsmInstr &a_instr)
 
 template<class Stream>
 Stream&
-operator<< (Stream &a_out, const IDebugger::MixedAsmInstr &a_instr)
+operator<< (Stream &a_out, const common::MixedAsmInstr &a_instr)
 {
     a_out << "<asm-mixed-instr>\n"
           << " <line>" << a_instr.line_number () << "</line>\n"
           << " <path>" << a_instr.file_path ()   << "</path>\n";
 
-    list<IDebugger::AsmInstr>::const_iterator it;
+    list<common::AsmInstr>::const_iterator it;
     a_out << " <asm-instr-list>";
     for (it = a_instr.instrs ().begin ();
          it != a_instr.instrs ().end ();
@@ -72,13 +72,13 @@ operator<< (Stream &a_out, const IDebugger::MixedAsmInstr &a_instr)
 
 template<class Stream>
 Stream&
-operator<< (Stream &a_out, const IDebugger::Asm &a_asm)
+operator<< (Stream &a_out, const common::Asm &a_asm)
 {
     switch (a_asm.which ()) {
-        case IDebugger::Asm::TYPE_PURE:
+        case common::Asm::TYPE_PURE:
             a_out << a_asm.instr ();
             break;
-        case IDebugger::Asm::TYPE_MIXED:
+        case common::Asm::TYPE_MIXED:
             a_out << a_asm.mixed_instr ();
             break;
         default:

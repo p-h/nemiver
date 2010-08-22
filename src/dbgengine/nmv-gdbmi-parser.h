@@ -325,11 +325,11 @@ class GDBMIParser {
     SafePtr<Priv> m_priv;
 
     bool analyse_pure_asm_instrs (GDBMIListSafePtr,
-                                    list<IDebugger::AsmInstr>&,
+                                    list<common::AsmInstr>&,
                                     string::size_type a_cur);
 
     bool analyse_mixed_asm_instrs (GDBMIListSafePtr,
-                                      list<IDebugger::MixedAsmInstr>&,
+                                      list<common::MixedAsmInstr>&,
                                       string::size_type a_cur);
 public:
 
@@ -616,7 +616,7 @@ public:
     /// by GDB/MI
     bool parse_asm_instruction_list (UString::size_type a_from,
                                      UString::size_type &a_to,
-                                     std::list<IDebugger::Asm> &a_asm);
+                                     std::list<common::Asm> &a_asm);
 
     bool parse_variable (UString::size_type a_from,
                          UString::size_type &a_to,

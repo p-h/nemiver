@@ -213,9 +213,9 @@ gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
 #endif
 
 static void
-log_asm_insns (std::list<IDebugger::Asm> a_asm)
+log_asm_insns (std::list<common::Asm> a_asm)
 {
-    typedef std::list<IDebugger::Asm> Asms;
+    typedef std::list<common::Asm> Asms;
     Asms::const_iterator it = a_asm.begin ();
     if (it != a_asm.end ()) {
         LOG_D (*it, DBG_PERSPECTIVE_ASM_DOMAIN);
@@ -415,24 +415,24 @@ private:
                                      const UString &a_cooker);
 
     void on_debugger_asm_signal1
-                            (const IDebugger::DisassembleInfo &a_info,
-                             const std::list<IDebugger::Asm> &a_instrs,
+                            (const common::DisassembleInfo &a_info,
+                             const std::list<common::Asm> &a_instrs,
                              bool a_show_asm_in_new_tab = true);
 
     void on_debugger_asm_signal2
-                            (const IDebugger::DisassembleInfo &info,
-                             const std::list<IDebugger::Asm> &instrs,
+                            (const common::DisassembleInfo &info,
+                             const std::list<common::Asm> &instrs,
                              SourceEditor *editor);
 
     void on_debugger_asm_signal3
-                            (const IDebugger::DisassembleInfo &info,
-                             const std::list<IDebugger::Asm> &instrs,
+                            (const common::DisassembleInfo &info,
+                             const std::list<common::Asm> &instrs,
                              SourceEditor *editor,
                              const IDebugger::Breakpoint &a_bp);
 
     void on_debugger_asm_signal4
-                            (const IDebugger::DisassembleInfo &info,
-                             const std::list<IDebugger::Asm> &instrs,
+                            (const common::DisassembleInfo &info,
+                             const std::list<common::Asm> &instrs,
                              const Address &address);
 
     void on_variable_created_for_tooltip_signal
@@ -571,31 +571,31 @@ public:
 
     bool is_asm_title (const UString &);
 
-    bool load_asm (const IDebugger::DisassembleInfo &a_info,
-                   const std::list<IDebugger::Asm> &a_asm,
+    bool load_asm (const common::DisassembleInfo &a_info,
+                   const std::list<common::Asm> &a_asm,
                    Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
 
     bool read_file_line (const UString&, int, string&);
     bool write_asm_instr (std::ostringstream&,
-                          const IDebugger::AsmInstr&);
+                          const common::AsmInstr&);
 
     bool write_asm_instr (std::ostringstream&,
-                          const IDebugger::Asm&);
+                          const common::Asm&);
 
-    bool add_asm (const IDebugger::DisassembleInfo &a_info,
-                  const std::list<IDebugger::Asm> &a_asm,
+    bool add_asm (const common::DisassembleInfo &a_info,
+                  const std::list<common::Asm> &a_asm,
                   Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf,
                   bool a_append = true);
 
-    SourceEditor* open_asm (const IDebugger::DisassembleInfo &a_info,
-                            const std::list<IDebugger::Asm> &a_asm,
+    SourceEditor* open_asm (const common::DisassembleInfo &a_info,
+                            const std::list<common::Asm> &a_asm,
                             bool set_where = false);
 
-    void switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                        const std::list<IDebugger::Asm> &a_asm);
+    void switch_to_asm (const common::DisassembleInfo &a_info,
+                        const std::list<common::Asm> &a_asm);
 
-    void switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                        const std::list<IDebugger::Asm> &a_asm,
+    void switch_to_asm (const common::DisassembleInfo &a_info,
+                        const std::list<common::Asm> &a_asm,
                         SourceEditor *a_editor);
 
     void pump_asm_including_address (SourceEditor *a_editor,
@@ -2737,8 +2737,8 @@ DBGPerspective::on_debugger_variable_value_signal
 
 void
 DBGPerspective::on_debugger_asm_signal1
-                            (const IDebugger::DisassembleInfo &a_info,
-                             const std::list<IDebugger::Asm> &a_instrs,
+                            (const common::DisassembleInfo &a_info,
+                             const std::list<common::Asm> &a_instrs,
                              bool a_show_asm_in_new_tab)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2756,8 +2756,8 @@ DBGPerspective::on_debugger_asm_signal1
 
 void
 DBGPerspective::on_debugger_asm_signal2
-                        (const IDebugger::DisassembleInfo &a_info,
-                         const std::list<IDebugger::Asm> &a_instrs,
+                        (const common::DisassembleInfo &a_info,
+                         const std::list<common::Asm> &a_instrs,
                          SourceEditor *a_editor)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2771,8 +2771,8 @@ DBGPerspective::on_debugger_asm_signal2
 
 void
 DBGPerspective::on_debugger_asm_signal3
-                        (const IDebugger::DisassembleInfo &a_info,
-                         const std::list<IDebugger::Asm> &a_instrs,
+                        (const common::DisassembleInfo &a_info,
+                         const std::list<common::Asm> &a_instrs,
                          SourceEditor *a_editor,
                          const IDebugger::Breakpoint &a_bp)
 {
@@ -2788,8 +2788,8 @@ DBGPerspective::on_debugger_asm_signal3
 
 void
 DBGPerspective::on_debugger_asm_signal4
-                        (const IDebugger::DisassembleInfo &a_info,
-                         const std::list<IDebugger::Asm> &a_instrs,
+                        (const common::DisassembleInfo &a_info,
+                         const std::list<common::Asm> &a_instrs,
                          const Address &a_address)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -5871,8 +5871,8 @@ DBGPerspective::is_asm_title (const UString &a_path)
 }
 
 bool
-DBGPerspective::load_asm (const IDebugger::DisassembleInfo &a_info,
-                          const std::list<IDebugger::Asm> &a_asm,
+DBGPerspective::load_asm (const common::DisassembleInfo &a_info,
+                          const std::list<common::Asm> &a_asm,
                           Glib::RefPtr<SourceBuffer> &a_source_buffer)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -5957,7 +5957,7 @@ DBGPerspective::read_file_line (const UString &a_file_path,
 
 bool
 DBGPerspective::write_asm_instr (std::ostringstream &a_os,
-                                 const IDebugger::AsmInstr &a_instr)
+                                 const common::AsmInstr &a_instr)
 {
     a_os << a_instr.address ();
     a_os << "  ";
@@ -5972,17 +5972,17 @@ DBGPerspective::write_asm_instr (std::ostringstream &a_os,
 
 bool
 DBGPerspective::write_asm_instr (std::ostringstream &a_os,
-                                 const IDebugger::Asm &a_asm)
+                                 const common::Asm &a_asm)
 {
     bool written = false;
 
     switch (a_asm.which ()) {
-        case IDebugger::Asm::TYPE_PURE:
+        case common::Asm::TYPE_PURE:
             write_asm_instr (a_os, a_asm.instr ());
             written = true;
             break;
-        case IDebugger::Asm::TYPE_MIXED: {
-            const IDebugger::MixedAsmInstr &instr = a_asm.mixed_instr ();
+        case common::Asm::TYPE_MIXED: {
+            const common::MixedAsmInstr &instr = a_asm.mixed_instr ();
             // Ignore requests for line 0. Line 0 cannot exist as lines
             // should be starting at 1., some
             // versions of GDB seem to be referencing it for a reason.
@@ -6010,7 +6010,7 @@ DBGPerspective::write_asm_instr (std::ostringstream &a_os,
             }
 
             if (!instr.instrs ().empty ()) {
-                list<IDebugger::AsmInstr>::const_iterator it =
+                list<common::AsmInstr>::const_iterator it =
                                                 instr.instrs ().begin ();
                 if (it != instr.instrs ().end ()) {
                     if (written)
@@ -6033,8 +6033,8 @@ DBGPerspective::write_asm_instr (std::ostringstream &a_os,
 }
 
 bool
-DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
-                         const std::list<IDebugger::Asm> &a_asm,
+DBGPerspective::add_asm (const common::DisassembleInfo &/*a_info*/,
+                         const std::list<common::Asm> &a_asm,
                          Glib::RefPtr<SourceBuffer> &a_buf,
                          bool a_append)
 {
@@ -6045,7 +6045,7 @@ DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
 
     log_asm_insns (a_asm);
 
-    std::list<IDebugger::Asm>::const_iterator it = a_asm.begin ();
+    std::list<common::Asm>::const_iterator it = a_asm.begin ();
     if (it == a_asm.end ())
         return true;
 
@@ -6094,8 +6094,8 @@ DBGPerspective::add_asm (const IDebugger::DisassembleInfo &/*a_info*/,
 // source buffer of the asm tab.
 // Return true upon successful completion, false otherwise.
 SourceEditor*
-DBGPerspective::open_asm (const IDebugger::DisassembleInfo &a_info,
-                          const std::list<IDebugger::Asm> &a_asm,
+DBGPerspective::open_asm (const common::DisassembleInfo &a_info,
+                          const std::list<common::Asm> &a_asm,
                           bool a_set_where)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -6136,8 +6136,8 @@ DBGPerspective::open_asm (const IDebugger::DisassembleInfo &a_info,
 // \param a_info descriptor of the assembly instructions
 // \param a_asm a list of asm instructions.
 void
-DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                               const std::list<IDebugger::Asm> &a_asm)
+DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
+                               const std::list<common::Asm> &a_asm)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -6150,8 +6150,8 @@ DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
 // \param a_info descriptor of the assembly instructions
 // \param a_asm a list of asm instructions.
 void
-DBGPerspective::switch_to_asm (const IDebugger::DisassembleInfo &a_info,
-                               const std::list<IDebugger::Asm> &a_asm,
+DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
+                               const std::list<common::Asm> &a_asm,
                                SourceEditor *a_source_editor)
 {
     if (!a_source_editor)

@@ -271,8 +271,8 @@ public:
                                 set_memory_signal;
 
     mutable sigc::signal<void,
-                 const IDebugger::DisassembleInfo&,
-                 const std::list<IDebugger::Asm>&,
+                 const common::DisassembleInfo&,
+                 const std::list<common::Asm>&,
                  const UString& /*cookie*/> instructions_disassembled_signal;
 
     mutable sigc::signal<void, const VariableSafePtr, const UString&>
@@ -2339,15 +2339,15 @@ struct OnDisassembleHandler : OutputHandler {
 
         THROW_IF_FAIL (m_engine);
 
-        const std::list<IDebugger::Asm>& instrs =
+        const std::list<common::Asm>& instrs =
             a_in.output ().result_record ().asm_instruction_list ();
-        IDebugger::DisassembleInfo info;
+        common::DisassembleInfo info;
 
         if (a_in.command ().name () == "disassemble-line-range-in-file") {
             info.file_name (a_in.command ().tag0 ());
         }
         if (!instrs.empty ()) {
-            std::list<IDebugger::Asm>::const_iterator it = instrs.begin ();
+            std::list<common::Asm>::const_iterator it = instrs.begin ();
             if (!it->empty ()) {
                 info.start_address ((*it).instr ().address ());
                 it = instrs.end ();
@@ -3172,8 +3172,8 @@ GDBEngine::program_finished_signal () const
 }
 
 sigc::signal<void,
-             const IDebugger::DisassembleInfo&,
-             const std::list<IDebugger::Asm>&,
+             const common::DisassembleInfo&,
+             const std::list<common::Asm>&,
              const UString& /*cookie*/>&
 GDBEngine::instructions_disassembled_signal () const
  {
@@ -4470,8 +4470,8 @@ GDBEngine::set_memory (size_t a_addr,
 }
 
 void
-null_disass_slot (const IDebugger::DisassembleInfo &,
-                  const std::list<IDebugger::Asm> &)
+null_disass_slot (const common::DisassembleInfo &,
+                  const std::list<common::Asm> &)
 {
 }
 

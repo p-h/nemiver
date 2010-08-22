@@ -61,18 +61,18 @@ on_program_finished_signal ()
     BOOST_REQUIRE (counter2 == 3);
 }
 
-typedef list<IDebugger::Asm> AsmInstrs;
+typedef list<common::Asm> AsmInstrs;
 
 void
-on_instructions_disassembled_signal0 (const IDebugger::DisassembleInfo &a_info,
+on_instructions_disassembled_signal0 (const common::DisassembleInfo &a_info,
                                       const AsmInstrs &a_instrs,
                                       const UString &/*a_cookie*/);
 void
-on_instructions_disassembled_signal1 (const IDebugger::DisassembleInfo &,
+on_instructions_disassembled_signal1 (const common::DisassembleInfo &,
                                       const AsmInstrs &a_instrs);
 
 void
-on_instructions_disassembled_signal0 (const IDebugger::DisassembleInfo &a_info,
+on_instructions_disassembled_signal0 (const common::DisassembleInfo &a_info,
                                       const AsmInstrs &a_instrs,
                                       const UString &/*a_cookie*/)
 {
@@ -81,7 +81,7 @@ on_instructions_disassembled_signal0 (const IDebugger::DisassembleInfo &a_info,
 }
 
 void
-on_instructions_disassembled_signal1 (const IDebugger::DisassembleInfo &,
+on_instructions_disassembled_signal1 (const common::DisassembleInfo &,
                                       const AsmInstrs &a_instrs)
 {
     cout << "<AssemblyInstructionList nb='" << a_instrs.size ()
