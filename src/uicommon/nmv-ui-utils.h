@@ -30,7 +30,6 @@
 
 #include "config.h"
 #include <gtkmm.h>
-#include <libglademm.h>
 #include "common/nmv-env.h"
 #include "common/nmv-ustring.h"
 #include "common/nmv-safe-ptr-utils.h"
@@ -172,39 +171,18 @@ bool find_file_and_read_line (const UString &a_file_path,
 
 template <class T>
 T*
-get_widget_from_glade (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
-                       const UString &a_widget_name)
+get_widget_from_gtkbuilder (const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
+                            const UString &a_widget_name)
 {
-    Gtk::Widget *widget = a_glade->get_widget (a_widget_name);
+    T *widget;
+    a_gtkbuilder->get_widget (a_widget_name, widget);
     if (!widget) {
         THROW ("couldn't find widget '"
-               + a_widget_name
-               + "' in glade file: " + a_glade->get_filename ().c_str ());
+               + a_widget_name);
     }
-    T *result = dynamic_cast<T*> (widget);
-    if (!result) {
-        //TODO: we may leak widget here if it is a toplevel widget
-        //like Gtk::Window. In this case, we should make sure to delete it
-        //before bailing out.
-        THROW ("widget " + a_widget_name + " is not of the expected type");
-    }
-    return result;
+    return widget;
 }
 
-template <class T>
-T*
-get_widget_from_glade (const UString &a_glade_file_name,
-                       const UString &a_widget_name,
-                       const Glib::RefPtr<Gnome::Glade::Xml> &a_glade)
-{
-    UString path_to_glade_file =
-                common::env::build_path_to_glade_file (a_glade_file_name);
-    a_glade = Gnome::Glade::Xml::create (path_to_glade_file);
-    if (!a_glade) {
-        THROW ("Could not create glade from file " + path_to_glade_file);
-    }
-    return get_widget_from_glade<T> (a_glade, a_widget_name);
-}
 
 struct WidgetRef {
     void operator () (Gtk::Widget *a_widget)

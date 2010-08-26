@@ -23,7 +23,6 @@
  */
 #include <glib/gi18n.h>
 #include "nmv-watchpoint-dialog.h"
-#include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-env.h"
@@ -36,7 +35,7 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 struct WatchpointDialog::Priv {
 
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
     Gtk::Entry *expression_entry;
     Gtk::Button *inspect_button;
     Gtk::CheckButton *read_check_button;
@@ -48,11 +47,11 @@ struct WatchpointDialog::Priv {
     IPerspective &perspective;
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
           IDebuggerSafePtr a_debugger,
           IPerspective &a_perspective) :
         dialog (a_dialog),
-        glade (a_glade),
+        gtkbuilder (a_gtkbuilder),
         expression_entry (0),
         inspect_button (0),
         read_check_button (0),
@@ -75,40 +74,40 @@ struct WatchpointDialog::Priv {
         dialog.set_default_response (Gtk::RESPONSE_OK);
 
         expression_entry =
-            ui_utils::get_widget_from_glade<Gtk::Entry>
-                                            (glade, "expressionentry");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
+                                            (gtkbuilder, "expressionentry");
         THROW_IF_FAIL (expression_entry);
         expression_entry->set_activates_default ();
 
         inspect_button =
-           ui_utils::get_widget_from_glade<Gtk::Button> (glade, "inspectbutton");
+           ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder, "inspectbutton");
         THROW_IF_FAIL (inspect_button);
         inspect_button->set_sensitive (false);
 
         read_check_button =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                            (glade, "readcheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                            (gtkbuilder, "readcheckbutton");
         THROW_IF_FAIL (read_check_button);
 
         write_check_button =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                            (glade, "writecheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                            (gtkbuilder, "writecheckbutton");
         THROW_IF_FAIL (write_check_button);
 
         ok_button =
-            ui_utils::get_widget_from_glade<Gtk::Button>
-                                            (glade, "okbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button>
+                                            (gtkbuilder, "okbutton");
         THROW_IF_FAIL (ok_button);
         ok_button->set_sensitive (false);
 
         cancel_button =
-            ui_utils::get_widget_from_glade<Gtk::Button>
-                                            (glade, "cancelbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button>
+                                            (gtkbuilder, "cancelbutton");
         THROW_IF_FAIL (cancel_button);
         cancel_button->set_sensitive (true);
 
         Gtk::Box *box =
-            ui_utils::get_widget_from_glade<Gtk::Box> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (gtkbuilder,
                                                        "varinspectorbox");
         THROW_IF_FAIL (box);
 
@@ -201,12 +200,12 @@ WatchpointDialog::WatchpointDialog (const UString &a_root_path,
                                     IDebuggerSafePtr a_debugger,
                                     IPerspective &a_perspective) :
     Dialog (a_root_path,
-            "watchpointdialog.glade",
+            "watchpointdialog.ui",
             "watchpointdialog")
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset (new WatchpointDialog::Priv (widget (),
-                                              glade (),
+                                              gtkbuilder (),
                                               a_debugger,
                                               a_perspective));
 }

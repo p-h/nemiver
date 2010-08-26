@@ -24,7 +24,6 @@
  */
 
 #include <vector>
-#include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-env.h"
@@ -41,35 +40,36 @@ class Dialog::Priv {
 public:
 
     SafePtr<Gtk::Dialog> dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
 
     Priv (const UString &a_resource_root_path,
-          const UString &a_glade_filename,
+          const UString &a_gtkbuilder_filename,
           const UString &a_widget_name)
     {
-        string glade_path;
+        string gtkbuilder_path;
         if (!a_resource_root_path.empty ()) {
             // So the glade file is shipped within a plugin. Build the
             // path to it accordingly.
             vector<string> path_elems;
             path_elems.push_back (Glib::locale_from_utf8 (a_resource_root_path));
-            path_elems.push_back ("glade");
-            path_elems.push_back (a_glade_filename);
-            glade_path = Glib::build_filename (path_elems);
+            path_elems.push_back ("ui");
+            path_elems.push_back (a_gtkbuilder_filename);
+            gtkbuilder_path = Glib::build_filename (path_elems);
         } else {
             // THe glade file is shipped into the global nemiver glade
             // directories.
-            glade_path = env::build_path_to_glade_file (a_glade_filename);
+            gtkbuilder_path = 
+	      env::build_path_to_gtkbuilder_file (a_gtkbuilder_filename);
         }
 
-        if (!Glib::file_test (glade_path, Glib::FILE_TEST_IS_REGULAR)) {
-            THROW (UString ("could not find file ") + glade_path);
+        if (!Glib::file_test (gtkbuilder_path, Glib::FILE_TEST_IS_REGULAR)) {
+            THROW (UString ("could not find file ") + gtkbuilder_path);
         }
 
-        glade = Gnome::Glade::Xml::create (glade_path);
-        THROW_IF_FAIL (glade);
+        gtkbuilder = Gtk::Builder::create_from_file (gtkbuilder_path);
+        THROW_IF_FAIL (gtkbuilder);
         dialog.reset
-            (ui_utils::get_widget_from_glade<Gtk::Dialog> (glade,
+            (ui_utils::get_widget_from_gtkbuilder<Gtk::Dialog> (gtkbuilder,
                                                            a_widget_name));
         THROW_IF_FAIL (dialog);
         dialog->hide ();
@@ -77,11 +77,11 @@ public:
 };//end struct Dialog::Priv
 
 Dialog::Dialog (const UString &a_resource_root_path,
-                const UString &a_glade_filename,
+                const UString &a_gtkbuilder_filename,
                 const UString &a_widget_name)
 {
     m_priv.reset (new Priv (a_resource_root_path,
-                            a_glade_filename,
+                            a_gtkbuilder_filename,
                             a_widget_name));
 }
 
@@ -93,12 +93,12 @@ Dialog::widget () const
     return *m_priv->dialog;
 }
 
-const Glib::RefPtr<Gnome::Glade::Xml>
-Dialog::glade () const
+const Glib::RefPtr<Gtk::Builder>
+Dialog::gtkbuilder () const
 {
     THROW_IF_FAIL (m_priv);
-    THROW_IF_FAIL (m_priv->glade);
-    return m_priv->glade;
+    THROW_IF_FAIL (m_priv->gtkbuilder);
+    return m_priv->gtkbuilder;
 }
 
 Dialog::~Dialog ()

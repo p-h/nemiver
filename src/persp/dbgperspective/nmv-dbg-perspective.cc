@@ -882,7 +882,7 @@ struct DBGPerspective::Priv {
     list<UString> session_search_paths;
     list<UString> global_search_paths;
     map<UString, bool> paths_to_ignore;
-    Glib::RefPtr<Gnome::Glade::Xml> body_glade;
+    Glib::RefPtr<Gtk::Builder> body_builder;
     SafePtr<Gtk::Window> body_window;
     SafePtr<Gtk::TextView> command_view;
     SafePtr<Gtk::ScrolledWindow> command_view_scrolled_win;
@@ -3741,20 +3741,20 @@ DBGPerspective::init_toolbar ()
 void
 DBGPerspective::init_body ()
 {
-    string relative_path = Glib::build_filename ("glade",
-                                                 "bodycontainer.glade");
+    string relative_path = Glib::build_filename ("ui",
+                                                 "bodycontainer.ui");
     string absolute_path;
     THROW_IF_FAIL (build_absolute_resource_path
                     (Glib::filename_to_utf8 (relative_path), absolute_path));
-    m_priv->body_glade = Gnome::Glade::Xml::create (absolute_path);
+    m_priv->body_builder = Gtk::Builder::create_from_file (absolute_path);
     m_priv->body_window.reset
-        (ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->body_glade,
+        (ui_utils::get_widget_from_gtkbuilder<Gtk::Window> (m_priv->body_builder,
                                                        "bodycontainer"));
     m_priv->top_box =
-        ui_utils::get_widget_from_glade<Gtk::Box> (m_priv->body_glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (m_priv->body_builder,
                                                    "topbox");
     m_priv->body_main_paned.reset
-        (ui_utils::get_widget_from_glade<Gtk::Paned> (m_priv->body_glade,
+        (ui_utils::get_widget_from_gtkbuilder<Gtk::Paned> (m_priv->body_builder,
                                                       "mainbodypaned"));
     // set the position of the status pane to the last saved position
     IConfMgr &conf_mgr = get_conf_mgr ();
@@ -3769,7 +3769,7 @@ DBGPerspective::init_body ()
     }
 
     m_priv->sourceviews_notebook =
-        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Notebook> (m_priv->body_builder,
                                                         "sourceviewsnotebook");
     m_priv->sourceviews_notebook->remove_page ();
     m_priv->sourceviews_notebook->set_show_tabs ();
@@ -3780,7 +3780,7 @@ DBGPerspective::init_body ()
 #endif
 
     m_priv->statuses_notebook =
-        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->body_glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Notebook> (m_priv->body_builder,
                                                         "statusesnotebook");
     int width=100, height=70;
 

@@ -45,7 +45,7 @@ private:
     Priv ();
 public:
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
     IDebuggerSafePtr debugger;
     IVarListWalkerSafePtr global_variables_walker_list;
 
@@ -57,11 +57,11 @@ public:
     UString previous_function_name;
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
           IDebuggerSafePtr &a_debugger,
           IWorkbench &a_workbench) :
         dialog (a_dialog),
-        glade (a_glade),
+        gtkbuilder (a_gtkbuilder),
         workbench (a_workbench)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -79,7 +79,7 @@ public:
     void build_dialog ()
     {
         Gtk::Box *box =
-            ui_utils::get_widget_from_glade<Gtk::Box> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (gtkbuilder,
                                                        "inspectorwidgetbox");
         THROW_IF_FAIL (box);
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
@@ -315,10 +315,10 @@ GlobalVarsInspectorDialog::GlobalVarsInspectorDialog
                                             (const UString &a_root_path,
         IDebuggerSafePtr &a_debugger, IWorkbench &a_workbench) :
     Dialog (a_root_path,
-            "globalvarsinspector.glade",
+            "globalvarsinspector.ui",
             "globalvarsinspector")
 {
-    m_priv.reset (new Priv (widget (), glade (), a_debugger, a_workbench));
+    m_priv.reset (new Priv (widget (), gtkbuilder (), a_debugger, a_workbench));
 }
 
 GlobalVarsInspectorDialog::~GlobalVarsInspectorDialog ()

@@ -25,7 +25,6 @@
 
 #include <vector>
 #include <glib/gi18n.h>
-#include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/filechooserbutton.h>
 #include <gtkmm/stock.h>
@@ -46,27 +45,27 @@ class LoadCoreDialog::Priv {
     Gtk::Button *okbutton;
 
 public:
-    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+    Priv (const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         fcbutton_core_file (0),
         fcbutton_executable (0),
         okbutton (0)
     {
 
         okbutton =
-        ui_utils::get_widget_from_glade<Gtk::Button> (a_glade, "okbutton");
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (a_gtkbuilder, "okbutton");
         THROW_IF_FAIL (okbutton);
         okbutton->set_sensitive (false);
 
         fcbutton_executable =
-            ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                (a_glade, "filechooserbutton_executable");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                (a_gtkbuilder, "filechooserbutton_executable");
         fcbutton_executable->signal_selection_changed ().connect
             (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal));
 
         fcbutton_core_file =
-            ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                (a_glade, "filechooserbutton_corefile");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                (a_gtkbuilder, "filechooserbutton_corefile");
         fcbutton_core_file->signal_selection_changed ().connect
             (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal));
@@ -95,9 +94,9 @@ public:
 };//end class LoadCoreDialog::Priv
 
 LoadCoreDialog::LoadCoreDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "loadcoredialog.glade", "loadcoredialog")
+    Dialog (a_root_path, "loadcoredialog.ui", "loadcoredialog")
 {
-    m_priv.reset (new Priv (glade ()));
+    m_priv.reset (new Priv (gtkbuilder ()));
 }
 
 LoadCoreDialog::~LoadCoreDialog ()

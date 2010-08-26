@@ -24,7 +24,6 @@
  */
 
 #include <glib/gi18n.h>
-#include <libglademm.h>
 #include <gtkmm/filechooserwidget.h>
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/button.h>
@@ -50,7 +49,7 @@ class OpenFileDialog::Priv {
 
 public:
 
-    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+    Priv (const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
           IDebuggerSafePtr &a_debugger, const UString &a_working_dir) :
         vbox_file_list (0),
         radio_button_file_list (0),
@@ -63,23 +62,23 @@ public:
 
         file_chooser.set_select_multiple (true);
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (a_gtkbuilder,
                                                           "okbutton");
         THROW_IF_FAIL (okbutton);
         vbox_file_list =
-            ui_utils::get_widget_from_glade<Gtk::VBox> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::VBox> (a_gtkbuilder,
                                                         "vbox_file_list");
         THROW_IF_FAIL (vbox_file_list);
         radio_button_file_list =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                                                (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                                                (a_gtkbuilder,
                                                  "radiobutton_target");
         THROW_IF_FAIL (radio_button_file_list);
         radio_button_file_list->signal_toggled ().connect (sigc::mem_fun
                     (*this, &Priv::on_radio_button_toggled));
         radio_button_chooser =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                                                (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                                                (a_gtkbuilder,
                                                  "radiobutton_other");
         THROW_IF_FAIL (radio_button_chooser);
         radio_button_chooser->signal_toggled ().connect
@@ -229,9 +228,9 @@ public:
 OpenFileDialog::OpenFileDialog (const UString &a_root_path,
                                 IDebuggerSafePtr &a_debugger,
                                 const UString  &a_working_dir) :
-    Dialog (a_root_path, "openfiledialog.glade", "dialog_open_source_file")
+    Dialog (a_root_path, "openfiledialog.ui", "dialog_open_source_file")
 {
-    m_priv.reset (new Priv (glade (), a_debugger, a_working_dir));
+    m_priv.reset (new Priv (gtkbuilder (), a_debugger, a_working_dir));
 }
 
 OpenFileDialog::~OpenFileDialog ()

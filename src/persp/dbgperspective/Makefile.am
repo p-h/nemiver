@@ -1,4 +1,4 @@
-SUBDIRS=glade menus icons sqlscripts schemas
+SUBDIRS=ui menus icons sqlscripts schemas
 
 install-data-local: install-schemas
 

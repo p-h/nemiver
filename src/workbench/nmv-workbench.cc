@@ -110,7 +110,7 @@ private:
     //</slots (signal callbacks)>
     //************************
 
-    void init_glade ();
+    void init_builder ();
     void init_window ();
     void init_actions ();
     void init_menubar ();
@@ -157,7 +157,7 @@ struct Workbench::Priv {
     Gtk::Main *main;
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
     Glib::RefPtr<Gtk::UIManager> ui_manager;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> builder;
     SafePtr <Gtk::Window> root_window;
     Gtk::Widget *menubar;
     Gtk::Notebook *toolbar_container;
@@ -383,7 +383,7 @@ Workbench::do_init (Gtk::Main &a_main)
         m_priv->root_window->set_default_icon_list(icon_list);
     }
 
-    init_glade ();
+    init_builder ();
     init_window ();
     init_actions ();
     init_menubar ();
@@ -565,25 +565,25 @@ Workbench::shutting_down_signal ()
 }
 
 void
-Workbench::init_glade ()
+Workbench::init_builder ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     THROW_IF_FAIL (m_priv);
 
-    UString file_path = env::build_path_to_glade_file ("workbench.glade");
-    m_priv->glade = Gnome::Glade::Xml::create (file_path);
-    THROW_IF_FAIL (m_priv->glade);
+    UString file_path = env::build_path_to_gtkbuilder_file ("workbench.ui");
+    m_priv->builder = Gtk::Builder::create_from_file (file_path);
+    THROW_IF_FAIL (m_priv->builder);
 
     Gtk::Widget *w =
-        ui_utils::get_widget_from_glade<Gtk::Window> (m_priv->glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Window> (m_priv->builder,
                                                       "workbench");
     THROW_IF_FAIL (w);
     m_priv->root_window.reset (dynamic_cast<Gtk::Window*>
                                                 (w->get_toplevel ()));
     THROW_IF_FAIL (m_priv->root_window);
     //get the title of the toplevel window as specified in the
-    //glade file and save
+    //gtkbuilder file and save
     //it so that later we can add state-specific
     //extensions to this base title
     //if needed
@@ -754,7 +754,7 @@ Workbench::init_menubar ()
     THROW_IF_FAIL (m_priv->menubar);
 
     Gtk::Box *menu_container =
-        ui_utils::get_widget_from_glade<Gtk::Box> (m_priv->glade, "menucontainer");
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (m_priv->builder, "menucontainer");
     menu_container->pack_start (*m_priv->menubar);
     menu_container->show_all ();
 }
@@ -765,7 +765,7 @@ Workbench::init_toolbar ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     m_priv->toolbar_container =
-        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Notebook> (m_priv->builder,
                                                         "toolbarcontainer");
 }
 
@@ -774,7 +774,7 @@ Workbench::init_body ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv->bodies_container =
-        ui_utils::get_widget_from_glade<Gtk::Notebook> (m_priv->glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Notebook> (m_priv->builder,
                                                         "bodynotebook");
 }
 

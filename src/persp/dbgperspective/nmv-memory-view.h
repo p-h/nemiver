@@ -27,7 +27,6 @@
 
 #include <gtkmm/widget.h>
 #include <pangomm/fontdescription.h>
-#include <libglademm.h>
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"

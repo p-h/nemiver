@@ -1,4 +1,4 @@
-SUBDIRS = src glade menus tests po data docs help
+SUBDIRS = src ui menus tests po data docs help
 ACLOCAL_AMFLAGS = -I m4
 headers= config.h
 

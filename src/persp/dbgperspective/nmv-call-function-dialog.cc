@@ -24,7 +24,6 @@
  */
 #include "nmv-call-function-dialog.h"
 #include <glib/gi18n.h>
-#include <libglademm.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-env.h"
 #include "common/nmv-ustring.h"
@@ -49,21 +48,21 @@ struct CallFunctionDialog::Priv {
     Glib::RefPtr<Gtk::ListStore> m_call_expr_history;
     Gtk::Button *ok_button;
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         call_expr_entry (0),
         ok_button (0)
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
 
         ok_button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (a_gtkbuilder,
                                                           "okbutton");
         THROW_IF_FAIL (ok_button);
         ok_button->set_sensitive (false);
 
         call_expr_entry =
-            ui_utils::get_widget_from_glade<Gtk::ComboBoxEntry>
-                                            (a_glade, "callexpressionentry");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBoxEntry>
+                                            (a_gtkbuilder, "callexpressionentry");
         THROW_IF_FAIL (call_expr_entry);
         m_call_expr_history=
             Gtk::ListStore::create (get_call_expr_history_cols ());
@@ -145,9 +144,9 @@ struct CallFunctionDialog::Priv {
 };//end struct CallFunctionDialog::Priv
 
 CallFunctionDialog::CallFunctionDialog (const UString &a_root_path):
-    Dialog (a_root_path, "callfunctiondialog.glade", "callfunctiondialog")
+    Dialog (a_root_path, "callfunctiondialog.ui", "callfunctiondialog")
 {
-    m_priv.reset (new Priv (widget (), glade ()));
+    m_priv.reset (new Priv (widget (), gtkbuilder ()));
 }
 
 CallFunctionDialog::~CallFunctionDialog ()

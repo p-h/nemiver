@@ -53,7 +53,7 @@ class VarInspectorDialog::Priv {
     Gtk::Button *inspect_button;
     SafePtr<VarInspector> var_inspector;
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
     IDebuggerSafePtr debugger;
     IPerspective &perspective;
 
@@ -61,13 +61,13 @@ class VarInspectorDialog::Priv {
 public:
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
           IDebuggerSafePtr a_debugger,
           IPerspective &a_perspective) :
         var_name_entry (0),
         inspect_button (0),
         dialog (a_dialog),
-        glade (a_glade),
+        gtkbuilder (a_gtkbuilder),
         debugger (a_debugger),
         perspective (a_perspective)
     {
@@ -81,20 +81,20 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         var_name_entry =
-            ui_utils::get_widget_from_glade<Gtk::ComboBoxEntry>
-                (glade, "variablenameentry");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBoxEntry>
+                (gtkbuilder, "variablenameentry");
         m_variable_history =
             Gtk::ListStore::create (get_cols ());
         var_name_entry->set_model (m_variable_history);
         var_name_entry->set_text_column (get_cols ().varname);
 
         inspect_button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,
                                                           "inspectbutton");
         inspect_button->set_sensitive (false);
 
         Gtk::Box *box =
-            ui_utils::get_widget_from_glade<Gtk::Box> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (gtkbuilder,
                                                        "inspectorwidgetbox");
         var_inspector.reset (new VarInspector (debugger, perspective));
         var_inspector->enable_contextual_menu (true);
@@ -227,13 +227,13 @@ VarInspectorDialog::VarInspectorDialog (const UString &a_root_path,
                                         IDebuggerSafePtr &a_debugger,
                                         IPerspective &a_perspective) :
     Dialog (a_root_path,
-            "varinspectordialog.glade",
+            "varinspectordialog.ui",
             "varinspectordialog")
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset
         (new VarInspectorDialog::Priv (widget (),
-                                       glade (), a_debugger,
+                                       gtkbuilder (), a_debugger,
                                        a_perspective));
     THROW_IF_FAIL (m_priv);
 }

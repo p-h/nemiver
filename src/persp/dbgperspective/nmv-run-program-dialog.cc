@@ -26,7 +26,6 @@
 #include <vector>
 #include <iostream>
 #include <glib/gi18n.h>
-#include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/filechooserbutton.h>
@@ -65,11 +64,11 @@ public:
     EnvVarModelColumns env_columns;
     Glib::RefPtr<Gtk::ListStore> model;
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
 
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+        const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         fcbutton (0),
         okbutton (0),
         treeview_environment (0),
@@ -77,7 +76,7 @@ public:
         add_button (0),
         model (Gtk::ListStore::create (env_columns)),
         dialog (a_dialog),
-        glade (a_glade)
+        gtkbuilder (a_gtkbuilder)
     {
         init ();
     }
@@ -85,14 +84,14 @@ public:
     void init ()
     {
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button>
-                (glade, "executebutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button>
+                (gtkbuilder, "executebutton");
         THROW_IF_FAIL (okbutton);
         okbutton->set_sensitive (false);
 
         treeview_environment =
-            ui_utils::get_widget_from_glade<Gtk::TreeView>
-                                            (glade, "treeview_environment");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::TreeView>
+                                            (gtkbuilder, "treeview_environment");
 
         treeview_environment->set_model (model);
 
@@ -103,15 +102,15 @@ public:
                                             (_("Value"), env_columns.value);
 
         add_button =
-            ui_utils::get_widget_from_glade<Gtk::Button>
-                                                    (glade, "button_add_var");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button>
+                                                    (gtkbuilder, "button_add_var");
         THROW_IF_FAIL (add_button);
 
         add_button->signal_clicked().connect(sigc::mem_fun(*this,
                     &RunProgramDialog::Priv::on_add_new_variable));
 
-        remove_button = ui_utils::get_widget_from_glade<Gtk::Button>
-                                                (glade, "button_remove_var");
+        remove_button = ui_utils::get_widget_from_gtkbuilder<Gtk::Button>
+                                                (gtkbuilder, "button_remove_var");
         THROW_IF_FAIL (remove_button);
         remove_button->signal_clicked().connect(sigc::mem_fun(*this,
                     &RunProgramDialog::Priv::on_remove_variable));
@@ -125,8 +124,8 @@ public:
                   &RunProgramDialog::Priv::on_variable_selection_changed));
 
         fcbutton =
-            ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                                (glade, "filechooserbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                                (gtkbuilder, "filechooserbutton");
         THROW_IF_FAIL (fcbutton);
         fcbutton->set_show_hidden (true);
         fcbutton->signal_selection_changed ().connect (sigc::mem_fun
@@ -134,8 +133,8 @@ public:
 
         // activate the default action (execute) when pressing enter in the
         // arguments text box
-        ui_utils::get_widget_from_glade<Gtk::Entry>
-                        (glade, "argumentsentry")->set_activates_default ();
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
+                        (gtkbuilder, "argumentsentry")->set_activates_default ();
     }
 
     void on_add_new_variable ()
@@ -190,9 +189,9 @@ public:
 };//end struct RunProgramDialog::Priv
 
 RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "runprogramdialog.glade", "runprogramdialog")
+    Dialog (a_root_path, "runprogramdialog.ui", "runprogramdialog")
 {
-    m_priv.reset (new Priv (widget (), glade ()));
+    m_priv.reset (new Priv (widget (), gtkbuilder ()));
     THROW_IF_FAIL (m_priv);
 
     working_directory (Glib::filename_to_utf8 (Glib::get_current_dir ()));
@@ -207,8 +206,8 @@ UString
 RunProgramDialog::program_name () const
 {
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                        (glade (), "filechooserbutton");
+        ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                        (gtkbuilder (), "filechooserbutton");
     return chooser->get_filename ();
 }
 
@@ -218,8 +217,8 @@ RunProgramDialog::program_name (const UString &a_name)
     THROW_IF_FAIL (m_priv);
 
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                    (glade (), "filechooserbutton");
+        ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                    (gtkbuilder (), "filechooserbutton");
     THROW_IF_FAIL (chooser);
     chooser->set_filename (a_name);
 }
@@ -228,7 +227,7 @@ UString
 RunProgramDialog::arguments () const
 {
     Gtk::Entry *entry =
-        ui_utils::get_widget_from_glade<Gtk::Entry> (glade (),
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder (),
                                                      "argumentsentry");
     THROW_IF_FAIL (entry);
     return entry->get_text ();
@@ -238,7 +237,7 @@ void
 RunProgramDialog::arguments (const UString &a_args)
 {
     Gtk::Entry *entry =
-        ui_utils::get_widget_from_glade<Gtk::Entry> (glade (),
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder (),
                                                      "argumentsentry");
     THROW_IF_FAIL (entry);
     entry->set_text (a_args);
@@ -248,8 +247,8 @@ UString
 RunProgramDialog::working_directory () const
 {
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                                (glade (), "filechooserbutton_workingdir");
+        ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                (gtkbuilder (), "filechooserbutton_workingdir");
     return chooser->get_filename ();
 }
 
@@ -257,8 +256,8 @@ void
 RunProgramDialog::working_directory (const UString &a_dir)
 {
     Gtk::FileChooserButton *chooser =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-            (glade (), "filechooserbutton_workingdir");
+        ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+            (gtkbuilder (), "filechooserbutton_workingdir");
     if (a_dir == "" || a_dir == ".") {
         chooser->set_filename
                     (Glib::locale_to_utf8 (Glib::get_current_dir ()));

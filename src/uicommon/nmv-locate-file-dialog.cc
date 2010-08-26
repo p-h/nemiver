@@ -25,7 +25,6 @@
 
 #include <vector>
 #include <glib/gi18n.h>
-#include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/filechooserbutton.h>
 #include <gtkmm/stock.h>
@@ -44,21 +43,21 @@ public:
     Gtk::FileChooserButton *fcbutton_location;
     Gtk::Label *label_filename;
     Gtk::Button *okbutton;
-    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade, const UString& a_filename) :
+    Priv (const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder, const UString& a_filename) :
         fcbutton_location (0),
         label_filename(0),
         okbutton (0)
     {
 
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (a_gtkbuilder,
                                                           "okbutton");
         THROW_IF_FAIL (okbutton);
         okbutton->set_sensitive (false);
 
         fcbutton_location =
-            ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                (a_glade, "filechooserbutton_location");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                (a_gtkbuilder, "filechooserbutton_location");
         fcbutton_location->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal));
         UString chooser_title;
@@ -67,7 +66,7 @@ public:
         fcbutton_location->set_title (chooser_title);
 
         label_filename =
-            ui_utils::get_widget_from_glade<Gtk::Label> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Label> (a_gtkbuilder,
                                                          "label_filename");
         THROW_IF_FAIL (label_filename);
         UString instructions;
@@ -97,9 +96,9 @@ public:
 
 LocateFileDialog::LocateFileDialog (const UString &a_root_path,
                                     const UString &a_file) :
-    Dialog (a_root_path, "locatefiledialog.glade", "locatefiledialog")
+    Dialog (a_root_path, "locatefiledialog.ui", "locatefiledialog")
 {
-    m_priv.reset (new Priv (glade (), a_file));
+    m_priv.reset (new Priv (gtkbuilder (), a_file));
 }
 
 LocateFileDialog::~LocateFileDialog ()

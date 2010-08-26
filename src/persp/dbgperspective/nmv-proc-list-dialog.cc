@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include <list>
-#include <libglademm.h>
 #include <gtkmm.h>
 #include <glib/gi18n.h>
 #include "common/nmv-env.h"
@@ -84,7 +83,7 @@ public:
     bool process_selected;
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
           IProcMgr &a_proc_mgr) :
         proc_mgr (a_proc_mgr),
         okbutton (0),
@@ -96,13 +95,13 @@ public:
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
 
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (a_gtkbuilder,
                                                           "okbutton");
         THROW_IF_FAIL (okbutton);
         okbutton->set_sensitive (false);
 
         entry_filter =
-            ui_utils::get_widget_from_glade<Gtk::Entry> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Entry> (a_gtkbuilder,
                                                          "entry_filter");
         THROW_IF_FAIL (entry_filter);
         entry_filter->signal_changed ().connect
@@ -111,7 +110,7 @@ public:
         entry_filter->set_activates_default ();
 
         proclist_view =
-        ui_utils::get_widget_from_glade<Gtk::TreeView> (a_glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::TreeView> (a_gtkbuilder,
                                                         "proclisttreeview");
         THROW_IF_FAIL (proclist_view);
         proclist_store = Gtk::ListStore::create (columns ());
@@ -273,9 +272,9 @@ public:
 
 ProcListDialog::ProcListDialog (const UString &a_root_path,
                                 IProcMgr &a_proc_mgr) :
-    Dialog(a_root_path, "proclistdialog.glade", "proclistdialog")
+    Dialog(a_root_path, "proclistdialog.ui", "proclistdialog")
 {
-    m_priv.reset (new Priv (widget (), glade (), a_proc_mgr));
+    m_priv.reset (new Priv (widget (), gtkbuilder (), a_proc_mgr));
     widget ().hide ();
 }
 

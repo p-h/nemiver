@@ -1,95 +1,106 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--*- mode: xml -*-->
-<glade-interface>
-  <widget class="GtkWindow" id="workbench">
+<?xml version="1.0"?>
+<interface>
+  <!-- interface-requires gtk+ 2.6 -->
+  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkWindow" id="workbench">
     <property name="visible">True</property>
     <property name="title" translatable="yes">Nemiver</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
     <property name="destroy_with_parent">True</property>
     <child>
-      <widget class="GtkVBox" id="vbox1">
+      <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
-          <widget class="GtkVBox" id="menucontainer">
+          <object class="GtkVBox" id="menucontainer">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
             <child>
               <placeholder/>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkVBox" id="toolbarvbox">
+          <object class="GtkVBox" id="toolbarvbox">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
             <child>
-              <widget class="GtkNotebook" id="toolbarcontainer">
+              <object class="GtkNotebook" id="toolbarcontainer">
                 <property name="visible">True</property>
                 <property name="show_tabs">False</property>
                 <property name="show_border">False</property>
                 <child>
-                  <widget class="GtkVBox" id="emptytoolbar">
+                  <object class="GtkVBox" id="emptytoolbar">
                     <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <placeholder/>
                     </child>
-                  </widget>
+                  </object>
                 </child>
-                <child>
-                  <widget class="GtkLabel" id="label1">
+                <child type="tab">
+                  <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">label1</property>
-                  </widget>
+                  </object>
                   <packing>
-                    <property name="type">tab</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
-              </widget>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkVBox" id="bodybox">
+          <object class="GtkVBox" id="bodybox">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
             <child>
-              <widget class="GtkNotebook" id="bodynotebook">
+              <object class="GtkNotebook" id="bodynotebook">
                 <property name="visible">True</property>
                 <property name="show_tabs">False</property>
                 <child>
-                  <widget class="GtkVBox" id="emptybody">
+                  <object class="GtkVBox" id="emptybody">
                     <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <placeholder/>
                     </child>
-                  </widget>
+                  </object>
                 </child>
-                <child>
-                  <widget class="GtkLabel" id="label2">
+                <child type="tab">
+                  <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">label2</property>
-                  </widget>
+                  </object>
                   <packing>
-                    <property name="type">tab</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
-              </widget>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="position">2</property>
           </packing>
         </child>
-      </widget>
+      </object>
     </child>
-  </widget>
-</glade-interface>
+  </object>
+</interface>

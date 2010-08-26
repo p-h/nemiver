@@ -26,7 +26,6 @@
 #include <unistd.h>
 #include <iostream>
 #include <gtkmm/window.h>
-#include <libglademm.h>
 #include <glib/gi18n.h>
 #include "nmv-exception.h"
 #include "nmv-initializer.h"

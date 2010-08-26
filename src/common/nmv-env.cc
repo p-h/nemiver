@@ -103,17 +103,17 @@ get_system_lib_dir ()
 }
 
 const UString&
-get_glade_files_dir ()
+get_gtkbuilder_files_dir ()
 {
-    static UString s_glade_files_dir;
-    if (s_glade_files_dir == "") {
+    static UString s_gtkbuilder_files_dir;
+    if (s_gtkbuilder_files_dir == "") {
         vector<string> path_elems;
         path_elems.push_back (get_data_dir ());
         path_elems.push_back ("nemiver");
-        path_elems.push_back ("glade");
-        s_glade_files_dir = Glib::build_filename (path_elems).c_str ();
+        path_elems.push_back ("ui");
+        s_gtkbuilder_files_dir = Glib::build_filename (path_elems).c_str ();
     }
-    return s_glade_files_dir;
+    return s_gtkbuilder_files_dir;
 }
 
 const UString&
@@ -242,18 +242,18 @@ create_user_db_dir ()
 }
 
 UString
-build_path_to_glade_file (const UString &a_glade_file_name)
+build_path_to_gtkbuilder_file (const UString &a_gtkbuilder_file_name)
 {
-    UString dir (get_glade_files_dir ());
+    UString dir (get_gtkbuilder_files_dir ());
     vector<string> path_elems;
     path_elems.push_back (dir.c_str ());
-    path_elems.push_back (a_glade_file_name);
-    UString path_to_glade = Glib::build_filename (path_elems).c_str ();
-    if (!Glib::file_test (path_to_glade.c_str (),
+    path_elems.push_back (a_gtkbuilder_file_name);
+    UString path_to_gtkbuilder = Glib::build_filename (path_elems).c_str ();
+    if (!Glib::file_test (path_to_gtkbuilder.c_str (),
                          Glib::FILE_TEST_IS_REGULAR)) {
-        THROW ("couldn't find file " + path_to_glade);
+        THROW ("couldn't find file " + path_to_gtkbuilder);
     }
-    return path_to_glade;
+    return path_to_gtkbuilder;
 }
 
 UString

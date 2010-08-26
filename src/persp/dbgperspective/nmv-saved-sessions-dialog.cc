@@ -25,7 +25,6 @@
 
 #include <vector>
 #include <glib/gi18n.h>
-#include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/filechooserbutton.h>
 #include <gtkmm/stock.h>
@@ -56,28 +55,28 @@ public:
     SessionModelColumns session_columns;
     Glib::RefPtr<Gtk::ListStore> model;
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
 
 private:
     Priv ();
 
 public:
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+        const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         okbutton (0),
         model(Gtk::ListStore::create (session_columns)),
         dialog (a_dialog),
-        glade (a_glade)
+        gtkbuilder (a_gtkbuilder)
     {
     }
 
     void init (ISessMgr *a_session_manager)
     {
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (glade, "okbutton1");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder, "okbutton1");
         treeview_sessions.reset
-            (ui_utils::get_widget_from_glade<Gtk::TreeView>
-                                            (glade, "treeview_sessions"));
+            (ui_utils::get_widget_from_gtkbuilder<Gtk::TreeView>
+                                            (gtkbuilder, "treeview_sessions"));
         okbutton->set_sensitive (false);
         THROW_IF_FAIL (a_session_manager);
         list<ISessMgr::Session> sessions = a_session_manager->sessions ();
@@ -124,9 +123,9 @@ public:
 
 SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
                                           ISessMgr *a_session_manager) :
-    Dialog(a_root_path, "savedsessionsdialog.glade", "savedsessionsdialog")
+    Dialog(a_root_path, "savedsessionsdialog.ui", "savedsessionsdialog")
 {
-    m_priv.reset (new Priv (widget (), glade ()));
+    m_priv.reset (new Priv (widget (), gtkbuilder ()));
     THROW_IF_FAIL (m_priv);
     m_priv->init (a_session_manager);
 }

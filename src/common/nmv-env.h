@@ -50,7 +50,7 @@ NEMIVER_API const UString& get_data_dir ();
 
 NEMIVER_API const UString& get_system_lib_dir ();
 
-NEMIVER_API const UString& get_glade_files_dir ();
+NEMIVER_API const UString& get_gtkbuilder_files_dir ();
 
 NEMIVER_API const UString& get_menu_files_dir ();
 
@@ -72,7 +72,7 @@ NEMIVER_API const UString& get_gdb_program ();
 
 NEMIVER_API bool create_user_db_dir ();
 
-NEMIVER_API UString build_path_to_glade_file (const UString &a_glade_file_name);
+NEMIVER_API UString build_path_to_gtkbuilder_file (const UString &a_gtkbuilder_file_name);
 
 NEMIVER_API UString build_path_to_menu_file (const UString &a_ui_file_name);
 

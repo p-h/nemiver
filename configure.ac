@@ -36,8 +36,6 @@ LIBXML2_VERSION=2.6.22
 AC_SUBST([LIBXML2_VERSION])
 LIBGTKMM_VERSION=2.12.0
 AC_SUBST([LIBGTKMM_VERSION])
-LIBGLADEMM_VERSION=2.6.0
-AC_SUBST([LIBGLADEMM_VERSION])
 LIBGTKSOURCEVIEWMM1_VERSION=0.3.0
 AC_SUBST([LIBGTKSOURCEVIEWMM1_VERSION])
 LIBGTKSOURCEVIEWMM2_VERSION=1.9.4
@@ -255,7 +253,6 @@ fi
 
 if test x$ENABLE_WORKBENCH = xyes ; then
     DEP_WORKBENCH=" gtkmm-2.4 >= $LIBGTKMM_VERSION \
-                   libglademm-2.4 >= $LIBGLADEMM_VERSION \
                    $LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION"
 fi
 
@@ -286,7 +283,6 @@ AC_SUBST(NEMIVERCOMMON_CFLAGS)
 
 dnl library dependencies for the nemiver common UI module
 DEP_UICOMMON=" gtkmm-2.4 >= $LIBGTKMM_VERSION \
-               libglademm-2.4 >= $LIBGLADEMM_VERSION \
                $LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION \
                vte >= $LIBVTE_VERSION"
 
@@ -310,8 +306,7 @@ AC_SUBST(NEMIVERWORKBENCH_LIBS)
 AC_SUBST(NEMIVERWORKBENCH_CFLAGS)
 
 dnl library dependencies for the nemiver debug perspective plugin
-DEP_PERSP=" libglademm-2.4 >= $LIBGLADEMM_VERSION \
-           $LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION \
+DEP_PERSP="$LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION \
            vte >= $LIBVTE_VERSION"
 
 PKG_CHECK_MODULES(NEMIVERDBGPERSP, $DEP_UICOMMON $DEP_VFS $DEP_PERSP $DEP_MEMORYVIEW)
@@ -429,7 +424,7 @@ src/Makefile
   src/persp/Makefile
   src/persp/dbgperspective/Makefile
   src/persp/dbgperspective/dbgperspective.conf
-    src/persp/dbgperspective/glade/Makefile
+    src/persp/dbgperspective/ui/Makefile
     src/persp/dbgperspective/menus/Makefile
     src/persp/dbgperspective/icons/Makefile
     src/persp/dbgperspective/sqlscripts/Makefile
@@ -443,7 +438,7 @@ data/Makefile
         data/icons/32x32/Makefile
         data/icons/48x48/Makefile
         data/icons/scalable/Makefile
-glade/Makefile
+ui/Makefile
 menus/Makefile
 tests/Makefile
 po/Makefile.in

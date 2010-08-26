@@ -52,7 +52,7 @@ using namespace gtksourceview;
 class FindTextDialog::Priv {
     friend class FindTextDialog;
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
     Glib::RefPtr<Gtk::ListStore> searchterm_store;
     Gtk::TextIter match_start;
     Gtk::TextIter match_end;
@@ -63,9 +63,9 @@ class FindTextDialog::Priv {
 public:
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         dialog (a_dialog),
-        glade (a_glade),
+        gtkbuilder (a_gtkbuilder),
         clear_selection_before_search (false)
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
@@ -100,7 +100,7 @@ public:
     Gtk::Button* get_close_button ()
     {
         Gtk::Button *button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,
                                                           "closebutton1");
         return button;
     }
@@ -108,7 +108,7 @@ public:
     Gtk::Button* get_search_button ()
     {
         Gtk::Button *button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,
                                                           "searchbutton");
         return button;
     }
@@ -116,40 +116,40 @@ public:
     Gtk::ComboBoxEntry* get_search_text_combo () const
     {
         Gtk::ComboBoxEntry *combo =
-            ui_utils::get_widget_from_glade<Gtk::ComboBoxEntry>
-                                                (glade, "searchtextcombo");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBoxEntry>
+                                                (gtkbuilder, "searchtextcombo");
         return combo;
     }
 
     Gtk::CheckButton* get_match_case_check_button () const
     {
         Gtk::CheckButton *button =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                            (glade, "matchcasecheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                            (gtkbuilder, "matchcasecheckbutton");
         return button;
     }
 
     Gtk::CheckButton* get_match_entire_word_check_button () const
     {
         Gtk::CheckButton *button =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                    (glade, "matchentirewordcheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                    (gtkbuilder, "matchentirewordcheckbutton");
         return button;
     }
 
     Gtk::CheckButton* get_wrap_around_check_button () const
     {
         Gtk::CheckButton *button =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                        (glade, "wraparoundcheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                        (gtkbuilder, "wraparoundcheckbutton");
         return button;
     }
 
     Gtk::CheckButton* get_search_backwards_check_button () const
     {
         Gtk::CheckButton *button =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                    (glade, "searchbackwardscheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                    (gtkbuilder, "searchbackwardscheckbutton");
         return button;
     }
 
@@ -199,9 +199,9 @@ public:
 };//end FindTextDialog
 
 FindTextDialog::FindTextDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "findtextdialog.glade", "findtextdialog")
+    Dialog (a_root_path, "findtextdialog.ui", "findtextdialog")
 {
-    m_priv.reset (new Priv (widget (), glade ()));
+    m_priv.reset (new Priv (widget (), gtkbuilder ()));
     THROW_IF_FAIL (m_priv);
 }
 

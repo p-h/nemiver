@@ -35,7 +35,7 @@ using namespace ui_utils;
 struct RemoteTargetDialog::Priv {
     friend class RemoteTargetDialog;
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
     mutable UString executable_path;
     mutable UString solib_prefix_path;
     mutable UString server_address;
@@ -45,12 +45,12 @@ struct RemoteTargetDialog::Priv {
     Priv ();
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         dialog (a_dialog),
-        glade (a_glade)
+        gtkbuilder (a_gtkbuilder)
     {
         init_members ();
-        init_from_glade ();
+        init_from_gtkbuilder ();
     }
 
     //*******************
@@ -61,12 +61,12 @@ struct RemoteTargetDialog::Priv {
         NEMIVER_TRY
 
         Gtk::RadioButton *radio =
-            get_widget_from_glade<Gtk::RadioButton> (glade, "tcpradiobutton");
+            get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder, "tcpradiobutton");
         Gtk::Widget *tcp_connection_container =
-            get_widget_from_glade<Gtk::Widget> (glade,
+            get_widget_from_gtkbuilder<Gtk::Widget> (gtkbuilder,
                                                 "tcpconnectioncontainer");
         Gtk::Widget *serial_connection_container =
-            get_widget_from_glade<Gtk::Widget> (glade,
+            get_widget_from_gtkbuilder<Gtk::Widget> (gtkbuilder,
                                                 "serialconnectioncontainer");
         if (radio->get_active ()) {
             connection_type = RemoteTargetDialog::TCP_CONNECTION_TYPE;
@@ -86,7 +86,7 @@ struct RemoteTargetDialog::Priv {
         NEMIVER_TRY
 
         Gtk::Button *button =
-            get_widget_from_glade<Gtk::Button> (glade, "okbutton");
+            get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder, "okbutton");
         if (can_enable_ok_button ()) {
             button->set_sensitive (true);
         } else {
@@ -108,24 +108,24 @@ struct RemoteTargetDialog::Priv {
         connection_type = RemoteTargetDialog::TCP_CONNECTION_TYPE;
     }
 
-    void init_from_glade ()
+    void init_from_gtkbuilder ()
     {
         Gtk::RadioButton *radio =
-            get_widget_from_glade<Gtk::RadioButton> (glade, "tcpradiobutton");
+            get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder, "tcpradiobutton");
         radio->signal_toggled ().connect (sigc::mem_fun
                 (*this, &Priv::on_radio_button_toggled_signal));
         radio->set_active (true);
         on_radio_button_toggled_signal ();//it does not get called otherwise
 
         Gtk::FileChooser *chooser =
-            get_widget_from_glade<Gtk::FileChooser> (glade,
+            get_widget_from_gtkbuilder<Gtk::FileChooser> (gtkbuilder,
                                                      "execfilechooserbutton");
         chooser->set_show_hidden (true);
         chooser->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_selection_changed_signal));
 
         chooser =
-        get_widget_from_glade<Gtk::FileChooser> (glade,
+        get_widget_from_gtkbuilder<Gtk::FileChooser> (gtkbuilder,
                                                  "solibprefixchooserbutton");
         chooser->set_show_hidden (true);
         chooser->set_action (Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
@@ -133,39 +133,39 @@ struct RemoteTargetDialog::Priv {
         set_solib_prefix_path (common::env::get_system_lib_dir ());
 
         Gtk::Entry* entry =
-                get_widget_from_glade<Gtk::Entry> (glade, "addressentry");
+                get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder, "addressentry");
         entry->signal_changed ().connect
                 (sigc::mem_fun (*this, &Priv::on_selection_changed_signal));
 
-        entry = get_widget_from_glade<Gtk::Entry> (glade, "portentry");
+        entry = get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder, "portentry");
         entry->signal_changed ().connect
                 (sigc::mem_fun (*this, &Priv::on_selection_changed_signal));
 
-        chooser = get_widget_from_glade<Gtk::FileChooserButton> (glade,
+        chooser = get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder,
                                                      "serialchooserbutton");
         chooser->signal_selection_changed ().connect (sigc::mem_fun
                             (*this, &Priv::on_selection_changed_signal));
 
         Gtk::Button *button =
-            get_widget_from_glade<Gtk::Button> (glade, "okbutton");
+            get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder, "okbutton");
         button->set_sensitive (false);
     }
 
     bool can_enable_ok_button () const
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_glade<Gtk::FileChooserButton>
-                                            (glade, "execfilechooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                            (gtkbuilder, "execfilechooserbutton");
         Gtk::Entry *entry = 0;
         if (chooser->get_filename ().empty ())
             return false;
         if (connection_type == RemoteTargetDialog::TCP_CONNECTION_TYPE) {
-            entry = get_widget_from_glade<Gtk::Entry> (glade, "portentry");
+            entry = get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder, "portentry");
             if (entry->get_text ().empty ())
                 return false;
         } else if (connection_type ==
                     RemoteTargetDialog::SERIAL_CONNECTION_TYPE) {
-            chooser = get_widget_from_glade<Gtk::FileChooserButton> (glade,
+            chooser = get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder,
                                                      "serialchooserbutton");
             if (chooser->get_filename ().empty ())
                 return false;
@@ -179,8 +179,8 @@ struct RemoteTargetDialog::Priv {
     const UString& get_executable_path () const
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_glade<Gtk::FileChooserButton>
-                                            (glade, "execfilechooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                            (gtkbuilder, "execfilechooserbutton");
         executable_path = chooser->get_filename ();
         return executable_path;
     }
@@ -188,8 +188,8 @@ struct RemoteTargetDialog::Priv {
     void set_executable_path (const UString &a_path)
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_glade<Gtk::FileChooserButton>
-                                            (glade, "execfilechooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                            (gtkbuilder, "execfilechooserbutton");
         chooser->set_filename (a_path);
         executable_path = a_path;
     }
@@ -197,8 +197,8 @@ struct RemoteTargetDialog::Priv {
     const UString& get_solib_prefix_path () const
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_glade<Gtk::FileChooserButton>
-                                        (glade, "solibprefixchooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                        (gtkbuilder, "solibprefixchooserbutton");
         solib_prefix_path = chooser->get_filename ();
         return solib_prefix_path;
     }
@@ -206,8 +206,8 @@ struct RemoteTargetDialog::Priv {
     void set_solib_prefix_path (const UString &a_path)
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_glade<Gtk::FileChooserButton>
-                                        (glade, "solibprefixchooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                                        (gtkbuilder, "solibprefixchooserbutton");
         chooser->set_filename (a_path);
         solib_prefix_path = a_path;
     }
@@ -215,7 +215,7 @@ struct RemoteTargetDialog::Priv {
     void set_connection_type (RemoteTargetDialog::ConnectionType &a_type)
     {
         Gtk::RadioButton *radio =
-            get_widget_from_glade<Gtk::RadioButton> (glade, "tcpradiobutton");
+            get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder, "tcpradiobutton");
         if (a_type == RemoteTargetDialog::TCP_CONNECTION_TYPE) {
             radio->set_active (true);
         } else {
@@ -225,7 +225,7 @@ struct RemoteTargetDialog::Priv {
 
     const UString& get_server_address () const
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry>(glade,
+        Gtk::Entry *entry = get_widget_from_gtkbuilder<Gtk::Entry>(gtkbuilder,
                                                               "addressentry");
         server_address = entry->get_text ();
         return server_address;
@@ -233,21 +233,21 @@ struct RemoteTargetDialog::Priv {
 
     void set_server_address (const UString &a_address)
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry>(glade,
+        Gtk::Entry *entry = get_widget_from_gtkbuilder<Gtk::Entry>(gtkbuilder,
                                                               "addressentry");
         entry->set_text (a_address);
     }
 
     int get_server_port () const
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry> (glade,
+        Gtk::Entry *entry = get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder,
                                                                "portentry");
         return atoi (entry->get_text ().c_str ());
     }
 
     void set_server_port (int a_port)
     {
-        Gtk::Entry *entry = get_widget_from_glade<Gtk::Entry> (glade,
+        Gtk::Entry *entry = get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder,
                                                                "portentry");
         entry->set_text (UString::from_int (a_port));
     }
@@ -255,7 +255,7 @@ struct RemoteTargetDialog::Priv {
     const UString& get_serial_port_name () const
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_glade<Gtk::FileChooserButton> (glade, "serialchooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder, "serialchooserbutton");
         serial_port_name = chooser->get_filename ();
         return serial_port_name;
     }
@@ -263,7 +263,7 @@ struct RemoteTargetDialog::Priv {
     void set_serial_port_name (const UString &a_name)
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_glade<Gtk::FileChooserButton> (glade, "serialchooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder, "serialchooserbutton");
         chooser->select_filename (a_name);
     }
 
@@ -271,10 +271,10 @@ struct RemoteTargetDialog::Priv {
 
 RemoteTargetDialog::RemoteTargetDialog (const UString &a_root_path) :
     Dialog (a_root_path,
-            "remotetargetdialog.glade",
+            "remotetargetdialog.ui",
             "remotetargetdialog")
 {
-    m_priv.reset (new Priv (widget (), glade ()));
+    m_priv.reset (new Priv (widget (), gtkbuilder ()));
     THROW_IF_FAIL (m_priv);
 }
 

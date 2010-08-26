@@ -56,7 +56,7 @@ columns ()
 struct ChooseOverloadsDialog::Priv {
     friend class ChooseOverloadsDialog;
     Gtk::Dialog &dialog;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
     Gtk::TreeView *tree_view;
     Glib::RefPtr<Gtk::ListStore> list_store;
     vector<IDebugger::OverloadsChoiceEntry> current_overloads;
@@ -64,15 +64,15 @@ struct ChooseOverloadsDialog::Priv {
     Priv ();
 
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         dialog (a_dialog),
-        glade (a_glade)
+        gtkbuilder (a_gtkbuilder)
     {
         init_members ();
         init_tree_view ();
-        pack_tree_view_into_glade ();
+        pack_tree_view_into_gtkbuilder ();
         Gtk::Widget *button =
-            ui_utils::get_widget_from_glade<Gtk::Widget> (glade, "okbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Widget> (gtkbuilder, "okbutton");
         button->set_sensitive (false);
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
     }
@@ -82,11 +82,11 @@ struct ChooseOverloadsDialog::Priv {
         tree_view = 0;
     }
 
-    void pack_tree_view_into_glade ()
+    void pack_tree_view_into_gtkbuilder ()
     {
         Gtk::ScrolledWindow *sw =
-            ui_utils::get_widget_from_glade<Gtk::ScrolledWindow>
-                                            (glade, "treeviewscrolledwindow");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ScrolledWindow>
+                                            (gtkbuilder, "treeviewscrolledwindow");
         sw->add (*tree_view);
     }
 
@@ -149,8 +149,8 @@ struct ChooseOverloadsDialog::Priv {
         }
 
         Gtk::Widget *ok_button =
-            ui_utils::get_widget_from_glade<Gtk::Button>
-                                                    (glade, "okbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button>
+                                                    (gtkbuilder, "okbutton");
         if (current_overloads.empty ()) {
             ok_button->set_sensitive (false);
         } else {
@@ -166,10 +166,10 @@ ChooseOverloadsDialog::ChooseOverloadsDialog
                 (const UString &a_root_path,
                  const vector<IDebugger::OverloadsChoiceEntry> &a_entries ) :
     Dialog (a_root_path,
-            "chooseoverloadsdialog.glade",
+            "chooseoverloadsdialog.ui",
             "chooseoverloadsdialog")
 {
-    m_priv.reset (new Priv (widget (), glade ()));
+    m_priv.reset (new Priv (widget (), gtkbuilder ()));
     THROW_IF_FAIL (m_priv);
     set_overloads_choice_entries (a_entries);
 }

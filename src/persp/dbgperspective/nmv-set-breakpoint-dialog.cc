@@ -27,7 +27,6 @@
 
 #include <vector>
 #include <glib/gi18n.h>
-#include <libglademm.h>
 #include <gtkmm/dialog.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-env.h"
@@ -71,7 +70,7 @@ public:
 
 public:
     Priv (Gtk::Dialog &a_dialog,
-          const Glib::RefPtr<Gnome::Glade::Xml> &a_glade) :
+          const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
         combo_event (0),
         entry_filename (0),
         entry_line (0),
@@ -86,14 +85,14 @@ public:
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
 
         okbutton =
-            ui_utils::get_widget_from_glade<Gtk::Button> (a_glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (a_gtkbuilder,
                                                           "okbutton");
         THROW_IF_FAIL (okbutton);
         okbutton->set_sensitive (false);
 
         combo_event =
-            ui_utils::get_widget_from_glade<Gtk::ComboBox>
-            (a_glade, "combo_event");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
+            (a_gtkbuilder, "combo_event");
         combo_event_model = Gtk::TreeStore::create(combo_event_col_model);
         combo_event->set_model(combo_event_model);
         Gtk::TreeModel::Row row;
@@ -121,66 +120,66 @@ public:
         combo_event->set_active (0);
 
         entry_filename =
-            ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "filenameentry");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
+                (a_gtkbuilder, "filenameentry");
         entry_filename->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal));
 
         entry_line =
-            ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "lineentry");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
+                (a_gtkbuilder, "lineentry");
         entry_line->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal));
         entry_line->set_activates_default ();
 
         entry_function =
-            ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "functionentry");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
+                (a_gtkbuilder, "functionentry");
         entry_function->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal));
         entry_function->set_activates_default ();
 
         entry_address =
-            ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "addressentry");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
+                (a_gtkbuilder, "addressentry");
         entry_address->signal_changed ().connect (sigc::mem_fun
               (*this, &Priv::on_text_changed_signal));
         entry_address->set_activates_default ();
 
-        entry_condition = ui_utils::get_widget_from_glade<Gtk::Entry>
-                (a_glade, "conditionentry");
+        entry_condition = ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
+                (a_gtkbuilder, "conditionentry");
         entry_condition->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_text_changed_signal));
         entry_condition->set_activates_default ();
 
         radio_source_location =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (a_glade, "sourcelocationradio");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                (a_gtkbuilder, "sourcelocationradio");
         radio_source_location->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed));
 
         radio_function_name =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (a_glade, "functionnameradio");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                (a_gtkbuilder, "functionnameradio");
         radio_function_name->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed));
 
         radio_binary_location =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (a_glade, "binarylocationradio");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                (a_gtkbuilder, "binarylocationradio");
         radio_binary_location->signal_clicked ().connect (sigc::mem_fun
               (*this, &Priv::on_radiobutton_changed));
 
         radio_event =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-            (a_glade, "eventradio");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+            (a_gtkbuilder, "eventradio");
         radio_event->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed));
 
         // set the 'function name' mode active by default
         mode (MODE_FUNCTION_NAME);
         // hack to ensure that the correct text entry fields
-        // get insensitive at startup since if the glade file
+        // get insensitive at startup since if the gtkbuilder file
         // initializes MODE_FUNCTION_NAME to
         // active, the 'changed' signal won't be emitted here
         // (is there a better way to do this?)
@@ -325,9 +324,9 @@ public:
 };//end class SetBreakpointDialog::Priv
 
 SetBreakpointDialog::SetBreakpointDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "setbreakpointdialog.glade", "setbreakpointdialog")
+    Dialog (a_root_path, "setbreakpointdialog.ui", "setbreakpointdialog")
 {
-    m_priv.reset (new Priv (widget (), glade ()));
+    m_priv.reset (new Priv (widget (), gtkbuilder ()));
 }
 
 SetBreakpointDialog::~SetBreakpointDialog ()

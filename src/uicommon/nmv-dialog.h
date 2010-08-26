@@ -25,7 +25,7 @@
 #ifndef __NEMIVER_DIALOG_H__
 #define __NEMIVER_DIALOG_H__
 
-#include <libglademm/xml.h>
+#include <gtkmm/builder.h>
 #include "common/nmv-object.h"
 
 namespace Gtk {
@@ -61,13 +61,13 @@ protected:
     //the actual underlying Gtk::Dialog widget
     Gtk::Dialog& widget () const;
 
-    //the actual glade object loaded by this dialog.
-    const Glib::RefPtr<Gnome::Glade::Xml> glade ()  const;
+    //the actual gtkbuilder object loaded by this dialog.
+    const Glib::RefPtr<Gtk::Builder> gtkbuilder ()  const;
 
 public:
 
     Dialog (const UString &a_resource_root_path,
-            const UString &a_glade_filename,
+            const UString &a_gtkbuilder_filename,
             const UString &a_widget_name);
 
     virtual ~Dialog ();

@@ -93,9 +93,9 @@ public:
     Gtk::RadioButton *follow_child_radio_button;
     Gtk::SpinButton  *default_num_asm_instrs_spin_button;
     Gtk::FileChooserButton *gdb_binary_path_chooser_button;
-    Glib::RefPtr<Gnome::Glade::Xml> glade;
+    Glib::RefPtr<Gtk::Builder> gtkbuilder;
 
-    Priv (const Glib::RefPtr<Gnome::Glade::Xml> &a_glade,
+    Priv (const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
           IWorkbench &a_workbench) :
         workbench (a_workbench),
         tree_view (0),
@@ -115,7 +115,7 @@ public:
         follow_child_radio_button (0),
         default_num_asm_instrs_spin_button (0),
         gdb_binary_path_chooser_button (0),
-        glade (a_glade)
+        gtkbuilder (a_gtkbuilder)
     {
         init ();
     }
@@ -235,7 +235,7 @@ public:
 
         list_store = Gtk::ListStore::create (source_dirs_cols ());
         tree_view =
-            ui_utils::get_widget_from_glade<Gtk::TreeView> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::TreeView> (gtkbuilder,
                                                             "dirstreeview");
         tree_view->append_column (_("Source directories"),
                                   source_dirs_cols ().dir);
@@ -251,13 +251,13 @@ public:
          (this, &PreferencesDialog::Priv::on_tree_view_selection_changed));
 
         Gtk::Button *button =
-            ui_utils::get_widget_from_glade<Gtk::Button> (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,
                                                           "adddirbutton");
         button->signal_clicked ().connect (sigc::mem_fun
                 (this, &PreferencesDialog::Priv::on_add_dir_button_clicked));
 
         remove_dir_button =
-        ui_utils::get_widget_from_glade<Gtk::Button> (glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,
                                                       "suppressdirbutton");
         remove_dir_button->signal_clicked ().connect
         (sigc::mem_fun
@@ -269,8 +269,8 @@ public:
         // *************************************
 
         show_lines_check_button  =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                            (glade, "showlinescheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                            (gtkbuilder, "showlinescheckbutton");
         THROW_IF_FAIL (show_lines_check_button);
         show_lines_check_button->signal_toggled ().connect
         (sigc::mem_fun
@@ -278,8 +278,8 @@ public:
              &PreferencesDialog::Priv::on_show_lines_toggled_signal));
 
         launch_terminal_check_button  =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                            (glade, "launchterminalcheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                            (gtkbuilder, "launchterminalcheckbutton");
         THROW_IF_FAIL (launch_terminal_check_button);
         launch_terminal_check_button->signal_toggled ().connect
         (sigc::mem_fun
@@ -287,8 +287,8 @@ public:
              &PreferencesDialog::Priv::on_launch_terminal_toggled_signal));
 
         highlight_source_check_button  =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-                                    (glade, "highlightsourcecheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+                                    (gtkbuilder, "highlightsourcecheckbutton");
         THROW_IF_FAIL (highlight_source_check_button);
         highlight_source_check_button->signal_toggled ().connect
         (sigc::mem_fun
@@ -296,8 +296,8 @@ public:
              &PreferencesDialog::Priv::on_highlight_source_toggled_signal));
 
         system_font_check_button =
-            ui_utils::get_widget_from_glade<Gtk::CheckButton>
-            (glade, "systemfontcheckbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+            (gtkbuilder, "systemfontcheckbutton");
         THROW_IF_FAIL (system_font_check_button);
         system_font_check_button->signal_toggled ().connect
         (sigc::mem_fun
@@ -305,8 +305,8 @@ public:
              &PreferencesDialog::Priv::on_system_font_toggled_signal));
 
         custom_font_button =
-            ui_utils::get_widget_from_glade<Gtk::FontButton>
-            (glade, "customfontfontbutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::FontButton>
+            (gtkbuilder, "customfontfontbutton");
         THROW_IF_FAIL (custom_font_button);
         custom_font_button->signal_font_set ().connect
         (sigc::mem_fun
@@ -314,13 +314,13 @@ public:
              &PreferencesDialog::Priv::on_custom_font_set_signal));
 
         custom_font_box =
-            ui_utils::get_widget_from_glade<Gtk::HBox>
-            (glade, "customfonthbox");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::HBox>
+            (gtkbuilder, "customfonthbox");
         THROW_IF_FAIL (custom_font_box);
 
         editor_style_combo =
-            ui_utils::get_widget_from_glade<Gtk::ComboBox>
-                                                        (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
+                                                        (gtkbuilder,
                                                          "editorstylecombobox");
         THROW_IF_FAIL (editor_style_combo);
         m_editor_style_model = Gtk::ListStore::create (m_style_columns);
@@ -350,8 +350,8 @@ public:
                      &PreferencesDialog::Priv::on_editor_style_changed_signal));
 
         always_reload_radio_button =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                                                        (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                                                        (gtkbuilder,
                                                          "reloadradiobutton");
         THROW_IF_FAIL (always_reload_radio_button);
         always_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
@@ -359,8 +359,8 @@ public:
                      &PreferencesDialog::Priv::on_reload_files_toggled_signal));
 
         never_reload_radio_button =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                                                (glade,
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                                                (gtkbuilder,
                                                  "neverreloadradiobutton");
         THROW_IF_FAIL (never_reload_radio_button);
         never_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
@@ -368,8 +368,8 @@ public:
              &PreferencesDialog::Priv::on_reload_files_toggled_signal));
 
         confirm_reload_radio_button =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-            (glade, "confirmreloadradiobutton");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+            (gtkbuilder, "confirmreloadradiobutton");
         THROW_IF_FAIL (confirm_reload_radio_button);
         confirm_reload_radio_button->signal_toggled ().connect (sigc::mem_fun
             (*this,
@@ -380,8 +380,8 @@ public:
         // *************************************
 
         pure_asm_radio_button =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (glade, "pureasmradio");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                (gtkbuilder, "pureasmradio");
         THROW_IF_FAIL (pure_asm_radio_button);
         pure_asm_radio_button->signal_toggled ().connect
             (sigc::mem_fun
@@ -389,8 +389,8 @@ public:
                   &PreferencesDialog::Priv::on_asm_style_toggled_signal));
 
         mixed_asm_radio_button =
-            ui_utils::get_widget_from_glade<Gtk::RadioButton>
-                (glade, "mixedasmradio");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
+                (gtkbuilder, "mixedasmradio");
         THROW_IF_FAIL (mixed_asm_radio_button);
         mixed_asm_radio_button->signal_toggled ().connect
             (sigc::mem_fun
@@ -398,8 +398,8 @@ public:
                   &PreferencesDialog::Priv::on_asm_style_toggled_signal));
 
         default_num_asm_instrs_spin_button =
-            ui_utils::get_widget_from_glade<Gtk::SpinButton>
-                (glade, "defaultnumasmspin");
+            ui_utils::get_widget_from_gtkbuilder<Gtk::SpinButton>
+                (gtkbuilder, "defaultnumasmspin");
         THROW_IF_FAIL (default_num_asm_instrs_spin_button);
         default_num_asm_instrs_spin_button->signal_value_changed ().connect
             (sigc::mem_fun
@@ -407,8 +407,8 @@ public:
                   &PreferencesDialog::Priv::on_num_asms_value_changed_signal));
 
         gdb_binary_path_chooser_button =
-        ui_utils::get_widget_from_glade<Gtk::FileChooserButton>
-                (glade, "pathtogdbfilechooser");
+        ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                (gtkbuilder, "pathtogdbfilechooser");
         THROW_IF_FAIL (gdb_binary_path_chooser_button);
         gdb_binary_path_chooser_button->signal_file_set ().connect
             (sigc::mem_fun
@@ -416,7 +416,7 @@ public:
                   &PreferencesDialog::Priv::on_gdb_binary_file_set_signal));
 
         follow_parent_radio_button =
-        ui_utils::get_widget_from_glade<Gtk::RadioButton> (glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder,
                                                            "followparentradio");
         THROW_IF_FAIL (follow_parent_radio_button);
         follow_parent_radio_button->signal_toggled ().connect
@@ -425,7 +425,7 @@ public:
                   &PreferencesDialog::Priv::on_follow_fork_mode_toggle_signal));
 
         follow_child_radio_button =
-        ui_utils::get_widget_from_glade<Gtk::RadioButton> (glade,
+        ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder,
                                                            "followchildradio");
         THROW_IF_FAIL (follow_child_radio_button);
         follow_child_radio_button->signal_toggled ().connect
@@ -750,10 +750,10 @@ public:
 PreferencesDialog::PreferencesDialog (IWorkbench &a_workbench,
                                       const UString &a_root_path) :
     Dialog (a_root_path,
-            "preferencesdialog.glade",
+            "preferencesdialog.ui",
             "preferencesdialog")
 {
-    m_priv.reset (new Priv (glade (), a_workbench));
+    m_priv.reset (new Priv (gtkbuilder (), a_workbench));
     m_priv->update_widget_from_conf ();
 }
 
