@@ -2593,30 +2593,9 @@ DBGPerspective::on_frame_selected_signal (int /* a_index */,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-
     NEMIVER_TRY
 
     m_priv->current_frame = a_frame;
-    UString file_path = a_frame.file_full_name ();
-
-    if (file_path == "") {
-        file_path = a_frame.file_name ();
-        if (!find_file_in_source_dirs (file_path, file_path)) {
-            UString message;
-            message.printf (_("File path info is missing for function '%s'"),
-                    a_frame.function_name ().c_str ());
-            LOG_ERROR (message);
-            return;
-            //TODO: we should disassemble the current frame and display it.
-        }
-    }
-
-    if (a_frame.line () == 0) {
-        LOG_ERROR ("Line info is missing for function '"
-                         + a_frame.function_name () + "'");
-        return;
-        //TODO: we should disassemble the current frame and display it.
-    }
 
     get_local_vars_inspector ().show_local_variables_of_current_function
                                                                     (a_frame);
