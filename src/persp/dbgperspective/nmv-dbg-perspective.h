@@ -73,10 +73,6 @@ public:
 
     virtual void close_file (const UString &a_uri) = 0;
 
-    virtual bool load_asm (const common::DisassembleInfo &a_info,
-                           const std::list<common::Asm> &a_asm,
-                           Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf) = 0;
-
     virtual Gtk::Widget* load_menu (const UString &a_filename,
                                     const UString &a_widget_name) = 0;
 

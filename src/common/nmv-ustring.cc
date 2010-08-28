@@ -191,16 +191,17 @@ UString::operator! () const
     return false;
 }
 
-vector<UString>
-UString::split (const UString &a_delim) const
+template<class string_container>
+string_container
+split_base (const UString &a_string, const UString &a_delim)
 {
-    vector<UString> result;
-    if (size () == Glib::ustring::size_type (0)) {return result;}
+    string_container result;
+    if (a_string.size () == Glib::ustring::size_type (0)) {return result;}
 
-    gint len = bytes () + 1;
+    gint len = a_string.bytes () + 1;
     CharSafePtr buf (new gchar[len]);
     memset (buf.get (), 0, len);
-    memcpy (buf.get (), c_str (), bytes ());
+    memcpy (buf.get (), a_string.c_str (), a_string.bytes ());
 
     gchar **splited = g_strsplit (buf.get (), a_delim.c_str (), -1);
     try {
@@ -214,6 +215,18 @@ UString::split (const UString &a_delim) const
         g_strfreev (splited);
     }
     return result;
+}
+
+vector<UString>
+UString::split (const UString &a_delim) const
+{
+    return split_base<vector<UString> > (*this, a_delim);
+}
+
+list<UString>
+UString::split_to_list (const UString &a_delim) const
+{
+    return split_base<list<UString> > (*this, a_delim);
 }
 
 vector<UString>

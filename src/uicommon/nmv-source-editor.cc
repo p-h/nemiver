@@ -30,9 +30,25 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtksourceviewmm/sourcemark.h>
 #include <gtksourceviewmm/sourceiter.h>
+#ifdef WITH_SOURCEVIEWMM2
+#include <gtksourceviewmm/sourcelanguagemanager.h>
+#include <gtksourceviewmm/sourcestyleschememanager.h>
+#else
+#include <gtksourceviewmm/sourcelanguagesmanager.h>
+#endif  // WITH_SOURCEVIEWMM2
+#ifdef WITH_GIO
+#include <giomm/file.h>
+#include <giomm/contenttype.h>
+#else
+#include <libgnomevfs/gnome-vfs-mime-utils.h>
+#include <libgnomevfs/gnome-vfs-monitor.h>
+#include <libgnomevfs/gnome-vfs-ops.h>
+#include <libgnomevfs/gnome-vfs-utils.h>
+#endif // WITH_GIO
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
 #include "common/nmv-str-utils.h"
+#include "common/nmv-asm-utils.h"
 #include "uicommon/nmv-ui-utils.h"
 #include "nmv-source-editor.h"
 
@@ -41,9 +57,10 @@ using namespace nemiver::common;
 using gtksourceview::SourceMark;
 using gtksourceview::SourceIter;
 using gtksourceview::SearchFlags;
+using gtksourceview::SourceLanguage;
+using gtksourceview::SourceLanguageManager;
 
-namespace nemiver
-{
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 const char* BREAKPOINT_ENABLED_CATEGORY = "breakpoint-enabled-category";
 const char* BREAKPOINT_DISABLED_CATEGORY = "breakpoint-disabled-category";
@@ -1087,6 +1104,294 @@ SourceEditor::do_search (const UString &a_str,
     return false;
 }
 
+/// Guess the mime type of a file.
+/// \param a_path the path of the file to consider.
+/// \param a_mime_type the resulting mime type, set iff the function
+/// returns true.
+/// \return true upon successful completion, false otherwise.
+bool
+SourceEditor::get_file_mime_type (const UString &a_path,
+                                  UString &a_mime_type)
+{
+    NEMIVER_TRY
+
+    std::string path = Glib::filename_from_utf8 (a_path);
+
+#ifdef WITH_GIO
+    Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
+    THROW_IF_FAIL (gio_file);
+#else
+    UString base_name = Glib::filename_to_utf8 (Glib::path_get_basename (path));
+#endif
+
+    UString mime_type;
+#ifdef WITH_GIO
+    Glib::RefPtr<Gio::FileInfo> info = gio_file->query_info();
+    mime_type = Gio::content_type_get_mime_type(info->get_content_type ());
+#else
+    mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ());
+#endif
+
+    if (mime_type == "") {
+        mime_type = "text/x-c++";
+    }
+    LOG_DD ("file has mime type: " << mime_type);
+    a_mime_type = mime_type;
+    return true;
+
+    NEMIVER_CATCH_AND_RETURN (false)
+}
+
+/// Make sure the source buffer a_buf is properly setup to have the
+/// mime type a_mime_type. If a_buf is null, a new one is created.
+/// Returns true upon successful completion, false otherwise.
+bool
+SourceEditor::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
+					  const std::string &a_mime_type)
+{
+    NEMIVER_TRY
+
+#ifdef WITH_SOURCEVIEWMM2
+    Glib::RefPtr<SourceLanguageManager> lang_manager =
+        SourceLanguageManager::get_default ();
+#else
+    Glib::RefPtr<SourceLanguagesManager> lang_manager =
+        SourceLanguagesManager::create ();
+#endif  // WITH_SOURCEVIEWMM2
+    Glib::RefPtr<SourceLanguage> lang;
+    #ifdef WITH_SOURCEVIEWMM2
+    std::list<Glib::ustring> lang_ids = lang_manager->get_language_ids ();
+    for (std::list<Glib::ustring>::const_iterator it = lang_ids.begin ();
+         it != lang_ids.end ();
+         ++it) {
+        Glib::RefPtr<gtksourceview::SourceLanguage> candidate = 
+            lang_manager->get_language (*it);
+        std::list<Glib::ustring> mime_types = candidate->get_mime_types ();
+        std::list<Glib::ustring>::const_iterator mime_it;
+        for (mime_it = mime_types.begin ();
+             mime_it != mime_types.end ();
+             ++mime_it) {
+            if (*mime_it == a_mime_type) {
+                // one of the mime types associated with this language matches
+                // the mime type of our file, so use this language
+                lang = candidate;
+                break;  // no need to look at further mime types
+            }
+        }
+        // we found a matching language, so stop looking for other languages
+        if (lang) break;
+    }
+#else
+    lang = lang_manager->get_language_from_mime_type (mime_type);
+#endif  // WITH_SOURCEVIEWMM2
+
+    if (!a_buf)
+        a_buf = SourceBuffer::create (lang);
+    else {
+        a_buf->set_language (lang);
+        a_buf->erase (a_buf->begin (), a_buf->end ());
+    }
+    THROW_IF_FAIL (a_buf);
+    return true;
+
+    NEMIVER_CATCH_AND_RETURN (false);
+}
+
+/// Create a source buffer properly set up to contain/highlight c++
+/// code.
+/// \return the created buffer or nil if something bad happened.
+Glib::RefPtr<SourceBuffer>
+SourceEditor::create_source_buffer ()
+{
+    Glib::RefPtr<SourceBuffer> result;
+    setup_buffer_mime_and_lang (result);
+    return result;
+}
+
+bool
+SourceEditor::load_file (const UString &a_path,
+                         const std::list<std::string> &a_supported_encodings,
+                         bool a_enable_syntax_highlight,
+                         Glib::RefPtr<SourceBuffer> &a_source_buffer)
+{
+    NEMIVER_TRY;
+
+    std::string path = Glib::filename_from_utf8 (a_path);
+#ifdef WITH_GIO
+    Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
+    THROW_IF_FAIL (gio_file);
+    #define FILE_IS_OK (!gio_file->query_exists ())
+#else
+    ifstream file (path.c_str ());
+    #define FILE_IS_OK (!file.good () && !file.eof ())
+
+#endif
+    if (FILE_IS_OK) {
+        LOG_ERROR ("Could not open file " + path);
+        ui_utils::display_error ("Could not open file: "
+                                 + Glib::filename_to_utf8 (path));
+        return false;
+    }
+
+    UString mime_type;
+    if (!get_file_mime_type (path, mime_type)) {
+        LOG_ERROR ("Could not get mime type for " + path);
+        return false;
+    }
+
+    if (!setup_buffer_mime_and_lang (a_source_buffer, mime_type)) {
+        LOG_ERROR ("Could not setup source buffer mime type or language");
+        return false;
+    }
+    THROW_IF_FAIL (a_source_buffer);
+
+    gint buf_size = 10 * 1024;
+    CharSafePtr buf (new gchar [buf_size + 1]);
+    memset (buf.get (), 0, buf_size + 1);
+
+    unsigned nb_bytes=0;
+    std::string content;
+#ifdef WITH_GIO
+    Glib::RefPtr<Gio::FileInputStream> gio_stream = gio_file->read ();
+    THROW_IF_FAIL (gio_stream);
+    gssize bytes_read = 0;
+    for (;;) {
+        bytes_read = gio_stream->read (buf.get (), buf_size);
+        content.append (buf.get (), bytes_read);
+        nb_bytes += bytes_read;
+        if (bytes_read != buf_size) {break;}
+    }
+    gio_stream->close ();
+#else
+    for (;;) {
+        file.read (buf.get (), buf_size);
+        content.append (buf.get (), file.gcount ());
+        THROW_IF_FAIL (file.good () || file.eof ());
+        nb_bytes += file.gcount ();
+        if (file.gcount () != buf_size) {break;}
+    }
+    file.close ();
+#endif // WITH_GIO
+    UString utf8_content;
+    std::string cur_charset;
+    if (!str_utils::ensure_buffer_is_in_utf8 (content,
+                                              a_supported_encodings,
+                                              utf8_content)) {
+        UString msg;
+        msg.printf (_("Could not load file %s because its encoding "
+                      "is different from %s"),
+                    path.c_str (),
+                    cur_charset.c_str ());
+        ui_utils::display_error (msg);
+        return false;
+    }
+    a_source_buffer->set_text (utf8_content);
+    LOG_DD ("file loaded. Read " << (int)nb_bytes << " bytes");
+
+#ifdef WITH_SOURCEVIEWMM2
+    a_source_buffer->set_highlight_syntax (a_enable_syntax_highlight);
+#else
+    a_source_buffer->set_highlight (a_enable_syntax_highlight);
+#endif  // WITH_SOURCEVIEWMM2
+
+    NEMIVER_CATCH_AND_RETURN (false);
+
+    return true;
+}
+
+bool
+SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
+                       const std::list<common::Asm> &a_asm,
+                       bool a_append,
+                       const UString &a_prog_path,
+                       const UString &a_cwd,
+                       list<UString> &a_session_dirs,
+                       const list<UString> &a_glob_dirs,
+                       std::map<UString, bool> &a_ignore_paths,
+                       Glib::RefPtr<SourceBuffer> &a_buf)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (!a_buf)
+        return false;
+
+    nemiver::common::log_asm_insns (a_asm);
+
+    std::list<common::Asm>::const_iterator it = a_asm.begin ();
+    if (it == a_asm.end ())
+        return true;
+
+    // Write the first asm instruction into a string stream.
+    std::ostringstream first_os, endl_os;
+    ReadLine reader (a_prog_path, a_cwd, a_session_dirs, a_glob_dirs,
+                     a_ignore_paths, &ui_utils::find_file_and_read_line);
+    bool first_written = write_asm_instr (*it, reader, first_os);
+    endl_os << std::endl;
+
+    // Figure out where to insert the asm instrs, depending on a_append
+    // (either prepend or append it)
+    // Also, if a_buf is not empty and we are going to append asm
+    // instrs, make sure to add an "end line" before appending our asm
+    // instrs.
+    Gtk::TextBuffer::iterator insert_it;
+    if (a_append) {
+        insert_it = a_buf->end ();
+        if (a_buf->get_char_count () != 0) {
+            insert_it = a_buf->insert (insert_it, endl_os.str ());
+        }
+    } else {
+        insert_it = a_buf->begin ();
+    }
+    // Really insert the the first asm instrs.
+    if (first_written)
+        insert_it = a_buf->insert (insert_it, first_os.str ());
+
+    // Append the remaining asm instrs. Make sure to add an "end of line"
+    // before each asm instr.
+    bool prev_written = true;
+    for (++it; it != a_asm.end (); ++it) {
+        // If the first item was empty, do not insert "\n" on the first
+        // iteration.
+        if (first_written && prev_written)
+            insert_it = a_buf->insert (insert_it, endl_os.str ());
+        first_written = true;
+        ostringstream os;
+        prev_written = write_asm_instr (*it, reader, os);
+        insert_it = a_buf->insert (insert_it, os.str ());
+    }
+    return true;
+}
+
+bool
+SourceEditor::load_asm (const common::DisassembleInfo &a_info,
+                        const std::list<common::Asm> &a_asm,
+                        bool a_append,
+                        const UString &a_prog_path,
+                        const UString &a_cwd,
+                        list<UString> &a_session_dirs,
+                        const list<UString> &a_glob_dirs,
+                        std::map<UString, bool> &a_ignore_paths,
+                        Glib::RefPtr<SourceBuffer> &a_buf)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY
+
+    std::string mime_type = "text/x-asm";
+    if (!setup_buffer_mime_and_lang (a_buf, mime_type)) {
+        LOG_ERROR ("Could not setup source buffer mime type of language");
+        return false;
+    }
+    THROW_IF_FAIL (a_buf);
+
+    add_asm (a_info, a_asm, a_append, a_prog_path, a_cwd,
+             a_session_dirs, a_glob_dirs, a_ignore_paths,
+             a_buf);
+
+    NEMIVER_CATCH_AND_RETURN (false)
+    return true;
+}
+
 /// Registers a assembly source buffer
 /// \param a_buf the assembly source buffer
 void
@@ -1270,5 +1575,4 @@ SourceEditor::insertion_changed_signal () const
     return m_priv->insertion_changed_signal;
 }
 
-}//end namespace nemiver
-
+NEMIVER_END_NAMESPACE (nemiver)

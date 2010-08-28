@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <string>
 #include <vector>
+#include <fstream>
 #include <glibmm.h>
 #include "nmv-env.h"
 #include "nmv-ustring.h"
@@ -374,6 +375,160 @@ build_path_to_executable (const UString &a_exe_name,
         return false;
     a_path_to_exe = Glib::filename_to_utf8 (path);
     return true;
+}
+
+bool
+find_file (const UString &a_file_name,
+           const UString &a_prog_path,
+           const UString &a_cwd,
+           const list<UString> &a_session_dirs,
+           const list<UString> &a_global_dirs,
+           UString &a_file_path)
+{
+    string file_name = Glib::filename_from_utf8 (a_file_name),
+        path,
+        candidate;
+
+    // first check if this is an absolute path
+    if (Glib::path_is_absolute (file_name)) {
+        if (Glib::file_test (file_name, Glib::FILE_TEST_IS_REGULAR)) {
+            a_file_path = Glib::filename_to_utf8 (file_name);
+            return true;
+        }
+    }
+    // then look in the working directory
+    candidate = Glib::build_filename (a_cwd, file_name);
+    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+        a_file_path = Glib::filename_to_utf8 (candidate);
+        return true;
+    }
+    // then look in the directory of the binary
+    candidate =
+        Glib::build_filename (Glib::path_get_dirname (a_prog_path),
+                              file_name);
+    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+        a_file_path = Glib::filename_to_utf8 (candidate);
+        return true;
+    }
+    // then look in the session-specific search paths
+    list<UString>::const_iterator session_iter;
+    for (session_iter = a_session_dirs.begin ();
+         session_iter != a_session_dirs.end ();
+         ++session_iter) {
+        path = Glib::filename_from_utf8 (*session_iter);
+        candidate = Glib::build_filename (path, file_name);
+        if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+            a_file_path = Glib::filename_to_utf8 (candidate);
+            return true;
+        }
+    }
+    // if not found, then look in the global search paths
+    list<UString>::const_iterator global_iter;
+    for (global_iter = a_global_dirs.begin ();
+         global_iter != a_global_dirs.end ();
+         ++global_iter) {
+        path = Glib::filename_from_utf8 (*global_iter);
+        candidate = Glib::build_filename (path, file_name);
+        if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
+            a_file_path = Glib::filename_to_utf8 (candidate);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool
+find_file_absolute_or_relative (const UString &a_file_name,
+                                const UString &a_prog_path,
+                                const UString &a_cwd,
+                                const list<UString> &a_session_dirs,
+                                const list<UString> &a_global_dirs,
+                                UString &a_file_path)
+{
+    // First, assume it's a full path name already.
+    if (Glib::file_test (a_file_name, Glib::FILE_TEST_IS_REGULAR)) {
+        a_file_path = a_file_name;
+        return true;
+    }
+
+    // If that didn't work, look for a file of that name in the search
+    // directories.
+    if (find_file (a_file_name, a_prog_path, a_cwd,
+                   a_session_dirs, a_global_dirs,
+                   a_file_path)) {
+        return true;
+    }
+
+    // Then look for a file of that basename in the search directories.
+    std::string basename =
+            Glib::path_get_basename (Glib::filename_from_utf8 (a_file_name));
+    if (basename != a_file_name
+        && find_file (basename, a_prog_path, a_cwd,
+                      a_session_dirs, a_global_dirs,
+                      a_file_path)) {
+        return true;
+    }
+    return false;
+}
+
+/// Given a file path P and a line number N , reads the line N from P
+/// and return it iff the function returns true. This is useful
+/// e.g. when forging a mixed source/assembly source view, and we want
+/// to display a source line N from a file P.
+///
+/// \param a_file_path the absolute file path to consider
+/// \param a_line_number the line number to consider
+/// \param a_line the string containing the resulting line read, if
+/// and only if the function returned true.
+/// \return true upon successful completion, false otherwise.
+bool
+read_file_line (const UString &a_file_path,
+                int a_line_number,
+                string &a_line)
+{
+    if (a_file_path.empty ())
+        return false;
+
+    bool found_line = false;
+    int line_num = 1;
+    char c = 0;
+
+    NEMIVER_TRY;
+
+    std::ifstream file (a_file_path.c_str ());
+
+    if (!file.good ()) {
+        LOG_ERROR ("Could not open file " + a_file_path);
+        return false;
+    }
+
+    while (true) {
+        if (line_num == a_line_number) {
+            found_line = true;
+            break;
+        }
+        file.get (c);
+        if (!file.good ())
+            break;
+        if (c == '\n')
+            ++line_num;
+    }
+    if (found_line) {
+        a_line.clear ();
+        while (true) {
+            file.get (c);
+            if (!file.good ())
+                break;
+            if (c == '\n')
+                break;
+            a_line += c;
+        }
+    }
+    file.close ();
+
+    NEMIVER_CATCH_NOX;
+
+    return found_line;
 }
 
 NEMIVER_END_NAMESPACE (env)

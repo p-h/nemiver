@@ -39,8 +39,6 @@
 #include "common/nmv-asm-instr.h"
 #include "nmv-i-conf-mgr.h"
 
-NEMIVER_BEGIN_NAMESPACE (nemiver)
-
 using nemiver::common::SafePtr;
 using nemiver::common::DynamicModule;
 using nemiver::common::DynamicModuleSafePtr;
@@ -58,6 +56,8 @@ using std::vector;
 using std::string;
 using std::map;
 using std::list;
+
+NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class ILangTrait;
 class IDebugger;

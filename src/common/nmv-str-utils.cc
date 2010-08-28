@@ -26,12 +26,24 @@
 #include <cstring>
 #include "nmv-str-utils.h"
 #include "nmv-safe-ptr-utils.h"
+#include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (str_utils)
 
 using nemiver::common::UString;
 using namespace nemiver::common;
+
+static const char *SUPPORTED_ENCODINGS[] =
+{
+    "UTF-8",
+    "ISO-8859",
+    "ISO-8859-1",
+    "ISO-8859-15",
+};
+
+#define SIZE_OF_SUPPORTED_ENCODINGS \
+sizeof (SUPPORTED_ENCODINGS)/sizeof (SUPPORTED_ENCODINGS[0])
 
 // Return true if a_str is a location string of the form
 // "filename:number", where number is string of digits.
@@ -290,6 +302,85 @@ vprintf (const UString &a_format, va_list a_args)
     GCharSafePtr str (g_strdup_vprintf (a_format.c_str (), a_args));
     result.assign (str.get ());
     return result;
+}
+
+bool
+is_buffer_valid_utf8 (const char *a_buffer, unsigned a_len)
+{
+    
+    RETURN_VAL_IF_FAIL (a_buffer, false);
+    const char *end=0;
+    bool is_valid = g_utf8_validate (a_buffer, a_len, &end);
+    return is_valid;
+}
+
+bool
+ensure_buffer_is_in_utf8 (const std::string &a_input,
+			  const std::list<std::string> &a_supported_encodings,
+			  UString &a_output)
+{
+    UString buf_content;
+    if (is_buffer_valid_utf8 (a_input.c_str (), a_input.size ())) {
+        a_output = a_input;
+        return true;
+    }
+
+    UString utf8_content;
+    bool converted = false;
+
+    // get the list of candidate encodings that could be the encoding
+    // of the a_input. If for a reason we cannot sucessfully proceed
+    // with the conversion then we will fall back to a hardcoded list
+    // of encodings.
+    std::string current_charset;
+    if (!a_supported_encodings.empty ()) {
+        std::list<std::string>::const_iterator it;
+        for (it = a_supported_encodings.begin ();
+             it != a_supported_encodings.end ();
+             ++it) {
+            current_charset = *it;
+            try {
+                utf8_content =
+                    Glib::convert (a_input, "UTF-8", current_charset);
+            } catch (Glib::Exception &e) {
+                continue;
+            } catch (...) {
+                return false;
+            }
+            converted = true;
+            break;
+        }
+    }
+
+    if (!converted) {
+        // fall back to trying the hardcoded list of supported encodings
+        for (unsigned int i=0; i < SIZE_OF_SUPPORTED_ENCODINGS; i++) {
+            try {
+                utf8_content =
+                    Glib::convert (a_input,
+                                   "UTF-8",
+                                   SUPPORTED_ENCODINGS[i]);
+            } catch (Glib::Exception &e) {
+                continue;
+            } catch (...) {
+                return false;
+            }
+            converted = true;
+        }
+    }
+
+    if (!converted)
+        return false;
+
+    const char *end=0;
+    if (utf8_content.empty ()
+        || !g_utf8_validate (utf8_content.raw ().c_str (),
+                             utf8_content.bytes (),
+                             &end)) {
+        return false;
+    }
+    a_output = utf8_content;
+    return true;
 }
 
 NEMIVER_END_NAMESPACE (str_utils)

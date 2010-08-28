@@ -1,3 +1,4 @@
+// Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -21,18 +22,19 @@
  *
  *See COPYRIGHT file copyright information.
  */
-// Author: Dodji Seketeli
-
 #ifndef __NEMIVER_ASM_UTILS_H__
 #define __NEMIVER_ASM_UTILS_H__
 
-#include "nmv-i-debugger.h"
+#include "nmv-asm-instr.h"
+
+using nemiver::common::UString;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
+NEMIVER_BEGIN_NAMESPACE (common)
 
 template<class Stream>
 Stream&
-operator<< (Stream &a_out, const common::AsmInstr &a_instr)
+operator<< (Stream &a_out, const AsmInstr &a_instr)
 {
     a_out << "<asm-instr>\n"
           << " <addr>" <<  a_instr.address () << "</addr>\n"
@@ -45,13 +47,13 @@ operator<< (Stream &a_out, const common::AsmInstr &a_instr)
 
 template<class Stream>
 Stream&
-operator<< (Stream &a_out, const common::MixedAsmInstr &a_instr)
+operator<< (Stream &a_out, const MixedAsmInstr &a_instr)
 {
     a_out << "<asm-mixed-instr>\n"
           << " <line>" << a_instr.line_number () << "</line>\n"
           << " <path>" << a_instr.file_path ()   << "</path>\n";
 
-    list<common::AsmInstr>::const_iterator it;
+    list<AsmInstr>::const_iterator it;
     a_out << " <asm-instr-list>";
     for (it = a_instr.instrs ().begin ();
          it != a_instr.instrs ().end ();
@@ -72,20 +74,74 @@ operator<< (Stream &a_out, const common::MixedAsmInstr &a_instr)
 
 template<class Stream>
 Stream&
-operator<< (Stream &a_out, const common::Asm &a_asm)
+operator<< (Stream &a_out, const Asm &a_asm)
 {
     switch (a_asm.which ()) {
-        case common::Asm::TYPE_PURE:
+        case Asm::TYPE_PURE:
             a_out << a_asm.instr ();
             break;
-        case common::Asm::TYPE_MIXED:
+        case Asm::TYPE_MIXED:
             a_out << a_asm.mixed_instr ();
             break;
         default:
-            THROW ("reached unreachable");
+	  THROW ("reached unreachable");
     }
     return a_out;
 }
 
+void log_asm_insns (const std::list<common::Asm> &a_asm);
+
+typedef bool (* FindFileAndReadLine) (const UString &a_file_path,
+                                      const UString &a_prog_path,
+                                      const UString &a_cwd,
+                                      list<UString> &a_sess_dirs,
+                                      const list<UString> &a_glob_dirs,
+                                      map<UString, bool> &a_ignore_paths,
+                                      bool a_ignore_if_not_found,
+                                      int a_line_number,
+                                      std::string &a_line);
+class ReadLine
+{
+ private:
+    ReadLine ();
+    ReadLine (const ReadLine &);
+
+ protected:
+    const UString &m_prog_path;
+    const UString &m_cwd;
+    list<UString> &m_session_dirs;
+    const list<UString> &m_global_dirs;
+    map<UString, bool> &m_ignore_paths;
+    FindFileAndReadLine read_line;
+
+ public:
+    ReadLine (const UString &prog_path,
+              const UString &cwd,
+              list<UString> &session_dirs,
+              const list<UString> &global_dirs,
+              map<UString, bool> &ignore_paths,
+              FindFileAndReadLine read_line_func) :
+    m_prog_path (prog_path), m_cwd (cwd), m_session_dirs (session_dirs),
+        m_global_dirs (global_dirs), m_ignore_paths (ignore_paths),
+        read_line (read_line_func)
+    {
+    }
+
+    bool operator () (const UString &a_file_path,
+                      int a_line_number,
+                      std::string &a_line)
+    {
+        return read_line (a_file_path, m_prog_path, m_cwd, m_session_dirs,
+                          m_global_dirs, m_ignore_paths, true, a_line_number,
+                          a_line);
+    }
+};
+
+bool write_asm_instr (const common::Asm &a_asm,
+		      ReadLine &a_read,
+		      std::ostringstream &a_os);
+
+NEMIVER_END_NAMESPACE (common)
 NEMIVER_END_NAMESPACE (nemiver)
-#endif // __NEMIVER_ASM_UTILS_H__ 
+
+#endif // __NEMIVER_ASM_UTILS_H__

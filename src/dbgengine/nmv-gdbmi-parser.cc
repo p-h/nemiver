@@ -26,7 +26,6 @@
 #include <sstream>
 #include "common/nmv-str-utils.h"
 #include "nmv-gdbmi-parser.h"
-#include "nmv-asm-utils.h"
 
 using nemiver::common::UString;
 

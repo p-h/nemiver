@@ -32,7 +32,6 @@
 #include <unistd.h>
 #include <algorithm>
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <glib/gi18n.h>
 
@@ -99,7 +98,6 @@
 #include "nmv-memory-view.h"
 #endif // WITH_MEMORYVIEW
 #include "nmv-watchpoint-dialog.h"
-#include "nmv-asm-utils.h"
 
 using namespace std;
 using namespace nemiver::common;
@@ -131,7 +129,6 @@ const char *PROGRAM_CWD= "programcwd";
 const char *LAST_RUN_TIME= "lastruntime";
 const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain";
-const char *DBG_PERSPECTIVE_ASM_DOMAIN = "dbg-perspective-asm-domain";
 const char *DISASSEMBLY_TITLE = "<Disassembly>";
 
 static const int NUM_INSTR_TO_DISASSEMBLE = 20;
@@ -180,20 +177,9 @@ const Gtk::StockID STOCK_STEP_INTO (STEP_INTO);
 const Gtk::StockID STOCK_STEP_OVER (STEP_OVER);
 const Gtk::StockID STOCK_STEP_OUT (STEP_OUT);
 
-const char *SUPPORTED_ENCODINGS[] =
-{
-    "UTF-8",
-    "ISO-8859",
-    "ISO-8859-1",
-    "ISO-8859-15",
-};
-
 const char *I_DEBUGGER_COOKIE_EXECUTE_PROGRAM = "i-debugger-execute-program";
 
 const char *PROG_ARG_SEPARATOR = "#DUMMY-SEP007#";
-
-#define SIZE_OF_SUPPORTED_ENCODINGS \
-sizeof (SUPPORTED_ENCODINGS)/sizeof (SUPPORTED_ENCODINGS[0])
 
 class DBGPerspective;
 
@@ -212,18 +198,6 @@ gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
                            DBGPerspective *a_persp);
 #endif
 
-static void
-log_asm_insns (std::list<common::Asm> a_asm)
-{
-    typedef std::list<common::Asm> Asms;
-    Asms::const_iterator it = a_asm.begin ();
-    if (it != a_asm.end ()) {
-        LOG_D (*it, DBG_PERSPECTIVE_ASM_DOMAIN);
-    }
-    for (++it; it != a_asm.end (); ++it) {
-        LOG_D ("\n" << *it, DBG_PERSPECTIVE_ASM_DOMAIN);
-    }
-}
 
 class DBGPerspective : public IDBGPerspective, public sigc::trackable {
     //non copyable
@@ -538,18 +512,6 @@ public:
 
     void open_file ();
 
-    bool get_file_mime_type (const UString &a_path,
-                             UString &a_mime_type);
-
-    bool setup_buffer_mime_and_lang
-                         (Glib::RefPtr<SourceBuffer> &a_buf,
-                          const std::string &a_mime_type = "text/x-c++") const;
-
-    Glib::RefPtr<SourceBuffer> create_source_buffer () const;
-
-    bool load_file (const UString &a_file,
-                    Glib::RefPtr<SourceBuffer> &a_source_buffer);
-
     bool open_file (const UString &a_path, int current_line=-1);
 
     SourceEditor* open_file_real (const UString &a_path, int current_line=-1);
@@ -571,21 +533,7 @@ public:
 
     bool is_asm_title (const UString &);
 
-    bool load_asm (const common::DisassembleInfo &a_info,
-                   const std::list<common::Asm> &a_asm,
-                   Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf);
-
     bool read_file_line (const UString&, int, string&);
-    bool write_asm_instr (std::ostringstream&,
-                          const common::AsmInstr&);
-
-    bool write_asm_instr (std::ostringstream&,
-                          const common::Asm&);
-
-    bool add_asm (const common::DisassembleInfo &a_info,
-                  const std::list<common::Asm> &a_asm,
-                  Glib::RefPtr<gtksourceview::SourceBuffer> &a_buf,
-                  bool a_append = true);
 
     SourceEditor* open_asm (const common::DisassembleInfo &a_info,
                             const std::list<common::Asm> &a_asm,
@@ -599,8 +547,7 @@ public:
                         SourceEditor *a_editor);
 
     void pump_asm_including_address (SourceEditor *a_editor,
-                                     const Address a_address,
-                                     bool a_tight = false);
+                                     const Address a_address);
 
     void switch_to_source_code ();
 
@@ -847,7 +794,7 @@ public:
 
     void read_default_config ();
 
-    vector<UString>& get_source_dirs ();
+    list<UString>& get_global_search_paths ();
 
     bool find_file_in_source_dirs (const UString &a_file_name,
                                    UString &a_file_path);
@@ -929,7 +876,8 @@ struct DBGPerspective::Priv {
     vector<UString> prog_args;
     UString prog_cwd;
     map<UString, UString> env_variables;
-    list<UString> search_paths;
+    list<UString> session_search_paths;
+    list<UString> global_search_paths;
     map<UString, bool> paths_to_ignore;
     Glib::RefPtr<Gnome::Glade::Xml> body_glade;
     SafePtr<Gtk::Window> body_window;
@@ -1014,7 +962,6 @@ struct DBGPerspective::Priv {
     ISessMgr::Session session;
     IProcMgrSafePtr process_manager;
     UString last_command_text;
-    vector<UString> source_dirs;
     bool show_dbg_errors;
     bool use_system_font;
     bool show_line_numbers;
@@ -1164,120 +1111,36 @@ struct DBGPerspective::Priv {
         }
     }
 
-    bool is_buffer_valid_utf8 (const char *a_buffer,
-                               unsigned a_len)
+    bool get_supported_encodings (list<string> &a_encodings)
     {
-        RETURN_VAL_IF_FAIL (a_buffer, false);
-        const char *end=0;
-        bool is_valid = g_utf8_validate (a_buffer, a_len, &end);
-        return is_valid;
-    }
+        list<UString> encodings;
 
-    //if source_buffer is not encoded in utf8, assume it is encoded
-    //in the current user locale.
-    //Try to convert it from user locale to utf8, and make sure the result
-    //is valid. if not, throw an exception due to the fact the file is
-    //encoded in an unknown encoding.
-    bool ensure_buffer_is_in_utf8 (const UString &a_path,
-                                   const std::string &a_input,
-                                   UString &a_output,
-                                   std::string &a_current_charset)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-        NEMIVER_TRY
+        NEMIVER_TRY;
 
-        UString buf_content;
-        if (is_buffer_valid_utf8 (a_input.c_str (), a_input.size ())) {
-            a_output = a_input;
-            return true;
-        }
-        UString utf8_content;
-        bool converted=false;
-        //get the list of candidate encodings that could be the encoding of
-        //the a_input. This list is in gconf. So let's kindly ask gconf for
-        //it. If for a reason we cannot reach gconf or the list is empty,
-        //then we will fall back to a hardcoded list of encodings.
-        THROW_IF_FAIL (workbench);
         IConfMgrSafePtr conf_mgr = workbench->get_configuration_manager ();
-        THROW_IF_FAIL (conf_mgr);
-        std::list<UString> supported_encodings;
-        bool have_gconf_values = false;
+        conf_mgr->get_key_value (CONF_KEY_SOURCE_FILE_ENCODING_LIST,
+                                 encodings);
 
-        NEMIVER_TRY
-        have_gconf_values =
-            conf_mgr->get_key_value (CONF_KEY_SOURCE_FILE_ENCODING_LIST,
-                                     supported_encodings);
-        NEMIVER_CATCH_NOX
-        if (have_gconf_values && !supported_encodings.empty ()) {
-            LOG_DD ("trying encodings coming from gconf");
-            std::list<UString>::const_iterator it;
-            for (it = supported_encodings.begin ();
-                 it != supported_encodings.end ();
-                 ++it) {
-                try {
-                    LOG_DD ("trying to convert buffer from encoding "
-                             << it->c_str ()
-                             << " to UTF-8");
-                    utf8_content =
-                        Glib::convert (a_input, "UTF-8",
-                                       it->c_str ());
-                } catch (Glib::Exception &e) {
-                    LOG_DD ("tentative encoding conversion failed!");
-                    continue;
-                } catch (...) {
-                    THROW ("unknown exception raised by Glib::convert()");
-                }
-                LOG_DD ("tentative encoding conversion succeeded!");
-                converted = true;
-                break;
-            }
-        }
+        NEMIVER_CATCH_AND_RETURN (false);
 
-        if (!converted) {
-            //fall back to trying the hardcoded list of supported encodings
-            LOG_DD ("trying hardcoded encodings");
-            for (unsigned int i=0; i < SIZE_OF_SUPPORTED_ENCODINGS; i++) {
-                try {
-                    utf8_content =
-                        Glib::convert (a_input,
-                                       "UTF-8",
-                                       SUPPORTED_ENCODINGS[i]);
-                } catch (Glib::Exception &e) {
-                    continue;
-                } catch (...) {
-                    THROW ("unknown exception raised by Glib::convert()");
-                }
-                converted = true;
-            }
+        for (list<UString>::const_iterator it = encodings.begin ();
+             it != encodings.end ();
+             ++it) {
+            a_encodings.push_back (it->raw ());
         }
-        if (!converted) {
-            THROW_IF_FAIL (!a_path.empty ());
-            UString message;
-            message.printf (_("File %s has an encoding that is not listed in "
-                            "the value of gconf key %s. "
-                            "Please add the encoding "
-                            "of that file to the values of the gconf "
-                            "key, and resume debugging"),
-                             a_path.c_str (),
-                             CONF_KEY_SOURCE_FILE_ENCODING_LIST);
-            THROW (message);
-        }
-        const char *end=0;
-        if (utf8_content.empty ()
-            || !g_utf8_validate (utf8_content.raw ().c_str (),
-                                 utf8_content.bytes (),
-                                 &end)) {
-            LOG_ERROR ("conversion from "
-                       << a_current_charset
-                       << " to utf8 failed");
-            return false;
-        }
-        a_output = utf8_content;
-
-        NEMIVER_CATCH_AND_RETURN (false)
-
-        return true;
+        return !encodings.empty ();
     }
+
+    bool load_file (const UString &a_path,
+                    Glib::RefPtr<SourceBuffer> &a_buffer)
+    {
+        list<string> supported_encodings;
+        get_supported_encodings (supported_encodings);
+        return SourceEditor::load_file (a_path, supported_encodings,
+                                        enable_syntax_highlight,
+                                        a_buffer);
+    }
+
 };//end struct DBGPerspective::Priv
 
 enum ViewsIndex
@@ -2282,7 +2145,7 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
     NEMIVER_TRY
     if (a_key == CONF_KEY_NEMIVER_SOURCE_DIRS) {
         LOG_DD ("updated key source-dirs");
-        m_priv->source_dirs = boost::get<UString> (a_value).split (":");
+        m_priv->global_search_paths = boost::get<UString> (a_value).split_to_list (":");
     } else if (a_key == CONF_KEY_SHOW_DBG_ERROR_DIALOGS) {
         m_priv->show_dbg_errors = boost::get<bool> (a_value);
     } else if (a_key == CONF_KEY_SHOW_SOURCE_LINE_NUMBERS) {
@@ -4075,33 +3938,21 @@ DBGPerspective::clear_session_data ()
     THROW_IF_FAIL (m_priv);
 
     m_priv->env_variables.clear ();
-    m_priv->search_paths.clear ();
+    m_priv->session_search_paths.clear ();
     m_priv->breakpoints.clear ();
-    m_priv->source_dirs.clear ();
+    m_priv->global_search_paths.clear ();
 }
 
 bool
 DBGPerspective::find_absolute_path (const UString& a_file_path,
                                     UString &a_absolute_path)
 {
-    // First, assume it's a full path name already.
-    if (Glib::file_test (a_file_path, Glib::FILE_TEST_IS_REGULAR)) {
-        a_absolute_path = a_file_path;
-        return true;
-    }
-    // If that didn't work, look for a file of that name in the search
-    // directories.
-    if (find_file_in_source_dirs (a_file_path, a_absolute_path)) {
-        return true;
-    }
-    // Then look for a file of that basename in the search directories.
-    std::string basename =
-            Glib::path_get_basename (Glib::filename_from_utf8 (a_file_path));
-    if (basename != a_file_path
-        && find_file_in_source_dirs (basename, a_absolute_path)) {
-        return true;
-    }
-    return false;
+    return common::env::find_file_absolute_or_relative (a_file_path,
+                                                        m_priv->prog_path,
+                                                        m_priv->prog_cwd,
+                                                        m_priv->session_search_paths,
+                                                        m_priv->global_search_paths,
+                                                        a_absolute_path);
 }
 
 /// Lookup a file path and return true if found. If the path is not
@@ -4120,25 +3971,14 @@ DBGPerspective::find_absolute_path_or_ask_user (const UString& a_file_path,
                                                 UString& a_absolute_path,
                                                 bool a_ignore_if_not_found)
 {
-    if (!find_absolute_path (a_file_path, a_absolute_path)) {
-        if (m_priv->paths_to_ignore.find (a_file_path)
-            != m_priv->paths_to_ignore.end ())
-            // We didn't find a_file_path but as we were previously
-            // requested to *not* ask the user to locate it, just
-            // pretend we didn't find the file.
-            return false;
-        if (ask_user_to_select_file (a_file_path, a_absolute_path)) {
-            UString parent_dir = Glib::filename_to_utf8
-                                    (Glib::path_get_dirname (a_absolute_path));
-            m_priv->search_paths.push_back (parent_dir);
-        } else {
-            if (a_ignore_if_not_found)
-                // Don't ask the user to locate a_file_path next time.
-                m_priv->paths_to_ignore[a_file_path] = true;
-            return false;
-        }
-    }
-    return true;
+    return ui_utils::find_absolute_path_or_ask_user (a_file_path,
+                                                     m_priv->prog_path,
+                                                     m_priv->prog_cwd,
+                                                     m_priv->session_search_paths,
+                                                     m_priv->global_search_paths,
+                                                     m_priv->paths_to_ignore,
+                                                     a_ignore_if_not_found,
+                                                     a_absolute_path);
 }
 
 void
@@ -4462,7 +4302,8 @@ DBGPerspective::get_or_append_asm_source_editor ()
     SourceEditor *source_editor =
         get_source_editor_from_path (get_asm_title (), path);
     if (source_editor == 0) {
-        Glib::RefPtr<SourceBuffer> source_buffer = create_source_buffer ();
+        Glib::RefPtr<SourceBuffer> source_buffer =
+            SourceEditor::create_source_buffer ();
         source_editor =
             create_source_editor (source_buffer,
                                   /*a_asm_view=*/true,
@@ -4812,16 +4653,16 @@ DBGPerspective::get_thread_list ()
     return *m_priv->thread_list;
 }
 
-vector<UString>&
-DBGPerspective::get_source_dirs ()
+list<UString>&
+DBGPerspective::get_global_search_paths ()
 {
 
     THROW_IF_FAIL (m_priv);
 
-    if (m_priv->source_dirs.empty ()) {
+    if (m_priv->global_search_paths.empty ()) {
         read_default_config ();
     }
-    return m_priv->source_dirs;
+    return m_priv->global_search_paths;
 }
 
 bool
@@ -4830,55 +4671,9 @@ DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
 {
     THROW_IF_FAIL (m_priv);
 
-    string file_name = Glib::filename_from_utf8 (a_file_name),
-                                                 path,
-                                                 candidate;
-    // first check if this is an absolute path
-    if (Glib::path_is_absolute (file_name)) {
-        if (Glib::file_test (file_name, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::filename_to_utf8 (file_name);
-            return true;
-        }
-    }
-    // then look in the working directory
-    candidate = Glib::build_filename (m_priv->prog_cwd, file_name);
-    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-        a_file_path = Glib::filename_to_utf8 (candidate);
-        return true;
-    }
-    // then look in the directory of the binary
-    candidate =
-        Glib::build_filename (Glib::path_get_dirname (m_priv->prog_path),
-                              file_name);
-    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-        a_file_path = Glib::filename_to_utf8 (candidate);
-        return true;
-    }
-    // then look in the session-specific search paths
-    list<UString>::const_iterator session_iter;
-    for (session_iter = m_priv->search_paths.begin ();
-         session_iter != m_priv->search_paths.end ();
-         ++session_iter) {
-        path = Glib::filename_from_utf8 (*session_iter);
-        candidate = Glib::build_filename (path, file_name);
-        if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::filename_to_utf8 (candidate);
-            return true;
-        }
-    }
-    // if not found, then look in the global search paths
-    vector<UString>::const_iterator global_iter;
-    for (global_iter = m_priv->source_dirs.begin ();
-         global_iter != m_priv->source_dirs.end ();
-         ++global_iter) {
-        path = Glib::filename_from_utf8 (*global_iter);
-        candidate = Glib::build_filename (path, file_name);
-        if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::filename_to_utf8 (candidate);
-            return true;
-        }
-    }
-    return false;
+    return common::env::find_file (a_file_name, m_priv->prog_path,
+                                   m_priv->prog_cwd, m_priv->session_search_paths,
+                                   m_priv->global_search_paths, a_file_path);
 }
 
 bool
@@ -4958,7 +4753,7 @@ DBGPerspective::read_default_config ()
 {
     THROW_IF_FAIL (m_priv->workbench);
     IConfMgr &conf_mgr = get_conf_mgr ();
-    if (m_priv->source_dirs.empty ()) {
+    if (m_priv->global_search_paths.empty ()) {
         UString dirs;
 
         NEMIVER_TRY
@@ -4967,8 +4762,8 @@ DBGPerspective::read_default_config ()
 
         LOG_DD ("got source dirs '" << dirs << "' from conf mgr");
         if (!dirs.empty ()) {
-            m_priv->source_dirs = dirs.split (":");
-            LOG_DD ("that makes '" <<(int)m_priv->source_dirs.size()
+            m_priv->global_search_paths = dirs.split_to_list (":");
+            LOG_DD ("that makes '" <<(int)m_priv->global_search_paths.size()
                     << "' dir paths");
         }
 
@@ -5360,8 +5155,8 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 
     a_session.search_paths ().clear ();
     list<UString>::const_iterator search_path_iter;
-    for (search_path_iter = m_priv->search_paths.begin ();
-         search_path_iter != m_priv->search_paths.end ();
+    for (search_path_iter = m_priv->session_search_paths.begin ();
+         search_path_iter != m_priv->session_search_paths.end ();
          ++search_path_iter) {
         a_session.search_paths ().push_back (*search_path_iter);
     }
@@ -5459,193 +5254,6 @@ DBGPerspective::edit_workbench_menu ()
 
     add_perspective_menu_entries ();
     //init_perspective_menu_entries ();
-}
-
-bool
-DBGPerspective::get_file_mime_type (const UString &a_path,
-                                    UString &a_mime_type)
-{
-    NEMIVER_TRY
-
-    std::string path = Glib::filename_from_utf8 (a_path);
-
-#ifdef WITH_GIO
-    Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
-    THROW_IF_FAIL (gio_file);
-#else
-    UString base_name = Glib::filename_to_utf8 (Glib::path_get_basename (path));
-#endif
-
-    UString mime_type;
-#ifdef WITH_GIO
-    Glib::RefPtr<Gio::FileInfo> info = gio_file->query_info();
-    mime_type = Gio::content_type_get_mime_type(info->get_content_type ());
-#else
-    mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ());
-#endif
-
-    if (mime_type == "") {
-        mime_type = "text/x-c++";
-    }
-    LOG_DD ("file has mime type: " << mime_type);
-    a_mime_type = mime_type;
-    return true;
-
-    NEMIVER_CATCH_AND_RETURN (false)
-}
-
-// Make sure the source buffer a_buf is properly setup to have the mime
-// type a_mime_type. If a_buf is null, a new one is created.
-// Returns true upon successful completion, false otherwise.
-bool
-DBGPerspective::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
-                                            const std::string &a_mime_type) const
-{
-    NEMIVER_TRY
-
-#ifdef WITH_SOURCEVIEWMM2
-    Glib::RefPtr<SourceLanguageManager> lang_manager =
-                                    SourceLanguageManager::get_default ();
-#else
-    Glib::RefPtr<SourceLanguagesManager> lang_manager =
-                                    SourceLanguagesManager::create ();
-#endif  // WITH_SOURCEVIEWMM2
-    Glib::RefPtr<SourceLanguage> lang;
-#ifdef WITH_SOURCEVIEWMM2
-    std::list<Glib::ustring> lang_ids = lang_manager->get_language_ids ();
-    for (std::list<Glib::ustring>::const_iterator it = lang_ids.begin ();
-         it != lang_ids.end ();
-         ++it) {
-        Glib::RefPtr<gtksourceview::SourceLanguage> candidate = 
-            lang_manager->get_language (*it);
-        std::list<Glib::ustring> mime_types = candidate->get_mime_types ();
-        std::list<Glib::ustring>::const_iterator mime_it;
-        for (mime_it = mime_types.begin ();
-             mime_it != mime_types.end ();
-             ++mime_it) {
-            if (*mime_it == a_mime_type) {
-                // one of the mime types associated with this language matches
-                // the mime type of our file, so use this language
-                lang = candidate;
-                break;  // no need to look at further mime types
-            }
-        }
-        // we found a matching language, so stop looking for other languages
-        if (lang) break;
-    }
-#else
-    lang = lang_manager->get_language_from_mime_type (mime_type);
-#endif  // WITH_SOURCEVIEWMM2
-
-    if (!a_buf)
-        a_buf = SourceBuffer::create (lang);
-    else {
-        a_buf->set_language (lang);
-        a_buf->erase (a_buf->begin (), a_buf->end ());
-    }
-    THROW_IF_FAIL (a_buf);
-    return true;
-
-    NEMIVER_CATCH_AND_RETURN (false);
-}
-
-/// Create a source buffer properly set up to contain/highlight c++
-/// code.
-/// \return the created buffer or nil if something bad happened.
-Glib::RefPtr<SourceBuffer>
-DBGPerspective::create_source_buffer () const
-{
-    Glib::RefPtr<SourceBuffer> result;
-    setup_buffer_mime_and_lang (result);
-    return result;
-}
-
-bool
-DBGPerspective::load_file (const UString &a_path,
-                           Glib::RefPtr<SourceBuffer> &a_source_buffer)
-{
-    NEMIVER_TRY
-
-    std::string path = Glib::filename_from_utf8 (a_path);
-#ifdef WITH_GIO
-    Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
-    THROW_IF_FAIL (gio_file);
-    if (!gio_file->query_exists ()) {
-#else
-    ifstream file (path.c_str ());
-    if (!file.good () && !file.eof ()) {
-#endif
-        LOG_ERROR ("Could not open file " + path);
-        ui_utils::display_error ("Could not open file: "
-                                 + Glib::filename_to_utf8 (path));
-        return false;
-    }
-
-    UString mime_type;
-    if (!get_file_mime_type (path, mime_type)) {
-        LOG_ERROR ("Could not get mime type for " + path);
-        return false;
-    }
-
-    if (!setup_buffer_mime_and_lang (a_source_buffer, mime_type)) {
-        LOG_ERROR ("Could not setup source buffer mime type or language");
-        return false;
-    }
-    THROW_IF_FAIL (a_source_buffer);
-
-    gint buf_size = 10 * 1024;
-    CharSafePtr buf (new gchar [buf_size + 1]);
-    memset (buf.get (), 0, buf_size + 1);
-
-    unsigned nb_bytes=0;
-    std::string content;
-#ifdef WITH_GIO
-    Glib::RefPtr<Gio::FileInputStream> gio_stream = gio_file->read ();
-    THROW_IF_FAIL (gio_stream);
-    gssize bytes_read = 0;
-    for (;;) {
-        bytes_read = gio_stream->read (buf.get (), buf_size);
-        content.append (buf.get (), bytes_read);
-        nb_bytes += bytes_read;
-        if (bytes_read != buf_size) {break;}
-    }
-    gio_stream->close ();
-#else
-    for (;;) {
-        file.read (buf.get (), buf_size);
-        content.append (buf.get (), file.gcount ());
-        THROW_IF_FAIL (file.good () || file.eof ());
-        nb_bytes += file.gcount ();
-        if (file.gcount () != buf_size) {break;}
-    }
-    file.close ();
-#endif // WITH_GIO
-    UString utf8_content;
-    std::string cur_charset;
-    if (!m_priv->ensure_buffer_is_in_utf8 (a_path,
-                                           content,
-                                           utf8_content,
-                                           cur_charset)) {
-        UString msg;
-        msg.printf (_("Could not load file %s because its encoding "
-                      "is different from %s"),
-                    path.c_str (),
-                    cur_charset.c_str ());
-        ui_utils::display_error (msg);
-        return false;
-    }
-    a_source_buffer->set_text (utf8_content);
-    LOG_DD ("file loaded. Read " << (int)nb_bytes << " bytes");
-
-#ifdef WITH_SOURCEVIEWMM2
-    a_source_buffer->set_highlight_syntax (m_priv->enable_syntax_highlight);
-#else
-    a_source_buffer->set_highlight (m_priv->enable_syntax_highlight);
-#endif  // WITH_SOURCEVIEWMM2
-
-    NEMIVER_CATCH_AND_RETURN (false);
-
-    return true;
 }
 
 SourceEditor*
@@ -5775,9 +5383,8 @@ DBGPerspective::open_file_real (const UString &a_path,
     NEMIVER_TRY
 
     Glib::RefPtr<SourceBuffer> source_buffer;
-    if (!load_file (a_path, source_buffer)) {
+    if (!m_priv->load_file (a_path, source_buffer))
         return 0;
-    }
 
     source_editor = create_source_editor (source_buffer,
                                           /*a_asm_view=*/false,
@@ -5870,224 +5477,6 @@ DBGPerspective::is_asm_title (const UString &a_path)
     return (a_path.raw () == DISASSEMBLY_TITLE);
 }
 
-bool
-DBGPerspective::load_asm (const common::DisassembleInfo &a_info,
-                          const std::list<common::Asm> &a_asm,
-                          Glib::RefPtr<SourceBuffer> &a_source_buffer)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    NEMIVER_TRY
-
-    std::string mime_type = "text/x-asm";
-    if (!setup_buffer_mime_and_lang (a_source_buffer, mime_type)) {
-        LOG_ERROR ("Could not setup source buffer mime type of language");
-        return false;
-    }
-    THROW_IF_FAIL (a_source_buffer);
-
-    add_asm (a_info, a_asm, a_source_buffer, /*append=*/ true);
-
-    NEMIVER_CATCH_AND_RETURN (false)
-    return true;
-}
-
-/// Given a file path P and a line number N , reads the line N from P
-/// and return it iff the function returns true. This is useful
-/// e.g. when forging a mixed source/assembly source view, and we want
-/// to display a source line N from a file P.
-///
-/// \param a_file_path the file path to consider
-/// \param a_line_number the line number to consider
-/// \param a_line the string containing the resulting line read, if
-/// and only if the function returned true.
-/// \return true upon successful completion, false otherwise.
-bool
-DBGPerspective::read_file_line (const UString &a_file_path,
-                                int a_line_number,
-                                string &a_line)
-{
-    if (a_file_path.empty ())
-        return false;
-
-    UString path;
-    if (!find_absolute_path_or_ask_user (a_file_path, path))
-        return false;
-    bool found_line = false;
-    int line_num = 1;
-    char c = 0;
-
-    NEMIVER_TRY
-
-    std::ifstream file (path.c_str ());
-
-    if (!file.good ()) {
-        LOG_ERROR ("Could not open file " + path);
-        return false;
-    }
-
-    while (true) {
-        if (line_num == a_line_number) {
-            found_line = true;
-            break;
-        }
-        file.get (c);
-        if (!file.good ())
-            break;
-        if (c == '\n')
-            ++line_num;
-    }
-    if (found_line) {
-        a_line.clear ();
-        while (true) {
-            file.get (c);
-            if (!file.good ())
-                break;
-            if (c == '\n')
-                break;
-            a_line += c;
-        }
-    }
-    file.close ();
-
-    NEMIVER_CATCH
-
-    return found_line;
-}
-
-bool
-DBGPerspective::write_asm_instr (std::ostringstream &a_os,
-                                 const common::AsmInstr &a_instr)
-{
-    a_os << a_instr.address ();
-    a_os << "  ";
-    a_os << "<" << a_instr.function ();
-    if (!a_instr.offset ().empty () && a_instr.offset () != "0")
-        a_os << "+" << a_instr.offset ();
-    a_os << ">:  ";
-    a_os << a_instr.instruction ();
-
-    return true;
-}
-
-bool
-DBGPerspective::write_asm_instr (std::ostringstream &a_os,
-                                 const common::Asm &a_asm)
-{
-    bool written = false;
-
-    switch (a_asm.which ()) {
-        case common::Asm::TYPE_PURE:
-            write_asm_instr (a_os, a_asm.instr ());
-            written = true;
-            break;
-        case common::Asm::TYPE_MIXED: {
-            const common::MixedAsmInstr &instr = a_asm.mixed_instr ();
-            // Ignore requests for line 0. Line 0 cannot exist as lines
-            // should be starting at 1., some
-            // versions of GDB seem to be referencing it for a reason.
-            if (instr.line_number () == 0) {
-                LOG_DD ("Skipping asm instr at line 0");
-                return false;
-            }
-            string line;
-            if (read_file_line (instr.file_path (),
-                                instr.line_number (),
-                                line)) {
-                if (line.empty ())
-                    a_os << "\n";
-                else {
-                    a_os << line; // line does not end with a '\n' char.
-                    written = true;
-                }
-            } else {
-                a_os << "<src file=\""
-                         << instr.file_path ()
-                         << "\" line=\""
-                         << instr.line_number ()
-                         << "\"/>";
-                written = true;
-            }
-
-            if (!instr.instrs ().empty ()) {
-                list<common::AsmInstr>::const_iterator it =
-                                                instr.instrs ().begin ();
-                if (it != instr.instrs ().end ()) {
-                    if (written)
-                        a_os << "\n";
-                    written = write_asm_instr (a_os, *it);
-                    ++it;
-                }
-                for (; it != instr.instrs ().end (); ++it) {
-                    if (written)
-                        a_os << "\n";
-                    written = write_asm_instr (a_os, *it);
-                }
-            }
-        }
-            break;
-        default:
-            break;
-    }
-    return written;
-}
-
-bool
-DBGPerspective::add_asm (const common::DisassembleInfo &/*a_info*/,
-                         const std::list<common::Asm> &a_asm,
-                         Glib::RefPtr<SourceBuffer> &a_buf,
-                         bool a_append)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    if (!a_buf)
-        return false;
-
-    log_asm_insns (a_asm);
-
-    std::list<common::Asm>::const_iterator it = a_asm.begin ();
-    if (it == a_asm.end ())
-        return true;
-
-    // Write the first asm instruction into a string stream.
-    std::ostringstream first_os, endl_os;
-    bool first_written = write_asm_instr (first_os, *it);
-    endl_os << std::endl;
-
-    // Figure out where to insert the asm instrs, depending on a_append
-    // (either prepend or append it)
-    // Also, if a_buf is not empty and we are going to append asm
-    // instrs, make sure to add an "end line" before appending our asm
-    // instrs.
-    Gtk::TextBuffer::iterator insert_it;
-    if (a_append) {
-        insert_it = a_buf->end ();
-        if (a_buf->get_char_count () != 0) {
-            insert_it = a_buf->insert (insert_it, endl_os.str ());
-        }
-    } else {
-        insert_it = a_buf->begin ();
-    }
-    // Really insert the the first asm instrs.
-    if (first_written)
-        insert_it = a_buf->insert (insert_it, first_os.str ());
-
-    // Append the remaining asm instrs. Make sure to add an "end of line"
-    // before each asm instr.
-    bool prev_written = true;
-    for (++it; it != a_asm.end (); ++it) {
-        // If the first item was empty, do not insert "\n" on the first
-        // iteration.
-        if (first_written && prev_written)
-            insert_it = a_buf->insert (insert_it, endl_os.str ());
-        first_written = true;
-        ostringstream os;
-        prev_written = write_asm_instr (os, *it);
-        insert_it = a_buf->insert (insert_it, os.str ());
-    }
-    return true;
-}
-
 // If no asm dedicated tab was already present in the perspective,
 // create  a new one, otherwise reuse the one that was already present.
 // Then load the assembly insns a_asm  described by a_info into the
@@ -6112,7 +5501,12 @@ DBGPerspective::open_asm (const common::DisassembleInfo &a_info,
         source_buffer->erase (source_buffer->begin (), source_buffer->end ());
     }
 
-    if (load_asm (a_info, a_asm, source_buffer) == 0)
+    if (!SourceEditor::load_asm (a_info, a_asm, /*a_append=*/true,
+                                 m_priv->prog_path, m_priv->prog_cwd,
+                                 m_priv->session_search_paths,
+                                 m_priv->global_search_paths,
+                                 m_priv->paths_to_ignore,
+                                 source_buffer))
         return 0;
 
     if (!source_editor)
@@ -6161,12 +5555,16 @@ DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
 
     Glib::RefPtr<SourceBuffer> asm_buf;
     if ((asm_buf = a_source_editor->get_assembly_source_buffer ()) == 0) {
-        setup_buffer_mime_and_lang (asm_buf, "test/x-asm");
+        SourceEditor::setup_buffer_mime_and_lang (asm_buf, "test/x-asm");
         a_source_editor->register_assembly_source_buffer (asm_buf);
         asm_buf = a_source_editor->get_assembly_source_buffer ();
         RETURN_IF_FAIL (asm_buf);
     }
-    if (!load_asm (a_info, a_asm, asm_buf)) {
+    if (!SourceEditor::load_asm (a_info, a_asm, /*a_append=*/true,
+                                 m_priv->prog_path, m_priv->prog_cwd,
+                                 m_priv->session_search_paths,
+                                 m_priv->global_search_paths,
+                                 m_priv->paths_to_ignore, asm_buf)) {
         LOG_ERROR ("failed to load asm");
         return;
     }
@@ -6241,9 +5639,9 @@ DBGPerspective::switch_to_source_code ()
                     << m_priv->current_frame.file_name ());
             return;
         }
-        get_file_mime_type (absolute_path, mime_type);
-        setup_buffer_mime_and_lang (source_buf, mime_type);
-        load_file (absolute_path, source_buf);
+        SourceEditor::get_file_mime_type (absolute_path, mime_type);
+        SourceEditor::setup_buffer_mime_and_lang (source_buf, mime_type);
+        m_priv->load_file (absolute_path, source_buf);
         source_editor->register_non_assembly_source_buffer (source_buf);
     }
     source_editor->switch_to_non_assembly_source_buffer ();
@@ -6342,7 +5740,8 @@ DBGPerspective::reload_file (const UString &a_path)
         editor->source_view ().get_source_buffer ();
     int current_line = editor->current_line ();
     int current_column = editor->current_column ();
-    if (!load_file (a_path, buffer))
+    
+    if (!m_priv->load_file (a_path, buffer))
         return false;
     editor->register_non_assembly_source_buffer (buffer);
     editor->current_line (current_line);
@@ -6415,11 +5814,11 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
 
     // populate the list of search paths from the current session
     list<UString>::const_iterator path_iter;
-    m_priv->search_paths.clear();
+    m_priv->session_search_paths.clear();
     for (path_iter = m_priv->session.search_paths ().begin ();
             path_iter != m_priv->session.search_paths ().end ();
             ++path_iter) {
-        m_priv->search_paths.push_back (*path_iter);
+        m_priv->session_search_paths.push_back (*path_iter);
     }
 
     // open the previously opened files
@@ -7161,26 +6560,8 @@ bool
 DBGPerspective::ask_user_to_select_file (const UString &a_file_name,
                                          UString &a_selected_file_path)
 {
-    LocateFileDialog dialog (plugin_path (), a_file_name);
-    // start looking in the working directory
-    dialog.file_location (m_priv->prog_cwd);
-    int result = dialog.run ();
-    if (result == Gtk::RESPONSE_OK) {
-        UString file_path = dialog.file_location ();
-        if (!Glib::file_test (file_path, Glib::FILE_TEST_IS_REGULAR)
-            || (Glib::path_get_basename (a_file_name)
-                != Glib::path_get_basename (file_path)))
-            return false;
-        UString parent_dir =
-            Glib::filename_to_utf8 (Glib::path_get_dirname
-                                                (dialog.file_location ()));
-        if (!Glib::file_test (parent_dir, Glib::FILE_TEST_IS_DIR))
-            return false;
-
-        a_selected_file_path = file_path;
-        return true;
-    }
-    return false;
+    return ui_utils::ask_user_to_select_file (a_file_name, m_priv->prog_cwd,
+                                              a_selected_file_path);
 }
 
 bool

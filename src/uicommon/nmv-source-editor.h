@@ -27,12 +27,14 @@
 
 #include <list>
 #include <functional>
+#include <map>
 #include <gtkmm/box.h>
 #include <gtksourceviewmm/sourceview.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-ustring.h"
 #include "common/nmv-address.h"
 #include "common/nmv-range.h"
+#include "common/nmv-asm-instr.h"
 
 using gtksourceview::SourceView;
 using gtksourceview::SourceBuffer;
@@ -41,6 +43,7 @@ using nemiver::common::SafePtr;
 using nemiver::common::UString;
 using nemiver::common::Address;
 using std::list;
+using std::map;
 
 namespace nemiver {
 
@@ -105,6 +108,20 @@ public:
                     bool a_search_backwards=false,
                     bool a_clear_selection=false);
 
+    static bool get_file_mime_type (const UString &a_path,
+				    UString &a_mime_type);
+
+    static bool setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
+					    const std::string &a_mime_type =
+					    "text/x-c++");
+
+    static Glib::RefPtr<SourceBuffer> create_source_buffer ();
+
+    static bool load_file (const UString &a_path,
+			   const std::list<std::string> &a_supported_encodings,
+			   bool a_enable_syntaxt_highlight,
+			   Glib::RefPtr<SourceBuffer> &a_source_buffer);
+
     /// \name Assembly source buffer handling.
     /// @{
 
@@ -147,6 +164,27 @@ public:
                                            bool enabled = true);
     bool remove_visual_breakpoint_from_address (const Address &);
     bool scroll_to_address (const Address &a_address);
+
+    static bool add_asm (const common::DisassembleInfo &/*a_info*/,
+			 const std::list<common::Asm> &a_asm,
+			 bool a_append,
+			 const UString &a_prog_path,
+			 const UString &a_cwd,
+			 list<UString> &a_session_dirs,
+			 const list<UString> &a_glob_dirs,
+			 std::map<UString, bool> &a_ignore_paths,
+			 Glib::RefPtr<SourceBuffer> &a_buf);
+
+    static bool load_asm (const common::DisassembleInfo &/*a_info*/,
+			  const std::list<common::Asm> &a_asm,
+			  bool a_append,
+			  const UString &a_prog_path,
+			  const UString &a_cwd,
+			  list<UString> &a_session_dirs,
+			  const list<UString> &a_glob_dirs,
+			  std::map<UString, bool> &a_ignore_paths,
+			  Glib::RefPtr<SourceBuffer> &a_buf);
+
 
     /// @}
 

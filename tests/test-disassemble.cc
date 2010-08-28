@@ -29,8 +29,8 @@
 #include <glibmm.h>
 #include "common/nmv-initializer.h"
 #include "common/nmv-safe-ptr-utils.h"
+#include "common/nmv-asm-utils.h"
 #include "nmv-i-debugger.h"
-#include "nmv-asm-utils.h"
 #include "nmv-dbg-common.h"
 
 using namespace nemiver;

@@ -47,14 +47,25 @@ public:
           const UString &a_glade_filename,
           const UString &a_widget_name)
     {
-        vector<string> path_elems;
-        path_elems.push_back (Glib::locale_from_utf8 (a_resource_root_path));
-        path_elems.push_back ("glade");
-        path_elems.push_back (a_glade_filename);
-        string glade_path = Glib::build_filename (path_elems);
+        string glade_path;
+        if (!a_resource_root_path.empty ()) {
+            // So the glade file is shipped within a plugin. Build the
+            // path to it accordingly.
+            vector<string> path_elems;
+            path_elems.push_back (Glib::locale_from_utf8 (a_resource_root_path));
+            path_elems.push_back ("glade");
+            path_elems.push_back (a_glade_filename);
+            glade_path = Glib::build_filename (path_elems);
+        } else {
+            // THe glade file is shipped into the global nemiver glade
+            // directories.
+            glade_path = env::build_path_to_glade_file (a_glade_filename);
+        }
+
         if (!Glib::file_test (glade_path, Glib::FILE_TEST_IS_REGULAR)) {
             THROW (UString ("could not find file ") + glade_path);
         }
+
         glade = Gnome::Glade::Xml::create (glade_path);
         THROW_IF_FAIL (glade);
         dialog.reset

@@ -3,9 +3,9 @@
 #include <map>
 #include <boost/test/unit_test.hpp>
 #include "dbgengine/nmv-gdbmi-parser.h"
-#include "dbgengine/nmv-asm-utils.h"
 #include "common/nmv-exception.h"
 #include "common/nmv-initializer.h"
+#include "common/nmv-asm-utils.h"
 
 using namespace std;
 using namespace nemiver;

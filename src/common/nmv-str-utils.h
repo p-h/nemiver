@@ -82,6 +82,13 @@ UString printf (const UString &a_format, ...);
 
 UString vprintf (const UString &a_format, va_list a_args);
 
+bool is_buffer_valid_utf8 (const char *a_buffer, unsigned a_len);
+
+bool ensure_buffer_is_in_utf8 (const std::string &a_input,
+			       const std::list<std::string> &supported_encodings,
+			       UString &a_output);
+			       
+
 NEMIVER_END_NAMESPACE (str_utils)
 NEMIVER_END_NAMESPACE (nemiver)
 

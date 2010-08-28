@@ -4,6 +4,10 @@ sources = \
 $(public_headers) \
 nmv-ui-utils.h \
 nmv-ui-utils.cc \
+nmv-dialog.cc \
+nmv-dialog.h \
+nmv-locate-file-dialog.cc \
+nmv-locate-file-dialog.h \
 ephy-spinner.c \
 ephy-spinner.h \
 ephy-spinner-tool-item.c \

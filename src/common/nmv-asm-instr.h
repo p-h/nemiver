@@ -24,10 +24,12 @@
  */
 #ifndef __NEMIVER_ASM_INSTR_H__
 #define __NEMIVER_ASM_INSTR_H__
+
+#include <list>
+#include <boost/variant.hpp>
 #include "nmv-namespace.h"
 #include "nmv-api-macros.h"
-#include <boost/variant.hpp>
-#include <list>
+#include "nmv-exception.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)

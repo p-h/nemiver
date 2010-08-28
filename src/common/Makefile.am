@@ -7,6 +7,7 @@ nmv-namespace.h \
 nmv-ustring.h \
 nmv-address.h \
 nmv-asm-instr.h \
+nmv-asm-utils.h \
 nmv-range.h \
 nmv-str-utils.h \
 nmv-libxml-utils.h \
@@ -43,6 +44,7 @@ nmv-proc-mgr.h
 libnemivercommon_la_SOURCES= $(headers) \
 nmv-ustring.cc \
 nmv-address.cc \
+nmv-asm-utils.cc \
 nmv-str-utils.cc \
 nmv-object.cc \
 nmv-libxml-utils.cc \
