@@ -5579,29 +5579,16 @@ DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
 
 void
 DBGPerspective::pump_asm_including_address (SourceEditor *a_editor,
-                                            const Address a_address,
-                                            bool a_tight)
+                                            const Address a_address)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    Range r;
-
-    if (!a_editor) {
-        LOG_ERROR ("Got nil editor");
-        return;
-    }
-    a_editor->get_assembly_address_range (r);
-    
-    if (r.contains (a_address))
-        return;
-
-    r.extend (a_address);
     IDebugger::DisassSlot slot =
         sigc::bind (sigc::mem_fun (this,
                                    &DBGPerspective::on_debugger_asm_signal2),
                     a_editor);
 
-    disassemble_and_do (slot, a_tight);
+    disassemble_around_address_and_do (a_address, slot);
 }
 
 // Get the source editor of the source file being currently debugged,
@@ -7152,8 +7139,20 @@ DBGPerspective::disassemble_around_address_and_do
     // archictecture. So let's say N instructions on IA is at
     // maximum N x 17.
     // FIXME: find a way to make this more cross arch.
-    addr_range.max (addr_range.max ()
-                    + m_priv->num_instr_to_disassemble * 17);
+    const size_t instr_size = 17;
+    const size_t total_instrs_size =
+        m_priv->num_instr_to_disassemble * instr_size;
+
+    addr_range.max (addr_range.max () + total_instrs_size);
+
+    // Also, try disassembling one insn *before* the starting @ of the
+    // range. Otherwise, sometimes, we miss the instruction that is at
+    // that address because GDB doesn't send it back to us in the
+    // disass. That leads to an infinite loop as our calling chain
+    // will then look for the insn having that @, won't find it, and
+    // will call us again with that @ as starting range of disass. 
+    if (addr_range.min () > instr_size)
+        addr_range.min (addr_range.min () - instr_size);
 
     debugger ()->disassemble (/*start_addr=*/addr_range.min (),
                               /*start_addr_relative_to_pc=*/false,
