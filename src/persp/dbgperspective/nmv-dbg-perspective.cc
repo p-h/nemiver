@@ -115,8 +115,7 @@ const char *STEP_OVER         = "nmv-step-over";
 const char *STEP_OUT          = "nmv-step-out";
 
 // labels for widget tabs in the status notebook
-const char *CALL_STACK_TITLE        = _("Call Stack");
-const char *LOCAL_VARIABLES_TITLE   = _("Variables");
+const char *CONTEXT_TITLE           = _("Context");
 const char *TARGET_TERMINAL_TITLE   = _("Target Terminal");
 const char *BREAKPOINTS_TITLE       = _("Breakpoints");
 const char *REGISTERS_VIEW_TITLE    = _("Registers");
@@ -169,6 +168,8 @@ const char* CONF_KEY_ASM_STYLE_PURE =
                 "/apps/nemiver/dbgperspective/asm-style-pure";
 const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS =
                 "/apps/nemiver/dbgperspective/default-num-asm-instrs";
+const char* CONF_KEY_CONTEXT_PANE_LOCATION =
+                "/apps/nemiver/dbgperspective/context-pane-location";
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT);
 const Gtk::StockID STOCK_LINE_POINTER (LINE_POINTER);
@@ -417,8 +418,7 @@ private:
     bool on_file_content_changed (const UString &a_path);
     void on_notebook_tabs_reordered(Gtk::Widget* a_page, guint a_page_num);
 
-    void on_activate_call_stack_view ();
-    void on_activate_variables_view ();
+    void on_activate_context_view ();
     void on_activate_output_view ();
     void on_activate_target_terminal_view ();
     void on_activate_breakpoints_view ();
@@ -715,6 +715,8 @@ public:
 
     Gtk::ScrolledWindow& get_thread_list_scrolled_win ();
 
+    Gtk::HPaned& get_context_paned ();
+
     Gtk::HPaned& get_call_stack_paned ();
 
     LocalVarsInspector& get_local_vars_inspector ();
@@ -747,9 +749,7 @@ public:
 
     void set_show_log_view (bool);
 
-    void set_show_call_stack_view (bool);
-
-    void set_show_variables_editor_view (bool);
+    void set_show_context_view (bool);
 
     void set_show_terminal_view (bool);
 
@@ -894,6 +894,7 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> call_stack_scrolled_win;
     SafePtr<Gtk::ScrolledWindow> thread_list_scrolled_win;
     SafePtr<Gtk::HPaned> call_stack_paned;
+    SafePtr<Gtk::HPaned> context_paned;
 
     Glib::RefPtr<Gtk::ActionGroup> target_connected_action_group;
     Glib::RefPtr<Gtk::ActionGroup> target_not_started_action_group;
@@ -924,8 +925,7 @@ struct DBGPerspective::Priv {
     bool command_view_is_visible;
     bool target_output_view_is_visible;
     bool log_view_is_visible;
-    bool call_stack_view_is_visible;
-    bool variables_editor_view_is_visible;
+    bool context_paned_view_is_visible;
     bool terminal_view_is_visible;
     bool breakpoints_view_is_visible;
     bool registers_view_is_visible;
@@ -1024,8 +1024,7 @@ struct DBGPerspective::Priv {
         command_view_is_visible (false),
         target_output_view_is_visible (false),
         log_view_is_visible (false),
-        call_stack_view_is_visible (false),
-        variables_editor_view_is_visible (false),
+        context_paned_view_is_visible (false),
         terminal_view_is_visible (false),
         breakpoints_view_is_visible (false),
         registers_view_is_visible (false),
@@ -1149,8 +1148,7 @@ struct DBGPerspective::Priv {
 enum ViewsIndex
 {
     COMMAND_VIEW_INDEX=0,
-    CALL_STACK_VIEW_INDEX,
-    VARIABLES_VIEW_INDEX,
+    CONTEXT_VIEW_INDEX,
     TERMINAL_VIEW_INDEX,
     BREAKPOINTS_VIEW_INDEX,
     REGISTERS_VIEW_INDEX,
@@ -2079,9 +2077,12 @@ DBGPerspective::on_shutdown_signal ()
     // next time.
     IConfMgr &conf_mgr = get_conf_mgr ();
     int pane_location = m_priv->body_main_paned->get_position();
+    int context_pane_location = get_context_paned ().get_position ();
 
     NEMIVER_TRY
     conf_mgr.set_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location);
+    conf_mgr.set_key_value (CONF_KEY_CONTEXT_PANE_LOCATION, 
+                            context_pane_location);
     NEMIVER_CATCH_NOX
 
     if (m_priv->prog_path == "") {
@@ -2870,22 +2871,12 @@ DBGPerspective::activate_status_view (Gtk::Widget &a_page)
 }
 
 void
-DBGPerspective::on_activate_call_stack_view ()
+DBGPerspective::on_activate_context_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     NEMIVER_TRY
-    activate_status_view (get_call_stack_paned ());
-    NEMIVER_CATCH
-}
-
-void 
-DBGPerspective::on_activate_variables_view ()
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    NEMIVER_TRY
-    activate_status_view (get_local_vars_inspector_scrolled_win ());
+    activate_status_view (get_context_paned ());
     NEMIVER_CATCH
 }
 
@@ -3075,8 +3066,7 @@ DBGPerspective::init_perspective_menu_entries ()
     set_show_target_output_view (false);
     set_show_log_view (false);
     set_show_terminal_view (true);
-    set_show_call_stack_view (true);
-    set_show_variables_editor_view (true);
+    set_show_context_view (true);
     set_show_breakpoints_view (true);
     set_show_registers_view (true);
 #ifdef WITH_MEMORYVIEW
@@ -3414,25 +3404,14 @@ DBGPerspective::init_actions ()
             false
         },
         {
-            "ActivateCallStackViewMenuAction",
+            "ActivateContextViewMenuAction",
             nil_stock_id,
-            CALL_STACK_TITLE,
-            _("Switch to Call Stack View"),
+            CONTEXT_TITLE,
+            _("Switch to Context View"),
             sigc::mem_fun (*this,
-                           &DBGPerspective::on_activate_call_stack_view),
+                           &DBGPerspective::on_activate_context_view),
             ActionEntry::DEFAULT,
             "<alt>2",
-            false
-        },
-        {
-            "ActivateVariablesViewMenuAction",
-            nil_stock_id,
-            LOCAL_VARIABLES_TITLE,
-            _("Switch to Variables View"),
-            sigc::mem_fun (*this,
-                           &DBGPerspective::on_activate_variables_view),
-            ActionEntry::DEFAULT,
-            "<alt>3",
             false
         },
         {
@@ -3443,7 +3422,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_breakpoints_view),
             ActionEntry::DEFAULT,
-            "<alt>4",
+            "<alt>3",
             false
         },
         {
@@ -3454,7 +3433,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_activate_registers_view),
             ActionEntry::DEFAULT,
-            "<alt>5",
+            "<alt>4",
             false
         },
 #ifdef WITH_MEMORYVIEW
@@ -3465,7 +3444,7 @@ DBGPerspective::init_actions ()
             _("Switch to Memory View"),
             sigc::mem_fun (*this, &DBGPerspective::on_activate_memory_view),
             ActionEntry::DEFAULT,
-            "<alt>6",
+            "<alt>5",
             false
         },
 #endif // WITH_MEMORYVIEW
@@ -3816,6 +3795,21 @@ DBGPerspective::init_body ()
     get_call_stack_paned ().add1 (get_thread_list_scrolled_win ());
     get_call_stack_scrolled_win ().add (get_call_stack ().widget ());
     get_call_stack_paned ().add2 (get_call_stack_scrolled_win ());
+
+    get_context_paned ().pack1 (get_call_stack_paned ());
+    get_context_paned ().pack2 (get_local_vars_inspector_scrolled_win ());
+
+
+    int context_pane_location = -1;
+    NEMIVER_TRY
+    conf_mgr.get_key_value (CONF_KEY_CONTEXT_PANE_LOCATION, 
+                            context_pane_location);    
+    NEMIVER_CATCH_NOX
+
+    if (context_pane_location > 0) {
+        get_context_paned ().set_position (context_pane_location);
+    }
+
     get_local_vars_inspector_scrolled_win ().add
                                     (get_local_vars_inspector ().widget ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
@@ -7468,6 +7462,18 @@ DBGPerspective::get_call_stack ()
 }
 
 Gtk::HPaned&
+DBGPerspective::get_context_paned ()
+{
+    THROW_IF_FAIL (m_priv);
+    if (!m_priv->context_paned) {
+        m_priv->context_paned.reset (new Gtk::HPaned ());
+        THROW_IF_FAIL (m_priv->context_paned);
+    }
+    return *m_priv->context_paned;
+
+}
+
+Gtk::HPaned&
 DBGPerspective::get_call_stack_paned ()
 {
     THROW_IF_FAIL (m_priv);
@@ -7714,56 +7720,29 @@ DBGPerspective::set_show_log_view (bool a_show)
 }
 
 void
-DBGPerspective::set_show_call_stack_view (bool a_show)
+DBGPerspective::set_show_context_view (bool a_show)
 {
     if (a_show) {
-        if (!get_call_stack_paned ().get_parent ()
-            && m_priv->call_stack_view_is_visible == false) {
-            get_call_stack_paned ().show_all ();
+        if (!get_context_paned ().get_parent ()
+            && m_priv->context_paned_view_is_visible == false) {
+            get_context_paned ().show_all ();
             int page_num = m_priv->statuses_notebook->insert_page
-                                            (get_call_stack_paned (),
-                                             CALL_STACK_TITLE,
-                                             CALL_STACK_VIEW_INDEX);
-            m_priv->call_stack_view_is_visible = true;
-            m_priv->statuses_notebook->set_current_page
-                                                (page_num);
-        }
-    } else {
-        if (get_call_stack_paned ().get_parent ()
-            && m_priv->call_stack_view_is_visible) {
-            LOG_DD ("removing call stack view");
-            m_priv->statuses_notebook->remove_page
-                                        (get_call_stack_paned ());
-            m_priv->call_stack_view_is_visible = false;
-        }
-        m_priv->call_stack_view_is_visible = false;
-    }
-}
-
-void
-DBGPerspective::set_show_variables_editor_view (bool a_show)
-{
-    if (a_show) {
-        if (!get_local_vars_inspector_scrolled_win ().get_parent ()
-            && m_priv->variables_editor_view_is_visible == false) {
-            get_local_vars_inspector_scrolled_win ().show_all ();
-            int page_num = m_priv->statuses_notebook->insert_page
-                                (get_local_vars_inspector_scrolled_win (),
-                                 LOCAL_VARIABLES_TITLE,
-                                 VARIABLES_VIEW_INDEX);
-            m_priv->variables_editor_view_is_visible = true;
+                                (get_context_paned (),
+                                 CONTEXT_TITLE,
+                                 CONTEXT_VIEW_INDEX);
+            m_priv->context_paned_view_is_visible = true;
             m_priv->statuses_notebook->set_current_page (page_num);
         }
     } else {
-        if (get_local_vars_inspector_scrolled_win ().get_parent ()
-            && m_priv->variables_editor_view_is_visible) {
-            LOG_DD ("removing variables editor");
+        if (get_context_paned ().get_parent ()
+            && m_priv->context_paned_view_is_visible) {
+            LOG_DD ("removing context pane");
             m_priv->statuses_notebook->remove_page
-                                (get_local_vars_inspector_scrolled_win ());
-            m_priv->variables_editor_view_is_visible = false;
+                                (get_context_paned ());
+            m_priv->context_paned_view_is_visible = false;
         }
-        m_priv->variables_editor_view_is_visible = false;
-    }
+        m_priv->context_paned_view_is_visible = false;
+    }    
 }
 
 void

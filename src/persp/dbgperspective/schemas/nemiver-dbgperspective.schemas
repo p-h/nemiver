@@ -194,6 +194,17 @@ to assembly view. Otherwise, source code mixed with assembly code is shown.</lon
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/context-pane-location</key>
+      <applyto>/apps/nemiver/dbgperspective/context-pane-location</applyto>
+      <owner>nemiver</owner>
+      <type>int</type>
+      <default>-1</default>
+      <locale name="C">
+	<short>The position of the splitter in the debug context tab</short>
+	<long>The position of the splitter in the debug context tab. This is saved by the UI automatically.</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/follow-fork-mode</key>
       <applyto>/apps/nemiver/dbgperspective/follow-fork-mode</applyto>
       <owner>nemiver</owner>

@@ -36,10 +36,8 @@
         <menu action="ViewMenuAction" name="ViewMenu">
             <menuitem action="ActivateTargetTerminalViewMenuAction"
                 name="ActivateTargetTerminalViewMenuItem"/>
-            <menuitem action="ActivateCallStackViewMenuAction"
-                name="ActivateCallStackViewMenuItem"/>
-            <menuitem action="ActivateVariablesViewMenuAction"
-                name="ActivateVariablesViewMenuItem"/>
+            <menuitem action="ActivateContextViewMenuAction"
+                name="ActivateContextViewMenuItem"/>
             <menuitem action="ActivateBreakpointsViewMenuAction"
                 name="ActivateBreakpointsViewMenuItem"/>
             <menuitem action="ActivateRegistersViewMenuAction"
