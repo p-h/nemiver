@@ -683,9 +683,8 @@ public:
 
         if (!result) {return false;}
         UString args = quote_args (a_prog_args);
-        if (!args.empty ()) {
-            return issue_command (Command ("set args " + args));
-        }
+        if (!args.empty ())
+	  issue_command (Command ("set args " + args));
         set_debugger_parameter ("follow-fork-mode", follow_fork_mode);
 
         return true;
