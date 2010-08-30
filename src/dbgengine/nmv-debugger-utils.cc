@@ -29,6 +29,10 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (debugger_utils)
 
+/// Generate a string of of white spaces.
+/// \param a_nb_ws the number of white spaces to generate
+/// \param a_ws_str the output string the white spaces are
+///  generated into.
 void
 gen_white_spaces (int a_nb_ws,
                   std::string &a_ws_str)
@@ -40,6 +44,12 @@ gen_white_spaces (int a_nb_ws,
     }
 }
 
+/// Serialize a variable and its value into an output stream.
+/// \param a_var the variable to serialize.
+/// \param a_indent_num the number of spaces to indent to before
+/// serializing the variable.
+/// \param a_os the output stream to serialize into.
+/// \param a_print_var_name if true, serialize the variable name too.
 void
 dump_variable_value (IDebugger::VariableSafePtr a_var,
                      int a_indent_num,
@@ -75,6 +85,11 @@ dump_variable_value (IDebugger::VariableSafePtr a_var,
     }
 }
 
+/// Serialize a variable and its value into a string.
+/// \param a_var the variable to serialize.
+/// \param a_indent_num the number of spaces to indent to before
+/// serializing the variable.
+/// \param a_out_str the string to serialize the variable into.
 void
 dump_variable_value (IDebugger::VariableSafePtr a_var,
                      int a_indent_num,

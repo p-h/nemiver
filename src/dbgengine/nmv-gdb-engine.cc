@@ -2577,7 +2577,8 @@ struct OnUnfoldVariableHandler : public OutputHandler {
     }
 };// End struct OnUnfoldVariableHandler
 
-struct OnListChangedVariableHandler : public OutputHandler {
+struct OnListChangedVariableHandler : public OutputHandler
+{
     GDBEngine *m_engine;
 
     OnListChangedVariableHandler (GDBEngine *a_engine) :
@@ -3406,9 +3407,9 @@ GDBEngine::init ()
     init_output_handlers ();
 }
 
-// Put here the initialization that must happen once our call call us
-// For initialization, i.e, after we are sure we have stuff like conf
-// manager ready, etc ...
+// Put here the initialization that must happen once we are called
+// for initialization, i.e, after we are sure we have stuff like
+// conf manager ready, etc ...
 void
 GDBEngine::do_init (IConfMgrSafePtr a_conf_mgr)
 {

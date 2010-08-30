@@ -565,10 +565,10 @@ public:
     /// GDB/MI command -stack-list-arguments 1.
     /// It is basically the arguments of the functions of the call stack.
     /// See the GDB/MI documentation for more.
-    bool parse_stack_arguments (UString::size_type a_from,
-                                UString::size_type &a_to,
-                                map<int,
-                                    list<IDebugger::VariableSafePtr> > &a_parms);
+    bool parse_stack_arguments
+                        (UString::size_type a_from,
+                         UString::size_type &a_to,
+                         map<int, list<IDebugger::VariableSafePtr> > &a_params);
 
     /// parse a list of local variables as returned by
     /// the GDBMI command -stack-list-locals 2
