@@ -7156,15 +7156,6 @@ DBGPerspective::disassemble_around_address_and_do
 
     addr_range.max (addr_range.max () + total_instrs_size);
 
-    // Also, try disassembling one insn *before* the starting @ of the
-    // range. Otherwise, sometimes, we miss the instruction that is at
-    // that address because GDB doesn't send it back to us in the
-    // disass. That leads to an infinite loop as our calling chain
-    // will then look for the insn having that @, won't find it, and
-    // will call us again with that @ as starting range of disass. 
-    if (addr_range.min () > instr_size)
-        addr_range.min (addr_range.min () - instr_size);
-
     debugger ()->disassemble (/*start_addr=*/addr_range.min (),
                               /*start_addr_relative_to_pc=*/false,
                               /*end_addr=*/addr_range.max (),
