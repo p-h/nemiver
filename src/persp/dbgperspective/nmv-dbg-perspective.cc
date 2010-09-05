@@ -6747,6 +6747,8 @@ DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
     THROW_IF_FAIL (a_editor->get_buffer_type ()
                    == SourceEditor::BUFFER_TYPE_ASSEMBLY);
 
+    /// Apply breakpoint decorations to the breakpoints that are
+    /// within the address range currently displayed.
     map<int, IDebugger::Breakpoint>::const_iterator it;
     for (it = m_priv->breakpoints.begin ();
          it != m_priv->breakpoints.end ();
@@ -6755,13 +6757,14 @@ DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
             Address addr = it->second.address ();
             if (!append_visual_breakpoint (a_editor, addr,
                                            it->second.enabled ())) {
-                LOG_ERROR ("Could'nt find line for address: "
-                           << addr.to_string ()
-                           << " for file: "
-                           << a_editor->get_path ());
+                LOG_DD ("Could'nt find line for address: "
+                        << addr.to_string ()
+                        << " for file: "
+                        << a_editor->get_path ());
             }
         }
     }
+
     // If we don't want to scroll to the "where marker", then scroll to
     // the line that was precedently selected
     int cur_line;
@@ -6775,6 +6778,11 @@ DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
         a_editor->scroll_to_line (cur_line);
     }
 
+    // Now apply decoration to the where marker. If the address of the
+    // where marker is not within the address range currently
+    // displayed, then disassemble instructions around the where
+    // marker's address, display that, and move the where marker
+    // to the correct address.
     if (get_current_source_editor () == a_editor)
         set_where (a_editor,
                    m_priv->current_frame.address (),
