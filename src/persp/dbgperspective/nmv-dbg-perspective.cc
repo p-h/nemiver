@@ -1689,13 +1689,16 @@ DBGPerspective::on_breakpoint_go_to_source_action
                 source_editor->scroll_to_line (a_breakpoint.line ());
                 break;
             case SourceEditor::BUFFER_TYPE_ASSEMBLY:
-                source_editor->scroll_to_address
-                                        (a_breakpoint.address ());
+                if (source_editor->scroll_to_address
+                    (a_breakpoint.address ()) == false)
+                    source_editor = 0;
                 break;
             case SourceEditor::BUFFER_TYPE_UNDEFINED:
                 break;
         }
-    } else {
+    }
+
+    if (source_editor == 0) {
         IDebugger::DisassSlot scroll_to_address;
         scroll_to_address =
             sigc::bind (sigc::mem_fun
