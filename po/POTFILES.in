@@ -1,12 +1,13 @@
 [encoding: UTF-8]
 glade/workbench.glade
+glade/locatefiledialog.glade
 data/nemiver.desktop.in
 src/main.cc
+src/uicommon/nmv-locate-file-dialog.cc
 src/persp/dbgperspective/glade/bodycontainer.glade
 src/persp/dbgperspective/glade/callfunctiondialog.glade
 src/persp/dbgperspective/glade/findtextdialog.glade
 src/persp/dbgperspective/glade/loadcoredialog.glade
-src/persp/dbgperspective/glade/locatefiledialog.glade
 src/persp/dbgperspective/glade/openfiledialog.glade
 src/persp/dbgperspective/glade/preferencesdialog.glade
 src/persp/dbgperspective/glade/proclistdialog.glade
@@ -23,7 +24,6 @@ src/persp/dbgperspective/nmv-breakpoints-view.cc
 src/persp/dbgperspective/nmv-call-stack.cc
 src/persp/dbgperspective/nmv-dbg-perspective.cc
 src/persp/dbgperspective/nmv-file-list.cc
-src/persp/dbgperspective/nmv-locate-file-dialog.cc
 src/persp/dbgperspective/nmv-memory-view.cc
 src/persp/dbgperspective/nmv-preferences-dialog.cc
 src/persp/dbgperspective/nmv-proc-list-dialog.cc
