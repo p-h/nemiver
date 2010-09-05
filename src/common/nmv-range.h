@@ -31,6 +31,7 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (common)
 
+/// This abstracts a range of integer values.
 class Range {
     size_t m_min;
     size_t m_max;
@@ -69,14 +70,25 @@ public:
     {
     }
 
+    /// Accessors of the lower bound of the range.
     size_t min () const {return m_min;}
     void min (size_t a) {m_min = a;}
+
+    /// Accessors of the upper bound of the range.
     size_t max () const {return m_max;}
     void max (size_t a) {m_max = a;}
+
+    /// Returns true if a_value is within the range.
     bool contains (size_t a_value) const
     {
         return (a_value >= m_min && a_value <= m_max);
     }
+
+    /// Extends the range. If a_value is greater than the upper bound
+    /// of the range, then the range becomes [lower-bound, a_value].
+    /// If a_value is less than the lower bound of the range, then the
+    /// range becomes [a_value, upper-bound]. If a_value is within the
+    /// range, nothing happens.
     void extend (size_t a_value)
     {
         if (!contains (a_value)) {
