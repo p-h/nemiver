@@ -36,6 +36,33 @@ class Range {
     size_t m_max;
 
 public:
+
+    /// An enum representing the result of the searching of a range
+    /// around a value. E.g, suppose we have an ordered set of integer
+    /// values vi {v1, v2, v3 ...} that we name V.
+    /// Suppose we also have a particular integer N. And we want to
+    /// make the query expressed as: "What is the smallest range
+    /// R{vi,vi+p} that encloses N?".
+    /// If we had a function that would execute that query and return
+    /// an answer, this enum would help us know more about the how N
+    /// relates to the returned range.
+    /// VALUE_SEARCH_RESULT_EXACT means
+    /// that the N equals vi and equals vi+p. It means the range is
+    /// actually a single value, which is N.
+    /// VALUE_SEARCH_RESULT_WITHIN means that N is greater than vi
+    /// and less than vi+p. I means N is within the range.
+    /// VALUE_SEARCH_RESULT_BEFORE means that N is less then vi, and
+    /// so less than vi+p too. It means N is before the range.
+    /// VALUE_SEARCH_RESULT_AFTER means N is greater than vi+p, and so
+    /// greater than vi too. It means N is after the range.
+    enum ValueSearchResult {
+        VALUE_SEARCH_RESULT_EXACT = 0,
+        VALUE_SEARCH_RESULT_WITHIN,
+        VALUE_SEARCH_RESULT_BEFORE,
+        VALUE_SEARCH_RESULT_AFTER,
+        VALUE_SEARCH_RESULT_NONE // <-- must always be last.
+    };
+
     Range (size_t a_min = 0, size_t a_max = 0) :
         m_min (a_min),
         m_max (a_max)

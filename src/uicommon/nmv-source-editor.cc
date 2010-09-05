@@ -332,6 +332,84 @@ struct SourceEditor::Priv {
         return 0;
     }
 
+    typedef std::pair<Address, int> AddrLine;
+    typedef std::pair<AddrLine, AddrLine> AddrLineRange;
+
+    common::Range::ValueSearchResult
+    get_smallest_range_containing_address (Glib::RefPtr<SourceBuffer> a_buf,
+                                           const Address &an_addr,
+                                           AddrLineRange &a_range) const
+                                    
+    {
+        Gtk::TextBuffer::iterator it = a_buf->begin ();
+        size_t  i;
+        std::string addr;
+        AddrLine lower_bound, upper_bound;
+
+        THROW_IF_FAIL (it.starts_line ());
+
+        while (!it.is_end ()) {
+            // We must always be at the beginning of a line here.
+            THROW_IF_FAIL (it.starts_line ());
+            addr.clear ();
+            for (i = 0;
+                 !isspace (it.get_char ()) && it.ends_line () != true
+                     && i < an_addr.string_size ();
+                 ++it, ++i) {
+                addr += it.get_char ();
+            }
+
+            int match = (addr.compare (an_addr.to_string ()));
+
+            if (match < 0
+                && str_utils::string_is_hexa_number (addr)) {
+                lower_bound.first = addr;
+                lower_bound.second = it.get_line () + 1;
+            }
+
+            if (match > 0
+                && str_utils::string_is_hexa_number (addr)) {
+                if (lower_bound.first.empty ()) {
+                    // So we are seing an @ that is greater than
+                    // an_addr without having ever seen an @ that is
+                    // lower than an_addr.  That means all the @s of
+                    // the buffer are greater than an_addr.
+                    return common::Range::VALUE_SEARCH_RESULT_BEFORE;
+                } else {
+                    // So the previous @ we saw was lower than
+                    // a_address and this one is greater. it means we
+                    // the buffer does not contain a_address, but
+                    // rather contains at a range of @s that surrounds
+                    // a_address. Return that range.
+                    upper_bound.first = addr;
+                    upper_bound.second = it.get_line () + 1;
+                    a_range.first = lower_bound;
+                    a_range.second = upper_bound;
+                    return common::Range::VALUE_SEARCH_RESULT_WITHIN;
+                }
+            }
+
+            if (match == 0) {
+                a_range.first.first = an_addr;
+                a_range.first.second = it.get_line () + 1;
+                a_range.second = a_range.first;
+                return common::Range::VALUE_SEARCH_RESULT_EXACT;
+            } else {
+                // Go to next line.
+                it.forward_line ();
+            }
+        }
+
+        if (!lower_bound.first.empty ()) {
+            if (upper_bound.first.empty ())
+                return common::Range::VALUE_SEARCH_RESULT_AFTER;
+            else
+                THROW ("unreachable");
+        }
+         
+        return common::Range::VALUE_SEARCH_RESULT_NONE;
+    }
+
     bool
     address_2_line (Glib::RefPtr<SourceBuffer> a_buf,
 		    const Address an_addr,
@@ -340,27 +418,14 @@ struct SourceEditor::Priv {
         if (!a_buf)
             return false;
 
-        Gtk::TextBuffer::iterator it = a_buf->begin ();
-        size_t  i;
-        std::string addr;
-        while (!it.is_end ()) {
-            // We must always be at the beginning of a line here.
-            THROW_IF_FAIL (it.starts_line ());
-            addr.clear ();
-            for (i = 0;
-                 !isspace (it.get_char ()) && it.ends_line () != true
-                 && i < an_addr.string_size ();
-                 ++it, ++i) {
-                addr += it.get_char ();
-            }
-            bool match = (addr == an_addr.to_string ());
-            if (match) {
-                a_line = it.get_line () + 1;
-                return true;
-            } else {
-                // Go to next line.
-                it.forward_line ();
-            }
+        AddrLineRange range;
+        common::Range::ValueSearchResult s =
+            get_smallest_range_containing_address (a_buf, an_addr, range);
+
+        if (s == common::Range::VALUE_SEARCH_RESULT_EXACT
+            || s == common::Range::VALUE_SEARCH_RESULT_WITHIN) {
+            a_line = range.second.second;
+            return true;
         }
         return false;
     }
