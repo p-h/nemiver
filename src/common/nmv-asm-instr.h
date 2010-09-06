@@ -151,7 +151,10 @@ class Asm {
   bool empty () const
   {
     switch (which ()) {
-    case TYPE_PURE:
+    case TYPE_PURE: {
+      const AsmInstr instr = boost::get<AsmInstr> (m_asm);
+      return instr.address ().empty ();
+    }
       break;
     case TYPE_MIXED: {
       const MixedAsmInstr &mixed =
