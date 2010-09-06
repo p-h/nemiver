@@ -153,17 +153,19 @@ public:
 
     bool switch_to_non_assembly_source_buffer ();
 
-    bool assembly_buf_addr_to_line (const Address&, int&) const;
+    bool assembly_buf_addr_to_line (const Address&, bool, int&) const;
     bool assembly_buf_line_to_addr (int, Address &) const;
     bool get_assembly_address_range (common::Range &a) const;
     bool move_where_marker_to_address (const Address &address,
-                                       bool do_scroll);
+                                       bool do_scroll,
+				       bool a_approximate);
     bool place_cursor_at_line (size_t);
     bool place_cursor_at_address (const Address &);
     bool set_visual_breakpoint_at_address (const Address &a_address,
                                            bool enabled = true);
     bool remove_visual_breakpoint_from_address (const Address &);
-    bool scroll_to_address (const Address &a_address);
+    bool scroll_to_address (const Address &a_address,
+			    bool a_approximate);
 
     static bool add_asm (const common::DisassembleInfo &/*a_info*/,
 			 const std::list<common::Asm> &a_asm,

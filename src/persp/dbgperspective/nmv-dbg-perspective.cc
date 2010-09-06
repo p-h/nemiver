@@ -544,10 +544,11 @@ public:
 
     void switch_to_asm (const common::DisassembleInfo &a_info,
                         const std::list<common::Asm> &a_asm,
-                        SourceEditor *a_editor);
+                        SourceEditor *a_editor,
+                        bool a_approximate_where = false);
 
     void pump_asm_including_address (SourceEditor *a_editor,
-                                     const Address a_address);
+                                     const Address &a_address);
 
     void switch_to_source_code ();
 
@@ -689,7 +690,8 @@ public:
     bool apply_decorations_to_source (SourceEditor *a_editor,
                                       bool scroll_to_where_marker = false);
     bool apply_decorations_to_asm (SourceEditor *a_editor,
-                                   bool scroll_to_where_marker = false);
+                                   bool a_scroll_to_where_marker = false,
+                                   bool a_approximate_where = false);
 
     IDebuggerSafePtr& debugger ();
 
@@ -780,7 +782,8 @@ public:
     bool set_where (SourceEditor *a_editor,
                     const Address &a_address,
                     bool a_do_scroll = true,
-                    bool a_try_hard = false);
+                    bool a_try_hard = false,
+                    bool a_approximate_where = false);
 
     void unset_where ();
 
@@ -1690,7 +1693,8 @@ DBGPerspective::on_breakpoint_go_to_source_action
                 break;
             case SourceEditor::BUFFER_TYPE_ASSEMBLY:
                 if (source_editor->scroll_to_address
-                    (a_breakpoint.address ()) == false)
+                    (a_breakpoint.address (),
+                     /*approximate=*/false) == false)
                     source_editor = 0;
                 break;
             case SourceEditor::BUFFER_TYPE_UNDEFINED:
@@ -2628,11 +2632,12 @@ DBGPerspective::on_debugger_asm_signal2
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
-    switch_to_asm (a_info, a_instrs, a_editor);
-
-    NEMIVER_CATCH
+    switch_to_asm (a_info, a_instrs, a_editor,
+                   /*a_approximate_where=*/ true);
+    
+    NEMIVER_CATCH;
 }
 
 void
@@ -2644,12 +2649,14 @@ DBGPerspective::on_debugger_asm_signal3
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
-    switch_to_asm (a_info, a_instrs, a_editor);
-    append_visual_breakpoint (a_editor, a_bp.address (), a_bp.line ());
+    switch_to_asm (a_info, a_instrs, a_editor,
+                   /*a_approximate_where=*/true);
+    append_visual_breakpoint (a_editor, a_bp.address (),
+                              a_bp.line ());
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
 }
 
 void
@@ -2665,7 +2672,8 @@ DBGPerspective::on_debugger_asm_signal4
     SourceEditor* editor = open_asm (a_info, a_instrs, /*set_where=*/false);
     THROW_IF_FAIL (editor);
     bring_source_as_current (editor);
-    editor->scroll_to_address (a_address);
+    editor->scroll_to_address (a_address,
+                               /*approximate=*/true);
 
     NEMIVER_CATCH
 }
@@ -4461,7 +4469,8 @@ bool
 DBGPerspective::set_where (SourceEditor *a_editor,
                            const Address &a_address,
                            bool a_do_scroll,
-                           bool a_try_hard)
+                           bool a_try_hard,
+                           bool a_approximate)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -4476,7 +4485,8 @@ DBGPerspective::set_where (SourceEditor *a_editor,
     // The IP points to the *next* instruction to execute. What we want
     // is the current instruction executed. So lets get the line of the
     // address that comes right before a_address.
-    if (!a_editor->move_where_marker_to_address (a_address, a_do_scroll)) {
+    if (!a_editor->move_where_marker_to_address (a_address, a_do_scroll,
+                                                 a_approximate)) {
         if (a_try_hard) {
             pump_asm_including_address (a_editor, a_address);
             return true;
@@ -5279,6 +5289,7 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
         if (!a_current_address.empty ()) {
             source_editor->assembly_buf_addr_to_line
                                 (Address (a_current_address.raw ()),
+                                 /*approximate=*/false,
                                  current_line);
         }
     } else {
@@ -5542,14 +5553,22 @@ DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
     switch_to_asm (a_info, a_asm, source_editor);
 }
 
-// Switch a_source_editor into the asm mode and load the asm insns
-// represented by a_info and a_asm into its source buffer.
-// \param a_info descriptor of the assembly instructions
-// \param a_asm a list of asm instructions.
+/// Switch a_source_editor into the asm mode and load the asm insns
+/// represented by a_info and a_asm into its source buffer.
+/// \param a_info descriptor of the assembly instructions
+/// \param a_asm a list of asm instructions.
+/// \param a_source_editor the source editor to switch into asm mode.
+/// \param a_approximate_where if true and if the current instruction
+/// pointer's address is missing from the list of asm instructions,
+/// try set the where marker to the closest address that comes right
+/// after the instruction pointer's address. Otherwise, try to
+/// disassemble and pump in more asm instructions whose addresses will
+/// likely contain the one of the instruction pointer.
 void
 DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
                                const std::list<common::Asm> &a_asm,
-                               SourceEditor *a_source_editor)
+                               SourceEditor *a_source_editor,
+                               bool a_approximate_where)
 {
     if (!a_source_editor)
         return;
@@ -5576,13 +5595,14 @@ DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
         return;
     }
     a_source_editor->current_line (-1);
-    apply_decorations (a_source_editor,
-                       /*scroll_to_where_marker=*/true);
+    apply_decorations_to_asm (a_source_editor,
+                              /*scroll_to_where_marker=*/true,
+                              a_approximate_where);
 }
 
 void
 DBGPerspective::pump_asm_including_address (SourceEditor *a_editor,
-                                            const Address a_address)
+                                            const Address &a_address)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -6739,7 +6759,8 @@ DBGPerspective::apply_decorations_to_source (SourceEditor *a_editor,
 
 bool
 DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
-                                          bool a_scroll_to_where_marker)
+                                          bool a_scroll_to_where_marker,
+                                          bool a_approximate_where)
 {
     if (a_editor == 0)
         return false;
@@ -6787,7 +6808,8 @@ DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
         set_where (a_editor,
                    m_priv->current_frame.address (),
                    a_scroll_to_where_marker,
-                   /*try_hard=*/true);
+                   /*try_hard=*/true,
+                   a_approximate_where);
     return true;
 }
 

@@ -332,9 +332,27 @@ struct SourceEditor::Priv {
         return 0;
     }
 
-    typedef std::pair<Address, int> AddrLine;
+    typedef std::pair<Address, size_t> AddrLine;
     typedef std::pair<AddrLine, AddrLine> AddrLineRange;
 
+    /// Return the smallest range of address/line pair enclosing the
+    /// instruction whose address is an_addr.
+    /// \param a_buf the buffer to look into.
+    /// \param an_addr the address of the instruction to look for.
+    /// \param a_range output parameter. the range found.
+    /// This range either encloses
+    /// an_addr if such a range is found, or is the range (possibly
+    /// reduced to a single value) that comes after or before an_addr
+    /// if no enclosing range is found in the buffer for an_addr.
+    /// \return Range::VALUE_SEARCH_RESULT_EXACT If an instruction which
+    /// address is an_addr is found; Range::VALUE_SEARCH_RESULT_BEFORE
+    /// if an_addr is smaller than all the addresses of a_buf. In
+    /// that case, the smaller address of a_buf is returned into
+    /// a_range; Range::VALUE_SEARCH_RESULT_AFTER if an_addr is higher
+    /// than all addresses found in the buffer. In that case the
+    /// higher address found in a_buf is returned into a_range;
+    /// Range::VALUE_SEARCH_RESULT_NONE when no address has been found
+    /// in the buffer.
     common::Range::ValueSearchResult
     get_smallest_range_containing_address (Glib::RefPtr<SourceBuffer> a_buf,
                                            const Address &an_addr,
@@ -374,6 +392,9 @@ struct SourceEditor::Priv {
                     // an_addr without having ever seen an @ that is
                     // lower than an_addr.  That means all the @s of
                     // the buffer are greater than an_addr.
+                    a_range.first.first = addr;
+                    a_range.first.second = it.get_line () + 1;
+                    a_range.second = a_range.first;
                     return common::Range::VALUE_SEARCH_RESULT_BEFORE;
                 } else {
                     // So the previous @ we saw was lower than
@@ -401,18 +422,32 @@ struct SourceEditor::Priv {
         }
 
         if (!lower_bound.first.empty ()) {
-            if (upper_bound.first.empty ())
+            if (upper_bound.first.empty ()) {
+                a_range.first.first = lower_bound.first;
+                a_range.second = a_range.first;
                 return common::Range::VALUE_SEARCH_RESULT_AFTER;
-            else
+            } else {
                 THROW ("unreachable");
+            }
         }
          
         return common::Range::VALUE_SEARCH_RESULT_NONE;
     }
 
+    /// Return the number of the line in a_buf that contains an asm
+    /// instruction of whose address is an_addr.
+    /// \param a_buf the buffer to search into
+    /// \param an_addr the address of the instruction to look for.
+    /// \param a_approximate if true and if an_addr hasn't been found
+    /// in the buffer, return the line that matches the closes address
+    /// found.
+    /// \param a_line output parameter. Is set to the line found, iff
+    /// the function returns true. Otherwise this parameter is not touched.
+    /// \return true upon successful completion, false otherwise.
     bool
     address_2_line (Glib::RefPtr<SourceBuffer> a_buf,
 		    const Address an_addr,
+                    bool a_approximate,
 		    int &a_line) const
     {
         if (!a_buf)
@@ -422,9 +457,15 @@ struct SourceEditor::Priv {
         common::Range::ValueSearchResult s =
             get_smallest_range_containing_address (a_buf, an_addr, range);
 
-        if (s == common::Range::VALUE_SEARCH_RESULT_EXACT
-            || s == common::Range::VALUE_SEARCH_RESULT_WITHIN) {
-            a_line = range.second.second;
+        if (s == common::Range::VALUE_SEARCH_RESULT_EXACT) {
+            a_line = range.first.second;
+            return true;
+        }
+
+        if (a_approximate
+            && (s == common::Range::VALUE_SEARCH_RESULT_WITHIN
+                || s == common::Range::VALUE_SEARCH_RESULT_BEFORE)) {
+            a_line = range.first.second;
             return true;
         }
         return false;
@@ -1495,7 +1536,7 @@ SourceEditor::set_visual_breakpoint_at_address (const Address &a_address,
                                                 bool a_enabled)
 {
     int line = -1;
-    if (!assembly_buf_addr_to_line (a_address, line))
+    if (!assembly_buf_addr_to_line (a_address, false, line))
         return false;
     return set_visual_breakpoint_at_line (line, a_enabled);
 
@@ -1510,16 +1551,21 @@ bool
 SourceEditor::remove_visual_breakpoint_from_address (const Address &a_address)
 {
     int line = -1;
-    if (!assembly_buf_addr_to_line (a_address, line))
+    if (!assembly_buf_addr_to_line (a_address, false, line))
         return false;
     return remove_visual_breakpoint_from_line (line);
 }
 
+/// Scroll the instruction which address is specified.
+/// \param a_address the instruction which address to scroll to.
+/// \param a_approximate if true and if the a_address hasn't been
+/// found in the buffer, scroll to the closes address found.
 bool
-SourceEditor::scroll_to_address (const Address &a_address)
+SourceEditor::scroll_to_address (const Address &a_address,
+                                 bool a_approximate)
 {
     int line = -1;
-    if (!assembly_buf_addr_to_line (a_address, line))
+    if (!assembly_buf_addr_to_line (a_address, a_approximate, line))
         return false;
     return scroll_to_line (line);
 }
@@ -1561,11 +1607,19 @@ SourceEditor::switch_to_non_assembly_source_buffer ()
     return false;
 }
 
+/// Give the source line number at which an asm instruction of a given
+/// address is.
+/// \param a_address the address of the asm instruction to look for.
+/// \param a_approximate if true and if the a_addr hasn't been found
+/// in the the buffer, then return the closest address
+/// found. Otherwise, pretend the we haven't found the address.
 bool
-SourceEditor::assembly_buf_addr_to_line (const Address &a_addr, int &a_line) const
+SourceEditor::assembly_buf_addr_to_line (const Address &a_addr,
+                                         bool a_approximate,
+                                         int &a_line) const
 {
     Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
-    return m_priv->address_2_line (buf, a_addr, a_line);
+    return m_priv->address_2_line (buf, a_addr, a_approximate, a_line);
 }
 
 bool
@@ -1592,10 +1646,11 @@ SourceEditor::get_assembly_address_range (Range &a) const
 
 bool
 SourceEditor::move_where_marker_to_address (const Address &a_address,
-                                            bool a_do_scroll)
+                                            bool a_do_scroll,
+                                            bool a_approximate)
 {
     int line = -1;
-    if (!assembly_buf_addr_to_line (a_address, line)) {
+    if (!assembly_buf_addr_to_line (a_address, a_approximate, line)) {
         return false;
     }
     return move_where_marker_to_line (line, a_do_scroll);
@@ -1622,7 +1677,7 @@ SourceEditor::place_cursor_at_address (const Address &a_address)
     if (get_buffer_type () != BUFFER_TYPE_ASSEMBLY)
         return false;
     int line = -1;
-    if (!assembly_buf_addr_to_line (a_address, line))
+    if (!assembly_buf_addr_to_line (a_address, false, line))
         return false;
     return place_cursor_at_line (line);
 
