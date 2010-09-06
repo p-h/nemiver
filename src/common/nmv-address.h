@@ -44,9 +44,14 @@ public:
     operator size_t () const;
     size_t size () const;
     size_t string_size () const;
+    bool operator<  (const Address&) const;
+    bool operator<= (const Address&) const;
+    bool operator>  (const Address&) const;
+    bool operator>= (const Address&) const;
+    bool operator== (const Address&) const;
+    bool operator== (const std::string &) const;
+    bool operator== (size_t) const;
     Address& operator= (const std::string &);
-    friend bool operator== (const Address&, const std::string &);
-    friend bool operator== (const Address&, size_t);
     const char& operator[] (size_t) const;
     void clear ();
 };// end class Address

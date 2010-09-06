@@ -102,6 +102,36 @@ Address::operator= (const std::string &a_addr)
     return *this;
 }
 
+bool
+Address::operator< (const Address &a_addr) const
+{
+  return ((size_t) *this < (size_t) a_addr);
+}
+
+bool
+Address::operator> (const Address &a_addr) const
+{
+  return ((size_t) *this > (size_t) a_addr);
+}
+
+bool
+Address::operator>= (const Address &a_addr) const
+{
+  return ((size_t) *this >= (size_t) a_addr);
+}
+
+bool
+Address::operator<= (const Address &a_addr) const
+{
+  return ((size_t) *this <= (size_t) a_addr);
+}
+
+bool
+Address::operator== (const Address &a_addr) const
+{
+  return ((size_t) *this == (size_t)a_addr);
+}
+
 const char&
 Address::operator[] (size_t a_index) const
 {
@@ -115,17 +145,15 @@ Address::clear ()
 }
 
 bool
-operator== (const Address &a_address,
-            const std::string &a_addr)
+Address::operator== (const std::string &a_addr) const
 {
-    return a_address.m_addr == a_addr;
+    return m_addr == a_addr;
 }
 
 bool
-operator== (const Address &a_address,
-            size_t a_addr)
+Address::operator== (size_t a_addr) const
 {
-    return (size_t) a_address == a_addr;
+    return (size_t) *this == a_addr;
 }
 
 NEMIVER_END_NAMESPACE (common)
