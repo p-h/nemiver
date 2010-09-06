@@ -1017,12 +1017,18 @@ SourceEditor::do_search (const UString &a_str,
     }
 
     SourceIter search_iter, limit;
+    if (source_view ().get_source_buffer ())
+        search_iter =
+            source_view ().get_source_buffer ()->get_insert ()->get_iter ();
+
     if (a_search_backwards) {
-        search_iter = source_buffer->end ();
+        if (!search_iter)
+            search_iter = source_buffer->end ();
         search_iter--;
         limit = source_buffer->begin ();
     } else {
-        search_iter = source_buffer->begin ();
+        if (!search_iter)
+            search_iter = source_buffer->begin ();
         limit = source_buffer->end ();
         limit--;
     }
