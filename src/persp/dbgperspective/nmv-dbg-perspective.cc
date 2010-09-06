@@ -2222,7 +2222,10 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
     }
 #endif // WITH_SOURCEVIEWMM2
     else if (a_key == CONF_KEY_DEFAULT_NUM_ASM_INSTRS) {
-        m_priv->num_instr_to_disassemble = boost::get<int> (a_value);
+        // m_priv->num_instr_to_disassemble must never be NULL!
+        int val = boost::get<int> (a_value);
+        if (val != 0)
+            m_priv->num_instr_to_disassemble = val;
     } else if (a_key == CONF_KEY_ASM_STYLE_PURE) {
         m_priv->asm_style_pure = boost::get<bool> (a_value);
     }
@@ -7136,8 +7139,7 @@ DBGPerspective::disassemble_and_do (IDebugger::DisassSlot &a_what_to_do,
 
     addr_range.max (max);
 
-    THROW_IF_FAIL (addr_range.min () != 0
-                   && addr_range.max () != 0);
+    THROW_IF_FAIL (addr_range.min () != addr_range.max ());
 
     debugger ()->disassemble (/*start_addr=*/addr_range.min (),
                               /*start_addr_relative_to_pc=*/false,
@@ -7177,6 +7179,7 @@ DBGPerspective::disassemble_around_address_and_do
         m_priv->num_instr_to_disassemble * instr_size;
 
     addr_range.max (addr_range.max () + total_instrs_size);
+    THROW_IF_FAIL (addr_range.min () != addr_range.max ());
 
     debugger ()->disassemble (/*start_addr=*/addr_range.min (),
                               /*start_addr_relative_to_pc=*/false,
