@@ -61,11 +61,13 @@ public:
     Glib::RefPtr<Gtk::ListStore> list_store;
     IDebuggerSafePtr& debugger;
     bool is_up2date;
-
+    bool first_run;
     Priv (IDebuggerSafePtr& a_debugger) :
         debugger(a_debugger),
-        is_up2date (true)
+        is_up2date (true),
+        first_run (true)
     {
+        first_run = true;
         build_tree_view ();
 
         // update breakpoint list when debugger indicates that the list of
@@ -124,7 +126,6 @@ public:
     void finish_handling_debugger_stopped_event ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-        static bool first_run = true;
         if (first_run) {
             first_run = false;
             debugger->list_register_names ();
@@ -311,7 +312,11 @@ void
 RegistersView::clear ()
 {
     THROW_IF_FAIL (m_priv && m_priv->list_store);
+
     m_priv->list_store->clear ();
+    // next time the wiget is used, we'll need to initialize it
+    // again. So mark it as such.
+    m_priv->first_run = true;
 }
 
 }//end namespace nemiver
