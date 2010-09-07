@@ -67,7 +67,6 @@ public:
         is_up2date (true),
         first_run (true)
     {
-        first_run = true;
         build_tree_view ();
 
         // update breakpoint list when debugger indicates that the list of
