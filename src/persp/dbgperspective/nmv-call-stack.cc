@@ -59,23 +59,29 @@ typedef SafePtr<Glib::Object, GObjectMMRef, GObjectMMUnref> GObjectMMSafePtr;
 struct CallStackCols : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> location;
     Gtk::TreeModelColumn<Glib::ustring> address;
+    Gtk::TreeModelColumn<Glib::ustring> binary;
     Gtk::TreeModelColumn<Glib::ustring> function_name;
     Gtk::TreeModelColumn<Glib::ustring> function_args;
     Gtk::TreeModelColumn<Glib::ustring> frame_index_caption;
     Gtk::TreeModelColumn<int> frame_index;
     Gtk::TreeModelColumn<bool> is_expansion_row;
 
+    /// Keep the enum in an order compatible with the how the diffent
+    /// columns are appended in CallStack::Priv::build_widget.
     enum Index {
-        LOCATION=0,
-        ADDRESS,
-        FUNCTION_NAME,
-        FUNCTION_ARGS
+        FRAME_INDEX = 0,
+        FUNCTION_NAME_INDEX,
+        FUNCTION_ARGUMENTS_INDEX,
+        LOCATION_INDEX,
+        ADDRESS_INDEX,
+        BINARY_INDEX
     };
 
     CallStackCols ()
     {
         add (location);
         add (address);
+	add (binary);
         add (function_name);
         add (function_args);
         add (frame_index_caption);
@@ -529,43 +535,41 @@ struct CallStack::Priv {
         Gtk::TreeView *tree_view = new Gtk::TreeView (store);
         THROW_IF_FAIL (tree_view);
         widget.reset (tree_view);
+	int nb_cols = 0;
         tree_view->append_column (_("Frame"), columns ().frame_index_caption);
         tree_view->append_column (_("Function"), columns ().function_name);
         tree_view->append_column (_("Arguments"), columns ().function_args);
         tree_view->append_column (_("Location"), columns ().location);
         tree_view->append_column (_("Address"), columns ().address);
+	nb_cols = tree_view->append_column (_("Binary"), columns ().binary);
+        Gtk::TreeViewColumn *col = 0;
+	for (int i = 0; i < nb_cols; ++i) {
+            col = tree_view->get_column (i);
+            col->set_resizable ();
+            col->set_clickable ();
+	}
+
+        THROW_IF_FAIL (col = tree_view->get_column (CallStackCols::BINARY_INDEX));
+        col->get_first_cell_renderer ()->set_sensitive ();
+
         tree_view->set_headers_visible (true);
+	tree_view->columns_autosize ();
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE);
 
         on_selection_changed_connection =
             tree_view->get_selection ()->signal_changed ().connect
             (sigc::mem_fun (*this,
                             &CallStack::Priv::on_selection_changed_signal));
+
         tree_view->signal_row_activated ().connect
             (sigc::hide (sigc::hide
-             (sigc::mem_fun (*this,
-                             &CallStack::Priv::on_row_activated_signal))));
+                         (sigc::mem_fun (*this,
+                                         &CallStack::Priv::on_row_activated_signal))));
 
         tree_view->signal_expose_event ().connect_notify
             (sigc::mem_fun (this, &Priv::on_expose_event_signal));
 
         tree_view->add_events (Gdk::EXPOSURE_MASK);
-
-        Gtk::TreeViewColumn* column =
-                    tree_view->get_column (CallStackCols::FUNCTION_NAME);
-        THROW_IF_FAIL (column);
-        column->set_clickable (false);
-        column->set_reorderable (false);
-
-        THROW_IF_FAIL (column = tree_view->get_column
-                                       (CallStackCols::LOCATION));
-        column->set_clickable (false);
-        column->set_reorderable (false);
-
-        THROW_IF_FAIL (column = tree_view->get_column
-                                            (CallStackCols::FUNCTION_ARGS));
-        column->set_clickable (false);
-        column->set_reorderable (false);
 
         tree_view->signal_button_press_event ().connect_notify
             (sigc::mem_fun (*this,
@@ -662,14 +666,15 @@ struct CallStack::Priv {
             store_iter = store->append ();
             (*store_iter)[columns ().is_expansion_row] = false;
             (*store_iter)[columns ().function_name] =
-                                                a_frames[i].function_name ();
+                a_frames[i].function_name ();
             if (!a_frames[i].file_name ().empty ()) {
                 (*store_iter)[columns ().location] =
                     a_frames[i].file_name () + ":"
                     + UString::from_int (a_frames[i].line ());
             }
             (*store_iter)[columns ().address] =
-                                        a_frames[i].address ().to_string ();
+                a_frames[i].address ().to_string ();
+	    (*store_iter)[columns ().binary] = a_frames[i].library ();
             (*store_iter)[columns ().frame_index] = a_frames[i].level ();
             (*store_iter)[columns ().frame_index_caption] =
                 UString::from_int (a_frames[i].level ());

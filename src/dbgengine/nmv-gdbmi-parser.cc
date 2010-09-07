@@ -2641,7 +2641,9 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
                 frame.line (atol (value.c_str ()));
             } else if ((*frame_part_iter)->variable () == "level") {
                 frame.level (atol (value.c_str ()));
-            }
+            } else if ((*frame_part_iter)->variable () == "from") {
+                frame.library (value.c_str ());
+	    }
         }
         THROW_IF_FAIL (frame.has_empty_address () != true);
         stack.push_back (frame);
