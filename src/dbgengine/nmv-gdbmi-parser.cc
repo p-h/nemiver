@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
 //Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
@@ -91,7 +92,8 @@ while (a_from < a_input.bytes () && isspace (a_input.c_str ()[a_from])) { \
 a_to = a_from;
 
 #define SKIP_WS2(a_from) \
-while (!m_priv->index_passed_end (a_from)  && isspace (RAW_CHAR_AT (a_from))) { \
+while (!m_priv->index_passed_end (a_from)  \
+       && isspace (RAW_CHAR_AT (a_from))) {     \
     CHECK_END2 (a_from);++a_from; \
 }
 
@@ -102,7 +104,8 @@ while (a_from < a_input.bytes () && isblank (a_input.c_str ()[a_from])) { \
 a_to = a_from;
 
 #define SKIP_BLANK2(a_from) \
-while (!m_priv->index_passed_end (a_from) && isblank (RAW_CHAR_AT (a_from))) { \
+while (!m_priv->index_passed_end (a_from) \
+       && isblank (RAW_CHAR_AT (a_from))) {     \
     CHECK_END2 (a_from); ++a_from; \
 }
 
@@ -255,7 +258,8 @@ gdbmi_tuple_to_string (GDBMITupleSafePtr a_result,
     if (!a_result)
         return false;
 
-    list<GDBMIResultSafePtr>::const_iterator it = a_result->content ().begin ();
+    list<GDBMIResultSafePtr>::const_iterator it = 
+        a_result->content ().begin ();
     UString str;
     bool is_ok = true;
     a_string = "{";
@@ -311,7 +315,8 @@ gdbmi_list_to_string (GDBMIListSafePtr a_list,
         case GDBMIList::RESULT_TYPE: {
             list<GDBMIResultSafePtr> results;
             a_list->get_result_content (results);
-            list<GDBMIResultSafePtr>::const_iterator result_it = results.begin ();
+            list<GDBMIResultSafePtr>::const_iterator result_it = 
+                results.begin ();
             if (result_it == results.end ())
                 break;
             if (!gdbmi_result_to_string (*result_it, str))
@@ -608,7 +613,7 @@ GDBMIParser::parse_string (UString::size_type a_from,
         str_end = cur - 1;
         break;
     }
-    Glib::ustring str (m_priv->input.raw ().c_str () + str_start,
+    Glib::ustring str (RAW_INPUT.c_str () + str_start,
                        str_end - str_start + 1);
     a_string = str;
     a_to = cur;
@@ -1221,7 +1226,10 @@ GDBMIParser::parse_stream_record (UString::size_type a_from,
         return false;
     }
 
-    for (; !m_priv->index_passed_end (cur) && isspace (RAW_CHAR_AT (cur)); ++cur) {}
+    for (; 
+         !m_priv->index_passed_end (cur) && isspace (RAW_CHAR_AT (cur)); 
+         ++cur) {
+    }
 
     bool found (false);
     if (!console.empty ()) {
@@ -1261,9 +1269,8 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
 
     if (m_priv->index_passed_end (cur)) {return false;}
 
-    if (m_priv->input.raw ().compare (cur,
-                                      strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
-                                      PREFIX_STOPPED_ASYNC_OUTPUT)) {
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+			   PREFIX_STOPPED_ASYNC_OUTPUT)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
@@ -1276,9 +1283,8 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
     bool got_frame (false);
     IDebugger::Frame frame;
     while (true) {
-        if (!m_priv->input.raw ().compare (cur,
-                                           strlen (PREFIX_FRAME),
-                                           PREFIX_FRAME)) {
+        if (!RAW_INPUT.compare (cur, strlen (PREFIX_FRAME),
+				PREFIX_FRAME)) {
             if (!parse_frame (cur, cur, frame)) {
                 LOG_PARSING_ERROR2 (cur);
                 return false;
@@ -1336,8 +1342,8 @@ GDBMIParser::parse_running_async_output (UString::size_type a_from,
 
     if (m_priv->index_passed_end (cur)) {return false;}
 
-    if (m_priv->input.raw ().compare (cur, prefix_len,
-                                      PREFIX_RUNNING_ASYNC_OUTPUT)) {
+    if (RAW_INPUT.compare (cur, prefix_len,
+			   PREFIX_RUNNING_ASYNC_OUTPUT)) {
         LOG_PARSING_ERROR_MSG2 (cur, "was expecting : '*running,'");
         return false;
     }
@@ -1375,8 +1381,8 @@ GDBMIParser::parse_thread_selected_async_output (UString::size_type a_from,
 
     if (m_priv->index_passed_end (cur)) {return false;}
 
-    if (m_priv->input.raw ().compare (cur, prefix_len,
-                                      PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
+    if (RAW_INPUT.compare (cur, prefix_len,
+			   PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
         LOG_PARSING_ERROR_MSG2 (cur, "was expecting : '=thread-selected,'");
         return false;
     }
@@ -1389,7 +1395,8 @@ GDBMIParser::parse_thread_selected_async_output (UString::size_type a_from,
         return false;
     }
     if (name != "id" && name != "thread-id") {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting attribute 'thread-id' or 'id'");
+        LOG_PARSING_ERROR_MSG2 (cur, "was expecting attribute 'thread-id' "
+                                "or 'id'");
         return false;
     }
     unsigned thread_id = atoi (value.c_str ());
@@ -1456,14 +1463,18 @@ GDBMIParser::parse_attributes (UString::size_type a_from,
     map<UString, UString> attrs;
 
     while (true) {
-        if (!parse_attribute (cur, cur, name, value)) {break;}
+        if (!parse_attribute (cur, cur, name, value)) {
+            break;
+        }
         if (!name.empty () && !value.empty ()) {
             attrs[name] = value;
             name.clear (); value.clear ();
         }
 
         while (isspace (RAW_CHAR_AT (cur))) {++cur;}
-        if (m_priv->index_passed_end (cur) || RAW_CHAR_AT (cur) != ',') {break;}
+        if (m_priv->index_passed_end (cur) || RAW_CHAR_AT (cur) != ',') {
+            break;
+        }
         if (m_priv->index_passed_end (++cur)) {break;}
     }
     a_attrs = attrs;
@@ -1551,7 +1562,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
 
-    UString::size_type cur=a_from;
+    UString::size_type cur = a_from;
 
     if (m_priv->index_passed_end (cur)) {
         LOG_PARSING_ERROR2 (cur);
@@ -1595,7 +1606,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
     while (!m_priv->index_passed_end (cur)
            && isspace (RAW_CHAR_AT (cur))) {++cur;}
 
-    if (!m_priv->input.raw ().compare (cur, 5, "(gdb)")) {
+    if (!RAW_INPUT.compare (cur, 5, "(gdb)")) {
         cur += 5;
     }
 
@@ -1682,9 +1693,8 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
                && isspace (RAW_CHAR_AT (cur))) {++cur;}
     }
 
-    if (!m_priv->input.raw ().compare (cur,
-                                       strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
-                                       PREFIX_STOPPED_ASYNC_OUTPUT)) {
+    if (!RAW_INPUT.compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
+			    PREFIX_STOPPED_ASYNC_OUTPUT)) {
         map<UString, UString> attrs;
         bool got_frame (false);
         IDebugger::Frame frame;
@@ -1714,9 +1724,8 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
         goto end;
     }
 
-    if (!m_priv->input.raw ().compare (cur,
-                                       strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
-                                       PREFIX_RUNNING_ASYNC_OUTPUT)) {
+    if (!RAW_INPUT.compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
+			    PREFIX_RUNNING_ASYNC_OUTPUT)) {
         int thread_id;
         if (!parse_running_async_output (cur, cur, thread_id)) {
             LOG_PARSING_ERROR_MSG2 (cur,
@@ -1728,10 +1737,9 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
         goto end;
     }
 
-    if (!m_priv->input.raw ().compare
-                            (cur,
-                             strlen (PREFIX_THREAD_SELECTED_ASYNC_OUTPUT),
-                                     PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
+    if (!RAW_INPUT.compare (cur,
+			    strlen (PREFIX_THREAD_SELECTED_ASYNC_OUTPUT),
+			    PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
         int thread_id;
         if (!parse_thread_selected_async_output (cur, cur, thread_id)) {
             LOG_PARSING_ERROR_MSG2 (cur,
@@ -1779,7 +1787,7 @@ GDBMIParser::parse_result_record (UString::size_type a_from,
 
     UString name, value;
     Output::ResultRecord result_record;
-    if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_DONE), PREFIX_DONE)) {
+    if (!RAW_INPUT.compare (cur, strlen (PREFIX_DONE), PREFIX_DONE)) {
         cur += 5;
         result_record.kind (Output::ResultRecord::DONE);
 
@@ -1793,8 +1801,8 @@ fetch_gdbmi_result:
                 return false;
             }
 
-            if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_BKPT),
-                                                            PREFIX_BKPT)) {
+            if (!RAW_INPUT.compare (cur, strlen (PREFIX_BKPT),
+				    PREFIX_BKPT)) {
                 IDebugger::Breakpoint breakpoint;
                 if (parse_breakpoint (cur, cur, breakpoint)) {
                     result_record.breakpoints ()[breakpoint.number ()] =
@@ -1813,10 +1821,9 @@ fetch_gdbmi_result:
                 if (parse_threads_list (cur, cur, thread_ids)) {
                     result_record.thread_list (thread_ids);
                 }
-            } else if (!m_priv->input.raw ().compare
-                                            (cur,
-                                             strlen (PREFIX_NEW_THREAD_ID),
-                                             PREFIX_NEW_THREAD_ID)) {
+            } else if (!RAW_INPUT.compare (cur,
+					   strlen (PREFIX_NEW_THREAD_ID),
+					   PREFIX_NEW_THREAD_ID)) {
                 IDebugger::Frame frame;
                 int thread_id=0;
                 if (parse_new_thread_id (cur, cur, thread_id, frame)) {
@@ -1834,8 +1841,8 @@ fetch_gdbmi_result:
                 LOG_D ("parsed a list of files: "
                        << (int) files.size (),
                        GDBMI_PARSING_DOMAIN);
-            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_STACK),
-                                                      PREFIX_STACK)) {
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_STACK),
+					   PREFIX_STACK)) {
                 vector<IDebugger::Frame> call_stack;
                 if (!parse_call_stack (cur, cur, call_stack)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -1852,9 +1859,8 @@ fetch_gdbmi_result:
                     LOG_D ("function-name: " << frame_iter->function_name (),
                            GDBMI_PARSING_DOMAIN);
                 }
-            } else if (!m_priv->input.raw ().compare (cur,
-                                                      strlen (PREFIX_FRAME),
-                                                              PREFIX_FRAME)) {
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_FRAME),
+					   PREFIX_FRAME)) {
                 IDebugger::Frame frame;
                 if (!parse_frame (cur, cur, frame)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -1862,15 +1868,14 @@ fetch_gdbmi_result:
                     LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
                     result_record.current_frame_in_core_stack_trace (frame);
                 }
-            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_DEPTH),
-                                                      PREFIX_DEPTH)) {
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_DEPTH),
+					   PREFIX_DEPTH)) {
                 GDBMIResultSafePtr result;
                 parse_gdbmi_result (cur, cur, result);
                 THROW_IF_FAIL (result);
                 LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
-            } else if (!m_priv->input.raw ().compare (cur,
-                                                      strlen (PREFIX_STACK_ARGS),
-                                                      PREFIX_STACK_ARGS)) {
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_STACK_ARGS),
+					   PREFIX_STACK_ARGS)) {
                 map<int, list<IDebugger::VariableSafePtr> > frames_args;
                 if (!parse_stack_arguments (cur, cur, frames_args)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -1878,8 +1883,8 @@ fetch_gdbmi_result:
                     LOG_D ("parsed stack args", GDBMI_PARSING_DOMAIN);
                 }
                 result_record.frames_parameters (frames_args);
-            } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_LOCALS),
-                                                      PREFIX_LOCALS)) {
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_LOCALS),
+					   PREFIX_LOCALS)) {
                 list<IDebugger::VariableSafePtr> vars;
                 if (!parse_local_var_list (cur, cur, vars)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -1887,9 +1892,8 @@ fetch_gdbmi_result:
                     LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN);
                     result_record.local_variables (vars);
                 }
-            } else if (!m_priv->input.raw ().compare (cur,
-                                                      strlen (PREFIX_VALUE),
-                                                      PREFIX_VALUE)) {
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_VALUE),
+					   PREFIX_VALUE)) {
                 // FIXME: this case will parse any response from
                 // -data-evaluate-expression, including the response from
                 // setting the value of a register or any other expression
@@ -1904,9 +1908,8 @@ fetch_gdbmi_result:
                     THROW_IF_FAIL (var);
                     result_record.variable_value (var);
                 }
-            } else if (!m_priv->input.raw ().compare (cur,
-                                                      strlen (PREFIX_REGISTER_NAMES),
-                                                      PREFIX_REGISTER_NAMES)) {
+            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_REGISTER_NAMES),
+					   PREFIX_REGISTER_NAMES)) {
                 std::map<IDebugger::register_id_t, UString> regs;
                 if (!parse_register_names (cur, cur, regs)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -1914,9 +1917,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed register names", GDBMI_PARSING_DOMAIN);
                     result_record.register_names (regs);
                 }
-            } else if (!m_priv->input.raw ().compare (cur,
-                                                      strlen (PREFIX_CHANGED_REGISTERS),
-                                                      PREFIX_CHANGED_REGISTERS)) {
+            } else if (!RAW_INPUT.compare (cur, 
+					   strlen (PREFIX_CHANGED_REGISTERS),
+					   PREFIX_CHANGED_REGISTERS)) {
                 std::list<IDebugger::register_id_t> regs;
                 if (!parse_changed_registers (cur, cur, regs)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -1924,9 +1927,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed changed register", GDBMI_PARSING_DOMAIN);
                     result_record.changed_registers (regs);
                 }
-            } else if (!m_priv->input.raw ().compare (cur,
-                                                      strlen (PREFIX_REGISTER_VALUES),
-                                                      PREFIX_REGISTER_VALUES)) {
+            } else if (!RAW_INPUT.compare (cur,
+					   strlen (PREFIX_REGISTER_VALUES),
+					   PREFIX_REGISTER_VALUES)) {
                 std::map<IDebugger::register_id_t, UString>  values;
                 if (!parse_register_values (cur, cur,  values)) {
                     LOG_PARSING_ERROR2 (cur);
@@ -1934,8 +1937,9 @@ fetch_gdbmi_result:
                     LOG_D ("parsed register values", GDBMI_PARSING_DOMAIN);
                     result_record.register_values (values);
                 }
-            } else if (!m_priv->input.compare (cur, strlen (PREFIX_MEMORY_VALUES),
-                        PREFIX_MEMORY_VALUES)) {
+            } else if (!m_priv->input.compare (cur, 
+					       strlen (PREFIX_MEMORY_VALUES),
+					       PREFIX_MEMORY_VALUES)) {
                 size_t addr;
                 std::vector<uint8_t>  values;
                 if (!parse_memory_values (cur, cur, addr, values)) {
@@ -1970,7 +1974,8 @@ fetch_gdbmi_result:
                            GDBMI_PARSING_DOMAIN);
                     result_record.variable (var);
                 }
-            } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_VARIABLE_DELETED),
+            } else if (!RAW_INPUT.compare (cur, 
+					   strlen (PREFIX_VARIABLE_DELETED),
                                            PREFIX_VARIABLE_DELETED)) {
                 unsigned int nb_variables_deleted = 0;
                 if (parse_variables_deleted (cur, cur, nb_variables_deleted)
@@ -2027,22 +2032,22 @@ fetch_gdbmi_result:
                  !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
                  ++cur) {}
         }
-    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_RUNNING),
-                                              PREFIX_RUNNING)) {
+    } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_RUNNING),
+				   PREFIX_RUNNING)) {
         result_record.kind (Output::ResultRecord::RUNNING);
         cur += 8;
         for (;
              !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
              ++cur) {}
-    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_EXIT),
-                                              PREFIX_EXIT)) {
+    } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_EXIT),
+				   PREFIX_EXIT)) {
         result_record.kind (Output::ResultRecord::EXIT);
         cur += 5;
         for (;
              !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
              ++cur) {}
-    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_CONNECTED),
-                                              PREFIX_CONNECTED)) {
+    } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_CONNECTED),
+				   PREFIX_CONNECTED)) {
         result_record.kind (Output::ResultRecord::CONNECTED);
         cur += 10;
         for (;
@@ -2050,12 +2055,14 @@ fetch_gdbmi_result:
              && RAW_CHAR_AT (cur) != '\n';
              ++cur) {
         }
-    } else if (!m_priv->input.raw ().compare (cur, strlen (PREFIX_ERROR),
-                                              PREFIX_ERROR)) {
+    } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_ERROR),
+				   PREFIX_ERROR)) {
         result_record.kind (Output::ResultRecord::ERROR);
         cur += 6;
         CHECK_END2 (cur);
-        if (!m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) == ',') {++cur;}
+        if (!m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) == ',') {
+            ++cur;
+        }
         CHECK_END2 (cur);
         if (!parse_attribute (cur, cur, name, value)) {
             LOG_PARSING_ERROR2 (cur);
@@ -2333,7 +2340,8 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
 
-    if (RAW_INPUT.compare (cur, strlen (PREFIX_THREAD_IDS), PREFIX_THREAD_IDS)) {
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_THREAD_IDS), 
+                           PREFIX_THREAD_IDS)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
@@ -2383,13 +2391,15 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
                 THROW_IF_FAIL ((*it)->value ()
                                && ((*it)->value ()->content_type ()
                                    == GDBMIValue::STRING_TYPE));
-                thread_id = atoi ((*it)->value ()->get_string_content ().c_str ());
+                thread_id = atoi ((*it)->value ()->get_string_content ()
+                                  .c_str ());
                 THROW_IF_FAIL (thread_id);
                 thread_ids.push_back (thread_id);
             }
         } else if (gdbmi_result->variable () == "number-of-threads") {
             // We've got a RESULT which variable is "number-of-threads",
-            // we expect the result to be a string which is the number of threads.
+            // we expect the result to be a string which is the number 
+            // of threads.
             THROW_IF_FAIL (gdbmi_result->value ()
                            && gdbmi_result->value ()->content_type ()
                            == GDBMIValue::STRING_TYPE);
@@ -3402,7 +3412,7 @@ GDBMIParser::parse_var_list_children
         // The components of a given variable result_it are packed into
         // the list of RESULT below.
         list<GDBMIResultSafePtr> child_comps =
-                        (*result_it)->value ()->get_tuple_content ()->content ();
+            (*result_it)->value ()->get_tuple_content ()->content ();
 
         // Walk the list of the components of the current child of a_var.
         // At this end of this walk, we will be able to build a child
