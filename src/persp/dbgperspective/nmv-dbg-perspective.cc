@@ -799,9 +799,6 @@ public:
 
     list<UString>& get_global_search_paths ();
 
-    bool find_file_in_source_dirs (const UString &a_file_name,
-                                   UString &a_file_path);
-
     bool do_monitor_file (const UString &a_path);
 
     bool do_unmonitor_file (const UString &a_path);
@@ -4673,17 +4670,6 @@ DBGPerspective::get_global_search_paths ()
         read_default_config ();
     }
     return m_priv->global_search_paths;
-}
-
-bool
-DBGPerspective::find_file_in_source_dirs (const UString &a_file_name,
-                                          UString &a_file_path)
-{
-    THROW_IF_FAIL (m_priv);
-
-    return common::env::find_file (a_file_name, m_priv->prog_path,
-                                   m_priv->prog_cwd, m_priv->session_search_paths,
-                                   m_priv->global_search_paths, a_file_path);
 }
 
 bool
