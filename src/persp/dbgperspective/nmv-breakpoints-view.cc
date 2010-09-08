@@ -123,6 +123,7 @@ public:
         tree_view->get_selection ()->set_mode (Gtk::SELECTION_MULTIPLE);
 
         //create the columns of the tree view
+	int nb_columns;
         tree_view->append_column_editable ("", get_bp_cols ().enabled);
         tree_view->append_column (_("ID"), get_bp_cols ().id);
         tree_view->append_column (_("Filename"), get_bp_cols ().filename);
@@ -135,12 +136,19 @@ public:
         tree_view->append_column (_("Hits"), get_bp_cols ().hits);
         tree_view->append_column (_("Expression"),
                                   get_bp_cols ().expression);
-        tree_view->append_column_editable (_("Ignore count"),
-                                           get_bp_cols ().ignore_count);
+        nb_columns = tree_view->append_column_editable (_("Ignore count"),
+							get_bp_cols ().ignore_count);
+	
+	for (int i = 0; i < nb_columns; ++i) {
+            Gtk::TreeViewColumn *col = tree_view->get_column (i);
+            col->set_clickable ();
+            col->set_resizable ();
+            col->set_reorderable ();
+	}
 
         Gtk::CellRendererToggle *enabled_toggle =
             dynamic_cast<Gtk::CellRendererToggle*>
-                                    (tree_view->get_column_cell_renderer (0));
+            (tree_view->get_column_cell_renderer (0));
         if (enabled_toggle) {
             enabled_toggle->signal_toggled ().connect
                 (sigc::mem_fun
@@ -150,36 +158,31 @@ public:
 
         Gtk::CellRendererText *r =
             dynamic_cast<Gtk::CellRendererText*>
-                (tree_view->get_column_cell_renderer (10));
+            (tree_view->get_column_cell_renderer (10));
         r->signal_edited ().connect
             (sigc::mem_fun
              (*this,
               &BreakpointsView::Priv::on_breakpoint_ignore_count_edited));
 
-        /*Gtk::TreeViewColumn *c = tree_view->get_column (10);
-        THROW_IF_FAIL (c);
-        c->add_attribute (r->property_editable (),
-                          get_bp_cols ().is_standard);*/
-
         r = dynamic_cast<Gtk::CellRendererText*>
-                (tree_view->get_column_cell_renderer (6));
+            (tree_view->get_column_cell_renderer (6));
         r->signal_edited ().connect (sigc::mem_fun
-             (*this, &BreakpointsView::Priv::on_breakpoint_condition_edited));
+                                     (*this, &BreakpointsView::Priv::on_breakpoint_condition_edited));
 
         // we must handle the button press event before the default button
         // handler since there are cases when we need to prevent the default
         // handler from running
         tree_view->signal_button_press_event ().connect
-                (sigc::mem_fun
-                     (*this, &Priv::on_breakpoints_view_button_press_signal),
-                      false /*connect before*/);
+            (sigc::mem_fun
+             (*this, &Priv::on_breakpoints_view_button_press_signal),
+             false /*connect before*/);
         tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_treeview_selection_changed));
+                                                                (*this, &Priv::on_treeview_selection_changed));
 
         tree_view->signal_key_press_event ().connect (sigc::mem_fun
-              (*this, &Priv::on_key_press_event));
+                                                      (*this, &Priv::on_key_press_event));
         tree_view->signal_expose_event ().connect_notify (sigc::mem_fun
-               (*this, &Priv::on_expose_event));
+                                                          (*this, &Priv::on_expose_event));
     }
 
     bool should_process_now ()
