@@ -5145,12 +5145,14 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     a_session.env_variables () = m_priv->env_variables;
 
     a_session.opened_files ().clear ();
-    map<UString, int>::const_iterator path_iter =
-        m_priv->path_2_pagenum_map.begin ();
-    for (;
+    map<UString, int>::const_iterator path_iter;
+    for (path_iter = m_priv->path_2_pagenum_map.begin ();
          path_iter != m_priv->path_2_pagenum_map.end ();
          ++path_iter) {
-        a_session.opened_files ().push_back (path_iter->first);
+        // Avoid saving non persistent files, e.g., things like
+        // disassembly buffers named "<Disassembly>"
+        if (m_priv->is_persistent_file (path_iter->first))
+            a_session.opened_files ().push_back (path_iter->first);
     }
 
     // Record regular breakpoints and watchpoints in the session
