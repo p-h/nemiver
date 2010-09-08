@@ -150,22 +150,18 @@ NEMIVER_API bool ask_user_to_select_file (const UString &a_file_name,
                                           const UString &a_default_dir,
                                           UString &a_selected_file_path);
 
-NEMIVER_API bool find_absolute_path_or_ask_user (const UString& a_file_path,
-                                                 const UString &a_prog_path,
-                                                 const UString &a_cwd,
-                                                 list<UString> &a_sess_dirs,
-                                                 const list<UString> &a_glob_dirs,
-                                                 map<UString, bool> &a_ignore_paths,
-                                                 bool a_ignore_if_not_found,
-                                                 UString& a_absolute_path);
+NEMIVER_API bool find_file_or_ask_user (const UString& a_file_path,
+                                        const list<UString> &a_where_to_look,
+                                        list<UString> &a_session_dirs,
+                                        map<UString, bool> &a_ignore_paths,
+                                        bool a_ignore_if_not_found,
+                                        UString& a_absolute_path);
+
 
 bool find_file_and_read_line (const UString &a_file_path,
-                              const UString &a_prog_path,
-                              const UString &a_cwd,
+                              const list<UString> &a_where_to_look,
                               list<UString> &a_sess_dirs,
-                              const list<UString> &a_glob_dirs,
                               map<UString, bool> &a_ignore_paths,
-                              bool a_ignore_if_not_found,
                               int a_line_number,
                               string &a_line);
 

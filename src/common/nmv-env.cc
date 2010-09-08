@@ -377,96 +377,41 @@ build_path_to_executable (const UString &a_exe_name,
     return true;
 }
 
+/// Find a file name, by looking in a given set of directories
+/// \param a_file_name the file name to look for.
+/// \param a_where_to_look the list of directories where to look for
+/// \param a_absolute_file_path the absolute path of the file name
+/// found. This parameter is set iff the function return true.
+/// \return true upon successful completion, false otherwise.
 bool
 find_file (const UString &a_file_name,
-           const UString &a_prog_path,
-           const UString &a_cwd,
-           const list<UString> &a_session_dirs,
-           const list<UString> &a_global_dirs,
-           UString &a_file_path)
+           const list<UString> &a_where_to_look,
+           UString &a_absolute_file_path)
 {
-    string file_name = Glib::filename_from_utf8 (a_file_name),
-        path,
-        candidate;
+    string file_name = Glib::filename_from_utf8 (a_file_name);
+    string path, candidate;
+
+    if (a_file_name.empty ())
+        return false;
 
     // first check if this is an absolute path
     if (Glib::path_is_absolute (file_name)) {
         if (Glib::file_test (file_name, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::filename_to_utf8 (file_name);
+            a_absolute_file_path = Glib::filename_to_utf8 (file_name);
             return true;
         }
     }
-    // then look in the working directory
-    candidate = Glib::build_filename (a_cwd, file_name);
-    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-        a_file_path = Glib::filename_to_utf8 (candidate);
-        return true;
-    }
-    // then look in the directory of the binary
-    candidate =
-        Glib::build_filename (Glib::path_get_dirname (a_prog_path),
-                              file_name);
-    if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-        a_file_path = Glib::filename_to_utf8 (candidate);
-        return true;
-    }
-    // then look in the session-specific search paths
-    list<UString>::const_iterator session_iter;
-    for (session_iter = a_session_dirs.begin ();
-         session_iter != a_session_dirs.end ();
-         ++session_iter) {
-        path = Glib::filename_from_utf8 (*session_iter);
+
+    // Otherwise, lookup the file in the directories we where given
+    for (list<UString>::const_iterator i = a_where_to_look.begin ();
+         i != a_where_to_look.end ();
+         ++i) {
+        path = Glib::filename_from_utf8 (*i);
         candidate = Glib::build_filename (path, file_name);
         if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::filename_to_utf8 (candidate);
+            a_absolute_file_path = Glib::filename_to_utf8 (candidate);
             return true;
         }
-    }
-    // if not found, then look in the global search paths
-    list<UString>::const_iterator global_iter;
-    for (global_iter = a_global_dirs.begin ();
-         global_iter != a_global_dirs.end ();
-         ++global_iter) {
-        path = Glib::filename_from_utf8 (*global_iter);
-        candidate = Glib::build_filename (path, file_name);
-        if (Glib::file_test (candidate, Glib::FILE_TEST_IS_REGULAR)) {
-            a_file_path = Glib::filename_to_utf8 (candidate);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool
-find_file_absolute_or_relative (const UString &a_file_name,
-                                const UString &a_prog_path,
-                                const UString &a_cwd,
-                                const list<UString> &a_session_dirs,
-                                const list<UString> &a_global_dirs,
-                                UString &a_file_path)
-{
-    // First, assume it's a full path name already.
-    if (Glib::file_test (a_file_name, Glib::FILE_TEST_IS_REGULAR)) {
-        a_file_path = a_file_name;
-        return true;
-    }
-
-    // If that didn't work, look for a file of that name in the search
-    // directories.
-    if (find_file (a_file_name, a_prog_path, a_cwd,
-                   a_session_dirs, a_global_dirs,
-                   a_file_path)) {
-        return true;
-    }
-
-    // Then look for a file of that basename in the search directories.
-    std::string basename =
-            Glib::path_get_basename (Glib::filename_from_utf8 (a_file_name));
-    if (basename != a_file_name
-        && find_file (basename, a_prog_path, a_cwd,
-                      a_session_dirs, a_global_dirs,
-                      a_file_path)) {
-        return true;
     }
     return false;
 }

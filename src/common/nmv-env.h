@@ -84,18 +84,8 @@ NEMIVER_API bool build_path_to_executable (const UString &a_exe_name,
                                            UString &a_exe_path);
 
 NEMIVER_API bool find_file (const UString &a_file_name,
-                            const UString &a_prog_path,
-                            const UString &a_cwd,
-                            const list<UString> &a_session_dirs,
-                            const list<UString> &a_global_dirs,
-                            UString &a_file_path);
-
-NEMIVER_API bool find_file_absolute_or_relative (const UString &a_file_name,
-                                                 const UString &a_prog_path,
-                                                 const UString &a_cwd,
-                                                 const list<UString> &a_sess_dirs,
-                                                 const list<UString> &a_glob_dirs,
-                                                 UString &a_file_path);
+                            const list<UString> &a_where_to_look,
+                            UString &a_aboslute_file_path);
 
 NEMIVER_API bool read_file_line (const UString &a_file_path,
                                  int a_line_number,

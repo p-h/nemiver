@@ -205,25 +205,23 @@ ask_user_to_select_file (const UString &a_file_name,
 }
 
 bool
-find_absolute_path_or_ask_user (const UString& a_file_path,
-                                const UString &a_prog_path,
-                                const UString &a_cwd,
-                                list<UString> &a_session_dirs,
-                                const list<UString> &a_global_dirs,
-                                map<UString, bool> &a_ignore_paths,
-                                bool a_ignore_if_not_found,
-                                UString& a_absolute_path)
+find_file_or_ask_user (const UString& a_file_name,
+                       const list<UString> &a_where_to_look,
+                       list<UString> &a_session_dirs,
+                       map<UString, bool> &a_ignore_paths,
+                       bool a_ignore_if_not_found,
+                       UString& a_absolute_path)
 {
-    if (!env::find_file_absolute_or_relative (a_file_path, a_prog_path,
-                                              a_cwd, a_session_dirs, a_global_dirs,
-                                              a_absolute_path)) {
-        if (a_ignore_paths.find (a_file_path)
+    if (!env::find_file (a_file_name, a_where_to_look, a_absolute_path)) {
+        if (a_ignore_paths.find (a_file_name)
             != a_ignore_paths.end ())
-            // We didn't find a_file_path but as we were previously
+            // We didn't find a_file_name but as we were previously
             // requested to *not* ask the user to locate it, just
             // pretend we didn't find the file.
             return false;
-        if (ask_user_to_select_file (a_file_path, a_cwd, a_absolute_path)) {
+        if (ask_user_to_select_file (a_file_name,
+                                     a_where_to_look.front (),
+                                     a_absolute_path)) {
             UString parent_dir =
                 Glib::filename_to_utf8 (Glib::path_get_dirname
                                         (a_absolute_path));
@@ -231,7 +229,7 @@ find_absolute_path_or_ask_user (const UString& a_file_path,
         } else {
             if (a_ignore_if_not_found)
                 // Don't ask the user to locate a_file_path next time.
-                a_ignore_paths[a_file_path] = true;
+                a_ignore_paths[a_file_name] = true;
             return false;
         }
     }
@@ -246,15 +244,9 @@ find_absolute_path_or_ask_user (const UString& a_file_path,
 /// \param a_file_path the file path to consider. Not necessarily
 /// absolute. If the file is not found, it will be searched for very hard
 /// in many places.
-/// \param a_prog_path the path of to the current program. This can be
-/// useful to search for a_file_path in case we have to search for it
-/// very hard.
-/// \param a_cwd the current working directory. This can be useful to
-/// search for a_file_path.
-/// \param a_sess_dirs a list of directories where to search for if
-/// all other places we searched for failed.
-/// \param a_glob_dirs a list of directories where to seach for if
-/// anything else failed so far.
+/// \param a_where_to_look the list of directories where to look for files.
+/// \param a_sess_dirs if the user helps to find the a file,
+/// the directory given by the user will be added to this list.
 /// \param a_ignore_paths a list of file paths to not search for. If
 /// a_file_path is present in these, we will not search for it.
 /// \param a_ignore_if_not_found if true and if we haven't found
@@ -265,12 +257,9 @@ find_absolute_path_or_ask_user (const UString& a_file_path,
 /// \return true upon successful completion, false otherwise.
 bool
 find_file_and_read_line (const UString &a_file_path,
-                         const UString &a_prog_path,
-                         const UString &a_cwd,
+                         const list<UString> &a_where_to_look,
                          list<UString> &a_sess_dirs,
-                         const list<UString> &a_glob_dirs,
                          map<UString, bool> &a_ignore_paths,
-                         bool a_ignore_if_not_found,
                          int a_line_number,
                          string &a_line)
 {
@@ -278,10 +267,11 @@ find_file_and_read_line (const UString &a_file_path,
         return false;
 
     UString path;
-    if (!find_absolute_path_or_ask_user (a_file_path, a_prog_path,
-                                         a_cwd, a_sess_dirs, a_glob_dirs,
-                                         a_ignore_paths, a_ignore_if_not_found,
-                                         path))
+    if (!find_file_or_ask_user (a_file_path,
+                                a_where_to_look,
+                                a_sess_dirs,
+                                a_ignore_paths,
+                                true, path))
         return false;
 
     return env::read_file_line (path, a_line_number, a_line);

@@ -1409,10 +1409,8 @@ bool
 SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
                        const std::list<common::Asm> &a_asm,
                        bool a_append,
-                       const UString &a_prog_path,
-                       const UString &a_cwd,
+		       const list<UString> &a_src_search_dirs,
                        list<UString> &a_session_dirs,
-                       const list<UString> &a_glob_dirs,
                        std::map<UString, bool> &a_ignore_paths,
                        Glib::RefPtr<SourceBuffer> &a_buf)
 {
@@ -1429,7 +1427,7 @@ SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
 
     // Write the first asm instruction into a string stream.
     std::ostringstream first_os, endl_os;
-    ReadLine reader (a_prog_path, a_cwd, a_session_dirs, a_glob_dirs,
+    ReadLine reader (a_src_search_dirs, a_session_dirs,
                      a_ignore_paths, &ui_utils::find_file_and_read_line);
     bool first_written = write_asm_instr (*it, reader, first_os);
     endl_os << std::endl;
@@ -1472,10 +1470,8 @@ bool
 SourceEditor::load_asm (const common::DisassembleInfo &a_info,
                         const std::list<common::Asm> &a_asm,
                         bool a_append,
-                        const UString &a_prog_path,
-                        const UString &a_cwd,
+			const list<UString> &a_src_search_dirs,
                         list<UString> &a_session_dirs,
-                        const list<UString> &a_glob_dirs,
                         std::map<UString, bool> &a_ignore_paths,
                         Glib::RefPtr<SourceBuffer> &a_buf)
 {
@@ -1490,9 +1486,8 @@ SourceEditor::load_asm (const common::DisassembleInfo &a_info,
     }
     THROW_IF_FAIL (a_buf);
 
-    add_asm (a_info, a_asm, a_append, a_prog_path, a_cwd,
-             a_session_dirs, a_glob_dirs, a_ignore_paths,
-             a_buf);
+    add_asm (a_info, a_asm, a_append, a_src_search_dirs,
+             a_session_dirs, a_ignore_paths, a_buf);
 
     NEMIVER_CATCH_AND_RETURN (false)
     return true;

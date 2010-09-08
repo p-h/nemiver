@@ -92,13 +92,10 @@ operator<< (Stream &a_out, const Asm &a_asm)
 void log_asm_insns (const std::list<common::Asm> &a_asm);
 
 typedef bool (* FindFileAndReadLine) (const UString &a_file_path,
-                                      const UString &a_prog_path,
-                                      const UString &a_cwd,
+				      const std::list<UString> &a_where_to_look,
                                       list<UString> &a_sess_dirs,
-                                      const list<UString> &a_glob_dirs,
                                       map<UString, bool> &a_ignore_paths,
-                                      bool a_ignore_if_not_found,
-                                      int a_line_number,
+				      int a_line_number,
                                       std::string &a_line);
 class ReadLine
 {
@@ -107,23 +104,20 @@ class ReadLine
     ReadLine (const ReadLine &);
 
  protected:
-    const UString &m_prog_path;
-    const UString &m_cwd;
+    const std::list<UString> &m_where_to_look;
     list<UString> &m_session_dirs;
-    const list<UString> &m_global_dirs;
     map<UString, bool> &m_ignore_paths;
     FindFileAndReadLine read_line;
 
  public:
-    ReadLine (const UString &prog_path,
-              const UString &cwd,
-              list<UString> &session_dirs,
-              const list<UString> &global_dirs,
-              map<UString, bool> &ignore_paths,
+    ReadLine (const std::list<UString> &where_to_look,
+	      list<UString> &session_dirs,
+                  map<UString, bool> &ignore_paths,
               FindFileAndReadLine read_line_func) :
-    m_prog_path (prog_path), m_cwd (cwd), m_session_dirs (session_dirs),
-        m_global_dirs (global_dirs), m_ignore_paths (ignore_paths),
-        read_line (read_line_func)
+    m_where_to_look (where_to_look),
+      m_session_dirs (session_dirs),
+      m_ignore_paths (ignore_paths),
+      read_line (read_line_func)
     {
     }
 
@@ -131,9 +125,8 @@ class ReadLine
                       int a_line_number,
                       std::string &a_line)
     {
-        return read_line (a_file_path, m_prog_path, m_cwd, m_session_dirs,
-                          m_global_dirs, m_ignore_paths, true, a_line_number,
-                          a_line);
+        return read_line (a_file_path, m_where_to_look, m_session_dirs,
+                          m_ignore_paths, a_line_number, a_line);
     }
 };
 

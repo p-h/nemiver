@@ -531,9 +531,9 @@ public:
 
     const char* get_asm_title ();
 
-    bool is_asm_title (const UString &);
-
-    bool read_file_line (const UString&, int, string&);
+    bool load_asm (const common::DisassembleInfo &a_info,
+                   const std::list<common::Asm> &a_asm,
+                   Glib::RefPtr<SourceBuffer> &a_buf);
 
     SourceEditor* open_asm (const common::DisassembleInfo &a_info,
                             const std::list<common::Asm> &a_asm,
@@ -665,11 +665,6 @@ public:
 
     void update_src_dependant_bp_actions_sensitiveness ();
 
-    bool find_absolute_path (const UString& a_file_path,
-                             UString& a_absolute_path);
-    bool find_absolute_path_or_ask_user (const UString& a_file_path,
-                                         UString& a_absolute_path,
-                                         bool a_ignore_if_not_found = true);
     bool ask_user_to_select_file (const UString &a_file_name,
                                   UString& a_selected_file_path);
     bool append_visual_breakpoint (SourceEditor *editor,
@@ -1138,6 +1133,80 @@ struct DBGPerspective::Priv {
         return SourceEditor::load_file (a_path, supported_encodings,
                                         enable_syntax_highlight,
                                         a_buffer);
+    }
+
+    bool
+    is_asm_title (const UString &a_path)
+    {
+        return (a_path.raw () == DISASSEMBLY_TITLE);
+    }
+
+    void
+    build_find_file_search_path (list<UString> &a_search_path)
+    {
+        if (!prog_path.empty ())
+            a_search_path.insert (a_search_path.end (),
+                                  Glib::path_get_dirname (prog_path));
+
+        if (!prog_cwd.empty ())
+            a_search_path.insert (a_search_path.end (), prog_cwd);
+
+        if (!session_search_paths.empty ())
+            a_search_path.insert (a_search_path.end (),
+                                  session_search_paths.begin (),
+                                  session_search_paths.end ());
+
+        if (!global_search_paths.empty ())
+            a_search_path.insert (a_search_path.end (),
+                                  global_search_paths.begin (),
+                                  global_search_paths.end ());
+    }
+
+    bool
+    find_file (const UString &a_file_name,
+               UString &a_absolute_file_path)
+    {
+        list<UString> where_to_look;
+        build_find_file_search_path (where_to_look);
+        return env::find_file (a_file_name, where_to_look,
+                               a_absolute_file_path);
+    }
+
+    /// Lookup a file path and return true if found. If the path is not
+    /// absolute, look it up in the various directories we know about
+    /// then return the absolute location at which it we found it.
+    /// \param a_file_path the file path to look up.
+    /// \param a_absolute_path the returned absolute location at which the
+    /// file got found, iff the function returned true.
+    /// \param a_ignore_if_not_found if true and if the file wasn't found
+    /// *after* we asked the user [e.g because the user clicked 'cancel'
+    /// in the dialog asking her to locate the file] subsequent calls to
+    /// this function will not ask the user to locate the file again.
+    /// \return true upon successful completion, false otherwise.
+    bool
+    find_file_or_ask_user (const UString &a_file_path,
+                           UString &a_absolute_path,
+                           bool a_ignore_if_not_found)
+    {
+        list<UString> where_to_look;
+        build_find_file_search_path (where_to_look);
+        return ui_utils::find_file_or_ask_user (a_file_path,
+                                                where_to_look,
+                                                session_search_paths,
+                                                paths_to_ignore,
+                                                a_ignore_if_not_found,
+                                                a_absolute_path);
+    }
+
+    bool
+    is_persistent_file (const UString &a_path)
+    {
+        if (is_asm_title (a_path))
+            return false;
+        UString absolute;
+        if (find_file (a_path, absolute))
+            return true;
+        return false;
     }
 
 };//end struct DBGPerspective::Priv
@@ -3948,44 +4017,6 @@ DBGPerspective::clear_session_data ()
     m_priv->global_search_paths.clear ();
 }
 
-bool
-DBGPerspective::find_absolute_path (const UString& a_file_path,
-                                    UString &a_absolute_path)
-{
-    return common::env::find_file_absolute_or_relative (a_file_path,
-                                                        m_priv->prog_path,
-                                                        m_priv->prog_cwd,
-                                                        m_priv->session_search_paths,
-                                                        m_priv->global_search_paths,
-                                                        a_absolute_path);
-}
-
-/// Lookup a file path and return true if found. If the path is not
-/// absolute, look it up in the various directories we know about
-/// then return the absolute location at which it we found it.
-/// \param a_file_path the file path to look up.
-/// \param a_absolute_path the returned absolute location at which the
-/// file got found, iff the function returned true.
-/// \param a_ignore_if_not_found if true and if the file wasn't found
-/// *after* we asked the user [e.g because the user clicked 'cancel'
-/// in the dialog asking her to locate the file] subsequent calls to
-/// this function will not ask the user to locate the file again.
-/// \return true upon successful completion, false otherwise.
-bool
-DBGPerspective::find_absolute_path_or_ask_user (const UString& a_file_path,
-                                                UString& a_absolute_path,
-                                                bool a_ignore_if_not_found)
-{
-    return ui_utils::find_absolute_path_or_ask_user (a_file_path,
-                                                     m_priv->prog_path,
-                                                     m_priv->prog_cwd,
-                                                     m_priv->session_search_paths,
-                                                     m_priv->global_search_paths,
-                                                     m_priv->paths_to_ignore,
-                                                     a_ignore_if_not_found,
-                                                     a_absolute_path);
-}
-
 void
 DBGPerspective::append_source_editor (SourceEditor &a_sv,
                                       const UString &a_path)
@@ -4117,7 +4148,8 @@ DBGPerspective::get_current_source_editor (bool a_load_if_nil)
         if (path.empty ()) {
             return 0;
         }
-        if (!find_absolute_path_or_ask_user (path, path))
+        if (!m_priv->find_file_or_ask_user (path, path,
+                                            /*ignore_if_not_found=*/false))
             return 0;
         SourceEditor *editor = open_file_real (path);
         apply_decorations (editor,
@@ -4289,7 +4321,8 @@ DBGPerspective::get_or_append_source_editor_from_path (const UString &a_path)
     SourceEditor *source_editor =
                     get_source_editor_from_path (a_path, actual_file_path);
     if (source_editor == 0) {
-        if (!find_absolute_path_or_ask_user (a_path, actual_file_path)) {
+        if (!m_priv->find_file_or_ask_user (a_path, actual_file_path,
+                                            /*ignore_if_not_found=*/false)) {
             return 0;
         }
         source_editor = open_file_real (actual_file_path);
@@ -4724,7 +4757,7 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
 
     // Disassembly result is composite content that doesn't come from
     // any on-disk file. It's thus not monitored.
-    if (is_asm_title (a_path))
+    if (m_priv->is_asm_title (a_path))
         return true;
 
     Priv::Path2MonitorMap::iterator it =
@@ -5469,9 +5502,17 @@ DBGPerspective::get_asm_title ()
 }
 
 bool
-DBGPerspective::is_asm_title (const UString &a_path)
+DBGPerspective::load_asm (const common::DisassembleInfo &a_info,
+                          const std::list<common::Asm> &a_asm,
+                          Glib::RefPtr<SourceBuffer> &a_source_buffer)
 {
-    return (a_path.raw () == DISASSEMBLY_TITLE);
+    list<UString> where_to_look_for_src;
+    m_priv->build_find_file_search_path (where_to_look_for_src);
+    return SourceEditor::load_asm (a_info, a_asm, /*a_append=*/true,
+                                   where_to_look_for_src,
+                                   m_priv->session_search_paths,
+                                   m_priv->paths_to_ignore,
+                                   a_source_buffer);
 }
 
 // If no asm dedicated tab was already present in the perspective,
@@ -5497,13 +5538,8 @@ DBGPerspective::open_asm (const common::DisassembleInfo &a_info,
         source_buffer = source_editor->source_view ().get_source_buffer ();
         source_buffer->erase (source_buffer->begin (), source_buffer->end ());
     }
-
-    if (!SourceEditor::load_asm (a_info, a_asm, /*a_append=*/true,
-                                 m_priv->prog_path, m_priv->prog_cwd,
-                                 m_priv->session_search_paths,
-                                 m_priv->global_search_paths,
-                                 m_priv->paths_to_ignore,
-                                 source_buffer))
+    
+    if (!load_asm (a_info, a_asm, source_buffer))
         return 0;
 
     if (!source_editor)
@@ -5565,11 +5601,7 @@ DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
         asm_buf = a_source_editor->get_assembly_source_buffer ();
         RETURN_IF_FAIL (asm_buf);
     }
-    if (!SourceEditor::load_asm (a_info, a_asm, /*a_append=*/true,
-                                 m_priv->prog_path, m_priv->prog_cwd,
-                                 m_priv->session_search_paths,
-                                 m_priv->global_search_paths,
-                                 m_priv->paths_to_ignore, asm_buf)) {
+    if (!load_asm (a_info, a_asm, asm_buf)) {
         LOG_ERROR ("failed to load asm");
         return;
     }
@@ -5626,8 +5658,9 @@ DBGPerspective::switch_to_source_code ()
             return;
         }
         UString absolute_path, mime_type;
-        if (!find_absolute_path_or_ask_user (m_priv->current_frame.file_name (),
-                                             absolute_path)) {
+        if (!m_priv->find_file_or_ask_user (m_priv->current_frame.file_name (),
+                                            absolute_path,
+                                            /*ignore_if_not_found=*/false)) {
             LOG_DD ("Could not find file: "
                     << m_priv->current_frame.file_name ());
             return;

@@ -170,20 +170,16 @@ public:
     static bool add_asm (const common::DisassembleInfo &/*a_info*/,
 			 const std::list<common::Asm> &a_asm,
 			 bool a_append,
-			 const UString &a_prog_path,
-			 const UString &a_cwd,
+			 const list<UString> &a_src_search_dirs,
 			 list<UString> &a_session_dirs,
-			 const list<UString> &a_glob_dirs,
 			 std::map<UString, bool> &a_ignore_paths,
 			 Glib::RefPtr<SourceBuffer> &a_buf);
 
     static bool load_asm (const common::DisassembleInfo &/*a_info*/,
 			  const std::list<common::Asm> &a_asm,
 			  bool a_append,
-			  const UString &a_prog_path,
-			  const UString &a_cwd,
+			  const list<UString> &a_src_search_dirs,
 			  list<UString> &a_session_dirs,
-			  const list<UString> &a_glob_dirs,
 			  std::map<UString, bool> &a_ignore_paths,
 			  Glib::RefPtr<SourceBuffer> &a_buf);
 
