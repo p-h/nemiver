@@ -1105,7 +1105,8 @@ struct DBGPerspective::Priv {
         }
     }
 
-    bool get_supported_encodings (list<string> &a_encodings)
+    bool
+    get_supported_encodings (list<string> &a_encodings)
     {
         list<UString> encodings;
 
@@ -1125,8 +1126,9 @@ struct DBGPerspective::Priv {
         return !encodings.empty ();
     }
 
-    bool load_file (const UString &a_path,
-                    Glib::RefPtr<SourceBuffer> &a_buffer)
+    bool
+    load_file (const UString &a_path,
+               Glib::RefPtr<SourceBuffer> &a_buffer)
     {
         list<string> supported_encodings;
         get_supported_encodings (supported_encodings);
