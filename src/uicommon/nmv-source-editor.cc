@@ -834,7 +834,10 @@ SourceEditor::move_where_marker_to_line (int a_line, bool a_do_scroll)
 
     Gtk::TextIter line_iter =
             source_view ().get_source_buffer ()->get_iter_at_line (a_line - 1);
-    THROW_IF_FAIL (line_iter);
+    if (!line_iter) {
+      LOG_DD ("Couldn't find line " << a_line << " in the buffer");
+      return false;
+    }
 
     Glib::RefPtr<Gtk::TextMark> where_marker =
         source_view ().get_source_buffer ()->get_mark (WHERE_MARK);
@@ -906,7 +909,11 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
     // marker doesn't yet exist, so create one of the correct type
     Gtk::TextIter iter = buf->get_iter_at_line (a_line);
     LOG_DD ("a_line: " << a_line);
-    THROW_IF_FAIL (iter);
+    if (!iter) {
+      LOG_DD ("Line not found in buffer");
+      return false;
+    }
+
     UString marker_name = UString::from_int (a_line);
 
     LOG_DD ("creating marker of type: " << marker_type);
