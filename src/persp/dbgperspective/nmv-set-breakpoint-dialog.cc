@@ -186,6 +186,37 @@ public:
         on_radiobutton_changed ();
     }
 
+    /// Return the file path and the line numbers as set by the
+    /// user. This function supports locations filename:linenumber in
+    /// the entry_filename text entry field.
+    /// \param a_path output parameter. The file path entered by the
+    /// user
+    /// \param a_line_num output parameter. The line number entered by
+    /// the user. The function makes sure the line number is a valid
+    /// number.
+    /// \return true iff the file path *and* the line number have been
+    /// set.
+    bool get_file_path_and_line_num (std::string &a_path,
+                                     std::string &a_line_num)
+    {
+        if (entry_line->get_text ().empty ()) {
+            // Try to see if entry_filename contains a location string
+            // of the form "filename:number".
+            return str_utils::extract_path_and_line_num_from_location
+                (entry_filename->get_text ().raw (), a_path, a_line_num);
+        } else {
+            // Try to just get the file path from the entry_filename
+            // and line from entry_line.
+            if (!entry_filename->get_text ().empty ()
+                && atoi (entry_line->get_text ().c_str ())) {
+                a_path = entry_line->get_text ();
+                a_line_num = entry_line->get_text ().raw ();
+                return true;
+            }
+        }
+        return false;
+    }
+
     void update_ok_button_sensitivity ()
     {
         THROW_IF_FAIL (entry_filename);
@@ -194,35 +225,38 @@ public:
         SetBreakpointDialog::Mode a_mode = mode ();
 
         switch (a_mode) {
-            case MODE_SOURCE_LOCATION:
-                // make sure there's something in the line number entry,
-                // at least, and that something is a valid number.
-                if (!entry_line->get_text ().empty ()
-                    && atoi (entry_line->get_text ().c_str ())) {
-                    okbutton->set_sensitive (true);
-                } else {
-                    okbutton->set_sensitive (false);
-                }
-                break;
-            case MODE_FUNCTION_NAME:
-                if (!entry_function->get_text ().empty ()) {
-                    okbutton->set_sensitive (true);
-                } else {
-                    okbutton->set_sensitive (false);
-                }
-                break;
-            case MODE_BINARY_ADDRESS: {
-                bool address_is_valid = false;
-                UString address = entry_address->get_text ();
-                // Validate the address
-                if (str_utils::string_is_number (address))
-                    address_is_valid = true;
-                okbutton->set_sensitive (address_is_valid);
-            }
-                break;
-            default:
+        case MODE_SOURCE_LOCATION: {
+            // make sure there's something in the line number entry,
+            // at least, and that something is a valid number.
+            // Or, make sure the user typed a location of the form
+            // filename:linenumber in the file name entry.
+            string filename, line;
+            if (get_file_path_and_line_num (filename, line)
+                || atoi (entry_line->get_text ().c_str ()))
                 okbutton->set_sensitive (true);
-                break;
+            else
+                okbutton->set_sensitive (false);
+            break;
+        }
+        case MODE_FUNCTION_NAME:
+            if (!entry_function->get_text ().empty ()) {
+                okbutton->set_sensitive (true);
+            } else {
+                okbutton->set_sensitive (false);
+            }
+            break;
+        case MODE_BINARY_ADDRESS: {
+            bool address_is_valid = false;
+            UString address = entry_address->get_text ();
+            // Validate the address
+            if (str_utils::string_is_number (address))
+                address_is_valid = true;
+            okbutton->set_sensitive (address_is_valid);
+        }
+            break;
+        default:
+            okbutton->set_sensitive (true);
+            break;
         }
     }
 
@@ -337,8 +371,12 @@ UString
 SetBreakpointDialog::file_name () const
 {
     THROW_IF_FAIL (m_priv);
-    THROW_IF_FAIL (m_priv->entry_filename);
 
+    string file_path, line_num;
+    if (m_priv->get_file_path_and_line_num (file_path, line_num))
+        return file_path;
+
+    THROW_IF_FAIL (m_priv->entry_filename);
     return m_priv->entry_filename->get_text ();
 }
 
@@ -354,6 +392,11 @@ int
 SetBreakpointDialog::line_number () const
 {
     THROW_IF_FAIL (m_priv);
+
+    string file_path, line_num;
+    if (m_priv->get_file_path_and_line_num (file_path, line_num))
+        return atoi (line_num.c_str ());
+
     THROW_IF_FAIL (m_priv->entry_line);
     return atoi (m_priv->entry_line->get_text ().c_str ());
 }
