@@ -7325,18 +7325,14 @@ DBGPerspective::call_function ()
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK)
         return;
+
     UString call_expr = dialog.call_expression ();
 
     if (call_expr.empty ())
         return;
 
     // Update our copy of call expression history.
-    list<UString>::iterator from = m_priv->call_expr_history.begin (),
-                            to = m_priv->call_expr_history.end (),
-                            nil = to;
-
-    if (std::find (from, to, call_expr) == nil)
-        m_priv->call_expr_history.push_front (call_expr);
+    dialog.get_history (m_priv->call_expr_history);
 
     // Really execute the function call expression now.
     call_function (call_expr);

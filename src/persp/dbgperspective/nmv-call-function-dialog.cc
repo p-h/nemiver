@@ -45,7 +45,7 @@ get_call_expr_history_cols ()
 
 struct CallFunctionDialog::Priv {
     Gtk::ComboBoxEntry *call_expr_entry;
-    Glib::RefPtr<Gtk::ListStore> m_call_expr_history;
+    Glib::RefPtr<Gtk::ListStore> call_expr_history;
     Gtk::Button *ok_button;
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
@@ -59,19 +59,30 @@ struct CallFunctionDialog::Priv {
                                                           "okbutton");
         THROW_IF_FAIL (ok_button);
         ok_button->set_sensitive (false);
+	ok_button->signal_clicked ().connect
+            (sigc::mem_fun (*this, &Priv::on_ok_button_clicked_signal));
 
         call_expr_entry =
             ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBoxEntry>
                                             (a_gtkbuilder, "callexpressionentry");
         THROW_IF_FAIL (call_expr_entry);
-        m_call_expr_history=
+        call_expr_history=
             Gtk::ListStore::create (get_call_expr_history_cols ());
-        call_expr_entry->set_model (m_call_expr_history);
+        call_expr_entry->set_model (call_expr_history);
         call_expr_entry->set_text_column (get_call_expr_history_cols ().expr);
 
         call_expr_entry->signal_changed ().connect
             (sigc::mem_fun (*this, &Priv::on_call_expr_entry_changed_signal));
         call_expr_entry->get_entry ()->set_activates_default ();
+    }
+
+    void on_ok_button_clicked_signal ()
+    {
+        THROW_IF_FAIL (call_expr_entry);
+
+        add_to_history (call_expr_entry->get_entry ()->get_text (),
+                        /*prepend=*/false,
+                        /*allow_dups=*/false);
     }
 
     void on_call_expr_entry_changed_signal ()
@@ -95,10 +106,10 @@ struct CallFunctionDialog::Priv {
 
     bool exists_in_history (const UString &a_expr) const
     {
-        THROW_IF_FAIL (m_call_expr_history);
+        THROW_IF_FAIL (call_expr_history);
         Gtk::TreeModel::iterator it;
-        for (it = m_call_expr_history->children ().begin ();
-             it != m_call_expr_history->children ().end ();
+        for (it = call_expr_history->children ().begin ();
+             it != call_expr_history->children ().end ();
              ++it) {
             if ((*it)[get_call_expr_history_cols ().expr] == a_expr) {
                 return true;
@@ -109,33 +120,34 @@ struct CallFunctionDialog::Priv {
 
     void clear_history ()
     {
-        m_call_expr_history->clear ();
+        call_expr_history->clear ();
     }
 
     void add_to_history (const UString &a_expr,
-                         bool a_prepend = true,
+                         bool a_prepend = false,
                          bool allow_dups = true)
     {
-        if (a_expr.empty () // don't append empty expressiosn
+        if (a_expr.empty () // don't append empty expressions
             // don't append an expression if it exists already.
             || (!allow_dups && exists_in_history (a_expr)))
             return;
 
-        THROW_IF_FAIL (m_call_expr_history);
+        THROW_IF_FAIL (call_expr_history);
         Gtk::TreeModel::iterator it;
         if (a_prepend)
-            it = m_call_expr_history->insert
-                                    (m_call_expr_history->children ().begin ());
+            it = call_expr_history->insert
+                                    (call_expr_history->children ().begin ());
         else
-            it = m_call_expr_history->append ();
+            it = call_expr_history->append ();
         (*it)[get_call_expr_history_cols ().expr] = a_expr;
     }
 
     void get_history (std::list<UString> &a_hist) const
     {
         Gtk::TreeModel::iterator it;
-        for (it = m_call_expr_history->children ().begin ();
-             it != m_call_expr_history->children ().end ();
+        a_hist.clear ();
+        for (it = call_expr_history->children ().begin ();
+             it != call_expr_history->children ().end ();
              ++it) {
             Glib::ustring elem = (*it)[get_call_expr_history_cols ().expr];
             a_hist.push_back (elem);
@@ -200,7 +212,7 @@ CallFunctionDialog::add_to_history (const UString &a_expr)
 {
     THROW_IF_FAIL (m_priv);
     m_priv->add_to_history (a_expr,
-                            true /* prepends */,
+                            false /* append */,
                             false /* disallow duplicates */);
 }
 NEMIVER_END_NAMESPACE (nemiver)

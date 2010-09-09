@@ -160,7 +160,7 @@ public:
     }
 
     void add_to_history (const UString &a_expr,
-                         bool a_prepend = true,
+                         bool a_prepend = false,
                          bool a_allow_dups = true)
     {
         if (a_expr.empty () // don't append empty exprs.
