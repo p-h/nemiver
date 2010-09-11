@@ -42,11 +42,6 @@ using namespace std;
 
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
-
-const char *CONF_KEY_GDB_BINARY = "/apps/nemiver/dbgperspective/gdb-binary";
-const char *CONF_KEY_FOLLOW_FORK_MODE = "/apps/nemiver/dbgperspective"
-                                        "/follow-fork-mode";
-
 NEMIVER_BEGIN_NAMESPACE (common)
 NEMIVER_BEGIN_NAMESPACE (env)
 

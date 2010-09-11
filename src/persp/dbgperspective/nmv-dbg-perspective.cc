@@ -135,44 +135,7 @@ const char *DISASSEMBLY_TITLE = "<Disassembly>";
 
 static const int NUM_INSTR_TO_DISASSEMBLE = 20;
 
-const char* CONF_KEY_NEMIVER_SOURCE_DIRS =
-                "/apps/nemiver/dbgperspective/source-search-dirs";
-const char* CONF_KEY_SHOW_DBG_ERROR_DIALOGS =
-                "/apps/nemiver/dbgperspective/show-dbg-error-dialogs";
-const char* CONF_KEY_SHOW_SOURCE_LINE_NUMBERS =
-                "/apps/nemiver/dbgperspective/show-source-line-numbers";
-const char* CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE =
-                "/apps/nemiver/dbgperspective/confirm-before-reload-source";
-const char* CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE =
-                "/apps/nemiver/dbgperspective/allow-auto-reload-source";
-const char* CONF_KEY_HIGHLIGHT_SOURCE_CODE =
-                "/apps/nemiver/dbgperspective/highlight-source-code";
-const char* CONF_KEY_SOURCE_FILE_ENCODING_LIST =
-                "/apps/nemiver/dbgperspective/source-file-encoding-list";
-const char* CONF_KEY_USE_SYSTEM_FONT =
-                "/apps/nemiver/dbgperspective/use-system-font";
-const char* CONF_KEY_CUSTOM_FONT_NAME=
-                "/apps/nemiver/dbgperspective/custom-font-name";
-const char* CONF_KEY_SYSTEM_FONT_NAME=
-                "/desktop/gnome/interface/monospace_font_name";
-const char* CONF_KEY_USE_LAUNCH_TERMINAL =
-                "/apps/nemiver/dbgperspective/use-launch-terminal";
-const char* CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH=
-                "/apps/nemiver/dbgperspective/status-widget-minimum-width";
-const char* CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT=
-                "/apps/nemiver/dbgperspective/status-widget-minimum-height";
-const char* CONF_KEY_STATUS_PANE_LOCATION=
-                "/apps/nemiver/dbgperspective/status-pane-location";
-const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
-                "/apps/nemiver/dbgperspective/debugger-engine-dynmod";
-const char* CONF_KEY_EDITOR_STYLE_SCHEME =
-                "/apps/nemiver/dbgperspective/editor-style-scheme";
-const char* CONF_KEY_ASM_STYLE_PURE =
-                "/apps/nemiver/dbgperspective/asm-style-pure";
-const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS =
-                "/apps/nemiver/dbgperspective/default-num-asm-instrs";
-const char* CONF_KEY_CONTEXT_PANE_LOCATION =
-                "/apps/nemiver/dbgperspective/context-pane-location";
+
 
 const Gtk::StockID STOCK_SET_BREAKPOINT (SET_BREAKPOINT);
 const Gtk::StockID STOCK_LINE_POINTER (LINE_POINTER);

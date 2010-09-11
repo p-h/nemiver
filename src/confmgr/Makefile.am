@@ -1,13 +1,15 @@
 gconfmgrmod_LTLIBRARIES=libgconfmgrmod.la
 gconfmgrmoddir=@NEMIVER_MODULES_DIR@
 
-headers= nmv-i-conf-mgr.h
+public_headers=nmv-i-conf-mgr.h
+private_headers=nmv-conf-keys.h
+headers= $(public_headers) $(private_headers)
 
 libgconfmgrmod_la_SOURCES= \
 $(headers) \
-nmv-gconf-mgr.cc
+nmv-gconf-mgr.cc nmv-conf-keys.cc
 
-publicheaders_DATA=$(headers)
+publicheaders_DATA=$(public_headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgconfmgrmod_la_LDFLAGS=-module -avoid-version -Wl,--as-needed

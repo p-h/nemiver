@@ -68,7 +68,6 @@ nmv-choose-overloads-dialog.cc \
 nmv-choose-overloads-dialog.h \
 nmv-remote-target-dialog.cc \
 nmv-remote-target-dialog.h \
-nmv-conf-keys.h \
 nmv-dbg-perspective.cc \
 nmv-dbg-perspective.h \
 nmv-vars-treeview.h \

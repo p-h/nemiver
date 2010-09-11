@@ -26,6 +26,8 @@
 #ifndef __NMV_CONF_KEYS_H__
 #define __NMV_CONF_KEYS_H__
 
+#include "common/nmv-namespace.h"
+
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 extern const char* CONF_KEY_NEMIVER_SOURCE_DIRS;
@@ -48,6 +50,7 @@ extern const char* CONF_KEY_ASM_STYLE_PURE;
 extern const char* CONF_KEY_GDB_BINARY;
 extern const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS;
 extern const char* CONF_KEY_FOLLOW_FORK_MODE;
+extern const char* CONF_KEY_CONTEXT_PANE_LOCATION;
 
 NEMIVER_END_NAMESPACE (nemiver)
 
