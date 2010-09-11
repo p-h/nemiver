@@ -28,13 +28,11 @@
 #ifndef __NEMIVER_UI_UTILS_H__
 #define __NEMIVER_UI_UTILS_H__
 
-#include "config.h"
+#include "common/nmv-api-macros.h"
 #include <gtkmm.h>
 #include "common/nmv-env.h"
 #include "common/nmv-ustring.h"
 #include "common/nmv-safe-ptr-utils.h"
-#include "common/nmv-api-macros.h"
-
 
 #ifndef NEMIVER_CATCH
 #define NEMIVER_CATCH \

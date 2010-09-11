@@ -32,7 +32,6 @@
 
 #include <vector>
 #include <string>
-#include "config.h"
 #include <glibmm.h>
 #include "nmv-namespace.h"
 #include "nmv-api-macros.h"
