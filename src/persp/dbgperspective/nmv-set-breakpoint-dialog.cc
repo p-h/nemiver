@@ -209,7 +209,7 @@ public:
             // and line from entry_line.
             if (!entry_filename->get_text ().empty ()
                 && atoi (entry_line->get_text ().c_str ())) {
-                a_path = entry_line->get_text ();
+                a_path = entry_filename->get_text ();
                 a_line_num = entry_line->get_text ().raw ();
                 return true;
             }
