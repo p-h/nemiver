@@ -56,7 +56,9 @@ OutputHandlerList::submit_command_and_output (CommandAndOutput &a_cao)
             ++iter)
     {
         if ((*iter)->can_handle (a_cao)) {
+            NEMIVER_TRY;
             (*iter)->do_handle (a_cao);
+            NEMIVER_CATCH_NOX;
         }
     }
 }
