@@ -5488,6 +5488,9 @@ DBGPerspective::close_file (const UString &a_path)
             << (int) (page_num)
             << ", path " << a_path);
     m_priv->sourceviews_notebook->remove_page (page_num);
+    m_priv->current_page_num =
+        m_priv->sourceviews_notebook->get_current_page ();
+
     if (!do_unmonitor_file (a_path)) {
         LOG_ERROR ("failed to unmonitor file " << a_path);
     }
