@@ -62,6 +62,7 @@ public:
         bool m_enabled;
         UString m_condition;
         int m_ignore_count;
+	bool m_is_countpoint;
 
     public:
         Breakpoint (const UString &a_file_name,
@@ -69,13 +70,15 @@ public:
                     const UString &a_line_number,
                     const UString &a_enabled,
                     const UString &a_condition,
-                    const UString &a_ignore_count) :
-            m_file_name (a_file_name),
+                    const UString &a_ignore_count,
+                    const UString &a_is_countpoint) :
+	m_file_name (a_file_name),
             m_file_full_name (a_file_full_name),
             m_line_number (atoi (a_line_number.c_str ())),
             m_enabled (atoi (a_enabled.c_str ())),
             m_condition (a_condition),
-            m_ignore_count (atoi (a_ignore_count.c_str ()))
+            m_ignore_count (atoi (a_ignore_count.c_str ())),
+            m_is_countpoint (atoi (a_is_countpoint.c_str ()))
         {}
 
         Breakpoint (const UString &a_file_name,
@@ -83,18 +86,22 @@ public:
                     int a_line_number,
                     bool a_enabled,
                     const UString &a_condition,
-                    unsigned a_ignore_count) :
-            m_file_name (a_file_name),
+                    unsigned a_ignore_count,
+		    bool a_is_countpoint) :
+	m_file_name (a_file_name),
             m_file_full_name (a_file_full_name),
             m_line_number (a_line_number),
             m_enabled (a_enabled),
             m_condition (a_condition),
-            m_ignore_count (a_ignore_count)
+            m_ignore_count (a_ignore_count),
+            m_is_countpoint (a_is_countpoint)
         {}
 
         Breakpoint () :
-            m_line_number (0),
-            m_ignore_count (0)
+        m_line_number (0),
+            m_enabled (true),
+            m_ignore_count (0),            
+            m_is_countpoint (false)
         {}
 
         const UString& file_name () const {return m_file_name;}
@@ -114,6 +121,9 @@ public:
 
         int ignore_count () const {return m_ignore_count;}
         void ignore_count (int a_c) {m_ignore_count = a_c;}
+
+        bool is_countpoint () const {return m_is_countpoint;}
+        void is_countpoint (bool a) {m_is_countpoint = a;}
     };
 
     class WatchPoint {

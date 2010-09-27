@@ -121,10 +121,14 @@ public:
 
     virtual void set_breakpoint (const UString &a_file,
                                  int a_line,
-                                 const UString &a_condition="") = 0;
+                                 const UString &a_condition,
+				 bool a_is_count_point) = 0;
 
     virtual void set_breakpoint (const UString &a_func_name,
-                                 const UString &a_condition="") = 0;
+                                 const UString &a_condition,
+				 bool a_is_count_point) = 0;
+
+    virtual void set_breakpoint (const IDebugger::Breakpoint &a_breakpoint) = 0;
 
     virtual void append_breakpoints
             (const map<int, IDebugger::Breakpoint> &a_breaks) = 0;

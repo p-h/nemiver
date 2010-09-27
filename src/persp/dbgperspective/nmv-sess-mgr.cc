@@ -43,7 +43,7 @@ using nemiver::common::ConnectionManager;
 using nemiver::common::Transaction;
 using nemiver::common::SQLStatement;
 
-static const char *REQUIRED_DB_SCHEMA_VERSION = "1.4";
+static const char *REQUIRED_DB_SCHEMA_VERSION = "1.5";
 static const char *DB_FILE_NAME = "nemivercommon.db";
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -340,16 +340,16 @@ SessMgr::store_session (Session &a_session,
         UString condition = break_iter->condition ();
         condition.chomp ();
         query = "insert into breakpoints values(NULL, "
-                + UString::from_int (a_session.session_id ()) + ", '"
-                + SQLStatement::escape_string
-                    (break_iter->file_name ()) + "', '"
-                + SQLStatement::escape_string
-                    (break_iter->file_full_name ()) + "', "
-                + UString::from_int (break_iter->line_number ()) + ", "
-                + UString::from_int (break_iter->enabled ()) + ", "
-                + "'" + SQLStatement::escape_string (condition) + "'" + ", "
-                + UString::from_int (break_iter->ignore_count ())
-                + ")";
+	  + UString::from_int (a_session.session_id ()) + ", '"
+	  + SQLStatement::escape_string (break_iter->file_name ()) + "', '"
+	  + SQLStatement::escape_string
+	  (break_iter->file_full_name ()) + "', "
+	  + UString::from_int (break_iter->line_number ()) + ", "
+	  + UString::from_int (break_iter->enabled ()) + ", "
+	  + "'" + SQLStatement::escape_string (condition) + "'" + ", "
+	  + UString::from_int (break_iter->ignore_count ()) + ", "
+	  + UString::from_int (break_iter->is_countpoint ())
+	  + ")";
         LOG_DD ("query: " << query);
         THROW_IF_FAIL
                 (trans.get ().get_connection ().execute_statement (query));
@@ -477,15 +477,17 @@ SessMgr::load_session (Session &a_session,
 
     // load the breakpoints
     query = "select breakpoints.filename, breakpoints.filefullname, "
-            "breakpoints.linenumber, breakpoints.enabled, "
-            "breakpoints.condition, breakpoints.ignorecount from "
-            "breakpoints where breakpoints.sessionid = "
-            + UString::from_int (session.session_id ());
+      "breakpoints.linenumber, breakpoints.enabled, "
+      "breakpoints.condition, breakpoints.ignorecount,"
+      "breakpoints.iscountpoint from "
+      "breakpoints where breakpoints.sessionid = "
+      + UString::from_int (session.session_id ());
+
     LOG_DD ("query: " << query);
     THROW_IF_FAIL (trans.get ().get_connection ().execute_statement (query));
     while (trans.get ().get_connection ().read_next_row ()) {
         UString filename, filefullname, linenumber,
-                enabled, condition, ignorecount;
+	  enabled, condition, ignorecount, is_countpoint;
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                             (0, filename));
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
@@ -499,17 +501,21 @@ SessMgr::load_session (Session &a_session,
         condition.chomp ();
         THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
                                                             (5, ignorecount));
+	THROW_IF_FAIL (trans.get ().get_connection ().get_column_content
+                                                            (6, is_countpoint));
         LOG_DD ("filename, filefullname, linenumber, enabled, "
                 "condition, ignorecount:\n"
                 << filename << "," << filefullname << ","
                 << linenumber << "," << enabled << ","
-                << condition<< "," << ignorecount);
+                << condition << "," << ignorecount
+		<< is_countpoint);
         session.breakpoints ().push_back (SessMgr::Breakpoint (filename,
                                                                filefullname,
                                                                linenumber,
                                                                enabled,
                                                                condition,
-                                                               ignorecount));
+                                                               ignorecount,
+							       is_countpoint));
     }
 
     // load the watchpoints

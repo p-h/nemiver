@@ -90,7 +90,8 @@ public:
         enum Type {
             UNDEFINED_TYPE = 0,
             STANDARD_BREAKPOINT_TYPE,
-            WATCHPOINT_TYPE
+            WATCHPOINT_TYPE,
+            COUNTPOINT_TYPE
         };
 
     private:
@@ -1085,17 +1086,17 @@ public:
     virtual void set_breakpoint (const UString &a_path,
                                  gint a_line_num,
                                  const UString &a_condition= "",
-                                 unsigned a_ignore_count = 0,
+                                 gint a_ignore_count = 0,
                                  const UString &a_cookie = "") = 0;
 
     virtual void set_breakpoint (const UString &a_func_name,
                                  const UString &a_condition = "",
-                                 unsigned a_ignore_count = 0,
+                                 gint a_ignore_count = 0,
                                  const UString &a_cookie = "") = 0;
 
     virtual void set_breakpoint (const Address &a_address,
                                  const UString &a_condition = "",
-                                 unsigned a_ignore_count = 0,
+                                 gint a_ignore_count = 0,
                                  const UString &a_cookie = "") = 0;
 
     virtual void enable_breakpoint (gint a_break_num,

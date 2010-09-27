@@ -41,6 +41,8 @@ void dump_variable_value (IDebugger::VariableSafePtr a_var,
                           int a_indent_num,
                           std::string &a_out_str);
 
+bool is_countpoint (const IDebugger::Breakpoint &);
+
 NEMIVER_END_NAMESPACE (debugger_utils)
 NEMIVER_END_NAMESPACE (nemiver)
 

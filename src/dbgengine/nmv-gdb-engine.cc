@@ -1210,6 +1210,13 @@ struct OnBreakpointHandler: OutputHandler {
         bool has_breaks = false;
         //if breakpoint where set, put them in cache !
         if (has_breakpoints_set (a_in)) {
+            if (a_in.command ().name () == "set-countpoint") {
+                THROW_IF_FAIL (a_in.output ().result_record ().
+                               breakpoints ().size () == 1);
+                a_in.output ().result_record ().
+                    breakpoints ().begin ()->second.type
+                    (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+            }
             m_engine->append_breakpoints_to_cache
             (a_in.output ().result_record ().breakpoints ());
             has_breaks = true;
@@ -1244,11 +1251,11 @@ struct OnBreakpointHandler: OutputHandler {
                            << tmp
                            << "', but that's not a well formed number dude.");
             }
-        } else if (has_breaks){
+        } else if (has_breaks) {
             LOG_DD ("firing IDebugger::breakpoint_set_signal()");
             m_engine->breakpoints_set_signal ().emit
-                            (a_in.output ().result_record ().breakpoints (),
-                             a_in.command ().cookie ());
+                (m_engine->get_cached_breakpoints (),
+                 a_in.command ().cookie ());
             m_engine->set_state (IDebugger::READY);
         } else {
             LOG_DD ("finally, no breakpoint was detected as set/deleted");
@@ -3255,6 +3262,28 @@ GDBEngine::on_got_target_info_signal (int a_pid, const UString &a_exe_path)
     NEMIVER_CATCH_NOX
 }
 
+/// If the given breakpoint is a countpoint, continue the execution of
+/// the inferior. This is a subroutine of GDBEngine::on_stopped_signal.
+/// \param a_reason the reason why the inferior stopped its execution.
+/// \param a_breakpoint_num the number of the breakpoint to consider.
+void
+GDBEngine::maybe_handle_countpoint (IDebugger::StopReason a_reason,
+                                    int a_breakpoint_num)
+{
+    if (a_reason != IDebugger::BREAKPOINT_HIT)
+        return;
+
+    map<int, IDebugger::Breakpoint>::const_iterator it, nil =
+        get_cached_breakpoints ().end ();       
+    it = get_cached_breakpoints ().find (a_breakpoint_num);
+    THROW_IF_FAIL (it != nil);
+
+    if (it->second.type () != IDebugger::Breakpoint::COUNTPOINT_TYPE)
+        return;
+
+    do_continue ("");
+}
+
 void
 GDBEngine::on_stopped_signal (IDebugger::StopReason a_reason,
                               bool a_has_frame,
@@ -3278,6 +3307,10 @@ GDBEngine::on_stopped_signal (IDebugger::StopReason a_reason,
     }
 
     m_priv->is_attached = true;
+
+    // If we stopped on a breakpoint marked as a countpoint, let's
+    // continue the execution.
+    maybe_handle_countpoint (a_reason, a_bkpt_num);
 
     NEMIVER_CATCH_NOX
 }
@@ -3610,7 +3643,7 @@ void
 GDBEngine::set_breakpoint (const UString &a_path,
                            gint a_line_num,
                            const UString &a_condition,
-                           unsigned a_ignore_count,
+                           gint a_ignore_count,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -3625,20 +3658,24 @@ GDBEngine::set_breakpoint (const UString &a_path,
         LOG_DD ("setting breakpoint without condition");
     }
 
-    break_cmd += " -i " + UString::from_int (a_ignore_count);
+    bool count_point = (a_ignore_count < 0);
+    if (!count_point)
+      break_cmd += " -i " + UString::from_int (a_ignore_count);
 
     if (!a_path.empty ()) {
         break_cmd += " " + a_path + ":";
     }
     break_cmd += UString::from_int (a_line_num);
-    queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
+    string cmd_name = count_point ? "set-countpoint" : "set-breakpoint";
+    queue_command (Command (cmd_name,
+			    break_cmd, a_cookie));
 }
 
 
 void
 GDBEngine::set_breakpoint (const Address &a_address,
                            const UString &a_condition,
-                           unsigned a_ignore_count,
+                           gint a_ignore_count,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -3652,11 +3689,13 @@ GDBEngine::set_breakpoint (const Address &a_address,
     } else {
         LOG_DD ("setting breakpoint without condition");
     }
-
-    break_cmd += " -i " + UString::from_int (a_ignore_count);
+    bool count_point = a_ignore_count < 0;
+    if (!count_point)
+      break_cmd += " -i " + UString::from_int (a_ignore_count);
     break_cmd += " *" + (const string&) a_address;
 
-    queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
+    string cmd_name = count_point ? "set-countpoint" : "set-breakpoint";
+    queue_command (Command (cmd_name, break_cmd, a_cookie));
 }
 
 void
@@ -3758,7 +3797,7 @@ GDBEngine::set_watchpoint (const UString &a_expression,
 void
 GDBEngine::set_breakpoint (const UString &a_func_name,
                            const UString &a_condition,
-                           unsigned a_ignore_count,
+                           gint a_ignore_count,
                            const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -3782,7 +3821,7 @@ GDBEngine::list_breakpoints (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    queue_command (Command ("list-breakpoint", "-break-list", a_cookie));
+    queue_command (Command ("list-breakpoints", "-break-list", a_cookie));
 }
 
 map<int, IDebugger::Breakpoint>&
@@ -3792,13 +3831,75 @@ GDBEngine::get_cached_breakpoints ()
     return m_priv->cached_breakpoints;
 }
 
+/// Append a set of breakpoints to our breakpoint cache.
+/// This function supports the countpoint feature. That is, as a
+/// countpoint is a concept not known to GDB, we have to mark an
+/// otherwise normal breakpoint [from GDB's standpoint] as a
+/// countpoint, in our cache. So whenever we see a breakpoint that we
+/// have previously marked as a countpoint in our cache, we make sure
+/// to not loose the countpointness.
+/// \param a_breaks the set of breakpoints to append to the cache.
 void
 GDBEngine::append_breakpoints_to_cache
                             (const map<int, IDebugger::Breakpoint> &a_breaks)
 {
-    map<int, IDebugger::Breakpoint>::const_iterator iter;
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    typedef map<int, IDebugger::Breakpoint> BpMap;
+    typedef BpMap::iterator BpIt;
+    typedef BpMap::const_iterator ConstBpIt;
+
+    BpMap &bp_cache = m_priv->cached_breakpoints;
+    ConstBpIt iter;
+    BpIt cur, nil = bp_cache.end ();
+    bool preserve_count_point;
+
     for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter) {
-        m_priv->cached_breakpoints[iter->first] = iter->second;
+        preserve_count_point = false;
+        if (iter->second.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE) {
+            LOG_DD ("breakpoint number "
+                    << iter->first
+                    << " is a count point");
+        } else {
+            LOG_DD ("breakpoint number "
+                    << iter->first
+                    << " is not a count point");
+        }
+        
+        // First, let's see if the breakpoint pointed to by iter is
+        // already in our cache.
+        cur = bp_cache.find (iter->first);
+        if (cur != nil) {
+            // So the breakpoint iter->second is already in the
+            // cache. If we flagged it as a countpoint, let's remember
+            // that so that we don't loose the countpointness of the
+            // breakpoint in the cache when we update its state with
+            // the content of iter->second.
+            if (cur->second.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE)
+                preserve_count_point = true;
+        }
+
+        // So now is the cache updating time.
+
+        // If the breakpoint iter->second was already in the cache and
+        // was flagged as a countpoint, let's preserve that
+        // countpointness attribute.
+        if (cur != nil) {
+            cur->second = iter->second;
+            if (preserve_count_point) {
+                cur->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+                LOG_DD ("propagated countpoinness to bp number " << cur->first);
+            }
+        } else {
+            // Its the first time we are adding this breakpoint to the
+            // cache. So its countpointness is going to be kept
+            // anyway.
+            std::pair<BpIt,bool> where = bp_cache.insert (*iter);
+            if (preserve_count_point) {
+                where.first->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+                LOG_DD ("propagated countpoinness to bp number " << cur->first);
+            }
+        }
     }
 }
 

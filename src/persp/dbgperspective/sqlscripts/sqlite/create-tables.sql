@@ -1,6 +1,6 @@
 create table schemainfo (version text not null) ;
 
-insert into schemainfo (version) values ('1.4') ;
+insert into schemainfo (version) values ('1.5') ;
 
 create table sessions (id integer primary key) ;
 
@@ -21,7 +21,8 @@ create table breakpoints (id integer primary key,
                           linenumber integer,
                           enabled integer,
                           condition text,
-                          ignorecount integer) ;
+                          ignorecount integer,
+			  iscountpoint integer) ;
 
 create table watchpoints (id integer primary key,
                           sessionid integer,

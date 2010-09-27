@@ -75,6 +75,9 @@ public:
     UString condition () const;
     void condition (const UString &a_cond);
 
+    bool count_point () const;
+    void count_point (bool a_flag);
+
     Mode mode () const;
     void mode (Mode);
 

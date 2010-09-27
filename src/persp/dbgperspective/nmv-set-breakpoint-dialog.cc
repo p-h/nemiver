@@ -66,6 +66,7 @@ public:
     Gtk::RadioButton *radio_function_name;
     Gtk::RadioButton *radio_binary_location;
     Gtk::RadioButton *radio_event;
+    Gtk::CheckButton *check_countpoint;
     Gtk::Button *okbutton;
 
 public:
@@ -80,6 +81,7 @@ public:
         radio_function_name (0),
         radio_binary_location (0),
         radio_event (0),
+        check_countpoint (0),
         okbutton (0)
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
@@ -175,6 +177,10 @@ public:
             (a_gtkbuilder, "eventradio");
         radio_event->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::on_radiobutton_changed));
+
+        check_countpoint =
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+            (a_gtkbuilder, "countpointcheck");
 
         // set the 'function name' mode active by default
         mode (MODE_FUNCTION_NAME);
@@ -285,6 +291,7 @@ public:
         entry_address->set_sensitive (a_mode == MODE_BINARY_ADDRESS);
         combo_event->set_sensitive (a_mode == MODE_EVENT);
         entry_condition->set_sensitive (a_mode != MODE_EVENT);
+        check_countpoint->set_sensitive (a_mode != MODE_EVENT);
         update_ok_button_sensitivity ();
         NEMIVER_CATCH
     }
@@ -480,6 +487,21 @@ SetBreakpointDialog::condition (const UString &a_cond)
     m_priv->entry_condition->set_text (a_cond);
 }
 
+bool
+SetBreakpointDialog::count_point () const
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->check_countpoint);
+    return m_priv->check_countpoint->get_active ();
+}
+
+void
+SetBreakpointDialog::count_point (bool a_flag)
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->check_countpoint);
+    m_priv->check_countpoint->set_active (a_flag);
+}
 
 SetBreakpointDialog::Mode
 SetBreakpointDialog::mode () const

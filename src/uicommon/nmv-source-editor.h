@@ -45,10 +45,11 @@ using nemiver::common::Address;
 using std::list;
 using std::map;
 
-namespace nemiver {
+NEMIVER_BEGIN_NAMESPACE (nemiver);
 
 extern const char* BREAKPOINT_ENABLED_CATEGORY;
 extern const char* BREAKPOINT_DISABLED_CATEGORY;
+extern const char* COUNTPOINT_CATEGORY;
 extern const char* WHERE_CATEGORY;
 
 extern const char* WHERE_MARK;
@@ -84,7 +85,9 @@ public:
     void current_column (int &a_col);
     bool move_where_marker_to_line (int a_line, bool a_do_scroll = true);
     void unset_where_marker ();
-    bool set_visual_breakpoint_at_line (int a_line, bool enabled = true);
+    bool set_visual_breakpoint_at_line (int a_line,
+					bool a_is_count_point,
+					bool a_enabled);
     bool remove_visual_breakpoint_from_line (int a_line);
     void clear_decorations ();
     bool is_visual_breakpoint_set_at_line (int a_line) const;
@@ -162,7 +165,8 @@ public:
     bool place_cursor_at_line (size_t);
     bool place_cursor_at_address (const Address &);
     bool set_visual_breakpoint_at_address (const Address &a_address,
-                                           bool enabled = true);
+					   bool is_countpoint,
+                                           bool enabled);
     bool remove_visual_breakpoint_from_address (const Address &);
     bool scroll_to_address (const Address &a_address,
 			    bool a_approximate);
@@ -197,7 +201,7 @@ public:
     /// @}
 };//end class SourceEditor
 
-}//end namespace nemiver
+NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NEMIVER_DBG_SOURCE_EDITOR_H__
 

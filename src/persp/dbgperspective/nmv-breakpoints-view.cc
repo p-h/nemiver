@@ -290,15 +290,18 @@ public:
 
         (*a_iter)[get_bp_cols ().is_standard] = false;
         switch (a_breakpoint.type ()) {
-            case IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE:
-                (*a_iter)[get_bp_cols ().type] = _("breakpoint");
-                (*a_iter)[get_bp_cols ().is_standard] = true;
-                break;
-            case IDebugger::Breakpoint::WATCHPOINT_TYPE:
-                (*a_iter)[get_bp_cols ().type] = _("watchtpoint");
-                break;
-            default:
-                (*a_iter)[get_bp_cols ().type] = _("unknown");
+	case IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE:
+	  (*a_iter)[get_bp_cols ().type] = _("breakpoint");
+	  (*a_iter)[get_bp_cols ().is_standard] = true;
+	  break;
+	case IDebugger::Breakpoint::WATCHPOINT_TYPE:
+	  (*a_iter)[get_bp_cols ().type] = _("watchpoint");
+	  break;
+	case IDebugger::Breakpoint::COUNTPOINT_TYPE:
+	  (*a_iter)[get_bp_cols ().type] = _("countpoint");
+	  break;
+	default:
+	  (*a_iter)[get_bp_cols ().type] = _("unknown");
         }
         (*a_iter)[get_bp_cols ().hits] = a_breakpoint.nb_times_hit ();
     }

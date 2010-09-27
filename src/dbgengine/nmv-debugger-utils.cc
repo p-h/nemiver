@@ -85,5 +85,12 @@ dump_variable_value (IDebugger::VariableSafePtr a_var,
     a_out_str = os.str ();
 }
 
+bool
+is_countpoint (const IDebugger::Breakpoint &a_breakpoint)
+{
+  return (a_breakpoint.type ()
+	  == IDebugger::Breakpoint::COUNTPOINT_TYPE);
+}
+
 NEMIVER_END_NAMESPACE (debugger_utils)
 NEMIVER_END_NAMESPACE (nemiver)

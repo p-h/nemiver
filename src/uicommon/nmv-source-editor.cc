@@ -64,6 +64,7 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 const char* BREAKPOINT_ENABLED_CATEGORY = "breakpoint-enabled-category";
 const char* BREAKPOINT_DISABLED_CATEGORY = "breakpoint-disabled-category";
+const char* COUNTPOINT_CATEGORY;
 const char* WHERE_CATEGORY = "line-pointer-category";
 
 const char* WHERE_MARK = "where-marker";
@@ -694,6 +695,9 @@ struct SourceEditor::Priv {
                                 (BREAKPOINT_DISABLED_CATEGORY,
                                  "icons/breakpoint-disabled-marker.png");
 
+	register_breakpoint_marker_type (COUNTPOINT_CATEGORY,
+					 "icons/countpoint-marker.png");
+
         // move cursor to the beginning of the file
         Glib::RefPtr<Gtk::TextBuffer> source_buffer = source_view->get_buffer ();
         source_buffer->place_cursor (source_buffer->begin ());
@@ -869,7 +873,9 @@ SourceEditor::unset_where_marker ()
 }
 
 bool
-SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
+SourceEditor::set_visual_breakpoint_at_line (int a_line,
+					     bool a_is_count_point,
+					     bool enabled)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
@@ -885,6 +891,9 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line, bool enabled)
 
     UString marker_type;
     if (enabled) {
+      if (a_is_count_point)
+	marker_type = COUNTPOINT_CATEGORY;
+      else
         marker_type = BREAKPOINT_ENABLED_CATEGORY;
     } else {
         marker_type = BREAKPOINT_DISABLED_CATEGORY;
@@ -1535,13 +1544,15 @@ SourceEditor::get_assembly_source_buffer () const
 
 bool
 SourceEditor::set_visual_breakpoint_at_address (const Address &a_address,
+						bool a_is_count_point,
                                                 bool a_enabled)
 {
     int line = -1;
     if (!assembly_buf_addr_to_line (a_address, false, line))
         return false;
-    return set_visual_breakpoint_at_line (line, a_enabled);
-
+    return set_visual_breakpoint_at_line (line,
+					  a_is_count_point,
+					  a_enabled);
 }
 
 /// Remove the marker that represents a breakpoint at a given machine
