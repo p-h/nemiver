@@ -689,6 +689,7 @@ struct SourceEditor::Priv {
                               Gtk::PACK_SHRINK, 6 /* padding */);
         init_signals ();
         source_view->set_editable (false);
+
         register_breakpoint_marker_type (BREAKPOINT_ENABLED_CATEGORY,
                                          "icons/breakpoint-marker.png");
         register_breakpoint_marker_type

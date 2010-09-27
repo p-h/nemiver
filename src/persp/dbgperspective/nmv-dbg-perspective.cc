@@ -105,7 +105,6 @@ using namespace nemiver::common;
 using namespace nemiver::ui_utils;
 using namespace gtksourceview;
 
-
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 const char *SET_BREAKPOINT    = "nmv-set-breakpoint";
@@ -672,6 +671,7 @@ public:
 
     bool ask_user_to_select_file (const UString &a_file_name,
                                   UString& a_selected_file_path);
+
     bool append_visual_breakpoint (SourceEditor *editor,
                                    int linenum,
                                    bool is_countpoint,
@@ -806,7 +806,7 @@ public:
     bool do_unmonitor_file (const UString &a_path);
 
     void activate_status_view(Gtk::Widget& page);
- 
+
     bool agree_to_shutdown ();
 
     sigc::signal<void, bool>& show_command_view_signal ();
@@ -2156,7 +2156,7 @@ DBGPerspective::on_shutdown_signal ()
 
     NEMIVER_TRY
     conf_mgr.set_key_value (CONF_KEY_STATUS_PANE_LOCATION, pane_location);
-    conf_mgr.set_key_value (CONF_KEY_CONTEXT_PANE_LOCATION, 
+    conf_mgr.set_key_value (CONF_KEY_CONTEXT_PANE_LOCATION,
                             context_pane_location);
     NEMIVER_CATCH_NOX
 
@@ -2718,7 +2718,7 @@ DBGPerspective::on_debugger_asm_signal2
 
     switch_to_asm (a_info, a_instrs, a_editor,
                    /*a_approximate_where=*/ true);
-    
+
     NEMIVER_CATCH;
 }
 
@@ -2959,7 +2959,7 @@ DBGPerspective::on_activate_context_view ()
     NEMIVER_CATCH
 }
 
-void 
+void
 DBGPerspective::on_activate_output_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2972,7 +2972,7 @@ DBGPerspective::on_activate_output_view ()
     NEMIVER_CATCH
 }
 
-void 
+void
 DBGPerspective::on_activate_target_terminal_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2984,7 +2984,7 @@ DBGPerspective::on_activate_target_terminal_view ()
     NEMIVER_CATCH
 }
 
-void 
+void
 DBGPerspective::on_activate_breakpoints_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2996,7 +2996,7 @@ DBGPerspective::on_activate_breakpoints_view ()
     NEMIVER_CATCH
 }
 
-void 
+void
 DBGPerspective::on_activate_logs_view ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -3881,8 +3881,8 @@ DBGPerspective::init_body ()
 
     int context_pane_location = -1;
     NEMIVER_TRY
-    conf_mgr.get_key_value (CONF_KEY_CONTEXT_PANE_LOCATION, 
-                            context_pane_location);    
+    conf_mgr.get_key_value (CONF_KEY_CONTEXT_PANE_LOCATION,
+                            context_pane_location);
     NEMIVER_CATCH_NOX
 
     if (context_pane_location > 0) {
@@ -5213,7 +5213,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     //erase all sessions but the 5 last ones, otherwise, the number
     //of debugging session stored will explode with time.
     std::list<ISessMgr::Session> sessions =
-                                        session_manager_ptr ()->sessions ();
+        session_manager_ptr ()->sessions ();
     int nb_sessions = sessions.size ();
     if (nb_sessions > 5) {
         int nb_sessions_to_erase = sessions.size () - 5;
@@ -5228,8 +5228,8 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 
     //now store the current session
     session_manager_ptr ()->store_session
-                            (a_session,
-                             session_manager_ptr ()->default_transaction ());
+        (a_session,
+         session_manager_ptr ()->default_transaction ());
 }
 
 
@@ -5560,7 +5560,7 @@ DBGPerspective::open_asm (const common::DisassembleInfo &a_info,
         source_buffer = source_editor->source_view ().get_source_buffer ();
         source_buffer->erase (source_buffer->begin (), source_buffer->end ());
     }
-    
+
     if (!load_asm (a_info, a_asm, source_buffer))
         return 0;
 
@@ -5788,7 +5788,7 @@ DBGPerspective::reload_file (const UString &a_path)
         editor->source_view ().get_source_buffer ();
     int current_line = editor->current_line ();
     int current_column = editor->current_column ();
-    
+
     if (!m_priv->load_file (a_path, buffer))
         return false;
     editor->register_non_assembly_source_buffer (buffer);
@@ -5824,6 +5824,8 @@ DBGPerspective::session_manager ()
 void
 DBGPerspective::execute_session (ISessMgr::Session &a_session)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     save_current_session ();
     m_priv->session = a_session;
 
@@ -7824,7 +7826,7 @@ DBGPerspective::set_show_context_view (bool a_show)
             m_priv->context_paned_view_is_visible = false;
         }
         m_priv->context_paned_view_is_visible = false;
-    }    
+    }
 }
 
 void

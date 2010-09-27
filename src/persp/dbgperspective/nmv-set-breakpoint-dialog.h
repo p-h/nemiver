@@ -1,5 +1,6 @@
 // -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
 //Author: Jonathon Jongsma
+//        Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *

@@ -166,8 +166,9 @@ public:
 
         r = dynamic_cast<Gtk::CellRendererText*>
             (tree_view->get_column_cell_renderer (6));
-        r->signal_edited ().connect (sigc::mem_fun
-                                     (*this, &BreakpointsView::Priv::on_breakpoint_condition_edited));
+        r->signal_edited ().connect
+	  (sigc::mem_fun
+	   (*this, &BreakpointsView::Priv::on_breakpoint_condition_edited));
 
         // we must handle the button press event before the default button
         // handler since there are cases when we need to prevent the default
@@ -176,8 +177,9 @@ public:
             (sigc::mem_fun
              (*this, &Priv::on_breakpoints_view_button_press_signal),
              false /*connect before*/);
-        tree_view->get_selection ()->signal_changed ().connect (sigc::mem_fun
-                                                                (*this, &Priv::on_treeview_selection_changed));
+        tree_view->get_selection ()->signal_changed ().connect
+	  (sigc::mem_fun
+	   (*this, &Priv::on_treeview_selection_changed));
 
         tree_view->signal_key_press_event ().connect (sigc::mem_fun
                                                       (*this, &Priv::on_key_press_event));

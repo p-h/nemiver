@@ -78,8 +78,8 @@ nmv-call-function-dialog.cc
 
 if BUILD_MEMORYVIEW
 memoryview_sources = \
-					  nmv-memory-view.cc \
-					  nmv-memory-view.h
+nmv-memory-view.cc \
+nmv-memory-view.h
 else
 memoryview_sources =
 endif

@@ -1,6 +1,7 @@
 // -*- c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-'
-//Author: Jonathon Jongsma
-//        Hubert Figuiere
+//Authors: Jonathon Jongsma
+//         Hubert Figuiere
+//         Dodji Seketeli
 /*
  *This file is part of the Nemiver project
  *
@@ -88,7 +89,7 @@ public:
 
         okbutton =
             ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (a_gtkbuilder,
-                                                          "okbutton");
+                                                               "okbutton");
         THROW_IF_FAIL (okbutton);
         okbutton->set_sensitive (false);
 
@@ -509,7 +510,6 @@ SetBreakpointDialog::mode () const
     THROW_IF_FAIL (m_priv);
     return m_priv->mode ();
 }
-
 
 void
 SetBreakpointDialog::mode (Mode a_mode)
