@@ -3757,6 +3757,30 @@ GDBEngine::set_breakpoint_condition (gint a_break_num,
 }
 
 void
+GDBEngine::enable_countpoint (gint a_break_num,
+			      bool a_yes,
+			      const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    typedef map<int, IDebugger::Breakpoint> BPMap;
+    BPMap &bp_cache = get_cached_breakpoints ();
+    BPMap::const_iterator nil = bp_cache.end ();
+
+    BPMap::iterator it = bp_cache.find (a_break_num);
+    if (it == nil)
+        return;
+
+    if (a_yes && it->second.type ()
+        == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
+        it->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+    else
+        it->second.type (IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE);
+
+    breakpoints_set_signal ().emit (get_cached_breakpoints (), a_cookie);
+}
+
+void
 GDBEngine::delete_breakpoint (const UString &a_path,
                               gint a_line_num,
                               const UString &a_cookie)

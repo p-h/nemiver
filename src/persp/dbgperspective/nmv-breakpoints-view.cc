@@ -32,6 +32,7 @@
 #include "nmv-ui-utils.h"
 #include "nmv-i-workbench.h"
 #include "nmv-i-perspective.h"
+#include "nmv-debugger-utils.h"
 
 namespace nemiver {
 
@@ -43,12 +44,28 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<Glib::ustring> function;
     Gtk::TreeModelColumn<int> line;
     Gtk::TreeModelColumn<Glib::ustring> condition;
+    Gtk::TreeModelColumn<bool> is_countpoint;
     Gtk::TreeModelColumn<Glib::ustring> type;
     Gtk::TreeModelColumn<int> hits;
     Gtk::TreeModelColumn<Glib::ustring> expression;
     Gtk::TreeModelColumn<int> ignore_count;
     Gtk::TreeModelColumn<IDebugger::Breakpoint> breakpoint;
     Gtk::TreeModelColumn<bool> is_standard;
+
+    enum INDEXES {
+        ENABLE_INDEX = 0,
+        ID_INDEX,
+        FILENAME_INDEX,
+        LINE_INDEX,
+        FUNCTION_INDEX,
+        ADDRESS_INDEX,
+        CONDITION_INDEX,
+	IS_COUNTPOINT_INDEX,
+        TYPE_INDEX,
+        HITS_INDEX,
+        EXPRESSION_INDEX,
+        IGNORE_COUNT_INDEX
+    };
 
     BPColumns ()
     {
@@ -60,6 +77,7 @@ struct BPColumns : public Gtk::TreeModelColumnRecord {
         add (line);
         add (breakpoint);
         add (condition);
+	add (is_countpoint);
         add (type);
         add (hits);
         add (expression);
@@ -132,6 +150,8 @@ public:
         tree_view->append_column (_("Address"), get_bp_cols ().address);
         tree_view->append_column_editable (_("Condition"),
                                            get_bp_cols ().condition);
+        tree_view->append_column_editable (_("Toggle countpoint"),
+                                           get_bp_cols ().is_countpoint);
         tree_view->append_column (_("Type"), get_bp_cols ().type);
         tree_view->append_column (_("Hits"), get_bp_cols ().hits);
         tree_view->append_column (_("Expression"),
@@ -148,24 +168,33 @@ public:
 
         Gtk::CellRendererToggle *enabled_toggle =
             dynamic_cast<Gtk::CellRendererToggle*>
-            (tree_view->get_column_cell_renderer (0));
+            (tree_view->get_column_cell_renderer (BPColumns::ENABLE_INDEX));
         if (enabled_toggle) {
             enabled_toggle->signal_toggled ().connect
                 (sigc::mem_fun
                  (*this,
                   &BreakpointsView::Priv::on_breakpoint_enable_toggled));
         }
+	Gtk::CellRendererToggle *countpoint_toggle =
+	  dynamic_cast<Gtk::CellRendererToggle*>
+	  (tree_view->get_column_cell_renderer (BPColumns::IS_COUNTPOINT_INDEX));
+	if (countpoint_toggle) {
+	  countpoint_toggle->signal_toggled ().connect
+	    (sigc::mem_fun (*this,
+			    &BreakpointsView::Priv::on_countpoint_toggled));
+	  
+	}
 
         Gtk::CellRendererText *r =
             dynamic_cast<Gtk::CellRendererText*>
-            (tree_view->get_column_cell_renderer (10));
+            (tree_view->get_column_cell_renderer (BPColumns::IGNORE_COUNT_INDEX));
         r->signal_edited ().connect
             (sigc::mem_fun
              (*this,
               &BreakpointsView::Priv::on_breakpoint_ignore_count_edited));
 
         r = dynamic_cast<Gtk::CellRendererText*>
-            (tree_view->get_column_cell_renderer (6));
+            (tree_view->get_column_cell_renderer (BPColumns::CONDITION_INDEX));
         r->signal_edited ().connect
 	  (sigc::mem_fun
 	   (*this, &BreakpointsView::Priv::on_breakpoint_condition_edited));
@@ -289,8 +318,10 @@ public:
         (*a_iter)[get_bp_cols ().expression] = a_breakpoint.expression ();
         (*a_iter)[get_bp_cols ().ignore_count] =
                                         a_breakpoint.ignore_count ();
-
         (*a_iter)[get_bp_cols ().is_standard] = false;
+        (*a_iter)[get_bp_cols ().is_countpoint] =
+            debugger_utils::is_countpoint (a_breakpoint);
+
         switch (a_breakpoint.type ()) {
 	case IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE:
 	  (*a_iter)[get_bp_cols ().type] = _("breakpoint");
@@ -625,6 +656,26 @@ public:
         }
 
         NEMIVER_CATCH
+    }
+
+    void on_countpoint_toggled (const Glib::ustring& path)
+    {
+        NEMIVER_TRY;
+
+        THROW_IF_FAIL (tree_view);
+        Gtk::TreeModel::iterator tree_iter =
+            tree_view->get_model ()->get_iter (path);
+        
+        if (tree_iter) {
+            if ((*tree_iter)[get_bp_cols ().enabled]) {
+                debugger->enable_countpoint
+                    ((*tree_iter)[get_bp_cols ().id], true);
+            } else {
+                debugger->enable_countpoint
+                    ((*tree_iter)[get_bp_cols ().id], false);
+            }
+        }
+        NEMIVER_CATCH;
     }
 
     void on_breakpoint_ignore_count_edited (const Glib::ustring &a_path,

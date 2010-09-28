@@ -354,6 +354,10 @@ public:
                                    const UString &a_condition,
                                    const UString &a_cookie);
 
+    void enable_countpoint (gint a_break_num,
+			    bool a_flag,
+			    const UString &a_cookie);
+
     void delete_breakpoint (const UString &a_path,
                             gint a_line_num,
                             const UString &a_cookie);
