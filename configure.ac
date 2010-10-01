@@ -1,19 +1,29 @@
 dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
-AC_INIT(nemiver,0.8.0)
+AC_PREREQ([2.64])
+AC_INIT([nemiver],
+        [0.8.0],
+        [http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver],
+        [nemiver],
+        [http://projects.gnome.org/nemiver])
 
 MAJOR_VERSION=0
 MINOR_VERSION=8
 MICRO_VERSION=0
 
-AC_PREREQ(2.59)
-AC_CONFIG_SRCDIR(README)
+AC_CONFIG_HEADER([config.h])
+AC_CONFIG_SRCDIR([README])
 AC_CONFIG_MACRO_DIR([m4])
+
 AC_CANONICAL_TARGET
-AM_MAINTAINER_MODE
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
-AC_CONFIG_HEADER(config.h)
+
+AM_INIT_AUTOMAKE([1.11.1])
+AM_MAINTAINER_MODE([enable])
+
+dnl If we are running automake >= 1.11, we can have nicer
+dnl compilation output.
+AM_SILENT_RULES([yes])
 
 
 NEMIVER_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION"
@@ -59,13 +69,16 @@ dnl *********************
 dnl Checks for programs.
 dnl *********************
 AC_PROG_CXX
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 #AC_HEADER_STDC
 
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
 
-AC_LANG_CPLUSPLUS
+dnl Initialize libtool
+LT_PREREQ([2.2])
+LT_INIT
+
+AC_LANG([C++])
 AC_LANG_COMPILER_REQUIRE
 
 AC_PATH_PROG(GDB_PROG,gdb)
@@ -106,8 +119,8 @@ dnl a list of enablexxx options
 dnl ***************************
 
 AC_ARG_ENABLE(idebuggeronly,
-              AC_HELP_STRING([--enable-idebugger-only=yes|no],
-                            [compile the idebuger iface only (default is no)]),
+              AS_HELP_STRING([--enable-idebugger-only=yes|no],
+                             [compile the idebuger iface only (default is no)]),
               ENABLE_IDEBUGGER_ONLY=$enableval,
               ENABLE_IDEBUGGER_ONLY=no)
 if test x$ENABLE_IDEBUGGER_ONLY = xyes ; then
@@ -116,7 +129,7 @@ if test x$ENABLE_IDEBUGGER_ONLY = xyes ; then
 fi
 
 AC_ARG_ENABLE(autotests,
-              AC_HELP_STRING([--enable-autotests=yes|no],
+              AS_HELP_STRING([--enable-autotests=yes|no],
                              [enable automated tests (default is no)]),
               ENABLE_AUTOTESTS=$enableval,
               ENABLE_AUTOTESTS=auto)
@@ -137,8 +150,8 @@ fi
 AM_CONDITIONAL(AUTOTESTS, test x$ENABLE_AUTOTESTS = xyes)
 
 AC_ARG_ENABLE(workbench,
-              AC_HELP_STRING([--enable-workbench=yes|no],
-                            [enable the graphical dbg workbench (default is yes)]),
+              AS_HELP_STRING([--enable-workbench=yes|no],
+                             [enable the graphical dbg workbench (default is yes)]),
               ENABLE_WORKBENCH=$enableval,
               ENABLE_WORKBENCH=yes)
 if test x$ENABLE_WORKBENCH = xyes ; then
@@ -149,8 +162,8 @@ fi
 
 
 AC_ARG_ENABLE(memoryview,
-              AC_HELP_STRING([--enable-memoryview=yes|no],
-                            [enable the memory view hex editor (default is yes)]),
+              AS_HELP_STRING([--enable-memoryview=yes|no],
+                             [enable the memory view hex editor (default is yes)]),
               ENABLE_MEMORYVIEW=$enableval,
               [PKG_CHECK_EXISTS([gtkhex >= $GTKHEX_VERSION], [ENABLE_MEMORYVIEW=yes], [ENABLE_MEMORYVIEW=no])])
 if test x$ENABLE_MEMORYVIEW = xyes ; then
@@ -162,8 +175,8 @@ AM_CONDITIONAL(BUILD_MEMORYVIEW, test x$ENABLE_MEMORYVIEW = xyes)
 
 
 AC_ARG_ENABLE(sourceviewmm2,
-              AC_HELP_STRING([--enable-sourceviewmm2=yes|no],
-                            [use gtksourceviewmm-2.0 (default is auto)]),
+              AS_HELP_STRING([--enable-sourceviewmm2=yes|no],
+                             [use gtksourceviewmm-2.0 (default is auto)]),
               ENABLE_SOURCEVIEWMM2=$enableval,
               [PKG_CHECK_EXISTS([gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM2_VERSION], [ENABLE_SOURCEVIEWMM2=yes], [ENABLE_SOURCEVIEWMM2=no])])
 if test x$ENABLE_SOURCEVIEWMM2 = xyes ; then
@@ -181,8 +194,8 @@ else
 fi
 
 AC_ARG_ENABLE(gio,
-              AC_HELP_STRING([--enable-gio=yes|no],
-                            [use gio instead of gnomevfs (default is auto)]),
+              AS_HELP_STRING([--enable-gio=yes|no],
+                             [use gio instead of gnomevfs (default is auto)]),
               ENABLE_GIO=$enableval,
               [PKG_CHECK_EXISTS([giomm-2.4 >= $LIBGIOMM_VERSION], [ENABLE_GIO=yes], [ENABLE_GIO=no])])
 if test x$ENABLE_GIO = xyes ; then
@@ -198,7 +211,7 @@ DEP_VFS="$VFS_PKG >= $VFS_VERSION"
 
 ENABLE_DEBUG=yes
 AC_ARG_ENABLE(debug,
-              AC_HELP_STRING([--enable-debug=yes|no],
+              AS_HELP_STRING([--enable-debug=yes|no],
                              [enable a lot of debug message dumps(default is yes)]),
               ENABLE_DEBUG=$enableval,
               ENABLE_DEBUG=yes)
@@ -212,7 +225,7 @@ fi
 
 ENABLE_GCC_SYMBOLS_VISIBILITY=no
 AC_ARG_ENABLE(symsvis,
-              AC_HELP_STRING([--enable-symsvis=yes|no],
+              AS_HELP_STRING([--enable-symsvis=yes|no],
                              [use the gcc symbols visibility feature. >=n gcc4.  default is no)]),
               ENABLE_GCC_SYMBOLS_VISIBILITY=$enableval,
               ENABLE_GCC_SYMBOLS_VISIBILITY=no)
@@ -395,10 +408,6 @@ dnl don't try to install gconf schemas during distcheck
 DISTCHECK_CONFIGURE_FLAGS="--disable-schemas-install"
 AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
 
-dnl If we are running automake >= 1.11, we can have nicer
-dnl compilation output.
-m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
-
 AC_PROG_MAKE_SET
 
 AC_CONFIG_FILES([Makefile
@@ -447,7 +456,7 @@ tests/Makefile
 po/Makefile.in
 help/Makefile])
 
-AC_OUTPUT()
+AC_OUTPUT
 
 AC_MSG_NOTICE([
 =================================================================

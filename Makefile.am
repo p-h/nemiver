@@ -1,5 +1,5 @@
 SUBDIRS = src ui menus tests po data docs help
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 headers= config.h
 
 publicheaders_DATA=$(headers)

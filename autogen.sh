@@ -23,4 +23,4 @@ which gnome-autogen.sh || {
 
 autopoint --force || exit $?
 
-REQUIRED_AUTOMAKE_VERSION=1.7 REQUIRED_INTLTOOL_VERSION=0.33 srcdir=$topsrcdir . gnome-autogen.sh
+srcdir=$topsrcdir . gnome-autogen.sh
