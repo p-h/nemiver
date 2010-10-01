@@ -83,12 +83,15 @@ dnl *************************************
 dnl Internationalization support
 dnl *************************************
 dnl To add a new language, add language code xx to po/LINGUAS
-IT_PROG_INTLTOOL([0.33.0])
+IT_PROG_INTLTOOL([0.40.0])
+
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.17])
+
 GETTEXT_PACKAGE=nemiver
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"],
                    [The domain to use with gettext])
-AM_GLIB_GNU_GETTEXT
 
 nemiverlocaledir=[${datadir}/locale]
 AC_SUBST(nemiverlocaledir)
