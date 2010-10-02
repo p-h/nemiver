@@ -2458,14 +2458,16 @@ DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
                                             const IDebugger::Frame &a_frame,
                                             int , int, const UString &)
 {
-
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     LOG_DD ("stopped, reason: " << (int)a_reason);
 
     THROW_IF_FAIL (m_priv);
+
+    if (IDebugger::is_exited (a_reason))
+        return;
 
     update_src_dependant_bp_actions_sensitiveness ();
     m_priv->current_frame = a_frame;
@@ -2478,7 +2480,8 @@ DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
     }
 
     add_text_to_command_view ("\n(gdb)", true);
-    NEMIVER_CATCH
+
+    NEMIVER_CATCH;
 }
 
 void

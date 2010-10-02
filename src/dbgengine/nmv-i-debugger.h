@@ -780,7 +780,15 @@ public:
         SIGNAL_RECEIVED
     };//end enum StopReason
 
-
+    /// Return true if a StopReason represents a reason for exiting.
+    static bool is_exited (enum StopReason a_reason)
+    {
+        if (a_reason == EXITED_SIGNALLED
+            || a_reason == EXITED
+            || a_reason == EXITED_NORMALLY)
+            return true;
+        return false;
+    }
 
     virtual ~IDebugger () {}
 
