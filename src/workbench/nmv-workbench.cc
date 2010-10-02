@@ -288,7 +288,7 @@ Workbench::on_about_menu_item_action ()
     documenters.push_back ("Jonathon Jongsma <jjongsma@gnome.org>");
     dialog.set_documenters (documenters);
 
-    dialog.set_website ("http://www.gnome.org/projects/nemiver/");
+    dialog.set_website (PACKAGE_URL);
     dialog.set_website_label (_("Project Website"));
 
     Glib::ustring license =
