@@ -44,6 +44,7 @@ using nemiver::IWorkbench;
 using nemiver::IWorkbenchSafePtr;
 using nemiver::IDBGPerspective;
 using nemiver::common::UString;
+using nemiver::common::GCharSafePtr;
 using nemiver::ISessMgr;
 
 static const UString DBGPERSPECTIVE_PLUGIN_NAME="dbgperspective";
@@ -315,6 +316,28 @@ parse_command_line (int& a_argc,
     if (a_argv != inf_argv) {
         memmove (a_argv, inf_argv, inf_argc * sizeof (char*));
         a_argc = inf_argc;
+    }
+
+    //***************************************************************
+    // Here goes some sanity checking on the command line parsed so far.
+    //****************************************************************
+
+    // If the user wants to debug a binary running on a remote target,
+    // make sure she provides us with a local copy of the binary too.
+    if (gv_remote) {
+        if (a_argc < 1 || a_argv[0][0] == '-') {
+            cerr << _("Please provide a local copy of the binary "
+                      "you intend to debug remotely.\n"
+                      "Like this:\n")
+                 << "nemiver --remote=" << gv_remote
+                 << " <binary-copy>\n\n";
+            cerr << _("Otherwise, find below the full set of nemiver options.\n");
+            GCharSafePtr help_message;
+            help_message.reset (g_option_context_get_help (context.get (),
+                                                           true, NULL));
+            cerr << help_message.get () << std::endl;
+            return false;
+        }
     }
     return true;
 }
