@@ -69,7 +69,7 @@ static GOptionEntry entries[] =
       G_OPTION_ARG_STRING,
       &gv_env_vars,
       _("Set the environment of the program to debug"),
-      "\"var0=val0 var1=val1 var2=val2 ...\""
+      "<\"var0=val0 var1=val1 var2=val2 ...\">"
     },
     {
       "attach",
@@ -102,7 +102,7 @@ static GOptionEntry entries[] =
       G_OPTION_ARG_INT,
       &gv_execute_session,
       _("Debug the program that was of session number N"),
-      "N"
+      "<N>"
     },
     { "last",
       0,
@@ -118,7 +118,7 @@ static GOptionEntry entries[] =
       G_OPTION_ARG_STRING,
       &gv_log_domains,
       _("Enable logging domains DOMAINS"),
-      "DOMAINS"
+      "<DOMAINS>"
     },
     { "log-debugger-output",
       0,
@@ -142,8 +142,8 @@ static GOptionEntry entries[] =
       0,
       G_OPTION_ARG_STRING,
       &gv_remote,
-      _("Connect to remote target specified by host:port"),
-      NULL,
+      _("Connect to remote target specified by HOST:PORT"),
+      "<HOST:PORT|serial-line-path>"
     },
     {
       "solib-prefix",
@@ -153,7 +153,7 @@ static GOptionEntry entries[] =
       &gv_solib_prefix,
       _("Where to look for shared libraries loaded by the inferior. "
 	"Use in conjunction with --remote"),
-      NULL,
+      "</path/to/prefix>"
     },
     { "version",
       0,
