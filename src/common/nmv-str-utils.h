@@ -31,10 +31,14 @@ NEMIVER_BEGIN_NAMESPACE (str_utils)
 
 using nemiver::common::UString;
 
-bool
-extract_path_and_line_num_from_location (const std::string &a_location,
-                                         std::string &a_file_path,
-                                         std::string &a_line_num);
+bool extract_path_and_line_num_from_location (const std::string &a_location,
+					      std::string &a_file_path,
+					      std::string &a_line_num);
+
+bool parse_host_and_port (const std::string &a,
+			  std::string &a_host,
+			  unsigned &a_port);
+
 size_t hexa_to_int (const string &a_hexa_str);
 std::string int_to_string (size_t an_int);
 bool string_is_number (const string&);

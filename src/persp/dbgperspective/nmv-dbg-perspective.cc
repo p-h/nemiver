@@ -596,8 +596,12 @@ public:
                             bool a_close_opened_files=false);
     void connect_to_remote_target ();
     void connect_to_remote_target (const UString &a_server_address,
-                                   int a_server_port);
-    void connect_to_remote_target (const UString &a_serial_line);
+                                   unsigned a_server_port,
+                                   const UString &a_prog_path,
+                                   const UString &a_solib_prefix);
+    void connect_to_remote_target (const UString &a_serial_line,
+                                   const UString &a_prog_path,
+                                   const UString &a_solib_prefix);
     void detach_from_program ();
     void load_core_file ();
     void load_core_file (const UString &a_prog_file,
@@ -6289,41 +6293,53 @@ DBGPerspective::connect_to_remote_target ()
 
     UString path = dialog.get_executable_path ();
     LOG_DD ("executable path: '" <<  path << "'");
-    vector<UString> args;
-    debugger ()->load_program (path , args, ".");
-    path = dialog.get_solib_prefix_path ();
-    LOG_DD ("solib prefix path: '" <<  path << "'");
-    debugger ()->set_solib_prefix_path (path);
+    UString solib_prefix = dialog.get_solib_prefix_path ();
 
     if (dialog.get_connection_type ()
         == RemoteTargetDialog::TCP_CONNECTION_TYPE) {
         connect_to_remote_target (dialog.get_server_address (),
-                                  dialog.get_server_port ());
+                                  dialog.get_server_port (),
+                                  path, solib_prefix);
     } else if (dialog.get_connection_type ()
                == RemoteTargetDialog::SERIAL_CONNECTION_TYPE) {
-        connect_to_remote_target (dialog.get_serial_port_name ());
+        connect_to_remote_target (dialog.get_serial_port_name (),
+                                  path, solib_prefix);
     }
 }
 
 void
 DBGPerspective::connect_to_remote_target (const UString &a_server_address,
-                                          int a_server_port)
+                                          unsigned a_server_port,
+                                          const UString &a_prog_path,
+                                          const UString &a_solib_prefix)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
     THROW_IF_FAIL (debugger ());
 
     save_current_session ();
-    debugger ()->attach_to_remote_target (a_server_address, a_server_port);
-
+    LOG_DD ("executable path: '" <<  a_prog_path << "'");
+    vector<UString> args;
+    debugger ()->load_program (a_prog_path , args, ".");
+    LOG_DD ("solib prefix path: '" <<  a_solib_prefix << "'");
+    debugger ()->set_solib_prefix_path (a_solib_prefix);
+    debugger ()->attach_to_remote_target (a_server_address,
+                                          a_server_port);
 }
 
 void
-DBGPerspective::connect_to_remote_target (const UString &a_serial_line)
+DBGPerspective::connect_to_remote_target (const UString &a_serial_line,
+                                          const UString &a_prog_path,
+                                          const UString &a_solib_prefix)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
     THROW_IF_FAIL (debugger ());
 
     save_current_session ();
+    LOG_DD ("executable path: '" <<  a_prog_path << "'");
+    vector<UString> args;
+    debugger ()->load_program (a_prog_path , args, ".");
+    LOG_DD ("solib prefix path: '" <<  a_solib_prefix << "'");
+    debugger ()->set_solib_prefix_path (a_solib_prefix);
     debugger ()->attach_to_remote_target (a_serial_line);
 }
 

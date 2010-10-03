@@ -27,6 +27,7 @@
 #include <iostream>
 #include <gtkmm/window.h>
 #include <glib/gi18n.h>
+#include "nmv-str-utils.h"
 #include "nmv-exception.h"
 #include "nmv-initializer.h"
 #include "nmv-i-workbench.h"
@@ -53,9 +54,11 @@ static bool gv_purge_sessions=false;
 static int gv_execute_session=0;
 static bool gv_last_session=false;
 static gchar *gv_log_domains=0;
-static bool gv_log_debugger_output=false;
-static bool gv_show_version=false;
-static bool gv_use_launch_terminal=false;
+static bool gv_log_debugger_output = false;
+static bool gv_show_version = false;
+static bool gv_use_launch_terminal = false;
+static gchar *gv_remote = 0;
+static gchar *gv_solib_prefix = 0;
 
 static GOptionEntry entries[] =
 {
@@ -133,6 +136,25 @@ static GOptionEntry entries[] =
       _("Use this terminal as the debugee's terminal"),
       NULL
     },
+    {
+      "remote",
+      0,
+      0,
+      G_OPTION_ARG_STRING,
+      &gv_remote,
+      _("Connect to remote target specified by host:port"),
+      NULL,
+    },
+    {
+      "solib-prefix",
+      0,
+      0,
+      G_OPTION_ARG_STRING,
+      &gv_solib_prefix,
+      _("Where to look for shared libraries loaded by the inferior. "
+	"Use in conjunction with --remote"),
+      NULL,
+    },
     { "version",
       0,
       0,
@@ -141,7 +163,7 @@ static GOptionEntry entries[] =
       _("Show the version number of nemiver"),
       NULL
     },
-    {0,0,0,(GOptionArg)0,0,0,0}
+    {0, 0, 0, (GOptionArg)0, 0, 0, 0}
 };
 
 struct GOptionContextUnref {
@@ -266,6 +288,8 @@ parse_command_line (int& a_argc,
     }
 }
 
+// Return true if Nemiver should keep going after the non gui options
+// have been processed.
 static bool
 process_non_gui_options ()
 {
@@ -290,6 +314,8 @@ process_non_gui_options ()
     return true;
 }
 
+/// Return true if Nemiver should keep going after the GUI option(s)
+/// have been processed.
 static bool
 process_gui_options (int& a_argc, char** a_argv)
 {
@@ -469,7 +495,31 @@ process_gui_options (int& a_argc, char** a_argv)
                 env[name] = value;
             }
         }
-        if (!prog_path.empty ()) {
+	if (gv_remote) {
+            // The user asked to connect to a remote target.
+            std::string host;
+            unsigned port = 0;
+            std::string solib_prefix;
+
+            if (gv_solib_prefix)
+                solib_prefix = gv_solib_prefix;
+
+            if (nemiver::str_utils::parse_host_and_port (gv_remote,
+                                                         host, port)) {
+                // So it looks like gv_remote has the form
+                // "host:port", so let's try to connect to that.
+                debug_persp->connect_to_remote_target (host, port,
+                                                       prog_path,
+                                                       solib_prefix);
+            } else {
+                // We think gv_remote contains a serial line address.
+                // Let's try to connect via the serial line then.
+                debug_persp->connect_to_remote_target (gv_remote,
+                                                       prog_path,
+                                                       solib_prefix);
+            }
+	} else if (!prog_path.empty ()) {
+            // The user wants to debug a local program
             debug_persp->uses_launch_terminal (gv_use_launch_terminal);
             debug_persp->execute_program (prog_path,
                                           prog_args,

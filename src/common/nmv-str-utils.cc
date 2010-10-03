@@ -45,6 +45,56 @@ static const char *SUPPORTED_ENCODINGS[] =
 #define SIZE_OF_SUPPORTED_ENCODINGS \
 sizeof (SUPPORTED_ENCODINGS)/sizeof (SUPPORTED_ENCODINGS[0])
 
+
+static bool
+parse_string_colon_number (const std::string &a_str,
+                           std::string &a_resulting_string,
+                           std::string &a_number)
+{
+    std::string filename;
+    std::string::size_type colon_pos;
+    bool result = false;
+
+    if ((colon_pos = a_str.find_last_of (":"))
+        == std::string::npos) {
+        // The string has no ':' character. Let's bail out.
+        return false;
+    }
+
+    // Is what comes after the comma a legit number?
+    bool is_number = true;
+    std::string::size_type str_len = colon_pos;
+
+    if (colon_pos + 1 >= a_str.length ())
+        is_number = false;
+    // Loop to make sure the thing after the ':' is an actual
+    // number.
+    std::string::size_type i;
+    for (i = colon_pos + 1; i < a_str.length (); ++i) {
+        if (!isdigit (a_str[i])) {
+            is_number = false;
+            break;
+        }
+    }
+    bool number_is_at_end_of_str = (i >= a_str.length ());
+
+    if (is_number && number_is_at_end_of_str) {
+        string file_name, line_num;
+
+        for (string::size_type i = 0; i < str_len; ++i)
+            a_resulting_string.push_back (a_str[i]);
+
+        for (string::size_type i = colon_pos + 1; i < a_str.length (); ++i)
+            a_number.push_back (a_str[i]);
+        result = true;
+    } else {
+        // Bail out because the ':' is either not a legit number or
+        // not at the end of the string.
+    }
+    
+    return result;
+}
+
 // Return true if a_str is a location string of the form
 // "filename:number", where number is string of digits.
 // Keep in mind that filename can also be a path that contains ':'
@@ -55,45 +105,26 @@ extract_path_and_line_num_from_location (const std::string &a_str,
                                          std::string &a_filename,
                                          std::string &a_line_num)
 {
-    std::string filename;
-    std::string::size_type colon_pos;
-    bool result = false;
-    if ((colon_pos = a_str.find_last_of (":"))
-        == std::string::npos) {
-        // The string has no ':' character. Let's bail out.
-    } else {
-        // Is what comes after the comma a legit number?
-        bool is_number = true;
-        std::string::size_type str_len = colon_pos;
+    return parse_string_colon_number (a_str, a_filename, a_line_num);
+}
 
-        if (colon_pos + 1 >= a_str.length ())
-            is_number = false;
-        // Loop to make sure the thing after the ':' is an actual
-        // number.
-        std::string::size_type i;
-        for (i = colon_pos + 1; i < a_str.length (); ++i) {
-            if (!isdigit (a_str[i])) {
-                is_number = false;
-                break;
-            }
-        }
-        bool number_is_at_end_of_str = (i >= a_str.length ());
+/// Extract host and post parts from a string of the form host:port.
+/// \param a the string to parse
+/// \param a_host the part that was extracted from
+bool
+parse_host_and_port (const std::string &a_str,
+                     std::string &a_host,
+                     unsigned &a_port)
+{
+    std::string host;
+    std::string port;
 
-        if (is_number && number_is_at_end_of_str) {
-            string file_name, line_num;
+    if (!parse_string_colon_number (a_str, host, port))
+        return false;
 
-            for (string::size_type i = 0; i < str_len; ++i)
-                a_filename.push_back (a_str[i]);
-
-            for (string::size_type i = colon_pos + 1; i < a_str.length (); ++i)
-                a_line_num.push_back (a_str[i]);
-            result = true;
-        } else {
-            // Bail out because the ':' is either not a legit number or
-            // not at the end of the string.
-        }
-    }
-    return result;
+    a_port = atoi (port.c_str ());
+    a_host = host;
+    return true;
 }
 
 size_t
