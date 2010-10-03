@@ -163,7 +163,7 @@ static GOptionEntry entries[] =
       _("Show the version number of nemiver"),
       NULL
     },
-    {0, 0, 0, (GOptionArg)0, 0, 0, 0}
+    {0, 0, 0, (GOptionArg) 0, 0, 0, 0}
 };
 
 struct GOptionContextUnref {
@@ -238,7 +238,8 @@ init_option_context ()
     g_option_context_set_ignore_unknown_options (context.get (), false);
     GOptionGroupSafePtr gtk_option_group (gtk_get_option_group (FALSE));
     THROW_IF_FAIL (gtk_option_group);
-    g_option_context_add_group (context.get (), gtk_option_group.release ());
+    g_option_context_add_group (context.get (),
+                                gtk_option_group.release ());
     return context.release ();
 }
 
