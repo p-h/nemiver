@@ -54,8 +54,8 @@ public:
     const UString& get_server_address () const;
     void set_server_address (const UString &a_address);
 
-    int get_server_port () const;
-    void set_server_port (int a_port);
+    unsigned get_server_port () const;
+    void set_server_port (unsigned a_port);
 
     const UString& get_serial_port_name () const;
     void set_serial_port_name (const UString &a_serial);

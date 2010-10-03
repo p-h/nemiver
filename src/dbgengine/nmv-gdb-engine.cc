@@ -2767,7 +2767,8 @@ GDBEngine::attach_to_target (unsigned int a_pid,
 }
 
 bool
-GDBEngine::attach_to_remote_target (const UString &a_host, int a_port)
+GDBEngine::attach_to_remote_target (const UString &a_host,
+				    unsigned a_port)
 {
     queue_command (Command ("-target-select remote " + a_host +
                             ":" + UString::from_int (a_port)));

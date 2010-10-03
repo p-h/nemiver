@@ -339,7 +339,7 @@ RemoteTargetDialog::set_server_address (const UString &a_address)
     m_priv->set_server_address (a_address);
 }
 
-int
+unsigned
 RemoteTargetDialog::get_server_port () const
 {
     THROW_IF_FAIL (m_priv);
@@ -347,7 +347,7 @@ RemoteTargetDialog::get_server_port () const
 }
 
 void
-RemoteTargetDialog::set_server_port (int a_port)
+RemoteTargetDialog::set_server_port (unsigned a_port)
 {
     THROW_IF_FAIL (m_priv);
     m_priv->set_server_port (a_port);

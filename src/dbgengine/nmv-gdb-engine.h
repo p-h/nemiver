@@ -260,7 +260,7 @@ public:
     bool attach_to_target (unsigned int a_pid,
                            const UString &a_tty_path);
 
-    bool attach_to_remote_target (const UString &a_host, int a_port);
+    bool attach_to_remote_target (const UString &a_host, unsigned a_port);
 
     bool attach_to_remote_target (const UString &a_serial_line);
 

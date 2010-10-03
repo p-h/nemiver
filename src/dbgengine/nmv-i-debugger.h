@@ -1035,7 +1035,7 @@ public:
                                    const UString &a_tty_path="") = 0;
 
     virtual bool attach_to_remote_target (const UString &a_host,
-                                          int a_port) = 0;
+                                          unsigned a_port) = 0;
 
     virtual bool attach_to_remote_target (const UString &a_serial_line) = 0;
 
