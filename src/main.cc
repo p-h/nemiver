@@ -304,15 +304,13 @@ parse_command_line (int& a_argc,
         NEMIVER_CATCH;
         g_error_free (error);
 
-        gchar *help_message = g_option_context_get_help (context.get (),
-                                                         true, NULL);
-        NEMIVER_TRY;
-        cerr << help_message << std::endl;
-        NEMIVER_CATCH;
-
-        g_free (help_message);
+        GCharSafePtr help_message;
+        help_message.reset (g_option_context_get_help (context.get (),
+                                                       true, NULL));
+        cerr << help_message.get () << std::endl;
         return false;
     }
+
     if (a_argv != inf_argv) {
         memmove (a_argv, inf_argv, inf_argc * sizeof (char*));
         a_argc = inf_argc;
