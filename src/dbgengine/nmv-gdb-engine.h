@@ -244,11 +244,11 @@ public:
                                  const UString &a_value);
     void set_solib_prefix_path (const UString &a_name);
 
-    void load_program (const UString &a_prog,
+    bool load_program (const UString &a_prog,
                        const vector<UString> &a_args,
                        const UString &a_working_dir);
 
-    void load_program (const UString &a_prog,
+    bool load_program (const UString &a_prog,
                        const vector<UString> &a_argv,
                        const UString &working_dir,
                        const vector<UString> &a_source_search_dirs,

@@ -2643,7 +2643,7 @@ GDBEngine::~GDBEngine ()
     LOG_D ("delete", "destructor-domain");
 }
 
-void
+bool
 GDBEngine::load_program (const UString &a_prog,
                          const vector<UString> &a_args,
                          const UString &a_working_dir)
@@ -2652,10 +2652,11 @@ GDBEngine::load_program (const UString &a_prog,
 
     vector<UString> search_paths;
     UString tty_path;
-    load_program (a_prog, a_args, a_working_dir, search_paths, tty_path);
+    return load_program (a_prog, a_args, a_working_dir,
+                         search_paths, tty_path);
 }
 
-void
+bool
 GDBEngine::load_program (const UString &a_prog,
                          const vector<UString> &a_argv,
                          const UString &working_dir,
@@ -2669,9 +2670,11 @@ GDBEngine::load_program (const UString &a_prog,
 
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts;
-        THROW_IF_FAIL (m_priv->launch_gdb_and_set_args
-                                    (working_dir, a_source_search_dirs, 
-                                     a_prog, a_argv, gdb_opts));
+        if (m_priv->launch_gdb_and_set_args (working_dir,
+                                             a_source_search_dirs, 
+                                             a_prog, a_argv,
+                                             gdb_opts) == false)
+            return false;
 
         Command command;
 
@@ -2711,6 +2714,7 @@ GDBEngine::load_program (const UString &a_prog,
         }
     }
     set_tty_path (a_tty_path);
+    return true;
 }
 
 void

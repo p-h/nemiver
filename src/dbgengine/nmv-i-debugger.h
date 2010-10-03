@@ -1017,11 +1017,11 @@ public:
 
     virtual void set_solib_prefix_path (const UString &a_name) = 0;
 
-    virtual void load_program (const UString &a_prog,
+    virtual bool load_program (const UString &a_prog,
                                const vector<UString> &a_args,
                                const UString &a_working_dir) = 0;
 
-    virtual void load_program
+    virtual bool load_program
                 (const UString &a_prog,
                  const vector<UString> &a_argv,
                  const UString &working_dir,

@@ -6192,9 +6192,18 @@ DBGPerspective::execute_program
 
     LOG_DD ("load program");
 
-    // now really load the inferior program (i.e: the one to be debugged)
-    dbg_engine->load_program (prog, a_args, a_cwd, source_search_dirs,
-                              get_terminal_name ());
+    // now really load the inferior program (i.e: the one to be
+    // debugged)
+
+    if (dbg_engine->load_program (prog, a_args, a_cwd,
+                                  source_search_dirs,
+                                  get_terminal_name ()) == false) {
+        UString message;
+        message.printf (_("Could not load program: %s"),
+                        prog.c_str ());
+        display_error (message);
+        return;
+    }
 
     m_priv->debugger_engine_alive = true;
 
@@ -6319,7 +6328,13 @@ DBGPerspective::connect_to_remote_target (const UString &a_server_address,
     save_current_session ();
     LOG_DD ("executable path: '" <<  a_prog_path << "'");
     vector<UString> args;
-    debugger ()->load_program (a_prog_path , args, ".");
+    if (debugger ()->load_program (a_prog_path , args, ".") == false) {
+        UString message;
+        message.printf (_("Could not load program: %s"),
+                        a_prog_path.c_str ());
+        display_error (message);
+        return;
+    }
     LOG_DD ("solib prefix path: '" <<  a_solib_prefix << "'");
     debugger ()->set_solib_prefix_path (a_solib_prefix);
     debugger ()->attach_to_remote_target (a_server_address,
@@ -6337,7 +6352,13 @@ DBGPerspective::connect_to_remote_target (const UString &a_serial_line,
     save_current_session ();
     LOG_DD ("executable path: '" <<  a_prog_path << "'");
     vector<UString> args;
-    debugger ()->load_program (a_prog_path , args, ".");
+    if (debugger ()->load_program (a_prog_path , args, ".") == false) {
+        UString message;
+        message.printf (_("Could not load program: %s"),
+                        a_prog_path.c_str ());
+        display_error (message);
+        return;
+    }
     LOG_DD ("solib prefix path: '" <<  a_solib_prefix << "'");
     debugger ()->set_solib_prefix_path (a_solib_prefix);
     debugger ()->attach_to_remote_target (a_serial_line);
