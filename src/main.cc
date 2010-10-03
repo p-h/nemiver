@@ -243,9 +243,19 @@ init_option_context ()
     return context.release ();
 }
 
-// Parse the command line and edits it
-// to make it contain the command line of the inferior program.
-static void
+/// Parse the command line and edits it
+/// to make it contain the command line of the inferior program.
+/// If an error happens (e.g, the user provided the wrong command
+/// lines) then display an usage help message and return
+/// false. Otherwise, return true.
+/// \param a_arg the argument count. This is the length of a_argv.
+///  This is going to be edited. After edit, only the number of
+///  arguments of the inferior will be put in this variable.
+/// \param a_argv the string of arguments passed to Nemiver. This is
+/// going to be edited so that only the arguments passed to the
+/// inferior will be left in this.
+/// \return true upon successful completion, false otherwise. If the
+static bool
 parse_command_line (int& a_argc,
                     char** a_argv)
 {
@@ -256,7 +266,7 @@ parse_command_line (int& a_argc,
         // We have no inferior program so edit the command like accordingly.
         a_argc = 0;
         a_argv[0] = 0;
-        return;
+        return true;
     }
 
     // Split the command like in two parts. One part is made of the options
@@ -282,11 +292,31 @@ parse_command_line (int& a_argc,
     }
     nmv_argv = a_argv;
     inf_argv = a_argv + i;
-    g_option_context_parse (context.get (), &nmv_argc, &nmv_argv, 0);
+    GError *error = NULL;
+    if (g_option_context_parse (context.get (),
+                                &nmv_argc,
+                                &nmv_argv,
+                                &error) != TRUE) {
+        NEMIVER_TRY;
+        if (error)
+            cerr << "error: "<< error->message << std::endl;
+        NEMIVER_CATCH;
+        g_error_free (error);
+
+        gchar *help_message = g_option_context_get_help (context.get (),
+                                                         true, NULL);
+        NEMIVER_TRY;
+        cerr << help_message << std::endl;
+        NEMIVER_CATCH;
+
+        g_free (help_message);
+        return false;
+    }
     if (a_argv != inf_argv) {
         memmove (a_argv, inf_argv, inf_argc * sizeof (char*));
         a_argc = inf_argc;
     }
+    return true;
 }
 
 // Return true if Nemiver should keep going after the non gui options
@@ -545,7 +575,8 @@ main (int a_argc, char *a_argv[])
     Initializer::do_init ();
     Gtk::Main gtk_kit (a_argc, a_argv);
 
-    parse_command_line (a_argc, a_argv);
+    if (parse_command_line (a_argc, a_argv) == false)
+        return -1;
 
     if (process_non_gui_options () != true) {
         return -1;
