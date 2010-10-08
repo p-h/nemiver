@@ -21,6 +21,4 @@ which gnome-autogen.sh || {
     exit 1
 }
 
-autopoint --force || exit $?
-
 srcdir=$topsrcdir . gnome-autogen.sh
