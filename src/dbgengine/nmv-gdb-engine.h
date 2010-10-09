@@ -352,11 +352,11 @@ public:
 
     void set_breakpoint_condition (gint a_break_num,
                                    const UString &a_condition,
-                                   const UString &a_cookie);
+                                   const UString &a_cookie = "");
 
     void enable_countpoint (gint a_break_num,
 			    bool a_flag,
-			    const UString &a_cookie);
+			    const UString &a_cookie = "");
 
     bool is_countpoint (gint a_break_num) const;
 
