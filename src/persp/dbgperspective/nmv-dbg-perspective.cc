@@ -280,6 +280,7 @@ private:
     void on_switch_to_asm_action ();
     void on_toggle_breakpoint_action ();
     void on_toggle_breakpoint_enabled_action ();
+    void on_toggle_countpoint_action ();
     void on_inspect_variable_action ();
     void on_call_function_action ();
     void on_show_commands_action ();
@@ -640,6 +641,10 @@ public:
     void toggle_breakpoint (const UString &a_file_path,
                             int a_linenum);
     void toggle_breakpoint (const Address &a_address);
+    void toggle_countpoint (const UString &a_file_path,
+                            int a_linenum);
+    void toggle_countpoint (const Address &a_address);
+    void toggle_countpoint (void);
     void set_breakpoint_using_dialog ();
     void set_breakpoint_using_dialog (const UString &a_file_path,
                                       const int a_line_num);
@@ -1619,6 +1624,18 @@ DBGPerspective::on_toggle_breakpoint_enabled_action ()
 }
 
 void
+DBGPerspective::on_toggle_countpoint_action ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY;
+
+    toggle_countpoint ();
+
+    NEMIVER_CATCH;
+}
+
+void
 DBGPerspective::on_inspect_variable_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2110,8 +2127,11 @@ void
 DBGPerspective::update_toggle_menu_text (const UString& a_current_file,
                                          int a_current_line)
 {
-    bool enabled;
-    int brk_num;
+    bool enabled = false;
+    int brk_num = 0;
+
+    // TODO: support updating in asm mode.
+
     // check if there's a breakpoint set at this line and file
     bool found_bkpt = get_breakpoint_number (a_current_file,
                                              a_current_line,
@@ -2127,8 +2147,19 @@ DBGPerspective::update_toggle_menu_text (const UString& a_current_file,
         ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleBreakMenuItem");
     THROW_IF_FAIL (toggle_break_action);
 
+    Glib::RefPtr<Gtk::Action> toggle_countpoint_action =
+         workbench ().get_ui_manager ()->get_action
+        ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleCountpointMenuItem");
+
     toggle_enable_action->set_sensitive (found_bkpt);
     if (found_bkpt) {
+        if (debugger ()->is_countpoint (brk_num))
+            toggle_countpoint_action->property_label () =
+                _("Change to standard Breakpoint");
+        else
+            toggle_countpoint_action->property_label () =
+                _("Change to Countpoint");
+
         toggle_break_action->property_label () = _("Remove _Breakpoint");
 
         if (enabled) {
@@ -2138,6 +2169,8 @@ DBGPerspective::update_toggle_menu_text (const UString& a_current_file,
         }
     } else {
         toggle_break_action->property_label () = _("Set _Breakpoint");
+        toggle_countpoint_action->property_label () =
+            _("Set Countpoint");
     }
 }
 
@@ -2463,7 +2496,7 @@ void
 DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
                                             bool /*a_has_frame*/,
                                             const IDebugger::Frame &a_frame,
-                                            int , int, const UString &)
+                                            int, int, const UString &)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -3331,6 +3364,25 @@ DBGPerspective::init_actions ()
                      &DBGPerspective::on_toggle_breakpoint_enabled_action),
             ActionEntry::DEFAULT,
             "<shift>F8",
+            false
+        },
+        {
+            "ToggleCountpointMenuItemAction",
+            nil_stock_id,
+            // Depending on the context we will want this string to be
+            // either "Set Countpoint", or "Change to Countpoint", or
+            // "Change to standard Breakpoint". Hence
+            // this string is updated by
+            // DBGPerspective::update_toggle_menu_text when needed. So
+            // this initial value is going to be displayed only when
+            // Nemiver is launched with no executable on the command
+            // line.
+            _("Toggle _Countpoint"),
+            _("Set/Unset a countpoint at the current cursor location"),
+            sigc::mem_fun (*this,
+                           &DBGPerspective::on_toggle_countpoint_action),
+            ActionEntry::DEFAULT,
+            "",
             false
         },
         {
@@ -4583,6 +4635,14 @@ DBGPerspective::get_contextual_menu ()
              "/ContextualMenu",
              "ToggleEnableBreakpointMenuItem",
              "ToggleEnableBreakpointMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false);
+
+        workbench ().get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "ToggleCountpointMenuItem",
+             "ToggleCountpointMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false);
 
@@ -6978,11 +7038,92 @@ DBGPerspective::toggle_breakpoint ()
     source_editor->get_path (path);
     THROW_IF_FAIL (path != "");
 
+    // TODO: support countpoint toggling in asm mode too.
+
     int current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
                 ()->get_iter ().get_line () + 1;
     if (current_line >= 0)
         toggle_breakpoint (path, current_line);
+}
+
+void
+DBGPerspective::toggle_countpoint (const UString &a_file_path,
+                                   int a_linenum)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    LOG_DD ("file_path:" << a_file_path
+            << ", line_num: " << a_file_path);
+
+    bool enabled = false;
+    int break_num = 0;
+    if (get_breakpoint_number (a_file_path, a_linenum,
+                               break_num, enabled)) {
+        // So a breakpoint is already set. See if it's a
+        // countpoint. If yes, turn it into a normal
+        // breakpoint. Otherwise, turn it into a count point.
+
+        IDebugger::Breakpoint bp;
+        THROW_IF_FAIL (debugger ()->get_breakpoint_from_cache
+                       (break_num, bp));
+
+        bool enable_cp = true;
+        if (debugger ()->is_countpoint (bp))
+            enable_cp = false;
+
+        debugger ()->enable_countpoint (break_num, enable_cp);
+    } else {
+        // No breakpoint is set on this line. Set a new countpoint.
+        set_breakpoint (a_file_path, a_linenum,
+                        /*condition=*/"",
+                        /*is_count_point=*/true);
+    }
+}
+
+void
+DBGPerspective::toggle_countpoint (const Address &a_address)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    int break_num = 0;
+    if (get_breakpoint_number (a_address, break_num)) {
+        // So a breakpoint is already set. See if it's a
+        // countpoint. If yes, turn it into a normal
+        // breakpoint. Otherwise, turn it into a count point.
+
+        IDebugger::Breakpoint bp;
+        THROW_IF_FAIL (debugger ()->get_breakpoint_from_cache
+                       (break_num, bp));
+
+        bool enable_cp = true;
+        if (debugger ()->is_countpoint (bp))
+            enable_cp = false;
+
+        debugger ()->enable_countpoint (break_num, enable_cp);
+    } else {
+        // No breakpoint is set on this line. Set a new countpoint.
+        set_breakpoint (a_address, /*is_count_point=*/true);
+    }
+}
+
+void
+DBGPerspective::toggle_countpoint (void)
+{
+    SourceEditor *source_editor = get_current_source_editor ();
+    THROW_IF_FAIL (source_editor);
+    UString path;
+    source_editor->get_path (path);
+    THROW_IF_FAIL (path != "");
+
+    // TODO: support countpoint toggling in asm mode too.
+
+    int current_line =
+        source_editor->source_view ().get_source_buffer ()->get_insert
+        ()->get_iter ().get_line () + 1;
+
+    if (current_line >= 0)
+        toggle_countpoint (path, current_line);
 }
 
 void
@@ -7329,14 +7470,20 @@ DBGPerspective::update_src_dependant_bp_actions_sensitiveness ()
         ("/MenuBar/MenuBarAdditions/DebugMenu/SetBreakUsingDialogMenuItem");
     THROW_IF_FAIL (bp_at_cur_line_with_dialog_action);
 
+    Glib::RefPtr<Gtk::Action> toggle_countpoint_action =
+         workbench ().get_ui_manager ()->get_action
+        ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleCountpointMenuItem");
+
     if (get_num_notebook_pages () == 0) {
         toggle_break_action->set_sensitive (false);
         toggle_enable_action->set_sensitive (false);
         bp_at_cur_line_with_dialog_action->set_sensitive (false);
+        toggle_countpoint_action->set_sensitive (false);
     } else {
         toggle_break_action->set_sensitive (true);
         toggle_enable_action->set_sensitive (true);
         bp_at_cur_line_with_dialog_action->set_sensitive (true);
+        toggle_countpoint_action->set_sensitive (true);
     }
 
 }

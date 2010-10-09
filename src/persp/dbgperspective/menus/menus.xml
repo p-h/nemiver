@@ -71,6 +71,8 @@
                 name="ToggleBreakMenuItem"/>
             <menuitem action="ToggleEnableBreakpointMenuItemAction"
                 name="ToggleEnableBreakMenuItem"/>
+	    <menuitem action="ToggleCountpointMenuItemAction"
+                name="ToggleCountpointMenuItem"/>
             <menuitem action="SetBreakpointMenuItemAction"
                 name="SetBreakMenuItem"/>
             <menuitem action="SetBreakpointUsingDialogMenuItemAction"
