@@ -224,8 +224,6 @@ public:
     //for internal use
     void init ();
 
-    void maybe_handle_countpoint (IDebugger::StopReason a_reason,
-				  int a_breakpoint_num);
     // to be called by client code
     void do_init (IConfMgrSafePtr a_conf_mgr);
 

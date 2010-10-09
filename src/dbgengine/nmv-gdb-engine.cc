@@ -1210,15 +1210,17 @@ struct OnBreakpointHandler: OutputHandler {
         bool has_breaks = false;
         //if breakpoint where set, put them in cache !
         if (has_breakpoints_set (a_in)) {
+            LOG_DD ("adding BPs to cache");
+            m_engine->append_breakpoints_to_cache
+                (a_in.output ().result_record ().breakpoints ());
             if (a_in.command ().name () == "set-countpoint") {
                 THROW_IF_FAIL (a_in.output ().result_record ().
                                breakpoints ().size () == 1);
-                a_in.output ().result_record ().
-                    breakpoints ().begin ()->second.type
-                    (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+                m_engine->enable_countpoint
+                    (a_in.output ().result_record ().
+                     breakpoints ().begin ()->second.number (),
+                     true);
             }
-            m_engine->append_breakpoints_to_cache
-            (a_in.output ().result_record ().breakpoints ());
             has_breaks = true;
         }
 
@@ -1465,6 +1467,27 @@ struct OnCommandDoneHandler : OutputHandler {
         m_engine (a_engine)
     {}
 
+    bool flag_breakpoint_as_countpoint (int a_break_num,
+                                        bool a_yes)
+    {
+        typedef map<int, IDebugger::Breakpoint> BPMap;
+        BPMap &bp_cache = m_engine->get_cached_breakpoints ();
+        BPMap::const_iterator nil = bp_cache.end ();
+
+        BPMap::iterator it = bp_cache.find (a_break_num);
+        if (it == nil)
+            return false;
+
+        if (a_yes && it->second.type ()
+            == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
+            it->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+        else
+            it->second.type
+                (IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE);
+
+        return true;
+    }
+
     bool can_handle (CommandAndOutput &a_in)
     {
         if (a_in.output ().has_result_record () &&
@@ -1484,6 +1507,19 @@ struct OnCommandDoneHandler : OutputHandler {
         }
         if (a_in.command ().name () == "select-frame") {
             m_engine->set_current_frame_level (a_in.command ().tag2 ());
+        }
+        if (a_in.command ().name () == "enable-countpoint"
+            || a_in.command ().name () == "disable-countpoint") {
+            if (a_in.command ().name () == "enable-countpoint") {
+                IDebugger::Breakpoint bp;
+                flag_breakpoint_as_countpoint (a_in.command ().tag2 (), true);
+            } else if (a_in.command ().name () == "disable-countpoint") {
+                flag_breakpoint_as_countpoint (a_in.command ().tag2 (), false);
+            }
+
+            m_engine->breakpoints_set_signal ().emit
+                (m_engine->get_cached_breakpoints (),
+                 a_in.command ().cookie ());
         }
 
         m_engine->command_done_signal ().emit (a_in.command ().name (),
@@ -3275,28 +3311,6 @@ GDBEngine::on_got_target_info_signal (int a_pid, const UString &a_exe_path)
     NEMIVER_CATCH_NOX
 }
 
-/// If the given breakpoint is a countpoint, continue the execution of
-/// the inferior. This is a subroutine of GDBEngine::on_stopped_signal.
-/// \param a_reason the reason why the inferior stopped its execution.
-/// \param a_breakpoint_num the number of the breakpoint to consider.
-void
-GDBEngine::maybe_handle_countpoint (IDebugger::StopReason a_reason,
-                                    int a_breakpoint_num)
-{
-    if (a_reason != IDebugger::BREAKPOINT_HIT)
-        return;
-
-    map<int, IDebugger::Breakpoint>::const_iterator it, nil =
-        get_cached_breakpoints ().end ();       
-    it = get_cached_breakpoints ().find (a_breakpoint_num);
-    THROW_IF_FAIL (it != nil);
-
-    if (it->second.type () != IDebugger::Breakpoint::COUNTPOINT_TYPE)
-        return;
-
-    do_continue ("");
-}
-
 void
 GDBEngine::on_stopped_signal (IDebugger::StopReason a_reason,
                               bool a_has_frame,
@@ -3320,10 +3334,6 @@ GDBEngine::on_stopped_signal (IDebugger::StopReason a_reason,
     }
 
     m_priv->is_attached = true;
-
-    // If we stopped on a breakpoint marked as a countpoint, let's
-    // continue the execution.
-    maybe_handle_countpoint (a_reason, a_bkpt_num);
 
     NEMIVER_CATCH_NOX
 }
@@ -3780,17 +3790,23 @@ GDBEngine::enable_countpoint (gint a_break_num,
     BPMap &bp_cache = get_cached_breakpoints ();
     BPMap::const_iterator nil = bp_cache.end ();
 
-    BPMap::iterator it = bp_cache.find (a_break_num);
-    if (it == nil)
+    if (bp_cache.find (a_break_num) == nil)
         return;
 
-    if (a_yes && it->second.type ()
-        == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
-        it->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
-    else
-        it->second.type (IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE);
+    std::ostringstream command_str;
+    UString command_name;
 
-    breakpoints_set_signal ().emit (get_cached_breakpoints (), a_cookie);
+    if (a_yes) {
+        command_str << "-break-commands " << a_break_num << " \"continue\"";
+        command_name = "enable-countpoint";
+    } else {
+        command_str << "-break-commands " << a_break_num << " \"\"";
+        command_name = "disable-countpoint";
+    }
+    Command command (command_name, command_str.str (), a_cookie);
+    command.tag2 (a_break_num);
+    queue_command (command);
+}
 }
 
 void
