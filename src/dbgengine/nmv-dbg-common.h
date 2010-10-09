@@ -210,6 +210,7 @@ public:
         bool m_has_stream_record;
         StreamRecord m_stream_record;
         bool m_is_stopped;
+	bool m_is_running;
         IDebugger::StopReason m_stop_reason;
         bool m_has_frame;
         IDebugger::Frame m_frame;
@@ -284,6 +285,9 @@ public:
         bool is_stopped () const {return m_is_stopped;}
         void is_stopped (bool a_in) {m_is_stopped = a_in;}
 
+	bool is_running () const {return m_is_running;}
+        void is_running (bool a) {m_is_running = a;}
+
         IDebugger::StopReason stop_reason () const {return m_stop_reason;}
         UString stop_reason_as_str () const
         {
@@ -319,6 +323,7 @@ public:
             m_has_stream_record = false;
             m_stream_record.clear ();
             m_is_stopped = false;
+            m_is_running = false;
             m_stop_reason = IDebugger::UNDEFINED_REASON;
             m_has_frame = false;
             m_frame.clear ();

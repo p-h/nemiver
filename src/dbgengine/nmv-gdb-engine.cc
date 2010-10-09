@@ -1280,9 +1280,22 @@ struct OnStoppedHandler: OutputHandler {
         }
         list<Output::OutOfBandRecord>::iterator iter;
 
-        for (iter = a_in.output ().out_of_band_records ().begin ();
-                iter != a_in.output ().out_of_band_records ().end ();
-                ++iter) {
+        // We want to detect the last out-of-band-record that would
+        // possibly tell us if the target was stopped somewhere. As we
+        // can have multiple contiguous OOBRs sent by GDB (e.g, when a
+        // countpoint is hit multiple times, each time it's hit we get
+        // an OOBR saying the target is stopped, followed by another
+        // one saying the target is running). So we need to start
+        // walking the OOBRs from the end, and stop at the first OOBR
+        // that tells us that the target has stopped. Then if before
+        // that we saw an OOBR telling us that that the target was
+        // running, then the target is running; otherwise it's stopped
+        iter = a_in.output ().out_of_band_records ().end ();
+        for (--iter;
+             iter != a_in.output ().out_of_band_records ().end ();
+             --iter) {
+            if (iter->is_running ())
+                break;
             if (iter->is_stopped ()) {
                 m_is_stopped = true;
                 m_out_of_band_record = *iter;

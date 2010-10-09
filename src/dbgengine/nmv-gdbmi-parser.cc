@@ -1734,6 +1734,7 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
             return false;
         }
         record.thread_id (thread_id);
+        record.is_running (true);
         goto end;
     }
 
