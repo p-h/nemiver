@@ -1134,6 +1134,10 @@ public:
 
     virtual const map<int, Breakpoint>& get_cached_breakpoints () = 0;
 
+    virtual bool get_breakpoint_from_cache (int a_num,
+                                            IDebugger::Breakpoint &a_bp)
+        const = 0;
+
     virtual void choose_function_overload (int a_overload_number,
                                            const UString &a_cookie="") = 0;
 

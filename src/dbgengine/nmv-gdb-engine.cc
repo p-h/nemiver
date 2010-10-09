@@ -3884,14 +3884,22 @@ GDBEngine::get_cached_breakpoints ()
     return m_priv->cached_breakpoints;
 }
 
-/// Append a set of breakpoints to our breakpoint cache.
-/// This function supports the countpoint feature. That is, as a
-/// countpoint is a concept not known to GDB, we have to mark an
-/// otherwise normal breakpoint [from GDB's standpoint] as a
-/// countpoint, in our cache. So whenever we see a breakpoint that we
-/// have previously marked as a countpoint in our cache, we make sure
-/// to not loose the countpointness.
-/// \param a_breaks the set of breakpoints to append to the cache.
+bool
+GDBEngine::get_breakpoint_from_cache (int a_num,
+                                      IDebugger::Breakpoint &a_bp) const
+{
+    typedef map<int, IDebugger::Breakpoint> BPMap;
+    BPMap &bp_cache =
+        const_cast<GDBEngine*> (this)->get_cached_breakpoints ();
+    BPMap::const_iterator nil = bp_cache.end ();
+    BPMap::iterator it;
+
+    if ((it = bp_cache.find (a_num)) == nil)
+        return false;
+    a_bp = it->second;
+    return true;
+}
+
 void
 GDBEngine::append_breakpoints_to_cache
                             (const map<int, IDebugger::Breakpoint> &a_breaks)

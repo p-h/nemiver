@@ -368,6 +368,9 @@ public:
 
     map<int, IDebugger::Breakpoint>& get_cached_breakpoints ();
 
+    bool get_breakpoint_from_cache (int a_num,
+				    IDebugger::Breakpoint &a_bp) const;
+
     void set_catch (const UString &a_event,
                     const UString &a_cookie) ;
 
