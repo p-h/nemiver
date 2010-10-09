@@ -3915,8 +3915,7 @@ GDBEngine::get_breakpoint_from_cache (int a_num,
 }
 
 void
-GDBEngine::append_breakpoints_to_cache
-                            (const map<int, IDebugger::Breakpoint> &a_breaks)
+GDBEngine::append_breakpoint_to_cache (const IDebugger::Breakpoint &a_break)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -3925,57 +3924,74 @@ GDBEngine::append_breakpoints_to_cache
     typedef BpMap::const_iterator ConstBpIt;
 
     BpMap &bp_cache = m_priv->cached_breakpoints;
-    ConstBpIt iter;
     BpIt cur, nil = bp_cache.end ();
-    bool preserve_count_point;
+    bool preserve_count_point = false;
 
-    for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter) {
-        preserve_count_point = false;
-        if (iter->second.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE) {
-            LOG_DD ("breakpoint number "
-                    << iter->first
-                    << " is a count point");
-        } else {
-            LOG_DD ("breakpoint number "
-                    << iter->first
-                    << " is not a count point");
-        }
+    if (a_break.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE) {
+        LOG_DD ("breakpoint number "
+                << a_break.number ()
+                << " is a count point");
+    } else {
+        LOG_DD ("breakpoint number "
+                << a_break.number ()
+                << " is not a count point");
+    }
         
-        // First, let's see if the breakpoint pointed to by iter is
-        // already in our cache.
-        cur = bp_cache.find (iter->first);
-        if (cur != nil) {
-            // So the breakpoint iter->second is already in the
-            // cache. If we flagged it as a countpoint, let's remember
-            // that so that we don't loose the countpointness of the
-            // breakpoint in the cache when we update its state with
-            // the content of iter->second.
-            if (cur->second.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE)
-                preserve_count_point = true;
+    // First, let's see if a_break is already in our cache.
+    cur = bp_cache.find (a_break.number ());
+    if (cur != nil) {
+        // So the breakpoint a_break is already in the
+        // cache. If we flagged it as a countpoint, let's remember
+        // that so that we don't loose the countpointness of the
+        // breakpoint in the cache when we update its state with
+        // the content of a_break.
+        if (cur->second.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE)
+            preserve_count_point = true;
+    }
+
+    // So now is the cache updating time.
+
+    // If the breakpoint a_break was already in the cache and
+    // was flagged as a countpoint, let's preserve that
+    // countpointness attribute.
+    if (cur != nil) {
+        cur->second = a_break;
+        if (preserve_count_point) {
+            cur->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+            LOG_DD ("propagated countpoinness to bp number " << cur->first);
         }
+    } else {
+        // Its the first time we are adding this breakpoint to the
+        // cache. So its countpointness is going to be kept
+        // anyway.
+        
+        std::pair<BpIt,bool> where =
+            bp_cache.insert (BpMap::value_type (a_break.number (), a_break));
 
-        // So now is the cache updating time.
-
-        // If the breakpoint iter->second was already in the cache and
-        // was flagged as a countpoint, let's preserve that
-        // countpointness attribute.
-        if (cur != nil) {
-            cur->second = iter->second;
-            if (preserve_count_point) {
-                cur->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
-                LOG_DD ("propagated countpoinness to bp number " << cur->first);
-            }
-        } else {
-            // Its the first time we are adding this breakpoint to the
-            // cache. So its countpointness is going to be kept
-            // anyway.
-            std::pair<BpIt,bool> where = bp_cache.insert (*iter);
-            if (preserve_count_point) {
-                where.first->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
-                LOG_DD ("propagated countpoinness to bp number " << cur->first);
-            }
+        if (preserve_count_point) {
+            where.first->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);
+            LOG_DD ("propagated countpoinness to bp number " << cur->first);
         }
     }
+}
+
+/// Append a set of breakpoints to our breakpoint cache.
+/// This function supports the countpoint feature. That is, as a
+/// countpoint is a concept not known to GDB, we have to mark an
+/// otherwise normal breakpoint [from GDB's standpoint] as a
+/// countpoint, in our cache. So whenever we see a breakpoint that we
+/// have previously marked as a countpoint in our cache, we make sure
+/// to not loose the countpointness.
+/// \param a_breaks the set of breakpoints to append to the cache.
+void
+GDBEngine::append_breakpoints_to_cache
+                            (const map<int, IDebugger::Breakpoint> &a_breaks)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    map<int, IDebugger::Breakpoint>::const_iterator iter;
+    for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter)
+        append_breakpoint_to_cache (iter->second);
 }
 
 
