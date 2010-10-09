@@ -1118,6 +1118,10 @@ public:
                                     bool a_flag,
                                     const UString &a_cookie ="") = 0;
 
+    virtual bool is_countpoint (gint a_break_num) const = 0;
+
+    virtual bool is_countpoint (const Breakpoint &a_breakpoint) const = 0;
+
     virtual void delete_breakpoint (const UString &a_path,
                                     gint a_line_num,
                                     const UString &a_cookie="") = 0;

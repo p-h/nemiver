@@ -2736,7 +2736,7 @@ DBGPerspective::on_debugger_asm_signal3
     switch_to_asm (a_info, a_instrs, a_editor,
                    /*a_approximate_where=*/true);
     append_visual_breakpoint (a_editor, a_bp.address (),
-                              debugger_utils::is_countpoint (a_bp),
+                              debugger ()->is_countpoint (a_bp),
                               a_bp.line ());
 
     NEMIVER_CATCH;
@@ -5185,7 +5185,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
                                      break_iter->second.enabled (),
                                      break_iter->second.condition (),
                                      break_iter->second.ignore_count (),
-                                     debugger_utils::is_countpoint
+                                     debugger ()->is_countpoint
                                      (break_iter->second));
             a_session.breakpoints ().push_back (bp);
             LOG_DD ("Regular breakpoint scheduled to be stored");
@@ -6440,7 +6440,7 @@ DBGPerspective::set_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
     if (a_breakpoint.type () == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE
         || a_breakpoint.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE) {
         int ignore_count =
-            debugger_utils::is_countpoint (a_breakpoint)
+            debugger ()->is_countpoint (a_breakpoint)
             ? -1
             : a_breakpoint.ignore_count ();
 
@@ -6492,13 +6492,13 @@ DBGPerspective::append_breakpoint (int a_bp_num,
         switch (type) {
             case SourceEditor::BUFFER_TYPE_SOURCE:
                 append_visual_breakpoint (editor, a_breakpoint.line (),
-                                          debugger_utils::is_countpoint
+                                          debugger ()->is_countpoint
                                           (a_breakpoint),
                                           a_breakpoint.enabled ());
                 break;
             case SourceEditor::BUFFER_TYPE_ASSEMBLY:
                 append_visual_breakpoint (editor, a_breakpoint.address (),
-                                          debugger_utils::is_countpoint
+                                          debugger ()->is_countpoint
                                           (a_breakpoint),
                                           a_breakpoint.enabled ());
                 break;
@@ -6807,7 +6807,7 @@ DBGPerspective::apply_decorations_to_source (SourceEditor *a_editor,
         if (a_editor->get_path () == it->second.file_full_name ()) {
             append_visual_breakpoint (a_editor,
                                       it->second.line (),
-                                      debugger_utils::is_countpoint
+                                      debugger ()->is_countpoint
                                       (it->second),
                                       it->second.enabled ());
         }
@@ -6853,7 +6853,7 @@ DBGPerspective::apply_decorations_to_asm (SourceEditor *a_editor,
         if (a_editor->get_path () == it->second.file_full_name ()) {
             Address addr = it->second.address ();
             if (!append_visual_breakpoint (a_editor, addr,
-                                           debugger_utils::is_countpoint
+                                           debugger ()->is_countpoint
                                            (it->second),
                                            it->second.enabled ())) {
                 LOG_DD ("Could'nt find line for address: "

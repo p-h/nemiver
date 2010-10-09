@@ -3807,6 +3807,20 @@ GDBEngine::enable_countpoint (gint a_break_num,
     command.tag2 (a_break_num);
     queue_command (command);
 }
+
+bool
+GDBEngine::is_countpoint (gint a_bp_num) const
+{
+    Breakpoint bp;
+    if (get_breakpoint_from_cache (a_bp_num, bp))
+        return is_countpoint (bp);
+    return false;
+}
+
+bool
+GDBEngine::is_countpoint (const Breakpoint &a_breakpoint) const
+{
+    return (a_breakpoint.type () == Breakpoint::COUNTPOINT_TYPE);
 }
 
 void

@@ -320,7 +320,7 @@ public:
                                         a_breakpoint.ignore_count ();
         (*a_iter)[get_bp_cols ().is_standard] = false;
         (*a_iter)[get_bp_cols ().is_countpoint] =
-            debugger_utils::is_countpoint (a_breakpoint);
+            debugger->is_countpoint (a_breakpoint);
 
         switch (a_breakpoint.type ()) {
 	case IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE:
