@@ -266,6 +266,7 @@ struct SourceEditor::Priv {
     {
         asm_ctxt.buffer = a_buf;
         source_view->set_source_buffer (a_buf);
+        init_assembly_buffer_signals ();
     }
 
     void
@@ -273,6 +274,7 @@ struct SourceEditor::Priv {
     {
         non_asm_ctxt.buffer = a_buf;
         source_view->set_source_buffer (a_buf);
+        init_non_assembly_buffer_signals ();
     }
 
     bool
@@ -596,15 +598,51 @@ struct SourceEditor::Priv {
         source_view->marker_region_got_clicked_signal ().connect
             (sigc::mem_fun (*this,
                             &SourceEditor::Priv::on_marker_region_got_clicked));
-        source_view->get_buffer ()->signal_mark_set ().connect
+        init_assembly_context_signals ();
+        init_non_assembly_context_signals ();
+    }
+
+    void
+    init_common_buffer_signals (Glib::RefPtr<SourceBuffer> a_buf)
+    {
+        if (!a_buf)
+            return;
+        a_buf->signal_mark_set ().connect
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_mark_set_signal));
-        source_view->get_buffer ()->signal_insert ().connect
+        a_buf->signal_insert ().connect
             (sigc::mem_fun (*this, &SourceEditor::Priv::on_signal_insert));
+        a_buf->signal_mark_set ().connect
+            (sigc::mem_fun (*this, &SourceEditor::Priv::on_signal_mark_set));
+    }
+
+    void
+    init_assembly_buffer_signals ()
+    {
+        Glib::RefPtr<SourceBuffer> buf = asm_ctxt.buffer;
+        if (!buf)
+            return;
+        init_common_buffer_signals (buf);        
+    }
+
+    void
+    init_assembly_context_signals ()
+    {
+        init_assembly_buffer_signals ();        
+    }
+
+    void init_non_assembly_buffer_signals ()
+    {
+        Glib::RefPtr<SourceBuffer> buf = non_asm_ctxt.buffer;
+        init_common_buffer_signals (buf);
+    }
+
+    void
+    init_non_assembly_context_signals ()
+    {
         non_asm_ctxt.signal_insertion_moved.connect
             (sigc::mem_fun (*this,
                             &SourceEditor::Priv::on_signal_insertion_moved));
-        source_view->get_buffer ()->signal_mark_set ().connect
-            (sigc::mem_fun (*this, &SourceEditor::Priv::on_signal_mark_set));
+        init_non_assembly_buffer_signals ();        
     }
 
     void
