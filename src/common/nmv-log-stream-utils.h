@@ -82,8 +82,12 @@ LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_INFO << message << nemiver::comm
 #endif
 
 #ifndef LOG_D
-#define LOG_D(message, domain) \
-LOG_STREAM.push_domain (domain); LOG (message) ; LOG_STREAM.pop_domain ();
+#define LOG_D(message, domain)                  \
+    do {                                        \
+        LOG_STREAM.push_domain (domain);        \
+        LOG (message) ;                         \
+        LOG_STREAM.pop_domain ();               \
+    } while (false)
 #endif
 
 #ifndef LOG_DD
@@ -101,8 +105,12 @@ LOG_STREAM << LOG_LEVEL_NORMAL___ << LOG_MARKER_EXCEPTION << HERE << message << 
 #endif
 
 #ifndef LOG_ERROR_D
-#define LOG_ERROR_D(message, domain) \
-LOG_STREAM.push_domain (domain); LOG_ERROR (message) ; LOG_STREAM.pop_domain() ;
+#define LOG_ERROR_D(message, domain)            \
+    do {                                        \
+        LOG_STREAM.push_domain (domain);        \
+        LOG_ERROR (message) ;                   \
+        LOG_STREAM.pop_domain() ;               \
+    } while (false)
 #endif
 
 #ifndef LOG_ERROR_DD
@@ -115,8 +123,12 @@ LOG_STREAM << LOG_LEVEL_VERBOSE___ << LOG_MARKER_INFO << HERE << message << nemi
 #endif
 
 #ifndef LOG_VERBOSE_D
-#define LOG_VERBOSE_D(message) \
-LOG_STREAM.push_domain (domain); LOG_VERBOSE(message) ;LOG_STREAM.pop_domain();
+#define LOG_VERBOSE_D(message)                  \
+    do {                                        \
+        LOG_STREAM.push_domain (domain);        \
+        LOG_VERBOSE(message) ;                  \
+        LOG_STREAM.pop_domain();                \
+    } while (false)
 #endif
 
 #ifndef LOG_SCOPE_VERBOSE

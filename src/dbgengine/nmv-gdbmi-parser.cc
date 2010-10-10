@@ -2760,7 +2760,7 @@ GDBMIParser::parse_local_var_list (UString::size_type a_from,
             } else {
                 LOG_ERROR_D ("got an unknown tuple member with name: '"
                              << variable_str << "'",
-                             GDBMI_PARSING_DOMAIN)
+                             GDBMI_PARSING_DOMAIN);
                 continue;
             }
 
