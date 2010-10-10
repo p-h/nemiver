@@ -1563,6 +1563,16 @@ SourceEditor::get_buffer_type () const
     return m_priv->get_buffer_type ();
 }
 
+bool
+SourceEditor::current_address (Address &a_address) const
+{
+  if (get_buffer_type () != BUFFER_TYPE_ASSEMBLY)
+    return false;
+
+  a_address = m_priv->asm_ctxt.current_address;
+  return true;
+}
+
 /// Registers a normal (non-assembly) source buffer.
 /// \param a_buf the source buffer to register.
 void

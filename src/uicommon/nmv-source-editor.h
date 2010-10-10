@@ -142,6 +142,8 @@ public:
 
     BufferType get_buffer_type () const;
 
+    bool current_address (Address&) const;
+
     void register_assembly_source_buffer
                         (Glib::RefPtr<SourceBuffer> &a_buf);
 
