@@ -326,6 +326,15 @@ private:
     void update_toggle_menu_text (const UString& a_current_file,
                                   int a_current_line);
 
+    void update_toggle_menu_text (const Address &a_address);
+
+    void update_toggle_menu_text (const IDebugger::Breakpoint *);
+
+    void update_toggle_menu_text (SourceEditor &);
+
+    void update_toggle_menu_text (SourceEditor &,
+                                  const Gtk::TextBuffer::iterator &);
+
     void on_shutdown_signal ();
 
     void on_show_command_view_changed_signal (bool);
@@ -623,12 +632,11 @@ public:
     void append_breakpoints
                     (const map<int, IDebugger::Breakpoint> &a_breaks);
 
-    bool get_breakpoint_number (const UString &a_file_name,
-                                int a_linenum,
-                                int &a_break_num,
-                                bool &a_enabled);
-    bool get_breakpoint_number (const Address &a_address,
-                                int &a_break_num);
+    const IDebugger::Breakpoint* get_breakpoint (const UString &a_file_name,
+                                                 int a_linenum) const;
+
+    const IDebugger::Breakpoint* get_breakpoint (const Address &) const;
+
     bool delete_breakpoint ();
     bool delete_breakpoint (int a_breakpoint_num);
     bool delete_breakpoint (const UString &a_file_path,
@@ -670,6 +678,8 @@ public:
     void toggle_breakpoint ();
     void toggle_breakpoint_enabled (const UString &a_file_path,
                                     int a_linenum);
+    void toggle_breakpoint_enabled (const Address &a);
+    void toggle_breakpoint_enabled (int a_break_num, bool a_enabled);
     void toggle_breakpoint_enabled ();
 
     void update_src_dependant_bp_actions_sensitiveness ();
@@ -2108,52 +2118,105 @@ DBGPerspective::on_mouse_immobile_timer_signal ()
 
 void
 DBGPerspective::on_insertion_changed_signal
-                                    (const Gtk::TextBuffer::iterator& iter,
+                                    (const Gtk::TextBuffer::iterator &a_it,
                                      SourceEditor *a_editor)
 {
     NEMIVER_TRY
 
-    THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (a_editor);
 
-    UString path;
-    a_editor->get_path (path);
-    // add one since iter is 0-based, file is 1-based
-    update_toggle_menu_text (path, iter.get_line () + 1);
+    update_toggle_menu_text (*a_editor, a_it);
+
     NEMIVER_CATCH
 }
 
 void
-DBGPerspective::update_toggle_menu_text (const UString& a_current_file,
+DBGPerspective::update_toggle_menu_text (const Address &a_address)
+{
+    const IDebugger::Breakpoint *bp = get_breakpoint (a_address);
+    update_toggle_menu_text (bp);
+}
+
+void
+DBGPerspective::update_toggle_menu_text (const UString &a_current_file,
                                          int a_current_line)
 {
-    bool enabled = false;
-    int brk_num = 0;
+    const IDebugger::Breakpoint *bp
+        = get_breakpoint (a_current_file, a_current_line);
 
-    // TODO: support updating in asm mode.
+    update_toggle_menu_text (bp);
+}
 
-    // check if there's a breakpoint set at this line and file
-    bool found_bkpt = get_breakpoint_number (a_current_file,
-                                             a_current_line,
-                                             brk_num,
-                                             enabled);
+void
+DBGPerspective::update_toggle_menu_text (SourceEditor &a_editor)
+{
+    switch (a_editor.get_buffer_type ()) {
+    case SourceEditor::BUFFER_TYPE_SOURCE: {
+        UString path;
+        int line = -1;
+        a_editor.get_path (path);
+        a_editor.current_line (line);
+        update_toggle_menu_text (path, line);
+    }
+        break;
+    case SourceEditor::BUFFER_TYPE_ASSEMBLY: {
+        Address a;
+        if (a_editor.current_address (a))
+            update_toggle_menu_text (a);
+    }
+        break;
+    default:
+        THROW ("should not be reached");
+    }
+}
 
+void
+DBGPerspective::update_toggle_menu_text (SourceEditor &a_editor,
+                                         const Gtk::TextBuffer::iterator &a_it)
+{
+    int line = a_it.get_line () + 1;
+    UString path;
+    a_editor.get_path (path);
+
+    switch (a_editor.get_buffer_type ()){
+    case SourceEditor::BUFFER_TYPE_SOURCE:
+        update_toggle_menu_text (path, line);
+        break;
+    case SourceEditor::BUFFER_TYPE_ASSEMBLY: {
+        Address a;
+        if (a_editor.assembly_buf_line_to_addr (line, a) == false) {
+            LOG_DD ("No ASM @ at line " << line);
+        }
+        else
+            update_toggle_menu_text (a);
+    }
+        break;
+    default:
+        THROW ("Should not be reached");
+        break;
+    }
+}
+
+void
+DBGPerspective::update_toggle_menu_text (const IDebugger::Breakpoint *a_bp)
+{
     Glib::RefPtr<Gtk::Action> toggle_enable_action =
-         workbench ().get_ui_manager ()->get_action
+        workbench ().get_ui_manager ()->get_action
         ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleEnableBreakMenuItem");
     THROW_IF_FAIL (toggle_enable_action);
     Glib::RefPtr<Gtk::Action> toggle_break_action =
-         workbench ().get_ui_manager ()->get_action
+        workbench ().get_ui_manager ()->get_action
         ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleBreakMenuItem");
     THROW_IF_FAIL (toggle_break_action);
 
     Glib::RefPtr<Gtk::Action> toggle_countpoint_action =
-         workbench ().get_ui_manager ()->get_action
+        workbench ().get_ui_manager ()->get_action
         ("/MenuBar/MenuBarAdditions/DebugMenu/ToggleCountpointMenuItem");
 
-    toggle_enable_action->set_sensitive (found_bkpt);
-    if (found_bkpt) {
-        if (debugger ()->is_countpoint (brk_num))
+    toggle_enable_action->set_sensitive (a_bp != 0);
+
+    if (a_bp != 0) {
+        if (debugger ()->is_countpoint (*a_bp))
             toggle_countpoint_action->property_label () =
                 _("Change to standard Breakpoint");
         else
@@ -2162,7 +2225,7 @@ DBGPerspective::update_toggle_menu_text (const UString& a_current_file,
 
         toggle_break_action->property_label () = _("Remove _Breakpoint");
 
-        if (enabled) {
+        if (a_bp->enabled ()) {
             toggle_enable_action->property_label () = _("Disable Breakpoint");
         } else {
             toggle_enable_action->property_label () = _("Enable Breakpoint");
@@ -2486,9 +2549,7 @@ DBGPerspective::on_debugger_breakpoints_set_signal
         LOG_ERROR ("no editor was found");
         return;
     }
-    UString path;
-    editor->get_path (path);
-    update_toggle_menu_text (path, editor->current_line ());
+    update_toggle_menu_text (*editor);
     NEMIVER_CATCH
 }
 
@@ -2614,9 +2675,7 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
     delete_visual_breakpoint (a_break_number);
     SourceEditor* editor = get_current_source_editor ();
     THROW_IF_FAIL (editor);
-    UString path;
-    editor->get_path (path);
-    update_toggle_menu_text (path, editor->current_line ());
+    update_toggle_menu_text (*editor);
     NEMIVER_CATCH
 }
 
@@ -6601,17 +6660,14 @@ DBGPerspective::append_breakpoints
         append_breakpoint (iter->first, iter->second);
 }
 
-bool
-DBGPerspective::get_breakpoint_number (const UString &a_file_name,
-                                       int a_line_num,
-                                       int &a_break_num,
-                                       bool &a_enabled)
+const IDebugger::Breakpoint*
+DBGPerspective::get_breakpoint (const UString &a_file_name,
+                                int a_line_num) const
+                         
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     UString breakpoint = a_file_name + ":" + UString::from_int (a_line_num);
-
-    LOG_DD ("searching for breakpoint " << breakpoint << ": ");
 
     map<int, IDebugger::Breakpoint>::const_iterator iter;
     for (iter = m_priv->breakpoints.begin ();
@@ -6627,30 +6683,26 @@ DBGPerspective::get_breakpoint_number (const UString &a_file_name,
              || (Glib::path_get_basename (iter->second.file_full_name ())
                      == Glib::path_get_basename (a_file_name)))
             && (iter->second.line () == a_line_num)) {
-            a_break_num = iter->second.number ();
-            a_enabled = iter->second.enabled ();
-            LOG_DD ("found breakpoint " << breakpoint << " !");
-            return true;
+            LOG_DD ("found breakpoint !");
+            return &iter->second;
         }
     }
-    LOG_DD ("did not find breakpoint " + breakpoint);
-    return false;
+    LOG_DD ("did not find breakpoint");
+    return 0;
 }
 
-bool
-DBGPerspective::get_breakpoint_number (const Address &a_address,
-                                       int &a_break_num)
+const IDebugger::Breakpoint*
+DBGPerspective::get_breakpoint (const Address &a) const
 {
     map<int, IDebugger::Breakpoint>::const_iterator iter;
     for (iter = m_priv->breakpoints.begin ();
          iter != m_priv->breakpoints.end ();
          ++iter) {
-        if (a_address == iter->second.address ()) {
-            a_break_num = iter->second.number ();
-            return true;
+        if (a == iter->second.address ()) {
+            return &iter->second;
         }
     }
-    return false;
+    return 0;
 }
 
 bool
@@ -6665,14 +6717,12 @@ DBGPerspective::delete_breakpoint ()
     gint current_line =
         source_editor->source_view ().get_source_buffer ()->get_insert
             ()->get_iter ().get_line () + 1;
-    int break_num=0;
-    bool enabled=false;
-    if (!get_breakpoint_number (path, current_line,
-                                break_num, enabled)) {
+
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (path, current_line)) == 0) {
         return false;
     }
-    THROW_IF_FAIL (break_num);
-    return delete_breakpoint (break_num);
+    return delete_breakpoint (bp->number ());
 }
 
 bool
@@ -6955,27 +7005,20 @@ bool
 DBGPerspective::delete_breakpoint (const UString &a_file_name,
                                    int a_line_num)
 {
-    int breakpoint_number = 0;
-    bool enabled = false;
-    if (!get_breakpoint_number (a_file_name, a_line_num,
-                                breakpoint_number, enabled))
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a_file_name, a_line_num)) == 0)
         return false;
 
-    if (breakpoint_number < 1)
-        return false;
-
-    return delete_breakpoint (breakpoint_number);
+    return delete_breakpoint (bp->number ());
 }
 
 bool
 DBGPerspective::delete_breakpoint (const Address &a_address)
 {
-    int bp_num = 0;
-    if (!get_breakpoint_number (a_address, bp_num))
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a_address)) == 0)
         return false;
-    if (bp_num < 1)
-        return false;
-    return delete_breakpoint (bp_num);
+    return delete_breakpoint (bp->number ());
 }
 
 bool
@@ -6983,18 +7026,19 @@ DBGPerspective::is_breakpoint_set_at_line (const UString &a_file_path,
                                            int a_line_num,
                                            bool &a_enabled)
 {
-    int break_num = 0;
-    if (get_breakpoint_number (a_file_path, a_line_num,
-                               break_num, a_enabled))
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a_file_path, a_line_num)) != 0) {
+        a_enabled = bp->enabled ();
         return true;
+    }
     return false;
 }
 
 bool
 DBGPerspective::is_breakpoint_set_at_address (const Address &a_address)
 {
-    int break_num = 0;
-    if (get_breakpoint_number (a_address, break_num))
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a_address)) != 0)
         return true;
     return false;
 }
@@ -7038,13 +7082,23 @@ DBGPerspective::toggle_breakpoint ()
     source_editor->get_path (path);
     THROW_IF_FAIL (path != "");
 
-    // TODO: support countpoint toggling in asm mode too.
-
-    int current_line =
-        source_editor->source_view ().get_source_buffer ()->get_insert
-                ()->get_iter ().get_line () + 1;
-    if (current_line >= 0)
-        toggle_breakpoint (path, current_line);
+    switch (source_editor->get_buffer_type ()) {
+    case SourceEditor::BUFFER_TYPE_ASSEMBLY:{
+        Address a;
+        if (source_editor->current_address (a))
+            toggle_breakpoint (a);
+    }
+        break;
+    case SourceEditor::BUFFER_TYPE_SOURCE: {
+        int current_line = source_editor->current_line ();
+        if (current_line >= 0)
+            toggle_breakpoint (path, current_line);
+    }
+        break;
+    default:
+        THROW ("should not be reached");
+        break;
+    }
 }
 
 void
@@ -7056,23 +7110,13 @@ DBGPerspective::toggle_countpoint (const UString &a_file_path,
     LOG_DD ("file_path:" << a_file_path
             << ", line_num: " << a_file_path);
 
-    bool enabled = false;
-    int break_num = 0;
-    if (get_breakpoint_number (a_file_path, a_linenum,
-                               break_num, enabled)) {
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a_file_path, a_linenum)) != 0) {
         // So a breakpoint is already set. See if it's a
         // countpoint. If yes, turn it into a normal
         // breakpoint. Otherwise, turn it into a count point.
-
-        IDebugger::Breakpoint bp;
-        THROW_IF_FAIL (debugger ()->get_breakpoint_from_cache
-                       (break_num, bp));
-
-        bool enable_cp = true;
-        if (debugger ()->is_countpoint (bp))
-            enable_cp = false;
-
-        debugger ()->enable_countpoint (break_num, enable_cp);
+        bool enable_cp = !debugger ()->is_countpoint (*bp);
+        debugger ()->enable_countpoint (bp->number (), enable_cp);
     } else {
         // No breakpoint is set on this line. Set a new countpoint.
         set_breakpoint (a_file_path, a_linenum,
@@ -7086,21 +7130,17 @@ DBGPerspective::toggle_countpoint (const Address &a_address)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    int break_num = 0;
-    if (get_breakpoint_number (a_address, break_num)) {
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a_address)) != 0) {
         // So a breakpoint is already set. See if it's a
         // countpoint. If yes, turn it into a normal
         // breakpoint. Otherwise, turn it into a count point.
 
-        IDebugger::Breakpoint bp;
-        THROW_IF_FAIL (debugger ()->get_breakpoint_from_cache
-                       (break_num, bp));
-
         bool enable_cp = true;
-        if (debugger ()->is_countpoint (bp))
+        if (debugger ()->is_countpoint (*bp))
             enable_cp = false;
 
-        debugger ()->enable_countpoint (break_num, enable_cp);
+        debugger ()->enable_countpoint (bp->number (), enable_cp);
     } else {
         // No breakpoint is set on this line. Set a new countpoint.
         set_breakpoint (a_address, /*is_count_point=*/true);
@@ -7111,19 +7151,24 @@ void
 DBGPerspective::toggle_countpoint (void)
 {
     SourceEditor *source_editor = get_current_source_editor ();
-    THROW_IF_FAIL (source_editor);
-    UString path;
-    source_editor->get_path (path);
-    THROW_IF_FAIL (path != "");
 
-    // TODO: support countpoint toggling in asm mode too.
-
-    int current_line =
-        source_editor->source_view ().get_source_buffer ()->get_insert
-        ()->get_iter ().get_line () + 1;
-
-    if (current_line >= 0)
-        toggle_countpoint (path, current_line);
+    switch (source_editor->get_buffer_type ()) {
+    case SourceEditor::BUFFER_TYPE_SOURCE: {
+        int line =  source_editor->current_line ();
+        UString path;
+        source_editor->get_path (path);
+        toggle_countpoint (path, line);
+    }
+        break;
+    case SourceEditor::BUFFER_TYPE_ASSEMBLY: {
+        Address a;
+        source_editor->current_address (a);
+        toggle_countpoint (a);
+    }
+        break;
+    default:
+        THROW ("should not be reached");
+    }
 }
 
 void
@@ -7423,11 +7468,26 @@ DBGPerspective::toggle_breakpoint_enabled ()
     source_editor->get_path (path);
     THROW_IF_FAIL (path != "");
 
-    gint current_line =
-        source_editor->source_view ().get_source_buffer ()->get_insert
-                ()->get_iter ().get_line () + 1;
-    if (current_line >= 0)
-        toggle_breakpoint_enabled (path, current_line);
+    switch (source_editor->get_buffer_type ()) {
+    case SourceEditor::BUFFER_TYPE_ASSEMBLY: {
+        Address a;
+        if (source_editor->current_address (a)) {
+            toggle_breakpoint_enabled (a);
+        } else {
+            LOG_DD ("Couldn't find any address here");
+        }
+    }
+        break;
+    case SourceEditor::BUFFER_TYPE_SOURCE: {
+        int current_line = source_editor->current_line ();
+        if (current_line >= 0)
+            toggle_breakpoint_enabled (path, current_line);
+    }
+        break;
+    default:
+        THROW ("should not be reached");
+        break;
+    }
 }
 
 void
@@ -7437,19 +7497,36 @@ DBGPerspective::toggle_breakpoint_enabled (const UString &a_file_path,
     LOG_DD ("file_path:" << a_file_path
             << ", line_num: " << a_line_num);
 
-    int break_num=-1;
-    bool enabled=false;
-    if (get_breakpoint_number (a_file_path, a_line_num, break_num, enabled)
-        && break_num > 0) {
-        LOG_DD ("breakpoint set");
-        if (enabled) {
-            debugger ()->disable_breakpoint (break_num);
-        } else {
-            debugger ()->enable_breakpoint (break_num);
-        }
-    } else {
-        LOG_DD ("breakpoint no set");
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a_file_path, a_line_num)) != 0)
+        toggle_breakpoint_enabled (bp->number (), bp->enabled ());
+    else {
+        LOG_DD ("breakpoint not set");
     }
+}
+
+void
+DBGPerspective::toggle_breakpoint_enabled (const Address &a)
+{
+    LOG_DD ("address: " << a.to_string ());
+
+    const IDebugger::Breakpoint *bp;
+    if ((bp = get_breakpoint (a)) != 0)
+        toggle_breakpoint_enabled (bp->number (), bp->enabled ());
+    else
+        LOG_DD ("breakpoint not set");
+}
+
+void
+DBGPerspective::toggle_breakpoint_enabled (int a_break_num,
+                                           bool a_enabled)
+{
+    LOG_DD ("enabled: " << a_enabled);
+
+    if (a_enabled)
+        debugger ()->disable_breakpoint (a_break_num);
+    else
+        debugger ()->enable_breakpoint (a_break_num);
 }
 
 void
