@@ -3481,6 +3481,8 @@ GDBEngine::set_solib_prefix_path (const UString &a_name)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+    if (a_name.empty ())
+      return;
     set_debugger_parameter ("solib-absolute-prefix", a_name);
 }
 
