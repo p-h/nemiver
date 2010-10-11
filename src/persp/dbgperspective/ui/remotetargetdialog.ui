@@ -73,7 +73,8 @@
                 <child>
                   <object class="GtkFileChooserButton" id="solibprefixchooserbutton">
                     <property name="visible">True</property>
-                    <property name="title" translatable="yes">Choose a File</property>
+                    <property name="action">select-folder</property>
+                    <property name="title" translatable="yes">Choose a Directory</property>
                   </object>
                 </child>
               </object>
