@@ -122,10 +122,13 @@ const char *REGISTERS_VIEW_TITLE    = _("Registers");
 const char *MEMORY_VIEW_TITLE       = _("Memory");
 
 const char *SESSION_NAME = "sessionname";
-const char *PROGRAM_NAME= "programname";
-const char *PROGRAM_ARGS= "programarguments";
-const char *PROGRAM_CWD= "programcwd";
-const char *LAST_RUN_TIME= "lastruntime";
+const char *PROGRAM_NAME = "programname";
+const char *PROGRAM_ARGS = "programarguments";
+const char *PROGRAM_CWD = "programcwd";
+const char *LAST_RUN_TIME = "lastruntime";
+const char *REMOTE_TARGET = "remotetarget";
+const char *SOLIB_PREFIX = "solibprefix";
+
 const char *DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN =
                                 "dbg-perspective-mouse-motion-domain";
 const char *DISASSEMBLY_TITLE = "<Disassembly>";
@@ -575,7 +578,7 @@ public:
 
     void execute_program ();
 
-    void execute_last_program_in_memory ();
+    void restart_inferior ();
 
     void execute_program (const UString &a_prog,
                           const vector<UString> &a_args,
@@ -595,13 +598,24 @@ public:
     void attach_to_program (unsigned int a_pid,
                             bool a_close_opened_files=false);
     void connect_to_remote_target ();
+
     void connect_to_remote_target (const UString &a_server_address,
                                    unsigned a_server_port,
                                    const UString &a_prog_path,
                                    const UString &a_solib_prefix);
+
     void connect_to_remote_target (const UString &a_serial_line,
                                    const UString &a_prog_path,
                                    const UString &a_solib_prefix);
+
+    void reconnect_to_remote_target (const UString &a_remote_target,
+                                     const UString &a_prog_path,
+                                     const UString &a_solib_prefix);
+
+    void pre_fill_remote_target_dialog (RemoteTargetDialog &a_dialog);
+
+    bool is_connected_to_remote_target ();
+
     void detach_from_program ();
     void load_core_file ();
     void load_core_file (const UString &a_prog_file,
@@ -896,6 +910,8 @@ struct DBGPerspective::Priv {
     UString prog_path;
     vector<UString> prog_args;
     UString prog_cwd;
+    UString remote_target;
+    UString solib_prefix;
     map<UString, UString> env_variables;
     list<UString> session_search_paths;
     list<UString> global_search_paths;
@@ -2435,6 +2451,7 @@ DBGPerspective::on_debugger_connected_to_remote_target_signal ()
     NEMIVER_TRY
 
     ui_utils::display_info (_("Connected to remote target !"));
+    debugger ()->list_breakpoints ();
 
     NEMIVER_CATCH
 }
@@ -5273,6 +5290,9 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     a_session.properties ()[PROGRAM_NAME] = m_priv->prog_path;
     a_session.properties ()[PROGRAM_ARGS] = prog_args;
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd;
+    a_session.properties ()[REMOTE_TARGET] = m_priv->remote_target;
+    a_session.properties ()[SOLIB_PREFIX] = m_priv->solib_prefix;
+
     GTimeVal timeval;
     g_get_current_time (&timeval);
     UString time;
@@ -6009,12 +6029,27 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
 
     vector<UString> args =
         a_session.properties ()[PROGRAM_ARGS].split (PROG_ARG_SEPARATOR);
+    
+    map<UString, UString>::const_iterator it,
+        nil = a_session.properties ().end ();
 
-    execute_program (a_session.properties ()[PROGRAM_NAME],
-                     args,
-                     a_session.env_variables (),
-                     a_session.properties ()[PROGRAM_CWD],
-                     breakpoints);
+    UString prog_name = a_session.properties ()[PROGRAM_NAME];
+
+    UString remote_target, solib_prefix;
+    if ((it = a_session.properties ().find (REMOTE_TARGET)) != nil)
+        remote_target = it->second;
+    if (!remote_target.empty ())
+        if ((it = a_session.properties ().find (SOLIB_PREFIX)) != nil)
+            solib_prefix = it->second;
+    
+    if (!remote_target.empty ())
+        reconnect_to_remote_target (remote_target, prog_name, solib_prefix);
+    else
+        execute_program (prog_name,
+                         args,
+                         a_session.env_variables (),
+                         a_session.properties ()[PROGRAM_CWD],
+                         breakpoints);
     m_priv->reused_session = true;
 }
 
@@ -6061,14 +6096,22 @@ DBGPerspective::execute_program ()
 /// This is useful when e.g. the debugger engine died and we want to
 /// restart it and restart the program that was being debugged.
 void
-DBGPerspective::execute_last_program_in_memory ()
+DBGPerspective::restart_inferior ()
 {
-    vector<IDebugger::Breakpoint> bps;
-    execute_program (m_priv->prog_path, m_priv->prog_args,
-                     m_priv->env_variables, m_priv->prog_cwd,
-                     bps,
-                     true /* be aware we are restarting the same inferior*/,
-                     false /* don't close opened files */);
+    if (!is_connected_to_remote_target ()) {
+        // Restarting a local program
+        vector<IDebugger::Breakpoint> bps;
+        execute_program (m_priv->prog_path, m_priv->prog_args,
+                         m_priv->env_variables, m_priv->prog_cwd,
+                         bps,
+                         true /* be aware we are restarting the same inferior*/,
+                         false /* don't close opened files */);
+    } else {
+        // We cannot restart an inferior running on a remote target at
+        // the moment.
+        ui_utils::display_error (_("Sorry, it's impossible to restart"
+                                   "a remote inferior"));
+    }
 }
 
 void
@@ -6284,17 +6327,26 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
     if (!debugger ()->attach_to_target (a_pid,
                                         get_terminal_name ())) {
         ui_utils::display_warning (_("You cannot attach to the "
-                                   "underlying debugger engine"));
+                                     "underlying debugger engine"));
+        return;
     }
 }
 
 void
 DBGPerspective::connect_to_remote_target ()
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (m_priv->prog_cwd == "") {
+        m_priv->prog_cwd = Glib::filename_to_utf8 (Glib::get_current_dir ());
+    }
 
     RemoteTargetDialog dialog (plugin_path ());
 
+    // try to pre-fill the remote target dialog with the relevant info
+    // if we have it.
+    pre_fill_remote_target_dialog (dialog);
+    
     int result = dialog.run ();
 
     if (result != Gtk::RESPONSE_OK)
@@ -6339,6 +6391,11 @@ DBGPerspective::connect_to_remote_target (const UString &a_server_address,
     debugger ()->set_solib_prefix_path (a_solib_prefix);
     debugger ()->attach_to_remote_target (a_server_address,
                                           a_server_port);
+    std::ostringstream remote_target;
+    remote_target << a_server_address << ":" << a_server_port;
+    m_priv->remote_target = remote_target.str ();
+    m_priv->prog_path = a_prog_path;
+    m_priv->solib_prefix = a_solib_prefix;
 }
 
 void
@@ -6362,6 +6419,72 @@ DBGPerspective::connect_to_remote_target (const UString &a_serial_line,
     LOG_DD ("solib prefix path: '" <<  a_solib_prefix << "'");
     debugger ()->set_solib_prefix_path (a_solib_prefix);
     debugger ()->attach_to_remote_target (a_serial_line);
+
+    std::ostringstream remote_target;
+    remote_target << a_serial_line;
+    m_priv->remote_target = remote_target.str ();
+    m_priv->solib_prefix = a_solib_prefix;
+    m_priv->prog_path = a_prog_path;
+}
+
+void
+DBGPerspective::reconnect_to_remote_target (const UString &a_remote_target,
+                                            const UString &a_prog_path,
+                                            const UString &a_solib_prefix)
+{
+    if (a_remote_target.empty ())
+        return;
+
+    string host;
+    unsigned port;
+    if (str_utils::parse_host_and_port (a_remote_target, host, port))
+        // Try to connect via IP
+        connect_to_remote_target (host, port,
+                                  a_prog_path,
+                                  a_solib_prefix);
+    else
+        // Try to connect via the serial line
+        connect_to_remote_target (a_remote_target,
+                                  a_prog_path,
+                                  a_solib_prefix);    
+}
+
+bool
+DBGPerspective::is_connected_to_remote_target ()
+{
+    return (debugger ()->is_attached_to_target ()
+            && !m_priv->remote_target.empty ());
+}
+
+void
+DBGPerspective::pre_fill_remote_target_dialog (RemoteTargetDialog &a_dialog)
+{
+    THROW_IF_FAIL (m_priv);
+
+    if (m_priv->remote_target.empty ()
+        || m_priv->prog_path.empty ())
+        return;
+
+    RemoteTargetDialog::ConnectionType connection_type;
+
+    string host;
+    unsigned port;
+    if (str_utils::parse_host_and_port (m_priv->remote_target,
+                                        host, port))
+        connection_type = RemoteTargetDialog::TCP_CONNECTION_TYPE;
+    else
+        connection_type = RemoteTargetDialog::SERIAL_CONNECTION_TYPE;
+
+    a_dialog.set_cwd (m_priv->prog_cwd);
+    a_dialog.set_solib_prefix_path (m_priv->solib_prefix);
+    a_dialog.set_executable_path (m_priv->prog_path);
+    a_dialog.set_connection_type (connection_type);
+    if (connection_type == RemoteTargetDialog::TCP_CONNECTION_TYPE) {
+        a_dialog.set_server_address (host);
+        a_dialog.set_server_port (port);
+    } else {
+        a_dialog.set_serial_port_name (m_priv->remote_target);
+    }
 }
 
 void
@@ -6370,8 +6493,18 @@ DBGPerspective::detach_from_program ()
     LOG_FUNCTION_SCOPE_NORMAL_DD
     THROW_IF_FAIL (debugger ());
 
+    if (!debugger ()->is_attached_to_target ())
+        return;
+
     save_current_session ();
-    debugger ()->detach_from_target ();
+
+    if (is_connected_to_remote_target ())
+        debugger ()->disconnect_from_remote_target ();
+    else
+        debugger ()->detach_from_target ();
+
+    close_opened_files ();
+    clear_status_notebook ();
 }
 
 void
@@ -6421,7 +6554,7 @@ DBGPerspective::run ()
     if (!m_priv->prog_path.empty ()) {
         LOG_DD ("Yes, it seems we were running a program before. "
                 "Will try to restart it");
-        execute_last_program_in_memory ();
+        restart_inferior ();
     } else {
         LOG_ERROR ("No program got previously loaded");
     }
