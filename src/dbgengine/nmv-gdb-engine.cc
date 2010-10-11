@@ -2794,6 +2794,15 @@ GDBEngine::detach_from_target (const UString &a_cookie)
     queue_command (Command ("detach-from-target", "-target-detach", a_cookie));
 }
 
+void
+GDBEngine::disconnect_from_remote_target (const UString &a_cookie)
+{
+      LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    queue_command (Command ("disconnect-from-remote-target",
+			    "-target-disconnect", a_cookie));
+}
+
 bool
 GDBEngine::is_attached_to_target () const
 {

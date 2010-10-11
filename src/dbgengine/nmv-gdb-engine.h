@@ -265,6 +265,9 @@ public:
     bool attach_to_remote_target (const UString &a_serial_line);
 
     void detach_from_target (const UString &a_cookie="");
+    void detach_from_target (const UString &a_cookie);
+
+    void disconnect_from_remote_target (const UString &a_cookie);
 
     bool is_attached_to_target () const;
 
