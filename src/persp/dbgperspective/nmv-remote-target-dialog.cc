@@ -36,6 +36,7 @@ struct RemoteTargetDialog::Priv {
     friend class RemoteTargetDialog;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gtk::Builder> gtkbuilder;
+    mutable UString cwd;
     mutable UString executable_path;
     mutable UString solib_prefix_path;
     mutable UString server_address;
@@ -61,7 +62,8 @@ struct RemoteTargetDialog::Priv {
         NEMIVER_TRY
 
         Gtk::RadioButton *radio =
-            get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder, "tcpradiobutton");
+            get_widget_from_gtkbuilder<Gtk::RadioButton>
+            (gtkbuilder, "tcpradiobutton");
         Gtk::Widget *tcp_connection_container =
             get_widget_from_gtkbuilder<Gtk::Widget> (gtkbuilder,
                                                 "tcpconnectioncontainer");
@@ -81,7 +83,28 @@ struct RemoteTargetDialog::Priv {
         NEMIVER_CATCH
     }
 
-    void on_selection_changed_signal ()
+    void on_exec_button_selection_changed_signal ()
+    {
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+            (gtkbuilder, "execfilechooserbutton");
+
+        string path = chooser->get_filename ();
+
+        if (!path.empty ())
+            executable_path = path;
+        
+        Gtk::Button *button =
+            get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder, "okbutton");
+
+        if (can_enable_ok_button ()) {
+            button->set_sensitive (true);
+        } else {
+            button->set_sensitive (false);
+        }
+    }
+
+    void on_address_selection_changed_signal ()
     {
         NEMIVER_TRY
 
@@ -111,40 +134,48 @@ struct RemoteTargetDialog::Priv {
     void init_from_gtkbuilder ()
     {
         Gtk::RadioButton *radio =
-            get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder, "tcpradiobutton");
+            get_widget_from_gtkbuilder<Gtk::RadioButton>
+            (gtkbuilder, "tcpradiobutton");
         radio->signal_toggled ().connect (sigc::mem_fun
                 (*this, &Priv::on_radio_button_toggled_signal));
         radio->set_active (true);
         on_radio_button_toggled_signal ();//it does not get called otherwise
 
-        Gtk::FileChooser *chooser =
-            get_widget_from_gtkbuilder<Gtk::FileChooser> (gtkbuilder,
-                                                     "execfilechooserbutton");
+        Gtk::FileChooserButton *chooser =
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+            (gtkbuilder, "execfilechooserbutton");
         chooser->set_show_hidden (true);
+        chooser->set_action (Gtk::FILE_CHOOSER_ACTION_OPEN);
         chooser->signal_selection_changed ().connect (sigc::mem_fun
-                (*this, &Priv::on_selection_changed_signal));
+                (*this, &Priv::on_exec_button_selection_changed_signal));
+        chooser->show ();
 
         chooser =
-        get_widget_from_gtkbuilder<Gtk::FileChooser> (gtkbuilder,
-                                                 "solibprefixchooserbutton");
+        get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+            (gtkbuilder, "solibprefixchooserbutton");
         chooser->set_show_hidden (true);
         chooser->set_action (Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
-
         set_solib_prefix_path (common::env::get_system_lib_dir ());
+        chooser->show ();
 
         Gtk::Entry* entry =
-                get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder, "addressentry");
+                get_widget_from_gtkbuilder<Gtk::Entry>
+            (gtkbuilder, "addressentry");
         entry->signal_changed ().connect
-                (sigc::mem_fun (*this, &Priv::on_selection_changed_signal));
+                (sigc::mem_fun (*this,
+                                &Priv::on_address_selection_changed_signal));
 
-        entry = get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder, "portentry");
+        entry = get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder,
+                                                        "portentry");
         entry->signal_changed ().connect
-                (sigc::mem_fun (*this, &Priv::on_selection_changed_signal));
+                (sigc::mem_fun (*this,
+                                &Priv::on_address_selection_changed_signal));
 
-        chooser = get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder,
-                                                     "serialchooserbutton");
+        chooser = get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+            (gtkbuilder, "serialchooserbutton");
         chooser->signal_selection_changed ().connect (sigc::mem_fun
-                            (*this, &Priv::on_selection_changed_signal));
+                            (*this,
+                             &Priv::on_address_selection_changed_signal));
 
         Gtk::Button *button =
             get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder, "okbutton");
@@ -153,20 +184,19 @@ struct RemoteTargetDialog::Priv {
 
     bool can_enable_ok_button () const
     {
-        Gtk::FileChooserButton *chooser =
-            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
-                                            (gtkbuilder, "execfilechooserbutton");
         Gtk::Entry *entry = 0;
-        if (chooser->get_filename ().empty ())
+        if (executable_path.empty ())
             return false;
         if (connection_type == RemoteTargetDialog::TCP_CONNECTION_TYPE) {
-            entry = get_widget_from_gtkbuilder<Gtk::Entry> (gtkbuilder, "portentry");
+            entry = get_widget_from_gtkbuilder<Gtk::Entry>
+                (gtkbuilder, "portentry");
             if (entry->get_text ().empty ())
                 return false;
         } else if (connection_type ==
                     RemoteTargetDialog::SERIAL_CONNECTION_TYPE) {
-            chooser = get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder,
-                                                     "serialchooserbutton");
+            Gtk::FileChooserButton *chooser =
+                get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+                (gtkbuilder, "serialchooserbutton");
             if (chooser->get_filename ().empty ())
                 return false;
         }
@@ -180,8 +210,10 @@ struct RemoteTargetDialog::Priv {
     {
         Gtk::FileChooserButton *chooser =
             get_widget_from_gtkbuilder<Gtk::FileChooserButton>
-                                            (gtkbuilder, "execfilechooserbutton");
-        executable_path = chooser->get_filename ();
+            (gtkbuilder, "execfilechooserbutton");
+        string path = chooser->get_filename ();
+        if (!path.empty ())
+            executable_path = path;
         return executable_path;
     }
 
@@ -189,9 +221,16 @@ struct RemoteTargetDialog::Priv {
     {
         Gtk::FileChooserButton *chooser =
             get_widget_from_gtkbuilder<Gtk::FileChooserButton>
-                                            (gtkbuilder, "execfilechooserbutton");
-        chooser->set_filename (a_path);
-        executable_path = a_path;
+            (gtkbuilder, "execfilechooserbutton");
+
+        string path = Glib::filename_from_utf8 (a_path);
+        if (!Glib::path_is_absolute (a_path)) {
+            path = Glib::build_filename (Glib::filename_from_utf8 (cwd),
+                                         path);
+        }
+        THROW_IF_FAIL (Glib::file_test (path, Glib::FILE_TEST_IS_REGULAR));
+        chooser->set_filename (path);
+        executable_path = path;
     }
 
     const UString& get_solib_prefix_path () const
@@ -207,7 +246,8 @@ struct RemoteTargetDialog::Priv {
     {
         Gtk::FileChooserButton *chooser =
             get_widget_from_gtkbuilder<Gtk::FileChooserButton>
-                                        (gtkbuilder, "solibprefixchooserbutton");
+            (gtkbuilder, "solibprefixchooserbutton");
+        chooser->set_current_folder (cwd);
         chooser->set_filename (a_path);
         solib_prefix_path = a_path;
     }
@@ -215,7 +255,8 @@ struct RemoteTargetDialog::Priv {
     void set_connection_type (RemoteTargetDialog::ConnectionType &a_type)
     {
         Gtk::RadioButton *radio =
-            get_widget_from_gtkbuilder<Gtk::RadioButton> (gtkbuilder, "tcpradiobutton");
+            get_widget_from_gtkbuilder<Gtk::RadioButton>
+            (gtkbuilder, "tcpradiobutton");
         if (a_type == RemoteTargetDialog::TCP_CONNECTION_TYPE) {
             radio->set_active (true);
         } else {
@@ -255,7 +296,8 @@ struct RemoteTargetDialog::Priv {
     const UString& get_serial_port_name () const
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder, "serialchooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+            (gtkbuilder, "serialchooserbutton");
         serial_port_name = chooser->get_filename ();
         return serial_port_name;
     }
@@ -263,7 +305,9 @@ struct RemoteTargetDialog::Priv {
     void set_serial_port_name (const UString &a_name)
     {
         Gtk::FileChooserButton *chooser =
-            get_widget_from_gtkbuilder<Gtk::FileChooserButton> (gtkbuilder, "serialchooserbutton");
+            get_widget_from_gtkbuilder<Gtk::FileChooserButton>
+            (gtkbuilder, "serialchooserbutton");
+        chooser->set_current_folder (cwd);
         chooser->select_filename (a_name);
     }
 
@@ -281,6 +325,18 @@ RemoteTargetDialog::RemoteTargetDialog (const UString &a_root_path) :
 RemoteTargetDialog::~RemoteTargetDialog ()
 {
     LOG_D ("destroyed", "destructor-domain");
+}
+
+const UString&
+RemoteTargetDialog::get_cwd () const
+{
+    return m_priv->cwd;
+}
+
+void
+RemoteTargetDialog::set_cwd (const UString &a)
+{
+    m_priv->cwd = a;
 }
 
 const UString&

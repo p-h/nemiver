@@ -42,6 +42,9 @@ public:
     RemoteTargetDialog (const UString &a_root_path);
     virtual ~RemoteTargetDialog ();
 
+    const UString& get_cwd () const;
+    void set_cwd (const UString &);
+
     const UString& get_executable_path () const;
     void set_executable_path (const UString &a_path);
 
