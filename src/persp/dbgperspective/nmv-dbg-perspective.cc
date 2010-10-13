@@ -5977,6 +5977,8 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
         close_opened_files ();
     }
 
+    m_priv->prog_cwd = a_session.properties ()[PROGRAM_CWD];
+
     IDebugger::Breakpoint breakpoint;
     vector<IDebugger::Breakpoint> breakpoints;
     for (list<ISessMgr::Breakpoint>::const_iterator it =
@@ -6337,10 +6339,6 @@ DBGPerspective::connect_to_remote_target ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    if (m_priv->prog_cwd == "") {
-        m_priv->prog_cwd = Glib::filename_to_utf8 (Glib::get_current_dir ());
-    }
-
     RemoteTargetDialog dialog (plugin_path ());
 
     // try to pre-fill the remote target dialog with the relevant info
@@ -6378,9 +6376,15 @@ DBGPerspective::connect_to_remote_target (const UString &a_server_address,
     THROW_IF_FAIL (debugger ());
 
     save_current_session ();
+
+    if (m_priv->prog_cwd.empty ())
+        m_priv->prog_cwd = Glib::filename_to_utf8 (Glib::get_current_dir ());
+
     LOG_DD ("executable path: '" <<  a_prog_path << "'");
     vector<UString> args;
-    if (debugger ()->load_program (a_prog_path , args, ".") == false) {
+
+    if (debugger ()->load_program (a_prog_path , args,
+                                   m_priv->prog_cwd) == false) {
         UString message;
         message.printf (_("Could not load program: %s"),
                         a_prog_path.c_str ());
@@ -6407,9 +6411,15 @@ DBGPerspective::connect_to_remote_target (const UString &a_serial_line,
     THROW_IF_FAIL (debugger ());
 
     save_current_session ();
+
+    if (m_priv->prog_cwd.empty ())
+        m_priv->prog_cwd = Glib::filename_to_utf8 (Glib::get_current_dir ());
+
     LOG_DD ("executable path: '" <<  a_prog_path << "'");
+
     vector<UString> args;
-    if (debugger ()->load_program (a_prog_path , args, ".") == false) {
+    if (debugger ()->load_program (a_prog_path , args,
+                                   m_priv->prog_cwd) == false) {
         UString message;
         message.printf (_("Could not load program: %s"),
                         a_prog_path.c_str ());

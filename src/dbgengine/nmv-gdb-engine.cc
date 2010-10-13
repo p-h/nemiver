@@ -627,11 +627,21 @@ public:
         argv.clear ();
 
         UString prog_path;
-        if (a_prog != "") {
+        if (!a_prog.empty ()) {
             prog_path = a_prog;
             if (!Glib::file_test (Glib::filename_from_utf8 (prog_path),
                                   Glib::FILE_TEST_IS_REGULAR)) {
-                if (!find_prog_in_path (prog_path, prog_path)) {
+                // So we haven't found the file. Let's look for it in
+                // the current working directory and in the PATH.
+                bool found = false;
+                if (!working_dir.empty ()) {
+                    list<UString> where;
+                    where.push_back (working_dir);
+                    if (common::env::find_file (prog_path, where, prog_path))
+                        found = true;
+                }
+
+                if (!found && !find_prog_in_path (prog_path, prog_path)) {
                     LOG_ERROR ("Could not find program '" << prog_path << "'");
                     return false;
                 }
