@@ -58,6 +58,7 @@ public:
     Gtk::ComboBox *combo_event;
     EventComboModelColumns combo_event_cols;
     Glib::RefPtr<Gtk::ListStore> combo_event_model;
+    Gtk::CellRendererText combo_event_cell_renderer;
     Gtk::Entry *entry_filename;
     Gtk::Entry *entry_line;
     Gtk::Entry *entry_function;
@@ -98,8 +99,20 @@ public:
             (a_gtkbuilder, "combo_event");
         combo_event_model = Gtk::ListStore::create (combo_event_cols);
         combo_event->set_model (combo_event_model);
-        Gtk::TreeModel::Row row;
 
+        // Clear the cell renderer that might have been
+        // associated to the combo box before.
+        combo_event->clear ();
+
+        // Then make sure the combo box uses a text cell renderer
+        combo_event->pack_start (combo_event_cell_renderer);
+
+        // And display the content of the m_label column of
+        // combo_even_cols in the combo box.
+        combo_event->add_attribute (combo_event_cell_renderer.property_text (),
+                                    combo_event_cols.m_label);
+
+        Gtk::TreeModel::Row row;
         row = *(combo_event_model->append ());
         row[combo_event_cols.m_label] = _("Throw Exception");
         row[combo_event_cols.m_command] = "throw";
