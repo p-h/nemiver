@@ -57,7 +57,7 @@ class SetBreakpointDialog::Priv {
 public:
     Gtk::ComboBox *combo_event;
     EventComboModelColumns combo_event_col_model;
-    Glib::RefPtr<Gtk::TreeStore> combo_event_model;
+    Glib::RefPtr<Gtk::ListStore> combo_event_model;
     Gtk::Entry *entry_filename;
     Gtk::Entry *entry_line;
     Gtk::Entry *entry_function;
@@ -96,7 +96,7 @@ public:
         combo_event =
             ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
             (a_gtkbuilder, "combo_event");
-        combo_event_model = Gtk::TreeStore::create (combo_event_col_model);
+        combo_event_model = Gtk::ListStore::create (combo_event_col_model);
         combo_event->set_model (combo_event_model);
         Gtk::TreeModel::Row row;
 
