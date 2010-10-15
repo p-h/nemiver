@@ -46,8 +46,8 @@ class EventComboModelColumns
 public:
     EventComboModelColumns()
         {
-            add(m_label);
-            add(m_command);
+            add (m_label);
+            add (m_command);
         }
     Gtk::TreeModelColumn<Glib::ustring> m_label;
     Gtk::TreeModelColumn<UString> m_command;
@@ -96,31 +96,31 @@ public:
         combo_event =
             ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
             (a_gtkbuilder, "combo_event");
-        combo_event_model = Gtk::TreeStore::create(combo_event_col_model);
-        combo_event->set_model(combo_event_model);
+        combo_event_model = Gtk::TreeStore::create (combo_event_col_model);
+        combo_event->set_model (combo_event_model);
         Gtk::TreeModel::Row row;
 
-        row = *(combo_event_model->append());
+        row = *(combo_event_model->append ());
         row[combo_event_col_model.m_label] = _("Throw Exception");
         row[combo_event_col_model.m_command] = "throw";
 
-        row = *(combo_event_model->append());
+        row = *(combo_event_model->append ());
         row[combo_event_col_model.m_label] = _("Catch Exception");
         row[combo_event_col_model.m_command] = "catch";
 
-        row = *(combo_event_model->append());
+        row = *(combo_event_model->append ());
         row[combo_event_col_model.m_label] = _("fork system call");
         row[combo_event_col_model.m_command] = "fork";
         
-        row = *(combo_event_model->append());
+        row = *(combo_event_model->append ());
         row[combo_event_col_model.m_label] = _("vfork system call");
         row[combo_event_col_model.m_command] = "vfork";
 
-        row = *(combo_event_model->append());
+        row = *(combo_event_model->append ());
         row[combo_event_col_model.m_label] = _("exec system call");
         row[combo_event_col_model.m_command] = "exec";
 
-        combo_event->set_active (0);
+        combo_event->set_active (false);
 
         entry_filename =
             ui_utils::get_widget_from_gtkbuilder<Gtk::Entry>
@@ -461,7 +461,7 @@ SetBreakpointDialog::event () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->combo_event);
-    return m_priv->get_active_event();
+    return m_priv->get_active_event ();
 }
 
 void SetBreakpointDialog::event (const UString &a_event) 
