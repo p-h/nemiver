@@ -56,7 +56,7 @@ public:
 class SetBreakpointDialog::Priv {
 public:
     Gtk::ComboBox *combo_event;
-    EventComboModelColumns combo_event_col_model;
+    EventComboModelColumns combo_event_cols;
     Glib::RefPtr<Gtk::ListStore> combo_event_model;
     Gtk::Entry *entry_filename;
     Gtk::Entry *entry_line;
@@ -96,29 +96,29 @@ public:
         combo_event =
             ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
             (a_gtkbuilder, "combo_event");
-        combo_event_model = Gtk::ListStore::create (combo_event_col_model);
+        combo_event_model = Gtk::ListStore::create (combo_event_cols);
         combo_event->set_model (combo_event_model);
         Gtk::TreeModel::Row row;
 
         row = *(combo_event_model->append ());
-        row[combo_event_col_model.m_label] = _("Throw Exception");
-        row[combo_event_col_model.m_command] = "throw";
+        row[combo_event_cols.m_label] = _("Throw Exception");
+        row[combo_event_cols.m_command] = "throw";
 
         row = *(combo_event_model->append ());
-        row[combo_event_col_model.m_label] = _("Catch Exception");
-        row[combo_event_col_model.m_command] = "catch";
+        row[combo_event_cols.m_label] = _("Catch Exception");
+        row[combo_event_cols.m_command] = "catch";
 
         row = *(combo_event_model->append ());
-        row[combo_event_col_model.m_label] = _("fork system call");
-        row[combo_event_col_model.m_command] = "fork";
+        row[combo_event_cols.m_label] = _("fork system call");
+        row[combo_event_cols.m_command] = "fork";
         
         row = *(combo_event_model->append ());
-        row[combo_event_col_model.m_label] = _("vfork system call");
-        row[combo_event_col_model.m_command] = "vfork";
+        row[combo_event_cols.m_label] = _("vfork system call");
+        row[combo_event_cols.m_command] = "vfork";
 
         row = *(combo_event_model->append ());
-        row[combo_event_col_model.m_label] = _("exec system call");
-        row[combo_event_col_model.m_command] = "exec";
+        row[combo_event_cols.m_label] = _("exec system call");
+        row[combo_event_cols.m_command] = "exec";
 
         combo_event->set_active (false);
 
@@ -337,7 +337,7 @@ public:
     UString get_active_event () const
     {
         Gtk::TreeModel::iterator iter = combo_event->get_active ();
-        return (*iter)[combo_event_col_model.m_command];
+        return (*iter)[combo_event_cols.m_command];
     }
 
     void set_active_event (const UString &) const
