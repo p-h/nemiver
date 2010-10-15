@@ -119,6 +119,9 @@
                     <child>
                       <object class="GtkComboBox" id="combo_event">
                         <property name="visible">True</property>
+                        <property name="app_paintable">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_STRUCTURE_MASK</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -357,4 +360,5 @@
       <action-widget response="-5">okbutton</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkListStore" id="liststore1"/>
 </interface>
