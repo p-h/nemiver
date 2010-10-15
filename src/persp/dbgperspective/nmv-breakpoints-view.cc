@@ -342,7 +342,7 @@ public:
     Gtk::TreeModel::iterator append_breakpoint
                                     (const IDebugger::Breakpoint &a_breakpoint)
     {
-        Gtk::TreeModel::iterator tree_iter = list_store->append();
+        Gtk::TreeModel::iterator tree_iter = list_store->append ();
         update_breakpoint (tree_iter, a_breakpoint);
 
         return tree_iter;
