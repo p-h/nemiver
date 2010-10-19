@@ -1,3 +1,129 @@
+0.8.0 Release
+=============
+
+Andrej Žnidaršič:
+      Updated Slovenian translation
+
+Bruno Brouard:
+      Updated French translation
+      New french doc translation
+
+Christian Kirbach:
+      Updated German translation
+
+Christophe Augier:
+      Properly initialize RegistersView (Closes: #622796)
+
+Claude Paroz:
+      Add gettext/glade prefix to .ui files in POTFILES.in
+      Fix glade prefix in POTFILES.in
+
+Dodji Seketeli:
+      Support integrated disassembling
+      Support Countpoints
+      Support "filename:linenum" in the set breakpoints dialog
+      Support breaking on fork/exec syscalls
+      Support --remote=HOST:PORT (#624630)
+      Support Lookup source files in inferior's directory
+      Support GDB/MI original-location attribute on pending breakpoints
+      Find dialog is no more modal
+      Skip unknown GDB/MI output records during parsing
+      Fix inferior restarting
+      Add a "Debug" preference dialog
+      Better handling of pending breakpoints
+      Avoid printing unnecessary error messages
+      Better handling of frame setting
+      Fix compilation with gcc 4.5
+      Fix clicking in the gutter with gsv >= 2.10
+      Ask the user to locate a given file only once
+      Set breakpoint view columns resizable
+      Append (not prepend) exprs to call function history
+      Don't go crazy when removing a source view tab
+      Better handling of continguous out-of-band-records
+      Don't forget the CWD when restarting a session
+      Allow breaking on events again (Closes: #631925)
+      Don't try to look for frame on exit (Closes: #630615)
+      Support follow-fork-mode setting (Closes: #581377)
+      Display "source file not found" error msg only once (Closes: #604436)
+      Disallow impossible breakpoint related actions (Closes: #607782)
+      Avoid READY state once detached (Closes: #419504)
+      Support multibytes string parsing (Closes: #62730)
+      Mark more strings for translation (Closes: 626079)
+      String thinko (Closes: #625706)
+      Search from current insert point (Closes: #628886)
+      Lots of code refactoring and cleanup
+      Miscellaneous bug fixes
+
+Dominique Leuenberger:
+      GCC 4.5 fixes, #611588
+
+Henrique P. Machado:
+      Updated Brazilian Portuguese Translation
+
+Hubert Figuiere:
+      Remove libglademm dependency and replace with GtkBuilder (Closes: #590817)
+      Merge the Call Stack and Variables into one tab: Context. (Closes: #424060)
+      Cleanup nmv-gdbmi-parser.cc (Bug #574072)
+
+Javier Jardón:
+      Use upstream gettext instead the Glib one
+      Update autotools configuration
+      Use PACKAGE_URL for project webpage
+      autogen.sh: remove unneded call to autopoint
+
+Joe Hansen:
+      Added Danish translation
+
+Jonathon Jongsma:
+      Fix the sourceview configure check for breakpoint setting
+
+Jorge González:
+      Updated Spanish translation
+
+Kenneth Nielsen:
+      Added da to list of languages
+
+Konstantinos Poulios:
+      Unnecessary scrollbars in variable popup, #610808
+
+Leonid Kanter:
+      added Russian translation from Alex 'mainframe' Z
+
+Marek Černocký:
+      Update Czech translation
+
+Mario Blättermann:
+      Updated German translation
+      Updated German doc translation
+
+Matej Urbančič:
+      Added sl for Slovenian translation
+
+Olav Vitters:
+      Fix doap file
+
+Petr Kovar:
+      Add Czech translation by Marek Cernocky
+      Add Czech help translation by Marek Cernocky
+
+Prema:
+      CorrectDesktopFile (Closes: #618506)
+
+Romain Tartière:
+      Remove useless header utmp.h
+
+Seemanta Dutta:
+      Adding a popup when quitting nemiver. (Closes: #553217)
+
+Takeshi AIHANA:
+      pdated Japanese translation.
+
+Thorsten Vollmer:
+      Require and properly detect gtkmm24 version 2.16
+
+Yinghua Wang:
+      Add Simplified Chinese translation.
+
 0.7.3 Release
 =============
 
