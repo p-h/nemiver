@@ -1,3 +1,2372 @@
+2010-10-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Don't update-changelog in make release
+	* Makefile.am (tag-release): Don't update changelog here for now.
+
+2010-10-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Updated NEWS file
+	* NEWS: Update for 0.8.0
+
+2010-10-15  Dodji Seketeli <dodji@seketeli.org>
+
+	Allow breaking on events again (Closes: #631925)
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::Priv::Priv): Create a cell renderer, make
+	the combo box use it and make sure it displays the event label we
+	it to show.
+
+2010-10-15  Dodji Seketeli <dodji@seketeli.org>
+
+	Small member renaming in nmv-set-breakpoint-dialog.cc
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::Priv::combo_event_cols): Renamed
+	combo_event_col_model into this.
+	(SetBreakpointDialog::Priv::Priv)
+	(SetBreakpointDialog::Priv::get_active_event): Adjust.
+
+2010-10-15  Dodji Seketeli <dodji@seketeli.org>
+
+	Events combo in BP setting dialog uses a ListStore
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::Priv::combo_event_model): Type of this is
+	now a Glib::RefPtr<Gtk::ListStore>.
+	(SetBreakpointDialog::Priv::Priv): Initialise combo_event_model
+	with a ListStore.
+
+2010-10-15  Dodji Seketeli <dodji@seketeli.org>
+
+	Style cleanup in nmv-set-breakpoint-dialog.cc
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(EventComboModelColumn::EventComboModelColumn)
+	(SetBreakpointDialog::event): Space before function call
+	operator's parenthesis.
+	(SetBreakpointDialog::Priv::Priv): Use false in lieu of 0.
+
+2010-10-15  Dodji Seketeli <dodji@seketeli.org>
+
+	Init event combo in setsetbreakpointdialog.ui
+	* src/persp/dbgperspective/ui/setbreakpointdialog.ui (<object
+	class="GtkComboBox" id="combo_event">): Set the default model of
+	this to list store.
+
+2010-10-15  Dodji Seketeli <dodji@seketeli.org>
+
+	Minor style nit in nmv-breakpoints-view.cc
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::append_breakpoint): Add space before a
+	function call operator's parenthesis.
+
+2010-10-15  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-10-14  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-10-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Don't forget the CWD when restarting a session
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEnging::Priv::launch_gdb):
+	When the path to the program to launch is neither found nor
+	absolute, Look for it in the workding dir before looking it up in
+	PATH.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_session): Restore the CWD from the
+	session.
+	(DBGPerspective::connect_to_remote_target): Take the CWD in
+	account when loading the local binary.
+
+2010-10-11  Dodji Seketeli <dodji@seketeli.org>
+
+	Avoid error in setting solib-absolute-prefix parm
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::set_solib_prefix_path): Avoid setting solib prefix to
+	an empty string.
+
+2010-10-11  Dodji Seketeli <dodji@seketeli.org>
+
+	Slight API cleanup
+	* src/dbgengine/nmv-gdb-engine.h (detach_from_target): Remove
+	default argument.
+
+2010-10-11  Dodji Seketeli <dodji@seketeli.org>
+
+	RemoteTargetDialog UI cleanup
+	* src/persp/dbgperspective/ui/remotetargetdialog.ui: Slight cleanup
+
+2010-10-11  Dodji Seketeli <dodji@seketeli.org>
+
+	Integrate remote debugging to session management
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc (REMOTE_TARGET)
+	(SOLIB_PREFIX): New session properties to save connecting to a
+	remote inferior.
+	(record_and_save_session): Save new REMOTE_TARGET and SOLIB_PREFIX
+	properties in the session.
+	(execute_session): Support remote target debugging when executing
+	a sesion. Properly
+	(restart_inferior): Renamed execute_last_program_in_memory into
+	this.
+	(run): Adjust.
+	(reconnect_to_remote_target, pre_fill_remote_target_dialog)
+	(is_connected_to_remote_target): New functions.
+	(on_debugger_connected_to_remote_target_signal): List breakpoints
+	when we connect to the remote target.
+	(connect_to_remote_target): Try hard to pre-fill the remote target
+	connection dialog when we have the information available, e.g,
+	when trying to reconnect to a target we just disconnected
+	from. Also keep connection information in the current context.
+	(detach_from_program): Support disconnecting from remote targets.
+
+2010-10-11  Dodji Seketeli <dodji@seketeli.org>
+
+	Work around FileChooser::set_filename bug
+	* src/persp/dbgperspective/nmv-remote-target-dialog.h
+	(RemoteTargetDialog::get_cwd, RemoteTargetDialog::set_cwd):
+	Declare new functions.
+	* src/persp/dbgperspective/nmv-remote-target-dialog.cc
+	(RemoteTargetDialog::Priv::on_exec_button_selection_changed_signal):
+	New.
+	(RemoteTargetDialog::Priv::init_from_gtkbuilder): Style cleanup.
+	(RemoteTargetDialog::Priv::set_executable_path): Cache the
+	executable path. Set the current working dir.
+	(RemoteTargetDialog::Priv::get_executable_path): Don't clobber the
+	returned value with an empty string. There seem to be a gtk bug
+	that makes Gtk::FileChooserButton::get_filename always return an
+	empty string even though we called Gtk::FileChooser::set_filename
+	and waited for the selection-changed signal. So here we returned
+	a cached value instead of the possibly bogus gtk+ one.
+	(RemoteTargetDialog::Priv::set_solib_prefix_path): Set the current
+	working dir.
+	(RemoteTargetDialog::Priv::set_serial_port_name): Likewise.
+	(RemoteTargetDialog::get_cwd, RemoteTargetDialog::set_cwd):
+	Implement New functions.
+
+2010-10-11  Dodji Seketeli <dodji@seketeli.org>
+
+	Add IDebugger::disconnect_from_remote_target
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::disconnect_from_remote_target): New API.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::disconnect_from_remote_target): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::disconnect_from_remote_target): Implement the new API.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Don't die when the loaded program isn't found
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::load_program): Return
+	a boolean now.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::load_program):
+	Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::load_program):
+	Return true upon successful completion, false otherwise. This is
+	now better than just throwing an exception at this point.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_program): Display an error message when
+	we fail to load the program, instead of just passing up an
+	exception.
+	(DBGPerspective::connect_to_remote_target): Likewise.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Cleanup in main.c
+	* main (parse_command_line): Use GCharSafePtr.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Catch --remote=HOST:PORT with no binary copy arg
+	* src/main.cc (parse_command_line): If the user forgets to provide
+	a binary copy of the binary she wants to debug remotely, catch the
+	case and display a meaningful error.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Show usage message on cmdline parsing error
+	* src/main.cc (parse_command_line): Return a boolean. When on
+	command line parsing error, display the usage help and return
+	false.
+	(main): Bail out when command line parsing fails.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Style cleanup
+	* src/main.cc (entries): Add some spaces.
+	(init_option_context): Split long line.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Better Help for --remote, --solib-prefix et al
+	* src/main.cc (entries)<remote, solib-prefix>: Add proper help
+	string specifying that you need to pass "=some-argument" to
+	--remote and --solib-prefix
+	(entries)<env, attach, session, log-domains>: Make the string
+	coming after "=" in the arguments help be more unified.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Initial support for --remote (#624630)
+	* src/common/nmv-str-utils.h (parse_host_and_port): New public API.
+	* src/common/nmv-str-utils.cc (parse_string_colon_number):
+	New function. Extracted from ...
+	(extract_path_and_line_num_from_location): ... this.
+	(parse_host_and_port): New public fn. Uses
+	parse_string_colon_number.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	* src/persp/dbgperspective/nmv-dbg-perspective.h
+	(DBGPerspective::connect_to_remote_target): Add this as a public
+	API.
+	(DBGPerspective::connect_to_remote_target): Add new parms to make
+	this callable from outside of the perspective. Clean up the
+	overload with no parm to make it rely on the overloads with parms.
+	* src/main.cc (process_gui_options): Take in account new
+	--remote and --solib-prefix to attach to a target running
+	remotely.
+
+2010-10-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Cleanup remote target port use.
+	* src/dbgengine/nmv-i-debugger.h (attach_to_remote_target): Remote
+	target port should be unsigned.
+	* src/dbgengine/nmv-gdb-engine.h
+	(IDebugger::attach_to_remote_target): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::attach_to_remote_target): Likewise.
+	* src/persp/dbgperspective/nmv-remote-target-dialog.cc
+	src/persp/dbgperspective/nmv-remote-target-dialog.h
+	(RemoteTargetDialog::get_server_port):
+	(RemoteTargetDialog::get_server_port): Likewise.
+
+2010-10-13  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2010-10-10  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-10-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Support Breakpoint toggling in asm mode
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(update_toggle_menu_text): New overloads of this function.
+	(get_breakpoint_number): Remove.
+	(get_breakpoint): New function.
+	(toggle_breakpoint_enabled): New overloads of this function.
+	(on_insertion_changed_signal): Use new overload of
+	update_toggle_menu_text. Handles toggle menu text updating in asm
+	buffer mode too.
+	(on_debugger_breakpoints_set_signal): Likewise.
+	(on_debugger_breakpoint_deleted_signal): Likewise.
+	(delete_breakpoint): Replate use of
+	get_breakpoint_number with get_breakpoint.
+	(is_breakpoint_set_at_line): Likewise.
+	(is_breakpoint_set_at_address): Likewise.
+	(toggle_countpoint): Likewise. Also, support toggling in asm mode.
+	(toggle_breakpoint): Support breakpoint toggling in asm mode.
+	(toggle_breakpoint_enabled): Likewise. Added new overloads of this
+	function too.
+
+2010-10-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Add a SourceEditor::current_address
+	* src/uicommon/nmv-source-editor.h
+	(SourceEditor::current_address): New API.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::current_address): Implement the new API.
+
+2010-10-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Connect asm buffers to relevant signals too
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::init_common_buffer_signals)
+	(SourceEditor::Priv::init_assembly_buffer_signals)
+	(SourceEditor::Priv::init_assembly_context_signals)
+	(SourceEditor::Priv::init_non_assembly_buffer_signals)
+	(SourceEditor::Priv::init_non_assembly_context_signals): New fnctions.
+	(SourceEditor::Priv::register_assembly_source_buffer): Connect
+	asm buffer to relevant signals
+	(SourceEditor::Priv::register_non_assembly_source_buffer): Connect
+	non-asm buffer relevant signals.
+	(SourceEditor::Priv::init_signals): Separately connect asm and
+	non-asm buffer to their signals.
+
+2010-10-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Cleanup logging macros.
+	* src/common/nmv-log-stream-utils.h (LOG_D, LOG_ERROR_D)
+	(LOG_VERBOSE_D): Each of these macros are now one statement
+	instead of a succession of statement separated by ';'
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_local_var_list): Add a ';' at the end of
+	LOG_ERROR_D now that it's needed.
+
+2010-10-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Countpoint toggling from (contextual) menu items
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(on_toggle_countpoint_action, toggle_countpoint): New functions.
+	(init_actions): Define a new ToggleCountpointMenuItemAction.
+	(get_contextual_menu): Add an item to the contextual menu to
+	create and toggle countpoints.
+	(update_toggle_menu_text): Update the text of the
+	new "toggle countpoint" menu item depending on the context.
+	(update_src_dependant_bp_actions_sensitiveness): Update
+	sensitive-ness of menu items that use the toggle countpoint
+	action.
+	* src/persp/dbgperspective/menus/menus.xml
+	(<DebugMenu>/<ToggleCountpointMenuItem>): New menu item using
+	ToggleCountpointMenuItemAction.
+
+2010-10-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Add missing default arguments to GDBEngine funcs
+	* src/dbgengine/nmv-gdb-engine.h
+	(IDebugger::set_breakpoint_condition)
+	(IDebugger::enable_countpoint): Add default argument to the cookie
+	parm.
+
+2010-10-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Cleanup GDBEngine::GDBEngine::append_breakpoints_to_cache
+	* src/dbgengine/nmv-gdb-engine.h (append_breakpoint_to_cache): New
+	API.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::append_breakpoint_to_cache): Extract this from ...
+	(GDBEngine::append_breakpoints_to_cache): ... here.
+
+2010-10-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Replace debugger_utils::is_countpoint with IDebugger::is_countpoint
+	* src/dbgengine/nmv-debugger-utils.h (is_countpoint): Remove.
+	* src/dbgengine/nmv-debugger-utils.cc (is_countpoint): Remove
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::is_countpoint): New API.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::is_countpoint): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::is_countpoint):
+	Implement new API.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::update_breakpoint): Replace use of
+	debugger_utils::is_counpoint with IDebugger::is_countpoint.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_debugger_asm_signal3): Likewise.
+	(DBGPerspective::record_and_save_session): Likewise.
+	(DBGPerspective::set_breakpoint): Likewise.
+	(DBGPerspective::append_breakpoint): Likewise.
+	(DBGPerspective::apply_decorations_to_source): Likewise.
+	(DBGPerspective::apply_decorations_to_asm): Likewise.
+
+2010-10-09  Dodji Seketeli <dodji@seketeli.org>
+
+	New IDebugger::get_breakpoint_from_cache API.
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::get_breakpoint_from_cache): New API.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::get_breakpoint_from_cache): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::get_breakpoint_from_cache): Implement the new API.
+
+2010-10-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Continuing excecution at a countpoint done by GDB
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::maybe_handle_countpoint): Remove.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::enable_countpoint): Associate a continue command to
+	the breakpoint when asked to turn it into a countpoint. When the
+	countpoint is hit GDB should now continue directly without
+	triggering a state change in Nemiver. This should be a lot faster
+	than notifying Nemiver of each stop and then Nemiver telling GDB
+	to continue.
+	(GDBEngine::on_stopped_signal): Don't tell GDB to continue when
+	it's stopped at a countpoint. This is now handled by GDB itself
+	thanks to GDBEngine::enable_countpoint.
+	(GDBEngine::maybe_handle_countpoint): Remove.
+	(OnCommandDoneHandler::flag_breakpoint_as_countpoint): New
+	function.
+	(OnCommandDoneHandler::can_handle): Once the "enable-countpoint"
+	or "disable-countpoint" command is sent to GDB for a given
+	breakpoint, flag the Nemiver-side breakpoint as being a
+	countpoint. GDB doesn't make any distinction otherwise.  Emit
+	IDebugger::breakpoints_set_signal. This is not semantically
+	correct. Ideally we'd need to have a signal "breakpoint changed"
+	or something along that line. I guess it will take a "Breakpoint
+	signals reorganisation" patchset to address this.
+	(OnBreakpointHandler::do_handle): Instead of just flagging
+	a Nemiver-side breakpoint as a countpoint, call
+	IDebugger::enable_countpoint on that that should do the right
+	thing.
+
+2010-10-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Handle continguous out-of-band-records better
+	* src/dbgengine/nmv-dbg-common.h
+	(Output::OutOfBandRecord::is_running): New accessor.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_out_of_band_record): Mark EXEC-ASYNC-OUTPUT of
+	ASSYNC-CLASS running as a "running" out-of-band-record.
+	* src/dbgengine/nmv-gdb-engine.cc (OnStoppedHandler::can_handle):
+	When multiple contiguous out-of-band-records are emitted in the
+	same output record, detect when an ASYNC-RECORD says the target is
+	stopped, then another one says the target is running. In such
+	cases, the target is considered to be running.  Such cases cases
+	can arise when a "continu" command is attached to a break
+	point. In that case when the breakpoint is hit, the execution then
+	continues straight away. So we get an output record containing two
+	out-of-band-records; one saying the target is stopped and the next
+	one saying the target is running.
+
+2010-09-29  Dodji Seketeli <dodji@seketeli.org>
+
+	Support countpoint/breakpoint toggling
+	* src/dbgengine/nmv-i-debugger.h (enable_countpoint): New
+	interface.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::enable_countpoint):
+	Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::enable_countpoint):
+	Implement it.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BPColumns::is_countpoint): New member.
+	(BPColumns::INDEXES): New enum to index the different columns of
+	the breakpoint treeview.
+	(BPColumns::BPColumns): Add the is_countpoint column's definition.
+	(BreakpointsView::Priv::build_tree_view): Use BPClumns::INDEXES
+	enum fields to index the columns now. Add a "Toggle countpoint"
+	column with a toggle button. When the user clicks on it, it
+	makes the breakpoint become a countpoint or the other way around.
+	(BreakpointsView::Priv::on_countpoint_toggled): New slot.
+
+2010-09-27  Dodji Seketeli <dodji@seketeli.org>
+
+	Reindent and style cleanup.
+	* src/persp/dbgperspective/Makefile.am
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.h
+	* src/uicommon/nmv-source-editor.cc: Little re-indent and style cleanup.
+
+2010-09-27  Dodji Seketeli <dodji@seketeli.org>
+
+	Countpoints support
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::Breakpoint::Type)<COUNTPOINT_TYPE>: New type of
+	breakpoint.
+	(IDebugger::set_breakpoint): Allow the ignore_count parm of to be
+	negative. When passed a negative ignore count,
+	IDebugger::set_breakpoint will set a countpoint.
+	* src/dbgengine/nmv-debugger-utils.[h,cc] (is_countpoint): New fn.
+	* src/dbgengine/nmv-gdb-engine.h (maybe_handle_countpoint): New
+	fn.
+	(GDB::set_breakpoint): Allow ignore_count to be negative.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::set_breakpoint): When called with a negative ignore
+	count, set the GDB-side breakpoint using a generic
+	"set-countpoint" command name.
+	(OnBreakpointHandler::do_handle): If a breakpoint was set with the
+	generic "set-countpoint" command name, flag the Nemiver-side
+	breakpoint as a countpoint. We need to handle the marking of a bp
+	as a countpoint b/c countpoints are not native GDB objects. They
+	are Nemiver-only objects.
+	(GDBEngine::maybe_handle_countpoint): New fn.
+	(GDBEngine::on_stopped_signal): Use it. Continue if we stopped on
+	a countpoint.
+	(GDBEngine::append_breakpoints_to_cache): Do not loose
+	countpointness when updating our internal breakpoint cache with
+	GDB breakpoints.
+	* src/persp/dbgperspective/icons/countpoint-marker.png:
+	* src/persp/dbgperspective/icons/Makefile.am: Add
+	countpoint-marker.png to the build system.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::update_breakpoint): The "type" column
+	value for countpoints is not "countpoint".
+	* src/uicommon/nmv-source-editor.h (set_visual_breakpoint_at_line)
+	(set_visual_breakpoint_at_address): Add an is_countpoint flag.
+	* src/uicommon/nmv-source-editor.cc (SourceEditor::Priv::init):
+	Register a marker for countpoints.
+	(SourceEditor::set_visual_breakpoint_at_line)
+	(SourceEditor::set_visual_breakpoint_at_address): Support
+	countpoints.
+	* src/persp/dbgperspective/ui/setbreakpointdialog.ui: Add a
+	countpoint check button.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.h
+	(count_point): New accessor.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::Priv::Priv): Load the countpoint check
+	button widget.
+	(SetBreakpointDialog::Priv::on_radiobutton_changed): Set the
+	countpoint check button widget insensitive in event mode.
+	(SetBreakpointDialog::count_point): New accessor.
+	* src/persp/dbgperspective/sqlscripts/sqlite/create-tables.sql:
+	Add an iscountpoint column to the breakpoints table. Bump the
+	schema version to 1.5 because of this change.
+	* src/persp/dbgperspective/nmv-sess-mgr.h
+	(ISessMgr::Breakpoint::is_countpoint): New property.
+	* src/persp/dbgperspective/nmv-sess-mgr.cc
+	(SessMgr::store_session): Require the 1.5 schema version.  Persist
+	countpoints that are in the session.
+	(SessMgr::load_session): Load countpoints that were persisted.
+	* src/persp/dbgperspective/nmv-dbg-perspective.h (set_breakpoint):
+	Add an is_count_point flag to the API.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::set_breakpoint)
+	(DBGPerspective::append_visual_breakpoint): Add an is_count_point
+	flag to the API and implement it.
+	(DBGPerspective::on_debugger_asm_signal3)
+	(DBGPerspective::apply_decorations_to_source)
+	(DBGPerspective::apply_decorations_to_asm): Pass countpointness to
+	append_visual_breakpoint.
+	(DBGPerspective::toggle_breakpoint)
+	(DBGPerspective::set_breakpoint_from_dialog): Pass countpointness
+	to set_breakpoint.
+	(DBGPerspective::record_and_save_session): Record countpoints into
+	the session.
+	(DBGPerspective::execute_session): Set countpoints back.
+	(DBGPerspective::set_breakpoint): Add a new overload that takes an
+	IDebugger:Breakpoint in parameter. Make it support countpoints
+	too. This was extracted from ...
+	(DBGPerspective::execute_program): ... here.
+	(DBGPerspective::append_breakpoint): Support countpoints.
+
+2010-10-08  Javier Jardón <jjardon@gnome.org>
+
+	autogen.sh: remove unneded call to autopoint
+	It's already called in gnome-autogen.sh
+
+2010-10-02  Javier Jardón <jjardon@gnome.org>
+
+	Use PACKAGE_URL for project webpage
+
+2010-10-01  Javier Jardón <jjardon@gnome.org>
+
+	Update autotools configuration
+	New requirements:
+	autoconf >= 2.64
+	automake >= 1.11.1
+	libtool >= 2.2
+	Fixes https://bugzilla.gnome.org/show_bug.cgi?id=631176
+
+2010-10-01  Javier Jardón <jjardon@gnome.org>
+
+	Use upstream gettext instead the Glib one
+
+2010-10-02  Dodji Seketeli <dodji@seketeli.org>
+
+	Don't try to look for frame on exit (Closes: #630615)
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::is_exited): New entry
+	point.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_debugger_stopped_signal): Use
+	IDebugger::is_exited to exit early whenever we stopped because we
+	exited.
+
+2010-09-21  Bruno Brouard <annoa.b@gmail.com>
+
+	Updated doc french translation
+	2 removed figures not translated
+
+2010-09-21  Bruno Brouard <annoa.b@gmail.com>
+
+	New french doc translation
+	Contributed by G. Baylard <gerard.b@bbox.fr>
+	Bruno Brouard <annoa.b@gmail.com>
+
+2010-09-18  Dodji Seketeli <dodji@redhat.com>
+
+	Don't go crazy when removing a source view tab
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::close_file): Update current page number when
+	removing a tab from the source view notebook.
+
+2010-09-16  Mario Blättermann <mariobl@gnome.org>
+
+	[i18n] Updated German translation
+
+2010-09-14  Bruno Brouard <annoa.b@gmail.com>
+
+	Updated French translation
+
+2010-09-12  Dodji Seketeli <dodji@gnome.org>
+
+	Fix breakpoint setting
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::Priv::get_file_path_and_line_num): Don't set
+	mistakenly take the line number for the file path
+
+2010-09-12  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-09-09  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-09-09  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2010-09-09  Dodji Seketeli <dodji@redhat.com>
+
+	Support "filename:linenum" in the set bp dialog
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::Priv::get_file_path_and_line_num): New
+	function.
+	(SetBreakpointDialog::Priv::update_ok_button_sensitivity): Use
+	it to allow the user to type a location of the form
+	filename:linenumber in the file name entry field. Also re-indent
+	this function.
+	(SetBreakpointDialog::file_name)
+	(SetBreakpointDialog::line_number): Support locations of the form
+	linename:linenumber in the file name entry field.
+
+2010-09-09  Dodji Seketeli <dodji@redhat.com>
+
+	Append (not prepend) exprs to call function history
+	* src/persp/dbgperspective/nmv-call-function-dialog.cc
+	(CallFunctionDialog::Priv::add_to_history): By default, append
+	expressions to history rather than prepend them.
+	(CallFunctionDialog::Priv::call_expr_history): Rename
+	CallFunctionDialog::Priv::m_call_expr_history into this.
+	(CallFunctionDialog::add_to_history): Append expressions to
+	history, rather than prepend them.
+	(CallFunctionDialog::Priv::on_ok_button_clicked_signal): New
+	signal handler.
+	(CallFunctionDialog::Priv::Priv): Connect
+	CallFunctionDialog::Priv::on_ok_button_clicked_signal to the
+	ok_button clicked signal. Update to the m_call_expr_history ->
+	call_expr_history rename.
+	(CallFunctionDialog::Priv::exists_in_history)
+	(CallFunctionDialog::Priv::clear_history): Update against
+	renaming.
+	(CallFunctionDialog::Priv::get_history): Clear the output parm
+	before appending the history elements to it.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::call_function): Let the CallFunctionDialog do the
+	history updating work.
+
+2010-09-08  Dodji Seketeli <dodji@redhat.com>
+
+	Set breakpoint view columns resizable
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::build_tree_view): Set all the colums
+	resizable and reorderable. Set their header clickable too. Cleanup.
+
+2010-09-08  Dodji Seketeli <dodji@redhat.com>
+
+	Be more tolerant with buffers with wrong content
+	* src/uicommon/nmv-source-editor.cc (move_where_marker_to_line)
+	(set_visual_breakpoint_at_line): Do not throw when the buffer
+	doesn't contain the requested line. Just return false.
+
+2010-09-07 23:08:49 -0700  Hubert Figuiere <hub@figuiere.net>
+
+	Cleanup nmv-gdbmi-parser.cc (Bug #574072)
+	* nmv-gdbmi-parser.{h,cc}: Ensure lines are wrapped at 80
+	Replace m_priv->input.raw () by RAW_INPUT
+	Add emacs modlines
+
+2010-09-08  Dodji Seketeli <dodji@redhat.com>
+
+	Small indentation cleanup
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::Priv::get_supported_encodings)
+	(DBGPerspective::Priv::load_file): Fix indentation.
+
+2010-09-08  Dodji Seketeli <dodji@redhat.com>
+
+	Do not save composite buffer names to session
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::record_and_save_session): Do not save non
+	persistent files into the saved session.
+
+2010-09-08  Dodji Seketeli <dodji@redhat.com>
+
+	Simplify file searching API and worfklow
+	* src/common/nmv-env.[h,cc] (find_file_absolute_or_relative): Remove
+	this ugly API.
+	* src/common/nmv-asm-utils.h (FindFileAndReadLine): Simplify this
+	API.
+	(class ReadLine): Likewise.
+	(find_file): Make this API look less like Belzebuth.
+	* nmv-ui-utils.[h,cc] (find_file_or_ask_user): Rename the awful
+	find_absolute_path_or_ask_user into this and make its API more
+	maintainable. Make it use env::find_file instead of the now
+	[luckily] defunct find_file_absolute_or_relative. Update comment.
+	(find_file_and_read_line): Use find_file_or_ask_user instead of
+	the defunct find_absolute_path_or_ask_user.
+	* nmv-source-editor.h (add_asm, load_asm): Simplify the APIs and
+	implementation of these as they need to be less weird now that the
+	underlying file searching API looks more reasonable.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	():
+	(DBGPerspective::load_asm): New helper fn.
+	(DBGPerspective::Priv::find_file): Renamed
+	DBGPerspective::find_absolute_path into this and move if from
+	DBGPerspective to DBGPerspective::Priv.
+	(DBGPerspective::Priv::find_file_or_ask_user): Renamed
+	DBGPerspective::find_absolute_path_or_ask_user into this and move
+	it here.
+	(DBGPerspective::Priv::is_asm_title): Moved
+	DBGPerspective::is_asm_title to here.
+	(DBGPerspective::Priv::build_find_file_search_path)
+	(DBGPerspective::Priv::is_persistent_file): New functions.
+	(DBGPerspective::get_current_source_editor)
+	(DBGPerspective::get_or_append_source_editor_from_path)
+	(DBGPerspective::switch_to_source_code): Use
+	DBGPerspective::Priv::find_file_or_ask_user.
+	(DBGPerspective::do_unmonitor_file): Use
+	DBGPerspective::Priv::is_asm_title.
+	(DBGPerspective::open_asm, DBGPerspective::switch_to_asm): Use
+	DBGPerspective::load_asm.
+
+2010-09-08  Dodji Seketeli <dodji@redhat.com>
+
+	Remove dead code
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(find_file_in_source_dirs): Remove unused function.
+
+2010-09-08  Dodji Seketeli <dodji@redhat.com>
+
+	Show frame obj name when there is no debug info
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_call_stack): Get the name of the library the
+	frame comes from. Stick it into Frame::library.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStackCols::Index): Reorganize the members of this enum.
+	(CallStack::Priv::build_widget): Add a "binary" column that
+	contains the name of the binary the frame symbol comes from. This
+	is only set if when no debug info is present. Make the columns
+	be resizable and reorderable.
+	(CallStack::Priv::append_frames_to_tree_view): Set the "binary"
+	column to the Frame::library() content.
+
+2010-08-29 14:48:29 -0700  Hubert Figuiere <hub@figuiere.net>
+
+	Merge the Call Stack and Variables into one tab: Context. (Closes: #424060)
+	* nmv-dbg-perspective.cc: Change the UI to merge the tabs.
+	* menus.xml: Change the actions for the code changes.
+	* nemiver-dbgperspective.schemas: New gconf key to save the paned value.
+
+2010-09-07  Claude Paroz <claude@2xlibre.net>
+
+	Fix glade prefix in POTFILES.in
+	Stupid of me :-(
+
+2010-09-07  Claude Paroz <claude@2xlibre.net>
+
+	Add gettext/glade prefix to .ui files in POTFILES.in
+
+2010-09-07  Dodji Seketeli <dodji@redhat.com>
+
+	Left over from previous commit
+	* src/persp/dbgperspective/nmv-registers-view.cc (Priv::Priv):
+	Remove unnecessary assignation.
+
+2010-09-07  Christophe Augier <christophe.augier@gmail.com>
+
+	Properly initialize RegistersView (Closes: #622796)
+	* src/persp/dbgperspective/nmv-registers-view.cc
+	(RegistersView::Priv::first_run): New member flag.
+	(RegistersView::Priv::finish_handling_debugger_stopped_event):
+	Remove the previous static first_run flag from here as it is now a
+	member of RegistersView::Priv.
+	(RegistersView::clear): Flag the object as needing initialization
+	after we cleared it.
+
+2010-09-07  Dodji Seketeli <dodji@redhat.com>
+
+	Bump version to 0.8.0
+	* configure.ac: Bump version to 0.8.0
+
+2010-08-25 20:35:57 -0700  Hubert Figuiere <hub@figuiere.net>
+
+	Remove libglademm dependency and replace with GtkBuilder (Closes: #590817)
+	* configure.ac: remove libglademm detection
+	* glade/*: renamed to ui/*
+	* src/persp/dbgperspective/glade/*.glade: renamed to src/persp/dbgperspective/ui/*.ui
+	* */Makefile.am: adjust following the renaming of glade to ui.
+	* */*.{h,cc}: replace anything Glade with GtkBuilder.
+
+2010-09-06  Dodji Seketeli <dodji@redhat.com>
+
+	Never disassemble an empty address range
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(on_conf_key_changed_signal): The number of instructions to
+	disassemble should never be 0, otherwise we'd ask GDB for zero
+	instrs to disassemble. Not great.
+	(disassemble_and_do, disassemble_around_address_and_do): Assert that.
+
+2010-09-06  Dodji Seketeli <dodji@redhat.com>
+
+	fuzzy address search when looking from insns
+	* src/uicommon/nmv-source-editor.h (assembly_buf_addr_to_line):
+	Add a bool to approximate the address we were asked for, when
+	needed.
+	(scroll_to_address): Likewise.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::get_smallest_range_containing_address):
+	Return range values even when the result is not
+	common::Range::VALUE_SEARCH_RESULT_EXACT. Add comment.
+	(assembly_buf_addr_to_line): Add a bool to approximate the address
+	we were asked for, when needed. Add comment.
+	(scroll_to_address): Likewise.
+	(move_where_marker_to_address): Likewise.
+	(remove_visual_breakpoint_from_address): Adapt to
+	assembly_buf_addr_to_line change.
+	(set_visual_breakpoint_at_address): Likewise.
+	(place_cursor_at_address): Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc (set_where):
+	Add a bool to approximate the address to set the
+	where pointer to in case the IP address isn't present in the
+	assembly.
+	(apply_decorations_to_asm): Likewise. Propagate the address
+	approximation request to set_where.
+	(switch_to_asm): Likewise. Use apply_decorations_to_asm directly instead of
+	apply_decoration. Propage the address approximation request.
+	(create_source_editor): Adapt to the change in
+	SourceEditor::assembly_buf_addr_to_line.
+	(on_breakpoint_go_to_source_action): Adapt to the change in
+	SourceEditor::scroll_to_address.
+	(on_debugger_asm_signal2, on_debugger_asm_signal3)
+	(on_debugger_asm_signal4): When we received the asm from the
+	engine, approximate the IP address when decorating or scrolling to
+	the instructions. This should hopefully prevent us -- in a robust
+	way -- from infinite recursion when the IP address is not present
+	in the asm. Why the IP address is not present in the asm will be
+	something to address in the engine. In the mean time we must be
+	liberal in what we accept.
+	(pump_asm_including_address): Pass the address by reference.
+
+2010-09-06  Dodji Seketeli <dodji@redhat.com>
+
+	Fix Asm::empty
+	* src/common/nmv-asm-instr.h (Asm::empty): Don't forget the case
+	of when the asm is a pure asm instr.
+
+2010-09-06  Dodji Seketeli <dodji@redhat.com>
+
+	Add a bunch of operators to Address
+	* src/common/nmv-address.[cc|h] (operator<, operator>, operator<=)
+	(operator>=, operator==(const Address&)): New operators.
+	(operator==(size_t), operator== (const std::string)): Turn these
+	operators into member operators, instead of friend.
+
+2010-09-05  Dodji Seketeli <dodji@redhat.com>
+
+	Update POTFILE.in after moving files around
+	* po/POTFILES.in (glade/locatefiledialog.glade)
+	(src/uicommon/nmv-locate-file-dialog.cc): These are the
+	destination of the moving of
+	src/persp/dbgperspective/glade/locatefiledialog.glade and
+	src/persp/dbgperspective/nmv-locate-file-dialog.cc
+
+2010-09-05  Dodji Seketeli <dodji@redhat.com>
+
+	Add more comments to nmv-range.h
+	* src/common/nmv-range.h: Add comments.
+
+2010-09-05  Dodji Seketeli <dodji@redhat.com>
+
+	Use a fuzzy matching scheme when searching an @
+	* src/common/nmv-range.h (Range::ValueSearchResult): New enum.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::get_smallest_range_containing_address): New
+	function.
+	(address_2_line): Use it. When asked the line matching an address
+	@, if @ is not present in the buffer, find the range of addresses
+	that encloses @, and return the line matching the uppper bound of
+	that address range.
+
+2010-09-05  Dodji Seketeli <dodji@redhat.com>
+
+	Disassemble only from addresses given by GDB
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(disassemble_around_address_and_do): Don't try to disassemble at
+	addresses that are "before" the address we were asked to
+	disassemble, after all. Starting at the wrong address can lead to
+	mis-disassembling.
+
+2010-09-05  Dodji Seketeli <dodji@redhat.com>
+
+	Don't barf when the @ of a bp isn't available yet
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(apply_decorations_to_asm): Don't emit error logs when a breakpoint
+	can't be decorated because its address is not within the range of
+	addresses currently being displayed. Add some comments.
+
+2010-09-05  Dodji Seketeli <dodji@redhat.com>
+
+	Disassemble breakpoint locations on demand
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(on_breakpoint_go_to_source_action): In disassembly mode, if the
+	user double clicks on a breakpoint descriptor in the status
+	notebook and if that breakpoint address is not within the range of
+	addresses currently displayed, disassemble the memory aroung the
+	breakpoint address and scroll to there.
+
+2010-08-29  Dodji Seketeli <dodji@redhat.com>
+
+	Forgot to add nmv-asm-utils.cc in a previous commit
+	* src/common/nmv-asm-utils.cc: New file
+
+2010-08-29  Dodji Seketeli <dodji@redhat.com>
+
+	Do not hang on disass 1st insn of a function.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(pump_asm_including_address): Call
+	disassemble_around_address_and_do, not disassemble_and_do.
+	(DBGPerspective::disassemble_around_address_and_do): Always try to
+	disassemble one insn before the @ we were asked to
+	disassemble. Otherwise, sometimes, we might miss one insn being
+	around the @ we were asked to start disassemble from. That miss
+	triggers an infinite loop where we look for the insn at the
+	starting @ of the range in the resulting asm. As that insn is
+	missing, we try to disass it again. It's missing again so we try
+	to disass it again etc ...
+
+2010-08-29  Dodji Seketeli <dodji@redhat.com>
+
+	Move core asm handling lower in the stack.
+	* src/dbgengine/nmv-asm-utils.h: Move content from here to ...
+	* common/nmv-asm-utils.h: ... here.
+	* common/nmv-asm-utils.cc: New file.
+	* src/common/Makefile.am: Add nmv-asm-utils.[h|cc] to the build
+	system.
+	* src/dbgengine/Makefile.am: Remove nmv-asm-utils.[h|cc] from the
+	build system.
+	* src/dbgengine/nmv-gdbmi-parser.cc: Don't include nmv-asm-utils.h
+	anymore.
+	* tests/test-disassemble.cc: Include common/nmv-asm-utils.h
+	instead of just nmv-asm-utils.h.
+	* tests/test-gdbmi.cc: Likewise.
+	* src/common/nmv-env.h (find_file, find_file_absolute_or_relative)
+	(read_file_line): Declare ...
+	* src/common/nmv-env.cc (find_file, find_file_absolute_or_relative)
+	(read_file_line): ... new functions.
+	* src/common/nmv-str-utils.h (is_buffer_valid_utf8)
+	(ensure_buffer_is_in_utf8): Declare ...
+	* src/common/nmv-str-utils.cc (is_buffer_valid_utf8)
+	(ensure_buffer_is_in_utf8): ... new functions.
+	* src/common/nmv-ustring.h (UString::split_to_list): Declare new function.
+	* src/common/nmv-ustring.cc (split_base): New function template.
+	(UString::split): Use the new splite_base function template.
+	(UString::split_to_list): Define new function. Uses splite_base.
+	* src/uicommon/nmv-dialog.[h|cc]: Moved here from
+	src/persp/dbgperspective/nmv-dialog.[h|cc].
+	(Dialog::Priv::Priv): Support loading glade file from the "global"
+	glade install dir of Nemiver as well as from the plugins glade
+	install dir.
+	* glade/locatefiledialog.glade: Moved here from
+	src/persp/dbgperspective/glade/locatefiledialog.glade.
+	* glade/Makefile.am: Add locatefiledialog.glade file to build system.
+	* src/uicommon/nmv-locate-file-dialog.[h|cc]: Moved here from
+	src/persp/dbgperspective/nmv-locate-file-dialog.[h|cc].
+	* src/uicommon/Makefile.am: Add nmv-dialog.[h|cc] and
+	nmv-locate-file-dialog.cc to the build system.
+	* src/uicommon/nmv-ui-utils.cc|h (ask_user_to_select_file)
+	(find_absolute_path_or_ask_user, find_file_and_read_line): New
+	functions. Moved here from DBGPerspective and hacked to fit in here.
+	* src/uicommon/nmv-source-editor.cc|h
+	(SourceEditor::get_file_mime_type)
+	(SourceEditor::setup_buffer_mime_and_lang)
+	(SourceEditor::create_source_buffer)
+	(SourceEditor::load_file, SourceEditor::add_asm)
+	(SourceEditor::load_asm): New functions. Mostly the result of
+	moving their counterparts from DBGPerspective to here. They got
+	also hacked to use new support functions from the common::env and
+	ui_utils namespace.
+	* src/persp/dbgperspective/glade/locatefiledialog.glade: Moved to
+	glade/locatefiledialog.glade.
+	* src/persp/dbgperspective/glade/Makefile.am: Remove
+	locatefiledialog.glade from the build system here.
+	* src/persp/dbgperspective/Makefile.am: Remove nmv-dialog.[cc|h] and
+	nmv-locate-file-dialog.[h|cc] from the build system here.
+	* src/persp/dbgperspective/nmv-dbg-perspective.h (load_asm): Remove.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc (log_asm_insns)
+	(get_file_mime_type, setup_buffer_mime_and_lang)
+	(create_source_buffer, load_file, load_asm, write_asm_instr)
+	(write_asm_instr, add_asm, read_file_line): Remove these
+	functions. Actually they got moved to lower level layers in the
+	stack, i.e, mostly into nmv-source-editor.cc, nmv-ui-utils.cc, and
+	nmv-env.cc.
+	(get_global_search_paths): get_source_dirs got renamed into this.
+	(DBGPerspective::Priv::session_search_paths): Renamed
+	DBGPerspective::Priv::search_paths into this.
+	(DBGPerspective::Priv::global_search_paths): Renamed
+	DBGPerspective::Priv::source_dirs into this.
+	(Priv::get_supported_encodings): New function.
+	(Priv::load_file): New function. Use get_supported_encodings and
+	the new SourceEditor::load_file.
+	(find_absolute_path): Use the new
+	common::env::find_file_absolute_or_relative.
+	(find_absolute_path_or_ask_user): Use the new
+	ui_utils::find_absolute_path_or_ask_user.
+	(get_or_append_asm_source_editor): Use the new
+	SourceEditor::create_source_buffer.
+	(find_file_in_source_dirs): Use the new common::env::find_file.
+	(open_file_real): Use the Priv::load_file, instead of the new
+	defunct load_file.
+	(open_asm): Use the new SourceEditor::load_asm instead of the
+	defunct load_asm.
+	(switch_to_asm): use the new
+	SourceEditor::setup_buffer_mime_and_lang and SourceEditor::load_asm.
+	(switch_to_source_code): Use the new
+	SourceEditor::get_file_mime_type,
+	SourceEditor::setup_buffer_mime_and_lang and Priv::load_file.
+	(reload_file): Use the Priv::load_file.
+	(ask_user_to_select_file): Use the new
+	ui_utils::ask_user_to_select_file.
+
+2010-08-22  Dodji Seketeli <dodji@gnome.org>
+
+	Update as Asm types changed
+	* src/dbgengine/nmv-asm-utils.h: Mechanical replacement of
+	IDebugger::AsmInstr, IDebugger::MixedAsmInstr, IDebugger::Asm and
+	IDebugger::DisassembleInfo by common::AsmInstr,
+	common::MixedAsmInstr, common::Asm and common::DisassembleInfo.
+	* src/dbgengine/nmv-dbg-common.h: Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc: Likewise.
+	* src/dbgengine/nmv-gdb-engine.h: Likewise.
+	* src/dbgengine/nmv-gdbmi-parser.cc: Likewise.
+	* src/dbgengine/nmv-gdbmi-parser.h: Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.h: Likewise.
+	* tests/test-disassemble.cc: Likewise.
+	* tests/test-gdbmi.cc: Likewise.
+
+2010-08-22  Dodji Seketeli <dodji@gnome.org>
+
+	Move asm types to src/common
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Asm)
+	(IDebugger::AsmInstr, IDebugger::MixedAsmInstr, IDebugger::Asm)
+	(IDebugger::DisassembleInfo): Move these types to ...
+	* src/common/nmv-asm-instr.h: ... here.
+	* src/common/Makefile.am: Add the new nmv-asm-instr.h to the build
+	system.
+
+2010-09-06  Dodji Seketeli <dodji@redhat.com>
+
+	Search from current insert point (Closes: #628886)
+	* src/uicommon/nmv-source-editor.cc (do_search): By default search
+	from the current insertion point, if it exists.
+
+2010-09-01  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-08-29  Dodji Seketeli <dodji@gnome.org>
+
+	Fix follow-fork-mode thinko
+	* src/dbgengine/nmv-gdb-engine.cc (Priv::launch_gdb_and_set_args):
+	Always set follow-fork mode.
+
+2010-08-28  Mario Blättermann <mariobl@gnome.org>
+
+	[i18n] Updated German translation
+
+2010-08-27  Dodji Seketeli <dodji@redhat.com>
+
+	Selecting a frame w/o debug info disassembles it
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_frame_selected_signal): Support disassembling
+	when selecting a frame that has no debug info.
+
+2010-08-25  Petr Kovar <pknbe@volny.cz>
+
+	Update Czech translation by Marek Cernocky
+
+2010-08-22  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-08-21  Dodji Seketeli <dodji@gnome.org>
+
+	Mark more strings for translation (Closes: 626079)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::init_actions): Mark "Toggle _Breakpoint" and
+	"Enable/Disable Breakpoint" strings as translatable. Update their
+	comments.
+
+2010-08-21  Dodji Seketeli <dodji@gnome.org>
+
+	Support multibytes string parsing (Closes: #62730)
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_c_string_body): When parsing strings, don't
+	expect one byte == one character. Rather, eat up bytes that aren't
+	characters.
+	* tests/test-gdbmi.cc (test_str3): New test.
+	(init_unit_test_suite): Add the new test_str3 test to the suite.
+
+2010-08-21  Dodji Seketeli <dodji@gnome.org>
+
+	String thinko (Closes: #625706)
+	* src/persp/dbgperspective/glade/preferencesdialog.glade: String
+	should not be in French, but rather in English.
+
+2010-08-16  Leonid Kanter <leon@asplinux.ru>
+
+	added Russian translation from Alex 'mainframe' Z <alex.mainframe@gmail.com>
+
+2010-08-14  Christian Kirbach <Christian.Kirbach@googlemail.com>
+
+	Updated German translation
+
+2010-08-13  Yinghua Wang <wantinghard@gmail.com>
+
+	Add Simplified Chinese translation.
+
+2010-08-07  Dodji Seketeli <dodji@gnome.org>
+
+	Add more logging
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::get_breakpoint_number,
+	DBGPerspective::toggle_breakpoint): Add logging.
+
+2010-08-07  Dodji Seketeli <dodji@gnome.org>
+
+	Handle assembly buffer when deleting breakpoints
+	* src/uicommon/nmv-source-editor.h
+	(SourceEditor::remove_visual_breakpoint_from_line): Change
+	declaration to return a boolean.
+	(SourceEditor::remove_visual_breakpoint_from_address): New
+	function declaration.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::remove_visual_breakpoint_from_line): Return a
+	boolean.
+	(SourceEditor::remove_visual_breakpoint_from_address): New
+	function.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::delete_visual_breakpoint): Handle assembly buffer.
+
+2010-08-07  Dodji Seketeli <dodji@gnome.org>
+
+	Lookup files in the inferior's directory
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::find_file_in_source_dirs): Lookup files in the
+	directory of the binary too.
+
+2010-08-04  Petr Kovar <pknbe@volny.cz>
+
+	Update Czech translation by Marek Cernocky
+
+2010-07-31  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-07-29  Dodji Seketeli <dodji@gnome.org>
+
+	Avoid breaking in main twice when restarting
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(execute_program): Don't reset breakpoints into main when
+	restarting a program.
+
+2010-07-28  Jonathon Jongsma <jonathon@quotidian.org>
+
+	Fix the sourceview configure check for breakpoint setting
+
+2010-07-24  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-07-24  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-07-24  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-07-24  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-07-24  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-07-22  Dodji Seketeli <dodji@redhat.com>
+
+	Ask the user to locate a given file only once
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::find_absolute_path_or_ask_user): Add a new parm
+	to avoid asking the user to locate files she choosed to ignore
+	once.
+	(DBGPerspective::read_file_line): Turn back to asking the user to
+	locate the file here. She'll have to do it only once for each file.
+
+2010-07-22  Dodji Seketeli <dodji@redhat.com>
+
+	Don't query mixed asm files (Closes: #624971)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::read_file_line): Don't try to ask the user if we
+	don't find the file path otherwise it can turn out to be extremely
+	annoying.
+
+2010-07-22  Dodji Seketeli <dodji@redhat.com>
+
+	Fix error when showing mixed asm/source
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::address_2_line): Do not return returns the
+	previous address. This is useless and can lead to issues with
+	mixed source/assembly, where the previous line can be a source
+	one.
+	(SourceEditor::assembly_buf_addr_to_line_previous): Remove this
+	useless function definition.
+	* src/uicommon/nmv-source-editor.h
+	(SourceEditor::assembly_buf_addr_to_line_previous): Remove fn declaration.
+
+2010-07-19  Dodji Seketeli <dodji@redhat.com>
+
+	Fix clicking in the gutter with gsv >= 2.10
+	* configure.ac (WITH_SOURCEVIEWMM_2_10): New macro defined when
+	Nemiver is compiled with a version of gtksourceview-2 >= 2.10.
+	* src/uicommon/nmv-source-editor.cc
+	(nemiver::on_line_mark_activated_signal): New callback.
+	(nemiver::SourceView::SourceView): Use it. Connect to the
+	line-mark-activated signal if we are compiled with a
+	gtksourceview-2 >= 2.10
+	(nemiver::SoureView::do_custom_button_press_event_handling): Don't
+	compile this function if we compile against a gtksourceview-2 < 2.10.
+	(nemiver::SourceView::on_button_press_event): Don't call
+	do_custom_button_press_event_handling if we compile against
+	gtksourceview-2 < 2.10
+
+2010-07-18  Dodji Seketeli <dodji@redhat.com>
+
+	Fix compilation with gcc 4.5
+	* fork-parent.cc (main): Use the simpler execv instead of execve
+	and pass a non-null second argument to make gcc 4.5 happy.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Allow pumping just one asm instruction.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::disassemble_and_do): Add a new parm to pump addresses
+	tight. I.e. to pump just one instruction.
+	(DBGPerspective::load_file): Likewise. Adjust when calling disassemble_and_do.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Handle restart when a child process is involved
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_program): Unconditionnaly delete the
+	breakpoints that were previously set whether we are starting a new
+	program or restarting the previous one.  When restarting the
+	previous program without setting new breakpoints, make sure to
+	re-set the breakpoints there were in effect before the
+	restart. When starting a new program, do not bother about the
+	breakpoints in effect for the previous program. They have been
+	deleted and rightly so.
+	(DBGPerspective::run): When asked for, properly restart the
+	previous program if we have its path. Remove unnecessary cruft.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Don't loose track when following a child process
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::load_program): Do
+	not stop on SIGHUP not pass it to target. This is useful to avoid
+	loosing track when following the child process during a fork/exec
+	combination.
+
+2010-06-22  Dodji Seketeli <dodji@redhat.com>
+
+	Allow breaking on fork/exec syscalls
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(Priv::SetBreakpointDialog::Priv): Add combo box entries to break
+	on fork, vfork and exec syscalls.
+	* test/fork-child.cc: New test.
+	* test/fork-parent.cc: Likewise.
+	* tests/Makefile.am: Add the files to the build system.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_breakpoint): Don't require the addr attribute
+	to be present in breakpoint results.
+
+2010-05-06  Dodji Seketeli <dodji@gnome.org>
+
+	Support follow-fork-mode setting (Closes: #581377)
+	* src/common/nmv-env.cc (CONF_KEY_FOLLOW_FORK_MODE): Define new
+	gconf key.
+	* src/persp/dbgperspective/nmv-conf-keys.h: Declare new key
+	CONF_KEY_FOLLOW_FORK_MODE.
+	* src/dbgengine/nmv-gdb-engine.cc (CONF_KEY_FOLLOW_FORK_MODE):
+	declare new key.
+	(struct GDBEngine::Priv)<follow_fork_mode>: New attribute.
+	Initialize it to "parent".
+	(GDBEngine::Priv::launch_gdb_and_set_args): Set the default
+	follow-fork-mode when launching GDB.
+	(GDBEngine::Priv::set_debugger_parameter): Factorize this out
+	from ...
+	(GDBEngine::set_debugger_parameter): ... here. Use the new
+	GDBEngine::Priv::set_debugger_parameter.
+	(GDBEngine::Priv::read_default_config,
+	GDBEngine::Priv::on_conf_key_changed_signal): New fns.
+	(GDBEngine::Priv::on_conf_key_changed_signal):
+	(GDBEngine::Priv::get_conf_mgr): Do not create our own conf mgr
+	here. Rather, use the one passed to us at GDBEngine::do_init time.
+	(GDBEngine::do_init): Connect to the value_changed_signal of the
+	conf manager we are initialized with.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::do_init): Don't
+	pass safeptrs by reference.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::do_init): Likewise.
+	* src/persp/dbgperspective/glade/preferencesdialog.glade: Add
+	UI to set follow-fork-mode.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc
+	(PreferencesDialog::Priv::on_follow_fork_mode_toggle_signal,
+	PreferencesDialog::Priv::update_follow_fork_mode_key):
+	New fns.
+	(PreferencesDialog::Priv::init): Get the radio buttons to set the
+	follow-fork-mode. Connect their toggled signal to the new
+	PreferencesDialog::Priv::on_follow_fork_mode_toggle_signal
+	(PreferencesDialog::Priv::update_widget_from_debugger_keys):
+	Pull the CONF_KEY_FOLLOW_FORK_MODE key value and initialize the
+	follow-fork-mode radio buttons with it.
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas:
+	Add a new string key /apps/nemiver/dbgperspective/follow-fork-mode.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Do not try to unmonitor disassembly content.
+	* nmv-dbg-perspective.cc (DBGPerspective::is_asm_title): New function.
+	(DBGPerspective::do_unmonitor_file): Use it.
+	(DBGPerspective::get_asm_title): Cleanup.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Better handling of frame setting.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::create_source_buffer): New function.
+	(DBGPerspective::set_where): Remove the frame file path parm from
+	this function. It now only needs the Frame. Adjust the body of the
+	function to call the proper overload of DBGPerspective::set_where
+	depending on if the frame has debug info or not. Make sure all the
+	overloads of DBGPerspective::set_where bring the proper source
+	editor to the front.
+	(DBGPerspective::on_debugger_stopped_signal): Use the new
+	simpler DBGPerspective::set_where.
+	(DBGPerspective::on_frame_selected_signal): Likewise.
+	(DBGPerspective::open_asm): No need to bring the source editor to
+	the front anymore. Also, factorize ...
+	(DBGPerspective::get_or_append_asm_source_editor): ... out.
+	Use DBGPerspective::create_source_buffer.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Fix address overflowing during disassembling
+	* src/common/nmv-range.h (Range::min, Range::max): Use size_t
+	instead of int for the parm type. This prevents overflowing the
+	addresses when trying to disassemble.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Avoid printing unnecessary error messages
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::assembly_buf_addr_to_line): Do not necessarily spit error
+	messages when returning false here.
+	(SourceEditor::assembly_buf_addr_to_line_previous): Likewise.
+	(SourceEditor::assembly_buf_line_to_addr): Likewise.
+
+2010-07-17  Dodji Seketeli <dodji@redhat.com>
+
+	Fix a thinko
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc (Priv::Priv):
+	Properly initialize num_instr_to_disassemble.
+
+2010-05-07  Dodji Seketeli <dodji@redhat.com>
+
+	Fix mixed asm handling
+	Ignore source line 0 addressing
+	Better newline handling during asm formatting
+	Validate addresses in source buffer
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::write_asm_instr): Return a boolean when a non
+	empty asm line has been writen. Line with just '\n' are
+	considered empty. Also, when writing mixed asms, sometime, GDB
+	refers to source line 0, with an empty asm instrs set. This is weird
+	since line numbers should start at 1. So ignore asm instrs at
+	line 0. Do not add '\n' at the end of non empty lines. '\n' is
+	added between two lines, though.
+	(DBGPerspective::add_asm): Do not add '\n' after empty lines.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::line_2_address): Don't consider non-number
+	strings as addresses.
+
+2010-04-28  Dodji Seketeli <dodji@gnome.org>
+
+	Support mixed asm insns with empty insn list
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Asm::empty): New fn.
+	(IDebugger::Asm::instr): If the Asm is a mixed src/asm insn that
+	contains an empty list of asm instr, throw an exception.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(OnDisassembleHandler::do_handle): Do not crash if a mixed
+	src/asm instruction contains an empty asm instr list.
+	* tests/test-gdbmi.cc (test_disassemble): Add a regression test
+	in which a mixed src/asm has an empty asm insns list.
+
+2010-04-28  Dodji Seketeli <dodji@gnome.org>
+
+	Flag pending breakpoints as such
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::update_breakpoint): If the breakpoint
+	has an empty address, it means it's pending. Write a PENDING
+	string in the bp's address column. This fixes a regression
+	introduced during the move to the new Address type.
+
+2010-04-27  Dodji Seketeli <dodji@gnome.org>
+
+	Support BP setting to an address
+	* src/persp/dbgperspective/glade/setbreakpointdialog.glade:
+	Add UI to set a breakpoint to a binary address.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.h:
+	(enum SetBreakpointDialog::Mode)<MODE_BINARY_ADDRESS>: New enum
+	member.
+	(SetBreakpointDialog::address): Declare accessor for the binary address.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::Priv::Priv): Initialize the new
+	address entry and binary address radio button widgets of the
+	breakpoint setting dialog.
+	(SetBreakpointDialog::Priv::update_ok_button_sensitivity):
+	Handle the new MODE_BINARY_ADDRESS.
+	(SetBreakpointDialog::Priv::on_radiobutton_changed): Update
+	sensitivity for the address entry widget whenever the state of
+	one of the radio buttons changes. Remove useless code.
+	(SetBreakpointDialog::Priv::mode): Handle the new
+	MODE_BINARY_ADDRESS.
+	(SetBreakpointDialog::address): Define new accessors.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::set_breakpoint_from_dialog): Handle setting a
+	breakpoint to an address.
+
+2010-04-27  Dodji Seketeli <dodji@gnome.org>
+
+	Validate decimal and hexa numbers
+	* src/common/nmv-str-utils.h (string_is_decimal_number): Declare
+	new fn.
+	* src/common/nmv-str-utils.cc (string_is_decimal_number): Define
+	new fn.
+	(string_is_number): Validate decimal and hexa numbers using
+	string_is_decimal_number and string_is_hexa_number.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::analyse_mixed_asm_instrs): Adjust. Use
+	str_utils::string_is_decimal_number to validate decimal numbers,
+	instead of the former string_is_number that now validate decimal
+	and hexa numbers.
+
+2010-04-27  Dodji Seketeli <dodji@gnome.org>
+
+	Make sure Addresses are valid
+	* src/common/nmv-address.cc (Address::operator=,
+	Address::Address(const string&)): Validate the
+	the address string.
+
+2010-04-27  Dodji Seketeli <dodji@gnome.org>
+
+	Debugger preference dialog cleanup
+	* src/persp/dbgperspective/glade/preferencesdialog.glade:
+	Make the labels appear on the left of the data entry widgets.
+
+2010-04-26  Dodji Seketeli <dodji@gnome.org>
+
+	refactor session cleaning actions for new inferior
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_program): Factorize session cleaning
+	actions when starting a new inferior.
+
+2010-04-26  Dodji Seketeli <dodji@gnome.org>
+
+	Don't clear search dir paths when restarting the inferior
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_last_program_in_memory): Do not clear
+	session data when restarting the same inferior. E.g. do not
+	clear the search dirs path.
+
+2010-04-26  Dodji Seketeli <dodji@gnome.org>
+
+	Support asm single stepping
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::step_over_asm):
+	Renamed IDebugger::step_instruction into this.
+	(IDebugger::step_in_asm): Declare new fn.
+	* src/dbgengine/nmv-gdb-engine.h: Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::step_over_asm):
+	Renamed GDBEngine::step_instruction into this.
+	(GDBEngine::step_in_asm): Define new fn.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStackCols::address): New column definition.
+	(CallStackCols::CallStackCols): Add the new column.
+	(CallStack::Priv::build_widget): Append a new graphical
+	address column.
+	(CallStack::Priv::append_frames_to_tree_view): Populate the new
+	address column. Do not show the address in the location column
+	when the frame has no location.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_step_in_asm_action,
+	DBGPerspective::on_step_over_asm_action,
+	DBGPerspective::step_in_asm, DBGPerspective::step_over_asm): New fns.
+	(DBGPerspective::get_current_source_editor): Add a flag to
+	decide whether to load a new source editor if the notebook is
+	empty.
+	(DBGPerspective::on_debugger_command_done_signal): Adjust for
+	IDebugger::step_instruction --> IDebugger::step_over_asm rename.
+	(DBGPerspective::init_actions): Add new actions to do asm step
+	into, asm step over. Add <control>-A shortcut for "switch to
+	asm" and <control><shift>-A for switch to source.
+	(DBGPerspective::get_source_editor_from_path): Avoid
+	dereferencing an iterator that points to the end of a container.
+	(DBGPerspective::apply_decorations_to_source): Use pointer
+	comparison to compare the source editor to decorate with the
+	current source editor. Before this change we where comparing the
+	file paths. That can lead to some misses when we got the source
+	editor from a non absolute path that got resolved by the user.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::get_first_asm_address,
+	SourceEditor::Priv::get_last_asm_address): New fns.
+	(SourceEditor::get_assembly_address_range): Use them.
+	* src/persp/dbgperspective/menus/menus.xml: Add
+	StepInAsmMenuItem and StepOverAsmMenuItem menu items.
+
+2010-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Show source code lines in mixed asm/src mode
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_debugger_stopped_signal): Make sure to pump
+	more asm insns in if necessary.
+	(DBGPerspective::read_file_line): New fn.
+	(DBGPerspective::write_asm_instr): Turn this into a member
+	function now. Also, for  mixed asm/source asm, show the actual
+	source code line. If not possible, then show the source code
+	line markers.
+	(DBGPerspective::set_where,
+	DBGPerspective::pump_asm_including_address,
+	DBGPerspective::disassemble_and_do): Add logging.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::move_where_marker_to_line): Likewise.
+
+2010-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Be more liberal when parsing asm instrs
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::analyse_pure_asm_instrs): Accept TUPLEs that have
+	less than the 4 usual results: address, func-name, offset,
+	instr. Some instrs like NOP can have only address and instr.
+	Also, don't die on unknown RESULTs. Added a comment.
+	(GDBMIParser::analyse_mixed_asm_instrs): Update this likewise.
+	Added a comment.
+	* tests/test-gdbmi.cc: Add a new test case reported by Luca
+	Bruno at
+	http://mail.gnome.org/archives/nemiver-list/2010-April/msg00003.html
+
+2010-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Adjust test-disassemble.cc after Asm type change.
+	* tests/test-disassemble.cc (on_instructions_disassembled_signal1):
+	Adjust due to the IDebugger::AsmInstr -> IDebugger::Asm switch.
+
+2010-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Initial front end support of mixed asm/src mode
+	* src/persp/dbgperspective/glade/preferencesdialog.glade: Add
+	debugger preferences: Asm style, nb of instrs to disasm and path
+	to debugger.
+	* src/persp/dbgperspective/nmv-conf-keys.h (CONF_KEY_ASM_STYLE_PURE,
+	CONF_KEY_GDB_BINARY, CONF_KEY_DEFAULT_NUM_ASM_INSTRS): Declare
+	new GCONF keys.
+	* src/persp/dbgperspective/nmv-dbg-perspective.h
+	(DGBPerspective::load_asm): Update for the IDebugger::AsmInstr to
+	IDebugger::Asm switch.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBG_PERSPECTIVE_ASM_DOMAIN): Define new logging domain for asm
+	stuff.
+	(CONF_KEY_ASM_STYLE_PURE, CONF_KEY_DEFAULT_NUM_ASM_INSTRS):
+	define new gconf keys.
+	(log_asm_insns): New function to dump asm insns being slammed
+	into a source buffer.
+	(DBGPerspective::on_debugger_asm_signal1,
+	DBGPerspective::on_debugger_asm_signal2,
+	DBGPerspective::on_debugger_asm_signal3,
+	DBGPerspective::on_debugger_asm_signal4,
+	DBGPerspective::load_asm,
+	DBGPerspective::open_asm,
+	DBGPerspective::switch_to_asm,
+	DBGPerspective::add_asm): Update for the IDebugger::AsmInstr to
+	IDebugger::Asm switch.
+	(DBGPerspective::on_conf_key_changed_signal): Listen to changes
+	of the value of GConf keys CONF_KEY_DEFAULT_NUM_ASM_INSTRS and
+	CONF_KEY_ASM_STYLE_PURE.
+	(DBGPerspective::append_source_editor): Monitor only the changes
+	of source type buffers, because asm type buffers' content don't
+	come from an on-disk file.
+	(DBGPerspective::read_default_config): Read the value of GConf
+	keys CONF_KEY_DEFAULT_NUM_ASM_INSTRS, CONF_KEY_ASM_STYLE_PURE.
+	(write_asm_instr): New fn.
+	(DBGPerspective::disassemble_and_do,
+	DBGPerspective::disassemble_around_address_and_do): Fetch at least
+	N asm instructions. N being the value of the gconf key
+	CONF_KEY_DEFAULT_NUM_ASM_INSTRS. Call the debugger engine
+	disassembler with the right asm style (pure asm or mixed
+	src/asm), depending on the value of the CONF_KEY_ASM_STYLE_PURE
+	key.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc
+	(PreferencesDialog::Priv::on_asm_style_toggled_signal,
+	PreferencesDialog::Priv::on_num_asms_value_changed_signal,
+	PreferencesDialog::Priv::on_gdb_binary_file_set_signal): New
+	signal handlers.
+	(PreferencesDialog::Priv::init): Add some comments.
+	Initialize the value of the pure/mixed asm radio buttons, the
+	debfault num asm instrs spin button and the gdb binary path
+	chooser button.
+	(PreferencesDialog::Priv::update_asm_style_keys,
+	PreferencesDialog::Priv::update_default_num_asm_instrs_key,
+	PreferencesDialog::Priv::update_gdb_binary_key,
+	PreferencesDialog::Priv::update_widget_from_debugger_keys): New fns.
+	(PreferencesDialog::Priv::update_widget_from_conf): Call
+	PreferencesDialog::Priv::update_widget_from_debugger_keys.
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas:
+	Add new keys: /apps/nemiver/dbgperspective/asm-style-pure,
+	and /apps/nemiver/dbgperspective/default-num-asm-instrs.
+
+2010-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Clean up Address type and adjust client code
+	* src/common/nmv-address.h
+	(Address::operator const std::string& () const): Remove.
+	(Address::to_string() const): New fn.
+	(Address::operator<< (Stream &a_os, const Address &a)): New
+	stream operator template.
+	(Address::Address(const std::string&)): Make this explicit to avoid
+	ambiguity when streaming a string to an ostream.
+	* src/common/nmv-address.cc: Adjust.
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_frame,
+	GDBMIParser::parse_breakpoint, GDBMIParser::parse_call_stack):
+	Adjust to the Address changes.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Breakpoint): Make
+	the m_address member be of Address type.
+	(IDebugger::Breakpoint::address, IDebugger::Frame::address): Add a
+	non-const fn overload.
+	(IDebugger::Frame::has_empty_address): Adjust to the Address
+	change.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::update_breakpoint): Likewise.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::append_frames_to_tree_view): Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::get_frame_breakpoints_address_range,
+	DBGPerspective::set_where, DBGPerspective::create_source_editor,
+	DBGPerspective::apply_decorations_to_asm): Likewise.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::address_2_line): Likewise.
+
+2010-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Backend support for mixed src/asm disassembly
+	* src/common/nmv-env.cc (CONF_KEY_GDB_BINARY): New gconf key
+	definition.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::MixedAsmInstr,
+	IDebugger::Asm): New type.
+	(many declarations): Don't use IDebugger::AsmInstr anymore, but
+	rather IDebugger::Asm that is a type which basically is an union
+	of AsmInstr and MixedAsmInstr.
+	(IDebugger::disassemble, IDebugger::disassemble_lines): Add a
+	a_pure_asm parm to discriminate between pure asm and mixed
+	source/asm disassembling queries.
+	* src/dbgengine/nmv-gdb-engine.h: Adjust.
+	* src/dbgengine/nmv-gdb-engine.cc (many places): Adjust to the
+	IDebugger::Asm usage.
+	(GDBEngine::disassemble, GDBEngine::disassemble_lines): Use the new
+	a_pure_asm parm.
+	* src/dbgengine/nmv-dbg-common.h: Adjust to the
+	IDebugger::AsmInstr -> IDebugger::Asm switch.
+	* src/dbgengine/nmv-gdbmi-parser.h
+	(GDBMIParser::analyse_pure_asm_instrs,
+	GDBMIParser::analyse_mixed_asm_instrs): New fns.
+	(GDBMIParser::parse_asm_instruction_list): Adjust to the
+	IDebugger::AsmInstr -> IDebugger::Asm switch.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::analyse_pure_asm_instrs): Factorize out this from
+	GDBMIParser::parse_asm_instruction_list.
+	(GDBMIParser::analyse_mixed_asm_instrs): New fn.
+	(GDBMIParser::parse_result_record): Adjust to the
+	IDebugger::AsmInstr -> IDebugger::Asm switch.
+	(GDBMIParser::parse_asm_instruction_list): Likewise.
+	Support parsing pure /and/ mixed src/asm instructions.
+	* tests/test-gdbmi.cc b/tests/test-gdbmi.cc: Use the new
+	dbgengine/nmv-asm-utils.h.
+	(test_disassemble): Add a test for mixed src/asm.
+
+2010-04-25  Dodji Seketeli <dodji@redhat.com>
+
+	Add proper streaming operators for asm insns
+	* src/dbgengine/nmv-asm-utils.h: New file.
+	* src/dbgengine/Makefile.am: Add it to build system.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(operator<<(std::ostream&, const IDebugger::AsmInstr&)): Remove
+	because a template of this is now available in the newly added
+	nmv-asm-utils.h above.
+
+2010-04-24  Dodji Seketeli <dodji@redhat.com>
+
+	Detect when a string is a number
+	* src/common/nmv-str-utils.[cc|] (string_is_number,
+	string_is_hexa_number):  New fns.
+
+2010-04-11  Dodji Seketeli <dodji@redhat.com>
+
+	Support disassembly and switching to/from asm view
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Breakpoint):
+	make members m_address, m_function, m_expression and m_condition
+	use std::string instead of UString. It's un-necessary for these
+	to be in utf8. Update their accessors.
+	(IDebugger::Frame): Likewise for members m_function_name, and
+	m_args and m_library. Make m_address use the new type Address
+	instead of UString.
+	(IDebugger::Frame::has_empty_address): New function.
+	(IDebugger::set_breakpoint): New overload to set a bp at an
+	address.
+	* src/dbgengine/nmv-gdb-engine.h: Adjust.
+	* src/dbgengine/nmv-gdb-engine.cc: Adjust. All addresses are
+	typed with the Address type now.
+	(GDBEngine::set_breakpoint): New definition.
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_frame,
+	GDBMIParser::parse_call_stack, ):
+	Adjust to use Address instead of UString.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::append_frames_to_tree_view): Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_debugger_asm_signal1,
+	DBGPerspective::on_debugger_asm_signal2,
+	DBGPerspective::on_debugger_asm_signal3,
+	DBGPerspective::on_debugger_asm_signal4,
+	DBGPerspective::get_or_append_source_editor_from_path,
+	DBGPerspective::open_file_real,
+	DBGPerspective::pump_asm_including_address,
+	DBGPerspective::is_breakpoint_set_at_address,
+	DBGPerspective::breakpoint_and_frame_have_same_file,
+	DBGPerspective::get_frame_breakpoints_address_range,
+	DBGPerspective::disassemble_and_do,
+	DBGPerspective::disassemble_around_address_and_do,
+	DBGPerspective::apply_decorations,
+	DBGPerspective::apply_decorations_to_asm,
+	DBGPerspective::add_asm, write_asm_instr): New fns.
+	(DBGPerspective::bring_source_as_current,
+	DBGPerspective::load_disassembly,
+	DBGPerspective::get_breakpoint_number,
+	DBGPerspective::delete_breakpoint,
+	DBGPerspective::toggle_breakpoint,
+	DBGPerspective::append_visual_breakpoint,
+	DBGPerspective::set_where): New overloads. Often refactor
+	related overloads to re-use each others.
+	(DBGPerspective::get_asm_title): Renamed
+	DBGPerspective::get_disassembly_title.
+	(DBGPerspective::load_asm): Renamed
+	DBGPerspective::load_disassembly. Refactor to use
+	DBGPerspective::add_asm.
+	(DBGPerspective::open_asm): Renamed DBGPerspective::open_disassembly.
+	If the source editor was populated and the where pointer is set,
+	then bring the source editor to front.
+	(DBGPerspective::switch_to_asm): Renamed
+	DBGPerspective::switch_disassembly. Clear the decoration of the
+	previous source editor, before switching to the new one.
+	Do not set the current line and apply the decoration.
+	(DBGPerspective::switch_to_source_code):
+	(DBGPerspective::set_breakpoint): Use Address instead of
+	UString.
+	(DBGPerspective::apply_decorations_to_source): Renamed
+	DBGPerspective::apply_decoration_to_text. Make this to act only
+	on source code editor.
+	(DBGPerspective::on_switch_to_asm_action): Renamed
+	DBGPerspective::on_switch_to_disassembly_action.
+	(DBGPerspective::on_sv_markers_region_clicked_signal): Renamed
+	DBGPerspective::on_source_view_markers_region_clicked_signal.
+	Add a SourceEditor* parm to know which editor the source view
+	marker was clicked on. When the user clicks on the bp's margin,
+	set the breakpoint, wether we are in asm view or text view. In
+	assembly view, properly set the bp to the @ of the ligne
+	clicked. In source view, properly set the bp to the line # where
+	the user clicked.
+	(DBGPerspective::on_breakpoint_go_to_source_action): Re-factorize and
+	simply logic. Use the new
+	DBGPerspective::get_or_append_source_editor_from_path. Handle
+	source and asm buffers. If user wanted the source buffer and no
+	source could be found, fall back to disassembling instead.
+	(DBGPerspective::on_debugger_stopped_signal): Support updating
+	the "where pointer" in asm and source mode. If we couldn't set
+	the where pointer in source mode (probably b/c we couldn't find
+	the source file), then disassemble around the current IP value
+	and set the where pointer to the current IP value.
+	(DBGPerspective::on_frame_selected_signal): Support setting the
+	where pointer either on source or asm view.
+	(DBGPerspective::find_absolute_path): Also look for a file of
+	the same basename in the search directories before giving up.
+	(DBGPerspective::append_source_editor): When trying to add a
+	source editor with an empty file name to the notebook, use the
+	patch of the source editor as file name.
+	(DBGPerspective::get_current_source_editor): When the source
+	notebook is empty, try to open the source file corresponding to the
+	current frame.
+	(DBGPerspective::switch_to_source_code): Clear the decoration
+	of the old view before switching to the new one. When applying
+	decorations, scroll to the where marker.
+	(DBGPerspective::disassemble): Refactor and use the new
+	DBGPerspective::disassemble_and_do function
+	* src/persp/dbgperspective/nmv-dbg-perspective.h
+	(IDBGPerspective::load_asm): New fun.
+	* src/uicommon/nmv-source-editor.h (SourceEditor::BufferType):
+	New type.
+	Also declare the new member functions defined above.
+	* src/uicommon/nmv-source-editor.cc (struct Line2AddrFunc):
+	Remove.
+	(SourceEditor::Priv::get_buffer_type,
+	SourceEditor::Priv::get_markers,
+	SourceEditor::Priv::address_2_line,
+	SourceEditor::Priv::line_2_address,
+	SourceEditor::get_buffer_type,
+	SourceEditor::set_visual_breakpoint_at_address,
+	SourceEditor::scroll_to_address,
+	SourceEditor::get_assembly_address_range,
+	SourceEditor::move_where_marker_to_address,
+	SourceEditor::place_cursor_at_line,
+	SourceEditor::place_cursor_at_address): New fns.
+	(SourceEditor::Priv::NonAssemblyBufContext): Make this hold
+	source markers.
+	(SourceEditor::Priv::AssemblyBufContext): Likewise. Move
+	current_line and current_column here too. Add a current_address
+	too.
+	(SourceEditor::Priv::switch_to_assembly_source_buffer): If
+	called when we are already switched to asm buffer, don't barf.
+	(SourceEditor::Priv::switch_to_non_assembly_source_buffer):
+	Don't barf if called when we are already switched to source
+	buffer.
+	(SourceEditor::Priv::on_signal_insertion_moved): Protect with
+	try/catch.
+	(SourceEditor::Priv::update_line_col_info_from_iter,
+	SourceEditor::current_line): Handle both asm and source buffers.
+	(SourceEditor::move_where_marker_to_line,
+	SourceEditor::unset_where_marker,
+	SourceEditor::remove_visual_breakpoint_from_line
+	SourceEditor::clear_decorations,
+	SourceEditor::SourceEditor::is_visual_breakpoint_set_at_line): Remove
+	support for gsvmm 1.xx.
+	(SourceEditor::set_visual_breakpoint_at_line): Support gtk+ line
+	numbering scheme i.e, line nums starting at 0, instead of 1 like
+	GDB.
+	(SourceEditor::set_path, SourceEditor::get_path,
+	SourceEditor::get_file_name): Support this for asm
+	and source bufs.
+	(SourceEditor::assembly_buf_addr_to_line): Renamed
+	SourceEditor::assembly_buf_loc_to_line. Use
+	SourceEditor::Priv::assembly_buf_addr_to_line.
+	(SourceEditor::assembly_buf_line_to_addr): Renamed
+	SourceEditor::assembly_buf_line_to_loc. Use
+	SourceEditor::Priv::line_2_address.
+	* tests/test-disassemble.cc (on_stopped_signal): Adjust to
+	IDebugger::Frame::function yielding an std::string rather than
+	an UString.
+	(test_main): Call _exit to avoid a crash at exit.
+	* tests/test-gdbmi.cc b/tests/test-gdbmi.cc (tes_stack0): Use
+	the new IDebugger::Frame::has_empty_address function.
+
+2010-04-10  Dodji Seketeli <dodji@redhat.com>
+
+	Fix parsing empty asm instrs list.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_asm_instruction_list): Gently handle empty
+	asm instructions list.
+
+2010-04-10  Dodji Seketeli <dodji@redhat.com>
+
+	Fix disassembling implementation.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::disassemble):
+	Fix absolute addressing of the address range's end.
+
+2010-04-10  Dodji Seketeli <dodji@redhat.com>
+
+	Rename the IDebugger::BreakPoint into IDebugger::Breakpoint
+	* src/dbgengine/nmv-i-debugger.h (*): Rename BreakPoint into
+	Breakpoint.
+	* src/dbgengine/nmv-dbg-common.h: Adjust.
+	* src/dbgengine/nmv-gdb-engine.[h|cc: Likewise.
+	* src/dbgengine/nmv-gdbmi-parser.[h|cc]: Likewise.
+	* src/persp/dbgperspective/menus/menus.xml: Likewise.
+	* src/persp/dbgperspective/nmv-breakpoints-view.[h|cc]: Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.[cc|h]: Likewise.
+	* src/persp/dbgperspective/nmv-sess-mgr.[h|cc]: Likewise.
+	* tests/test-breakpoint.cc: Likewise.
+	* tests/test-gdbmi.cc: Likewise.
+	* tests/test-var-path-expr.cc: Likewise.
+	* tests/test-watchpoint.cc: Likewise.
+
+2010-04-10  Dodji Seketeli <dodji@redhat.com>
+
+	Update the Address type
+	* src/common/nmv-address.h (Address::empty,
+	Address::operator size_t () const, Address::string_size,
+	operator==(const Address&, const std::string&),
+	operator==(const Address&, size_t), operator[](size_t),
+	Address::clear):
+	Declare new functions.
+	* src/common/nmv-address.cc (Address::empty,
+	Address::operator size_t () const, Address::string_size,
+	operator==(const Address&, const std::string&),
+	operator==(const Address&, size_t), operator[](size_t)):
+	Define new functions.
+	(Address::Address (const std::string &a)): Chomp the address
+	string.
+	(Address::operator= (const std::string &a_addr)): Chomp the
+	newly assigned string.
+	(Address::size): Make this
+
+2010-04-10  Dodji Seketeli <dodji@redhat.com>
+
+	Add new range type
+	* src/common/nmv-range.h: New range type declaration/definition.
+	* src/common/Makefile.am: Add it to the build system.
+
+2010-04-10  Dodji Seketeli <dodji@redhat.com>
+
+	Support original-location attr on pending breakpoints.
+	* src/common/nmv-str-utils.h (extract_path_and_line_num_from_location):
+	Remove use of UString in the declaration.
+	(chomp): Turn this into a template.
+	* src/common/nmv-str-utils.cc (extract_path_and_line_num_from_location):
+	Adjust and make it much more robust.
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_breakpoint):
+	Adjust to recent (GDB 7?) behaviour wrt PENDING breakpoints.
+	Now, the original location is in the original-location
+	attribute.
+
+2010-03-07  Dodji Seketeli <dodji@redhat.com>
+
+	ASM <-> Source code switching preliminary support
+	Preliminary support to switch from source code view to assembly
+	view and backward. Neiher decorating nor stepping is supported
+	in the assembly view yet.
+	* src/uicommon/nmv-source-editor.h (clear_decorations): New
+	interface.
+	(SourceEditor::*): Renamed all methods that had "composite" in
+	their names into method that have "assembly" in their name
+	instead.
+	* src/uicommon/nmv-source-editor.cc (*):
+	Same similar renaming as above.
+	Go further by renaming members that have "comp" in their names
+	by members that have "asm" in their names instead.
+	(SourceEditor::clear_decorations): New definition.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_disassemble_action,
+	DBGPerspective::on_switch_to_disassembly_action,
+	DBGPerspective::on_debugger_disassembled_signal,
+	DBGPerspective::switch_to_disassembly,
+	DBGPerspective::switch_to_source_code,
+	DBGPerspective::disassemble,
+	DBGPerspective::find_absolute_path_or_ask_user,
+	DBGPerspective::remove_visual_decorations_from_text): New fns
+	declarations and definitions.
+	(DBGPerspective::find_absolute_path,
+	DBGPerspective::ask_user_to_select_file): Extract these
+	functions from DBGPerspective::append_visual_breakpoint.
+	(DBGPerspective::append_visual_breakpoint): Use the new
+	DBGPerspective::find_absolute_path and
+	DBGPerspective::ask_user_to_select_file.
+	(DBGPerspective::init_actions): Add menu actions DisAsmMenuItemAction,
+	SwitchToAsmMenuItemAction, SwitchToSourceMenuItemAction. Used
+	the new DBGPerspective::on_disassemble_action, and
+	DBGPerspective::switch_to_source_code as the callbacks for this
+	menu actions.
+	(DBGPerspective::open_disassembly): If the disassembly tab
+	exists already, re-use it.
+	(DBGPerspective::open_file): Don't yell if the file path is empty.
+	* src/persp/dbgperspective/menus/menus.xml: Add new "Show assembly",
+	"Switch to assembly" and "Switch to source" menu items to the
+	"debug" menu.
+
+2010-01-10  Dodji Seketeli <dodji@redhat.com>
+
+	Start preping debug perspective to ask for disassembly
+	* src/persp/dbgperspective/nmv-dbg-perspective.h
+	(IDBGPerspective::load_disassembly): New iface.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::get_disassembly_title,
+	DBGPerspective::load_disassembly,
+	DBGPerspective::open_disassembly): New local methods.
+	(DBGPerspective::append_source_editor): Add source editor
+	related signal setup here ...
+	(DBGPerspective::open_file): ... and remove it from here.
+	Also, split ...
+	(DBGPerspective::create_source_editor): ... from open_file.
+	(DBGPerspective::get_file_mime_type): Split from this and ...
+	(DBGPerspective::setup_buffer_mime_and_lang): ... this ...
+	(DBGPerspective::load_file): ... from here.
+
+2010-01-10  Dodji Seketeli <dodji@redhat.com>
+
+	March towards composite SourceEditor
+	* src/uicommon/nmv-source-editor.cc (SourceEditor::Priv): Move
+	SourceEditor::Priv::NonCompositeBufContext::line_col_label here.
+	(SourceEditor::Priv::NonCompositeBufContext): Update this
+	contructor and split it in two constructors. Also add a
+	default constructor.
+	(SourceEditor::Priv::CompositeBufContext): Add line to addr
+	converters and constructors.
+	(SourceEditor::Priv::register_composite_source_buffer): This is
+	not a template anymore.
+	(SourceEditor::Priv::update_line_col_label,
+	SourceEditor::Priv::init): Update access to line_col_label.
+	(SourceEditor::Priv::Priv): Initialize line_col_label, update
+	access SourceEditor::Priv::non_comp_ctxt as its constructor
+	signature changed. Updated the constructors accordingly. Mark
+	them explicit as they are no converting constructors.
+	(SourceEditor::SourceEditor): Add a flag to know whether the
+	source buffer is composite or not.
+	(SourceEditor::register_composite_source_buffer): This is no
+	longer a template.
+	(SourceEditor::composite_buf_loc_to_line,
+	SourceEditor::composite_buf_line_to_loc, Line2AddrFunc::operator,
+	Addr2LineFunc::operator): New methods.
+	* src/uicommon/nmv-source-editor.h (SourceEditor::SourceEditor):
+	Declare explicit. Add a flag for composite buffers.
+	(SourceEditor::register_composite_source_buffer): No more a
+	template.
+	(SourceEditor::composite_buf_loc_to_line,
+	SourceEditor::composite_buf_line_to_loc): New methods.
+
+2010-01-10  Dodji Seketeli <dodji@redhat.com>
+
+	Iron out the disassembling interface
+	* src/dbgengine/nmv-gdb-engine.cc
+	(OnDisassembleHandler::do_handle): Call back into the slot
+	passed in parameter to the disasemble method invocation.
+	(GDBEngine::disassemble): Overhaul. An overload of this uses has
+	a slot in parameter. Make the other overloads use it.
+	(GDBEngine::disassemble_lines): Renamed the disassemble
+	invocation that takes lines in parameter (instead of address)
+	into this.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::disassemble):
+	Update declarations.
+	(GDBEngine::disassemble_lines): Declare new method.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::AsmInstr):  Store
+	addresses in strings for now. Might want to change that later to
+	store them in a size_t. This is easier for now.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_asm_instruction_list): Address and string
+	are now represented in strings.
+	* tests/test-disassemble.cc: Update to the ironed out interface.
+
+2010-01-10  Dodji Seketeli <dodji@redhat.com>
+
+	Const-ify some parms in IDebugger.
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::instructions_disassembled_signal): Const-ify the
+	IDebugger::DisassembleInfo parameter.
+
+2010-01-10  Dodji Seketeli <dodji@redhat.com>
+
+	More functions to common::str_utils namespace
+	* src/common/nmv-str-utils.[cc|h]: (hexa_to_int, int_to_string, split,
+	split_set, join, chomp, get_number_of_lines, get_number_of_words,
+	printf, vprintf): Ported these here from UString. The plan is to
+	remove these from fat UString and adjust client code to make it
+	use these instead.
+
+2010-01-10  Dodji Seketeli <dodji@redhat.com>
+
+	New Address type.
+	* src/common/Makefile.am: Add nmv-address.[h|cc] to build system
+	* src/common/nmv-address.[cc|h]: New files.
+
+2009-12-21  Dodji Seketeli <dodji@redhat.com>
+
+	Started preparing SourceEditor for asm support
+	* src/uicommon/nmv-source-editor.h (register_composite_source_buffer,
+	register_non_composite_source_buffer, get_composite_source_buffer,
+	get_non_composite_source_buffer, switch_to_composite_source_buffer,
+	switch_to_non_composite_source_buffer): Declare this new methods of
+	SourceEditor.
+	* src/uicommon/nmv-source-editor.cc (struct SourceEditor::Priv):
+	Reorganised this to hold two contexts: one for composite buffers,
+	one for non-composite buffers. Updated the rest of the code to
+	match this reorg. The composite buffer code is not yet used, but
+	the non-composite one works as before.
+	(class SourceEditor::*): Implement the new methods of SourceEditor
+	and update the existing one according to the new organisation in
+	contexts.
+
+2009-09-20  Dodji Seketeli <dodji@redhat.com>
+
+	Add disassembling backend support
+	* src/common/nmv-ustring.h,cc (UString::hexa_to_int): New entry point.
+	* src/dbgengine/nmv-dbg-common.h: Make ResultRecord carry
+	assembly instructions list.
+	* src/dbgengine/nmv-gdbmi-parser.cc,h:
+	(operator<<): New streaming operator for IDebugger::AsmInstr.
+	(GDBMIParser::parse_asm_instruction_list): New function.
+	(GDBMIParser::parse_result_record ): Parse asm instruction lists.
+	* src/dbgengine/nmv-gdb-engine.[cc|h],nmv-i-debugger.h:
+	(IDebugger::disassemble,
+	Added IDebugger::instructions_disassembled_signal): New entry points.
+	Wrote a first implementation for these, based on the new
+	GDB/MI parsing code that handles instruction disassembling.
+	Added new types IDebugger::AsmInstr and IDebugger::DisassembleInfo.
+	* tests/test-gdbmi.cc (test_disassemble): New test.
+	(test_file_list): Add test_disassemble to the list of tests.
+	* tests/Makefile.am,tests/test-disassemble.cc: added a new
+	regression test for the disassembling stuff. This does IDebugger
+	to debug a program and tries to disassemble parts of it.
+	* tests/test-disassemble.cc: New test file.
+	* tests/Makefile.am: Add new test above to the build system.
+
+2010-06-20  Dodji Seketeli <dodji@redhat.com>
+
+	Second attempt at fixing testvarwalker
+	* src/dbgengine/nmv-gdb-engine.cc
+	(OnVariableTypeHandler::can_handle): Look for the "ptype " marker
+	in both debugger console and debugger log. Depending on the
+	version of GDB, sometimes it's in the debugger console, sometimes
+	in the debugger log.
+	(OnVariableTypeHandler::do_handle): Remove unnecessary assert.
+
+2010-06-19  Dodji Seketeli <dodji@redhat.com>
+
+	Skip unknown output records.
+	* src/dbgengine/nmv-gdbmi-parser.h
+	(GDBMIParser::skip_output_record): Declare new fn.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::skip_output_record): Define it.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::on_gdb_stdout_signal): Use it.
+
+2010-06-19  Dodji Seketeli <dodji@redhat.com>
+
+	Style cleanups.
+	* src/dbgengine/nmv-gdbmi-parser.cc (parse_output_record): Minor
+	style cleanup.
+
+2010-06-19  Dodji Seketeli <dodji@redhat.com>
+
+	Fix runtestvarwalker hang
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::on_gdb_stdout_signal): Style cleanup.
+	(OnVariableTypeHandler::can_handle): Look for "ptype " string in
+	the debugger console output, not the debugger log output.
+	(OnVariableTypeHandler::can_handle): Likewise, use the content of
+	the debugger console output, not the debugger log output.
+
+2010-06-17  Matej Urbančič <mateju@svn.gnome.org>
+
+	Updated Slovenian translation
+
+2010-06-16  Mario Blättermann <mariobl@gnome.org>
+
+	[i18n] Updated German doc translation
+
+2010-06-15  Mario Blättermann <mariobl@gnome.org>
+
+	[i18n] Updated German doc translation
+
+2010-05-31  Petr Kovar <pknbe@volny.cz>
+
+	Update Czech translation by Marek Cernocky
+
+2010-05-28  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-05-25  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-05-24  Mario Blättermann <mariobl@gnome.org>
+
+	Updated German translation
+
+2010-05-23  Seemanta Dutta <seemanta@gmail.com>
+
+	Adding a popup when quitting nemiver. (Closes: #553217)
+	* src/persp/dbgperspective/nmv-dbg-perspective.h
+	(DBGPerspective::agree_to_shutdown): Declare
+	new fn.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::agree_to_shutdown): Define new fn.
+	* src/persp/nmv-i-perspective.h (IPerspective::agree_to_shutdown):
+	New function declaration.
+	* src/workbench/nmv-workbench.cc
+	(Workbench::query_for_shutdown): New function.
+	(Workbench::on_delete_event): Call it.
+	(Workbench::on_quit_menu_item_action): Likewise.
+
+2010-05-21  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-05-21  Prema <premum@gmail.com>
+
+	GnomeGoal: CorrectDesktopFile (Closes: #618506)
+	* data/nemiver.desktop.in: Per
+	http://live.gnome.org/GnomeGoals/CorrectDesktopFiles, _Name should
+	contain only the brand name of the application, and the new
+	X-GNOME-FullName can contain the concatenation of _Name and
+	_GenericName.
+
+2010-05-17 10:32:04 -0300  Henrique P. Machado <hpmachado@gnome.org>
+
+	Updated Brazilian Portuguese Translation
+
+2010-05-01  Dodji Seketeli <dodji@gnome.org>
+
+	Find dialog is no more modal
+	* src/persp/dbgperspective/glade/findtextdialog.glade: Don't
+	make the dialog modal.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_find_text_response_signal): New signal
+	handler.
+	(DBGPerspective::get_find_text_dialog): Connect the new signal
+	handler above to the "signal_reponse" signal of the find text" dialog.
+	When the user clicks on a button of the dialog, the search is
+	driven by DBGPerspective::on_find_text_response_signal.
+	(DBGPerspective::find_in_current_file): Do not drive the search
+	here -- in a modal way -- anymore.
+	* src/persp/dbgperspective/nmv-dialog.[cc|h] (Dialog::show,
+	Dialog::signal_response): New fns.
+	* src/persp/dbgperspective/nmv-find-text-dialog.[cc|h]
+	(FindTextDialog::clear_selection_before_search): New fn.
+
+2010-05-01  Dodji Seketeli <dodji@gnome.org>
+
+	Be mercyful with empty noteboks
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::get_current_source_editor): Don't cry when the
+	source view notebook is empty.
+
+2010-04-27  Dodji Seketeli <dodji@gnome.org>
+
+	Avoid READY state once detached (Closes: #419504)
+	* src/dbgengine/nmv-gdb-engine.cc
+	(OnCommandDoneHandler::do_handle): Once we are detached from the
+	target, don't get back to READY state just because we got a
+	random response from GDB.
+
+2010-04-27  Dodji Seketeli <dodji@gnome.org>
+
+	Disallow impossible BP actions (Closes: #607782)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::get_num_notebook_pages): Renamed
+	DBGPerspective::get_n_pages into this.
+	(DBGPerspective::on_debugger_not_started_signal,
+	DBGPerspective::close_current_file, DBGPerspective::close_opened_files,
+	DBGPerspective::execute_session, DBGPerspective::execute_program,
+	DBGPerspective::attach_to_program,
+	DBGPerspective::load_core_file): Adjust.
+	(DBGPerspective::update_src_dependant_bp_actions_sensitiveness): New fn.
+	(DBGPerspective::on_debugger_stopped_signal,
+	DBGPerspective::append_source_editor,
+	DBGPerspective::close_file): Use it, and adjust for the get_n_pages ->
+	get_num_notebook_pages rename.
+
+2010-04-18  Olav Vitters <olav@vitters.nl>
+
+	Fix doap file
+
+2010-03-28  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-03-26  Bruno Brouard <annoa.b@gmail.com>
+
+	Updated French translation
+
+2010-03-16  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-03-02  Dominique Leuenberger <dominique-gnomezilla@leuenberger.net>
+
+	More GCC 4.5 fixes, #611588
+	* src/langs/nmv-cpp-ast.cc (Token::operator=): Token::Token is
+	the name of the constructor, not of the type.
+
+2010-02-28  Konstantinos Poulios <poulios.konstantinos@gmail.com>
+
+	Unnecessary scrollbars in variable popup, #610808
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_popup_var_insp_size_request):
+	It looks like add both horizontal and vertical toolbars prevents
+	them from honouring the Gtk::POLICY_AUTOMATIC policy.
+	Furthermore, it appears we never clip the popup time
+	horizontaly (yet).
+	So do not add any horizontal clipboard for now.
+	Also, fixup the padding logic.
+
+2010-02-27  Dodji Seketeli <dodji@redhat.com>
+
+	Fix build with gcc 4.5
+	* src/common/nmv-object.cc: Class name is Object, not
+	Object::Object.
+
+2010-02-27  Romain Tartière <romainl@blogreen.org>
+
+	Remove useless header utmp.h
+	* src/uicommon/nmv-terminal.cc: Don't include useless
+	header utmp.h
+
+2010-02-27  Thorsten Vollmer <thorsten@thvo.de>
+
+	Require and properly detect gtkmm24 version 2.16
+	* configure.ac: Define HAVE_GTKMM_2_16 if we have at least
+	gtkmm24 version 2.16.
+	* src/uicommon/nmv-ui-utils.h: Use Gtk::Action::set_is_important
+	only if HAVE_GTKMM_2_16 is defined.
+
+2010-02-04  Petr Kovar <pknbe@volny.cz>
+
+	Add Czech help translation by Marek Cernocky
+
+2010-01-18  Marek Černocký <marek@manet.cz>
+
+	Update Czech translation
+
+2010-01-14  Joe Hansen <joedalton2@yahoo.dk>
+
+	Added Danish translation
+
+2010-01-14  Kenneth Nielsen <k.nielsen81@gmail.com>
+
+	Added da to list of languages
+
+2010-01-11  Petr Kovar <pknbe@volny.cz>
+
+	Add Czech translation by Marek Cernocky
+
+2010-01-11  Petr Kovar <pknbe@volny.cz>
+
+	Updated Czech translation by Marek Cernocky
+
+2010-01-06  Matej Urbančič <mateju@svn.gnome.org>
+
+	Added sl for Slovenian translation
+
+2010-01-06  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2009-12-13  Dodji Seketeli <dodji@redhat.com>
+
+	Display "source file not found" error msg only once (Closes: #604436)
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::set_breakpoint):
+	Don't list breakpoints after setting it a breakpoint.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc:
+	(DBGPerspective::append_visual_breakpoint): Don't try to get the
+	source editor of an empty source path.
+	One message box saying we couldn't find the source file is enough.
+
+2009-12-12  Mario Blättermann <mariobl@gnome.org>
+
+	Updated German translation
+
+2009-12-12  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+
+2009-12-07  Dodji Seketeli <dodji@redhat.com>
+
+	Updated configure.ac for 0.7.4
+	* ChangeLog: Updated for 0.7.3.
+	* configure.ac: Bumped version number to 0.7.4
+
 2009-12-07  Dodji Seketeli <dodji@redhat.com>
 
 	Automatically regenerate ChangeLog for 0.7.3
