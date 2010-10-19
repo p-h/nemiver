@@ -54,7 +54,7 @@ RELEASED_BRANCH=master
 echo-released-branch:
 	echo "released-branch=$(RELEASED_BRANCH)"
 
-tag-release: update-changelog dist tag-release-only
+tag-release: tag-release-only
 tag-release-only:
 	git tag -m "$(PACKAGE_NAME) release $(VERSION)" \
 	"$(PACKAGE_NAME)-$(VERSION)" $(RELEASED_BRANCH)
