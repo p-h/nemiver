@@ -6111,7 +6111,7 @@ DBGPerspective::restart_inferior ()
     } else {
         // We cannot restart an inferior running on a remote target at
         // the moment.
-        ui_utils::display_error (_("Sorry, it's impossible to restart"
+        ui_utils::display_error (_("Sorry, it's impossible to restart "
                                    "a remote inferior"));
     }
 }
