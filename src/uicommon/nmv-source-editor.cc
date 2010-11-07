@@ -761,10 +761,12 @@ struct SourceEditor::Priv {
         status_box (Gtk::manage (new Gtk::HBox)),
         non_asm_ctxt (-1, -1)
     {
+        Glib::RefPtr<SourceBuffer> b;
+        b = (a_buf) ? a_buf : source_view->get_source_buffer ();
         if (a_assembly) {
-            asm_ctxt.buffer = a_buf;
+            asm_ctxt.buffer = b;
         } else {
-            non_asm_ctxt.buffer = a_buf;
+            non_asm_ctxt.buffer = b;
         }
         init ();
     }
@@ -774,8 +776,11 @@ struct SourceEditor::Priv {
         root_dir (a_root_dir),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
-        non_asm_ctxt (a_buf, -1, -1)
+        non_asm_ctxt (-1, -1)
     {
+        Glib::RefPtr<SourceBuffer> b;
+        b = (a_buf) ? a_buf : source_view->get_source_buffer ();
+        non_asm_ctxt.buffer = b;
         init ();
     }
 };//end class SourceEditor
