@@ -181,8 +181,6 @@ const Gtk::StockID STOCK_STEP_INTO (STEP_INTO);
 const Gtk::StockID STOCK_STEP_OVER (STEP_OVER);
 const Gtk::StockID STOCK_STEP_OUT (STEP_OUT);
 
-const char *I_DEBUGGER_COOKIE_EXECUTE_PROGRAM = "i-debugger-execute-program";
-
 const char *PROG_ARG_SEPARATOR = "#DUMMY-SEP007#";
 
 class DBGPerspective;
@@ -2676,27 +2674,17 @@ void
 DBGPerspective::on_debugger_breakpoint_deleted_signal
                                         (const IDebugger::Breakpoint &,
                                          int a_break_number,
-                                         const UString &a_cookie)
+                                         const UString &)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     NEMIVER_TRY
 
-    if (a_cookie == I_DEBUGGER_COOKIE_EXECUTE_PROGRAM) {
-        //We received this event because we were triggering the
-        //execution of a program, in DBGPerspective::execute_program().
-        //So as part of that function, we asked to clear all the opened files
-        //and to delete all the set breakpoints.
-        //This event is the result the request to delete all the
-        //breakpoints. The request was issued after the opened files got
-        //closed. So we won't be able to find the files to visualy delete the
-        //breakpoints from. So let's just pass.
-        return;
-    }
     delete_visual_breakpoint (a_break_number);
     SourceEditor* editor = get_current_source_editor ();
     THROW_IF_FAIL (editor);
     update_toggle_menu_text (*editor);
+
     NEMIVER_CATCH
 }
 
@@ -6217,14 +6205,16 @@ DBGPerspective::execute_program
         : true;
     LOG_DD ("is new prog: " << is_new_program);
 
+    // Save the current breakpoints aside.
+    map<int, IDebugger::Breakpoint> saved_bps = m_priv->breakpoints;
+
     // delete old breakpoints, if any.
     map<int, IDebugger::Breakpoint>::const_iterator bp_it;
-    for (bp_it = m_priv->breakpoints.begin ();
-         bp_it != m_priv->breakpoints.end ();
+    for (bp_it = saved_bps.begin ();
+         bp_it != saved_bps.end ();
          ++bp_it) {
         if (m_priv->debugger_engine_alive)
-            dbg_engine->delete_breakpoint (bp_it->first,
-                                           I_DEBUGGER_COOKIE_EXECUTE_PROGRAM);
+            dbg_engine->delete_breakpoint (bp_it->first);
     }
 
     if (is_new_program) {
@@ -6260,8 +6250,8 @@ DBGPerspective::execute_program
     if (a_breaks.empty ()) {
         if (!is_new_program) {
             map<int, IDebugger::Breakpoint>::const_iterator it;
-            for (it = m_priv->breakpoints.begin ();
-                 it != m_priv->breakpoints.end ();
+            for (it = saved_bps.begin ();
+                 it != saved_bps.end ();
                  ++it) {
                 set_breakpoint (it->second);
             }
