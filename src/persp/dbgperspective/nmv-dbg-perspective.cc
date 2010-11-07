@@ -6748,6 +6748,10 @@ DBGPerspective::set_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
                                          a_breakpoint.line (),
                                          a_breakpoint.condition (),
                                          ignore_count, cookie);
+        else
+            debugger ()->set_breakpoint (a_breakpoint.address (),
+                                         a_breakpoint.condition (),
+                                         ignore_count, cookie);
     } else if (a_breakpoint.type ()
                == IDebugger::Breakpoint::WATCHPOINT_TYPE) {
         debugger ()->set_watchpoint (a_breakpoint.expression (),
@@ -6979,8 +6983,7 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
 {
     map<int, IDebugger::Breakpoint>::iterator iter =
         m_priv->breakpoints.find (a_breakpoint_num);
-    if (iter == m_priv->breakpoints.end ()) {
-        LOG_ERROR ("breakpoint " << (int) a_breakpoint_num << " not found");
+    if (iter == m_priv->breakpoints.end ())
         return;
     }
 
