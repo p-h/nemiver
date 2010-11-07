@@ -712,7 +712,9 @@ public:
                                    bool is_countpoint,
                                    bool enabled);
     void delete_visual_breakpoint (const UString &a_file_name, int a_linenum);
+    void delete_visual_breakpoint (map<int, IDebugger::Breakpoint>::iterator &a_i);
     void delete_visual_breakpoint (int a_breaknum);
+    void delete_visual_breakpoints ();
     void choose_function_overload
                 (const vector<IDebugger::OverloadsChoiceEntry> &a_entries);
 
@@ -4146,7 +4148,7 @@ DBGPerspective::clear_session_data ()
 
     m_priv->env_variables.clear ();
     m_priv->session_search_paths.clear ();
-    m_priv->breakpoints.clear ();
+    delete_visual_breakpoints ();
     m_priv->global_search_paths.clear ();
 }
 
@@ -6975,32 +6977,54 @@ DBGPerspective::delete_visual_breakpoint (int a_breakpoint_num)
         m_priv->breakpoints.find (a_breakpoint_num);
     if (iter == m_priv->breakpoints.end ())
         return;
-    }
+    delete_visual_breakpoint (iter);
+}
 
-    SourceEditor *source_editor =
-        get_source_editor_from_path (iter->second.file_full_name ());
-    if (!source_editor) {
-        source_editor =
-        get_source_editor_from_path (iter->second.file_full_name (),
-                                     true);
+void
+DBGPerspective::delete_visual_breakpoint (map<int, IDebugger::Breakpoint>::iterator &a_i)
+{
+    SourceEditor *source_editor = 0;
+    
+    if (!a_i->second.file_full_name ().empty ()) {
+        get_source_editor_from_path (a_i->second.file_full_name ());
+        if (!source_editor) {
+            source_editor =
+                get_source_editor_from_path (a_i->second.file_full_name (),
+                                             true);
+        }
+    } else {
+        source_editor = get_source_editor_from_path (get_asm_title ());
     }
     THROW_IF_FAIL (source_editor);
     switch (source_editor->get_buffer_type ()) {
     case SourceEditor::BUFFER_TYPE_ASSEMBLY:
         source_editor->remove_visual_breakpoint_from_address
-            (iter->second.address ());
+            (a_i->second.address ());
         break;
     case SourceEditor::BUFFER_TYPE_SOURCE:
         source_editor->remove_visual_breakpoint_from_line
-            (iter->second.line ());
+            (a_i->second.line ());
         break;
     case SourceEditor::BUFFER_TYPE_UNDEFINED:
         THROW ("should not be reached");
         break;
     }
 
-    m_priv->breakpoints.erase (iter);
-    LOG_DD ("erased breakpoint number " << (int) a_breakpoint_num);
+    m_priv->breakpoints.erase (a_i);
+    LOG_DD ("erased breakpoint number " << (int) a_i->first);
+}
+
+void
+DBGPerspective::delete_visual_breakpoints ()
+{
+    if (m_priv->breakpoints.empty ())
+        return;
+
+    map<int, IDebugger::Breakpoint> bps = m_priv->breakpoints;
+    map<int, IDebugger::Breakpoint>::iterator iter;
+
+    for (iter = bps.begin (); iter != bps.end (); ++iter)
+        delete_visual_breakpoint (iter->first);
 }
 
 void
