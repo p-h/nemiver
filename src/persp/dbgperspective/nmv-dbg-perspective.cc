@@ -463,6 +463,7 @@ private:
     void append_source_editor (SourceEditor &a_sv,
                                const UString &a_path);
     SourceEditor* get_current_source_editor (bool a_load_if_nil = true);
+    SourceEditor* get_source_editor_of_current_frame (bool a_bring_to_front = true);
     ISessMgr* session_manager_ptr ();
     UString get_current_file_path ();
     SourceEditor* get_source_editor_from_path (const UString& a_path,
@@ -4271,27 +4272,11 @@ DBGPerspective::get_current_source_editor (bool a_load_if_nil)
 
     if (a_load_if_nil
         && m_priv->sourceviews_notebook
-        && !m_priv->sourceviews_notebook->get_n_pages ()) {
+        && !m_priv->sourceviews_notebook->get_n_pages ())
         // The source notebook is empty. If the current frame
         // has file info, load the file, bring it to the front,
         // apply decorations to it and return its editor.
-        if (m_priv->current_frame.has_empty_address ())
-            return NULL;
-        UString path = m_priv->current_frame.file_full_name ();
-        if (path.empty ())
-            path = m_priv->current_frame.file_name ();
-        if (path.empty ()) {
-            return 0;
-        }
-        if (!m_priv->find_file_or_ask_user (path, path,
-                                            /*ignore_if_not_found=*/false))
-            return 0;
-        SourceEditor *editor = open_file_real (path);
-        apply_decorations (editor,
-                           /*scroll_to_where_marker=*/true);
-        bring_source_as_current (editor);
-        return editor;
-    }
+        return get_source_editor_of_current_frame ();
 
     LOG_DD ("current pagenum: "
             << m_priv->current_page_num);
@@ -4308,6 +4293,34 @@ DBGPerspective::get_current_source_editor (bool a_load_if_nil)
     }
 
     return iter->second;
+}
+
+/// Return the source editor of the current frame. If the current
+/// frame doesn't have debug info then return 0. If we can't locate
+/// (after trying very hard) the file of the current frame, return 0
+/// too.
+SourceEditor*
+DBGPerspective::get_source_editor_of_current_frame (bool a_bring_to_front)
+{
+    if (m_priv->current_frame.has_empty_address ())
+        return 0;
+
+    UString path = m_priv->current_frame.file_full_name ();
+    if (path.empty ())
+        path = m_priv->current_frame.file_name ();
+    if (path.empty ())
+        return 0;
+    if (!m_priv->find_file_or_ask_user (path, path,
+                                        /*ignore_if_not_found=*/false))
+        return 0;
+
+    SourceEditor *editor = open_file_real (path);
+    apply_decorations (editor,
+                       /*scroll_to_where_marker=*/true);
+    if (a_bring_to_front)
+        bring_source_as_current (editor);
+
+    return editor;
 }
 
 ISessMgr*
@@ -5723,7 +5736,7 @@ DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    SourceEditor *source_editor = get_current_source_editor ();
+    SourceEditor *source_editor = get_source_editor_of_current_frame ();
     switch_to_asm (a_info, a_asm, source_editor);
 }
 
@@ -5790,7 +5803,7 @@ DBGPerspective::pump_asm_including_address (SourceEditor *a_editor,
 void
 DBGPerspective::switch_to_source_code ()
 {
-    SourceEditor *source_editor = get_current_source_editor ();
+    SourceEditor *source_editor = get_source_editor_of_current_frame ();
     if (source_editor == 0)
         return;
 
