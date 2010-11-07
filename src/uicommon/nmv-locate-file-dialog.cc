@@ -71,11 +71,11 @@ public:
         THROW_IF_FAIL (label_filename);
         UString instructions;
         instructions.printf (
-                _("Cannot find file '<b>%s</b>'.\nPlease specify "
+                _("Cannot find file '%s'.\nPlease specify "
                   "the location of this file:"),
                 a_filename.c_str ());
+        label_filename->set_use_markup (false);
         label_filename->set_text(instructions);
-        label_filename->set_use_markup ();
     }
 
     void on_file_selection_changed_signal ()
