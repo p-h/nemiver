@@ -6997,18 +6997,25 @@ void
 DBGPerspective::delete_visual_breakpoint (map<int, IDebugger::Breakpoint>::iterator &a_i)
 {
     SourceEditor *source_editor = 0;
-    
-    if (!a_i->second.file_full_name ().empty ()) {
-        get_source_editor_from_path (a_i->second.file_full_name ());
-        if (!source_editor) {
+
+    UString file_name = a_i->second.file_name ();
+    if (file_name.empty ())
+        file_name = a_i->second.file_full_name ();
+    if (!file_name.empty ()) {
+        get_source_editor_from_path (file_name);
+        if (!source_editor)
             source_editor =
-                get_source_editor_from_path (a_i->second.file_full_name (),
+                get_source_editor_from_path (file_name,
                                              true);
-        }
     } else {
         source_editor = get_source_editor_from_path (get_asm_title ());
     }
-    THROW_IF_FAIL (source_editor);
+
+    if (source_editor == 0)
+        // This can happen for a BP with no debug info, but for which
+        // we haven't done any disassembling yet.
+        return;
+
     switch (source_editor->get_buffer_type ()) {
     case SourceEditor::BUFFER_TYPE_ASSEMBLY:
         source_editor->remove_visual_breakpoint_from_address
