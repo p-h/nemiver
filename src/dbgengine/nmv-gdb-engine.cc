@@ -1524,7 +1524,6 @@ struct OnCommandDoneHandler : OutputHandler {
         if (a_in.command ().name () == "enable-countpoint"
             || a_in.command ().name () == "disable-countpoint") {
             if (a_in.command ().name () == "enable-countpoint") {
-                IDebugger::Breakpoint bp;
                 flag_breakpoint_as_countpoint (a_in.command ().tag2 (), true);
             } else if (a_in.command ().name () == "disable-countpoint") {
                 flag_breakpoint_as_countpoint (a_in.command ().tag2 (), false);
