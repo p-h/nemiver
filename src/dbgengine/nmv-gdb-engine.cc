@@ -754,7 +754,6 @@ public:
     bool queue_command (const Command &a_command)
     {
         bool result (false);
-        THROW_IF_FAIL (is_gdb_running ());
         LOG_DD ("queuing command: '" << a_command.value () << "'");
         queued_commands.push_back (a_command);
         if (!line_busy && started_commands.empty ()) {
