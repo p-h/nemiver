@@ -39,6 +39,7 @@
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
 #include "common/nmv-proc-utils.h"
+#include "common/nmv-str-utils.h"
 #include "nmv-gdb-engine.h"
 #include "langs/nmv-cpp-parser.h"
 #include "langs/nmv-cpp-ast-utils.h"
@@ -103,8 +104,8 @@ public:
     Glib::RefPtr<Glib::IOChannel> gdb_stdout_channel;
     Glib::RefPtr<Glib::IOChannel> gdb_stderr_channel;
     Glib::RefPtr<Glib::IOChannel> master_pty_channel;
-    UString gdb_stdout_buffer;
-    UString gdb_stderr_buffer;
+    std::string gdb_stdout_buffer;
+    std::string gdb_stderr_buffer;
     list<Command> queued_commands;
     list<Command> started_commands;
     bool line_busy;
@@ -542,9 +543,15 @@ public:
 
     void set_communication_charset (const string &a_charset)
     {
-        gdb_stdout_channel->set_encoding (a_charset);
-        gdb_stderr_channel->set_encoding (a_charset);
-        master_pty_channel->set_encoding (a_charset);
+        if (a_charset.empty ()) {
+            gdb_stdout_channel->set_encoding ();
+            gdb_stderr_channel->set_encoding ();
+            master_pty_channel->set_encoding ();
+        } else {
+            gdb_stdout_channel->set_encoding (a_charset);
+            gdb_stderr_channel->set_encoding (a_charset);
+            master_pty_channel->set_encoding (a_charset);
+        }
     }
 
     bool launch_gdb_real (const vector<UString> a_argv)
@@ -568,9 +575,7 @@ public:
                                                             (master_pty_fd);
         THROW_IF_FAIL (master_pty_channel);
 
-        string charset;
-        Glib::get_charset (charset);
-        set_communication_charset (charset);
+        set_communication_charset (string ());
 
 
         attach_channel_to_loop_context_as_source
@@ -820,15 +825,14 @@ public:
             gsize nb_read (0), CHUNK_SIZE(10*1024);
             char buf[CHUNK_SIZE+1];
             Glib::IOStatus status (Glib::IO_STATUS_NORMAL);
-            UString meaningful_buffer;
+            std::string meaningful_buffer;
             while (true) {
                 memset (buf, 0, CHUNK_SIZE + 1);
                 status = gdb_stdout_channel->read (buf, CHUNK_SIZE, nb_read);
                 if (status == Glib::IO_STATUS_NORMAL &&
                     nb_read && (nb_read <= CHUNK_SIZE)) {
-                    std::string raw_str(buf, nb_read);
-                    UString tmp = Glib::locale_to_utf8 (raw_str);
-                    gdb_stdout_buffer.append (tmp);
+                    std::string raw_str (buf, nb_read);
+                    gdb_stdout_buffer.append (raw_str);
                 } else {
                     break;
                 }
@@ -839,7 +843,7 @@ public:
                     << "</buf>");
 
             UString::size_type i = 0;
-            while ((i = gdb_stdout_buffer.raw ().find ("\n(gdb)")) !=
+            while ((i = gdb_stdout_buffer.find ("\n(gdb)")) !=
                     std::string::npos) {
                 i += 6;/*is the offset in the buffer of the end of
                          *of the '(gdb)' prompt
@@ -851,7 +855,7 @@ public:
                 //TODO: optimize the way we handle this so that we do
                 //less allocation and copying.
                 meaningful_buffer = gdb_stdout_buffer.substr (0, size);
-                meaningful_buffer.chomp ();
+                str_utils::chomp (meaningful_buffer);
                 meaningful_buffer += '\n';
                 LOG_DD ("emiting gdb_stdout_signal () with '"
                         << meaningful_buffer << "'");
@@ -862,9 +866,9 @@ public:
                     gdb_stdout_buffer.erase (0,1);
                 }
             }
-            if (gdb_stdout_buffer.raw ().find ("[0] cancel")
+            if (gdb_stdout_buffer.find ("[0] cancel")
                     != std::string::npos
-                && gdb_stdout_buffer.raw ().find ("> ")
+                && gdb_stdout_buffer.find ("> ")
                     != std::string::npos) {
                 // this is not a gdbmi ouptut, but rather a plain gdb
                 // command line. It is actually a prompt sent by gdb

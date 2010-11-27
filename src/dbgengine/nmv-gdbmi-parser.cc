@@ -671,7 +671,8 @@ GDBMIParser::parse_octal_escape_sequence (UString::size_type a_from,
     }
     if (raw.empty ()) return false;
     try {
-        a_result = Glib::locale_to_utf8 (raw);
+        // a_result = raw;
+        a_result = Glib::filename_to_utf8 (raw);
     } catch (...) {
         a_result.assign (raw.size (), '?');
     }
