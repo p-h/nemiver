@@ -667,7 +667,7 @@ public:
             tree_view->get_model ()->get_iter (path);
         
         if (tree_iter) {
-            if ((*tree_iter)[get_bp_cols ().enabled]) {
+            if ((*tree_iter)[get_bp_cols ().is_countpoint]) {
                 debugger->enable_countpoint
                     ((*tree_iter)[get_bp_cols ().id], true);
             } else {
