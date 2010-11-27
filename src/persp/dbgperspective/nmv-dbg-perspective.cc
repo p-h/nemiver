@@ -579,6 +579,8 @@ public:
 
     void restart_inferior ();
 
+    void restart_local_inferior ();
+
     void execute_program (const UString &a_prog,
                           const vector<UString> &a_args,
                           const map<UString, UString> &a_env,
@@ -6105,17 +6107,54 @@ DBGPerspective::restart_inferior ()
 {
     if (!is_connected_to_remote_target ()) {
         // Restarting a local program
+        restart_local_inferior ();
+    } else {
+        // We cannot restart an inferior running on a remote target at
+        // the moment.
+        ui_utils::display_error (_("Sorry, it's impossible to restart "
+                                   "a remote inferior"));
+    }
+}
+
+/// Restart the execution of an inferior, only if we got attached to
+/// it locally (i.e, not remotely).  This preserves breakpoints that
+/// are set.  If we are currently attached to the inferior, then the
+/// function just re-runs it. The advantage of doing this is that the
+/// debugging engine will not re-read its init file (and possibly
+/// execute stuff from it like setting breakpoints). Re reading the
+/// init file and executing what is possibly there can lead to make
+/// restarting become slower and slower.  But we are not currently
+/// attached to the inferior, well, then the function has no choice
+/// but re-loading the binary of the inferior and start it. This makes
+/// the debugging engine re-read its init file, though.
+void
+DBGPerspective::restart_local_inferior ()
+{
+    THROW_IF_FAIL (!is_connected_to_remote_target ());
+    
+    if (debugger ()->is_attached_to_target ()
+        // Make sure we are restarting the program we were running
+        // right before. We need to make sure because the user can
+        // have changed the path to the inferior and ask for a
+        // restart; in which case, we can't just simply call debugger
+        // ()->run ().
+        && debugger ()->get_target_path () == m_priv->prog_path) {
+        // if the engine is running, stop it.
+        if (debugger ()->get_state () == IDebugger::RUNNING) {
+            debugger ()->stop_target ();
+            LOG_DD ("stopped dbg_engine");
+        }
+        going_to_run_target_signal ().emit ();
+        debugger ()->run ();
+        m_priv->debugger_has_just_run = true;
+        attached_to_target_signal ().emit (true);
+    } else {            
         vector<IDebugger::Breakpoint> bps;
         execute_program (m_priv->prog_path, m_priv->prog_args,
                          m_priv->env_variables, m_priv->prog_cwd,
                          bps,
                          true /* be aware we are restarting the same inferior*/,
                          false /* don't close opened files */);
-    } else {
-        // We cannot restart an inferior running on a remote target at
-        // the moment.
-        ui_utils::display_error (_("Sorry, it's impossible to restart "
-                                   "a remote inferior"));
     }
 }
 
