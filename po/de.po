@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&component=general\n"
-"POT-Creation-Date: 2010-11-27 22:44+0000\n"
+"POT-Creation-Date: 2010-12-13 19:01+0000\n"
 "PO-Revision-Date: 2010-10-24 18:48+0200\n"
 "Last-Translator: Christian Kirbach <Christian.Kirbach@googlemail.com>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
@@ -126,15 +126,12 @@ msgid "Select Location For %s"
 msgstr "Ort für %s auswählen"
 
 #: ../src/uicommon/nmv-locate-file-dialog.cc:74
-#, fuzzy, c-format
-#| msgid ""
-#| "Cannot find file '<b>%s</b>'.\n"
-#| "Please specify the location of this file:"
+#, c-format
 msgid ""
 "Cannot find file '%s'.\n"
 "Please specify the location of this file:"
 msgstr ""
-"Datei »<b>%s</b>« kann nicht gefunden werden.\n"
+"Datei »%s« kann nicht gefunden werden.\n"
 "Bitte geben Sie den Ort dieser Datei an:"
 
 #. end namespace nemiver
@@ -1107,8 +1104,6 @@ msgstr "%s s_chlieẞen"
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6114
-#, fuzzy
-#| msgid "Sorry, it's impossible to restarta remote inferior"
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr ""
 "Entschuldigung, aber es ist unmöglich, einen entfernten Unterständigen neu "
