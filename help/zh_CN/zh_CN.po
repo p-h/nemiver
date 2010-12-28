@@ -1,0 +1,1248 @@
+# Chinese (China) translation for nemiver.
+# Copyright (C) 2010 nemiver's COPYRIGHT HOLDER
+# This file is distributed under the same license as the nemiver package.
+# lainme <lainme993@gmail.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver master\n"
+"POT-Creation-Date: 2010-09-21 19:33+0000\n"
+"PO-Revision-Date: 2010-09-27 14:58+0800\n"
+"Last-Translator: lainme <lainme993@gmail.com>\n"
+"Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: C/legal.xml:2(para)
+msgid ""
+"Permission is granted to copy, distribute and/or modify this document under "
+"the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any "
+"later version published by the Free Software Foundation with no Invariant "
+"Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy "
+"of the GFDL at this <ulink type=\"help\" url=\"ghelp:fdl\">link</ulink> or "
+"in the file COPYING-DOCS distributed with this manual."
+msgstr ""
+"对于本文档的复制、分发和/或修改必须遵循自由软件基金会 (Free Software "
+"Foundation) 发布的 GNU 自由文档许可证 (GFDL) 版本 1.1 或更高版本， 该许可证没"
+"有固定的部分、没有封面和背页文本。您可以在此<ulink type=\"help\" url=\"ghelp:"
+"fdl\">链接</ulink>上或在随本手册一起分发的 COPYING-DOCS 文件中找到 GFDL 的副"
+"本。"
+
+#: C/legal.xml:12(para)
+msgid ""
+"This manual is part of a collection of GNOME manuals distributed under the "
+"GFDL. If you want to distribute this manual separately from the collection, "
+"you can do so by adding a copy of the license to the manual, as described in "
+"section 6 of the license."
+msgstr ""
+"本手册是在 GFDL 许可之下分发的 GNOME 手册集合的一部分。如果想要单独分发此手"
+"册，可以在手册中添加该许可证的一份副本然后分发，如该许可证的第 6 部分所述。"
+
+#: C/legal.xml:19(para)
+msgid ""
+"Many of the names used by companies to distinguish their products and "
+"services are claimed as trademarks. Where those names appear in any GNOME "
+"documentation, and the members of the GNOME Documentation Project are made "
+"aware of those trademarks, then the names are in capital letters or initial "
+"capital letters."
+msgstr ""
+"各个公司使用的许多用于区别它们产品和服务的名称都声明为商标。在所有的 GNOME 文"
+"档以及 GNOME 文档项目的成员中，这些名称都是以全大写字母或首字母大写显示，从而"
+"表明它们是商标。"
+
+#: C/legal.xml:35(para)
+msgid ""
+"DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, "
+"EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT "
+"THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS "
+"MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE "
+"RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR "
+"MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR "
+"MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL "
+"WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY "
+"SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN "
+"ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION "
+"OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND "
+"UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING "
+"NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY "
+"CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE "
+"DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON "
+"FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF "
+"ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, "
+"WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES "
+"OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED "
+"VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE "
+"POSSIBILITY OF SUCH DAMAGES."
+msgstr ""
+"文档按“原样”提供，不提供任何明示或暗示的保证，包括但不限于：文档或文档的修改"
+"版本没有适销性方面的缺陷、适合特定目的的适用性，以及没有侵权行为。您将自行承"
+"担本文档以及文档修改版本的质量、准确性以及性能方面的风险。如果任何文档或文档"
+"修改版本存在缺陷，您（而不是最初的编写者、作者或撰写人）将承担所有必需的服"
+"务、维修或更正的费用。此免责声明是本许可证的重要组成部分。如果不接受此免责声"
+"明， 那么您就没有权利使用任何文档或文档的修改版本；并且无论在任何情况以及在任"
+"何法律理论下，本文档或文档修改版本的作者、最初的编写者、任何撰写人或任何分发"
+"者，或者任意这些方的任何提供者都不对任何人由于使用本文档或文档修改版本引起或"
+"带来的任何直接的、间接的、 特殊的、偶然的或继发的损失承担任何民事（包括疏"
+"忽）、合同或其它方面的责任，这些损失包括但不限于信誉损失、工作停止、计算机失"
+"败或故障，或任何以及所有其它损失或由此引发的或与之相关的损失，即使这些方已被"
+"告知存在出现此类损失的可能性时也是如此。"
+
+#: C/legal.xml:28(para)
+msgid ""
+"DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS "
+"OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: "
+"<placeholder-1/>"
+msgstr ""
+"本文档以及文档的修改版本都是在遵循 GNU 自由文档许可证的条款下提供，这表示具有"
+"以下含义：<placeholder-1/>"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:180(None)
+msgid ""
+"@@image: 'figures/main-window.png'; md5=216a6e17325ddd6a4e96037d05a39734"
+msgstr ""
+"@@image: 'figures/main-window.png'; md5=216a6e17325ddd6a4e96037d05a39734"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:329(None)
+msgid ""
+"@@image: 'figures/execute-dialog.png'; md5=450a45378b4021176c8f093be2dedc97"
+msgstr ""
+"@@image: 'figures/execute-dialog.png'; md5=450a45378b4021176c8f093be2dedc97"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:394(None)
+msgid ""
+"@@image: 'figures/attach-dialog.png'; md5=9940de171b58f92ea810dc4478364976"
+msgstr ""
+"@@image: 'figures/attach-dialog.png'; md5=9940de171b58f92ea810dc4478364976"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:440(None)
+msgid ""
+"@@image: 'figures/load-core-dialog.png'; md5=2a3dd09883a026826d0a7036991720a4"
+msgstr ""
+"@@image: 'figures/load-core-dialog.png'; md5=2a3dd09883a026826d0a7036991720a4"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:471(None)
+msgid ""
+"@@image: 'figures/connect-remote-dialog.png'; "
+"md5=0f47f358e68947aaf1330fb1c1013f72"
+msgstr ""
+"@@image: 'figures/connect-remote-dialog.png'; "
+"md5=0f47f358e68947aaf1330fb1c1013f72"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:593(None)
+msgid ""
+"@@image: 'figures/variable-inspector.png'; "
+"md5=676c2a7985aa4e41f5a77a85bcfd8a27"
+msgstr ""
+"@@image: 'figures/variable-inspector.png'; "
+"md5=676c2a7985aa4e41f5a77a85bcfd8a27"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:627(None)
+msgid ""
+"@@image: 'figures/global-variables-dialog.png'; "
+"md5=b3224457732491046fbcea9491df2383"
+msgstr ""
+"@@image: 'figures/global-variables-dialog.png'; "
+"md5=b3224457732491046fbcea9491df2383"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:667(None)
+msgid ""
+"@@image: 'figures/set-breakpoint-dialog.png'; "
+"md5=86618670e2f62026adeb38ae033ec38d"
+msgstr ""
+"@@image: 'figures/set-breakpoint-dialog.png'; "
+"md5=86618670e2f62026adeb38ae033ec38d"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:705(None)
+msgid ""
+"@@image: 'figures/enabled-breakpoint.png'; "
+"md5=a51237a0756cdb7a754b24b211e40bbb"
+msgstr ""
+"@@image: 'figures/enabled-breakpoint.png'; "
+"md5=a51237a0756cdb7a754b24b211e40bbb"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:716(None)
+msgid ""
+"@@image: 'figures/disabled-breakpoint.png'; "
+"md5=b703d696cec0c49810de7f2a85f0ddba"
+msgstr ""
+"@@image: 'figures/disabled-breakpoint.png'; "
+"md5=b703d696cec0c49810de7f2a85f0ddba"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:739(None)
+msgid ""
+"@@image: 'figures/open-files-target.png'; "
+"md5=715003a703fc7cc112bea9e58a25f627"
+msgstr ""
+"@@image: 'figures/open-files-target.png'; "
+"md5=715003a703fc7cc112bea9e58a25f627"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:777(None)
+msgid ""
+"@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
+msgstr ""
+"@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:802(None)
+msgid ""
+"@@image: 'figures/memory-view.png'; md5=b2a94da383551b3eaae64ddb93a7128f"
+msgstr ""
+"@@image: 'figures/memory-view.png'; md5=b2a94da383551b3eaae64ddb93a7128f"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/nemiver.xml:863(None)
+msgid ""
+"@@image: 'figures/sessions-dialog.png'; md5=d07fd79198e666ca9b21fee3bbb30db4"
+msgstr ""
+"@@image: 'figures/sessions-dialog.png'; md5=d07fd79198e666ca9b21fee3bbb30db4"
+
+#: C/nemiver.xml:24(title)
+msgid "Nemiver Manual"
+msgstr "Nemiver 手册"
+
+#: C/nemiver.xml:26(year) C/nemiver.xml:76(date)
+msgid "2008"
+msgstr "2008"
+
+#: C/nemiver.xml:27(holder)
+msgid "Jonathon Jongsma"
+msgstr "Jonathon Jongsma"
+
+#: C/nemiver.xml:38(publishername)
+msgid "Nemiver Project"
+msgstr "Nemiver 项目"
+
+#: C/nemiver.xml:43(firstname)
+msgid "Jonathon"
+msgstr "Jonathon"
+
+#: C/nemiver.xml:44(surname)
+msgid "Jongsma"
+msgstr "Jongsma"
+
+#: C/nemiver.xml:46(orgname)
+msgid "GNOME"
+msgstr "GNOME"
+
+#: C/nemiver.xml:68(revnumber)
+msgid "1.0"
+msgstr "1.0"
+
+#: C/nemiver.xml:69(date)
+msgid "2007"
+msgstr "2007"
+
+#: C/nemiver.xml:71(para)
+msgid "Initial version"
+msgstr "最初版本"
+
+#: C/nemiver.xml:75(revnumber)
+msgid "2.0"
+msgstr "2.0"
+
+#: C/nemiver.xml:78(para)
+msgid "Updated for 0.5.0 Release"
+msgstr "更新为 0.5.0 版"
+
+#: C/nemiver.xml:82(releaseinfo)
+msgid "This manual describes version 0.5.0 of Nemiver."
+msgstr "本手册介绍 Nemiver 0.5.0 版本。"
+
+#: C/nemiver.xml:85(title)
+msgid "Feedback"
+msgstr "反馈"
+
+#: C/nemiver.xml:86(para)
+msgid ""
+"To report a bug or make a suggestion regarding the <application>Nemiver</"
+"application> application or this manual, see the <ulink url=\"http://www."
+"gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
+msgstr ""
+"要报告关于 <application>Nemiver</application> 应用程序或者本手册的错误或提建"
+"议，参见 <ulink url=\"http://www.gnome.org/projects/nemiver/\" type=\"http"
+"\">Nemiver 项目网站</ulink>。"
+
+#: C/nemiver.xml:94(para)
+msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
+msgstr "Nemiver 是 GNOME 桌面环境的图形化调试器。"
+
+#: C/nemiver.xml:100(primary)
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: C/nemiver.xml:103(primary)
+msgid "debugger"
+msgstr "调试器"
+
+#: C/nemiver.xml:106(primary)
+msgid "gdb"
+msgstr "gdb"
+
+#: C/nemiver.xml:111(title)
+msgid "Overview"
+msgstr "概述"
+
+#: C/nemiver.xml:112(para)
+msgid ""
+"Nemiver is an ongoing effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr ""
+"Nemiver 不断致力于编写一个可以和 GNOME 桌面环境良好整合的独立图形化调试器。它"
+"目前采用著名的 GNU 调试器 gdb 来调试 C / C++ 程序。"
+
+#: C/nemiver.xml:119(title)
+msgid "Perspectives"
+msgstr "视图"
+
+#: C/nemiver.xml:120(para)
+msgid ""
+"Nemiver is designed as a generic graphical <interface>workbench</interface> "
+"and a plugin system that can offer several different perspectives. Currently "
+"the only perspective provided is a debugging perspective, but in the future, "
+"there may be perspectives added for memory debugging with "
+"<application>valgrind</application>, or for profiling tools such as "
+"<application>oprofile</application>."
+msgstr ""
+"Nemiver 被设计成一个通用的图形化<interface>工作台</interface>与插件系统，可以"
+"提供多种不同视图。目前仅提供调试视图，但在将来，可能为使用"
+"<application>valgrind</application>的内存调试或者类似<application>oprofile</"
+"application>这样的分析工具增加视图。"
+
+#: C/nemiver.xml:132(title)
+msgid "Getting Started"
+msgstr "入门 "
+
+#: C/nemiver.xml:133(para)
+msgid ""
+"This section explains how to start Nemiver and gives a basic overview of the "
+"application."
+msgstr "本节解释如何启动 Nemiver 并给出程序的一个概述。"
+
+#: C/nemiver.xml:138(title)
+msgid "Starting Nemiver"
+msgstr "启动 Nemiver"
+
+#: C/nemiver.xml:139(para)
+msgid "You can start Nemiver in the following ways:"
+msgstr "您可以用以下方式启动 Nemiver："
+
+#: C/nemiver.xml:144(term)
+msgid "<guimenu>Applications</guimenu> menu"
+msgstr "<guimenu>应用程序</guimenu>菜单"
+
+#: C/nemiver.xml:146(para)
+msgid ""
+"Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver "
+"Debugger</guimenuitem></menuchoice>."
+msgstr ""
+"选择<menuchoice><guisubmenu>编程</guisubmenu><guimenuitem>Nemiver 调试器</"
+"guimenuitem></menuchoice>。"
+
+#: C/nemiver.xml:152(term)
+msgid "Command line"
+msgstr "命令行"
+
+#: C/nemiver.xml:154(para)
+msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
+msgstr "键入 <command>nemiver</command>，然后按<keycap>回车</keycap>。"
+
+#: C/nemiver.xml:159(title)
+msgid "Additional Command-line Options"
+msgstr "额外的命令行选项"
+
+#: C/nemiver.xml:160(para)
+msgid ""
+"You can find a list of options that can be passed to Nemiver on the command "
+"line by typing <command>nemiver --help-all</command>."
+msgstr ""
+"您可以通过键入 <command>nemiver --help-all</command> 来得到可以用命令行传给 "
+"Nemiver 的选项列表。"
+
+#: C/nemiver.xml:170(title)
+msgid "The Nemiver window"
+msgstr "Nemiver 窗口"
+
+#: C/nemiver.xml:171(para)
+msgid ""
+"When you start Nemiver, you will see a window that looks very much like the "
+"following:"
+msgstr "当您启动 Nemiver，您会看到和下图很像的窗口："
+
+#: C/nemiver.xml:176(title)
+msgid "Nemiver Window"
+msgstr "Nemiver 窗口"
+
+#: C/nemiver.xml:183(phrase)
+msgid "Shows Nemiver main window."
+msgstr "显示 Nemiver 主窗口。"
+
+#: C/nemiver.xml:188(para)
+msgid ""
+"The <application>Nemiver</application> window contains the following "
+"elements:"
+msgstr "<application>Nemiver</application> 窗口包含下列元素："
+
+#: C/nemiver.xml:194(term)
+msgid "Menubar"
+msgstr "菜单栏"
+
+#: C/nemiver.xml:196(para)
+msgid ""
+"The menus on the menubar contain all of the commands you need to use "
+"<application>Nemiver</application>."
+msgstr ""
+"菜单栏中的菜单包含您使用 <application>Nemiver</application> 所需的所有命令。"
+
+#: C/nemiver.xml:203(term)
+msgid "Toolbar"
+msgstr "工具栏"
+
+#: C/nemiver.xml:205(para)
+msgid ""
+"The toolbar contains the basic debugging actions that can be used to run or "
+"step through the program being debugged."
+msgstr "工具栏包含基本的调试动作，可以用来运行或单步运行被调试的程序。"
+
+#: C/nemiver.xml:212(term)
+msgid "Source View Notebook"
+msgstr "源代码视图区域"
+
+#: C/nemiver.xml:214(para)
+msgid ""
+"When source files are open, this area will display source files of the "
+"program being debugged."
+msgstr "当打开源代码文件时，这个区域将显示被调试的程序的源代码。"
+
+#: C/nemiver.xml:221(term)
+msgid "Status Notebook"
+msgstr "状态区域"
+
+#: C/nemiver.xml:223(para)
+msgid ""
+"The Status notebook contains several tabs for displaying information about "
+"the program being debugged. These include the following:"
+msgstr "状态区域包含多个标签页，用来显示被调试的程序的信息。它们包括下列内容："
+
+#: C/nemiver.xml:230(term)
+msgid "Call Stack"
+msgstr "调用堆栈"
+
+#: C/nemiver.xml:234(para)
+msgid ""
+"Displays the current state of the call stack of the program being debugged."
+msgstr "显示被调试的程序的调用堆栈状态。"
+
+#: C/nemiver.xml:241(term)
+msgid "Variables"
+msgstr "变量"
+
+#: C/nemiver.xml:245(para)
+msgid ""
+"Displays a list of all local variables and function arguments, in addition "
+"to their values and types."
+msgstr "显示所有局部变量和函数参数列表，此外还有它们的值和类型。"
+
+#: C/nemiver.xml:252(term)
+msgid "Target Terminal"
+msgstr "目标终端"
+
+#: C/nemiver.xml:256(para)
+msgid ""
+"If the program being debugged prints any output to the terminal, it will be "
+"displayed in this tab."
+msgstr "如果被调试的程序向终端输出任何内容，它会显示在这个标签页中。"
+
+#: C/nemiver.xml:263(term)
+msgid "Breakpoints"
+msgstr "断点"
+
+#: C/nemiver.xml:267(para)
+msgid ""
+"This tab displays a list of all breakpoints that have been set. You can view "
+"the source code of a particular breakpoint by double-clicking an item in the "
+"list or by right-clicking and selecting <menuchoice><guimenuitem>Go to "
+"Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints "
+"can be deleted, enabled, or disabled in this tab. For more information about "
+"breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
+msgstr ""
+"这个标签页显示所有设置的断点列表。您可以查看特定断点的源代码，双击列表中的项"
+"目或者点击右键并从菜单选择<menuchoice><guimenuitem>转到源代码</guimenuitem></"
+"menuchoice>。此外，可以在这个标签页删除、激活或者禁用断点。更多关于断点的信息"
+"请参考<xref linkend=\"nemiver-sect-breakpoints\"/>。"
+
+#: C/nemiver.xml:280(term) C/nemiver.xml:766(title)
+msgid "Registers"
+msgstr "寄存器"
+
+#: C/nemiver.xml:284(para)
+msgid ""
+"This tab displays all of the CPU registers and their values. For more "
+"information, see <xref linkend=\"nemiver-sect-registers\"/>."
+msgstr ""
+"这个标签页显示所有的 CPU 寄存器和它们的值。更多信息请参考<xref linkend="
+"\"nemiver-sect-registers\"/>。"
+
+#: C/nemiver.xml:291(term) C/nemiver.xml:793(title)
+msgid "Memory"
+msgstr "内存"
+
+#: C/nemiver.xml:295(para)
+msgid ""
+"This tab displays a view of the current state of a specific memory location. "
+"For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
+msgstr ""
+"这个标签页显示特定内存位置的当前状态视图。更多信息请参考<xref linkend="
+"\"nemiver-sect-memory\"/>。"
+
+#: C/nemiver.xml:307(title)
+msgid "Choosing a Program to Debug"
+msgstr "选择要调试的程序"
+
+#: C/nemiver.xml:308(para)
+msgid ""
+"There are several ways to begin debugging a program. Nemiver allows you to "
+"load a local executable file, load a core file, attach to a running process, "
+"or connect to a remote debugging server."
+msgstr ""
+"有多种开始调试程序的方式。Nemiver 允许您载入本地可执行文件、载入核心文件、附"
+"到运行的程序中或者连接到远程调试服务器。"
+
+#: C/nemiver.xml:313(title)
+msgid "Debugging an Executable Program"
+msgstr "调试一个可执行程序"
+
+#: C/nemiver.xml:315(title) C/nemiver.xml:380(title) C/nemiver.xml:425(title)
+#: C/nemiver.xml:462(title) C/nemiver.xml:852(title)
+msgid "Using the Workbench"
+msgstr "使用工作台"
+
+#: C/nemiver.xml:316(para)
+msgid ""
+"To select an executable program to debug, select <menuchoice><guimenu> File "
+"</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"要选择一个可执行程序来调试，选择<menuchoice><guimenu>文件</"
+"guimenu><guimenuitem>执行...</guimenuitem></menuchoice>，这会显示下列对话框："
+
+#: C/nemiver.xml:325(title)
+msgid "Execute Dialog"
+msgstr "执行对话框"
+
+#: C/nemiver.xml:332(phrase)
+msgid "Shows dialog for selecting an executable to run"
+msgstr "显示选择要运行的可执行程序的对话框"
+
+#: C/nemiver.xml:337(para)
+msgid ""
+"In this dialog, you can select the program to be debugged, any arguments or "
+"options to be passed to the executable on the command line, the working "
+"directory to run the executable in, and any Environment Variables that "
+"should be set when the executable is being debugged."
+msgstr ""
+"在这个对话框中，您可以选择要调试的程序、任何要通过命令行传给可执行程序的参数"
+"或选项、要运行可执行程序的工作目录以及可执行程序在调试时需要设置的任何环境变"
+"量。"
+
+#: C/nemiver.xml:345(title) C/nemiver.xml:411(title) C/nemiver.xml:450(title)
+#: C/nemiver.xml:485(title)
+msgid "Using the Command Line"
+msgstr "使用命令行"
+
+#: C/nemiver.xml:346(para)
+msgid ""
+"To start an executable program to debug from the command line, simply "
+"specify the name of the executable. You can either give an absolute path to "
+"the executable, or if it is in the path, you can simply give the basename of "
+"the executable. For example, if <filename>/usr/bin</filename> is in your "
+"path, both of the following are valid:"
+msgstr ""
+"要从命令行开始一个准备调试的可执行程序，只需指名可执行程序的名字。您可以给出"
+"可执行程序的绝对路径；或者若它在系统路径中，可以仅给出前缀名。例如，如果 "
+"<filename>/usr/bin</filename> 在您的系统路径中，下面两种均有效："
+
+#: C/nemiver.xml:357(command)
+msgid "nemiver /usr/bin/progname"
+msgstr "nemiver /usr/bin/progname"
+
+#: C/nemiver.xml:362(command)
+msgid "nemiver progname"
+msgstr "nemiver progname"
+
+#: C/nemiver.xml:367(title)
+msgid "Passing Options on the Command Line"
+msgstr "在命令行传递选项"
+
+#: C/nemiver.xml:368(para)
+msgid ""
+"If you would like to pass command line options to the program that you are "
+"debugging, you should enclose them in quotes to prevent Nemiver from "
+"processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
+msgstr ""
+"如果您希望向调试的程序传递命令行选项，您应将它们放入引号中，以防 Nemiver 运行"
+"它们：<command>nemiver \"prognam --arg1 --arg2\"</command>。"
+
+#: C/nemiver.xml:378(title)
+msgid "Attaching to a Running Program"
+msgstr "附到运行中的程序"
+
+#: C/nemiver.xml:381(para)
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> "
+"Attach to Running Program... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"选择菜单项目<menuchoice><guimenu>文件</guimenu><guimenuitem>附到运行中的程"
+"序...</guimenuitem></menuchoice>，将会显示下面的对话框："
+
+#: C/nemiver.xml:390(title)
+msgid "Attach Dialog"
+msgstr "附加对话框"
+
+#: C/nemiver.xml:397(phrase)
+msgid "Shows dialog for attaching to a running program"
+msgstr "显示附加到运行中的程序的对话框"
+
+#: C/nemiver.xml:402(para)
+msgid ""
+"Select a process from the list and click <guibutton>OK</guibutton> to start "
+"debugging the selected program. There may be a lot of processes listed in "
+"the dialog, so you can filter the list to only ones that that you are "
+"interested in by typing some text into the text entry located just below the "
+"list."
+msgstr ""
+"从列表着那个选择一个进程并点击<guibutton>确定</guibutton>以开始调试所选的程"
+"序。对话框中可能列出了很多进程，您可以在列表下方的文本框中输入一些文字来过滤"
+"出感兴趣的列表。"
+
+#: C/nemiver.xml:412(para)
+msgid ""
+"To attach to a running program from the command line, use the <option>--"
+"attach</option> option. The <option>--attach</option> option accepts either "
+"a pid or a process name. So, for example, to debug the running process "
+"<command>foo</command> which has a pid of 1121, you could either type "
+"<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
+"command>."
+msgstr ""
+"要从命令行附加到一个运行中的程序，使用 <option>--attach</option> 选项。"
+"<option>--attach</option> 选项接受一个 pid 或者进程名。因此，例如要调试运行中"
+"的 <command>foo</command> 进程，其 pid 为 1121，您可以键入 <command>nemiver "
+"--attach foo</command> 或者 <command>nemiver --attach 1121</command>。"
+
+#: C/nemiver.xml:423(title)
+msgid "Loading a Core File"
+msgstr "载入核心文件"
+
+#: C/nemiver.xml:426(para)
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load "
+"Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
+"which will let you load a core file:"
+msgstr ""
+"选择菜单项目<menuchoice><guimenu>文件</guimenu><guimenuitem>载入核心文件...</"
+"guimenuitem></menuchoice>来调出下面的对话框，这将让您加载一个核心文件："
+
+#: C/nemiver.xml:436(title)
+msgid "Load Core File Dialog"
+msgstr "载入核心文件对话框"
+
+#: C/nemiver.xml:443(phrase)
+msgid "Shows dialog for loading a core file"
+msgstr "显示载入核心文件的对话框"
+
+#: C/nemiver.xml:451(para)
+msgid "Core files cannot be loaded from the command line."
+msgstr "核心文件不能从命令行载入。"
+
+#: C/nemiver.xml:457(title)
+msgid "Remote Debugging"
+msgstr "远程调试"
+
+#: C/nemiver.xml:458(para)
+msgid "Nemiver allows you to connect to a remote debugging server."
+msgstr "Nemiver 允许您连接到一个远程调试服务器。"
+
+#: C/nemiver.xml:463(para)
+msgid ""
+"To connect to a remote debugging server, select <menuchoice><guimenu>File</"
+"guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
+msgstr ""
+"要连接到一个远程调试服务器，选择<menuchoice><guimenu>文件</"
+"guimenu><guimenuitem>连接到远程目标...</guimenuitem></menuchoice>"
+
+#: C/nemiver.xml:474(phrase)
+msgid "Remote Debugging Dialog"
+msgstr "远程调试"
+
+#: C/nemiver.xml:478(para)
+msgid ""
+"Select the executable to load and the location where any shared libraries "
+"are located, and then fill in the details about connecting to the remote "
+"server."
+msgstr ""
+"选择要载入的可执行程序以及任何共享库的位置，然后填写关于连接到远程服务器的详"
+"细信息。"
+
+#: C/nemiver.xml:486(para)
+msgid ""
+"Nemiver does not provide a way to connect to a remote server using the "
+"command line"
+msgstr "Nemiver 不提供用命令行连接到远程服务器的方法"
+
+#: C/nemiver.xml:495(title)
+msgid "Using Nemiver"
+msgstr "使用 Nemiver"
+
+#: C/nemiver.xml:496(para)
+msgid "This section describes how to use Nemiver to debug your application."
+msgstr "本节介绍如何使用 Nemiver 来调试您的程序。"
+
+#: C/nemiver.xml:500(title)
+msgid "Basic Debugging Actions"
+msgstr "基本的调试动作"
+
+#: C/nemiver.xml:501(para)
+msgid ""
+"The basic debugging actions are available on the main toolbar, in the "
+"<guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common "
+"actions are listed below:"
+msgstr ""
+"基本的调试动作可以在主工具栏、<guimenu>调试</guimenu>菜单和键盘快捷键找到。最"
+"常用的动作如下："
+
+#: C/nemiver.xml:508(term)
+msgid "Continue"
+msgstr "继续"
+
+#: C/nemiver.xml:510(para)
+msgid ""
+"Starts the program. The program will run until it hits a breakpoint or until "
+"the program ends, unless it is interrupted manually by the user by clicking "
+"<action>Stop</action>. This action can be activated from the keyboard with "
+"<keycap>F5</keycap>."
+msgstr ""
+"启动程序。程序会一直运行直到遇到断点或者程序结束，除非被用户通过点击<action>"
+"停止</action>来手动中断。这个动作可以通过 <keycap>F5</keycap> 键激活。"
+
+#: C/nemiver.xml:520(term)
+msgid "Next"
+msgstr "下一步"
+
+#: C/nemiver.xml:522(para)
+msgid ""
+"Executes the next statement, and stops when it reaches the next line in this "
+"file. Some debuggers may call this action \"Step Over\". This action can be "
+"activated from the keyboard with <keycap>F6</keycap>."
+msgstr ""
+"执行下一条语句，并当到达文件的下一行时停止。一些调试器会称这个动作为“单步执"
+"行”。这个动作可以通过 <keycap>F6</keycap> 键激活。"
+
+#: C/nemiver.xml:531(term)
+msgid "Step"
+msgstr "进入"
+
+#: C/nemiver.xml:533(para)
+msgid ""
+"Executes the next statement, stepping into the function if possible. Some "
+"debuggers may call this action \"Step In\". This action can be activated "
+"from the keyboard with <keycap>F7</keycap>."
+msgstr ""
+"执行下一条语句，如果可能则进入到函数中。一些调试器会称这个动作为“逐步跳入”。"
+"这个动作可以通过 <keycap>F7</keycap> 键激活。"
+
+#: C/nemiver.xml:541(term)
+msgid "Step Out"
+msgstr "跳出"
+
+#: C/nemiver.xml:543(para)
+msgid ""
+"Finishes execution of the current function and stops when it returns to the "
+"calling function. This action can be activated from the keyboard with "
+"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
+msgstr ""
+"结束执行当前函数，并在返回到调用函数时停止。这个动作从可以通过 "
+"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo> 键激活。"
+
+#: C/nemiver.xml:552(term)
+msgid "Restart"
+msgstr "重新启动"
+
+#: C/nemiver.xml:554(para)
+msgid ""
+"Reloads the current executable and starts execution from the beginning. This "
+"action can be activated from the keyboard with <keycombo><keycap>Shift</"
+"keycap><keycap>F5</keycap></keycombo>."
+msgstr ""
+"重新载入当前可执行程序并从开头开始执行。这个动作可以通过 "
+"<keycombo><keycap>Shift</keycap><keycap>F5</keycap></keycombo> 键激活。"
+
+#: C/nemiver.xml:562(term)
+msgid "Stop"
+msgstr "停止"
+
+#: C/nemiver.xml:564(para)
+msgid ""
+"Manually interrupt execution of the program. This action is only available "
+"when the debugger is running the executable (e.g. after a user has clicked "
+"<action>Continue</action>). This action can be activated from the keyboard "
+"with <keycap>F9</keycap>."
+msgstr ""
+"手动中断程序的执行。这个动作仅在调试器运行可执行程序时能够使用(例如，在用户点"
+"击<action>继续</action>之后)。这个动作可以通过 <keycap>F9</keycap> 键激活。"
+
+#: C/nemiver.xml:573(para)
+msgid ""
+"By default, after loading an executable, Nemiver creates a breakpoint at "
+"<function>main()</function>, so when execution reaches <function>main()</"
+"function>, it will stop and wait for input. You can then step through the "
+"program, examine variables (see <xref linkend=\"nemiver-sect-inspecting-"
+"variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-"
+"sect-breakpoints\"/>)."
+msgstr ""
+"默认情况下，Nemiver 在载入可执行程序后会在 <function>main()</function> 创建断"
+"点。因此，当执行到 <function>main()</function>，它会停下来并等待输入。然后您"
+"可以逐步运行程序、检查变量(参考<xref linkend=\"nemiver-sect-inspecting-"
+"variables\"/>)或者设置额外的断点(参考<xref linkend=\"nemiver-sect-breakpoints"
+"\"/>)。"
+
+#: C/nemiver.xml:582(title)
+msgid "Inspecting Variables"
+msgstr "检查变量"
+
+#: C/nemiver.xml:583(para)
+msgid ""
+"Nemiver displays a list of all local variables in the <interface>Variables</"
+"interface> tab of the <interface>Status Notebook</interface>. If you'd like "
+"to examine a different variable (or even an arbitrary expression), you can "
+"use the <interface>Variable Inspector</interface>. To bring up the "
+"<interface>Variable Inspector</interface>, select "
+"<menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</"
+"guimenuitem></menuchoice>. When the variable inspector comes up, you'll see "
+"a window that looks similar to the following:"
+msgstr ""
+"Nemiver 在<interface>状态区域</interface>的<interface>变量</interface>标签页"
+"显示所有局部变量的一个列表。如果您想检查一个不同的变量(甚或任意一个表达式)，"
+"您可以使用<interface>变量检查器</interface>。要调出<interface>变量检查器</"
+"interface>，选择<menuchoice><guimenu>调试</guimenu><guimenuitem>检查一个变量"
+"</guimenuitem></menuchoice>。当变量检查器出现时，您会看到类似下图的窗口："
+
+#: C/nemiver.xml:596(phrase)
+msgid "Variable Inspector Dialog"
+msgstr "变量检查器对话框"
+
+#: C/nemiver.xml:600(para)
+msgid ""
+"You can type any variable name or a simple expression (such as <literal>pFoo-"
+"&gt;bar</literal>) into the input box, and if the variable is valid and in "
+"scope, it will be display details about that expression."
+msgstr ""
+"您可以在输入框输入任何变量名或一个简单的表达式(例如 <literal>pFoo-&gt;bar</"
+"literal>)。如果变量是有效的并在作用域内，它会显示出表达式的详细信息。"
+
+#: C/nemiver.xml:605(para)
+msgid ""
+"Alternately, if you select the name of a variable in the <interface>source "
+"editor</interface>, and then launch the <interface>Variable Inspector</"
+"interface>, it will attempt to display information about the selected "
+"variable name."
+msgstr ""
+"或者，如果您在<interface>源代码编辑器</interface>中选择一个变量的名字，然后运"
+"行<interface>变量检查器</interface>，它会尝试显示所选变量名的信息。"
+
+#: C/nemiver.xml:612(title)
+msgid "Keyboard Shortcut"
+msgstr "键盘快捷键"
+
+#: C/nemiver.xml:613(para)
+msgid ""
+"You can also start the <interface>Variable Inspector</interface> by pressing "
+"<keycap>F12</keycap>."
+msgstr ""
+"您也可以通过按 <keycap>F12</keycap> 来启动<interface>变量检查器</interface>。"
+
+#: C/nemiver.xml:618(para)
+msgid ""
+"Nemiver will also let you display a list of all global variables in an "
+"application in a separate dialog. To display the <interface>Global "
+"Variables</interface> dialog, select <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
+"press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
+msgstr ""
+"Nemiver 会允许您在一个单独的对话框中显示一个应用程序中所有全局变量的列表。要"
+"显示<interface>全局变量</interface>对话框，选择<menuchoice><guimenu>调试</"
+"guimenu><guimenuitem>显示全局变量</guimenuitem></menuchoice>或者按 "
+"<keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>。"
+
+#: C/nemiver.xml:630(phrase)
+msgid "Global Variables Dialog"
+msgstr "全局变量对话框"
+
+#: C/nemiver.xml:635(para)
+msgid ""
+"For some programs (especially C++ programs), listing all of the global "
+"variables may take a very long time."
+msgstr "对于一些程序(特别是 C++ 程序)，列出所有全局变量可能会花费很长时间。"
+
+#: C/nemiver.xml:642(title)
+msgid "Setting Breakpoints"
+msgstr "设置断点"
+
+#: C/nemiver.xml:643(para)
+msgid ""
+"There are several different ways to set breakpoints in Nemiver. Nemiver "
+"automatically sets a breakpoint at <function>main()</function> when you "
+"first begin debugging a new executable. If you want to set additional "
+"breakpoints you can do one of the following:"
+msgstr ""
+"在 Nemiver 中有多种不同方法来设置断点。当您首次开始调试一个新的可执行程序，"
+"Nemiver 自动在 <function>main()</function> 设置断点。如果您想设置额外的断点，"
+"可以执行下列操作之一："
+
+#: C/nemiver.xml:651(para)
+msgid ""
+"Click in the margin next to the line where you want the breakpoint to be set"
+msgstr "点击您要设置断点的行的左边界"
+
+#: C/nemiver.xml:655(para)
+msgid ""
+"Place your cursor on a line where you want the breakpoint to be set and set "
+"the breakpoint by either selecting <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
+"or by pressing <keycap>F8</keycap>"
+msgstr ""
+"将光标放到您要设置断点的行，通过选择<menuchoice><guimenu>调试</"
+"guimenu><guimenuitem>在光标处设置断点</guimenuitem></menuchoice>，或者按 "
+"<keycap>F8</keycap>。"
+
+#: C/nemiver.xml:660(para)
+msgid ""
+"Set a breakpoint at a specific function name or at a specific location in a "
+"file by selecting <menuchoice><guimenu>Debug</guimenu><guimenuitem>Set "
+"Breakpoint...</guimenuitem></menuchoice> or by pressing "
+"<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will "
+"bring up a dialog that looks like the following:"
+msgstr ""
+"通过选择<menuchoice><guimenu>调试</guimenu><guimenuitem>设置断点...</"
+"guimenuitem></menuchoice>或者按 <keycombo><keycap>Ctrl</keycap><keycap>B</"
+"keycap></keycombo> 以在特定函数名或者位置设置断点。这会调出类似下面的对话框："
+
+#: C/nemiver.xml:670(phrase)
+msgid "Set Breakpoint Dialog"
+msgstr "设置断点对话框"
+
+#: C/nemiver.xml:674(para)
+msgid ""
+"You can specify a breakpoint at a particular location in a file, or by "
+"function name. If there are more than one function with the same name, "
+"Nemiver will display a list of all matching functions and ask you to pick "
+"the one you want."
+msgstr ""
+"您可以在文件的特定位置或通过函数名指定断点。如果多个函数有相同的名字，"
+"Nemiver 会显示所有匹配的函数的列表并询问您挑出想要的那个。"
+
+#: C/nemiver.xml:683(title)
+msgid "Disabled Breakpoints"
+msgstr "禁用的断点"
+
+#: C/nemiver.xml:684(para)
+msgid ""
+"Breakpoints can be either enabled or disabled. The debugger will stop "
+"execution whenever it reaches an enabled breakpoint but will not be affected "
+"by any breakpoints in the disabled state. This allows you to temporarily "
+"remove a breakpoint without actually deleting it."
+msgstr ""
+"断点可以激活或者禁用。调试器在遇到激活的断点时会停止执行，但不会被任何处于禁"
+"用状态的断点影响。这允许您临时移除一个断点而不用实际删除它。"
+
+#: C/nemiver.xml:690(para)
+msgid ""
+"To disable or enable a breakpoint, click the checkbox next to the breakpoint "
+"number you want to enable or disable in the <interface>Breakpoints</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> "
+"to enable or disable a breakpoint that is set on the line that the cursor is "
+"currently on."
+msgstr ""
+"要禁用或激活一个断点，在<interface>状态区域</interface>的<interface>断点</"
+"interface>标签页中，点击您要激活或禁用的断点标号旁的选框。或者，您可以按 "
+"<keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> 来激活或禁用当"
+"前光标所在行的断点。"
+
+#: C/nemiver.xml:698(para)
+msgid ""
+"The following figures show the difference between enabled and disabled "
+"breakpoints in the source editor."
+msgstr "下面的图显示源代码编辑器中激活的断点和禁用的断点之间的区别。"
+
+#: C/nemiver.xml:708(phrase)
+msgid "Illustration of an enabled breakpoint"
+msgstr "激活的断点的插图"
+
+#: C/nemiver.xml:710(para)
+msgid "Enabled Breakpoint"
+msgstr "激活断点"
+
+#: C/nemiver.xml:719(phrase)
+msgid "Illustration of a disabled breakpoint"
+msgstr "禁用的断点的插图"
+
+#: C/nemiver.xml:721(para)
+msgid "Disabled Breakpoint"
+msgstr "禁用断点"
+
+#: C/nemiver.xml:726(title)
+msgid "Opening Source Files"
+msgstr "打开源代码文件"
+
+#: C/nemiver.xml:727(para)
+msgid ""
+"Sometimes you don't know exactly the function name or line number where you "
+"want a breakpoint to be set, so you must open a source file to figure it "
+"out. You could just open arbitrary files from the filesystem, but Nemiver "
+"can also provide a list of source files that were used to build the "
+"executable and allow you to select from this list. When you select "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</"
+"guimenuitem></menuchoice>, the following window should be displayed:"
+msgstr ""
+"有时您不能准确知道要设置断点的函数名或者行数，因此必须打开源文件来找出它。您"
+"可以从文件系统打开任意文件，但 Nemiver 也提供一个用来构建可执行程序的源文件列"
+"表并允许您从中选择。当您选择<menuchoice><guimenu>文件</guimenu><guimenuitem>"
+"打开源代码文件...</guimenuitem></menuchoice>，将显示下面的窗口："
+
+#: C/nemiver.xml:742(phrase)
+msgid "Shows dialog for opening source files"
+msgstr "显示打开源代码文件的对话框"
+
+#: C/nemiver.xml:746(para)
+msgid ""
+"To select an arbitrary file from the filesystem, choose the <guilabel>Select "
+"from Filesystem</guilabel> option. To select from a list of files that "
+"produced the executable, choose <guilabel>Select from Target Executable</"
+"guilabel>."
+msgstr ""
+"要从文件系统选择任意文件，选择<guilabel>从文件系统中选择</guilabel>的选项。要"
+"从产生可执行程序的文件列表中选择，选<guilabel>从目标可执行程序选择</"
+"guilabel>。"
+
+#: C/nemiver.xml:753(title)
+msgid "Determining Source Files for Dynamically Loaded Modules"
+msgstr "确定动态加载的模块的源文件 "
+
+#: C/nemiver.xml:754(para)
+msgid ""
+"If the target executable loads modules at runtime (e.g. using "
+"<function>dlopen()</function>), Nemiver will not be able to determine which "
+"files were used to build these modules until they are actually loaded."
+msgstr ""
+"如果目标可执行程序来运行时载入模块(例如，使用 <function>dlopen()</"
+"function>)，Nemiver 无法确定哪些文件被用来构建这些模块，直到它们实际载入。"
+
+#: C/nemiver.xml:764(title)
+msgid "Advanced Debugging"
+msgstr "高级调试"
+
+#: C/nemiver.xml:767(para)
+msgid ""
+"The register editing widget is located in the <interface>Registers</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> "
+"to jump directly to the correct tab."
+msgstr ""
+"寄存器编辑部件位于<interface>状态区域</interface>的<interface>寄存器</"
+"interface>标签页。或者，您可以按 <keycombo><keycap>Alt</keycap><keycap>F5</"
+"keycap></keycombo> 来直接跳到正确的标签页。"
+
+#: C/nemiver.xml:780(phrase)
+msgid "The Register Editing Widget"
+msgstr "寄存器编辑部件"
+
+#: C/nemiver.xml:784(para)
+msgid ""
+"This widget shows the current values of all of the CPU registers. You can "
+"edit the register values by clicking in the <interface>Value</interface> "
+"column and entering a new value. If the value for the register changed since "
+"the last time the debugger stopped, it will be highlighted in red."
+msgstr ""
+"这个部件显示所有 CPU 寄存器的当前值。您可以通过点击<interface>值</interface>"
+"这一列并输入新值来编辑寄存器的值。如果从调试器最后一次停止以来寄存器的值有改"
+"变，它会以红色高亮显示。"
+
+#: C/nemiver.xml:794(para)
+msgid ""
+"The memory widget allows you to view a section of memory directly. This "
+"enables you to get a lower-level view of what's happening while your program "
+"is running."
+msgstr ""
+"内存部件允许您直接查看内存的一部分。这使您能对程序运行时所发生的情况得到一个"
+"更底层的视图。"
+
+#: C/nemiver.xml:805(phrase)
+msgid "The Memory Editing Widget"
+msgstr "内存编辑部件"
+
+#: C/nemiver.xml:809(para)
+msgid ""
+"To display a segment of memory in the memory view widget, enter a memory "
+"address in the <interface>Address</interface> field. If the address is valid "
+"for the program being debugged, the memory view will display the memory "
+"values starting at the specified address. Memory values can be displayed in "
+"byte format, word format (2 bytes), or long word format (4 bytes) by "
+"choosing an option from the <interface>Group By</interface> drop-down menu. "
+"The memory values will automatically be updated as you step through the "
+"program."
+msgstr ""
+"要在内存视图部件中显示一个内存段，在<interface>地址</interface>栏中输入一个内"
+"存地址。如果地址是对于正调试的程序是有效的，内存视图将显示从指定地址开始的内"
+"存值。通过在<interface>分组依据</interface>下拉菜单中选择选项，内存值可以以字"
+"节格式、字格式(2 个字节)，或者长字格式(4 字节)显示。内存值在您单步运行程序时"
+"会自动更新。"
+
+#: C/nemiver.xml:820(para)
+msgid ""
+"In addition to viewing the memory values, you can also use the memory widget "
+"to modify memory values. You can edit either the hex byte representation "
+"(the left-hand section of the memory widget), or the ASCII representation "
+"(the right-hand section of the memory widget). All changes will be applied "
+"immediately."
+msgstr ""
+"除了查看内存值，您也可以用内存部件来修改内存值。你可以编辑十六进制的字节表示"
+"(内存部件的左手部分)，或者 ASCII 表示(内存部件的右手部分)。所有变化都会立刻应"
+"用。"
+
+#: C/nemiver.xml:831(title)
+msgid "Session Save and Restore"
+msgstr "会话保存和恢复"
+
+#: C/nemiver.xml:832(para)
+msgid ""
+"Nemiver can save your debugging sessions for you so that you can resume them "
+"at a later time. This includes saving information such as which executable "
+"is being debugged, what environment variables are set, what command-line "
+"options are passed to the executable, which files are open, and which "
+"breakpoints are set so that you can get back to where you left off last time "
+"as quickly as possible."
+msgstr ""
+"Nemiver 可以保存您的调试会话，使您可以在以后恢复它们。这包括保存例如调试了哪"
+"个可执行程序、设置了什么环境变量、向可执行程序传递了哪些命令行选项、打开了哪"
+"些文件以及设置了哪些断点等信息。这样，您能尽快回到最后一次离开时位置。"
+
+#: C/nemiver.xml:841(title)
+msgid "Saving Sessions"
+msgstr "保存会话"
+
+#: C/nemiver.xml:842(para)
+msgid ""
+"Nemiver will save your session automatically on exit, so you don't even have "
+"to worry about it. However, if you want to explicitly save the session "
+"before closing Nemiver, you can do so by selecting "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</"
+"guimenuitem></menuchoice>."
+msgstr ""
+"Nemiver 在退出时会自动保存您的会话，所以您甚至不必为此担心。然而，如果您在关"
+"闭 Nemiver 前明确保存会话，可以选择<menuchoice><guimenu>文件</"
+"guimenu><guimenuitem>将会话保存到磁盘</guimenuitem></menuchoice>。"
+
+#: C/nemiver.xml:850(title)
+msgid "Resuming Saved Sessions"
+msgstr "恢复已保存的会话"
+
+#: C/nemiver.xml:853(para)
+msgid ""
+"Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved "
+"Session...</guimenuitem></menuchoice> and select a session from the list."
+msgstr ""
+"选择<menuchoice><guimenu>文件</guimenu><guimenuitem>恢复保存的会话...</"
+"guimenuitem></menuchoice>并从列表中选择一个会话。"
+
+#: C/nemiver.xml:859(title)
+msgid "Session Dialog"
+msgstr "会话对话框"
+
+#: C/nemiver.xml:866(phrase)
+msgid "Shows dialog for resuming a saved session"
+msgstr "显示恢复一个已保存会话的对话框"
+
+#: C/nemiver.xml:873(title)
+msgid "From the Command Line"
+msgstr "从命令行"
+
+#: C/nemiver.xml:874(para)
+msgid ""
+"If you know the session ID of the session you want to run, you can start "
+"that debugging session from the command line. For example, if you want to "
+"run session number 3, you can do so with the following command: "
+"<command>nemiver --session 3</command>."
+msgstr ""
+"如果您知道想要运行的会话的 ID，您可以从命令行启动那个调试会话。例如，如果您想"
+"要运行编号为 3 的会话，可以从下面的命令：<command>nemiver --session 3</"
+"command>。"
+
+#: C/nemiver.xml:886(title)
+msgid "About Nemiver"
+msgstr "关于 Nemiver"
+
+#: C/nemiver.xml:887(para)
+msgid ""
+"<application>Nemiver</application> was written by Dodji Seketeli and "
+"Jonathon Jongsma, with contributions from many others. To find more "
+"information about Nemiver, please visit the <ulink url=\"http://www.gnome."
+"org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
+msgstr ""
+"<application>Nemiver</application> 由 Dodji Seketeli 和  Jonathon Jongsma 编"
+"写，还有很多其他人的贡献。要获取更多关于 Nemiver 的信息，请访问 <ulink url="
+"\"http://www.gnome.org/projects/nemiver/\" type=\"http\">Nemiver 项目网站</"
+"ulink>。"
+
+#: C/nemiver.xml:891(para)
+msgid ""
+"To report a bug or make a suggestion regarding this application or this "
+"manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?"
+"feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
+msgstr ""
+"要报告关于本应用程序或者本手册的错误或提建议，参见 <ulink url=\"ghelp:user-"
+"guide?feedback-bugs\" type=\"help\">GNOME 用户指南</ulink>的反馈部分。"
+
+#: C/nemiver.xml:896(para)
+msgid ""
+"This program is distributed under the terms of the GNU General Public "
+"license as published by the Free Software Foundation; either version 2 of "
+"the License, or (at your option) any later version. A copy of this license "
+"can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or "
+"in the file COPYING included with the source code of this program."
+msgstr ""
+"这个程序在由自由软件基金会发布的 GNU 通用公共许可证协议下分发；可以是协议的"
+"第 2 版，或任何更高版本(自行选择)。协议副本可以在这个<ulink url=\"ghelp:gpl"
+"\" type=\"help\">链接</ulink>中找到，或在程序源代码包的 COPYING 文件中找到。"
+
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
+#: C/nemiver.xml:0(None)
+msgid "translator-credits"
+msgstr "lainme <lainme993@gmail.com>, 2010"
