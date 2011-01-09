@@ -1,16 +1,17 @@
 dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
-AC_PREREQ([2.64])
-AC_INIT([nemiver],
-        [0.8.0],
-        [http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver],
-        [nemiver],
-        [http://projects.gnome.org/nemiver])
 
 MAJOR_VERSION=0
 MINOR_VERSION=8
-MICRO_VERSION=0
+MICRO_VERSION=1
+
+AC_PREREQ([2.64])
+AC_INIT([nemiver],
+        [0.8.1],
+        [http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver],
+        [nemiver],
+        [http://projects.gnome.org/nemiver])
 
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([README])
