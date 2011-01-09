@@ -1,3 +1,56 @@
+0.8.1 Release
+=============
+
+Andrej Žnidaršič:
+      Updated Slovenian translation
+
+Bruno Brouard:
+      Updated French translation
+      Updated French translation
+
+Dodji Seketeli:
+      Fix string typo (Close #633445)
+      Fix buffer setting in SourceEditor (Closes: #633561)
+      Handle BP setting w/o debug info (Closes: #634224)
+      Better BP re-setting on restart (Closes: #634227)
+      Safer session data clearing (Closes: #634228)
+      Don't boldify file path in locate dialog (Closes: #633563)
+      Show asm in the right SourceEditor (Closes #633565)
+      Restart without exception (Closes: #634406)
+      Treat GDB communication as raw data (Closes: #634834)
+      Fix count-point toggling thinko (Close: #635935)
+      Ignore GDB init file on restart (Closes: #635928)
+      Allow restarting after GDB dies (Closes: #635956)
+      Remove dead code
+
+Jakob Kramer:
+      [l10n] Updated German translation
+
+Joe Hansen:
+      Updated Danish translation
+
+Jorge González:
+      Updated Spanish translation
+
+Marek Černocký:
+      Updated Czech translation
+
+Mario Blättermann:
+      [l10n] Updated German translation
+
+Matej Urbančič:
+      Added Slovenian translation
+      Added sl for Slovenian translation
+
+Petr Kovar:
+      Update Czech translation by Marek Cernocky
+
+Takeshi AIHANA:
+      Updated Japanese translation.
+
+lainme:
+      Add Chinese (China) help translation.
+
 0.8.0 Release
 =============
 
