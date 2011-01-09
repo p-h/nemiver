@@ -1,3 +1,183 @@
+2011-01-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Update NEWS for 0.8.1
+	* NEWS: add new entries for 0.8.1
+
+2011-01-02  Joe Hansen <joedalton2@yahoo.dk>
+
+	Updated Danish translation
+
+2010-12-28  lainme <lainme993@gmail.com>
+
+	Add Chinese (China) help translation.
+
+2010-12-13  Mario Blättermann <mariobl@gnome.org>
+
+	[l10n] Updated German translation
+
+2010-12-13  Jakob Kramer <jakob.kramer@gmx.de>
+
+	[l10n] Updated German translation
+
+2010-11-27  Dodji Seketeli <dodji@gnome.org>
+
+	Remove dead code
+	* src/dbgengine/nmv-gdb-engine.cc
+	(OnCommandDoneHandler::do_handle): Remove useless type
+	instantiation.
+
+2010-11-27  Dodji Seketeli <dodji@gnome.org>
+
+	Allow restarting after GDB dies (Closes: #635956)
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::queue_command): Remove assert.
+
+2010-11-27  Dodji Seketeli <dodji@gnome.org>
+
+	Ignore GDB init file on restart (Closes: #635928)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::restart_local_inferior): New function.
+	(DBGPerspective::restart_inferior): Use it.
+
+2010-11-27  Dodji Seketeli <dodji@gnome.org>
+
+	Fix count-point toggling thinko (Close: #635935)
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::on_countpoint_toggled): Fix thinko.
+
+2010-11-27  Dodji Seketeli <dodji@gnome.org>
+
+	Treat GDB communication as raw data (Closes: #634834)
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::set_communication_charset): Support treating
+	communication data as binary.
+	(GDBEngine::Priv::launch_gdb_real): Treat our communication with
+	GDB as binary communication.
+	(GDBEngine::on_gdb_stdout_has_data_signal): Use std::string
+	instead of UString to handle data we get from GDB.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_octal_escape_sequence): Treat octal escape
+	sequence as representing file paths for now.
+
+2010-11-24  Bruno Brouard <annoa.b@gmail.com>
+
+	Updated French translation
+
+2010-11-12  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2010-11-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Restart without exception (Closes: #634406)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(delete_visual_breakpoint): Do not throw an exception when we
+	can't get the source editor of a given breakpoint. That just
+	likely mean 1/it's an in-asm breakpoint 2/we haven't disassembled
+	that part yet.
+
+2010-11-08  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2010-11-08  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2010-11-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Show asm in the right SourceEditor (Closes #633565)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(get_source_editor_of_current_frame): Split out of ...
+	(DBGPerspective::get_current_source_editor): This.
+	(switch_to_asm): Use the new get_source_editor_of_current_frame.
+	(switch_to_source_code): Likewise.
+
+2010-11-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Don't boldify file path in locate dialog (Closes: #633563)
+	* src/uicommon/nmv-locate-file-dialog.cc
+	(src/uicommon/nmv-locate-file-dialog.cc): Don't use markups in
+	this label. I am not not sure it's useful and we'd need to escape
+	the content if it was.
+
+2010-11-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Safer session data clearing (Closes: #634228)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(delete_visual_breakpoint): New overload that takes an iterator
+	inside the breakpoint's map.
+	(delete_visual_breakpoints): Delete all visual breakpoints.
+	(clear_session_data): Use delete_visual_breakpoints instead of
+	clearing the BPs map.
+
+2010-11-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Better BP re-setting on restart (Closes: #634227)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_program): Save breakpoints we want to
+	delete and set back. Delete them, and set them back by looking at
+	the saved breakpoint. Do not pass any special cookie to
+	IDebugger::delete_breakpoint anymore.
+	(DBGPerspective::on_debugger_breakpoint_deleted_signal): Do not
+	handle the special cookie for the restarting use case anymore.
+	(<const char *I_DEBUGGER_COOKIE_EXECUTE_PROGRAM>): Remove this
+	[now useless] cookie.
+
+2010-11-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Handle BP setting w/o debug info (Closes: #634224)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::set_breakpoint): Handle the case of a breakpoint
+	that doesn't have debug info.
+	(DBGPerspective::delete_visual_breakpoint): Don't emit an error
+	message when the visual breakpoint has already been deleted. This
+	can happen when session data is cleared, e.g, when restarting. In
+	that case we clear the visual breakpoints w/o necessarily removing
+	the real breakpoints.
+
+2010-11-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix buffer setting in SourceEditor (Closes: #633561)
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::SourceEditor::Priv): When initializing the
+	source editor with a null buffer, set the right context of the
+	editor with the real buffer of the source editor.
+
+2010-11-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix string typo (Close #633445)
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(restart_inferior): Fix a the string typo here.
+
+2010-11-04  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	Updated Japanese translation.
+
+2010-10-31  Petr Kovar <pknbe@volny.cz>
+
+	Update Czech translation by Marek Cernocky
+
+2010-10-30  Bruno Brouard <annoa.b@gmail.com>
+
+	Updated French translation
+
+2010-10-30  Dodji Seketeli <dodji@seketeli.org>
+
+	Merge remote branch 'origin/master'
+
+2010-10-22  Matej Urbančič <mateju@svn.gnome.org>
+
+	Added sl for Slovenian translation
+
+2010-10-22  Matej Urbančič <mateju@svn.gnome.org>
+
+	Added Slovenian translation
+
+2010-10-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Automatically generate changelog for 0.8.0
+
 2010-10-19  Dodji Seketeli <dodji@seketeli.org>
 
 	Don't update-changelog in make release
