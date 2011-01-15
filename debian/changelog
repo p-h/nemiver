@@ -1,3 +1,11 @@
+nemiver (0.8.0-1) unstable; urgency=low
+
+  * New upstream version
+    + Support countpoints and integrated disassembling
+  * Dropped gcc-4.5 patch, fixed upstream
+
+ -- Luca Bruno <lucab@debian.org>  Sat, 15 Jan 2011 12:41:08 +0100
+
 nemiver (0.7.3-2) unstable; urgency=low
 
   * Fixed build failure with gcc-4.5 (Closes: #565093)
