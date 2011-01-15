@@ -1,6 +1,6 @@
 nemiver (0.7.3-2) unstable; urgency=low
 
-  * Fixed build failure wirh gcc-4.5 (Closes: #565093)
+  * Fixed build failure with gcc-4.5 (Closes: #565093)
   * Updated Standards-Version to 3.8.4
 
  -- Luca Bruno <lucab@debian.org>  Thu, 04 Mar 2010 23:26:22 +0100
