@@ -3,6 +3,7 @@
 #include "common/nmv-exception.h"
 #include "nmv-i-lang-trait.h"
 #include "nmv-i-debugger.h"
+#include "nmv-debugger-utils.h"
 
 using namespace std;
 using nemiver::common::Initializer;
@@ -45,8 +46,7 @@ void test_debugger ()
     using nemiver::IDebugger;
     using nemiver::IDebuggerSafePtr;
     IDebuggerSafePtr debugger =
-        DynamicModuleManager::load_iface_with_default_manager<IDebugger>
-            ("gdbengine", "IDebugger");
+        nemiver::debugger_utils::load_debugger_iface_with_gconf ();
     BOOST_REQUIRE (debugger);
     ILangTrait &trait = debugger->get_language_trait ();
     BOOST_REQUIRE (trait.get_name () == "cpptrait");

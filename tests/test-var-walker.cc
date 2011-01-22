@@ -7,6 +7,7 @@
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"
 #include "nmv-i-var-list-walker.h"
+#include "nmv-debugger-utils.h"
 
 using namespace nemiver;
 using namespace nemiver::common;
@@ -181,16 +182,14 @@ test_main (int argc, char **argv)
 {
     if (argc || argv) {/*keep compiler happy*/}
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     Initializer::do_init ();
 
-
     //load the IDebugger interface
     IDebuggerSafePtr debugger =
-        DynamicModuleManager::load_iface_with_default_manager<IDebugger>
-                                                                ("gdbengine",
-                                                                 "IDebugger");
+        debugger_utils::load_debugger_iface_with_gconf ();
+
     //setup the debugger with the glib mainloop
     debugger->set_event_loop_context (Glib::MainContext::get_default ());
 
@@ -263,7 +262,7 @@ test_main (int argc, char **argv)
         BOOST_FAIL (str.c_str ());
     }
 
-    NEMIVER_CATCH_AND_RETURN_NOX (-1)
+    NEMIVER_CATCH_AND_RETURN_NOX (-1);
 
     return 0;
 }

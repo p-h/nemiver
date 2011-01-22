@@ -4,6 +4,7 @@
 #include "common/nmv-initializer.h"
 #include "common/nmv-safe-ptr-utils.h"
 #include "nmv-i-debugger.h"
+#include "nmv-debugger-utils.h"
 
 using namespace nemiver;
 using namespace nemiver::common;
@@ -77,9 +78,8 @@ test_main (int, char **)
     Initializer::do_init();
     THROW_IF_FAIL (loop);
 
-    DynamicModuleManager module_manager;
     IDebuggerSafePtr debugger =
-            module_manager.load_iface<IDebugger> ("gdbengine", "IDebugger");
+      debugger_utils::load_debugger_iface_with_gconf ();
 
     debugger->set_event_loop_context (loop->get_context ());
 
@@ -107,5 +107,3 @@ test_main (int, char **)
     NEMIVER_CATCH_NOX
     return 0;
 }
-
-

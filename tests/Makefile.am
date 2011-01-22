@@ -48,19 +48,24 @@ forkchild_LDADD=
 
 runtestbreakpoint_SOURCES=test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestwatchpoint_SOURCES=test-watchpoint.cc
 runtestwatchpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvarpathexpr_SOURCES=test-var-path-expr.cc
 runtestvarpathexpr_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvarobjwalker_SOURCES=test-varobj-walker.cc
-runtestvarobjwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
-$(top_builddir)/src/common/libnemivercommon.la
+runtestvarobjwalker_LDADD=@NEMIVERCOMMON_LIBS@ \
+@BOOST_TEST_EXEC_MONITOR_LIB@ \
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 #runtestoverloads_SOURCES=test-overloads.cc
 #runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
@@ -77,7 +82,8 @@ $(top_builddir)/src/common/libnemivercommon.la
 runtestcpptrait_SOURCES=test-cpptrait.cc
 runtestcpptrait_LDADD=@NEMIVERCOMMON_LIBS@ \
 @BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestunicode_SOURCES=test-unicode.cc
 runtestunicode_LDADD=@NEMIVERCOMMON_LIBS@ \
@@ -86,23 +92,28 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtestvars_SOURCES=test-vars.cc
 runtestvars_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvarlist_SOURCES=test-var-list.cc
 runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvarwalker_SOURCES=test-var-walker.cc
 runtestvarwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestderef_SOURCES=test-deref.cc
 runtestderef_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestlocalvarslist_SOURCES=test-local-vars-list.cc
 runtestlocalvarslist_LDADD=@NEMIVERCOMMON_LIBS@  \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 #runtestglobalvariables_SOURCES=test-global-variables.cc
 #runtestglobalvariables_LDADD=@NEMIVERCOMMON_LIBS@ \
@@ -134,11 +145,13 @@ $(top_builddir)/src/common/libnemivercommon.la
 runtesttypes_SOURCES=test-types.cc
 runtesttypes_LDADD=@NEMIVERCOMMON_LIBS@ \
 @BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestdisassemble_SOURCES=test-disassemble.cc
 runtestdisassemble_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 docore_SOURCES=do-core.cc
 docore_LDADD=@NEMIVERCOMMON_LIBS@

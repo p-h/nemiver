@@ -100,5 +100,29 @@ dump_variable_value (IDebugger::VariableSafePtr a_var,
     a_out_str = os.str ();
 }
 
+/// Load the debugger interface using the default
+/// DynamicModuleManager, and initialize it with the gconf
+/// based IConfMgr.
+/// \return the IDebuggerSafePtr
+IDebuggerSafePtr
+load_debugger_iface_with_gconf ()
+{
+    
+    // Load the confmgr interface
+    IConfMgrSafePtr conf_mgr =
+        common::DynamicModuleManager::load_iface_with_default_manager<IConfMgr>
+      ("gconfmgr", "IConfMgr");
+
+    // load the IDebugger interface
+    IDebuggerSafePtr debugger =
+        common::DynamicModuleManager::load_iface_with_default_manager<IDebugger>
+        ("gdbengine", "IDebugger");
+
+    // Initialize the debugger interface.
+    debugger->do_init (conf_mgr);
+
+    return debugger;
+}
+
 NEMIVER_END_NAMESPACE (debugger_utils)
 NEMIVER_END_NAMESPACE (nemiver)
