@@ -46,6 +46,11 @@ using namespace std;
 using namespace nemiver;
 using namespace nemiver::common;
 
+#ifndef PACKAGE_URL
+// This is not define with autoconf < 2.64
+#define PACKAGE_URL "http://projects.gnome.org/nemiver"
+#endif
+
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 static const UString CONF_KEY_NEMIVER_WINDOW_WIDTH =
