@@ -1,8 +1,9 @@
 SUBDIRS=dbgperspective
 
+h=$(abs_srcdir)
 
 headers= \
-nmv-i-perspective.h
+$(h)/nmv-i-perspective.h
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods

@@ -10,6 +10,8 @@ install-schemas:
 uninstall-schemas:
 	$(MAKE) -C schemas $(AM_MAKEFLAGS)  uninstall-schemas
 
+h=$(abs_srcdir)
+
 plugin_config_files= \
 plugin-descriptor.xml \
 dbgperspective.conf
@@ -24,61 +26,61 @@ pluginconfigdir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 plugin_LTLIBRARIES=libdbgperspectiveplugin.la
 plugindir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 sources= \
-nmv-run-program-dialog.cc \
-nmv-run-program-dialog.h \
-nmv-load-core-dialog.cc \
-nmv-load-core-dialog.h \
-nmv-saved-sessions-dialog.h \
-nmv-saved-sessions-dialog.cc \
-nmv-preferences-dialog.h \
-nmv-preferences-dialog.cc \
-nmv-proc-list-dialog.cc \
-nmv-proc-list-dialog.h \
-nmv-var-inspector-dialog.cc \
-nmv-var-inspector-dialog.h \
-nmv-find-text-dialog.cc \
-nmv-find-text-dialog.h \
-nmv-sess-mgr.cc \
-nmv-sess-mgr.h \
-nmv-call-stack.cc \
-nmv-call-stack.h \
-nmv-variables-utils.cc \
-nmv-variables-utils.h \
-nmv-local-vars-inspector.cc \
-nmv-local-vars-inspector.h \
-nmv-global-vars-inspector-dialog.cc \
-nmv-global-vars-inspector-dialog.h \
-nmv-var-inspector.cc \
-nmv-var-inspector.h \
-nmv-breakpoints-view.cc \
-nmv-breakpoints-view.h \
-nmv-registers-view.cc \
-nmv-registers-view.h \
-nmv-thread-list.h \
-nmv-thread-list.cc \
-nmv-file-list.cc \
-nmv-file-list.h \
-nmv-open-file-dialog.cc \
-nmv-open-file-dialog.h \
-nmv-set-breakpoint-dialog.cc \
-nmv-set-breakpoint-dialog.h \
-nmv-watchpoint-dialog.h \
-nmv-watchpoint-dialog.cc \
-nmv-choose-overloads-dialog.cc \
-nmv-choose-overloads-dialog.h \
-nmv-remote-target-dialog.cc \
-nmv-remote-target-dialog.h \
-nmv-dbg-perspective.cc \
-nmv-dbg-perspective.h \
-nmv-vars-treeview.h \
-nmv-vars-treeview.cc \
-nmv-call-function-dialog.h \
-nmv-call-function-dialog.cc
+$(h)/nmv-run-program-dialog.cc \
+$(h)/nmv-run-program-dialog.h \
+$(h)/nmv-load-core-dialog.cc \
+$(h)/nmv-load-core-dialog.h \
+$(h)/nmv-saved-sessions-dialog.h \
+$(h)/nmv-saved-sessions-dialog.cc \
+$(h)/nmv-preferences-dialog.h \
+$(h)/nmv-preferences-dialog.cc \
+$(h)/nmv-proc-list-dialog.cc \
+$(h)/nmv-proc-list-dialog.h \
+$(h)/nmv-var-inspector-dialog.cc \
+$(h)/nmv-var-inspector-dialog.h \
+$(h)/nmv-find-text-dialog.cc \
+$(h)/nmv-find-text-dialog.h \
+$(h)/nmv-sess-mgr.cc \
+$(h)/nmv-sess-mgr.h \
+$(h)/nmv-call-stack.cc \
+$(h)/nmv-call-stack.h \
+$(h)/nmv-variables-utils.cc \
+$(h)/nmv-variables-utils.h \
+$(h)/nmv-local-vars-inspector.cc \
+$(h)/nmv-local-vars-inspector.h \
+$(h)/nmv-global-vars-inspector-dialog.cc \
+$(h)/nmv-global-vars-inspector-dialog.h \
+$(h)/nmv-var-inspector.cc \
+$(h)/nmv-var-inspector.h \
+$(h)/nmv-breakpoints-view.cc \
+$(h)/nmv-breakpoints-view.h \
+$(h)/nmv-registers-view.cc \
+$(h)/nmv-registers-view.h \
+$(h)/nmv-thread-list.h \
+$(h)/nmv-thread-list.cc \
+$(h)/nmv-file-list.cc \
+$(h)/nmv-file-list.h \
+$(h)/nmv-open-file-dialog.cc \
+$(h)/nmv-open-file-dialog.h \
+$(h)/nmv-set-breakpoint-dialog.cc \
+$(h)/nmv-set-breakpoint-dialog.h \
+$(h)/nmv-watchpoint-dialog.h \
+$(h)/nmv-watchpoint-dialog.cc \
+$(h)/nmv-choose-overloads-dialog.cc \
+$(h)/nmv-choose-overloads-dialog.h \
+$(h)/nmv-remote-target-dialog.cc \
+$(h)/nmv-remote-target-dialog.h \
+$(h)/nmv-dbg-perspective.cc \
+$(h)/nmv-dbg-perspective.h \
+$(h)/nmv-vars-treeview.h \
+$(h)/nmv-vars-treeview.cc \
+$(h)/nmv-call-function-dialog.h \
+$(h)/nmv-call-function-dialog.cc
 
 if BUILD_MEMORYVIEW
 memoryview_sources = \
-nmv-memory-view.cc \
-nmv-memory-view.h
+$(h)/nmv-memory-view.cc \
+$(h)/nmv-memory-view.h
 else
 memoryview_sources =
 endif
@@ -87,16 +89,16 @@ libdbgperspectiveplugin_la_SOURCES=$(sources) $(memoryview_sources)
 libdbgperspectiveplugin_la_LDFLAGS= -module -avoid-version -Wl,--as-needed
 libdbgperspectiveplugin_la_LIBADD= \
 @NEMIVERDBGPERSP_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la \
-$(top_builddir)/src/uicommon/libnemiveruicommon.la \
-$(top_builddir)/src/dbgengine/libdebuggerutils.la
+$(abs_top_builddir)/src/common/libnemivercommon.la \
+$(abs_top_builddir)/src/uicommon/libnemiveruicommon.la \
+$(abs_top_builddir)/src/dbgengine/libdebuggerutils.la
 
 INCLUDES=@NEMIVERDBGPERSP_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
--I$(top_srcdir)/src \
--I$(top_srcdir)/src/confmgr \
--I$(top_srcdir)/src/dbgengine \
--I$(top_srcdir)/src/uicommon \
--I$(top_srcdir)/src/workbench \
--I$(top_srcdir)/src/persp \
--I$(top_srcdir)/src/dbgperspective
+-I$(abs_top_srcdir)/src \
+-I$(abs_top_srcdir)/src/confmgr \
+-I$(abs_top_srcdir)/src/dbgengine \
+-I$(abs_top_srcdir)/src/uicommon \
+-I$(abs_top_srcdir)/src/workbench \
+-I$(abs_top_srcdir)/src/persp \
+-I$(abs_top_srcdir)/src/dbgperspective
 

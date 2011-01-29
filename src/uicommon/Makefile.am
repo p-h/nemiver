@@ -1,34 +1,36 @@
 noinst_LTLIBRARIES=libnemiveruicommon.la
 
+h=$(abs_srcdir)
+
 sources = \
 $(public_headers) \
-nmv-ui-utils.h \
-nmv-ui-utils.cc \
-nmv-dialog.cc \
-nmv-dialog.h \
-nmv-locate-file-dialog.cc \
-nmv-locate-file-dialog.h \
-ephy-spinner.c \
-ephy-spinner.h \
-ephy-spinner-tool-item.c \
-ephy-spinner-tool-item.h \
-nmv-spinner.cc \
-nmv-spinner.h \
-nmv-spinner-tool-item.h \
-nmv-spinner-tool-item.cc \
-nmv-popup-tip.cc \
-nmv-popup-tip.h \
-nmv-terminal.cc \
-nmv-terminal.h \
-nmv-source-editor.cc \
-nmv-source-editor.h
+$(h)/nmv-ui-utils.h \
+$(h)/nmv-ui-utils.cc \
+$(h)/nmv-dialog.cc \
+$(h)/nmv-dialog.h \
+$(h)/nmv-locate-file-dialog.cc \
+$(h)/nmv-locate-file-dialog.h \
+$(h)/ephy-spinner.c \
+$(h)/ephy-spinner.h \
+$(h)/ephy-spinner-tool-item.c \
+$(h)/ephy-spinner-tool-item.h \
+$(h)/nmv-spinner.cc \
+$(h)/nmv-spinner.h \
+$(h)/nmv-spinner-tool-item.h \
+$(h)/nmv-spinner-tool-item.cc \
+$(h)/nmv-popup-tip.cc \
+$(h)/nmv-popup-tip.h \
+$(h)/nmv-terminal.cc \
+$(h)/nmv-terminal.h \
+$(h)/nmv-source-editor.cc \
+$(h)/nmv-source-editor.h
 
 if BUILD_MEMORYVIEW
 memoryview_sources = \
-nmv-hex-editor.h \
-nmv-hex-editor.cc \
-nmv-hex-document.h \
-nmv-hex-document.cc
+$(h)/nmv-hex-editor.h \
+$(h)/nmv-hex-editor.cc \
+$(h)/nmv-hex-document.h \
+$(h)/nmv-hex-document.cc
 else
 memoryview_sources =
 endif
@@ -38,7 +40,7 @@ libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@ -lutil
 libnemiveruicommon_la_CFLAGS= -fPIC -DPIC
 
 INCLUDES=@NEMIVERUICOMMON_CFLAGS@ \
--I$(top_srcdir) \
--I$(top_srcdir)/src \
--I$(top_srcdir)/src/uicommon
+-I$(abs_top_srcdir) \
+-I$(abs_top_srcdir)/src \
+-I$(abs_top_srcdir)/src/uicommon
 
