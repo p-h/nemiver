@@ -1,11 +1,13 @@
 # translation of nemiver.help.HEAD.po to Español
 # Jorge González <jorgegonz@svn.gnome.org>, 2008, 2010.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver.help.HEAD\n"
-"POT-Creation-Date: 2009-03-10 12:58+0000\n"
-"PO-Revision-Date: 2010-03-28 12:13+0200\n"
-"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
+"POT-Creation-Date: 2010-03-28 10:14+0000\n"
+"PO-Revision-Date: 2011-02-15 15:50+0100\n"
+"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -117,8 +119,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:180(None)
-#| msgid ""
-#| "@@image: 'figures/main-window.png'; md5=98f9a8b2b358e34d5ae09619332e6557"
 msgid ""
 "@@image: 'figures/main-window.png'; md5=216a6e17325ddd6a4e96037d05a39734"
 msgstr ""
@@ -127,9 +127,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:329(None)
-#| msgid ""
-#| "@@image: 'figures/execute-dialog.png'; "
-#| "md5=4ed2b568c68c30613fe0474dadd0d6ab"
 msgid ""
 "@@image: 'figures/execute-dialog.png'; md5=450a45378b4021176c8f093be2dedc97"
 msgstr ""
@@ -138,8 +135,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:394(None)
-#| msgid ""
-#| "@@image: 'figures/attach-dialog.png'; md5=15875311bd98ebfa1fea19cf9af06cca"
 msgid ""
 "@@image: 'figures/attach-dialog.png'; md5=9940de171b58f92ea810dc4478364976"
 msgstr ""
@@ -148,9 +143,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:440(None)
-#| msgid ""
-#| "@@image: 'figures/load-core-dialog.png'; "
-#| "md5=7bba55bf735e2c83a240713346b03621"
 msgid ""
 "@@image: 'figures/load-core-dialog.png'; md5=2a3dd09883a026826d0a7036991720a4"
 msgstr ""
@@ -159,9 +151,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:471(None)
-#| msgid ""
-#| "@@image: 'figures/load-core-dialog.png'; "
-#| "md5=7bba55bf735e2c83a240713346b03621"
 msgid ""
 "@@image: 'figures/connect-remote-dialog.png'; "
 "md5=0f47f358e68947aaf1330fb1c1013f72"
@@ -172,9 +161,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:593(None)
-#| msgid ""
-#| "@@image: 'figures/variable-inspector.png'; "
-#| "md5=288952a65ba8c54d2003c38a6f1f0eb7"
 msgid ""
 "@@image: 'figures/variable-inspector.png'; "
 "md5=676c2a7985aa4e41f5a77a85bcfd8a27"
@@ -185,9 +171,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:627(None)
-#| msgid ""
-#| "@@image: 'figures/load-core-dialog.png'; "
-#| "md5=7bba55bf735e2c83a240713346b03621"
 msgid ""
 "@@image: 'figures/global-variables-dialog.png'; "
 "md5=b3224457732491046fbcea9491df2383"
@@ -198,9 +181,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:667(None)
-#| msgid ""
-#| "@@image: 'figures/set-breakpoint-dialog.png'; "
-#| "md5=d67a22068597943204b452ad59a690ce"
 msgid ""
 "@@image: 'figures/set-breakpoint-dialog.png'; "
 "md5=86618670e2f62026adeb38ae033ec38d"
@@ -211,9 +191,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:705(None)
-#| msgid ""
-#| "@@image: 'figures/set-breakpoint-dialog.png'; "
-#| "md5=d67a22068597943204b452ad59a690ce"
 msgid ""
 "@@image: 'figures/enabled-breakpoint.png'; "
 "md5=a51237a0756cdb7a754b24b211e40bbb"
@@ -224,9 +201,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:716(None)
-#| msgid ""
-#| "@@image: 'figures/set-breakpoint-dialog.png'; "
-#| "md5=d67a22068597943204b452ad59a690ce"
 msgid ""
 "@@image: 'figures/disabled-breakpoint.png'; "
 "md5=b703d696cec0c49810de7f2a85f0ddba"
@@ -237,9 +211,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:739(None)
-#| msgid ""
-#| "@@image: 'figures/open-files-target.png'; "
-#| "md5=372c30907bb4f1d25e7e966d85c42de2"
 msgid ""
 "@@image: 'figures/open-files-target.png'; "
 "md5=715003a703fc7cc112bea9e58a25f627"
@@ -250,9 +221,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:777(None)
-#| msgid ""
-#| "@@image: 'figures/execute-dialog.png'; "
-#| "md5=4ed2b568c68c30613fe0474dadd0d6ab"
 msgid ""
 "@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
 msgstr ""
@@ -261,8 +229,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:802(None)
-#| msgid ""
-#| "@@image: 'figures/main-window.png'; md5=98f9a8b2b358e34d5ae09619332e6557"
 msgid ""
 "@@image: 'figures/memory-view.png'; md5=b2a94da383551b3eaae64ddb93a7128f"
 msgstr ""
@@ -271,9 +237,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/nemiver.xml:863(None)
-#| msgid ""
-#| "@@image: 'figures/sessions-dialog.png'; "
-#| "md5=b3e9731d03539a638a366ca724463a03"
 msgid ""
 "@@image: 'figures/sessions-dialog.png'; md5=d07fd79198e666ca9b21fee3bbb30db4"
 msgstr ""
@@ -284,7 +247,6 @@ msgid "Nemiver Manual"
 msgstr "Manual de Nemiver"
 
 #: C/nemiver.xml:26(year) C/nemiver.xml:76(date)
-#| msgid "2007"
 msgid "2008"
 msgstr "2008"
 
@@ -321,7 +283,6 @@ msgid "Initial version"
 msgstr "Versión inicial"
 
 #: C/nemiver.xml:75(revnumber)
-#| msgid "1.0"
 msgid "2.0"
 msgstr "2.0"
 
@@ -330,7 +291,6 @@ msgid "Updated for 0.5.0 Release"
 msgstr "Actualizado para la publicación 0.5.0"
 
 #: C/nemiver.xml:82(releaseinfo)
-#| msgid "This manual describes version 0.3.0 of Nemiver."
 msgid "This manual describes version 0.5.0 of Nemiver."
 msgstr "Este manual describe la versión 0.5.0 de Nemiver."
 
@@ -344,6 +304,10 @@ msgid ""
 "application> application or this manual, see the <ulink url=\"http://www."
 "gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
 msgstr ""
+"Para informar de un error o hacer sugerencia sobre la aplicación "
+"<application>Nemiver</application> o sobre su manual, consulte la <ulink url="
+"\"http://www.gnome.org/projects/nemiver/\" type=\"http\">página web del "
+"proyecto Nemiver</ulink>."
 
 #: C/nemiver.xml:94(para)
 msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
@@ -452,7 +416,7 @@ msgstr "Ventana de Nemiver"
 
 #: C/nemiver.xml:183(phrase)
 msgid "Shows Nemiver main window."
-msgstr ""
+msgstr "Muestra la ventana principal de Nemiver."
 
 #: C/nemiver.xml:188(para)
 msgid ""
@@ -544,7 +508,6 @@ msgid ""
 msgstr ""
 
 #: C/nemiver.xml:280(term) C/nemiver.xml:766(title)
-#| msgid "Restart"
 msgid "Registers"
 msgstr "Registros"
 
@@ -566,7 +529,7 @@ msgstr ""
 
 #: C/nemiver.xml:307(title)
 msgid "Choosing a Program to Debug"
-msgstr ""
+msgstr "Elegir un programa que depurar"
 
 #: C/nemiver.xml:308(para)
 msgid ""
@@ -623,15 +586,15 @@ msgstr ""
 
 #: C/nemiver.xml:357(command)
 msgid "nemiver /usr/bin/progname"
-msgstr ""
+msgstr "nemiver /usr/bin/nombre_programa"
 
 #: C/nemiver.xml:362(command)
 msgid "nemiver progname"
-msgstr ""
+msgstr "nemiver nombre_programa"
 
 #: C/nemiver.xml:367(title)
 msgid "Passing Options on the Command Line"
-msgstr ""
+msgstr "Pasar opciones en la línea de comandos"
 
 #: C/nemiver.xml:368(para)
 msgid ""
@@ -642,7 +605,7 @@ msgstr ""
 
 #: C/nemiver.xml:378(title)
 msgid "Attaching to a Running Program"
-msgstr ""
+msgstr "Adjuntar a un programa en ejecución"
 
 #: C/nemiver.xml:381(para)
 msgid ""
@@ -653,7 +616,7 @@ msgstr ""
 
 #: C/nemiver.xml:390(title)
 msgid "Attach Dialog"
-msgstr ""
+msgstr "Diálogo «Adjuntar»"
 
 #: C/nemiver.xml:397(phrase)
 msgid "Shows dialog for attaching to a running program"
@@ -680,7 +643,7 @@ msgstr ""
 
 #: C/nemiver.xml:423(title)
 msgid "Loading a Core File"
-msgstr ""
+msgstr "Cargar un archivo core"
 
 #: C/nemiver.xml:426(para)
 msgid ""
@@ -691,7 +654,7 @@ msgstr ""
 
 #: C/nemiver.xml:436(title)
 msgid "Load Core File Dialog"
-msgstr ""
+msgstr "Diálogo «Cargar archivo core»"
 
 #: C/nemiver.xml:443(phrase)
 msgid "Shows dialog for loading a core file"
@@ -703,7 +666,7 @@ msgstr ""
 
 #: C/nemiver.xml:457(title)
 msgid "Remote Debugging"
-msgstr ""
+msgstr "Depuración remota"
 
 #: C/nemiver.xml:458(para)
 msgid "Nemiver allows you to connect to a remote debugging server."
@@ -717,7 +680,7 @@ msgstr ""
 
 #: C/nemiver.xml:474(phrase)
 msgid "Remote Debugging Dialog"
-msgstr ""
+msgstr "Diálogo de ejecución remota"
 
 #: C/nemiver.xml:478(para)
 msgid ""
@@ -734,7 +697,7 @@ msgstr ""
 
 #: C/nemiver.xml:495(title)
 msgid "Using Nemiver"
-msgstr ""
+msgstr "Usar Nemiver"
 
 #: C/nemiver.xml:496(para)
 msgid "This section describes how to use Nemiver to debug your application."
@@ -830,7 +793,6 @@ msgid ""
 msgstr ""
 
 #: C/nemiver.xml:582(title)
-#| msgid "Variables"
 msgid "Inspecting Variables"
 msgstr "Inspeccionar variables"
 
@@ -848,7 +810,7 @@ msgstr ""
 
 #: C/nemiver.xml:596(phrase)
 msgid "Variable Inspector Dialog"
-msgstr ""
+msgstr "Diálogo «Inspector de variables»"
 
 #: C/nemiver.xml:600(para)
 msgid ""
@@ -874,6 +836,8 @@ msgid ""
 "You can also start the <interface>Variable Inspector</interface> by pressing "
 "<keycap>F12</keycap>."
 msgstr ""
+"También puede iniciar el <interface>Inspector de variables</interface> "
+"pulsando <keycap>F12</keycap>."
 
 #: C/nemiver.xml:618(para)
 msgid ""
@@ -896,7 +860,7 @@ msgstr ""
 
 #: C/nemiver.xml:642(title)
 msgid "Setting Breakpoints"
-msgstr ""
+msgstr "Establecer puntos de parada"
 
 #: C/nemiver.xml:643(para)
 msgid ""
@@ -942,7 +906,7 @@ msgstr ""
 
 #: C/nemiver.xml:683(title)
 msgid "Disabled Breakpoints"
-msgstr ""
+msgstr "Puntos de paradas desactivados"
 
 #: C/nemiver.xml:684(para)
 msgid ""
@@ -970,25 +934,23 @@ msgstr ""
 
 #: C/nemiver.xml:708(phrase)
 msgid "Illustration of an enabled breakpoint"
-msgstr ""
+msgstr "Ilustración de un punto de parada activado"
 
 #: C/nemiver.xml:710(para)
-#| msgid "Breakpoints"
 msgid "Enabled Breakpoint"
 msgstr "Punto de parada activado"
 
 #: C/nemiver.xml:719(phrase)
 msgid "Illustration of a disabled breakpoint"
-msgstr ""
+msgstr "Ilustración de un punto de parada desactivado"
 
 #: C/nemiver.xml:721(para)
-#| msgid "Breakpoints"
 msgid "Disabled Breakpoint"
 msgstr "Punto de parada desactivado"
 
 #: C/nemiver.xml:726(title)
 msgid "Opening Source Files"
-msgstr ""
+msgstr "Abrir archivos de fuentes"
 
 #: C/nemiver.xml:727(para)
 msgid ""
@@ -1174,7 +1136,7 @@ msgstr ""
 "\"help\">enlace</ulink>, o en el archivo COPYING incluido con el código "
 "fuente de este programa."
 
-#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2.
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
 #: C/nemiver.xml:0(None)
 msgid "translator-credits"
 msgstr "Jorge González <jorgegonz@svn.gnome.org>, 2008, 2010."
