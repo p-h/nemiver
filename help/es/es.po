@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver.help.HEAD\n"
-"POT-Creation-Date: 2010-03-28 10:14+0000\n"
-"PO-Revision-Date: 2011-02-15 15:50+0100\n"
+"POT-Creation-Date: 2011-02-15 20:28+0000\n"
+"PO-Revision-Date: 2011-02-18 13:18+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -388,17 +388,19 @@ msgstr "Línea de comandos"
 
 #: C/nemiver.xml:154(para)
 msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
-msgstr ""
+msgstr "Escriba <command>nemiver</command> y pulse <keycap>Intro</keycap>."
 
 #: C/nemiver.xml:159(title)
 msgid "Additional Command-line Options"
-msgstr ""
+msgstr "Opciones adicionales de la línea de comandos"
 
 #: C/nemiver.xml:160(para)
 msgid ""
 "You can find a list of options that can be passed to Nemiver on the command "
 "line by typing <command>nemiver --help-all</command>."
 msgstr ""
+"Puede encontrar una lista de las opciones que se pueden pasar a Nemiver en "
+"la línea de comandos escribiendo <command>nemiver --help-all</command>."
 
 #: C/nemiver.xml:170(title)
 msgid "The Nemiver window"
@@ -423,6 +425,8 @@ msgid ""
 "The <application>Nemiver</application> window contains the following "
 "elements:"
 msgstr ""
+"La ventana de <application>Nemiver</application> contiene los siguientes "
+"elementos:"
 
 #: C/nemiver.xml:194(term)
 msgid "Menubar"
@@ -492,6 +496,8 @@ msgid ""
 "If the program being debugged prints any output to the terminal, it will be "
 "displayed in this tab."
 msgstr ""
+"Si el programa que se está depurando imprime cualquier salida en la "
+"terminal, se mostrará en esta solapa."
 
 #: C/nemiver.xml:263(term)
 msgid "Breakpoints"
@@ -516,6 +522,9 @@ msgid ""
 "This tab displays all of the CPU registers and their values. For more "
 "information, see <xref linkend=\"nemiver-sect-registers\"/>."
 msgstr ""
+"Esta solapa muestra todos los registros de la CPU y sus valores. Para "
+"obtener más información, consulte la <xref linkend=\"nemiver-sect-registers"
+"\"/>."
 
 #: C/nemiver.xml:291(term) C/nemiver.xml:793(title)
 msgid "Memory"
@@ -526,6 +535,9 @@ msgid ""
 "This tab displays a view of the current state of a specific memory location. "
 "For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
 msgstr ""
+"Esta solapa muestra una vista del estado actual de una ubicación específica "
+"de la memoria. Para obtener más información, consulte la <xref linkend="
+"\"nemiver-sect-memory\"/>."
 
 #: C/nemiver.xml:307(title)
 msgid "Choosing a Program to Debug"
@@ -537,10 +549,13 @@ msgid ""
 "load a local executable file, load a core file, attach to a running process, "
 "or connect to a remote debugging server."
 msgstr ""
+"Hay varias maneras de empezar a depurar un programa. Nemiver le permite "
+"cargar un archivo ejecutable local, cargar un archivo core, unirse a un "
+"programa en ejecución o conectar a un servidor de depuración remota."
 
 #: C/nemiver.xml:313(title)
 msgid "Debugging an Executable Program"
-msgstr ""
+msgstr "Depurar un programa ejecutable"
 
 #: C/nemiver.xml:315(title) C/nemiver.xml:380(title) C/nemiver.xml:425(title)
 #: C/nemiver.xml:462(title) C/nemiver.xml:852(title)
@@ -556,11 +571,12 @@ msgstr ""
 
 #: C/nemiver.xml:325(title)
 msgid "Execute Dialog"
-msgstr "Diálogo ejecutar"
+msgstr "Diálogo «Ejecutar»"
 
 #: C/nemiver.xml:332(phrase)
+#, fuzzy
 msgid "Shows dialog for selecting an executable to run"
-msgstr ""
+msgstr "Muestra el diálogo para seleccionar el ejecutable que lanzar"
 
 #: C/nemiver.xml:337(para)
 msgid ""
@@ -640,6 +656,11 @@ msgid ""
 "<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
 "command>."
 msgstr ""
+"Para unirse a un programa en ejecución desde la línea de comandos, use la "
+"opción <option>--attach</option>. La opción <option>--attach</option> acepta "
+"un PID o el un nombre de proceso. Asi, por ejemplo, para depurar el proceso "
+"<command>foo</command> cuyo PID es 1121, podría escribir o <command>nemiver "
+"--attach foo</command> o <command>nemiver --attach 1121</command>."
 
 #: C/nemiver.xml:423(title)
 msgid "Loading a Core File"
@@ -651,6 +672,9 @@ msgid ""
 "Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
 "which will let you load a core file:"
 msgstr ""
+"Seleccione el elemento de menú <menuchoice><guimenu> Archivo </"
+"guimenu><guimenuitem> Cargar archivo core… </guimenuitem></menuchoice> para "
+"abrir el siguiente diálogo, que le permitirá cargar un archivo core:"
 
 #: C/nemiver.xml:436(title)
 msgid "Load Core File Dialog"
@@ -658,11 +682,11 @@ msgstr "Diálogo «Cargar archivo core»"
 
 #: C/nemiver.xml:443(phrase)
 msgid "Shows dialog for loading a core file"
-msgstr ""
+msgstr "Muestra un diálogo para cargar un archivo core"
 
 #: C/nemiver.xml:451(para)
 msgid "Core files cannot be loaded from the command line."
-msgstr ""
+msgstr "Los archivos core no se pueden cargar desde la línea de comandos."
 
 #: C/nemiver.xml:457(title)
 msgid "Remote Debugging"
@@ -688,6 +712,8 @@ msgid ""
 "are located, and then fill in the details about connecting to the remote "
 "server."
 msgstr ""
+"Seleccione el ejecutable que cargar y la ubicación de cualquier biblioteca "
+"compartida, y rellene los detalles sobre la conexión al servidor remoto."
 
 #: C/nemiver.xml:486(para)
 msgid ""
@@ -705,7 +731,7 @@ msgstr ""
 
 #: C/nemiver.xml:500(title)
 msgid "Basic Debugging Actions"
-msgstr ""
+msgstr "Acciones básicas de depurado"
 
 #: C/nemiver.xml:501(para)
 msgid ""
@@ -894,7 +920,7 @@ msgstr ""
 
 #: C/nemiver.xml:670(phrase)
 msgid "Set Breakpoint Dialog"
-msgstr ""
+msgstr "Diálogo «Fijar un punto de parada»"
 
 #: C/nemiver.xml:674(para)
 msgid ""
@@ -965,7 +991,7 @@ msgstr ""
 
 #: C/nemiver.xml:742(phrase)
 msgid "Shows dialog for opening source files"
-msgstr ""
+msgstr "Muestra un diálogo para abrir archivos de fuentes"
 
 #: C/nemiver.xml:746(para)
 msgid ""
@@ -1000,7 +1026,7 @@ msgstr ""
 
 #: C/nemiver.xml:780(phrase)
 msgid "The Register Editing Widget"
-msgstr ""
+msgstr "El widget de edición de registros"
 
 #: C/nemiver.xml:784(para)
 msgid ""
@@ -1110,6 +1136,10 @@ msgid ""
 "information about Nemiver, please visit the <ulink url=\"http://www.gnome."
 "org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
 msgstr ""
+"Dodji Seketeli y Jonathon Jongsma escribieron <application>Nemiver</"
+"application>, con contribuciones de muchos otros. Para obtener más "
+"información sobre Nemiver, visite la <ulink url=\"http://www.gnome.org/"
+"projects/nemiver/\" type=\"http\">página web del proyecto Nemiver</ulink>."
 
 #: C/nemiver.xml:891(para)
 msgid ""
