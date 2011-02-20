@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver.help.HEAD\n"
-"POT-Creation-Date: 2011-02-15 20:28+0000\n"
-"PO-Revision-Date: 2011-02-18 13:18+0100\n"
+"POT-Creation-Date: 2011-02-19 11:11+0000\n"
+"PO-Revision-Date: 2011-02-20 21:41+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -335,6 +335,10 @@ msgid ""
 "integrates well in the GNOME desktop environment. It currently features a "
 "backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
 msgstr ""
+"Nemiver es un esfuerzo continuo para escribir un depurador gráfico "
+"independiente que se integre perfectamente en el entorno de escritorio "
+"GNOME. Actualmente cuenta con un motor que utiliza el conocido Depurador de "
+"GNU gdb para depurar programas en C / C ++."
 
 #: C/nemiver.xml:119(title)
 msgid "Perspectives"
@@ -410,7 +414,7 @@ msgstr "La ventana de Nemiver"
 msgid ""
 "When you start Nemiver, you will see a window that looks very much like the "
 "following:"
-msgstr ""
+msgstr "Al iniciar Nemiver, verá una ventana que se se parece mucho a esto:"
 
 #: C/nemiver.xml:176(title)
 msgid "Nemiver Window"
@@ -437,6 +441,8 @@ msgid ""
 "The menus on the menubar contain all of the commands you need to use "
 "<application>Nemiver</application>."
 msgstr ""
+"Los menús de la barra de menús contienen todos los comandos que puede "
+"necesitar para usar <application>Nemiver</application>."
 
 #: C/nemiver.xml:203(term)
 msgid "Toolbar"
@@ -447,35 +453,42 @@ msgid ""
 "The toolbar contains the basic debugging actions that can be used to run or "
 "step through the program being debugged."
 msgstr ""
+"La barra de herramientas contiene las acciones básicas de depuración que se "
+"pueden usar para ejecutar o analizar paso a paso el programa en depuración."
 
 #: C/nemiver.xml:212(term)
 msgid "Source View Notebook"
-msgstr ""
+msgstr "Cuaderno de vista de fuentes"
 
 #: C/nemiver.xml:214(para)
 msgid ""
 "When source files are open, this area will display source files of the "
 "program being debugged."
 msgstr ""
+"Cuando los archivos de fuentes están abiertos, este área mostrará los "
+"archivos de fuentes del programa en depuración."
 
 #: C/nemiver.xml:221(term)
 msgid "Status Notebook"
-msgstr ""
+msgstr "Cuaderno de estado"
 
 #: C/nemiver.xml:223(para)
 msgid ""
 "The Status notebook contains several tabs for displaying information about "
 "the program being debugged. These include the following:"
 msgstr ""
+"El cuaderno de estado contiene varias pestañas para mostrar información "
+"sobre el programa en depuración. Estas incluyen lo siguiente:"
 
 #: C/nemiver.xml:230(term)
 msgid "Call Stack"
-msgstr "Pilla de llamadas"
+msgstr "Pila de llamadas"
 
 #: C/nemiver.xml:234(para)
 msgid ""
 "Displays the current state of the call stack of the program being debugged."
 msgstr ""
+"Muestra el estado actual de la pila de llamadas del programa en depuración."
 
 #: C/nemiver.xml:241(term)
 msgid "Variables"
@@ -486,6 +499,8 @@ msgid ""
 "Displays a list of all local variables and function arguments, in addition "
 "to their values and types."
 msgstr ""
+"Muestra una lista de todas las variables locales y los argumentos de "
+"funciones, además de sus valores y sus tipos."
 
 #: C/nemiver.xml:252(term)
 msgid "Target Terminal"
@@ -497,7 +512,7 @@ msgid ""
 "displayed in this tab."
 msgstr ""
 "Si el programa que se está depurando imprime cualquier salida en la "
-"terminal, se mostrará en esta solapa."
+"terminal, se mostrará en esta pestaña."
 
 #: C/nemiver.xml:263(term)
 msgid "Breakpoints"
@@ -522,7 +537,7 @@ msgid ""
 "This tab displays all of the CPU registers and their values. For more "
 "information, see <xref linkend=\"nemiver-sect-registers\"/>."
 msgstr ""
-"Esta solapa muestra todos los registros de la CPU y sus valores. Para "
+"Esta pestaña muestra todos los registros de la CPU y sus valores. Para "
 "obtener más información, consulte la <xref linkend=\"nemiver-sect-registers"
 "\"/>."
 
@@ -535,7 +550,7 @@ msgid ""
 "This tab displays a view of the current state of a specific memory location. "
 "For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
 msgstr ""
-"Esta solapa muestra una vista del estado actual de una ubicación específica "
+"Esta pestaña muestra una vista del estado actual de una ubicación específica "
 "de la memoria. Para obtener más información, consulte la <xref linkend="
 "\"nemiver-sect-memory\"/>."
 
@@ -550,7 +565,7 @@ msgid ""
 "or connect to a remote debugging server."
 msgstr ""
 "Hay varias maneras de empezar a depurar un programa. Nemiver le permite "
-"cargar un archivo ejecutable local, cargar un archivo core, unirse a un "
+"cargar un archivo ejecutable local, cargar un archivo core, conectarse a un "
 "programa en ejecución o conectar a un servidor de depuración remota."
 
 #: C/nemiver.xml:313(title)
@@ -568,13 +583,15 @@ msgid ""
 "</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
 "display the following dialog:"
 msgstr ""
+"Para seleccionar un ejecutable que depurar, elija "
+"<menuchoice><guimenu>Archivo</guimenu><guimenuitem>Ejecutar...</"
+"guimenuitem></menuchoice>, lo que mostrará el siguiente diálogo:"
 
 #: C/nemiver.xml:325(title)
 msgid "Execute Dialog"
 msgstr "Diálogo «Ejecutar»"
 
 #: C/nemiver.xml:332(phrase)
-#, fuzzy
 msgid "Shows dialog for selecting an executable to run"
 msgstr "Muestra el diálogo para seleccionar el ejecutable que lanzar"
 
@@ -621,7 +638,7 @@ msgstr ""
 
 #: C/nemiver.xml:378(title)
 msgid "Attaching to a Running Program"
-msgstr "Adjuntar a un programa en ejecución"
+msgstr "Conectarse a un programa en ejecución"
 
 #: C/nemiver.xml:381(para)
 msgid ""
@@ -629,10 +646,13 @@ msgid ""
 "Attach to Running Program... </guimenuitem></menuchoice>, which should "
 "display the following dialog:"
 msgstr ""
+"Seleccione el elemento de menú <menuchoice><guimenu> Archivo </"
+"guimenu><guimenuitem>Conectarse a un programa en ejecución...</guimenuitem></"
+"menuchoice>, lo que mostrará el siguiente diálogo:"
 
 #: C/nemiver.xml:390(title)
 msgid "Attach Dialog"
-msgstr "Diálogo «Adjuntar»"
+msgstr "Diálogo «Conectar»"
 
 #: C/nemiver.xml:397(phrase)
 msgid "Shows dialog for attaching to a running program"
@@ -656,11 +676,12 @@ msgid ""
 "<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
 "command>."
 msgstr ""
-"Para unirse a un programa en ejecución desde la línea de comandos, use la "
-"opción <option>--attach</option>. La opción <option>--attach</option> acepta "
-"un PID o el un nombre de proceso. Asi, por ejemplo, para depurar el proceso "
-"<command>foo</command> cuyo PID es 1121, podría escribir o <command>nemiver "
-"--attach foo</command> o <command>nemiver --attach 1121</command>."
+"Para conectarse a un programa en ejecución desde la línea de comandos, use "
+"la opción <option>--attach</option>. La opción <option>--attach</option> "
+"acepta un PID o el un nombre de proceso. Así, por ejemplo, para depurar el "
+"proceso <command>foo</command> cuyo PID es 1121, podría escribir o "
+"<command>nemiver --attach foo</command> o <command>nemiver --attach 1121</"
+"command>."
 
 #: C/nemiver.xml:423(title)
 msgid "Loading a Core File"
@@ -776,7 +797,7 @@ msgstr ""
 
 #: C/nemiver.xml:541(term)
 msgid "Step Out"
-msgstr ""
+msgstr "Paso afuera"
 
 #: C/nemiver.xml:543(para)
 msgid ""
@@ -876,13 +897,15 @@ msgstr ""
 
 #: C/nemiver.xml:630(phrase)
 msgid "Global Variables Dialog"
-msgstr ""
+msgstr "Diálogo de variables globales"
 
 #: C/nemiver.xml:635(para)
 msgid ""
 "For some programs (especially C++ programs), listing all of the global "
 "variables may take a very long time."
 msgstr ""
+"Para algunos programas (especialmente los escritos en C++), listar todas las "
+"variables globales puede llevar mucho tiempo."
 
 #: C/nemiver.xml:642(title)
 msgid "Setting Breakpoints"
@@ -900,6 +923,8 @@ msgstr ""
 msgid ""
 "Click in the margin next to the line where you want the breakpoint to be set"
 msgstr ""
+"Pulse en el margen junto a la línea en la quiere establecer un punto de "
+"ruptura"
 
 #: C/nemiver.xml:655(para)
 msgid ""
@@ -957,6 +982,8 @@ msgid ""
 "The following figures show the difference between enabled and disabled "
 "breakpoints in the source editor."
 msgstr ""
+"La siguiente figura muestra la diferencia entre los puntos de ruptura "
+"activados y desactivados en el editor de fuentes."
 
 #: C/nemiver.xml:708(phrase)
 msgid "Illustration of an enabled breakpoint"
@@ -1094,6 +1121,11 @@ msgid ""
 "<menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</"
 "guimenuitem></menuchoice>."
 msgstr ""
+"Nemiver guardará su sesión automáticamente al salir, por lo que no tiene que "
+"preocuparse de ello. sin embargo, si quiere guardar explícitamente la sesión "
+"antes de cerrar Nemiver, puede hacerlo seleccionando "
+"<menuchoice><guimenu>Archivo</guimenu><guimenuitem>Guardar la sesión en el "
+"disco</guimenuitem></menuchoice>."
 
 #: C/nemiver.xml:850(title)
 msgid "Resuming Saved Sessions"
@@ -1104,6 +1136,9 @@ msgid ""
 "Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved "
 "Session...</guimenuitem></menuchoice> and select a session from the list."
 msgstr ""
+"Seleccione <menuchoice><guimenu>Archivo</guimenu><guimenuitem>Continuar una "
+"sesión guardada...</guimenuitem></menuchoice> y seleccione una sesión de la "
+"lista."
 
 #: C/nemiver.xml:859(title)
 msgid "Session Dialog"
@@ -1124,6 +1159,10 @@ msgid ""
 "run session number 3, you can do so with the following command: "
 "<command>nemiver --session 3</command>."
 msgstr ""
+"Si conoce el ID de la sesión que quiere ejecutar, puede empezar esa sesión "
+"de depuración desde la línea de comandos. Por ejemplo, si quiere ejecutar la "
+"sesión nº 3, puede hacerlo con el siguiente comando: <command>nemiver --"
+"session 3</command>."
 
 #: C/nemiver.xml:886(title)
 msgid "About Nemiver"
@@ -1169,7 +1208,9 @@ msgstr ""
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
 #: C/nemiver.xml:0(None)
 msgid "translator-credits"
-msgstr "Jorge González <jorgegonz@svn.gnome.org>, 2008, 2010."
+msgstr ""
+"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011\n"
+"Jorge González <jorgegonz@svn.gnome.org>, 2008 - 2011."
 
 #~ msgid "Introduction"
 #~ msgstr "Introducción"
