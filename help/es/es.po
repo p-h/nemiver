@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver.help.HEAD\n"
-"POT-Creation-Date: 2011-02-19 11:11+0000\n"
-"PO-Revision-Date: 2011-02-20 21:41+0100\n"
+"POT-Creation-Date: 2011-02-20 20:41+0000\n"
+"PO-Revision-Date: 2011-02-23 13:44+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -353,6 +353,12 @@ msgid ""
 "<application>valgrind</application>, or for profiling tools such as "
 "<application>oprofile</application>."
 msgstr ""
+"Nemiver está diseñado como una <interface>banco de trabajo</interface> "
+"gráfica genérica y un sistema de complementos que puede ofrecer diversas "
+"perspectivas. Actualmente, la única perspectiva proporcionada es la de "
+"depuración, pero en el futuro se añadirán perspectivas para depurar la "
+"memoria con <application>valgrind</application>, o para herramientas de "
+"perfiles como <application>oprofile</application>."
 
 #: C/nemiver.xml:132(title)
 msgid "Getting Started"
@@ -527,6 +533,14 @@ msgid ""
 "can be deleted, enabled, or disabled in this tab. For more information about "
 "breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
 msgstr ""
+"Esta pestaña muestra una lista de todos los puntos de parada que ha "
+"establecido. Puede ver el código fuente de un punto de parada concreto "
+"pulsando dos veces en un elemento en la lista o pulsando con el botón "
+"derecho y seleccionando <menuchoice><guimenuitem>Ir al código fuente</"
+"guimenuitem></menuchoice> en el menú. Además, los puntos de parada se pueden "
+"eliminar, activar o desactivar en esta pestaña. Para obtener más información "
+"sobre los puntos de parada consulte la <xref linkend=\"nemiver-sect-"
+"breakpoints\"/>."
 
 #: C/nemiver.xml:280(term) C/nemiver.xml:766(title)
 msgid "Registers"
@@ -575,7 +589,7 @@ msgstr "Depurar un programa ejecutable"
 #: C/nemiver.xml:315(title) C/nemiver.xml:380(title) C/nemiver.xml:425(title)
 #: C/nemiver.xml:462(title) C/nemiver.xml:852(title)
 msgid "Using the Workbench"
-msgstr ""
+msgstr "Usar el banco de trabajo"
 
 #: C/nemiver.xml:316(para)
 msgid ""
@@ -602,6 +616,10 @@ msgid ""
 "directory to run the executable in, and any Environment Variables that "
 "should be set when the executable is being debugged."
 msgstr ""
+"En este diálogo puede seleccionar el programa que depurar, cualquier "
+"argumento u opciones que pasar al ejecutable en la línea de comandos, la "
+"carpeta de trabajo donde ejecutar el ejecutable y cualquier variable de "
+"entorno que deba estar configurada cuando se depure el ejecutable."
 
 #: C/nemiver.xml:345(title) C/nemiver.xml:411(title) C/nemiver.xml:450(title)
 #: C/nemiver.xml:485(title)
@@ -656,7 +674,7 @@ msgstr "Diálogo «Conectar»"
 
 #: C/nemiver.xml:397(phrase)
 msgid "Shows dialog for attaching to a running program"
-msgstr ""
+msgstr "Muestra un diálogo para conectarse a un programa en ejecución"
 
 #: C/nemiver.xml:402(para)
 msgid ""
@@ -715,13 +733,16 @@ msgstr "Depuración remota"
 
 #: C/nemiver.xml:458(para)
 msgid "Nemiver allows you to connect to a remote debugging server."
-msgstr ""
+msgstr "Nemiver le permite conectarse a un servidor de depuración remota."
 
 #: C/nemiver.xml:463(para)
 msgid ""
 "To connect to a remote debugging server, select <menuchoice><guimenu>File</"
 "guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
 msgstr ""
+"Para conectarse a un servidor de depuración remota, seleccione "
+"<menuchoice><guimenu>Archivo</guimenu><guimenuitem>Conectar con objetivo "
+"remoto...</guimenuitem></menuchoice>"
 
 #: C/nemiver.xml:474(phrase)
 msgid "Remote Debugging Dialog"
@@ -741,6 +762,8 @@ msgid ""
 "Nemiver does not provide a way to connect to a remote server using the "
 "command line"
 msgstr ""
+"Nemiver no proporciona una forma de conectarse a un servidor remoto usando "
+"la línea de comandos"
 
 #: C/nemiver.xml:495(title)
 msgid "Using Nemiver"
@@ -748,7 +771,7 @@ msgstr "Usar Nemiver"
 
 #: C/nemiver.xml:496(para)
 msgid "This section describes how to use Nemiver to debug your application."
-msgstr ""
+msgstr "Esta sección describe cómo usar Nemiver para depurar su aplicación."
 
 #: C/nemiver.xml:500(title)
 msgid "Basic Debugging Actions"
@@ -816,6 +839,9 @@ msgid ""
 "action can be activated from the keyboard with <keycombo><keycap>Shift</"
 "keycap><keycap>F5</keycap></keycombo>."
 msgstr ""
+"Recarga el ejecutable actual e inicia la ejecución desde el principio. Esta "
+"acción se puede activar desde el teclado con <keycombo><keycap>Mayús</"
+"keycap><keycap>F5</keycap></keycombo>."
 
 #: C/nemiver.xml:562(term)
 msgid "Stop"
@@ -865,6 +891,9 @@ msgid ""
 "&gt;bar</literal>) into the input box, and if the variable is valid and in "
 "scope, it will be display details about that expression."
 msgstr ""
+"Puede escribir cualquier nombre de variable o una expresión (como "
+"<literal>pFoo-&gt;bar</literal>) en la caja de entrada, y si la variable es "
+"válida y alcanzable, se mostrarán los detalles de esta expresión."
 
 #: C/nemiver.xml:605(para)
 msgid ""
@@ -873,6 +902,10 @@ msgid ""
 "interface>, it will attempt to display information about the selected "
 "variable name."
 msgstr ""
+"Alternativamente, si selecciona el nombre de una variable en el "
+"<interface>editor de código fuente</interface> y lanza el "
+"<interface>Inspector de variables</interface>, intentará mostrar información "
+"sobre el nombre de la variable seleccionada."
 
 #: C/nemiver.xml:612(title)
 msgid "Keyboard Shortcut"
@@ -894,6 +927,12 @@ msgid ""
 "guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
 "press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
 msgstr ""
+"Nemiver también le permitirá mostrar una lista de todas las variables "
+"globales de una aplicación en un diálogo aparte. Para mostrar el diálogo "
+"<interface>Variables globales</interface>, seleccione "
+"<menuchoice><guimenu>Depurar</guimenu><guimenuitem>Mostrar variables "
+"globales</guimenuitem></menuchoice> o pulse <keycombo><keycap>Ctrl</"
+"keycap><keycap>G</keycap></keycombo>."
 
 #: C/nemiver.xml:630(phrase)
 msgid "Global Variables Dialog"
@@ -918,6 +957,10 @@ msgid ""
 "first begin debugging a new executable. If you want to set additional "
 "breakpoints you can do one of the following:"
 msgstr ""
+"Hay varias maneras de establecer puntos de parada en Nemiver. Nemiver "
+"configura automáticamente un punto de parada en <function>main()</function> "
+"cuando depura por primera vez un ejecutable nuevo. Si quiere establecer "
+"puntos de parada adicionales, puede hacer una de las siguientes cosas:"
 
 #: C/nemiver.xml:651(para)
 msgid ""
@@ -933,6 +976,10 @@ msgid ""
 "guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
 "or by pressing <keycap>F8</keycap>"
 msgstr ""
+"Sitúe el cursor en la línea en la que quiere establecer el punto de parada y "
+"establézcalo seleccionando <menuchoice><guimenu>Depurar</"
+"guimenu><guimenuitem>Activar/desactivar punto de parada en el cursor</"
+"guimenuitem></menuchoice>, o pulsando <keycap>F8</keycap>"
 
 #: C/nemiver.xml:660(para)
 msgid ""
@@ -942,6 +989,11 @@ msgid ""
 "<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will "
 "bring up a dialog that looks like the following:"
 msgstr ""
+"Establezca un punto de parada en el nombre de una función específica o en "
+"una ubicación específica seleccionando <menuchoice><guimenu>Depurar</"
+"guimenu><guimenuitem>Fijar punto de parada...</guimenuitem></menuchoice> o "
+"pulsando <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. Esto "
+"hará que aparezca un diálogo similar a esto:"
 
 #: C/nemiver.xml:670(phrase)
 msgid "Set Breakpoint Dialog"
@@ -1030,7 +1082,7 @@ msgstr ""
 
 #: C/nemiver.xml:753(title)
 msgid "Determining Source Files for Dynamically Loaded Modules"
-msgstr ""
+msgstr "Determinar archivos de fuentes para módulos cargados dinámicamente"
 
 #: C/nemiver.xml:754(para)
 msgid ""
@@ -1038,6 +1090,9 @@ msgid ""
 "<function>dlopen()</function>), Nemiver will not be able to determine which "
 "files were used to build these modules until they are actually loaded."
 msgstr ""
+"Si el ejecutable objetivo carga módulos el tiempo de ejecución (ej. usando "
+"<function>dlopen()</function>), Nemiver no podrá determinar qué archivos se "
+"usaron para construir estos módulos hasta que estén cargados."
 
 #: C/nemiver.xml:764(title)
 msgid "Advanced Debugging"
@@ -1062,6 +1117,11 @@ msgid ""
 "column and entering a new value. If the value for the register changed since "
 "the last time the debugger stopped, it will be highlighted in red."
 msgstr ""
+"Este widget muestra los valores actuales de todos los registros de la CPU. "
+"Puede editar los valores de los registros pulsando en la columna "
+"<interface>Valor</interface> e introduciendo un valor nuevo. Si el valor del "
+"registro ha cambiado desde la última vez que se paró el depurador, se "
+"resaltará en rojo."
 
 #: C/nemiver.xml:794(para)
 msgid ""
@@ -1069,6 +1129,9 @@ msgid ""
 "enables you to get a lower-level view of what's happening while your program "
 "is running."
 msgstr ""
+"El widget de memoria le permite ver directamente una sección de la memoria. "
+"Esto le permite obtener una vista de bajo nivel de qué está pasando mientras "
+"su programa se ejecuta."
 
 #: C/nemiver.xml:805(phrase)
 msgid "The Memory Editing Widget"
