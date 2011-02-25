@@ -36,7 +36,11 @@
 #include "nmv-api-macros.h"
 
 #ifndef NMV_DEFAULT_DOMAIN
-#define NMV_DEFAULT_DOMAIN __FILE__
+#define NMV_DEFAULT_DOMAIN __extension__        \
+    ({                                          \
+        const char* path = __FILE__;            \
+        Glib::path_get_basename (path);         \
+    })
 #endif
 
 #ifndef NMV_GENERAL_DOMAIN
