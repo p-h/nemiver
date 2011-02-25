@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <boost/test/unit_test.hpp>
 #include "common/nmv-exception.h"
 #include "common/nmv-initializer.h"
@@ -7,19 +8,31 @@
 
 using namespace nemiver::common;
 using boost::unit_test::test_suite;
+using std::vector;
+using std::string;
 
 void
 test0 ()
 {
-    UString real_path;
-    BOOST_REQUIRE (is_libtool_executable_wrapper ("./runtestcore"));
+    vector<string> path_elems;
+    path_elems.push_back (NEMIVER_BUILDDIR);
+    path_elems.push_back ("runtestcore");
+    string path = Glib::build_filename (path_elems);
+    BOOST_REQUIRE (Glib::file_test (path, Glib::FILE_TEST_EXISTS));
+    BOOST_REQUIRE (is_libtool_executable_wrapper (path));
 }
 
 void
 test_filename_with_dashes()
 {
-    UString real_path;
-    BOOST_REQUIRE (is_libtool_executable_wrapper ("./libtool-wrapper-with-dashes"));
+    vector<string> path_elems;
+    path_elems.push_back (NEMIVER_SRCDIR);
+    path_elems.push_back ("libtool-wrapper-with-dashes");
+    string path = Glib::build_filename (path_elems);
+    std::cout << "path: '" << path << "'" << std::endl;
+    BOOST_REQUIRE (Glib::file_test (path, Glib::FILE_TEST_EXISTS));
+    BOOST_REQUIRE (is_libtool_executable_wrapper (path));
+
 }
 
 test_suite*
