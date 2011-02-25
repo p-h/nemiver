@@ -3187,7 +3187,7 @@ GDBEngine::variable_type_set_signal () const
     return m_priv->variable_type_set_signal;
 }
 
-sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>
+sigc::signal<void, const IDebugger::VariableSafePtr, const UString&>&
 GDBEngine::variable_dereferenced_signal () const
 {
     return m_priv->variable_dereferenced_signal;

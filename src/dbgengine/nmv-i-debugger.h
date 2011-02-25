@@ -918,7 +918,7 @@ public:
     /// Emitted as a the result of the IDebugger::dereference_variable is call.
     virtual sigc::signal<void,
                          const VariableSafePtr/*the variable we derefed*/,
-                         const UString&/*cookie*/>
+                         const UString&/*cookie*/>&
                                       variable_dereferenced_signal () const=0;
 
     virtual sigc::signal<void, const vector<UString>&, const UString&>&

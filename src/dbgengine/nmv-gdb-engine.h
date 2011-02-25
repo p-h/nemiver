@@ -143,7 +143,7 @@ public:
     sigc::signal<void, const VariableSafePtr, const UString&>&
                                     variable_type_set_signal () const;
 
-    sigc::signal<void, const VariableSafePtr, const UString&>
+    sigc::signal<void, const VariableSafePtr, const UString&>&
                                       variable_dereferenced_signal () const;
 
     sigc::signal<void, int, const UString&>& got_target_info_signal () const ;
