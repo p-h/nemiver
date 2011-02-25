@@ -29,6 +29,21 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (debugger_utils)
 
+void
+null_const_variable_slot (const IDebugger::VariableSafePtr &)
+{
+}
+
+void
+null_const_variable_list_slot (const IDebugger::VariableList &)
+{
+}
+
+void
+null_const_ustring_slot (const UString &)
+{
+}
+
 /// Generate a string of of white spaces.
 /// \param a_nb_ws the number of white spaces to generate
 /// \param a_ws_str the output string the white spaces are

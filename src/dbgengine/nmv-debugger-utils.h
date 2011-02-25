@@ -32,6 +32,12 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (debugger_utils)
 
+void null_const_variable_slot (const IDebugger::VariableSafePtr &);
+
+void null_const_variable_list_slot (const IDebugger::VariableList &);
+
+void null_const_ustring_slot (const UString &);
+
 void dump_variable_value (IDebugger::VariableSafePtr a_var,
                           int a_indent_num,
                           std::ostringstream &a_os,

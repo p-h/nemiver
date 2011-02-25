@@ -44,6 +44,7 @@
 #include "langs/nmv-cpp-parser.h"
 #include "langs/nmv-cpp-ast-utils.h"
 #include "nmv-i-lang-trait.h"
+#include "nmv-debugger-utils.h"
 
 using namespace std;
 using namespace nemiver::common;
@@ -51,6 +52,10 @@ using namespace nemiver::cpp;
 
 static const UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain";
 static const UString DEFAULT_GDB_BINARY = "default-gdb-binary";
+
+using nemiver::debugger_utils::null_const_variable_slot;
+using nemiver::debugger_utils::null_const_variable_list_slot;
+
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -4800,21 +4805,6 @@ GDBEngine::disassemble_lines (const UString &a_file_name,
     command.tag1 (UString::from_int (a_line_num));
     command.set_slot (a_slot);
     queue_command (command);
-}
-
-void
-null_const_variable_slot (const IDebugger::VariableSafePtr &)
-{
-}
-
-void
-null_const_variable_list_slot (const IDebugger::VariableList &)
-{
-}
-
-void
-null_const_ustring_slot (const UString &)
-{
 }
 
 void
