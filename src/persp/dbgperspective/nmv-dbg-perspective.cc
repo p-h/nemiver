@@ -2626,7 +2626,11 @@ DBGPerspective::on_frame_selected_signal (int /* a_index */,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY
+    if (m_priv->current_frame == a_frame)
+        return;
+
+    NEMIVER_TRY;
+
 
     m_priv->current_frame = a_frame;
 

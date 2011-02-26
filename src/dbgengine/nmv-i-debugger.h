@@ -272,10 +272,20 @@ public:
     public:
 
         Frame () :
-            m_level (0),
+        m_level (0),
             m_line (0)
-        {}
+            {
+            }
 
+        /// \operators
+        /// @{
+
+        bool operator== (const Frame &a)
+        {
+            return (address () == a.address ());
+        }
+
+        /// @}
         /// \name accessors
 
         /// @{
