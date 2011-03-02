@@ -769,6 +769,21 @@ public:
         return result;
     }
 
+    /// Resets the GDB command queue so that it is in its initial
+    /// state.  Just as is the GDBEngine object has just been
+    /// instantiated.  This is useful when we are about to launch a
+    /// new GDB just after the previous one crashed "during flight".
+    /// Use this with great care.
+    void
+    reset_command_queue (void)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        started_commands.clear ();
+        queued_commands.clear ();
+        line_busy = false;
+    }
+
     void set_debugger_parameter (const UString &a_name,
                                  const UString &a_value)
     {
@@ -2755,6 +2770,10 @@ GDBEngine::load_program (const UString &a_prog,
             return false;
 
         Command command;
+
+        // In case we are restarting GDB after a crash, the command
+        // queue might be stuck.  Let's restart it.
+        m_priv->reset_command_queue ();
 
         queue_command (Command ("set breakpoint pending on"));
 
