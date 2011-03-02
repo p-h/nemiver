@@ -256,6 +256,10 @@ public:
         void line_number (int a_in) {m_line_number = a_in;}
     };//end class OverloadsChoiceEntry
 
+    class Variable;
+    typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr;
+    typedef list<VariableSafePtr> VariableList;
+
     /// \brief a function frame as seen by the debugger.
     class Frame {
         Address m_address;
@@ -334,10 +338,11 @@ public:
             m_args.clear ();
         }
     };//end class Frame
+    typedef sigc::slot<void, const vector<IDebugger::Frame>&>
+        FrameVectorSlot;
+    typedef sigc::slot<void, const map<int, IDebugger::VariableList>& >
+        FrameArgsSlot;
 
-    class Variable;
-    typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr;
-    typedef list<VariableSafePtr> VariableList;
     class Variable : public Object {
         // non copyable.
         Variable (const Variable &);
@@ -1177,9 +1182,19 @@ public:
                               int a_high_frame=-1,
                               const UString &a_cookie="") = 0;
 
+    virtual void list_frames (int a_low_frame,
+                              int a_high_frame,
+                              const FrameVectorSlot &a_slot,
+                              const UString &a_cookie) = 0;
+
     virtual void list_frames_arguments (int a_low_frame=-1,
                                         int a_high_frame=-1,
                                         const UString &a_cookie="") = 0;
+
+    virtual void list_frames_arguments (int a_low_frame,
+                                        int a_high_frame,
+                                        const FrameArgsSlot &a_slot,
+                                        const UString &a_cookie) = 0;
 
     virtual void list_local_variables (const UString &a_cookie="") = 0;
 

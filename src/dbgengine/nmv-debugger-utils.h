@@ -38,6 +38,10 @@ void null_const_variable_list_slot (const IDebugger::VariableList &);
 
 void null_const_ustring_slot (const UString &);
 
+void null_frame_vector_slot (const vector<IDebugger::Frame> &);
+
+void null_frame_args_slot (const map<int, IDebugger::VariableList> &);
+
 void dump_variable_value (IDebugger::VariableSafePtr a_var,
                           int a_indent_num,
                           std::ostringstream &a_os,

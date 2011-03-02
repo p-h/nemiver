@@ -185,6 +185,8 @@ public:
         return true;
     }
 
+    /// Connect callback slots to the relevant signals of the
+    /// debugging engine.k
     void
     connect_to_debugger_signals ()
     {
@@ -195,8 +197,6 @@ public:
             (sigc::mem_fun (*this, &Priv::on_stopped_signal));
         debugger->local_variables_listed_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal));
-        debugger->frames_arguments_listed_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_function_args_listed_signal));
     }
 
     void
@@ -454,7 +454,10 @@ public:
             debugger->list_local_variables ();
             LOG_DD ("list frames arguments");
             debugger->list_frames_arguments (a_frame.level (),
-                                             a_frame.level ());
+                                             a_frame.level (),
+                                             sigc::mem_fun
+                                             (*this, &Priv::on_function_args_listed),
+                                             "");
         } else {
             LOG_DD ("update local variables and function arguments");
             update_local_variables ();
@@ -793,18 +796,16 @@ public:
     }
 
     void
-    on_function_args_listed_signal
-        (const map<int, IDebugger::VariableList> &a_frames_params,
-         const UString & /* a_cookie */)
+    on_function_args_listed (const map<int, IDebugger::VariableList> &a_args)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        NEMIVER_TRY
+        NEMIVER_TRY;
 
         UString name;
         map<int, IDebugger::VariableList>::const_iterator frame_it;
-        frame_it = a_frames_params.find (debugger->get_current_frame_level ());
-        if (frame_it == a_frames_params.end ()) {
+        frame_it = a_args.find (debugger->get_current_frame_level ());
+        if (frame_it == a_args.end ()) {
             LOG_DD ("Got empty frames parameters");
             return;
         }
@@ -822,7 +823,7 @@ public:
                  sigc::mem_fun (*this,
                                 &Priv::on_function_arg_var_created_signal));
         }
-        NEMIVER_CATCH
+        NEMIVER_CATCH;
     }
 
     void
@@ -1130,6 +1131,10 @@ LocalVarsInspector::widget () const
     return *m_priv->tree_view;
 }
 
+/// List the local variables of the current function, as well as its
+/// arguments.
+///
+/// \param a_frame the frame of the current function to act upon.
 void
 LocalVarsInspector::show_local_variables_of_current_function
                                             (const IDebugger::Frame &a_frame)
@@ -1144,7 +1149,10 @@ LocalVarsInspector::show_local_variables_of_current_function
     m_priv->debugger->list_local_variables ();
     int frame_level = m_priv->debugger->get_current_frame_level ();
     LOG_DD ("current frame level: " <<  (int)frame_level);
-    m_priv->debugger->list_frames_arguments (frame_level, frame_level);
+    m_priv->debugger->list_frames_arguments (frame_level, frame_level,
+                                             sigc::mem_fun
+                                             (*m_priv, &Priv::on_function_args_listed),
+                                             "");
 }
 
 void

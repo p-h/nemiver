@@ -406,9 +406,19 @@ public:
                       int a_high_frame,
                       const UString &a_cookie);
 
+    void list_frames (int a_low_frame,
+		      int a_high_frame,
+		      const FrameVectorSlot &a_slot,
+		      const UString &a_cookie);
+
     void list_frames_arguments (int a_low_frame,
                                 int a_high_frame,
                                 const UString &a_cookie);
+
+    void list_frames_arguments (int a_low_frame,
+				int a_high_frame,
+				const FrameArgsSlot &a_slot,
+				const UString &a_cookie);
 
     void list_local_variables (const UString &a_cookie);
 

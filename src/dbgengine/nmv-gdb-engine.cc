@@ -55,7 +55,8 @@ static const UString DEFAULT_GDB_BINARY = "default-gdb-binary";
 
 using nemiver::debugger_utils::null_const_variable_slot;
 using nemiver::debugger_utils::null_const_variable_list_slot;
-
+using nemiver::debugger_utils::null_frame_vector_slot;
+using nemiver::debugger_utils::null_frame_args_slot;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -785,11 +786,52 @@ public:
                                         follow_fork_mode);
     }
 
+    /// Lists the frames which numbers are in a given range.
+    ///
+    /// Upon completion of the GDB side of this command, the signal
+    /// Priv::frames_listed_signal is emitted.
+    ///
+    /// \param a_low_frame the lower bound of the frame range to list.
+    ///
+    /// \param a_high_frame the upper bound of the frame range to list.
+    ///
+    /// \param a_cookie a string to be passed to the
+    /// Priv::frames_listed_signal.
     void list_frames (int a_low_frame,
                       int a_high_frame,
                       const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        list_frames (a_low_frame, a_high_frame,
+                     &null_frame_vector_slot,
+                     a_cookie);
+    }
+
+    /// A subroutine of the list_frame overload above.
+    /// 
+    /// Lists the frames which numbers are in a given range.
+    ///
+    /// Upon completion of the GDB side of this command, the signal
+    /// Priv::frames_listed_signal is emitted.  The callback slot
+    /// given in parameter is called as well.
+    ///
+    /// \param a_low_frame the lower bound of the frame range to list.
+    ///
+    /// \param a_high_frame the upper bound of the frame range to list.
+    ///
+    /// \param a_slot a callback slot to be called upon completion of
+    /// the GDB-side command.
+    ///
+    /// \param a_cookie a string to be passed to the
+    /// Priv::frames_listed_signal.
+    void list_frames (int a_low_frame,
+                      int a_high_frame,
+                      const FrameVectorSlot &a_slot,
+                      const UString &a_cookie)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         string low, high, stack_window, cmd_str;
 
         if (a_low_frame >= 0)
@@ -803,10 +845,10 @@ public:
         cmd_str = (stack_window.empty ())
                   ? "-stack-list-frames"
                   : "-stack-list-frames " + stack_window;
-
-        queue_command (Command ("list-frames",
-                                cmd_str,
-                                a_cookie));
+        
+        Command command ("list-frames", cmd_str, a_cookie);
+        command.set_slot (a_slot);
+        queue_command (command);
     }
 
     void set_tty_path (const UString &a_tty_path)
@@ -1656,9 +1698,17 @@ struct OnFramesListedHandler : OutputHandler {
             m_engine->set_current_frame_address
             (a_in.output ().result_record ().call_stack ()[0].address ());
 
-        m_engine->frames_listed_signal ().emit
-            (a_in.output ().result_record ().call_stack (),
-             a_in.command ().cookie ());
+        vector<IDebugger::Frame> &frames =
+            a_in.output ().result_record ().call_stack ();
+
+        if (a_in.command ().has_slot ()) {
+            IDebugger::FrameVectorSlot slot =
+                a_in.command ().get_slot<IDebugger::FrameVectorSlot> ();
+            slot (frames);
+        }
+
+        m_engine->frames_listed_signal ().emit (frames,
+                                                a_in.command ().cookie ());
         m_engine->set_state (IDebugger::READY);
     }
 };//struct OnFramesListedHandler
@@ -1686,6 +1736,16 @@ struct OnFramesParamsListedHandler : OutputHandler {
     void do_handle (CommandAndOutput &a_in)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        
+        const map<int, list<IDebugger::VariableSafePtr> > &frame_args =
+            a_in.output ().result_record ().frames_parameters ();
+
+        if (a_in.command ().has_slot ()) {
+            IDebugger::FrameArgsSlot slot =
+                a_in.command ().get_slot<IDebugger::FrameArgsSlot> ();
+            slot (frame_args);
+        }
 
         m_engine->frames_arguments_listed_signal ().emit
             (a_in.output ().result_record ().frames_parameters (),
@@ -4112,6 +4172,21 @@ GDBEngine::delete_breakpoint (gint a_break_num,
                             a_cookie));
 }
 
+/// Lists the frames which numbers are in a given range.
+///
+/// Upon completion of the GDB side of this command, the signal
+/// Priv::frames_listed_signal is emitted.  The callback slot
+/// given in parameter is called as well.
+///
+/// \param a_low_frame the lower bound of the frame range to list.
+///
+/// \param a_high_frame the upper bound of the frame range to list.
+///
+/// \param a_slot a callback slot to be called upon completion of
+/// the GDB-side command.
+///
+/// \param a_cookie a string to be passed to the
+/// Priv::frames_listed_signal. 
 void
 GDBEngine::list_frames (int a_low_frame,
                         int a_high_frame,
@@ -4122,10 +4197,36 @@ GDBEngine::list_frames (int a_low_frame,
     m_priv->list_frames (a_low_frame, a_high_frame, a_cookie);
 }
 
+/// A subroutine of the list_frame overload above.
+/// 
+/// Lists the frames which numbers are in a given range.
+///
+/// Upon completion of the GDB side of this command, the signal
+/// Priv::frames_listed_signal is emitted.  The callback slot
+/// given in parameter is called as well.
+///
+/// \param a_low_frame the lower bound of the frame range to list.
+///
+/// \param a_high_frame the upper bound of the frame range to list.
+///
+/// \param a_slot a callback slot to be called upon completion of
+/// the GDB-side command.
+///
+/// \param a_cookie a string to be passed to the
+/// Priv::frames_listed_signal. 
 void
-GDBEngine::list_frames (int a_min_frame_index,
-                        int a_max_frame_index,
-                        const UString &a_cookie = "");
+GDBEngine::list_frames (int a_low_frame,
+                        int a_high_frame,
+                        const FrameVectorSlot &a_slot,
+                        const UString &a_cookie)
+
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    m_priv->list_frames (a_low_frame,
+                         a_high_frame,
+                         a_slot, a_cookie);
+}
 
 void
 GDBEngine::select_frame (int a_frame_id,
@@ -4141,17 +4242,68 @@ GDBEngine::select_frame (int a_frame_id,
 
 }
 
+/// List the arguments of the frames which numbers are in a given
+/// range.
+///
+/// Upon completion of the GDB-side of this command the signal
+/// GDBEngine::frames_arguments_listed_signal is emitted.
+/// 
+/// \param a_low_frame the lower bound of the range of frames which
+/// arguments to list.
+///
+/// \param a_high_frame the uper bound of the range of frames which
+/// arguments to list.
+///
+/// \param a_cookie a string to be passed to the
+/// GDBEngine::frames_arguments_listed_signal signal.
 void
 GDBEngine::list_frames_arguments (int a_low_frame,
                                   int a_high_frame,
                                   const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+    list_frames_arguments (a_low_frame, a_high_frame,
+                           &null_frame_args_slot, a_cookie);
+}
+
+/// List the arguments of the frames which numbers are in a given
+/// range.
+///
+/// Upon completion of the GDB-side command emitted by this function
+/// the signal GDBEngine::frames_arguments_listed_signal is emitted.
+/// In addition, a callback slot passed in parameter of this function
+/// is invoked upon completion.
+/// 
+/// \param a_low_frame the lower bound of the range of frames which
+/// arguments to list.
+///
+/// \param a_high_frame the uper bound of the range of frames which
+/// arguments to list.
+///
+/// \param a_slot a callback slot called upon completion of the
+/// GDB-side command emitted by this function.
+///
+/// \param a_cookie a string to be passed to the
+/// GDBEngine::frames_arguments_listed_signal signal.
+void
+GDBEngine::list_frames_arguments (int a_low_frame,
+                                  int a_high_frame,
+                                  const FrameArgsSlot &a_slot,
+                                  const UString &a_cookie)
+{
+    UString cmd_str;
+
     if (a_low_frame < 0 || a_high_frame < 0) {
+        cmd_str = "-stack-list-arguments 1";
         queue_command (Command ("list-frames-arguments",
                                 "-stack-list-arguments 1",
                                 a_cookie));
     } else {
+        cmd_str = UString ("-stack-list-arguments 1 ")
+            + UString::from_int (a_low_frame)
+            + " "
+            + UString::from_int (a_high_frame);
+
         queue_command (Command ("list-frames-arguments",
                                 "-stack-list-arguments 1 "
                                     + UString::from_int (a_low_frame)
@@ -4159,6 +4311,9 @@ GDBEngine::list_frames_arguments (int a_low_frame,
                                     + UString::from_int (a_high_frame),
                                     a_cookie));
     }
+    Command command ("list-frames-arguments", cmd_str, a_cookie);
+    command.set_slot (a_slot);
+    queue_command (command);
 }
 
 void

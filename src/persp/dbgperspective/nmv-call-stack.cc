@@ -234,7 +234,9 @@ struct CallStack::Priv {
             frame_low = frame_high + 1;
             frame_high += nb_frames_expansion_chunk;
             debugger->list_frames (frame_low, frame_high,
-                                   COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS);
+                                   sigc::mem_fun
+                                   (*this, &Priv::on_frames_listed_during_paging),
+                                   "");
             return;
         }
 
@@ -302,45 +304,64 @@ struct CallStack::Priv {
         handle_update (a_cookie);
     }
 
-    void on_frames_listed_signal (const vector<IDebugger::Frame> &a_stack,
-                                  const UString &a_cookie)
+    void
+    on_frames_listed_during_paging (const vector<IDebugger::Frame> &a_stack)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        NEMIVER_TRY
+        NEMIVER_TRY;
+
+        // We are in a mode where the user asked to see more stack
+        // frames.  This is named frame paging. In this case, just
+        // append the frames to the current ones. Again, the frames
+        // will be appended without arguments. We'll request the
+        // arguments right after this.
+        FrameArgsMap frames_args;
+        append_frames_to_tree_view (a_stack, frames_args);
+
+        // Okay so now, ask for frame arguments matching the frames we
+        // just received.
+        debugger->list_frames_arguments (a_stack[0].level (),
+                                         a_stack[a_stack.size () - 1].level (),
+                                         sigc::mem_fun
+                                         (*this, &Priv::on_frames_args_listed),
+                                         "");
+
+        NEMIVER_CATCH;
+    }
+
+    void
+    on_frames_listed (const vector<IDebugger::Frame> &a_stack)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        NEMIVER_TRY;
 
         THROW_IF_FAIL (debugger);
         waiting_for_stack_args = true;
 
         FrameArgsMap frames_args;
-        if (a_cookie.raw () != COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS) {
-            // Set the frame list without frame arguments,
-            // then, request IDebugger for frame arguments.
-            // When the arguments arrive, we will update the call stack
-            // with those.
-            set_frame_list (a_stack, frames_args);
-        } else {
-            // We are a mode where the user asked to see more stack frames.
-            // This is named frame paging. In this case, just append the
-            // frames to the current ones. Again, the frames will be
-            // appended without arguments. We'll request the arguments
-            // right after this.
-            append_frames_to_tree_view (a_stack, frames_args);
-        }
-        // Okay so now, ask for frame arguments matching the frames we just
-        // received.
-        debugger->list_frames_arguments (a_stack[0].level (),
-                                         a_stack[a_stack.size () - 1].level ());
+        // Set the frame list without frame arguments, then, request
+        // IDebugger for frame arguments.  When the arguments arrive,
+        // we will update the call stack with those.
+        set_frame_list (a_stack, frames_args);
 
-        NEMIVER_CATCH
+        // Okay so now, ask for frame arguments matching the frames we
+        // just received.
+        debugger->list_frames_arguments (a_stack[0].level (),
+                                         a_stack[a_stack.size () - 1].level (),
+                                         sigc::mem_fun
+                                         (*this, &Priv::on_frames_args_listed),
+                                         "");
+
+        NEMIVER_CATCH;
     }
 
-    void on_frames_params_listed_signal
-            (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_args,
-             const UString &a_cookie)
+    void
+    on_frames_args_listed
+    (const map<int, IDebugger::VariableList> &a_frames_args)
     {
         LOG_DD ("frames params listed");
-        if (a_cookie.empty ()) {}
 
         if (waiting_for_stack_args) {
             update_frames_arguments (a_frames_args);
@@ -426,6 +447,8 @@ struct CallStack::Priv {
         }
     }
 
+    /// Connect callback slots to the relevant signals of our
+    /// implementation of the IDebugger interface.
     void connect_debugger_signals ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -436,10 +459,6 @@ struct CallStack::Priv {
                     (*this, &CallStack::Priv::on_debugger_stopped_signal));
         debugger->thread_selected_signal ().connect (sigc::mem_fun
                      (*this, &CallStack::Priv::on_thread_selected_signal));
-        debugger->frames_listed_signal ().connect (sigc::mem_fun
-                    (*this, &CallStack::Priv::on_frames_listed_signal));
-        debugger->frames_arguments_listed_signal ().connect (sigc::mem_fun
-                    (*this, &CallStack::Priv::on_frames_params_listed_signal));
         debugger->command_done_signal ().connect (sigc::mem_fun
                     (*this, &CallStack::Priv::on_command_done_signal));
     }
@@ -784,7 +803,9 @@ struct CallStack::Priv {
     void update_call_stack ()
     {
         THROW_IF_FAIL (debugger);
-        debugger->list_frames (0, frame_high);
+        debugger->list_frames (0, frame_high,
+                               sigc::mem_fun (*this, &Priv::on_frames_listed),
+                               "");
     }
 };//end struct CallStack::Priv
 

@@ -44,6 +44,16 @@ null_const_ustring_slot (const UString &)
 {
 }
 
+void
+null_frame_vector_slot (const vector<IDebugger::Frame> &)
+{
+}
+
+void
+null_frame_args_slot (const map<int, IDebugger::VariableList> &)
+{
+}
+
 /// Generate a string of of white spaces.
 /// \param a_nb_ws the number of white spaces to generate
 /// \param a_ws_str the output string the white spaces are
