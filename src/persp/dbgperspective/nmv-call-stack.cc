@@ -254,7 +254,9 @@ struct CallStack::Priv {
     void finish_update_handling ()
     {
         THROW_IF_FAIL (debugger);
-        debugger->list_frames (frame_low, frame_high);
+        debugger->list_frames (frame_low, frame_high,
+			       sigc::mem_fun (*this, &Priv::on_frames_listed),
+			       "");
     }
 
     void handle_update (const UString &a_cookie)
