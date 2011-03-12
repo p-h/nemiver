@@ -104,7 +104,18 @@ struct CallFunctionDialog::Priv {
         }
     }
 
-    bool exists_in_history (const UString &a_expr) const
+    /// Tests whether if the expression exists in history.
+    /// 
+    /// \param a_expr the expression to look for.
+    /// 
+    /// \param a_iter if the function returned true and if this
+    /// pointer is non-null, then *a_iter is filled with an iterator
+    /// pointing at the expression found in history.
+    ///
+    /// \return true if the expresison exists in history, false
+    /// otherwise.
+    bool exists_in_history (const UString &a_expr,
+                            Gtk::TreeModel::iterator *a_iter = 0) const
     {
         THROW_IF_FAIL (call_expr_history);
         Gtk::TreeModel::iterator it;
@@ -112,10 +123,22 @@ struct CallFunctionDialog::Priv {
              it != call_expr_history->children ().end ();
              ++it) {
             if ((*it)[get_call_expr_history_cols ().expr] == a_expr) {
+                if (a_iter != 0)
+                    *a_iter = it;
                 return true;
             }
         }
         return false;
+    }
+
+    /// Erases an expression from expression history.
+    ///
+    /// \param a_iter the iterator pointing to the expression to erase
+    /// from history.
+    void erase_expression_from_history (Gtk::TreeModel::iterator &a_iter)
+    {
+        THROW_IF_FAIL (call_expr_history);
+        call_expr_history->erase (a_iter);
     }
 
     void clear_history ()
@@ -123,17 +146,34 @@ struct CallFunctionDialog::Priv {
         call_expr_history->clear ();
     }
 
+    /// Add an expression to expression history.  If the expression
+    /// already exists in history, it can either be duplicated or be
+    /// not.  Also, the new expression can be either appended or
+    /// prepended to history.
+    ///
+    /// \param a_expr the expression to add to history.
+    ///
+    /// \param a_prepend if true, prepend the expression to history.
+    ///
+    /// \param allow_dups if true, allow expressions to be present in
+    /// more than copy in history.
     void add_to_history (const UString &a_expr,
                          bool a_prepend = false,
-                         bool allow_dups = true)
+                         bool allow_dups = false)
     {
-        if (a_expr.empty () // don't append empty expressions
-            // don't append an expression if it exists already.
-            || (!allow_dups && exists_in_history (a_expr)))
+        // don't append empty expressions
+        if (a_expr.empty ())
             return;
+        
+        // If the expression already exists in history, remove it, so
+        // that it can be added again, as to be the latest added item
+        // to historry.
+        Gtk::TreeModel::iterator it;
+        if (!allow_dups
+            && exists_in_history (a_expr, &it))
+            erase_expression_from_history (it);
 
         THROW_IF_FAIL (call_expr_history);
-        Gtk::TreeModel::iterator it;
         if (a_prepend)
             it = call_expr_history->insert
                                     (call_expr_history->children ().begin ());

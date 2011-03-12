@@ -144,7 +144,18 @@ public:
                         false /*don't allow duplicates*/);
     }
 
-    bool exists_in_history (const UString &a_expr)
+    /// Tests wheter if the variable expression exists in history.
+    ///
+    /// \param a_expr the expression to look for.
+    ///
+    /// \param a_iter if the return returned true and if this pointer
+    /// is non-null, then *a_iter is filled with an iterator pointing
+    /// at the expression found in history.
+    /// 
+    /// \return true if the variable expression a_expr exits in
+    /// memory, false otherwise.
+    bool exists_in_history (const UString &a_expr,
+                            Gtk::TreeModel::iterator *a_iter = 0) const
     {
         THROW_IF_FAIL (m_variable_history);
 
@@ -153,22 +164,52 @@ public:
              it != m_variable_history->children ().end ();
              ++it) {
             if ((*it)[get_cols ().varname] == a_expr) {
+                if (a_iter != 0)
+                    *a_iter = it;
                 return true;
             }
         }
         return false;
     }
 
+    /// Erases an expression from expression history.
+    ///
+    /// \param a_iter the iterator pointing to the expression to erase
+    /// from history.
+    void erase_expression_from_history (Gtk::TreeModel::iterator &a_iter)
+    {
+        THROW_IF_FAIL (m_variable_history);
+        m_variable_history->erase (a_iter);
+    }
+
+    /// Add an expression to variable expression history.  If the
+    /// expression already exists in history, it can either be
+    /// duplicated or be not.  Also, the new expression can be either
+    /// appended or prepended to history.
+    ///
+    /// \param a_expr the expression to add to history.
+    ///
+    /// \param a_prepend if true, prepend the expression to history.
+    ///
+    /// \param allow_dups if true, allow expressions to be present in
+    /// more than copy in history.
     void add_to_history (const UString &a_expr,
                          bool a_prepend = false,
-                         bool a_allow_dups = true)
+                         bool a_allow_dups = false)
     {
-        if (a_expr.empty () // don't append empty exprs.
-            // don't append an expr if it exists already.
-            || (!a_allow_dups && exists_in_history (a_expr)))
+        // Don't append empty expressions.
+        if (a_expr.empty ())
             return;
-        Gtk::TreeModel::iterator it;
 
+        // If the expression already exists in history, remove it, so
+        // that it can be added again, as to be the latest added item
+        // to historry.
+        Gtk::TreeModel::iterator it;
+        if (!a_allow_dups
+            && exists_in_history (a_expr, &it))
+            erase_expression_from_history (it);
+
+        THROW_IF_FAIL (m_variable_history);
         if (a_prepend)
             it = m_variable_history->insert
                 (m_variable_history->children ().begin ());
@@ -186,6 +227,18 @@ public:
             Glib::ustring elem = (*it)[get_cols ().varname];
             a_hist.push_back (elem);
         }
+    }
+
+    /// Set the current history of variable expression to a new one.
+    ///
+    /// \param a_hist the new history to set.
+    void set_history (const std::list<UString> &a_hist)
+    {
+        m_variable_history->clear ();
+        std::list<UString>::const_iterator it;
+        for (it = a_hist.begin (); it != a_hist.end (); ++it)
+            add_to_history (*it, /*a_prepend=*/false,
+                            /*a_allow_dups=*/false);
     }
 
     //************************
@@ -271,15 +324,15 @@ VarInspectorDialog::variable () const
     return m_priv->var_inspector->get_variable ();
 }
 
+/// Set the history of variable expression to a new one.
+///
+/// \param a_hist the new history.
 void
 VarInspectorDialog::set_history (const std::list<UString> &a_hist)
 {
     THROW_IF_FAIL (m_priv);
 
-    list<UString>::const_iterator it;
-    for (it = a_hist.begin (); it != a_hist.end (); ++it) {
-        m_priv->add_to_history (*it, false /*append*/);
-    }
+    m_priv->set_history (a_hist);
 }
 
 void
