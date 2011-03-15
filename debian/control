@@ -1,8 +1,8 @@
 Source: nemiver
 Section: gnome
 Priority: optional
-Vcs-Git: https://git.unstable.it/packages.git/
-Vcs-Browser: https://git.unstable.it/?p=packages.git;a=shortlog;h=nemiver
+Vcs-Git: git://git.debian.org/git/collab-maint/nemiver.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/ipv6calc.git
 Maintainer: Luca Bruno <lucab@debian.org>
 Uploaders: Andrea Corradi <lash@unstable.it>
 Build-Depends: debhelper (>= 5.0.51~), quilt, gdb, libxml-parser-perl, 
@@ -13,8 +13,8 @@ Build-Depends: debhelper (>= 5.0.51~), quilt, gdb, libxml-parser-perl,
 	       libvte-dev (>= 0.12), libgtkmm-2.4-dev (>= 2.6), 
 	       libglademm-2.4-dev (>= 2.6), 
 	       libgtksourceviewmm-2.0-dev (>= 1.9), scrollkeeper, 
-	       libgtkhex0-dev (>= 2.21.4)
-Standards-Version: 3.8.0
+	       libgtkhex0-dev (>= 2.21.4), intltool (>= 0.33)
+Standards-Version: 3.9.1
 Homepage: http://www.gnome.org/projects/nemiver/
 
 Package: nemiver
