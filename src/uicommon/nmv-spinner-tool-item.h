@@ -25,36 +25,28 @@
 #ifndef __NMV_SPINNER_TOOL_ITEM_H__
 #define __NMV_SPINNER_TOOL_ITEM_H__
 
-#include "common/nmv-object.h"
+#include <gtkmm/toolitem.h>
 #include "common/nmv-safe-ptr-utils.h"
 
 namespace Gtk {
-    class ToolItem;
+    class Spinner;
 }
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 using nemiver::common::SafePtr;
-using nemiver::common::ObjectRef;
-using nemiver::common::ObjectUnref;
-using nemiver::common::Object;
 
-class SpinnerToolItem;
-typedef SafePtr<SpinnerToolItem, ObjectRef, ObjectUnref> SpinnerToolItemSafePtr;
-
-class SpinnerToolItem : public Object {
-    struct Priv;
-    SafePtr<Priv> m_priv;
-    SpinnerToolItem ();
+class SpinnerToolItem : public Gtk::ToolItem {
+    SafePtr<Gtk::Spinner> m_spinner;
 
 public:
-    virtual ~SpinnerToolItem () ;
-    static SpinnerToolItemSafePtr create ();
+    SpinnerToolItem ();
+    virtual ~SpinnerToolItem ();
     void start ();
-    bool is_started () const;
     void stop ();
-    void toggle_state ();
-    Gtk::ToolItem& get_widget () const;
+
+protected:
+    virtual void on_toolbar_reconfigured ();
 };//end class SpinnerToolItem
 
 NEMIVER_END_NAMESPACE (nemiver)
