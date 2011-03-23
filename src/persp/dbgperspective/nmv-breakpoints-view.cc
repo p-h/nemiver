@@ -631,7 +631,7 @@ public:
 
     bool on_key_press_event (GdkEventKey* event)
     {
-        if (event && event->keyval == GDK_Delete)
+        if (event && event->keyval == GDK_KEY_Delete)
         {
             on_breakpoint_delete_action ();
         }

@@ -298,7 +298,7 @@ FileListView::on_key_press_event (GdkEventKey* event)
 {
     bool return_value = TreeView::on_key_press_event (event);
 
-    if ((event->type == GDK_KEY_PRESS) && (event->keyval == GDK_Return)) {
+    if ((event->type == GDK_KEY_PRESS) && (event->keyval == GDK_KEY_Return)) {
         bool recursive = (event->state & GDK_CONTROL_MASK);
         bool collapse_if_expanded = true;
         expand_selected (recursive, collapse_if_expanded);
