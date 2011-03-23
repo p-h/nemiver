@@ -117,10 +117,10 @@ public:
             default:
                 THROW ("should never reach this point");
         }
-#ifdef HAVE_GTKMM_2_16
+
         if (result)
             result->set_is_important (m_is_important);
-#endif
+
         return result;
     }
 };//end class ActionEntry
