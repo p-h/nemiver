@@ -35,15 +35,8 @@
 #include <sstream>
 #include <glib/gi18n.h>
 
-#ifdef WITH_GIO
 #include <giomm/file.h>
 #include <giomm/contenttype.h>
-#else
-#include <libgnomevfs/gnome-vfs-mime-utils.h>
-#include <libgnomevfs/gnome-vfs-monitor.h>
-#include <libgnomevfs/gnome-vfs-ops.h>
-#include <libgnomevfs/gnome-vfs-utils.h>
-#endif // WITH_GIO
 
 #include <gtksourceviewmm/init.h>
 #ifdef WITH_SOURCEVIEWMM2
@@ -147,21 +140,11 @@ const char *PROG_ARG_SEPARATOR = "#DUMMY-SEP007#";
 
 class DBGPerspective;
 
-#ifdef WITH_GIO
 static void
 gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
                      const Glib::RefPtr<Gio::File>& other_file,
                      Gio::FileMonitorEvent event,
                      DBGPerspective *a_persp);
-#else
-static void
-gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
-                           const gchar *a_monitor_uri,
-                           const gchar *a_info_uri,
-                           GnomeVFSMonitorEventType a_event_type,
-                           DBGPerspective *a_persp);
-#endif
-
 
 class DBGPerspective : public IDBGPerspective, public sigc::trackable {
     //non copyable
@@ -170,18 +153,10 @@ class DBGPerspective : public IDBGPerspective, public sigc::trackable {
     struct Priv;
     SafePtr<Priv> m_priv;
 
-#ifdef WITH_GIO
     friend void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& a_f,
                                      const Glib::RefPtr<Gio::File>& a_f2,
                                      Gio::FileMonitorEvent event,
                                      DBGPerspective *a_persp);
-#else
-    friend void gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
-                                           const gchar *a_monitor_uri,
-                                           const gchar *a_info_uri,
-                                           GnomeVFSMonitorEventType a_et,
-                                           DBGPerspective *a_persp);
-#endif
 
 private:
 
@@ -850,20 +825,11 @@ struct UnrefGObjectNative {
     }
 };
 
-#ifdef WITH_GIO
 static
 void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
                           const Glib::RefPtr<Gio::File>& other_file,
                           Gio::FileMonitorEvent event,
                           DBGPerspective *a_persp);
-#else
-static
-void gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
-                      const gchar *a_monitor_uri,
-                      const gchar *a_info_uri,
-                      GnomeVFSMonitorEventType a_event_type,
-                      DBGPerspective *a_persp);
-#endif // WITH_GIO
 
 struct DBGPerspective::Priv {
     bool initialized;
@@ -936,11 +902,7 @@ struct DBGPerspective::Priv {
     map<UString, int> basename_2_pagenum_map;
     map<int, SourceEditor*> pagenum_2_source_editor_map;
     map<int, UString> pagenum_2_path_map;
-#ifdef WITH_GIO
     typedef map<UString, Glib::RefPtr<Gio::FileMonitor> > Path2MonitorMap;
-#else
-    typedef map<UString, GnomeVFSMonitorHandle*> Path2MonitorMap;
-#endif // WITH_GIO
     Path2MonitorMap path_2_monitor_map;
     Gtk::Notebook *statuses_notebook;
     SafePtr<LocalVarsInspector> variables_editor;
@@ -1238,7 +1200,6 @@ enum ViewsIndex
 #define CHECK_P_INIT THROW_IF_FAIL(m_priv && m_priv->initialized);
 #endif
 
-#ifdef WITH_GIO
 static void
 gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
                      const Glib::RefPtr<Gio::File>& other_file,
@@ -1262,42 +1223,6 @@ gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
     }
     NEMIVER_CATCH
 }
-#else
-static void
-gnome_vfs_file_monitor_cb (GnomeVFSMonitorHandle *a_handle,
-                           const gchar *a_monitor_uri,
-                           const gchar *a_info_uri,
-                           GnomeVFSMonitorEventType a_event_type,
-                           DBGPerspective *a_persp)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    RETURN_IF_FAIL (a_info_uri);
-
-    NEMIVER_TRY
-
-    if (a_handle) {}
-
-    LOG_DD ("monitor_uri: " << a_monitor_uri << "\n"
-         "info_uri: " << a_info_uri);
-
-    if (a_event_type == GNOME_VFS_MONITOR_EVENT_CHANGED) {
-        LOG_DD ("file content changed");
-        GnomeVFSURI *uri = gnome_vfs_uri_new (a_info_uri);
-        if (gnome_vfs_uri_get_path (uri)) {
-            UString path = Glib::filename_to_utf8
-                                            (gnome_vfs_uri_get_path (uri));
-            Glib::signal_idle ().connect
-                (sigc::bind
-                    (sigc::mem_fun (*a_persp,
-                                    &DBGPerspective::on_file_content_changed),
-                     path));
-        }
-        gnome_vfs_uri_unref (uri);
-    }
-    NEMIVER_CATCH
-}
-#endif // WITH_GIO
 
 ostream&
 operator<< (ostream &a_out,
@@ -4831,7 +4756,6 @@ DBGPerspective::do_monitor_file (const UString &a_path)
 {
     THROW_IF_FAIL (m_priv);
 
-#ifdef WITH_GIO
     if (m_priv->path_2_monitor_map.find (a_path) !=
         m_priv->path_2_monitor_map.end ()) {
         return false;
@@ -4844,29 +4768,7 @@ DBGPerspective::do_monitor_file (const UString &a_path)
     monitor->signal_changed (). connect (sigc::bind (sigc::ptr_fun
                 (gio_file_monitor_cb), this));
     m_priv->path_2_monitor_map[a_path] = monitor;
-#else
-    if (m_priv->path_2_monitor_map.find (a_path) !=
-        m_priv->path_2_monitor_map.end ()) {
-        return false;
-    }
-    GnomeVFSMonitorHandle *handle=0;
-    GCharSafePtr uri (gnome_vfs_get_uri_from_local_path (a_path.c_str ()));
-    GnomeVFSResult result = gnome_vfs_monitor_add
-                        (&handle, uri.get (),
-                         GNOME_VFS_MONITOR_FILE,
-                         (GnomeVFSMonitorCallback)gnome_vfs_file_monitor_cb,
-                         (gpointer)this);
-    if (result != GNOME_VFS_OK) {
-        LOG_ERROR ("failed to start monitoring file '" << a_path << "'");
-        if (handle) {
-            gnome_vfs_monitor_cancel (handle);
-            handle = 0;
-        }
-        return false;
-    }
-    THROW_IF_FAIL (handle);
-    m_priv->path_2_monitor_map[a_path] = handle;
-#endif // WITH_GIO
+
     LOG_DD ("Monitoring file '" << Glib::filename_from_utf8 (a_path));
     return true;
 }
@@ -4888,11 +4790,7 @@ DBGPerspective::do_unmonitor_file (const UString &a_path)
         return false;
     }
     if (it->second) {
-#ifdef WITH_GIO
         it->second->cancel ();
-#else
-        gnome_vfs_monitor_cancel (it->second);
-#endif // WITH_GIO
     }
     m_priv->path_2_monitor_map.erase (it);
     return true;

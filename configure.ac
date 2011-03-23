@@ -42,8 +42,6 @@ LIBGTHREAD_VERSION=2.14
 AC_SUBST([LIBGTHREAD_VERSION])
 LIBGLIBMM_VERSION=2.14
 AC_SUBST([LIBGLIBMM_VERSION])
-LIBGNOMEVFS_VERSION=2.14
-AC_SUBST([LIBGNOMEVFS_VERSION])
 LIBXML2_VERSION=2.6.22
 AC_SUBST([LIBXML2_VERSION])
 LIBGTK_VERSION=2.22
@@ -197,22 +195,6 @@ else
     LIBGTKSOURCEVIEWMM_PKG=libgtksourceviewmm-1.0
 fi
 
-AC_ARG_ENABLE(gio,
-              AS_HELP_STRING([--enable-gio=yes|no],
-                             [use gio instead of gnomevfs (default is auto)]),
-              ENABLE_GIO=$enableval,
-              [PKG_CHECK_EXISTS([giomm-2.4 >= $LIBGIOMM_VERSION], [ENABLE_GIO=yes], [ENABLE_GIO=no])])
-if test x$ENABLE_GIO = xyes ; then
-    AC_DEFINE([WITH_GIO], 1, [build with gio instead of gnomevfs])
-    VFS_PKG=giomm-2.4
-    VFS_VERSION=$LIBGIOMM_VERSION
-else
-    VFS_PKG=gnome-vfs-2.0
-    VFS_VERSION=$LIBGNOMEVFS_VERSION
-    ENABLE_GIO=no
-fi
-DEP_VFS="$VFS_PKG >= $VFS_VERSION"
-
 ENABLE_DEBUG=yes
 AC_ARG_ENABLE(debug,
               AS_HELP_STRING([--enable-debug=yes|no],
@@ -313,6 +295,8 @@ NEMIVERUICOMMON_LIBS="$NEMIVERUICOMMON_LIBS $CPPUNIT_LIBS"
 
 AC_SUBST(NEMIVERUICOMMON_LIBS)
 AC_SUBST(NEMIVERUICOMMON_CFLAGS)
+
+DEP_VFS="giomm-2.4 >= $LIBGIOMM_VERSION"
 
 dnl library dependencies for the nemiver workbench module
 dnl dependencies list already declared above
@@ -485,7 +469,6 @@ AC_MSG_NOTICE([
     Enable workbench                : ${ENABLE_WORKBENCH}
     Enable memory view              : ${ENABLE_MEMORYVIEW} (requires gtkhex > $GTKHEX_VERSION)
     gtksourceviewmm version         : ${LIBGTKSOURCEVIEWMM_PKG}
-    VFS library                     : ${VFS_PKG}
     Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
     Maintainer mode                 : ${USER_MAINTAINER_MODE}
 

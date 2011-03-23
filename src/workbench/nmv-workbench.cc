@@ -27,11 +27,7 @@
 #include <vector>
 #include <iostream>
 #include <glib/gi18n.h>
-#ifdef WITH_GIO
 #include <giomm/init.h>
-#else
-#include <libgnomevfs/gnome-vfs-init.h>
-#endif // WITH_GIO
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/icontheme.h>
 #include "common/nmv-exception.h"
@@ -72,18 +68,11 @@ static const UString CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT=
 class WorkbenchStaticInit {
     WorkbenchStaticInit ()
     {
-#ifdef WITH_GIO
         Gio::init();
-#else
-        gnome_vfs_init ();
-#endif // WITH_GIO
     }
 
     ~WorkbenchStaticInit ()
     {
-#ifndef WITH_GIO
-        gnome_vfs_shutdown ();
-#endif  // WITH_GIO
     }
 
 public:

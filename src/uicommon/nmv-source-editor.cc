@@ -36,15 +36,8 @@
 #else
 #include <gtksourceviewmm/sourcelanguagesmanager.h>
 #endif  // WITH_SOURCEVIEWMM2
-#ifdef WITH_GIO
 #include <giomm/file.h>
 #include <giomm/contenttype.h>
-#else
-#include <libgnomevfs/gnome-vfs-mime-utils.h>
-#include <libgnomevfs/gnome-vfs-monitor.h>
-#include <libgnomevfs/gnome-vfs-ops.h>
-#include <libgnomevfs/gnome-vfs-utils.h>
-#endif // WITH_GIO
 #include "common/nmv-exception.h"
 #include "common/nmv-sequence.h"
 #include "common/nmv-str-utils.h"
@@ -1279,20 +1272,12 @@ SourceEditor::get_file_mime_type (const UString &a_path,
 
     std::string path = Glib::filename_from_utf8 (a_path);
 
-#ifdef WITH_GIO
     Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
     THROW_IF_FAIL (gio_file);
-#else
-    UString base_name = Glib::filename_to_utf8 (Glib::path_get_basename (path));
-#endif
 
     UString mime_type;
-#ifdef WITH_GIO
     Glib::RefPtr<Gio::FileInfo> info = gio_file->query_info();
     mime_type = Gio::content_type_get_mime_type(info->get_content_type ());
-#else
-    mime_type = gnome_vfs_get_mime_type_for_name (base_name.c_str ());
-#endif
 
     if (mime_type == "") {
         mime_type = "text/x-c++";
@@ -1379,16 +1364,10 @@ SourceEditor::load_file (const UString &a_path,
     NEMIVER_TRY;
 
     std::string path = Glib::filename_from_utf8 (a_path);
-#ifdef WITH_GIO
     Glib::RefPtr<Gio::File> gio_file = Gio::File::create_for_path (path);
     THROW_IF_FAIL (gio_file);
-    #define FILE_IS_OK (!gio_file->query_exists ())
-#else
-    ifstream file (path.c_str ());
-    #define FILE_IS_OK (!file.good () && !file.eof ())
 
-#endif
-    if (FILE_IS_OK) {
+    if (!gio_file->query_exists ()) {
         LOG_ERROR ("Could not open file " + path);
         ui_utils::display_error ("Could not open file: "
                                  + Glib::filename_to_utf8 (path));
@@ -1413,7 +1392,7 @@ SourceEditor::load_file (const UString &a_path,
 
     unsigned nb_bytes=0;
     std::string content;
-#ifdef WITH_GIO
+
     Glib::RefPtr<Gio::FileInputStream> gio_stream = gio_file->read ();
     THROW_IF_FAIL (gio_stream);
     gssize bytes_read = 0;
@@ -1424,16 +1403,7 @@ SourceEditor::load_file (const UString &a_path,
         if (bytes_read != buf_size) {break;}
     }
     gio_stream->close ();
-#else
-    for (;;) {
-        file.read (buf.get (), buf_size);
-        content.append (buf.get (), file.gcount ());
-        THROW_IF_FAIL (file.good () || file.eof ());
-        nb_bytes += file.gcount ();
-        if (file.gcount () != buf_size) {break;}
-    }
-    file.close ();
-#endif // WITH_GIO
+
     UString utf8_content;
     std::string cur_charset;
     if (!str_utils::ensure_buffer_is_in_utf8 (content,
