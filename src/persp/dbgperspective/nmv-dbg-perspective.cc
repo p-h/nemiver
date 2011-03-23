@@ -57,8 +57,7 @@
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
 #include <gdkmm/cursor.h>
-#include <gtk/gtkseparatortoolitem.h>
-#include <gtk/gtkversion.h>
+#include <gtk/gtk.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-env.h"
 #include "common/nmv-date-utils.h"
