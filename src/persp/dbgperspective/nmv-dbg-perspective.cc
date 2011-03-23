@@ -3923,10 +3923,8 @@ DBGPerspective::init_body ()
     m_priv->sourceviews_notebook->remove_page ();
     m_priv->sourceviews_notebook->set_show_tabs ();
     m_priv->sourceviews_notebook->set_scrollable ();
-#if GTK_CHECK_VERSION (2, 10, 0)
     m_priv->sourceviews_notebook->signal_page_reordered ().connect
         (sigc::mem_fun (this, &DBGPerspective::on_notebook_tabs_reordered));
-#endif
 
     m_priv->statuses_notebook =
         ui_utils::get_widget_from_gtkbuilder<Gtk::Notebook> (m_priv->body_builder,
@@ -4182,9 +4180,8 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
                                                               *hbox,
                                                               -1);
-#if GTK_CHECK_VERSION (2, 10, 0)
     m_priv->sourceviews_notebook->set_tab_reorderable (a_sv);
-#endif
+
     std::string base_name =
                 Glib::path_get_basename (Glib::filename_from_utf8 (path));
     THROW_IF_FAIL (base_name != "");
