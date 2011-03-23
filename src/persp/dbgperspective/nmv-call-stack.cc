@@ -204,7 +204,7 @@ struct CallStack::Priv {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (widget);
-        bool is_visible = widget->is_drawable ();
+        bool is_visible = widget->get_is_drawable ();
         LOG_DD ("is visible: " << is_visible);
         return is_visible;
     }

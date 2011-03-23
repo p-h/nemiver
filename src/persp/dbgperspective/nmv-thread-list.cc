@@ -81,7 +81,7 @@ struct ThreadList::Priv {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (tree_view);
-        bool is_visible = tree_view->is_drawable ();
+        bool is_visible = tree_view->get_is_drawable ();
         LOG_DD ("is visible: " << is_visible);
         return is_visible;
     }

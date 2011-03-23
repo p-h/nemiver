@@ -2086,7 +2086,7 @@ DBGPerspective::on_mouse_immobile_timer_signal ()
     NEMIVER_TRY
 
     if (get_contextual_menu ()
-        && get_contextual_menu ()->is_visible ()) {
+        && get_contextual_menu ()->get_visible ()) {
         return false;
     }
 
@@ -4204,7 +4204,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     label.release ();
     cicon.release ();
 
-    if (!a_sv.source_view ().has_no_window ()) {
+    if (a_sv.source_view ().get_has_window ()) {
         a_sv.source_view ().add_events (Gdk::BUTTON3_MOTION_MASK);
         a_sv.source_view ().signal_button_press_event ().connect
             (sigc::mem_fun
