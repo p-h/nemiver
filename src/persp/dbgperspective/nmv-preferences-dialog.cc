@@ -31,9 +31,7 @@
 #include "nmv-i-conf-mgr.h"
 #include "nmv-i-workbench.h"
 #include "nmv-conf-keys.h"
-#ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcestyleschememanager.h>
-#endif
 
 using nemiver::common::DynamicModuleManager;
 static const std::string DEFAULT_GDB_BINARY = "default-gdb-binary";

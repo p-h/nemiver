@@ -30,12 +30,8 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtksourceviewmm/sourcemark.h>
 #include <gtksourceviewmm/sourceiter.h>
-#ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcelanguagemanager.h>
 #include <gtksourceviewmm/sourcestyleschememanager.h>
-#else
-#include <gtksourceviewmm/sourcelanguagesmanager.h>
-#endif  // WITH_SOURCEVIEWMM2
 #include <giomm/file.h>
 #include <giomm/contenttype.h>
 #include "common/nmv-exception.h"
@@ -62,24 +58,20 @@ const char* WHERE_CATEGORY = "line-pointer-category";
 
 const char* WHERE_MARK = "where-marker";
 
-#ifdef WITH_SOURCEVIEW_2_10
 void
 on_line_mark_activated_signal (GtkSourceView *a_view,
                                GtkTextIter *a_iter,
                                GdkEvent *a_event,
                                gpointer a_pointer);
-#endif
 
 class SourceView : public gtksourceview::SourceView
 {
 
     sigc::signal<void, int, bool> m_marker_region_got_clicked_signal;
-#ifdef WITH_SOURCEVIEW_2_10
     friend void on_line_mark_activated_signal (GtkSourceView *a_view,
                                                GtkTextIter *a_iter,
                                                GdkEvent *a_event,
                                                gpointer a_pointer);
-#endif
 
 public:
     SourceView (Glib::RefPtr<SourceBuffer> &a_buf) :
@@ -87,12 +79,10 @@ public:
     {
         init_font ();
         enable_events ();
-#ifdef WITH_SOURCEVIEW_2_10
         g_signal_connect (gobj (),
                           "line-mark-activated",
                           G_CALLBACK (&on_line_mark_activated_signal),
                           this);
-#endif
     }
 
     SourceView () :
@@ -113,42 +103,6 @@ public:
                     |Gdk::BUTTON_PRESS_MASK);
     }
 
-#if (WITH_SOURCEVIEWMM2 && !WITH_SOURCEVIEW_2_10)
-    void do_custom_button_press_event_handling (GdkEventButton *a_event)
-    {
-        THROW_IF_FAIL (a_event);
-
-        if (a_event->type == GDK_BUTTON_PRESS
-            && a_event->button != 1) {
-            // We are only intersted in the left button press here
-            return;
-        }
-        Glib::RefPtr<Gdk::Window> markers_window =
-            get_window (Gtk::TEXT_WINDOW_LEFT);
-        THROW_IF_FAIL (markers_window);
-
-        if (markers_window.operator->()->gobj () != a_event->window) {
-            LOG_DD ("didn't clicked in markers region");
-            return;
-        }
-        LOG_DD ("got clicked in markers region !");
-        Gtk::TextBuffer::iterator iter;
-        int line_top=0, x=0, y=0;
-
-        window_to_buffer_coords (Gtk::TEXT_WINDOW_LEFT,
-                                 (int)a_event->x, (int)a_event->y, x, y);
-
-        get_line_at_y (iter, (int) y, line_top);
-
-        THROW_IF_FAIL (iter);
-
-        LOG_DD ("got clicked on line: " << iter.get_line ());
-        marker_region_got_clicked_signal ().emit (iter.get_line () + 1,
-                                                  false/*no dialog requested*/);
-    }
-#endif
-
-
     bool on_button_press_event (GdkEventButton *a_event)
     {
         if (a_event->type == GDK_BUTTON_PRESS
@@ -157,9 +111,6 @@ public:
             return false;
         } else {
             Gtk::Widget::on_button_press_event (a_event);
-#if (WITH_SOURCEVIEWMM2 && !WITH_SOURCEVIEW_2_10)            
-            do_custom_button_press_event_handling (a_event);
-#endif
             return false;
         }
     }
@@ -171,7 +122,6 @@ public:
 
 };//end class Sourceview
 
-#if WITH_SOURCEVIEW_2_10
 void
 on_line_mark_activated_signal (GtkSourceView *a_view,
                                GtkTextIter *a_iter,
@@ -188,7 +138,6 @@ on_line_mark_activated_signal (GtkSourceView *a_view,
             (gtk_text_iter_get_line (a_iter) + 1,
              false/*No dialog requested*/);
 }
-#endif
 
 struct SourceEditor::Priv {
     Sequence sequence;
@@ -1298,15 +1247,9 @@ SourceEditor::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
 {
     NEMIVER_TRY
 
-#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<SourceLanguageManager> lang_manager =
         SourceLanguageManager::get_default ();
-#else
-    Glib::RefPtr<SourceLanguagesManager> lang_manager =
-        SourceLanguagesManager::create ();
-#endif  // WITH_SOURCEVIEWMM2
     Glib::RefPtr<SourceLanguage> lang;
-    #ifdef WITH_SOURCEVIEWMM2
     std::list<Glib::ustring> lang_ids = lang_manager->get_language_ids ();
     for (std::list<Glib::ustring>::const_iterator it = lang_ids.begin ();
          it != lang_ids.end ();
@@ -1328,9 +1271,6 @@ SourceEditor::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
         // we found a matching language, so stop looking for other languages
         if (lang) break;
     }
-#else
-    lang = lang_manager->get_language_from_mime_type (mime_type);
-#endif  // WITH_SOURCEVIEWMM2
 
     if (!a_buf)
         a_buf = SourceBuffer::create (lang);
@@ -1420,11 +1360,7 @@ SourceEditor::load_file (const UString &a_path,
     a_source_buffer->set_text (utf8_content);
     LOG_DD ("file loaded. Read " << (int)nb_bytes << " bytes");
 
-#ifdef WITH_SOURCEVIEWMM2
     a_source_buffer->set_highlight_syntax (a_enable_syntax_highlight);
-#else
-    a_source_buffer->set_highlight (a_enable_syntax_highlight);
-#endif  // WITH_SOURCEVIEWMM2
 
     NEMIVER_CATCH_AND_RETURN (false);
 

@@ -48,10 +48,8 @@ LIBGTK_VERSION=2.22
 AC_SUBST([LIBGTK_VERSION])
 LIBGTKMM_VERSION=2.20
 AC_SUBST([LIBGTKMM_VERSION])
-LIBGTKSOURCEVIEWMM1_VERSION=0.3.0
-AC_SUBST([LIBGTKSOURCEVIEWMM1_VERSION])
-LIBGTKSOURCEVIEWMM2_VERSION=1.9.4
-AC_SUBST([LIBGTKSOURCEVIEWMM2_VERSION])
+LIBGTKSOURCEVIEWMM_VERSION=2.10
+AC_SUBST([LIBGTKSOURCEVIEWMM_VERSION])
 LIBGIOMM_VERSION=2.15.2
 AC_SUBST([LIBGIOMM_VERSION])
 SQLITE3_VERSION=3.0
@@ -176,25 +174,6 @@ fi
 AM_CONDITIONAL(BUILD_MEMORYVIEW, test x$ENABLE_MEMORYVIEW = xyes)
 
 
-AC_ARG_ENABLE(sourceviewmm2,
-              AS_HELP_STRING([--enable-sourceviewmm2=yes|no],
-                             [use gtksourceviewmm-2.0 (default is auto)]),
-              ENABLE_SOURCEVIEWMM2=$enableval,
-              [PKG_CHECK_EXISTS([gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM2_VERSION], [ENABLE_SOURCEVIEWMM2=yes], [ENABLE_SOURCEVIEWMM2=no])])
-if test x$ENABLE_SOURCEVIEWMM2 = xyes ; then
-    AC_DEFINE([WITH_SOURCEVIEWMM2], 1, [build with gtksourceviewmm 2.x instead of 1.x])
-    LIBGTKSOURCEVIEWMM_VERSION=$LIBGTKSOURCEVIEWMM2_VERSION
-    LIBGTKSOURCEVIEWMM_PKG=gtksourceviewmm-2.0
-    PKG_CHECK_EXISTS([gtksourceview-2.0 >= 2.10], [ENABLE_SOURCEVIEW_2_10=yes], [ENABLE_SOURCEVIEW_2_10=no])
-    if test x$ENABLE_SOURCEVIEW_2_10 = xyes; then
-       AC_DEFINE(WITH_SOURCEVIEW_2_10, 1, [build with gtksourceview higher than 2.10])
-    fi
-else
-    ENABLE_SOURCEVIEWMM2=no
-    LIBGTKSOURCEVIEWMM_VERSION=$LIBGTKSOURCEVIEWMM1_VERSION
-    LIBGTKSOURCEVIEWMM_PKG=libgtksourceviewmm-1.0
-fi
-
 ENABLE_DEBUG=yes
 AC_ARG_ENABLE(debug,
               AS_HELP_STRING([--enable-debug=yes|no],
@@ -255,7 +234,7 @@ fi
 
 if test x$ENABLE_WORKBENCH = xyes ; then
     DEP_WORKBENCH=" gtkmm-2.4 >= $LIBGTKMM_VERSION \
-                   $LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION"
+                   gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM_VERSION"
 fi
 
 if test x$ENABLE_MEMORYVIEW = xyes ; then
@@ -286,7 +265,7 @@ AC_SUBST(NEMIVERCOMMON_CFLAGS)
 dnl library dependencies for the nemiver common UI module
 DEP_UICOMMON=" gtkmm-2.4 >= $LIBGTKMM_VERSION \
                gtk+-2.0 >= $LIBGTK_VERSION \
-               $LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION \
+               gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM_VERSION \
                vte >= $LIBVTE_VERSION"
 
 PKG_CHECK_MODULES(NEMIVERUICOMMON, $DEP_UICOMMON $DEP_COMMON $DEP_MEMORYVIEW)
@@ -309,7 +288,7 @@ AC_SUBST(NEMIVERWORKBENCH_LIBS)
 AC_SUBST(NEMIVERWORKBENCH_CFLAGS)
 
 dnl library dependencies for the nemiver debug perspective plugin
-DEP_PERSP="$LIBGTKSOURCEVIEWMM_PKG >= $LIBGTKSOURCEVIEWMM_VERSION \
+DEP_PERSP="gtksourceviewmm-2.0 >= $LIBGTKSOURCEVIEWMM_VERSION \
            vte >= $LIBVTE_VERSION"
 
 PKG_CHECK_MODULES(NEMIVERDBGPERSP, $DEP_UICOMMON $DEP_VFS $DEP_PERSP $DEP_MEMORYVIEW)
@@ -468,7 +447,6 @@ AC_MSG_NOTICE([
     Enable verbose debug messages   : ${ENABLE_DEBUG}
     Enable workbench                : ${ENABLE_WORKBENCH}
     Enable memory view              : ${ENABLE_MEMORYVIEW} (requires gtkhex > $GTKHEX_VERSION)
-    gtksourceviewmm version         : ${LIBGTKSOURCEVIEWMM_PKG}
     Enable symbols visibility ctrl  : ${ENABLE_GCC_SYMBOLS_VISIBILITY}
     Maintainer mode                 : ${USER_MAINTAINER_MODE}
 

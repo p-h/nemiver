@@ -39,12 +39,8 @@
 #include <giomm/contenttype.h>
 
 #include <gtksourceviewmm/init.h>
-#ifdef WITH_SOURCEVIEWMM2
 #include <gtksourceviewmm/sourcelanguagemanager.h>
 #include <gtksourceviewmm/sourcestyleschememanager.h>
-#else
-#include <gtksourceviewmm/sourcelanguagesmanager.h>
-#endif  // WITH_SOURCEVIEWMM2
 
 #include <pangomm/fontdescription.h>
 #include <gtkmm/clipboard.h>
@@ -937,9 +933,7 @@ struct DBGPerspective::Priv {
     bool use_launch_terminal;
     int num_instr_to_disassemble;
     bool asm_style_pure;
-#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<gtksourceview::SourceStyleScheme> editor_style;
-#endif // WITH_SOURCEVIEWMM2
     sigc::connection timeout_source_connection;
     //**************************************
     //<detect mouse immobility > N seconds
@@ -1013,7 +1007,6 @@ struct DBGPerspective::Priv {
     }
 
 
-#ifdef WITH_SOURCEVIEWMM2
     void
     modify_source_editor_style (Glib::RefPtr<gtksourceview::SourceStyleScheme> a_style_scheme)
     {
@@ -1030,7 +1023,6 @@ struct DBGPerspective::Priv {
             }
         }
     }
-#endif // WITH_SOURCEVIEWMM2
 
     void
     modify_source_editor_fonts (const UString &a_font_name)
@@ -1056,13 +1048,11 @@ struct DBGPerspective::Priv {
 #endif // WITH_MEMORYVIEW
     }
 
-#ifdef WITH_SOURCEVIEWMM2
     Glib::RefPtr<gtksourceview::SourceStyleScheme>
     get_editor_style ()
     {
         return editor_style;
     }
-#endif // WITH_SOURCEVIEWMM2
 
     Glib::ustring
     get_source_font_name ()
@@ -2257,12 +2247,8 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
              it != m_priv->pagenum_2_source_editor_map.end ();
              ++it) {
             if (it->second && it->second->source_view ().get_buffer ()) {
-#ifdef WITH_SOURCEVIEWMM2
                 it->second->source_view ().get_source_buffer
                                                 ()->set_highlight_syntax
-#else
-                it->second->source_view ().get_source_buffer ()->set_highlight
-#endif  // WITH_SOURCEVIEWMM2
                                                 (boost::get<bool> (a_value));
             }
         }
@@ -2292,7 +2278,6 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         if (m_priv->debugger_engine_alive) {
             debugger ()->set_tty_path (get_terminal_name ());
         }
-#ifdef WITH_SOURCEVIEWMM2
     } else if (a_key == CONF_KEY_EDITOR_STYLE_SCHEME) {
         UString style_id = boost::get<UString> (a_value);
         if (!style_id.empty ()) {
@@ -2301,9 +2286,7 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
                 ()->get_scheme (style_id);
             m_priv->modify_source_editor_style (m_priv->editor_style);
         }
-    }
-#endif // WITH_SOURCEVIEWMM2
-    else if (a_key == CONF_KEY_DEFAULT_NUM_ASM_INSTRS) {
+    } else if (a_key == CONF_KEY_DEFAULT_NUM_ASM_INSTRS) {
         // m_priv->num_instr_to_disassemble must never be NULL!
         int val = boost::get<int> (a_value);
         if (val != 0)
@@ -4845,7 +4828,6 @@ DBGPerspective::read_default_config ()
                             m_priv->asm_style_pure);
     NEMIVER_CATCH_NOX
 
-#ifdef WITH_SOURCEVIEWMM2
     UString style_id ("classic");
 
     NEMIVER_TRY
@@ -4854,7 +4836,6 @@ DBGPerspective::read_default_config ()
 
     m_priv->editor_style = gtksourceview::SourceStyleSchemeManager::get_default
         ()->get_scheme (style_id);
-#endif // WITH_SOURCEVIEWMM2
 
     default_config_read_signal ().emit ();
 }
@@ -5349,17 +5330,10 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
         Gtk::TextIter cur_line_iter =
                 a_source_buf->get_iter_at_line (current_line);
         if (cur_line_iter) {
-#ifdef WITH_SOURCEVIEWMM2
             Glib::RefPtr<SourceMark> where_marker =
                 a_source_buf->create_source_mark (WHERE_MARK,
                                                   WHERE_CATEGORY,
                                                   cur_line_iter);
-#else
-            Glib::RefPtr<SourceMarker> where_marker =
-                source_buffer->create_marker (WHERE_MARK,
-                                              WHERE_CATEGORY,
-                                              cur_line_iter);
-#endif // WITH_SOURCEVIEWMM2
             THROW_IF_FAIL (where_marker);
         }
     }
@@ -5378,12 +5352,10 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
         Pango::FontDescription font_desc (m_priv->get_source_font_name ());
         source_editor->source_view ().modify_font (font_desc);
     }
-#ifdef WITH_SOURCEVIEWMM2
     if (m_priv->get_editor_style ()) {
         source_editor->source_view ().get_source_buffer ()->set_style_scheme
             (m_priv->get_editor_style ());
     }
-#endif // WITH_SOURCEVIEWMM2
     source_editor->set_path (a_path);
     source_editor->marker_region_got_clicked_signal ().connect
     (sigc::bind
