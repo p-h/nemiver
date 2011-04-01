@@ -1073,7 +1073,7 @@ public:
 
     virtual void disconnect_from_remote_target (const UString &a_cookie = "") = 0;
 
-    virtual bool is_attached_to_target () const =0;
+    virtual bool is_attached_to_target () const = 0;
 
     virtual void set_tty_path (const UString &a_tty_path) = 0;
 

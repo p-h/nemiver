@@ -6115,7 +6115,7 @@ DBGPerspective::restart_local_inferior ()
         debugger ()->run ();
         m_priv->debugger_has_just_run = true;
         attached_to_target_signal ().emit (true);
-    } else {            
+    } else {
         vector<IDebugger::Breakpoint> bps;
         execute_program (m_priv->prog_path, m_priv->prog_args,
                          m_priv->env_variables, m_priv->prog_cwd,
