@@ -4314,21 +4314,11 @@ GDBEngine::list_frames_arguments (int a_low_frame,
 
     if (a_low_frame < 0 || a_high_frame < 0) {
         cmd_str = "-stack-list-arguments 1";
-        queue_command (Command ("list-frames-arguments",
-                                "-stack-list-arguments 1",
-                                a_cookie));
     } else {
         cmd_str = UString ("-stack-list-arguments 1 ")
             + UString::from_int (a_low_frame)
             + " "
             + UString::from_int (a_high_frame);
-
-        queue_command (Command ("list-frames-arguments",
-                                "-stack-list-arguments 1 "
-                                    + UString::from_int (a_low_frame)
-                                    + " "
-                                    + UString::from_int (a_high_frame),
-                                    a_cookie));
     }
     Command command ("list-frames-arguments", cmd_str, a_cookie);
     command.set_slot (a_slot);
