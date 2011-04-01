@@ -65,17 +65,17 @@ $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvarobjwalker_SOURCES=$(h)/test-varobj-walker.cc
-runtestvarobjwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestvarobjwalker_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvariableformat_SOURCES=$(h)/test-variable-format.cc
-runtestvariableformat_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestvariableformat_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 #runtestoverloads_SOURCES=$(h)/test-overloads.cc
-#runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+#runtestoverloads_LDADD=@NEMIVERCOMMON_LIBS@ \
 #$(top_builddir)/src/common/libnemivercommon.la
 
 runtestcore_SOURCES=$(h)/test-core.cc
@@ -103,12 +103,12 @@ $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvarlist_SOURCES=$(h)/test-var-list.cc
-runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@  \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvarwalker_SOURCES=$(h)/test-var-walker.cc
-runtestvarwalker_LDADD=@NEMIVERCOMMON_LIBS@ @BOOST_TEST_EXEC_MONITOR_LIB@ \
+runtestvarwalker_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
@@ -151,7 +151,6 @@ $(top_builddir)/src/common/libnemivercommon.la
 
 runtesttypes_SOURCES=$(h)/test-types.cc
 runtesttypes_LDADD=@NEMIVERCOMMON_LIBS@ \
-@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
