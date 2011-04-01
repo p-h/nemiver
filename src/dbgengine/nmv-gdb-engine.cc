@@ -4641,7 +4641,6 @@ GDBEngine::extract_global_variable_list (Output &a_output,
     InitDeclaratorPtr init_decl;
     ParserPtr parser;
     bool found = false;
-    unsigned cur = 0;
     list<Output::OutOfBandRecord>::const_iterator oobr_it =
                                     a_output.out_of_band_records ().begin ();
 fetch_file:
@@ -4659,7 +4658,6 @@ fetch_file:
     }
     if (!found)
         goto out;
-    cur = 5;
     file_name = str.substr (5);
     file_name.chomp ();
     file_name.erase (file_name.length ()-1, 1);

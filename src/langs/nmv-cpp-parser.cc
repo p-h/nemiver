@@ -1268,7 +1268,7 @@ out:
 bool
 Parser::parse_qualified_id (QualifiedIDExprPtr &a_expr)
 {
-    bool result=false, has_template=false;
+    bool result=false;
     UnqualifiedIDExprPtr id;
     Token token;
     QNamePtr scope;
@@ -1286,7 +1286,6 @@ Parser::parse_qualified_id (QualifiedIDExprPtr &a_expr)
             && token.get_kind () == Token::KEYWORD
             && token.get_str_value () == "template") {
             LEXER.consume_next_token ();
-            has_template=true;
         }
         if (!parse_unqualified_id (id)) {goto error;}
         expr.reset (new QualifiedIDExpr (scope, id));

@@ -153,7 +153,6 @@ parse_connection_string (const common::UString &a_str,
         goto parse_schemaname;
     }
     if (common::parsing_utils::is_host_name_char (a_str[i])) {
-        bool parsed_host (false);
         host += a_str[i];
         ++i;
         CHECK_INDEX (i);
@@ -162,13 +161,11 @@ parse_connection_string (const common::UString &a_str,
             if (a_str[i] == ':') {
                 ++i;
                 CHECK_INDEX (i);
-                parsed_host = true;
                 goto parse_port;
             };
             if (a_str[i] == '/') {
                 ++i;
                 CHECK_INDEX (i);
-                parsed_host= true;
                 goto parse_schemaname;
             }
             if (common::parsing_utils::is_host_name_char (a_str[i])) {

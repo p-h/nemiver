@@ -668,10 +668,6 @@ struct SourceEditor::Priv {
     void
     update_line_col_label ()
     {
-        int line_count = 0;
-        if (source_view && source_view->get_buffer ()) {
-            line_count = source_view->get_buffer ()->get_line_count ();
-        }
         UString message;
         message.printf (_("Line: %i, Column: %i"),
                         non_asm_ctxt.current_line,

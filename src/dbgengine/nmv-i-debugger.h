@@ -371,43 +371,52 @@ public:
         // If empty, it can be set by calling
         // IDebugger::query_variable_path_expr()
         UString m_path_expression;
+        bool m_in_scope;
 
     public:
         Variable (const UString &a_internal_name,
                   const UString &a_name,
                   const UString &a_value,
-                  const UString &a_type) :
-            m_internal_name (a_internal_name),
+                  const UString &a_type,
+                  bool a_in_scope = true)
+            : m_internal_name (a_internal_name),
             m_name (a_name),
             m_value (a_value),
             m_type (a_type),
             m_parent (0),
-            m_num_expected_children (0)
+            m_num_expected_children (0),
+            m_in_scope (a_in_scope)
 
         {
         }
 
         Variable (const UString &a_name,
                   const UString &a_value,
-                  const UString &a_type) :
-            m_name (a_name),
+                  const UString &a_type,
+                  bool a_in_scope = true)
+            : m_name (a_name),
             m_value (a_value),
             m_type (a_type),
             m_parent (0),
-            m_num_expected_children (0)
+            m_num_expected_children (0),
+            m_in_scope (a_in_scope)
 
         {
         }
 
-        Variable (const UString &a_name) :
-            m_name (a_name),
+        Variable (const UString &a_name)
+            : m_name (a_name),
             m_parent (0),
-            m_num_expected_children (0)
+            m_num_expected_children (0),
+            m_in_scope (true)
+                
         {}
 
-        Variable () :
-            m_parent (0),
-            m_num_expected_children (0)
+        Variable ()
+            : m_parent (0),
+            m_num_expected_children (0),
+            m_in_scope (true)
+                
         {}
 
         const VariableList& members () const {return m_members;}
@@ -751,6 +760,10 @@ public:
         {
             m_path_expression = a_expr;
         }
+
+        bool in_scope () const {return m_in_scope;}
+        void in_scope (bool a) {m_in_scope = a;}
+
     };//end class Variable
 
     enum State {

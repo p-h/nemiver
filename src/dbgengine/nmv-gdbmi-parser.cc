@@ -2350,7 +2350,7 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
 
     GDBMIResultSafePtr gdbmi_result;
     std::list<int> thread_ids;
-    unsigned int num_threads = 0, current_thread_id = 0;
+    unsigned int num_threads = 0;
 
     // We loop, parsing GDB/MI RESULT constructs and ',' until we reach '\n'
     while (true) {
@@ -2411,8 +2411,9 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
             // If we've got a RESULT which variable is "current-thread-id",
             // expect the result to be a string which is the id of the current
             // thread.
-            current_thread_id =
+            unsigned current_thread_id =
                 atoi (gdbmi_result->value ()->get_string_content ().c_str ());
+            thread_ids.push_back (current_thread_id);
         } else {
             // Let's consume the unknown RESULT which we might have gotten for
             // now.
@@ -3553,7 +3554,7 @@ GDBMIParser::parse_var_changed_list (UString::size_type a_from,
         list<GDBMIResultSafePtr> comps =
                 (*value_it)->get_tuple_content ()->content ();
         UString n, v, internal_name, value;
-        bool in_scope = false, type_changed = false;
+        bool in_scope = true;
         IDebugger::VariableSafePtr var;
         // Walk the list of components of the child variable and really
         // build the damn variable
@@ -3573,7 +3574,7 @@ GDBMIParser::parse_var_changed_list (UString::size_type a_from,
             } else if (n == "in_scope") {
                 in_scope = (v == "true");
             } else if (n == "type_changed") {
-                type_changed = (v == "true");
+                // type_changed = (v == "true");
             }
         }
         if (!internal_name.empty ()) {
@@ -3581,7 +3582,8 @@ GDBMIParser::parse_var_changed_list (UString::size_type a_from,
                     (new IDebugger::Variable (internal_name,
                                               "" /* name */,
                                               value,
-                                              "" /* type */));
+                                              "" /* type */,
+                                              in_scope));
             a_vars.push_back (var);
         }
     }
