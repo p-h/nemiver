@@ -246,13 +246,15 @@ public:
 
     bool load_program (const UString &a_prog,
                        const vector<UString> &a_args,
-                       const UString &a_working_dir);
+                       const UString &a_working_dir,
+		       bool a_force);
 
     bool load_program (const UString &a_prog,
                        const vector<UString> &a_argv,
                        const UString &working_dir,
                        const vector<UString> &a_source_search_dirs,
-                       const UString &a_tty_path);
+                       const UString &a_tty_path,
+		       bool a_force);
 
     void load_core_file (const UString &a_prog_file,
                          const UString &a_core_path);

@@ -162,7 +162,8 @@ test_main (int, char**)
     source_search_dir.push_back (".");
 
     // load the program to debug.
-    debugger->load_program (PROG_TO_DEBUG, args, ".", source_search_dir);
+    debugger->load_program (PROG_TO_DEBUG, args, ".",
+                            source_search_dir, "", false);
 
     // set a breakpoint in the main function.
     debugger->set_breakpoint ("main");

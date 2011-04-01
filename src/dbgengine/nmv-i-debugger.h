@@ -1047,14 +1047,16 @@ public:
 
     virtual bool load_program (const UString &a_prog,
                                const vector<UString> &a_args,
-                               const UString &a_working_dir) = 0;
+                               const UString &a_working_dir,
+                               bool a_force = false) = 0;
 
     virtual bool load_program
                 (const UString &a_prog,
                  const vector<UString> &a_argv,
                  const UString &working_dir,
                  const vector<UString> &a_source_search_dirs,
-                 const UString &a_tty_path="") = 0;
+                 const UString &a_tty_path,
+                 bool a_force = false) = 0;
 
     virtual void load_core_file (const UString &a_prog_file,
                                  const UString &a_core_file) = 0;

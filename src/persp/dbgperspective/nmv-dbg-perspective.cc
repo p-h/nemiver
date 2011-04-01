@@ -555,7 +555,7 @@ public:
                           const map<UString, UString> &a_env,
                           const UString &a_cwd,
                           const vector<IDebugger::Breakpoint> &a_breaks,
-                          bool a_check_is_new_program = true,
+                          bool a_restarting = true,
                           bool a_close_opened_files = false);
 
     void attach_to_program ();
@@ -6150,7 +6150,7 @@ DBGPerspective::execute_program (const UString &a_prog,
 /// \param a_breaks the breakpoints to set prior to running the inferior.
 /// \param a_close_opened_files if true, close the files that have been
 ///        opened in the debugging perspective.
-/// \param a_check_is_new_program if true, be kind if the program to run
+/// \param a_restarting if true, be kind if the program to run
 ///        has be run previously. Be kind means things like do not re do
 ///        things that have been done already, e.g. re set breakpoints etc.
 ///        Otherwise, just ignore the fact that the program might have been
@@ -6162,7 +6162,7 @@ DBGPerspective::execute_program
                          const map<UString, UString> &a_env,
                          const UString &a_cwd,
                          const vector<IDebugger::Breakpoint> &a_breaks,
-                         bool a_check_is_new_program,
+                         bool a_restarting,
                          bool a_close_opened_files)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
@@ -6221,7 +6221,7 @@ DBGPerspective::execute_program
     // that we are not debugging a new program.
     // In that case, we might want to keep things like breakpoints etc,
     // around.
-    bool is_new_program = (a_check_is_new_program)
+    bool is_new_program = a_restarting
         ? (prog != m_priv->prog_path)
         : true;
     LOG_DD ("is new prog: " << is_new_program);
@@ -6253,7 +6253,10 @@ DBGPerspective::execute_program
 
     if (dbg_engine->load_program (prog, a_args, a_cwd,
                                   source_search_dirs,
-                                  get_terminal_name ()) == false) {
+                                  get_terminal_name (),
+                                  a_restarting
+                                  ? true
+                                  : false) == false) {
         UString message;
         message.printf (_("Could not load program: %s"),
                         prog.c_str ());

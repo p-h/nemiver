@@ -2739,14 +2739,15 @@ GDBEngine::~GDBEngine ()
 bool
 GDBEngine::load_program (const UString &a_prog,
                          const vector<UString> &a_args,
-                         const UString &a_working_dir)
+                         const UString &a_working_dir,
+                         bool a_force)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     vector<UString> search_paths;
     UString tty_path;
     return load_program (a_prog, a_args, a_working_dir,
-                         search_paths, tty_path);
+                         search_paths, tty_path, a_force);
 }
 
 bool
@@ -2754,7 +2755,8 @@ GDBEngine::load_program (const UString &a_prog,
                          const vector<UString> &a_argv,
                          const UString &working_dir,
                          const vector<UString> &a_source_search_dirs,
-                         const UString &a_tty_path)
+                         const UString &a_tty_path,
+                         bool a_force)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -2773,7 +2775,8 @@ GDBEngine::load_program (const UString &a_prog,
 
         // In case we are restarting GDB after a crash, the command
         // queue might be stuck.  Let's restart it.
-        m_priv->reset_command_queue ();
+        if (a_force)
+            m_priv->reset_command_queue ();
 
         queue_command (Command ("set breakpoint pending on"));
 
