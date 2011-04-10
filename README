@@ -1,11 +1,13 @@
 About
 =====
+
 Nemiver is a project to write a standalone graphical debugger that integrates
 well in the GNOME desktop environment.
 It currently features a backend which uses the well known GNU Debugger gdb.
 
 General
 =======
+
 - In addition to the toolbar buttons, you can toggle breakpoints simply by
   clicking in the margin on the line you want to break on.
 - Hovering over a variable name for longer than 1 second should show its value
@@ -16,6 +18,7 @@ General
 
 Sessions
 ========
+
 Nemiver uses a sqlite database to store basic information about a debugging
 session so you can resume where you left off last time.  Whenever you start
 debugging, a new session is created for you automatically (unless you explicitly
@@ -31,6 +34,7 @@ To resume the last saved debugging session you can just type "nemiver --last".
 
 Source Directories
 ==================
+
 Some versions of the GDB debugger don't provide full pathname information for
 breakpoints, etc.  In this case, you may need to specify which directories to
 search for source files.  These can be specified by manually adding source
@@ -40,6 +44,7 @@ determine the absolute path of a file on its own.
 
 Extending Nemiver
 =================
+
 Nemiver is a bit more than just a simple GUI debugger.  It is actually a
 platform which can be extended with plugins and dynamically loaded modules.
 The libnemivercommon library provides the basic functionality for loading
@@ -54,11 +59,21 @@ other projects seeking to implement a debugger as a part of an IDE, for example.
 
 Automated Tests
 ===============
+
 Nemiver includes several automated unit tests which can be run with `make
 check`.  Because nemiver uses dynamically-loaded modules, however, these tests
 must be run after installing nemiver, otherwise they will not work.
 
 Reporting Bugs
 ==============
+
 If you've found a bug with Nemiver, we'd like to know about it.  Bugs are
 tracked in the GNOME Bugzilla bug tracker: http://bugzilla.gnome.org/
+
+Contact
+=======
+
+If you have any question related to nemiver, you can send an email to
+nemiver-list@gnome.org.  If you have patches you would like to see
+included in the code base, you can send them to that same email
+address as well.
