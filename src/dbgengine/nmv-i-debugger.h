@@ -860,7 +860,12 @@ public:
     virtual sigc::signal<void,
                          const map<int, IDebugger::Breakpoint>&,
                          const UString& /*cookie*/>&
-                                         breakpoints_set_signal () const=0;
+                                         breakpoints_list_signal () const=0;
+
+    virtual sigc::signal<void,
+                        const std::pair<int, const IDebugger::Breakpoint&>&,
+                        const UString& /*cookie*/>&
+                        breakpoint_set_signal () const = 0;
 
     virtual sigc::signal<void,
                          const vector<OverloadsChoiceEntry>&,
