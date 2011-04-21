@@ -132,7 +132,8 @@ public:
                 "/BreakpointsPopup");
     }
 
-    void build_tree_view ()
+    void
+    build_tree_view ()
     {
         if (tree_view) {return;}
         //create a default tree store and a tree view
@@ -156,8 +157,9 @@ public:
         tree_view->append_column (_("Hits"), get_bp_cols ().hits);
         tree_view->append_column (_("Expression"),
                                   get_bp_cols ().expression);
-        nb_columns = tree_view->append_column_editable (_("Ignore count"),
-							get_bp_cols ().ignore_count);
+        nb_columns =
+            tree_view->append_column_editable (_("Ignore count"),
+                                               get_bp_cols ().ignore_count);
 	
 	for (int i = 0; i < nb_columns; ++i) {
             Gtk::TreeViewColumn *col = tree_view->get_column (i);
@@ -210,13 +212,16 @@ public:
 	  (sigc::mem_fun
 	   (*this, &Priv::on_treeview_selection_changed));
 
-        tree_view->signal_key_press_event ().connect (sigc::mem_fun
-                                                      (*this, &Priv::on_key_press_event));
-        tree_view->signal_expose_event ().connect_notify (sigc::mem_fun
-                                                          (*this, &Priv::on_expose_event));
+        tree_view->signal_key_press_event ().connect
+            (sigc::mem_fun
+             (*this, &Priv::on_key_press_event));
+        tree_view->signal_expose_event ().connect_notify
+            (sigc::mem_fun
+             (*this, &Priv::on_expose_event));
     }
 
-    bool should_process_now ()
+    bool 
+    should_process_now ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (tree_view);
@@ -225,8 +230,8 @@ public:
         return is_visible;
     }
 
-    void set_breakpoints
-        (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
+    void
+    set_breakpoints (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
     {
         if (a_breakpoints.empty ()) {
             return;
@@ -249,16 +254,19 @@ public:
                             << breakmap_iter->second.number ());
                     update_breakpoint (tree_iter, breakmap_iter->second);
                 } else {
-                    LOG_DD ("Adding breakpoint "
-                            << breakmap_iter->second.number ());
-                    append_breakpoint (breakmap_iter->second);
+                    // We shouldn't reach this place, as we should
+                    // have been notified about any new breakpoint by
+                    // mean of IDebugger::breakpoint_set_signal, and
+                    // on_debugger_breakpoint_set_signal should have
+                    // added the breakpoint to the model.                    
+                    THROW ("Should not be reached");
                 }
             }
         }
     }
 
-    void add_breakpoints
-                (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
+    void
+    add_breakpoints (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
     {
         THROW_IF_FAIL (list_store);
 
@@ -270,7 +278,8 @@ public:
         }
     }
 
-    bool breakpoint_list_has_id
+    bool
+    breakpoint_list_has_id
         (const std::map<int, IDebugger::Breakpoint> &a_breakpoints,
          int a_id)
     {
@@ -284,8 +293,8 @@ public:
         return false;
     }
 
-    Gtk::TreeModel::iterator find_breakpoint_in_model
-                                (const IDebugger::Breakpoint &a_breakpoint)
+    Gtk::TreeModel::iterator
+    find_breakpoint_in_model (const IDebugger::Breakpoint &a_breakpoint)
     {
         THROW_IF_FAIL (list_store);
 
@@ -301,8 +310,9 @@ public:
         return Gtk::TreeModel::iterator();
     }
 
-    void update_breakpoint (Gtk::TreeModel::iterator& a_iter,
-                            const IDebugger::Breakpoint &a_breakpoint)
+    void
+    update_breakpoint (Gtk::TreeModel::iterator& a_iter,
+                       const IDebugger::Breakpoint &a_breakpoint)
     {
         (*a_iter)[get_bp_cols ().breakpoint] = a_breakpoint;
         (*a_iter)[get_bp_cols ().enabled] = a_breakpoint.enabled ();
@@ -339,8 +349,8 @@ public:
         (*a_iter)[get_bp_cols ().hits] = a_breakpoint.nb_times_hit ();
     }
 
-    Gtk::TreeModel::iterator append_breakpoint
-                                    (const IDebugger::Breakpoint &a_breakpoint)
+    Gtk::TreeModel::iterator 
+    append_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
     {
         Gtk::TreeModel::iterator tree_iter = list_store->append ();
         update_breakpoint (tree_iter, a_breakpoint);
@@ -348,13 +358,15 @@ public:
         return tree_iter;
     }
 
-    void finish_handling_debugger_stopped_event ()
+    void
+    finish_handling_debugger_stopped_event ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         debugger->list_breakpoints ();
     }
 
-    Gtk::Widget* load_menu (UString a_filename, UString a_widget_name)
+    Gtk::Widget*
+    load_menu (UString a_filename, UString a_widget_name)
     {
         NEMIVER_TRY
         string relative_path = Glib::build_filename ("menus", a_filename);
@@ -368,13 +380,15 @@ public:
         return workbench.get_ui_manager ()->get_widget (a_widget_name);
     }
 
-    Gtk::Widget* get_breakpoints_menu ()
+    Gtk::Widget*
+    get_breakpoints_menu ()
     {
         THROW_IF_FAIL (breakpoints_menu);
         return breakpoints_menu;
     }
 
-    void popup_breakpoints_view_menu (GdkEventButton *a_event)
+    void
+    popup_breakpoints_view_menu (GdkEventButton *a_event)
     {
         THROW_IF_FAIL (a_event);
         THROW_IF_FAIL (tree_view);
@@ -383,7 +397,8 @@ public:
         menu->popup (a_event->button, a_event->time);
     }
 
-    void init_actions()
+    void
+    init_actions()
     {
         static ui_utils::ActionEntry s_breakpoints_action_entries [] = {
             {
@@ -431,7 +446,8 @@ public:
         debugger->list_breakpoints ();
     }
 
-    void erase_breakpoint (int a_bp_num)
+    void
+    erase_breakpoint (int a_bp_num)
     {
 
         LOG_DD ("asked to erase bp num:" << (int) a_bp_num);
@@ -461,12 +477,13 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_debugger_stopped_signal (IDebugger::StopReason a_reason,
-                                     bool /*a_has_frame*/,
-                                     const IDebugger::Frame &/*a_frame*/,
-                                     int /*a_thread_id*/,
-                                     int a_bkpt_num,
-                                     const UString &/*a_cookie*/)
+    void
+    on_debugger_stopped_signal (IDebugger::StopReason a_reason,
+                                bool /*a_has_frame*/,
+                                const IDebugger::Frame &/*a_frame*/,
+                                int /*a_thread_id*/,
+                                int a_bkpt_num,
+                                const UString &/*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -491,9 +508,10 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_debugger_breakpoint_deleted_signal
-            (const IDebugger::Breakpoint &a_break, int a_break_number,
-             const UString &a_cookie)
+    void
+    on_debugger_breakpoint_deleted_signal (const IDebugger::Breakpoint &a_break,
+                                           int a_break_number,
+                                           const UString &a_cookie)
     {
         if (a_break.number () || a_cookie.empty()) {}
         NEMIVER_TRY
@@ -562,7 +580,8 @@ public:
         return handled;
     }
 
-    void on_treeview_selection_changed ()
+    void
+    on_treeview_selection_changed ()
     {
         NEMIVER_TRY
         THROW_IF_FAIL(tree_view)
@@ -584,7 +603,8 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_breakpoint_go_to_source_action ()
+    void
+    on_breakpoint_go_to_source_action ()
     {
         THROW_IF_FAIL(tree_view)
         Glib::RefPtr<Gtk::TreeSelection> selection =
@@ -599,7 +619,8 @@ public:
         }
     }
 
-    void on_breakpoint_delete_action ()
+    void
+    on_breakpoint_delete_action ()
     {
         THROW_IF_FAIL (tree_view)
         THROW_IF_FAIL (list_store);
@@ -618,7 +639,8 @@ public:
         }
     }
 
-    void on_expose_event (GdkEventExpose *)
+    void
+    on_expose_event (GdkEventExpose *)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY
@@ -629,7 +651,8 @@ public:
         NEMIVER_CATCH
     }
 
-    bool on_key_press_event (GdkEventKey* event)
+    bool 
+    on_key_press_event (GdkEventKey* event)
     {
         if (event && event->keyval == GDK_KEY_Delete)
         {
@@ -638,7 +661,8 @@ public:
         return false;
     }
 
-    void on_breakpoint_enable_toggled (const Glib::ustring& path)
+    void
+    on_breakpoint_enable_toggled (const Glib::ustring& path)
     {
         NEMIVER_TRY
 
@@ -658,7 +682,8 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_countpoint_toggled (const Glib::ustring& path)
+    void
+    on_countpoint_toggled (const Glib::ustring& path)
     {
         NEMIVER_TRY;
 
@@ -678,8 +703,9 @@ public:
         NEMIVER_CATCH;
     }
 
-    void on_breakpoint_ignore_count_edited (const Glib::ustring &a_path,
-                                            const Glib::ustring &a_text)
+    void 
+    on_breakpoint_ignore_count_edited (const Glib::ustring &a_path,
+                                       const Glib::ustring &a_text)
     {
         NEMIVER_TRY
 
@@ -706,8 +732,9 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_breakpoint_condition_edited (const Glib::ustring &a_path,
-                                         const Glib::ustring &a_text)
+    void
+    on_breakpoint_condition_edited (const Glib::ustring &a_path,
+                                    const Glib::ustring &a_text)
     {
         NEMIVER_TRY
 

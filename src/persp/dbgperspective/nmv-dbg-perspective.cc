@@ -2412,12 +2412,14 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
     LOG_DD ("a_command: " << a_command);
     LOG_DD ("a_cookie: " << a_cookie);
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
+
     if (a_command == "attach-to-program") {
         debugger ()->step_over_asm ();
         debugger ()->get_target_info ();
     }
-    NEMIVER_CATCH
+
+    NEMIVER_CATCH;
 }
 
 void
@@ -2426,7 +2428,6 @@ DBGPerspective::on_debugger_breakpoints_set_signal
                              const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    if (a_cookie.empty ()) {}
 
     NEMIVER_TRY
     // if a breakpoint was stored in the session db as disabled,
