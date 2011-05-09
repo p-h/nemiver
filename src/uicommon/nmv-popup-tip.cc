@@ -54,7 +54,7 @@ public:
         window.hide ();
         // Un-comment this to get tooltip specific colors for the window
         // window.set_name ("gtk-tooltips");
-        window.set_resizable (true);
+        window.set_resizable (false);
         window.set_app_paintable (true);
         window.set_border_width (4);
         notebook = Gtk::manage (new Gtk::Notebook);
