@@ -31,10 +31,6 @@
 #include "nmv-sess-mgr.h"
 #include <sigc++/trackable.h>
 
-namespace gtksourceview {
-    class SourceBuffer;
-}
-
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class SourceEditor;
