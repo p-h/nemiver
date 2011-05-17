@@ -72,8 +72,6 @@ public:
             (sigc::mem_fun (*this, &Priv::on_leave_notify_event));
         window.signal_focus_out_event ().connect
             (sigc::mem_fun (*this, &Priv::on_signal_focus_out_event));
-
-        window.ensure_style ();
     }
 
     bool

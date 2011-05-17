@@ -215,9 +215,9 @@ public:
         tree_view->signal_key_press_event ().connect
             (sigc::mem_fun
              (*this, &Priv::on_key_press_event));
-        tree_view->signal_expose_event ().connect_notify
+        tree_view->signal_draw ().connect_notify
             (sigc::mem_fun
-             (*this, &Priv::on_expose_event));
+             (*this, &Priv::on_draw_signal));
     }
 
     bool 
@@ -657,7 +657,7 @@ public:
     }
 
     void
-    on_expose_event (GdkEventExpose *)
+    on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY

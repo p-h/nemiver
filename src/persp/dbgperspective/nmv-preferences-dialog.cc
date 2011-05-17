@@ -31,7 +31,7 @@
 #include "nmv-i-conf-mgr.h"
 #include "nmv-i-workbench.h"
 #include "nmv-conf-keys.h"
-#include <gtksourceviewmm/sourcestyleschememanager.h>
+#include <gtksourceviewmm/styleschememanager.h>
 
 using nemiver::common::DynamicModuleManager;
 static const std::string DEFAULT_GDB_BINARY = "default-gdb-binary";
@@ -323,14 +323,14 @@ public:
         THROW_IF_FAIL (editor_style_combo);
         m_editor_style_model = Gtk::ListStore::create (m_style_columns);
 
-        Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> mgr =
-            gtksourceview::SourceStyleSchemeManager::get_default ();
-        std::list<Glib::ustring> schemes = mgr->get_scheme_ids ();
-        for (std::list<Glib::ustring>::const_iterator it = schemes.begin ();
+        Glib::RefPtr<Gsv::StyleSchemeManager> mgr =
+            Gsv::StyleSchemeManager::get_default ();
+        std::vector<std::string> schemes = mgr->get_scheme_ids ();
+        for (std::vector<std::string>::const_iterator it = schemes.begin ();
              it != schemes.end(); ++it) {
             Gtk::TreeModel::iterator treeiter = m_editor_style_model->append ();
             (*treeiter)[m_style_columns.scheme_id] = *it;
-            Glib::RefPtr<gtksourceview::SourceStyleScheme> scheme =
+            Glib::RefPtr<Gsv::StyleScheme> scheme =
                 mgr->get_scheme (*it);
             (*treeiter)[m_style_columns.name] =
                 Glib::ustring::compose ("%1 - <span size=\"smaller\" "

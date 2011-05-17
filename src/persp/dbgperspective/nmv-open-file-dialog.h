@@ -48,7 +48,7 @@ public:
                     const UString &a_working_dir);
     virtual ~OpenFileDialog ();
 
-    void get_filenames (list<UString> &a_filenames) const;
+    void get_filenames (vector<string> &a_filenames) const;
 
 };//end class nemiver
 

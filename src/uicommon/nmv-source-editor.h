@@ -29,7 +29,7 @@
 #include <functional>
 #include <map>
 #include <gtkmm/box.h>
-#include <gtksourceviewmm/sourceview.h>
+#include <gtksourceviewmm/view.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-ustring.h"
 #include "common/nmv-address.h"
@@ -37,8 +37,8 @@
 #include "common/nmv-asm-instr.h"
 #include "common/nmv-loc.h"
 
-using gtksourceview::SourceView;
-using gtksourceview::SourceBuffer;
+using Gsv::View;
+using Gsv::Buffer;
 using Gtk::VBox;
 using nemiver::common::SafePtr;
 using nemiver::common::UString;
@@ -77,10 +77,10 @@ public:
 
 
     explicit SourceEditor (const UString &a_root_dir,
-                           Glib::RefPtr<SourceBuffer> &a_buf,
+                           Glib::RefPtr<Buffer> &a_buf,
                            bool a_composite = false);
     virtual ~SourceEditor ();
-    SourceView& source_view () const;
+    View& source_view () const;
     int current_line () const;
     void current_line (int a_line);
     int current_column () const;
@@ -117,16 +117,16 @@ public:
     static bool get_file_mime_type (const UString &a_path,
 				    UString &a_mime_type);
 
-    static bool setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
+    static bool setup_buffer_mime_and_lang (Glib::RefPtr<Buffer> &a_buf,
 					    const std::string &a_mime_type =
 					    "text/x-c++");
 
-    static Glib::RefPtr<SourceBuffer> create_source_buffer ();
+    static Glib::RefPtr<Buffer> create_source_buffer ();
 
     static bool load_file (const UString &a_path,
 			   const std::list<std::string> &a_supported_encodings,
 			   bool a_enable_syntaxt_highlight,
-			   Glib::RefPtr<SourceBuffer> &a_source_buffer);
+			   Glib::RefPtr<Buffer> &a_source_buffer);
 
     /// \name Assembly source buffer handling.
     /// @{
@@ -140,7 +140,7 @@ public:
     /// In an assembly view, a meaningful location is the address
     /// of a machine instruction. So there somehow must be a kind of mapping
     /// between the location used for the assembly buffer and the actual
-    /// line number, because the underlying SourceBuffer implementation
+    /// line number, because the underlying Buffer implementation
     /// relies on line numbers anyhow.
 
     BufferType get_buffer_type () const;
@@ -148,14 +148,14 @@ public:
     bool current_address (Address&) const;
 
     void register_assembly_source_buffer
-                        (Glib::RefPtr<SourceBuffer> &a_buf);
+                        (Glib::RefPtr<Buffer> &a_buf);
 
     void register_non_assembly_source_buffer
-                                    (Glib::RefPtr<SourceBuffer> &a_buf);
+                                    (Glib::RefPtr<Buffer> &a_buf);
 
-    Glib::RefPtr<SourceBuffer> get_assembly_source_buffer () const;
+    Glib::RefPtr<Buffer> get_assembly_source_buffer () const;
 
-    Glib::RefPtr<SourceBuffer> get_non_assembly_source_buffer () const;
+    Glib::RefPtr<Buffer> get_non_assembly_source_buffer () const;
 
     bool switch_to_assembly_source_buffer ();
 
@@ -182,7 +182,7 @@ public:
 			 const list<UString> &a_src_search_dirs,
 			 list<UString> &a_session_dirs,
 			 std::map<UString, bool> &a_ignore_paths,
-			 Glib::RefPtr<SourceBuffer> &a_buf);
+			 Glib::RefPtr<Buffer> &a_buf);
 
     static bool load_asm (const common::DisassembleInfo &/*a_info*/,
 			  const std::list<common::Asm> &a_asm,
@@ -190,7 +190,7 @@ public:
 			  const list<UString> &a_src_search_dirs,
 			  list<UString> &a_session_dirs,
 			  std::map<UString, bool> &a_ignore_paths,
-			  Glib::RefPtr<SourceBuffer> &a_buf);
+			  Glib::RefPtr<Buffer> &a_buf);
 
 
     /// @}

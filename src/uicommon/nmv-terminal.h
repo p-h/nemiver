@@ -59,7 +59,7 @@ public:
     Terminal ();
     ~Terminal ();
     Gtk::Widget& widget () const;
-    Gtk::Adjustment& adjustment () const;
+    Glib::RefPtr<Gtk::Adjustment> adjustment () const;
     UString slave_pts_name () const;
     void modify_font (const Pango::FontDescription &font_desc);
     void feed (const UString &a_text);

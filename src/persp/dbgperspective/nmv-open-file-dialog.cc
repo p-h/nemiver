@@ -107,13 +107,15 @@ public:
         if (radio_button_file_list->get_active ()) {
             LOG_DD("Target file list is active");
             // remove existing children of vbox_file_list
-            vbox_file_list->children ().clear();
+            vbox_file_list->foreach (sigc::mem_fun (vbox_file_list,
+                                                    &Gtk::VBox::remove));
             vbox_file_list->pack_start (file_list.widget ());
             file_list.widget ().show ();
         } else if (radio_button_chooser->get_active ()) {
             LOG_DD("file chooser is active");
             // remove existing children of vbox_file_list
-            vbox_file_list->children ().clear();
+            vbox_file_list->foreach (sigc::mem_fun (vbox_file_list,
+                                                    &Gtk::VBox::remove));
             vbox_file_list->pack_start (file_chooser);
             file_chooser.show ();
         }
@@ -143,13 +145,13 @@ public:
         on_radio_button_toggled ();
     }
 
-    bool validate_source_files(const list<UString> &files)
+    bool validate_source_files(const vector<string> &files)
     {
         if (files.empty()) {
             return false;
         }
 
-        for (list<UString>::const_iterator iter = files.begin ();
+        for (vector<string>::const_iterator iter = files.begin ();
              iter != files.end ();
              ++iter) {
             if (!validate_source_file (*iter)) {
@@ -187,7 +189,7 @@ public:
 
         THROW_IF_FAIL (okbutton);
 
-        list<UString> filenames;
+        vector<string> filenames;
         file_list.get_filenames (filenames);
         if (validate_source_files (filenames)){
             okbutton->set_sensitive (true);
@@ -212,7 +214,7 @@ public:
         NEMIVER_CATCH
     }
 
-    void get_filenames (list<UString> &a_files)
+    void get_filenames (vector<string> &a_files)
     {
         THROW_IF_FAIL(radio_button_file_list);
         THROW_IF_FAIL(radio_button_chooser);
@@ -239,7 +241,7 @@ OpenFileDialog::~OpenFileDialog ()
 }
 
 void
-OpenFileDialog::get_filenames (list<UString> &a_files) const
+OpenFileDialog::get_filenames (vector<string> &a_files) const
 {
     NEMIVER_TRY
 

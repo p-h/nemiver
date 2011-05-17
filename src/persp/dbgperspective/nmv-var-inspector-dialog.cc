@@ -48,7 +48,7 @@ get_cols ()
 
 class VarInspectorDialog::Priv {
     friend class VarInspectorDialog;
-    Gtk::ComboBoxEntry *var_name_entry;
+    Gtk::ComboBox *var_name_entry;
     Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
     SafePtr<VarInspector> var_inspector;
@@ -81,12 +81,12 @@ public:
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         var_name_entry =
-            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBoxEntry>
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
                 (gtkbuilder, "variablenameentry");
         m_variable_history =
             Gtk::ListStore::create (get_cols ());
         var_name_entry->set_model (m_variable_history);
-        var_name_entry->set_text_column (get_cols ().varname);
+        var_name_entry->set_entry_text_column (get_cols ().varname);
 
         inspect_button =
             ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,

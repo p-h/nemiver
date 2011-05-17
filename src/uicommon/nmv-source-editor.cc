@@ -28,10 +28,9 @@
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
-#include <gtksourceviewmm/sourcemark.h>
-#include <gtksourceviewmm/sourceiter.h>
-#include <gtksourceviewmm/sourcelanguagemanager.h>
-#include <gtksourceviewmm/sourcestyleschememanager.h>
+#include <gtksourceviewmm/mark.h>
+#include <gtksourceviewmm/markattributes.h>
+#include <gtksourceviewmm.h>
 #include <giomm/file.h>
 #include <giomm/contenttype.h>
 #include "common/nmv-exception.h"
@@ -43,11 +42,9 @@
 
 using namespace std;
 using namespace nemiver::common;
-using gtksourceview::SourceMark;
-using gtksourceview::SourceIter;
-using gtksourceview::SearchFlags;
-using gtksourceview::SourceLanguage;
-using gtksourceview::SourceLanguageManager;
+using Gsv::Mark;
+using Gsv::Language;
+using Gsv::LanguageManager;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -64,7 +61,7 @@ on_line_mark_activated_signal (GtkSourceView *a_view,
                                GdkEvent *a_event,
                                gpointer a_pointer);
 
-class SourceView : public gtksourceview::SourceView
+class SourceView : public Gsv::View
 {
 
     sigc::signal<void, int, bool> m_marker_region_got_clicked_signal;
@@ -74,8 +71,8 @@ class SourceView : public gtksourceview::SourceView
                                                gpointer a_pointer);
 
 public:
-    SourceView (Glib::RefPtr<SourceBuffer> &a_buf) :
-        gtksourceview::SourceView (a_buf)
+    SourceView (Glib::RefPtr<Buffer> &a_buf) :
+        Gsv::View (a_buf)
     {
         init_font ();
         enable_events ();
@@ -86,7 +83,7 @@ public:
     }
 
     SourceView () :
-        gtksourceview::SourceView ()
+        Gsv::View ()
     {
         init_font ();
     }
@@ -94,7 +91,7 @@ public:
     void init_font ()
     {
         Pango::FontDescription font("monospace");
-        modify_font(font);
+        override_font(font);
     }
 
     void enable_events ()
@@ -149,14 +146,14 @@ struct SourceEditor::Priv {
     UString path;
 
     struct NonAssemblyBufContext {
-        Glib::RefPtr<SourceBuffer> buffer;
-        std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > markers;
+        Glib::RefPtr<Buffer> buffer;
+        std::map<int, Glib::RefPtr<Gsv::Mark> > markers;
         int current_column;
         int current_line;
         sigc::signal<void, int, int> signal_insertion_moved;
         sigc::signal<void, int, bool> marker_region_got_clicked_signal;
 
-        NonAssemblyBufContext (Glib::RefPtr<SourceBuffer> a_buf,
+        NonAssemblyBufContext (Glib::RefPtr<Buffer> a_buf,
                                 int a_cur_col, int a_cur_line) :
             buffer (a_buf),
             current_column (a_cur_col),
@@ -178,8 +175,8 @@ struct SourceEditor::Priv {
     } non_asm_ctxt;
 
     struct AssemblyBufContext {
-        Glib::RefPtr<SourceBuffer> buffer;
-        std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > markers;
+        Glib::RefPtr<Buffer> buffer;
+        std::map<int, Glib::RefPtr<Gsv::Mark> > markers;
         int current_line;
         int current_column;
         Address current_address;
@@ -191,7 +188,7 @@ struct SourceEditor::Priv {
         }
 
         AssemblyBufContext
-                    (Glib::RefPtr<SourceBuffer> a_buf) :
+                    (Glib::RefPtr<Buffer> a_buf) :
             buffer (a_buf),
             current_line (-1),
             current_column (-1)
@@ -204,7 +201,7 @@ struct SourceEditor::Priv {
 
 
     void
-    register_assembly_source_buffer (Glib::RefPtr<SourceBuffer> &a_buf)
+    register_assembly_source_buffer (Glib::RefPtr<Buffer> &a_buf)
     {
         asm_ctxt.buffer = a_buf;
         source_view->set_source_buffer (a_buf);
@@ -212,7 +209,7 @@ struct SourceEditor::Priv {
     }
 
     void
-    register_non_assembly_source_buffer (Glib::RefPtr<SourceBuffer> &a_buf)
+    register_non_assembly_source_buffer (Glib::RefPtr<Buffer> &a_buf)
     {
         non_asm_ctxt.buffer = a_buf;
         source_view->set_source_buffer (a_buf);
@@ -253,7 +250,7 @@ struct SourceEditor::Priv {
     SourceEditor::BufferType
     get_buffer_type () const
     {
-        Glib::RefPtr<SourceBuffer> buf = source_view->get_source_buffer ();
+        Glib::RefPtr<Buffer> buf = source_view->get_source_buffer ();
         if (buf == non_asm_ctxt.buffer)
             return BUFFER_TYPE_SOURCE;
         else if (buf == asm_ctxt.buffer)
@@ -262,7 +259,7 @@ struct SourceEditor::Priv {
             return BUFFER_TYPE_UNDEFINED;
     }
 
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >*
+    std::map<int, Glib::RefPtr<Gsv::Mark> >*
     get_markers ()
     {
         SourceEditor::BufferType t = get_buffer_type ();
@@ -299,7 +296,7 @@ struct SourceEditor::Priv {
     /// Range::VALUE_SEARCH_RESULT_NONE when no address has been found
     /// in the buffer.
     common::Range::ValueSearchResult
-    get_smallest_range_containing_address (Glib::RefPtr<SourceBuffer> a_buf,
+    get_smallest_range_containing_address (Glib::RefPtr<Buffer> a_buf,
                                            const Address &an_addr,
                                            AddrLineRange &a_range) const
                                     
@@ -390,7 +387,7 @@ struct SourceEditor::Priv {
     /// the function returns true. Otherwise this parameter is not touched.
     /// \return true upon successful completion, false otherwise.
     bool
-    address_2_line (Glib::RefPtr<SourceBuffer> a_buf,
+    address_2_line (Glib::RefPtr<Buffer> a_buf,
 		    const Address an_addr,
                     bool a_approximate,
 		    int &a_line) const
@@ -417,7 +414,7 @@ struct SourceEditor::Priv {
     }
 
     bool
-    line_2_address (Glib::RefPtr<SourceBuffer> a_buf,
+    line_2_address (Glib::RefPtr<Buffer> a_buf,
                     int a_line,
                     Address &an_address) const
     {
@@ -545,7 +542,7 @@ struct SourceEditor::Priv {
     }
 
     void
-    init_common_buffer_signals (Glib::RefPtr<SourceBuffer> a_buf)
+    init_common_buffer_signals (Glib::RefPtr<Buffer> a_buf)
     {
         if (!a_buf)
             return;
@@ -560,7 +557,7 @@ struct SourceEditor::Priv {
     void
     init_assembly_buffer_signals ()
     {
-        Glib::RefPtr<SourceBuffer> buf = asm_ctxt.buffer;
+        Glib::RefPtr<Buffer> buf = asm_ctxt.buffer;
         if (!buf)
             return;
         init_common_buffer_signals (buf);        
@@ -574,7 +571,7 @@ struct SourceEditor::Priv {
 
     void init_non_assembly_buffer_signals ()
     {
-        Glib::RefPtr<SourceBuffer> buf = non_asm_ctxt.buffer;
+        Glib::RefPtr<Buffer> buf = non_asm_ctxt.buffer;
         init_common_buffer_signals (buf);
     }
 
@@ -652,10 +649,9 @@ struct SourceEditor::Priv {
             THROW ("could not get path to " + a_image);
         }
 
-        Glib::RefPtr<Gdk::Pixbuf> bm_pixbuf =
-                                Gdk::Pixbuf::create_from_file (path);
-        source_view->set_mark_category_pixbuf (a_name, bm_pixbuf);
-        source_view->set_mark_category_priority (a_name, 0);
+        Glib::RefPtr<Gsv::MarkAttributes> attributes = Gsv::MarkAttributes::create ();
+        attributes->set_icon (Gio::Icon::create (path));
+        source_view->set_mark_attributes (a_name, attributes, 0);
     }
 
     void
@@ -691,7 +687,7 @@ struct SourceEditor::Priv {
     }
 
     explicit Priv (const UString &a_root_dir,
-                   Glib::RefPtr<SourceBuffer> &a_buf,
+                   Glib::RefPtr<Buffer> &a_buf,
                    bool a_assembly) :
         root_dir (a_root_dir),
         source_view (Gtk::manage (new SourceView (a_buf))),
@@ -699,7 +695,7 @@ struct SourceEditor::Priv {
         status_box (Gtk::manage (new Gtk::HBox)),
         non_asm_ctxt (-1, -1)
     {
-        Glib::RefPtr<SourceBuffer> b;
+        Glib::RefPtr<Buffer> b;
         b = (a_buf) ? a_buf : source_view->get_source_buffer ();
         if (a_assembly) {
             asm_ctxt.buffer = b;
@@ -710,13 +706,13 @@ struct SourceEditor::Priv {
     }
 
     explicit Priv (const UString &a_root_dir,
-                   Glib::RefPtr<SourceBuffer> &a_buf) :
+                   Glib::RefPtr<Buffer> &a_buf) :
         root_dir (a_root_dir),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
         non_asm_ctxt (-1, -1)
     {
-        Glib::RefPtr<SourceBuffer> b;
+        Glib::RefPtr<Buffer> b;
         b = (a_buf) ? a_buf : source_view->get_source_buffer ();
         non_asm_ctxt.buffer = b;
         init ();
@@ -741,10 +737,10 @@ SourceEditor::init ()
     if (!m_priv->get_absolute_resource_path ("icons/line-pointer.png", path)) {
         THROW ("could not get path to line-pointer.png");
     }
-    Glib::RefPtr<Gdk::Pixbuf> lp_pixbuf = Gdk::Pixbuf::create_from_file (path);
-    source_view ().set_mark_category_pixbuf (WHERE_CATEGORY, lp_pixbuf);
+    Glib::RefPtr<Gsv::MarkAttributes> attributes = Gsv::MarkAttributes::create ();
+    attributes->set_icon (Gio::Icon::create (path));
     // show this on top
-    source_view ().set_mark_category_priority (WHERE_CATEGORY, 100);
+    source_view ().set_mark_attributes (WHERE_CATEGORY, attributes, 100);
     source_view ().set_show_line_marks (true);
 }
 
@@ -755,7 +751,7 @@ SourceEditor::SourceEditor ()
 }
 
 SourceEditor::SourceEditor (const UString &a_root_dir,
-                            Glib::RefPtr<SourceBuffer> &a_buf,
+                            Glib::RefPtr<Buffer> &a_buf,
                             bool a_assembly)
 {
     m_priv.reset (new Priv (a_root_dir, a_buf, a_assembly));
@@ -767,7 +763,7 @@ SourceEditor::~SourceEditor ()
     LOG_D ("deleted", "destructor-domain");
 }
 
-gtksourceview::SourceView&
+Gsv::View&
 SourceEditor::source_view () const
 {
     THROW_IF_FAIL (m_priv && m_priv->source_view);
@@ -913,13 +909,13 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line,
     }
 
     std::map<int,
-            Glib::RefPtr<gtksourceview::SourceMark> > *markers;
+            Glib::RefPtr<Gsv::Mark> > *markers;
     if ((markers = m_priv->get_markers ()) == 0)
         return false;
 
 
-    Glib::RefPtr<SourceBuffer> buf = source_view ().get_source_buffer ();
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator mark_iter;
+    Glib::RefPtr<Buffer> buf = source_view ().get_source_buffer ();
+    std::map<int, Glib::RefPtr<Gsv::Mark> >::iterator mark_iter;
     mark_iter = markers->find (a_line);
     if (mark_iter !=  markers->end ()) {
         if (!mark_iter->second->get_deleted ()) {
@@ -939,7 +935,7 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line,
     UString marker_name = UString::from_int (a_line);
 
     LOG_DD ("creating marker of type: " << marker_type);
-    Glib::RefPtr<gtksourceview::SourceMark> marker;
+    Glib::RefPtr<Gsv::Mark> marker;
     marker = buf->create_source_mark (marker_name, marker_type, iter);
     (*markers)[a_line] = marker;
     return true;
@@ -954,13 +950,13 @@ SourceEditor::set_visual_breakpoint_at_line (int a_line,
 bool
 SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 {
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > *markers;
+    std::map<int, Glib::RefPtr<Gsv::Mark> > *markers;
 
     if ((markers = m_priv->get_markers ()) == 0 || a_line < 1)
         return false;
 
     --a_line;
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter;
+    std::map<int, Glib::RefPtr<Gsv::Mark> >::iterator iter;
     iter = markers->find (a_line);
     if (iter == markers->end ()) {
         return false;
@@ -976,10 +972,10 @@ SourceEditor::remove_visual_breakpoint_from_line (int a_line)
 void
 SourceEditor::clear_decorations ()
 {
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > *markers;
+    std::map<int, Glib::RefPtr<Gsv::Mark> > *markers;
     if ((markers = m_priv->get_markers ()) == 0)
         return;
-    typedef std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator
+    typedef std::map<int, Glib::RefPtr<Gsv::Mark> >::iterator
       SourceMarkMapIter;
 
     SourceMarkMapIter it;
@@ -1012,8 +1008,8 @@ SourceEditor::clear_decorations ()
 bool
 SourceEditor::is_visual_breakpoint_set_at_line (int a_line) const
 {
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> > *markers;
-    std::map<int, Glib::RefPtr<gtksourceview::SourceMark> >::iterator iter;
+    std::map<int, Glib::RefPtr<Gsv::Mark> > *markers;
+    std::map<int, Glib::RefPtr<Gsv::Mark> >::iterator iter;
     if ((markers = m_priv->get_markers ()) == 0)
         return false;
     iter = markers->find (a_line);
@@ -1179,7 +1175,7 @@ SourceEditor::do_search (const UString &a_str,
                          bool a_search_backwards,
                          bool a_clear_selection)
 {
-    Glib::RefPtr<SourceBuffer> source_buffer = source_view ().get_source_buffer ();
+    Glib::RefPtr<Buffer> source_buffer = source_view ().get_source_buffer ();
     THROW_IF_FAIL (source_buffer);
 
     if (a_clear_selection) {
@@ -1187,7 +1183,7 @@ SourceEditor::do_search (const UString &a_str,
                                      source_buffer->end ());
     }
 
-    SourceIter search_iter, limit;
+    Gtk::TextIter search_iter, limit;
     if (source_view ().get_source_buffer ())
         search_iter =
             source_view ().get_source_buffer ()->get_insert ()->get_iter ();
@@ -1216,10 +1212,9 @@ SourceEditor::do_search (const UString &a_str,
     //*********************
     //build search flags
     //**********************
-    namespace gsv=gtksourceview;
-    gsv::SearchFlags search_flags = gsv::SEARCH_TEXT_ONLY;
+    Gtk::TextSearchFlags search_flags = Gtk::TEXT_SEARCH_TEXT_ONLY;
     if (!a_match_case) {
-        search_flags |= gsv::SEARCH_CASE_INSENSITIVE;
+        search_flags |= Gtk::TEXT_SEARCH_CASE_INSENSITIVE;
     }
 
     bool found=false;
@@ -1292,22 +1287,22 @@ SourceEditor::get_file_mime_type (const UString &a_path,
 /// mime type a_mime_type. If a_buf is null, a new one is created.
 /// Returns true upon successful completion, false otherwise.
 bool
-SourceEditor::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
+SourceEditor::setup_buffer_mime_and_lang (Glib::RefPtr<Buffer> &a_buf,
 					  const std::string &a_mime_type)
 {
     NEMIVER_TRY
 
-    Glib::RefPtr<SourceLanguageManager> lang_manager =
-        SourceLanguageManager::get_default ();
-    Glib::RefPtr<SourceLanguage> lang;
-    std::list<Glib::ustring> lang_ids = lang_manager->get_language_ids ();
-    for (std::list<Glib::ustring>::const_iterator it = lang_ids.begin ();
+    Glib::RefPtr<LanguageManager> lang_manager =
+        LanguageManager::get_default ();
+    Glib::RefPtr<Language> lang;
+    std::vector<std::string> lang_ids = lang_manager->get_language_ids ();
+    for (std::vector<std::string>::const_iterator it = lang_ids.begin ();
          it != lang_ids.end ();
          ++it) {
-        Glib::RefPtr<gtksourceview::SourceLanguage> candidate = 
+        Glib::RefPtr<Gsv::Language> candidate =
             lang_manager->get_language (*it);
-        std::list<Glib::ustring> mime_types = candidate->get_mime_types ();
-        std::list<Glib::ustring>::const_iterator mime_it;
+        std::vector<Glib::ustring> mime_types = candidate->get_mime_types ();
+        std::vector<Glib::ustring>::const_iterator mime_it;
         for (mime_it = mime_types.begin ();
              mime_it != mime_types.end ();
              ++mime_it) {
@@ -1323,7 +1318,7 @@ SourceEditor::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
     }
 
     if (!a_buf)
-        a_buf = SourceBuffer::create (lang);
+        a_buf = Buffer::create (lang);
     else {
         a_buf->set_language (lang);
         a_buf->erase (a_buf->begin (), a_buf->end ());
@@ -1337,10 +1332,10 @@ SourceEditor::setup_buffer_mime_and_lang (Glib::RefPtr<SourceBuffer> &a_buf,
 /// Create a source buffer properly set up to contain/highlight c++
 /// code.
 /// \return the created buffer or nil if something bad happened.
-Glib::RefPtr<SourceBuffer>
+Glib::RefPtr<Buffer>
 SourceEditor::create_source_buffer ()
 {
-    Glib::RefPtr<SourceBuffer> result;
+    Glib::RefPtr<Buffer> result;
     setup_buffer_mime_and_lang (result);
     return result;
 }
@@ -1349,7 +1344,7 @@ bool
 SourceEditor::load_file (const UString &a_path,
                          const std::list<std::string> &a_supported_encodings,
                          bool a_enable_syntax_highlight,
-                         Glib::RefPtr<SourceBuffer> &a_source_buffer)
+                         Glib::RefPtr<Buffer> &a_source_buffer)
 {
     NEMIVER_TRY;
 
@@ -1424,7 +1419,7 @@ SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
 		       const list<UString> &a_src_search_dirs,
                        list<UString> &a_session_dirs,
                        std::map<UString, bool> &a_ignore_paths,
-                       Glib::RefPtr<SourceBuffer> &a_buf)
+                       Glib::RefPtr<Buffer> &a_buf)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -1485,7 +1480,7 @@ SourceEditor::load_asm (const common::DisassembleInfo &a_info,
 			const list<UString> &a_src_search_dirs,
                         list<UString> &a_session_dirs,
                         std::map<UString, bool> &a_ignore_paths,
-                        Glib::RefPtr<SourceBuffer> &a_buf)
+                        Glib::RefPtr<Buffer> &a_buf)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -1509,7 +1504,7 @@ SourceEditor::load_asm (const common::DisassembleInfo &a_info,
 /// \param a_buf the assembly source buffer
 void
 SourceEditor::register_assembly_source_buffer
-                    (Glib::RefPtr<SourceBuffer> &a_buf)
+                    (Glib::RefPtr<Buffer> &a_buf)
 {
     m_priv->register_assembly_source_buffer (a_buf);
 }
@@ -1534,7 +1529,7 @@ SourceEditor::current_address (Address &a_address) const
 /// \param a_buf the source buffer to register.
 void
 SourceEditor::register_non_assembly_source_buffer
-                                    (Glib::RefPtr<SourceBuffer> &a_buf)
+                                    (Glib::RefPtr<Buffer> &a_buf)
 {
     m_priv->register_non_assembly_source_buffer (a_buf);
 }
@@ -1542,7 +1537,7 @@ SourceEditor::register_non_assembly_source_buffer
 /// Get the assembly source buffer that was registered, or a NULL
 /// pointer if no one was registered before.
 /// \return a smart pointer to the source buffer.
-Glib::RefPtr<SourceBuffer>
+Glib::RefPtr<Buffer>
 SourceEditor::get_assembly_source_buffer () const
 {
     return m_priv->asm_ctxt.buffer;
@@ -1592,7 +1587,7 @@ SourceEditor::scroll_to_address (const Address &a_address,
 /// Get the non-assembly source buffer that was registered, or a NULL
 /// pointer if no one was registered before.
 /// \return a smart pointer to the source buffer.
-Glib::RefPtr<SourceBuffer>
+Glib::RefPtr<Buffer>
 SourceEditor::get_non_assembly_source_buffer () const
 {
     return m_priv->non_asm_ctxt.buffer;
@@ -1637,14 +1632,14 @@ SourceEditor::assembly_buf_addr_to_line (const Address &a_addr,
                                          bool a_approximate,
                                          int &a_line) const
 {
-    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
+    Glib::RefPtr<Buffer> buf = get_assembly_source_buffer ();
     return m_priv->address_2_line (buf, a_addr, a_approximate, a_line);
 }
 
 bool
 SourceEditor::assembly_buf_line_to_addr (int a_line, Address &a_address) const
 {
-    Glib::RefPtr<SourceBuffer> buf = get_assembly_source_buffer ();
+    Glib::RefPtr<Buffer> buf = get_assembly_source_buffer ();
     return m_priv->line_2_address (buf, a_line, a_address);
 }
 

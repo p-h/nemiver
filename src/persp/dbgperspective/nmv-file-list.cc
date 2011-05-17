@@ -53,7 +53,7 @@ public:
     virtual ~FileListView ();
 
     void set_files (const std::vector<UString> &a_files);
-    void get_selected_filenames (list<UString> &a_filenames) const;
+    void get_selected_filenames (vector<string> &a_filenames) const;
     void expand_to_filename (const UString &a_filename);
 
     sigc::signal<void,
@@ -122,18 +122,29 @@ FileListView::FileListView ()
         sigc::mem_fun (*this, &FileListView::on_file_list_selection_changed));
 
     // fill popup menu:
-    Gtk::Menu::MenuList& menu_list = m_menu_popup.items ();
+    Gtk::MenuItem *menu_item;
 
-    menu_list.push_back (Gtk::Menu_Helpers::MenuElem(_("Expand _Selected"),
-      sigc::mem_fun (*this, &FileListView::on_menu_popup_expand_clicked)));
+    menu_item = Gtk::manage (new Gtk::MenuItem (_("Expand _Selected"), true));
+    menu_item->signal_activate ().connect (
+        sigc::mem_fun (*this, &FileListView::on_menu_popup_expand_clicked));
+    m_menu_popup.append (*menu_item);
+    menu_item->show ();
 
-    menu_list.push_back (Gtk::Menu_Helpers::MenuElem(_("Expand _All"),
-      sigc::mem_fun (*this, &FileListView::on_menu_popup_expand_all_clicked)));
+    menu_item = Gtk::manage (new Gtk::MenuItem (_("Expand _All"), true));
+    menu_item->signal_activate ().connect (
+        sigc::mem_fun (*this, &FileListView::on_menu_popup_expand_all_clicked));
+    m_menu_popup.append (*menu_item);
+    menu_item->show ();
 
-    menu_list.push_back (Gtk::Menu_Helpers::SeparatorElem());
+    menu_item = Gtk::manage (new Gtk::SeparatorMenuItem ());
+    m_menu_popup.append (*menu_item);
+    menu_item->show ();
 
-    menu_list.push_back (Gtk::Menu_Helpers::MenuElem(_("_Collapse"),
-      sigc::mem_fun (*this, &FileListView::on_menu_popup_collapse_clicked)));
+    menu_item = Gtk::manage (new Gtk::MenuItem (_("_Collapse"), true));
+    menu_item->signal_activate ().connect (
+        sigc::mem_fun (*this, &FileListView::on_menu_popup_collapse_clicked));
+    m_menu_popup.append (*menu_item);
+    menu_item->show ();
 
     m_menu_popup.accelerate (*this);
 }
@@ -228,13 +239,13 @@ FileListView::set_files (const std::vector<UString> &a_files)
 }
 
 void
-FileListView::get_selected_filenames (list<UString> &a_filenames) const
+FileListView::get_selected_filenames (vector<string> &a_filenames) const
 {
     Glib::RefPtr<const Gtk::TreeSelection> selection = get_selection ();
     THROW_IF_FAIL (selection);
-    list<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
+    vector<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
 
-    for (list<Gtk::TreeModel::Path>::iterator path_iter = paths.begin ();
+    for (vector<Gtk::TreeModel::Path>::iterator path_iter = paths.begin ();
          path_iter != paths.end ();
          ++path_iter) {
         Gtk::TreeModel::iterator tree_iter =
@@ -332,9 +343,9 @@ FileListView::expand_selected (bool recursive, bool collapse_if_expanded)
     Glib::RefPtr<Gtk::TreeView::Selection> selection = get_selection ();
 
     if (selection) {
-        list<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
+        vector<Gtk::TreeModel::Path> paths = selection->get_selected_rows ();
 
-        for (list<Gtk::TreeModel::Path>::iterator path_iter = paths.begin ();
+        for (vector<Gtk::TreeModel::Path>::iterator path_iter = paths.begin ();
              path_iter != paths.end ();
              ++path_iter) {
             Gtk::TreeModel::iterator tree_iter =
@@ -515,7 +526,7 @@ FileList::files_selected_signal () const
 }
 
 void
-FileList::get_filenames (list<UString> &a_filenames) const
+FileList::get_filenames (vector<string> &a_filenames) const
 {
     THROW_IF_FAIL (m_priv);
     m_priv->tree_view->get_selected_filenames (a_filenames);

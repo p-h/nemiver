@@ -39,13 +39,14 @@
 #include <giomm/contenttype.h>
 
 #include <gtksourceviewmm/init.h>
-#include <gtksourceviewmm/sourcelanguagemanager.h>
-#include <gtksourceviewmm/sourcestyleschememanager.h>
+#include <gtksourceviewmm/languagemanager.h>
+#include <gtksourceviewmm/styleschememanager.h>
 
 #include <pangomm/fontdescription.h>
 #include <gtkmm/clipboard.h>
 #include <gtkmm/separatortoolitem.h>
 #include <gdkmm/cursor.h>
+#include <gdkmm/devicemanager.h>
 #include <gtk/gtk.h>
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-env.h"
@@ -94,7 +95,7 @@ using namespace std;
 using namespace nemiver::common;
 using namespace nemiver::debugger_utils;
 using namespace nemiver::ui_utils;
-using namespace gtksourceview;
+using namespace Gsv;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -197,9 +198,9 @@ private:
             LOG_FUNCTION_SCOPE_NORMAL_DD
             NEMIVER_TRY
 
-            Gtk::ScrolledWindow::on_size_request (req);
-
             if (!get_realized ()) {
+                Gtk::ScrolledWindow::get_preferred_height_vfunc (minimum_height,
+                                                                 natural_height);
                 return;
             }
 
@@ -215,17 +216,21 @@ private:
 
             const Gtk::Widget *child = get_child ();
             THROW_IF_FAIL (child);
-            Gtk::Requisition child_req = child->size_request ();
+            int child_minimum_height, child_natural_height;
+            child->get_preferred_height (child_minimum_height,
+                                         child_natural_height);
 
             // If the height of the container is too big so that
             // it overflows the max usable height, clip it.
-            if (child_req.height > max_height) {
-                req->height = max_height;
+            if (child_minimum_height > max_height) {
+                minimum_height = max_height;
+                natural_height = max_height;
             } else {
-                req->height = child_req.height;
+                minimum_height = child_minimum_height;
+                natural_height = child_natural_height;
             }
 
-            LOG_DD ("setting scrolled window height: " << req->height);
+            LOG_DD ("setting scrolled window height: " << minimum_height);
 
             NEMIVER_CATCH
         }
@@ -282,7 +287,7 @@ private:
                                 (const IDebugger::Breakpoint& a_breakpoint);
     void on_thread_list_thread_selected_signal (int a_tid);
 
-    void on_switch_page_signal (GtkNotebookPage *a_page, guint a_page_num);
+    void on_switch_page_signal (Gtk::Widget *a_page, guint a_page_num);
 
     void on_attached_to_target_signal (bool a_is_attached);
 
@@ -505,7 +510,7 @@ public:
 
     void edit_workbench_menu ();
 
-    SourceEditor* create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
+    SourceEditor* create_source_editor (Glib::RefPtr<Gsv::Buffer> &a_source_buf,
                                         bool a_asm_view,
                                         const UString &a_path,
                                         int a_current_line,
@@ -534,7 +539,7 @@ public:
 
     bool load_asm (const common::DisassembleInfo &a_info,
                    const std::list<common::Asm> &a_asm,
-                   Glib::RefPtr<SourceBuffer> &a_buf);
+                   Glib::RefPtr<Gsv::Buffer> &a_buf);
 
     SourceEditor* open_asm (const common::DisassembleInfo &a_info,
                             const std::list<common::Asm> &a_asm,
@@ -996,7 +1001,7 @@ struct DBGPerspective::Priv {
     bool use_launch_terminal;
     int num_instr_to_disassemble;
     bool asm_style_pure;
-    Glib::RefPtr<gtksourceview::SourceStyleScheme> editor_style;
+    Glib::RefPtr<Gsv::StyleScheme> editor_style;
     sigc::connection timeout_source_connection;
     //**************************************
     //<detect mouse immobility > N seconds
@@ -1070,7 +1075,7 @@ struct DBGPerspective::Priv {
 
 
     void
-    modify_source_editor_style (Glib::RefPtr<gtksourceview::SourceStyleScheme> a_style_scheme)
+    modify_source_editor_style (Glib::RefPtr<Gsv::StyleScheme> a_style_scheme)
     {
         if (!a_style_scheme) {
             LOG_ERROR ("Trying to set a style with null pointer");
@@ -1099,7 +1104,7 @@ struct DBGPerspective::Priv {
                 it != pagenum_2_source_editor_map.end ();
                 ++it) {
             if (it->second) {
-                it->second->source_view ().modify_font (font_desc);
+                it->second->source_view ().override_font (font_desc);
             }
         }
        THROW_IF_FAIL (terminal);
@@ -1110,7 +1115,7 @@ struct DBGPerspective::Priv {
 #endif // WITH_MEMORYVIEW
     }
 
-    Glib::RefPtr<gtksourceview::SourceStyleScheme>
+    Glib::RefPtr<Gsv::StyleScheme>
     get_editor_style ()
     {
         return editor_style;
@@ -1149,7 +1154,7 @@ struct DBGPerspective::Priv {
 
     bool
     load_file (const UString &a_path,
-               Glib::RefPtr<SourceBuffer> &a_buffer)
+               Glib::RefPtr<Gsv::Buffer> &a_buffer)
     {
         list<string> supported_encodings;
         get_supported_encodings (supported_encodings);
@@ -1891,7 +1896,7 @@ DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
 
 
 void
-DBGPerspective::on_switch_page_signal (GtkNotebookPage *a_page,
+DBGPerspective::on_switch_page_signal (Gtk::Widget *a_page,
                                        guint a_page_num)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2132,8 +2137,8 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
         && m_priv->popup_tip->get_display ()) {
             // Mouse pointer coordinates relative to the root window
             int x = 0, y = 0;
-            Gdk::ModifierType modifier;
-            m_priv->popup_tip->get_display ()->get_pointer (x, y, modifier);
+            m_priv->popup_tip->get_display ()->get_device_manager
+                ()->get_client_pointer ()->get_position (x, y);
             hide_popup_tip_if_mouse_is_outside (x, y);
     }
 
@@ -2454,7 +2459,7 @@ DBGPerspective::on_conf_key_changed_signal (const UString &a_key,
         conf_mgr.get_key_value (a_key, style_id, a_namespace);
         if (!style_id.empty ()) {
             m_priv->editor_style =
-                gtksourceview::SourceStyleSchemeManager::get_default
+                Gsv::StyleSchemeManager::get_default
                 ()->get_scheme (style_id);
             m_priv->modify_source_editor_style (m_priv->editor_style);
         }
@@ -2780,7 +2785,7 @@ DBGPerspective::on_debugger_running_signal ()
     THROW_IF_FAIL (m_priv->throbber);
     THROW_IF_FAIL (m_priv->sourceviews_notebook);
     workbench ().get_root_window ().get_window ()->set_cursor
-                                                (Gdk::Cursor (Gdk::WATCH));
+                                                (Gdk::Cursor::create (Gdk::WATCH));
     m_priv->throbber->start ();
     NEMIVER_CATCH
 }
@@ -3202,8 +3207,7 @@ DBGPerspective::add_stock_icon (const UString &a_stock_id,
     string icon_path = build_resource_path (a_icon_dir, a_icon_name);
     Glib::RefPtr<Gdk::Pixbuf> pixbuf =
                             Gdk::Pixbuf::create_from_file (icon_path);
-    Gtk::IconSet icon_set (pixbuf);
-    m_priv->icon_factory->add (stock_id, icon_set);
+    m_priv->icon_factory->add (stock_id, Gtk::IconSet::create (pixbuf));
 }
 
 void
@@ -4214,8 +4218,21 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
 
     SafePtr<SlotedButton> close_button (Gtk::manage (new SlotedButton ()));
     //okay, make the button as small as possible.
-    close_button->get_modifier_style ()->set_xthickness (0);
-    close_button->get_modifier_style ()->set_ythickness (0);
+    static const std::string button_style =
+        "* {\n"
+          "-GtkButton-default-border : 0;\n"
+          "-GtkButton-default-outside-border : 0;\n"
+          "-GtkButton-inner-border: 0;\n"
+          "-GtkWidget-focus-line-width : 0;\n"
+          "-GtkWidget-focus-padding : 0;\n"
+          "padding: 0;\n"
+        "}";
+    Glib::RefPtr<Gtk::CssProvider> css = Gtk::CssProvider::create ();
+    css->load_from_data (button_style);
+
+    Glib::RefPtr<Gtk::StyleContext> context = close_button->get_style_context ();
+    context->add_provider (css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
     int w=0, h=0;
     Gtk::IconSize::lookup (Gtk::ICON_SIZE_MENU, w, h);
     close_button->set_size_request (w+2, h+2);
@@ -4518,7 +4535,7 @@ DBGPerspective::get_or_append_asm_source_editor ()
     SourceEditor *source_editor =
         get_source_editor_from_path (get_asm_title (), path);
     if (source_editor == 0) {
-        Glib::RefPtr<SourceBuffer> source_buffer =
+        Glib::RefPtr<Gsv::Buffer> source_buffer =
             SourceEditor::create_source_buffer ();
         source_editor =
             create_source_editor (source_buffer,
@@ -5008,7 +5025,7 @@ DBGPerspective::read_default_config ()
     conf_mgr.get_key_value (CONF_KEY_EDITOR_STYLE_SCHEME, style_id);
     NEMIVER_CATCH_NOX
 
-    m_priv->editor_style = gtksourceview::SourceStyleSchemeManager::get_default
+    m_priv->editor_style = Gsv::StyleSchemeManager::get_default
         ()->get_scheme (style_id);
 
     default_config_read_signal ().emit ();
@@ -5044,7 +5061,7 @@ DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
     THROW_IF_FAIL (menu);
 
     Gtk::TextIter start, end;
-    Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+    Glib::RefPtr<Gsv::Buffer> buffer =
                             editor->source_view ().get_source_buffer ();
     THROW_IF_FAIL (buffer);
     bool has_selected_text=false;
@@ -5451,7 +5468,7 @@ DBGPerspective::edit_workbench_menu ()
 }
 
 SourceEditor*
-DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
+DBGPerspective::create_source_editor (Glib::RefPtr<Gsv::Buffer> &a_source_buf,
                                       bool a_asm_view,
                                       const UString &a_path,
                                       int a_current_line,
@@ -5486,7 +5503,7 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
         Gtk::TextIter cur_line_iter =
                 a_source_buf->get_iter_at_line (current_line);
         if (cur_line_iter) {
-            Glib::RefPtr<SourceMark> where_marker =
+            Glib::RefPtr<Mark> where_marker =
                 a_source_buf->create_source_mark (WHERE_MARK,
                                                   WHERE_CATEGORY,
                                                   cur_line_iter);
@@ -5506,7 +5523,7 @@ DBGPerspective::create_source_editor (Glib::RefPtr<SourceBuffer> &a_source_buf,
 
     if (!m_priv->get_source_font_name ().empty ()) {
         Pango::FontDescription font_desc (m_priv->get_source_font_name ());
-        source_editor->source_view ().modify_font (font_desc);
+        source_editor->source_view ().override_font (font_desc);
     }
     if (m_priv->get_editor_style ()) {
         source_editor->source_view ().get_source_buffer ()->set_style_scheme
@@ -5539,9 +5556,9 @@ DBGPerspective::open_file ()
 
     if (result != Gtk::RESPONSE_OK) {return;}
 
-    list<UString> paths;
+    vector<string> paths;
     dialog.get_filenames (paths);
-    list<UString>::const_iterator iter;
+    vector<string>::const_iterator iter;
     for (iter = paths.begin (); iter != paths.end (); ++iter) {
         open_file_real (*iter, -1, true);
     }
@@ -5568,7 +5585,7 @@ DBGPerspective::open_file_real (const UString &a_path,
 
     NEMIVER_TRY
 
-    Glib::RefPtr<SourceBuffer> source_buffer;
+    Glib::RefPtr<Gsv::Buffer> source_buffer;
     if (!m_priv->load_file (a_path, source_buffer))
         return 0;
 
@@ -5663,7 +5680,7 @@ DBGPerspective::get_asm_title ()
 bool
 DBGPerspective::load_asm (const common::DisassembleInfo &a_info,
                           const std::list<common::Asm> &a_asm,
-                          Glib::RefPtr<SourceBuffer> &a_source_buffer)
+                          Glib::RefPtr<Gsv::Buffer> &a_source_buffer)
 {
     list<UString> where_to_look_for_src;
     m_priv->build_find_file_search_path (where_to_look_for_src);
@@ -5689,7 +5706,7 @@ DBGPerspective::open_asm (const common::DisassembleInfo &a_info,
     SourceEditor *source_editor = 0;
     NEMIVER_TRY
 
-    Glib::RefPtr<SourceBuffer> source_buffer;
+    Glib::RefPtr<Gsv::Buffer> source_buffer;
 
     source_editor = get_source_editor_from_path (get_asm_title ());
 
@@ -5753,7 +5770,7 @@ DBGPerspective::switch_to_asm (const common::DisassembleInfo &a_info,
 
     a_source_editor->clear_decorations ();
 
-    Glib::RefPtr<SourceBuffer> asm_buf;
+    Glib::RefPtr<Gsv::Buffer> asm_buf;
     if ((asm_buf = a_source_editor->get_assembly_source_buffer ()) == 0) {
         SourceEditor::setup_buffer_mime_and_lang (asm_buf, "test/x-asm");
         a_source_editor->register_assembly_source_buffer (asm_buf);
@@ -5800,7 +5817,7 @@ DBGPerspective::switch_to_source_code ()
 
     source_editor->clear_decorations ();
 
-    Glib::RefPtr<SourceBuffer> source_buf;
+    Glib::RefPtr<Gsv::Buffer> source_buf;
     UString source_path;
     if ((source_buf = source_editor->get_non_assembly_source_buffer ()) == 0) {
         // Woops!
@@ -5921,7 +5938,7 @@ DBGPerspective::reload_file (const UString &a_path)
     if (!editor)
         return open_file (a_path);
 
-    Glib::RefPtr<SourceBuffer> buffer =
+    Glib::RefPtr<Gsv::Buffer> buffer =
         editor->source_view ().get_source_buffer ();
     int current_line = editor->current_line ();
     int current_column = editor->current_column ();
@@ -6998,7 +7015,7 @@ DBGPerspective::append_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
         // We not could find an editor for the file of the breakpoint.
         // Ask the backend for asm instructions and set the visual breakpoint
         // at the breakpoint address.
-        Glib::RefPtr<SourceBuffer> buf;
+        Glib::RefPtr<Gsv::Buffer> buf;
         editor = get_source_editor_from_path (get_asm_title ());
         if (editor == 0) {
             editor = create_source_editor (buf,
@@ -7759,7 +7776,7 @@ DBGPerspective::set_breakpoint_using_dialog ()
     SourceEditor *source_editor = get_current_source_editor ();
 
     if (source_editor) {
-        Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+        Glib::RefPtr<Gsv::Buffer> buffer =
             source_editor->source_view ().get_source_buffer ();
         THROW_IF_FAIL (buffer);
 
@@ -8067,7 +8084,7 @@ DBGPerspective::inspect_variable ()
     Gtk::TextIter start, end;
     SourceEditor *source_editor = get_current_source_editor ();
     if (source_editor) {
-        Glib::RefPtr<gtksourceview::SourceBuffer> buffer =
+        Glib::RefPtr<Gsv::Buffer> buffer =
             source_editor->source_view ().get_source_buffer ();
         THROW_IF_FAIL (buffer);
         if (buffer->get_selection_bounds (start, end)) {
@@ -8828,7 +8845,7 @@ extern "C" {
 bool
 NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance)
 {
-    gtksourceview::init ();
+    Gsv::init ();
     *a_new_instance = new nemiver::DBGPerspectiveModule ();
     return (*a_new_instance != 0);
 }

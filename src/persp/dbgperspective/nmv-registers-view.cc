@@ -100,17 +100,17 @@ public:
         tree_view->append_column (_("Name"), get_columns ().name);
         tree_view->append_column_editable (_("Value"), get_columns ().value);
         Gtk::TreeViewColumn * col = tree_view->get_column (2);
-        col->add_attribute (*col->get_first_cell_renderer (),
+        col->add_attribute (*col->get_first_cell (),
                             "foreground-gdk",
                             get_columns ().fg_color);
         Gtk::CellRendererText* renderer =
                 dynamic_cast<Gtk::CellRendererText*>
-                                        (col->get_first_cell_renderer ());
+                                        (col->get_first_cell ());
         THROW_IF_FAIL (renderer);
         renderer->signal_edited ().connect (sigc::mem_fun
                     (*this, &Priv::on_register_value_edited));
-        tree_view->signal_expose_event ().connect_notify (sigc::mem_fun
-                    (*this, &Priv::on_expose_event_signal));
+        tree_view->signal_draw ().connect_notify (sigc::mem_fun
+                    (*this, &Priv::on_draw_signal));
     }
 
     bool should_process_now ()
@@ -262,7 +262,7 @@ public:
         }
     }
 
-    void on_expose_event_signal (GdkEventExpose *)
+    void on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -281,8 +281,14 @@ public:
         if (changed) {
             (*iter)[get_columns ().fg_color]  = Gdk::Color ("red");
         } else {
-            (*iter)[get_columns ().fg_color] =
-                tree_view->get_style ()->get_text (Gtk::STATE_NORMAL);
+            Gdk::RGBA rgba =
+                tree_view->get_style_context ()->get_color
+                                                    (Gtk::STATE_FLAG_NORMAL);
+            Gdk::Color color;
+            color.set_rgb (rgba.get_red (),
+                           rgba.get_green (),
+                           rgba.get_blue ());
+            (*iter)[get_columns ().fg_color] = color;
         }
     }
 

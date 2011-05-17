@@ -72,7 +72,6 @@ public:
             (ui_utils::get_widget_from_gtkbuilder<Gtk::Dialog> (gtkbuilder,
                                                            a_widget_name));
         THROW_IF_FAIL (dialog);
-        dialog->hide ();
     }
 };//end struct Dialog::Priv
 

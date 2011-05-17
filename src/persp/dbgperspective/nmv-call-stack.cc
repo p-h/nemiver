@@ -400,7 +400,7 @@ struct CallStack::Priv {
         THROW_IF_FAIL (tree_view);
         Glib::RefPtr<Gtk::TreeSelection> selection = tree_view->get_selection ();
         THROW_IF_FAIL (selection);
-        list<Gtk::TreePath> selected_rows = selection->get_selected_rows ();
+        vector<Gtk::TreePath> selected_rows = selection->get_selected_rows ();
         if (selected_rows.empty ()) {return;}
 
         Gtk::TreeModel::iterator row_iter =
@@ -425,7 +425,7 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void on_expose_event_signal (GdkEventExpose *)
+    void on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -578,7 +578,7 @@ struct CallStack::Priv {
 	}
 
         THROW_IF_FAIL (col = tree_view->get_column (CallStackCols::BINARY_INDEX));
-        col->get_first_cell_renderer ()->set_sensitive ();
+        col->get_first_cell ()->set_sensitive ();
 
         tree_view->set_headers_visible (true);
 	tree_view->columns_autosize ();
@@ -594,8 +594,8 @@ struct CallStack::Priv {
                          (sigc::mem_fun (*this,
                                          &CallStack::Priv::on_row_activated_signal))));
 
-        tree_view->signal_expose_event ().connect_notify
-            (sigc::mem_fun (this, &Priv::on_expose_event_signal));
+        tree_view->signal_draw ().connect_notify
+            (sigc::mem_fun (this, &Priv::on_draw_signal));
 
         tree_view->add_events (Gdk::EXPOSURE_MASK);
 

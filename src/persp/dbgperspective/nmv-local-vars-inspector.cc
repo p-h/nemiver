@@ -216,8 +216,8 @@ public:
                             &Priv::on_tree_view_row_activated_signal));
         tree_view->signal_button_press_event ().connect_notify
             (sigc::mem_fun (this, &Priv::on_button_press_signal));
-        tree_view->signal_expose_event ().connect_notify
-            (sigc::mem_fun (this, &Priv::on_expose_event_signal));
+        tree_view->signal_draw ().connect_notify
+            (sigc::mem_fun (this, &Priv::on_draw_signal));
 
         Gtk::CellRenderer *r = tree_view->get_column_cell_renderer
             (VarsTreeView::VARIABLE_VALUE_COLUMN_INDEX);
@@ -994,7 +994,7 @@ public:
     }
 
     void
-    on_expose_event_signal (GdkEventExpose *)
+    on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         NEMIVER_TRY

@@ -56,7 +56,7 @@ struct Terminal::Priv {
     //the same object as
     //m_vte, but wrapped as a Gtk::Widget
     Gtk::Widget *widget;
-    Gtk::Adjustment *adjustment;
+    Glib::RefPtr<Gtk::Adjustment> adjustment;
 
     Priv () :
         master_pty (0),
@@ -79,12 +79,12 @@ struct Terminal::Priv {
         widget = Glib::wrap (w);
         THROW_IF_FAIL (widget);
         widget->set_manage ();
+        widget->reference ();
 
         adjustment = Glib::wrap (vte_terminal_get_adjustment (vte));
         THROW_IF_FAIL (adjustment);
-        adjustment->set_manage ();
+        adjustment->reference ();
 
-        widget->reference ();
         THROW_IF_FAIL (init_pty ());
     }
 
@@ -149,12 +149,12 @@ Terminal::widget () const
     return *m_priv->widget;
 }
 
-Gtk::Adjustment&
+Glib::RefPtr<Gtk::Adjustment>
 Terminal::adjustment () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->adjustment);
-    return *m_priv->adjustment;
+    return m_priv->adjustment;
 }
 
 UString

@@ -140,7 +140,7 @@ struct ThreadList::Priv {
         NEMIVER_CATCH
     }
 
-    void on_expose_event_signal (GdkEventExpose *)
+    void on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -211,8 +211,8 @@ struct ThreadList::Priv {
             tree_view->get_selection ()->signal_changed ().connect
                 (sigc::mem_fun
                     (*this, &Priv::on_tree_view_selection_changed_signal));
-        tree_view->signal_expose_event ().connect_notify
-                    (sigc::mem_fun (*this, &Priv::on_expose_event_signal));
+        tree_view->signal_draw ().connect_notify
+                    (sigc::mem_fun (*this, &Priv::on_draw_signal));
     }
 
     void set_a_thread_id (int a_id)

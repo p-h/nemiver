@@ -44,7 +44,7 @@ get_call_expr_history_cols ()
 }
 
 struct CallFunctionDialog::Priv {
-    Gtk::ComboBoxEntry *call_expr_entry;
+    Gtk::ComboBox *call_expr_entry;
     Glib::RefPtr<Gtk::ListStore> call_expr_history;
     Gtk::Button *ok_button;
     Priv (Gtk::Dialog &a_dialog,
@@ -63,13 +63,13 @@ struct CallFunctionDialog::Priv {
             (sigc::mem_fun (*this, &Priv::on_ok_button_clicked_signal));
 
         call_expr_entry =
-            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBoxEntry>
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
                                             (a_gtkbuilder, "callexpressionentry");
         THROW_IF_FAIL (call_expr_entry);
         call_expr_history=
             Gtk::ListStore::create (get_call_expr_history_cols ());
         call_expr_entry->set_model (call_expr_history);
-        call_expr_entry->set_text_column (get_call_expr_history_cols ().expr);
+        call_expr_entry->set_entry_text_column (get_call_expr_history_cols ().expr);
 
         call_expr_entry->signal_changed ().connect
             (sigc::mem_fun (*this, &Priv::on_call_expr_entry_changed_signal));

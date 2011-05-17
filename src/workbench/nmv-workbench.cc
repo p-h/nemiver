@@ -260,12 +260,12 @@ Workbench::on_about_menu_item_action ()
     dialog.set_version (PACKAGE_VERSION);
     dialog.set_comments(_("A C/C++ debugger for GNOME"));
 
-    list<Glib::ustring> authors;
+    vector<Glib::ustring> authors;
     authors.push_back ("Dodji Seketeli <dodji@gnome.org>");
     authors.push_back ("Jonathon Jongsma <jjongsma@gnome.org>");
     dialog.set_authors (authors);
 
-    list<Glib::ustring> documenters;
+    vector<Glib::ustring> documenters;
     documenters.push_back ("Jonathon Jongsma <jjongsma@gnome.org>");
     dialog.set_documenters (documenters);
 
@@ -375,7 +375,7 @@ Workbench::do_init (Gtk::Main &a_main)
         Glib::RefPtr<Gdk::Pixbuf> icon48 = theme->load_icon("nemiver", 48,
                 Gtk::ICON_LOOKUP_USE_BUILTIN);
 
-        std::list<Glib::RefPtr<Gdk::Pixbuf> > icon_list;
+        std::vector<Glib::RefPtr<Gdk::Pixbuf> > icon_list;
         icon_list.push_back(icon16);
         icon_list.push_back(icon32);
         icon_list.push_back(icon48);

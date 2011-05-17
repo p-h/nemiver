@@ -176,8 +176,14 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     } else {
         LOG_DD ("remove highlight from variable");
         (*a_iter)[get_variable_columns ().is_highlighted]=false;
-        (*a_iter)[get_variable_columns ().fg_color]  =
-            a_tree_view.get_style ()->get_text (Gtk::STATE_NORMAL);
+        Gdk::RGBA rgba =
+            a_tree_view.get_style_context ()->get_color
+                                                  (Gtk::STATE_FLAG_NORMAL);
+        Gdk::Color color;
+        color.set_rgb (rgba.get_red (),
+                       rgba.get_green (),
+                       rgba.get_blue ());
+        (*a_iter)[get_variable_columns ().fg_color] = color;
     }
 
     (*a_iter)[get_variable_columns ().value] = a_var->value ();

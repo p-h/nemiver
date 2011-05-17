@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#include <gtksourceviewmm/sourceiter.h>
+#include <gtksourceviewmm.h>
 #include <gtkmm/liststore.h>
 #include "common/nmv-exception.h"
 #include "nmv-find-text-dialog.h"
@@ -47,7 +47,7 @@ columns ()
     return s_columns;
 }
 
-using namespace gtksourceview;
+using namespace Gsv;
 
 class FindTextDialog::Priv {
     friend class FindTextDialog;
@@ -72,7 +72,7 @@ public:
         connect_dialog_signals ();
         searchterm_store = Gtk::ListStore::create (columns ());
         get_search_text_combo ()->set_model (searchterm_store);
-        get_search_text_combo ()->set_text_column (columns ().term);
+        get_search_text_combo ()->set_entry_text_column (columns ().term);
     }
 
     void on_search_entry_activated_signal ()
@@ -113,10 +113,10 @@ public:
         return button;
     }
 
-    Gtk::ComboBoxEntry* get_search_text_combo () const
+    Gtk::ComboBox* get_search_text_combo () const
     {
-        Gtk::ComboBoxEntry *combo =
-            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBoxEntry>
+        Gtk::ComboBox *combo =
+            ui_utils::get_widget_from_gtkbuilder<Gtk::ComboBox>
                                                 (gtkbuilder, "searchtextcombo");
         return combo;
     }
