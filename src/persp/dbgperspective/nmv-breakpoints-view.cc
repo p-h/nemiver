@@ -254,12 +254,22 @@ public:
                             << breakmap_iter->second.number ());
                     update_breakpoint (tree_iter, breakmap_iter->second);
                 } else {
-                    // We shouldn't reach this place, as we should
-                    // have been notified about any new breakpoint by
-                    // mean of IDebugger::breakpoint_set_signal, and
+                    // Normally, we shouldn't reach this place, as we
+                    // should have been notified about any new
+                    // breakpoint by mean of
+                    // IDebugger::breakpoint_set_signal, and
                     // on_debugger_breakpoint_set_signal should have
-                    // added the breakpoint to the model.                    
-                    THROW ("Should not be reached");
+                    // added the breakpoint to the model.  It turned
+                    // out we can reach this point nevertheless, when,
+                    // say, a breakpoint is added by mean of a GDB
+                    // script. In that case, the GDB implementation of
+                    // IDebugger doesn't get any GDB/MI notification
+                    // upon breakpoint creation, so we don't get the
+                    // IDebugger::breakpoint_set_signal notification.
+                    // Let's just add the breakpoint now then.
+                    LOG_DD ("Didn't find breakpoint: " << breakmap_iter->first
+                            << " so going to add it");
+                    append_breakpoint (breakmap_iter->second);
                 }
             }
         }
