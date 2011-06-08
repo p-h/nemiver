@@ -793,7 +793,7 @@ public:
         if (!result) {return false;}
         UString args = quote_args (a_prog_args);
         if (!args.empty ())
-	  issue_command (Command ("set args " + args));
+	  queue_command (Command ("set args " + args));
         set_debugger_parameter ("follow-fork-mode", follow_fork_mode);
 
         return true;
@@ -839,6 +839,7 @@ public:
             //usually, when we send a command to the debugger,
             //it becomes busy (in a running state), untill it gets
             //back to us saying the converse.
+            line_busy = true;
             set_state (IDebugger::RUNNING);
             return true;
         }
@@ -993,7 +994,7 @@ public:
 
             UString::size_type i = 0;
             while ((i = gdb_stdout_buffer.find ("\n(gdb)")) !=
-                    std::string::npos) {
+                   std::string::npos) {
                 i += 6;/*is the offset in the buffer of the end of
                          *of the '(gdb)' prompt
                          */
