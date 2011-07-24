@@ -29,9 +29,27 @@
 #include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
 #include "nmv-sess-mgr.h"
+#include "nmv-i-conf-mgr.h"
 #include <sigc++/trackable.h>
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
+
+extern const char *CONTEXT_VIEW_TITLE;
+extern const char *TARGET_TERMINAL_VIEW_TITLE;
+extern const char *BREAKPOINTS_VIEW_TITLE;
+extern const char *REGISTERS_VIEW_TITLE;
+extern const char *MEMORY_VIEW_TITLE;
+
+enum ViewsIndex
+{
+    TARGET_TERMINAL_VIEW_INDEX = 0,
+    CONTEXT_VIEW_INDEX,
+    BREAKPOINTS_VIEW_INDEX,
+    REGISTERS_VIEW_INDEX,
+#ifdef WITH_MEMORYVIEW
+    MEMORY_VIEW_INDEX
+#endif // WITH_MEMORYVIEW
+};
 
 class SourceEditor;
 class NEMIVER_API IDBGPerspective : public IPerspective {
@@ -55,6 +73,8 @@ public:
     virtual void get_toolbars (list<Gtk::Widget*> &a_tbs) = 0;
 
     virtual Gtk::Widget* get_body () = 0;
+
+    virtual Gtk::Widget& get_source_view_widget () = 0;
 
     virtual IWorkbench& get_workbench () = 0;
 
@@ -153,6 +173,8 @@ public:
 
     virtual Gtk::Widget* get_contextual_menu () = 0;
 
+    virtual IConfMgr& get_conf_mgr () = 0;
+
     virtual bool uses_launch_terminal () const = 0;
 
     virtual void uses_launch_terminal (bool a_flag) = 0;
@@ -160,6 +182,8 @@ public:
     virtual sigc::signal<void, bool>& activated_signal () = 0;
 
     virtual sigc::signal<void, bool>& debugger_ready_signal () = 0;
+
+    virtual sigc::signal<void>& layout_changed_signal () = 0;
 
     virtual bool agree_to_shutdown () = 0;
 };//end class IDBGPerspective
