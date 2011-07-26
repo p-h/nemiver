@@ -1,55 +1,26 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 2.6 -->
-  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkDialog" id="savedsessionsdialog">
     <property name="width_request">300</property>
     <property name="height_request">300</property>
     <property name="visible">True</property>
+    <property name="can_focus">False</property>
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Saved Sessions</property>
     <property name="default_width">330</property>
     <property name="default_height">350</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
-        <child>
-          <object class="GtkLabel" id="label1">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label" translatable="yes">&lt;b&gt;Choose a Session to Debug&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow" id="scrolledwindow2">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
-            <property name="shadow_type">in</property>
-            <child>
-              <object class="GtkTreeView" id="treeview_sessions">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="position">2</property>
-          </packing>
-        </child>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
+          <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="cancelbutton1">
@@ -58,6 +29,7 @@
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -73,18 +45,22 @@
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
                 <child>
                   <object class="GtkAlignment" id="alignment2">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="xscale">0</property>
                     <property name="yscale">0</property>
                     <child>
                       <object class="GtkHBox" id="hbox2">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="spacing">2</property>
                         <child>
                           <object class="GtkImage" id="image2">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="stock">gtk-execute</property>
                           </object>
                           <packing>
@@ -96,6 +72,7 @@
                         <child>
                           <object class="GtkLabel" id="label3">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label">_Execute</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -119,8 +96,44 @@
           </object>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="pack_type">end</property>
             <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="xalign">0</property>
+            <property name="label" translatable="yes">&lt;b&gt;Choose a Session to Debug&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrolledwindow2">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkTreeView" id="treeview_sessions">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
