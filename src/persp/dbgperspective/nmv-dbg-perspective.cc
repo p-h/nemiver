@@ -3944,6 +3944,11 @@ DBGPerspective::init_toolbar ()
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
             (workbench ().get_ui_manager ()->get_widget ("/ToolBar"));
     THROW_IF_FAIL (glade_toolbar);
+    Glib::RefPtr<Gtk::StyleContext> style_context =
+            glade_toolbar->get_style_context ();
+    if (style_context) {
+        style_context->add_class (GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+    }
     Gtk::SeparatorToolItem *sep = Gtk::manage (new Gtk::SeparatorToolItem);
     gtk_separator_tool_item_set_draw (sep->gobj (), false);
     sep->set_expand (true);
