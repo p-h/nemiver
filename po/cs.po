@@ -1,7 +1,6 @@
 # Czech translation for nemiver.
 # Copyright (C) 2009 the author(s) of nemiver.
 # This file is distributed under the same license as the nemiver package.
-#
 # Marek Černocký <marek@manet.cz>, 2009, 2010, 2011.
 #
 msgid ""
@@ -9,8 +8,8 @@ msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-05-07 08:58+0000\n"
-"PO-Revision-Date: 2011-07-15 14:53+0200\n"
+"POT-Creation-Date: 2011-08-01 17:49+0000\n"
+"PO-Revision-Date: 2011-08-01 22:47+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -212,122 +211,126 @@ msgid "Select from _Target Executable"
 msgstr "Vybrat v cílovém spus_titelném programu"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
+msgid "<b>Assembly flavor</b>"
+msgstr "<b>Verze assembleru</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
 msgid "<b>Assembly style</b>"
 msgstr "<b>Styl assembleru</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
 msgid "<b>Editor Font</b>"
 msgstr "<b>Písmo editoru</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "<b>File Monitoring</b>"
 msgstr "<b>Sledování souboru</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
 msgid "<b>GDB binary</b>"
 msgstr "<b>Program GDB</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
 msgid "<b>GDB follow fork mode</b>"
 msgstr "<b>Režim postupu GDB při rozvětvení</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
 msgid "<b>Instructions</b>"
 msgstr "<b>Instrukce</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
 msgid "<b>Line Numbers</b>"
 msgstr "<b>Čísla řádků</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "<b>Syntax Highlighting</b>"
 msgstr "<b>Zvýrazňování syntaxe</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
 msgid "<b>Terminal</b>"
 msgstr "<b>Terminál</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
 msgid "<b>Visual Style</b>"
 msgstr "<b>Vzhled</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
 msgid "Ask each time"
 msgstr "Pokaždé se zeptat"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
 msgid "Choose a file"
 msgstr "Výběr souboru"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
 msgid "Custom Font:"
 msgstr "Vlastní písmo:"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
 msgid "Debugger"
 msgstr "Ladicí program"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
 msgid "Display line numbers"
 msgstr "Zobrazovat čísla řádků"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
 msgid "Do not reload the file"
 msgstr "Soubor znovu nenačítat"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
 msgid "Editor"
 msgstr "Editor"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
 msgid "Enable syntax highlighting"
 msgstr "Zapnout zvýrazňování syntaxe"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
 msgid "Follow child"
 msgstr "Následovat potomka"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Follow parent"
 msgstr "Následovat rodiče"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
 msgid "Mixed source and assembly"
 msgstr "Kombinace zdrojového kódu a assembleru"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 msgid "Number of instructions to disassemble by default"
 msgstr "Počet instrukcí, které se májí standardně disassemblovat"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
 msgid "Path to the GDB binary used"
 msgstr "Cesta ke spustitelnému programu GDB, který se má používat"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
 msgid "Preferences"
 msgstr "Předvolby"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Pure assembly"
 msgstr "Prostý assembler"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
 msgid "Reload the file"
 msgstr "Soubor znovu načíst"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Source Directories"
 msgstr "Složky se zdrojovými kódy"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "Use launch terminal"
 msgstr "Použít spouštěcí terminál"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Use system monospace font"
 msgstr "Použít systémové písmo s pevnou šířkou"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "When a source file is changed:"
 msgstr "Když se zdrojový soubor změní:"
 
@@ -388,7 +391,7 @@ msgid "Saved Sessions"
 msgstr "Uložená sezení"
 
 #: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:1
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3555
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3530
 msgid "Inspect a Variable"
 msgstr "Prohlédnout proměnnou"
 
@@ -510,7 +513,6 @@ msgid "_Source Location:"
 msgstr "Mí_sto ve zdrojovém kódu:"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
-#| msgid "<b>Call a function:</b>"
 msgid "<b>Jump to location:</b>"
 msgstr "<b>Skočit na místo:</b>"
 
@@ -519,7 +521,6 @@ msgid "Break at destination"
 msgstr "Bod přerušení v cílovém místě"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
-#| msgid "Select Location For %s"
 msgid "Set location to jump to"
 msgstr "Nastavení místa skoku"
 
@@ -612,35 +613,35 @@ msgstr "Výraz"
 msgid "Ignore count"
 msgstr "Vynecháno"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:337
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:347
 msgid "breakpoint"
 msgstr "bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:341
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:351
 msgid "watchpoint"
 msgstr "bod sledování"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:344
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:354
 msgid "countpoint"
 msgstr "bod počítání"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:347
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:357
 msgid "unknown"
 msgstr "neznámý"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:407
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:417
 msgid "_Delete"
 msgstr "_Odebrat"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:408
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
 msgid "Remove this breakpoint"
 msgstr "Odebrat tento bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:417
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:427
 msgid "_Go to Source"
 msgstr "_Přejít do zdrojového kódu"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
 msgid "Find this breakpoint in the source editor"
 msgstr "Hledat tento bod přerušení v editoru zdrojového kódu"
 
@@ -670,203 +671,198 @@ msgid "(Click here to see the next %d rows of the call stack)"
 msgstr "(Kliknutím zde zobrazíte následujících %d řádků zásobníku volání)"
 
 #. labels for widget tabs in the status notebook
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:109
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:110
 msgid "Context"
 msgstr "Kontext"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:110
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:111
 msgid "Target Terminal"
 msgstr "Cílový terminál"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:111
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:112
 msgid "Breakpoints"
 msgstr "Body přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:112
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:113
 msgid "Registers"
 msgstr "Registry"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:113
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:114
 msgid "Memory"
 msgstr "Paměť"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1761
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1810
 msgid "Reached end of file"
 msgstr "Dosažen konec souboru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1764
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1813
 #, c-format
 msgid "Could not find string %s"
 msgstr "Nelze najít řetězec %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2235
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2284
 msgid "Change to standard Breakpoint"
 msgstr "Změnit na standardní bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2238
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2287
 msgid "Change to Countpoint"
 msgstr "Změnit na bod počítání"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2240
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2289
 msgid "Remove _Breakpoint"
 msgstr "Odebrat _bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2243
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2292
 msgid "Disable Breakpoint"
 msgstr "Zakázat bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2245
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2294
 msgid "Enable Breakpoint"
 msgstr "Povolit bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2297
 msgid "Set _Breakpoint"
 msgstr "Nastavit _bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2250
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2299
 msgid "Set Countpoint"
 msgstr "Nastavit bod počítání"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2443
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2492
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (cesta=„%s“, pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2457
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2506
 msgid "Connected to remote target !"
 msgstr "Připojeno ke vzdálenému cíli!"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2637
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2686
 msgid "Program exited"
 msgstr "Program skončil"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2671
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2720
 msgid "The underlying debugger engine process died."
 msgstr "Proces jádra ladicího programu běžící na pozadí zemřel."
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2753
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2802
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "Cíl obdržel signál: %s, %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2768
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2817
 #, c-format
 msgid "An error occured: %s"
 msgstr "Vyskytla se chyba: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3009
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2985
 #, c-format
 msgid "File %s has been modified. Do want to reload it ?"
 msgstr "Soubor %s byl změněn. Chcete jej znovu načíst?"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3318
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3293
 msgid "_Save Session to Disk"
 msgstr "_Uložit sezení na disk"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3294
 msgid "Save the current debugging session to disk"
 msgstr "Uložit současné ladicí sezení na disk"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3328
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3303
 msgid "_Detach From the Running Program"
 msgstr "O_dpojit se od laděného programu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3329
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3304
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "Odpojit ladicí program od běžícího cíle bez jeho zabití"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3343
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3318
 msgid "_Restart"
 msgstr "_Restartovat"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3344
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
 msgid "Restart the target, killing this process and starting a new one"
 msgstr "Restartovat cíl zabitím tohoto procesu a spuštěním nového"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3332
 msgid "_Next"
 msgstr "_Následující"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3358
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3333
 msgid "Execute next line stepping over the next function, if any"
 msgstr "Provést následující řádek, pokud půjde o funkci, tak ji celou provést"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3342
 msgid "_Step"
 msgstr "_Krokovat"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3368
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3343
 msgid "Execute next line, stepping into the next function, if any"
 msgstr "Provést další řádek, pokud půjde o funkci, tak se do ní zanořit"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3377
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3352
 msgid "Step _Out"
 msgstr "Krokovat _ven"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3378
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
 msgid "Finish the execution of the current function"
 msgstr "Dokončit provádění aktuální funkce"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3387
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3362
 msgid "Step Into asm"
 msgstr "Krokovat assembler do"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3363
 msgid "Step into the next assembly instruction"
 msgstr "Krokovat bez zanoření následující funkci assembleru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3397
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3372
 msgid "Step Over asm"
 msgstr "Krokovat assembler přes"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3398
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3373
 msgid "Step over the next assembly instruction"
 msgstr "Krokovat se zanořením následující funkci assembleru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3407
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3382
 msgid "_Continue"
 msgstr "_Pokračovat"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3408
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3383
 msgid "Continue program execution until the next breakpoint"
 msgstr "Pokračovat v běhu programu dokud se nevyskytne další bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3417
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3392
 msgid "Run to Cursor"
 msgstr "Běžet po kurzor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3418
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3393
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 "Pokračovat v provádění programu dokud se nedosáhne aktuálně vybraného řádku"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3428
-#| msgid "Run to Cursor"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
 msgid "Jump to cursor"
 msgstr "Skočit na místo kurzoru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3429
-#| msgid ""
-#| "Continue program execution until the currently selected line is reached"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3404
 msgid "Jump to  the currently selected line"
 msgstr "Skočit na aktuálně vybraný řádek"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3439
-#| msgid "Run to Cursor"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
 msgid "Jump and stop to cursor"
 msgstr "Skočit na místo kurzoru a zastavit"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3440
-#| msgid "Set a breakpoint at the current line using a dialog"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3415
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr "Nastavit bod přerušení na aktuálně vybraný řádek a skočit na něj"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3452
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3427
 msgid "Jump to a given location"
 msgstr "Skočit na zadané místo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3453
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3428
 msgid "Select a given code location and jump there"
 msgstr "Vybrat zadané místo v kódu a skočit na něj"
 
@@ -877,11 +873,11 @@ msgstr "Vybrat zadané místo v kódu a skočit na něj"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3471
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3446
 msgid "Toggle _Breakpoint"
 msgstr "Přepnout _bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3472
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3447
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "Nastavit/odstranit bod přerušení na současné pozici kurzoru"
 
@@ -892,11 +888,11 @@ msgstr "Nastavit/odstranit bod přerušení na současné pozici kurzoru"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3464
 msgid "Enable/Disable Breakpoint"
 msgstr "Povolit/zakázat bod přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3490
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3465
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
@@ -911,71 +907,71 @@ msgstr ""
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3510
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3485
 msgid "Toggle _Countpoint"
 msgstr "Přepnout bod p_očítání"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3511
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3486
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "Nastavit/odstranit bod počítání na současné pozici kurzoru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3496
 msgid "Set Breakpoint..."
 msgstr "Nastavit bod přerušení…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3497
 msgid "Set a breakpoint at a function or line number"
 msgstr "Nastavit bod přerušení na funkci nebo číslo řádku"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3531
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3506
 msgid "Set Breakpoint with dialog..."
 msgstr "Nastavit bod přerušení s dialogem…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3532
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3507
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr "Nastavit bod přerušení na aktuální řádek pomocí dialogu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3543
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3518
 msgid "Set Watchpoint with dialog..."
 msgstr "Nastavit bod sledování s dialogem…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3544
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3519
 msgid "Set a watchpoint using a dialog"
 msgstr "Nastavit bod přerušení pomocí dialogu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3556
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3531
 msgid "Inspect a global or local variable"
 msgstr "Prohlédnout globální nebo lokální proměnnou"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3566
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3541
 msgid "Call a function"
 msgstr "Zavolat funkci"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3567
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3542
 msgid "Call a function in the program being debugged"
 msgstr "Zavolat funkci v laděném programu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3576
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3551
 msgid "Show Global Variables"
 msgstr "Zobrazit globální proměnné"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3577
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3552
 msgid "Display all global variables"
 msgstr "Zobrazit všechny globální proměnné"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3587
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3562
 msgid "Refresh locals"
 msgstr "Občerstvit lokální proměnné"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3588
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3563
 msgid "Refresh the list of variables local to the current function"
 msgstr "Občerstvit seznam proměnných lokálních k aktuální funkci"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3597
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3572
 msgid "Show assembly"
 msgstr "Zobrazit assembler"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3598
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3573
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
@@ -983,216 +979,216 @@ msgstr ""
 "Zobrazit na jiné kartě kód assembleru odpovídající zdrojovému kódu, který se "
 "právě ladí"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3610
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3585
 msgid "Switch to assembly"
 msgstr "Přepnout na assembler"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3611
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3586
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr ""
 "Zobrazit kód assembleru odpovídající zdrojovému kódu, který se právě ladí"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3623
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3598
 msgid "Switch to source"
 msgstr "Přepnout na zdrojový kód"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3624
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3599
 msgid "Show the source code being currently debugged"
 msgstr "Zobrazit zdrojový kód, který se právě ladí"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3636
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3611
 msgid "Stop"
 msgstr "Zastavit"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3612
 msgid "Stop the Debugger"
 msgstr "Zastavit ladění"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3624
 msgid "_View"
 msgstr "_Zobrazit"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3635
 msgid "Switch to Target Terminal View"
 msgstr "Přepnout na zobrazení cílového terminálu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3671
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3646
 msgid "Switch to Context View"
 msgstr "Přepnout na zobrazení kontextu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3682
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3657
 msgid "Switch to Breakpoints View"
 msgstr "Přepnout na zobrazení bodů přerušení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3693
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3668
 msgid "Switch to Registers View"
 msgstr "Přepnout na zobrazení registrů"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3680
 msgid "Switch to Memory View"
 msgstr "Přepnout na zobrazení paměti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3715
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3690
 msgid "Show Commands"
 msgstr "Zobrazit příkazy"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3716
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3691
 msgid "Show the debugger commands tab"
 msgstr "Zobrazit kartu s příkazy pro ladění"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3725
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3700
 msgid "Show Errors"
 msgstr "Zobrazit chyby"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3726
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3701
 msgid "Show the errors tab"
 msgstr "Zobrazit kartu s chybami"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3735
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3710
 msgid "Show Output"
 msgstr "Zobrazit výstup"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3736
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3711
 msgid "Show the debugged target output tab"
 msgstr "Zobrazit kartu s výstupem laděného cíle"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3746
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3721
 msgid "_Debug"
 msgstr "La_dit"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3756
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3731
 msgid "_Open Source File ..."
 msgstr "_Otevřít zdrojový soubor…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3757
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3732
 msgid "Open a source file for viewing"
 msgstr "Otevřít zdrojový soubor pro prohlížení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3766
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3741
 msgid "Load _Executable..."
 msgstr "Načíst spustit_elný program…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3767
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3742
 msgid "Execute a program"
 msgstr "Spustit program"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3777
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3752
 msgid "_Load Core File..."
 msgstr "_Načíst soubor s obrazem paměti…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3778
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3753
 msgid "Load a core file from disk"
 msgstr "Načíst z disku soubor s obrazem paměti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3788
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3763
 msgid "_Attach to Running Program..."
 msgstr "N_apojit se na běžící program…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3789
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3764
 msgid "Debug a program that's already running"
 msgstr "Ladit program, který již běží"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3799
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3774
 msgid "_Connect to Remote Target..."
 msgstr "_Připojit se ke vzdálenému cíli…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3800
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3775
 msgid "Connect to a debugging server to debug a remote target"
 msgstr "Připojit se k ladicímu serveru kvůli ladění vzdáleného cíle"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3811
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3786
 msgid "Resume Sa_ved Session..."
 msgstr "Obnovit u_ložené sezení…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3812
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3787
 msgid "Open a previously saved debugging session"
 msgstr "Otevřít ladicí sezení, které jste si dříve uložili"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3822
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3797
 msgid "_Preferences"
 msgstr "_Předvolby"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3823
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3798
 msgid "Edit the properties of the current session"
 msgstr "Upravit vlastnosti současného sezení"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3837
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3812
 msgid "_Reload Source File"
 msgstr "Znovu načíst zd_rojový soubor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3838
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3813
 msgid "Reloads the source file"
 msgstr "Znovu načte zdrojový soubor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3847
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3822
 msgid "_Close Source File"
 msgstr "_Zavřít zdrojový soubor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3848
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3823
 msgid "Close the opened file"
 msgstr "Zavřít otevřený soubor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3857
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3832
 msgid "_Find"
 msgstr "_Hledat"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3858
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3833
 msgid "Find a text string in file"
 msgstr "Hledat v souboru textový řetězec"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4260
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4253
 #, c-format
 msgid "Close %s"
 msgstr "Zavřít %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6150
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6127
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Bohužel není možné restartovat vzdálené podřízené ladění"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6266
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6245
 #, c-format
 msgid "Could not find file %s"
 msgstr "Nelze najít soubor %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6330
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6472
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6507
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6309
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6451
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6486
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Nelze načíst program: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6409
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6388
 msgid "You cannot attach to Nemiver itself"
 msgstr "Nemůžete napojit Nemiver sám na sebe"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6414
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6393
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Nemůžete se napojit na jádro ladicího programu běžícího na pozadí"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6694
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6673
 msgid "Failed to stop the debugger"
 msgstr "Selhalo zastavení ladicího programu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6933
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6912
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Neplatné číslo řádku: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8502
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8481
 msgid "Commands"
 msgstr "Příkazy"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8528
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8507
 msgid "Output"
 msgstr "Výstup"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8554
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8533
 msgid "Logs"
 msgstr "Evidence"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8826
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8805
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -1203,15 +1199,15 @@ msgstr "Právě je laděn nějaký program. Opravdu chcete ladicí program ukon�
 msgid "Expand _Selected"
 msgstr "Rozbalit vy_brané"
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:130
+#: ../src/persp/dbgperspective/nmv-file-list.cc:133
 msgid "Expand _All"
 msgstr "Rozbalit _vše"
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:135
+#: ../src/persp/dbgperspective/nmv-file-list.cc:143
 msgid "_Collapse"
 msgstr "_Sbalit"
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:415
+#: ../src/persp/dbgperspective/nmv-file-list.cc:426
 msgid "Loading Files from target executable..."
 msgstr "Načítají se soubory z cílového spustitelného programu…"
 
@@ -1235,11 +1231,11 @@ msgstr "Zobrazit"
 msgid "Group By:"
 msgstr "Seskupovat podle:"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:138
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:139
 msgid "Choose directory"
 msgstr "Výběr složky"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:238
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:244
 msgid "Source directories"
 msgstr "Složky se zdrojovými kódy"
 
@@ -1271,28 +1267,28 @@ msgid "Thread ID"
 msgstr "ID vlákna"
 
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:125
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:239
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:238
 msgid "_Copy variable name"
 msgstr "_Kopírovat název proměnné"
 
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:126
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:240
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:239
 msgid "Copy the variable path expression to the clipboard"
 msgstr "Kopírovat vyjádření proměnné do schránky"
 
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:137
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:251
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:250
 msgid "_Copy variable value"
 msgstr "_Kopírovat hodnotu proměnné"
 
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:138
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:252
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:251
 msgid "Copy the variable value to the clipboard"
 msgstr "Kopírovat hodnotu proměnné do schránky"
 
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:218
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:481
-#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:301
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:480
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:302
 #, c-format
 msgid ""
 "Variable type is: \n"
@@ -1301,31 +1297,31 @@ msgstr ""
 "Typ proměnné je: \n"
 " %s"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:124
 msgid "Local Variables"
 msgstr "Lokální proměnné"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:132
 msgid "Function Arguments"
 msgstr "Argumenty funkce"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:263
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:262
 msgid "Create watchpoint"
 msgstr "Vytvořit bod sledování"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:264
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:263
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
 msgstr ""
 "Vytvořit bod sledování, který se spouští ve chvíli, kdy se změní hodnota "
 "výrazu"
 
-#: ../src/uicommon/nmv-source-editor.cc:614
+#: ../src/uicommon/nmv-source-editor.cc:611
 #, c-format
 msgid "Line: %i, Column: %i"
 msgstr "Řádek: %i, Sloupec: %i"
 
-#: ../src/uicommon/nmv-source-editor.cc:1403
+#: ../src/uicommon/nmv-source-editor.cc:1398
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
 msgstr "Nelze načíst soubor %s, protože jeho kódování je rozdílné od %s"
