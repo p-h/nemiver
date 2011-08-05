@@ -169,7 +169,7 @@ AC_ARG_ENABLE(memoryview,
               AS_HELP_STRING([--enable-memoryview=yes|no],
                              [enable the memory view hex editor (default is yes)]),
               ENABLE_MEMORYVIEW=$enableval,
-              [PKG_CHECK_EXISTS([gtkhex >= $GTKHEX_VERSION], [ENABLE_MEMORYVIEW=yes], [ENABLE_MEMORYVIEW=no])])
+              [PKG_CHECK_EXISTS([gtkhex-3 >= $GTKHEX_VERSION], [ENABLE_MEMORYVIEW=yes], [ENABLE_MEMORYVIEW=no])])
 if test x$ENABLE_MEMORYVIEW = xyes ; then
     AC_DEFINE([WITH_MEMORYVIEW], 1, [compile the the memory view widget])
 else
@@ -263,7 +263,7 @@ if test x$ENABLE_WORKBENCH = xyes ; then
 fi
 
 if test x$ENABLE_MEMORYVIEW = xyes ; then
-    DEP_MEMORYVIEW="gtkhex >= $GTKHEX_VERSION"
+    DEP_MEMORYVIEW="gtkhex-3 >= $GTKHEX_VERSION"
 fi
 
 dnl *******************

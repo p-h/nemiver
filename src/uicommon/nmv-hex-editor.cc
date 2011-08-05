@@ -26,7 +26,7 @@
 #include <gtkmm/container.h>
 #include "common/nmv-exception.h"
 #include "nmv-hex-editor.h"
-#include <gtkhex/gtkhex.h>
+#include <gtkhex.h>
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (Hex)

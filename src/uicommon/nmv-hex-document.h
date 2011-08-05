@@ -28,7 +28,7 @@
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-ustring.h"
-#include <gtkhex/hex-document.h>
+#include <hex-document.h>
 #include <sigc++/signal.h>
 
 namespace Gtk {

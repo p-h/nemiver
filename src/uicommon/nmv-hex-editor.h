@@ -29,7 +29,7 @@
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-ustring.h"
 #include <uicommon/nmv-hex-document.h>
-#include <gtkhex/gtkhex.h>  // for GROUP_* defines
+#include <gtkhex.h>  // for GROUP_* defines
 
 namespace Gtk {
     class Widget;
