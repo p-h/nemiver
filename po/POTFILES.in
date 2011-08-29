@@ -1,47 +1,48 @@
-[type: gettext/glade]ui/workbench.ui
-[type: gettext/glade]ui/locatefiledialog.ui
 data/nemiver.desktop.in
 src/main.cc
-src/uicommon/nmv-locate-file-dialog.cc
-[type: gettext/glade]src/persp/dbgperspective/ui/callfunctiondialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/findtextdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/loadcoredialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/openfiledialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/preferencesdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/proclistdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/runprogramdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/savedsessionsdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/varinspectordialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/chooseoverloadsdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/remotetargetdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/setbreakpointdialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/setjumptodialog.ui
-src/persp/dbgperspective/nmv-choose-overloads-dialog.cc
-[type: gettext/glade]src/persp/dbgperspective/ui/globalvarsinspector.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/watchpointdialog.ui
 src/persp/dbgperspective/nmv-breakpoints-view.cc
 src/persp/dbgperspective/nmv-call-stack.cc
+src/persp/dbgperspective/nmv-choose-overloads-dialog.cc
 src/persp/dbgperspective/nmv-dbg-perspective.cc
 src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc
 src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc
 src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc
 src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc
 src/persp/dbgperspective/nmv-file-list.cc
+src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc
+src/persp/dbgperspective/nmv-local-vars-inspector.cc
 src/persp/dbgperspective/nmv-memory-view.cc
 src/persp/dbgperspective/nmv-preferences-dialog.cc
 src/persp/dbgperspective/nmv-proc-list-dialog.cc
 src/persp/dbgperspective/nmv-registers-view.cc
 src/persp/dbgperspective/nmv-run-program-dialog.cc
 src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
+src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
 src/persp/dbgperspective/nmv-thread-list.cc
 src/persp/dbgperspective/nmv-var-inspector.cc
-src/persp/dbgperspective/nmv-var-inspector-dialog.cc
-src/persp/dbgperspective/nmv-local-vars-inspector.cc
 src/persp/dbgperspective/nmv-var-inspector.cc
+src/persp/dbgperspective/nmv-var-inspector-dialog.cc
+src/persp/dbgperspective/nmv-vars-treeview.cc
+[type: gettext/glade]src/persp/dbgperspective/ui/callfunctiondialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/chooseoverloadsdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/findtextdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/globalvarsinspector.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/loadcoredialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/openfiledialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/preferencesdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/proclistdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/remotetargetdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/runprogramdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/savedsessionsdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/setbreakpointdialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/setjumptodialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/varinspectordialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/watchpointdialog.ui
+src/uicommon/nmv-locate-file-dialog.cc
 src/uicommon/nmv-source-editor.cc
+src/uicommon/nmv-terminal.cc
 src/uicommon/nmv-ui-utils.cc
 src/workbench/nmv-workbench.cc
-src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc
-src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
-src/persp/dbgperspective/nmv-vars-treeview.cc
+[type: gettext/glade]ui/locatefiledialog.ui
+[type: gettext/glade]ui/workbench.ui
 
