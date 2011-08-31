@@ -757,7 +757,7 @@ public:
             if (asm_flavor == "intel") {
                 asm_flavor_combo->set_active_text ("Intel");
             } else {
-                asm_flavor_combo->set_active_text ("AT&T");
+                asm_flavor_combo->set_active_text ("ATT");
             }
         }
 
