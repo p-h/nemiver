@@ -42,7 +42,7 @@ Naming conventions
        to define namespace, like "namespace foo { //blah}", otherwise, emacs indents
        //blah.  Use the macro NEMIVER_BEGIN_NAMESPACE (foo) and NEMIVER_END_NAMESPACE (foo), instead.
        This helps emacs not to endent the content of the namespace.
-    6. Generaly, C++ data mambers should be prefixed by m_. 
+    6. Generaly, C++ data members should be prefixed by m_.
 
 Functions
 
