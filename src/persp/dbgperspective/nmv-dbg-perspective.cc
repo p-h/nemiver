@@ -270,8 +270,8 @@ private:
     void on_jump_to_location_action ();
     void on_jump_to_current_location_action ();
     void on_jump_and_break_to_current_location_action ();
-    void on_break_before_jump (const std::pair<int,
-                                               const IDebugger::Breakpoint&>&,
+    void on_break_before_jump (const std::map<int,
+                                              IDebugger::Breakpoint>&,
                                const Loc &a_loc);
     void on_set_breakpoint_action ();
     void on_set_breakpoint_using_dialog_action ();
@@ -343,8 +343,8 @@ private:
     void on_debugger_command_done_signal (const UString &a_command_name,
                                           const UString &a_cookie);
 
-    void on_debugger_breakpoint_set_signal
-    (const std::pair<int, const IDebugger::Breakpoint&>&, const UString&);
+    void on_debugger_breakpoints_set_signal
+    (const std::map<int, IDebugger::Breakpoint>&, const UString&);
 
     void on_debugger_breakpoints_list_signal
                                 (const map<int, IDebugger::Breakpoint> &,
@@ -1518,8 +1518,7 @@ DBGPerspective::on_jump_and_break_to_current_location_action ()
 /// callback.
 void
 DBGPerspective::on_break_before_jump
-(const std::pair<int,
-                 const IDebugger::Breakpoint&> &,
+(const std::map<int, IDebugger::Breakpoint> &,
  const Loc &a_loc)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -2347,11 +2346,13 @@ DBGPerspective::on_debugger_command_done_signal (const UString &a_command,
 /// call that triggered this callback.
 ///
 void
-DBGPerspective::on_debugger_breakpoint_set_signal
-(const std::pair<int, const IDebugger::Breakpoint&> &a,
+DBGPerspective::on_debugger_breakpoints_set_signal
+(const std::map<int, IDebugger::Breakpoint> &a,
  const UString&)
 {
-    append_breakpoint (a.second);
+    std::map<int, IDebugger::Breakpoint>::const_iterator i;
+    for (i = a.begin (); i != a.end (); ++i)
+        append_breakpoint (i->second);
 }
 
 void
@@ -3735,8 +3736,8 @@ DBGPerspective::init_debugger_signals ()
     debugger ()->command_done_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_command_done_signal));
 
-    debugger ()->breakpoint_set_signal ().connect (sigc::mem_fun
-            (*this, &DBGPerspective::on_debugger_breakpoint_set_signal));
+    debugger ()->breakpoints_set_signal ().connect (sigc::mem_fun
+            (*this, &DBGPerspective::on_debugger_breakpoints_set_signal));
 
     debugger ()->breakpoints_list_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_debugger_breakpoints_list_signal));
