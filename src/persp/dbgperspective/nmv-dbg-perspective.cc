@@ -3869,6 +3869,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     hbox->pack_start (*close_button, Gtk::PACK_SHRINK);
     event_box->set_tooltip_text (a_path);
     hbox->show_all ();
+    a_sv.show_all ();
     int page_num = m_priv->sourceviews_notebook->insert_page (a_sv,
                                                               *hbox,
                                                               -1);
@@ -4154,7 +4155,6 @@ DBGPerspective::get_or_append_asm_source_editor ()
                                   /*curren_line=*/-1,
                                   /*a_current_address=*/"");
         THROW_IF_FAIL (source_editor);
-        source_editor->show_all ();
         append_source_editor (*source_editor, get_asm_title ());
     }
     THROW_IF_FAIL (source_editor);
@@ -5266,7 +5266,6 @@ DBGPerspective::open_file_real (const UString &a_path,
                                           /*a_current_address=*/"");
 
     THROW_IF_FAIL (source_editor);
-    source_editor->show_all ();
     append_source_editor (*source_editor, a_path);
 
     NEMIVER_CATCH_AND_RETURN (0)
