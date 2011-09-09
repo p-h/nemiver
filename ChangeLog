@@ -1,3 +1,2114 @@
+2011-09-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Prepare for 0.9.0 Release
+	* Makefile.am: Use master a the release branch.
+	* NEWS: Update for 0.9.0
+	* configure.ac: Bump version number to 0.9.0
+
+2011-09-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Misbehaving vertically enlarging var inspector
+	* src/persp/dbgperspective/ui/varinspectordialog.ui: Allow the
+	VBox containing the variable inspector widget to expand.
+
+2011-09-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Don't append the disassembly editor multiple times
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::append_source_editor): Fix thinko: use path, not
+	the a_path that can be empty for e.g, disassembly source editor.
+
+2011-09-04  Dodji Seketeli <dodji@seketeli.org>
+
+	632305 Avoid disassembling location of pending breakpoint
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::append_breakpoint): Don't try to graphically
+	append a /pending/ breakpoint.
+
+2011-09-04  Dodji Seketeli <dodji@seketeli.org>
+
+	constify IDebugger::Breakpoint::is_pending
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::Breakpoint::is_pending): Make this function const.
+
+2011-09-04  Dodji Seketeli <dodji@seketeli.org>
+
+	Don't forget to Gtk::Widget::show_all source views
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::append_source_editor): Call Gtk::Widget::show_all
+	on the source view to add append to the source view notebook here
+	...
+	(DBGPerspective::get_or_append_asm_source_editor)
+	(DBGPerspective::open_file_real): ... not here.
+
+2011-09-04  Dodji Seketeli <dodji@seketeli.org>
+
+	Use DBGPerspective::append_breakpoints
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_debugger_breakpoints_set_signal): Use
+	DBGPerspective::append_breakpoints
+	instead of walking the
+	breakpoints and appending them one by one.
+
+2011-09-04  Dodji Seketeli <dodji@seketeli.org>
+
+	658143 Fails to support multiple breakpoints
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::breakpoints_set_signal): Renamed
+	IDebugger::breakpoint_set_signal into this.  Make it take a map of
+	breakpoints instead of just one.
+	(IDebugger::set_breakpoint): Change the type of the callback slot
+	so that it takes a map of breakpoints.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::breakpoints_set_signal): Renamed
+	IDebugger::breakpoint_set_signal into this.  Make it take a map of
+	breakpoints instead of just one.
+	(GDBEngine::set_breakpoint) Change the type of the callback slot
+	so that it takes a map of breakpoints.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::breakpoints_set_signal): Renamed
+	GDBEngine::Priv::breakpoint_set_signal into this.  Change the
+	type, make it take a map of breakpoint instead of just one
+	breakpoint.
+	(OnBreakpointHandler::do_handle): Expect that the result of
+	setting a breakpoint can be multiple breakpoints set.  Adjust code
+	to the callback slots taking a map of breakpoints instead of just
+	one breakpoint.
+	(GDBEngine::breakpoints_set_signal): Renamed
+	GDBEngine::breakpoint_set_signal into this.  Make it take a map of
+	breakpoints instead of just one.
+	(GDBEngine::set_breakpoint): Change the type of the callback slot
+	so that it takes a map of breakpoints.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::Priv): Adjust.
+	(BreakpointsView::Priv::on_debugger_breakpoints_set_signal):
+	Renamed BreakpointsView::Priv::on_debugger_breakpoint_set_signal
+	into this.  Adjust.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_break_before_jump)
+	(DBGPerspective::on_debugger_breakpoints_set_signal)
+	(DBGPerspective::init_debugger_signals): Adjust.
+
+2011-09-04  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix tests/pointer-deref.c regression
+	* tests/test-local-vars-list.cc (on_stopped_signal): Acknowledge
+	that we now have 4 local variables, not 3 like before.  Expect
+	that the types of 4 variables got set.  Not 3 anymore.  Step
+	further - until after the new variable gets instantiated - before
+	querying the state of the local variables.
+	(on_var_type_set): Acknowledge that we have a new local variable
+	called "b".
+
+2011-08-31  Fabien Parent <parent.f@gmail.com>
+
+	Use ATT for disassembly flavor to avoid a glade bug
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc: Replace AT&T with ATT
+	* src/persp/dbgperspective/ui/preferencesdialog.ui: Likewise
+
+2011-09-03  Dodji Seketeli <dodji@seketeli.org>
+
+	644823 Cannot set BP in files with space in path
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::set_breakpoint):
+	Enclose the path argument to -break-insert into quotes.
+
+2011-09-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix a typo in the coding style
+	* coding-style.txt: Fix typo.
+
+2011-09-03  Dodji Seketeli <dodji@seketeli.org>
+
+	Add comment to is_word_delimiter
+	* src/uicommon/nmv-source-editor.cc (is_word_delimiter): Add comment.
+
+2011-09-03  Dodji Seketeli <dodji@seketeli.org>
+
+	658097 Fix hovering over pointer dereference expression
+	* src/uicommon/nmv-source-editor.cc (parse_word_around_iter): New
+	function.  Factorized and enhanced from ...
+	(SourceEditor::get_word_at_position): ... here.
+	* tests/pointer-deref.cc: Enhance this test to add some
+	de-referencing expression for testing purpose.
+
+2011-09-02  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix style
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_c_string_body): Fix spacing.
+
+2011-09-02  Dodji Seketeli <dodji@seketeli.org>
+
+	657834 Properly un-escape '\"' sequence
+	* src/dbgengine/nmv-gdbmi-parser.cc:
+	(GDBMIParser::parse_c_string_body):  Properly handle '\"' escape
+	sequence of characters.
+	* tests/test-gdbmi.cc: (test_str4):  Add new test case, and ...
+	(init_unit_test_suite): ... wire it.
+
+2011-09-01  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-09-01  Mario Blättermann <mariobl@gnome.org>
+
+	[l10n] Updated German translation
+
+2011-03-02  Dodji Seketeli <dodji@seketeli.org>
+
+	Avoid over reacting to pretty printing key changes
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::Priv::enable_pretty_printing): New member.
+	(DBGPerspective::on_conf_key_changed_signal): Don't react to a
+	change of the value of the pretty printing key if the new value
+	equals the old one.
+	(DBGPerspective::read_default_config): Set the value of the new
+	member DBGPerspective::Priv::enable_pretty_printing.  Also also a
+	couple of ";" around.
+
+2011-03-02  Dodji Seketeli <dodji@seketeli.org>
+
+	Avoid emitting useless -enable-pretty-printing
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::pretty_printing_enabled_once): New member.
+	(GDBEngine::Priv::on_conf_key_changed_signal): Don't emit
+	-enable-pretty-printing if it has already been emitted once.
+	(GDBEngine::load_program): Likewise.
+
+2011-03-01  Dodji Seketeli <dodji@seketeli.org>
+
+	Support pretty printing instantly applied
+	* src/dbgengine/nmv-dbg-common.h (Command::should_emit_signal):
+	New accessor.  Returns TRUE by default.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::variable_visualized_signal)
+	(GDBEngine::on_rv_eval_var, GDBEngine::on_rv_unfold_var)
+	(GDBEngine::on_rv_set_visualizer_on_member)
+	(GDBEngine::on_rv_set_visualizer_on_next_sibling)
+	(GDBEngine::on_rv_flag)
+	(GDBEngine::unfold_variable_with_visualizer)
+	(GDBEngine::revisualize_variable)
+	(GDBEngine::revisualize_variable_real): Declare new functions.
+	(GDBEngine::create_variable, GDBEngine::unfold_variable): Declare
+	new overloads.
+	(GDBEngine::enable_pretty_printing): Rename
+	GDBEngine::disable_pretty_printing into this.
+	(GDBEngine::set_variable_visualizer): Rename
+	GDBEngine::set_variable_vizualizer.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::variable_visualized_signal): New fn.
+	(GDBEngine::Priv::on_conf_key_changed_signal): If pretty printing
+	has been enabled, send the -enable-pretty-printing command down
+	the wire.
+	(OnCommandDoneHandler::do_handle): Handle new
+	set-variable-visualizer command.
+	(OnCreateVariableHandler::do_handle): Do not emit
+	IDebugger:variable_created_signal if it was been requested
+	otherwise at command creation time.
+	(OnUnfoldVariableHandler::do_handle): Likewise.
+	(GDBEngine::variable_visualized_signal, GDBEngine::on_rv_eval_var)
+	(GDBEngine::on_rv_unfold_var)
+	(GDBEngine::on_rv_set_visualizer_on_members)
+	(GDBEngine::on_rv_set_visualizer_on_next_sibling)
+	(GDBEngine::on_rv_flag)
+	(GDBEngine::unfold_variable_with_visualizer)
+	(GDBEngine::revisualize_variable)
+	(GDBEngine::revisualize_variable_real): New functions.
+	(GDBEngine::register_names_listed_signal)
+	(GDBEngine::register_values_listed_signal): Re-indent return type.
+	Add comments.
+	(GDBEngine::on_detached_from_target_signal): Add ';' after
+	NEMIVER_TRY/CATCH_NOX.  Add comments.
+	(GDBEngine::create_variable, GDBEngine::unfold_variable): Add
+	comments.  Add an overload that enables disabling broadcast signal
+	emitting.
+	(GDBEngine::enable_pretty_printing): Renamed
+	GDBEngine::disable_pretty_printing into this.  Added comments.
+	(GDBEngine::set_variable_vizualizer): Update comments.  Fix MI
+	commands sending.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::ConstVariableSlot)
+	(IDebugger::ConstVariableListSlot, IDebugger::ConstUStringSlot):
+	Move these defines right before declaring the IDebugger::Variable
+	type.
+	(IDebugger::visualizer, IDebugger::needs_revisualizing): New
+	accessors.
+	(IDebugger::members): Add a new accessor that returns non-const
+	members.
+	(IDebugger::variable_visualized_signal): New signal.
+	(IDebugger::revisualize_variable): New entry point.
+	(IDebugger::enable_pretty_printing): Renamed
+	IDebugger::disable_pretty_printing into this.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_conf_key_changed_signal): Add comments.
+	Re-indent somewhat.  Re-visualize the local variables of the
+	current function whenever the pretty-printing enabling setting
+	changes.
+	(DBGPerspective::Priv::pretty_printing_toggled): New member.
+	(DBGPerspective::on_conf_key_changed_signal): Set it.
+	(DBGPerspective::show_underline_tip_at_position): Use it.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.h
+	(LocalVarsInspector::set_local_variables)
+	(LocalVarsInspector::show_local_variables_of_current_function):
+	Re-indent.
+	(LocalVarsInspector::visualize_local_variables_of_current_function):
+	New function.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(LocalVarsInspector::Priv::append_a_function_argument): Add
+	logging.
+	(LocalVarsInspector::Priv::update_a_visualized_local_variable)
+	(LocalVarsInspector::Priv::update_a_visualized_function_arg)
+	(LocalVarsInspector::Priv::on_local_var_visualized_signal)
+	(LocalVarsInspector::Priv::on_function_arg_visualized_signal)
+	(LocalVarsInspector::visualize_local_variables_of_current_function):
+	New functions.
+	* src/persp/dbgperspective/nmv-var-inspector.h
+	(VarInspector::set_variable): Take a new flag to re-visualize the
+	variable.
+	* src/persp/dbgperspective/nmv-var-inspector.cc
+	(VarInspector::Priv::rev_visualize): New member.
+	(VarInspector::Priv::on_var_revisualized): New function.
+	(VarInspector::Priv::graphically_set_variable): Factor out from
+	...
+	(VarInspector::Priv::set_variable): ... here.  Use the new
+	VarInspector::Priv::on_var_revisualized.  Take a new flag to
+	re-visualize the variable.
+	(VarInspector::set_variable): Take a new flag to re-visualize the
+	variable.
+	* src/persp/dbgperspective/nmv-variables-utils.h ():
+	* src/persp/dbgperspective/nmv-variables-utils.cc
+	(variables_match): Consider variables with the same internal name
+	being equal.
+	(set_a_variable): Factorize out of ...
+	(append_a_variable): ... here.
+	(unlink_member_variable_rows): New function.
+	(visualize_a_variable): Likewise.  Use set_a_variable.
+	* tests/test-breakpoint.cc (test_main): Adjust for the renaming of
+	IDebugger::enable_pretty_printing.
+	* tests/test-types.cc (test_main): Likewise.
+	* tests/test-var-path-expr.cc (test_main): Likewise.
+	* tests/test-vars.cc (test_main): Likewise.
+
+2011-01-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Add preferences for GDB pretty printing
+	* src/confmgr/nmv-conf-keys.h (CONF_KEY_PRETTY_PRINTING): Declare
+	new conf key.
+	* src/confmgr/nmv-conf-keys.cc (CONF_KEY_PRETTY_PRINTING): Define
+	it.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::enable_pretty_printing): Rename
+	GDBEngine::Priv::disable_pretty_printing into this.
+	(GDBEngine::Priv::Priv, GDBEngine::load_program): Adjust.
+	(GDB::Engine::Priv::read_default_config): Read the value of key
+	CONF_KEY_PRETTY_PRINTING as well.
+	(GDB::Engine::Priv::on_conf_key_changed_signal): Update
+	GDB::Engine::Priv::enable_pretty_printing.
+	(GDBEngine::disable_pretty_printing): Update remote conf setting.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc
+	(PreferencesDialog::Priv::pretty_printing_check_button): New check
+	button.
+	(PreferencesDialog::Priv::on_pretty_printing_toggled_signal)
+	(PreferencesDialog::Priv::update_pretty_printing_key): New
+	functions.
+	(PreferencesDialog::Priv::init): Deserialize the new
+	PreferencesDialog::Priv::pretty_printing_check_button.
+	(PreferencesDialog::Priv::update_widget_from_debugger_keys): Read
+	the new CONF_KEY_PRETTY_PRINTING key.
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas:
+	Add new schema for key
+	/schemas/apps/nemiver/dbgperspective/pretty-printing.
+	* src/persp/dbgperspective/ui/preferencesdialog.ui: Add a check
+	button to enable pretty printing in the debugger preference tab.
+
+2010-09-12  Dodji Seketeli <dodji@gnome.org>
+
+	Initialize IDebugger dynmods with gconf in tests
+	* src/dbgengine/nmv-debugger-utils.[h,cc]
+	(load_debugger_iface_with_gconf): New entry point.
+	* tests/test-cpptrait.cc (test_debugger)
+	* tests/test-deref.cc (test_main)
+	* tests/test-disassemble.cc (test_main)
+	* tests/test-local-vars-list.cc (test_main)
+	* tests/test-types.cc (test_main)
+	* tests/test-var-list.cc (test_main)
+	* tests/test-var-walker.cc (test_main)
+	* tests/test-variable-format.cc (test_main)
+	* tests/test-varobj-walker.cc (test_main)
+	* tests/test-vars.cc (test_main)
+	* tests/test-watchpoint.cc (test_main):
+	Use load_debugger_iface_with_gconf.
+	* tests/Makefile.am: Link all the tests loading the IDebugger
+	interface with $(top_builddir)/src/dbgengine/libdebuggerutils.la
+
+2010-09-12  Dodji Seketeli <dodji@gnome.org>
+
+	Fix tests that got broken a while ago
+	* tests/test-types.cc (on_variable_value_signal): Update this test
+	b/c of a change in fooprog.cc
+	* tests/test-breakpoint.cc (on_stopped_signal): Likewise.
+
+2010-09-12  Dodji Seketeli <dodji@gnome.org>
+
+	Enable GDB pretty printers by default
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::disable_pretty_printing)
+	(IDebugger::set_variable_vizualizer): New ifaces.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::disable_pretty_printing)
+	(GDBEngine::set_variable_vizualizer): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::disable_pretty_printing): New member.
+	(GDBEngine::Priv::Priv): Initialize
+	GDBEngine::Priv::disable_pretty_printing if
+	NMV_DISABLE_PRETTY_PRINTING is set.
+	(GDBengine::disable_pretty_printing)
+	(GDBEngine::set_variable_vizualizer): Implement new interfaces.
+	(GDBEngine::load_program): Enable GDB pretty printers by default.
+	* tests/test-breakpoint.cc (test_main): Disable GDB pretty
+	printers to keep this test working as before.
+	* tests/test-var-path-expr.cc (test_main): Likewise.
+	* tests/test-vars.cc (test_main): Likewise.
+	* tests/test-types.cc (test_main): Likewise.
+
+2010-08-30  Dodji Seketeli <dodji@gnome.org>
+
+	Backend support for GDB/MI variable format
+	* src/dbgengine/nmv-gdbmi-parser.h (parse_variable_format):
+	Declare new GDBMI parser entry point.
+	* src/dbgengine/nmv-gdbmi-parser.cc (parse_variable_format):
+	Define it.
+	(parse_result_record): Support variable format result record. Use
+	parse_variable_format.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Variable::Format):
+	New enum.
+	(query_variable_format, set_variable_format): Declare new entry
+	points.
+	* src/dbgengine/nmv-dbg-common.h (ResultRecord::variable_format)
+	(ResultRecord::has_variable_format): New accessors to support
+	variable format in the result record.
+	* src/dbgengine/nmv-debugger-utils.[cc|h] (string_to_variable_format)
+	(variable_format_to_string): New (de)serialization functions.
+	* src/dbgengine/nmv-gdb-engine.h (query_variable_format)
+	(set_variable_format): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc (query_variable_format)
+	(set_variable_format): Define these.
+	(struct OnVariableFormatHandler): New output handler.
+	(init_output_handlers): Add it to the list of output handlers.
+	* src/dbgengine/Makefile.am: Make the libgdbmod use the static lib
+	libdebuggerutils.
+	* tests/test-variable-format.cc: New test.
+	* tests/Makefile.am: Added new test-variable-format to the build
+	system. Link runtestgdbmi and runtestvarobjwalker with
+	libdebuggerutils.la
+	* tests/fooprog.cc: Add a new func1_1 to test for some variable
+	value. Used by the new tests/test-variable-format.cc.
+
+2011-08-29  Piotr Drąg <piotrdrag@gmail.com>
+
+	Updated POTFILES.in
+
+2011-08-07  Fabien Parent <parent.f@gmail.com>
+
+	577496 561100 533437 656093 564992 Support Copy/Paste/Reset on target terminal
+	* src/persp/dbgperspective/menus/Makefile.am: Add terminal menu file
+	* src/persp/dbgperspective/menus/terminalmenu.xml: New file
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::get_terminal): pass the ui manager to the terminal
+	* src/uicommon/nmv-terminal.cc
+	(on_button_press_signal): New API
+	(Terminal::Priv::Priv): Move code into a new method init_body, and call it
+	along with init_actions.
+	(Terminal::Priv::init_body): Code moved from Terminal::Priv::Priv.
+	(Terminal::Priv::init_actions): New API
+	(Terminal::Priv::on_reset_signal): Likewise
+	(Terminal::Priv::on_copy_signal): Likewise
+	(Terminal::Priv::on_paste_signal): Likewise
+	(Terminal::Priv::reset): Likewise
+	(Terminal::Priv::copy): Likewise
+	(Terminal::Priv::paste): Likewise
+	(Terminal::Terminal): Add a new paramater
+	* src/uicommon/nmv-terminal.h
+	(Terminal::Terminal): Set constructor explicit and add a new parameter.
+
+2011-08-29  Piotr Drąg <piotrdrag@gmail.com>
+
+	Updated POTFILES.in
+
+2011-07-24  Fabien Parent <parent.f@gmail.com>
+
+	New Layout Manager and 3 additionals new layouts
+	* configure.ac: Add directives to enable/disable the building of the
+	dynamic layout.
+	* data/schemas/gconf/nemiver-dbgperspective.schemas: Add new configuration
+	keys for the new layouts.
+	* data/schemas/gsettings/org.nemiver.gschema.xml: Likewise
+	* src/confmgr/nmv-conf-keys.h: Likewise
+	* src/confmgr/nmv-gconf-keys-defs.cc: Likewise
+	* src/confmgr/nmv-gsettings-keys-defs.c: Likewise
+	* src/persp/dbgperspective/Makefile.am: Add new source files
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc: New API
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.h: Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc: Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.h: Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc: Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.h: Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc: Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.h: Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_layout_changed): New API
+	(DBGPerspective::init_perspective_menu_entries): Removed
+	(DBGPerspective::register_layouts): New API
+	(DBGPerspective::get_source_view_widget): New API
+	(DBGPerspective::set_show_context_view): Removed
+	(DBGPerspective::set_show_terminal_view): Likewise
+	(DBGPerspective::set_show_breakpoints_view): Likewise
+	(DBGPerspective::set_show_registers_view): Likewise
+	(DBGPerspective::set_show_memory_view): Likewise
+	(DBGPerspective::activate_status_view): Removed. Implemented in each Layout.
+	(DBGPerspective::Priv::Priv):
+	(DBGPerspective::Priv::layout): New API
+	(DBGPerspective::on_shutdown_signal): Call the layout's save_configuration
+	method.
+	(DBGPerspective::on_debugger_running_signal): Check pointer before using it
+	(DBGPerspective::on_activate_context_view): Use the new Layout Manager API
+	(DBGPerspective::on_activate_target_terminal_view): Likewise
+	(DBGPerspective::on_activate_breakpoints_view): Likewise
+	(DBGPerspective::on_activate_registers_view): Likewise
+	(DBGPerspective::on_activate_memory_view): Likewise
+	(DBGPerspective::init_actions): Use Renamed ViewsIndex's elements.
+	(DBGPerspective::init_body): Move status views initialization into the new
+	Layout API.
+	(DBGPerspective::init_signals): Connect signal
+	to DBGPerspective::on_layout_changed when the layout has changed.
+	(DBGPerspective::bring_source_as_current): Check pointer before using it.
+	(DBGPerspective::do_init): Call register_layouts to initialize the layout
+	manager.
+	(DBGPerspective::get_body): Use the Layout Manager to get the perspective's
+	body.
+	(DBGPerspective::edit_workbench_menu): Remove comment
+	(DBGPerspective::update_file_maps): Check pointer before using it.
+	(DBGPerspective::edit_preferences): Adapt to the new PreferencesDialog's
+	constructor prototype.
+	(DBGPerspective::layout_changed_signal): New API
+	(DBGPerspective::add_views_to_layout): New API
+	* src/persp/dbgperspective/nmv-dbg-perspective.h
+	(DBGPerspective::get_source_view_widget): New API
+	(DBGPerspective::get_conf_mgr): Add the method to the interface
+	(DBGPerspective::layout_changed_signal): New API
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc
+	(PreferencesDialog::Priv::Priv): Take the Perspective and the LayoutManager
+	as parameters instead of a Workbench.
+	(PreferencesDialog::Priv::init): Add the LayoutSelector widget to the
+	preferences dialog.
+	(PreferencesDialog::Priv::conf_manager): Use the IPerspective to get the
+	configuration manager instead of the workbench.
+	(PreferencesDialog::PreferencesDialog): Take the Perspective and
+	the LayoutManager as parameters instead of a Workbench.
+	* src/persp/dbgperspective/nmv-preferences-dialog.h
+	(PreferencesDialog::PreferencesDialog): Take the Perspective and
+	the LayoutManager as parameters instead of a Workbench.
+	* src/persp/dbgperspective/ui/Makefile.am: Remove bodycontainer.ui file
+	* src/persp/dbgperspective/ui/bodycontainer.ui: Removed
+	* src/persp/dbgperspective/ui/preferencesdialog.ui: Add Layout tab
+	* src/persp/nmv-i-perspective.h: Add a signal when the layout changed.
+	* src/uicommon/Makefile.am: Add new source files and add new include
+	directories.
+	* src/uicommon/nmv-layout-manager.cc: New API
+	* src/uicommon/nmv-layout-manager.h: Likewise
+	* src/uicommon/nmv-layout-selector.cc: Likewise
+	* src/uicommon/nmv-layout-selector.h: Likewise
+	* src/uicommon/nmv-layout.h: Likewise
+	* src/workbench/nmv-workbench.cc
+	(Workbench::on_perspective_body_changed_signal): New API
+	(Workbench::disconnect_all_perspective_signals): New API
+	(Workbench::~Workbench): Disconnect perspectives layout_changed_signal
+	(Workbench::do_init): Attach the signal 'layout_changed_signal' when
+	the layout changed to the Workbench::on_perspective_layout_changed_signal
+	method.
+
+2011-08-21  Dodji Seketeli <dodji@gnome.org>
+
+	657021 Wrong behaviour enlarging var inspector
+	* src/persp/dbgperspective/ui/varinspectordialog.ui: Don't expand
+	variablenameentry ComboBox when its parent expands.  Likewise for
+	the vbox1 ancestor containing widget.
+
+2011-07-24  Fabien Parent <parent.f@gmail.com>
+
+	Remove unused status widgets
+	* src/persp/dbgperspective/menus/menus.xml: Remove commands, errors,
+	and target output menu items.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::Priv::Priv): Stop initializing commands, errors,
+	and target output datas.
+	(DBGPerspective::on_show_commands_action): Removed
+	(DBGPerspective::on_show_errors_action): Removed
+	(DBGPerspective::on_show_target_output_action): Removed
+	(DBGPerspective::on_insert_in_command_view_signal): Removed
+	(DBGPerspective::on_show_command_view_changed_signal): Removed
+	(DBGPerspective::on_show_target_output_view_changed_signal): Removed
+	(DBGPerspective::on_show_log_view_changed_signal): Removed
+	(DBGPerspective::on_debugger_console_message_signal): Removed
+	(DBGPerspective::on_debugger_target_output_message_signal): Removed
+	(DBGPerspective::on_debugger_log_message_signal): Removed
+	(DBGPerspective::on_activate_output_view): Removed
+	(DBGPerspective::on_activate_logs_view): Removed
+	(DBGPerspective::get_command_view): Removed
+	(DBGPerspective::get_command_view_scrolled_win): Removed
+	(DBGPerspective::get_target_output_view): Removed
+	(DBGPerspective::get_target_output_view_scrolled_win): Removed
+	(DBGPerspective::get_log_view): Removed
+	(DBGPerspective::get_log_view_scrolled_win): Removed
+	(DBGPerspective::set_show_command_view): Removed
+	(DBGPerspective::set_show_target_output_view): Removed
+	(DBGPerspective::set_show_log_view): Removed
+	(DBGPerspective::add_text_to_command_view): Removed
+	(DBGPerspective::add_text_to_target_output_view): Removed
+	(DBGPerspective::add_text_to_log_view): Removed
+	(DBGPerspective::show_command_view_signal): Removed
+	(DBGPerspective::show_target_output_view_signal): Removed
+	(DBGPerspective::show_log_view_signal): Removed
+	(DBGPerspective::on_debugger_command_done_signal): Stop updating
+	the command view.
+	(DBGPerspective::init_perspective_menu_entries): Remove code hiding
+	the command, log, and target output view.
+	(DBGPerspective::init_actions): Stop initializing the command, log,
+	and target output menu entries.
+	(DBGPerspective::init_body): Stop initializing the command, log,
+	and target output view.
+	(DBGPerspective::init_signals): Stop inializing the command, log,
+	and target output signals.
+	(DBGPerspective::init_debugger_signals): Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective.h
+	(DBGPerspective::add_text_to_command_view): Removed
+	(DBGPerspective::add_text_to_target_output_view): Removed
+	(DBGPerspective::add_text_to_log_view): Removed
+
+2011-08-22  Fran Dieguez <fran@openhost.es>
+
+	Added galician translations for documentation
+
+2011-08-22  Fran Dieguez <fran@openhost.es>
+
+	Updated Galician translations
+
+2011-08-22  Fran Dieguez <fran@openhost.es>
+
+	Updated Galician translations
+
+2011-08-19  Yuri Kozlov <yuray@komyakino.ru>
+
+	Updated Russian translation
+
+2011-08-05  Kalev Lember <kalevlember@gmail.com>
+
+	Fix build with ghex 2.90.0
+	* configure.ac: Depend on gtkhex-3
+	* src/uicommon/nmv-hex-document.h:
+	* src/uicommon/nmv-hex-editor.[cc,h]: When including gtkhex
+	headers, include the files directly without directory prefix,
+	because the -I from pkgconfig already specifies the directory.
+
+2011-08-06  Mario Blättermann <mariobl@gnome.org>
+
+	[l10n] Updated German translation
+
+2011-08-06  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2011-08-04  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-08-01  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2011-07-24  Fabien Parent <parent.f@gmail.com>
+
+	Fix typo
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::switch_to_asm): Fix typo
+
+2011-07-13  Fabien Parent <parent.f@gmail.com>
+
+	Add GUI to change the assembly syntax
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc
+	(PreferencesDialog::Priv::on_asm_flavor_changed_signal): Update
+	the disassembly flavor in the configuration.
+	(PreferencesDialog::Priv::update_asm_flavor_key): Likewise
+	(PreferencesDialog::Priv::on_reload_files_toggled_signal): Initialize
+	new widgets.
+	(PreferencesDialog::Priv::update_reload_files_keys): Update combobox
+	from the configuration.
+	* src/persp/dbgperspective/ui/preferencesdialog.ui: New frame for
+	the disassembly flavor setting.
+
+2011-07-13  Fabien Parent <parent.f@gmail.com>
+
+	Support user defined assembly syntax
+	* data/schemas/gconf/nemiver-dbgperspective.schemas: Add configuration key
+	* data/schemas/gsettings/org.nemiver.gschema.xml: Likewise
+	* src/confmgr/nmv-conf-keys.h: Likewise
+	* src/confmgr/nmv-gconf-keys-defs.cc: Likewise
+	* src/confmgr/nmv-gsettings-keys-defs.cc: Likewise
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::launch_gdb_and_set_args): set the disassembly flavor
+	(GDBEngine::Priv::read_default_config): read the disassembly flavor from
+	the configuration.
+	(GDBEngine::Priv::on_conf_key_changed_signal): change the disassembly flavor
+	in case of change in the configuration.
+
+2011-07-30  Fabien Parent <parent.f@gmail.com>
+
+	Replace NULL symbol with 0
+	* src/common/nmv-buffer.h (Buffer::Buffer): Replace NULL symbol with 0
+	* src/common/nmv-conf-manager.cc (Config::~Config): Likewise
+	* src/common/nmv-connection.cc
+	(ConnectionPriv::ConnectionPriv): Likewise
+	(Connection::~Connection): Likewise
+	* src/common/nmv-date-utils.cc (get_current_datetime): Likewise
+	* src/common/nmv-delete-statement.cc
+	(DeleteStatement::~DeleteStatement): Likewise
+	* src/common/nmv-dynamic-module.cc
+	(DynamicModule::Loader::create_dynamic_module_instance): Likewise
+	(DynamicModule::Priv::Priv): Likewise
+	* src/common/nmv-insert-statement.cc
+	(InsertStatement::~InsertStatement): Likewise
+	* src/common/nmv-log-stream.cc
+	(OfstreamLogSink::OfstreamLogSink): Likewise
+	* src/common/nmv-proc-mgr.cc
+	(ProcMgr::get_all_process_list): Likewise
+	(ProcMgr::get_process_from_pid): Likewise
+	* src/common/nmv-proc-utils.cc (launch_program): Likewise
+	* src/common/nmv-safe-ptr.h
+	(SafePtr::~SafePtr): Likewise
+	(SafePtr::release): Likewise
+	* src/common/nmv-scope-logger.cc
+	(ScopeLoggerPriv::ScopeLoggerPriv): Likewise
+	(ScopeLoggerPriv::~ScopeLoggerPriv): Likewise
+	* src/common/nmv-sql-statement.cc (SQLStatement::~SQLStatement): Likewise
+	* src/common/nmv-str-utils.cc (hexa_to_int): Likewise
+	* src/common/nmv-transaction.cc (Transaction::~Transaction): Likewise
+	* src/common/nmv-ustring.cc (UString::hexa_to_int): Likewise
+	* src/confmgr/nmv-gconf-mgr.cc
+	(GConfMgr::register_namespace): Likewise
+	(GConfMgr::get_key_value): Likewise
+	(GConfMgr::set_key_value): Likewise
+	* src/dbdimpl/sqlite/nmv-sqlite-cnx-drv.cc
+	(SqliteCnxDrv::Priv::Priv): Likewise
+	(SqliteCnxDrv::Priv::step_cur_statement): Likewise
+	(SqliteCnxDrv::get_last_error): Likewise
+	(SqliteCnxDrv::execute_statement): Likewise
+	(SqliteCnxDrv::close): Likewise
+	* src/dbdimpl/sqlite/nmv-sqlite-cnx-mgr-drv.cc
+	(SqliteCnxMgrDrv::~SqliteCnxMgrDrv): Likewise
+	(SqliteCnxMgrDrv::connect_to_db): Likewise
+	* src/langs/nmv-cpp-lexer.cc
+	(Lexer::~Lexer): Likewise
+	* src/main.cc (parse_command_line): Likewise
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::on_breakpoints_view_button_press_signal): Likewise
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::SlotedButton::SlotedButton): Likewise
+	(DBGPerspective::Priv::Priv): Likewise
+	(DBGPerspective::get_current_source_editor): Likewise
+	(DBGPerspective::update_file_maps): Likewise
+	(ScrollTextViewToEndClosure::ScrollTextViewToEndClosure): Likewise
+	* src/uicommon/nmv-terminal.cc (Terminal::Priv::init_pty): Likewise
+	* src/workbench/nmv-workbench.cc
+	(Workbench::on_contents_menu_item_action): Likewise
+	(Workbench::get_perspective): Likewise
+
+2011-07-26  Fabien Parent <parent.f@gmail.com>
+
+	Expand session's treeview
+	* src/persp/dbgperspective/ui/savedsessionsdialog.ui: Expand
+	session's treeview
+
+2011-07-30  Fabien Parent <parent.f@gmail.com>
+
+	Apply the GNOME 3 style on the toolbar
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::init_toolbar): Apply the GNOME 3 style on the toolbar
+
+2011-07-15  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2011-06-12  Fabien Parent <parent.f@gmail.com>
+
+	Fix typo
+	* src/langs/nmv-cpp-ast.cc (UnqualifiedOpFuncID::to_string): Fix typo
+
+2011-06-11  Dodji Seketeli <dodji@gnome.org>
+
+	Fix VarsTreeView memory management
+	* src/persp/dbgperspective/nmv-vars-treeview.h
+	(VarsTreeView::create): Change return type from a SafePtr to a
+	bare VarsTreeView* pointer.
+	* src/persp/dbgperspective/nmv-vars-treeview.cc
+	(VarsTreeView::create): Likewise.  Return a VarsTreeView* now.
+	The caller has either to call Gtk::manage on the result of
+	VarsTreeView::create or delete it by hand.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(LocalVarsInspector::Priv::tree_view): Change the type of this
+	member from a SafePtr to a bare VarsTreeView* pointer.
+	(LocalVarsInspector::Priv::Priv): Initialize
+	LocalVarsInspector::Priv::tree_view with the result of
+	VarsTreeView passed to Gtk::manage.  Avoid doing the (wrong)
+	tree_view.reference() dance I was doing before.
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc
+	(GlobalVarsInspectorDialog::Priv::tree_view): Change the type of
+	this member from a SafePtr to a bare VarsTreeView* pointer.
+	* src/uicommon/nmv-dialog.cc (Dialog::Priv::Priv): Fix indentation.
+
+2011-06-11  Dodji Seketeli <dodji@gnome.org>
+
+	Restore layout for variable inspector widget
+	* src/persp/dbgperspective/ui/varinspectordialog.ui: Don't set any
+	default size for the dialog.
+
+2011-06-08  Fabien Parent <parent.f@gmail.com>
+
+	Uniformize the header guard name.
+	* src/common/nmv-address.h: use the file name as header guard name.
+	* src/common/nmv-api-macros.h: Likewise
+	* src/common/nmv-asm-instr.h: Likewise
+	* src/common/nmv-asm-utils.h: Likewise
+	* src/common/nmv-buffer.h: Likewise
+	* src/common/nmv-conf-manager.h: Likewise
+	* src/common/nmv-connection-manager.h: Likewise
+	* src/common/nmv-connection.h: Likewise
+	* src/common/nmv-date-utils.h: Likewise
+	* src/common/nmv-delete-statement.h: Likewise
+	* src/common/nmv-dynamic-module.h: Likewise
+	* src/common/nmv-env.h: Likewise
+	* src/common/nmv-exception.h: Likewise
+	* src/common/nmv-i-connection-driver.h: Likewise
+	* src/common/nmv-i-connection-manager-driver.h: Likewise
+	* src/common/nmv-i-input-stream.h: Likewise
+	* src/common/nmv-initializer.h: Likewise
+	* src/common/nmv-insert-statement.h: Likewise
+	* src/common/nmv-loc.h: Likewise
+	* src/common/nmv-parsing-utils.h: Likewise
+	* src/common/nmv-plugin.h: Likewise
+	* src/common/nmv-range.h: Likewise
+	* src/common/nmv-safe-ptr.h: Likewise
+	* src/common/nmv-scope-logger.h: Likewise
+	* src/common/nmv-sequence.h: Likewise
+	* src/common/nmv-sql-statement.h: Likewise
+	* src/common/nmv-tools.h: Likewise
+	* src/common/nmv-transaction.h: Likewise
+	* src/common/nmv-ustring.h: Likewise
+	* src/dbdimpl/sqlite/nmv-sqlite-cnx-drv.h: Likewise
+	* src/dbdimpl/sqlite/nmv-sqlite-cnx-mgr-drv.h: Likewise
+	* src/dbgengine/nmv-i-debugger.h: Likewise
+	* src/langs/nmv-cpp-ast.h: Likewise
+	* src/langs/nmv-cpp-lexer-utils.h: Likewise
+	* src/langs/nmv-cpp-lexer.h: Likewise
+	* src/persp/dbgperspective/nmv-call-function-dialog.h: Likewise
+	* src/persp/dbgperspective/nmv-load-core-dialog.h: Likewise
+	* src/persp/dbgperspective/nmv-open-file-dialog.h: Likewise
+	* src/persp/dbgperspective/nmv-run-program-dialog.h: Likewise
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.h: Likewise
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.h: Likewise
+	* src/persp/dbgperspective/nmv-set-jump-to-dialog.h: Likewise
+	* src/persp/nmv-i-perspective.h: Likewise
+	* src/uicommon/nmv-dialog.h: Likewise
+	* src/uicommon/nmv-locate-file-dialog.h: Likewise
+	* src/uicommon/nmv-source-editor.h: Likewise
+	* src/uicommon/nmv-ui-utils.h: Likewise
+
+2011-06-08  Fabien Parent <parent.f@gmail.com>
+
+	Remove not implemented constructor
+	* src/persp/dbgperspective/nmv-preferences-dialog.h: Remove not
+	implemented constructor.
+
+2011-06-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Reference the local var inspector view
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(LocalVarsInspector::Priv::Priv): Add a reference on the tree_view
+	component we have here otherwise we'd unreference it after gtk got
+	rid of the widget it has.
+
+2011-06-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Handle breakpoints added via GDB scripts
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::set_breakpoints): Handle breakpoints that
+	have been set via e.g, GDB scripts.  That is, breakpoints for
+	which we didn't get singular notification for.
+
+2011-06-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Avoid gratuitously resetting the dbg command queue
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_program): Don't reset the command queue
+	here, as we don't mean to re-start the inferior at this point.
+
+2011-06-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Add some logging to nmv-gdb-engine.cc
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::Priv::issue_command)
+	(OnBreakpointHandler::do_handle, GDBEngine::load_program): Add
+	some logging.
+
+2011-06-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Properly mark the GDB line as busy
+	* src/dbgengine/nmv-gdb-engine.cc (issue_command): Mark the line
+	as busy when we send data over the wire.  The line is later marked
+	non-busy when we receive the proper marker from GDB.
+	(launch_gdb_and_set_args): Don't send data over the wire if it's
+	busy.
+	(on_gdb_stdout_has_data_signal): Slight indentation cleanup.
+
+2011-05-17  Kalev Lember <kalev@smartlink.ee>
+
+	Port to gtkmm 3.0 and gtksourceviewmm 3.0
+	* configure.ac: Require gtkmm-3.0, gtksourceviewmm-3.0,
+	gtk+-3.0, and vte-2.90. gtkhex still needs porting to GTK+ 3;
+	require gtkhex-2.90 to avoid pulling in the gtk2-only version.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::build_tree_view): Use the "draw" signal
+	instead of the "expose-event" signal that was removed in GTK+ 3.
+	(BreakpointsView::Priv::on_expose_event): Renamed to
+	BreakpointsView::Priv::on_draw_signal.
+	(BreakpointsView::Priv::on_draw_signal): Likewise.
+	* src/persp/dbgperspective/nmv-call-function-dialog.cc
+	(CallFunctionDialog::Priv): Use Gtk::ComboBox instead of
+	Gtk::ComboBoxEntry.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::on_selection_changed_signal): Adapt to gtkmm
+	3.0 changes to use std::vector instead of std::list.
+	(CallStack::Priv::build_widget): Use the "draw" signal instead
+	of the "expose-event" signal that was removed in GTK+ 3.
+	(CallStack::Priv::on_expose_event_signal): Renamed to
+	CallStack::Priv::on_draw_signal.
+	(CallStack::Priv::on_draw_signal): Likewise.
+	* src/persp/dbgperspective/nmv-file-list.[cc,h]
+	(FileListView::get_selected_filenames): Adapt to gtkmm 3.0
+	changes to use std::vector instead of std::list.
+	(FileListView::FileListView): gtkmm 3.0 no longer has
+	Gtk::Menu_Helpers. Port to manually set up Gtk::MenuItems.
+	(FileListView::get_selected_filenames):
+	(FileList::get_filenames): Adapt to gtkmm 3.0 changes to use
+	std::vector instead of std::list.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(LocalVarsInspector::Priv::init_graphical_signals): Use the
+	"draw" signal instead of the "expose-event" signal that was
+	removed in GTK+ 3.
+	(LocalVarsInspector::Priv::on_expose_event_signal): Renamed to
+	LocalVarsInspector::Priv::on_draw_signal.
+	(LocalVarsInspector::Priv::on_draw_signal): Likewise.
+	* src/persp/dbgperspective/nmv-open-file-dialog.[cc,h]:
+	(OpenFileDialog::Priv::on_radio_button_toggled): Use foreach and
+	Gtk::VBox::remove to clear the list of vbox's children, as
+	children ().clear () no longer works with gtkmm 3.0.
+	(OpenFileDialog::Priv::validate_source_files):
+	(OpenFileDialog::Priv::get_filenames):
+	(OpenFileDialog::get_filenames): Adapt to gtkmm 3.0 changes to
+	use std::vector instead of std::list.
+	* src/persp/dbgperspective/nmv-registers-view.cc
+	(RegistersView::Priv::build_tree_view): Call
+	Gtk::TreeViewColumn::get_first_cell () instead of the removed
+	Gtk::TreeViewColumn::get_first_cell_renderer ().  Also use the
+	"draw" signal instead of the "expose-event" signal that was
+	removed in GTK+ 3.
+	(RegistersView::Priv::on_expose_event_signal): Renamed to
+	RegistersView::Priv::on_draw_signal.
+	(RegistersView::Priv::on_draw_signal): Likewise; also adapt to
+	gtk-style-context changes.
+	* src/persp/dbgperspective/nmv-thread-list.cc
+	(ThreadList::Priv::connect_to_widget_signals): Use the "draw"
+	signal instead of the "expose-event" signal that was removed in
+	GTK+ 3.
+	(ThreadList::Priv::on_expose_event_signal): Renamed to
+	ThreadList::Priv::on_draw_signal.
+	(ThreadList::Priv::on_draw_signal): Likewise.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc
+	(VarInspectorDialog::Priv):
+	(VarInspectorDialog::Priv::build_dialog): Adapt to
+	Gtk::ComboBoxEntry removal.
+	* src/persp/dbgperspective/nmv-variables-utils.cc
+	(update_a_variable_node): Adapt to gtk-style-context changes.
+	* src/persp/dbgperspective/nmv-vars-treeview.cc
+	(VarsTreeView::VarsTreeView): Call
+	Gtk::TreeViewColumn::get_first_cell () instead of the removed
+	Gtk::TreeViewColumn::get_first_cell_renderer ().
+	* src/persp/dbgperspective/ui/callfunctiondialog.ui:
+	* src/persp/dbgperspective/ui/findtextdialog.ui:
+	* src/persp/dbgperspective/ui/varinspectordialog.ui: Adapt to
+	GtkComboBoxEntry removal.
+	* src/uicommon/nmv-dialog.cc (Dialog::Priv::Priv): Removed a
+	call to hide () that prevented all dialogs from showing.
+	* src/uicommon/nmv-popup-tip.cc (PopupTip::Priv::Priv): Removed
+	a call to ensure_style () which no longer exists in gtkmm 3.0.
+	* src/uicommon/nmv-terminal.[cc,h]
+	(Terminal::Priv):
+	(Terminal::Priv::Priv):
+	(Terminal::adjustment): Wrap the Gtk::Adjustment in a
+	Glib::RefPtr and fix up its reference counting.
+	* src/workbench/nmv-workbench.cc
+	(Workbench::on_about_menu_item_action):
+	(Workbench::do_init): Adapt to gtkmm 3.0 changes to use
+	std::vector instead of std::list.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Adapt
+	includes and using namespace directive for gtksourceviewmm
+	renames.
+	(PopupScrolledWindow::on_size_request): Renamed to
+	PopupScrolledWindow::get_preferred_height_vfunc.
+	(PopupScrolledWindow::get_preferred_height_vfunc): Override the
+	virtual get_preferred_height_vfunc instead of the removed
+	on_size_request.
+	(DBGPerspective::on_switch_page_signal): GtkNotebookPage was
+	removed in GTK+ 3; use Gtk::Widget instead in the signal handler.
+	(DBGPerspective::create_source_editor):
+	(DBGPerspective::load_asm):
+	(DBGPerspective::Priv::modify_source_editor_style):
+	(DBGPerspective::Priv::load_file):
+	(DBGPerspective::on_conf_key_changed_signal):
+	(DBGPerspective::get_or_append_asm_source_editor):
+	(DBGPerspective::read_default_config):
+	(DBGPerspective::popup_source_view_contextual_menu):
+	(DBGPerspective::edit_workbench_menu):
+	(DBGPerspective::create_source_editor):
+	(DBGPerspective::open_file_real):
+	(DBGPerspective::get_asm_title):
+	(DBGPerspective::open_asm):
+	(DBGPerspective::switch_to_asm):
+	(DBGPerspective::switch_to_source_code):
+	(DBGPerspective::reload_file):
+	(DBGPerspective::append_breakpoint):
+	(DBGPerspective::set_breakpoint_using_dialog):
+	(DBGPerspective::inspect_variable):
+	(nemiver_common_create_dynamic_module_instance): Adapt to
+	gtksourceviewmm namespace and symbol renames.
+	(DBGPerspective::modify_source_editor_style): Use
+	override_font () instead of the deprecated modify_font ().
+	(DBGPerspective::on_motion_notify_event_signal): Adapt to GTK+ 3
+	changes and get pointer coordinates through device_manager.
+	(DBGPerspective::on_debugger_running_signal): Adapt to
+	set_cursor's changes to take a RefPtr.
+	(DBGPerspective::add_stock_icon): Adapt to Gtk::IconFactory::add
+	changes to take a RefPtr to Gtk::IconSet.
+	(DBGPerspective::append_source_editor): Use CSS styling and
+	style-context.
+	(DBGPerspective::create_source_editor): Adapt to gtkmm 3.0
+	changes to use override_font instead of modify_font.
+	(DBGPerspective::open_file): Adapt to gtkmm 3.0 changes to use
+	std::vector instead of std::list.
+	* src/persp/dbgperspective/nmv-find-text-dialog.cc: Adapt
+	includes and using namespace directive for gtksourceviewmm
+	renames.
+	(FindTextDialog::Priv::Priv):
+	(FindTextDialog::Priv::get_search_text_combo): Adapt to GTK+ 3
+	GtkComboBoxEntry removal.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc: Adapt
+	includes for gtksourceviewmm renames.
+	(PreferencesDialog::Priv::init): Adapt to gtksourceviewmm symbol
+	and namespace renames; adapt to gtkmm 3.0 changes to use
+	std::vector instead of std::list.
+	* src/uicommon/nmv-source-editor.[cc,h]: Adapt includes and using
+	namespace directives for gtksourceviewmm renames.
+	(SourceView::SourceView):
+	(SourceEditor::Priv::NonAssemblyBufContext):
+	(SourceEditor::Priv::AssemblyBufContext):
+	(SourceEditor::Priv::register_assembly_source_buffer):
+	(SourceEditor::Priv::register_non_assembly_source_buffer):
+	(SourceEditor::Priv::get_buffer_type):
+	(SourceEditor::Priv::get_markers):
+	(SourceEditor::Priv::get_smallest_range_containing_address):
+	(SourceEditor::Priv::address_2_line):
+	(SourceEditor::Priv::init_common_buffer_signals):
+	(SourceEditor::Priv::init_assembly_buffer_signals):
+	(SourceEditor::Priv::init_non_assembly_buffer_signals):
+	(SourceEditor::Priv::Priv):
+	(SourceEditor::SourceEditor):
+	(SourceEditor::source_view):
+	(SourceEditor::set_visual_breakpoint_at_line):
+	(SourceEditor::remove_visual_breakpoint_from_line):
+	(SourceEditor::clear_decorations):
+	(SourceEditor::is_visual_breakpoint_set_at_line):
+	(SourceEditor::do_search):
+	(SourceEditor::setup_buffer_mime_and_lang):
+	(SourceEditor::load_file):
+	(SourceEditor::add_asm):
+	(SourceEditor::load_asm):
+	(SourceEditor::current_address):
+	(SourceEditor::register_non_assembly_source_buffer):
+	(SourceEditor::scroll_to_address):
+	(SourceEditor::assembly_buf_addr_to_line):
+	(SourceEditor::assembly_buf_line_to_addr): Adapt to
+	gtksourceviewmm namespace and symbol renames.
+	(SourceView::init_font): Use override_font instead of
+	modify_font that was removed in gtkmm 3.0.
+	(SourceEditor::Priv::register_breakpoint_marker_type): Adapt to
+	gtksourceviewmm 3.0 changes for setting icon.
+	(SourceEditor::init): Adapt to gtksourceviewmm 3.0 changes to
+	setting icon and mark category.
+	(SourceEditor::do_search): Use TextIter and text search flags
+	from Gtk:: namespace instead of the equivalents that were
+	removed from gtksourceviewmm.
+	(SourceEditor::setup_buffer_mime_and_lang): Adapt to
+	gtksourceviewmm 3.0 changes to use std::vector instead of
+	std::list.
+
+2011-05-09  Kalev Lember <kalevlember@gmail.com>
+
+	Popup var inspector size requisition code rework
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(PopupScrolledWindow::on_size_request): New virtual function for
+	clipping the height of the ScrolledWindow.
+	(DBGPerspective::on_popup_var_insp_size_request): Removed the
+	function; replaced by PopupScrolledWindow::on_size_request.
+	(DBGPerspective::pack_popup_var_inspector_in_new_scr_win):
+	Removed the function.
+	(DBGPerspective::get_popup_tip): Use the new
+	PopupScrolledWindow class.
+	* src/uicommon/nmv-popup-tip.cc (PopupTip::Priv::Priv): Set the
+	window as not resizable so its size would shrink back along with
+	its contents.
+
+2011-05-09  Kalev Lember <kalevlember@gmail.com>
+
+	Removed has-separator property
+	* src/persp/dbgperspective/ui/callfunctiondialog.ui:
+	* src/persp/dbgperspective/ui/chooseoverloadsdialog.ui:
+	* src/persp/dbgperspective/ui/findtextdialog.ui:
+	* src/persp/dbgperspective/ui/globalvarsinspector.ui:
+	* src/persp/dbgperspective/ui/loadcoredialog.ui:
+	* src/persp/dbgperspective/ui/openfiledialog.ui:
+	* src/persp/dbgperspective/ui/preferencesdialog.ui:
+	* src/persp/dbgperspective/ui/proclistdialog.ui:
+	* src/persp/dbgperspective/ui/remotetargetdialog.ui:
+	* src/persp/dbgperspective/ui/runprogramdialog.ui:
+	* src/persp/dbgperspective/ui/savedsessionsdialog.ui:
+	* src/persp/dbgperspective/ui/setbreakpointdialog.ui:
+	* src/persp/dbgperspective/ui/setjumptodialog.ui:
+	* src/persp/dbgperspective/ui/varinspectordialog.ui:
+	* src/persp/dbgperspective/ui/watchpointdialog.ui:
+	* ui/locatefiledialog.ui: Removed has-separator property which
+	is deprecated since GTK+ 2.22 and removed in GTK+ 3.
+
+2011-05-09  Kalev Lember <kalevlember@gmail.com>
+
+	Removed an unused forward declaration
+	* src/persp/dbgperspective/nmv-dbg-perspective.h: Removed
+	gtksourceview::SourceBuffer forward declaration.
+
+2011-05-09  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2011-05-10  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	Updated Japanese translation.
+
+2011-05-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix update-changelog for building out of srcdir
+	* Makefile.am (update-changelog):  Refer to the absolute location
+	of gitlog2gnucl and ChangeLog files.
+
+2011-05-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Update NEWS file for 0.8.2
+	* NEWS: Update changes for 0.8.2
+
+2011-05-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Update Makefile.am's release text.
+	* Makefile.am: Update release text.
+
+2011-05-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Add a description to Nemiver's doap file
+	* nemiver.doap: Add a description element.
+
+2011-05-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix configuration keys' description wording
+	* data/schemas/gsettings/org.nemiver.gschema.xml: Fix various
+	wording nits.
+	* data/schemas/gconf/nemiver-dbgperspective.schemas: Likewise.
+
+2011-05-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Use Automake GSettings magic to support DESTDIR
+	* data/schemas/gsettings/Makefile.am: Remove custom makefile
+	rules.  Use gsettings_SCHEMAS and @GSETTINGS_RULES@.
+
+2011-05-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix gsettings configure test error
+	* configure.ac:  Use /bin/false in lieu of [0].
+
+2011-05-07  Mario Blättermann <mariobl@gnome.org>
+
+	[l10n] Updated German translation
+
+2011-05-07  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-04-25  Dodji Seketeli <dodji@seketeli.org>
+
+	Various style cleanups
+	* src/common/nmv-loc.h: Remove various useless spaces.
+	* src/common/nmv-safe-ptr.h (DefaultRef::operator()):  Make the
+	parameter be unnamed as it's unused.
+	(operator=, swap): Re-indent.
+	* src/confmgr/nmv-i-conf-mgr.h (load_iface_and_confmgr): Shorten
+	long line.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::init_actions)
+	(DBGPerspective::set_breakpoint_using_dialog): Likewise.
+	* src/workbench/nmv-workbench.cc (Workbench::do_init): Likewise.
+
+2011-04-21  Dodji Seketeli <dodji@seketeli.org>
+
+	560235 Initial support of "jump to"
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::jump_to_position):
+	New entry point.
+	(IDebugger::set_breakpoint, IDebugger::enable_breakpoint): New
+	overloads taking callback slots.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::jump_to_position)
+	(GDBEngine::enable_breakpoint): Declare these functions.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(OnBreakpointHandler::do_handle): Support callback slots for
+	'-break-enable' and 'jump-to-position'.
+	(GDBEngine::jump_to_position, location_to_string): Define new
+	functions.
+	(GDBEngine::enable_breakpoint): Likewise.  Rewrite the other
+	overload in terms of this one.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::current_location): New overload that returns a
+	pointer to const Loc.
+	* src/uicommon/nmv-source-editor.h: Likewise.
+	* src/persp/nmv-set-jump-to-dialog.h: New file.
+	* rc/persp/nmv-set-jump-to-dialog.cc: Likewise.
+	* src/persp/dbgperspective/ui/setjumptodialog.ui: Likewise.
+	* src/persp/dbgperspective/ui/Makefile.am: Add setjumptodialog.ui
+	to build system.
+	* src/persp/dbgperspective/Makefile.am: Add
+	nmv-set-jump-to-dialog.h and nmv-set-jump-to-dialog.cc to the
+	build system.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_jump_to_current_location_action)
+	(DBGPerspective::on_jump_and_break_to_current_location_action)
+	(DBGPerspective::on_break_before_jump)
+	(DBGPerspective::do_jump_to_current_location)
+	(DBGPerspective::do_jump_and_break_to_current_location)
+	(DBGPerspective::jump_to_location)
+	(DBGPerspective::on_jump_to_location_action)
+	(DBGPerspective::do_jump_and_break_to_location)
+	(DBGPerspective::jump_to_location_from_dialog)
+	(DBGPerspective::is_breakpoint_set_at_location): New functions.
+	(DBGPerspective::on_debugger_breakpoints_set_signal): Minor style
+	cleanup.
+	(DBGPerspective::init_actions): Add
+	JumpToCurrentLocationMenuItemAction and
+	JumpAndBreakToCurrentLocationMenuItemAction actions.  Add a menu
+	item to display a dialog to jump to a given location.
+	(DBGPerspective::get_contextual_menu): Add two new menu items for
+	actions JumpToCurrentLocationMenuItemAction and
+	(DBGPerspective::is_breakpoint_set_at_address): Add a boolean
+	output parameter to get the enable-ness of the breakpoint.
+	(DBGPerspective::get_breakpoint): New overload that takes a
+	location in argument.
+	(DBGPerspective::is_breakpoint_set_at_line): Add comment.
+	(DBGPerspective::toggle_breakpoint): Adjust for the new signature
+	of is_breakpoint_set_at_address.
+	JumpAndBreakToCurrentLocationMenuItemAction.
+	* src/persp/dbgperspective/menus/menus.xml: Add add menu item to
+	jump to a specified location.
+	* po/POTFILES.in: Add
+	src/persp/dbgperspective/ui/setjumptodialog.ui to the list of
+	files containing translatable strings.
+
+2011-04-27  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2011-04-27  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2011-04-26  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-04-25  Mario Blättermann <mariobl@gnome.org>
+
+	[l10n] Updated German translation
+
+2011-04-25  Dodji Seketeli <dodji@seketeli.org>
+
+	Fixlets in setbreakpointdialog.ui
+	* src/persp/dbgperspective/ui/setbreakpointdialog.ui:  Center the
+	dialog on its parent.  Fix some spelling.
+
+2011-04-24  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix a crash in confmgr
+	* src/confmgr/nmv-i-conf-mgr.h (load_iface_and_confmgr): Set the
+	loaded configuration manager into the other loaded interface so
+	that the lifetime of the configuration manager is as longer as the
+	lifetime of the other loaded interface object.  Added comment.
+	* src/workbench/nmv-i-workbench.h (IWorkbench::do_init): New
+	pure virtual function.
+	* src/workbench/nmv-workbench.cc
+	(Workbench::set_configuration_manager): New
+	function.
+	(Workbench::do_init): New function.  Use the new
+	Workbench::set_configuration_manager.
+	(Workbench::get_configuration_manager): Factorize to use the new
+	Workbench::set_configuration_manager.
+
+2011-04-25  Dodji Seketeli <dodji@seketeli.org>
+
+	Avoid reading freed memory
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::delete_visual_breakpoint): Don't read a map
+	element after it has been freed.
+
+2011-04-24  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix memory corruption in SourceEditor
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::clear_decorations): Don't erase members of a map
+	while iterating over it.
+
+2011-04-21  Dodji Seketeli <dodji@seketeli.org>
+
+	Introduce Loc (code location) type
+	* src/common/Makefile.am: Add nmv-loc.h to build system.
+	* src/common/nmv-loc.h: New file.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::set_breakpoint):
+	New overload that takes an instance of Loc.
+	* src/dbgengine/nmv-debugger-utils.h (null_default_slot)
+	(null_disass_slot, null_breakpoints_slot): New declarations.
+	* src/dbgengine/nmv-debugger-utils.cc (null_default_slot)
+	(null_disass_slot, null_breakpoints_slot): New definitions.
+	* src/dbgengine/nmv-gdb-engine.cc (location_to_string): New
+	helpers to serialize instance of Loc.
+	(OnBreakpointHandler::handle): Call the argument callback slot
+	when the command was "set-breakpoint".
+	(GDBEngine::set_breakpoint): New overload definition that takes an
+	instance of Loc in argument, as well as callback slot.
+	(null_disass_slot): Remove this from here.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::set_breakpoint): New
+	overload declaration.
+
+2011-04-21  Dodji Seketeli <dodji@gnome.org>
+
+	Emit one IDebugger::breakpoint_set_signal per BP
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::breakpoints_list_signal): Renamed
+	IDebugger::breakpoints_set_signal into this.
+	(IDebugger::breakpoint_set_signal): New interface.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::breakpoints_list_signal): Renamed
+	GDBEngine::breakpoint_set_signal into this.
+	(GDBEngine::breakpoint_set_signal): New interface.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::breakpoints_list_signal): Renamed
+	GDBEngine::breakpoints_set_signal into this.
+	(GDBEngine::breakpoint_set_signal): New definition.
+	(OnBreakpointHandler::do_handle): Emit
+	IDebugger::breakpoint_set_signal whenever a breakpoint is set.
+	Avoid emitting IDebugger::breakpoints_list_signal when a
+	breakpoint is set.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointView::Priv::Priv): Update for rename to
+	IDebugger::breakpoints_list_signal.  Connect to the new
+	IDebugger::breakpoint_set_signal.
+	(BreakpointView::Priv::on_debugger_breakpoint_set_signal): New
+	definition.
+	(BreakpointView::Priv::on_debugger_breakpoints_list_signal):
+	Renamed BreakpointView::Priv::on_debugger_breakpoints_set_signal
+	into this.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_debugger_breakpoint_set_signal): New
+	definition.
+	(DBGPerspective::on_debugger_breakpoints_list_signal): Renamed
+	DBGPerspective::on_debugger_breakpoints_set_signal into this.
+	(DBGPerspective::append_breakpoint): Remove useless first
+	parameter from this.
+	(DBGPerspective::init_debugger_signals): Connect to the new
+	IDebugger::breakpoint_set_signal.  Update for renaming into
+	IDebugger::breakpoints_list_signal.
+	* tests/test-breakpoint.cc (test_main): Update for renaming into
+	IDebugger::breakpoints_list_signal.
+	* tests/test-var-path-expr.cc (test_main): Likewise.
+	* tests/test-watchpoint.cc (test_main): Likewise.
+
+2011-04-21  Dodji Seketeli <dodji@seketeli.org>
+
+	Style cleanup
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::set_catch): Add
+	Space before parenthesis.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(build_tree_view): Properly align function name, indent some
+	statements.
+	(should_process_now, set_breakpoints, add_breakpoints)
+	(breakpoint_list_has_id, find_breakpoint_in_model)
+	(update_breakpoint, append_breakpoint)
+	(finish_handling_debugger_stopped_event, load_menu)
+	(get_breakpoints_menu, popup_breakpoints_view_menu, init_actions)
+	(erase_breakpoint, on_debugger_breakpoints_list_signal)
+	(on_debugger_stopped_signal)
+	(on_debugger_breakpoint_deleted_signal)
+	(on_treeview_selection_changed, on_breakpoint_go_to_source_action)
+	(on_expose_event, on_key_press_event)
+	(on_breakpoint_enable_toggled, on_countpoint_toggled)
+	(on_breakpoint_ignore_count_edited)
+	(on_breakpoint_condition_edited): Properly indent function name.
+
+2011-04-10  Lele Long <schemacs@gmail.com>
+
+	Update Simplified Chinese translaton
+
+2011-04-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Update HACKING documentation
+	* README: Add space between each paragraph and its header.
+	* README.git-commit-messages.txt: Renamed
+	git-commit-messages.README into this.  Re-flowed paragraphs.
+	* README.hacking.txt: New file.
+
+2011-04-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Update the INSTALL file.
+	* INSTALL: update.
+
+2011-04-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix configury when gsettings is not present
+	* configure.ac: When gsettings is not present, make sure
+	gsettingsschemadir is set to a dummy value, otherwise the Automake
+	complains for data/schemas/gsettings/Makefile.am.
+
+2011-04-04  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix a crash in previous commit
+	* src/confmgr/nmv-gsettings-mgr.cc
+	(GSettingsMgr::register_namespace): Bind the namespace name
+	to the parameter of the signal handler by value; not by
+	reference.  This avoids a crash when the signal slots later try to
+	poke at the namespace parameter.
+	(GSettingsMgr::set_key_value): Fix thinko.
+
+2011-03-31  Fabien Parent <parent.f@gmail.com>
+
+	Add a GSettings implementation for IConfMgr
+	* configure.ac: Auto-detect gsettings dependencies.  Add a
+	--enable-gsettings.  By default, switch to gsettings if all its
+	dependencies are present; switch to gconf otherwise.  Define
+	preprocessor macros WITH_GSETTINGS and CONFIG_MGR_MODULE_NAME.
+	* data/Makefile.am: Declare a new schema sub-directory.
+	* data/schemas/gconf/Makefile.am: New file.
+	* data/schemas/gconf/nemiver-dbgperspective.schemas: Moved
+	src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas
+	into this.
+	* data/schemas/gconf/nemiver-workbench.schemas: Moved
+	src/workbench/schemas/nemiver-workbench.schemas into this.
+	* data/schemas/gsettings/Makefile.am: New file.
+	* data/schemas/gsettings/org.nemiver.gschema.xml: Likewise.
+	* src/confmgr/Makefile.am: Build either the gsettings backend or
+	the gconf one.
+	* src/confmgr/gsettingsmgr.conf.in: New file.
+	* src/confmgr/nmv-conf-keys.h (CONF_NAMESPACE_NEMIVER)
+	(CONF_NAMESPACE_DESKTOP_INTERFACE): Declare new keys.
+	(CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK): Moved this here from
+	nmv-call-stack.cc.
+	(CONF_KEY_NEMIVER_WINDOW_WIDTH)
+	(CONF_KEY_NEMIVER_WINDOW_HEIGHT)
+	(CONF_KEY_NEMIVER_WINDOW_POSITION_X)
+	(CONF_KEY_NEMIVER_WINDOW_POSITION_Y)
+	(CONF_KEY_NEMIVER_WINDOW_MAXIMIZED)
+	(CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH)
+	(CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT): Move these declarations
+	here from nmv-workbench.cc.
+	* src/confmgr/nmv-gconf-keys-defs.cc: Renamed this from
+	src/confmgr/nmv-conf-keys.cc.
+	(CONF_NAMESPACE_NEMIVER)
+	(CONF_NAMESPACE_DESKTOP_INTERFACE): Define these new keys.
+	(CONF_KEY_NEMIVER_WINDOW_WIDTH)
+	(CONF_KEY_NEMIVER_WINDOW_HEIGHT)
+	(CONF_KEY_NEMIVER_WINDOW_POSITION_X)
+	(CONF_KEY_NEMIVER_WINDOW_POSITION_Y)
+	(CONF_KEY_NEMIVER_WINDOW_MAXIMIZED)
+	(CONF_KEY_NEMIVER_WINDOW_MINIMUM_WIDTH)
+	(CONF_KEY_NEMIVER_WINDOW_MINIMUM_HEIGHT): Move these definitions
+	here from nmv-workbench.cc.
+	* src/confmgr/nmv-gconf-mgr.cc: Include nmv-conf-keys.h.
+	(GConfMgr::m_value_changed_signal):  Adjust the type of this signal.
+	(GConfMgr::set_key_dir_to_notify, GConfMgr::add_key_to_notify):
+	Remove.
+	(GConfMgr::get_default_namespace, GConfMgr::register_namespace):
+	New functions.
+	(GConfMgr::{set,get}_key_value): Add a namespace parameter.
+	(GConfMgr::value_changed_signal): Remove the Value parameter.  Add
+	a namespace parameter.  Ignore the namespace parameter in the
+	definition.
+	(client_notify_func): Don't pass any value argument to
+	GConfMgr::value_change_signal anymore.
+	* src/confmgr/nmv-gsettings-keys-defs.cc: New file.
+	* src/confmgr/nmv-gsettings-mgr.cc: Likewise.
+	* src/confmgr/nmv-i-conf-mgr.h: Include config.h.
+	(IConfMgr::Value): Remove typedef.
+	(IConfMgr::set_key_dir_to_notify, IConfMgr::add_key_to_notify):
+	Remove functions.
+	(IConfMgr::get_default_namespace): New function.
+	(IConfMgr::{get,set}_key_value): Add a namespace parameter, with a
+	default argument "".
+	(load_iface_and_confmgr): New function template.
+	* src/dbgengine/nmv-debugger-utils.cc
+	(load_debugger_iface_with_confmgr): Renamed
+	load_debugger_iface_with_gconf into this.  Use the new
+	load_iface_and_confmgr instead of loading the gconf backend of
+	IConfMgr systematically.  Use the new
+	IConfMgr::register_namespace.
+	* src/dbgengine/nmv-debugger-utils.h
+	(load_debugger_iface_with_confmgr): Renamed
+	load_debugger_iface_with_gconf into this.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::on_conf_key_changed_signal): Adjust signature.
+	Get the configuration value from the conf_mgr as it's not passed
+	by parameter anymore.
+	* src/main.cc: Include nmv-i-conf-mgr.h
+	(main): Use the new load_iface_and_confmgr to load the workbench.
+	* src/persp/dbgperspective/Makefile.am: There is no more schema
+	sub-directory to take care about as it got moved under data/.
+	* src/persp/dbgperspective/nmv-call-stack.cc: Include
+	nmv-conf-keys.h.
+	(CONF_KEY_NEMIVER_CALLSTACK_EXPANSION_CHUNK): Moved declaration into
+	into nmv-conf-keys.h and the definition into the IConfMgr
+	backends.
+	(CallStack::Priv::conf_mgr): New member to cache the conf mgr
+	here.
+	(CallStack::Priv::init_conf):  Cache the conf mgr into the new
+	memver conf_mgr.  Don't call conf_mgr->add_key_to_notify anymore.
+	(CallStack::Priv::on_config_value_changed_signal): Adjust
+	signature.  Get the key from conf_mgr as it's no more passed as a
+	parameter.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_conf_key_changed_signal): Likewise.
+	(DBGPerspective::read_default_config): Pass
+	CONF_NAMESPACE_DESKTOP_INTERFACE argument to the namespace of
+	IConfMgr::get_key_value as necessary.
+	* src/persp/dbgperspective/schemas/Makefile.am: Moved to under data/.
+	* src/persp/dbgperspective/schemas/nemiver-dbgperspective.schemas: Likewise.
+	* src/workbench/Makefile.am: Don't handle schema (un)install as
+	schemas got moved under data/
+	* src/workbench/nmv-workbench.cc: Include nmv-conf-keys.h.
+	(Workbench::get_configuration_manager): Use
+	DynamicModuleManager::load_iface_with_default_manager to load the
+	conf mgr.  Use the new IConfMgr::register_namespace API instead of
+	the former IConfMgr::set_key_dir_to_notify and IConfMgr::add_key_to_notify.
+	* src/workbench/schemas/Makefile.am: Moved under data/.
+	* src/workbench/schemas/nemiver-workbench.schemas: Likewise.
+	* tests/test-breakpoint.cc (test_main): Use the new
+	debugger_utils::load_debugger_iface_with_confmgr
+	* tests/test-cpptrait.cc: Likewise.
+	* tests/test-deref.cc: Likewise.
+	* tests/test-disassemble.cc: Likewise.
+	* tests/test-global-variables.cc: Likewise.
+	* tests/test-local-vars-list.cc: Likewise.
+	* tests/test-overloads.cc: Likewise.
+	* tests/test-types.cc: Likewise:
+	* tests/test-var-list.cc: Likewise.
+	* tests/test-var-path-expr.cc: Likewise.
+	* tests/test-var-walker.cc: Likewise.
+	* tests/test-varobj-walker.cc: Likewise.
+	* tests/test-vars.cc: Likewise.
+	* tests/test-watchpoint.cc: Likewise.
+
+2011-04-02  Dodji Seketeli <dodji@seketeli.org>
+
+	Ignore 'current-thread-id' in thread list
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_threads_list): Ignore current-thread-id when
+	coming across it.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Dropped compat code with gtksourceviewmm < 2.10
+	* configure.ac: Removed checks for gtksourceviewmm-1.0 and
+	gtksourceviewmm < 2.10.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::Priv::editor_style)
+	(DBGPerspective::Priv::modify_source_editor_style)
+	(DBGPerspective::Priv::get_editor_style): Define
+	unconditionally.  Remove ifdef WITH_SOURCEVIEWMM2.
+	(DBGPerspective::on_conf_key_changed_signal): Use
+	SourceBuffer::set_highlight_syntax from ifdef WITH_SOURCEVIEWMM2
+	drop use of SourceBuffer::set_highlight.  Also, unconditionally
+	handle CONF_KEY_EDITOR_STYLE_SCHEME conf key.  Drop the ifdef
+	WITH_SOURCEVIEWMM2.
+	(DBGPerspective::read_default_config): Unconditionally handle
+	style scheme.  Drop the WITH_SOURCEVIEWMM2.
+	(DBGPerspective::create_source_editor): Unconditionally keep the
+	WITH_SOURCEVIEWMM2 version of the code.  Drop the ifdef.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc:
+	Unconditionally include
+	gtksourceviewmm/sourcestyleschememanager.h.  Remove ifdef
+	WITH_SOURCEVIEWMM2.
+	* src/uicommon/nmv-source-editor.cc
+	(on_line_mark_activated_signal): Unconditionally declare this.
+	Drop the ifdef WITH_SOURCEVIEW_2_10.
+	(class Sourceview): Remove ifdef WITH_SOURCEVIEW around friend
+	declaration of on_line_mark_activated_signal.
+	(SourceView::SourceView): Unconditionally connect to signal
+	SourceView::line-mark-activated.  Remove ifdef WITH_SOURCEVIEW.
+	(SourceView::do_custom_button_press_event_handling):
+	Unconditionally remove.  Remove #if (WITH_SOURCEVIEWMM2 &&
+	!WITH_SOURCEVIEW_2_10).
+	(SourceView::on_button_press_event): unconditionally Remove call
+	to do_custom_button_press_event_handling.  Remove #if
+	(WITH_SOURCEVIEWMM2 && !WITH_SOURCEVIEW_2_10).
+	(on_line_mark_activated_signal): Unconditionally define.  Remove
+	#if WITH_SOURCEVIEW_2_10.
+	(SourceEditor::setup_buffer_mime_and_lang)
+	(SourceEditor::load_file): Unconditionally keep the code inside
+	#ifdef WITH_SOURCEVIEWMM2 branch.  Drop the code in the #else
+	branch.  Drop the #ifdef completely.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Removed gnome-vfs compat code
+	Drop gnome-vfs compat code, useless for GTK+ >= 2.22
+	* configure.ac: Removed checks for gnome-vfs-2.0 and WITH_GIO
+	define.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(gio_file_monitor_cb): Remove WITH_GIO ifdef around this, making
+	it declared/defined unconditionally.
+	(gnome_vfs_file_monitor_cb): Remove this declaration/definition.
+	(DBGPerspective::Priv::Path2MonitorMap): Only keep the WITH_GIO
+	version.  Drop the ifdef.
+	(DBGPerspective::do_monitor_file)
+	(DBGPerspective::do_unmonitor_file): Unconditionally keep the
+	#ifdef WITH_GIO parts.  Drop the ifdef.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::get_file_mime_type, SourceEditor::load_file): Likewise.
+	* src/workbench/nmv-workbench.cc
+	(WorkbenchStaticInit::WorkbenchStaticInit): Likewise.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Dropped ifdefs for GTK+ 2.10
+	The minimum required version of GTK+ is now 2.22
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::init_body, DBGPerspective::append_source_editor):
+	Removed ifdefs to unconditionally use the code that was only used
+	with GTK+ 2.10.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Use GDK_KEY_* enums, not the deprecated GDK_* ones
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::on_key_press_event): Use GDK_KEY_Delete
+	instead of the deprecated GDK_Delete.
+	* src/persp/dbgperspective/nmv-file-list.cc
+	(FileListView::on_key_press_event): Use GDK_KEY_Return instead of
+	the deprecated GDK_Return.
+	* configure.ac: Require GTK+ 2.22.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Dropped ifdefs for gtkmm 2.16
+	The minimum required is gtkmm version is now 2.20
+	* src/uicommon/nmv-ui-utils.h: Removed #ifdef HAVE_GTKMM_2_16.
+	* configure.ac: Removed HAVE_GTKMM_2_16 define.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Avoid using gtkmm deprecated API
+	Don't use API that was deprecated in gtkmm-2.4 and removed in
+	gtkmm-3.0.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc
+	(BreakpointsView::Priv::should_process_now): Use
+	Widget::get_is_drawable instead of Widget::is_drawable.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::should_process_now): Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_mouse_immobile_timer_signal): Use
+	Widget::get_visible instead of Widget::is_visible.
+	(DBGPerspective::append_source_editor): Use Widget::get_has_window
+	instead of Widget::has_no_window.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(BreakpointsView::Priv::should_process_now): Use
+	Widget::get_is_drawable instead of Widget::is_drawable.
+	* src/persp/dbgperspective/nmv-registers-view.cc
+	(RegistersView::Priv::should_process_now): Likewise.
+	* src/persp/dbgperspective/nmv-thread-list.cc
+	(ThreadList::Priv::should_process_now): Likewise.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Fixed includes to match GTK+'s single include policy
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Only include
+	<gtk/gtk.h> directly.
+
+2011-03-23  Kalev Lember <kalevlember@gmail.com>
+
+	Fix header guard name in nmv-hex-document.h
+	* src/uicommon/nmv-hex-document.h: Renamed header guard from
+	__NMV_SPINNER_H__ to __NMV_HEX_DOCUMENT_H__.
+
+2011-04-01  Dodji Seketeli <dodji@gnome.org>
+
+	Fix style
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::is_attached_to_target): Add space.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::restart_local_inferior): Remove trailing space.
+
+2011-04-01  Dodji Seketeli <dodji@gnome.org>
+
+	Don't loose commands sent down the wire
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::load_program): Add a
+	force flag.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::load_program):
+	Adjust.
+	* src/dbgengine/nmv-gdb-engine.cc (GDBEngine::load_program): Add
+	a_force parameter to control whether to reset the command queue or
+	not.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::execute_progra): Rename the
+	a_check_is_new_program parameter into a_restarting.  Then, load
+	the program by forcing the reset of the command queue *only* when
+	restarting.
+	* tests/test-breakpoint.cc (test_main): Adjust to the new
+	additional parameter of IDebugger::load_program.
+	* tests/test-disassemble.cc (test_main): Likewise.
+	* tests/test-types.cc (test_main): Likewise.
+	* tests/test-var-path-expr.cc (test_main): Likewise.
+	* tests/test-watchpoint.cc (test_main): Likewise.
+
+2011-04-01  Dodji Seketeli <dodji@gnome.org>
+
+	Fix tests linking with boost 1.46
+	* tests/Makefile.am (runtestvarobjwalker)
+	(runtestvariableformat, runtestvarlist, runtestvarwalker): Don't
+	link these tests with (useless) @BOOST_TEST_EXEC_MONITOR_LIB@
+	anymore.
+	(runtesttypes): Don't link with
+	BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB anymore.
+	* tests/test-overloads.cc: Don't include boost/test/test_tools.hpp
+	as it is redundant with boost/test/minimal.hpp.
+	* tests/test-var-walker.cc: Likewise.
+	* tests/test-variable-format.cc: Likewise.
+	* tests/test-varobj-walker.cc: Likewise.
+
+2011-04-01  Dodji Seketeli <dodji@gnome.org>
+
+	Fix 'set-but-unused' warning from GCC 4.6
+	* src/common/nmv-connection-manager.cc (parse_connection_string):
+	Remove dead variable 'parsed_host'.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::extract_global_variable_list): Likewise for 'cur'.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_threads_list): Likewise for
+	'current_thread_id'.
+	(GDBMIParser::parse_var_changed_list): Likewise for
+	'type_changed'.  Use the 'in_scope' (otherwise unused) variable
+	value to initialise the resulting instance of IDebugger::Variable.
+	* src/dbgengine/nmv-i-debugger.h: (IDebugger::IVariable):  Add an
+	in_scope member and the related accessors.
+	* src/langs/nmv-cpp-parser.cc (Parser::parse_qualified_id): Remove
+	dead variable 'has_template'.
+	* src/uicommon/nmv-source-editor.cc
+	(SourceEditor::Priv::update_line_col_label): Remove dead
+	'line_count' variable.
+
+2011-04-01  Dodji Seketeli <dodji@gnome.org>
+
+	Don't list frame args twice
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::list_frames_arguments): Don't queue the GDB command twice.
+
+2011-03-21  Kalev Lember <kalev@smartlink.ee>
+
+	598444 Use Gtk::Spinner instead of custom spinner widget
+	* src/uicommon/nmv-spinner-tool-item.[cc,h]: Rewrote to use
+	Gtk::Spinner instead of EphySpinner.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Adapt to
+	nmv-spinner-tool-item changes.
+	* src/uicommon/ephy-spinner-tool-item.[c,h]:
+	* src/uicommon/ephy-spinner.[c,h]:
+	* src/uicommon/nmv-spinner.[cc,h]: Removed EphySpinner and its C++
+	wrappers.
+	* src/uicommon/Makefile.am: Removed references to deleted files.
+	* configure.ac: Bumped gtkmm minimum version to 2.20.
+
+2011-03-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Update the commit log guidelines
+
+2011-03-18  Lucian Adrian Grijincu <lucian.grijincu@gmail.com>
+
+	Updated Romanian translation
+
+2011-03-15  Luca Bruno <lucab@debian.org>
+
+	Merge branch 'debian' of https://alioth.debian.org/anonscm/git/collab-maint/nemiver
+
+2011-03-13  Joe Hansen <joedalton2@yahoo.dk>
+
+	Updated Danish translation
+
+2011-03-12  Dodji Seketeli <dodji@seketeli.org>
+
+	644569 Ensure last expr becomes last history item
+	* src/persp/dbgperspective/nmv-call-function-dialog.cc
+	(CallFunctionDialog::Priv::exists_in_history): Return an iterator
+	to the history item found.
+	(CallFunctionDialog::Priv::erase_expression_from_history): New
+	function.
+	(CallFunctionDialog::Priv::add_to_history): Make sure the item to
+	add is the last history item.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc
+	(VarInspectorDialog::Priv::exists_in_history): Return an iterator
+	to the history item found.
+	(VarInspectorDialog::Priv::erase_expression_from_history): New
+	function.
+	(VarInspectorDialog::Priv::add_to_history): Make sure the item to
+	add is the last history item.
+	(VarInspectorDialog::Priv::set_history): New function.
+	(VarInspectorDialog::set_history): Use it.
+
+2011-03-07  Dodji Seketeli <dodji@seketeli.org>
+
+	644114 Update the call stack again
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::finish_update_handling): Pass the
+	&Priv::on_frames_listed slot to IDebugger::list_frames.
+
+2011-03-02  Dodji Seketeli <dodji@seketeli.org>
+
+	Reset command queue on restart GDB after a crash
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::reset_command_queue): New function.
+	(GDBEngine::load_program): When launching a fresh GDB (e.g after
+	the previous one crashed) make sure to reset the command queue in
+	case the previous GDB vanished in the middle of a command
+	submitting process -- and so the command queue is left in a stuck
+	state.
+
+2011-03-02  Dodji Seketeli <dodji@seketeli.org>
+
+	643700 Function arguments are duplicated
+	* src/dbgengine/nmv-debugger-utils.h (null_frame_vector_slot)
+	(null_frame_args_slot): Declare ...
+	* src/dbgengine/nmv-debugger-utils.cc (null_frame_vector_slot)
+	(null_frame_args_slot): ... these new functions.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::FrameVectorSlot)
+	(IDebugger::FrameArgsSlot): Declare these new slot typedefs.
+	(IDebugger::list_frames)
+	(IDebugger::list_frames_arguments): Declare these new entry point
+	overloads taking slots.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::list_frames)
+	(GDBEngine::list_frames_arguments): Declare new functions.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::list_frames, GDBEngine::list_frames_arguments):
+	Support calling back into a slot.
+	(OnFramesListedHandler::do_handle): Invoke the slot passed in
+	parameter of IDebugger::list_frames.
+	(OnFramesParamsListedHandler::do_handle): Invoke the slot passed
+	in parameter of IDebugger::list_frames_arguments.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::update_selected_frame): Pass a callback slot to
+	IDebugger::list_frames.
+	(CallStack::Priv::on_frames_listed_during_paging): Renamed
+	on_frames_listed_signal into this.  The former was reacting to
+	IDebugger::frames_listed_signal and was looking into the cookie to
+	decide what to do.  This new version is passed to the
+	IDebugger::list_frames call directly we don't need to look into
+	any cookie anymore.  Also we know that we are now called during
+	frame paging, so we just have to react to that context.
+	(CallStack::Priv::on_frames_listed): Splitted out of the former
+	on_frames_listed_signal.  Like for the function above, we don't
+	need to look into any cookie anymore, as this function is passed
+	as a callback to a precise invocation of IDebugger::list_frames.
+	We just have to react to contexts where we are not dealing with
+	frames paging.  Pass &Priv::on_frames_args_listed to the
+	invocation of IDebugger::list_frames_arguments.
+	(CallStack::Priv::on_frames_args_listed): Renamed
+	on_frames_params_listed_signal into this.  This doesn't react to
+	IDebugger::frames_arguments_listed_signal anymore.  Rather, it is
+	passed as a callback slot to a precise invocation of
+	IDebugger::list_frames_arguments.
+	(CallStack::Priv::connect_debugger_signals): Do not react anymore to
+	IDebugger::frames_listed_signal and
+	IDebugger::frames_arguments_listed_signal.
+	(CallStack::Priv::update_call_stack): Pass Priv::on_frames_listed
+	as callback slot to the IDebugger::list_frames invocation.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(LocalVarsInspector::Priv::connect_to_debugger_signals): Don't
+	connect anymore to IDebugger::frames_arguments_listed_signals.
+	(LocalVarsInspector::Priv::on_function_args_listed): Renamed
+	LocalVarsInspector::Priv::on_function_args_listed_signal into
+	this.  No need to look into any cookie anymore.
+	(LocalVarsInspector::Priv::finish_handling_debugger_stopped_event):
+	Pass &Priv::on_function_args_listed slot as callback to the
+	IDebugger::list_frames_arguments invocation.
+	(LocalVarsInspector::show_local_variables_of_current_function):
+	Likewise.
+
+2011-03-01  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-02-26  Dodji Seketeli <dodji@seketeli.org>
+
+	Avoid needless work when selecting a frame
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Frame::operator==):
+	New equality operator.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_frame_selected_signal): Return early if we
+	selecting the same frame as the current one.
+
+2011-02-26  Dodji Seketeli <dodji@seketeli.org>
+
+	Return a signal of IDebugger by reference
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::variable_dereferenced_signal): Return the value by
+	reference.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::variable_dereferenced_signal): Likewise.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::variable_dereferenced_signal): Likewise.
+
+2011-02-25  Dodji Seketeli <dodji@seketeli.org>
+
+	Move null slots to nmv-debugger-utils.[h|cc]
+	* src/dbgengine/nmv-gdb-engine.cc (null_const_variable_slot)
+	(null_const_variable_list_slot, null_const_ustring_slot): Move
+	these to src/dbgengine/nmv-debugger-utils.cc.  Import
+	nemiver::debugger_utils::null_const_variable_slot, and
+	nemiver::debugger_utils::null_const_variable_list_slot with using
+	directives.
+	* src/dbgengine/nmv-debugger-utils.h (null_const_variable_slot)
+	(null_const_variable_list_slot, null_const_ustring_slot): Declare
+	these.
+	* src/dbgengine/nmv-debugger-utils.cc (null_const_variable_slot)
+	(null_const_variable_list_slot, null_const_ustring_slot): Moved
+	these here from src/dbgengine/nmv-gdb-engine.cc.
+
+2011-02-25  Dodji Seketeli <dodji@seketeli.org>
+
+	Pass full tests file paths to the compiler
+	* tests/Makefile.am: Pass the full path of files to the compiler.
+	Pass -DNEMIVER_SRCDIR=<full-src-path> and
+	-DDNEMIVER_BUILDDIR=<build-path> to the compiler on each
+	compilation unit.
+	* tests/test-libtool-wrapper-detection.cc: Use the two new macro
+	passed to this CU to address the files that are either in srcdir
+	or builddir.  This is useful when building in a build dir that is
+	!= the source dir.
+
+2011-02-25  Dodji Seketeli <dodji@seketeli.org>
+
+	NMV_DEFAULT_LOG_DOMAIN is always file base name
+	* src/common/nmv-log-stream.h (NMV_DEFAULT_DOMAIN): Always return
+	file base name.
+
+2011-02-24  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-02-23  lainme <lainme993@gmail.com>
+
+	Update Simplified Chinese translation.
+
+2011-02-21  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-02-20  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-02-19  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-02-15  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-01-30  Dodji Seketeli <dodji@gnome.org>
+
+	640921 Pass absolute file paths to the compiler
+	* src/Makefile.am:
+	* src/common/Makefile.am:
+	* src/confmgr/Makefile.am:
+	* src/dbdimpl/sqlite/Makefile.am:
+	* src/dbgengine/Makefile.am:
+	* src/langs/Makefile.am:
+	* src/persp/Makefile.am:
+	* src/persp/dbgperspective/Makefile.am:
+	* src/uicommon/Makefile.am
+	* src/workbench/Makefile.am: Pass absolute file paths to the
+	compiler.
+
+2011-01-30  Dodji Seketeli <dodji@seketeli.org>
+
+	640919 Fix build for autoconf < 2.64
+	* configure.ac: Require autoconf 2.63 instead of 2.64 because EL6
+	has 2.63. More AC_PREREQ after AC_INIT, for consistency. That
+	macro is the only one that can be invoked before AC_INIT, but
+	let's move it after AC_INIT like all other macros.
+	* src/workbench/nmv-workbench.cc: PACKAGE_URL is only defined by
+	AC_INIT on autoconf >= 2.64. Let's define it ourselves for
+	earlier versions.
+
+2011-01-27  Luca Bruno <lucab@debian.org>
+
+	New upstream version 0.8.1-1
+
+2011-01-27  Luca Bruno <lucab@debian.org>
+
+	Add Debian source format version
+
+2011-01-27  Luca Bruno <lucab@debian.org>
+
+	Add a temporarily empty patches/series
+
+2011-01-22  Dodji Seketeli <dodji@seketeli.org>
+
+	Bump version number to 0.8.2
+	* configure.ac: Bump version number to 0.8.2
+
+2011-01-22  Dodji Seketeli <dodji@seketeli.org>
+
+	Initialize IDebugger dynmods with gconf in tests
+	* src/dbgengine/nmv-debugger-utils.[h,cc]
+	(load_debugger_iface_with_gconf): New entry point.
+	* tests/test-cpptrait.cc (test_debugger)
+	* tests/test-deref.cc (test_main)
+	* tests/test-disassemble.cc (test_main)
+	* tests/test-local-vars-list.cc (test_main)
+	* tests/test-types.cc (test_main)
+	* tests/test-var-list.cc (test_main)
+	* tests/test-var-walker.cc (test_main)
+	* tests/test-variable-format.cc (test_main)
+	* tests/test-varobj-walker.cc (test_main)
+	* tests/test-vars.cc (test_main)
+	* tests/test-watchpoint.cc (test_main):
+	Use load_debugger_iface_with_gconf.
+	* tests/Makefile.am: Link all the tests loading the IDebugger
+	interface with $(top_builddir)/src/dbgengine/libdebuggerutils.la
+
+2010-09-11  Dodji Seketeli <dodji@gnome.org>
+
+	Centralize conf keys decls/defs to src/confmgr
+	* src/confmgr/nmv-conf-keys.h: Moved
+	src/persp/dbgperspective/nmv-conf-keys.h here.
+	* src/confmgr/nmv-conf-keys.cc: New.
+	* src/confmgr/Makefile.am: Add src/confmgr/nmv-conf-keys.[h,cc] to the
+	build system here.
+	* src/persp/dbgperspective/Makefile.am: Remove
+	src/persp/dbgperspective/nmv-conf-keys.h from the build sytem here.
+	* src/common/nmv-env.cc: Move definition of CONF_KEY_GDB_BINARY and
+	CONF_KEY_FOLLOW_FORK_MODE in src/confmgr/nmv-conf-keys.cc.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc: Move
+	definitions of CONF_KEY_NEMIVER_SOURCE_DIRS,
+	CONF_KEY_SHOW_DBG_ERROR_DIALOGS,
+	CONF_KEY_SHOW_SOURCE_LINE_NUMBERS,
+	CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE,
+	CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE, CONF_KEY_HIGHLIGHT_SOURCE_CODE,
+	CONF_KEY_SOURCE_FILE_ENCODING_LIST, CONF_KEY_USE_SYSTEM_FONT,
+	CONF_KEY_CUSTOM_FONT_NAME, CONF_KEY_SYSTEM_FONT_NAME,
+	CONF_KEY_USE_LAUNCH_TERMINAL,
+	CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH,
+	CONF_KEY_STATUS_WIDGET_MINIMUM_HEIGHT,
+	CONF_KEY_STATUS_PANE_LOCATION,
+	CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME,
+	CONF_KEY_EDITOR_STYLE_SCHEME, CONF_KEY_ASM_STYLE_PURE,
+	CONF_KEY_DEFAULT_NUM_ASM_INSTRS, CONF_KEY_CONTEXT_PANE_LOCATION
+	into src/confmgr/nmv-conf-keys.cc.
+
+2010-09-12  Dodji Seketeli <dodji@gnome.org>
+
+	Catch more exceptions at low level
+	* src/dbgengine/nmv-dbg-common.cc
+	(OutputHandlerList::submit_command_and_output): Don't let
+	exceptions sneak through here.
+
+2010-09-11  Dodji Seketeli <dodji@gnome.org>
+
+	Remove useless includes
+	* src/common/nmv-ustring.h: Remove useless #include "config.h".
+	* src/uicommon/nmv-ui-utils.h: Likewise.
+
+2010-08-30  Dodji Seketeli <dodji@gnome.org>
+
+	Style/comments cleanups
+	* src/dbgengine/nmv-debugger-utils.cc (gen_white_spaces)
+	(dump_variable_value): Add comment for these functions.
+	* src/dbgengine/nmv-gdb-engine.cc (struct
+	OnListChangedVariableHandler): Tiny style cleanup.
+	(do_init): Fix comment.
+	* src/dbgengine/nmv-gdbmi-parser.h (parse_stack_arguments):
+	Tiny style cleanup.
+
+2011-01-16  Dodji Seketeli <dodji@seketeli.org>
+
+	Detect boost when in /usr/lib64
+	Some systems like Fedora or RHEL install system libraries under
+	/usr/lib64 when setup in 64 bits mode. In that case AX_BOOST_BASE
+	wrongly sets BOOST_LDFLAGS to -L/usr/lib leading to further boost
+	library detection tests to fail even though those libraries are
+	installed.
+
+2011-01-15  Luca Bruno <lucab@debian.org>
+
+	Updated policy to 3.9.1
+
+2011-01-15  Luca Bruno <lucab@debian.org>
+
+	Remove legacy build switches, enabled by default
+
+2011-01-15  Luca Bruno <lucab@debian.org>
+
+	New upstream version 0.8.0
+
+2011-01-15  Luca Bruno <lucab@debian.org>
+
+	Dropped gcc-4.5 patch, fixed upstream
+
+2011-01-15  Luca Bruno <lucab@debian.org>
+
+	Fix minor typo in previous changelog
+
+2011-01-10  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	Updated Japanese translation.
+
+2011-01-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Update boost m4 macro definitions.
+	* m4/ax_boost_test_exec_monitor.m4: Update to new upstream
+	version.
+	* m4/ax_boost_unit_test_framework.m4: Likewise.
+
+2011-01-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Bump version to 0.8.1
+	* configure.ac: Bump version number to 0.8.1
+
+2011-01-09  Dodji Seketeli <dodji@seketeli.org>
+
+	Generate ChangeLog for 0.8.1
+
 2011-01-09  Dodji Seketeli <dodji@seketeli.org>
 
 	Update NEWS for 0.8.1
@@ -153,6 +2264,14 @@
 2010-11-04  Takeshi AIHANA <takeshi.aihana@gmail.com>
 
 	Updated Japanese translation.
+
+2010-11-04  Luca Bruno <lucab@debian.org>
+
+	Repository moved to git.debian.org, updating VCS control tags accordingly
+
+2010-11-04  Luca Bruno <lucab@debian.org>
+
+	Added proper git-buildpackage config for this repo
 
 2010-10-31  Petr Kovar <pknbe@volny.cz>
 
@@ -2454,6 +4573,18 @@
 
 	Updated Spanish translation
 
+2010-03-07  Luca Bruno <lucab@debian.org>
+
+	New revision 0.7.3-2
+
+2010-03-07  Luca Bruno <lucab@debian.org>
+
+	Updated Standards-Version to 3.8.4
+
+2010-03-07  Luca Bruno <lucab@debian.org>
+
+	Fix FTBFS with gcc-4.5 (Closes: #565093)
+
 2010-03-02  Dominique Leuenberger <dominique-gnomezilla@leuenberger.net>
 
 	More GCC 4.5 fixes, #611588
@@ -2523,6 +4654,10 @@
 2010-01-06  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
 
 	Updated Slovenian translation
+
+2009-12-20  Luca Bruno <lucab@debian.org>
+
+	New nemiver upstream version 0.7.3-1
 
 2009-12-13  Dodji Seketeli <dodji@redhat.com>
 
@@ -2841,6 +4976,14 @@
 	* src/persp/dbgperspective/sqlscripts/sqlite/drop-tables.sql: Add
 	watchpoints table to the list of tables to drop.
 
+2009-09-17  Luca Bruno <lucab@debian.org>
+
+	New nemiver version 0.7.2-1
+
+2009-09-17  Luca Bruno <lucab@debian.org>
+
+	New upstream version 0.7.1-1
+
 2009-09-15  Dodji Seketeli <dodji@redhat.com>
 
 	Support ignore count at breakpoint setting time
@@ -3137,6 +5280,18 @@
 	variable popup tip be too small for simple scalar types, otherwise
 	users are obliged to scroll to see the value for those simple
 	cases.
+
+2009-07-25  Luca Bruno <lucab@debian.org>
+
+	New version 0.7.0-1
+
+2009-07-24  Luca Bruno <lucab@debian.org>
+
+	Updated Standards-Version to 3.8.2
+
+2009-07-24  Luca Bruno <lucab@debian.org>
+
+	dh_scroolkeeper is deprecated now, removed.
 
 2009-07-18  Dodji Seketeli <dodji@redhat.com>
 
@@ -3901,6 +6056,14 @@
 	the new watchpoint dialog when the user hits <control>-T.
 	* src/persp/dbgperspective/menus/menus.xml: Add a new menu item for
 	setting watchpoints.
+
+2009-05-05  Luca Bruno <lucab@debian.org>
+
+	New nemiver upstream version 0.6.7-1
+
+2009-05-05  Luca Bruno <lucab@debian.org>
+
+	New upstream version 0.6.6-1
 
 2009-05-03  Dodji Seketeli <dodji@redhat.com>
 
@@ -4859,6 +7022,18 @@
 	for now. Be more robust wrt unknown RESULT entries as well.
 	* tests/test-gdbmi.cc: Add new test.
 
+2009-03-14  Luca Bruno <lucab@debian.org>
+
+	New upstream version 0.6.5-1
+
+2009-03-14  Luca Bruno <lucab@debian.org>
+
+	Bumped Standards-Version to 3.8.1 (no changes needed)
+
+2009-03-14  Luca Bruno <lucab@debian.org>
+
+	Added new intltool build-dep
+
 2009-03-13  Dodji Seketeli <dodji@redhat.com>
 
 	Fix tests to work with Boost.Test 1.37
@@ -5152,6 +7327,10 @@
 	PKG_CHECK_MODULES calls.
 	* tests/Makefile.am: Adjust this.
 
+2008-11-30  Luca Bruno <lucab@debian.org>
+
+	Added patches/series for quilt, to avoid lintian warning
+
 2009-02-22  Dodji Seketeli <dodji@redhat.com>
 
 	Blind tentative at fixing the crash #571036
@@ -5420,6 +7599,18 @@
 	First version of the GDBMIParser type.
 	Debugged GDBMIParser and make GDBEngine switch to it.
 
+2008-11-29  Luca Bruno <lucab@debian.org>
+
+	Explicit DESTDIR variable
+
+2008-11-29  Luca Bruno <lucab@debian.org>
+
+	Use $(QUILT_STAMPFN) target instead of patch to avoid double configuration
+
+2008-11-29  Luca Bruno <lucab@debian.org>
+
+	New nemiver version 0.6.4
+
 2008-11-26  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Enlarge the default size of the variable inspector dialog
@@ -5523,6 +7714,10 @@
 
 	Sync'ed with latest debian package
 
+2008-10-13  Luca Bruno <lucab@debian.org>
+
+	New version 0.6.3-1
+
 2008-10-05  Takeshi AIHANA <takeshi.aihana@gmail.com>
 
 	Updated Japanese translation.
@@ -5576,6 +7771,14 @@
 	(DBGPerspective::on_default_config_read): Don't set the memory
 	font to a font with empty name.
 	This entry should fix bug #553780
+
+2008-09-20  Luca Bruno <lucab@debian.org>
+
+	Website moved
+
+2008-09-20  Luca Bruno <lucab@debian.org>
+
+	New version 0.6.2-1
 
 2008-09-16  Theppitak Karoonboonyanan <thep@linux.thai.net>
 
@@ -5638,6 +7841,10 @@
 2008-08-24  Dodji Seketeli <dodji@src.gnome.org>
 
 	Style fixes
+
+2008-08-23  Luca Bruno <lucab@debian.org>
+
+	Removed unused cruft
 
 2008-08-21  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -5708,6 +7915,18 @@
 
 	Fix a configure help string typo.
 	Patch sent by Stephane Wirtel.
+
+2008-08-08  Luca Bruno <lucab@debian.org>
+
+	Updated Andrea's mail address
+
+2008-08-03  Luca Bruno <lucab@debian.org>
+
+	Standards-Version 3.8.0 in place
+
+2008-08-03  Luca Bruno <lucab@debian.org>
+
+	New upstream version 0.6.1
 
 2008-07-31  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -5892,6 +8111,10 @@
 
 	Updated Spanish translaiton
 
+2008-06-24  Luca Bruno <lucab@debian.org>
+
+	* New upstream version 0.5.4
+
 2008-06-22  Dodji Seketeli <dodji@src.gnome.org>
 
 	fix #515525 – Arrow keys don't work to navigate through source file
@@ -6035,6 +8258,14 @@
 	addition to sending the command when the selection is changed.
 	This should close bug #535359.
 
+2008-05-26  Luca Bruno <lucab@debian.org>
+
+	* New upstream version 0.5.3
+
+2008-05-26  Luca Bruno <lucab@debian.org>
+
+	* .desktop patch removed, accepted upstream
+
 2008-05-25  Dodji Seketeli <dodji@src.gnome.org>
 
 	update for 0.5.3 released on the 0.5 branch
@@ -6125,6 +8356,10 @@
 	[gdbmi parser] allow reading empty lists
 	When trying to read either empty lists of results or values, the current
 	code throws exceptions. Don't do that.
+
+2008-04-18  Luca Bruno <lucab@debian.org>
+
+	* New upstream release 0.5.2, using libgtksourceviewmm 2.0 - http://bugs.debian.org/474344
 
 2008-04-12  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -6236,6 +8471,10 @@
 	the functionality is not mature yet. When the version of libstdc++
 	changes the result of the test changes.
 
+2008-03-29  Luca Bruno <lucab@debian.org>
+
+	* New upstream version 0.5.1
+
 2008-03-24  Dodji Seketeli <dodji@src.gnome.org>
 
 	Fix a gdb output buffer management bug
@@ -6263,6 +8502,10 @@
 	* src/dbgengine/nmv-gdb-engine.cc:
 	(GDBEngine::load_program): check if the program to load is a litbool
 	wrapper. If yes, load the actuall binary instead.
+
+2008-03-17  Luca Bruno <lucab@debian.org>
+
+	* New upstream version 0.5.0
 
 2008-03-17  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -6311,6 +8554,14 @@
 2008-03-08  Yannig MARCHEGAY <ymarcheg@src.gnome.org>
 
 	Updated Occitan translation
+
+2008-03-06  Luca Bruno <lucab@debian.org>
+
+	* Bumped versioned build-dep on debhelper due to dh_icons
+
+2008-03-06  Luca Bruno <lucab@debian.org>
+
+	* Remove spurious scroolkeeper database - http://bugs.debian.org/469431
 
 2008-02-24  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -6718,12 +8969,20 @@
 	* help/Makefile.am: add legal.xml to DOC_INCLUDES instead of DOC_ENTITIES
 	so that it gets installed with translations, etc.  Fixes Bug #509371
 
+2008-01-16  Luca Bruno <lucab@debian.org>
+
+	* Minor fixes for scrollkeeper, gconf and icons
+
 2008-01-15  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	don't use g_option_context_set_summary unless the glib version is at least
 	* src/main.cc: don't use g_option_context_set_summary unless the glib
 	version is at least 2.12.  This is just a descriptive string, so it's not
 	worth bumping the minimum version in configure.ac just for this
+
+2008-01-14  Luca Bruno <lucab@debian.org>
+
+	* Really symlinking for the package content :)
 
 2008-01-14  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -6780,6 +9039,10 @@
 	use line marker and breakpoint icons from anjuta since they're nicer-looking
 	and tango-ish and GPLed
 
+2008-01-11  Luca Bruno <lucab@debian.org>
+
+	* Symbolic link for missing sv/legal.xml
+
 2008-01-10  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Use VarsTreeView in locals and var inspector widgets
@@ -6818,6 +9081,14 @@
 	* src/persp/dbgperspective/nmv-local-vars-inspector2.cc: remove the global
 	variables listing from the local variables widget.  It will be added later
 	as a modal dialog.
+
+2008-01-09  Luca Bruno <lucab@debian.org>
+
+	* Enable and register scrollkeeper entry - Close http://bugs.debian.org/457522
+
+2008-01-09  Luca Bruno <lucab@debian.org>
+
+	* Added manpage nemiver(1)
 
 2008-01-03  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -6987,6 +9258,10 @@
 
 	use MI to set breakpoints by name.
 
+2007-12-16  Luca Bruno <lucab@debian.org>
+
+	Revert previous statement, leaving out scrollkeeper for this time
+
 2007-12-16  Dodji Seketeli <dodji@src.gnome.org>
 
 	catch exceptions thrown in a signal callbacks (#503864)
@@ -7018,6 +9293,26 @@
 	Basically the format of the prompt returned to the client for
 	overload resolution is broken by gdb.
 	This test shows the problem.
+
+2007-12-12  Luca Bruno <lucab@debian.org>
+
+	* Not really sure about it, but leaving scrollkeeper there for now
+
+2007-12-10  Luca Bruno <lucab@debian.org>
+
+	* Various minor fixes
+
+2007-12-10  Luca Bruno <lucab@debian.org>
+
+	* Minor fix in series
+
+2007-12-10  Luca Bruno <lucab@debian.org>
+
+	* Desktop file conforming to 1.0 specification
+
+2007-12-10  Luca Bruno <lucab@debian.org>
+
+	*  Shipping libnemivercommon as a private lib (patch from SVN r539-542)
 
 2007-12-09  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -7095,10 +9390,34 @@
 	Allow setting breakpoints like you do with gdb command "catch".
 	Closes bug #499034.
 
+2007-12-05  Luca Bruno <luca.br@uno.it>
+
+	* Manpage missing right now, will be written soon
+
 2007-11-29  Claude Paroz <claude@2xlibre.net>
 
 	Updated French translation.
 	* fr.po: Updated French translation.
+
+2007-11-29  Luca Bruno <luca.br@uno.it>
+
+	* Minor copyright fixes
+
+2007-11-29  Luca Bruno <luca.br@uno.it>
+
+	* Making lintian happy about distclean
+
+2007-11-29  Luca Bruno <luca.br@uno.it>
+
+	* Long description added
+
+2007-11-27  Luca Bruno <luca.br@uno.it>
+
+	* Build-depends filled up and ready to build
+
+2007-11-26  Luca Bruno <luca.br@uno.it>
+
+	* Added a proper menu section
 
 2007-11-26  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -7196,6 +9515,18 @@
 	"postfix [expression]", especially the 'expression' part.
 	Did quite some debugging.
 
+2007-11-24  Luca Bruno <luca.br@uno.it>
+
+	* Patch from SVN (r513) to fix a misnamed glade file
+
+2007-11-24  Luca Bruno <luca.br@uno.it>
+
+	* Better handling of gconf schemas and lib stuff
+
+2007-11-24  Luca Bruno <luca.br@uno.it>
+
+	* Added xpm icon for debian menu file
+
 2007-11-24  Dodji Seketeli <dodji@src.gnome.org>
 
 	cpplang: finish parsing bitwise operations expression
@@ -7203,6 +9534,10 @@
 	src/langs/nmv-cpp-parser.cc,h,
 	tests/test-cpp-parser.cc: parse equality-expression, and-expression,
 	exclusive-or-expression and inclusive-or-expression productions.
+
+2007-11-24  Luca Bruno <luca.br@uno.it>
+
+	* Non-fatal distclean
 
 2007-11-23  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -7253,6 +9588,10 @@
 	some vars are getting wrong types, so further lookup would fail if it
 	it takes in account var type names.
 
+2007-11-19  Luca Bruno <luca.br@uno.it>
+
+	* Added debian/watch for nemiver
+
 2007-11-18  Dodji Seketeli <dodji@src.gnome.org>
 
 	cpplang: made pm-expression and multiplicative-expression parsing complete.
@@ -7300,6 +9639,22 @@
 	value.
 	* src/persp/dbgperspective/nmv-memory-view.cc: ditto. Also make sure
 	lines are properly indented.
+
+2007-11-18  Luca Bruno <luca.br@uno.it>
+
+	* Patch from SVN to reflect a libgtop API change
+
+2007-11-18  Luca Bruno <luca.br@uno.it>
+
+	* debian/copyright rewritten in a machine-interpretable format
+
+2007-11-18  Luca Bruno <luca.br@uno.it>
+
+	* First rough skeleton
+
+2007-11-18  Luca Bruno <luca.br@uno.it>
+
+	* Start packaging nemiver
 
 2007-11-18  Dodji Seketeli <dodji@src.gnome.org>
 
