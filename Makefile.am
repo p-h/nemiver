@@ -49,7 +49,7 @@ update-changelog:
 	else echo "ChangeLog.updated is smaller than ChangeLog. Problem!!"\
 	; exit -1; fi
 
-RELEASED_BRANCH=gtk2-branch
+RELEASED_BRANCH=master
 
 echo-released-branch:
 	echo "released-branch=$(RELEASED_BRANCH)"

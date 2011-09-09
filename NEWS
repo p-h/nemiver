@@ -1,3 +1,112 @@
+0.9.0 Release
+=============
+
+Andrej Žnidaršič
+      Updated Slovenian translation
+
+Daniel Mustieles
+      Updated Spanish translation
+
+Dodji Seketeli
+      Ignore 'current-thread-id' in thread list
+      Fix a crash in previous commit
+      Fix configury when gsettings is not present
+      Update the INSTALL file.
+      Update HACKING documentation
+      Style cleanup
+      Emit one IDebugger::breakpoint_set_signal per BP
+      Introduce Loc (code location) type
+      Fix memory corruption in SourceEditor
+      Avoid reading freed memory
+      Fix a crash in confmgr
+      Fixlets in setbreakpointdialog.ui
+      Fix gsettings configure test error
+      Use Automake GSettings magic to support DESTDIR
+      Fix configuration keys' description wording
+      Add a description to Nemiver's doap file
+      Update Makefile.am's release text.
+      Fix update-changelog for building out of srcdir
+      Properly mark the GDB line as busy
+      Add some logging to nmv-gdb-engine.cc
+      Avoid gratuitously resetting the dbg command queue
+      Handle breakpoints added via GDB scripts
+      Reference the local var inspector view
+      Restore layout for variable inspector widget
+      Fix VarsTreeView memory management
+      657021 Wrong behaviour enlarging var inspector
+      Backend support for GDB/MI variable format
+      Enable GDB pretty printers by default
+      Fix tests that got broken a while ago
+      Initialize IDebugger dynmods with gconf in tests
+      Add preferences for GDB pretty printing
+      Support pretty printing instantly applied
+      Avoid emitting useless -enable-pretty-printing
+      Avoid over reacting to pretty printing key changes
+      657834 Properly un-escape '\"' sequence
+      658097 Fix hovering over pointer dereference expression
+      Add comment to is_word_delimiter
+      Fix a typo in the coding style
+      644823 Cannot set BP in files with space in path
+      Fix tests/pointer-deref.c regression
+      658143 Fails to support multiple breakpoints
+      Use DBGPerspective::append_breakpoints
+      Don't forget to Gtk::Widget::show_all source views
+      constify IDebugger::Breakpoint::is_pending
+      632305 Avoid disassembling location of pending breakpoint
+      Don't append the disassembly editor multiple times
+      Misbehaving vertically enlarging var inspector
+
+Fabien Parent
+      Add a GSettings implementation for IConfMgr
+      Remove not implemented constructor
+      Uniformize the header guard name.
+      Fix typo
+      Apply the GNOME 3 style on the toolbar
+      Expand session's treeview
+      Replace NULL symbol with 0
+      Support user defined assembly syntax
+      Add GUI to change the assembly syntax
+      Remove unused status widgets
+      New Layout Manager and 3 additionals new layouts
+      577496 561100 533437 656093 564992 Support Copy/Paste/Reset on target terminal
+      Use ATT for disassembly flavor to avoid a glade bug
+
+Fran Dieguez
+      Updated Galician translations
+
+Kalev Lember
+      Fix header guard name in nmv-hex-document.h
+      Fixed includes to match GTK+'s single include policy
+      Avoid using gtkmm deprecated API
+      Dropped ifdefs for gtkmm 2.16
+      Use GDK_KEY_* enums, not the deprecated GDK_* ones
+      Dropped ifdefs for GTK+ 2.10
+      Removed gnome-vfs compat code
+      Dropped compat code with gtksourceviewmm < 2.10
+      Removed an unused forward declaration
+      Removed has-separator property
+      Popup var inspector size requisition code rework
+      Port to gtkmm 3.0 and gtksourceviewmm 3.0
+      Fix build with ghex 2.90.0
+
+Lele Long
+      Update Simplified Chinese translaton
+
+Marek Černocký
+      Updated Czech translation
+
+Mario Blättermann
+      [l10n] Updated German translation
+
+Piotr Drąg
+      Updated POTFILES.in
+
+Takeshi AIHANA
+      Updated Japanese translation.
+
+Yuri Kozlov
+      Updated Russian translation
+
 0.8.2 Release
 =============
 
