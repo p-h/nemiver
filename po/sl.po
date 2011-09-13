@@ -13,10 +13,10 @@ msgstr ""
 "PO-Revision-Date: 2011-09-12 20:17+0100\n"
 "Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
 "X-Poedit-Country: SLOVENIA\n"
 "X-Poedit-Language: Slovenian\n"
@@ -724,7 +724,7 @@ msgstr "Izvorna koda"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
 msgid "Dynamic Layout"
-msgstr "Dinamična postavitev"
+msgstr "Spremenljiva postavitev"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
 msgid "A layout which can be modified"
@@ -789,7 +789,7 @@ msgstr "_Kopiraj ime spremenljivke"
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:239
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:128
 msgid "Copy the variable path expression to the clipboard"
-msgstr "Kopiranje izraza poti spremenljivke na odložišče"
+msgstr "Kopiranje izraza poti spremenljivke v odložišče"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:250
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:139
@@ -799,7 +799,7 @@ msgstr "_Kopiraj vrednost spremenljivke"
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:251
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:140
 msgid "Copy the variable value to the clipboard"
-msgstr "Kopiranje vrednosti spremenljivke na odložišče"
+msgstr "Kopiranje vrednosti spremenljivke v odložišče"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:262
 msgid "Create watchpoint"
@@ -876,7 +876,7 @@ msgstr "Izjema ujema"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
 msgid "fork system call"
-msgstr "sistemski klic fotk"
+msgstr "sistemski klic fork"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
 msgid "vfork system call"
@@ -1006,7 +1006,7 @@ msgstr "<b>Nadzor datotek</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
 msgid "<b>GDB binary</b>"
-msgstr "<b>Binarni GDB</b>Pokaži _binarne"
+msgstr "<b>Binarni GDB</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
 msgid "<b>GDB follow fork mode</b>"
@@ -1103,7 +1103,7 @@ msgstr "Možnosti"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "Pure assembly"
-msgstr "Čiti zbirnik"
+msgstr "Čisti zbirnik"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Reload the file"
@@ -1342,7 +1342,7 @@ msgstr "Kopiraj izbor"
 #: ../src/uicommon/nmv-terminal.cc:180
 #| msgid "Copy the call stack to the clipboard"
 msgid "Paste the clipboard"
-msgstr "Prilepi z odložišča / Prilepi vsebino odložišča"
+msgstr "Prilepi vsebino odložišča"
 
 #: ../src/uicommon/nmv-terminal.cc:187
 #| msgid "Use launch terminal"
@@ -1406,4 +1406,3 @@ msgstr "<b>Najdi datoteko</b>"
 #: ../ui/locatefiledialog.ui.h:2
 msgid "Select File Location"
 msgstr "Izbor mesta datoteke"
-
