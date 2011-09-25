@@ -67,13 +67,13 @@
     </key>
 
     <key name="status-widget-minimum-width" type="i">
-      <default>100</default>
+      <default>0</default>
       <summary>The minimum width of the status widget</summary>
       <description>The minimum width of the status widget.</description>
     </key>
 
     <key name="status-widget-minimum-height" type="i">
-      <default>70</default>
+      <default>0</default>
       <summary>The minimum height of the status widget</summary>
       <description>The minimum height of the status widget.</description>
     </key>
@@ -193,13 +193,13 @@
     </key>
 
     <key name="window-minimum-width" type="i">
-      <default>700</default>
+      <default>0</default>
       <summary>window minim width</summary>
       <description>The workbench main window minium width.</description>
     </key>
 
     <key name="window-minimum-height" type="i">
-      <default>500</default>
+      <default>0</default>
       <summary>window minimum height</summary>
       <description>The workbench main window minium height.</description>
     </key>

@@ -139,7 +139,7 @@ DBGPerspectiveTwoPaneLayout::do_lay_out (IPerspective &a_perspective)
         (m_priv->dbg_perspective.get_source_view_widget (), true, true);
     m_priv->horizontal_paned->pack2 (*m_priv->vertical_statuses_notebook);
 
-    int width=100, height=70;
+    int width = 0, height = 0;
 
     NEMIVER_TRY
     conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH, width);

@@ -61,7 +61,7 @@
       <applyto>/apps/nemiver/workbench/window-minimum-width</applyto>
       <owner>nemiver</owner>
       <type>int</type>
-      <default>700</default>
+      <default>0</default>
       <locale name="C">
 	<short>window minim width</short>
 	<long>The workbench main window minium width.</long>
@@ -72,7 +72,7 @@
       <applyto>/apps/nemiver/workbench/window-minimum-height</applyto>
       <owner>nemiver</owner>
       <type>int</type>
-      <default>500</default>
+      <default>0</default>
       <locale name="C">
 	<short>window minimum height</short>
 	<long>The workbench main window minium height.</long>

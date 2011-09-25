@@ -129,7 +129,7 @@
       <applyto>/apps/nemiver/dbgperspective/status-widget-minimum-width</applyto>
       <owner>nemiver</owner>
       <type>int</type>
-      <default>100</default>
+      <default>0</default>
       <locale name="C">
 	<short>The minimum width of the status widget</short>
 	<long>The minimum width of the status widget</long>
@@ -140,7 +140,7 @@
       <applyto>/apps/nemiver/dbgperspective/status-widget-minimum-height</applyto>
       <owner>nemiver</owner>
       <type>int</type>
-      <default>70</default>
+      <default>0</default>
       <locale name="C">
 	<short>The minimum height of the status widget</short>
 	<long>The minimum height of the status widget</long>

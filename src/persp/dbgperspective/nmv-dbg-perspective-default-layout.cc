@@ -99,7 +99,7 @@ DBGPerspectiveDefaultLayout::do_lay_out (IPerspective &a_perspective)
     m_priv->body_main_paned->pack1
         (m_priv->dbg_perspective.get_source_view_widget (), true, true);
 
-    int width=100, height=70;
+    int width = 0, height = 0;
 
     NEMIVER_TRY
     conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH, width);

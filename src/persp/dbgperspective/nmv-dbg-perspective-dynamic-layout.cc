@@ -253,8 +253,8 @@ DBGPerspectiveDynamicLayout::add_view (Gtk::Widget &a_widget,
     if (a_index == TARGET_TERMINAL_VIEW_INDEX) {
 #endif // WITH_MEMORYVIEW
         IConfMgr &conf_mgr = m_priv->dbg_perspective.get_conf_mgr ();
-        int width = 100;
-        int height = 70;
+        int width = 0;
+        int height = 0;
 
         NEMIVER_TRY
         conf_mgr.get_key_value (CONF_KEY_STATUS_WIDGET_MINIMUM_WIDTH, width);
