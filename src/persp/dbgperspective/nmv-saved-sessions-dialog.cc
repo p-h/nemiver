@@ -53,24 +53,30 @@ public:
     SafePtr<Gtk::TreeView> treeview_sessions;
     Gtk::Button *okbutton;
     SessionModelColumns session_columns;
+    Gtk::CellRendererText name_column_cell_renderer;
+    Gtk::TreeView::Column name_column;
     Glib::RefPtr<Gtk::ListStore> model;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gtk::Builder> gtkbuilder;
+    ISessMgr &session_manager;
 
 private:
     Priv ();
 
 public:
     Priv (Gtk::Dialog &a_dialog,
-        const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder) :
+        const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
+        ISessMgr &a_session_manager) :
         okbutton (0),
+        name_column (_("Session"), name_column_cell_renderer),
         model(Gtk::ListStore::create (session_columns)),
         dialog (a_dialog),
-        gtkbuilder (a_gtkbuilder)
+        gtkbuilder (a_gtkbuilder),
+        session_manager (a_session_manager)
     {
     }
 
-    void init (ISessMgr *a_session_manager)
+    void init ()
     {
         okbutton =
             ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder, "okbutton1");
@@ -78,8 +84,7 @@ public:
             (ui_utils::get_widget_from_gtkbuilder<Gtk::TreeView>
                                             (gtkbuilder, "treeview_sessions"));
         okbutton->set_sensitive (false);
-        THROW_IF_FAIL (a_session_manager);
-        list<ISessMgr::Session> sessions = a_session_manager->sessions ();
+        list<ISessMgr::Session> sessions = session_manager.sessions ();
         THROW_IF_FAIL (model);
         for (list<ISessMgr::Session>::iterator iter = sessions.begin();
                 iter != sessions.end(); ++iter)
@@ -87,14 +92,24 @@ public:
             Gtk::TreeModel::iterator treeiter = model->append ();
             (*treeiter)[session_columns.id] = iter->session_id ();
             (*treeiter)[session_columns.name] =
-                                        iter->properties ()["sessionname"];
+                                        iter->properties ()["captionname"];
             (*treeiter)[session_columns.session] = *iter;
         }
 
         THROW_IF_FAIL (treeview_sessions);
         treeview_sessions->set_model (model);
         treeview_sessions->append_column (_("ID"), session_columns.id);
-        treeview_sessions->append_column (_("Session"), session_columns.name);
+        treeview_sessions->append_column (name_column);
+
+        name_column_cell_renderer.property_editable () = true;
+
+        name_column.set_cell_data_func
+            (name_column_cell_renderer, sigc::mem_fun
+                (*this,
+                 &SavedSessionsDialog::Priv::session_name_cell_data_func));
+
+        name_column_cell_renderer.signal_edited ().connect (sigc::mem_fun
+            (*this, &SavedSessionsDialog::Priv::on_session_name_edited));
 
         // update the sensitivity of the OK
         // button when the selection is changed
@@ -105,6 +120,44 @@ public:
         treeview_sessions->signal_row_activated ().connect
             (sigc::mem_fun(*this,
                            &SavedSessionsDialog::Priv::on_row_activated));
+    }
+
+    void
+    session_name_cell_data_func (Gtk::CellRenderer*,
+                                 const Gtk::TreeModel::iterator &a_iter)
+    {
+        NEMIVER_TRY
+
+        if (a_iter) {
+            UString session_name ((*a_iter)[session_columns.name]);
+            name_column_cell_renderer.property_text () = session_name;
+        }
+
+        NEMIVER_CATCH
+    }
+
+    void
+    on_session_name_edited (const UString &a_path, const UString &a_name)
+    {
+        NEMIVER_TRY
+
+        UString name = a_name;
+        Gtk::TreePath path (a_path);
+        Gtk::TreeModel::iterator iter = model->get_iter (path);
+        if (iter) {
+            ISessMgr::Session session = (*iter)[session_columns.session];
+            if (name.empty ()) {
+                name = session.properties ()["sessionname"];
+            }
+            session.properties ()["captionname"] = name;
+            Transaction &transaction = session_manager.default_transaction ();
+            session_manager.store_session (session, transaction);
+            session_manager.load_sessions ();
+
+            (*iter)[session_columns.name] = name;
+        }
+
+        NEMIVER_CATCH
     }
 
     void on_selection_changed ()
@@ -125,9 +178,10 @@ SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
                                           ISessMgr *a_session_manager) :
     Dialog(a_root_path, "savedsessionsdialog.ui", "savedsessionsdialog")
 {
-    m_priv.reset (new Priv (widget (), gtkbuilder ()));
+    THROW_IF_FAIL (a_session_manager);
+    m_priv.reset (new Priv (widget (), gtkbuilder (), *a_session_manager));
     THROW_IF_FAIL (m_priv);
-    m_priv->init (a_session_manager);
+    m_priv->init ();
 }
 
 SavedSessionsDialog::~SavedSessionsDialog ()

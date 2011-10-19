@@ -119,6 +119,7 @@ const char *BREAKPOINTS_VIEW_TITLE     = _("Breakpoints");
 const char *REGISTERS_VIEW_TITLE       = _("Registers");
 const char *MEMORY_VIEW_TITLE          = _("Memory");
 
+const char *CAPTION_SESSION_NAME = "captionname";
 const char *SESSION_NAME = "sessionname";
 const char *PROGRAM_NAME = "programname";
 const char *PROGRAM_ARGS = "programarguments";
@@ -4958,6 +4959,11 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
 
     if (session_name == "") {return;}
 
+    UString caption_session_name;
+    if (a_session.properties ().count (CAPTION_SESSION_NAME)) {
+        caption_session_name = a_session.properties ()[CAPTION_SESSION_NAME];
+    }
+
     if (a_session.session_id ()) {
         session_manager ().clear_session (a_session.session_id ());
         LOG_DD ("cleared current session: "
@@ -4967,6 +4973,9 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     UString today;
     dateutils::get_current_datetime (today);
     session_name += "-" + today;
+    if (caption_session_name.empty ()) {
+        caption_session_name = session_name;
+    }
     UString prog_args = UString::join (m_priv->prog_args,
                                        PROG_ARG_SEPARATOR);
     a_session.properties ().clear ();
@@ -4976,6 +4985,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     a_session.properties ()[PROGRAM_CWD] = m_priv->prog_cwd;
     a_session.properties ()[REMOTE_TARGET] = m_priv->remote_target;
     a_session.properties ()[SOLIB_PREFIX] = m_priv->solib_prefix;
+    a_session.properties ()[CAPTION_SESSION_NAME] = caption_session_name;
 
     GTimeVal timeval;
     g_get_current_time (&timeval);
