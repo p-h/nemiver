@@ -494,7 +494,7 @@ update_a_variable_real (const IDebugger::VariableSafePtr a_var,
 /// variable is added as the root node of the tree view widget.
 /// \return true if a_var was added, false otherwise.
 bool
-append_a_variable (const IDebugger::VariableSafePtr a_var,
+append_a_variable (const IDebugger::VariableSafePtr &a_var,
                    const Gtk::TreeView &a_tree_view,
                    const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                    Gtk::TreeModel::iterator &a_parent_row_it,
@@ -521,7 +521,7 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
 /// the function returned true.
 /// \return true if a_var was added, false otherwise.
 bool
-append_a_variable (const IDebugger::VariableSafePtr a_var,
+append_a_variable (const IDebugger::VariableSafePtr &a_var,
                    const Gtk::TreeView &a_tree_view,
                    const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                    Gtk::TreeModel::iterator &a_parent_row_it,
@@ -614,6 +614,29 @@ set_a_variable (const IDebugger::VariableSafePtr a_var,
                                a_truncate_type);
         }
     }
+    return true;
+}
+
+/// Unlike the graphical node representing a variable a_var.
+///
+/// \param a_var the variable which graphical node to unlink.
+///
+/// \param a_store the tree store of the tree view to act upon.
+///
+/// \param a_parent_row_it the parent graphical row under which we
+/// have to look to find the graphical node to unlink.
+///
+/// \return true upon successful unlinking, false otherwise.
+bool
+unlink_a_variable_row (const IDebugger::VariableSafePtr &a_var,
+                       const Glib::RefPtr<Gtk::TreeStore> &a_store,
+                       Gtk::TreeModel::iterator &a_parent_row_it)
+{
+    Gtk::TreeModel::iterator var_to_unlink_it;
+    if (!find_a_variable (a_var, a_parent_row_it, var_to_unlink_it))
+        return false;
+
+    a_store->erase (var_to_unlink_it);
     return true;
 }
 

@@ -97,6 +97,7 @@
 #include "nmv-dbg-perspective-dynamic-layout.h"
 #endif // WITH_DYNAMICLAYOUT
 #include "nmv-layout-manager.h"
+#include "nmv-vars-monitor.h"
 
 using namespace std;
 using namespace nemiver::common;
@@ -114,11 +115,12 @@ const char *STEP_OVER         = "nmv-step-over";
 const char *STEP_OUT          = "nmv-step-out";
 
 // labels for widget tabs in the status notebook
-const char *CONTEXT_VIEW_TITLE         = _("Context");
-const char *TARGET_TERMINAL_VIEW_TITLE = _("Target Terminal");
-const char *BREAKPOINTS_VIEW_TITLE     = _("Breakpoints");
-const char *REGISTERS_VIEW_TITLE       = _("Registers");
-const char *MEMORY_VIEW_TITLE          = _("Memory");
+const char *CONTEXT_VIEW_TITLE           = _("Context");
+const char *TARGET_TERMINAL_VIEW_TITLE   = _("Target Terminal");
+const char *BREAKPOINTS_VIEW_TITLE       = _("Breakpoints");
+const char *REGISTERS_VIEW_TITLE         = _("Registers");
+const char *MEMORY_VIEW_TITLE            = _("Memory");
+const char *VARS_MONITOR_VIEW_TITLE      = _("Variables Monitor");
 
 const char *SESSION_NAME = "sessionname";
 const char *PROGRAM_NAME = "programname";
@@ -419,6 +421,7 @@ private:
 #ifdef WITH_MEMORYVIEW
     void on_activate_memory_view ();
 #endif // WITH_MEMORYVIEW
+    void on_activate_vars_monitor_view ();
     void on_activate_global_variables ();
     void on_default_config_read ();
 
@@ -757,6 +760,8 @@ public:
     MemoryView& get_memory_view ();
 #endif // WITH_MEMORYVIEW
 
+    VarsMonitor& get_vars_monitor_view ();
+
     ThreadList& get_thread_list ();
 
     bool set_where (const IDebugger::Frame &a_frame,
@@ -907,6 +912,7 @@ struct DBGPerspective::Priv {
 #ifdef WITH_MEMORYVIEW
     SafePtr<MemoryView> memory_view;
 #endif // WITH_MEMORYVIEW
+    SafePtr<VarsMonitor> vars_monitor;
 
     int current_page_num;
     IDebuggerSafePtr debugger;
@@ -1834,6 +1840,7 @@ DBGPerspective::on_going_to_run_target_signal ()
     get_memory_view ().clear ();
 #endif
     get_registers_view ().clear ();
+    get_vars_monitor_view ().re_init_widget ();;
     NEMIVER_CATCH
 }
 
@@ -2868,6 +2875,19 @@ DBGPerspective::on_activate_memory_view ()
 #endif //WITH_MEMORYVIEW
 
 void
+DBGPerspective::on_activate_vars_monitor_view ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY;
+
+    THROW_IF_FAIL (m_priv);
+    m_priv->layout ().activate_view (VARS_MONITOR_VIEW_INDEX);
+
+    NEMIVER_CATCH;
+}
+
+void
 DBGPerspective::on_activate_global_variables ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -3398,6 +3418,16 @@ DBGPerspective::init_actions ()
         },
 #endif // WITH_MEMORYVIEW
         {
+            "ActivateVarsMonitorViewMenuAction",
+            nil_stock_id,
+            VARS_MONITOR_VIEW_TITLE,
+            _("Switch to Variables Monitor View"),
+            sigc::mem_fun (*this, &DBGPerspective::on_activate_vars_monitor_view),
+            ActionEntry::DEFAULT,
+            "<alt>6",
+            false
+        },
+        {
             "DebugMenuAction",
             nil_stock_id,
             _("_Debug"),
@@ -3792,6 +3822,7 @@ DBGPerspective::clear_status_notebook ()
 #ifdef WITH_MEMORYVIEW
     get_memory_view ().clear ();
 #endif // WITH_MEMORYVIEW
+    get_vars_monitor_view ().re_init_widget ();
 }
 
 void
@@ -4931,6 +4962,9 @@ DBGPerspective::add_views_to_layout ()
     m_priv->layout ().add_view (get_terminal_box (),
                                 TARGET_TERMINAL_VIEW_TITLE,
                                 TARGET_TERMINAL_VIEW_INDEX);
+    m_priv->layout ().add_view (get_vars_monitor_view ().widget (),
+                                VARS_MONITOR_VIEW_TITLE,
+                                VARS_MONITOR_VIEW_INDEX);
 
     m_priv->layout ().do_init ();
 
@@ -8092,6 +8126,17 @@ DBGPerspective::get_memory_view ()
 }
 #endif // WITH_MEMORYVIEW
 
+VarsMonitor&
+DBGPerspective::get_vars_monitor_view ()
+{
+    THROW_IF_FAIL (m_priv);
+
+    if (!m_priv->vars_monitor)
+        m_priv->vars_monitor.reset (new VarsMonitor (*debugger (),
+                                                     *this));
+    THROW_IF_FAIL (m_priv->vars_monitor);
+    return *m_priv->vars_monitor;
+}
 
 struct ScrollTextViewToEndClosure {
     Gtk::TextView* text_view;

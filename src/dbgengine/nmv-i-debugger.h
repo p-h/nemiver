@@ -351,7 +351,7 @@ public:
         FrameArgsSlot;
 
     typedef sigc::slot<void, const VariableSafePtr> ConstVariableSlot;
-    typedef sigc::slot<void, const VariableList> ConstVariableListSlot;
+    typedef sigc::slot<void, const VariableList&> ConstVariableListSlot;
     typedef sigc::slot<void, const UString&> ConstUStringSlot;
 
     class Variable : public Object {
@@ -507,7 +507,7 @@ public:
 
         /// Tests value equality between two variables.
         /// Two variables are considered equal by value if their
-        /// respective memebers have the same values and same type.
+        /// respective members have the same values and same type.
         /// \param a_other the other variable to test against
         /// \return true if a_other equals the current instance
         ///         by value.
@@ -577,6 +577,28 @@ public:
         bool has_parent () const
         {
             return m_parent != 0;
+        }
+
+        /// If this variable has a backend counterpart (e.g GDB
+        /// Backend variable object) then, there are cases where a
+        /// variable sub-object can be returned by the backend without
+        /// being linked to its ancestor tree.  Such a variable
+        /// appears as being structurally root (it has no parent), but
+        /// is morally a sub-variable.  A variable that is
+        /// structurally non-root is also morally non-root.
+        ///
+        /// To know if a variable is morally root, this function
+        /// detects if the fully qualified internal name of the
+        /// variable has dot (".") in it (e.g, "variable.member").  If
+        /// does not, then the function assumes the variable is
+        /// morally root and returns true.
+        bool is_morally_root () const
+        {
+            if (has_parent ())
+                return false;
+            if (internal_name ().empty ())
+                return !has_parent ();
+            return (internal_name ().find (".") == UString::npos);
         }
 
         /// A getter of the parent Variable of the current instance.
@@ -1095,6 +1117,12 @@ public:
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
                                  variable_expression_evaluated_signal () const = 0;
 
+    /// This is a callback slot called upon completion of the
+    /// IDebugger::list_changed_variables entry point.
+    ///
+    /// The parameters of are the slots are: the list of variables
+    /// that changed, and the cookie passed to
+    /// IDebugger::list_changed_variables.
     virtual sigc::signal<void, const VariableList&, const UString&>&
                                 changed_variables_signal () const  = 0;
 
@@ -1417,8 +1445,26 @@ public:
              const ConstVariableSlot &a_slot,
              const UString &a_cookie = "")= 0;
 
+    /// List the sub-variables of a_root (included a_root) which value
+    /// changed since the last time this function was called.
+    ///
+    /// \param a_root the variable to consider
+    /// \a_cookie the cookie to be passed to the callback function
+    /// IDebugger::changed_variables_signal
     virtual void list_changed_variables (VariableSafePtr a_root,
                                          const UString &a_cookie = "") = 0;
+
+    /// List the sub-variables of a_root (included a_root) which value
+    /// changed since the last time this function was called.
+    ///
+    /// \param a_root the variable to consider
+    /// 
+    /// \param a_slot the slot to be invoked upon completion of this
+    /// function.  That slot is going to be passed the list of
+    /// sub-variables that have changed.
+    /// 
+    /// \a_cookie the cookie to be passed to the callback function
+    /// IDebugger::changed_variables_signal
     virtual void list_changed_variables
             (VariableSafePtr a_root,
              const ConstVariableListSlot &a_slot,
