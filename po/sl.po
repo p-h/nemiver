@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-08-31 10:47+0000\n"
-"PO-Revision-Date: 2011-09-12 20:17+0100\n"
-"Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
+"POT-Creation-Date: 2011-10-23 12:51+0000\n"
+"PO-Revision-Date: 2011-10-23 19:08+0100\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -39,64 +39,68 @@ msgstr "Nemiver"
 msgid "Nemiver C/C++ Debugger"
 msgstr "Razhroščevalnik C/C++ Nemiver"
 
-#: ../src/main.cc:74
+#: ../src/main.cc:76
 msgid "Set the environment of the program to debug"
 msgstr "Nastavi okolje programa za razhroščevanje"
 
-#: ../src/main.cc:83
+#: ../src/main.cc:85
 msgid "Attach to a process"
 msgstr "Pripni k opravilu"
 
-#: ../src/main.cc:91
+#: ../src/main.cc:93
 msgid "List the saved debugging sessions"
 msgstr "Naštej shranjene možnosti razhroščevalnika"
 
-#: ../src/main.cc:99
+#: ../src/main.cc:101
 msgid "Erase the saved debugging sessions"
 msgstr "Izbriši shranjene seje razhroščevanja"
 
-#: ../src/main.cc:107
+#: ../src/main.cc:109
 msgid "Debug the program that was of session number N"
 msgstr "Razhroščevanje programa iz seje številka N"
 
-#: ../src/main.cc:115
+#: ../src/main.cc:117
 msgid "Execute the last session"
 msgstr "Izvedi zadnjo sejo"
 
-#: ../src/main.cc:123
+#: ../src/main.cc:125
 msgid "Enable logging domains DOMAINS"
 msgstr "Omogoči beleženje dnevnika domen"
 
-#: ../src/main.cc:131
+#: ../src/main.cc:133
 msgid "Log the debugger output"
 msgstr "Beleženje dnevnika odvoda razhroščevalnika"
 
-#: ../src/main.cc:139
+#: ../src/main.cc:141
 msgid "Use this terminal as the debugee's terminal"
 msgstr "Uporabi ta terminal kot terminal razhroščevalnika"
 
-#: ../src/main.cc:148
+#: ../src/main.cc:150
 msgid "Connect to remote target specified by HOST:PORT"
 msgstr "Povezava z oddaljenim ciljem navedenim z GOSTITELJ:VRATA"
 
-#: ../src/main.cc:157
+#: ../src/main.cc:159
 msgid "Where to look for shared libraries loaded by the inferior. Use in conjunction with --remote"
 msgstr "Mesto za iskanje knjižnic v souporabi, ki jih naloži inferior. Uporabite skupaj z --remote"
 
-#: ../src/main.cc:166
+#: ../src/main.cc:169
+msgid "Set the path of the GDB binary to use to debug the inferior"
+msgstr "Določitev poti dvojiške datoteke GDB za razhroščevanje podrejenih opravil."
+
+#: ../src/main.cc:177
 msgid "Show the version number of nemiver"
 msgstr "Pokaži različico programa"
 
-#: ../src/main.cc:232
+#: ../src/main.cc:243
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr "[<program-za-razhroščevanje> [argumenti-programa]]"
 
-#: ../src/main.cc:235
+#: ../src/main.cc:246
 #: ../src/workbench/nmv-workbench.cc:263
 msgid "A C/C++ debugger for GNOME"
 msgstr "C/C++ razhroščevalnik za GNOME"
 
-#: ../src/main.cc:329
+#: ../src/main.cc:340
 msgid ""
 "Please provide a local copy of the binary you intend to debug remotely.\n"
 "Like this:\n"
@@ -104,7 +108,7 @@ msgstr ""
 "Zagotovite krajevno kopijo binarne datoteke, ki jo želite oddaljeno razhroščevati. \n"
 "Takole: \n"
 
-#: ../src/main.cc:334
+#: ../src/main.cc:345
 msgid "Otherwise, find below the full set of nemiver options.\n"
 msgstr "V nasprotnem primeru najdite polen niz možnosti nemiver. \n"
 
@@ -247,177 +251,177 @@ msgstr "Vpisniki"
 msgid "Memory"
 msgstr "Pomnilnik"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1667
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1666
 msgid "Reached end of file"
 msgstr "Dosežen je konec datoteke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1670
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1669
 #, c-format
 msgid "Could not find string %s"
 msgstr "Ni mogoče najti niza %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2102
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2101
 msgid "Change to standard Breakpoint"
 msgstr "Spremeni v običajno prekinitveno točko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2105
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2104
 msgid "Change to Countpoint"
 msgstr "Spremeni v točko štetja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2107
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2106
 msgid "Remove _Breakpoint"
 msgstr "Odstrani _prekinitveno točko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2110
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2109
 msgid "Disable Breakpoint"
 msgstr "Onemogoči prekinitveno točko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2112
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
 msgid "Enable Breakpoint"
 msgstr "Omogoči prekinitveno točko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2115
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
 msgid "Set _Breakpoint"
 msgstr "Nastavi _prekinitveno točko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
 msgid "Set Countpoint"
 msgstr "Nastavi točko štetja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2280
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2279
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (pot=\"%s\", pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2294
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2293
 msgid "Connected to remote target !"
 msgstr "Povezava z oddaljenim ciljem !"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2438
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2437
 msgid "Program exited"
 msgstr "Program je končan"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2472
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2471
 msgid "The underlying debugger engine process died."
 msgstr "Spodnji programnik razhroščevalnika je nepričakovano končan."
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2553
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2559
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "Cilj je prejel signal: %s, vzrok %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2568
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2574
 #, c-format
 msgid "An error occured: %s"
 msgstr "Prišlo je do napake: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2736
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2742
 #, c-format
 msgid "File %s has been modified. Do want to reload it ?"
 msgstr "Datoteka %s je bila spremenjena. Ali jo želite ponovno naložiti?"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3000
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3006
 msgid "_Save Session to Disk"
 msgstr "_Shrani sejo na disk"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3001
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3007
 msgid "Save the current debugging session to disk"
 msgstr "Shranjevanje trenutne seje razhroščevalnika na disk"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3010
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3016
 msgid "_Detach From the Running Program"
 msgstr "O_dpni od delujočega programa"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3011
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3017
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "Prekinitev povezave razhroščevalnika s tarčo brez njenega uničenja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3025
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3031
 msgid "_Restart"
 msgstr "_Ponovno zaženi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3026
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3032
 msgid "Restart the target, killing this process and starting a new one"
 msgstr "Ponoven zagon cilja, uniči to opravilo in začne novega"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3039
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3045
 msgid "_Next"
 msgstr "N_aslednja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3040
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3046
 msgid "Execute next line stepping over the next function, if any"
 msgstr "Izvajanje naslednje vrstice in preskok naslednje funkcije, če obstaja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3049
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3055
 msgid "_Step"
 msgstr "_Korak"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3050
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3056
 msgid "Execute next line, stepping into the next function, if any"
 msgstr "Izvedi naslednjo vrstico in vstop v naslednjo funkcijo, če obstaja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3059
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3065
 msgid "Step _Out"
 msgstr "_Izstopi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3060
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3066
 msgid "Finish the execution of the current function"
 msgstr "Končaj izvajanje trenutne funkcije"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3069
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3075
 msgid "Step Into asm"
 msgstr "Skoči v asm"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3070
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3076
 msgid "Step into the next assembly instruction"
 msgstr "Skoči v naslednje navodilo zbirnika"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3079
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3085
 msgid "Step Over asm"
 msgstr "Skoči nad asm"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3080
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3086
 msgid "Step over the next assembly instruction"
 msgstr "Skoči nad naslednje navodilo zbirnika"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3089
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3095
 msgid "_Continue"
 msgstr "_Nadaljuj"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3090
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
 msgid "Continue program execution until the next breakpoint"
 msgstr "Nadaljuj izvajanje programa do naslednje prekinitvene točke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3099
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3105
 msgid "Run to Cursor"
 msgstr "Zaženi do kazalke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3100
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3106
 msgid "Continue program execution until the currently selected line is reached"
 msgstr "Nadaljuj izvajanje programa, dokler ni dosežena izbrana vrstica"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3110
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3116
 msgid "Jump to cursor"
 msgstr "Skoči do kazalke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3111
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3117
 msgid "Jump to  the currently selected line"
 msgstr "Skoči na trenutno izbrano vrstico"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3121
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3127
 msgid "Jump and stop to cursor"
 msgstr "Skoči in zažene do kazalke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3122
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3128
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr "Nastavi prekinitveno točko na trenutni vrstici in skoči tja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3134
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3140
 msgid "Jump to a given location"
 msgstr "Skoči na dano mesto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3135
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3141
 msgid "Select a given code location and jump there"
 msgstr "Izbere dano mesto kode in skoči tja"
 
@@ -428,11 +432,11 @@ msgstr "Izbere dano mesto kode in skoči tja"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3153
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3159
 msgid "Toggle _Breakpoint"
 msgstr "Preklopi _prekinitveno točko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3154
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3160
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "Nastavi/Odstrani nastavitev prekinitvene točke na trenutno mesto kazalke"
 
@@ -443,11 +447,11 @@ msgstr "Nastavi/Odstrani nastavitev prekinitvene točke na trenutno mesto kazalk
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3171
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3177
 msgid "Enable/Disable Breakpoint"
 msgstr "Omogoči/onemogoči prekinitveno točko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3172
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3178
 msgid "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr "Omogoči ali onemogoči prekinitveno točko, ki je nastavljena na mesto trenutne kazalke"
 
@@ -459,252 +463,252 @@ msgstr "Omogoči ali onemogoči prekinitveno točko, ki je nastavljena na mesto 
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3198
 msgid "Toggle _Countpoint"
 msgstr "_Preklopi stanje"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3193
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3199
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "Nastavi/Odnastavi točko štetja na trenutni legi kazalke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3203
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3209
 msgid "Set Breakpoint..."
 msgstr "Nastavi prekinitveno točko ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3204
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3210
 msgid "Set a breakpoint at a function or line number"
 msgstr "Nastavitev prekinitvene točke kot funkcije številke vrstice"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3213
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3219
 msgid "Set Breakpoint with dialog..."
 msgstr "Nastavi prekinitveno točko s pogovornim oknom ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3214
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3220
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr "Nastavitev prekinitvene točke na trenutni vrstici z uporabo pogovornega okna"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3225
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
 msgid "Set Watchpoint with dialog..."
 msgstr "Nastavi nadzorno točko s pogovornim oknom ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3226
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
 msgid "Set a watchpoint using a dialog"
 msgstr "Nastavitev nadzorne točke z uporabo pogovornega okna"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3237
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3243
 #: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:1
 msgid "Inspect a Variable"
 msgstr "Preverjanje spremenljivke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3238
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3244
 msgid "Inspect a global or local variable"
 msgstr "Preveri ali splošno ali krajevno spremenljivko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3254
 msgid "Call a function"
 msgstr "Pokliči funkcijo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3249
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3255
 msgid "Call a function in the program being debugged"
 msgstr "Klic razhroščevane funkcije v programu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3258
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3264
 msgid "Show Global Variables"
 msgstr "Pokaži splošne spremenljivke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3259
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3265
 msgid "Display all global variables"
 msgstr "Prikaz vseh splošnih spremenljivk"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3269
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3275
 msgid "Refresh locals"
 msgstr "Osveži krajevne spremenljivke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3270
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3276
 msgid "Refresh the list of variables local to the current function"
 msgstr "Osveži seznam krajevnih spremenljivk glede na trenutno funkcijo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3279
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3285
 msgid "Show assembly"
 msgstr "Pokaži zbirnik"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
 msgid "Show the assembly code of the source code being currently debugged, in another tab"
 msgstr "Pokaži zbirno kodo izvorne kode, ki se trenutno razhroščuje v drugemu zavihku"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3292
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
 msgid "Switch to assembly"
 msgstr "Preklopi na zbirnik"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3293
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr "Pokaži zbirno kodo izvorne kode, ki se trenutno razhroščuje"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3305
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3311
 msgid "Switch to source"
 msgstr "Preklopi na izvor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3312
 msgid "Show the source code being currently debugged"
 msgstr "Pokaži izvorno kodo, ki se trenutno razhroščuje"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3318
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3324
 msgid "Stop"
 msgstr "Zaustavi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3325
 msgid "Stop the Debugger"
 msgstr "Zaustavi razhroščevalnik"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3331
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3337
 msgid "_View"
 msgstr "_Pogled"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3342
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3348
 msgid "Switch to Target Terminal View"
 msgstr "Preklopi na pogled ciljnega terminala"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3359
 msgid "Switch to Context View"
 msgstr "Preklopi na pogled vsebine"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3364
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3370
 msgid "Switch to Breakpoints View"
 msgstr "Preklopi na pogled prekinitvenih točk"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3375
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3381
 msgid "Switch to Registers View"
 msgstr "Preklopi na pogled registrov"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3387
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3393
 msgid "Switch to Memory View"
 msgstr "Preklopi na pogled pomnilnika"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3397
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
 msgid "_Debug"
 msgstr "Raz_hroščevanje"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3407
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3413
 msgid "_Open Source File ..."
 msgstr "_Odpri izvorno datoteko ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3408
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
 msgid "Open a source file for viewing"
 msgstr "Odpiranje izvorne datoteke za ogled"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3417
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3423
 msgid "Load _Executable..."
 msgstr "Naloži _izvršljivo datoteko ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3418
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3424
 msgid "Execute a program"
 msgstr "Izvedi program"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3428
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3434
 msgid "_Load Core File..."
 msgstr "_Naloži jedrno datoteko ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3429
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3435
 msgid "Load a core file from disk"
 msgstr "Nalaganje jedrne datoteke z diska"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3439
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3445
 msgid "_Attach to Running Program..."
 msgstr "Pripni na delujoč pro_gram ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3440
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3446
 msgid "Debug a program that's already running"
 msgstr "Razhroščevanje programa, ki že teče"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3450
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
 msgid "_Connect to Remote Target..."
 msgstr "_Povezava z oddaljenim ciljem ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3451
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3457
 msgid "Connect to a debugging server to debug a remote target"
 msgstr "Povezava s strežnikom razhroščevanja za razhroščevanje oddaljenega cilja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3462
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
 msgid "Resume Sa_ved Session..."
 msgstr "Nadaljuj sh_ranjeno sejo ..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3463
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
 msgid "Open a previously saved debugging session"
 msgstr "Odpri predhodno shranjeno sejo razhroščevanja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3473
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3479
 msgid "_Preferences"
 msgstr "_Možnosti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3474
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3480
 msgid "Edit the properties of the current session"
 msgstr "Uredi lastnosti trenutne seje"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3494
 msgid "_Reload Source File"
 msgstr "Ponovno naloži i_zvorno datoteko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3495
 msgid "Reloads the source file"
 msgstr "Ponovno nalaganje izvorne datoteke"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3498
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3504
 msgid "_Close Source File"
 msgstr "_Zapri izvorno datoteko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3505
 msgid "Close the opened file"
 msgstr "Zapri odprto datoteko"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3508
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3514
 msgid "_Find"
 msgstr "_Poišči"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3509
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3515
 msgid "Find a text string in file"
 msgstr "Najdi besedilni niz v datoteki"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3859
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3865
 #, c-format
 msgid "Close %s"
 msgstr "Zapri %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5795
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5802
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Oprostite, ni mogoče znova zagnati oddaljenega inferiorja"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5913
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5920
 #, c-format
 msgid "Could not find file %s"
 msgstr "Datoteke %s ni mogoče najti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5977
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6119
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6154
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5984
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6126
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6161
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Ni mogoče naložiti programa '%s'"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6056
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6063
 msgid "You cannot attach to Nemiver itself"
 msgstr "Ni mogoče pripeti programa samega nase"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6061
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6068
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Spodaj ležečega motorja razhroščevalnika ni mogoče pripeti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6341
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6348
 msgid "Failed to stop the debugger"
 msgstr "Zaustavitev razhroščevalnika je spodletela"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6580
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6587
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Neveljavna številka vrstice: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8153
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8165
 #, c-format
 msgid "There is a program being currently debugged. Do you really want to exit from the debugger?"
 msgstr "Trenutno poteka razhroščevanje programa. Ali ste prepričani, da želite razhroščevalnik končati?"
@@ -718,7 +722,6 @@ msgid "Nemiver's default layout"
 msgstr "Privzeta postavitev programa Nemiver"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
-#| msgid "Source Directories"
 msgid "Source Code"
 msgstr "Izvorna koda"
 
@@ -1013,7 +1016,6 @@ msgid "<b>GDB follow fork mode</b>"
 msgstr "<b>GDB način sledenja vilicam</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
-#| msgid "<b>GDB binary</b>"
 msgid "<b>GDB pretty printing</b>"
 msgstr "<b>Olepšan prikaz GDB</b>"
 
@@ -1330,7 +1332,7 @@ msgstr ""
 msgid "Line: %i, Column: %i"
 msgstr "Vrstica: %i, stolpec: %i"
 
-#: ../src/uicommon/nmv-source-editor.cc:1398
+#: ../src/uicommon/nmv-source-editor.cc:1439
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
 msgstr "Datoteke %s ni mogoče naložiti, ker je kodiranje datoteke različno od %s"
@@ -1340,12 +1342,10 @@ msgid "Copy the selection"
 msgstr "Kopiraj izbor"
 
 #: ../src/uicommon/nmv-terminal.cc:180
-#| msgid "Copy the call stack to the clipboard"
 msgid "Paste the clipboard"
 msgstr "Prilepi vsebino odložišča"
 
 #: ../src/uicommon/nmv-terminal.cc:187
-#| msgid "Use launch terminal"
 msgid "Reset the terminal"
 msgstr "Ponastavi terminal"
 
@@ -1362,39 +1362,39 @@ msgstr "Spletišče projekta"
 msgid "translator-credits"
 msgstr "Andrej Žnidaršič <andrej.znidarsic@gmail.com>"
 
-#: ../src/workbench/nmv-workbench.cc:678
+#: ../src/workbench/nmv-workbench.cc:673
 msgid "_File"
 msgstr "_Datoteka"
 
-#: ../src/workbench/nmv-workbench.cc:689
+#: ../src/workbench/nmv-workbench.cc:684
 msgid "_Quit"
 msgstr "_Končaj"
 
-#: ../src/workbench/nmv-workbench.cc:690
+#: ../src/workbench/nmv-workbench.cc:685
 msgid "Quit the application"
 msgstr "Končaj program"
 
-#: ../src/workbench/nmv-workbench.cc:700
+#: ../src/workbench/nmv-workbench.cc:695
 msgid "_Edit"
 msgstr "_Uredi"
 
-#: ../src/workbench/nmv-workbench.cc:711
+#: ../src/workbench/nmv-workbench.cc:706
 msgid "_Help"
 msgstr "Pomo_č"
 
-#: ../src/workbench/nmv-workbench.cc:722
+#: ../src/workbench/nmv-workbench.cc:717
 msgid "_About"
 msgstr "_O Programu"
 
-#: ../src/workbench/nmv-workbench.cc:723
+#: ../src/workbench/nmv-workbench.cc:718
 msgid "Display information about this application"
 msgstr "Pokaži podrobnosti o programu"
 
-#: ../src/workbench/nmv-workbench.cc:733
+#: ../src/workbench/nmv-workbench.cc:728
 msgid "_Contents"
 msgstr "_Vsebina"
 
-#: ../src/workbench/nmv-workbench.cc:734
+#: ../src/workbench/nmv-workbench.cc:729
 msgid "Display the user manual for this application"
 msgstr "Prikaz uporabniškega priročnika za ta program"
 
@@ -1406,3 +1406,4 @@ msgstr "<b>Najdi datoteko</b>"
 #: ../ui/locatefiledialog.ui.h:2
 msgid "Select File Location"
 msgstr "Izbor mesta datoteke"
+
