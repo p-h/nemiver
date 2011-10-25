@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-10-23 12:51+0000\n"
-"PO-Revision-Date: 2011-10-23 19:08+0100\n"
+"POT-Creation-Date: 2011-10-24 18:11+0000\n"
+"PO-Revision-Date: 2011-10-25 20:35+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: \n"
@@ -223,8 +223,12 @@ msgstr "Dvojiško"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:723
 #, c-format
-msgid "(Click here to see the next %d rows of the call stack)"
-msgstr "(Kliknite za ogled naslednjih %d vrstic sklada klicev)"
+msgid "(Click here to see the next %d row of the call stack"
+msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgstr[0] "(Kliknite za ogled naslednjih %d vrstic sklada klicev)"
+msgstr[1] "(Kliknite za ogled naslednje %d vrstice sklada klicev)"
+msgstr[2] "(Kliknite za ogled naslednjih %d vrstic sklada klicev)"
+msgstr[3] "(Kliknite za ogled naslednjih %d vrstic sklada klicev)"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:109
 msgid "Function Name"
