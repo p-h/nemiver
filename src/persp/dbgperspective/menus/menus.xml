@@ -42,8 +42,6 @@
                 name="ActivateBreakpointsViewMenuItem"/>
             <menuitem action="ActivateRegistersViewMenuAction"
                 name="ActivateRegistersViewMenuItem"/>
-	    <menuitem action="ActivateVarsMonitorViewMenuAction"
-                name="ActivateVarsMonitorViewMenuItem"/>
         </menu>
         <menu action="DebugMenuAction" name="DebugMenu">
             <menuitem action="RunMenuItemAction" name="RunMenuItem"/>

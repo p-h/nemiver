@@ -186,8 +186,8 @@ DBGPerspectiveDefaultLayout::add_view (Gtk::Widget &a_widget,
         return;
     }
 
-    a_widget.show_all ();
     m_priv->views.insert (std::make_pair<int, Gtk::Widget&> (a_index, a_widget));
+    a_widget.show_all ();
     int page_num = m_priv->statuses_notebook->insert_page (a_widget,
                                                            a_title,
                                                            a_index);

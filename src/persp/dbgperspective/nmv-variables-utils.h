@@ -113,13 +113,13 @@ bool update_a_variable (const IDebugger::VariableSafePtr a_var,
                         bool a_is_new_frame,
                         bool a_update_members = false);
 
-bool append_a_variable (const IDebugger::VariableSafePtr &a_var,
+bool append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                         Gtk::TreeModel::iterator &a_parent_row_it,
                         bool a_truncate_type);
 
-bool append_a_variable (const IDebugger::VariableSafePtr &a_var,
+bool append_a_variable (const IDebugger::VariableSafePtr a_var,
                         const Gtk::TreeView &a_tree_view,
                         const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
                         Gtk::TreeModel::iterator &a_parent_row_it,
@@ -131,10 +131,6 @@ bool set_a_variable (const IDebugger::VariableSafePtr a_var,
 		     const Glib::RefPtr<Gtk::TreeStore> &a_tree_store,
 		     Gtk::TreeModel::iterator a_row_it,
 		     bool a_truncate_type);
-
-bool unlink_a_variable_row (const IDebugger::VariableSafePtr &a_var,
-			    const Glib::RefPtr<Gtk::TreeStore> &a_store,
-			    Gtk::TreeModel::iterator &a_parent_row_it);
 
 bool unlink_member_variable_rows (const Gtk::TreeModel::iterator &a_row_it,
 				  const Glib::RefPtr<Gtk::TreeStore> &a_store);
