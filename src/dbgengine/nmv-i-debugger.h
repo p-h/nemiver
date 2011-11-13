@@ -286,7 +286,7 @@ public:
         /// \operators
         /// @{
 
-        bool operator== (const Frame &a)
+        bool operator== (const Frame &a) const
         {
             return (address () == a.address ()
                     && level () == a.level ()
@@ -295,6 +295,8 @@ public:
                     && line () == a.line ()
                     && library () == a.library ());
         }
+
+        bool operator!= (const Frame &a) const {return !(operator== (a));}
 
         /// @}
         /// \name accessors
