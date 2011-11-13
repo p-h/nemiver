@@ -285,7 +285,6 @@ private:
     void on_toggle_breakpoint_enabled_action ();
     void on_toggle_countpoint_action ();
     void on_inspect_variable_action ();
-    void on_expr_monitoring_requested (const IDebugger::VariableSafePtr);
     void on_call_function_action ();
     void on_find_text_response_signal (int);
     void on_breakpoint_delete_action
@@ -1629,21 +1628,6 @@ DBGPerspective::on_inspect_variable_action ()
     NEMIVER_TRY
     inspect_variable ();
     NEMIVER_CATCH
-}
-
-void
-DBGPerspective::on_expr_monitoring_requested
-(const IDebugger::VariableSafePtr a_var)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    NEMIVER_TRY;
-
-    THROW_IF_FAIL (m_priv && m_priv->vars_monitor);
-
-    m_priv->vars_monitor->add_variable (a_var);
-
-    NEMIVER_CATCH;
 }
 
 void
@@ -7841,9 +7825,6 @@ DBGPerspective::inspect_variable (const UString &a_variable_name)
                                debugger (),
                                *this);
     dialog.set_history (m_priv->var_inspector_dialog_history);
-    dialog.expr_monitoring_requested ().connect
-        (sigc::mem_fun (*this,
-                        &DBGPerspective::on_expr_monitoring_requested));
     if (a_variable_name != "") {
         dialog.inspect_variable (a_variable_name);
     }

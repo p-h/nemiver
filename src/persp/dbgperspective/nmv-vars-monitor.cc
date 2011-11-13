@@ -44,24 +44,15 @@ struct VarsMonitor::Priv
     SafePtr<Gtk::TreeRowReference> in_scope_vars_row_ref;
     SafePtr<Gtk::TreeRowReference> out_of_scope_vars_row_ref;
     Gtk::TreeModel::iterator cur_selected_row;
+    bool initialized;
     IDebugger::VariableList monitored_variables;
     map<IDebugger::VariableSafePtr, bool> in_scope_vars;
-    IDebugger::Frame saved_frame;
-    IDebugger::StopReason saved_reason;
-    bool saved_has_frame;
-    bool initialized;
-    bool is_new_frame;
-    bool is_up2date;
 
     Priv (IDebugger &a_debugger,
           IPerspective &a_perspective)
         : debugger (a_debugger),
           perspective (a_perspective),
-          saved_reason (IDebugger::UNDEFINED_REASON),
-          saved_has_frame (false),
-          initialized (false),
-          is_new_frame (true),
-          is_up2date (true)
+          initialized (false)
     {
         // The widget is built lazily when somone requests it from
         // the outside.
@@ -146,13 +137,6 @@ struct VarsMonitor::Priv
     void
     init_graphical_signals ()
     {
-        THROW_IF_FAIL (tree_view);
-
-        tree_view->signal_row_expanded ().connect
-            (sigc::mem_fun (*this, &Priv::on_tree_view_row_expanded_signal));
-
-        tree_view->signal_draw ().connect_notify
-            (sigc::mem_fun (this, &Priv::on_draw_signal));
     }
 
     void
@@ -163,60 +147,16 @@ struct VarsMonitor::Priv
     void
     add_variable (const IDebugger::VariableSafePtr a_var)
     {
-        if (!a_var)
-            return;
-        monitored_variables.push_back (a_var);
-        Gtk::TreeModel::iterator root_node;
-        if (a_var->in_scope ())
-            get_in_scope_vars_row_iterator (root_node);
-        else
-            get_out_of_scope_vars_row_iterator (root_node);
-        THROW_IF_FAIL (root_node);
-        vutils::append_a_variable (a_var, *tree_view,
-                                   tree_store, root_node,
-                                   /*a_truncate_type=*/true);
+        if (a_var)
+            monitored_variables.push_back (a_var);
     }
 
     void
     add_variables (const IDebugger::VariableList &a_vars)
     {
-        IDebugger::VariableList::const_iterator it = a_vars.begin ();
-        for (; it != a_vars.end (); ++it)
-            add_variable (*it);
-    }
-
-    void
-    remove_variable (const IDebugger::VariableSafePtr a_var)
-    {
-        IDebugger::VariableList::iterator it = monitored_variables.begin ();
-        for (; it != monitored_variables.end (); ++it) {
-            if ((*it)->internal_name () == a_var->internal_name ()
-                || (*it)->equals_by_value (*a_var)) {
-                // Remove the graphical representation of the node,
-                // and then remove the node itself from the list of
-                // monitored variables.
-                Gtk::TreeModel::iterator parent_row;
-                if (a_var->in_scope ())
-                    get_in_scope_vars_row_iterator (parent_row);
-                else
-                    get_out_of_scope_vars_row_iterator (parent_row);
-                THROW_IF_FAIL (parent_row);
-                vutils::unlink_a_variable_row (a_var, tree_store, parent_row);
-                monitored_variables.erase (it);
-                // We removed an element from the array while
-                // iterating on it so the iterator is invalidated.  We
-                // must not use it again.
-                break;
-            }
-        }
-    }
-
-    void
-    remove_variables (const IDebugger::VariableList &a_vars)
-    {
-        IDebugger::VariableList::const_iterator it = a_vars.begin ();
-        for (; it != a_vars.end (); ++it)
-            remove_variable (*it);
+        IDebugger::VariableList::const_iterator it;
+        for (it = a_vars.begin (); it != a_vars.end (); ++it)
+            monitored_variables.push_back (*it);
     }
 
     bool
@@ -293,9 +233,9 @@ struct VarsMonitor::Priv
     }
 
     void
-    finish_handling_debugger_stopped_event (IDebugger::StopReason a_reason,
+    finish_handling_debugger_stopped_event (IDebugger::StopReason /*a_reason*/,
                                             bool a_has_frame,
-                                            const IDebugger::Frame &a_frame)
+                                            const IDebugger::Frame &/*a_frame*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -303,20 +243,11 @@ struct VarsMonitor::Priv
 
         THROW_IF_FAIL (tree_store);
 
-        LOG_DD ("stopped, reason: " << a_reason);
-        if (a_reason == IDebugger::EXITED_SIGNALLED
-            || a_reason == IDebugger::EXITED_NORMALLY
-            || a_reason == IDebugger::EXITED
-            || !a_has_frame) {
+        if (!a_has_frame)
             return;
-        }
 
-        is_new_frame = (saved_frame != a_frame);
-        saved_frame = a_frame;
-
-
-        // Walk the monitored variables and list those that have
-        // changed.
+        //TODO: walk the monitored variables and list those that have
+        //changed.
         IDebugger::VariableList::const_iterator it;
         for (it = monitored_variables.begin ();
              it != monitored_variables.end ();
@@ -351,20 +282,15 @@ struct VarsMonitor::Priv
             || !a_has_frame)
             return;
 
-        if (should_process_now ()) {
+        if (should_process_now ())
             finish_handling_debugger_stopped_event (a_reason,
                                                     a_has_frame,
                                                     a_frame);
-        } else {
-            saved_reason = a_reason;
-            saved_has_frame = a_has_frame;
-            is_up2date = false;
-        }
         NEMIVER_CATCH;
     }
 
     void
-    on_vars_changed (const IDebugger::VariableList &a_sub_vars,
+    on_vars_changed (const IDebugger::VariableList &/*a_sub_vars*/,
                      const IDebugger::VariableSafePtr a_var_root)
     {
         NEMIVER_TRY;
@@ -375,73 +301,8 @@ struct VarsMonitor::Priv
         update_var_in_scope_or_not (a_var_root, var_it);
         THROW_IF_FAIL (var_it);
 
-        // Walk children of a_var_root and update their graphical
-        // representation.
-        IDebugger::VariableList::const_iterator v = a_sub_vars.begin ();
-        for (; v != a_sub_vars.end (); ++v) {
-            vutils::update_a_variable (*v, *tree_view,
-                                       var_it,
-                                       /*a_truncate_type=*/false,
-                                       /*a_handle_highlight=*/true,
-                                       /*a_is_new_frame=*/is_new_frame,
-                                       /*a_update_members=*/false);
-        }
-        NEMIVER_CATCH;
-    }
-
-  void
-  on_tree_view_row_expanded_signal (const Gtk::TreeModel::iterator &a_it,
-				    const Gtk::TreeModel::Path &a_path)
-  {
-      LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-      NEMIVER_TRY;
-
-      if (!(*a_it)[vutils::get_variable_columns ().needs_unfolding]) {
-          return;
-      }
-      LOG_DD ("A variable needs unfolding");
-
-      IDebugger::VariableSafePtr var =
-          (*a_it)[vutils::get_variable_columns ().variable];
-      debugger.unfold_variable
-          (var,
-           sigc::bind  (sigc::mem_fun (*this,
-                                       &Priv::on_variable_unfolded_signal),
-                        a_path));
-
-      NEMIVER_CATCH;
-  }
-
-    void
-    on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var,
-                                 const Gtk::TreeModel::Path a_var_node)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-        NEMIVER_TRY;
-
-        Gtk::TreeModel::iterator var_it = tree_store->get_iter (a_var_node);
-        vutils::update_unfolded_variable (a_var,
-                                          *tree_view,
-                                          tree_store,
-                                          var_it,
-                                          false /* do not truncate type */);
-        tree_view->expand_row (a_var_node, false);
-        NEMIVER_CATCH;
-    }
-
-    void
-    on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-        NEMIVER_TRY;
-        if (!is_up2date) {
-            finish_handling_debugger_stopped_event (saved_reason,
-                                                    saved_has_frame,
-                                                    saved_frame);
-            is_up2date = true;
-        }
+        // TODO: Walk a_sub_vars (children of a_var_root) and update
+        // them graphically, using update_a_variable.
         NEMIVER_CATCH;
     }
 
@@ -481,15 +342,13 @@ VarsMonitor::add_variables (const IDebugger::VariableList &a_vars)
 }
 
 void
-VarsMonitor::remove_variable (const IDebugger::VariableSafePtr a_var)
+VarsMonitor::remove_variable (const IDebugger::VariableSafePtr /*a_var*/)
 {
-    m_priv->remove_variable (a_var);
 }
 
 void
-VarsMonitor::remove_variables (const std::list<IDebugger::VariableSafePtr> &a_vars)
+VarsMonitor::remove_variables (const std::list<IDebugger::VariableSafePtr> &/*a_vars*/)
 {
-    m_priv->remove_variables (a_vars);
 }
 
 void

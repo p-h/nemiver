@@ -19,20 +19,6 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="addtomonitorbutton">
-                <property name="label" translatable="yes">Add to monitor</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton" id="okbutton">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
@@ -45,7 +31,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
           </object>
@@ -147,7 +133,6 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-3">addtomonitorbutton</action-widget>
       <action-widget response="-7">okbutton</action-widget>
     </action-widgets>
   </object>

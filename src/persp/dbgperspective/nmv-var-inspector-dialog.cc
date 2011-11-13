@@ -51,13 +51,11 @@ class VarInspectorDialog::Priv {
     Gtk::ComboBox *var_name_entry;
     Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
-    Gtk::Button *add_to_monitor_button;
     SafePtr<VarInspector> var_inspector;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gtk::Builder> gtkbuilder;
     IDebuggerSafePtr debugger;
     IPerspective &perspective;
-    sigc::signal<void, IDebugger::VariableSafePtr> expr_monitoring_requested;
 
     Priv ();
 public:
@@ -96,11 +94,6 @@ public:
                                                           "inspectbutton");
         inspect_button->set_sensitive (false);
 
-        add_to_monitor_button =
-            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,
-                                                               "addtomonitorbutton");
-        add_to_monitor_button->set_sensitive (false);
-
         Gtk::Box *box =
             ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (gtkbuilder,
                                                        "inspectorwidgetbox");
@@ -123,8 +116,6 @@ public:
         THROW_IF_FAIL (var_name_entry);
         inspect_button->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::do_inspect_variable));
-        add_to_monitor_button->signal_clicked ().connect
-            (sigc::mem_fun (*this, &Priv::on_do_monitor_button_clicked));
         var_name_entry->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_var_name_changed_signal));
         var_name_entry->get_entry()->signal_activate ().connect (sigc::mem_fun
@@ -275,10 +266,8 @@ public:
         UString var_name = var_name_entry->get_entry ()->get_text ();
         if (var_name == "") {
             inspect_button->set_sensitive (false);
-            add_to_monitor_button->set_sensitive (false);
         } else {
             inspect_button->set_sensitive (true);
-            add_to_monitor_button->set_sensitive (true);
         }
 
         // this handler is called when any text is changed in the entry or when
@@ -288,18 +277,6 @@ public:
         if (var_name_entry->get_active ()) {
             inspect_variable (var_name, true);
         }
-
-        NEMIVER_CATCH
-    }
-
-    void
-    on_do_monitor_button_clicked ()
-    {
-        NEMIVER_TRY;
-
-        THROW_IF_FAIL (var_inspector->get_variable ());
-
-        expr_monitoring_requested.emit (var_inspector->get_variable ());
 
         NEMIVER_CATCH
     }
@@ -375,11 +352,5 @@ VarInspectorDialog::get_history (std::list<UString> &a_hist) const
     m_priv->get_history (a_hist);
 }
 
-sigc::signal<void, IDebugger::VariableSafePtr>&
-VarInspectorDialog::expr_monitoring_requested ()
-{
-    THROW_IF_FAIL (m_priv);
-    return m_priv->expr_monitoring_requested;
-}
-
 NEMIVER_END_NAMESPACE (nemiver)
+

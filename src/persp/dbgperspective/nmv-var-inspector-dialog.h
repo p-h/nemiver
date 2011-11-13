@@ -53,10 +53,6 @@ public:
     const IDebugger::VariableSafePtr variable () const;
     void set_history (const std::list<UString> &);
     void get_history (std::list<UString> &) const;
-    
-    // Signals
-
-    sigc::signal<void, IDebugger::VariableSafePtr>& expr_monitoring_requested ();
 };//end class VarInspectorDialog
 
 NEMIVER_END_NAMESPACE (nemiver)
