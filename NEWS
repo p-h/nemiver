@@ -1,3 +1,46 @@
+0.9.1 Release
+=============
+
+Andrej Žnidaršič
+      Updated Slovenian translation
+
+Daniel Mustieles
+      Updated Spanish translation
+
+Dodji Seketeli
+      Handle deprecated functions on glibmm-2.4 2.30.0 and glib-2.0 2.31.0
+      Bye bye gziped tarballs, welcome xz
+      #664385 - Source code tab label completely ellipsized
+      Allow shrinking of the memory view widget
+      Relax the fixed minimum sizes preventing shrinking
+      Allow selecting current frame twice consecutively
+
+Fabien Parent
+      #646698 Add cmd line option to choose the gdb binary
+      #659462 Handle plural form of a string
+      Use local time instead of UTC time
+
+Jorge González
+      Updated Spanish translation
+
+Marek Černocký
+      Updated Czech translation
+
+Mario Blättermann
+      Updated German translation
+
+Martin Srebotnjak
+      Updated Slovenian translation
+
+Matej Urbančič:
+      Updated Slovenian translation
+
+Takeshi AIHANA
+      Updated Japanese translation.
+
+dmustieles
+      Updated Spanish translation
+
 0.9.0 Release
 =============
 
