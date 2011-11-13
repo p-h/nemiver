@@ -1,3 +1,318 @@
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Automatically update ChangeLog
+
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Bump to 0.9.1 and update NEWS file
+	* configure.ac: Current version is not 0.9.1
+	* NEWS: Update for changes since 0.9.0
+
+2011-11-20  Dodji Seketeli <dodji@seketeli.org>
+
+	Handle deprecated functions on glibmm-2.4 2.30.0 and glib-2.0 2.31.0
+	* configure.ac: Define GLIB_DISABLE_DEPRECATION_WARNINGS if we
+	detect that we are building against a combination of glibmm/glib
+	that uses deprecated functions.  Update report at the end of
+	configure.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_motion_notify_event_signal): Use the new
+	gdk_event_get_device_position on gtk+ >= 3.0.0 instead of the
+	deprecated gdk_window_get_pointer.  Include config.h as the first
+	header in the translation unit.
+	* src/common/nmv-conf-manager.cc: Include config.h as the first
+	header in the translation unit.
+	* src/common/nmv-connection-manager.cc: Likewise.
+	* src/common/nmv-connection.cc: Likewise.
+	* src/common/nmv-date-utils.cc: Likewise.
+	* src/common/nmv-delete-statement.cc: Likewise.
+	* src/common/nmv-dynamic-module.cc: Likewise.
+	* src/common/nmv-env.cc: Likewise.
+	* src/common/nmv-exception.cc: Likewise.
+	* src/common/nmv-initializer.cc: Likewise.
+	* src/common/nmv-insert-statement.cc: Likewise.
+	* src/common/nmv-log-stream.cc: Likewise.
+	* src/common/nmv-option-utils.cc: Likewise.
+	* src/common/nmv-parsing-utils.cc: Likewise.
+	* src/common/nmv-plugin.cc: Likewise.
+	* src/common/nmv-proc-mgr.cc: Likewise.
+	* src/common/nmv-proc-utils.cc: Likewise.
+	* src/common/nmv-scope-logger.cc: Likewise.
+	* src/common/nmv-sql-statement.cc: Likewise.
+	* src/common/nmv-str-utils.cc: Likewise.
+	* src/common/nmv-tools.cc: Likewise.
+	* src/common/nmv-transaction.cc: Likewise.
+	* src/common/nmv-ustring.cc: Likewise.
+	* src/confmgr/nmv-gsettings-mgr.cc: Likewise.
+	* src/dbgengine/nmv-cpp-trait.cc: Likewise.
+	* src/dbgengine/nmv-dbg-common.cc: Likewise.
+	* src/dbgengine/nmv-gdbmi-parser.cc: Likewise.
+	* src/persp/dbgperspective/nmv-breakpoints-view.cc: Likewise.
+	* src/persp/dbgperspective/nmv-call-function-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-call-stack.cc: Likewise.
+	* src/persp/dbgperspective/nmv-choose-overloads-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-file-list.cc: Likewise.
+	* src/persp/dbgperspective/nmv-find-text-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-load-core-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-memory-view.cc: Likewise.
+	* src/persp/dbgperspective/nmv-open-file-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-proc-list-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-registers-view.cc: Likewise.
+	* src/persp/dbgperspective/nmv-remote-target-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-run-program-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-sess-mgr.cc: Likewise.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-set-jump-to-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-thread-list.cc: Likewise.
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc: Likewise.
+	* src/persp/dbgperspective/nmv-vars-treeview.cc: Likewise.
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.cc: Likewise.
+	* src/uicommon/nmv-dialog.cc: Likewise.
+	* src/uicommon/nmv-hex-editor.cc: Likewise.
+	* src/uicommon/nmv-layout-manager.cc: Likewise.
+	* src/uicommon/nmv-layout-selector.cc: Likewise.
+	* src/uicommon/nmv-locate-file-dialog.cc: Likewise.
+	* src/uicommon/nmv-popup-tip.cc: Likewise.
+	* src/uicommon/nmv-spinner-tool-item.cc: Likewise.
+	* src/uicommon/nmv-terminal.cc: Likewise.
+	* src/uicommon/nmv-ui-utils.cc: Likewise.
+	* tests/gtkmm-test.cc: Likewise.
+	* tests/test-breakpoint.cc: Likewise.
+	* tests/test-core.cc: Likewise.
+	* tests/test-cpp-lexer.cc: Likewise.
+	* tests/test-cpp-parser.cc: Likewise.
+	* tests/test-deref.cc: Likewise.
+	* tests/test-disassemble.cc: Likewise.
+	* tests/test-env.cc: Likewise.
+	* tests/test-libtool-wrapper-detection.cc: Likewise.
+	* tests/test-local-vars-list.cc: Likewise.
+	* tests/test-stdout.cc: Likewise.
+	* tests/test-types.cc: Likewise.
+	* tests/test-unicode.cc: Likewise.
+	* tests/test-var-list.cc: Likewise.
+	* tests/test-var-path-expr.cc: Likewise.
+	* tests/test-var-walker.cc: Likewise.
+	* tests/test-variable-format.cc: Likewise.
+	* tests/test-varobj-walker.cc: Likewise.
+	* tests/test-vars.cc: Likewise.
+	* tests/test-watchpoint.cc: Likewise.
+
+2011-11-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Bye bye gziped tarballs, welcome xz
+	* configure.ac: Change AM_INIT_AUTOMAKE to avoid generate gzipped
+	tarballs, and generate xz compressed tarballs instead.
+
+2011-11-19  Dodji Seketeli <dodji@seketeli.org>
+
+	664385 - Source code tab label completely ellipsized
+
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Revert "Initial import of variable monitor work"
+	This reverts commit 11940f85da451c6b933f59e255863dba01f1001b.
+
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Revert "Support graphically adding a variable to the monitor"
+	This reverts commit 5c4b2227fd2477f224120575b42776d63549cddb.
+
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Support graphically adding a variable to the monitor
+	[This is not a proper commit entry.  Commits on this branch are
+	all going to be re-hashed anyway.]
+	The variable inspector dialog now has a button that lets you add
+	the current variable/expression to the monitor.  It's very rough as no
+	check is performed to make sure you can't add the same expression to the
+	monitor twice, etc.  Also, once the variable is added, we face an issue
+	that is explained in #663959, namely the life time management of expressions
+	backed by variable objects.  I need to address that issue separately
+	before getting back to this business.
+
+2011-10-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Initial import of variable monitor work
+	This is Work In Progress.  Nothing works yet, and the damin thing eats
+	kitties.
+
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix changed variable highlighting
+	* src/dbgengine/nmv-i-debugger.h (Frame::operator==): Ignore
+	line number and instruction pointer when comparing two frames.
+
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix style in nmv-var-inspector-dialog.cc
+	* src/persp/dbgperspective/nmv-var-inspector-dialog.cc
+	(Priv, build_dialog, connect_to_widget_signals)
+	(do_inspect_variable, inspect_variable, exists_in_history)
+	(erase_expression_from_history, add_to_history, get_history)
+	(set_history, on_var_name_changed_signal): Fix function
+	declaration style.
+
+2011-11-13  Dodji Seketeli <dodji@seketeli.org>
+
+	Simplify logic in nmv-local-vars-inspector.cc
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(on_stopped_signal):  Simplify logic.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::operator==): Make
+	this const.
+	(IDebugger::operator!=): New.
+
+2011-11-03  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2011-10-25  Matej Urbančič <mateju@svn.gnome.org>
+
+	Updated Slovenian translation
+
+2011-10-24  Mario Blättermann <mariobl@gnome.org>
+
+	[l10n] Updated German translation
+
+2011-10-24  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-10-24  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-10-23  Matej Urbančič <mateju@svn.gnome.org>
+
+	Updated Slovenian translation
+
+2011-10-19  Fabien Parent <parent.f@gmail.com>
+
+	659462 Handle plural form of a string
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::append_frames_to_tree_view): Handle plural form
+	of a string
+
+2011-10-19  Fabien Parent <parent.f@gmail.com>
+
+	Use local time instead of UTC time
+	* src/common/nmv-date-utils.cc (get_current_datetime): return local time
+	instead of UTC time
+
+2011-10-06  Fabien Parent <parent.f@gmail.com>
+
+	646698 Add cmd line option to choose the gdb binary
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::get_debugger_full_path): Return the path of the debugger
+	from the command line if specified
+	(GDBEngine::set_non_persistent_debugger_path): New API
+	* src/dbgengine/nmv-i-debugger.h
+	(GDBEngine::set_non_persistent_debugger_path): New API
+	* src/main.cc (process_gui_options): Set the debugger path from the command
+	line if specified in it
+
+2011-10-03  Fabien Parent <parent.f@gmail.com>
+
+	Add missing return
+	* src/common/nmv-buffer.h (Buffer::operator=): Add missing return
+
+2011-10-02  Dodji Seketeli <dodji@gnome.org>
+
+	Tighten IDebugger::Frame::operator=
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::Frame::operator=):
+	Compare more than just the address of the frame.
+
+2011-10-02  Dodji Seketeli <dodji@gnome.org>
+
+	Add logging in DBGPerspective::set_where
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::set_where): Add logging here.
+
+2011-10-02  Dodji Seketeli <dodji@gnome.org>
+
+	Allow selecting current frame twice consecutively
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_frame_selected_signal): If the current frame
+	was previously selected, just set the "where-marker" again.
+
+2011-09-25  Dodji Seketeli <dodji@gnome.org>
+
+	Relax the fixed minimum sizes preventing shrinking
+	* data/schemas/gconf/nemiver-workbench.schemas
+	(/apps/nemiver/workbench/window-minimum-width)
+	(/apps/nemiver/workbench/window-minimum-height)
+	(/apps/nemiver/dbgperspective/status-widget-minimum-width)
+	(/apps/nemiver/dbgperspective/status-widget-minimum-height): Set these keys to
+	zero.
+	* data/schemas/gsettings/org.nemiver.gschema.xml
+	(window-minimum-width, window-minimum-height)
+	(status-widget-minimum-width, status-widget-minimum-height):
+	Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc
+	(DBGPerspectiveDefaultLayout::do_lay_out): Set the default minimum
+	status widget size to zero.
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc
+	(DBGPerspectiveTwoPaneLayout::do_lay_out): Set the default minimal
+	size of the two status notebooks to zero.
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc
+	(DBGPerspectiveWideLayout::do_lay_out):  Set the default minimal
+	size of the status widget to zero.
+	* src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc
+	(DBGPerspectiveDynamicLayout::add_view): Set the default minimal
+	size of the terminal to zero.
+	* src/workbench/nmv-workbench.cc (Workbench::init_window): Set the
+	default minimum window size of Nemiver to zero.
+
+2011-09-25  Dodji Seketeli <dodji@gnome.org>
+
+	Allow shrinking of the memory view widget
+	* src/persp/dbgperspective/nmv-memory-view.cc
+	(MemoryView::Priv::Priv):  Renamed the m_container member into
+	m_vbox, and the m_scrolledwindow member into m_container.  Put the
+	whole resulting memory view widget into a scrolled window with
+	automatic scrolling policy.
+
+2011-09-25  Dodji Seketeli <dodji@gnome.org>
+
+	Minor style cleanups
+	* src/workbench/nmv-workbench.cc (Workbench::init_window): Add
+	space around '=' and fix some comments.
+
+2011-09-25  Dodji Seketeli <dodji@gnome.org>
+
+	Update copyright file
+	* COPYRIGHT: Add Jonner.
+
+2011-09-24  Jorge González <jorgegonz@svn.gnome.org>
+
+	Updated Spanish translation
+
+2011-09-19  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	Updated Japanese translation.
+
+2011-09-15  dmustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2011-09-13  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	Updated Slovenian translation
+
+2011-09-13  Martin Srebotnjak <miles@filmsi.net>
+
+	Updated Slovenian translation
+
+2011-09-11  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2011-09-10  Dodji Seketeli <dodji@seketeli.org>
+
+	Automatically update ChangeLog
+	* ChangeLog: Automatically update.
+
 2011-09-09  Dodji Seketeli <dodji@seketeli.org>
 
 	Prepare for 0.9.0 Release
