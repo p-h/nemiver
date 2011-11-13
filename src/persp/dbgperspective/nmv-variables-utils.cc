@@ -630,7 +630,7 @@ set_a_variable (const IDebugger::VariableSafePtr a_var,
 bool
 unlink_a_variable_row (const IDebugger::VariableSafePtr &a_var,
                        const Glib::RefPtr<Gtk::TreeStore> &a_store,
-                       Gtk::TreeModel::iterator &a_parent_row_it)
+                       const Gtk::TreeModel::iterator &a_parent_row_it)
 {
     Gtk::TreeModel::iterator var_to_unlink_it;
     if (!find_a_variable (a_var, a_parent_row_it, var_to_unlink_it))
