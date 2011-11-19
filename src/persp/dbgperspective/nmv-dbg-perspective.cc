@@ -3827,6 +3827,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     SafePtr<Gtk::Label> label (Gtk::manage
                             (new Gtk::Label (basename)));
     label->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
+    label->set_width_chars (basename.length ());
     label->set_max_width_chars (25);
     label->set_justify (Gtk::JUSTIFY_LEFT);
     SafePtr<Gtk::Image> cicon (manage
