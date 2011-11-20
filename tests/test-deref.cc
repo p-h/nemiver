@@ -1,3 +1,4 @@
+#include "config.h"
 #include <iostream>
 #include <boost/test/minimal.hpp>
 #include <glibmm.h>

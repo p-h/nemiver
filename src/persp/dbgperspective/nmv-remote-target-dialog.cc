@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <glib/gi18n.h>
 #include "common/nmv-env.h"
 #include "nmv-remote-target-dialog.h"

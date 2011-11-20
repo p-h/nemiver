@@ -21,6 +21,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <locale.h>
 #include <glibmm.h>
 #include <libxml/parser.h>

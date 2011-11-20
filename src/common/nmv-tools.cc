@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <fstream>
 #include <glibmm.h>
 #include "nmv-tools.h"

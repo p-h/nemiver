@@ -25,6 +25,7 @@
 #ifndef __NMV_CPP_TRAIT_H__
 #define __NMV_CPP_TRAIT_H__
 
+#include "config.h"
 #include "nmv-i-lang-trait.h"
 
 using nemiver::common::UString;

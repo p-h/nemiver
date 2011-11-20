@@ -1,3 +1,4 @@
+#include "config.h"
 #include <iostream>
 #include <string>
 #include <boost/test/unit_test.hpp>

@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <vector>
 #include <glib/gi18n.h>
 #include <gtkmm/treeview.h>

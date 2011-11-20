@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <gtkmm/container.h>
 #include "common/nmv-exception.h"
 #include "nmv-hex-editor.h"

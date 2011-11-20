@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include "nmv-exception.h"
 #include "nmv-log-stream-utils.h"
 #include "nmv-sql-statement.h"

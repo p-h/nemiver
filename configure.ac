@@ -248,6 +248,18 @@ AC_CHECK_HEADERS([boost/variant.hpp],
 #dnl checking for non-aggregated lib
 PKG_CHECK_MODULES(SQLITE3, [sqlite3 >= $SQLITE3_VERSION])
 
+dnl glibmm-2.4 version 2.30.0 uses many deprecated functions from
+dnl glib-2.0 version 2.31.0 if we are building against such a
+dnl combination, we need to define GLIB_DISABLE_DEPRECATION_WARNINGS
+dnl to shut the compilation warnigs down.
+PKG_CHECK_EXISTS([glib-2.0 >= 2.31.0 glibmm-2.4 <= 2.30.0],
+                 [GLIBMM_USES_DEPRECATED_GLIB_FUNCS=yes],
+		 [GLIBMM_USES_DEPRECATED_GLIB_FUNCS=no])
+if test x$GLIBMM_USES_DEPRECATED_GLIB_FUNCS = xyes; then
+   AC_DEFINE(GLIB_DISABLE_DEPRECATION_WARNINGS,1,[disables glib deprecation warnings])
+   AC_MSG_NOTICE(glibmm uses deprecated glib functions!)
+fi
+
 #######################################################
 #boost build system sucks no end.
 #it is damn hard to detect the version of boost
@@ -497,17 +509,18 @@ AC_MSG_NOTICE([
 =================================================================
         Here is the configuration of the package:
 
-    Prefix                          : ${prefix}
-    Source code location            : ${srcdir}
-    C Compiler                      : ${CC}
-    C++ Compiler                    : ${CXX}
+    Prefix                             : ${prefix}
+    Source code location               : ${srcdir}
+    C Compiler                         : ${CC}
+    C++ Compiler		       : ${CXX}
 
-    NEMIVER_DEVEL env var           : ${NEMIVER_DEVEL}
-    NEMIVER_ALLOW_WARNINGS env var  : ${NEMIVER_ALLOW_WARNINGS}
-    CFLAGS                          : ${CFLAGS}
-    CXXFLAGS                        : ${CXXFLAGS}
-    NEMIVER_LIBS                    : ${NEMIVER_LIBS}
-    NEMIVER_CFLAGS                  : ${NEMIVER_CFLAGS}
+    NEMIVER_DEVEL env var              : ${NEMIVER_DEVEL}
+    NEMIVER_ALLOW_WARNINGS env var     : ${NEMIVER_ALLOW_WARNINGS}
+    CFLAGS                             : ${CFLAGS}
+    CXXFLAGS                           : ${CXXFLAGS}
+    NEMIVER_LIBS                       : ${NEMIVER_LIBS}
+    NEMIVER_CFLAGS                     : ${NEMIVER_CFLAGS}
+    GLIBMM_USES_DEPRECATED_GLIB_FUNCS  : ${GLIBMM_USES_DEPRECATED_GLIB_FUNCS}
 
  OPTIONAL FEATURES:
     Enable autotests                : ${ENABLE_AUTOTESTS}

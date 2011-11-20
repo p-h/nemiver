@@ -23,7 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <ctype.h>
 #include <vector>
 #include "nmv-exception.h"

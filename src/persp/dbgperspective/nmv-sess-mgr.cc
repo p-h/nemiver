@@ -22,9 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <iostream>
-
 #include "common/nmv-safe-ptr-utils.h"
 #include "common/nmv-connection.h"
 #include "common/nmv-connection-manager.h"

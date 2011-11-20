@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include "nmv-spinner-tool-item.h"
 #include <gtkmm/spinner.h>
 

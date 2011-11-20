@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <glib/gi18n.h>
 #include "nmv-vars-treeview.h"
 #include "nmv-variables-utils.h"

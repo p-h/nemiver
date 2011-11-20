@@ -27,6 +27,7 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+#include "config.h"
 #include <cstring>
 #include <sstream>
 #include "nmv-ustring.h"

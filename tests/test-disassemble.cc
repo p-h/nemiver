@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <iostream>
 #include <iomanip>
 #include <boost/test/minimal.hpp>

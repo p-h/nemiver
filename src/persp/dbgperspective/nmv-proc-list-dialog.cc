@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <iostream>
 #include <list>
 #include <gtkmm.h>

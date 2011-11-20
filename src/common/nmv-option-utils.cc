@@ -21,7 +21,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include "nmv-option-utils.h"
 
 namespace nemiver {

@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include "nmv-layout-selector.h"
 #include "nmv-layout-manager.h"
 #include "nmv-layout.h"

@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <cstring>
 #include <ctype.h>
 #include <unistd.h>

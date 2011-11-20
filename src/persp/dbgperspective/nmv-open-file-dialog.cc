@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <glib/gi18n.h>
 #include <gtkmm/filechooserwidget.h>
 #include <gtkmm/radiobutton.h>

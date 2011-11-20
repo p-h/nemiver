@@ -23,9 +23,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#include <cstring>
-
 #include "config.h"
+#include <cstring>
 // For OpenBSD
 #include <sys/types.h>
 // For OpenBSD
@@ -1933,7 +1932,15 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
     GdkModifierType state = (GdkModifierType) 0;
 
     if (a_event->is_hint) {
-        gdk_window_get_pointer (a_event->window, &x, &y, &state);
+#if GTK_CHECK_VERSION (3, 0, 0)
+          gdk_window_get_device_position
+            (a_event->window,
+             gdk_event_get_device (reinterpret_cast<GdkEvent*> (a_event)),
+             &x, &y, &state);
+
+#else
+          gdk_window_get_pointer (a_event->window, &x, &y, &state);
+#endif
     } else {
         x = (int) a_event->x;
         y = (int) a_event->y;

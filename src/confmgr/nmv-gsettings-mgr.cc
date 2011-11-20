@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <giomm/settings.h>
 #include "nmv-i-conf-mgr.h"
 #include "nmv-conf-keys.h"

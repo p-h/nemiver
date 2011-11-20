@@ -27,6 +27,7 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+#include "config.h"
 #include <glibmm.h>
 #include "nmv-exception.h"
 #include "nmv-ustring.h"

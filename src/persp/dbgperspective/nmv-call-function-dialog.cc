@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include "nmv-call-function-dialog.h"
 #include <glib/gi18n.h>
 #include "common/nmv-exception.h"

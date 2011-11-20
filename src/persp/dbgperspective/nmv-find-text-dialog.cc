@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <gtksourceviewmm.h>
 #include <gtkmm/liststore.h>
 #include "common/nmv-exception.h"

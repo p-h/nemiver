@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <cstdlib>
 #include <cstring>
 #include <gmodule.h>

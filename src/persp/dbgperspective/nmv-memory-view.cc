@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <sstream>
 #include <bitset>
 #include <iomanip>

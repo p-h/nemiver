@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <vector>
 #include <iostream>
 #include <glib/gi18n.h>

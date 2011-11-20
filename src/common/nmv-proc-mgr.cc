@@ -23,6 +23,7 @@
  *See COPYRIGHT file copyright information.
  */
 
+#include "config.h"
 #include <algorithm>
 extern "C" {
 #include "glibtop.h"

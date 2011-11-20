@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <gtkmm/widget.h>
 #include "nmv-layout-manager.h"
 #include "nmv-layout.h"

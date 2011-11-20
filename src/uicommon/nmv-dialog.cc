@@ -22,7 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
+#include "config.h"
 #include <vector>
 #include <gtkmm/dialog.h>
 #include "common/nmv-exception.h"

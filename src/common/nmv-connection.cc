@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include "nmv-connection.h"
 #include "nmv-i-connection-driver.h"
 #include "nmv-exception.h"

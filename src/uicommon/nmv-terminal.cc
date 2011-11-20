@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include "nmv-terminal.h"
 #if !(defined(__FreeBSD__) || defined(__OpenBSD__))
 # include <pty.h>

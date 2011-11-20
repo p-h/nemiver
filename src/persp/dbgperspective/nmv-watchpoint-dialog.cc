@@ -21,6 +21,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <glib/gi18n.h>
 #include "nmv-watchpoint-dialog.h"
 #include <gtkmm/dialog.h>

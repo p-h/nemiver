@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <stack>
 #include "nmv-exception.h"
 #include "nmv-transaction.h"

@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <cstring>
 #include <sstream>
 #include "common/nmv-str-utils.h"

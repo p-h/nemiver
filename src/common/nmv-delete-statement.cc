@@ -23,6 +23,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include "nmv-ustring.h"
 #include "nmv-exception.h"
 #include "nmv-delete-statement.h"

@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include "config.h"
 #include <gtkmm/label.h>
 #include "common/nmv-exception.h"
 #include "nmv-popup-tip.h"
