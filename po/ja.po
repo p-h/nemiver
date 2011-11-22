@@ -6,32 +6,33 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-22 07:26+0900\n"
-"PO-Revision-Date: 2011-11-22 07:26+0900\n"
-"Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-11-21 22:28+0000\n"
+"PO-Revision-Date: 2011-11-22 12:32+0900\n"
+"Last-Translator: Jiro Matsuzawa <jmatsuzawa@src.gnome.org>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
-"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
-msgid "Nemiver"
-msgstr "Nemiver"
-
-#: ../data/nemiver.desktop.in.h:2
+#: ../data/nemiver.desktop.in.h:1
 msgid "C/C++ Debugger"
 msgstr "Ｃ/Ｃ++ デバッガ"
 
-#: ../data/nemiver.desktop.in.h:3
-msgid "Nemiver C/C++ Debugger"
-msgstr "Nemiver C/C++ デバッガ"
-
-#: ../data/nemiver.desktop.in.h:4
+#: ../data/nemiver.desktop.in.h:2
 msgid "Debug Applications"
 msgstr "デバッグ・ツールです"
+
+#: ../data/nemiver.desktop.in.h:3 ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.desktop.in.h:4
+msgid "Nemiver C/C++ Debugger"
+msgstr "Nemiver C/C++ デバッガ"
 
 #: ../src/main.cc:76
 msgid "Set the environment of the program to debug"
@@ -840,8 +841,8 @@ msgid "Long Word"
 msgstr "ロング・ワード"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:98
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
 msgid "Address:"
 msgstr "アドレス:"
 
@@ -914,334 +915,334 @@ msgid "Variable"
 msgstr "変数"
 
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
-msgid "Call Function"
-msgstr "関数の呼び出し"
-
-#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
 msgid "<b>Call a function:</b>"
 msgstr "<b>呼び出す関数:</b>"
 
-#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
-msgid "Set Breakpoint"
-msgstr "ブレークポイントの指定"
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "Call Function"
+msgstr "関数の呼び出し"
 
-#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
 msgid "<b>Choose Overloaded Function</b>"
 msgstr "<b>オーバーロードした関数の選択</b>"
 
-#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
 msgid ""
 "Multiple functions match the specified name. Please choose one from the list "
 "below."
 msgstr ""
 "指定した名前に該当する関数が複数個あります。次の一覧から一つ選択して下さい。"
 
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+msgid "Set Breakpoint"
+msgstr "ブレークポイントの指定"
+
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
-msgid "Find text"
-msgstr "文字列の検索"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
-msgid "_Search:"
-msgstr "検索(_S):"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
-msgid "<b>Match Options:</b>"
-msgstr "<b>検索のオプション:</b>"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
-msgid "Match c_ase"
-msgstr "大/小文字を区別する(_C)"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
-msgid "Match _entire word only"
-msgstr "単語全体一致するものだけ(_E)"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
 msgid "<b>Cycling Options:</b>"
 msgstr "<b>繰り返しのオプション:</b>"
 
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
-msgid "_Wrap around"
-msgstr "行末の折り返しも含める(_W)"
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
+msgid "<b>Match Options:</b>"
+msgstr "<b>検索のオプション:</b>"
 
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "Find text"
+msgstr "文字列の検索"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match _entire word only"
+msgstr "単語全体一致するものだけ(_E)"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match c_ase"
+msgstr "大/小文字を区別する(_A)"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
 msgid "Search _backwards"
 msgstr "前方に向かって検索する(_B)"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+msgid "_Search:"
+msgstr "検索(_S):"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "_Wrap around"
+msgstr "行末の折り返しも含める(_W)"
 
 #: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
 msgid "Global Variables"
 msgstr "グローバル変数"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
-msgid "Choose a Core File to Debug"
-msgstr "デバッグするコア・ファイルの選択"
-
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
-msgid "Select A Core File"
-msgstr "コア・ファイルの選択"
-
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
 msgid "<b>Core File:</b>"
 msgstr "<b>コア・ファイル:</b>"
 
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
-msgid "Select the executable that created the core file"
-msgstr "コア・ファイルを生成した実行形式の選択"
-
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
 msgid "<b>Executable:</b>"
 msgstr "<b>実行形式:</b>"
 
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "Choose a Core File to Debug"
+msgstr "デバッグするコア・ファイルの選択"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+msgid "Select A Core File"
+msgstr "コア・ファイルの選択"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "Select the executable that created the core file"
+msgstr "コア・ファイルを生成した実行形式の選択"
+
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
-msgid "Open Source Files"
-msgstr "ソース・ファイルを開く"
+msgid "<b>Choose Source Files to Open</b>"
+msgstr "<b>オープンするソース・ファイルの選択</b>"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
-msgid "Select from _Target Executable"
-msgstr "ターゲットとなる実行形式から選択(_T)"
+msgid "Open Source Files"
+msgstr "ソース・ファイルを開く"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _Filesystem"
 msgstr "ファイルシステムからの選択(_F)"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
-msgid "<b>Choose Source Files to Open</b>"
-msgstr "<b>オープンするソース・ファイルの選択</b>"
+msgid "Select from _Target Executable"
+msgstr "ターゲットとなる実行形式から選択(_T)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
-msgid "Preferences"
-msgstr "設定"
+msgid "<b>Assembly flavor</b>"
+msgstr "<b>逆アセンブルの方式</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
-msgid "Use system monospace font"
-msgstr "システム指定の固定幅フォントを使う"
+msgid "<b>Assembly style</b>"
+msgstr "<b>逆アセンブルの表示</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
-msgid "Custom Font:"
-msgstr "独自のフォント:"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "<b>Editor Font</b>"
 msgstr "<b>エディタのフォント</b>"
 
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "<b>File Monitoring</b>"
+msgstr "<b>ファイルの監視</b>"
+
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
-msgid "<b>Visual Style</b>"
-msgstr "<b>エディタのスタイル</b>"
+msgid "<b>GDB binary</b>"
+msgstr "<b>GDB の格納場所</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
-msgid "Display line numbers"
-msgstr "行番号を表示する"
+msgid "<b>GDB follow fork mode</b>"
+msgstr "<b>GDB の follow-fork-mode</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "<b>GDB pretty printing</b>"
+msgstr "<b>GDB の Pretty Print 機能</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "<b>Instructions</b>"
+msgstr "<b>命令数</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "<b>Line Numbers</b>"
 msgstr "<b>行番号</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
-msgid "Use launch terminal"
-msgstr "起動時の端末を利用する (デバッギ側として)"
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "<b>Syntax Highlighting</b>"
+msgstr "<b>キーワードの強調表示</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
 msgid "<b>Terminal</b>"
 msgstr "<b>端末</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
-msgid "When a source file is changed:"
-msgstr "ソース・ファイルが変更されたら:"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
-msgid "Reload the file"
-msgstr "ファイルを読み直す"
-
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
-msgid "Do not reload the file"
-msgstr "ファイルを読み直さない"
+msgid "<b>Visual Style</b>"
+msgstr "<b>エディタのスタイル</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
 msgid "Ask each time"
 msgstr "毎回問い合わせる"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
-msgid "<b>File Monitoring</b>"
-msgstr "<b>ファイルの監視</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
-msgid "Enable syntax highlighting"
-msgstr "キーワードや予約語を強調表示する"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
-msgid "<b>Syntax Highlighting</b>"
-msgstr "<b>キーワードの強調表示</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
-msgid "Editor"
-msgstr "エディタ"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
-msgid "Source Directories"
-msgstr "ソースのフォルダ"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
-msgid "Pure assembly"
-msgstr "機械語のみ"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
-msgid "Mixed source and assembly"
-msgstr "ソースと機械語の両方"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
-msgid "<b>Assembly style</b>"
-msgstr "<b>逆アセンブルの表示</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
-msgid "<b>Assembly flavor</b>"
-msgstr "<b>逆アセンブルの方式</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 msgid "Choose a file"
 msgstr "ファイルの選択"
 
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Custom Font:"
+msgstr "独自のフォント:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "Debugger"
+msgstr "デバッガ"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Display line numbers"
+msgstr "行番号を表示する"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Do not reload the file"
+msgstr "ファイルを読み直さない"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Editor"
+msgstr "エディタ"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr "Pretty Print 機能を有効にする (要デバッガの再起動)"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "Enable syntax highlighting"
+msgstr "キーワードや予約語を強調表示する"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "Follow child"
+msgstr "子プロセスをデバッグする"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+msgid "Follow parent"
+msgstr "元のプロセスをデバッグする"
+
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
-msgid "Path to the GDB binary used"
-msgstr "使用する GDB コマンドのパス: "
+msgid "Layout"
+msgstr "レイアウト"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
-msgid "<b>GDB binary</b>"
-msgstr "<b>GDB の格納場所</b>"
+msgid "Mixed source and assembly"
+msgstr "ソースと機械語の両方"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Number of instructions to disassemble by default"
 msgstr "デフォルトで逆アセンブルする命令数: "
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
-msgid "<b>Instructions</b>"
-msgstr "<b>命令数</b>"
+msgid "Path to the GDB binary used"
+msgstr "使用する GDB コマンドのパス: "
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
-msgid "Enable pretty printing (requires debugger restart)"
-msgstr "Pretty Print 機能を有効にする (要デバッガの再起動)"
+msgid "Preferences"
+msgstr "設定"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
-msgid "<b>GDB pretty printing</b>"
-msgstr "<b>GDB の Pretty Print 機能</b>"
+msgid "Pure assembly"
+msgstr "機械語のみ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
-msgid "Follow parent"
-msgstr "元のプロセスをデバッグする"
+msgid "Reload the file"
+msgstr "ファイルを読み直す"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
-msgid "Follow child"
-msgstr "子プロセスをデバッグする"
+msgid "Source Directories"
+msgstr "ソースのフォルダ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
-msgid "<b>GDB follow fork mode</b>"
-msgstr "<b>GDB の follow-fork-mode</b>"
+msgid "Use launch terminal"
+msgstr "起動時の端末を利用する (デバッギ側として)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
-msgid "Debugger"
-msgstr "デバッガ"
+msgid "Use system monospace font"
+msgstr "システム指定の固定幅フォントを使う"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
-msgid "Layout"
-msgstr "レイアウト"
+msgid "When a source file is changed:"
+msgstr "ソース・ファイルが変更されたら:"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
-msgid "Attach to a Running Program"
-msgstr "実行中のプログラムへのアタッチ"
-
-#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
 msgid "<b>Choose a Process to Debug</b>"
 msgstr "<b>デバッグするプロセスの選択</b>"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "Attach to a Running Program"
+msgstr "実行中のプログラムへのアタッチ"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
 msgstr "フィルタ(_F):"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
-msgid "Connect to Remote Target"
-msgstr "リモート・ターゲットへの接続"
-
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
 msgid "<b>Executable to Load</b>"
 msgstr "<b>対象となる実行形式</b>"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
-msgid "Choose a File"
-msgstr "ファイルの選択"
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+msgid "<b>Remote Debugging Server</b>"
+msgstr "<b>リモート・デバッグ用のサーバ</b>"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
 msgid "<b>Shared Libraries Location</b>"
 msgstr "<b>共有ライブラリの格納場所</b>"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "Address :"
+msgstr "アドレス :"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
 msgstr "フォルダの選択"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
-msgid "<b>Remote Debugging Server</b>"
-msgstr "<b>リモート・デバッグ用のサーバ</b>"
+msgid "Choose a File"
+msgstr "ファイルの選択"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
-msgid "TCP/IP Connection"
-msgstr "TCP/IP を使った接続"
+msgid "Connect to Remote Target"
+msgstr "リモート・ターゲットへの接続"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
 msgid "Port :"
 msgstr "ポート番号 :"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
-msgid "Address :"
-msgstr "アドレス :"
-
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
 msgid "Serial Line Connection"
 msgstr "シリアル・ケーブルを使った接続"
 
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
+msgid "TCP/IP Connection"
+msgstr "TCP/IP を使った接続"
+
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
-msgid "Choose a Program to Execute"
-msgstr "実行するプログラムの選択"
+msgid "<b>Arguments:</b>"
+msgstr "<b>引数:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
-msgid "Choose an executable"
-msgstr "実行形式の選択"
+msgid "<b>Environment Variables:</b>"
+msgstr "<b>環境変数:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "<b>Program:</b>"
 msgstr "<b>プログラム:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
-msgid "<b>Arguments:</b>"
-msgstr "<b>引数:</b>"
-
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
-msgid "Choose a working directory"
-msgstr "作業フォルダの選択"
-
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "<b>Working Directory:</b>"
 msgstr "<b>作業フォルダ:</b>"
 
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
+msgid "Choose a Program to Execute"
+msgstr "実行するプログラムの選択"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "Choose a working directory"
+msgstr "作業フォルダの選択"
+
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
+msgid "Choose an executable"
+msgstr "実行形式の選択"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
 msgid "_Add"
 msgstr "追加(_A)"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
 msgid "_Remove"
 msgstr "削除(_R)"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
-msgid "<b>Environment Variables:</b>"
-msgstr "<b>環境変数:</b>"
-
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
-msgid "Saved Sessions"
-msgstr "保存済みのセッション"
-
-#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
 msgid "<b>Choose a Session to Debug</b>"
 msgstr "<b>デバッグするセッションの選択</b>"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "Saved Sessions"
+msgstr "保存済みのセッション"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
 msgid "<b>Set a Breakpoint:</b>"
 msgstr "<b>ブレークポイントの指定:</b>"
 
@@ -1250,82 +1251,82 @@ msgid "Condition:"
 msgstr "条件:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
-msgid "_Event:"
-msgstr "イベントで指定する(_E):"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
-msgid "_Binary Location:"
-msgstr "バイナリで指定する(_B):"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
-msgid "_Source Location:"
-msgstr "ソースから指定する(_S):"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
 msgid "F_unction Name:"
 msgstr "関数名で指定する(_U):"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
 msgid "File name:"
 msgstr "ファイル名:"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
 msgid "Function:"
 msgstr "関数:"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
 msgid "Line:"
 msgstr "行:"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
 msgid "Set as Countpoint"
 msgstr "カウントポイントで指定する"
 
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
-msgid "Set location to jump to"
-msgstr "移動先の指定"
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
+msgid "_Binary Location:"
+msgstr "バイナリで指定する(_B):"
 
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+msgid "_Event:"
+msgstr "イベントで指定する(_E):"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "_Source Location:"
+msgstr "ソースから指定する(_S):"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
 msgid "<b>Jump to location:</b>"
 msgstr "<b>移動先:</b>"
 
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
 msgid "Break at destination"
 msgstr "移動先で実行を停止する"
 
-#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:2
-msgid "_Variable Name:"
-msgstr "変数名(_V):"
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Set location to jump to"
+msgstr "移動先の指定"
 
-#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:3
+#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:2
 msgid "_Inspect"
 msgstr "調査する(_I)"
+
+#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:3
+msgid "_Variable Name:"
+msgstr "変数名(_V):"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
 msgid "<b>Set a watchpoint:</b>"
 msgstr "<b>ウォッチポイントの指定:</b>"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
-msgid "expression:"
-msgstr "評価する式:"
-
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
 msgid "Inspect"
 msgstr "調査する"
 
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
-msgid "triggers on:"
-msgstr "タイミング:"
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "expression:"
+msgstr "評価する式:"
 
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
 msgid "read"
 msgstr "読み込んだ時"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "triggers on:"
+msgstr "タイミング:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
 msgid "write"
@@ -1420,12 +1421,12 @@ msgstr "このアプリのユーザ・マニュアルを表示します"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
-msgid "Select File Location"
-msgstr "ファイルを格納した場所の選択"
-
-#: ../ui/locatefiledialog.ui.h:2
 msgid "<b>Locate File</b>"
 msgstr "<b>ファイルがある場所:</b>"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "Select File Location"
+msgstr "ファイルを格納した場所の選択"
 
 #~ msgid "bodycontainer"
 #~ msgstr "bodycontainer"
