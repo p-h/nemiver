@@ -6644,10 +6644,12 @@ DBGPerspective::set_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
                                          a_breakpoint.line (),
                                          a_breakpoint.condition (),
                                          ignore_count, cookie);
-        else
+        else if (!a_breakpoint.address ().empty ())
             debugger ()->set_breakpoint (a_breakpoint.address (),
                                          a_breakpoint.condition (),
                                          ignore_count, cookie);
+        // else we don't set this breakpoint as it has neither an
+        // address or a file name associated.
     } else if (a_breakpoint.type ()
                == IDebugger::Breakpoint::WATCHPOINT_TYPE) {
         debugger ()->set_watchpoint (a_breakpoint.expression (),
