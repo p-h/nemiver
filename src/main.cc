@@ -50,13 +50,13 @@ using nemiver::common::UString;
 using nemiver::common::GCharSafePtr;
 using nemiver::ISessMgr;
 
-static const UString DBGPERSPECTIVE_PLUGIN_NAME="dbgperspective";
-static gchar *gv_env_vars=0;
-static gchar *gv_process_to_attach_to=0;
-static bool gv_list_sessions=false;
-static bool gv_purge_sessions=false;
-static int gv_execute_session=0;
-static bool gv_last_session=false;
+static const UString DBGPERSPECTIVE_PLUGIN_NAME = "dbgperspective";
+static gchar *gv_env_vars = 0;
+static gchar *gv_process_to_attach_to = 0;
+static bool gv_list_sessions = false;
+static bool gv_purge_sessions = false;
+static int gv_execute_session = 0;
+static bool gv_last_session = false;
 static gchar *gv_log_domains=0;
 static bool gv_log_debugger_output = false;
 static bool gv_show_version = false;
@@ -68,22 +68,22 @@ static gchar *gv_gdb_binary_filepath = 0;
 static GOptionEntry entries[] =
 {
     {
-      "env",
-      0,
-      0,
-      G_OPTION_ARG_STRING,
-      &gv_env_vars,
-      _("Set the environment of the program to debug"),
-      "<\"var0=val0 var1=val1 var2=val2 ...\">"
+        "env",
+        0,
+        0,
+        G_OPTION_ARG_STRING,
+        &gv_env_vars,
+        _("Set the environment of the program to debug"),
+        "<\"var0=val0 var1=val1 var2=val2 ...\">"
     },
     {
-      "attach",
-      0,
-      0,
-      G_OPTION_ARG_STRING,
-      &gv_process_to_attach_to,
-      _("Attach to a process"),
-      "<pid|process name>"
+        "attach",
+        0,
+        0,
+        G_OPTION_ARG_STRING,
+        &gv_process_to_attach_to,
+        _("Attach to a process"),
+        "<pid|process name>"
     },
     { "list-sessions",
       0,
@@ -142,40 +142,41 @@ static GOptionEntry entries[] =
       0
     },
     {
-      "remote",
-      0,
-      0,
-      G_OPTION_ARG_STRING,
-      &gv_remote,
-      _("Connect to remote target specified by HOST:PORT"),
-      "<HOST:PORT|serial-line-path>"
+        "remote",
+        0,
+        0,
+        G_OPTION_ARG_STRING,
+        &gv_remote,
+        _("Connect to remote target specified by HOST:PORT"),
+        "<HOST:PORT|serial-line-path>"
     },
     {
-      "solib-prefix",
-      0,
-      0,
-      G_OPTION_ARG_STRING,
-      &gv_solib_prefix,
-      _("Where to look for shared libraries loaded by the inferior. "
-	"Use in conjunction with --remote"),
-      "</path/to/prefix>"
+        "solib-prefix",
+        0,
+        0,
+        G_OPTION_ARG_STRING,
+        &gv_solib_prefix,
+        _("Where to look for shared libraries loaded by the inferior. "
+          "Use in conjunction with --remote"),
+        "</path/to/prefix>"
     },
     {
-      "gdb-binary",
-      0,
-      0,
-      G_OPTION_ARG_STRING,
-      &gv_gdb_binary_filepath,
-      _("Set the path of the GDB binary to use to debug the inferior"),
-      "</path/to/gdb>"
+        "gdb-binary",
+        0,
+        0,
+        G_OPTION_ARG_STRING,
+        &gv_gdb_binary_filepath,
+        _("Set the path of the GDB binary to use to debug the inferior"),
+        "</path/to/gdb>"
     },
-    { "version",
-      0,
-      0,
-      G_OPTION_ARG_NONE,
-      &gv_show_version,
-      _("Show the version number of nemiver"),
-      0
+    { 
+        "version",
+        0,
+        0,
+        G_OPTION_ARG_NONE,
+        &gv_show_version,
+        _("Show the version number of nemiver"),
+        0
     },
     {0, 0, 0, (GOptionArg) 0, 0, 0, 0}
 };
