@@ -11,6 +11,15 @@
 using namespace nemiver;
 using namespace nemiver::common;
 
+typedef std::list<IDebugger::VariableSafePtr> VariablesList;
+
+static int num_variables_created;
+
+// This container holds variables backed up by backend-side
+// variable objects created during this test, so that they stay
+// alive during the life of this test.
+VariablesList variables;
+
 Glib::RefPtr<Glib::MainLoop> loop =
     Glib::MainLoop::create (Glib::MainContext::get_default ());
 
@@ -26,6 +35,23 @@ on_program_finished_signal ()
 {
     MESSAGE ("program finished");
     loop->quit ();
+}
+
+/// Counts the number of deleted variables.  If it equals the number
+/// of created variables, then exit the event loop, effectively
+/// allowing the test to exit.
+static void
+on_variable_deleted_signal (const IDebugger::VariableSafePtr a_var,
+                            const UString&)
+{
+    BOOST_REQUIRE (!a_var);
+    MESSAGE ("a backend-side variable object got deleted!");
+
+    static int num_variables_deleted;
+    num_variables_deleted++;
+
+    if (num_variables_deleted == num_variables_created)
+        loop->quit ();
 }
 
 static void
@@ -49,7 +75,11 @@ on_variable_expr_path (const IDebugger::VariableSafePtr a_var)
     MESSAGE ("var expr path: " << a_var->path_expression ());
     BOOST_REQUIRE (a_var->path_expression ()
                    == "((((person).m_first_name)).npos)");
-    loop->quit ();
+
+    // This should help delete all the variables (and their
+    // backend-side variable objects) created during this test, along
+    // with a_var, after this function returns.
+    variables.clear ();
 }
 
 static void
@@ -68,6 +98,8 @@ on_variable_unfolded (const IDebugger::VariableSafePtr a_var,
         a_debugger->query_variable_path_expr (a_var->members ().front (),
                                               &on_variable_expr_path);
     }
+    // Ensure that a_var lives throughout the test.
+    variables.push_back (a_var);
 }
 
 static void
@@ -76,6 +108,9 @@ on_variable_created (const IDebugger::VariableSafePtr a_var,
 {
     MESSAGE ("variable created: " << a_var->name ());
 
+    // Add a_var to the list of live variables, so that it remains
+    // alive during the whole life of the main function.
+    variables.push_back (a_var);
     if (a_var->needs_unfolding ()) {
         MESSAGE ("unfolding variable " << a_var->name ());
         a_debugger->unfold_variable (a_var,
@@ -91,7 +126,7 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                    int /*a_thread_id*/,
                    int /*a_bp_num*/,
                    const UString &/*a_cookie*/,
-                   IDebuggerSafePtr &a_debugger)
+                   IDebuggerSafePtr a_debugger)
 {
     MESSAGE ("stopped at: "
              << a_frame.function_name ()
@@ -104,16 +139,15 @@ on_stopped_signal (IDebugger::StopReason a_reason,
         a_debugger->create_variable ("person",
                                      sigc::bind (&on_variable_created,
                                                  a_debugger));
+        ++num_variables_created;
     } else {
         a_debugger->do_continue ();
     }
 }
 
 NEMIVER_API int
-test_main (int argc, char *argv[])
+test_main (int, char **)
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     Initializer::do_init ();
@@ -132,6 +166,8 @@ test_main (int argc, char *argv[])
 
     debugger->program_finished_signal ().connect
                                             (&on_program_finished_signal);
+
+    debugger->variable_deleted_signal ().connect (&on_variable_deleted_signal);
 
     debugger->breakpoints_list_signal ().connect
                                             (&on_breakpoints_set_signal);

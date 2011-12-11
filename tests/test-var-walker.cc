@@ -12,14 +12,19 @@
 using namespace nemiver;
 using namespace nemiver::common;
 
+typedef std::list<IDebugger::VariableSafePtr> Variables;
+typedef std::map<std::string, IVarListWalkerSafePtr> VarListWalkerMap;
+typedef std::map<std::string, string> StringMap;
+
+// This is to hold variables which should live throughout the life
+// time of this test.
+Variables variables;
+
 Glib::RefPtr<Glib::MainLoop> s_loop =
     Glib::MainLoop::create (Glib::MainContext::get_default ());
 
 IDebugger::Frame s_current_frame;
 
-typedef std::list<IDebugger::VariableSafePtr> DebuggerVariableList;
-typedef std::map<std::string, IVarListWalkerSafePtr> VarListWalkerMap;
-typedef std::map<std::string, string> StringMap;
 
 VarListWalkerMap&
 var_list_walker ()
@@ -123,15 +128,19 @@ on_stopped_signal (IDebugger::StopReason a_reason,
 void
 on_frames_arguments_listed_signal
         (const map<int, list<IDebugger::VariableSafePtr> > &a_frames_params,
-         const UString &a_cookie)
+         const UString &)
 {
-    if (a_cookie.empty ()) {/*keep compiler happy*/}
     map<int, list<IDebugger::VariableSafePtr> >::const_iterator it;
     it = a_frames_params.find (0);
     if (it == a_frames_params.end ()) {
         LOG_ERROR ("Could not find current frame");
         return;
     }
+    Variables::const_iterator i = it->second.begin ();
+    for (; i != it->second.end (); ++i) {
+        variables.push_back (*i);
+    }
+
     BOOST_REQUIRE (var_list_walker ().find (s_current_frame.function_name ())
                    != var_list_walker ().end ());
     IVarListWalkerSafePtr walker = var_list_walker ()[s_current_frame.function_name ()];
@@ -142,13 +151,17 @@ on_frames_arguments_listed_signal
 }
 
 void
-on_local_variables_listed_signal (const DebuggerVariableList &a_variables,
-                                  const UString &a_cookie)
+on_local_variables_listed_signal (const Variables &a_variables,
+                                  const UString &)
 {
-    if (a_variables.empty () || a_cookie.empty ()) {
-    }
     BOOST_REQUIRE (var_list_walker ().find (s_current_frame.function_name ())
                    != var_list_walker ().end ());
+
+    Variables::const_iterator i = a_variables.begin ();
+    for (; i != a_variables.end (); ++i) {
+        variables.push_back (*i);
+    }
+
     IVarListWalkerSafePtr walker = var_list_walker ()[s_current_frame.function_name ()];
     BOOST_REQUIRE (walker);
     walker->remove_variables ();
@@ -218,7 +231,7 @@ test_main (int argc, char **argv)
     debugger->set_breakpoint ("func3");
 
     var_list_walker ()["main"] = create_var_list_walker (debugger);
-    expected_variables ()["main"] = " person a_argc a_argv";
+    expected_variables ()["main"] = " person";
     var_list_walker ()["func1"] = create_var_list_walker (debugger);
     expected_variables ()["func1"] = " i";
     var_list_walker ()["func2"] = create_var_list_walker (debugger);
@@ -231,6 +244,8 @@ test_main (int argc, char **argv)
     //run the event loop.
     //****************************************
     s_loop->run ();
+
+    variables.clear ();
 
     BOOST_REQUIRE (actual_variables ().find ("main")  != actual_variables ().end ());
     BOOST_REQUIRE (actual_variables ().find ("func1") != actual_variables ().end ());

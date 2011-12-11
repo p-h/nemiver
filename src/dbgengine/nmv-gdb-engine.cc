@@ -2735,6 +2735,8 @@ struct OnCreateVariableHandler : public OutputHandler
     void do_handle (CommandAndOutput &a_in)
     {
         VariableSafePtr var = a_in.output ().result_record ().variable ();
+        if (!var->internal_name ().empty ())
+        var->debugger (m_engine);
 
         // Set the name of the variable to the name that got stored
         // in the tag0 member of the command.
@@ -2785,20 +2787,30 @@ struct OnDeleteVariableHandler : public OutputHandler {
 
     void do_handle (CommandAndOutput &a_in)
     {
-        THROW_IF_FAIL (a_in.command ().variable ());
+        IDebugger::VariableSafePtr var;
         THROW_IF_FAIL (m_engine);
 
-        // Call the slot associated to IDebugger::delete_variable (), if
-        // Any.
+        // Call the slot associated to IDebugger::delete_variable (),
+        // if Any.
         if (a_in.command ().has_slot ()) {
-            typedef sigc::slot<void, const IDebugger::VariableSafePtr> SlotType;
-            SlotType slot = a_in.command ().get_slot<SlotType> ();
-            slot (a_in.command ().variable ());
+            // The resulting command can either have an associated
+            // instance of IDebugger::Variable attached to it or not,
+            // depending on the flavor of IDebugger::delete_variable
+            // that was called.  Make sure to handle both cases.
+            if (a_in.command ().variable ()) {
+                typedef sigc::slot<void, const IDebugger::VariableSafePtr> SlotType;
+                SlotType slot = a_in.command ().get_slot<SlotType> ();
+                var = a_in.command ().variable ();
+                slot (var);
+            } else {
+                typedef IDebugger::DefaultSlot DefaultSlot;
+                IDebugger::DefaultSlot slot = a_in.command ().get_slot<DefaultSlot> ();
+                slot ();
+            }
         }
         // Emit the general IDebugger::variable_deleted_signal ().
-        m_engine->variable_deleted_signal ().emit
-                (a_in.command ().variable (),
-                 a_in.command ().cookie ());
+        m_engine->variable_deleted_signal ().emit (var,
+                                                   a_in.command ().cookie ());
     }
 }; // end OnDeleteVariableHandler
 
@@ -5755,6 +5767,19 @@ GDBEngine::create_variable (const UString &a_name,
     queue_command (command);
 }
 
+/// If a variable has a GDB variable object then this method deletes
+/// the backend.  You should not use this method because the life
+/// cycle of variables backend counter parts is automatically tied to
+/// the life cycle of instances of IDebugger::Variable, unless you
+/// know what you are doing.
+///
+/// Note that when the varobj is deleted, the
+/// IDebugger::variable_deleted signal is invoked.
+///
+/// \param a_var the variable which backend counter to delete.
+///
+/// \param a_cookie a string cookie passed to the
+/// IDebugger::variable_deleted_signal.
 void
 GDBEngine::delete_variable (const VariableSafePtr a_var,
                             const UString &a_cookie)
@@ -5765,6 +5790,22 @@ GDBEngine::delete_variable (const VariableSafePtr a_var,
                      a_cookie);
 }
 
+/// If a variable has a GDB variable object, then this method deletes
+/// the varobj.  You should not use this method because the life cycle
+/// of variables backend counter parts is automatically tied to the
+/// life cycle of instances of IDebugger::Variable, unless you know
+/// what you are doing.
+///
+/// Note that when the varobj is deleted, the
+/// IDebugger::variable_deleted signal is invoked.
+///
+/// \param a_var the variable which backend counter to delete.
+///
+/// \param a_slot a slot asynchronously called when the backend
+/// variable oject is deleted.
+///
+/// \param a_cookie a string cookie passed to the
+/// IDebugger::variable_deleted_signal.
 void
 GDBEngine::delete_variable (const VariableSafePtr a_var,
                             const ConstVariableSlot &a_slot,
@@ -5779,6 +5820,35 @@ GDBEngine::delete_variable (const VariableSafePtr a_var,
                      "-var-delete " + a_var->internal_name (),
                      a_cookie);
     command.variable (a_var);
+    command.set_slot (a_slot);
+    queue_command (command);
+}
+
+/// Deletes a variable object named by a given string.  You should not
+/// use this method because the life cycle of variables backend
+/// counter parts is automatically tied to the life cycle of instances
+/// of IDebugger::Variable, unless you know what you are doing.
+///
+/// Note that when the backend counter part is deleted, the
+/// IDebugger::variable_deleted signal is invoked.
+///
+/// \param a_internal_name the name of the backend variable object we
+/// want to delete.
+///
+/// \param a_slot a slot that is going to be called asynchronuously
+/// when the backend object is deleted.
+void
+GDBEngine::delete_variable (const UString &a_internal_name,
+                            const DefaultSlot &a_slot,
+                            const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    THROW_IF_FAIL (!a_internal_name.empty ());
+
+    Command command ("delete-variable",
+                     "-var-delete " + a_internal_name,
+                     a_cookie);
     command.set_slot (a_slot);
     queue_command (command);
 }

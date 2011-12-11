@@ -163,20 +163,6 @@ class VarInspector::Priv : public sigc::trackable {
         get_ui_manager ()->insert_action_group (var_inspector_action_group);
     }
 
-    // If the variable we are inspected was created
-    // with a backend counterpart (variable objects for GDB),
-    // instruct the backend to delete its variable counterpart.
-    void
-    delete_variable_if_needed ()
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-        if (variable
-            && !variable->internal_name ().empty ()
-            && debugger) {
-            debugger->delete_variable (variable);
-        }
-    }
-
     void
     graphically_set_variable (const IDebugger::VariableSafePtr a_variable,
                               bool a_expand)
@@ -213,7 +199,6 @@ class VarInspector::Priv : public sigc::trackable {
         re_visualize = a_re_visualize;
 
         re_init_tree_view ();
-        delete_variable_if_needed ();
         variable = a_variable;
         if (a_re_visualize) {
             debugger->revisualize_variable (a_variable,
@@ -629,7 +614,6 @@ public:
 
     ~Priv ()
     {
-        delete_variable_if_needed ();
     }
 };//end class VarInspector::Priv
 
@@ -670,7 +654,6 @@ VarInspector::inspect_variable (const UString &a_variable_name,
     if (a_variable_name == "") {return;}
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();
-    m_priv->delete_variable_if_needed ();
     m_priv->create_variable (a_variable_name, a_expand);
 }
 
@@ -701,7 +684,6 @@ VarInspector::clear ()
 {
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();
-    m_priv->delete_variable_if_needed ();
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

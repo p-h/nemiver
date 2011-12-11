@@ -345,6 +345,8 @@ public:
             m_args.clear ();
         }
     };//end class Frame
+
+    typedef sigc::slot<void> DefaultSlot;
     typedef sigc::slot<void, const vector<IDebugger::Frame>&>
         FrameVectorSlot;
     typedef sigc::slot<void, const map<int, IDebugger::VariableList>& >
@@ -378,6 +380,14 @@ public:
         // (e.g: backend side variable objects in GDB), then this
         // is the name of the backend side counterpart of this variable.
         UString m_internal_name;
+        // If the variable was created with a backend counterpart
+        // (e.g, GDB Variable objects), then this client-side
+        // variable instance needs to have a hold on the instance of
+        // IDebugger that was used to create the variable.  This is
+        // needed so that that instance of IDebugger can be used to
+        // tie the life cycle of the remote variable object peer with
+        // the life cycle of this instance.
+        mutable IDebugger *m_debugger;
         UString m_name;
         UString m_name_caption;
         UString m_value;
@@ -412,8 +422,10 @@ public:
                   const UString &a_name,
                   const UString &a_value,
                   const UString &a_type,
-                  bool a_in_scope = true)
+                  bool a_in_scope = true,
+                  IDebugger *a_dbg = 0)
             : m_internal_name (a_internal_name),
+            m_debugger (a_dbg),
             m_name (a_name),
             m_value (a_value),
             m_type (a_type),
@@ -428,8 +440,10 @@ public:
         Variable (const UString &a_name,
                   const UString &a_value,
                   const UString &a_type,
-                  bool a_in_scope = true)
-            : m_name (a_name),
+                  bool a_in_scope = true,
+                  IDebugger *a_dbg = 0)
+            : m_debugger (a_dbg),
+            m_name (a_name),
             m_value (a_value),
             m_type (a_type),
             m_parent (0),
@@ -441,24 +455,41 @@ public:
         {
         }
 
-        Variable (const UString &a_name)
-            : m_name (a_name),
+        Variable (const UString &a_name,
+                  IDebugger *a_dbg = 0)
+            : m_debugger (a_dbg),
+            m_name (a_name),
             m_parent (0),
             m_num_expected_children (0),
             m_in_scope (true),
             m_format (UNDEFINED_FORMAT),
             m_needs_revisualizing (false)
-                
-        {}
+        {
+        }
 
-        Variable ()
-            : m_parent (0),
+        Variable (IDebugger *a_dbg = 0)
+            : m_debugger (a_dbg),
+            m_parent (0),
             m_num_expected_children (0),
             m_in_scope (true),
             m_format (UNDEFINED_FORMAT),
             m_needs_revisualizing (false)
-                
-        {}
+        {
+        }
+
+        ~Variable ()
+        {
+            // If this variable is peered with an engine-side variable
+            // object then ask the debugging engine to delete the peer
+            // variable object now.
+            if (m_debugger
+                && !internal_name ().empty ()
+                && m_debugger->is_attached_to_target ()) {
+                IDebugger::DefaultSlot empty_slot;
+                m_debugger->delete_variable (internal_name (),
+                                             empty_slot);
+            }
+        }
 
         const VariableList& members () const {return m_members;}
 
@@ -551,6 +582,10 @@ public:
         /// (e.g. variable object in GDB).
         /// \param a_in the new name of backend side counterpart variable object.
         void internal_name (const UString &a_in) {m_internal_name = a_in;}
+
+
+        IDebugger* debugger () const {return m_debugger;}
+        void debugger (IDebugger *a_dbg) {m_debugger = a_dbg;}
 
         const UString& name () const {return m_name;}
         void name (const UString &a_name)
@@ -871,8 +906,6 @@ public:
         return false;
     }
 
-    typedef sigc::slot<void> DefaultSlot;
-
     typedef sigc::slot<void,
                        const std::pair<int, const IDebugger::Breakpoint&>&>
         BreakpointSlot;
@@ -1086,6 +1119,12 @@ public:
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
                                  variable_created_signal () const = 0;
 
+    /// This signal is emitted after IDebugger::delete_variable is
+    /// called and the underlying backend-side variable object has
+    /// been effectively deleted.  Note that when no instance of
+    /// VariableSafePtr has been passed to the
+    /// IDebugger::delete_variable method, the first argument of this
+    /// signal slot is a null pointer to VariableSafePtr.
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
                                  variable_deleted_signal () const = 0;
 
@@ -1386,11 +1425,66 @@ public:
                                   const ConstVariableSlot &a_slot,
                                   const UString &a_cookie = "") = 0;
 
+    /// If a variable has a backend counterpart (e.g, a variable object
+    /// when using the GDB backend), then this method deletes the
+    /// backend.  You should not use this method because the life cycle
+    /// of variables backend counter parts is automatically
+    /// tied to the life cycle of instances of IDebugger::Variable,
+    /// unless you know what you are doing.
+    ///
+    /// Note that when the backend counter part is deleted, the
+    /// IDebugger::variable_deleted_signal is invoked with the a_var
+    /// variable in argument.
+    ///
+    /// \param a_var the variable which backend counter to delete.
+    ///
+    /// \param a_cookie a string cookie passed to the
+    /// IDebugger::variable_deleted_signal.
     virtual void delete_variable (const VariableSafePtr a_var,
                                   const UString &a_cookie = "") = 0;
 
+    /// If a variable has a backend counterpart (e.g, a variable object
+    /// when using the GDB backend), then this method deletes the
+    /// backend.  You should not use this method because the life cycle
+    /// of variables backend counter parts is automatically
+    /// tied to the life cycle of instances of IDebugger::Variable,
+    /// unless you know what you are doing.
+    ///
+    /// Note that when the backend counter part is deleted, the
+    /// IDebugger::variable_deleted_signal is invoked with the a_var
+    /// variable in argument.
+    ///
+    /// \param a_var the variable which backend counter to delete.
+    ///
+    /// \param a_slot a slot asynchronously called when the backend
+    /// variable oject is deleted.
+    ///
+    /// \param a_cookie a string cookie passed to the
+    /// IDebugger::variable_deleted_signal.
     virtual void delete_variable (const VariableSafePtr a_var,
                                   const ConstVariableSlot&,
+                                  const UString &a_cookie = "") = 0;
+
+    /// Deletes a backend variable object (e.g, for GDB, a so called
+    /// variable object) named by a given string.
+    /// You should not use this method because the life cycle
+    /// of variables backend counter parts is automatically
+    /// tied to the life cycle of instances of IDebugger::Variable,
+    /// unless you know what you are doing.
+    ///
+    /// Note that when the backend counter part is deleted, the
+    /// IDebugger::variable_deleted_signal is invoked, with null pointer
+    /// to IDebugger::Variable.
+    ///
+    /// \param a_internal_name the name of the backend variable object
+    /// we want to delete.
+    ///
+    /// \param a_slot a slot that is going to be called
+    /// asynchronuously when the backend object is deleted.
+    ///
+    /// \param a_cookie
+    virtual void delete_variable (const UString &a_internal_name,
+                                  const DefaultSlot &a_slot,
                                   const UString &a_cookie = "") = 0;
 
     virtual void unfold_variable (VariableSafePtr a_var,

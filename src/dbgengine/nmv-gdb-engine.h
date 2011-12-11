@@ -584,6 +584,10 @@ public:
                           const ConstVariableSlot &a_s,
                           const UString &a_cookie);
 
+    void delete_variable (const UString &a_internal_name,
+			  const DefaultSlot &a_slot,
+			  const UString &a_cookie);
+
     void unfold_variable (VariableSafePtr a_var,
                           const UString &a_cookie);
 

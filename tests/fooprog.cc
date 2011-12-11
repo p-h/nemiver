@@ -92,8 +92,7 @@ func4 (Person &a_person)
 }
 
 int
-main (int a_argc __attribute__((unused)),
-      char *a_argv[] __attribute__((unused)))
+main (int, char **)
 {
     Person person ("Bob", "Barton", 15);
     func1 ();

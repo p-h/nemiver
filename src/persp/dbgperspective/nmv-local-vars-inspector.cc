@@ -329,7 +329,6 @@ public:
                 row_it = tree_store->erase (row_it);
             }
         }
-        delete_vars_backend_peers (local_vars);
         local_vars.clear ();
         local_vars_changed_at_prev_stop.clear ();
     }
@@ -347,7 +346,6 @@ public:
                 row_it = tree_store->erase (*row_it);
             }
         }
-        delete_vars_backend_peers (function_arguments);
         function_arguments.clear ();
         func_args_changed_at_prev_stop.clear ();
     }
@@ -588,19 +586,6 @@ public:
                     (*it,
                      sigc::mem_fun (*this,
                                     &Priv::on_function_args_updated_signal));
-        }
-    }
-
-    void
-    delete_vars_backend_peers (IDebugger::VariableList &a_vars)
-    {
-        for (IDebugger::VariableList::const_iterator it = a_vars.begin ();
-             it != a_vars.end ();
-             ++it) {
-            if (!(*it) || (*it)->internal_name ().empty ()) {
-                continue;
-            }
-            debugger->delete_variable (*it);
         }
     }
 

@@ -12,6 +12,13 @@
 using namespace nemiver;
 using namespace nemiver::common;
 
+typedef  std::list<IDebugger::VariableSafePtr> Variables;
+
+// This is to hold instances of IDebugger::Variable which backend-side
+// variable object has to live throughout the life time of this test.
+static Variables variables;
+static IDebugger::VariableSafePtr person_var;
+
 Glib::RefPtr<Glib::MainLoop> s_loop =
     Glib::MainLoop::create (Glib::MainContext::get_default ());
 static int nb_vars_created;
@@ -19,7 +26,7 @@ static int nb_vars_created2;
 static int nb_vars_deleted;
 static int nb_vars_deleted2;
 static int unfold_requests;
-static IDebugger::VariableSafePtr var_to_delete;
+
 
 void on_variable_deleted_signal (const IDebugger::VariableSafePtr a_var);
 void on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var,
@@ -61,11 +68,12 @@ on_variable_created_signal (IDebugger::VariableSafePtr a_var)
     a_var->to_string (var_str, true /*show var name*/);
     MESSAGE ("variable created " << var_str);
 
+    variables.push_back (a_var);
     nb_vars_created++;
     if (a_var->name () == "person") {
         // put the variable aside so that we
         // can delete it later
-        var_to_delete = a_var;
+        person_var = a_var;
     }
 }
 
@@ -77,6 +85,7 @@ on_variable_created_signal2 (IDebugger::VariableSafePtr a_var,
     UString var_str;
     a_var->to_string (var_str, true /*show var name*/);
     MESSAGE ("variable created (second report): " << var_str);
+    variables.push_back (a_var);
     nb_vars_created2++;
 
     unfold_requests++;
@@ -166,16 +175,21 @@ on_changed_variables_listed_signal
         MESSAGE ("name: "  + (*it)->internal_name ());
         MESSAGE ("value: " + (*it)->value ());
     }
-    a_debugger->delete_variable (root, &on_variable_deleted_signal);
+    a_debugger->step_over ();
+    person_var.reset ();
 }
 
 void
 on_variable_deleted_signal (const IDebugger::VariableSafePtr a_var)
 {
-    MESSAGE ("variable deleted. Name: "
-             << a_var->name ()
-             << ", Internal Name: "
-             << a_var->internal_name ());
+    if (a_var) {
+        MESSAGE ("variable deleted. Name: "
+                 << a_var->name ()
+                 << ", Internal Name: "
+                 << a_var->internal_name ());
+    } else {
+        MESSAGE ("backend-side variable object deleted");
+    }
     nb_vars_deleted++;
 }
 
@@ -184,10 +198,14 @@ on_variable_deleted_signal2 (const IDebugger::VariableSafePtr a_var,
                              const UString&,
                              IDebuggerSafePtr a_debugger)
 {
-    MESSAGE ("variable deleted. Name: "
-             << a_var->name ()
-             << ", Internal Name: "
-             << a_var->internal_name ());
+    if (a_var) {
+        MESSAGE ("variable deleted. Name: "
+                 << a_var->name ()
+                 << ", Internal Name: "
+                 << a_var->internal_name ());
+    } else {
+        MESSAGE ("backend-side variable object deleted");
+    }
     nb_vars_deleted2++;
     a_debugger->step_over ();
 }
@@ -219,13 +237,13 @@ on_stopped_signal (IDebugger::StopReason /*a_reason*/,
                  sigc::bind (&on_variable_created_in_func4_signal,
                              a_debugger));
         } else if (nb_stops_in_func4 < 5 ) {
-            a_debugger->step_over ("in-func4");
+            a_debugger->step_over ();
         } else {
             a_debugger->do_continue ();
         }
     } else if (nb_stops == 2) {
-        // Okay we stepped once, now we can now create the variable
-        // for the person variable.
+        // Okay we stepped once, we can now create the variable for
+        // the person variable.
         a_debugger->create_variable ("person",
                                      &on_variable_created_signal);
         MESSAGE ("Requested creation of variable 'person'");
@@ -235,7 +253,7 @@ on_stopped_signal (IDebugger::StopReason /*a_reason*/,
         // let's now ask the debugger to tell us which descendant variable
         // was changed exactly.
         a_debugger->list_changed_variables
-                (var_to_delete,
+                (person_var,
                  sigc::bind (&on_changed_variables_listed_signal, a_debugger));
     } else {
         a_debugger->step_over ();
@@ -288,12 +306,13 @@ test_main (int, char **)
     //****************************************
     s_loop->run ();
 
-    NEMIVER_CATCH_AND_RETURN_NOX (-1)
-
+    NEMIVER_CATCH_AND_RETURN_NOX (-1);
+    
     BOOST_REQUIRE (nb_vars_created == nb_vars_created2);
     BOOST_REQUIRE (nb_vars_created > 0);
-    BOOST_REQUIRE (nb_vars_deleted == nb_vars_deleted2);
-    BOOST_REQUIRE (nb_vars_deleted > 0);
+    BOOST_REQUIRE (nb_vars_deleted == 0);
+
+    variables.clear ();
 
     return 0;
 }
