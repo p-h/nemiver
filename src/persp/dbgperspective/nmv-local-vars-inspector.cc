@@ -173,7 +173,25 @@ public:
     }
 
     bool
-    get_local_variables_row_iterator (Gtk::TreeModel::iterator &a_it)
+    is_local_variables_subtree_empty () const
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        Gtk::TreeModel::iterator it;
+        if (!get_local_variables_row_iterator (it))
+            return true;
+        return it->children ().empty ();
+    }
+
+    bool
+    inspector_is_empty () const
+    {
+        return (is_function_arguments_subtree_empty ()
+                && is_local_variables_subtree_empty ());
+    }
+
+    bool
+    get_local_variables_row_iterator (Gtk::TreeModel::iterator &a_it) const
     {
         if (!local_variables_row_ref) {
             LOG_DD ("there is no variables row iter yet");
@@ -487,12 +505,14 @@ public:
 
         THROW_IF_FAIL (tree_store);
 
+        LOG_DD ("a_has_frame: " << a_has_frame);
+
         if (!a_has_frame)
             return;
 
         saved_frame = a_frame;
 
-        if (is_new_frame) {
+        if (is_new_frame || inspector_is_empty ()) {
             LOG_DD ("init tree view");
             re_init_tree_view ();
             LOG_DD ("list local variables");
@@ -708,14 +728,14 @@ public:
         THROW_IF_FAIL (debugger);
         is_new_frame = (saved_frame != a_frame);
         saved_frame = a_frame;
+        saved_reason = a_reason;
+        saved_has_frame = a_has_frame;
 
         if (should_process_now ()) {
             finish_handling_debugger_stopped_event (a_reason,
                                                     a_has_frame,
                                                     a_frame);
         } else {
-            saved_reason = a_reason;
-            saved_has_frame = a_has_frame;
             is_up2date = false;
         }
 
