@@ -22,7 +22,6 @@
  *
  *See COPYRIGHT file copyright information.
  */
-
 #include "nmv-debugger-utils.h"
 #include "common/nmv-exception.h"
 
@@ -91,6 +90,7 @@ gen_white_spaces (int a_nb_ws,
 }
 
 /// Serialize a variable and its value into an output stream.
+/// 
 /// \param a_var the variable to serialize.
 /// \param a_indent_num the number of spaces to indent to before
 /// serializing the variable.
@@ -99,7 +99,7 @@ gen_white_spaces (int a_nb_ws,
 void
 dump_variable_value (IDebugger::VariableSafePtr a_var,
                      int a_indent_num,
-                     std::ostringstream &a_os,
+                     std::ostream &a_os,
                      bool a_print_var_name)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -132,6 +132,7 @@ dump_variable_value (IDebugger::VariableSafePtr a_var,
 }
 
 /// Serialize a variable and its value into a string.
+///
 /// \param a_var the variable to serialize.
 /// \param a_indent_num the number of spaces to indent to before
 /// serializing the variable.
@@ -144,6 +145,17 @@ dump_variable_value (IDebugger::VariableSafePtr a_var,
     std::ostringstream os;
     dump_variable_value (a_var, a_indent_num, os);
     a_out_str = os.str ();
+}
+
+/// Serialize a variable and its value out to the standard error
+/// output stream.
+///
+/// \param a_var the variable to serialize.
+void
+dump_variable_value (IDebugger::VariableSafePtr a_var)
+{
+    dump_variable_value (a_var, 4, std::cerr,
+                         /*print_var_name=*/true);
 }
 
 /// Load the debugger interface using the default

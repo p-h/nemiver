@@ -56,12 +56,14 @@ void null_breakpoints_slot (const map<int, IDebugger::Breakpoint>&);
 
 void dump_variable_value (IDebugger::VariableSafePtr a_var,
                           int a_indent_num,
-                          std::ostringstream &a_os,
+                          std::ostream &a_os,
                           bool a_print_var_name = false);
 
 void dump_variable_value (IDebugger::VariableSafePtr a_var,
                           int a_indent_num,
                           std::string &a_out_str);
+
+void dump_variable_value (IDebugger::VariableSafePtr a_var);
 
 IDebuggerSafePtr load_debugger_iface_with_confmgr ();
 
