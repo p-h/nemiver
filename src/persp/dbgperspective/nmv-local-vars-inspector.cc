@@ -413,6 +413,7 @@ public:
 
         THROW_IF_FAIL (tree_view);
 
+        LOG_DD ("updating variable: " << a_var->internal_name ());
         Gtk::TreeModel::iterator parent_row_it;
         if (get_local_variables_row_iterator (parent_row_it)) {
             vutil::update_a_variable (a_var, *tree_view,
@@ -799,8 +800,12 @@ public:
             // separately by a call to update_a_local_variable.
             // At least that's the current behaviour with the "GDB/MI
             // Variable Objects" based backend we are using.
+            LOG_DD ("Going to update var: " << (*it)->internal_name ()
+                    << " that has number of children "
+                    << (int) (*it)->members ().size ());
+
             update_a_local_variable (*it,
-                                     false /* do not update members */);
+                                     false /* Do not update members */);
             local_vars_changed_at_prev_stop.push_back (*it);
         }
 

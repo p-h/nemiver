@@ -1195,6 +1195,11 @@ public:
 
     virtual void set_solib_prefix_path (const UString &a_name) = 0;
 
+    virtual bool load_program (const UString &a_prog) = 0;
+
+    virtual bool load_program (const UString &a_prog,
+                               const vector<UString> &a_args) = 0;
+
     virtual bool load_program (const UString &a_prog,
                                const vector<UString> &a_args,
                                const UString &a_working_dir,

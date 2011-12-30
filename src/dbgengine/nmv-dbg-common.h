@@ -25,8 +25,58 @@
 #ifndef __NMV_DBG_COMMON_H_H__
 #define __NMV_DBG_COMMON_H_H__
 #include "nmv-i-debugger.h"
+#include <tr1/memory>
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
+
+/// Abstracts a change that happened to a variable as reported by the
+/// -var-update GDB/MI command, for GDB backends.  The change can be
+/// either a new set of children sub variable appearing, or a change
+/// of a variable value.
+class VarChange {
+    struct Priv;
+    std::tr1::shared_ptr<Priv> m_priv;
+
+public:
+    VarChange ();
+    VarChange (IDebugger::VariableSafePtr a_var,
+                int new_num_children,
+                list<IDebugger::VariableSafePtr> &a_changed_children);
+
+    /// Returns the variable this change is to be applied to.  The
+    /// returned variable contains the new value(s) as a result member
+    /// value change.
+    const IDebugger::VariableSafePtr variable () const;
+    void variable (const IDebugger::VariableSafePtr);
+
+    /// If the change encompasses new children sub variables, then this
+    /// accessor returns a positive value.  If the change is about
+    /// removing all the children sub variables then this accessor
+    /// returns zero.  Otherwise, if no children got added or removed
+    /// the this returns -1.
+    int new_num_children () const;
+    void new_num_children (int);
+
+    /// If new_num_children() returned a positive number then this
+    /// accessor returns the list of new children variables.
+    const list<IDebugger::VariableSafePtr>& new_children () const;
+    list<IDebugger::VariableSafePtr>& new_children ();
+    void new_children (const list<IDebugger::VariableSafePtr>&);
+
+    /// Apply current change to a given variable.
+    void apply_to_variable (IDebugger::VariableSafePtr a_var,
+			    std::list<IDebugger::VariableSafePtr> &a_changed_vars);
+};
+typedef std::tr1::shared_ptr<VarChange> VarChangePtr;
+
+/// Update variable a_to with new bits from a_from.  Note that only
+/// things that can reasonably change are updated here.
+void update_debugger_variable (IDebugger::Variable &a_to,
+			       IDebugger::Variable &a_from);
+
+void
+apply_debugger_variable_change (IDebugger::VariableSafePtr a_var,
+                                const VarChange &a_change);
 
 /// \brief A container of the textual command sent to the debugger
 class Command {
@@ -146,7 +196,6 @@ public:
         m_tag4.clear ();
 	m_should_emit_signal = true;
     }
-
 };//end class Command
 
 /// \brief the output received from the debugger.
@@ -434,10 +483,19 @@ public:
         vector<IDebugger::VariableSafePtr> m_variable_children;
         bool m_has_variable_children;
 
-        // Updated sub variables (direct/indirect children)
-        // of a given variable
-        list<IDebugger::VariableSafePtr> m_changed_var_list;
-        bool m_has_changed_var_list;
+	// A list of the changes that occurred on a given variable.
+	// Whenever a user issues IDebugger::list_changed_variables on
+	// a given variable, the result is this m_var_changes.  Each
+	// element of the list represents a change in the value of the
+	// given variable (like a change in one of its scalar members,
+	// a new member, or removal of last N members), or a change in
+	// one of the children of the variables.
+        list<VarChangePtr> m_var_changes;
+        bool m_has_var_changes;	
+
+	// Thew new number of children of a dynamic variable.  Set to
+	// -1 by default.
+	int m_new_num_children;
 
         // The path expression of a variable object.
         UString m_path_expression;
@@ -482,11 +540,13 @@ public:
             m_memory_address = 0;
             m_has_memory_values = false;
             m_asm_instrs.clear ();
-            m_has_asm_instrs = false;
-            m_has_variable = false;
+	    m_has_asm_instrs = false;
+	    m_has_variable = false;
             m_nb_variable_deleted = 0;
             m_has_variable_children = false;
-            m_has_changed_var_list = false;
+	    m_var_changes.clear ();
+            m_has_var_changes = false;
+	    m_new_num_children = -1;
             m_path_expression.clear ();
             m_has_path_expression = false;
             m_variable_format = IDebugger::Variable::UNDEFINED_FORMAT;
@@ -728,23 +788,42 @@ public:
             has_variable_children (true);
         }
 
-        bool has_changed_var_list () const
+        bool has_var_changes () const
         {
-            return m_has_changed_var_list;
+            return m_has_var_changes;
         }
-        void has_changed_var_list (bool a_in)
+        void has_var_changes (bool a_in)
         {
-            m_has_changed_var_list = a_in;
+            m_has_var_changes = a_in;
         }
-        const list<IDebugger::VariableSafePtr>& changed_var_list () const
+
+        /// Returns a list of the changes that occurred on a given variable.
+	/// Whenever a user issues IDebugger::list_changed_variables on
+	/// a given variable, the result is this m_var_changes.  Each
+	/// element of the list represents a change in the value of the
+	/// given variable (like a change in one of its scalar members,
+	/// a new member, or removal of last N members), or a change in
+	/// one of the children of the variables.
+        const list<VarChangePtr>& var_changes () const
         {
-            return m_changed_var_list;
+            return m_var_changes;
         }
-        void changed_var_list (const list<IDebugger::VariableSafePtr> &a_in)
+
+        /// Sets a list of the changes that occurred on a given variable.
+	/// Whenever a user issues IDebugger::list_changed_variables on
+	/// a given variable, the result is this m_var_changes.  Each
+	/// element of the list represents a change in the value of the
+	/// given variable (like a change in one of its scalar members,
+	/// a new member, or removal of last N members), or a change in
+	/// one of the children of the variables.
+        void var_changes (const list<VarChangePtr> &a_in)
         {
-            m_changed_var_list = a_in;
-            has_changed_var_list (true);
+            m_var_changes = a_in;
+            has_var_changes (true);
         }
+
+	int new_num_children () const {return m_new_num_children;}
+	void new_num_children (int a) {m_new_num_children = a;}
 
         const UString& path_expression () const
         {

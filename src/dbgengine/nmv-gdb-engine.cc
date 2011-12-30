@@ -920,6 +920,8 @@ public:
 
     void read_default_config ()
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         get_conf_mgr ()->get_key_value (CONF_KEY_FOLLOW_FORK_MODE,
                                         follow_fork_mode);
         get_conf_mgr ()->get_key_value (CONF_KEY_DISASSEMBLY_FLAVOR,
@@ -1186,6 +1188,8 @@ public:
     void on_conf_key_changed_signal (const UString &a_key,
                                      const UString &a_namespace)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         NEMIVER_TRY
 
         if (a_key == CONF_KEY_FOLLOW_FORK_MODE
@@ -1199,7 +1203,9 @@ public:
             conf_mgr->get_key_value (a_key, e, a_namespace);
             if (e != enable_pretty_printing) {
                 enable_pretty_printing = e;
-                if (!pretty_printing_enabled_once && enable_pretty_printing) {
+                if (is_gdb_running ()
+                    && !pretty_printing_enabled_once
+                    && enable_pretty_printing) {
                     queue_command (Command ("-enable-pretty-printing"));
                     pretty_printing_enabled_once = true;
                 }
@@ -2880,7 +2886,7 @@ struct OnListChangedVariableHandler : public OutputHandler
         if (a_in.output ().has_result_record ()
             && a_in.output ().result_record ().kind ()
                 == Output::ResultRecord::DONE
-            && a_in.output ().result_record ().has_changed_var_list ()
+            && a_in.output ().result_record ().has_var_changes ()
             && a_in.command ().name () == "list-changed-variables") {
             LOG_DD ("handler selected");
             return true;
@@ -2891,25 +2897,46 @@ struct OnListChangedVariableHandler : public OutputHandler
     void do_handle (CommandAndOutput &a_in)
     {
         THROW_IF_FAIL (a_in.command ().variable ());
-        THROW_IF_FAIL (a_in.output ().result_record ().has_changed_var_list ());
+        THROW_IF_FAIL (a_in.output ().result_record ().has_var_changes ());
 
-        // We are going to build the list of descendants of
-        // a_in.command ().variable () that got returned as being
-        // changed.
+        // Each element of a_in.output ().result_record ().var_changes
+        // () describes changes that occurred to the variable
+        // a_in.command ().variable ().  Some of these changes might
+        // be new members of a_in.command ().variable () that are not
+        // yet represented in it.  Some of these change might just be
+        // change in some member values, or changes to some of its
+        // children.  We'll now apply those changes to
+        // a_in.command().variable() and its children as it fits and
+        // come up with a list of updated variables, that we'll notify
+        // client code with.
         list<IDebugger::VariableSafePtr> vars;
-        const list<IDebugger::VariableSafePtr> &changed_vars =
-                    a_in.output ().result_record ().changed_var_list ();
-        list<IDebugger::VariableSafePtr>::const_iterator it;
-        IDebugger::VariableSafePtr v;
-        for (it = changed_vars.begin (); it != changed_vars.end (); ++it) {
-            v = a_in.command ().variable ()->get_descendant
-                                                ((*it)->internal_name ());
-            // Okay, so v now contains the a descendant variable of
-            // a_in.command ().variable () which value got modified.
-            // Let's set the value of v to the new updated value.
-            v->value ((*it)->value ());
-            if (v) {
-                vars.push_back (v);
+        const list<VarChangePtr> &var_changes =
+            a_in.output ().result_record ().var_changes ();
+
+        IDebugger::VariableSafePtr variable = a_in.command ().variable ();
+        list<VariableSafePtr> changed_sub_vars;        
+        // Each element of var_changes is either a change of variable
+        // itself, or a change of one its children.  So apply those
+        // changes to variable so that it reflects its new state, and
+        // notify the client code with the variable and it's
+        // sub-variables in their new states.
+        for (list<VarChangePtr>::const_iterator i = var_changes.begin ();
+             i != var_changes.end ();
+             ++i) {
+            // Apply the variable changes to each i->variable.  The
+            // result is going to be a list VariableSafePtr that is
+            // going to be sent back to notify the client code.
+            (*i)->apply_to_variable (variable, changed_sub_vars);
+            LOG_DD ("Num sub vars:" << (int) changed_sub_vars.size ());
+            for (list<VariableSafePtr>::const_iterator j =
+                     changed_sub_vars.begin ();
+                 j != changed_sub_vars.end ();
+                 ++j)
+            {
+                LOG_DD ("sub var: " << (*j)->internal_name ()
+                        << "/" << (*j)->name ()
+                        << " num children: " << (int) (*j)->members ().size ());
+                vars.push_back (*j);
             }
         }
         // Call the slot associated to
@@ -2923,7 +2950,7 @@ struct OnListChangedVariableHandler : public OutputHandler
         }
         // Tell the world about the descendant variables that changed.
         m_engine->changed_variables_signal ().emit
-                            (vars, a_in.command ().cookie ());
+            (vars, a_in.command ().cookie ());
     }
 };//end OnListChangedVariableHandler
 
@@ -2984,6 +3011,40 @@ GDBEngine::~GDBEngine ()
     LOG_D ("delete", "destructor-domain");
 }
 
+/// Load an inferior program to debug.
+///
+/// \param a_prog a path to the inferior program to debug.
+bool
+GDBEngine::load_program (const UString &a_prog)
+{
+    std::vector<UString> empty_args;
+    return load_program (a_prog, empty_args);
+}
+
+/// Load an inferior program to debug.
+///
+/// \param a_prog a path to the inferior program to debug.
+///
+/// \param a_args the arguments to the inferior program
+bool
+GDBEngine::load_program (const UString &a_prog,
+                         const vector<UString> &a_args)
+{
+    return load_program (a_prog, a_args, ".", /*a_force=*/false);
+}
+
+/// Load an inferior program to debug.
+///
+/// \param a_prog a path to the inferior program to debug.
+///
+/// \param a_args the arguments to the inferior program
+///
+/// \param a_workingdir the path of the directory under which to look
+/// for the inferior program to load.  This is used if a_prog couldn't
+/// be found by just using its path as given.
+///
+/// \param a_force if this is true and the command queue is stuck,
+/// clear it to force the loading of the inferior.
 bool
 GDBEngine::load_program (const UString &a_prog,
                          const vector<UString> &a_args,
@@ -2998,10 +3059,28 @@ GDBEngine::load_program (const UString &a_prog,
                          search_paths, tty_path, a_force);
 }
 
+/// Load an inferior program to debug.
+///
+/// \param a_prog a path to the inferior program to debug.
+///
+/// \param a_argv the arguments to the inferior program
+///
+/// \param a_workingdir the path of the directory under which to look
+/// for the inferior program to load.  This is used if a_prog couldn't
+/// be found by just using its path as given.
+///
+/// \param a_source_search_dirs a vector of directories under which to
+/// look for the source files of the objects that make up the inferior
+/// program.
+///
+/// \param a_tty_path the tty path the inferior should use.
+///
+/// \param a_force if this is true and the command queue is stuck,
+/// clear it to force the loading of the inferior.
 bool
 GDBEngine::load_program (const UString &a_prog,
                          const vector<UString> &a_argv,
-                         const UString &working_dir,
+                         const UString &a_working_dir,
                          const vector<UString> &a_source_search_dirs,
                          const UString &a_tty_path,
                          bool a_force)
@@ -3013,7 +3092,7 @@ GDBEngine::load_program (const UString &a_prog,
 
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts;
-        if (m_priv->launch_gdb_and_set_args (working_dir,
+        if (m_priv->launch_gdb_and_set_args (a_working_dir,
                                              a_source_search_dirs, 
                                              a_prog, a_argv,
                                              gdb_opts) == false)
@@ -3052,8 +3131,7 @@ GDBEngine::load_program (const UString &a_prog,
         } else {
             LOG_DD ("not setting LD_BIND_NOW environment variable ");
         }
-        if (m_priv->enable_pretty_printing
-            && !m_priv->pretty_printing_enabled_once)
+        if (m_priv->enable_pretty_printing)
             queue_command (Command ("-enable-pretty-printing"));
     } else {
         Command command ("load-program",

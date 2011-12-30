@@ -63,6 +63,7 @@ static const char *gv_output_record7="^done,changelist=[{name=\"var1.public.m_fi
 
 static const char *gv_output_record8="^done,changelist=[]\n";
 
+static const char *gv_output_record9="^done,changelist=[{name=\"var1\",value=\"{...}\",in_scope=\"true\",type_changed=\"false\",new_num_children=\"2\",displayhint=\"array\",dynamic=\"1\",has_more=\"0\",new_children=[{name=\"var1.[1]\",exp=\"[1]\",numchild=\"0\",value=\" \\\"fila\\\"\",type=\"std::basic_string<char, std::char_traits<char>, std::allocator<char> >\",thread-id=\"1\",displayhint=\"string\",dynamic=\"1\"}]},{name=\"var1.[0]\",value=\"\\\"k\\303\\251l\\303\\251\\\"\",in_scope=\"true\",type_changed=\"false\",displayhint=\"array\",dynamic=\"1\",has_more=\"0\"}]\n";
 
 static const char *gv_stack0 =
 "stack=[frame={level=\"0\",addr=\"0x000000330f832f05\",func=\"raise\",file=\"../nptl/sysdeps/unix/sysv/linux/raise.c\",fullname=\"/usr/src/debug/glibc-20081113T2206/nptl/sysdeps/unix/sysv/linux/raise.c\",line=\"64\"},frame={level=\"1\",addr=\"0x000000330f834a73\",func=\"abort\",file=\"abort.c\",fullname=\"/usr/src/debug/glibc-20081113T2206/stdlib/abort.c\",line=\"88\"},frame={level=\"2\",addr=\"0x0000000000400872\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"7\"},frame={level=\"3\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"4\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"5\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"6\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"7\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"8\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"9\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"10\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"11\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"12\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"13\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"14\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"15\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"16\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"17\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"18\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"19\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"20\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"21\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"22\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"23\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"24\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"},frame={level=\"25\",addr=\"0x000000000040087e\",func=\"overflow_after_n_recursions\",file=\"do-stack-overflow.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/do-stack-overflow.cc\",line=\"8\"}]";
@@ -412,16 +413,41 @@ test_output_record ()
                    && v[i]->name () == "m_age"
                    && v[i]->type () == "unsigned int"
                    && v[i]->internal_name () == "var2.public.m_age");
+
     // gv_output_record7 should result in 1 variable.
     parser.push_input (gv_output_record7);
     is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok);
-    BOOST_REQUIRE (output.result_record ().has_changed_var_list ());
+    BOOST_REQUIRE (output.result_record ().has_var_changes ());
+
     // gv_output_record8 should result in 0 variable.
     parser.push_input (gv_output_record8);
     is_ok = parser.parse_output_record (0, to, output);
     BOOST_REQUIRE (is_ok);
-    BOOST_REQUIRE (output.result_record ().has_changed_var_list ());
+    BOOST_REQUIRE (output.result_record ().has_var_changes ());
+
+    // gv_output_record9 should contain a list of 2 var_changes.
+    parser.push_input (gv_output_record9);
+    is_ok = parser.parse_output_record (0, to, output);
+    BOOST_REQUIRE (is_ok);
+    BOOST_REQUIRE (output.result_record ().has_var_changes ());
+    BOOST_REQUIRE (output.result_record ().var_changes ().size () == 2);
+    {
+        // The first var_change should represent a variable of internal
+        // name "var1" that has one new child named var1.[1]
+        list<nemiver::VarChangePtr>::const_iterator it =
+            output.result_record ().var_changes ().begin ();
+        BOOST_REQUIRE ((*it)->variable ()->internal_name () == "var1");
+        BOOST_REQUIRE ((*it)->new_children ().size () == 1);
+        BOOST_REQUIRE ((*it)->new_children ().front ()-> internal_name ()
+                       == "var1.[1]");
+
+        // The second var_change should represent a variable of
+        // internal name var1.[0] which value is "kélé".
+        ++it;
+        BOOST_REQUIRE ((*it)->variable ()->internal_name () == "var1.[0]");
+        BOOST_REQUIRE ((*it)->variable ()->value () == "\"kélé\"");
+    }
 }
 
 void

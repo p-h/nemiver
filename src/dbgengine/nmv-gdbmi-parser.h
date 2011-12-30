@@ -633,7 +633,7 @@ public:
 
     bool parse_var_changed_list (UString::size_type a_from,
                                  UString::size_type &a_to,
-                                 list<IDebugger::VariableSafePtr> &a_vars);
+                                 list<VarChangePtr> &a_var_changes);
 
     bool parse_var_path_expression (UString::size_type a_from,
                                     UString::size_type &a_to,

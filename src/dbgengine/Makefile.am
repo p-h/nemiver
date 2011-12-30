@@ -95,7 +95,7 @@ publicheaders_DATA=$(dynmodheaders)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 libgdbmod_la_LDFLAGS=-module -avoid-version -Wl,--as-needed
-libgdbmod_la_LIBADD=libdbgcommon.la libgdbmiparser.la \
+libgdbmod_la_LIBADD=libgdbmiparser.la \
 libgdbengine.la libdebuggerutils.la @NEMIVERCOMMON_LIBS@ \
 $(abs_top_builddir)/src/langs/libnemivercparser.la \
 $(abs_top_builddir)/src/common/libnemivercommon.la
@@ -118,11 +118,11 @@ libvarobjwalkermod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \
 
 libvarlistwalkermod_la_LDFLAGS=-module -avoid-version
 libvarlistwalkermod_la_LIBADD=@NEMIVERCOMMON_LIBS@ \
-	$(abs_top_builddir)/src/common/libnemivercommon.la
+$(abs_top_builddir)/src/common/libnemivercommon.la
 
 libgdbmiparser_la_LIBADD= \
 @NEMIVERCOMMON_LIBS@ \
-$(abs_top_builddir)/src/common/libnemivercommon.la
+$(abs_top_builddir)/src/common/libnemivercommon.la libdbgcommon.la
 
 config_DATA=gdbengine.conf varlist.conf varwalker.conf varobjwalker.conf varlistwalker.conf cpptrait.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@

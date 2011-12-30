@@ -16,7 +16,7 @@ runtestlocalvarslist runtestcpplexer \
 runtestcppparser runtestvarpathexpr \
 runtestlibtoolwrapperdetection \
 runtestenv runtesttypes runtestdisassemble \
-runtestvariableformat
+runtestvariableformat runtestprettyprint
 
 else
 
@@ -29,7 +29,7 @@ $(TESTS) \
 runtestcore  runteststdout  docore inout \
 pointerderef fooprog templatedvar \
 gtkmmtest dostackoverflow bigvar threads \
-forkparent forkchild
+forkparent forkchild prettyprint
 
 runtestgdbmi_SOURCES=$(h)/test-gdbmi.cc
 runtestgdbmi_LDADD= @NEMIVERCOMMON_LIBS@ \
@@ -50,6 +50,9 @@ forkparent_LDADD=
 
 forkchild_SOURCES=$(h)/fork-child.cc
 forkchild_LDADD=
+
+prettyprint_SOURCES=$(h)/pretty-print.cc
+prettyprint_LDADD=
 
 runtestbreakpoint_SOURCES=$(h)/test-breakpoint.cc
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
@@ -73,6 +76,11 @@ $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestvariableformat_SOURCES=$(h)/test-variable-format.cc
 runtestvariableformat_LDADD=@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
+
+runtestprettyprint_SOURCES=$(h)/test-pretty-print.cc
+runtestprettyprint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 

@@ -40,6 +40,21 @@ static void update_a_variable_real (const IDebugger::VariableSafePtr a_var,
                                     bool a_is_new_frame,
                                     bool a_update_members);
 
+static bool is_empty_row (const Gtk::TreeModel::iterator &a_row_it);
+
+static UString get_row_name (const Gtk::TreeModel::iterator &a_row_it);
+
+/// Return a copy of the name of a variable's row, as presented to the
+/// user.  That name is actually the name of the variable as presented
+/// to the user.
+static UString
+get_row_name (const Gtk::TreeModel::iterator &a_row_it)
+              
+{
+    Glib::ustring str = (*a_row_it)[get_variable_columns ().name];
+    return str;
+}
+
 VariableColumns&
 get_variable_columns ()
 {
@@ -140,7 +155,7 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     if (a_var) {
         LOG_DD ("going to really update variable '"
-                << a_var->name ()
+                << a_var->internal_name ()
                 << "'");
     } else {
         LOG_DD ("eek, got null variable");
@@ -239,6 +254,7 @@ find_a_variable (const IDebugger::VariableSafePtr a_var,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+    LOG_DD ("looking for variable: " << a_var->internal_name ());
     if (!a_var) {
         LOG_DD ("got null var, returning false");
         return false;
@@ -252,11 +268,11 @@ find_a_variable (const IDebugger::VariableSafePtr a_var,
         var = row_it->get_value (get_variable_columns ().variable);
         if (variables_match (a_var, row_it)) {
             a_out_row_it = row_it;
-            LOG_DD ("found variable");
+            LOG_DD ("found variable at row: " << get_row_name (row_it));
             return true;
         }
     }
-    LOG_DD ("didn't find variable " << a_var->name ());
+    LOG_DD ("didn't find variable " << a_var->internal_name ());
     return false;
 }
 
@@ -298,16 +314,26 @@ static bool
 walk_path_from_row (const Gtk::TreeModel::iterator &a_from,
                     const list<int>::const_iterator &a_path_start,
                     const list<int>::const_iterator &a_path_end,
-                    Gtk::TreeModel::iterator &a_to)
+                    Gtk::TreeModel::iterator &a_to,
+                    bool a_recursed)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+    LOG_DD ("starting from row: " << get_row_name (a_from));
+
     if (a_path_start == a_path_end) {
-        if (a_from->parent ()) {
-            a_to = a_from->parent ();
-            return true;
+        if (!a_recursed) {
+                a_to = a_from;
+        } else {
+            if (a_from->parent ()) {
+                a_to = a_from->parent ();
+            } else {
+                LOG_DD ("return false");
+                return false;
+            }
         }
-        return false;
+        LOG_DD ("return true, row name: " << get_row_name (a_to));
+        return true;
     }
 
     Gtk::TreeModel::iterator row = a_from;
@@ -315,18 +341,27 @@ walk_path_from_row (const Gtk::TreeModel::iterator &a_from,
          steps  < *a_path_start && row;
          ++steps, ++row) {
         // stepping at the current level;
+        LOG_DD ("stepped: " << steps);
     }
 
-    if (!row)
+    if (is_empty_row (row))  {
         // we reached the end of the current level. That means the path
         // was not well suited for this variable tree view. Bail out.
+        LOG_DD ("return false");
         return false;
+    }
 
     // Dive down one level.
     list<int>::const_iterator from = a_path_start;
     from++;
+    if (from == a_path_end) {
+        a_to = row;
+        LOG_DD ("return true: " << get_row_name (row));
+        return true;
+    }
     return walk_path_from_row (row->children ().begin (),
-                               from, a_path_end, a_to);
+                               from, a_path_end, a_to,
+                               /*a_recursed=*/true);
 }
 
 /// Find a member variable that is a descendent of a root ancestor variable
@@ -350,12 +385,16 @@ find_a_variable_descendent (const IDebugger::VariableSafePtr a_descendent,
         return false;
     }
 
+    LOG_DD ("looking for descendent: "
+            << a_descendent->internal_name ());
+
     // first, find the root variable the descendant belongs to.
     IDebugger::VariableSafePtr root_var = a_descendent->root ();
     THROW_IF_FAIL (root_var);
+    LOG_DD ("root var: " << root_var->internal_name ());
     Gtk::TreeModel::iterator root_var_row;
     if (!find_a_variable (root_var, a_parent_row, root_var_row)) {
-        LOG_DD ("didn't find root variable " << root_var->name ());
+        LOG_DD ("didn't find root variable " << root_var->internal_name ());
         return false;
     }
 
@@ -368,8 +407,11 @@ find_a_variable_descendent (const IDebugger::VariableSafePtr a_descendent,
     // let's walk the path from the root variable down to the descendent
     // now.
     if (!walk_path_from_row (root_var_row, path.begin (),
-                             path.end (), a_out_row)) {
-        THROW ("fatal: should not be reached");
+                             path.end (), a_out_row,
+                             /*a_recursed=*/false)) {
+        // This can happen if a_descendent is a new child of its root
+        // variable.
+        return false;
     }
     return true;
 }
@@ -392,8 +434,10 @@ variables_match (const IDebugger::VariableSafePtr &a_var,
         return false;
     if (a_var->internal_name () == var->internal_name ())
         return true;
-
-    return var->equals_by_value (*a_var);
+    else if (a_var->internal_name ().empty ()
+             && var->internal_name ().empty ())
+        return var->equals_by_value (*a_var);
+    return false;
 }
 
 // Update the graphical representation of variable a_var.
@@ -421,20 +465,61 @@ update_a_variable (const IDebugger::VariableSafePtr a_var,
     THROW_IF_FAIL (a_parent_row_it);
 
     Gtk::TreeModel::iterator row_it;
+    // First lets try to see if a_var is already graphically
+    // represented as a descendent of the graphical node
+    // a_parent_row_it.
     bool found_variable = find_a_variable_descendent (a_var,
                                                       a_parent_row_it,
                                                       row_it);
 
+    IDebugger::VariableSafePtr var = a_var;
     if (!found_variable) {
+        LOG_DD ("here");
+        //  So a_parent_row_it doesn't have any descendent row that
+        //  contains a_var.  So maybe a_var is a new variable member
+        //  that appeared?  To verify this hypothesis, let's try to
+        //  find the root variable of a_var under the a_parent_row_it
+        //  node.
+        IDebugger::VariableSafePtr root = a_var->root ();
+        if (find_a_variable (root, a_parent_row_it, row_it)) {
+            // So the root node root is already graphically
+            // represented under a_parent_row_it, by row_it.  That
+            // means a_var is a new member of "root".  Let's update
+            // root altogether.  That will indirectly graphically
+            // append a_var underneath row_it, at the right spot.
+            LOG_DD ("Found a new member to append: "
+                    << a_var->internal_name ());
+            var = root;
+            a_update_members = true;
+            // For now, we voluntarily don't handle highlighting when
+            // adding new members as we don't handle this case well
+            // and mess things up instead.
+            a_handle_highlight = false;            
+            goto real_job;
+        }
         LOG_ERROR ("could not find variable in inspector: "
-                   + a_var->name ());
+                   + a_var->internal_name ());
         return false;
     }
 
-    update_a_variable_real (a_var, a_tree_view,
+ real_job:
+    update_a_variable_real (var, a_tree_view,
                             row_it, a_truncate_type, a_handle_highlight,
                             a_is_new_frame, a_update_members);
     return true;
+}
+
+/// Return true iff the row pointed to by the iterator in argument has
+/// no instance of IDebugger::Variable stored in.
+static bool
+is_empty_row (const Gtk::TreeModel::iterator &a_row_it)
+{
+    if (!a_row_it)
+        return true;
+    IDebugger::VariableSafePtr v = (*a_row_it)[get_variable_columns ().variable];
+    if (!v)
+        return true;
+    return false;
 }
 
 // Subroutine of update_a_variable. See that function comments to learn
@@ -459,24 +544,52 @@ update_a_variable_real (const IDebugger::VariableSafePtr a_var,
                         bool a_is_new_frame,
                         bool a_update_members)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    LOG_DD ("Going to update variable " << a_var->internal_name ());
+    LOG_DD ("Its num members: " << (int) a_var->members ().size ());
+
+    if (a_update_members) {
+        LOG_DD ("Going to update its members too");
+    } else {
+        LOG_DD ("Not going to update its members, though");
+    }
+
     update_a_variable_node (a_var,
                             a_tree_view,
                             a_row_it,
                             a_truncate_type,
                             a_handle_highlight,
                             a_is_new_frame);
+
     Gtk::TreeModel::iterator row_it;
     list<IDebugger::VariableSafePtr>::const_iterator var_it;
     Gtk::TreeModel::Children rows = a_row_it->children ();
+
     if (a_update_members) {
+        LOG_DD ("Updating members of" << a_var->internal_name ());
         for (row_it = rows.begin (), var_it = a_var->members ().begin ();
-             row_it != rows.end () && var_it != a_var->members ().end ();
-             ++row_it, ++var_it) {
-            update_a_variable_real (*var_it, a_tree_view,
-                                    row_it, a_truncate_type,
-                                    a_handle_highlight,
-                                    a_is_new_frame,
-                                    true /* update members */);
+             var_it != a_var->members ().end ();
+             ++var_it) {
+            if (row_it != rows.end () && !is_empty_row (row_it)) {
+                LOG_DD ("updating member: " << (*var_it)->internal_name ());
+                update_a_variable_real (*var_it, a_tree_view,
+                                        row_it, a_truncate_type,
+                                        a_handle_highlight,
+                                        a_is_new_frame,
+                                        true /* update members */);
+                ++row_it;
+            } else {
+                // var_it is a member that is new, compared to the
+                // previous members of a_var that were already present
+                // in the graphical representation.  Thus we need to
+                // append this new child member to the graphical
+                // representation of a_var.
+                LOG_DD ("appending new member: "
+                        << (*var_it)->internal_name ());
+                append_a_variable (*var_it, a_tree_view,
+                                   a_row_it, a_truncate_type);
+            }
         }
     }
 }
@@ -670,4 +783,3 @@ visualize_a_variable (const IDebugger::VariableSafePtr a_var,
 
 NEMIVER_END_NAMESPACE (variables_utils2)
 NEMIVER_END_NAMESPACE (nemiver)
-

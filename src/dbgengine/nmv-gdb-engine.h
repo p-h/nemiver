@@ -276,6 +276,11 @@ public:
                                  const UString &a_value);
     void set_solib_prefix_path (const UString &a_name);
 
+    bool load_program (const UString &a_prog);
+
+    bool load_program (const UString &a_prog,
+		       const vector<UString> &a_args);
+
     bool load_program (const UString &a_prog,
                        const vector<UString> &a_args,
                        const UString &a_working_dir,

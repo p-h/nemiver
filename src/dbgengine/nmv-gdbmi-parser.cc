@@ -199,6 +199,9 @@ const char* PATH_EXPR = "path_expr";
 static const char* PREFIX_ASM_INSTRUCTIONS= "asm_insns=";
 const char* PREFIX_VARIABLE_FORMAT = "format=";
 
+static bool grok_var_changed_list_components (GDBMIValueSafePtr a_value,
+                                              list<VarChangePtr> &a_var_changes);
+
 static bool
 is_string_start (gunichar a_c)
 {
@@ -256,7 +259,7 @@ str_to_stopped_reason (const UString &a_str)
 
 bool
 gdbmi_tuple_to_string (GDBMITupleSafePtr a_result,
-                        UString &a_string)
+                       UString &a_string)
 {
 
     if (!a_result)
@@ -458,6 +461,79 @@ operator<< (std::ostream &a_out, const IDebugger::Variable &a_var)
     }
     a_out << "</members></variable>";
     return a_out;
+}
+
+std::ostream&
+operator<< (std::ostream &a_out, const IDebugger::VariableSafePtr &a_var)
+{
+    if (a_var)
+        a_out << a_var;
+    else
+        a_out << "";
+    return a_out;
+}
+
+std::ostream&
+operator<< (std::ostream &a_out,
+            const std::list<IDebugger::VariableSafePtr> &a_vars)
+{
+    a_out << "<variablelist length='" << a_vars.size () << "'>";
+    std::list<IDebugger::VariableSafePtr>::const_iterator i = a_vars.begin ();
+    for (; i != a_vars.end (); ++i) {
+        a_out << **i;
+    }
+    a_out << "</variablelist>";
+    return a_out;
+}
+
+std::ostream&
+operator<< (std::ostream &a_out, const VarChangePtr &a_change)
+{
+    a_out << "<varchange>";
+
+    if (a_change->variable ())
+        a_out << a_change->variable ();
+    else
+        a_out << "";
+
+    a_out << "<newnumchildren>"
+          << a_change->new_num_children ()
+          << "</newnumchildren>"
+          << "<newchildren>"
+          << a_change->new_children ()
+          << "</newchildren>"
+          << "</varchange>";
+    return a_out;
+}
+
+void
+dump_gdbmi (const GDBMIResultSafePtr &a_result)
+{
+    std::cout << a_result;
+}
+
+void
+dump_gdbmi (const GDBMITupleSafePtr &a_tuple)
+{
+    std::cout << a_tuple;
+}
+
+void
+dump_gdbmi (const GDBMIListSafePtr &a_list)
+{
+    std::cout << a_list;
+}
+
+void
+dump_gdbmi (const GDBMIValueSafePtr &a_var)
+{
+    std::cout << a_var;
+}
+
+void
+dump_gdbmi (const IDebugger::Variable &a_var)
+{
+    std::cout << a_var;
 }
 
 struct QuickUStringLess : public std::binary_function<const UString,
@@ -2007,9 +2083,9 @@ fetch_gdbmi_result:
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_VARIABLES_CHANGED_LIST),
                                            PREFIX_VARIABLES_CHANGED_LIST)) {
-                list<IDebugger::VariableSafePtr> vars;
-                if (parse_var_changed_list (cur, cur, vars)) {
-                    result_record.changed_var_list (vars);
+                list<VarChangePtr> var_changes;
+                if (parse_var_changed_list (cur, cur, var_changes)) {
+                    result_record.var_changes (var_changes);
                 } else {
                     LOG_PARSING_ERROR2 (cur);
                 }
@@ -3508,14 +3584,164 @@ GDBMIParser::parse_var_list_children
     return true;
 }
 
-// We want to parse something that likes:
+/// This function takes a GDB/MI VALUE data structure that contains a
+/// LIST of VALUEs representing the list of variables that changed (as
+/// a result of the command -var-update --all-values <varobj-name>).
+/// Each VALUE in the LIST (so each changed variable) contains a TUPLE
+/// representing the components of the variable.
+///
+/// This function analyses this input and constructs a list of
+/// instances of IDebugger::Variable representing the list of changed
+/// variables as returned by the -var-udpate command.
+///
+/// \param a_value the GDB/MI VALUE data structure presented above.
+///
+/// \param a_vars an output parameter.  The resulting list of
+/// variables built by this function.
+///
+/// \return true upon succesful completion
+static bool
+grok_var_changed_list_components (GDBMIValueSafePtr a_value,
+                                  list<VarChangePtr> &a_var_changes)
+{
+    // The value of the RESULT must be a LIST
+    if (!a_value
+        || a_value->content_type () != GDBMIValue::LIST_TYPE
+        || !a_value->get_list_content ()) {
+        LOG_ERROR ("expected a LIST value for the GDBMI variable "
+                   << CHANGELIST);
+        return false;
+    }
+
+    // Have we got an empty list ?
+    if (a_value->get_list_content ()->empty ()) {
+        return true;
+    }
+
+    if (a_value->get_list_content ()->content_type ()
+        != GDBMIList::VALUE_TYPE) {
+        LOG_ERROR ("expected a TUPLE content in the LIST value of "
+                   << CHANGELIST);
+        return false;
+    }
+
+    list<GDBMIValueSafePtr> values;
+    a_value->get_list_content ()->get_value_content (values);
+    if (values.empty ()) {
+        LOG_ERROR ("expected a non empty TUPLE content in the LIST value of "
+                   << CHANGELIST);
+        return false;
+    }
+
+    list<VarChangePtr> var_changes;
+    for (list<GDBMIValueSafePtr>::const_iterator value_it = values.begin ();
+         value_it != values.end ();
+         ++value_it) {
+        if (!(*value_it)) {
+            continue;
+        }
+        if ((*value_it)->content_type () != GDBMIValue::TUPLE_TYPE
+            || !(*value_it)->get_tuple_content ()) {
+            LOG_ERROR ("expected a non empty TUPLE content in the LIST value of "
+                       << CHANGELIST);
+            return false;
+        }
+        // the components of a given child variable
+        list<GDBMIResultSafePtr> comps =
+            (*value_it)->get_tuple_content ()->content ();
+        UString n, internal_name, value, display_hint, type;
+        bool in_scope = true, has_more = false, dynamic = false;
+        int new_num_children = -1;
+        list<IDebugger::VariableSafePtr> children;
+        list<VarChangePtr> sub_var_changes;
+        // Walk the list of components of the child variable and really
+        // build the damn variable
+        for (list<GDBMIResultSafePtr>::const_iterator it = comps.begin ();
+             it != comps.end ();
+             ++it) {
+            if (!(*it)
+                || ((*it)->value ()->content_type () != GDBMIValue::STRING_TYPE
+                    && (*it)->value ()->content_type () != GDBMIValue::LIST_TYPE)) {
+                continue;
+            }
+
+            n = (*it)->variable ();
+            if ((*it)->value ()->content_type () == GDBMIValue::STRING_TYPE) {
+                UString v;
+                v = (*it)->value ()->get_string_content ();
+                if (n == "name") {
+                    internal_name = v;
+                } else if (n == "value") {
+                    value = v;
+                } else if (n == "type") {
+                    type = v;
+                } else if (n == "in_scope") {
+                    in_scope = (v == "true");
+                } else if (n == "type_changed") {
+                    // type_changed = (v == "true");
+                } else if (n == "has_more") {
+                    has_more = (v == "0") ? false : true;
+                } else if (n == "dynamic") {
+                    dynamic = (v == "0") ? false : true;
+                } else if (n == "displayhint") {
+                    display_hint = v;
+                } else if (n == "new_num_children") {
+                    new_num_children = atoi (v.c_str ());
+                }
+            } else if ((*it)->value ()->content_type () == GDBMIValue::LIST_TYPE) {
+                if (n == "new_children") {
+                    // (it*)->value () should contain one value (a TUPLE) per
+                    // child.  Each child containing the components
+                    // that appeared as part of the "changed values"
+                    // of this variable.  This can happen with a
+                    // pretty printed variable like a container into
+                    // which new elements got added.
+                    grok_var_changed_list_components ((*it)->value (),
+                                                      sub_var_changes);
+                }
+            }
+        }
+        if (!internal_name.empty ()) {
+            IDebugger::VariableSafePtr var;
+                var.reset
+                    (new IDebugger::Variable (internal_name,
+                                              "" /* name */,
+                                              value,
+                                              type,
+                                              in_scope));
+            var->is_dynamic (dynamic);
+            var->display_hint (display_hint);
+            var->has_more_children (has_more);
+            // If var has some new children that appeared, append them
+            // as member now.
+            VarChangePtr var_change (new VarChange);
+            var_change->variable (var);
+            list<VarChangePtr>::const_iterator i;
+            for (i = sub_var_changes.begin ();
+                 i != sub_var_changes.end ();
+                 ++i) {
+                // None of the new sub variables of var should
+                // themselves contain any new sub variable.
+                THROW_IF_FAIL ((*i)->new_children ().empty ());
+                THROW_IF_FAIL ((*i)->new_num_children () == -1);
+                var_change->new_children ().push_back ((*i)->variable ());
+            }
+            var_change->new_num_children (new_num_children);
+            var_changes.push_back (var_change);
+        }
+    }
+    a_var_changes = var_changes;
+    return true;
+}
+
+// We want to parse something that looks likes:
 // 'changelist=[{name="var1",value="3",in_scope="true",type_changed="false"}]'
 // It's a RESULT, which value is a LIST of TUPLEs.
 // Each TUPLE represents a child variable.
 bool
 GDBMIParser::parse_var_changed_list (UString::size_type a_from,
                                      UString::size_type &a_to,
-                                     list<IDebugger::VariableSafePtr> &a_vars)
+                                     list<VarChangePtr> &a_var_changes)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
@@ -3537,86 +3763,10 @@ GDBMIParser::parse_var_changed_list (UString::size_type a_from,
                    << result->variable () << "\'");
         return false;
     }
-    // The value of the RESULT must be a LIST
-    if (!result->value ()
-        || result->value ()->content_type () != GDBMIValue::LIST_TYPE
-        || !result->value ()->get_list_content ()) {
-        LOG_ERROR ("expected a LIST value for the GDBMI variable "
-                   << CHANGELIST);
-        return false;
-    }
 
-    // Have we got an empty list ?
-    if (result->value ()->get_list_content ()->empty ()) {
-        a_vars.clear ();
-        a_to = cur;
-        return true;
-    }
-
-    if (result->value ()->get_list_content ()->content_type ()
-            != GDBMIList::VALUE_TYPE) {
-        LOG_ERROR ("expected a TUPLE content in the LIST value of "
-                   << CHANGELIST);
-        return false;
-    }
-    list<GDBMIValueSafePtr> values;
-    result->value ()->get_list_content ()->get_value_content (values);
-    if (values.empty ()) {
-        LOG_ERROR ("expected a non empty TUPLE content in the LIST value of "
-                   << CHANGELIST);
-        return false;
-    }
-    for (list<GDBMIValueSafePtr>::const_iterator value_it = values.begin ();
-         value_it != values.end ();
-         ++value_it) {
-        if (!(*value_it)) {
-            continue;
-        }
-        if ((*value_it)->content_type () != GDBMIValue::TUPLE_TYPE
-            || !(*value_it)->get_tuple_content ()) {
-            LOG_ERROR ("expected a non empty TUPLE content in the LIST value of "
-                       << CHANGELIST);
-            return false;
-        }
-        // the components of a given child variable
-        list<GDBMIResultSafePtr> comps =
-                (*value_it)->get_tuple_content ()->content ();
-        UString n, v, internal_name, value;
-        bool in_scope = true;
-        IDebugger::VariableSafePtr var;
-        // Walk the list of components of the child variable and really
-        // build the damn variable
-        for (list<GDBMIResultSafePtr>::const_iterator it = comps.begin ();
-             it != comps.end ();
-             ++it) {
-            if (!(*it)
-                || (*it)->value ()->content_type () != GDBMIValue::STRING_TYPE) {
-                continue;
-            }
-            n = (*it)->variable ();
-            v = (*it)->value ()->get_string_content ();
-            if (n == "name") {
-                internal_name = v;
-            } else if (n == "value") {
-                value = v;
-            } else if (n == "in_scope") {
-                in_scope = (v == "true");
-            } else if (n == "type_changed") {
-                // type_changed = (v == "true");
-            }
-        }
-        if (!internal_name.empty ()) {
-            var = IDebugger::VariableSafePtr
-                    (new IDebugger::Variable (internal_name,
-                                              "" /* name */,
-                                              value,
-                                              "" /* type */,
-                                              in_scope));
-            a_vars.push_back (var);
-        }
-    }
     a_to = cur;
-    return true;
+
+    return grok_var_changed_list_components (result->value (), a_var_changes);
 }
 
 /// Parse the result of -var-info-path-expression.
