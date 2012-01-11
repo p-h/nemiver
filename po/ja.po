@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-11-21 22:28+0000\n"
-"PO-Revision-Date: 2011-11-22 12:32+0900\n"
+"POT-Creation-Date: 2011-12-29 13:27+0000\n"
+"PO-Revision-Date: 2012-01-01 19:56+0900\n"
 "Last-Translator: Jiro Matsuzawa <jmatsuzawa@src.gnome.org>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: ../data/nemiver.desktop.in.h:1
 msgid "C/C++ Debugger"
-msgstr "Ｃ/Ｃ++ デバッガ"
+msgstr "Ｃ/Ｃ++ デバッガー"
 
 #: ../data/nemiver.desktop.in.h:2
 msgid "Debug Applications"
@@ -32,7 +32,7 @@ msgstr "Nemiver"
 
 #: ../data/nemiver.desktop.in.h:4
 msgid "Nemiver C/C++ Debugger"
-msgstr "Nemiver C/C++ デバッガ"
+msgstr "Nemiver C/C++ デバッガー"
 
 #: ../src/main.cc:76
 msgid "Set the environment of the program to debug"
@@ -64,7 +64,7 @@ msgstr "ログのドメインを DOMAINS にする"
 
 #: ../src/main.cc:133
 msgid "Log the debugger output"
-msgstr "デバッガの出力をログに記録する"
+msgstr "デバッガーの出力をログに記録する"
 
 #: ../src/main.cc:141
 msgid "Use this terminal as the debugee's terminal"
@@ -86,19 +86,19 @@ msgstr ""
 msgid "Set the path of the GDB binary to use to debug the inferior"
 msgstr "デバッグで使用する別の GDB コマンドのパス名を指定する"
 
-#: ../src/main.cc:177
+#: ../src/main.cc:178
 msgid "Show the version number of nemiver"
 msgstr "nemiver のバージョンを表示する"
 
-#: ../src/main.cc:243
+#: ../src/main.cc:244
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<デバッグするプログラム名> [引数]]"
 
-#: ../src/main.cc:246 ../src/workbench/nmv-workbench.cc:263
+#: ../src/main.cc:247 ../src/workbench/nmv-workbench.cc:263
 msgid "A C/C++ debugger for GNOME"
-msgstr "GNOME 向けの C/C++ デバッガです。"
+msgstr "GNOME 向けの C/C++ デバッガーです。"
 
-#: ../src/main.cc:340
+#: ../src/main.cc:341
 msgid ""
 "Please provide a local copy of the binary you intend to debug remotely.\n"
 "Like this:\n"
@@ -107,14 +107,14 @@ msgstr ""
 "さい\n"
 "(例):\n"
 
-#: ../src/main.cc:345
+#: ../src/main.cc:346
 msgid "Otherwise, find below the full set of nemiver options.\n"
 msgstr "もしくは、以下の用法を参照してオプション一式を指定して下さい\n"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:100
-#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:96
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
 msgid "ID"
 msgstr "ID"
 
@@ -254,179 +254,179 @@ msgstr "レジスタ"
 msgid "Memory"
 msgstr "メモリ"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1665
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1666
 msgid "Reached end of file"
 msgstr "ファイルの終端に到達しました"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1668
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1669
 #, c-format
 msgid "Could not find string %s"
 msgstr "文字列 %s が見つかりませんでした"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2108
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2109
 msgid "Change to standard Breakpoint"
 msgstr "標準のブレークポイントに戻す"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2112
 msgid "Change to Countpoint"
 msgstr "カウントポイントにする"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2113
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
 msgid "Remove _Breakpoint"
 msgstr "ブレークポイントの削除(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
 msgid "Disable Breakpoint"
 msgstr "ブレークポイントを無効にする"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2118
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2119
 msgid "Enable Breakpoint"
 msgstr "ブレークポイントを有効にする"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2121
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2122
 msgid "Set _Breakpoint"
 msgstr "ブレークポイントのセット(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2123
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2124
 msgid "Set Countpoint"
 msgstr "カウントポイントの指定"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2286
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2287
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (パス=\"%s\", PID=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2300
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2301
 msgid "Connected to remote target !"
 msgstr "リモートのターゲットに接続しました！"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2444
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2445
 msgid "Program exited"
 msgstr "プログラムが正常終了しました"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2478
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2479
 msgid "The underlying debugger engine process died."
-msgstr "低レベルにあるデバッガ・エンジンが強制終了しました"
+msgstr "低レベルにあるデバッガー・エンジンが強制終了しました"
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2566
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2567
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "ターゲットがシグナル %s を受信しました: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2581
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2582
 #, c-format
 msgid "An error occured: %s"
 msgstr "エラーが発生しました: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2749
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2750
 #, c-format
 msgid "File %s has been modified. Do want to reload it ?"
 msgstr "%s というファイルは変更されていますが、もう一度読み直しますか？"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3013
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3014
 msgid "_Save Session to Disk"
 msgstr "セッションの保存(_S)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3014
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3015
 msgid "Save the current debugging session to disk"
 msgstr "デバッグ中のセッションをディスクに保存します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3023
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3024
 msgid "_Detach From the Running Program"
 msgstr "実行中のプログラムからのデタッチ(_D)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3024
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3025
 msgid "Disconnect the debugger from the running target without killing it"
-msgstr "強制終了することなく、実行中のターゲットからデバッガを取り外します"
+msgstr "強制終了することなく、実行中のターゲットからデバッガーを取り外します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3038
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3039
 msgid "_Restart"
 msgstr "再起動(_R)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3039
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3040
 msgid "Restart the target, killing this process and starting a new one"
 msgstr ""
 "ターゲットを再起動します (このプロセスを強制終了して新しいプロセスを起動しま"
 "す)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3052
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3053
 msgid "_Next"
 msgstr "次へ(_N)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3053
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3054
 msgid "Execute next line stepping over the next function, if any"
 msgstr "次の行にある命令を実行して停止します (関数の中には入りません)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3062
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3063
 msgid "_Step"
 msgstr "ステップ・イン(_S)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3063
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3064
 msgid "Execute next line, stepping into the next function, if any"
 msgstr "次の行にある命令を実行して停止します (関数の中に入ります)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3072
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3073
 msgid "Step _Out"
 msgstr "ステップ・アウト(_O)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3073
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3074
 msgid "Finish the execution of the current function"
 msgstr "現在の関数を最後まで実行して呼び出し元に戻り停止します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3082
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3083
 msgid "Step Into asm"
 msgstr "ステップ・イン(機械語)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3083
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3084
 msgid "Step into the next assembly instruction"
 msgstr "次の行にある機械語の命令を実行して停止します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3092
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3093
 msgid "Step Over asm"
 msgstr "ステップ・オーバー(機械語)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3093
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3094
 msgid "Step over the next assembly instruction"
 msgstr "次の行にある機械語の命令を実行して停止します (関数の中に入りません)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3102
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3103
 msgid "_Continue"
 msgstr "続行(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3103
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3104
 msgid "Continue program execution until the next breakpoint"
 msgstr "次のブレークポイントまでプログラムを実行し続けます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3112
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3113
 msgid "Run to Cursor"
 msgstr "カーソル位置まで実行する"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3113
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3114
 msgid "Continue program execution until the currently selected line is reached"
 msgstr "現在選択している行までプログラムを実行し続けます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3123
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3124
 msgid "Jump to cursor"
 msgstr "カーソル位置へジャンプ"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3124
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3125
 msgid "Jump to  the currently selected line"
 msgstr "現在選択している行にジャンプします"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3134
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3135
 msgid "Jump and stop to cursor"
 msgstr "カーソル位置へジャンプして停止"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3135
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3136
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr "現在選択している行にブレークポイントをセットしてそこへジャンプします"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3147
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3148
 msgid "Jump to a given location"
 msgstr "ジャンプ先を指定する"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3148
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3149
 msgid "Select a given code location and jump there"
 msgstr "コードや場所を指定してそこにジャンプします"
 
@@ -437,11 +437,11 @@ msgstr "コードや場所を指定してそこにジャンプします"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3166
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3167
 msgid "Toggle _Breakpoint"
 msgstr "ブレークポイントの ON/OFF(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3167
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3168
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "現在のカーソル位置でブレークポイントの ON/OFF を切り換えます"
 
@@ -452,11 +452,11 @@ msgstr "現在のカーソル位置でブレークポイントの ON/OFF を切�
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3184
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3185
 msgid "Enable/Disable Breakpoint"
 msgstr "ブレークポイントの ON/OFF"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3185
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3186
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr "現在のカーソル位置でブレークポイントの ON/OFF を切り換えます"
@@ -469,257 +469,257 @@ msgstr "現在のカーソル位置でブレークポイントの ON/OFF を切�
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3205
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3206
 msgid "Toggle _Countpoint"
 msgstr "カウントポイントの切替え(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3206
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3207
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "現在のカーソル位置でカウントポイントの指定/解除を切り替える"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3216
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3217
 msgid "Set Breakpoint..."
 msgstr "ブレークポイントのセット..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3217
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3218
 msgid "Set a breakpoint at a function or line number"
 msgstr "関数や行番号でブレークポイントを指定します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3226
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3227
 msgid "Set Breakpoint with dialog..."
 msgstr "ダイアログからブレークポイントをセットする..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3227
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3228
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr ""
 "ダイアログを使って現在のカーソル位置でブレークポイントの ON/OFF を切り換えま"
 "す"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3238
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3239
 msgid "Set Watchpoint with dialog..."
 msgstr "ダイアログからウォッチポイントをセットする..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3239
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
 msgid "Set a watchpoint using a dialog"
 msgstr "ダイアログを使ってウォッチポイントをセットします"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3250
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
 #: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:1
 msgid "Inspect a Variable"
 msgstr "変数の調査"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
 msgid "Inspect a global or local variable"
 msgstr "大局変数/局所変数を調査します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3261
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
 msgid "Call a function"
 msgstr "関数の呼び出し"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
 msgid "Call a function in the program being debugged"
 msgstr "プログラムでデバッグ済の関数を呼び出します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3271
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3272
 msgid "Show Global Variables"
 msgstr "グローバル変数の表示"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3272
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
 msgid "Display all global variables"
 msgstr "全てのグローバル変数を表示します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3282
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3283
 msgid "Refresh locals"
 msgstr "ローカル変数のリフレッシュ"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3283
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3284
 msgid "Refresh the list of variables local to the current function"
 msgstr "現在の関数で使用しているローカル変数の一覧を更新します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3292
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3293
 msgid "Show assembly"
 msgstr "機械語の表示"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3293
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3294
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
 msgstr "現在デバッグしているソース・コードに対する機械語を別のタブに表示します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3305
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
 msgid "Switch to assembly"
 msgstr "機械語に切り替える"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3307
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr "現在デバッグ中のソース・コードに対応する機械語を表示します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3318
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
 msgid "Switch to source"
 msgstr "ソースに切り替える"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
 msgid "Show the source code being currently debugged"
 msgstr "現在デバッグ中のソース・コードを表示します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3331
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3332
 msgid "Stop"
 msgstr "停止"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3332
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3333
 msgid "Stop the Debugger"
 msgstr "デバッグを停止します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3344
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3345
 msgid "_View"
 msgstr "表示(_V)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3355
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3356
 msgid "Switch to Target Terminal View"
 msgstr "ターゲットの出力表示に切り替えます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
 msgid "Switch to Context View"
 msgstr "コンテキスト表示に切り替えます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3377
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3378
 msgid "Switch to Breakpoints View"
 msgstr "ブレークポイント表示に切り替えます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3389
 msgid "Switch to Registers View"
 msgstr "レジスタ表示に切り替えます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3400
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
 msgid "Switch to Memory View"
 msgstr "メモリ表示に切り替えます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3410
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3411
 msgid "_Debug"
 msgstr "デバッグ(_D)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3420
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3421
 msgid "_Open Source File ..."
 msgstr "ソース・ファイルを開く(_O)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3421
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3422
 msgid "Open a source file for viewing"
 msgstr "表示用にソース・ファイルを開きます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3430
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3431
 msgid "Load _Executable..."
 msgstr "実行形式の読み込み(_E)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3431
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3432
 msgid "Execute a program"
 msgstr "プログラムを実行します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3441
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3442
 msgid "_Load Core File..."
 msgstr "コア・ファイルの読み込み(_L)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3442
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3443
 msgid "Load a core file from disk"
 msgstr "ディスク上のコア・ファイルを読み込みます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3452
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3453
 msgid "_Attach to Running Program..."
 msgstr "実行中のプログラムへのアタッチ(_A)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3453
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3454
 msgid "Debug a program that's already running"
 msgstr "既に実行しているプログラムをデバッグします"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3463
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3464
 msgid "_Connect to Remote Target..."
 msgstr "リモート・ターゲットへの接続(_C)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3464
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3465
 msgid "Connect to a debugging server to debug a remote target"
 msgstr ""
-"リモートにあるターゲットをデバッグするためにデバッグ用サーバへ接続します"
+"リモートにあるターゲットをデバッグするためにデバッグ用サーバーへ接続します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3475
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
 msgid "Resume Sa_ved Session..."
 msgstr "保存したセッションへ復帰する(_V)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3477
 msgid "Open a previously saved debugging session"
 msgstr "今まで保存したデバッグ・セッションに復帰します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3486
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3487
 msgid "_Preferences"
 msgstr "設定(_P)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3487
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
 msgid "Edit the properties of the current session"
 msgstr "現在のセッションに適用するプロパティを編集します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3501
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3502
 msgid "_Reload Source File"
 msgstr "ソースの再読込み(_R)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3502
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3503
 msgid "Reloads the source file"
 msgstr "もう一度ソース・ファイルを読み直します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3511
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3512
 msgid "_Close Source File"
 msgstr "ソース・ファイルを閉じる(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3512
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3513
 msgid "Close the opened file"
 msgstr "ファイルを閉じます"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
 msgid "_Find"
 msgstr "検索(_F)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3523
 msgid "Find a text string in file"
 msgstr "ファイルの中から文字列を検索します"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3873
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3874
 #, c-format
 msgid "Close %s"
 msgstr "%s を閉じます"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5810
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5820
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "リモートの inferior を再起動することはできません"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5928
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5938
 #, c-format
 msgid "Could not find file %s"
 msgstr "ファイルが見つかりませんでした: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5992
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6134
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6169
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6002
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6179
 #, c-format
 msgid "Could not load program: %s"
 msgstr "プログラムを読み込めませんでした: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6071
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6081
 msgid "You cannot attach to Nemiver itself"
 msgstr "Namiver 自身にアタッチすることはできません"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6076
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6086
 msgid "You cannot attach to the underlying debugger engine"
-msgstr "低レベルにあるデバッガ・エンジンにアタッチすることはできません"
+msgstr "低レベルにあるデバッガー・エンジンにアタッチすることはできません"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6356
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6366
 msgid "Failed to stop the debugger"
-msgstr "デバッガを停止できませんでした"
+msgstr "デバッガーを停止できませんでした"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6595
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6605
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "行番号が間違っています: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8173
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8185
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -762,7 +762,7 @@ msgstr "ワイド"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
 msgid "A layout for very large monitors"
-msgstr "大きなモニタ向けのレイアウトです"
+msgstr "大きなモニター向けのレイアウトです"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:128
 msgid "Expand _Selected"
@@ -781,8 +781,8 @@ msgid "Loading Files from target executable..."
 msgstr "ターゲットとなる実行形式からファイルの読み込み中..."
 
 #: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:302
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:528
-#: ../src/persp/dbgperspective/nmv-var-inspector.cc:240
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:546
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:225
 #, c-format
 msgid ""
 "Variable type is: \n"
@@ -799,31 +799,31 @@ msgstr "ローカル変数"
 msgid "Function Arguments"
 msgstr "関数の引数"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:238
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:256
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:127
 msgid "_Copy variable name"
 msgstr "変数名のコピー(_C)"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:239
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:128
 msgid "Copy the variable path expression to the clipboard"
 msgstr "変数の評価式をクリップボードにコピーします"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:250
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:268
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:139
 msgid "_Copy variable value"
 msgstr "変数の値のコピー(_C)"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:251
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:140
 msgid "Copy the variable value to the clipboard"
 msgstr "変数の値をクリップボードにコピーします"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:262
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:280
 msgid "Create watchpoint"
 msgstr "ウォッチポイントの生成"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:263
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
 msgstr "評価する式の値が変化した時に実行を停止するウォッチポイントを生成します"
@@ -856,15 +856,15 @@ msgstr "表示単位:"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:149
 msgid "Choose directory"
-msgstr "フォルダの選択"
+msgstr "フォルダーの選択"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
 msgid "Source directories"
-msgstr "ソース・フォルダ"
+msgstr "ソース・フォルダー"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
 msgid "User Name"
-msgstr "ユーザ名"
+msgstr "ユーザー名"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
 msgid "Proc Args"
@@ -881,7 +881,7 @@ msgstr "名前"
 msgid "Value"
 msgstr "値"
 
-#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:97
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
 msgid "Session"
 msgstr "セッション"
 
@@ -1020,7 +1020,7 @@ msgstr "<b>逆アセンブルの表示</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
 msgid "<b>Editor Font</b>"
-msgstr "<b>エディタのフォント</b>"
+msgstr "<b>エディターのフォント</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "<b>File Monitoring</b>"
@@ -1056,7 +1056,7 @@ msgstr "<b>端末</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
 msgid "<b>Visual Style</b>"
-msgstr "<b>エディタのスタイル</b>"
+msgstr "<b>エディターのスタイル</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
 msgid "Ask each time"
@@ -1072,7 +1072,7 @@ msgstr "独自のフォント:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
 msgid "Debugger"
-msgstr "デバッガ"
+msgstr "デバッガー"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
 msgid "Display line numbers"
@@ -1084,11 +1084,11 @@ msgstr "ファイルを読み直さない"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
 msgid "Editor"
-msgstr "エディタ"
+msgstr "エディター"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
 msgid "Enable pretty printing (requires debugger restart)"
-msgstr "Pretty Print 機能を有効にする (要デバッガの再起動)"
+msgstr "Pretty Print 機能を有効にする (要デバッガーの再起動)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Enable syntax highlighting"
@@ -1132,7 +1132,7 @@ msgstr "ファイルを読み直す"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "Source Directories"
-msgstr "ソースのフォルダ"
+msgstr "ソースのフォルダー"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
 msgid "Use launch terminal"
@@ -1156,7 +1156,7 @@ msgstr "実行中のプログラムへのアタッチ"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
-msgstr "フィルタ(_F):"
+msgstr "フィルター(_F):"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
 msgid "<b>Executable to Load</b>"
@@ -1164,7 +1164,7 @@ msgstr "<b>対象となる実行形式</b>"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
 msgid "<b>Remote Debugging Server</b>"
-msgstr "<b>リモート・デバッグ用のサーバ</b>"
+msgstr "<b>リモート・デバッグ用のサーバー</b>"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
 msgid "<b>Shared Libraries Location</b>"
@@ -1176,7 +1176,7 @@ msgstr "アドレス :"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
-msgstr "フォルダの選択"
+msgstr "フォルダーの選択"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
 msgid "Choose a File"
@@ -1212,7 +1212,7 @@ msgstr "<b>プログラム:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
 msgid "<b>Working Directory:</b>"
-msgstr "<b>作業フォルダ:</b>"
+msgstr "<b>作業フォルダー:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
 msgid "Choose a Program to Execute"
@@ -1220,7 +1220,7 @@ msgstr "実行するプログラムの選択"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "Choose a working directory"
-msgstr "作業フォルダの選択"
+msgstr "作業フォルダーの選択"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
 msgid "Choose an executable"
@@ -1393,7 +1393,7 @@ msgstr "終了(_Q)"
 
 #: ../src/workbench/nmv-workbench.cc:685
 msgid "Quit the application"
-msgstr "デバッガを終了します"
+msgstr "デバッガーを終了します"
 
 #: ../src/workbench/nmv-workbench.cc:695
 msgid "_Edit"
@@ -1417,7 +1417,7 @@ msgstr "目次(_C)"
 
 #: ../src/workbench/nmv-workbench.cc:729
 msgid "Display the user manual for this application"
-msgstr "このアプリのユーザ・マニュアルを表示します"
+msgstr "このアプリのユーザー・マニュアルを表示します"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
