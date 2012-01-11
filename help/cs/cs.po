@@ -449,7 +449,7 @@ msgstr "Načítání obrazu paměti"
 
 #: C/nemiver.xml:426(para)
 msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load Core File... </guimenuitem></menuchoice> to bring up the following dialog, which will let you load a core file:"
-msgstr "Zvolte položku nabídky <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Načíst soubor s obrazem paměti…</guimenuitem></menuchoice a tím se zobrazí dialogové okno, které vám umožní soubor s obrazem paměti načíst:"
+msgstr "Zvolte položku nabídky <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Načíst soubor s obrazem paměti…</guimenuitem></menuchoice> a tím se zobrazí dialogové okno, které vám umožní soubor s obrazem paměti načíst:"
 
 #: C/nemiver.xml:436(title)
 msgid "Load Core File Dialog"
