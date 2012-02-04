@@ -172,7 +172,6 @@ class VarInspector::Priv : public sigc::trackable {
         Gtk::TreeModel::iterator var_row;
         vutil::append_a_variable (a_variable,
                                   *tree_view,
-                                  tree_store,
                                   parent_iter,
                                   var_row,
                                   true /* Do truncate type */);
@@ -510,7 +509,6 @@ class VarInspector::Priv : public sigc::trackable {
 
         Gtk::TreeModel::iterator var_it = tree_store->get_iter (a_var_node);
         vutil::update_unfolded_variable (a_var, *tree_view,
-                                         tree_store,
                                          var_it,
                                          true /* Do truncate type */);
         tree_view->expand_row (a_var_node, false);

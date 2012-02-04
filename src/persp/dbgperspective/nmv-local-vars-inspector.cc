@@ -379,7 +379,6 @@ public:
         if (get_local_variables_row_iterator (parent_row_it)) {
             vutil::append_a_variable (a_var,
                                       *tree_view,
-                                      tree_store,
                                       parent_row_it,
                                       false /* do not truncate types */);
             tree_view->expand_row (tree_store->get_path (parent_row_it), false);
@@ -399,7 +398,6 @@ public:
             LOG_DD ("appending argument: " << a_var->name ());
             vutil::append_a_variable (a_var,
                                       *tree_view,
-                                      tree_store,
                                       parent_row_it,
                                       false /* do not truncate type */);
             tree_view->expand_row (tree_store->get_path (parent_row_it), false);
@@ -936,7 +934,6 @@ public:
         Gtk::TreeModel::iterator var_it = tree_store->get_iter (a_var_node);
         vutil::update_unfolded_variable (a_var,
                                          *tree_view,
-                                         tree_store,
                                          var_it,
                                          false /* do not truncate type */);
         tree_view->expand_row (a_var_node, false);
