@@ -145,7 +145,7 @@ on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var,
     for (VarIter it = a_var->members ().begin ();
          it != a_var->members ().end ();
          ++it) {
-        if ((*it)->has_expected_children ()) {
+        if ((*it)->expects_children ()) {
             unfold_requests++;
             a_debugger->unfold_variable (*it,
                                          sigc::bind (&on_variable_unfolded_signal,

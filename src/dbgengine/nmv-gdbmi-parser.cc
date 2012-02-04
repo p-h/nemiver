@@ -4323,6 +4323,12 @@ GDBMIParser::parse_variable (UString::size_type a_from,
             LOG_D ("num children: " << s, GDBMI_PARSING_DOMAIN);
         } else if (result->variable () == "type") {
             var->type (value);
+        } else if (result->variable () == "displayint") {
+            var->display_hint (value);
+        } else if (result->variable () == "dynamic") {
+            var->is_dynamic ((value == "0" ) ? false: true);
+        } else if (result->variable () == "has_more") {
+            var->has_more_children ((value == "0") ? false : true);
         } else {
             LOG_D ("hugh? unknown result variable: " << result->variable (),
                    GDBMI_PARSING_DOMAIN);

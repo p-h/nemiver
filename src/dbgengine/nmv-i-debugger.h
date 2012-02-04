@@ -402,6 +402,7 @@ public:
         // disabled the variable would be displayed using no pretty
         // printer.
         UString m_visualizer;
+        UString m_display_hint;
         Variable *m_parent;
         //if this variable is a pointer,
         //it can be dereferenced. The variable
@@ -416,6 +417,8 @@ public:
         bool m_in_scope;
         Format m_format;
         bool m_needs_revisualizing;
+        bool m_is_dynamic;
+        bool m_has_more_children;
 
     public:
         Variable (const UString &a_internal_name,
@@ -433,7 +436,9 @@ public:
             m_num_expected_children (0),
             m_in_scope (a_in_scope),
             m_format (UNDEFINED_FORMAT),
-            m_needs_revisualizing (false)
+            m_needs_revisualizing (false),
+            m_is_dynamic (false),
+            m_has_more_children (false)
         {
         }
 
@@ -450,7 +455,9 @@ public:
             m_num_expected_children (0),
             m_in_scope (a_in_scope),
             m_format (UNDEFINED_FORMAT),
-            m_needs_revisualizing (false)
+            m_needs_revisualizing (false),
+            m_is_dynamic (false),
+            m_has_more_children (false)
 
         {
         }
@@ -463,7 +470,10 @@ public:
             m_num_expected_children (0),
             m_in_scope (true),
             m_format (UNDEFINED_FORMAT),
-            m_needs_revisualizing (false)
+            m_needs_revisualizing (false),
+            m_is_dynamic (false),
+            m_has_more_children (false)
+
         {
         }
 
@@ -473,7 +483,9 @@ public:
             m_num_expected_children (0),
             m_in_scope (true),
             m_format (UNDEFINED_FORMAT),
-            m_needs_revisualizing (false)
+            m_needs_revisualizing (false),
+                    m_is_dynamic (false),
+            m_has_more_children (false)
         {
         }
 
@@ -606,6 +618,9 @@ public:
 
         const UString& visualizer () const {return m_visualizer;}
         void visualizer (const UString &a) {m_visualizer = a;}
+
+        const UString& display_hint () const {return m_display_hint;};
+        void display_hint (const UString &a) {m_display_hint = a;}
 
         /// Return true if this instance of Variable has a parent variable,
         /// false otherwise.
@@ -796,16 +811,17 @@ public:
             m_num_expected_children = a_in;
         }
 
-        bool has_expected_children () const
+        bool expects_children () const
         {
-            return m_num_expected_children != 0;
+            return ((m_num_expected_children != 0)
+                    || (has_more_children ()));
         }
 
         /// \return true if the current variable needs to be unfolded
         /// by a call to IDebugger::unfold_variable()
         bool needs_unfolding () const
         {
-            return (has_expected_children () && members ().empty ());
+            return (expects_children () && members ().empty ());
         }
 
         /// Return the descendant of the current instance of Variable.
@@ -850,6 +866,12 @@ public:
 
         bool needs_revisualizing () const {return m_needs_revisualizing;}
         void needs_revisualizing (bool a) {m_needs_revisualizing = a;}
+
+        bool is_dynamic () const {return m_is_dynamic;}
+        void is_dynamic (bool a) {m_is_dynamic = a;}
+
+        bool has_more_children () const {return m_has_more_children;}
+        void has_more_children (bool a) {m_has_more_children = a;}
 
     };//end class Variable
 
