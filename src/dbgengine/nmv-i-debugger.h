@@ -372,9 +372,6 @@ public:
         Variable (const Variable &);
         Variable& operator= (const Variable &);
 
-        bool operator == (Variable &a_other) const;
-        bool operator == (Variable &a_other);
-
         VariableList m_members;
         // If this variable was created with a backend counterpart
         // (e.g: backend side variable objects in GDB), then this
@@ -546,6 +543,23 @@ public:
                     return i;
             }
             THROW ("fatal: should not be reached");
+        }
+
+        bool operator == (const Variable &a_other) const
+        {
+            return equals (a_other);
+        }
+
+        // Tests if this variable equals another one, by first
+        // considering the variables' internal names, if they have
+        // any.  Otherwise, tests if they are equal by value, i.e,
+        // compare them memberwise.
+        bool equals (const Variable &a_other) const
+        {
+            if (!internal_name ().empty ()
+                && !a_other.internal_name ().empty ())
+                return internal_name () == a_other.internal_name ();
+            return equals_by_value (a_other);
         }
 
         /// Tests value equality between two variables.
