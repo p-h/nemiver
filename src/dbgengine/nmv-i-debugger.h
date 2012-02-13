@@ -564,7 +564,7 @@ public:
 
         /// Tests value equality between two variables.
         /// Two variables are considered equal by value if their
-        /// respective memebers have the same values and same type.
+        /// respective members have the same values and same type.
         /// \param a_other the other variable to test against
         /// \return true if a_other equals the current instance
         ///         by value.
