@@ -4650,6 +4650,11 @@ DBGPerspective::read_default_config ()
                             m_priv->use_launch_terminal);
     conf_mgr.get_key_value (CONF_KEY_DEFAULT_NUM_ASM_INSTRS,
                             m_priv->num_instr_to_disassemble);
+    // m_priv->num_instr_to_disassemble should never be 0.  If it is,
+    // then something is wrong with the local configuration manager
+    // setup.
+    if (m_priv->num_instr_to_disassemble == 0)
+        m_priv->num_instr_to_disassemble = NUM_INSTR_TO_DISASSEMBLE;
     conf_mgr.get_key_value (CONF_KEY_ASM_STYLE_PURE,
                             m_priv->asm_style_pure);
     conf_mgr.get_key_value (CONF_KEY_PRETTY_PRINTING,
