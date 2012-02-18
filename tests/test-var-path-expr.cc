@@ -73,8 +73,8 @@ static void
 on_variable_expr_path (const IDebugger::VariableSafePtr a_var)
 {
     MESSAGE ("var expr path: " << a_var->path_expression ());
-    BOOST_REQUIRE (a_var->path_expression ()
-                   == "((((person).m_first_name)).npos)");
+    BOOST_REQUIRE (a_var->path_expression ().find (".m_first_name")
+                   != UString::npos);
 
     // This should help delete all the variables (and their
     // backend-side variable objects) created during this test, along
