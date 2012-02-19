@@ -90,7 +90,8 @@ $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestcore_SOURCES=$(h)/test-core.cc
 runtestcore_LDADD=@NEMIVERCOMMON_LIBS@ \
-$(top_builddir)/src/common/libnemivercommon.la
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runteststdout_SOURCES=$(h)/test-stdout.cc
 runteststdout_LDADD=@NEMIVERCOMMON_LIBS@ \
