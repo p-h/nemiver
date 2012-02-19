@@ -6333,6 +6333,7 @@ DBGPerspective::run ()
 void
 DBGPerspective::load_core_file ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
     LoadCoreDialog dialog (plugin_path ());
 
     int result = dialog.run ();
@@ -6353,6 +6354,8 @@ void
 DBGPerspective::load_core_file (const UString &a_prog_path,
                                 const UString &a_core_file_path)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     THROW_IF_FAIL (m_priv);
 
     if (a_prog_path != m_priv->prog_path && get_num_notebook_pages ()) {
@@ -6360,7 +6363,7 @@ DBGPerspective::load_core_file (const UString &a_prog_path,
     }
 
     debugger ()->load_core_file (a_prog_path, a_core_file_path);
-    debugger ()->list_frames ();
+    get_call_stack ().update_stack (/*select_top_most=*/true);
 }
 
 void

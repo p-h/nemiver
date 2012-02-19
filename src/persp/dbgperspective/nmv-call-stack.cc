@@ -223,6 +223,22 @@ struct CallStack::Priv {
         return callstack_menu;
     }
 
+    /// Set the frame at a_index as the current frame.  This makes the
+    /// whole perspective to udpate accordingly.
+    void
+    set_current_frame (unsigned a_index)
+    {
+        THROW_IF_FAIL (a_index < frames.size ());
+        cur_frame = frames[a_index];
+        THROW_IF_FAIL (cur_frame.level () >= 0);
+        in_set_cur_frame_trans = true;
+
+        LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'");
+        LOG_DD ("frame level: '" << (int) cur_frame.level () << "'");
+
+        debugger->select_frame (a_index);
+    }
+
     /// If the selected frame is the "expand to see more frames" raw,
     /// ask the debugger engine for more frames.
     /// Otherwise, just set the "current frame" variable.
@@ -245,15 +261,7 @@ struct CallStack::Priv {
             return;
         }
 
-        cur_frame_index = (*a_row_iter)[columns ().frame_index];
-        THROW_IF_FAIL (cur_frame_index < frames.size ());
-        cur_frame = frames[cur_frame_index];
-        THROW_IF_FAIL (cur_frame.level () >= 0);
-        in_set_cur_frame_trans = true;
-
-        LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'");
-        LOG_DD ("frame level: '" << (int) cur_frame.level () << "'");
-        debugger->select_frame (cur_frame_index);
+        set_current_frame ((*a_row_iter)[columns ().frame_index]);
     }
 
     void 
@@ -261,7 +269,8 @@ struct CallStack::Priv {
     {
         THROW_IF_FAIL (debugger);
         debugger->list_frames (frame_low, frame_high,
-			       sigc::mem_fun (*this, &Priv::on_frames_listed),
+			       sigc::bind (sigc::mem_fun (*this, &Priv::on_frames_listed),
+                                           /*a_select_top_most*/false),
 			       "");
     }
 
@@ -342,7 +351,8 @@ struct CallStack::Priv {
     }
 
     void
-    on_frames_listed (const vector<IDebugger::Frame> &a_stack)
+    on_frames_listed (const vector<IDebugger::Frame> &a_stack,
+                      bool a_select_top_most = false)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -364,6 +374,9 @@ struct CallStack::Priv {
                                          sigc::mem_fun
                                          (*this, &Priv::on_frames_args_listed),
                                          "");
+
+        if (a_select_top_most)
+            set_current_frame (0);
 
         NEMIVER_CATCH;
     }
@@ -840,11 +853,14 @@ struct CallStack::Priv {
 
     }
 
-    void update_call_stack ()
+    void
+    update_call_stack (bool a_select_top_most = false)
     {
         THROW_IF_FAIL (debugger);
         debugger->list_frames (0, frame_high,
-                               sigc::mem_fun (*this, &Priv::on_frames_listed),
+                               sigc::bind (sigc::mem_fun
+                                           (*this, &Priv::on_frames_listed),
+                                           a_select_top_most),
                                "");
     }
 };//end struct CallStack::Priv
@@ -895,13 +911,16 @@ CallStack::widget () const
     return *m_priv->get_widget ();
 }
 
+/// Query the debugging engine for the call stack and display it.  If
+/// a_select_top_most is true, select the topmost frame of the stack
+/// and emit the CallStack::frame_selected_signal accordingly.
 void
-CallStack::update_stack ()
+CallStack::update_stack (bool a_select_top_most)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     THROW_IF_FAIL (m_priv);
 
-    m_priv->update_call_stack ();
+    m_priv->update_call_stack (a_select_top_most);
 }
 
 void

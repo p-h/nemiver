@@ -62,7 +62,7 @@ public:
     bool is_empty ();
     const vector<IDebugger::Frame>& frames () const;
     IDebugger::Frame& current_frame () const;
-    void update_stack ();
+    void update_stack (bool select_top_most = false);
     void clear ();
     Gtk::Widget& widget () const;
     sigc::signal<void,
