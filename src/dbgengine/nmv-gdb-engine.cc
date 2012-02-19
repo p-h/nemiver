@@ -835,11 +835,14 @@ public:
     bool launch_gdb_on_core_file (const UString &a_prog_path,
                                   const UString &a_core_path)
     {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
         vector<UString> argv;
 
         // if the executable program to be debugged is a libtool wrapper script,
         // run the debugging session under libtool
         if (is_libtool_executable_wrapper (a_prog_path)) {
+            LOG_DD (a_prog_path << " is a libtool wrapper.  ");
             argv.push_back ("libtool");
             argv.push_back ("--mode=execute");
         }
@@ -3155,6 +3158,7 @@ GDBEngine::load_core_file (const UString &a_prog_path,
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     if (m_priv->is_gdb_running ()) {
+        LOG_DD ("GDB is already running, going to kill it");
         m_priv->kill_gdb ();
     }
     THROW_IF_FAIL (m_priv->launch_gdb_on_core_file (a_prog_path,
