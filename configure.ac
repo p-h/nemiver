@@ -87,7 +87,11 @@ LT_INIT
 AC_LANG([C++])
 AC_LANG_COMPILER_REQUIRE
 
-AC_PATH_PROG(GDB_PROG,gdb)
+AC_ARG_WITH(default-gdb, AC_HELP_STRING([--with-default-gdb=filename], [Path to the default GDB binary]), GDB_PROG=${withval})
+
+if test x$GDB_PROG = x ; then
+    AC_PATH_PROG(GDB_PROG,gdb)
+fi
 
 if test x$GDB_PROG = x ; then
     AC_MSG_ERROR([didn't find the gdb debugger. please, install it.])
