@@ -64,6 +64,7 @@ static bool gv_use_launch_terminal = false;
 static gchar *gv_remote = 0;
 static gchar *gv_solib_prefix = 0;
 static gchar *gv_gdb_binary_filepath = 0;
+static gchar *gv_core_path = 0;
 
 static GOptionEntry entries[] =
 {
@@ -84,6 +85,15 @@ static GOptionEntry entries[] =
         &gv_process_to_attach_to,
         _("Attach to a process"),
         "<pid|process name>"
+    },
+    {
+        "load-core",
+        0,
+        0,
+        G_OPTION_ARG_STRING,
+        &gv_core_path,
+        _("Load a core file"),
+        "</path/to/core/file>"
     },
     { "list-sessions",
       0,
@@ -284,9 +294,9 @@ parse_command_line (int& a_argc,
         return true;
     }
 
-    // Split the command like in two parts. One part is made of the options
-    // for Nemiver itself, and the other part is the options relevant to
-    // the inferior.
+    // Split the command line in two parts. One part is made of the
+    // options for Nemiver itself, and the other part is the options
+    // relevant to the inferior.
     int i;
     std::vector<UString> args;
     for (i = 1; i < a_argc; ++i)
@@ -351,6 +361,25 @@ parse_command_line (int& a_argc,
             return false;
         }
     }
+
+    // If the user wants to analyse a core dump, make sure she
+    // provides us with a path to the binary that generated the core
+    // dump too.
+    if (gv_core_path) {
+        if (a_argc < 1 || a_argv[0][0] == '-') {
+            cerr << _("Please provide the path to the binary "
+                      "that generated the core file too.\n"
+                      "Like this:\n")
+                 << "nemiver --load-core=\""
+                 << gv_core_path << "\" </path/to/binary>\n\n";
+            cerr << _("Otherwise, find below the full set of nemiver options.\n");
+            GCharSafePtr help_message;
+            help_message.reset (g_option_context_get_help (context.get (),
+                                                           true, 0));
+            cerr << help_message.get () << std::endl;
+            return false;
+        }
+    }
     return true;
 }
 
@@ -380,15 +409,21 @@ process_non_gui_options ()
     return true;
 }
 
+/// Load the debugger perspective.
+static IDBGPerspective*
+load_debugger_perspective ()
+{
+    return dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
+                                           (DBGPERSPECTIVE_PLUGIN_NAME));
+}
+
 /// Return true if Nemiver should keep going after the GUI option(s)
 /// have been processed.
 static bool
 process_gui_options (int& a_argc, char** a_argv)
 {
     if (gv_purge_sessions) {
-        IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME));
+        IDBGPerspective *debug_persp = load_debugger_perspective ();
         if (debug_persp) {
             debug_persp->session_manager ().delete_sessions ();
         }
@@ -398,10 +433,7 @@ process_gui_options (int& a_argc, char** a_argv)
     if (gv_process_to_attach_to) {
         using nemiver::common::IProcMgrSafePtr;
         using nemiver::common::IProcMgr;
-
-        IDBGPerspective *debug_persp =
-                dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME));
+        IDBGPerspective *debug_persp = load_debugger_perspective ();
         if (!debug_persp) {
             cerr << "Could not get the debugging perspective" << endl;
             return false;
@@ -436,10 +468,8 @@ process_gui_options (int& a_argc, char** a_argv)
         }
     }
 
-    if (gv_list_sessions) {
-        IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME));
+    if (gv_list_sessions) {        
+        IDBGPerspective *debug_persp = load_debugger_perspective ();
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions ();
             list<ISessMgr::Session>::iterator session_iter;
@@ -461,9 +491,7 @@ process_gui_options (int& a_argc, char** a_argv)
     }
 
     if (gv_execute_session) {
-        IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME));
+        IDBGPerspective *debug_persp = load_debugger_perspective ();
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions ();
             list<ISessMgr::Session>::iterator session_iter;
@@ -488,14 +516,15 @@ process_gui_options (int& a_argc, char** a_argv)
                 return false;
             }
             return true;
+        } else {
+            cerr << "Could not find the debugger perpective plugin";
+            return false;
         }
     }
 
     //execute the last session if one exists
     if (gv_last_session) {
-        IDBGPerspective *debug_persp =
-            dynamic_cast<IDBGPerspective*> (s_workbench->get_perspective
-                                                (DBGPERSPECTIVE_PLUGIN_NAME));
+        IDBGPerspective *debug_persp = load_debugger_perspective ();
         if (debug_persp) {
             debug_persp->session_manager ().load_sessions ();
             list<ISessMgr::Session>& sessions =
@@ -525,7 +554,23 @@ process_gui_options (int& a_argc, char** a_argv)
                 return false;
             }
             return true;
+        } else {
+            cerr << "Could not find the debugger perpective plugin";
+            return false;
         }
+    }
+
+    // Load and analyse a core file
+    if (gv_core_path) {
+        IDBGPerspective *debug_persp = load_debugger_perspective ();
+        if (debug_persp == 0) {
+            cerr << "Could not find the debugger perpective plugin";
+            return false;
+        }
+        UString prog_path = a_argv[0];
+        THROW_IF_FAIL (!prog_path.empty ());
+        debug_persp->load_core_file (prog_path, gv_core_path);
+        return true;
     }
 
     vector<UString> prog_args;
