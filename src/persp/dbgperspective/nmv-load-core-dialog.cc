@@ -62,6 +62,7 @@ public:
         fcbutton_executable->signal_selection_changed ().connect
             (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal));
+        fcbutton_executable->set_current_folder (Glib::get_current_dir ());
 
         fcbutton_core_file =
             ui_utils::get_widget_from_gtkbuilder<Gtk::FileChooserButton>
@@ -69,6 +70,8 @@ public:
         fcbutton_core_file->signal_selection_changed ().connect
             (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal));
+        fcbutton_core_file->set_current_folder (Glib::get_current_dir ());
+
     }
 
     void on_file_selection_changed_signal ()
