@@ -149,7 +149,8 @@ struct CallStack::Priv {
         init_conf ();
     }
 
-    void init_conf ()
+    void
+    init_conf ()
     {
         conf_mgr = workbench.get_configuration_manager ();
         if (!conf_mgr)
@@ -165,7 +166,8 @@ struct CallStack::Priv {
             (sigc::mem_fun (*this, &Priv::on_config_value_changed_signal));
     }
 
-    void init_actions ()
+    void 
+    init_actions ()
     {
 
         static ui_utils::ActionEntry s_call_stack_action_entries [] = {
@@ -200,7 +202,8 @@ struct CallStack::Priv {
                                                 (call_stack_action_group);
     }
 
-    bool should_process_now ()
+    bool
+    should_process_now ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (widget);
@@ -209,7 +212,8 @@ struct CallStack::Priv {
         return is_visible;
     }
 
-    Gtk::Widget* get_call_stack_menu ()
+    Gtk::Widget*
+    get_call_stack_menu ()
     {
         if (!callstack_menu) {
             callstack_menu = perspective.load_menu ("callstackpopup.xml",
@@ -222,7 +226,8 @@ struct CallStack::Priv {
     /// If the selected frame is the "expand to see more frames" raw,
     /// ask the debugger engine for more frames.
     /// Otherwise, just set the "current frame" variable.
-    void update_selected_frame (Gtk::TreeModel::iterator &a_row_iter)
+    void 
+    update_selected_frame (Gtk::TreeModel::iterator &a_row_iter)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -251,7 +256,8 @@ struct CallStack::Priv {
         debugger->select_frame (cur_frame_index);
     }
 
-    void finish_update_handling ()
+    void 
+    finish_update_handling ()
     {
         THROW_IF_FAIL (debugger);
         debugger->list_frames (frame_low, frame_high,
@@ -259,7 +265,8 @@ struct CallStack::Priv {
 			       "");
     }
 
-    void handle_update (const UString &a_cookie)
+    void 
+    handle_update (const UString &a_cookie)
     {
         if (a_cookie != COOKIE_CALL_STACK_IN_FRAME_PAGING_TRANS) {
             // Restore the frame window, in case the user changed it by
@@ -275,12 +282,13 @@ struct CallStack::Priv {
         }
     }
 
-    void on_debugger_stopped_signal (IDebugger::StopReason a_reason,
-                                     bool /*a_has_frame*/,
-                                     const IDebugger::Frame &/*a_frame*/,
-                                     int /*a_thread_id*/,
-                                     int /*a_bp_num*/,
-                                     const UString &a_cookie)
+    void 
+    on_debugger_stopped_signal (IDebugger::StopReason a_reason,
+                                bool /*a_has_frame*/,
+                                const IDebugger::Frame &/*a_frame*/,
+                                int /*a_thread_id*/,
+                                int /*a_bp_num*/,
+                                const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -298,9 +306,10 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void on_thread_selected_signal (int /*a_thread_id*/,
-                                    const IDebugger::Frame* const /*a_frame*/,
-                                    const UString& a_cookie)
+    void
+    on_thread_selected_signal (int /*a_thread_id*/,
+                               const IDebugger::Frame* const /*a_frame*/,
+                               const UString& a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         handle_update (a_cookie);
@@ -373,8 +382,9 @@ struct CallStack::Priv {
         }
     }
 
-    void on_command_done_signal (const UString &a_command,
-                                 const UString &a_cookie)
+    void
+    on_command_done_signal (const UString &a_command,
+                            const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -391,7 +401,8 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void on_selection_changed_signal ()
+    void
+    on_selection_changed_signal ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -410,7 +421,8 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void on_row_activated_signal ()
+    void
+    on_row_activated_signal ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -426,7 +438,8 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
+    void
+    on_draw_signal (const Cairo::RefPtr<Cairo::Context> &)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -438,8 +451,9 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void on_config_value_changed_signal (const UString &a_key,
-                                         const UString &a_namespace)
+    void
+    on_config_value_changed_signal (const UString &a_key,
+                                    const UString &a_namespace)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -459,7 +473,8 @@ struct CallStack::Priv {
 
     /// Connect callback slots to the relevant signals of our
     /// implementation of the IDebugger interface.
-    void connect_debugger_signals ()
+    void
+    connect_debugger_signals ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -473,7 +488,8 @@ struct CallStack::Priv {
                     (*this, &CallStack::Priv::on_command_done_signal));
     }
 
-    void on_call_stack_button_press_signal (GdkEventButton *a_event)
+    void
+    on_call_stack_button_press_signal (GdkEventButton *a_event)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -487,7 +503,8 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    void popup_call_stack_menu (GdkEventButton *a_event)
+    void
+    popup_call_stack_menu (GdkEventButton *a_event)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -511,7 +528,8 @@ struct CallStack::Priv {
         }
     }
 
-    void on_call_stack_copy_to_clipboard_action ()
+    void
+    on_call_stack_copy_to_clipboard_action ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -547,13 +565,15 @@ struct CallStack::Priv {
         NEMIVER_CATCH
     }
 
-    Gtk::Widget* get_widget ()
+    Gtk::Widget*
+    get_widget ()
     {
         if (!widget) {return 0;}
         return widget.get ();
     }
 
-    void build_widget ()
+    void
+    build_widget ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -605,8 +625,9 @@ struct CallStack::Priv {
                             &Priv::on_call_stack_button_press_signal));
     }
 
-    void store_frames_in_cache (const FrameArray &a_frames,
-                                const FrameArgsMap &a_frames_args)
+    void
+    store_frames_in_cache (const FrameArray &a_frames,
+                           const FrameArgsMap &a_frames_args)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -615,8 +636,9 @@ struct CallStack::Priv {
         append_frames_to_cache (a_frames, a_frames_args);
     }
 
-    void append_frames_to_cache (const FrameArray &a_frames,
-                                 const FrameArgsMap &a_frames_args)
+    void
+    append_frames_to_cache (const FrameArray &a_frames,
+                            const FrameArgsMap &a_frames_args)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -638,7 +660,8 @@ struct CallStack::Priv {
         append_frame_args_to_cache (a_frames_args);
     }
 
-    void append_frame_args_to_cache (const FrameArgsMap &a_frames_args)
+    void
+    append_frame_args_to_cache (const FrameArgsMap &a_frames_args)
     {
         FrameArgsMap::const_iterator fa;
         for (fa = a_frames_args.begin ();
@@ -648,8 +671,9 @@ struct CallStack::Priv {
         }
     }
 
-    void format_args_string (const list<IDebugger::VariableSafePtr> &a_args,
-                             UString &a_string)
+    void
+    format_args_string (const list<IDebugger::VariableSafePtr> &a_args,
+                        UString &a_string)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -669,8 +693,9 @@ struct CallStack::Priv {
         a_string = arg_string;
     }
 
-    void append_frames_to_tree_view (const FrameArray &a_frames,
-                                     const FrameArgsMap &a_args)
+    void
+    append_frames_to_tree_view (const FrameArray &a_frames,
+                                const FrameArgsMap &a_args)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -734,10 +759,10 @@ struct CallStack::Priv {
         store_frames_in_cache (a_frames, a_args);
     }
 
-    void set_frame_list
-                (const FrameArray &a_frames,
-                 const FrameArgsMap &a_params,
-                 bool a_emit_signal=false)
+    void
+    set_frame_list (const FrameArray &a_frames,
+                    const FrameArgsMap &a_params,
+                    bool a_emit_signal=false)
     {
         THROW_IF_FAIL (get_widget ());
 
@@ -758,7 +783,8 @@ struct CallStack::Priv {
         }
     }
 
-    void update_frames_arguments (FrameArgsMap a_args)
+    void
+    update_frames_arguments (FrameArgsMap a_args)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -796,7 +822,8 @@ struct CallStack::Priv {
     /// Visually clear the frame list.
     /// \param a_reset_frame_window if true, reset the frame window range
     ///  to [0 - defaultmax]
-    void clear_frame_list (bool a_reset_frame_window = false)
+    void
+    clear_frame_list (bool a_reset_frame_window = false)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
