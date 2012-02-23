@@ -28,6 +28,7 @@
 #include <gtkmm.h>
 #include <glib/gi18n.h>
 #include "common/nmv-env.h"
+#include "common/nmv-str-utils.h"
 #include "nmv-proc-list-dialog.h"
 #include "nmv-ui-utils.h"
 
@@ -35,6 +36,8 @@ using namespace std;
 using namespace nemiver::common;
 
 namespace nemiver {
+
+const int APP_ICON_SIZE = 16;
 
 struct ProcListCols : public Gtk::TreeModel::ColumnRecord {
     Gtk::TreeModelColumn<IProcMgr::Process> process;
@@ -81,6 +84,9 @@ public:
     Glib::RefPtr<Gtk::TreeModelSort> sort_store;
     IProcMgr::Process selected_process;
     bool process_selected;
+    Gtk::TreeView::Column proc_args_column;
+    Gtk::CellRendererPixbuf proc_args_pixbuf;
+    Gtk::CellRendererText proc_args_text;
 
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
@@ -90,7 +96,8 @@ public:
         proclist_view (0),
         entry_filter (0),
         nb_filtered_results (0),
-        process_selected (false)
+        process_selected (false),
+        proc_args_column (_("Proc Args"))
     {
         a_dialog.set_default_response (Gtk::RESPONSE_OK);
 
@@ -136,7 +143,7 @@ public:
         col->set_resizable (true);
         col->set_sort_column (columns ().user_name);
 
-        proclist_view->append_column (_("Proc Args"), columns ().proc_args);
+        proclist_view->append_column (proc_args_column);
         col = proclist_view->get_column (2);
         THROW_IF_FAIL (col);
         col->set_clickable (true);
@@ -146,11 +153,60 @@ public:
         proclist_view->get_selection ()->set_mode (Gtk::SELECTION_SINGLE);
         col = proclist_view->get_column (ProcListCols::PID);
 
+        proc_args_column.pack_start (proc_args_pixbuf, false);
+        proc_args_column.pack_start (proc_args_text);
+        proc_args_column.add_attribute
+            (proc_args_text.property_text (), columns ().proc_args);
+        proc_args_column.set_cell_data_func (proc_args_pixbuf, sigc::mem_fun
+            (*this, &ProcListDialog::Priv::proc_args_cell_data_func));
+
         proclist_view->get_selection ()->signal_changed ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_selection_changed_signal));
         proclist_view->signal_row_activated ().connect (sigc::mem_fun
                 (*this, &Priv::on_row_activated_signal));
+    }
+
+    void
+    proc_args_cell_data_func (Gtk::CellRenderer *a_cell,
+                              const Gtk::TreeModel::iterator &a_iter)
+    {
+        NEMIVER_TRY
+
+        THROW_IF_FAIL (a_cell);
+        Gtk::CellRendererPixbuf &renderer =
+            static_cast<Gtk::CellRendererPixbuf&> (*a_cell);
+
+        Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default ();
+        THROW_IF_FAIL (theme);
+
+        Glib::RefPtr<Gdk::Pixbuf> icon =
+            theme->load_icon ("application-x-executable",
+                              APP_ICON_SIZE,
+                              Gtk::ICON_LOOKUP_USE_BUILTIN);
+
+        THROW_IF_FAIL (a_iter);
+        IProcMgr::Process proc;
+        if (proc_mgr.get_process_from_pid
+                (a_iter->get_value (columns ().pid), proc)
+            && proc.args ().size ()) {
+            UString process_name = proc.args ().front ();
+            std::vector<UString> split = str_utils::split (process_name, "/");
+
+            if (split.size ()) {
+                process_name = split[split.size () - 1];
+                try {
+                    icon = theme->load_icon (process_name,
+                                             APP_ICON_SIZE,
+                                             Gtk::ICON_LOOKUP_USE_BUILTIN);
+                } catch (Gtk::IconThemeError&) {
+                }
+            }
+        }
+
+        renderer.property_pixbuf () = icon;
+
+        NEMIVER_CATCH
     }
 
     void on_filter_entry_changed ()
