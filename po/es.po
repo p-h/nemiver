@@ -5,15 +5,15 @@
 #
 # Alberto Caso <alberto.caso@adaptia.es>, 2007, 2008.
 # Jorge González <jorgegonz@svn.gnome.org>, 2008, 2010, 2011.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-10-24 15:08+0000\n"
-"PO-Revision-Date: 2011-10-24 17:11+0200\n"
+"POT-Creation-Date: 2012-02-19 18:16+0000\n"
+"PO-Revision-Date: 2012-02-23 14:04+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -22,63 +22,68 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../data/nemiver.desktop.in.h:1
-msgid "C/C++ Debugger"
-msgstr "Depurador de C/C++"
-
-#: ../data/nemiver.desktop.in.h:2
-msgid "Debug Applications"
-msgstr "Depurar aplicaciones"
-
-#: ../data/nemiver.desktop.in.h:3 ../ui/workbench.ui.h:1
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
 msgstr "Nemiver"
 
-#: ../data/nemiver.desktop.in.h:4
+#: ../data/nemiver.desktop.in.h:2
+msgid "C/C++ Debugger"
+msgstr "Depurador de C/C++"
+
+#: ../data/nemiver.desktop.in.h:3
 msgid "Nemiver C/C++ Debugger"
 msgstr "Depurador de C/C++ Nemiver"
 
-#: ../src/main.cc:76
+#: ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Depurar aplicaciones"
+
+#: ../src/main.cc:77
 msgid "Set the environment of the program to debug"
 msgstr "Establecer el entorno del programa por depurar"
 
-#: ../src/main.cc:85
+#: ../src/main.cc:86
 msgid "Attach to a process"
 msgstr "Conectar a un proceso"
 
-#: ../src/main.cc:93
+#: ../src/main.cc:95
+#| msgid "Load a core file from disk"
+msgid "Load a core file"
+msgstr "Cargar un archivo core"
+
+#: ../src/main.cc:103
 msgid "List the saved debugging sessions"
 msgstr "Listar las sesiones de depuración guardadas"
 
-#: ../src/main.cc:101
+#: ../src/main.cc:111
 msgid "Erase the saved debugging sessions"
 msgstr "Borrar las sesiones de depuración guardadas"
 
-#: ../src/main.cc:109
+#: ../src/main.cc:119
 msgid "Debug the program that was of session number N"
 msgstr "Depurar el programa correspondiente a la sesión N"
 
-#: ../src/main.cc:117
+#: ../src/main.cc:127
 msgid "Execute the last session"
 msgstr "Ejecutar la última sesión"
 
-#: ../src/main.cc:125
+#: ../src/main.cc:135
 msgid "Enable logging domains DOMAINS"
 msgstr "Activar los dominios de registro DOMAINS"
 
-#: ../src/main.cc:133
+#: ../src/main.cc:143
 msgid "Log the debugger output"
 msgstr "Registrar la salida del depurador"
 
-#: ../src/main.cc:141
+#: ../src/main.cc:151
 msgid "Use this terminal as the debugee's terminal"
 msgstr "Usar esta terminal como la terminal de depuración"
 
-#: ../src/main.cc:150
+#: ../src/main.cc:160
 msgid "Connect to remote target specified by HOST:PORT"
 msgstr "Conectar con el destino remoto especificado por SERVIDOR:PUERTO"
 
-#: ../src/main.cc:159
+#: ../src/main.cc:169
 msgid ""
 "Where to look for shared libraries loaded by the inferior. Use in "
 "conjunction with --remote"
@@ -86,23 +91,23 @@ msgstr ""
 "Dónde buscar las bibliotecas compartidas cargadas por el inferior. Usar "
 "junto con --remote"
 
-#: ../src/main.cc:169
+#: ../src/main.cc:179
 msgid "Set the path of the GDB binary to use to debug the inferior"
 msgstr "Establecer la ruta del binario GDB que usar para depurar el inferior"
 
-#: ../src/main.cc:177
+#: ../src/main.cc:188
 msgid "Show the version number of nemiver"
 msgstr "Mostrar el número de versión de Nemiver"
 
-#: ../src/main.cc:243
+#: ../src/main.cc:254
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<prog-para-depurar> [argumentos]]"
 
-#: ../src/main.cc:246 ../src/workbench/nmv-workbench.cc:263
+#: ../src/main.cc:257 ../src/workbench/nmv-workbench.cc:263
 msgid "A C/C++ debugger for GNOME"
 msgstr "Depurador de C/C++ para GNOME"
 
-#: ../src/main.cc:340
+#: ../src/main.cc:351
 msgid ""
 "Please provide a local copy of the binary you intend to debug remotely.\n"
 "Like this:\n"
@@ -110,151 +115,161 @@ msgstr ""
 "Proporcionar una copia local del binario que intenta depurar remotamente.\n"
 "Como ejemplo:\n"
 
-#: ../src/main.cc:345
+#: ../src/main.cc:356 ../src/main.cc:375
 msgid "Otherwise, find below the full set of nemiver options.\n"
 msgstr ""
 "De otra forma, consulte debajo el conjunto completo de opciones de nemiver.\n"
 
+#: ../src/main.cc:370
+#| msgid ""
+#| "Please provide a local copy of the binary you intend to debug remotely.\n"
+#| "Like this:\n"
+msgid ""
+"Please provide the path to the binary that generated the core file too.\n"
+"Like this:\n"
+msgstr ""
+"Proporcione también una ruta al binario que generó el archivo core.\n"
+"Como ejemplo:\n"
+
 #. create the columns of the tree view
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:147
-#: ../src/persp/dbgperspective/nmv-registers-view.cc:99
-#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:96
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
 msgid "ID"
 msgstr "ID"
 
 #. create the columns of the tree view
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
-#: ../src/persp/dbgperspective/nmv-file-list.cc:107
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-file-list.cc:108
 msgid "Filename"
 msgstr "Nombre de archivo"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
 msgid "Line"
 msgstr "Línea"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:568
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
 msgid "Function"
 msgstr "Función"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:571
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
 msgid "Address"
 msgstr "Dirección"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:153
 msgid "Condition"
 msgstr "Condición"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:154
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
 msgid "Toggle countpoint"
 msgstr "Cambiar punto de conteo"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:156
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
 msgid "Type"
 msgstr "Tipo"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
 msgid "Hits"
 msgstr "Impactos"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
 msgid "Expression"
 msgstr "Expresión"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:161
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
 msgid "Ignore count"
 msgstr "Ignorar cuenta"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:347
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:348
 msgid "breakpoint"
 msgstr "punto de parada"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:351
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:352
 msgid "watchpoint"
 msgstr "punto de observación"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:354
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:355
 msgid "countpoint"
 msgstr "punto de conteo"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:357
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:358
 msgid "unknown"
 msgstr "desconocido"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:417
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
 msgid "_Delete"
 msgstr "_Borrar"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
 msgid "Remove this breakpoint"
 msgstr "Quitar este punto de parada"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:427
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
 msgid "_Go to Source"
 msgstr "_Ir al código fuente"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
 msgid "Find this breakpoint in the source editor"
 msgstr "Buscar este punto de parada en el editor de código fuente"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:174
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:177
 msgid "_Copy"
 msgstr "_Copiar"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:175
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:178
 msgid "Copy the call stack to the clipboard"
 msgstr "Copiar la pila de llamadas al portapapeles"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:567
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
 msgid "Frame"
 msgstr "Marco"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:569
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
 msgid "Arguments"
 msgstr "Parámetros"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:570
-#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:111
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Ubicación"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:572
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Binary"
 msgstr "Binario"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:723
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
 #, c-format
-#| msgid "(Click here to see the next %d rows of the call stack)"
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
 msgstr[0] "(Pulse aquí para ver la siguiente fila de la pila de llamadas)"
 msgstr[1] ""
 "(Pulse aquí para ver las siguientes %d filas de la pila de llamadas)"
 
-#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:109
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
 msgid "Function Name"
 msgstr "Nombre de la función"
 
 #. labels for widget tabs in the status notebook
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:117
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:116
 msgid "Context"
 msgstr "Contexto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:117
 msgid "Target Terminal"
 msgstr "Terminal de destino"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
 msgid "Breakpoints"
 msgstr "Puntos de parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
 msgid "Registers"
 msgstr "Registros"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
 msgid "Memory"
 msgstr "Memoria"
 
@@ -267,174 +282,174 @@ msgstr "Se ha alcanzado el final del archivo"
 msgid "Could not find string %s"
 msgstr "No se ha podido encontrar la cadena %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2101
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2109
 msgid "Change to standard Breakpoint"
 msgstr "Cambiar a punto de parada estándar"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2104
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2112
 msgid "Change to Countpoint"
 msgstr "Cambiar a punto de conteo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2106
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
 msgid "Remove _Breakpoint"
 msgstr "Quitar punto de _parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2109
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
 msgid "Disable Breakpoint"
 msgstr "Activar punto de parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2119
 msgid "Enable Breakpoint"
 msgstr "Activar punto de parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2122
 msgid "Set _Breakpoint"
 msgstr "Fijar punto de _parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2124
 msgid "Set Countpoint"
 msgstr "Fijar punto de conteo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2279
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2287
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (ruta=«%s», pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2293
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2301
 msgid "Connected to remote target !"
 msgstr "Conectado al objetivo remoto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2437
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2445
 msgid "Program exited"
 msgstr "El programa ha finalizado"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2471
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2479
 msgid "The underlying debugger engine process died."
 msgstr "El proceso del motor de depuración subyacente murió."
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2559
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2567
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "El objetivo recibió una señal: %s, %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2574
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2582
 #, c-format
 msgid "An error occured: %s"
 msgstr "Se ha producido un error: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2742
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2750
 #, c-format
 msgid "File %s has been modified. Do want to reload it ?"
 msgstr "El archivo %s ha sido modificado. ¿Desea volver a cargarlo?"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3006
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3014
 msgid "_Save Session to Disk"
 msgstr "_Guardar la sesión en el disco"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3007
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3015
 msgid "Save the current debugging session to disk"
 msgstr "Guardar la sesión actual en el disco"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3016
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3024
 msgid "_Detach From the Running Program"
 msgstr "_Desconectarse del programa en ejecución"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3017
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3025
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "Desconectar el depurador del objetivo en ejecución sin matarlo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3031
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3039
 msgid "_Restart"
 msgstr "_Reiniciar"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3032
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3040
 msgid "Restart the target, killing this process and starting a new one"
 msgstr "Reiniciar el objetivo, matando el proceso actual e iniciando uno nuevo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3045
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3053
 msgid "_Next"
 msgstr "_Siguiente"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3046
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3054
 msgid "Execute next line stepping over the next function, if any"
 msgstr ""
 "Ejecutar la siguiente línea saltando sobre la siguiente función, si hay "
 "alguna"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3055
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3063
 msgid "_Step"
 msgstr "_Paso"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3056
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3064
 msgid "Execute next line, stepping into the next function, if any"
 msgstr ""
 "Ejecutar la siguiente línea, entrando en la siguiente función, si hay alguna"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3065
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3073
 msgid "Step _Out"
 msgstr "Paso a_fuera"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3066
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3074
 msgid "Finish the execution of the current function"
 msgstr "Termina la ejecución de la función actual"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3075
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3083
 msgid "Step Into asm"
 msgstr "Paso en asm"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3076
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3084
 msgid "Step into the next assembly instruction"
 msgstr "Paso en la siguiente instrucción de ensamblado"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3085
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3093
 msgid "Step Over asm"
 msgstr "Paso sobre asm\t"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3086
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3094
 msgid "Step over the next assembly instruction"
 msgstr "Paso sobre la siguiente instrucción de ensamblado"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3095
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3103
 msgid "_Continue"
 msgstr "_Continuar"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3104
 msgid "Continue program execution until the next breakpoint"
 msgstr "Continuar la ejecución hasta el siguiente punto de parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3105
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3113
 msgid "Run to Cursor"
 msgstr "Ejecutar hasta el cursor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3106
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3114
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 "Continuar la ejecución del programa hasta alcanzar la línea seleccionada "
 "actualmente"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3116
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3124
 msgid "Jump to cursor"
 msgstr "Saltar al cursor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3117
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3125
 msgid "Jump to  the currently selected line"
 msgstr "Saltar a la línea seleccionada actualmente"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3127
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3135
 msgid "Jump and stop to cursor"
 msgstr "Saltar y parar en el cursor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3128
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3136
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr ""
 "Fijar un punto de parada en la línea seleccionada actualmente y saltar a ella"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3140
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3148
 msgid "Jump to a given location"
 msgstr "Saltar a una ubicación dada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3141
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3149
 msgid "Select a given code location and jump there"
 msgstr "Seleccionar la ubicación del código dado y saltar a ella"
 
@@ -445,11 +460,11 @@ msgstr "Seleccionar la ubicación del código dado y saltar a ella"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3159
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3167
 msgid "Toggle _Breakpoint"
 msgstr "Cambiar punto de pa_rada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3160
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3168
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "Fijar/quitar un punto de parada en la posición actual del cursor"
 
@@ -460,11 +475,11 @@ msgstr "Fijar/quitar un punto de parada en la posición actual del cursor"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3177
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3185
 msgid "Enable/Disable Breakpoint"
 msgstr "Activar/desactivar punto de parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3178
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3186
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
@@ -479,76 +494,76 @@ msgstr ""
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3198
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3206
 msgid "Toggle _Countpoint"
 msgstr "Cambiar punto de c_onteo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3199
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3207
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "Fijar/quitar un punto de conteo en la posición actual del cursor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3209
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3217
 msgid "Set Breakpoint..."
 msgstr "Fijar punto de parada…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3210
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3218
 msgid "Set a breakpoint at a function or line number"
 msgstr "Fijar un punto de parada en una función o un número de línea"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3219
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3227
 msgid "Set Breakpoint with dialog..."
 msgstr "Fijar punto de parada con diálogo…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3220
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3228
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr "Fijar un punto de parada en la línea actual usando un diálogo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3239
 msgid "Set Watchpoint with dialog..."
 msgstr "Fijar punto de observación con diálogo…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
 msgid "Set a watchpoint using a dialog"
 msgstr "Fijar un punto de observación usando un diálogo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3243
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
 #: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:1
 msgid "Inspect a Variable"
 msgstr "Inspeccionar una variable"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3244
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
 msgid "Inspect a global or local variable"
 msgstr "Inspeccionar una variable global o local"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3254
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
 msgid "Call a function"
 msgstr "Llamar a una función"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3255
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
 msgid "Call a function in the program being debugged"
 msgstr "Llamar a una función en el programa que se está depurando"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3264
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3272
 msgid "Show Global Variables"
 msgstr "Mostrar las variables globales"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3265
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
 msgid "Display all global variables"
 msgstr "Mostrar todas las variables globales"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3275
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3283
 msgid "Refresh locals"
 msgstr "Actualizar las variables locales"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3276
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3284
 msgid "Refresh the list of variables local to the current function"
 msgstr "Actualizar la lista de variables locales de la función actual"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3285
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3293
 msgid "Show assembly"
 msgstr "Mostrar ensamblador"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3294
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
@@ -556,180 +571,180 @@ msgstr ""
 "Mostrar el código ensamblado del código fuente actualmente en depuración, en "
 "otra pestaña"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
 msgid "Switch to assembly"
 msgstr "Cambiar al ensamblado"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3307
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr ""
 "Mostrar el código ensamblado del código fuente actualmente en depuración"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3311
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
 msgid "Switch to source"
 msgstr "Cambiar al código"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3312
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
 msgid "Show the source code being currently debugged"
 msgstr "Mostrar el código fuente actualmente en depuración"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3324
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3332
 msgid "Stop"
 msgstr "Detener"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3325
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3333
 msgid "Stop the Debugger"
 msgstr "Detener el depurador"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3337
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3345
 msgid "_View"
 msgstr "_Ver"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3348
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3356
 msgid "Switch to Target Terminal View"
 msgstr "Cambiar a la vista de terminal de destino"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3359
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
 msgid "Switch to Context View"
 msgstr "Cambiar a la vista de contexto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3370
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3378
 msgid "Switch to Breakpoints View"
 msgstr "Cambiar a la vista de puntos de parada"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3381
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3389
 msgid "Switch to Registers View"
 msgstr "Cambiar a la vista de registros"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3393
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
 msgid "Switch to Memory View"
 msgstr "Cambiar a la vista de memoria"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3411
 msgid "_Debug"
 msgstr "_Depurar"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3413
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3421
 msgid "_Open Source File ..."
 msgstr "Abrir archivo de _fuentes…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3422
 msgid "Open a source file for viewing"
 msgstr "Abrir un archivo de fuentes para mostrarlo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3423
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3431
 msgid "Load _Executable..."
 msgstr "Cargar _ejecutable…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3424
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3432
 msgid "Execute a program"
 msgstr "Ejecutar un programa"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3434
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3442
 msgid "_Load Core File..."
 msgstr "Cargar _archivo core…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3435
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3443
 msgid "Load a core file from disk"
 msgstr "Cargar un archivo core desde disco"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3445
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3453
 msgid "_Attach to Running Program..."
 msgstr "Conectarse a un progra_ma en ejecución…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3446
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3454
 msgid "Debug a program that's already running"
 msgstr "Depurar un programa que ya está en ejecución"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3464
 msgid "_Connect to Remote Target..."
 msgstr "Conectar con _objetivo remoto…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3457
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3465
 msgid "Connect to a debugging server to debug a remote target"
 msgstr "Conectar con un servidor para depurar un objetivo remoto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
 msgid "Resume Sa_ved Session..."
 msgstr "Conti_nuar una sesión guardada…"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3477
 msgid "Open a previously saved debugging session"
 msgstr "Abrir una sesión de depuración guardada previamente"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3479
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3487
 msgid "_Preferences"
 msgstr "_Preferencias"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3480
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
 msgid "Edit the properties of the current session"
 msgstr "Editar las preferencias de la sesión actual"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3494
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3502
 msgid "_Reload Source File"
 msgstr "_Recargar archivo de fuentes"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3495
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3503
 msgid "Reloads the source file"
 msgstr "Recarga el archivo de fuentes"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3504
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3512
 msgid "_Close Source File"
 msgstr "_Cerrar archivo de fuentes"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3505
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3513
 msgid "Close the opened file"
 msgstr "Cerrar el archivo abierto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3514
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
 msgid "_Find"
 msgstr "_Buscar"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3515
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3523
 msgid "Find a text string in file"
 msgstr "Buscar una cadena de texto en el archivo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3865
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3874
 #, c-format
 msgid "Close %s"
 msgstr "Cerrar %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5802
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5825
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Es imposible reiniciar un inferior remoto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5920
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5943
 #, c-format
 msgid "Could not find file %s"
 msgstr "No se ha podido encontrar el archivo %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5984
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6126
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6161
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6007
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6149
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6184
 #, c-format
 msgid "Could not load program: %s"
 msgstr "No se pudo cargar el programa: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6063
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6086
 msgid "You cannot attach to Nemiver itself"
 msgstr "No es posible conectarse al propio Nemiver"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6068
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6091
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "No es posible conectarse al motor de depuración subyacente"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6348
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6374
 msgid "Failed to stop the debugger"
 msgstr "No se ha podido detener el depurador"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6587
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6613
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Número de línea inválido: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8165
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8193
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -773,25 +788,25 @@ msgstr "Distribución ancha"
 msgid "A layout for very large monitors"
 msgstr "Una distribución para pantallas muy grandes"
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:127
+#: ../src/persp/dbgperspective/nmv-file-list.cc:128
 msgid "Expand _Selected"
 msgstr "Expandir _seleccionados"
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:133
+#: ../src/persp/dbgperspective/nmv-file-list.cc:134
 msgid "Expand _All"
 msgstr "Expandir _todos"
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:143
+#: ../src/persp/dbgperspective/nmv-file-list.cc:144
 msgid "_Collapse"
 msgstr "_Contraer"
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:426
+#: ../src/persp/dbgperspective/nmv-file-list.cc:427
 msgid "Loading Files from target executable..."
 msgstr "Cargando archivos desde el ejecutable objetivo…"
 
-#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:302
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:528
-#: ../src/persp/dbgperspective/nmv-var-inspector.cc:240
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:301
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:545
+#: ../src/persp/dbgperspective/nmv-var-inspector.cc:224
 #, c-format
 msgid ""
 "Variable type is: \n"
@@ -808,68 +823,68 @@ msgstr "Variables locales"
 msgid "Function Arguments"
 msgstr "Parámetros de función"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:238
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:256
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:127
 msgid "_Copy variable name"
 msgstr "_Copiar el nombre de la variable:"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:239
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:128
 msgid "Copy the variable path expression to the clipboard"
 msgstr "Copiar la expresión de la ruta de la variable al portapapeles"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:250
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:268
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:139
 msgid "_Copy variable value"
 msgstr "_Copiar el valor de la variable"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:251
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
 #: ../src/persp/dbgperspective/nmv-var-inspector.cc:140
 msgid "Copy the variable value to the clipboard"
 msgstr "Copiar el valor de la variable al portapapeles"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:262
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:280
 msgid "Create watchpoint"
 msgstr "Crear punto de observación"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:263
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
 msgstr ""
 "Crear un punto de observación que se dispara cuando el valor de la expresión "
 "cambia"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:48
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
 msgstr "Byte"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:51
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:52
 msgid "Word"
 msgstr "Palabra"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:54
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:55
 msgid "Long Word"
 msgstr "Palabra larga"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:97
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:98
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
 msgid "Address:"
 msgstr "Dirección:"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:99
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:100
 msgid "Show"
 msgstr "Mostrar"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:102
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:103
 msgid "Group By:"
 msgstr "Agrupar por:"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:148
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:149
 msgid "Choose directory"
 msgstr "Elegir carpeta"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:258
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
 msgid "Source directories"
 msgstr "Carpetas de fuentes"
 
@@ -881,18 +896,18 @@ msgstr "Nombre de usuario"
 msgid "Proc Args"
 msgstr "Argumentos del proceso"
 
-#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
 msgid "Name"
 msgstr "Nombre"
 
-#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:102
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
 msgid "Value"
 msgstr "Valor"
 
-#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:97
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
 msgid "Session"
 msgstr "Sesión"
 
@@ -926,18 +941,23 @@ msgid "Variable"
 msgstr "Variable"
 
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
-msgid "<b>Call a function:</b>"
-msgstr "<b>Llamar a una función:</b>"
-
-#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
 msgid "Call Function"
 msgstr "Llamar función"
 
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "<b>Call a function:</b>"
+msgstr "<b>Llamar a una función:</b>"
+
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "Fijar un punto de parada"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
 msgid "<b>Choose Overloaded Function</b>"
 msgstr "<b>Elija la función sobrecargada</b>"
 
-#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
 msgid ""
 "Multiple functions match the specified name. Please choose one from the list "
 "below."
@@ -945,316 +965,311 @@ msgstr ""
 "Varias funciones se corresponden con el nombre especificado. Elija una de la "
 "lista."
 
-#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
-msgid "Set Breakpoint"
-msgstr "Fijar un punto de parada"
-
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
-msgid "<b>Cycling Options:</b>"
-msgstr "<b>Búsqueda cíclica:</b>"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
-msgid "<b>Match Options:</b>"
-msgstr "<b>Opciones de coincidencia:</b>"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
 msgid "Find text"
 msgstr "Buscar texto"
 
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
-msgid "Match _entire word only"
-msgstr "Coincidir sólo con la _palabra completa"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
-msgid "Match c_ase"
-msgstr "Coincidir con _capitalización"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
-msgid "Search _backwards"
-msgstr "Buscar hacia _atrás"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
 msgid "_Search:"
 msgstr "_Buscar:"
 
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "<b>Match Options:</b>"
+msgstr "<b>Opciones de coincidencia:</b>"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "Coincidir con _capitalización"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "Coincidir sólo con la _palabra completa"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "<b>Cycling Options:</b>"
+msgstr "<b>Búsqueda cíclica:</b>"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
 msgid "_Wrap around"
 msgstr "Volver al _inicio"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "Buscar hacia _atrás"
 
 #: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
 msgid "Global Variables"
 msgstr "Variables globales"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
-msgid "<b>Core File:</b>"
-msgstr "<b>Archivo core:</b>"
-
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
-msgid "<b>Executable:</b>"
-msgstr "<b>Ejecutable:</b>"
-
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
 msgid "Choose a Core File to Debug"
 msgstr "Elija un archivo core para depurar"
 
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
 msgid "Select A Core File"
 msgstr "Seleccione un archivo core"
 
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "<b>Core File:</b>"
+msgstr "<b>Archivo core:</b>"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
 msgid "Select the executable that created the core file"
 msgstr "Seleccionar el ejecutable que creó el archivo core"
 
-#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
-msgid "<b>Choose Source Files to Open</b>"
-msgstr "<b>Elegir archivos de fuentes para abrir</b>"
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "<b>Executable:</b>"
+msgstr "<b>Ejecutable:</b>"
 
-#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
 msgstr "Abrir archivos de fuentes"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "Seleccionar desde el _ejecutable objetivo"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _Filesystem"
 msgstr "Seleccionar desde el sistema de _archivos"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
-msgid "Select from _Target Executable"
-msgstr "Seleccionar desde el _ejecutable objetivo"
+msgid "<b>Choose Source Files to Open</b>"
+msgstr "<b>Elegir archivos de fuentes para abrir</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
-msgid "<b>Assembly flavor</b>"
-msgstr "<b>Tipo de ensamblado</b>"
+msgid "Preferences"
+msgstr "Preferencias"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
-msgid "<b>Assembly style</b>"
-msgstr "<b>Estilo de ensamblado</b>"
+msgid "Use system monospace font"
+msgstr "Usar la tipografía de ancho fijo del sistema"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "Tipografía personalizada:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "<b>Editor Font</b>"
 msgstr "<b>Tipografía para el editor</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
-msgid "<b>File Monitoring</b>"
-msgstr "<b>Monitorización de archivos</b>"
-
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
-msgid "<b>GDB binary</b>"
-msgstr "<b>Binario GDB</b>"
+msgid "<b>Visual Style</b>"
+msgstr "<b>Estilo visual</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
-msgid "<b>GDB follow fork mode</b>"
-msgstr "<b>Modo de seguimiento de bifurcación de GDB</b>"
+msgid "Display line numbers"
+msgstr "Mostrar _números de línea"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
-msgid "<b>GDB pretty printing</b>"
-msgstr "<b>Impresión bonita de GDB</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
-msgid "<b>Instructions</b>"
-msgstr "<b>Instrucciones</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "<b>Line Numbers</b>"
 msgstr "<b>Números de línea</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
-msgid "<b>Syntax Highlighting</b>"
-msgstr "<b>Resaltado de sintaxis</b>"
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr "Usar terminal de lanzamiento"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "<b>Terminal</b>"
 msgstr "<b>Terminal</b>"
 
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "When a source file is changed:"
+msgstr "Cuando un archivo fuente se cambia:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "Recargar el archivo"
+
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
-msgid "<b>Visual Style</b>"
-msgstr "<b>Estilo visual</b>"
+msgid "Do not reload the file"
+msgstr "No recargar el archivo"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
 msgid "Ask each time"
 msgstr "Preguntar cada vez"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
-msgid "Choose a file"
-msgstr "Elegir un archivo"
+msgid "<b>File Monitoring</b>"
+msgstr "<b>Monitorización de archivos</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
-msgid "Custom Font:"
-msgstr "Tipografía personalizada:"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
-msgid "Debugger"
-msgstr "Depurador"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
-msgid "Display line numbers"
-msgstr "Mostrar _números de línea"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
-msgid "Do not reload the file"
-msgstr "No recargar el archivo"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
-msgid "Editor"
-msgstr "Editor"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
-msgid "Enable pretty printing (requires debugger restart)"
-msgstr "Activar impresión bonita (requiere reiniciar el depurador)"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Enable syntax highlighting"
 msgstr "Activar _resaltado de sintaxis"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
-msgid "Follow child"
-msgstr "Seguir hijo"
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "<b>Syntax Highlighting</b>"
+msgstr "<b>Resaltado de sintaxis</b>"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
-msgid "Follow parent"
-msgstr "Seguir padre"
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "Editor"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
-msgid "Layout"
-msgstr "Distribución"
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "Carpetas de archivos de fuentes"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Pure assembly"
+msgstr "Ensamblador puro"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
 msgid "Mixed source and assembly"
 msgstr "Código fuente y ensamblado mezclado"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "<b>Assembly style</b>"
+msgstr "<b>Estilo de ensamblado</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "<b>Assembly flavor</b>"
+msgstr "<b>Tipo de ensamblado</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+msgid "Choose a file"
+msgstr "Elegir un archivo"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Path to the GDB binary used"
+msgstr "Ruta al binario GDB que usar"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+msgid "<b>GDB binary</b>"
+msgstr "<b>Binario GDB</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Number of instructions to disassemble by default"
 msgstr "Número de instrucciones que desensamblar de forma predeterminada"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
-msgid "Path to the GDB binary used"
-msgstr "Ruta al binario GDB que usar"
+msgid "<b>Instructions</b>"
+msgstr "<b>Instrucciones</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
-msgid "Preferences"
-msgstr "Preferencias"
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr "Activar impresión bonita (requiere reiniciar el depurador)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
-msgid "Pure assembly"
-msgstr "Ensamblador puro"
+msgid "<b>GDB pretty printing</b>"
+msgstr "<b>Impresión bonita de GDB</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
-msgid "Reload the file"
-msgstr "Recargar el archivo"
+msgid "Follow parent"
+msgstr "Seguir padre"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
-msgid "Source Directories"
-msgstr "Carpetas de archivos de fuentes"
+msgid "Follow child"
+msgstr "Seguir hijo"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
-msgid "Use launch terminal"
-msgstr "Usar terminal de lanzamiento"
+msgid "<b>GDB follow fork mode</b>"
+msgstr "<b>Modo de seguimiento de bifurcación de GDB</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
-msgid "Use system monospace font"
-msgstr "Usar la tipografía de ancho fijo del sistema"
+msgid "Debugger"
+msgstr "Depurador"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
-msgid "When a source file is changed:"
-msgstr "Cuando un archivo fuente se cambia:"
+msgid "Layout"
+msgstr "Distribución"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
-msgid "<b>Choose a Process to Debug</b>"
-msgstr "<b>Elija un proceso para depurar</b>"
-
-#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
 msgid "Attach to a Running Program"
 msgstr "Conectar a un programa en ejecución"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "<b>Choose a Process to Debug</b>"
+msgstr "<b>Elija un proceso para depurar</b>"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
 msgstr "_Filtrar lista:"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "Conectar con objetivo remoto"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
 msgid "<b>Executable to Load</b>"
 msgstr "<b>Archivo ejecutable que cargar</b>"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
-msgid "<b>Remote Debugging Server</b>"
-msgstr "<b>Servidor de depuración remota</b>"
-
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
-msgid "<b>Shared Libraries Location</b>"
-msgstr "<b>Ubicación de las bibliotecas compartidas</b>"
+msgid "Choose a File"
+msgstr "Elegir un archivo"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
-msgid "Address :"
-msgstr "Dirección:"
+msgid "<b>Shared Libraries Location</b>"
+msgstr "<b>Ubicación de las bibliotecas compartidas</b>"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
 msgstr "Elegir una carpeta"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
-msgid "Choose a File"
-msgstr "Elegir un archivo"
+msgid "<b>Remote Debugging Server</b>"
+msgstr "<b>Servidor de depuración remota</b>"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
-msgid "Connect to Remote Target"
-msgstr "Conectar con objetivo remoto"
+msgid "TCP/IP Connection"
+msgstr "Conexión TCP/IP"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
 msgid "Port :"
 msgstr "Puerto:"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+msgid "Address :"
+msgstr "Dirección:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
 msgid "Serial Line Connection"
 msgstr "Conexión de línea serie"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
-msgid "TCP/IP Connection"
-msgstr "Conexión TCP/IP"
-
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
-msgid "<b>Arguments:</b>"
-msgstr "<b>Argumentos:</b>"
+msgid "Choose a Program to Execute"
+msgstr "Elegir un programa para ejecutar"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
-msgid "<b>Environment Variables:</b>"
-msgstr "<b>Variables de entorno:</b>"
+msgid "Choose an executable"
+msgstr "Elegir un archivo ejecutable"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "<b>Program:</b>"
 msgstr "<b>Programa:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
-msgid "<b>Working Directory:</b>"
-msgstr "<b>Carpeta de trabajo:</b>"
+msgid "<b>Arguments:</b>"
+msgstr "<b>Argumentos:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
-msgid "Choose a Program to Execute"
-msgstr "Elegir un programa para ejecutar"
-
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "Choose a working directory"
 msgstr "Elegir una carpeta de trabajo"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
-msgid "Choose an executable"
-msgstr "Elegir un archivo ejecutable"
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "<b>Working Directory:</b>"
+msgstr "<b>Carpeta de trabajo:</b>"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
 msgid "_Add"
 msgstr "_Añadir"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
 msgid "_Remove"
 msgstr "_Quitar"
 
-#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
-msgid "<b>Choose a Session to Debug</b>"
-msgstr "<b>Elija una sesión para depurar</b>"
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "<b>Environment Variables:</b>"
+msgstr "<b>Variables de entorno:</b>"
 
-#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
 msgstr "Sesiones guardadas"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "<b>Choose a Session to Debug</b>"
+msgstr "<b>Elija una sesión para depurar</b>"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
 msgid "<b>Set a Breakpoint:</b>"
 msgstr "<b>Fijar un punto de parada:</b>"
 
@@ -1263,93 +1278,93 @@ msgid "Condition:"
 msgstr "Condición:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
-msgid "F_unction Name:"
-msgstr "Nombre de la _función:"
+msgid "_Event:"
+msgstr "_Evento:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
+msgid "_Binary Location:"
+msgstr "Ubicación del _binario:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
+msgid "_Source Location:"
+msgstr "Ubicación del código _fuente:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
+msgid "F_unction Name:"
+msgstr "Nombre de la _función:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
 msgid "File name:"
 msgstr "Nombre del archivo:"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
 msgid "Function:"
 msgstr "Función:"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
 msgid "Line:"
 msgstr "Línea:"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
 msgid "Set as Countpoint"
 msgstr "Fijar como punto de conteo"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
-msgid "_Binary Location:"
-msgstr "Ubicación del _binario:"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
-msgid "_Event:"
-msgstr "_Evento:"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
-msgid "_Source Location:"
-msgstr "Ubicación del código _fuente:"
-
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
-msgid "<b>Jump to location:</b>"
-msgstr "<b>Saltar a la ubicación:</b>"
-
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
-msgid "Break at destination"
-msgstr "Parar en el destino"
-
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
 msgid "Set location to jump to"
 msgstr "Establecer la ubicación a la que saltar"
 
-#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:2
-msgid "_Inspect"
-msgstr "_Inspeccionar"
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "<b>Jump to location:</b>"
+msgstr "<b>Saltar a la ubicación:</b>"
 
-#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:3
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at destination"
+msgstr "Parar en el destino"
+
+#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:2
 msgid "_Variable Name:"
 msgstr "_Nombre de la variable:"
+
+#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:3
+msgid "_Inspect"
+msgstr "_Inspeccionar"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
 msgid "<b>Set a watchpoint:</b>"
 msgstr "<b>Fijar un punto observación:</b>"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
-msgid "Inspect"
-msgstr "Inspeccionar"
-
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
 msgid "expression:"
 msgstr "expresión:"
 
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
-msgid "read"
-msgstr "lectura"
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "Inspeccionar"
 
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
 msgid "triggers on:"
 msgstr "disparadores activados"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "read"
+msgstr "lectura"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
 msgid "write"
 msgstr "escritura"
 
-#: ../src/uicommon/nmv-locate-file-dialog.cc:64
+#: ../src/uicommon/nmv-locate-file-dialog.cc:65
 #, c-format
 msgid "Select Location For %s"
 msgstr "Seleccionar ubicación para %s"
 
-#: ../src/uicommon/nmv-locate-file-dialog.cc:74
+#: ../src/uicommon/nmv-locate-file-dialog.cc:75
 #, c-format
 msgid ""
 "Cannot find file '%s'.\n"
@@ -1370,19 +1385,19 @@ msgstr ""
 "No se pudo cargar el archivo %s porque su codificación de caracteres es "
 "distinta de %s"
 
-#: ../src/uicommon/nmv-terminal.cc:173
+#: ../src/uicommon/nmv-terminal.cc:174
 msgid "Copy the selection"
 msgstr "Copiar la selección"
 
-#: ../src/uicommon/nmv-terminal.cc:180
+#: ../src/uicommon/nmv-terminal.cc:181
 msgid "Paste the clipboard"
 msgstr "Pegar el portapapeles"
 
-#: ../src/uicommon/nmv-terminal.cc:187
+#: ../src/uicommon/nmv-terminal.cc:188
 msgid "Reset the terminal"
 msgstr "Reiniciar la terminal"
 
-#: ../src/uicommon/nmv-ui-utils.cc:90
+#: ../src/uicommon/nmv-ui-utils.cc:91
 msgid "Do not ask me again"
 msgstr "No preguntarme de nuevo"
 
@@ -1436,12 +1451,12 @@ msgstr "Mostrar el manual de usuario de esta aplicación"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
-msgid "<b>Locate File</b>"
-msgstr "<b>Encontrar archivo</b>"
-
-#: ../ui/locatefiledialog.ui.h:2
 msgid "Select File Location"
 msgstr "Seleccionar la ubicación del archivo"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "<b>Locate File</b>"
+msgstr "<b>Encontrar archivo</b>"
 
 #~ msgid "bodycontainer"
 #~ msgstr "bodycontainer"
