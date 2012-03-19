@@ -193,7 +193,7 @@ DBGPerspectiveTwoPaneLayout::activate_view (int a_view)
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     THROW_IF_FAIL (m_priv);
-    THROW_IF_FAIL (!m_priv->views.count (a_view));
+    THROW_IF_FAIL (m_priv->views.count (a_view));
 
     Gtk::Notebook &status_notebook = m_priv->statuses_notebook (a_view);
     int page_num = status_notebook.page_num (m_priv->views.at (a_view));
@@ -222,9 +222,9 @@ DBGPerspectiveTwoPaneLayout::save_configuration ()
 }
 
 void
-DBGPerspectiveTwoPaneLayout::add_view (Gtk::Widget &a_widget,
-                                       const UString &a_title,
-                                       int a_index)
+DBGPerspectiveTwoPaneLayout::append_view (Gtk::Widget &a_widget,
+                                          const UString &a_title,
+                                          int a_index)
 {
     THROW_IF_FAIL (m_priv);
     if (m_priv->views.count (a_index) || a_widget.get_parent ()) {
@@ -234,7 +234,7 @@ DBGPerspectiveTwoPaneLayout::add_view (Gtk::Widget &a_widget,
     m_priv->views.insert (std::make_pair<int, Gtk::Widget&> (a_index, a_widget));
     a_widget.show_all ();
     Gtk::Notebook &statuses_notebook = m_priv->statuses_notebook (a_index);
-    int page_num = statuses_notebook.insert_page (a_widget, a_title, a_index);
+    int page_num = statuses_notebook.append_page (a_widget, a_title);
     statuses_notebook.set_current_page (page_num);
 }
 

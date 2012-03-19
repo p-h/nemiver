@@ -60,7 +60,7 @@ public:
 
     void save_configuration ();
 
-    void add_view (Gtk::Widget&, const UString&, int);
+    void append_view (Gtk::Widget&, const UString&, int);
 
     void remove_view (int);
 

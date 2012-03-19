@@ -236,9 +236,9 @@ DBGPerspectiveDynamicLayout::save_configuration ()
 }
 
 void
-DBGPerspectiveDynamicLayout::add_view (Gtk::Widget &a_widget,
-                                       const UString &a_title,
-                                       int a_index)
+DBGPerspectiveDynamicLayout::append_view (Gtk::Widget &a_widget,
+                                          const UString &a_title,
+                                          int a_index)
 {
     THROW_IF_FAIL (m_priv);
     if (m_priv->views.count (a_index) || a_widget.get_parent ()) {

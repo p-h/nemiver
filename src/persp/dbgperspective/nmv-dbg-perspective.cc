@@ -4928,29 +4928,31 @@ DBGPerspective::get_find_text_dialog ()
     return *m_priv->find_text_dialog;
 }
 
+/// Adds the views of the debugger to the layout.  It adds them in a
+/// left to right manner (if you consider the defaut layout at
+/// least).
 void
 DBGPerspective::add_views_to_layout ()
 {
     THROW_IF_FAIL (m_priv);
 
-#ifdef WITH_MEMORYVIEW
-    m_priv->layout ().add_view (get_memory_view ().widget (),
-                                MEMORY_VIEW_TITLE,
-                                MEMORY_VIEW_INDEX);
-#endif // WITH_MEMORYVIEW
-    m_priv->layout ().add_view (get_registers_scrolled_win (),
-                                REGISTERS_VIEW_TITLE,
-                                REGISTERS_VIEW_INDEX);
-    m_priv->layout ().add_view (get_breakpoints_scrolled_win (),
-                                BREAKPOINTS_VIEW_TITLE,
-                                BREAKPOINTS_VIEW_INDEX);
-    m_priv->layout ().add_view (get_context_paned (),
-                                CONTEXT_VIEW_TITLE,
-                                CONTEXT_VIEW_INDEX);
-    m_priv->layout ().add_view (get_terminal_box (),
-                                TARGET_TERMINAL_VIEW_TITLE,
-                                TARGET_TERMINAL_VIEW_INDEX);
-
+    m_priv->layout ().append_view (get_terminal_box (),
+                                   TARGET_TERMINAL_VIEW_TITLE,
+                                   TARGET_TERMINAL_VIEW_INDEX);
+    m_priv->layout ().append_view (get_context_paned (),
+                                   CONTEXT_VIEW_TITLE,
+                                   CONTEXT_VIEW_INDEX);
+    m_priv->layout ().append_view (get_breakpoints_scrolled_win (),
+                                   BREAKPOINTS_VIEW_TITLE,
+                                   BREAKPOINTS_VIEW_INDEX);
+    m_priv->layout ().append_view (get_registers_scrolled_win (),
+                                   REGISTERS_VIEW_TITLE,
+                                   REGISTERS_VIEW_INDEX);
+    #ifdef WITH_MEMORYVIEW
+    m_priv->layout ().append_view (get_memory_view ().widget (),
+                                   MEMORY_VIEW_TITLE,
+                                   MEMORY_VIEW_INDEX);
+    #endif // WITH_MEMORYVIEW
     m_priv->layout ().do_init ();
 
 }

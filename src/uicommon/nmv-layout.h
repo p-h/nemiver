@@ -89,13 +89,16 @@ public:
     /// \param a_view_identifier The view to activate
     virtual void activate_view (int a_view_identifier) = 0;
 
-    /// \brief add a view to the layout
+    /// \brief appends a view to the layout
+    ///
+    /// The view is added to the end of the existing list of views
+    /// contained in the layout.
     /// \param a_widget Widget of the view to add to the layout
     /// \param a_title Title of the view (will appears in notebook label, ...)
     /// \param a_index Unique identifier of the view to add to the layout
-    virtual void add_view (Gtk::Widget &a_widget,
-                           const UString &a_title,
-                           int a_index) = 0;
+    virtual void append_view (Gtk::Widget &a_widget,
+			      const UString &a_title,
+			      int a_index) = 0;
 
     /// \brief remove a view from the layout
     /// \param a_index Unique identifier of the view to remove from the layout
