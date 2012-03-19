@@ -154,7 +154,10 @@ DBGPerspectiveDefaultLayout::activate_view (int a_view)
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->statuses_notebook);
 
-    m_priv->statuses_notebook->set_current_page (a_view);
+    int page_num =
+        m_priv->statuses_notebook->page_num (m_priv->views.at (a_view));
+    THROW_IF_FAIL (page_num >= 0);
+    m_priv->statuses_notebook->set_current_page (page_num);
 }
 
 void
@@ -188,9 +191,7 @@ DBGPerspectiveDefaultLayout::add_view (Gtk::Widget &a_widget,
 
     m_priv->views.insert (std::make_pair<int, Gtk::Widget&> (a_index, a_widget));
     a_widget.show_all ();
-    int page_num = m_priv->statuses_notebook->insert_page (a_widget,
-                                                           a_title,
-                                                           a_index);
+    int page_num = m_priv->statuses_notebook->prepend_page (a_widget, a_title);
     m_priv->statuses_notebook->set_current_page (page_num);
 }
 
