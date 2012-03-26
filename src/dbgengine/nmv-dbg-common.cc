@@ -162,15 +162,13 @@ VarChange::apply_to_variable (IDebugger::VariableSafePtr a_var,
     IDebugger::VariableSafePtr v;
     if (*a_var == *variable ()) {
         applied_to = a_var;
-        update_debugger_variable (*applied_to, *variable ());
     } else {
         // variable must be a descendant of a_var.
         v = a_var->get_descendant (variable ()->internal_name ());
         THROW_IF_FAIL (v);
         applied_to = v;
-        if (variable ()->name ().empty () && !v->name ().empty ())
-            variable ()->name (v->name ());
     }
+    update_debugger_variable (*applied_to, *variable ());
 
     a_changed_vars.push_back (applied_to);
 
