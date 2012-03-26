@@ -2917,6 +2917,8 @@ struct OnListChangedVariableHandler : public OutputHandler
             a_in.output ().result_record ().var_changes ();
 
         IDebugger::VariableSafePtr variable = a_in.command ().variable ();
+        // This contains the sub-variables of 'variable' that changed,
+        // as well as 'variable' itself.
         list<VariableSafePtr> changed_sub_vars;        
         // Each element of var_changes is either a change of variable
         // itself, or a change of one its children.  So apply those
@@ -2926,8 +2928,9 @@ struct OnListChangedVariableHandler : public OutputHandler
         for (list<VarChangePtr>::const_iterator i = var_changes.begin ();
              i != var_changes.end ();
              ++i) {
-            // Apply the variable changes to each i->variable.  The
-            // result is going to be a list VariableSafePtr that is
+            // Apply each variable change to variable.  The result is
+            // going to be a list of VariableSafePtr (variable itself,
+            // as well as each sub-variable that got changed) that is
             // going to be sent back to notify the client code.
             (*i)->apply_to_variable (variable, changed_sub_vars);
             LOG_DD ("Num sub vars:" << (int) changed_sub_vars.size ());
@@ -2942,6 +2945,7 @@ struct OnListChangedVariableHandler : public OutputHandler
                 vars.push_back (*j);
             }
         }
+
         // Call the slot associated to
         // IDebugger::list_changed_variables(), if any.
         if (a_in.command ().has_slot ()) {
@@ -2951,6 +2955,7 @@ struct OnListChangedVariableHandler : public OutputHandler
             SlotType slot = a_in.command ().get_slot<SlotType> ();
             slot (vars);
         }
+
         // Tell the world about the descendant variables that changed.
         m_engine->changed_variables_signal ().emit
             (vars, a_in.command ().cookie ());
