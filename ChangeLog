@@ -1,3 +1,513 @@
+2012-03-19  Fabien Parent <parent.f@gmail.com>
+
+	672409 - activate correct views in static layouts
+	* src/uicommon/nmv-layout.h (Layout::append_view): Renamed
+	add_view into this.  Updated comment.
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.h
+	(DBGPerspectiveDefaultLayout::append_view): Renamed add_view into
+	this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc
+	(DBGPerspectiveDefaultLayout::activate_view): Set the current page
+	of the notebook to the page number of the widget to activate
+	instead of its ID
+	(DBGPerspectiveDefaultLayout::append_view): Renamed add_view into
+	this.  Append the widget instead of trying to put it at specific
+	position in the notebook
+	* src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.h
+	(DBGPerspectiveDynamicLayout::append_view): Renamed add_view into
+	this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc
+	(DBGPerspectiveDynamicLayout::append_view): Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.h
+	(DBGPerspectiveTwoPaneLayout::activate_view): Renamed add_view
+	into this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc
+	(DBGPerspectiveTwoPaneLayout::activate_view): Fix wrong assertion
+	(DBGPerspectiveTwoPaneLayout::append_view): Renamed add_view into
+	this.  Append the widget instead of trying to put it at a specific
+	position in the notebook.
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.h
+	(DBGPerspectiveWideLayout::append_view): Renamed add_view into
+	this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc
+	(DBGPerspectiveWideLayout::activate_view): Set the current page of the
+	notebook to the page number of the widget to activate instead of its ID
+	(DBGPerspectiveWideLayout::append_view): Renamed add_view into
+	this.  Append the widget instead of trying to put at a specific
+	position in the notebook.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::add_views_to_layout): Update this to use
+	Layout::append_view and to append views in the proper order.  Add
+	comment.
+
+2012-03-27  Dodji Seketeli <dodji@seketeli.org>
+
+	Revert "672409 - activate correct views in static layouts"
+	This reverts commit e1683034407681032ed38b1649124c5915248858.
+
+2012-03-19  Fabien Parent <parent.f@gmail.com>
+
+	672409 - activate correct views in static layouts
+	* src/uicommon/nmv-layout.h (Layout::append_view): Renamed
+	add_view into this.  Updated comment.
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.h
+	(DBGPerspectiveDefaultLayout::append_view): Renamed add_view into
+	this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc
+	(DBGPerspectiveDefaultLayout::activate_view): Set the current page
+	of the notebook to the page number of the widget to activate
+	instead of its ID
+	(DBGPerspectiveDefaultLayout::append_view): Renamed add_view into
+	this.  Append the widget instead of trying to put it at specific
+	position in the notebook
+	* src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.h
+	(DBGPerspectiveDynamicLayout::append_view): Renamed add_view into
+	this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc
+	(DBGPerspectiveDynamicLayout::append_view): Likewise.
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.h
+	(DBGPerspectiveTwoPaneLayout::activate_view): Renamed add_view
+	into this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc
+	(DBGPerspectiveTwoPaneLayout::activate_view): Fix wrong assertion
+	(DBGPerspectiveTwoPaneLayout::append_view): Renamed add_view into
+	this.  Append the widget instead of trying to put it at a specific
+	position in the notebook.
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.h
+	(DBGPerspectiveWideLayout::append_view): Renamed add_view into
+	this.
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc
+	(DBGPerspectiveWideLayout::activate_view): Set the current page of the
+	notebook to the page number of the widget to activate instead of its ID
+	(DBGPerspectiveWideLayout::append_view): Renamed add_view into
+	this.  Append the widget instead of trying to put at a specific
+	position in the notebook.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::add_views_to_layout): Update this to use
+	Layout::append_view and to append views in the proper order.  Add
+	comment.
+
+2012-03-25  Joe Hansen <joedalton2@yahoo.dk>
+
+	Updated Danish translation
+
+2012-03-25  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2012-03-24  Fran Diéguez <fran.dieguez@mabishu.com>
+
+	Updated Galician translations
+
+2012-02-20  Dodji Seketeli <dodji@seketeli.org>
+
+	670464 - Make breakpoint ignore count persistent
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::Breakpoint::initial_ignore_count): New accessor for
+	the initial ignore count that got set by the user.
+	(IDebugger::Breakpoint::clear): Zero the new
+	m_initial_ignore_count member.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(GDBMIParser::parse_breakpoint): Set initial ignore count when
+	we are on the edge of an ignore count change.
+	* src/dbgengine/nmv-gdb-engine.h
+	(GDBEngine::append_breakpoints_to_cache): Remove const from
+	breakpoint(s) parameter.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::set_breakpoint_ignore_count): Set the initial ignore
+	count on the locally cached breakpoint, when we have one.  This is
+	how we 'remember' the initial ignore count, even though GDB
+	decrements the ignore count at each hit.  That way, we can have a
+	chance to set the proper ignore count back to the instance of
+	Breakpoint we receive from GDB, if necessary.
+	(GDBEngine::append_breakpoint_to_cache): Remove the const from the
+	breakpoint parameter.  Update that argument with the cached
+	initial ignore count if necessary.
+	(GDBEngine::append_breakpoints_to_cache): Remove const from the
+	breakpoints parameter.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::re_initialize_set_breakpoints): New.
+	(DBGPerspective::on_going_to_run_target_signal): Use here.
+	(DBGPerspective::record_and_save_session): Save the initial ignore
+	count ...
+	(DBGPerspective::execute_session): ... and restore it.
+	(DBGPerspective::set_breakpoint): Set the breakpoint ignore count
+	to the initial ignore count.
+
+2012-03-02  Fabien Parent <parent.f@gmail.com>
+
+	Remove duplicate file
+	* src/persp/dbgperspective/DBGPerspective.conf.in: Removed. Unused
+	duplicate copy of src/persp/dbgperspective/dbgperspective.conf.in.
+
+2012-02-23  Matej Urbančič <mateju@svn.gnome.org>
+
+	Updated Slovenian translation
+
+2012-02-23  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2012-02-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix test-core.cc
+	* tests/test-core.cc (main): Use
+	debugger_utils::load_debugger_iface_with_confmgr to ensure the
+	configuration manager is loaded too.
+	* Makefile.am (runtestcore): Link this executable with
+	libdebuggerutils.la.
+
+2012-02-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Better default directory in core loading dialog
+	* src/persp/dbgperspective/nmv-load-core-dialog.cc
+	(Loadcoredialog::Priv::Priv): Set the current folder of the file
+	chooser dialogs to the current directory.
+
+2012-02-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Add a --load-core command line switch
+	* src/main.cc (gv_core_path): New global variable that holds the
+	path to the core file to load.
+	(static GOptionEntry entries<load-core>): New struct to describe
+	the new command line switch.
+	(parse_command_line): Fix a typo in a comment.  Handle cases where
+	the user forgets to provide the path to the binary that generated
+	the core file.
+	(load_debugger_perspective): Factorize out of ...
+	(process_gui_options): ... here.  Handle the new option.
+
+2012-02-19  Dodji Seketeli <dodji@seketeli.org>
+
+	667723 - can't load core dump
+	* src/persp/dbgperspective/nmv-call-stack.h
+	(CallStack::update_stack): Take a parameter to select the top most
+	frame of the call stack.
+	* src/persp/dbgperspective/nmv-call-stack.cc
+	(CallStack::Priv::set_current_frame):  Split from ...
+	(CallStack::Priv::update_selected_frame): ... here.
+	(CallStack::Priv::{on_frames_listed, update_call_stack}): Take a
+	parameter to select the top most frame of the call stack.  Pass it
+	to the new set_current_frame.
+	(CallStack::Priv::finish_update_handling): Adjust.
+	(CallStack::update_stack): Take a parameter to select the top most
+	frame of the call stack.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::load_core_file): Don't just instruct the debugger
+	to list call frames.  No client code is listening to update.
+	Rather, delegate that job to the call stack widget.
+
+2012-02-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Add more logging to nmv-gdb-engine.cc
+	* src/dbgengine/nmv-gdb-engine.cc
+	(GDBEngine::Priv::{launch_gdb_on_core_file, load_core_file}): Add
+	logging.
+
+2012-02-19  Dodji Seketeli <dodji@seketeli.org>
+
+	Style cleanup in nmv-call-stack.cc
+	* src/persp/dbgperspective/nmv-call-stack.cc: Cleanup function
+	definition style.
+
+2012-02-19  Romain Tartière <romain@blogreen.org>
+
+	641595 - Add configure option for default GDB path
+	* configure.ac: Add --with-default-gdb=/path/to/default/gdb/binary
+	configure option.
+
+2012-02-18  Dodji Seketeli <dodji@seketeli.org>
+
+	665498 - Assertion failure on program launch
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::read_default_config):  Ensure that
+	m_priv->num_instr_to_disassemble is not zero.
+
+2012-02-18  Dodji Seketeli <dodji@seketeli.org>
+
+	Make test-var-path-expr.cc more portable
+	* tests/test-var-path-expr.cc (on_variable_expr_path): Test the
+	presence of the string ".m_first_name" in the path expression,
+	instead of trying to look for something exact that would depend on
+	a particular implementation of libstdc++.
+
+2012-02-14  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix comment typo in class IDebugger::Variable
+	* src/dbgengine/nmv-i-debugger
+	(IDebugger::Variable::equals_by_value): Fix comment.
+
+2011-12-30  Dodji Seketeli <dodji@seketeli.org>
+
+	Support 'new_children' property of GDB/MI changelist LIST
+	* src/dbgengine/nmv-dbg-common.h (VarChange): New type.
+	(apply_debugger_variable_change): New public entry point.
+	(Output::ResultRecord::m_has_var_changes):
+	(Output::ResultRecord::m_new_num_children): New members
+	(Output::ResultRecord::clear): Clear new m_var_changes and
+	m_new_num_children.
+	(Output::ResultRecord::has_var_changes):New.
+	(Output::ResultRecord::var_changes): New.
+	(Output::ResultRecord::new_num_children): New.
+	* src/dbgengine/nmv-dbg-common.cc (VarChange::Priv): New
+	(VarChange::*): New.
+	(update_debugger_variable): New.
+	* src/dbgengine/nmv-gdbmi-parser.h (parse_var_changed_list): New.
+	* src/dbgengine/nmv-gdbmi-parser.cc
+	(grok_var_changed_list_components): Split out from
+	GDBMIParser::parse_var_changed_list.  Make it support
+	"new_children" property.
+	(GDBMIParser::parse_var_changed_list): Use new
+	grok_var_changed_list_components.
+	(operator<<): Added a few overloads of this to stream instances of
+	VariableSafePtr, Variable, VarChangePtr to ostream.
+	(dump_gdbmi): Added a few overloads of this for GDBMI types.
+	(GDBMIParser::parse_result_record<PREFIX_VARIABLES_CHANGED_LIST>):
+	Adjust to list<VarChangePtr> instead of
+	list<IDebugger::VariableSafePtr>.
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::load_program): Add
+	two new overloads to simplify inferior load from client code.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::load_program): Add
+	two new overloads to simplify inferior load from client code.
+	* src/dbgengine/nmv-gdb-engine.cc (read_default_config): Add logs.
+	(on_conf_key_changed_signal): Likewise.  Don't queue
+	-enable-pretty-printing command if gdb is not running.  That will
+	make us lose the queued command once load_program is later called.
+	(OnListChangedVariableHandler::do_handle): Apply variable changes
+	to relevant variables and notify client code with the
+	sub-variables that got modified.
+	(GDBEngine::load_program): Two new overloads to simplify the
+	client code.  Add comments.  Cleanup.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(update_a_local_variable, on_local_variables_listed_signal): Add
+	logs.
+	* src/persp/dbgperspective/nmv-variables-utils.cc (is_empty_row)
+	(get_row_name): New static functions.
+	(get_variable_columns, find_a_variable): Update logging.
+	(walk_path_from_row):  Add a recurse argument that indicates if we
+	are being called recursively or not.  Use that to determine row
+	where the walk stops at.  USe is_empty_row.  Add logging.
+	(find_a_variable_descendent): Add logging.  Support looking for a
+	variable member that is a new sibling.  That is, a variable member
+	not present in the graphical representation of its root variable,
+	even though that root variable is graphically represented.
+	(variables_match): Fix logic.
+	(update_a_variable, update_a_variable_real): Add comments and
+	logging.  Support new variable members.
+	* tests/test-gdbmi.cc (gv_output_record9): New output record as a
+	result of -var-update.
+	* tests/test-pretty-print.cc: New test case.
+	* tests/pretty-print.cc: New inferior for new test case.
+	* tests/Makefile.am: Update build system for adding new test case.
+
+2012-02-14  Dodji Seketeli <dodji@seketeli.org>
+
+	Add IDebugger::Variable::operator==
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::Variable::operator==): Make this public and implement
+	it.
+	(IDebugger::Variable::equals): New function.
+
+2012-02-04  Dodji Seketeli <dodji@seketeli.org>
+
+	Support GDB/MI properties displayint, dynamic, has_more
+	* src/dbgengine/nmv-i-debugger.h
+	(IDebugger::{m_display_hint,m_is_dynamic,m_has_more_children}):
+	New members.
+	(Variable::Variable): Initialize the new members.
+	(Variable::{display_hint,is_dynamic,has_more_children}): New
+	accessors.
+	(Variable::expects_children): Renamed
+	Variable::has_expected_children into this.  Use the new
+	Variable::has_more_children accessor.
+	(Variable::needs_unfolding): Adjust.
+	* src/dbgengine/nmv-gdbmi-parser.cc (GDBMIParser::parse_variable):
+	Support "displayhinr", "dynamic", "has_more" properties.
+	* tests/test-vars.cc (on_variable_unfolded_signal): Adjust.
+
+2012-02-04  Dodji Seketeli <dodji@seketeli.org>
+
+	Drop redundant parameter from some variable utils
+	* src/persp/dbgperspective/nmv-variables-utils.h
+	(append_a_variable, set_a_variable):  Drop redundant a_tree_store
+	and the const from a_tree_view.
+	(update_a_variable_node, update_unfolded_variable)
+	(update_a_variable, visualize_a_variable): Adjust.
+	* src/persp/dbgperspective/nmv-variables-utils.cc
+	(append_a_variable, set_a_variable): Drop redundant
+	a_tree_store parameter.  Get it from from the a_tree_view
+	parameter instead.  Drop the const from a_tree_view as a
+	consequence.  Adjust the rest of the function accordingly.
+	(update_a_variable_real, update_a_variable)
+	(update_a_variable_node, update_unfolded_variable)
+	(visualize_a_variable): Adjust.
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc
+	(append_a_global_variable): Adjust.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(append_a_local_variable, append_a_function_argument)
+	(on_variable_unfolded_signal): Likewise.
+	* src/persp/dbgperspective/nmv-var-inspector.cc
+	(graphically_set_variable, on_variable_unfolded_signal): Likewise.
+
+2012-01-11  Jiro Matsuzawa <jmatsuzawa@src.gnome.org>
+
+	Updated Japanese translation
+
+2012-01-11  Jiro Matsuzawa <jmatsuzawa@src.gnome.org>
+
+	Fix Bug 667677. Fix broken tags.
+
+2011-12-29  Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>
+
+	Add Esperanto translation
+
+2011-12-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix offscreen -> onscreen locals rendering
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(is_local_variables_subtree_empty, inspector_is_empty): New
+	functions.
+	(finish_handling_debugger_stopped_event): Add logging.  Use the
+	new inspector_is_empty.  Make sure to save proper state in all
+	cases.
+
+2011-12-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Dump variable value to stderr
+	* src/dbgengine/nmv-debugger-utils.h (dump_variable_value):
+	Declare new overload.  Make the existing overload take an
+	std::ostream instead of an std::ostringstream.
+	* src/dbgengine/nmv-debugger-utils.cc (dump_variable_value):
+	Define new overload.  Make the existing overload take an
+	std::ostream instead of an std::ostringstream.
+
+2011-12-11  Dodji Seketeli <dodji@seketeli.org>
+
+	Tie life time of IDebugger::Variable and varobjs
+	* src/dbgengine/nmv-i-debugger.h (IDebugger::delete_variable): Add
+	an overload declaration that takes the internal name of the
+	backend-side variable object to delete.  Add comments to all the
+	overloads.
+	(IDebugger::DefaultSlot): Move typedef before declaration of
+	IDebugger::Variable.
+	(IDebugger::Variable::m_debugger): New member.
+	(IDebubber::Variable::Variable): Adjust constructors to initialize
+	the new m_debugger member.
+	(IDebugger::Variable::debugger): New accessor.
+	(IDebugger::Variable::~Variable): If the debugging engine is still
+	connected to the Delete the backend-side variable
+	object if any.
+	(IDebugger::variable_deleted_signal): Add comments.
+	* src/dbgengine/nmv-gdb-engine.h (GDBEngine::delete_variable):
+	Declare new overload.
+	* src/dbgengine/nmv-gdb-engine.cc
+	(OnCreateVariableHandler::do_handle): Associate the instance of
+	IDebugger::Variable with the instance of IDebugger::Variable it
+	was created from, iff there is backend-side variable object for
+	that variable.
+	(OnDeleteVariableHandler::do_handle): Some requests for deleting
+	variable can have null instances of IDebugger::Variable
+	associated.  Handle those.
+	(GDBEngine::delete_variable): Implement the new overload to delete
+	a variable object from its "internal name".  Add comments to the
+	other overloads.
+	* src/dbgengine/nmv-varobj-walker.cc (~VarobjWalker): Remove.
+	(delete_varobj_if_necessary): Remove.
+	(connect): Remove call to delete_varobj_if_necessary.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(LocalVarsInspector::Priv::clear_local_variables)
+	(LocalVarsInspector::Priv::clear_function_arguments): Remove uses
+	of delete_vars_backend_peers.
+	(LocalVarsInspector::Priv::delete_vars_backend_peers): Remove.
+	* src/persp/dbgperspective/nmv-var-inspector.cc
+	(VarInspector::Priv::graphically_set_variable)
+	(VarInspector::Priv::~Priv, VarInspector::inspect_variable)
+	(VarInspector::clear): Remove use of delete_variable_if_needed.
+	(VarInspector::Priv::delete_variable_if_needed): Remove.
+	* tests/fooprog.cc (main): Don't name unused parameters.
+	* tests/test-var-path-expr.cc (variables): New global
+	container of variables.
+	(on_variable_deleted_signal): New signal handler.
+	(on_breakpoints_set_signal): Clear variables instead of quitting
+	the event loop.
+	(on_variable_unfolded, on_variable_created): Add the variable to
+	the "variables" container.
+	(on_stopped_signal): Count the number of variable created.
+	Avoid needlessly passing a reference to the debugger engine.
+	(test_main): Don't name unused arguments.  Handle the
+	IDebugger::variable_deleted_signal event.
+	* tests/test-var-walker.cc (VariableList): Rename
+	DebuggerVariableList into this.
+	(variables): New global variable to hold variables.
+	(on_frames_arguments_listed_signal, on_local_variables_listed_signal):
+	Don't name unused parameters.  Add function arguments to the
+	"variables" global.
+	(test_main): Adjust b/c fooprog's main function doesn't have any
+	named parameter anymore.  Clear the "variables" global after the
+	event loop is closed.
+	* tests/test-vars.cc (variables): New global to handle variables.
+	(person_var): Rename var_to_delete into this.
+	(on_variable_created_signal, on_varible_created_signal2): Add
+	variable to the "variables" global.
+	(on_changed_variables_listed_signal):  Don't explicitly
+	delete_variable anymore.  Keep stepping, and don't hold a
+	reference on the person_var reference.
+	(on_variable_deleted_signal, on_variable_deleted_signal2): Be
+	aware that a_var can be empty for backend-side variable objects.
+	(on_stopped_signal): Adjust.
+	(test_main):  Don't expect any variable to be have been deleted
+	during this test, and clear the "variables" global.
+
+2011-10-19  Fabien Parent <parent.f@gmail.com>
+
+	543488 Support renaming of sessions
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::record_and_save_session): Restore the custom user
+	defined name of the session when updating a previous session
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
+	(SavedSessionsDialog::Priv::Priv): Take the session manager as parameter
+	(SavedSessionsDialog::Priv::init): Add a custom cell renderer for
+	the session name column and display the custom session name is present.
+	(SavedSessionsDialog::Priv::session_name_cell_data_func): New API
+	(SavedSessionsDialog::Priv::on_session_name_edited): New API
+	(SavedSessionsDialog::SavedSessionsDialog): The session manager is given
+	to the constructor of Priv instead of the method Priv::init.
+
+2011-11-24  Dodji Seketeli <dodji@seketeli.org>
+
+	Misc style cleanups
+	* src/main.cc: Add missing spaces for initialization expressions.
+	(entries): Properly indent.
+	* src/persp/dbgperspective/nmv-remote-target-dialog.cc
+	(RemoteTargetDialog::Priv:*): In function definitions, names
+	should start at the beginning of the line.
+
+2011-11-24  Dodji Seketeli <dodji@seketeli.org>
+
+	664463 - cannot debug the same software twice
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::set_breakpoint): Don't try to set a breakpoint if
+	it has neither and address nor a filename set.
+
+2011-11-24  Dodji Seketeli <dodji@seketeli.org>
+
+	En route toward 0.9.2
+	* configure.ac: Bump revision to 0.9.2.
+
+2011-11-20  Dodji Seketeli <dodji@seketeli.org>
+
+	Update the 'release' target for gz -> xz change
+	* Makefile.am:  Substitute tar_gz_file for tar_xz_file and tar.gz
+	for tar.xz.
+
+2011-11-23  Jiro Matsuzawa <jmatsuzawa@src.gnome.org>
+
+	Updated Japanese translation
+
+2011-11-22  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	Updated Japanese translation.
+
 2011-11-13  Dodji Seketeli <dodji@seketeli.org>
 
 	Automatically update ChangeLog

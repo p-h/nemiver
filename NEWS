@@ -1,3 +1,55 @@
+0.9.2 Release
+=============
+
+Daniel Mustieles
+      Updated Spanish translation
+
+Dodji Seketeli
+      664463 - cannot debug the same software twice
+      665498 - Assertion failure on program launch
+      667723 - can't load core dump
+      670464 - Make breakpoint ignore count persistent
+      Add a --load-core command line switch
+      Better default directory in core loading dialog
+      Tie life time of IDebugger::Variable and varobjs
+      Fix offscreen -> onscreen locals rendering
+      Support GDB/MI properties displayint, dynamic, has_more
+      Support 'new_children' property of GDB/MI changelist LIST
+      Code maintainability enhancements
+      Test suite fixes
+      Update the 'release' target for gz -> xz change
+
+Fabien Parent
+      543488 Support renaming of sessions
+      672409 - activate correct views in static layouts
+      672409 - activate correct views in static layouts
+      Code maintainability enhancements
+
+Fran Diéguez
+      Updated Galician translations
+
+Jiro Matsuzawa
+      667677 - Fix broken tags.
+      Updated Japanese translation
+
+Joe Hansen
+      Updated Danish translation
+
+Kristjan SCHMIDT
+      Add Esperanto translation
+
+Marek Černocký
+      Updated Czech translation
+
+Matej Urbančič
+      Updated Slovenian translation
+
+Romain Tartière
+      641595 - Add configure option for default GDB path
+
+Takeshi AIHANA
+      Updated Japanese translation.
+
 0.9.1 Release
 =============
 
