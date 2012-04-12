@@ -25,6 +25,7 @@
  */
 #include "config.h"
 #include <cstring>
+#include <iostream>
 #include <sstream>
 #include "common/nmv-str-utils.h"
 #include "common/nmv-asm-utils.h"

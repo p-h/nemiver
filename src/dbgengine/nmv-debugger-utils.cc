@@ -22,6 +22,7 @@
  *
  *See COPYRIGHT file copyright information.
  */
+#include <iostream>
 #include "nmv-debugger-utils.h"
 #include "common/nmv-exception.h"
 
