@@ -274,8 +274,7 @@ msgstr "Aktualisierung für die Version 0.5.0"
 #: C/nemiver.xml:82(releaseinfo)
 msgid "This manual describes version 0.5.0 of Nemiver."
 msgstr ""
-"Dieses Handbuch beschreibt Version 0.5.0 von <application>Nemiver</"
-"application>."
+"Dieses Handbuch beschreibt Version 0.5.0 von Nemiver."
 
 #: C/nemiver.xml:85(title)
 msgid "Feedback"
