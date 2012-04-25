@@ -66,8 +66,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-25 22:49+0200\n"
-"PO-Revision-Date: 2012-03-25 21:38+0000\n"
+"POT-Creation-Date: 2012-04-25 09:57+0200\n"
+"PO-Revision-Date: 2012-04-22 21:38+0000\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Dansk-gruppen <dansk@dansk-gruppen.dk>\n"
 "Language: \n"
@@ -76,21 +76,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../data/nemiver.desktop.in.h:1
-msgid "C/C++ Debugger"
-msgstr "Fejlsøgning i C/C++"
-
-#: ../data/nemiver.desktop.in.h:2
-msgid "Debug Applications"
-msgstr "Fejlsøgningsprogrammer"
-
-#: ../data/nemiver.desktop.in.h:3 ../ui/workbench.ui.h:1
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
 msgstr "Nemiver"
 
-#: ../data/nemiver.desktop.in.h:4
+#: ../data/nemiver.desktop.in.h:2
+msgid "C/C++ Debugger"
+msgstr "Fejlsøgning i C/C++"
+
+#: ../data/nemiver.desktop.in.h:3
 msgid "Nemiver C/C++ Debugger"
 msgstr "Nemiver C/C++-fejlsøgning"
+
+#: ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Fejlsøgningsprogrammer"
 
 # Set står som standard med angiv på ordlisten, så har beholdt den. 
 # Ja, ordlisten skeler jeg også til, men /set/ kan jo indgå i flere
@@ -109,9 +109,8 @@ msgid "Attach to a process"
 msgstr "Hægt til en proces"
 
 #: ../src/main.cc:95
-#, fuzzy
 msgid "Load a core file"
-msgstr "Indlæs en kernefil fra disk"
+msgstr "Indlæs en kernefil"
 
 #: ../src/main.cc:103
 msgid "List the saved debugging sessions"
@@ -156,6 +155,8 @@ msgstr ""
 #: ../src/main.cc:179
 msgid "Set the path of the GDB binary to use to debug the inferior"
 msgstr ""
+"Angiv stien til den GDB-binære fil der skal bruges til at fejlsøge den "
+"laverestående"
 
 #: ../src/main.cc:188
 msgid "Show the version number of nemiver"
@@ -184,13 +185,12 @@ msgstr "Ellers kan du nedenfor se alle indstillingsmuligheder for nemiver.\n"
 
 # evt. Sådan her:
 #: ../src/main.cc:370
-#, fuzzy
 msgid ""
 "Please provide the path to the binary that generated the core file too.\n"
 "Like this:\n"
 msgstr ""
-"Angiv venligst en lokal kopi af den binære fil du ønsker at fejlsøge på\n"
-"eksternt. På den her måde:\n"
+"Angiv venligst en sti til den binære fil som også oprettede kernefilen.\n"
+"På den her måde:\n"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
@@ -306,10 +306,10 @@ msgid "Binary"
 msgstr "Binær"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:762
-#, fuzzy, c-format
+#, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
-msgstr[0] "(Klik her for at se de næste %d rækker af kaldstakken)"
+msgstr[0] "(Klik her for at se %d række af kaldstakken)"
 msgstr[1] "(Klik her for at se de næste %d rækker af kaldstakken)"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
@@ -779,40 +779,40 @@ msgstr "Luk %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5830
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5832
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Beklager. Det er umuligt at genstarte en laverestående eksternt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5948
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5950
 #, c-format
 msgid "Could not find file %s"
 msgstr "Kunne ikke finde fil %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6012
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6154
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6189
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6014
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6156
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6191
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Kunne ikke indlæse program: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6091
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6093
 msgid "You cannot attach to Nemiver itself"
 msgstr "Du kan ikke hægte dig på Nemiver"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6096
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6098
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Du kan ikke hægte dig til den underliggende fejlsøgningsmotor"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6379
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6381
 msgid "Failed to stop the debugger"
 msgstr "Kunne ikke stoppe fejlsøgningen"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6618
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6620
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Ugyldigt linjenummer: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8217
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8219
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -935,8 +935,8 @@ msgid "Long Word"
 msgstr "Langt ord"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:98
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
 msgid "Address:"
 msgstr "Adresse:"
 
@@ -1018,18 +1018,23 @@ msgid "Variable"
 msgstr "Variabel"
 
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
-msgid "<b>Call a function:</b>"
-msgstr "<b>Kald en funktion:</b>"
-
-#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
 msgid "Call Function"
 msgstr "Kaldfunktion"
 
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "<b>Call a function:</b>"
+msgstr "<b>Kald en funktion:</b>"
+
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "Angiv stoppunkt"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
 msgid "<b>Choose Overloaded Function</b>"
 msgstr "<b>Vælg overdefineret funktion</b>"
 
-#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
 msgid ""
 "Multiple functions match the specified name. Please choose one from the list "
 "below."
@@ -1037,216 +1042,84 @@ msgstr ""
 "Flere funktioner svarer til det angivet navn. Vælg venligst en fra listen "
 "nedenfor."
 
-#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
-msgid "Set Breakpoint"
-msgstr "Angiv stoppunkt"
-
-# Måske kan søgeindstillinger bruges? Jeg forestiller mig, at det 
-# er en overskift til en gruppe af UI-kontroller.
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
-msgid "<b>Cycling Options:</b>"
-msgstr "<b>Gennemløbsindstillinger:</b>"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
-msgid "<b>Match Options:</b>"
-msgstr "<b>Søgeindstillinger:</b>"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
 msgid "Find text"
 msgstr "Find tekst"
 
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
-msgid "Match _entire word only"
-msgstr "Søg kun efter _hele ord"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
-msgid "Match c_ase"
-msgstr "_Versalfølsom"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
-msgid "Search _backwards"
-msgstr "Søg _tilbage"
-
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
 msgid "_Search:"
 msgstr "_Søg:"
 
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "<b>Match Options:</b>"
+msgstr "<b>Søgeindstillinger:</b>"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "_Versalfølsom"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "Søg kun efter _hele ord"
+
+# Måske kan søgeindstillinger bruges? Jeg forestiller mig, at det 
+# er en overskift til en gruppe af UI-kontroller.
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "<b>Cycling Options:</b>"
+msgstr "<b>Gennemløbsindstillinger:</b>"
+
 # Fold omkring, ombryd om, begynd forfra ved slut
-#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
 msgid "_Wrap around"
 msgstr "_Fold omkring"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "Søg _tilbage"
 
 #: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
 msgid "Global Variables"
 msgstr "Globale variabler"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
-msgid "<b>Core File:</b>"
-msgstr "<b>Kernefil:</b>"
-
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
-msgid "<b>Executable:</b>"
-msgstr "<b>Eksekverbar fil:</b>"
-
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
 msgid "Choose a Core File to Debug"
 msgstr "Vælg en kernefil til fejlsøgning"
 
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
 msgid "Select A Core File"
 msgstr "Vælg en kernefil"
 
-#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "<b>Core File:</b>"
+msgstr "<b>Kernefil:</b>"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
 msgid "Select the executable that created the core file"
 msgstr "Vælg den eksekverbare fil som oprettede kernefilen"
 
-#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
-msgid "<b>Choose Source Files to Open</b>"
-msgstr "<b>Vælg kildetekstfiler der skal åbnes</b>"
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "<b>Executable:</b>"
+msgstr "<b>Eksekverbar fil:</b>"
 
-#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
 msgstr "Åbn kildetekstfiler"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "Vælg ud fra _eksekverbar fil for mål"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _Filesystem"
 msgstr "Vælg ud fra _filsystem"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
-msgid "Select from _Target Executable"
-msgstr "Vælg ud fra _eksekverbar fil for mål"
+msgid "<b>Choose Source Files to Open</b>"
+msgstr "<b>Vælg kildetekstfiler der skal åbnes</b>"
 
-# Assembler set i GNOME gnome-mime-data:
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
-msgid "<b>Assembly flavor</b>"
-msgstr "<b>Assemblervariant</b>"
-
-# Assembler set i GNOME gnome-mime-data:
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
-msgid "<b>Assembly style</b>"
-msgstr "<b>Assemblerstil</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
-msgid "<b>Editor Font</b>"
-msgstr "<b>Redigeringsskrifttype</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
-msgid "<b>File Monitoring</b>"
-msgstr "<b>Filovervågning</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
-msgid "<b>GDB binary</b>"
-msgstr "<b>GDB-binær</b>"
-
-# hvad er dette?
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
-msgid "<b>GDB follow fork mode</b>"
-msgstr "<b>GDB følge forgreningstilstand</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
-msgid "<b>GDB pretty printing</b>"
-msgstr "<b>Pæn udskrivning for GDB</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
-msgid "<b>Instructions</b>"
-msgstr "<b>Instruktioner</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
-msgid "<b>Line Numbers</b>"
-msgstr "<b>Linjenumre</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
-msgid "<b>Syntax Highlighting</b>"
-msgstr "<b>Syntaksfremhævelse</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
-msgid "<b>Terminal</b>"
-msgstr "<b>Terminal</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
-msgid "<b>Visual Style</b>"
-msgstr "<b>Visuel stil</b>"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
-msgid "Ask each time"
-msgstr "Spørg hver gang"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
-msgid "Choose a file"
-msgstr "Vælg en fil"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
-msgid "Custom Font:"
-msgstr "Tilpasset skrifttype:"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
-msgid "Debugger"
-msgstr "Fejlsøgning"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
-msgid "Display line numbers"
-msgstr "Vis linjenumre"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
-msgid "Do not reload the file"
-msgstr "Genindlæs ikke filen"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
-msgid "Editor"
-msgstr "Redigering"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
-msgid "Enable pretty printing (requires debugger restart)"
-msgstr "Aktiver pæn udskrivning (kræver genstart af debugger)"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
-msgid "Enable syntax highlighting"
-msgstr "Slå syntaksfremhævning til"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
-msgid "Follow child"
-msgstr "Følg underproces"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
-msgid "Follow parent"
-msgstr "Følg overproces"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
-msgid "Layout"
-msgstr "Layout"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
-msgid "Mixed source and assembly"
-msgstr "Blandet kilde og assembler"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
-msgid "Number of instructions to disassemble by default"
-msgstr "Antal instruktioner at adskille som standard"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
-msgid "Path to the GDB binary used"
-msgstr "Den brugte sti til GDB-binæren"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Preferences"
 msgstr "Indstillinger"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
-msgid "Pure assembly"
-msgstr "Kun assembler"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
-msgid "Reload the file"
-msgstr "Genindlæs filen"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
-msgid "Source Directories"
-msgstr "Mapper for kildetekst"
-
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
-msgid "Use launch terminal"
-msgstr "Brug opstartsterminal"
 
 # Brug systemets standard for monospatieret skrift" - den linje er på
 # grænsen til at være for lang.
@@ -1254,37 +1127,184 @@ msgstr "Brug opstartsterminal"
 # Jeg synes stadig mit forslag er for langt, og dit er heller ikke lige i
 # øjet - der er sjældent tale om en skrift, der hedder 'monospace'. Hvad
 # med "Brug monospatieret skrift"
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
 msgid "Use system monospace font"
 msgstr "Brug monospatieret skrift"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "Tilpasset skrifttype:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "<b>Editor Font</b>"
+msgstr "<b>Redigeringsskrifttype</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+msgid "<b>Visual Style</b>"
+msgstr "<b>Visuel stil</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+msgid "Display line numbers"
+msgstr "Vis linjenumre"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "<b>Line Numbers</b>"
+msgstr "<b>Linjenumre</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr "Brug opstartsterminal"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+msgid "<b>Terminal</b>"
+msgstr "<b>Terminal</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
 msgid "When a source file is changed:"
 msgstr "Når en kildetekstfil ændres:"
 
-#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
-msgid "<b>Choose a Process to Debug</b>"
-msgstr "<b>Vælg en proces at fejlsøge</b>"
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "Genindlæs filen"
 
-#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+msgid "Do not reload the file"
+msgstr "Genindlæs ikke filen"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+msgid "Ask each time"
+msgstr "Spørg hver gang"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+msgid "<b>File Monitoring</b>"
+msgstr "<b>Filovervågning</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Enable syntax highlighting"
+msgstr "Slå syntaksfremhævning til"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "<b>Syntax Highlighting</b>"
+msgstr "<b>Syntaksfremhævelse</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "Redigering"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "Mapper for kildetekst"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Pure assembly"
+msgstr "Kun assembler"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Mixed source and assembly"
+msgstr "Blandet kilde og assembler"
+
+# Assembler set i GNOME gnome-mime-data:
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "<b>Assembly style</b>"
+msgstr "<b>Assemblerstil</b>"
+
+# Assembler set i GNOME gnome-mime-data:
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "<b>Assembly flavor</b>"
+msgstr "<b>Assemblervariant</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+msgid "Choose a file"
+msgstr "Vælg en fil"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Path to the GDB binary used"
+msgstr "Den brugte sti til GDB-binæren"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+msgid "<b>GDB binary</b>"
+msgstr "<b>GDB-binær</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+msgid "Number of instructions to disassemble by default"
+msgstr "Antal instruktioner at adskille som standard"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+msgid "<b>Instructions</b>"
+msgstr "<b>Instruktioner</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr "Aktiver pæn udskrivning (kræver genstart af debugger)"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+msgid "<b>GDB pretty printing</b>"
+msgstr "<b>Pæn udskrivning for GDB</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+msgid "Follow parent"
+msgstr "Følg overproces"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+msgid "Follow child"
+msgstr "Følg underproces"
+
+# hvad er dette?
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+msgid "<b>GDB follow fork mode</b>"
+msgstr "<b>GDB følge forgreningstilstand</b>"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+msgid "Debugger"
+msgstr "Fejlsøgning"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+msgid "Layout"
+msgstr "Layout"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
 msgid "Attach to a Running Program"
 msgstr "Hægt til et kørende program"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "<b>Choose a Process to Debug</b>"
+msgstr "<b>Vælg en proces at fejlsøge</b>"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
 msgstr "_Filterliste:"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "Forbind til eksternt mål"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
 msgid "<b>Executable to Load</b>"
 msgstr "<b>Eksekverbar fil til indlæsning</b>"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
+msgid "Choose a File"
+msgstr "Vælg en fil"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "<b>Shared Libraries Location</b>"
+msgstr "<b>Placering af delte programbiblioteker</b>"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
+msgid "Choose a Directory"
+msgstr "Vælg en mappe"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
 msgid "<b>Remote Debugging Server</b>"
 msgstr "<b>Ekstern fejlsøgningsserver</b>"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
-msgid "<b>Shared Libraries Location</b>"
-msgstr "<b>Placering af delte programbiblioteker</b>"
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
+msgid "TCP/IP Connection"
+msgstr "TCP/IP-forbindelse"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
+msgid "Port :"
+msgstr "Port :"
 
 # "Adresse:" - fjern mellemrummet!
 # Hvorfor?
@@ -1296,80 +1316,60 @@ msgstr "<b>Placering af delte programbiblioteker</b>"
 # et ekstra mellemrum fra projektets side. De har også nogle strenge uden mellemrum. 
 # Det kan selvfølgelig også være en fejl fra deres side. Har beholdt den indtil
 # videre.
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
 msgid "Address :"
 msgstr "Adresse :"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
-msgid "Choose a Directory"
-msgstr "Vælg en mappe"
-
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
-msgid "Choose a File"
-msgstr "Vælg en fil"
-
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
-msgid "Connect to Remote Target"
-msgstr "Forbind til eksternt mål"
-
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
-msgid "Port :"
-msgstr "Port :"
-
 # "Seriel forbindelse" / "Forbindelse over seriel linje"
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
 msgid "Serial Line Connection"
 msgstr "Seriel linjeforbindelse"
 
-#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
-msgid "TCP/IP Connection"
-msgstr "TCP/IP-forbindelse"
-
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
-msgid "<b>Arguments:</b>"
-msgstr "<b>Argumenter:</b>"
+msgid "Choose a Program to Execute"
+msgstr "Vælg et program, der skal startes"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
-msgid "<b>Environment Variables:</b>"
-msgstr "<b>Miljøvariabler:</b>"
+msgid "Choose an executable"
+msgstr "Vælg en eksekverbar fil"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "<b>Program:</b>"
 msgstr "<b>Program:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
-msgid "<b>Working Directory:</b>"
-msgstr "<b>Arbejdsmappe:</b>"
+msgid "<b>Arguments:</b>"
+msgstr "<b>Argumenter:</b>"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
-msgid "Choose a Program to Execute"
-msgstr "Vælg et program, der skal startes"
-
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "Choose a working directory"
 msgstr "Vælg en arbejdsmappe"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
-msgid "Choose an executable"
-msgstr "Vælg en eksekverbar fil"
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "<b>Working Directory:</b>"
+msgstr "<b>Arbejdsmappe:</b>"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
 msgid "_Add"
 msgstr "_Tilføj"
 
-#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
 msgid "_Remove"
 msgstr "_Fjern"
 
-#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
-msgid "<b>Choose a Session to Debug</b>"
-msgstr "<b>Vælg en session at fejlsøge</b>"
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "<b>Environment Variables:</b>"
+msgstr "<b>Miljøvariabler:</b>"
 
-#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
 msgstr "Gemte sessioner"
 
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "<b>Choose a Session to Debug</b>"
+msgstr "<b>Vælg en session at fejlsøge</b>"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
 msgid "<b>Set a Breakpoint:</b>"
 msgstr "<b>Angiv et stoppunkt:</b>"
 
@@ -1378,37 +1378,13 @@ msgid "Condition:"
 msgstr "Betingelse:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
-msgid "F_unction Name:"
-msgstr "F_unktionnavn:"
+msgid "_Event:"
+msgstr "_Hændelse:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
-msgid "File name:"
-msgstr "Filnavn:"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
-msgid "Function:"
-msgstr "Funktion:"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
-msgid "Line:"
-msgstr "Linje:"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
-msgid "Set as Countpoint"
-msgstr "Angiv som countpunkt"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
 msgid "_Binary Location:"
 msgstr "_Binærplacering:"
-
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
-msgid "_Event:"
-msgstr "_Hændelse:"
 
 # ved vi der er tale om en fil?
 # Ja, det vil jeg mene. Det er under definitionen af stoppunkter
@@ -1428,50 +1404,74 @@ msgstr "_Hændelse:"
 #      ++++++++++++++++++++++
 #    o Alternativ 4
 # Du bør bruge teksten "_Kildeplacering" (eller "Placering")
-#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
 msgid "_Source Location:"
 msgstr "_Kildeplacering:"
 
-#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
-msgid "<b>Jump to location:</b>"
-msgstr "<b>Hop til placering:</b>"
-
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
-msgid "Break at destination"
-msgstr "Stop ved destination"
+msgid "F_unction Name:"
+msgstr "F_unktionnavn:"
 
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+msgid "File name:"
+msgstr "Filnavn:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
+msgid "Function:"
+msgstr "Funktion:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Line:"
+msgstr "Linje:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+msgid "Set as Countpoint"
+msgstr "Angiv som countpunkt"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
 msgid "Set location to jump to"
 msgstr "Vælg placering at hoppe til"
 
-#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:2
-msgid "_Inspect"
-msgstr "_Inspicer"
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "<b>Jump to location:</b>"
+msgstr "<b>Hop til placering:</b>"
 
-#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:3
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at destination"
+msgstr "Stop ved destination"
+
+#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:2
 msgid "_Variable Name:"
 msgstr "_Variabelnavn:"
+
+#: ../src/persp/dbgperspective/ui/varinspectordialog.ui.h:3
+msgid "_Inspect"
+msgstr "_Inspicer"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
 msgid "<b>Set a watchpoint:</b>"
 msgstr "<b>Angiv et overvågningspunkt:</b>"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
-msgid "Inspect"
-msgstr "Inspicer"
-
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
 msgid "expression:"
 msgstr "udtryk:"
 
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
-msgid "read"
-msgstr "læs"
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "Inspicer"
 
-#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
 msgid "triggers on:"
 msgstr "udløses ved:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "read"
+msgstr "læs"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
 msgid "write"
@@ -1568,12 +1568,12 @@ msgstr "Vis brugermanaulen for dette program"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
-msgid "<b>Locate File</b>"
-msgstr "<b>Placer fil</b>"
-
-#: ../ui/locatefiledialog.ui.h:2
 msgid "Select File Location"
 msgstr "Vælg filplacering"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "<b>Locate File</b>"
+msgstr "<b>Placer fil</b>"
 
 #~ msgid "bodycontainer"
 #~ msgstr "kropbeholder"
