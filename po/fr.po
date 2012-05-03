@@ -124,7 +124,7 @@ msgid ""
 "Please provide the path to the binary that generated the core file too.\n"
 "Like this:\n"
 msgstr ""
-"Fournissez le chemin vers le binaire qui a aussi généré le fichier core.\n"
+"Fournissez aussi le chemin vers le binaire qui a généré le fichier core.\n"
 "Comme cela :\n"
 
 #. create the columns of the tree view
@@ -1141,11 +1141,11 @@ msgstr "<b>Instructions</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Enable pretty printing (requires debugger restart)"
-msgstr "Activer la belle impression (le débogueur doit être redémarré)"
+msgstr "Activer l'affichage formaté (le débogueur doit être redémarré)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "<b>GDB pretty printing</b>"
-msgstr "<b>Belle impression GDB</b>"
+msgstr "<b>Affichage formaté GDB</b>"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Follow parent"
