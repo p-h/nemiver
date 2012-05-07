@@ -105,7 +105,7 @@ FileListView::FileListView ()
     set_headers_visible (false);
 
     // create the columns of the tree view
-    Gtk::TreeViewColumn* view_column = new Gtk::TreeViewColumn (_("File name"));
+    Gtk::TreeViewColumn* view_column = new Gtk::TreeViewColumn (_("File Name"));
     Gtk::CellRendererPixbuf renderer_pixbuf;
     Gtk::CellRendererText renderer_text;
 
@@ -424,7 +424,7 @@ public:
     Priv (IDebuggerSafePtr &a_debugger, const UString &a_starting_path) :
         vbox (new Gtk::VBox()),
         scrolled_window (new Gtk::ScrolledWindow ()),
-        loading_indicator (new Gtk::Label (_("Loading Files from target executable..."))),
+        loading_indicator (new Gtk::Label (_("Loading files from target executable..."))),
         debugger (a_debugger),
         start_path (a_starting_path)
     {
