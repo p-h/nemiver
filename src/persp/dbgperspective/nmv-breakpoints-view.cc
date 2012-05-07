@@ -146,7 +146,7 @@ public:
 	int nb_columns;
         tree_view->append_column_editable ("", get_bp_cols ().enabled);
         tree_view->append_column (_("ID"), get_bp_cols ().id);
-        tree_view->append_column (_("Filename"), get_bp_cols ().filename);
+        tree_view->append_column (_("File name"), get_bp_cols ().filename);
         tree_view->append_column (_("Line"), get_bp_cols ().line);
         tree_view->append_column (_("Function"), get_bp_cols ().function);
         tree_view->append_column (_("Address"), get_bp_cols ().address);

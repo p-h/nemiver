@@ -183,7 +183,7 @@ DBGPerspectiveTwoPaneLayout::name () const
 const UString&
 DBGPerspectiveTwoPaneLayout::description () const
 {
-    static const UString s_description = _("A layout with 2 status pane");
+    static const UString s_description = _("A layout with two status pane");
     return s_description;
 }
 

@@ -105,7 +105,7 @@ FileListView::FileListView ()
     set_headers_visible (false);
 
     // create the columns of the tree view
-    Gtk::TreeViewColumn* view_column = new Gtk::TreeViewColumn (_("Filename"));
+    Gtk::TreeViewColumn* view_column = new Gtk::TreeViewColumn (_("File name"));
     Gtk::CellRendererPixbuf renderer_pixbuf;
     Gtk::CellRendererText renderer_text;
 

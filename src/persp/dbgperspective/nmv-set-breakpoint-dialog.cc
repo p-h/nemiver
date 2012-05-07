@@ -122,15 +122,15 @@ public:
         row[combo_event_cols.m_command] = "catch";
 
         row = *(combo_event_model->append ());
-        row[combo_event_cols.m_label] = _("fork system call");
+        row[combo_event_cols.m_label] = _("Fork System Call");
         row[combo_event_cols.m_command] = "fork";
         
         row = *(combo_event_model->append ());
-        row[combo_event_cols.m_label] = _("vfork system call");
+        row[combo_event_cols.m_label] = _("Vfork System Call");
         row[combo_event_cols.m_command] = "vfork";
 
         row = *(combo_event_model->append ());
-        row[combo_event_cols.m_label] = _("exec system call");
+        row[combo_event_cols.m_label] = _("Exec System Call");
         row[combo_event_cols.m_command] = "exec";
 
         combo_event->set_active (false);

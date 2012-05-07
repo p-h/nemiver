@@ -663,7 +663,7 @@
                               <object class="GtkFileChooserButton" id="pathtogdbfilechooser">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="title" translatable="yes">Choose a file</property>
+                                <property name="title" translatable="yes">Choose a File</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -691,7 +691,7 @@
                       <object class="GtkLabel" id="label15">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;b&gt;GDB binary&lt;/b&gt;</property>
+                        <property name="label" translatable="yes">&lt;b&gt;GDB Binary&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                     </child>
@@ -794,7 +794,7 @@
                       <object class="GtkLabel" id="label11">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;b&gt;GDB pretty printing&lt;/b&gt;</property>
+                        <property name="label" translatable="yes">&lt;b&gt;GDB Pretty Printing&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                     </child>
@@ -862,7 +862,7 @@
                       <object class="GtkLabel" id="label17">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;b&gt;GDB follow fork mode&lt;/b&gt;</property>
+                        <property name="label" translatable="yes">&lt;b&gt;GDB Follow Fork Mode&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                     </child>

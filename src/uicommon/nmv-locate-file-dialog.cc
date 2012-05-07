@@ -62,7 +62,7 @@ public:
         fcbutton_location->signal_selection_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_file_selection_changed_signal));
         UString chooser_title;
-        chooser_title.printf (_("Select Location For %s"),
+        chooser_title.printf (_("Select Location for %s"),
                               a_filename.c_str ());
         fcbutton_location->set_title (chooser_title);
 

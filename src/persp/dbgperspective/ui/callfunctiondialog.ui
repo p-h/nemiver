@@ -4,7 +4,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkDialog" id="callfunctiondialog">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Call Function</property>
+    <property name="title" translatable="yes">Call a Function</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="default_width">300</property>

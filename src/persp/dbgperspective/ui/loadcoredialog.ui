@@ -31,7 +31,7 @@
                     <child>
                       <object class="GtkFileChooserButton" id="filechooserbutton_corefile">
                         <property name="visible">True</property>
-                        <property name="title" translatable="yes">Select A Core File</property>
+                        <property name="title" translatable="yes">Select a Core File</property>
                       </object>
                     </child>
                   </object>

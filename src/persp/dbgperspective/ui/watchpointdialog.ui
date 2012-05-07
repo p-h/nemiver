@@ -47,7 +47,7 @@
                           <object class="GtkLabel" id="label2">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">expression:</property>
+                            <property name="label" translatable="yes">Expression:</property>
                           </object>
                           <packing>
                             <property name="position">0</property>
@@ -90,7 +90,7 @@
                           <object class="GtkLabel" id="label3">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">triggers on:</property>
+                            <property name="label" translatable="yes">Triggers on:</property>
                           </object>
                           <packing>
                             <property name="position">0</property>
@@ -98,7 +98,7 @@
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="readcheckbutton">
-                            <property name="label" translatable="yes">read</property>
+                            <property name="label" translatable="yes">Read</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -110,7 +110,7 @@
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="writecheckbutton">
-                            <property name="label" translatable="yes">write</property>
+                            <property name="label" translatable="yes">Write</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>

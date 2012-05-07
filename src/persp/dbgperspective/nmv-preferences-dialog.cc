@@ -146,7 +146,7 @@ public:
     {
         NEMIVER_TRY
         Gtk::FileChooserDialog file_chooser
-                                (_("Choose directory"),
+                                (_("Choose a Directory"),
                                  Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
 
         file_chooser.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -256,7 +256,7 @@ public:
         tree_view =
             ui_utils::get_widget_from_gtkbuilder<Gtk::TreeView> (gtkbuilder,
                                                             "dirstreeview");
-        tree_view->append_column (_("Source directories"),
+        tree_view->append_column (_("Source Directories"),
                                   source_dirs_cols ().dir);
 
         tree_view->set_headers_visible (false);

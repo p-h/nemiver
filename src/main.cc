@@ -185,7 +185,7 @@ static GOptionEntry entries[] =
         0,
         G_OPTION_ARG_NONE,
         &gv_show_version,
-        _("Show the version number of nemiver"),
+        _("Show the version number of Nemiver"),
         0
     },
     {0, 0, 0, (GOptionArg) 0, 0, 0, 0}
@@ -353,7 +353,7 @@ parse_command_line (int& a_argc,
                       "Like this:\n")
                  << "nemiver --remote=" << gv_remote
                  << " <binary-copy>\n\n";
-            cerr << _("Otherwise, find below the full set of nemiver options.\n");
+            cerr << _("Otherwise, find below the full set of Nemiver options.\n");
             GCharSafePtr help_message;
             help_message.reset (g_option_context_get_help (context.get (),
                                                            true, 0));
@@ -372,7 +372,7 @@ parse_command_line (int& a_argc,
                       "Like this:\n")
                  << "nemiver --load-core=\""
                  << gv_core_path << "\" </path/to/binary>\n\n";
-            cerr << _("Otherwise, find below the full set of nemiver options.\n");
+            cerr << _("Otherwise, find below the full set of Nemiver options.\n");
             GCharSafePtr help_message;
             help_message.reset (g_option_context_get_help (context.get (),
                                                            true, 0));

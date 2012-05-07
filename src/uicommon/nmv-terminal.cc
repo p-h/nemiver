@@ -170,21 +170,21 @@ struct Terminal::Priv {
         action_group->add (Gtk::Action::create
                 ("CopyAction",
                  Gtk::Stock::COPY,
-                 "_Copy",
+                 _("_Copy"),
                  _("Copy the selection")),
                  sigc::mem_fun (*this,
                                 &Terminal::Priv::on_copy_signal));
         action_group->add (Gtk::Action::create
                 ("PasteAction",
                  Gtk::Stock::PASTE,
-                 "_Paste",
+                 _("_Paste"),
                  _("Paste the clipboard")),
                  sigc::mem_fun (*this,
                                 &Terminal::Priv::on_paste_signal));
         action_group->add (Gtk::Action::create
                 ("ResetAction",
                  Gtk::StockID (""),
-                 "_Reset",
+                 _("_Reset"),
                  _("Reset the terminal")),
                  sigc::mem_fun (*this,
                                 &Terminal::Priv::on_reset_signal));

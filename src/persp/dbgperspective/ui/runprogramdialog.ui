@@ -30,7 +30,7 @@
                     <child>
                       <object class="GtkFileChooserButton" id="filechooserbutton">
                         <property name="visible">True</property>
-                        <property name="title" translatable="yes">Choose an executable</property>
+                        <property name="title" translatable="yes">Choose an Executable</property>
                       </object>
                     </child>
                   </object>
@@ -90,7 +90,7 @@
                       <object class="GtkFileChooserButton" id="filechooserbutton_workingdir">
                         <property name="visible">True</property>
                         <property name="action">select-folder</property>
-                        <property name="title" translatable="yes">Choose a working directory</property>
+                        <property name="title" translatable="yes">Choose a Working Directory</property>
                       </object>
                     </child>
                   </object>

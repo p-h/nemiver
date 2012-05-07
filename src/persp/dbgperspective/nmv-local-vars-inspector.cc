@@ -253,7 +253,7 @@ public:
             {
                 "CopyLocalVariablePathMenuItemAction",
                 Gtk::Stock::COPY,
-                _("_Copy variable name"),
+                _("_Copy Variable Name"),
                 _("Copy the variable path expression to the clipboard"),
                 sigc::mem_fun
                     (*this,
@@ -265,7 +265,7 @@ public:
             {
                 "CopyVariableValueMenuItemAction",
                 Gtk::Stock::COPY,
-                _("_Copy variable value"),
+                _("_Copy Variable Value"),
                 _("Copy the variable value to the clipboard"),
                 sigc::mem_fun
                     (*this,
@@ -277,7 +277,7 @@ public:
             {
                 "CreateWatchpointMenuItemAction",
                 Gtk::Stock::COPY,
-                _("Create watchpoint"),
+                _("Create Watchpoint"),
                 _("Create a watchpoint that triggers when the value "
                   "of the expression changes"),
                 sigc::mem_fun

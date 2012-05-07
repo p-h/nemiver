@@ -124,7 +124,7 @@ class VarInspector::Priv : public sigc::trackable {
             {
                 "CopyVariablePathMenuItemAction",
                 Gtk::Stock::COPY,
-                _("_Copy variable name"),
+                _("_Copy Variable Name"),
                 _("Copy the variable path expression to the clipboard"),
                 sigc::mem_fun
                     (*this,
@@ -136,7 +136,7 @@ class VarInspector::Priv : public sigc::trackable {
             {
                 "CopyVariableValueMenuItemAction",
                 Gtk::Stock::COPY,
-                _("_Copy variable value"),
+                _("_Copy Variable Value"),
                 _("Copy the variable value to the clipboard"),
                 sigc::mem_fun
                     (*this,

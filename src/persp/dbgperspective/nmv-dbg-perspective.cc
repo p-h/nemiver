@@ -2111,7 +2111,7 @@ DBGPerspective::update_toggle_menu_text (const IDebugger::Breakpoint *a_bp)
     if (a_bp != 0) {
         if (debugger ()->is_countpoint (*a_bp))
             toggle_countpoint_action->property_label () =
-                _("Change to standard Breakpoint");
+                _("Change to Standard Breakpoint");
         else
             toggle_countpoint_action->property_label () =
                 _("Change to Countpoint");
@@ -2303,7 +2303,7 @@ DBGPerspective::on_debugger_connected_to_remote_target_signal ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     NEMIVER_TRY
 
-    ui_utils::display_info (_("Connected to remote target !"));
+    ui_utils::display_info (_("Connected to remote target!"));
     debugger ()->list_breakpoints ();
 
     NEMIVER_CATCH
@@ -2584,7 +2584,7 @@ DBGPerspective::on_debugger_error_signal (const UString &a_msg)
 
     if (m_priv->show_dbg_errors) {
         UString message;
-        message.printf (_("An error occured: %s"), a_msg.c_str ());
+        message.printf (_("An error occurred: %s"), a_msg.c_str ());
         ui_utils::display_error (message);
     }
 
@@ -2753,7 +2753,7 @@ DBGPerspective::on_file_content_changed (const UString &a_path)
             pending_notifications.push_back (a_path);
             UString msg;
             msg.printf (_("File %s has been modified. "
-                          "Do want to reload it ?"),
+                          "Do want to reload it?"),
                         a_path.c_str ());
             bool dont_ask_again = !m_priv->confirm_before_reload_source;
             bool need_to_reload_file = m_priv->allow_auto_reload_source;
@@ -3126,8 +3126,8 @@ DBGPerspective::init_actions ()
         {
             "JumpToCurrentLocationMenuItemAction",
             nil_stock_id,
-            _("Jump to cursor"),
-            _("Jump to  the currently selected line"),
+            _("Jump to Cursor"),
+            _("Jump to the currently selected line"),
             sigc::mem_fun
             (*this, &DBGPerspective::on_jump_to_current_location_action),
             ActionEntry::DEFAULT,
@@ -3137,7 +3137,7 @@ DBGPerspective::init_actions ()
         {
             "JumpAndBreakToCurrentLocationMenuItemAction",
             nil_stock_id,
-            _("Jump and stop to cursor"),
+            _("Jump and Stop to Cursor"),
             _("Sets a breakpoint to the currently "
               "selected line and jump there"),
             sigc::mem_fun
@@ -3150,7 +3150,7 @@ DBGPerspective::init_actions ()
         {
             "JumpToLocationMenuItemAction",
             nil_stock_id,
-            _("Jump to a given location"),
+            _("Jump to a Given Location"),
             _("Select a given code location and jump there"),
             sigc::mem_fun
             (*this,
@@ -3202,7 +3202,7 @@ DBGPerspective::init_actions ()
             nil_stock_id,
             // Depending on the context we will want this string to be
             // either "Set Countpoint", or "Change to Countpoint", or
-            // "Change to standard Breakpoint". Hence
+            // "Change to Standard Breakpoint". Hence
             // this string is updated by
             // DBGPerspective::update_toggle_menu_text when needed. So
             // this initial value is going to be displayed only when
@@ -3229,7 +3229,7 @@ DBGPerspective::init_actions ()
         {
             "SetBreakpointUsingDialogMenuItemAction",
             nil_stock_id,
-            _("Set Breakpoint with dialog..."),
+            _("Set Breakpoint with Dialog..."),
             _("Set a breakpoint at the current line using a dialog"),
             sigc::mem_fun
                 (*this,
@@ -3241,7 +3241,7 @@ DBGPerspective::init_actions ()
         {
             "SetWatchPointUsingDialogMenuItemAction",
             nil_stock_id,
-            _("Set Watchpoint with dialog..."),
+            _("Set Watchpoint with Dialog..."),
             _("Set a watchpoint using a dialog"),
             sigc::mem_fun
                 (*this,
@@ -3264,7 +3264,7 @@ DBGPerspective::init_actions ()
         {
             "CallFunctionMenuItemAction",
             nil_stock_id,
-            _("Call a function"),
+            _("Call a Function"),
             _("Call a function in the program being debugged"),
             sigc::mem_fun (*this, &DBGPerspective::on_call_function_action),
             ActionEntry::DEFAULT,
@@ -3285,7 +3285,7 @@ DBGPerspective::init_actions ()
         {
             "RefreshLocalVariablesMenuItemAction",
             nil_stock_id,
-            _("Refresh locals"),
+            _("Refresh Locals"),
             _("Refresh the list of variables local to the current function"),
             sigc::mem_fun (*this, &DBGPerspective::on_refresh_locals_action),
             ActionEntry::DEFAULT,
@@ -3295,7 +3295,7 @@ DBGPerspective::init_actions ()
         {
             "DisAsmMenuItemAction",
             nil_stock_id,
-            _("Show assembly"),
+            _("Show Assembly"),
             _("Show the assembly code of the source code being "
               "currently debugged, in another tab"),
             sigc::bind (sigc::mem_fun
@@ -3308,7 +3308,7 @@ DBGPerspective::init_actions ()
         {
             "SwitchToAsmMenuItemAction",
             nil_stock_id,
-            _("Switch to assembly"),
+            _("Switch to Assembly"),
             _("Show the assembly code of the source code being "
               "currently debugged"),
             sigc::bind (sigc::mem_fun
@@ -3321,7 +3321,7 @@ DBGPerspective::init_actions ()
         {
             "SwitchToSourceMenuItemAction",
             nil_stock_id,
-            _("Switch to source"),
+            _("Switch to Source"),
             _("Show the source code being currently debugged"),
             sigc::mem_fun (*this, &DBGPerspective::switch_to_source_code),
             ActionEntry::DEFAULT,
@@ -3335,7 +3335,7 @@ DBGPerspective::init_actions ()
             "StopMenuItemAction",
             Gtk::Stock::STOP,
             _("Stop"),
-            _("Stop the Debugger"),
+            _("Stop the debugger"),
             sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
             ActionEntry::DEFAULT,
             "F9",
@@ -3423,7 +3423,7 @@ DBGPerspective::init_actions ()
         {
             "OpenMenuItemAction",
             Gtk::Stock::OPEN,
-            _("_Open Source File ..."),
+            _("_Open Source File..."),
             _("Open a source file for viewing"),
             sigc::mem_fun (*this, &DBGPerspective::on_open_action),
             ActionEntry::DEFAULT,

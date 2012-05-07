@@ -4,7 +4,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkDialog" id="findtextdialog">
     <property name="visible">True</property>
-    <property name="title" translatable="yes">Find text</property>
+    <property name="title" translatable="yes">Find Text</property>
     <property name="default_width">150</property>
     <property name="default_height">100</property>
     <property name="type_hint">dialog</property>
