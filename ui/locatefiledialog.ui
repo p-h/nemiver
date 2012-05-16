@@ -21,8 +21,10 @@
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;Locate File&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
+                <property name="label" translatable="yes">Locate File</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -35,7 +37,6 @@
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="label">Nemiver cannot locate the following file:</property>
-                <property name="use_markup">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>

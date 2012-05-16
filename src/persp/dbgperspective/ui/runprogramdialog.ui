@@ -38,8 +38,10 @@
                 <child type="label">
                   <object class="GtkLabel" id="label_program">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Program:&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="label" translatable="yes">Program:</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
                   </object>
                 </child>
               </object>
@@ -67,8 +69,10 @@
                 <child type="label">
                   <object class="GtkLabel" id="label_arguments">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Arguments:&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="label" translatable="yes">Arguments:</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
                   </object>
                 </child>
               </object>
@@ -98,8 +102,10 @@
                 <child type="label">
                   <object class="GtkLabel" id="label_workingdir">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Working Directory:&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="label" translatable="yes">Working Directory:</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
                   </object>
                 </child>
               </object>
@@ -256,8 +262,10 @@
                 <child type="label">
                   <object class="GtkLabel" id="label_environment">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Environment Variables:&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="label" translatable="yes">Environment Variables:</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
                   </object>
                 </child>
               </object>

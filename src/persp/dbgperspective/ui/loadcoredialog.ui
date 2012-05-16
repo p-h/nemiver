@@ -39,8 +39,10 @@
                 <child type="label">
                   <object class="GtkLabel" id="label_corefile">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Core File:&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="label" translatable="yes">Core File:</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
                   </object>
                 </child>
               </object>
@@ -68,8 +70,10 @@
                 <child type="label">
                   <object class="GtkLabel" id="label_executable">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Executable:&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="label" translatable="yes">Executable:</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
                   </object>
                 </child>
               </object>
