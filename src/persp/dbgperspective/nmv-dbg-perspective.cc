@@ -2753,7 +2753,7 @@ DBGPerspective::on_file_content_changed (const UString &a_path)
             pending_notifications.push_back (a_path);
             UString msg;
             msg.printf (_("File %s has been modified. "
-                          "Do want to reload it?"),
+                          "Do you want to reload it?"),
                         a_path.c_str ());
             bool dont_ask_again = !m_priv->confirm_before_reload_source;
             bool need_to_reload_file = m_priv->allow_auto_reload_source;
