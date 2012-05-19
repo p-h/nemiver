@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-09 13:41+0200\n"
-"PO-Revision-Date: 2012-05-09 14:10+0200\n"
+"POT-Creation-Date: 2012-05-19 15:33+0200\n"
+"PO-Revision-Date: 2012-05-19 15:38+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: Galician <gnome-l10n-gl@gnome.org>\n"
 "Language: gl_ES\n"
@@ -334,7 +334,7 @@ msgstr "Produciuse un erro: %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2755
 #, c-format
-msgid "File %s has been modified. Do want to reload it?"
+msgid "File %s has been modified. Do you want to reload it?"
 msgstr "O ficheiro %s foi modificado. Desexa volver a cargalo?"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3019
@@ -934,8 +934,8 @@ msgid "Variable"
 msgstr "Variábel"
 
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
-msgid "<b>Call a function:</b>"
-msgstr "<b>Chamar unha función:</b>"
+msgid "Call a function:"
+msgstr "Chamar a unha función:"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
@@ -943,8 +943,8 @@ msgid "Set Breakpoint"
 msgstr "Estabelecer o punto de interrupción"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
-msgid "<b>Choose Overloaded Function</b>"
-msgstr "<b>Seleccionar a función sobrecargada</b>"
+msgid "Choose Overloaded Function"
+msgstr "Seleccionar a función sobrecargada"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
 msgid ""
@@ -963,8 +963,8 @@ msgid "_Search:"
 msgstr "_Buscar:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
-msgid "<b>Match Options:</b>"
-msgstr "<b>Opcións de coincidencia:</b>"
+msgid "Match Options:"
+msgstr "Opcións de coincidencia:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
 msgid "Match c_ase"
@@ -975,8 +975,8 @@ msgid "Match _entire word only"
 msgstr "Coincidir só coa palabra compl_eta"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
-msgid "<b>Cycling Options:</b>"
-msgstr "<b>Opcións cíclicas:</b>"
+msgid "Cycling Options:"
+msgstr "Opcións cíclicas:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
 msgid "_Wrap around"
@@ -999,16 +999,16 @@ msgid "Select a Core File"
 msgstr "Seleccione un ficheiro core"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
-msgid "<b>Core File:</b>"
-msgstr "<b>Ficheiro core:</b>"
+msgid "Core File:"
+msgstr "Ficheiro core:"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
 msgid "Select the executable that created the core file"
 msgstr "Seleccione o executábel que creou o ficheiro core"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
-msgid "<b>Executable:</b>"
-msgstr "<b>Executábel:</b>"
+msgid "Executable:"
+msgstr "Executábel:"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
@@ -1023,8 +1023,8 @@ msgid "Select from _File System"
 msgstr "Seleccionar desde o sistema de _ficheiros"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
-msgid "<b>Choose Source Files to Open</b>"
-msgstr "<b>Seleccione os ficheiros fonte para abrir</b>"
+msgid "Choose Source Files to Open"
+msgstr "Seleccione os ficheiros fonte para abrir"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
 msgid "Preferences"
@@ -1039,28 +1039,28 @@ msgid "Custom Font:"
 msgstr "Tipo de letra personalizada:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
-msgid "<b>Editor Font</b>"
-msgstr "<b>Tipo de letra do editor</b>"
+msgid "Editor Font"
+msgstr "Tipo de letra do editor"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
-msgid "<b>Visual Style</b>"
-msgstr "<b>Estilo visual</b>"
+msgid "Visual Style"
+msgstr "Estilo visual"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
 msgid "Display line numbers"
 msgstr "Mostrar números de liña"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
-msgid "<b>Line Numbers</b>"
-msgstr "<b>Números de liña</b>"
+msgid "Line Numbers"
+msgstr "Números de liña"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
 msgid "Use launch terminal"
 msgstr "Usar terminal de lanzamento"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
-msgid "<b>Terminal</b>"
-msgstr "<b>Terminal</b>"
+msgid "Terminal"
+msgstr "Terminal"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
 msgid "When a source file is changed:"
@@ -1079,16 +1079,16 @@ msgid "Ask each time"
 msgstr "Preguntarme cada vez"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
-msgid "<b>File Monitoring</b>"
-msgstr "<b>Monitorización de ficheiros</b>"
+msgid "File Monitoring"
+msgstr "Monitorización de ficheiros"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
 msgid "Enable syntax highlighting"
 msgstr "Activar o realzado de sintaxe"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
-msgid "<b>Syntax Highlighting</b>"
-msgstr "<b>Realzado de sintaxe</b>"
+msgid "Syntax Highlighting"
+msgstr "Realzado de sintaxe"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
 msgid "Editor"
@@ -1103,12 +1103,12 @@ msgid "Mixed source and assembly"
 msgstr "Código fonte e ensamblado mesturado"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
-msgid "<b>Assembly style</b>"
-msgstr "<b>Estilo de ensamblado</b>"
+msgid "Assembly style"
+msgstr "Estilo de ensamblado"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
-msgid "<b>Assembly flavor</b>"
-msgstr "<b>Tipo de ensamblado</b>"
+msgid "Assembly flavor"
+msgstr "Tipo de ensamblado"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
@@ -1120,24 +1120,24 @@ msgid "Path to the GDB binary used"
 msgstr "Ruta ao binario GDB que usar"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
-msgid "<b>GDB Binary</b>"
-msgstr "<b>Binario GDB</b>"
+msgid "GDB Binary"
+msgstr "Binario de GDB"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Number of instructions to disassemble by default"
 msgstr "Número de instrucións que desensamblar de forma predeterminada"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
-msgid "<b>Instructions</b>"
-msgstr "<b>Instrucións</b>"
+msgid "Instructions"
+msgstr "Instrucións"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Enable pretty printing (requires debugger restart)"
 msgstr "Activar impresión bonita (require reiniciar o depurador)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
-msgid "<b>GDB Pretty Printing</b>"
-msgstr "<b>Impresión bonita de GDB</b>"
+msgid "GDB Pretty Printing"
+msgstr "Impresión bonita de GDB"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Follow parent"
@@ -1148,8 +1148,8 @@ msgid "Follow child"
 msgstr "Seguir fillo"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
-msgid "<b>GDB Follow Fork Mode</b>"
-msgstr "<b>Modo de seguimento de bifurcación de GDB</b>"
+msgid "GDB Follow Fork Mode"
+msgstr "Modo de seguimento de bifurcación de GDB"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
 msgid "Debugger"
@@ -1164,8 +1164,8 @@ msgid "Attach to a Running Program"
 msgstr "Conectar a un programa en execución"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
-msgid "<b>Choose a Process to Debug</b>"
-msgstr "<b>Seleccione un proceso para depurar</b>"
+msgid "Choose a Process to Debug"
+msgstr "Seleccione un proceso para depurar"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
@@ -1176,16 +1176,16 @@ msgid "Connect to Remote Target"
 msgstr "Conectar con obxectivo remoto"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
-msgid "<b>Executable to Load</b>"
-msgstr "<b>Ficheiro executábel que cargar</b>"
+msgid "Executable to Load"
+msgstr "Executábel que cargar"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
-msgid "<b>Shared Libraries Location</b>"
-msgstr "<b>Localización das bibliotecas compartidas</b>"
+msgid "Shared Libraries Location"
+msgstr "Localización das bibliotecas compartidas"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
-msgid "<b>Remote Debugging Server</b>"
-msgstr "<b>Servidor de depuración remoto</b>"
+msgid "Remote Debugging Server"
+msgstr "Servidor de depuración remoto"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
 msgid "TCP/IP Connection"
@@ -1208,20 +1208,20 @@ msgid "Choose an Executable"
 msgstr "Seleccione un ficheiro exsecutábel"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
-msgid "<b>Program:</b>"
-msgstr "<b>Programa:</b>"
+msgid "Program:"
+msgstr "Programa:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
-msgid "<b>Arguments:</b>"
-msgstr "<b>Argumentos:</b>"
+msgid "Arguments:"
+msgstr "Argumentos"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
 msgid "Choose a Working Directory"
 msgstr "Seleccione un cartafol de traballo"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
-msgid "<b>Working Directory:</b>"
-msgstr "<b>Cartafol de traballo</b>"
+msgid "Working Directory:"
+msgstr "Cartafol de traballo:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
 msgid "_Add"
@@ -1232,20 +1232,20 @@ msgid "_Remove"
 msgstr "_Eliminar"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
-msgid "<b>Environment Variables:</b>"
-msgstr "<b>Variábeis do contorno:</b>"
+msgid "Environment Variables:"
+msgstr "Variábeis do contorno:"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
 msgstr "Sesións gardadas"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
-msgid "<b>Choose a Session to Debug</b>"
-msgstr "<b>Escoller unha sesión para depurar</b>"
+msgid "Choose a Session to Debug"
+msgstr "Escoller unha sesión para depurar"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
-msgid "<b>Set a Breakpoint:</b>"
-msgstr "<b>Estabelecer un punto de interrupción:</b>"
+msgid "Set a Breakpoint:"
+msgstr "Fixar un punto de parada:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
 msgid "Condition:"
@@ -1294,8 +1294,8 @@ msgid "Set Location to Jump To"
 msgstr "Estabelecer a localización á que saltar"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
-msgid "<b>Jump to location:</b>"
-msgstr "<b>Saltar á localización:</b>"
+msgid "Jump to location:"
+msgstr "Saltar á localización:"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
 msgid "Break at Destination"
@@ -1310,8 +1310,8 @@ msgid "_Inspect"
 msgstr "_Inspeccionar"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
-msgid "<b>Set a watchpoint:</b>"
-msgstr "<b>Estabelecer o punto de vixilancia:</b>"
+msgid "Set a watchpoint:"
+msgstr "Fixar un punto de observación:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
 msgid "Expression:"
@@ -1434,8 +1434,23 @@ msgid "Select File Location"
 msgstr "Seleccione unha localización de ficheiro"
 
 #: ../ui/locatefiledialog.ui.h:2
-msgid "<b>Locate File</b>"
-msgstr "<b>Buscar ficheiro</b>"
+msgid "Locate File"
+msgstr "Buscar ficheiro"
+
+#~ msgid "<b>Call a function:</b>"
+#~ msgstr "<b>Chamar unha función:</b>"
+
+#~ msgid "<b>Terminal</b>"
+#~ msgstr "<b>Terminal</b>"
+
+#~ msgid "<b>GDB Binary</b>"
+#~ msgstr "<b>Binario GDB</b>"
+
+#~ msgid "<b>Arguments:</b>"
+#~ msgstr "<b>Argumentos:</b>"
+
+#~ msgid "<b>Set a Breakpoint:</b>"
+#~ msgstr "<b>Estabelecer un punto de interrupción:</b>"
 
 #~ msgid "Filename"
 #~ msgstr "Nome do ficheiro"
