@@ -1172,7 +1172,7 @@ public:
         THROW_IF_FAIL (variable);
 
         IVarWalkerSafePtr walker = get_varobj_walker ();
-        walker->connect (debugger, variable);
+        walker->connect (debugger.get (), variable);
         walker->do_walk_variable ();
 
         NEMIVER_CATCH

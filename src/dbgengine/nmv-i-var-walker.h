@@ -72,10 +72,10 @@ public:
 
     /// connect the walker to a variable and to a debugger
     /// that will be use to walk that variable
-    virtual void connect (IDebuggerSafePtr a_debugger,
+    virtual void connect (IDebugger *a_debugger,
                           const UString &a_var_name) = 0;
 
-    virtual void connect (IDebuggerSafePtr a_debugger,
+    virtual void connect (IDebugger *a_debugger,
                           const IDebugger::VariableSafePtr a_var) = 0;
 
     virtual void do_walk_variable (const UString &a_cookie = "") = 0;
@@ -86,7 +86,7 @@ public:
     virtual const IDebugger::VariableSafePtr get_variable () const = 0;
 
     /// gets the debugger the walker is connected to
-    virtual IDebuggerSafePtr get_debugger () const = 0;
+    virtual IDebugger* get_debugger () const = 0;
 
     /// accessor of the maximum depth of variable members to explore.
     /// this can prevent inifite recursions.

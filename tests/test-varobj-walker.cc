@@ -113,7 +113,7 @@ do_varobj_walker_stuff (IDebuggerSafePtr a_debugger)
     IVarWalkerSafePtr var_walker = get_varobj_walker ();
 
     var_walker->visited_variable_signal ().connect (&on_variable_visited_signal);
-    var_walker->connect (a_debugger, "person");
+    var_walker->connect (a_debugger.get (), "person");
     var_walker->do_walk_variable ();
 }
 

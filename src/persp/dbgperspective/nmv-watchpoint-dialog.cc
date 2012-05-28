@@ -44,12 +44,12 @@ struct WatchpointDialog::Priv {
     Gtk::Button *ok_button;
     Gtk::Button *cancel_button;
     SafePtr<VarInspector> var_inspector;
-    IDebuggerSafePtr debugger;
+    IDebugger &debugger;
     IPerspective &perspective;
 
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
-          IDebuggerSafePtr a_debugger,
+          IDebugger &a_debugger,
           IPerspective &a_perspective) :
         dialog (a_dialog),
         gtkbuilder (a_gtkbuilder),
@@ -198,7 +198,7 @@ struct WatchpointDialog::Priv {
 }; // end struct WatchpointDialog
 
 WatchpointDialog::WatchpointDialog (const UString &a_root_path,
-                                    IDebuggerSafePtr a_debugger,
+                                    IDebugger &a_debugger,
                                     IPerspective &a_perspective) :
     Dialog (a_root_path,
             "watchpointdialog.ui",

@@ -61,7 +61,7 @@ create_var_list_walker (IDebuggerSafePtr a_debugger)
         DynamicModuleManager::load_iface_with_default_manager<IVarListWalker>
                                                                 ("varlistwalker",
                                                                  "IVarListWalker");
-    result->initialize (a_debugger);
+    result->initialize (a_debugger.get ());
     result->variable_visited_signal ().connect
         (sigc::bind (&on_variable_visited_signal, a_debugger));
     result->variable_list_visited_signal ().connect

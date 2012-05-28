@@ -44,8 +44,7 @@ class VarInspectorDialog : public Dialog {
     SafePtr<Priv> m_priv;
 
 public:
-    VarInspectorDialog (const UString &a_resource_root_path,
-                        IDebuggerSafePtr &a_debugger,
+    VarInspectorDialog (IDebugger &a_debugger,
                         IPerspective &a_perspective);
     virtual ~VarInspectorDialog ();
 

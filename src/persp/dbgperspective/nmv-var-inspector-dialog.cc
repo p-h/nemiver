@@ -54,7 +54,7 @@ class VarInspectorDialog::Priv {
     SafePtr<VarInspector> var_inspector;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gtk::Builder> gtkbuilder;
-    IDebuggerSafePtr debugger;
+    IDebugger &debugger;
     IPerspective &perspective;
 
     Priv ();
@@ -62,7 +62,7 @@ public:
 
     Priv (Gtk::Dialog &a_dialog,
           const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
-          IDebuggerSafePtr a_debugger,
+          IDebugger &a_debugger,
           IPerspective &a_perspective) :
         var_name_entry (0),
         inspect_button (0),
@@ -342,10 +342,9 @@ public:
     //*************************
 };//end class VarInspectorDialog::Priv
 
-VarInspectorDialog::VarInspectorDialog (const UString &a_root_path,
-                                        IDebuggerSafePtr &a_debugger,
+VarInspectorDialog::VarInspectorDialog (IDebugger &a_debugger,
                                         IPerspective &a_perspective) :
-    Dialog (a_root_path,
+    Dialog (a_perspective.plugin_path (),
             "varinspectordialog.ui",
             "varinspectordialog")
 {

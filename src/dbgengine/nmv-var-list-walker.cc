@@ -45,7 +45,7 @@ class VarListWalker : public IVarListWalker {
      typedef std::deque<WalkersMap> WalkersQueue;
      WalkersQueue m_considered_walkers;
      WalkersMap m_walkers_map;
-     IDebuggerSafePtr m_debugger;
+     IDebugger *m_debugger;
 
      IVarWalkerSafePtr create_variable_walker
                                  (const IDebugger::VariableSafePtr &a_var);
@@ -56,7 +56,8 @@ class VarListWalker : public IVarListWalker {
 public:
 
      VarListWalker (DynamicModule *a_dynmod) :
-         IVarListWalker (a_dynmod)
+         IVarListWalker (a_dynmod),
+         m_debugger (0)
     {
     }
     //******************
@@ -68,7 +69,7 @@ public:
     //******************
     //</event getters>
     //******************
-    void initialize (IDebuggerSafePtr &a_debugger);
+    void initialize (IDebugger *a_debugger);
 
     void append_variable (const IDebugger::VariableSafePtr a_var);
 
@@ -130,7 +131,7 @@ VarListWalker::variable_list_visited_signal () const
 }
 
 void
-VarListWalker::initialize (IDebuggerSafePtr &a_debugger)
+VarListWalker::initialize (IDebugger *a_debugger)
 {
     THROW_IF_FAIL (a_debugger);
 

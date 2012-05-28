@@ -140,7 +140,7 @@ public:
             module_manager->load_iface<IVarListWalker> ("varlistwalker",
                                                         "IVarListWalker");
         THROW_IF_FAIL (result);
-        result->initialize (debugger);
+        result->initialize (debugger.get ());
         return result;
     }
 

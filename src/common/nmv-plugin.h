@@ -169,11 +169,10 @@ public:
         //must be created by a factory
         EntryPoint (DynamicModuleSafePtr &a_module);
         EntryPoint (DynamicModule *a_module);
+
         virtual void activate (bool a_activate,
                                ObjectSafePtr &a_activation_context);
         virtual bool is_activated ();
-
-        const UString& plugin_path ();
 
         void descriptor (DescriptorSafePtr &a_desc);
 
@@ -181,6 +180,8 @@ public:
 
         bool build_absolute_resource_path (const UString &a_relative_path,
                                            std::string &a_absolute_path);
+
+        const UString& plugin_path ();
 
         class NEMIVER_API Loader : public DynamicModule::Loader {
             struct Priv;

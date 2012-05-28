@@ -60,7 +60,7 @@ class VarInspector::Priv : public sigc::trackable {
     bool expand_variable;
     bool re_visualize;
     bool enable_contextual_menu;
-    IDebuggerSafePtr debugger;
+    IDebugger &debugger;
     // Variable that is being inspected
     // at a given point in time
     IDebugger::VariableSafePtr variable;
@@ -209,12 +209,12 @@ class VarInspector::Priv : public sigc::trackable {
         re_init_tree_view ();
         variable = a_variable;
         if (a_re_visualize) {
-            debugger->revisualize_variable (a_variable,
-                                            sigc::bind
-                                            (sigc::mem_fun
-                                             (*this,
-                                              &Priv::on_var_revisualized),
-                                             a_expand));
+            debugger.revisualize_variable (a_variable,
+                                           sigc::bind
+                                           (sigc::mem_fun
+                                            (*this,
+                                             &Priv::on_var_revisualized),
+                                            a_expand));
         } else {
             graphically_set_variable (a_variable, a_expand);
         }
@@ -276,7 +276,7 @@ class VarInspector::Priv : public sigc::trackable {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         expand_variable = a_expand;
-        debugger->create_variable
+        debugger.create_variable
             (a_name,
              sigc::bind
              (sigc::mem_fun
@@ -432,7 +432,7 @@ class VarInspector::Priv : public sigc::trackable {
         // editable.
         cur_selected_row->set_value
                     (vutil::get_variable_columns ().variable_value_editable,
-                     debugger->is_variable_editable (variable));
+                     debugger.is_variable_editable (variable));
 
         // Dump some log about the variable that got selected.
         UString qname;
@@ -479,7 +479,7 @@ class VarInspector::Priv : public sigc::trackable {
 
         IDebugger::VariableSafePtr var =
             (*a_row_it)[vutil::get_variable_columns ().variable];
-        debugger->unfold_variable
+        debugger.unfold_variable
         (var, sigc::bind (sigc::mem_fun (*this,
                                          &Priv::on_variable_unfolded_signal),
                           a_row_path));
@@ -501,7 +501,7 @@ class VarInspector::Priv : public sigc::trackable {
             (*row)[vutil::get_variable_columns ().variable];
         THROW_IF_FAIL (var);
 
-        debugger->assign_variable
+        debugger.assign_variable
             (var, a_text,
              sigc::bind (sigc::mem_fun
                                  (*this, &Priv::on_variable_assigned_signal),
@@ -602,7 +602,7 @@ class VarInspector::Priv : public sigc::trackable {
                 (vutil::get_variable_columns ().variable);
         THROW_IF_FAIL (variable);
 
-        debugger->query_variable_path_expr
+        debugger.query_variable_path_expr
             (variable,
              sigc::mem_fun (*this, &Priv::on_variable_path_expression_signal));
 
@@ -623,7 +623,7 @@ class VarInspector::Priv : public sigc::trackable {
         THROW_IF_FAIL (variable);
 
         IVarWalkerSafePtr walker = get_varobj_walker ();
-        walker->connect (debugger, variable);
+        walker->connect (&debugger, variable);
         walker->do_walk_variable ();
 
         NEMIVER_CATCH
@@ -644,7 +644,7 @@ class VarInspector::Priv : public sigc::trackable {
 
 public:
 
-    Priv (IDebuggerSafePtr a_debugger,
+    Priv (IDebugger &a_debugger,
           IPerspective &a_perspective) :
           requested_variable (false),
           requested_type (false),
@@ -667,7 +667,7 @@ public:
     }
 };//end class VarInspector::Priv
 
-VarInspector::VarInspector (IDebuggerSafePtr a_debugger,
+VarInspector::VarInspector (IDebugger &a_debugger,
                             IPerspective &a_perspective)
 {
     m_priv.reset (new Priv (a_debugger, a_perspective));

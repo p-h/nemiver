@@ -59,7 +59,7 @@ public:
     virtual sigc::signal<void>& variable_list_visited_signal () const=0;
     ///@}
 
-    virtual void initialize (IDebuggerSafePtr &a_debugger)=0;
+    virtual void initialize (IDebugger *a_debugger)=0;
 
     virtual void append_variable (const IDebugger::VariableSafePtr a_var)=0;
 

@@ -48,8 +48,8 @@ class VarInspector : public nemiver::common::Object {
     SafePtr<Priv> m_priv;
 
 public:
-    VarInspector (IDebuggerSafePtr a_debugger,
-                   IPerspective &a_perspective);
+    VarInspector (IDebugger &a_debugger,
+		  IPerspective &a_perspective);
     virtual ~VarInspector ();
     Gtk::Widget& widget () const;
     void set_variable (IDebugger::VariableSafePtr a_variable,

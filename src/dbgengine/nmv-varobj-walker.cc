@@ -52,7 +52,7 @@ class VarobjWalker : public IVarWalker, public sigc::trackable
     mutable sigc::signal<void,
                          const IDebugger::VariableSafePtr>
                                         m_visited_variable_signal;
-    IDebuggerSafePtr m_debugger;
+    IDebugger *m_debugger;
     IDebugger::VariableSafePtr m_variable;
     UString m_var_name;
     bool m_do_walk;
@@ -67,6 +67,7 @@ public:
 
     VarobjWalker (DynamicModule *a_dynmod) :
         IVarWalker (a_dynmod),
+        m_debugger (0),
         m_do_walk (false),
         m_variable_unfolds (0),
         m_max_depth (MAX_DEPTH)
@@ -80,17 +81,17 @@ public:
                  const IDebugger::VariableSafePtr>
                                     visited_variable_signal () const;
 
-    void connect (IDebuggerSafePtr a_debugger,
+    void connect (IDebugger *a_debugger,
                   const UString &a_var_name);
 
-    void connect (IDebuggerSafePtr a_debugger,
+    void connect (IDebugger *a_debugger,
                   const IDebugger::VariableSafePtr a_var);
 
     void do_walk_variable (const UString &a_cookie="");
 
     const IDebugger::VariableSafePtr get_variable () const;
 
-    IDebuggerSafePtr get_debugger () const;
+    IDebugger* get_debugger () const;
 
     void set_maximum_member_depth (unsigned a_max_depth);
 
@@ -120,7 +121,7 @@ VarobjWalker::visited_variable_signal () const
 }
 
 void
-VarobjWalker::connect (IDebuggerSafePtr a_debugger,
+VarobjWalker::connect (IDebugger *a_debugger,
                        const UString &a_var_name)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -137,7 +138,7 @@ VarobjWalker::connect (IDebuggerSafePtr a_debugger,
 }
 
 void
-VarobjWalker::connect (IDebuggerSafePtr a_debugger,
+VarobjWalker::connect (IDebugger *a_debugger,
                        const IDebugger::VariableSafePtr a_var)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -177,7 +178,7 @@ VarobjWalker::get_variable () const
     return m_variable;
 }
 
-IDebuggerSafePtr
+IDebugger*
 VarobjWalker::get_debugger () const
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;

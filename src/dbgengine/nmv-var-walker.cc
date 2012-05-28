@@ -67,7 +67,7 @@ class VarWalker : public IVarWalker , public sigc::trackable {
                          const IDebugger::VariableSafePtr>
                                             m_visited_variable_signal;
 
-    mutable GDBEngineSafePtr m_debugger;
+    mutable GDBEngine *m_debugger;
     UString m_root_var_name;
     list<sigc::connection> m_connections;
     map<IDebugger::VariableSafePtr, bool, SafePtrCmp> m_vars_to_visit;
@@ -89,7 +89,8 @@ class VarWalker : public IVarWalker , public sigc::trackable {
 public:
 
     VarWalker (DynamicModule *a_dynmod) :
-        IVarWalker (a_dynmod)
+        IVarWalker (a_dynmod),
+        m_debugger (0)
     {
     }
 
@@ -104,16 +105,16 @@ public:
     //</event getters>
     //********************
 
-    void connect (IDebuggerSafePtr a_debugger, const UString &a_var_name);
+    void connect (IDebugger *a_debugger, const UString &a_var_name);
 
-    void connect (IDebuggerSafePtr a_debugger,
+    void connect (IDebugger *a_debugger,
                   const IDebugger::VariableSafePtr a_var);
 
     void do_walk_variable (const UString &a_cookie="");
 
     const IDebugger::VariableSafePtr get_variable () const;
 
-    IDebuggerSafePtr get_debugger () const;
+    IDebugger *get_debugger () const;
 
     void set_maximum_member_depth (unsigned a_max_depth);
 
@@ -253,11 +254,14 @@ VarWalker::visited_variable_signal () const
 }
 
 void
-VarWalker::connect (IDebuggerSafePtr a_debugger,
+VarWalker::connect (IDebugger *a_debugger,
                     const UString &a_var_name)
 {
-    m_debugger = a_debugger.do_dynamic_cast<GDBEngine> ();
+    THROW_IF_FAIL (a_debugger);
+
+    m_debugger = dynamic_cast<GDBEngine*> (a_debugger);
     THROW_IF_FAIL (m_debugger);
+
     m_root_var_name = a_var_name;
 
     list<sigc::connection>::iterator it;
@@ -271,11 +275,14 @@ VarWalker::connect (IDebuggerSafePtr a_debugger,
 }
 
 void
-VarWalker::connect (IDebuggerSafePtr a_debugger,
+VarWalker::connect (IDebugger *a_debugger,
                     const IDebugger::VariableSafePtr a_var)
 {
-    m_debugger = a_debugger.do_dynamic_cast<GDBEngine> ();
+    THROW_IF_FAIL (a_debugger);
+
+    m_debugger = dynamic_cast<GDBEngine *> (a_debugger);
     THROW_IF_FAIL (m_debugger);
+
     m_root_var = a_var;
 
     list<sigc::connection>::iterator it;
@@ -316,10 +323,10 @@ VarWalker::get_variable () const
     return m_root_var;
 }
 
-IDebuggerSafePtr
+IDebugger*
 VarWalker::get_debugger () const
 {
-    return m_debugger.do_dynamic_cast<IDebugger> ();
+    return dynamic_cast<IDebugger*> (m_debugger);
 }
 
 void

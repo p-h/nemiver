@@ -60,7 +60,7 @@ public:
     };
 
     WatchpointDialog (const UString &a_resource_root_path,
-                      IDebuggerSafePtr a_debugger,
+                      IDebugger &a_debugger,
                       IPerspective &a_perspective);
     virtual ~WatchpointDialog ();
 

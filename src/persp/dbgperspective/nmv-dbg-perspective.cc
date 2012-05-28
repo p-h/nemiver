@@ -4825,7 +4825,7 @@ DBGPerspective::get_popup_var_inspector ()
 
     if (!m_priv->popup_var_inspector)
         m_priv->popup_var_inspector.reset
-                    (new VarInspector (debugger (),
+                    (new VarInspector (*debugger (),
                                        *const_cast<DBGPerspective*> (this)));
     THROW_IF_FAIL (m_priv->popup_var_inspector);
     return *m_priv->popup_var_inspector;
@@ -7584,7 +7584,7 @@ DBGPerspective::set_watchpoint_using_dialog ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    WatchpointDialog dialog (plugin_path (), debugger (), *this);
+    WatchpointDialog dialog (plugin_path (), *debugger (), *this);
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
         return;
@@ -7841,8 +7841,7 @@ void
 DBGPerspective::inspect_variable (const UString &a_variable_name)
 {
     THROW_IF_FAIL (debugger ());
-    VarInspectorDialog dialog (plugin_path (),
-                               debugger (),
+    VarInspectorDialog dialog (*debugger (),
                                *this);
     dialog.set_history (m_priv->var_inspector_dialog_history);
     if (a_variable_name != "") {
