@@ -28,6 +28,7 @@
 #include "nmv-dialog.h"
 #include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
+#include "nmv-var-inspector.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -54,6 +55,7 @@ public:
 			   const sigc::slot<void, 
 			                    const IDebugger::VariableSafePtr> &);
     const IDebugger::VariableSafePtr variable () const;
+    VarInspector& inspector () const;
     void set_history (const std::list<UString> &);
     void get_history (std::list<UString> &) const;
 };//end class VarInspectorDialog

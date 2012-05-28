@@ -413,6 +413,14 @@ VarInspectorDialog::variable () const
     return m_priv->var_inspector->get_variable ();
 }
 
+/// Return the variable inspector used by this dialog
+VarInspector& 
+VarInspectorDialog::inspector () const
+{
+    THROW_IF_FAIL (m_priv);
+    return *m_priv->var_inspector;
+}
+
 /// Set the history of variable expression to a new one.
 ///
 /// \param a_hist the new history.
