@@ -319,7 +319,6 @@ VarInspectorDialog::inspect_variable (const UString &a_var_name)
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->var_name_entry);
-    THROW_IF_FAIL (m_priv->var_inspector);
 
     if (a_var_name != "") {
         m_priv->var_name_entry->get_entry ()->set_text (a_var_name);

@@ -231,6 +231,8 @@ public:
         tree_view->signal_row_activated ().connect
             (sigc::mem_fun (*this,
                             &Priv::on_tree_view_row_activated_signal));
+        // Schedule the button press signal handler to be run before
+        // the default handler.
         tree_view->signal_button_press_event ().connect_notify
             (sigc::mem_fun (this, &Priv::on_button_press_signal));
         tree_view->signal_draw ().connect_notify
