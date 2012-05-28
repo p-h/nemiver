@@ -57,10 +57,20 @@ public:
 		       bool a_re_visualize = false);
     void inspect_variable (const UString &a_variable_name,
                            bool a_expand = false);
+    void inspect_variable (const UString &a_variable_name,
+                           bool a_expand,
+			   const sigc::slot<void, 
+			              const IDebugger::VariableSafePtr> &a_s);
     IDebugger::VariableSafePtr get_variable () const;
     void enable_contextual_menu (bool a_flag);
     bool is_contextual_menu_enabled () const;
     void clear ();
+
+    // Signals
+    sigc::signal<void, const IDebugger::VariableSafePtr>&
+      var_inspected_signal () const;
+    sigc::signal<void>& cleared_signal () const;
+
 };//end class VarInspector
 
 NEMIVER_END_NAMESPACE (nemiver)

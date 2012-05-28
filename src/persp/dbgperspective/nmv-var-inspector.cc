@@ -45,6 +45,12 @@ using cmn::DynamicModuleManager;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
+/// A no-op variable slot.
+static void
+no_op_void_variable_slot (const IDebugger::VariableSafePtr)
+{
+}
+
 class VarInspector::Priv : public sigc::trackable {
     friend class VarInspector;
     Priv ();
@@ -68,6 +74,9 @@ class VarInspector::Priv : public sigc::trackable {
     IVarWalkerSafePtr varobj_walker;
     DynamicModuleManager *module_manager;
     Glib::RefPtr<Gtk::UIManager> ui_manager;
+    mutable sigc::signal<void,
+                         const IDebugger::VariableSafePtr> var_inspected_signal;
+    mutable sigc::signal<void> cleared_signal;
 
     void
     build_widget ()
@@ -233,16 +242,46 @@ class VarInspector::Priv : public sigc::trackable {
         ui_utils::display_info (message);
     }
 
+    /// Creates a variable (or more generally, an expression).
+    ///
+    /// \param a_name the expression (or name of the variable) to
+    /// create.
+    ///
+    /// \param a_expand whethet to expand the tree representing the
+    /// expression that is going to be created, or not.
     void
     create_variable (const UString &a_name,
                      bool a_expand)
+    {
+        create_variable (a_name, a_expand, &no_op_void_variable_slot);
+    }
+
+    /// Creates a variable (or more generally, an expression).
+    ///
+    /// \param a_name the expression (or name of the variable) to
+    /// create.
+    ///
+    /// \param a_expand whethet to expand the tree representing the
+    /// expression that is going to be created, or not.
+    ///
+    /// \param a_slot a slot (an abstraction of a handler function)
+    /// that is invoked whenever the resulting expression is added to
+    /// the inspector.
+    void
+    create_variable (const UString &a_name,
+                     bool a_expand,
+                     const sigc::slot<void, 
+                                      const IDebugger::VariableSafePtr> &a_slot)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         expand_variable = a_expand;
         debugger->create_variable
-            (a_name, sigc::mem_fun
-                    (this, &VarInspector::Priv::on_variable_created_signal));
+            (a_name,
+             sigc::bind
+             (sigc::mem_fun
+              (this, &VarInspector::Priv::on_variable_created_signal),
+              a_slot));
     }
 
     Glib::RefPtr<Gtk::UIManager> get_ui_manager ()
@@ -487,14 +526,27 @@ class VarInspector::Priv : public sigc::trackable {
         NEMIVER_CATCH
     }
 
+    /// A handler called whenever a variable is created in the
+    /// debugger interface, as a result of the user requesting that we
+    /// inspect it.  The function then adds the variable into the
+    /// inspector.
+    ///
+    /// \param a_var the created variable
+    ///
+    /// \param a_slot a handler to be called whenever the variable is
+    /// added to the inspector.
     void
-    on_variable_created_signal (const IDebugger::VariableSafePtr a_var)
+    on_variable_created_signal (const IDebugger::VariableSafePtr a_var,
+                                sigc::slot<void, 
+                                           const IDebugger::VariableSafePtr> &a_slot)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         NEMIVER_TRY;
 
         set_variable (a_var, expand_variable, re_visualize);
+        var_inspected_signal.emit (a_var);
+        a_slot (a_var);
 
         NEMIVER_CATCH;
     }
@@ -643,16 +695,45 @@ VarInspector::set_variable (IDebugger::VariableSafePtr a_variable,
     m_priv->set_variable (a_variable, a_expand, a_revisualize);
 }
 
+/// Inspect a variable/expression.
+///
+/// \param a_variable_name the name of the variable, or more
+/// generally, the expression to the inspected.
+///
+/// \param a_expand whether to expand the resulting tree representing
+/// the expression.
 void
 VarInspector::inspect_variable (const UString &a_variable_name,
-                                 bool a_expand)
+                                bool a_expand)
+{
+    inspect_variable (a_variable_name,
+                      a_expand,
+                      &no_op_void_variable_slot);
+}
+
+/// Inspect a variable/expression.
+///
+/// \param a_variable_name the name of the variable, or more
+/// generally, the expression to the inspected.
+///
+/// \param a_expand whether to expand the resulting tree representing
+/// the expression.
+///
+/// \param a_s a slot (handler function) to be invoked whenever the
+/// resulting tree (representing the expression to the inspected) is
+/// added to the inspector.
+void
+VarInspector::inspect_variable (const UString &a_variable_name,
+                                bool a_expand,
+                                const sigc::slot<void, 
+                                                 const IDebugger::VariableSafePtr> &a_s)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     if (a_variable_name == "") {return;}
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();
-    m_priv->create_variable (a_variable_name, a_expand);
+    m_priv->create_variable (a_variable_name, a_expand, a_s);
 }
 
 IDebugger::VariableSafePtr
@@ -684,5 +765,21 @@ VarInspector::clear ()
     m_priv->re_init_tree_view ();
 }
 
-NEMIVER_END_NAMESPACE (nemiver)
+/// A signal emitted when the variable to be inspected is added to the
+/// inspector.
+sigc::signal<void, const IDebugger::VariableSafePtr>&
+VarInspector::var_inspected_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->var_inspected_signal;
+}
 
+/// A signal emitted when the inspector is cleared.
+sigc::signal<void>&
+VarInspector::cleared_signal () const
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->cleared_signal;
+}
+
+NEMIVER_END_NAMESPACE (nemiver)

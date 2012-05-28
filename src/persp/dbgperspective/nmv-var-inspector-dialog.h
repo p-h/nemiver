@@ -50,6 +50,9 @@ public:
 
     UString variable_name () const;
     void inspect_variable (const UString &a_variable_name);
+    void inspect_variable (const UString &a_variable_name,
+			   const sigc::slot<void, 
+			                    const IDebugger::VariableSafePtr> &);
     const IDebugger::VariableSafePtr variable () const;
     void set_history (const std::list<UString> &);
     void get_history (std::list<UString> &) const;

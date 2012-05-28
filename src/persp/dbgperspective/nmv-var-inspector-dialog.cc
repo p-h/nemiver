@@ -76,6 +76,9 @@ public:
         connect_to_widget_signals ();
     }
 
+    /// Build the inspector dialog.
+    ///
+    /// Fetch widgets from gtkbuilder and initialize them.
     void
     build_dialog ()
     {
@@ -97,9 +100,13 @@ public:
         Gtk::Box *box =
             ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (gtkbuilder,
                                                        "inspectorwidgetbox");
+
         var_inspector.reset (new VarInspector (debugger, perspective));
         var_inspector->enable_contextual_menu (true);
-        THROW_IF_FAIL (var_inspector);
+        var_inspector->cleared_signal ().connect
+            (sigc::mem_fun
+             (*this,
+              &VarInspectorDialog::Priv::on_variable_inspector_cleared));
 
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
         scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -122,27 +129,61 @@ public:
                 (*this, &Priv::do_inspect_variable));
     }
 
+    /// Inspect the variable (or, more generally the expression) which
+    /// name the user has typed in the variable name entry, in the UI.
     void 
     do_inspect_variable ()
     {
-        NEMIVER_TRY
+        NEMIVER_TRY;
 
         THROW_IF_FAIL (var_name_entry);
 
         UString var_name = var_name_entry->get_entry ()->get_text ();
-        if (var_name == "") {return;}
-        inspect_variable (var_name, true);
+        if (var_name == "")
+            return;
 
-        NEMIVER_CATCH
+        inspect_variable (var_name, /*expand=*/true);
+
+        NEMIVER_CATCH;
     }
 
+    /// Inspect an expression.
+    ///
+    /// \param a_expr the expression to inspect.
+    ///
+    /// \param a_expand whether to expand the resulting expression
+    /// tree.
     void
     inspect_variable (const UString& a_expr,
                       bool a_expand)
     {
+        inspect_variable (a_expr, a_expand, 
+                          sigc::mem_fun
+                          (*this,
+                           &VarInspectorDialog::Priv::on_variable_inspected));
+    }
+
+    /// Inspect an expression.
+    ///
+    /// \param a_expr the expression to inspect.
+    ///
+    /// \param a_expand whether to expand the resulting expression
+    /// tree.
+    ///
+    /// \param a_s a slot to invoke whenever the expresion has been
+    /// inspected.
+    void
+    inspect_variable (const UString &a_expr,
+                      bool a_expand,
+                      const sigc::slot<void, 
+                                       const IDebugger::VariableSafePtr> &a_s)
+    {
         THROW_IF_FAIL (var_inspector);
         THROW_IF_FAIL (m_variable_history);
-        var_inspector->inspect_variable (a_expr, a_expand);
+
+        var_inspector->inspect_variable
+            (a_expr, a_expand, a_s);
+
         add_to_history (a_expr,
                         false /*append*/,
                         false /*don't allow duplicates*/);
@@ -254,6 +295,8 @@ public:
     //<signal handlers>
     //*************************
 
+    /// Handler called when the name of the variable changes in the
+    /// variable name entry field.
     void
     on_var_name_changed_signal ()
     {
@@ -279,6 +322,19 @@ public:
         }
 
         NEMIVER_CATCH
+    }
+
+    /// Handler called when the variable to be inspected is actually
+    /// added to the inspector.
+    void
+    on_variable_inspected (const IDebugger::VariableSafePtr)
+    {
+    }
+
+    /// Handler called when the variable inspector is cleared.
+    void
+    on_variable_inspector_cleared ()
+    {
     }
 
     //************************
@@ -314,6 +370,9 @@ VarInspectorDialog::variable_name () const
     return m_priv->var_name_entry->get_entry ()->get_text ();
 }
 
+/// Inspect an expression (including a variable)
+///
+/// \param a_var_name the expression to inspect.
 void
 VarInspectorDialog::inspect_variable (const UString &a_var_name)
 {
@@ -323,6 +382,27 @@ VarInspectorDialog::inspect_variable (const UString &a_var_name)
     if (a_var_name != "") {
         m_priv->var_name_entry->get_entry ()->set_text (a_var_name);
         m_priv->inspect_variable (a_var_name, true);
+    }
+}
+
+/// Inspect an expression (including a variable)
+///
+/// \param a_var_name the expression to inspect.
+///
+/// \param a_slot a slot to invoke whenever the expression has been
+/// inspected.
+void
+VarInspectorDialog::inspect_variable
+(const UString &a_var_name,
+ const sigc::slot<void, 
+                  const IDebugger::VariableSafePtr> &a_slot)
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->var_name_entry);
+
+    if (a_var_name != "") {
+        m_priv->var_name_entry->get_entry ()->set_text (a_var_name);
+        m_priv->inspect_variable (a_var_name, true, a_slot);
     }
 }
 
