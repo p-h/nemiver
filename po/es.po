@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: nemiver.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-18 13:26+0000\n"
+"POT-Creation-Date: 2012-05-18 14:48+0000\n"
 "PO-Revision-Date: 2012-05-18 16:47+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -337,7 +337,6 @@ msgstr "Ocurrió un error: %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2755
 #, c-format
-#| msgid "File %s has been modified. Do want to reload it?"
 msgid "File %s has been modified. Do you want to reload it?"
 msgstr "El archivo %s se ha modificado. ¿Quiere volver a cargarlo?"
 
@@ -741,7 +740,7 @@ msgstr "No se ha podido detener el depurador"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6620
 #, c-format
 msgid "Invalid line number: %i"
-msgstr "Número de línea inválido: %i"
+msgstr "Número de línea no válido: %i"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8219
 #, c-format
