@@ -1183,6 +1183,12 @@ public:
     virtual sigc::signal<void, const VariableSafePtr, const UString&>&
                                  variable_expression_evaluated_signal () const = 0;
 
+    /// This is a callback slot invoked upon completion of the
+    /// IDebugger::list_changed_variables entry point.
+    ///
+    /// The parameters of the slots are the list of variables
+    /// that changed, and the cookie passed to
+    /// IDebugger::list_changed_variables.
     virtual sigc::signal<void, const VariableList&, const UString&>&
                                 changed_variables_signal () const  = 0;
 
@@ -1565,8 +1571,28 @@ public:
              const ConstVariableSlot &a_slot,
              const UString &a_cookie = "")= 0;
 
+    /// List the sub-variables of a_root (including a_root)
+    /// which value changed since the last time this function was
+    /// invoked.
+    ///
+    /// \param a_root the variable to consider
+    ///
+    /// \param a_cookie the cookie to be passed to the callback
+    //// slot IDebugger::changed_variables_signal
     virtual void list_changed_variables (VariableSafePtr a_root,
                                          const UString &a_cookie = "") = 0;
+
+    /// List the sub-variables of a_root (including a_root) which value
+    /// changed since the last time this function was called.
+    ///
+    /// \param a_root the variable to consider
+    /// 
+    /// \param a_slot the slot to be invoked upon completion of this
+    /// function.  That slot is going to be passed the list of
+    /// sub-variables that have changed.
+    /// 
+    /// \a_cookie the cookie to be passed to the callback function
+    /// IDebugger::changed_variables_signal
     virtual void list_changed_variables
             (VariableSafePtr a_root,
              const ConstVariableListSlot &a_slot,
