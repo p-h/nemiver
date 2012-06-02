@@ -96,6 +96,7 @@
 #include "nmv-dbg-perspective-dynamic-layout.h"
 #endif // WITH_DYNAMICLAYOUT
 #include "nmv-layout-manager.h"
+#include "nmv-expr-monitor.h"
 
 using namespace std;
 using namespace nemiver::common;
@@ -113,11 +114,12 @@ const char *STEP_OVER         = "nmv-step-over";
 const char *STEP_OUT          = "nmv-step-out";
 
 // labels for widget tabs in the status notebook
-const char *CONTEXT_VIEW_TITLE         = _("Context");
-const char *TARGET_TERMINAL_VIEW_TITLE = _("Target Terminal");
-const char *BREAKPOINTS_VIEW_TITLE     = _("Breakpoints");
-const char *REGISTERS_VIEW_TITLE       = _("Registers");
-const char *MEMORY_VIEW_TITLE          = _("Memory");
+const char *CONTEXT_VIEW_TITLE           = _("Context");
+const char *TARGET_TERMINAL_VIEW_TITLE   = _("Target Terminal");
+const char *BREAKPOINTS_VIEW_TITLE       = _("Breakpoints");
+const char *REGISTERS_VIEW_TITLE         = _("Registers");
+const char *MEMORY_VIEW_TITLE            = _("Memory");
+const char *EXPR_MONITOR_VIEW_TITLE      = _("Expression Monitor");
 
 const char *CAPTION_SESSION_NAME = "captionname";
 const char *SESSION_NAME = "sessionname";
@@ -283,6 +285,7 @@ private:
     void on_toggle_breakpoint_enabled_action ();
     void on_toggle_countpoint_action ();
     void on_inspect_expression_action ();
+    void on_expr_monitoring_requested (const IDebugger::VariableSafePtr);
     void on_call_function_action ();
     void on_find_text_response_signal (int);
     void on_breakpoint_delete_action
@@ -299,7 +302,7 @@ private:
 
     void on_debugger_not_started_signal ();
 
-    void on_going_to_run_target_signal ();
+    void on_going_to_run_target_signal (bool);
 
     void on_sv_markers_region_clicked_signal
                                         (int a_line, bool a_dialog_requested,
@@ -421,6 +424,7 @@ private:
 #ifdef WITH_MEMORYVIEW
     void on_activate_memory_view ();
 #endif // WITH_MEMORYVIEW
+    void on_activate_expr_monitor_view ();
     void on_activate_global_variables ();
     void on_default_config_read ();
 
@@ -441,7 +445,7 @@ private:
     void init_body ();
     void init_signals ();
     void init_debugger_signals ();
-    void clear_status_notebook ();
+    void clear_status_notebook (bool a_restarting);
     void clear_session_data ();
     void append_source_editor (SourceEditor &a_sv,
                                const UString &a_path);
@@ -760,6 +764,8 @@ public:
     MemoryView& get_memory_view ();
 #endif // WITH_MEMORYVIEW
 
+    ExprMonitor& get_expr_monitor_view ();
+
     ThreadList& get_thread_list ();
 
     bool set_where (const IDebugger::Frame &a_frame,
@@ -804,7 +810,7 @@ public:
     sigc::signal<void, bool>& debugger_ready_signal ();
     sigc::signal<void>& layout_changed_signal ();
     sigc::signal<void>& debugger_not_started_signal ();
-    sigc::signal<void>& going_to_run_target_signal ();
+    sigc::signal<void, bool>& going_to_run_target_signal ();
     sigc::signal<void>& default_config_read_signal ();
 };//end class DBGPerspective
 
@@ -890,7 +896,7 @@ struct DBGPerspective::Priv {
     sigc::signal<void, bool> attached_to_target_signal;
     sigc::signal<void, bool> debugger_ready_signal;
     sigc::signal<void> debugger_not_started_signal;
-    sigc::signal<void> going_to_run_target_signal;
+    sigc::signal<void, bool> going_to_run_target_signal;
     sigc::signal<void> default_config_read_signal;
     map<UString, int> path_2_pagenum_map;
     map<UString, int> basename_2_pagenum_map;
@@ -910,6 +916,7 @@ struct DBGPerspective::Priv {
 #ifdef WITH_MEMORYVIEW
     SafePtr<MemoryView> memory_view;
 #endif // WITH_MEMORYVIEW
+    SafePtr<ExprMonitor> expr_monitor;
 
     int current_page_num;
     IDebuggerSafePtr debugger;
@@ -1628,6 +1635,22 @@ DBGPerspective::on_inspect_expression_action ()
 }
 
 void
+DBGPerspective::on_expr_monitoring_requested
+(const IDebugger::VariableSafePtr a_var)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY;
+
+    THROW_IF_FAIL (m_priv && m_priv->expr_monitor);
+
+    m_priv->expr_monitor->add_expression (a_var);
+
+    NEMIVER_CATCH;
+}
+
+
+void
 DBGPerspective::on_call_function_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -1825,21 +1848,15 @@ DBGPerspective::on_debugger_not_started_signal ()
 }
 
 void
-DBGPerspective::on_going_to_run_target_signal ()
+DBGPerspective::on_going_to_run_target_signal (bool a_restarting)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     NEMIVER_TRY;
 
+    clear_status_notebook (a_restarting);
     re_initialize_set_breakpoints ();
     clear_session_data ();
-    get_local_vars_inspector ().re_init_widget ();
-    get_breakpoints_view ().re_init ();
-    get_call_stack ().clear ();
-#ifdef WITH_MEMORYVIEW
-    get_memory_view ().clear ();
-#endif
-    get_registers_view ().clear ();
 
     NEMIVER_CATCH;
 }
@@ -2331,7 +2348,7 @@ DBGPerspective::on_debugger_detached_from_target_signal ()
 
     NEMIVER_TRY
 
-    clear_status_notebook ();
+    clear_status_notebook (true);
     workbench ().set_title_extension ("");
     //****************************
     //grey out all the menu
@@ -2480,7 +2497,7 @@ DBGPerspective::on_program_finished_signal ()
     //clear threads list and
     //call stack
     //**********************
-    clear_status_notebook ();
+    clear_status_notebook (true);
     NEMIVER_CATCH
 }
 
@@ -2894,6 +2911,19 @@ DBGPerspective::on_activate_memory_view ()
     NEMIVER_CATCH
 }
 #endif //WITH_MEMORYVIEW
+
+void
+DBGPerspective::on_activate_expr_monitor_view ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY;
+
+    THROW_IF_FAIL (m_priv);
+    m_priv->layout ().activate_view (EXPR_MONITOR_VIEW_INDEX);
+
+    NEMIVER_CATCH;
+}
 
 void
 DBGPerspective::on_activate_global_variables ()
@@ -3425,6 +3455,16 @@ DBGPerspective::init_actions ()
             false
         },
 #endif // WITH_MEMORYVIEW
+         {
+            "ActivateExprMonitorViewMenuAction",
+            nil_stock_id,
+            EXPR_MONITOR_VIEW_TITLE,
+            _("Switch to Variables Monitor View"),
+            sigc::mem_fun (*this, &DBGPerspective::on_activate_expr_monitor_view),
+            ActionEntry::DEFAULT,
+            "<alt>6",
+            false
+        },
         {
             "DebugMenuAction",
             nil_stock_id,
@@ -3810,7 +3850,7 @@ DBGPerspective::init_debugger_signals ()
 }
 
 void
-DBGPerspective::clear_status_notebook ()
+DBGPerspective::clear_status_notebook (bool a_restarting)
 {
     get_thread_list ().clear ();
     get_call_stack ().clear ();
@@ -3820,6 +3860,7 @@ DBGPerspective::clear_status_notebook ()
 #ifdef WITH_MEMORYVIEW
     get_memory_view ().clear ();
 #endif // WITH_MEMORYVIEW
+    get_expr_monitor_view ().re_init_widget (a_restarting);
 }
 
 void
@@ -4968,6 +5009,9 @@ DBGPerspective::add_views_to_layout ()
                                    MEMORY_VIEW_TITLE,
                                    MEMORY_VIEW_INDEX);
     #endif // WITH_MEMORYVIEW
+    m_priv->layout ().append_view (get_expr_monitor_view ().widget (),
+                                   EXPR_MONITOR_VIEW_TITLE,
+                                   EXPR_MONITOR_VIEW_INDEX);
     m_priv->layout ().do_init ();
 
 }
@@ -5872,7 +5916,7 @@ DBGPerspective::restart_local_inferior ()
         // restart; in which case, we can't just simply call debugger
         // ()->run ().
         && debugger ()->get_target_path () == m_priv->prog_path) {
-        going_to_run_target_signal ().emit ();
+        going_to_run_target_signal ().emit (true);
         debugger ()->re_run
             (sigc::mem_fun
              (*this, &DBGPerspective::on_debugger_inferior_re_run_signal));
@@ -6007,8 +6051,6 @@ DBGPerspective::execute_program
         clear_session_data ();
     }
 
-    clear_status_notebook ();
-
     LOG_DD ("load program");
 
     // now really load the inferior program (i.e: the one to be
@@ -6052,7 +6094,7 @@ DBGPerspective::execute_program
         }
     }
 
-    going_to_run_target_signal ().emit ();
+    going_to_run_target_signal ().emit (a_restarting);
     dbg_engine->run ();
     m_priv->debugger_has_just_run = true;
 
@@ -6291,7 +6333,7 @@ DBGPerspective::detach_from_program ()
         debugger ()->detach_from_target ();
 
     close_opened_files ();
-    clear_status_notebook ();
+    clear_status_notebook (false);
 }
 
 void
@@ -7854,6 +7896,9 @@ DBGPerspective::inspect_expression (const UString &a_expression)
     ExprInspectorDialog dialog (*debugger (),
                                *this);
     dialog.set_history (m_priv->var_inspector_dialog_history);
+    dialog.expr_monitoring_requested ().connect
+        (sigc::mem_fun (*this,
+                        &DBGPerspective::on_expr_monitoring_requested));
     if (a_expression != "") {
         dialog.inspect_expression (a_expression);
     }
@@ -8155,6 +8200,18 @@ DBGPerspective::get_memory_view ()
 }
 #endif // WITH_MEMORYVIEW
 
+/// Return the variable monitor view.
+ExprMonitor&
+DBGPerspective::get_expr_monitor_view ()
+{
+    THROW_IF_FAIL (m_priv);
+
+    if (!m_priv->expr_monitor)
+        m_priv->expr_monitor.reset (new ExprMonitor (*debugger (),
+                                                     *this));
+    THROW_IF_FAIL (m_priv->expr_monitor);
+    return *m_priv->expr_monitor;
+}
 
 struct ScrollTextViewToEndClosure {
     Gtk::TextView* text_view;
@@ -8207,7 +8264,7 @@ DBGPerspective::debugger_not_started_signal ()
     return m_priv->debugger_not_started_signal;
 }
 
-sigc::signal<void>&
+sigc::signal<void, bool>&
 DBGPerspective::going_to_run_target_signal ()
 {
     return m_priv->going_to_run_target_signal;

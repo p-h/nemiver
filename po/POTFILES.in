@@ -22,6 +22,7 @@ src/persp/dbgperspective/nmv-thread-list.cc
 src/persp/dbgperspective/nmv-expr-inspector.cc
 src/persp/dbgperspective/nmv-expr-inspector-dialog.cc
 src/persp/dbgperspective/nmv-vars-treeview.cc
+src/persp/dbgperspective/nmv-expr-monitor.cc
 [type: gettext/glade]src/persp/dbgperspective/ui/callfunctiondialog.ui
 [type: gettext/glade]src/persp/dbgperspective/ui/chooseoverloadsdialog.ui
 [type: gettext/glade]src/persp/dbgperspective/ui/findtextdialog.ui

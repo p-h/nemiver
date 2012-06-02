@@ -366,7 +366,7 @@ public:
         FrameArgsSlot;
 
     typedef sigc::slot<void, const VariableSafePtr> ConstVariableSlot;
-    typedef sigc::slot<void, const VariableList> ConstVariableListSlot;
+    typedef sigc::slot<void, const VariableList&> ConstVariableListSlot;
     typedef sigc::slot<void, const UString&> ConstUStringSlot;
 
     class Variable : public Object {
@@ -622,6 +622,14 @@ public:
         /// \param a_in the new name of backend side counterpart variable object.
         void internal_name (const UString &a_in) {m_internal_name = a_in;}
 
+        /// Return the ID of the variable.  The ID is either the
+        /// internal_name of the variable if it has one, or its user
+        /// facing name.
+        const UString& id () const
+        { return internal_name ().empty ()
+                ? name ()
+                : internal_name ();
+        }
 
         IDebugger* debugger () const {return m_debugger;}
         void debugger (IDebugger *a_dbg) {m_debugger = a_dbg;}
@@ -654,6 +662,28 @@ public:
         bool has_parent () const
         {
             return m_parent != 0;
+        }
+
+        /// If this variable has a backend counterpart (e.g GDB
+        /// Backend variable object) then, there are cases where a
+        /// variable sub-object can be returned by the backend without
+        /// being linked to its ancestor tree.  Such a variable
+        /// appears as being structurally root (it has no parent), but
+        /// is morally a sub-variable.  A variable that is
+        /// structurally non-root is also morally non-root.
+        ///
+        /// To know if a variable is morally root, this function
+        /// detects if the fully qualified internal name of the
+        /// variable has dot (".") in it (e.g, "variable.member").  If
+        /// does not, then the function assumes the variable is
+        /// morally root and returns true.
+        bool is_morally_root () const
+        {
+            if (has_parent ())
+                return false;
+            if (internal_name ().empty ())
+                return !has_parent ();
+            return (internal_name ().find (".") == UString::npos);
         }
 
         /// A getter of the parent Variable of the current instance.

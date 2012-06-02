@@ -44,6 +44,26 @@ class ExprInspectorDialog : public Dialog {
     SafePtr<Priv> m_priv;
 
 public:
+
+    /// These flags control the fonctionnalities that are enabled to
+    /// be used with the current instance of VarInspectorDialog.
+    enum FunctionalityFlags {
+      FUNCTIONALITY_NONE = 0,
+      /// When this bit is set, the inspector allows the user to
+      /// inspect expressions.  Thus the "inspect" button is made
+      /// clickable.
+      FUNCTIONALITY_EXPR_INSPECTOR = 1,
+      /// When this bit is set, the inspect allows the user to send
+      /// the inspected expression to the expression (or variable)
+      /// monitor.
+      FUNCTIONALITY_EXPR_MONITOR_PICKER = 1 << 1,
+      // This one should be the last one, and should contain all the
+      // flags above.
+      FUNCTIONALITY_ALL =
+      (FUNCTIONALITY_EXPR_INSPECTOR
+       | FUNCTIONALITY_EXPR_MONITOR_PICKER)
+    };
+
     ExprInspectorDialog (IDebugger &a_debugger,
                         IPerspective &a_perspective);
     virtual ~ExprInspectorDialog ();
@@ -57,6 +77,14 @@ public:
     ExprInspector& inspector () const;
     void set_history (const std::list<UString> &);
     void get_history (std::list<UString> &) const;
+    void functionality_mask (int functionality_mask);
+    unsigned functionality_mask ();
+
+    // <Signals>
+
+    sigc::signal<void, IDebugger::VariableSafePtr>& expr_monitoring_requested ();
+
+    // </Signals>
 };//end class ExprInspectorDialog
 
 NEMIVER_END_NAMESPACE (nemiver)

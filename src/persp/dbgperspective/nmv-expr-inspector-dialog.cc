@@ -51,11 +51,15 @@ class ExprInspectorDialog::Priv {
     Gtk::ComboBox *var_name_entry;
     Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
+    Gtk::Button *add_to_monitor_button;
     SafePtr<ExprInspector> expr_inspector;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gtk::Builder> gtkbuilder;
     IDebugger &debugger;
     IPerspective &perspective;
+    sigc::signal<void, IDebugger::VariableSafePtr> expr_monitoring_requested;
+    // Functionality mask
+    unsigned fun_mask;
 
     Priv ();
 public:
@@ -69,7 +73,8 @@ public:
         dialog (a_dialog),
         gtkbuilder (a_gtkbuilder),
         debugger (a_debugger),
-        perspective (a_perspective)
+        perspective (a_perspective),
+        fun_mask (FUNCTIONALITY_ALL)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         build_dialog ();
@@ -97,6 +102,11 @@ public:
                                                           "inspectbutton");
         inspect_button->set_sensitive (false);
 
+        add_to_monitor_button =
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Button> (gtkbuilder,
+                                                               "addtomonitorbutton");
+        add_to_monitor_button->set_sensitive (false);
+
         Gtk::Box *box =
             ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (gtkbuilder,
                                                        "inspectorwidgetbox");
@@ -123,6 +133,8 @@ public:
         THROW_IF_FAIL (var_name_entry);
         inspect_button->signal_clicked ().connect (sigc::mem_fun
                 (*this, &Priv::do_inspect_expression));
+        add_to_monitor_button->signal_clicked ().connect
+            (sigc::mem_fun (*this, &Priv::on_do_monitor_button_clicked));
         var_name_entry->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_var_name_changed_signal));
         var_name_entry->get_entry()->signal_activate ().connect (sigc::mem_fun
@@ -291,6 +303,23 @@ public:
                             /*a_allow_dups=*/false);
     }
 
+    /// Set the functionality mask.  It's a mask made of the bits
+    /// addressed by VarInspector::FunctionalityFlags.
+    void
+    functionality_mask (int a_mask)
+    {
+        fun_mask = a_mask;
+    }
+
+    /// Return the functionality mask.  It's a mask made of the bits
+    /// addressed by VarInspector::FunctionalityFlags.
+    unsigned
+    functionality_mask ()
+    {
+        return fun_mask;
+    }
+
+
     //************************
     //<signal handlers>
     //*************************
@@ -307,11 +336,11 @@ public:
         THROW_IF_FAIL (inspect_button);
 
         UString var_name = var_name_entry->get_entry ()->get_text ();
-        if (var_name == "") {
+        if (var_name == "")
             inspect_button->set_sensitive (false);
-        } else {
+        else if (functionality_mask ()
+                 & FUNCTIONALITY_EXPR_INSPECTOR)
             inspect_button->set_sensitive (true);
-        }
 
         // this handler is called when any text is changed in the entry or when
         // an item is selected from the combobox.  We don't want to inspect any
@@ -329,12 +358,27 @@ public:
     void
     on_variable_inspected (const IDebugger::VariableSafePtr)
     {
+        if ((functionality_mask () & FUNCTIONALITY_EXPR_MONITOR_PICKER))
+            add_to_monitor_button->set_sensitive (true);
     }
 
     /// Handler called when the variable inspector is cleared.
     void
     on_variable_inspector_cleared ()
     {
+        add_to_monitor_button->set_sensitive (false);
+    }
+
+    void
+    on_do_monitor_button_clicked ()
+    {
+        NEMIVER_TRY;
+
+        THROW_IF_FAIL (expr_inspector->get_expression ());
+
+        expr_monitoring_requested.emit (expr_inspector->get_expression ());
+
+        NEMIVER_CATCH
     }
 
     //************************
@@ -436,6 +480,33 @@ ExprInspectorDialog::get_history (std::list<UString> &a_hist) const
 {
     THROW_IF_FAIL (m_priv);
     m_priv->get_history (a_hist);
+}
+
+sigc::signal<void, IDebugger::VariableSafePtr>&
+ExprInspectorDialog::expr_monitoring_requested ()
+{
+    THROW_IF_FAIL (m_priv);
+    return m_priv->expr_monitoring_requested;
+}
+
+/// Set the functionality mask.  It's a mask made of the bits
+/// addressed by ExprInspector::FunctionalityFlags.
+void
+ExprInspectorDialog::functionality_mask (int a_mask)
+{
+    THROW_IF_FAIL (m_priv);
+
+    m_priv->functionality_mask (a_mask);
+}
+
+/// Return the functionality mask.  It's a mask made of the bits
+/// addressed by ExprInspector::FunctionalityFlags.
+unsigned
+ExprInspectorDialog::functionality_mask ()
+{
+    THROW_IF_FAIL (m_priv);
+
+    return m_priv->functionality_mask ();
 }
 
 NEMIVER_END_NAMESPACE (nemiver)

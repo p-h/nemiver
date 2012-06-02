@@ -128,6 +128,10 @@ bool set_a_variable (const IDebugger::VariableSafePtr a_var,
 		     Gtk::TreeModel::iterator a_row_it,
 		     bool a_truncate_type);
 
+bool unlink_a_variable_row (const IDebugger::VariableSafePtr &a_var,
+			    const Glib::RefPtr<Gtk::TreeStore> &a_store,
+			    const Gtk::TreeModel::iterator &a_parent_row_it);
+
 bool unlink_member_variable_rows (const Gtk::TreeModel::iterator &a_row_it,
 				  const Glib::RefPtr<Gtk::TreeStore> &a_store);
 

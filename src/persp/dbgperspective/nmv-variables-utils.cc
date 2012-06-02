@@ -155,7 +155,7 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     if (a_var) {
         LOG_DD ("going to really update variable '"
-                << a_var->internal_name ()
+                << a_var->id ()
                 << "'");
     } else {
         LOG_DD ("eek, got null variable");
@@ -258,6 +258,7 @@ find_a_variable (const IDebugger::VariableSafePtr a_var,
                  Gtk::TreeModel::iterator &a_out_row_it)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+    LOG_DD ("a_var: " << a_var->id ());
 
     LOG_DD ("looking for variable: " << a_var->internal_name ());
     if (!a_var) {
@@ -266,11 +267,9 @@ find_a_variable (const IDebugger::VariableSafePtr a_var,
     }
 
     Gtk::TreeModel::iterator row_it;
-    IDebugger::VariableSafePtr var;
     for (row_it = a_parent_row_it->children ().begin ();
          row_it != a_parent_row_it->children ().end ();
          ++row_it) {
-        var = row_it->get_value (get_variable_columns ().variable);
         if (variables_match (a_var, row_it)) {
             a_out_row_it = row_it;
             LOG_DD ("found variable at row: " << get_row_name (row_it));
@@ -467,6 +466,8 @@ update_a_variable (const IDebugger::VariableSafePtr a_var,
                    bool a_update_members)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+    LOG_DD ("a_var: " << a_var->id ());
+
     THROW_IF_FAIL (a_parent_row_it);
 
     Gtk::TreeModel::iterator row_it;
@@ -641,7 +642,7 @@ append_a_variable (const IDebugger::VariableSafePtr a_var,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    Glib::RefPtr<Gtk::TreeStore>  tree_store =
+    Glib::RefPtr<Gtk::TreeStore> tree_store =
         Glib::RefPtr<Gtk::TreeStore>::cast_dynamic (a_tree_view.get_model ());
     THROW_IF_FAIL (tree_store);
 
@@ -698,10 +699,6 @@ set_a_variable (const IDebugger::VariableSafePtr a_var,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    Glib::RefPtr<const Gtk::TreeStore> tree_store =
-        Glib::RefPtr<const Gtk::TreeStore>::cast_dynamic (a_tree_view.get_model ());
-    THROW_IF_FAIL (tree_store);
-
     if (!a_var) {
         return false;
     }
@@ -724,6 +721,34 @@ set_a_variable (const IDebugger::VariableSafePtr a_var,
             append_a_variable (*it, a_tree_view, a_row_it, a_truncate_type);
         }
     }
+    return true;
+}
+
+/// Unlike the graphical node representing a variable a_var.
+///
+/// \param a_var the variable which graphical node to unlink.
+///
+/// \param a_store the tree store of the tree view to act upon.
+///
+/// \param a_parent_row_it the parent graphical row under which we
+/// have to look to find the graphical node to unlink.
+///
+/// \return true upon successful unlinking, false otherwise.
+bool
+unlink_a_variable_row (const IDebugger::VariableSafePtr &a_var,
+                       const Glib::RefPtr<Gtk::TreeStore> &a_store,
+                       const Gtk::TreeModel::iterator &a_parent_row_it)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    Gtk::TreeModel::iterator var_to_unlink_it;
+    if (!find_a_variable (a_var, a_parent_row_it, var_to_unlink_it)) {
+        LOG_DD ("var " << a_var->id () << " was not found");
+        return false;
+    }
+
+    a_store->erase (var_to_unlink_it);
+    LOG_DD ("var " << a_var->id () << " was found and unlinked");
     return true;
 }
 

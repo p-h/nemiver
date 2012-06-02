@@ -42,6 +42,8 @@ $(h)/nmv-global-vars-inspector-dialog.cc \
 $(h)/nmv-global-vars-inspector-dialog.h \
 $(h)/nmv-expr-inspector.cc \
 $(h)/nmv-expr-inspector.h \
+$(h)/nmv-expr-monitor.cc \
+$(h)/nmv-expr-monitor.h \
 $(h)/nmv-breakpoints-view.cc \
 $(h)/nmv-breakpoints-view.h \
 $(h)/nmv-registers-view.cc \

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui>
+    <popup name="ExprMonitorPopup">
+	<menuitem action="AddExpressionMenuItemAction"
+		  name="AddExpressionMenuItem"/>
+        <menuitem action="RemoveExpressionsMenuItemAction"
+		  name="RemoveExpressionsMenuItem" />
+    </popup>
+</ui>
