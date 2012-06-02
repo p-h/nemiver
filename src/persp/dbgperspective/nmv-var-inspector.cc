@@ -388,7 +388,7 @@ class VarInspector::Priv : public sigc::trackable {
         NEMIVER_TRY
 
         std::string str;
-        dutil::dump_variable_value (a_var, 0, str);
+        dutil::dump_variable_value (*a_var, 0, str);
 
         if (!str.empty ())
             Gtk::Clipboard::get ()->set_text (str);

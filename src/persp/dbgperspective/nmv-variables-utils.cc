@@ -170,9 +170,12 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
             (Glib::ustring)(*a_iter)[get_variable_columns ().name];
     LOG_DD ("Prev variable name: " << prev_var_name);
     LOG_DD ("new variable name: " << var_name);
-    LOG_DD ("Didn't update variable name");
+
     if (prev_var_name.raw () == "") {
         (*a_iter)[get_variable_columns ().name] = var_name;
+        LOG_DD ("Updated variable name");
+    } else {
+        LOG_DD ("Didn't update variable name");
     }
     (*a_iter) [get_variable_columns ().is_highlighted] = false;
     bool do_highlight = false;
@@ -202,7 +205,9 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     }
 
     (*a_iter)[get_variable_columns ().value] = a_var->value ();
+    LOG_DD ("Updated variable value to " << a_var->value ());
     set_a_variable_node_type (a_iter,  a_var->type (), a_truncate_type);
+    LOG_DD ("Updated variable type to " << a_var->type ());
 }
 
 

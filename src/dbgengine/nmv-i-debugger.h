@@ -431,12 +431,12 @@ public:
         bool m_has_more_children;
 
     public:
-        Variable (const UString &a_internal_name,
-                  const UString &a_name,
-                  const UString &a_value,
-                  const UString &a_type,
-                  bool a_in_scope = true,
-                  IDebugger *a_dbg = 0)
+        explicit Variable (const UString &a_internal_name,
+                           const UString &a_name,
+                           const UString &a_value,
+                           const UString &a_type,
+                           bool a_in_scope = true,
+                           IDebugger *a_dbg = 0)
             : m_internal_name (a_internal_name),
             m_debugger (a_dbg),
             m_name (a_name),
@@ -452,10 +452,10 @@ public:
         {
         }
 
-        Variable (const UString &a_name,
-                  const UString &a_value,
-                  const UString &a_type,
-                  bool a_in_scope = true,
+        explicit Variable (const UString &a_name,
+                           const UString &a_value,
+                           const UString &a_type,
+                           bool a_in_scope = true,
                   IDebugger *a_dbg = 0)
             : m_debugger (a_dbg),
             m_name (a_name),
@@ -472,8 +472,8 @@ public:
         {
         }
 
-        Variable (const UString &a_name,
-                  IDebugger *a_dbg = 0)
+        explicit Variable (const UString &a_name,
+                           IDebugger *a_dbg = 0)
             : m_debugger (a_dbg),
             m_name (a_name),
             m_parent (0),

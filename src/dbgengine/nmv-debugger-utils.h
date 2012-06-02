@@ -54,16 +54,24 @@ void null_breakpoints_slot (const map<int, IDebugger::Breakpoint>&);
 
 /// @}
 
-void dump_variable_value (IDebugger::VariableSafePtr a_var,
-                          int a_indent_num,
-                          std::ostream &a_os,
-                          bool a_print_var_name = false);
+void gen_white_spaces (int a_nb_ws,
+                       std::string &a_ws_str);
 
-void dump_variable_value (IDebugger::VariableSafePtr a_var,
+template<class ostream_type>
+void dump_variable_value (const IDebugger::Variable& a_var,
+                          int a_indent_num,
+                          ostream_type &a_os,
+                          bool a_print_var_name);
+
+void dump_variable_value (IDebugger::Variable& a_var,
                           int a_indent_num,
                           std::string &a_out_str);
 
-void dump_variable_value (IDebugger::VariableSafePtr a_var);
+void dump_variable_value (IDebugger::Variable& a_var);
+
+template<class ostream_type>
+ostream_type&
+operator<< (ostream_type &a_out, const IDebugger::Variable &a_var);
 
 IDebuggerSafePtr load_debugger_iface_with_confmgr ();
 
@@ -72,6 +80,50 @@ IDebugger::Variable::Format string_to_variable_format (const std::string &);
 std::string variable_format_to_string (IDebugger::Variable::Format);
 
 IDebuggerSafePtr load_debugger_iface_with_gconf ();
+
+// Template implementations.
+
+template<class ostream_type>
+void
+dump_variable_value (const IDebugger::Variable &a_var,
+                     int a_indent_num,
+                     ostream_type &a_os,
+                     bool a_print_var_name)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    std::string ws_string;
+
+    if (a_indent_num)
+        gen_white_spaces (a_indent_num, ws_string);
+
+    if (a_print_var_name)
+        a_os << ws_string << a_var.name ();
+
+    if (!a_var.members ().empty ()) {
+        a_os << "\n"  << ws_string << "{";
+        IDebugger::VariableList::const_iterator it;
+        for (it = a_var.members ().begin ();
+             it != a_var.members ().end ();
+             ++it) {
+            a_os << "\n";
+            dump_variable_value (**it, a_indent_num + 2, a_os, true);
+        }
+        a_os << "\n" << ws_string <<  "}";
+    } else {
+        if (a_print_var_name)
+            a_os << " = ";
+        a_os << a_var.value ();
+    }
+}
+
+template<class ostream_type>
+ostream_type&
+operator<< (ostream_type &a_out, const IDebugger::Variable &a_var)
+{
+    dump_variable_value (a_var, 4, a_out, /*print_var_name*/true);
+    return a_out;
+}
 
 NEMIVER_END_NAMESPACE (debugger_utils)
 NEMIVER_END_NAMESPACE (nemiver)

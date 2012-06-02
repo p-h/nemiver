@@ -90,48 +90,6 @@ gen_white_spaces (int a_nb_ws,
     }
 }
 
-/// Serialize a variable and its value into an output stream.
-/// 
-/// \param a_var the variable to serialize.
-/// \param a_indent_num the number of spaces to indent to before
-/// serializing the variable.
-/// \param a_os the output stream to serialize into.
-/// \param a_print_var_name if true, serialize the variable name too.
-void
-dump_variable_value (IDebugger::VariableSafePtr a_var,
-                     int a_indent_num,
-                     std::ostream &a_os,
-                     bool a_print_var_name)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-    THROW_IF_FAIL (a_var);
-
-    std::string ws_string;
-
-    if (a_indent_num)
-        gen_white_spaces (a_indent_num, ws_string);
-
-    if (a_print_var_name)
-        a_os << ws_string << a_var->name ();
-
-    if (!a_var->members ().empty ()) {
-        a_os << "\n"  << ws_string << "{";
-        IDebugger::VariableList::const_iterator it;
-        for (it = a_var->members ().begin ();
-             it != a_var->members ().end ();
-             ++it) {
-            a_os << "\n";
-            dump_variable_value (*it, a_indent_num + 2, a_os, true);
-        }
-        a_os << "\n" << ws_string <<  "}";
-    } else {
-        if (a_print_var_name)
-            a_os << " = ";
-        a_os << a_var->value ();
-    }
-}
-
 /// Serialize a variable and its value into a string.
 ///
 /// \param a_var the variable to serialize.
@@ -139,12 +97,12 @@ dump_variable_value (IDebugger::VariableSafePtr a_var,
 /// serializing the variable.
 /// \param a_out_str the string to serialize the variable into.
 void
-dump_variable_value (IDebugger::VariableSafePtr a_var,
+dump_variable_value (const IDebugger::Variable &a_var,
                      int a_indent_num,
                      std::string &a_out_str)
 {
     std::ostringstream os;
-    dump_variable_value (a_var, a_indent_num, os);
+    dump_variable_value (a_var, a_indent_num, os, /*print_var_name=*/false);
     a_out_str = os.str ();
 }
 
@@ -153,7 +111,7 @@ dump_variable_value (IDebugger::VariableSafePtr a_var,
 ///
 /// \param a_var the variable to serialize.
 void
-dump_variable_value (IDebugger::VariableSafePtr a_var)
+dump_variable_value (const IDebugger::Variable &a_var)
 {
     dump_variable_value (a_var, 4, std::cerr,
                          /*print_var_name=*/true);
