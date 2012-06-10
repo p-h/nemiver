@@ -992,6 +992,10 @@ public:
 
     virtual sigc::signal<void>& detached_from_target_signal () const=0;
 
+    /// Signal emitted whenever the inferior is re-run, using the
+    /// function IDebugger::re_run.
+    virtual sigc::signal<void>& inferior_re_run_signal () const = 0;
+
     virtual sigc::signal<void,
                         const IDebugger::Breakpoint&,
                         int /*breakpoint command*/,
@@ -1266,6 +1270,8 @@ public:
     virtual void do_continue (const UString &a_cookie="") = 0;
 
     virtual void run (const UString &a_cookie="") = 0;
+
+    virtual void re_run (const DefaultSlot &) = 0;
 
     virtual IDebugger::State get_state () const = 0;
 

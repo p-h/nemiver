@@ -60,6 +60,7 @@ using nemiver::debugger_utils::null_const_variable_list_slot;
 using nemiver::debugger_utils::null_frame_vector_slot;
 using nemiver::debugger_utils::null_frame_args_slot;
 using nemiver::debugger_utils::null_disass_slot;
+using nemiver::debugger_utils::null_default_slot;
 using nemiver::debugger_utils::null_breakpoints_slot;
 
 static const char* GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain";
@@ -257,6 +258,8 @@ public:
     mutable sigc::signal<void> connected_to_server_signal;
 
     mutable sigc::signal<void> detached_from_target_signal;
+    
+    mutable sigc::signal<void> inferior_re_run_signal;
 
     mutable sigc::signal<void,
                          const map<int, IDebugger::Breakpoint>&,
@@ -1855,6 +1858,16 @@ struct OnRunningHandler : OutputHandler {
             IDebugger::DefaultSlot s = c.get_slot<IDebugger::DefaultSlot> ();
             s ();
         }
+
+        if (a_in.command ().name () == "re-run") {
+            if (a_in.command ().has_slot ()) {
+                typedef sigc::slot<void> SlotType;
+                SlotType slot = a_in.command ().get_slot<SlotType> ();
+                slot ();
+            }
+            m_engine->inferior_re_run_signal ().emit ();
+        }
+
         m_engine->running_signal ().emit ();
     }
 };//struct OnRunningHandler
@@ -3497,6 +3510,13 @@ GDBEngine::detached_from_target_signal () const
     return m_priv->detached_from_target_signal;
 }
 
+/// Return a reference on the IDebugger::inferior_re_run_signal.
+sigc::signal<void>&
+GDBEngine::inferior_re_run_signal () const
+{
+    return m_priv->inferior_re_run_signal;
+}
+
 sigc::signal<void, const IDebugger::Breakpoint&, int, const UString&>&
 GDBEngine::breakpoint_deleted_signal () const
 {
@@ -4195,6 +4215,30 @@ GDBEngine::run (const UString &a_cookie)
     Command command ("run",
                      "-exec-run",
                      a_cookie);
+    queue_command (command);
+}
+
+/// Re-run the inferior.  That is, if the inferior is running, stop
+/// it, and re-start it.
+///
+/// \param a_slot the callback slot to invoke upon re-starting
+/// successful restarting of the inferior.  Note that this function
+/// also triggers the emitting of the
+/// IDebugger::inferior_re_run_signal signal.
+void
+GDBEngine::re_run (const DefaultSlot &a_slot)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    if (is_attached_to_target ()
+        && get_state () == IDebugger::RUNNING)
+    {
+        stop_target ();
+        LOG_DD ("Requested to stop GDB");
+    }
+
+    Command command ("re-run", "-exec-run");
+    command.set_slot (a_slot);
     queue_command (command);
 }
 

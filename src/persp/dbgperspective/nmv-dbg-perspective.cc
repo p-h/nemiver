@@ -335,6 +335,8 @@ private:
 
     void on_debugger_connected_to_remote_target_signal ();
 
+    void on_debugger_inferior_re_run_signal ();
+
     void on_debugger_detached_from_target_signal ();
 
     void on_debugger_got_target_info_signal (int a_pid,
@@ -2307,6 +2309,19 @@ DBGPerspective::on_debugger_connected_to_remote_target_signal ()
     debugger ()->list_breakpoints ();
 
     NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_debugger_inferior_re_run_signal ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    
+    NEMIVER_TRY;
+
+    m_priv->debugger_has_just_run = true;
+    attached_to_target_signal ().emit (true);
+
+    NEMIVER_CATCH;
 }
 
 void
@@ -5857,15 +5872,10 @@ DBGPerspective::restart_local_inferior ()
         // restart; in which case, we can't just simply call debugger
         // ()->run ().
         && debugger ()->get_target_path () == m_priv->prog_path) {
-        // if the engine is running, stop it.
-        if (debugger ()->get_state () == IDebugger::RUNNING) {
-            debugger ()->stop_target ();
-            LOG_DD ("stopped dbg_engine");
-        }
         going_to_run_target_signal ().emit ();
-        debugger ()->run ();
-        m_priv->debugger_has_just_run = true;
-        attached_to_target_signal ().emit (true);
+        debugger ()->re_run
+            (sigc::mem_fun
+             (*this, &DBGPerspective::on_debugger_inferior_re_run_signal));
     } else {
         vector<IDebugger::Breakpoint> bps;
         execute_program (m_priv->prog_path, m_priv->prog_args,

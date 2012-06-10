@@ -69,6 +69,8 @@ public:
 
     sigc::signal<void>& detached_from_target_signal () const;
 
+    sigc::signal<void>& inferior_re_run_signal () const;
+
     sigc::signal<void, const map<int, IDebugger::Breakpoint>&, const UString&>&
                                             breakpoints_list_signal () const;
 
@@ -327,7 +329,9 @@ public:
 
     void do_continue (const UString &a_cookie);
 
-    void run (const UString &a_cookie) ;
+    void run (const UString &a_cookie);
+
+    void re_run (const DefaultSlot &);
 
     void get_target_info (const UString &a_cookie);
 
