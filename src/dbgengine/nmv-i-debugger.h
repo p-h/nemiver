@@ -558,7 +558,7 @@ public:
             THROW ("fatal: should not be reached");
         }
 
-        bool operator == (const Variable &a_other) const
+        bool operator== (const Variable &a_other) const
         {
             return equals (a_other);
         }
