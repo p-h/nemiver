@@ -5343,9 +5343,9 @@ SourceEditor*
 DBGPerspective::open_file_real (const UString &a_path,
                                 int a_current_line)
 {
-    RETURN_VAL_IF_FAIL (m_priv, false);
+    RETURN_VAL_IF_FAIL (m_priv, 0);
     if (a_path.empty ())
-        return false;
+        return 0;
 
     SourceEditor *source_editor = 0;
     if ((source_editor = get_source_editor_from_path (a_path)))
@@ -6853,7 +6853,7 @@ DBGPerspective::get_breakpoint (const Loc &a_location) const
 {
     switch (a_location.kind ()) {
     case Loc::UNDEFINED_LOC_KIND:
-        return false;
+        return 0;
     case Loc::SOURCE_LOC_KIND: {
         const SourceLoc &loc =
             static_cast<const SourceLoc&> (a_location);
@@ -6863,7 +6863,7 @@ DBGPerspective::get_breakpoint (const Loc &a_location) const
         // TODO: For now we cannot get a breakpoint set by function.
         // For that we would need to be able to get the address at
         // which a breakpoint set by function would be set to.
-        return false;
+        return 0;
     }
     case Loc::ADDRESS_LOC_KIND: {
         const AddressLoc &loc =
