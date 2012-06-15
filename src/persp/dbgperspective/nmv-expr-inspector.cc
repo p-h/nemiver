@@ -29,7 +29,7 @@
 #include <gtkmm/treestore.h>
 #include "common/nmv-exception.h"
 #include "common/nmv-dynamic-module.h"
-#include "nmv-var-inspector.h"
+#include "nmv-expr-inspector.h"
 #include "nmv-variables-utils.h"
 #include "nmv-i-var-walker.h"
 #include "nmv-ui-utils.h"
@@ -47,17 +47,17 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 /// A no-op variable slot.
 static void
-no_op_void_variable_slot (const IDebugger::VariableSafePtr)
+no_op_void_expression_slot (const IDebugger::VariableSafePtr)
 {
 }
 
-class VarInspector::Priv : public sigc::trackable {
-    friend class VarInspector;
+class ExprInspector::Priv : public sigc::trackable {
+    friend class ExprInspector;
     Priv ();
 
-    bool requested_variable;
+    bool requested_expression;
     bool requested_type;
-    bool expand_variable;
+    bool expand_expression;
     bool re_visualize;
     bool enable_contextual_menu;
     IDebugger &debugger;
@@ -69,8 +69,8 @@ class VarInspector::Priv : public sigc::trackable {
     Glib::RefPtr<Gtk::TreeStore> tree_store;
     Gtk::TreeModel::iterator var_row_it;
     Gtk::TreeModel::iterator cur_selected_row;
-    Glib::RefPtr<Gtk::ActionGroup> var_inspector_action_group;
-    Gtk::Widget *var_inspector_menu;
+    Glib::RefPtr<Gtk::ActionGroup> expr_inspector_action_group;
+    Gtk::Widget *expr_inspector_menu;
     IVarWalkerSafePtr varobj_walker;
     DynamicModuleManager *module_manager;
     Glib::RefPtr<Gtk::UIManager> ui_manager;
@@ -129,7 +129,7 @@ class VarInspector::Priv : public sigc::trackable {
 
     void init_actions ()
     {
-        ui_utils::ActionEntry s_var_inspector_action_entries [] = {
+        ui_utils::ActionEntry s_expr_inspector_action_entries [] = {
             {
                 "CopyVariablePathMenuItemAction",
                 Gtk::Stock::COPY,
@@ -137,7 +137,7 @@ class VarInspector::Priv : public sigc::trackable {
                 _("Copy the variable path expression to the clipboard"),
                 sigc::mem_fun
                     (*this,
-                     &Priv::on_variable_path_expr_copy_to_clipboard_action),
+                     &Priv::on_expression_path_expr_copy_to_clipboard_action),
                 ui_utils::ActionEntry::DEFAULT,
                 "",
                 false
@@ -149,31 +149,31 @@ class VarInspector::Priv : public sigc::trackable {
                 _("Copy the variable value to the clipboard"),
                 sigc::mem_fun
                     (*this,
-                     &Priv::on_variable_value_copy_to_clipboard_action),
+                     &Priv::on_expression_value_copy_to_clipboard_action),
                 ui_utils::ActionEntry::DEFAULT,
                 "",
                 false
             }
         };
 
-        var_inspector_action_group =
-            Gtk::ActionGroup::create ("var-inspector-action-group");
-        var_inspector_action_group->set_sensitive (true);
+        expr_inspector_action_group =
+            Gtk::ActionGroup::create ("expr-inspector-action-group");
+        expr_inspector_action_group->set_sensitive (true);
         int num_actions =
-            sizeof (s_var_inspector_action_entries)
+            sizeof (s_expr_inspector_action_entries)
                 /
             sizeof (ui_utils::ActionEntry);
 
         ui_utils::add_action_entries_to_action_group
-            (s_var_inspector_action_entries,
+            (s_expr_inspector_action_entries,
              num_actions,
-             var_inspector_action_group);
+             expr_inspector_action_group);
 
-        get_ui_manager ()->insert_action_group (var_inspector_action_group);
+        get_ui_manager ()->insert_action_group (expr_inspector_action_group);
     }
 
     void
-    graphically_set_variable (const IDebugger::VariableSafePtr a_variable,
+    graphically_set_expression (const IDebugger::VariableSafePtr a_variable,
                               bool a_expand)
     {
         Gtk::TreeModel::iterator parent_iter =
@@ -196,7 +196,7 @@ class VarInspector::Priv : public sigc::trackable {
     }
 
     void
-    set_variable (const IDebugger::VariableSafePtr a_variable,
+    set_expression (const IDebugger::VariableSafePtr a_variable,
                   bool a_expand,
                   bool a_re_visualize)
     {
@@ -216,12 +216,12 @@ class VarInspector::Priv : public sigc::trackable {
                                              &Priv::on_var_revisualized),
                                             a_expand));
         } else {
-            graphically_set_variable (a_variable, a_expand);
+            graphically_set_expression (a_variable, a_expand);
         }
     }
 
     void
-    show_variable_type_in_dialog ()
+    show_expression_type_in_dialog ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -250,10 +250,10 @@ class VarInspector::Priv : public sigc::trackable {
     /// \param a_expand whethet to expand the tree representing the
     /// expression that is going to be created, or not.
     void
-    create_variable (const UString &a_name,
-                     bool a_expand)
+    create_expression (const UString &a_name,
+                       bool a_expand)
     {
-        create_variable (a_name, a_expand, &no_op_void_variable_slot);
+        create_expression (a_name, a_expand, &no_op_void_expression_slot);
     }
 
     /// Creates a variable (or more generally, an expression).
@@ -268,19 +268,19 @@ class VarInspector::Priv : public sigc::trackable {
     /// that is invoked whenever the resulting expression is added to
     /// the inspector.
     void
-    create_variable (const UString &a_name,
-                     bool a_expand,
-                     const sigc::slot<void, 
-                                      const IDebugger::VariableSafePtr> &a_slot)
+    create_expression (const UString &a_name,
+                       bool a_expand,
+                       const sigc::slot<void, 
+                                        const IDebugger::VariableSafePtr> &a_slot)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        expand_variable = a_expand;
+        expand_expression = a_expand;
         debugger.create_variable
             (a_name,
              sigc::bind
              (sigc::mem_fun
-              (this, &VarInspector::Priv::on_variable_created_signal),
+              (this, &ExprInspector::Priv::on_expression_created_signal),
               a_slot));
     }
 
@@ -294,11 +294,11 @@ class VarInspector::Priv : public sigc::trackable {
         return ui_manager;
     }
 
-    Gtk::Widget* get_var_inspector_menu ()
+    Gtk::Widget* get_expr_inspector_menu ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        if (!var_inspector_menu) {
+        if (!expr_inspector_menu) {
             string relative_path =
                 Glib::build_filename ("menus", "varinspectorpopup.xml");
             string absolute_path;
@@ -306,19 +306,19 @@ class VarInspector::Priv : public sigc::trackable {
                                                 (relative_path, absolute_path));
             get_ui_manager ()->add_ui_from_file (absolute_path);
             get_ui_manager ()->ensure_update ();
-            var_inspector_menu =
-                get_ui_manager ()->get_widget ("/VarInspectorPopup");
+            expr_inspector_menu =
+                get_ui_manager ()->get_widget ("/ExprInspectorPopup");
         }
-        return var_inspector_menu;
+        return expr_inspector_menu;
     }
 
     void
-    popup_var_inspector_menu (GdkEventButton *a_event)
+    popup_expr_inspector_menu (GdkEventButton *a_event)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
         Gtk::Menu *menu =
-            dynamic_cast<Gtk::Menu*> (get_var_inspector_menu ());
+            dynamic_cast<Gtk::Menu*> (get_expr_inspector_menu ());
         THROW_IF_FAIL (menu);
 
         // only pop up a menu if a row exists at that position
@@ -362,7 +362,7 @@ class VarInspector::Priv : public sigc::trackable {
             get_module_manager ()->load_iface_with_default_manager<IVarWalker>
                                             ("varobjwalker", "IVarWalker");
         result->visited_variable_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_visited_variable_signal));
+            (sigc::mem_fun (*this, &Priv::on_visited_expression_signal));
         return result;
     }
 
@@ -381,7 +381,7 @@ class VarInspector::Priv : public sigc::trackable {
     // ******************
 
     void
-    on_visited_variable_signal (const IDebugger::VariableSafePtr a_var)
+    on_visited_expression_signal (const IDebugger::VariableSafePtr a_var)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -404,7 +404,7 @@ class VarInspector::Priv : public sigc::trackable {
 
         NEMIVER_TRY;
 
-        graphically_set_variable (a_var, a_expand);
+        graphically_set_expression (a_var, a_expand);
 
         NEMIVER_CATCH;
     }
@@ -459,7 +459,7 @@ class VarInspector::Priv : public sigc::trackable {
 
         if (a_col != tree_view->get_column (2)) {return;}
         cur_selected_row = it;
-        show_variable_type_in_dialog ();
+        show_expression_type_in_dialog ();
 
         NEMIVER_CATCH
     }
@@ -481,7 +481,7 @@ class VarInspector::Priv : public sigc::trackable {
             (*a_row_it)[vutil::get_variable_columns ().variable];
         debugger.unfold_variable
         (var, sigc::bind (sigc::mem_fun (*this,
-                                         &Priv::on_variable_unfolded_signal),
+                                         &Priv::on_expression_unfolded_signal),
                           a_row_path));
         LOG_DD ("variable unfolding triggered");
 
@@ -504,7 +504,7 @@ class VarInspector::Priv : public sigc::trackable {
         debugger.assign_variable
             (var, a_text,
              sigc::bind (sigc::mem_fun
-                                 (*this, &Priv::on_variable_assigned_signal),
+                                 (*this, &Priv::on_expression_assigned_signal),
                          a_path));
 
         NEMIVER_CATCH
@@ -520,7 +520,7 @@ class VarInspector::Priv : public sigc::trackable {
         if (a_event->type == GDK_BUTTON_PRESS
             && a_event->button == 3
             && enable_contextual_menu) {
-            popup_var_inspector_menu (a_event);
+            popup_expr_inspector_menu (a_event);
         }
 
         NEMIVER_CATCH
@@ -536,7 +536,7 @@ class VarInspector::Priv : public sigc::trackable {
     /// \param a_slot a handler to be called whenever the variable is
     /// added to the inspector.
     void
-    on_variable_created_signal (const IDebugger::VariableSafePtr a_var,
+    on_expression_created_signal (const IDebugger::VariableSafePtr a_var,
                                 sigc::slot<void, 
                                            const IDebugger::VariableSafePtr> &a_slot)
     {
@@ -544,7 +544,7 @@ class VarInspector::Priv : public sigc::trackable {
 
         NEMIVER_TRY;
 
-        set_variable (a_var, expand_variable, re_visualize);
+        set_expression (a_var, expand_expression, re_visualize);
         var_inspected_signal.emit (a_var);
         a_slot (a_var);
 
@@ -552,7 +552,7 @@ class VarInspector::Priv : public sigc::trackable {
     }
 
     void
-    on_variable_unfolded_signal (const IDebugger::VariableSafePtr a_var,
+    on_expression_unfolded_signal (const IDebugger::VariableSafePtr a_var,
                                  const Gtk::TreeModel::Path &a_var_node)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -569,7 +569,7 @@ class VarInspector::Priv : public sigc::trackable {
     }
 
     void
-    on_variable_assigned_signal (const IDebugger::VariableSafePtr a_var,
+    on_expression_assigned_signal (const IDebugger::VariableSafePtr a_var,
                                  const UString &a_var_path)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -589,7 +589,7 @@ class VarInspector::Priv : public sigc::trackable {
         NEMIVER_CATCH
     }
 
-    void on_variable_path_expr_copy_to_clipboard_action ()
+    void on_expression_path_expr_copy_to_clipboard_action ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -604,12 +604,12 @@ class VarInspector::Priv : public sigc::trackable {
 
         debugger.query_variable_path_expr
             (variable,
-             sigc::mem_fun (*this, &Priv::on_variable_path_expression_signal));
+             sigc::mem_fun (*this, &Priv::on_expression_path_expression_signal));
 
         NEMIVER_CATCH
     }
 
-    void on_variable_value_copy_to_clipboard_action ()
+    void on_expression_value_copy_to_clipboard_action ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -629,7 +629,7 @@ class VarInspector::Priv : public sigc::trackable {
         NEMIVER_CATCH
     }
 
-    void on_variable_path_expression_signal
+    void on_expression_path_expression_signal
                                     (const IDebugger::VariableSafePtr a_var)
     {
         NEMIVER_TRY
@@ -646,15 +646,15 @@ public:
 
     Priv (IDebugger &a_debugger,
           IPerspective &a_perspective) :
-          requested_variable (false),
+          requested_expression (false),
           requested_type (false),
-          expand_variable (false),
+          expand_expression (false),
           re_visualize (false),
           enable_contextual_menu (false),
           debugger (a_debugger),
           perspective (a_perspective),
           tree_view (0),
-          var_inspector_menu (0),
+          expr_inspector_menu (0),
           module_manager (0)
     {
         build_widget ();
@@ -665,21 +665,21 @@ public:
     ~Priv ()
     {
     }
-};//end class VarInspector::Priv
+};//end class ExprInspector::Priv
 
-VarInspector::VarInspector (IDebugger &a_debugger,
+ExprInspector::ExprInspector (IDebugger &a_debugger,
                             IPerspective &a_perspective)
 {
     m_priv.reset (new Priv (a_debugger, a_perspective));
 }
 
-VarInspector::~VarInspector ()
+ExprInspector::~ExprInspector ()
 {
     LOG_D ("deleted", "destructor-domain");
 }
 
 Gtk::Widget&
-VarInspector::widget () const
+ExprInspector::widget () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->tree_view);
@@ -687,12 +687,12 @@ VarInspector::widget () const
 }
 
 void
-VarInspector::set_variable (IDebugger::VariableSafePtr a_variable,
+ExprInspector::set_expression (IDebugger::VariableSafePtr a_variable,
                             bool a_expand, bool a_revisualize)
 {
     THROW_IF_FAIL (m_priv);
 
-    m_priv->set_variable (a_variable, a_expand, a_revisualize);
+    m_priv->set_expression (a_variable, a_expand, a_revisualize);
 }
 
 /// Inspect a variable/expression.
@@ -703,12 +703,12 @@ VarInspector::set_variable (IDebugger::VariableSafePtr a_variable,
 /// \param a_expand whether to expand the resulting tree representing
 /// the expression.
 void
-VarInspector::inspect_variable (const UString &a_variable_name,
+ExprInspector::inspect_expression (const UString &a_variable_name,
                                 bool a_expand)
 {
-    inspect_variable (a_variable_name,
+    inspect_expression (a_variable_name,
                       a_expand,
-                      &no_op_void_variable_slot);
+                      &no_op_void_expression_slot);
 }
 
 /// Inspect a variable/expression.
@@ -723,21 +723,21 @@ VarInspector::inspect_variable (const UString &a_variable_name,
 /// resulting tree (representing the expression to the inspected) is
 /// added to the inspector.
 void
-VarInspector::inspect_variable (const UString &a_variable_name,
-                                bool a_expand,
-                                const sigc::slot<void, 
-                                                 const IDebugger::VariableSafePtr> &a_s)
+ExprInspector::inspect_expression (const UString &a_variable_name,
+                                   bool a_expand,
+                                   const sigc::slot<void, 
+                                                    const IDebugger::VariableSafePtr> &a_s)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     if (a_variable_name == "") {return;}
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();
-    m_priv->create_variable (a_variable_name, a_expand, a_s);
+    m_priv->create_expression (a_variable_name, a_expand, a_s);
 }
 
 IDebugger::VariableSafePtr
-VarInspector::get_variable () const
+ExprInspector::get_expression () const
 {
     THROW_IF_FAIL (m_priv);
 
@@ -745,21 +745,21 @@ VarInspector::get_variable () const
 }
 
 void
-VarInspector::enable_contextual_menu (bool a_flag)
+ExprInspector::enable_contextual_menu (bool a_flag)
 {
     THROW_IF_FAIL (m_priv);
     m_priv->enable_contextual_menu = a_flag;
 }
 
 bool
-VarInspector::is_contextual_menu_enabled () const
+ExprInspector::is_contextual_menu_enabled () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->enable_contextual_menu;
 }
 
 void
-VarInspector::clear ()
+ExprInspector::clear ()
 {
     THROW_IF_FAIL (m_priv);
     m_priv->re_init_tree_view ();
@@ -768,7 +768,7 @@ VarInspector::clear ()
 /// A signal emitted when the variable to be inspected is added to the
 /// inspector.
 sigc::signal<void, const IDebugger::VariableSafePtr>&
-VarInspector::var_inspected_signal () const
+ExprInspector::expr_inspected_signal () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->var_inspected_signal;
@@ -776,7 +776,7 @@ VarInspector::var_inspected_signal () const
 
 /// A signal emitted when the inspector is cleared.
 sigc::signal<void>&
-VarInspector::cleared_signal () const
+ExprInspector::cleared_signal () const
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->cleared_signal;

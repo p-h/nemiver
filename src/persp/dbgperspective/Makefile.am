@@ -26,8 +26,8 @@ $(h)/nmv-preferences-dialog.h \
 $(h)/nmv-preferences-dialog.cc \
 $(h)/nmv-proc-list-dialog.cc \
 $(h)/nmv-proc-list-dialog.h \
-$(h)/nmv-var-inspector-dialog.cc \
-$(h)/nmv-var-inspector-dialog.h \
+$(h)/nmv-expr-inspector-dialog.cc \
+$(h)/nmv-expr-inspector-dialog.h \
 $(h)/nmv-find-text-dialog.cc \
 $(h)/nmv-find-text-dialog.h \
 $(h)/nmv-sess-mgr.cc \
@@ -40,8 +40,8 @@ $(h)/nmv-local-vars-inspector.cc \
 $(h)/nmv-local-vars-inspector.h \
 $(h)/nmv-global-vars-inspector-dialog.cc \
 $(h)/nmv-global-vars-inspector-dialog.h \
-$(h)/nmv-var-inspector.cc \
-$(h)/nmv-var-inspector.h \
+$(h)/nmv-expr-inspector.cc \
+$(h)/nmv-expr-inspector.h \
 $(h)/nmv-breakpoints-view.cc \
 $(h)/nmv-breakpoints-view.h \
 $(h)/nmv-registers-view.cc \

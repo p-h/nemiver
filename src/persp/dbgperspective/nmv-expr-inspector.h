@@ -22,8 +22,8 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_VAR_INSPECTOR2_H__
-#define __NMV_VAR_INSPECTOR2_H__
+#ifndef __NMV_EXPR_INSPECTOR2_H__
+#define __NMV_EXPR_INSPECTOR2_H__
 
 #include "common/nmv-object.h"
 #include "common/nmv-safe-ptr-utils.h"
@@ -40,40 +40,40 @@ namespace common {
     class UString;
 }
 
-class VarInspector : public nemiver::common::Object {
-    VarInspector (const VarInspector &);
-    VarInspector& operator= (const VarInspector &);
-    VarInspector ();
+class ExprInspector : public nemiver::common::Object {
+    ExprInspector (const ExprInspector &);
+    ExprInspector& operator= (const ExprInspector &);
+    ExprInspector ();
     class Priv;
     SafePtr<Priv> m_priv;
 
 public:
-    VarInspector (IDebugger &a_debugger,
+    ExprInspector (IDebugger &a_debugger,
 		  IPerspective &a_perspective);
-    virtual ~VarInspector ();
+    virtual ~ExprInspector ();
     Gtk::Widget& widget () const;
-    void set_variable (IDebugger::VariableSafePtr a_variable,
+    void set_expression (IDebugger::VariableSafePtr a_variable,
                        bool a_expand = false,
 		       bool a_re_visualize = false);
-    void inspect_variable (const UString &a_variable_name,
+    void inspect_expression (const UString &a_variable_name,
                            bool a_expand = false);
-    void inspect_variable (const UString &a_variable_name,
+    void inspect_expression (const UString &a_variable_name,
                            bool a_expand,
 			   const sigc::slot<void, 
 			              const IDebugger::VariableSafePtr> &a_s);
-    IDebugger::VariableSafePtr get_variable () const;
+    IDebugger::VariableSafePtr get_expression () const;
     void enable_contextual_menu (bool a_flag);
     bool is_contextual_menu_enabled () const;
     void clear ();
 
     // Signals
     sigc::signal<void, const IDebugger::VariableSafePtr>&
-      var_inspected_signal () const;
+      expr_inspected_signal () const;
     sigc::signal<void>& cleared_signal () const;
 
-};//end class VarInspector
+};//end class ExprInspector
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_VAR_INSPECTOR2_H__
+#endif //__NMV_EXPR_INSPECTOR2_H__
 

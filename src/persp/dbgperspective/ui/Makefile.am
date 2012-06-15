@@ -4,7 +4,7 @@ proclistdialog.ui \
 loadcoredialog.ui \
 savedsessionsdialog.ui \
 preferencesdialog.ui \
-varinspectordialog.ui \
+exprinspectordialog.ui \
 findtextdialog.ui \
 openfiledialog.ui \
 setbreakpointdialog.ui \

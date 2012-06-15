@@ -19,9 +19,8 @@ src/persp/dbgperspective/nmv-run-program-dialog.cc
 src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
 src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
 src/persp/dbgperspective/nmv-thread-list.cc
-src/persp/dbgperspective/nmv-var-inspector.cc
-src/persp/dbgperspective/nmv-var-inspector.cc
-src/persp/dbgperspective/nmv-var-inspector-dialog.cc
+src/persp/dbgperspective/nmv-expr-inspector.cc
+src/persp/dbgperspective/nmv-expr-inspector-dialog.cc
 src/persp/dbgperspective/nmv-vars-treeview.cc
 [type: gettext/glade]src/persp/dbgperspective/ui/callfunctiondialog.ui
 [type: gettext/glade]src/persp/dbgperspective/ui/chooseoverloadsdialog.ui
@@ -36,7 +35,7 @@ src/persp/dbgperspective/nmv-vars-treeview.cc
 [type: gettext/glade]src/persp/dbgperspective/ui/savedsessionsdialog.ui
 [type: gettext/glade]src/persp/dbgperspective/ui/setbreakpointdialog.ui
 [type: gettext/glade]src/persp/dbgperspective/ui/setjumptodialog.ui
-[type: gettext/glade]src/persp/dbgperspective/ui/varinspectordialog.ui
+[type: gettext/glade]src/persp/dbgperspective/ui/exprinspectordialog.ui
 [type: gettext/glade]src/persp/dbgperspective/ui/watchpointdialog.ui
 src/uicommon/nmv-locate-file-dialog.cc
 src/uicommon/nmv-source-editor.cc

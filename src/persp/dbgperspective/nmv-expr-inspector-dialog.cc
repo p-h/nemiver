@@ -26,8 +26,8 @@
 #include <glib/gi18n.h>
 #include <gtkmm/liststore.h>
 #include "common/nmv-exception.h"
-#include "nmv-var-inspector-dialog.h"
-#include "nmv-var-inspector.h"
+#include "nmv-expr-inspector-dialog.h"
+#include "nmv-expr-inspector.h"
 #include "nmv-ui-utils.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -46,12 +46,12 @@ get_cols ()
     return cols;
 }
 
-class VarInspectorDialog::Priv {
-    friend class VarInspectorDialog;
+class ExprInspectorDialog::Priv {
+    friend class ExprInspectorDialog;
     Gtk::ComboBox *var_name_entry;
     Glib::RefPtr<Gtk::ListStore> m_variable_history;
     Gtk::Button *inspect_button;
-    SafePtr<VarInspector> var_inspector;
+    SafePtr<ExprInspector> expr_inspector;
     Gtk::Dialog &dialog;
     Glib::RefPtr<Gtk::Builder> gtkbuilder;
     IDebugger &debugger;
@@ -101,17 +101,17 @@ public:
             ui_utils::get_widget_from_gtkbuilder<Gtk::Box> (gtkbuilder,
                                                        "inspectorwidgetbox");
 
-        var_inspector.reset (new VarInspector (debugger, perspective));
-        var_inspector->enable_contextual_menu (true);
-        var_inspector->cleared_signal ().connect
+        expr_inspector.reset (new ExprInspector (debugger, perspective));
+        expr_inspector->enable_contextual_menu (true);
+        expr_inspector->cleared_signal ().connect
             (sigc::mem_fun
              (*this,
-              &VarInspectorDialog::Priv::on_variable_inspector_cleared));
+              &ExprInspectorDialog::Priv::on_variable_inspector_cleared));
 
         Gtk::ScrolledWindow *scr = Gtk::manage (new Gtk::ScrolledWindow);
         scr->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
         scr->set_shadow_type (Gtk::SHADOW_IN);
-        scr->add (var_inspector->widget ());
+        scr->add (expr_inspector->widget ());
         box->pack_start (*scr);
         dialog.show_all ();
     }
@@ -122,17 +122,17 @@ public:
         THROW_IF_FAIL (inspect_button);
         THROW_IF_FAIL (var_name_entry);
         inspect_button->signal_clicked ().connect (sigc::mem_fun
-                (*this, &Priv::do_inspect_variable));
+                (*this, &Priv::do_inspect_expression));
         var_name_entry->signal_changed ().connect (sigc::mem_fun
                 (*this, &Priv::on_var_name_changed_signal));
         var_name_entry->get_entry()->signal_activate ().connect (sigc::mem_fun
-                (*this, &Priv::do_inspect_variable));
+                (*this, &Priv::do_inspect_expression));
     }
 
     /// Inspect the variable (or, more generally the expression) which
     /// name the user has typed in the variable name entry, in the UI.
     void 
-    do_inspect_variable ()
+    do_inspect_expression ()
     {
         NEMIVER_TRY;
 
@@ -142,7 +142,7 @@ public:
         if (var_name == "")
             return;
 
-        inspect_variable (var_name, /*expand=*/true);
+        inspect_expression (var_name, /*expand=*/true);
 
         NEMIVER_CATCH;
     }
@@ -154,13 +154,13 @@ public:
     /// \param a_expand whether to expand the resulting expression
     /// tree.
     void
-    inspect_variable (const UString& a_expr,
+    inspect_expression (const UString& a_expr,
                       bool a_expand)
     {
-        inspect_variable (a_expr, a_expand, 
+        inspect_expression (a_expr, a_expand, 
                           sigc::mem_fun
                           (*this,
-                           &VarInspectorDialog::Priv::on_variable_inspected));
+                           &ExprInspectorDialog::Priv::on_variable_inspected));
     }
 
     /// Inspect an expression.
@@ -173,15 +173,15 @@ public:
     /// \param a_s a slot to invoke whenever the expresion has been
     /// inspected.
     void
-    inspect_variable (const UString &a_expr,
+    inspect_expression (const UString &a_expr,
                       bool a_expand,
                       const sigc::slot<void, 
                                        const IDebugger::VariableSafePtr> &a_s)
     {
-        THROW_IF_FAIL (var_inspector);
+        THROW_IF_FAIL (expr_inspector);
         THROW_IF_FAIL (m_variable_history);
 
-        var_inspector->inspect_variable
+        expr_inspector->inspect_expression
             (a_expr, a_expand, a_s);
 
         add_to_history (a_expr,
@@ -318,7 +318,7 @@ public:
         // text that is typed into the entry, but we do want to inspect when
         // they choose an item from the dropdown list
         if (var_name_entry->get_active ()) {
-            inspect_variable (var_name, true);
+            inspect_expression (var_name, true);
         }
 
         NEMIVER_CATCH
@@ -340,29 +340,29 @@ public:
     //************************
     //</signal handlers>
     //*************************
-};//end class VarInspectorDialog::Priv
+};//end class ExprInspectorDialog::Priv
 
-VarInspectorDialog::VarInspectorDialog (IDebugger &a_debugger,
+ExprInspectorDialog::ExprInspectorDialog (IDebugger &a_debugger,
                                         IPerspective &a_perspective) :
     Dialog (a_perspective.plugin_path (),
-            "varinspectordialog.ui",
-            "varinspectordialog")
+            "exprinspectordialog.ui",
+            "exprinspectordialog")
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset
-        (new VarInspectorDialog::Priv (widget (),
+        (new ExprInspectorDialog::Priv (widget (),
                                        gtkbuilder (), a_debugger,
                                        a_perspective));
     THROW_IF_FAIL (m_priv);
 }
 
-VarInspectorDialog::~VarInspectorDialog ()
+ExprInspectorDialog::~ExprInspectorDialog ()
 {
     LOG_D ("delete", "destructor-domain");
 }
 
 UString
-VarInspectorDialog::variable_name () const
+ExprInspectorDialog::expression_name () const
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->var_name_entry);
@@ -373,14 +373,14 @@ VarInspectorDialog::variable_name () const
 ///
 /// \param a_var_name the expression to inspect.
 void
-VarInspectorDialog::inspect_variable (const UString &a_var_name)
+ExprInspectorDialog::inspect_expression (const UString &a_var_name)
 {
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->var_name_entry);
 
     if (a_var_name != "") {
         m_priv->var_name_entry->get_entry ()->set_text (a_var_name);
-        m_priv->inspect_variable (a_var_name, true);
+        m_priv->inspect_expression (a_var_name, true);
     }
 }
 
@@ -391,7 +391,7 @@ VarInspectorDialog::inspect_variable (const UString &a_var_name)
 /// \param a_slot a slot to invoke whenever the expression has been
 /// inspected.
 void
-VarInspectorDialog::inspect_variable
+ExprInspectorDialog::inspect_expression
 (const UString &a_var_name,
  const sigc::slot<void, 
                   const IDebugger::VariableSafePtr> &a_slot)
@@ -401,30 +401,30 @@ VarInspectorDialog::inspect_variable
 
     if (a_var_name != "") {
         m_priv->var_name_entry->get_entry ()->set_text (a_var_name);
-        m_priv->inspect_variable (a_var_name, true, a_slot);
+        m_priv->inspect_expression (a_var_name, true, a_slot);
     }
 }
 
 const IDebugger::VariableSafePtr
-VarInspectorDialog::variable () const
+ExprInspectorDialog::expression () const
 {
     THROW_IF_FAIL (m_priv);
-    return m_priv->var_inspector->get_variable ();
+    return m_priv->expr_inspector->get_expression ();
 }
 
 /// Return the variable inspector used by this dialog
-VarInspector& 
-VarInspectorDialog::inspector () const
+ExprInspector& 
+ExprInspectorDialog::inspector () const
 {
     THROW_IF_FAIL (m_priv);
-    return *m_priv->var_inspector;
+    return *m_priv->expr_inspector;
 }
 
 /// Set the history of variable expression to a new one.
 ///
 /// \param a_hist the new history.
 void
-VarInspectorDialog::set_history (const std::list<UString> &a_hist)
+ExprInspectorDialog::set_history (const std::list<UString> &a_hist)
 {
     THROW_IF_FAIL (m_priv);
 
@@ -432,7 +432,7 @@ VarInspectorDialog::set_history (const std::list<UString> &a_hist)
 }
 
 void
-VarInspectorDialog::get_history (std::list<UString> &a_hist) const
+ExprInspectorDialog::get_history (std::list<UString> &a_hist) const
 {
     THROW_IF_FAIL (m_priv);
     m_priv->get_history (a_hist);

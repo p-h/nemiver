@@ -66,7 +66,7 @@
 #include "nmv-call-stack.h"
 #include "nmv-spinner-tool-item.h"
 #include "nmv-local-vars-inspector.h"
-#include "nmv-var-inspector.h"
+#include "nmv-expr-inspector.h"
 #include "nmv-global-vars-inspector-dialog.h"
 #include "nmv-terminal.h"
 #include "nmv-breakpoints-view.h"
@@ -75,7 +75,7 @@
 #include "nmv-preferences-dialog.h"
 #include "nmv-popup-tip.h"
 #include "nmv-thread-list.h"
-#include "nmv-var-inspector-dialog.h"
+#include "nmv-expr-inspector-dialog.h"
 #include "nmv-find-text-dialog.h"
 #include "nmv-set-breakpoint-dialog.h"
 #include "nmv-choose-overloads-dialog.h"
@@ -282,7 +282,7 @@ private:
     void on_toggle_breakpoint_action ();
     void on_toggle_breakpoint_enabled_action ();
     void on_toggle_countpoint_action ();
-    void on_inspect_variable_action ();
+    void on_inspect_expression_action ();
     void on_call_function_action ();
     void on_find_text_response_signal (int);
     void on_breakpoint_delete_action
@@ -473,7 +473,7 @@ private:
                                          const UString &a_text);
     void show_underline_tip_at_position (int a_x, int a_y,
                                          IDebugger::VariableSafePtr a_var);
-    VarInspector& get_popup_var_inspector ();
+    ExprInspector& get_popup_expr_inspector ();
     void restart_mouse_immobile_timer ();
     void stop_mouse_immobile_timer ();
     PopupTip& get_popup_tip ();
@@ -683,8 +683,8 @@ public:
     void disassemble_around_address_and_do (const Address &adress,
                                             IDebugger::DisassSlot &what_to_do);
 
-    void inspect_variable ();
-    void inspect_variable (const UString &a_variable_name);
+    void inspect_expression ();
+    void inspect_expression (const UString &a_variable_name);
     void call_function ();
     void call_function (const UString &a_call_expr);
     void toggle_breakpoint ();
@@ -946,7 +946,7 @@ struct DBGPerspective::Priv {
     //<variable value popup tip related data>
     //****************************************
     SafePtr<PopupTip> popup_tip;
-    SafePtr<VarInspector> popup_var_inspector;
+    SafePtr<ExprInspector> popup_expr_inspector;
     bool in_show_var_value_at_pos_transaction;
     UString var_to_popup;
     int var_popup_tip_x;
@@ -1619,11 +1619,11 @@ DBGPerspective::on_toggle_countpoint_action ()
 }
 
 void
-DBGPerspective::on_inspect_variable_action ()
+DBGPerspective::on_inspect_expression_action ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     NEMIVER_TRY
-    inspect_variable ();
+    inspect_expression ();
     NEMIVER_CATCH
 }
 
@@ -2746,7 +2746,7 @@ DBGPerspective::on_popup_tip_hide ()
     NEMIVER_TRY
 
     m_priv->popup_tip.reset ();
-    m_priv->popup_var_inspector.reset ();
+    m_priv->popup_expr_inspector.reset ();
 
     NEMIVER_CATCH
 }
@@ -3266,12 +3266,12 @@ DBGPerspective::init_actions ()
             false
         },
         {
-            "InspectVariableMenuItemAction",
+            "InspectExpressionMenuItemAction",
             nil_stock_id,
-            _("Inspect a Variable"),
-            _("Inspect a global or local variable"),
+            _("Inspect an Expression"),
+            _("Inspect a global or local expression"),
             sigc::mem_fun (*this,
-                           &DBGPerspective::on_inspect_variable_action),
+                           &DBGPerspective::on_inspect_expression_action),
             ActionEntry::DEFAULT,
             "F12",
             false
@@ -4394,8 +4394,8 @@ DBGPerspective::get_contextual_menu ()
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
              "/ContextualMenu",
-             "InspectVariableMenuItem",
-             "InspectVariableMenuItemAction",
+             "InspectExpressionMenuItem",
+             "InspectExpressionMenuItemAction",
              Gtk::UI_MANAGER_AUTO,
              false);
 
@@ -4828,22 +4828,22 @@ DBGPerspective::show_underline_tip_at_position
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
     get_popup_tip ().show_at_position (a_x, a_y);
-    get_popup_var_inspector ().set_variable (a_var,
-                                             true/*expand variable*/,
-                                             m_priv->pretty_printing_toggled);
+    get_popup_expr_inspector ().set_expression (a_var,
+                                               true/*expand variable*/,
+                                               m_priv->pretty_printing_toggled);
 }
 
-VarInspector&
-DBGPerspective::get_popup_var_inspector ()
+ExprInspector&
+DBGPerspective::get_popup_expr_inspector ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
-    if (!m_priv->popup_var_inspector)
-        m_priv->popup_var_inspector.reset
-                    (new VarInspector (*debugger (),
+    if (!m_priv->popup_expr_inspector)
+        m_priv->popup_expr_inspector.reset
+                    (new ExprInspector (*debugger (),
                                        *const_cast<DBGPerspective*> (this)));
-    THROW_IF_FAIL (m_priv->popup_var_inspector);
-    return *m_priv->popup_var_inspector;
+    THROW_IF_FAIL (m_priv->popup_expr_inspector);
+    return *m_priv->popup_expr_inspector;
 }
 
 void
@@ -4883,7 +4883,7 @@ DBGPerspective::get_popup_tip ()
         Gtk::ScrolledWindow *w = Gtk::manage (new PopupScrolledWindow ());
         w->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
         m_priv->popup_tip->set_child (*w);
-        w->add (get_popup_var_inspector ().widget ());
+        w->add (get_popup_expr_inspector ().widget ());
         m_priv->popup_tip->signal_hide ().connect (sigc::mem_fun
                    (*this, &DBGPerspective::on_popup_tip_hide));
     }
@@ -7829,11 +7829,11 @@ DBGPerspective::update_src_dependant_bp_actions_sensitiveness ()
 }
 
 void
-DBGPerspective::inspect_variable ()
+DBGPerspective::inspect_expression ()
 {
     THROW_IF_FAIL (m_priv);
 
-    UString variable_name;
+    UString expression;
     Gtk::TextIter start, end;
     SourceEditor *source_editor = get_current_source_editor ();
     if (source_editor) {
@@ -7841,21 +7841,21 @@ DBGPerspective::inspect_variable ()
             source_editor->source_view ().get_source_buffer ();
         THROW_IF_FAIL (buffer);
         if (buffer->get_selection_bounds (start, end)) {
-            variable_name= buffer->get_slice (start, end);
+            expression = buffer->get_slice (start, end);
         }
     }
-    inspect_variable (variable_name);
+    inspect_expression (expression);
 }
 
 void
-DBGPerspective::inspect_variable (const UString &a_variable_name)
+DBGPerspective::inspect_expression (const UString &a_expression)
 {
     THROW_IF_FAIL (debugger ());
-    VarInspectorDialog dialog (*debugger (),
+    ExprInspectorDialog dialog (*debugger (),
                                *this);
     dialog.set_history (m_priv->var_inspector_dialog_history);
-    if (a_variable_name != "") {
-        dialog.inspect_variable (a_variable_name);
+    if (a_expression != "") {
+        dialog.inspect_expression (a_expression);
     }
     dialog.run ();
     m_priv->var_inspector_dialog_history.clear ();

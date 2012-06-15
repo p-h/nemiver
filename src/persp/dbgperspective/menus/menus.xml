@@ -74,8 +74,8 @@
             <menuitem action="SetWatchPointUsingDialogMenuItemAction"
                 name="SetWatchUsingDialogMenuItem"/>
             <separator/>
-            <menuitem action="InspectVariableMenuItemAction"
-                name="InspectVariableMenuItem"/>
+            <menuitem action="InspectExpressionMenuItemAction"
+                name="InspectExpressionMenuItem"/>
             <menuitem action="CallFunctionMenuItemAction"
                 name="CallFunctionMenuItem"/>
             <menuitem action="ActivateGlobalVariablesDialogMenuAction"

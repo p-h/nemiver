@@ -22,43 +22,43 @@
  *
  *See COPYRIGHT file copyright information.
  */
-#ifndef __NMV_VAR_INSPECTOR_DIALOG_H__
-#define __NMV_VAR_INSPECTOR_DIALOG_H__
+#ifndef __NMV_EXPR_INSPECTOR_DIALOG_H__
+#define __NMV_EXPR_INSPECTOR_DIALOG_H__
 
 #include "nmv-dialog.h"
 #include "nmv-i-perspective.h"
 #include "nmv-i-debugger.h"
-#include "nmv-var-inspector.h"
+#include "nmv-expr-inspector.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
-class VarInspectorDialog : public Dialog {
+class ExprInspectorDialog : public Dialog {
     //non copyable
-    VarInspectorDialog (const VarInspectorDialog &);
-    VarInspectorDialog& operator= (const VarInspectorDialog &);
+    ExprInspectorDialog (const ExprInspectorDialog &);
+    ExprInspectorDialog& operator= (const ExprInspectorDialog &);
 
     //tell me why you would want to extend this.
-    VarInspectorDialog ();
+    ExprInspectorDialog ();
 
     class Priv;
     SafePtr<Priv> m_priv;
 
 public:
-    VarInspectorDialog (IDebugger &a_debugger,
+    ExprInspectorDialog (IDebugger &a_debugger,
                         IPerspective &a_perspective);
-    virtual ~VarInspectorDialog ();
+    virtual ~ExprInspectorDialog ();
 
-    UString variable_name () const;
-    void inspect_variable (const UString &a_variable_name);
-    void inspect_variable (const UString &a_variable_name,
-			   const sigc::slot<void, 
-			                    const IDebugger::VariableSafePtr> &);
-    const IDebugger::VariableSafePtr variable () const;
-    VarInspector& inspector () const;
+    UString expression_name () const;
+    void inspect_expression (const UString &a_expression_name);
+    void inspect_expression (const UString &a_expression_name,
+			     const sigc::slot<void, 
+			     const IDebugger::VariableSafePtr> &);
+    const IDebugger::VariableSafePtr expression () const;
+    ExprInspector& inspector () const;
     void set_history (const std::list<UString> &);
     void get_history (std::list<UString> &) const;
-};//end class VarInspectorDialog
+};//end class ExprInspectorDialog
 
 NEMIVER_END_NAMESPACE (nemiver)
 
-#endif //__NMV_VAR_INSPECTOR_DIALOG_H__
+#endif //__NMV_EXPR_INSPECTOR_DIALOG_H__
