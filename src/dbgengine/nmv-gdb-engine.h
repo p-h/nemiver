@@ -341,6 +341,8 @@ public:
 
     bool is_variable_editable (const VariableSafePtr) const;
 
+    bool is_running () const;
+
     IDebugger::State get_state () const;
 
     int get_current_frame_level () const;

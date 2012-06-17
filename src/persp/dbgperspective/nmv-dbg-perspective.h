@@ -102,10 +102,11 @@ public:
     virtual void execute_program () = 0;
 
     virtual void execute_program (const UString &a_prog,
-                          const vector<UString> &a_args,
-                          const map<UString, UString> &a_env,
-                          const UString &a_cwd = ".",
-                          bool a_close_opened_files = false) = 0;
+				  const vector<UString> &a_args,
+				  const map<UString, UString> &a_env,
+				  const UString &a_cwd = ".",
+				  bool a_close_opened_files = false,
+				  bool a_break_in_main_run = true) = 0;
 
     virtual void execute_program (const UString &a_prog,
                                   const vector<UString> &a_args,
@@ -114,7 +115,8 @@ public:
                                   const vector<IDebugger::Breakpoint>
                                                                   &a_breaks,
                                   bool a_check_is_new_program = true,
-                                  bool a_close_opened_files = false) = 0;
+                                  bool a_close_opened_files = false,
+				  bool a_break_in_main_run = true) = 0;
 
     virtual void attach_to_program (unsigned int a_pid,
                                     bool a_close_open_files = false) = 0;
@@ -181,8 +183,6 @@ public:
     virtual void uses_launch_terminal (bool a_flag) = 0;
 
     virtual sigc::signal<void, bool>& activated_signal () = 0;
-
-    virtual sigc::signal<void, bool>& debugger_ready_signal () = 0;
 
     virtual sigc::signal<void>& layout_changed_signal () = 0;
 

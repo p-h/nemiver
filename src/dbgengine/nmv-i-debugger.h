@@ -933,9 +933,16 @@ public:
     };//end class Variable
 
     enum State {
+        // The inferior hasn't been loaded.
         NOT_STARTED=0,
+        // The inferior has been loaded, but hasn't been run yet.
+        INFERIOR_LOADED,
+        // The inferior has started its execution, but is currently
+        // stopped.
         READY,
+        // The inferior is currently busy running.
         RUNNING,
+        // The inferior has exited.
         PROGRAM_EXITED
     };//enum State
 
@@ -943,18 +950,21 @@ public:
     {
         UString str;
         switch (a_state) {
-            case NOT_STARTED:
-                str = "NOT_STARTED";
-                break;
-            case READY:
-                str = "READY";
-                break;
-            case RUNNING:
-                str = "RUNNING";
-                break;
-            case PROGRAM_EXITED:
-                str = "PROGRAM_EXITED";
-                break;
+        case NOT_STARTED:
+            str = "NOT_STARTED";
+            break;
+        case INFERIOR_LOADED:
+            str = "INFERIOR_LOADED";
+            break;
+        case READY:
+            str = "READY";
+            break;
+        case RUNNING:
+            str = "RUNNING";
+            break;
+        case PROGRAM_EXITED:
+            str = "PROGRAM_EXITED";
+            break;
         }
         return str;
     }
@@ -1296,6 +1306,8 @@ public:
     virtual ILangTrait& get_language_trait () = 0;
 
     virtual bool is_variable_editable (const VariableSafePtr a_var) const = 0;
+
+    virtual bool is_running () const = 0;
 
     virtual void do_continue (const UString &a_cookie="") = 0;
 

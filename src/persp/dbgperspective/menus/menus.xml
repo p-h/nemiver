@@ -63,16 +63,16 @@
 	    <menuitem action="JumpToLocationMenuItemAction"
                       name="JumpToLocationMenuItem"/>
             <separator/>
-            <menuitem action="ToggleBreakpointMenuItemAction"
+	    <menuitem action="SetBreakpointUsingDialogMenuItemAction"
+                name="SetBreakUsingDialogMenuItem"/>
+	    <menuitem action="SetBreakpointMenuItemAction"
+                name="SetBreakMenuItem"/>
+	    <menuitem action="ToggleBreakpointMenuItemAction"
                 name="ToggleBreakMenuItem"/>
             <menuitem action="ToggleEnableBreakpointMenuItemAction"
                 name="ToggleEnableBreakMenuItem"/>
 	    <menuitem action="ToggleCountpointMenuItemAction"
-                name="ToggleCountpointMenuItem"/>
-            <menuitem action="SetBreakpointMenuItemAction"
-                name="SetBreakMenuItem"/>
-            <menuitem action="SetBreakpointUsingDialogMenuItemAction"
-                name="SetBreakUsingDialogMenuItem"/>
+                name="ToggleCountpointMenuItem"/>           
             <menuitem action="SetWatchPointUsingDialogMenuItemAction"
                 name="SetWatchUsingDialogMenuItem"/>
             <separator/>

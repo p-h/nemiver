@@ -65,6 +65,7 @@ static gchar *gv_remote = 0;
 static gchar *gv_solib_prefix = 0;
 static gchar *gv_gdb_binary_filepath = 0;
 static gchar *gv_core_path = 0;
+static bool gv_just_load = false;
 
 static GOptionEntry entries[] =
 {
@@ -178,6 +179,15 @@ static GOptionEntry entries[] =
         &gv_gdb_binary_filepath,
         _("Set the path of the GDB binary to use to debug the inferior"),
         "</path/to/gdb>"
+    },
+    {
+        "just-load",
+        0,
+        0,
+        G_OPTION_ARG_NONE,
+        &gv_just_load,
+        _("Do not set a breakpoint in 'main' and do not run the inferior either"),
+        0
     },
     { 
         "version",
@@ -649,7 +659,10 @@ process_gui_options (int& a_argc, char** a_argv)
             debug_persp->uses_launch_terminal (gv_use_launch_terminal);
             debug_persp->execute_program (prog_path,
                                           prog_args,
-                                          env);
+                                          env,
+                                          /*a_cwd=*/".",
+                                          /*a_clone_opened_files=*/false,
+                                          /*a_break_in_main_run=*/!gv_just_load);
         }
     } else {
         cerr << "Could not find the debugger perspective plugin\n";

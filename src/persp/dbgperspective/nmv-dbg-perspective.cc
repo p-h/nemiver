@@ -296,11 +296,7 @@ private:
 
     void on_switch_page_signal (Gtk::Widget *a_page, guint a_page_num);
 
-    void on_attached_to_target_signal (bool a_is_attached);
-
-    void on_debugger_ready_signal (bool a_is_ready);
-
-    void on_debugger_not_started_signal ();
+    void on_attached_to_target_signal (IDebugger::State a_state);
 
     void on_going_to_run_target_signal (bool);
 
@@ -432,6 +428,7 @@ private:
     //</signal slots>
     //************
 
+    void update_action_group_sensitivity (IDebugger::State a_state);
     string build_resource_path (const UString &a_dir, const UString &a_name);
     void add_stock_icon (const UString &a_stock_id,
                          const UString &icon_dir,
@@ -573,16 +570,18 @@ public:
     void execute_program (const UString &a_prog,
                           const vector<UString> &a_args,
                           const map<UString, UString> &a_env,
-                          const UString &a_cwd,
-                          bool a_close_opened_files);
+                          const UString &a_cwd = ".",
+                          bool a_close_opened_files = false,
+                          bool a_break_in_main_run = true);
 
     void execute_program (const UString &a_prog,
                           const vector<UString> &a_args,
                           const map<UString, UString> &a_env,
                           const UString &a_cwd,
                           const vector<IDebugger::Breakpoint> &a_breaks,
-                          bool a_restarting = false,
-                          bool a_close_opened_files = false);
+                          bool a_restarting = true,
+                          bool a_close_opened_files = false,
+                          bool a_break_in_main_run = true);
 
     void attach_to_program ();
     void attach_to_program (unsigned int a_pid,
@@ -615,6 +614,7 @@ public:
     void edit_preferences ();
 
     void run ();
+    void run_real (bool a_restarting);
     void stop ();
     void step_over ();
     void step_into ();
@@ -806,10 +806,8 @@ public:
     bool agree_to_shutdown ();
 
     sigc::signal<void, bool>& activated_signal ();
-    sigc::signal<void, bool>& attached_to_target_signal ();
-    sigc::signal<void, bool>& debugger_ready_signal ();
+    sigc::signal<void, IDebugger::State>& attached_to_target_signal ();
     sigc::signal<void>& layout_changed_signal ();
-    sigc::signal<void>& debugger_not_started_signal ();
     sigc::signal<void, bool>& going_to_run_target_signal ();
     sigc::signal<void>& default_config_read_signal ();
 };//end class DBGPerspective
@@ -873,13 +871,14 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> thread_list_scrolled_win;
     SafePtr<Gtk::HPaned> call_stack_paned;
     SafePtr<Gtk::HPaned> context_paned;
-
-    Glib::RefPtr<Gtk::ActionGroup> target_connected_action_group;
+   
+    Glib::RefPtr<Gtk::ActionGroup> default_action_group;
     Glib::RefPtr<Gtk::ActionGroup> target_not_started_action_group;
+    Glib::RefPtr<Gtk::ActionGroup> inferior_loaded_action_group;
+    Glib::RefPtr<Gtk::ActionGroup> detach_action_group;
+    Glib::RefPtr<Gtk::ActionGroup> opened_file_action_group;
     Glib::RefPtr<Gtk::ActionGroup> debugger_ready_action_group;
     Glib::RefPtr<Gtk::ActionGroup> debugger_busy_action_group;
-    Glib::RefPtr<Gtk::ActionGroup> default_action_group;
-    Glib::RefPtr<Gtk::ActionGroup> opened_file_action_group;
     Glib::RefPtr<Gtk::UIManager> ui_manager;
     Glib::RefPtr<Gtk::IconFactory> icon_factory;
     Gtk::UIManager::ui_merge_id menubar_merge_id;
@@ -893,9 +892,7 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::Notebook> sourceviews_notebook;
     SafePtr<SpinnerToolItem> throbber;
     sigc::signal<void, bool> activated_signal;
-    sigc::signal<void, bool> attached_to_target_signal;
-    sigc::signal<void, bool> debugger_ready_signal;
-    sigc::signal<void> debugger_not_started_signal;
+    sigc::signal<void, IDebugger::State> attached_to_target_signal;
     sigc::signal<void, bool> going_to_run_target_signal;
     sigc::signal<void> default_config_read_signal;
     map<UString, int> path_2_pagenum_map;
@@ -1791,63 +1788,6 @@ DBGPerspective::on_switch_page_signal (Gtk::Widget *a_page,
 }
 
 void
-DBGPerspective::on_debugger_ready_signal (bool a_is_ready)
-{
-    LOG_FUNCTION_SCOPE_NORMAL_DD;
-    NEMIVER_TRY
-
-    THROW_IF_FAIL (m_priv);
-    THROW_IF_FAIL (m_priv->debugger_ready_action_group);
-    THROW_IF_FAIL (m_priv->throbber);
-
-    LOG_DD ("a_is_ready: " << (int)a_is_ready);
-
-    if (a_is_ready) {
-        // reset to default cursor
-        workbench ().get_root_window ().get_window ()->set_cursor ();
-        m_priv->throbber->stop ();
-        m_priv->debugger_ready_action_group->set_sensitive (true);
-        m_priv->target_not_started_action_group->set_sensitive (true);
-        m_priv->debugger_busy_action_group->set_sensitive (false);
-        if (debugger ()->is_attached_to_target ()) {
-            attached_to_target_signal ().emit (true);
-        }
-    } else {
-        m_priv->target_not_started_action_group->set_sensitive (false);
-        m_priv->debugger_ready_action_group->set_sensitive (false);
-        m_priv->debugger_busy_action_group->set_sensitive (true);
-    }
-
-    NEMIVER_CATCH
-}
-
-void
-DBGPerspective::on_debugger_not_started_signal ()
-{
-    THROW_IF_FAIL (m_priv);
-    THROW_IF_FAIL (m_priv->throbber);
-    THROW_IF_FAIL (m_priv->default_action_group);
-    THROW_IF_FAIL (m_priv->target_connected_action_group);
-    THROW_IF_FAIL (m_priv->target_not_started_action_group);
-    THROW_IF_FAIL (m_priv->debugger_ready_action_group);
-    THROW_IF_FAIL (m_priv->debugger_busy_action_group);
-    THROW_IF_FAIL (m_priv->opened_file_action_group);
-
-    // reset to default cursor
-    workbench ().get_root_window ().get_window ()->set_cursor ();
-    m_priv->throbber->stop ();
-    m_priv->default_action_group->set_sensitive (true);
-    m_priv->target_connected_action_group->set_sensitive (false);
-    m_priv->target_not_started_action_group->set_sensitive (false);
-    m_priv->debugger_ready_action_group->set_sensitive (false);
-    m_priv->debugger_busy_action_group->set_sensitive (false);
-
-    if (get_num_notebook_pages ()) {
-        close_opened_files ();
-    }
-}
-
-void
 DBGPerspective::on_going_to_run_target_signal (bool a_restarting)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -1862,25 +1802,15 @@ DBGPerspective::on_going_to_run_target_signal (bool a_restarting)
 }
 
 void
-DBGPerspective::on_attached_to_target_signal (bool a_is_ready)
+DBGPerspective::on_attached_to_target_signal (IDebugger::State a_state)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    NEMIVER_TRY
 
-    if (a_is_ready) {
-        m_priv->target_connected_action_group->set_sensitive (true);
-    } else {
-        //reset to default cursor, in case the busy cursor was spinning
-        workbench ().get_root_window ().get_window ()->set_cursor ();
-        m_priv->throbber->stop ();
-        m_priv->target_connected_action_group->set_sensitive (false);
-        m_priv->default_action_group->set_sensitive (true);
-        m_priv->target_not_started_action_group->set_sensitive (false);
-        m_priv->debugger_ready_action_group->set_sensitive (false);
-        m_priv->debugger_busy_action_group->set_sensitive (false);
-    }
+    NEMIVER_TRY;
 
-    NEMIVER_CATCH
+    update_action_group_sensitivity (a_state);
+
+    NEMIVER_CATCH;
 }
 
 void
@@ -2343,7 +2273,6 @@ DBGPerspective::on_debugger_inferior_re_run_signal ()
     NEMIVER_TRY;
 
     m_priv->debugger_has_just_run = true;
-    attached_to_target_signal ().emit (true);
 
     NEMIVER_CATCH;
 }
@@ -2365,7 +2294,7 @@ DBGPerspective::on_debugger_detached_from_target_signal ()
     THROW_IF_FAIL (m_priv);
     m_priv->debugger_ready_action_group->set_sensitive (false);
     m_priv->debugger_busy_action_group->set_sensitive (false);
-    m_priv->target_connected_action_group->set_sensitive (false);
+    m_priv->inferior_loaded_action_group->set_sensitive (false);
     m_priv->target_not_started_action_group->set_sensitive (true);
 
     NEMIVER_CATCH
@@ -2485,7 +2414,7 @@ DBGPerspective::on_program_finished_signal ()
     NEMIVER_TRY
 
     unset_where ();
-    attached_to_target_signal ().emit (false);
+
     display_info (_("Program exited"));
     workbench ().set_title_extension ("");
 
@@ -2494,11 +2423,7 @@ DBGPerspective::on_program_finished_signal ()
     //items but those to
     //to restart the debugger etc
     //***************************
-    THROW_IF_FAIL (m_priv);
-    m_priv->target_not_started_action_group->set_sensitive (true);
-    m_priv->debugger_ready_action_group->set_sensitive (false);
-    m_priv->debugger_busy_action_group->set_sensitive (false);
-    m_priv->target_connected_action_group->set_sensitive (false);
+    update_action_group_sensitivity (IDebugger::PROGRAM_EXITED);
 
     //**********************
     //clear threads list and
@@ -2518,7 +2443,7 @@ DBGPerspective::on_engine_died_signal ()
     m_priv->target_not_started_action_group->set_sensitive (true);
     m_priv->debugger_ready_action_group->set_sensitive (false);
     m_priv->debugger_busy_action_group->set_sensitive (false);
-    m_priv->target_connected_action_group->set_sensitive (false);
+    m_priv->inferior_loaded_action_group->set_sensitive (false);
 
     ui_utils::display_info (_("The underlying debugger engine process died."));
 
@@ -2634,15 +2559,10 @@ void
 DBGPerspective::on_debugger_state_changed_signal (IDebugger::State a_state)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    NEMIVER_TRY
 
-    LOG_DD ("state is '" << IDebugger::state_to_string (a_state) << "'");
+    NEMIVER_TRY;
 
-    if (a_state == IDebugger::READY) {
-        debugger_ready_signal ().emit (true);
-    } else {
-        debugger_ready_signal ().emit (false);
-    }
+    update_action_group_sensitivity (a_state);
 
     NEMIVER_CATCH
 }
@@ -2972,6 +2892,71 @@ DBGPerspective::on_default_config_read ()
 //<private methods>
 //*******************
 
+/// Given a debugger state, update the sensitivity of the various menu
+/// actions of the graphical debugger.
+///
+/// \param a_state the debugger state.
+void
+DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    LOG_DD ("state is '" << IDebugger::state_to_string (a_state) << "'");
+
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->debugger_ready_action_group);
+    THROW_IF_FAIL (m_priv->target_not_started_action_group);
+    THROW_IF_FAIL (m_priv->debugger_busy_action_group);
+    THROW_IF_FAIL (m_priv->throbber);
+
+    if (a_state == IDebugger::NOT_STARTED) {
+        m_priv->throbber->stop ();
+        // reset to default cursor
+        workbench ().get_root_window ().get_window ()->set_cursor ();
+        m_priv->default_action_group->set_sensitive (true);
+        m_priv->detach_action_group->set_sensitive (false);
+        m_priv->target_not_started_action_group->set_sensitive (true);
+        m_priv->inferior_loaded_action_group->set_sensitive (false);
+        m_priv->debugger_busy_action_group->set_sensitive (false);
+        m_priv->debugger_ready_action_group->set_sensitive (false);
+        if (get_num_notebook_pages ()) {
+            close_opened_files ();
+        }
+    } else if (a_state == IDebugger::INFERIOR_LOADED) {
+        // reset to default cursor
+        workbench ().get_root_window ().get_window ()->set_cursor ();
+        m_priv->detach_action_group->set_sensitive (false);
+        m_priv->target_not_started_action_group->set_sensitive (true);
+        m_priv->inferior_loaded_action_group->set_sensitive (true);
+        m_priv->debugger_busy_action_group->set_sensitive (false);
+        m_priv->debugger_ready_action_group->set_sensitive (false);
+        m_priv->throbber->stop ();
+    } else if (a_state == IDebugger::READY) {
+        m_priv->throbber->stop ();
+        // reset to default cursor
+        workbench ().get_root_window ().get_window ()->set_cursor ();
+        m_priv->detach_action_group->set_sensitive (true);
+        m_priv->target_not_started_action_group->set_sensitive (true);
+        m_priv->inferior_loaded_action_group->set_sensitive (true);
+        m_priv->debugger_ready_action_group->set_sensitive (true);
+        m_priv->debugger_busy_action_group->set_sensitive (false);
+    } else if (a_state == IDebugger::RUNNING){
+        m_priv->detach_action_group->set_sensitive (true);
+        m_priv->target_not_started_action_group->set_sensitive (false);
+        m_priv->inferior_loaded_action_group->set_sensitive (false);
+        m_priv->debugger_ready_action_group->set_sensitive (false);
+        m_priv->debugger_busy_action_group->set_sensitive (true);
+    } else if (a_state == IDebugger::PROGRAM_EXITED) {
+        m_priv->throbber->stop ();
+        // reset to default cursor
+        workbench ().get_root_window ().get_window ()->set_cursor ();
+        m_priv->target_not_started_action_group->set_sensitive (true);
+        m_priv->inferior_loaded_action_group->set_sensitive (true);
+        m_priv->debugger_ready_action_group->set_sensitive (false);
+        m_priv->debugger_busy_action_group->set_sensitive (false);
+        m_priv->inferior_loaded_action_group->set_sensitive (false);
+    }
+}
 
 string
 DBGPerspective::build_resource_path (const UString &a_dir,
@@ -3064,17 +3049,21 @@ DBGPerspective::init_actions ()
 {
     Gtk::StockID nil_stock_id ("");
     sigc::slot<void> nil_slot;
-    ui_utils::ActionEntry s_target_connected_action_entries [] = {
+
+    static ui_utils::ActionEntry s_target_not_started_action_entries [] = {
         {
-            "SaveSessionMenuItemAction",
-            Gtk::Stock::SAVE,
-            _("_Save Session to Disk"),
-            _("Save the current debugging session to disk"),
-            sigc::mem_fun (*this, &DBGPerspective::on_save_session_action),
+            "RunMenuItemAction",
+            Gtk::Stock::REFRESH,
+            _("_Run or Restart"),
+            _("Run or Restart the target"),
+            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
-            "",
-            false
-        },
+            "<shift>F5",
+            true
+        }
+    };
+
+    static ui_utils::ActionEntry s_detach_action_entries [] = {
         {
             "DetachFromProgramMenuItemAction",
             Gtk::Stock::DISCONNECT,
@@ -3089,126 +3078,38 @@ DBGPerspective::init_actions ()
         },
     };
 
-    static ui_utils::ActionEntry s_target_not_started_action_entries [] = {
-        {
-            "RunMenuItemAction",
-            Gtk::Stock::REFRESH,
-            _("_Restart"),
-            _("Restart the target, killing this process "
-              "and starting a new one"),
-            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
-            ActionEntry::DEFAULT,
-            "<shift>F5",
-            true
-        }
-    };
 
-    static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
+    ui_utils::ActionEntry s_inferior_loaded_action_entries [] = {
         {
-            "NextMenuItemAction",
-            nemiver::STOCK_STEP_OVER,
-            _("_Next"),
-            _("Execute next line stepping over the next function, if any"),
-            sigc::mem_fun (*this, &DBGPerspective::on_next_action),
-            ActionEntry::DEFAULT,
-            "F6",
-            false
-        },
-        {
-            "StepMenuItemAction",
-            nemiver::STOCK_STEP_INTO,
-            _("_Step"),
-            _("Execute next line, stepping into the next function, if any"),
-            sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
-            ActionEntry::DEFAULT,
-            "F7",
-            false
-        },
-        {
-            "StepOutMenuItemAction",
-            nemiver::STOCK_STEP_OUT,
-            _("Step _Out"),
-            _("Finish the execution of the current function"),
-            sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
-            ActionEntry::DEFAULT,
-            "<shift>F7",
-            false
-        },
-        {
-            "StepInAsmMenuItemAction",
-            nil_stock_id,
-            _("Step Into asm"),
-            _("Step into the next assembly instruction"),
-            sigc::mem_fun (*this, &DBGPerspective::on_step_in_asm_action),
-            ActionEntry::DEFAULT,
-            "<control>I",
-            false
-        },
-        {
-            "StepOverAsmMenuItemAction",
-            nil_stock_id,
-            _("Step Over asm"),
-            _("Step over the next assembly instruction"),
-            sigc::mem_fun (*this, &DBGPerspective::on_step_over_asm_action),
-            ActionEntry::DEFAULT,
-            "<control>N",
-            false
-        },
-        {
-            "ContinueMenuItemAction",
-            Gtk::Stock::EXECUTE,
-            _("_Continue"),
-            _("Continue program execution until the next breakpoint"),
-            sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
-            ActionEntry::DEFAULT,
-            "F5",
-            true
-        },
-        {
-            "ContinueUntilMenuItemAction",
-            nil_stock_id,
-            _("Run to Cursor"),
-            _("Continue program execution until the currently selected "
-              "line is reached"),
-            sigc::mem_fun (*this, &DBGPerspective::on_continue_until_action),
-            ActionEntry::DEFAULT,
-            "F11",
-            false
-        },
-        {
-            "JumpToCurrentLocationMenuItemAction",
-            nil_stock_id,
-            _("Jump to Cursor"),
-            _("Jump to the currently selected line"),
-            sigc::mem_fun
-            (*this, &DBGPerspective::on_jump_to_current_location_action),
+            "SaveSessionMenuItemAction",
+            Gtk::Stock::SAVE,
+            _("_Save Session to Disk"),
+            _("Save the current debugging session to disk"),
+            sigc::mem_fun (*this, &DBGPerspective::on_save_session_action),
             ActionEntry::DEFAULT,
             "",
             false
         },
         {
-            "JumpAndBreakToCurrentLocationMenuItemAction",
+            "SetBreakpointUsingDialogMenuItemAction",
             nil_stock_id,
-            _("Jump and Stop to Cursor"),
-            _("Sets a breakpoint to the currently "
-              "selected line and jump there"),
+            _("Set Breakpoint with Dialog..."),
+            _("Set a breakpoint at the current line using a dialog"),
             sigc::mem_fun
-            (*this,
-             &DBGPerspective::on_jump_and_break_to_current_location_action),
+                (*this,
+                 &DBGPerspective::on_set_breakpoint_using_dialog_action),
             ActionEntry::DEFAULT,
-            "",
+            "<control><shift>B",
             false
         },
         {
-            "JumpToLocationMenuItemAction",
+            "SetBreakpointMenuItemAction",
             nil_stock_id,
-            _("Jump to a Given Location"),
-            _("Select a given code location and jump there"),
-            sigc::mem_fun
-            (*this,
-             &DBGPerspective::on_jump_to_location_action),
+            _("Set Breakpoint..."),
+            _("Set a breakpoint at a function or line number"),
+            sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
             ActionEntry::DEFAULT,
-            "<control>J",
+            "<control>B",
             false
         },
         {
@@ -3269,28 +3170,6 @@ DBGPerspective::init_actions ()
             false
         },
         {
-            "SetBreakpointMenuItemAction",
-            nil_stock_id,
-            _("Set Breakpoint..."),
-            _("Set a breakpoint at a function or line number"),
-            sigc::mem_fun (*this, &DBGPerspective::on_set_breakpoint_action),
-            ActionEntry::DEFAULT,
-            "<control>B",
-            false
-        },
-        {
-            "SetBreakpointUsingDialogMenuItemAction",
-            nil_stock_id,
-            _("Set Breakpoint with Dialog..."),
-            _("Set a breakpoint at the current line using a dialog"),
-            sigc::mem_fun
-                (*this,
-                 &DBGPerspective::on_set_breakpoint_using_dialog_action),
-            ActionEntry::DEFAULT,
-            "<control><shift>B",
-            false
-        },
-        {
             "SetWatchPointUsingDialogMenuItemAction",
             nil_stock_id,
             _("Set Watchpoint with Dialog..."),
@@ -3300,6 +3179,117 @@ DBGPerspective::init_actions ()
                  &DBGPerspective::on_set_watchpoint_using_dialog_action),
             ActionEntry::DEFAULT,
             "<control>T",
+            false
+        },
+    };
+
+
+    static ui_utils::ActionEntry s_debugger_ready_action_entries [] = {
+        {
+            "NextMenuItemAction",
+            nemiver::STOCK_STEP_OVER,
+            _("_Next"),
+            _("Execute next line stepping over the next function, if any"),
+            sigc::mem_fun (*this, &DBGPerspective::on_next_action),
+            ActionEntry::DEFAULT,
+            "F6",
+            false
+        },
+        {
+            "StepMenuItemAction",
+            nemiver::STOCK_STEP_INTO,
+            _("_Step"),
+            _("Execute next line, stepping into the next function, if any"),
+            sigc::mem_fun (*this, &DBGPerspective::on_step_into_action),
+            ActionEntry::DEFAULT,
+            "F7",
+            false
+        },
+        {
+            "StepOutMenuItemAction",
+            nemiver::STOCK_STEP_OUT,
+            _("Step _Out"),
+            _("Finish the execution of the current function"),
+            sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
+            ActionEntry::DEFAULT,
+            "<shift>F7",
+            false
+        },
+        {
+            "StepInAsmMenuItemAction",
+            nil_stock_id,
+            _("Step Into asm"),
+            _("Step into the next assembly instruction"),
+            sigc::mem_fun (*this, &DBGPerspective::on_step_in_asm_action),
+            ActionEntry::DEFAULT,
+            "<control>I",
+            false
+        },
+        {
+            "StepOverAsmMenuItemAction",
+            nil_stock_id,
+            _("Step Over asm"),
+            _("Step over the next assembly instruction"),
+            sigc::mem_fun (*this, &DBGPerspective::on_step_over_asm_action),
+            ActionEntry::DEFAULT,
+            "<control>N",
+            false
+        },
+        {
+            "ContinueMenuItemAction",
+            Gtk::Stock::EXECUTE,
+            _("_Continue or start"),
+            _("Start or continue program execution until the next breakpoint"),
+            sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
+            ActionEntry::DEFAULT,
+            "F5",
+            true
+        },
+        {
+            "ContinueUntilMenuItemAction",
+            nil_stock_id,
+            _("Run to Cursor"),
+            _("Continue program execution until the currently selected "
+              "line is reached"),
+            sigc::mem_fun (*this, &DBGPerspective::on_continue_until_action),
+            ActionEntry::DEFAULT,
+            "F11",
+            false
+        },
+        {
+            "JumpToCurrentLocationMenuItemAction",
+            nil_stock_id,
+            _("Jump to Cursor"),
+            _("Jump to the currently selected line"),
+            sigc::mem_fun
+            (*this, &DBGPerspective::on_jump_to_current_location_action),
+            ActionEntry::DEFAULT,
+            "",
+            false
+        },
+        {
+            "JumpAndBreakToCurrentLocationMenuItemAction",
+            nil_stock_id,
+            _("Jump and Stop to Cursor"),
+            _("Sets a breakpoint to the currently "
+              "selected line and jump there"),
+            sigc::mem_fun
+            (*this,
+             &DBGPerspective::on_jump_and_break_to_current_location_action),
+            ActionEntry::DEFAULT,
+            "",
+            false
+        },
+        {
+            "JumpToLocationMenuItemAction",
+            nil_stock_id,
+            _("Jump to a Given Location"),
+            _("Select a given code location and jump there"),
+            sigc::mem_fun
+            (*this,
+             &DBGPerspective::on_jump_to_location_action),
+            ActionEntry::DEFAULT,
+            "<control>J",
             false
         },
         {
@@ -3595,9 +3585,13 @@ DBGPerspective::init_actions ()
         }
     };
 
-    m_priv->target_connected_action_group =
-                Gtk::ActionGroup::create ("target-connected-action-group");
-    m_priv->target_connected_action_group->set_sensitive (false);
+    m_priv->detach_action_group =
+        Gtk::ActionGroup::create ("detach-action-group");
+    m_priv->detach_action_group->set_sensitive (false);
+
+    m_priv->inferior_loaded_action_group =
+        Gtk::ActionGroup::create ("inferior-loaded-action-group");
+    m_priv->inferior_loaded_action_group->set_sensitive (false);
 
     m_priv->target_not_started_action_group =
                 Gtk::ActionGroup::create ("target-not-started-action-group");
@@ -3620,13 +3614,20 @@ DBGPerspective::init_actions ()
     m_priv->opened_file_action_group->set_sensitive (false);
 
     int num_actions =
-     sizeof (s_target_connected_action_entries)
+        sizeof (s_detach_action_entries) / sizeof (ui_utils::ActionEntry);
+    ui_utils::add_action_entries_to_action_group
+        (s_detach_action_entries,
+         num_actions,
+         m_priv->detach_action_group);
+
+    num_actions =
+     sizeof (s_inferior_loaded_action_entries)
              /
              sizeof (ui_utils::ActionEntry);
     ui_utils::add_action_entries_to_action_group
-                        (s_target_connected_action_entries,
+                        (s_inferior_loaded_action_entries,
                          num_actions,
-                         m_priv->target_connected_action_group);
+                         m_priv->inferior_loaded_action_group);
 
     num_actions =
      sizeof (s_target_not_started_action_entries)
@@ -3674,7 +3675,9 @@ DBGPerspective::init_actions ()
                          m_priv->opened_file_action_group);
 
     workbench ().get_ui_manager ()->insert_action_group
-                                    (m_priv->target_connected_action_group);
+        (m_priv->detach_action_group);
+    workbench ().get_ui_manager ()->insert_action_group
+                                    (m_priv->inferior_loaded_action_group);
     workbench ().get_ui_manager ()->insert_action_group
                                 (m_priv->target_not_started_action_group);
     workbench ().get_ui_manager ()->insert_action_group
@@ -3771,12 +3774,6 @@ DBGPerspective::init_signals ()
 {
     m_priv->sourceviews_notebook->signal_switch_page ().connect
         (sigc::mem_fun (*this, &DBGPerspective::on_switch_page_signal));
-
-    debugger_ready_signal ().connect (sigc::mem_fun
-            (*this, &DBGPerspective::on_debugger_ready_signal));
-
-    debugger_not_started_signal ().connect (sigc::mem_fun
-            (*this, &DBGPerspective::on_debugger_not_started_signal));
 
     going_to_run_target_signal ().connect (sigc::mem_fun
             (*this, &DBGPerspective::on_going_to_run_target_signal));
@@ -5889,6 +5886,8 @@ DBGPerspective::execute_program ()
 void
 DBGPerspective::restart_inferior ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     if (!is_connected_to_remote_target ()) {
         // Restarting a local program
         restart_local_inferior ();
@@ -5914,6 +5913,8 @@ DBGPerspective::restart_inferior ()
 void
 DBGPerspective::restart_local_inferior ()
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
     THROW_IF_FAIL (!is_connected_to_remote_target ());
     
     if (debugger ()->is_attached_to_target ()
@@ -5944,12 +5945,14 @@ DBGPerspective::execute_program (const UString &a_prog,
                                  const vector<UString> &a_args,
                                  const map<UString, UString> &a_env,
                                  const UString &a_cwd,
-                                 bool a_close_opened_files)
+                                 bool a_close_opened_files,
+                                 bool a_break_in_main_run)
 {
     vector<IDebugger::Breakpoint> bps;
     execute_program (a_prog, a_args, a_env,
                      a_cwd, bps, /*a_restarting=*/false,
-                     a_close_opened_files);
+                     a_close_opened_files,
+                     a_break_in_main_run);
 }
 
 /// Loads and executes a program (called an inferior) under the debugger.
@@ -5969,6 +5972,11 @@ DBGPerspective::execute_program (const UString &a_prog,
 ///        things that have been done already, e.g. re set breakpoints etc.
 ///        Otherwise, just ignore the fact that the program might have been
 ///        run previously and just redo all the necessary things.
+/// \param a_close_opened_files if true, close all the opened files
+///        before executing the inferior.
+/// \param a_break_in_main_run if true, set a breakpoint in the "main"
+///        function of the inferior and run it.  The inferior will
+///        then run and stop at the beginning of the main function.
 void
 DBGPerspective::execute_program
                         (const UString &a_prog,
@@ -5977,7 +5985,8 @@ DBGPerspective::execute_program
                          const UString &a_cwd,
                          const vector<IDebugger::Breakpoint> &a_breaks,
                          bool a_restarting,
-                         bool a_close_opened_files)
+                         bool a_close_opened_files,
+                         bool a_break_in_main_run)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD
 
@@ -6091,7 +6100,7 @@ DBGPerspective::execute_program
                  ++it) {
                 set_breakpoint (it->second);
             }
-        } else {
+        } else if (a_break_in_main_run) {
             dbg_engine->set_breakpoint ("main");
         }
     } else {
@@ -6101,11 +6110,8 @@ DBGPerspective::execute_program
         }
     }
 
-    going_to_run_target_signal ().emit (a_restarting);
-    dbg_engine->run ();
-    m_priv->debugger_has_just_run = true;
-
-    attached_to_target_signal ().emit (true);
+    if (a_break_in_main_run)
+        run_real (a_restarting);
 
     m_priv->prog_path = prog;
     m_priv->prog_args = a_args;
@@ -6139,12 +6145,7 @@ void
 DBGPerspective::attach_to_program (unsigned int a_pid,
                                    bool a_close_opened_files)
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD
-    save_current_session ();
-
-    if (a_close_opened_files && get_num_notebook_pages ()) {
-        close_opened_files ();
-    }
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     LOG_DD ("a_pid: " << (int) a_pid);
 
@@ -6152,8 +6153,16 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
         ui_utils::display_warning (_("You cannot attach to Nemiver itself"));
         return;
     }
+
+    save_current_session ();
+
+    if (a_close_opened_files && get_num_notebook_pages ()) {
+        close_opened_files ();
+    }
+
     if (!debugger ()->attach_to_target (a_pid,
                                         get_terminal_name ())) {
+
         ui_utils::display_warning (_("You cannot attach to the "
                                      "underlying debugger engine"));
         return;
@@ -6391,9 +6400,21 @@ DBGPerspective::run ()
         LOG_DD ("Yes, it seems we were running a program before. "
                 "Will try to restart it");
         restart_inferior ();
+    } else if (m_priv->debugger_engine_alive) {
+        run_real (/*a_restarting=*/false);
     } else {
         LOG_ERROR ("No program got previously loaded");
     }
+}
+
+/// Really run the inferior (invoking IDebugger).  This is sub-routine
+/// of the run and execute_program methods.
+void
+DBGPerspective::run_real (bool a_restarting)
+{
+    going_to_run_target_signal ().emit (a_restarting);
+    debugger ()->run ();
+    m_priv->debugger_has_just_run = true;
 }
 
 void
@@ -6471,10 +6492,15 @@ DBGPerspective::step_over_asm ()
     debugger ()->step_over_asm ();
 }
 
+// Start the inferior if it has not started yet, or make it continue
+// its execution.
 void
 DBGPerspective::do_continue ()
 {
-    debugger ()->do_continue ();
+    if (!debugger ()->is_running ())
+        debugger ()->run ();
+    else
+        debugger ()->do_continue ();
 }
 
 void
@@ -8246,16 +8272,10 @@ DBGPerspective::activated_signal ()
     return m_priv->activated_signal;
 }
 
-sigc::signal<void, bool>&
+sigc::signal<void, IDebugger::State>&
 DBGPerspective::attached_to_target_signal ()
 {
     return m_priv->attached_to_target_signal;
-}
-
-sigc::signal<void, bool>&
-DBGPerspective::debugger_ready_signal ()
-{
-    return m_priv->debugger_ready_signal;
 }
 
 sigc::signal<void>&
@@ -8263,12 +8283,6 @@ DBGPerspective::layout_changed_signal ()
 {
     THROW_IF_FAIL (m_priv);
     return m_priv->layout_mgr.layout_changed_signal ();
-}
-
-sigc::signal<void>&
-DBGPerspective::debugger_not_started_signal ()
-{
-    return m_priv->debugger_not_started_signal;
 }
 
 sigc::signal<void, bool>&

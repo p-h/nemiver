@@ -221,6 +221,7 @@ public:
 
     OutputHandlerList output_handler_list;
     IDebugger::State state;
+    bool is_running;
     int cur_frame_level;
     int cur_thread_num;
     Address cur_frame_address;
@@ -563,6 +564,7 @@ public:
         line_busy (false),
         error_buffer_status (DEFAULT),
         state (IDebugger::NOT_STARTED),
+        is_running (false),
         cur_frame_level (0),
         cur_thread_num (1),
         follow_fork_mode ("parent"),
@@ -581,6 +583,9 @@ public:
                 (*this, &Priv::on_master_pty_signal));
         gdb_stderr_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_gdb_stderr_signal));
+
+        running_signal.connect
+            (sigc::mem_fun (*this, &Priv::on_running_signal));
 
         state_changed_signal.connect (sigc::mem_fun
                 (*this, &Priv::on_state_changed_signal));
@@ -1001,11 +1006,20 @@ public:
         queue_command (command);
     }
 
-    void set_tty_path (const UString &a_tty_path)
+    /// Sets the path to the tty used to communicate between us and GDB (or the
+    /// inferior).
+    ///
+    /// \param a_tty_path the to the tty
+    ///
+    /// \param a_command the name of the debugging command during
+    /// which we are setting the tty path.
+    void set_tty_path (const UString &a_tty_path,
+                       const UString &a_command = "")
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         if (!a_tty_path.empty ())
-            queue_command (Command ("set inferior-tty " + a_tty_path));
+            queue_command (Command (a_command,
+                                    "set inferior-tty " + a_tty_path));
     }
 
     bool on_gdb_stdout_has_data_signal (Glib::IOCondition a_cond)
@@ -1143,6 +1157,12 @@ public:
         return true;
     }
 
+    /// Callback invoked whenever the running_signal event is fired.
+    void on_running_signal ()
+    {
+        is_running = true;
+    }
+
     void on_state_changed_signal (IDebugger::State a_state)
     {
         state = a_state;
@@ -1162,7 +1182,9 @@ public:
         NEMIVER_CATCH_NOX
     }
 
-    void on_stopped_signal (IDebugger::StopReason,
+    /// Callback function invoked when the IDebugger::stopped_signal
+    /// event is fired.
+    void on_stopped_signal (IDebugger::StopReason a_reason,
                             bool a_has_frame,
                             const IDebugger::Frame &,
                             int,
@@ -1170,13 +1192,17 @@ public:
                             const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-        NEMIVER_TRY
+
+        NEMIVER_TRY;
+
+        if (IDebugger::is_exited (a_reason))
+            is_running = false;
 
         if (a_has_frame)
             // List frames so that we can get the @ of the current frame.
             list_frames (0, 0, a_cookie);
 
-        NEMIVER_CATCH_NOX
+        NEMIVER_CATCH_NOX;
     }
 
     void on_frames_listed_signal (const vector<IDebugger::Frame> &a_frames,
@@ -1756,9 +1782,21 @@ struct OnCommandDoneHandler : OutputHandler {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+        LOG_DD ("command name: '" << a_in.command ().name () << "'");
+
         if (a_in.command ().name () == "attach-to-program") {
             m_engine->set_attached_to_target (true);
+            m_engine->set_state (IDebugger::READY);
+        } else if (a_in.command ().name () == "load-program") {
+            m_engine->set_attached_to_target (true);
+            m_engine->set_state (IDebugger::INFERIOR_LOADED);
+        } else if (a_in.command ().name () == "detach-from-target") {
+            m_engine->set_attached_to_target (false);
+            m_engine->set_state (IDebugger::NOT_STARTED);
+        } else {
+            m_engine->set_state (IDebugger::READY);
         }
+
         if (a_in.command ().name () == "select-frame") {
             m_engine->set_current_frame_level (a_in.command ().tag2 ());
         }
@@ -1774,9 +1812,6 @@ struct OnCommandDoneHandler : OutputHandler {
                 (m_engine->get_cached_breakpoints (),
                  a_in.command ().cookie ());
         }
-
-        m_engine->command_done_signal ().emit (a_in.command ().name (),
-                                               a_in.command ().cookie ());
 
         if (a_in.command ().name () == "query-variable-path-expr"
             && a_in.command ().variable ()
@@ -1813,20 +1848,8 @@ struct OnCommandDoneHandler : OutputHandler {
             }
         }
 
-        // So, if we are still attached to the target and we receive
-        // a "DONE" response from GDB, it means we are READY.
-        // But if we are not attached -- which can mean that the
-        // inferior just completed its execution or we did attached to
-        // an already inferior and we detached from it -- then we should
-        // not pretend we are in the READY state.
-        // Even if we are attached and this GDB response comes right
-        // after we sent the "detach-from-target" command, the
-        // OnDetachHandler output handler should have already taken care
-        // of updating our state, so let that state alone.
-        if (m_engine->is_attached_to_target ()
-            && (a_in.command ().name () != "detach-from-target")) {
-            m_engine->set_state (IDebugger::READY);
-        }
+        m_engine->command_done_signal ().emit (a_in.command ().name (),
+                                               a_in.command ().cookie ());
     }
 };//struct OnCommandDoneHandler
 
@@ -3128,10 +3151,12 @@ GDBEngine::load_program (const UString &a_prog,
             m_priv->reset_command_queue ();
         }
 
-        queue_command (Command ("set breakpoint pending on"));
+        queue_command (Command ("load-program",
+                                "set breakpoint pending on"));
 
         // tell gdb not to pass the SIGINT signal to the target.
-        queue_command (Command ("handle SIGINT stop print nopass"));
+        queue_command (Command ("load-program",
+                                "handle SIGINT stop print nopass"));
 
 	// Tell gdb not to pass the SIGHUP signal to the target.  This
 	// is useful when the debugger follows a child during a
@@ -3139,7 +3164,8 @@ GDBEngine::load_program (const UString &a_prog,
 	// has some controlling term attached to the target.. Make
 	// sure the signal is not not passed to the target and the
 	// debugger doesn't stop upon that signal.
-	queue_command (Command ("handle SIGHUP nostop print nopass"));
+	queue_command (Command ("load-program",
+                                "handle SIGHUP nostop print nopass"));
 
         // tell the linker to do all relocations at program load
         // time so that some "step into" don't take for ever.
@@ -3148,12 +3174,15 @@ GDBEngine::load_program (const UString &a_prog,
         const char *nmv_ld_bind_now = g_getenv ("NMV_LD_BIND_NOW");
         if (nmv_ld_bind_now && atoi (nmv_ld_bind_now)) {
             LOG_DD ("setting LD_BIND_NOW=1");
-            queue_command (Command ("set env LD_BIND_NOW 1"));
+            queue_command (Command ("load-program",
+                                    "set env LD_BIND_NOW 1"));
         } else {
             LOG_DD ("not setting LD_BIND_NOW environment variable ");
         }
         if (m_priv->enable_pretty_printing)
-            queue_command (Command ("-enable-pretty-printing"));
+            queue_command (Command ("load-program",
+                                    "-enable-pretty-printing"));
+        set_attached_to_target (true);
     } else {
         Command command ("load-program",
                          UString ("-file-exec-and-symbols ") + a_prog);
@@ -3165,7 +3194,7 @@ GDBEngine::load_program (const UString &a_prog,
             queue_command (command);
         }
     }
-    set_tty_path (a_tty_path);
+    m_priv->set_tty_path (a_tty_path, "load-program");
     return true;
 }
 
@@ -3219,7 +3248,7 @@ GDBEngine::attach_to_target (unsigned int a_pid,
     queue_command (Command ("attach-to-program",
                             "attach " + UString::from_int (a_pid)));
     queue_command (Command ("info proc"));
-    set_tty_path (a_tty_path);
+    m_priv->set_tty_path (a_tty_path, "attach-to-program");
     return true;
 }
 
@@ -4302,6 +4331,15 @@ GDBEngine::is_variable_editable (const VariableSafePtr a_var) const
                 (this)->get_language_trait ().is_variable_compound (a_var))
         return true;
     return false;
+}
+
+/// Return true iff the inferior is "running".  Running here means
+/// that it has received the "run" command once, and hasn't yet
+/// exited.  It might be stopped, though.
+bool
+GDBEngine::is_running () const
+{
+    return m_priv->is_running;
 }
 
 bool
