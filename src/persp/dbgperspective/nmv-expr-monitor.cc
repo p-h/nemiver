@@ -244,7 +244,7 @@ struct ExprMonitor::Priv
             {
                 "AddExpressionMenuItemAction",
                 Gtk::Stock::ADD,
-                _("New ..."),
+                _("New..."),
                 _("Add a new expression to the monitor"),
                 sigc::mem_fun (*this, &Priv::on_add_expression_action),
                 ui_utils::ActionEntry::DEFAULT,
