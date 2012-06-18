@@ -1890,7 +1890,7 @@ DBGPerspective::on_sv_markers_region_clicked_signal (int a_line,
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     if (m_priv->debugger->get_state () == IDebugger::NOT_STARTED
         || a_editor == 0)
@@ -1920,7 +1920,7 @@ DBGPerspective::on_sv_markers_region_clicked_signal (int a_line,
         }
     }
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
 }
 
 bool
@@ -1928,7 +1928,8 @@ DBGPerspective::on_button_pressed_in_source_view_signal
                                                 (GdkEventButton *a_event)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    NEMIVER_TRY
+
+    NEMIVER_TRY;
 
     if (a_event->type != GDK_BUTTON_PRESS) {
         return false;
@@ -1939,7 +1940,7 @@ DBGPerspective::on_button_pressed_in_source_view_signal
         return true;
     }
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
 
     return false;
 }
@@ -1950,7 +1951,7 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D(DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN);
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     // Mouse pointer coordinates relative to the source editor window
     int x = 0, y = 0;
@@ -1991,7 +1992,7 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
             hide_popup_tip_if_mouse_is_outside (x, y);
     }
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
 
     return false;
 }
@@ -1999,18 +2000,23 @@ DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
 void
 DBGPerspective::on_leave_notify_event_signal (GdkEventCrossing *a_event)
 {
-    NEMIVER_TRY
     LOG_FUNCTION_SCOPE_NORMAL_D(DBG_PERSPECTIVE_MOUSE_MOTION_DOMAIN);
+
+    NEMIVER_TRY;
+
+    
     if (a_event) {}
     stop_mouse_immobile_timer ();
-    NEMIVER_CATCH
+
+    NEMIVER_CATCH;
 }
 
 bool
 DBGPerspective::on_mouse_immobile_timer_signal ()
 {
-    LOG_FUNCTION_SCOPE_NORMAL_DD
-    NEMIVER_TRY
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    NEMIVER_TRY;
 
     if (get_contextual_menu ()
         && get_contextual_menu ()->get_visible ()) {
@@ -2024,7 +2030,8 @@ DBGPerspective::on_mouse_immobile_timer_signal ()
     try_to_request_show_variable_value_at_position
                                         (m_priv->mouse_in_source_editor_x,
                                          m_priv->mouse_in_source_editor_y);
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
+
     return false;
 }
 
@@ -2033,13 +2040,13 @@ DBGPerspective::on_insertion_changed_signal
                                     (const Gtk::TextBuffer::iterator &a_it,
                                      SourceEditor *a_editor)
 {
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     THROW_IF_FAIL (a_editor);
 
     update_toggle_menu_text (*a_editor, a_it);
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
 }
 
 void
