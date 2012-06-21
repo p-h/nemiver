@@ -263,16 +263,6 @@ struct Terminal::Priv {
         THROW_IF_FAIL (slave_pty);
         THROW_IF_FAIL (master_pty);
 
-        if (grantpt (master_pty)) {
-            LOG_ERROR ("oops");
-            return false;
-        }
-
-        if (unlockpt (master_pty)) {
-            LOG_ERROR ("oops");
-            return false;
-        }
-
         vte_terminal_set_pty (vte, master_pty);
         return true;
     }
@@ -311,12 +301,12 @@ Terminal::slave_pts_name () const
     THROW_IF_FAIL (m_priv);
     UString result;
 
-    if (!m_priv->master_pty) {
+    if (!m_priv->slave_pty) {
         LOG_ERROR ("oops");
         return result;
     }
 
-    result = ptsname (m_priv->master_pty);
+    result = ttyname (m_priv->slave_pty);
     return result;
 }
 
