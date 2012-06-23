@@ -2105,8 +2105,8 @@ DBGPerspective::on_shutdown_signal ()
         return;
     }
 
-    // stop the debugger so that the target executable doesn't go on running
-    // after we shut down
+    // stop the debugger so that the target executable doesn't go on
+    // running after we shut down
     debugger ()->exit_engine ();
 
     if (m_priv->reused_session) {
@@ -6075,6 +6075,8 @@ DBGPerspective::execute_program
     if (dbg_engine->load_program (prog, a_args, a_cwd,
                                   source_search_dirs,
                                   get_terminal_name (),
+                                  uses_launch_terminal (),
+                                  get_terminal ().slave_pty (),
                                   a_restarting
                                   ? true
                                   : false) == false) {
@@ -8159,6 +8161,16 @@ DBGPerspective::get_terminal_box ()
     return *m_priv->terminal_box;
 }
 
+/// Return the path name for the tty device that the debugging
+/// perspective uses to communicate with the standard tty of the and
+/// the inferior program.
+///
+/// If Nemiver is using the terminal from which it was launch (rather
+/// than its own terminal widget), the name returned is the path name
+/// for the tty device of that "launch terminal".
+///
+/// Note that this really is the path of the device created for the
+/// slave side of the relevant pseudo terminal.
 UString
 DBGPerspective::get_terminal_name ()
 {

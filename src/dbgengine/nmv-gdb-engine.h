@@ -292,7 +292,9 @@ public:
                        const vector<UString> &a_argv,
                        const UString &working_dir,
                        const vector<UString> &a_source_search_dirs,
-                       const UString &a_tty_path,
+                       const UString &a_slave_tty_path,
+		       int a_slave_tty_fd,
+		       bool a_uses_launch_tty,
 		       bool a_force);
 
     void load_core_file (const UString &a_prog_file,

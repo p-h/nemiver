@@ -222,6 +222,10 @@ public:
     OutputHandlerList output_handler_list;
     IDebugger::State state;
     bool is_running;
+    bool uses_launch_tty;
+    struct termios tty_attributes;
+    string tty_path;
+    int tty_fd;
     int cur_frame_level;
     int cur_thread_num;
     Address cur_frame_address;
@@ -565,6 +569,8 @@ public:
         error_buffer_status (DEFAULT),
         state (IDebugger::NOT_STARTED),
         is_running (false),
+        uses_launch_tty (false),
+        tty_fd (-1),
         cur_frame_level (0),
         cur_thread_num (1),
         follow_fork_mode ("parent"),
@@ -573,6 +579,7 @@ public:
         enable_pretty_printing (true),
         pretty_printing_enabled_once (false)
     {
+        memset (&tty_attributes, 0, sizeof (tty_attributes));
 
         enable_pretty_printing =
             g_getenv ("NMV_DISABLE_PRETTY_PRINTING") == 0;
@@ -685,6 +692,37 @@ public:
             gdb_stdout_channel->set_encoding (a_charset);
             gdb_stderr_channel->set_encoding (a_charset);
             master_pty_channel->set_encoding (a_charset);
+        }
+    }
+
+    /// Read the attributes of the low level tty used by Nemiver's
+    /// terminal and the inferior to communicate.  The attributes are
+    /// then stored memory.
+    void get_tty_attributes ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (uses_launch_tty && isatty (0)) {
+            tcgetattr (0, &tty_attributes);
+        } else if (tty_fd >= 0) {
+            tcgetattr (tty_fd,
+                       &tty_attributes);
+        }
+    }
+
+    /// Set the attributes (previously saved by get_tty_attributes)
+    /// from memory to the low level tty used by Nemiver's terminal
+    /// and the inferior to communicate.
+    void set_tty_attributes ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (uses_launch_tty && isatty (0)) {
+            tcsetattr (0, TCSANOW, &tty_attributes);
+        } else if (tty_fd >= 0){
+            tcsetattr (tty_fd,
+                       TCSANOW,
+                       &tty_attributes);
         }
     }
 
@@ -871,6 +909,14 @@ public:
 
         LOG_DD ("issuing command: '" << a_command.value () << "': name: '"
                 << a_command.name () << "'");
+
+        if (a_command.name () == "re-run") {
+            // Before restarting the target, re-set the tty attributes
+            // so that the tty has a chance to comes back into cook
+            // mode.  Some targets might expect this behaviour.
+            LOG_DD ("Restoring tty attributes");
+            set_tty_attributes ();
+        }
 
         if (master_pty_channel->write
                 (a_command.value () + "\n") == Glib::IO_STATUS_NORMAL) {
@@ -3100,7 +3146,10 @@ GDBEngine::load_program (const UString &a_prog,
     vector<UString> search_paths;
     UString tty_path;
     return load_program (a_prog, a_args, a_working_dir,
-                         search_paths, tty_path, a_force);
+                         search_paths, tty_path, 
+                         /*slave_tty_fd*/-1,
+                         /*uses_launch_tty=*/false,
+                         a_force);
 }
 
 /// Load an inferior program to debug.
@@ -3117,7 +3166,11 @@ GDBEngine::load_program (const UString &a_prog,
 /// look for the source files of the objects that make up the inferior
 /// program.
 ///
-/// \param a_tty_path the tty path the inferior should use.
+/// \param a_slave_tty_path the tty path the inferior should use.
+///
+/// \param a_slave_tty_fd the file descriptor of the slave tty that is
+/// to be used by the inferior to communicate with the program using
+/// the current instance of GDBEngine.
 ///
 /// \param a_force if this is true and the command queue is stuck,
 /// clear it to force the loading of the inferior.
@@ -3126,7 +3179,9 @@ GDBEngine::load_program (const UString &a_prog,
                          const vector<UString> &a_argv,
                          const UString &a_working_dir,
                          const vector<UString> &a_source_search_dirs,
-                         const UString &a_tty_path,
+                         const UString &a_slave_tty_path,
+                         int a_slave_tty_fd,
+                         bool a_uses_launch_tty,
                          bool a_force)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -3136,13 +3191,20 @@ GDBEngine::load_program (const UString &a_prog,
 
     if (!m_priv->is_gdb_running ()) {
         vector<UString> gdb_opts;
+
+        // Read the tty attributes before we launch the target so that
+        // we can restore them later at exit time, to discard the tty
+        // changes that might be done by the target.
+        m_priv->tty_fd = a_slave_tty_fd;
+        m_priv->get_tty_attributes ();
+
         if (m_priv->launch_gdb_and_set_args (a_working_dir,
                                              a_source_search_dirs, 
                                              a_prog, a_argv,
                                              gdb_opts) == false)
             return false;
 
-        Command command;
+        m_priv->uses_launch_tty = a_uses_launch_tty;
 
         // In case we are restarting GDB after a crash, the command
         // queue might be stuck.  Let's restart it.
@@ -3194,7 +3256,7 @@ GDBEngine::load_program (const UString &a_prog,
             queue_command (command);
         }
     }
-    m_priv->set_tty_path (a_tty_path, "load-program");
+    m_priv->set_tty_path (a_slave_tty_path, "load-program");
     return true;
 }
 
@@ -4360,6 +4422,7 @@ GDBEngine::stop_target ()
     return  (kill (m_priv->gdb_pid, SIGINT) == 0);
 }
 
+/// Stop the inferior and exit GDB.  Do the necessary book keeping.
 void
 GDBEngine::exit_engine ()
 {
@@ -4379,6 +4442,10 @@ GDBEngine::exit_engine ()
     //send the lethal command and run the event loop to flush everything.
     m_priv->issue_command (Command ("quit"), false);
     set_state (IDebugger::NOT_STARTED);
+
+    // Set the tty attribute back into the state it was before we
+    // connected to the target.
+    m_priv->set_tty_attributes ();
 }
 
 void

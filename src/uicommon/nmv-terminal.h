@@ -66,6 +66,7 @@ public:
     ~Terminal ();
     Gtk::Widget& widget () const;
     Glib::RefPtr<Gtk::Adjustment> adjustment () const;
+    int slave_pty () const;
     UString slave_pts_name () const;
     void modify_font (const Pango::FontDescription &font_desc);
     void feed (const UString &a_text);

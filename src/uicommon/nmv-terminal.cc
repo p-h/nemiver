@@ -295,6 +295,16 @@ Terminal::adjustment () const
     return m_priv->adjustment;
 }
 
+/// Return the file descriptor of the slave pseudo tty used by the the
+/// proces that would want to communicate with this terminal.
+int
+Terminal::slave_pty () const
+{
+    THROW_IF_FAIL (m_priv);
+    THROW_IF_FAIL (m_priv->slave_pty);
+    return m_priv->slave_pty;
+}
+
 UString
 Terminal::slave_pts_name () const
 {
