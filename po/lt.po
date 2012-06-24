@@ -1,0 +1,1456 @@
+# Lithuanian translation for nemiver.
+# Copyright (C) 2012 nemiver's COPYRIGHT HOLDER
+# This file is distributed under the same license as the nemiver package.
+# Aurimas Černius <aurisc4@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2012-06-23 13:40+0000\n"
+"PO-Revision-Date: 2012-06-24 16:07+0300\n"
+"Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
+"Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Gtranslator 2.91.5\n"
+
+#: ../data/nemiver.desktop.in.h:1
+#: ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.desktop.in.h:2
+msgid "C/C++ Debugger"
+msgstr "C/C++ derintuvė"
+
+#: ../data/nemiver.desktop.in.h:3
+msgid "Nemiver C/C++ Debugger"
+msgstr "Nemiver C/C++ derintuvė"
+
+#: ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Derinti programas"
+
+#: ../src/main.cc:78
+msgid "Set the environment of the program to debug"
+msgstr "Nustatyti derinamos programos aplinką"
+
+#: ../src/main.cc:87
+msgid "Attach to a process"
+msgstr "Prisijungti prie proceso"
+
+#: ../src/main.cc:96
+msgid "Load a core file"
+msgstr "Įkelti išklotinės failą"
+
+#: ../src/main.cc:104
+msgid "List the saved debugging sessions"
+msgstr "Išvardinti įrašytas derinimo seansus"
+
+#: ../src/main.cc:112
+msgid "Erase the saved debugging sessions"
+msgstr "Ištrinti įrašytus derinimo seansus"
+
+#: ../src/main.cc:120
+msgid "Debug the program that was of session number N"
+msgstr "Derinti programą, kurios seanso numeris N"
+
+#: ../src/main.cc:128
+msgid "Execute the last session"
+msgstr "Vykdyti paskutinį seansą"
+
+#: ../src/main.cc:136
+msgid "Enable logging domains DOMAINS"
+msgstr "Įjungti žurnalo sritis DOMAINS"
+
+#: ../src/main.cc:144
+msgid "Log the debugger output"
+msgstr "Įrašyti į žurnalą derintuvės išvestį"
+
+#: ../src/main.cc:152
+msgid "Use this terminal as the debugee's terminal"
+msgstr "Naudoti šį terminalą kaip derinamos programos terminalą"
+
+#: ../src/main.cc:161
+msgid "Connect to remote target specified by HOST:PORT"
+msgstr "Prisijungti prie nutolusio tinklo, nurodyto HOST:PORT"
+
+#: ../src/main.cc:170
+msgid "Where to look for shared libraries loaded by the inferior. Use in conjunction with --remote"
+msgstr "Kur ieškoti įkeliamų bendro naudojimo bibliotekų. Naudoti kartu su --remote"
+
+#: ../src/main.cc:180
+msgid "Set the path of the GDB binary to use to debug the inferior"
+msgstr "Nustatyti GDB programos kelią derinimui"
+
+#: ../src/main.cc:189
+msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
+msgstr "Nenustatyti sustojimo taško „main“ ir nevykdyti programos"
+
+#: ../src/main.cc:198
+msgid "Show the version number of Nemiver"
+msgstr "Rodyti Nemiver versiją"
+
+#: ../src/main.cc:264
+msgid " [<prog-to-debug> [prog-args]]"
+msgstr " [<derinama-programa> [argumentai]]"
+
+#: ../src/main.cc:267
+#: ../src/workbench/nmv-workbench.cc:263
+msgid "A C/C++ debugger for GNOME"
+msgstr "GNOME C/C++ derintuvė"
+
+#: ../src/main.cc:361
+msgid ""
+"Please provide a local copy of the binary you intend to debug remotely.\n"
+"Like this:\n"
+msgstr ""
+"Pateikite vietinę derinamos nutolusios programos kopiją.\n"
+"Pavyzdžiui:\n"
+
+#: ../src/main.cc:366
+#: ../src/main.cc:385
+msgid "Otherwise, find below the full set of Nemiver options.\n"
+msgstr "Priešingu atveju žemiau rasite visas Nemiver parinktis.\n"
+
+#: ../src/main.cc:380
+msgid ""
+"Please provide the path to the binary that generated the core file too.\n"
+"Like this:\n"
+msgstr ""
+"Taip pat nurodykite kelią iki programos, kuri sugeneravo išklotinės failą.\n"
+"Pavyzdžiui:\n"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
+msgid "ID"
+msgstr "ID"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-file-list.cc:108
+msgid "File Name"
+msgstr "Failo pavadinimas"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
+msgid "Line"
+msgstr "Eilutė"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+msgid "Function"
+msgstr "Funkcija"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+msgid "Address"
+msgstr "Adresas"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:153
+msgid "Condition"
+msgstr "Sąlyga"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
+msgid "Toggle countpoint"
+msgstr "Perjungti skaitinį tašką"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
+msgid "Type"
+msgstr "Tipas"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
+msgid "Hits"
+msgstr "Pasiekimai"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
+msgid "Expression"
+msgstr "Išraiška"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
+msgid "Ignore count"
+msgstr "Nepaisyti skaičiaus"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:348
+msgid "breakpoint"
+msgstr "sustojimo taškas"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:352
+msgid "watchpoint"
+msgstr "stebimas taškas"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:355
+msgid "countpoint"
+msgstr "skaitinis taškas"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:358
+msgid "unknown"
+msgstr "nežinoma"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
+msgid "_Delete"
+msgstr "_Trinti"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
+msgid "Remove this breakpoint"
+msgstr "Pašalinti šį sustojimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
+msgid "_Go to Source"
+msgstr "_Eiti prie išeities teksto"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
+msgid "Find this breakpoint in the source editor"
+msgstr "Rasti šį sustojimo tašką išeities teksto redaktoriuje"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:177
+#: ../src/uicommon/nmv-terminal.cc:173
+msgid "_Copy"
+msgstr "_Kopijuoti"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:178
+msgid "Copy the call stack to the clipboard"
+msgstr "Kopijuoti kvietinių seką į iškarpinę"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+msgid "Frame"
+msgstr "Rėmas"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+msgid "Arguments"
+msgstr "Argumentai"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
+msgid "Location"
+msgstr "Vieta"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+msgid "Binary"
+msgstr "Programa"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#, c-format
+msgid "(Click here to see the next %d row of the call stack"
+msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgstr[0] "(Spauskite čia kitai %d eilutei kvietinių sekoje pamatyti"
+msgstr[1] "(Spauskite čia kitoms %d eilutėms kvietinių sekoje pamatyti)"
+msgstr[2] "(Spauskite čia kitoms %d eilučių kvietinių sekoje pamatyti)"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
+msgid "Function Name"
+msgstr "Funkcijos pavadinimas"
+
+#. labels for widget tabs in the status notebook
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:117
+msgid "Context"
+msgstr "Kontekstas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+msgid "Target Terminal"
+msgstr "Tikslo terminalas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
+msgid "Breakpoints"
+msgstr "Sustojimo taškai"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
+msgid "Registers"
+msgstr "Registrai"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
+msgid "Memory"
+msgstr "Atmintis"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
+msgid "Expression Monitor"
+msgstr "Išraiškų stebyklė"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1689
+msgid "Reached end of file"
+msgstr "Pasiekta failo pabaiga"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1692
+#, c-format
+msgid "Could not find string %s"
+msgstr "Nepavyko rasti eilutės %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2070
+msgid "Change to Standard Breakpoint"
+msgstr "Keisti į standartinį sustojimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2073
+msgid "Change to Countpoint"
+msgstr "Keisit į skaitinį tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2075
+msgid "Remove _Breakpoint"
+msgstr "_Pašalinti sustojimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2078
+msgid "Disable Breakpoint"
+msgstr "Išjungti sustojimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
+msgid "Enable Breakpoint"
+msgstr "Įjungti sustojimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2083
+msgid "Set _Breakpoint"
+msgstr "Nustatyti sustojimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2085
+msgid "Set Countpoint"
+msgstr "Nustatyti skaitinį tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "%s (kelias=„%s“, pid=%i)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2262
+msgid "Connected to remote target!"
+msgstr "Prisijungta prie nutolusio tikslo!"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2418
+msgid "Program exited"
+msgstr "Programa baigė darbą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2448
+msgid "The underlying debugger engine process died."
+msgstr "Žemesnis derintuvės variklio procesas baigė darbą."
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2536
+#, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "Tikslas gavo signalą: %s, %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2551
+#, c-format
+msgid "An error occurred: %s"
+msgstr "Kilo klaida: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2714
+#, c-format
+msgid "File %s has been modified. Do you want to reload it?"
+msgstr "Failas %s buvo pakeistas. Ar norite jį įkelti iš naujo?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3057
+msgid "_Run or Restart"
+msgstr "_Vykdyti arba paleisti iš naujo"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3058
+msgid "Run or Restart the target"
+msgstr "Vykdyti arba paleisti iš naujo tikslą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3070
+msgid "_Detach From the Running Program"
+msgstr "_Atsijungti nuo vykdomos programos"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3071
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr "Atjungti derintuvę nuo vykdomos programos pastarosios nenutraukiant"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3086
+msgid "_Save Session to Disk"
+msgstr "Įrašyti _seansą į diską"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3087
+msgid "Save the current debugging session to disk"
+msgstr "Įrašyti dabartinį derinimo seansą į diską"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
+msgid "Set Breakpoint with Dialog..."
+msgstr "Nustatyti sustojimo tašką su dialogu..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3097
+msgid "Set a breakpoint at the current line using a dialog"
+msgstr "Nustatyti sustojimo tašką esamoje eilutėje naudojant dialogą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3108
+msgid "Set Breakpoint..."
+msgstr "Nustatyti sustojimo tašką..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3109
+msgid "Set a breakpoint at a function or line number"
+msgstr "Nustatyti sustojimo tašką funkcijoje arba eilutėje"
+
+#. Depending on the context we will want this string to be
+#. either "Set Breakpoint", or "Remove Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3125
+msgid "Toggle _Breakpoint"
+msgstr "Perjungti sustojimo _tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3126
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "Nustatyti/išjungti sustojimo tašką esamoje vietoje"
+
+#. Depending on the context we will want this string to be
+#. either "Enable Breakpoint", or "Disable
+#. Breakpoint". Hence this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3143
+msgid "Enable/Disable Breakpoint"
+msgstr "Įjungti/išjungti sustojimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
+msgid "Enable or disable the breakpoint that is set at the current cursor location"
+msgstr "Įjungti/išjungti sustojimo tašką esamoje vietoje"
+
+#. Depending on the context we will want this string to be
+#. either "Set Countpoint", or "Change to Countpoint", or
+#. "Change to Standard Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3164
+msgid "Toggle _Countpoint"
+msgstr "Perjungti _skaitinį tašką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3165
+msgid "Set/Unset a countpoint at the current cursor location"
+msgstr "Nustatyti/išjungti skaitinį tašką esamoje vietoje"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
+msgid "Set Watchpoint with Dialog..."
+msgstr "Nustatyti stebėjimo tašką su dialogu..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
+msgid "Set a watchpoint using a dialog"
+msgstr "Nustatyti stebėjimo tašką su dialogu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
+msgid "_Next"
+msgstr "_Kitas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
+msgid "Execute next line stepping over the next function, if any"
+msgstr "Vykdyti kitą eilutę pereinant per kitą funkciją, jei tokia yra"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
+msgid "_Step"
+msgstr "_Žingsnis"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
+msgid "Execute next line, stepping into the next function, if any"
+msgstr "Vykdyti kitą eilutę įeinant į kitą funkciją, jei tokia yra"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
+msgid "Step _Out"
+msgstr "Žengti _lauk"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
+msgid "Finish the execution of the current function"
+msgstr "Baigti dabartinės funkcijos vykdymą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3221
+msgid "Step Into asm"
+msgstr "Žengti į asemblerį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3222
+msgid "Step into the next assembly instruction"
+msgstr "Žengti į kitą asemblerio instrukciją"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+msgid "Step Over asm"
+msgstr "Žengti per asemblerį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+msgid "Step over the next assembly instruction"
+msgstr "Žengti per kitą asemblerio instrukciją"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
+msgid "_Continue or start"
+msgstr "_Tęsti arba pradėti"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3242
+msgid "Start or continue program execution until the next breakpoint"
+msgstr "Pradėti arba tęsti programos vykdymą iki kito sustojimo taško"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
+msgid "Run to Cursor"
+msgstr "Vykdyti iki žymeklio"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
+msgid "Continue program execution until the currently selected line is reached"
+msgstr "Tęsti programos vykdymą iki šiuo metu nustatytos eilutės pasiekimo"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
+msgid "Jump to Cursor"
+msgstr "Peršokti prie žymeklio"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
+msgid "Jump to the currently selected line"
+msgstr "Peršokti prie šiuo metu pažymėtos eilutės"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
+msgid "Jump and Stop to Cursor"
+msgstr "Peršokti ir sustoti prie žymeklio"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3274
+msgid "Sets a breakpoint to the currently selected line and jump there"
+msgstr "Nustato sustojimo tašką šiuo metu pažymėtoje eilutėje ir peršoka ten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
+msgid "Jump to a Given Location"
+msgstr "Peršokti į vietą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
+msgid "Select a given code location and jump there"
+msgstr "Pasirinkti kodo vietą ir peršokti ten"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
+msgid "Inspect an Expression"
+msgstr "Tikrinti išraišką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+msgid "Inspect a global or local expression"
+msgstr "Tikrinti globalią arba vietinę išraišką"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3309
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
+msgid "Call a Function"
+msgstr "Kviesti funkciją"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3310
+msgid "Call a function in the program being debugged"
+msgstr "Kviesti funkciją derinamoje programoje"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
+msgid "Show Global Variables"
+msgstr "Rodyti globalius kintamuosius"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
+msgid "Display all global variables"
+msgstr "Rodyti visus globalius kintamuosius"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3330
+msgid "Refresh Locals"
+msgstr "Atnaujinti vietinius"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3331
+msgid "Refresh the list of variables local to the current function"
+msgstr "Atnaujinti vietinių kintamųjų sąrašą dabartinėje funkcijoje"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3340
+msgid "Show Assembly"
+msgstr "Rodyti asemblerį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
+msgid "Show the assembly code of the source code being currently debugged, in another tab"
+msgstr "Rodyti derinamo kodo asemblerio kodą kitoje kortelėje"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
+msgid "Switch to Assembly"
+msgstr "Perjungti į asemblerį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
+msgid "Show the assembly code of the source code being currently debugged"
+msgstr "Rodyti derinamo kodo asemblerio kodą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
+msgid "Switch to Source"
+msgstr "Perjungti į išeities tekstą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
+msgid "Show the source code being currently debugged"
+msgstr "Rodyti derinamą išeities tekstą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3379
+msgid "Stop"
+msgstr "Sustoti"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3380
+msgid "Stop the debugger"
+msgstr "Sustabdyti derintuvę"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3392
+msgid "_View"
+msgstr "_Rodyti"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
+msgid "Switch to Target Terminal View"
+msgstr "Perjungti į tikslo terminalo rodinį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
+msgid "Switch to Context View"
+msgstr "Perjungti į konteksto rodinį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
+msgid "Switch to Breakpoints View"
+msgstr "Perjungti į sustojimo taškų rodinį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3436
+msgid "Switch to Registers View"
+msgstr "Perjungti į registrų rodinį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3448
+msgid "Switch to Memory View"
+msgstr "Perjungti į atminties rodinį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3459
+msgid "Switch to Variables Monitor View"
+msgstr "Perjungti į kintamųjų rodinį"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
+msgid "_Debug"
+msgstr "_Derinti"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3478
+msgid "_Open Source File..."
+msgstr "_Atverti išeities teksto failą..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3479
+msgid "Open a source file for viewing"
+msgstr "Atverti išeities teksto failą rodymui"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
+msgid "Load _Executable..."
+msgstr "Įkelti _programą..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+msgid "Execute a program"
+msgstr "Vykdyti programą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
+msgid "_Load Core File..."
+msgstr "Įkelti išk_lotinės failą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3500
+msgid "Load a core file from disk"
+msgstr "Įkelti išklotinės failą iš disko"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3510
+msgid "_Attach to Running Program..."
+msgstr "Prisijungti prie vykdomos progr_amos..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3511
+msgid "Debug a program that's already running"
+msgstr "Derinti jau vykdomą programą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
+msgid "_Connect to Remote Target..."
+msgstr "_Prisijungti prie nutolusio tikslo..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
+msgid "Connect to a debugging server to debug a remote target"
+msgstr "Prisijungti prie derinimo serverio ir derinti nutolusį tikslą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
+msgid "Resume Sa_ved Session..."
+msgstr "Tęsti _įrašytą seansą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3534
+msgid "Open a previously saved debugging session"
+msgstr "Atverti anksčiau įrašytą derinimo seansą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3544
+msgid "_Preferences"
+msgstr "_Nustatymai"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3545
+msgid "Edit the properties of the current session"
+msgstr "Keisti dabartinio seanso savybes"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+msgid "_Reload Source File"
+msgstr "Į_kelti failą iš naujo "
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3560
+msgid "Reloads the source file"
+msgstr "Iš naujo įkelia failą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3569
+msgid "_Close Source File"
+msgstr "_Užverti failą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3570
+msgid "Close the opened file"
+msgstr "Užverti atvertą failą"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3579
+msgid "_Find"
+msgstr "_Rasti"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3580
+msgid "Find a text string in file"
+msgstr "Rasti tekstą faile"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3939
+#, c-format
+msgid "Close %s"
+msgstr "Užverti %s"
+
+#. We cannot restart an inferior running on a remote target at
+#. the moment.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5897
+msgid "Sorry, it's impossible to restart a remote inferior"
+msgstr "Atleiskite, neįmano iš naujo paleisti nutolusios programos"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6020
+#, c-format
+msgid "Could not find file %s"
+msgstr "Nepavyko rasti failo %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6082
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6224
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6259
+#, c-format
+msgid "Could not load program: %s"
+msgstr "Nepavyko įkelti programos: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6153
+msgid "You cannot attach to Nemiver itself"
+msgstr "Negalite prisijungti prie paties Nemiver"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6166
+msgid "You cannot attach to the underlying debugger engine"
+msgstr "Negalite prisijungti prie žemiau esančio derinimo variklio"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6461
+msgid "Failed to stop the debugger"
+msgstr "Nepavyko sustabdyti derintuvės"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6705
+#, c-format
+msgid "Invalid line number: %i"
+msgstr "Neteisingas eilutės numeris: %i"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8306
+#, c-format
+msgid "There is a program being currently debugged. Do you really want to exit from the debugger?"
+msgstr "Yra šiuo metu derinama programa. Ar tikrai norite palikti derintuvę?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
+msgid "Default Layout"
+msgstr "Numatytas išdėstymas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
+msgid "Nemiver's default layout"
+msgstr "Nemiver numatytas išdėstymas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
+msgid "Source Code"
+msgstr "Išeities kodas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
+msgid "Dynamic Layout"
+msgstr "Dinaminis išdėstymas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
+msgid "A layout which can be modified"
+msgstr "Išdėstymas, kurį galima keisti"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
+msgid "Two Status Pane"
+msgstr "Du būsenų skydai"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
+msgid "A layout with two status pane"
+msgstr "Išdėstymas su dviem būsenos skydais"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
+msgid "Wide Layout"
+msgstr "Platus išdėstymas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
+msgid "A layout for very large monitors"
+msgstr "Išdėstymas labai dideliems monitoriams"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:128
+msgid "Expand _Selected"
+msgstr "Iš_skleisti pažymėtą"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:134
+msgid "Expand _All"
+msgstr "Išskleisti _visus"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:144
+msgid "_Collapse"
+msgstr "Su_traukti"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:427
+msgid "Loading files from target executable..."
+msgstr "Įkeliami failai iš tikslo programos..."
+
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:301
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:547
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
+msgstr ""
+"Kintamojo tipas yra: \n"
+" %s"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:124
+msgid "Local Variables"
+msgstr "Vietiniai kintamieji"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:132
+msgid "Function Arguments"
+msgstr "Funkcijos argumentai"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
+msgid "_Copy Variable Name"
+msgstr "_Kopijuoti kintamojo vardą"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:259
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
+msgid "Copy the variable path expression to the clipboard"
+msgstr "Kopijuoti kintamojo kelio išraišką į iškarpinę"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
+msgid "_Copy Variable Value"
+msgstr "_Kopijuoti kintamojo reikšmę"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:271
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
+msgid "Copy the variable value to the clipboard"
+msgstr "Kopijuoti kintamojo reikšmę į iškarpinę"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
+msgid "Create Watchpoint"
+msgstr "Sukurti stebėjimo tašką"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
+msgid "Create a watchpoint that triggers when the value of the expression changes"
+msgstr "Sukurti stebėjimo tašką, kuris iššaukiamas, kai išraiškos reikšmė pasikeičia"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:49
+msgid "Byte"
+msgstr "Baitas"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:52
+msgid "Word"
+msgstr "Žodis"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:55
+msgid "Long Word"
+msgstr "Ilgas žodis"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:98
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
+msgid "Address:"
+msgstr "Adresas:"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:100
+msgid "Show"
+msgstr "Rodyti"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:103
+msgid "Group By:"
+msgstr "Grupuoti pagal:"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:149
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
+msgid "Choose a Directory"
+msgstr "Pasirinkite katalogą"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "Išeities tekstų katalogai"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
+msgid "User Name"
+msgstr "Naudotojo vardas"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
+msgid "Proc Args"
+msgstr "Proceso argumentai"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
+msgid "Name"
+msgstr "Vardas"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:102
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
+msgid "Value"
+msgstr "Reikšmė"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
+msgid "Session"
+msgstr "Seansas"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
+msgid "Throw Exception"
+msgstr "Sukelti išskirtinę situaciją"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
+msgid "Catch Exception"
+msgstr "Sugauti išskirtinę situaciją"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
+msgid "Fork System Call"
+msgstr "Fork sistemos iškvietimas"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
+msgid "Vfork System Call"
+msgstr "Vfork sistemos iškvietimas"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
+msgid "Exec System Call"
+msgstr "Exec sistemos iškvietimas"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:184
+msgid "Thread ID"
+msgstr "Gijos ID"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
+msgid "Variable"
+msgstr "Kintamasis"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
+msgid "In scope expressions"
+msgstr "Srities išraiškos"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
+msgid "Out of scope expressions"
+msgstr "Išraiškos už srities ribų"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
+msgid "Remove"
+msgstr "Pašalinti"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
+msgid "Remove selected expressions from the monitor"
+msgstr "Pašalinti pasirinktą išraiškas iš stebyklės"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
+msgid "New..."
+msgstr "Nauja..."
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
+msgid "Add a new expression to the monitor"
+msgstr "Pridėti naują išraišką į stebyklę"
+
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "Call a function:"
+msgstr "Kviesti funkciją:"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "Nustatyti sustojimo tašką"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+msgid "Choose Overloaded Function"
+msgstr "Pasirinkite funkcijos variantą"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+msgid "Multiple functions match the specified name. Please choose one from the list below."
+msgstr "Yra kelios funkcijos tuo pačiu vardu. Pasirinkite vieną iš sąrašo."
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
+msgid "Find Text"
+msgstr "Rasti tekstą"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
+msgid "_Search:"
+msgstr "_Ieškoti:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "Match Options:"
+msgstr "Atitikimo parinktys:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "Skirti r_aidžių dydį"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "Tik _visus žodžius"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "Cycling Options:"
+msgstr "Ciklo parinktys"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+msgid "_Wrap around"
+msgstr "Sukti _ratu"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "Ieškoti at_gal"
+
+#: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
+msgid "Global Variables"
+msgstr "Globalūs kintamieji"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
+msgid "Choose a Core File to Debug"
+msgstr "Pasirinkite derinamą išklotinės failą"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
+msgid "Select a Core File"
+msgstr "Pasirinkite išklotinės failą"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "Core File:"
+msgstr "Išklotinės failas:"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+msgid "Select the executable that created the core file"
+msgstr "Pasirinkite šį išklotinės failą sukūrusią programą"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "Executable:"
+msgstr "Programa:"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
+msgid "Open Source Files"
+msgstr "Atverti išeities failus"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "Pasirinkti iš _tikslo programos"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
+msgid "Select from _File System"
+msgstr "Pasirinkti iš _failų sistemos"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
+msgid "Choose Source Files to Open"
+msgstr "Pasirinkite atveriamus failus"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
+msgid "Preferences"
+msgstr "Nustatymai"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
+msgid "Use system monospace font"
+msgstr "Naudoti sistemos lygiaplotį šriftą"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "Pasirinktinis šriftas:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "Editor Font"
+msgstr "Redaktoriaus šriftas"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+msgid "Visual Style"
+msgstr "Vizualus stilius"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+msgid "Display line numbers"
+msgstr "Rodyti eilučių numerius"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "Line Numbers"
+msgstr "Eilučių numeriai"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr "Naudoti paleidimo terminalą"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+msgid "Terminal"
+msgstr "Terminalas"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "When a source file is changed:"
+msgstr "Kada išeities failas pakeistas:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "Iš naujo įkelti failą"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+msgid "Do not reload the file"
+msgstr "Neįkelti failo"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+msgid "Ask each time"
+msgstr "Klausti kiekvieną kartą"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+msgid "File Monitoring"
+msgstr "Failo stebėjimas"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Enable syntax highlighting"
+msgstr "Įjungti sintaksės paryškinimą"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "Syntax Highlighting"
+msgstr "Sintaksės paryškinimas"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "Redaktorius"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Pure assembly"
+msgstr "Grynas asemblerius"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Mixed source and assembly"
+msgstr "Mišrus išeities tekstas ir asembleris"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "Assembly style"
+msgstr "Asemblerio stilius"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "Assembly flavor"
+msgstr "Asembleriu rūšis"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
+msgid "Choose a File"
+msgstr "Pasirinkite failą"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Path to the GDB binary used"
+msgstr "Kelias iki naudojamos GDB programos"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+msgid "GDB Binary"
+msgstr "GDB programa"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+msgid "Number of instructions to disassemble by default"
+msgstr "Numatytai išgaunamas instrukcijų skaičius"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+msgid "Instructions"
+msgstr "Instrukcijos"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr "Įjungti gražų spausdinimą (reikalauja iš naujo paleisti derintuvę)"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+msgid "GDB Pretty Printing"
+msgstr "GDB gražus spausdinimas"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+msgid "Follow parent"
+msgstr "Sekti tėvą"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+msgid "Follow child"
+msgstr "Sekti vaiką"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+msgid "GDB Follow Fork Mode"
+msgstr "GDB fork sekimo veiksena"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+msgid "Debugger"
+msgstr "Derintuvė"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+msgid "Layout"
+msgstr "Išdėstymas"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
+msgid "Attach to a Running Program"
+msgstr "Prisijungti prie vykdomos programos"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "Choose a Process to Debug"
+msgstr "Pasirinkite derinamą procesą"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
+msgid "_Filter list:"
+msgstr "_Filtrų sąrašas:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "Prisijungti prie nutolusio tikslo"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+msgid "Executable to Load"
+msgstr "Įkeliama programa"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "Shared Libraries Location"
+msgstr "Bendro naudojimo bibliotekų vieta"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
+msgid "Remote Debugging Server"
+msgstr "Nutolęs derinimo serveris"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
+msgid "TCP/IP Connection"
+msgstr "TCP/IP ryšys"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
+msgid "Port:"
+msgstr "Prievadas:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
+msgid "Serial Line Connection"
+msgstr "Serijinės linijos ryšys"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
+msgid "Choose a Program to Execute"
+msgstr "Pasirinkite vykdomą programą"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
+msgid "Choose an Executable"
+msgstr "Pasirinkite programą"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
+msgid "Program:"
+msgstr "Programa:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
+msgid "Arguments:"
+msgstr "Argumentai:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
+msgid "Choose a Working Directory"
+msgstr "Pasirinkite darbinį katalogą"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "Working Directory:"
+msgstr "Darbinis katalogas:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
+msgid "_Add"
+msgstr "_Pridėti"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+msgid "_Remove"
+msgstr "Pa_šalinti"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "Environment Variables:"
+msgstr "Aplinkos kintamieji:"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
+msgid "Saved Sessions"
+msgstr "Įrašyti seansai"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "Choose a Session to Debug"
+msgstr "Pasirinkite deriną seansą"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+msgid "Set a Breakpoint:"
+msgstr "Nustatyti sustojimo tašką:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
+msgid "Condition:"
+msgstr "Sąlygą:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
+msgid "_Event:"
+msgstr "_Įvykis:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
+msgid "_Binary Location:"
+msgstr "_Programos vieta:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
+msgid "_Source Location:"
+msgstr "_Išeities vieta:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
+msgid "F_unction Name:"
+msgstr "F_unkcijos vardas:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+msgid "File name:"
+msgstr "Failo pavadinimas:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
+msgid "Function:"
+msgstr "Funkcija:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Line:"
+msgstr "Eilutė:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+msgid "Set as Countpoint"
+msgstr "Nustatyti kaip skaitinį tašką"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
+msgid "Set Location to Jump To"
+msgstr "Nustatyti vietą peršokimui"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "Jump to location:"
+msgstr "Peršokimo vieta:"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at Destination"
+msgstr "Sustoti tiksle"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
+msgid "Add to monitor"
+msgstr "Pridėti į stebyklę"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
+msgid "_Variable Name:"
+msgstr "Kintamojo _vardas:"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
+msgid "_Inspect"
+msgstr "T_ikrinti"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
+msgid "Set a watchpoint:"
+msgstr "Nustatyti stebėjimo tašką:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
+msgid "Expression:"
+msgstr "Išraiška:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "Tikrinti"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
+msgid "Triggers on:"
+msgstr "Iššaukiamas:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "Read"
+msgstr "Skaitymas"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
+msgid "Write"
+msgstr "Rašymas"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:65
+#, c-format
+msgid "Select Location for %s"
+msgstr "Pasirinkite %s vietą"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:75
+#, c-format
+msgid ""
+"Cannot find file '%s'.\n"
+"Please specify the location of this file:"
+msgstr ""
+"Nepavyko rasti failų „%s“.\n"
+"Nurodykite šio failo vietą:"
+
+#: ../src/uicommon/nmv-source-editor.cc:611
+#, c-format
+msgid "Line: %i, Column: %i"
+msgstr "Eilutė: %i, Stulpelis: %i"
+
+#: ../src/uicommon/nmv-source-editor.cc:1439
+#, c-format
+msgid "Could not load file %s because its encoding is different from %s"
+msgstr "Nepavyko įkelti failo %s, nes jo koduotė skiriasi nuo %s"
+
+#: ../src/uicommon/nmv-terminal.cc:174
+msgid "Copy the selection"
+msgstr "Kopijuoti pasirinkimą"
+
+#: ../src/uicommon/nmv-terminal.cc:180
+msgid "_Paste"
+msgstr "_Įdėti"
+
+#: ../src/uicommon/nmv-terminal.cc:181
+msgid "Paste the clipboard"
+msgstr "Įdėti iš iškarpinės"
+
+#: ../src/uicommon/nmv-terminal.cc:187
+msgid "_Reset"
+msgstr "_Atstatyti"
+
+#: ../src/uicommon/nmv-terminal.cc:188
+msgid "Reset the terminal"
+msgstr "Atstatyti terminalą"
+
+#: ../src/uicommon/nmv-ui-utils.cc:91
+msgid "Do not ask me again"
+msgstr "Daugiau neklausti"
+
+#: ../src/workbench/nmv-workbench.cc:275
+msgid "Project Website"
+msgstr "Projekto tinklapis"
+
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:295
+msgid "translator-credits"
+msgstr ""
+"išvertė:\n"
+"Aurimas Černius <aurisc4@gmail.com>"
+
+#: ../src/workbench/nmv-workbench.cc:673
+msgid "_File"
+msgstr "_Failas"
+
+#: ../src/workbench/nmv-workbench.cc:684
+msgid "_Quit"
+msgstr "_Išeiti"
+
+#: ../src/workbench/nmv-workbench.cc:685
+msgid "Quit the application"
+msgstr "Išeiti iš programos"
+
+#: ../src/workbench/nmv-workbench.cc:695
+msgid "_Edit"
+msgstr "_Taisa"
+
+#: ../src/workbench/nmv-workbench.cc:706
+msgid "_Help"
+msgstr "_Žinynas"
+
+#: ../src/workbench/nmv-workbench.cc:717
+msgid "_About"
+msgstr "_Apie"
+
+#: ../src/workbench/nmv-workbench.cc:718
+msgid "Display information about this application"
+msgstr "Rodyti informaciją apie šią programą"
+
+#: ../src/workbench/nmv-workbench.cc:728
+msgid "_Contents"
+msgstr "_Turinys"
+
+#: ../src/workbench/nmv-workbench.cc:729
+msgid "Display the user manual for this application"
+msgstr "Rodyti šios programos vadovą"
+
+#. end extern C
+#: ../ui/locatefiledialog.ui.h:1
+msgid "Select File Location"
+msgstr "Pasirinkite failo vietą"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "Locate File"
+msgstr "Surasti failą"
+
