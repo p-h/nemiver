@@ -15,8 +15,7 @@ INSTALL \
 COPYING \
 COPYRIGHT \
 $(headers) \
-$(INTLTOOL_FILES) \
-gnome-doc-utils.make
+$(INTLTOOL_FILES)
 
 doc:
 	$(MAKE) -C docs doc
@@ -97,7 +96,5 @@ cat-announcement:
 	@echo "Last but not least, do not forget to bump up the micro"
 	@echo "version component to the next (odd) number and commit."
 
-DISTCLEANFILES = $(INTLTOOL_FILES:.in=) \
-	gnome-doc-utils.make
-
-DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper
+DISTCLEANFILES = \
+	$(INTLTOOL_FILES:.in=)

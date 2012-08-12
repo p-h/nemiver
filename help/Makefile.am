@@ -1,9 +1,12 @@
-include $(top_srcdir)/gnome-doc-utils.make
-dist-hook: doc-dist-hook
-DOC_MODULE = nemiver
-DOC_ENTITIES =
-DOC_INCLUDES = legal.xml
-DOC_FIGURES = \
+@YELP_HELP_RULES@
+
+HELP_ID = nemiver
+
+HELP_FILES = \
+	index.docbook \
+	legal.xml
+
+HELP_MEDIA = \
 			  figures/attach-dialog.png \
 			  figures/execute-dialog.png \
 			  figures/load-core-dialog.png \
@@ -18,4 +21,5 @@ DOC_FIGURES = \
 			  figures/connect-remote-dialog.png \
 			  figures/enabled-breakpoint.png \
 			  figures/disabled-breakpoint.png
-DOC_LINGUAS = cs de el es fr gl oc sl sv zh_CN
+
+HELP_LINGUAS = cs de el es fr gl oc sl sv zh_CN

@@ -122,7 +122,7 @@ AC_SUBST(nemiverlocaledir)
 dnl ***************************
 dnl Initialize GNOME doc utils
 dnl ***************************
-GNOME_DOC_INIT
+YELP_HELP_INIT
 
 dnl ***************************
 dnl a list of enablexxx options
