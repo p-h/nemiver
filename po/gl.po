@@ -1,24 +1,27 @@
-# Galician translations for PACKAGE package.
-# Copyright (C) 2011 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Enrique Estévez Fernández <keko.gl@gmail.com>, 2011.
-# Fran Diéguez <frandieguez@gnome.org>, 2011.
-# Fran Dieguez <frandieguez@gnome.org>, 2012.
+# Galician translations for nemiver.
+# Copyright (C) 2012 Leandro Regueiro
+# This file is distributed under the same license as the nemiver package.
 #
+# Proxecto Trasno - Adaptación do software libre á lingua galega:  Se desexas
+# colaborar connosco, podes atopar máis información en http://www.trasno.net
+#
+# Enrique Estévez Fernández <keko.gl@gmail.com>, 2011.
+# Fran Diéguez <frandieguez@gnome.org>, 2011, 2012.
+# Leandro Regueiro <leandro.regueiro@gmail.com>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-24 22:52+0200\n"
-"PO-Revision-Date: 2012-06-24 23:21+0200\n"
-"Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
+"POT-Creation-Date: 2012-08-17 23:11+0200\n"
+"PO-Revision-Date: 2012-08-17 16:46+0200\n"
+"Last-Translator: Leandro Regueiro <leandro.regueiro@gmail.com>\n"
 "Language-Team: Galician <gnome-l10n-gl@gnome.org>\n"
 "Language: gl_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Gtranslator 2.91.5\n"
+"X-Generator: Lokalize 1.0\n"
 
 #: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
@@ -38,7 +41,7 @@ msgstr "Depurar aplicativos"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
-msgstr "Definir o contorno do programa para depuralo"
+msgstr "Definir o ambiente do programa para depuralo"
 
 #: ../src/main.cc:87
 msgid "Attach to a process"
@@ -54,7 +57,7 @@ msgstr "Obter lista das sesións de depuración gardadas"
 
 #: ../src/main.cc:112
 msgid "Erase the saved debugging sessions"
-msgstr "Eliminar as sesións de depuración gardadas"
+msgstr "Borrar as sesións de depuración gardadas"
 
 #: ../src/main.cc:120
 msgid "Debug the program that was of session number N"
@@ -113,9 +116,8 @@ msgid ""
 "Please provide a local copy of the binary you intend to debug remotely.\n"
 "Like this:\n"
 msgstr ""
-"Forneza unha copia local do ficheiro binario que quere depurar de forma "
-"remota.\n"
-"Coma isto:\n"
+"Forneza unha copia local do binario que quere depurar de forma remota.\n"
+"Como isto:\n"
 
 #: ../src/main.cc:366 ../src/main.cc:385
 msgid "Otherwise, find below the full set of Nemiver options.\n"
@@ -204,7 +206,7 @@ msgstr "E_liminar"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
 msgid "Remove this breakpoint"
-msgstr "Quitar este punto de interrupción"
+msgstr "Retirar este punto de interrupción"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
 msgid "_Go to Source"
@@ -295,7 +297,7 @@ msgstr "Cambiar a punto de contía"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2075
 msgid "Remove _Breakpoint"
-msgstr "Quitar _punto de interrupción"
+msgstr "Retirar _punto de interrupción"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2078
 msgid "Disable Breakpoint"
@@ -717,38 +719,38 @@ msgstr "Pechar %s"
 #. the moment.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5897
 msgid "Sorry, it's impossible to restart a remote inferior"
-msgstr "Non se pode reiniciar un límite inferior"
+msgstr "Non é posíbel reiniciar un límite inferior"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6020
 #, c-format
 msgid "Could not find file %s"
 msgstr "Non foi posíbel localizar o ficheiro %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6082
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6224
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6259
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6084
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6226
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6261
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Non foi posíbel cargar o programa: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6153
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6155
 msgid "You cannot attach to Nemiver itself"
-msgstr "Non se pode acoplar o Nemiver a si mesmo"
+msgstr "Non é posíbel acoplar o Nemiver a si mesmo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6166
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6168
 msgid "You cannot attach to the underlying debugger engine"
-msgstr "Non se pode acoplar o motor de depuración subxacente"
+msgstr "Non é posíbel acoplar ao motor de depuración subxacente"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6461
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6463
 msgid "Failed to stop the debugger"
 msgstr "Produciuse un erro ao deter a depuración"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6705
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6707
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "O número de liña non é válido: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8318
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -893,7 +895,7 @@ msgstr "Seleccionar un cartafol"
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
 msgid "Source Directories"
-msgstr "Cartafoles de ficheiros fonte"
+msgstr "Directorios de código fonte"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
 msgid "User Name"
@@ -957,11 +959,11 @@ msgstr "Fóra do ámbito das expresións"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
 msgid "Remove"
-msgstr "Quitar"
+msgstr "Retirar"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
 msgid "Remove selected expressions from the monitor"
-msgstr "Quitar do monitor as expresións seleccionadas"
+msgstr "Retirar do monitor as expresións seleccionadas"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
 msgid "New..."
@@ -1094,7 +1096,7 @@ msgstr "Números de liña"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
 msgid "Use launch terminal"
-msgstr "Usar terminal de lanzamento"
+msgstr "Usar terminal de inicio"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "Terminal"
@@ -1243,7 +1245,7 @@ msgstr "Seleccionar un programa para executar"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
 msgid "Choose an Executable"
-msgstr "Seleccione un ficheiro exsecutábel"
+msgstr "Seleccione un executábel"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "Program:"
@@ -1267,11 +1269,11 @@ msgstr "_Engadir"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
 msgid "_Remove"
-msgstr "_Eliminar"
+msgstr "_Retirar"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
 msgid "Environment Variables:"
-msgstr "Variábeis do contorno:"
+msgstr "Variábeis do ambiente:"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
@@ -1419,7 +1421,7 @@ msgstr "_Restabelecer"
 
 #: ../src/uicommon/nmv-terminal.cc:188
 msgid "Reset the terminal"
-msgstr "Reiniciar o terminal"
+msgstr "Restaurar o terminal"
 
 #: ../src/uicommon/nmv-ui-utils.cc:91
 msgid "Do not ask me again"
@@ -1432,7 +1434,12 @@ msgstr "Sitio web do proxecto"
 #. Translators: change this to your name, separate multiple names with \n
 #: ../src/workbench/nmv-workbench.cc:295
 msgid "translator-credits"
-msgstr "Fran Dieguez <frandieguez@gnome.org>, 2011."
+msgstr ""
+"Leandro Regueiro <leandro.regueiro@gmail.com>, 2012\n"
+"Fran Dieguez <frandieguez@gnome.org>, 2011, 2012\n"
+"Enrique Estévez Fernández <keko.gl@gmail.com>, 2011\n"
+"Proxecto Trasno - Tradución de software libre ao galego <proxecto@trasno."
+"net>, 1999-2012"
 
 #: ../src/workbench/nmv-workbench.cc:673
 msgid "_File"
