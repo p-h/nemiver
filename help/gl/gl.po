@@ -300,8 +300,8 @@ msgid ""
 "gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
 msgstr ""
 "Para informar dun erro ou facer unha suxestión sobre o <application> Nemiver "
-"</application>, ou sobre esta guía, consulte o <ulink url=\\\"http://www."
-"gnome.org/projects/nemiver/\\\" type=\\\"http\\\"> sitio web do proxecto "
+"</application>, ou sobre esta guía, consulte o <ulink url=\"http://www."
+"gnome.org/projects/nemiver/\" type=\"http\"> sitio web do proxecto "
 "Nemiver</ulink>."
 
 #: C/nemiver.xml:94(para)
