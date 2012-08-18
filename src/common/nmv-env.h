@@ -78,8 +78,6 @@ NEMIVER_API UString build_path_to_menu_file (const UString &a_ui_file_name);
 
 NEMIVER_API UString build_path_to_image_file (const UString &a_image_file_name);
 
-NEMIVER_API UString build_path_to_help_file (const UString &a_file_name);
-
 NEMIVER_API bool build_path_to_executable (const UString &a_exe_name,
                                            UString &a_exe_path);
 

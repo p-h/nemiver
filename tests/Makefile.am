@@ -6,6 +6,7 @@ if AUTOTESTS
 
 #runtestoverloads
 #runtestglobalvariables
+#runtestenv
 
 TESTS=\
 runtestgdbmi runtestunicode \
@@ -15,7 +16,7 @@ runtestwatchpoint runtestderef \
 runtestlocalvarslist runtestcpplexer \
 runtestcppparser runtestvarpathexpr \
 runtestlibtoolwrapperdetection \
-runtestenv runtesttypes runtestdisassemble \
+runtesttypes runtestdisassemble \
 runtestvariableformat runtestprettyprint
 
 else
@@ -155,10 +156,10 @@ runtestlibtoolwrapperdetection_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/langs/libnemivercparser.la \
 $(top_builddir)/src/common/libnemivercommon.la
 
-runtestenv_SOURCES=$(h)/test-env.cc
-runtestenv_LDADD=@NEMIVERCOMMON_LIBS@ \
-@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
-$(top_builddir)/src/common/libnemivercommon.la
+#runtestenv_SOURCES=$(h)/test-env.cc
+#runtestenv_LDADD=@NEMIVERCOMMON_LIBS@ \
+#@BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB@ \
+#$(top_builddir)/src/common/libnemivercommon.la
 
 runtesttypes_SOURCES=$(h)/test-types.cc
 runtesttypes_LDADD=@NEMIVERCOMMON_LIBS@ \

@@ -233,21 +233,9 @@ Workbench::on_quit_menu_item_action ()
 void
 Workbench::on_contents_menu_item_action ()
 {
-    NEMIVER_TRY
-
-    UString help_url = "ghelp:nemiver";
+    UString help_url = "help:" PACKAGE_TARNAME;
     LOG_DD ("launching help url: " << help_url);
-    UString path_to_help =
-        nemiver::common::env::build_path_to_help_file ("nemiver.xml");
-    THROW_IF_FAIL (!path_to_help.empty ());
-    UString cmd_line ("yelp " + path_to_help);
-    LOG_DD ("going to spawn: " << cmd_line);
-    bool is_ok = g_spawn_command_line_async (Glib::locale_from_utf8
-                                             (cmd_line).c_str (), 0);
-    if (!is_ok) {
-        LOG_ERROR ("failed to spawn " << is_ok);
-    }
-    NEMIVER_CATCH
+    gtk_show_uri (NULL, help_url.c_str (), 0, NULL);
 }
 
 void

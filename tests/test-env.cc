@@ -13,27 +13,18 @@ using nemiver::common::UString;
 using nemiver::common::Initializer;
 using boost::unit_test::test_suite;
 namespace env=nemiver::common::env;
-void
-test_build_path_to_help_file ()
-{
-    string nemiver_file ("nemiver.xml");
-    UString path (env::build_path_to_help_file ("nemiver.xml"));
-    BOOST_REQUIRE_MESSAGE (!path.empty (),
-                           "failed build path to " + nemiver_file);
-}
+
 
 test_suite*
-init_unit_test_suite (int argc, char** argv)
+init_unit_test_suite (int, char**)
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     Initializer::do_init ();
 
-    test_suite *suite = BOOST_TEST_SUITE ("nemiver env tests");
-    suite->add (BOOST_TEST_CASE (&test_build_path_to_help_file));
-    return suite;
+    // test_suite *suite = BOOST_TEST_SUITE ("nemiver env tests");
+    // suite->add (BOOST_TEST_CASE (&test_function_to_be_defined));
+    // return suite;
 
     NEMIVER_CATCH_NOX
 
