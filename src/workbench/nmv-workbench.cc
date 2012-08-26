@@ -727,7 +727,7 @@ Workbench::init_actions ()
 
        ui_utils::add_action_entries_to_action_group
            (s_default_action_entries,
-            G_N_ELEMENTS (s_default_action_entries);
+            G_N_ELEMENTS (s_default_action_entries),
             m_priv->default_action_group);
 
     get_ui_manager ()->insert_action_group (m_priv->default_action_group);
