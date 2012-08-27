@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-07 13:43+0800\n"
-"PO-Revision-Date: 2012-08-07 13:44+0800\n"
-"Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
+"POT-Creation-Date: 2012-08-27 18:26+0800\n"
+"PO-Revision-Date: 2012-08-27 18:26+0800\n"
+"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
@@ -80,18 +80,21 @@ msgid "Connect to remote target specified by HOST:PORT"
 msgstr "連線到以 HOST:PORT 指定的遠端目標"
 
 #: ../src/main.cc:170
+#, fuzzy
 msgid ""
 "Where to look for shared libraries loaded by the inferior. Use in "
 "conjunction with --remote"
-msgstr ""
+msgstr "要查詢 inferior 載入的共享函式庫之處。使用時請連帶附上 --remote"
 
 #: ../src/main.cc:180
+#, fuzzy
 msgid "Set the path of the GDB binary to use to debug the inferior"
-msgstr ""
+msgstr "設定 GDB 二元檔要除錯 inferior 用的路徑"
 
 #: ../src/main.cc:189
+#, fuzzy
 msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
-msgstr ""
+msgstr "不要在 'main' 中設定中斷點，且不要執行 inferior"
 
 #: ../src/main.cc:198
 msgid "Show the version number of Nemiver"
@@ -101,7 +104,7 @@ msgstr "顯示 Nemiver 的版本號碼"
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<prog-to-debug> [prog-args]]"
 
-#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:263
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "GNOME 的 C/C++ 除錯器"
 
@@ -233,7 +236,7 @@ msgstr "位置"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Binary"
-msgstr "二進位"
+msgstr "二元檔"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:762
 #, c-format
@@ -695,47 +698,47 @@ msgstr "尋找(_F)"
 msgid "Find a text string in file"
 msgstr "在檔案中尋找文字字串"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3939
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3915
 #, c-format
 msgid "Close %s"
 msgstr "關閉 %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5897
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "很抱歉，無法重新啟動遠端 inferior"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6020
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
 #, c-format
 msgid "Could not find file %s"
 msgstr "找不到檔案 %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6084
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6226
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6261
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6060
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6202
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6237
 #, c-format
 msgid "Could not load program: %s"
 msgstr "無法載入程式：%s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6155
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6131
 msgid "You cannot attach to Nemiver itself"
 msgstr "你無法附加 Nemiver 到它自己身上"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6168
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "你不能附加到底層的除錯誤擎"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6463
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6439
 msgid "Failed to stop the debugger"
 msgstr "無法停止除錯器"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6707
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6683
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "無效的列號：%i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8318
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -913,17 +916,17 @@ msgstr "捕捉例外"
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
 #, fuzzy
 msgid "Fork System Call"
-msgstr "系統函數參數錯誤"
+msgstr "Fork 系統呼叫"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
 #, fuzzy
 msgid "Vfork System Call"
-msgstr "系統函數參數錯誤"
+msgstr "Vfork 系統呼叫"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
 #, fuzzy
 msgid "Exec System Call"
-msgstr "系統函數參數錯誤"
+msgstr "Exec 系統呼叫"
 
 #: ../src/persp/dbgperspective/nmv-thread-list.cc:184
 msgid "Thread ID"
@@ -1144,7 +1147,7 @@ msgstr "GDB 二元檔的路徑"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
 msgid "GDB Binary"
-msgstr "GDB 二進位"
+msgstr "GDB 二元檔"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Number of instructions to disassemble by default"
@@ -1171,8 +1174,9 @@ msgid "Follow child"
 msgstr "跟隨子元件"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+#, fuzzy
 msgid "GDB Follow Fork Mode"
-msgstr ""
+msgstr "GDB 跟隨分支模式"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
 msgid "Debugger"
@@ -1281,7 +1285,7 @@ msgstr "事件(_E)："
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
 msgid "_Binary Location:"
-msgstr "二進位位置(_B)："
+msgstr "二元檔位置(_B)："
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
@@ -1408,48 +1412,50 @@ msgstr "重設終端機"
 msgid "Do not ask me again"
 msgstr "別再問我"
 
-#: ../src/workbench/nmv-workbench.cc:275
+#: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
 msgstr "專案網站"
 
 #. Translators: change this to your name, separate multiple names with \n
-#: ../src/workbench/nmv-workbench.cc:295
+#: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
-msgstr "Cheng-Chia Tseng <pswo10680@gmail.com>, 2012."
+msgstr ""
+"Cheng-Chia Tseng <pswo10680@gmail.com>, 2012.\n"
+"Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>, 2012."
 
-#: ../src/workbench/nmv-workbench.cc:673
+#: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
 msgstr "檔案(_F)"
 
-#: ../src/workbench/nmv-workbench.cc:684
+#: ../src/workbench/nmv-workbench.cc:672
 msgid "_Quit"
 msgstr "退出(_Q)"
 
-#: ../src/workbench/nmv-workbench.cc:685
+#: ../src/workbench/nmv-workbench.cc:673
 msgid "Quit the application"
 msgstr "退出應用程式"
 
-#: ../src/workbench/nmv-workbench.cc:695
+#: ../src/workbench/nmv-workbench.cc:683
 msgid "_Edit"
 msgstr "編輯(_E)"
 
-#: ../src/workbench/nmv-workbench.cc:706
+#: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
 msgstr "求助(_H)"
 
-#: ../src/workbench/nmv-workbench.cc:717
+#: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
 msgstr "關於(_A)"
 
-#: ../src/workbench/nmv-workbench.cc:718
+#: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
 msgstr "顯示有關此應用程式的資訊"
 
-#: ../src/workbench/nmv-workbench.cc:728
+#: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
 msgstr "內容(_C)"
 
-#: ../src/workbench/nmv-workbench.cc:729
+#: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
 msgstr "顯示此應用程式的使用者手冊"
 
