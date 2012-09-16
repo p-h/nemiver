@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: nemiver.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-06-18 12:07+0000\n"
+"POT-Creation-Date: 2012-06-19 14:48+0000\n"
 "PO-Revision-Date: 2012-06-19 16:27+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -201,7 +201,7 @@ msgstr "desconocido"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
 msgid "_Delete"
-msgstr "_Borrar"
+msgstr "_Eliminar"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
 msgid "Remove this breakpoint"
@@ -275,7 +275,6 @@ msgid "Memory"
 msgstr "Memoria"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
-#| msgid "Expression"
 msgid "Expression Monitor"
 msgstr "Monitor de expresiones"
 
@@ -350,7 +349,6 @@ msgid "File %s has been modified. Do you want to reload it?"
 msgstr "El archivo %s se ha modificado. ¿Quiere volver a cargarlo?"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3057
-#| msgid "_Restart"
 msgid "_Run or Restart"
 msgstr "Ejecutar o _reiniciar"
 
@@ -491,12 +489,10 @@ msgid "Step over the next assembly instruction"
 msgstr "Paso sobre la siguiente instrucción de ensamblado"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
-#| msgid "_Continue"
 msgid "_Continue or start"
 msgstr "_Continuar o iniciar"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3242
-#| msgid "Continue program execution until the next breakpoint"
 msgid "Start or continue program execution until the next breakpoint"
 msgstr "Iniciar o continuar la ejecución hasta el siguiente punto de parada"
 
@@ -631,7 +627,6 @@ msgid "Switch to Memory View"
 msgstr "Cambiar a la vista de memoria"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3459
-#| msgid "Switch to Variables View"
 msgid "Switch to Variables Monitor View"
 msgstr "Cambiar a la vista del monitor de variables"
 
@@ -959,7 +954,6 @@ msgid "Variable"
 msgstr "Variable"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
-#| msgid "expression:"
 msgid "In scope expressions"
 msgstr "En las expresiones del alcance"
 
