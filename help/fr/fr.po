@@ -8,33 +8,1520 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-18 15:45+0000\n"
+"POT-Creation-Date: 2012-09-22 07:34+0000\n"
 "PO-Revision-Date: 2010-03-31 16:39+0200\n"
 "Last-Translator: G. Baylard <gerard.b@bbox.fr>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: C/legal.xml:2(para)
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr ""
+"Gérard Baylard, <gerard DOT b AT bbox DOT fr>, 2010\n"
+"Bruno Brouard, <annoa.b@gmail.com>, 2010"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:180(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
+msgstr ""
+"external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:329(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/execute-dialog.png' "
+"md5='450a45378b4021176c8f093be2dedc97'"
+msgstr ""
+"external ref='figures/execute-dialog.png' "
+"md5='450a45378b4021176c8f093be2dedc97'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:394(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/attach-dialog.png' "
+"md5='9940de171b58f92ea810dc4478364976'"
+msgstr ""
+"external ref='figures/attach-dialog.png' "
+"md5='9940de171b58f92ea810dc4478364976'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:440(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/load-core-dialog.png' "
+"md5='2a3dd09883a026826d0a7036991720a4'"
+msgstr ""
+"external ref='figures/load-core-dialog.png' "
+"md5='2a3dd09883a026826d0a7036991720a4'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:471(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/connect-remote-dialog.png' "
+"md5='0f47f358e68947aaf1330fb1c1013f72'"
+msgstr ""
+"external ref='figures/connect-remote-dialog.png' "
+"md5='0f47f358e68947aaf1330fb1c1013f72'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:593(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/variable-inspector.png' "
+"md5='676c2a7985aa4e41f5a77a85bcfd8a27'"
+msgstr ""
+"external ref='figures/variable-inspector.png' "
+"md5='676c2a7985aa4e41f5a77a85bcfd8a27'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:627(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/global-variables-dialog.png' "
+"md5='b3224457732491046fbcea9491df2383'"
+msgstr ""
+"external ref='figures/global-variables-dialog.png' "
+"md5='b3224457732491046fbcea9491df2383'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:667(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/set-breakpoint-dialog.png' "
+"md5='86618670e2f62026adeb38ae033ec38d'"
+msgstr ""
+"external ref='figures/set-breakpoint-dialog.png' "
+"md5='86618670e2f62026adeb38ae033ec38d'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:705(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/enabled-breakpoint.png' "
+"md5='a51237a0756cdb7a754b24b211e40bbb'"
+msgstr ""
+"external ref='figures/enabled-breakpoint.png' "
+"md5='a51237a0756cdb7a754b24b211e40bbb'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:716(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/disabled-breakpoint.png' "
+"md5='b703d696cec0c49810de7f2a85f0ddba'"
+msgstr ""
+"external ref='figures/disabled-breakpoint.png' "
+"md5='b703d696cec0c49810de7f2a85f0ddba'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:739(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/open-files-target.png' "
+"md5='715003a703fc7cc112bea9e58a25f627'"
+msgstr ""
+"external ref='figures/open-files-target.png' "
+"md5='715003a703fc7cc112bea9e58a25f627'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:777(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/registers-view.png' "
+"md5='25b369f4f3f0a42c04ded0f8880435ba'"
+msgstr ""
+"@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:802(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
+msgstr ""
+"external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:863(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/sessions-dialog.png' "
+"md5='d07fd79198e666ca9b21fee3bbb30db4'"
+msgstr ""
+"external ref='figures/sessions-dialog.png' "
+"md5='d07fd79198e666ca9b21fee3bbb30db4'"
+
+#: C/index.docbook:24(articleinfo/title)
+msgid "Nemiver Manual"
+msgstr "Manuel de <application>Nemiver</application>"
+
+#: C/index.docbook:25(articleinfo/copyright)
+msgid "<year>2008</year> <holder>Jonathon Jongsma</holder>"
+msgstr "<year>2008</year> <holder>Jonathon Jongsma</holder>"
+
+#: C/index.docbook:38(publisher/publishername)
+msgid "Nemiver Project"
+msgstr "Projet Nemiver"
+
+#: C/index.docbook:42(authorgroup/author)
+msgid ""
+"<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
+"<orgname>GNOME</orgname> </affiliation>"
+msgstr ""
+"<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
+"<orgname>GNOME</orgname> </affiliation>"
+
+#: C/index.docbook:71(revdescription/para)
+msgid "Initial version"
+msgstr "Version initiale"
+
+#: C/index.docbook:67(revhistory/revision)
+msgid "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
+msgstr "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
+
+#: C/index.docbook:78(revdescription/para)
+msgid "Updated for 0.5.0 Release"
+msgstr "Mise à jour pour la version 0.5.0"
+
+#: C/index.docbook:74(revhistory/revision)
+msgid "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
+msgstr "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
+
+#: C/index.docbook:82(articleinfo/releaseinfo)
+msgid "This manual describes version 0.5.0 of Nemiver."
+msgstr ""
+"Le présent manuel décrit le fonctionnement de la version 0.5.0 de Nemiver."
+
+#: C/index.docbook:85(legalnotice/title)
+msgid "Feedback"
+msgstr "Retours d'informations"
+
+#: C/index.docbook:86(legalnotice/para)
+msgid ""
+"To report a bug or make a suggestion regarding the <application>Nemiver</"
+"application> application or this manual, see the <ulink url=\"http://www."
+"gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
+msgstr ""
+"Pour rapporter un bogue ou pour faire une suggestion concernant "
+"l'application <application>Nemiver</application> ou ce manuel, consultez le "
+"<ulink url=\"http://www.gnome.org/projects/nemiver/\" type=\"http\">site Web "
+"du projet Nemiver</ulink>."
+
+#: C/index.docbook:94(abstract/para)
+msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
+msgstr ""
+"<application>Nemiver</application> est un débogueur avec interface graphique "
+"pour l'environnement de bureau GNOME."
+
+#: C/index.docbook:99(article/indexterm)
+msgid "<primary>Nemiver</primary>"
+msgstr "<primary>Nemiver/<primary>"
+
+#: C/index.docbook:102(article/indexterm)
+msgid "<primary>debugger</primary>"
+msgstr "<primary>débogueur</primary>"
+
+#: C/index.docbook:105(article/indexterm)
+msgid "<primary>gdb</primary>"
+msgstr "<primary>gdb</primary>"
+
+#: C/index.docbook:111(sect1/title)
+msgid "Overview"
+msgstr "Aperçu"
+
+#: C/index.docbook:112(sect1/para)
+msgid ""
+"Nemiver is an ongoing effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr ""
+"<application>Nemiver</application> est une tentative d'écriture d'un "
+"débogueur indépendant avec interface graphique, s'intégrant bien dans "
+"l'environnement de bureau GNOME. Il se fonde sur l'utilisation en arrière-"
+"plan du débogueur GNU bien connu <application>gdb</application> pour "
+"déboguer des programmes en C / C++."
+
+#: C/index.docbook:119(sect2/title)
+msgid "Perspectives"
+msgstr "Perspectives"
+
+#: C/index.docbook:120(sect2/para)
+msgid ""
+"Nemiver is designed as a generic graphical <interface>workbench</interface> "
+"and a plugin system that can offer several different perspectives. Currently "
+"the only perspective provided is a debugging perspective, but in the future, "
+"there may be perspectives added for memory debugging with "
+"<application>valgrind</application>, or for profiling tools such as "
+"<application>oprofile</application>."
+msgstr ""
+"<application>Nemiver</application> est conçu comme une <interface>boîte à "
+"outils</interface> graphique générique et un système de greffons qui ouvrent "
+"diverses perspectives. Actuellement la seule perspective offerte est le "
+"débogage, mais dans le futur, seront ajoutées des perspectives de débogage "
+"mémoire avec <application>valgrind</application> ou de profilage avec des "
+"outils tels que <application>oprofile</application>."
+
+#: C/index.docbook:132(sect1/title)
+msgid "Getting Started"
+msgstr "Premiers pas"
+
+#: C/index.docbook:133(sect1/para)
+msgid ""
+"This section explains how to start Nemiver and gives a basic overview of the "
+"application."
+msgstr ""
+"Ce paragraphe explique comment lancer <application>Nemiver</application> ; "
+"il donne également un aperçu des fondements de l'application."
+
+#: C/index.docbook:138(sect2/title)
+msgid "Starting Nemiver"
+msgstr "Lancement de <application>Nemiver</application>"
+
+#: C/index.docbook:139(sect2/para)
+msgid "You can start Nemiver in the following ways:"
+msgstr ""
+"Vous pouvez lancer <application>Nemiver</application> de la manière "
+"suivante :"
+
+#: C/index.docbook:144(varlistentry/term)
+msgid "<guimenu>Applications</guimenu> menu"
+msgstr "Menu <guimenu>Applications</guimenu>"
+
+#: C/index.docbook:146(listitem/para)
+msgid ""
+"Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver "
+"Debugger</guimenuitem></menuchoice>."
+msgstr ""
+"Choisissez <menuchoice><guisubmenu>Programmation</"
+"guisubmenu><guimenuitem>Débogueur Nemiver</guimenuitem></menuchoice>."
+
+#: C/index.docbook:152(varlistentry/term)
+msgid "Command line"
+msgstr "En ligne de commande"
+
+#: C/index.docbook:154(listitem/para)
+msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
+msgstr ""
+"Saisissez <command>nemiver</command>, puis appuyez sur la touche "
+"<keycap>Entrée</keycap>."
+
+#: C/index.docbook:159(tip/title)
+msgid "Additional Command-line Options"
+msgstr "Options supplémentaires en ligne de commande"
+
+#: C/index.docbook:160(tip/para)
+msgid ""
+"You can find a list of options that can be passed to Nemiver on the command "
+"line by typing <command>nemiver --help-all</command>."
+msgstr ""
+"La liste des options pouvant être passées à <application>Nemiver</"
+"application> en ligne de commande s'affiche en saisissant <command>nemiver --"
+"help-all</command>."
+
+#: C/index.docbook:170(sect2/title)
+msgid "The Nemiver window"
+msgstr "Fenêtre de <application>Nemiver</application>"
+
+#: C/index.docbook:171(sect2/para)
+msgid ""
+"When you start Nemiver, you will see a window that looks very much like the "
+"following:"
+msgstr ""
+"Quand vous lancez <application>Nemiver</application>, une fenêtre "
+"ressemblant beaucoup à la suivante apparaît :"
+
+#: C/index.docbook:176(figure/title)
+msgid "Nemiver Window"
+msgstr "Fenêtre <application>Nemiver</application>"
+
+#: C/index.docbook:178(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Shows Nemiver main window.</phrase> </"
+"textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Fenêtre principale de Nemiver</phrase> "
+"</textobject>"
+
+#: C/index.docbook:188(sect2/para)
+msgid ""
+"The <application>Nemiver</application> window contains the following "
+"elements:"
+msgstr ""
+"La fenêtre <application>Nemiver</application> comporte les éléments "
+"suivants :"
+
+#: C/index.docbook:194(varlistentry/term)
+msgid "Menubar"
+msgstr "Barre de menu"
+
+#: C/index.docbook:196(listitem/para)
+msgid ""
+"The menus on the menubar contain all of the commands you need to use "
+"<application>Nemiver</application>."
+msgstr ""
+"Les menus de la barre de menus comportent la totalité des commandes "
+"nécessaires à l'utilisation de <application>Nemiver</application>."
+
+#: C/index.docbook:203(varlistentry/term)
+msgid "Toolbar"
+msgstr "Barre d'outils"
+
+#: C/index.docbook:205(listitem/para)
+msgid ""
+"The toolbar contains the basic debugging actions that can be used to run or "
+"step through the program being debugged."
+msgstr ""
+"La barre d'outils affiche les actions élémentaires de débogage pour le "
+"lancement ou l'exécution pas à pas du programme à déboguer."
+
+#: C/index.docbook:212(varlistentry/term)
+msgid "Source View Notebook"
+msgstr "Bloc-notes d'affichage du source"
+
+#: C/index.docbook:214(listitem/para)
+msgid ""
+"When source files are open, this area will display source files of the "
+"program being debugged."
+msgstr ""
+"Quand des fichiers source sont ouverts, cette zone sert à l'affichage des "
+"sources du programme en cours de débogage."
+
+#: C/index.docbook:221(varlistentry/term)
+msgid "Status Notebook"
+msgstr "Bloc-notes d'état"
+
+#: C/index.docbook:223(listitem/para)
+msgid ""
+"The Status notebook contains several tabs for displaying information about "
+"the program being debugged. These include the following:"
+msgstr ""
+"Le bloc notes d'état comporte plusieurs onglets pour afficher les "
+"informations relatives au programme en cours de débogage. Ces onglets sont "
+"les suivants :"
+
+#: C/index.docbook:230(varlistentry/term)
+msgid "Call Stack"
+msgstr "Pile d'appel"
+
+#: C/index.docbook:234(listitem/para)
+msgid ""
+"Displays the current state of the call stack of the program being debugged."
+msgstr ""
+"Affiche l'état courant de la pile d'appel du programme en cours de débogage."
+
+#: C/index.docbook:241(varlistentry/term)
+msgid "Variables"
+msgstr "Variables"
+
+#: C/index.docbook:245(listitem/para)
+msgid ""
+"Displays a list of all local variables and function arguments, in addition "
+"to their values and types."
+msgstr ""
+"Affiche une liste de toutes les variables locales et paramètres de fonction, "
+"ainsi que leurs types et leurs valeurs."
+
+#: C/index.docbook:252(varlistentry/term)
+msgid "Target Terminal"
+msgstr "Terminal de la cible"
+
+#: C/index.docbook:256(listitem/para)
+msgid ""
+"If the program being debugged prints any output to the terminal, it will be "
+"displayed in this tab."
+msgstr ""
+"Si le programme en cours de débogage écrit une quelconque sortie sur le "
+"terminal, elle est affichée dans cet onglet."
+
+#: C/index.docbook:263(varlistentry/term)
+msgid "Breakpoints"
+msgstr "Points d'arrêt"
+
+#: C/index.docbook:267(listitem/para)
+msgid ""
+"This tab displays a list of all breakpoints that have been set. You can view "
+"the source code of a particular breakpoint by double-clicking an item in the "
+"list or by right-clicking and selecting <menuchoice><guimenuitem>Go to "
+"Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints "
+"can be deleted, enabled, or disabled in this tab. For more information about "
+"breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
+msgstr ""
+"Cet onglet affiche la liste de tous les points d'arrêt définis. Vous "
+"visualisez le code source d'un point d'arrêt donné en double cliquant sur un "
+"élément de la liste ou bien en choisissant <menuchoice><guimenuitem>Aller "
+"dans le source</guimenuitem></menuchoice> dans le menu contextuel affiché "
+"par un clic droit du bouton de souris. De plus, les points d'arrêt de cet "
+"onglet peuvent être détruits, activés ou désactivés. Pour plus "
+"d'informations concernant les points d'arrêt, consultez la <xref linkend="
+"\"nemiver-sect-breakpoints\"/>."
+
+#: C/index.docbook:280(varlistentry/term) C/index.docbook:766(sect3/title)
+msgid "Registers"
+msgstr "Registres"
+
+#: C/index.docbook:284(listitem/para)
+msgid ""
+"This tab displays all of the CPU registers and their values. For more "
+"information, see <xref linkend=\"nemiver-sect-registers\"/>."
+msgstr ""
+"Cet onglet affiche tous les registres processeur et leurs valeurs. Pour plus "
+"de détails, consultez la <xref linkend=\"nemiver-sect-registers\"/>."
+
+#: C/index.docbook:291(varlistentry/term) C/index.docbook:793(sect3/title)
+msgid "Memory"
+msgstr "Mémoire"
+
+#: C/index.docbook:295(listitem/para)
+msgid ""
+"This tab displays a view of the current state of a specific memory location. "
+"For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
+msgstr ""
+"Cet onglet donne l'état présent d'une zone de mémoire donnée. Pour plus "
+"d'informations, consultez la <xref linkend=\"nemiver-sect-memory\"/>."
+
+#: C/index.docbook:307(sect2/title)
+msgid "Choosing a Program to Debug"
+msgstr "Choix d'un programme à déboguer"
+
+#: C/index.docbook:308(sect2/para)
+msgid ""
+"There are several ways to begin debugging a program. Nemiver allows you to "
+"load a local executable file, load a core file, attach to a running process, "
+"or connect to a remote debugging server."
+msgstr ""
+"Il y a plusieurs manières de débuter le débogage d'un programme. "
+"<application>Nemiver</application> permet le chargement d'un exécutable "
+"local, d'un fichier « core », la connexion à un processus en cours ou à un "
+"serveur de débogage distant."
+
+#: C/index.docbook:313(sect3/title)
+msgid "Debugging an Executable Program"
+msgstr "Débogage d'un exécutable"
+
+#: C/index.docbook:315(sect4/title) C/index.docbook:380(sect4/title)
+#: C/index.docbook:425(sect4/title) C/index.docbook:462(sect4/title)
+#: C/index.docbook:852(sect3/title)
+msgid "Using the Workbench"
+msgstr "Utilisation de la boîte à outils"
+
+#: C/index.docbook:316(sect4/para)
+msgid ""
+"To select an executable program to debug, select <menuchoice><guimenu> File "
+"</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"Pour sélectionner un exécutable à déboguer, choisissez <menuchoice><guimenu> "
+"Fichier </guimenu><guimenuitem> Charger le fichier exécutable... </"
+"guimenuitem></menuchoice> qui affiche la boîte de dialogue suivante :"
+
+#: C/index.docbook:325(figure/title)
+msgid "Execute Dialog"
+msgstr "Boîte de dialogue pour exécutable"
+
+#: C/index.docbook:327(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for selecting an "
+"executable to run</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Boîte de dialogue pour sélectionner "
+"un exécutable à lancer</phrase> </textobject>"
+
+#: C/index.docbook:337(sect4/para)
+msgid ""
+"In this dialog, you can select the program to be debugged, any arguments or "
+"options to be passed to the executable on the command line, the working "
+"directory to run the executable in, and any Environment Variables that "
+"should be set when the executable is being debugged."
+msgstr ""
+"Dans cette boîte de dialogue, vous pouvez sélectionner le programme à "
+"déboguer, tous paramètres ou toutes options à transmettre à l'exécutable via "
+"sa ligne de commande, le répertoire de travail dans lequel l'exécutable sera "
+"lancé et l'ensemble des variables d'environnement à définir lors du débogage."
+
+#: C/index.docbook:345(sect4/title) C/index.docbook:411(sect4/title)
+#: C/index.docbook:450(sect4/title) C/index.docbook:485(sect4/title)
+msgid "Using the Command Line"
+msgstr "Utilisation de la ligne de commande"
+
+#: C/index.docbook:346(sect4/para)
+msgid ""
+"To start an executable program to debug from the command line, simply "
+"specify the name of the executable. You can either give an absolute path to "
+"the executable, or if it is in the path, you can simply give the basename of "
+"the executable. For example, if <filename>/usr/bin</filename> is in your "
+"path, both of the following are valid:"
+msgstr ""
+"Pour lancer un exécutable à déboguer à partir de la ligne de commande, "
+"indiquez simplement le nom de l'exécutable. Précisez, soit le chemin complet "
+"vers l'exécutable, soit uniquement son nom de base si vous vous trouvez dans "
+"son répertoire. Par exemple, si votre chemin est <filename>/usr/bin</"
+"filename>, les deux syntaxes suivantes sont équivalentes :"
+
+#: C/index.docbook:356(listitem/para)
+msgid "<command>nemiver /usr/bin/progname</command>"
+msgstr "<command>nemiver /usr/bin/nomprog</command>"
+
+#: C/index.docbook:361(listitem/para)
+msgid "<command>nemiver progname</command>"
+msgstr "<command>nemiver nomprog</command>"
+
+#: C/index.docbook:367(tip/title)
+msgid "Passing Options on the Command Line"
+msgstr "Passage d'options par la ligne de commande"
+
+#: C/index.docbook:368(tip/para)
+msgid ""
+"If you would like to pass command line options to the program that you are "
+"debugging, you should enclose them in quotes to prevent Nemiver from "
+"processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
+msgstr ""
+"Si vous voulez transmettre au programme à déboguer des options via la ligne "
+"de commande, vous devez les saisir entre guillemets pour prévenir une "
+"interprétation immédiate par <application>Nemiver</application> : "
+"<command>nemiver \"nomprog --arg1 --arg2\"</command>."
+
+#: C/index.docbook:378(sect3/title)
+msgid "Attaching to a Running Program"
+msgstr "Connexion à un programme en cours d'exécution"
+
+#: C/index.docbook:381(sect4/para)
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> "
+"Attach to Running Program... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"Choisissez l'élément de menu <menuchoice><guimenu> Fichier </"
+"guimenu><guimenuitem> Se connecter à un processus en cours... </"
+"guimenuitem></menuchoice> qui affiche la boîte de dialogue suivante :"
+
+#: C/index.docbook:390(figure/title)
+msgid "Attach Dialog"
+msgstr "Boîte de dialogue de connexion"
+
+#: C/index.docbook:392(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for attaching to a "
+"running program</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Boîte de dialogue pour se connecter "
+"à un programme en cours d'exécution</phrase> </textobject>"
+
+#: C/index.docbook:402(sect4/para)
+msgid ""
+"Select a process from the list and click <guibutton>OK</guibutton> to start "
+"debugging the selected program. There may be a lot of processes listed in "
+"the dialog, so you can filter the list to only ones that that you are "
+"interested in by typing some text into the text entry located just below the "
+"list."
+msgstr ""
+"Choisissez un processus dans la liste et cliquez sur <guibutton>Valider</"
+"guibutton> pour débuter le débogage du programme choisi. La liste affichée "
+"dans la boîte de dialogue peut comporter de très nombreux d'éléments, vous "
+"pouvez filtrer ceux qui vous intéressent en saisissant du texte dans le "
+"contrôle de saisie situé immédiatement sous la liste."
+
+#: C/index.docbook:412(sect4/para)
+msgid ""
+"To attach to a running program from the command line, use the <option>--"
+"attach</option> option. The <option>--attach</option> option accepts either "
+"a pid or a process name. So, for example, to debug the running process "
+"<command>foo</command> which has a pid of 1121, you could either type "
+"<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
+"command>."
+msgstr ""
+"Pour se connecter à un processus en cours à partir de la ligne de commande, "
+"servez-vous de l'option <option>--attach</option>. Elle accepte, soit le "
+"numéro d'identification du processus (pid), soit son nom. Ainsi, par "
+"exemple, pour déboguer le processus en cours <command>foo</command> "
+"possédant le numéro 1121, vous saisissez soit <command>nemiver --attach foo</"
+"command>, soit <command>nemiver --attach 1121</command>."
+
+#: C/index.docbook:423(sect3/title)
+msgid "Loading a Core File"
+msgstr "Chargement d'un fichier « core »"
+
+#: C/index.docbook:426(sect4/para)
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load "
+"Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
+"which will let you load a core file:"
+msgstr ""
+"Choisissez l'élément de menu <menuchoice><guimenu> Fichier </"
+"guimenu><guimenuitem> Charger un fichier core... </guimenuitem></menuchoice> "
+"pour faire apparaître la boîte de dialogue suivante qui vous permet de "
+"charger un fichier core :"
+
+#: C/index.docbook:436(figure/title)
+msgid "Load Core File Dialog"
+msgstr "Boîte de dialogue de chargement d'un fichier core"
+
+#: C/index.docbook:438(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for loading a "
+"core file</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Boîte de dialogue pour le "
+"chargement d'un fichier core.</phrase> </textobject>"
+
+#: C/index.docbook:451(sect4/para)
+msgid "Core files cannot be loaded from the command line."
+msgstr ""
+"Les fichiers core ne peuvent pas être chargés à partir de la ligne de "
+"commande."
+
+#: C/index.docbook:457(sect3/title)
+msgid "Remote Debugging"
+msgstr "Débogage distant"
+
+#: C/index.docbook:458(sect3/para)
+msgid "Nemiver allows you to connect to a remote debugging server."
+msgstr ""
+"<application>Nemiver</application> permet une connexion pour un débogage sur "
+"un serveur distant."
+
+#: C/index.docbook:463(sect4/para)
+msgid ""
+"To connect to a remote debugging server, select <menuchoice><guimenu>File</"
+"guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
+msgstr ""
+"Pour se connecter à un serveur distant en vue d'un débogage, choisissez "
+"<menuchoice><guimenu>Fichier</guimenu><guimenuitem>Se connecter à une cible "
+"distante...</guimenuitem></menuchoice>"
+
+#: C/index.docbook:469(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Remote Debugging "
+"Dialog</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Boîte de dialogue pour "
+"débogage à distance</phrase> </textobject>"
+
+#: C/index.docbook:478(sect4/para)
+msgid ""
+"Select the executable to load and the location where any shared libraries "
+"are located, and then fill in the details about connecting to the remote "
+"server."
+msgstr ""
+"Choisissez l'exécutable à charger et indiquez l'endroit où se trouvent les "
+"bibliothèques partagées. Saisissez ensuite les informations détaillées pour "
+"vous connecter à distance."
+
+#: C/index.docbook:486(sect4/para)
+msgid ""
+"Nemiver does not provide a way to connect to a remote server using the "
+"command line"
+msgstr ""
+"<application>Nemiver</application> ne dispose d'aucun moyen pour se "
+"connecter à un serveur distant à partir de la ligne de commande"
+
+#: C/index.docbook:495(sect1/title)
+msgid "Using Nemiver"
+msgstr "Utilisation de <application>Nemiver</application>"
+
+#: C/index.docbook:496(sect1/para)
+msgid "This section describes how to use Nemiver to debug your application."
+msgstr ""
+"Ce paragraphe décrit comment utiliser <application>Nemiver</application> "
+"pour déboguer une application."
+
+#: C/index.docbook:500(sect2/title)
+msgid "Basic Debugging Actions"
+msgstr "Actions élémentaires de débogage"
+
+#: C/index.docbook:501(sect2/para)
+msgid ""
+"The basic debugging actions are available on the main toolbar, in the "
+"<guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common "
+"actions are listed below:"
+msgstr ""
+"Les actions élémentaires de débogage sont accessibles soit à partir de la "
+"barre d'outils principale, soit à l'aide du menu <guimenu>Déboguer</"
+"guimenu>, soit avec des raccourcis clavier. Les actions les plus courantes "
+"sont listées ci-après :"
+
+#: C/index.docbook:508(varlistentry/term)
+msgid "Continue"
+msgstr "Continuer"
+
+#: C/index.docbook:510(listitem/para)
+msgid ""
+"Starts the program. The program will run until it hits a breakpoint or until "
+"the program ends, unless it is interrupted manually by the user by clicking "
+"<action>Stop</action>. This action can be activated from the keyboard with "
+"<keycap>F5</keycap>."
+msgstr ""
+"Démarre le programme. L'exécution se poursuit jusqu'à la rencontre d'un "
+"point d'arrêt ou jusqu'à la fin du programme. Vous pouvez l'interrompre « à "
+"la main » en cliquant sur le bouton <action>Arrêter</action>. Le démarrage "
+"peut être activé en appuyant sur la touche <keycap>F5</keycap>."
+
+#: C/index.docbook:520(varlistentry/term)
+msgid "Next"
+msgstr "Suivante"
+
+#: C/index.docbook:522(listitem/para)
+msgid ""
+"Executes the next statement, and stops when it reaches the next line in this "
+"file. Some debuggers may call this action \"Step Over\". This action can be "
+"activated from the keyboard with <keycap>F6</keycap>."
+msgstr ""
+"Exécute l'instruction suivante et s'arrête sur la ligne immédiatement après "
+"dans le fichier. Certains débogueurs appellent cette action « Avancer ». "
+"Elle peut être activée en appuyant sur la touche <keycap>F6</keycap>."
+
+#: C/index.docbook:531(varlistentry/term)
+msgid "Step"
+msgstr "Pas à pas"
+
+#: C/index.docbook:533(listitem/para)
+msgid ""
+"Executes the next statement, stepping into the function if possible. Some "
+"debuggers may call this action \"Step In\". This action can be activated "
+"from the keyboard with <keycap>F7</keycap>."
+msgstr ""
+"Exécute l'instruction suivante en entrant dans la fonction si c'est "
+"possible. Certains débogueurs appellent cette action « Entrer ». Elle peut "
+"être activée en appuyant sur la touche <keycap>F7</keycap>."
+
+#: C/index.docbook:541(varlistentry/term)
+msgid "Step Out"
+msgstr "Sortir"
+
+#: C/index.docbook:543(listitem/para)
+msgid ""
+"Finishes execution of the current function and stops when it returns to the "
+"calling function. This action can be activated from the keyboard with "
+"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
+msgstr ""
+"Termine l'exécution de la fonction en cours et s'arrête au point de retour "
+"de son appel. Cette action peut être activée en appuyant sur les touches "
+"<keycombo><keycap>Maj</keycap><keycap>F7</keycap></keycombo>."
+
+#: C/index.docbook:552(varlistentry/term)
+msgid "Restart"
+msgstr "Redémarrer"
+
+#: C/index.docbook:554(listitem/para)
+msgid ""
+"Reloads the current executable and starts execution from the beginning. This "
+"action can be activated from the keyboard with <keycombo><keycap>Shift</"
+"keycap><keycap>F5</keycap></keycombo>."
+msgstr ""
+"Recharge l'exécutable en cours de traitement et redémarre son exécution "
+"depuis le début. Cette action peut être activée en appuyant sur les touches "
+"<keycombo><keycap>Maj</keycap><keycap>F5</keycap></keycombo>."
+
+#: C/index.docbook:562(varlistentry/term)
+msgid "Stop"
+msgstr "Arrêter"
+
+#: C/index.docbook:564(listitem/para)
+msgid ""
+"Manually interrupt execution of the program. This action is only available "
+"when the debugger is running the executable (e.g. after a user has clicked "
+"<action>Continue</action>). This action can be activated from the keyboard "
+"with <keycap>F9</keycap>."
+msgstr ""
+"Arrête manuellement le déroulement du programme. Cette action n'est "
+"disponible que lorsque le débogueur est en train de déboguer l'exécutable "
+"(c'est-à-dire après que l'utilisateur a cliqué sur <action>Continuer</"
+"action>). Cette action peut être activée en appuyant sur la touche "
+"<keycap>F9</keycap>."
+
+#: C/index.docbook:573(sect2/para)
+msgid ""
+"By default, after loading an executable, Nemiver creates a breakpoint at "
+"<function>main()</function>, so when execution reaches <function>main()</"
+"function>, it will stop and wait for input. You can then step through the "
+"program, examine variables (see <xref linkend=\"nemiver-sect-inspecting-"
+"variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-"
+"sect-breakpoints\"/>)."
+msgstr ""
+"Par défaut, après avoir chargé un exécutable, <application>Nemiver</"
+"application> crée un point d'arrêt à l'entrée de la fonction <function>main()"
+"</function>. Ainsi dès que l'exécution atteint ce point, elle s'arrête et "
+"attend une commande. Vous pouvez ensuite parcourir pas à pas le programme, "
+"examiner les variables (consultez la <xref linkend=\"nemiver-sect-inspecting-"
+"variables\"/>) ou ajouter des points d'arrêt supplémentaires (consultez la "
+"<xref linkend=\"nemiver-sect-breakpoints\"/>)."
+
+#: C/index.docbook:582(sect2/title)
+msgid "Inspecting Variables"
+msgstr "Examen des variables"
+
+#: C/index.docbook:583(sect2/para)
+msgid ""
+"Nemiver displays a list of all local variables in the <interface>Variables</"
+"interface> tab of the <interface>Status Notebook</interface>. If you'd like "
+"to examine a different variable (or even an arbitrary expression), you can "
+"use the <interface>Variable Inspector</interface>. To bring up the "
+"<interface>Variable Inspector</interface>, select "
+"<menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</"
+"guimenuitem></menuchoice>. When the variable inspector comes up, you'll see "
+"a window that looks similar to the following:"
+msgstr ""
+"<application>Nemiver</application> affiche une liste de toutes les variables "
+"locales dans l'onglet <interface>Variables</interface> du <interface>Bloc-"
+"notes d'état</interface>. Si vous voulez examiner une autre variable (ou "
+"même une expression quelconque), servez-vous de l'élément de menu "
+"<menuchoice><guimenu>Déboguer</guimenu><guimenuitem>Examiner une variable</"
+"guimenuitem></menuchoice> qui fait apparaître une fenêtre semblable à celle-"
+"ci :"
+
+#: C/index.docbook:591(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Variable Inspector Dialog</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Boîte de dialogue d'examen de "
+"variables</phrase> </textobject>"
+
+#: C/index.docbook:600(sect2/para)
+msgid ""
+"You can type any variable name or a simple expression (such as <literal>pFoo-"
+"&gt;bar</literal>) into the input box, and if the variable is valid and in "
+"scope, it will be display details about that expression."
+msgstr ""
+"Vous pouvez indiquer dans le contrôle de saisie tout nom de variable ou "
+"toute expression simple (comme <literal>pFoo-&gt;bar</literal>). Si cette "
+"variable est valide et à portée de vue, des informations détaillées la "
+"concernant seront affichées."
+
+#: C/index.docbook:605(sect2/para)
+msgid ""
+"Alternately, if you select the name of a variable in the <interface>source "
+"editor</interface>, and then launch the <interface>Variable Inspector</"
+"interface>, it will attempt to display information about the selected "
+"variable name."
+msgstr ""
+"D'une autre façon, si vous sélectionnez un nom de variable dans la fenêtre "
+"d'<interface>édition des sources</interface> puis faites apparaître la boîte "
+"de dialogue <interface>Examiner une variable</interface>, Nemiver essaie "
+"d'afficher des informations concernant cette variable."
+
+#: C/index.docbook:612(tip/title)
+msgid "Keyboard Shortcut"
+msgstr "Raccourci clavier"
+
+#: C/index.docbook:613(tip/para)
+msgid ""
+"You can also start the <interface>Variable Inspector</interface> by pressing "
+"<keycap>F12</keycap>."
+msgstr ""
+"Vous ferez également apparaître la fenêtre <interface>Examiner une variable</"
+"interface> en appuyant sur la touche <keycap>F12</keycap>."
+
+#: C/index.docbook:618(sect2/para)
+msgid ""
+"Nemiver will also let you display a list of all global variables in an "
+"application in a separate dialog. To display the <interface>Global "
+"Variables</interface> dialog, select <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
+"press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
+msgstr ""
+"<application>Nemiver</application> vous permet également d'afficher la liste "
+"de toutes les variables globales d'une application dans une boîte de "
+"dialogue séparée. Pour faire apparaître la fenêtre <interface>Variables "
+"globales</interface>, choisissez l'élément de menu "
+"<menuchoice><guimenu>Déboguer</guimenu><guimenuitem>Afficher les variables "
+"globales</guimenuitem></menuchoice> ou bien pressez <keycombo><keycap>Ctrl</"
+"keycap><keycap>G</keycap></keycombo>."
+
+#: C/index.docbook:625(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Global Variables "
+"Dialog</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Boîte de dialogue des "
+"variables globales</phrase> </textobject>"
+
+#: C/index.docbook:635(warning/para)
+msgid ""
+"For some programs (especially C++ programs), listing all of the global "
+"variables may take a very long time."
+msgstr ""
+"Pour certains programmes (plus spécialement les programmes en C++), "
+"l'affichage de la totalité des variables globales peut prendre beaucoup de "
+"temps."
+
+#: C/index.docbook:642(sect2/title)
+msgid "Setting Breakpoints"
+msgstr "Définition des points d'arrêt"
+
+#: C/index.docbook:643(sect2/para)
+msgid ""
+"There are several different ways to set breakpoints in Nemiver. Nemiver "
+"automatically sets a breakpoint at <function>main()</function> when you "
+"first begin debugging a new executable. If you want to set additional "
+"breakpoints you can do one of the following:"
+msgstr ""
+"Il y a plusieurs méthodes pour définir des points d'arrêt dans "
+"<application>Nemiver</application>. <application>Nemiver</application> "
+"définit automatiquement un point d'arrêt à l'entrée de la fonction "
+"<function>main()</function> quand vous débutez le débogage d'un exécutable. "
+"Si vous voulez définir d'autres points d'arrêt, utilisez un des moyens ci-"
+"après :"
+
+#: C/index.docbook:651(listitem/para)
+msgid ""
+"Click in the margin next to the line where you want the breakpoint to be set"
+msgstr ""
+"Cliquez dans la marge de la ligne sur laquelle vous voulez placer un point "
+"d'arrêt."
+
+#: C/index.docbook:655(listitem/para)
+msgid ""
+"Place your cursor on a line where you want the breakpoint to be set and set "
+"the breakpoint by either selecting <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
+"or by pressing <keycap>F8</keycap>"
+msgstr ""
+"Placez le curseur dans la ligne où vous voulez placer le point d'arrêt et "
+"définissez-le, soit via l'élément de menu <menuchoice><guimenu>Déboguer</"
+"guimenu><guimenuitem>Définir un point d'arrêt</guimenuitem></menuchoice>, "
+"soit en appuyant sur la touche <keycap>F8</keycap>."
+
+#: C/index.docbook:660(listitem/para)
+msgid ""
+"Set a breakpoint at a specific function name or at a specific location in a "
+"file by selecting <menuchoice><guimenu>Debug</guimenu><guimenuitem>Set "
+"Breakpoint...</guimenuitem></menuchoice> or by pressing "
+"<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will "
+"bring up a dialog that looks like the following:"
+msgstr ""
+"Définissez un point d'arrêt en entrée d'une fonction particulière ou à un "
+"emplacement donné d'un fichier à l'aide du menu "
+"<menuchoice><guimenu>Déboguer</guimenu><guimenuitem>Définir un point "
+"d'arrêt...</guimenuitem></menuchoice> ou bien en pressant "
+"<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. Cela fait "
+"apparaître une boîte de dialogue du type :"
+
+#: C/index.docbook:665(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/set-breakpoint-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Set Breakpoint Dialog</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/set-breakpoint-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Boîte de dialogue de "
+"définition d'un point d'arrêt</phrase> </textobject>"
+
+#: C/index.docbook:674(listitem/para)
+msgid ""
+"You can specify a breakpoint at a particular location in a file, or by "
+"function name. If there are more than one function with the same name, "
+"Nemiver will display a list of all matching functions and ask you to pick "
+"the one you want."
+msgstr ""
+"Vous pouvez définir un point d'arrêt à un emplacement particulier du fichier "
+"ou bien via le nom d'une fonction. S'il y a plusieurs fonctions portant ce "
+"nom, <application>Nemiver</application> en affiche la liste et vous demande "
+"de choisir celle que vous souhaitez."
+
+#: C/index.docbook:683(sect3/title)
+msgid "Disabled Breakpoints"
+msgstr "Désactivation de points d'arrêt"
+
+#: C/index.docbook:684(sect3/para)
+msgid ""
+"Breakpoints can be either enabled or disabled. The debugger will stop "
+"execution whenever it reaches an enabled breakpoint but will not be affected "
+"by any breakpoints in the disabled state. This allows you to temporarily "
+"remove a breakpoint without actually deleting it."
+msgstr ""
+"Les points d'arrêt peuvent être, soit activés, soit désactivés. Le débogueur "
+"arrête l'exécution quand il atteint un point d'arrêt activé mais il ignore "
+"tous ceux qui sont dans l'état désactivé. Cette fonctionnalité permet "
+"d'enlever un point d'arrêt sans réellement le détruire."
+
+#: C/index.docbook:690(sect3/para)
+msgid ""
+"To disable or enable a breakpoint, click the checkbox next to the breakpoint "
+"number you want to enable or disable in the <interface>Breakpoints</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> "
+"to enable or disable a breakpoint that is set on the line that the cursor is "
+"currently on."
+msgstr ""
+"Pour activer ou désactiver un point d'arrêt, cliquez sur la case à cocher à "
+"côté du numéro du point d'arrêt dans l'onglet <interface>Points d'arrêt</"
+"interface> du <interface>Bloc notes d'état</interface>. Autrement, pressez "
+"<keycombo><keycap>Maj</keycap><keycap>F8</keycap></keycombo> pour activer ou "
+"désactiver le point d'arrêt situé dans la ligne de code possédant le curseur."
+
+#: C/index.docbook:698(sect3/para)
+msgid ""
+"The following figures show the difference between enabled and disabled "
+"breakpoints in the source editor."
+msgstr ""
+"Les figures suivantes montrent la différence de représentation entre des "
+"points d'arrêt activés ou désactivés dans l'éditeur de sources."
+
+#: C/index.docbook:710(caption/para)
+msgid "Enabled Breakpoint"
+msgstr "Point d'arrêt activé"
+
+#: C/index.docbook:703(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/enabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of an enabled "
+"breakpoint</phrase> </textobject> <_:caption-1/>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/enabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration d'un point "
+"d'arrêt activé</phrase> </textobject> <_:caption-1/>"
+
+#: C/index.docbook:721(caption/para)
+msgid "Disabled Breakpoint"
+msgstr "Point d'arrêt désactivé"
+
+#: C/index.docbook:714(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/disabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of a disabled "
+"breakpoint</phrase> </textobject> <_:caption-1/>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/disabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration d'un point "
+"d'arrêt désactivé</phrase> </textobject> <_:caption-1/>"
+
+#: C/index.docbook:726(sect3/title)
+msgid "Opening Source Files"
+msgstr "Ouverture des fichiers source"
+
+#: C/index.docbook:727(sect3/para)
+msgid ""
+"Sometimes you don't know exactly the function name or line number where you "
+"want a breakpoint to be set, so you must open a source file to figure it "
+"out. You could just open arbitrary files from the filesystem, but Nemiver "
+"can also provide a list of source files that were used to build the "
+"executable and allow you to select from this list. When you select "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</"
+"guimenuitem></menuchoice>, the following window should be displayed:"
+msgstr ""
+"Parfois, vous ne savez pas déterminer exactement le nom de la fonction ou le "
+"numéro de ligne à l'aplomb de laquelle placer un point d'arrêt. Il faut "
+"alors ouvrir le fichier source pour situer le point d'arrêt. Vous pouvez "
+"ouvrir arbitrairement des fichiers dans le système de fichiers, mais "
+"<application>Nemiver</application> fournit une liste des fichiers utilisés "
+"pour construire l'exécutable et vous permet d'en sélectionner un parmi ceux-"
+"ci. Si vous choisissez <menuchoice><guimenu>Fichier</"
+"guimenu><guimenuitem>Ouvrir un fichier source...</guimenuitem></menuchoice>, "
+"la fenêtre suivante est affichée :"
+
+#: C/index.docbook:737(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/open-files-target.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for opening "
+"source files</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/open-files-target.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Boîte de dialogue pour ouvrir "
+"des fichiers source</phrase> </textobject>"
+
+#: C/index.docbook:746(sect3/para)
+msgid ""
+"To select an arbitrary file from the filesystem, choose the <guilabel>Select "
+"from Filesystem</guilabel> option. To select from a list of files that "
+"produced the executable, choose <guilabel>Select from Target Executable</"
+"guilabel>."
+msgstr ""
+"Pour choisir un fichier arbitrairement dans le système de fichier, cliquez "
+"sur l'option <guilabel>Sélectionnez depuis le système de fichiers</"
+"guilabel>. Pour choisir parmi les fichiers ayant servis à créer "
+"l'exécutable, cliquez sur <guilabel>Sélectionnez depuis l'exécutable cible</"
+"guilabel>."
+
+#: C/index.docbook:753(warning/title)
+msgid "Determining Source Files for Dynamically Loaded Modules"
+msgstr "Détermination des fichiers source des modules chargés dynamiquement"
+
+#: C/index.docbook:754(warning/para)
+msgid ""
+"If the target executable loads modules at runtime (e.g. using "
+"<function>dlopen()</function>), Nemiver will not be able to determine which "
+"files were used to build these modules until they are actually loaded."
+msgstr ""
+"Si l'exécutable cible charge des modules en cours d'exécution (par exemple, "
+"avec <function>dlopen()</function>), <application>Nemiver</application> ne "
+"sera pas capable de déterminer quels ont été les fichiers utilisés pour "
+"construire ces modules avant qu'ils n'aient été effectivement chargés."
+
+#: C/index.docbook:764(sect2/title)
+msgid "Advanced Debugging"
+msgstr "Débogage avancé"
+
+#: C/index.docbook:767(sect3/para)
+msgid ""
+"The register editing widget is located in the <interface>Registers</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> "
+"to jump directly to the correct tab."
+msgstr ""
+"L'élément graphique d'édition des registres est situé dans l'onglet "
+"<interface>Registres</interface> du <interface>Bloc notes d'état</"
+"interface>. Pour aller directement dans cet onglet, pressez "
+"<keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo>."
+
+#: C/index.docbook:775(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/registers-view.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>The Register Editing Widget</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/registers-view.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>L'élément graphique d'édition des "
+"registres</phrase> </textobject>"
+
+#: C/index.docbook:784(sect3/para)
+msgid ""
+"This widget shows the current values of all of the CPU registers. You can "
+"edit the register values by clicking in the <interface>Value</interface> "
+"column and entering a new value. If the value for the register changed since "
+"the last time the debugger stopped, it will be highlighted in red."
+msgstr ""
+"Cet élément graphique affiche les valeurs actuelles de tous les registres du "
+"processeur. Vous pouvez modifier les valeurs en cliquant dans la colonne "
+"<interface>Valeur</interface> et en saisissant une nouvelle valeur. Si la "
+"valeur du registre a été modifiée depuis le précédent arrêt du débogueur, "
+"elle est mise en évidence en rouge."
+
+#: C/index.docbook:794(sect3/para)
+msgid ""
+"The memory widget allows you to view a section of memory directly. This "
+"enables you to get a lower-level view of what's happening while your program "
+"is running."
+msgstr ""
+"L'élément graphique mémoire permet d'afficher directement une partie de la "
+"mémoire, offrant ainsi une vue au plus bas niveau de ce qui se passe lors du "
+"déroulement du programme."
+
+#: C/index.docbook:800(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/memory-view.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>The Memory Editing Widget</phrase> </"
+"textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/memory-view.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>L'élément graphique d'édition mémoire</"
+"phrase> </textobject>"
+
+#: C/index.docbook:809(sect3/para)
+msgid ""
+"To display a segment of memory in the memory view widget, enter a memory "
+"address in the <interface>Address</interface> field. If the address is valid "
+"for the program being debugged, the memory view will display the memory "
+"values starting at the specified address. Memory values can be displayed in "
+"byte format, word format (2 bytes), or long word format (4 bytes) by "
+"choosing an option from the <interface>Group By</interface> drop-down menu. "
+"The memory values will automatically be updated as you step through the "
+"program."
+msgstr ""
+"Pour afficher une portion de mémoire dans l'élément graphique mémoire, "
+"saisissez une adresse mémoire dans le champ <interface>Adresse</interface>. "
+"Si l'adresse est valide par rapport au programme en cours de débogage, une "
+"vue de la mémoire, débutant à l'adresse indiquée, est affichée. Les valeurs "
+"mémoire sont affichées sous les formats octet, mot (2 octets) ou mot long (4 "
+"octets) selon le choix opéré avec le menu déroulant <interface>Regrouper "
+"par</interface>. Les valeurs de la mémoire sont automatiquement mises à jour "
+"au fur et à mesure que vous avancez pas à pas dans le programme."
+
+#: C/index.docbook:820(sect3/para)
+msgid ""
+"In addition to viewing the memory values, you can also use the memory widget "
+"to modify memory values. You can edit either the hex byte representation "
+"(the left-hand section of the memory widget), or the ASCII representation "
+"(the right-hand section of the memory widget). All changes will be applied "
+"immediately."
+msgstr ""
+"Outre l'affichage des valeurs en mémoire, cet élément graphique peut servir "
+"à les modifier. Vous pouvez modifier, soit la représentation hexadécimale "
+"(côté gauche), soit la représentation ASCII (côté droit). Les changements "
+"sont appliqués immédiatement."
+
+#: C/index.docbook:831(sect1/title)
+msgid "Session Save and Restore"
+msgstr "Enregistrement et restauration d'une session"
+
+#: C/index.docbook:832(sect1/para)
+msgid ""
+"Nemiver can save your debugging sessions for you so that you can resume them "
+"at a later time. This includes saving information such as which executable "
+"is being debugged, what environment variables are set, what command-line "
+"options are passed to the executable, which files are open, and which "
+"breakpoints are set so that you can get back to where you left off last time "
+"as quickly as possible."
+msgstr ""
+"<application>Nemiver</application> enregistre les sessions de débogage pour "
+"vous et vous permet de les reprendre ultérieurement. Les informations "
+"d'enregistrement comprennent le nom de l'exécutable en cours de débogage, "
+"les variables d'environnement définies, les options passées en ligne de "
+"commande, les fichiers ouverts et les points d'arrêt définis de manière à "
+"retrouver le plus rapidement possible la situation que vous aviez abandonnée "
+"la fois précédente."
+
+#: C/index.docbook:841(sect2/title)
+msgid "Saving Sessions"
+msgstr "Enregistrement de sessions"
+
+#: C/index.docbook:842(sect2/para)
+msgid ""
+"Nemiver will save your session automatically on exit, so you don't even have "
+"to worry about it. However, if you want to explicitly save the session "
+"before closing Nemiver, you can do so by selecting "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</"
+"guimenuitem></menuchoice>."
+msgstr ""
+"<application>Nemiver</application> enregistre votre session automatiquement "
+"lorsque vous quittez. Vous n'avez pas à vous en soucier. Toutefois, si vous "
+"souhaitez explicitement enregistrer votre session avant la fermeture de "
+"<application>Nemiver</application>, choisissez l'élément de menu "
+"<menuchoice><guimenu>Fichier</guimenu><guimenuitem>Enregistrer la session "
+"sur le disque</guimenuitem></menuchoice>."
+
+#: C/index.docbook:850(sect2/title)
+msgid "Resuming Saved Sessions"
+msgstr "Reprise de sessions enregistrées"
+
+#: C/index.docbook:853(sect3/para)
+msgid ""
+"Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved "
+"Session...</guimenuitem></menuchoice> and select a session from the list."
+msgstr ""
+"Choisissez <menuchoice><guimenu>Fichier</guimenu><guimenuitem>Reprendre une "
+"session enregistrée...</guimenuitem></menuchoice> et sélectionnez une "
+"session dans la liste."
+
+#: C/index.docbook:859(figure/title)
+msgid "Session Dialog"
+msgstr "Boîte de dialogue Sessions"
+
+#: C/index.docbook:861(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/sessions-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for resuming a saved "
+"session</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/sessions-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Boîte de dialogue pour reprendre "
+"une session enregistrée</phrase> </textobject>"
+
+#: C/index.docbook:873(sect3/title)
+msgid "From the Command Line"
+msgstr "À partir de la ligne de commande"
+
+#: C/index.docbook:874(sect3/para)
+msgid ""
+"If you know the session ID of the session you want to run, you can start "
+"that debugging session from the command line. For example, if you want to "
+"run session number 3, you can do so with the following command: "
+"<command>nemiver --session 3</command>."
+msgstr ""
+"Si vous connaissez le numéro d'identification de la session que vous voulez "
+"reprendre, vous pouvez redémarrer la session à partir de la ligne de "
+"commande. Par exemple, pour reprendre la session numéro 3, tapez la commande "
+"suivante : <command>nemiver --session 3</command>."
+
+#: C/index.docbook:886(sect1/title)
+msgid "About Nemiver"
+msgstr "À propos de <application>Nemiver</application>"
+
+#: C/index.docbook:887(sect1/para)
+msgid ""
+"<application>Nemiver</application> was written by Dodji Seketeli and "
+"Jonathon Jongsma, with contributions from many others. To find more "
+"information about Nemiver, please visit the <ulink url=\"http://www.gnome."
+"org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
+msgstr ""
+"<application>Nemiver</application> a été écrit par Dodji Seketeli et "
+"Jonathon Jongsma, avec de nombreuses autres contributions. Pour obtenir plus "
+"d'information à propos de Nemiver, consultez le site Web du <ulink url="
+"\"http://www.gnome.org/projects/nemiver/\" type=\"http\">projet Nemiver</"
+"ulink>."
+
+#: C/index.docbook:891(sect1/para)
+msgid ""
+"To report a bug or make a suggestion regarding this application or this "
+"manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?"
+"feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
+msgstr ""
+"Pour signaler une anomalie ou émettre une suggestion concernant "
+"l'application ou le présent manuel, procédez comme indiqué à la section "
+"« Votre avis » du <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help"
+"\">Guide utilisateur GNOME</ulink>."
+
+#: C/index.docbook:896(sect1/para)
+msgid ""
+"This program is distributed under the terms of the GNU General Public "
+"license as published by the Free Software Foundation; either version 2 of "
+"the License, or (at your option) any later version. A copy of this license "
+"can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or "
+"in the file COPYING included with the source code of this program."
+msgstr ""
+"Ce programme est distribué selon les termes de la « GNU General Public "
+"license » telle que publiée par la Free Software Foundation ; soit la "
+"version 2 de la licence, soit, (à votre discrétion) toute version "
+"ultérieure. Une copie de la-dite licence est accessible <ulink url=\"ghelp:"
+"gpl\" type=\"help\">ici</ulink> ou bien dans le fichier COPYING joint au "
+"code source de ce programme."
+
+#: C/legal.xml:9(para/ulink)
+msgid "link"
+msgstr "lien"
+
+#: C/legal.xml:2(legalnotice/para)
 msgid ""
 "Permission is granted to copy, distribute and/or modify this document under "
 "the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any "
 "later version published by the Free Software Foundation with no Invariant "
 "Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy "
-"of the GFDL at this <ulink type=\"help\" url=\"ghelp:fdl\">link</ulink> or "
-"in the file COPYING-DOCS distributed with this manual."
+"of the GFDL at this <_:ulink-1/> or in the file COPYING-DOCS distributed "
+"with this manual."
 msgstr ""
 "Permission vous est donnée de copier, distribuer et/ou modifier ce document "
 "sans section inaltérable, sans texte de première de couverture ni de "
 "dernière de couverture conformément aux termes de la licence de "
 "documentation libre GNU, Version 1.1 ou ultérieure publiée par la Free "
 "Software Foundation . Vous trouverez un exemplaire de cette licence en "
-"activant ce <ulink type=\"help\" url=\"ghelp:fdl\">lien</ulink> ou en "
-"ouvrant le fichier COPYING-DOCS fourni avec le présent manuel."
+"activant ce <_:ulink-1/> ou en ouvrant le fichier COPYING-DOCS fourni avec "
+"le présent manuel."
 
-#: C/legal.xml:12(para)
+#: C/legal.xml:12(legalnotice/para)
 msgid ""
 "This manual is part of a collection of GNOME manuals distributed under the "
 "GFDL. If you want to distribute this manual separately from the collection, "
@@ -46,7 +1533,7 @@ msgstr ""
 "collection, vous devez joindre un exemplaire de la licence au document, "
 "comme indiqué dans la section 6 de celle-ci."
 
-#: C/legal.xml:19(para)
+#: C/legal.xml:19(legalnotice/para)
 msgid ""
 "Many of the names used by companies to distinguish their products and "
 "services are claimed as trademarks. Where those names appear in any GNOME "
@@ -60,7 +1547,7 @@ msgstr ""
 "GNOME sont informés de l'existence de ces marques déposées, soit ces noms "
 "entiers, soit leur première lettre est en majuscule."
 
-#: C/legal.xml:35(para)
+#: C/legal.xml:35(listitem/para)
 msgid ""
 "DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, "
 "EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT "
@@ -109,1302 +1596,91 @@ msgstr ""
 "VERSIONS MODIFIÉES, MÊME SI LADITE PARTIE A ÉTÉ INFORMÉE DE L'ÉVENTUALITÉ DE "
 "TELS DOMMAGES."
 
-#: C/legal.xml:28(para)
+#: C/legal.xml:28(legalnotice/para)
 msgid ""
 "DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS "
 "OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: "
-"<placeholder-1/>"
+"<_:orderedlist-1/>"
 msgstr ""
 "LE PRÉSENT DOCUMENT ET SES VERSIONS MODIFIÉES SONT FOURNIS SELON LES TERMES "
-"DE LA LICENCE DE DOCUMENTATION LIBRE GNU SACHANT QUE : <placeholder-1/>"
+"DE LA LICENCE DE DOCUMENTATION LIBRE GNU SACHANT QUE : <_:orderedlist-1/>"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:180(None)
-msgid ""
-"@@image: 'figures/main-window.png'; md5=216a6e17325ddd6a4e96037d05a39734"
-msgstr ""
-"@@image: 'figures/main-window.png'; md5=216a6e17325ddd6a4e96037d05a39734"
+#~ msgid "2008"
+#~ msgstr "2008"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:329(None)
-msgid ""
-"@@image: 'figures/execute-dialog.png'; md5=450a45378b4021176c8f093be2dedc97"
-msgstr ""
-"@@image: 'figures/execute-dialog.png'; md5=450a45378b4021176c8f093be2dedc97"
+#~ msgid "Jonathon Jongsma"
+#~ msgstr "Jonathon Jongsma"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:394(None)
-msgid ""
-"@@image: 'figures/attach-dialog.png'; md5=9940de171b58f92ea810dc4478364976"
-msgstr ""
-"@@image: 'figures/attach-dialog.png'; md5=9940de171b58f92ea810dc4478364976"
+#~ msgid "Jonathon"
+#~ msgstr "Jonathon"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:440(None)
-msgid ""
-"@@image: 'figures/load-core-dialog.png'; md5=2a3dd09883a026826d0a7036991720a4"
-msgstr ""
-"@@image: 'figures/load-core-dialog.png'; md5=2a3dd09883a026826d0a7036991720a4"
+#~ msgid "Jongsma"
+#~ msgstr "Jongsma"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:471(None)
-msgid ""
-"@@image: 'figures/connect-remote-dialog.png'; "
-"md5=0f47f358e68947aaf1330fb1c1013f72"
-msgstr ""
-"@@image: 'figures/connect-remote-dialog.png'; "
-"md5=0f47f358e68947aaf1330fb1c1013f72"
+#~ msgid "GNOME"
+#~ msgstr "GNOME"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:593(None)
-msgid ""
-"@@image: 'figures/variable-inspector.png'; "
-"md5=676c2a7985aa4e41f5a77a85bcfd8a27"
-msgstr ""
-"@@image: 'figures/variable-inspector.png'; "
-"md5=676c2a7985aa4e41f5a77a85bcfd8a27"
+#~ msgid "1.0"
+#~ msgstr "1.0"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:627(None)
-msgid ""
-"@@image: 'figures/global-variables-dialog.png'; "
-"md5=b3224457732491046fbcea9491df2383"
-msgstr ""
-"@@image: 'figures/global-variables-dialog.png'; "
-"md5=b3224457732491046fbcea9491df2383"
+#~ msgid "2007"
+#~ msgstr "2007"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:667(None)
-msgid ""
-"@@image: 'figures/set-breakpoint-dialog.png'; "
-"md5=86618670e2f62026adeb38ae033ec38d"
-msgstr ""
-"@@image: 'figures/set-breakpoint-dialog.png'; "
-"md5=86618670e2f62026adeb38ae033ec38d"
+#~ msgid "2.0"
+#~ msgstr "2.0"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:705(None)
-msgid ""
-"@@image: 'figures/enabled-breakpoint.png'; "
-"md5=a51237a0756cdb7a754b24b211e40bbb"
-msgstr ""
-"@@image: 'figures/enabled-breakpoint.png'; "
-"md5=a51237a0756cdb7a754b24b211e40bbb"
+#~ msgid "Nemiver"
+#~ msgstr "<application>Nemiver</application>"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:716(None)
-msgid ""
-"@@image: 'figures/disabled-breakpoint.png'; "
-"md5=b703d696cec0c49810de7f2a85f0ddba"
-msgstr ""
-"@@image: 'figures/disabled-breakpoint.png'; "
-"md5=b703d696cec0c49810de7f2a85f0ddba"
+#~ msgid "debugger"
+#~ msgstr "débogueur"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:739(None)
-msgid ""
-"@@image: 'figures/open-files-target.png'; "
-"md5=715003a703fc7cc112bea9e58a25f627"
-msgstr ""
-"@@image: 'figures/open-files-target.png'; "
-"md5=715003a703fc7cc112bea9e58a25f627"
+#~ msgid "gdb"
+#~ msgstr "gdb"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:777(None)
-msgid ""
-"@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
-msgstr ""
-"@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
+#~ msgid "Shows Nemiver main window."
+#~ msgstr ""
+#~ "Affiche la fenêtre principale de <application>Nemiver</application>."
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:802(None)
-msgid ""
-"@@image: 'figures/memory-view.png'; md5=b2a94da383551b3eaae64ddb93a7128f"
-msgstr ""
-"@@image: 'figures/memory-view.png'; md5=b2a94da383551b3eaae64ddb93a7128f"
+#~ msgid "Shows dialog for selecting an executable to run"
+#~ msgstr ""
+#~ "Affiche la boîte de dialogue pour sélectionner un exécutable à lancer"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:863(None)
-msgid ""
-"@@image: 'figures/sessions-dialog.png'; md5=d07fd79198e666ca9b21fee3bbb30db4"
-msgstr ""
-"@@image: 'figures/sessions-dialog.png'; md5=d07fd79198e666ca9b21fee3bbb30db4"
+#~ msgid "Shows dialog for attaching to a running program"
+#~ msgstr ""
+#~ "Affiche une boîte de dialogue pour se connecter à un programme en cours "
+#~ "d'exécution"
 
-#: C/nemiver.xml:24(title)
-msgid "Nemiver Manual"
-msgstr "Manuel de <application>Nemiver</application>"
+#~ msgid "Shows dialog for loading a core file"
+#~ msgstr "Affiche une boîte de dialogue pour le chargement d'un fichier core."
 
-#: C/nemiver.xml:26(year) C/nemiver.xml:76(date)
-msgid "2008"
-msgstr "2008"
+#~ msgid "Remote Debugging Dialog"
+#~ msgstr "Dialogue pour débogage à distance"
 
-#: C/nemiver.xml:27(holder)
-msgid "Jonathon Jongsma"
-msgstr "Jonathon Jongsma"
+#~ msgid "Variable Inspector Dialog"
+#~ msgstr "Boîte de dialogue examen de variables"
 
-#: C/nemiver.xml:38(publishername)
-msgid "Nemiver Project"
-msgstr "Projet Nemiver"
+#~ msgid "Global Variables Dialog"
+#~ msgstr "Boîte de dialogue des variables globales"
 
-#: C/nemiver.xml:43(firstname)
-msgid "Jonathon"
-msgstr "Jonathon"
+#~ msgid "Set Breakpoint Dialog"
+#~ msgstr "Boîte de dialogue de définition d'un point d'arrêt"
 
-#: C/nemiver.xml:44(surname)
-msgid "Jongsma"
-msgstr "Jongsma"
+#~ msgid "Illustration of an enabled breakpoint"
+#~ msgstr "Illustration d'un point d'arrêt activé"
 
-#: C/nemiver.xml:46(orgname)
-msgid "GNOME"
-msgstr "GNOME"
+#~ msgid "Illustration of a disabled breakpoint"
+#~ msgstr "Illustration d'un point d'arrêt désactivé"
 
-#: C/nemiver.xml:68(revnumber)
-msgid "1.0"
-msgstr "1.0"
+#~ msgid "Shows dialog for opening source files"
+#~ msgstr "Affiche la boîte de dialogue pour ouvrir des fichiers source"
 
-#: C/nemiver.xml:69(date)
-msgid "2007"
-msgstr "2007"
+#~ msgid "The Register Editing Widget"
+#~ msgstr "L'élément graphique d'édition des registres"
 
-#: C/nemiver.xml:71(para)
-msgid "Initial version"
-msgstr "Version initiale"
+#~ msgid "The Memory Editing Widget"
+#~ msgstr "L'élément graphique d'édition mémoire"
 
-#: C/nemiver.xml:75(revnumber)
-msgid "2.0"
-msgstr "2.0"
-
-#: C/nemiver.xml:78(para)
-msgid "Updated for 0.5.0 Release"
-msgstr "Mise à jour pour la version 0.5.0"
-
-#: C/nemiver.xml:82(releaseinfo)
-msgid "This manual describes version 0.5.0 of Nemiver."
-msgstr ""
-"Le présent manuel décrit le fonctionnement de la version 0.5.0 de "
-"Nemiver."
-
-#: C/nemiver.xml:85(title)
-msgid "Feedback"
-msgstr "Retours d'informations"
-
-#: C/nemiver.xml:86(para)
-msgid ""
-"To report a bug or make a suggestion regarding the <application>Nemiver</"
-"application> application or this manual, see the <ulink url=\"http://www."
-"gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
-msgstr ""
-"Pour rapporter un bogue ou pour faire une suggestion concernant "
-"l'application <application>Nemiver</application> ou ce manuel, consultez le "
-"<ulink url=\"http://www.gnome.org/projects/nemiver/\" type=\"http\">site Web "
-"du projet Nemiver</ulink>."
-
-#: C/nemiver.xml:94(para)
-msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
-msgstr ""
-"<application>Nemiver</application> est un débogueur avec interface graphique "
-"pour l'environnement de bureau GNOME."
-
-#: C/nemiver.xml:100(primary)
-msgid "Nemiver"
-msgstr "<application>Nemiver</application>"
-
-#: C/nemiver.xml:103(primary)
-msgid "debugger"
-msgstr "débogueur"
-
-#: C/nemiver.xml:106(primary)
-msgid "gdb"
-msgstr "gdb"
-
-#: C/nemiver.xml:111(title)
-msgid "Overview"
-msgstr "Aperçu"
-
-#: C/nemiver.xml:112(para)
-msgid ""
-"Nemiver is an ongoing effort to write a standalone graphical debugger that "
-"integrates well in the GNOME desktop environment. It currently features a "
-"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
-msgstr ""
-"<application>Nemiver</application> est une tentative d'écriture d'un "
-"débogueur indépendant avec interface graphique, s'intégrant bien dans "
-"l'environnement de bureau GNOME. Il se fonde sur l'utilisation en arrière-"
-"plan du débogueur GNU bien connu <application>gdb</application> pour "
-"déboguer des programmes en C / C++."
-
-#: C/nemiver.xml:119(title)
-msgid "Perspectives"
-msgstr "Perspectives"
-
-#: C/nemiver.xml:120(para)
-msgid ""
-"Nemiver is designed as a generic graphical <interface>workbench</interface> "
-"and a plugin system that can offer several different perspectives. Currently "
-"the only perspective provided is a debugging perspective, but in the future, "
-"there may be perspectives added for memory debugging with "
-"<application>valgrind</application>, or for profiling tools such as "
-"<application>oprofile</application>."
-msgstr ""
-"<application>Nemiver</application> est conçu comme une <interface>boîte à "
-"outils</interface> graphique générique et un système de greffons qui ouvrent "
-"diverses perspectives. Actuellement la seule perspective offerte est le "
-"débogage, mais dans le futur, seront ajoutées des perspectives de débogage "
-"mémoire avec <application>valgrind</application> ou de profilage avec des "
-"outils tels que <application>oprofile</application>."
-
-#: C/nemiver.xml:132(title)
-msgid "Getting Started"
-msgstr "Premiers pas"
-
-#: C/nemiver.xml:133(para)
-msgid ""
-"This section explains how to start Nemiver and gives a basic overview of the "
-"application."
-msgstr ""
-"Ce paragraphe explique comment lancer <application>Nemiver</application> ; "
-"il donne également un aperçu des fondements de l'application."
-
-#: C/nemiver.xml:138(title)
-msgid "Starting Nemiver"
-msgstr "Lancement de <application>Nemiver</application>"
-
-#: C/nemiver.xml:139(para)
-msgid "You can start Nemiver in the following ways:"
-msgstr ""
-"Vous pouvez lancer <application>Nemiver</application> de la manière "
-"suivante :"
-
-#: C/nemiver.xml:144(term)
-msgid "<guimenu>Applications</guimenu> menu"
-msgstr "Menu <guimenu>Applications</guimenu>"
-
-#: C/nemiver.xml:146(para)
-msgid ""
-"Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver "
-"Debugger</guimenuitem></menuchoice>."
-msgstr ""
-"Choisissez <menuchoice><guisubmenu>Programmation</"
-"guisubmenu><guimenuitem>Débogueur Nemiver</guimenuitem></menuchoice>."
-
-#: C/nemiver.xml:152(term)
-msgid "Command line"
-msgstr "En ligne de commande"
-
-#: C/nemiver.xml:154(para)
-msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
-msgstr ""
-"Saisissez <command>nemiver</command>, puis appuyez sur la touche "
-"<keycap>Entrée</keycap>."
-
-#: C/nemiver.xml:159(title)
-msgid "Additional Command-line Options"
-msgstr "Options supplémentaires en ligne de commande"
-
-#: C/nemiver.xml:160(para)
-msgid ""
-"You can find a list of options that can be passed to Nemiver on the command "
-"line by typing <command>nemiver --help-all</command>."
-msgstr ""
-"La liste des options pouvant être passées à <application>Nemiver</"
-"application> en ligne de commande s'affiche en saisissant <command>nemiver --"
-"help-all</command>."
-
-#: C/nemiver.xml:170(title)
-msgid "The Nemiver window"
-msgstr "Fenêtre de <application>Nemiver</application>"
-
-#: C/nemiver.xml:171(para)
-msgid ""
-"When you start Nemiver, you will see a window that looks very much like the "
-"following:"
-msgstr ""
-"Quand vous lancez <application>Nemiver</application>, une fenêtre "
-"ressemblant beaucoup à la suivante apparaît :"
-
-#: C/nemiver.xml:176(title)
-msgid "Nemiver Window"
-msgstr "Fenêtre <application>Nemiver</application>"
-
-#: C/nemiver.xml:183(phrase)
-msgid "Shows Nemiver main window."
-msgstr "Affiche la fenêtre principale de <application>Nemiver</application>."
-
-#: C/nemiver.xml:188(para)
-msgid ""
-"The <application>Nemiver</application> window contains the following "
-"elements:"
-msgstr ""
-"La fenêtre <application>Nemiver</application> comporte les éléments "
-"suivants :"
-
-#: C/nemiver.xml:194(term)
-msgid "Menubar"
-msgstr "Barre de menu"
-
-#: C/nemiver.xml:196(para)
-msgid ""
-"The menus on the menubar contain all of the commands you need to use "
-"<application>Nemiver</application>."
-msgstr ""
-"Les menus de la barre de menus comportent la totalité des commandes "
-"nécessaires à l'utilisation de <application>Nemiver</application>."
-
-#: C/nemiver.xml:203(term)
-msgid "Toolbar"
-msgstr "Barre d'outils"
-
-#: C/nemiver.xml:205(para)
-msgid ""
-"The toolbar contains the basic debugging actions that can be used to run or "
-"step through the program being debugged."
-msgstr ""
-"La barre d'outils affiche les actions élémentaires de débogage pour le "
-"lancement ou l'exécution pas à pas du programme à déboguer."
-
-#: C/nemiver.xml:212(term)
-msgid "Source View Notebook"
-msgstr "Bloc-notes d'affichage du source"
-
-#: C/nemiver.xml:214(para)
-msgid ""
-"When source files are open, this area will display source files of the "
-"program being debugged."
-msgstr ""
-"Quand des fichiers source sont ouverts, cette zone sert à l'affichage des "
-"sources du programme en cours de débogage."
-
-#: C/nemiver.xml:221(term)
-msgid "Status Notebook"
-msgstr "Bloc-notes d'état"
-
-#: C/nemiver.xml:223(para)
-msgid ""
-"The Status notebook contains several tabs for displaying information about "
-"the program being debugged. These include the following:"
-msgstr ""
-"Le bloc notes d'état comporte plusieurs onglets pour afficher les "
-"informations relatives au programme en cours de débogage. Ces onglets sont "
-"les suivants :"
-
-#: C/nemiver.xml:230(term)
-msgid "Call Stack"
-msgstr "Pile d'appel"
-
-#: C/nemiver.xml:234(para)
-msgid ""
-"Displays the current state of the call stack of the program being debugged."
-msgstr ""
-"Affiche l'état courant de la pile d'appel du programme en cours de débogage."
-
-#: C/nemiver.xml:241(term)
-msgid "Variables"
-msgstr "Variables"
-
-#: C/nemiver.xml:245(para)
-msgid ""
-"Displays a list of all local variables and function arguments, in addition "
-"to their values and types."
-msgstr ""
-"Affiche une liste de toutes les variables locales et paramètres de fonction, "
-"ainsi que leurs types et leurs valeurs."
-
-#: C/nemiver.xml:252(term)
-msgid "Target Terminal"
-msgstr "Terminal de la cible"
-
-#: C/nemiver.xml:256(para)
-msgid ""
-"If the program being debugged prints any output to the terminal, it will be "
-"displayed in this tab."
-msgstr ""
-"Si le programme en cours de débogage écrit une quelconque sortie sur le "
-"terminal, elle est affichée dans cet onglet."
-
-#: C/nemiver.xml:263(term)
-msgid "Breakpoints"
-msgstr "Points d'arrêt"
-
-#: C/nemiver.xml:267(para)
-msgid ""
-"This tab displays a list of all breakpoints that have been set. You can view "
-"the source code of a particular breakpoint by double-clicking an item in the "
-"list or by right-clicking and selecting <menuchoice><guimenuitem>Go to "
-"Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints "
-"can be deleted, enabled, or disabled in this tab. For more information about "
-"breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
-msgstr ""
-"Cet onglet affiche la liste de tous les points d'arrêt définis. Vous "
-"visualisez le code source d'un point d'arrêt donné en double cliquant sur un "
-"élément de la liste ou bien en choisissant <menuchoice><guimenuitem>Aller "
-"dans le source</guimenuitem></menuchoice> dans le menu contextuel affiché "
-"par un clic droit du bouton de souris. De plus, les points d'arrêt de cet "
-"onglet peuvent être détruits, activés ou désactivés. Pour plus "
-"d'informations concernant les points d'arrêt, consultez la <xref linkend="
-"\"nemiver-sect-breakpoints\"/>."
-
-#: C/nemiver.xml:280(term) C/nemiver.xml:766(title)
-msgid "Registers"
-msgstr "Registres"
-
-#: C/nemiver.xml:284(para)
-msgid ""
-"This tab displays all of the CPU registers and their values. For more "
-"information, see <xref linkend=\"nemiver-sect-registers\"/>."
-msgstr ""
-"Cet onglet affiche tous les registres processeur et leurs valeurs. Pour plus "
-"de détails, consultez la <xref linkend=\"nemiver-sect-registers\"/>."
-
-#: C/nemiver.xml:291(term) C/nemiver.xml:793(title)
-msgid "Memory"
-msgstr "Mémoire"
-
-#: C/nemiver.xml:295(para)
-msgid ""
-"This tab displays a view of the current state of a specific memory location. "
-"For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
-msgstr ""
-"Cet onglet donne l'état présent d'une zone de mémoire donnée. Pour plus "
-"d'informations, consultez la <xref linkend=\"nemiver-sect-memory\"/>."
-
-#: C/nemiver.xml:307(title)
-msgid "Choosing a Program to Debug"
-msgstr "Choix d'un programme à déboguer"
-
-#: C/nemiver.xml:308(para)
-msgid ""
-"There are several ways to begin debugging a program. Nemiver allows you to "
-"load a local executable file, load a core file, attach to a running process, "
-"or connect to a remote debugging server."
-msgstr ""
-"Il y a plusieurs manières de débuter le débogage d'un programme. "
-"<application>Nemiver</application> permet le chargement d'un exécutable "
-"local, d'un fichier « core », la connexion à un processus en cours ou à un "
-"serveur de débogage distant."
-
-#: C/nemiver.xml:313(title)
-msgid "Debugging an Executable Program"
-msgstr "Débogage d'un exécutable"
-
-#: C/nemiver.xml:315(title) C/nemiver.xml:380(title) C/nemiver.xml:425(title)
-#: C/nemiver.xml:462(title) C/nemiver.xml:852(title)
-msgid "Using the Workbench"
-msgstr "Utilisation de la boîte à outils"
-
-#: C/nemiver.xml:316(para)
-msgid ""
-"To select an executable program to debug, select <menuchoice><guimenu> File "
-"</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
-"display the following dialog:"
-msgstr ""
-"Pour sélectionner un exécutable à déboguer, choisissez <menuchoice><guimenu> "
-"Fichier </guimenu><guimenuitem> Charger le fichier exécutable... </"
-"guimenuitem></menuchoice> qui affiche la boîte de dialogue suivante :"
-
-#: C/nemiver.xml:325(title)
-msgid "Execute Dialog"
-msgstr "Boîte de dialogue pour exécutable"
-
-#: C/nemiver.xml:332(phrase)
-msgid "Shows dialog for selecting an executable to run"
-msgstr "Affiche la boîte de dialogue pour sélectionner un exécutable à lancer"
-
-#: C/nemiver.xml:337(para)
-msgid ""
-"In this dialog, you can select the program to be debugged, any arguments or "
-"options to be passed to the executable on the command line, the working "
-"directory to run the executable in, and any Environment Variables that "
-"should be set when the executable is being debugged."
-msgstr ""
-"Dans cette boîte de dialogue, vous pouvez sélectionner le programme à "
-"déboguer, tous paramètres ou toutes options à transmettre à l'exécutable via "
-"sa ligne de commande, le répertoire de travail dans lequel l'exécutable sera "
-"lancé et l'ensemble des variables d'environnement à définir lors du débogage."
-
-#: C/nemiver.xml:345(title) C/nemiver.xml:411(title) C/nemiver.xml:450(title)
-#: C/nemiver.xml:485(title)
-msgid "Using the Command Line"
-msgstr "Utilisation de la ligne de commande"
-
-#: C/nemiver.xml:346(para)
-msgid ""
-"To start an executable program to debug from the command line, simply "
-"specify the name of the executable. You can either give an absolute path to "
-"the executable, or if it is in the path, you can simply give the basename of "
-"the executable. For example, if <filename>/usr/bin</filename> is in your "
-"path, both of the following are valid:"
-msgstr ""
-"Pour lancer un exécutable à déboguer à partir de la ligne de commande, "
-"indiquez simplement le nom de l'exécutable. Précisez, soit le chemin complet "
-"vers l'exécutable, soit uniquement son nom de base si vous vous trouvez dans "
-"son répertoire. Par exemple, si votre chemin est <filename>/usr/bin</"
-"filename>, les deux syntaxes suivantes sont équivalentes :"
-
-#: C/nemiver.xml:357(command)
-msgid "nemiver /usr/bin/progname"
-msgstr "nemiver /usr/bin/nomprog"
-
-#: C/nemiver.xml:362(command)
-msgid "nemiver progname"
-msgstr "nemiver nomprog"
-
-#: C/nemiver.xml:367(title)
-msgid "Passing Options on the Command Line"
-msgstr "Passage d'options par la ligne de commande"
-
-#: C/nemiver.xml:368(para)
-msgid ""
-"If you would like to pass command line options to the program that you are "
-"debugging, you should enclose them in quotes to prevent Nemiver from "
-"processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
-msgstr ""
-"Si vous voulez transmettre au programme à déboguer des options via la ligne "
-"de commande, vous devez les saisir entre guillemets pour prévenir une "
-"interprétation immédiate par <application>Nemiver</application> : "
-"<command>nemiver \"nomprog --arg1 --arg2\"</command>."
-
-#: C/nemiver.xml:378(title)
-msgid "Attaching to a Running Program"
-msgstr "Connexion à un programme en cours d'exécution"
-
-#: C/nemiver.xml:381(para)
-msgid ""
-"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> "
-"Attach to Running Program... </guimenuitem></menuchoice>, which should "
-"display the following dialog:"
-msgstr ""
-"Choisissez l'élément de menu <menuchoice><guimenu> Fichier </"
-"guimenu><guimenuitem> Se connecter à un processus en cours... </"
-"guimenuitem></menuchoice> qui affiche la boîte de dialogue suivante :"
-
-#: C/nemiver.xml:390(title)
-msgid "Attach Dialog"
-msgstr "Boîte de dialogue de connexion"
-
-#: C/nemiver.xml:397(phrase)
-msgid "Shows dialog for attaching to a running program"
-msgstr ""
-"Affiche une boîte de dialogue pour se connecter à un programme en cours "
-"d'exécution"
-
-#: C/nemiver.xml:402(para)
-msgid ""
-"Select a process from the list and click <guibutton>OK</guibutton> to start "
-"debugging the selected program. There may be a lot of processes listed in "
-"the dialog, so you can filter the list to only ones that that you are "
-"interested in by typing some text into the text entry located just below the "
-"list."
-msgstr ""
-"Choisissez un processus dans la liste et cliquez sur <guibutton>Valider</"
-"guibutton> pour débuter le débogage du programme choisi. La liste affichée "
-"dans la boîte de dialogue peut comporter de très nombreux d'éléments, vous "
-"pouvez filtrer ceux qui vous intéressent en saisissant du texte dans le "
-"contrôle de saisie situé immédiatement sous la liste."
-
-#: C/nemiver.xml:412(para)
-msgid ""
-"To attach to a running program from the command line, use the <option>--"
-"attach</option> option. The <option>--attach</option> option accepts either "
-"a pid or a process name. So, for example, to debug the running process "
-"<command>foo</command> which has a pid of 1121, you could either type "
-"<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
-"command>."
-msgstr ""
-"Pour se connecter à un processus en cours à partir de la ligne de commande, "
-"servez-vous de l'option <option>--attach</option>. Elle accepte, soit le "
-"numéro d'identification du processus (pid), soit son nom. Ainsi, par "
-"exemple, pour déboguer le processus en cours <command>foo</command> "
-"possédant le numéro 1121, vous saisissez soit <command>nemiver --attach foo</"
-"command>, soit <command>nemiver --attach 1121</command>."
-
-#: C/nemiver.xml:423(title)
-msgid "Loading a Core File"
-msgstr "Chargement d'un fichier « core »"
-
-#: C/nemiver.xml:426(para)
-msgid ""
-"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load "
-"Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
-"which will let you load a core file:"
-msgstr ""
-"Choisissez l'élément de menu <menuchoice><guimenu> Fichier </"
-"guimenu><guimenuitem> Charger un fichier core... </guimenuitem></menuchoice> "
-"pour faire apparaître la boîte de dialogue suivante qui vous permet de "
-"charger un fichier core :"
-
-#: C/nemiver.xml:436(title)
-msgid "Load Core File Dialog"
-msgstr "Boîte de dialogue de chargement d'un fichier core"
-
-#: C/nemiver.xml:443(phrase)
-msgid "Shows dialog for loading a core file"
-msgstr "Affiche une boîte de dialogue pour le chargement d'un fichier core."
-
-#: C/nemiver.xml:451(para)
-msgid "Core files cannot be loaded from the command line."
-msgstr ""
-"Les fichiers core ne peuvent pas être chargés à partir de la ligne de "
-"commande."
-
-#: C/nemiver.xml:457(title)
-msgid "Remote Debugging"
-msgstr "Débogage distant"
-
-#: C/nemiver.xml:458(para)
-msgid "Nemiver allows you to connect to a remote debugging server."
-msgstr ""
-"<application>Nemiver</application> permet une connexion pour un débogage sur "
-"un serveur distant."
-
-#: C/nemiver.xml:463(para)
-msgid ""
-"To connect to a remote debugging server, select <menuchoice><guimenu>File</"
-"guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
-msgstr ""
-"Pour se connecter à un serveur distant en vue d'un débogage, choisissez "
-"<menuchoice><guimenu>Fichier</guimenu><guimenuitem>Se connecter à une cible "
-"distante...</guimenuitem></menuchoice>"
-
-#: C/nemiver.xml:474(phrase)
-msgid "Remote Debugging Dialog"
-msgstr "Dialogue pour débogage à distance"
-
-#: C/nemiver.xml:478(para)
-msgid ""
-"Select the executable to load and the location where any shared libraries "
-"are located, and then fill in the details about connecting to the remote "
-"server."
-msgstr ""
-"Choisissez l'exécutable à charger et indiquez l'endroit où se trouvent les "
-"bibliothèques partagées. Saisissez ensuite les informations détaillées pour "
-"vous connecter à distance."
-
-#: C/nemiver.xml:486(para)
-msgid ""
-"Nemiver does not provide a way to connect to a remote server using the "
-"command line"
-msgstr ""
-"<application>Nemiver</application> ne dispose d'aucun moyen pour se "
-"connecter à un serveur distant à partir de la ligne de commande"
-
-#: C/nemiver.xml:495(title)
-msgid "Using Nemiver"
-msgstr "Utilisation de <application>Nemiver</application>"
-
-#: C/nemiver.xml:496(para)
-msgid "This section describes how to use Nemiver to debug your application."
-msgstr ""
-"Ce paragraphe décrit comment utiliser <application>Nemiver</application> "
-"pour déboguer une application."
-
-#: C/nemiver.xml:500(title)
-msgid "Basic Debugging Actions"
-msgstr "Actions élémentaires de débogage"
-
-#: C/nemiver.xml:501(para)
-msgid ""
-"The basic debugging actions are available on the main toolbar, in the "
-"<guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common "
-"actions are listed below:"
-msgstr ""
-"Les actions élémentaires de débogage sont accessibles soit à partir de la "
-"barre d'outils principale, soit à l'aide du menu <guimenu>Déboguer</"
-"guimenu>, soit avec des raccourcis clavier. Les actions les plus courantes "
-"sont listées ci-après :"
-
-#: C/nemiver.xml:508(term)
-msgid "Continue"
-msgstr "Continuer"
-
-#: C/nemiver.xml:510(para)
-msgid ""
-"Starts the program. The program will run until it hits a breakpoint or until "
-"the program ends, unless it is interrupted manually by the user by clicking "
-"<action>Stop</action>. This action can be activated from the keyboard with "
-"<keycap>F5</keycap>."
-msgstr ""
-"Démarre le programme. L'exécution se poursuit jusqu'à la rencontre d'un "
-"point d'arrêt ou jusqu'à la fin du programme. Vous pouvez l'interrompre « à "
-"la main » en cliquant sur le bouton <action>Arrêter</action>. Le démarrage "
-"peut être activé en appuyant sur la touche <keycap>F5</keycap>."
-
-#: C/nemiver.xml:520(term)
-msgid "Next"
-msgstr "Suivante"
-
-#: C/nemiver.xml:522(para)
-msgid ""
-"Executes the next statement, and stops when it reaches the next line in this "
-"file. Some debuggers may call this action \"Step Over\". This action can be "
-"activated from the keyboard with <keycap>F6</keycap>."
-msgstr ""
-"Exécute l'instruction suivante et s'arrête sur la ligne immédiatement après "
-"dans le fichier. Certains débogueurs appellent cette action « Avancer ». Elle "
-"peut être activée en appuyant sur la touche <keycap>F6</keycap>."
-
-#: C/nemiver.xml:531(term)
-msgid "Step"
-msgstr "Pas à pas"
-
-#: C/nemiver.xml:533(para)
-msgid ""
-"Executes the next statement, stepping into the function if possible. Some "
-"debuggers may call this action \"Step In\". This action can be activated "
-"from the keyboard with <keycap>F7</keycap>."
-msgstr ""
-"Exécute l'instruction suivante en entrant dans la fonction si c'est "
-"possible. Certains débogueurs appellent cette action « Entrer ». Elle peut "
-"être activée en appuyant sur la touche <keycap>F7</keycap>."
-
-#: C/nemiver.xml:541(term)
-msgid "Step Out"
-msgstr "Sortir"
-
-#: C/nemiver.xml:543(para)
-msgid ""
-"Finishes execution of the current function and stops when it returns to the "
-"calling function. This action can be activated from the keyboard with "
-"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
-msgstr ""
-"Termine l'exécution de la fonction en cours et s'arrête au point de retour "
-"de son appel. Cette action peut être activée en appuyant sur les touches "
-"<keycombo><keycap>Maj</keycap><keycap>F7</keycap></keycombo>."
-
-#: C/nemiver.xml:552(term)
-msgid "Restart"
-msgstr "Redémarrer"
-
-#: C/nemiver.xml:554(para)
-msgid ""
-"Reloads the current executable and starts execution from the beginning. This "
-"action can be activated from the keyboard with <keycombo><keycap>Shift</"
-"keycap><keycap>F5</keycap></keycombo>."
-msgstr ""
-"Recharge l'exécutable en cours de traitement et redémarre son exécution "
-"depuis le début. Cette action peut être activée en appuyant sur les touches "
-"<keycombo><keycap>Maj</keycap><keycap>F5</keycap></keycombo>."
-
-#: C/nemiver.xml:562(term)
-msgid "Stop"
-msgstr "Arrêter"
-
-#: C/nemiver.xml:564(para)
-msgid ""
-"Manually interrupt execution of the program. This action is only available "
-"when the debugger is running the executable (e.g. after a user has clicked "
-"<action>Continue</action>). This action can be activated from the keyboard "
-"with <keycap>F9</keycap>."
-msgstr ""
-"Arrête manuellement le déroulement du programme. Cette action n'est "
-"disponible que lorsque le débogueur est en train de déboguer l'exécutable "
-"(c'est-à-dire après que l'utilisateur a cliqué sur <action>Continuer</"
-"action>). Cette action peut être activée en appuyant sur la touche "
-"<keycap>F9</keycap>."
-
-#: C/nemiver.xml:573(para)
-msgid ""
-"By default, after loading an executable, Nemiver creates a breakpoint at "
-"<function>main()</function>, so when execution reaches <function>main()</"
-"function>, it will stop and wait for input. You can then step through the "
-"program, examine variables (see <xref linkend=\"nemiver-sect-inspecting-"
-"variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-"
-"sect-breakpoints\"/>)."
-msgstr ""
-"Par défaut, après avoir chargé un exécutable, <application>Nemiver</"
-"application> crée un point d'arrêt à l'entrée de la fonction <function>main()"
-"</function>. Ainsi dès que l'exécution atteint ce point, elle s'arrête et "
-"attend une commande. Vous pouvez ensuite parcourir pas à pas le programme, "
-"examiner les variables (consultez la <xref linkend=\"nemiver-sect-inspecting-"
-"variables\"/>) ou ajouter des points d'arrêt supplémentaires (consultez la "
-"<xref linkend=\"nemiver-sect-breakpoints\"/>)."
-
-#: C/nemiver.xml:582(title)
-msgid "Inspecting Variables"
-msgstr "Examen des variables"
-
-#: C/nemiver.xml:583(para)
-msgid ""
-"Nemiver displays a list of all local variables in the <interface>Variables</"
-"interface> tab of the <interface>Status Notebook</interface>. If you'd like "
-"to examine a different variable (or even an arbitrary expression), you can "
-"use the <interface>Variable Inspector</interface>. To bring up the "
-"<interface>Variable Inspector</interface>, select "
-"<menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</"
-"guimenuitem></menuchoice>. When the variable inspector comes up, you'll see "
-"a window that looks similar to the following:"
-msgstr ""
-"<application>Nemiver</application> affiche une liste de toutes les variables "
-"locales dans l'onglet <interface>Variables</interface> du <interface>Bloc-"
-"notes d'état</interface>. Si vous voulez examiner une autre variable (ou "
-"même une expression quelconque), servez-vous de l'élément de menu "
-"<menuchoice><guimenu>Déboguer</guimenu><guimenuitem>Examiner une variable</"
-"guimenuitem></menuchoice> qui fait apparaître une fenêtre semblable à celle-"
-"ci :"
-
-#: C/nemiver.xml:596(phrase)
-msgid "Variable Inspector Dialog"
-msgstr "Boîte de dialogue examen de variables"
-
-#: C/nemiver.xml:600(para)
-msgid ""
-"You can type any variable name or a simple expression (such as <literal>pFoo-"
-"&gt;bar</literal>) into the input box, and if the variable is valid and in "
-"scope, it will be display details about that expression."
-msgstr ""
-"Vous pouvez indiquer dans le contrôle de saisie tout nom de variable ou "
-"toute expression simple (comme <literal>pFoo-&gt;bar</literal>). Si cette "
-"variable est valide et à portée de vue, des informations détaillées la "
-"concernant seront affichées."
-
-#: C/nemiver.xml:605(para)
-msgid ""
-"Alternately, if you select the name of a variable in the <interface>source "
-"editor</interface>, and then launch the <interface>Variable Inspector</"
-"interface>, it will attempt to display information about the selected "
-"variable name."
-msgstr ""
-"D'une autre façon, si vous sélectionnez un nom de variable dans la fenêtre "
-"d'<interface>édition des sources</interface> puis faites apparaître la boîte "
-"de dialogue <interface>Examiner une variable</interface>, Nemiver essaie "
-"d'afficher des informations concernant cette variable."
-
-#: C/nemiver.xml:612(title)
-msgid "Keyboard Shortcut"
-msgstr "Raccourci clavier"
-
-#: C/nemiver.xml:613(para)
-msgid ""
-"You can also start the <interface>Variable Inspector</interface> by pressing "
-"<keycap>F12</keycap>."
-msgstr ""
-"Vous ferez également apparaître la fenêtre <interface>Examiner une variable</"
-"interface> en appuyant sur la touche <keycap>F12</keycap>."
-
-#: C/nemiver.xml:618(para)
-msgid ""
-"Nemiver will also let you display a list of all global variables in an "
-"application in a separate dialog. To display the <interface>Global "
-"Variables</interface> dialog, select <menuchoice><guimenu>Debug</"
-"guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
-"press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
-msgstr ""
-"<application>Nemiver</application> vous permet également d'afficher la liste "
-"de toutes les variables globales d'une application dans une boîte de "
-"dialogue séparée. Pour faire apparaître la fenêtre <interface>Variables "
-"globales</interface>, choisissez l'élément de menu "
-"<menuchoice><guimenu>Déboguer</guimenu><guimenuitem>Afficher les variables "
-"globales</guimenuitem></menuchoice> ou bien pressez <keycombo><keycap>Ctrl</"
-"keycap><keycap>G</keycap></keycombo>."
-
-#: C/nemiver.xml:630(phrase)
-msgid "Global Variables Dialog"
-msgstr "Boîte de dialogue des variables globales"
-
-#: C/nemiver.xml:635(para)
-msgid ""
-"For some programs (especially C++ programs), listing all of the global "
-"variables may take a very long time."
-msgstr ""
-"Pour certains programmes (plus spécialement les programmes en C++), "
-"l'affichage de la totalité des variables globales peut prendre beaucoup de "
-"temps."
-
-#: C/nemiver.xml:642(title)
-msgid "Setting Breakpoints"
-msgstr "Définition des points d'arrêt"
-
-#: C/nemiver.xml:643(para)
-msgid ""
-"There are several different ways to set breakpoints in Nemiver. Nemiver "
-"automatically sets a breakpoint at <function>main()</function> when you "
-"first begin debugging a new executable. If you want to set additional "
-"breakpoints you can do one of the following:"
-msgstr ""
-"Il y a plusieurs méthodes pour définir des points d'arrêt dans "
-"<application>Nemiver</application>. <application>Nemiver</application> "
-"définit automatiquement un point d'arrêt à l'entrée de la fonction "
-"<function>main()</function> quand vous débutez le débogage d'un exécutable. "
-"Si vous voulez définir d'autres points d'arrêt, utilisez un des moyens ci-"
-"après :"
-
-#: C/nemiver.xml:651(para)
-msgid ""
-"Click in the margin next to the line where you want the breakpoint to be set"
-msgstr ""
-"Cliquez dans la marge de la ligne sur laquelle vous voulez placer un point "
-"d'arrêt."
-
-#: C/nemiver.xml:655(para)
-msgid ""
-"Place your cursor on a line where you want the breakpoint to be set and set "
-"the breakpoint by either selecting <menuchoice><guimenu>Debug</"
-"guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
-"or by pressing <keycap>F8</keycap>"
-msgstr ""
-"Placez le curseur dans la ligne où vous voulez placer le point d'arrêt et "
-"définissez-le, soit via l'élément de menu <menuchoice><guimenu>Déboguer</"
-"guimenu><guimenuitem>Définir un point d'arrêt</guimenuitem></menuchoice>, "
-"soit en appuyant sur la touche <keycap>F8</keycap>."
-
-#: C/nemiver.xml:660(para)
-msgid ""
-"Set a breakpoint at a specific function name or at a specific location in a "
-"file by selecting <menuchoice><guimenu>Debug</guimenu><guimenuitem>Set "
-"Breakpoint...</guimenuitem></menuchoice> or by pressing "
-"<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will "
-"bring up a dialog that looks like the following:"
-msgstr ""
-"Définissez un point d'arrêt en entrée d'une fonction particulière ou à un "
-"emplacement donné d'un fichier à l'aide du menu "
-"<menuchoice><guimenu>Déboguer</guimenu><guimenuitem>Définir un point "
-"d'arrêt...</guimenuitem></menuchoice> ou bien en pressant "
-"<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. Cela fait "
-"apparaître une boîte de dialogue du type :"
-
-#: C/nemiver.xml:670(phrase)
-msgid "Set Breakpoint Dialog"
-msgstr "Boîte de dialogue de définition d'un point d'arrêt"
-
-#: C/nemiver.xml:674(para)
-msgid ""
-"You can specify a breakpoint at a particular location in a file, or by "
-"function name. If there are more than one function with the same name, "
-"Nemiver will display a list of all matching functions and ask you to pick "
-"the one you want."
-msgstr ""
-"Vous pouvez définir un point d'arrêt à un emplacement particulier du fichier "
-"ou bien via le nom d'une fonction. S'il y a plusieurs fonctions portant ce "
-"nom, <application>Nemiver</application> en affiche la liste et vous demande "
-"de choisir celle que vous souhaitez."
-
-#: C/nemiver.xml:683(title)
-msgid "Disabled Breakpoints"
-msgstr "Désactivation de points d'arrêt"
-
-#: C/nemiver.xml:684(para)
-msgid ""
-"Breakpoints can be either enabled or disabled. The debugger will stop "
-"execution whenever it reaches an enabled breakpoint but will not be affected "
-"by any breakpoints in the disabled state. This allows you to temporarily "
-"remove a breakpoint without actually deleting it."
-msgstr ""
-"Les points d'arrêt peuvent être, soit activés, soit désactivés. Le débogueur "
-"arrête l'exécution quand il atteint un point d'arrêt activé mais il ignore "
-"tous ceux qui sont dans l'état désactivé. Cette fonctionnalité permet "
-"d'enlever un point d'arrêt sans réellement le détruire."
-
-#: C/nemiver.xml:690(para)
-msgid ""
-"To disable or enable a breakpoint, click the checkbox next to the breakpoint "
-"number you want to enable or disable in the <interface>Breakpoints</"
-"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
-"you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> "
-"to enable or disable a breakpoint that is set on the line that the cursor is "
-"currently on."
-msgstr ""
-"Pour activer ou désactiver un point d'arrêt, cliquez sur la case à cocher à "
-"côté du numéro du point d'arrêt dans l'onglet <interface>Points d'arrêt</"
-"interface> du <interface>Bloc notes d'état</interface>. Autrement, pressez "
-"<keycombo><keycap>Maj</keycap><keycap>F8</keycap></keycombo> pour activer ou "
-"désactiver le point d'arrêt situé dans la ligne de code possédant le curseur."
-
-#: C/nemiver.xml:698(para)
-msgid ""
-"The following figures show the difference between enabled and disabled "
-"breakpoints in the source editor."
-msgstr ""
-"Les figures suivantes montrent la différence de représentation entre des "
-"points d'arrêt activés ou désactivés dans l'éditeur de sources."
-
-#: C/nemiver.xml:708(phrase)
-msgid "Illustration of an enabled breakpoint"
-msgstr "Illustration d'un point d'arrêt activé"
-
-#: C/nemiver.xml:710(para)
-msgid "Enabled Breakpoint"
-msgstr "Point d'arrêt activé"
-
-#: C/nemiver.xml:719(phrase)
-msgid "Illustration of a disabled breakpoint"
-msgstr "Illustration d'un point d'arrêt désactivé"
-
-#: C/nemiver.xml:721(para)
-msgid "Disabled Breakpoint"
-msgstr "Point d'arrêt désactivé"
-
-#: C/nemiver.xml:726(title)
-msgid "Opening Source Files"
-msgstr "Ouverture des fichiers source"
-
-#: C/nemiver.xml:727(para)
-msgid ""
-"Sometimes you don't know exactly the function name or line number where you "
-"want a breakpoint to be set, so you must open a source file to figure it "
-"out. You could just open arbitrary files from the filesystem, but Nemiver "
-"can also provide a list of source files that were used to build the "
-"executable and allow you to select from this list. When you select "
-"<menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</"
-"guimenuitem></menuchoice>, the following window should be displayed:"
-msgstr ""
-"Parfois, vous ne savez pas déterminer exactement le nom de la fonction ou le "
-"numéro de ligne à l'aplomb de laquelle placer un point d'arrêt. Il faut "
-"alors ouvrir le fichier source pour situer le point d'arrêt. Vous pouvez "
-"ouvrir arbitrairement des fichiers dans le système de fichiers, mais "
-"<application>Nemiver</application> fournit une liste des fichiers utilisés "
-"pour construire l'exécutable et vous permet d'en sélectionner un parmi ceux-"
-"ci. Si vous choisissez <menuchoice><guimenu>Fichier</"
-"guimenu><guimenuitem>Ouvrir un fichier source...</guimenuitem></menuchoice>, "
-"la fenêtre suivante est affichée :"
-
-#: C/nemiver.xml:742(phrase)
-msgid "Shows dialog for opening source files"
-msgstr "Affiche la boîte de dialogue pour ouvrir des fichiers source"
-
-#: C/nemiver.xml:746(para)
-msgid ""
-"To select an arbitrary file from the filesystem, choose the <guilabel>Select "
-"from Filesystem</guilabel> option. To select from a list of files that "
-"produced the executable, choose <guilabel>Select from Target Executable</"
-"guilabel>."
-msgstr ""
-"Pour choisir un fichier arbitrairement dans le système de fichier, cliquez "
-"sur l'option <guilabel>Sélectionnez depuis le système de fichiers</"
-"guilabel>. Pour choisir parmi les fichiers ayant servis à créer "
-"l'exécutable, cliquez sur <guilabel>Sélectionnez depuis l'exécutable cible</"
-"guilabel>."
-
-#: C/nemiver.xml:753(title)
-msgid "Determining Source Files for Dynamically Loaded Modules"
-msgstr "Détermination des fichiers source des modules chargés dynamiquement"
-
-#: C/nemiver.xml:754(para)
-msgid ""
-"If the target executable loads modules at runtime (e.g. using "
-"<function>dlopen()</function>), Nemiver will not be able to determine which "
-"files were used to build these modules until they are actually loaded."
-msgstr ""
-"Si l'exécutable cible charge des modules en cours d'exécution (par exemple, "
-"avec <function>dlopen()</function>), <application>Nemiver</application> ne "
-"sera pas capable de déterminer quels ont été les fichiers utilisés pour "
-"construire ces modules avant qu'ils n'aient été effectivement chargés."
-
-#: C/nemiver.xml:764(title)
-msgid "Advanced Debugging"
-msgstr "Débogage avancé"
-
-#: C/nemiver.xml:767(para)
-msgid ""
-"The register editing widget is located in the <interface>Registers</"
-"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
-"you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> "
-"to jump directly to the correct tab."
-msgstr ""
-"L'élément graphique d'édition des registres est situé dans l'onglet "
-"<interface>Registres</interface> du <interface>Bloc notes d'état</"
-"interface>. Pour aller directement dans cet onglet, pressez "
-"<keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo>."
-
-#: C/nemiver.xml:780(phrase)
-msgid "The Register Editing Widget"
-msgstr "L'élément graphique d'édition des registres"
-
-#: C/nemiver.xml:784(para)
-msgid ""
-"This widget shows the current values of all of the CPU registers. You can "
-"edit the register values by clicking in the <interface>Value</interface> "
-"column and entering a new value. If the value for the register changed since "
-"the last time the debugger stopped, it will be highlighted in red."
-msgstr ""
-"Cet élément graphique affiche les valeurs actuelles de tous les registres du "
-"processeur. Vous pouvez modifier les valeurs en cliquant dans la colonne "
-"<interface>Valeur</interface> et en saisissant une nouvelle valeur. Si la "
-"valeur du registre a été modifiée depuis le précédent arrêt du débogueur, "
-"elle est mise en évidence en rouge."
-
-#: C/nemiver.xml:794(para)
-msgid ""
-"The memory widget allows you to view a section of memory directly. This "
-"enables you to get a lower-level view of what's happening while your program "
-"is running."
-msgstr ""
-"L'élément graphique mémoire permet d'afficher directement une partie de la "
-"mémoire, offrant ainsi une vue au plus bas niveau de ce qui se passe lors du "
-"déroulement du programme."
-
-#: C/nemiver.xml:805(phrase)
-msgid "The Memory Editing Widget"
-msgstr "L'élément graphique d'édition mémoire"
-
-#: C/nemiver.xml:809(para)
-msgid ""
-"To display a segment of memory in the memory view widget, enter a memory "
-"address in the <interface>Address</interface> field. If the address is valid "
-"for the program being debugged, the memory view will display the memory "
-"values starting at the specified address. Memory values can be displayed in "
-"byte format, word format (2 bytes), or long word format (4 bytes) by "
-"choosing an option from the <interface>Group By</interface> drop-down menu. "
-"The memory values will automatically be updated as you step through the "
-"program."
-msgstr ""
-"Pour afficher une portion de mémoire dans l'élément graphique mémoire, "
-"saisissez une adresse mémoire dans le champ <interface>Adresse</interface>. "
-"Si l'adresse est valide par rapport au programme en cours de débogage, une "
-"vue de la mémoire, débutant à l'adresse indiquée, est affichée. Les valeurs "
-"mémoire sont affichées sous les formats octet, mot (2 octets) ou mot long (4 "
-"octets) selon le choix opéré avec le menu déroulant <interface>Regrouper "
-"par</interface>. Les valeurs de la mémoire sont automatiquement mises à jour "
-"au fur et à mesure que vous avancez pas à pas dans le programme."
-
-#: C/nemiver.xml:820(para)
-msgid ""
-"In addition to viewing the memory values, you can also use the memory widget "
-"to modify memory values. You can edit either the hex byte representation "
-"(the left-hand section of the memory widget), or the ASCII representation "
-"(the right-hand section of the memory widget). All changes will be applied "
-"immediately."
-msgstr ""
-"Outre l'affichage des valeurs en mémoire, cet élément graphique peut servir "
-"à les modifier. Vous pouvez modifier, soit la représentation hexadécimale "
-"(côté gauche), soit la représentation ASCII (côté droit). Les changements "
-"sont appliqués immédiatement."
-
-#: C/nemiver.xml:831(title)
-msgid "Session Save and Restore"
-msgstr "Enregistrement et restauration d'une session"
-
-#: C/nemiver.xml:832(para)
-msgid ""
-"Nemiver can save your debugging sessions for you so that you can resume them "
-"at a later time. This includes saving information such as which executable "
-"is being debugged, what environment variables are set, what command-line "
-"options are passed to the executable, which files are open, and which "
-"breakpoints are set so that you can get back to where you left off last time "
-"as quickly as possible."
-msgstr ""
-"<application>Nemiver</application> enregistre les sessions de débogage pour "
-"vous et vous permet de les reprendre ultérieurement. Les informations "
-"d'enregistrement comprennent le nom de l'exécutable en cours de débogage, "
-"les variables d'environnement définies, les options passées en ligne de "
-"commande, les fichiers ouverts et les points d'arrêt définis de manière à "
-"retrouver le plus rapidement possible la situation que vous aviez abandonnée "
-"la fois précédente."
-
-#: C/nemiver.xml:841(title)
-msgid "Saving Sessions"
-msgstr "Enregistrement de sessions"
-
-#: C/nemiver.xml:842(para)
-msgid ""
-"Nemiver will save your session automatically on exit, so you don't even have "
-"to worry about it. However, if you want to explicitly save the session "
-"before closing Nemiver, you can do so by selecting "
-"<menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</"
-"guimenuitem></menuchoice>."
-msgstr ""
-"<application>Nemiver</application> enregistre votre session automatiquement "
-"lorsque vous quittez. Vous n'avez pas à vous en soucier. Toutefois, si vous "
-"souhaitez explicitement enregistrer votre session avant la fermeture de "
-"<application>Nemiver</application>, choisissez l'élément de menu "
-"<menuchoice><guimenu>Fichier</guimenu><guimenuitem>Enregistrer la session "
-"sur le disque</guimenuitem></menuchoice>."
-
-#: C/nemiver.xml:850(title)
-msgid "Resuming Saved Sessions"
-msgstr "Reprise de sessions enregistrées"
-
-#: C/nemiver.xml:853(para)
-msgid ""
-"Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved "
-"Session...</guimenuitem></menuchoice> and select a session from the list."
-msgstr ""
-"Choisissez <menuchoice><guimenu>Fichier</guimenu><guimenuitem>Reprendre une "
-"session enregistrée...</guimenuitem></menuchoice> et sélectionnez une "
-"session dans la liste."
-
-#: C/nemiver.xml:859(title)
-msgid "Session Dialog"
-msgstr "Boîte de dialogue Sessions"
-
-#: C/nemiver.xml:866(phrase)
-msgid "Shows dialog for resuming a saved session"
-msgstr "Affiche une boîte de dialogue pour reprendre une session enregistrée"
-
-#: C/nemiver.xml:873(title)
-msgid "From the Command Line"
-msgstr "À partir de la ligne de commande"
-
-#: C/nemiver.xml:874(para)
-msgid ""
-"If you know the session ID of the session you want to run, you can start "
-"that debugging session from the command line. For example, if you want to "
-"run session number 3, you can do so with the following command: "
-"<command>nemiver --session 3</command>."
-msgstr ""
-"Si vous connaissez le numéro d'identification de la session que vous voulez "
-"reprendre, vous pouvez redémarrer la session à partir de la ligne de "
-"commande. Par exemple, pour reprendre la session numéro 3, tapez la commande "
-"suivante : <command>nemiver --session 3</command>."
-
-#: C/nemiver.xml:886(title)
-msgid "About Nemiver"
-msgstr "À propos de <application>Nemiver</application>"
-
-#: C/nemiver.xml:887(para)
-msgid ""
-"<application>Nemiver</application> was written by Dodji Seketeli and "
-"Jonathon Jongsma, with contributions from many others. To find more "
-"information about Nemiver, please visit the <ulink url=\"http://www.gnome."
-"org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
-msgstr ""
-"<application>Nemiver</application> a été écrit par Dodji Seketeli et "
-"Jonathon Jongsma, avec de nombreuses autres contributions. Pour obtenir plus "
-"d'information à propos de Nemiver, consultez le site Web du <ulink url="
-"\"http://www.gnome.org/projects/nemiver/\" type=\"http\">projet Nemiver</"
-"ulink>."
-
-#: C/nemiver.xml:891(para)
-msgid ""
-"To report a bug or make a suggestion regarding this application or this "
-"manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?"
-"feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
-msgstr ""
-"Pour signaler une anomalie ou émettre une suggestion concernant "
-"l'application ou le présent manuel, procédez comme indiqué à la section "
-"« Votre avis » du <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help"
-"\">Guide utilisateur GNOME</ulink>."
-
-#: C/nemiver.xml:896(para)
-msgid ""
-"This program is distributed under the terms of the GNU General Public "
-"license as published by the Free Software Foundation; either version 2 of "
-"the License, or (at your option) any later version. A copy of this license "
-"can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or "
-"in the file COPYING included with the source code of this program."
-msgstr ""
-"Ce programme est distribué selon les termes de la « GNU General Public "
-"license » telle que publiée par la Free Software Foundation ; soit la "
-"version 2 de la licence, soit, (à votre discrétion) toute version "
-"ultérieure. Une copie de la-dite licence est accessible <ulink url=\"ghelp:"
-"gpl\" type=\"help\">ici</ulink> ou bien dans le fichier COPYING joint au "
-"code source de ce programme."
-
-#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
-#: C/nemiver.xml:0(None)
-msgid "translator-credits"
-msgstr ""
-"Gérard Baylard, <gerard DOT b AT bbox DOT fr>, 2010\n"
-"Bruno Brouard, <annoa.b@gmail.com>, 2010"
+#~ msgid "Shows dialog for resuming a saved session"
+#~ msgstr ""
+#~ "Affiche une boîte de dialogue pour reprendre une session enregistrée"
