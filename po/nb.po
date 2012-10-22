@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-28 07:27+0200\n"
-"PO-Revision-Date: 2012-08-28 07:32+0200\n"
+"POT-Creation-Date: 2012-10-22 19:44+0200\n"
+"PO-Revision-Date: 2012-10-22 19:47+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian bokmål <i18n-nb@lister.ping.uio.no>\n"
 "Language: \n"
@@ -101,7 +101,7 @@ msgstr ""
 
 #: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
-msgstr ""
+msgstr "GNOME feilsøkingsprogram for C/C++"
 
 #: ../src/main.cc:361
 msgid ""
@@ -197,7 +197,7 @@ msgstr "Fjern dette stoppunktet"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
 msgid "_Go to Source"
-msgstr ""
+msgstr "_Gå til kildekode"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
 msgid "Find this breakpoint in the source editor"
@@ -1028,7 +1028,7 @@ msgstr "Kjørbar fil:"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
-msgstr ""
+msgstr "Åpne kildekodefiler"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
 msgid "Select from _Target Executable"
@@ -1136,9 +1136,8 @@ msgid "Path to the GDB binary used"
 msgstr ""
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
-#, fuzzy
 msgid "GDB Binary"
-msgstr "Binær"
+msgstr "GDB binærfil"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Number of instructions to disassemble by default"
@@ -1158,11 +1157,11 @@ msgstr ""
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Follow parent"
-msgstr ""
+msgstr "Følg opphav"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "Follow child"
-msgstr ""
+msgstr "Følg barn"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
 msgid "GDB Follow Fork Mode"
@@ -1178,12 +1177,11 @@ msgstr "Utforming"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
 msgid "Attach to a Running Program"
-msgstr ""
+msgstr "Fest til et kjørende program"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
-#, fuzzy
 msgid "Choose a Process to Debug"
-msgstr "Velg program som skal kjøres"
+msgstr "Velg en prosess for feilsøking"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
@@ -1191,16 +1189,15 @@ msgstr ""
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
 msgid "Connect to Remote Target"
-msgstr ""
+msgstr "Koble til eksternt mål"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
-#, fuzzy
 msgid "Executable to Load"
-msgstr "Kjør et program"
+msgstr "Kjørbar fil som skal lastes"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
 msgid "Shared Libraries Location"
-msgstr ""
+msgstr "Lokasjon for delte biblioteker"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
 msgid "Remote Debugging Server"
@@ -1224,7 +1221,7 @@ msgstr "Velg program som skal kjøres"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
 msgid "Choose an Executable"
-msgstr ""
+msgstr "Velg en kjørbar fil"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "Program:"
@@ -1236,7 +1233,7 @@ msgstr "Argumenter:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
 msgid "Choose a Working Directory"
-msgstr ""
+msgstr "Velg en arbeidskatalog"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "Working Directory:"
@@ -1259,9 +1256,8 @@ msgid "Saved Sessions"
 msgstr "Lagrede økter"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
-#, fuzzy
 msgid "Choose a Session to Debug"
-msgstr "Velg program som skal kjøres"
+msgstr "Velg en økt for feilsøking"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
 msgid "Set a Breakpoint:"
@@ -1278,17 +1274,17 @@ msgstr "H_endelse:"
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
 msgid "_Binary Location:"
-msgstr ""
+msgstr "Lokasjon for _binærfil:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
 msgid "_Source Location:"
-msgstr ""
+msgstr "Loka_sjon for kildekode:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
 msgid "F_unction Name:"
-msgstr ""
+msgstr "F_unksjonsnavn:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
@@ -1319,11 +1315,11 @@ msgstr "Gå til lokasjon:"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
 msgid "Break at Destination"
-msgstr ""
+msgstr "Bryt ved mål"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
 msgid "Add to monitor"
-msgstr ""
+msgstr "Legg til overvåking"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
 msgid "_Variable Name:"
@@ -1347,7 +1343,7 @@ msgstr "Inspiser"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
 msgid "Triggers on:"
-msgstr ""
+msgstr "Utløses på:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
 msgid "Read"
@@ -1368,6 +1364,8 @@ msgid ""
 "Cannot find file '%s'.\n"
 "Please specify the location of this file:"
 msgstr ""
+"Kan ikke finne fil «%s».\n"
+"Oppgi lokasjon for denne filen:"
 
 #: ../src/uicommon/nmv-source-editor.cc:611
 #, c-format
