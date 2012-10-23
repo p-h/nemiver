@@ -4,16 +4,17 @@
 # Carsten Reith <carsten.reith@arcor.de>, 2006.
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2009-2012.
 # Jakob Kramer <jakob.kramer@gmx.de>, 2010.
-# Christian Kirbach <Christian.Kirbach@googlemail.com>, 2010.
+# Christian Kirbach <Christian.Kirbach@gmail.com>, 2010, 2012.
+# Wolfgang Stöggl <c72578@yahoo.de>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-16 11:42+0000\n"
-"PO-Revision-Date: 2012-09-16 17:44+0100\n"
-"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
+"POT-Creation-Date: 2012-10-02 15:36+0000\n"
+"PO-Revision-Date: 2012-10-20 17:12+0200\n"
+"Last-Translator: Wolfgang Stoeggl <c72578@yahoo.de>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -22,6 +23,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
+"X-Generator: Gtranslator 2.91.5\n"
 
 #: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
@@ -98,9 +100,9 @@ msgstr ""
 "verwendet wird"
 
 #: ../src/main.cc:189
-#, fuzzy
 msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
-msgstr "Keinen Haltepunkt in »main« setzen und ?"
+msgstr ""
+"Keinen Haltepunkt in »main« setzen und Unterständigen auch nicht ausführen"
 
 #: ../src/main.cc:198
 msgid "Show the version number of Nemiver"
@@ -129,10 +131,6 @@ msgstr ""
 "Andernfalls finden Sie unten die vollständigen Einstellungen von Nemiver.\n"
 
 #: ../src/main.cc:380
-#, fuzzy
-#| msgid ""
-#| "Please provide a local copy of the binary you intend to debug remotely.\n"
-#| "Like this:\n"
 msgid ""
 "Please provide the path to the binary that generated the core file too.\n"
 "Like this:\n"
@@ -700,7 +698,7 @@ msgstr "Einstellungen der laufenden Sitzungen bearbeiten"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
 msgid "_Reload Source File"
-msgstr "Quelldatei  neu _laden"
+msgstr "Quelldatei neu _laden"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3560
 msgid "Reloads the source file"
@@ -965,13 +963,10 @@ msgid "Variable"
 msgstr "Variable"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
-#, fuzzy
-#| msgid "expression:"
 msgid "In scope expressions"
 msgstr "Ausdrücke innerhalb des Bereichs"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
-#, fuzzy
 msgid "Out of scope expressions"
 msgstr "Ausdrücke außerhalb des Bereichs"
 
@@ -1165,10 +1160,8 @@ msgid "Assembly style"
 msgstr "Assemblerstil"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
-#, fuzzy
-#| msgid "<b>Assembly flavor</b>"
 msgid "Assembly flavor"
-msgstr "Assembler?"
+msgstr "Assembler-Variante"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
