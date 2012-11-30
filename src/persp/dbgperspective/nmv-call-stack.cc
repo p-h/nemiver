@@ -229,14 +229,15 @@ struct CallStack::Priv {
     set_current_frame (unsigned a_index)
     {
         THROW_IF_FAIL (a_index < frames.size ());
-        cur_frame = frames[a_index];
+        cur_frame_index = a_index;
+        cur_frame = frames[cur_frame_index];
         THROW_IF_FAIL (cur_frame.level () >= 0);
         in_set_cur_frame_trans = true;
 
         LOG_DD ("frame selected: '"<<  (int) cur_frame_index << "'");
         LOG_DD ("frame level: '" << (int) cur_frame.level () << "'");
 
-        debugger->select_frame (a_index);
+        debugger->select_frame (cur_frame_index);
     }
 
     /// If the selected frame is the "expand to see more frames" raw,
@@ -419,7 +420,11 @@ struct CallStack::Priv {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        NEMIVER_TRY
+        NEMIVER_TRY;
+
+        // Don't try to select a row on an empty call stack.
+        if (store->children ().empty ())
+            return;
 
         Gtk::TreeView *tree_view = dynamic_cast<Gtk::TreeView*> (widget.get ());
         THROW_IF_FAIL (tree_view);
@@ -846,7 +851,12 @@ struct CallStack::Priv {
         }
 
         THROW_IF_FAIL (store);
+        // We really don't need to try to update the selected frame
+        // when we are just clearing the list store, so block the signal
+        // transmission to the callback slot while we clear the store.
+        on_selection_changed_connection.block ();
         store->clear ();
+        on_selection_changed_connection.unblock ();
         frames.clear ();
         params.clear ();
         level_frame_map.clear ();
