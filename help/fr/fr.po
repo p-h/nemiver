@@ -336,7 +336,7 @@ msgstr ""
 
 #: C/index.docbook:99(article/indexterm)
 msgid "<primary>Nemiver</primary>"
-msgstr "<primary>Nemiver/<primary>"
+msgstr "<primary>Nemiver</primary>"
 
 #: C/index.docbook:102(article/indexterm)
 msgid "<primary>debugger</primary>"
