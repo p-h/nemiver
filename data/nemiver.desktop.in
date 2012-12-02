@@ -7,5 +7,5 @@ _X-GNOME-FullName=Nemiver C/C++ Debugger
 _Comment=Debug Applications
 Icon=nemiver
 Exec=nemiver
-Categories=GNOME;Development;Debugger;
+Categories=GNOME;GTK;Development;Debugger;
 StartupNotify=true
