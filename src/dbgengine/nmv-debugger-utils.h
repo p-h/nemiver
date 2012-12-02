@@ -63,11 +63,11 @@ void dump_variable_value (const IDebugger::Variable& a_var,
                           ostream_type &a_os,
                           bool a_print_var_name);
 
-void dump_variable_value (IDebugger::Variable& a_var,
+void dump_variable_value (const IDebugger::Variable& a_var,
                           int a_indent_num,
                           std::string &a_out_str);
 
-void dump_variable_value (IDebugger::Variable& a_var);
+void dump_variable_value (const IDebugger::Variable& a_var);
 
 template<class ostream_type>
 ostream_type&
