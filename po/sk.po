@@ -1,0 +1,1751 @@
+# Slovak translation for nemiver.
+# Copyright (C) 2012 nemiver's COPYRIGHT HOLDER
+# This file is distributed under the same license as the nemiver package.
+# Richard Stanislavský <kenny.vv@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2012-12-01 22:00+0000\n"
+"PO-Revision-Date: 2012-12-02 17:27+0000\n"
+"Last-Translator: Richard Stanislavský <kenny.vv@gmail.com>\n"
+"Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
+"X-Generator: Poedit 1.5.4\n"
+
+# desktop entry name
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+# desktop entry generic name
+#: ../data/nemiver.desktop.in.h:2
+msgid "C/C++ Debugger"
+msgstr "Odlaďovač C/C++"
+
+# desktop entry generic X-FullName
+#: ../data/nemiver.desktop.in.h:3
+msgid "Nemiver C/C++ Debugger"
+msgstr "Nemiver - odlaďovač C/C++"
+
+# desktop entry comment
+#: ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Ladenie aplikácií"
+
+# cmd desc
+#: ../src/main.cc:78
+msgid "Set the environment of the program to debug"
+msgstr "Nastaví prostredie programu na ladenie"
+
+# cmd desc
+#: ../src/main.cc:87
+msgid "Attach to a process"
+msgstr "Pričlení k procesu"
+
+# cmd desc
+#: ../src/main.cc:96
+msgid "Load a core file"
+msgstr "Načíta súbor s výpisom obsahu pamäte"
+
+# cmd desc
+#: ../src/main.cc:104
+msgid "List the saved debugging sessions"
+msgstr "Zobrazí zoznam uložených relácií ladenia"
+
+# cmd desc
+#: ../src/main.cc:112
+msgid "Erase the saved debugging sessions"
+msgstr "Zmaže uložené relácie ladenia"
+
+# cmd desc
+#: ../src/main.cc:120
+msgid "Debug the program that was of session number N"
+msgstr "Ladí program, ktorý bol v relácií číslo N"
+
+# cmd desc
+#: ../src/main.cc:128
+msgid "Execute the last session"
+msgstr "Spustí poslednú reláciu"
+
+# cmd desc
+#: ../src/main.cc:136
+msgid "Enable logging domains DOMAINS"
+msgstr "Povolí zaznamenávanie domén DOMAINS"
+
+# cmd desc
+#: ../src/main.cc:144
+msgid "Log the debugger output"
+msgstr "Zaznamená výstup odlaďovača"
+
+# cmd desc
+#: ../src/main.cc:152
+msgid "Use this terminal as the debugee's terminal"
+msgstr "Použije tento terminál ako hlavný terminál odlaďovača"
+
+# cmd desc
+#: ../src/main.cc:161
+msgid "Connect to remote target specified by HOST:PORT"
+msgstr "Pripojí sa k vzdialenému cieľu určenému pomocou HOSTITEĽ:PORT"
+
+# cmd desc
+#: ../src/main.cc:170
+msgid ""
+"Where to look for shared libraries loaded by the inferior. Use in "
+"conjunction with --remote"
+msgstr ""
+"Kde sa majú hľadať knižnice načítané podradeným programom. Používa sa v "
+"spojení s voľbou --remote"
+
+# cmd desc
+#: ../src/main.cc:180
+msgid "Set the path of the GDB binary to use to debug the inferior"
+msgstr ""
+"Nastavuje cestu k binárnemu súboru GDB, ktorý sa použije na ladenie "
+"jednotlivých stavov programu"
+
+# cmd desc
+#: ../src/main.cc:189
+msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
+msgstr "Nenastavuje zarážku v „main“ a tiež nespúšťa jednotlivé stavy programu"
+
+# cmd desc
+#: ../src/main.cc:198
+msgid "Show the version number of Nemiver"
+msgstr "Zobrazí číslo verzie programu Nemiver"
+
+#: ../src/main.cc:264
+msgid " [<prog-to-debug> [prog-args]]"
+msgstr " [<prog-na-ladenie> [prog-parametre]]"
+
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
+msgid "A C/C++ debugger for GNOME"
+msgstr "Odlaďovač C/C++ pre GNOME"
+
+#: ../src/main.cc:361
+msgid ""
+"Please provide a local copy of the binary you intend to debug remotely.\n"
+"Like this:\n"
+msgstr ""
+"Prosím, uveďte lokálnu kópiu binárneho súboru, ktorý chcete vzdialene "
+"ladiť.\n"
+"Napríklad takto:\n"
+
+#: ../src/main.cc:366 ../src/main.cc:385
+msgid "Otherwise, find below the full set of Nemiver options.\n"
+msgstr ""
+"V opačnom prípade môžete nižšie nájsť úplnú sadu volieb programu Nemiver.\n"
+
+#: ../src/main.cc:380
+msgid ""
+"Please provide the path to the binary that generated the core file too.\n"
+"Like this:\n"
+msgstr ""
+"Prosím, uveďte aj cestu k binárnemu súboru, ktorý generoval súbor s výpisom "
+"obsahu pamäte.\n"
+"Napríklad takto:\n"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
+msgid "ID"
+msgstr "Identifikátor"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-file-list.cc:108
+msgid "File Name"
+msgstr "Názov súboru"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
+msgid "Line"
+msgstr "Riadok"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
+msgid "Function"
+msgstr "Funkcia"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
+msgid "Address"
+msgstr "Adresa"
+
+# treeview column editable
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:153
+msgid "Condition"
+msgstr "Podmienka"
+
+# treeview column editable
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
+msgid "Toggle countpoint"
+msgstr "Prepnúť bod počítadla"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
+msgid "Type"
+msgstr "Typ"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
+msgid "Hits"
+msgstr "Prístupy"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
+msgid "Expression"
+msgstr "Výraz"
+
+# treeview column editable
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
+msgid "Ignore count"
+msgstr "Ignorovať počet"
+
+# breakpoint type
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:348
+msgid "breakpoint"
+msgstr "zarážka"
+
+# breakpoint type
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:352
+msgid "watchpoint"
+msgstr "bod sledovania"
+
+# breakpoint type
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:355
+msgid "countpoint"
+msgstr "bod počítadla"
+
+# breakpoint type
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:358
+msgid "unknown"
+msgstr "neznámy"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
+msgid "_Delete"
+msgstr "O_dstrániť"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
+msgid "Remove this breakpoint"
+msgstr "Odoberie túto zarážku"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
+msgid "_Go to Source"
+msgstr "_Prejsť na zdrojový súbor"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
+msgid "Find this breakpoint in the source editor"
+msgstr "Nájde túto zarážku v editore zdrojového súboru"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:177
+#: ../src/uicommon/nmv-terminal.cc:173
+msgid "_Copy"
+msgstr "_Kopírovať"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:178
+msgid "Copy the call stack to the clipboard"
+msgstr "Skopíruje zásobník volania do schránky"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+msgid "Frame"
+msgstr "Rámec"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
+msgid "Arguments"
+msgstr "Parametre"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
+msgid "Location"
+msgstr "Umiestnenie"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
+msgid "Binary"
+msgstr "Binárny súbor"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
+#, c-format
+msgid "(Click here to see the next %d row of the call stack"
+msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgstr[0] "(Kliknutím zobrazíte následujúcich %d riadkov zásobníka volania)"
+msgstr[1] "(Kliknutím zobrazíte následujúci %d riadok zásobníka volania)"
+msgstr[2] "(Kliknutím zobrazíte následujúce %d riadky zásobníka volania)"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
+msgid "Function Name"
+msgstr "Názov funkcie"
+
+#. labels for widget tabs in the status notebook
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:117
+msgid "Context"
+msgstr "Kontext"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+msgid "Target Terminal"
+msgstr "Cieľový terminál"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
+msgid "Breakpoints"
+msgstr "Zarážky"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
+msgid "Registers"
+msgstr "Registre"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
+msgid "Memory"
+msgstr "Pamäť"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
+msgid "Expression Monitor"
+msgstr "Sledovanie výrazov"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1689
+msgid "Reached end of file"
+msgstr "Dosiahnutý koniec súboru"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1692
+#, c-format
+msgid "Could not find string %s"
+msgstr "Nepodarilo sa nájsť reťazec %s"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2070
+msgid "Change to Standard Breakpoint"
+msgstr "Zmeniť na štandardnú zarážku"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2073
+msgid "Change to Countpoint"
+msgstr "Zmeniť na bod počítadla"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2075
+msgid "Remove _Breakpoint"
+msgstr "Odo_brať zarážku"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2078
+msgid "Disable Breakpoint"
+msgstr "Zakázať zarážku"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
+msgid "Enable Breakpoint"
+msgstr "Povoliť zarážku"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2083
+msgid "Set _Breakpoint"
+msgstr "Nastaviť _zarážku"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2085
+msgid "Set Countpoint"
+msgstr "Nastaviť bod počítadla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "%s (path=„%s“, pid=%i)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2262
+msgid "Connected to remote target!"
+msgstr "Pripojený k vzdialenému cieľu!"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2418
+msgid "Program exited"
+msgstr "Program skončil"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2448
+msgid "The underlying debugger engine process died."
+msgstr "Podkladový program používaný odlaďovačom nečakane skončil."
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2536
+#, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "Cieľ prijal signál: %s, %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2551
+#, c-format
+msgid "An error occurred: %s"
+msgstr "Vyskytla sa chyba: %s"
+
+# PM: chcete
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2714
+#, c-format
+msgid "File %s has been modified. Do you want to reload it?"
+msgstr "Súbor %s bol upravený. Chcete ho načítať znovu?"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3057
+msgid "_Run or Restart"
+msgstr "Spustiť alebo _reštartovať"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3058
+msgid "Run or Restart the target"
+msgstr "Spustí alebo reštartuje cieľ"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3070
+msgid "_Detach From the Running Program"
+msgstr "O_dčleniť od bežiaceho programu"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3071
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr "Odpojí odlaďovač od bežiaceho programu bez jeho vypnutia"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3086
+msgid "_Save Session to Disk"
+msgstr "Uložiť _reláciu na disk"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3087
+msgid "Save the current debugging session to disk"
+msgstr "Uloží aktuálnu reláciu ladenia na disk"
+
+# PM: dialog prekladáme ako dialógové okno
+# PM: nastaviť zarážku pomocou okna (aby to nebolo velmi dlhé)
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
+msgid "Set Breakpoint with Dialog..."
+msgstr "Nastaviť zarážku pomocou okna…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3097
+msgid "Set a breakpoint at the current line using a dialog"
+msgstr "Nastaví zarážku na aktuálnom riadku pomocou okna"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3108
+msgid "Set Breakpoint..."
+msgstr "Nastaviť zarážku…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3109
+msgid "Set a breakpoint at a function or line number"
+msgstr "Nastaví zarážku na funkciu alebo číslo riadka"
+
+# menu item action
+#. Depending on the context we will want this string to be
+#. either "Set Breakpoint", or "Remove Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3125
+msgid "Toggle _Breakpoint"
+msgstr "Prepnúť _zarážku"
+
+# PM: nejdem to tu všetko označovať ako fuzzy, jednoducho si oprav všetky tooltipy
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3126
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "Nastaví/odoberie zarážku aktuálneho umiestnennie kurzora"
+
+# menu item action
+#. Depending on the context we will want this string to be
+#. either "Enable Breakpoint", or "Disable
+#. Breakpoint". Hence this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3143
+msgid "Enable/Disable Breakpoint"
+msgstr "Povoliť/zakázať zarážku"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
+msgid ""
+"Enable or disable the breakpoint that is set at the current cursor location"
+msgstr ""
+"Povolí alebo zakáže zarážku, ktorá je nastavená na aktuálnu pozíciu kurzora"
+
+# menu item action
+#. Depending on the context we will want this string to be
+#. either "Set Countpoint", or "Change to Countpoint", or
+#. "Change to Standard Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3164
+msgid "Toggle _Countpoint"
+msgstr "Prepnúť bod počítadla"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3165
+msgid "Set/Unset a countpoint at the current cursor location"
+msgstr "Nastaví/odoberie bod počítadla na aktuálne umiestnennie kurzora"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
+msgid "Set Watchpoint with Dialog..."
+msgstr "Nastaviť bod sledovania pomocou okna…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
+msgid "Set a watchpoint using a dialog"
+msgstr "Nastaví bod sledovania pomocou okna"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
+msgid "_Next"
+msgstr "_Ďalej"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
+msgid "Execute next line stepping over the next function, if any"
+msgstr "Vykoná nasledujúci riadok krokovaním cez ďalšiu funkciu"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
+msgid "_Step"
+msgstr "_Krok"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
+msgid "Execute next line, stepping into the next function, if any"
+msgstr "Vykoná nasledujúci riadok krokovaním do ďalšej funkcie"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
+msgid "Step _Out"
+msgstr "Krok _von"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
+msgid "Finish the execution of the current function"
+msgstr "Dokonči vykonávanie aktuálnej funkcie"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3221
+msgid "Step Into asm"
+msgstr "Krok do Assembleru"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3222
+msgid "Step into the next assembly instruction"
+msgstr "Krok do ďalšej inštrukcie Assembleru"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+msgid "Step Over asm"
+msgstr "Krok cez Assembler"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+msgid "Step over the next assembly instruction"
+msgstr "Krok cez ďalšiu inštrukciu Assembleru"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
+msgid "_Continue or start"
+msgstr "_Pokračovať alebo spustiť"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3242
+msgid "Start or continue program execution until the next breakpoint"
+msgstr "Spustí alebo pokračuje vykonávanie programu až po ďalšiu zarážku"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
+msgid "Run to Cursor"
+msgstr "Bežať po kurzor"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
+msgid "Continue program execution until the currently selected line is reached"
+msgstr ""
+"Pokračuje vo vykonávaní programu až po dosiahnutí aktuálne vybratého riadka"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
+msgid "Jump to Cursor"
+msgstr "Skočiť na kurzor"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
+msgid "Jump to the currently selected line"
+msgstr "Skočí na aktuálny riadok"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
+msgid "Jump and Stop to Cursor"
+msgstr "Skočiť a zastaviť na kurzore"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3274
+msgid "Sets a breakpoint to the currently selected line and jump there"
+msgstr "Nastaví zarážku na aktuálny riadok a skočí tam"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
+msgid "Jump to a Given Location"
+msgstr "Skočiť na dané umiestnenie"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
+msgid "Select a given code location and jump there"
+msgstr "Vyberie pozíciu daného kódu a skočí tam"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
+msgid "Inspect an Expression"
+msgstr "Preskúmať výraz"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+msgid "Inspect a global or local expression"
+msgstr "Preskúma globálny alebo lokálny výraz"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3309
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
+msgid "Call a Function"
+msgstr "Volať funkciu"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3310
+msgid "Call a function in the program being debugged"
+msgstr "Volá funkciu programu, ktorý sa momentálne ladí"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
+msgid "Show Global Variables"
+msgstr "Zobraziť globálne premenné"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
+msgid "Display all global variables"
+msgstr "Zobrazí všetky globálne premenné"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3330
+msgid "Refresh Locals"
+msgstr "Obnoviť lokálne premenné"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3331
+msgid "Refresh the list of variables local to the current function"
+msgstr "Obnoví zoznam lokálnych premenných aktuálnej funkcie"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3340
+msgid "Show Assembly"
+msgstr "Zobraziť Assembler"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
+msgid ""
+"Show the assembly code of the source code being currently debugged, in "
+"another tab"
+msgstr ""
+"Zobrazí zdrojový kód v Assembleri, ktorý sa momentálne ladí, v novej karte"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
+msgid "Switch to Assembly"
+msgstr "Prepnúť na Assembler"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
+msgid "Show the assembly code of the source code being currently debugged"
+msgstr "Zobrazí zdrojový kód v Assembleri, ktorý sa momentálne ladí"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
+msgid "Switch to Source"
+msgstr "Prepnúť na zdrojový kód"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
+msgid "Show the source code being currently debugged"
+msgstr "Zobrazí zdrojový kód, ktorý sa momentále ladí"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3379
+msgid "Stop"
+msgstr "Zastaviť"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3380
+msgid "Stop the debugger"
+msgstr "Zastaví odlaďovač"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3392
+msgid "_View"
+msgstr "_Zobraziť"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
+msgid "Switch to Target Terminal View"
+msgstr "Prepne na zobrazenie cieľového terminálu"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
+msgid "Switch to Context View"
+msgstr "Prepnúť na zobrazenie kontextu"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
+msgid "Switch to Breakpoints View"
+msgstr "Prepnúť na zobrazenie zarážiek"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3436
+msgid "Switch to Registers View"
+msgstr "Prepnúť na zobrazenie registrov"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3448
+msgid "Switch to Memory View"
+msgstr "Prepnúť na zobrazenie pamäte"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3459
+msgid "Switch to Variables Monitor View"
+msgstr "Prepnúť na zobrazenie sledovania premenných"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
+msgid "_Debug"
+msgstr "La_diť"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3478
+msgid "_Open Source File..."
+msgstr "_Otvoriť zdrojový súbor…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3479
+msgid "Open a source file for viewing"
+msgstr "Otvorí zdrojový súbor pre náhľad"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
+msgid "Load _Executable..."
+msgstr "Načítať _spúšťací súbor…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+msgid "Execute a program"
+msgstr "Spustí program"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
+msgid "_Load Core File..."
+msgstr "_Načítať súbor s výpisom obsahu pamäte…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3500
+msgid "Load a core file from disk"
+msgstr "Načíta súbor s výpisom obsahu pamäte z disku"
+
+# PK: k spustenemu
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3510
+#, fuzzy
+msgid "_Attach to Running Program..."
+msgstr "Pričleniť n_a spustený program…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3511
+msgid "Debug a program that's already running"
+msgstr "Spustí ladenie momentálne spusteného programu"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
+msgid "_Connect to Remote Target..."
+msgstr "_Pripojiť k vzdialenému cieľu…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
+msgid "Connect to a debugging server to debug a remote target"
+msgstr "Pripojí k serveru ladenia pre ladenie vzdialeného cieľa"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
+msgid "Resume Sa_ved Session..."
+msgstr "Pokračo_vať v uloženej relácií…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3534
+msgid "Open a previously saved debugging session"
+msgstr "Otvorí predchádzajúcu uloženú reláciu ladenia"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3544
+msgid "_Preferences"
+msgstr "Nas_tavenia"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3545
+msgid "Edit the properties of the current session"
+msgstr "Upraví vlastnosti aktuálnej relácie"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+msgid "_Reload Source File"
+msgstr "Znovu načítať zd_rojový súbor"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3560
+msgid "Reloads the source file"
+msgstr "Znovu načíta zdrojový súbor"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3569
+msgid "_Close Source File"
+msgstr "_Zavrieť zdrojový súbor"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3570
+msgid "Close the opened file"
+msgstr "Zavrie otvorený súbor"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3579
+msgid "_Find"
+msgstr "_Nájsť"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3580
+msgid "Find a text string in file"
+msgstr "Nájde textový reťazec v súbore"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3915
+#, c-format
+msgid "Close %s"
+msgstr "Zavrieť %s"
+
+#. We cannot restart an inferior running on a remote target at
+#. the moment.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
+msgid "Sorry, it's impossible to restart a remote inferior"
+msgstr ""
+"Prepáčte, ale nie je možné vzdialene reštartovať jednotlivé stavy programu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
+#, c-format
+msgid "Could not find file %s"
+msgstr "Nepodarilo sa nájsť súbor %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6060
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6202
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6237
+#, c-format
+msgid "Could not load program: %s"
+msgstr "Nepodarilo sa načítať program: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6131
+msgid "You cannot attach to Nemiver itself"
+msgstr "Nemôžete pričleniť Nemiver sám na seba"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
+msgid "You cannot attach to the underlying debugger engine"
+msgstr "Nemôžete pričleniť k podkladovému programu používanému odlaďovačom"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6439
+msgid "Failed to stop the debugger"
+msgstr "Zlyhalo zastavenie odlaďovača"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6683
+#, c-format
+msgid "Invalid line number: %i"
+msgstr "Nesprávne číslo riadka: %i"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
+#, c-format
+msgid ""
+"There is a program being currently debugged. Do you really want to exit from "
+"the debugger?"
+msgstr "Práve prebieha ladenie programu. Chcete opustiť odlaďovač?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
+msgid "Default Layout"
+msgstr "Predvolené rozloženie"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
+msgid "Nemiver's default layout"
+msgstr "Predvolené rozloženie programu Nemiver"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
+msgid "Source Code"
+msgstr "Zdrojový kód"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
+msgid "Dynamic Layout"
+msgstr "Dynamické rozloženie"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
+msgid "A layout which can be modified"
+msgstr "Rozloženie, ktoré môže byť upravené"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
+msgid "Two Status Pane"
+msgstr "Dva stavové panely"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
+msgid "A layout with two status pane"
+msgstr "Rozloženie s dvoma stavovými panelmi"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
+msgid "Wide Layout"
+msgstr "Široké rozloženie"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
+msgid "A layout for very large monitors"
+msgstr "Rozloženie pre veľmi veľké monitory"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-file-list.cc:128
+msgid "Expand _Selected"
+msgstr "Rozbaliť _vybraté"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-file-list.cc:134
+msgid "Expand _All"
+msgstr "Rozb_aliť všetko"
+
+# menu item
+#: ../src/persp/dbgperspective/nmv-file-list.cc:144
+msgid "_Collapse"
+msgstr "_Zbaliť"
+
+# label
+#: ../src/persp/dbgperspective/nmv-file-list.cc:427
+msgid "Loading files from target executable..."
+msgstr "Načítavajú sa súbory z cieľového spúšťacieho súboru…"
+
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:301
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:547
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
+msgstr ""
+"Typ premennej je: \n"
+" %s"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:124
+msgid "Local Variables"
+msgstr "Lokálne premenné"
+
+# treeview column
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:132
+msgid "Function Arguments"
+msgstr "Parametre funkcie"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
+msgid "_Copy Variable Name"
+msgstr "_Kopírovať názov premennej"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:259
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
+msgid "Copy the variable path expression to the clipboard"
+msgstr "Skopíruje cestu výrazu do schránky"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
+msgid "_Copy Variable Value"
+msgstr "_Kopírovať hodnotu premennej"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:271
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
+msgid "Copy the variable value to the clipboard"
+msgstr "Skopíruje hodnotu premennej do schránky"
+
+# menu item action
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
+msgid "Create Watchpoint"
+msgstr "Vytvoriť bod sledovania"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
+msgid ""
+"Create a watchpoint that triggers when the value of the expression changes"
+msgstr ""
+"Vytvorí bod sledovania, ktorý sa spustí vo chvíli až bude hodnota výrazu "
+"zmenená"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:49
+msgid "Byte"
+msgstr "Bajt"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:52
+msgid "Word"
+msgstr "Slovo"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:55
+msgid "Long Word"
+msgstr "Dlhé slovo"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:98
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
+msgid "Address:"
+msgstr "Adresa:"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:100
+msgid "Show"
+msgstr "Zobraziť"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:103
+msgid "Group By:"
+msgstr "Zoskupovať podľa:"
+
+# window title
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:149
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
+msgid "Choose a Directory"
+msgstr "Výber adresára"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "Adresáre zdrojových súborov"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
+msgid "User Name"
+msgstr "Používateľské meno"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
+msgid "Proc Args"
+msgstr "Parametre procesu"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
+msgid "Name"
+msgstr "Názov"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:102
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
+msgid "Value"
+msgstr "Hodnota"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
+msgid "Session"
+msgstr "Relácia"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
+msgid "Throw Exception"
+msgstr "Vyvolať výnimku"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
+msgid "Catch Exception"
+msgstr "Zachytiť výnimku"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
+msgid "Fork System Call"
+msgstr "Systémové volanie fork"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
+msgid "Vfork System Call"
+msgstr "Systémové volanie vfork"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
+msgid "Exec System Call"
+msgstr "Systémové volanie exec"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:184
+msgid "Thread ID"
+msgstr "Identifikátor vlákna"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
+msgid "Variable"
+msgstr "Premenná"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
+msgid "In scope expressions"
+msgstr "V oblasti pôsobnosti výrazov"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
+msgid "Out of scope expressions"
+msgstr "Mimo oblasti pôsobnosti výrazov"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
+msgid "Remove"
+msgstr "Odobrať"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
+msgid "Remove selected expressions from the monitor"
+msgstr "Odoberie vybratý výraz zo sledovania"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
+msgid "New..."
+msgstr "Nový…"
+
+# tooltip
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
+msgid "Add a new expression to the monitor"
+msgstr "Pridá nový výraz na sledovanie"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "Call a function:"
+msgstr "Volať funkciu:"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "Nastavenie zarážky"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+msgid "Choose Overloaded Function"
+msgstr "Vyberte preťaženú funkciu"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+msgid ""
+"Multiple functions match the specified name. Please choose one from the list "
+"below."
+msgstr ""
+"Viaceré funkcie používajú rovnaký názov. Prosím, vyberte jednu z "
+"nasledujúceho zoznamu."
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
+msgid "Find Text"
+msgstr "Hľadanie textu"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
+msgid "_Search:"
+msgstr "_Hľadať:"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "Match Options:"
+msgstr "Voľby porovnávania:"
+
+#  GtkCheckButton
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "Rozlišovať veľkosť _písmen"
+
+# GtkCheckButton
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "Porovnávať ako c_elé slovo"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "Cycling Options:"
+msgstr "Voľby smeru hľadania:"
+
+# GtkCheckButton
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+msgid "_Wrap around"
+msgstr "_Pokračovať na druhom konci"
+
+# GtkCheckButton
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "Hľadať _dozadu"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
+msgid "Global Variables"
+msgstr "Globálne premenné"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
+msgid "Choose a Core File to Debug"
+msgstr "Výber súboru s výpisom obsahu pamäte na ladenie"
+
+# GtkFileChooserButton title
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
+msgid "Select a Core File"
+msgstr "Výber súboru s výpisom obsahu pamäte"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "Core File:"
+msgstr "Súbor s výpisom obsahu pamäte:"
+
+# GtkFileChooserButton
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+msgid "Select the executable that created the core file"
+msgstr ""
+"Výber spustiteľného súboru, ktorý vytvorí súbor s výpisom obsahu pamäte"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "Executable:"
+msgstr "Spustiteľný súbor:"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
+msgid "Open Source Files"
+msgstr "Otvorenie súborov so zdrojovým kódom"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "Vybrať z _cieľového spustiteľného súboru"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
+msgid "Select from _File System"
+msgstr "Vybrať zo _súborového systému"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
+msgid "Choose Source Files to Open"
+msgstr "Vyberte zdrojové súbory, ktoré sa majú otvoriť"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
+msgid "Preferences"
+msgstr "Nastavenia"
+
+#  GtkCheckButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
+msgid "Use system monospace font"
+msgstr "Použiť systémové písmo s pevnou šírkou"
+
+#  GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "Vlastné písmo:"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "Editor Font"
+msgstr "Editor písma"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+msgid "Visual Style"
+msgstr "Štýl vzhľadu"
+
+# GtkCheckButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+msgid "Display line numbers"
+msgstr "Zobraziť čísla riadkov"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "Line Numbers"
+msgstr "Čísla riadkov"
+
+# GtkCheckButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr "Použiť spúšťací terminál"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+msgid "Terminal"
+msgstr "Terminál"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "When a source file is changed:"
+msgstr "Keď je súbor zdrojového kódu zmenený:"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "Znova načítať súbor"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+msgid "Do not reload the file"
+msgstr "Nenačítavať súbor znovu"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+msgid "Ask each time"
+msgstr "Vždy sa opýtať"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+msgid "File Monitoring"
+msgstr "Sledovanie súboru"
+
+#  GtkCheckButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Enable syntax highlighting"
+msgstr "Povoliť zvýraznenie syntaxe"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "Syntax Highlighting"
+msgstr "Zvýraznenie syntaxe"
+
+# tab Label
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "Editor"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Pure assembly"
+msgstr "Čistý Assembler"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Mixed source and assembly"
+msgstr "Kombinácia zdrojového kódu a Assemblera"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "Assembly style"
+msgstr "Štýl Assembleru"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "Assembly flavor"
+msgstr "Verzia Assembleru"
+
+# GtkFileChooserButton title
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
+msgid "Choose a File"
+msgstr "Výber súboru"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Path to the GDB binary used"
+msgstr "Cesta k použitému binárnemu súboru GDB"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+msgid "GDB Binary"
+msgstr "Binárny súbor GDB"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+msgid "Number of instructions to disassemble by default"
+msgstr "Počet inštrukcií, ktoré sa majú štandardne zobraziť v Assembleri"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+msgid "Instructions"
+msgstr "Inštrukcie"
+
+# GtkCheckButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr "Povoliť pekne formátované výpisy (vyžaduje reštart odlaďovača)"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+msgid "GDB Pretty Printing"
+msgstr "Pekne formátované výpisy pre GDB"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+msgid "Follow parent"
+msgstr "Nasledovať rodiča"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+msgid "Follow child"
+msgstr "Nasledovať potomka"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+msgid "GDB Follow Fork Mode"
+msgstr "Režim nasledovania vetiev GDB"
+
+# tab label
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+msgid "Debugger"
+msgstr "Odlaďovač"
+
+# tab label
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+msgid "Layout"
+msgstr "Rozloženie"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
+msgid "Attach to a Running Program"
+msgstr "Pričlenenie k bežiacemu programu"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "Choose a Process to Debug"
+msgstr "Vyberte proces, ktorý sa má ladiť"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
+msgid "_Filter list:"
+msgstr "_Filtrovať zoznam:"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "Pripojenie k vzdialenému cieľu"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+msgid "Executable to Load"
+msgstr "Spustiteľný súbor, ktorý sa má načítať"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "Shared Libraries Location"
+msgstr "Umiestnenie zdieľaných knižníc"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
+msgid "Remote Debugging Server"
+msgstr "Server na vzdialené ladenie"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
+msgid "TCP/IP Connection"
+msgstr "Pripojenie TCP/IP"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
+msgid "Port:"
+msgstr "Port:"
+
+#  GtkRadioButton
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
+msgid "Serial Line Connection"
+msgstr "Pripojenie cez sériovú linku"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
+msgid "Choose a Program to Execute"
+msgstr "Výber program na spustenie"
+
+# GtkFileChooserButton title
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
+msgid "Choose an Executable"
+msgstr "Výber spustiteľného súboru"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
+msgid "Program:"
+msgstr "Program:"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
+msgid "Arguments:"
+msgstr "Parametre:"
+
+# GtkFileChooserButton title
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
+msgid "Choose a Working Directory"
+msgstr "Výber pracovného adresára"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "Working Directory:"
+msgstr "Pracovný adresár:"
+
+#  GtkButton
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
+msgid "_Add"
+msgstr "Prid_ať"
+
+#  GtkButton
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+msgid "_Remove"
+msgstr "Odob_rať"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "Environment Variables:"
+msgstr "Premenné prostredia:"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
+msgid "Saved Sessions"
+msgstr "Uložené relácie"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "Choose a Session to Debug"
+msgstr "Vyberte reláciu na ladenie"
+
+#  GtkLabel nad tabuľkou
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+msgid "Set a Breakpoint:"
+msgstr "Nastaviť zarážku:"
+
+#  GtkLabel v tabuľke
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
+msgid "Condition:"
+msgstr "Podmienka:"
+
+#  GtkRadioButton
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
+msgid "_Event:"
+msgstr "_Udalosť:"
+
+#  PM: toto sa mi nevidí, sú to nejaké prepínacie tlačidlá - prever v programe čo to robí a čo nasleduje za dvojbodkou
+# PM: podľa kontextu by som povedal že ide o pozíciu v binárnom a zdrojovom súbore, na ktorej má program zastaviť alebo, na ktorú má skočiť
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
+#, fuzzy
+msgid "_Binary Location:"
+msgstr "Umiestnenie _binárneho súboru:"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
+msgid "_Source Location:"
+msgstr "Umie_stnenie zdrojového súboru:"
+
+# GtkRadioButton
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
+msgid "F_unction Name:"
+msgstr "Názov f_unkcie:"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+msgid "File name:"
+msgstr "Názov súboru:"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
+msgid "Function:"
+msgstr "Funkcia:"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Line:"
+msgstr "Riadok:"
+
+#  GtkCheckButton
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+msgid "Set as Countpoint"
+msgstr "Nastaviť ako bod počítania"
+
+# GtkDialog title
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
+msgid "Set Location to Jump To"
+msgstr "Nastavenie cieľovej pozície pre skok"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "Jump to location:"
+msgstr "Skočiť na cieľovú pozíciu:"
+
+# GtkCheckButton
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at Destination"
+msgstr "Prerušiť na cieľovej pozícii"
+
+#  GtkButton
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
+msgid "Add to monitor"
+msgstr "Pridať na sledovanie"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
+msgid "_Variable Name:"
+msgstr "Názo_v premennej:"
+
+# GtkButton
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
+msgid "_Inspect"
+msgstr "_Preskúmať"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
+msgid "Set a watchpoint:"
+msgstr "Nastaviť bod sledovania:"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
+msgid "Expression:"
+msgstr "Výraz:"
+
+#  GtkButton
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "Preskúmať"
+
+# GtkLabel
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
+msgid "Triggers on:"
+msgstr "Spúšťať pri:"
+
+#  GtkCheckButton
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "Read"
+msgstr "prečítaní"
+
+#  GtkCheckButton
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
+msgid "Write"
+msgstr "zápise"
+
+# chooser title %s - filename
+#: ../src/uicommon/nmv-locate-file-dialog.cc:65
+#, c-format
+msgid "Select Location for %s"
+msgstr "Výber umiestnenia pre %s"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:75
+#, c-format
+msgid ""
+"Cannot find file '%s'.\n"
+"Please specify the location of this file:"
+msgstr ""
+"Nepodarilo sa nájsť súbor „%s“.\n"
+"Prosím, vyberte umiestnenie tohto súboru:"
+
+#: ../src/uicommon/nmv-source-editor.cc:611
+#, c-format
+msgid "Line: %i, Column: %i"
+msgstr "Riadok: %i, stĺpec: %i"
+
+#: ../src/uicommon/nmv-source-editor.cc:1439
+#, c-format
+msgid "Could not load file %s because its encoding is different from %s"
+msgstr "Nepodarilo sa načítať súbor %s, pretože jeho kódovanie je iné ako %s"
+
+# tooltip
+#: ../src/uicommon/nmv-terminal.cc:174
+msgid "Copy the selection"
+msgstr "Skopíruje výber"
+
+# action
+#: ../src/uicommon/nmv-terminal.cc:180
+msgid "_Paste"
+msgstr "_Prilepiť"
+
+# tooltip
+#: ../src/uicommon/nmv-terminal.cc:181
+msgid "Paste the clipboard"
+msgstr "Vloží obsah schránky"
+
+# action
+#: ../src/uicommon/nmv-terminal.cc:187
+msgid "_Reset"
+msgstr "_Resetovať"
+
+# tooltip
+#: ../src/uicommon/nmv-terminal.cc:188
+msgid "Reset the terminal"
+msgstr "Resetuje terminál"
+
+# CheckButton
+#: ../src/uicommon/nmv-ui-utils.cc:91
+msgid "Do not ask me again"
+msgstr "Nabudúce sa už nepýtať"
+
+# label (about dialog)
+#: ../src/workbench/nmv-workbench.cc:263
+msgid "Project Website"
+msgstr "Domovská stránka projektu"
+
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:283
+msgid "translator-credits"
+msgstr "Richard Stanislavský <kenny.vv@gmail.com>"
+
+# menu
+#: ../src/workbench/nmv-workbench.cc:661
+msgid "_File"
+msgstr "_Súbor"
+
+# menu File
+#: ../src/workbench/nmv-workbench.cc:672
+msgid "_Quit"
+msgstr "U_končiť"
+
+# tooltip
+#: ../src/workbench/nmv-workbench.cc:673
+msgid "Quit the application"
+msgstr "Ukončí aplikáciu"
+
+# menu
+#: ../src/workbench/nmv-workbench.cc:683
+msgid "_Edit"
+msgstr "_Upraviť"
+
+# menu
+#: ../src/workbench/nmv-workbench.cc:694
+msgid "_Help"
+msgstr "_Pomocník"
+
+# menu Help
+#: ../src/workbench/nmv-workbench.cc:705
+msgid "_About"
+msgstr "_O programe"
+
+# tooltip
+#: ../src/workbench/nmv-workbench.cc:706
+msgid "Display information about this application"
+msgstr "Zobrazí informácie o tomto programe"
+
+# menu Help
+#: ../src/workbench/nmv-workbench.cc:716
+msgid "_Contents"
+msgstr "Ob_sah"
+
+# tooltip
+#: ../src/workbench/nmv-workbench.cc:717
+msgid "Display the user manual for this application"
+msgstr "Zobrazí používateľskú príručku pre tento program"
+
+# GtkDialog title
+#. end extern C
+#: ../ui/locatefiledialog.ui.h:1
+msgid "Select File Location"
+msgstr "Výber umiestnenia súboru"
+
+# GtkLabel label
+#: ../ui/locatefiledialog.ui.h:2
+msgid "Locate File"
+msgstr "Vyhľadajte súbor"
