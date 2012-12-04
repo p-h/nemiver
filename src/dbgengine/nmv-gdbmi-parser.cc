@@ -1719,7 +1719,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
 /// stream before.
 bool
 GDBMIParser::skip_output_record (UString::size_type a_from,
-				 UString::size_type &a_to)
+                                 UString::size_type &a_to)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
