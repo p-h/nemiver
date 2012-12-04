@@ -1703,9 +1703,6 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
         return false;
     }
 
-    while (m_priv->index_passed_end (cur)
-           && isspace (RAW_CHAR_AT (cur))) {++cur;}
-
     a_output = output;
     a_to = cur;
     return true;
