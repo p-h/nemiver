@@ -1758,12 +1758,10 @@ struct OnThreadSelectedHandler : OutputHandler {
             for (it = a_in.output ().out_of_band_records ().begin ();
                  it != a_in.output ().out_of_band_records ().end ();
                  ++it) {
-                if (it->thread_id ()) {
+                if (it->thread_selected ()) {
                     thread_id = it->thread_id ();
-                    return false; // GDB is broken currently
-                                  // for this. So return false
-                                  // for now. We'll be able to return
-                                  // true later.;
+                    THROW_IF_FAIL (thread_id > 0);
+                    return true;
                 }
             }
         }

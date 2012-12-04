@@ -28,10 +28,7 @@ thread_func (void *arg)
 {
     assert (arg != 0);
     thread_info *ti = static_cast<thread_info*> (arg);
-    for (int i = 0; i < NUM_ITER; ++i) {
-        cout << "thread " << ti->tnum << ":iter:" << i << "\n";
-    }
-    cout << flush;
+    __attribute__((unused)) int tid = ti->tid;
     return NULL;
 }
 

@@ -256,10 +256,9 @@ public:
 
     /// \brief the out of band record we got from GDB.
     ///
-    ///Out of band record is either
-    ///a set of messages sent by gdb
-    ///to tell us about the reason why the target has stopped,
-    ///or, a stream record.
+    /// An Out of band record is an aynchronous record that is either
+    /// a set of messages sent by the debugger to tell us about the reason why
+    /// the target has changed state.
     class OutOfBandRecord {
     public:
 
@@ -271,6 +270,7 @@ public:
 	bool m_is_running;
         IDebugger::StopReason m_stop_reason;
         bool m_has_frame;
+        bool m_thread_selected;
         IDebugger::Frame m_frame;
         long m_breakpoint_number;
         long m_thread_id;
@@ -363,6 +363,9 @@ public:
         long breakpoint_number () const {return m_breakpoint_number;}
         void breakpoint_number (long a_in) {m_breakpoint_number = a_in;}
 
+        bool thread_selected () const {return m_thread_selected;}
+        void thread_selected (bool a_in) {m_thread_selected = a_in;}
+
         long thread_id () const {return m_thread_id;}
         void thread_id (long a_in) {m_thread_id = a_in;}
 
@@ -384,6 +387,7 @@ public:
             m_is_running = false;
             m_stop_reason = IDebugger::UNDEFINED_REASON;
             m_has_frame = false;
+            m_thread_selected = false;
             m_frame.clear ();
             m_breakpoint_number = 0;
             m_thread_id = -1;

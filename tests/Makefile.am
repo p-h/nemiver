@@ -17,7 +17,8 @@ runtestlocalvarslist runtestcpplexer \
 runtestcppparser runtestvarpathexpr \
 runtestlibtoolwrapperdetection \
 runtesttypes runtestdisassemble \
-runtestvariableformat runtestprettyprint
+runtestvariableformat runtestprettyprint \
+runtestthreads
 
 else
 
@@ -82,6 +83,11 @@ $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
 runtestprettyprint_SOURCES=$(h)/test-pretty-print.cc
 runtestprettyprint_LDADD=@NEMIVERCOMMON_LIBS@ \
+$(top_builddir)/src/common/libnemivercommon.la \
+$(top_builddir)/src/dbgengine/libdebuggerutils.la
+
+runtestthreads_SOURCES=$(h)/test-threads.cc
+runtestthreads_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
