@@ -804,6 +804,8 @@ Workbench::add_perspective_body (IPerspectiveSafePtr &a_perspective,
 
     if (!a_body || !a_perspective) {return;}
 
+    a_body->show_all ();
+
     m_priv->bodies_index_map[a_perspective.get ()] =
         m_priv->bodies_container->insert_page (*a_body, -1);
 }
@@ -814,6 +816,8 @@ Workbench::on_perspective_layout_changed_signal
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+    NEMIVER_TRY;
+
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->bodies_container);
 
@@ -822,9 +826,15 @@ Workbench::on_perspective_layout_changed_signal
     int page = m_priv->bodies_index_map[a_perspective.get ()];
 
     m_priv->bodies_container->remove_page (page);
-    m_priv->bodies_container->insert_page (*a_perspective->get_body (), page);
+
+    Gtk::Widget *b = a_perspective->get_body ();
+    THROW_IF_FAIL (b);
+    b->show_all ();
+    m_priv->bodies_container->insert_page (*b, page);
 
     select_perspective (a_perspective);
+
+    NEMIVER_CATCH;
 }
 
 bool
