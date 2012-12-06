@@ -575,7 +575,7 @@ Workbench::init_builder ()
 
     Gtk::Widget *w =
         ui_utils::get_widget_from_gtkbuilder<Gtk::Window> (m_priv->builder,
-                                                      "workbench");
+                                                           "workbench");
     THROW_IF_FAIL (w);
     m_priv->root_window.reset (dynamic_cast<Gtk::Window*>
                                                 (w->get_toplevel ()));
@@ -760,7 +760,8 @@ Workbench::init_toolbar ()
 
     m_priv->toolbar_container =
         ui_utils::get_widget_from_gtkbuilder<Gtk::Notebook> (m_priv->builder,
-                                                        "toolbarcontainer");
+                                                             "toolbarcontainer");
+    m_priv->toolbar_container->show_all ();
 }
 
 void
@@ -769,7 +770,8 @@ Workbench::init_body ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv->bodies_container =
         ui_utils::get_widget_from_gtkbuilder<Gtk::Notebook> (m_priv->builder,
-                                                        "bodynotebook");
+                                                             "bodynotebook");
+    m_priv->bodies_container->show_all ();
 }
 
 void
