@@ -8,22 +8,22 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-04 17:53+0000\n"
-"PO-Revision-Date: 2012-09-06 21:31+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2013-01-13 12:32+0000\n"
+"PO-Revision-Date: 2013-01-13 14:33+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
-"Language: \n"
+"Language: sl_SI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
-"X-Poedit-Country: SLOVENIA\n"
-"X-Poedit-Language: Slovenian\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
+"%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 1.5.4\n"
 
-#: ../data/nemiver.desktop.in.h:1
-#: ../ui/workbench.ui.h:1
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
 msgstr "Nemiver"
 
@@ -38,6 +38,10 @@ msgstr "Razhroščevalnik C/C++ Nemiver"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Programi za razhroščevanje"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++"
+msgstr "razhroščevalnik;gdb;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -84,16 +88,22 @@ msgid "Connect to remote target specified by HOST:PORT"
 msgstr "Povezava z oddaljenim ciljem navedenim z GOSTITELJ:VRATA"
 
 #: ../src/main.cc:170
-msgid "Where to look for shared libraries loaded by the inferior. Use in conjunction with --remote"
-msgstr "Mesto za iskanje knjižnic v souporabi, ki jih naloži inferior. Uporabite skupaj z --remote"
+msgid ""
+"Where to look for shared libraries loaded by the inferior. Use in "
+"conjunction with --remote"
+msgstr ""
+"Mesto za iskanje knjižnic v souporabi, ki jih naloži inferior. Uporabite "
+"skupaj z --remote"
 
 #: ../src/main.cc:180
 msgid "Set the path of the GDB binary to use to debug the inferior"
-msgstr "Določitev poti dvojiške datoteke GDB za razhroščevanje podrejenih opravil."
+msgstr ""
+"Določitev poti dvojiške datoteke GDB za razhroščevanje podrejenih opravil."
 
 #: ../src/main.cc:189
 msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
-msgstr "Ne nastavi prekinitvene točke v 'glavni seji' in ne zaženi podrejenih opravil"
+msgstr ""
+"Ne nastavi prekinitvene točke v 'glavni seji' in ne zaženi podrejenih opravil"
 
 #: ../src/main.cc:198
 msgid "Show the version number of Nemiver"
@@ -103,8 +113,7 @@ msgstr "Pokaži različico programa Nemiver"
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr "[<program-za-razhroščevanje> [argumenti-programa]]"
 
-#: ../src/main.cc:267
-#: ../src/workbench/nmv-workbench.cc:251
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "C/C++ razhroščevalnik za GNOME"
 
@@ -113,11 +122,11 @@ msgid ""
 "Please provide a local copy of the binary you intend to debug remotely.\n"
 "Like this:\n"
 msgstr ""
-"Zagotovite krajevno kopijo binarne datoteke, ki jo želite oddaljeno razhroščevati. \n"
+"Zagotovite krajevno kopijo binarne datoteke, ki jo želite oddaljeno "
+"razhroščevati. \n"
 "Takole: \n"
 
-#: ../src/main.cc:366
-#: ../src/main.cc:385
+#: ../src/main.cc:366 ../src/main.cc:385
 msgid "Otherwise, find below the full set of Nemiver options.\n"
 msgstr "Poln nabor možnosti programa Nemvier je mogoče najti spodaj. \n"
 
@@ -147,12 +156,12 @@ msgid "Line"
 msgstr "Vrstica"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Funkcija"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Naslov"
 
@@ -222,24 +231,24 @@ msgstr "_Kopiraj"
 msgid "Copy the call stack to the clipboard"
 msgstr "Kopiraj sklad klicev v odložišče"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Okvir"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Argumenti"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Mesto"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Dvojiško"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
@@ -377,7 +386,8 @@ msgstr "Nastavi prekinitveno točko v pogovornem oknu ..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3097
 msgid "Set a breakpoint at the current line using a dialog"
-msgstr "Nastavitev prekinitvene točke na trenutni vrstici z uporabo pogovornega okna"
+msgstr ""
+"Nastavitev prekinitvene točke na trenutni vrstici z uporabo pogovornega okna"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3108
 msgid "Set Breakpoint..."
@@ -400,7 +410,8 @@ msgstr "Preklopi _prekinitveno točko"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3126
 msgid "Set/Unset a breakpoint at the current cursor location"
-msgstr "Nastavi/Odstrani nastavitev prekinitvene točke na trenutno mesto kazalke"
+msgstr ""
+"Nastavi/Odstrani nastavitev prekinitvene točke na trenutno mesto kazalke"
 
 #. Depending on the context we will want this string to be
 #. either "Enable Breakpoint", or "Disable
@@ -414,8 +425,11 @@ msgid "Enable/Disable Breakpoint"
 msgstr "Omogoči/onemogoči prekinitveno točko"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
-msgid "Enable or disable the breakpoint that is set at the current cursor location"
-msgstr "Omogoči ali onemogoči prekinitveno točko, ki je nastavljena na mesto trenutne kazalke"
+msgid ""
+"Enable or disable the breakpoint that is set at the current cursor location"
+msgstr ""
+"Omogoči ali onemogoči prekinitveno točko, ki je nastavljena na mesto "
+"trenutne kazalke"
 
 #. Depending on the context we will want this string to be
 #. either "Set Countpoint", or "Change to Countpoint", or
@@ -560,8 +574,11 @@ msgid "Show Assembly"
 msgstr "Pokaži zbirnik"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
-msgid "Show the assembly code of the source code being currently debugged, in another tab"
-msgstr "Pokaži zbirno kodo izvorne kode, ki se trenutno razhroščuje v drugemu zavihku"
+msgid ""
+"Show the assembly code of the source code being currently debugged, in "
+"another tab"
+msgstr ""
+"Pokaži zbirno kodo izvorne kode, ki se trenutno razhroščuje v drugemu zavihku"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
 msgid "Switch to Assembly"
@@ -657,7 +674,8 @@ msgstr "_Povezava z oddaljenim ciljem ..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
 msgid "Connect to a debugging server to debug a remote target"
-msgstr "Povezava s strežnikom razhroščevanja za razhroščevanje oddaljenega cilja"
+msgstr ""
+"Povezava s strežnikom razhroščevanja za razhroščevanje oddaljenega cilja"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
 msgid "Resume Sa_ved Session..."
@@ -741,8 +759,12 @@ msgstr "Neveljavna številka vrstice: %i"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
-msgid "There is a program being currently debugged. Do you really want to exit from the debugger?"
-msgstr "Trenutno poteka razhroščevanje programa. Ali ste prepričani, da želite razhroščevalnik končati?"
+msgid ""
+"There is a program being currently debugged. Do you really want to exit from "
+"the debugger?"
+msgstr ""
+"Trenutno poteka razhroščevanje programa. Ali ste prepričani, da želite "
+"razhroščevalnik končati?"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
 msgid "Default Layout"
@@ -840,8 +862,10 @@ msgid "Create Watchpoint"
 msgstr "Ustvari nadzorno točko"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
-msgid "Create a watchpoint that triggers when the value of the expression changes"
-msgstr "Ustvarjanje nadzorne točke, ki se sproži ob spremembi vrednosti izraza "
+msgid ""
+"Create a watchpoint that triggers when the value of the expression changes"
+msgstr ""
+"Ustvarjanje nadzorne točke, ki se sproži ob spremembi vrednosti izraza "
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
@@ -970,8 +994,11 @@ msgid "Choose Overloaded Function"
 msgstr "Izbor preobremenjene funkcije"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
-msgid "Multiple functions match the specified name. Please choose one from the list below."
-msgstr "Več funkcij se sklada z določenim imenom. Izberite eno iz seznama spodaj."
+msgid ""
+"Multiple functions match the specified name. Please choose one from the list "
+"below."
+msgstr ""
+"Več funkcij se sklada z določenim imenom. Izberite eno iz seznama spodaj."
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
 msgid "Find Text"
@@ -1378,7 +1405,8 @@ msgstr "Vrstica: %i, stolpec: %i"
 #: ../src/uicommon/nmv-source-editor.cc:1439
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
-msgstr "Datoteke %s ni mogoče naložiti, ker je kodiranje datoteke različno od %s"
+msgstr ""
+"Datoteke %s ni mogoče naložiti, ker je kodiranje datoteke različno od %s"
 
 #: ../src/uicommon/nmv-terminal.cc:174
 msgid "Copy the selection"
