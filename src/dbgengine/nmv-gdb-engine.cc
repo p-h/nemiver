@@ -3014,11 +3014,11 @@ struct OnListChangedVariableHandler : public OutputHandler
             // going to be sent back to notify the client code.
             (*i)->apply_to_variable (variable, changed_sub_vars);
             LOG_DD ("Num sub vars:" << (int) changed_sub_vars.size ());
+
             for (list<VariableSafePtr>::const_iterator j =
                      changed_sub_vars.begin ();
                  j != changed_sub_vars.end ();
-                 ++j)
-            {
+                 ++j) {
                 LOG_DD ("sub var: " << (*j)->internal_name ()
                         << "/" << (*j)->name ()
                         << " num children: " << (int) (*j)->members ().size ());
