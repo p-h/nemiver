@@ -4,10 +4,10 @@ dnl **************************************************************
 
 MAJOR_VERSION=0
 MINOR_VERSION=9
-MICRO_VERSION=4
+MICRO_VERSION=5
 
 AC_INIT([nemiver],
-        [0.9.4],
+        [0.9.5],
         [http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver],
         [nemiver],
         [http://projects.gnome.org/nemiver])
