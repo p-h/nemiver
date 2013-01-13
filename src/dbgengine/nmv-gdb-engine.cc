@@ -2997,9 +2997,7 @@ struct OnListChangedVariableHandler : public OutputHandler
             a_in.output ().result_record ().var_changes ();
 
         IDebugger::VariableSafePtr variable = a_in.command ().variable ();
-        // This contains the sub-variables of 'variable' that changed,
-        // as well as 'variable' itself.
-        list<VariableSafePtr> changed_sub_vars;        
+
         // Each element of var_changes is either a change of variable
         // itself, or a change of one its children.  So apply those
         // changes to variable so that it reflects its new state, and
@@ -3008,6 +3006,9 @@ struct OnListChangedVariableHandler : public OutputHandler
         for (list<VarChangePtr>::const_iterator i = var_changes.begin ();
              i != var_changes.end ();
              ++i) {
+            // This contains the sub-variables of 'variable' that changed,
+            // as well as 'variable' itself.
+            list<VariableSafePtr> changed_sub_vars;
             // Apply each variable change to variable.  The result is
             // going to be a list of VariableSafePtr (variable itself,
             // as well as each sub-variable that got changed) that is
