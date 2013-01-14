@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-06-23 13:40+0000\n"
-"PO-Revision-Date: 2012-06-24 16:07+0300\n"
+"POT-Creation-Date: 2013-01-13 12:32+0000\n"
+"PO-Revision-Date: 2013-01-14 22:25+0300\n"
 "Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
 "Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -33,6 +34,10 @@ msgstr "Nemiver C/C++ derintuvė"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Derinti programas"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++"
+msgstr "gdb;disasembleris;derintuvė;c;c++"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -99,7 +104,7 @@ msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<derinama-programa> [argumentai]]"
 
 #: ../src/main.cc:267
-#: ../src/workbench/nmv-workbench.cc:263
+#: ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "GNOME C/C++ derintuvė"
 
@@ -142,12 +147,12 @@ msgid "Line"
 msgstr "Eilutė"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Funkcija"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Adresas"
 
@@ -217,24 +222,24 @@ msgstr "_Kopijuoti"
 msgid "Copy the call stack to the clipboard"
 msgstr "Kopijuoti kvietinių seką į iškarpinę"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Rėmas"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Argumentai"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Vieta"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Programa"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
@@ -693,47 +698,47 @@ msgstr "_Rasti"
 msgid "Find a text string in file"
 msgstr "Rasti tekstą faile"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3939
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3915
 #, c-format
 msgid "Close %s"
 msgstr "Užverti %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5897
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Atleiskite, neįmano iš naujo paleisti nutolusios programos"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6020
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
 #, c-format
 msgid "Could not find file %s"
 msgstr "Nepavyko rasti failo %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6082
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6224
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6259
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6060
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6202
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6237
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Nepavyko įkelti programos: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6153
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6131
 msgid "You cannot attach to Nemiver itself"
 msgstr "Negalite prisijungti prie paties Nemiver"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6166
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Negalite prisijungti prie žemiau esančio derinimo variklio"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6461
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6439
 msgid "Failed to stop the debugger"
 msgstr "Nepavyko sustabdyti derintuvės"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6705
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6683
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Neteisingas eilutės numeris: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
 msgid "There is a program being currently debugged. Do you really want to exit from the debugger?"
 msgstr "Yra šiuo metu derinama programa. Ar tikrai norite palikti derintuvę?"
@@ -1398,50 +1403,50 @@ msgstr "Atstatyti terminalą"
 msgid "Do not ask me again"
 msgstr "Daugiau neklausti"
 
-#: ../src/workbench/nmv-workbench.cc:275
+#: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
 msgstr "Projekto tinklapis"
 
 #. Translators: change this to your name, separate multiple names with \n
-#: ../src/workbench/nmv-workbench.cc:295
+#: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
 msgstr ""
 "išvertė:\n"
 "Aurimas Černius <aurisc4@gmail.com>"
 
-#: ../src/workbench/nmv-workbench.cc:673
+#: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
 msgstr "_Failas"
 
-#: ../src/workbench/nmv-workbench.cc:684
+#: ../src/workbench/nmv-workbench.cc:672
 msgid "_Quit"
 msgstr "_Išeiti"
 
-#: ../src/workbench/nmv-workbench.cc:685
+#: ../src/workbench/nmv-workbench.cc:673
 msgid "Quit the application"
 msgstr "Išeiti iš programos"
 
-#: ../src/workbench/nmv-workbench.cc:695
+#: ../src/workbench/nmv-workbench.cc:683
 msgid "_Edit"
 msgstr "_Taisa"
 
-#: ../src/workbench/nmv-workbench.cc:706
+#: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
 msgstr "_Žinynas"
 
-#: ../src/workbench/nmv-workbench.cc:717
+#: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
 msgstr "_Apie"
 
-#: ../src/workbench/nmv-workbench.cc:718
+#: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
 msgstr "Rodyti informaciją apie šią programą"
 
-#: ../src/workbench/nmv-workbench.cc:728
+#: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
 msgstr "_Turinys"
 
-#: ../src/workbench/nmv-workbench.cc:729
+#: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
 msgstr "Rodyti šios programos vadovą"
 
