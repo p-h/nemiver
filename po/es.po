@@ -5,21 +5,22 @@
 #
 # Alberto Caso <alberto.caso@adaptia.es>, 2007, 2008.
 # Jorge González <jorgegonz@svn.gnome.org>, 2008, 2010, 2011.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-06-19 14:48+0000\n"
-"PO-Revision-Date: 2012-06-19 16:27+0200\n"
+"POT-Creation-Date: 2013-01-15 15:28+0000\n"
+"PO-Revision-Date: 2013-01-15 16:29+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
 #: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
@@ -37,6 +38,10 @@ msgstr "Depurador de C/C++ Nemiver"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Depurar aplicaciones"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;desensamblador;depurador;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -106,7 +111,7 @@ msgstr "Mostrar el número de versión de Nemiver"
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<prog-para-depurar> [argumentos]]"
 
-#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:263
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "Depurador de C/C++ para GNOME"
 
@@ -149,12 +154,12 @@ msgid "Line"
 msgstr "Línea"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Función"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Dirección"
 
@@ -224,24 +229,24 @@ msgstr "_Copiar"
 msgid "Copy the call stack to the clipboard"
 msgstr "Copiar la pila de llamadas al portapapeles"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Marco"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Parámetros"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Ubicación"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Binario"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
@@ -714,47 +719,47 @@ msgstr "_Buscar"
 msgid "Find a text string in file"
 msgstr "Buscar una cadena de texto en el archivo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3939
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3915
 #, c-format
 msgid "Close %s"
 msgstr "Cerrar %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5897
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Es imposible reiniciar un inferior remoto"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6020
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
 #, c-format
 msgid "Could not find file %s"
 msgstr "No se ha podido encontrar el archivo %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6082
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6224
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6259
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6060
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6202
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6237
 #, c-format
 msgid "Could not load program: %s"
 msgstr "No se pudo cargar el programa: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6153
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6131
 msgid "You cannot attach to Nemiver itself"
 msgstr "No es posible conectarse al propio Nemiver"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6166
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "No es posible conectarse al motor de depuración subyacente"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6461
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6439
 msgid "Failed to stop the debugger"
 msgstr "No se ha podido detener el depurador"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6705
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6683
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Número de línea no válido: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -1431,12 +1436,12 @@ msgstr "REstablecer la terminal"
 msgid "Do not ask me again"
 msgstr "No preguntarme de nuevo"
 
-#: ../src/workbench/nmv-workbench.cc:275
+#: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
 msgstr "Web del proyecto"
 
 #. Translators: change this to your name, separate multiple names with \n
-#: ../src/workbench/nmv-workbench.cc:295
+#: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
 msgstr ""
 "Daniel Mustieles <daniel.mustieles@gmail.com>, 2012\n"
@@ -1444,39 +1449,39 @@ msgstr ""
 "Jorge González <jorgegonz@svn.gnome.org>, 2008, 2010\n"
 "QA: Jorge González <jorgegonz@svn.gnome.org>, 2007-2008"
 
-#: ../src/workbench/nmv-workbench.cc:673
+#: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
 msgstr "_Archivo"
 
-#: ../src/workbench/nmv-workbench.cc:684
+#: ../src/workbench/nmv-workbench.cc:672
 msgid "_Quit"
 msgstr "_Salir"
 
-#: ../src/workbench/nmv-workbench.cc:685
+#: ../src/workbench/nmv-workbench.cc:673
 msgid "Quit the application"
 msgstr "Salir de la aplicación"
 
-#: ../src/workbench/nmv-workbench.cc:695
+#: ../src/workbench/nmv-workbench.cc:683
 msgid "_Edit"
 msgstr "_Editar"
 
-#: ../src/workbench/nmv-workbench.cc:706
+#: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
 msgstr "Ay_uda"
 
-#: ../src/workbench/nmv-workbench.cc:717
+#: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
 msgstr "_Acerca de"
 
-#: ../src/workbench/nmv-workbench.cc:718
+#: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
 msgstr "Mostrar información acerca de esta aplicación"
 
-#: ../src/workbench/nmv-workbench.cc:728
+#: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
 msgstr "_Contenido"
 
-#: ../src/workbench/nmv-workbench.cc:729
+#: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
 msgstr "Mostrar el manual de usuario de esta aplicación"
 
