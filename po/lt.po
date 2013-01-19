@@ -1,25 +1,26 @@
 # Lithuanian translation for nemiver.
 # Copyright (C) 2012 nemiver's COPYRIGHT HOLDER
 # This file is distributed under the same license as the nemiver package.
-# Aurimas Černius <aurisc4@gmail.com>, 2012.
+# Aurimas Černius <aurisc4@gmail.com>, 2012, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-01-13 12:32+0000\n"
-"PO-Revision-Date: 2013-01-14 22:25+0300\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2013-01-15 15:28+0000\n"
+"PO-Revision-Date: 2013-01-19 22:48+0200\n"
 "Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
 "Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Gtranslator 2.91.5\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
+"%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
-#: ../data/nemiver.desktop.in.h:1
-#: ../ui/workbench.ui.h:1
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
 msgstr "Nemiver"
 
@@ -36,8 +37,9 @@ msgid "Debug Applications"
 msgstr "Derinti programas"
 
 #: ../data/nemiver.desktop.in.h:5
-msgid "gdb;disassembler;debugger;c;c++"
-msgstr "gdb;disasembleris;derintuvė;c;c++"
+#| msgid "gdb;disassembler;debugger;c;c++"
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;disasembleris;derintuvė;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -84,8 +86,11 @@ msgid "Connect to remote target specified by HOST:PORT"
 msgstr "Prisijungti prie nutolusio tinklo, nurodyto HOST:PORT"
 
 #: ../src/main.cc:170
-msgid "Where to look for shared libraries loaded by the inferior. Use in conjunction with --remote"
-msgstr "Kur ieškoti įkeliamų bendro naudojimo bibliotekų. Naudoti kartu su --remote"
+msgid ""
+"Where to look for shared libraries loaded by the inferior. Use in "
+"conjunction with --remote"
+msgstr ""
+"Kur ieškoti įkeliamų bendro naudojimo bibliotekų. Naudoti kartu su --remote"
 
 #: ../src/main.cc:180
 msgid "Set the path of the GDB binary to use to debug the inferior"
@@ -103,8 +108,7 @@ msgstr "Rodyti Nemiver versiją"
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<derinama-programa> [argumentai]]"
 
-#: ../src/main.cc:267
-#: ../src/workbench/nmv-workbench.cc:251
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "GNOME C/C++ derintuvė"
 
@@ -116,8 +120,7 @@ msgstr ""
 "Pateikite vietinę derinamos nutolusios programos kopiją.\n"
 "Pavyzdžiui:\n"
 
-#: ../src/main.cc:366
-#: ../src/main.cc:385
+#: ../src/main.cc:366 ../src/main.cc:385
 msgid "Otherwise, find below the full set of Nemiver options.\n"
 msgstr "Priešingu atveju žemiau rasite visas Nemiver parinktis.\n"
 
@@ -413,7 +416,8 @@ msgid "Enable/Disable Breakpoint"
 msgstr "Įjungti/išjungti sustojimo tašką"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
-msgid "Enable or disable the breakpoint that is set at the current cursor location"
+msgid ""
+"Enable or disable the breakpoint that is set at the current cursor location"
 msgstr "Įjungti/išjungti sustojimo tašką esamoje vietoje"
 
 #. Depending on the context we will want this string to be
@@ -559,7 +563,9 @@ msgid "Show Assembly"
 msgstr "Rodyti asemblerį"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
-msgid "Show the assembly code of the source code being currently debugged, in another tab"
+msgid ""
+"Show the assembly code of the source code being currently debugged, in "
+"another tab"
 msgstr "Rodyti derinamo kodo asemblerio kodą kitoje kortelėje"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
@@ -740,7 +746,9 @@ msgstr "Neteisingas eilutės numeris: %i"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
-msgid "There is a program being currently debugged. Do you really want to exit from the debugger?"
+msgid ""
+"There is a program being currently debugged. Do you really want to exit from "
+"the debugger?"
 msgstr "Yra šiuo metu derinama programa. Ar tikrai norite palikti derintuvę?"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
@@ -839,8 +847,10 @@ msgid "Create Watchpoint"
 msgstr "Sukurti stebėjimo tašką"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
-msgid "Create a watchpoint that triggers when the value of the expression changes"
-msgstr "Sukurti stebėjimo tašką, kuris iššaukiamas, kai išraiškos reikšmė pasikeičia"
+msgid ""
+"Create a watchpoint that triggers when the value of the expression changes"
+msgstr ""
+"Sukurti stebėjimo tašką, kuris iššaukiamas, kai išraiškos reikšmė pasikeičia"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
@@ -969,7 +979,9 @@ msgid "Choose Overloaded Function"
 msgstr "Pasirinkite funkcijos variantą"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
-msgid "Multiple functions match the specified name. Please choose one from the list below."
+msgid ""
+"Multiple functions match the specified name. Please choose one from the list "
+"below."
 msgstr "Yra kelios funkcijos tuo pačiu vardu. Pasirinkite vieną iš sąrašo."
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
@@ -1458,4 +1470,3 @@ msgstr "Pasirinkite failo vietą"
 #: ../ui/locatefiledialog.ui.h:2
 msgid "Locate File"
 msgstr "Surasti failą"
-
