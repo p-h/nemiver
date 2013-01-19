@@ -1,14 +1,14 @@
 # Serbian translation of nemiver.
 # Courtesy of Prevod.org team (http://prevod.org/) -- 2012.
 # This file is distributed under the same license as the nemiver package.
-# Miroslav Nikolić <miroslavnikolic@rocketmail.com>, 2012.
+# Miroslav Nikolić <miroslavnikolic@rocketmail.com>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-07-13 07:37+0000\n"
-"PO-Revision-Date: 2012-07-21 11:36+0200\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemive"
+"r&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2013-01-15 15:28+0000\n"
+"PO-Revision-Date: 2013-01-19 11:56+0200\n"
 "Last-Translator: Miroslav Nikolić <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "Language: sr\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
 "n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Project-Style: gnome\n"
 
 #: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
@@ -33,6 +34,10 @@ msgstr "Nemiver C/C++ ispravljač grešaka"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Programi za ispravljanje grešaka"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;razjedinitelj;ispravljač grešaka;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -102,7 +107,7 @@ msgstr "Prikazuje broj izdanja Nemivera"
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<program-za-pročišćavanje> [argumenti-programa]]"
 
-#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:263
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "C/C++ pročišćavač za Gnom"
 
@@ -144,12 +149,12 @@ msgid "Line"
 msgstr "Red"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Funkcija"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Adresa"
 
@@ -219,24 +224,24 @@ msgstr "_Umnoži"
 msgid "Copy the call stack to the clipboard"
 msgstr "Umnožite pozivni stek među isečke"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Okvir"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Argumenti"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Mesto"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Binarni"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
@@ -498,8 +503,7 @@ msgstr "Izvrši do kursora"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
-"Nastavite izvršavanje programa sve dok se ne stigne do trenutno izabranog "
-"reda"
+"Nastavite izvršavanje programa sve dok se ne stigne do trenutno izabranog reda"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
 msgid "Jump to Cursor"
@@ -709,47 +713,47 @@ msgstr "_Nađi"
 msgid "Find a text string in file"
 msgstr "Pronađite tekstualnu nisku u datoteci"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3939
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3915
 #, c-format
 msgid "Close %s"
 msgstr "Zatvori %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5897
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Izvinite, nije moguće ponovno pokretanje udaljenog potčinjenog"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6020
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
 #, c-format
 msgid "Could not find file %s"
 msgstr "Nemogu da nađem datoteku „%s“"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6084
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6226
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6261
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6060
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6202
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6237
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Ne mogu da učitam program: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6155
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6131
 msgid "You cannot attach to Nemiver itself"
 msgstr "Ne možete da prikačite samom Nemiveru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6168
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Ne možete da prikačite na motor osnovnog pročišćavača"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6463
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6439
 msgid "Failed to stop the debugger"
 msgstr "Nisam uspeo da zaustavim program"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6707
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6683
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Neispravan broj reda: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8318
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -1424,48 +1428,51 @@ msgstr "Ponovo postavite terminal"
 msgid "Do not ask me again"
 msgstr "Ne pitaj me ponovo"
 
-#: ../src/workbench/nmv-workbench.cc:275
+#: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
 msgstr "Veb sajt projekta"
 
 #. Translators: change this to your name, separate multiple names with \n
-#: ../src/workbench/nmv-workbench.cc:295
+#: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
-msgstr "  Miroslav Nikolić <mirosavnikoic@rocketmailcom>"
+msgstr ""
+"  Miroslav Nikolić <miroslavnikolic@rocketmail.com>\n"
+"\n"
+"http://prevod.org — prevod na srpski jezik"
 
-#: ../src/workbench/nmv-workbench.cc:673
+#: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
 msgstr "_Datoteka"
 
-#: ../src/workbench/nmv-workbench.cc:684
+#: ../src/workbench/nmv-workbench.cc:672
 msgid "_Quit"
 msgstr "_Izađi"
 
-#: ../src/workbench/nmv-workbench.cc:685
+#: ../src/workbench/nmv-workbench.cc:673
 msgid "Quit the application"
 msgstr "Izađite iz programa"
 
-#: ../src/workbench/nmv-workbench.cc:695
+#: ../src/workbench/nmv-workbench.cc:683
 msgid "_Edit"
 msgstr "_Uređivanje"
 
-#: ../src/workbench/nmv-workbench.cc:706
+#: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
 msgstr "Po_moć"
 
-#: ../src/workbench/nmv-workbench.cc:717
+#: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
 msgstr "_O programu"
 
-#: ../src/workbench/nmv-workbench.cc:718
+#: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
 msgstr "Prikažite podatke o ovom programu"
 
-#: ../src/workbench/nmv-workbench.cc:728
+#: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
 msgstr "_Sadržaj"
 
-#: ../src/workbench/nmv-workbench.cc:729
+#: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
 msgstr "Prikažite korisničku pomoć za ovaj program"
 
