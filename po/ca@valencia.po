@@ -2,14 +2,14 @@
 # Copyright (C) 2006 Dodji Seketeli & Jonathon Jongsma
 # This file is distributed under the same license as the nemiver package.
 # David Planella Molas <david.planella@googlemail.com>, 2007, 2008, 2009.
-# Gil Forcada <gilforcada@guifi.net>, 2012.
+# Gil Forcada <gilforcada@guifi.net>, 2012, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-22 09:30+0200\n"
-"PO-Revision-Date: 2012-09-17 21:33+0200\n"
+"POT-Creation-Date: 2013-01-21 22:43+0100\n"
+"PO-Revision-Date: 2013-01-21 22:42+0100\n"
 "Last-Translator: Gil Forcada <gilforcada@guifi.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "Language: ca-XV\n"
@@ -34,6 +34,10 @@ msgstr "Depurador de C/C++ Nemiver"
 msgid "Debug Applications"
 msgstr "Depureu aplicacions"
 
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;desassemblador;depurador;c;c++;"
+
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
 msgstr "Estableix l'entorn del programa a depurar"
@@ -48,11 +52,11 @@ msgstr "Carrega un fitxer de bolcat de memòria"
 
 #: ../src/main.cc:104
 msgid "List the saved debugging sessions"
-msgstr "Llista les sessions de depuració alçades"
+msgstr "Llista les sessions de depuració guardades"
 
 #: ../src/main.cc:112
 msgid "Erase the saved debugging sessions"
-msgstr "Esborra les sessions de depuració alçades"
+msgstr "Esborra les sessions de depuració guardades"
 
 #: ../src/main.cc:120
 msgid "Debug the program that was of session number N"
@@ -146,12 +150,12 @@ msgid "Line"
 msgstr "Línia"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Funció"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Adreça"
 
@@ -224,24 +228,24 @@ msgid "Copy the call stack to the clipboard"
 msgstr "Copia la pila de crides al porta-retalls"
 
 # FIXME: es refereix a l'«stack frame» (dpm)
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Crida"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Arguments"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Ubicació"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Binari"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
@@ -370,7 +374,7 @@ msgstr "Al_ça la sessió"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3087
 msgid "Save the current debugging session to disk"
-msgstr "Alça la sessió de depuració actual al disc"
+msgstr "Guarda la sessió de depuració actual al disc"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
 msgid "Set Breakpoint with Dialog..."
@@ -679,11 +683,11 @@ msgstr ""
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
 msgid "Resume Sa_ved Session..."
-msgstr "Reprén una _sessió alçada..."
+msgstr "Reprén una _sessió guardada..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3534
 msgid "Open a previously saved debugging session"
-msgstr "Obri una sessió de depuració alçada anteriorment"
+msgstr "Obri una sessió de depuració guardada anteriorment"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3544
 msgid "_Preferences"
@@ -1289,7 +1293,7 @@ msgstr "Variables d'entorn:"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
-msgstr "Sessions alçades"
+msgstr "Sessions guardades"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
 msgid "Choose a Session to Debug"
