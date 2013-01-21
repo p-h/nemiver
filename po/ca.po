@@ -2,15 +2,15 @@
 # Copyright (C) 2006 Dodji Seketeli & Jonathon Jongsma
 # This file is distributed under the same license as the nemiver package.
 # David Planella Molas <david.planella@googlemail.com>, 2007, 2008, 2009.
-# Gil Forcada <gilforcada@guifi.net>, 2012.
+# Gil Forcada <gilforcada@guifi.net>, 2012, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-17 11:49+0000\n"
-"PO-Revision-Date: 2012-09-17 21:33+0200\n"
+"POT-Creation-Date: 2013-01-15 15:28+0000\n"
+"PO-Revision-Date: 2013-01-21 22:42+0100\n"
 "Last-Translator: Gil Forcada <gilforcada@guifi.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "Language: ca\n"
@@ -34,6 +34,10 @@ msgstr "Depurador de C/C++ Nemiver"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Depureu aplicacions"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;desassemblador;depurador;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -147,12 +151,12 @@ msgid "Line"
 msgstr "Línia"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Funció"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Adreça"
 
@@ -225,24 +229,24 @@ msgid "Copy the call stack to the clipboard"
 msgstr "Copia la pila de crides al porta-retalls"
 
 # FIXME: es refereix a l'«stack frame» (dpm)
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Crida"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Arguments"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Ubicació"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Binari"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
