@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-10-23 13:34+0000\n"
-"PO-Revision-Date: 2011-11-09 16:10+0900\n"
+"POT-Creation-Date: 2013-01-15 15:28+0000\n"
+"PO-Revision-Date: 2013-01-26 10:21+0900\n"
 "Last-Translator: Gheyret Kenji <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: \n"
@@ -33,49 +33,53 @@ msgstr "نېمىۋېر C/C++ سازلىغۇچ"
 msgid "Debug Applications"
 msgstr "پروگراممىلارنى سازلاش پروگراممىسى"
 
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;disassembler;debugger;c;c++;سازلىغۇچ؛"
+
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
-msgstr ""
+msgstr "سازلايدىغان پروگراممىنىڭ مۇھىت ئۆزگەرگۈچىلىرىنى بەلگىلەش"
 
 #: ../src/main.cc:87
 msgid "Attach to a process"
-msgstr ""
+msgstr "قېتىلىدىغان نىشان ئىجرانى كۆرسىتىش"
 
 #: ../src/main.cc:96
 msgid "Load a core file"
-msgstr ""
+msgstr "ئوقۇيدىغان يادرو ھۆججەتنى كۆرسىتىش"
 
 #: ../src/main.cc:104
 msgid "List the saved debugging sessions"
-msgstr ""
+msgstr "ساقلانغان سازلاش ئەڭگىمەلىرىنى تىزىپ كۆرسىتىش"
 
 #: ../src/main.cc:112
 msgid "Erase the saved debugging sessions"
-msgstr ""
+msgstr "ساقلانغان سازلاش ئەڭگىمەلىرىنى ئۆچۈرۈش"
 
 #: ../src/main.cc:120
 msgid "Debug the program that was of session number N"
-msgstr ""
+msgstr "ئەڭگىمە نومۇرى N بولغان پروگراممىنى سازلاش"
 
 #: ../src/main.cc:128
 msgid "Execute the last session"
-msgstr ""
+msgstr "ئەڭ ئاخىرقى ئەڭگىمەنى قايتا ئىجرا قىلىش"
 
 #: ../src/main.cc:136
 msgid "Enable logging domains DOMAINS"
-msgstr ""
+msgstr "خاتىرىلەش دائىرىلىرىنى DOMAINS قىلىش"
 
 #: ../src/main.cc:144
 msgid "Log the debugger output"
-msgstr ""
+msgstr "سازلىغۇچنىڭ چىقىرىشىنى خاتىرىلىسۇن"
 
 #: ../src/main.cc:152
 msgid "Use this terminal as the debugee's terminal"
-msgstr ""
+msgstr "مەزكۇر تېرمىنالنى سازلانغۇچىنىڭ تېرمىنالى قىلىپ ئىشلەتسۇن"
 
 #: ../src/main.cc:161
 msgid "Connect to remote target specified by HOST:PORT"
-msgstr ""
+msgstr "HOST:PORT ئارقىلىق كۆرسىتىلگەن يىراقتىكى نىشانغا باغلانسۇن"
 
 #: ../src/main.cc:170
 msgid ""
@@ -93,38 +97,40 @@ msgstr ""
 
 #: ../src/main.cc:198
 msgid "Show the version number of Nemiver"
-msgstr ""
+msgstr "مەزكۇر Nemiver نەشر نومۇرىنى كۆرسىتىدۇ"
 
 #: ../src/main.cc:264
 msgid " [<prog-to-debug> [prog-args]]"
-msgstr ""
+msgstr " [<prog-to-debug> [prog-args]]"
 
 #: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
-msgstr ""
+msgstr "گىنومنىڭ C/C++ سازلىغۇچىسى"
 
 #: ../src/main.cc:361
 msgid ""
 "Please provide a local copy of the binary you intend to debug remotely.\n"
 "Like this:\n"
-msgstr ""
+msgstr "يىراقتا تۇرۇپ سازلىماقچى بولغان ئىجرا ھۆججەتنى كۆچۈرۈپ بېرىڭ.\n"
+"مۇنداق بولسۇن:\n"
 
 #: ../src/main.cc:366 ../src/main.cc:385
 msgid "Otherwise, find below the full set of Nemiver options.\n"
-msgstr ""
+msgstr "ياكى بولمىسا، تۆۋەندىكى Nemiver نىڭ تولۇق تاللانمىلىرىدىن پايدىلىنىڭ.\n"
 
 #: ../src/main.cc:380
 msgid ""
 "Please provide the path to the binary that generated the core file too.\n"
 "Like this:\n"
-msgstr ""
+msgstr "يادرو ھۆججەت(core file) نى ھاسىل قىلغان ئىجرا ھۆججىتىنىڭ يولىنىمۇ كۆرسىتىپ بېرىڭ.\n"
+"مۇنداق بولسۇن:\n"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:100
 #: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
 msgid "ID"
-msgstr "ID"
+msgstr "كىملىكى(ID)"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
@@ -137,12 +143,12 @@ msgid "Line"
 msgstr "قۇر"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "فۇنكسىيە"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "ئادرېس"
 
@@ -152,7 +158,7 @@ msgstr "شەرت"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
 msgid "Toggle countpoint"
-msgstr ""
+msgstr "ساناش نۇقتىسى(countpoint) نى ئۆزگەرت"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
@@ -161,7 +167,7 @@ msgstr "تىپى"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
 msgid "Hits"
-msgstr ""
+msgstr "بۇ يەردىن ئوتكەن سانى"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
 msgid "Expression"
@@ -169,7 +175,7 @@ msgstr "ئىپادە"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
 msgid "Ignore count"
-msgstr ""
+msgstr "پەرۋا قىلمايدىغان سانى"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:348
 msgid "breakpoint"
@@ -177,11 +183,11 @@ msgstr "توختاش نۇقتىسى"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:352
 msgid "watchpoint"
-msgstr ""
+msgstr "كۆزىتىش نۇقتىسى"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:355
 msgid "countpoint"
-msgstr ""
+msgstr "ساناش نۇقتىسى"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:358
 msgid "unknown"
@@ -193,15 +199,15 @@ msgstr "ئۆچۈر(_D)"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
 msgid "Remove this breakpoint"
-msgstr ""
+msgstr "مەزكۇر توختاش نۇقتىسىنى ئۆچۈرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
 msgid "_Go to Source"
-msgstr ""
+msgstr "مەنبەگە يۆتكەل(_G)"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
 msgid "Find this breakpoint in the source editor"
-msgstr ""
+msgstr "ئەسلى كود تەھرىرلىگۈچىدىن مەزكۇر توختاش نۇقتىسىنى تاپىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:177
 #: ../src/uicommon/nmv-terminal.cc:173
@@ -210,30 +216,30 @@ msgstr "كۆچۈر(_C)"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:178
 msgid "Copy the call stack to the clipboard"
-msgstr ""
+msgstr "چاپلاش تاختىسىغا call stack نى كۆچۈرىدۇ"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "كاندۇك"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "ئۆزگەرگۈچىلەر"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "ئورنى"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "ئىككىلىك"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
-msgstr[0] ""
+msgstr[0] "(بۇ يەر چېكىلسە call stack نىڭ كېيىنكى قۇرى %d نى كۆرگىلى بولىدۇ)"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
 msgid "Function Name"
@@ -246,7 +252,7 @@ msgstr "مەزمۇن"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
 msgid "Target Terminal"
-msgstr ""
+msgstr "نىشان تېرمىنال"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
 msgid "Breakpoints"
@@ -262,28 +268,28 @@ msgstr "ئەسلەك"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
 msgid "Expression Monitor"
-msgstr ""
+msgstr "ئىپادە كۆزەتكۈ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1689
 msgid "Reached end of file"
-msgstr ""
+msgstr "ھۆججەتنىڭ ئاخىرىغا كەلدى"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1692
 #, c-format
 msgid "Could not find string %s"
-msgstr ""
+msgstr "تېكىست %s نى تاپالمىدى"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2070
 msgid "Change to Standard Breakpoint"
-msgstr ""
+msgstr "ئۆلچەملىك توختاش نۇقتىسىغا ئۆزگەرتىش"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2073
 msgid "Change to Countpoint"
-msgstr ""
+msgstr "ساناش نۇقتىسىغا ئۆزگەرتىش"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2075
 msgid "Remove _Breakpoint"
-msgstr ""
+msgstr "توختاش نۇقتىسىنى چىقىرىۋەت(_B)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2078
 msgid "Disable Breakpoint"
@@ -295,34 +301,34 @@ msgstr "توختاش نۇقتىسىنى قوزغات"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2083
 msgid "Set _Breakpoint"
-msgstr ""
+msgstr "توختاش نۇقتىسى بەلگىلە(_B)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2085
 msgid "Set Countpoint"
-msgstr ""
+msgstr "ساناش نۇقتىسىنى بەلگىلەش"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
-msgstr ""
+msgstr "%s (path=\"%s\", pid=%i)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2262
 msgid "Connected to remote target!"
-msgstr ""
+msgstr "يىراقتىكى نىشانغا باغلاندى!"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2418
 msgid "Program exited"
-msgstr ""
+msgstr "پروگرامما ئاخىرلاشتى"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2448
 msgid "The underlying debugger engine process died."
-msgstr ""
+msgstr "توۋەن دەرىجىدىكى سازلاش ماتورىنىڭ ئىجراسى ئۆلدى."
 
 #. translators: first %s is the signal name, second one is the reason
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2536
 #, c-format
 msgid "Target received a signal: %s, %s"
-msgstr ""
+msgstr "نىشان سىگنال تاپشۇرۇپ ئالدى: %s، %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2551
 #, c-format
@@ -332,47 +338,47 @@ msgstr "خاتالىق يۈز بەردى:  %s"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2714
 #, c-format
 msgid "File %s has been modified. Do you want to reload it?"
-msgstr ""
+msgstr "ھۆججەت %s ئۆزگەرتىلىپتۇ. ئۇنى قايتا ئوقۇسۇنمۇ؟"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3057
 msgid "_Run or Restart"
-msgstr ""
+msgstr "ئىجرا قىل ياكى قايتا باشلا(_R)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3058
 msgid "Run or Restart the target"
-msgstr ""
+msgstr "نىشاننى ئىجرا قىلىدۇ ياكى قايتا باشلايدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3070
 msgid "_Detach From the Running Program"
-msgstr ""
+msgstr "ئىجرا بولۇۋاتقان پروگراممىدىن ئايرىل(_D)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3071
 msgid "Disconnect the debugger from the running target without killing it"
-msgstr ""
+msgstr "ئىجرا بولۇۋاتقان نىشاننى ئۆلتۈرمەي، ئىجراچىنى ئۇنىڭدىن ئايرىيدۇ."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3086
 msgid "_Save Session to Disk"
-msgstr ""
+msgstr "ئەڭگىمەنى دىسكىغا ساقلا(_S)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3087
 msgid "Save the current debugging session to disk"
-msgstr ""
+msgstr "نۆۋەتتىكى سازلاۋاتقان ئەڭگىمەنى دىسكىغا ساقلايدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
 msgid "Set Breakpoint with Dialog..."
-msgstr ""
+msgstr "سۆزلەشكۈدە توختاش نۇقتىسىنى بەلگىلە…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3097
 msgid "Set a breakpoint at the current line using a dialog"
-msgstr ""
+msgstr "سۆزلەشكۈ ئىشلىتىپ نۆۋەتتىكى قۇرغا توختاش نۇقتىسى بەلگىلەيدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3108
 msgid "Set Breakpoint..."
-msgstr ""
+msgstr "توختاش نۇقتىسى بەلگىلە…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3109
 msgid "Set a breakpoint at a function or line number"
-msgstr ""
+msgstr "بىر قۇر ياكى بىر فۇنكسىيىگە توختاش نۇقتىسى بەلگىلەيدۇ"
 
 #. Depending on the context we will want this string to be
 #. either "Set Breakpoint", or "Remove Breakpoint". Hence
@@ -383,11 +389,11 @@ msgstr ""
 #. line.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3125
 msgid "Toggle _Breakpoint"
-msgstr ""
+msgstr "توختاش نۇقتىسى ئۆزگەرت(_B)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3126
 msgid "Set/Unset a breakpoint at the current cursor location"
-msgstr ""
+msgstr "نۆۋەتتىكى نۇربەلگىسى تۇرغان قۇرغا توختاش نۇقتىسى بەلگىلەيدۇ ياكى چىقىرىۋېتىدۇ"
 
 #. Depending on the context we will want this string to be
 #. either "Enable Breakpoint", or "Disable
@@ -398,12 +404,12 @@ msgstr ""
 #. line.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3143
 msgid "Enable/Disable Breakpoint"
-msgstr ""
+msgstr "توختاش نۇقتىسىنى ئىناۋەتلىك/ئىناۋەتسىز قىل"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
-msgstr ""
+msgstr "نۇربەلگىسى تۇرغان ئورۇندىكى توختاش نۇقتىسىنى ئىناۋەتلىك ياكى ئىناۋەتسىز قىلىدۇ"
 
 #. Depending on the context we will want this string to be
 #. either "Set Countpoint", or "Change to Countpoint", or
@@ -415,19 +421,19 @@ msgstr ""
 #. line.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3164
 msgid "Toggle _Countpoint"
-msgstr ""
+msgstr "ساناش نۇقتىسىنى ئۆزگەر(_C)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3165
 msgid "Set/Unset a countpoint at the current cursor location"
-msgstr ""
+msgstr "نۆۋەتتىكى ئۇرۇنغان ساناش نۇقتىسىنى بەلگىلەيدۇ ياكى ئۇنى ئېلىۋېتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
 msgid "Set Watchpoint with Dialog..."
-msgstr ""
+msgstr "سۆزلەشكۈدە كۆزىتىش نۇقتىسىنى بەلگىلە…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
 msgid "Set a watchpoint using a dialog"
-msgstr ""
+msgstr "سۆزلەشكۈ ئىشلىتىپ كۆزىتىش نۇقتىسى بەلگىلەيدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
 msgid "_Next"
@@ -435,15 +441,15 @@ msgstr "كېيىنكى(_N)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
 msgid "Execute next line stepping over the next function, if any"
-msgstr ""
+msgstr "كېيىنكى قۇرغا بېرىپ توختايدۇ، فۇنكسىيەڭنىڭ ئىچىگە كىرمەيدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
 msgid "_Step"
-msgstr ""
+msgstr "قەدەم(_S)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
 msgid "Execute next line, stepping into the next function, if any"
-msgstr ""
+msgstr "كېيىنكى قۇرغا ياكى كېيىنكى فۇنكسىيىگە كىرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
 msgid "Step _Out"
@@ -451,31 +457,31 @@ msgstr "چىق(_O)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
 msgid "Finish the execution of the current function"
-msgstr ""
+msgstr "نۆۋەتتىكى فۇنكسىيىنى ئەڭ ئاخىرغىچە ئىجرا قىلىپ، ئۇنى چاقىرغان ئورۇنغا قايتىپ بارىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3221
 msgid "Step Into asm"
-msgstr ""
+msgstr "ماشىنا پروگراممىسىغا قەدەم"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3222
 msgid "Step into the next assembly instruction"
-msgstr ""
+msgstr "كېيىنكى ماشىنا پروگراممىسىغا قەدەملەپ كىرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
 msgid "Step Over asm"
-msgstr ""
+msgstr "ماشىنا پروگراممىسىدىن چىق"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
 msgid "Step over the next assembly instruction"
-msgstr ""
+msgstr "كېيىنكى قۇردىكى ماشىنا پروگراممىسىغا بېرىپ توختايدۇ(فۇنكسىيەڭنىڭ ئىچىگە كىرمەيدۇ)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
 msgid "_Continue or start"
-msgstr ""
+msgstr "داۋاملاشتۇر/باشلا(_C)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3242
 msgid "Start or continue program execution until the next breakpoint"
-msgstr ""
+msgstr "كېيىنكى توختاش نۇقتىسىغىچە پروگراممىنى ئىجرا قىلىدۇ ياكى ئىجرانى داۋام قىلىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
 msgid "Run to Cursor"
@@ -483,91 +489,91 @@ msgstr "نۇربەلگىسىگىچە ئىجرا قىل"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
 msgid "Continue program execution until the currently selected line is reached"
-msgstr ""
+msgstr "پروگراممىنى نۆۋەتتە تاللانغان قۇرغىچە ئىجرا قىلىپ توختايدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
 msgid "Jump to Cursor"
-msgstr ""
+msgstr "نۇر بەلگىسى تۇرغان ئورۇنغا بار"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
 msgid "Jump to the currently selected line"
-msgstr ""
+msgstr "نۆۋەتتە تاللانغان قۇرغا بارىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
 msgid "Jump and Stop to Cursor"
-msgstr ""
+msgstr "نۇر بەلگىسى تۇرغان ئورۇنغا بېرىپ توختا"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3274
 msgid "Sets a breakpoint to the currently selected line and jump there"
-msgstr ""
+msgstr "نۆۋەتتە تاللانغان قۇرغا توختاش نۇقتىسى بەلگىلەپ شۇ يەرگىچە بارىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
 msgid "Jump to a Given Location"
-msgstr ""
+msgstr "كۆرسىتىلگەن ئورۇنغا بار"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
 msgid "Select a given code location and jump there"
-msgstr ""
+msgstr "كۆرسىتىلگەن ئورۇن ياكى كود بار يەرگە بارىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
 msgid "Inspect an Expression"
-msgstr ""
+msgstr "ئىپادىنى تەكشۈر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
 msgid "Inspect a global or local expression"
-msgstr ""
+msgstr "ئومۇمىي دائىرىلىك ياكى قىسمى دائىرىلىك ئىپادىنى تەكشۈرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3309
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
 msgid "Call a Function"
-msgstr ""
+msgstr "فۇنكسىيىنى چاقىر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3310
 msgid "Call a function in the program being debugged"
-msgstr ""
+msgstr "پروگراممىدىكى سازلىنىۋاتقان فۇنكسىيىنى چاقىرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
 msgid "Show Global Variables"
-msgstr ""
+msgstr "ئومۇمىي دائىرىلىك ئۆزگەرگۈچىلەرنى كۆرسەت"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
 msgid "Display all global variables"
-msgstr ""
+msgstr "بارلىق ئومۇمىي دائىرىلىك ئۆزگەرگۈچىلەرنى كۆرسىتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3330
 msgid "Refresh Locals"
-msgstr ""
+msgstr "يەرلىك ئۆزگەرگۈچىلەرنى يېڭىلا"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3331
 msgid "Refresh the list of variables local to the current function"
-msgstr ""
+msgstr "نۆۋەتتىكى فۇنكىسىيەدىلا ئىشلىتىلىۋاتقان يەرلىك ئۆزگەرگۈچىلەرنىڭ تىزىمىنى يېڭىلايدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3340
 msgid "Show Assembly"
-msgstr ""
+msgstr "ماشىنا پروگراممىسىنى كۆرسەت"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
-msgstr ""
+msgstr "نۆۋەتتە سازلىنىۋاتقان مەنبە كودىغا ماس كېلىدىغان ماشىنا كودىنى باشقا بىر بەتكۈچتە كۆرسىتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
 msgid "Switch to Assembly"
-msgstr ""
+msgstr "ماشىنا كودىغا ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
 msgid "Show the assembly code of the source code being currently debugged"
-msgstr ""
+msgstr "نۆۋەتتە سازلىنىۋاتقان مەنبە كودىغا ماس كېلىدىغان ماشىنا كودىنى كۆرسىتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
 msgid "Switch to Source"
-msgstr ""
+msgstr "ئەسلى كودىغا ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
 msgid "Show the source code being currently debugged"
-msgstr ""
+msgstr "نۆۋەتتە سازلىنىۋاتقان مەنبە كودىنى كۆرسىتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3379
 msgid "Stop"
@@ -575,7 +581,7 @@ msgstr "توختا"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3380
 msgid "Stop the debugger"
-msgstr ""
+msgstr "سازلىغۇچنى توختىتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3392
 msgid "_View"
@@ -583,27 +589,27 @@ msgstr "كۆرۈنۈش(_V)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
 msgid "Switch to Target Terminal View"
-msgstr ""
+msgstr "نىشان تېرمىنال كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
 msgid "Switch to Context View"
-msgstr ""
+msgstr "مەزمۇن كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
 msgid "Switch to Breakpoints View"
-msgstr ""
+msgstr "توختاش نۇقتىسى كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3436
 msgid "Switch to Registers View"
-msgstr ""
+msgstr "رېگىستىرلەر كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3448
 msgid "Switch to Memory View"
-msgstr ""
+msgstr "ئەسلەك كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3459
 msgid "Switch to Variables Monitor View"
-msgstr ""
+msgstr "ئۆزگەرگۈچى كۆزەتكۈ كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
 msgid "_Debug"
@@ -611,51 +617,51 @@ msgstr "سازلا(_D)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3478
 msgid "_Open Source File..."
-msgstr ""
+msgstr "مەنبە ھۆججەتنى ئاچ(_O)…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3479
 msgid "Open a source file for viewing"
-msgstr ""
+msgstr "ئەسلى(مەنبە) پروگراممىنىڭ ھۆججىتىنى ئاچىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
 msgid "Load _Executable..."
-msgstr ""
+msgstr "ئىجرا بولىدىغان پروگراممىنى ئوقۇ(_E)…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
 msgid "Execute a program"
-msgstr ""
+msgstr "پروگراممىنى ئىجرا قىلىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
 msgid "_Load Core File..."
-msgstr ""
+msgstr "يادرو ھۆججەتنى ئوقۇ(_L)…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3500
 msgid "Load a core file from disk"
-msgstr ""
+msgstr "دىسكىدىن يادرو ھۆججەتنى ئوقۇيدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3510
 msgid "_Attach to Running Program..."
-msgstr ""
+msgstr "ئىجرا بولۇۋاتقان پروگراممىغا چېتىل(_A)…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3511
 msgid "Debug a program that's already running"
-msgstr ""
+msgstr "ئىجرا بولۇۋاتقان بىر پروگراممىنى سازلايدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
 msgid "_Connect to Remote Target..."
-msgstr ""
+msgstr "يىراقتىكى نىشانغا باغلان(_C)…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
 msgid "Connect to a debugging server to debug a remote target"
-msgstr ""
+msgstr "يىراقتىكى نىشاننى سازلاش ئۈچۈن سازلاش مۇلازىمېتىرىغا باغلىنىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
 msgid "Resume Sa_ved Session..."
-msgstr ""
+msgstr "ساقلاپ قويغان ئەڭگىمەنى داۋام قىل(_V)…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3534
 msgid "Open a previously saved debugging session"
-msgstr ""
+msgstr "بۇرۇن ساقلاپ قويغان سازلاش ئەڭگىمەسىنى ئاچىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3544
 msgid "_Preferences"
@@ -663,23 +669,23 @@ msgstr "مايىللىق(_P)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3545
 msgid "Edit the properties of the current session"
-msgstr ""
+msgstr "نۆۋەتتىكى ئەڭگىمەنىڭ خاسلىقىنى تەھرىرلەيدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
 msgid "_Reload Source File"
-msgstr ""
+msgstr "مەنبە ھۆججەتنى قايتا ئوقۇ(_R)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3560
 msgid "Reloads the source file"
-msgstr ""
+msgstr "مەنبە ھۆججەتنى قايتا ئوقۇيدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3569
 msgid "_Close Source File"
-msgstr ""
+msgstr "مەنبە ھۆججەتنى ياپ(_C)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3570
 msgid "Close the opened file"
-msgstr ""
+msgstr "مەنبە ھۆججەتنى ياپىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3579
 msgid "_Find"
@@ -687,62 +693,62 @@ msgstr "ئىزدە(_F)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3580
 msgid "Find a text string in file"
-msgstr ""
+msgstr "ھۆججەتتىن بىر تېكىست ئىزدەيدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3915
 #, c-format
 msgid "Close %s"
-msgstr ""
+msgstr "%s نى ياپ"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
 msgid "Sorry, it's impossible to restart a remote inferior"
-msgstr ""
+msgstr "كەچۈرۈڭ يىراقتىكى inferior نى قايتا قوزغىتىش مۇمكىن بولمىدى"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
 #, c-format
 msgid "Could not find file %s"
-msgstr ""
+msgstr "ھۆججەت %s نى تاپقىلى بولمىدى"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6060
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6202
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6237
 #, c-format
 msgid "Could not load program: %s"
-msgstr ""
+msgstr "پروگراممىنى ئوقۇغىلى بولمىدى: %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6131
 msgid "You cannot attach to Nemiver itself"
-msgstr ""
+msgstr "ئۆزىگە چېتىلالمايدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
 msgid "You cannot attach to the underlying debugger engine"
-msgstr ""
+msgstr "توۋەن دەرىجىدىكى سازلاش ماتورىغا چېتىلغىلى بولمايدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6439
 msgid "Failed to stop the debugger"
-msgstr ""
+msgstr "سازلىغۇچنى توختىتىش مەغلۇپ بولدى"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6683
 #, c-format
 msgid "Invalid line number: %i"
-msgstr ""
+msgstr "بۇ قۇر نومۇرى خاتا: %i"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
 "the debugger?"
-msgstr ""
+msgstr "نۆۋەتتە بىر پروگرامما سازلىنىۋاتىدۇ. راستلا سازلىغۇچنى ئاخىرلاشتۇرامسىز؟"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
 msgid "Default Layout"
-msgstr ""
+msgstr "كۆڭۈلدىكى ئورۇنلاشتۇرما"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
 msgid "Nemiver's default layout"
-msgstr ""
+msgstr "بۇ Nemiver نىڭ كۆڭۈلدىكى ئورۇنلاشتۇرۇلۇشىدۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
 msgid "Source Code"
@@ -750,43 +756,43 @@ msgstr "مەنبە كودى"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
 msgid "Dynamic Layout"
-msgstr ""
+msgstr "ھەرىكەتچان ئورۇنلاشتۇرما"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
 msgid "A layout which can be modified"
-msgstr ""
+msgstr "ئۆزگەرتكىلى بولىدىغان ئورۇنلاشتۇرۇشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
 msgid "Two Status Pane"
-msgstr ""
+msgstr "ئىككى ھالەت كۆزنىكى بار"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
 msgid "A layout with two status pane"
-msgstr ""
+msgstr "ئىككى دانە ھالەت كۆزنىكى بار ئورۇنلاشتۇرما"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
 msgid "Wide Layout"
-msgstr ""
+msgstr "كېڭى ئورۇنلاشتۇرما"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
 msgid "A layout for very large monitors"
-msgstr ""
+msgstr "چوڭ تىپتىكى ئېكرانلارغا ماس كېلىدىغان ئورۇنلاشتۇرما"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:128
 msgid "Expand _Selected"
-msgstr ""
+msgstr "تاللانغاننى ياي(_S)"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:134
 msgid "Expand _All"
-msgstr ""
+msgstr "ھەممىنى ياي(_A)"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:144
 msgid "_Collapse"
-msgstr ""
+msgstr "قاتلا(_C)"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:427
 msgid "Loading files from target executable..."
-msgstr ""
+msgstr "نىشان ئىجرا ھۆججىتىدىن ھۆججەتلەرنى ئوقۇۋاتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:301
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:547
@@ -795,7 +801,8 @@ msgstr ""
 msgid ""
 "Variable type is: \n"
 " %s"
-msgstr ""
+msgstr "ئۆزگەرگۈچى تىپى: \n"
+" %s"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:124
 msgid "Local Variables"
@@ -803,36 +810,36 @@ msgstr "يەرلىك ئۆزگەرگۈچىلەر"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:132
 msgid "Function Arguments"
-msgstr ""
+msgstr "فۇنكسىيەڭنىڭ پارامېتىرلىرى"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
 msgid "_Copy Variable Name"
-msgstr ""
+msgstr "ئۆزگەرگۈچى ئاتىنى كۆچۈر(_C)"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:259
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
 msgid "Copy the variable path expression to the clipboard"
-msgstr ""
+msgstr "چاپلاش تاختىسىغا ئۆزگەرگۈچى يول ئىپادىسىنى كۆچۈرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
 msgid "_Copy Variable Value"
-msgstr ""
+msgstr "ئۆزگەرگۈچى قىممىتىنى كۆچۈر(_C)"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:271
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
 msgid "Copy the variable value to the clipboard"
-msgstr ""
+msgstr "چاپلاش تاختىسىغا ئۆزگەرگۈچىنىڭ قىممىتىنى كۆچۈرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
 msgid "Create Watchpoint"
-msgstr ""
+msgstr "كۆزىتىش نۇقتىسى قۇر"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
-msgstr ""
+msgstr "قىممەت ياكى ئىپادە ئۆزگەرگەندە ھەمىشە كۆزىتىلىدىغان كۆزىتىش نۇقتىسى قۇرىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
@@ -840,11 +847,11 @@ msgstr "بايت"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:52
 msgid "Word"
-msgstr "خەت"
+msgstr "سۆز(ئىككى بايت)"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:55
 msgid "Long Word"
-msgstr ""
+msgstr "ئۇزۇن سوز(تۆت بايت)"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:98
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
@@ -859,12 +866,12 @@ msgstr "كۆرسەت"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:103
 msgid "Group By:"
-msgstr ""
+msgstr "گۇرۇپپىلاش ئۇسۇلى:"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:149
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
-msgstr ""
+msgstr "مۇندەرىجە تاللاش"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
@@ -877,7 +884,7 @@ msgstr "ئىشلەتكۈچى ئاتى"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
 msgid "Proc Args"
-msgstr ""
+msgstr "پارامېتىرلىرى"
 
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:101
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
@@ -896,32 +903,32 @@ msgstr "ئەڭگىمە"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
 msgid "Throw Exception"
-msgstr ""
+msgstr "مۇستەسنا تاشلاش"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
 msgid "Catch Exception"
-msgstr ""
+msgstr "مۇستەسنا تۇتۇش"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
 msgid "Fork System Call"
-msgstr ""
+msgstr "سىستېما چاقىرىشى(System Call) نى ئاچىلىغاندا"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
 msgid "Vfork System Call"
-msgstr ""
+msgstr "سىستېما چاقىرىشى(System Call) نى Vfork قىلغاندا"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
 msgid "Exec System Call"
-msgstr ""
+msgstr "سىستېما چاقىرىشى(System Call) نى ئىجرا قىلغاندا"
 
 #: ../src/persp/dbgperspective/nmv-thread-list.cc:184
 msgid "Thread ID"
-msgstr ""
+msgstr "Thread كىملىكى"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
 msgid "Variable"
-msgstr "ئۆزگىرىشچان"
+msgstr "ئۆزگەرگۈچى"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
 msgid "In scope expressions"
@@ -937,7 +944,7 @@ msgstr "چىقىرىۋەت"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
 msgid "Remove selected expressions from the monitor"
-msgstr ""
+msgstr "نۆۋەتتىكى ئىپادىنى كۆزەتكۈچتىن ئۆچۈرۈۋېتىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
 msgid "New..."
@@ -945,16 +952,16 @@ msgstr "يېڭى…"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
 msgid "Add a new expression to the monitor"
-msgstr ""
+msgstr "كۆزەتكۈچكە يېڭى ئىپادە قوشىدۇ"
 
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
 msgid "Call a function:"
-msgstr ""
+msgstr "فۇنكسىيىنى چاقىرىش:"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
 msgid "Set Breakpoint"
-msgstr ""
+msgstr "توختاش نۇقتىسىنى بەلگىلە"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
 msgid "Choose Overloaded Function"
@@ -964,7 +971,7 @@ msgstr ""
 msgid ""
 "Multiple functions match the specified name. Please choose one from the list "
 "below."
-msgstr ""
+msgstr "كۆرسىتىلگەن ئاتقا ماس كېلىدىغان فۇنكسىيىدىن بىر نەچچىسى بار ئىكەن. تۆۋەندىكىلەرنىڭ بىرىنى تاللاڭ."
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
 msgid "Find Text"
@@ -976,47 +983,47 @@ msgstr "ئىزدە(_S):"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
 msgid "Match Options:"
-msgstr ""
+msgstr "ئىزدەش تاللانمىلىرى:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
 msgid "Match c_ase"
-msgstr ""
+msgstr "چوڭ كىچىكلىكىگە قارىسۇن(_A)"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
 msgid "Match _entire word only"
-msgstr "پۈتۈن سۆزگە ماسلاش(_E)"
+msgstr "پۈتۈن سۆزگە ماسلاشتۇرسۇن(_E)"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
 msgid "Cycling Options:"
-msgstr ""
+msgstr "تەكرارلاش تاللانمىلىرى:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
 msgid "_Wrap around"
-msgstr "ئايلاندۇرۇپ قەۋەتلە(_W)"
+msgstr "قۇر قاتلانغان ئورۇنغىمۇ قارىسۇن(_W)"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
 msgid "Search _backwards"
-msgstr "ئارقىغا ئىزدە(_B)"
+msgstr "ئارقىغا قاراپ ئىزدىسۇن(_B)"
 
 #: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
 msgid "Global Variables"
-msgstr "ئومۇمىيەت ئۆزگەرگۈچى"
+msgstr "ئومۇمىي دائىرىلىك ئۆزگەرگۈچى ئۆزگەرگۈچى"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
 msgid "Choose a Core File to Debug"
-msgstr ""
+msgstr "سازلايدىغان يادرو ھۆججەتنى تاللاڭ"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
 msgid "Select a Core File"
-msgstr ""
+msgstr "يادرو ھۆججەتنى تاللا"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
 msgid "Core File:"
-msgstr ""
+msgstr "يادرو ھۆججەت:"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
 msgid "Select the executable that created the core file"
-msgstr ""
+msgstr "يادرو ھۆججەتنى ھاسىل قىلغان ئىجرا بولىدىغان ھۆججەتنى تاللاش"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
 msgid "Executable:"
@@ -1024,19 +1031,19 @@ msgstr "ئىجرا قىلغىلى بولىدۇ:"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
-msgstr ""
+msgstr "مەنبە ھۆججەتنى ئاچ"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
 msgid "Select from _Target Executable"
-msgstr ""
+msgstr "نىشاندىكى ئىجرا بولىدىغاندىن تاللا(_T)"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _File System"
-msgstr ""
+msgstr "ھۆججەت سىستېمىسىدىن تاللا(_F)"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
 msgid "Choose Source Files to Open"
-msgstr ""
+msgstr "ئاچىدىغان مەنبە ھۆججەتلەرنى تاللاش"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
 msgid "Preferences"
@@ -1044,11 +1051,11 @@ msgstr "مايىللىق"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
 msgid "Use system monospace font"
-msgstr ""
+msgstr "سىستېمىنىڭ تەڭ كەڭلىكتىكى خەت نۇسخىسىنى ئىشلەت"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
 msgid "Custom Font:"
-msgstr ""
+msgstr "ئىختىيارى خەت نۇسخىسى:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "Editor Font"
@@ -1056,11 +1063,11 @@ msgstr "تەھرىرلىگۈچ خەت نۇسخىسى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
 msgid "Visual Style"
-msgstr ""
+msgstr "تەھرىرلىگۈچنىڭ ئۇسلۇبى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
 msgid "Display line numbers"
-msgstr ""
+msgstr "قۇر نومۇرىنى كۆرسەتسۇن"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
 msgid "Line Numbers"
@@ -1076,27 +1083,27 @@ msgstr "تېرمىنال"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
 msgid "When a source file is changed:"
-msgstr ""
+msgstr "مەنبە ھۆججەت ئۆزگەرگەندە:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
 msgid "Reload the file"
-msgstr ""
+msgstr "ئۇنى قايتا ئوقۇسۇن"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
 msgid "Do not reload the file"
-msgstr ""
+msgstr "ئۇنى قايتا ئوقۇمىسۇن"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
 msgid "Ask each time"
-msgstr ""
+msgstr "قانداق قىلىشنى ھەر قېتىم سورىسۇن"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
 msgid "File Monitoring"
-msgstr ""
+msgstr "ھۆججەتنى كۆزىتىش"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
 msgid "Enable syntax highlighting"
-msgstr ""
+msgstr "يورۇتۇپ كۆرسىتىش ئىناۋەتلىك  بولسۇن"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
 msgid "Syntax Highlighting"
@@ -1108,19 +1115,19 @@ msgstr "تەھرىرلىگۈچ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
 msgid "Pure assembly"
-msgstr ""
+msgstr "ساپ ماشىنا كودى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
 msgid "Mixed source and assembly"
-msgstr ""
+msgstr "ماشىنا كودى ۋە مەنبە ئارىلاش"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Assembly style"
-msgstr ""
+msgstr "ماشىنا كودى ئۇسلۇبى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
 msgid "Assembly flavor"
-msgstr ""
+msgstr "ماشىنا كودىنى كۆرسىتىش ئۇسۇلى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
@@ -1129,15 +1136,15 @@ msgstr "بىر ھۆججەت تاللاڭ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
 msgid "Path to the GDB binary used"
-msgstr ""
+msgstr "ئىشلىتىلگەن GDB ئىجرا بولىدىغان پروگراممىنىڭ يولى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
 msgid "GDB Binary"
-msgstr ""
+msgstr "GDB ئىجرا بولىدىغان پروگرامما"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Number of instructions to disassemble by default"
-msgstr ""
+msgstr "تەتۈرلەش(disassemble) تە ئىشلىتىدىغان پەرمانلارنىڭ كۆڭۈلدىكى سانى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
 msgid "Instructions"
@@ -1145,23 +1152,23 @@ msgstr "پەرمانلار"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Enable pretty printing (requires debugger restart)"
-msgstr ""
+msgstr "Pretty Printing نى ئىناۋەتلىك قىلسۇن (سازلىغۇچنى قايتا قوزغىتىش كېرەك)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "GDB Pretty Printing"
-msgstr ""
+msgstr "GDB Pretty Printing ئىقتىدارى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Follow parent"
-msgstr ""
+msgstr "ئەسلى ئىجرانى سازلاش"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "Follow child"
-msgstr ""
+msgstr "بالا ئىجرانى سازلاش"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
 msgid "GDB Follow Fork Mode"
-msgstr ""
+msgstr "GDB Follow Fork Mode"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
 msgid "Debugger"
@@ -1173,31 +1180,31 @@ msgstr "جايلاشتۇرۇش"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
 msgid "Attach to a Running Program"
-msgstr ""
+msgstr "ئىجرا بولۇۋاتقان پروگراممىغا چېتىل"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
 msgid "Choose a Process to Debug"
-msgstr ""
+msgstr "سازلايدىغان ئىجرانى تاللا"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
-msgstr ""
+msgstr "سۈزگۈچ تىزىمى(_F):"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
 msgid "Connect to Remote Target"
-msgstr ""
+msgstr "يىراقتىكى نىشانغا باغلان"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
 msgid "Executable to Load"
-msgstr ""
+msgstr "ئوقۇيدىغان ئىجرا بولىدىغان پروگرامما"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
 msgid "Shared Libraries Location"
-msgstr ""
+msgstr "ھەمبەھىرلەنگەن ئامبارلارنىڭ ئورنى"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
 msgid "Remote Debugging Server"
-msgstr ""
+msgstr "يىراقتىكى سازلاش مۇلازىمىتى"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
 msgid "TCP/IP Connection"
@@ -1213,11 +1220,11 @@ msgstr "ئارقىمۇئارقا ئېغىز باغلىنىشى"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
 msgid "Choose a Program to Execute"
-msgstr ""
+msgstr "ئىجرا قىلىدىغان پروگراممىنى تاللاش"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
 msgid "Choose an Executable"
-msgstr ""
+msgstr "ئىجرا بولىدىغاننى تاللاش"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "Program:"
@@ -1229,7 +1236,7 @@ msgstr "ئەركىن ئۆزگەرگۈچى:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
 msgid "Choose a Working Directory"
-msgstr ""
+msgstr "خىزمەت مۇندەرىجىسىنى تاللاش"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "Working Directory:"
@@ -1249,15 +1256,15 @@ msgstr "مۇھىت ئۆزگەرگۈچىلىرى:"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
-msgstr ""
+msgstr "ساقلانغان ئەڭگىمەلەر"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
 msgid "Choose a Session to Debug"
-msgstr ""
+msgstr "سازلايدىغان ئەڭگىمەنى تاللاش"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
 msgid "Set a Breakpoint:"
-msgstr ""
+msgstr "توختاش نۇقتىسى بەلگىلەش:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
 msgid "Condition:"
@@ -1265,22 +1272,22 @@ msgstr "شەرت:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
 msgid "_Event:"
-msgstr ""
+msgstr "ھادىسە(_E):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
 msgid "_Binary Location:"
-msgstr ""
+msgstr "ئىجرا بولىدىغاننىڭ ئورنى(_B):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
 msgid "_Source Location:"
-msgstr ""
+msgstr "مەنبە ئورنى(_S):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
 msgid "F_unction Name:"
-msgstr ""
+msgstr "فۇنكسىيە ئاتى(_U):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
@@ -1299,35 +1306,35 @@ msgstr "قۇر:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
 msgid "Set as Countpoint"
-msgstr ""
+msgstr "ساناش نۇقتىسى قىلىپ بەلگىلە"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
 msgid "Set Location to Jump To"
-msgstr ""
+msgstr "سەكرەيدىغان ئورۇننى بەلگىلەش:"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
 msgid "Jump to location:"
-msgstr ""
+msgstr "سەكرەيدىغان ئورۇن:"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
 msgid "Break at Destination"
-msgstr ""
+msgstr "نىشاندا توختىسۇن"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
 msgid "Add to monitor"
-msgstr ""
+msgstr "كۆزەتكۈچكە قوش"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
 msgid "_Variable Name:"
-msgstr ""
+msgstr "ئۆزگەرگۈچى ئاتى(_V):"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
 msgid "_Inspect"
-msgstr ""
+msgstr "تەكشۈر(_I)"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
 msgid "Set a watchpoint:"
-msgstr ""
+msgstr "كۆزىتىش نۇقتىسى بەلگىلە:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
 msgid "Expression:"
@@ -1339,37 +1346,38 @@ msgstr "تەكشۈرۈش"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
 msgid "Triggers on:"
-msgstr ""
+msgstr "ۋاقىت:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
 msgid "Read"
-msgstr "ئوقۇ"
+msgstr "ئوقۇغاندا"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
 msgid "Write"
-msgstr "ياز"
+msgstr "يازغاندا"
 
 #: ../src/uicommon/nmv-locate-file-dialog.cc:65
 #, c-format
 msgid "Select Location for %s"
-msgstr ""
+msgstr "%s نىڭ ئورنىنى بەلگىلە"
 
 #: ../src/uicommon/nmv-locate-file-dialog.cc:75
 #, c-format
 msgid ""
 "Cannot find file '%s'.\n"
 "Please specify the location of this file:"
-msgstr ""
+msgstr "ھۆججەت ‹%s› نى تاپقىلى بولمىدى.\n"
+"مەزكۇر ھۆججەتنىڭ ئورنىنى كۆرسىتىپ بېرىڭ:"
 
 #: ../src/uicommon/nmv-source-editor.cc:611
 #, c-format
 msgid "Line: %i, Column: %i"
-msgstr ""
+msgstr "قۇر: %i، ئىستون: %i"
 
 #: ../src/uicommon/nmv-source-editor.cc:1439
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
-msgstr ""
+msgstr "ھۆججەت %s نى ئوقۇغىلى بولمىدى. سەۋەبى ئۇنىڭ كودلاش ئۇسۇلى %s غا ئوخشىمايدىكەن"
 
 #: ../src/uicommon/nmv-terminal.cc:174
 msgid "Copy the selection"
@@ -1389,7 +1397,7 @@ msgstr "ئەسلىگە قايتۇر(_R)"
 
 #: ../src/uicommon/nmv-terminal.cc:188
 msgid "Reset the terminal"
-msgstr ""
+msgstr "تېرمىنالنى ئەسلىگە قايتۇرىدۇ"
 
 #: ../src/uicommon/nmv-ui-utils.cc:91
 msgid "Do not ask me again"
@@ -1397,7 +1405,7 @@ msgstr "قايتا سورىما"
 
 #: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
-msgstr ""
+msgstr "قۇرۇلۇش تورتۇراسى"
 
 #. Translators: change this to your name, separate multiple names with \n
 #: ../src/workbench/nmv-workbench.cc:283
@@ -1405,12 +1413,6 @@ msgid "translator-credits"
 msgstr "Gheyret Kenji <gheyret@gmail.com>\n"
 "Sahran<sahran@live.com>\n"
 "Muhemmed Erdem <misran_erdem@hotmail.com>\n"
-"\n"
-"Launchpad Contributions:\n"
-"  Abdumomin.Kadir https://launchpad.net/~abdumomin-kadir\n"
-"  Gheyret T.Kenji https://launchpad.net/~gheyret\n"
-"  Gheyret T.Kenji https://launchpad.net/~gheyretkenji\n"
-"  Sahran https://launchpad.net/~sahran"
 
 #: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
@@ -1438,7 +1440,7 @@ msgstr "ھەققىدە(_A)"
 
 #: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
-msgstr ""
+msgstr "مەزكۇر پروگرامما ھەققىدىكى ئۇچۇرلارنى كۆرسىتىدۇ"
 
 #: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
@@ -1446,7 +1448,7 @@ msgstr "مەزمۇنلار(_C)"
 
 #: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
-msgstr ""
+msgstr "مەزكۇر پروگراممىنىڭ ئىشلەتكۈچى قوللانمىسىنى كۆرسىتىدۇ"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
@@ -1455,4 +1457,4 @@ msgstr "ھۆججەت ئورنىنى تاللاش"
 
 #: ../ui/locatefiledialog.ui.h:2
 msgid "Locate File"
-msgstr ""
+msgstr "ھۆججەتنىڭ ئورنى"
