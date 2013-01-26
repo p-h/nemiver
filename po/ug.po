@@ -1412,7 +1412,7 @@ msgstr "قۇرۇلۇش تورتۇراسى"
 msgid "translator-credits"
 msgstr "Gheyret Kenji <gheyret@gmail.com>\n"
 "Sahran<sahran@live.com>\n"
-"Muhemmed Erdem <misran_erdem@hotmail.com>\n"
+"Muhemmed Erdem <misran_erdem@hotmail.com>"
 
 #: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
