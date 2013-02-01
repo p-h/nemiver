@@ -10,11 +10,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-10-02 15:36+0000\n"
-"PO-Revision-Date: 2012-10-20 17:12+0200\n"
-"Last-Translator: Wolfgang Stoeggl <c72578@yahoo.de>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-01 21:07+0100\n"
+"PO-Revision-Date: 2013-02-01 21:07+0100\n"
+"Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -25,7 +24,8 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
-#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
+#: ../data/nemiver.desktop.in.h:1
+#: ../ui/workbench.ui.h:1
 msgid "Nemiver"
 msgstr "Nemiver"
 
@@ -40,6 +40,10 @@ msgstr "Nemiver Debugger für C/C++"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Anwendungen debuggen"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;disassembler;debugger;Diagnose;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -86,23 +90,16 @@ msgid "Connect to remote target specified by HOST:PORT"
 msgstr "Zum entfernten Ziel verbinden, das mit HOST:PORT angegeben wurde"
 
 #: ../src/main.cc:170
-msgid ""
-"Where to look for shared libraries loaded by the inferior. Use in "
-"conjunction with --remote"
-msgstr ""
-"Wo nach gemeinsamen Bibliotheken geschaut wird, die durch den Unterständigen "
-"geladen werden. Wird in Verbindung mit »--remote« verwendet."
+msgid "Where to look for shared libraries loaded by the inferior. Use in conjunction with --remote"
+msgstr "Wo nach gemeinsamen Bibliotheken geschaut wird, die durch den Unterständigen geladen werden. Wird in Verbindung mit »--remote« verwendet."
 
 #: ../src/main.cc:180
 msgid "Set the path of the GDB binary to use to debug the inferior"
-msgstr ""
-"Den Pfad zum GDB-Binary angeben, das zum Debuggen des Unterständigen "
-"verwendet wird"
+msgstr "Den Pfad zum GDB-Binary angeben, das zum Debuggen des Unterständigen verwendet wird"
 
 #: ../src/main.cc:189
 msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
-msgstr ""
-"Keinen Haltepunkt in »main« setzen und Unterständigen auch nicht ausführen"
+msgstr "Keinen Haltepunkt in »main« setzen und Unterständigen auch nicht ausführen"
 
 #: ../src/main.cc:198
 msgid "Show the version number of Nemiver"
@@ -112,7 +109,8 @@ msgstr "Die Versionsnummer von Nemiver anzeigen"
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<prog-to-debug> [prog-args]]"
 
-#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
+#: ../src/main.cc:267
+#: ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "Ein C/C++ Debugger für GNOME"
 
@@ -121,22 +119,20 @@ msgid ""
 "Please provide a local copy of the binary you intend to debug remotely.\n"
 "Like this:\n"
 msgstr ""
-"Bitte stellen Sie eine lokale Kopie der Binärdatei bereit, die Sie entfernt "
-"diagnostizieren möchten.\n"
+"Bitte stellen Sie eine lokale Kopie der Binärdatei bereit, die Sie entfernt diagnostizieren möchten.\n"
 "Auf diese Weise:\n"
 
-#: ../src/main.cc:366 ../src/main.cc:385
+#: ../src/main.cc:366
+#: ../src/main.cc:385
 msgid "Otherwise, find below the full set of Nemiver options.\n"
-msgstr ""
-"Andernfalls finden Sie unten die vollständigen Einstellungen von Nemiver.\n"
+msgstr "Andernfalls finden Sie unten die vollständigen Einstellungen von Nemiver.\n"
 
 #: ../src/main.cc:380
 msgid ""
 "Please provide the path to the binary that generated the core file too.\n"
 "Like this:\n"
 msgstr ""
-"Bitte geben Sie auch den Pfad zur Binärdatei an, welche die Core-Datei "
-"erzeugt hat.\n"
+"Bitte geben Sie auch den Pfad zur Binärdatei an, welche die Core-Datei erzeugt hat.\n"
 "Auf diese Weise:\n"
 
 #. create the columns of the tree view
@@ -157,12 +153,12 @@ msgid "Line"
 msgstr "Zeile"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Funktion"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Adresse"
 
@@ -232,31 +228,29 @@ msgstr "_Kopieren"
 msgid "Copy the call stack to the clipboard"
 msgstr "Aufruf-Stack in die Zwischenablage kopieren"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Frame"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Parameter"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Ort"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Binär"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
-msgstr[0] ""
-"(Hier klicken, um die nächste %d Zeile des Aufruf-Stacks anzuzeigen)"
-msgstr[1] ""
-"(Hier klicken, um die nächsten %d Zeilen des Aufruf-Stacks anzuzeigen)"
+msgstr[0] "(Hier klicken, um die nächste %d Zeile des Aufruf-Stacks anzuzeigen)"
+msgstr[1] "(Hier klicken, um die nächsten %d Zeilen des Aufruf-Stacks anzuzeigen)"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
 msgid "Function Name"
@@ -424,10 +418,8 @@ msgid "Enable/Disable Breakpoint"
 msgstr "Haltepunkt aktivieren/deaktivieren"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
-msgid ""
-"Enable or disable the breakpoint that is set at the current cursor location"
-msgstr ""
-"An der jetzigen Cursor-Position gesetzten Haltepunkt aktivieren/deaktivieren"
+msgid "Enable or disable the breakpoint that is set at the current cursor location"
+msgstr "An der jetzigen Cursor-Position gesetzten Haltepunkt aktivieren/deaktivieren"
 
 #. Depending on the context we will want this string to be
 #. either "Set Countpoint", or "Change to Countpoint", or
@@ -459,8 +451,7 @@ msgstr "_Weiter"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
 msgid "Execute next line stepping over the next function, if any"
-msgstr ""
-"Nächste Zeile ausführen, die nächste Funktion überspringen, falls vorhanden"
+msgstr "Nächste Zeile ausführen, die nächste Funktion überspringen, falls vorhanden"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
 msgid "_Step"
@@ -524,8 +515,7 @@ msgstr "Bis zum Cursor springen und anhalten"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3274
 msgid "Sets a breakpoint to the currently selected line and jump there"
-msgstr ""
-"In der gegenwärtigen Zeile einen Haltepunkt setzen und dorthin springen"
+msgstr "In der gegenwärtigen Zeile einen Haltepunkt setzen und dorthin springen"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
 msgid "Jump to a Given Location"
@@ -574,12 +564,8 @@ msgid "Show Assembly"
 msgstr "Assembler anzeigen"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
-msgid ""
-"Show the assembly code of the source code being currently debugged, in "
-"another tab"
-msgstr ""
-"Den Assemblercode des Quelltextes, der gerade diagnostiziert wird, in einem "
-"neuen Reiter anzeigen"
+msgid "Show the assembly code of the source code being currently debugged, in another tab"
+msgstr "Den Assemblercode des Quelltextes, der gerade diagnostiziert wird, in einem neuen Reiter anzeigen"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
 msgid "Switch to Assembly"
@@ -587,8 +573,7 @@ msgstr "Auf Assembleransicht umschalten"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
 msgid "Show the assembly code of the source code being currently debugged"
-msgstr ""
-"Den Assemblercode des Quelltextes anzeigen, der gerade diagnostiziert wird"
+msgstr "Den Assemblercode des Quelltextes anzeigen, der gerade diagnostiziert wird"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
 msgid "Switch to Source"
@@ -676,9 +661,7 @@ msgstr "Mit entferntem Ziel _verbinden …"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
 msgid "Connect to a debugging server to debug a remote target"
-msgstr ""
-"Zum Debuggen eines entfernten Ziels eine Verbindung zu einem Debugging-"
-"Server herstellen"
+msgstr "Zum Debuggen eines entfernten Ziels eine Verbindung zu einem Debugging-Server herstellen"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
 msgid "Resume Sa_ved Session..."
@@ -729,9 +712,7 @@ msgstr "%s s_chlieẞen"
 #. the moment.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
 msgid "Sorry, it's impossible to restart a remote inferior"
-msgstr ""
-"Entschuldigung, aber es ist unmöglich, einen entfernten Unterständigen neu "
-"zu starten."
+msgstr "Entschuldigung, aber es ist unmöglich, einen entfernten Unterständigen neu zu starten."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
 #, c-format
@@ -764,12 +745,8 @@ msgstr "Ungültige Zeilennummer: %i"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
 #, c-format
-msgid ""
-"There is a program being currently debugged. Do you really want to exit from "
-"the debugger?"
-msgstr ""
-"Das Debugging für ein Programm läuft derzeit. Wollen Sie den Debugger "
-"wirklich verlassen?"
+msgid "There is a program being currently debugged. Do you really want to exit from the debugger?"
+msgstr "Das Debugging für ein Programm läuft derzeit. Wollen Sie den Debugger wirklich verlassen?"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
 msgid "Default Layout"
@@ -867,11 +844,8 @@ msgid "Create Watchpoint"
 msgstr "Überwachungspunkt erzeugen"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
-msgid ""
-"Create a watchpoint that triggers when the value of the expression changes"
-msgstr ""
-"Einen Überwachungspunkt erzeugen, welcher auslöst, wenn sich der Wert des "
-"Ausdrucks ändert"
+msgid "Create a watchpoint that triggers when the value of the expression changes"
+msgstr "Einen Überwachungspunkt erzeugen, welcher auslöst, wenn sich der Wert des Ausdrucks ändert"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
@@ -1000,12 +974,8 @@ msgid "Choose Overloaded Function"
 msgstr "Überladene Funktion wählen"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
-msgid ""
-"Multiple functions match the specified name. Please choose one from the list "
-"below."
-msgstr ""
-"Mehrere Funktionen stimmen mit dem angegebenen Namen überein. Bitte wählen "
-"Sie eine Funktion aus der nachfolgenden Liste."
+msgid "Multiple functions match the specified name. Please choose one from the list below."
+msgstr "Mehrere Funktionen stimmen mit dem angegebenen Namen überein. Bitte wählen Sie eine Funktion aus der nachfolgenden Liste."
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
 msgid "Find Text"
@@ -1178,8 +1148,7 @@ msgstr "GDB-Binärdatei"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Number of instructions to disassemble by default"
-msgstr ""
-"Voreingestellte Anzahl der Anweisungen, die disassembliert werden sollen"
+msgstr "Voreingestellte Anzahl der Anweisungen, die disassembliert werden sollen"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
 msgid "Instructions"
@@ -1413,9 +1382,7 @@ msgstr "Zeile: %i, Spalte: %i"
 #: ../src/uicommon/nmv-source-editor.cc:1439
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
-msgstr ""
-"Datei %s kann nicht geladen werden, da sich die Kodierung von %s "
-"unterscheidet"
+msgstr "Datei %s kann nicht geladen werden, da sich die Kodierung von %s unterscheidet"
 
 #: ../src/uicommon/nmv-terminal.cc:174
 msgid "Copy the selection"
