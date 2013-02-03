@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-01-15 15:28+0000\n"
-"PO-Revision-Date: 2013-01-26 10:21+0900\n"
+"POT-Creation-Date: 2013-01-26 01:28+0000\n"
+"PO-Revision-Date: 2013-02-03 10:29+0900\n"
 "Last-Translator: Gheyret Kenji <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: \n"
@@ -85,15 +85,15 @@ msgstr "HOST:PORT ئارقىلىق كۆرسىتىلگەن يىراقتىكى ن�
 msgid ""
 "Where to look for shared libraries loaded by the inferior. Use in "
 "conjunction with --remote"
-msgstr ""
+msgstr "inferior ئوقۇيدىغان ھەمبەھىرلەنگەن ئامبارلار بار ئورۇننى كۆرسىتىپ بېرىدۇ(--remote بىلەن بىرگە ئىشلىتىلىشى كېرەك)"
 
 #: ../src/main.cc:180
 msgid "Set the path of the GDB binary to use to debug the inferior"
-msgstr ""
+msgstr "سازلاشتا ئىشلىتىلىدىغان باشقا GDB پروگراممىسىنىڭ يولىنى كۆرسىتىدۇ"
 
 #: ../src/main.cc:189
 msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
-msgstr ""
+msgstr "توختاش نۇقتىسىنى ‹main› نىڭ ئىچىگە بەلگىلىمىسۇن ۋە ئىجرامۇ قىلمىسۇن"
 
 #: ../src/main.cc:198
 msgid "Show the version number of Nemiver"
@@ -493,7 +493,7 @@ msgstr "پروگراممىنى نۆۋەتتە تاللانغان قۇرغىچە 
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
 msgid "Jump to Cursor"
-msgstr "نۇر بەلگىسى تۇرغان ئورۇنغا بار"
+msgstr "نۇربەلگىسى تۇرغان ئورۇنغا بار"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
 msgid "Jump to the currently selected line"
@@ -501,7 +501,7 @@ msgstr "نۆۋەتتە تاللانغان قۇرغا بارىدۇ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
 msgid "Jump and Stop to Cursor"
-msgstr "نۇر بەلگىسى تۇرغان ئورۇنغا بېرىپ توختا"
+msgstr "نۇربەلگىسى تۇرغان ئورۇنغا بېرىپ توختا"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3274
 msgid "Sets a breakpoint to the currently selected line and jump there"
@@ -601,7 +601,7 @@ msgstr "توختاش نۇقتىسى كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3436
 msgid "Switch to Registers View"
-msgstr "رېگىستىرلەر كۆرۈنۈشىگە ئالماشتۇر"
+msgstr "رېگىستىر كۆرۈنۈشىگە ئالماشتۇر"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3448
 msgid "Switch to Memory View"
@@ -932,11 +932,11 @@ msgstr "ئۆزگەرگۈچى"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
 msgid "In scope expressions"
-msgstr ""
+msgstr "دائىرە ئىچىدىكى ئىپادە"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
 msgid "Out of scope expressions"
-msgstr ""
+msgstr "دائىرە سىرتىدىكى ئىپادە"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
 msgid "Remove"
@@ -965,7 +965,7 @@ msgstr "توختاش نۇقتىسىنى بەلگىلە"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
 msgid "Choose Overloaded Function"
-msgstr ""
+msgstr "يۈكى ئېشىپ كەتكەن فۇنكسىيىلەرنى تاللاش"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
 msgid ""
@@ -1075,7 +1075,7 @@ msgstr "قۇر نومۇرى"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
 msgid "Use launch terminal"
-msgstr ""
+msgstr "قوزغالغان ۋاقىتتىكى تېرمىنالنى ئىشلەتسۇن"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "Terminal"
