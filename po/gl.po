@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-13 18:06+0100\n"
-"PO-Revision-Date: 2013-01-13 18:07+0200\n"
+"POT-Creation-Date: 2013-02-07 01:33+0100\n"
+"PO-Revision-Date: 2013-02-07 01:33+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: gnome-l10n-gl@gnome.org\n"
 "Language: gl\n"
@@ -39,8 +39,8 @@ msgid "Debug Applications"
 msgstr "Depurar aplicativos"
 
 #: ../data/nemiver.desktop.in.h:5
-msgid "gdb;disassembler;debugger;c;c++"
-msgstr "gdb;desamblador;depurador;c;c++"
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;desamblador;depurador;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
