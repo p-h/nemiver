@@ -4903,7 +4903,6 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
 
     typedef map<int, IDebugger::Breakpoint> BpMap;
     typedef BpMap::iterator BpIt;
-    typedef BpMap::const_iterator ConstBpIt;
 
     BpMap &bp_cache = m_priv->cached_breakpoints;
     BpIt cur, nil = bp_cache.end ();

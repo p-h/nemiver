@@ -196,7 +196,6 @@ public:
                 << "'");
 
         Gtk::TreeModel::iterator iter;
-        typedef Glib::RefPtr<Gtk::TreeStore> TreeStoreRefPtr;
         vutil::append_a_variable (a_var,
                                   static_cast<Gtk::TreeView&> (*tree_view),
                                   iter /* no parent */,
