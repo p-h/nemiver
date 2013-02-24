@@ -120,6 +120,12 @@
       <description>If set to yes, pure assembly code is shown when switching to assembly view. Otherwise, source code mixed with assembly code is shown.</description>
     </key>
 
+    <key name="update-local-vars-at-each-stop" type="b">
+      <default>true</default>
+      <summary>Whether to update the list of local variables at each stop</summary>
+      <description>Updating the list of local variables lets the debugger show variables that are created way after the beginning of the function.  Disabling this option might speed up stepping but leads the debugger to miss local variables that are created after the beginning of the function.</description>
+    </key>
+
     <key name="default-num-asm-instrs" type="i">
       <default>25</default>
       <summary>The number of assembly instructions to show by default</summary>

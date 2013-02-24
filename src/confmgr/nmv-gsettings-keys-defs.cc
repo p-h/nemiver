@@ -60,6 +60,8 @@ const char* CONF_KEY_TWO_PANE_LAYOUT_STATUS_HPANE_LOCATION =
 const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME = "debugger-engine-dynmod";
 const char* CONF_KEY_EDITOR_STYLE_SCHEME = "editor-style-scheme";
 const char* CONF_KEY_ASM_STYLE_PURE = "asm-style-pure";
+const char* CONF_KEY_UPDATE_LOCAL_VARS_AT_EACH_STOP =
+  "update-local-vars-at-each-stop";
 const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS = "default-num-asm-instrs";
 const char* CONF_KEY_GDB_BINARY = "gdb-binary";
 const char* CONF_KEY_FOLLOW_FORK_MODE = "follow-fork-mode";

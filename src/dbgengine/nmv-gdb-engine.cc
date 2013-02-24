@@ -2140,6 +2140,12 @@ struct OnLocalVariablesListedHandler : OutputHandler {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_engine);
 
+        if (a_in.command ().has_slot ()) {
+            typedef sigc::slot<void, const IDebugger::VariableList> SlotType;
+            SlotType slot = a_in.command ().get_slot<SlotType> ();
+            slot (a_in.output ().result_record ().local_variables ());
+        }
+
         m_engine->local_variables_listed_signal ().emit
             (a_in.output ().result_record ().local_variables (),
              a_in.command ().cookie ());
@@ -5211,13 +5217,22 @@ GDBEngine::list_frames_arguments (int a_low_frame,
 }
 
 void
-GDBEngine::list_local_variables (const UString &a_cookie)
+GDBEngine::list_local_variables (const ConstVariableListSlot &a_slot,
+                                 const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     Command command ("list-local-variables",
                      "-stack-list-locals 2",
                      a_cookie);
+    command.set_slot (a_slot);
     queue_command (command);
+}
+
+void
+GDBEngine::list_local_variables (const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+    list_local_variables (&null_const_variable_list_slot, a_cookie);
 }
 
 void

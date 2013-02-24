@@ -72,6 +72,8 @@ const char* CONF_KEY_DEBUGGER_ENGINE_DYNMOD_NAME =
                 "/apps/nemiver/dbgperspective/debugger-engine-dynmod";
 const char* CONF_KEY_EDITOR_STYLE_SCHEME =
                 "/apps/nemiver/dbgperspective/editor-style-scheme";
+const char* CONF_KEY_UPDATE_LOCAL_VARS_AT_EACH_STOP =
+  "/apps/nemiver/dbgperspective/update-local-vars-at-each-stop";
 const char* CONF_KEY_ASM_STYLE_PURE =
                 "/apps/nemiver/dbgperspective/asm-style-pure";
 const char* CONF_KEY_DEFAULT_NUM_ASM_INSTRS =

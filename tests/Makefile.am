@@ -29,7 +29,7 @@ endif
 noinst_PROGRAMS= \
 $(TESTS) \
 runtestcore  runteststdout  docore inout \
-pointerderef fooprog templatedvar \
+pointerderef fooprog localsinmiddle templatedvar \
 gtkmmtest dostackoverflow bigvar threads \
 forkparent forkchild prettyprint
 
@@ -46,6 +46,9 @@ gtkmmtest_LDADD= @NEMIVERUICOMMON_LIBS@
 
 fooprog_SOURCES=$(h)/fooprog.cc
 fooprog_LDADD=
+
+localsinmiddle_SOURCES=$(h)/locals-in-middle.cc
+localsinmiddle_LDADD=
 
 forkparent_SOURCES=$(h)/fork-parent.cc
 forkparent_LDADD=

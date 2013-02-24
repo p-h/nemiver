@@ -918,6 +918,7 @@ struct DBGPerspective::Priv {
     int current_page_num;
     IDebuggerSafePtr debugger;
     IDebugger::Frame current_frame;
+    int current_thread_id;
     map<int, IDebugger::Breakpoint> breakpoints;
     ISessMgrSafePtr session_manager;
     ISessMgr::Session session;
@@ -976,6 +977,7 @@ struct DBGPerspective::Priv {
         contextual_menu (0),
         workbench (0),
         current_page_num (0),
+        current_thread_id (0),
         show_dbg_errors (false),
         use_system_font (true),
         show_line_numbers (true),
@@ -1761,16 +1763,21 @@ void
 DBGPerspective::on_thread_list_thread_selected_signal (int a_tid)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    if (a_tid) {}
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     THROW_IF_FAIL (m_priv);
 
-    get_local_vars_inspector ().show_local_variables_of_current_function
-                                                        (m_priv->current_frame);
+    LOG_DD ("current tid: " << m_priv->current_thread_id);
+    LOG_DD ("new tid: " << a_tid);
+    if (m_priv->current_thread_id == a_tid)
+        return;
 
-    NEMIVER_CATCH
+    m_priv->current_thread_id = a_tid;
+    get_local_vars_inspector ().show_local_variables_of_current_function
+        (m_priv->current_frame);
+
+    NEMIVER_CATCH;
 }
 
 
@@ -2381,7 +2388,7 @@ void
 DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
                                             bool /*a_has_frame*/,
                                             const IDebugger::Frame &a_frame,
-                                            int, int, const UString &)
+                                            int a_thread_id, int, const UString &)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -2396,6 +2403,7 @@ DBGPerspective::on_debugger_stopped_signal (IDebugger::StopReason a_reason,
 
     update_src_dependant_bp_actions_sensitiveness ();
     m_priv->current_frame = a_frame;
+    m_priv->current_thread_id = a_thread_id;
 
     set_where (a_frame, /*do_scroll=*/true, /*try_hard=*/true);
 

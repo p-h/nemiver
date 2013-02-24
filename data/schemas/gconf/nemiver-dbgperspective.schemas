@@ -213,6 +213,17 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/nemiver/dbgperspective/update-local-vars-at-each-stop</key>
+      <applyto>/apps/nemiver/dbgperspective/update-local-vars-at-each-stop</applyto>
+      <owner>nemiver</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+	<short>Whether to update the list of local variables at each stop</short>
+	<long>Updating the list of local variables lets the debugger show variables that are created way after the beginning of the function.  Disabling this option might speed up stepping but leads the debugger to miss local variables that are created after the beginning of the function.</long>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/nemiver/dbgperspective/asm-style-pure</key>
       <applyto>/apps/nemiver/dbgperspective/asm-style-pure</applyto>
       <owner>nemiver</owner>

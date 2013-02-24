@@ -480,6 +480,9 @@ public:
 				const FrameArgsSlot &a_slot,
 				const UString &a_cookie);
 
+    void list_local_variables (const ConstVariableListSlot &a_slot,
+			       const UString &a_cookie);
+
     void list_local_variables (const UString &a_cookie);
 
     void list_global_variables ( const UString &a_cookie );

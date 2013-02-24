@@ -37,6 +37,7 @@
 #include "nmv-i-var-walker.h"
 #include "nmv-vars-treeview.h"
 #include "nmv-debugger-utils.h"
+#include "nmv-conf-keys.h"
 
 using namespace nemiver::common;
 namespace vutil = nemiver::variables_utils2;
@@ -212,8 +213,6 @@ public:
         THROW_IF_FAIL (debugger);
         debugger->stopped_signal ().connect
             (sigc::mem_fun (*this, &Priv::on_stopped_signal));
-        debugger->local_variables_listed_signal ().connect
-            (sigc::mem_fun (*this, &Priv::on_local_variables_listed_signal));
     }
 
     void
@@ -388,6 +387,44 @@ public:
         }
     }
 
+    /// Append a new local variable to this widget and then update the
+    /// content of all the local variables contained in the widget.
+    void
+    append_a_local_variable_and_update_all (const IDebugger::VariableSafePtr a_var)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        append_a_local_variable (a_var);
+        update_local_variables ();
+    }
+
+    /// Erases a variable from a list of variables.
+    void
+    erase_variable_from_list (const IDebugger::VariableSafePtr a_var,
+                              IDebugger::VariableList &a_list)
+    {
+        IDebugger::VariableList::iterator v;
+        for (v = a_list.begin (); v != a_list.end (); ++v)
+            if (**v == *a_var)
+                break;
+
+        if (v != a_list.end ())
+            a_list.erase (v);
+    }
+
+    /// Graphically remove a variable a_var from the widget.
+    void
+    remove_a_local_variable (const IDebugger::VariableSafePtr a_var)
+    {
+        Gtk::TreeModel::iterator parent_row_it;
+
+        if (get_local_variables_row_iterator (parent_row_it))
+            vutil::unlink_a_variable_row (a_var, tree_store, parent_row_it);
+
+        erase_variable_from_list (a_var, local_vars);
+        erase_variable_from_list (a_var, local_vars_changed_at_prev_stop);
+    }
+
     void
     append_a_function_argument (const IDebugger::VariableSafePtr a_var)
     {
@@ -494,6 +531,12 @@ public:
         return false;
     }
 
+    /// This function is called after the debugger got stopped and
+    /// this widget is visible.  In this case the function becomes the
+    /// entry point to perform the tasks this local variable inspector
+    /// is supposed to perform: Update the list of local variables and
+    /// then update the content of each local variable and function
+    /// argument.
     void
     finish_handling_debugger_stopped_event
                                     (IDebugger::StopReason /*a_reason*/,
@@ -517,7 +560,9 @@ public:
             LOG_DD ("init tree view");
             re_init_tree_view ();
             LOG_DD ("list local variables");
-            debugger->list_local_variables ();
+            debugger->list_local_variables
+                (sigc::mem_fun
+                 (*this, &Priv::add_new_local_vars_and_update_olders));
             LOG_DD ("list frames arguments");
             debugger->list_frames_arguments (a_frame.level (),
                                              a_frame.level (),
@@ -526,7 +571,7 @@ public:
                                              "");
         } else {
             LOG_DD ("update local variables and function arguments");
-            update_local_variables ();
+            maybe_update_list_of_local_vars_and_then_update_older_ones ();
             update_function_arguments ();
         }
         previous_function_name = a_frame.function_name ();
@@ -552,6 +597,128 @@ public:
                         (vutil::get_variable_columns ().variable);
         THROW_IF_FAIL (variable);
         ui_utils::display_info (message);
+    }
+
+    /// Add the new local variables @a_vars to the list of local
+    /// variables for the current function.  Then, update the content
+    /// of all the local variables that we already had previous to
+    /// calling this function.
+    void
+    add_new_local_vars_and_update_olders (const IDebugger::VariableList &a_vars)
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        if (a_vars.empty ()) {
+            LOG_DD ("got empty list of new variables");
+            // There are no new variables to add.  This functions
+            // amounts to just updating the content of the local
+            // variables we already had.
+            update_local_variables ();
+            return;
+        }
+
+        // For each new local variable name, create a backend variable
+        // object (and add it to the list of local variable managed by
+        // this widget) and then, when all new local variables are
+        // under control, update the older variables we already had in
+        // this widget.
+        bool added_new_vars = false;
+        for (IDebugger::VariableList::const_iterator i = a_vars.begin ();
+             i != a_vars.end ();
+             ++i) {
+            if ((*i)->name ().empty ())
+                continue;
+
+            if (!is_variable_in_list ((*i)->name (),
+                                      local_vars)) {
+                IDebugger::VariableList::const_iterator next_iterator = i;
+                next_iterator++;
+                if (next_iterator == a_vars.end ()) {
+                    // So we are on the last new local variable to
+                    // add.  Do not forget to update the content of
+                    // the list of all the (older) local variables
+                    // after adding this one.
+                    LOG_DD ("Creating a varobj for the last var " << (*i)->name ()
+                            << " and updating the content of all variables");
+                    debugger->create_variable
+                        ((*i)->name (),
+                         sigc::mem_fun
+                         (*this,
+                          &Priv::append_a_local_variable_and_update_all));
+                } else {
+                    LOG_DD ("Creating a varobj for var " << (*i)->name ());
+                    debugger->create_variable
+                        ((*i)->name (),
+                         sigc::mem_fun (*this,
+                                        &Priv::append_a_local_variable));
+                }
+                added_new_vars = true;
+            }
+        }
+
+        // If some old variables we had don't exist anymore, remove
+        // them from the widget.
+        IDebugger::VariableList to_remove;
+        for (IDebugger::VariableList::const_iterator i = local_vars.begin ();
+             i != local_vars.end ();
+             ++i) {
+            if (!is_variable_in_list ((*i)->name (), a_vars))
+                to_remove.push_back (*i);
+        }
+        for (IDebugger::VariableList::const_iterator i = to_remove.begin ();
+             i != to_remove.end ();
+             ++i)
+            remove_a_local_variable (*i);
+
+        // If we didn't add any new variable to the widget, let's not
+        // forget to update the content of the old ones we already
+        // had.
+        if (!added_new_vars) {
+            LOG_DD ("No new local variable was added.  "
+                    "Update existing local variables nonetheless");
+            update_local_variables ();
+        }
+    }
+
+    /// First -- if the user wants the list of local variables to be
+    /// updated at each stop -- update the list of local variables.
+    /// That way, if new variables appeared in the current scope since
+    /// the previous stop, we'll get them.  Second, update the content
+    /// of all the variables that were already present at the previous
+    /// stop.
+    void
+    maybe_update_list_of_local_vars_and_then_update_older_ones ()
+    {
+        LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+        IConfMgrSafePtr conf_mgr = workbench.get_configuration_manager ();
+        bool do_update = false;
+        conf_mgr->get_key_value (CONF_KEY_UPDATE_LOCAL_VARS_AT_EACH_STOP,
+                                 do_update);
+        if (do_update) {
+            LOG_DD ("updating the list and content of local variables");
+            debugger->list_local_variables
+                (sigc::mem_fun
+                 (*this,
+                  &Priv::add_new_local_vars_and_update_olders));
+        } else {
+            LOG_DD ("just updating the content of local variables");
+            update_local_variables ();
+        }
+    }
+
+    /// Return true if a variable named @a_name is present among the
+    /// list of local variables of this function, false otherwise.
+    bool
+    is_variable_in_list (const UString &a_name,
+                         const IDebugger::VariableList &a_vars)
+    {
+        for (IDebugger::VariableList::const_iterator i = a_vars.begin ();
+             i != a_vars.end ();
+             ++i)
+            if (a_name == (*i)->name ())
+                return true;
+        return false;
     }
 
     void
@@ -756,31 +923,6 @@ public:
             update_a_local_variable (a_var);
         }
 
-        NEMIVER_CATCH
-    }
-
-    void
-    on_local_variables_listed_signal
-                            (const IDebugger::VariableList &a_vars,
-                             const UString & /* a_cookie */)
-    {
-        LOG_FUNCTION_SCOPE_NORMAL_DD;
-
-        NEMIVER_TRY
-
-        UString name;
-        for (IDebugger::VariableList::const_iterator it = a_vars.begin ();
-             it != a_vars.end ();
-             ++it) {
-            name = (*it)->name ();
-            if (name.empty ()) {
-                continue;
-            }
-            LOG_DD ("creating variable '" << name << "'");
-            debugger->create_variable
-                (name, sigc::mem_fun (*this,
-                                      &Priv::on_local_variable_created_signal));
-        }
         NEMIVER_CATCH
     }
 
@@ -1232,7 +1374,9 @@ LocalVarsInspector::show_local_variables_of_current_function
     m_priv->saved_frame = a_frame;
 
     re_init_widget ();
-    m_priv->debugger->list_local_variables ();
+    m_priv->debugger->list_local_variables
+        (sigc::mem_fun (*m_priv, &Priv::add_new_local_vars_and_update_olders));
+
     int frame_level = m_priv->debugger->get_current_frame_level ();
     LOG_DD ("current frame level: " <<  (int)frame_level);
     m_priv->debugger->list_frames_arguments (frame_level, frame_level,

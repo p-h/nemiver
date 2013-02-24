@@ -90,6 +90,7 @@ public:
     Gtk::RadioButton *always_reload_radio_button;
     Gtk::RadioButton *never_reload_radio_button;
     Gtk::RadioButton *confirm_reload_radio_button;
+    Gtk::CheckButton *update_local_vars_check_button;
     Gtk::RadioButton *pure_asm_radio_button;
     Gtk::RadioButton *mixed_asm_radio_button;
     Gtk::RadioButton *follow_parent_radio_button;
@@ -117,6 +118,7 @@ public:
         always_reload_radio_button (0),
         never_reload_radio_button (0),
         confirm_reload_radio_button (0),
+        update_local_vars_check_button (0),
         pure_asm_radio_button (0),
         mixed_asm_radio_button (0),
         follow_parent_radio_button (0),
@@ -229,6 +231,12 @@ public:
     on_reload_files_toggled_signal ()
     {
         update_reload_files_keys ();
+    }
+
+    void
+    on_local_vars_list_updated_signal ()
+    {
+        update_local_vars_list_keys ();
     }
 
     void
@@ -415,10 +423,19 @@ public:
         // Handle the "Debugger" preferences tab
         // *************************************
 
+        update_local_vars_check_button =
+            ui_utils::get_widget_from_gtkbuilder<Gtk::CheckButton>
+            (gtkbuilder, "updatelocalvarslistcheckbutton");
+        THROW_IF_FAIL (update_local_vars_check_button);
+        update_local_vars_check_button->signal_toggled ().connect
+            (sigc::mem_fun
+             (*this, &PreferencesDialog::Priv::on_local_vars_list_updated_signal));
+
         pure_asm_radio_button =
             ui_utils::get_widget_from_gtkbuilder<Gtk::RadioButton>
-                (gtkbuilder, "pureasmradio");
+            (gtkbuilder, "pureasmradio");
         THROW_IF_FAIL (pure_asm_radio_button);
+
         pure_asm_radio_button->signal_toggled ().connect
             (sigc::mem_fun
                  (*this,
@@ -661,6 +678,19 @@ public:
     }
 
     void
+    update_local_vars_list_keys ()
+    {
+        THROW_IF_FAIL (update_local_vars_check_button);
+
+        bool value = false;
+        if (update_local_vars_check_button->get_active ())
+            value = true;
+
+        conf_manager ().set_key_value (CONF_KEY_UPDATE_LOCAL_VARS_AT_EACH_STOP,
+                                       value);
+    }
+
+    void
     update_asm_style_keys ()
     {
         THROW_IF_FAIL (pure_asm_radio_button);
@@ -823,6 +853,13 @@ public:
         THROW_IF_FAIL (mixed_asm_radio_button);
         THROW_IF_FAIL (default_num_asm_instrs_spin_button);
         THROW_IF_FAIL (gdb_binary_path_chooser_button);
+
+        bool update_local_vars_at_each_stop = true;
+        if (!conf_manager ().get_key_value (CONF_KEY_UPDATE_LOCAL_VARS_AT_EACH_STOP,
+                                            update_local_vars_at_each_stop)) {
+            LOG_ERROR ("failed to get conf key"
+                       << CONF_KEY_UPDATE_LOCAL_VARS_AT_EACH_STOP);
+        }
 
         bool pure_asm = false;
         if (!conf_manager ().get_key_value (CONF_KEY_ASM_STYLE_PURE,
