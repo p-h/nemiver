@@ -129,7 +129,8 @@ public:
         init ();
     }
 
-    void on_tree_view_selection_changed ()
+    void
+    on_tree_view_selection_changed ()
     {
         THROW_IF_FAIL (tree_view);
         Glib::RefPtr<Gtk::TreeSelection> sel = tree_view->get_selection ();
@@ -142,7 +143,8 @@ public:
         }
     }
 
-    void on_add_dir_button_clicked ()
+    void
+    on_add_dir_button_clicked ()
     {
         NEMIVER_TRY
         Gtk::FileChooserDialog file_chooser
@@ -169,7 +171,8 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_remove_dir_button_clicked ()
+    void
+    on_remove_dir_button_clicked ()
     {
         NEMIVER_TRY
         if (!cur_dir_iter) {return;}
@@ -178,74 +181,88 @@ public:
         NEMIVER_CATCH
     }
 
-    void on_show_lines_toggled_signal ()
+    void
+    on_show_lines_toggled_signal ()
     {
         update_show_source_line_numbers_key ();
     }
 
-    void on_launch_terminal_toggled_signal ()
+    void
+    on_launch_terminal_toggled_signal ()
     {
         update_use_launch_terminal_key ();
     }
 
-    void on_highlight_source_toggled_signal ()
+    void
+    on_highlight_source_toggled_signal ()
     {
         update_highlight_source_keys ();
     }
 
-    void on_system_font_toggled_signal ()
+    void
+    on_system_font_toggled_signal ()
     {
         update_system_font_key ();
         custom_font_box->set_sensitive
                             (!system_font_check_button->get_active ());
     }
 
-    void on_custom_font_set_signal ()
+    void
+    on_custom_font_set_signal ()
     {
         update_custom_font_key ();
     }
 
-    void on_editor_style_changed_signal ()
+    void
+    on_editor_style_changed_signal ()
     {
         update_editor_style_key ();
     }
 
-    void on_asm_flavor_changed_signal ()
+    void
+    on_asm_flavor_changed_signal ()
     {
         update_asm_flavor_key ();
     }
 
-    void on_reload_files_toggled_signal ()
+    void
+    on_reload_files_toggled_signal ()
     {
         update_reload_files_keys ();
     }
 
-    void on_asm_style_toggled_signal ()
+    void
+    on_asm_style_toggled_signal ()
     {
         update_asm_style_keys ();
     }
 
-    void on_num_asms_value_changed_signal ()
+    void
+    on_num_asms_value_changed_signal ()
     {
         update_default_num_asm_instrs_key ();
     }
 
-    void on_gdb_binary_file_set_signal ()
+    void
+    on_gdb_binary_file_set_signal ()
     {
         update_gdb_binary_key ();
     }
 
-    void on_follow_fork_mode_toggle_signal ()
+    void
+    on_follow_fork_mode_toggle_signal ()
     {
         update_follow_fork_mode_key ();
     }
 
-    void on_pretty_printing_toggled_signal ()
+    void
+    on_pretty_printing_toggled_signal ()
     {
         update_pretty_printing_key ();
     }
 
-    void init ()
+    void
+    init ()
     {
 
         // ********************************************
@@ -485,7 +502,8 @@ public:
         layout_box->show_all_children ();                                    
     }
 
-    void collect_source_dirs ()
+    void
+    collect_source_dirs ()
     {
         source_dirs.clear ();
         Gtk::TreeModel::iterator iter;
@@ -498,7 +516,8 @@ public:
 
     }
 
-    void set_source_dirs (const vector<UString> &a_dirs)
+    void
+    set_source_dirs (const vector<UString> &a_dirs)
     {
         Gtk::TreeModel::iterator row_it;
         vector<UString>::const_iterator dir_it;
@@ -508,7 +527,8 @@ public:
         }
     }
 
-    IConfMgr& conf_manager () const
+    IConfMgr&
+    conf_manager () const
     {
         IConfMgrSafePtr conf_mgr = perspective.get_workbench ()
             .get_configuration_manager ();
@@ -516,7 +536,8 @@ public:
         return *conf_mgr;
     }
 
-    void update_source_dirs_key ()
+    void
+    update_source_dirs_key ()
     {
         collect_source_dirs ();
         UString source_dirs_str;
@@ -533,7 +554,8 @@ public:
             (CONF_KEY_NEMIVER_SOURCE_DIRS, source_dirs_str);
     }
 
-    void update_show_source_line_numbers_key ()
+    void
+    update_show_source_line_numbers_key ()
     {
         THROW_IF_FAIL (show_lines_check_button);
         bool is_on = show_lines_check_button->get_active ();
@@ -541,7 +563,8 @@ public:
                     (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS, is_on);
     }
 
-    void update_use_launch_terminal_key ()
+    void
+    update_use_launch_terminal_key ()
     {
         THROW_IF_FAIL (launch_terminal_check_button);
         bool is_on = launch_terminal_check_button->get_active ();
@@ -549,7 +572,8 @@ public:
                     (CONF_KEY_USE_LAUNCH_TERMINAL, is_on);
     }
 
-    void update_highlight_source_keys ()
+    void
+    update_highlight_source_keys ()
     {
         THROW_IF_FAIL (highlight_source_check_button);
         bool is_on = highlight_source_check_button->get_active ();
@@ -558,7 +582,8 @@ public:
                      is_on);
     }
 
-    void update_widget_from_source_dirs_key ()
+    void
+    update_widget_from_source_dirs_key ()
     {
         UString paths_str;
         if (!conf_manager ().get_key_value
@@ -570,7 +595,8 @@ public:
         set_source_dirs (paths);
     }
 
-    void update_system_font_key ()
+    void
+    update_system_font_key ()
     {
         THROW_IF_FAIL (system_font_check_button);
         bool is_on = system_font_check_button->get_active ();
@@ -578,7 +604,8 @@ public:
                     (CONF_KEY_USE_SYSTEM_FONT, is_on);
     }
 
-    void update_custom_font_key ()
+    void
+    update_custom_font_key ()
     {
         THROW_IF_FAIL (custom_font_button);
         UString font_name = custom_font_button->get_font_name ();
@@ -586,7 +613,8 @@ public:
                     (CONF_KEY_CUSTOM_FONT_NAME, font_name);
     }
 
-    void update_editor_style_key ()
+    void
+    update_editor_style_key ()
     {
         THROW_IF_FAIL (editor_style_combo);
         Gtk::TreeModel::iterator treeiter = editor_style_combo->get_active();
@@ -595,7 +623,8 @@ public:
                     (CONF_KEY_EDITOR_STYLE_SCHEME, scheme);
     }
 
-    void update_asm_flavor_key ()
+    void
+    update_asm_flavor_key ()
     {
         THROW_IF_FAIL (asm_flavor_combo);
         UString asm_flavor = asm_flavor_combo->get_active_text ();
@@ -608,7 +637,8 @@ public:
         }
     }
 
-    void update_reload_files_keys ()
+    void
+    update_reload_files_keys ()
     {
         THROW_IF_FAIL (always_reload_radio_button);
         THROW_IF_FAIL (never_reload_radio_button);
@@ -630,7 +660,8 @@ public:
         }
     }
 
-    void update_asm_style_keys ()
+    void
+    update_asm_style_keys ()
     {
         THROW_IF_FAIL (pure_asm_radio_button);
         THROW_IF_FAIL (mixed_asm_radio_button);
@@ -642,7 +673,8 @@ public:
         }
     }
 
-    void update_default_num_asm_instrs_key ()
+    void
+    update_default_num_asm_instrs_key ()
     {
         THROW_IF_FAIL (default_num_asm_instrs_spin_button);
         int num = default_num_asm_instrs_spin_button->get_value_as_int ();
@@ -650,7 +682,8 @@ public:
                                        num);
     }
 
-    void update_gdb_binary_key ()
+    void
+    update_gdb_binary_key ()
     {
         THROW_IF_FAIL (gdb_binary_path_chooser_button);
         UString path = gdb_binary_path_chooser_button->get_filename ();
@@ -662,7 +695,8 @@ public:
                                        Glib::filename_from_utf8 (path));
     }
 
-    void update_follow_fork_mode_key ()
+    void
+    update_follow_fork_mode_key ()
     {
         THROW_IF_FAIL (follow_parent_radio_button);
         THROW_IF_FAIL (follow_child_radio_button);
@@ -676,7 +710,8 @@ public:
         conf_manager ().set_key_value (CONF_KEY_FOLLOW_FORK_MODE, mode);
     }
 
-    void update_pretty_printing_key ()
+    void
+    update_pretty_printing_key ()
     {
         THROW_IF_FAIL (pretty_printing_check_button);
         
@@ -684,7 +719,8 @@ public:
         conf_manager ().set_key_value (CONF_KEY_PRETTY_PRINTING, is_on);
     }
 
-    void update_widget_from_editor_keys ()
+    void
+    update_widget_from_editor_keys ()
     {
         THROW_IF_FAIL (show_lines_check_button);
         THROW_IF_FAIL (launch_terminal_check_button);
@@ -698,7 +734,7 @@ public:
         bool is_on = true;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_SHOW_SOURCE_LINE_NUMBERS, is_on)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         } else {
             show_lines_check_button->set_active (is_on);
         }
@@ -706,7 +742,7 @@ public:
         is_on = false;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_USE_LAUNCH_TERMINAL, is_on)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         } else {
             launch_terminal_check_button->set_active (is_on);
         }
@@ -714,7 +750,7 @@ public:
         is_on = true;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_HIGHLIGHT_SOURCE_CODE, is_on)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         } else {
             highlight_source_check_button->set_active (is_on);
         }
@@ -722,7 +758,7 @@ public:
         is_on = true;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_USE_SYSTEM_FONT, is_on)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         } else {
             system_font_check_button->set_active (is_on);
             custom_font_box->set_sensitive (!is_on);
@@ -730,7 +766,7 @@ public:
         UString font_name;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_CUSTOM_FONT_NAME, font_name)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         } else {
             custom_font_button->set_font_name (font_name);
         }
@@ -738,7 +774,7 @@ public:
         UString style_scheme;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_EDITOR_STYLE_SCHEME, style_scheme)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         } else {
             Gtk::TreeModel::iterator treeiter;
             for (treeiter = m_editor_style_model->children().begin();
@@ -753,7 +789,7 @@ public:
         UString asm_flavor;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_DISASSEMBLY_FLAVOR, asm_flavor)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         } else {
             if (asm_flavor == "intel") {
                 asm_flavor_combo->set_active_text ("Intel");
@@ -765,11 +801,11 @@ public:
         bool confirm_reload = true, always_reload = false;
         if (!conf_manager ().get_key_value
                 (CONF_KEY_CONFIRM_BEFORE_RELOAD_SOURCE, confirm_reload)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         }
         if (!conf_manager ().get_key_value
                 (CONF_KEY_ALLOW_AUTO_RELOAD_SOURCE, always_reload)) {
-            LOG_ERROR ("failed to get gconf key");
+            LOG_ERROR ("failed to get conf key");
         }
         if (confirm_reload) {
             confirm_reload_radio_button->set_active ();
@@ -780,7 +816,8 @@ public:
         }
     }
 
-    void update_widget_from_debugger_keys ()
+    void
+    update_widget_from_debugger_keys ()
     {
         THROW_IF_FAIL (pure_asm_radio_button);
         THROW_IF_FAIL (mixed_asm_radio_button);
@@ -790,7 +827,8 @@ public:
         bool pure_asm = false;
         if (!conf_manager ().get_key_value (CONF_KEY_ASM_STYLE_PURE,
                                             pure_asm)) {
-            LOG_ERROR ("failed to get gconf key " << CONF_KEY_ASM_STYLE_PURE);
+            LOG_ERROR ("failed to get conf key "
+                       << CONF_KEY_ASM_STYLE_PURE);
         }
         if (pure_asm)
             pure_asm_radio_button->set_active ();
@@ -800,14 +838,14 @@ public:
         int num_asms = 25;
         if (!conf_manager ().get_key_value (CONF_KEY_DEFAULT_NUM_ASM_INSTRS,
                                             num_asms)) {
-            LOG_ERROR ("failed to get gconf key "
+            LOG_ERROR ("failed to get conf key "
                        << CONF_KEY_DEFAULT_NUM_ASM_INSTRS);
         }
         default_num_asm_instrs_spin_button->set_value (num_asms);
 
         UString gdb_binary = common::env::get_gdb_program ();
         if (!conf_manager ().get_key_value (CONF_KEY_GDB_BINARY, gdb_binary)) {
-            LOG_ERROR ("failed to get gconf key " << CONF_KEY_GDB_BINARY);
+            LOG_ERROR ("failed to get conf key " << CONF_KEY_GDB_BINARY);
         }
         gdb_binary_path_chooser_button->set_filename
             (Glib::filename_to_utf8 (gdb_binary));
@@ -815,7 +853,7 @@ public:
         UString follow_fork_mode = "parent";
         if (!conf_manager ().get_key_value (CONF_KEY_FOLLOW_FORK_MODE,
                                            follow_fork_mode)) {
-            LOG_ERROR ("failed to get gconf key "
+            LOG_ERROR ("failed to get conf key "
                        << CONF_KEY_FOLLOW_FORK_MODE);
         }
         if (follow_fork_mode == "parent") {
@@ -827,13 +865,14 @@ public:
         bool is_on = true;
         if (!conf_manager ().get_key_value (CONF_KEY_PRETTY_PRINTING,
                                             is_on)) {
-            LOG_ERROR ("failed to get gconf key "
+            LOG_ERROR ("failed to get conf key "
                        << CONF_KEY_PRETTY_PRINTING);
         }
         pretty_printing_check_button->set_active (is_on);
     }
 
-    void update_widget_from_conf ()
+    void
+    update_widget_from_conf ()
     {
         update_widget_from_source_dirs_key ();
         update_widget_from_editor_keys ();

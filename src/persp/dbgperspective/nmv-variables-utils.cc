@@ -724,7 +724,7 @@ set_a_variable (const IDebugger::VariableSafePtr a_var,
     return true;
 }
 
-/// Unlike the graphical node representing a variable a_var.
+/// Unlink the graphical node representing a variable a_var.
 ///
 /// \param a_var the variable which graphical node to unlink.
 ///
