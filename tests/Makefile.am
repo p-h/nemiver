@@ -201,7 +201,7 @@ bigvar_LDADD=@NEMIVERCOMMON_LIBS@
 threads_SOURCES=$(h)/threads.cc
 threads_LDADD=@NEMIVERCOMMON_LIBS@
 
-INCLUDES=-I$(top_srcdir)/src \
+AM_CPPFLAGS=-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \
 @NEMIVERCOMMON_CFLAGS@ -DBOOST_TEST_DYN_LINK \
