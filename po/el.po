@@ -2,14 +2,14 @@
 # Copyright (C) 2012 nemiver's COPYRIGHT HOLDER
 # This file is distributed under the same license as the nemiver package.
 # Tom Tryfonidis <tomtryf@gmail.com>, 2012.
-# Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2012.
+# Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemive"
 "r&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-06-19 14:48+0000\n"
-"PO-Revision-Date: 2012-06-25 08:15+0300\n"
+"POT-Creation-Date: 2013-02-24 22:45+0000\n"
+"PO-Revision-Date: 2013-03-09 10:59+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@gnome.gr\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.7.0\n"
+"X-Generator: Virtaal 0.7.1\n"
 "X-Project-Style: gnome\n"
 
 #: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
@@ -35,6 +35,10 @@ msgstr "Αποσφαλματωτής Nemiver C/C++"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Εφαρμογές αποσφαλμάτωσης"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;αντίστροφος συμβολομεταφραστής;αποσφαλματωτής;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -107,7 +111,7 @@ msgstr "Προβολή του αριθμού έκδοσης του Nemiver"
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<prog-to-debug> [prog-args]]"
 
-#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:263
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "Ένας αποσφαλματωτής C/C++ για το GNOME"
 
@@ -151,12 +155,12 @@ msgid "Line"
 msgstr "Γραμμή"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Συνάρτηση"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Διεύθυνση"
 
@@ -226,24 +230,24 @@ msgstr "Αντι_γραφή"
 msgid "Copy the call stack to the clipboard"
 msgstr "Αντιγραφή της στοίβας κλήσης στο πρόχειρο"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Πλαίσιο"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Ορίσματα"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Τοποθεσία"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Δυαδικό"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
@@ -279,114 +283,114 @@ msgstr "Μνήμη"
 msgid "Expression Monitor"
 msgstr "Παρακολούθηση έκφρασης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1689
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1691
 msgid "Reached end of file"
 msgstr "Τερματισμός του αρχείου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1692
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1694
 #, c-format
 msgid "Could not find string %s"
 msgstr "Αδυναμία εύρεσης γραμματοσειράς %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2070
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2077
 msgid "Change to Standard Breakpoint"
 msgstr "Αλλαγή σε τυπικό σημείο διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2073
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
 msgid "Change to Countpoint"
 msgstr "Αλλαγή σε σημείο μέτρησης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2075
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2082
 msgid "Remove _Breakpoint"
 msgstr "Αφαίρεση σημείου _διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2078
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2085
 msgid "Disable Breakpoint"
 msgstr "Απενεργοποίηση σημείου διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2087
 msgid "Enable Breakpoint"
 msgstr "Ενεργοποίηση σημείου διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2083
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2090
 msgid "Set _Breakpoint"
 msgstr "Ορισμός σημείου _διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2085
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2092
 msgid "Set Countpoint"
 msgstr "Ορισμός σημείου μέτρησης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2255
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (path=\"%s\", pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2262
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2269
 msgid "Connected to remote target!"
 msgstr "Σύνδεση με απομακρυσμένο στόχο!"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2418
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2426
 msgid "Program exited"
 msgstr "Έξοδος προγράμματος"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2448
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2456
 msgid "The underlying debugger engine process died."
 msgstr "Η διεργασία της υποκείμενης μηχανής αποσφαλμάτωσης τελείωσε."
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2536
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2544
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "Ο στόχος έλαβε ένα σήμα: %s, %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2551
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2559
 #, c-format
 msgid "An error occurred: %s"
 msgstr "Προέκυψε ένα σφάλμα: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2714
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2722
 #, c-format
 msgid "File %s has been modified. Do you want to reload it?"
 msgstr "Τροποποιήθηκε το αρχείο %s. Θέλετε να το επαναφορτώσετε;"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3057
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3065
 msgid "_Run or Restart"
 msgstr "_Εκτέλεση ή επανεκκίνηση"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3058
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3066
 msgid "Run or Restart the target"
 msgstr "Εκτέλεση ή επανεκκίνηση του στόχου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3070
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3078
 msgid "_Detach From the Running Program"
 msgstr "_Απόσπαση από το εκτελούμενο πρόγραμμα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3071
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3079
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr ""
 "Αποσύνδεση του αποσφαλματωτή από τον εκτελούμενο στόχο χωρίς θανάτωσή του"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3086
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3094
 msgid "_Save Session to Disk"
 msgstr "_Αποθήκευση συνεδρίας στον δίσκο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3087
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3095
 msgid "Save the current debugging session to disk"
 msgstr "Αποθήκευση της τρέχουσας συνεδρίας αποσφαλμάτωσης στο δίσκο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3104
 msgid "Set Breakpoint with Dialog..."
 msgstr "Ορισμός σημείου διακοπής με διάλογο..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3097
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3105
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr "Ορισμός σημείου διακοπής στην τρέχουσα γραμμή χρησιμοποιώντας διάλογο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3108
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3116
 msgid "Set Breakpoint..."
 msgstr "Ορισμός σημείου διακοπής..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3109
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3117
 msgid "Set a breakpoint at a function or line number"
 msgstr "Ορισμός σημείου διακοπής σε συνάρτηση ή αριθμό γραμμής"
 
@@ -397,11 +401,11 @@ msgstr "Ορισμός σημείου διακοπής σε συνάρτηση �
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3125
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3133
 msgid "Toggle _Breakpoint"
 msgstr "Εναλλαγή σημείου _διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3126
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3134
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "Ορισμός/απορισμός σημείου διακοπής στην τρέχουσα θέση δρομέα"
 
@@ -412,11 +416,11 @@ msgstr "Ορισμός/απορισμός σημείου διακοπής στη
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3143
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3151
 msgid "Enable/Disable Breakpoint"
 msgstr "Ενεργοποίηση/απενεργοποίηση σημείου διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3152
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
@@ -431,149 +435,148 @@ msgstr ""
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3164
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3172
 msgid "Toggle _Countpoint"
 msgstr "Εναλλαγή σημείου _μέτρησης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3165
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3173
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "Ορισμός/απορισμός σημείου διακοπής στην τρέχουσα θέση δρομέα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3183
 msgid "Set Watchpoint with Dialog..."
 msgstr "Ορισμός σημείου παρατήρησης με διάλογο..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3184
 msgid "Set a watchpoint using a dialog"
 msgstr "Ορισμός σημείου παρατήρησης χρησιμοποιώντας διάλογο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3199
 msgid "_Next"
 msgstr "Επό_μενο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3200
 msgid "Execute next line stepping over the next function, if any"
 msgstr ""
 "Εκτέλεση της επόμενης γραμμής παραλείποντας την επόμενη συνάρτηση, εάν "
 "υπάρχει"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3209
 msgid "_Step"
 msgstr "_Βήμα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3210
 msgid "Execute next line, stepping into the next function, if any"
 msgstr ""
-"Εκτέλεση της επόμενης γραμμής, μπαίνοντας στην επόμενη συνάρτηση, εάν "
-"υπάρχει"
+"Εκτέλεση της επόμενης γραμμής, μπαίνοντας στην επόμενη συνάρτηση, εάν υπάρχει"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3219
 msgid "Step _Out"
 msgstr "Έ_ξοδος"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3220
 msgid "Finish the execution of the current function"
 msgstr "Τερματισμός της εκτέλεσης της τρέχουσας συνάρτησης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3221
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3229
 msgid "Step Into asm"
 msgstr "Μετάβαση σε συμβολομεταφραστή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3222
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3230
 msgid "Step into the next assembly instruction"
 msgstr "Μετάβαση στην επόμενη εντολή της συμβολομετάφρασης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3239
 msgid "Step Over asm"
 msgstr "Παράλειψη του συμβολομεταφραστή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
 msgid "Step over the next assembly instruction"
 msgstr "Παράλειψη της επόμενης εντολής της συμβολομετάφρασης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3249
 msgid "_Continue or start"
 msgstr "_Συνέχεια ή εκκίνηση"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3242
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3250
 msgid "Start or continue program execution until the next breakpoint"
 msgstr ""
 "Έναρξη ή συνέχεια της εκτέλεσης του προγράμματος μέχρι το επόμενο σημείο "
 "διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3259
 msgid "Run to Cursor"
 msgstr "Εκτέλεση μέχρι το δρομέα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3260
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 "Συνέχιση της εκτέλεσης του προγράμματος μέχρι την τρέχουσα επιλεγμένη γραμμή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3270
 msgid "Jump to Cursor"
 msgstr "Άλμα μέχρι το δρομέα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3271
 msgid "Jump to the currently selected line"
 msgstr "Άλμα στην τρέχουσα επιλεγμένη γραμμή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3281
 msgid "Jump and Stop to Cursor"
 msgstr "Άλμα και στάση στον δρομέα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3274
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3282
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr ""
 "Ορίζει ένα σημείο διακοπής στην τρέχουσα επιλεγμένη γραμμή και άλμα εκεί"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3294
 msgid "Jump to a Given Location"
 msgstr "Άλμα στη δοσμένη θέση"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3295
 msgid "Select a given code location and jump there"
 msgstr "Επιλογή μιας δοσμένης θέσης κώδικα και άλμα εκεί"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
 msgid "Inspect an Expression"
 msgstr "Επιθεώρηση μιας έκφρασης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3307
 msgid "Inspect a global or local expression"
 msgstr "Επιθεώρηση μίας καθολικής ή τοπικής έκφρασης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3309
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3317
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
 msgid "Call a Function"
 msgstr "Κλήση μιας συνάρτησης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3310
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3318
 msgid "Call a function in the program being debugged"
 msgstr "Κλήση συνάρτησης στο αποσφαλματούμενο πρόγραμμα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3327
 msgid "Show Global Variables"
 msgstr "Εμφάνιση καθολικών μεταβλητών"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3328
 msgid "Display all global variables"
 msgstr "Προβολή όλων των καθολικών μεταβλητών"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3330
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3338
 msgid "Refresh Locals"
 msgstr "Ανανέωση τοπικών"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3331
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3339
 msgid "Refresh the list of variables local to the current function"
 msgstr "Ανανέωση της λίστας των τοπικών μεταβλητών στην τρέχουσα συνάρτηση"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3340
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3348
 msgid "Show Assembly"
 msgstr "Εμφάνιση συμβολομετάφρασης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3349
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
@@ -581,187 +584,186 @@ msgstr ""
 "Εμφάνιση σε νέα καρτέλα του κώδικα συμβολομετάφρασης του πηγαίου κώδικα που "
 "αποσφαλματώνεται"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3361
 msgid "Switch to Assembly"
 msgstr "Εναλλαγή σε συμβολομετάφραση"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3362
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr ""
 "Εμφάνιση του κώδικα συμβολομετάφρασης του πηγαίου κώδικα που "
 "αποσφαλματώνεται τώρα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3374
 msgid "Switch to Source"
 msgstr "Εναλλαγή σε κώδικα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3375
 msgid "Show the source code being currently debugged"
 msgstr "Εμφάνιση του πηγαίου κώδικα που αποσφαλματώνεται τώρα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3379
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3387
 msgid "Stop"
 msgstr "Διακοπή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3380
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
 msgid "Stop the debugger"
 msgstr "Διακοπή του αποσφαλματωτή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3392
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3400
 msgid "_View"
 msgstr "Πρ_οβολή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3411
 msgid "Switch to Target Terminal View"
 msgstr "Εναλλαγή στην προβολή τερματικού στόχου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3422
 msgid "Switch to Context View"
 msgstr "Εναλλαγή στην προβολή περιεχομένου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3433
 msgid "Switch to Breakpoints View"
 msgstr "Εναλλαγή στην προβολή σημείων διακοπής"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3436
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3444
 msgid "Switch to Registers View"
 msgstr "Εναλλαγή στην προβολή καταχωριστών"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3448
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
 msgid "Switch to Memory View"
 msgstr "Εναλλαγή στην προβολή μνήμης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3459
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3467
 msgid "Switch to Variables Monitor View"
 msgstr "Εναλλαγή στην προβολή παρακολούθησης μεταβλητών"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
 msgid "_Debug"
 msgstr "Αποσφα_λμάτωση"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3478
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3486
 msgid "_Open Source File..."
 msgstr "Ά_νοιγμα αρχείου κώδικα..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3479
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3487
 msgid "Open a source file for viewing"
 msgstr "Άνοιγμα πηγαίου αρχείου για προβολή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3496
 msgid "Load _Executable..."
 msgstr "Φόρτωση _εκτελέσιμου..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3497
 msgid "Execute a program"
 msgstr "Εκτελέστε ένα πρόγραμμα"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3507
 msgid "_Load Core File..."
 msgstr "_Φόρτωση αρχείου πυρήνα..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3500
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3508
 msgid "Load a core file from disk"
 msgstr "Φόρτωση αρχείου πυρήνα από δίσκο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3510
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3518
 msgid "_Attach to Running Program..."
 msgstr "_Προσκόλληση σε εκτελούμενο πρόγραμμα..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3511
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3519
 msgid "Debug a program that's already running"
 msgstr "Αποσφαλμάτωση προγράμματος που ήδη τρέχει"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3529
 msgid "_Connect to Remote Target..."
 msgstr "_Σύνδεση με απομακρυσμένο στόχο..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3530
 msgid "Connect to a debugging server to debug a remote target"
 msgstr ""
-"Σύνδεση με εξυπηρετητή αποσφαλμάτωσης για αποσφαλμάτωση απομακρυσμένου "
-"στόχου"
+"Σύνδεση με εξυπηρετητή αποσφαλμάτωσης για αποσφαλμάτωση απομακρυσμένου στόχου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3541
 msgid "Resume Sa_ved Session..."
 msgstr "Συνέχιση απο_θηκευμένης συνεδρίας..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3534
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3542
 msgid "Open a previously saved debugging session"
 msgstr "Άνοιγμα μιας προηγουμένως αποθηκευμένης συνεδρίας αποσφαλμάτωσης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3544
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3552
 msgid "_Preferences"
 msgstr "_Προτιμήσεις"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3545
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3553
 msgid "Edit the properties of the current session"
 msgstr "Επεξεργασία των ιδιοτήτων της τρέχουσας συνεδρίας"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3567
 msgid "_Reload Source File"
 msgstr "Ε_παναφόρτωση πηγαίου αρχείου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3560
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3568
 msgid "Reloads the source file"
 msgstr "Επαναφορτώνει το πηγαίο αρχείο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3569
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3577
 msgid "_Close Source File"
 msgstr "Κ_λείσιμο πηγαίου αρχείου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3570
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3578
 msgid "Close the opened file"
 msgstr "Κλείσιμο του ανοικτού αρχείου"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3579
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3587
 msgid "_Find"
 msgstr "_Αναζήτηση"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3580
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3588
 msgid "Find a text string in file"
 msgstr "Εύρεση συμβολοσειράς κειμένου σε αρχείο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3939
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3923
 #, c-format
 msgid "Close %s"
 msgstr "Κλείσιμο %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5897
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5881
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Συγνώμη, είναι αδύνατο να επανεκκινήσουμε έναν απομακρυσμένο κατώτερο"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6020
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6004
 #, c-format
 msgid "Could not find file %s"
 msgstr "Αδυναμία εύρεσης του αρχείου %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6082
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6224
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6259
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6068
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6210
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6245
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Αδυναμία φόρτωσης του προγράμματος: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6153
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6139
 msgid "You cannot attach to Nemiver itself"
 msgstr "Δεν μπορείτε να προσαρτήσετε το ίδιο το Nemiver"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6166
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6152
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Δεν μπορείτε να προσαρτήσετε στην υποκείμενη μηχανή αποσφαλμάτωσης"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6461
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6447
 msgid "Failed to stop the debugger"
 msgstr "Αποτυχία διακοπής του αποσφαλματωτή"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6705
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6691
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Άκυρος αριθμός γραμμής: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8306
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8302
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -822,8 +824,8 @@ msgstr "_Σύμπτυξη"
 msgid "Loading files from target executable..."
 msgstr "Φόρτωση αρχείων από εκτελέσιμο στόχο..."
 
-#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:301
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:547
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
 #, c-format
 msgid ""
@@ -833,44 +835,43 @@ msgstr ""
 "Ο τύπος της μεταβλητής είναι: \n"
 " %s"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:124
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
 msgid "Local Variables"
 msgstr "Τοπικές μεταβλητές"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:132
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
 msgid "Function Arguments"
 msgstr "Ορίσματα της συνάρτησης"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
 msgid "_Copy Variable Name"
 msgstr "Αντιγρα_φή ονόματος μεταβλητής"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:259
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
 msgid "Copy the variable path expression to the clipboard"
 msgstr "Αντιγραφή της έκφρασης διαδρομής μεταβλητής στο πρόχειρο"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
 msgid "_Copy Variable Value"
 msgstr "Αντιγρα_φή τιμής μεταβλητής"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:271
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
 msgid "Copy the variable value to the clipboard"
 msgstr "Αντιγραφή της τιμής μεταβλητής στο πρόχειρο"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
 msgid "Create Watchpoint"
 msgstr "Δημιουργία σημείου παρατήρησης"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
 msgstr ""
-"Δημιουργία σημείου παρατήρησης που προκαλείται όταν τιμή της έκφρασης "
-"αλλάζει"
+"Δημιουργία σημείου παρατήρησης που προκαλείται όταν τιμή της έκφρασης αλλάζει"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
@@ -899,12 +900,12 @@ msgstr "Εμφάνιση"
 msgid "Group By:"
 msgstr "Ομαδοποίηση κατά:"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:149
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
 msgstr "Επιλέξτε έναν κατάλογο"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
 msgid "Source Directories"
 msgstr "Κατάλογοι πηγής"
@@ -1147,67 +1148,76 @@ msgid "Editor"
 msgstr "Επεξεργαστής"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Update at each stop"
+msgstr "Ενημέρωση σε κάθε στάση"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+#| msgid "Local Variables"
+msgid "Local variables"
+msgstr "Τοπικές μεταβλητές"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Pure assembly"
 msgstr "Καθαρή συμβολομετάφραση"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
 msgid "Mixed source and assembly"
 msgstr "Αναμειγμένη πηγή και συμβολομετάφραση"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 msgid "Assembly style"
 msgstr "Τεχνοτροπία συμβολομετάφρασης"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
 msgid "Assembly flavor"
 msgstr "Είδος συμβολομετάφρασης"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
 msgid "Choose a File"
 msgstr "Επιλέξτε ένα αρχείο"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Path to the GDB binary used"
 msgstr "Διαδρομή για το χρησιμοποιούμενο δυαδικό GDB"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
 msgid "GDB Binary"
 msgstr "Δυαδικό GDB"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Number of instructions to disassemble by default"
 msgstr "Αριθμός εντολών για αποσυμβολομετάφραση από προεπιλογή"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "Instructions"
 msgstr "Εντολές"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Enable pretty printing (requires debugger restart)"
 msgstr "Ενεργοποίηση όμορφης εκτύπωσης (απαιτεί επανεκκίνηση αποσφαλματωτή)"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "GDB Pretty Printing"
 msgstr "Όμορφη εκτύπωση GDB"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
 msgid "Follow parent"
 msgstr "Παρακολούθηση ανιόντα"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
 msgid "Follow child"
 msgstr "Παρακολούθηση κατιόντος"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
 msgid "GDB Follow Fork Mode"
 msgstr "Κατάσταση διακλάδωσης παρακολούθησης GDB"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
 msgid "Debugger"
 msgstr "Αποσφαλματωτής"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
 msgid "Layout"
 msgstr "Διάταξη"
 
@@ -1439,12 +1449,12 @@ msgstr "Επαναφορά του τερματικού"
 msgid "Do not ask me again"
 msgstr "Να μην ερωτηθώ ξανά"
 
-#: ../src/workbench/nmv-workbench.cc:275
+#: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
 msgstr "Ιστοσελίδα έργου"
 
 #. Translators: change this to your name, separate multiple names with \n
-#: ../src/workbench/nmv-workbench.cc:295
+#: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
 msgstr ""
 "Ελληνική μεταφραστική ομάδα GNOME\n"
@@ -1453,39 +1463,39 @@ msgstr ""
 "\n"
 "Για περισσότερα δείτε http://www.gnome.gr/"
 
-#: ../src/workbench/nmv-workbench.cc:673
+#: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
 msgstr "Α_ρχείο"
 
-#: ../src/workbench/nmv-workbench.cc:684
+#: ../src/workbench/nmv-workbench.cc:672
 msgid "_Quit"
 msgstr "Έ_ξοδος"
 
-#: ../src/workbench/nmv-workbench.cc:685
+#: ../src/workbench/nmv-workbench.cc:673
 msgid "Quit the application"
 msgstr "Έξοδος από την εφαρμογή"
 
-#: ../src/workbench/nmv-workbench.cc:695
+#: ../src/workbench/nmv-workbench.cc:683
 msgid "_Edit"
 msgstr "_Επεξεργασία"
 
-#: ../src/workbench/nmv-workbench.cc:706
+#: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
 msgstr "_Βοήθεια"
 
-#: ../src/workbench/nmv-workbench.cc:717
+#: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
 msgstr "Π_ερί"
 
-#: ../src/workbench/nmv-workbench.cc:718
+#: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
 msgstr "Εμφάνιση πληροφοριών σχετικά με την εφαρμογή"
 
-#: ../src/workbench/nmv-workbench.cc:728
+#: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
 msgstr "Περιε_χόμενα"
 
-#: ../src/workbench/nmv-workbench.cc:729
+#: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
 msgstr "Εμφάνιση του εγχειριδίου χρήστη γι' αυτήν την εφαρμογή"
 
