@@ -7780,8 +7780,6 @@ DBGPerspective::disassemble_around_address_and_do
         return;
 
     Range addr_range (a_address, a_address);
-    THROW_IF_FAIL (addr_range.min () != 0
-                   && addr_range.max () != 0);
     // Increase the address range of instruction to disassemble by a
     // number N that is equal to m_priv->num_instr_to_disassemble.
     // 17 is the max size (in bytes) of an instruction on intel
