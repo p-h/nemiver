@@ -3195,7 +3195,10 @@ GDBEngine::load_program (const UString &a_prog,
     THROW_IF_FAIL (!a_prog.empty ());
     vector<UString> argv (a_argv);
 
-    if (!m_priv->is_gdb_running ()) {
+    bool is_gdb_running = m_priv->is_gdb_running();
+    LOG_DD ("force: " << a_force << ", is_gdb_running: " << is_gdb_running);
+    if (a_force || !is_gdb_running) {
+        LOG_DD("Launching a fresh GDB");
         vector<UString> gdb_opts;
 
         // Read the tty attributes before we launch the target so that

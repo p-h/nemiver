@@ -53,6 +53,7 @@
 #include "common/nmv-str-utils.h"
 #include "common/nmv-address.h"
 #include "common/nmv-loc.h"
+#include "common/nmv-proc-utils.h"
 #include "nmv-sess-mgr.h"
 #include "nmv-dbg-perspective.h"
 #include "nmv-source-editor.h"
@@ -857,6 +858,15 @@ struct DBGPerspective::Priv {
     // A Flag to know if the debugging
     // engine died or not.
     bool debugger_engine_alive;
+    // The path to the program the user requested a debugging session
+    // for.
+    UString last_prog_path_requested;
+    // The path to the binary that is actually being debugged.  This
+    // can be different from last_prog_path_requested above, e.g, when
+    // the user asked to debug a libtool wrapper shell script.  In
+    // that case, this data member eventually contains the path to the
+    // real underlying binary referred to by the libtool wrapper shell
+    // script.
     UString prog_path;
     vector<UString> prog_args;
     UString prog_cwd;
@@ -5900,8 +5910,21 @@ DBGPerspective::restart_local_inferior ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
     THROW_IF_FAIL (!is_connected_to_remote_target ());
-    
-    if (debugger ()->is_attached_to_target ()
+
+    if (// If the program the user asked is a libtool wrapper shell
+        // script, then the real program we are debugging is at a
+        // different path from the (libtool shell script) path
+        // requested by the user.  So we cannot just ask the debugger
+        // to re-run the binary it's current running, as libtool can
+        // have changed changed the path to the underlying real
+        // binary.  This can happen, e.g, when the user re-compiled
+        // the program she is debugging and then asks for a re-start
+        // of the inferior in Nemiver.  In that case, libtool might
+        // have changed the real binary path name.
+        !is_libtool_executable_wrapper(m_priv->last_prog_path_requested)
+        // If we are not attached to the target, there is not debugger
+        // engine to ask a re-run to ...
+        && debugger ()->is_attached_to_target ()
         // Make sure we are restarting the program we were running
         // right before. We need to make sure because the user can
         // have changed the path to the inferior and ask for a
@@ -5914,7 +5937,7 @@ DBGPerspective::restart_local_inferior ()
              (*this, &DBGPerspective::on_debugger_inferior_re_run_signal));
     } else {
         vector<IDebugger::Breakpoint> bps;
-        execute_program (m_priv->prog_path, m_priv->prog_args,
+        execute_program (m_priv->last_prog_path_requested, m_priv->prog_args,
                          m_priv->env_variables, m_priv->prog_cwd,
                          bps,
                          true /* be aware we are restarting the same inferior*/,
@@ -6029,7 +6052,7 @@ DBGPerspective::execute_program
     // In that case, we might want to keep things like breakpoints etc,
     // around.
     bool is_new_program = a_restarting
-        ? (prog != m_priv->prog_path)
+        ? (prog != m_priv->last_prog_path_requested)
         : true;
     LOG_DD ("is new prog: " << is_new_program);
 
@@ -6097,6 +6120,7 @@ DBGPerspective::execute_program
     if (a_break_in_main_run)
         run_real (a_restarting);
 
+    m_priv->last_prog_path_requested = prog;
     m_priv->prog_path = prog;
     m_priv->prog_args = a_args;
     m_priv->prog_cwd = a_cwd;
