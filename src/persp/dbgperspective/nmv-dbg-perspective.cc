@@ -6061,9 +6061,7 @@ DBGPerspective::execute_program
                                   get_terminal_name (),
                                   uses_launch_terminal (),
                                   get_terminal ().slave_pty (),
-                                  a_restarting
-                                  ? true
-                                  : false) == false) {
+                                  a_restarting) == false) {
         UString message;
         message.printf (_("Could not load program: %s"),
                         prog.c_str ());

@@ -68,7 +68,7 @@ launch_program (const std::vector<UString> &a_args,
          ++it) {
         str += *it + " ";
     }
-    LOG_D ("launching program with args: '" << str << "'", NMV_DEFAULT_DOMAIN);
+    LOG_DD ("launching program with args: '" << str << "'");
 
     enum ReadWritePipe {
         READ_PIPE=0,

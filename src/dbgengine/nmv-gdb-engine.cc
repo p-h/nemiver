@@ -828,6 +828,7 @@ public:
         // libtool wrapper script,
         // run the debugging session under libtool
         if (is_libtool_executable_wrapper (prog_path)) {
+            LOG_DD ( prog_path << " is a libtool script");
             argv.push_back ("libtool");
             argv.push_back ("--mode=execute");
         }
@@ -3204,7 +3205,7 @@ GDBEngine::load_program (const UString &a_prog,
         m_priv->get_tty_attributes ();
 
         if (m_priv->launch_gdb_and_set_args (a_working_dir,
-                                             a_source_search_dirs, 
+                                             a_source_search_dirs,
                                              a_prog, a_argv,
                                              gdb_opts) == false)
             return false;
@@ -3251,6 +3252,7 @@ GDBEngine::load_program (const UString &a_prog,
                                     "-enable-pretty-printing"));
         set_attached_to_target (true);
     } else {
+        LOG_DD("Re-using the same GDB");
         Command command ("load-program",
                          UString ("-file-exec-and-symbols ") + a_prog);
         queue_command (command);
