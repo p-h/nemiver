@@ -497,12 +497,19 @@ src/Makefile
     src/persp/dbgperspective/sqlscripts/sqlite/Makefile
 data/Makefile
     data/icons/Makefile
-        data/icons/16x16/Makefile
-        data/icons/22x22/Makefile
-        data/icons/24x24/Makefile
-        data/icons/32x32/Makefile
-        data/icons/48x48/Makefile
-        data/icons/scalable/Makefile
+	data/icons/hicolor/Makefile
+        data/icons/hicolor/16x16/Makefile
+        data/icons/hicolor/22x22/Makefile
+        data/icons/hicolor/24x24/Makefile
+        data/icons/hicolor/32x32/Makefile
+        data/icons/hicolor/48x48/Makefile
+        data/icons/hicolor/scalable/Makefile
+	data/icons/HighContrast/Makefile
+        data/icons/HighContrast/16x16/Makefile
+        data/icons/HighContrast/22x22/Makefile
+        data/icons/HighContrast/24x24/Makefile
+        data/icons/HighContrast/32x32/Makefile
+        data/icons/HighContrast/48x48/Makefile
     data/schemas/Makefile
         data/schemas/gconf/Makefile
         data/schemas/gsettings/Makefile
