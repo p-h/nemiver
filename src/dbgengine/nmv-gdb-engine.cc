@@ -1171,7 +1171,7 @@ public:
                             CHUNK_SIZE,
                             nb_read);
                     if (status == Glib::IO_STATUS_NORMAL
-                            && nb_read && (nb_read <= CHUNK_SIZE)) {
+                        && nb_read && (nb_read <= CHUNK_SIZE)) {
                         if (error_buffer_status == FILLED) {
                             gdb_stderr_buffer.clear ();
                             error_buffer_status = FILLING;
