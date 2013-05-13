@@ -28,10 +28,13 @@
     </menu>
     <placeholder name="MenuBarAdditions">
         <menu action="EditMenuAction" name="EditMenu">
-            <menuitem action="FindMenuItemAction"
-                name="FindMenutItem"/>
-            <menuitem action="CurrentSessionPropertiesMenuItemAction"
-                name="CurrentSessionPropertiesMenuItem"/>
+	  <menuitem action="CopyMenuItemAction"
+                    name="CopyMenutItem"/>
+	  <separator/>
+          <menuitem action="FindMenuItemAction"
+                    name="FindMenutItem"/>
+          <menuitem action="CurrentSessionPropertiesMenuItemAction"
+                      name="CurrentSessionPropertiesMenuItem"/>
         </menu>
         <menu action="ViewMenuAction" name="ViewMenu">
             <menuitem action="ActivateTargetTerminalViewMenuAction"

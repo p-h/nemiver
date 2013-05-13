@@ -114,6 +114,10 @@ public:
                     bool a_search_backwards=false,
                     bool a_clear_selection=false);
 
+    void setup_and_popup_menu (GdkEventButton *a_event,
+			       Gtk::Widget *attach_to,
+			       Gtk::Menu *custom_menu);
+
     static bool get_file_mime_type (const UString &a_path,
 				    UString &a_mime_type);
 

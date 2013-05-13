@@ -88,19 +88,22 @@ public:
         init_font ();
     }
 
-    void init_font ()
+    void
+    init_font ()
     {
         Pango::FontDescription font("monospace");
         override_font(font);
     }
 
-    void enable_events ()
+    void
+    enable_events ()
     {
         add_events (Gdk::LEAVE_NOTIFY_MASK
                     |Gdk::BUTTON_PRESS_MASK);
     }
 
-    bool on_button_press_event (GdkEventButton *a_event)
+    bool
+    on_button_press_event (GdkEventButton *a_event)
     {
         if (a_event->type == GDK_BUTTON_PRESS
             && a_event->button == 3) {
@@ -112,11 +115,42 @@ public:
         }
     }
 
-    sigc::signal<void, int, bool>& marker_region_got_clicked_signal ()
+    sigc::signal<void, int, bool>&
+    marker_region_got_clicked_signal ()
     {
         return m_marker_region_got_clicked_signal;
     }
 
+    /// Given a menu to popup, pop it up at the right place;
+    ///
+    /// \param a_event the event that triggered this whole button
+    /// popup business or NULL.
+    ///
+    /// \param a_attach_to a widget to attach the popup menu to, or NULL.
+    ///
+    /// \param a_menu the menu to popup.
+    void
+    setup_and_popup_menu (GdkEventButton* a_event,
+                          Gtk::Widget *a_attach_to,
+                          Gtk::Menu *a_menu)
+    {
+        Gtk::TextBuffer::iterator cur_iter;
+
+        RETURN_IF_FAIL (a_menu);
+
+        if (a_attach_to && a_menu->get_attach_widget () == NULL) {
+            gtk_menu_attach_to_widget (GTK_MENU (a_menu->gobj()),
+                                       GTK_WIDGET (a_attach_to->gobj()),
+                                       NULL);
+        }
+
+        Gtk::TextIter start, end;
+        Glib::RefPtr<Gsv::Buffer> buffer = get_source_buffer ();
+        THROW_IF_FAIL (buffer);
+
+        a_menu->popup (a_event ? a_event->button : 0,
+                       a_event ? a_event->time : 0);
+    }
 };//end class Sourceview
 
 void
@@ -1453,6 +1487,22 @@ SourceEditor::load_file (const UString &a_path,
     return true;
 }
 
+    /// Given a menu to popup, pop it up at the right place;
+    ///
+    /// \param a_event the event that triggered this whole button
+    /// popup business or NULL.
+    ///
+    /// \param a_attach_to a widget to attach the popup menu to, or NULL.
+    ///
+    /// \param a_menu the menu to popup.
+void
+SourceEditor::setup_and_popup_menu (GdkEventButton *a_event,
+                                    Gtk::Widget *a_attach_to,
+                                    Gtk::Menu *a_menu)
+{
+    m_priv->source_view->setup_and_popup_menu (a_event, a_attach_to,
+                                               a_menu);
+}
 bool
 SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
                        const std::list<common::Asm> &a_asm,

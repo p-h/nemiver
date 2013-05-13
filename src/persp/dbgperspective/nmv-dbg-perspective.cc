@@ -260,6 +260,7 @@ private:
     void on_detach_from_program_action ();
     void on_choose_a_saved_session_action ();
     void on_current_session_properties_action ();
+    void on_copy_action ();
     void on_stop_debugger_action ();
     void on_run_action ();
     void on_save_session_action ();
@@ -306,6 +307,8 @@ private:
                                          SourceEditor *a_editor);
 
     bool on_button_pressed_in_source_view_signal (GdkEventButton *a_event);
+
+    bool on_popup_menu ();
 
     bool on_motion_notify_event_signal (GdkEventMotion *a_event);
 
@@ -430,6 +433,7 @@ private:
     //************
 
     void update_action_group_sensitivity (IDebugger::State a_state);
+    void update_copy_action_sensitivity ();
     string build_resource_path (const UString &a_dir, const UString &a_name);
     void add_stock_icon (const UString &a_stock_id,
                          const UString &icon_dir,
@@ -466,7 +470,6 @@ private:
     int get_num_notebook_pages ();
     SourceEditor* bring_source_as_current (const UString &a_path);
     void bring_source_as_current (SourceEditor *a_editor);
-    void popup_source_view_contextual_menu (GdkEventButton *a_event);
     void record_and_save_new_session ();
     void record_and_save_session (ISessMgr::Session &a_session);
     IProcMgr* get_process_manager ();
@@ -790,6 +793,8 @@ public:
 
     Gtk::Widget* get_contextual_menu ();
 
+    void setup_and_popup_contextual_menu ();
+
     bool uses_launch_terminal () const;
 
     void uses_launch_terminal (bool a_flag);
@@ -881,7 +886,7 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::ScrolledWindow> thread_list_scrolled_win;
     SafePtr<Gtk::HPaned> call_stack_paned;
     SafePtr<Gtk::HPaned> context_paned;
-   
+
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
     Glib::RefPtr<Gtk::ActionGroup> target_not_started_action_group;
     Glib::RefPtr<Gtk::ActionGroup> inferior_loaded_action_group;
@@ -976,6 +981,10 @@ struct DBGPerspective::Priv {
     list<UString> call_expr_history;
     list<UString> var_inspector_dialog_history;
 
+    // This is set when the user presses a mouse button in the source
+    // view
+    GdkEventButton *source_view_event_button;
+
     Priv () :
         initialized (false),
         reused_session (false),
@@ -1003,7 +1012,8 @@ struct DBGPerspective::Priv {
         mouse_in_source_editor_y (0),
         in_show_var_value_at_pos_transaction (false),
         var_popup_tip_x (0),
-        var_popup_tip_y (0)
+        var_popup_tip_y (0),
+        source_view_event_button (0)
     {
     }
 
@@ -1341,6 +1351,22 @@ DBGPerspective::on_current_session_properties_action ()
     edit_preferences ();
 
     NEMIVER_CATCH
+}
+
+void
+DBGPerspective::on_copy_action ()
+{
+    if (SourceEditor *e = get_current_source_editor ()) {
+        Glib::RefPtr<Gsv::Buffer> buffer =
+            e->source_view ().get_source_buffer ();
+        THROW_IF_FAIL (buffer);
+
+        Gtk::TextIter start, end;
+        if (buffer->get_selection_bounds (start, end))
+            g_signal_emit_by_name (e->source_view ().gobj (),
+                                   "copy-clipboard");
+    }
+
 }
 
 void
@@ -1876,22 +1902,22 @@ DBGPerspective::on_button_pressed_in_source_view_signal
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY;
-
-    if (a_event->type != GDK_BUTTON_PRESS) {
-        return false;
+    if (a_event->type == GDK_BUTTON_PRESS) {
+        m_priv->source_view_event_button = a_event;
+        update_copy_action_sensitivity ();
+        if (a_event->button == 3)
+            setup_and_popup_contextual_menu ();
     }
-
-    if (a_event->button == 3) {
-        popup_source_view_contextual_menu (a_event);
-        return true;
-    }
-
-    NEMIVER_CATCH;
 
     return false;
 }
 
+bool
+DBGPerspective::on_popup_menu ()
+{
+    setup_and_popup_contextual_menu ();
+    return true;
+}
 
 bool
 DBGPerspective::on_motion_notify_event_signal (GdkEventMotion *a_event)
@@ -1992,6 +2018,7 @@ DBGPerspective::on_insertion_changed_signal
     THROW_IF_FAIL (a_editor);
 
     update_toggle_menu_text (*a_editor, a_it);
+    update_copy_action_sensitivity ();
 
     NEMIVER_CATCH;
 }
@@ -2976,6 +3003,32 @@ DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
     }
 }
 
+/// Updates the sensitivity of the 'Copy' action item.
+///
+/// If there is something to copy, then the action is made sensitive
+/// (i.e, clickable), otherwise it's made unsensitive.
+void
+DBGPerspective::update_copy_action_sensitivity ()
+{
+    Glib::RefPtr<Gtk::Action> action =
+        m_priv->opened_file_action_group->get_action ("CopyMenuItemAction");
+
+    if (!action)
+        return;
+
+    if (SourceEditor *e = get_current_source_editor ()) {
+        Glib::RefPtr<Gsv::Buffer> buffer =
+            e->source_view ().get_source_buffer ();
+        if (!buffer)
+            return;
+        Gtk::TextIter start, end;
+        bool sensitive = false;
+        if (buffer->get_selection_bounds (start, end))
+            sensitive = true;
+        action->set_sensitive (sensitive);
+    }
+}
+
 string
 DBGPerspective::build_resource_path (const UString &a_dir,
                                      const UString &a_name)
@@ -3022,10 +3075,10 @@ DBGPerspective::add_perspective_menu_entries ()
 
     relative_path = Glib::build_filename ("menus", "contextualmenu.xml");
     THROW_IF_FAIL (build_absolute_resource_path
-                    (Glib::filename_to_utf8 (relative_path), absolute_path));
+                   (Glib::filename_to_utf8 (relative_path), absolute_path));
     m_priv->contextual_menu_merge_id =
         workbench ().get_ui_manager ()->add_ui_from_file
-                                    (Glib::filename_to_utf8 (absolute_path));
+        (Glib::filename_to_utf8 (absolute_path));
 
 #ifdef WITH_MEMORYVIEW
     // Add memory view menu item if we're compiling with memoryview support
@@ -3572,6 +3625,16 @@ DBGPerspective::init_actions ()
 
     static ui_utils::ActionEntry s_file_opened_action_entries [] = {
         {
+            "CopyMenuItemAction",
+            Gtk::Stock::COPY,
+            _("_Copy selected text"),
+            _("Copy the text selected in the current source file"),
+            sigc::mem_fun (*this, &DBGPerspective::on_copy_action),
+            ActionEntry::DEFAULT,
+            "<control>C",
+            false
+        },
+        {
             "ReloadSourceMenuItemAction",
             Gtk::Stock::REFRESH,
             _("_Reload Source File"),
@@ -3971,10 +4034,22 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
 
     if (a_sv.source_view ().get_has_window ()) {
         a_sv.source_view ().add_events (Gdk::BUTTON3_MOTION_MASK);
+
         a_sv.source_view ().signal_button_press_event ().connect
             (sigc::mem_fun
              (*this,
               &DBGPerspective::on_button_pressed_in_source_view_signal));
+
+        // OK, this is a hack but it's the cleaner way I've found to
+        // prevent the default popup menu of GtkTextView to show up
+        // whent he user hits the "menu" keyboard key or shit F10.
+        GTK_WIDGET_GET_CLASS (a_sv.source_view ().gobj())->popup_menu = NULL;
+
+        // Then wire our own contextual popup menu when the user hits
+        // the menu key.
+       a_sv.source_view ().signal_popup_menu ().connect
+            (sigc::mem_fun (*this,
+                            &DBGPerspective::on_popup_menu));
 
         a_sv.source_view ().signal_motion_notify_event ().connect
             (sigc::mem_fun
@@ -3990,6 +4065,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     if (get_num_notebook_pages () == 1) {
         m_priv->opened_file_action_group->set_sensitive (true);
         update_src_dependant_bp_actions_sensitiveness ();
+        update_copy_action_sensitivity ();
     }
 }
 
@@ -4428,7 +4504,17 @@ DBGPerspective::get_contextual_menu ()
 {
     THROW_IF_FAIL (m_priv && m_priv->contextual_menu_merge_id);
 
-    if (!m_priv->contextual_menu) {
+    if (m_priv->contextual_menu == NULL) {
+        workbench ().get_ui_manager ()->add_ui
+            (m_priv->contextual_menu_merge_id,
+             "/ContextualMenu",
+             "CopyMenuItem",
+             "CopyMenuItemAction",
+             Gtk::UI_MANAGER_AUTO,
+             false);
+
+        workbench ().get_ui_manager ()->add_ui_separator
+            (m_priv->contextual_menu_merge_id, "/ContextualMenu");
 
         workbench ().get_ui_manager ()->add_ui
             (m_priv->contextual_menu_merge_id,
@@ -4569,9 +4655,26 @@ DBGPerspective::get_contextual_menu ()
         m_priv->contextual_menu =
             workbench ().get_ui_manager ()->get_widget
             ("/ContextualMenu");
-        THROW_IF_FAIL (m_priv->contextual_menu);
     }
+
+    THROW_IF_FAIL (m_priv->contextual_menu);
+
     return m_priv->contextual_menu;
+}
+
+/// Get the contextual menu, massage it as necessary and pop it up.
+void
+DBGPerspective::setup_and_popup_contextual_menu ()
+{
+    GdkEventButton *event = m_priv->source_view_event_button;
+    RETURN_IF_FAIL (event);
+
+    SourceEditor *editor = get_current_source_editor ();
+    THROW_IF_FAIL (editor);
+
+    editor->setup_and_popup_menu
+        (event, NULL,
+         dynamic_cast<Gtk::Menu*> (get_contextual_menu ()));
 }
 
 bool
@@ -4738,42 +4841,6 @@ DBGPerspective::get_num_notebook_pages ()
     THROW_IF_FAIL (m_priv && m_priv->sourceviews_notebook);
 
     return m_priv->sourceviews_notebook->get_n_pages ();
-}
-
-void
-DBGPerspective::popup_source_view_contextual_menu (GdkEventButton *a_event)
-{
-    int buffer_x=0, buffer_y=0, line_top=0;
-    Gtk::TextBuffer::iterator cur_iter;
-    UString file_name;
-
-    SourceEditor *editor = get_current_source_editor ();
-    THROW_IF_FAIL (editor);
-
-    editor->source_view ().window_to_buffer_coords (Gtk::TEXT_WINDOW_TEXT,
-                                                    (int)a_event->x,
-                                                    (int)a_event->y,
-                                                    buffer_x, buffer_y);
-    editor->source_view ().get_line_at_y (cur_iter, buffer_y, line_top);
-
-    editor->get_path (file_name);
-
-    Gtk::Menu *menu = dynamic_cast<Gtk::Menu*> (get_contextual_menu ());
-    THROW_IF_FAIL (menu);
-
-    Gtk::TextIter start, end;
-    Glib::RefPtr<Gsv::Buffer> buffer =
-                            editor->source_view ().get_source_buffer ();
-    THROW_IF_FAIL (buffer);
-    bool has_selected_text=false;
-    if (buffer->get_selection_bounds (start, end)) {
-        has_selected_text = true;
-    }
-    editor->source_view ().get_buffer ()->place_cursor (cur_iter);
-    if (has_selected_text) {
-        buffer->select_range (start, end);
-    }
-    menu->popup (a_event->button, a_event->time);
 }
 
 void
