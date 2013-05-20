@@ -127,6 +127,6 @@ $(abs_top_builddir)/src/common/libnemivercommon.la libdbgcommon.la
 config_DATA=gdbengine.conf varlist.conf varwalker.conf varobjwalker.conf varlistwalker.conf cpptrait.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
-INCLUDES=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+AM_CPPFLAGS=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(top_srcdir)/src -I$(top_srcdir)/src/confmgr
 

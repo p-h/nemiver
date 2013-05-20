@@ -102,7 +102,7 @@ $(abs_top_builddir)/src/common/libnemivercommon.la \
 $(abs_top_builddir)/src/uicommon/libnemiveruicommon.la \
 $(abs_top_builddir)/src/dbgengine/libdebuggerutils.la
 
-INCLUDES=@NEMIVERDBGPERSP_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+AM_CPPFLAGS=@NEMIVERDBGPERSP_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(abs_top_srcdir)/src \
 -I$(abs_top_srcdir)/src/confmgr \
 -I$(abs_top_srcdir)/src/dbgengine \

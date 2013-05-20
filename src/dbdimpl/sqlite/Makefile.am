@@ -16,7 +16,7 @@ libnemiverdbdsqlite_la_LIBADD= \
 @SQLITE3_LIBS@ @NEMIVERCOMMON_LIBS@ \
 $(abs_top_builddir)/src/common/libnemivercommon.la
 
-INCLUDES=@SQLITE3_CFLAGS@ @NEMIVERCOMMON_CFLAGS@ -I$(abs_top_srcdir)/src \
+AM_CPPFLAGS=@SQLITE3_CFLAGS@ @NEMIVERCOMMON_CFLAGS@ -I$(abs_top_srcdir)/src \
 -DIN_LIBSQLITE_DSO
 
 config_DATA=org.nemiver.db.sqlitedriver.conf

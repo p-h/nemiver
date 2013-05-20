@@ -38,7 +38,7 @@ libnemiveruicommon_la_SOURCES= $(sources) $(memoryview_sources)
 libnemiveruicommon_la_LIBADD= @NEMIVERUICOMMON_LIBS@ -lutil
 libnemiveruicommon_la_CFLAGS= -fPIC -DPIC
 
-INCLUDES=@NEMIVERUICOMMON_CFLAGS@ \
+AM_CPPFLAGS=@NEMIVERUICOMMON_CFLAGS@ \
 -I$(abs_top_srcdir) \
 -I$(abs_top_srcdir)/src \
 -I$(abs_top_srcdir)/src/confmgr \

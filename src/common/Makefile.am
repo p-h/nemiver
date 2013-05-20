@@ -85,7 +85,7 @@ libnemivercommon_la_LDFLAGS=@NEMIVERCOMMON_LIBS@ -lutil \
 #pkgconfig_DATA = libnemivercommon.pc
 #EXTRA_DIST = $(pkgconfig_DATA)
 
-INCLUDES=@NEMIVERCOMMON_CFLAGS@ \
+AM_CPPFLAGS=@NEMIVERCOMMON_CFLAGS@ \
 -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -DSYSTEM_LIBDIR=\"/usr/lib\" \
 -DNEMIVER_INSTALL_PREFIX=\"@NEMIVER_INSTALL_PREFIX@\" \

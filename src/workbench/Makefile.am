@@ -23,7 +23,7 @@ libworkbenchmod_la_LIBADD=@NEMIVERWORKBENCH_LIBS@ \
 config_DATA=workbench.conf
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
-INCLUDES=@NEMIVERWORKBENCH_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+AM_CPPFLAGS=@NEMIVERWORKBENCH_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(abs_top_srcdir)/src \
 -I$(abs_top_srcdir)/src/confmgr \
 -I$(abs_top_srcdir)/src/dbgengine \

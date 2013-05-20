@@ -17,7 +17,7 @@ $(h)/nmv-cpp-parser.cc
 libnemivercparser_la_LIBADD=$(abs_top_builddir)/src/common/libnemivercommon.la
 libnemivercparser_la_CFLAGS= -fPIC -DPIC
 
-INCLUDES= \
+AM_CPPFLAGS = \
 -I$(abs_top_srcdir) \
 -I$(abs_top_srcdir)/src \
 @NEMIVERCOMMON_CFLAGS@

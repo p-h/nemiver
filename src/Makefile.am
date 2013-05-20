@@ -24,7 +24,7 @@ $(abs_top_builddir)/src/uicommon/libnemiveruicommon.la
 
 endif
 
-INCLUDES=\
+AM_CPPFLAGS=\
 -DNEMIVERLOCALEDIR=\"$(nemiverlocaledir)\" \
 -DPREFIX=\""$(prefix)"\" \
 -DSYSCONFDIR=\""$(sysconfdir)"\" \

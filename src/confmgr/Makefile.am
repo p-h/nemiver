@@ -9,7 +9,7 @@ publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods
 
 configdir=@NEMIVER_SYSTEM_CONFIG_DIR@
 
-INCLUDES=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
+AM_CPPFLAGS=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(abs_top_srcdir)/src
 
 if BUILD_GSETTINGS
@@ -23,7 +23,7 @@ if BUILD_GSETTINGS
     gsettingsmgrmoddir=@NEMIVER_MODULES_DIR@
 
     config_DATA=gsettingsmgr.conf
-    INCLUDES+= @NEMIVERGSETTINGS_CFLAGS@
+    AM_CPPFLAGS+= @NEMIVERGSETTINGS_CFLAGS@
 else
     libgconfmgrmod_la_SOURCES=$(headers) $(h)/nmv-gconf-mgr.cc\
             $(h)/nmv-gconf-keys-defs.cc
@@ -35,7 +35,7 @@ else
     gconfmgrmoddir=@NEMIVER_MODULES_DIR@
 
     config_DATA=gconfmgr.conf
-    INCLUDES+= @GCONF_CFLAGS@
+    AM_CPPFLAGS+= @GCONF_CFLAGS@
 endif
 
 EXTRA_DIST=gconfmgr.conf.in gsettingsmgr.conf.in
