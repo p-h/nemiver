@@ -1,0 +1,1497 @@
+# Turkish translation for nemiver.
+# Copyright (C) 2013 nemiver's COPYRIGHT HOLDER
+# This file is distributed under the same license as the nemiver package.
+# Muhammet Kara <muhammetk@gmail.com>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2013-05-20 19:05+0000\n"
+"PO-Revision-Date: 2013-05-24 23:09+0300\n"
+"Last-Translator: Muhammet Kara <muhammetk@gmail.com>\n"
+"Language-Team: Turkish <gnome-turk@gnome.org>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.desktop.in.h:2
+msgid "C/C++ Debugger"
+msgstr "C/C++ Hata Ayıklayıcısı"
+
+#: ../data/nemiver.desktop.in.h:3
+msgid "Nemiver C/C++ Debugger"
+msgstr "Nemiver C/C++ Hata Ayıklayıcısı"
+
+#: ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Hata Ayıklama Uygulamaları"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;ayırıcı;çözücü;hata ayıklayıcı;c;c++;"
+
+#: ../src/main.cc:78
+msgid "Set the environment of the program to debug"
+msgstr "Uygulama ortamını hata ayıklamaya ayarla"
+
+#: ../src/main.cc:87
+msgid "Attach to a process"
+msgstr "Bir sürece bağlan"
+
+#: ../src/main.cc:96
+msgid "Load a core file"
+msgstr "Çekirdek dosyası yükle"
+
+#: ../src/main.cc:104
+msgid "List the saved debugging sessions"
+msgstr "Kaydedilmiş hata ayıklama oturumlarını listele"
+
+#: ../src/main.cc:112
+msgid "Erase the saved debugging sessions"
+msgstr "Kaydedilmiş hata ayıklama oturumlarını sil"
+
+#: ../src/main.cc:120
+msgid "Debug the program that was of session number N"
+msgstr "N oturum numaralı programdaki hataları ayıkla"
+
+#: ../src/main.cc:128
+msgid "Execute the last session"
+msgstr "Son oturumu çalıştır"
+
+#: ../src/main.cc:136
+msgid "Enable logging domains DOMAINS"
+msgstr "Günlük tutmayı etkinleştir"
+
+#: ../src/main.cc:144
+msgid "Log the debugger output"
+msgstr "Hata ayıklayıcı çıktısının kaydını tut"
+
+#: ../src/main.cc:152
+msgid "Use this terminal as the debugee's terminal"
+msgstr "Bu uçbirimi hatası ayıklanan programın uçbirimi olarak kullan"
+
+#: ../src/main.cc:161
+msgid "Connect to remote target specified by HOST:PORT"
+msgstr "HOST:PORT ile belirtilen uzak hedefe bağlan"
+
+#: ../src/main.cc:170
+msgid ""
+"Where to look for shared libraries loaded by the inferior. Use in "
+"conjunction with --remote"
+msgstr ""
+"Ast tarafından yüklenmiş paylaşılan kütüphanelerin aranacağı yer. --remote "
+"ile birlikte kullanın."
+
+#: ../src/main.cc:180
+msgid "Set the path of the GDB binary to use to debug the inferior"
+msgstr ""
+"Astın hatasını ayıklamak için kullanılacak GDB ikili kodunun yolunu ayarla"
+
+#: ../src/main.cc:189
+msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
+msgstr "'main' içinde kesme noktası ayarlama ve astı da çalıştırma"
+
+#: ../src/main.cc:198
+msgid "Show the version number of Nemiver"
+msgstr "Nemiver sürüm numarasını göster"
+
+#: ../src/main.cc:264
+msgid " [<prog-to-debug> [prog-args]]"
+msgstr " [<hataları-ayıklanaca-program> [program-değiştirgeleri]]"
+
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
+msgid "A C/C++ debugger for GNOME"
+msgstr "GNOME için C/C++ hata ayıklayıcısı"
+
+#: ../src/main.cc:361
+msgid ""
+"Please provide a local copy of the binary you intend to debug remotely.\n"
+"Like this:\n"
+msgstr ""
+"Lütfen uzaktan hatalarını ayıklamak istediğiniz ikili kodun yerel bir "
+"kopyasını sağlayın.\n"
+"Bunun gibi:\n"
+
+#: ../src/main.cc:366 ../src/main.cc:385
+msgid "Otherwise, find below the full set of Nemiver options.\n"
+msgstr "Aksi halde, Nemiver seçeneklerinin tamamını aşağıda bulabilrisiniz.\n"
+
+#: ../src/main.cc:380
+msgid ""
+"Please provide the path to the binary that generated the core file too.\n"
+"Like this:\n"
+msgstr ""
+"Lütfen çekirdek dosyasını oluşturan ikili kodun yolunu da sağlayın.\n"
+"Bunun gibi:\n"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
+msgid "ID"
+msgstr "ID"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-file-list.cc:108
+msgid "File Name"
+msgstr "Dosya Adı"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
+msgid "Line"
+msgstr "Satır"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
+msgid "Function"
+msgstr "Fonksiyon"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
+msgid "Address"
+msgstr "Adres"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:153
+msgid "Condition"
+msgstr "Koşul"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
+msgid "Toggle countpoint"
+msgstr "Sayım noktasını aç/kapat"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
+msgid "Type"
+msgstr "Tür"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
+msgid "Hits"
+msgstr "İsabetler"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
+msgid "Expression"
+msgstr "İfade"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
+msgid "Ignore count"
+msgstr "Sayıyı gözardı et"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:348
+msgid "breakpoint"
+msgstr "kesme noktası"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:352
+msgid "watchpoint"
+msgstr "izleme noktası"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:355
+msgid "countpoint"
+msgstr "sayma noktası"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:358
+msgid "unknown"
+msgstr "bilinmiyor"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
+msgid "_Delete"
+msgstr "_Sil"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
+msgid "Remove this breakpoint"
+msgstr "Bu kesme noktasını kaldır"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
+msgid "_Go to Source"
+msgstr "Kaynağa _Git"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
+msgid "Find this breakpoint in the source editor"
+msgstr "Bu kesme noktasını kaynak düzenleyicisinde bul"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:177
+#: ../src/uicommon/nmv-terminal.cc:173
+msgid "_Copy"
+msgstr "_Kopyala"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:178
+msgid "Copy the call stack to the clipboard"
+msgstr "Çağrı yığıtını panoya kopyala"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+msgid "Frame"
+msgstr "Çerçeve"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
+msgid "Arguments"
+msgstr "Bağımsız Değişkenler"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
+msgid "Location"
+msgstr "Konum"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
+msgid "Binary"
+msgstr "İkilik"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
+#, c-format
+msgid "(Click here to see the next %d row of the call stack"
+msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgstr[0] "(Çağrı yığıtının sonraki %d satırını görmek için buraya tıklayın)"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
+msgid "Function Name"
+msgstr "Fonksiyon Adı"
+
+#. labels for widget tabs in the status notebook
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+msgid "Context"
+msgstr "Bağlam"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
+msgid "Target Terminal"
+msgstr "Hedef Uçbirim"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
+msgid "Breakpoints"
+msgstr "Kesme noktaları"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
+msgid "Registers"
+msgstr "Yazmaçlar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
+msgid "Memory"
+msgstr "Bellek"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:123
+msgid "Expression Monitor"
+msgstr "İfade İzleyici"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1727
+msgid "Reached end of file"
+msgstr "Dosya sonuna ulaşıldı"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1730
+#, c-format
+msgid "Could not find string %s"
+msgstr "%s dizgesi bulunamadı"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2114
+msgid "Change to Standard Breakpoint"
+msgstr "Standart Kesme Noktasına Dönüştür"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
+msgid "Change to Countpoint"
+msgstr "Sayım Noktasına Dönüştür"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2119
+msgid "Remove _Breakpoint"
+msgstr "_Kesme Noktasını Kaldır"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2122
+msgid "Disable Breakpoint"
+msgstr "Kesme Noktasını Kapat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2124
+msgid "Enable Breakpoint"
+msgstr "Kesme Noktasını Etkinleştir"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2127
+msgid "Set _Breakpoint"
+msgstr "_Kesme Noktası Koy"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2129
+msgid "Set Countpoint"
+msgstr "Sayım Noktası Koy"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2292
+#, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "%s (yol=\"%s\", pid=%i)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2306
+msgid "Connected to remote target!"
+msgstr "Uzaktaki hedefe bağlanıldı!"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2463
+msgid "Program exited"
+msgstr "Programdan çıkıldı"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2493
+msgid "The underlying debugger engine process died."
+msgstr "Altta yatan hata ayıklayıcı motor süreci sonlandı."
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2581
+#, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "Hedef bir sinyal aldı: %s, %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2596
+#, c-format
+msgid "An error occurred: %s"
+msgstr "Bir hata oluştu: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2759
+#, c-format
+msgid "File %s has been modified. Do you want to reload it?"
+msgstr "%s dosyası değiştirilmiş. Yeniden yüklemek ister misiniz?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3128
+msgid "_Run or Restart"
+msgstr "_Çalıştır ya da Yeniden Başlat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3129
+msgid "Run or Restart the target"
+msgstr "Hedefi çalıştır ya da yeniden başlat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3141
+msgid "_Detach From the Running Program"
+msgstr "_Çalışan Programı Bırak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3142
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr "Hata ayıklayıcıyı çalışan hedeften hedefi sonlandırmadan ayır"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3157
+msgid "_Save Session to Disk"
+msgstr "Oturumu Di_ske Kaydet"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3158
+msgid "Save the current debugging session to disk"
+msgstr "Mevcut hata ayıklama oturumunu diske kaydet"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3167
+msgid "Set Breakpoint with Dialog..."
+msgstr "İletişim Penceresiyle Kesme Noktası Koy..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3168
+msgid "Set a breakpoint at the current line using a dialog"
+msgstr "Geçerli satıra iletişim penceresi kullanarak bir kesme noktası koy"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3179
+msgid "Set Breakpoint..."
+msgstr "Kesme Noktası Koy..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3180
+msgid "Set a breakpoint at a function or line number"
+msgstr "Bir fonksiyona ya da satır numarasına kesme nokatsı koy"
+
+#. Depending on the context we will want this string to be
+#. either "Set Breakpoint", or "Remove Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3196
+msgid "Toggle _Breakpoint"
+msgstr "_Kesme Nokatsını Aç/Kapat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3197
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "Geçerli imleç konumuna bir kesme noktası koy/kaldır"
+
+#. Depending on the context we will want this string to be
+#. either "Enable Breakpoint", or "Disable
+#. Breakpoint". Hence this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3214
+msgid "Enable/Disable Breakpoint"
+msgstr "Kesme Noktasını Etkinleştir/Kapat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3215
+msgid ""
+"Enable or disable the breakpoint that is set at the current cursor location"
+msgstr ""
+"Geçerli imleç konumuna konmuş olan kesme noktasını etkinleştir ya da kapat"
+
+#. Depending on the context we will want this string to be
+#. either "Set Countpoint", or "Change to Countpoint", or
+#. "Change to Standard Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3235
+msgid "Toggle _Countpoint"
+msgstr "Sayma Noktasını A_ç/Kapat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3236
+msgid "Set/Unset a countpoint at the current cursor location"
+msgstr "Geçerli imleç konumuna bir sayma noktası koy/kaldır"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3246
+msgid "Set Watchpoint with Dialog..."
+msgstr "İletişim Penceresi ile İzleme Noktası Koy..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3247
+msgid "Set a watchpoint using a dialog"
+msgstr "İletişim penceresi kullanarak bir izleme noktası koy"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
+msgid "_Next"
+msgstr "So_nraki"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
+msgid "Execute next line stepping over the next function, if any"
+msgstr ""
+"Eğer varsa, sonraki fonksiyonun üzerinden atlayarak sonraki satırı icra et"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3272
+msgid "_Step"
+msgstr "_Adımla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
+msgid "Execute next line, stepping into the next function, if any"
+msgstr "Eğer varsa, sonraki fonksiyonun içine girerek sonraki satırı icra et"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3282
+msgid "Step _Out"
+msgstr "Dışa _Adımla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3283
+msgid "Finish the execution of the current function"
+msgstr "Geçerli fonksiyonun icrasını bitir"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3292
+msgid "Step Into asm"
+msgstr "asm'ye Adımla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3293
+msgid "Step into the next assembly instruction"
+msgstr "Sonraki assembly komutuna adımla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3302
+msgid "Step Over asm"
+msgstr "asm'nin Üzerinden Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3303
+msgid "Step over the next assembly instruction"
+msgstr "Sonraki assembly komutunun üzerinden geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3312
+msgid "_Continue or start"
+msgstr "_Devam et ya da başla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3313
+msgid "Start or continue program execution until the next breakpoint"
+msgstr ""
+"Program icrasını sonraki kesme noktasına kadar devam ettir ya da başlat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3322
+msgid "Run to Cursor"
+msgstr "İmlece Kadar Çalıştır"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3323
+msgid "Continue program execution until the currently selected line is reached"
+msgstr "Seçili olan satıra ulaşılana kadar programın icrasına devam et"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3333
+msgid "Jump to Cursor"
+msgstr "İmlece Atla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3334
+msgid "Jump to the currently selected line"
+msgstr "Seçili satıra atla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3344
+msgid "Jump and Stop to Cursor"
+msgstr "İmlece Atla ve Dur"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3345
+msgid "Sets a breakpoint to the currently selected line and jump there"
+msgstr "Seçili satıra kesme noktası koyar ve oraya atlar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
+msgid "Jump to a Given Location"
+msgstr "Verilen Bir Konuma Atla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3358
+msgid "Select a given code location and jump there"
+msgstr "Verilen bir kod konumunu seç ve oraya atla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3369
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
+msgid "Inspect an Expression"
+msgstr "İfadeyi İncele"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3370
+msgid "Inspect a global or local expression"
+msgstr "Genel ya da yerel bir ifadeyi incele"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3380
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
+msgid "Call a Function"
+msgstr "Fonksiyon Çağır"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3381
+msgid "Call a function in the program being debugged"
+msgstr "Hata ayıklaması yapılmakta olan programdaki bir fonksiyonu çağır"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3390
+msgid "Show Global Variables"
+msgstr "Genel Değişkenleri Göster"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3391
+msgid "Display all global variables"
+msgstr "Tüm genel değişkenleri görüntüle"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
+msgid "Refresh Locals"
+msgstr "Yerelleri Tazele"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3402
+msgid "Refresh the list of variables local to the current function"
+msgstr "Geçerli fonksiyonun yerel değişkenler listesini tazele"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3411
+msgid "Show Assembly"
+msgstr "Assembly Göster"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3412
+msgid ""
+"Show the assembly code of the source code being currently debugged, in "
+"another tab"
+msgstr ""
+"Hata ayıklaması yapılmakta olan kaynak kodun assembly kodunu başka bir "
+"sekmede göster"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3424
+msgid "Switch to Assembly"
+msgstr "Assembly'e Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
+msgid "Show the assembly code of the source code being currently debugged"
+msgstr "Hata ayıklaması yapılmakta olan kaynak kodun assembly kodunu göster"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3437
+msgid "Switch to Source"
+msgstr "Kaynağa Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3438
+msgid "Show the source code being currently debugged"
+msgstr "Hata ayıklaması yapılmakta olan kaynak kodu göster"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3450
+msgid "Stop"
+msgstr "Durdur"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3451
+msgid "Stop the debugger"
+msgstr "Hata ayıklayıcıyı durdur"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3463
+msgid "_View"
+msgstr "_Görünüm"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3474
+msgid "Switch to Target Terminal View"
+msgstr "Hedef Uçbirim Görünümüne Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3485
+msgid "Switch to Context View"
+msgstr "Bağlam Görünümüne Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3496
+msgid "Switch to Breakpoints View"
+msgstr "Kesme Noktaları Görünümüne Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3507
+msgid "Switch to Registers View"
+msgstr "Yazmaçlar Görünümüne Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3519
+msgid "Switch to Memory View"
+msgstr "Bellek Görünümüne Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3530
+msgid "Switch to Variables Monitor View"
+msgstr "Değişken İzleyici Görünümüne Geç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3539
+msgid "_Debug"
+msgstr "_Hata Ayıkla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3549
+msgid "_Open Source File..."
+msgstr "Kaynak D_osyasını Aç..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3550
+msgid "Open a source file for viewing"
+msgstr "Kaynak dosyasını görüntülemek için aç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+msgid "Load _Executable..."
+msgstr "Yürütülür Yükl_e..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3560
+msgid "Execute a program"
+msgstr "Programı yürüt"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3570
+msgid "_Load Core File..."
+msgstr "Çekirdek Dosyası Yük_le..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3571
+msgid "Load a core file from disk"
+msgstr "Diskten bir çekirdek dosyası yükle"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3581
+msgid "_Attach to Running Program..."
+msgstr "Ç_alışan Programa Bağlan..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3582
+msgid "Debug a program that's already running"
+msgstr "Zaten çalışmakta olan bir programın hatalarını ayıkla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3592
+msgid "_Connect to Remote Target..."
+msgstr "Uzak Hedefe Ba_ğlan..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3593
+msgid "Connect to a debugging server to debug a remote target"
+msgstr ""
+"Uzaktaki bir hedefin hatalarını ayıklamak için bir hata ayıklama sunucusuna "
+"bağlan"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3604
+msgid "Resume Sa_ved Session..."
+msgstr "Kaydedilmiş Oturumu De_vam Ettir..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3605
+msgid "Open a previously saved debugging session"
+msgstr "Daha önce kaydedilmiş bir hata ayıklama oturumunu aç"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3615
+msgid "_Preferences"
+msgstr "_Tercihler"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3616
+msgid "Edit the properties of the current session"
+msgstr "Geçerli oturumun özelliklerini düzenle"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3630
+msgid "_Copy selected text"
+msgstr "Se_çili metni kopyala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3631
+msgid "Copy the text selected in the current source file"
+msgstr "Geçerli kaynak dosyasındaki seçili metni kopyala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3640
+msgid "_Reload Source File"
+msgstr "Kaynak Dosyasını Yeniden Y_ükle"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3641
+msgid "Reloads the source file"
+msgstr "Kaynak dosyasını yeniden yükler"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3650
+msgid "_Close Source File"
+msgstr "Kaynak Dosyasını _Kapat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3651
+msgid "Close the opened file"
+msgstr "Açık dosyayı kapat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
+msgid "_Find"
+msgstr "_Bul"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3661
+msgid "Find a text string in file"
+msgstr "Dosyadaki bir metin dizgesini bul"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3996
+#, c-format
+msgid "Close %s"
+msgstr "%s'i Kapat"
+
+#. We cannot restart an inferior running on a remote target at
+#. the moment.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5958
+msgid "Sorry, it's impossible to restart a remote inferior"
+msgstr "Üzgünüm, uzaktaki astı yendien başlatmak mümkün değil"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6094
+#, c-format
+msgid "Could not find file %s"
+msgstr "%s dosyası bulunamadı"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6156
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6299
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6334
+#, c-format
+msgid "Could not load program: %s"
+msgstr "Program yüklenemedi: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6228
+msgid "You cannot attach to Nemiver itself"
+msgstr "Nemiver'in kendisine bağlanamazsınız"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6241
+msgid "You cannot attach to the underlying debugger engine"
+msgstr "Altta yatan hata ayıklama motoruna bağlanamazsınız"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6536
+msgid "Failed to stop the debugger"
+msgstr "Hata ayıklayıcı durdurulamadı"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6780
+#, c-format
+msgid "Invalid line number: %i"
+msgstr "Geçersiz satır numarası: %i"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8389
+#, c-format
+msgid ""
+"There is a program being currently debugged. Do you really want to exit from "
+"the debugger?"
+msgstr ""
+"Hataları ayıklanmakta olan bir program var. Gerçekten hata ayıklayıcıdan "
+"çıkmak mı istiyorsunuz?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
+msgid "Default Layout"
+msgstr "Öntanımlı Düzen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
+msgid "Nemiver's default layout"
+msgstr "Nemiver'in öntanımlı düzeni"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
+msgid "Source Code"
+msgstr "Kaynak Kod"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
+msgid "Dynamic Layout"
+msgstr "Dinamik Düzen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
+msgid "A layout which can be modified"
+msgstr "Değiştirilebilir bir düzen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
+msgid "Two Status Pane"
+msgstr "İki Durum Bölmesi"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
+msgid "A layout with two status pane"
+msgstr "İki durum bölmeli bir düzen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
+msgid "Wide Layout"
+msgstr "Geniş Düzen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
+msgid "A layout for very large monitors"
+msgstr "Çok geniş monitörler için bir düzen"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:128
+msgid "Expand _Selected"
+msgstr "_Seçileni Genişlet"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:134
+msgid "Expand _All"
+msgstr "T_ümünü Genişlet"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:144
+msgid "_Collapse"
+msgstr "_Daralt"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:427
+msgid "Loading files from target executable..."
+msgstr "Yürütülür hedeften dosyalar yükleniyor..."
+
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
+msgstr ""
+"Değişken türü:\n"
+" %s"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
+msgid "Local Variables"
+msgstr "Yerel Değişkenler"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
+msgid "Function Arguments"
+msgstr "Fonksiyonun Bağımsız Değişkenleri"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
+msgid "_Copy Variable Name"
+msgstr "De_ğişken Adını Kopyala"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
+msgid "Copy the variable path expression to the clipboard"
+msgstr "Değişken yolu ifadesini panoya kopyala"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
+msgid "_Copy Variable Value"
+msgstr "De_ğişken Değerini Kopyala"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
+msgid "Copy the variable value to the clipboard"
+msgstr "Değişken değerini panoya kopyala"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
+msgid "Create Watchpoint"
+msgstr "İzleme Noktası Oluştur"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
+msgid ""
+"Create a watchpoint that triggers when the value of the expression changes"
+msgstr "İfadenin değeri değiştiği zaman tetiklenen bir izleme noktası oluştur"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:49
+msgid "Byte"
+msgstr "Bayt"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:52
+msgid "Word"
+msgstr "Sözcük"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:55
+msgid "Long Word"
+msgstr "Uzun Sözcük"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:98
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
+msgid "Address:"
+msgstr "Adres:"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:100
+msgid "Show"
+msgstr "Göster"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:103
+msgid "Group By:"
+msgstr "Şuna Göre Grupla:"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
+msgid "Choose a Directory"
+msgstr "Dizin Seç"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "Kaynak Dizinleri"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
+msgid "User Name"
+msgstr "Kullanıcı Adı"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
+msgid "Proc Args"
+msgstr "İşl Değş"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
+msgid "Name"
+msgstr "İsim"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:102
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
+msgid "Value"
+msgstr "Değer"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
+msgid "Session"
+msgstr "Oturum"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
+msgid "Throw Exception"
+msgstr "İstisna Oluştur"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
+msgid "Catch Exception"
+msgstr "İstisna Yakala"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
+msgid "Fork System Call"
+msgstr "Fork Sistem Çağrısı"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
+msgid "Vfork System Call"
+msgstr "Vfork Sistem Çağrısı"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
+msgid "Exec System Call"
+msgstr "Exec Sistem Çağrısı"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:184
+msgid "Thread ID"
+msgstr "İzlek Kimliği"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
+msgid "Variable"
+msgstr "Değişken"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
+msgid "In scope expressions"
+msgstr "Kapsam içi ifadeler"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
+msgid "Out of scope expressions"
+msgstr "Kapsam dışı ifadeler"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
+msgid "Remove"
+msgstr "Kaldır"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
+msgid "Remove selected expressions from the monitor"
+msgstr "Seçili ifadeleri izleyiciden çıkart"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
+msgid "New..."
+msgstr "Yeni..."
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
+msgid "Add a new expression to the monitor"
+msgstr "İzleyiciye yeni bir ifade ekle"
+
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "Call a function:"
+msgstr "Fonksiyon çağır:"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "Kesme Noktası Koy"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+msgid "Choose Overloaded Function"
+msgstr "Aşırı Yüklenmiş Fonksiyon Seç"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+msgid ""
+"Multiple functions match the specified name. Please choose one from the list "
+"below."
+msgstr ""
+"Belirtilen adda birden fazla fonksiyon var. Lütfen aşağıdaki listeden bir "
+"tanesini seçin."
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
+msgid "Find Text"
+msgstr "Metin Bul"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
+msgid "_Search:"
+msgstr "_Ara:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "Match Options:"
+msgstr "Eşleştirme Seçenekleri:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "B_üyük/küçük harf eşleştir"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "Sadece bütün sözcüğü _eşleştir"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "Cycling Options:"
+msgstr "Döngü Seçenekleri:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+msgid "_Wrap around"
+msgstr "_Başa dön"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "_Geriye doğru ara"
+
+#: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
+msgid "Global Variables"
+msgstr "Genel Değişkenler"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
+msgid "Choose a Core File to Debug"
+msgstr "Hata Ayıklama için Çekirdek Dosyası Seç"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
+msgid "Select a Core File"
+msgstr "Çekirdek Dosyası Seç"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "Core File:"
+msgstr "çekirdek Dosyası:"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+msgid "Select the executable that created the core file"
+msgstr "Çekirdek dosyasını oluşturan yürütülürü seç"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "Executable:"
+msgstr "Yürütülür:"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
+msgid "Open Source Files"
+msgstr "Kaynak Dosyalarını Aç"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "Hedef Yürü_tülürden Seç"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
+msgid "Select from _File System"
+msgstr "_Dosya Sisteminden Seç"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
+msgid "Choose Source Files to Open"
+msgstr "Açmak Kaynak Dosyaları Seç"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
+msgid "Preferences"
+msgstr "Tercihler"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
+msgid "Use system monospace font"
+msgstr "Sistem sabit genişlikli yazı tipini kullan"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "Özel Yazı Tipi:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "Editor Font"
+msgstr "Düzenleyici Yazı Tipi"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+msgid "Visual Style"
+msgstr "Görsel Tarz"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+msgid "Display line numbers"
+msgstr "Satır numaralarını göster"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "Line Numbers"
+msgstr "Satır Numaraları"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr "Çalıştırma uçbirimini kullan"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+msgid "Terminal"
+msgstr "Uçbirim"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "When a source file is changed:"
+msgstr "Bir kaynak dosyası değiştiğinde:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "Dosyayı yeniden yükle"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+msgid "Do not reload the file"
+msgstr "Dosyayı yeniden yükleme"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+msgid "Ask each time"
+msgstr "Her zaman sor"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+msgid "File Monitoring"
+msgstr "Dosya İzleme"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Enable syntax highlighting"
+msgstr "Sözdizimi vurgulamayı etkinleştir"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "Syntax Highlighting"
+msgstr "Sözdizimi Vurgulama"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "Düzenleyici"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Update at each stop"
+msgstr "Her duruşta güncelle"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Local variables"
+msgstr "Yerel değişkenler"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "Pure assembly"
+msgstr "Salt assembly"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "Mixed source and assembly"
+msgstr "Kaynak ve assembly karışımı"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+msgid "Assembly style"
+msgstr "Assembly tarzı"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Assembly flavor"
+msgstr "Assembly tadında"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
+msgid "Choose a File"
+msgstr "Dosya Seç"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+msgid "Path to the GDB binary used"
+msgstr "Kullanılan GDB ikiliğinin yolu"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+msgid "GDB Binary"
+msgstr "GDB İkiliği"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+msgid "Number of instructions to disassemble by default"
+msgstr "Öntanımlı olarak parçalarına ayrılacak komut sayısı"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+msgid "Instructions"
+msgstr "Komutlar"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr ""
+"Güzel yazdırmayı etkinleştir (hata ayıklayıcının yendien başlatılmasını "
+"gerektirir)"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+msgid "GDB Pretty Printing"
+msgstr "GDB Güzel Yazdırma"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+msgid "Follow parent"
+msgstr "Ebeveyni izle"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+msgid "Follow child"
+msgstr "Çocuğu izle"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+msgid "GDB Follow Fork Mode"
+msgstr "GDB Çatal İzleme Kipi"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
+msgid "Debugger"
+msgstr "Hata Ayıklayıcı"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
+msgid "Layout"
+msgstr "Düzen"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
+msgid "Attach to a Running Program"
+msgstr "Çalışan Bir Programa Bağlan"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "Choose a Process to Debug"
+msgstr "Hatalarını Ayıklamak İçin Bir Süreç Seçin"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
+msgid "_Filter list:"
+msgstr "S_üzgeç listesi:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "Uzak Hedefe Bağlan"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+msgid "Executable to Load"
+msgstr "Yüklenecek Yürütülür"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "Shared Libraries Location"
+msgstr "Paylaşılan Kütüphanelerin Konumu"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
+msgid "Remote Debugging Server"
+msgstr "Uzak Hata Ayıklama Sunucusu"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
+msgid "TCP/IP Connection"
+msgstr "TCP/IP Bağlantısı"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
+msgid "Port:"
+msgstr "Port:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
+msgid "Serial Line Connection"
+msgstr "Seri Hat Bağlantısı"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
+msgid "Choose a Program to Execute"
+msgstr "Yürütülecek Program Seç"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
+msgid "Choose an Executable"
+msgstr "Yürütülür Seç"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
+msgid "Program:"
+msgstr "Program:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
+msgid "Arguments:"
+msgstr "Bağımsız Değişkenler:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
+msgid "Choose a Working Directory"
+msgstr "Çalışma Dizini Seç"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "Working Directory:"
+msgstr "Çalışma Dizini:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
+msgid "_Add"
+msgstr "_Ekle"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+msgid "_Remove"
+msgstr "Kaldı_r"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "Environment Variables:"
+msgstr "Çevresel Değişkenler:"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
+msgid "Saved Sessions"
+msgstr "Kaydedilmiş Oturumlar"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "Choose a Session to Debug"
+msgstr "Hatalarını Ayıklamak İçin Oturum Seç"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+msgid "Set a Breakpoint:"
+msgstr "Kesme Noktası Koy:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
+msgid "Condition:"
+msgstr "Koşul:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
+msgid "_Event:"
+msgstr "_Olay:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
+msgid "_Binary Location:"
+msgstr "_İkilik Konumu:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
+msgid "_Source Location:"
+msgstr "_Kaynak Konumu:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
+msgid "F_unction Name:"
+msgstr "F_onksiyon Adı:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+msgid "File name:"
+msgstr "Dosya adı:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
+msgid "Function:"
+msgstr "Fonksiyon:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Line:"
+msgstr "Satır:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+msgid "Set as Countpoint"
+msgstr "Sayma Noktası Koy"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
+msgid "Set Location to Jump To"
+msgstr "Atlama Noktası Koy"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "Jump to location:"
+msgstr "Konuma atla:"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at Destination"
+msgstr "Hedefte Kes"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
+msgid "Add to monitor"
+msgstr "izleyiciye ekle"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
+msgid "_Variable Name:"
+msgstr "_Değişken Adı:"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
+msgid "_Inspect"
+msgstr "_İncele"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
+msgid "Set a watchpoint:"
+msgstr "İzleme noktası koy:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
+msgid "Expression:"
+msgstr "İfade:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "İncele"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
+msgid "Triggers on:"
+msgstr "Tetikleyicisi:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "Read"
+msgstr "Okuma"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
+msgid "Write"
+msgstr "Yazma"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:65
+#, c-format
+msgid "Select Location for %s"
+msgstr "%s için Konum Seç"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:75
+#, c-format
+msgid ""
+"Cannot find file '%s'.\n"
+"Please specify the location of this file:"
+msgstr ""
+"'%s' dosyası bulunamıyor.\n"
+"Lütfen dosyanın konumunu belirtin:"
+
+#: ../src/uicommon/nmv-source-editor.cc:645
+#, c-format
+msgid "Line: %i, Column: %i"
+msgstr "Satır: %i, Sütun: %i"
+
+#: ../src/uicommon/nmv-source-editor.cc:1473
+#, c-format
+msgid "Could not load file %s because its encoding is different from %s"
+msgstr "%s dosyası, kodlaması %s'den farklı olduğu için yüklenemedi"
+
+#: ../src/uicommon/nmv-terminal.cc:174
+msgid "Copy the selection"
+msgstr "Seçimi kopyala"
+
+#: ../src/uicommon/nmv-terminal.cc:180
+msgid "_Paste"
+msgstr "Ya_pıştır"
+
+#: ../src/uicommon/nmv-terminal.cc:181
+msgid "Paste the clipboard"
+msgstr "Panodan yapıştır"
+
+#: ../src/uicommon/nmv-terminal.cc:187
+msgid "_Reset"
+msgstr "Sıfı_rla"
+
+#: ../src/uicommon/nmv-terminal.cc:188
+msgid "Reset the terminal"
+msgstr "Uçbirimi sıfırla"
+
+#: ../src/uicommon/nmv-ui-utils.cc:91
+msgid "Do not ask me again"
+msgstr "Bir daha sorma"
+
+#: ../src/workbench/nmv-workbench.cc:263
+msgid "Project Website"
+msgstr "Projenin Web Sitesi"
+
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:283
+msgid "translator-credits"
+msgstr "Muhammet Kara <muhammetk@gmail.com>"
+
+#: ../src/workbench/nmv-workbench.cc:661
+msgid "_File"
+msgstr "_Dosya"
+
+#: ../src/workbench/nmv-workbench.cc:672
+msgid "_Quit"
+msgstr "_Çıkış"
+
+#: ../src/workbench/nmv-workbench.cc:673
+msgid "Quit the application"
+msgstr "Uygulamadan çık"
+
+#: ../src/workbench/nmv-workbench.cc:683
+msgid "_Edit"
+msgstr "Düz_enle"
+
+#: ../src/workbench/nmv-workbench.cc:694
+msgid "_Help"
+msgstr "_Yardım"
+
+#: ../src/workbench/nmv-workbench.cc:705
+msgid "_About"
+msgstr "H_akkında"
+
+#: ../src/workbench/nmv-workbench.cc:706
+msgid "Display information about this application"
+msgstr "Bu uygulama hakkındaki bilgileri göster"
+
+#: ../src/workbench/nmv-workbench.cc:716
+msgid "_Contents"
+msgstr "İ_çindekiler"
+
+#: ../src/workbench/nmv-workbench.cc:717
+msgid "Display the user manual for this application"
+msgstr "Bu uygulamanın kullanıcı kılavuzunu göster"
+
+#. end extern C
+#: ../ui/locatefiledialog.ui.h:1
+msgid "Select File Location"
+msgstr "Dosya Konumu Seç"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "Locate File"
+msgstr "Dosyanın Yerini Belirle"
