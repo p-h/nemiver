@@ -54,7 +54,7 @@ on_stopped_signal (IDebugger::StopReason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
                    int,
-                   int,
+                   const string &,
                    const UString&,
                    IDebuggerSafePtr a_debugger)
 {

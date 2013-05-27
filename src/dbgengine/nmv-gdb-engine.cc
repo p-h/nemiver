@@ -210,7 +210,7 @@ public:
     list<Command> queued_commands;
     list<Command> started_commands;
     bool line_busy;
-    map<int, IDebugger::Breakpoint> cached_breakpoints;
+    map<string, IDebugger::Breakpoint> cached_breakpoints;
     enum InBufferStatus {
         DEFAULT,
         FILLING,
@@ -267,11 +267,11 @@ public:
     mutable sigc::signal<void> inferior_re_run_signal;
 
     mutable sigc::signal<void,
-                         const map<int, IDebugger::Breakpoint>&,
+                         const map<string, IDebugger::Breakpoint>&,
                          const UString&> breakpoints_list_signal;
 
     mutable sigc::signal<void,
-                         const std::map<int, IDebugger::Breakpoint>&,
+                         const std::map<string, IDebugger::Breakpoint>&,
                          const UString& /*cookie*/> breakpoints_set_signal;
 
     mutable sigc::signal<void,
@@ -280,7 +280,7 @@ public:
 
     mutable sigc::signal<void,
                          const IDebugger::Breakpoint&,
-                         int,
+                         const string&,
                          const UString&> breakpoint_deleted_signal;
 
     mutable sigc::signal<void, const IDebugger::Breakpoint&, int>
@@ -291,7 +291,7 @@ public:
 
     mutable sigc::signal<void, IDebugger::StopReason,
                          bool, const IDebugger::Frame&,
-                         int, int, const UString&> stopped_signal;
+                         int, const string&, const UString&> stopped_signal;
 
     mutable sigc::signal<void,
                          const list<int>,
@@ -1235,7 +1235,7 @@ public:
                             bool a_has_frame,
                             const IDebugger::Frame &,
                             int,
-                            int,
+                            const string&,
                             const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -1535,7 +1535,7 @@ struct OnBreakpointHandler: OutputHandler {
             // We are getting this reply b/c we did set a breakpoint;
             // be aware that sometimes GDB can actually set multiple
             // breakpoints as a result.
-            const map<int, IDebugger::Breakpoint> &bps =
+            const map<string, IDebugger::Breakpoint> &bps =
                 a_in.output ().result_record ().breakpoints ();
 
             Command &c = a_in.command ();
@@ -1561,10 +1561,10 @@ struct OnBreakpointHandler: OutputHandler {
             tmp = tmp.erase (0, 13);
             if (tmp.size () == 0) {return;}
             tmp.chomp ();
-            int bkpt_number = atoi (tmp.c_str ());
-            if (bkpt_number) {
-                map<int, IDebugger::Breakpoint>::iterator iter;
-                map<int, IDebugger::Breakpoint> &breaks =
+            string bkpt_number = tmp;
+            if (!bkpt_number.empty ()) {
+                map<string, IDebugger::Breakpoint>::iterator iter;
+                map<string, IDebugger::Breakpoint> &breaks =
                                         m_engine->get_cached_breakpoints ();
                 iter = breaks.find (bkpt_number);
                 if (iter != breaks.end ()) {
@@ -1577,7 +1577,7 @@ struct OnBreakpointHandler: OutputHandler {
             } else {
                 LOG_ERROR ("Got deleted breakpoint number '"
                            << tmp
-                           << "', but that's not a well formed number dude.");
+                           << "', but that's not a well formed number, dude.");
             }
         } else if (has_breaks) {
             LOG_DD ("firing IDebugger::breakpoints_list_signal(), after command: "
@@ -1644,7 +1644,7 @@ struct OnStoppedHandler: OutputHandler {
                 << "Cookie was '" << a_in.command ().cookie () << "'");
 
         int thread_id = m_out_of_band_record.thread_id ();
-        int breakpoint_number = -1;
+        string breakpoint_number;
         IDebugger::StopReason reason = m_out_of_band_record.stop_reason ();
         if (reason == IDebugger::BREAKPOINT_HIT
             || reason == IDebugger::WATCHPOINT_SCOPE)
@@ -1792,10 +1792,10 @@ struct OnCommandDoneHandler : OutputHandler {
         m_engine (a_engine)
     {}
 
-    bool flag_breakpoint_as_countpoint (int a_break_num,
+    bool flag_breakpoint_as_countpoint (const string& a_break_num,
                                         bool a_yes)
     {
-        typedef map<int, IDebugger::Breakpoint> BPMap;
+        typedef map<string, IDebugger::Breakpoint> BPMap;
         BPMap &bp_cache = m_engine->get_cached_breakpoints ();
         BPMap::const_iterator nil = bp_cache.end ();
 
@@ -1848,9 +1848,9 @@ struct OnCommandDoneHandler : OutputHandler {
         if (a_in.command ().name () == "enable-countpoint"
             || a_in.command ().name () == "disable-countpoint") {
             if (a_in.command ().name () == "enable-countpoint") {
-                flag_breakpoint_as_countpoint (a_in.command ().tag2 (), true);
+                flag_breakpoint_as_countpoint (a_in.command ().tag0 (), true);
             } else if (a_in.command ().name () == "disable-countpoint") {
-                flag_breakpoint_as_countpoint (a_in.command ().tag2 (), false);
+                flag_breakpoint_as_countpoint (a_in.command ().tag0 (), false);
             }
 
             m_engine->breakpoints_list_signal ().emit
@@ -3618,20 +3618,20 @@ GDBEngine::inferior_re_run_signal () const
     return m_priv->inferior_re_run_signal;
 }
 
-sigc::signal<void, const IDebugger::Breakpoint&, int, const UString&>&
+sigc::signal<void, const IDebugger::Breakpoint&, const string&, const UString&>&
 GDBEngine::breakpoint_deleted_signal () const
 {
     return m_priv->breakpoint_deleted_signal;
 }
 
-sigc::signal<void, const map<int, IDebugger::Breakpoint>&, const UString&>&
+sigc::signal<void, const map<string, IDebugger::Breakpoint>&, const UString&>&
 GDBEngine::breakpoints_list_signal () const
 {
     return m_priv->breakpoints_list_signal;
 }
 
 sigc::signal<void,
-             const std::map<int, IDebugger::Breakpoint>&,
+             const std::map<string, IDebugger::Breakpoint>&,
              const UString& /*cookie*/>&
 GDBEngine::breakpoints_set_signal () const
 {
@@ -3646,7 +3646,7 @@ GDBEngine::got_overloads_choice_signal () const
 
 sigc::signal<void, IDebugger::StopReason,
              bool, const IDebugger::Frame&,
-             int, int, const UString&>&
+             int, const string&, const UString&>&
 GDBEngine::stopped_signal () const
 {
     return m_priv->stopped_signal;
@@ -3914,17 +3914,12 @@ GDBEngine::on_got_target_info_signal (int a_pid, const UString &a_exe_path)
 
 void
 GDBEngine::on_stopped_signal (IDebugger::StopReason a_reason,
-                              bool a_has_frame,
-                              const IDebugger::Frame &a_frame,
-                              int a_thread_id,
-                              int a_bkpt_num,
-                              const UString &a_cookie)
+                              bool /*a_has_frame*/,
+                              const IDebugger::Frame &/*a_frame*/,
+                              int /*a_thread_id*/,
+                              const string& /*a_bkpt_num*/,
+                              const UString &/*a_cookie*/)
 {
-    if (a_has_frame || a_frame.line ()
-        || a_thread_id || a_cookie.empty ()
-        || a_bkpt_num) {
-        //keep compiler happy
-    }
 
     NEMIVER_TRY
 
@@ -4682,15 +4677,14 @@ GDBEngine::set_breakpoint (const Address &a_address,
 /// IDebugger::breakpoints_set_signal will be dropped.  We in a
 /// transitional period at the moment.
 void
-GDBEngine::enable_breakpoint (gint a_break_num,
+GDBEngine::enable_breakpoint (const string &a_break_num,
                               const BreakpointsSlot &a_slot,
                               const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     
     Command command ("enable-breakpoint",
-                     "-break-enable "
-                     + UString::from_int (a_break_num));
+                     "-break-enable " + a_break_num);
     command.set_slot (a_slot);
     queue_command (command);
     list_breakpoints (a_cookie);
@@ -4705,7 +4699,7 @@ GDBEngine::enable_breakpoint (gint a_break_num,
 /// by GDB.  Eventually this function should be dropped and we should
 /// keep the one above.
 void
-GDBEngine::enable_breakpoint (gint a_break_num,
+GDBEngine::enable_breakpoint (const string &a_break_num,
                               const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -4713,35 +4707,34 @@ GDBEngine::enable_breakpoint (gint a_break_num,
 }
 
 void
-GDBEngine::disable_breakpoint (gint a_break_num,
+GDBEngine::disable_breakpoint (const string &a_break_num,
                                const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     UString cur_frame;
     queue_command (Command ("disable-breakpoint",
-                            "-break-disable "
-                            + UString::from_int (a_break_num),
+                            "-break-disable " + a_break_num,
                             a_cookie));
     list_breakpoints (a_cookie);
 }
 
 void
-GDBEngine::set_breakpoint_ignore_count (gint a_break_num,
+GDBEngine::set_breakpoint_ignore_count (const string &a_break_num,
                                         gint a_ignore_count,
                                         const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    RETURN_IF_FAIL (a_break_num >= 0 && a_ignore_count >= 0);
+    RETURN_IF_FAIL (!a_break_num.empty () && a_ignore_count >= 0);
 
     Command command ("set-breakpoint-ignore-count",
-                     "-break-after " + UString::from_int (a_break_num)
+                     "-break-after " + a_break_num
                      + " " + UString::from_int (a_ignore_count),
                      a_cookie);
     queue_command (command);
     list_breakpoints (a_cookie);
 
-    typedef map<int, IDebugger::Breakpoint> BPMap;
+    typedef map<string, IDebugger::Breakpoint> BPMap;
     BPMap &bp_cache =
         get_cached_breakpoints ();
     BPMap::iterator b_it;
@@ -4751,29 +4744,29 @@ GDBEngine::set_breakpoint_ignore_count (gint a_break_num,
 }
 
 void
-GDBEngine::set_breakpoint_condition (gint a_break_num,
+GDBEngine::set_breakpoint_condition (const string &a_break_num,
                                      const UString &a_condition,
                                      const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    RETURN_IF_FAIL (a_break_num >= 0);
+    RETURN_IF_FAIL (!a_break_num.empty ());
 
     Command command ("set-breakpoint-condition",
-                     "-break-condition " + UString::from_int (a_break_num)
+                     "-break-condition " + a_break_num
                      + " " + a_condition, a_cookie);
     queue_command (command);
     list_breakpoints (a_cookie);
 }
 
 void
-GDBEngine::enable_countpoint (gint a_break_num,
+GDBEngine::enable_countpoint (const string &a_break_num,
 			      bool a_yes,
 			      const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    typedef map<int, IDebugger::Breakpoint> BPMap;
+    typedef map<string, IDebugger::Breakpoint> BPMap;
     BPMap &bp_cache = get_cached_breakpoints ();
     BPMap::const_iterator nil = bp_cache.end ();
 
@@ -4791,12 +4784,12 @@ GDBEngine::enable_countpoint (gint a_break_num,
         command_name = "disable-countpoint";
     }
     Command command (command_name, command_str.str (), a_cookie);
-    command.tag2 (a_break_num);
+    command.tag0 (a_break_num);
     queue_command (command);
 }
 
 bool
-GDBEngine::is_countpoint (gint a_bp_num) const
+GDBEngine::is_countpoint (const string &a_bp_num) const
 {
     Breakpoint bp;
     if (get_breakpoint_from_cache (a_bp_num, bp))
@@ -4878,7 +4871,7 @@ GDBEngine::list_breakpoints (const UString &a_cookie)
     queue_command (Command ("list-breakpoints", "-break-list", a_cookie));
 }
 
-map<int, IDebugger::Breakpoint>&
+map<string, IDebugger::Breakpoint>&
 GDBEngine::get_cached_breakpoints ()
 {
 
@@ -4886,10 +4879,10 @@ GDBEngine::get_cached_breakpoints ()
 }
 
 bool
-GDBEngine::get_breakpoint_from_cache (int a_num,
+GDBEngine::get_breakpoint_from_cache (const string &a_num,
                                       IDebugger::Breakpoint &a_bp) const
 {
-    typedef map<int, IDebugger::Breakpoint> BPMap;
+    typedef map<string, IDebugger::Breakpoint> BPMap;
     BPMap &bp_cache =
         const_cast<GDBEngine*> (this)->get_cached_breakpoints ();
     BPMap::const_iterator nil = bp_cache.end ();
@@ -4912,7 +4905,7 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    typedef map<int, IDebugger::Breakpoint> BpMap;
+    typedef map<string, IDebugger::Breakpoint> BpMap;
     typedef BpMap::iterator BpIt;
 
     BpMap &bp_cache = m_priv->cached_breakpoints;
@@ -4929,7 +4922,7 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
                 << " is not a count point");
     }
     LOG_DD ("initial_ignore_count on bp "
-            << (int)  a_break.number ()
+            <<  a_break.number ()
             << ": " << a_break.initial_ignore_count ());
 
     // First, let's see if a_break is already in our cache.
@@ -4947,7 +4940,7 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
         if (cur->second.initial_ignore_count () != a_break.initial_ignore_count ()) {
             a_break.initial_ignore_count (cur->second.initial_ignore_count ());
             LOG_DD ("initial_ignore_count propagated on bp "
-                    << (int)  a_break.number ()
+                    << a_break.number ()
                     << ": " << a_break.initial_ignore_count ());
         }
     } else {
@@ -4994,11 +4987,11 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
 /// \param a_breaks the set of breakpoints to append to the cache.
 void
 GDBEngine::append_breakpoints_to_cache
-                            (map<int, IDebugger::Breakpoint> &a_breaks)
+                            (map<string, IDebugger::Breakpoint> &a_breaks)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    map<int, IDebugger::Breakpoint>::iterator iter;
+    map<string, IDebugger::Breakpoint>::iterator iter;
     for (iter = a_breaks.begin (); iter != a_breaks.end (); ++iter)
         append_breakpoint_to_cache (iter->second);
 }
@@ -5078,12 +5071,12 @@ GDBEngine::choose_function_overloads (const vector<int> &a_nums,
 }
 
 void
-GDBEngine::delete_breakpoint (gint a_break_num,
+GDBEngine::delete_breakpoint (const string &a_break_num,
                               const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     queue_command (Command ("delete-breakpoint",
-                            "-break-delete " + UString::from_int (a_break_num),
+                            "-break-delete " + a_break_num,
                             a_cookie));
 }
 

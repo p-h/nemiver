@@ -38,6 +38,7 @@
 #include "common/nmv-address.h"
 #include "common/nmv-asm-instr.h"
 #include "common/nmv-loc.h"
+#include "common/nmv-str-utils.h"
 #include "nmv-i-conf-mgr.h"
 
 using nemiver::common::SafePtr;
@@ -115,6 +116,19 @@ public:
         int m_ignore_count;
         bool m_is_read_watchpoint;
         bool m_is_write_watchpoint;
+        // The list of sub-breakpoints, in case this breakpoint is a
+        // multiple breakpoint.  In that case, each sub-breakpoint
+        // will be set to a real location of an overload function.
+        // Each sub-breakpoint will then have a non-nil
+        // m_parent_breakpoint pointer that points back to this
+        // instance, and an empty m_sub_breakpoints member.
+        vector<Breakpoint> m_sub_breakpoints;
+        // If this instance is a sub-breakpoint, i.e, a breakpoint to
+        // an overloaded function that has been set by name to all the
+        // overloads at the same time, then this is set to the id of
+        // the parent breakpoint.  The parent breakpoint contains
+        // information that are relevant for all the sub-breakpoints.
+        int m_parent_breakpoint_number;
 
     public:
         Breakpoint () {clear ();}
@@ -122,8 +136,22 @@ public:
         /// \name accessors
 
         /// @{
-        int number () const {return m_number;}
+        string number () const
+        {
+            if (is_sub_breakpoint ())
+                return (str_utils::int_to_string (parent_breakpoint_number ()) + "."
+                        + str_utils::int_to_string (sub_breakpoint_number ()));
+            else
+                return str_utils::int_to_string (sub_breakpoint_number ());
+        }
+
+        void number (string& s) const
+        {
+            s = number ();
+        }
+
         void number (int a_in) {m_number = a_in;}
+        int sub_breakpoint_number () const {return m_number;}
 
         bool enabled () const {return m_enabled;}
         void enabled (bool a_in) {m_enabled = a_in;}
@@ -180,6 +208,29 @@ public:
             return false;
         }
 
+        /// Test whether this breakpoint has multiple location.
+        ///
+        /// Each location is then represented by a sub-breakpoint,
+        /// that is a child breakpoint of this instance of
+        /// breakpoint.  The sub-breakpoints can be retrieved by the
+        /// #sub_breakpoints below.
+        bool has_multiple_locations () const {return !m_sub_breakpoints.empty ();}
+
+        void append_sub_breakpoint (Breakpoint& b)
+        {
+            b.m_parent_breakpoint_number = m_number;
+            m_sub_breakpoints.push_back (b);
+        }
+
+        const vector<Breakpoint>& sub_breakpoints () const
+        {
+            return m_sub_breakpoints;
+        }
+
+        int parent_breakpoint_number () const {return m_parent_breakpoint_number;}
+
+        bool is_sub_breakpoint () const {return !!parent_breakpoint_number ();}
+
         Type type () const {return m_type;}
         void type (Type a_type) {m_type = a_type;}
 
@@ -202,6 +253,8 @@ public:
             m_ignore_count = 0;
             m_is_read_watchpoint = false;
             m_is_write_watchpoint = false;
+            m_sub_breakpoints.clear ();
+            m_parent_breakpoint_number = 0;
         }
     };//end class Breakpoint
 
@@ -1000,7 +1053,7 @@ public:
         BreakpointSlot;
 
     typedef sigc::slot<void,
-                       const std::map<int, IDebugger::Breakpoint>&>
+                       const std::map<string, IDebugger::Breakpoint>&>
         BreakpointsSlot;
 
     typedef sigc::slot<void, Loc&> LocSlot;
@@ -1038,7 +1091,7 @@ public:
 
     virtual sigc::signal<void,
                         const IDebugger::Breakpoint&,
-                        int /*breakpoint command*/,
+                        const string& /*breakpoint number*/,
                         const UString & /*cookie*/>&
                                      breakpoint_deleted_signal () const=0;
 
@@ -1048,12 +1101,12 @@ public:
     /// IDebugger does not cache the list of breakpoints. This must
     /// be fixed at some point.
     virtual sigc::signal<void,
-                         const map<int, IDebugger::Breakpoint>&,
+                         const map<string, IDebugger::Breakpoint>&,
                          const UString& /*cookie*/>&
                                          breakpoints_list_signal () const=0;
 
     virtual sigc::signal<void,
-                        const std::map<int, IDebugger::Breakpoint>&,
+                        const std::map<string, IDebugger::Breakpoint>&,
                         const UString& /*cookie*/>&
                         breakpoints_set_signal () const = 0;
 
@@ -1067,9 +1120,9 @@ public:
                          bool /*has frame*/,
                          const IDebugger::Frame&/*the frame*/,
                          int /*thread id*/,
-                         int /*breakpoint number,
-                               meaningfull only when
-                               reason == IDebugger::BREAKPOINT_HIT*/,
+                         const string& /*breakpoint number,
+                                         meaningfull only when
+                                         reason == IDebugger::BREAKPOINT_HIT*/,
                          const UString& /*cookie*/>& stopped_signal () const=0;
 
     virtual sigc::signal<void,
@@ -1364,30 +1417,30 @@ public:
                                  gint a_ignore_count = 0,
                                  const UString &a_cookie = "") = 0;
 
-    virtual void enable_breakpoint (gint a_break_num,
+    virtual void enable_breakpoint (const string& a_break_num,
                                     const BreakpointsSlot &a_slot,
                                     const UString &a_cookie="") = 0;
 
-    virtual void enable_breakpoint (gint a_break_num,
+    virtual void enable_breakpoint (const string& a_break_num,
                                     const UString &a_cookie="") = 0;
 
-    virtual void disable_breakpoint (gint a_break_num,
+    virtual void disable_breakpoint (const string& a_break_num,
                                      const UString &a_cookie="") = 0;
 
     virtual void set_breakpoint_ignore_count
-                                        (gint a_break_num,
+                                        (const string& a_break_num,
                                          gint a_ignore_count,
                                          const UString &a_cookie = "") = 0;
 
-    virtual void set_breakpoint_condition (gint a_break_num,
+    virtual void set_breakpoint_condition (const string& a_break_num,
                                            const UString &a_condition,
                                            const UString &a_cookie = "") = 0;
 
-    virtual void enable_countpoint (gint a_break_num,
+    virtual void enable_countpoint (const string& a_break_num,
                                     bool a_flag,
                                     const UString &a_cookie ="") = 0;
 
-    virtual bool is_countpoint (gint a_break_num) const = 0;
+    virtual bool is_countpoint (const string &a_break_num) const = 0;
 
     virtual bool is_countpoint (const Breakpoint &a_breakpoint) const = 0;
 
@@ -1405,9 +1458,9 @@ public:
 
     virtual void list_breakpoints (const UString &a_cookie="") = 0;
 
-    virtual const map<int, Breakpoint>& get_cached_breakpoints () = 0;
+    virtual const map<string, Breakpoint>& get_cached_breakpoints () = 0;
 
-    virtual bool get_breakpoint_from_cache (int a_num,
+    virtual bool get_breakpoint_from_cache (const string &a_num,
                                             IDebugger::Breakpoint &a_bp)
         const = 0;
 
@@ -1417,7 +1470,7 @@ public:
     virtual void choose_function_overloads (const vector<int> &a_numbers,
                                             const UString &a_cookie="") = 0;
 
-    virtual void delete_breakpoint (gint a_break_num,
+    virtual void delete_breakpoint (const string &a_break_num,
                                     const UString &a_cookie="") = 0;
 
     virtual void list_threads (const UString &a_cookie="") = 0;

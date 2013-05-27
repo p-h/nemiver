@@ -71,18 +71,18 @@ public:
 
     sigc::signal<void>& inferior_re_run_signal () const;
 
-    sigc::signal<void, const map<int, IDebugger::Breakpoint>&, const UString&>&
+    sigc::signal<void, const map<string, IDebugger::Breakpoint>&, const UString&>&
                                             breakpoints_list_signal () const;
 
     sigc::signal<void,
-                const std::map<int, IDebugger::Breakpoint>&,
+                const std::map<string, IDebugger::Breakpoint>&,
                 const UString& /*cookie*/>&
         breakpoints_set_signal () const;
 
     sigc::signal<void, const vector<OverloadsChoiceEntry>&, const UString&>&
                                     got_overloads_choice_signal () const;
 
-    sigc::signal<void, const IDebugger::Breakpoint&, int, const UString&>&
+    sigc::signal<void, const IDebugger::Breakpoint&, const string&, const UString&>&
                                         breakpoint_deleted_signal () const;
 
     sigc::signal<void, const IDebugger::Breakpoint&, int>&
@@ -97,7 +97,7 @@ public:
                 bool,
                 const IDebugger::Frame&,
                 int,
-                int,
+                const string&,
                 const UString& /*cookie*/>& stopped_signal () const;
 
     sigc::signal<void,
@@ -222,7 +222,7 @@ public:
                             bool has_frame,
                             const IDebugger::Frame &a_frame,
                             int a_thread_id,
-                            int a_breakpoint_number,
+                            const string &a_breakpoint_number,
                             const UString &a_cookie);
     void on_detached_from_target_signal ();
 
@@ -327,7 +327,7 @@ public:
 
     void append_breakpoint_to_cache (IDebugger::Breakpoint &a_break);
 
-    void append_breakpoints_to_cache (map<int, IDebugger::Breakpoint>&);
+    void append_breakpoints_to_cache (map<string, IDebugger::Breakpoint>&);
 
     void do_continue (const UString &a_cookie);
 
@@ -398,29 +398,29 @@ public:
                          gint a_ignore_count,
                          const UString &a_cookie);
 
-    void enable_breakpoint (gint a_break_num,
+    void enable_breakpoint (const string& a_break_num,
 			    const BreakpointsSlot &a_slot,
 			    const UString &a_cookie = "");
 
-    void enable_breakpoint (gint a_break_num,
+    void enable_breakpoint (const string& a_break_num,
                             const UString &a_cookie="");
 
-    void disable_breakpoint (gint a_break_num,
+    void disable_breakpoint (const string& a_break_num,
                              const UString &a_cookie="");
 
-    void set_breakpoint_ignore_count (gint a_break_num,
+    void set_breakpoint_ignore_count (const string& a_break_num,
                                       gint a_ignore_count,
                                       const UString &a_cookie = "");
 
-    void set_breakpoint_condition (gint a_break_num,
+    void set_breakpoint_condition (const string& a_break_num,
                                    const UString &a_condition,
                                    const UString &a_cookie = "");
 
-    void enable_countpoint (gint a_break_num,
+    void enable_countpoint (const string& a_break_num,
 			    bool a_flag,
 			    const UString &a_cookie = "");
 
-    bool is_countpoint (gint a_break_num) const;
+    bool is_countpoint (const string& a_break_num) const;
 
     bool is_countpoint (const Breakpoint &a_breakpoint) const;
 
@@ -434,9 +434,9 @@ public:
 
     void list_breakpoints (const UString &a_cookie);
 
-    map<int, IDebugger::Breakpoint>& get_cached_breakpoints ();
+    map<string, IDebugger::Breakpoint>& get_cached_breakpoints ();
 
-    bool get_breakpoint_from_cache (int a_num,
+    bool get_breakpoint_from_cache (const string &a_num,
 				    IDebugger::Breakpoint &a_bp) const;
 
     void set_catch (const UString &a_event,
@@ -456,7 +456,7 @@ public:
 
     unsigned int get_current_thread () const;
 
-    void delete_breakpoint (gint a_break_num,
+    void delete_breakpoint (const string &a_break_num,
                             const UString &a_cookie);
 
     void select_frame (int a_frame_id,

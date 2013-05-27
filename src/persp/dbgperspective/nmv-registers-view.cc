@@ -138,7 +138,7 @@ public:
                               bool,
                               const IDebugger::Frame &,
                               int,
-                              int,
+                              const string&,
                               const UString&)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;

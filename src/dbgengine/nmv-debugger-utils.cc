@@ -70,7 +70,7 @@ null_disass_slot (const common::DisassembleInfo &,
 }
 
 void
-null_breakpoints_slot (const map<int, IDebugger::Breakpoint>&)
+null_breakpoints_slot (const map<string, IDebugger::Breakpoint>&)
 {
 }
 ///@}

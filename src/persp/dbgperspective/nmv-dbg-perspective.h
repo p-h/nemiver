@@ -159,11 +159,11 @@ public:
     virtual void set_breakpoint (const IDebugger::Breakpoint &a_breakpoint) = 0;
 
     virtual void append_breakpoints
-            (const map<int, IDebugger::Breakpoint> &a_breaks) = 0;
+            (const map<string, IDebugger::Breakpoint> &a_breaks) = 0;
 
     virtual bool delete_breakpoint () = 0;
 
-    virtual bool delete_breakpoint (int a_breakpoint_num) = 0;
+    virtual bool delete_breakpoint (const string &a_breakpoint_num) = 0;
 
     virtual bool delete_breakpoint (const UString &a_file_uri,
                                     int a_linenum) = 0;

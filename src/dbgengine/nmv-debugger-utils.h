@@ -50,7 +50,7 @@ void null_default_slot ();
 void null_disass_slot (const common::DisassembleInfo &,
 		       const std::list<common::Asm> &);
 
-void null_breakpoints_slot (const map<int, IDebugger::Breakpoint>&);
+void null_breakpoints_slot (const map<string, IDebugger::Breakpoint>&);
 
 /// @}
 

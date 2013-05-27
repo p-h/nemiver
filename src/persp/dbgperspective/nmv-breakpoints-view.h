@@ -56,7 +56,7 @@ public:
     virtual ~BreakpointsView ();
     Gtk::Widget& widget () const;
     void set_breakpoints
-                (const std::map<int, IDebugger::Breakpoint> &a_breakpoints);
+                (const std::map<string, IDebugger::Breakpoint> &a_breakpoints);
     void clear ();
     void re_init ();
     sigc::signal<void,

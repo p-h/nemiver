@@ -107,11 +107,7 @@ while (a_from < a_input.bytes () && isblank (a_input.c_str ()[a_from])) { \
 } \
 a_to = a_from;
 
-#define SKIP_BLANK2(a_from) \
-while (!m_priv->index_passed_end (a_from) \
-       && isblank (RAW_CHAR_AT (a_from))) {     \
-    CHECK_END2 (a_from); ++a_from; \
-}
+#define SKIP_BLANK2(a_from) m_priv->skip_blank (a_from)
 
 #define RAW_CHAR_AT(cur) m_priv->raw_char_at (cur)
 
@@ -585,6 +581,14 @@ struct GDBMIParser::Priv {
     bool index_passed_end (UString::size_type a_index)
     {
         return a_index >= end;
+    }
+
+    bool skip_blank (UString::size_type &i)
+    {
+        while (!index_passed_end (i)
+               && isblank (raw_char_at (i)))
+            ++i;
+        return true;
     }
 
     void set_input (const UString &a_input)
@@ -1897,7 +1901,7 @@ fetch_gdbmi_result:
             } else if (!m_priv->input.compare (cur,
                                                strlen (PREFIX_BREAKPOINT_TABLE),
                                                PREFIX_BREAKPOINT_TABLE)) {
-                map<int, IDebugger::Breakpoint> breaks;
+                map<string, IDebugger::Breakpoint> breaks;
                 if (parse_breakpoint_table (cur, cur, breaks)) {
                     result_record.breakpoints () = breaks;
                 }
@@ -2198,23 +2202,33 @@ fetch_gdbmi_result:
 }
 
 bool
-GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
-                               Glib::ustring::size_type &a_to,
-                               IDebugger::Breakpoint &a_bkpt)
+GDBMIParser::parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
+                                            Glib::ustring::size_type &a_to,
+                                            bool is_sub_breakpoint,
+                                            IDebugger::Breakpoint &a_bkpt)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
 
     Glib::ustring::size_type cur = a_from;
 
-    if (RAW_INPUT.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
+    if (m_priv->index_passed_end (cur)) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
 
-    cur += 6;
-    if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
-        return false;
+    if (!is_sub_breakpoint) {
+        if (RAW_INPUT.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        cur += 6;
+    } else {
+        // We must be on the starting '{'.
+        if (RAW_CHAR_AT (cur) != '{') {
+            LOG_PARSING_ERROR2 (cur);
+            return false;
+        }
+        CHECK_END2 (++cur);
     }
 
     map<UString, UString> attrs;
@@ -2275,20 +2289,33 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
     // well, but it seems that a lot debug info set got shipped without
     // that property. Client code should do what they can with the
     // file property only.
-    if (   (iter = attrs.find ("number"))  == null_iter
-            || (iter = attrs.find ("type"))    == null_iter
-            || (iter = attrs.find ("disp"))    == null_iter
-            || (iter = attrs.find ("enabled")) == null_iter
+    if ((iter = attrs.find ("number"))                            == null_iter
+        || (iter = attrs.find ("enabled"))                        == null_iter
+        || (!is_sub_breakpoint && ((iter = attrs.find ("type"))   == null_iter))
+        || (!is_sub_breakpoint && ((iter = attrs.find ("disp"))   == null_iter))
+        || (!is_sub_breakpoint && ((iter = attrs.find ("times"))  == null_iter))
+
 	   // Non regular breakpoints like those set to catch fork
 	   // events can have an empty address when set.
 	   // || (iter = attrs.find ("addr"))    == null_iter
-            || (iter = attrs.find ("times"))   == null_iter
+        
        ) {
         LOG_PARSING_ERROR2 (cur);
         return false;
     }
 
-    a_bkpt.number (atoi (attrs["number"].c_str ()));
+    if (!is_sub_breakpoint)
+        a_bkpt.number (atoi (attrs["number"].c_str ()));
+    else {
+        UString num = attrs["number"];
+        vector<UString> parts = str_utils::split (num, ".");
+        if (parts.size () > 1)
+            num = parts[1];
+        else if (parts.size ())
+            num = parts[0];
+        a_bkpt.number (atoi (num.c_str ()));
+    }
+        
     if (attrs["enabled"] == "y") {
         a_bkpt.enabled (true);
     } else {
@@ -2355,9 +2382,57 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
 }
 
 bool
+GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
+                               Glib::ustring::size_type &a_to,
+                               IDebugger::Breakpoint &a_bkpt)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
+
+    Glib::ustring::size_type cur = a_from;
+
+    if (!parse_breakpoint_with_one_loc (cur, cur,
+                                        /*is_sub_breakpoint=*/false,
+                                        a_bkpt)) {
+        LOG_PARSING_ERROR2 (cur);
+        return false;
+    }
+
+    while (true) {
+        Glib::ustring::size_type saved_cur = cur;
+        SKIP_BLANK2 (cur);
+
+        if (!END_OF_INPUT (cur)) {
+            if (RAW_CHAR_AT (cur) != ','
+                || (++cur
+                    && SKIP_BLANK2 (cur)
+                    && !END_OF_INPUT (cur) 
+                    && RAW_CHAR_AT (cur) != '{')) {
+                ;// Get out.
+            } else {
+                // So, after the previous breakpoint, we have a new breakpoint
+                // location starting with , '{number="some number", ...
+                // Let's parse that.
+                IDebugger::Breakpoint sub_bp;
+                if (!parse_breakpoint_with_one_loc (cur, cur,
+                                                    /*is_sub_breakpoint=*/true,
+                                                    sub_bp)) {
+                    LOG_PARSING_ERROR2 (cur);
+                    return false;
+                }
+                a_bkpt.append_sub_breakpoint (sub_bp);
+                continue;
+            }
+        }
+        a_to = saved_cur;
+        break;
+    }
+    return true;
+}
+
+bool
 GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
                                      UString::size_type &a_to,
-                                     map<int, IDebugger::Breakpoint> &a_breakpoints)
+                                     map<string, IDebugger::Breakpoint> &a_breakpoints)
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur=a_from;
@@ -2385,7 +2460,7 @@ GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
         return false;
     }
 
-    map<int, IDebugger::Breakpoint> breakpoint_table;
+    map<string, IDebugger::Breakpoint> breakpoint_table;
     if (RAW_CHAR_AT (cur) == ']') {
         //there are zero breakpoints ...
     } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_BKPT),

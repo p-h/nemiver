@@ -38,7 +38,7 @@
 namespace nemiver {
 
 struct BPColumns : public Gtk::TreeModelColumnRecord {
-    Gtk::TreeModelColumn<int> id;
+    Gtk::TreeModelColumn<Glib::ustring> id;
     Gtk::TreeModelColumn<bool> enabled;
     Gtk::TreeModelColumn<Glib::ustring> address;
     Gtk::TreeModelColumn<Glib::ustring> filename;
@@ -231,8 +231,39 @@ public:
         return is_visible;
     }
 
+    /// If a_bp is a breakpoint already present in the tree model,
+    /// then update it.  Otherwise, add it.
     void
-    set_breakpoints (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
+    update_or_append_breakpoint (const IDebugger::Breakpoint &a_bp)
+    {
+        Gtk::TreeModel::iterator i = find_breakpoint_in_model (a_bp);
+        if (i) {
+            LOG_DD ("Updating breakpoint " << a_bp.number ());
+            update_breakpoint (i, a_bp);
+        } else {
+            // Normally, we shouldn't reach this place, as we
+            // should have been notified about any new
+            // breakpoint by mean of
+            // IDebugger::breakpoint_set_signal, and
+            // on_debugger_breakpoint_set_signal should have
+            // added the breakpoint to the model.  It turned
+            // out we can reach this point nevertheless, when,
+            // say, a breakpoint is added by mean of a GDB
+            // script. In that case, the GDB implementation of
+            // IDebugger doesn't get any GDB/MI notification
+            // upon breakpoint creation, so we don't get the
+            // IDebugger::breakpoint_set_signal notification.
+            // Let's just add the breakpoint now then.
+            LOG_DD ("Didn't find breakpoint: "
+                    << a_bp.number ()
+                    << " so going to add it");
+            append_breakpoint (a_bp);
+        }
+    }
+
+    /// Set the breakpoints to our tree model.
+    void
+    set_breakpoints (const std::map<string, IDebugger::Breakpoint> &a_breakpoints)
     {
         if (a_breakpoints.empty ()) {
             return;
@@ -243,45 +274,30 @@ public:
             // searching for things to update, just add them all directly
             add_breakpoints (a_breakpoints);
         } else {
-            //find breakpoints that need adding or updating
-            std::map<int, IDebugger::Breakpoint>::const_iterator breakmap_iter;
-            for (breakmap_iter = a_breakpoints.begin ();
-                 breakmap_iter != a_breakpoints.end ();
-                 ++breakmap_iter) {
-                Gtk::TreeModel::iterator tree_iter =
-                    find_breakpoint_in_model (breakmap_iter->second);
-                if (tree_iter) {
-                    LOG_DD ("Updating breakpoint "
-                            << breakmap_iter->second.number ());
-                    update_breakpoint (tree_iter, breakmap_iter->second);
+            // find breakpoints that need adding or updating
+            std::map<string, IDebugger::Breakpoint>::const_iterator bi;
+            for (bi = a_breakpoints.begin ();
+                 bi != a_breakpoints.end ();
+                 ++bi) {
+                if (bi->second.has_multiple_locations ()) {
+                    vector<IDebugger::Breakpoint>::const_iterator si;
+                    for (si = bi->second.sub_breakpoints ().begin ();
+                         si != bi->second.sub_breakpoints ().end ();
+                         ++si)
+                        update_or_append_breakpoint (*si);
                 } else {
-                    // Normally, we shouldn't reach this place, as we
-                    // should have been notified about any new
-                    // breakpoint by mean of
-                    // IDebugger::breakpoint_set_signal, and
-                    // on_debugger_breakpoint_set_signal should have
-                    // added the breakpoint to the model.  It turned
-                    // out we can reach this point nevertheless, when,
-                    // say, a breakpoint is added by mean of a GDB
-                    // script. In that case, the GDB implementation of
-                    // IDebugger doesn't get any GDB/MI notification
-                    // upon breakpoint creation, so we don't get the
-                    // IDebugger::breakpoint_set_signal notification.
-                    // Let's just add the breakpoint now then.
-                    LOG_DD ("Didn't find breakpoint: " << breakmap_iter->first
-                            << " so going to add it");
-                    append_breakpoint (breakmap_iter->second);
+                    update_or_append_breakpoint (bi->second);
                 }
             }
         }
     }
 
     void
-    add_breakpoints (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
+    add_breakpoints (const std::map<string, IDebugger::Breakpoint> &a_breakpoints)
     {
         THROW_IF_FAIL (list_store);
 
-        std::map<int, IDebugger::Breakpoint>::const_iterator break_iter;
+        std::map<string, IDebugger::Breakpoint>::const_iterator break_iter;
         for (break_iter = a_breakpoints.begin ();
                 break_iter != a_breakpoints.end ();
                 ++break_iter) {
@@ -291,10 +307,10 @@ public:
 
     bool
     breakpoint_list_has_id
-        (const std::map<int, IDebugger::Breakpoint> &a_breakpoints,
-         int a_id)
+        (const std::map<string, IDebugger::Breakpoint> &a_breakpoints,
+         const string &a_id)
     {
-        std::map<int, IDebugger::Breakpoint>::const_iterator breakmap_iter;
+        std::map<string, IDebugger::Breakpoint>::const_iterator breakmap_iter;
         for (breakmap_iter = a_breakpoints.begin ();
                 breakmap_iter != a_breakpoints.end (); ++ breakmap_iter) {
             if (a_id == breakmap_iter->second.number ()) {
@@ -360,13 +376,20 @@ public:
         (*a_iter)[get_bp_cols ().hits] = a_breakpoint.nb_times_hit ();
     }
 
-    Gtk::TreeModel::iterator 
-    append_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
+    void
+    append_breakpoint (const IDebugger::Breakpoint &a_bp)
     {
-        Gtk::TreeModel::iterator tree_iter = list_store->append ();
-        update_breakpoint (tree_iter, a_breakpoint);
-
-        return tree_iter;
+        if (a_bp.has_multiple_locations ()) {
+            vector<IDebugger::Breakpoint>::const_iterator bi;
+            for (bi = a_bp.sub_breakpoints ().begin ();
+                 bi != a_bp.sub_breakpoints ().end ();
+                 ++bi) {
+                append_breakpoint (*bi);
+            }
+        } else {
+            Gtk::TreeModel::iterator tree_iter = list_store->append ();
+            update_breakpoint (tree_iter, a_bp);
+        }
     }
 
     void
@@ -458,10 +481,10 @@ public:
     }
 
     void
-    erase_breakpoint (int a_bp_num)
+    erase_breakpoint (const string &a_bp_num)
     {
 
-        LOG_DD ("asked to erase bp num:" << (int) a_bp_num);
+        LOG_DD ("asked to erase bp num:" << a_bp_num);
 
         Gtk::TreeModel::iterator iter;
         for (iter = list_store->children ().begin ();
@@ -480,7 +503,7 @@ public:
 
     void 
     on_debugger_breakpoints_list_signal
-                            (const map<int, IDebugger::Breakpoint> &a_breaks,
+                            (const map<string, IDebugger::Breakpoint> &a_breaks,
                              const UString &a_cookie)
     {
         NEMIVER_TRY
@@ -494,7 +517,7 @@ public:
                                 bool /*a_has_frame*/,
                                 const IDebugger::Frame &/*a_frame*/,
                                 int /*a_thread_id*/,
-                                int a_bkpt_num,
+                                const string &a_bkpt_num,
                                 const UString &/*a_cookie*/)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
@@ -513,7 +536,7 @@ public:
                 is_up2date = false;
             }
         } else if (a_reason == IDebugger::WATCHPOINT_SCOPE) {
-            LOG_DD ("erase watchpoint num: " << (int) a_bkpt_num);
+            LOG_DD ("erase watchpoint num: " << a_bkpt_num);
             erase_breakpoint (a_bkpt_num);
         }
 
@@ -521,11 +544,10 @@ public:
     }
 
     void
-    on_debugger_breakpoint_deleted_signal (const IDebugger::Breakpoint &a_break,
-                                           int a_break_number,
-                                           const UString &a_cookie)
+    on_debugger_breakpoint_deleted_signal (const IDebugger::Breakpoint &/*a_break*/,
+                                           const string &a_break_number,
+                                           const UString &/*a_cookie*/)
     {
-        if (a_break.number () || a_cookie.empty()) {}
         NEMIVER_TRY
         list<Gtk::TreeModel::iterator> iters_to_erase;
         for (Gtk::TreeModel::iterator iter = list_store->children ().begin ();
@@ -547,12 +569,12 @@ public:
 
     void
     on_debugger_breakpoints_set_signal
-    (const std::map<int, IDebugger::Breakpoint> &a,
+    (const std::map<string, IDebugger::Breakpoint> &a,
      const UString &)
     {
         NEMIVER_TRY;
 
-        std::map<int, IDebugger::Breakpoint>::const_iterator i;
+        std::map<string, IDebugger::Breakpoint>::const_iterator i;
         for (i = a.begin (); i != a.end (); ++i) {
             LOG_DD ("Adding breakpoints "
                     << i->second.number ());
@@ -663,8 +685,8 @@ public:
         for (it=paths.begin (); it != paths.end (); ++it) {
             tree_iter = list_store->get_iter (*it);
             if (tree_iter) {
-                debugger->delete_breakpoint
-                                ((*tree_iter)[get_bp_cols ().id]);
+                Glib::ustring bp_id = (*tree_iter)[get_bp_cols ().id];
+                debugger->delete_breakpoint (bp_id);
             }
         }
     }
@@ -694,22 +716,21 @@ public:
     void
     on_breakpoint_enable_toggled (const Glib::ustring& path)
     {
-        NEMIVER_TRY
+        NEMIVER_TRY;
 
         THROW_IF_FAIL (tree_view);
         Gtk::TreeModel::iterator tree_iter =
                                     tree_view->get_model ()->get_iter (path);
         if (tree_iter) {
+            Glib::ustring bp_id = (*tree_iter)[get_bp_cols ().id];
             if ((*tree_iter)[get_bp_cols ().enabled]) {
-                debugger->enable_breakpoint
-                                    ((*tree_iter)[get_bp_cols ().id]);
+                debugger->enable_breakpoint (bp_id);
             } else {
-                debugger->disable_breakpoint
-                                    ((*tree_iter)[get_bp_cols ().id]);
+                debugger->disable_breakpoint (bp_id);
             }
         }
 
-        NEMIVER_CATCH
+        NEMIVER_CATCH;
     }
 
     void
@@ -722,12 +743,11 @@ public:
             tree_view->get_model ()->get_iter (path);
         
         if (tree_iter) {
+            Glib::ustring bp_id = (*tree_iter)[get_bp_cols ().id];
             if ((*tree_iter)[get_bp_cols ().is_countpoint]) {
-                debugger->enable_countpoint
-                    ((*tree_iter)[get_bp_cols ().id], true);
+                debugger->enable_countpoint (bp_id, true);
             } else {
-                debugger->enable_countpoint
-                    ((*tree_iter)[get_bp_cols ().id], false);
+                debugger->enable_countpoint (bp_id, false);
             }
         }
         NEMIVER_CATCH;
@@ -756,8 +776,8 @@ public:
 
         if (is_standard_bp) {
             int count = atoi (a_text.raw ().c_str ());
-            debugger->set_breakpoint_ignore_count ((*it)[get_bp_cols ().id],
-                                                   count);
+            Glib::ustring bp_id = (*it)[get_bp_cols ().id];
+            debugger->set_breakpoint_ignore_count (bp_id, count);
         }
         NEMIVER_CATCH
     }
@@ -776,9 +796,10 @@ public:
             ? true
             : false;
 
-        if (is_standard_bp)
-            debugger->set_breakpoint_condition ((*it)[get_bp_cols ().id],
-                                                a_text);
+        if (is_standard_bp) {
+            Glib::ustring bp_id = (*it)[get_bp_cols ().id];
+            debugger->set_breakpoint_condition (bp_id, a_text);
+        }
 
         NEMIVER_CATCH
     }
@@ -808,7 +829,7 @@ BreakpointsView::widget () const
 
 void
 BreakpointsView::set_breakpoints
-                (const std::map<int, IDebugger::Breakpoint> &a_breakpoints)
+                (const std::map<string, IDebugger::Breakpoint> &a_breakpoints)
 {
     THROW_IF_FAIL (m_priv);
     m_priv->set_breakpoints (a_breakpoints);

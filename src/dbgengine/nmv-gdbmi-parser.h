@@ -507,6 +507,11 @@ public:
                                    UString::size_type &a_to,
                                    Output::OutOfBandRecord &a_record);
 
+    bool parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
+                                        Glib::ustring::size_type &a_to,
+                                        bool is_sub_breakpoint,
+                                        IDebugger::Breakpoint &a_bkpt);
+
     /// \brief parses a breakpoint definition as returned by gdb.
     ///
     ///breakpoint definition string looks like this:
@@ -526,7 +531,7 @@ public:
 
     bool parse_breakpoint_table (UString::size_type a_from,
                                  UString::size_type &a_to,
-                                 map<int, IDebugger::Breakpoint> &a_breakpoints);
+                                 map<string, IDebugger::Breakpoint> &a_breakpoints);
 
     /// parses the result of the gdbmi command
     /// "-thread-list-ids".

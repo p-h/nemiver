@@ -297,7 +297,7 @@ struct CallStack::Priv {
                                 bool /*a_has_frame*/,
                                 const IDebugger::Frame &/*a_frame*/,
                                 int /*a_thread_id*/,
-                                int /*a_bp_num*/,
+                                const string& /*a_bp_num*/,
                                 const UString &a_cookie)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;

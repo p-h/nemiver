@@ -24,7 +24,7 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
                    int /*a_thread_id*/,
-                   int /*a_bp_num*/,
+                   const string &/*a_bp_num*/,
                    const UString &/*a_cookie*/,
                    const IVarListSafePtr a_var_list)
 {

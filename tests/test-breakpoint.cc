@@ -29,8 +29,8 @@ on_program_finished_signal ()
 {
     MESSAGE ("program finished");
     MESSAGE ("nb of breakpoint hit: " <<  (int)nb_bp);
-    BOOST_REQUIRE(nb_bp == 5);
-    BOOST_REQUIRE(nb_stops > 5);
+    BOOST_REQUIRE(nb_bp == 1007);
+    BOOST_REQUIRE(nb_stops > 1007);
     loop->quit ();
 }
 
@@ -45,13 +45,13 @@ on_command_done_signal (const UString &a_command,
 }
 
 void
-on_breakpoints_set_signal (const std::map<int, IDebugger::Breakpoint> &a_breaks,
+on_breakpoints_set_signal (const std::map<string, IDebugger::Breakpoint> &a_breaks,
                            const UString &a_cookie)
 {
     if (a_cookie.empty ()) {}
 
     MESSAGE ("breakpoints set:");
-    std::map<int, IDebugger::Breakpoint>::const_iterator it;
+    std::map<string, IDebugger::Breakpoint>::const_iterator it;
     for (it = a_breaks.begin (); it != a_breaks.end () ; ++it) {
         MESSAGE ("<break><num>" << it->first <<"</num><line>"
                  << it->second.file_name () << ":" << it->second.line ()
@@ -82,7 +82,7 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                    bool a_has_frame,
                    const IDebugger::Frame &a_frame,
                    int a_thread_id,
-                   int a_bp_num,
+                   const string &a_bp_num,
                    const UString &/*a_cookie*/,
                    IDebuggerSafePtr &a_debugger)
 {
@@ -129,8 +129,8 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                 MESSAGE ("hit conditional breakpoint! bp number: "
                          << a_bp_num);
             }
-            map<int, IDebugger::Breakpoint>::const_iterator it;
-            map<int, IDebugger::Breakpoint>::const_iterator null_iter =
+            map<string, IDebugger::Breakpoint>::const_iterator it;
+            map<string, IDebugger::Breakpoint>::const_iterator null_iter =
                                     a_debugger->get_cached_breakpoints ().end ();
 
             if ((it = a_debugger->get_cached_breakpoints ().find (a_bp_num))
@@ -138,6 +138,9 @@ on_stopped_signal (IDebugger::StopReason a_reason,
                  && it->second.has_condition ()) {MESSAGE ("hit conditional breakpoint. condition was: "
                          << it->second.condition ());
             }
+            a_debugger->do_continue ();
+        } else if (a_frame.function_name () == "Person::overload") {
+            MESSAGE ("stepping from Person::overload");
             a_debugger->do_continue ();
         } else {
             BOOST_FAIL ("Stopped, for an unknown reason");
@@ -251,6 +254,7 @@ test_main (int argc, char *argv[])
     debugger->set_breakpoint ("func1");
     debugger->set_breakpoint ("func2");
     debugger->set_breakpoint ("func4");
+    debugger->set_breakpoint ("Person::overload");
     debugger->run ();
     loop->run ();
 
