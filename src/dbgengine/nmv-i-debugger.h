@@ -1057,7 +1057,7 @@ public:
         BreakpointsSlot;
 
     typedef sigc::slot<void, Loc&> LocSlot;
-    
+
     virtual ~IDebugger () {}
 
     /// \name events you can connect to.

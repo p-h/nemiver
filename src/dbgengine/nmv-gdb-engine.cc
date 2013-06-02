@@ -4596,7 +4596,7 @@ GDBEngine::set_breakpoint (const Loc &a_loc,
 
     break_cmd += " " + loc_str;
     string cmd_name = count_point ? "set-countpoint" : "set-breakpoint";
-    
+
     Command command (cmd_name, break_cmd, a_cookie);
     command.set_slot (a_slot);
     queue_command (command);
@@ -4682,7 +4682,7 @@ GDBEngine::enable_breakpoint (const string &a_break_num,
                               const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    
+
     Command command ("enable-breakpoint",
                      "-break-enable " + a_break_num);
     command.set_slot (a_slot);
