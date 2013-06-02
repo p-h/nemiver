@@ -1049,10 +1049,6 @@ public:
     }
 
     typedef sigc::slot<void,
-                       const std::pair<int, const IDebugger::Breakpoint&>&>
-        BreakpointSlot;
-
-    typedef sigc::slot<void,
                        const std::map<string, IDebugger::Breakpoint>&>
         BreakpointsSlot;
 
