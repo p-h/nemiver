@@ -129,6 +129,8 @@ public:
         // the parent breakpoint.  The parent breakpoint contains
         // information that are relevant for all the sub-breakpoints.
         int m_parent_breakpoint_number;
+        // Whether the breakpoint is pending.
+        bool m_is_pending;
 
     public:
         Breakpoint () {clear ();}
@@ -158,7 +160,12 @@ public:
 
         const Address& address () const {return m_address;}
         Address& address () {return m_address;}
-        void address (const string &a_in) {m_address = a_in;}
+        void address (const string &a_in)
+        {
+            m_address = a_in;
+            if (!m_address.empty ())
+                m_is_pending = false;
+        }
 
         const string& function () const {return m_function;}
         void function (const string &a_in) {m_function = a_in;}
@@ -200,13 +207,8 @@ public:
         bool is_write_watchpoint () const {return m_is_write_watchpoint;}
         void is_write_watchpoint (bool f) {m_is_write_watchpoint = f;}
 
-        bool is_pending () const
-        {
-            if (m_address == "<PENDING>") {
-                return true;
-            }
-            return false;
-        }
+        bool is_pending () const {return m_is_pending;}
+        void is_pending (bool a) {m_is_pending = a;}
 
         /// Test whether this breakpoint has multiple location.
         ///
@@ -255,6 +257,7 @@ public:
             m_is_write_watchpoint = false;
             m_sub_breakpoints.clear ();
             m_parent_breakpoint_number = 0;
+            m_is_pending = false;
         }
     };//end class Breakpoint
 

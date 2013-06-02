@@ -2270,6 +2270,8 @@ GDBMIParser::parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
     UString pending = attrs["pending"];
     if (pending.empty ())
         pending = attrs["original-location"];
+    else
+        a_bkpt.is_pending (true);
     if (!pending.empty ()) {
         LOG_D ("got pending breakpoint: '" << pending << "'",
                GDBMI_OUTPUT_DOMAIN);
