@@ -4279,6 +4279,27 @@ DBGPerspective::source_view_to_root_window_coordinates (int a_x, int a_y,
     return true;
 }
 
+/// For a given file path, find the file (open it in a source editor
+/// if it's not opened yet) and return the source editor that contains
+/// the contents of the file.
+///
+/// If the file could not be located, note that this function tries to
+/// ask the user (via a dialog box) to locate it, and the user can
+/// decide not to locate the file after all.
+///
+/// In the end if the file could not be located then a NULL pointer is
+/// returned, so callers have to deal with that.
+///
+/// \param a_path the path to the source file to consider.
+///
+/// \param a_actual_file_path the resulting absolute path at which the
+/// file was actually located.
+///
+/// \param whether to only consider the basename of the file in the
+/// search.
+///
+/// \return a pointer to the resulting source editor or NULL if the
+/// file could not be located.
 SourceEditor*
 DBGPerspective::get_source_editor_from_path (const UString &a_path,
                                              UString &a_actual_file_path,
@@ -6921,6 +6942,14 @@ DBGPerspective::re_initialize_set_breakpoints ()
     }
 }
 
+/// Given a breakpoint that was set in the inferior, graphically
+/// represent it and show it to the user.
+///
+/// Note that this function doesn't not try to set a breakpoint that
+/// is reported to be 'pending' because then we are not even sure if
+/// source code exists for that breakpoint.
+///
+/// \param a_breakpoint the breakpoint that was set.
 void
 DBGPerspective::append_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
 {

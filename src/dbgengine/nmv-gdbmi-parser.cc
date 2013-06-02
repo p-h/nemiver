@@ -2201,6 +2201,30 @@ fetch_gdbmi_result:
     return true;
 }
 
+/// Parse a GDBMI expression that contains only one breakpoint.
+///
+/// The expression parsed has either the form:
+///
+/// bkpt={number="1",type="breakpoint",disp="keep",
+///       enabled="y",addr="0x000100d0",func="main",file="hello.c",
+///       fullname="/home/foo/hello.c",line="5",thread-groups=["i1"],
+///       times="0"}
+///
+/// Or the form:
+///
+/// {number="1",type="breakpoint",disp="keep",
+///  enabled="y",addr="0x000100d0",func="main",file="hello.c",
+///  fullname="/home/foo/hello.c",line="5",thread-groups=["i1"],
+///  times="0"}
+///
+///  \parm a_from the index from which to parse the MI string.
+///
+///  \param a_to where the index has been advanced to, upon completion
+///  of this function.
+///
+///  \param is_sub_breakpoint if true, means we are parsing the second
+///  form of breakpoint expression above.  Otherwise, means we are
+///  parsing the first form.
 bool
 GDBMIParser::parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
                                             Glib::ustring::size_type &a_to,
@@ -2298,7 +2322,6 @@ GDBMIParser::parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
 	   // Non regular breakpoints like those set to catch fork
 	   // events can have an empty address when set.
 	   // || (iter = attrs.find ("addr"))    == null_iter
-        
        ) {
         LOG_PARSING_ERROR2 (cur);
         return false;
@@ -2315,7 +2338,7 @@ GDBMIParser::parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
             num = parts[0];
         a_bkpt.number (atoi (num.c_str ()));
     }
-        
+
     if (attrs["enabled"] == "y") {
         a_bkpt.enabled (true);
     } else {
