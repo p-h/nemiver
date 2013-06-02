@@ -351,6 +351,9 @@ private:
     void on_debugger_breakpoints_set_signal
     (const std::map<string, IDebugger::Breakpoint>&, const UString&);
 
+    void on_debugger_bp_automatically_set_on_main
+    (const map<string, IDebugger::Breakpoint>&, bool);
+
     void on_debugger_breakpoints_list_signal
                                 (const map<string, IDebugger::Breakpoint> &,
                                  const UString &a_cookie);
@@ -2376,7 +2379,48 @@ DBGPerspective::on_debugger_breakpoints_set_signal
 (const std::map<string, IDebugger::Breakpoint> &a,
  const UString&)
 {
+    NEMIVER_TRY;
+
     append_breakpoints (a);
+
+    NEMIVER_CATCH;
+}
+
+/// This callback slot is invoked when the breakpoint that is
+/// automatically set to the 'main' function upon startup is set.
+///
+/// The goal here is to detect that the breakpoint is actually set to
+/// the 'main' entry point (that would mean that a 'main' entry point
+/// function exists and one can set a breakpoint there).  In that
+/// case, the function makes the debugger 'run', so that execution of
+/// the inferior stops at the main entry point.
+///
+/// Otherwise, if no 'main' entry point exists or can be broke at, the
+/// debugger does nothing.  The user will have to set a breakpoint at
+/// a place of her choice and run the debugger so that it stops there.
+///
+/// \param a_bps the set of breakpoints that are set.
+///
+/// \param a_restarting whether the debugger is re-starting, or just
+/// starting for the first time.
+void
+DBGPerspective::on_debugger_bp_automatically_set_on_main
+(const map<string, IDebugger::Breakpoint>& a_bps,
+ bool a_restarting)
+{
+    NEMIVER_TRY;
+
+    for (map<string, IDebugger::Breakpoint>::const_iterator i = a_bps.begin ();
+         i != a_bps.end ();
+         ++i) {
+        if (i->second.function () == "main"
+            && !i->second.address ().empty ()) {
+            run_real (a_restarting);
+            return;
+        }
+    }
+
+    NEMIVER_CATCH;
 }
 
 void
@@ -6036,24 +6080,33 @@ DBGPerspective::execute_program (const UString &a_prog,
 /// This function can also set breakpoints before running the inferior.
 ///
 /// \param a_prog the path to the program to debug
+///
 /// \param a_args the arguments of the program to debug
-/// \param a_env  the environment variables to set prior
-///               to running the inferior. Those environment variables
-///               will be accessible to the inferior.
+///
+/// \param a_env the environment variables to set prior to running the
+///  inferior. Those environment variables will be accessible to the
+///  inferior.
+///
 /// \param a_cwd the working directory in which to run the inferior
+///
 /// \param a_breaks the breakpoints to set prior to running the inferior.
+///
 /// \param a_close_opened_files if true, close the files that have been
 ///        opened in the debugging perspective.
-/// \param a_restarting if true, be kind if the program to run
-///        has be run previously. Be kind means things like do not re do
-///        things that have been done already, e.g. re set breakpoints etc.
-///        Otherwise, just ignore the fact that the program might have been
-///        run previously and just redo all the necessary things.
+///
+/// \param a_restarting if true, be kind if the program to run has be
+///  run previously. Be kind means things like do not re do things
+///  that have been done already, e.g. re set breakpoints etc.
+///  Otherwise, just ignore the fact that the program might have been
+///  run previously and just redo all the necessary things.
+///
 /// \param a_close_opened_files if true, close all the opened files
-///        before executing the inferior.
+///  before executing the inferior.
+///
 /// \param a_break_in_main_run if true, set a breakpoint in the "main"
-///        function of the inferior and run it.  The inferior will
-///        then run and stop at the beginning of the main function.
+///  function of the inferior and, if the breakpoint is actually set
+///  there, then run it.  The inferior will then run and stop at the
+///  beginning of the main function.
 void
 DBGPerspective::execute_program
                         (const UString &a_prog,
@@ -6178,7 +6231,13 @@ DBGPerspective::execute_program
                 set_breakpoint (it->second);
             }
         } else if (a_break_in_main_run) {
-            dbg_engine->set_breakpoint ("main");
+            dbg_engine->set_breakpoint
+                ("main",
+                 sigc::bind
+                 (sigc::mem_fun
+                  (*this,
+                   &DBGPerspective::on_debugger_bp_automatically_set_on_main),
+                  a_restarting));
         }
     } else {
         vector<IDebugger::Breakpoint>::const_iterator it;
@@ -6186,9 +6245,6 @@ DBGPerspective::execute_program
             set_breakpoint (*it);
         }
     }
-
-    if (a_break_in_main_run)
-        run_real (a_restarting);
 
     m_priv->last_prog_path_requested = prog;
     m_priv->prog_path = prog;

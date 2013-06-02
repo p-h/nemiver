@@ -393,6 +393,12 @@ public:
                          gint a_ignore_count,
                          const UString &a_cookie);
 
+    void  set_breakpoint (const UString &a_func_name,
+                          const BreakpointsSlot &a_slot,
+                          const UString &a_condition,
+                          gint a_ignore_count,
+                          const UString &a_cookie);
+
     void set_breakpoint (const Address &a_address,
                          const UString &a_condition,
                          gint a_ignore_count,

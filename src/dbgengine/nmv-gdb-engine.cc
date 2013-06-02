@@ -4841,8 +4841,52 @@ GDBEngine::set_watchpoint (const UString &a_expression,
     list_breakpoints (a_cookie);
 }
 
+/// Set a breakpoint to a function name.
+///
+/// \param a_func_name the name of the function to set the breakpoint to.
+///
+/// \param a_condition the condition of the breakption.  This is a
+/// string containing an expression that is to be evaluated in the
+/// context of the inferior, at the source location of the breakpoint.
+/// Once the breakpoint is set, code execution will stop at the
+/// breakpoint iff the condition evaluates to true.
+///
+/// \param a_ignore_count the number of time the breakpoint must be
+/// hit, before execution is stopped.
+///
+/// \param a_cookie a string that is passed to the callback slot.
 void
 GDBEngine::set_breakpoint (const UString &a_func_name,
+                           const UString &a_condition,
+                           gint a_ignore_count,
+                           const UString &a_cookie)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    set_breakpoint (a_func_name, &null_breakpoints_slot,
+                    a_condition, a_ignore_count, a_cookie);
+}
+
+/// Set a breakpoint to a function name, and have a callback slot be
+/// invoked when/if the breakpoint is set.
+///
+/// \param a_func_name the name of the function to set the breakpoint to.
+///
+/// \param a_slot the callback slot to set the breakpoint to.
+///
+/// \param a_condition the condition of the breakption.  This is a
+/// string containing an expression that is to be evaluated in the
+/// context of the inferior, at the source location of the breakpoint.
+/// Once the breakpoint is set, code execution will stop at the
+/// breakpoint iff the condition evaluates to true.
+///
+/// \param a_ignore_count the number of time the breakpoint must be
+/// hit, before execution is stopped.
+///
+/// \param a_cookie a string that is passed to the callback slot.
+void
+GDBEngine::set_breakpoint (const UString &a_func_name,
+                           const BreakpointsSlot &a_slot,
                            const UString &a_condition,
                            gint a_ignore_count,
                            const UString &a_cookie)
@@ -4860,7 +4904,9 @@ GDBEngine::set_breakpoint (const UString &a_func_name,
     break_cmd += " -i " + UString::from_int (a_ignore_count);
     break_cmd +=  " " + a_func_name;
 
-    queue_command (Command ("set-breakpoint", break_cmd, a_cookie));
+    Command command ("set-breakpoint", break_cmd, a_cookie);
+    command.set_slot (a_slot);
+    queue_command (command);
 }
 
 void
