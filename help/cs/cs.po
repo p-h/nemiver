@@ -1,774 +1,1557 @@
 # Czech translation for nemiver.
 # Copyright (C) 2010 nemiver's COPYRIGHT HOLDER
 # This file is distributed under the same license as the nemiver help.
-# Marek Černocký <marek@manet.cz>, 2010.
+#
+# Marek Černocký <marek@manet.cz>, 2010, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"POT-Creation-Date: 2009-12-12 10:38+0000\n"
-"PO-Revision-Date: 2010-01-11 17:17+0100\n"
+"POT-Creation-Date: 2012-08-18 20:40+0000\n"
+"PO-Revision-Date: 2013-07-13 20:00+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
-#: C/legal.xml:2(para)
-msgid "Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any later version published by the Free Software Foundation with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy of the GFDL at this <ulink type=\"help\" url=\"ghelp:fdl\">link</ulink> or in the file COPYING-DOCS distributed with this manual."
-msgstr "Je povoleno kopírovat, šířit a/nebo upravovat tento dokument za podmínek GNU Free Documentation License, verze 1.1 nebo jakékoli další verze vydané nadací Free Software Foundation; bez neměnných oddílů, bez textů předních desek a bez textů zadních desek. Kopie této licence je zahrnuta v oddílu jménem <ulink type=\"help\" url=\"ghelp:fdl\">GNU Free Documentation License</ulink> nebo v souboru COPYING-DOCS dodávaném s touto příručkou."
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "Marek Černocký <marek@manet.cz>, 2010, 2013"
 
-#: C/legal.xml:12(para)
-msgid "This manual is part of a collection of GNOME manuals distributed under the GFDL. If you want to distribute this manual separately from the collection, you can do so by adding a copy of the license to the manual, as described in section 6 of the license."
-msgstr "Tato příručka je součástí kolekce příruček GNOME, distribuovaných pod licencí GNU FDL. Pokud chcete tento dokument šířit odděleně od kolekce, musíte přiložit kopii licence dle popisu v sekci 6 dané licence."
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:180(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
+msgstr ""
+"external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
 
-#: C/legal.xml:19(para)
-msgid "Many of the names used by companies to distinguish their products and services are claimed as trademarks. Where those names appear in any GNOME documentation, and the members of the GNOME Documentation Project are made aware of those trademarks, then the names are in capital letters or initial capital letters."
-msgstr "Mnoho užívaných jmen určených k zviditelnění produktů nebo služeb jsou ochranné známky. Na místech, kde jsou tato jména v dokumentaci užita a členové Dokumentačního projektu GNOME jsou si vědomi skutečnosti, že se jedná o ochrannou známku, je takové jméno psáno velkými písmeny celé nebo s velkým písmenem na začátku."
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:329(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/execute-dialog.png' "
+"md5='450a45378b4021176c8f093be2dedc97'"
+msgstr ""
+"external ref='figures/execute-dialog.png' "
+"md5='450a45378b4021176c8f093be2dedc97'"
 
-#: C/legal.xml:35(para)
-msgid "DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGES."
-msgstr "DOKUMENT JE POSKYTOVÁN V PODOBĚ „JAK JE“ BEZ ZÁRUKY V JAKÉKOLIV PODOBĚ, NEPOSKYTUJÍ SE ANI ODVOZENÉ ZÁRUKY, ZÁRUKY, ŽE DOKUMENT, NEBO JEHO UPRAVENÁ VERZE, JE BEZCHYBNÝ NEBO ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO URČITÝ ÚČEL NEBO NEPORUŠENOSTI. RIZIKO NEKVALITY, NEPŘESNOSTI A ŠPATNÉHO PROVEDENÍ DOKUMENTU, NEBO JEHO UPRAVENÉ VERZE, LEŽÍ NA VÁS. POKUD KVŮLI TOMUTO DOKUMENTU, NEBO JEHO UPRAVENÉ VERZI, NASTANE PROBLÉM, VY (NIKOLIV PŮVODNÍ AUTOR NEBO JAKÝKOLIV PŘISPĚVATEL) PŘEBÍRÁTE JAKÉKOLIV NÁKLADY ZA NUTNÉ ÚPRAVY, OPRAVY ČI SLUŽBY. TOTO PROHLÁŠENÍ O ZÁRUCE PŘEDSTAVUJE ZÁKLADNÍ SOUČÁST TÉTO LICENCE. BEZ TOHOTO PROHLÁŠENÍ NENÍ, PODLE TÉTO DOHODY, POVOLENO UŽÍVÁNÍ ANI ÚPRAVY TOHOTO DOKUMENTU; DÁLE ZA ŽÁDNÝCH OKOLNOSTÍ A ŽÁDNÝCH PRÁVNÍCH PŘEDPOKLADŮ, AŤ SE JEDNÁ O PŘEČIN (VČETNĚ NEDBALOSTNÍCH), SMLOUVU NEBO JINÉ, NENÍ AUTOR, PŮVODNÍ PISATEL, KTERÝKOLIV PŘISPĚVATEL NEBO KTERÝKOLIV DISTRIBUTOR TOHOTO DOKUMENTU NEBO UPRAVENÉ VERZE DOKUMENTU NEBO KTERÝKOLIV DODAVATEL NĚKTERÉ Z TĚCHTO STRAN ODPOVĚDNÝ NĚJAKÉ OSOBĚ ZA PŘÍMÉ, NEPŘÍMÉ, SPECIÁLNÍ, NAHODILÉ NEBO NÁSLEDNÉ ŠKODY JAKÉHOKOLIV CHARAKTERU, VČETNĚ, ALE NEJEN, ZA POŠKOZENÍ ZE ZTRÁTY DOBRÉHO JMÉNA, PŘERUŠENÍ PRÁCE, PORUCHY NEBO NESPRÁVNÉ FUNKCE POČÍTAČE NEBO JINÉHO A VŠECH DALŠÍCH ŠKOD NEBO ZTRÁT VYVSTÁVAJÍCÍCH Z NEBO VZTAHUJÍCÍCH SE K POUŽÍVÁNÍ TOHOTO DOKUMENTU NEBO UPRAVENÝCH VERZÍ DOKUMENTU, I KDYŽ BY TAKOVÁTO STRANA BYLA INFORMOVANÁ O MOŽNOSTI TAKOVÉHOTO POŠKOZENÍ."
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:394(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/attach-dialog.png' "
+"md5='9940de171b58f92ea810dc4478364976'"
+msgstr ""
+"external ref='figures/attach-dialog.png' "
+"md5='9940de171b58f92ea810dc4478364976'"
 
-#: C/legal.xml:28(para)
-msgid "DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: <placeholder-1/>"
-msgstr "DOKUMENT A JEHO UPRAVENÉ VERZE JSOU ŠÍŘENY V SOULADU SE ZNĚNÍM LICENCE GNU FREE DOCUMENTATION LICENSE S NÁSLEDUJÍCÍM USTANOVENÍM: <placeholder-1/>"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:440(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/load-core-dialog.png' "
+"md5='2a3dd09883a026826d0a7036991720a4'"
+msgstr ""
+"external ref='figures/load-core-dialog.png' "
+"md5='2a3dd09883a026826d0a7036991720a4'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:180(None)
-msgid "@@image: 'figures/main-window.png'; md5=216a6e17325ddd6a4e96037d05a39734"
-msgstr "@@image: 'figures/main-window.png'; md5=24400b52cd228ebc96c7bb4d96513b3b"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:471(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/connect-remote-dialog.png' "
+"md5='0f47f358e68947aaf1330fb1c1013f72'"
+msgstr ""
+"external ref='figures/connect-remote-dialog.png' "
+"md5='0f47f358e68947aaf1330fb1c1013f72'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:329(None)
-msgid "@@image: 'figures/execute-dialog.png'; md5=450a45378b4021176c8f093be2dedc97"
-msgstr "@@image: 'figures/execute-dialog.png'; md5=227d93b8d0094691ff83e83d06017c12"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:593(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/variable-inspector.png' "
+"md5='676c2a7985aa4e41f5a77a85bcfd8a27'"
+msgstr ""
+"external ref='figures/variable-inspector.png' "
+"md5='676c2a7985aa4e41f5a77a85bcfd8a27'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:394(None)
-msgid "@@image: 'figures/attach-dialog.png'; md5=9940de171b58f92ea810dc4478364976"
-msgstr "@@image: 'figures/attach-dialog.png'; md5=d7e7d7cdd27e56acab0d7c14b0508da0"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:627(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/global-variables-dialog.png' "
+"md5='b3224457732491046fbcea9491df2383'"
+msgstr ""
+"external ref='figures/global-variables-dialog.png' "
+"md5='b3224457732491046fbcea9491df2383'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:440(None)
-msgid "@@image: 'figures/load-core-dialog.png'; md5=2a3dd09883a026826d0a7036991720a4"
-msgstr "@@image: 'figures/load-core-dialog.png'; md5=2fadefbec77da3074f89a342292ae35d"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:667(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/set-breakpoint-dialog.png' "
+"md5='86618670e2f62026adeb38ae033ec38d'"
+msgstr ""
+"external ref='figures/set-breakpoint-dialog.png' "
+"md5='86618670e2f62026adeb38ae033ec38d'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:471(None)
-msgid "@@image: 'figures/connect-remote-dialog.png'; md5=0f47f358e68947aaf1330fb1c1013f72"
-msgstr "@@image: 'figures/connect-remote-dialog.png'; md5=1eebcd322e0124795fae797633805ba9"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:705(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/enabled-breakpoint.png' "
+"md5='a51237a0756cdb7a754b24b211e40bbb'"
+msgstr ""
+"external ref='figures/enabled-breakpoint.png' "
+"md5='a51237a0756cdb7a754b24b211e40bbb'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:593(None)
-msgid "@@image: 'figures/variable-inspector.png'; md5=676c2a7985aa4e41f5a77a85bcfd8a27"
-msgstr "@@image: 'figures/variable-inspector.png'; md5=dc7b0efec578b54080514c4dd085ba77"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:716(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/disabled-breakpoint.png' "
+"md5='b703d696cec0c49810de7f2a85f0ddba'"
+msgstr ""
+"external ref='figures/disabled-breakpoint.png' "
+"md5='b703d696cec0c49810de7f2a85f0ddba'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:627(None)
-msgid "@@image: 'figures/global-variables-dialog.png'; md5=b3224457732491046fbcea9491df2383"
-msgstr "@@image: 'figures/global-variables-dialog.png'; md5=e618838268bca2639b45e3129a143434"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:739(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/open-files-target.png' "
+"md5='715003a703fc7cc112bea9e58a25f627'"
+msgstr ""
+"external ref='figures/open-files-target.png' "
+"md5='715003a703fc7cc112bea9e58a25f627'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:667(None)
-msgid "@@image: 'figures/set-breakpoint-dialog.png'; md5=86618670e2f62026adeb38ae033ec38d"
-msgstr "@@image: 'figures/set-breakpoint-dialog.png'; md5=6d71b7e484e0d915b4f0686e2711bb76"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:777(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/registers-view.png' "
+"md5='25b369f4f3f0a42c04ded0f8880435ba'"
+msgstr ""
+"external ref='figures/registers-view.png' "
+"md5='25b369f4f3f0a42c04ded0f8880435ba'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:705(None)
-msgid "@@image: 'figures/enabled-breakpoint.png'; md5=a51237a0756cdb7a754b24b211e40bbb"
-msgstr "@@image: 'figures/enabled-breakpoint.png'; md5=a34c984749594da32b4ef863381df6fc"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:802(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
+msgstr ""
+"external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:716(None)
-msgid "@@image: 'figures/disabled-breakpoint.png'; md5=b703d696cec0c49810de7f2a85f0ddba"
-msgstr "@@image: 'figures/disabled-breakpoint.png'; md5=b6ad6722594534a23ca04ca77ea1c01b"
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:863(imagedata)
+msgctxt "_"
+msgid ""
+"external ref='figures/sessions-dialog.png' "
+"md5='d07fd79198e666ca9b21fee3bbb30db4'"
+msgstr ""
+"external ref='figures/sessions-dialog.png' "
+"md5='d07fd79198e666ca9b21fee3bbb30db4'"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:739(None)
-msgid "@@image: 'figures/open-files-target.png'; md5=715003a703fc7cc112bea9e58a25f627"
-msgstr "@@image: 'figures/open-files-target.png'; md5=ea6ee912667457ffa23d9e5dbe2f3f84"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:777(None)
-msgid "@@image: 'figures/registers-view.png'; md5=25b369f4f3f0a42c04ded0f8880435ba"
-msgstr "@@image: 'figures/registers-view.png'; md5=5e991e6c920ec04c86946e4326ef6655"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:802(None)
-msgid "@@image: 'figures/memory-view.png'; md5=b2a94da383551b3eaae64ddb93a7128f"
-msgstr "@@image: 'figures/memory-view.png'; md5=b1fdbabc1a25e3ec22fde6e382aa55bb"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:863(None)
-msgid "@@image: 'figures/sessions-dialog.png'; md5=d07fd79198e666ca9b21fee3bbb30db4"
-msgstr "@@image: 'figures/sessions-dialog.png'; md5=e095c42c6c09c8dc4bd4d515ce5aeb01"
-
-#: C/nemiver.xml:24(title)
+#: C/index.docbook:24(articleinfo/title)
 msgid "Nemiver Manual"
 msgstr "Příručka k aplikaci Nemiver"
 
-#: C/nemiver.xml:26(year)
-#: C/nemiver.xml:76(date)
-msgid "2008"
-msgstr "2008"
+#: C/index.docbook:25(articleinfo/copyright)
+msgid "<year>2008</year> <holder>Jonathon Jongsma</holder>"
+msgstr "<year>2008</year> <holder>Jonathon Jongsma</holder>"
 
-#: C/nemiver.xml:27(holder)
-msgid "Jonathon Jongsma"
-msgstr "Jonathon Jongsma"
-
-#: C/nemiver.xml:38(publishername)
+#: C/index.docbook:38(publisher/publishername)
 msgid "Nemiver Project"
 msgstr "Projekt Nemiver"
 
-#: C/nemiver.xml:43(firstname)
-msgid "Jonathon"
-msgstr "Jonathon"
+#: C/index.docbook:42(authorgroup/author)
+msgid ""
+"<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
+"<orgname>GNOME</orgname> </affiliation>"
+msgstr ""
+"<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
+"<orgname>GNOME</orgname> </affiliation>"
 
-#: C/nemiver.xml:44(surname)
-msgid "Jongsma"
-msgstr "Jongsma"
-
-#: C/nemiver.xml:46(orgname)
-msgid "GNOME"
-msgstr "GNOME"
-
-#: C/nemiver.xml:68(revnumber)
-msgid "1.0"
-msgstr "1.0"
-
-#: C/nemiver.xml:69(date)
-msgid "2007"
-msgstr "2007"
-
-#: C/nemiver.xml:71(para)
+#: C/index.docbook:71(revdescription/para)
 msgid "Initial version"
 msgstr "Počáteční verze"
 
-#: C/nemiver.xml:75(revnumber)
-msgid "2.0"
-msgstr "2.0"
+#: C/index.docbook:67(revhistory/revision)
+msgid "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
+msgstr "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
 
-#: C/nemiver.xml:78(para)
+#: C/index.docbook:78(revdescription/para)
 msgid "Updated for 0.5.0 Release"
 msgstr "Aktualizováno pro vydání 0.5.0"
 
-#: C/nemiver.xml:82(releaseinfo)
+#: C/index.docbook:74(revhistory/revision)
+msgid "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
+msgstr "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
+
+#: C/index.docbook:82(articleinfo/releaseinfo)
 msgid "This manual describes version 0.5.0 of Nemiver."
 msgstr "Tato příručka popisuje aplikaci Nemiver ve verzi 0.5.0"
 
-#: C/nemiver.xml:85(title)
+#: C/index.docbook:85(legalnotice/title)
 msgid "Feedback"
 msgstr "Ohlasy"
 
-#: C/nemiver.xml:86(para)
-msgid "To report a bug or make a suggestion regarding the <application>Nemiver</application> application or this manual, see the <ulink url=\"http://www.gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
-msgstr "Pokud chcete oznámit chybu nebo navrhnout vylepšení vztahující se k aplikaci <application>Nemiver</application> nebo této příručce, postupujte dle instrukcí na <ulink url=\"http://www.gnome.org/projects/nemiver/\" type=\"http\">webových stránkách Nemiver</ulink>."
+#: C/index.docbook:86(legalnotice/para)
+msgid ""
+"To report a bug or make a suggestion regarding the <application>Nemiver</"
+"application> application or this manual, see the <ulink url=\"http://www."
+"gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
+msgstr ""
+"Pokud chcete oznámit chybu nebo navrhnout vylepšení vztahující se k aplikaci "
+"<application>Nemiver</application> nebo této příručce, postupujte dle "
+"instrukcí na <ulink url=\"http://www.gnome.org/projects/nemiver/\" type="
+"\"http\">webových stránkách Nemiver</ulink>."
 
-#: C/nemiver.xml:94(para)
+#: C/index.docbook:94(abstract/para)
 msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
 msgstr "Nemiver je grafický ladicí program pro pracovní prostředí GNOME."
 
-#: C/nemiver.xml:100(primary)
-msgid "Nemiver"
-msgstr "Nemiver"
+#: C/index.docbook:99(article/indexterm)
+msgid "<primary>Nemiver</primary>"
+msgstr "<primary>Nemiver</primary>"
 
-#: C/nemiver.xml:103(primary)
-msgid "debugger"
-msgstr "ladicí program"
+#: C/index.docbook:102(article/indexterm)
+msgid "<primary>debugger</primary>"
+msgstr "<primary>ladicí program</primary>"
 
-#: C/nemiver.xml:106(primary)
-msgid "gdb"
-msgstr "gdb"
+#: C/index.docbook:105(article/indexterm)
+msgid "<primary>gdb</primary>"
+msgstr "<primary>gdb</primary>"
 
-#: C/nemiver.xml:111(title)
+#: C/index.docbook:111(sect1/title)
 msgid "Overview"
 msgstr "Přehled"
 
-#: C/nemiver.xml:112(para)
-msgid "Nemiver is an ongoing effort to write a standalone graphical debugger that integrates well in the GNOME desktop environment. It currently features a backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
-msgstr "Aplikace Nemiver je trvalou snahou o napsání samostatného grafického ladicího programu, který je dobře integrován s pracovním prostředím GNOME. V současné době funkčně podporuje dobře známý ladicí program GNU gdb sloužící k ladění programů v C / C++."
+#: C/index.docbook:112(sect1/para)
+msgid ""
+"Nemiver is an ongoing effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr ""
+"Aplikace Nemiver je trvalou snahou o napsání samostatného grafického "
+"ladicího programu, který je dobře integrován s pracovním prostředím GNOME. V "
+"současné době funkčně podporuje dobře známý ladicí program GNU gdb sloužící "
+"k ladění programů v C / C++."
 
-#: C/nemiver.xml:119(title)
+#: C/index.docbook:119(sect2/title)
 msgid "Perspectives"
 msgstr "Vyhlídky do budoucna"
 
-#: C/nemiver.xml:120(para)
-msgid "Nemiver is designed as a generic graphical <interface>workbench</interface> and a plugin system that can offer several different perspectives. Currently the only perspective provided is a debugging perspective, but in the future, there may be perspectives added for memory debugging with <application>valgrind</application>, or for profiling tools such as <application>oprofile</application>."
-msgstr "Nemiver je navržen jako obecný grafický <interface>pracovní nástroj</interface> a systém zásuvných modulů, který může sloužit několika různým účelům. V současnosti slouží pouze pro účely ladění, ale do budoucna může výhledově přidat podporu pro ladění paměti pomocí nástroje <application>valgrind</application> nebo profilovací nástroje, jako je <application>oprofile</application>."
+#: C/index.docbook:120(sect2/para)
+msgid ""
+"Nemiver is designed as a generic graphical <interface>workbench</interface> "
+"and a plugin system that can offer several different perspectives. Currently "
+"the only perspective provided is a debugging perspective, but in the future, "
+"there may be perspectives added for memory debugging with "
+"<application>valgrind</application>, or for profiling tools such as "
+"<application>oprofile</application>."
+msgstr ""
+"Nemiver je navržen jako obecný grafický <interface>pracovní nástroj</"
+"interface> a systém zásuvných modulů, který může sloužit několika různým "
+"účelům. V současnosti slouží pouze pro účely ladění, ale do budoucna může "
+"výhledově přidat podporu pro ladění paměti pomocí nástroje "
+"<application>valgrind</application> nebo profilovací nástroje, jako je "
+"<application>oprofile</application>."
 
-#: C/nemiver.xml:132(title)
+#: C/index.docbook:132(sect1/title)
 msgid "Getting Started"
 msgstr "Začínáme"
 
-#: C/nemiver.xml:133(para)
-msgid "This section explains how to start Nemiver and gives a basic overview of the application."
-msgstr "Tento oddíl vysvětluje, jak aplikaci Nemiver spustit a podává o aplikaci základní přehled."
+#: C/index.docbook:133(sect1/para)
+msgid ""
+"This section explains how to start Nemiver and gives a basic overview of the "
+"application."
+msgstr ""
+"Tento oddíl vysvětluje, jak aplikaci Nemiver spustit a podává o aplikaci "
+"základní přehled."
 
-#: C/nemiver.xml:138(title)
+#: C/index.docbook:138(sect2/title)
 msgid "Starting Nemiver"
 msgstr "Spuštění aplikace Nemiver"
 
-#: C/nemiver.xml:139(para)
+#: C/index.docbook:139(sect2/para)
 msgid "You can start Nemiver in the following ways:"
 msgstr "Aplikaci Nemiver můžete spustit následujícími způsoby:"
 
-#: C/nemiver.xml:144(term)
+#: C/index.docbook:144(varlistentry/term)
 msgid "<guimenu>Applications</guimenu> menu"
 msgstr "Nabídka <guimenu>Aplikace</guimenu>"
 
-#: C/nemiver.xml:146(para)
-msgid "Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver Debugger</guimenuitem></menuchoice>."
-msgstr "Zvolte <menuchoice><guisubmenu>Programování</guisubmenu><guimenuitem>Ladicí program Nemiver</guimenuitem></menuchoice>."
+#: C/index.docbook:146(listitem/para)
+msgid ""
+"Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver "
+"Debugger</guimenuitem></menuchoice>."
+msgstr ""
+"Zvolte <menuchoice><guisubmenu>Programování</guisubmenu><guimenuitem>Ladicí "
+"program Nemiver</guimenuitem></menuchoice>."
 
-#: C/nemiver.xml:152(term)
+#: C/index.docbook:152(varlistentry/term)
 msgid "Command line"
 msgstr "Příkazový řádek"
 
-#: C/nemiver.xml:154(para)
+#: C/index.docbook:154(listitem/para)
 msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
 msgstr "Napište <command>nemiver</command> a stiskněte <keycap>Enter</keycap>."
 
-#: C/nemiver.xml:159(title)
+#: C/index.docbook:159(tip/title)
 msgid "Additional Command-line Options"
 msgstr "Doplňující přepínače příkazového řádku"
 
-#: C/nemiver.xml:160(para)
-msgid "You can find a list of options that can be passed to Nemiver on the command line by typing <command>nemiver --help-all</command>."
-msgstr "Přehled přepínačů, které můžete aplikaci Nemiver na příkazovém řádku předat, získáte napsáním <command>nemiver --help-all</command>."
+#: C/index.docbook:160(tip/para)
+msgid ""
+"You can find a list of options that can be passed to Nemiver on the command "
+"line by typing <command>nemiver --help-all</command>."
+msgstr ""
+"Přehled přepínačů, které můžete aplikaci Nemiver na příkazovém řádku předat, "
+"získáte napsáním <command>nemiver --help-all</command>."
 
-#: C/nemiver.xml:170(title)
+#: C/index.docbook:170(sect2/title)
 msgid "The Nemiver window"
 msgstr "Okno aplikace Nemiver"
 
-#: C/nemiver.xml:171(para)
-msgid "When you start Nemiver, you will see a window that looks very much like the following:"
-msgstr "Když aplikaci Nemiver spustíte, uvidíte okno, které vypadá podobně jako na následujícím obrázku:"
+#: C/index.docbook:171(sect2/para)
+msgid ""
+"When you start Nemiver, you will see a window that looks very much like the "
+"following:"
+msgstr ""
+"Když aplikaci Nemiver spustíte, uvidíte okno, které vypadá podobně jako na "
+"následujícím obrázku:"
 
-#: C/nemiver.xml:176(title)
+#: C/index.docbook:176(figure/title)
 msgid "Nemiver Window"
 msgstr "Okno aplikace Nemiver"
 
-#: C/nemiver.xml:183(phrase)
-msgid "Shows Nemiver main window."
-msgstr "Ukazuje hlavní okno aplikace Nemiver."
+#: C/index.docbook:178(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Shows Nemiver main window.</phrase> </"
+"textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Ukazuje hlavní okno aplikace Nemiver.</"
+"phrase> </textobject>"
 
-#: C/nemiver.xml:188(para)
-msgid "The <application>Nemiver</application> window contains the following elements:"
-msgstr "Okno aplikace <application>Nemiver</application> obsahuje následující prvky:"
+#: C/index.docbook:188(sect2/para)
+msgid ""
+"The <application>Nemiver</application> window contains the following "
+"elements:"
+msgstr ""
+"Okno aplikace <application>Nemiver</application> obsahuje následující prvky:"
 
-#: C/nemiver.xml:194(term)
+#: C/index.docbook:194(varlistentry/term)
 msgid "Menubar"
 msgstr "Panel nabídek"
 
-#: C/nemiver.xml:196(para)
-msgid "The menus on the menubar contain all of the commands you need to use <application>Nemiver</application>."
-msgstr "Nabídky v panelu nabídek obsahují všechny příkazy, které potřebujete k používání aplikace <application>Nemiver</application>."
+#: C/index.docbook:196(listitem/para)
+msgid ""
+"The menus on the menubar contain all of the commands you need to use "
+"<application>Nemiver</application>."
+msgstr ""
+"Nabídky v panelu nabídek obsahují všechny příkazy, které potřebujete k "
+"používání aplikace <application>Nemiver</application>."
 
-#: C/nemiver.xml:203(term)
+#: C/index.docbook:203(varlistentry/term)
 msgid "Toolbar"
 msgstr "Panel nástrojů"
 
-#: C/nemiver.xml:205(para)
-msgid "The toolbar contains the basic debugging actions that can be used to run or step through the program being debugged."
-msgstr "Panel nástrojů obsahuje základní ladicí činnosti, které mohou být použity ke spuštění nebo krokování programu, který je laděn."
+#: C/index.docbook:205(listitem/para)
+msgid ""
+"The toolbar contains the basic debugging actions that can be used to run or "
+"step through the program being debugged."
+msgstr ""
+"Panel nástrojů obsahuje základní ladicí činnosti, které mohou být použity ke "
+"spuštění nebo krokování programu, který je laděn."
 
-#: C/nemiver.xml:212(term)
+#: C/index.docbook:212(varlistentry/term)
 msgid "Source View Notebook"
 msgstr "Sešit zdrojových kódů"
 
-#: C/nemiver.xml:214(para)
-msgid "When source files are open, this area will display source files of the program being debugged."
-msgstr "Když se otevřou soubory se zdrojovými kódy laděného programu, zobrazí se v právě tomto místě."
+#: C/index.docbook:214(listitem/para)
+msgid ""
+"When source files are open, this area will display source files of the "
+"program being debugged."
+msgstr ""
+"Když se otevřou soubory se zdrojovými kódy laděného programu, zobrazí se v "
+"právě tomto místě."
 
-#: C/nemiver.xml:221(term)
+#: C/index.docbook:221(varlistentry/term)
 msgid "Status Notebook"
 msgstr "Sešit stavů"
 
-#: C/nemiver.xml:223(para)
-msgid "The Status notebook contains several tabs for displaying information about the program being debugged. These include the following:"
-msgstr "Sešit stavů obsahuje několik karet, které zobrazují informace o laděném programu. Jsou to následující:"
+#: C/index.docbook:223(listitem/para)
+msgid ""
+"The Status notebook contains several tabs for displaying information about "
+"the program being debugged. These include the following:"
+msgstr ""
+"Sešit stavů obsahuje několik karet, které zobrazují informace o laděném "
+"programu. Jsou to následující:"
 
-#: C/nemiver.xml:230(term)
+#: C/index.docbook:230(varlistentry/term)
 msgid "Call Stack"
 msgstr "Zásobník volání"
 
-#: C/nemiver.xml:234(para)
-msgid "Displays the current state of the call stack of the program being debugged."
-msgstr "Zobrazuje současný stav zásobníku volání programu, který je právě laděn."
+#: C/index.docbook:234(listitem/para)
+msgid ""
+"Displays the current state of the call stack of the program being debugged."
+msgstr ""
+"Zobrazuje současný stav zásobníku volání programu, který je právě laděn."
 
-#: C/nemiver.xml:241(term)
+#: C/index.docbook:241(varlistentry/term)
 msgid "Variables"
 msgstr "Proměnné"
 
-#: C/nemiver.xml:245(para)
-msgid "Displays a list of all local variables and function arguments, in addition to their values and types."
-msgstr "Zobrazuje seznam lokálních proměnných a argumentů funkcí a navíc i jejich hodnotu a typ."
+#: C/index.docbook:245(listitem/para)
+msgid ""
+"Displays a list of all local variables and function arguments, in addition "
+"to their values and types."
+msgstr ""
+"Zobrazuje seznam lokálních proměnných a argumentů funkcí a navíc i jejich "
+"hodnotu a typ."
 
-#: C/nemiver.xml:252(term)
+#: C/index.docbook:252(varlistentry/term)
 msgid "Target Terminal"
 msgstr "Cílový terminál"
 
-#: C/nemiver.xml:256(para)
-msgid "If the program being debugged prints any output to the terminal, it will be displayed in this tab."
-msgstr "Když laděný program vypisuje nějaké výstupy na terminál, zobrazí se právě na této kartě."
+#: C/index.docbook:256(listitem/para)
+msgid ""
+"If the program being debugged prints any output to the terminal, it will be "
+"displayed in this tab."
+msgstr ""
+"Když laděný program vypisuje nějaké výstupy na terminál, zobrazí se právě na "
+"této kartě."
 
-#: C/nemiver.xml:263(term)
+#: C/index.docbook:263(varlistentry/term)
 msgid "Breakpoints"
 msgstr "Body přerušení"
 
-#: C/nemiver.xml:267(para)
-msgid "This tab displays a list of all breakpoints that have been set. You can view the source code of a particular breakpoint by double-clicking an item in the list or by right-clicking and selecting <menuchoice><guimenuitem>Go to Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints can be deleted, enabled, or disabled in this tab. For more information about breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
-msgstr "Tato karta zobrazuje seznam všech bodů přerušení, které jsou nastavené. Dvojitým kliknutím na položku v seznamu, případně volbou <menuchoice><guimenuitem>Přejít do zdrojového kódu</guimenuitem></menuchoice> z nabídky, si můžete zobrazit místo ve zdrojovém kódu, kde se bod přerušení nachází. Na kartě můžete body přerušení také mazat a zakazovat nebo povolovat. Více informací o bodech přerušení viz <xref linkend=\"nemiver-sect-breakpoints\"/>."
+#: C/index.docbook:267(listitem/para)
+msgid ""
+"This tab displays a list of all breakpoints that have been set. You can view "
+"the source code of a particular breakpoint by double-clicking an item in the "
+"list or by right-clicking and selecting <menuchoice><guimenuitem>Go to "
+"Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints "
+"can be deleted, enabled, or disabled in this tab. For more information about "
+"breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
+msgstr ""
+"Tato karta zobrazuje seznam všech bodů přerušení, které jsou nastavené. "
+"Dvojitým kliknutím na položku v seznamu, případně volbou "
+"<menuchoice><guimenuitem>Přejít do zdrojového kódu</guimenuitem></"
+"menuchoice> z nabídky, si můžete zobrazit místo ve zdrojovém kódu, kde se "
+"bod přerušení nachází. Na kartě můžete body přerušení také mazat a zakazovat "
+"nebo povolovat. Více informací o bodech přerušení viz <xref linkend="
+"\"nemiver-sect-breakpoints\"/>."
 
-#: C/nemiver.xml:280(term)
-#: C/nemiver.xml:766(title)
+#: C/index.docbook:280(varlistentry/term) C/index.docbook:766(sect3/title)
 msgid "Registers"
 msgstr "Registry"
 
-#: C/nemiver.xml:284(para)
-msgid "This tab displays all of the CPU registers and their values. For more information, see <xref linkend=\"nemiver-sect-registers\"/>."
-msgstr "Tato karta zobrazuje seznam všech registrů CPU a jejich hodnoty. Více informací viz <xref linkend=\"nemiver-sect-registers\"/>."
+#: C/index.docbook:284(listitem/para)
+msgid ""
+"This tab displays all of the CPU registers and their values. For more "
+"information, see <xref linkend=\"nemiver-sect-registers\"/>."
+msgstr ""
+"Tato karta zobrazuje seznam všech registrů CPU a jejich hodnoty. Více "
+"informací viz <xref linkend=\"nemiver-sect-registers\"/>."
 
-#: C/nemiver.xml:291(term)
-#: C/nemiver.xml:793(title)
+#: C/index.docbook:291(varlistentry/term) C/index.docbook:793(sect3/title)
 msgid "Memory"
 msgstr "Paměť"
 
-#: C/nemiver.xml:295(para)
-msgid "This tab displays a view of the current state of a specific memory location. For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
-msgstr "Tato karta zobrazuje současný stav zadaného místa v paměti. Více informací viz <xref linkend=\"nemiver-sect-memory\"/>."
+#: C/index.docbook:295(listitem/para)
+msgid ""
+"This tab displays a view of the current state of a specific memory location. "
+"For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
+msgstr ""
+"Tato karta zobrazuje současný stav zadaného místa v paměti. Více informací "
+"viz <xref linkend=\"nemiver-sect-memory\"/>."
 
-#: C/nemiver.xml:307(title)
+#: C/index.docbook:307(sect2/title)
 msgid "Choosing a Program to Debug"
 msgstr "Výběr laděného programu"
 
-#: C/nemiver.xml:308(para)
-msgid "There are several ways to begin debugging a program. Nemiver allows you to load a local executable file, load a core file, attach to a running process, or connect to a remote debugging server."
-msgstr "Existuje několik způsobů, jak program ladit. Nemiver umožňuje načíst místní spustitelný soubor, načíst obraz paměti, napojit se na běžící proces a nebo se připojit ke vzdálenému ladicímu serveru."
+#: C/index.docbook:308(sect2/para)
+msgid ""
+"There are several ways to begin debugging a program. Nemiver allows you to "
+"load a local executable file, load a core file, attach to a running process, "
+"or connect to a remote debugging server."
+msgstr ""
+"Existuje několik způsobů, jak program ladit. Nemiver umožňuje načíst místní "
+"spustitelný soubor, načíst obraz paměti, napojit se na běžící proces a nebo "
+"se připojit ke vzdálenému ladicímu serveru."
 
-#: C/nemiver.xml:313(title)
+#: C/index.docbook:313(sect3/title)
 msgid "Debugging an Executable Program"
 msgstr "Ladění spustitelného programu"
 
-#: C/nemiver.xml:315(title)
-#: C/nemiver.xml:380(title)
-#: C/nemiver.xml:425(title)
-#: C/nemiver.xml:462(title)
-#: C/nemiver.xml:852(title)
+#: C/index.docbook:315(sect4/title) C/index.docbook:380(sect4/title)
+#: C/index.docbook:425(sect4/title) C/index.docbook:462(sect4/title)
+#: C/index.docbook:852(sect3/title)
 msgid "Using the Workbench"
 msgstr "Použití pracovního nástroje"
 
-#: C/nemiver.xml:316(para)
-msgid "To select an executable program to debug, select <menuchoice><guimenu> File </guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should display the following dialog:"
-msgstr "Když chcete vybrat spustitelný program k ladění, zvolte <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Načíst spustitelný soubor…</guimenuitem></menuchoice>, čímž by se mělo zobrazit následující dialogové okno:"
+#: C/index.docbook:316(sect4/para)
+msgid ""
+"To select an executable program to debug, select <menuchoice><guimenu> File "
+"</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"Když chcete vybrat spustitelný program k ladění, zvolte "
+"<menuchoice><guimenu>Soubor</guimenu><guimenuitem>Načíst spustitelný soubor…"
+"</guimenuitem></menuchoice>, čímž by se mělo zobrazit následující dialogové "
+"okno:"
 
-#: C/nemiver.xml:325(title)
+#: C/index.docbook:325(figure/title)
 msgid "Execute Dialog"
 msgstr "Dialogové okno Výběr programu ke spuštění"
 
-#: C/nemiver.xml:332(phrase)
-msgid "Shows dialog for selecting an executable to run"
-msgstr "Ukazuje dialogové okno sloužící k výběru spustitelného souboru, který má běžet"
+#: C/index.docbook:327(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for selecting an "
+"executable to run</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Ukazuje dialogové okno pro výběr "
+"spustitelného souboru, který poběží</phrase> </textobject>"
 
-#: C/nemiver.xml:337(para)
-msgid "In this dialog, you can select the program to be debugged, any arguments or options to be passed to the executable on the command line, the working directory to run the executable in, and any Environment Variables that should be set when the executable is being debugged."
-msgstr "V tomto dialogovém okně můžete vybrat program, který se má ladit, zadat argumenty nebo přepínače, které se mají spustitelnému souboru předat na příkazové řádce, vybrat pracovní složku, ve kterém má spustitelný soubor běžet a nadefinovat proměnné prostředí, které by se měli nastavit, když se spustitelný soubor začne ladit."
+#: C/index.docbook:337(sect4/para)
+msgid ""
+"In this dialog, you can select the program to be debugged, any arguments or "
+"options to be passed to the executable on the command line, the working "
+"directory to run the executable in, and any Environment Variables that "
+"should be set when the executable is being debugged."
+msgstr ""
+"V tomto dialogovém okně můžete vybrat program, který se má ladit, zadat "
+"argumenty nebo přepínače, které se mají spustitelnému souboru předat na "
+"příkazové řádce, vybrat pracovní složku, ve kterém má spustitelný soubor "
+"běžet a nadefinovat proměnné prostředí, které by se měli nastavit, když se "
+"spustitelný soubor začne ladit."
 
-#: C/nemiver.xml:345(title)
-#: C/nemiver.xml:411(title)
-#: C/nemiver.xml:450(title)
-#: C/nemiver.xml:485(title)
+#: C/index.docbook:345(sect4/title) C/index.docbook:411(sect4/title)
+#: C/index.docbook:450(sect4/title) C/index.docbook:485(sect4/title)
 msgid "Using the Command Line"
 msgstr "Použití příkazového řádku"
 
-#: C/nemiver.xml:346(para)
-msgid "To start an executable program to debug from the command line, simply specify the name of the executable. You can either give an absolute path to the executable, or if it is in the path, you can simply give the basename of the executable. For example, if <filename>/usr/bin</filename> is in your path, both of the following are valid:"
-msgstr "Spustitelný soubor, který chcete ladit, spustíte z příkazové řádky jednoduše tak, že zadáte název spustitelného souboru. Můžete uvést buď absolutní cestu ke spustitelnému programu nebo, pokud se nachází v prohledávané cestě, pouze základní název spustitelného souboru. Například, pokud patří cesta <filename>/usr/bin</filename> mezi prohledávané, jsou platné oba následující případy:"
+#: C/index.docbook:346(sect4/para)
+msgid ""
+"To start an executable program to debug from the command line, simply "
+"specify the name of the executable. You can either give an absolute path to "
+"the executable, or if it is in the path, you can simply give the basename of "
+"the executable. For example, if <filename>/usr/bin</filename> is in your "
+"path, both of the following are valid:"
+msgstr ""
+"Spustitelný soubor, který chcete ladit, spustíte z příkazové řádky jednoduše "
+"tak, že zadáte název spustitelného souboru. Můžete uvést buď absolutní cestu "
+"ke spustitelnému programu nebo, pokud se nachází v prohledávané cestě, pouze "
+"základní název spustitelného souboru. Například, pokud patří cesta "
+"<filename>/usr/bin</filename> mezi prohledávané, jsou platné oba následující "
+"případy:"
 
-#: C/nemiver.xml:357(command)
-msgid "nemiver /usr/bin/progname"
-msgstr "nemiver /usr/bin/nazevprogramu"
+#: C/index.docbook:356(listitem/para)
+msgid "<command>nemiver /usr/bin/progname</command>"
+msgstr "<command>nemiver /usr/bin/nazev_programu</command>"
 
-#: C/nemiver.xml:362(command)
-msgid "nemiver progname"
-msgstr "nemiver nazevprogramu"
+#: C/index.docbook:361(listitem/para)
+msgid "<command>nemiver progname</command>"
+msgstr "<command>nemiver nazev_programu</command>"
 
-#: C/nemiver.xml:367(title)
+#: C/index.docbook:367(tip/title)
 msgid "Passing Options on the Command Line"
 msgstr "Předávání argumentů v příkazovém řádku"
 
-#: C/nemiver.xml:368(para)
-msgid "If you would like to pass command line options to the program that you are debugging, you should enclose them in quotes to prevent Nemiver from processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
-msgstr "Pokud byste potřebovali předat argumenty příkazového řádku programu, který ladíte, měli byste je uzavřít do uvozovek, abyste předešli jejich zpracování aplikací Nemiver: <command>nemiver \"prognam --arg1 --arg2\"</command>."
+#: C/index.docbook:368(tip/para)
+msgid ""
+"If you would like to pass command line options to the program that you are "
+"debugging, you should enclose them in quotes to prevent Nemiver from "
+"processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
+msgstr ""
+"Pokud byste potřebovali předat argumenty příkazového řádku programu, který "
+"ladíte, měli byste je uzavřít do uvozovek, abyste předešli jejich zpracování "
+"aplikací Nemiver: <command>nemiver \"prognam --arg1 --arg2\"</command>."
 
-#: C/nemiver.xml:378(title)
+#: C/index.docbook:378(sect3/title)
 msgid "Attaching to a Running Program"
 msgstr "Napojování na běžící program"
 
-#: C/nemiver.xml:381(para)
-msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Attach to Running Program... </guimenuitem></menuchoice>, which should display the following dialog:"
-msgstr "Zvolte položku nabídky <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Napojit na běžící program…</guimenuitem></menuchoice>, která by měla zobrazit následující dialogové okno:"
+#: C/index.docbook:381(sect4/para)
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> "
+"Attach to Running Program... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"Zvolte položku nabídky <menuchoice><guimenu>Soubor</"
+"guimenu><guimenuitem>Napojit na běžící program…</guimenuitem></menuchoice>, "
+"která by měla zobrazit následující dialogové okno:"
 
-#: C/nemiver.xml:390(title)
+#: C/index.docbook:390(figure/title)
 msgid "Attach Dialog"
 msgstr "Dialogové okno Napojení na běžící program"
 
-#: C/nemiver.xml:397(phrase)
-msgid "Shows dialog for attaching to a running program"
-msgstr "Ukazuje dialogové okno sloužící k napojení na běžící program"
+#: C/index.docbook:392(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for attaching to a "
+"running program</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Ukazuje dialogové okno pro napojení "
+"na již běžící program</phrase> </textobject>"
 
-#: C/nemiver.xml:402(para)
-msgid "Select a process from the list and click <guibutton>OK</guibutton> to start debugging the selected program. There may be a lot of processes listed in the dialog, so you can filter the list to only ones that that you are interested in by typing some text into the text entry located just below the list."
-msgstr "Vyberte ze seznamu proces a kliknutím na <guibutton>OK</guibutton> započněte ladění vybraného programu. V dialogovém okně může být procesů vypsáno hodně, takže máte možnost si vyfiltrovat jen ten, který vás zajímá, tak, že napíšete text do textového pole umístěného pod seznamem."
+#: C/index.docbook:402(sect4/para)
+msgid ""
+"Select a process from the list and click <guibutton>OK</guibutton> to start "
+"debugging the selected program. There may be a lot of processes listed in "
+"the dialog, so you can filter the list to only ones that that you are "
+"interested in by typing some text into the text entry located just below the "
+"list."
+msgstr ""
+"Vyberte ze seznamu proces a kliknutím na <guibutton>OK</guibutton> započněte "
+"ladění vybraného programu. V dialogovém okně může být procesů vypsáno hodně, "
+"takže máte možnost si vyfiltrovat jen ten, který vás zajímá, tak, že "
+"napíšete text do textového pole umístěného pod seznamem."
 
-#: C/nemiver.xml:412(para)
-msgid "To attach to a running program from the command line, use the <option>--attach</option> option. The <option>--attach</option> option accepts either a pid or a process name. So, for example, to debug the running process <command>foo</command> which has a pid of 1121, you could either type <command>nemiver --attach foo</command> or <command>nemiver --attach 1121</command>."
-msgstr "Pokud se chcete napojit na běžící program z příkazového řádku, použijte přepínač <option>--attach</option>. Přepínač <option>--attach</option> přijímá buď PID procesu nebo jeho název. Takže když například chcete ladit běžící proces <command>pokus</command>, který má PID 1121, můžete napsat buď <command>nemiver --attach pokus</command> nebo <command>nemiver --attach 1121</command>."
+#: C/index.docbook:412(sect4/para)
+msgid ""
+"To attach to a running program from the command line, use the <option>--"
+"attach</option> option. The <option>--attach</option> option accepts either "
+"a pid or a process name. So, for example, to debug the running process "
+"<command>foo</command> which has a pid of 1121, you could either type "
+"<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
+"command>."
+msgstr ""
+"Pokud se chcete napojit na běžící program z příkazového řádku, použijte "
+"přepínač <option>--attach</option>. Přepínač <option>--attach</option> "
+"přijímá buď PID procesu nebo jeho název. Takže když například chcete ladit "
+"běžící proces <command>pokus</command>, který má PID 1121, můžete napsat buď "
+"<command>nemiver --attach pokus</command> nebo <command>nemiver --attach "
+"1121</command>."
 
-#: C/nemiver.xml:423(title)
+#: C/index.docbook:423(sect3/title)
 msgid "Loading a Core File"
 msgstr "Načítání obrazu paměti"
 
-#: C/nemiver.xml:426(para)
-msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load Core File... </guimenuitem></menuchoice> to bring up the following dialog, which will let you load a core file:"
-msgstr "Zvolte položku nabídky <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Načíst soubor s obrazem paměti…</guimenuitem></menuchoice> a tím se zobrazí dialogové okno, které vám umožní soubor s obrazem paměti načíst:"
+#: C/index.docbook:426(sect4/para)
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load "
+"Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
+"which will let you load a core file:"
+msgstr ""
+"Zvolte položku nabídky <menuchoice><guimenu>Soubor</"
+"guimenu><guimenuitem>Načíst soubor s obrazem paměti…</guimenuitem></"
+"menuchoice> a tím se zobrazí dialogové okno, které vám umožní soubor s "
+"obrazem paměti načíst:"
 
-#: C/nemiver.xml:436(title)
+#: C/index.docbook:436(figure/title)
 msgid "Load Core File Dialog"
 msgstr "Dialogové okno Výběr obrazu paměti k ladění"
 
-#: C/nemiver.xml:443(phrase)
-msgid "Shows dialog for loading a core file"
-msgstr "Ukazuje dialogové okno sloužící k načtení souboru s obrazem paměti"
+#: C/index.docbook:438(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for loading a "
+"core file</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Ukazuje dialogové okno pro "
+"načtení obrazu paměti</phrase> </textobject>"
 
-#: C/nemiver.xml:451(para)
+#: C/index.docbook:451(sect4/para)
 msgid "Core files cannot be loaded from the command line."
 msgstr "Soubory s obrazem paměti nelze načíst z příkazového řádku."
 
-#: C/nemiver.xml:457(title)
+#: C/index.docbook:457(sect3/title)
 msgid "Remote Debugging"
 msgstr "Vzdálené ladění"
 
-#: C/nemiver.xml:458(para)
+#: C/index.docbook:458(sect3/para)
 msgid "Nemiver allows you to connect to a remote debugging server."
 msgstr "Aplikace Nemiver umožňuje připojení ke vzdálenému ladicímu serveru."
 
-#: C/nemiver.xml:463(para)
-msgid "To connect to a remote debugging server, select <menuchoice><guimenu>File</guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
-msgstr "Když se chcete připojit ke vzdálenému ladicímu serveru, zvolte <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Připojit ke vzdálenému cíli…</guimenuitem></menuchoice>"
+#: C/index.docbook:463(sect4/para)
+msgid ""
+"To connect to a remote debugging server, select <menuchoice><guimenu>File</"
+"guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
+msgstr ""
+"Když se chcete připojit ke vzdálenému ladicímu serveru, zvolte "
+"<menuchoice><guimenu>Soubor</guimenu><guimenuitem>Připojit ke vzdálenému "
+"cíli…</guimenuitem></menuchoice>"
 
-#: C/nemiver.xml:474(phrase)
-msgid "Remote Debugging Dialog"
-msgstr "Dialogové okno Vzdálené ladění"
+#: C/index.docbook:469(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Remote Debugging "
+"Dialog</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Dialogové okno "
+"vzdáleného ladění</phrase> </textobject>"
 
-#: C/nemiver.xml:478(para)
-msgid "Select the executable to load and the location where any shared libraries are located, and then fill in the details about connecting to the remote server."
-msgstr "Vyberte spustitelný soubor, který se má načíst a umístění, kde se nachází případné sdílené knihovny, a potom vyplňte údaje pro připojení ke vzdálenému serveru."
+#: C/index.docbook:478(sect4/para)
+msgid ""
+"Select the executable to load and the location where any shared libraries "
+"are located, and then fill in the details about connecting to the remote "
+"server."
+msgstr ""
+"Vyberte spustitelný soubor, který se má načíst a umístění, kde se nachází "
+"případné sdílené knihovny, a potom vyplňte údaje pro připojení ke vzdálenému "
+"serveru."
 
-#: C/nemiver.xml:486(para)
-msgid "Nemiver does not provide a way to connect to a remote server using the command line"
-msgstr "Nemiver nenabízí žádný způsob, jak se připojit ke vzdálenému serveru pomocí příkazového řádku."
+#: C/index.docbook:486(sect4/para)
+msgid ""
+"Nemiver does not provide a way to connect to a remote server using the "
+"command line"
+msgstr ""
+"Nemiver nenabízí žádný způsob, jak se připojit ke vzdálenému serveru pomocí "
+"příkazového řádku."
 
-#: C/nemiver.xml:495(title)
+#: C/index.docbook:495(sect1/title)
 msgid "Using Nemiver"
 msgstr "Používání aplikace Nemiver"
 
-#: C/nemiver.xml:496(para)
+#: C/index.docbook:496(sect1/para)
 msgid "This section describes how to use Nemiver to debug your application."
-msgstr "Tento oddíl popisuje, jak použít aplikaci Nemiver k ladění vaší aplikace."
+msgstr ""
+"Tento oddíl popisuje, jak použít aplikaci Nemiver k ladění vaší aplikace."
 
-#: C/nemiver.xml:500(title)
+#: C/index.docbook:500(sect2/title)
 msgid "Basic Debugging Actions"
 msgstr "Základní ladicí činnosti"
 
-#: C/nemiver.xml:501(para)
-msgid "The basic debugging actions are available on the main toolbar, in the <guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common actions are listed below:"
-msgstr "Základní ladicí činnosti jsou dostupné na hlavním panelu nástrojů, v nabídce <guimenu>Ladit</guimenu> a přes klávesové zkratky. Většina běžných činností je uvedena níže:"
+#: C/index.docbook:501(sect2/para)
+msgid ""
+"The basic debugging actions are available on the main toolbar, in the "
+"<guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common "
+"actions are listed below:"
+msgstr ""
+"Základní ladicí činnosti jsou dostupné na hlavním panelu nástrojů, v nabídce "
+"<guimenu>Ladit</guimenu> a přes klávesové zkratky. Většina běžných činností "
+"je uvedena níže:"
 
-#: C/nemiver.xml:508(term)
+#: C/index.docbook:508(varlistentry/term)
 msgid "Continue"
 msgstr "Pokračovat"
 
-#: C/nemiver.xml:510(para)
-msgid "Starts the program. The program will run until it hits a breakpoint or until the program ends, unless it is interrupted manually by the user by clicking <action>Stop</action>. This action can be activated from the keyboard with <keycap>F5</keycap>."
-msgstr "Spustí program. Program poběží dokud nenarazí na bod přerušení nebo dokud program neskončí, ledaže bude přerušen ručně uživatelem kliknutím na <action>Zastavit</action>. Tuto činnost lze vyvolat z klávesnice pomocí <keycap>F5</keycap>."
+#: C/index.docbook:510(listitem/para)
+msgid ""
+"Starts the program. The program will run until it hits a breakpoint or until "
+"the program ends, unless it is interrupted manually by the user by clicking "
+"<action>Stop</action>. This action can be activated from the keyboard with "
+"<keycap>F5</keycap>."
+msgstr ""
+"Spustí program. Program poběží dokud nenarazí na bod přerušení nebo dokud "
+"program neskončí, ledaže bude přerušen ručně uživatelem kliknutím na "
+"<action>Zastavit</action>. Tuto činnost lze vyvolat z klávesnice pomocí "
+"<keycap>F5</keycap>."
 
-#: C/nemiver.xml:520(term)
+#: C/index.docbook:520(varlistentry/term)
 msgid "Next"
 msgstr "Následující"
 
-#: C/nemiver.xml:522(para)
-msgid "Executes the next statement, and stops when it reaches the next line in this file. Some debuggers may call this action \"Step Over\". This action can be activated from the keyboard with <keycap>F6</keycap>."
-msgstr "Provede následující příkaz a zastaví se, jakmile dosáhne následujícího řádku v souboru. V některých ladicích programech je to nazýváno „Step Over“ („Krok přes“). Tuto činnost lze vyvolat z klávesnice pomocí <keycap>F6</keycap>."
+#: C/index.docbook:522(listitem/para)
+msgid ""
+"Executes the next statement, and stops when it reaches the next line in this "
+"file. Some debuggers may call this action \"Step Over\". This action can be "
+"activated from the keyboard with <keycap>F6</keycap>."
+msgstr ""
+"Provede následující příkaz a zastaví se, jakmile dosáhne následujícího řádku "
+"v souboru. V některých ladicích programech je to nazýváno „Step Over“ („Krok "
+"přes“). Tuto činnost lze vyvolat z klávesnice pomocí <keycap>F6</keycap>."
 
-#: C/nemiver.xml:531(term)
+#: C/index.docbook:531(varlistentry/term)
 msgid "Step"
 msgstr "Krokovat"
 
-#: C/nemiver.xml:533(para)
-msgid "Executes the next statement, stepping into the function if possible. Some debuggers may call this action \"Step In\". This action can be activated from the keyboard with <keycap>F7</keycap>."
-msgstr "Provede následující příkaz, přičemž se zanoří do funkce, pokud je to možné. V některých ladicích programech je to nazýváno „Step in“ („Krok dovnitř“). Tuto činnost lze vyvolat z klávesnice pomocí <keycap>F7</keycap>."
+#: C/index.docbook:533(listitem/para)
+msgid ""
+"Executes the next statement, stepping into the function if possible. Some "
+"debuggers may call this action \"Step In\". This action can be activated "
+"from the keyboard with <keycap>F7</keycap>."
+msgstr ""
+"Provede následující příkaz, přičemž se zanoří do funkce, pokud je to možné. "
+"V některých ladicích programech je to nazýváno „Step in“ („Krok dovnitř“). "
+"Tuto činnost lze vyvolat z klávesnice pomocí <keycap>F7</keycap>."
 
-#: C/nemiver.xml:541(term)
+#: C/index.docbook:541(varlistentry/term)
 msgid "Step Out"
 msgstr "Krokovat ven"
 
-#: C/nemiver.xml:543(para)
-msgid "Finishes execution of the current function and stops when it returns to the calling function. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
-msgstr "Dokončí provádění současné funkce a zastaví se hned po návratu z této funkce. Tuto činnost lze vyvolat z klávesnice pomocí <keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
+#: C/index.docbook:543(listitem/para)
+msgid ""
+"Finishes execution of the current function and stops when it returns to the "
+"calling function. This action can be activated from the keyboard with "
+"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
+msgstr ""
+"Dokončí provádění současné funkce a zastaví se hned po návratu z této "
+"funkce. Tuto činnost lze vyvolat z klávesnice pomocí "
+"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
 
-#: C/nemiver.xml:552(term)
+#: C/index.docbook:552(varlistentry/term)
 msgid "Restart"
 msgstr "Restartovat"
 
-#: C/nemiver.xml:554(para)
-msgid "Reloads the current executable and starts execution from the beginning. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F5</keycap></keycombo>."
-msgstr "Znovu načte současný spustitelný soubor a začne provádění od začátku. Tuto činnost lze vyvolat z klávesnice pomocí <keycombo><keycap>Shift</keycap><keycap>F5</keycap></keycombo>."
+#: C/index.docbook:554(listitem/para)
+msgid ""
+"Reloads the current executable and starts execution from the beginning. This "
+"action can be activated from the keyboard with <keycombo><keycap>Shift</"
+"keycap><keycap>F5</keycap></keycombo>."
+msgstr ""
+"Znovu načte současný spustitelný soubor a začne provádění od začátku. Tuto "
+"činnost lze vyvolat z klávesnice pomocí <keycombo><keycap>Shift</"
+"keycap><keycap>F5</keycap></keycombo>."
 
-#: C/nemiver.xml:562(term)
+#: C/index.docbook:562(varlistentry/term)
 msgid "Stop"
 msgstr "Zastavit"
 
-#: C/nemiver.xml:564(para)
-msgid "Manually interrupt execution of the program. This action is only available when the debugger is running the executable (e.g. after a user has clicked <action>Continue</action>). This action can be activated from the keyboard with <keycap>F9</keycap>."
-msgstr "Ručně přeruší provádění programu. Tato činnost je přístupná jen v případě, že v ladicím programu běží spustitelný soubor (např. po té, co uživatel klikne na <action>Pokračovat</action>). Tuto činnost lze vyvolat z klávesnice pomocí <keycap>F9</keycap>."
+#: C/index.docbook:564(listitem/para)
+msgid ""
+"Manually interrupt execution of the program. This action is only available "
+"when the debugger is running the executable (e.g. after a user has clicked "
+"<action>Continue</action>). This action can be activated from the keyboard "
+"with <keycap>F9</keycap>."
+msgstr ""
+"Ručně přeruší provádění programu. Tato činnost je přístupná jen v případě, "
+"že v ladicím programu běží spustitelný soubor (např. po té, co uživatel "
+"klikne na <action>Pokračovat</action>). Tuto činnost lze vyvolat z "
+"klávesnice pomocí <keycap>F9</keycap>."
 
-#: C/nemiver.xml:573(para)
-msgid "By default, after loading an executable, Nemiver creates a breakpoint at <function>main()</function>, so when execution reaches <function>main()</function>, it will stop and wait for input. You can then step through the program, examine variables (see <xref linkend=\"nemiver-sect-inspecting-variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-sect-breakpoints\"/>)."
-msgstr "Po načtení spustitelného souboru vytvoří Nemiver výchozí bod přerušení ve funkci <function>main()</function>, takže když provádění dojde k funkci <function>main()</function>, zastaví se běh a čeká se na vstup. V tu chvíli můžete program krokovat, zkoumat proměnné (viz <xref linkend=\"nemiver-sect-inspecting-variables\"/>) nebo nastavit další body přerušení (viz <xref linkend=\"nemiver-sect-breakpoints\"/>)."
+#: C/index.docbook:573(sect2/para)
+msgid ""
+"By default, after loading an executable, Nemiver creates a breakpoint at "
+"<function>main()</function>, so when execution reaches <function>main()</"
+"function>, it will stop and wait for input. You can then step through the "
+"program, examine variables (see <xref linkend=\"nemiver-sect-inspecting-"
+"variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-"
+"sect-breakpoints\"/>)."
+msgstr ""
+"Po načtení spustitelného souboru vytvoří Nemiver výchozí bod přerušení ve "
+"funkci <function>main()</function>, takže když provádění dojde k funkci "
+"<function>main()</function>, zastaví se běh a čeká se na vstup. V tu chvíli "
+"můžete program krokovat, zkoumat proměnné (viz <xref linkend=\"nemiver-sect-"
+"inspecting-variables\"/>) nebo nastavit další body přerušení (viz <xref "
+"linkend=\"nemiver-sect-breakpoints\"/>)."
 
-#: C/nemiver.xml:582(title)
+#: C/index.docbook:582(sect2/title)
 msgid "Inspecting Variables"
 msgstr "Prohlížení proměnných"
 
-#: C/nemiver.xml:583(para)
-msgid "Nemiver displays a list of all local variables in the <interface>Variables</interface> tab of the <interface>Status Notebook</interface>. If you'd like to examine a different variable (or even an arbitrary expression), you can use the <interface>Variable Inspector</interface>. To bring up the <interface>Variable Inspector</interface>, select <menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</guimenuitem></menuchoice>. When the variable inspector comes up, you'll see a window that looks similar to the following:"
-msgstr "Aplikace Nemiver zobrazuje seznam lokálních proměnných na kartě <interface>Proměnné</interface> v <interface>sešitu stavů</interface>. Když chcete studovat jinou proměnnou (nebo i jakýkoliv výraz), můžete použít <interface>Prohlížeč proměnných</interface>. Ten zobrazíte tak, že vyberete <menuchoice><guimenu>Ladit</guimenu><guimenuitem>Prohlédnout proměnnou</guimenuitem></menuchoice>. Objeví se prohlížeč proměnných, který vypadá nějak následovně:"
+#: C/index.docbook:583(sect2/para)
+msgid ""
+"Nemiver displays a list of all local variables in the <interface>Variables</"
+"interface> tab of the <interface>Status Notebook</interface>. If you'd like "
+"to examine a different variable (or even an arbitrary expression), you can "
+"use the <interface>Variable Inspector</interface>. To bring up the "
+"<interface>Variable Inspector</interface>, select "
+"<menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</"
+"guimenuitem></menuchoice>. When the variable inspector comes up, you'll see "
+"a window that looks similar to the following:"
+msgstr ""
+"Aplikace Nemiver zobrazuje seznam lokálních proměnných na kartě "
+"<interface>Proměnné</interface> v <interface>sešitu stavů</interface>. Když "
+"chcete studovat jinou proměnnou (nebo i jakýkoliv výraz), můžete použít "
+"<interface>Prohlížeč proměnných</interface>. Ten zobrazíte tak, že vyberete "
+"<menuchoice><guimenu>Ladit</guimenu><guimenuitem>Prohlédnout proměnnou</"
+"guimenuitem></menuchoice>. Objeví se prohlížeč proměnných, který vypadá "
+"nějak následovně:"
 
-#: C/nemiver.xml:596(phrase)
-msgid "Variable Inspector Dialog"
-msgstr "Dialogové okno prohlížeče proměnných"
+#: C/index.docbook:591(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Variable Inspector Dialog</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Dialogové okno sloužící k "
+"prohlížení proměnných</phrase> </textobject>"
 
-#: C/nemiver.xml:600(para)
-msgid "You can type any variable name or a simple expression (such as <literal>pFoo-&gt;bar</literal>) into the input box, and if the variable is valid and in scope, it will be display details about that expression."
-msgstr "Do vstupního pole můžete zapsal název libovolné proměnné nebo jednoduchý výraz (jako <literal>pZbozi-&gt;Skladem</literal> a pokud bude proměnná platná a v rozsahu působnosti, zobrazí se podrobné údaje daného výrazu."
+#: C/index.docbook:600(sect2/para)
+msgid ""
+"You can type any variable name or a simple expression (such as <literal>pFoo-"
+"&gt;bar</literal>) into the input box, and if the variable is valid and in "
+"scope, it will be display details about that expression."
+msgstr ""
+"Do vstupního pole můžete zapsal název libovolné proměnné nebo jednoduchý "
+"výraz (jako <literal>pZbozi-&gt;Skladem</literal> a pokud bude proměnná "
+"platná a v rozsahu působnosti, zobrazí se podrobné údaje daného výrazu."
 
-#: C/nemiver.xml:605(para)
-msgid "Alternately, if you select the name of a variable in the <interface>source editor</interface>, and then launch the <interface>Variable Inspector</interface>, it will attempt to display information about the selected variable name."
-msgstr "Můžete také proměnnou vybrat v <interface>editoru zdrojového kódu</interface> a potom spustit <interface>Prohlížeč proměnné</interface>. Ten se pak pokusí zobrazit informace vztahující se k vybranému názvu proměnné."
+#: C/index.docbook:605(sect2/para)
+msgid ""
+"Alternately, if you select the name of a variable in the <interface>source "
+"editor</interface>, and then launch the <interface>Variable Inspector</"
+"interface>, it will attempt to display information about the selected "
+"variable name."
+msgstr ""
+"Můžete také proměnnou vybrat v <interface>editoru zdrojového kódu</"
+"interface> a potom spustit <interface>Prohlížeč proměnné</interface>. Ten se "
+"pak pokusí zobrazit informace vztahující se k vybranému názvu proměnné."
 
-#: C/nemiver.xml:612(title)
+#: C/index.docbook:612(tip/title)
 msgid "Keyboard Shortcut"
 msgstr "Klávesová zkratka"
 
-#: C/nemiver.xml:613(para)
-msgid "You can also start the <interface>Variable Inspector</interface> by pressing <keycap>F12</keycap>."
-msgstr "<interface>Prohlížeč proměnných</interface> můžete spustit rovněž stiskem klávesy <keycap>F12</keycap>."
+#: C/index.docbook:613(tip/para)
+msgid ""
+"You can also start the <interface>Variable Inspector</interface> by pressing "
+"<keycap>F12</keycap>."
+msgstr ""
+"<interface>Prohlížeč proměnných</interface> můžete spustit rovněž stiskem "
+"klávesy <keycap>F12</keycap>."
 
-#: C/nemiver.xml:618(para)
-msgid "Nemiver will also let you display a list of all global variables in an application in a separate dialog. To display the <interface>Global Variables</interface> dialog, select <menuchoice><guimenu>Debug</guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
-msgstr "Nemiver vám také umožňuje zobrazit seznam všech globálních proměnných aplikace ve zvláštním okně. Dialogové okno <interface>Globální proměnné</interface> zobrazíte výběrem <menuchoice><guimenu>Ladit</guimenu><guimenuitem>Zobrazit globální proměnné</guimenuitem></menuchoice> nebo stiskem <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
+#: C/index.docbook:618(sect2/para)
+msgid ""
+"Nemiver will also let you display a list of all global variables in an "
+"application in a separate dialog. To display the <interface>Global "
+"Variables</interface> dialog, select <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
+"press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
+msgstr ""
+"Nemiver vám také umožňuje zobrazit seznam všech globálních proměnných "
+"aplikace ve zvláštním okně. Dialogové okno <interface>Globální proměnné</"
+"interface> zobrazíte výběrem <menuchoice><guimenu>Ladit</"
+"guimenu><guimenuitem>Zobrazit globální proměnné</guimenuitem></menuchoice> "
+"nebo stiskem <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
 
-#: C/nemiver.xml:630(phrase)
-msgid "Global Variables Dialog"
-msgstr "Dialogové okno Globální proměnné"
+#: C/index.docbook:625(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Global Variables "
+"Dialog</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Dialogové okno s "
+"globálními proměnnými</phrase> </textobject>"
 
-#: C/nemiver.xml:635(para)
-msgid "For some programs (especially C++ programs), listing all of the global variables may take a very long time."
-msgstr "U některých programů (zvláště programů v C++) může vypsání všech globálních proměnných zabrat dlouhou dobu."
+#: C/index.docbook:635(warning/para)
+msgid ""
+"For some programs (especially C++ programs), listing all of the global "
+"variables may take a very long time."
+msgstr ""
+"U některých programů (zvláště programů v C++) může vypsání všech globálních "
+"proměnných zabrat dlouhou dobu."
 
-#: C/nemiver.xml:642(title)
+#: C/index.docbook:642(sect2/title)
 msgid "Setting Breakpoints"
 msgstr "Nastavení bodu přerušení"
 
-#: C/nemiver.xml:643(para)
-msgid "There are several different ways to set breakpoints in Nemiver. Nemiver automatically sets a breakpoint at <function>main()</function> when you first begin debugging a new executable. If you want to set additional breakpoints you can do one of the following:"
-msgstr "V aplikaci Nemiver je několik různých způsobů, jak nastavit body přerušení.  Nemiver automaticky nastavuje bod přerušení ve funkci <function>main()</function>, když poprvé začnete ladit nový spustitelný soubor. Pokud chcete nastavit další body přerušení, můžete to udělat následovně:"
+#: C/index.docbook:643(sect2/para)
+msgid ""
+"There are several different ways to set breakpoints in Nemiver. Nemiver "
+"automatically sets a breakpoint at <function>main()</function> when you "
+"first begin debugging a new executable. If you want to set additional "
+"breakpoints you can do one of the following:"
+msgstr ""
+"V aplikaci Nemiver je několik různých způsobů, jak nastavit body přerušení.  "
+"Nemiver automaticky nastavuje bod přerušení ve funkci <function>main()</"
+"function>, když poprvé začnete ladit nový spustitelný soubor. Pokud chcete "
+"nastavit další body přerušení, můžete to udělat následovně:"
 
-#: C/nemiver.xml:651(para)
-msgid "Click in the margin next to the line where you want the breakpoint to be set"
-msgstr "Klikněte na okraj vedle řádku, na kterém chcete bod přerušení nastavit."
+#: C/index.docbook:651(listitem/para)
+msgid ""
+"Click in the margin next to the line where you want the breakpoint to be set"
+msgstr ""
+"Klikněte na okraj vedle řádku, na kterém chcete bod přerušení nastavit."
 
-#: C/nemiver.xml:655(para)
-msgid "Place your cursor on a line where you want the breakpoint to be set and set the breakpoint by either selecting <menuchoice><guimenu>Debug</guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, or by pressing <keycap>F8</keycap>"
-msgstr "Umístěte kurzor na řádek, kde chcete bod přerušení nastavit a v nabídce vyberte <menuchoice><guimenu>Ladit</guimenu><guimenuitem>Nastavit bod přerušení</guimenuitem></menuchoice> nebo zmáčkněte klávesu <keycap>F8</keycap>."
+#: C/index.docbook:655(listitem/para)
+msgid ""
+"Place your cursor on a line where you want the breakpoint to be set and set "
+"the breakpoint by either selecting <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
+"or by pressing <keycap>F8</keycap>"
+msgstr ""
+"Umístěte kurzor na řádek, kde chcete bod přerušení nastavit a v nabídce "
+"vyberte <menuchoice><guimenu>Ladit</guimenu><guimenuitem>Nastavit bod "
+"přerušení</guimenuitem></menuchoice> nebo zmáčkněte klávesu <keycap>F8</"
+"keycap>."
 
-#: C/nemiver.xml:660(para)
-msgid "Set a breakpoint at a specific function name or at a specific location in a file by selecting <menuchoice><guimenu>Debug</guimenu><guimenuitem>Set Breakpoint...</guimenuitem></menuchoice> or by pressing <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will bring up a dialog that looks like the following:"
-msgstr "Nastavte bod přerušení uvedením názvu funkce nebo místa v souboru tím, že vyberete <menuchoice><guimenu>Ladit</guimenu><guimenuitem>Nastavit bod přerušení…</guimenuitem></menuchoice> nebo zmáčknete <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. Zobrazí se dialogové okno, které vypadá nějak následovně:"
+#: C/index.docbook:660(listitem/para)
+msgid ""
+"Set a breakpoint at a specific function name or at a specific location in a "
+"file by selecting <menuchoice><guimenu>Debug</guimenu><guimenuitem>Set "
+"Breakpoint...</guimenuitem></menuchoice> or by pressing "
+"<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will "
+"bring up a dialog that looks like the following:"
+msgstr ""
+"Nastavte bod přerušení uvedením názvu funkce nebo místa v souboru tím, že "
+"vyberete <menuchoice><guimenu>Ladit</guimenu><guimenuitem>Nastavit bod "
+"přerušení…</guimenuitem></menuchoice> nebo zmáčknete <keycombo><keycap>Ctrl</"
+"keycap><keycap>B</keycap></keycombo>. Zobrazí se dialogové okno, které "
+"vypadá nějak následovně:"
 
-#: C/nemiver.xml:670(phrase)
-msgid "Set Breakpoint Dialog"
-msgstr "Dialogové okno Nastavit bod přerušení"
+#: C/index.docbook:665(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/set-breakpoint-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Set Breakpoint Dialog</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/set-breakpoint-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Dialogové okno pro "
+"nastavení bodu přerušení</phrase> </textobject>"
 
-#: C/nemiver.xml:674(para)
-msgid "You can specify a breakpoint at a particular location in a file, or by function name. If there are more than one function with the same name, Nemiver will display a list of all matching functions and ask you to pick the one you want."
-msgstr "Bod přerušení můžete zadat jako konkrétní místo v souboru nebo jako název funkce. V případě, že existuje více než jedna funkce se stejným názvem, zobrazí aplikace Nemiver seznam všech odpovídajících funkci a požádá vás o výběr jedné z nich."
+#: C/index.docbook:674(listitem/para)
+msgid ""
+"You can specify a breakpoint at a particular location in a file, or by "
+"function name. If there are more than one function with the same name, "
+"Nemiver will display a list of all matching functions and ask you to pick "
+"the one you want."
+msgstr ""
+"Bod přerušení můžete zadat jako konkrétní místo v souboru nebo jako název "
+"funkce. V případě, že existuje více než jedna funkce se stejným názvem, "
+"zobrazí aplikace Nemiver seznam všech odpovídajících funkci a požádá vás o "
+"výběr jedné z nich."
 
-#: C/nemiver.xml:683(title)
+#: C/index.docbook:683(sect3/title)
 msgid "Disabled Breakpoints"
 msgstr "Zakázané body přerušení"
 
-#: C/nemiver.xml:684(para)
-msgid "Breakpoints can be either enabled or disabled. The debugger will stop execution whenever it reaches an enabled breakpoint but will not be affected by any breakpoints in the disabled state. This allows you to temporarily remove a breakpoint without actually deleting it."
-msgstr "Body přerušení mohou být buď povolené nebo zakázané. Ladicí program zastaví provádění vždy, když dosáhne povoleného bodu přerušení, ale zakázaný bod přerušen se nijak neprojeví. Díky tomu můžete bod přerušení dočasně odstranit, aniž byste jej museli smazat."
+#: C/index.docbook:684(sect3/para)
+msgid ""
+"Breakpoints can be either enabled or disabled. The debugger will stop "
+"execution whenever it reaches an enabled breakpoint but will not be affected "
+"by any breakpoints in the disabled state. This allows you to temporarily "
+"remove a breakpoint without actually deleting it."
+msgstr ""
+"Body přerušení mohou být buď povolené nebo zakázané. Ladicí program zastaví "
+"provádění vždy, když dosáhne povoleného bodu přerušení, ale zakázaný bod "
+"přerušen se nijak neprojeví. Díky tomu můžete bod přerušení dočasně "
+"odstranit, aniž byste jej museli smazat."
 
-#: C/nemiver.xml:690(para)
-msgid "To disable or enable a breakpoint, click the checkbox next to the breakpoint number you want to enable or disable in the <interface>Breakpoints</interface> tab of the <interface>Status Notebook</interface>. Alternately, you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> to enable or disable a breakpoint that is set on the line that the cursor is currently on."
-msgstr "Když chcete bod přerušení zakázat nebo povolit, klikněte na zaškrtávací políčko vedle čísla bodu přerušení na kartě <interface>Body přerušení</interface> v <interface>sešitě stavů</interface>. Jinou možností, jak povolit nebo zakázat bod přerušení na řádku, kde se právě nachází kurzor, je zmáčknout <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo>."
+#: C/index.docbook:690(sect3/para)
+msgid ""
+"To disable or enable a breakpoint, click the checkbox next to the breakpoint "
+"number you want to enable or disable in the <interface>Breakpoints</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> "
+"to enable or disable a breakpoint that is set on the line that the cursor is "
+"currently on."
+msgstr ""
+"Když chcete bod přerušení zakázat nebo povolit, klikněte na zaškrtávací "
+"políčko vedle čísla bodu přerušení na kartě <interface>Body přerušení</"
+"interface> v <interface>sešitě stavů</interface>. Jinou možností, jak "
+"povolit nebo zakázat bod přerušení na řádku, kde se právě nachází kurzor, je "
+"zmáčknout <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo>."
 
-#: C/nemiver.xml:698(para)
-msgid "The following figures show the difference between enabled and disabled breakpoints in the source editor."
-msgstr "Následující obrázky ukazují ve zdrojovém kódu rozdíl mezi povoleným a zakázaným bodem přerušení"
+#: C/index.docbook:698(sect3/para)
+msgid ""
+"The following figures show the difference between enabled and disabled "
+"breakpoints in the source editor."
+msgstr ""
+"Následující obrázky ukazují ve zdrojovém kódu rozdíl mezi povoleným a "
+"zakázaným bodem přerušení"
 
-#: C/nemiver.xml:708(phrase)
-msgid "Illustration of an enabled breakpoint"
-msgstr "Ukázka povoleného bodu přerušení"
-
-#: C/nemiver.xml:710(para)
+#: C/index.docbook:710(caption/para)
 msgid "Enabled Breakpoint"
 msgstr "Povolený bod přerušení"
 
-#: C/nemiver.xml:719(phrase)
-msgid "Illustration of a disabled breakpoint"
-msgstr "Ukázka zakázaného bodu přerušení"
+#: C/index.docbook:703(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/enabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of an enabled "
+"breakpoint</phrase> </textobject> <_:caption-1/>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/enabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Ukázka povoleného bodu "
+"přerušení</phrase> </textobject> <_:caption-1/>"
 
-#: C/nemiver.xml:721(para)
+#: C/index.docbook:721(caption/para)
 msgid "Disabled Breakpoint"
 msgstr "Zakázaný bod přerušení"
 
-#: C/nemiver.xml:726(title)
+#: C/index.docbook:714(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/disabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of a disabled "
+"breakpoint</phrase> </textobject> <_:caption-1/>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/disabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Ukázka zakázaného bodu "
+"přerušení</phrase> </textobject> <_:caption-1/>"
+
+#: C/index.docbook:726(sect3/title)
 msgid "Opening Source Files"
 msgstr "Otevření zdrojových souborů"
 
-#: C/nemiver.xml:727(para)
-msgid "Sometimes you don't know exactly the function name or line number where you want a breakpoint to be set, so you must open a source file to figure it out. You could just open arbitrary files from the filesystem, but Nemiver can also provide a list of source files that were used to build the executable and allow you to select from this list. When you select <menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</guimenuitem></menuchoice>, the following window should be displayed:"
-msgstr "Někdy se může stát, že neznáte přesný název funkce nebo číslo řádku, kde chcete nastavit bod přerušení, takže musíte otevřít zdrojový soubor. Můžete sice otevřít jakýkoliv soubor nacházející se v souborovém systému, ale aplikace Nemiver vám také umí nabídnout seznam zdrojových souborů, které byly použité k sestavení spustitelného souboru a vy si můžete jednoduše vybrat z nich. Když zvolíte <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Otevřít zdrojový soubor…</guimenuitem></menuchoice>, zobrazí se následující:"
+#: C/index.docbook:727(sect3/para)
+msgid ""
+"Sometimes you don't know exactly the function name or line number where you "
+"want a breakpoint to be set, so you must open a source file to figure it "
+"out. You could just open arbitrary files from the filesystem, but Nemiver "
+"can also provide a list of source files that were used to build the "
+"executable and allow you to select from this list. When you select "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</"
+"guimenuitem></menuchoice>, the following window should be displayed:"
+msgstr ""
+"Někdy se může stát, že neznáte přesný název funkce nebo číslo řádku, kde "
+"chcete nastavit bod přerušení, takže musíte otevřít zdrojový soubor. Můžete "
+"sice otevřít jakýkoliv soubor nacházející se v souborovém systému, ale "
+"aplikace Nemiver vám také umí nabídnout seznam zdrojových souborů, které "
+"byly použité k sestavení spustitelného souboru a vy si můžete jednoduše "
+"vybrat z nich. Když zvolíte <menuchoice><guimenu>Soubor</"
+"guimenu><guimenuitem>Otevřít zdrojový soubor…</guimenuitem></menuchoice>, "
+"zobrazí se následující:"
 
-#: C/nemiver.xml:742(phrase)
-msgid "Shows dialog for opening source files"
-msgstr "Ukazuje dialogové okno sloužící k otevírání zdrojových souborů"
+#: C/index.docbook:737(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/open-files-target.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for opening "
+"source files</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/open-files-target.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Ukazuje dialogové okno pro "
+"otevření souboru se zdrojovým kódem</phrase> </textobject>"
 
-#: C/nemiver.xml:746(para)
-msgid "To select an arbitrary file from the filesystem, choose the <guilabel>Select from Filesystem</guilabel> option. To select from a list of files that produced the executable, choose <guilabel>Select from Target Executable</guilabel>."
-msgstr "Pokud chcete vybírat v souborovém systému jakýkoliv soubor, použijte volbu <guilabel>Vybrat v souborovém systému</guilabel>. Pokud chcete vybírat v seznamu souborů použitých k vytvoření spustitelného souboru, použijte volbu <guilabel>Vybrat v cílovém spustitelném souboru</guilabel>."
+#: C/index.docbook:746(sect3/para)
+msgid ""
+"To select an arbitrary file from the filesystem, choose the <guilabel>Select "
+"from Filesystem</guilabel> option. To select from a list of files that "
+"produced the executable, choose <guilabel>Select from Target Executable</"
+"guilabel>."
+msgstr ""
+"Pokud chcete vybírat v souborovém systému jakýkoliv soubor, použijte volbu "
+"<guilabel>Vybrat v souborovém systému</guilabel>. Pokud chcete vybírat v "
+"seznamu souborů použitých k vytvoření spustitelného souboru, použijte volbu "
+"<guilabel>Vybrat v cílovém spustitelném souboru</guilabel>."
 
-#: C/nemiver.xml:753(title)
+#: C/index.docbook:753(warning/title)
 msgid "Determining Source Files for Dynamically Loaded Modules"
 msgstr "Určování zdrojových souborů pro dynamicky načítané moduly"
 
-#: C/nemiver.xml:754(para)
-msgid "If the target executable loads modules at runtime (e.g. using <function>dlopen()</function>), Nemiver will not be able to determine which files were used to build these modules until they are actually loaded."
-msgstr "V případě, že cílový spustitelný soubor načte moduly za běhu (např. pomocí <function>dlopen()</function>), nebude Nemiver schopen určit, které soubory byly použity k sestavení těchto modulů, pokud nebudou zrovna načtené."
+#: C/index.docbook:754(warning/para)
+msgid ""
+"If the target executable loads modules at runtime (e.g. using "
+"<function>dlopen()</function>), Nemiver will not be able to determine which "
+"files were used to build these modules until they are actually loaded."
+msgstr ""
+"V případě, že cílový spustitelný soubor načte moduly za běhu (např. pomocí "
+"<function>dlopen()</function>), nebude Nemiver schopen určit, které soubory "
+"byly použity k sestavení těchto modulů, pokud nebudou zrovna načtené."
 
-#: C/nemiver.xml:764(title)
+#: C/index.docbook:764(sect2/title)
 msgid "Advanced Debugging"
 msgstr "Pokročilé ladění"
 
-#: C/nemiver.xml:767(para)
-msgid "The register editing widget is located in the <interface>Registers</interface> tab of the <interface>Status Notebook</interface>. Alternately, you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> to jump directly to the correct tab."
-msgstr "Widget na úpravu registrů se nachází na kartě <interface>Registry</interface> v <interface>sešitě stavů</interface>. Případně můžete zmáčknout <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> a tím se přímo dostanete na tuto kartu."
+#: C/index.docbook:767(sect3/para)
+msgid ""
+"The register editing widget is located in the <interface>Registers</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> "
+"to jump directly to the correct tab."
+msgstr ""
+"Widget na úpravu registrů se nachází na kartě <interface>Registry</"
+"interface> v <interface>sešitě stavů</interface>. Případně můžete zmáčknout "
+"<keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> a tím se přímo "
+"dostanete na tuto kartu."
 
-#: C/nemiver.xml:780(phrase)
-msgid "The Register Editing Widget"
-msgstr "Widget na úpravu obsahu registrů"
+#: C/index.docbook:775(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/registers-view.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>The Register Editing Widget</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/registers-view.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Widget pro úpravu registrů</phrase> "
+"</textobject>"
 
-#: C/nemiver.xml:784(para)
-msgid "This widget shows the current values of all of the CPU registers. You can edit the register values by clicking in the <interface>Value</interface> column and entering a new value. If the value for the register changed since the last time the debugger stopped, it will be highlighted in red."
-msgstr "Tento widget zobrazuje současné hodnoty všech registrů CPU. Můžete hodnoty registru upravit kliknutím ve sloupci <interface>Hodnota</interface> a zadáním nové hodnoty. V případě, že se hodnota registru změnila od posledního zastavení ladění, bude zvýrazněná červeně."
+#: C/index.docbook:784(sect3/para)
+msgid ""
+"This widget shows the current values of all of the CPU registers. You can "
+"edit the register values by clicking in the <interface>Value</interface> "
+"column and entering a new value. If the value for the register changed since "
+"the last time the debugger stopped, it will be highlighted in red."
+msgstr ""
+"Tento widget zobrazuje současné hodnoty všech registrů CPU. Můžete hodnoty "
+"registru upravit kliknutím ve sloupci <interface>Hodnota</interface> a "
+"zadáním nové hodnoty. V případě, že se hodnota registru změnila od "
+"posledního zastavení ladění, bude zvýrazněná červeně."
 
-#: C/nemiver.xml:794(para)
-msgid "The memory widget allows you to view a section of memory directly. This enables you to get a lower-level view of what's happening while your program is running."
-msgstr "Widget Paměť umožňuje zobrazit přímo část paměti. Díky tomu můžete získat na nižší úrovni zobrazení toho, co se děje, když váš program běží."
+#: C/index.docbook:794(sect3/para)
+msgid ""
+"The memory widget allows you to view a section of memory directly. This "
+"enables you to get a lower-level view of what's happening while your program "
+"is running."
+msgstr ""
+"Widget Paměť umožňuje zobrazit přímo část paměti. Díky tomu můžete získat na "
+"nižší úrovni zobrazení toho, co se děje, když váš program běží."
 
-#: C/nemiver.xml:805(phrase)
-msgid "The Memory Editing Widget"
-msgstr "Widget na úpravu obsahu paměti"
+#: C/index.docbook:800(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/memory-view.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>The Memory Editing Widget</phrase> </"
+"textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/memory-view.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Widget pro úpravu paměti</phrase> </"
+"textobject>"
 
-#: C/nemiver.xml:809(para)
-msgid "To display a segment of memory in the memory view widget, enter a memory address in the <interface>Address</interface> field. If the address is valid for the program being debugged, the memory view will display the memory values starting at the specified address. Memory values can be displayed in byte format, word format (2 bytes), or long word format (4 bytes) by choosing an option from the <interface>Group By</interface> drop-down menu. The memory values will automatically be updated as you step through the program."
-msgstr "Do pole <interface>Adresa</interface> ve widgetu Paměť zadejte adresu paměťového segmentu, který chcete zobrazit. Pokud bude adresa platná pro laděný program, zobrazí se hodnoty v paměti od zadané adresy. Mohou být zobrazeny jako bajty, slova (2 bajty) nebo dlouhá slova (4 bajty), podle volby ve vyskakovací nabídce <interface>Seskupovat podle</interface>. Během krokování programu se hodnoty automaticky aktualizují."
+#: C/index.docbook:809(sect3/para)
+msgid ""
+"To display a segment of memory in the memory view widget, enter a memory "
+"address in the <interface>Address</interface> field. If the address is valid "
+"for the program being debugged, the memory view will display the memory "
+"values starting at the specified address. Memory values can be displayed in "
+"byte format, word format (2 bytes), or long word format (4 bytes) by "
+"choosing an option from the <interface>Group By</interface> drop-down menu. "
+"The memory values will automatically be updated as you step through the "
+"program."
+msgstr ""
+"Do pole <interface>Adresa</interface> ve widgetu Paměť zadejte adresu "
+"paměťového segmentu, který chcete zobrazit. Pokud bude adresa platná pro "
+"laděný program, zobrazí se hodnoty v paměti od zadané adresy. Mohou být "
+"zobrazeny jako bajty, slova (2 bajty) nebo dlouhá slova (4 bajty), podle "
+"volby ve vyskakovací nabídce <interface>Seskupovat podle</interface>. Během "
+"krokování programu se hodnoty automaticky aktualizují."
 
-#: C/nemiver.xml:820(para)
-msgid "In addition to viewing the memory values, you can also use the memory widget to modify memory values. You can edit either the hex byte representation (the left-hand section of the memory widget), or the ASCII representation (the right-hand section of the memory widget). All changes will be applied immediately."
-msgstr "Widget můžete používat nejenom k prohlížení hodnot v paměti, ale i k jejich úpravě. Můžete je upravovat jak v podobě šestnáctkových čísel (v levé části widgetu Paměť), tak v podobě znaků ASCII (v pravé části widgetu Paměť). Všechny změny se projeví ihned."
+#: C/index.docbook:820(sect3/para)
+msgid ""
+"In addition to viewing the memory values, you can also use the memory widget "
+"to modify memory values. You can edit either the hex byte representation "
+"(the left-hand section of the memory widget), or the ASCII representation "
+"(the right-hand section of the memory widget). All changes will be applied "
+"immediately."
+msgstr ""
+"Widget můžete používat nejenom k prohlížení hodnot v paměti, ale i k jejich "
+"úpravě. Můžete je upravovat jak v podobě šestnáctkových čísel (v levé části "
+"widgetu Paměť), tak v podobě znaků ASCII (v pravé části widgetu Paměť). "
+"Všechny změny se projeví ihned."
 
-#: C/nemiver.xml:831(title)
+#: C/index.docbook:831(sect1/title)
 msgid "Session Save and Restore"
 msgstr "Uložení a obnovení sezení"
 
-#: C/nemiver.xml:832(para)
-msgid "Nemiver can save your debugging sessions for you so that you can resume them at a later time. This includes saving information such as which executable is being debugged, what environment variables are set, what command-line options are passed to the executable, which files are open, and which breakpoints are set so that you can get back to where you left off last time as quickly as possible."
-msgstr "Nemiver umí uložit vaše ladicí sezení, takže si jej později můžete obnovit. Součástí je ukládání takových informací, jako je laděný spustitelný soubor, nastavené proměnné prostředí, argumenty příkazového řádku předané laděnému programu, seznam otevřených souborů a nastavené body přerušení. Díky tomu všemu se můžete vrátit zpět do stavu, kde jste naposledy skončili, tak rychle, jak jen to je možné."
+#: C/index.docbook:832(sect1/para)
+msgid ""
+"Nemiver can save your debugging sessions for you so that you can resume them "
+"at a later time. This includes saving information such as which executable "
+"is being debugged, what environment variables are set, what command-line "
+"options are passed to the executable, which files are open, and which "
+"breakpoints are set so that you can get back to where you left off last time "
+"as quickly as possible."
+msgstr ""
+"Nemiver umí uložit vaše ladicí sezení, takže si jej později můžete obnovit. "
+"Součástí je ukládání takových informací, jako je laděný spustitelný soubor, "
+"nastavené proměnné prostředí, argumenty příkazového řádku předané laděnému "
+"programu, seznam otevřených souborů a nastavené body přerušení. Díky tomu "
+"všemu se můžete vrátit zpět do stavu, kde jste naposledy skončili, tak "
+"rychle, jak jen to je možné."
 
-#: C/nemiver.xml:841(title)
+#: C/index.docbook:841(sect2/title)
 msgid "Saving Sessions"
 msgstr "Ukládání sezení"
 
-#: C/nemiver.xml:842(para)
-msgid "Nemiver will save your session automatically on exit, so you don't even have to worry about it. However, if you want to explicitly save the session before closing Nemiver, you can do so by selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</guimenuitem></menuchoice>."
-msgstr "Aplikace Nemiver ukládá vaše sezení automaticky při ukončení, takže se o to nemusíte starat. Pokud však chcete sezení výslovně uložit před zavřením aplikace Nemiver, můžete tak učinit výběrem <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Uložit sezení na disk</guimenuitem></menuchoice>."
+#: C/index.docbook:842(sect2/para)
+msgid ""
+"Nemiver will save your session automatically on exit, so you don't even have "
+"to worry about it. However, if you want to explicitly save the session "
+"before closing Nemiver, you can do so by selecting "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</"
+"guimenuitem></menuchoice>."
+msgstr ""
+"Aplikace Nemiver ukládá vaše sezení automaticky při ukončení, takže se o to "
+"nemusíte starat. Pokud však chcete sezení výslovně uložit před zavřením "
+"aplikace Nemiver, můžete tak učinit výběrem <menuchoice><guimenu>Soubor</"
+"guimenu><guimenuitem>Uložit sezení na disk</guimenuitem></menuchoice>."
 
-#: C/nemiver.xml:850(title)
+#: C/index.docbook:850(sect2/title)
 msgid "Resuming Saved Sessions"
 msgstr "Obnovení uloženého sezení"
 
-#: C/nemiver.xml:853(para)
-msgid "Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved Session...</guimenuitem></menuchoice> and select a session from the list."
-msgstr "Zvolte <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Obnovit uložené sezení…</guimenuitem></menuchoice> a vyberte sezení ze seznamu."
+#: C/index.docbook:853(sect3/para)
+msgid ""
+"Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved "
+"Session...</guimenuitem></menuchoice> and select a session from the list."
+msgstr ""
+"Zvolte <menuchoice><guimenu>Soubor</guimenu><guimenuitem>Obnovit uložené "
+"sezení…</guimenuitem></menuchoice> a vyberte sezení ze seznamu."
 
-#: C/nemiver.xml:859(title)
+#: C/index.docbook:859(figure/title)
 msgid "Session Dialog"
 msgstr "Dialogové okno Uložená sezení"
 
-#: C/nemiver.xml:866(phrase)
-msgid "Shows dialog for resuming a saved session"
-msgstr "Ukazuje dialogové okno na obnovení uloženého sezení"
+#: C/index.docbook:861(screenshot/mediaobject)
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/sessions-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for resuming a saved "
+"session</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/sessions-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Ukazuje dialogové okno pro obnovení "
+"uloženého sezení</phrase> </textobject>"
 
-#: C/nemiver.xml:873(title)
+#: C/index.docbook:873(sect3/title)
 msgid "From the Command Line"
 msgstr "Z příkazového řádku"
 
-#: C/nemiver.xml:874(para)
-msgid "If you know the session ID of the session you want to run, you can start that debugging session from the command line. For example, if you want to run session number 3, you can do so with the following command: <command>nemiver --session 3</command>."
-msgstr "Pokud znáte ID sezení, které chcete provozovat, můžete spustit ladicí sezení z příkazového řádku. Například, pokud chcete spustit sezení číslo 3, můžete tak učinit následujícím příkazem: <command>nemiver --session 3</command>."
+#: C/index.docbook:874(sect3/para)
+msgid ""
+"If you know the session ID of the session you want to run, you can start "
+"that debugging session from the command line. For example, if you want to "
+"run session number 3, you can do so with the following command: "
+"<command>nemiver --session 3</command>."
+msgstr ""
+"Pokud znáte ID sezení, které chcete provozovat, můžete spustit ladicí sezení "
+"z příkazového řádku. Například, pokud chcete spustit sezení číslo 3, můžete "
+"tak učinit následujícím příkazem: <command>nemiver --session 3</command>."
 
-#: C/nemiver.xml:886(title)
+#: C/index.docbook:886(sect1/title)
 msgid "About Nemiver"
 msgstr "O aplikaci Nemiver"
 
-#: C/nemiver.xml:887(para)
-msgid "<application>Nemiver</application> was written by Dodji Seketeli and Jonathon Jongsma, with contributions from many others. To find more information about Nemiver, please visit the <ulink url=\"http://www.gnome.org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
-msgstr "Aplikaci <application>Nemiver</application> napsali Dodji Seketeli a Jonathon Jongsma za přispění mnoha dalších. Pokud se chcete o aplikaci Nemiver dovědět více, navštivte <ulink url=\"http://www.gnome.org/projects/nemiver/\" type=\"http\">webové stránky projektu Nemiver</ulink>."
+#: C/index.docbook:887(sect1/para)
+msgid ""
+"<application>Nemiver</application> was written by Dodji Seketeli and "
+"Jonathon Jongsma, with contributions from many others. To find more "
+"information about Nemiver, please visit the <ulink url=\"http://www.gnome."
+"org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
+msgstr ""
+"Aplikaci <application>Nemiver</application> napsali Dodji Seketeli a "
+"Jonathon Jongsma za přispění mnoha dalších. Pokud se chcete o aplikaci "
+"Nemiver dovědět více, navštivte <ulink url=\"http://www.gnome.org/projects/"
+"nemiver/\" type=\"http\">webové stránky projektu Nemiver</ulink>."
 
-#: C/nemiver.xml:891(para)
-msgid "To report a bug or make a suggestion regarding this application or this manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
-msgstr "Pokud chcete oznámit chybu nebo navrhnout vylepšení vztahující se k této aplikaci nebo této příručce, podívejte se na oddíl Ohlasy v <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">Uživatelské příručce GNOME</ulink>."
+#: C/index.docbook:891(sect1/para)
+msgid ""
+"To report a bug or make a suggestion regarding this application or this "
+"manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?"
+"feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
+msgstr ""
+"Pokud chcete oznámit chybu nebo navrhnout vylepšení vztahující se k této "
+"aplikaci nebo této příručce, podívejte se na oddíl Ohlasy v <ulink url="
+"\"ghelp:user-guide?feedback-bugs\" type=\"help\">Uživatelské příručce GNOME</"
+"ulink>."
 
-#: C/nemiver.xml:896(para)
-msgid "This program is distributed under the terms of the GNU General Public license as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. A copy of this license can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or in the file COPYING included with the source code of this program."
-msgstr "Tento program je šířen podle ustanovení GNU General Public License, vydávané Free Software Foundation; a to buď verze 2 této licence anebo (podle vlastního uvážení) kterékoliv pozdější verze. Kopii této licence naleznete pod tímto <ulink url=\"ghelp:gpl\" type=\"help\">odkazem</ulink> nebo v souboru COPYING přiloženém ke zdrojovým kódům tohoto programu. "
+#: C/index.docbook:896(sect1/para)
+msgid ""
+"This program is distributed under the terms of the GNU General Public "
+"license as published by the Free Software Foundation; either version 2 of "
+"the License, or (at your option) any later version. A copy of this license "
+"can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or "
+"in the file COPYING included with the source code of this program."
+msgstr ""
+"Tento program je šířen podle ustanovení GNU General Public License, vydávané "
+"Free Software Foundation; a to buď verze 2 této licence anebo (podle "
+"vlastního uvážení) kterékoliv pozdější verze. Kopii této licence naleznete "
+"pod tímto <ulink url=\"ghelp:gpl\" type=\"help\">odkazem</ulink> nebo v "
+"souboru COPYING přiloženém ke zdrojovým kódům tohoto programu. "
 
-#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
-#: C/nemiver.xml:0(None)
-msgid "translator-credits"
-msgstr "Marek Černocký <marek@manet.cz>, 2010"
+#: C/legal.xml:9(para/ulink)
+msgid "link"
+msgstr "okazem"
 
+#: C/legal.xml:2(legalnotice/para)
+msgid ""
+"Permission is granted to copy, distribute and/or modify this document under "
+"the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any "
+"later version published by the Free Software Foundation with no Invariant "
+"Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy "
+"of the GFDL at this <_:ulink-1/> or in the file COPYING-DOCS distributed "
+"with this manual."
+msgstr ""
+"Je povoleno kopírovat, šířit a/nebo upravovat tento dokument za podmínek GNU "
+"Free Documentation License (GFDL) ve verzi 1.1 nebo v jakékoli další verzi "
+"vydané nadací Free Software Foundation; bez neměnných oddílů, bez textů "
+"předních desek a bez textů zadních desek. Kopii licence GFDL naleznete pod "
+"tímto <_:ulink-1/> nebo v souboru COPYING-DOCS dodávaném s touto příručkou."
+
+#: C/legal.xml:12(legalnotice/para)
+msgid ""
+"This manual is part of a collection of GNOME manuals distributed under the "
+"GFDL. If you want to distribute this manual separately from the collection, "
+"you can do so by adding a copy of the license to the manual, as described in "
+"section 6 of the license."
+msgstr ""
+"Tato příručka je součástí sbírky příruček GNOME šířených za podmínek licence "
+"GNU FDL. Pokud chcete tento dokument šířit odděleně od sbírky, musíte "
+"přiložit kopii licence dle popisu v oddílu 6 dané licence."
+
+#: C/legal.xml:19(legalnotice/para)
+msgid ""
+"Many of the names used by companies to distinguish their products and "
+"services are claimed as trademarks. Where those names appear in any GNOME "
+"documentation, and the members of the GNOME Documentation Project are made "
+"aware of those trademarks, then the names are in capital letters or initial "
+"capital letters."
+msgstr ""
+"Mnoho užívaných názvů určených k zviditelnění produktů nebo služeb jsou "
+"ochranné známky. Na místech, kde jsou tato jména v dokumentaci užita a "
+"členové Dokumentačního projektu GNOME jsou si vědomi skutečnosti, že se "
+"jedná o ochrannou známku, je takové jméno psáno velkými písmeny celé nebo s "
+"velkým písmenem na začátku."
+
+#: C/legal.xml:35(listitem/para)
+msgid ""
+"DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, "
+"EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT "
+"THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS "
+"MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE "
+"RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR "
+"MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR "
+"MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL "
+"WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY "
+"SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN "
+"ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION "
+"OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND "
+"UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING "
+"NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY "
+"CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE "
+"DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON "
+"FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF "
+"ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, "
+"WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES "
+"OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED "
+"VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE "
+"POSSIBILITY OF SUCH DAMAGES."
+msgstr ""
+"DOKUMENT JE POSKYTOVÁN V PODOBĚ „JAK JE“, BEZ ZÁRUKY JAKÉHOKOLIV DRUHU, "
+"NEPOSKYTUJÍ SE ANI ODVOZENÉ ZÁRUKY, ZÁRUKY, ŽE DOKUMENT, NEBO JEHO UPRAVENÁ "
+"VERZE, JE BEZCHYBNÝ, NEBO ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO URČITÝ ÚČEL, "
+"NEBO NEPORUŠENOSTI. RIZIKO NEKVALITY, NEPŘESNOSTI A ŠPATNÉHO PROVEDENÍ "
+"DOKUMENTU, NEBO JEHO UPRAVENÉ VERZE, NESETE VY. POKUD JE TENTO DOKUMENT NEBO "
+"JEHO UPRAVENÁ VERZE VADNÁ V JAKÉMKOLIV SMYSLU, VY (NIKOLIV PŮVODCE, AUTOR "
+"NEBO JAKÝKOLIV PŘISPĚVATEL) PŘEBÍRÁTE ODPOVĚDNOST ZA JAKÉKOLIV NÁKLADY NA "
+"NUTNÉ ÚPRAVY, OPRAVY ČI SLUŽBY. TOTO PROHLÁŠENÍ O ZÁRUCE PŘEDSTAVUJE "
+"ZÁKLADNÍ SOUČÁST TÉTO LICENCE. BEZ TOHOTO PROHLÁŠENÍ NENÍ PODLE TÉTO DOHODY "
+"POVOLENO UŽÍVÁNÍ ANI ÚPRAVY TOHOTO DOKUMENTU; DÁLE"
+"ZA ŽÁDNÝCH OKOLNOSTÍ A ŽÁDNÝCH PRÁVNÍCH PŘEDPOKLADŮ, AŤ SE JEDNÁ O PŘEČIN "
+"(VČETNĚ NEDBALOSTNÍCH), SMLOUVU NEBO JINÉ, NENÍ AUTOR, PŮVODNÍ PISATEL, "
+"KTERÝKOLIV PŘISPĚVATEL NEBO KTERÝKOLIV DISTRIBUTOR TOHOTO DOKUMENTU NEBO "
+"UPRAVENÉ VERZE DOKUMENTU NEBO KTERÝKOLIV DODAVATEL NĚKTERÉ Z TĚCHTO STRAN "
+"ODPOVĚDNÝ NĚJAKÉ OSOBĚ ZA PŘÍMÉ, NEPŘÍMÉ, SPECIÁLNÍ, NAHODILÉ NEBO NÁSLEDNÉ "
+"ŠKODY JAKÉHOKOLIV CHARAKTERU, VČETNĚ, ALE NEJEN, ZA POŠKOZENÍ ZE ZTRÁTY "
+"DOBRÉHO JMÉNA, PŘERUŠENÍ PRÁCE, PORUCHY NEBO NESPRÁVNÉ FUNKCE POČÍTAČE NEBO "
+"JINÉHO A VŠECH DALŠÍCH ŠKOD NEBO ZTRÁT VYVSTÁVAJÍCÍCH Z NEBO VZTAHUJÍCÍCH SE "
+"K POUŽÍVÁNÍ TOHOTO DOKUMENTU NEBO UPRAVENÝCH VERZÍ DOKUMENTU, I KDYŽ BY "
+"TAKOVÁTO STRANA BYLA INFORMOVANÁ O MOŽNOSTI TAKOVÉHOTO POŠKOZENÍ."
+
+#: C/legal.xml:28(legalnotice/para)
+msgid ""
+"DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS "
+"OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: "
+"<_:orderedlist-1/>"
+msgstr ""
+"DOKUMENT A JEHO UPRAVENÉ VERZE JSOU ŠÍŘENY V SOULADU SE ZNĚNÍM LICENCE GNU "
+"FREE DOCUMENTATION LICENSE S NÁSLEDUJÍCÍM USTANOVENÍM: <_:orderedlist-1/>"
