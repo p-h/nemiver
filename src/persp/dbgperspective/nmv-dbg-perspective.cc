@@ -6254,6 +6254,12 @@ DBGPerspective::execute_program
                  ++it) {
                 set_breakpoint (it->second);
             }
+            if (!saved_bps.empty())
+                // We are restarting the same program, and we hope that
+                // some that at least one breakpoint is actually going to
+                // be set.  So let's schedule the continuation of the
+                // inferior's execution.
+                run_real (a_restarting);
         } else if (a_break_in_main_run) {
             LOG_DD ("here");
             dbg_engine->set_breakpoint
@@ -6270,6 +6276,10 @@ DBGPerspective::execute_program
         for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
             set_breakpoint (*it);
         }
+        // Here we are starting (or restarting) the program and we
+        // hope at least one breakpoint is going to be set; so lets
+        // schedule the continuation of the execution of the inferior.
+        run_real (a_restarting);
     }
 
     m_priv->last_prog_path_requested = prog;
