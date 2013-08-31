@@ -2386,10 +2386,9 @@ DBGPerspective::on_debugger_breakpoints_set_signal
     NEMIVER_CATCH;
 }
 
-/// This callback slot is invoked when the breakpoint that is
-/// automatically set to the 'main' function upon startup is set.
+/// This callback slot is invoked when a breakpoint is set.
 ///
-/// The goal here is to detect that the breakpoint is actually set to
+/// The goal here is to detect that a breakpoint is actually set to
 /// the 'main' entry point (that would mean that a 'main' entry point
 /// function exists and one can set a breakpoint there).  In that
 /// case, the function makes the debugger 'run', so that execution of
