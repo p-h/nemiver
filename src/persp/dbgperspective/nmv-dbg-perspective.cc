@@ -2408,6 +2408,7 @@ DBGPerspective::on_debugger_bp_automatically_set_on_main
 (const map<string, IDebugger::Breakpoint>& a_bps,
  bool a_restarting)
 {
+    LOG_FUNCTION_SCOPE_NORMAL_DD
     NEMIVER_TRY;
 
     for (map<string, IDebugger::Breakpoint>::const_iterator i = a_bps.begin ();
@@ -6244,7 +6245,9 @@ DBGPerspective::execute_program
     // If this is a new program we are debugging,
     // set a breakpoint in 'main' by default.
     if (a_breaks.empty ()) {
+        LOG_DD ("here");
         if (!is_new_program) {
+            LOG_DD ("here");
             map<string, IDebugger::Breakpoint>::const_iterator it;
             for (it = saved_bps.begin ();
                  it != saved_bps.end ();
@@ -6252,6 +6255,7 @@ DBGPerspective::execute_program
                 set_breakpoint (it->second);
             }
         } else if (a_break_in_main_run) {
+            LOG_DD ("here");
             dbg_engine->set_breakpoint
                 ("main",
                  sigc::bind
@@ -6261,6 +6265,7 @@ DBGPerspective::execute_program
                   a_restarting));
         }
     } else {
+        LOG_DD ("here");
         vector<IDebugger::Breakpoint>::const_iterator it;
         for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
             set_breakpoint (*it);
