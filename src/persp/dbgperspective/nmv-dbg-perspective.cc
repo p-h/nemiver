@@ -3356,8 +3356,8 @@ DBGPerspective::init_actions ()
         {
             "ContinueMenuItemAction",
             Gtk::Stock::EXECUTE,
-            _("_Continue or start"),
-            _("Start or continue program execution until the next breakpoint"),
+            _("_Continue"),
+            _("Continue program execution until the next breakpoint"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
             ActionEntry::DEFAULT,
             "F5",
