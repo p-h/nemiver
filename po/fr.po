@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: nemiver HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-08-06 11:53+0000\n"
-"PO-Revision-Date: 2013-08-22 12:22+0200\n"
+"POT-Creation-Date: 2013-08-31 15:53+0000\n"
+"PO-Revision-Date: 2013-09-03 20:20+0200\n"
 "Last-Translator: Alain Lojewski <allomervan@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "Language: \n"
@@ -498,13 +498,13 @@ msgid "Step over the next assembly instruction"
 msgstr "Saute la prochaine instruction assembleur"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3359
-msgid "_Continue or start"
-msgstr "_Continuer ou démarrer"
+msgid "_Continue"
+msgstr "_Continuer"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3360
-msgid "Start or continue program execution until the next breakpoint"
+msgid "Continue program execution until the next breakpoint"
 msgstr ""
-"Démarre ou continue l'exécution du programme jusqu'au prochain point d'arrêt"
+"Continue l'exécution du programme jusqu'au prochain point d'arrêt"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3369
 msgid "Run to Cursor"
@@ -747,30 +747,30 @@ msgid "Could not find file %s"
 msgstr "Impossible de trouver le fichier « %s »"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6233
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6379
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6414
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6393
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6428
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Impossible de charger le programme : %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6308
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6322
 msgid "You cannot attach to Nemiver itself"
 msgstr "Vous ne pouvez pas connecter Nemiver à lui-même"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6321
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6335
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Vous ne pouvez pas vous connecter au moteur de débogage sous-jacent"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6616
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6630
 msgid "Failed to stop the debugger"
 msgstr "L'arrêt du débogueur a échoué"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6860
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6874
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Numéro de ligne non valide : %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8484
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8498
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
