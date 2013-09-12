@@ -2,14 +2,14 @@
 # Copyright (C) 2012 nemiver's COPYRIGHT HOLDER
 # This file is distributed under the same license as the nemiver package.
 #
-# Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>, 2012.
+# Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-23 19:10+0000\n"
-"PO-Revision-Date: 2012-09-25 18:26+0300\n"
+"POT-Creation-Date: 2013-08-31 15:53+0000\n"
+"PO-Revision-Date: 2013-09-12 14:15+0300\n"
 "Last-Translator: Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>\n"
 "Language-Team: Latvian <lata-l10n@googlegroups.com>\n"
 "Language: lv\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
-"X-Generator: Lokalize 1.4\n"
+"X-Generator: Lokalize 1.5\n"
 
 #: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
@@ -35,6 +35,10 @@ msgstr "Nemiver C/C++ atkļūdotājs"
 #: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "Atkļūdo lietotnes"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;disasemblers;atkļūdošana;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -147,12 +151,12 @@ msgid "Line"
 msgstr "Rinda"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
 msgstr "Funkcija"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:605
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
 msgstr "Adrese"
 
@@ -181,35 +185,35 @@ msgstr "Izteiksme"
 msgid "Ignore count"
 msgstr "Ignorēt skaitu"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:348
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:364
 msgid "breakpoint"
 msgstr "pārtraukuma punkts"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:352
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:368
 msgid "watchpoint"
 msgstr "vērojamais punkts"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:355
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:371
 msgid "countpoint"
 msgstr "skaitīšanas punkts"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:358
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:374
 msgid "unknown"
 msgstr "nezināms"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:418
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:441
 msgid "_Delete"
 msgstr "_Dzēst"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:419
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:442
 msgid "Remove this breakpoint"
 msgstr "Izņemt šo pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:428
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:451
 msgid "_Go to Source"
 msgstr "_Iet uz avotu"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:429
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:452
 msgid "Find this breakpoint in the source editor"
 msgstr "Meklēt šo pārtraukuma punktu avota redaktorā"
 
@@ -222,24 +226,24 @@ msgstr "_Kopēt"
 msgid "Copy the call stack to the clipboard"
 msgstr "Kopēt izsaukumu steku uz starpliktuvi"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:601
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
 msgstr "Ietvars"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:603
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
 msgstr "Parametri"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:604
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
 msgid "Location"
 msgstr "Vieta"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
 msgid "Binary"
 msgstr "Binārā datne"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:762
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
 msgid "(Click here to see the next %d row of the call stack"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
@@ -252,137 +256,137 @@ msgid "Function Name"
 msgstr "Funkcijas nosaukums"
 
 #. labels for widget tabs in the status notebook
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:117
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
 msgid "Context"
 msgstr "Konteksts"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
 msgid "Target Terminal"
 msgstr "Mērķa terminālis"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
 msgid "Breakpoints"
 msgstr "Pārtraukuma punkti"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
 msgid "Registers"
 msgstr "Reģistri"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
 msgid "Memory"
 msgstr "Atmiņa"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:123
 msgid "Expression Monitor"
 msgstr "Izteiksmju pārraugs"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1689
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1731
 msgid "Reached end of file"
 msgstr "Sasniegtas datnes beigas"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1692
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1734
 #, c-format
 msgid "Could not find string %s"
 msgstr "Neizdevās atrast virkni %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2070
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2118
 msgid "Change to Standard Breakpoint"
 msgstr "Mainīt uz standarta pārtraukuma punktiem"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2073
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2121
 msgid "Change to Countpoint"
 msgstr "Mainīt uz skaitīšanas punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2075
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2123
 msgid "Remove _Breakpoint"
 msgstr "Izņemt _pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2078
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2126
 msgid "Disable Breakpoint"
 msgstr "Deaktivēt pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2080
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2128
 msgid "Enable Breakpoint"
 msgstr "Aktivēt pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2083
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2131
 msgid "Set _Breakpoint"
 msgstr "Iestatīt _pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2085
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2133
 msgid "Set Countpoint"
 msgstr "Iestatīt skaitīšanas punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (path=\"%s\", pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2262
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2310
 msgid "Connected to remote target!"
 msgstr "Savienojies ar attālināto mērķi!"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2418
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2510
 msgid "Program exited"
 msgstr "Programma beidza darbu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2448
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2540
 msgid "The underlying debugger engine process died."
 msgstr "Apakšā esošais atkļūdošanas dziņa process nomira."
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2536
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2628
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "Mērķis saņēma signālu — %s, %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2551
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2643
 #, c-format
 msgid "An error occurred: %s"
 msgstr "Gadījās kļūda — %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2714
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2806
 #, c-format
 msgid "File %s has been modified. Do you want to reload it?"
 msgstr "Datne %s tika modificēta. Vai vēlaties to atkal ielādēt?"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3057
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
 msgid "_Run or Restart"
 msgstr "Palaist vai pā_rstartēt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3058
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
 msgid "Run or Restart the target"
 msgstr "Palaist vai pārstartēt mērķi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3070
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3188
 msgid "_Detach From the Running Program"
 msgstr "Atvienot no strā_dājošas programmas"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3071
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3189
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "Atvienot atkļūdotāju no strādājoša mērķa, to neapturot"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3086
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3204
 msgid "_Save Session to Disk"
 msgstr "_Saglabāt sesiju diskā"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3087
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3205
 msgid "Save the current debugging session to disk"
 msgstr "Saglabāt pašreizējo atkļūdošanas sesiju diskā"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3096
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3214
 msgid "Set Breakpoint with Dialog..."
 msgstr "Iestatīt pārtraukuma punktu ar dialoglodziņu..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3097
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3215
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr "Iestatīt pārtraukuma punktu dotajā rindā ar dialoglodziņu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3108
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3226
 msgid "Set Breakpoint..."
 msgstr "Iestatīt pārtraukuma punktu..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3109
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3227
 msgid "Set a breakpoint at a function or line number"
 msgstr "Iestatīt pārtraukuma punktu pie funkcijas vai rindas numura"
 
@@ -393,11 +397,11 @@ msgstr "Iestatīt pārtraukuma punktu pie funkcijas vai rindas numura"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3125
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3243
 msgid "Toggle _Breakpoint"
 msgstr "Pārslēgt pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3126
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3244
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "Iestatīt / atstatīt pārtraukuma punktu pašreizējā kursora vietā"
 
@@ -408,16 +412,16 @@ msgstr "Iestatīt / atstatīt pārtraukuma punktu pašreizējā kursora vietā"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3143
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3261
 msgid "Enable/Disable Breakpoint"
 msgstr "Aktivēt / deaktivēt pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3144
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
-"Aktivēt vai deaktivēt pārtraukuma punktu, kas ir iestatīts pašreizējā kursora "
-"vietā"
+"Aktivēt vai deaktivēt pārtraukuma punktu, kas ir iestatīts pašreizējā "
+"kursora vietā"
 
 #. Depending on the context we will want this string to be
 #. either "Set Countpoint", or "Change to Countpoint", or
@@ -427,326 +431,336 @@ msgstr ""
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3164
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3282
 msgid "Toggle _Countpoint"
 msgstr "Pārslēgt _skaitīšanas punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3165
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3283
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "Iestatīt / atstatīt skaitīšanas punktu pašreizējā kursora vietā"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3293
 msgid "Set Watchpoint with Dialog..."
 msgstr "Iestatīt vērojamo punktu ar dialoglodziņu..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3294
 msgid "Set a watchpoint using a dialog"
 msgstr "Iestatīt vērojamo punktu ar dialoglodziņu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3309
 msgid "_Next"
 msgstr "_Nākamais"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3310
 msgid "Execute next line stepping over the next function, if any"
 msgstr "Izpildīt nākamo rindu, pārkāpjot pāri nākamajai funkcijai, ja tāda ir"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
 msgid "_Step"
 msgstr "_Solis"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
 msgid "Execute next line, stepping into the next function, if any"
 msgstr "Izpildīt nākamo rindu, iekāpjot iekšā nākamajā funkcijā, ja tāda ir"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3329
 msgid "Step _Out"
 msgstr "Izs_oļot"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3330
 msgid "Finish the execution of the current function"
 msgstr "Pabeigt pašreizējās funkcijas izpildīšanu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3221
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3339
 msgid "Step Into asm"
 msgstr "Iekāpt asm"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3222
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3340
 msgid "Step into the next assembly instruction"
 msgstr "Iekāpt nākamajā asamblera instrukcijā"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3349
 msgid "Step Over asm"
 msgstr "Pārkāpt pāri asm"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3350
 msgid "Step over the next assembly instruction"
 msgstr "Pārkāpt pāri nākamajai asamblera instrukcijai"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
-msgid "_Continue or start"
-msgstr "_Turpināt vai sākt"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3359
+#| msgid "_Continue or start"
+msgid "_Continue"
+msgstr "_Turpināt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3242
-msgid "Start or continue program execution until the next breakpoint"
-msgstr ""
-"Sākt vai turpināt programmu izpildi, līdz sasniedz nākamo pārtraukuma punktu"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3360
+#| msgid "Start or continue program execution until the next breakpoint"
+msgid "Continue program execution until the next breakpoint"
+msgstr "Turpināt programmu izpildi, līdz sasniedz nākamo pārtraukuma punktu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3251
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3369
 msgid "Run to Cursor"
 msgstr "Darbināt līdz kursoram"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3252
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3370
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 "Turpināt programmas izpildi, līdz tiek sasniegta pašlaik izvēlētā rinda"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3262
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3380
 msgid "Jump to Cursor"
 msgstr "Pārlekt uz kursoru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3263
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3381
 msgid "Jump to the currently selected line"
 msgstr "Pārlekt uz pašlaik izvēlēto rindu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3273
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3391
 msgid "Jump and Stop to Cursor"
 msgstr "Pārlekt uz kursoru un apstāties"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3274
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3392
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr ""
 "Iestata pārtraukuma punktu pašlaik izvēlētajā rindā un pārlekt uz turieni"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3286
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3404
 msgid "Jump to a Given Location"
 msgstr "Pārlekt uz doto vietu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3405
 msgid "Select a given code location and jump there"
 msgstr "Izvēlēties doto koda vietu un pārlekt turp"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3416
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
 msgid "Inspect an Expression"
 msgstr "Izpētīt izteiksmi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3417
 msgid "Inspect a global or local expression"
 msgstr "Izpētīt globālās un lokālās izteiksmes"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3309
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3427
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
 msgid "Call a Function"
 msgstr "Izsaukt funkciju"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3310
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3428
 msgid "Call a function in the program being debugged"
 msgstr "Izsaukt funkciju programmā, ko atkļūdo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3319
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3437
 msgid "Show Global Variables"
 msgstr "Rādīt globālos mainīgos"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3320
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3438
 msgid "Display all global variables"
 msgstr "Rādīt visus globālos mainīgos"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3330
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3448
 msgid "Refresh Locals"
 msgstr "Atsvaidzināt lokāles"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3331
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3449
 msgid "Refresh the list of variables local to the current function"
 msgstr "Atsvaidzināt lokālo mainīgo sarakstu pašreizējai funkcijai"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3340
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3458
 msgid "Show Assembly"
 msgstr "Rādīt asambleri"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3341
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3459
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
 msgstr "Rādīt pašlaik atkļūdojamā pirmkoda asamblera kodu citā cilnē"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3353
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3471
 msgid "Switch to Assembly"
 msgstr "Pārslēgties uz asambleru"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3472
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr "Rādīt pašlaik atkļūdojamā pirmkoda asamblera kodu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3484
 msgid "Switch to Source"
 msgstr "Pārslēgties uz avotu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3485
 msgid "Show the source code being currently debugged"
 msgstr "Rādīt pirmkodu, ko pašlaik atkļūdo"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3379
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3497
 msgid "Stop"
 msgstr "Apturēt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3380
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3498
 msgid "Stop the debugger"
 msgstr "Apturēt atkļūdotāju"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3392
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3510
 msgid "_View"
 msgstr "_Skats"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3403
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
 msgid "Switch to Target Terminal View"
 msgstr "Pārslēgties uz mērķa termināļa skatu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3532
 msgid "Switch to Context View"
 msgstr "Pārslēgties uz konteksta skatu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3543
 msgid "Switch to Breakpoints View"
 msgstr "Pārslēgties uz pārtraukuma punktu skatu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3436
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3554
 msgid "Switch to Registers View"
 msgstr "Pārslēgties uz reģistru skatu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3448
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3566
 msgid "Switch to Memory View"
 msgstr "Pārslēgties uz atmiņas skatu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3459
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3577
 msgid "Switch to Variables Monitor View"
 msgstr "Pārslēgties uz mainīgo pārraudzības skatu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3586
 msgid "_Debug"
 msgstr "Atkļū_dot"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3478
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3596
 msgid "_Open Source File..."
 msgstr "Atvērt av_ota datni..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3479
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3597
 msgid "Open a source file for viewing"
 msgstr "Atvērt avota datni, lai to apskatītu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3488
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3606
 msgid "Load _Executable..."
 msgstr "I_elādēt izpildāmo datni..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3607
 msgid "Execute a program"
 msgstr "Izpildīt programmu"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3499
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3617
 msgid "_Load Core File..."
 msgstr "Ie_lādēt kodola datni..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3500
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3618
 msgid "Load a core file from disk"
 msgstr "Ielādēt kodola datni no diska"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3510
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3628
 msgid "_Attach to Running Program..."
 msgstr "Pies_aistīt pie strādājošas programmas..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3511
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3629
 msgid "Debug a program that's already running"
 msgstr "Atkļūdot programmu, kas jau darbojas"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3521
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3639
 msgid "_Connect to Remote Target..."
 msgstr "_Savienoties ar attālinātu datoru..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3522
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3640
 msgid "Connect to a debugging server to debug a remote target"
 msgstr "Savienoties ar atkļūdošanas serveri, lai atkļūdotu attālināto mērķi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3533
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3651
 msgid "Resume Sa_ved Session..."
 msgstr "Turpināt sa_glabāto sesiju..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3534
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3652
 msgid "Open a previously saved debugging session"
 msgstr "Atvērt iepriekš saglabātu atkļūdošanas sesiju"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3544
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3662
 msgid "_Preferences"
 msgstr "_Iestatījumi"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3545
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3663
 msgid "Edit the properties of the current session"
 msgstr "Rediģēt pašreizējās sesijas īpašības"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3677
+msgid "_Copy selected text"
+msgstr "_Kopēt izvēlēto tekstu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3678
+#| msgid "Finish the execution of the current function"
+msgid "Copy the text selected in the current source file"
+msgstr "Kopēt pašreizējā avota datnē izvēlēto tekstu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3687
 msgid "_Reload Source File"
 msgstr "Pā_rlādēt avota datni"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3560
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3688
 msgid "Reloads the source file"
 msgstr "Pārlādē avota datni"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3569
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3697
 msgid "_Close Source File"
 msgstr "_Aizvērt avota datni"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3570
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3698
 msgid "Close the opened file"
 msgstr "Aizvērt atvērto datni"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3579
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3707
 msgid "_Find"
 msgstr "_Meklēt"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3580
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3708
 msgid "Find a text string in file"
 msgstr "Meklēt nākamo virkni datnē"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3915
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4043
 #, c-format
 msgid "Close %s"
 msgstr "Aizvērt %s"
 
 #. We cannot restart an inferior running on a remote target at
 #. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5873
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6026
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "Diemžēl nevar pārstartēt attālināto inferior"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5996
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6171
 #, c-format
 msgid "Could not find file %s"
 msgstr "Nevarēja ielādēt datni %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6060
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6202
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6237
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6233
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6393
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6428
 #, c-format
 msgid "Could not load program: %s"
 msgstr "Nevarēja ielādēt programmu — %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6131
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6322
 msgid "You cannot attach to Nemiver itself"
 msgstr "Nevar piesaistīt pie paša Nemiver"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6144
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6335
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "Nevar piesaistīt pie apakšējā atkļūdošanas dziņa"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6439
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6630
 msgid "Failed to stop the debugger"
 msgstr "Neizdevās apturēt atkļūdotāju"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6683
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6874
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "Nederīgs rindas numurs — %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8294
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8498
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -807,8 +821,8 @@ msgstr "S_akļaut"
 msgid "Loading files from target executable..."
 msgstr "Ielādē datnes no mērķa izpildāmās datnes..."
 
-#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:301
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:547
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
 #, c-format
 msgid ""
@@ -818,39 +832,39 @@ msgstr ""
 "Mainīgā tips ir: \n"
 " %s"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:124
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
 msgid "Local Variables"
 msgstr "Lokālie mainīgie"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:132
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
 msgid "Function Arguments"
 msgstr "Funkcijas parametri"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
 msgid "_Copy Variable Name"
 msgstr "_Kopēt mainīgo nosaukums"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:259
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
 msgid "Copy the variable path expression to the clipboard"
 msgstr "Kopēt mainīgo ceļu izteiksmes uz starpliktuvi"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
 msgid "_Copy Variable Value"
 msgstr "_Kopēt mainīgā vērtību"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:271
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
 msgid "Copy the variable value to the clipboard"
 msgstr "Kopēt mainīgā vērtību uz starpliktuvi"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
 msgid "Create Watchpoint"
 msgstr "Izveidot vērojamo punktu"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:283
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
 msgstr "Izveidot vērojamo punktu, kas nostrādā, kad izteiksmes vērtība mainās"
@@ -882,12 +896,12 @@ msgstr "Rādīt"
 msgid "Group By:"
 msgstr "Grupēt pēc:"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:149
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
 msgstr "Izvēlieties direktoriju"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:259
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
 msgid "Source Directories"
 msgstr "Pirmkoda direktorijas"
@@ -1130,67 +1144,76 @@ msgid "Editor"
 msgstr "Redaktors"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Update at each stop"
+msgstr "Atjaunināt pie katras apstāšanās"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+#| msgid "Local Variables"
+msgid "Local variables"
+msgstr "Lokālie mainīgie"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Pure assembly"
 msgstr "Tīrs asambleris"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
 msgid "Mixed source and assembly"
 msgstr "Jaukt kopā avotu un asambleri"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 msgid "Assembly style"
 msgstr "Asamblera stils"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
 msgid "Assembly flavor"
 msgstr "Asamblera paveids"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
 msgid "Choose a File"
 msgstr "Izvēlieties datni"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Path to the GDB binary used"
 msgstr "Ceļš uz GDB bināro datni"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
 msgid "GDB Binary"
 msgstr "GDB binārā datne"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Number of instructions to disassemble by default"
 msgstr "Instrukciju skaits, ko disasemblēt pēc noklusējuma"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "Instructions"
 msgstr "Instrukcijas"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Enable pretty printing (requires debugger restart)"
 msgstr "Aktivēt smuko drukāšanu (jāpārstartē atkļūdotājs)"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "GDB Pretty Printing"
 msgstr "GDB smukā drukāšana"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
 msgid "Follow parent"
 msgstr "Sekot vecākam"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
 msgid "Follow child"
 msgstr "Sekot bērnam"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
 msgid "GDB Follow Fork Mode"
 msgstr "GDB sekošanas dakšas metode"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
 msgid "Debugger"
 msgstr "Atkļūdotājs"
 
-#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
 msgid "Layout"
 msgstr "Izkārtojums"
 
@@ -1386,12 +1409,12 @@ msgstr ""
 "Nevar atrast datni “%s”.\n"
 "Lūdzu, norādiet šīs datnes atrašanās vietu:"
 
-#: ../src/uicommon/nmv-source-editor.cc:611
+#: ../src/uicommon/nmv-source-editor.cc:645
 #, c-format
 msgid "Line: %i, Column: %i"
 msgstr "Rinda: %i, kolonna: %i"
 
-#: ../src/uicommon/nmv-source-editor.cc:1439
+#: ../src/uicommon/nmv-source-editor.cc:1473
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
 msgstr "Nevarēja ielādēt datni %s, jo tās kodējums atšķiras no %s"
