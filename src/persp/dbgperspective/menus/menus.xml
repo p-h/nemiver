@@ -29,7 +29,7 @@
     <placeholder name="MenuBarAdditions">
         <menu action="EditMenuAction" name="EditMenu">
 	  <menuitem action="CopyMenuItemAction"
-                    name="CopyMenutItem"/>
+                    name="CopyMenuItem"/>
 	  <separator/>
           <menuitem action="FindMenuItemAction"
                     name="FindMenutItem"/>
