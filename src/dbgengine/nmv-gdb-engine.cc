@@ -3207,6 +3207,13 @@ GDBEngine::load_program (const UString &a_prog,
         m_priv->tty_fd = a_slave_tty_fd;
         m_priv->get_tty_attributes ();
 
+        // In case we are restarting GDB after a crash, the command
+        // queue might be stuck.  Let's restart it.
+        if (a_force) {
+            LOG_DD ("Reset command queue");
+            m_priv->reset_command_queue ();
+        }
+
         if (m_priv->launch_gdb_and_set_args (a_working_dir,
                                              a_source_search_dirs,
                                              a_prog, a_argv,
@@ -3214,13 +3221,6 @@ GDBEngine::load_program (const UString &a_prog,
             return false;
 
         m_priv->uses_launch_tty = a_uses_launch_tty;
-
-        // In case we are restarting GDB after a crash, the command
-        // queue might be stuck.  Let's restart it.
-        if (a_force) {
-            LOG_DD ("Reset command queue");
-            m_priv->reset_command_queue ();
-        }
 
         queue_command (Command ("load-program",
                                 "set breakpoint pending on"));
