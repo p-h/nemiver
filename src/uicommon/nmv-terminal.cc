@@ -145,7 +145,8 @@ struct Terminal::Priv {
         widget->set_manage ();
         widget->reference ();
 
-        adjustment = Glib::wrap (vte_terminal_get_adjustment (vte));
+        adjustment =
+            Glib::wrap (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (vte)));
         THROW_IF_FAIL (adjustment);
         adjustment->reference ();
 
