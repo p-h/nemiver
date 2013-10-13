@@ -359,6 +359,8 @@ public:
 
     void get_mi_thread_and_frame_location (UString &a_str) const;
 
+    void reset_command_queue ();
+
     void step_over (const UString &a_cookie);
 
     void step_in (const UString &a_cookie);

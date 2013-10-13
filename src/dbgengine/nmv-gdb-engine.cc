@@ -1407,6 +1407,24 @@ struct OnDetachHandler : OutputHandler {
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
         THROW_IF_FAIL (m_engine);
+        /// So at this point we've been detached from the target.  To
+        /// perform that detachment, we might have first sent a SIGINT
+        /// to the target (making it to stop) and then, in a second
+        /// step, sent the detach command.  One must understand that
+        /// upon the stop (incurred by the SIGINT) many commands are
+        /// scheduled by the Nemiver front end to get the context of
+        /// the stop;  The thing is, we don't need these commands and
+        /// they might even cause havoc b/c they might be sent to the
+        /// target after this point -- but we are not connected to the
+        /// target anymore!  So let's just drop these commands.
+        ///
+        /// FIXME: So this is a hack, btw.  I think the proper way to
+        /// do this is to define a new kind of StopReason, like
+        /// SIGNAL_RECEIVED_BEFORE_COMMAND.  That way, handling code
+        /// called by the IDebugger::stopped_signal knows that we are
+        /// getting stopped just to be able to issue a command to
+        /// GDB; it can thus avoid querying context from IDebugger.
+        m_engine->reset_command_queue();
         m_engine->detached_from_target_signal ().emit ();
         m_engine->set_state (IDebugger::NOT_STARTED);
     }
@@ -3209,7 +3227,7 @@ GDBEngine::load_program (const UString &a_prog,
         // queue might be stuck.  Let's restart it.
         if (a_force) {
             LOG_DD ("Reset command queue");
-            m_priv->reset_command_queue ();
+            reset_command_queue ();
         }
 
         if (m_priv->launch_gdb_and_set_args (a_working_dir,
@@ -3343,6 +3361,14 @@ GDBEngine::detach_from_target (const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
+    if (is_attached_to_target ()
+        && get_state () == IDebugger::RUNNING)
+    {
+        LOG_DD ("Requesting GDB to stop ...");
+        stop_target ();
+        LOG_DD ("DONE");
+    }
+
     queue_command (Command ("detach-from-target", "-target-detach", a_cookie));
 }
 
@@ -3472,6 +3498,17 @@ GDBEngine::get_mi_thread_and_frame_location (UString &a_str) const
             + " " + frame_level;
 
     LOG_DD ("a_str: " << a_str);
+}
+
+/// Clear the comamnd queue.  That means that all the commands that
+/// got queued for submission to GDB will be erased.  Do not use this
+/// function.  Ever.  Unless you know what you are doing.
+void
+GDBEngine::reset_command_queue ()
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    m_priv->reset_command_queue();
 }
 
 void

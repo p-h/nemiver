@@ -892,7 +892,6 @@ struct DBGPerspective::Priv {
     SafePtr<Gtk::HPaned> context_paned;
 
     Glib::RefPtr<Gtk::ActionGroup> default_action_group;
-    Glib::RefPtr<Gtk::ActionGroup> target_not_started_action_group;
     Glib::RefPtr<Gtk::ActionGroup> inferior_loaded_action_group;
     Glib::RefPtr<Gtk::ActionGroup> detach_action_group;
     Glib::RefPtr<Gtk::ActionGroup> opened_file_action_group;
@@ -2332,6 +2331,8 @@ DBGPerspective::on_debugger_detached_from_target_signal ()
 
     NEMIVER_TRY;
 
+    if (get_num_notebook_pages ())
+        close_opened_files ();
     clear_status_notebook (true);
     workbench ().set_title_extension ("");
     //****************************
@@ -2343,7 +2344,6 @@ DBGPerspective::on_debugger_detached_from_target_signal ()
     m_priv->debugger_ready_action_group->set_sensitive (false);
     m_priv->debugger_busy_action_group->set_sensitive (false);
     m_priv->inferior_loaded_action_group->set_sensitive (false);
-    m_priv->target_not_started_action_group->set_sensitive (true);
 
     NEMIVER_CATCH
 }
@@ -2532,7 +2532,6 @@ DBGPerspective::on_engine_died_signal ()
 
     m_priv->debugger_engine_alive = false;
 
-    m_priv->target_not_started_action_group->set_sensitive (true);
     m_priv->debugger_ready_action_group->set_sensitive (false);
     m_priv->debugger_busy_action_group->set_sensitive (false);
     m_priv->inferior_loaded_action_group->set_sensitive (false);
@@ -2997,7 +2996,6 @@ DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
 
     THROW_IF_FAIL (m_priv);
     THROW_IF_FAIL (m_priv->debugger_ready_action_group);
-    THROW_IF_FAIL (m_priv->target_not_started_action_group);
     THROW_IF_FAIL (m_priv->debugger_busy_action_group);
     THROW_IF_FAIL (m_priv->throbber);
 
@@ -3007,7 +3005,6 @@ DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
         workbench ().get_root_window ().get_window ()->set_cursor ();
         m_priv->default_action_group->set_sensitive (true);
         m_priv->detach_action_group->set_sensitive (false);
-        m_priv->target_not_started_action_group->set_sensitive (true);
         m_priv->inferior_loaded_action_group->set_sensitive (false);
         m_priv->debugger_busy_action_group->set_sensitive (false);
         m_priv->debugger_ready_action_group->set_sensitive (false);
@@ -3018,7 +3015,6 @@ DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
         // reset to default cursor
         workbench ().get_root_window ().get_window ()->set_cursor ();
         m_priv->detach_action_group->set_sensitive (false);
-        m_priv->target_not_started_action_group->set_sensitive (true);
         m_priv->inferior_loaded_action_group->set_sensitive (true);
         m_priv->debugger_busy_action_group->set_sensitive (false);
         m_priv->debugger_ready_action_group->set_sensitive (false);
@@ -3028,13 +3024,11 @@ DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
         // reset to default cursor
         workbench ().get_root_window ().get_window ()->set_cursor ();
         m_priv->detach_action_group->set_sensitive (true);
-        m_priv->target_not_started_action_group->set_sensitive (true);
         m_priv->inferior_loaded_action_group->set_sensitive (true);
         m_priv->debugger_ready_action_group->set_sensitive (true);
         m_priv->debugger_busy_action_group->set_sensitive (false);
     } else if (a_state == IDebugger::RUNNING){
         m_priv->detach_action_group->set_sensitive (true);
-        m_priv->target_not_started_action_group->set_sensitive (false);
         m_priv->inferior_loaded_action_group->set_sensitive (false);
         m_priv->debugger_ready_action_group->set_sensitive (false);
         m_priv->debugger_busy_action_group->set_sensitive (true);
@@ -3042,7 +3036,6 @@ DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
         m_priv->throbber->stop ();
         // reset to default cursor
         workbench ().get_root_window ().get_window ()->set_cursor ();
-        m_priv->target_not_started_action_group->set_sensitive (true);
         m_priv->inferior_loaded_action_group->set_sensitive (true);
         m_priv->debugger_ready_action_group->set_sensitive (false);
         m_priv->debugger_busy_action_group->set_sensitive (false);
@@ -3167,19 +3160,6 @@ DBGPerspective::init_actions ()
 {
     Gtk::StockID nil_stock_id ("");
     sigc::slot<void> nil_slot;
-
-    static ui_utils::ActionEntry s_target_not_started_action_entries [] = {
-        {
-            "RunMenuItemAction",
-            Gtk::Stock::REFRESH,
-            _("_Run or Restart"),
-            _("Run or Restart the target"),
-            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
-            ActionEntry::DEFAULT,
-            "<shift>F5",
-            true
-        }
-    };
 
     static ui_utils::ActionEntry s_detach_action_entries [] = {
         {
@@ -3352,6 +3332,16 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control>N",
             false
+        },
+        {
+            "RunMenuItemAction",
+            Gtk::Stock::REFRESH,
+            _("_Run or Restart"),
+            _("Run or Restart the target"),
+            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
+            ActionEntry::DEFAULT,
+            "<shift>F5",
+            true
         },
         {
             "ContinueMenuItemAction",
@@ -3721,10 +3711,6 @@ DBGPerspective::init_actions ()
         Gtk::ActionGroup::create ("inferior-loaded-action-group");
     m_priv->inferior_loaded_action_group->set_sensitive (false);
 
-    m_priv->target_not_started_action_group =
-                Gtk::ActionGroup::create ("target-not-started-action-group");
-    m_priv->target_not_started_action_group->set_sensitive (false);
-
     m_priv->debugger_ready_action_group =
                 Gtk::ActionGroup::create ("debugger-ready-action-group");
     m_priv->debugger_ready_action_group->set_sensitive (false);
@@ -3754,11 +3740,6 @@ DBGPerspective::init_actions ()
                          m_priv->inferior_loaded_action_group);
 
     ui_utils::add_action_entries_to_action_group
-                        (s_target_not_started_action_entries,
-                         G_N_ELEMENTS (s_target_not_started_action_entries),
-                         m_priv->target_not_started_action_group);
-
-    ui_utils::add_action_entries_to_action_group
                         (s_debugger_ready_action_entries,
                          G_N_ELEMENTS (s_debugger_ready_action_entries),
                          m_priv->debugger_ready_action_group);
@@ -3782,8 +3763,6 @@ DBGPerspective::init_actions ()
         (m_priv->detach_action_group);
     workbench ().get_ui_manager ()->insert_action_group
                                     (m_priv->inferior_loaded_action_group);
-    workbench ().get_ui_manager ()->insert_action_group
-                                (m_priv->target_not_started_action_group);
     workbench ().get_ui_manager ()->insert_action_group
                                     (m_priv->debugger_busy_action_group);
     workbench ().get_ui_manager ()->insert_action_group
@@ -6516,9 +6495,6 @@ DBGPerspective::detach_from_program ()
         debugger ()->disconnect_from_remote_target ();
     else
         debugger ()->detach_from_target ();
-
-    close_opened_files ();
-    clear_status_notebook (false);
 }
 
 void
