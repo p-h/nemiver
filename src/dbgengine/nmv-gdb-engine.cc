@@ -1047,7 +1047,7 @@ public:
         cmd_str = (stack_window.empty ())
                   ? "-stack-list-frames"
                   : "-stack-list-frames " + stack_window;
-        
+
         Command command ("list-frames", cmd_str, a_cookie);
         command.set_slot (a_slot);
         queue_command (command);
@@ -1403,11 +1403,9 @@ struct OnDetachHandler : OutputHandler {
         return false;
     }
 
-    void do_handle (CommandAndOutput &a_in)
+    void do_handle (CommandAndOutput &)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
-        if (a_in.command ().name () == "") {
-        }
         THROW_IF_FAIL (m_engine);
         m_engine->detached_from_target_signal ().emit ();
         m_engine->set_state (IDebugger::NOT_STARTED);

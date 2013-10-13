@@ -2317,7 +2317,7 @@ void
 DBGPerspective::on_debugger_inferior_re_run_signal ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    
+
     NEMIVER_TRY;
 
     m_priv->debugger_has_just_run = true;
@@ -2330,7 +2330,7 @@ DBGPerspective::on_debugger_detached_from_target_signal ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     clear_status_notebook (true);
     workbench ().set_title_extension ("");
