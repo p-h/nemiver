@@ -3039,7 +3039,6 @@ DBGPerspective::update_action_group_sensitivity (IDebugger::State a_state)
         m_priv->inferior_loaded_action_group->set_sensitive (true);
         m_priv->debugger_ready_action_group->set_sensitive (false);
         m_priv->debugger_busy_action_group->set_sensitive (false);
-        m_priv->inferior_loaded_action_group->set_sensitive (false);
     }
 }
 
@@ -3189,6 +3188,16 @@ DBGPerspective::init_actions ()
             false
         },
         {
+            "RunMenuItemAction",
+            Gtk::Stock::REFRESH,
+            _("_Run or Restart"),
+            _("Run or Restart the target"),
+            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
+            ActionEntry::DEFAULT,
+            "<shift>F5",
+            true
+        },
+        {
             "SetBreakpointUsingDialogMenuItemAction",
             nil_stock_id,
             _("Set Breakpoint with Dialog..."),
@@ -3332,16 +3341,6 @@ DBGPerspective::init_actions ()
             ActionEntry::DEFAULT,
             "<control>N",
             false
-        },
-        {
-            "RunMenuItemAction",
-            Gtk::Stock::REFRESH,
-            _("_Run or Restart"),
-            _("Run or Restart the target"),
-            sigc::mem_fun (*this, &DBGPerspective::on_run_action),
-            ActionEntry::DEFAULT,
-            "<shift>F5",
-            true
         },
         {
             "ContinueMenuItemAction",
