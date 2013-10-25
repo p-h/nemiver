@@ -1543,7 +1543,7 @@ struct OnBreakpointHandler: OutputHandler {
                                breakpoints ().size () == 1);
                 m_engine->enable_countpoint
                     (a_in.output ().result_record ().
-                     breakpoints ().begin ()->second.number (),
+                     breakpoints ().begin ()->second.id (),
                      true);
             }
             has_breaks = true;
@@ -5011,7 +5011,7 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
             << ": " << a_break.initial_ignore_count ());
 
     // First, let's see if a_break is already in our cache.
-    cur = bp_cache.find (a_break.number ());
+    cur = bp_cache.find (a_break.id ());
     if (cur != nil) {
         // So the breakpoint a_break is already in the
         // cache. If we flagged it as a countpoint, let's remember
@@ -5053,7 +5053,7 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
         // cache. So its countpointness is going to be kept
         // anyway.
         std::pair<BpIt,bool> where =
-            bp_cache.insert (BpMap::value_type (a_break.number (), a_break));
+            bp_cache.insert (BpMap::value_type (a_break.id (), a_break));
 
         if (preserve_count_point) {
             where.first->second.type (IDebugger::Breakpoint::COUNTPOINT_TYPE);

@@ -1854,7 +1854,7 @@ fetch_gdbmi_result:
                                     PREFIX_BKPT)) {
                 IDebugger::Breakpoint breakpoint;
                 if (parse_breakpoint (cur, cur, breakpoint)) {
-                    result_record.breakpoints ()[breakpoint.number ()] =
+                    result_record.breakpoints ()[breakpoint.id ()] =
                     breakpoint;
                 }
             } else if (!m_priv->input.compare (cur,
@@ -2460,7 +2460,7 @@ GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
                 LOG_PARSING_ERROR (cur);
                 return false;
             }
-            breakpoint_table[breakpoint.number ()] = breakpoint;
+            breakpoint_table[breakpoint.id ()] = breakpoint;
             if (RAW_CHAR_AT (cur) == ',') {
                 ++cur;
                 if (m_priv->index_passed_end (cur)) {

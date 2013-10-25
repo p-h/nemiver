@@ -864,7 +864,7 @@ test_breakpoint_table ()
     std::map<string, IDebugger::Breakpoint>::const_iterator iter;
     iter = breakpoints.find ("1");
     BOOST_REQUIRE (iter != breakpoints.end ());
-    BOOST_REQUIRE_EQUAL (iter->second.number (), "1");
+    BOOST_REQUIRE_EQUAL (iter->second.id (), "1");
     BOOST_REQUIRE (iter->second.enabled ());
     BOOST_REQUIRE_EQUAL (iter->second.address (), "0x08081566");
     BOOST_REQUIRE_EQUAL (iter->second.function (), "main");
@@ -933,8 +933,8 @@ test_breakpoint ()
     BOOST_REQUIRE (is_ok);
     BOOST_REQUIRE (breakpoint.has_multiple_locations ());
     BOOST_REQUIRE_EQUAL (breakpoint.sub_breakpoints ().size (), 2);
-    BOOST_REQUIRE_EQUAL (breakpoint.sub_breakpoints ()[0].number (), "2.1");
-    BOOST_REQUIRE_EQUAL (breakpoint.sub_breakpoints ()[1].number (), "2.2");
+    BOOST_REQUIRE_EQUAL (breakpoint.sub_breakpoints ()[0].id (), "2.1");
+    BOOST_REQUIRE_EQUAL (breakpoint.sub_breakpoints ()[1].id (), "2.2");
 }
 
 void

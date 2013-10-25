@@ -313,7 +313,7 @@ public:
         std::map<string, IDebugger::Breakpoint>::const_iterator breakmap_iter;
         for (breakmap_iter = a_breakpoints.begin ();
                 breakmap_iter != a_breakpoints.end (); ++ breakmap_iter) {
-            if (a_id == breakmap_iter->second.number ()) {
+            if (a_id == breakmap_iter->second.id ()) {
                 return true;
             }
         }
@@ -329,7 +329,7 @@ public:
         for (iter = list_store->children ().begin ();
              iter != list_store->children ().end ();
              ++iter) {
-            if ((*iter)[get_bp_cols ().id] == a_breakpoint.number ()) {
+            if ((*iter)[get_bp_cols ().id] == a_breakpoint.id ()) {
                 return iter;
             }
         }
@@ -343,7 +343,7 @@ public:
     {
         (*a_iter)[get_bp_cols ().breakpoint] = a_breakpoint;
         (*a_iter)[get_bp_cols ().enabled] = a_breakpoint.enabled ();
-        (*a_iter)[get_bp_cols ().id] = a_breakpoint.number ();
+        (*a_iter)[get_bp_cols ().id] = a_breakpoint.id ();
         (*a_iter)[get_bp_cols ().function] = a_breakpoint.function ();
         (*a_iter)[get_bp_cols ().address] =
                                 (a_breakpoint.address ().empty ())
@@ -577,7 +577,7 @@ public:
         std::map<string, IDebugger::Breakpoint>::const_iterator i;
         for (i = a.begin (); i != a.end (); ++i) {
             LOG_DD ("Adding breakpoints "
-                    << i->second.number ());
+                    << i->second.id ());
             append_breakpoint (i->second);
         }
 

@@ -1748,7 +1748,7 @@ DBGPerspective::on_breakpoint_delete_action
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     NEMIVER_TRY
-    delete_breakpoint (a_breakpoint.number ());
+    delete_breakpoint (a_breakpoint.id ());
     NEMIVER_CATCH
 }
 
@@ -2451,7 +2451,7 @@ DBGPerspective::on_debugger_breakpoints_list_signal
             if ((break_iter->second.file_full_name () == file
                     || break_iter->second.file_name () == file)
                  && break_iter->second.line () == line) {
-                debugger ()->disable_breakpoint (break_iter->second.number ());
+                debugger ()->disable_breakpoint (break_iter->second.id ());
             }
         }
     }
@@ -6684,7 +6684,7 @@ DBGPerspective::do_jump_and_break_to_location (const Loc &a_location)
 {
 #define JUMP_TO_LOC_AFTER_ENABLE_BP(LOC)                    \
     debugger ()->enable_breakpoint                          \
-        (bp->number (),                                     \
+        (bp->id (),                                     \
          sigc::bind                                         \
          (sigc::mem_fun                                     \
           (*this,                                           \
@@ -6926,7 +6926,7 @@ DBGPerspective::re_initialize_set_breakpoints ()
          i != bps.end ();
          ++i) {
         debugger ()->set_breakpoint_ignore_count
-            (i->second.number (),
+            (i->second.id (),
              i->second.initial_ignore_count ());
     }
 }
@@ -6955,8 +6955,8 @@ DBGPerspective::append_breakpoint (const IDebugger::Breakpoint &a_breakpoint)
         file_path = a_breakpoint.file_name ();
     }
 
-    m_priv->breakpoints[a_breakpoint.number ()] = a_breakpoint;
-    m_priv->breakpoints[a_breakpoint.number ()].file_full_name (file_path);
+    m_priv->breakpoints[a_breakpoint.id ()] = a_breakpoint;
+    m_priv->breakpoints[a_breakpoint.id ()].file_full_name (file_path);
 
     if (// We don't know how to graphically represent non-standard
         // breakpoints (e.g watchpoints) at this moment, so let's not
@@ -7128,7 +7128,7 @@ DBGPerspective::delete_breakpoint ()
     if ((bp = get_breakpoint (path, current_line)) == 0) {
         return false;
     }
-    return delete_breakpoint (bp->number ());
+    return delete_breakpoint (bp->id ());
 }
 
 bool
@@ -7444,7 +7444,7 @@ DBGPerspective::delete_breakpoint (const UString &a_file_name,
     if ((bp = get_breakpoint (a_file_name, a_line_num)) == 0)
         return false;
 
-    return delete_breakpoint (bp->number ());
+    return delete_breakpoint (bp->id ());
 }
 
 bool
@@ -7453,7 +7453,7 @@ DBGPerspective::delete_breakpoint (const Address &a_address)
     const IDebugger::Breakpoint *bp;
     if ((bp = get_breakpoint (a_address)) == 0)
         return false;
-    return delete_breakpoint (bp->number ());
+    return delete_breakpoint (bp->id ());
 }
 
 /// Return true if a breakpoint was set at a given location.
@@ -7611,7 +7611,7 @@ DBGPerspective::toggle_countpoint (const UString &a_file_path,
         // countpoint. If yes, turn it into a normal
         // breakpoint. Otherwise, turn it into a count point.
         bool enable_cp = !debugger ()->is_countpoint (*bp);
-        debugger ()->enable_countpoint (bp->number (), enable_cp);
+        debugger ()->enable_countpoint (bp->id (), enable_cp);
     } else {
         // No breakpoint is set on this line. Set a new countpoint.
         set_breakpoint (a_file_path, a_linenum,
@@ -7635,7 +7635,7 @@ DBGPerspective::toggle_countpoint (const Address &a_address)
         if (debugger ()->is_countpoint (*bp))
             enable_cp = false;
 
-        debugger ()->enable_countpoint (bp->number (), enable_cp);
+        debugger ()->enable_countpoint (bp->id (), enable_cp);
     } else {
         // No breakpoint is set on this line. Set a new countpoint.
         set_breakpoint (a_address, /*is_count_point=*/true);
@@ -7993,7 +7993,7 @@ DBGPerspective::toggle_breakpoint_enabled (const UString &a_file_path,
 
     const IDebugger::Breakpoint *bp;
     if ((bp = get_breakpoint (a_file_path, a_line_num)) != 0)
-        toggle_breakpoint_enabled (bp->number (), bp->enabled ());
+        toggle_breakpoint_enabled (bp->id (), bp->enabled ());
     else {
         LOG_DD ("breakpoint not set");
     }
@@ -8006,7 +8006,7 @@ DBGPerspective::toggle_breakpoint_enabled (const Address &a)
 
     const IDebugger::Breakpoint *bp;
     if ((bp = get_breakpoint (a)) != 0)
-        toggle_breakpoint_enabled (bp->number (), bp->enabled ());
+        toggle_breakpoint_enabled (bp->id (), bp->enabled ());
     else
         LOG_DD ("breakpoint not set");
 }

@@ -138,7 +138,14 @@ public:
         /// \name accessors
 
         /// @{
-        string number () const
+
+        /// Getter of the ID of this breakpoint.  If the breakpoint is
+        /// a sub breakpoint, its id has the form of the string "5.4"
+        /// where 5 is the number of the parent breakpoint and 4 is
+        /// the number of this sub breakpoint.
+        ///
+        /// @return the ID this breakpoint.
+        string id () const
         {
             if (is_sub_breakpoint ())
                 return (str_utils::int_to_string (parent_breakpoint_number ()) + "."
@@ -147,10 +154,23 @@ public:
                 return str_utils::int_to_string (sub_breakpoint_number ());
         }
 
-        void number (string& s) const
+        /// Getter of the ID of this breakpoint.  If the breakpoint is
+        /// a sub breakpoint, its id has the form of the string "5.4"
+        /// where 5 is the number of the parent breakpoint and 4 is
+        /// the number of this sub breakpoint.
+        ///
+        /// @param s out parameter. Set to the ID of this breakpoint.
+        void id (string& s) const
         {
             s = number ();
         }
+
+        /// Getter of the number of this breakpoint.  Note that if
+        /// this is a sub breakpoint, what you might want is the
+        /// number of the parent breakpoint.
+        ///
+        /// @return the integer number of this breakpoint.
+        int number() const {return sub_breakpoint_number();}
 
         void number (int a_in) {m_number = a_in;}
         int sub_breakpoint_number () const {return m_number;}
