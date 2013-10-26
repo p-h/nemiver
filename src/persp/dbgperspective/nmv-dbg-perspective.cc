@@ -5922,7 +5922,7 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
 
     vector<UString> args =
         a_session.properties ()[PROGRAM_ARGS].split (PROG_ARG_SEPARATOR);
-    
+
     map<UString, UString>::const_iterator it,
         nil = a_session.properties ().end ();
 
@@ -5934,7 +5934,7 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
     if (!remote_target.empty ())
         if ((it = a_session.properties ().find (SOLIB_PREFIX)) != nil)
             solib_prefix = it->second;
-    
+
     if (!remote_target.empty ())
         reconnect_to_remote_target (remote_target, prog_name, solib_prefix);
     else
@@ -7070,7 +7070,6 @@ DBGPerspective::get_breakpoint (const Loc &a_location) const
 const IDebugger::Breakpoint*
 DBGPerspective::get_breakpoint (const UString &a_file_name,
                                 int a_line_num) const
-                         
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 

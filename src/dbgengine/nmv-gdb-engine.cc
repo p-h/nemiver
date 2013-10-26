@@ -1439,7 +1439,8 @@ struct OnBreakpointHandler: OutputHandler {
     {
     }
 
-    bool has_overloads_prompt (CommandAndOutput &a_in)
+    bool
+    has_overloads_prompt (const CommandAndOutput &a_in) const
     {
         if (a_in.output ().has_out_of_band_record ()) {
             list<Output::OutOfBandRecord>::const_iterator it;
@@ -1458,9 +1459,10 @@ struct OnBreakpointHandler: OutputHandler {
     }
 
 
-    bool extract_overloads_choice_prompt_values
-                        (CommandAndOutput &a_in,
-                         vector<IDebugger::OverloadsChoiceEntry> &a_prompts)
+    bool
+    extract_overloads_choice_prompt_values
+    (const CommandAndOutput &a_in,
+     IDebugger::OverloadsChoiceEntries &a_prompts) const
     {
         UString input;
         UString::size_type cur = 0;
@@ -1482,7 +1484,8 @@ struct OnBreakpointHandler: OutputHandler {
         return gdbmi_parser.parse_overloads_choice_prompt (cur, cur, a_prompts);
     }
 
-    bool has_breakpoints_set (CommandAndOutput &a_in)
+    bool
+    has_breakpoints_set (const CommandAndOutput &a_in) const
     {
         if (a_in.output ().has_result_record ()
             && a_in.output ().result_record ().breakpoints ().size ()) {
@@ -1501,7 +1504,8 @@ struct OnBreakpointHandler: OutputHandler {
         return true;
     }
 
-    void do_handle (CommandAndOutput &a_in)
+    void
+    do_handle (CommandAndOutput &a_in)
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -4746,7 +4750,7 @@ GDBEngine::disable_breakpoint (const string &a_break_num,
                                const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    UString cur_frame;
+
     queue_command (Command ("disable-breakpoint",
                             "-break-disable " + a_break_num,
                             a_cookie));
@@ -5016,9 +5020,10 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
         // the content of a_break.
         if (cur->second.type () == IDebugger::Breakpoint::COUNTPOINT_TYPE)
             preserve_count_point = true;
-        
+
         // Let's preserve the initial ignore count property.
-        if (cur->second.initial_ignore_count () != a_break.initial_ignore_count ()) {
+        if (cur->second.initial_ignore_count ()
+            != a_break.initial_ignore_count ()) {
             a_break.initial_ignore_count (cur->second.initial_ignore_count ());
             LOG_DD ("initial_ignore_count propagated on bp "
                     << a_break.number ()
@@ -5047,7 +5052,6 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
         // Its the first time we are adding this breakpoint to the
         // cache. So its countpointness is going to be kept
         // anyway.
-        
         std::pair<BpIt,bool> where =
             bp_cache.insert (BpMap::value_type (a_break.number (), a_break));
 
@@ -5068,7 +5072,7 @@ GDBEngine::append_breakpoint_to_cache (IDebugger::Breakpoint &a_break)
 /// \param a_breaks the set of breakpoints to append to the cache.
 void
 GDBEngine::append_breakpoints_to_cache
-                            (map<string, IDebugger::Breakpoint> &a_breaks)
+(map<string, IDebugger::Breakpoint> &a_breaks)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
@@ -6600,4 +6604,3 @@ NEMIVER_API nemiver_common_create_dynamic_module_instance (void **a_new_instance
 }
 
 }//end extern C
-

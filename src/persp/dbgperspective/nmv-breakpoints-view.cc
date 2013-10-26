@@ -221,7 +221,7 @@ public:
              (*this, &Priv::on_draw_signal));
     }
 
-    bool 
+    bool
     should_process_now ()
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;

@@ -1,3 +1,5 @@
+// -*- Mode: C++ -*-
+
 // Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project

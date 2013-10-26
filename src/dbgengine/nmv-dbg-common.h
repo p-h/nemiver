@@ -1,3 +1,5 @@
+// -*- Mode: C++ -*-
+
 //Author: Dodji Seketeli
 /*
  *This file is part of the Nemiver project
@@ -256,12 +258,11 @@ public:
 
     /// \brief the out of band record we got from GDB.
     ///
-    /// An Out of band record is an aynchronous record that is either
-    /// a set of messages sent by the debugger to tell us about the reason why
-    /// the target has changed state.
+    /// An Out of band record is an aynchronous record that is a set
+    /// of messages sent by the debugger to tell us about how and why
+    /// the target/inferior has changed state.
     class OutOfBandRecord {
     public:
-
 
     private:
         bool m_has_stream_record;
@@ -495,7 +496,7 @@ public:
 	// a new member, or removal of last N members), or a change in
 	// one of the children of the variables.
         list<VarChangePtr> m_var_changes;
-        bool m_has_var_changes;	
+        bool m_has_var_changes;
 
 	// Thew new number of children of a dynamic variable.  Set to
 	// -1 by default.

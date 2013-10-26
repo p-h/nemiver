@@ -37,15 +37,7 @@ using nemiver::common::UString;
 static const UString GDBMI_PARSING_DOMAIN = "gdbmi-parsing-domain";
 static const UString GDBMI_OUTPUT_DOMAIN = "gdbmi-output-domain";
 
-#define LOG_PARSING_ERROR(a_buf, a_from) \
-do { \
-Glib::ustring str_01 (a_buf, (a_from), a_buf.size () - (a_from));\
-LOG_ERROR ("parsing failed for buf: >>>" \
-             << a_buf << "<<<" \
-             << " cur index was: " << (int)(a_from)); \
-} while (0)
-
-#define LOG_PARSING_ERROR2(a_from) \
+#define LOG_PARSING_ERROR(a_from) \
 do { \
 Glib::ustring str_01 (m_priv->input, (a_from), m_priv->end - (a_from));\
 LOG_ERROR ("parsing failed for buf: >>>" \
@@ -53,16 +45,7 @@ LOG_ERROR ("parsing failed for buf: >>>" \
              << " cur index was: " << (int)(a_from)); \
 } while (0)
 
-#define LOG_PARSING_ERROR_MSG(a_buf, a_from, msg) \
-do { \
-Glib::ustring str_01 (a_buf, (a_from), a_buf.size () - (a_from));\
-LOG_ERROR ("parsing failed for buf: >>>" \
-             << a_buf << "<<<" \
-             << " cur index was: " << (int)(a_from) \
-             << ", reason: " << msg); \
-} while (0)
-
-#define LOG_PARSING_ERROR_MSG2(a_from, msg) \
+#define LOG_PARSING_ERROR_MSG(a_from, msg) \
 do { \
 Glib::ustring str_01 (m_priv->input, (a_from), m_priv->end - (a_from));\
 LOG_ERROR ("parsing failed for buf: >>>" \
@@ -71,43 +54,19 @@ LOG_ERROR ("parsing failed for buf: >>>" \
              << ", reason: " << msg); \
 } while (0)
 
-#define CHECK_END(a_input, a_current, a_end) \
-if ((a_current) >= (a_end)) {\
-LOG_ERROR ("hit end index " << (int) a_end); \
-return false;\
-}
-
-#define CHECK_END2(a_current) \
+#define CHECK_END(a_current) \
 if ((a_current) >= (m_priv->end)) {\
 LOG_ERROR ("hit end index " << (int) m_priv->end); \
 return false;\
 }
 
-#define CHECK_END_BREAK(a_input, a_current, a_end) \
-if ((a_current) >= (a_end)) {\
-LOG_ERROR ("hit end index " << (int) a_end); \
-G_BREAKPOINT();\
-}
-
-#define SKIP_WS(a_input, a_from, a_to) \
-while (a_from < a_input.bytes () && isspace (a_input.c_str ()[a_from])) { \
-    CHECK_END (a_input, a_from, end);++a_from; \
-} \
-a_to = a_from;
-
-#define SKIP_WS2(a_from) \
+#define SKIP_WS(a_from) \
 while (!m_priv->index_passed_end (a_from)  \
        && isspace (RAW_CHAR_AT (a_from))) {     \
-    CHECK_END2 (a_from);++a_from; \
+    CHECK_END (a_from);++a_from; \
 }
 
-#define SKIP_BLANK(a_input, a_from, a_to) \
-while (a_from < a_input.bytes () && isblank (a_input.c_str ()[a_from])) { \
-    CHECK_END (a_input, a_from, end);++a_from; \
-} \
-a_to = a_from;
-
-#define SKIP_BLANK2(a_from) m_priv->skip_blank (a_from)
+#define SKIP_BLANK(a_from) m_priv->skip_blank (a_from)
 
 #define RAW_CHAR_AT(cur) m_priv->raw_char_at (cur)
 
@@ -671,17 +630,17 @@ GDBMIParser::parse_string (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur=a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     UString::value_type ch = RAW_CHAR_AT (cur);
     if (!is_string_start (ch)) {
-        LOG_PARSING_ERROR_MSG2 (cur,
+        LOG_PARSING_ERROR_MSG (cur,
                                 "string doesn't start with a string char");
         return false;
     }
     UString::size_type str_start (cur), str_end (0);
     ++cur;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     for (;;) {
         ch = RAW_CHAR_AT (cur);
@@ -742,8 +701,8 @@ GDBMIParser::parse_octal_escape_sequence (UString::size_type a_from,
     if (m_priv->index_passed_end (cur+3))
         return false;
 
-    CHECK_END2 (cur);
-    CHECK_END2 (cur+1);
+    CHECK_END (cur);
+    CHECK_END (cur+1);
 
     unsigned char b=0;
     string raw;
@@ -771,7 +730,7 @@ GDBMIParser::parse_c_string_body (UString::size_type a_from,
                                   UString &a_string)
 {
     UString::size_type cur=a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     UString::value_type ch = RAW_CHAR_AT (cur), prev_ch;
     if (ch == '"') {
@@ -781,7 +740,7 @@ GDBMIParser::parse_c_string_body (UString::size_type a_from,
     }
 
     if (!isascii (ch) && ch != '\\') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -802,7 +761,7 @@ GDBMIParser::parse_c_string_body (UString::size_type a_from,
             ++cur;
         }
     }
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     for (;;) {
         prev_ch = ch;
@@ -833,7 +792,7 @@ GDBMIParser::parse_c_string_body (UString::size_type a_from,
                 result += ch;
                 ++cur;
             }
-            CHECK_END2 (cur);
+            CHECK_END (cur);
             continue;
         } else {
 	  result += ch;
@@ -844,7 +803,7 @@ GDBMIParser::parse_c_string_body (UString::size_type a_from,
     }
 
     if (ch != '"') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     a_string = result;
@@ -858,23 +817,23 @@ GDBMIParser::parse_c_string (UString::size_type a_from,
                              UString &a_c_string)
 {
     UString::size_type cur=a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_CHAR_AT (cur) != '"') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     UString str;
     if (!parse_c_string_body (cur, cur, str)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (RAW_CHAR_AT (cur) != '"') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -892,15 +851,15 @@ GDBMIParser::parse_embedded_c_string_body (UString::size_type a_from,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
 
     UString::size_type cur=a_from;
-    CHECK_END2 (cur);
-    CHECK_END2 (cur+1);
+    CHECK_END (cur);
+    CHECK_END (cur+1);
 
     if (RAW_CHAR_AT (cur) != '\\' || RAW_CHAR_AT (cur+1) != '"') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += 2;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
     UString escaped_str;
     escaped_str += '"';
 
@@ -930,7 +889,7 @@ GDBMIParser::parse_embedded_c_string_body (UString::size_type a_from,
                     break;
                 }
             } else {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
         } else {
@@ -940,7 +899,7 @@ GDBMIParser::parse_embedded_c_string_body (UString::size_type a_from,
         }
     }
     if (!found_end) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     //TODO:debug this.
@@ -957,14 +916,14 @@ GDBMIParser::parse_embedded_c_string (UString::size_type a_from,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
 
     UString::size_type cur=a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_CHAR_AT (cur) != '\\' || RAW_CHAR_AT (cur+1) != '"') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (!parse_embedded_c_string_body (cur, cur, a_string)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     a_to = ++cur;
@@ -988,7 +947,7 @@ GDBMIParser::parse_gdbmi_result (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     UString variable;
     GDBMIValueSafePtr value;
@@ -997,11 +956,11 @@ GDBMIParser::parse_gdbmi_result (UString::size_type a_from,
     if (get_mode () == BROKEN_MODE
         && RAW_CHAR_AT (cur) == '"') {
         if (!parse_c_string (cur, cur, variable)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
     } else if (!parse_string (cur, cur, variable)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1012,18 +971,18 @@ GDBMIParser::parse_gdbmi_result (UString::size_type a_from,
         goto end;
     }
 
-    CHECK_END2 (cur);
-    SKIP_BLANK2 (cur);
+    CHECK_END (cur);
+    SKIP_BLANK (cur);
     if (RAW_CHAR_AT (cur) != '=') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     LOG_D ("got gdbmi variable: " << variable, GDBMI_PARSING_DOMAIN);
     ++cur;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (!parse_gdbmi_value (cur, cur, value)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     THROW_IF_FAIL (value);
@@ -1043,7 +1002,7 @@ GDBMIParser::parse_gdbmi_value (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     GDBMIValueSafePtr value;
     if (RAW_CHAR_AT (cur) == '"') {
@@ -1071,11 +1030,11 @@ GDBMIParser::parse_gdbmi_value (UString::size_type a_from,
             value = GDBMIValueSafePtr (new GDBMIValue (list));
         }
     } else {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (!value) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     a_value = value;
@@ -1090,14 +1049,14 @@ GDBMIParser::parse_gdbmi_tuple (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_CHAR_AT (cur) != '{') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_CHAR_AT (cur) == '}') {
         ++cur;
@@ -1111,8 +1070,8 @@ GDBMIParser::parse_gdbmi_tuple (UString::size_type a_from,
     for (;;) {
         if (parse_gdbmi_result (cur, cur, result)) {
             THROW_IF_FAIL (result);
-            SKIP_BLANK2 (cur);
-            CHECK_END2 (cur);
+            SKIP_BLANK (cur);
+            CHECK_END (cur);
             if (!tuple) {
                 tuple = GDBMITupleSafePtr (new GDBMITuple);
                 THROW_IF_FAIL (tuple);
@@ -1120,15 +1079,15 @@ GDBMIParser::parse_gdbmi_tuple (UString::size_type a_from,
             tuple->append (result);
             if (RAW_CHAR_AT (cur) == ',') {
                 ++cur;
-                CHECK_END2 (cur);
-                SKIP_BLANK2 (cur);
+                CHECK_END (cur);
+                SKIP_BLANK (cur);
                 continue;
             }
             if (RAW_CHAR_AT (cur) == '}') {
                 ++cur;
             }
         } else {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         LOG_D ("getting out at char '"
@@ -1142,7 +1101,7 @@ GDBMIParser::parse_gdbmi_tuple (UString::size_type a_from,
         break;
     }
 
-    SKIP_BLANK2 (cur);
+    SKIP_BLANK (cur);
     a_to = cur;
     a_tuple = tuple;
     return true;
@@ -1155,14 +1114,14 @@ GDBMIParser::parse_gdbmi_list (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     GDBMIListSafePtr return_list;
     if (RAW_CHAR_AT (cur) != '[') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
-    CHECK_END2 (cur + 1);
+    CHECK_END (cur + 1);
     if (RAW_CHAR_AT (cur + 1) == ']') {
         a_list = GDBMIListSafePtr (new GDBMIList);
         cur += 2;
@@ -1171,21 +1130,21 @@ GDBMIParser::parse_gdbmi_list (UString::size_type a_from,
     }
 
     ++cur;
-    CHECK_END2 (cur);
-    SKIP_BLANK2 (cur);
+    CHECK_END (cur);
+    SKIP_BLANK (cur);
 
     GDBMIValueSafePtr value;
     GDBMIResultSafePtr result;
     if ((isalpha (RAW_CHAR_AT (cur)) || RAW_CHAR_AT (cur) == '_')
          && parse_gdbmi_result (cur, cur, result)) {
-        CHECK_END2 (cur);
+        CHECK_END (cur);
         THROW_IF_FAIL (result);
         return_list = GDBMIListSafePtr (new GDBMIList (result));
         for (;;) {
             if (RAW_CHAR_AT (cur) == ',') {
                 ++cur;
-                SKIP_BLANK2 (cur);
-                CHECK_END2 (cur);
+                SKIP_BLANK (cur);
+                CHECK_END (cur);
                 result.reset ();
                 if (parse_gdbmi_result (cur, cur, result)) {
                     THROW_IF_FAIL (result);
@@ -1196,14 +1155,14 @@ GDBMIParser::parse_gdbmi_list (UString::size_type a_from,
             break;
         }
     } else if (parse_gdbmi_value (cur, cur, value)) {
-        CHECK_END2 (cur);
+        CHECK_END (cur);
         THROW_IF_FAIL (value);
         return_list = GDBMIListSafePtr (new GDBMIList (value));
         for (;;) {
             if (RAW_CHAR_AT (cur) == ',') {
                 ++cur;
-                SKIP_BLANK2 (cur);
-                CHECK_END2 (cur);
+                SKIP_BLANK (cur);
+                CHECK_END (cur);
                 value.reset ();
                 if (parse_gdbmi_value (cur, cur, value)) {
                     THROW_IF_FAIL (value);
@@ -1214,12 +1173,12 @@ GDBMIParser::parse_gdbmi_list (UString::size_type a_from,
             break;
         }
     } else {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (RAW_CHAR_AT (cur) != ']') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
@@ -1237,11 +1196,11 @@ GDBMIParser::parse_gdbmi_string_result (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (cur, cur, result) || !result) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1267,7 +1226,7 @@ GDBMIParser::parse_stream_record (UString::size_type a_from,
     UString::size_type cur=a_from;
 
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1276,44 +1235,44 @@ GDBMIParser::parse_stream_record (UString::size_type a_from,
         //console stream output
         ++cur;
         if (m_priv->index_passed_end (cur)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         if (!parse_c_string (cur, cur, console)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
-        SKIP_WS2 (cur);
+        SKIP_WS (cur);
         if (!m_priv->index_passed_end (cur + 1)
             && RAW_CHAR_AT (cur) == '>'
             && isspace (RAW_CHAR_AT (cur+1))) {
             cur += 2;
         }
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
     } else if (RAW_CHAR_AT (cur) == '@') {
         //target stream output
         ++cur;
         if (m_priv->index_passed_end (cur)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         if (!parse_c_string (cur, cur, target)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
     } else if (RAW_CHAR_AT (cur) == '&') {
         //log stream output
         ++cur;
         if (m_priv->index_passed_end (cur)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         if (!parse_c_string (cur, cur, log)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
     } else {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1340,7 +1299,7 @@ GDBMIParser::parse_stream_record (UString::size_type a_from,
     }
 
     if (!found) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     a_to = cur;
@@ -1361,8 +1320,8 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
     if (m_priv->index_passed_end (cur)) {return false;}
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
-			   PREFIX_STOPPED_ASYNC_OUTPUT)) {
-        LOG_PARSING_ERROR2 (cur);
+                           PREFIX_STOPPED_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += 9;
@@ -1375,9 +1334,9 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
     IDebugger::Frame frame;
     while (true) {
         if (!RAW_INPUT.compare (cur, strlen (PREFIX_FRAME),
-				PREFIX_FRAME)) {
+                                PREFIX_FRAME)) {
             if (!parse_frame (cur, cur, frame)) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             got_frame = true;
@@ -1407,7 +1366,7 @@ GDBMIParser::parse_stopped_async_output (UString::size_type a_from,
     }
 
     if (RAW_CHAR_AT (cur) != '\n') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
@@ -1434,8 +1393,8 @@ GDBMIParser::parse_running_async_output (UString::size_type a_from,
     if (m_priv->index_passed_end (cur)) {return false;}
 
     if (RAW_INPUT.compare (cur, prefix_len,
-			   PREFIX_RUNNING_ASYNC_OUTPUT)) {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting : '*running,'");
+                           PREFIX_RUNNING_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR_MSG (cur, "was expecting : '*running,'");
         return false;
     }
     cur += 9;
@@ -1443,11 +1402,11 @@ GDBMIParser::parse_running_async_output (UString::size_type a_from,
 
     UString name, value;
     if (!parse_attribute (cur, cur, name, value)) {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting an attribute");
+        LOG_PARSING_ERROR_MSG (cur, "was expecting an attribute");
         return false;
     }
     if (name != "thread-id") {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting attribute 'thread-id'");
+        LOG_PARSING_ERROR_MSG (cur, "was expecting attribute 'thread-id'");
         return false;
     }
     if (value == "all")
@@ -1473,8 +1432,8 @@ GDBMIParser::parse_thread_selected_async_output (UString::size_type a_from,
     if (m_priv->index_passed_end (cur)) {return false;}
 
     if (RAW_INPUT.compare (cur, prefix_len,
-			   PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting : '=thread-selected,'");
+                           PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR_MSG (cur, "was expecting : '=thread-selected,'");
         return false;
     }
     cur += prefix_len;
@@ -1482,17 +1441,17 @@ GDBMIParser::parse_thread_selected_async_output (UString::size_type a_from,
 
     UString name, value;
     if (!parse_attribute (cur, cur, name, value)) {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting an attribute");
+        LOG_PARSING_ERROR_MSG (cur, "was expecting an attribute");
         return false;
     }
     if (name != "id" && name != "thread-id") {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting attribute 'thread-id' "
+        LOG_PARSING_ERROR_MSG (cur, "was expecting attribute 'thread-id' "
                                 "or 'id'");
         return false;
     }
     unsigned thread_id = atoi (value.c_str ());
     if (!thread_id) {
-        LOG_PARSING_ERROR_MSG2 (cur, "was expecting a non null thread-id");
+        LOG_PARSING_ERROR_MSG (cur, "was expecting a non null thread-id");
         return false;
     }
 
@@ -1517,7 +1476,7 @@ GDBMIParser::parse_attribute (UString::size_type a_from,
         || !result
         || result->variable ().empty ()
         || !result->value ()) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1580,36 +1539,36 @@ GDBMIParser::parse_frame (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (m_priv->input.compare (a_from, strlen (PREFIX_FRAME), PREFIX_FRAME)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (cur, cur, result)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     THROW_IF_FAIL (result);
 
     if (result->variable () != "frame") {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (!result->value ()
         ||result->value ()->content_type ()
                 != GDBMIValue::TUPLE_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     GDBMITupleSafePtr result_value_tuple =
                                 result->value ()->get_tuple_content ();
     if (!result_value_tuple) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     list<GDBMIResultSafePtr>::const_iterator res_it;
@@ -1656,7 +1615,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
     UString::size_type cur = a_from;
 
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1670,7 +1629,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
            || RAW_CHAR_AT (cur) == '=') {
         Output::OutOfBandRecord oo_record;
         if (!parse_out_of_band_record (cur, cur, oo_record)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         output.has_out_of_band_record (true);
@@ -1678,7 +1637,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
     }
 
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1689,7 +1648,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
             output.result_record (result_record);
         }
         if (m_priv->index_passed_end (cur)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
     }
@@ -1703,7 +1662,7 @@ GDBMIParser::parse_output_record (UString::size_type a_from,
 
     if (cur == a_from) {
         //we didn't parse anything
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1729,7 +1688,7 @@ GDBMIParser::skip_output_record (UString::size_type a_from,
     UString::size_type cur = a_from;
 
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1761,7 +1720,7 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
 
     UString::size_type cur=a_from;
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1771,7 +1730,7 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
         RAW_CHAR_AT (cur) == '&') {
         Output::StreamRecord stream_record;
         if (!parse_stream_record (cur, cur, stream_record)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         record.has_stream_record (true);
@@ -1782,12 +1741,12 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
     }
 
     if (!RAW_INPUT.compare (cur, strlen (PREFIX_STOPPED_ASYNC_OUTPUT),
-			    PREFIX_STOPPED_ASYNC_OUTPUT)) {
+                            PREFIX_STOPPED_ASYNC_OUTPUT)) {
         map<UString, UString> attrs;
         bool got_frame (false);
         IDebugger::Frame frame;
         if (!parse_stopped_async_output (cur, cur, got_frame, frame, attrs)) {
-            LOG_PARSING_ERROR_MSG2 (cur,
+            LOG_PARSING_ERROR_MSG (cur,
                                     "could not parse the expected "
                                     "stopped async output");
             return false;
@@ -1813,10 +1772,10 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
     }
 
     if (!RAW_INPUT.compare (cur, strlen (PREFIX_RUNNING_ASYNC_OUTPUT),
-			    PREFIX_RUNNING_ASYNC_OUTPUT)) {
+                            PREFIX_RUNNING_ASYNC_OUTPUT)) {
         int thread_id;
         if (!parse_running_async_output (cur, cur, thread_id)) {
-            LOG_PARSING_ERROR_MSG2 (cur,
+            LOG_PARSING_ERROR_MSG (cur,
                                     "could not parse the expected "
                                     "running async output");
             return false;
@@ -1827,11 +1786,11 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
     }
 
     if (!RAW_INPUT.compare (cur,
-			    strlen (PREFIX_THREAD_SELECTED_ASYNC_OUTPUT),
-			    PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
+                            strlen (PREFIX_THREAD_SELECTED_ASYNC_OUTPUT),
+                            PREFIX_THREAD_SELECTED_ASYNC_OUTPUT)) {
         int thread_id;
         if (!parse_thread_selected_async_output (cur, cur, thread_id)) {
-            LOG_PARSING_ERROR_MSG2 (cur,
+            LOG_PARSING_ERROR_MSG (cur,
                                     "could not parse the expected "
                                     "running async output");
             return false;
@@ -1871,7 +1830,7 @@ GDBMIParser::parse_result_record (UString::size_type a_from,
 
     UString::size_type cur=a_from;
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -1887,12 +1846,12 @@ GDBMIParser::parse_result_record (UString::size_type a_from,
 fetch_gdbmi_result:
             cur++;
             if (m_priv->index_passed_end (cur)) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
 
             if (!RAW_INPUT.compare (cur, strlen (PREFIX_BKPT),
-				    PREFIX_BKPT)) {
+                                    PREFIX_BKPT)) {
                 IDebugger::Breakpoint breakpoint;
                 if (parse_breakpoint (cur, cur, breakpoint)) {
                     result_record.breakpoints ()[breakpoint.number ()] =
@@ -1912,8 +1871,8 @@ fetch_gdbmi_result:
                     result_record.thread_list (thread_ids);
                 }
             } else if (!RAW_INPUT.compare (cur,
-					   strlen (PREFIX_NEW_THREAD_ID),
-					   PREFIX_NEW_THREAD_ID)) {
+                                           strlen (PREFIX_NEW_THREAD_ID),
+                                           PREFIX_NEW_THREAD_ID)) {
                 IDebugger::Frame frame;
                 int thread_id=0;
                 if (parse_new_thread_id (cur, cur, thread_id, frame)) {
@@ -1924,7 +1883,7 @@ fetch_gdbmi_result:
                         PREFIX_FILES)) {
                 vector<UString> files;
                 if (!parse_file_list (cur, cur, files)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                     return false;
                 }
                 result_record.file_list (files);
@@ -1932,10 +1891,10 @@ fetch_gdbmi_result:
                        << (int) files.size (),
                        GDBMI_PARSING_DOMAIN);
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_STACK),
-					   PREFIX_STACK)) {
+                                           PREFIX_STACK)) {
                 vector<IDebugger::Frame> call_stack;
                 if (!parse_call_stack (cur, cur, call_stack)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                     return false;
                 }
                 result_record.call_stack (call_stack);
@@ -1950,40 +1909,40 @@ fetch_gdbmi_result:
                            GDBMI_PARSING_DOMAIN);
                 }
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_FRAME),
-					   PREFIX_FRAME)) {
+                                           PREFIX_FRAME)) {
                 IDebugger::Frame frame;
                 if (!parse_frame (cur, cur, frame)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
                     result_record.current_frame_in_core_stack_trace (frame);
                 }
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_DEPTH),
-					   PREFIX_DEPTH)) {
+                                           PREFIX_DEPTH)) {
                 GDBMIResultSafePtr result;
                 parse_gdbmi_result (cur, cur, result);
                 THROW_IF_FAIL (result);
                 LOG_D ("parsed result", GDBMI_PARSING_DOMAIN);
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_STACK_ARGS),
-					   PREFIX_STACK_ARGS)) {
+                                           PREFIX_STACK_ARGS)) {
                 map<int, list<IDebugger::VariableSafePtr> > frames_args;
                 if (!parse_stack_arguments (cur, cur, frames_args)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed stack args", GDBMI_PARSING_DOMAIN);
                 }
                 result_record.frames_parameters (frames_args);
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_LOCALS),
-					   PREFIX_LOCALS)) {
+                                           PREFIX_LOCALS)) {
                 list<IDebugger::VariableSafePtr> vars;
                 if (!parse_local_var_list (cur, cur, vars)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed local vars", GDBMI_PARSING_DOMAIN);
                     result_record.local_variables (vars);
                 }
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_VALUE),
-					   PREFIX_VALUE)) {
+                                           PREFIX_VALUE)) {
                 // FIXME: this case will parse any response from
                 // -data-evaluate-expression, including the response from
                 // setting the value of a register or any other expression
@@ -1992,48 +1951,48 @@ fetch_gdbmi_result:
                 // Perhaps this needs to be reworked somehow
                 IDebugger::VariableSafePtr var;
                 if (!parse_variable_value (cur, cur, var)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed var value", GDBMI_PARSING_DOMAIN);
                     THROW_IF_FAIL (var);
                     result_record.variable_value (var);
                 }
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_REGISTER_NAMES),
-					   PREFIX_REGISTER_NAMES)) {
+                                           PREFIX_REGISTER_NAMES)) {
                 std::map<IDebugger::register_id_t, UString> regs;
                 if (!parse_register_names (cur, cur, regs)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed register names", GDBMI_PARSING_DOMAIN);
                     result_record.register_names (regs);
                 }
-            } else if (!RAW_INPUT.compare (cur, 
-					   strlen (PREFIX_CHANGED_REGISTERS),
-					   PREFIX_CHANGED_REGISTERS)) {
+            } else if (!RAW_INPUT.compare (cur,
+                                           strlen (PREFIX_CHANGED_REGISTERS),
+                                           PREFIX_CHANGED_REGISTERS)) {
                 std::list<IDebugger::register_id_t> regs;
                 if (!parse_changed_registers (cur, cur, regs)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed changed register", GDBMI_PARSING_DOMAIN);
                     result_record.changed_registers (regs);
                 }
             } else if (!RAW_INPUT.compare (cur,
-					   strlen (PREFIX_REGISTER_VALUES),
-					   PREFIX_REGISTER_VALUES)) {
+                                           strlen (PREFIX_REGISTER_VALUES),
+                                           PREFIX_REGISTER_VALUES)) {
                 std::map<IDebugger::register_id_t, UString>  values;
                 if (!parse_register_values (cur, cur,  values)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed register values", GDBMI_PARSING_DOMAIN);
                     result_record.register_values (values);
                 }
-            } else if (!m_priv->input.compare (cur, 
-					       strlen (PREFIX_MEMORY_VALUES),
-					       PREFIX_MEMORY_VALUES)) {
+            } else if (!m_priv->input.compare (cur,
+                                               strlen (PREFIX_MEMORY_VALUES),
+                                               PREFIX_MEMORY_VALUES)) {
                 size_t addr;
                 std::vector<uint8_t>  values;
                 if (!parse_memory_values (cur, cur, addr, values)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed memory values", GDBMI_PARSING_DOMAIN);
                     result_record.memory_values (addr, values);
@@ -2044,7 +2003,7 @@ fetch_gdbmi_result:
                 std::list<common::Asm> asm_instrs;
                 if (!parse_asm_instruction_list (cur, cur,
                                                  asm_instrs)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed asm instruction list", GDBMI_PARSING_DOMAIN);
                     result_record.asm_instruction_list (asm_instrs);
@@ -2054,7 +2013,7 @@ fetch_gdbmi_result:
                                            PREFIX_NAME)) {
                 IDebugger::VariableSafePtr var;
                 if (!parse_variable (cur, cur, var)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     THROW_IF_FAIL (var);
                     LOG_D ("parsed variable, name: "
@@ -2064,8 +2023,8 @@ fetch_gdbmi_result:
                            GDBMI_PARSING_DOMAIN);
                     result_record.variable (var);
                 }
-            } else if (!RAW_INPUT.compare (cur, 
-					   strlen (PREFIX_VARIABLE_DELETED),
+            } else if (!RAW_INPUT.compare (cur,
+                                           strlen (PREFIX_VARIABLE_DELETED),
                                            PREFIX_VARIABLE_DELETED)) {
                 unsigned int nb_variables_deleted = 0;
                 if (parse_variables_deleted (cur, cur, nb_variables_deleted)
@@ -2073,7 +2032,7 @@ fetch_gdbmi_result:
                     result_record.number_of_variables_deleted
                                                         (nb_variables_deleted);
                 } else {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 }
             } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_NUMCHILD),
                                            PREFIX_NUMCHILD)) {
@@ -2081,7 +2040,7 @@ fetch_gdbmi_result:
                 if (parse_var_list_children (cur, cur, vars)) {
                     result_record.variable_children (vars);
                 } else {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 }
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_VARIABLES_CHANGED_LIST),
@@ -2090,7 +2049,7 @@ fetch_gdbmi_result:
                 if (parse_var_changed_list (cur, cur, var_changes)) {
                     result_record.var_changes (var_changes);
                 } else {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 }
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_PATH_EXPR),
@@ -2099,7 +2058,7 @@ fetch_gdbmi_result:
                 if (parse_var_path_expression (cur, cur, var_expr)) {
                     result_record.path_expression (var_expr);
                 } else {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 }
             } else if (!RAW_INPUT.compare (cur,
                                            strlen (PREFIX_VARIABLE_FORMAT),
@@ -2115,13 +2074,13 @@ fetch_gdbmi_result:
                         result_record.variable_value (var);
                     }
                 } else {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 }
             } else {
                 GDBMIResultSafePtr result;
                 if (!parse_gdbmi_result (cur, cur, result)
                     || !result) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                 } else {
                     LOG_D ("parsed unknown gdbmi result",
                            GDBMI_PARSING_DOMAIN);
@@ -2139,21 +2098,21 @@ fetch_gdbmi_result:
                  ++cur) {}
         }
     } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_RUNNING),
-				   PREFIX_RUNNING)) {
+                                   PREFIX_RUNNING)) {
         result_record.kind (Output::ResultRecord::RUNNING);
         cur += 8;
         for (;
              !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
              ++cur) {}
     } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_EXIT),
-				   PREFIX_EXIT)) {
+                                   PREFIX_EXIT)) {
         result_record.kind (Output::ResultRecord::EXIT);
         cur += 5;
         for (;
              !m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) != '\n';
              ++cur) {}
     } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_CONNECTED),
-				   PREFIX_CONNECTED)) {
+                                   PREFIX_CONNECTED)) {
         result_record.kind (Output::ResultRecord::CONNECTED);
         cur += 10;
         for (;
@@ -2162,16 +2121,16 @@ fetch_gdbmi_result:
              ++cur) {
         }
     } else if (!RAW_INPUT.compare (cur, strlen (PREFIX_ERROR),
-				   PREFIX_ERROR)) {
+                                   PREFIX_ERROR)) {
         result_record.kind (Output::ResultRecord::ERROR);
         cur += 6;
-        CHECK_END2 (cur);
+        CHECK_END (cur);
         if (!m_priv->index_passed_end (cur) && RAW_CHAR_AT (cur) == ',') {
             ++cur;
         }
-        CHECK_END2 (cur);
+        CHECK_END (cur);
         if (!parse_attribute (cur, cur, name, value)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         if (name != "") {
@@ -2187,12 +2146,12 @@ fetch_gdbmi_result:
              ++cur) {
         }
     } else {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (RAW_CHAR_AT (cur) != '\n' && !m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -2236,33 +2195,33 @@ GDBMIParser::parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
     Glib::ustring::size_type cur = a_from;
 
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (!is_sub_breakpoint) {
         if (RAW_INPUT.compare (cur, strlen (PREFIX_BKPT), PREFIX_BKPT)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         cur += 6;
     } else {
         // We must be on the starting '{'.
         if (RAW_CHAR_AT (cur) != '{') {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
-        CHECK_END2 (++cur);
+        CHECK_END (++cur);
     }
 
     map<UString, UString> attrs;
     bool is_ok = parse_attributes (cur, cur, attrs);
     if (!is_ok) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (RAW_CHAR_AT (cur) != '}') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
@@ -2325,7 +2284,7 @@ GDBMIParser::parse_breakpoint_with_one_loc (Glib::ustring::size_type a_from,
 	   // events can have an empty address when set.
 	   // || (iter = attrs.find ("addr"))    == null_iter
        ) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -2418,19 +2377,19 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
     if (!parse_breakpoint_with_one_loc (cur, cur,
                                         /*is_sub_breakpoint=*/false,
                                         a_bkpt)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     while (true) {
         Glib::ustring::size_type saved_cur = cur;
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
 
         if (!END_OF_INPUT (cur)) {
             if (RAW_CHAR_AT (cur) != ','
                 || (++cur
-                    && SKIP_BLANK2 (cur)
-                    && !END_OF_INPUT (cur) 
+                    && SKIP_BLANK (cur)
+                    && !END_OF_INPUT (cur)
                     && RAW_CHAR_AT (cur) != '{')) {
                 ;// Get out.
             } else {
@@ -2441,7 +2400,7 @@ GDBMIParser::parse_breakpoint (Glib::ustring::size_type a_from,
                 if (!parse_breakpoint_with_one_loc (cur, cur,
                                                     /*is_sub_breakpoint=*/true,
                                                     sub_bp)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                     return false;
                 }
                 a_bkpt.append_sub_breakpoint (sub_bp);
@@ -2464,24 +2423,24 @@ GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_BREAKPOINT_TABLE),
                                       PREFIX_BREAKPOINT_TABLE)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += strlen (PREFIX_BREAKPOINT_TABLE);
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     //skip table headers and go to table body.
     cur = RAW_INPUT.find ("body=[", 0);
     if (!cur) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += 6;
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -2498,40 +2457,40 @@ GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
                 break;
             }
             if (!parse_breakpoint (cur, cur, breakpoint)) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             breakpoint_table[breakpoint.number ()] = breakpoint;
             if (RAW_CHAR_AT (cur) == ',') {
                 ++cur;
                 if (m_priv->index_passed_end (cur)) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                     return false;
                 }
             }
             breakpoint.clear ();
         }
         if (breakpoint_table.empty ()) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
     } else {
         //weird things are happening, get out.
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (RAW_CHAR_AT (cur) != ']') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (RAW_CHAR_AT (cur) != '}') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
@@ -2549,9 +2508,9 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
 
-    if (RAW_INPUT.compare (cur, strlen (PREFIX_THREAD_IDS), 
+    if (RAW_INPUT.compare (cur, strlen (PREFIX_THREAD_IDS),
                            PREFIX_THREAD_IDS)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -2562,7 +2521,7 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
     // We loop, parsing GDB/MI RESULT constructs and ',' until we reach '\n'
     while (true) {
         if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         if (gdbmi_result->variable () == "thread-ids") {
@@ -2631,15 +2590,15 @@ GDBMIParser::parse_threads_list (UString::size_type a_from,
                        << gdbmi_result->variable ()
                        << "'. Ignoring it thus.");
         }
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
         if (RAW_CHAR_AT (cur) == '\n') {
             break;
         }
         if (RAW_CHAR_AT (cur) == ',') {
             ++cur;
-            CHECK_END2 (cur);
+            CHECK_END (cur);
         }
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
     }
 
     if (num_threads != thread_ids.size ()) {
@@ -2667,13 +2626,13 @@ GDBMIParser::parse_new_thread_id (UString::size_type a_from,
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_NEW_THREAD_ID),
                            PREFIX_NEW_THREAD_ID)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     GDBMIResultSafePtr gdbmi_result;
     if (!parse_gdbmi_result (cur, cur, gdbmi_result)
         || !gdbmi_result) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (gdbmi_result->variable () != "new-thread-id") {
@@ -2684,7 +2643,7 @@ GDBMIParser::parse_new_thread_id (UString::size_type a_from,
     THROW_IF_FAIL (gdbmi_result->value ());
     THROW_IF_FAIL (gdbmi_result->value ()->content_type ()
                    == GDBMIValue::STRING_TYPE);
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     int thread_id =
         atoi (gdbmi_result->value ()->get_string_content ().c_str ());
@@ -2693,18 +2652,18 @@ GDBMIParser::parse_new_thread_id (UString::size_type a_from,
         return false;
     }
 
-    SKIP_BLANK2 (cur);
+    SKIP_BLANK (cur);
 
     if (RAW_CHAR_AT (cur) != ',') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     IDebugger::Frame frame;
     if (!parse_frame (cur, cur, frame)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -2723,7 +2682,7 @@ GDBMIParser::parse_file_list (UString::size_type a_from,
     UString::size_type cur = a_from;
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_FILES), PREFIX_FILES)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += 7;
@@ -2732,7 +2691,7 @@ GDBMIParser::parse_file_list (UString::size_type a_from,
     while (!m_priv->index_passed_end (cur)) {
         GDBMITupleSafePtr tuple;
         if (!parse_gdbmi_tuple (cur, cur, tuple)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         tuples.push_back(tuple);
@@ -2743,7 +2702,7 @@ GDBMIParser::parse_file_list (UString::size_type a_from,
             break;
         } else {
             //unexpected data
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
         }
     }
 
@@ -2798,24 +2757,24 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (cur, cur, result)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     THROW_IF_FAIL (result);
 
     if (result->variable () != "stack") {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (!result->value ()
         ||result->value ()->content_type ()
                 != GDBMIValue::LIST_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -2828,7 +2787,7 @@ GDBMIParser::parse_call_stack (const UString::size_type a_from,
     }
 
     if (result_value_list->content_type () != GDBMIList::RESULT_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     list<GDBMIResultSafePtr> result_list;
@@ -2884,16 +2843,16 @@ GDBMIParser::parse_local_var_list (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_LOCALS), PREFIX_LOCALS)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     GDBMIResultSafePtr gdbmi_result;
     if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     THROW_IF_FAIL (gdbmi_result
@@ -2902,7 +2861,7 @@ GDBMIParser::parse_local_var_list (UString::size_type a_from,
     if (!gdbmi_result->value ()
         || gdbmi_result->value ()->content_type ()
             != GDBMIValue::LIST_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -2996,17 +2955,17 @@ GDBMIParser::parse_stack_arguments (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_STACK_ARGS),
                            PREFIX_STACK_ARGS)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     GDBMIResultSafePtr gdbmi_result;
     if (!parse_gdbmi_result (cur, cur, gdbmi_result)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     THROW_IF_FAIL (gdbmi_result
@@ -3015,7 +2974,7 @@ GDBMIParser::parse_stack_arguments (UString::size_type a_from,
     if (!gdbmi_result->value ()
         || gdbmi_result->value ()->content_type ()
             != GDBMIValue::LIST_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -3028,7 +2987,7 @@ GDBMIParser::parse_stack_arguments (UString::size_type a_from,
     }
 
     if (gdbmi_list->content_type () != GDBMIList::RESULT_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -3186,7 +3145,7 @@ GDBMIParser::parse_stack_arguments (UString::size_type a_from,
                        GDBMI_PARSING_DOMAIN);
                 all_frames_args[cur_frame_level] = cur_frame_args;
             } else {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
         }
@@ -3211,15 +3170,15 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
     THROW_IF_FAIL (a_var);
 
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_CHAR_AT (cur) != '{') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     ++cur;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     UString name, value;
     UString::size_type name_start=0, name_end=0, value_start=0, value_end=0;
@@ -3228,11 +3187,11 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
         name_start=0, name_end=0, value_start=0, value_end=0;
         name = "#unnamed#" , value = "";
 
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
         LOG_D ("fetching name ...", GDBMI_PARSING_DOMAIN);
         //we should be at the begining of A = B. lets try to parse A
         if (RAW_CHAR_AT (cur) != '{') {
-            SKIP_BLANK2 (cur);
+            SKIP_BLANK (cur);
             name_start = cur;
             while (true) {
                 if (!m_priv->index_passed_end (cur)
@@ -3273,11 +3232,11 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
             break;
         }
 
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
         if (RAW_CHAR_AT (cur) != '{') {
             ++cur;
-            CHECK_END2 (cur);
-            SKIP_BLANK2 (cur);
+            CHECK_END (cur);
+            SKIP_BLANK (cur);
         }
 
         //if we are at a '{', (like in A = {B}),
@@ -3290,13 +3249,13 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
                 in_unnamed = false;
             }
             if (!parse_member_variable (cur, cur, cur_var, in_unnamed)) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
         } else {
             //else, we are at a B, (like in A = B),
             //so let's try to parse B
-            SKIP_BLANK2 (cur);
+            SKIP_BLANK (cur);
             value_start = cur;
             unsigned int brace_level = 0;
             while (true) {
@@ -3304,7 +3263,7 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
                 if ( RAW_CHAR_AT (cur) == '"'
                     && RAW_CHAR_AT (cur -1) != '\\') {
                     if (!parse_c_string (cur, cur, str)) {
-                        LOG_PARSING_ERROR2 (cur);
+                        LOG_PARSING_ERROR (cur);
                         return false;
                     }
                 } else if (!m_priv->index_passed_end (cur+2)
@@ -3313,7 +3272,7 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
                            && RAW_CHAR_AT (cur+2) != '\''
                            && RAW_CHAR_AT (cur-1) != '\'') {
                     if (!parse_embedded_c_string (cur, cur, str)){
-                        LOG_PARSING_ERROR2 (cur);
+                        LOG_PARSING_ERROR (cur);
                         return false;
                     }
                 } else if ((RAW_CHAR_AT (cur) != ','
@@ -3330,7 +3289,7 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
                         --brace_level;
                     }
                     ++cur;
-                    CHECK_END2 (cur);
+                    CHECK_END (cur);
                 } else {
                     //if we found an '}' character, make sure
                     //it is not enclosed in sigle quotes. If it is in
@@ -3366,7 +3325,7 @@ GDBMIParser::parse_member_variable (const UString::size_type a_from,
                GDBMI_PARSING_DOMAIN);
 
 end_of_block:
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
 
         LOG_D ("cur char: " << (char) RAW_CHAR_AT (cur),
                 GDBMI_PARSING_DOMAIN);
@@ -3378,7 +3337,7 @@ end_of_block:
             break;
         } else if (RAW_CHAR_AT (cur) == ',') {
             ++cur;
-            CHECK_END2 (cur);
+            CHECK_END (cur);
             LOG_D ("got ',' , going to fetch name",
                    GDBMI_PARSING_DOMAIN);
             continue /*goto fetch name*/;
@@ -3401,7 +3360,7 @@ end_of_block:
                 break;
             } else {
                 LOG_ERROR ("failed to skip repeat construct");
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
         } else if (!RAW_INPUT.compare (cur, 3, "...")) {
@@ -3409,7 +3368,7 @@ end_of_block:
             cur+= 3;
             goto end_of_block;
         }
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         THROW ("should not be reached");
     }//end while
 
@@ -3424,29 +3383,29 @@ GDBMIParser::parse_variable_value (const UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_VALUE), PREFIX_VALUE)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     cur += 6;
-    CHECK_END2 (cur);
-    CHECK_END2 (cur+1);
+    CHECK_END (cur);
+    CHECK_END (cur+1);
 
     a_var = IDebugger::VariableSafePtr (new IDebugger::Variable);
     if (RAW_CHAR_AT (cur+1) == '{') {
         ++cur;
         if (!parse_member_variable (cur, cur, a_var)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
         if (RAW_CHAR_AT (cur) != '"') {
             UString value;
             if (!parse_c_string_body (cur, cur, value)) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             value = a_var->value () + " " + value;
@@ -3455,7 +3414,7 @@ GDBMIParser::parse_variable_value (const UString::size_type a_from,
     } else {
         UString value;
         if (!parse_c_string (cur, cur, value)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         a_var->value (value);
@@ -3473,16 +3432,16 @@ GDBMIParser::parse_variables_deleted (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_VARIABLE_DELETED),
                            PREFIX_VARIABLE_DELETED)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (cur, cur, result) || !result) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (result->variable () != NDELETED) {
@@ -3514,16 +3473,16 @@ GDBMIParser::parse_var_list_children
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_NUMCHILD),
                            PREFIX_NUMCHILD)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (cur, cur, result) || !result) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (result->variable () != NUMCHILD) {
@@ -3547,9 +3506,9 @@ GDBMIParser::parse_var_list_children
         return true;
     }
 
-    SKIP_BLANK2 (cur);
+    SKIP_BLANK (cur);
     if (RAW_CHAR_AT (cur) != ',') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     ++cur;
@@ -3557,14 +3516,14 @@ GDBMIParser::parse_var_list_children
     // Go look for the "children" RESULT, and ignore the other ones
     // we might encounter.
     for (;;) {
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
         if (RAW_CHAR_AT (cur) == ',') {
             ++cur;
-            SKIP_BLANK2 (cur);
+            SKIP_BLANK (cur);
         }
         result.reset ();
         if (!parse_gdbmi_result (cur, cur, result) || !result) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         if (result->variable () == "children")
@@ -3851,16 +3810,16 @@ GDBMIParser::parse_var_changed_list (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_VARIABLES_CHANGED_LIST),
                            PREFIX_VARIABLES_CHANGED_LIST)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (cur, cur, result) || !result) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     // The name of RESULT must be CHANGELIST
@@ -3885,17 +3844,17 @@ GDBMIParser::parse_var_path_expression (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_PATH_EXPR),
                            PREFIX_PATH_EXPR)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     GDBMIResultSafePtr result;
     if (!parse_gdbmi_result (cur, cur, result) || !result) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     // The name of RESULT must be PATH_EXPR
@@ -3926,17 +3885,17 @@ GDBMIParser::parse_variable_format (UString::size_type a_from,
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (GDBMI_PARSING_DOMAIN);
     UString::size_type cur = a_from;
-    CHECK_END2 (cur);
+    CHECK_END (cur);
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_VARIABLE_FORMAT),
                            PREFIX_VARIABLE_FORMAT)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     UString name, value;
     if (!parse_gdbmi_string_result (cur, cur, name, value)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     const char *FORMAT = "format";
@@ -3952,13 +3911,13 @@ GDBMIParser::parse_variable_format (UString::size_type a_from,
         return false;
     }
 
-    SKIP_WS2 (cur);
+    SKIP_WS (cur);
     if (RAW_CHAR_AT (cur) == ',') {
         ++cur;
-        SKIP_WS2 (cur);
+        SKIP_WS (cur);
         name.clear (), value.clear ();
         if (!parse_gdbmi_string_result (cur, cur, name, value)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         const char *VALUE = "value";
@@ -3986,25 +3945,25 @@ GDBMIParser::parse_register_names (UString::size_type a_from,
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_REGISTER_NAMES),
                            PREFIX_REGISTER_NAMES)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += strlen (PREFIX_REGISTER_NAMES);
 
     GDBMIListSafePtr reg_list;
     if (!parse_gdbmi_list (cur, cur, reg_list)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (RAW_CHAR_AT (cur-1) != ']') {
         //unexpected data
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     std::map<IDebugger::register_id_t, UString> regs;
     if (reg_list->content_type () != GDBMIList::VALUE_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     std::list<GDBMIValueSafePtr> value_list;
@@ -4033,26 +3992,26 @@ GDBMIParser::parse_changed_registers (UString::size_type a_from,
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_CHANGED_REGISTERS),
                            PREFIX_CHANGED_REGISTERS)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += strlen (PREFIX_CHANGED_REGISTERS);
 
     GDBMIListSafePtr reg_list;
     if (!parse_gdbmi_list (cur, cur, reg_list)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (RAW_CHAR_AT (cur-1) != ']') {
         // unexpected data
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     std::list<IDebugger::register_id_t> regs;
     if (!reg_list->empty () &&
             reg_list->content_type () != GDBMIList::VALUE_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     std::list<GDBMIValueSafePtr> value_list;
@@ -4081,25 +4040,25 @@ GDBMIParser::parse_register_values (UString::size_type a_from,
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_REGISTER_VALUES),
                            PREFIX_REGISTER_VALUES)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += strlen (PREFIX_REGISTER_VALUES);
 
     GDBMIListSafePtr gdbmi_list;
     if (!parse_gdbmi_list (cur, cur, gdbmi_list)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     if (RAW_CHAR_AT (cur-1) != ']') {
         // unexpected data
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     std::map<IDebugger::register_id_t, UString> vals;
     if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     std::list<GDBMIValueSafePtr> val_list;
@@ -4111,14 +4070,14 @@ GDBMIParser::parse_register_values (UString::size_type a_from,
         UString value_str;
         if ((*val_iter)->content_type ()
             != GDBMIValue::TUPLE_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         GDBMITupleSafePtr tuple = (*val_iter)->get_tuple_content ();
         std::list<GDBMIResultSafePtr> result_list = tuple->content ();
         if (result_list.size () != 2) {
             // each tuple should have a 'number' and 'value' field
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         std::list<GDBMIResultSafePtr>::const_iterator res_iter =
@@ -4127,7 +4086,7 @@ GDBMIParser::parse_register_values (UString::size_type a_from,
         GDBMIValueSafePtr reg_number_val = (*res_iter)->value ();
         if ((*res_iter)->variable () != "number"
             || reg_number_val->content_type () != GDBMIValue::STRING_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         IDebugger::register_id_t id =
@@ -4138,7 +4097,7 @@ GDBMIParser::parse_register_values (UString::size_type a_from,
         GDBMIValueSafePtr reg_value_val = (*res_iter)->value ();
         if ((*res_iter)->variable () != "value"
             || reg_value_val->content_type () != GDBMIValue::STRING_TYPE) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         } else {
             value_str = reg_value_val->get_string_content ();
@@ -4162,7 +4121,7 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_MEMORY_VALUES),
                            PREFIX_MEMORY_VALUES)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4170,26 +4129,26 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
     const char* prefix_memory = "memory=";
     cur = RAW_INPUT.find (prefix_memory);
     if (!cur) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     cur += strlen (prefix_memory);
 
     GDBMIListSafePtr mem_gdbmi_list;
     if (!parse_gdbmi_list (cur, cur, mem_gdbmi_list)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (RAW_CHAR_AT (cur-1) != ']') {
         //unexpected data
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (mem_gdbmi_list->content_type ()
         != GDBMIList::VALUE_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     std::list<GDBMIValueSafePtr> mem_value_list;
@@ -4197,7 +4156,7 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
 
     //there should only be one 'row'
     if (mem_value_list.size () != 1) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4205,7 +4164,7 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
                                                     mem_value_list.begin ();
     if ((*mem_tuple_iter)->content_type ()
         != GDBMIValue::TUPLE_TYPE) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4215,7 +4174,7 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
     std::list<GDBMIResultSafePtr> result_list;
     result_list = gdbmi_tuple->content ();
     if (result_list.size () < 2) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4229,7 +4188,7 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
             seen_addr = true;
             if ((*result_iter)->value ()->content_type ()
                 != GDBMIValue::STRING_TYPE) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             std::istringstream istream
@@ -4239,13 +4198,13 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
             seen_data = true;
             if ((*result_iter)->value ()->content_type ()
                 != GDBMIValue::LIST_TYPE) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             GDBMIListSafePtr gdbmi_list =
                             (*result_iter)->value ()->get_list_content ();
             if (gdbmi_list->content_type () != GDBMIList::VALUE_TYPE) {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             std::list<GDBMIValueSafePtr> gdbmi_values;
@@ -4256,7 +4215,7 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
                  ++val_iter) {
                 if ((*val_iter)->content_type ()
                     != GDBMIValue::STRING_TYPE) {
-                    LOG_PARSING_ERROR2 (cur);
+                    LOG_PARSING_ERROR (cur);
                     return false;
                 }
                 std::istringstream istream
@@ -4272,7 +4231,7 @@ GDBMIParser::parse_memory_values (UString::size_type a_from,
     }
 
     if (!seen_addr || !seen_data) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4293,13 +4252,13 @@ GDBMIParser::parse_asm_instruction_list
     if (RAW_INPUT.compare (cur,
                            strlen (PREFIX_ASM_INSTRUCTIONS),
                            PREFIX_ASM_INSTRUCTIONS)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     cur += strlen (PREFIX_ASM_INSTRUCTIONS);
     if (RAW_CHAR_AT (cur) != '[') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4322,7 +4281,7 @@ GDBMIParser::parse_asm_instruction_list
 
     // OK, now parse the LIST.
     if (!parse_gdbmi_list (cur, cur, gdbmi_list)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4340,7 +4299,7 @@ GDBMIParser::parse_asm_instruction_list
     if (gdbmi_list->content_type () == GDBMIList::VALUE_TYPE) {
         list<common::AsmInstr> instrs;
         if (!analyse_pure_asm_instrs (gdbmi_list, instrs, cur)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         list<common::AsmInstr>::const_iterator it;
@@ -4350,7 +4309,7 @@ GDBMIParser::parse_asm_instruction_list
     } else if (gdbmi_list->content_type () == GDBMIList::RESULT_TYPE) {
         list<common::MixedAsmInstr> instrs;
         if (!analyse_mixed_asm_instrs (gdbmi_list, instrs, cur)) {
-            LOG_PARSING_ERROR2 (cur);
+            LOG_PARSING_ERROR (cur);
             return false;
         }
         list<common::MixedAsmInstr>::const_iterator it;
@@ -4358,7 +4317,7 @@ GDBMIParser::parse_asm_instruction_list
             a_instrs.push_back (*it);
         }
     } else {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     a_to = cur;
@@ -4482,7 +4441,7 @@ GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
                 stringstream s;
                 s << "got result named " << (*outer_it)->variable ()
                   << " instead of src_and_asm_line";
-                LOG_PARSING_ERROR_MSG2 (a_cur, s.str ());
+                LOG_PARSING_ERROR_MSG (a_cur, s.str ());
                 return false;
         }
         if ((*outer_it)->value ()->content_type ()
@@ -4490,7 +4449,7 @@ GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
             stringstream s;
             s << "got value of type " << (*outer_it)->value ()->content_type ()
               << " instead of TUPLE_TYPE (3)";
-            LOG_PARSING_ERROR_MSG2 (a_cur, s.str ());
+            LOG_PARSING_ERROR_MSG (a_cur, s.str ());
             return false;
         }
 
@@ -4510,7 +4469,7 @@ GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
                     s << "The value of the 'line' RESULT should be "
                          "a number. Instead it was: "
                       << line_str;
-                    LOG_PARSING_ERROR_MSG2 (a_cur, s.str ());
+                    LOG_PARSING_ERROR_MSG (a_cur, s.str ());
                     return false;
                 }
                 instr.line_number (atoi (line_str.c_str ()));
@@ -4525,7 +4484,7 @@ GDBMIParser::analyse_mixed_asm_instrs (GDBMIListSafePtr a_gdbmi_list,
                     stringstream s;
                     s << "Could not parse the instrs of this mixed asm/src "
                          "tuple." ;
-                    LOG_PARSING_ERROR_MSG2 (a_cur, s.str ());
+                    LOG_PARSING_ERROR_MSG (a_cur, s.str ());
                     return false;
                 }
             }
@@ -4545,7 +4504,7 @@ GDBMIParser::parse_variable (UString::size_type a_from,
     UString::size_type cur=a_from;
 
     if (RAW_INPUT.compare (cur, strlen (PREFIX_NAME), PREFIX_NAME)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
@@ -4556,7 +4515,7 @@ GDBMIParser::parse_variable (UString::size_type a_from,
     GDBMIResultSafePtr result;
     UString value;
     bool got_variable = false;
-    SKIP_BLANK2 (cur);
+    SKIP_BLANK (cur);
     while (!END_OF_INPUT (cur)
            && RAW_CHAR_AT (cur) != '\n'
            && parse_gdbmi_result (cur, cur, result)
@@ -4589,11 +4548,11 @@ GDBMIParser::parse_variable (UString::size_type a_from,
             LOG_D ("hugh? unknown result variable: " << result->variable (),
                    GDBMI_PARSING_DOMAIN);
         }
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
         if (RAW_CHAR_AT (cur) == ',') {
             cur++;
         }
-        SKIP_BLANK2 (cur);
+        SKIP_BLANK (cur);
     }
 
     if (got_variable) {
@@ -4614,12 +4573,12 @@ GDBMIParser::parse_overloads_choice_prompt
     gunichar c = 0;
 
     if (m_priv->index_passed_end (cur)) {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
 
     if (RAW_CHAR_AT (cur) != '[') {
-        LOG_PARSING_ERROR2 (cur);
+        LOG_PARSING_ERROR (cur);
         return false;
     }
     c = RAW_CHAR_AT (cur);
@@ -4628,19 +4587,19 @@ GDBMIParser::parse_overloads_choice_prompt
     vector<IDebugger::OverloadsChoiceEntry> prompts;
     while (c == '[') {
         ++cur;
-        CHECK_END2 (cur);
+        CHECK_END (cur);
         index_str.clear ();
         c = RAW_CHAR_AT (cur);
         //look for the numerical index of the current prompt entry
         for (;;) {
-            CHECK_END2 (cur);
+            CHECK_END (cur);
             c = RAW_CHAR_AT (cur);
             if (isdigit (c)) {
                 index_str += RAW_CHAR_AT (cur);
             } else if (c == ']') {
                 break;
             } else {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             ++cur;
@@ -4656,8 +4615,8 @@ GDBMIParser::parse_overloads_choice_prompt
         }
         LOG_DD ("prompt index: " << index_str);
         ++cur;
-        CHECK_END2 (cur);
-        SKIP_WS2 (cur);
+        CHECK_END (cur);
+        SKIP_WS (cur);
         c = RAW_CHAR_AT (cur);
 
         //now parse the prompt value.
@@ -4668,7 +4627,7 @@ GDBMIParser::parse_overloads_choice_prompt
             && !RAW_INPUT.compare (cur, 3, "all")) {
             entry.kind (IDebugger::OverloadsChoiceEntry::ALL);
             cur += 3;
-            SKIP_WS2 (cur);
+            SKIP_WS (cur);
             c = RAW_CHAR_AT (cur);
             LOG_DD ("pushing entry: " << (int) entry.index ()
                     << ", all" );
@@ -4682,7 +4641,7 @@ GDBMIParser::parse_overloads_choice_prompt
                     && !RAW_INPUT.compare (cur, 6, "cancel")) {
             entry.kind (IDebugger::OverloadsChoiceEntry::CANCEL);
             cur += 6;
-            SKIP_WS2 (cur);
+            SKIP_WS (cur);
             c = RAW_CHAR_AT (cur);
             LOG_DD ("pushing entry: " << (int) entry.index ()
                     << ", cancel");
@@ -4706,13 +4665,13 @@ GDBMIParser::parse_overloads_choice_prompt
                 && !RAW_INPUT.compare (cur, 4, " at ")) {
                 e = cur;
             } else {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             function_name.assign (RAW_INPUT, b, e-b);
 
             cur += 4;
-            SKIP_WS2 (cur);
+            SKIP_WS (cur);
             c = RAW_CHAR_AT (cur);
             b=cur; e=0;
             while (c != ':') {
@@ -4724,12 +4683,12 @@ GDBMIParser::parse_overloads_choice_prompt
             if (!m_priv->index_passed_end (cur) && c == ':') {
                 e = cur;
             } else {
-                LOG_PARSING_ERROR2 (cur);
+                LOG_PARSING_ERROR (cur);
                 return false;
             }
             file_name.assign (RAW_INPUT, b, e-b);
             ++cur;
-            SKIP_WS2 (cur);
+            SKIP_WS (cur);
             c = RAW_CHAR_AT (cur);
 
             while (isdigit (c)) {
@@ -4750,14 +4709,14 @@ GDBMIParser::parse_overloads_choice_prompt
                 LOG_DD ("reached end, getting out");
                 break;
             }
-            SKIP_WS2 (cur);
+            SKIP_WS (cur);
             c = RAW_CHAR_AT (cur);
             if (!m_priv->index_passed_end (cur+1)
                 && c == '\\' && RAW_CHAR_AT (cur+1) == 'n') {
                 cur += 2;
                 c = RAW_CHAR_AT (cur);
             }
-            SKIP_WS2 (cur);
+            SKIP_WS (cur);
             c = RAW_CHAR_AT (cur);
             if (m_priv->index_passed_end (cur))
                 break;
