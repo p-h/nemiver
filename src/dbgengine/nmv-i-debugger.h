@@ -154,6 +154,22 @@ public:
                 return str_utils::int_to_string (sub_breakpoint_number ());
         }
 
+        /// Getter of the ID of the parent of this breakpoint.
+        ///
+        ///Note that (at least for GDB) only parent breakpoints can be
+        ///deleted by ID
+        ///
+        ///@return the ID of the parent of this breakpoint.
+        string parent_id () const
+        {
+            string id;
+            if (is_sub_breakpoint ())
+                id = str_utils::int_to_string(parent_breakpoint_number ());
+            else
+                id = str_utils::int_to_string (sub_breakpoint_number ());
+            return id;
+        }
+
         /// Getter of the ID of this breakpoint.  If the breakpoint is
         /// a sub breakpoint, its id has the form of the string "5.4"
         /// where 5 is the number of the parent breakpoint and 4 is

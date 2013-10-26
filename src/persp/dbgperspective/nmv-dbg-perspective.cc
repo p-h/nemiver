@@ -2586,6 +2586,22 @@ DBGPerspective::on_debugger_breakpoint_deleted_signal
     THROW_IF_FAIL (editor);
     update_toggle_menu_text (*editor);
 
+    // Now delete the breakpoints and sub-breakpoints matching
+    // a_break_number.
+    map<string, IDebugger::Breakpoint>::iterator i,
+        end = m_priv->breakpoints.end ();
+    list<map<string, IDebugger::Breakpoint>::iterator> to_erase;
+    list<map<string, IDebugger::Breakpoint>::iterator>::iterator j;
+    for (i = m_priv->breakpoints.begin();i != end; ++i) {
+        UString parent_id = i->second.parent_id ();
+        if (parent_id == a_break_number
+            || i->first == a_break_number)
+            to_erase.push_back (i);
+    }
+
+    for (j = to_erase.begin (); j != to_erase.end (); ++j)
+        m_priv->breakpoints.erase (*j);
+
     NEMIVER_CATCH
 }
 
@@ -5191,6 +5207,9 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
     a_session.breakpoints ().clear ();
     a_session.watchpoints ().clear ();
     map<string, IDebugger::Breakpoint>::const_iterator break_iter;
+    map<string, bool> parent_ids_added;
+    map<string, bool>::const_iterator end = parent_ids_added.end ();
+
     for (break_iter = m_priv->breakpoints.begin ();
          break_iter != m_priv->breakpoints.end ();
          ++break_iter) {
@@ -5198,6 +5217,9 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
              == IDebugger::Breakpoint::STANDARD_BREAKPOINT_TYPE)
             || (break_iter->second.type ()
              == IDebugger::Breakpoint::COUNTPOINT_TYPE)) {
+            UString parent_id = break_iter->second.parent_id ();
+            if (parent_ids_added.find (parent_id) != end)
+                continue;
             ISessMgr::Breakpoint bp (break_iter->second.file_name (),
                                      break_iter->second.file_full_name (),
                                      break_iter->second.line (),
@@ -5207,6 +5229,7 @@ DBGPerspective::record_and_save_session (ISessMgr::Session &a_session)
                                      debugger ()->is_countpoint
                                      (break_iter->second));
             a_session.breakpoints ().push_back (bp);
+            parent_ids_added[parent_id] = true;
             LOG_DD ("Regular breakpoint scheduled to be stored");
         } else if (break_iter->second.type ()
                    == IDebugger::Breakpoint::WATCHPOINT_TYPE) {
@@ -6182,6 +6205,7 @@ DBGPerspective::execute_program
     map<string, IDebugger::Breakpoint> saved_bps = m_priv->breakpoints;
 
     // delete old breakpoints, if any.
+    m_priv->breakpoints.clear();
     map<string, IDebugger::Breakpoint>::const_iterator bp_it;
     for (bp_it = saved_bps.begin ();
          bp_it != saved_bps.end ();
@@ -6226,10 +6250,31 @@ DBGPerspective::execute_program
         if (!is_new_program) {
             LOG_DD ("here");
             map<string, IDebugger::Breakpoint>::const_iterator it;
+            map<string, bool> bps_set;
+            UString parent_id;
             for (it = saved_bps.begin ();
                  it != saved_bps.end ();
                  ++it) {
-                set_breakpoint (it->second);
+                // for breakpoints that are sub-breakpoints of a parent
+                // breakpoint, only set the parent breakpoint once.
+                if (it->second.has_multiple_locations ()) {
+                    for (vector<IDebugger::Breakpoint>::const_iterator i =
+                             it->second.sub_breakpoints ().begin();
+                         i != it->second.sub_breakpoints ().end ();
+                         ++i) {
+                        parent_id = i->parent_id ();
+                        if (bps_set.find (parent_id) != bps_set.end ())
+                            continue;
+                        set_breakpoint (*i);
+                        bps_set[parent_id] = true;
+                    }
+                } else {
+                    parent_id = it->second.parent_id();
+                    if (bps_set.find (parent_id) != bps_set.end ())
+                        continue;
+                    set_breakpoint (it->second);
+                    bps_set[parent_id] = true;
+                }
             }
             if (!saved_bps.empty())
                 // We are restarting the same program, and we hope that
@@ -6250,8 +6295,14 @@ DBGPerspective::execute_program
     } else {
         LOG_DD ("here");
         vector<IDebugger::Breakpoint>::const_iterator it;
+        map<string, bool> bps_set;
+        UString parent_id;
         for (it = a_breaks.begin (); it != a_breaks.end (); ++it) {
+            parent_id = it->parent_id ();
+            if (bps_set.find (parent_id) != bps_set.end ())
+                continue;
             set_breakpoint (*it);
+            bps_set[parent_id] = true;
         }
         // Here we are starting (or restarting) the program and we
         // hope at least one breakpoint is going to be set; so lets
@@ -7440,11 +7491,20 @@ bool
 DBGPerspective::delete_breakpoint (const UString &a_file_name,
                                    int a_line_num)
 {
-    const IDebugger::Breakpoint *bp;
-    if ((bp = get_breakpoint (a_file_name, a_line_num)) == 0)
-        return false;
-
-    return delete_breakpoint (bp->id ());
+    bool found = false;
+    map<string, IDebugger::Breakpoint>::const_iterator iter;
+    for (iter = m_priv->breakpoints.begin ();
+         iter != m_priv->breakpoints.end ();
+         ++iter) {
+        if (((iter->second.file_full_name () == a_file_name)
+             || (Glib::path_get_basename (iter->second.file_full_name ())
+                 == Glib::path_get_basename (a_file_name)))
+            && (iter->second.line () == a_line_num)) {
+            delete_breakpoint (iter->first);
+            found = true;
+        }
+    }
+    return found;
 }
 
 bool

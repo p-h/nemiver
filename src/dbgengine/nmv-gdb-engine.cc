@@ -5160,8 +5160,16 @@ GDBEngine::delete_breakpoint (const string &a_break_num,
                               const UString &a_cookie)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    UString id, break_num(a_break_num);
+
+    // If this is a sub-breakpoint ID, then delete its parent
+    // breakpoint as GDB doesn't seem to be able to delete
+    // sub-breakpoints.
+    vector<UString> id_parts = UString(a_break_num).split(".");
+    id = id_parts.size() ? id_parts[0] : break_num;
     queue_command (Command ("delete-breakpoint",
-                            "-break-delete " + a_break_num,
+                            "-break-delete " + id,
                             a_cookie));
 }
 

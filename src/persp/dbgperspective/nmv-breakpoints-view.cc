@@ -553,9 +553,9 @@ public:
         for (Gtk::TreeModel::iterator iter = list_store->children ().begin ();
              iter != list_store->children ().end ();
              ++iter) {
-            if ((*iter)[get_bp_cols ().id] == a_break_number) {
+            IDebugger::Breakpoint bp = (*iter)[get_bp_cols ().breakpoint];
+            if (bp.parent_id () == a_break_number) {
                 iters_to_erase.push_back (iter);
-                break;
             }
         }
         list<Gtk::TreeModel::iterator>::iterator it;
