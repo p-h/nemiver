@@ -277,6 +277,8 @@ public:
         long m_thread_id;
         UString m_signal_type;
         UString m_signal_meaning;
+        bool m_has_modified_breakpoint;
+        IDebugger::Breakpoint m_modified_breakpoint;
 
     public:
 
@@ -378,23 +380,49 @@ public:
 
         bool has_signal () const {return m_signal_type != "";}
 
+        /// Getter of the "modified_breakpoint" flag.  This flag is
+        /// true if the underlying debugging engine reports that a
+        /// given breakpoint has been modified.
+        ///
+        /// @return the modified_breakpoint flag.
+        bool has_modified_breakpoint () const
+        {return m_has_modified_breakpoint;}
+
+        /// Getter of the modified breakpoint carried by this out of
+        /// band record.  What this returns is meaningful only if the
+        /// has_modified_breakpoint() member function above returns
+        /// true.
+        IDebugger::Breakpoint& modified_breakpoint ()
+        {return m_modified_breakpoint;}
+
+        /// Setter of the modified breakpoint carried by this out of
+        /// band record.
+        void modified_breakpoint (const IDebugger::Breakpoint& b)
+        {
+            m_modified_breakpoint = b;
+            m_has_modified_breakpoint = true;
+        }
+
         /// @}
 
-        void clear ()
-        {
-            m_has_stream_record = false;
-            m_stream_record.clear ();
-            m_is_stopped = false;
-            m_is_running = false;
-            m_stop_reason = IDebugger::UNDEFINED_REASON;
-            m_has_frame = false;
-            m_thread_selected = false;
-            m_frame.clear ();
-            m_breakpoint_number = 0;
-            m_thread_id = -1;
-            m_signal_type.clear ();
-        }
+	void clear ()
+	{
+	    m_has_stream_record = false;
+	    m_stream_record.clear ();
+	    m_is_stopped = false;
+	    m_is_running = false;
+	    m_stop_reason = IDebugger::UNDEFINED_REASON;
+	    m_has_frame = false;
+	    m_thread_selected = false;
+	    m_frame.clear ();
+	    m_breakpoint_number = 0;
+	    m_thread_id = -1;
+	    m_signal_type.clear ();
+	    m_has_modified_breakpoint = 0;
+	    m_modified_breakpoint.clear();
+	}
     };//end class OutOfBandRecord
+    typedef list<OutOfBandRecord> OutOfBandRecords;
 
     /// \debugger result record
     ///

@@ -1494,10 +1494,93 @@ struct OnBreakpointHandler: OutputHandler {
         return false;
     }
 
-    bool can_handle (CommandAndOutput &a_in)
+    /// \return true if the output has an out of band containing a
+    /// breakpoint-modified async output, and if so, set an iterator
+    /// over the out of band record that contains the first modified
+    /// breakpoint.
+    ///
+    /// \param a_in the debugging command sent and its output.
+    ///
+    /// \param b_ib out parameter.  Set to the out of band record that
+    /// contains the modified breakpoint, iff the function returned
+    /// true.
+    bool
+    has_modified_breakpoint (CommandAndOutput &a_in,
+                             Output::OutOfBandRecords::iterator &b_i) const
+    {
+        for (Output::OutOfBandRecords::iterator i =
+                 a_in.output ().out_of_band_records ().begin ();
+             i != a_in.output ().out_of_band_records ().end ();
+             ++i) {
+            if (i->has_modified_breakpoint ()) {
+                b_i = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// \param a_in command sent and its output.
+    ///
+    /// \return true if there is an out of band record that contains a
+    /// modified breakpoint.
+    bool
+    has_modified_breakpoint (CommandAndOutput &a_in) const
+    {
+        Output::OutOfBandRecords::iterator i;
+        return has_modified_breakpoint (a_in, i);
+    }
+
+    /// Look if we have a breakpoint of a given id in the cache.  If
+    /// so, notify listeners that the breakpoint has been deleted and
+    /// delete it from the cache and return true.
+    ///
+    /// \param bp_id the id of the breakpoint to consider.
+    ///
+    /// \return true if the breakpoint has been found in the cache,
+    /// the listeners were notified about its deletion and it was
+    /// deleted from the cache.
+    bool
+    notify_breakpoint_deleted_signal (const string &bp_id)
+    {
+        map<string, IDebugger::Breakpoint>::iterator iter;
+        map<string, IDebugger::Breakpoint> &breaks =
+            m_engine->get_cached_breakpoints ();
+        iter = breaks.find (bp_id);
+        if (iter != breaks.end ()) {
+            LOG_DD ("firing IDebugger::breakpoint_deleted_signal()");
+            m_engine->breakpoint_deleted_signal ().emit (iter->second,
+                                                         iter->first,
+                                                         "");
+            breaks.erase (iter);
+            return true;
+        }
+        return false;
+    }
+
+    /// Append a breakpoint to the cache and notify the listeners that
+    /// this new breakpoint was set.
+    ///
+    /// \param b the breakpoint to add to the cache and to notify the
+    /// listeners about.
+    void
+    append_bp_to_cache_and_notify_bp_set (IDebugger::Breakpoint &b)
+    {
+        LOG_DD ("Adding bp " << b.id () << "to cache");
+        m_engine->append_breakpoint_to_cache (b);
+
+        map<string, IDebugger::Breakpoint> bps;
+        bps[b.id ()] = b;
+        LOG_DD ("Firing bp " << b.id() << " set");
+        m_engine->breakpoints_set_signal ().emit (bps, "");
+    }
+
+    bool
+    can_handle (CommandAndOutput &a_in)
     {
         if (!a_in.output ().has_result_record ()
-            && !has_overloads_prompt (a_in)) {
+            && !has_overloads_prompt (a_in)
+            && !has_modified_breakpoint (a_in)) {
             return false;
         }
         LOG_DD ("handler selected");
@@ -1532,7 +1615,30 @@ struct OnBreakpointHandler: OutputHandler {
             return;
         }
 
-        bool has_breaks = false;
+        // If there is modified breakpoint, delete its previous
+        // version from the cache, notify the listeners about its
+        // deletion, add the new version to the cache and notify the
+        // listeners about its addition.
+        {
+            Output::OutOfBandRecords::iterator i, end;
+            if (has_modified_breakpoint (a_in, i)) {
+                LOG_DD ("has modified breakpoints!");
+                end = a_in.output ().out_of_band_records ().end ();
+                for (; i != end; ++i) {
+                    if (!i->has_modified_breakpoint ())
+                        continue;
+                    IDebugger::Breakpoint &b = i->modified_breakpoint ();
+                    LOG_DD ("bp " << b.id () << ": notify deleted");
+                    notify_breakpoint_deleted_signal (b.id ());
+                    LOG_DD ("bp "
+                            << b.id ()
+                            << ": add to cache and notify set");
+                    append_bp_to_cache_and_notify_bp_set (b);
+                }
+            }
+        }
+
+        bool has_breaks_set = false;
         //if breakpoint where set, put them in cache !
         if (has_breakpoints_set (a_in)) {
             LOG_DD ("adding BPs to cache");
@@ -1546,10 +1652,10 @@ struct OnBreakpointHandler: OutputHandler {
                      breakpoints ().begin ()->second.id (),
                      true);
             }
-            has_breaks = true;
+            has_breaks_set = true;
         }
 
-        if (has_breaks
+        if (has_breaks_set
             && (a_in.command ().name () == "set-breakpoint"
                 || a_in.command ().name () == "set-countpoint")) {
             // We are getting this reply b/c we did set a breakpoint;
@@ -1575,7 +1681,6 @@ struct OnBreakpointHandler: OutputHandler {
             == Output::ResultRecord::DONE
             && a_in.command ().value ().find ("-break-delete")
             != Glib::ustring::npos) {
-
             LOG_DD ("detected break-delete");
             UString tmp = a_in.command ().value ();
             tmp = tmp.erase (0, 13);
@@ -1583,23 +1688,14 @@ struct OnBreakpointHandler: OutputHandler {
             tmp.chomp ();
             string bkpt_number = tmp;
             if (!bkpt_number.empty ()) {
-                map<string, IDebugger::Breakpoint>::iterator iter;
-                map<string, IDebugger::Breakpoint> &breaks =
-                                        m_engine->get_cached_breakpoints ();
-                iter = breaks.find (bkpt_number);
-                if (iter != breaks.end ()) {
-                    LOG_DD ("firing IDebugger::breakpoint_deleted_signal()");
-                    m_engine->breakpoint_deleted_signal ().emit
-                    (iter->second, iter->first, a_in.command ().cookie ());
-                    breaks.erase (iter);
-                }
+                notify_breakpoint_deleted_signal (bkpt_number);
                 m_engine->set_state (IDebugger::READY);
             } else {
                 LOG_ERROR ("Got deleted breakpoint number '"
                            << tmp
                            << "', but that's not a well formed number, dude.");
             }
-        } else if (has_breaks) {
+        } else if (has_breaks_set) {
             LOG_DD ("firing IDebugger::breakpoints_list_signal(), after command: "
                     << a_in.command ().name ());
             m_engine->breakpoints_list_signal ().emit

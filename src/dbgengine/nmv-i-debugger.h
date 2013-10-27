@@ -362,6 +362,7 @@ public:
         int line_number () const {return m_line_number;}
         void line_number (int a_in) {m_line_number = a_in;}
     };//end class OverloadsChoiceEntry
+    typedef vector<OverloadsChoiceEntry> OverloadsChoiceEntries;
 
     class Variable;
     typedef SafePtr<Variable, ObjectRef, ObjectUnref> VariableSafePtr;

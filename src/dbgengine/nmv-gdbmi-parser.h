@@ -533,6 +533,13 @@ public:
                                  UString::size_type &a_to,
                                  map<string, IDebugger::Breakpoint> &a_breakpoints);
 
+    /// Parse a GDB/MI async output that says that a breakpoint that
+    /// was set (e.g before the inferior is run) has changed (e.g
+    /// after the inferior started to run).
+    bool parse_breakpoint_modified_async_output (UString::size_type a_from,
+                                                 UString::size_type &a_to,
+                                                 IDebugger::Breakpoint &a_b);
+
     /// parses the result of the gdbmi command
     /// "-thread-list-ids".
     bool parse_threads_list (UString::size_type a_from,

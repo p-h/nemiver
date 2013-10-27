@@ -54,11 +54,19 @@ LOG_ERROR ("parsing failed for buf: >>>" \
              << ", reason: " << msg); \
 } while (0)
 
-#define CHECK_END(a_current) \
-if ((a_current) >= (m_priv->end)) {\
-LOG_ERROR ("hit end index " << (int) m_priv->end); \
-return false;\
+#define END_OF_INPUT(cur) m_priv->index_passed_end (cur)
+
+#define CHECK_END(a_current)                                \
+    if (END_OF_INPUT (a_current)) {                         \
+        LOG_ERROR ("hit end index " << (int) m_priv->end);  \
+        return false;                                       \
 }
+
+#define PARSING_ERROR_IF_END(cur)                           \
+    if (END_OF_INPUT (cur)) {                               \
+        LOG_PARSING_ERROR (cur);                            \
+        return false;                                       \
+    }
 
 #define SKIP_WS(a_from) \
 while (!m_priv->index_passed_end (a_from)  \
@@ -73,8 +81,6 @@ while (!m_priv->index_passed_end (a_from)  \
 #define UCHAR_AT(cur) m_priv->m_priv->input (cur)
 
 #define RAW_INPUT m_priv->input.raw ()
-
-#define END_OF_INPUT(cur) m_priv->index_passed_end (cur)
 
 using namespace std;
 using namespace nemiver::common;
@@ -120,38 +126,39 @@ GDBMITuple::clear ()
 // *******************************
 
 // prefixes of command output records.
-const char* PREFIX_DONE = "^done";
-const char* PREFIX_RUNNING = "^running";
-const char* PREFIX_EXIT = "^exit";
-const char* PREFIX_CONNECTED = "^connected";
-const char* PREFIX_ERROR = "^error";
-const char* PREFIX_BKPT = "bkpt={";
-const char* PREFIX_BREAKPOINT_TABLE = "BreakpointTable={";
-const char* PREFIX_THREAD_IDS = "thread-ids={";
-const char* PREFIX_NEW_THREAD_ID = "new-thread-id=\"";
-const char* PREFIX_FILES = "files=[";
-const char* PREFIX_STACK = "stack=[";
-const char* PREFIX_FRAME = "frame={";
-const char* PREFIX_DEPTH = "depth=\"";
-const char* PREFIX_STACK_ARGS = "stack-args=[";
-const char* PREFIX_LOCALS = "locals=[";
-const char* PREFIX_VALUE = "value=\"";
-const char* PREFIX_REGISTER_NAMES = "register-names=";
-const char* PREFIX_CHANGED_REGISTERS = "changed-registers=";
-const char* PREFIX_REGISTER_VALUES = "register-values=";
-const char* PREFIX_MEMORY_VALUES = "addr=";
-const char* PREFIX_RUNNING_ASYNC_OUTPUT = "*running,";
-const char* PREFIX_STOPPED_ASYNC_OUTPUT = "*stopped,";
-const char* PREFIX_THREAD_SELECTED_ASYNC_OUTPUT = "=thread-selected,";
-const char* PREFIX_NAME = "name=\"";
-const char* PREFIX_VARIABLE_DELETED = "ndeleted=\"";
-const char* NDELETED = "ndeleted";
-const char* PREFIX_NUMCHILD = "numchild=\"";
-const char* NUMCHILD = "numchild";
-const char* PREFIX_VARIABLES_CHANGED_LIST = "changelist=[";
-const char* CHANGELIST = "changelist";
-const char* PREFIX_PATH_EXPR = "path_expr=";
-const char* PATH_EXPR = "path_expr";
+static const char* PREFIX_DONE = "^done";
+static const char* PREFIX_RUNNING = "^running";
+static const char* PREFIX_EXIT = "^exit";
+static const char* PREFIX_CONNECTED = "^connected";
+static const char* PREFIX_ERROR = "^error";
+static const char* PREFIX_BKPT = "bkpt={";
+static const char* PREFIX_BREAKPOINT_TABLE = "BreakpointTable={";
+static const char* PREFIX_BREAKPOINT_MODIFIED_ASYNC_OUTPUT = "=breakpoint-modified,";
+static const char* PREFIX_THREAD_IDS = "thread-ids={";
+static const char* PREFIX_NEW_THREAD_ID = "new-thread-id=\"";
+static const char* PREFIX_FILES = "files=[";
+static const char* PREFIX_STACK = "stack=[";
+static const char* PREFIX_FRAME = "frame={";
+static const char* PREFIX_DEPTH = "depth=\"";
+static const char* PREFIX_STACK_ARGS = "stack-args=[";
+static const char* PREFIX_LOCALS = "locals=[";
+static const char* PREFIX_VALUE = "value=\"";
+static const char* PREFIX_REGISTER_NAMES = "register-names=";
+static const char* PREFIX_CHANGED_REGISTERS = "changed-registers=";
+static const char* PREFIX_REGISTER_VALUES = "register-values=";
+static const char* PREFIX_MEMORY_VALUES = "addr=";
+static const char* PREFIX_RUNNING_ASYNC_OUTPUT = "*running,";
+static const char* PREFIX_STOPPED_ASYNC_OUTPUT = "*stopped,";
+static const char* PREFIX_THREAD_SELECTED_ASYNC_OUTPUT = "=thread-selected,";
+static const char* PREFIX_NAME = "name=\"";
+static const char* PREFIX_VARIABLE_DELETED = "ndeleted=\"";
+static const char* NDELETED = "ndeleted";
+static const char* PREFIX_NUMCHILD = "numchild=\"";
+static const char* NUMCHILD = "numchild";
+static const char* PREFIX_VARIABLES_CHANGED_LIST = "changelist=[";
+static const char* CHANGELIST = "changelist";
+static const char* PREFIX_PATH_EXPR = "path_expr=";
+static const char* PATH_EXPR = "path_expr";
 static const char* PREFIX_ASM_INSTRUCTIONS= "asm_insns=";
 const char* PREFIX_VARIABLE_FORMAT = "format=";
 
@@ -1800,6 +1807,20 @@ GDBMIParser::parse_out_of_band_record (UString::size_type a_from,
         goto end;
     }
 
+    if (!RAW_INPUT.compare (cur,
+                            strlen (PREFIX_BREAKPOINT_MODIFIED_ASYNC_OUTPUT),
+                            PREFIX_BREAKPOINT_MODIFIED_ASYNC_OUTPUT)) {
+        IDebugger::Breakpoint bp;
+        if (!parse_breakpoint_modified_async_output (cur, cur, bp)) {
+            LOG_PARSING_ERROR_MSG (cur,
+                                   "could not parse the expected "
+                                   "breakpoint modifed async output");
+            return false;
+        }
+        record.modified_breakpoint (bp);
+        goto end;
+    }
+
     if (RAW_CHAR_AT (cur) == '=' || RAW_CHAR_AT (cur) == '*') {
        //this is an unknown async notification sent by gdb.
        //For now, the only one
@@ -2498,6 +2519,28 @@ GDBMIParser::parse_breakpoint_table (UString::size_type a_from,
     a_to = cur;
     a_breakpoints = breakpoint_table;
     return true;
+}
+
+bool
+GDBMIParser::parse_breakpoint_modified_async_output (UString::size_type a_from,
+                                                     UString::size_type &a_to,
+                                                     IDebugger::Breakpoint &a_b)
+{
+    LOG_FUNCTION_SCOPE_NORMAL_DD;
+
+    UString::size_type cur = a_from;
+
+    int prefix_len = strlen (PREFIX_BREAKPOINT_MODIFIED_ASYNC_OUTPUT);
+    if (RAW_INPUT.compare (cur, prefix_len,
+                           PREFIX_BREAKPOINT_MODIFIED_ASYNC_OUTPUT)) {
+        LOG_PARSING_ERROR (cur);
+        return false;
+    }
+
+    cur += prefix_len;
+    PARSING_ERROR_IF_END (cur);
+
+    return parse_breakpoint (cur, a_to, a_b);
 }
 
 bool
