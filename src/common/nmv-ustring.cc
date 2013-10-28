@@ -136,7 +136,7 @@ UString::is_integer () const
 
     for (UString::size_type i = 0; i < size (); ++i) {
         c = (*this)[i];
-        if (c < '0' && c > '9') {
+        if (c < '0' || c > '9') {
             return false;
         }
     }
