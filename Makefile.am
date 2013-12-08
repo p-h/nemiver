@@ -89,7 +89,7 @@ cat-announcement:
 	@echo "The home page of the Nemiver project is at"
 	@echo "http://projects.gnome.org/nemiver."
 	@echo ""
-	@echo "What's changed in this release?"
+	@echo "Who changed what in this release?"
 	@echo "================================"
 	@echo ""
 	@echo ""
