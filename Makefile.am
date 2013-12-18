@@ -87,7 +87,7 @@ cat-announcement:
 	@echo "be downloaded from: $(RELEASE_URL_BASE)"
 	@echo ""
 	@echo "The home page of the Nemiver project is at"
-	@echo "http://projects.gnome.org/nemiver."
+	@echo "https://wiki.gnome.org/Apps/Nemiver."
 	@echo ""
 	@echo "Who changed what in this release?"
 	@echo "================================"

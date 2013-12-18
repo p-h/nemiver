@@ -45,7 +45,7 @@ using namespace nemiver::common;
 
 #ifndef PACKAGE_URL
 // This is not define with autoconf < 2.64
-#define PACKAGE_URL "http://projects.gnome.org/nemiver"
+#define PACKAGE_URL "https://wiki.gnome.org/Apps/Nemiver"
 #endif
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)

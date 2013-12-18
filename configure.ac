@@ -10,7 +10,7 @@ AC_INIT([nemiver],
         [0.9.6],
         [http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver],
         [nemiver],
-        [http://projects.gnome.org/nemiver])
+        [https://wiki.gnome.org/Apps/Nemiver])
 
 AC_PREREQ([2.63])
 
