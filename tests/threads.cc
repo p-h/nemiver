@@ -28,7 +28,7 @@ thread_func (void *arg)
 {
     assert (arg != 0);
     thread_info *ti = static_cast<thread_info*> (arg);
-    __attribute__((unused)) int tid = ti->tid;
+    __attribute__((unused)) pthread_t tid = ti->tid;
     return NULL;
 }
 
