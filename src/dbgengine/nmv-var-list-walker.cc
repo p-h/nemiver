@@ -31,7 +31,7 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 struct SafePtrCmp {
     bool operator() (const IVarWalkerSafePtr l,
-                     const IVarWalkerSafePtr r)
+                     const IVarWalkerSafePtr r) const
     {
         return (l.get () < r.get ());
     }

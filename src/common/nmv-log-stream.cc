@@ -43,8 +43,10 @@
 #include "nmv-date-utils.h"
 #include "nmv-safe-ptr-utils.h"
 
-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
+#if defined(HAVE_TR1_UNORDERED_MAP)
 #include <tr1/unordered_map>
+#elif defined(HAVE_BOOST_TR1_UNORDERED_MAP_HPP)
+#include <boost/tr1/unordered_map.hpp>
 #else
 #include <ext/hash_map>
 
@@ -64,7 +66,7 @@ namespace common {
 
 using namespace std;
 
-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
+#if defined(HAVE_TR1_UNORDERED_MAP) || defined(HAVE_BOOST_TR1_UNORDERED_MAP_HPP)
 typedef std::tr1::unordered_map<std::string, bool> DomainMap;
 #else
 typedef __gnu_cxx::hash_map<std::string, bool> DomainMap;

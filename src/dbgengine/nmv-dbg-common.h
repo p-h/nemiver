@@ -27,7 +27,11 @@
 #ifndef __NMV_DBG_COMMON_H_H__
 #define __NMV_DBG_COMMON_H_H__
 #include "nmv-i-debugger.h"
+#if defined(HAVE_TR1_MEMORY)
 #include <tr1/memory>
+#elif defined(HAVE_BOOST_TR1_MEMORY_HPP)
+#include <boost/tr1/memory.hpp>
+#endif
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 

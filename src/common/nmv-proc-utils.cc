@@ -28,13 +28,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
-#if defined(_GNU_SOURCE)
+#if defined(HAVE_PTY_H)
 # include <pty.h>
-#elif defined(__FreeBSD__)
+#elif defined(HAVE_LIBUTIL_H)
 # include <sys/types.h>
 # include <sys/ioctl.h>
 # include <libutil.h>
-#elif defined(__OpenBSD__)
+#elif defined(HAVE_UTIL_H)
 #include <util.h>
 #endif
 #include <termios.h>
@@ -45,7 +45,7 @@
 #include "nmv-exception.h"
 #include "nmv-log-stream-utils.h"
 
-#if (defined(__FreeBSD__) || defined(__OpenBSD__)) && !defined(__MAX_BAUD)
+#if !defined(__MAX_BAUD)
 #define __MAX_BAUD B38400
 #endif
 

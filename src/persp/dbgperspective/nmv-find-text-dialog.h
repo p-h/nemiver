@@ -31,11 +31,9 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 
 class SourceEditor;
 class FindTextDialog;
-class ObjectRef;
-class ObjectUnref;
-template <class A, class B, class C> class SafePtr;
+using nemiver::common::SafePtr;
 
-typedef SafePtr<FindTextDialog, ObjectRef, ObjectUnref>  FindTextDialogSafePtr;
+typedef SafePtr<FindTextDialog, common::ObjectRef, common::ObjectUnref>  FindTextDialogSafePtr;
 
 class FindTextDialog : public Dialog {
     class Priv;

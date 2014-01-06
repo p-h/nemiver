@@ -24,21 +24,23 @@
  */
 #include "config.h"
 #include "nmv-terminal.h"
-#if !(defined(__FreeBSD__) || defined(__OpenBSD__))
+#if defined(HAVE_PTY_H)
 # include <pty.h>
-#else
+#elif defined (HAVE_LIBUTIL_H)
 # include <sys/types.h>
 # include <sys/ioctl.h>
 # include <termios.h>
-#if defined(__FreeBSD__)
 # include <libutil.h>
-#else
+#elif defined(HAVE_UTIL_H)
 # include <util.h>
-#endif
 #endif
 #include <unistd.h>
 #include <iostream>
+#if defined(HAVE_TR1_TUPLE)
 #include <tr1/tuple>
+#elif defined(HAVE_BOOST_TR1_TUPLE_HPP)
+#include <boost/tr1/tuple.hpp>
+#endif
 #include <gtkmm/bin.h>
 #include <gtkmm/main.h>
 #include <gtkmm/window.h>

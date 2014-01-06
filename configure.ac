@@ -270,6 +270,16 @@ if test x$GLIBMM_USES_DEPRECATED_GLIB_FUNCS = xyes; then
    AC_MSG_NOTICE(glibmm uses deprecated glib functions!)
 fi
 
+dnl Check for tr1 headers
+AC_CHECK_HEADERS([tr1/unordered_map boost/tr1/unordered_map.hpp])
+AC_CHECK_HEADERS([tr1/memory boost/tr1/memory.hpp])
+AC_CHECK_HEADERS([tr1/tuple boost/tr1/tuple.hpp])
+
+dnl Check for pty.h and its alternatives
+dnl https://www.gnu.org/software/gnulib/manual/html_node/pty_002eh.html
+AC_CHECK_HEADERS([pty.h util.h libutil.h])
+
+
 #######################################################
 #boost build system sucks no end.
 #it is damn hard to detect the version of boost

@@ -52,7 +52,7 @@ get_sequence ()
 
 struct SafePtrCmp {
     bool operator() (const IDebugger::VariableSafePtr l,
-                     const IDebugger::VariableSafePtr r)
+                     const IDebugger::VariableSafePtr r) const
     {
         return (l.get () < r.get ());
     }

@@ -25,11 +25,12 @@
 #ifndef __NMV_CPP_AST_H__
 #define __NMV_CPP_AST_H__
 
+#include "config.h"
 #include <string>
 #include <list>
-#if __GNUC__ >= 4
+#if defined(HAVE_TR1_MEMORY)
 #include <tr1/memory>
-#else
+#elif defined(HAVE_BOOST_TR1_MEMORY_HPP)
 #include <boost/tr1/memory.hpp>
 #endif
 #include "common/nmv-namespace.h"
@@ -173,6 +174,204 @@ typedef shared_ptr<TypeID> TypeIDPtr;
 bool to_string (const TypeIDPtr, string &);
 bool to_string (const UnqualifiedIDExprPtr, string &);
 UnqualifiedIDPtr create_unqualified_id (const string &);
+
+/// the base class of all expressions
+class NEMIVER_API ExprBase {
+    ExprBase (const ExprBase&);
+    ExprBase& operator= (const ExprBase&);
+    ExprBase ();
+
+public:
+    enum Kind {
+        UNDEFINED=0,
+        PRIMARY_EXPRESSION,
+        CONDITIONAL_EXPRESSION,
+        ASSIGNMENT_EXPRESION,
+        THROW_EXPRESSION,
+        UNARY_EXPRESSION,
+        CAST_EXPRESSION,
+        PM_EXPRESSION,
+        MULT_EXPR,
+        ADD_EXPR,
+        SHIFT_EXPR,
+        RELATIONAL_EXPR,
+        EQUALITY_EXPR,
+        AND_EXPR,
+        XOR_EXPR,
+        INCL_OR_EXPR,
+        LOGICAL_AND_EXPR,
+        LOGICAL_OR_EXPR,
+        COND_EXPR,
+        ASSIGNMENT_EXPR,
+        ASSIGNMENT_LIST
+    };
+
+    enum Operator {
+        OP_UNDEFINED,
+        MULT,
+        DIV,
+        MOD,
+        PLUS,
+        MINUS,
+        LT,
+        GT,
+        LT_OR_EQ,
+        GT_OR_EQ,
+        LEFT_SHIFT,
+        RIGHT_SHIFT,
+        ASSIGN,
+        MULT_EQ,
+        DIV_EQ,
+        MOD_EQ,
+        PLUS_EQ,
+        MINUS_EQ,
+        RIGHT_SHIFT_EQ,
+        LEFT_SHIFT_EQ,
+        AND_EQ,
+        XOR_EQ,
+        OR_EQ,
+        EQUALS,
+        NOT_EQUALS,
+        BIT_AND,
+        LOG_AND,
+        LOG_OR
+    };
+
+private:
+    Kind m_kind;
+
+public:
+    ExprBase (Kind a_kind) :
+        m_kind (a_kind)
+    {
+    }
+    virtual ~ExprBase () {}
+    Kind get_kind () {return m_kind;}
+    virtual bool to_string (string &) const=0;
+    static const string& operator_to_string (Operator);
+};//end class ExprBase
+typedef shared_ptr<ExprBase> ExprBasePtr;
+
+class NEMIVER_API PrimaryExpr : public ExprBase {
+    PrimaryExpr (const PrimaryExpr&);
+    PrimaryExpr& operator= (const PrimaryExpr&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        LITERAL,
+        THIS,
+        PARENTHESIZED,
+        ID_EXPR,
+    };
+
+private:
+    Kind m_kind;
+    Token m_token;
+    IDExprPtr m_id_expr;
+    ExprBasePtr m_parenthesized;
+
+public:
+    PrimaryExpr () :
+        ExprBase (PRIMARY_EXPRESSION), m_kind (UNDEFINED)
+    {}
+    PrimaryExpr (Kind k) :
+        ExprBase (PRIMARY_EXPRESSION),
+        m_kind (k)
+    {}
+    ~PrimaryExpr () {}
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind kind) {m_kind=kind;}
+    void set_token (Kind kind, const Token &token) {m_kind=kind, m_token=token;}
+    const Token& get_token () const {return m_token;}
+    void set_id_expr (IDExprPtr id_expr) {m_kind=ID_EXPR, m_id_expr=id_expr;}
+    const IDExprPtr get_id_expr () const {return m_id_expr;}
+    void set_parenthesized (ExprBasePtr expr)
+    {
+        m_kind=PARENTHESIZED, m_parenthesized=expr;
+    }
+    const ExprBasePtr get_parenthesized () const {return m_parenthesized;}
+};//end class PrimaryExpr
+typedef shared_ptr<PrimaryExpr> PrimaryExprPtr;
+
+class NEMIVER_API IDExpr : public PrimaryExpr {
+    IDExpr (const IDExpr&);
+    IDExpr& operator= (const IDExpr&);
+    IDExpr ();
+
+public:
+    enum Kind {
+        UNDEFINED,
+        QUALIFIED,
+        UNQUALIFIED
+    };
+
+private:
+    Kind m_kind;
+
+public:
+    IDExpr (Kind kind) :
+        PrimaryExpr (ID_EXPR),
+        m_kind (kind)
+    {
+    }
+    ~IDExpr ();
+    Kind get_kind () const {return m_kind;}
+};//end class ExprBase
+
+class NEMIVER_API UnqualifiedIDExpr : public IDExpr {
+    UnqualifiedIDExpr (const UnqualifiedIDExpr&);
+    UnqualifiedIDExpr& operator= (const UnqualifiedIDExpr&);
+
+public:
+    enum Kind {
+        UNDEFINED,
+        IDENTIFIER,
+        OP_FUNC_ID,
+        CONV_FUNC_ID, //TODO:not supported yet
+        DESTRUCTOR_ID,
+        TEMPLATE_ID
+    };
+
+private:
+    Kind m_kind;
+
+public:
+    UnqualifiedIDExpr () :
+        IDExpr (UNQUALIFIED),
+        m_kind (UNDEFINED)
+    {
+    }
+
+    UnqualifiedIDExpr (Kind kind) :
+        IDExpr (UNQUALIFIED),
+        m_kind (kind)
+
+    {
+    }
+    Kind get_kind () const {return m_kind;}
+    void set_kind (Kind kind) {m_kind=kind;}
+    virtual ~UnqualifiedIDExpr () {}
+    virtual bool to_string (string &) const=0;
+};//end class UnqualifiedIDExpr
+
+class NEMIVER_API UnqualifiedID : public UnqualifiedIDExpr {
+    string m_name;
+
+public:
+    UnqualifiedID ():
+        UnqualifiedIDExpr (UnqualifiedIDExpr::IDENTIFIER)
+    {}
+    UnqualifiedID (const string &a_s):
+        UnqualifiedIDExpr (UnqualifiedIDExpr::IDENTIFIER),
+        m_name (a_s)
+    {}
+    ~UnqualifiedID ()
+    {}
+    const string& get_name () const {return m_name;}
+    void set_name (const string &a_n) {m_name=a_n;}
+    bool to_string (string &a_s) const;
+};
 
 /// \brief Qualified Name.
 ///
@@ -432,127 +631,8 @@ public:
 };//end SimpleDeclaration
 typedef shared_ptr<SimpleDeclaration> SimpleDeclarationPtr;
 
-/// the base class of all expressions
-class NEMIVER_API ExprBase {
-    ExprBase (const ExprBase&);
-    ExprBase& operator= (const ExprBase&);
-    ExprBase ();
-
-public:
-    enum Kind {
-        UNDEFINED=0,
-        PRIMARY_EXPRESSION,
-        CONDITIONAL_EXPRESSION,
-        ASSIGNMENT_EXPRESION,
-        THROW_EXPRESSION,
-        UNARY_EXPRESSION,
-        CAST_EXPRESSION,
-        PM_EXPRESSION,
-        MULT_EXPR,
-        ADD_EXPR,
-        SHIFT_EXPR,
-        RELATIONAL_EXPR,
-        EQUALITY_EXPR,
-        AND_EXPR,
-        XOR_EXPR,
-        INCL_OR_EXPR,
-        LOGICAL_AND_EXPR,
-        LOGICAL_OR_EXPR,
-        COND_EXPR,
-        ASSIGNMENT_EXPR,
-        ASSIGNMENT_LIST
-    };
-
-    enum Operator {
-        OP_UNDEFINED,
-        MULT,
-        DIV,
-        MOD,
-        PLUS,
-        MINUS,
-        LT,
-        GT,
-        LT_OR_EQ,
-        GT_OR_EQ,
-        LEFT_SHIFT,
-        RIGHT_SHIFT,
-        ASSIGN,
-        MULT_EQ,
-        DIV_EQ,
-        MOD_EQ,
-        PLUS_EQ,
-        MINUS_EQ,
-        RIGHT_SHIFT_EQ,
-        LEFT_SHIFT_EQ,
-        AND_EQ,
-        XOR_EQ,
-        OR_EQ,
-        EQUALS,
-        NOT_EQUALS,
-        BIT_AND,
-        LOG_AND,
-        LOG_OR
-    };
-
-private:
-    Kind m_kind;
-
-public:
-    ExprBase (Kind a_kind) :
-        m_kind (a_kind)
-    {
-    }
-    virtual ~ExprBase () {}
-    Kind get_kind () {return m_kind;}
-    virtual bool to_string (string &) const=0;
-    static const string& operator_to_string (Operator);
-};//end class ExprBase
-typedef shared_ptr<ExprBase> ExprBasePtr;
-
 class Expr;
 typedef shared_ptr<Expr> ExprPtr;
-
-class NEMIVER_API PrimaryExpr : public ExprBase {
-    PrimaryExpr (const PrimaryExpr&);
-    PrimaryExpr& operator= (const PrimaryExpr&);
-
-public:
-    enum Kind {
-        UNDEFINED,
-        LITERAL,
-        THIS,
-        PARENTHESIZED,
-        ID_EXPR,
-    };
-
-private:
-    Kind m_kind;
-    Token m_token;
-    IDExprPtr m_id_expr;
-    ExprBasePtr m_parenthesized;
-
-public:
-    PrimaryExpr () :
-        ExprBase (PRIMARY_EXPRESSION), m_kind (UNDEFINED)
-    {}
-    PrimaryExpr (Kind k) :
-        ExprBase (PRIMARY_EXPRESSION),
-        m_kind (k)
-    {}
-    ~PrimaryExpr () {}
-    Kind get_kind () const {return m_kind;}
-    void set_kind (Kind kind) {m_kind=kind;}
-    void set_token (Kind kind, const Token &token) {m_kind=kind, m_token=token;}
-    const Token& get_token () const {return m_token;}
-    void set_id_expr (IDExprPtr id_expr) {m_kind=ID_EXPR, m_id_expr=id_expr;}
-    const IDExprPtr get_id_expr () const {return m_id_expr;}
-    void set_parenthesized (ExprBasePtr expr)
-    {
-        m_kind=PARENTHESIZED, m_parenthesized=expr;
-    }
-    const ExprBasePtr get_parenthesized () const {return m_parenthesized;}
-};//end class PrimaryExpr
-typedef shared_ptr<PrimaryExpr> PrimaryExprPtr;
 
 class NEMIVER_API LiteralPrimaryExpr : public PrimaryExpr {
     LiteralPrimaryExpr (const LiteralPrimaryExpr&);
@@ -686,85 +766,6 @@ public:
         return true;
     }
 };//end class TemplateID
-
-class NEMIVER_API IDExpr : public PrimaryExpr {
-    IDExpr (const IDExpr&);
-    IDExpr& operator= (const IDExpr&);
-    IDExpr ();
-
-public:
-    enum Kind {
-        UNDEFINED,
-        QUALIFIED,
-        UNQUALIFIED
-    };
-
-private:
-    Kind m_kind;
-
-public:
-    IDExpr (Kind kind) :
-        PrimaryExpr (ID_EXPR),
-        m_kind (kind)
-    {
-    }
-    ~IDExpr ();
-    Kind get_kind () const {return m_kind;}
-};//end class ExprBase
-
-class NEMIVER_API UnqualifiedIDExpr : public IDExpr {
-    UnqualifiedIDExpr (const UnqualifiedIDExpr&);
-    UnqualifiedIDExpr& operator= (const UnqualifiedIDExpr&);
-
-public:
-    enum Kind {
-        UNDEFINED,
-        IDENTIFIER,
-        OP_FUNC_ID,
-        CONV_FUNC_ID, //TODO:not supported yet
-        DESTRUCTOR_ID,
-        TEMPLATE_ID
-    };
-
-private:
-    Kind m_kind;
-
-public:
-    UnqualifiedIDExpr () :
-        IDExpr (UNQUALIFIED),
-        m_kind (UNDEFINED)
-    {
-    }
-
-    UnqualifiedIDExpr (Kind kind) :
-        IDExpr (UNQUALIFIED),
-        m_kind (kind)
-
-    {
-    }
-    Kind get_kind () const {return m_kind;}
-    void set_kind (Kind kind) {m_kind=kind;}
-    virtual ~UnqualifiedIDExpr () {}
-    virtual bool to_string (string &) const=0;
-};//end class UnqualifiedIDExpr
-
-class NEMIVER_API UnqualifiedID : public UnqualifiedIDExpr {
-    string m_name;
-
-public:
-    UnqualifiedID ():
-        UnqualifiedIDExpr (UnqualifiedIDExpr::IDENTIFIER)
-    {}
-    UnqualifiedID (const string &a_s):
-        UnqualifiedIDExpr (UnqualifiedIDExpr::IDENTIFIER),
-        m_name (a_s)
-    {}
-    ~UnqualifiedID ()
-    {}
-    const string& get_name () const {return m_name;}
-    void set_name (const string &a_n) {m_name=a_n;}
-    bool to_string (string &a_s) const;
-};
 
 class UnqualifiedOpFuncID : public UnqualifiedIDExpr {
     UnqualifiedOpFuncID (const UnqualifiedOpFuncID&);
