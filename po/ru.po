@@ -38,7 +38,7 @@ msgstr "Отлаживаемые приложения"
 
 #: ../data/nemiver.desktop.in.h:5
 msgid "gdb;disassembler;debugger;c;c++;"
-msgstr "gdb;дизассемблер;отладчик;c;c++"
+msgstr "gdb;дизассемблер;отладчик;c;c++;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
