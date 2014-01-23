@@ -19,8 +19,7 @@
  *You should have received a copy of the
  *GNU General Public License along with Nemiver;
  *see the file COPYING.
- *If not, write to the Free Software Foundation,
- *Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *If not, see <http://www.gnu.org/licenses/>.
  *
  *See COPYRIGHT file copyright information.
  */
