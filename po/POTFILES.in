@@ -1,3 +1,4 @@
+data/nemiver.appdata.xml.in
 data/nemiver.desktop.in
 src/main.cc
 src/persp/dbgperspective/nmv-breakpoints-view.cc
