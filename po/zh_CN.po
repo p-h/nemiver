@@ -1,7 +1,7 @@
 # Chinese (China) translation for nemiver.
 # Copyright (C) 2010 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nemiver package.
-# Wylmer Wang <wantinghard@gmail.com>, 2010, 2013.
+# Wylmer Wang <wantinghard@gmail.com>, 2010, 2013, 2014.
 # lainme <lainme993@gmail.com>, 2010, 2012.
 # Lele Long <schemacs@gmail.com>, 2011.
 # YunQiang Su <wzssyqa@gmail.com>, 2011.
@@ -11,9 +11,9 @@ msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-10-27 15:56+0000\n"
-"PO-Revision-Date: 2014-01-18 10:35+0800\n"
-"Last-Translator: 甘露(Gan Lu) <rhythm.gan@gmail.com>\n"
+"POT-Creation-Date: 2014-02-14 13:41+0000\n"
+"PO-Revision-Date: 2014-02-20 17:20+0800\n"
+"Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 1.5.7\n"
+
+#: ../data/nemiver.appdata.xml.in.h:1
+msgid ""
+"Nemiver is an on-going effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr "Nemiver 是一款正在开发的，与 GNOME 桌面环境良好集成的独立图形化调试工具。"
+"它当前使用为人熟知的 GNU 调试器 gdb 为后端来调试 C / C++ 程序。"
+
+#: ../data/nemiver.appdata.xml.in.h:2
+msgid ""
+"We believe that Nemiver is mature and robust enough to just let you debug "
+"your favorite C or C++ application in a pleasant way."
+msgstr "我们相信，Nemiver 已经足够成熟，您可以用它轻松的调试自己喜欢的 C 或 C++ 应用程序了。"
 
 #: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
