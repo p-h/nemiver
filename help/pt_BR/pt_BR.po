@@ -1,29 +1,32 @@
 # Brazilian Portuguese Translation of Nemiver manual.
-# Copyright (C) 2013 Nemiver's copyright holder.
+# Copyright (C) 2014 Nemiver's copyright holder.
 # This file is distributed under the same license as the nemiver package.
 # Enrico Nicoletto <liverig@gmail.com>, 2013.
+# Rafael Ferreira <rafael.f.f1@gmail.com>, 2013, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver manual\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-09-12 11:16+0000\n"
-"PO-Revision-Date: 2013-09-13 15:31-0300\n"
-"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
+"POT-Creation-Date: 2014-01-18 13:40+0000\n"
+"PO-Revision-Date: 2014-03-19 11:18-0300\n"
+"Last-Translator: Rafael Ferreira <rafael.f.f1@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.6.4\n"
 "X-Project-Style: gnome\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
-msgstr "Enrico Nicoletto <liverig@gmail.com>, 2013."
+msgstr ""
+"Enrico Nicoletto <liverig@gmail.com>, 2013\n"
+"Rafael Ferreira <rafael.f.f1@gmail.com>, 2013, 2014"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -35,7 +38,7 @@ msgctxt "_"
 msgid ""
 "external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
 msgstr ""
-"external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
+"external ref='figures/main-window.png' md5='002ab499cae23049c2f9a0eb1d62c97b'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -49,7 +52,7 @@ msgid ""
 "md5='450a45378b4021176c8f093be2dedc97'"
 msgstr ""
 "external ref='figures/execute-dialog.png' "
-"md5='450a45378b4021176c8f093be2dedc97'"
+"md5='09177931713ebecef7fdb43171873ac8'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -77,7 +80,7 @@ msgid ""
 "md5='2a3dd09883a026826d0a7036991720a4'"
 msgstr ""
 "external ref='figures/load-core-dialog.png' "
-"md5='2a3dd09883a026826d0a7036991720a4'"
+"md5='3a5d239270808beb1c3ba7339a4ec91e'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -91,7 +94,7 @@ msgid ""
 "md5='0f47f358e68947aaf1330fb1c1013f72'"
 msgstr ""
 "external ref='figures/connect-remote-dialog.png' "
-"md5='0f47f358e68947aaf1330fb1c1013f72'"
+"md5='50c667690ff90fc3b56c71f7641b3c81'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -99,6 +102,7 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:593
+#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/variable-inspector.png' "
@@ -119,7 +123,7 @@ msgid ""
 "md5='b3224457732491046fbcea9491df2383'"
 msgstr ""
 "external ref='figures/global-variables-dialog.png' "
-"md5='b3224457732491046fbcea9491df2383'"
+"md5='98eb6143e31fa1719014b4e97971f06c'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -133,7 +137,7 @@ msgid ""
 "md5='86618670e2f62026adeb38ae033ec38d'"
 msgstr ""
 "external ref='figures/set-breakpoint-dialog.png' "
-"md5='86618670e2f62026adeb38ae033ec38d'"
+"md5='02ee392091b586c87b054fa993d2f80a'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -169,6 +173,7 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:739
+#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/open-files-target.png' "
@@ -183,6 +188,7 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:777
+#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/registers-view.png' "
@@ -197,6 +203,7 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:802
+#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
@@ -209,6 +216,7 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:863
+#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/sessions-dialog.png' "
@@ -220,7 +228,7 @@ msgstr ""
 #. (itstool) path: articleinfo/title
 #: C/index.docbook:24
 msgid "Nemiver Manual"
-msgstr "Nemiver Manual"
+msgstr "Manual do Nemiver"
 
 #. (itstool) path: articleinfo/copyright
 #: C/index.docbook:25
@@ -230,7 +238,7 @@ msgstr "<year>2008</year> <holder>Jonathon Jongsma</holder>"
 #. (itstool) path: publisher/publishername
 #: C/index.docbook:38
 msgid "Nemiver Project"
-msgstr "Nemiver Project"
+msgstr "Projeto Nemiver"
 
 #. (itstool) path: authorgroup/author
 #: C/index.docbook:42
@@ -269,7 +277,7 @@ msgstr "Este manual descreve a versão 0.5.0 do Nemiver."
 #. (itstool) path: legalnotice/title
 #: C/index.docbook:85
 msgid "Feedback"
-msgstr ""
+msgstr "Comentários (Feedback)"
 
 #. (itstool) path: legalnotice/para
 #: C/index.docbook:86
@@ -278,6 +286,10 @@ msgid ""
 "application> application or this manual, see the <ulink url=\"http://www."
 "gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
 msgstr ""
+"Para relatar um erro ou fazer uma sugestão sobre o aplicativo "
+"<application>Nemiver</application> ou este manual, veja o <ulink url="
+"\"http://www.gnome.org/projects/nemiver/\" type=\"http\">site do Projeto "
+"Nemiver</ulink>."
 
 #. (itstool) path: abstract/para
 #: C/index.docbook:94
@@ -312,6 +324,10 @@ msgid ""
 "integrates well in the GNOME desktop environment. It currently features a "
 "backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
 msgstr ""
+"Nemiver é um esforço contínuo para escrever um depurador gráfico autônomo "
+"que se integra bem ao ambiente de área de trabalho do GNOME. Atualmente, ele "
+"conta com um backend que usa o tão conhecido depurador GNU gdb para depurar "
+"programas em C / C++."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:119
@@ -328,6 +344,12 @@ msgid ""
 "<application>valgrind</application>, or for profiling tools such as "
 "<application>oprofile</application>."
 msgstr ""
+"Nemiver foi projetado como um <interface>workbench</interface> gráfico "
+"genérico e um sistema de plug-ins que pode oferecer diversas perspectivas "
+"diferentes. Atualmente, a única perspectiva fornecida é a de um depurador, "
+"mas no futuro, podem haver perspectivas adicionadas para depuração de "
+"memória com o <application>valgrind</application> ou  por ferramentas de "
+"perfilamento, tal como <application>oprofile</application>."
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:132
@@ -376,6 +398,7 @@ msgstr "Linha de comando"
 #: C/index.docbook:154
 msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
 msgstr ""
+"Digite <command>nemiver</command> e, então, pressione <keycap>Enter</keycap>."
 
 #. (itstool) path: tip/title
 #: C/index.docbook:159
@@ -388,6 +411,8 @@ msgid ""
 "You can find a list of options that can be passed to Nemiver on the command "
 "line by typing <command>nemiver --help-all</command>."
 msgstr ""
+"Você pode encontrar uma lista de opções que podem ser passadas ao Nemiver na "
+"linha de comando digitando <command>nemiver --help-all</command>."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:170
@@ -400,6 +425,8 @@ msgid ""
 "When you start Nemiver, you will see a window that looks very much like the "
 "following:"
 msgstr ""
+"Quando você iniciar o Nemiver, você verá uma janela que se parece muito com "
+"o seguinte:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:176
@@ -413,6 +440,9 @@ msgid ""
 "> </imageobject> <textobject> <phrase>Shows Nemiver main window.</phrase> </"
 "textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Mostra a janela principal do Nemiver.</"
+"phrase> </textobject>"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:188
@@ -420,6 +450,8 @@ msgid ""
 "The <application>Nemiver</application> window contains the following "
 "elements:"
 msgstr ""
+"A janela do <application>Nemiver</application> contém os seguintes "
+"componentes:"
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:194
@@ -432,6 +464,8 @@ msgid ""
 "The menus on the menubar contain all of the commands you need to use "
 "<application>Nemiver</application>."
 msgstr ""
+"Os menus na barra de menus contém todos os comandos que você precisa usar "
+"<application>Nemiver</application>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:203
@@ -444,12 +478,13 @@ msgid ""
 "The toolbar contains the basic debugging actions that can be used to run or "
 "step through the program being debugged."
 msgstr ""
+"A barra de ferramentas contém as ações de depuração básica que podem ser "
+"usadas para executar ou passar pelo programa sendo depurado."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:212
-#, fuzzy
 msgid "Source View Notebook"
-msgstr "Lista compacta"
+msgstr "Bloco de visão de fontes"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:214
@@ -457,12 +492,13 @@ msgid ""
 "When source files are open, this area will display source files of the "
 "program being debugged."
 msgstr ""
+"Quando os arquivos fontes estão abertos, esta área vai mostrar arquivos "
+"fontes do programa sendo depurados."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:221
-#, fuzzy
 msgid "Status Notebook"
-msgstr "Definir estado"
+msgstr "Bloco de status"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:223
@@ -470,6 +506,8 @@ msgid ""
 "The Status notebook contains several tabs for displaying information about "
 "the program being debugged. These include the following:"
 msgstr ""
+"O bloco de status contém diversas abas que exibem informações sobre o "
+"programa sendo depurado. Essas incluem o seguinte:"
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:230
@@ -480,7 +518,7 @@ msgstr "Pilha de chamadas"
 #: C/index.docbook:234
 msgid ""
 "Displays the current state of the call stack of the program being debugged."
-msgstr ""
+msgstr "Mostra o estado atual da pilha de chamadas do programa sendo depurado."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:241
@@ -493,6 +531,8 @@ msgid ""
 "Displays a list of all local variables and function arguments, in addition "
 "to their values and types."
 msgstr ""
+"Mostra uma lista de todos argumentos de função e variáveis locais, além de "
+"seus valores e tipos."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:252
@@ -505,6 +545,8 @@ msgid ""
 "If the program being debugged prints any output to the terminal, it will be "
 "displayed in this tab."
 msgstr ""
+"Se o programa sendo depurado imprime qualquer saída para o terminal, ela "
+"será exibida nesta aba."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:263
@@ -521,6 +563,14 @@ msgid ""
 "can be deleted, enabled, or disabled in this tab. For more information about "
 "breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
 msgstr ""
+"Esta aba exibe uma lista de todos os pontos de interrupção que foram "
+"definidos. Você pode ver o código fonte de um ponto de interrupção "
+"específico realizando clique-duplo em um item na lista ou clicando com botão "
+"direito do mouse e selecionando <menuchoice><guimenuitem>Ir para o fonte</"
+"guimenuitem></menuchoice> do menu. Além disso, pontos de interrupção podem "
+"ser excluídos, habilitados ou desabilitados nesta aba. Para mais informações "
+"sobre pontos de interrupção, veja <xref linkend=\"nemiver-sect-breakpoints\"/"
+">."
 
 #. (itstool) path: varlistentry/term
 #. (itstool) path: sect3/title
@@ -534,6 +584,8 @@ msgid ""
 "This tab displays all of the CPU registers and their values. For more "
 "information, see <xref linkend=\"nemiver-sect-registers\"/>."
 msgstr ""
+"Esta aba mostra todos os registradores de CPU e seus valores. Para mais "
+"informações, veja <xref linkend=\"nemiver-sect-registers\"/>."
 
 #. (itstool) path: varlistentry/term
 #. (itstool) path: sect3/title
@@ -547,6 +599,9 @@ msgid ""
 "This tab displays a view of the current state of a specific memory location. "
 "For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
 msgstr ""
+"Esta aba mostra uma visão do estado atual de uma localização de memória "
+"específica. Para mais informações, veja <xref linkend=\"nemiver-sect-memory"
+"\"/>."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:307
@@ -560,6 +615,9 @@ msgid ""
 "load a local executable file, load a core file, attach to a running process, "
 "or connect to a remote debugging server."
 msgstr ""
+"Há várias formas de iniciar a depuração de um programa. Nemiver permite que "
+"você carregue um arquivo executável local, carregue um arquivo central, "
+"anexe a um processo em execução ou conecte a um servidor de depuração remoto."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:313
@@ -570,9 +628,8 @@ msgstr "Depurando um programa em execução"
 #. (itstool) path: sect3/title
 #: C/index.docbook:315 C/index.docbook:380 C/index.docbook:425
 #: C/index.docbook:462 C/index.docbook:852
-#, fuzzy
 msgid "Using the Workbench"
-msgstr "Usar clasificaciones"
+msgstr "Usando o workbench"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:316
@@ -581,6 +638,9 @@ msgid ""
 "</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
 "display the following dialog:"
 msgstr ""
+"Para selecionar um programa executável para depurar, selecione "
+"<menuchoice><guimenu> Arquivo </guimenu><guimenuitem> Executar... </"
+"guimenuitem></menuchoice>, o qual deveria exibir o seguinte diálogo:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:325
@@ -594,6 +654,9 @@ msgid ""
 "\"/> </imageobject> <textobject> <phrase>Shows dialog for selecting an "
 "executable to run</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Mostra o diálogo para seleção de um "
+"executável para depurar</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:337
@@ -603,6 +666,11 @@ msgid ""
 "directory to run the executable in, and any Environment Variables that "
 "should be set when the executable is being debugged."
 msgstr ""
+"Neste diálogo, você pode selecionar o programa para ser depurado, quaisquer "
+"argumentos ou opções para serem passadas para o executável na linha de "
+"comando, o diretório de trabalho para executar o executável e quaisquer "
+"variáveis de ambiente que deveriam ser definidas qualquer o executável está "
+"sendo depurado."
 
 #. (itstool) path: sect4/title
 #: C/index.docbook:345 C/index.docbook:411 C/index.docbook:450
@@ -619,22 +687,26 @@ msgid ""
 "the executable. For example, if <filename>/usr/bin</filename> is in your "
 "path, both of the following are valid:"
 msgstr ""
+"Para iniciar uma programa executável para depuração a partir da linha de "
+"comando, basta especificar o nome do executável. Você pode tanto fornecer um "
+"caminho absoluto para o executável quanto, se ele está no caminho, você pode "
+"simplesmente fornecer o nome base do executável. Por exemplo, se <filename>/"
+"usr/bin</filename> está no seu caminho, ambas opções abaixo são válidas:"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:356
 msgid "<command>nemiver /usr/bin/progname</command>"
-msgstr ""
+msgstr "<command>nemiver /usr/bin/nome-do-programa</command>"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:361
-#, fuzzy
 msgid "<command>nemiver progname</command>"
-msgstr "Disposição por omissão do Nemiver"
+msgstr "<command>nemiver nome-do-programa</command>"
 
 #. (itstool) path: tip/title
 #: C/index.docbook:367
 msgid "Passing Options on the Command Line"
-msgstr ""
+msgstr "Passando opções na linha de comando"
 
 #. (itstool) path: tip/para
 #: C/index.docbook:368
@@ -643,6 +715,10 @@ msgid ""
 "debugging, you should enclose them in quotes to prevent Nemiver from "
 "processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
 msgstr ""
+"Se você deseja passar opções na linha de comando para o programa que você "
+"está depurando, você deveria colocar aspas em volta dessas opções para "
+"evitar do Nemiver processá-las: <command>nemiver \"prognam --arg1 --arg2\"</"
+"command>."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:378
@@ -656,6 +732,9 @@ msgid ""
 "Attach to Running Program... </guimenuitem></menuchoice>, which should "
 "display the following dialog:"
 msgstr ""
+"Selecione o item de <menuchoice><guimenu> File </guimenu><guimenuitem> "
+"Anexar ao programa em execução... </guimenuitem></menuchoice>, que deveria "
+"exibir o seguinte diálogo:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:390
@@ -669,6 +748,9 @@ msgid ""
 "\"/> </imageobject> <textobject> <phrase>Shows dialog for attaching to a "
 "running program</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Mostra diálogo para anexar a um "
+"programa em execução</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:402
@@ -679,6 +761,11 @@ msgid ""
 "interested in by typing some text into the text entry located just below the "
 "list."
 msgstr ""
+"Selecione um processo da lista e clique no <guibutton>OK</guibutton> para "
+"começar a depuração do programa selecionado. Podem haver muitos processos "
+"listados no diálogo. Então, você pode filtrar a lista por apenas aqueles que "
+"você tem interesse digitando algum texto na caixa de texto localizada logo "
+"abaixo da lista."
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:412
@@ -690,12 +777,17 @@ msgid ""
 "<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
 "command>."
 msgstr ""
+"Para anexar a um programa em execução a partir da linha de comando, use a "
+"opção <option>--attach</option>. A opção <option>--attach</option> aceita "
+"tanto um PID quanto um nome de processo. Então, por exemplo, para depurar o "
+"processo em execução <command>foo</command> que possui um PID de 1121, você "
+"poderia tanto digitar <command>nemiver --attach foo</command> ou "
+"<command>nemiver --attach 1121</command>."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:423
-#, fuzzy
 msgid "Loading a Core File"
-msgstr "Ler um ficheiro core"
+msgstr "Carregando um arquivo core"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:426
@@ -704,12 +796,15 @@ msgid ""
 "Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
 "which will let you load a core file:"
 msgstr ""
+"Selecione o item de menu <menuchoice><guimenu> Arquivo </"
+"guimenu><guimenuitem> Carregar um arquivo core... </guimenuitem></"
+"menuchoice> para trazer o diálogo a seguir, o qual permitirá você carregar "
+"um arquivo core:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:436
-#, fuzzy
 msgid "Load Core File Dialog"
-msgstr "Ler um ficheiro core do disco"
+msgstr "Diálogo para carregar um arquivo core"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:438
@@ -718,11 +813,14 @@ msgid ""
 "\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for loading a "
 "core file</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Mostra diálogo para carregar "
+"um arquivo core</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:451
 msgid "Core files cannot be loaded from the command line."
-msgstr ""
+msgstr "Arquivos core não podem ser carregados a partir da linha de comando."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:457
@@ -732,7 +830,7 @@ msgstr "Depuração remota"
 #. (itstool) path: sect3/para
 #: C/index.docbook:458
 msgid "Nemiver allows you to connect to a remote debugging server."
-msgstr ""
+msgstr "Nemiver permite que você se conecte a um servidor de depuração remoto"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:463
@@ -740,6 +838,9 @@ msgid ""
 "To connect to a remote debugging server, select <menuchoice><guimenu>File</"
 "guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
 msgstr ""
+"Para conectar a um servidor de depuração remoto, selecione "
+"<menuchoice><guimenu>Arquivo</guimenu><guimenuitem>Conectar a um destino "
+"remoto...</guimenuitem></menuchoice>"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:469
@@ -748,6 +849,9 @@ msgid ""
 "format=\"PNG\"/> </imageobject> <textobject> <phrase>Remote Debugging "
 "Dialog</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Diálogo de depuração "
+"remoto</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:478
@@ -756,6 +860,9 @@ msgid ""
 "are located, and then fill in the details about connecting to the remote "
 "server."
 msgstr ""
+"Selecione o executável para carregar e a localização onde quaisquer "
+"bibliotecas remotas estão localizadas e, então, preencha os detalhes sobre a "
+"conexão com o servidor remoto."
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:486
@@ -763,6 +870,8 @@ msgid ""
 "Nemiver does not provide a way to connect to a remote server using the "
 "command line"
 msgstr ""
+"Nemiver não fornece uma forma para conectar a um servidor remoto usando a "
+"linha de comando"
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:495
@@ -772,7 +881,7 @@ msgstr "Usando o Nemiver"
 #. (itstool) path: sect1/para
 #: C/index.docbook:496
 msgid "This section describes how to use Nemiver to debug your application."
-msgstr ""
+msgstr "Essa seção descreve como usar o Nemiver para depurar seu aplicativo."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:500
@@ -786,6 +895,9 @@ msgid ""
 "<guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common "
 "actions are listed below:"
 msgstr ""
+"As ações básicas de depuração estão disponíveis na barra de ferramentas "
+"principal, no menu <guimenu>Depurar</guimenu> e pelos atalhos de teclado. A "
+"maioria das ações comuns estão listadas abaixo:"
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:508
@@ -800,6 +912,10 @@ msgid ""
 "<action>Stop</action>. This action can be activated from the keyboard with "
 "<keycap>F5</keycap>."
 msgstr ""
+"Inicia o programa. O programa vai executar até que acertar um ponto de "
+"interrupção ou até o programa terminar, a menos que ele seja interrompido "
+"manualmente pelo usuário clicando em <action>Parar</action>. Essa ação pode "
+"ser ativada pelo teclado com <keycap>F5</keycap>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:520
@@ -813,12 +929,14 @@ msgid ""
 "file. Some debuggers may call this action \"Step Over\". This action can be "
 "activated from the keyboard with <keycap>F6</keycap>."
 msgstr ""
+"Executa a próxima instrução e para quando alcançar a próxima linha nesse "
+"arquivo. Alguns depuradores chamam essa ação de \"Passar por cima\". Essa "
+"ação pode ser ativada pelo teclado com <keycap>F6</keycap>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:531
-#, fuzzy
 msgid "Step"
-msgstr "Pa_sso"
+msgstr "Passo"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:533
@@ -827,12 +945,14 @@ msgid ""
 "debuggers may call this action \"Step In\". This action can be activated "
 "from the keyboard with <keycap>F7</keycap>."
 msgstr ""
+"Executa a próxima instrução, entrando na função se possível. Alguns "
+"depuradores podem chamar essa função de \"um passo\". Essa ação pode ser "
+"ativada pelo teclado com <keycap>F7</keycap>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:541
-#, fuzzy
 msgid "Step Out"
-msgstr "Sair _De"
+msgstr "Sair"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:543
@@ -841,6 +961,9 @@ msgid ""
 "calling function. This action can be activated from the keyboard with "
 "<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
 msgstr ""
+"Finaliza a execução da função atual e para quando ela retornar para a função "
+"chamada. Essa ação pode ser ativada pelo teclado com "
+"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:552
@@ -854,6 +977,9 @@ msgid ""
 "action can be activated from the keyboard with <keycombo><keycap>Shift</"
 "keycap><keycap>F5</keycap></keycombo>."
 msgstr ""
+"Recarrega o executável atual e inicia a execução do começo. Essa ação pode "
+"ser ativada pelo teclado com <keycombo><keycap>Shift</keycap><keycap>F5</"
+"keycap></keycombo>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:562
@@ -868,6 +994,10 @@ msgid ""
 "<action>Continue</action>). This action can be activated from the keyboard "
 "with <keycap>F9</keycap>."
 msgstr ""
+"Interrompe manualmente a execução do programa. Essa ação está disponível "
+"apenas quando o depurador está executando o executável (ex.: após um usuário "
+"ter clicado em <action>Continuar</action>). Essa ação pode ser ativada pelo "
+"teclado com <keycap>F9</keycap>."
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:573
@@ -882,9 +1012,8 @@ msgstr ""
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:582
-#, fuzzy
 msgid "Inspecting Variables"
-msgstr "Comparar variáveis"
+msgstr "Inspecionando variáveis"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:583
@@ -898,6 +1027,14 @@ msgid ""
 "guimenuitem></menuchoice>. When the variable inspector comes up, you'll see "
 "a window that looks similar to the following:"
 msgstr ""
+"Nemiver exibe uma lista de todas as variáveis locais na aba "
+"<interface>Variáveis</interface> do <interface>Bloco de status</interface>. "
+"Caso você queira examinar uma variável diferente (ou até mesmo uma expressão "
+"arbitrária), você pode usar o <interface>Inspetor de variável</interface>. "
+"Para trazer o <interface>Inspetor de variável</interface>, selecione "
+"<menuchoice><guimenu>Depurar</guimenu><guimenuitem>Inspecionar uma variável</"
+"guimenuitem></menuchoice>. Quando o inspetor de variável aparecer, você verá "
+"uma janela semelhante a:"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:591
@@ -906,6 +1043,9 @@ msgid ""
 "\"PNG\"/> </imageobject> <textobject> <phrase>Variable Inspector Dialog</"
 "phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Diálogo do inspetor de "
+"variável</phrase> </textobject>"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:600
@@ -914,6 +1054,10 @@ msgid ""
 "&gt;bar</literal>) into the input box, and if the variable is valid and in "
 "scope, it will be display details about that expression."
 msgstr ""
+"Você pode digitar qualquer nome de variável ou uma simples expressão (tal "
+"como <literal>pFoo-&gt;bar</literal>) em uma caixa de entrada, e se a "
+"variável é válida e no escopo, ela vai exibir detalhes sobre aquela "
+"expressão."
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:605
@@ -923,12 +1067,15 @@ msgid ""
 "interface>, it will attempt to display information about the selected "
 "variable name."
 msgstr ""
+"Alternativamente, se você selecionar o nome de uma variável no "
+"<interface>editor de código fonte</interface> e então inicia o "
+"<interface>Inspetor de variável</interface>, ele vai tentar exibir "
+"informação sobre o nome da variável selecionada."
 
 #. (itstool) path: tip/title
 #: C/index.docbook:612
-#, fuzzy
 msgid "Keyboard Shortcut"
-msgstr "Criar atal_ho"
+msgstr "Atalho de teclado"
 
 #. (itstool) path: tip/para
 #: C/index.docbook:613
@@ -936,6 +1083,8 @@ msgid ""
 "You can also start the <interface>Variable Inspector</interface> by pressing "
 "<keycap>F12</keycap>."
 msgstr ""
+"Você também pode iniciar o <interface>Inspetor de variável</interface> "
+"pressionando <keycap>F12</keycap>."
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:618
@@ -946,6 +1095,12 @@ msgid ""
 "guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
 "press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
 msgstr ""
+"Nemiver também vai permitir que você exiba uma lista de todas as variáveis "
+"globais em um aplicativo em um diálogo separado. Para exibir o diálogo "
+"<interface>Variáveis globais</interface>, selecione "
+"<menuchoice><guimenu>Depurar</guimenu><guimenuitem>Mostrar variáveis "
+"globais</guimenuitem></menuchoice> ou pressione <keycombo><keycap>Ctrl</"
+"keycap><keycap>G</keycap></keycombo>."
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:625
@@ -954,6 +1109,9 @@ msgid ""
 "format=\"PNG\"/> </imageobject> <textobject> <phrase>Global Variables "
 "Dialog</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Diálogo de variáveis "
+"globais</phrase> </textobject>"
 
 #. (itstool) path: warning/para
 #: C/index.docbook:635
@@ -961,12 +1119,13 @@ msgid ""
 "For some programs (especially C++ programs), listing all of the global "
 "variables may take a very long time."
 msgstr ""
+"Para alguns programas (especialmente programas C++), listar todas as "
+"variáveis globais pode levar muito tempo."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:642
-#, fuzzy
 msgid "Setting Breakpoints"
-msgstr "Definições do sistema"
+msgstr "Configurando pontos de interrupção"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:643
@@ -976,12 +1135,18 @@ msgid ""
 "first begin debugging a new executable. If you want to set additional "
 "breakpoints you can do one of the following:"
 msgstr ""
+"Há várias formas de definir pontos de interrupção no Nemiver. Nemiver define "
+"automaticamente um ponto de interrupção em <function>main()</function> "
+"quando você começa a depurar um novo executável. Se você quiser definir "
+"pontos de interrupção adicionais, você pode fazer umas das opções abaixo:"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:651
 msgid ""
 "Click in the margin next to the line where you want the breakpoint to be set"
 msgstr ""
+"Clique na margem ao lado da linha na qual você deseja que o ponto de "
+"interrupção seja definido"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:655
@@ -1021,9 +1186,8 @@ msgstr ""
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:683
-#, fuzzy
 msgid "Disabled Breakpoints"
-msgstr "Desabilitar todos os pontos de interrupção"
+msgstr "Pontos de interrupção desabilitados"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:684
@@ -1054,9 +1218,8 @@ msgstr ""
 
 #. (itstool) path: caption/para
 #: C/index.docbook:710
-#, fuzzy
 msgid "Enabled Breakpoint"
-msgstr "Desactivar Ponto de Paragem"
+msgstr "Pontos de interrupção habilitados"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:703
@@ -1068,9 +1231,8 @@ msgstr ""
 
 #. (itstool) path: caption/para
 #: C/index.docbook:721
-#, fuzzy
 msgid "Disabled Breakpoint"
-msgstr "Desactivar Ponto de Paragem"
+msgstr "Ponto de interrupção desabilitado"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:714
@@ -1082,9 +1244,8 @@ msgstr ""
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:726
-#, fuzzy
 msgid "Opening Source Files"
-msgstr "Abrir Ficheiros de Código"
+msgstr "Abrindo arquivos do código fonte"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:727
@@ -1200,9 +1361,8 @@ msgstr ""
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:831
-#, fuzzy
 msgid "Session Save and Restore"
-msgstr "Guarda e restaura as suas sessões de trabalho"
+msgstr "Gravando e restaurando sessões"
 
 #. (itstool) path: sect1/para
 #: C/index.docbook:832
@@ -1217,9 +1377,8 @@ msgstr ""
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:841
-#, fuzzy
 msgid "Saving Sessions"
-msgstr "Sessões Gravadas"
+msgstr "Sessões gravadas"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:842
@@ -1233,9 +1392,8 @@ msgstr ""
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:850
-#, fuzzy
 msgid "Resuming Saved Sessions"
-msgstr "_Gerir sessões gravadas..."
+msgstr "Resumindo sessões gravadas"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:853
