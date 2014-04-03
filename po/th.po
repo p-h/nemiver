@@ -1,1065 +1,1623 @@
 # Thai translation of nemiver.
-# Copyright (C) 2008 Free Software Foundation, Inc.
+# Copyright (C) 2008-2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nemiver package.
 # Piya Wanishsujit <wanishsujit@hotmail.com>, 2008.
+# Akom Chotiphantawanon <knight2000@gmail.com>, 2014.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver HEAD\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-16 15:41+0700\n"
-"PO-Revision-Date: 2008-09-16 15:58-0400\n"
-"Last-Translator:  Piya Wanishsujit <wanishsujit@hotmail.com>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2014-03-13 23:10+0000\n"
+"PO-Revision-Date: 2014-04-03 13:16+0700\n"
+"Last-Translator: Akom Chotiphantawanon <knight2000@gmail.com>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
+"Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../glade/workbench.glade.h:1
+#: ../data/nemiver.appdata.xml.in.h:1
+msgid ""
+"Nemiver is an on-going effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr ""
+
+#: ../data/nemiver.appdata.xml.in.h:2
+msgid ""
+"We believe that Nemiver is mature and robust enough to just let you debug "
+"your favorite C or C++ application in a pleasant way."
+msgstr ""
+
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
 msgid "Nemiver"
 msgstr "Nemiver"
 
-#: ../data/nemiver.desktop.in.h:1
+#: ../data/nemiver.desktop.in.h:2
 msgid "C/C++ Debugger"
 msgstr "โปรแกรมดีบั๊ก C/C++"
 
-#: ../data/nemiver.desktop.in.h:2
+#: ../data/nemiver.desktop.in.h:3
+#, fuzzy
+#| msgid "Nemiver Debugger"
+msgid "Nemiver C/C++ Debugger"
+msgstr "Nemiver: โปรแกรมดีบั๊ก"
+
+#: ../data/nemiver.desktop.in.h:4
 msgid "Debug Applications"
 msgstr "ดีบั๊กโปรแกรม"
 
-#: ../data/nemiver.desktop.in.h:3
-msgid "Nemiver Debugger"
-msgstr "Nemiver: โปรแกรมดีบั๊ก"
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr ""
 
-#: ../src/main.cc:67
+#: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
 msgstr "ตั้งค่าสภาพแวดล้อมของโปรแกรมที่จะดีบั๊ก"
 
-#: ../src/main.cc:76
+#: ../src/main.cc:87
 msgid "Attach to a process"
 msgstr "แนบกับโพรเซส"
 
-#: ../src/main.cc:84
+#: ../src/main.cc:96
+msgid "Load a core file"
+msgstr "โหลดแฟ้ม core"
+
+#: ../src/main.cc:104
 msgid "List the saved debugging sessions"
 msgstr "รายชื่อวาระการดีบั๊กที่บันทึกไว้"
 
-#: ../src/main.cc:92
+#: ../src/main.cc:112
 msgid "Erase the saved debugging sessions"
 msgstr "ลบวาระการดีบั๊กที่บันทึกไว้"
 
-#: ../src/main.cc:100
+#: ../src/main.cc:120
 msgid "Debug the program that was of session number N"
 msgstr "ดีบั๊กโปรแกรมซึ่งอยู่ในวาระหมายเลข N"
 
-#: ../src/main.cc:108
+#: ../src/main.cc:128
 msgid "Execute the last session"
 msgstr "เรียกทำงานวาระล่าสุด"
 
-#: ../src/main.cc:116
+#: ../src/main.cc:136
 msgid "Enable logging domains DOMAINS"
 msgstr "เปิดใช้โดเมน DOMAINS สำหรับการบันทึกปูม"
 
-#: ../src/main.cc:124
+#: ../src/main.cc:144
 msgid "Log the debugger output"
 msgstr "บันทึกข้อความของโปรแกรมดีบั๊กลงปูม"
 
-#: ../src/main.cc:132
-msgid "Show the version number of nemiver"
-msgstr "แสดงหมายเลขรุ่นของ Nemiver"
+#: ../src/main.cc:152
+msgid "Use this terminal as the debugee's terminal"
+msgstr ""
+
+#: ../src/main.cc:161
+#, fuzzy
+#| msgid "Connected to remote target !"
+msgid "Connect to remote target specified by HOST:PORT"
+msgstr "เชื่อมต่อไปยังเป้าหมายในเครือข่ายแล้ว !"
+
+#: ../src/main.cc:170
+msgid ""
+"Where to look for shared libraries loaded by the inferior. Use in "
+"conjunction with --remote"
+msgstr ""
+
+#: ../src/main.cc:180
+msgid "Set the path of the GDB binary to use to debug the inferior"
+msgstr ""
+
+#: ../src/main.cc:189
+msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
+msgstr ""
 
 #: ../src/main.cc:198
+msgid "Show the version number of Nemiver"
+msgstr "แสดงหมายเลขรุ่นของ Nemiver"
+
+#: ../src/main.cc:264
 msgid " [<prog-to-debug> [prog-args]]"
 msgstr " [<prog-to-debug> [prog-args]]"
 
-#: ../src/main.cc:201 ../src/workbench/nmv-workbench.cc:255
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
 msgstr "โปรแกรมดีบั๊ก C/C++ ของ GNOME"
 
-#: ../src/persp/dbgperspective/glade/bodycontainer.glade.h:1
-msgid "bodycontainer"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/callfunctiondialog.glade.h:1
-msgid "<b>Call a function:</b>"
-msgstr "<b>เรียกฟังก์ชัน:</b>"
-
-#: ../src/persp/dbgperspective/glade/callfunctiondialog.glade.h:2
-msgid "Call Function"
-msgstr "เรียกฟังก์ชัน"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:1
-msgid "<b>Cycling Options:</b>"
-msgstr "<b>ตัวเลือกการวนรอบ:</b>"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:2
-msgid "<b>Match Options:</b>"
-msgstr "<b>ตัวเลือกการค้นหา:</b>"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:3
-msgid "Find text"
-msgstr "ค้นหาข้อความ"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:4
-msgid "Match _entire word only"
-msgstr "ค้นหาทั้_งคำ"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:5
-msgid "Match c_ase"
-msgstr "ตัวพิมพ์ใหญ่-เ_ล็กตรงกัน"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:6
-msgid "Search _backwards"
-msgstr "ค้นหา_ย้อนกลับ"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:7
-msgid "_Search:"
-msgstr "_ค้นหา:"
-
-#: ../src/persp/dbgperspective/glade/findtextdialog.glade.h:8
-msgid "_Wrap around"
-msgstr "หมดแล้วเ_ริ่มใหม่"
-
-#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:1
-msgid "<b>Core File:</b>"
-msgstr "<b>แฟ้ม Core:</b>"
-
-#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:2
-msgid "<b>Executable:</b>"
-msgstr "<b>แฟ้มโปรแกรม:</b>"
-
-#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:3
-msgid "Choose a Core File to Debug"
-msgstr "เลือกแฟ้ม Core ที่จะดีบั๊ก"
-
-#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:4
-msgid "Select A Core File"
-msgstr "เลือกแฟ้ม Core"
-
-#: ../src/persp/dbgperspective/glade/loadcoredialog.glade.h:5
-msgid "Select the executable that created the core file"
-msgstr "เลือกแฟ้มโปรแกรมที่ทำให้เกิดแฟ้ม core"
-
-#: ../src/persp/dbgperspective/glade/locatefiledialog.glade.h:1
-msgid "<b>Locate File</b>"
-msgstr "<b>ระบุตำแหน่งแฟ้ม</b>"
-
-#: ../src/persp/dbgperspective/glade/locatefiledialog.glade.h:2
-msgid "Select File Location"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:1
-msgid "<b>Choose Source Files to Open</b>"
-msgstr "<b>เลือกแฟ้มซอร์สที่จะเปิด</b>"
-
-#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:2
-msgid "Open Source Files"
-msgstr "เปิดแฟ้มซอร์ส"
-
-#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:3
-msgid "Select from _Filesystem"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/openfiledialog.glade.h:4
-msgid "Select from _Target Executable"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:1
-msgid "<b>Editor Font</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:2
-msgid "<b>File Monitoring</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:3
-msgid "<b>Line Numbers</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:4
-msgid "<b>Syntax Highlighting</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:5
-msgid "Ask each time"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:6
-msgid "Custom Font:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:7
-msgid "Display line numbers"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:8
-msgid "Do not reload the file"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:9
-msgid "Editor"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:10
-msgid "Enable syntax highlighting"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:11
-msgid "Preferences"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:12
-msgid "Reload the file"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:13
-msgid "Source Directories"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:14
-msgid "Use system monospace font"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/preferencesdialog.glade.h:15
-msgid "When a source file is changed:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:1
-msgid "<b>Choose a Process to Debug</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:2
-msgid "Attach to a Running Program"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/proclistdialog.glade.h:3
-msgid "_Filter list:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:1
-msgid "<b>Arguments:</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:2
-msgid "<b>Environment Variables:</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:3
-msgid "<b>Program:</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:4
-msgid "<b>Working Directory:</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:5
-msgid "Choose a Program to Execute"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:6
-msgid "Choose a working directory"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:7
-msgid "Choose an executable"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:8
-msgid "_Add"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/runprogramdialog.glade.h:9
-msgid "_Remove"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:1
-msgid "<b>Choose a Session to Debug</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/savedsessionsdialog.glade.h:2
-msgid "Saved Sessions"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:1
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2757
-msgid "Inspect a Variable"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:2
-msgid "_Inspect"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/varinspectordialog.glade.h:3
-msgid "_Variable Name:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/chooseoverloadsdialog.glade.h:1
-msgid "<b>Choose Overloaded Function</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/chooseoverloadsdialog.glade.h:2
+#: ../src/main.cc:361
 msgid ""
-"Multiple functions match the specified name. Please choose one from the list "
-"below."
+"Please provide a local copy of the binary you intend to debug remotely.\n"
+"Like this:\n"
 msgstr ""
 
-#: ../src/persp/dbgperspective/glade/chooseoverloadsdialog.glade.h:3
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:7
-msgid "Set Breakpoint"
+#: ../src/main.cc:366 ../src/main.cc:385
+msgid "Otherwise, find below the full set of Nemiver options.\n"
 msgstr ""
 
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:1
-msgid "<b>Executable to Load</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:2
-msgid "<b>Remote Debugging Server</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:3
-msgid "<b>Shared Libraries Location</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:4
-msgid "Address :"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:5
-msgid "Choose a File"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:6
-msgid "Connect to Remote Target"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:7
-msgid "Port :"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:8
-msgid "Serial Line Connection"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/remotetargetdialog.glade.h:9
-msgid "TCP/IP Connection"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:1
-msgid "<b>Set a Breakpoint:</b>"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:2
-msgid "Condition:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:3
-msgid "F_unction Name:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:4
-msgid "Filename:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:5
-msgid "Function:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:6
-msgid "Line:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:8
-msgid "_Event:"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/setbreakpointdialog.glade.h:9
-msgid "_Source Location"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:109
-msgid "Function Name"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:111
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:500
-msgid "Location"
-msgstr ""
-
-#: ../src/persp/dbgperspective/glade/globalvarsinspector.glade.h:1
-msgid "Global Variables"
+#: ../src/main.cc:380
+msgid ""
+"Please provide the path to the binary that generated the core file too.\n"
+"Like this:\n"
 msgstr ""
 
 #. create the columns of the tree view
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:119
-#: ../src/persp/dbgperspective/nmv-registers-view.cc:98
-#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:97
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. create the columns of the tree view
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:120
-#: ../src/persp/dbgperspective/nmv-file-list.cc:106
-msgid "Filename"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-file-list.cc:108
+msgid "File Name"
+msgstr "ชื่อแฟ้ม"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:121
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
 msgid "Line"
-msgstr ""
+msgstr "บรรทัด"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:122
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:501
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
 msgid "Function"
-msgstr ""
+msgstr "ฟังก์ชัน"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:123
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
 msgid "Address"
-msgstr ""
+msgstr "ที่อยู่"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:124
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:153
 msgid "Condition"
+msgstr "เงื่อนไข"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
+msgid "Toggle countpoint"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:125
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
+msgid "Type"
+msgstr "ชนิด"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
 msgid "Hits"
+msgstr "ถึง"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
+msgid "Expression"
+msgstr "นิพจน์"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
+msgid "Ignore count"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:482
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:364
+msgid "breakpoint"
+msgstr "จุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:368
+msgid "watchpoint"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:371
+msgid "countpoint"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:374
+msgid "unknown"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:441
 msgid "_Delete"
-msgstr ""
+msgstr "_ลบ"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:483
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:442
 msgid "Remove this breakpoint"
-msgstr ""
+msgstr "ลบจุดพักนี้"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:491
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:451
 msgid "_Go to Source"
-msgstr ""
+msgstr "ไ_ปยังซอร์ส"
 
-#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:492
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:452
 msgid "Find this breakpoint in the source editor"
-msgstr ""
+msgstr "หาจุดพักนี้ในเครื่องมือแก้ไขซอร์ส"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:158
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:177
+#: ../src/uicommon/nmv-terminal.cc:174
 msgid "_Copy"
-msgstr ""
+msgstr "_คัดลอก"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:159
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:178
 msgid "Copy the call stack to the clipboard"
-msgstr ""
+msgstr "คัดลอกสแต็กการเรียกลงในคลิปบอร์ด"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:499
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
 msgid "Frame"
-msgstr ""
+msgstr "เฟรม"
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:502
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
 msgid "Arguments"
+msgstr "อาร์กิวเมนต์"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
+msgid "Location"
+msgstr "ตำแหน่ง"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
+msgid "Binary"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-call-stack.cc:602
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
-msgid "(Click here to see the next %d rows of the %d call stack rows)"
-msgstr ""
+msgid "(Click here to see the next %d row of the call stack"
+msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgstr[0] "(คลิกที่นี่เพื่อดู %d บรรทัดถัดไปของสแต็กการเรียก)"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
+msgid "Function Name"
+msgstr "ชื่อฟังก์ชัน"
 
 #. labels for widget tabs in the status notebook
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:111
-msgid "Call Stack"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+msgid "Context"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:112
-msgid "Variables"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:113
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
 msgid "Target Terminal"
-msgstr ""
+msgstr "เทอร์มินัลเป้าหมาย"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:114
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
 msgid "Breakpoints"
-msgstr ""
+msgstr "จุดพัก"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:115
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
 msgid "Registers"
-msgstr ""
+msgstr "เรจิสเตอร์"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:116
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
 msgid "Memory"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:995
-#, c-format
-msgid ""
-"File %s has an encoding that is not listed in the value of gconf key %s. "
-"Please add the encoding of that file to the values of the gconf key, and "
-"resume debugging"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1460
-#, c-format
-msgid "File path info is missing for breakpoint '%i'"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1780
-msgid "Remove _Breakpoint"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1783
-msgid "Disable Breakpoint"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1785
-msgid "Enable Breakpoint"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1788
-msgid "Set _Breakpoint"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1941
-#, c-format
-msgid "%s (path=\"%s\", pid=%i)"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1955
-msgid "Connected to remote target !"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2104
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4769
-#, c-format
-msgid "Could not find file %s"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2176
-#, c-format
-msgid "File path info is missing for function '%s'"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2139
-msgid "Program exited"
-msgstr ""
-
-#. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2254
-#, c-format
-msgid "Target received a signal: %s, %s"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2269
-#, c-format
-msgid "An error occured: %s"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2334
-#, c-format
-msgid "File %s has been modified. Do want to reload it ?"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2631
-msgid "_Save Session to Disk"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2632
-msgid "Save the current debugging session to disk"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2640
-msgid "_Detach From the Running Program"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2641
-msgid "Disconnect the debugger from the running target without killing it"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2654
-msgid "_Restart"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2655
-msgid "Restart the target, killing this process and starting a new one"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2667
-msgid "_Next"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2668
-msgid "Execute next line stepping over the next function, if any"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2676
-msgid "_Step"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2677
-msgid "Execute next line, stepping into the next function, if any"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2685
-msgid "Step _Out"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2686
-msgid "Finish the execution of the current function"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2694
-msgid "_Continue"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2695
-msgid "Continue program execution until the next breakpoint"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2703
-msgid "Run to Cursor"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2704
-msgid "Continue program execution until the currently selected line is reached"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2715
-msgid "Set/Unset a breakpoint at the current cursor location"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2726
-msgid ""
-"Enable or disable the breakpoint that is set at the current cursor location"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2737
-msgid "Set Breakpoint..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2738
-msgid "Set a breakpoint at a function or line number"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2746
-msgid "Set Breakpoint with dialog..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2747
-msgid "Set a breakpoint at the current line using a dialog"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2758
-msgid "Inspect a global or local variable"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2767
-msgid "Call a function"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2768
-msgid "Call a function in the program being debugged"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2776
-msgid "Show Global Variables"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2777
-msgid "Display all global variables"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2786
-msgid "Refresh locals"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2787
-msgid "Refresh the list of variables local to the current function"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2798
-msgid "Stop"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2799
-msgid "Stop the Debugger"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2810
-msgid "_View"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2820
-msgid "Switch to Call Stack View"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2830
-msgid "Switch to Variables View"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2840
-msgid "Switch to Target Terminal View"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2850
-msgid "Switch to Breakpoints View"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2860
-msgid "Switch to Registers View"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2871
-msgid "Switch to Memory View"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2880
-msgid "Show Commands"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2881
-msgid "Show the debugger commands tab"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2889
-msgid "Show Errors"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2890
-msgid "Show the errors tab"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2898
-msgid "Show Output"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2899
-msgid "Show the debugged target output tab"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2908
-msgid "_Debug"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2917
-msgid "_Open Source File ..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2918
-msgid "Open a source file for viewing"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2926
-msgid "Load _Executable..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2927
-msgid "Execute a program"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2936
-msgid "_Load Core File..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2937
-msgid "Load a core file from disk"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2946
-msgid "_Attach to Running Program..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2947
-msgid "Debug a program that's already running"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2956
-msgid "_Connect to Remote Target..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2957
-msgid "Connect to a debugging server to debug a remote target"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2967
-msgid "Resume Sa_ved Session..."
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2968
-msgid "Open a previously saved debugging session"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2977
-msgid "_Preferences"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2978
-msgid "Edit the properties of the current session"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2991
-msgid "_Reload Source File"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2992
-msgid "Reloads the source file"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3000
-msgid "_Close Source File"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3001
-msgid "Close the opened file"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3009
-msgid "_Find"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3010
-msgid "Find a text string in file"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3370
-#, c-format
-msgid "Close %s"
-msgstr ""
+msgstr "หน่วยความจำ"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4305
-#, c-format
-msgid "Could not load file %s because its encoding is different from %s"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:123
+msgid "Expression Monitor"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4486
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1730
 msgid "Reached end of file"
-msgstr ""
+msgstr "ชนท้ายแฟ้ม"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4489
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1733
 #, c-format
 msgid "Could not find string %s"
+msgstr "หาข้อความ %s ไม่พบ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
+#, fuzzy
+#| msgid "Set Breakpoint"
+msgid "Change to Standard Breakpoint"
+msgstr "กำหนดจุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2120
+msgid "Change to Countpoint"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4877
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2122
+msgid "Remove _Breakpoint"
+msgstr "ลบจุด_พัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2125
+msgid "Disable Breakpoint"
+msgstr "ปิดใช้จุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2127
+msgid "Enable Breakpoint"
+msgstr "เปิดใช้จุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2130
+msgid "Set _Breakpoint"
+msgstr "กำหนดจุด_พัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2132
+#, fuzzy
+#| msgid "Set Breakpoint"
+msgid "Set Countpoint"
+msgstr "กำหนดจุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2295
+#, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "%s (พาธ=\"%s\", pid=%i)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2309
+msgid "Connected to remote target!"
+msgstr "เชื่อมต่อไปยังเป้าหมายในเครือข่ายแล้ว!"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2510
+msgid "Program exited"
+msgstr "ออกจากโปรแกรมแล้ว"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2539
+msgid "The underlying debugger engine process died."
+msgstr "กลไกดีบั๊กที่อยู่ภายใต้ตายแล้ว"
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2643
+#, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "เป้าหมายได้รับสัญญาณ: %s, %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2658
+#, c-format
+msgid "An error occurred: %s"
+msgstr "เกิดข้อผิดพลาด: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2821
+#, c-format
+msgid "File %s has been modified. Do you want to reload it?"
+msgstr "แฟ้ม %s มีการแก้ไข คุณต้องการโหลดใหม่หรือไม่?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3183
+msgid "_Detach From the Running Program"
+msgstr "แย_กออกจากโปรแกรมที่กำลังทำงาน"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3184
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr "ตัดการเชื่อมต่อโปรแกรมดีบั๊กจากเป้าหมายที่ทำงานอยู่โดยไม่ฆ่าเป้าหมาย"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3199
+msgid "_Save Session to Disk"
+msgstr "_บันทึกวาระลงในดิสก์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3200
+msgid "Save the current debugging session to disk"
+msgstr "บันทึกวาระการดีบั๊กปัจจุบันลงในดิสก์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3209
+#, fuzzy
+#| msgid "_Restart"
+msgid "_Run or Restart"
+msgstr "เ_ริ่มใหม่"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3210
+msgid "Run or Restart the target"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3219
+msgid "Set Breakpoint with Dialog..."
+msgstr "กำหนดจุดพักด้วยกล่องโต้ตอบ..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3220
+msgid "Set a breakpoint at the current line using a dialog"
+msgstr "กำหนดจุดพักที่บรรทัดปัจจุบันโดยใช้กล่องโต้ตอบ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+msgid "Set Breakpoint..."
+msgstr "กำหนดจุดพัก..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+msgid "Set a breakpoint at a function or line number"
+msgstr "กำหนดจุดพักที่ฟังก์ชันหรือเลขบรรทัด"
+
+#. Depending on the context we will want this string to be
+#. either "Set Breakpoint", or "Remove Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3248
+msgid "Toggle _Breakpoint"
+msgstr "ตั้ง/ล้างจุด_พัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3249
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "ตั้ง/ล้างจุดพักที่ตำแหน่งเคอร์เซอร์ปัจจุบัน"
+
+#. Depending on the context we will want this string to be
+#. either "Enable Breakpoint", or "Disable
+#. Breakpoint". Hence this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3266
+msgid "Enable/Disable Breakpoint"
+msgstr "เปิด/ปิดจุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3267
+msgid ""
+"Enable or disable the breakpoint that is set at the current cursor location"
+msgstr "เปิดใช้หรือปิดจุดพักที่ตั้งไว้ที่ตำแหน่งเคอร์เซอร์ปัจจุบัน"
+
+#. Depending on the context we will want this string to be
+#. either "Set Countpoint", or "Change to Countpoint", or
+#. "Change to Standard Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
+msgid "Toggle _Countpoint"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3288
+#, fuzzy
+#| msgid "Set/Unset a breakpoint at the current cursor location"
+msgid "Set/Unset a countpoint at the current cursor location"
+msgstr "ตั้ง/ล้างจุดพักที่ตำแหน่งเคอร์เซอร์ปัจจุบัน"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#, fuzzy
+#| msgid "Set Breakpoint with dialog..."
+msgid "Set Watchpoint with Dialog..."
+msgstr "กำหนดจุดพักด้วยกล่องโต้ตอบ..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+#, fuzzy
+#| msgid "Set a breakpoint at the current line using a dialog"
+msgid "Set a watchpoint using a dialog"
+msgstr "กำหนดจุดพักที่บรรทัดปัจจุบันโดยใช้กล่องโต้ตอบ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3314
+msgid "_Next"
+msgstr "_ถัดไป"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3315
+msgid "Execute next line stepping over the next function, if any"
+msgstr "เรียกทำงานบรรทัดถัดไป โดยก้าวข้ามฟังก์ชันถัดไปถ้ามี"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3324
+msgid "_Step"
+msgstr "_ก้าว"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3325
+msgid "Execute next line, stepping into the next function, if any"
+msgstr "เรียกทำงานบรรทัดถัดไป โดยก้าวเข้าในฟังก์ชันถัดไปถ้ามี"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3334
+msgid "Step _Out"
+msgstr "ก้าว_ออก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3335
+msgid "Finish the execution of the current function"
+msgstr "ทำงานฟังก์ชันปัจจุบันต่อให้จบ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3344
+msgid "Step Into asm"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3345
+msgid "Step into the next assembly instruction"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
+msgid "Step Over asm"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3355
+msgid "Step over the next assembly instruction"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3364
+msgid "_Continue"
+msgstr "_ทำต่อ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3365
+msgid "Continue program execution until the next breakpoint"
+msgstr "ให้โปรแกรมทำงานต่อจนถึงจุดพักถัดไป"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3374
+msgid "Run to Cursor"
+msgstr "ทำถึงเคอร์เซอร์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3375
+msgid "Continue program execution until the currently selected line is reached"
+msgstr "ให้โปรแกรมทำงานต่อจนถึงบรรทัดที่เลือกอยู่"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3385
+#, fuzzy
+#| msgid "Run to Cursor"
+msgid "Jump to Cursor"
+msgstr "ทำถึงเคอร์เซอร์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3386
+#, fuzzy
+#| msgid ""
+#| "Continue program execution until the currently selected line is reached"
+msgid "Jump to the currently selected line"
+msgstr "ดำเนินการเรียกทำงานโปรแกรมจนถึงบรรทัดที่เลือก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3396
+#, fuzzy
+#| msgid "Run to Cursor"
+msgid "Jump and Stop to Cursor"
+msgstr "ทำถึงเคอร์เซอร์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3397
+#, fuzzy
+#| msgid "Set a breakpoint at the current line using a dialog"
+msgid "Sets a breakpoint to the currently selected line and jump there"
+msgstr "กำหนดจุดพักที่บรรทัดปัจจุบันโดยใช้กล่องโต้ตอบ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3409
+msgid "Jump to a Given Location"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3410
+msgid "Select a given code location and jump there"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3421
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
+msgid "Inspect an Expression"
+msgstr "เฝ้าสังเกตนิพจน์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3422
+msgid "Inspect a global or local expression"
+msgstr "เฝ้าสังเกตนิพจน์ส่วนกลางหรือเฉพาะที่"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3432
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
+msgid "Call a Function"
+msgstr "เรียกฟังก์ชัน"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3433
+msgid "Call a function in the program being debugged"
+msgstr "เรียกฟังก์ชันในโปรแกรมที่ดีบั๊ก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3442
+msgid "Show Global Variables"
+msgstr "แสดงตัวแปรส่วนกลาง"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3443
+msgid "Display all global variables"
+msgstr "แสดงตัวแปรส่วนกลางทั้งหมด"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3453
+msgid "Refresh Locals"
+msgstr "ปรับข้อมูลตัวแปรเฉพาะที่"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3454
+msgid "Refresh the list of variables local to the current function"
+msgstr "ปรับข้อมูลรายชื่อตัวแปรเฉพาะที่ในฟังก์ชันปัจจุบัน"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3463
+msgid "Show Assembly"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3464
+msgid ""
+"Show the assembly code of the source code being currently debugged, in "
+"another tab"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
+#, fuzzy
+#| msgid "Switch to Memory View"
+msgid "Switch to Assembly"
+msgstr "สลับไปมุมมองหน่วยความจำ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3477
+msgid "Show the assembly code of the source code being currently debugged"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+#, fuzzy
+#| msgid "Switch to Memory View"
+msgid "Switch to Source"
+msgstr "สลับไปมุมมองหน่วยความจำ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3490
+msgid "Show the source code being currently debugged"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3502
+msgid "Stop"
+msgstr "หยุด"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3503
+msgid "Stop the debugger"
+msgstr "หยุดโปรแกรมดีบั๊ก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3515
+msgid "_View"
+msgstr "มุ_มมอง"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3526
+msgid "Switch to Target Terminal View"
+msgstr "สลับไปมุมมองเทอร์มินัลเป้าหมาย"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3537
+#, fuzzy
+#| msgid "Switch to Breakpoints View"
+msgid "Switch to Context View"
+msgstr "สลับไปมุมมองจุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3548
+msgid "Switch to Breakpoints View"
+msgstr "สลับไปมุมมองจุดพัก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+msgid "Switch to Registers View"
+msgstr "สลับไปมุมมองเรจิสเตอร์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3571
+msgid "Switch to Memory View"
+msgstr "สลับไปมุมมองหน่วยความจำ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3582
+msgid "Switch to Variables Monitor View"
+msgstr "สลับไปมุมมองเฝ้าสังเกตตัวแปร"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3591
+msgid "_Debug"
+msgstr "_ดีบั๊ก"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3601
+msgid "_Open Source File..."
+msgstr "_เปิดแฟ้มซอร์ส..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3602
+msgid "Open a source file for viewing"
+msgstr "เปิดแฟ้มซอร์สเพื่อดู"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3611
+msgid "Load _Executable..."
+msgstr "โหลดแ_ฟ้มโปรแกรม..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3612
+msgid "Execute a program"
+msgstr "เรียกทำงานโปรแกรม"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3622
+msgid "_Load Core File..."
+msgstr "โ_หลดแฟ้ม Core..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3623
+msgid "Load a core file from disk"
+msgstr "โหลดแฟ้ม core จากดิสก์"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3633
+msgid "_Attach to Running Program..."
+msgstr "แ_นบกับโปรแกรมที่กำลังทำงาน..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3634
+msgid "Debug a program that's already running"
+msgstr "ดีบั๊กโปรแกรมที่ทำงานอยู่แล้ว"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3644
+msgid "_Connect to Remote Target..."
+msgstr "เ_ชื่อมต่อไปยังเป้าหมายในเครือข่าย..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3645
+msgid "Connect to a debugging server to debug a remote target"
+msgstr "เชื่อมต่อไปยังเซิร์ฟเวอร์ดีบั๊กเพื่อดีบั๊กเป้าหมายในเครือข่าย"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3656
+msgid "Resume Sa_ved Session..."
+msgstr "ทำวาระที่ได้บันทึกไว้_ต่อ..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3657
+msgid "Open a previously saved debugging session"
+msgstr "เปิดวาระการดีบั๊กที่ได้บันทึกไว้ก่อนหน้า"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3667
+msgid "_Preferences"
+msgstr "_ปรับแต่ง"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3668
+msgid "Edit the properties of the current session"
+msgstr "แก้ไขคุณสมบัติของวาระปัจจุบัน"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3682
+msgid "_Copy selected text"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3683
+msgid "Copy the text selected in the current source file"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3692
+msgid "_Reload Source File"
+msgstr "_อ่านแฟ้มซอร์สใหม่"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3693
+msgid "Reloads the source file"
+msgstr "อ่านแฟ้มซอร์สใหม่"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3702
+msgid "_Close Source File"
+msgstr "ปิ_ดแฟ้มซอร์ส"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3703
+msgid "Close the opened file"
+msgstr "ปิดแฟ้มที่เปิดอยู่"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3712
+msgid "_Find"
+msgstr "_หา"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3713
+msgid "Find a text string in file"
+msgstr "หาข้อความในแฟ้ม"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4037
+#, c-format
+msgid "Close %s"
+msgstr "ปิด %s"
+
+#. We cannot restart an inferior running on a remote target at
+#. the moment.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6027
+msgid "Sorry, it's impossible to restart a remote inferior"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6172
+#, c-format
+msgid "Could not find file %s"
+msgstr "หาแฟ้ม %s ไม่พบ"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6235
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6422
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6457
+#, c-format
+msgid "Could not load program: %s"
+msgstr "ไม่สามารถโหลดโปรแกรม: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6351
 msgid "You cannot attach to Nemiver itself"
-msgstr ""
+msgstr "คุณไม่สามารถแนบกับตัว Nemiver เองได้"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4882
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6364
 msgid "You cannot attach to the underlying debugger engine"
-msgstr ""
+msgstr "คุณไม่สามารถแนบกับกลไกดีบั๊กที่อยู่ภายใต้ได้"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5024
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6656
 msgid "Failed to stop the debugger"
-msgstr ""
+msgstr "หยุดโปรแกรมดีบั๊กไม่สำเร็จ"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5096
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6900
 #, c-format
 msgid "Invalid line number: %i"
-msgstr ""
+msgstr "เลขบรรทัดไม่ถูกต้อง: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5125
-#, c-format
-msgid "There is no file name info for symbol@addr: %s@%s"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5261
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8532
 #, c-format
 msgid ""
-"Failed to open file %s. Would you like to open another file which would have "
-"the same content ?"
+"There is a program being currently debugged. Do you really want to exit from "
+"the debugger?"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:5354
-#, c-format
-msgid "Could not find file: %s\n"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
+msgid "Default Layout"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6045
-msgid "Commands"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
+msgid "Nemiver's default layout"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6071
-msgid "Output"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
+msgid "Source Code"
+msgstr "ซอร์สโค้ด"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
+msgid "Dynamic Layout"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6097
-msgid "Logs"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
+msgid "A layout which can be modified"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-file-list.cc:126
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
+msgid "Two Status Pane"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
+msgid "A layout with two status pane"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
+msgid "Wide Layout"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
+msgid "A layout for very large monitors"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:128
 msgid "Expand _Selected"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-file-list.cc:129
-msgid "Expand _All"
-msgstr ""
+msgstr "ขยายรายการที่เ_ลือก"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:134
+msgid "Expand _All"
+msgstr "ขยาย_ทั้งหมด"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:144
 msgid "_Collapse"
-msgstr ""
+msgstr "ยุ_บ"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:109
-msgid "Dereference the pointer"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-file-list.cc:427
+#, fuzzy
+#| msgid "Select from _Target Executable"
+msgid "Loading files from target executable..."
+msgstr "เลือกจากแฟ้มโปรแกรมเ_ป้าหมาย"
 
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:110
-msgid "Dereference the selected pointer variable"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:155
-msgid "Local Variables"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:163
-msgid "Function Arguments"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:172
-msgid "Dereferenced Variables"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:843
-#: ../src/persp/dbgperspective/nmv-var-inspector.cc:115
-#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:298
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
 #, c-format
 msgid ""
 "Variable type is: \n"
 " %s"
 msgstr ""
+"ชนิดตัวแปรคือ: \n"
+" %s"
 
-#: ../src/persp/dbgperspective/nmv-locate-file-dialog.cc:65
-#, c-format
-msgid "Select Location For %s"
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
+msgid "Local Variables"
+msgstr "ตัวแปรเฉพาะที่"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
+msgid "Function Arguments"
+msgstr "อาร์กิวเมนต์ของฟังก์ชัน"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
+msgid "_Copy Variable Name"
+msgstr "_คัดลอกชื่อตัวแปร"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
+msgid "Copy the variable path expression to the clipboard"
+msgstr "คัดลอกนิพจน์พาธของตัวแปรไปยังคลิปบอร์ด"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
+msgid "_Copy Variable Value"
+msgstr "_คัดลอกค่าตัวแปร"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
+msgid "Copy the variable value to the clipboard"
+msgstr "คัดลอกค่าของตัวแปรไปยังคลิปบอร์ด"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
+msgid "Create Watchpoint"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-locate-file-dialog.cc:75
-#, c-format
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
 msgid ""
-"Cannot find file '<b>%s</b>'.\n"
-"Please specify the location of this file:"
+"Create a watchpoint that triggers when the value of the expression changes"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:48
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
-msgstr ""
+msgstr "ไบต์"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:51
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:52
 msgid "Word"
-msgstr ""
+msgstr "เวิร์ด"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:54
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:55
 msgid "Long Word"
-msgstr ""
+msgstr "เวิร์ดยาว"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:97
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:98
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
 msgid "Address:"
-msgstr ""
+msgstr "ที่อยู่:"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:99
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:100
 msgid "Show"
-msgstr ""
+msgstr "แสดง"
 
-#: ../src/persp/dbgperspective/nmv-memory-view.cc:102
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:103
 msgid "Group By:"
-msgstr ""
+msgstr "จัดกลุ่มตาม:"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:111
-msgid "Choose directory"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
+msgid "Choose a Directory"
+msgstr "เลือกไดเรกทอรี"
 
-#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:177
-msgid "Source directories"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "ไดเรกทอรีซอร์ส"
 
-#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:120
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
 msgid "User Name"
-msgstr ""
+msgstr "ชื่อผู้ใช้"
 
-#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:127
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
 msgid "Proc Args"
-msgstr ""
+msgstr "Proc Args"
 
-#: ../src/persp/dbgperspective/nmv-registers-view.cc:99
-#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:100
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
 msgid "Name"
-msgstr ""
+msgstr "ชื่อ"
 
-#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
-#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:103
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:102
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
 msgid "Value"
-msgstr ""
+msgstr "ค่า"
 
-#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:98
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
 msgid "Session"
-msgstr ""
+msgstr "วาระ"
 
-#: ../src/persp/dbgperspective/nmv-thread-list.cc:185
-msgid "Thread ID"
-msgstr ""
-
-#: ../src/uicommon/nmv-source-editor.cc:241
-#, c-format
-msgid "Line: %i, Column: %i"
-msgstr ""
-
-#: ../src/uicommon/nmv-ui-utils.cc:88
-msgid "Do not ask me again"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:267
-msgid "Project Website"
-msgstr ""
-
-#. Translators: change this to your name, separate multiple names with \n
-#: ../src/workbench/nmv-workbench.cc:287
-msgid "translator-credits"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:630
-msgid "_File"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:640
-msgid "_Quit"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:641
-msgid "Quit the application"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:650
-msgid "_Edit"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:660
-msgid "_Help"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:670
-msgid "_About"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:671
-msgid "Display information about this application"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:680
-msgid "_Contents"
-msgstr ""
-
-#: ../src/workbench/nmv-workbench.cc:681
-msgid "Display the user manual for this application"
-msgstr ""
-
-#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:98
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
 msgid "Throw Exception"
+msgstr "โยนข้อยกเว้น"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
+msgid "Catch Exception"
+msgstr "จับข้อยกเว้น"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
+msgid "Fork System Call"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:101
-msgid "Catch Exception"
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
+msgid "Vfork System Call"
 msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
+msgid "Exec System Call"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:184
+msgid "Thread ID"
+msgstr "เลขที่เธรด"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
 msgid "Variable"
+msgstr "ตัวแปร"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
+msgid "In scope expressions"
 msgstr ""
 
-#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:67
-msgid "Type"
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
+msgid "Out of scope expressions"
 msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
+msgid "Remove"
+msgstr "ลบ"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
+msgid "Remove selected expressions from the monitor"
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
+msgid "New..."
+msgstr ""
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
+msgid "Add a new expression to the monitor"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "Call a function:"
+msgstr "เรียกฟังก์ชัน:"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "กำหนดจุดพัก"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+msgid "Choose Overloaded Function"
+msgstr "เลือกฟังก์ชันที่โอเวอร์โหลด"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+msgid ""
+"Multiple functions match the specified name. Please choose one from the list "
+"below."
+msgstr "มีหลายฟังก์ชันตรงกับชื่อที่ระบุ กรุณาเลือกฟังก์ชันจากรายชื่อด้านล่าง"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
+msgid "Find Text"
+msgstr "ค้นหาข้อความ"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
+msgid "_Search:"
+msgstr "_ค้นหา:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "Match Options:"
+msgstr "ตัวเลือกของการค้นหา:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "ตัวพิมพ์ใหญ่-เ_ล็กตรงกัน"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "ค้นหาทั้_งคำ"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "Cycling Options:"
+msgstr "ตัวเลือกการวนรอบ:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+msgid "_Wrap around"
+msgstr "หมดแล้วเ_ริ่มใหม่"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "ค้นหา_ย้อนกลับ"
+
+#: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
+msgid "Global Variables"
+msgstr "ตัวแปรส่วนกลาง"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
+msgid "Choose a Core File to Debug"
+msgstr "เลือกแฟ้ม Core ที่จะดีบั๊ก"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
+msgid "Select a Core File"
+msgstr "เลือกแฟ้ม Core"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "Core File:"
+msgstr "แฟ้ม Core:"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+msgid "Select the executable that created the core file"
+msgstr "เลือกแฟ้มโปรแกรมที่ทำให้เกิดแฟ้ม core"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "Executable:"
+msgstr "แฟ้มโปรแกรม:"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
+msgid "Open Source Files"
+msgstr "เปิดแฟ้มซอร์ส"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "เลือกจากแฟ้มโปรแกรมเ_ป้าหมาย"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
+msgid "Select from _File System"
+msgstr "เลือกจาก_ระบบแฟ้ม"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
+msgid "Choose Source Files to Open"
+msgstr "เลือกแฟ้มซอร์สที่จะเปิด"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
+msgid "Preferences"
+msgstr "ปรับแต่ง"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
+msgid "Use system monospace font"
+msgstr "ใช้แบบอักษร monospace ของระบบ"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "แบบอักษรกำหนดเอง:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "Editor Font"
+msgstr "แบบอักษรของเครื่องมือแก้ไข"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+msgid "Visual Style"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+msgid "Display line numbers"
+msgstr "แสดงเลขบรรทัด"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "Line Numbers"
+msgstr "เลขบรรทัด"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+msgid "Terminal"
+msgstr "เทอร์มินัล"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "When a source file is changed:"
+msgstr "เมื่อแฟ้มซอร์สมีการเปลี่ยนแปลง:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "อ่านแฟ้มซ้ำ"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+msgid "Do not reload the file"
+msgstr "ไม่อ่านแฟ้มซ้ำ"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+msgid "Ask each time"
+msgstr "ถามทุกครั้ง"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+msgid "File Monitoring"
+msgstr "การเฝ้าดูแฟ้ม"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Enable syntax highlighting"
+msgstr "เปิดใช้การเน้นไวยากรณ์"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "Syntax Highlighting"
+msgstr "การเน้นไวยากรณ์"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "เครื่องมือแก้ไข"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Update at each stop"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Local variables"
+msgstr "ตัวแปรเฉพาะที่"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "Pure assembly"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "Mixed source and assembly"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+msgid "Assembly style"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Assembly flavor"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
+msgid "Choose a File"
+msgstr "เลือกแฟ้ม"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+msgid "Path to the GDB binary used"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+msgid "GDB Binary"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+msgid "Number of instructions to disassemble by default"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+msgid "Instructions"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+msgid "GDB Pretty Printing"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+msgid "Follow parent"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+msgid "Follow child"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+msgid "GDB Follow Fork Mode"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
+msgid "Debugger"
+msgstr "โปรแกรมดีบั๊ก"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
+msgid "Layout"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
+msgid "Attach to a Running Program"
+msgstr "แนบกับโปรแกรมที่กำลังทำงาน"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "Choose a Process to Debug"
+msgstr "เลือกโพรเซสที่จะดีบั๊ก"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
+msgid "_Filter list:"
+msgstr "_ตัวกรองรายชื่อ:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "เชื่อมต่อไปยังเป้าหมายในเครือข่าย"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+msgid "Executable to Load"
+msgstr "แฟ้มโปรแกรมที่จะโหลด"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "Shared Libraries Location"
+msgstr "ตำแหน่งไลบรารีใช้ร่วม"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
+msgid "Remote Debugging Server"
+msgstr "เซิร์ฟเวอร์ดีบั๊กผ่านเครือข่าย"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
+msgid "TCP/IP Connection"
+msgstr "การเชื่อมต่อ TCP/IP"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
+msgid "Port:"
+msgstr "พอร์ต:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
+msgid "Serial Line Connection"
+msgstr "การเชื่อมต่อสายอนุกรม"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
+msgid "Choose a Program to Execute"
+msgstr "เลือกโปรแกรมที่จะเรียกทำงาน"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
+msgid "Choose an Executable"
+msgstr "เลือกแฟ้มโปรแกรม"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
+msgid "Program:"
+msgstr "โปรแกรม:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
+msgid "Arguments:"
+msgstr "อาร์กิวเมนต์:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
+msgid "Choose a Working Directory"
+msgstr "เลือกไดเรกทอรีทำงาน"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "Working Directory:"
+msgstr "ไดเรกทอรีทำงาน:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
+msgid "_Add"
+msgstr "เ_พิ่ม"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+msgid "_Remove"
+msgstr "_ลบ"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "Environment Variables:"
+msgstr "ตัวแปรสภาพแวดล้อม:"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
+msgid "Saved Sessions"
+msgstr "วาระที่บันทึกไว้"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "Choose a Session to Debug"
+msgstr "เลือกวาระที่จะดีบั๊ก"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+msgid "Set a Breakpoint:"
+msgstr "กำหนดจุดพัก:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
+msgid "Condition:"
+msgstr "เงื่อนไข:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
+msgid "_Event:"
+msgstr "เ_หตุการณ์:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
+msgid "_Binary Location:"
+msgstr "ตำแหน่งไ_บนารี:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
+msgid "_Source Location:"
+msgstr "ตำแหน่งซอร์_ส:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
+msgid "F_unction Name:"
+msgstr "ชื่อ_ฟังก์ชัน:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+msgid "File name:"
+msgstr "ชื่อแฟ้ม:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
+msgid "Function:"
+msgstr "ฟังก์ชัน:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Line:"
+msgstr "บรรทัด:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+#, fuzzy
+#| msgid "Set Breakpoint"
+msgid "Set as Countpoint"
+msgstr "กำหนดจุดพัก"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
+msgid "Set Location to Jump To"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "Jump to location:"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at Destination"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
+msgid "Add to monitor"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
+msgid "_Variable Name:"
+msgstr "ชื่อ_ตัวแปร:"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
+msgid "_Inspect"
+msgstr "เ_ฝ้าสังเกต"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
+#, fuzzy
+#| msgid "Set Breakpoint"
+msgid "Set a watchpoint:"
+msgstr "กำหนดจุดพัก"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
+msgid "Expression:"
+msgstr "นิพจน์:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "เฝ้าสังเกต"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
+msgid "Triggers on:"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "Read"
+msgstr ""
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
+msgid "Write"
+msgstr ""
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:65
+#, c-format
+msgid "Select Location for %s"
+msgstr "เลือกตำแหน่งสำหรับ %s"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:75
+#, c-format
+msgid ""
+"Cannot find file '%s'.\n"
+"Please specify the location of this file:"
+msgstr ""
+"หาแฟ้ม '%s' ไม่พบ\n"
+"กรุณาระบุตำแหน่งของแฟ้มนี้:"
+
+#: ../src/uicommon/nmv-source-editor.cc:645
+#, c-format
+msgid "Line: %i, Column: %i"
+msgstr "บรรทัด: %i, คอลัมน์: %i"
+
+#: ../src/uicommon/nmv-source-editor.cc:1473
+#, c-format
+msgid "Could not load file %s because its encoding is different from %s"
+msgstr "ไม่สามารถโหลดแฟ้ม %s ได้ เพราะรหัสอักขระต่างจาก %s"
+
+#: ../src/uicommon/nmv-terminal.cc:175
+msgid "Copy the selection"
+msgstr ""
+
+#: ../src/uicommon/nmv-terminal.cc:181
+msgid "_Paste"
+msgstr ""
+
+#: ../src/uicommon/nmv-terminal.cc:182
+msgid "Paste the clipboard"
+msgstr ""
+
+#: ../src/uicommon/nmv-terminal.cc:188
+msgid "_Reset"
+msgstr ""
+
+#: ../src/uicommon/nmv-terminal.cc:189
+msgid "Reset the terminal"
+msgstr ""
+
+#: ../src/uicommon/nmv-ui-utils.cc:91
+msgid "Do not ask me again"
+msgstr "ไม่ต้องถามอีก"
+
+#: ../src/workbench/nmv-workbench.cc:263
+msgid "Project Website"
+msgstr "เว็บไซต์ของโครงการ"
+
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:283
+msgid "translator-credits"
+msgstr ""
+"Piya Wanishsujit <wanishsujit@hotmail.com>\n"
+"Akom Chotiphantawanon <knight2000@gmail.com>"
+
+#: ../src/workbench/nmv-workbench.cc:661
+msgid "_File"
+msgstr "แ_ฟ้ม"
+
+#: ../src/workbench/nmv-workbench.cc:672
+msgid "_Quit"
+msgstr "_ออก"
+
+#: ../src/workbench/nmv-workbench.cc:673
+msgid "Quit the application"
+msgstr "ออกจากโปรแกรม"
+
+#: ../src/workbench/nmv-workbench.cc:683
+msgid "_Edit"
+msgstr "แ_ก้ไข"
+
+#: ../src/workbench/nmv-workbench.cc:694
+msgid "_Help"
+msgstr "_วิธีใช้"
+
+#: ../src/workbench/nmv-workbench.cc:705
+msgid "_About"
+msgstr "เ_กี่ยวกับ"
+
+#: ../src/workbench/nmv-workbench.cc:706
+msgid "Display information about this application"
+msgstr "แสดงข้อมูลเกี่ยวกับโปรแกรมนี้"
+
+#: ../src/workbench/nmv-workbench.cc:716
+msgid "_Contents"
+msgstr "เนื้อ_หา"
+
+#: ../src/workbench/nmv-workbench.cc:717
+msgid "Display the user manual for this application"
+msgstr "แสดงคู่มือผู้ใช้สำหรับโปรแกรมนี้"
+
+#. end extern C
+#: ../ui/locatefiledialog.ui.h:1
+msgid "Select File Location"
+msgstr "เลือกตำแหน่งแฟ้ม"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "Locate File"
+msgstr "ระบุตำแหน่งแฟ้ม"
+
+#~ msgid "bodycontainer"
+#~ msgstr "bodycontainer"
+
+#~ msgid "<b>Call a function:</b>"
+#~ msgstr "<b>เรียกฟังก์ชัน:</b>"
+
+#~ msgid "Call Function"
+#~ msgstr "เรียกฟังก์ชัน"
+
+#~ msgid "<b>Arguments:</b>"
+#~ msgstr "<b>อาร์กิวเมนต์:</b>"
+
+#~ msgid "Address :"
+#~ msgstr "ที่อยู่ :"
+
+#~ msgid "<b>Set a Breakpoint:</b>"
+#~ msgstr "<b>กำหนดจุดพัก:</b>"
+
+#~ msgid "Call Stack"
+#~ msgstr "Call Stack"
+
+#~ msgid "Variables"
+#~ msgstr "ตัวแปร"
+
+#~ msgid ""
+#~ "File %s has an encoding that is not listed in the value of gconf key %s. "
+#~ "Please add the encoding of that file to the values of the gconf key, and "
+#~ "resume debugging"
+#~ msgstr ""
+#~ "แฟ้ม %s มีการเข้ารหัสที่ไม่มีในรายการในค่าของ gconf คีย์ %s "
+#~ "กรุณาเพิ่มการเข้ารหัสของแฟ้มนั้นเพื่อค่าของคีย์ gconf และดีบั๊กต่อ"
+
+#~ msgid "File path info is missing for breakpoint '%i'"
+#~ msgstr "ขาดข้อมูลพาธของแฟ้มสำหรับจุดพัก '%i'"
+
+#~ msgid "File path info is missing for function '%s'"
+#~ msgstr "ขาดข้อมูลพาธของแฟ้มสำหรับฟังก์ชัน '%s'"
+
+#~ msgid "Restart the target, killing this process and starting a new one"
+#~ msgstr "เริ่มเป้าหมายใหม่ กำลังฆ่าโพรเซสและเริ่มต้นใหม่"
+
+#~ msgid "Switch to Call Stack View"
+#~ msgstr "สลับไปมุมมอง Call Stack"
+
+#~ msgid "Show Commands"
+#~ msgstr "แสดงคำสั่ง"
+
+#~ msgid "Show the debugger commands tab"
+#~ msgstr "แสดงแท็บคำสั่งโปรแกรมดีบั๊ก"
+
+#~ msgid "Show Errors"
+#~ msgstr "แสดงข้อผิดพลาด"
+
+#~ msgid "Show the errors tab"
+#~ msgstr "แสดงแท็บข้อผิดพลาด"
+
+#~ msgid "Show Output"
+#~ msgstr "แสดงเอาต์พุต"
+
+#~ msgid "Show the debugged target output tab"
+#~ msgstr "แสดงแท็บเอาต์พุตเป้าหมายที่ดีบั๊ก"
+
+#~ msgid "There is no file name info for symbol@addr: %s@%s"
+#~ msgstr "ไม่มีข้อมูลชื่อแฟ้มสำหรับ symbol@addr: %s@%s"
+
+#~ msgid ""
+#~ "Failed to open file %s. Would you like to open another file which would "
+#~ "have the same content ?"
+#~ msgstr "เปิดแฟ้ม %s ไม่สำเร็จ คุณต้องการที่จะเปิดแฟ้มอื่นซึ่งมีเนื้อหาเดียวกันหรือไม่ ?"
+
+#~ msgid "Could not find file: %s\n"
+#~ msgstr "ไม่สามารถหาแฟ้ม: %s ได้\n"
+
+#~ msgid "Commands"
+#~ msgstr "คำสั่ง"
+
+#~ msgid "Output"
+#~ msgstr "เอาต์พุต"
+
+#~ msgid "Logs"
+#~ msgstr "ปูม"
+
+#~ msgid "Dereference the pointer"
+#~ msgstr "อ้างอิงพอยน์เตอร์กลับ"
+
+#~ msgid "Dereference the selected pointer variable"
+#~ msgstr "ตัวแปรอ้างอิงพอยน์เตอร์กลับที่เลือก"
+
+#~ msgid "Dereferenced Variables"
+#~ msgstr "ตัวแปรอ้างอิงกลับ"
+
+#~ msgid "Source directories"
+#~ msgstr "ไดเรกทอรีซอร์ส"
