@@ -92,16 +92,6 @@ public:
 
 //static const char * NEMIVER_KEY_DIR = "/app/nemiver";
 
-struct GErrorRef {
-    void operator () (GError *a_error) {if (a_error) {}}
-};
-
-struct GErrorUnref {
-    void operator () (GError *a_error) {if (a_error) {g_error_free (a_error);}}
-};
-
-typedef SafePtr<GError, GErrorRef, GErrorUnref> GErrorSafePtr;
-
 void
 client_notify_func (GConfClient *a_client,
                     const char* a_key,

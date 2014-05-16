@@ -479,21 +479,6 @@ WString::assign (super_type::size_type a_n, gunichar a_c)
     return *this;
 }
 
-struct GErrorRef {
-    void operator () (GError *)
-    {
-    }
-};
-
-struct GErrorUnref {
-    void operator () (GError *a_err)
-    {
-        if (a_err) {
-            g_error_free (a_err);
-        }
-    }
-};
-
 bool
 wstring_to_ustring (const WString &a_wstr,
                     UString &a_ustr)
@@ -504,7 +489,7 @@ wstring_to_ustring (const WString &a_wstr,
     utf8_buf.reset (g_ucs4_to_utf8 (a_wstr.c_str (),
                                     a_wstr.size (), &wstr_len,
                                     &utf8_bytes_len, &err));
-    SafePtr<GError, GErrorRef, GErrorUnref> error;
+    GErrorSafePtr error;
     error.reset (err);
     if (error) {
         LOG_ERROR ("got error conversion error: '" << error->message << "'");
@@ -531,7 +516,7 @@ ustring_to_wstring (const UString &a_ustr,
                                 &utf8_bytes_len,
                                 &wstr_len,
                                 &err));
-    SafePtr<GError, GErrorRef, GErrorUnref> error;
+    GErrorSafePtr error;
     error.reset (err);
     if (error) {
         LOG_ERROR ("got error conversion error: '" << error->message << "'");

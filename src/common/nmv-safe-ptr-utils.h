@@ -99,13 +99,29 @@ struct DelUnicharsUnref {
     }
 };
 
+struct GErrorRef {
+    void
+    operator () (GError *)
+    {}
+};
+
+struct GErrorUnref {
+    void
+    operator () (GError *a_error)
+    {
+        if (a_error) {
+            g_error_free (a_error);
+        }
+    }
+};
+
 typedef SafePtr <gchar, CharsRef, GCharUnref> GCharSafePtr;
 typedef SafePtr <Object, ObjectRef, ObjectUnref> ObjectSafePtr;
 typedef SafePtr <gchar, CharsRef, DelCharsUnref> CharSafePtr;
 typedef SafePtr <gunichar, UnicharsRef, DelUnicharsUnref> UnicharSafePtr;
+typedef SafePtr<GError, GErrorRef, GErrorUnref> GErrorSafePtr;
 
 NEMIVER_END_NAMESPACE(common)
 NEMIVER_END_NAMESPACE(nemiver)
 
 #endif
-
