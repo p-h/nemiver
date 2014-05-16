@@ -46,6 +46,7 @@
 #include <gtkmm/menu.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/uimanager.h>
+#include <pangomm/fontdescription.h>
 #include <vte/vte.h>
 #include <glib/gi18n.h>
 #include "common/nmv-exception.h"
@@ -133,12 +134,12 @@ struct Terminal::Priv {
         vte = VTE_TERMINAL (w);
         THROW_IF_FAIL (vte);
 
-        // Mandatory for vte 0.14	
-        vte_terminal_set_font_from_string (vte, "monospace");
+        // Mandatory for vte >= 0.14
+        Pango::FontDescription font_desc ("monospace");
+        vte_terminal_set_font (vte, font_desc.gobj());
 
         vte_terminal_set_scroll_on_output (vte, TRUE);
         vte_terminal_set_scrollback_lines (vte, 1000);
-        vte_terminal_set_emulation (vte, "xterm");
 
         widget = Glib::wrap (w);
         THROW_IF_FAIL (widget);
@@ -264,7 +265,13 @@ struct Terminal::Priv {
         THROW_IF_FAIL (slave_pty);
         THROW_IF_FAIL (master_pty);
 
-        vte_terminal_set_pty (vte, master_pty);
+        GError *err = 0;
+        VtePty *p = vte_pty_new_foreign_sync (master_pty, 0, &err);
+        GErrorSafePtr error (err);
+        SafePtr<VtePty, RefGObjectNative, UnrefGObjectNative> pty (p);
+        THROW_IF_FAIL2 (!error, error->message);
+
+        vte_terminal_set_pty (vte, pty.get());
         return true;
     }
 };//end Terminal::Priv
@@ -338,4 +345,3 @@ Terminal::feed (const UString &a_text)
 
 
 NEMIVER_END_NAMESPACE(nemiver)
-
