@@ -329,7 +329,7 @@ elif test x$CONF_MGR = xgconf ; then
     AC_PATH_PROG(GCONFTOOL, gconftool-2)
     AC_SUBST(GCONFTOOL)
 
-    AM_GCONF_SOURCE_2
+    m4_ifdef([AM_GCONF_SOURCE_2], [AM_GCONF_SOURCE_2])
     AC_SUBST(gsettingsschemadir, [dummy])
 else
     AC_MSG_ERROR([Configuration Manager undetermined. Abort...])
