@@ -836,24 +836,6 @@ struct UnrefGObject {
     }
 };
 
-struct RefGObjectNative {
-    void operator () (void *a_object)
-    {
-        if (a_object && G_IS_OBJECT (a_object)) {
-            g_object_ref (G_OBJECT (a_object));
-        }
-    }
-};
-
-struct UnrefGObjectNative {
-    void operator () (void *a_object)
-    {
-        if (a_object && G_IS_OBJECT (a_object)) {
-            g_object_unref (G_OBJECT (a_object));
-        }
-    }
-};
-
 static
 void gio_file_monitor_cb (const Glib::RefPtr<Gio::File>& file,
                           const Glib::RefPtr<Gio::File>& other_file,

@@ -30,7 +30,7 @@
 #ifndef __NMV_SAFE_PTR_UTILS_H__
 #define __NMV_SAFE_PTR_UTILS_H__
 
-#include <glib.h>
+#include <glib-object.h>
 #include "nmv-object.h"
 #include "nmv-safe-ptr.h"
 #include "nmv-namespace.h"
@@ -115,11 +115,32 @@ struct GErrorUnref {
     }
 };
 
+struct RefGObjectNative {
+    void operator () (void *a_object)
+    {
+        if (a_object && G_IS_OBJECT (a_object)) {
+            g_object_ref (G_OBJECT (a_object));
+        }
+    }
+};
+
+struct UnrefGObjectNative {
+    void operator () (void *a_object)
+    {
+        if (a_object && G_IS_OBJECT (a_object)) {
+            g_object_unref (G_OBJECT (a_object));
+        }
+    }
+};
+
 typedef SafePtr <gchar, CharsRef, GCharUnref> GCharSafePtr;
 typedef SafePtr <Object, ObjectRef, ObjectUnref> ObjectSafePtr;
 typedef SafePtr <gchar, CharsRef, DelCharsUnref> CharSafePtr;
 typedef SafePtr <gunichar, UnicharsRef, DelUnicharsUnref> UnicharSafePtr;
 typedef SafePtr<GError, GErrorRef, GErrorUnref> GErrorSafePtr;
+typedef SafePtr<void*,
+                RefGObjectNative,
+                UnrefGObjectNative> NativeGObjectSafePtr;
 
 NEMIVER_END_NAMESPACE(common)
 NEMIVER_END_NAMESPACE(nemiver)
