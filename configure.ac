@@ -293,8 +293,7 @@ if test x$ENABLE_AUTOTESTS = xyes ; then
     AX_BOOST_UNIT_TEST_FRAMEWORK
     AX_BOOST_TEST_EXEC_MONITOR
 
-    unit_framework_lib_candidates="/usr/lib/libboost_unit_test_framework-st.a /usr/lib/libboost_unit_test_framework.a"
-    unit_framework_lib_candidates=$unit_framework_lib_candidates" /usr/lib64/libboost_unit_test_framework-st.a /usr/lib64/libboost_unit_test_framework.a"
+    unit_framework_lib_candidates="$BOOSTLIBDIR/libboost_unit_test_framework-st.a $BOOSTLIBDIR/libboost_unit_test_framework.a"
     for i in $unit_framework_lib_candidates ; do
         if test -f $i ; then
             BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB=$i
