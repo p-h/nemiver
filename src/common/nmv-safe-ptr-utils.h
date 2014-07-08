@@ -133,10 +133,10 @@ struct UnrefGObjectNative {
     }
 };
 
-typedef SafePtr <gchar, CharsRef, GCharUnref> GCharSafePtr;
-typedef SafePtr <Object, ObjectRef, ObjectUnref> ObjectSafePtr;
-typedef SafePtr <gchar, CharsRef, DelCharsUnref> CharSafePtr;
-typedef SafePtr <gunichar, UnicharsRef, DelUnicharsUnref> UnicharSafePtr;
+typedef SafePtr<gchar, CharsRef, GCharUnref> GCharSafePtr;
+typedef SafePtr<Object, ObjectRef, ObjectUnref> ObjectSafePtr;
+typedef SafePtr<gchar, CharsRef, DelCharsUnref> CharSafePtr;
+typedef SafePtr<gunichar, UnicharsRef, DelUnicharsUnref> UnicharSafePtr;
 typedef SafePtr<GError, GErrorRef, GErrorUnref> GErrorSafePtr;
 typedef SafePtr<void*,
                 RefGObjectNative,
