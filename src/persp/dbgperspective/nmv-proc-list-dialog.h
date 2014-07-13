@@ -54,4 +54,3 @@ public:
 NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_PROC_LIST_DIALOG_H__
-

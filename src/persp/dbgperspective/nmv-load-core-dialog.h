@@ -55,4 +55,3 @@ public:
 NEMIVER_END_NAMESPACE (nemiver)
 
 #endif //__NMV_LOAD_CORE_DIALOG_H__
-

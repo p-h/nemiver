@@ -91,12 +91,22 @@ operator<< (Stream &a_out, const Asm &a_asm)
 
 void log_asm_insns (const std::list<common::Asm> &a_asm);
 
-typedef bool (* FindFileAndReadLine) (const UString &a_file_path,
+/// A pointer to ui_utils::find_file_and_read_line() function.
+typedef bool (* FindFileAndReadLine) (Gtk::Window &a_parent_window,
+				      const UString &a_file_path,
 				      const std::list<UString> &a_where_to_look,
                                       list<UString> &a_sess_dirs,
                                       map<UString, bool> &a_ignore_paths,
 				      int a_line_number,
                                       std::string &a_line);
+
+/// This is a wrapper type around (a functor) for the call to
+/// ui_utils::find_file_and_read_line.
+///
+/// The function call operator of this functor read the line N of a
+/// given file F.  The functor has context to know where to look for
+/// the file F; otherwise it can ask the user (interactively) for
+/// help.
 class ReadLine
 {
  private:
@@ -112,7 +122,7 @@ class ReadLine
  public:
     ReadLine (const std::list<UString> &where_to_look,
 	      list<UString> &session_dirs,
-                  map<UString, bool> &ignore_paths,
+	      map<UString, bool> &ignore_paths,
               FindFileAndReadLine read_line_func) :
     m_where_to_look (where_to_look),
       m_session_dirs (session_dirs),
@@ -121,6 +131,16 @@ class ReadLine
     {
     }
 
+    /// The function-call operator of the functor.
+    ///
+    /// \param a_file_path the file to look for.
+    ///
+    /// \param a_line_number the number of the line of \p a_file_path
+    /// to read.
+    ///
+    /// \param a_line the resulting line read.
+    ///
+    /// \return true iff a line was read.
     bool operator () (const UString &a_file_path,
                       int a_line_number,
                       std::string &a_line)

@@ -41,9 +41,16 @@ log_asm_insns (const std::list<common::Asm> &a_asm)
     }
 }
 
+/// Write an asm instruction to an output stream.
+///
+/// \param a_instr the asm instruction to write.
+///
+/// \param a_os the output stream to write the instruction to.
+///
+/// \return true upon successful completion, false otherwise.
 bool
 write_asm_instr (const common::AsmInstr &a_instr,
-		 std::ostringstream &a_os)
+                 std::ostringstream &a_os)
 {
     a_os << a_instr.address ();
     a_os << "  ";
@@ -56,10 +63,20 @@ write_asm_instr (const common::AsmInstr &a_instr,
     return true;
 }
 
+/// Write an asm instruction to an output stream.
+///
+/// \param a_asm the asm instruction to write.
+///
+/// \param a_read the functor used to read source code lines in case
+/// the asm to write is mixed with higher level source code.
+///
+/// \param a_os the output stream to write the asm to.
+///
+/// \return true upon sucessful completion, false otherwise.
 bool
 write_asm_instr (const common::Asm &a_asm,
-		 ReadLine &a_read,
-		 std::ostringstream &a_os)
+                 ReadLine &a_read,
+                 std::ostringstream &a_os)
 {
     bool written = false;
 

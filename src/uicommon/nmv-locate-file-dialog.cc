@@ -128,4 +128,3 @@ LocateFileDialog::file_location (const UString &a_location)
 }
 
 }//end namespace nemiver
-

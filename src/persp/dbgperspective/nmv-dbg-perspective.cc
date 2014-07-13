@@ -2946,14 +2946,14 @@ DBGPerspective::on_activate_global_variables ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     GlobalVarsInspectorDialog dialog (plugin_path (),
                                       debugger (),
                                       workbench ());
     dialog.run ();
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
 }
 
 void
@@ -6359,9 +6359,8 @@ DBGPerspective::connect_to_remote_target ()
     // try to pre-fill the remote target dialog with the relevant info
     // if we have it.
     pre_fill_remote_target_dialog (dialog);
-    
-    int result = dialog.run ();
 
+    int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK)
         return;
 

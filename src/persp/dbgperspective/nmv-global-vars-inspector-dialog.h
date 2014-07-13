@@ -60,5 +60,3 @@ public:
 
 NEMIVER_END_NAMESPACE (nemiver)
 #endif //__NMV_GLOBAL_VARS_INSPECTOR_DIALOG_H__
-
-
