@@ -363,7 +363,7 @@ dnl library dependencies for the nemiver common UI module
 dnl first what vte should we use?
 PKG_CHECK_EXISTS([vte-2.90 >= $LIBVTE_VERSION],
 		 [HAS_VTE_2_90=yes],
-		 [HAS_VTR_2_90=no])
+		 [HAS_VTE_2_90=no])
 
 PKG_CHECK_EXISTS([vte-2.91 >= $LIBVTE_VERSION],
 		 [HAS_VTE_2_91=yes],
