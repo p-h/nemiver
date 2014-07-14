@@ -359,10 +359,29 @@ AC_SUBST(NEMIVERCOMMON_LIBS)
 AC_SUBST(NEMIVERCOMMON_CFLAGS)
 
 dnl library dependencies for the nemiver common UI module
+
+dnl first what vte should we use?
+PKG_CHECK_EXISTS([vte-2.90 >= $LIBVTE_VERSION],
+		 [HAS_VTE_2_90=yes],
+		 [HAS_VTR_2_90=no])
+
+PKG_CHECK_EXISTS([vte-2.91 >= $LIBVTE_VERSION],
+		 [HAS_VTE_2_91=yes],
+		 [HAS_VTE_2_91=no])
+
+if test x$HAS_VTE_2_91 = xyes; then
+   VTE_TO_USE=vte-2.91
+   AC_DEFINE(HAS_VTE_2_91,1,[libvte 2.91 support])
+else
+   VTE_TO_USE=vte-2.90
+   AC_DEFINE(HAS_VTE_2_90,1,[libvtr 2.90 support])
+fi
+
+dnl then the other libraries of uicommon module.
 DEP_UICOMMON=" gtkmm-3.0 >= $LIBGTKMM_VERSION \
                gtk+-3.0 >= $LIBGTK_VERSION \
                gtksourceviewmm-3.0 >= $LIBGTKSOURCEVIEWMM_VERSION \
-               vte-2.91 >= $LIBVTE_VERSION"
+               $VTE_TO_USE >= $LIBVTE_VERSION"
 
 PKG_CHECK_MODULES(NEMIVERUICOMMON, $DEP_UICOMMON $DEP_COMMON $DEP_MEMORYVIEW)
 NEMIVERUICOMMON_CFLAGS="$NEMIVERUICOMMON_CFLAGS $CPPUNIT_CFLAGS"
@@ -385,7 +404,7 @@ AC_SUBST(NEMIVERWORKBENCH_CFLAGS)
 
 dnl library dependencies for the nemiver debug perspective plugin
 DEP_PERSP="gtksourceviewmm-3.0 >= $LIBGTKSOURCEVIEWMM_VERSION \
-           vte-2.91 >= $LIBVTE_VERSION"
+           $VTE_TO_USE >= $LIBVTE_VERSION"
 
 PKG_CHECK_MODULES(NEMIVERDBGPERSP, $DEP_UICOMMON $DEP_VFS $DEP_PERSP $DEP_MEMORYVIEW $DEP_DYNAMICLAYOUT)
 NEMIVERDBGPERSP_LIBS="$NEMIVERDBGPERSP_LIBS $CPPUNIT_LIBS"

@@ -137,11 +137,18 @@ struct Terminal::Priv {
         THROW_IF_FAIL (vte);
 
         // Mandatory for vte >= 0.14
+#ifdef HAS_VTE_2_91
         Pango::FontDescription font_desc ("monospace");
         vte_terminal_set_font (vte, font_desc.gobj());
+#else // HAS_VTE_2_90
+        vte_terminal_set_font_from_string (vte, "monospace");
+#endif
 
         vte_terminal_set_scroll_on_output (vte, TRUE);
         vte_terminal_set_scrollback_lines (vte, 1000);
+#ifdef HAS_VTE_2_90
+        vte_terminal_set_emulation (vte, "xterm");
+#endif
 
         widget = Glib::wrap (w);
         THROW_IF_FAIL (widget);
@@ -267,6 +274,7 @@ struct Terminal::Priv {
         THROW_IF_FAIL (slave_pty);
         THROW_IF_FAIL (master_pty);
 
+#ifdef HAS_VTE_2_91
         GError *err = 0;
         VtePty *p = vte_pty_new_foreign_sync (master_pty, 0, &err);
         GErrorSafePtr error (err);
@@ -274,6 +282,9 @@ struct Terminal::Priv {
         THROW_IF_FAIL2 (!error, error->message);
 
         vte_terminal_set_pty (vte, pty.get());
+#else //HAS_VTE_2_90
+      vte_terminal_set_pty (vte, master_pty);
+#endif
         return true;
     }
 };//end Terminal::Priv
