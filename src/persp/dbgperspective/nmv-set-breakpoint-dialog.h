@@ -55,7 +55,8 @@ public:
         MODE_EVENT
     };
 
-    SetBreakpointDialog (const UString &a_resource_root_path);
+    SetBreakpointDialog (Gtk::Window &a_parent,
+                         const UString &a_resource_root_path);
     virtual ~SetBreakpointDialog ();
 
     UString file_name () const;

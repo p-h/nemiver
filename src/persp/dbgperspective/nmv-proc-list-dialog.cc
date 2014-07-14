@@ -269,10 +269,18 @@ public:
     }
 };//end class ProcListDialog::Priv
 
-
-ProcListDialog::ProcListDialog (const UString &a_root_path,
+/// Constructor of the ProcListDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+///
+/// \param a_proc_mgr the IProcMgr interface to use.
+ProcListDialog::ProcListDialog (Gtk::Window &a_parent,
+                                const UString &a_root_path,
                                 IProcMgr &a_proc_mgr) :
-    Dialog(a_root_path, "proclistdialog.ui", "proclistdialog")
+    Dialog(a_root_path, "proclistdialog.ui", "proclistdialog", a_parent)
 {
     m_priv.reset (new Priv (widget (), gtkbuilder (), a_proc_mgr));
     widget ().hide ();

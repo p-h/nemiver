@@ -188,8 +188,16 @@ public:
     }
 };//end struct RunProgramDialog::Priv
 
-RunProgramDialog::RunProgramDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "runprogramdialog.ui", "runprogramdialog")
+/// Constructor of the RunProgramDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+RunProgramDialog::RunProgramDialog (Gtk::Window &a_parent,
+                                    const UString &a_root_path) :
+    Dialog (a_root_path, "runprogramdialog.ui",
+            "runprogramdialog", a_parent)
 {
     m_priv.reset (new Priv (widget (), gtkbuilder ()));
     THROW_IF_FAIL (m_priv);

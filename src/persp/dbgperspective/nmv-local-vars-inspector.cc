@@ -596,7 +596,8 @@ public:
                 cur_selected_row->get_value
                         (vutil::get_variable_columns ().variable);
         THROW_IF_FAIL (variable);
-        ui_utils::display_info (message);
+        ui_utils::display_info (workbench.get_root_window (),
+                                message);
     }
 
     /// Add the new local variables @a_vars to the list of local

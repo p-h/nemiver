@@ -75,13 +75,26 @@ public:
     }
 };//end struct Dialog::Priv
 
+/// Constructor of the Dialog type.
+///
+/// \param a_ressource_root_path the path to the root directory where
+/// to find the resources of the Dialog.
+///
+/// \param a_gtkbuilder_filename the file name of the gtkbuilder
+/// resource file of the dialog, relative to a_resource_root_path.
+///
+/// \param a_widget_name the name of the widget.
+///
+/// \param a_parent the parent window of the dialog.
 Dialog::Dialog (const UString &a_resource_root_path,
                 const UString &a_gtkbuilder_filename,
-                const UString &a_widget_name)
+                const UString &a_widget_name,
+                Gtk::Window &a_parent)
 {
     m_priv.reset (new Priv (a_resource_root_path,
                             a_gtkbuilder_filename,
                             a_widget_name));
+    widget().set_transient_for (a_parent);
 }
 
 Gtk::Dialog&

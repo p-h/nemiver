@@ -227,10 +227,23 @@ public:
     }
 };//end class OpenFileDialog::Priv
 
-OpenFileDialog::OpenFileDialog (const UString &a_root_path,
+/// Constructor of the OpenFileDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+///
+/// \param a_debugger the IDebugger interface to use.
+///
+/// \param a_working_dir the directory to consider as the current
+/// working directory.
+OpenFileDialog::OpenFileDialog (Gtk::Window &a_parent,
+                                const UString &a_root_path,
                                 IDebuggerSafePtr &a_debugger,
                                 const UString  &a_working_dir) :
-    Dialog (a_root_path, "openfiledialog.ui", "dialog_open_source_file")
+    Dialog (a_root_path, "openfiledialog.ui",
+            "dialog_open_source_file", a_parent)
 {
     m_priv.reset (new Priv (gtkbuilder (), a_debugger, a_working_dir));
 }

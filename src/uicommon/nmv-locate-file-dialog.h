@@ -42,7 +42,8 @@ class LocateFileDialog : public Dialog {
     SafePtr<Priv> m_priv;
 public:
     LocateFileDialog (const UString &a_resource_root_path,
-                      const UString &a_file);
+                      const UString &a_file,
+                      Gtk::Window &a_parent);
     virtual ~LocateFileDialog ();
 
     UString file_location () const;

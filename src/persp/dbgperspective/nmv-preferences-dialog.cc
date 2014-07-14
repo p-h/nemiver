@@ -917,12 +917,24 @@ public:
     }
 };//end PreferencesDialog
 
-PreferencesDialog::PreferencesDialog (IPerspective &a_perspective,
+/// Constructor of the PreferenceDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_perspective the IPerspective interface to use.
+///
+/// \param a_layout_manager the layout manager to use.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+PreferencesDialog::PreferencesDialog (Gtk::Window &a_parent,
+                                      IPerspective &a_perspective,
                                       LayoutManager &a_layout_manager,
                                       const UString &a_root_path) :
     Dialog (a_root_path,
             "preferencesdialog.ui",
-            "preferencesdialog")
+            "preferencesdialog",
+            a_parent)
 {
     m_priv.reset (new Priv (gtkbuilder (), a_perspective, a_layout_manager));
     m_priv->update_widget_from_conf ();

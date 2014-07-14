@@ -43,7 +43,8 @@ class ProcListDialog : public Dialog {
 
 public:
 
-    ProcListDialog (const UString &a_root_path,
+    ProcListDialog (Gtk::Window &a_parent,
+                    const UString &a_root_path,
                     IProcMgr &a_proc_mgr);
     virtual ~ProcListDialog ();
     virtual gint run ();

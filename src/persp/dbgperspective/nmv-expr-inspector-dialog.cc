@@ -386,11 +386,21 @@ public:
     //*************************
 };//end class ExprInspectorDialog::Priv
 
-ExprInspectorDialog::ExprInspectorDialog (IDebugger &a_debugger,
-                                        IPerspective &a_perspective) :
+/// The constructor of the ExprInspectorDilaog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_debugger the IDebugger interface to use to inspect the
+/// expression.
+///
+/// \param a_perspective the IPerspective interface to use.
+ExprInspectorDialog::ExprInspectorDialog (Gtk::Window &a_parent,
+                                          IDebugger &a_debugger,
+                                          IPerspective &a_perspective) :
     Dialog (a_perspective.plugin_path (),
             "exprinspectordialog.ui",
-            "exprinspectordialog")
+            "exprinspectordialog",
+            a_parent)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset

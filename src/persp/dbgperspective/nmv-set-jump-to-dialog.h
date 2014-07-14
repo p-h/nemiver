@@ -43,7 +43,8 @@ class SetJumpToDialog : public Dialog
 
  public:
 
-    SetJumpToDialog (const UString &a_resource_root_path);
+    SetJumpToDialog (Gtk::Window &a_parent,
+                     const UString &a_resource_root_path);
     virtual ~SetJumpToDialog ();
 
     const common::Loc* get_location () const;

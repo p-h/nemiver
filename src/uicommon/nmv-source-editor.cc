@@ -173,6 +173,7 @@ on_line_mark_activated_signal (GtkSourceView *a_view,
 struct SourceEditor::Priv {
     Sequence sequence;
     UString root_dir;
+    Gtk::Window &parent_window;
     nemiver::SourceView *source_view;
     Gtk::Label *line_col_label;
     Gtk::HBox *status_box;
@@ -710,7 +711,8 @@ struct SourceEditor::Priv {
         source_buffer->place_cursor (source_buffer->begin ());
     }
 
-    Priv () :
+    Priv (Gtk::Window &a_parent_window) :
+        parent_window (a_parent_window),
         source_view (Gtk::manage (new SourceView)),
         line_col_label (Gtk::manage (new Gtk::Label)),
         status_box (Gtk::manage (new Gtk::HBox)),
@@ -720,10 +722,12 @@ struct SourceEditor::Priv {
         init ();
     }
 
-    explicit Priv (const UString &a_root_dir,
+    explicit Priv (Gtk::Window &a_parent_window,
+                   const UString &a_root_dir,
                    Glib::RefPtr<Buffer> &a_buf,
                    bool a_assembly) :
         root_dir (a_root_dir),
+        parent_window (a_parent_window),
         source_view (Gtk::manage (new SourceView (a_buf))),
         line_col_label (Gtk::manage (new Gtk::Label)),
         status_box (Gtk::manage (new Gtk::HBox)),
@@ -739,9 +743,11 @@ struct SourceEditor::Priv {
         init ();
     }
 
-    explicit Priv (const UString &a_root_dir,
+    explicit Priv (Gtk::Window &a_parent_window,
+                   const UString &a_root_dir,
                    Glib::RefPtr<Buffer> &a_buf) :
         root_dir (a_root_dir),
+        parent_window (a_parent_window),
         source_view (Gtk::manage (new SourceView (a_buf))),
         status_box (Gtk::manage (new Gtk::HBox)),
         non_asm_ctxt (-1, -1)
@@ -778,17 +784,26 @@ SourceEditor::init ()
     source_view ().set_show_line_marks (true);
 }
 
-SourceEditor::SourceEditor ()
-{
-    m_priv.reset (new Priv);
-    init ();
-}
-
-SourceEditor::SourceEditor (const UString &a_root_dir,
+/// Constructor of the SourceEditor type.
+///
+/// \param a_parent_window the parent window of the dialogs used by
+/// this editor.
+///
+/// \param a_root_dir the root directory from where to find the
+/// resources of the dialogs used by the editor.
+///
+/// \param a_buf the buffer containing the source to edit.
+///
+/// \param a_assembly whether to support asm.
+SourceEditor::SourceEditor (Gtk::Window &a_parent_window,
+                            const UString &a_root_dir,
                             Glib::RefPtr<Buffer> &a_buf,
                             bool a_assembly)
 {
-    m_priv.reset (new Priv (a_root_dir, a_buf, a_assembly));
+    m_priv.reset (new Priv (a_parent_window,
+                            a_root_dir,
+                            a_buf,
+                            a_assembly));
     init ();
 }
 
@@ -1416,7 +1431,8 @@ SourceEditor::create_source_buffer ()
 }
 
 bool
-SourceEditor::load_file (const UString &a_path,
+SourceEditor::load_file (Gtk::Window &a_parent,
+                         const UString &a_path,
                          const std::list<std::string> &a_supported_encodings,
                          bool a_enable_syntax_highlight,
                          Glib::RefPtr<Buffer> &a_source_buffer)
@@ -1429,7 +1445,8 @@ SourceEditor::load_file (const UString &a_path,
 
     if (!gio_file->query_exists ()) {
         LOG_ERROR ("Could not open file " + path);
-        ui_utils::display_error ("Could not open file: "
+        ui_utils::display_error (a_parent,
+                                 "Could not open file: "
                                  + Glib::filename_to_utf8 (path));
         return false;
     }
@@ -1474,7 +1491,7 @@ SourceEditor::load_file (const UString &a_path,
                       "is different from %s"),
                     path.c_str (),
                     cur_charset.c_str ());
-        ui_utils::display_error (msg);
+        ui_utils::display_error (a_parent, msg);
         return false;
     }
     a_source_buffer->set_text (utf8_content);
@@ -1503,11 +1520,37 @@ SourceEditor::setup_and_popup_menu (GdkEventButton *a_event,
     m_priv->source_view->setup_and_popup_menu (a_event, a_attach_to,
                                                a_menu);
 }
+
+/// Add asm instructions to the underlying buffer of a source editor.
+///
+/// \param a_parent_window the parent window of the dialogs used in
+/// the course of adding the asm instruction to the source editor.
+///
+/// \param a_asm the list of asm instructions to add to the source editor.
+///
+/// \param a_append whether to append the asm instructions (if true)
+/// or to prepend them to the buffer.
+///
+/// \param a_src_search_dirs if there are source files to find, where
+/// to look for them.  This can be useful for mixed (with source code)
+/// asm.
+///
+/// \param a_session_dirs if a file was searched and found, its
+/// directory is added to this list.
+///
+/// \param a_ignore_path, if a source file is searched, is not found,
+/// and is in this list, do not ask the user to help us locate it.
+///
+/// \param a_buf the underlying source buffer of this source editor.
+/// It's where the asm instructions are to be added.
+///
+/// \return true upon successful completion.
 bool
-SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
+SourceEditor::add_asm (Gtk::Window &a_parent_window,
+                       const common::DisassembleInfo &/*a_info*/,
                        const std::list<common::Asm> &a_asm,
                        bool a_append,
-		       const list<UString> &a_src_search_dirs,
+                       const list<UString> &a_src_search_dirs,
                        list<UString> &a_session_dirs,
                        std::map<UString, bool> &a_ignore_paths,
                        Glib::RefPtr<Buffer> &a_buf)
@@ -1525,8 +1568,11 @@ SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
 
     // Write the first asm instruction into a string stream.
     std::ostringstream first_os, endl_os;
-    ReadLine reader (a_src_search_dirs, a_session_dirs,
-                     a_ignore_paths, &ui_utils::find_file_and_read_line);
+    ReadLine reader (a_parent_window,
+                     a_src_search_dirs,
+                     a_session_dirs,
+                     a_ignore_paths,
+                     &ui_utils::find_file_and_read_line);
     bool first_written = write_asm_instr (*it, reader, first_os);
     endl_os << std::endl;
 
@@ -1564,11 +1610,42 @@ SourceEditor::add_asm (const common::DisassembleInfo &/*a_info*/,
     return true;
 }
 
+/// Load the asm instructions referred to by the disassembling
+/// information and stuff it into the underlying buffer of a
+/// SourceEditor.
+///
+/// \param a_parent_window the parent window of the dialogs used in
+/// the course of adding the asm instruction to the source editor.
+///
+/// \param a_info some information describing the assembly instruction
+/// stream to add to this source editor.
+///
+/// \param a_asm the asm instruction stream to add to this source
+/// editor.
+///
+/// \param a_append if true, the asm instructions are added to the
+/// buffer, otherwise they are prepended to it.
+///
+/// \param a_src_search_dirs if there are source files to find, where
+/// to look for them.  This can be useful for mixed (with source code)
+/// asm.
+///
+/// \param a_session_dirs if a file was searched and found, its
+/// directory is added to this list.
+///
+/// \param a_ignore_path, if a source file is searched, is not found,
+/// and is in this list, do not ask the user to help us locate it.
+///
+/// \param a_buf the underlying source buffer of this source editor.
+/// It's where the asm instructions are to be added.
+///
+/// \return true upon successful completion.
 bool
-SourceEditor::load_asm (const common::DisassembleInfo &a_info,
+SourceEditor::load_asm (Gtk::Window &a_parent_window,
+                        const common::DisassembleInfo &a_info,
                         const std::list<common::Asm> &a_asm,
                         bool a_append,
-			const list<UString> &a_src_search_dirs,
+                        const list<UString> &a_src_search_dirs,
                         list<UString> &a_session_dirs,
                         std::map<UString, bool> &a_ignore_paths,
                         Glib::RefPtr<Buffer> &a_buf)
@@ -1584,8 +1661,11 @@ SourceEditor::load_asm (const common::DisassembleInfo &a_info,
     }
     THROW_IF_FAIL (a_buf);
 
-    add_asm (a_info, a_asm, a_append, a_src_search_dirs,
-             a_session_dirs, a_ignore_paths, a_buf);
+    add_asm (a_parent_window,
+             a_info, a_asm, a_append,
+             a_src_search_dirs,
+             a_session_dirs,
+             a_ignore_paths, a_buf);
 
     NEMIVER_CATCH_AND_RETURN (false)
     return true;

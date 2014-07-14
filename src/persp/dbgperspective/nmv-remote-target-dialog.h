@@ -39,7 +39,8 @@ public:
         SERIAL_CONNECTION_TYPE
     };
 
-    RemoteTargetDialog (const UString &a_root_path);
+    RemoteTargetDialog (Gtk::Window &a_parent,
+                        const UString &a_root_path);
     virtual ~RemoteTargetDialog ();
 
     const UString& get_cwd () const;

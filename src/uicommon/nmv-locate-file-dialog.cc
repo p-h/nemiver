@@ -44,7 +44,8 @@ public:
     Gtk::FileChooserButton *fcbutton_location;
     Gtk::Label *label_filename;
     Gtk::Button *okbutton;
-    Priv (const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder, const UString& a_filename) :
+    Priv (const Glib::RefPtr<Gtk::Builder> &a_gtkbuilder,
+          const UString& a_filename) :
         fcbutton_location (0),
         label_filename(0),
         okbutton (0)
@@ -81,7 +82,7 @@ public:
 
     void on_file_selection_changed_signal ()
     {
-        NEMIVER_TRY
+        NEMIVER_TRY;
 
         THROW_IF_FAIL (fcbutton_location);
 
@@ -91,13 +92,26 @@ public:
         } else {
             okbutton->set_sensitive (false);
         }
-        NEMIVER_CATCH
+        NEMIVER_CATCH;
     }
 };//end class LocateFileDialog::Priv
 
+/// Constructor of the LocateFileDialog type.
+///
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+///
+/// \param a_file the file to locate.
+///
+/// \param a_parent the parent window of the dialog.
 LocateFileDialog::LocateFileDialog (const UString &a_root_path,
-                                    const UString &a_file) :
-    Dialog (a_root_path, "locatefiledialog.ui", "locatefiledialog")
+                                    const UString &a_file,
+                                    Gtk::Window &a_parent) :
+    Dialog (a_root_path,
+            "locatefiledialog.ui",
+            "locatefiledialog",
+            a_parent)
 {
     m_priv.reset (new Priv (gtkbuilder (), a_file));
 }

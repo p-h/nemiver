@@ -1094,7 +1094,8 @@ struct DBGPerspective::Priv {
     {
         list<string> supported_encodings;
         get_supported_encodings (supported_encodings);
-        return SourceEditor::load_file (a_path, supported_encodings,
+        return SourceEditor::load_file (workbench->get_root_window (),
+                                        a_path, supported_encodings,
                                         enable_syntax_highlight,
                                         a_buffer);
     }
@@ -1154,7 +1155,8 @@ struct DBGPerspective::Priv {
     {
         list<UString> where_to_look;
         build_find_file_search_path (where_to_look);
-        return ui_utils::find_file_or_ask_user (a_file_path,
+        return ui_utils::find_file_or_ask_user (workbench->get_root_window (),
+                                                a_file_path,
                                                 where_to_look,
                                                 session_search_paths,
                                                 paths_to_ignore,
@@ -1471,7 +1473,8 @@ DBGPerspective::on_continue_until_action ()
 void
 DBGPerspective::on_jump_to_location_action ()
 {
-    SetJumpToDialog dialog (plugin_path ());
+    SetJumpToDialog dialog (workbench ().get_root_window (),
+                            plugin_path ());
 
     SourceEditor *editor = get_current_source_editor ();
 
@@ -1716,7 +1719,8 @@ DBGPerspective::on_find_text_response_signal (int a_response)
                             search_str.c_str ());
             find_text_dialog.clear_selection_before_search (false);
         }
-        ui_utils::display_info (message);
+        ui_utils::display_info (workbench ().get_root_window (),
+                                message);
     } else {
         find_text_dialog.clear_selection_before_search (false);
     }
@@ -2288,7 +2292,8 @@ DBGPerspective::on_debugger_connected_to_remote_target_signal ()
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     NEMIVER_TRY
 
-    ui_utils::display_info (_("Connected to remote target!"));
+        ui_utils::display_info (workbench ().get_root_window (),
+                                _("Connected to remote target!"));
     debugger ()->list_breakpoints ();
 
     NEMIVER_CATCH
@@ -2489,7 +2494,8 @@ DBGPerspective::on_program_finished_signal ()
 
     unset_where ();
 
-    display_info (_("Program exited"));
+    display_info (workbench ().get_root_window (),
+                  _("Program exited"));
     workbench ().set_title_extension ("");
 
     //****************************
@@ -2518,7 +2524,8 @@ DBGPerspective::on_engine_died_signal ()
     m_priv->debugger_busy_action_group->set_sensitive (false);
     m_priv->inferior_loaded_action_group->set_sensitive (false);
 
-    ui_utils::display_info (_("The underlying debugger engine process died."));
+    ui_utils::display_info (workbench ().get_root_window (),
+                            _("The underlying debugger engine process died."));
 
     NEMIVER_CATCH
 
@@ -2624,7 +2631,8 @@ DBGPerspective::on_signal_received_by_target_signal (const UString &a_signal,
     // translators: first %s is the signal name, second one is the reason
     message.printf (_("Target received a signal: %s, %s"),
             a_signal.c_str (), a_meaning.c_str ());
-    ui_utils::display_info (message);
+    ui_utils::display_info (workbench ().get_root_window (),
+                            message);
 
     NEMIVER_CATCH
 }
@@ -2638,7 +2646,8 @@ DBGPerspective::on_debugger_error_signal (const UString &a_msg)
     if (m_priv->show_dbg_errors) {
         UString message;
         message.printf (_("An error occurred: %s"), a_msg.c_str ());
-        ui_utils::display_error (message);
+        ui_utils::display_error (workbench ().get_root_window (),
+                                 message);
     }
 
     NEMIVER_CATCH
@@ -2806,7 +2815,8 @@ DBGPerspective::on_file_content_changed (const UString &a_path)
             bool dont_ask_again = !m_priv->confirm_before_reload_source;
             bool need_to_reload_file = m_priv->allow_auto_reload_source;
             if (!dont_ask_again) {
-                if (ask_yes_no_question (msg,
+                if (ask_yes_no_question (workbench ().get_root_window (),
+                                         msg,
                                          true /*propose to not ask again*/,
                                          dont_ask_again)
                         == Gtk::RESPONSE_YES) {
@@ -5083,7 +5093,9 @@ DBGPerspective::get_find_text_dialog ()
 {
     THROW_IF_FAIL (m_priv);
     if (!m_priv->find_text_dialog) {
-        m_priv->find_text_dialog.reset (new FindTextDialog (plugin_path ()));
+        m_priv->find_text_dialog.reset
+            (new FindTextDialog (workbench ().get_root_window (),
+                                 plugin_path ()));
         m_priv->find_text_dialog->signal_response ().connect
             (sigc::mem_fun (*this,
                             &DBGPerspective::on_find_text_response_signal));
@@ -5365,9 +5377,11 @@ DBGPerspective::create_source_editor (Glib::RefPtr<Gsv::Buffer> &a_source_buf,
     int current_line =  -1;
 
     if (a_asm_view) {
-        source_editor = Gtk::manage (new SourceEditor (plugin_path (),
-                                                       a_source_buf,
-                                                       true));
+        source_editor =
+            Gtk::manage (new SourceEditor (workbench ().get_root_window (),
+                                           plugin_path (),
+                                           a_source_buf,
+                                           true));
         if (!a_current_address.empty ()) {
             source_editor->assembly_buf_addr_to_line
                                 (Address (a_current_address.raw ()),
@@ -5375,9 +5389,11 @@ DBGPerspective::create_source_editor (Glib::RefPtr<Gsv::Buffer> &a_source_buf,
                                  current_line);
         }
     } else {
-        source_editor = Gtk::manage (new SourceEditor (plugin_path (),
-                                                       a_source_buf,
-                                                       false));
+        source_editor =
+            Gtk::manage (new SourceEditor (workbench ().get_root_window (),
+                                           plugin_path (),
+                                           a_source_buf,
+                                           false));
         source_editor->source_view ().set_show_line_numbers
                                                 (m_priv->show_line_numbers);
         current_line = a_current_line;
@@ -5430,7 +5446,8 @@ DBGPerspective::create_source_editor (Glib::RefPtr<Gsv::Buffer> &a_source_buf,
 void
 DBGPerspective::open_file ()
 {
-    OpenFileDialog dialog (plugin_path (),
+    OpenFileDialog dialog (workbench ().get_root_window (),
+                           plugin_path (),
                            debugger (),
                            get_current_file_path ());
 
@@ -5567,7 +5584,8 @@ DBGPerspective::load_asm (const common::DisassembleInfo &a_info,
 {
     list<UString> where_to_look_for_src;
     m_priv->build_find_file_search_path (where_to_look_for_src);
-    return SourceEditor::load_asm (a_info, a_asm, /*a_append=*/true,
+    return SourceEditor::load_asm (workbench ().get_root_window (),
+                                   a_info, a_asm, /*a_append=*/true,
                                    where_to_look_for_src,
                                    m_priv->session_search_paths,
                                    m_priv->paths_to_ignore,
@@ -5954,7 +5972,8 @@ DBGPerspective::execute_session (ISessMgr::Session &a_session)
 void
 DBGPerspective::execute_program ()
 {
-    RunProgramDialog dialog (plugin_path ());
+    RunProgramDialog dialog (workbench ().get_root_window (),
+                             plugin_path ());
 
     // set defaults from session
     if (debugger ()->get_target_path () != "") {
@@ -6006,7 +6025,8 @@ DBGPerspective::restart_inferior ()
     } else {
         // We cannot restart an inferior running on a remote target at
         // the moment.
-        ui_utils::display_error (_("Sorry, it's impossible to restart "
+        ui_utils::display_error (workbench ().get_root_window (),
+                                 _("Sorry, it's impossible to restart "
                                    "a remote inferior"));
     }
 }
@@ -6152,7 +6172,8 @@ DBGPerspective::execute_program
             || !env::build_path_to_executable (prog, prog)) {
             UString msg;
             msg.printf (_("Could not find file %s"), prog.c_str ());
-            ui_utils::display_error (msg);
+            ui_utils::display_error (workbench ().get_root_window (),
+                                     msg);
             return;
         }
     }
@@ -6216,7 +6237,8 @@ DBGPerspective::execute_program
         UString message;
         message.printf (_("Could not load program: %s"),
                         prog.c_str ());
-        display_error (message);
+        display_error (workbench ().get_root_window (),
+                       message);
         return;
     }
 
@@ -6308,7 +6330,8 @@ DBGPerspective::attach_to_program ()
 
     IProcMgr *process_manager = get_process_manager ();
     THROW_IF_FAIL (process_manager);
-    ProcListDialog dialog (plugin_path (),
+    ProcListDialog dialog (workbench ().get_root_window (),
+                           plugin_path (),
                            *process_manager);
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
@@ -6330,7 +6353,8 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
     LOG_DD ("a_pid: " << (int) a_pid);
 
     if (a_pid == (unsigned int) getpid ()) {
-        ui_utils::display_warning (_("You cannot attach to Nemiver itself"));
+        ui_utils::display_warning (workbench ().get_root_window (),
+                                   _("You cannot attach to Nemiver itself"));
         return;
     }
 
@@ -6343,7 +6367,8 @@ DBGPerspective::attach_to_program (unsigned int a_pid,
     if (!debugger ()->attach_to_target (a_pid,
                                         get_terminal_name ())) {
 
-        ui_utils::display_warning (_("You cannot attach to the "
+        ui_utils::display_warning (workbench ().get_root_window (),
+                                   _("You cannot attach to the "
                                      "underlying debugger engine"));
         return;
     }
@@ -6354,7 +6379,8 @@ DBGPerspective::connect_to_remote_target ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    RemoteTargetDialog dialog (plugin_path ());
+    RemoteTargetDialog dialog (workbench ().get_root_window (),
+                               plugin_path ());
 
     // try to pre-fill the remote target dialog with the relevant info
     // if we have it.
@@ -6402,7 +6428,7 @@ DBGPerspective::connect_to_remote_target (const UString &a_server_address,
         UString message;
         message.printf (_("Could not load program: %s"),
                         a_prog_path.c_str ());
-        display_error (message);
+        display_error (workbench ().get_root_window (), message);
         return;
     }
     LOG_DD ("solib prefix path: '" <<  a_solib_prefix << "'");
@@ -6437,7 +6463,7 @@ DBGPerspective::connect_to_remote_target (const UString &a_serial_line,
         UString message;
         message.printf (_("Could not load program: %s"),
                         a_prog_path.c_str ());
-        display_error (message);
+        display_error (workbench ().get_root_window (), message);
         return;
     }
     LOG_DD ("solib prefix path: '" <<  a_solib_prefix << "'");
@@ -6543,7 +6569,8 @@ DBGPerspective::save_current_session ()
 void
 DBGPerspective::choose_a_saved_session ()
 {
-    SavedSessionsDialog dialog (plugin_path (), session_manager_ptr ());
+    SavedSessionsDialog dialog (workbench ().get_root_window (),
+                                plugin_path (), session_manager_ptr ());
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
         return;
@@ -6556,7 +6583,9 @@ void
 DBGPerspective::edit_preferences ()
 {
     THROW_IF_FAIL (m_priv);
-    PreferencesDialog dialog (*this, m_priv->layout_mgr, plugin_path ());
+    PreferencesDialog dialog (workbench ().get_root_window (),
+                              *this, m_priv->layout_mgr,
+                              plugin_path ());
     dialog.run ();
 }
 
@@ -6597,7 +6626,7 @@ void
 DBGPerspective::load_core_file ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    LoadCoreDialog dialog (plugin_path ());
+    LoadCoreDialog dialog (workbench ().get_root_window (), plugin_path ());
 
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
@@ -6634,7 +6663,8 @@ DBGPerspective::stop ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_D (NMV_DEFAULT_DOMAIN);
     if (!debugger ()->stop_target ()) {
-        ui_utils::display_error (_("Failed to stop the debugger"));
+        ui_utils::display_error (workbench ().get_root_window (),
+                                 _("Failed to stop the debugger"));
     }
 }
 
@@ -6879,7 +6909,7 @@ DBGPerspective::set_breakpoint (const UString &a_file_path,
             LOG_ERROR ("invalid line number: " << a_line);
             UString msg;
             msg.printf (_("Invalid line number: %i"), a_line);
-            display_warning (msg);
+            display_warning (workbench ().get_root_window (), msg);
         }
 }
 
@@ -7186,7 +7216,8 @@ bool
 DBGPerspective::ask_user_to_select_file (const UString &a_file_name,
                                          UString &a_selected_file_path)
 {
-    return ui_utils::ask_user_to_select_file (a_file_name, m_priv->prog_cwd,
+    return ui_utils::ask_user_to_select_file (workbench ().get_root_window (),
+                                              a_file_name, m_priv->prog_cwd,
                                               a_selected_file_path);
 }
 
@@ -7306,7 +7337,8 @@ DBGPerspective::choose_function_overload
         return;
     }
     THROW_IF_FAIL (debugger ());
-    ChooseOverloadsDialog dialog (plugin_path (), a_entries);
+    ChooseOverloadsDialog dialog (workbench ().get_root_window (),
+                                  plugin_path (), a_entries);
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
         debugger ()->choose_function_overload (0)/*cancel*/;
@@ -7792,7 +7824,8 @@ DBGPerspective::set_breakpoint_using_dialog ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    SetBreakpointDialog dialog (plugin_path ());
+    SetBreakpointDialog dialog (workbench ().get_root_window (),
+                                plugin_path ());
 
     // Checkout if the user did select a function number.
     // If she did, pre-fill the breakpoint setting dialog with the
@@ -7838,7 +7871,8 @@ DBGPerspective::set_breakpoint_using_dialog (const UString &a_file_name,
     THROW_IF_FAIL (!a_file_name.empty ());
     THROW_IF_FAIL (a_line_num > 0);
 
-    SetBreakpointDialog dialog (plugin_path ());
+    SetBreakpointDialog dialog (workbench ().get_root_window (),
+                                plugin_path ());
     dialog.mode (SetBreakpointDialog::MODE_SOURCE_LOCATION);
     dialog.file_name (a_file_name);
     dialog.line_number (a_line_num);
@@ -7853,7 +7887,8 @@ void
 DBGPerspective::set_breakpoint_using_dialog (const UString &a_function_name)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
-    SetBreakpointDialog dialog (plugin_path ());
+    SetBreakpointDialog dialog (workbench ().get_root_window (),
+                                plugin_path ());
     dialog.mode (SetBreakpointDialog::MODE_FUNCTION_NAME);
     dialog.file_name (a_function_name);
     int result = dialog.run ();
@@ -7868,7 +7903,8 @@ DBGPerspective::set_watchpoint_using_dialog ()
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-    WatchpointDialog dialog (plugin_path (), *debugger (), *this);
+    WatchpointDialog dialog (workbench ().get_root_window (),
+                             plugin_path (), *debugger (), *this);
     int result = dialog.run ();
     if (result != Gtk::RESPONSE_OK) {
         return;
@@ -8123,7 +8159,8 @@ void
 DBGPerspective::inspect_expression (const UString &a_expression)
 {
     THROW_IF_FAIL (debugger ());
-    ExprInspectorDialog dialog (*debugger (),
+    ExprInspectorDialog dialog (workbench ().get_root_window (),
+                                *debugger (),
                                *this);
     dialog.set_history (m_priv->var_inspector_dialog_history);
     dialog.expr_monitoring_requested ().connect
@@ -8142,7 +8179,8 @@ DBGPerspective::call_function ()
 {
     THROW_IF_FAIL (m_priv);
 
-    CallFunctionDialog dialog (plugin_path ());
+    CallFunctionDialog dialog (workbench ().get_root_window (),
+                               plugin_path ());
 
     // Fill the dialog with the "function call" expression history.
     if (!m_priv->call_expr_history.empty ())
@@ -8512,8 +8550,8 @@ DBGPerspective::agree_to_shutdown ()
         UString message;
         message.printf (_("There is a program being currently debugged. "
                           "Do you really want to exit from the debugger?"));
-        if (nemiver::ui_utils::ask_yes_no_question (message) ==
-            Gtk::RESPONSE_YES) {
+        if (nemiver::ui_utils::ask_yes_no_question
+            (workbench ().get_root_window (), message) == Gtk::RESPONSE_YES) {
             return true;
         } else {
             return false;

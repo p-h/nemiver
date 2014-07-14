@@ -1158,7 +1158,10 @@ struct ExprMonitor::Priv
     {
         LOG_FUNCTION_SCOPE_NORMAL_DD;
 
-        ExprInspectorDialog dialog (debugger, perspective);
+        ExprInspectorDialog dialog
+            (perspective.get_workbench ().get_root_window(),
+             debugger, perspective);
+
         dialog.expr_monitoring_requested ().connect
             (sigc::mem_fun (*this,
                             &ExprMonitor::Priv::on_expr_monitoring_requested));

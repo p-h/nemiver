@@ -174,9 +174,19 @@ public:
     }
 }; //end struct SavedSessionsDialog::Priv
 
-SavedSessionsDialog::SavedSessionsDialog (const UString &a_root_path,
+/// Constructor of the SavedSessionsDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+///
+/// \param a_session_manager the session manager to use.
+SavedSessionsDialog::SavedSessionsDialog (Gtk::Window &a_parent,
+                                          const UString &a_root_path,
                                           ISessMgr *a_session_manager) :
-    Dialog(a_root_path, "savedsessionsdialog.ui", "savedsessionsdialog")
+    Dialog(a_root_path, "savedsessionsdialog.ui",
+           "savedsessionsdialog", a_parent)
 {
     THROW_IF_FAIL (a_session_manager);
     m_priv.reset (new Priv (widget (), gtkbuilder (), *a_session_manager));

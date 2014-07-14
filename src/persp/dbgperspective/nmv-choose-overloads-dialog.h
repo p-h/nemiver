@@ -37,8 +37,9 @@ class ChooseOverloadsDialog : public Dialog {
 
 public:
     ChooseOverloadsDialog
-                (const UString &a_res_root_path,
-                 const vector<IDebugger::OverloadsChoiceEntry> &a_entries);
+      (Gtk::Window &a_parent,
+       const UString &a_res_root_path,
+       const vector<IDebugger::OverloadsChoiceEntry> &a_entries);
     virtual ~ChooseOverloadsDialog ();
 
     void set_overloads_choice_entries

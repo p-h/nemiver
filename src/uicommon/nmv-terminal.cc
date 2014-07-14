@@ -73,7 +73,7 @@ on_button_press_signal (GtkWidget*,
         return false;
     }
 
-    NEMIVER_TRY
+    NEMIVER_TRY;
 
     THROW_IF_FAIL (a_tuple);
     VteTerminal*& vte = std::tr1::get<0> (*a_tuple);
@@ -94,7 +94,7 @@ on_button_press_signal (GtkWidget*,
             (vte_terminal_get_has_selection (vte));
     menu->popup (a_event->button, a_event->time);
 
-    NEMIVER_CATCH
+    NEMIVER_CATCH;
     return true;
 }
 

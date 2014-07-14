@@ -27,6 +27,10 @@
 
 #include "nmv-asm-instr.h"
 
+namespace Gtk {
+  class Window;
+}
+
 using nemiver::common::UString;
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
@@ -114,20 +118,41 @@ class ReadLine
     ReadLine (const ReadLine &);
 
  protected:
+    Gtk::Window &m_parent;
     const std::list<UString> &m_where_to_look;
     list<UString> &m_session_dirs;
     map<UString, bool> &m_ignore_paths;
     FindFileAndReadLine read_line;
 
  public:
-    ReadLine (const std::list<UString> &where_to_look,
+
+    /// Constructor for the ReadLine functor.
+    ///
+    /// \param a_parent the parent window used by the dialog used by
+    /// the functor to interact with the user, should the need arise.
+    ///
+    /// \param where_to_look a list of directories where to look for
+    /// the file the function call operators of the functor might be
+    /// interested in.
+    ///
+    /// \param session_dirs if the file is found in a directory D,
+    /// that D is put in this list.
+    ///
+    /// \param ignore_path if the file is not found but is part of
+    /// this map, do not ask the user for help in finding it.
+    ///
+    /// \param read_line_func the function to use to do the actual job
+    /// of finding the file.
+    ReadLine (Gtk::Window& a_parent,
+	      const std::list<UString> &where_to_look,
 	      list<UString> &session_dirs,
 	      map<UString, bool> &ignore_paths,
               FindFileAndReadLine read_line_func) :
-    m_where_to_look (where_to_look),
-      m_session_dirs (session_dirs),
-      m_ignore_paths (ignore_paths),
-      read_line (read_line_func)
+    m_parent(a_parent),
+        m_where_to_look (where_to_look),
+        m_session_dirs (session_dirs),
+        m_ignore_paths (ignore_paths),
+        read_line (read_line_func)
     {
     }
 
@@ -145,8 +170,10 @@ class ReadLine
                       int a_line_number,
                       std::string &a_line)
     {
-        return read_line (a_file_path, m_where_to_look, m_session_dirs,
-                          m_ignore_paths, a_line_number, a_line);
+        return read_line (m_parent, a_file_path,
+                          m_where_to_look, m_session_dirs,
+                          m_ignore_paths, a_line_number,
+                          a_line);
     }
 };
 

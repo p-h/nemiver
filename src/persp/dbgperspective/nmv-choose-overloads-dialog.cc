@@ -163,12 +163,20 @@ struct ChooseOverloadsDialog::Priv {
 
 };//end ChooseOverloadsDialog
 
+/// Constructor of the ChooseOverloadsDialog type.
+///
+/// \param a_parent the parent window of the dialog.x
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
 ChooseOverloadsDialog::ChooseOverloadsDialog
-                (const UString &a_root_path,
-                 const vector<IDebugger::OverloadsChoiceEntry> &a_entries ) :
+(Gtk::Window &a_parent,
+ const UString &a_root_path,
+ const vector<IDebugger::OverloadsChoiceEntry> &a_entries) :
     Dialog (a_root_path,
             "chooseoverloadsdialog.ui",
-            "chooseoverloadsdialog")
+            "chooseoverloadsdialog",
+            a_parent)
 {
     m_priv.reset (new Priv (widget (), gtkbuilder ()));
     THROW_IF_FAIL (m_priv);

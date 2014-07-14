@@ -43,7 +43,8 @@ class OpenFileDialog : public Dialog {
     SafePtr<Priv> m_priv;
 
 public:
-    OpenFileDialog (const UString &a_resource_root_path,
+    OpenFileDialog (Gtk::Window &a_parent,
+                    const UString &a_resource_root_path,
                     IDebuggerSafePtr& a_debugger,
                     const UString &a_working_dir);
     virtual ~OpenFileDialog ();

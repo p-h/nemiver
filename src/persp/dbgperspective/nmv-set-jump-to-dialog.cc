@@ -400,8 +400,16 @@ public:
     }
 };// end class SetJumpToDialog::Priv
 
-SetJumpToDialog::SetJumpToDialog (const UString &a_root_path)
-    : Dialog (a_root_path, "setjumptodialog.ui", "setjumptodialog")
+/// Constructor of the SetJumpToDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+SetJumpToDialog::SetJumpToDialog (Gtk::Window &a_parent,
+                                  const UString &a_root_path)
+    : Dialog (a_root_path, "setjumptodialog.ui",
+              "setjumptodialog", a_parent)
 {
     m_priv.reset (new Priv (widget (), gtkbuilder ()));
 }

@@ -46,7 +46,8 @@ class SavedSessionsDialog : public Dialog {
     SafePtr<SavedSessionsDialog::Priv> m_priv;
 
 public:
-    SavedSessionsDialog (const UString &a_root_path,
+    SavedSessionsDialog (Gtk::Window &a_parent,
+                         const UString &a_root_path,
                          ISessMgr *a_sesssion_manager);
     virtual ~SavedSessionsDialog ();
 

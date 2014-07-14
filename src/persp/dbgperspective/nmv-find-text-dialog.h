@@ -41,7 +41,8 @@ class FindTextDialog : public Dialog {
 
 public:
 
-    FindTextDialog (const UString &a_resource_root_path);
+    FindTextDialog (Gtk::Window &a_parent,
+                    const UString &a_resource_root_path);
     virtual ~FindTextDialog ();
 
     Gtk::TextIter& get_search_match_start () const;

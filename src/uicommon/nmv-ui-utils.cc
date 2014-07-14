@@ -59,12 +59,14 @@ add_action_entries_to_action_group (const ActionEntry a_tab[],
 /// be shown that dialog again
 class DontShowAgainMsgDialog : public Gtk::MessageDialog {
 
-    DontShowAgainMsgDialog (const DontShowAgainMsgDialog&);
+    DontShowAgainMsgDialog (Gtk::Window &a_parent_window,
+                            const DontShowAgainMsgDialog&);
     DontShowAgainMsgDialog& operator= (const DontShowAgainMsgDialog&);
 
     Gtk::CheckButton *m_check_button;
 public:
-    explicit DontShowAgainMsgDialog (const Glib::ustring &a_message,
+    explicit DontShowAgainMsgDialog (Gtk::Window &a_parent_window,
+                                     const Glib::ustring &a_message,
                                      bool a_propose_dont_ask_again = false,
                                      bool a_use_markup = false,
                                      Gtk::MessageType a_type
@@ -72,7 +74,8 @@ public:
                                      Gtk::ButtonsType a_buttons
                                                          = Gtk::BUTTONS_OK,
                                      bool a_modal = false) :
-        Gtk::MessageDialog (a_message,
+        Gtk::MessageDialog (a_parent_window,
+                            a_message,
                             a_use_markup,
                             a_type,
                             a_buttons,
@@ -111,18 +114,23 @@ public:
 };//end class DontShowAgainMsgDialog
 
 int
-display_info (const UString &a_message)
+display_info (Gtk::Window &a_parent_window,
+              const UString &a_message)
 {
-    Gtk::MessageDialog dialog (a_message, false, Gtk::MESSAGE_INFO,
-                                               Gtk::BUTTONS_OK, true);
+    Gtk::MessageDialog dialog (a_parent_window,
+                               a_message, false,
+                               Gtk::MESSAGE_INFO,
+                               Gtk::BUTTONS_OK, true);
     dialog.set_default_response (Gtk::RESPONSE_OK);
     return dialog.run ();
 }
 
 int
-display_warning (const UString &a_message)
+display_warning (Gtk::Window &a_parent_window,
+                 const UString &a_message)
 {
-    Gtk::MessageDialog dialog (a_message, false,
+    Gtk::MessageDialog dialog (a_parent_window,
+                               a_message, false,
                                Gtk::MESSAGE_WARNING,
                                Gtk::BUTTONS_OK, true);
     dialog.set_default_response (Gtk::RESPONSE_OK);
@@ -130,7 +138,19 @@ display_warning (const UString &a_message)
 }
 
 int
-display_error (const UString &a_message)
+display_error (Gtk::Window &a_parent_window,
+               const UString &a_message)
+{
+    Gtk::MessageDialog dialog (a_parent_window,
+                               a_message, false,
+                               Gtk::MESSAGE_ERROR,
+                               Gtk::BUTTONS_OK, true);
+    dialog.set_default_response (Gtk::RESPONSE_OK);
+    return dialog.run ();
+}
+
+int
+display_error_not_transient (const UString &a_message)
 {
     Gtk::MessageDialog dialog (a_message, false,
                                Gtk::MESSAGE_ERROR,
@@ -140,9 +160,11 @@ display_error (const UString &a_message)
 }
 
 int
-ask_yes_no_question (const UString &a_message)
+ask_yes_no_question (Gtk::Window &a_parent_window,
+                     const UString &a_message)
 {
-    Gtk::MessageDialog dialog (a_message, false,
+    Gtk::MessageDialog dialog (a_parent_window,
+                               a_message, false,
                                Gtk::MESSAGE_QUESTION,
                                Gtk::BUTTONS_YES_NO, true);
     dialog.set_default_response (Gtk::RESPONSE_OK);
@@ -150,11 +172,13 @@ ask_yes_no_question (const UString &a_message)
 }
 
 int
-ask_yes_no_question (const UString &a_message,
+ask_yes_no_question (Gtk::Window &a_parent_window,
+                     const UString &a_message,
                      bool a_propose_dont_ask_again,
                      bool &a_dont_ask_this_again)
 {
-    DontShowAgainMsgDialog dialog (a_message, a_propose_dont_ask_again,
+    DontShowAgainMsgDialog dialog (a_parent_window,
+                                   a_message, a_propose_dont_ask_again,
                                    false, Gtk::MESSAGE_QUESTION,
                                    Gtk::BUTTONS_YES_NO, true);
     dialog.set_default_response (Gtk::RESPONSE_OK);
@@ -164,9 +188,11 @@ ask_yes_no_question (const UString &a_message,
 }
 
 int
-ask_yes_no_cancel_question (const common::UString &a_message)
+ask_yes_no_cancel_question (Gtk::Window &a_parent_window,
+                            const common::UString &a_message)
 {
-    Gtk::MessageDialog dialog (a_message, false,
+    Gtk::MessageDialog dialog (a_parent_window,
+                               a_message, false,
                                Gtk::MESSAGE_QUESTION,
                                Gtk::BUTTONS_NONE,
                                true);
@@ -178,12 +204,27 @@ ask_yes_no_cancel_question (const common::UString &a_message)
     return dialog.run ();
 }
 
+/// Use a dialog to interactively ask the user to select a file.
+///
+/// \param a_parent the parent window used by the (transient) dialog.
+///
+/// \param a_file_name the name of the file to ask the user help us
+/// look for.
+///
+/// \param a_default_dir the default directory from where to the user
+/// is proposed to start the search from.
+///
+/// \param a_selected_file_path the resulting absolute file path as
+/// selected by the user.  This is set iff the function returns true.
+///
+/// \return true iff the user actually selected a file.
 bool
-ask_user_to_select_file (const UString &a_file_name,
+ask_user_to_select_file (Gtk::Window &a_parent,
+                         const UString &a_file_name,
                          const UString &a_default_dir,
                          UString &a_selected_file_path)
 {
-    LocateFileDialog dialog ("", a_file_name);
+    LocateFileDialog dialog ("", a_file_name, a_parent);
     // start looking in the default directory
     dialog.file_location (a_default_dir);
     int result = dialog.run ();
@@ -205,8 +246,33 @@ ask_user_to_select_file (const UString &a_file_name,
     return false;
 }
 
+/// Find a given file from a set of directories.
+///
+/// If the file is not found, then graphically ask the user to find it
+/// instread.
+///
+/// \param a_parent_window the parent window of the dialog used to ask
+/// the user where to find the file, should the need arise.
+///
+/// \param a_file_name the file name to find.
+///
+/// \param a_where_to_look the list of directories where to look the
+/// file from.
+///
+/// \param a_session_dirs if the file was found, add its parent
+/// directory to this list.
+///
+/// \param a_ignore_paths If a file not found by this function has its
+/// name in this map, then do not ask the user to look for it.  Also,
+/// if a_ignore_if_not_found is true and if the file wasn't found
+/// this time, the a_file_name is added to this map (a_ignore_paths).
+///
+/// \param a_absolute_path the absolute path of the file found.
+///
+/// \return true iff the file was found.
 bool
-find_file_or_ask_user (const UString& a_file_name,
+find_file_or_ask_user (Gtk::Window &a_parent_window,
+                       const UString& a_file_name,
                        const list<UString> &a_where_to_look,
                        list<UString> &a_session_dirs,
                        map<UString, bool> &a_ignore_paths,
@@ -220,7 +286,8 @@ find_file_or_ask_user (const UString& a_file_name,
             // requested to *not* ask the user to locate it, just
             // pretend we didn't find the file.
             return false;
-        if (ask_user_to_select_file (a_file_name,
+        if (ask_user_to_select_file (a_parent_window,
+                                     a_file_name,
                                      a_where_to_look.front (),
                                      a_absolute_path)) {
             UString parent_dir =
@@ -242,6 +309,8 @@ find_file_or_ask_user (const UString& a_file_name,
 /// e.g. when forging a mixed source/assembly source view, and we want
 /// to display a source line N from a file P.
 ///
+/// \param a_parent_window the parent window used by the Dialog widget
+/// that we use.
 /// \param a_file_path the file path to consider. Not necessarily
 /// absolute. If the file is not found, it will be searched for very hard
 /// in many places.
@@ -257,7 +326,8 @@ find_file_or_ask_user (const UString& a_file_name,
 /// and only if the function returned true.
 /// \return true upon successful completion, false otherwise.
 bool
-find_file_and_read_line (const UString &a_file_path,
+find_file_and_read_line (Gtk::Window &a_parent_window,
+                         const UString &a_file_path,
                          const list<UString> &a_where_to_look,
                          list<UString> &a_sess_dirs,
                          map<UString, bool> &a_ignore_paths,
@@ -268,7 +338,8 @@ find_file_and_read_line (const UString &a_file_path,
         return false;
 
     UString path;
-    if (!find_file_or_ask_user (a_file_path,
+    if (!find_file_or_ask_user (a_parent_window,
+                                a_file_path,
                                 a_where_to_look,
                                 a_sess_dirs,
                                 a_ignore_paths,

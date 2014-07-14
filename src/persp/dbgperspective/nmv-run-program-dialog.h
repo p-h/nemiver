@@ -45,7 +45,8 @@ class RunProgramDialog : public Dialog {
 
 public:
 
-    RunProgramDialog (const UString &a_resource_root_path);
+    RunProgramDialog (Gtk::Window &a_parent,
+                      const UString &a_resource_root_path);
 
     virtual ~RunProgramDialog ();
 

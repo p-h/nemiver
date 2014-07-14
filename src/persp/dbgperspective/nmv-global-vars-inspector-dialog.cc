@@ -305,17 +305,31 @@ public:
         THROW_IF_FAIL (variable);
         //message += "\nDumped for debug: \n";
         //variable->to_string (message, false);
-        ui_utils::display_info (message);
+        ui_utils::display_info (workbench.get_root_window (),
+                                message);
     }
 
 };//end GlobalVarsInspectorDialog::Priv
 
+/// Constructor of the GlobalVarsInspectorDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+///
+/// \param a_debugger the IDebugger interface to use to inspect the
+/// variables.
+///
+/// \param a_workbench the IWorkbench interface to use.
 GlobalVarsInspectorDialog::GlobalVarsInspectorDialog
-                                            (const UString &a_root_path,
-        IDebuggerSafePtr &a_debugger, IWorkbench &a_workbench) :
+(const UString &a_root_path,
+ IDebuggerSafePtr &a_debugger,
+ IWorkbench &a_workbench) :
     Dialog (a_root_path,
             "globalvarsinspector.ui",
-            "globalvarsinspector")
+            "globalvarsinspector",
+            a_workbench.get_root_window ())
 {
     m_priv.reset (new Priv (widget (), gtkbuilder (), a_debugger, a_workbench));
 }

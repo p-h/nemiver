@@ -59,7 +59,8 @@ public:
         READ_MODE = 1 << 1
     };
 
-    WatchpointDialog (const UString &a_resource_root_path,
+    WatchpointDialog (Gtk::Window &a_parent,
+                      const UString &a_resource_root_path,
                       IDebugger &a_debugger,
                       IPerspective &a_perspective);
     virtual ~WatchpointDialog ();

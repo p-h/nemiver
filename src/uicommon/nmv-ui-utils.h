@@ -38,13 +38,13 @@
 #define NEMIVER_CATCH \
 } catch (Glib::Exception &e) { \
     LOG_ERROR (std::string ("caught exception: '") + e.what () + "'"); \
-    nemiver::ui_utils::display_error (e.what ()); \
+    nemiver::ui_utils::display_error_not_transient (e.what ()); \
 } catch (std::exception &e) { \
     LOG_ERROR (std::string ("caught exception: '") + e.what () + "'"); \
-    nemiver::ui_utils::display_error (e.what ()); \
+    nemiver::ui_utils::display_error_not_transient (e.what ()); \
 } catch (...) { \
     LOG_ERROR ("caught unknown exception"); \
-    nemiver::ui_utils::display_error ("An unknown error occured"); \
+    nemiver::ui_utils::display_error_not_transient ("An unknown error occured"); \
 }
 #endif
 
@@ -52,15 +52,15 @@
 #define NEMIVER_CATCH_AND_RETURN(a_value) \
 } catch (Glib::Exception &e) { \
     LOG_ERROR (std::string ("caught exception: '") + e.what () + "'"); \
-    nemiver::ui_utils::display_error (e.what ()); \
+    nemiver::ui_utils::display_error_not_transient (e.what ()); \
     return a_value; \
 } catch (std::exception &e) { \
     LOG_ERROR (std::string ("caught exception: '") + e.what () + "'"); \
-    nemiver::ui_utils::display_error (e.what ()); \
+    nemiver::ui_utils::display_error_not_transient (e.what ()); \
     return a_value; \
 } catch (...) { \
     LOG_ERROR ("Caught unknown exception"); \
-    nemiver::ui_utils::display_error ("An unknown error occured"); \
+    nemiver::ui_utils::display_error_not_transient ("An unknown error occured"); \
     return a_value; \
 }
 #endif
@@ -130,25 +130,35 @@ NEMIVER_API void add_action_entries_to_action_group
                                  int a_num_entries,
                                  Glib::RefPtr<Gtk::ActionGroup> &a_group);
 
-NEMIVER_API int display_info (const common::UString &a_message);
+NEMIVER_API int display_info (Gtk::Window &a_parent_window,
+                              const common::UString &a_message);
 
-NEMIVER_API int display_warning (const common::UString &a_message);
+NEMIVER_API int display_warning (Gtk::Window &a_parent_window,
+                                 const common::UString &a_message);
 
-NEMIVER_API int display_error (const common::UString &a_message);
+NEMIVER_API int display_error (Gtk::Window &a_parent_window,
+                               const common::UString &a_message);
 
-NEMIVER_API int ask_yes_no_question (const common::UString &a_message);
+NEMIVER_API int display_error_not_transient (const UString &a_message);
 
-NEMIVER_API int ask_yes_no_question (const common::UString &a_message,
+NEMIVER_API int ask_yes_no_question (Gtk::Window &a_parent_window,
+                                     const common::UString &a_message);
+
+NEMIVER_API int ask_yes_no_question (Gtk::Window &a_parent_window,
+                                     const common::UString &a_message,
                                      bool a_propose_dont_ask_question,
                                      bool &a_dont_ask_this_again);
 
-NEMIVER_API int ask_yes_no_cancel_question (const common::UString &a_message);
+NEMIVER_API int ask_yes_no_cancel_question (Gtk::Window &a_parent_window,
+                                            const common::UString &a_message);
 
-NEMIVER_API bool ask_user_to_select_file (const UString &a_file_name,
+NEMIVER_API bool ask_user_to_select_file (Gtk::Window &a_parent,
+                                          const UString &a_file_name,
                                           const UString &a_default_dir,
                                           UString &a_selected_file_path);
 
-NEMIVER_API bool find_file_or_ask_user (const UString& a_file_path,
+NEMIVER_API bool find_file_or_ask_user (Gtk::Window &a_parent_window,
+                                        const UString& a_file_path,
                                         const list<UString> &a_where_to_look,
                                         list<UString> &a_session_dirs,
                                         map<UString, bool> &a_ignore_paths,
@@ -156,7 +166,8 @@ NEMIVER_API bool find_file_or_ask_user (const UString& a_file_path,
                                         UString& a_absolute_path);
 
 
-bool find_file_and_read_line (const UString &a_file_path,
+bool find_file_and_read_line (Gtk::Window &a_parent_window,
+                              const UString &a_file_path,
                               const list<UString> &a_where_to_look,
                               list<UString> &a_sess_dirs,
                               map<UString, bool> &a_ignore_paths,

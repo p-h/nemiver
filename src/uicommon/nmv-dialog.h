@@ -68,7 +68,8 @@ public:
 
     Dialog (const UString &a_resource_root_path,
             const UString &a_gtkbuilder_filename,
-            const UString &a_widget_name);
+            const UString &a_widget_name,
+            Gtk::Window &a_parent);
 
     virtual ~Dialog ();
 

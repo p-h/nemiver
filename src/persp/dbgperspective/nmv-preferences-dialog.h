@@ -43,7 +43,8 @@ class PreferencesDialog : public Dialog {
     PreferencesDialog ();
 
 public:
-    PreferencesDialog (IPerspective &a_perspective,
+    PreferencesDialog (Gtk::Window &a_parent,
+                       IPerspective &a_perspective,
                        LayoutManager &a_layout_manager,
                        const UString &a_root_path);
     virtual ~PreferencesDialog ();

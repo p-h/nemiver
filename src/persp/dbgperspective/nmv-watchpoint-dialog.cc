@@ -197,12 +197,24 @@ struct WatchpointDialog::Priv {
 
 }; // end struct WatchpointDialog
 
-WatchpointDialog::WatchpointDialog (const UString &a_root_path,
+/// Constructor of the WatchpointDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+///
+/// \param a_debugger the IDebugger interface to use.
+///
+/// \param a_perspective the IPerspective interface to use.
+/// ressources of the dialog.
+WatchpointDialog::WatchpointDialog (Gtk::Window &a_parent,
+                                    const UString &a_root_path,
                                     IDebugger &a_debugger,
                                     IPerspective &a_perspective) :
     Dialog (a_root_path,
             "watchpointdialog.ui",
-            "watchpointdialog")
+            "watchpointdialog",
+            a_parent)
 {
     LOG_FUNCTION_SCOPE_NORMAL_DD;
     m_priv.reset (new WatchpointDialog::Priv (widget (),

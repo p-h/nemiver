@@ -239,7 +239,8 @@ class ExprInspector::Priv : public sigc::trackable {
         THROW_IF_FAIL (variable);
         // message += "\nDumped for debug: \n";
         // variable->to_string (message, false);
-        ui_utils::display_info (message);
+        ui_utils::display_info (perspective.get_workbench ().get_root_window (),
+                                message);
     }
 
     /// Creates a variable (or more generally, an expression).

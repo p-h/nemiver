@@ -378,8 +378,17 @@ public:
     }
 };//end class SetBreakpointDialog::Priv
 
-SetBreakpointDialog::SetBreakpointDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "setbreakpointdialog.ui", "setbreakpointdialog")
+/// Constructor of the SetBreakpointDialog type.
+///
+/// \param a_parent the parent window of the dialog.
+///
+/// \param a_root_path the path to the root directory of the
+/// ressources of the dialog.
+SetBreakpointDialog::SetBreakpointDialog (Gtk::Window &a_parent,
+                                          const UString &a_root_path) :
+    Dialog (a_root_path, "setbreakpointdialog.ui",
+            "setbreakpointdialog",
+            a_parent)
 {
     m_priv.reset (new Priv (widget (), gtkbuilder ()));
 }

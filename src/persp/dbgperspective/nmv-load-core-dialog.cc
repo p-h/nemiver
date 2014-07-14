@@ -96,8 +96,10 @@ public:
     }
 };//end class LoadCoreDialog::Priv
 
-LoadCoreDialog::LoadCoreDialog (const UString &a_root_path) :
-    Dialog (a_root_path, "loadcoredialog.ui", "loadcoredialog")
+LoadCoreDialog::LoadCoreDialog (Gtk::Window &a_parent,
+                                const UString &a_root_path) :
+    Dialog (a_root_path, "loadcoredialog.ui",
+            "loadcoredialog", a_parent)
 {
     m_priv.reset (new Priv (gtkbuilder ()));
 }

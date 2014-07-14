@@ -64,14 +64,15 @@ public:
        | FUNCTIONALITY_EXPR_MONITOR_PICKER)
     };
 
-    ExprInspectorDialog (IDebugger &a_debugger,
-                        IPerspective &a_perspective);
+    ExprInspectorDialog (Gtk::Window &a_parent,
+                         IDebugger &a_debugger,
+                         IPerspective &a_perspective);
     virtual ~ExprInspectorDialog ();
 
     UString expression_name () const;
     void inspect_expression (const UString &a_expression_name);
     void inspect_expression (const UString &a_expression_name,
-			     const sigc::slot<void, 
+			     const sigc::slot<void,
 			     const IDebugger::VariableSafePtr> &);
     const IDebugger::VariableSafePtr expression () const;
     ExprInspector& inspector () const;

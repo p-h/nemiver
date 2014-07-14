@@ -76,7 +76,8 @@ public:
     };
 
 
-    explicit SourceEditor (const UString &a_root_dir,
+    explicit SourceEditor (Gtk::Window &a_parent_window,
+			   const UString &a_root_dir,
                            Glib::RefPtr<Buffer> &a_buf,
                            bool a_composite = false);
     virtual ~SourceEditor ();
@@ -127,7 +128,8 @@ public:
 
     static Glib::RefPtr<Buffer> create_source_buffer ();
 
-    static bool load_file (const UString &a_path,
+    static bool load_file (Gtk::Window &a_parent,
+			   const UString &a_path,
 			   const std::list<std::string> &a_supported_encodings,
 			   bool a_enable_syntaxt_highlight,
 			   Glib::RefPtr<Buffer> &a_source_buffer);
@@ -180,7 +182,8 @@ public:
     bool scroll_to_address (const Address &a_address,
 			    bool a_approximate);
 
-    static bool add_asm (const common::DisassembleInfo &/*a_info*/,
+    static bool add_asm (Gtk::Window &a_parent_window,
+			 const common::DisassembleInfo &/*a_info*/,
 			 const std::list<common::Asm> &a_asm,
 			 bool a_append,
 			 const list<UString> &a_src_search_dirs,
@@ -188,7 +191,8 @@ public:
 			 std::map<UString, bool> &a_ignore_paths,
 			 Glib::RefPtr<Buffer> &a_buf);
 
-    static bool load_asm (const common::DisassembleInfo &/*a_info*/,
+    static bool load_asm (Gtk::Window &a_parent_window,
+			  const common::DisassembleInfo &/*a_info*/,
 			  const std::list<common::Asm> &a_asm,
 			  bool a_append,
 			  const list<UString> &a_src_search_dirs,

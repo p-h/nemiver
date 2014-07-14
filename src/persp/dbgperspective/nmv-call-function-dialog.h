@@ -41,7 +41,8 @@ class CallFunctionDialog : public Dialog {
 
 public:
 
-    CallFunctionDialog (const UString &a_resource_root_path);
+    CallFunctionDialog (Gtk::Window &a_parent,
+                        const UString &a_resource_root_path);
     virtual ~CallFunctionDialog ();
 
     UString call_expression () const;
