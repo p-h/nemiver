@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2014-08-26 10:07+0000\n"
-"PO-Revision-Date: 2014-08-26 19:28+0530\n"
+"PO-Revision-Date: 2014-08-27 18:36+0530\n"
 "Last-Translator: Nilamdyuti Goswami <ngoswami@redhat.com>\n"
 "Language-Team: Assamese <kde-i18n-doc@kde.org>\n"
 "Language: as\n"
@@ -187,7 +187,7 @@ msgstr "কনডিষণ"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
 msgid "Toggle countpoint"
-msgstr "কাউন্টপইন্ট টগল কৰক"
+msgstr "কাউণ্টপইণ্ট টগল কৰক"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
@@ -204,19 +204,19 @@ msgstr "এক্সপ্ৰেষণ"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
 msgid "Ignore count"
-msgstr "কাউন্ট উপেক্ষা কৰক"
+msgstr "কাউণ্ট উপেক্ষা কৰক"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:364
 msgid "breakpoint"
-msgstr "ব্ৰেকপইন্ট"
+msgstr "ব্ৰেকপইণ্ট"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:368
 msgid "watchpoint"
-msgstr "ৱাচপইন্ট"
+msgstr "ৱাচপইণ্ট"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:371
 msgid "countpoint"
-msgstr "কাউন্টপইন্ট"
+msgstr "কাউণ্টপইণ্ট"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:374
 msgid "unknown"
@@ -228,7 +228,7 @@ msgstr "মচি পেলাওক (_D)"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:442
 msgid "Remove this breakpoint"
-msgstr "এই ব্ৰেকপইন্ট আতৰাওক"
+msgstr "এই ব্ৰেকপইণ্ট আতৰাওক"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:451
 msgid "_Go to Source"
@@ -236,7 +236,7 @@ msgstr "উৎসলৈ যাওক (_G)"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:452
 msgid "Find this breakpoint in the source editor"
-msgstr "উৎস সম্পাদকত এই ব্ৰেকপইন্ট সন্ধান কৰক"
+msgstr "উৎস সম্পাদকত এই ব্ৰেকপইণ্ট সন্ধান কৰক"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:177
 #: ../src/uicommon/nmv-terminal.cc:184
@@ -286,7 +286,7 @@ msgstr "লক্ষ্য টাৰ্মিনেল"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
 msgid "Breakpoints"
-msgstr "ব্ৰেকপইন্টসমূহ"
+msgstr "ব্ৰেকপইণ্টসমূহ"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
 msgid "Registers"
@@ -311,11 +311,11 @@ msgstr "স্ট্ৰিং %s পোৱা নগল"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2103
 msgid "Change to Standard Breakpoint"
-msgstr "প্ৰামাণিক ব্ৰেকপইন্টলৈ পৰিবৰ্তন"
+msgstr "প্ৰামাণিক ব্ৰেকপইণ্টলৈ পৰিবৰ্তন"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2106
 msgid "Change to Countpoint"
-msgstr "কাউন্টপইন্টলৈ পৰিবৰ্তন"
+msgstr "কাউণ্টপইণ্টলৈ পৰিবৰ্তন"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2108
 msgid "Remove _Breakpoint"
@@ -452,11 +452,11 @@ msgstr ""
 #. line.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3279
 msgid "Toggle _Countpoint"
-msgstr "কাউন্টপইণ্টক টগল কৰক (_C)"
+msgstr "কাউণ্টপইণ্টক টগল কৰক (_C)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
 msgid "Set/Unset a countpoint at the current cursor location"
-msgstr "বৰ্তমান কাৰ্চাৰ অৱস্থানত এটা কাউন্টপইণ্ট সংহতি/অসংহতি কৰক"
+msgstr "বৰ্তমান কাৰ্চাৰ অৱস্থানত এটা কাউণ্টপইণ্ট সংহতি/অসংহতি কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3290
 msgid "Set Watchpoint with Dialog..."
@@ -656,121 +656,121 @@ msgstr "দৰ্শনৰ বাবে এটা উৎস ফাইল খো�
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3603
 msgid "Load _Executable..."
-msgstr ""
+msgstr "এক্সিকিউটেবুল ল'ড কৰক (_E)..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3604
 msgid "Execute a program"
-msgstr ""
+msgstr "এটা প্ৰগ্ৰাম এক্সিকিউট কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3614
 msgid "_Load Core File..."
-msgstr ""
+msgstr "কেন্দ্ৰ ফাইল ল'ড কৰক (_L)..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3615
 msgid "Load a core file from disk"
-msgstr ""
+msgstr "ডিস্কৰ পৰা এটা কেন্দ্ৰ ফাইল ল'ড কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3625
 msgid "_Attach to Running Program..."
-msgstr ""
+msgstr "চলি থকা প্ৰগ্ৰামলৈ সংলঘ্ন কৰক (_A)..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3626
 msgid "Debug a program that's already running"
-msgstr ""
+msgstr "এটা ইতিমধ্যে চলি থকা প্ৰগ্ৰামক ডিবাগ কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3636
 msgid "_Connect to Remote Target..."
-msgstr ""
+msgstr "দূৰৱৰ্তী লক্ষ্যলৈ সংযোগ কৰক (_C)..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
 msgid "Connect to a debugging server to debug a remote target"
-msgstr ""
+msgstr "এটা দূৰৱৰ্তী লক্ষ্যক ডিবাগ কৰিবলে এটা ডিবাগিং চাৰ্ভাৰৰ সৈতে সংযোগ কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
-msgstr ""
+msgstr "সংৰক্ষিত অধিবেশনক অব্যাহত ৰাখক (_v)..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
 msgid "Open a previously saved debugging session"
-msgstr ""
+msgstr "এটা পূৰ্বতে সংৰক্ষণ কৰা ডিবাগিং অধিবেশনক খোলক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3659
 msgid "_Preferences"
-msgstr ""
+msgstr "পছন্দসমূহ (_P)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
 msgid "Edit the properties of the current session"
-msgstr ""
+msgstr "বৰ্তমান অধিবেশনৰ বৈশিষ্ট্যসমূহ সম্পাদন কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3674
 msgid "_Copy selected text"
-msgstr ""
+msgstr "নিৰ্বাচিত লিখনিক কপি কৰক (_C)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3675
 msgid "Copy the text selected in the current source file"
-msgstr ""
+msgstr "বৰ্তমান উৎস ফাইলত নিৰ্বাচিত লিখনিক কপি কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3684
 msgid "_Reload Source File"
-msgstr ""
+msgstr "উৎস ফাইলক পুনৰল'ড কৰক (_R)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3685
 msgid "Reloads the source file"
-msgstr ""
+msgstr "উৎস ফাইলক পুনৰল'ড কৰে"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3694
 msgid "_Close Source File"
-msgstr ""
+msgstr "উৎস ফাইলক বন্ধ কৰক (_C)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3695
 msgid "Close the opened file"
-msgstr ""
+msgstr "খোলা ফাইলক বন্ধ কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3704
 msgid "_Find"
-msgstr ""
+msgstr "সন্ধান কৰক (_F)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
 msgid "Find a text string in file"
-msgstr ""
+msgstr "ফাইলত এটা লিখনি স্ট্ৰিং সন্ধান কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4029
 #, c-format
 msgid "Close %s"
-msgstr ""
+msgstr "%s ক বন্ধ কৰক"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6029
 msgid "Sorry, it's impossible to restart a remote inferior"
-msgstr ""
+msgstr "ক্ষমা কৰিব, এটা দূৰৱৰ্তী গৌণক পুনাৰম্ভ কৰা অসম্ভব"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6174
 #, c-format
 msgid "Could not find file %s"
-msgstr ""
+msgstr "ফাইল %s বিচাৰি পোৱা নগল"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6238
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6429
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6464
 #, c-format
 msgid "Could not load program: %s"
-msgstr ""
+msgstr "প্ৰগ্ৰাম ল'ড কৰিব পৰা নগল: %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6357
 msgid "You cannot attach to Nemiver itself"
-msgstr ""
+msgstr "আপুনি Nemiver লৈ সংলঘ্ন কৰিব নোৱাৰি"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6371
 msgid "You cannot attach to the underlying debugger engine"
-msgstr ""
+msgstr "আপুনি তলৰ ডিবাগাৰ ইঞ্জিনলৈ সংলঘ্ন কৰিব নোৱাৰিব"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6667
 msgid "Failed to stop the debugger"
-msgstr ""
+msgstr "ডিবাগাৰক বন্ধ কৰিবলৈ ব্যৰ্থ হল"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6911
 #, c-format
 msgid "Invalid line number: %i"
-msgstr ""
+msgstr "অবৈধ শাৰী সংখ্যা: %i"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8551
 #, c-format
@@ -778,58 +778,60 @@ msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
 "the debugger?"
 msgstr ""
+"এটা প্ৰগ্ৰামক বৰ্তমানে ডিবাগ কৰা হৈছে। আপুনি ডিবাগাৰৰ পৰা সঁচাকৈ প্ৰস্থান "
+"কৰিব খোজে নে?"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
 msgid "Default Layout"
-msgstr ""
+msgstr "অবিকল্পিত বিন্যাস"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
 msgid "Nemiver's default layout"
-msgstr ""
+msgstr "Nemiver ৰ অবিকল্পিত বিন্যাস"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
 msgid "Source Code"
-msgstr ""
+msgstr "উৎস ক'ড"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
 msgid "Dynamic Layout"
-msgstr ""
+msgstr "ডাইনামিক বিন্যাস"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
 msgid "A layout which can be modified"
-msgstr ""
+msgstr "এটা বিন্যাস যাক পৰিবৰ্তন কৰিব পাৰি"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
 msgid "Two Status Pane"
-msgstr ""
+msgstr "দুটা অৱস্থা পেইন"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
 msgid "A layout with two status pane"
-msgstr ""
+msgstr "দুটা অৱস্থা পেইনৰ সৈতে এটা বিন্যাস"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
 msgid "Wide Layout"
-msgstr ""
+msgstr "বিস্তৃত বিন্যাস"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
 msgid "A layout for very large monitors"
-msgstr ""
+msgstr "অতি বৃহত মনিটৰসমূহৰ বাবে এটা বিন্যাস"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:128
 msgid "Expand _Selected"
-msgstr ""
+msgstr "নিৰ্বাচিতক প্ৰসাৰিত কৰক (_S)"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:134
 msgid "Expand _All"
-msgstr ""
+msgstr "সকলো প্ৰসাৰিত কৰক (_A)"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:144
 msgid "_Collapse"
-msgstr ""
+msgstr "স্খলন কৰক (_C)"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:427
 msgid "Loading files from target executable..."
-msgstr ""
+msgstr "লক্ষ্য এক্সিকিউটেবুলৰ পৰা ফাইলসমূহ ল'ড কৰা হৈছে..."
 
 #: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
@@ -839,571 +841,574 @@ msgid ""
 "Variable type is: \n"
 " %s"
 msgstr ""
+"চলকৰ ধৰণ হল: \n"
+" %s"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
 msgid "Local Variables"
-msgstr ""
+msgstr "লকেল চলকসমূহ"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
 msgid "Function Arguments"
-msgstr ""
+msgstr "ফলন তৰ্কসমূহ"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
 msgid "_Copy Variable Name"
-msgstr ""
+msgstr "চলকৰ নাম কপি কৰক (_C)"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
 msgid "Copy the variable path expression to the clipboard"
-msgstr ""
+msgstr "চলক পথ এক্সপ্ৰেষণক ক্লিপবৰ্ডলৈ কপি কৰক"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
 msgid "_Copy Variable Value"
-msgstr ""
+msgstr "চলকৰ মান কপি কৰক (_C)"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
 msgid "Copy the variable value to the clipboard"
-msgstr ""
+msgstr "চলকৰ মানক ক্লিপবৰ্ডলৈ কপি কৰক"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
 msgid "Create Watchpoint"
-msgstr ""
+msgstr "ৱাচপইণ্ট সৃষ্টি কৰক"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
-msgstr ""
+msgstr "এটা ৱাচপইণ্ট সৃষ্টি কৰক যি এক্সপ্ৰেষণৰ মান সলনি হওতে ট্ৰিগাৰ হয়"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
-msgstr ""
+msgstr "বাইট"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:52
 msgid "Word"
-msgstr ""
+msgstr "শব্দ"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:55
 msgid "Long Word"
-msgstr ""
+msgstr "দীঘল শব্দ"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:98
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
 msgid "Address:"
-msgstr ""
+msgstr "ঠিকনা:"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:100
 msgid "Show"
-msgstr ""
+msgstr "দেখুৱাওক"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:103
 msgid "Group By:"
-msgstr ""
+msgstr "চিহ্নিত বস্তু দ্বাৰা দলবদ্ধ কৰক:"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
-msgstr ""
+msgstr "এটা ডাইৰেকটৰি বাছক"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
 msgid "Source Directories"
-msgstr ""
+msgstr "উৎস ডাইৰেকটৰিসমূহ"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
 msgid "User Name"
-msgstr ""
+msgstr "ব্যৱহাৰকাৰী নাম"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
 msgid "Proc Args"
-msgstr ""
+msgstr "Proc Args"
 
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:101
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
 msgid "Name"
-msgstr ""
+msgstr "নাম"
 
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:102
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
 msgid "Value"
-msgstr ""
+msgstr "মান"
 
 #: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
 msgid "Session"
-msgstr ""
+msgstr "অধিবেশন"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
 msgid "Throw Exception"
-msgstr ""
+msgstr "থ্ৰ ব্যতিক্ৰম"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
 msgid "Catch Exception"
-msgstr ""
+msgstr "কেচ ব্যতিক্ৰম"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
 msgid "Fork System Call"
-msgstr ""
+msgstr "ফৰ্ক চিস্টেম কল"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
 msgid "Vfork System Call"
-msgstr ""
+msgstr "Vfork চিস্টেম কল"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
 msgid "Exec System Call"
-msgstr ""
+msgstr "Exec চিস্টেম কল"
 
 #: ../src/persp/dbgperspective/nmv-thread-list.cc:184
 msgid "Thread ID"
-msgstr ""
+msgstr "থ্ৰেড ID"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
 msgid "Variable"
-msgstr ""
+msgstr "চলক"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
 msgid "In scope expressions"
-msgstr ""
+msgstr "ইন স্কৌপ এক্সপ্ৰেষণসমূহ"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
 msgid "Out of scope expressions"
-msgstr ""
+msgstr "আউট অফ স্কৌপ এক্সপ্ৰেষণসমূহ"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
 msgid "Remove"
-msgstr ""
+msgstr "আতৰাওক"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
 msgid "Remove selected expressions from the monitor"
-msgstr ""
+msgstr "মনিটৰৰ পৰা নিৰ্বাচিত এক্সপ্ৰেষণসমূহক আতৰাওক"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
 msgid "New..."
-msgstr ""
+msgstr "নতুন..."
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
 msgid "Add a new expression to the monitor"
-msgstr ""
+msgstr "মনিটৰলৈ এটা নতুন এক্সপ্ৰেষণ যোগ কৰক"
 
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
 msgid "Call a function:"
-msgstr ""
+msgstr "এটা ফলনক কল কৰক:"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
 msgid "Set Breakpoint"
-msgstr ""
+msgstr "ব্ৰেকপইণ্ট সংহতি কৰক"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
 msgid "Choose Overloaded Function"
-msgstr ""
+msgstr "অভাৰল'ড কৰা ফলন বাছক"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
 msgid ""
 "Multiple functions match the specified name. Please choose one from the list "
 "below."
 msgstr ""
+"একাধিক ফলন ধাৰ্য্যত নামৰ সৈতে মিল খায়। অনুগ্ৰহ কৰি তলৰ তালিকাৰ পৰা এটা বাছক।"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
 msgid "Find Text"
-msgstr ""
+msgstr "লিখনি সন্ধান কৰক"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
 msgid "_Search:"
-msgstr ""
+msgstr "সন্ধান কৰক (_S):"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
 msgid "Match Options:"
-msgstr ""
+msgstr "বিকল্পসমূহ মিলাওক:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
 msgid "Match c_ase"
-msgstr ""
+msgstr "ফলা মিলাওক (_a)"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
 msgid "Match _entire word only"
-msgstr ""
+msgstr "কেৱল সম্পূৰ্ণ শব্দ সন্ধান কৰক (_e)"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
 msgid "Cycling Options:"
-msgstr ""
+msgstr "চাইক্লিং বিকল্পসমূহ:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
 msgid "_Wrap around"
-msgstr ""
+msgstr "মেৰিয়াওক (_W)"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
 msgid "Search _backwards"
-msgstr ""
+msgstr "বিপৰীত দিশত সন্ধান কৰক (_b)"
 
 #: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
 msgid "Global Variables"
-msgstr ""
+msgstr "গ্লবেল চলকসমূহ"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
 msgid "Choose a Core File to Debug"
-msgstr ""
+msgstr "ডিবাগ কৰিবলে এটা কেন্দ্ৰ ফাইল বাছক"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
 msgid "Select a Core File"
-msgstr ""
+msgstr "এটা কেন্দ্ৰ ফাইল বাছক"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
 msgid "Core File:"
-msgstr ""
+msgstr "কেন্দ্ৰ ফাইল:"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
 msgid "Select the executable that created the core file"
-msgstr ""
+msgstr "কেন্দ্ৰ ফাইল সৃষ্টি কৰা এক্সিকিউটেবুলক বাছক"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
 msgid "Executable:"
-msgstr ""
+msgstr "এক্সিকিউটেবুল:"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
-msgstr ""
+msgstr "উৎস ফাইলসমূহ খোলক"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
 msgid "Select from _Target Executable"
-msgstr ""
+msgstr "লক্ষ্য এক্সিকিউটেবুলৰ পৰা বাছক (_T)"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _File System"
-msgstr ""
+msgstr "ফাইল চিস্টেমৰ পৰা বাছক (_F)"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
 msgid "Choose Source Files to Open"
-msgstr ""
+msgstr "খোলিবলে উৎস ফাইলসমূহ বাছক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
 msgid "Preferences"
-msgstr ""
+msgstr "পছন্দসমূহ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
 msgid "Use system monospace font"
-msgstr ""
+msgstr "চিস্টেম মনোস্পেইছ ফণ্ট ব্যৱহাৰ কৰক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
 msgid "Custom Font:"
-msgstr ""
+msgstr "স্বনিৰ্বাচিত ফণ্ট:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "Editor Font"
-msgstr ""
+msgstr "সম্পাদক ফণ্ট"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
 msgid "Visual Style"
-msgstr ""
+msgstr "দৃশ্যমান শৈলী"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
 msgid "Display line numbers"
-msgstr ""
+msgstr "শাৰী সংখ্যা প্ৰদৰ্শন কৰক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
 msgid "Line Numbers"
-msgstr ""
+msgstr "শাৰী সংখ্যা"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
 msgid "Use launch terminal"
-msgstr ""
+msgstr "লঞ্চ টাৰ্মিনেল ব্যৱহাৰ কৰক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "Terminal"
-msgstr ""
+msgstr "টাৰ্মিনেল"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
 msgid "When a source file is changed:"
-msgstr ""
+msgstr "যেতিয়া এটা উৎস ফাইল পৰিবৰ্তন কৰা হয়:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
 msgid "Reload the file"
-msgstr ""
+msgstr "ফাইল পুনৰল'ড কৰক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
 msgid "Do not reload the file"
-msgstr ""
+msgstr "ফাইল পুনৰল'ড নকৰিব"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
 msgid "Ask each time"
-msgstr ""
+msgstr "প্ৰতিবাৰ সোধিব"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
 msgid "File Monitoring"
-msgstr ""
+msgstr "ফাইলৰ পৰ্যবেক্ষন"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
 msgid "Enable syntax highlighting"
-msgstr ""
+msgstr "বাক্যবিন্যাস উজ্জ্বলকৰণ সামৰ্থবান কৰক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
 msgid "Syntax Highlighting"
-msgstr ""
+msgstr "বাক্যবিন্যাস উজ্জ্বলকৰণ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
 msgid "Editor"
-msgstr ""
+msgstr "সম্পাদক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
 msgid "Update at each stop"
-msgstr ""
+msgstr "প্ৰতি স্টপত আপডেইট কৰক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
 msgid "Local variables"
-msgstr ""
+msgstr "লকেল চলকসমূহ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Pure assembly"
-msgstr ""
+msgstr "প্ৰকৃত এচেম্বলি"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
 msgid "Mixed source and assembly"
-msgstr ""
+msgstr "মিশ্ৰিত উৎস আৰু এচেম্বলি"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 msgid "Assembly style"
-msgstr ""
+msgstr "এচেম্বলি শৈলী"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
 msgid "Assembly flavor"
-msgstr ""
+msgstr "এচেম্বলি ফ্লেবৰ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
 msgid "Choose a File"
-msgstr ""
+msgstr "এটা ফাইল বাছক"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Path to the GDB binary used"
-msgstr ""
+msgstr "ব্যৱহৃত GDB বাইনাৰিলৈ পথ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
 msgid "GDB Binary"
-msgstr ""
+msgstr "GDB বাইনাৰি"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Number of instructions to disassemble by default"
-msgstr ""
+msgstr "অবিকল্পিতভাৱে ডিচএচেম্বল কৰিবলে নিৰ্দেশসমূহৰ সংখ্যা"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "Instructions"
-msgstr ""
+msgstr "নিৰ্দেশসমূহ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Enable pretty printing (requires debugger restart)"
-msgstr ""
+msgstr "প্ৰেটি প্ৰিন্টিং সামৰ্থবান কৰক (ডিবাগাৰ পুনাৰম্ভ কৰাৰ প্ৰয়োজন)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "GDB Pretty Printing"
-msgstr ""
+msgstr "GDB প্ৰেটি প্ৰিন্টিং"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
 msgid "Follow parent"
-msgstr ""
+msgstr "ফলো পেৰেণ্ট"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
 msgid "Follow child"
-msgstr ""
+msgstr "ফলো ছাইল্ড"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
 msgid "GDB Follow Fork Mode"
-msgstr ""
+msgstr "GDB ফলো ফৰ্ক অৱস্থা"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
 msgid "Debugger"
-msgstr ""
+msgstr "ডিবাগাৰ"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
 msgid "Layout"
-msgstr ""
+msgstr "বিন্যাস"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
 msgid "Attach to a Running Program"
-msgstr ""
+msgstr "এটা চলি থকা প্ৰগ্ৰামৰ সৈতে সংলঘ্ন কৰক"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
 msgid "Choose a Process to Debug"
-msgstr ""
+msgstr "ডিবাগ কৰিবলে এটা প্ৰক্ৰিয়া বাছক"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
-msgstr ""
+msgstr "তালিকাক ফিল্টাৰ কৰক (_F):"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
 msgid "Connect to Remote Target"
-msgstr ""
+msgstr "দূৰৱৰ্তী লক্ষ্যৰ সৈতে সংযোগ কৰক"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
 msgid "Executable to Load"
-msgstr ""
+msgstr "ল'ড কৰিবলে এক্সিকিউটেবুল"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
 msgid "Shared Libraries Location"
-msgstr ""
+msgstr "অংশীদাৰী কৰা লাইব্ৰেৰীসমূহৰ অৱস্থান"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
 msgid "Remote Debugging Server"
-msgstr ""
+msgstr "দূৰৱৰ্তী ডিবাগিং চাৰ্ভাৰ"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
 msgid "TCP/IP Connection"
-msgstr ""
+msgstr "TCP/IP সংযোগ"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
 msgid "Port:"
-msgstr ""
+msgstr "পৰ্ট:"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
 msgid "Serial Line Connection"
-msgstr ""
+msgstr "ক্ৰমিক শাৰী সংযোগ"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
 msgid "Choose a Program to Execute"
-msgstr ""
+msgstr "এক্সিকিউট কৰিবলে এটা প্ৰগ্ৰাম বাছক"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
 msgid "Choose an Executable"
-msgstr ""
+msgstr "এটা এক্সিকিউটেবুল বাছক"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "Program:"
-msgstr ""
+msgstr "প্ৰগ্ৰাম:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
 msgid "Arguments:"
-msgstr ""
+msgstr "তৰ্কসমূহ:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
 msgid "Choose a Working Directory"
-msgstr ""
+msgstr "এটা কাৰ্য্যকৰী ডাইৰেকটৰি বাছক"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "Working Directory:"
-msgstr ""
+msgstr "কাৰ্য্যকৰী ডাইৰেকটৰি:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
 msgid "_Add"
-msgstr ""
+msgstr "যোগ কৰক (_A)"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
 msgid "_Remove"
-msgstr ""
+msgstr "আতৰাওক (_R)"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
 msgid "Environment Variables:"
-msgstr ""
+msgstr "পৰিৱেশ চলকসমূহ:"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
-msgstr ""
+msgstr "সংৰক্ষিত অধিবেশনসমূহ"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
 msgid "Choose a Session to Debug"
-msgstr ""
+msgstr "ডিবাগ কৰিবলে এটা অধিবেশন বাছক"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
 msgid "Set a Breakpoint:"
-msgstr ""
+msgstr "এটা ব্ৰেকপইণ্ট সংহতি কৰক:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
 msgid "Condition:"
-msgstr ""
+msgstr "কনডিষণ:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
 msgid "_Event:"
-msgstr ""
+msgstr "ইভেণ্ট (_E):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
 msgid "_Binary Location:"
-msgstr ""
+msgstr "বাইনাৰি অৱস্থান (_B):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
 msgid "_Source Location:"
-msgstr ""
+msgstr "উৎস অবস্থান (_S):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
 msgid "F_unction Name:"
-msgstr ""
+msgstr "ফলনৰ নাম (_u):"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
 msgid "File name:"
-msgstr ""
+msgstr "ফাইলৰ নাম:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
 msgid "Function:"
-msgstr ""
+msgstr "ফলন:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
 msgid "Line:"
-msgstr ""
+msgstr "শাৰী:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
 msgid "Set as Countpoint"
-msgstr ""
+msgstr "কাউণ্টপইণ্ট ৰূপে সংহতি কৰক"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
 msgid "Set Location to Jump To"
-msgstr ""
+msgstr "জাম্প কৰিব লগিয়া অৱস্থান সংহতি কৰক"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
 msgid "Jump to location:"
-msgstr ""
+msgstr "অৱস্থানলৈ জাম্প কৰক:"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
 msgid "Break at Destination"
-msgstr ""
+msgstr "গন্তব্যত ভাঙক"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
 msgid "Add to monitor"
-msgstr ""
+msgstr "মনিটৰলৈ যোগ কৰক"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
 msgid "_Variable Name:"
-msgstr ""
+msgstr "চলকৰ নাম (_V):"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
 msgid "_Inspect"
-msgstr ""
+msgstr "নিৰীক্ষণ কৰক (_I)"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
 msgid "Set a watchpoint:"
-msgstr ""
+msgstr "এটা ৱাচপইণ্ট সংহতি কৰক:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
 msgid "Expression:"
-msgstr ""
+msgstr "এক্সপ্ৰেষণ:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
 msgid "Inspect"
-msgstr ""
+msgstr "নিৰীক্ষণ কৰক"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
 msgid "Triggers on:"
-msgstr ""
+msgstr "চিহ্নিত বস্তুত ট্ৰিগাৰচ্:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
 msgid "Read"
-msgstr ""
+msgstr "পঢ়ক"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
 msgid "Write"
-msgstr ""
+msgstr "লিখক"
 
 #: ../src/uicommon/nmv-locate-file-dialog.cc:66
 #, c-format
 msgid "Select Location for %s"
-msgstr ""
+msgstr "%s ৰ বাবে অৱস্থান বাছক"
 
 #: ../src/uicommon/nmv-locate-file-dialog.cc:76
 #, c-format
@@ -1411,93 +1416,95 @@ msgid ""
 "Cannot find file '%s'.\n"
 "Please specify the location of this file:"
 msgstr ""
+"ফাইল '%s' পোৱা নগল।\n"
+"অনুগ্ৰহ কৰি এই ফাইলৰ অৱস্থান ধাৰ্য্য কৰক:"
 
 #: ../src/uicommon/nmv-source-editor.cc:646
 #, c-format
 msgid "Line: %i, Column: %i"
-msgstr ""
+msgstr "শাৰী: %i, স্তম্ভ: %i"
 
 #: ../src/uicommon/nmv-source-editor.cc:1490
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
-msgstr ""
+msgstr "ফাইল %s ল'ড কৰিব পৰা নগল কাৰণ ইয়াৰ এনক'ডিং %s পৰা ভিন্ন"
 
 #: ../src/uicommon/nmv-terminal.cc:185
 msgid "Copy the selection"
-msgstr ""
+msgstr "নিৰ্বাচনক কপি কৰক"
 
 #: ../src/uicommon/nmv-terminal.cc:191
 msgid "_Paste"
-msgstr ""
+msgstr "পেইস্ট কৰক (_P)"
 
 #: ../src/uicommon/nmv-terminal.cc:192
 msgid "Paste the clipboard"
-msgstr ""
+msgstr "ক্লিপবৰ্ডক পেইস্ট কৰক"
 
 #: ../src/uicommon/nmv-terminal.cc:198
 msgid "_Reset"
-msgstr ""
+msgstr "পুনৰ সংহতি কৰক (_R)"
 
 #: ../src/uicommon/nmv-terminal.cc:199
 msgid "Reset the terminal"
-msgstr ""
+msgstr "টাৰ্মিনেল পুনৰসংহতি কৰক"
 
 #: ../src/uicommon/nmv-ui-utils.cc:94
 msgid "Do not ask me again"
-msgstr ""
+msgstr "মোক আকৌ নুশুধিব"
 
 #: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
-msgstr ""
+msgstr "প্ৰকল্পৰ ৱেবছাইট"
 
 #. Translators: change this to your name, separate multiple names with \n
 #: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
-msgstr ""
+msgstr "নীলমদ্যুতি গোস্বামী (ngoswami@redhat.com)"
 
 #: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
-msgstr ""
+msgstr "ফাইল (_F)"
 
 #: ../src/workbench/nmv-workbench.cc:672
 msgid "_Quit"
-msgstr ""
+msgstr "প্ৰস্থান কৰক (_Q)"
 
 #: ../src/workbench/nmv-workbench.cc:673
 msgid "Quit the application"
-msgstr ""
+msgstr "এপ্লিকেচন প্ৰস্থান কৰক"
 
 #: ../src/workbench/nmv-workbench.cc:683
 msgid "_Edit"
-msgstr ""
+msgstr "সম্পাদনা কৰক (_E)"
 
 #: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
-msgstr ""
+msgstr "সহায় (_H)"
 
 #: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
-msgstr ""
+msgstr "বিষয়ে (_A)"
 
 #: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
-msgstr ""
+msgstr "এই এপ্লিকেচনৰ বিষয়ে তথ্য প্ৰদৰ্শন কৰক"
 
 #: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
-msgstr ""
+msgstr "সমলসমূহ (_C)"
 
 #: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
-msgstr ""
+msgstr "এই এপ্লিকেচনৰ বাবে ব্যৱহাৰকাৰী হাতপুথি প্ৰদৰ্শন কৰক"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
 msgid "Select File Location"
-msgstr ""
+msgstr "ফাইলৰ অৱস্থান বাছক"
 
 #: ../ui/locatefiledialog.ui.h:2
 msgid "Locate File"
-msgstr ""
+msgstr "ফাইল অৱস্থিত কৰক"
 
 
