@@ -8,13 +8,16 @@ if AUTOTESTS
 #runtestglobalvariables
 #runtestenv
 
+#runtestvars is not run as part of the tests because of a GDB bug: https://sourceware.org/bugzilla/show_bug.cgi?id=17124.  Otherwise, it loops indefinitly.
+#likewise for runtestvarpathexpr
+
 TESTS=\
 runtestgdbmi runtestunicode \
-runtestvars runtestcpptrait runtestvarlist \
+runtestcpptrait runtestvarlist \
 runtestvarwalker runtestvarobjwalker runtestbreakpoint \
 runtestwatchpoint runtestderef \
 runtestlocalvarslist runtestcpplexer \
-runtestcppparser runtestvarpathexpr \
+runtestcppparser  \
 runtestlibtoolwrapperdetection \
 runtesttypes runtestdisassemble \
 runtestvariableformat runtestprettyprint \

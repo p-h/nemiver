@@ -113,7 +113,7 @@ test_main (int, char **)
 
     NEMIVER_CATCH_NOX
 
-    BOOST_REQUIRE (nb_watchpoint_trigger == 1);
+    BOOST_REQUIRE (nb_watchpoint_trigger == 2);
     BOOST_REQUIRE (nb_watchpoint_out_of_scope == 1);
     return 0;
 }
