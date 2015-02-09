@@ -1,0 +1,1509 @@
+# Basque translation for nemiver.
+# Copyright (C) 2015 nemiver's COPYRIGHT HOLDER
+# This file is distributed under the same license as the nemiver package.
+# 
+# Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2015.
+# Edurne Labaka <elabaka@uzei.com>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2015-02-07 17:37+0100\n"
+"PO-Revision-Date: 2015-02-02 16:03+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: eu_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#: ../data/nemiver.appdata.xml.in.h:1
+msgid ""
+"Nemiver is an on-going effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr ""
+"GNOMEren mahaigaineko ingurunean ondo integratzen den araztaile grafiko "
+"independentea idazteko ahalegina da Nemiver. Une honetan, C / C++ programak "
+"arazteko GNU Debugger gdb ezaguna erabiltzen duen modulua eskaintzen du."
+
+#: ../data/nemiver.appdata.xml.in.h:2
+msgid ""
+"We believe that Nemiver is mature and robust enough to just let you debug "
+"your favorite C or C++ application in a pleasant way."
+msgstr ""
+"Gure ustez Nemiver ondo eratua dago eta sendoa da zure gogoko C edo C++ "
+"aplikazioak erosotasunez arazteko."
+
+#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.desktop.in.h:2
+msgid "C/C++ Debugger"
+msgstr "C/C++ araztailea"
+
+#: ../data/nemiver.desktop.in.h:3
+msgid "Nemiver C/C++ Debugger"
+msgstr "Nemiver C/C++ araztailea"
+
+#: ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Araztu aplikazioak"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;disassembler;debugger;c;c++;"
+
+#: ../src/main.cc:78
+msgid "Set the environment of the program to debug"
+msgstr "Ezarri arazteko programaren ingurunea"
+
+#: ../src/main.cc:87
+msgid "Attach to a process"
+msgstr "Erantsi prozesu bati"
+
+#: ../src/main.cc:96
+msgid "Load a core file"
+msgstr "Kargatu nukleo-fitxategi bat"
+
+#: ../src/main.cc:104
+msgid "List the saved debugging sessions"
+msgstr "Zerrendatu gordetako arazketa-saioak"
+
+#: ../src/main.cc:112
+msgid "Erase the saved debugging sessions"
+msgstr "Ezabatu gordetako arazketa-saioak"
+
+#: ../src/main.cc:120
+msgid "Debug the program that was of session number N"
+msgstr "Araztu N saio-zenbakikoa zen programa"
+
+#: ../src/main.cc:128
+msgid "Execute the last session"
+msgstr "Exekutatu azken saioa"
+
+#: ../src/main.cc:136
+msgid "Enable logging domains DOMAINS"
+msgstr "Gaitu saio-hasierako domeinuak DOMAINSen"
+
+#: ../src/main.cc:144
+msgid "Log the debugger output"
+msgstr "Erregistratu araztailearen irteera"
+
+#: ../src/main.cc:152
+msgid "Use this terminal as the debugee's terminal"
+msgstr "Erabili terminal hau araztailearen terminal gisa"
+
+#: ../src/main.cc:161
+msgid "Connect to remote target specified by HOST:PORT"
+msgstr "Konektatu HOST:PORek zehaztutako urruneko helburura"
+
+#: ../src/main.cc:170
+msgid ""
+"Where to look for shared libraries loaded by the inferior. Use in "
+"conjunction with --remote"
+msgstr ""
+"Behekoak kargatutako liburutegi partekatuak bilatzeko lekua. Erabili honekin "
+"batera: --remote"
+
+#: ../src/main.cc:180
+msgid "Set the path of the GDB binary to use to debug the inferior"
+msgstr "Ezarri behekoa arazteko erabiliko den GDB bitarraren bide-izena"
+
+#: ../src/main.cc:189
+msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
+msgstr "Ez ezarri eten-punturik 'main'en eta ez exekutatu behekoa ere"
+
+#: ../src/main.cc:198
+msgid "Show the version number of Nemiver"
+msgstr "Erakutsi Nemiver-en bertsio-zenbaki"
+
+#: ../src/main.cc:264
+msgid " [<prog-to-debug> [prog-args]]"
+msgstr " [<prog-to-debug> [prog-args]]"
+
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
+msgid "A C/C++ debugger for GNOME"
+msgstr "GNOMErako C/C++ araztaile bat"
+
+#: ../src/main.cc:361
+msgid ""
+"Please provide a local copy of the binary you intend to debug remotely.\n"
+"Like this:\n"
+msgstr ""
+"Eman urrunetik araztu nahi duzun bitarraren kopia lokal bat.\n"
+"Adibidez:\n"
+
+#: ../src/main.cc:366 ../src/main.cc:385
+msgid "Otherwise, find below the full set of Nemiver options.\n"
+msgstr "Bestela, ikusi behean Nemiver-en aukera guztiak.\n"
+
+#: ../src/main.cc:380
+msgid ""
+"Please provide the path to the binary that generated the core file too.\n"
+"Like this:\n"
+msgstr ""
+"Eman nukleo-fitxategia sortu duen bitarraren bide-izena ere.\n"
+"Adibidez:\n"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
+msgid "ID"
+msgstr "IDa"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-file-list.cc:108
+msgid "File Name"
+msgstr "Fitxategi-izena"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
+msgid "Line"
+msgstr "Lerroa"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
+msgid "Function"
+msgstr "Funtzioa"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
+msgid "Address"
+msgstr "Helbidea"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:153
+msgid "Condition"
+msgstr "Baldintza"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
+msgid "Toggle countpoint"
+msgstr "Txandakatu konta-untua"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
+msgid "Type"
+msgstr "Mota"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
+msgid "Hits"
+msgstr "Bisitak"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
+msgid "Expression"
+msgstr "Adierazpena"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
+msgid "Ignore count"
+msgstr "Ez ikusi egin kontaketari"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:364
+msgid "breakpoint"
+msgstr "eten-puntua"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:368
+msgid "watchpoint"
+msgstr "beha-puntua"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:371
+msgid "countpoint"
+msgstr "konta-puntua"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:374
+msgid "unknown"
+msgstr "ezezaguna"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:441
+msgid "_Delete"
+msgstr "_Ezabatu"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:442
+msgid "Remove this breakpoint"
+msgstr "Kendu eten-puntu hau"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:451
+msgid "_Go to Source"
+msgstr "_Joan iturburura"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:452
+msgid "Find this breakpoint in the source editor"
+msgstr "Bilatu eten-puntu hau iturburu-editorean"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:177
+#: ../src/uicommon/nmv-terminal.cc:184
+msgid "_Copy"
+msgstr "_Kopiatu"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:178
+msgid "Copy the call stack to the clipboard"
+msgstr "Kopiatu dei-pila arbelean"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+msgid "Frame"
+msgstr "Markoa"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
+msgid "Arguments"
+msgstr "Argumentuak"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
+msgid "Location"
+msgstr "Kokalekua"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
+msgid "Binary"
+msgstr "Bitarra"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
+#, c-format
+msgid "(Click here to see the next %d row of the call stack"
+msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgstr[0] "Egin klik hemen dei-pilaren hurrengo %d errenkada ikusteko"
+msgstr[1] "Egin klik hemen dei-pilaren hurrengo %d errenkada ikusteko"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
+msgid "Function Name"
+msgstr "Funtzio-izena"
+
+#. labels for widget tabs in the status notebook
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+msgid "Context"
+msgstr "Testuingurua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
+msgid "Target Terminal"
+msgstr "Helburuko terminala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
+msgid "Breakpoints"
+msgstr "Eten-puntuak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
+msgid "Registers"
+msgstr "Erregistroak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
+msgid "Memory"
+msgstr "Memoria"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:123
+msgid "Expression Monitor"
+msgstr "Adierazpen-monitorea"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1715
+msgid "Reached end of file"
+msgstr "fitxategiaren amaierara heldu da"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1718
+#, c-format
+msgid "Could not find string %s"
+msgstr "Ezin izan da %s katea aurkitu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2103
+msgid "Change to Standard Breakpoint"
+msgstr "Aldatu Eten-puntu Estandarrera"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2106
+msgid "Change to Countpoint"
+msgstr "Aldatu konta-puntura"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2108
+msgid "Remove _Breakpoint"
+msgstr "Kendu _eten-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
+msgid "Disable Breakpoint"
+msgstr "Desgaitu eten-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2113
+msgid "Enable Breakpoint"
+msgstr "Gaitu eten-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
+msgid "Set _Breakpoint"
+msgstr "E_zarri eten-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2118
+msgid "Set Countpoint"
+msgstr "Ezarri konta-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2281
+#, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "%s (path=\"%s\", pid=%i)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
+msgid "Connected to remote target!"
+msgstr "Urruneko helburura konektatuta!"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2498
+msgid "Program exited"
+msgstr "Programatik irtenda"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2528
+msgid "The underlying debugger engine process died."
+msgstr "Azpiko araztaile-motorraren prozesua hil da."
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2632
+#, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "Helburuak seinale bat jaso du: %s, %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2648
+#, c-format
+msgid "An error occurred: %s"
+msgstr "Errore bat gertatu da: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2812
+#, c-format
+msgid "File %s has been modified. Do you want to reload it?"
+msgstr "%s fitxategia aldatu da. Berriro kargatu nahi duzu?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
+msgid "_Detach From the Running Program"
+msgstr "_Desuztartu exekutatzen ari den programatik"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr "Araztailea deskonektatzen exekutatzen ari den helburutik hil gabe"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
+msgid "_Save Session to Disk"
+msgstr "_Gorde saioa diskoan"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
+msgid "Save the current debugging session to disk"
+msgstr "Gorde uneko araztaile-saioa diskoan"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
+msgid "_Run or Restart"
+msgstr "E_xekutatu edo berrabiarazi"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
+msgid "Run or Restart the target"
+msgstr "Exekutatu edo berrabiarazi helburua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
+msgid "Set Breakpoint with Dialog..."
+msgstr "Ezarri eten-puntua elkarrizketarekin..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
+msgid "Set a breakpoint at the current line using a dialog"
+msgstr "Ezarri eten-puntua uneko lerroan elkarrizketa bat erabiliz"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3223
+msgid "Set Breakpoint..."
+msgstr "Ezarri eten-puntua..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3224
+msgid "Set a breakpoint at a function or line number"
+msgstr "Ezarri eten-puntua funtzio edo lerro-zenbaki batean"
+
+#. Depending on the context we will want this string to be
+#. either "Set Breakpoint", or "Remove Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
+msgid "Toggle _Breakpoint"
+msgstr "Txandakatu _Eten-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "Ezarri/Kendu eten-puntua kurtsorearen uneko kokalekuan"
+
+#. Depending on the context we will want this string to be
+#. either "Enable Breakpoint", or "Disable
+#. Breakpoint". Hence this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3258
+msgid "Enable/Disable Breakpoint"
+msgstr "Gaitu/Desgaitu eten-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3259
+msgid ""
+"Enable or disable the breakpoint that is set at the current cursor location"
+msgstr ""
+"Gaitu edo desgaitu kurtsorearen uneko kokalekuan ezarrita dagoen eten-puntua"
+
+#. Depending on the context we will want this string to be
+#. either "Set Countpoint", or "Change to Countpoint", or
+#. "Change to Standard Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3279
+msgid "Toggle _Countpoint"
+msgstr "Txandakatu _konta-puntua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
+msgid "Set/Unset a countpoint at the current cursor location"
+msgstr "Ezarri/Kendu konta-puntua kurtsorearen uneko kokalekuan"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3290
+msgid "Set Watchpoint with Dialog..."
+msgstr "Ezarri beha-puntua elkarrizketarekin..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3291
+msgid "Set a watchpoint using a dialog"
+msgstr "Ezarri beha-puntua elkarrizketa erabiliz"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
+msgid "_Next"
+msgstr "_Hurrengoa"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3307
+msgid "Execute next line stepping over the next function, if any"
+msgstr ""
+"Exekutatu hurrengo funtzioa saltatzen duen hurrengo lerroa, halakorik badago"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3316
+msgid "_Step"
+msgstr "_Salto"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3317
+msgid "Execute next line, stepping into the next function, if any"
+msgstr "Exekutatu hurrengo lerroa, hurrengo funtzioan sartuz, halakorik badago"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3326
+msgid "Step _Out"
+msgstr "Sal_tatu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3327
+msgid "Finish the execution of the current function"
+msgstr "Amaitu uneko funtzioaren exekuzioa"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3336
+msgid "Step Into asm"
+msgstr "Sartu asmen"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3337
+msgid "Step into the next assembly instruction"
+msgstr "Sartu hurrengo mihiztatze-instrukzioan"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3346
+msgid "Step Over asm"
+msgstr "Saltatu asm"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3347
+msgid "Step over the next assembly instruction"
+msgstr "Saltatu hurrengo mihiztatze-instrukzioa"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3356
+msgid "_Continue"
+msgstr "_Jarraitu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
+msgid "Continue program execution until the next breakpoint"
+msgstr "Jarraitu programaren exekuzioa hurrengo eten-puntura arte"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
+msgid "Run to Cursor"
+msgstr "Exekutatu kurtsoreraino"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
+msgid "Continue program execution until the currently selected line is reached"
+msgstr "Jarraitu kurtsorearen exekuzioa unean hautatutako lerrora heldu arte"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3377
+msgid "Jump to Cursor"
+msgstr "Joan kurtsorera"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3378
+msgid "Jump to the currently selected line"
+msgstr "Joan une honetan hautatutako lerrora"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
+msgid "Jump and Stop to Cursor"
+msgstr "Joan eta gelditu kurtsorean"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3389
+msgid "Sets a breakpoint to the currently selected line and jump there"
+msgstr "Eten-puntu bat ezartzen du uneko lerroan eta bertara salto egiten du"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
+msgid "Jump to a Given Location"
+msgstr "Joan kokaleku jakin batera"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3402
+msgid "Select a given code location and jump there"
+msgstr "Hautatu kode-kokaleku bat eta joan horra"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3413
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
+msgid "Inspect an Expression"
+msgstr "Ikuskatu adierazpena"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
+msgid "Inspect a global or local expression"
+msgstr "Ikuskatu adierazpen globala edo lokala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3424
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
+msgid "Call a Function"
+msgstr "Deitu funtzio bati"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
+msgid "Call a function in the program being debugged"
+msgstr "Deitu arazten ari den programako funtzio bati"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3434
+msgid "Show Global Variables"
+msgstr "Erakutsi aldagai globalak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3435
+msgid "Display all global variables"
+msgstr "Bistaratu aldagai global guztiak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3445
+msgid "Refresh Locals"
+msgstr "Freskatu lokalak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3446
+msgid "Refresh the list of variables local to the current function"
+msgstr "Freskatu aldagai-zerrenda (lokala) uneko funtziora"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3455
+msgid "Show Assembly"
+msgstr "Erakutsi mihiztatzea"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
+msgid ""
+"Show the assembly code of the source code being currently debugged, in "
+"another tab"
+msgstr ""
+"Erakutsi arazten ari den iturburu-kodearen mihiztatze-kodea beste fitxa "
+"batean"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
+msgid "Switch to Assembly"
+msgstr "Aldatu mihiztatzera"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
+msgid "Show the assembly code of the source code being currently debugged"
+msgstr "Erakutsi arazten ari den iturburu-kodearen mihiztatze-kodea"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3481
+msgid "Switch to Source"
+msgstr "Aldatu iturburura"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3482
+msgid "Show the source code being currently debugged"
+msgstr "Erakutsi arazten ari den iturburu-kodea"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3494
+msgid "Stop"
+msgstr "Gelditu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3495
+msgid "Stop the debugger"
+msgstr "Gelditu araztailea"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3507
+msgid "_View"
+msgstr "_Ikusi"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3518
+msgid "Switch to Target Terminal View"
+msgstr "Aldatu helburuko terminal-ikuspegira"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3529
+msgid "Switch to Context View"
+msgstr "Aldatu testuinguru-ikuspegira"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3540
+msgid "Switch to Breakpoints View"
+msgstr "Aldatu etenpuntu-ikuspegira"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3551
+msgid "Switch to Registers View"
+msgstr "Aldatu erregistro-ikuspegira"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3563
+msgid "Switch to Memory View"
+msgstr "Aldatu memoria-ikuspegira"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3574
+msgid "Switch to Variables Monitor View"
+msgstr "Aldatu aldagai-monitoreen ikuspegira"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3583
+msgid "_Debug"
+msgstr "A_raztu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3593
+msgid "_Open Source File..."
+msgstr "_Ireki iturburu-kodea"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3594
+msgid "Open a source file for viewing"
+msgstr "Ireki iturburu-kode bat ikusteko"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3603
+msgid "Load _Executable..."
+msgstr "Kargatu e_xekutagarria"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3604
+msgid "Execute a program"
+msgstr "Exe_kutatu programa"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3614
+msgid "_Load Core File..."
+msgstr "Kar_gatu nukleo-fitxategia"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3615
+msgid "Load a core file from disk"
+msgstr "Kargatu nukleo-fitxategi bat diskotik"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3625
+msgid "_Attach to Running Program..."
+msgstr "_Erantsi exekutatzen ari den programari..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3626
+msgid "Debug a program that's already running"
+msgstr "Araztu jada exekutatzen ari den programa bat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3636
+msgid "_Connect to Remote Target..."
+msgstr "_Konektatu urruneko helburura..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
+msgid "Connect to a debugging server to debug a remote target"
+msgstr "Konektatu arazketa-zerbitzari batera urruneko helburu bat arazteko"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
+msgid "Resume Sa_ved Session..."
+msgstr "Berreskuratu _gordetako saioa..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
+msgid "Open a previously saved debugging session"
+msgstr "Ireki aurrez gordetako arazketa-saioa"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3659
+msgid "_Preferences"
+msgstr "_Hobespenak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
+msgid "Edit the properties of the current session"
+msgstr "Editatu uneko saioaren propietateak"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3674
+msgid "_Copy selected text"
+msgstr "_Kopiatu hautatutako testua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3675
+msgid "Copy the text selected in the current source file"
+msgstr "Kopiatu uneko iturburu-fitxategian hautatutako testua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3684
+msgid "_Reload Source File"
+msgstr "_Kargatu berriro iturburu-fitxategia"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3685
+msgid "Reloads the source file"
+msgstr "Iturburu-fitxategia kargatzen du berriro"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3694
+msgid "_Close Source File"
+msgstr "_Itxi iturburu-fitxategia"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3695
+msgid "Close the opened file"
+msgstr "Itxi irekitako fitxategia"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3704
+msgid "_Find"
+msgstr "_Bilatu"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
+msgid "Find a text string in file"
+msgstr "Bilatu testu-kate bat fitxategian"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4029
+#, c-format
+msgid "Close %s"
+msgstr "Itxi %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6029
+msgid "Sorry, it's impossible to restart a remote inferior"
+msgstr "Sentitzen dut, ezin da urruneko behekoa berrabiarazi"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6174
+#, c-format
+msgid "Could not find file %s"
+msgstr "Ezin izan da aurkitu %s fitxategia"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6238
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6429
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6464
+#, c-format
+msgid "Could not load program: %s"
+msgstr "Ezin izan da kargatu programa: %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6357
+msgid "You cannot attach to Nemiver itself"
+msgstr "Ezin diozu Nemiver-i berari erantsi"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6371
+msgid "You cannot attach to the underlying debugger engine"
+msgstr "Ezin diozu erantsi mendeko araztaile-motorrari"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6667
+msgid "Failed to stop the debugger"
+msgstr "Huts egin du araztailea gelditzean"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6911
+#, c-format
+msgid "Invalid line number: %i"
+msgstr "Lerro-zenbaki baliogabea: %i"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8551
+#, c-format
+msgid ""
+"There is a program being currently debugged. Do you really want to exit from "
+"the debugger?"
+msgstr ""
+"Programa bat arazten ari da une honetan. Ziur zaude araztailetik irten nahi "
+"duzula?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
+msgid "Default Layout"
+msgstr "Diseinu lehenetsia"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
+msgid "Nemiver's default layout"
+msgstr "Nemiver-en diseinu lehenetsia"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
+msgid "Source Code"
+msgstr "Iturburu-kodea"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
+msgid "Dynamic Layout"
+msgstr "Diseinu dinamikoa"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
+msgid "A layout which can be modified"
+msgstr "Alda daitekeen diseinua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
+msgid "Two Status Pane"
+msgstr "Bi egoerako panela"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
+msgid "A layout with two status pane"
+msgstr "Bi egoerako panela duen diseinua"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
+msgid "Wide Layout"
+msgstr "Diseinu zabala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
+msgid "A layout for very large monitors"
+msgstr "Monitore oso handientzako diseinua"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:128
+msgid "Expand _Selected"
+msgstr "Zabaldu _hautatutakoa"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:134
+msgid "Expand _All"
+msgstr "Zabaldu _dena"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:144
+msgid "_Collapse"
+msgstr "_Tolestu"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:427
+msgid "Loading files from target executable..."
+msgstr "Fitxategiak kargatzen helburuko exekutagarritik..."
+
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
+msgstr ""
+"Aldagai mota: \n"
+" %s"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
+msgid "Local Variables"
+msgstr "Aldagai lokalak"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
+msgid "Function Arguments"
+msgstr "Funtzio-argumentuak"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
+msgid "_Copy Variable Name"
+msgstr "_Kopiatu aldagai-izena"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
+msgid "Copy the variable path expression to the clipboard"
+msgstr "Kopiatu aldagaiaren bide-izenaren adierazpena arbelean"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
+msgid "_Copy Variable Value"
+msgstr "_Kopiatu aldagai-balioa"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
+msgid "Copy the variable value to the clipboard"
+msgstr "Kopiatu aldagai-balioa arbelean"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
+msgid "Create Watchpoint"
+msgstr "Sortu beha-puntua"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
+msgid ""
+"Create a watchpoint that triggers when the value of the expression changes"
+msgstr "Sortu adierazpenaren balioa aldatzen denean abiarazten den beha-puntua"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:49
+msgid "Byte"
+msgstr "Byte"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:52
+msgid "Word"
+msgstr "Hitza"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:55
+msgid "Long Word"
+msgstr "Hitz luzea"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:98
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
+msgid "Address:"
+msgstr "Helbidea:"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:100
+msgid "Show"
+msgstr "Erakutsi"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:103
+msgid "Group By:"
+msgstr "Taldekatu honen arabera:"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
+msgid "Choose a Directory"
+msgstr "Aukeratu direktorioa"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "Iturburu-direktorioak"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
+msgid "User Name"
+msgstr "Erabiltzaile-izena"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
+msgid "Proc Args"
+msgstr "Proc Args"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
+msgid "Name"
+msgstr "Izena"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:102
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
+msgid "Value"
+msgstr "Balioa"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
+msgid "Session"
+msgstr "Saioa"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
+msgid "Throw Exception"
+msgstr "Jaurti salbuespena"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
+msgid "Catch Exception"
+msgstr "Hartu salbuespena"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
+msgid "Fork System Call"
+msgstr "Fork sistema-deia"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
+msgid "Vfork System Call"
+msgstr "Vfork sistema-deia"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
+msgid "Exec System Call"
+msgstr "Exec sistema-deia"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:184
+msgid "Thread ID"
+msgstr "Hariaren IDa"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
+msgid "Variable"
+msgstr "Aldagaia"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
+msgid "In scope expressions"
+msgstr "Esparruko adierazpenak"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
+msgid "Out of scope expressions"
+msgstr "Esparrutik kanpoko adierazpenak"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
+msgid "Remove"
+msgstr "Kendu"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
+msgid "Remove selected expressions from the monitor"
+msgstr "Kendu hautatutako adierazpenak monitoretik"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
+msgid "New..."
+msgstr "Berria..."
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
+msgid "Add a new expression to the monitor"
+msgstr "Gehitu adierazpen berria monitoreari"
+
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "Call a function:"
+msgstr "Deitu funtzioari:"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "Ezarri eten-puntua"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+msgid "Choose Overloaded Function"
+msgstr "Aukeratu gainkargatutako funtzioa"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+msgid ""
+"Multiple functions match the specified name. Please choose one from the list "
+"below."
+msgstr ""
+"Hainbat funtzio bat datos zehaztutako izenarekin. Aukeratu bat beheko "
+"zerrendan."
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
+msgid "Find Text"
+msgstr "Bilatu testua"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
+msgid "_Search:"
+msgstr "_Bilatu:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "Match Options:"
+msgstr "Bat-etortzeko aukerak:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "Maiuskula/minuskula"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "Bat etorri hitz osoarekin soilik"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "Cycling Options:"
+msgstr "Ziklo-aukerak:"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+msgid "_Wrap around"
+msgstr "_Itzulbiratu"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "Bilatu a_tzerantz"
+
+#: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
+msgid "Global Variables"
+msgstr "Aldagai globalak"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
+msgid "Choose a Core File to Debug"
+msgstr "Aukeratu nukleo-fitxategi bat arazteko"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
+msgid "Select a Core File"
+msgstr "Aukeratu nukleo-fitxategia"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "Core File:"
+msgstr "Nukleo-fitxategia:"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+msgid "Select the executable that created the core file"
+msgstr "Hautatu nukleo-fitxategia sortu duen exekutagarria"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "Executable:"
+msgstr "Exekutagarria:"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
+msgid "Open Source Files"
+msgstr "Ireki iturburu-fitxategiak"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "Hautatu _helburuko exekutagarritik"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
+msgid "Select from _File System"
+msgstr "Hautatu _fitxategi-sistematik"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
+msgid "Choose Source Files to Open"
+msgstr "Aukeratu irekitzeko iturburu-fitxategiak"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
+msgid "Preferences"
+msgstr "Hobespenak"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
+msgid "Use system monospace font"
+msgstr "Erabili sistemaren mnospace letra-tipoa"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "Letra-tipo pertsonalizatua:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "Editor Font"
+msgstr "Editorearen letra-tipoa"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+msgid "Visual Style"
+msgstr "Estilo bisuala"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+msgid "Display line numbers"
+msgstr "Erakutsi lerro-zenbakia"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "Line Numbers"
+msgstr "Lerro-zenbakiak"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr "Erabili abio-terminala"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+msgid "Terminal"
+msgstr "Terminala"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "When a source file is changed:"
+msgstr "Iturburuko fitxategia aldatzen denean:"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "Kargatu berriro fitxategia"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+msgid "Do not reload the file"
+msgstr "Ez kargatu berriro fitxategia"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+msgid "Ask each time"
+msgstr "Galdetu aldi bakoitzean"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+msgid "File Monitoring"
+msgstr "Fitxategi-kontrola"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Enable syntax highlighting"
+msgstr "Gaitu sintaxi-nabarmentzea"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "Syntax Highlighting"
+msgstr "Sintaxi-nabarmentzea"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "Editorea"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Update at each stop"
+msgstr "Eguneratu gelditze bakoitzean"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Local variables"
+msgstr "Aldagai lokalak"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "Pure assembly"
+msgstr "Mihiztatze purua"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "Mixed source and assembly"
+msgstr "iturburu eta mihiztatze nahasia"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+msgid "Assembly style"
+msgstr "Mihiztatze-estiloa"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Assembly flavor"
+msgstr "Mihiztatze-konfigurazioa"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
+msgid "Choose a File"
+msgstr "Aukeratu fitxategia"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+msgid "Path to the GDB binary used"
+msgstr "Erabilitako GDB bitarraren bide-izena"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+msgid "GDB Binary"
+msgstr "GDB bitarra"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+msgid "Number of instructions to disassemble by default"
+msgstr "Lehenespenez desmihiztatzeko instrukzio kopurua"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+msgid "Instructions"
+msgstr "Instrukzioak"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr "Gaitu inprimatze "
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+msgid "GDB Pretty Printing"
+msgstr "GDB Pretty Printing"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+msgid "Follow parent"
+msgstr "Jarraitu gurasoari"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+msgid "Follow child"
+msgstr "Jarraitu umeari"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+msgid "GDB Follow Fork Mode"
+msgstr "GDB jarraipeneko fork modua"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
+msgid "Debugger"
+msgstr "Araztailea"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
+msgid "Layout"
+msgstr "Diseinua"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
+msgid "Attach to a Running Program"
+msgstr "Erantsi exekutatzen ari dren programa bati"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "Choose a Process to Debug"
+msgstr "Aukeratu arazteko prozesu bat"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
+msgid "_Filter list:"
+msgstr "_Iragazi zerrenda:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "Konektatu urruneko helburu batera"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+msgid "Executable to Load"
+msgstr "Kargatzeko exekutagarria"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "Shared Libraries Location"
+msgstr "Liburutegi partekatuen kokalekua"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
+msgid "Remote Debugging Server"
+msgstr "Urruneko arazketa-zerbitzaria"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
+msgid "TCP/IP Connection"
+msgstr "TCP/IP konexioa"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
+msgid "Port:"
+msgstr "Ataka:"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
+msgid "Serial Line Connection"
+msgstr "Serieko lineako konexioa"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
+msgid "Choose a Program to Execute"
+msgstr "Aukeratu exekutatzeko programa bat"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
+msgid "Choose an Executable"
+msgstr "Aukeratu exekutagarria"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
+msgid "Program:"
+msgstr "Programa:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
+msgid "Arguments:"
+msgstr "Argumentuak:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
+msgid "Choose a Working Directory"
+msgstr "Aukeratu laneko direktorioa"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "Working Directory:"
+msgstr "Laneko direktorioa:"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
+msgid "_Add"
+msgstr "_Gehitu"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+msgid "_Remove"
+msgstr "_Kendu"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "Environment Variables:"
+msgstr "Ingurune-aldagaiak:"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
+msgid "Saved Sessions"
+msgstr "Gordetako saioak"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "Choose a Session to Debug"
+msgstr "Aukeratu arazteko saio bat"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+msgid "Set a Breakpoint:"
+msgstr "Ezarri eten-puntua:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
+msgid "Condition:"
+msgstr "Baldintza:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
+msgid "_Event:"
+msgstr "_Gertaera:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
+msgid "_Binary Location:"
+msgstr "_Kokaleku bitarra:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
+msgid "_Source Location:"
+msgstr "_Iturburu-kokalekua:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
+msgid "F_unction Name:"
+msgstr "_Funtzio-izena:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+msgid "File name:"
+msgstr "Fitxategi-izena:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
+msgid "Function:"
+msgstr "Funtzioa:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Line:"
+msgstr "Lerroa:"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+msgid "Set as Countpoint"
+msgstr "Ezarri konta-puntu gisa"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
+msgid "Set Location to Jump To"
+msgstr "Ezarri salto egiteko kokalekua"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "Jump to location:"
+msgstr "Saltatu kokalekura:"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at Destination"
+msgstr "Eten helburuan"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
+msgid "Add to monitor"
+msgstr "Gehitu monitorizatzeko"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
+msgid "_Variable Name:"
+msgstr "Al_dagai-izena:"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
+msgid "_Inspect"
+msgstr "_Ikuskatu"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
+msgid "Set a watchpoint:"
+msgstr "Ezarri beha-puntua:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
+msgid "Expression:"
+msgstr "Adierazpena:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "Ikuskatu"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
+msgid "Triggers on:"
+msgstr "Hemen abiarazten da:"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "Read"
+msgstr "Irakurri"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
+msgid "Write"
+msgstr "Idatzi"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:66
+#, c-format
+msgid "Select Location for %s"
+msgstr "Hautatu %s(r)en kokalekua"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:76
+#, c-format
+msgid ""
+"Cannot find file '%s'.\n"
+"Please specify the location of this file:"
+msgstr ""
+"Ezin da aurkitu '%s' fitxategia.\n"
+"Zehaztu fitxategi honen kokalekua:"
+
+#: ../src/uicommon/nmv-source-editor.cc:646
+#, c-format
+msgid "Line: %i, Column: %i"
+msgstr "Lerroa: %i, Zutabea: %i"
+
+#: ../src/uicommon/nmv-source-editor.cc:1490
+#, c-format
+msgid "Could not load file %s because its encoding is different from %s"
+msgstr "Ezin izan da kargatu %s fitxategia %s(r)en kodeketa desberdina duelako"
+
+#: ../src/uicommon/nmv-terminal.cc:185
+msgid "Copy the selection"
+msgstr "Kopiatu hautapena"
+
+#: ../src/uicommon/nmv-terminal.cc:191
+msgid "_Paste"
+msgstr "_Itsatsi"
+
+#: ../src/uicommon/nmv-terminal.cc:192
+msgid "Paste the clipboard"
+msgstr "Itsatsi arbela"
+
+#: ../src/uicommon/nmv-terminal.cc:198
+msgid "_Reset"
+msgstr "_Berrezarri"
+
+#: ../src/uicommon/nmv-terminal.cc:199
+msgid "Reset the terminal"
+msgstr "Berrezarri terminala"
+
+#: ../src/uicommon/nmv-ui-utils.cc:94
+msgid "Do not ask me again"
+msgstr "Ez galdetu berriro"
+
+#: ../src/workbench/nmv-workbench.cc:263
+msgid "Project Website"
+msgstr "Proiektuaren webgunea"
+
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:283
+msgid "translator-credits"
+msgstr "Itzultzailea"
+
+#: ../src/workbench/nmv-workbench.cc:661
+msgid "_File"
+msgstr "_Fitxategia"
+
+#: ../src/workbench/nmv-workbench.cc:672
+msgid "_Quit"
+msgstr "_Irten"
+
+#: ../src/workbench/nmv-workbench.cc:673
+msgid "Quit the application"
+msgstr "Irten aplikaziotik"
+
+#: ../src/workbench/nmv-workbench.cc:683
+msgid "_Edit"
+msgstr "_Editatu"
+
+#: ../src/workbench/nmv-workbench.cc:694
+msgid "_Help"
+msgstr "_Laguntza"
+
+#: ../src/workbench/nmv-workbench.cc:705
+msgid "_About"
+msgstr "Ho_ni buruz"
+
+#: ../src/workbench/nmv-workbench.cc:706
+msgid "Display information about this application"
+msgstr "Erakutsi aplikazio honi buruzko informazioa"
+
+#: ../src/workbench/nmv-workbench.cc:716
+msgid "_Contents"
+msgstr "_Edukiak"
+
+#: ../src/workbench/nmv-workbench.cc:717
+msgid "Display the user manual for this application"
+msgstr "Erakutsi aplikazio honen eskuliburua"
+
+#. end extern C
+#: ../ui/locatefiledialog.ui.h:1
+msgid "Select File Location"
+msgstr "Hautatu fitxategi-kokalekua"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "Locate File"
+msgstr "Zehaztu fitxategiaren kokalekua"
