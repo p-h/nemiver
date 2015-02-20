@@ -765,7 +765,7 @@ struct CallStack::Priv {
             store_iter = store->append ();
             UString msg;
             msg.printf (ngettext ("(Click here to see the next %d row of the "
-                                  "call stack",
+                                  "call stack)",
                                   "(Click here to see the next %d rows of the "
                                   "call stack)",
                                   nb_frames_expansion_chunk),
