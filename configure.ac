@@ -531,12 +531,7 @@ data/Makefile
         data/icons/hicolor/32x32/Makefile
         data/icons/hicolor/48x48/Makefile
         data/icons/hicolor/scalable/Makefile
-	data/icons/HighContrast/Makefile
-        data/icons/HighContrast/16x16/Makefile
-        data/icons/HighContrast/22x22/Makefile
-        data/icons/HighContrast/24x24/Makefile
-        data/icons/HighContrast/32x32/Makefile
-        data/icons/HighContrast/48x48/Makefile
+        data/icons/hicolor/symbolic/Makefile
     data/schemas/Makefile
         data/schemas/gconf/Makefile
         data/schemas/gsettings/Makefile

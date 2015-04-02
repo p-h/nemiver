@@ -1,6 +1,6 @@
-SUBDIRS=hicolor HighContrast
+SUBDIRS=hicolor
 
-themes = hicolor HighContrast
+themes = hicolor
 themedir = ${datadir}/icons
 gtk_update_icon_cache = gtk-update-icon-cache -f -t
 
