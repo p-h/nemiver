@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-02-14 13:41+0000\n"
+"POT-Creation-Date: 2014-03-09 05:08+0000\n"
 "PO-Revision-Date: 2014-03-08 18:45+0800\n"
 "Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@lists.linux.org.tw>\n"
@@ -535,7 +535,7 @@ msgstr "跳到指定位置"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3410
 msgid "Select a given code location and jump there"
-msgstr "選擇指定的原始碼位置並跳到那裡"
+msgstr "選擇指定的源碼位置並跳到那裡"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3421
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
@@ -579,7 +579,7 @@ msgstr "顯示組合語言"
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
-msgstr "顯示目前要除錯原始碼的組合語言碼，於另一個分頁"
+msgstr "顯示目前要除錯源碼的組合語言碼，於另一個分頁"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
 msgid "Switch to Assembly"
@@ -587,15 +587,15 @@ msgstr "切換到組合語言"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3477
 msgid "Show the assembly code of the source code being currently debugged"
-msgstr "顯示目前要除錯原始碼的組合語言碼"
+msgstr "顯示目前要除錯源碼的組合語言碼"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
 msgid "Switch to Source"
-msgstr "切換到原始碼"
+msgstr "切換到源碼"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3490
 msgid "Show the source code being currently debugged"
-msgstr "顯示目前要除錯的原始碼"
+msgstr "顯示目前要除錯的源碼"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3502
 msgid "Stop"
@@ -699,7 +699,7 @@ msgstr "複製選取的文字(_C)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3683
 msgid "Copy the text selected in the current source file"
-msgstr "複製在目前原始碼檔案中選取的文字"
+msgstr "複製在目前源碼檔案中選取的文字"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3692
 msgid "_Reload Source File"
