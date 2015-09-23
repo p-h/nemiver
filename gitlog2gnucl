@@ -25,13 +25,14 @@
 
 
 class Entry
-  attr_accessor :date, :author, :summary, :body
+  attr_accessor :date, :author, :summary, :body, :first_msg_line
 
-  def initialize(date, author, summary, body)
+  def initialize(date, author, summary, body, first_msg_line)
     @date = filter_date(date)
     @author = author
     @summary = summary
     @body = body
+    @first_msg_line = first_msg_line
 
   end
 
@@ -58,10 +59,16 @@ class Entry
     if line =~ /^\d\d\d\d-\d\d-\d\d [\w\s]+/
       return false
     end
+    #Filter out signed offs:
+    if line =~ /^Signed-off-by:/
+      return false
+    end
+
     return true
   end
 
   def to_s
+    body_empty = true
     s = "#{@date}  #{@author}\n\n"
     if !summary.empty?
       if  keep_line(summary)
@@ -71,8 +78,12 @@ class Entry
     @body.each {|line|
       if keep_line(line)
 	s += "\t#{line}\n"
+        body_empty = false;
       end
     }
+    if summary.empty? and body_empty == true
+      s += "\t#{@first_msg_line}\n"
+    end
     return s
   end
 end
@@ -82,8 +93,10 @@ def process_git_log (log)
   author = ""
   date = ""
   summary = ""
+  first_msg_line = ""
   body = Array.new
   msg_line_num = 0
+  body_started = false;
 
   entries = Array.new
 
@@ -94,10 +107,14 @@ def process_git_log (log)
       summary = ""
       body = Array.new
       msg_line_num = 0
+      body_started = false;
+      commit = ""
+      first_msg_line = ""
       next
     elsif line =~ /^--END-ENTRY--/
+      msg_line_num = 0
       if !author.empty? and !date.empty?
-	entries.push(Entry.new(date, author, summary, body))
+	entries.push(Entry.new(date, author, summary, body, first_msg_line))
       end
       next
     else #We are in the middle of an entry
@@ -107,17 +124,23 @@ def process_git_log (log)
       elsif line =~ /^Date:(.*)?$/
 	date = $1
         date = date.strip
-	msg_line_num = 0
-      elsif line =~ /^.+?$/
+      elsif line =~ /^commit ([a-f]|[0-9])+$/
+        commit = line.strip
+      else #if line =~ /^.+?$/
 	msg_line_num += 1
 	line = line.strip
+        if line[0] == '*'
+          body_started = true;
+        end
 	if line.length == 0
 	  next
 	end
 	if msg_line_num == 1 and line[0] != '*'
-	  summary = line;
-	else
-	  body.push(line)
+          summary = line;
+        elsif msg_line_num == 1
+          first_msg_line = line.strip
+	elsif body_started
+	  body.push(line.strip)
 	end
       end
     end
