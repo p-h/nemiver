@@ -270,6 +270,11 @@ if test x$GLIBMM_USES_DEPRECATED_GLIB_FUNCS = xyes; then
    AC_MSG_NOTICE(glibmm uses deprecated glib functions!)
 fi
 
+dnl detect if c++11 is required, because of glibmm-24 >= 2.46
+PKG_CHECK_EXISTS([glibmm-2.4 >= 2.46],
+                 [CXX11_IS_REQUIRED=yes],
+		 [CXX11_IS_REQUIRED=no])
+		 
 dnl Check for tr1 headers
 AC_CHECK_HEADERS([tr1/unordered_map boost/tr1/unordered_map.hpp])
 AC_CHECK_HEADERS([tr1/memory boost/tr1/memory.hpp])
@@ -441,12 +446,14 @@ AC_SUBST(NEMIVER_INCLUDE_DIR)
 AC_SUBST(NEMIVER_LIB_DIR_NAME)
 AC_SUBST(NEMIVER_LIBDIR)
 
-
 if test x$ENABLE_GCC_SYMBOLS_VISIBILITY = xyes && test x$host_cpu != xx86_64 ; then
     AC_DEFINE(HAS_GCC_VISIBILITY_SUPPORT,1,[gcc visibility support])
-    REQUIRED_FLAGS="-fvisibility=hidden -fvisibility-inlines-hidden"
-else
-    REQUIRED_FLAGS=""
+    REQUIRED_FLAGS="$REQUIRED_FLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
+fi
+
+dnl Use c++11, if required (for glibmm)
+if test x$CXX11_IS_REQUIRED = xyes; then
+  CXXFLAGS="-std=c++11 $CXXFLAGS"
 fi
 
 dnl ***************************
@@ -459,7 +466,7 @@ if test  "x$NEMIVER_DEVEL" = "xon" ; then
     fi
     DODJI_CXXFLAGS="$DODJI_CFLAGS -fuse-cxa-atexit"
     ENABLE_DEBUG=yes
-    CXXFLAGS="$DODJI_CXXFLAGS"
+    CXXFLAGS="$CXXFLAGS $DODJI_CXXFLAGS"
     CFLAGS="$DODJI_CFLAGS"
 else
     DODJI_CFLAGS="$REQUIRED_FLAGS"
@@ -553,6 +560,7 @@ AC_MSG_NOTICE([
     Source code location               : ${srcdir}
     C Compiler                         : ${CC}
     C++ Compiler		       : ${CXX}
+    C++11 is required                  : ${CXX11_IS_REQUIRED}
 
     NEMIVER_DEVEL env var              : ${NEMIVER_DEVEL}
     NEMIVER_ALLOW_WARNINGS env var     : ${NEMIVER_ALLOW_WARNINGS}

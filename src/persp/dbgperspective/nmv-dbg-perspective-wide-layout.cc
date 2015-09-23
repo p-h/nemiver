@@ -45,7 +45,7 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 struct DBGPerspectiveWideLayout::Priv {
     SafePtr<Gtk::Paned> body_main_paned;
     SafePtr<Gtk::Notebook> statuses_notebook;
-    map<int, Gtk::Widget&> views;
+    map<int, Gtk::Widget*> views;
     IDBGPerspective &dbg_perspective;
 
     Priv (IDBGPerspective &a_dbg_perspective) :
@@ -152,7 +152,7 @@ DBGPerspectiveWideLayout::activate_view (int a_view)
     THROW_IF_FAIL (m_priv->statuses_notebook);
 
     int page_num =
-        m_priv->statuses_notebook->page_num (m_priv->views.at (a_view));
+        m_priv->statuses_notebook->page_num (*m_priv->views.at (a_view));
     THROW_IF_FAIL (page_num >= 0);
     m_priv->statuses_notebook->set_current_page (page_num);
 }
@@ -186,7 +186,7 @@ DBGPerspectiveWideLayout::append_view (Gtk::Widget &a_widget,
         return;
     }
 
-    m_priv->views.insert (std::make_pair<int, Gtk::Widget&> (a_index, a_widget));
+    m_priv->views[a_index] = &a_widget;
     a_widget.show_all ();
     int page_num = m_priv->statuses_notebook->append_page (a_widget, a_title);
     m_priv->statuses_notebook->set_current_page (page_num);
@@ -202,7 +202,7 @@ DBGPerspectiveWideLayout::remove_view (int a_index)
         return;
     }
 
-    m_priv->statuses_notebook->remove_page (m_priv->views.at (a_index));
+    m_priv->statuses_notebook->remove_page (*m_priv->views.at (a_index));
     m_priv->views.erase (a_index);
 }
 
