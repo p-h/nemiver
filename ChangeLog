@@ -1,3 +1,584 @@
+2015-09-03  Dušan Kazik <prescott66@gmail.com>
+
+	Updated Slovak translation
+
+2015-04-02  Jakub Steiner <jimmac@gmail.com>
+
+	icon: provide a symbolic variant of the app icon
+	Since 3.16 the high contrast accessible theme is
+	covered by the recolorable symbolic variant of the app icon.
+	The symbolic size has been introduced to hicolor to cope with
+	the nominal size of 16x16 rather than the backward compatible
+	128x128.
+	https://bugzilla.gnome.org/show_bug.cgi?id=747241
+
+2015-08-26  Piotr Drąg <piotrdrag@gmail.com>
+
+	Updated Polish translation
+
+2015-08-26  Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>
+
+	Updated Chinese (Taiwan) translation
+
+2015-08-15  Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>
+
+	Updated Esperanto translation
+
+2015-06-29  Pedro Albuquerque <palbuquerque73@gmail.com>
+
+	Updated Portuguese translation
+
+2015-03-13  Samir Ribic <samir.ribic@etf.unsa.ba>
+
+	Added Bosnian translation
+
+2015-03-09  Sebastian Rasmussen <sebras@gmail.com>
+
+	Updated Swedish translation
+
+2015-03-08  Josef Andersson <josef.andersson@gmail.com>
+
+	Updated Swedish translation
+
+2015-02-12  Kjartan Maraas <kmaraas@gnome.org>
+
+	Updated Norwegian bokmål translation.
+
+2015-02-09  Inaki Larranaga Murgoitio <dooteo@zundan.com>
+
+	Added Basque language\nAdded 'eu' (Basque) to LINGUAS
+
+2014-12-24  Necdet Yücel <necdetyucel@gmail.com>
+
+	Updated Turkish translation
+
+2014-12-08  Muhammet Kara <muhammetk@gmail.com>
+
+	Updated Turkish translation
+
+2014-11-27  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2014-11-03  Timo Jyrinki <timo@debian.org>
+
+	Change Finnish translation team web page to l10n.gnome.org
+
+2014-11-01  Dodji Seketeli <dodji@seketeli.org>
+
+	Avoid running some tests due to a GDB bug
+	* test/Makefile.am: Do not run runtestvars and
+	runtestvarpathexpr.
+	* tests/test-watchpoint.cc: Adjust for current GDB behaviour.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-09-21  Maria  Mavridou <mavridou@gmail.com>
+
+	Updated Greek translation
+
+2014-08-27  Nilamdyuti Goswami <ngoswami@redhat.com>
+
+	Updated Assamese translation
+
+2014-08-26  Nilamdyuti Goswami <ngoswami@redhat.com>
+
+	Added Assamese translation
+
+2014-08-17  Lasse Liehu <lasse.liehu@gmail.com>
+
+	Finnish translation update
+
+2014-07-31  Piotr Drąg <piotrdrag@gmail.com>
+
+	doap: add <programming-language>
+
+2014-07-30  Olav Vitters <olav@vitters.nl>
+
+	doap category apps
+
+2014-07-15  Dodji Seketeli <dodji@seketeli.org>
+
+	Fix a typo in configure.
+	* configure.ac: Change HAS_VTR_2_90 into HAS_VTE_2_90.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-14  Dodji Seketeli <dodji@seketeli.org>
+
+	Support vte 2.90 alongside 2.91
+	* configure.ac: Test the presence of vte-2.90 *and* vte-2.91, and
+	configure the library accordingly.
+	* src/uicommon/nmv-terminal.cc (Terminal::Priv::init_body):
+	Depending on the vte version, use the correct API.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-14  Dodji Seketeli <dodji@seketeli.org>
+
+	Make all dialogs transient on top of the workbench root window
+	* src/uicommon/nmv-dialog.h (Dialog::Dialog): Add a parent window
+	parameter.
+	* src/uicommon/nmv-dialog.cc (Dialog::Dialog): Add a parent window
+	parameter.  Add apidoc comments.
+	* src/common/nmv-asm-utils.h (class Gtk::Window): Forward declare
+	this here.
+	(ReadLine::ReadLine): Take a Gtk::Window& as the parent window for
+	the dialogs it might use.
+	* src/uicommon/nmv-ui-utils.h (ask_user_to_select_file)
+	(find_file_or_ask_user, find_file_and_read_line, display_info)
+	(display_error, display_warning, ask_yes_no_question)
+	(ask_yes_no_cancel_question): Add a parent window parameter.
+	(display_error_not_transient): New function for cases where we
+	cannot really pass a parent window to the dialog yet.
+	(NEMIVER_CATCH, NEMIVER_CATCH_AND_RETURN): Use
+	display_error_not_transient because this is used in contexts where
+	we cannot yet get the parent window.  We could, but that'll
+	involve even more changes.  So let's do this for now.
+	* src/uicommon/nmv-ui-utils.cc (ask_user_to_select_file)
+	(find_file_or_ask_user, find_file_and_read_line): Add a parent
+	window parameter.  Add apidoc comments.  Adjust.
+	(DontShowAgainMsgDialog::DontShowAgainMsgDialog): Likewise.
+	Adjust call to Gtk::MessageDialog constructor.
+	* src/persp/dbgperspective/nmv-call-function-dialog.h
+	(CallFunctionDialog::CallFunctionDialog): Likewise.
+	* src/persp/dbgperspective/nmv-call-function-dialog.cc
+	(CallFunctionDialog::CallFunctionDialog): Likewise.  Add comment.
+	* src/persp/dbgperspective/nmv-choose-overloads-dialog.h
+	(ChooseOverloadsDialog::ChooseOverloadsDialog): Likewise.
+	* src/persp/dbgperspective/nmv-choose-overloads-dialog.cc
+	(ChooseOverloadsDialog::ChooseOverloadsDialog): Likewise.  Add
+	comment.
+	* src/persp/dbgperspective/nmv-expr-inspector-dialog.h
+	(ExprInspectorDialog::ExprInspectorDialog): Add a new parent
+	window parameter.
+	* src/persp/dbgperspective/nmv-expr-inspector-dialog.cc
+	(ExprInspectorDialog::ExprInspectorDialog): Add a new parent
+	window parameter.
+	* src/persp/dbgperspective/nmv-expr-monitor.cc
+	(ExprMonitor::Priv::on_add_expression_action): Adjust call to
+	ExprInspectorDialog constructor.
+	* src/persp/dbgperspective/nmv-find-text-dialog.h
+	(FindTextDialog::FindTextDialog): Add a parent window parameter.
+	* src/persp/dbgperspective/nmv-find-text-dialog.cc
+	(FindTextDialog::FindTextDialog): Add a parent window parameter.
+	Add apidoc comments.
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc
+	(GlobalVarsInspectorDialog::GlobalVarsInspectorDialog): Add a
+	parent window parameter.  Add apidoc comments.
+	(GlobalVarsInspectorDialog::Priv::show_variable_type_in_dialog):
+	Adjust call to ui_utils::display_info.
+	* src/persp/dbgperspective/nmv-load-core-dialog.h
+	(LoadCoreDialog::LoadCoreDialog): Add a parent window parameter.
+	* src/persp/dbgperspective/nmv-load-core-dialog.cc
+	(LoadCoreDialog::LoadCoreDialog): Add a parent window parameter.
+	Add apidoc comments.
+	* src/persp/dbgperspective/nmv-open-file-dialog.h
+	(OpenFileDialog::OpenFileDialog): Add a parent window parameter.
+	* src/persp/dbgperspective/nmv-open-file-dialog.cc
+	(OpenFileDialog::OpenFileDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-preferences-dialog.h
+	(PreferencesDialog::PreferencesDialog): Add a parent window
+	parameter.
+	* src/persp/dbgperspective/nmv-preferences-dialog.cc
+	(PreferencesDialog::PreferencesDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-proc-list-dialog.h
+	(ProcListDialog::ProcListDialog): Add a parent window parameter.
+	* src/persp/dbgperspective/nmv-proc-list-dialog.cc
+	(ProcListDialog::ProcListDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-remote-target-dialog.h
+	(RemoteTargetDialog::RemoteTargetDialog): Add a parent window
+	parameter.
+	* src/persp/dbgperspective/nmv-remote-target-dialog.cc
+	(RemoteTargetDialog::RemoteTargetDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-run-program-dialog.h
+	(RunProgramDialog::RunProgramDialog): Add a parent window
+	parameter.
+	* src/persp/dbgperspective/nmv-run-program-dialog.cc
+	(RunProgramDialog::RunProgramDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.h
+	(SavedSessionsDialog::SavedSessionsDialog): Add a parent window
+	parameter.
+	* src/persp/dbgperspective/nmv-saved-sessions-dialog.cc
+	(SavedSessionsDialog::SavedSessionsDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.h
+	(SetBreakpointDialog::SetBreakpointDialog): Add a parent window
+	parameter.
+	* src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc
+	(SetBreakpointDialog::SetBreakpointDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-set-jump-to-dialog.h
+	(SetJumpToDialog::SetJumpToDialog): Add a parent window parameter.
+	* src/persp/dbgperspective/nmv-set-jump-to-dialog.cc
+	(SetJumpToDialog::SetJumpToDialog): Add a parent window
+	parameter. Add apidoc comments.
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.h
+	(WatchpointDialog::WatchpointDialog): Add a parent window parameter.
+	* src/persp/dbgperspective/nmv-watchpoint-dialog.cc
+	(WatchpointDialog::WatchpointDialog): Add a parent window
+	parameter.  Add apidoc comments.
+	* src/uicommon/nmv-locate-file-dialog.h
+	(LocateFileDialog::LocateFileDialog): Add a parent window parameter.
+	* src/uicommon/nmv-locate-file-dialog.cc
+	(LocateFileDialog::LocateFileDialog): Add a parent window
+	parameter. Add apidoc comments.
+	Misc style fixes.
+	* src/uicommon/nmv-source-editor.h (SourceEditor::{SourceEditor,
+	add_asm, load_asm, load_file}): Add a parent window parameter.
+	* src/uicommon/nmv-source-editor.cc (SourceEditor::Priv::Priv):
+	Add a parent window parameter.
+	(SourceEditor::SourceEditor): Remove the unused default
+	constructor.  Add a parent window parameter to the other
+	constructors and add apidoc comments there.
+	(SourceEditor::{add_asm, load_asm, load_file): Add a parent window
+	parameter.  Adjust.
+	(SourceEditor::load_file): Likewise.  Adjust call to
+	ui_utils::display_error.
+	* src/persp/dbgperspective/nmv-local-vars-inspector.cc
+	(LocalVarsInspector::Priv::show_variable_type_in_dialog): Adjust
+	call to ui_utils::display_info.
+	* src/uicommon/nmv-terminal.cc (on_button_press_signal): Misc
+	style fixes.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::Priv::find_file_or_ask_user): Adjust call to
+	ui_utils::find_file_or_ask_user.
+	(DBGPerspective::Priv::load_file): Adjust call to
+	SourceEditor::load_file.
+	(DBGPerspective::{on_find_text_response_signal,
+	on_debugger_connected_to_remote_target_signal,
+	on_program_finished_signal, on_engine_died_signal,
+	on_signal_received_by_target_signal, on_debugger_error_signal,
+	on_file_content_changed, restart_inferior, execute_program,
+	attach_to_program, connect_to_remote_target, stop, set_breakpoint,
+	agree_to_shutdown}): Adjust call to ui_utils::{display_info,
+	display_warning, display_error}.
+	(DBGPerspective::on_jump_to_location_action): Adjust call to
+	constructor for SetJumpToDialog.
+	(DBGPerspective::get_find_text_dialog): Adjust call to constructor
+	for FindTextDialog.
+	(DBGPerspective::create_source_editor): Adjust call to constructor
+	for SourceEditor and OpenFileDialog.
+	(DBGPerspective::load_asm ): Adjust.
+	(DBGPerspective::execute_session): Adjust call to
+	SourceEditor::load_asm.
+	(DBGPerspective::execute_program): Adjust call to
+	RunProgramDialog and ProcListDialog.
+	(DBGPerspective::choose_a_saved_session): Adjust call to
+	SavedSessionsDialog.
+	(DBGPerspective::edit_preferences): Adjust call to
+	PreferencesDialog.
+	(DBGPerspective::load_core_file): Adjust call to LoadCoreDialog.
+	(DBGPerspective::ask_user_to_select_file): Adjust call to
+	ui_utils::ask_user_to_select_file.
+	(DBGPerspective::choose_function_overload): Adjust call to
+	ChooseOverloadsDialog.
+	(DBGPerspective::set_breakpoint_using_dialog): Adjust call to
+	SetBreakpointDialog.
+	(DBGPerspective::set_watchpoint_using_dialog): Adjust call to
+	WatchpointDialog.
+	(DBGPerspective::inspect_expression): Adjust call to
+	ExprInspectorDialog.
+	(DBGPerspective::call_function): Adjust call to CallFunctionDialog
+	constructor.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-14  Dodji Seketeli <dodji@seketeli.org>
+
+	Misc style fixes and comments additions
+	* src/common/nmv-asm-utils.h (FindFileAndReadLine, class
+	ReadLine, ReadLine::operator()): Add comment.
+	* src/common/nmv-asm-utils.cc (write_asm_instr, write_asm_instr):
+	Add apidoc comment.
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(DBGPerspective::on_activate_global_variables): Add ';' after
+	NEMIVER_TRY, NEMIVER_CATCH.
+	(DBGPerspective::connect_to_remote_target): Remove useless white
+	spaces.
+	* src/persp/dbgperspective/nmv-global-vars-inspector-dialog.h:
+	Likewise.
+	* src/persp/dbgperspective/nmv-load-core-dialog.h: Likewise.
+	* src/persp/dbgperspective/nmv-open-file-dialog.h: Likewise.
+	* src/persp/dbgperspective/nmv-proc-list-dialog.h: Likewise.
+	* src/uicommon/nmv-locate-file-dialog.cc: Likewise.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-12  Dodji Seketeli <dodji@seketeli.org>
+
+	Update the INSTALL file
+	* INSTALL: Update the text.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-08  Fabien Parent <parent.f@gmail.com>
+
+	Use BOOSTLIBDIR instead of harcoded path to find boost
+	* configure.ac: Use BOOSTLIBDIR variable to find libboost.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-08  Fabien Parent <parent.f@gmail.com>
+
+	Import new boost M4 files from upstream
+	* m4/ax_boost_base.m4: Imported from autoconf-archive-2014.02.28,
+	* m4/ax_boost_test_exec_monitor.m4: Ditto,
+	* m4/ax_boost_unit_test_framework.m4: Ditto.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-01-06  Juan R. García Blanco <juanrgar@gmail.com>
+
+	Fix tr1 and pty.h compilation issues
+	* configure.ac: Check for tr1/unordered_map, tr1/memory
+	and tr1/tuple, and their boost::tr1 counterparts.
+	Check for pty.h, util.h and libutil.h.
+	* src/common/nmv-log-stream.cc: Replace checks on compiler
+	defined macros with checks for required headers; in this
+	case tr1/unordered_map and boost/tr1/unordered_map.hpp.
+	* src/dbgengine/nmv-dbg-common.h: Check whether tr1/memory
+	or boost/tr1/memory.hpp is available and use accordingly.
+	* src/dbgengine/nmv-var-list-walker.cc (SafePtrCmp::operator()):
+	Compare method const-correctness.
+	* src/dbgengine/nmv-var-walker.cc (SafePtrCmp::operator()):
+	Compare method const-correctness.
+	* src/langs/nmv-cpp-ast.h: Replace checks on compiler
+	defined macros with checks for required headers; in this
+	case tr1/memory and boost/tr1/memory.hpp.
+	Rearrange various class definitions to make the compiler
+	aware of the class hierarchy ahead of forward-declaring
+	shared_ptr typedefs.
+	* src/persp/dbgperspective/nmv-find-text-dialog.h: Use
+	SafePtr, ObjectRef and ObjectUnref from nemiver::common.
+	* src/uicommon/nmv-terminal.cc: Check whether tr1/tuple or
+	boost/tr1/tuple.hpp is available and use accordingly.
+	Replace checks on platform defined macros with checks for
+	required headers; in this case pty.h, util.h and libutil.h.
+	* src/common/nmv-proc-utils.cc: Replace checks on
+	platform defined macros with checks for required headers;
+	in this case pty.h, util.h and libutil.h.
+
+2013-12-30  Juan R. García Blanco <juanrgar@gmail.com>
+
+	Fix compilation issue in tests/ due to wrong type
+	* tests/threads.cc (thread_func): Type of unused
+	variable tid changed from int to pthread_t.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Misc space fix in src/common/nmv-safe-ptr-utils.h
+	* src/common/nmv-safe-ptr-utils.h: Remove space before the '<' of
+	a template-id.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-05-16  Debarshi Ray <debarshir@gnome.org>
+
+	730243 Port to vte-2.91 API
+	* configure.ac: Build against vte-2.91.
+	* src/uicommon/nmv-terminal (init_body): Use
+	vte_terminal_set_font instead of
+	vte_terminal_set_font_from_string.  Remove
+	vte_terminal_set_emulation that is not present in this version of
+	vte anymore.  The emulation is set to 'xterm' by default anyway.
+	(init_pty): vte_terminal_set_pty expects a VtePty instead of a fd.
+	Adjust according to that.  Do not forget to make the code
+	exception-safe.
+
+2014-07-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Consolidate NativeGObjectSafePtr definitions
+	* src/persp/dbgperspective/nmv-dbg-perspective.cc
+	(RefGObjectNative, UnrefGObjectNative): Move the definition of
+	these functors ...
+	* src/common/nmv-safe-ptr-utils.h: ... here.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-05-16  Debarshi Ray <debarshir@gnome.org>
+
+	730243 Consolidate GErrorSafePtr definitions
+	* src/common/nmv-ustring.cc: Remove local copy of GErrorSafePtr.
+	(wstring_to_ustring): Use GErrorSafePtr from nmv-error.h
+	instead of local copy.
+	(ustring_to_wstring): Likewise.
+	* src/confmgr/nmv-gconf-mgr.cc: Remove local copy of
+	GErrorSafePtr.
+	* src/common/nmv-safe-ptr-utils.h: Move the copy of
+	GErrorSafePtr definition here.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-04  Dodji Seketeli <dodji@seketeli.org>
+
+	Add subdir-objects automake option to src/common/Makefile.am
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Update copyright & misc formatting
+	* src/common/nmv-safe-ptr-utils.h: Update copyright and re-format
+	license header.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-07-07  Dodji Seketeli <dodji@seketeli.org>
+
+	Update INSTALL file
+	* INSTALL: Update.
+	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
+
+2014-06-02 16:41:10 -0500  Michael Catanzaro <mcatanzaro@gnome.org>
+
+	configure.ac: don't fail if gconf is missing
+	Since gconf has dropped to gnome-world, this macro cannot be assumed to
+	exist.
+
+2014-04-22  Dirgita <dirgitadevina@gmail.com>
+
+	Updated Indonesian translation
+
+2014-04-18  marablack3 <marablack3@gmail.com>
+
+	Updated Greek translation
+
+2014-04-03  Akom Chotiphantawanon <knight2000@gmail.com>
+
+	Updated Thai translation
+
+2014-04-01  Yuri Myasoedov <ymyasoedov@yandex.ru>
+
+	Updated Russian translation
+
+2014-03-20  Мирослав Николић <miroslavnikolic@rocketmail.com>
+
+	Updated Serbian translation
+
+2014-03-19  Ask H. Larsen <asklarsen@gmail.com>
+
+	Updated Danish translation
+
+2014-03-19 11:54:30 -0300  Rafael Ferreira <rafael.f.f1@gmail.com>
+
+	Updated Brazilian Portuguese translation for help files
+
+2014-03-18  Tiagosdot <almosthumane@portugalmail.pt>
+
+	Updated Portuguese translation
+
+2014-03-15  Claude Paroz <claude@2xlibre.net>
+
+	Updated French translation
+
+2014-03-15  Seong-ho Cho <darkcircle.0426@gmail.com>
+
+	Updated Korean translation
+
+2014-03-09  Milo Casagrande <milo@ubuntu.com>
+
+	[l10n] Updated Italian translation.
+
+2014-03-09  Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>
+
+	Updated Traditional Chinese translation(Hong Kong and Taiwan)
+
+2014-03-07  Benjamin St <b@stbe.at>
+
+	Updated German translation
+
+2014-03-07  Rūdolfs Mazurs <rudolfsm@src.gnome.org>
+
+	Updated Latvian translation
+
+2014-03-03  Fran Diéguez <fran.dieguez@mabishu.com>
+
+	Updated Galician translations
+
+2014-03-01  Andika Triwidada <andika@gmail.com>
+
+	Updated Indonesian translation
+
+2014-02-26  Matej Urbančič <mateju@svn.gnome.org>
+
+	Updated Slovenian translation
+
+2014-02-24  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated Spanish translation
+
+2014-02-23  Balázs Úr <urbalazs@src.gnome.org>
+
+	Updated Hungarian translation
+
+2014-02-21  Gil Forcada <gforcada@gnome.org>
+
+	[l10n] Update Catalan translation
+
+2014-02-21  Rafael Ferreira <rafael.f.f1@gmail.com>
+
+	Updated Brazilian Portuguese translation
+
+2014-02-20  Marek Černocký <marek@manet.cz>
+
+	Updated Czech translation
+
+2014-02-20  Wylmer Wang <wantinghard@gmail.com>
+
+	Updated Chinese (China) translation
+
+2014-02-15  Aurimas Černius <aurisc4@gmail.com>
+
+	Updated Lithuanian translation
+
+2014-02-15  Piotr Drąg <piotrdrag@gmail.com>
+
+	Updated Polish translation
+
+2014-02-14  Richard Hughes <richard@hughsie.com>
+
+	Added translatable AppData file
+
+2014-02-12  Kjartan Maraas <kmaraas@gnome.org>
+
+	Updated Norwegian bokmål translation
+
+2014-02-01  Piotr Drąg <piotrdrag@gmail.com>
+
+	Revert "Updated FSF's address"
+	This reverts commit 2c2e3955951892acf08019923551be88b13bc8ab.
+
+2014-01-23  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	Updated FSF's address
+
+2014-01-18  Piotr Drąg <piotrdrag@gmail.com>
+
+	Add a trailing semicolon to keywords in Russian translation
+
+2014-01-18  Wylmer Wang <wantinghard@gmail.com>
+
+	Fix a mistake in Chinese simplified translation that may block compiling
+
+2013-12-18 08:10:08 -0500  William Jon McCann <william.jon.mccann@gmail.com>
+
+	Update project homepage url
+
+2013-10-28  Fabien Parent <parent.f@gmail.com>
+
+	710828 Fix a condition in UString::is_integer
+	* src/common/nmv-ustring.cc (UString::is_integer): Replace a 'and' by a
+	'or' in the condition checking for non-numerical characters.
+
+2013-12-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Slight wording change in the announcement text
+	* Makefile.am: Change the title of the "Changes" section.
+
+2013-12-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Bump version number to 0.9.6 for next developments
+	* configure.ac: Bump version number to 0.9.6
+
+2013-12-08  Dodji Seketeli <dodji@seketeli.org>
+
+	Automatic ChangeLog update for 0.9.5
+	* ChangeLog: Automatic update for 0.9.5.
+
 2013-12-08  Dodji Seketeli <dodji@seketeli.org>
 
 	Update NEWS file for 0.9.5
@@ -7,6 +588,10 @@
 
 	Update Copyright in INSTALL file.
 	* NEWS: Update copyright year mention.
+
+2013-12-07  甘露(Gan  Lu) <rhythm.gan@gmail.com>
+
+	Update Chinese simplified translation
 
 2013-10-27  Dodji Seketeli <dodji@seketeli.org>
 
