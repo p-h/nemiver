@@ -1,3 +1,51 @@
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Tighten the output of gitlog2gnucl
+	* gitlog2gnucl (Entry::first_msg_line): New data member.
+	(Entry::initialize): Adjust to initialize Entry::first_msg_line.
+	(Entry::keep_line): Filter out Signed-off-by: lines.
+	(Entry::to_s): If there is no summary line and the entry body is
+	empty, then keep the first line of the commit message as the
+	summary.
+	(process_git_log): Better detection of the summary line.  Also
+	keep a handle on the first line of the commit message.
+
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
+	No need to try to specify absolute paths for files in the build system
+	* src/Makefile.am: Do not use absolute paths of files to build
+	here.
+	* src/confmgr/Makefile.am: Likewise.
+	* src/dbdimpl/sqlite/Makefile.am: Likewise.
+	* src/dbgengine/Makefile.am: Likewise.
+	* src/langs/Makefile.am: Likewise.
+	* src/persp/Makefile.am: Likewise.
+	* src/persp/dbgperspective/Makefile.am: Likewise.
+	* src/uicommon/Makefile.am: Likewise.
+	* src/workbench/Makefile.am: Likewise.
+	* tests/Makefile.am: Likewise.
+
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Add missing subdir link to the build system
+	* data/icons/hicolor/Makefile.am: Add the symbolic sub-directory
+	to the build system.
+
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Update NEWS file for 0.9.6 release
+	* NEWS: update for 0.9.6 release.
+
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Update ChangeLog automatically
+	* ChangeLog: Update.
+
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Update INSTALL file
+	* INSTALL: Update.
+
 2015-09-03  Dušan Kazik <prescott66@gmail.com>
 
 	Updated Slovak translation
@@ -5,12 +53,6 @@
 2015-04-02  Jakub Steiner <jimmac@gmail.com>
 
 	icon: provide a symbolic variant of the app icon
-	Since 3.16 the high contrast accessible theme is
-	covered by the recolorable symbolic variant of the app icon.
-	The symbolic size has been introduced to hicolor to cope with
-	the nominal size of 16x16 rather than the backward compatible
-	128x128.
-	https://bugzilla.gnome.org/show_bug.cgi?id=747241
 
 2015-08-26  Piotr Drąg <piotrdrag@gmail.com>
 
@@ -70,7 +112,6 @@
 	* test/Makefile.am: Do not run runtestvars and
 	runtestvarpathexpr.
 	* tests/test-watchpoint.cc: Adjust for current GDB behaviour.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-09-21  Maria  Mavridou <mavridou@gmail.com>
 
@@ -100,7 +141,6 @@
 
 	Fix a typo in configure.
 	* configure.ac: Change HAS_VTR_2_90 into HAS_VTE_2_90.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-14  Dodji Seketeli <dodji@seketeli.org>
 
@@ -109,7 +149,6 @@
 	configure the library accordingly.
 	* src/uicommon/nmv-terminal.cc (Terminal::Priv::init_body):
 	Depending on the vte version, use the correct API.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-14  Dodji Seketeli <dodji@seketeli.org>
 
@@ -283,7 +322,6 @@
 	ExprInspectorDialog.
 	(DBGPerspective::call_function): Adjust call to CallFunctionDialog
 	constructor.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-14  Dodji Seketeli <dodji@seketeli.org>
 
@@ -303,19 +341,16 @@
 	* src/persp/dbgperspective/nmv-open-file-dialog.h: Likewise.
 	* src/persp/dbgperspective/nmv-proc-list-dialog.h: Likewise.
 	* src/uicommon/nmv-locate-file-dialog.cc: Likewise.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-12  Dodji Seketeli <dodji@seketeli.org>
 
 	Update the INSTALL file
 	* INSTALL: Update the text.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-08  Fabien Parent <parent.f@gmail.com>
 
 	Use BOOSTLIBDIR instead of harcoded path to find boost
 	* configure.ac: Use BOOSTLIBDIR variable to find libboost.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-08  Fabien Parent <parent.f@gmail.com>
 
@@ -323,7 +358,6 @@
 	* m4/ax_boost_base.m4: Imported from autoconf-archive-2014.02.28,
 	* m4/ax_boost_test_exec_monitor.m4: Ditto,
 	* m4/ax_boost_unit_test_framework.m4: Ditto.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-01-06  Juan R. García Blanco <juanrgar@gmail.com>
 
@@ -361,14 +395,12 @@
 	Fix compilation issue in tests/ due to wrong type
 	* tests/threads.cc (thread_func): Type of unused
 	variable tid changed from int to pthread_t.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-08  Dodji Seketeli <dodji@seketeli.org>
 
 	Misc space fix in src/common/nmv-safe-ptr-utils.h
 	* src/common/nmv-safe-ptr-utils.h: Remove space before the '<' of
 	a template-id.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-05-16  Debarshi Ray <debarshir@gnome.org>
 
@@ -390,7 +422,6 @@
 	(RefGObjectNative, UnrefGObjectNative): Move the definition of
 	these functors ...
 	* src/common/nmv-safe-ptr-utils.h: ... here.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-05-16  Debarshi Ray <debarshir@gnome.org>
 
@@ -403,31 +434,25 @@
 	GErrorSafePtr.
 	* src/common/nmv-safe-ptr-utils.h: Move the copy of
 	GErrorSafePtr definition here.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-04  Dodji Seketeli <dodji@seketeli.org>
 
 	Add subdir-objects automake option to src/common/Makefile.am
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-07  Dodji Seketeli <dodji@seketeli.org>
 
 	Update copyright & misc formatting
 	* src/common/nmv-safe-ptr-utils.h: Update copyright and re-format
 	license header.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-07-07  Dodji Seketeli <dodji@seketeli.org>
 
 	Update INSTALL file
 	* INSTALL: Update.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2014-06-02 16:41:10 -0500  Michael Catanzaro <mcatanzaro@gnome.org>
 
 	configure.ac: don't fail if gconf is missing
-	Since gconf has dropped to gnome-world, this macro cannot be assumed to
-	exist.
 
 2014-04-22  Dirgita <dirgitadevina@gmail.com>
 
@@ -540,7 +565,6 @@
 2014-02-01  Piotr Drąg <piotrdrag@gmail.com>
 
 	Revert "Updated FSF's address"
-	This reverts commit 2c2e3955951892acf08019923551be88b13bc8ab.
 
 2014-01-23  Daniel Mustieles <daniel.mustieles@gmail.com>
 
@@ -1456,7 +1480,6 @@
 2013-02-25  Gheyret Kenji <gheyret@gmail.com>
 
 	Updated Uyghur translation
-	Signed-off-by: Gheyret Kenji <gheyret@gmail.com>
 
 2013-02-24  Piotr Drąg <piotrdrag@gmail.com>
 
@@ -1590,7 +1613,6 @@
 2013-02-03  Gheyret Kenji <gheyret@gmail.com>
 
 	Updated Uyghur translation
-	Signed-off-by: Gheyret Kenji <gheyret@gmail.com>
 
 2013-02-02  Anish A <aneesh.nl@gmail.com>
 
@@ -1607,12 +1629,10 @@
 2013-01-26  Gheyret Kenji <gheyret@gmail.com>
 
 	Updated Uyghur translation
-	Signed-off-by: Gheyret Kenji <gheyret@gmail.com>
 
 2013-01-26  Gheyret Kenji <gheyret@gmail.com>
 
 	Updated Uyghur translation
-	Signed-off-by: Gheyret Kenji <gheyret@gmail.com>
 
 2013-01-23  Alexandre Franke <alexandre.franke@gmail.com>
 
@@ -2019,7 +2039,6 @@
 2012-08-02  Jiro Matsuzawa <jmatsuzawa@gnome.org>
 
 	[l10n] Update Japanese translation
-	Modify the About label
 
 2012-07-29  Seong-ho Cho <darkcircle.0426@gmail.com>
 
@@ -2079,13 +2098,10 @@
 	IDebugger::load_program.
 	(DBGPerspective::on_shutdown_signal): Re-indent comment.
 	(DBGPerspective::get_terminal_name): Add comment.
-	Signed-off-by: Dodji Seketeli <dodji@seketeli.org>
 
 2012-06-25  Piotr Drąg <piotrdrag@gmail.com>
 
 	Revert "Added Greek translation"
-	This reverts commit 39cdb74c198f32910880c4535edeb835892e2096.
-	Probably committed by mistake.
 
 2012-06-25  Dimitris Spingos <dmtrs32@gmail.com>
 
@@ -2551,7 +2567,6 @@
 2012-05-18  Piotr Drąg <piotrdrag@gmail.com>
 
 	Fixed typo
-	Reported by Andika Triwidada.
 
 2012-05-17  Andika Triwidada <andika@gmail.com>
 
@@ -2588,7 +2603,6 @@
 2012-05-07  Piotr Drąg <piotrdrag@gmail.com>
 
 	Spell check translatable strings
-	Also mark for translation three forgotten strings in nmv-terminal.cc.
 
 2012-05-03  Bruno Brouard <annoa.b@gmail.com>
 
@@ -2605,23 +2619,14 @@
 2012-04-19  Dustin Polke <DuPol@gmx.de>
 
 	Fix XML validation.
-	This fixes the following validation failures:
-	./de/nemiver.xml:82: element releaseinfo: validity error : Element
-	application is not declared in releaseinfo list of possible children
-	./fr/nemiver.xml:38: element publishername: validity error : Element
-	application is not declared in publishername list of possible children
-	./fr/nemiver.xml:82: element releaseinfo: validity error : Element
-	application is not declared in releaseinfo list of possible children
 
 2012-04-12  Antoine Jacoutot <ajacoutot@gnome.org>
 
 	build: unbreak on OpenBSD by including iostream
-	Add proper includes for std:cerr and std:cout.
 
 2012-04-12  Antoine Jacoutot <ajacoutot@gnome.org>
 
 	don't hardcode path to false(1).
-	On some platforms, false is under /usr/bin, not /bin.
 
 2012-03-27  Dodji Seketeli <dodji@seketeli.org>
 
@@ -2684,7 +2689,6 @@
 2012-03-27  Dodji Seketeli <dodji@seketeli.org>
 
 	Revert "672409 - activate correct views in static layouts"
-	This reverts commit e1683034407681032ed38b1649124c5915248858.
 
 2012-03-19  Fabien Parent <parent.f@gmail.com>
 
@@ -3263,31 +3267,18 @@
 2011-11-13  Dodji Seketeli <dodji@seketeli.org>
 
 	Revert "Initial import of variable monitor work"
-	This reverts commit 11940f85da451c6b933f59e255863dba01f1001b.
 
 2011-11-13  Dodji Seketeli <dodji@seketeli.org>
 
 	Revert "Support graphically adding a variable to the monitor"
-	This reverts commit 5c4b2227fd2477f224120575b42776d63549cddb.
 
 2011-11-13  Dodji Seketeli <dodji@seketeli.org>
 
 	Support graphically adding a variable to the monitor
-	[This is not a proper commit entry.  Commits on this branch are
-	all going to be re-hashed anyway.]
-	The variable inspector dialog now has a button that lets you add
-	the current variable/expression to the monitor.  It's very rough as no
-	check is performed to make sure you can't add the same expression to the
-	monitor twice, etc.  Also, once the variable is added, we face an issue
-	that is explained in #663959, namely the life time management of expressions
-	backed by variable objects.  I need to address that issue separately
-	before getting back to this business.
 
 2011-10-23  Dodji Seketeli <dodji@seketeli.org>
 
 	Initial import of variable monitor work
-	This is Work In Progress.  Nothing works yet, and the damin thing eats
-	kitties.
 
 2011-11-13  Dodji Seketeli <dodji@seketeli.org>
 
@@ -5049,7 +5040,6 @@
 2011-03-23  Kalev Lember <kalevlember@gmail.com>
 
 	Removed gnome-vfs compat code
-	Drop gnome-vfs compat code, useless for GTK+ >= 2.22
 	* configure.ac: Removed checks for gnome-vfs-2.0 and WITH_GIO
 	define.
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc
@@ -5069,7 +5059,6 @@
 2011-03-23  Kalev Lember <kalevlember@gmail.com>
 
 	Dropped ifdefs for GTK+ 2.10
-	The minimum required version of GTK+ is now 2.22
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc
 	(DBGPerspective::init_body, DBGPerspective::append_source_editor):
 	Removed ifdefs to unconditionally use the code that was only used
@@ -5089,15 +5078,12 @@
 2011-03-23  Kalev Lember <kalevlember@gmail.com>
 
 	Dropped ifdefs for gtkmm 2.16
-	The minimum required is gtkmm version is now 2.20
 	* src/uicommon/nmv-ui-utils.h: Removed #ifdef HAVE_GTKMM_2_16.
 	* configure.ac: Removed HAVE_GTKMM_2_16 define.
 
 2011-03-23  Kalev Lember <kalevlember@gmail.com>
 
 	Avoid using gtkmm deprecated API
-	Don't use API that was deprecated in gtkmm-2.4 and removed in
-	gtkmm-3.0.
 	* src/persp/dbgperspective/nmv-breakpoints-view.cc
 	(BreakpointsView::Priv::should_process_now): Use
 	Widget::get_is_drawable instead of Widget::is_drawable.
@@ -5529,11 +5515,6 @@
 2011-01-16  Dodji Seketeli <dodji@seketeli.org>
 
 	Detect boost when in /usr/lib64
-	Some systems like Fedora or RHEL install system libraries under
-	/usr/lib64 when setup in 64 bits mode. In that case AX_BOOST_BASE
-	wrongly sets BOOST_LDFLAGS to -L/usr/lib leading to further boost
-	library detection tests to fail even though those libraries are
-	installed.
 
 2011-01-15  Luca Bruno <lucab@debian.org>
 
@@ -6296,7 +6277,6 @@
 2010-10-08  Javier Jardón <jjardon@gnome.org>
 
 	autogen.sh: remove unneded call to autopoint
-	It's already called in gnome-autogen.sh
 
 2010-10-02  Javier Jardón <jjardon@gnome.org>
 
@@ -6305,11 +6285,6 @@
 2010-10-01  Javier Jardón <jjardon@gnome.org>
 
 	Update autotools configuration
-	New requirements:
-	autoconf >= 2.64
-	automake >= 1.11.1
-	libtool >= 2.2
-	Fixes https://bugzilla.gnome.org/show_bug.cgi?id=631176
 
 2010-10-01  Javier Jardón <jjardon@gnome.org>
 
@@ -6328,13 +6303,10 @@
 2010-09-21  Bruno Brouard <annoa.b@gmail.com>
 
 	Updated doc french translation
-	2 removed figures not translated
 
 2010-09-21  Bruno Brouard <annoa.b@gmail.com>
 
 	New french doc translation
-	Contributed by G. Baylard <gerard.b@bbox.fr>
-	Bruno Brouard <annoa.b@gmail.com>
 
 2010-09-18  Dodji Seketeli <dodji@redhat.com>
 
@@ -6515,7 +6487,6 @@
 2010-09-07  Claude Paroz <claude@2xlibre.net>
 
 	Fix glade prefix in POTFILES.in
-	Stupid of me :-(
 
 2010-09-07  Claude Paroz <claude@2xlibre.net>
 
@@ -7139,9 +7110,6 @@
 2010-05-07  Dodji Seketeli <dodji@redhat.com>
 
 	Fix mixed asm handling
-	Ignore source line 0 addressing
-	Better newline handling during asm formatting
-	Validate addresses in source buffer
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc
 	(DBGPerspective::write_asm_instr): Return a boolean when a non
 	empty asm line has been writen. Line with just '\n' are
@@ -7700,9 +7668,6 @@
 2010-03-07  Dodji Seketeli <dodji@redhat.com>
 
 	ASM <-> Source code switching preliminary support
-	Preliminary support to switch from source code view to assembly
-	view and backward. Neiher decorating nor stepping is supported
-	in the assembly view yet.
 	* src/uicommon/nmv-source-editor.h (clear_decorations): New
 	interface.
 	(SourceEditor::*): Renamed all methods that had "composite" in
@@ -10920,7 +10885,6 @@
 2009-01-31  Dodji Seketeli <dodji@src.gnome.org>
 
 	Fix 568785 - New: Add Debugger category to the desktop file
-	Patch from "Vincent Untz" <vuntz@gnome.org>
 
 2009-01-31  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -11116,12 +11080,6 @@
 2008-11-18  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Rearrange the Callstack columns to put the function name first
-	Currently the first column is the 'location', but if the location is an absolute
-	filesystem path and the directory structure is deep, it will often push the
-	function name way off to the right and even off the screen if the debugger
-	window is relatively narrow.  I think the most important information is the
-	function name, so I propose to move the 'Location' column to the end
-	http://bugzilla.gnome.org/show_bug.cgi?id=561378
 
 2008-11-18  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -11267,10 +11225,6 @@
 2008-09-05  Saleem Abdulrasool <asaleem@src.gnome.org>
 
 	update deprecated api to new api
-	Require GTK+ 2.12 for the new Tooltip API.  Update the TreeModel usage to the
-	new APIs:
-	set_sort_column_id -> set_sort_column
-	Remove unnecessary code.
 
 2008-08-30  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -11375,12 +11329,10 @@
 2008-08-13  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	fix the boost unit test static library detection
-	A space was missing so two of the candidates got concatenated together
 
 2008-08-10  Dodji Seketeli <dodji@src.gnome.org>
 
 	Fix a configure help string typo.
-	Patch sent by Stephane Wirtel.
 
 2008-08-08  Luca Bruno <lucab@debian.org>
 
@@ -11579,7 +11531,6 @@
 
 2008-06-24  Luca Bruno <lucab@debian.org>
 
-	commit bc9f19ed88245361768b7a197e59c3459a75dff4
 	* New upstream version 0.5.4
 
 2008-06-22  Dodji Seketeli <dodji@src.gnome.org>
@@ -11694,8 +11645,6 @@
 2008-06-01  Dodji Seketeli <dodji@src.gnome.org>
 
 	Merge commit 'origin/master'
-	Conflicts:
-	ChangeLog
 
 2008-06-01  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -11727,12 +11676,10 @@
 
 2008-05-26  Luca Bruno <lucab@debian.org>
 
-	commit e4601b290648f215b8ef415811bba547076733cf
 	* New upstream version 0.5.3
 
 2008-05-26  Luca Bruno <lucab@debian.org>
 
-	commit 8cef8c4745908abe5b652b912ddb10119ae8424e
 	* .desktop patch removed, accepted upstream
 
 2008-05-25  Dodji Seketeli <dodji@src.gnome.org>
@@ -11742,13 +11689,6 @@
 2008-05-25  Dodji Seketeli <dodji@src.gnome.org>
 
 	first tentative to fix 534695
-	Nemiver actually is slow when attaching to some targets.
-	This comes from the fact that nemiver steps over the first C instruction it
-	finds when attaching to a program. Stepping over might take a lot of time
-	if for instance there is no debug information for the symbol over which we are trying
-	to step over.
-	In this fix tentative, nemiver instead steps into the next machine
-	instruction instead of the stepping over the first C instruction
 
 2008-05-24  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -11776,15 +11716,10 @@
 2008-05-17  Dodji Seketeli <dodji@src.gnome.org>
 
 	Merge branch 'add-as-needed-link'
-	Conflicts:
-	ChangeLog
 
 2008-05-17  Dodji Seketeli <dodji@src.gnome.org>
 
 	[workbench] don't use libgnome anymore
-	Libgnome was used to display the nemiver help. So basically the called used
-	was gnome_help_display(). That call was replaced by building the path to
-	the nemiver help file and directly spawning yelp with that path.
 
 2008-05-06  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -11796,39 +11731,29 @@
 2008-05-05  Dodji Seketeli <dodji@src.gnome.org>
 
 	[terminal widget] handle pty.h on FreeBSD.
-	include the right headers in lieu of pty.h, on FreeBSD.
-	Patch from Romain Tartière <romain@blogreen.org>
 
 2008-05-05  Dodji Seketeli <dodji@src.gnome.org>
 
 	[ustring] define strnlen() on FreeBSD.
-	Patch from Romain Tartière <romain@blogreen.org>
 
 2008-05-05  Dodji Seketeli <dodji@src.gnome.org>
 
 	[proc utils] handle some specific FreeBSD symbols/headers
-	Patch from Romain Tartière <romain@blogreen.org>
 
 2008-05-05  Dodji Seketeli <dodji@src.gnome.org>
 
 	[logging] make sure __ASSERT_FUNCTION is defined
-	This is for FreeBSD.
-	Patch from Romain Tartière <romain@blogreen.org>
 
 2008-05-04  Dodji Seketeli <dodji@src.gnome.org>
 
 	[desktop file] remove obsolete fields
-	Patch from Luca Bruno <lucab@debian.org>
 
 2008-05-04  Dodji Seketeli <dodji@src.gnome.org>
 
 	[gdbmi parser] allow reading empty lists
-	When trying to read either empty lists of results or values, the current
-	code throws exceptions. Don't do that.
 
 2008-04-18  Luca Bruno <lucab@debian.org>
 
-	commit a40d3b7dd1ddca0105ec37422d7dcf70303c75b6
 	* New upstream release 0.5.2, using libgtksourceviewmm 2.0 - http://bugs.debian.org/474344
 
 2008-04-12  Dodji Seketeli <dodji@src.gnome.org>
@@ -11943,7 +11868,6 @@
 
 2008-03-29  Luca Bruno <lucab@debian.org>
 
-	commit 75a16240787e48c622cf867ab0e68626a33968f4
 	* New upstream version 0.5.1
 
 2008-03-24  Dodji Seketeli <dodji@src.gnome.org>
@@ -11976,7 +11900,6 @@
 
 2008-03-17  Luca Bruno <lucab@debian.org>
 
-	commit f2603d21ef7e9b6a064fcf3078c7fc64039713e5
 	* New upstream version 0.5.0
 
 2008-03-17  Jonathon Jongsma <jjongsma@src.gnome.org>
@@ -12029,12 +11952,10 @@
 
 2008-03-06  Luca Bruno <lucab@debian.org>
 
-	commit 303a0b19782d00b6f0d2b4baaa00f218a01311f8
 	* Bumped versioned build-dep on debhelper due to dh_icons
 
 2008-03-06  Luca Bruno <lucab@debian.org>
 
-	commit 11a8c7446c1d77e2bfd889a9e2f3ffdf6c6cc107
 	* Remove spurious scroolkeeper database - http://bugs.debian.org/469431
 
 2008-02-24  Jonathon Jongsma <jjongsma@src.gnome.org>
@@ -12050,7 +11971,6 @@
 2008-02-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Fix a bug where a popup tooltip stayed on top of other windows.
-	Also a couple other minor changes to popup tooltip handling
 
 2008-02-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -12420,11 +12340,6 @@
 2008-01-17  Dodji Seketeli <dodji@src.gnome.org>
 
 	better derefing algorithm
-	When dereferencing a variable, use its fully qualified variable
-	name. Also, set the name caption of the resulting dereferenced
-	variable to the string "*<fully-qualified-name>".
-	This commit is also polluted by me cleaning the source code,
-	removing spaces before ";". Bad bad Dodji.
 
 2008-01-17  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -12445,7 +12360,6 @@
 
 2008-01-16  Luca Bruno <lucab@debian.org>
 
-	commit 3eb5aac020273bc1f4f667db8537d59be7ac406c
 	* Minor fixes for scrollkeeper, gconf and icons
 
 2008-01-15  Jonathon Jongsma <jjongsma@src.gnome.org>
@@ -12457,7 +12371,6 @@
 
 2008-01-14  Luca Bruno <lucab@debian.org>
 
-	commit ae071e0ee7c4ee80cb0b99f117306580060d3a03
 	* Really symlinking for the package content :)
 
 2008-01-14  Jonathon Jongsma <jjongsma@src.gnome.org>
@@ -12517,7 +12430,6 @@
 
 2008-01-11  Luca Bruno <lucab@debian.org>
 
-	commit 508bf233c49202febb3af35ea037a4119ad4833b
 	* Symbolic link for missing sv/legal.xml
 
 2008-01-10  Jonathon Jongsma <jjongsma@src.gnome.org>
@@ -12561,19 +12473,15 @@
 
 2008-01-09  Luca Bruno <lucab@debian.org>
 
-	commit 10ee66979167a5e03a0ac5898a2ed718f08c5339
 	* Enable and register scrollkeeper entry - Close http://bugs.debian.org/457522
 
 2008-01-09  Luca Bruno <lucab@debian.org>
 
-	commit 69ca9a0009ef7136824f17e53ccb81e7f7ca2907
 	* Added manpage nemiver(1)
 
 2008-01-03  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	add --disable-memoryview configure option
-	The memory view will be enabled by default, but it will only be built if the
-	configure option is enabled
 
 2007-12-31  Yannig MARCHEGAY <ymarcheg@src.gnome.org>
 
@@ -12712,16 +12620,10 @@
 2007-12-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Add ability to set the HexEditor font
-	The font of the memory hex editor should now match that of the monospaced source
-	editor font
 
 2007-12-21  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Use the Hex editor widget from GHex instead of the simplistic TextView widget
-	The new widget still needs a lot of work (both the widget itself and the
-	integration of it).  It currently doesn't redraw itself properly so it doesn't
-	seem like it's working, but it actually is.  It also isn't usable for editing
-	memory yet, just viewing it.
 
 2007-12-18  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -12775,27 +12677,22 @@
 
 2007-12-12  Luca Bruno <lucab@debian.org>
 
-	commit d9693f92a9e8923dda19a328d650998fd757b884
 	* Not really sure about it, but leaving scrollkeeper there for now
 
 2007-12-10  Luca Bruno <lucab@debian.org>
 
-	commit 5c23313736e6df7447894afb4a2e741f246cb369
 	* Various minor fixes
 
 2007-12-10  Luca Bruno <lucab@debian.org>
 
-	commit 4cd7bff01d5768ffd037720cedcb312620702058
 	* Minor fix in series
 
 2007-12-10  Luca Bruno <lucab@debian.org>
 
-	commit e24c8d964730957b9c2d23694c8dad4f63d069df
 	* Desktop file conforming to 1.0 specification
 
 2007-12-10  Luca Bruno <lucab@debian.org>
 
-	commit e5666b167590687f832c60166c374a09241b2ed9
 	*  Shipping libnemivercommon as a private lib (patch from SVN r539-542)
 
 2007-12-09  Dodji Seketeli <dodji@src.gnome.org>
@@ -12876,7 +12773,6 @@
 
 2007-12-05  Luca Bruno <luca.br@uno.it>
 
-	commit ab98a35dd9e63f13213c051f15cba926708c61d9
 	* Manpage missing right now, will be written soon
 
 2007-11-29  Claude Paroz <claude@2xlibre.net>
@@ -12886,27 +12782,22 @@
 
 2007-11-29  Luca Bruno <luca.br@uno.it>
 
-	commit 3f1a4c5a821213df2407d643ff0735c85f73170a
 	* Minor copyright fixes
 
 2007-11-29  Luca Bruno <luca.br@uno.it>
 
-	commit 227e46488ff93c537f7d7961794344a7d7d8fbad
 	* Making lintian happy about distclean
 
 2007-11-29  Luca Bruno <luca.br@uno.it>
 
-	commit e133a795834858a6169ee71656d5c07e45a5135e
 	* Long description added
 
 2007-11-27  Luca Bruno <luca.br@uno.it>
 
-	commit 5b320a5ab2f84f1c70c27382218fa7fa6373cdf9
 	* Build-depends filled up and ready to build
 
 2007-11-26  Luca Bruno <luca.br@uno.it>
 
-	commit 0be9720375ed2297988bb937e7b44527b71c96a0
 	* Added a proper menu section
 
 2007-11-26  Dodji Seketeli <dodji@src.gnome.org>
@@ -13007,17 +12898,14 @@
 
 2007-11-24  Luca Bruno <luca.br@uno.it>
 
-	commit acf0464be58ef33bf30096c346b99305f42be7be
 	* Patch from SVN (r513) to fix a misnamed glade file
 
 2007-11-24  Luca Bruno <luca.br@uno.it>
 
-	commit f6bc803cef9b1fa66f57bac7cf7c3238bb85b277
 	* Better handling of gconf schemas and lib stuff
 
 2007-11-24  Luca Bruno <luca.br@uno.it>
 
-	commit 67852abd448f57a72963f6393e954516764eabc9
 	* Added xpm icon for debian menu file
 
 2007-11-24  Dodji Seketeli <dodji@src.gnome.org>
@@ -13030,7 +12918,6 @@
 
 2007-11-24  Luca Bruno <luca.br@uno.it>
 
-	commit 0d5cbe1383292e8316a80f6a3ae4a690474efad7
 	* Non-fatal distclean
 
 2007-11-23  Dodji Seketeli <dodji@src.gnome.org>
@@ -13084,7 +12971,6 @@
 
 2007-11-19  Luca Bruno <luca.br@uno.it>
 
-	commit a30a8268915fad78745149bb02d21d582856c564
 	* Added debian/watch for nemiver
 
 2007-11-18  Dodji Seketeli <dodji@src.gnome.org>
@@ -13108,7 +12994,6 @@
 2007-11-18  Dodji Seketeli <dodji@src.gnome.org>
 
 	Fix a crash triggered by a memory corruption
-	The crash was happening randomly while single-stepping.
 	* src/dbgengine/nmv-var-walker.cc: fixed a nasty memory corruption bug.
 	the map VarWalker::m_vars_to_visit was storing IDebugger::Variable*,
 	not IDebugger::VariableSafePtr. So at some point, the pointer to
@@ -13137,22 +13022,18 @@
 
 2007-11-18  Luca Bruno <luca.br@uno.it>
 
-	commit 3c571226a8ad4b26d7db58496b4abbc4a784a2b2
 	* Patch from SVN to reflect a libgtop API change
 
 2007-11-18  Luca Bruno <luca.br@uno.it>
 
-	commit db6b67c6050ee0484da7b8b2acf22b487bfabcdc
 	* debian/copyright rewritten in a machine-interpretable format
 
 2007-11-18  Luca Bruno <luca.br@uno.it>
 
-	commit d9094a81ad86b9e03b58a26f8378d4618fc2e629
 	* First rough skeleton
 
 2007-11-18  Luca Bruno <luca.br@uno.it>
 
-	commit 38f71b27e6dc08090ba4e338ec90adb771c29f86
 	* Start packaging nemiver
 
 2007-11-18  Dodji Seketeli <dodji@src.gnome.org>
@@ -13518,9 +13399,6 @@
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Remove MemoryEditor class, combine with MemoryView
-	Move the MemoryEditor functionality into MemoryView since it was really only a
-	TextView and TextBuffer.  Also improve the memory display slightly, and add an
-	option for displaying the memory values as decimal, hex, octal, or binary
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -13553,7 +13431,6 @@
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Don't activate default in the memory view widget.
-	It was causing warnings on the command line
 
 2007-10-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -13584,11 +13461,6 @@
 2007-09-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Add keybindings for switching between notebook tabs
-	patch by: A. Gordon <agordon88@gmail.com>
-	modified slightly to now add keybindings for the 'output' and 'errors' tabs
-	because they're not useful for users.  Also move the output and errors tab
-	index to the end so that the useful tabs are all in order even when the
-	debugging tabs are shown
 	* src/persp/dbgperspective/menus/menus.xml: add actions for switching
 	between the notebook tabs (e.g. variables, breakpoints, etc)
 	* src/persp/dbgperspective/nmv-dbg-perspective.cc: hook up the actions to
@@ -13640,8 +13512,6 @@
 2007-08-19  Dodji Seketeli <dodji@src.gnome.org>
 
 	Enable remote targets debugging.
-	This entry should allow remote debugging in environments like Poky or Scratchbox,
-	using a gdbserver and a cross-gdb.
 	* src/common/nmv-env.cc,h: add a env::get_system_lib_dir() call.
 	* src/dbgengine/nmv-gdb-engine.cc,nmv-i-debugger.h:
 	Add a IDebugger::do_init() to be called by client code to initialize
@@ -13701,28 +13571,18 @@
 2007-07-28  Dodji Seketeli <dodji@src.gnome.org>
 
 	link libnemiveruicommon with libutil
-	This is a patch from Josselin Mouette
 
 2007-07-28  Dodji Seketeli <dodji@src.gnome.org>
 
 	make sure all dynmods have no undef symbols
-	make confmgrmod, dbgmod and varlistmod have no undef symbols.
-	Link them all with libnemivercommon lib.
-	This is a patch from Josselin Mouette
 
 2007-07-28  Dodji Seketeli <dodji@src.gnome.org>
 
 	make libnemivercommon be a private library
-	it ends up in $libdir/nemiver and has no version number.
-	this is because no one uses libnemivercommon yet, outside of the
-	nemiver tree. So there is no need to put libnemivercommon.so in $libdir
-	and force packagers to split their packages.
-	This is pach from Josselin Mouette
 
 2007-07-28  Dodji Seketeli <dodji@src.gnome.org>
 
 	static libs must be PIC
-	This is a patch from Josselin Mouette
 
 2007-07-27  Daniel Nylander <dnylande@src.gnome.org>
 
@@ -13915,7 +13775,6 @@
 2007-06-02  Dodji Seketeli <dodji@src.gnome.org>
 
 	Revert "quick temporary commit. Must be reverted."
-	This reverts temporary commit 1a370a5558f422328bf060d885322cf237530609.
 
 2007-05-31  Daniel Nylander <dnylande@src.gnome.org>
 
@@ -13940,17 +13799,10 @@
 2007-05-20  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Variable Inspector Dialog HIG fixes
-	- add 6px border around the dialog so that things match up a bit better and
-	things don't look so crowded
-	- remove separator
-	- set a border around the scrolled window containing the variable inspector
-	widget so that it looks a bit cleaner
 
 2007-05-20  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Clean up the breakpoint menu items.
-	Improve the menu item names and descriptions, add a keyboard shortcut <shift>F8
-	for enabling/disabling an existing breakpoint
 
 2007-05-20  Jonathon Jongsma <jjongsma@src.gnome.org>
 
@@ -14006,12 +13858,6 @@
 2007-05-15  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Disable 'toggle enable breakpoint' when there's no breakpoint on the line
-	Add handling for when the cursor position changes so that we can enable or
-	disable certain actions depending on what line we're on.  Now, the "toggle
-	enable breakpoint" action is set insensitive when there's no breakpoint set on a
-	particular line.  This is a partial fix for bug #430346.  The method I used to
-	implement this feels a little bit 'brute-force'-ish, so if you know of better
-	ways to accomplish this, let me know.
 
 2007-05-12  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -14136,18 +13982,6 @@
 2007-04-25  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Allow multiple breakpoints to be deleted at the same time.
-	Although the breakpoints view supported multiple selection, when you right-click
-	a group of selected breakpoints, all but the one you clicked on became
-	de-selected.  To fix this, I had to connect the button-press-event signal before
-	the default handler and prevent the default handler from being executed if the
-	user right-clicked on an already-selected item.
-	Moving the signal connection before the default handler caused problems for the
-	code that figures out which actions in the context menu are valid, however.  The
-	problem was that we use the current selection to determine which menu items are
-	valid, but the selection has not been updated by the default handler at the time
-	we want to pop up the menu.  To solve this, I connected to the treeview
-	selections 'changed' signal, and update the actions here instead of while we are
-	displaying the menu.
 
 2007-04-22  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -14262,19 +14096,10 @@
 2007-04-19  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	A few fixes for the new icons
-	Talking with Andreas, he suggested that we should provide both 22x22 and 24x24
-	icons since the GNOME menu uses 24x24 and the KDE menu (and some GNOME themes)
-	uses 22x22 icons.  So he provided a 24x24 icon which I've added.  I also fixed a
-	couple mistakes in the installation where the 48x48 icons were still getting
-	installed to the 64x64 directory.
 
 2007-04-19  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Add new icons from Andreas Nilsson
-	The new icon is a more 'tango'-ish icon, and uses a bugspray metaphor.  The
-	sizes now provided are 16x16, 22x22 (instead of 24x24), 32x32, 48x48 (instead of
-	64x64) and scalable.  Also added Andreas' name to the artist credits in the
-	About dialog
 
 2007-04-18  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -14313,10 +14138,6 @@
 2007-04-17  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Set Breakpoint Dialog: fix text entry sensitivity at startup (bug #430343)
-	Add a hacky workaround to set the sensitivity of the text entry fields at
-	startup based on the current dialog mode.  Also moved the 'Function' section to
-	the top since that will be the mode that is selected by default at startup and
-	will likely be used more often.
 
 2007-04-16  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -14401,11 +14222,6 @@
 2007-04-07  Jonathon Jongsma <jjongsma@src.gnome.org>
 
 	Beginning of an implementation of a dialog for setting arbitrary breakpoints.
-	Currently it has a text entry for 'filename' and one for 'line number' and
-	attempts to set a breakpoint at the requested line.  There's not really any
-	error handling yet, but it works for simple cases.  Eventually there should be a
-	way to set a breakpoint on a function name as well -- not sure whether that
-	should be a separate option in the UI or combined somehow.
 
 2007-04-07  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -14634,7 +14450,6 @@
 2007-03-21  Dodji Seketeli <dodji@src.gnome.org>
 
 	Fixed a typo.
-	+ configure.ac: fixed a typo: AX_BOOST_TEST_FRAMEWORK does not exit
 
 2007-03-21  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -15110,7 +14925,6 @@
 2007-01-21  Dodji Seketeli <dodji@src.gnome.org>
 
 	Sun, 21 Jan 2007 17:35:51 +0100
-	================ 0.3.0 release ===================
 
 2007-01-21  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -15410,16 +15224,6 @@
 2007-01-01  Jonathon Jongsma <jonathon.jongsma@gmail.com>
 
 	Reorganization of the source file list widget. It was previously in a
-	Reorganization of the source file list widget.  It was previously in a
-	notebook tab in the status notebook.  Now it is located in the dialog that
-	appears when the user selects the 'File -> Open' menu item.
-	It isn't perfect yet.  For example, after opening this dialog (and therefore
-	querying GDB for the list of source files), all debugging actions become
-	disabled, and I couldn't figure out how to fix it since I'm not familiar
-	with this code.
-	Also, it queries gdb to build the list every time the dialog is opened
-	instead of caching it.  This could probably be optimized, but it's quick
-	enough now that it probably doesn't matter too much.
 	* src/persp/dbgperspective/Makefile.am: add nmv-open-file-dialog.h,cc
 	* src/persp/dbgperspective/glade/Makefile.am: add openfiledialog.glade
 	* src/persp/dbgperspective/glade/openfiledialog.glade: add new dialog for
@@ -15644,11 +15448,6 @@
 2006-12-16  Dodji Seketeli <dodji@src.gnome.org>
 
 	Sat, 16 Dec 2006 01:42:03 +0100 Dodji Seketeli
-	==
-	merged revision #318 from branch
-	http://svn.gna.org/svn/nemiver/tags/nemiver-0.2.0.
-	This pulls bugfix #386473 in.
-	==
 
 2006-12-16  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -15718,7 +15517,6 @@
 2006-12-14  Dodji Seketeli <dodji@src.gnome.org>
 
 	Thu, 14 Dec 2006 07:55:07 +0100 Dodji Seketeli
-	============== 0.2.0 release ===========
 
 2006-12-13  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -16659,7 +16457,6 @@
 2006-11-10  Dodji Seketeli <dodji@src.gnome.org>
 
 	Fri, 10 Nov 2006 13:44:03 +0100 Dodji Seketeli
-	================ released 0.1.0 ================
 
 2006-11-10  Dodji Seketeli <dodji@src.gnome.org>
 
@@ -16816,8 +16613,6 @@
 2006-11-02  Jonathon Jongsma <jonathon.jongsma@gmail.com>
 
 	Changing the libnemiveruicommon library to a static library was causing
-	Changing the libnemiveruicommon library to a static library was causing
-	the following warning when linking the workbench module:
 	*** Warning: Linking the shared library libworkbenchmod.la against the
 	*** static library ../../src/uicommon/libnemiveruicommon.a is not portable!
 	Resulting in this error on my amd64 machine:
@@ -18577,11 +18372,9 @@
 
 2006-07-31  Dodji Seketeli <dodji@src.gnome.org>
 
-	emergency commit ... this breaks everything.
 
 2006-07-31  Dodji Seketeli <dodji@src.gnome.org>
 
-	forgot to add these two files: src/common/nmv-option-utils.cc src/common/nmv-option-utils.h
 
 2006-07-31  Dodji Seketeli <dodji@src.gnome.org>
 
