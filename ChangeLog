@@ -1,5 +1,30 @@
 2015-09-23  Dodji Seketeli <dodji@seketeli.org>
 
+	Use c++11 when we use glibmm24 version >= 2.46
+	* configure.ac: If c++11 is required by the fact that we use a
+	version of glibmm24 >= 2.46, then use c++11.
+	* src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc
+	(DBGPerspectiveDefaultLayout::Priv::views): Make this be a
+	map<int, Gtk::Widget*> rather than a map<int, Gtk::Widget&>, to
+	keep the compiler happy.
+	(DBGPerspectiveDefaultLayout::{activate,append}_view): Adjust.
+	* src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc
+	(DBGPerspectiveTwoPaneLayout::Priv::views): Make this be a
+	map<int, Gtk::Widget*> rather than a map<int, Gtk::Widget&>, to
+	keep the compiler happy.
+	(DBGPerspectiveTwoPaneLayout::{activate,append}_view): Adjust.
+	* src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc
+	(DBGPerspectiveWideLayout::Priv::views): Make this be a map<int,
+	Gtk::Widget*> rather than a map<int, Gtk::Widget&>, to keep the
+	compiler happy.
+
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
+	Update ChangeLog to fix some bad entries
+	* ChangeLog: Update to cleanup some weirdness
+
+2015-09-23  Dodji Seketeli <dodji@seketeli.org>
+
 	Tighten the output of gitlog2gnucl
 	* gitlog2gnucl (Entry::first_msg_line): New data member.
 	(Entry::initialize): Adjust to initialize Entry::first_msg_line.
