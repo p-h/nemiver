@@ -1,3 +1,166 @@
+0.9.6 Release
+=============
+Akom Chotiphantawanon:
+      Updated Thai translation
+
+Andika Triwidada:
+      Updated Indonesian translation
+
+Ask H. Larsen:
+      Updated Danish translation
+
+Aurimas Černius:
+      Updated Lithuanian translation
+
+Balázs Úr:
+      Updated Hungarian translation
+
+Benjamin St:
+      Updated German translation
+
+Chao-Hsiung Liao:
+      Updated Traditional Chinese translation(Hong Kong and Taiwan)
+      Updated Chinese (Taiwan) translation
+
+Claude Paroz:
+      Updated French translation
+
+Daniel Mustieles:
+      Updated FSF's address
+      Updated Spanish translation
+
+Debarshi Ray:
+      730243 Consolidate GErrorSafePtr definitions
+      730243 Port to vte-2.91 API
+
+Dirgita:
+      Updated Indonesian translation
+
+Dodji Seketeli:
+      Use c++11 when we use glibmm24 version >= 2.46
+      Consolidate NativeGObjectSafePtr definitions
+      Make all dialogs transient on top of the workbench root window
+      Support vte 2.90 alongside 2.91
+      Misc code & build system cleanup
+
+Dušan Kazik:
+      Updated Slovak translation
+
+Fabien Parent:
+      710828 Fix a condition in UString::is_integer
+      Import new boost M4 files from upstream
+      Use BOOSTLIBDIR instead of harcoded path to find boost
+
+Fran Diéguez:
+      Updated Galician translations
+
+Gil Forcada:
+      [l10n] Update Catalan translation
+
+Inaki Larranaga Murgoitio:
+      Added Basque language\nAdded 'eu' (Basque) to LINGUAS
+
+Jakub Steiner:
+      icon: provide a symbolic variant of the app icon
+
+Josef Andersson:
+      Updated Swedish translation
+
+Juan R. García Blanco:
+      Fix compilation issue in tests/ due to wrong type
+      Fix tr1 and pty.h compilation issues
+
+Kjartan Maraas:
+      Updated Norwegian bokmål translation
+
+Kristjan SCHMIDT:
+      Updated Esperanto translation
+
+Lasse Liehu:
+      Finnish translation update
+
+Marek Černocký:
+      Updated Czech translation
+
+Maria  Mavridou:
+      Updated Greek translation
+
+Matej Urbančič:
+      Updated Slovenian translation
+
+Michael Catanzaro:
+      configure.ac: don't fail if gconf is missing
+
+Milo Casagrande:
+      [l10n] Updated Italian translation.
+
+Muhammet Kara:
+      Updated Turkish translation
+
+Necdet Yücel:
+      Updated Turkish translation
+
+Nilamdyuti Goswami:
+      Added Assamese translation
+      Updated Assamese translation
+
+Olav Vitters:
+      doap category apps
+
+Pedro Albuquerque:
+      Updated Portuguese translation
+
+Piotr Drąg :
+      Add a trailing semicolon to keywords in Russian translation
+      Revert "Updated FSF's address"
+      Updated Polish translation
+      doap: add <programming-language>
+      Updated Polish translation
+
+Rafael Ferreira:
+      Updated Brazilian Portuguese translation
+      Updated Brazilian Portuguese translation for help files
+
+Richard Hughes:
+      Added translatable AppData file
+
+Rūdolfs Mazurs:
+      Updated Latvian translation
+
+Samir Ribic:
+      Added Bosnian translation
+
+Sebastian Rasmussen:
+      Updated Swedish translation
+
+Seong-ho Cho:
+      Updated Korean translation
+
+Tiagosdot:
+      Updated Portuguese translation
+
+Timo Jyrinki:
+      Change Finnish translation team web page to l10n.gnome.org
+
+William Jon McCann:
+      Update project homepage url
+
+Wylmer Wang:
+      Fix a mistake in Chinese simplified translation that may block compiling
+      Updated Chinese (China) translation
+
+Yuri Myasoedov:
+      Updated Russian translation
+
+marablack3:
+      Updated Greek translation
+
+Мирослав Николић:
+      Updated Serbian translation
+
+甘露(Gan  Lu):
+      Update Chinese simplified translation
+
 0.9.5 Release
 =============
 
