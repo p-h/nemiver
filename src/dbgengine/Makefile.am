@@ -22,20 +22,18 @@ libdbgcommon.la \
 libdebuggerutils.la \
 libgdbengine.la
 
-h=$(abs_srcdir)
-
 idebuggerheaders= \
-$(h)/nmv-i-debugger.h
+nmv-i-debugger.h
 
 ivarlistheaders= \
-$(h)/nmv-i-var-list.h
+nmv-i-var-list.h
 
 ilangtraitheaders= \
-$(h)/nmv-i-lang-trait.h
+nmv-i-lang-trait.h
 
-ivarwalkerheaders= $(h)/nmv-i-var-walker.h $(h)/nmv-var.h
+ivarwalkerheaders= nmv-i-var-walker.h nmv-var.h
 
-ivarlistwalkerheaders= $(h)/nmv-i-var-list-walker.h
+ivarlistwalkerheaders= nmv-i-var-list-walker.h
 
 dynmodheaders = \
 $(idebuggerheaders) \
@@ -49,45 +47,45 @@ $(idebuggerheaders)
 
 libvarlistmod_la_SOURCES= \
 $(ivarlistheaders) \
-$(h)/nmv-var-list.cc
+nmv-var-list.cc
 
 libvarwalkermod_la_SOURCES= \
 $(ivarwalkerheaders) \
-$(h)/nmv-var-walker.cc
+nmv-var-walker.cc
 
 libvarobjwalkermod_la_SOURCES= \
 $(ivarwalkerheaders) \
-$(h)/nmv-varobj-walker.cc
+nmv-varobj-walker.cc
 
 libvarlistwalkermod_la_SOURCES= \
 $(ivarlistwalkerheaders) \
-$(h)/nmv-var-list-walker.cc
+nmv-var-list-walker.cc
 
 libgdbmiparser_la_SOURCES= \
-$(h)/nmv-gdbmi-parser.cc \
-$(h)/nmv-gdbmi-parser.h
+nmv-gdbmi-parser.cc \
+nmv-gdbmi-parser.h
 
 libgdbmiparser_la_CFLAGS=-fPIC -DPIC
 
 libcpptraitmod_la_SOURCES= \
 $(ilangtraitheaders) \
-$(h)/nmv-cpp-trait.cc
+nmv-cpp-trait.cc
 
 libdbgcommon_la_SOURCES= \
-$(h)/nmv-dbg-common.cc \
-$(h)/nmv-dbg-common.h
+nmv-dbg-common.cc \
+nmv-dbg-common.h
 
 libdbgcommon_la_CFLAGS=-fPIC -DPIC
 
 libdebuggerutils_la_SOURCES= \
-$(h)/nmv-debugger-utils.h \
-$(h)/nmv-debugger-utils.cc
+nmv-debugger-utils.h \
+nmv-debugger-utils.cc
 
 libdebuggerutils_la_CFLAGS=-fPIC -DPIC
 
 libgdbengine_la_SOURCES= \
-$(h)/nmv-gdb-engine.cc \
-$(h)/nmv-gdb-engine.h
+nmv-gdb-engine.cc \
+nmv-gdb-engine.h
 
 libgdbengine_la_CFLAGS=-fPIC -DPIC
 

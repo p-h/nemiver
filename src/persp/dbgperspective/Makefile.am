@@ -1,7 +1,5 @@
 SUBDIRS=ui menus icons sqlscripts
 
-h=$(abs_srcdir)
-
 plugin_config_files= \
 plugin-descriptor.xml \
 dbgperspective.conf
@@ -16,79 +14,79 @@ pluginconfigdir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 plugin_LTLIBRARIES=libdbgperspectiveplugin.la
 plugindir=@NEMIVER_PLUGINS_DIR@/$(PLUGIN_NAME)
 sources= \
-$(h)/nmv-run-program-dialog.cc \
-$(h)/nmv-run-program-dialog.h \
-$(h)/nmv-load-core-dialog.cc \
-$(h)/nmv-load-core-dialog.h \
-$(h)/nmv-saved-sessions-dialog.h \
-$(h)/nmv-saved-sessions-dialog.cc \
-$(h)/nmv-preferences-dialog.h \
-$(h)/nmv-preferences-dialog.cc \
-$(h)/nmv-proc-list-dialog.cc \
-$(h)/nmv-proc-list-dialog.h \
-$(h)/nmv-expr-inspector-dialog.cc \
-$(h)/nmv-expr-inspector-dialog.h \
-$(h)/nmv-find-text-dialog.cc \
-$(h)/nmv-find-text-dialog.h \
-$(h)/nmv-sess-mgr.cc \
-$(h)/nmv-sess-mgr.h \
-$(h)/nmv-call-stack.cc \
-$(h)/nmv-call-stack.h \
-$(h)/nmv-variables-utils.cc \
-$(h)/nmv-variables-utils.h \
-$(h)/nmv-local-vars-inspector.cc \
-$(h)/nmv-local-vars-inspector.h \
-$(h)/nmv-global-vars-inspector-dialog.cc \
-$(h)/nmv-global-vars-inspector-dialog.h \
-$(h)/nmv-expr-inspector.cc \
-$(h)/nmv-expr-inspector.h \
-$(h)/nmv-expr-monitor.cc \
-$(h)/nmv-expr-monitor.h \
-$(h)/nmv-breakpoints-view.cc \
-$(h)/nmv-breakpoints-view.h \
-$(h)/nmv-registers-view.cc \
-$(h)/nmv-registers-view.h \
-$(h)/nmv-thread-list.h \
-$(h)/nmv-thread-list.cc \
-$(h)/nmv-file-list.cc \
-$(h)/nmv-file-list.h \
-$(h)/nmv-open-file-dialog.cc \
-$(h)/nmv-open-file-dialog.h \
-$(h)/nmv-set-breakpoint-dialog.cc \
-$(h)/nmv-set-breakpoint-dialog.h \
-$(h)/nmv-watchpoint-dialog.h \
-$(h)/nmv-watchpoint-dialog.cc \
-$(h)/nmv-choose-overloads-dialog.cc \
-$(h)/nmv-choose-overloads-dialog.h \
-$(h)/nmv-remote-target-dialog.cc \
-$(h)/nmv-remote-target-dialog.h \
-$(h)/nmv-dbg-perspective.cc \
-$(h)/nmv-dbg-perspective.h \
-$(h)/nmv-vars-treeview.h \
-$(h)/nmv-vars-treeview.cc \
-$(h)/nmv-call-function-dialog.h \
-$(h)/nmv-call-function-dialog.cc \
-$(h)/nmv-set-jump-to-dialog.h \
-$(h)/nmv-set-jump-to-dialog.cc \
-$(h)/nmv-dbg-perspective-default-layout.cc \
-$(h)/nmv-dbg-perspective-default-layout.h \
-$(h)/nmv-dbg-perspective-two-pane-layout.cc \
-$(h)/nmv-dbg-perspective-two-pane-layout.h \
-$(h)/nmv-dbg-perspective-wide-layout.cc \
-$(h)/nmv-dbg-perspective-wide-layout.h
+nmv-run-program-dialog.cc \
+nmv-run-program-dialog.h \
+nmv-load-core-dialog.cc \
+nmv-load-core-dialog.h \
+nmv-saved-sessions-dialog.h \
+nmv-saved-sessions-dialog.cc \
+nmv-preferences-dialog.h \
+nmv-preferences-dialog.cc \
+nmv-proc-list-dialog.cc \
+nmv-proc-list-dialog.h \
+nmv-expr-inspector-dialog.cc \
+nmv-expr-inspector-dialog.h \
+nmv-find-text-dialog.cc \
+nmv-find-text-dialog.h \
+nmv-sess-mgr.cc \
+nmv-sess-mgr.h \
+nmv-call-stack.cc \
+nmv-call-stack.h \
+nmv-variables-utils.cc \
+nmv-variables-utils.h \
+nmv-local-vars-inspector.cc \
+nmv-local-vars-inspector.h \
+nmv-global-vars-inspector-dialog.cc \
+nmv-global-vars-inspector-dialog.h \
+nmv-expr-inspector.cc \
+nmv-expr-inspector.h \
+nmv-expr-monitor.cc \
+nmv-expr-monitor.h \
+nmv-breakpoints-view.cc \
+nmv-breakpoints-view.h \
+nmv-registers-view.cc \
+nmv-registers-view.h \
+nmv-thread-list.h \
+nmv-thread-list.cc \
+nmv-file-list.cc \
+nmv-file-list.h \
+nmv-open-file-dialog.cc \
+nmv-open-file-dialog.h \
+nmv-set-breakpoint-dialog.cc \
+nmv-set-breakpoint-dialog.h \
+nmv-watchpoint-dialog.h \
+nmv-watchpoint-dialog.cc \
+nmv-choose-overloads-dialog.cc \
+nmv-choose-overloads-dialog.h \
+nmv-remote-target-dialog.cc \
+nmv-remote-target-dialog.h \
+nmv-dbg-perspective.cc \
+nmv-dbg-perspective.h \
+nmv-vars-treeview.h \
+nmv-vars-treeview.cc \
+nmv-call-function-dialog.h \
+nmv-call-function-dialog.cc \
+nmv-set-jump-to-dialog.h \
+nmv-set-jump-to-dialog.cc \
+nmv-dbg-perspective-default-layout.cc \
+nmv-dbg-perspective-default-layout.h \
+nmv-dbg-perspective-two-pane-layout.cc \
+nmv-dbg-perspective-two-pane-layout.h \
+nmv-dbg-perspective-wide-layout.cc \
+nmv-dbg-perspective-wide-layout.h
 
 if BUILD_DYNAMICLAYOUT
 dynamiclayout_sources = \
-$(h)/nmv-dbg-perspective-dynamic-layout.cc \
-$(h)/nmv-dbg-perspective-dynamic-layout.h
+nmv-dbg-perspective-dynamic-layout.cc \
+nmv-dbg-perspective-dynamic-layout.h
 else
 dynamiclayout_sources =
 endif
 
 if BUILD_MEMORYVIEW
 memoryview_sources = \
-$(h)/nmv-memory-view.cc \
-$(h)/nmv-memory-view.h
+nmv-memory-view.cc \
+nmv-memory-view.h
 else
 memoryview_sources =
 endif

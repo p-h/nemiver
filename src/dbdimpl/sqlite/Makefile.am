@@ -1,13 +1,13 @@
 sqlitedriver_LTLIBRARIES = libnemiverdbdsqlite.la
 sqlitedriverdir=@NEMIVER_MODULES_DIR@
 
-h=$(abs_srcdir)
+
 
 sources=\
-$(h)/nmv-sqlite-cnx-mgr-drv.cc \
-$(h)/nmv-sqlite-cnx-mgr-drv.h \
-$(h)/nmv-sqlite-cnx-drv.cc \
-$(h)/nmv-sqlite-cnx-drv.h
+nmv-sqlite-cnx-mgr-drv.cc \
+nmv-sqlite-cnx-mgr-drv.h \
+nmv-sqlite-cnx-drv.cc \
+nmv-sqlite-cnx-drv.h
 
 libnemiverdbdsqlite_la_SOURCES=$(sources)
 

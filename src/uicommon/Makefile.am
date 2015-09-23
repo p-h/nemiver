@@ -1,35 +1,33 @@
 noinst_LTLIBRARIES=libnemiveruicommon.la
 
-h=$(abs_srcdir)
-
 sources = \
 $(public_headers) \
-$(h)/nmv-ui-utils.h \
-$(h)/nmv-ui-utils.cc \
-$(h)/nmv-dialog.cc \
-$(h)/nmv-dialog.h \
-$(h)/nmv-locate-file-dialog.cc \
-$(h)/nmv-locate-file-dialog.h \
-$(h)/nmv-spinner-tool-item.h \
-$(h)/nmv-spinner-tool-item.cc \
-$(h)/nmv-popup-tip.cc \
-$(h)/nmv-popup-tip.h \
-$(h)/nmv-terminal.cc \
-$(h)/nmv-terminal.h \
-$(h)/nmv-source-editor.cc \
-$(h)/nmv-source-editor.h \
-$(h)/nmv-layout.h \
-$(h)/nmv-layout-manager.cc \
-$(h)/nmv-layout-manager.h \
-$(h)/nmv-layout-selector.cc \
-$(h)/nmv-layout-selector.h
+nmv-ui-utils.h \
+nmv-ui-utils.cc \
+nmv-dialog.cc \
+nmv-dialog.h \
+nmv-locate-file-dialog.cc \
+nmv-locate-file-dialog.h \
+nmv-spinner-tool-item.h \
+nmv-spinner-tool-item.cc \
+nmv-popup-tip.cc \
+nmv-popup-tip.h \
+nmv-terminal.cc \
+nmv-terminal.h \
+nmv-source-editor.cc \
+nmv-source-editor.h \
+nmv-layout.h \
+nmv-layout-manager.cc \
+nmv-layout-manager.h \
+nmv-layout-selector.cc \
+nmv-layout-selector.h
 
 if BUILD_MEMORYVIEW
 memoryview_sources = \
-$(h)/nmv-hex-editor.h \
-$(h)/nmv-hex-editor.cc \
-$(h)/nmv-hex-document.h \
-$(h)/nmv-hex-document.cc
+nmv-hex-editor.h \
+nmv-hex-editor.cc \
+nmv-hex-document.h \
+nmv-hex-document.cc
 else
 memoryview_sources =
 endif

@@ -1,16 +1,14 @@
 workbenchmod_LTLIBRARIES=libworkbenchmod.la
 workbenchmoddir=@NEMIVER_MODULES_DIR@
 
-h=$(abs_srcdir)
-
 headers= \
-$(h)/nmv-i-workbench.h \
-$(h)/nmv-i-pref-mgr.h
+nmv-i-workbench.h \
+nmv-i-pref-mgr.h
 
 libworkbenchmod_la_SOURCES= \
 $(headers) \
-$(h)/nmv-workbench.cc \
-$(h)/nmv-pref-mgr.cc
+nmv-workbench.cc \
+nmv-pref-mgr.cc
 
 publicheaders_DATA=$(headers)
 publicheadersdir=$(NEMIVER_INCLUDE_DIR)/dynmods

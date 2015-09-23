@@ -11,12 +11,10 @@ SUBDIRS=$(NON_WORKBENCH_STUFF)
 
 endif
 
-h=$(abs_srcdir)
-
 if ENABLE_WORKBENCH
 
 bin_PROGRAMS=nemiver
-nemiver_SOURCES=$(h)/main.cc
+nemiver_SOURCES=main.cc
 nemiver_LDADD= \
 @NEMIVER_LIBS@  \
 $(abs_top_builddir)/src/common/libnemivercommon.la \

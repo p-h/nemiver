@@ -1,7 +1,5 @@
-h=$(abs_srcdir)
-
-public_headers=$(h)/nmv-i-conf-mgr.h
-private_headers=$(h)/nmv-conf-keys.h
+public_headers=nmv-i-conf-mgr.h
+private_headers=nmv-conf-keys.h
 headers= $(public_headers) $(private_headers)
 
 publicheaders_DATA=$(public_headers)
@@ -13,8 +11,8 @@ AM_CPPFLAGS=@NEMIVERCOMMON_CFLAGS@ -DENABLE_NLS=1 -DDATADIR=\"${datadir}\" \
 -I$(abs_top_srcdir)/src
 
 if BUILD_GSETTINGS
-    libgsettingsmgrmod_la_SOURCES=$(headers) $(h)/nmv-gsettings-mgr.cc\
-            $(h)/nmv-gsettings-keys-defs.cc
+    libgsettingsmgrmod_la_SOURCES=$(headers) nmv-gsettings-mgr.cc\
+            nmv-gsettings-keys-defs.cc
     libgsettingsmgrmod_la_LDFLAGS=-module -avoid-version -Wl,--as-needed
     libgsettingsmgrmod_la_LIBADD=@NEMIVERCOMMON_LIBS@ @NEMIVERGSETTINGS_LIBS@ \
             $(abs_top_builddir)/src/common/libnemivercommon.la
@@ -25,8 +23,8 @@ if BUILD_GSETTINGS
     config_DATA=gsettingsmgr.conf
     AM_CPPFLAGS+= @NEMIVERGSETTINGS_CFLAGS@
 else
-    libgconfmgrmod_la_SOURCES=$(headers) $(h)/nmv-gconf-mgr.cc\
-            $(h)/nmv-gconf-keys-defs.cc
+    libgconfmgrmod_la_SOURCES=$(headers) nmv-gconf-mgr.cc\
+            nmv-gconf-keys-defs.cc
     libgconfmgrmod_la_LDFLAGS=-module -avoid-version -Wl,--as-needed
     libgconfmgrmod_la_LIBADD=@NEMIVERCOMMON_LIBS@ @GCONF_LIBS@ \
             $(abs_top_builddir)/src/common/libnemivercommon.la
