@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application>
-  <id type="desktop">nemiver.desktop</id>
-  <licence>CC0</licence>
+<component type="desktop">
+  <id>nemiver.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <_name>Nemiver</_name>
+  <_summary>Debug Applications</_summary>
   <description>
     <_p>
       Nemiver is an on-going effort to write a standalone graphical debugger
@@ -15,8 +18,13 @@
     </_p>
   </description>
   <screenshots>
-    <screenshot type="default">https://projects.gnome.org/nemiver/images/nemiver-main-page.png</screenshot>
+    <screenshot type="default">
+      <image>https://projects.gnome.org/nemiver/images/nemiver-main-page.png</image>
+    </screenshot>
   </screenshots>
   <url type="homepage">https://projects.gnome.org/nemiver/</url>
-  <updatecontact>nemiver-list@gnome.org</updatecontact>
-</application>
+  <url type="bugtracker">https://bugzilla.gnome.org/enter_bug.cgi?product=nemiver</url>
+  <url type="donation">http://www.gnome.org/friends/</url>
+  <project_group>GNOME</project_group>
+  <update_contact>nemiver-list@gnome.org</update_contact>
+</component>
