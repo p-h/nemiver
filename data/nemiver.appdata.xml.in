@@ -27,4 +27,5 @@
   <url type="donation">http://www.gnome.org/friends/</url>
   <project_group>GNOME</project_group>
   <update_contact>nemiver-list@gnome.org</update_contact>
+  <translation type="gettext">nemiver</translation>
 </component>
