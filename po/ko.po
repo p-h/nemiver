@@ -1,26 +1,26 @@
 # Korean translation for nemiver.
 # Copyright (C) 2012, 2013 Seong-ho cho et al.
 # This file is distributed under the same license as the nemiver package.
-# Seong-ho Cho <darkcircle.0426@gmail.com>, 2012, 2013, 2014.
 #
 # Note:
 # 'Nemiver' 발음 표기는 '네마이버'로 표기합니다
+# Seong-ho Cho <shcho@gnome.org>, 2012, 2013, 2014, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-03-14 11:06+0000\n"
-"PO-Revision-Date: 2014-03-15 04:01+0900\n"
-"Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
-"Language-Team: Korean <gnome-kr@googlegroups.com>\n"
+"POT-Creation-Date: 2015-12-09 08:08+0000\n"
+"PO-Revision-Date: 2016-03-02 03:29+0900\n"
+"Last-Translator: Seong-ho Cho <shcho@gnome.org>\n"
+"Language-Team: 한국어 <gnome-kr@googlegroups.com>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #: ../data/nemiver.appdata.xml.in.h:1
 msgid ""
@@ -239,7 +239,7 @@ msgid "Find this breakpoint in the source editor"
 msgstr "소스 에디터에서 이 중단점 찾기"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:177
-#: ../src/uicommon/nmv-terminal.cc:174
+#: ../src/uicommon/nmv-terminal.cc:184
 msgid "_Copy"
 msgstr "복사(_C)"
 
@@ -266,7 +266,9 @@ msgstr "바이너리"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
-msgid "(Click here to see the next %d row of the call stack"
+#| msgid "(Click here to see the next %d row of the call stack"
+#| msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgid "(Click here to see the next %d row of the call stack)"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
 msgstr[0] "(호출 스택의 다음 %d줄을 보려면 여기를 누르십시오)"
 
@@ -299,113 +301,113 @@ msgstr "메모리"
 msgid "Expression Monitor"
 msgstr "수식 감시창"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1730
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1715
 msgid "Reached end of file"
 msgstr "파일 끝에 도달했습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1733
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1718
 #, c-format
 msgid "Could not find string %s"
 msgstr "%s 문자열을 찾을 수 없습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2103
 msgid "Change to Standard Breakpoint"
 msgstr "표준 중단점으로 바꾸기"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2120
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2106
 msgid "Change to Countpoint"
 msgstr "계수점으로 바꾸기"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2122
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2108
 msgid "Remove _Breakpoint"
 msgstr "중단점 제거(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2125
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
 msgid "Disable Breakpoint"
 msgstr "중단점 비활성화"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2127
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2113
 msgid "Enable Breakpoint"
 msgstr "중단점 활성화"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2130
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
 msgid "Set _Breakpoint"
 msgstr "중단점 설정(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2132
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2118
 msgid "Set Countpoint"
 msgstr "계수점 설정"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2295
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2281
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (경로=\"%s\", 프로세스=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2309
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
 msgid "Connected to remote target!"
 msgstr "원격 대상에 연결했습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2510
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2498
 msgid "Program exited"
 msgstr "프로그램에서 빠져나갔습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2539
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2528
 msgid "The underlying debugger engine process died."
 msgstr "디버거 엔진에 붙어있던 프로세스가 죽었습니다."
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2643
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2632
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "대상이 %s 시그널을 받음: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2658
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2648
 #, c-format
 msgid "An error occurred: %s"
 msgstr "오류 발생: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2821
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2812
 #, c-format
 msgid "File %s has been modified. Do you want to reload it?"
 msgstr "%s 파일이 수정되었습니다. 다시 불러오시겠습니까?"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3183
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
 msgid "_Detach From the Running Program"
 msgstr "실행 중인 프로그램 떼어내기(_D)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3184
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "실행 중인 대상을 죽이지 않고 디버거와의 연결을 끊습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3199
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
 msgid "_Save Session to Disk"
 msgstr "디스크에 세션 저장(_S)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3200
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
 msgid "Save the current debugging session to disk"
 msgstr "현재 디버깅 세션을 디스크에 저장합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3209
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
 msgid "_Run or Restart"
 msgstr "실행 또는 다시 시작(_R)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3210
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
 msgid "Run or Restart the target"
 msgstr "대상을 실행하거나 다시 시작합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3219
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
 msgid "Set Breakpoint with Dialog..."
 msgstr "대화상자에서 중단점 설정..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3220
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr "대화상자를 사용하여 현재 줄에 중단점을 설정합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3223
 msgid "Set Breakpoint..."
 msgstr "중단점 설정..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3224
 msgid "Set a breakpoint at a function or line number"
 msgstr "함수나 줄 번호로 중단점을 설정합니다"
 
@@ -416,11 +418,11 @@ msgstr "함수나 줄 번호로 중단점을 설정합니다"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
 msgid "Toggle _Breakpoint"
 msgstr "중단점 상태 전환(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3249
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "현재 커서 위치에 있는 중단점을 설정/해제합니다"
 
@@ -431,11 +433,11 @@ msgstr "현재 커서 위치에 있는 중단점을 설정/해제합니다"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3266
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3258
 msgid "Enable/Disable Breakpoint"
 msgstr "중단점 활성/비활성"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3267
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3259
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr "현재 커서 위치에 설정한 중단점을 활성화 또는 비활성화 합니다"
@@ -448,331 +450,329 @@ msgstr "현재 커서 위치에 설정한 중단점을 활성화 또는 비활�
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3279
 msgid "Toggle _Countpoint"
 msgstr "계수점 상태 전환(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3288
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "현재 커서 위치에 있는 계수점을 설정/해제합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3290
 msgid "Set Watchpoint with Dialog..."
 msgstr "대화상자를 통한 감시점 설정..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3291
 msgid "Set a watchpoint using a dialog"
 msgstr "대화상자를 사용하여 감시점을 설정합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3314
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
 msgid "_Next"
 msgstr "다음(_N)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3315
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3307
 msgid "Execute next line stepping over the next function, if any"
 msgstr "다음 줄이 있다면 실행 후 다음 함수로 건너갑니다."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3324
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3316
 msgid "_Step"
 msgstr "한 단계 실행(_S)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3325
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3317
 msgid "Execute next line, stepping into the next function, if any"
 msgstr "다음 줄이 있다면 실행 후 다음 함수로 진입합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3334
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3326
 msgid "Step _Out"
 msgstr "한 단계 끝내기(_O)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3335
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3327
 msgid "Finish the execution of the current function"
 msgstr "현재 함수의 실행을 끝냅니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3344
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3336
 msgid "Step Into asm"
 msgstr "asm 단계 진입"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3345
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3337
 msgid "Step into the next assembly instruction"
 msgstr "다음 어셈블리 명령으로 들어갑니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3346
 msgid "Step Over asm"
 msgstr "asm 단계 건너뛰기"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3355
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3347
 msgid "Step over the next assembly instruction"
 msgstr "다음 어셈블리 명령을 건너뜁니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3364
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3356
 msgid "_Continue"
 msgstr "계속(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3365
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
 msgid "Continue program execution until the next breakpoint"
 msgstr "다음 중단점 까지 프로그램 실행을 계속합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3374
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
 msgid "Run to Cursor"
 msgstr "커서 위치까지 실행"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3375
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
 msgid "Continue program execution until the currently selected line is reached"
 msgstr "현재 선택한 줄에 도달할 때까지 프로그램 실행을 계속합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3385
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3377
 msgid "Jump to Cursor"
 msgstr "커서로 건너뛰기"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3386
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3378
 msgid "Jump to the currently selected line"
 msgstr "현재 선택한 줄로 건너뜁니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3396
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
 msgid "Jump and Stop to Cursor"
 msgstr "커서로 건너뛰고 멈춤"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3397
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3389
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr "현재 선택한 줄에 중단점을 설정하고 해당 위치로 건너뜁니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3409
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
 msgid "Jump to a Given Location"
 msgstr "주어진 위치로 건너뛰기"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3410
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3402
 msgid "Select a given code location and jump there"
 msgstr "주어진 코드 위치를 선택하고 해당 위치로 건너뜁니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3421
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3413
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
 msgid "Inspect an Expression"
 msgstr "수식 점검"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3422
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
 msgid "Inspect a global or local expression"
 msgstr "전역 또는 로컬 수식을 점검합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3432
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3424
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
 msgid "Call a Function"
 msgstr "함수 호출"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3433
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
 msgid "Call a function in the program being debugged"
 msgstr "디버깅 중인 프로그램의 함수를 호출합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3442
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3434
 msgid "Show Global Variables"
 msgstr "전역 변수 보이기"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3443
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3435
 msgid "Display all global variables"
 msgstr "모든 전역 변수를 표시합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3453
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3445
 msgid "Refresh Locals"
 msgstr "로컬 변수 새로 고침"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3454
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3446
 msgid "Refresh the list of variables local to the current function"
 msgstr "현재 함수의 로컬 변수의 내용을 새로 고칩니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3463
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3455
 msgid "Show Assembly"
 msgstr "어셈블리 보이기"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3464
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
 msgstr "현재 디버깅 중인 소스코드의 어셈블리 코드를 다른 탭에 보여줍니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
 msgid "Switch to Assembly"
 msgstr "어셈블리로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3477
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr "현재 디버깅 중인 소스코드의 어셈블리 코드를 보여줍니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3481
 msgid "Switch to Source"
 msgstr "소스코드로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3490
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3482
 msgid "Show the source code being currently debugged"
 msgstr "현재 디버깅 중인 소스코드를 보여줍니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3502
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3494
 msgid "Stop"
 msgstr "멈춤"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3503
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3495
 msgid "Stop the debugger"
 msgstr "디버거를 멈춥니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3515
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3507
 msgid "_View"
 msgstr "보기(_V)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3526
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3518
 msgid "Switch to Target Terminal View"
 msgstr "대상 터미널 보기로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3537
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3529
 msgid "Switch to Context View"
 msgstr "컨텍스트 보기로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3548
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3540
 msgid "Switch to Breakpoints View"
 msgstr "중단점 보기로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3551
 msgid "Switch to Registers View"
 msgstr "레지스터 보기로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3571
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3563
 msgid "Switch to Memory View"
 msgstr "메모리 보기로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3582
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3574
 msgid "Switch to Variables Monitor View"
 msgstr "변수 감시 보기로 전환"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3591
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3583
 msgid "_Debug"
 msgstr "디버깅(_D)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3601
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3593
 msgid "_Open Source File..."
 msgstr "소스 파일 열기(_O)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3602
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3594
 msgid "Open a source file for viewing"
 msgstr "보려는 소스 파일을 엽니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3611
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3603
 msgid "Load _Executable..."
 msgstr "실행 파일 불러오기(_E)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3612
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3604
 msgid "Execute a program"
 msgstr "프로그램 실행"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3622
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3614
 msgid "_Load Core File..."
 msgstr "핵심 파일 불러오기(_L)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3623
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3615
 msgid "Load a core file from disk"
 msgstr "디스크에서 핵심 파일을 불러옵니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3633
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3625
 msgid "_Attach to Running Program..."
 msgstr "실행 중인 프로그램 붙이기(_A)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3634
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3626
 msgid "Debug a program that's already running"
 msgstr "이미 실행 중인 프로그램을 디버깅합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3644
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3636
 msgid "_Connect to Remote Target..."
 msgstr "원격 대상에 연결(_C)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3645
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
 msgid "Connect to a debugging server to debug a remote target"
 msgstr "디버깅할 원격 타겟에 디버깅 서버를 연결합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3656
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
 msgstr "저장한 세션 재개(_V)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3657
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
 msgid "Open a previously saved debugging session"
 msgstr "이전에 저장한 디버깅 세션을 엽니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3667
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3659
 msgid "_Preferences"
 msgstr "기본 설정(_P)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3668
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
 msgid "Edit the properties of the current session"
 msgstr "현재 세션의 속성을 편집합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3682
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3674
 msgid "_Copy selected text"
 msgstr "선택한 텍스트 복사(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3683
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3675
 msgid "Copy the text selected in the current source file"
 msgstr "현재 원본 파일에서 선택한 텍스트를 복사합니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3692
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3684
 msgid "_Reload Source File"
 msgstr "소스 파일 다시 불러오기(_R)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3693
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3685
 msgid "Reloads the source file"
 msgstr "소스 파일을 다시 불러옵니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3702
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3694
 msgid "_Close Source File"
 msgstr "소스 파일 닫기(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3703
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3695
 msgid "Close the opened file"
 msgstr "열려있는 파일을 닫습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3712
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3704
 msgid "_Find"
 msgstr "찾기(_F)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3713
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
 msgid "Find a text string in file"
 msgstr "파일의 본문 문자열을 찾습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4037
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4029
 #, c-format
 msgid "Close %s"
 msgstr "%s 닫기"
 
-#. We cannot restart an inferior running on a remote target at
-#. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6027
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6029
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "죄송하지만 원격 하위 요소를 다시 시작할 수 없습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6172
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6174
 #, c-format
 msgid "Could not find file %s"
 msgstr "%s 파일을 찾을 수 없습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6235
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6422
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6457
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6238
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6429
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6464
 #, c-format
 msgid "Could not load program: %s"
 msgstr "프로그램을 불러올 수 없습니다: %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6351
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6357
 msgid "You cannot attach to Nemiver itself"
 msgstr "네마이버 자체를 붙일 수 없습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6364
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6371
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "디버거 엔진에 붙일 수 없습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6656
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6667
 msgid "Failed to stop the debugger"
 msgstr "디버거를 멈추는데 실패했습니다"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6900
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6911
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "잘못된 줄 번호: %i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8532
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8551
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -1403,12 +1403,12 @@ msgstr "읽기"
 msgid "Write"
 msgstr "쓰기"
 
-#: ../src/uicommon/nmv-locate-file-dialog.cc:65
+#: ../src/uicommon/nmv-locate-file-dialog.cc:66
 #, c-format
 msgid "Select Location for %s"
 msgstr "%s 위치 선택"
 
-#: ../src/uicommon/nmv-locate-file-dialog.cc:75
+#: ../src/uicommon/nmv-locate-file-dialog.cc:76
 #, c-format
 msgid ""
 "Cannot find file '%s'.\n"
@@ -1417,37 +1417,37 @@ msgstr ""
 "'%s'파일을 찾을 수 없습니다.\n"
 "이 파일의 위치를 지정해주십시오:"
 
-#: ../src/uicommon/nmv-source-editor.cc:645
+#: ../src/uicommon/nmv-source-editor.cc:646
 #, c-format
 msgid "Line: %i, Column: %i"
 msgstr "%i번째 줄, %i번째 칸"
 
-#: ../src/uicommon/nmv-source-editor.cc:1473
+#: ../src/uicommon/nmv-source-editor.cc:1490
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
 msgstr "%2$s 인코딩과 달라  %1$s파일을 불러올 수 없습니다."
 
-#: ../src/uicommon/nmv-terminal.cc:175
+#: ../src/uicommon/nmv-terminal.cc:185
 msgid "Copy the selection"
 msgstr "선택영역 복사"
 
-#: ../src/uicommon/nmv-terminal.cc:181
+#: ../src/uicommon/nmv-terminal.cc:191
 msgid "_Paste"
 msgstr "붙여넣기(_P)"
 
-#: ../src/uicommon/nmv-terminal.cc:182
+#: ../src/uicommon/nmv-terminal.cc:192
 msgid "Paste the clipboard"
 msgstr "클립보드 내용을 붙여 넣습니다"
 
-#: ../src/uicommon/nmv-terminal.cc:188
+#: ../src/uicommon/nmv-terminal.cc:198
 msgid "_Reset"
 msgstr "초기화(_R)"
 
-#: ../src/uicommon/nmv-terminal.cc:189
+#: ../src/uicommon/nmv-terminal.cc:199
 msgid "Reset the terminal"
 msgstr "터미널을 비웁니다"
 
-#: ../src/uicommon/nmv-ui-utils.cc:91
+#: ../src/uicommon/nmv-ui-utils.cc:94
 msgid "Do not ask me again"
 msgstr "다시 묻지 않기"
 
