@@ -1,0 +1,1596 @@
+# Korean translation for nemiver.
+# Copyright (C) 2016 nemiver's COPYRIGHT HOLDER
+# This file is distributed under the same license as the nemiver package.
+# Seong-ho Cho <shcho@gnome.org>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nemiver master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-03-03 13:56+0000\n"
+"PO-Revision-Date: 2016-03-04 02:24+0900\n"
+"Last-Translator: Seong-ho Cho <shcho@gnome.org>\n"
+"Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "조성호 <shcho@gnome.org>, 2016."
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:180
+msgctxt "_"
+msgid ""
+"external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:329
+msgctxt "_"
+msgid ""
+"external ref='figures/execute-dialog.png' "
+"md5='450a45378b4021176c8f093be2dedc97'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:394
+msgctxt "_"
+msgid ""
+"external ref='figures/attach-dialog.png' "
+"md5='9940de171b58f92ea810dc4478364976'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:440
+msgctxt "_"
+msgid ""
+"external ref='figures/load-core-dialog.png' "
+"md5='2a3dd09883a026826d0a7036991720a4'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:471
+msgctxt "_"
+msgid ""
+"external ref='figures/connect-remote-dialog.png' "
+"md5='0f47f358e68947aaf1330fb1c1013f72'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:593
+msgctxt "_"
+msgid ""
+"external ref='figures/variable-inspector.png' "
+"md5='676c2a7985aa4e41f5a77a85bcfd8a27'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:627
+msgctxt "_"
+msgid ""
+"external ref='figures/global-variables-dialog.png' "
+"md5='b3224457732491046fbcea9491df2383'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:667
+msgctxt "_"
+msgid ""
+"external ref='figures/set-breakpoint-dialog.png' "
+"md5='86618670e2f62026adeb38ae033ec38d'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:705
+msgctxt "_"
+msgid ""
+"external ref='figures/enabled-breakpoint.png' "
+"md5='a51237a0756cdb7a754b24b211e40bbb'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:716
+msgctxt "_"
+msgid ""
+"external ref='figures/disabled-breakpoint.png' "
+"md5='b703d696cec0c49810de7f2a85f0ddba'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:739
+msgctxt "_"
+msgid ""
+"external ref='figures/open-files-target.png' "
+"md5='715003a703fc7cc112bea9e58a25f627'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:777
+msgctxt "_"
+msgid ""
+"external ref='figures/registers-view.png' "
+"md5='25b369f4f3f0a42c04ded0f8880435ba'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:802
+msgctxt "_"
+msgid ""
+"external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
+msgstr ""
+
+#. (itstool) path: imagedata
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.docbook:863
+msgctxt "_"
+msgid ""
+"external ref='figures/sessions-dialog.png' "
+"md5='d07fd79198e666ca9b21fee3bbb30db4'"
+msgstr ""
+
+#. (itstool) path: articleinfo/title
+#: C/index.docbook:24
+msgid "Nemiver Manual"
+msgstr "네마이버 설명서"
+
+#. (itstool) path: articleinfo/copyright
+#: C/index.docbook:25
+msgid "<year>2008</year> <holder>Jonathon Jongsma</holder>"
+msgstr "<year>2008</year> <holder>Jonathon Jongsma</holder>"
+
+#. (itstool) path: publisher/publishername
+#: C/index.docbook:38
+msgid "Nemiver Project"
+msgstr "네마이버 프로젝트"
+
+#. (itstool) path: authorgroup/author
+#: C/index.docbook:42
+msgid ""
+"<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
+"<orgname>GNOME</orgname> </affiliation>"
+msgstr ""
+"<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
+"<orgname>그놈</orgname> </affiliation>"
+
+#. (itstool) path: revdescription/para
+#: C/index.docbook:71
+msgid "Initial version"
+msgstr "초기 버전"
+
+#. (itstool) path: revhistory/revision
+#: C/index.docbook:67
+msgid "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
+msgstr "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
+
+#. (itstool) path: revdescription/para
+#: C/index.docbook:78
+msgid "Updated for 0.5.0 Release"
+msgstr "0.5.0 릴리스 업데이트"
+
+#. (itstool) path: revhistory/revision
+#: C/index.docbook:74
+msgid "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
+msgstr "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
+
+#. (itstool) path: articleinfo/releaseinfo
+#: C/index.docbook:82
+msgid "This manual describes version 0.5.0 of Nemiver."
+msgstr "이 설명서는 네마이버 0.5.0 버전을 설명합니다."
+
+#. (itstool) path: legalnotice/title
+#: C/index.docbook:85
+msgid "Feedback"
+msgstr "피드백"
+
+#. (itstool) path: legalnotice/para
+#: C/index.docbook:86
+msgid ""
+"To report a bug or make a suggestion regarding the <application>Nemiver</"
+"application> application or this manual, see the <ulink url=\"http://www."
+"gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
+msgstr ""
+"<application>네마이버</application> 또는 이 설명서에 대한 문제점을 보고하거"
+"나 의견이 있다면 <ulink url=\"http://www.gnome.org/projects/nemiver/\" type="
+"\"http\">네마이버 프로젝트 웹사이트</ulink>를 참고하십시오."
+
+#. (itstool) path: abstract/para
+#: C/index.docbook:94
+msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
+msgstr "네마이버는 그놈 데스크톱 환경용 그래픽 디버거입니다."
+
+#. (itstool) path: article/indexterm
+#: C/index.docbook:99
+msgid "<primary>Nemiver</primary>"
+msgstr "<primary>네마이버</primary>"
+
+#. (itstool) path: article/indexterm
+#: C/index.docbook:102
+msgid "<primary>debugger</primary>"
+msgstr "<primary>디버거</primary>"
+
+#. (itstool) path: article/indexterm
+#: C/index.docbook:105
+msgid "<primary>gdb</primary>"
+msgstr "<primary>gdb</primary>"
+
+#. (itstool) path: sect1/title
+#: C/index.docbook:111
+msgid "Overview"
+msgstr "개요"
+
+#. (itstool) path: sect1/para
+#: C/index.docbook:112
+msgid ""
+"Nemiver is an ongoing effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+msgstr ""
+"네마이버는 그놈 데스크톱 환경에 잘 어울리는 독립 그래픽 디버거로 열심히 작성 "
+"중입니다. 현재 C / C++ 프로그램을 디버깅하는 잘 알려진 GNU 디버거 gdb를 백엔"
+"드로 갖추고 있습니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:119
+msgid "Perspectives"
+msgstr "모양새"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:120
+msgid ""
+"Nemiver is designed as a generic graphical <interface>workbench</interface> "
+"and a plugin system that can offer several different perspectives. Currently "
+"the only perspective provided is a debugging perspective, but in the future, "
+"there may be perspectives added for memory debugging with "
+"<application>valgrind</application>, or for profiling tools such as "
+"<application>oprofile</application>."
+msgstr ""
+"네마이버는 일반 그래픽 <interface>작업 환경</interface>으로 설계했으며 다양"
+"한 모양새를 갖출 수 있는 플러그인 시스템을 붙였습니다. 현재 제공하는 모양새"
+"는 디버거 모양새지만, 앞으로는 메모리 디버깅을 수행하는 "
+"<application>valgrind</application> 용 모양새, <application>oprofile</"
+"application>와 같은 프로파일 도구용 모양새를 추가할 계획입니다."
+
+#. (itstool) path: sect1/title
+#: C/index.docbook:132
+msgid "Getting Started"
+msgstr "시작하기"
+
+#. (itstool) path: sect1/para
+#: C/index.docbook:133
+msgid ""
+"This section explains how to start Nemiver and gives a basic overview of the "
+"application."
+msgstr ""
+"이 장에서는 네마이버를 시작하는 방법을 설명하고 프로그램의 기본 모양새를 보여"
+"드립니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:138
+msgid "Starting Nemiver"
+msgstr "네마이버 시작하기"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:139
+msgid "You can start Nemiver in the following ways:"
+msgstr "다음 방법으로 네마이버를 시작할 수 있습니다:"
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:144
+msgid "<guimenu>Applications</guimenu> menu"
+msgstr "<guimenu>프로그램</guimenu> 메뉴"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:146
+msgid ""
+"Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver "
+"Debugger</guimenuitem></menuchoice>."
+msgstr ""
+"<menuchoice><guisubmenu>프로그래밍</guisubmenu><guimenuitem>네마이버 디버거</"
+"guimenuitem></menuchoice>를 선택하십시오."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:152
+msgid "Command line"
+msgstr "명령행"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:154
+msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
+msgstr ""
+"<command>nemiver</command>를 입력하고 <keycap>Return</keycap>키를 누르십시오."
+
+#. (itstool) path: tip/title
+#: C/index.docbook:159
+msgid "Additional Command-line Options"
+msgstr "추가 명령행 옵션"
+
+#. (itstool) path: tip/para
+#: C/index.docbook:160
+msgid ""
+"You can find a list of options that can be passed to Nemiver on the command "
+"line by typing <command>nemiver --help-all</command>."
+msgstr ""
+"<command>nemiver --help-all</command>를 입력하여 명령행에서 네마이버에 전달"
+"할 수 있는 여러가지 옵션을 찾아볼 수 있습니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:170
+msgid "The Nemiver window"
+msgstr "네마이버 창"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:171
+msgid ""
+"When you start Nemiver, you will see a window that looks very much like the "
+"following:"
+msgstr "네마이버를 시작할 때 다음과 같은 창을 보게 됩니다:"
+
+#. (itstool) path: figure/title
+#: C/index.docbook:176
+msgid "Nemiver Window"
+msgstr "네마이버 창"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:178
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Shows Nemiver main window.</phrase> </"
+"textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>네마이버 메인 창.</phrase> </"
+"textobject>"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:188
+msgid ""
+"The <application>Nemiver</application> window contains the following "
+"elements:"
+msgstr "<application>네마이버</application> 창에는 다음 요소가 들어있습니다:"
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:194
+msgid "Menubar"
+msgstr "메뉴 표시줄"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:196
+msgid ""
+"The menus on the menubar contain all of the commands you need to use "
+"<application>Nemiver</application>."
+msgstr ""
+"메뉴 표시줄의 메뉴에는 <application>네마이버</application>를 활용하는데 필요"
+"한 모든 명령이 들어있습니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:203
+msgid "Toolbar"
+msgstr "도구 모음"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:205
+msgid ""
+"The toolbar contains the basic debugging actions that can be used to run or "
+"step through the program being debugged."
+msgstr ""
+"도구 모음에는 프로그램을 디버깅할 때 그대로 실행하거나 한 단계씩 실행할 때 활"
+"용할 수 있는 기본 디버깅 옵션이 들어있습니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:212
+msgid "Source View Notebook"
+msgstr "소스 뷰 노트북"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:214
+msgid ""
+"When source files are open, this area will display source files of the "
+"program being debugged."
+msgstr "소스 파일을 열면 디버깅할 프로그램의 소스 파일을 이곳에 표시합니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:221
+msgid "Status Notebook"
+msgstr "상태 노트북"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:223
+msgid ""
+"The Status notebook contains several tabs for displaying information about "
+"the program being debugged. These include the following:"
+msgstr ""
+"상태 노트북에는 디버깅할 프로그램의 정보를 표시할 몇가지 탭이 들어있습니다. "
+"다음 구성요소가 들어있습니다:"
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:230
+msgid "Call Stack"
+msgstr "호출 스택"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:234
+msgid ""
+"Displays the current state of the call stack of the program being debugged."
+msgstr "디버깅하는 프로그램의 호출 스택 현재 상태를 표시합니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:241
+msgid "Variables"
+msgstr "변수"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:245
+msgid ""
+"Displays a list of all local variables and function arguments, in addition "
+"to their values and types."
+msgstr "모든 지역 변수 및 함수 인자, 값 및 형식을 표시합니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:252
+msgid "Target Terminal"
+msgstr "대상 터미널"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:256
+msgid ""
+"If the program being debugged prints any output to the terminal, it will be "
+"displayed in this tab."
+msgstr ""
+"디버깅하고 있는 프로그램에서 터미널에 출력할 어떤 내용을 이 탭에 표시합니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:263
+msgid "Breakpoints"
+msgstr "중단점"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:267
+msgid ""
+"This tab displays a list of all breakpoints that have been set. You can view "
+"the source code of a particular breakpoint by double-clicking an item in the "
+"list or by right-clicking and selecting <menuchoice><guimenuitem>Go to "
+"Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints "
+"can be deleted, enabled, or disabled in this tab. For more information about "
+"breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
+msgstr ""
+"이 탭에서는 설정한 모든 중단점 목록을 표시합니다. 목록의 항목을 두번 누르든"
+"지, 마우스 오른쪽 단추를 누른 후 <menuchoice><guimenuitem>소스로 이동</"
+"guimenuitem></menuchoice>을 선택하여 제각각의 중단점을 설정한 소스코드를 볼 "
+"수 있습니다. 또한 이 탭에서 중단점을 삭제, 활성화, 비활성화할 수 있습니다. 중"
+"단점에 대한 추가 정보는 <xref linkend=\"nemiver-sect-breakpoints\"/>을(를) 참"
+"고하십시오."
+
+#. (itstool) path: varlistentry/term
+#. (itstool) path: sect3/title
+#: C/index.docbook:280 C/index.docbook:766
+msgid "Registers"
+msgstr "레지스터"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:284
+msgid ""
+"This tab displays all of the CPU registers and their values. For more "
+"information, see <xref linkend=\"nemiver-sect-registers\"/>."
+msgstr ""
+"이 탭에는 모든 CPU 레지스터 및 값을 표시합니다. 자세한 내용은 <xref linkend="
+"\"nemiver-sect-registers\"/>을(를) 참고하십시오."
+
+#. (itstool) path: varlistentry/term
+#. (itstool) path: sect3/title
+#: C/index.docbook:291 C/index.docbook:793
+msgid "Memory"
+msgstr "메모리"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:295
+msgid ""
+"This tab displays a view of the current state of a specific memory location. "
+"For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
+msgstr ""
+"이 탭에서는 지정 메모리 위치의 현재 상태를 표시합니다. 자세한 내용은 <xref "
+"linkend=\"nemiver-sect-memory\"/>을(를) 참고하십시오."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:307
+msgid "Choosing a Program to Debug"
+msgstr "디버깅할 프로그램 선택"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:308
+msgid ""
+"There are several ways to begin debugging a program. Nemiver allows you to "
+"load a local executable file, load a core file, attach to a running process, "
+"or connect to a remote debugging server."
+msgstr ""
+"프로그램 디버깅을 시작하는 방법에는 여러가지가 있습니다. 네마이버에서는 로컬 "
+"실행 파일을 불러오고, 로컬 핵심 파일을 불러오며, 실행 프로세스에 붙거나 원격 "
+"디버깅 서버에 연결할 수 있습니다."
+
+#. (itstool) path: sect3/title
+#: C/index.docbook:313
+msgid "Debugging an Executable Program"
+msgstr "실행 프로그램 디버깅"
+
+#. (itstool) path: sect4/title
+#. (itstool) path: sect3/title
+#: C/index.docbook:315 C/index.docbook:380 C/index.docbook:425
+#: C/index.docbook:462 C/index.docbook:852
+msgid "Using the Workbench"
+msgstr "워크벤치 활용"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:316
+msgid ""
+"To select an executable program to debug, select <menuchoice><guimenu> File "
+"</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"디버깅할 실행 프로그램을 선택하려면 <menuchoice><guimenu> 파일 </"
+"guimenu><guimenuitem> 실행... </guimenuitem></menuchoice>을 선택하여 다음 대"
+"화상자를 띄우십시오:"
+
+#. (itstool) path: figure/title
+#: C/index.docbook:325
+msgid "Execute Dialog"
+msgstr "대화상자 실행"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:327
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for selecting an "
+"executable to run</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>실행할 실행 파일을 선택하는 대화상자"
+"</phrase> </textobject>"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:337
+msgid ""
+"In this dialog, you can select the program to be debugged, any arguments or "
+"options to be passed to the executable on the command line, the working "
+"directory to run the executable in, and any Environment Variables that "
+"should be set when the executable is being debugged."
+msgstr ""
+"이 대화상자에서 디버깅할 프로그램, 명령행에서 실행시 전달할 인자 또는 옵션, "
+"실행할 작업 디렉터리, 실행 파일을 디버깅할 때 설정해야 할 환경 변수를 설정할 "
+"수 있습니다."
+
+#. (itstool) path: sect4/title
+#: C/index.docbook:345 C/index.docbook:411 C/index.docbook:450
+#: C/index.docbook:485
+msgid "Using the Command Line"
+msgstr "명령행 활용"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:346
+msgid ""
+"To start an executable program to debug from the command line, simply "
+"specify the name of the executable. You can either give an absolute path to "
+"the executable, or if it is in the path, you can simply give the basename of "
+"the executable. For example, if <filename>/usr/bin</filename> is in your "
+"path, both of the following are valid:"
+msgstr ""
+"명령행에서 디버깅할 실행 프로그램을 시작하려면, 간단하게 실행 파일의 이름을 "
+"지정하십시오. 실행 파일의 절대 경로를 입력하거나, 이미 경로상에 있을 경우 실"
+"행 파일의 베이스 이름을 간단하게 지정할 수 있습니다. 예를 들면 <filename>/"
+"usr/bin</filename> 경로에서 이미 실행중이라면 다음 두가지의 경우 모두 유효합"
+"니다:"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:356
+msgid "<command>nemiver /usr/bin/progname</command>"
+msgstr "<command>nemiver /usr/bin/progname</command>"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:361
+msgid "<command>nemiver progname</command>"
+msgstr "<command>nemiver progname</command>"
+
+#. (itstool) path: tip/title
+#: C/index.docbook:367
+msgid "Passing Options on the Command Line"
+msgstr "명령행에 옵션 전달하기"
+
+#. (itstool) path: tip/para
+#: C/index.docbook:368
+msgid ""
+"If you would like to pass command line options to the program that you are "
+"debugging, you should enclose them in quotes to prevent Nemiver from "
+"processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
+msgstr ""
+"디버깅할 프로그램에 명령행 옵션을 전달하려면 네마이버가 옵션을 처리하지 않도"
+"록 <command>nemiver \"prognam --arg1 --arg2\"</command>와 같이 따옴표로 감싸"
+"야합니다."
+
+#. (itstool) path: sect3/title
+#: C/index.docbook:378
+msgid "Attaching to a Running Program"
+msgstr "실행 중인 프로그램 붙이기"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:381
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> "
+"Attach to Running Program... </guimenuitem></menuchoice>, which should "
+"display the following dialog:"
+msgstr ""
+"<menuchoice><guimenu> 파일 </guimenu><guimenuitem>실행 중인 프로그램 붙이"
+"기... </guimenuitem></menuchoice> 메뉴 항목을 선택하면 다음 대화상자가 뜹니"
+"다:"
+
+#. (itstool) path: figure/title
+#: C/index.docbook:390
+msgid "Attach Dialog"
+msgstr "대화상자 붙이기"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:392
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for attaching to a "
+"running program</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>실행 중인 프로그램을 붙이는 대화상자"
+"</phrase> </textobject>"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:402
+msgid ""
+"Select a process from the list and click <guibutton>OK</guibutton> to start "
+"debugging the selected program. There may be a lot of processes listed in "
+"the dialog, so you can filter the list to only ones that that you are "
+"interested in by typing some text into the text entry located just below the "
+"list."
+msgstr ""
+"목록의 프로세스를 선택하고 <guibutton>확인</guibutton>을 눌러 선택한 프로그램"
+"의 디버깅을 시작하십시오. 대화상자에 바로 하단 목록에 있는 텍스트 항목에 여러"
+"가지 프로세스가 나타나는데, 이 중 일부 텍스트를 입력하여 관심있는 항목을 따"
+"로 추려볼 수 있습니다."
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:412
+msgid ""
+"To attach to a running program from the command line, use the <option>--"
+"attach</option> option. The <option>--attach</option> option accepts either "
+"a pid or a process name. So, for example, to debug the running process "
+"<command>foo</command> which has a pid of 1121, you could either type "
+"<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
+"command>."
+msgstr ""
+"명령행에서 실행 중인 프로그램을 붙이려면 <option>--attach</option> 옵션을 활"
+"용하십시오. <option>--attach</option> 옵션에서는 PID 또는 프로세스 이름을 받"
+"아들입니다. 예를 들자면 PID 1121번으로 실행 중인 <command>foo</command> 프로"
+"세스를 디버깅한다면 <command>nemiver --attach foo</command> 명령 또는 "
+"<command>nemiver --attach 1121</command> 명령으로 시작할 수 있습니다."
+
+#. (itstool) path: sect3/title
+#: C/index.docbook:423
+msgid "Loading a Core File"
+msgstr "핵심 파일 불러오기"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:426
+msgid ""
+"Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load "
+"Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
+"which will let you load a core file:"
+msgstr ""
+"<menuchoice><guimenu> 파일 </guimenu><guimenuitem> 핵심 파일 불러오기... </"
+"guimenuitem></menuchoice> 메뉴 항목을 선택하면, 핵심 파일을 불러올 다음 대화"
+"상자를 띄웁니다:"
+
+#. (itstool) path: figure/title
+#: C/index.docbook:436
+msgid "Load Core File Dialog"
+msgstr "핵심 파일 대화상자 불러오기"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:438
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for loading a "
+"core file</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>핵심 파일을 불러오는 대화 상자"
+"</phrase> </textobject>"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:451
+msgid "Core files cannot be loaded from the command line."
+msgstr "핵싱 파일은 명령행에서 불러올 수 없습니다."
+
+#. (itstool) path: sect3/title
+#: C/index.docbook:457
+msgid "Remote Debugging"
+msgstr "원격 디버깅"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:458
+msgid "Nemiver allows you to connect to a remote debugging server."
+msgstr "네마이버에서는 원격 디버깅 서버에 연결할 수 있습니다."
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:463
+msgid ""
+"To connect to a remote debugging server, select <menuchoice><guimenu>File</"
+"guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
+msgstr ""
+"원격 디버깅 서버에 연결하려면 <menuchoice><guimenu>파일</"
+"guimenu><guimenuitem>원격 대상에 연결...</guimenuitem></menuchoice>을 선택하"
+"십시오."
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:469
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Remote Debugging "
+"Dialog</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>원격 디버깅 대화상자</"
+"phrase> </textobject>"
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:478
+msgid ""
+"Select the executable to load and the location where any shared libraries "
+"are located, and then fill in the details about connecting to the remote "
+"server."
+msgstr ""
+"불러올 실행 파일과 공유 라이브러리가 있는 위치를 선택한 다음, 원격 서버에 연"
+"결할 세부 설정을 채워주십시오."
+
+#. (itstool) path: sect4/para
+#: C/index.docbook:486
+msgid ""
+"Nemiver does not provide a way to connect to a remote server using the "
+"command line"
+msgstr "네마이버는 명령행에서 원격 서버에 연결하는 수단을 제공하지 않습니다."
+
+#. (itstool) path: sect1/title
+#: C/index.docbook:495
+msgid "Using Nemiver"
+msgstr "네마이버 활용"
+
+#. (itstool) path: sect1/para
+#: C/index.docbook:496
+msgid "This section describes how to use Nemiver to debug your application."
+msgstr ""
+"이 장에서는 네마이버를 활용하여 프로그램을 디버깅하는 방법을 설명합니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:500
+msgid "Basic Debugging Actions"
+msgstr "기본 디버깅 동작"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:501
+msgid ""
+"The basic debugging actions are available on the main toolbar, in the "
+"<guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common "
+"actions are listed below:"
+msgstr ""
+"기본 디버깅 동작은 주 도구 모음, <guimenu>디버깅</guimenu> 메뉴, 키보드 바로 "
+"가기 키로 접근할 수 있습니다. 대부분 일반적으로 수행하는 동작은 다음과 같습니"
+"다:"
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:508
+msgid "Continue"
+msgstr "계속 진행"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:510
+msgid ""
+"Starts the program. The program will run until it hits a breakpoint or until "
+"the program ends, unless it is interrupted manually by the user by clicking "
+"<action>Stop</action>. This action can be activated from the keyboard with "
+"<keycap>F5</keycap>."
+msgstr ""
+"프로그램을 시작합니다. 중단점을 마주하거나 프로그램 끝에 도달하기 전까지, 또"
+"는 <action>멈춤</action>을 사용자가 눌러 직접 멈추기 전까지 실행합니다. 이 동"
+"작은 <keycap>F5</keycap>키로 접근할 수 있습니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:520
+msgid "Next"
+msgstr "다음"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:522
+msgid ""
+"Executes the next statement, and stops when it reaches the next line in this "
+"file. Some debuggers may call this action \"Step Over\". This action can be "
+"activated from the keyboard with <keycap>F6</keycap>."
+msgstr ""
+"다음 구문을 실행하며 이 파일의 다음 줄에 도달하면 멈춥니다. 일부 디버거는 "
+"\"한 단계 건너뛰기\"라고 부릅니다. 이 동작은 <keycap>F6</keycap>키로 접근할 "
+"수 있습니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:531
+msgid "Step"
+msgstr "한 단계 실행"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:533
+msgid ""
+"Executes the next statement, stepping into the function if possible. Some "
+"debuggers may call this action \"Step In\". This action can be activated "
+"from the keyboard with <keycap>F7</keycap>."
+msgstr ""
+"다음 구문을 실행하며 가능하다면 함수 내부로 한 단계 거쳐 접근합니다. 어떤 디"
+"버거에서는 \"안쪽 단계 진입\"으로 부릅니다. 이 동작은 <keycap>F7</keycap>키"
+"로 접근할 수 있습니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:541
+msgid "Step Out"
+msgstr "단계 벗어나기"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:543
+msgid ""
+"Finishes execution of the current function and stops when it returns to the "
+"calling function. This action can be activated from the keyboard with "
+"<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
+msgstr ""
+"현재 함수 동작 실행을 끝내고 함수 호출 코드로 돌아갔을 경우 멈춥니다. 이 동작"
+"은 <keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo> 키로 접근"
+"할 수 있습니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:552
+msgid "Restart"
+msgstr "다시 시작"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:554
+msgid ""
+"Reloads the current executable and starts execution from the beginning. This "
+"action can be activated from the keyboard with <keycombo><keycap>Shift</"
+"keycap><keycap>F5</keycap></keycombo>."
+msgstr ""
+"현재 실행 파일을 다시 불러오고 처음부터 실행을 시작합니다. 이 동작은 "
+"<keycombo><keycap>Shift</keycap><keycap>F5</keycap></keycombo> 키로 접근할 "
+"수 있습니다."
+
+#. (itstool) path: varlistentry/term
+#: C/index.docbook:562
+msgid "Stop"
+msgstr "멈춤"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:564
+msgid ""
+"Manually interrupt execution of the program. This action is only available "
+"when the debugger is running the executable (e.g. after a user has clicked "
+"<action>Continue</action>). This action can be activated from the keyboard "
+"with <keycap>F9</keycap>."
+msgstr ""
+"프로그램 실행을 직접 멈춥니다. 이 동작은 실행 파일을 디버거에서 실행 중일 때"
+"(<action>계속</action>을 눌렀을 때라든지)만 가능합니다. 이 동작은 "
+"<keycap>F9</keycap>키로 접근할 수 있습니다."
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:573
+msgid ""
+"By default, after loading an executable, Nemiver creates a breakpoint at "
+"<function>main()</function>, so when execution reaches <function>main()</"
+"function>, it will stop and wait for input. You can then step through the "
+"program, examine variables (see <xref linkend=\"nemiver-sect-inspecting-"
+"variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-"
+"sect-breakpoints\"/>)."
+msgstr ""
+"네마이버에서 실행 파일을 불러온 후에는 기본적으로 <function>main()</"
+"function> 함수에 중단점을 만들기 때문에 <function>main()</function> 함수에 도"
+"달하면 멈추고 입력을 기다립니다. 이 때 여러분은 프로그램을 한 단계씩 실행하거"
+"나, 변수를 확인하든지, 중단점을 추가로 설정할 수 있습니다(<xref linkend="
+"\"nemiver-sect-breakpoints\"/> 참고)."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:582
+msgid "Inspecting Variables"
+msgstr "변수 점검"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:583
+msgid ""
+"Nemiver displays a list of all local variables in the <interface>Variables</"
+"interface> tab of the <interface>Status Notebook</interface>. If you'd like "
+"to examine a different variable (or even an arbitrary expression), you can "
+"use the <interface>Variable Inspector</interface>. To bring up the "
+"<interface>Variable Inspector</interface>, select "
+"<menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</"
+"guimenuitem></menuchoice>. When the variable inspector comes up, you'll see "
+"a window that looks similar to the following:"
+msgstr ""
+"네마이버는 <interface>상태 노트북</interface>의 <interface>변수</interface> "
+"탭에서 모든 지역 변수를 표시합니다. 여러가지 변수(또는 임의의 수식) 값을 확인"
+"하려면 <interface>변수 검사창</interface>을 활용할 수 있습니다. <interface>변"
+"수 검사창</interface>을 띄우려면 <menuchoice><guimenu>디버깅</"
+"guimenu><guimenuitem>변수 검사</guimenuitem></menuchoice>를 선택하십시오. 변"
+"수 검사창이 뜨면,  다음과 같은 창을 볼 수 있습니다:"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:591
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Variable Inspector Dialog</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>변수 점검창 대화상자</phrase> "
+"</textobject>"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:600
+msgid ""
+"You can type any variable name or a simple expression (such as <literal>pFoo-"
+"&gt;bar</literal>) into the input box, and if the variable is valid and in "
+"scope, it will be display details about that expression."
+msgstr ""
+"입력창에 변수 이름 또는 간단한 수식(<literal>pFoo-&gt;bar</literal>)을 입력"
+"할 수 있으며, 변수 이름과 적용 범위가 유효하다면 해당 수식에 대한 자세한 결과"
+"를 보여줍니다."
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:605
+msgid ""
+"Alternately, if you select the name of a variable in the <interface>source "
+"editor</interface>, and then launch the <interface>Variable Inspector</"
+"interface>, it will attempt to display information about the selected "
+"variable name."
+msgstr ""
+"대힌 <interface>소스 편집기</interface>에서 변수 이름을 선택하고 <interface>"
+"변수 점검창</interface>을 띄우면 선택한 변수 이름에 대한 정보 표시를 시도합니"
+"다."
+
+#. (itstool) path: tip/title
+#: C/index.docbook:612
+msgid "Keyboard Shortcut"
+msgstr "키보드 바로 가기 키"
+
+#. (itstool) path: tip/para
+#: C/index.docbook:613
+msgid ""
+"You can also start the <interface>Variable Inspector</interface> by pressing "
+"<keycap>F12</keycap>."
+msgstr ""
+"<keycap>F12</keycap> 키를 눌러 <interface>변수 점검창</interface>을 시작할 "
+"수 있습니다."
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:618
+msgid ""
+"Nemiver will also let you display a list of all global variables in an "
+"application in a separate dialog. To display the <interface>Global "
+"Variables</interface> dialog, select <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
+"press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
+msgstr ""
+"네마이버에서는 다른 대화상자에서 프로그램의 모든 전역 변수 목록을 표시합니"
+"다. <interface>전역 변수</interface>를 표시하려면 <menuchoice><guimenu>디버깅"
+"</guimenu><guimenuitem>전역 변수 표시</guimenuitem></menuchoice>를 선택하거"
+"나 <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>키를 누르십시"
+"오."
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:625
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Global Variables "
+"Dialog</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>전역 변수 대화상자</"
+"phrase> </textobject>"
+
+#. (itstool) path: warning/para
+#: C/index.docbook:635
+msgid ""
+"For some programs (especially C++ programs), listing all of the global "
+"variables may take a very long time."
+msgstr ""
+"어떤 프로그램(특히 C++ 프로그램)에서는 모든 전역 변수를 조회하는데 시간이 상"
+"당히 걸릴 수도 있습니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:642
+msgid "Setting Breakpoints"
+msgstr "중단점 설정"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:643
+msgid ""
+"There are several different ways to set breakpoints in Nemiver. Nemiver "
+"automatically sets a breakpoint at <function>main()</function> when you "
+"first begin debugging a new executable. If you want to set additional "
+"breakpoints you can do one of the following:"
+msgstr ""
+"네마이버에 중단점을 설정하는 방법에는 여러가지가 있습니다. 네마이버는 새 실"
+"행 파일 디버깅을 시작할 때 <function>main()</function> 에 중단점을 자동으로 "
+"설정합니다. 추가 중단점을 설정하고 싶다면 다음 방식으로 처리할 수 있습니다:"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:651
+msgid ""
+"Click in the margin next to the line where you want the breakpoint to be set"
+msgstr "중단점을 설정하려는 줄의 여백을 클릭"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:655
+msgid ""
+"Place your cursor on a line where you want the breakpoint to be set and set "
+"the breakpoint by either selecting <menuchoice><guimenu>Debug</"
+"guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
+"or by pressing <keycap>F8</keycap>"
+msgstr ""
+"중단점을 설정하려는 위치의 줄에 커서를 두고 <menuchoice><guimenu>디버깅</"
+"guimenu><guimenuitem>커서 위치의 중단점 설정 전환</guimenuitem></menuchoice>"
+"을 선택하거나 <keycap>F8</keycap>키를 눌러 중단점 설정"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:660
+msgid ""
+"Set a breakpoint at a specific function name or at a specific location in a "
+"file by selecting <menuchoice><guimenu>Debug</guimenu><guimenuitem>Set "
+"Breakpoint...</guimenuitem></menuchoice> or by pressing "
+"<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will "
+"bring up a dialog that looks like the following:"
+msgstr ""
+"<menuchoice><guimenu>디버깅</guimenu><guimenuitem>중단점 설정...</"
+"guimenuitem></menuchoice>를 선택하거나 <keycombo><keycap>Ctrl</"
+"keycap><keycap>B</keycap></keycombo> 키를 눌러 파일에 있는 특정 함수 이름 또"
+"는 특정 위치의 중단점 설정. 이 방식은 다음과 같은 대화상자를 띄웁니다:"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:665
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/set-breakpoint-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Set Breakpoint Dialog</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/set-breakpoint-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>중단점 설정 대화상자</"
+"phrase> </textobject>"
+
+#. (itstool) path: listitem/para
+#: C/index.docbook:674
+msgid ""
+"You can specify a breakpoint at a particular location in a file, or by "
+"function name. If there are more than one function with the same name, "
+"Nemiver will display a list of all matching functions and ask you to pick "
+"the one you want."
+msgstr ""
+"파일의 각 부분에 중단점을 설정할 수 있습니다. 동일한 이름을 지닌 하나 이상의 "
+"함수가 있다면 네마이버에서는 일치하는 모든 함수 목록을 표시하고 어떤 항목을 "
+"선택할 지 물어봅니다."
+
+#. (itstool) path: sect3/title
+#: C/index.docbook:683
+msgid "Disabled Breakpoints"
+msgstr "비활성화한 중단점"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:684
+msgid ""
+"Breakpoints can be either enabled or disabled. The debugger will stop "
+"execution whenever it reaches an enabled breakpoint but will not be affected "
+"by any breakpoints in the disabled state. This allows you to temporarily "
+"remove a breakpoint without actually deleting it."
+msgstr ""
+"중단점은 활성화하거나 비활성화할 수 있습니다. 디버거에서는 활성화한 중단점에 "
+"도달하는 언제든 실행을 멈출 수 있지만 다른 중단점을 비활성화 한다고 해서 상태"
+"를 바꿀 수 있진 않습니다. 이 기능을 통해 실제로 중단점을 삭제하지 않아도 임시"
+"로 중단점을 제거할 수 있습니다."
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:690
+msgid ""
+"To disable or enable a breakpoint, click the checkbox next to the breakpoint "
+"number you want to enable or disable in the <interface>Breakpoints</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> "
+"to enable or disable a breakpoint that is set on the line that the cursor is "
+"currently on."
+msgstr ""
+"중단점을 비활성화하거나 활성화하려면 <interface>상태 노트북</interface>의 "
+"<interface>중단점</interface> 탭에서 활성화하거나 비활성화하려는 중단점 번호 "
+"옆의 확인 상자를 누르십시오. 대신, 현재 커서가 있는 줄에서 "
+"<keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> 키를 눌러 중단"
+"점을 활성화 또는 비활성화 할 수 있습니다."
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:698
+msgid ""
+"The following figures show the difference between enabled and disabled "
+"breakpoints in the source editor."
+msgstr ""
+"다음 그림에서는 소스 편집기에서 중단점을 활성화한 모습과 비활성화한 모습의 차"
+"이점을 보여줍니다."
+
+#. (itstool) path: caption/para
+#: C/index.docbook:710
+msgid "Enabled Breakpoint"
+msgstr "활성화한 중단점"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:703
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/enabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of an enabled "
+"breakpoint</phrase> </textobject> <_:caption-1/>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/enabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>활성화한 중단점의 모습</"
+"phrase> </textobject> <_:caption-1/>"
+
+#. (itstool) path: caption/para
+#: C/index.docbook:721
+msgid "Disabled Breakpoint"
+msgstr "비활성화한 중단점"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:714
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/disabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of a disabled "
+"breakpoint</phrase> </textobject> <_:caption-1/>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/disabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>비활성화한 중단점의 모습</"
+"phrase> </textobject> <_:caption-1/>"
+
+#. (itstool) path: sect3/title
+#: C/index.docbook:726
+msgid "Opening Source Files"
+msgstr "소스 파일 열기"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:727
+msgid ""
+"Sometimes you don't know exactly the function name or line number where you "
+"want a breakpoint to be set, so you must open a source file to figure it "
+"out. You could just open arbitrary files from the filesystem, but Nemiver "
+"can also provide a list of source files that were used to build the "
+"executable and allow you to select from this list. When you select "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</"
+"guimenuitem></menuchoice>, the following window should be displayed:"
+msgstr ""
+"가끔 중단점을 설정하려는 함수 이름 또는 줄 번호를 정확히 모를 경우가 있기 때"
+"문에 소스 파일을 열어 찾아봐야합니다. 파일 시스템에서 임의의 파일을 열어볼 수"
+"는 있지만, 네마이버에서는 실행 파일을 빌드하는데 사용한 소스 파일 목록을 제공"
+"할 수 있으며 목록을 통해 선택할 수 있게 합니다. <menuchoice><guimenu>파일</"
+"guimenu><guimenuitem>소스 파일 열기...</guimenuitem></menuchoice>를 선택하면 "
+"다음 창이 나타납니다:"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:737
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/open-files-target.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for opening "
+"source files</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/open-files-target.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>소스 파일을 여는 대화상자</"
+"phrase> </textobject>"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:746
+msgid ""
+"To select an arbitrary file from the filesystem, choose the <guilabel>Select "
+"from Filesystem</guilabel> option. To select from a list of files that "
+"produced the executable, choose <guilabel>Select from Target Executable</"
+"guilabel>."
+msgstr ""
+"파일 시스템에서 임의의 파일을 선택하려면 <guilabel>파일 시스템에서 선택</"
+"guilabel> 옵션을 선택하십시오. 실행 파일을 만든 파일 목록에서 선택하려면 "
+"<guilabel>실행 대상에서 선택</guilabel>을 선택하십시오."
+
+#. (itstool) path: warning/title
+#: C/index.docbook:753
+msgid "Determining Source Files for Dynamically Loaded Modules"
+msgstr "동적으로 불러오는 모듈의 소스 파일 판단"
+
+#. (itstool) path: warning/para
+#: C/index.docbook:754
+msgid ""
+"If the target executable loads modules at runtime (e.g. using "
+"<function>dlopen()</function>), Nemiver will not be able to determine which "
+"files were used to build these modules until they are actually loaded."
+msgstr ""
+"(<function>dlopen()</function>을 활용하는 식으로) 실행 도중에 대상 실행 파일"
+"이 모듈을 불러온다면, 네마이버에서는 실제 모듈을 불러오기 전에 이 모듈을 빌드"
+"할 때 어떤 파일을 활용할 지 판단할 수 없습니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:764
+msgid "Advanced Debugging"
+msgstr "고급 디버깅"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:767
+msgid ""
+"The register editing widget is located in the <interface>Registers</"
+"interface> tab of the <interface>Status Notebook</interface>. Alternately, "
+"you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> "
+"to jump directly to the correct tab."
+msgstr ""
+"레지스터 편집 위젯은 <interface>상태 노트북</interface>의 <interface>레지스터"
+"</interface> 탭에 있습니다. 대신 <keycombo><keycap>Alt</keycap><keycap>F5</"
+"keycap></keycombo> 키를 눌러 적절한 탭으로 바로 이동할 수 있습니다."
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:775
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/registers-view.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>The Register Editing Widget</"
+"phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/registers-view.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>레지스터 편집 위젯</phrase> </"
+"textobject>"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:784
+msgid ""
+"This widget shows the current values of all of the CPU registers. You can "
+"edit the register values by clicking in the <interface>Value</interface> "
+"column and entering a new value. If the value for the register changed since "
+"the last time the debugger stopped, it will be highlighted in red."
+msgstr ""
+"이 위젯에서는 모든 CPU 레지스터의 현재 값을 보여줍니다. <interface>값</"
+"interface> 컬럼을 누르고 새 값을 입력하여 레지스터 값을 편집할 수 있습니다. "
+"마지막으로 디버거를 멈춘 후 바뀐 레지스터 값은 빨간색으로 나타납니다."
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:794
+msgid ""
+"The memory widget allows you to view a section of memory directly. This "
+"enables you to get a lower-level view of what's happening while your program "
+"is running."
+msgstr ""
+"메모리 위젯에서는 메모리 섹션을 직접 볼 수 있습니다. 메모리 위젯에서는 프로그"
+"램을 실행하고 있을 때 어떤 일이 일어나고 있는지 저수준에서 볼 수 있습니다."
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:800
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/memory-view.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>The Memory Editing Widget</phrase> </"
+"textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/memory-view.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>메모리 편집 위젯</phrase> </textobject>"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:809
+msgid ""
+"To display a segment of memory in the memory view widget, enter a memory "
+"address in the <interface>Address</interface> field. If the address is valid "
+"for the program being debugged, the memory view will display the memory "
+"values starting at the specified address. Memory values can be displayed in "
+"byte format, word format (2 bytes), or long word format (4 bytes) by "
+"choosing an option from the <interface>Group By</interface> drop-down menu. "
+"The memory values will automatically be updated as you step through the "
+"program."
+msgstr ""
+"메모리 뷰 위젯에서 메모리 세그먼트를 표시하려면 <interface>주소</interface> "
+"칸에 메모리 주소를 입력하십시오. 디버깅 중인 프로그램에서 사용하는 주소 영역"
+"과 일치하는 주소라면 지정 주소에서 시작하는 메모리 값을 <interface>항목 정렬"
+"</interface> 드롭 다운 메뉴의 설정에 따라 바이트, 워드(2 바이트), 롱 워드(4 "
+"바이트) 형식으로 메모리 보기 화면에 표시합니다. 프로그램을 순차적으로 실행하"
+"는대로 메모리 값을 자동으로 업데이트합니다."
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:820
+msgid ""
+"In addition to viewing the memory values, you can also use the memory widget "
+"to modify memory values. You can edit either the hex byte representation "
+"(the left-hand section of the memory widget), or the ASCII representation "
+"(the right-hand section of the memory widget). All changes will be applied "
+"immediately."
+msgstr ""
+"게다가 메모리 값을 볼 때, 메모리 값을 수정하는 메모리 위젯을 활용할 수 있습니"
+"다. 바이트 단위 16진수 표기 방식(메모리 위젯의 왼편) 또는 아스키 표기 방식(메"
+"모리 위젝의 오른편)으로 편집할 수 있습니다. 바뀐 값은 즉시 반영됩니다."
+
+#. (itstool) path: sect1/title
+#: C/index.docbook:831
+msgid "Session Save and Restore"
+msgstr "세션 저장 및 복구"
+
+#. (itstool) path: sect1/para
+#: C/index.docbook:832
+msgid ""
+"Nemiver can save your debugging sessions for you so that you can resume them "
+"at a later time. This includes saving information such as which executable "
+"is being debugged, what environment variables are set, what command-line "
+"options are passed to the executable, which files are open, and which "
+"breakpoints are set so that you can get back to where you left off last time "
+"as quickly as possible."
+msgstr ""
+"네마이버에서는 나중에 상태를 되돌릴 수 있도록 디버깅 세션을 저장할 수 있습니"
+"다. 세션 저장 내용에는 어떤 실행 파일을 디버깅할 지, 어떤 환경 변수를 설정할 "
+"지, 어떤 명령행 옵션을 실행 파일에 전달할 지, 어떤 파일을 열지, 어떤 중단점"
+"을 설정하여 최근 벗어난 지점에 최대한 빠르게 돌아갈 수 있는지에 대한 정보가 "
+"들어있습니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:841
+msgid "Saving Sessions"
+msgstr "세션 저장"
+
+#. (itstool) path: sect2/para
+#: C/index.docbook:842
+msgid ""
+"Nemiver will save your session automatically on exit, so you don't even have "
+"to worry about it. However, if you want to explicitly save the session "
+"before closing Nemiver, you can do so by selecting "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</"
+"guimenuitem></menuchoice>."
+msgstr ""
+"네마이버에서 프로그램을 빠져나갈 때 세션을 자동으로 저장하므로 전혀 걱정하실 "
+"필요가 없습니다. 그러나 네마이버를 닫기 전에 세션을 분명하게 저장하고 싶다면 "
+"<menuchoice><guimenu>파일</guimenu><guimenuitem>디스크에 세션 저장</"
+"guimenuitem></menuchoice>을 선택하여 동작을 처리할 수 있습니다."
+
+#. (itstool) path: sect2/title
+#: C/index.docbook:850
+msgid "Resuming Saved Sessions"
+msgstr "저장한 세션 재개"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:853
+msgid ""
+"Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved "
+"Session...</guimenuitem></menuchoice> and select a session from the list."
+msgstr ""
+"<menuchoice><guimenu>파일</guimenu><guimenuitem>저장한 세션 재개...</"
+"guimenuitem></menuchoice>를 선택하고 목록에서 세션을 선택하십시오."
+
+#. (itstool) path: figure/title
+#: C/index.docbook:859
+msgid "Session Dialog"
+msgstr "세션 대화상자"
+
+#. (itstool) path: screenshot/mediaobject
+#: C/index.docbook:861
+msgid ""
+"<imageobject> <imagedata fileref=\"figures/sessions-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Shows dialog for resuming a saved "
+"session</phrase> </textobject>"
+msgstr ""
+"<imageobject> <imagedata fileref=\"figures/sessions-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>저장 세션에 복귀하는 대화상자</"
+"phrase> </textobject>"
+
+#. (itstool) path: sect3/title
+#: C/index.docbook:873
+msgid "From the Command Line"
+msgstr "명령행에서"
+
+#. (itstool) path: sect3/para
+#: C/index.docbook:874
+msgid ""
+"If you know the session ID of the session you want to run, you can start "
+"that debugging session from the command line. For example, if you want to "
+"run session number 3, you can do so with the following command: "
+"<command>nemiver --session 3</command>."
+msgstr ""
+"실행하고자 하는 세션의 세션 ID를 알고 있다면 명령행에서 디버깅 세션을 시작할 "
+"수 있습니다. 예를 들자면 세션 3번을 실행하고자 한다면 <command>nemiver --"
+"session 3</command> 명령으로 처리할 수 있습니다."
+
+#. (itstool) path: sect1/title
+#: C/index.docbook:886
+msgid "About Nemiver"
+msgstr "네마이버 정보"
+
+#. (itstool) path: sect1/para
+#: C/index.docbook:887
+msgid ""
+"<application>Nemiver</application> was written by Dodji Seketeli and "
+"Jonathon Jongsma, with contributions from many others. To find more "
+"information about Nemiver, please visit the <ulink url=\"http://www.gnome."
+"org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
+msgstr ""
+"<application>네마이버</application>는 Dodji Seketeli, Jonathon Jongsma, 및 다"
+"른 공헌 개발자가 작성했습니다. 네마이버 정보를 더 많이 찾아보려면 <ulink url="
+"\"http://www.gnome.org/projects/nemiver/\" type=\"http\">네마이버 프로젝트 웹"
+"사이트</ulink>를 방문하십시오."
+
+#. (itstool) path: sect1/para
+#: C/index.docbook:891
+msgid ""
+"To report a bug or make a suggestion regarding this application or this "
+"manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?"
+"feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
+msgstr ""
+"이 프로그램 또는 이 설명서에 대한 문제점을 보고하거나 의견이 있다면 <ulink "
+"url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">그놈 사용자 설명서</"
+"ulink>의 피드백 섹션을 살펴보십시오."
+
+#. (itstool) path: sect1/para
+#: C/index.docbook:896
+msgid ""
+"This program is distributed under the terms of the GNU General Public "
+"license as published by the Free Software Foundation; either version 2 of "
+"the License, or (at your option) any later version. A copy of this license "
+"can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or "
+"in the file COPYING included with the source code of this program."
+msgstr ""
+"이 프로그램은 자유 소프트웨어 재단이 발표한 GNU 일반 공중 사용허가서 버전 2 "
+"또는(선택에 따라)그 이상 버전의 조항에 따라 배포합니다. 라이선스 사본은 이 "
+"<ulink url=\"ghelp:gpl\" type=\"help\">링크</ulink> 또는 이 프로그램의 소스코"
+"드에 들어있는 COPYING 파일에서 찾아보실 수 있습니다."
+
+#. (itstool) path: para/ulink
+#: C/legal.xml:9
+msgid "link"
+msgstr "링크"
+
+#. (itstool) path: legalnotice/para
+#: C/legal.xml:2
+msgid ""
+"Permission is granted to copy, distribute and/or modify this document under "
+"the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any "
+"later version published by the Free Software Foundation with no Invariant "
+"Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy "
+"of the GFDL at this <_:ulink-1/> or in the file COPYING-DOCS distributed "
+"with this manual."
+msgstr ""
+"전면 표지와 후면 표지, 그리고 바뀌지 않는 섹션을 제외한 이 문서의 복제, 배"
+"포, 수정은 자유 소프트웨어 재단이 발표한 1.1 버전 이후의 GNU 자유 문서 라이선"
+"스(GFDL) 조항에 따라 허용합니다. GFDL의 사본은 이 <_:ulink-1/>, 또는 설명서"
+"와 배포하는 COPYING-DOCS 파일에서 찾을 수 있습니다."
+
+#. (itstool) path: legalnotice/para
+#: C/legal.xml:12
+msgid ""
+"This manual is part of a collection of GNOME manuals distributed under the "
+"GFDL. If you want to distribute this manual separately from the collection, "
+"you can do so by adding a copy of the license to the manual, as described in "
+"section 6 of the license."
+msgstr ""
+"이 설명서는 GFDL에 따라 배포하는 그놈 설명서 모음의 일부입니다. 모음과는 별개"
+"로 이 설명서를 배포하고 싶다면, 라이선스 6장에 명시한대로 설명서에 라이선스 "
+"사본을 추가할 경우 가능합니다."
+
+#. (itstool) path: legalnotice/para
+#: C/legal.xml:19
+msgid ""
+"Many of the names used by companies to distinguish their products and "
+"services are claimed as trademarks. Where those names appear in any GNOME "
+"documentation, and the members of the GNOME Documentation Project are made "
+"aware of those trademarks, then the names are in capital letters or initial "
+"capital letters."
+msgstr ""
+"회사의 제품 및 서비스를 구분할 때 사용하는 여러 이름은 등록상표 입니다. 어떤 "
+"그놈 문서에 나타나는 등록상표 명칭이나 그놈 문서 프로젝트의 구성원의 이름이 "
+"있는 곳에는 대문자로 표기하거나 대문자 약자로 표기합니다."
+
+#. (itstool) path: listitem/para
+#: C/legal.xml:35
+msgid ""
+"DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, "
+"EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT "
+"THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS "
+"MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE "
+"RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR "
+"MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR "
+"MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL "
+"WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY "
+"SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN "
+"ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION "
+"OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND "
+"UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING "
+"NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY "
+"CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE "
+"DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON "
+"FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF "
+"ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, "
+"WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES "
+"OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED "
+"VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE "
+"POSSIBILITY OF SUCH DAMAGES."
+msgstr ""
+"DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, "
+"EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT "
+"THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS "
+"MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE "
+"RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR "
+"MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR "
+"MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL "
+"WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY "
+"SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN "
+"ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION "
+"OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND "
+"UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING "
+"NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY "
+"CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE "
+"DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON "
+"FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF "
+"ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, "
+"WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES "
+"OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED "
+"VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE "
+"POSSIBILITY OF SUCH DAMAGES."
+
+#. (itstool) path: legalnotice/para
+#: C/legal.xml:28
+msgid ""
+"DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS "
+"OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: "
+"<_:orderedlist-1/>"
+msgstr ""
+"DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS "
+"OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: "
+"<_:orderedlist-1/>"

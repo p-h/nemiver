@@ -22,4 +22,4 @@ HELP_MEDIA = \
 			  figures/enabled-breakpoint.png \
 			  figures/disabled-breakpoint.png
 
-HELP_LINGUAS = cs de el es fr gl oc pt_BR sl sv zh_CN
+HELP_LINGUAS = cs de el es fr gl ko oc pt_BR sl sv zh_CN
